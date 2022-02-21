@@ -106,7 +106,7 @@ void PointerLockController::requestPointerUnlockAndForceCursorVisible()
 void PointerLockController::elementWasRemoved(Element& element)
 {
     if (m_element == &element) {
-        m_documentOfRemovedElementWhileWaitingForUnlock = makeWeakPtr(m_element->document());
+        m_documentOfRemovedElementWhileWaitingForUnlock = m_element->document();
         // Set element null immediately to block any future interaction with it
         // including mouse events received before the unlock completes.
         requestPointerUnlock();
@@ -120,7 +120,7 @@ void PointerLockController::documentDetached(Document& document)
         m_documentAllowedToRelockWithoutUserGesture = nullptr;
 
     if (m_element && &m_element->document() == &document) {
-        m_documentOfRemovedElementWhileWaitingForUnlock = makeWeakPtr(m_element->document());
+        m_documentOfRemovedElementWhileWaitingForUnlock = m_element->document();
         requestPointerUnlock();
         clearElement();
     }
@@ -151,7 +151,7 @@ void PointerLockController::didAcquirePointerLock()
     enqueueEvent(eventNames().pointerlockchangeEvent, m_element.get());
     m_lockPending = false;
     m_forceCursorVisibleUponUnlock = false;
-    m_documentAllowedToRelockWithoutUserGesture = makeWeakPtr(m_element->document());
+    m_documentAllowedToRelockWithoutUserGesture = m_element->document();
 }
 
 void PointerLockController::didNotAcquirePointerLock()
@@ -213,7 +213,7 @@ void PointerLockController::enqueueEvent(const AtomString& type, Element* elemen
 void PointerLockController::enqueueEvent(const AtomString& type, Document* document)
 {
     // FIXME: Spec doesn't specify which task source use.
-    if (auto protectedDocument = makeRefPtr(document))
+    if (RefPtr protectedDocument = document)
         protectedDocument->queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(type, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 

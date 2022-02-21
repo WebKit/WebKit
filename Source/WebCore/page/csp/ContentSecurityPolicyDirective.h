@@ -42,8 +42,11 @@ public:
     {
     }
 
+    virtual ~ContentSecurityPolicyDirective() = 0;
+
     const String& name() const { return m_name; }
     const String& text() const { return m_text; }
+    virtual const String& nameForReporting() const { return m_name; }
 
     const ContentSecurityPolicyDirectiveList& directiveList() const { return m_directiveList; }
 

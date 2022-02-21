@@ -28,6 +28,7 @@
 
 #import "FontCascade.h"
 #import "GraphicsContext.h"
+#import "ImageBuffer.h"
 #import <dlfcn.h>
 
 namespace WebCore {
@@ -107,28 +108,34 @@ static CGPDFPageRef applePayButtonLogoWhite()
     return logoPage;
 };
 
-static void drawApplePayButton(GraphicsContext& context, CGPDFPageRef page, const FloatRect& rect)
+static void drawApplePayButton(GraphicsContext& context, CGPDFPageRef page, const FloatSize& size)
 {
+    // Create a local ImageBuffer because decoding the PDF images has to happen in WebProcess.
+    auto imageBuffer = context.createCompatibleImageBuffer(size, DestinationColorSpace::SRGB(), RenderingMethod::Local);
+    if (!imageBuffer)
+        return;
+
     CGSize pdfSize = CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size;
-    GraphicsContextStateSaver stateSaver(context);
-    fitContextToBox(context, FloatSize(pdfSize), rect.size());
 
-    CGContextTranslateCTM(context.platformContext(), 0, pdfSize.height);
-    CGContextScaleCTM(context.platformContext(), 1, -1);
+    auto& imageContext = imageBuffer->context();
+    fitContextToBox(imageContext, FloatSize(pdfSize), size);
+    imageContext.translate(0, pdfSize.height);
+    imageContext.scale(FloatSize(1, -1));
+    CGContextDrawPDFPage(imageContext.platformContext(), page);
 
-    CGContextDrawPDFPage(context.platformContext(), page);
+    context.drawConsumingImageBuffer(WTFMove(imageBuffer), FloatRect(FloatPoint::zero(), size));
 };
 
 #endif
 
-void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, const FloatRect& rect) const
+void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, const FloatSize& size) const
 {
     if (name == "wireless-playback") {
         GraphicsContextStateSaver stateSaver(context);
         context.setFillColor(Color::black);
 
         FloatSize wirelessPlaybackSrcSize(32, 24.016);
-        fitContextToBox(context, wirelessPlaybackSrcSize, rect.size());
+        fitContextToBox(context, wirelessPlaybackSrcSize, size);
 
         Path outline;
         outline.moveTo(FloatPoint(24.066, 18));
@@ -158,20 +165,20 @@ void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, co
 #if ENABLE(APPLE_PAY)
     if (name == "apple-pay-logo-black") {
         if (auto logo = applePayButtonLogoBlack()) {
-            drawApplePayButton(context, logo, rect);
+            drawApplePayButton(context, logo, size);
             return;
         }
     }
 
     if (name == "apple-pay-logo-white") {
         if (auto logo = applePayButtonLogoWhite()) {
-            drawApplePayButton(context, logo, rect);
+            drawApplePayButton(context, logo, size);
             return;
         }
     }
 #endif
 
-    Theme::drawNamedImage(name, context, rect);
+    Theme::drawNamedImage(name, context, size);
 }
 
 }

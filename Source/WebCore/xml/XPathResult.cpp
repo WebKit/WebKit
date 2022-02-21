@@ -32,22 +32,20 @@
 
 namespace WebCore {
 
-using namespace XPath;
-
-XPathResult::XPathResult(Document& document, const Value& value)
+XPathResult::XPathResult(Document& document, const XPath::Value& value)
     : m_value(value)
 {
     switch (m_value.type()) {
-        case Value::BooleanValue:
+        case XPath::Value::BooleanValue:
             m_resultType = BOOLEAN_TYPE;
             return;
-        case Value::NumberValue:
+        case XPath::Value::NumberValue:
             m_resultType = NUMBER_TYPE;
             return;
-        case Value::StringValue:
+        case XPath::Value::StringValue:
             m_resultType = STRING_TYPE;
             return;
-        case Value::NodeSetValue:
+        case XPath::Value::NodeSetValue:
             m_resultType = UNORDERED_NODE_ITERATOR_TYPE;
             m_nodeSetPosition = 0;
             m_nodeSet = m_value.toNodeSet();

@@ -28,9 +28,9 @@
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     LegacyWindowAlias=WebKitCSSMatrix,
-    ImplementationLacksVTable
+    JSGenerateToNativeObject,
 ] interface DOMMatrix : DOMMatrixReadOnly {
-    [CallWith=ScriptExecutionContext] constructor(optional (DOMString or sequence<unrestricted double>) init);
+    [CallWith=CurrentScriptExecutionContext] constructor(optional (DOMString or sequence<unrestricted double>) init);
 
     [NewObject] static DOMMatrix fromMatrix(optional DOMMatrixInit other);
     [NewObject] static DOMMatrix fromFloat32Array(Float32Array array32);

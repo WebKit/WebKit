@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +54,7 @@ const ClassInfo IntlRelativeTimeFormatPrototype::s_info = { "Intl.RelativeTimeFo
 
 IntlRelativeTimeFormatPrototype* IntlRelativeTimeFormatPrototype::create(VM& vm, Structure* structure)
 {
-    auto* object = new (NotNull, allocateCell<IntlRelativeTimeFormatPrototype>(vm.heap)) IntlRelativeTimeFormatPrototype(vm, structure);
+    auto* object = new (NotNull, allocateCell<IntlRelativeTimeFormatPrototype>(vm)) IntlRelativeTimeFormatPrototype(vm, structure);
     object->finishCreation(vm);
     return object;
 }

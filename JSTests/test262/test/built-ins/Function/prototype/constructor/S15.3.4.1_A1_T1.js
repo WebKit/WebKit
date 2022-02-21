@@ -8,8 +8,8 @@ info: |
 es5id: 15.3.4.1_A1_T1
 description: Checking Function.prototype.constructor
 ---*/
-
-//CHECK#1
-if (Function.prototype.constructor !== Function) {
-  throw new Test262Error('#1: The initial value of Function.prototype.constructor is the built-in Function constructor');
-}
+assert.sameValue(
+  Function.prototype.constructor,
+  Function,
+  'The value of Function.prototype.constructor is expected to equal the value of Function'
+);

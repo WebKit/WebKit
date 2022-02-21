@@ -1,14 +1,21 @@
 
 describe('TestGroupFormTests', () => {
-    const scripts = ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js', 'components/test-group-form.js'];
+    const scripts = ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js',
+        'components/test-group-form.js', 'components/repetition-type-selection.js', 'models/data-model.js',
+        'models/triggerable.js', 'models/test.js', 'models/platform.js', 'lazily-evaluated-function.js'];
 
-    function createTestGroupFormWithContext(context)
+    async function createTestGroupFormWithContext(context)
     {
-        return context.importScripts(scripts, 'ComponentBase', 'TestGroupForm').then((symbols) => {
-            const testGroupForm = new context.symbols.TestGroupForm;
-            context.document.body.appendChild(testGroupForm.element());
-            return testGroupForm;
-        });
+        await context.importScripts(scripts, 'ComponentBase', 'LabeledObject', 'DataModelObject', 'Test',
+            'TestGroupForm', 'RepetitionTypeSelection', 'TriggerableConfiguration','Platform', 'LazilyEvaluatedFunction');
+        const platform = new context.symbols.Platform(5, {name: 'SomePlatform', metrics: []});
+        const test = new context.symbols.Test(10, {name: 'SomeTest'});
+        new context.symbols.TriggerableConfiguration(`${test.id()}-${platform.id()}`,
+            {platform, test, supportedRepetitionTypes: ['alternating', 'sequential']});
+        const testGroupForm = new context.symbols.TestGroupForm;
+        testGroupForm.setTestAndPlatform(test, platform);
+        context.document.body.appendChild(testGroupForm.element());
+        return testGroupForm;
     }
 
     it('must dispatch "startTesting" action with the number of repetitions the user clicks on "Start A/B testing"', () => {
@@ -30,9 +37,7 @@ describe('TestGroupFormTests', () => {
         expect(calls).to.eql({});
         testGroupForm.content('start-button').click();
         expect(calls).to.eql([[4, 'alternating', true]]);
-        const typeForm = testGroupForm.content('repetition-type');
-        typeForm.value = 'sequential';
-        typeForm.dispatchEvent(new Event('change'));
+        testGroupForm.part('repetition-type-selector').selectedRepetitionType = 'sequential';
         testGroupForm.content('start-button').click();
         expect(calls).to.eql([[4, 'alternating', true], [4, 'sequential', true]]);
     });

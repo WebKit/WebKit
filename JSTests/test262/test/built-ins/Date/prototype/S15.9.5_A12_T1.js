@@ -6,7 +6,8 @@ info: The Date.prototype has the property "getMonth"
 esid: sec-properties-of-the-date-prototype-object
 description: The Date.prototype has the property "getMonth"
 ---*/
-
-if (Date.prototype.hasOwnProperty("getMonth") !== true) {
-  throw new Test262Error('#1: The Date.prototype has the property "getMonth"');
-}
+assert.sameValue(
+  Date.prototype.hasOwnProperty("getMonth"),
+  true,
+  'Date.prototype.hasOwnProperty("getMonth") must return true'
+);

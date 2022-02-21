@@ -11,9 +11,12 @@ description: >
     object as a constructor
 ---*/
 
-//CHECK#1
 var x = new function f1() {
   return 1;
 };
-if (typeof(x.constructor) !== "function")
-  throw new Test262Error('#1: typeof(x.constructor)!=="function"');
+
+assert.sameValue(
+  typeof(x.constructor),
+  "function",
+  'The value of `typeof(x.constructor)` is expected to be "function"'
+);

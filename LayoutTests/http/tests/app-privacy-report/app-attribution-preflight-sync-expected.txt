@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Preflight response is not successful
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 404
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py due to access control checks.
 Tests app initiated requests get marked for sync preflights
 

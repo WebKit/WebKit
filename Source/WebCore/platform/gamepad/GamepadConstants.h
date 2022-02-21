@@ -27,9 +27,7 @@
 
 #if ENABLE(GAMEPAD)
 
-namespace WTF {
-class String;
-};
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -61,9 +59,9 @@ extern const size_t numberOfStandardGamepadButtonsWithoutHomeButton;
 extern const size_t numberOfStandardGamepadButtonsWithHomeButton;
 extern const GamepadButtonRole maximumGamepadButton;
 
-const WTF::String& standardGamepadMappingString();
+const String& standardGamepadMappingString();
 #if ENABLE(WEBXR)
-const WTF::String& xrStandardGamepadMappingString();
+const String& xrStandardGamepadMappingString();
 #endif
 
 } // namespace WebCore

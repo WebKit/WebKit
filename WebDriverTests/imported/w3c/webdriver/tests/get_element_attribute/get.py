@@ -1,7 +1,6 @@
 import pytest
 
 from tests.support.asserts import assert_error, assert_success
-from tests.support.inline import inline
 
 
 def get_element_attribute(session, element, attr):
@@ -13,8 +12,14 @@ def get_element_attribute(session, element, attr):
 
 
 def test_no_top_browsing_context(session, closed_window):
+    original_handle, element = closed_window
+    response = get_element_attribute(session, element.id, "id")
+    assert_error(response, "no such window")
     response = get_element_attribute(session, "foo", "id")
     assert_error(response, "no such window")
+    session.window_handle = original_handle
+    response = get_element_attribute(session, element.id, "id")
+    assert_error(response, "no such element")
 
 
 def test_no_browsing_context(session, closed_frame):
@@ -28,7 +33,7 @@ def test_element_not_found(session):
     assert_error(result, "no such element")
 
 
-def test_element_stale(session):
+def test_element_stale(session, inline):
     session.url = inline("<input id=foo>")
     element = session.find.css("input", all=False)
     session.refresh()
@@ -36,7 +41,7 @@ def test_element_stale(session):
     assert_error(result, "stale element reference")
 
 
-def test_normal(session):
+def test_normal(session, inline):
     # 13.2 Step 5
     session.url = inline("<input type=checkbox>")
     element = session.find.css("input", all=False)
@@ -73,7 +78,7 @@ def test_normal(session):
     ("track", ["default"]),
     ("video", ["autoplay", "controls", "loop", "muted"])
 ])
-def test_boolean_attribute(session, tag, attrs):
+def test_boolean_attribute(session, inline, tag, attrs):
     for attr in attrs:
         session.url = inline("<{0} {1}>".format(tag, attr))
         element = session.find.css(tag, all=False)
@@ -81,7 +86,7 @@ def test_boolean_attribute(session, tag, attrs):
         assert_success(result, "true")
 
 
-def test_global_boolean_attributes(session):
+def test_global_boolean_attributes(session, inline):
     session.url = inline("<p hidden>foo")
     element = session.find.css("p", all=False)
     result = get_element_attribute(session, element.id, "hidden")
@@ -103,3 +108,14 @@ def test_global_boolean_attributes(session):
     element = session.find.css("p", all=False)
     result = get_element_attribute(session, element.id, "itemscope")
     assert_success(result, None)
+
+
+@pytest.mark.parametrize("is_relative", [True, False], ids=["relative", "absolute"])
+def test_anchor_href(session, inline, url, is_relative):
+    href = "/foo.html" if is_relative else url("/foo.html")
+
+    session.url = inline("<a href='{}'>foo</a>".format(href))
+    element = session.find.css("a", all=False)
+
+    response = get_element_attribute(session, element.id, "href")
+    assert_success(response, href)

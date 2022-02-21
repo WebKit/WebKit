@@ -50,9 +50,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/ContentRuleListAdditions.mm>
@@ -78,13 +76,13 @@ bool ContentExtensionsBackend::shouldBeMadeSecure(const URL& url)
     return results.summary.madeHTTPS;
 }
 
-void ContentExtensionsBackend::addContentExtension(const String& identifier, Ref<CompiledContentExtension> compiledContentExtension, ContentExtension::ShouldCompileCSS shouldCompileCSS)
+void ContentExtensionsBackend::addContentExtension(const String& identifier, Ref<CompiledContentExtension> compiledContentExtension, URL&& extensionBaseURL, ContentExtension::ShouldCompileCSS shouldCompileCSS)
 {
     ASSERT(!identifier.isEmpty());
     if (identifier.isEmpty())
         return;
     
-    auto contentExtension = ContentExtension::create(identifier, WTFMove(compiledContentExtension), shouldCompileCSS);
+    auto contentExtension = ContentExtension::create(identifier, WTFMove(compiledContentExtension), WTFMove(extensionBaseURL), shouldCompileCSS);
     m_contentExtensions.set(identifier, WTFMove(contentExtension));
 }
 
@@ -96,6 +94,60 @@ void ContentExtensionsBackend::removeContentExtension(const String& identifier)
 void ContentExtensionsBackend::removeAllContentExtensions()
 {
     m_contentExtensions.clear();
+}
+
+auto ContentExtensionsBackend::actionsFromContentRuleList(const ContentExtension& contentExtension, const String& urlString, const ResourceLoadInfo& resourceLoadInfo, ResourceFlags flags) const -> ActionsFromContentRuleList
+{
+    ActionsFromContentRuleList actionsStruct;
+    actionsStruct.contentRuleListIdentifier = contentExtension.identifier();
+
+    const auto& compiledExtension = contentExtension.compiledExtension();
+
+    DFABytecodeInterpreter interpreter(compiledExtension.urlFiltersBytecode());
+    auto actionLocations = interpreter.interpret(urlString, flags);
+    auto& topURLActions = contentExtension.topURLActions(resourceLoadInfo.mainDocumentURL);
+    auto& frameURLActions = contentExtension.frameURLActions(resourceLoadInfo.frameURL);
+
+    actionLocations.removeIf([&](uint64_t actionAndFlags) {
+        ResourceFlags flags = actionAndFlags >> 32;
+        auto actionCondition = static_cast<ActionCondition>(flags & ActionConditionMask);
+        switch (actionCondition) {
+        case ActionCondition::None:
+            return false;
+        case ActionCondition::IfTopURL:
+            return !topURLActions.contains(actionAndFlags);
+        case ActionCondition::UnlessTopURL:
+            return topURLActions.contains(actionAndFlags);
+        case ActionCondition::IfFrameURL:
+            return !frameURLActions.contains(actionAndFlags);
+        }
+        ASSERT_NOT_REACHED();
+        return false;
+    });
+
+    auto serializedActions = compiledExtension.serializedActions();
+
+    const auto& universalActions = contentExtension.universalActions();
+    if (auto totalActionCount = actionLocations.size() + universalActions.size()) {
+        Vector<uint32_t> vector;
+        vector.reserveInitialCapacity(totalActionCount);
+        for (uint64_t actionLocation : actionLocations)
+            vector.uncheckedAppend(static_cast<uint32_t>(actionLocation));
+        for (uint64_t actionLocation : universalActions)
+            vector.uncheckedAppend(static_cast<uint32_t>(actionLocation));
+        std::sort(vector.begin(), vector.end());
+
+        // Add actions in reverse order to properly deal with IgnorePreviousRules.
+        for (auto i = vector.size(); i; i--) {
+            auto action = DeserializedAction::deserialize(serializedActions, vector[i - 1]);
+            if (std::holds_alternative<IgnorePreviousRulesAction>(action.data())) {
+                actionsStruct.sawIgnorePreviousRules = true;
+                break;
+            }
+            actionsStruct.actions.append(WTFMove(action));
+        }
+    }
+    return actionsStruct;
 }
 
 auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo) const -> Vector<ActionsFromContentRuleList>
@@ -110,54 +162,13 @@ auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& re
 
     const String& urlString = resourceLoadInfo.resourceURL.string();
     ASSERT_WITH_MESSAGE(urlString.isAllASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
-    const auto urlCString = urlString.utf8();
 
     Vector<ActionsFromContentRuleList> actionsVector;
     actionsVector.reserveInitialCapacity(m_contentExtensions.size());
-    const ResourceFlags flags = resourceLoadInfo.getResourceFlags();
-    for (auto& contentExtension : m_contentExtensions.values()) {
-        ActionsFromContentRuleList actionsStruct;
-        actionsStruct.contentRuleListIdentifier = contentExtension->identifier();
-
-        const CompiledContentExtension& compiledExtension = contentExtension->compiledExtension();
-        
-        DFABytecodeInterpreter withoutConditionsInterpreter(compiledExtension.filtersWithoutConditionsBytecode(), compiledExtension.filtersWithoutConditionsBytecodeLength());
-        DFABytecodeInterpreter::Actions withoutConditionsActions = withoutConditionsInterpreter.interpret(urlCString, flags);
-        
-        URL topURL = resourceLoadInfo.mainDocumentURL;
-        DFABytecodeInterpreter withConditionsInterpreter(compiledExtension.filtersWithConditionsBytecode(), compiledExtension.filtersWithConditionsBytecodeLength());
-        DFABytecodeInterpreter::Actions withConditionsActions = withConditionsInterpreter.interpretWithConditions(urlCString, flags, contentExtension->topURLActions(topURL));
-        
-        const SerializedActionByte* actions = compiledExtension.actions();
-        const unsigned actionsLength = compiledExtension.actionsLength();
-        
-        const Vector<uint32_t>& universalWithConditions = contentExtension->universalActionsWithConditions(topURL);
-        const Vector<uint32_t>& universalWithoutConditions = contentExtension->universalActionsWithoutConditions();
-        if (!withoutConditionsActions.isEmpty() || !withConditionsActions.isEmpty() || !universalWithConditions.isEmpty() || !universalWithoutConditions.isEmpty()) {
-            Vector<uint32_t> actionLocations;
-            actionLocations.reserveInitialCapacity(withoutConditionsActions.size() + withConditionsActions.size() + universalWithoutConditions.size() + universalWithConditions.size());
-            for (uint64_t actionLocation : withoutConditionsActions)
-                actionLocations.uncheckedAppend(static_cast<uint32_t>(actionLocation));
-            for (uint64_t actionLocation : withConditionsActions)
-                actionLocations.uncheckedAppend(static_cast<uint32_t>(actionLocation));
-            for (uint32_t actionLocation : universalWithoutConditions)
-                actionLocations.uncheckedAppend(actionLocation);
-            for (uint32_t actionLocation : universalWithConditions)
-                actionLocations.uncheckedAppend(actionLocation);
-            std::sort(actionLocations.begin(), actionLocations.end());
-
-            // Add actions in reverse order to properly deal with IgnorePreviousRules.
-            for (unsigned i = actionLocations.size(); i; i--) {
-                Action action = Action::deserialize(actions, actionsLength, actionLocations[i - 1]);
-                if (action.type() == ActionType::IgnorePreviousRules) {
-                    actionsStruct.sawIgnorePreviousRules = true;
-                    break;
-                }
-                actionsStruct.actions.append(WTFMove(action));
-            }
-        }
-        actionsVector.uncheckedAppend(WTFMove(actionsStruct));
-    }
+    ASSERT(!(resourceLoadInfo.getResourceFlags() & ActionConditionMask));
+    const ResourceFlags flags = resourceLoadInfo.getResourceFlags() | ActionConditionMask;
+    for (auto& contentExtension : m_contentExtensions.values())
+        actionsVector.uncheckedAppend(actionsFromContentRuleList(contentExtension.get(), urlString, resourceLoadInfo, flags));
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime addedTimeEnd = MonotonicTime::now();
     dataLogF("Time added: %f microseconds %s \n", (addedTimeEnd - addedTimeStart).microseconds(), resourceLoadInfo.resourceURL.string().utf8().data());
@@ -165,7 +176,7 @@ auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& re
     return actionsVector;
 }
 
-void ContentExtensionsBackend::forEach(const WTF::Function<void(const String&, ContentExtension&)>& apply)
+void ContentExtensionsBackend::forEach(const Function<void(const String&, ContentExtension&)>& apply)
 {
     for (auto& pair : m_contentExtensions)
         apply(pair.key, pair.value);
@@ -181,6 +192,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
 {
     Document* currentDocument = nullptr;
     URL mainDocumentURL;
+    URL frameURL;
     bool mainFrameContext = false;
 
     if (auto* frame = initiatingDocumentLoader.frame()) {
@@ -194,8 +206,12 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
         else if (auto* mainDocument = frame->mainFrame().document())
             mainDocumentURL = mainDocument->url();
     }
+    if (currentDocument)
+        frameURL = currentDocument->url();
+    else
+        frameURL = url;
 
-    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, resourceType, mainFrameContext };
+    ResourceLoadInfo resourceLoadInfo { url, mainDocumentURL, frameURL, resourceType, mainFrameContext };
     auto actions = actionsForResourceLoad(resourceLoadInfo);
 
     ContentRuleListResults results;
@@ -206,36 +222,39 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
         const String& contentRuleListIdentifier = actionsFromContentRuleList.contentRuleListIdentifier;
         ContentRuleListResults::Result result;
         for (const auto& action : actionsFromContentRuleList.actions) {
-            switch (action.type()) {
-            case ContentExtensions::ActionType::BlockLoad:
+            std::visit(WTF::makeVisitor([&](const BlockLoadAction&) {
                 results.summary.blockedLoad = true;
                 result.blockedLoad = true;
-                break;
-            case ContentExtensions::ActionType::BlockCookies:
+            }, [&](const BlockCookiesAction&) {
                 results.summary.blockedCookies = true;
                 result.blockedCookies = true;
-                break;
-            case ContentExtensions::ActionType::CSSDisplayNoneSelector:
+            }, [&](const CSSDisplayNoneSelectorAction& actionData) {
                 if (resourceType == ResourceType::Document)
-                    initiatingDocumentLoader.addPendingContentExtensionDisplayNoneSelector(contentRuleListIdentifier, action.stringArgument(), action.actionID());
+                    initiatingDocumentLoader.addPendingContentExtensionDisplayNoneSelector(contentRuleListIdentifier, actionData.string, action.actionID());
                 else if (currentDocument)
-                    currentDocument->extensionStyleSheets().addDisplayNoneSelector(contentRuleListIdentifier, action.stringArgument(), action.actionID());
-                break;
-            case ContentExtensions::ActionType::Notify:
+                    currentDocument->extensionStyleSheets().addDisplayNoneSelector(contentRuleListIdentifier, actionData.string, action.actionID());
+            }, [&](const NotifyAction& actionData) {
                 results.summary.hasNotifications = true;
-                result.notifications.append(action.stringArgument());
-                break;
-            case ContentExtensions::ActionType::MakeHTTPS: {
+                result.notifications.append(actionData.string);
+            }, [&](const MakeHTTPSAction&) {
                 if ((url.protocolIs("http") || url.protocolIs("ws"))
                     && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol()))) {
                     results.summary.madeHTTPS = true;
                     result.madeHTTPS = true;
                 }
-                break;
-            }
-            case ContentExtensions::ActionType::IgnorePreviousRules:
+            }, [&](const IgnorePreviousRulesAction&) {
                 RELEASE_ASSERT_NOT_REACHED();
-            }
+            }, [&] (const ModifyHeadersAction& action) {
+                if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(contentRuleListIdentifier, url)) {
+                    result.modifiedHeaders = true;
+                    results.summary.modifyHeadersActions.append(action);
+                }
+            }, [&] (const RedirectAction& redirectAction) {
+                if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(contentRuleListIdentifier, url)) {
+                    result.redirected = true;
+                    results.summary.redirectActions.append({ redirectAction, m_contentExtensions.get(contentRuleListIdentifier)->extensionBaseURL() });
+                }
+            }), action.data());
         }
 
         if (!actionsFromContentRuleList.sawIgnorePreviousRules) {
@@ -273,33 +292,32 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     return results;
 }
 
-ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingLoad(const URL& url, const URL& mainDocumentURL)
+ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingLoad(const URL& url, const URL& mainDocumentURL, const URL& frameURL)
 {
-    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, ResourceType::Ping };
+    ResourceLoadInfo resourceLoadInfo { url, mainDocumentURL, frameURL, ResourceType::Ping };
     auto actions = actionsForResourceLoad(resourceLoadInfo);
 
     ContentRuleListResults results;
     makeSecureIfNecessary(results, url);
     for (const auto& actionsFromContentRuleList : actions) {
         for (const auto& action : actionsFromContentRuleList.actions) {
-            switch (action.type()) {
-            case ContentExtensions::ActionType::BlockLoad:
+            std::visit(WTF::makeVisitor([&](const BlockLoadAction&) {
                 results.summary.blockedLoad = true;
-                break;
-            case ContentExtensions::ActionType::BlockCookies:
+            }, [&](const BlockCookiesAction&) {
                 results.summary.blockedCookies = true;
-                break;
-            case ContentExtensions::ActionType::MakeHTTPS:
+            }, [&](const CSSDisplayNoneSelectorAction&) {
+            }, [&](const NotifyAction&) {
+                // We currently have not implemented notifications from the NetworkProcess to the UIProcess.
+            }, [&](const MakeHTTPSAction&) {
                 if ((url.protocolIs("http") || url.protocolIs("ws")) && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol())))
                     results.summary.madeHTTPS = true;
-                break;
-            case ContentExtensions::ActionType::CSSDisplayNoneSelector:
-            case ContentExtensions::ActionType::Notify:
-                // We currently have not implemented notifications from the NetworkProcess to the UIProcess.
-                break;
-            case ContentExtensions::ActionType::IgnorePreviousRules:
+            }, [&](const IgnorePreviousRulesAction&) {
                 RELEASE_ASSERT_NOT_REACHED();
-            }
+            }, [&] (const ModifyHeadersAction&) {
+                // We currently have not implemented active actions from the network process (CORS preflight).
+            }, [&] (const RedirectAction&) {
+                // We currently have not implemented active actions from the network process (CORS preflight).
+            }), action.data());
         }
     }
 
@@ -329,6 +347,12 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
         request.setURL(newURL);
     }
 
+    for (auto& action : results.summary.modifyHeadersActions)
+        action.applyToRequest(request);
+
+    for (auto& pair : results.summary.redirectActions)
+        pair.first.applyToRequest(request, pair.second);
+
     if (page && results.shouldNotifyApplication()) {
         results.results.removeAllMatching([](const auto& pair) {
             return !pair.second.shouldNotifyApplication();
@@ -337,8 +361,6 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
     }
 }
     
-} // namespace ContentExtensions
-
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

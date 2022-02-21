@@ -188,11 +188,11 @@ class NetEqNetworkStatsTest {
                            : 0xffffffff);
   }
 
-  // |stats_ref|
+  // `stats_ref`
   // expects.x = -1, do not care
-  // expects.x = 0, 'x' in current stats should equal 'x' in |stats_ref|
-  // expects.x = 1, 'x' in current stats should < 'x' in |stats_ref|
-  // expects.x = 2, 'x' in current stats should > 'x' in |stats_ref|
+  // expects.x = 0, 'x' in current stats should equal 'x' in `stats_ref`
+  // expects.x = 1, 'x' in current stats should < 'x' in `stats_ref`
+  // expects.x = 2, 'x' in current stats should > 'x' in `stats_ref`
   void CheckNetworkStatistics(NetEqNetworkStatsCheck expects) {
     NetEqNetworkStatistics stats;
     neteq_->NetworkStatistics(&stats);
@@ -229,7 +229,7 @@ class NetEqNetworkStatsTest {
     uint32_t time_now;
     uint32_t next_send_time;
 
-    // Initiate |last_lost_time_|.
+    // Initiate `last_lost_time_`.
     time_now = next_send_time = last_lost_time_ = rtp_generator_->GetRtpHeader(
         kPayloadType, frame_size_samples_, &rtp_header_);
     for (int k = 0; k < num_loops; ++k) {

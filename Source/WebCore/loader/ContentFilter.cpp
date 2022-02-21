@@ -113,22 +113,39 @@ bool ContentFilter::continueAfterWillSendRequest(ResourceRequest& request, const
     return !request.isNull();
 }
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+void ContentFilter::startFilteringMainResource(const URL& url)
+{
+    if (m_state != State::Stopped)
+        return;
+
+    LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%{sensitive}s>.\n", url.string().ascii().data());
+    m_state = State::Filtering;
+    ASSERT(m_mainResourceURL.isEmpty());
+    m_mainResourceURL = url;
+}
+#else
 void ContentFilter::startFilteringMainResource(CachedRawResource& resource)
 {
     if (m_state != State::Stopped)
         return;
 
-    LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%s>.\n", resource.url().string().ascii().data());
+    LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%{sensitive}s>.\n", resource.url().string().ascii().data());
     m_state = State::Filtering;
     ASSERT(!m_mainResource);
     m_mainResource = &resource;
 }
+#endif
 
 void ContentFilter::stopFilteringMainResource()
 {
     if (m_state != State::Blocked)
         m_state = State::Stopped;
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    m_mainResourceURL = URL();
+#else
     m_mainResource = nullptr;
+#endif
 }
 
 bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& response)
@@ -142,44 +159,75 @@ bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& respon
         });
     }
 
+    m_responseReceived = true;
+
     return m_state != State::Blocked;
 }
 
-bool ContentFilter::continueAfterDataReceived(const uint8_t* data, int length)
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data, size_t encodedDataLength)
+#else
+bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data)
+#endif
 {
     Ref<ContentFilterClient> protectedClient { m_client };
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter received %d bytes of data from <%s>.\n", length, m_mainResource->url().string().ascii().data());
-        forEachContentFilterUntilBlocked([data, length](PlatformContentFilter& contentFilter) {
-            contentFilter.addData(data, length);
-        });
+        LOG(ContentFiltering, "ContentFilter received %zu bytes of data from <%{sensitive}s>.\n", data.size(), url().string().ascii().data());
 
-        if (m_state == State::Allowed)
-            deliverResourceData(*m_mainResource);
+        forEachContentFilterUntilBlocked([data = Ref { data }](auto& contentFilter) {
+            contentFilter.addData(data);
+        });
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+        if (m_state == State::Allowed) {
+            deliverStoredResourceData();
+            deliverResourceData(data, encodedDataLength);
+        } else
+            m_buffers.append(ResourceDataItem { RefPtr { &data }, encodedDataLength });
+#else
+        if (m_state == State::Allowed) {
+            ASSERT(m_mainResource->dataBufferingPolicy() == DataBufferingPolicy::BufferData);
+            if (auto* buffer = m_mainResource->resourceBuffer())
+                deliverResourceData(buffer->makeContiguous());
+        }
+#endif
         return false;
     }
 
     return m_state != State::Blocked;
 }
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+bool ContentFilter::continueAfterNotifyFinished(const URL& resourceURL)
+#else
 bool ContentFilter::continueAfterNotifyFinished(CachedResource& resource)
+#endif
 {
-    ASSERT_UNUSED(resource, &resource == m_mainResource);
     Ref<ContentFilterClient> protectedClient { m_client };
-
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    ASSERT_UNUSED(resourceURL, resourceURL == m_mainResourceURL);
+#else
+    ASSERT_UNUSED(resource, &resource == m_mainResource);
     if (m_mainResource->errorOccurred())
         return true;
+#endif
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%s>.\n", m_mainResource->url().string().ascii().data());
+        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%{sensitive}s>.\n", url().string().ascii().data());
         forEachContentFilterUntilBlocked([](PlatformContentFilter& contentFilter) {
             contentFilter.finishedAddingData();
         });
 
         if (m_state != State::Blocked) {
             m_state = State::Allowed;
-            deliverResourceData(*m_mainResource);
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+            deliverStoredResourceData();
+#else
+            if (auto* buffer = m_mainResource->resourceBuffer()) {
+                ASSERT(m_mainResource->dataBufferingPolicy() == DataBufferingPolicy::BufferData);
+                deliverResourceData(buffer->makeContiguous());
+            }
+#endif
         }
 
         if (m_state == State::Stopped)
@@ -219,7 +267,9 @@ void ContentFilter::didDecide(State state)
     ASSERT(m_state != State::Allowed);
     ASSERT(m_state != State::Blocked);
     ASSERT(state == State::Allowed || state == State::Blocked);
-    LOG(ContentFiltering, "ContentFilter decided load should be %s for main resource at <%s>.\n", state == State::Allowed ? "allowed" : "blocked", m_mainResource ? m_mainResource->url().string().ascii().data() : "");
+#if !LOG_DISABLED
+    LOG(ContentFiltering, "ContentFilter decided load should be %s for main resource at <%{sensitive}s>.\n", state == State::Allowed ? "allowed" : "blocked", url().string().ascii().data());
+#endif // !LOG_DISABLED
     m_state = state;
     if (m_state != State::Blocked)
         return;
@@ -228,23 +278,38 @@ void ContentFilter::didDecide(State state)
     m_client.cancelMainResourceLoadForContentFilter(m_blockedError);
 }
 
-void ContentFilter::deliverResourceData(CachedResource& resource)
+void ContentFilter::deliverResourceData(const SharedBuffer& buffer, size_t encodedDataLength)
 {
     ASSERT(m_state == State::Allowed);
-    ASSERT(resource.dataBufferingPolicy() == DataBufferingPolicy::BufferData);
-    if (auto* resourceBuffer = resource.resourceBuffer())
-        m_client.dataReceivedThroughContentFilter(resourceBuffer->data(), resourceBuffer->size());
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    m_client.dataReceivedThroughContentFilter(buffer, encodedDataLength);
+#else
+    UNUSED_PARAM(encodedDataLength);
+    m_client.dataReceivedThroughContentFilter(buffer);
+#endif
+}
+
+URL ContentFilter::url()
+{
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    return m_mainResourceURL;
+#else
+    if (m_mainResource)
+        return m_mainResource->url();
+    return URL();
+#endif
 }
 
 static const URL& blockedPageURL()
 {
-    static const auto blockedPageURL = makeNeverDestroyed([] () -> URL {
+    static NeverDestroyed blockedPageURL = [] () -> URL {
         auto webCoreBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
         return adoptCF(CFBundleCopyResourceURL(webCoreBundle, CFSTR("ContentFilterBlockedPage"), CFSTR("html"), nullptr)).get();
-    }());
+    }();
     return blockedPageURL;
 }
 
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 bool ContentFilter::continueAfterSubstituteDataRequest(const DocumentLoader& activeLoader, const SubstituteData& substituteData)
 {
     if (auto contentFilter = activeLoader.contentFilter()) {
@@ -259,6 +324,7 @@ bool ContentFilter::continueAfterSubstituteDataRequest(const DocumentLoader& act
 
     return true;
 }
+#endif
 
 bool ContentFilter::willHandleProvisionalLoadFailure(const ResourceError& error) const
 {
@@ -276,12 +342,21 @@ void ContentFilter::handleProvisionalLoadFailure(const ResourceError& error)
 {
     ASSERT(willHandleProvisionalLoadFailure(error));
 
-    RefPtr<SharedBuffer> replacementData { m_blockingContentFilter->replacementData() };
+    RefPtr<FragmentedSharedBuffer> replacementData { m_blockingContentFilter->replacementData() };
     ResourceResponse response { URL(), "text/html"_s, static_cast<long long>(replacementData->size()), "UTF-8"_s };
     SubstituteData substituteData { WTFMove(replacementData), error.failingURL(), response, SubstituteData::SessionHistoryVisibility::Hidden };
     SetForScope<bool> loadingBlockedPage { m_isLoadingBlockedPage, true };
     m_client.handleProvisionalLoadFailureFromContentFilter(blockedPageURL(), substituteData);
 }
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+void ContentFilter::deliverStoredResourceData()
+{
+    for (auto& buffer : m_buffers)
+        deliverResourceData(*buffer.buffer, buffer.encodedDataLength);
+    m_buffers.clear();
+}
+#endif
 
 } // namespace WebCore
 

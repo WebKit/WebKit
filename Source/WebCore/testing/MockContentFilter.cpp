@@ -100,7 +100,7 @@ void MockContentFilter::responseReceived(const ResourceResponse&)
     maybeDetermineStatus(DecisionPoint::AfterResponse);
 }
 
-void MockContentFilter::addData(const uint8_t*, int)
+void MockContentFilter::addData(const SharedBuffer&)
 {
     maybeDetermineStatus(DecisionPoint::AfterAddData);
 }
@@ -110,7 +110,7 @@ void MockContentFilter::finishedAddingData()
     maybeDetermineStatus(DecisionPoint::AfterFinishedAddingData);
 }
 
-Ref<SharedBuffer> MockContentFilter::replacementData() const
+Ref<FragmentedSharedBuffer> MockContentFilter::replacementData() const
 {
     ASSERT(didBlockData());
     return SharedBuffer::create(m_replacementData.data(), m_replacementData.size());

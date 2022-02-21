@@ -16,8 +16,9 @@
 namespace angle
 {
 
-using VendorID = uint32_t;
-using DeviceID = uint32_t;
+using VendorID   = uint32_t;
+using DeviceID   = uint32_t;
+using RevisionID = uint32_t;
 
 struct VersionInfo
 {
@@ -34,8 +35,9 @@ struct GPUDeviceInfo
 
     GPUDeviceInfo(const GPUDeviceInfo &other);
 
-    VendorID vendorId = 0;
-    DeviceID deviceId = 0;
+    VendorID vendorId     = 0;
+    DeviceID deviceId     = 0;
+    RevisionID revisionId = 0;
 
     std::string driverVendor;
     std::string driverVersion;
@@ -68,10 +70,11 @@ struct SystemInfo
     // Only true on dual-GPU Mac laptops.
     bool isMacSwitchable = false;
     // Only true on Apple Silicon Macs when running in macCatalyst.
-    bool needsEAGLOnMac   = false;
+    bool needsEAGLOnMac = false;
 
     // Only available on Android
     std::string machineManufacturer;
+    int androidSdkLevel = 0;
 
     // Only available on macOS and Android
     std::string machineModelName;
@@ -125,6 +128,9 @@ bool IsVeriSilicon(VendorID vendorId);
 bool IsVMWare(VendorID vendorId);
 bool IsVivante(VendorID vendorId);
 bool IsApple(VendorID vendorId);
+
+// Returns a readable vendor name given the VendorID
+std::string VendorName(VendorID vendor);
 
 // Use a heuristic to attempt to find the GPU used for 3D graphics. Sets activeGPUIndex,
 // isOptimus, and isAMDSwitchable.

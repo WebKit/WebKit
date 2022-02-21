@@ -21,16 +21,17 @@
 #pragma once
 
 #include "RenderInline.h"
-#include "SVGGraphicsElement.h"
 
 namespace WebCore {
+
+class SVGGraphicsElement;
 
 class RenderSVGInline : public RenderInline {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGInline);
 public:
     RenderSVGInline(SVGGraphicsElement&, RenderStyle&&);
 
-    SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(nodeForNonAnonymous()); }
+    inline SVGGraphicsElement& graphicsElement() const;
 
 private:
     void element() const = delete;

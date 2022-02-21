@@ -33,6 +33,7 @@
 #include "AudioStreamDescription.h"
 #include "CAAudioStreamDescription.h"
 #include "LibWebRTCAudioFormat.h"
+#include "LibWebRTCAudioModule.h"
 #include "Logging.h"
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/FastMalloc.h>
@@ -132,7 +133,7 @@ void RealtimeIncomingAudioSourceCocoa::OnData(const void* audioData, int bitsPer
             m_numberOfFrames = 0;
     }
 
-    CMTime startTime = PAL::CMTimeMake(m_numberOfFrames, sampleRate);
+    CMTime startTime = PAL::CMTimeMake(audioModule() ? audioModule()->currentAudioSampleCount() : m_numberOfFrames, LibWebRTCAudioFormat::sampleRate);
     auto mediaTime = PAL::toMediaTime(startTime);
     m_numberOfFrames += numberOfFrames;
 

@@ -38,7 +38,7 @@ TEST(BufferLevelFilter, ConvergenceTest) {
         filter.Update(value, 0 /* time_stretched_samples */);
       }
       // Expect the filtered value to be (theoretically)
-      // (1 - (251/256) ^ |times|) * |value|.
+      // (1 - (251/256) ^ `times`) * `value`.
       double expected_value_double = (1 - pow(251.0 / 256.0, times)) * value;
       int expected_value = static_cast<int>(expected_value_double);
 
@@ -62,7 +62,7 @@ TEST(BufferLevelFilter, FilterFactor) {
     filter.Update(kValue, 0 /* time_stretched_samples */);
   }
   // Expect the filtered value to be
-  // (1 - (252/256) ^ |kTimes|) * |kValue|.
+  // (1 - (252/256) ^ `kTimes`) * `kValue`.
   int expected_value = 15;
   EXPECT_EQ(expected_value, filter.filtered_current_level());
 
@@ -72,7 +72,7 @@ TEST(BufferLevelFilter, FilterFactor) {
     filter.Update(kValue, 0 /* time_stretched_samples */);
   }
   // Expect the filtered value to be
-  // (1 - (253/256) ^ |kTimes|) * |kValue|.
+  // (1 - (253/256) ^ `kTimes`) * `kValue`.
   expected_value = 11;
   EXPECT_EQ(expected_value, filter.filtered_current_level());
 
@@ -82,7 +82,7 @@ TEST(BufferLevelFilter, FilterFactor) {
     filter.Update(kValue, 0 /* time_stretched_samples */);
   }
   // Expect the filtered value to be
-  // (1 - (254/256) ^ |kTimes|) * |kValue|.
+  // (1 - (254/256) ^ `kTimes`) * `kValue`.
   expected_value = 8;
   EXPECT_EQ(expected_value, filter.filtered_current_level());
 }
@@ -98,13 +98,13 @@ TEST(BufferLevelFilter, TimeStretchedSamples) {
     filter.Update(kValue, 0);
   }
   // Expect the filtered value to be
-  // (1 - (251/256) ^ |kTimes|) * |kValue|.
+  // (1 - (251/256) ^ `kTimes`) * `kValue`.
   const int kExpectedValue = 18;
   EXPECT_EQ(kExpectedValue, filter.filtered_current_level());
 
   // Update filter again, now with non-zero value for packet length.
   // Set the current filtered value to be the input, in order to isolate the
-  // impact of |kTimeStretchedSamples|.
+  // impact of `kTimeStretchedSamples`.
   filter.Update(filter.filtered_current_level(), kTimeStretchedSamples);
   EXPECT_EQ(kExpectedValue - kTimeStretchedSamples,
             filter.filtered_current_level());

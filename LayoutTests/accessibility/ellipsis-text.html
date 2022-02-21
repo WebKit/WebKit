@@ -18,14 +18,12 @@ text
             description("This test makes sure that the bounds of text that overflows with ellipsis is correct (shortened to the ellipsis that is).");
 
             // The width of the ellipsis text should be short.
-            document.getElementById("text-ellipsis").focus();
-            var textContainer = accessibilityController.focusedElement;
+            var textContainer = accessibilityController.accessibleElementById("text-ellipsis");
             var textNode = textContainer.childrenCount ? textContainer.childAtIndex(0) : textContainer;
             var clippedWidth = textNode.width;
 
             // The width of non-ellipsis'd text should be longer.
-            document.getElementById("text-noellipsis").focus();
-            textContainer = accessibilityController.focusedElement;
+            textContainer = accessibilityController.accessibleElementById("text-noellipsis");
             textNode = textContainer.childrenCount ? textContainer.childAtIndex(0) : textContainer;
             var fullWidth = textNode.width;
 

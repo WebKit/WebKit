@@ -1,0 +1,3 @@
+
+PASS navigator.storage.persist should not exist in workers
+

@@ -34,8 +34,8 @@ namespace WebCore {
 
 class ArchiveResource : public SubstituteResource {
 public:
-    static RefPtr<ArchiveResource> create(RefPtr<SharedBuffer>&&, const URL&, const ResourceResponse&);
-    WEBCORE_EXPORT static RefPtr<ArchiveResource> create(RefPtr<SharedBuffer>&&, const URL&,
+    static RefPtr<ArchiveResource> create(RefPtr<FragmentedSharedBuffer>&&, const URL&, const ResourceResponse&);
+    WEBCORE_EXPORT static RefPtr<ArchiveResource> create(RefPtr<FragmentedSharedBuffer>&&, const URL&,
         const String& mimeType, const String& textEncoding, const String& frameName,
         const ResourceResponse& = ResourceResponse());
 
@@ -47,7 +47,7 @@ public:
     bool shouldIgnoreWhenUnarchiving() const { return m_shouldIgnoreWhenUnarchiving; }
 
 private:
-    ArchiveResource(Ref<SharedBuffer>&&, const URL&, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse&);
+    ArchiveResource(Ref<FragmentedSharedBuffer>&&, const URL&, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse&);
 
     String m_mimeType;
     String m_textEncoding;

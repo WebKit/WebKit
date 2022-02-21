@@ -38,18 +38,17 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSLock.h>
-#include <pal/SessionID.h>
 
 namespace WebCore {
 using namespace JSC;
 namespace IDBServer {
 
-Ref<MemoryObjectStore> MemoryObjectStore::create(PAL::SessionID sessionID, const IDBObjectStoreInfo& info)
+Ref<MemoryObjectStore> MemoryObjectStore::create(const IDBObjectStoreInfo& info)
 {
-    return adoptRef(*new MemoryObjectStore(sessionID, info));
+    return adoptRef(*new MemoryObjectStore(info));
 }
 
-MemoryObjectStore::MemoryObjectStore(PAL::SessionID, const IDBObjectStoreInfo& info)
+MemoryObjectStore::MemoryObjectStore(const IDBObjectStoreInfo& info)
     : m_info(info)
 {
 }
@@ -156,12 +155,9 @@ IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transacti
 
 void MemoryObjectStore::deleteAllIndexes(MemoryBackingStoreTransaction& transaction)
 {
-    Vector<uint64_t> indexIdentifiers;
-    indexIdentifiers.reserveInitialCapacity(m_indexesByName.size());
-
-    for (auto& index : m_indexesByName.values())
-        indexIdentifiers.uncheckedAppend(index->info().identifier());
-
+    auto indexIdentifiers = WTF::map(m_indexesByName, [](auto& entry) {
+        return entry.value->info().identifier();
+    });
     for (auto identifier : indexIdentifiers)
         deleteIndex(transaction, identifier);
 }
@@ -310,19 +306,19 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
     IDBError error;
     Vector<std::pair<MemoryIndex*, IndexKey>> changedIndexRecords;
 
-    for (const auto& entry : indexKeys) {
-        auto* index = m_indexesByIdentifier.get(entry.key);
+    for (const auto& [indexID, indexKey] : indexKeys) {
+        auto* index = m_indexesByIdentifier.get(indexID);
         ASSERT(index);
         if (!index) {
             error = IDBError { InvalidStateError, "Missing index metadata" };
             break;
         }
 
-        error = index->putIndexKey(key, entry.value);
+        error = index->putIndexKey(key, indexKey);
         if (!error.isNull())
             break;
 
-        changedIndexRecords.append(std::make_pair(index, entry.value));
+        changedIndexRecords.append(std::make_pair(index, indexKey));
     }
 
     // If any of the index puts failed, revert all of the ones that went through.

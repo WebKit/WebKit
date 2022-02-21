@@ -8,11 +8,7 @@ info: |
 es5id: 15.11.4_A1
 description: Get Error.prototype and compare with Object.prototype
 ---*/
-
-//////////////////////////////////////////////////////////////////////////////
-// CHECK#1
-if (!Object.prototype.isPrototypeOf(Error.prototype)) {
-  throw new Test262Error('#1: Object.prototype.isPrototypeOf(Error.prototype) return true. Actual: ' + Object.prototype.isPrototypeOf(Error.prototype));
-}
-//
-//////////////////////////////////////////////////////////////////////////////
+assert(
+  Object.prototype.isPrototypeOf(Error.prototype),
+  'Object.prototype.isPrototypeOf(Error.prototype) must return true'
+);

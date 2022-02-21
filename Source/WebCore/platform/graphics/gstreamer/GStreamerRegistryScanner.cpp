@@ -28,11 +28,21 @@
 #include <gst/pbutils/codec-utils.h>
 #include <wtf/PrintStream.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
 GST_DEBUG_CATEGORY_STATIC(webkit_media_gst_registry_scanner_debug);
 #define GST_CAT_DEFAULT webkit_media_gst_registry_scanner_debug
+
+// We shouldn't accept media that the player can't actually play.
+// AAC supports up to 96 channels.
+#define MEDIA_MAX_AAC_CHANNELS 96
+
+// Assume hardware video decoding acceleration up to 8K@60fps for the generic case. Some embedded platforms might want to tune this.
+#define MEDIA_MAX_WIDTH 7680.0f
+#define MEDIA_MAX_HEIGHT 4320.0f
+#define MEDIA_MAX_FRAMERATE 60.0f
 
 GStreamerRegistryScanner& GStreamerRegistryScanner::singleton()
 {
@@ -297,13 +307,27 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
             m_decoderMimeTypeSet.add(AtomString("audio/webm"));
     }
 
+    bool shouldAddMP4Container = false;
+
     auto h264DecoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-h264, profile=(string){ constrained-baseline, baseline, high }", ElementFactories::CheckHardwareClassifier::Yes);
     if (h264DecoderAvailable && (!m_isMediaSource || factories.hasElementForMediaType(ElementFactories::Type::VideoParser, "video/x-h264"))) {
-        m_decoderMimeTypeSet.add(AtomString("video/mp4"));
-        m_decoderMimeTypeSet.add(AtomString("video/x-m4v"));
+        shouldAddMP4Container = true;
         m_decoderCodecMap.add(AtomString("x-h264"), h264DecoderAvailable.isUsingHardware);
         m_decoderCodecMap.add(AtomString("avc*"), h264DecoderAvailable.isUsingHardware);
         m_decoderCodecMap.add(AtomString("mp4v*"), h264DecoderAvailable.isUsingHardware);
+    }
+
+    auto h265DecoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-h265", ElementFactories::CheckHardwareClassifier::Yes);
+    if (h265DecoderAvailable && (!m_isMediaSource || factories.hasElementForMediaType(ElementFactories::Type::VideoParser, "video/x-h265"))) {
+        shouldAddMP4Container = true;
+        m_decoderCodecMap.add(AtomString("x-h265"), h265DecoderAvailable.isUsingHardware);
+        m_decoderCodecMap.add(AtomString("hvc1*"), h265DecoderAvailable.isUsingHardware);
+        m_decoderCodecMap.add(AtomString("hev1*"), h265DecoderAvailable.isUsingHardware);
+    }
+
+    if (shouldAddMP4Container) {
+        m_decoderMimeTypeSet.add(AtomString("video/mp4"));
+        m_decoderMimeTypeSet.add(AtomString("video/x-m4v"));
     }
 
     Vector<String> av1DecodersDisallowedList { "av1dec"_s };
@@ -480,7 +504,7 @@ bool GStreamerRegistryScanner::isCodecSupported(Configuration configuration, con
 {
     // If the codec is named like a mimetype (eg: video/avc) remove the "video/" part.
     size_t slashIndex = codec.find('/');
-    String codecName = slashIndex != WTF::notFound ? codec.substring(slashIndex + 1) : codec;
+    String codecName = slashIndex != notFound ? codec.substring(slashIndex + 1) : codec;
 
     bool supported = false;
     if (codecName.startsWith("avc1"))
@@ -501,12 +525,31 @@ bool GStreamerRegistryScanner::isCodecSupported(Configuration configuration, con
     return supported;
 }
 
+bool GStreamerRegistryScanner::supportsFeatures(const String& features) const
+{
+    // Apple TV requires this one for DD+.
+    constexpr auto dolbyDigitalPlusJOC = "joc";
+    if (features == dolbyDigitalPlusJOC)
+        return true;
+
+    return false;
+}
+
 MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(Configuration configuration, const ContentType& contentType, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const
 {
     using SupportsType = MediaPlayerEnums::SupportsType;
 
     const auto& containerType = contentType.containerType().convertToASCIILowercase();
     if (!isContainerTypeSupported(configuration, containerType))
+        return SupportsType::IsNotSupported;
+
+    int channels = parseInteger<int>(contentType.parameter("channels"_s)).value_or(1);
+    String features = contentType.parameter("features"_s);
+    if (channels > MEDIA_MAX_AAC_CHANNELS || channels <= 0
+        || !(features.isEmpty() || supportsFeatures(features))
+        || parseInteger<unsigned>(contentType.parameter("width"_s)).value_or(0) > MEDIA_MAX_WIDTH
+        || parseInteger<unsigned>(contentType.parameter("height"_s)).value_or(0) > MEDIA_MAX_HEIGHT
+        || parseInteger<unsigned>(contentType.parameter("framerate"_s)).value_or(0) > MEDIA_MAX_FRAMERATE)
         return SupportsType::IsNotSupported;
 
     const auto& codecs = contentType.codecs();
@@ -518,14 +561,14 @@ MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(
     for (const auto& item : codecs) {
         auto codec = item.convertToASCIILowercase();
         bool requiresHardwareSupport = contentTypesRequiringHardwareSupport
-            .findMatching([containerType, codec](auto& hardwareContentType) -> bool {
+            .findIf([containerType, codec](auto& hardwareContentType) -> bool {
             auto hardwareContainer = hardwareContentType.containerType();
             if (!hardwareContainer.isEmpty()
                 && fnmatch(hardwareContainer.utf8().data(), containerType.utf8().data(), 0))
                 return false;
             auto hardwareCodecs = hardwareContentType.codecs();
             return hardwareCodecs.isEmpty()
-                || hardwareCodecs.findMatching([codec](auto& hardwareCodec) -> bool {
+                || hardwareCodecs.findIf([codec](auto& hardwareCodec) -> bool {
                     return !fnmatch(hardwareCodec.utf8().data(), codec.utf8().data(), 0);
             }) != notFound;
         }) != notFound;

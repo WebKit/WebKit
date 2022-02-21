@@ -24,8 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=HighlightAPI,
-    ImplementationLacksVTable,
+    EnabledAtRuntime=HighlightAPIEnabled,
     Exposed=Window
 ] interface HighlightRegister {
     constructor();

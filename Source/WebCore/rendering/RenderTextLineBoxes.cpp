@@ -147,29 +147,6 @@ LegacyInlineTextBox* RenderTextLineBoxes::findNext(int offset, int& position) co
     return current;
 }
 
-LayoutRect RenderTextLineBoxes::visualOverflowBoundingBox(const RenderText& renderer) const
-{
-    if (!m_first)
-        return LayoutRect();
-
-    // Return the width of the minimal left side and the maximal right side.
-    auto logicalLeftSide = LayoutUnit::max();
-    auto logicalRightSide = LayoutUnit::min();
-    for (auto* current = m_first; current; current = current->nextTextBox()) {
-        logicalLeftSide = std::min(logicalLeftSide, current->logicalLeftVisualOverflow());
-        logicalRightSide = std::max(logicalRightSide, current->logicalRightVisualOverflow());
-    }
-    
-    auto logicalTop = m_first->logicalTopVisualOverflow();
-    auto logicalWidth = logicalRightSide - logicalLeftSide;
-    auto logicalHeight = m_last->logicalBottomVisualOverflow() - logicalTop;
-    
-    LayoutRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
-    if (!renderer.style().isHorizontalWritingMode())
-        rect = rect.transposedRect();
-    return rect;
-}
-
 void RenderTextLineBoxes::dirtyAll()
 {
     for (auto* box = m_first; box; box = box->nextTextBox())

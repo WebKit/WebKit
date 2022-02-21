@@ -36,7 +36,7 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(TableGrid);
 
 TableGrid::Column::Column(const ContainerBox* columnBox)
-    : m_layoutBox(makeWeakPtr(columnBox))
+    : m_layoutBox(columnBox)
 {
 }
 
@@ -56,19 +56,19 @@ void TableGrid::Rows::addRow(const ContainerBox& rowBox)
 }
 
 TableGrid::Row::Row(const ContainerBox& rowBox)
-    : m_layoutBox(makeWeakPtr(rowBox))
+    : m_layoutBox(rowBox)
 {
 }
 
 TableGrid::Cell::Cell(const ContainerBox& cellBox, SlotPosition position, CellSpan span)
-    : m_layoutBox(makeWeakPtr(cellBox))
+    : m_layoutBox(cellBox)
     , m_position(position)
     , m_span(span)
 {
 }
 
 TableGrid::Slot::Slot(Cell& cell, bool isColumnSpanned, bool isRowSpanned)
-    : m_cell(makeWeakPtr(cell))
+    : m_cell(cell)
     , m_isColumnSpanned(isColumnSpanned)
     , m_isRowSpanned(isRowSpanned)
 {

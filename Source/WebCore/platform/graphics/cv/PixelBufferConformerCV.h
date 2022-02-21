@@ -38,7 +38,7 @@ class PixelBufferConformerCV {
 public:
     WEBCORE_EXPORT PixelBufferConformerCV(CFDictionaryRef attributes);
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> convert(CVPixelBufferRef);
-    RetainPtr<CGImageRef> createImageFromPixelBuffer(CVPixelBufferRef);
+    WEBCORE_EXPORT RetainPtr<CGImageRef> createImageFromPixelBuffer(CVPixelBufferRef);
 
 private:
     RetainPtr<VTPixelBufferConformerRef> m_pixelConformer;

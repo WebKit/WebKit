@@ -11,7 +11,4 @@ description: Argument at call function is void 0
 
 Function("this.field=\"battle\"").call(void 0);
 
-//CHECK#1
-if (this["field"] !== "battle") {
-  throw new Test262Error('#1: If thisArg is null or undefined, the called function is passed the global object as the this value');
-}
+assert.sameValue(this["field"], "battle", 'The value of this["field"] is expected to be "battle"');

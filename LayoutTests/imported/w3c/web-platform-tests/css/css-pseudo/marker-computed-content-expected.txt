@@ -1,14 +1,14 @@
 
-FAIL Computed 'content' for list-item ::marker, variant default assert_equals: expected "normal" but got ""
-FAIL Computed 'content' for list-item ::marker, variant normal assert_equals: expected "normal" but got ""
-FAIL Computed 'content' for list-item ::marker, variant string assert_equals: expected "\"string\"" but got ""
-FAIL Computed 'content' for list-item ::marker, variant image assert_equals: expected "url(\"about:invalid\")" but got ""
-FAIL Computed 'content' for list-item ::marker, variant none assert_equals: expected "none" but got ""
-FAIL Computed 'content' for non-list-item ::marker, variant default assert_equals: expected "normal" but got ""
-FAIL Computed 'content' for non-list-item ::marker, variant normal assert_equals: expected "normal" but got ""
-FAIL Computed 'content' for non-list-item ::marker, variant string assert_equals: expected "\"string\"" but got ""
-FAIL Computed 'content' for non-list-item ::marker, variant image assert_equals: expected "url(\"about:invalid\")" but got ""
-FAIL Computed 'content' for non-list-item ::marker, variant none assert_equals: expected "none" but got ""
+PASS Computed 'content' for list-item ::marker, variant default
+PASS Computed 'content' for list-item ::marker, variant normal
+PASS Computed 'content' for list-item ::marker, variant string
+PASS Computed 'content' for list-item ::marker, variant image
+FAIL Computed 'content' for list-item ::marker, variant none assert_equals: expected "none" but got "normal"
+PASS Computed 'content' for non-list-item ::marker, variant default
+PASS Computed 'content' for non-list-item ::marker, variant normal
+PASS Computed 'content' for non-list-item ::marker, variant string
+PASS Computed 'content' for non-list-item ::marker, variant image
+FAIL Computed 'content' for non-list-item ::marker, variant none assert_equals: expected "none" but got "normal"
 item
 item
 item

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ JSDataView::JSDataView(VM& vm, ConstructionContext& context, ArrayBuffer* buffer
 
 JSDataView* JSDataView::create(
     JSGlobalObject* globalObject, Structure* structure, RefPtr<ArrayBuffer>&& buffer,
-    unsigned byteOffset, unsigned byteLength)
+    size_t byteOffset, size_t byteLength)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -65,30 +65,30 @@ JSDataView* JSDataView::create(
         structure, buffer.copyRef(), byteOffset, byteLength, ConstructionContext::DataView);
     ASSERT(context);
     JSDataView* result =
-        new (NotNull, allocateCell<JSDataView>(vm.heap)) JSDataView(vm, context, buffer.get());
+        new (NotNull, allocateCell<JSDataView>(vm)) JSDataView(vm, context, buffer.get());
     result->finishCreation(vm);
     return result;
 }
 
-JSDataView* JSDataView::createUninitialized(JSGlobalObject*, Structure*, unsigned)
+JSDataView* JSDataView::createUninitialized(JSGlobalObject*, Structure*, size_t)
 {
     UNREACHABLE_FOR_PLATFORM();
     return nullptr;
 }
 
-JSDataView* JSDataView::create(JSGlobalObject*, Structure*, unsigned)
+JSDataView* JSDataView::create(JSGlobalObject*, Structure*, size_t)
 {
     UNREACHABLE_FOR_PLATFORM();
     return nullptr;
 }
 
-bool JSDataView::set(JSGlobalObject*, unsigned, JSObject*, unsigned, unsigned)
+bool JSDataView::set(JSGlobalObject*, size_t, JSObject*, size_t, size_t)
 {
     UNREACHABLE_FOR_PLATFORM();
     return false;
 }
 
-bool JSDataView::setIndex(JSGlobalObject*, unsigned, JSValue)
+bool JSDataView::setIndex(JSGlobalObject*, size_t, JSValue)
 {
     UNREACHABLE_FOR_PLATFORM();
     return false;

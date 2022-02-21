@@ -16,6 +16,8 @@ _metal_backend_sources = [
   "CompilerMtl.mm",
   "ContextMtl.h",
   "ContextMtl.mm",
+  "DeviceMtl.h",
+  "DeviceMtl.mm",
   "DisplayMtl.h",
   "DisplayMtl.mm",
   "DisplayMtl_api.h",
@@ -27,6 +29,8 @@ _metal_backend_sources = [
   "ImageMtl.mm",
   "ProgramMtl.h",
   "ProgramMtl.mm",
+  "ProvokingVertexHelper.h",
+  "ProvokingVertexHelper.mm",
   "QueryMtl.h",
   "QueryMtl.mm",
   "RenderBufferMtl.h",
@@ -53,6 +57,9 @@ _metal_backend_sources = [
   "mtl_command_buffer.mm",
   "mtl_common.h",
   "mtl_common.mm",
+  "mtl_context_device.h",
+  "mtl_context_device.mm",
+  "mtl_default_shaders_compiled.inc",
   "mtl_format_table_autogen.mm",
   "mtl_format_utils.h",
   "mtl_format_utils.mm",
@@ -64,6 +71,7 @@ _metal_backend_sources = [
   "mtl_occlusion_query_pool.mm",
   "mtl_render_utils.h",
   "mtl_render_utils.mm",
+  "mtl_resource_spi.h",
   "mtl_resources.h",
   "mtl_resources.mm",
   "mtl_state_cache.h",
@@ -71,11 +79,16 @@ _metal_backend_sources = [
   "mtl_utils.h",
   "mtl_utils.mm",
   "shaders/constants.h",
-  "shaders/mtl_default_shaders_src_autogen.inc"
+  "shaders/format_autogen.h",
+  "shaders/mtl_default_shaders_src_autogen.inc",
+  "shaders/rewrite_indices_shared.h",
 ]
 
 config("angle_metal_backend_config") {
-  defines = [ "ANGLE_ENABLE_METAL", "ANGLE_ENABLE_METAL_SPIRV" ]
+  defines = [
+    "ANGLE_ENABLE_METAL",
+    "ANGLE_ENABLE_METAL_SPIRV",
+  ]
   ldflags = [
     "-weak_framework",
     "Metal",
@@ -95,22 +108,20 @@ angle_source_set("angle_metal_backend") {
   libs = []
 
   public_deps = [
+    "${angle_root}:angle_common",
     "${angle_root}:angle_glslang_wrapper",
     "${angle_root}:angle_gpu_info_util",
     "${angle_root}:angle_image_util",
     "${angle_root}:libANGLE_headers",
+    "${angle_root}:translator",
   ]
 
-  deps = [
-    "$angle_spirv_tools_dir:spvtools_val",
-    "${angle_spirv_cross_dir}/gn:spirv_cross_sources",
-  ]
+  deps = [ "${angle_spirv_cross_dir}/gn:spirv_cross_sources" ]
 
   objc_flags = [
     "-Wno-nullability-completeness",
     "-Wno-unguarded-availability",
     "-fno-objc-arc",
-    "-Wno-extra-semi-stmt",
   ]
   cflags_objc += objc_flags
   cflags_objcc += objc_flags

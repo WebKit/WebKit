@@ -16,8 +16,8 @@ EVENT: mute
 PASS screenCaptureTrack.muted is true
 PASS microphoneCaptureTrack.muted is false
 PASS cameraCaptureTrack.muted is false
-PASS window.internals.pageMediaState().includes(HasMutedDisplayCaptureDevice) became true
-PASS window.internals.pageMediaState().includes(HasActiveDisplayCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasMutedScreenCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasActiveScreenCaptureDevice) became false
 PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true
 PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became false
 PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true
@@ -29,8 +29,8 @@ EVENT: mute
 PASS screenCaptureTrack.muted is true
 PASS microphoneCaptureTrack.muted is true
 PASS cameraCaptureTrack.muted is true
-PASS window.internals.pageMediaState().includes(HasMutedDisplayCaptureDevice) became true
-PASS window.internals.pageMediaState().includes(HasActiveDisplayCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasMutedScreenCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasActiveScreenCaptureDevice) became false
 PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became true
 PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became false
 PASS window.internals.pageMediaState().includes(HasMutedVideoCaptureDevice) became true
@@ -42,8 +42,8 @@ EVENT: unmute
 PASS screenCaptureTrack.muted is true
 PASS microphoneCaptureTrack.muted is false
 PASS cameraCaptureTrack.muted is false
-PASS window.internals.pageMediaState().includes(HasMutedDisplayCaptureDevice) became true
-PASS window.internals.pageMediaState().includes(HasActiveDisplayCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasMutedScreenCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasActiveScreenCaptureDevice) became false
 PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true
 PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became false
 PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true
@@ -54,8 +54,8 @@ EVENT: unmute
 PASS screenCaptureTrack.muted is false
 PASS microphoneCaptureTrack.muted is false
 PASS cameraCaptureTrack.muted is false
-PASS window.internals.pageMediaState().includes(HasActiveDisplayCaptureDevice) became true
-PASS window.internals.pageMediaState().includes(HasMutedDisplayCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasActiveScreenCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasMutedScreenCaptureDevice) became false
 PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true
 PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became false
 PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true

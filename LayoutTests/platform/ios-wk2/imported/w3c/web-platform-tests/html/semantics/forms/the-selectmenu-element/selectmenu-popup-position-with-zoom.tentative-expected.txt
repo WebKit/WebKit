@@ -1,0 +1,11 @@
+Custom bottom left
+
+Custom top left
+Custom bottom right
+Custom top right
+
+PASS The popup should be bottom left positioned
+FAIL The popup should be top left positioned assert_equals: expected 400 but got 380
+FAIL The popup should be bottom right positioned assert_equals: expected 133 but got 267
+FAIL The popup should be top right positioned assert_equals: expected 150 but got 131
+

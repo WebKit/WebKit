@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -218,7 +219,7 @@ ExceptionOr<void> AudioParamTimeline::cancelAndHoldAtTime(Seconds cancelTime)
     Locker locker { m_eventsLock };
 
     // Find the first event at or just past cancelTime.
-    size_t i = m_events.findMatching([&](auto& event) {
+    size_t i = m_events.findIf([&](auto& event) {
         return event.time() > cancelTime;
     });
     i = (i == notFound) ? m_events.size() : i;
@@ -324,6 +325,16 @@ void AudioParamTimeline::removeCancelledEvents(size_t firstEventToRemove)
     m_events.remove(firstEventToRemove, m_events.size() - firstEventToRemove);
 }
 
+void AudioParamTimeline::removeOldEvents(size_t eventCount)
+{
+    ASSERT(eventCount <= m_events.size());
+    if (m_events.isEmpty())
+        return;
+
+    // Always leave at least one event in the list.
+    m_events.remove(0, std::min(eventCount, m_events.size() - 1));
+}
+
 std::optional<float> AudioParamTimeline::valueForContextTime(BaseAudioContext& context, float defaultValue, float minValue, float maxValue)
 {
     {
@@ -397,6 +408,7 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
     }
 
     float value = defaultValue;
+    size_t numberOfSkippedEvents = 0;
 
     // Go through each event and render the value buffer where the times overlap,
     // stopping when we've rendered all the requested values.
@@ -408,8 +420,10 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
         auto* nextEvent = i < n - 1 ? &m_events[i + 1] : nullptr;
 
         // Wait until we get a more recent event.
-        if (!isEventCurrent(*event, nextEvent, currentFrame, sampleRate))
+        if (!isEventCurrent(*event, nextEvent, currentFrame, sampleRate)) {
+            ++numberOfSkippedEvents;
             continue;
+        }
 
         auto nextEventType = nextEvent ? static_cast<ParamEvent::Type>(nextEvent->type()) : ParamEvent::LastType /* unknown */;
 
@@ -481,6 +495,10 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
             }
         }
     }
+
+    // Drop outdated events that we skipped so we don't have to go through them again in the future.
+    if (numberOfSkippedEvents > 0)
+        removeOldEvents(numberOfSkippedEvents);
 
     // If there's any time left after processing the last event then just propagate the last value
     // to the end of the values buffer.
@@ -988,11 +1006,44 @@ bool AudioParamTimeline::hasValues(size_t startFrame, double sampleRate) const
 {
     if (!m_eventsLock.tryLock())
         return true;
+
     Locker locker { AdoptLock, m_eventsLock };
 
-    // Return false if there are no events in the time range.
-    auto endFrame = startFrame + AudioUtilities::renderQuantumSize;
-    return !m_events.isEmpty() && endFrame / sampleRate > m_events[0].time().value();
+    if (m_events.isEmpty())
+        return false;
+
+    if (m_events[0].time().value() > (startFrame + AudioUtilities::renderQuantumSize) / sampleRate) {
+        // The first event starts after the end of this rendering quantum so no automation is needed.
+        auto eventType = m_events[0].type();
+        if (eventType == ParamEvent::SetTarget || eventType == ParamEvent::SetValue || eventType == ParamEvent::SetValueCurve)
+            return false;
+    }
+
+    // Don't try and optimize when there is more than one event in the timeline as it gets complicated.
+    if (m_events.size() > 1)
+        return true;
+
+    switch (m_events[0].type()) {
+    case ParamEvent::SetTarget:
+        // Need automation if the event starts somewhere before the end of the current render quantum.
+        return m_events[0].time().value() <= (startFrame + AudioUtilities::renderQuantumSize) / sampleRate;
+    case ParamEvent::SetValue:
+    case ParamEvent::LinearRampToValue:
+    case ParamEvent::ExponentialRampToValue:
+    case ParamEvent::CancelValues:
+        // If these events are in the past, we don't need any automation; the value is a constant.
+        return m_events[0].time().value() >= startFrame / sampleRate;
+    case ParamEvent::SetValueCurve: {
+        auto curveEndTime = m_events[0].time() + m_events[0].duration();
+        double startTime = startFrame / sampleRate;
+        return m_events[0].time().value() <= startTime && startTime < curveEndTime.value();
+    }
+    case ParamEvent::LastType:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return true;
 }
 
 } // namespace WebCore

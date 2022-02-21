@@ -35,7 +35,7 @@ const ClassInfo FunctionRareData::s_info = { "FunctionRareData", nullptr, nullpt
 
 FunctionRareData* FunctionRareData::create(VM& vm, ExecutableBase* executable)
 {
-    FunctionRareData* rareData = new (NotNull, allocateCell<FunctionRareData>(vm.heap)) FunctionRareData(vm, executable);
+    FunctionRareData* rareData = new (NotNull, allocateCell<FunctionRareData>(vm)) FunctionRareData(vm, executable);
     rareData->finishCreation(vm);
     return rareData;
 }
@@ -60,7 +60,7 @@ void FunctionRareData::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     rareData->m_objectAllocationProfile.visitAggregate(visitor);
     rareData->m_internalFunctionAllocationProfile.visitAggregate(visitor);
-    visitor.append(rareData->m_boundFunctionStructure);
+    visitor.append(rareData->m_boundFunctionStructureID);
     visitor.append(rareData->m_executable);
 }
 

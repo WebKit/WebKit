@@ -71,9 +71,9 @@ void CGDisplayStreamCaptureSource::stop()
     m_isRunning = false;
 }
 
-DisplayCaptureSourceMac::DisplayFrameType CGDisplayStreamCaptureSource::generateFrame()
+DisplayCaptureSourceCocoa::DisplayFrameType CGDisplayStreamCaptureSource::generateFrame()
 {
-    return DisplayCaptureSourceMac::DisplayFrameType { RetainPtr<IOSurfaceRef> { m_currentFrame.ioSurface() } };
+    return m_currentFrame;
 }
 
 bool CGDisplayStreamCaptureSource::startDisplayStream()
@@ -81,11 +81,8 @@ bool CGDisplayStreamCaptureSource::startDisplayStream()
     if (!checkDisplayStream())
         return false;
 
-    if (!m_captureQueue)
-        m_captureQueue = adoptOSObject(dispatch_queue_create("CGDisplayStreamCaptureSource Capture Queue", DISPATCH_QUEUE_SERIAL));
-
     if (!m_displayStream) {
-        m_displayStream = createDisplayStream(frameAvailableHandler(), m_captureQueue.get());
+        m_displayStream = createDisplayStream();
         if (!m_displayStream)
             return false;
 
@@ -134,7 +131,7 @@ void CGDisplayStreamCaptureSource::displayReconfigurationCallBack(CGDirectDispla
         reinterpret_cast<CGDisplayStreamCaptureSource *>(userInfo)->displayWasReconfigured(display, flags);
 }
 
-void CGDisplayStreamCaptureSource::newFrame(CGDisplayStreamFrameStatus status, DisplaySurface&& newFrame)
+void CGDisplayStreamCaptureSource::newFrame(CGDisplayStreamFrameStatus status, RetainPtr<IOSurfaceRef>&& newFrame)
 {
     switch (status) {
     case kCGDisplayStreamFrameStatusFrameComplete:
@@ -160,7 +157,7 @@ CGDisplayStreamFrameAvailableHandler CGDisplayStreamCaptureSource::frameAvailabl
     if (m_frameAvailableHandler)
         return m_frameAvailableHandler.get();
 
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     m_frameAvailableHandler = ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
     {
         if (!frameSurface || !displayTime)
@@ -171,7 +168,7 @@ CGDisplayStreamFrameAvailableHandler CGDisplayStreamCaptureSource::frameAvailabl
         if (!rects || !count)
             return;
 
-        RunLoop::main().dispatch([weakThis, status, frame = DisplaySurface { frameSurface }]() mutable {
+        RunLoop::main().dispatch([weakThis, status, frame = retainPtr(frameSurface)]() mutable {
             if (!weakThis)
                 return;
             weakThis->newFrame(status, WTFMove(frame));
@@ -179,7 +176,14 @@ CGDisplayStreamFrameAvailableHandler CGDisplayStreamCaptureSource::frameAvailabl
     };
 
     return m_frameAvailableHandler.get();
+}
 
+dispatch_queue_t CGDisplayStreamCaptureSource::captureQueue()
+{
+    if (!m_captureQueue)
+        m_captureQueue = adoptOSObject(dispatch_queue_create("CGDisplayStreamCaptureSource Capture Queue", DISPATCH_QUEUE_SERIAL));
+
+    return m_captureQueue.get();
 }
 
 } // namespace WebCore

@@ -23,10 +23,27 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+typedef (double or CSSNumericValue) CSSNumberish;
+
 [
     InterfaceName=CSSNumericValue,
-    EnabledAtRuntime=CSSTypedOM,
+    EnabledAtRuntime=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
-    Exposed=(Window,Worker,PaintWorklet),
+    JSGenerateToNativeObject,
+    Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSNumericValue : CSSStyleValue {
+    CSSNumericValue add(CSSNumberish... values);
+    CSSNumericValue sub(CSSNumberish... values);
+    CSSNumericValue mul(CSSNumberish... values);
+    CSSNumericValue div(CSSNumberish... values);
+    CSSNumericValue min(CSSNumberish... values);
+    CSSNumericValue max(CSSNumberish... values);
+
+    boolean equals(CSSNumberish... value);
+
+    CSSUnitValue to(USVString unit);
+    CSSMathSum toSum(USVString... units);
+    CSSNumericType type();
+
+    [Exposed=Window] static CSSNumericValue parse(USVString cssText);
 };

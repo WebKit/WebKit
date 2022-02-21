@@ -4,8 +4,10 @@ Here is a paragraph that requires word wrap
 
 svg text tag
 
+Harness Error (TIMEOUT), message = null
+
 PASS ResizeObserver implemented
-PASS guard
+NOTRUN guard
 PASS test0: observe svg:circle
 PASS test1: observe svg:ellipse
 PASS test2: observe svg:foreignObject
@@ -18,9 +20,9 @@ PASS test8: observe svg:rect
 PASS test9: observe svg:text
 PASS test10: observe svg:svg, top/left is 0 even with padding
 PASS test11: observe svg non-displayable element
-FAIL test12: observe svg:rect content box undefined is not an object (evaluating 'entries[0].contentBoxSize[0]')
-FAIL test13: observe svg:rect border box undefined is not an object (evaluating 'entries[0].contentBoxSize[0]')
-FAIL test14: observe g:rect content and border box undefined is not an object (evaluating 'entries[0].contentBoxSize[0]')
-FAIL test15: observe svg:text content and border box assert_equals: expected 30 but got 30.015625
-FAIL test16: observe g:rect content, border and device-pixel-content boxes undefined is not an object (evaluating 'entries[0].contentBoxSize[0]')
+PASS test12: observe svg:rect content box
+PASS test13: observe svg:rect border box
+PASS test14: observe g:rect content and border box
+PASS test15: observe svg:text content and border box
+FAIL test16: observe g:rect content, border and device-pixel-content boxes assert_unreached: Caught a throw, possible syntax error Reached unreachable code
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>.
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ const ClassInfo BigIntObject::s_info = { "BigInt", &Base::s_info, nullptr, nullp
 BigIntObject* BigIntObject::create(VM& vm, JSGlobalObject* globalObject, JSValue bigInt)
 {
     ASSERT(bigInt.isBigInt());
-    BigIntObject* object = new (NotNull, allocateCell<BigIntObject>(vm.heap)) BigIntObject(vm, globalObject->bigIntObjectStructure());
+    BigIntObject* object = new (NotNull, allocateCell<BigIntObject>(vm)) BigIntObject(vm, globalObject->bigIntObjectStructure());
     object->finishCreation(vm, bigInt);
     return object;
 }

@@ -26,13 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
 #import <TargetConditionals.h>
 
 @class WebView;
 @class WebDataSource;
-@class NSURLAuthenticationChallenge;
-@class NSURLResponse;
-@class NSURLRequest;
 
 @interface NSObject (WebResourceLoadDelegatePrivate)
 

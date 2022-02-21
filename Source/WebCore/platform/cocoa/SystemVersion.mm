@@ -24,20 +24,16 @@
 
 #import "config.h"
 #import "SystemVersion.h"
+#import <pal/spi/cf/CFUtilitiesSPI.h>
 
 namespace WebCore {
 
 static RetainPtr<NSString> createSystemMarketingVersion()
 {
     // Can't use -[NSProcessInfo operatingSystemVersionString] because it has too much stuff we don't want.
-    NSString *systemLibraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, YES) objectAtIndex:0];
-#if PLATFORM(IOS_FAMILY_SIMULATOR)
-    if (char *simulatorRoot = getenv("SIMULATOR_ROOT"))
-        systemLibraryPath = [NSString stringWithFormat:@"%s/%@", simulatorRoot, systemLibraryPath];
-#endif
-    NSString *systemVersionPlistPath = [systemLibraryPath stringByAppendingPathComponent:@"CoreServices/SystemVersion.plist"];
-    NSDictionary *systemVersionInfo = [NSDictionary dictionaryWithContentsOfFile:systemVersionPlistPath];
-    return adoptNS([[systemVersionInfo objectForKey:@"ProductVersion"] copy]);
+    auto systemVersionDictionary = adoptCF(_CFCopySystemVersionDictionary());
+    CFStringRef productVersion = static_cast<CFStringRef>(CFDictionaryGetValue(systemVersionDictionary.get(), _kCFSystemVersionProductVersionKey));
+    return adoptNS([(__bridge NSString *)productVersion copy]);
 }
 
 NSString *systemMarketingVersion()

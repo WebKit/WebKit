@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@
 #include "Region.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
-#include <wtf/RobinHoodHashMap.h>
+#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 
@@ -150,23 +150,6 @@ bool NonFastScrollableRegionOverlay::updateRegion()
     return regionChanged;
 }
 
-static const MemoryCompactLookupOnlyRobinHoodHashMap<String, SRGBA<uint8_t>>& touchEventRegionColors()
-{
-    static const auto regionColors = makeNeverDestroyed([] {
-        return MemoryCompactLookupOnlyRobinHoodHashMap<String, SRGBA<uint8_t>> { {
-            { "touchstart"_s, { 191, 191, 63, 50 } },
-            { "touchmove"_s, { 80, 204, 245, 50 } },
-            { "touchend"_s, { 191, 63, 127, 50 } },
-            { "touchforcechange"_s, { 63, 63, 191, 50 } },
-            { "wheel"_s, { 255, 128, 0, 50 } },
-            { "mousedown"_s, { 80, 245, 80, 50 } },
-            { "mousemove"_s, { 245, 245, 80, 50 } },
-            { "mouseup"_s, { 80, 245, 176, 50 } }
-        } };
-    }());
-    return regionColors;
-}
-
 static void drawRightAlignedText(const String& text, GraphicsContext& context, const FontCascade& font, const FloatPoint& boxLocation)
 {
     float textGap = 10;
@@ -180,6 +163,19 @@ static void drawRightAlignedText(const String& text, GraphicsContext& context, c
 
 void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, GraphicsContext& context, const IntRect&)
 {
+    static constexpr std::pair<ComparableASCIILiteral, SRGBA<uint8_t>> colorMappings[] = {
+        { "mousedown", { 80, 245, 80, 50 } },
+        { "mousemove", { 245, 245, 80, 50 } },
+        { "mouseup", { 80, 245, 176, 50 } },
+        { "touchend", { 191, 63, 127, 50 } },
+        { "touchforcechange", { 63, 63, 191, 50 } },
+        { "touchmove", { 80, 204, 245, 50 } },
+        { "touchstart", { 191, 191, 63, 50 } },
+        { "wheel", { 255, 128, 0, 50 } },
+    };
+    constexpr SortedArrayMap colors { colorMappings };
+    constexpr auto defaultColor = Color::black.colorWithAlphaByte(64);
+
     IntRect bounds = pageOverlay.bounds();
     
     context.clearRect(bounds);
@@ -194,60 +190,32 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     FontCascade font(WTFMove(fontDescription), 0, 0);
     font.update(nullptr);
 
+    auto drawLegend = [&] (const Color& color, ASCIILiteral text) {
+        context.setFillColor(color);
+        context.fillRect(legendRect);
+        drawRightAlignedText(text, context, font, legendRect.location());
+        legendRect.move(0, 30);
+    };
+
 #if ENABLE(TOUCH_EVENTS)
-    context.setFillColor(touchEventRegionColors().get("touchstart"_s));
-    context.fillRect(legendRect);
-    drawRightAlignedText("touchstart"_s, context, font, legendRect.location());
-
-    legendRect.move(0, 30);
-    context.setFillColor(touchEventRegionColors().get("touchmove"_s));
-    context.fillRect(legendRect);
-    drawRightAlignedText("touchmove"_s, context, font, legendRect.location());
-
-    legendRect.move(0, 30);
-    context.setFillColor(touchEventRegionColors().get("touchend"_s));
-    context.fillRect(legendRect);
-    drawRightAlignedText("touchend"_s, context, font, legendRect.location());
-
-    legendRect.move(0, 30);
-    context.setFillColor(touchEventRegionColors().get("touchforcechange"_s));
-    context.fillRect(legendRect);
-    drawRightAlignedText("touchforcechange"_s, context, font, legendRect.location());
-
-    legendRect.move(0, 30);
-    context.setFillColor(m_color);
-    context.fillRect(legendRect);
-    drawRightAlignedText("passive listeners"_s, context, font, legendRect.location());
-
-    legendRect.move(0, 30);
-    context.setFillColor(touchEventRegionColors().get("mousedown"_s));
-    context.fillRect(legendRect);
-    drawRightAlignedText("mousedown"_s, context, font, legendRect.location());
-
-    legendRect.move(0, 30);
-    context.setFillColor(touchEventRegionColors().get("mousemove"_s));
-    context.fillRect(legendRect);
-    drawRightAlignedText("mousemove"_s, context, font, legendRect.location());
-
-    legendRect.move(0, 30);
-    context.setFillColor(touchEventRegionColors().get("mouseup"_s));
-    context.fillRect(legendRect);
-    drawRightAlignedText("mouseup"_s, context, font, legendRect.location());
+    auto drawEventLegend = [&] (ASCIILiteral color) {
+        drawLegend(colors.get(StringView { color }), color);
+    };
+    drawEventLegend("touchstart"_s);
+    drawEventLegend("touchmove"_s);
+    drawEventLegend("touchend"_s);
+    drawEventLegend("touchforcechange"_s);
+    drawLegend(m_color, "passive listeners"_s);
+    drawEventLegend("mousedown"_s);
+    drawEventLegend("mousemove"_s);
+    drawEventLegend("mouseup"_s);
 #else
     // On desktop platforms, the "wheel" region includes the non-fast scrollable region.
-    context.setFillColor(touchEventRegionColors().get("wheel"_s));
-    context.fillRect(legendRect);
-    drawRightAlignedText("non-fast region"_s, context, font, legendRect.location());
+    drawLegend(colors.get("wheel"), "non-fast region"_s);
 #endif
 
-    for (const auto& synchronousEventRegion : m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions) {
-        auto regionColor = Color::black.colorWithAlphaByte(64);
-        auto it = touchEventRegionColors().find(synchronousEventRegion.key);
-        if (it != touchEventRegionColors().end())
-            regionColor = it->value;
-        drawRegion(context, synchronousEventRegion.value, regionColor, bounds);
-    }
-
+    for (auto& region : m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions)
+        drawRegion(context, region.value, colors.get(region.key, defaultColor), bounds);
     drawRegion(context, m_eventTrackingRegions.asynchronousDispatchRegion, m_color, bounds);
 }
 

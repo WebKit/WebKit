@@ -69,7 +69,8 @@ for instructions on how to run Cherry on Linux or Windows.
 
 ANGLE also supports the same set of targets built with GoogleTest, for running
 on the bots. We don't currently recommend using these for local debugging, but
-we do maintain lists of test expectations in `src/tests/deqp_support`. When
+we do maintain lists of test expectations in `src/tests/deqp_support` (see
+[Handling Test Failures](TestingAndProcesses.md)). When
 you fix tests, please remove the suppression(s) from the relevant files!
 
 ### Running dEQP on Android
@@ -80,6 +81,6 @@ adb shell am start -a android.intent.action.MAIN -n org.chromium.native_test/.Na
 ```
 After the tests finish, get the results with
 ```
-adb pull /sdcard/chromium_tests_root/third_party/angle/third_party/deqp/src/data/TestResults.qpa .
+adb pull /sdcard/chromium_tests_root/gen/vk_gl_cts_data/data/TestResults.qpa .
 ```
 Note: this location might change, one can double-check with `adb logcat -d | grep qpa`.

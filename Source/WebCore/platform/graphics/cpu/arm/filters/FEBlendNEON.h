@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FEBlendNEON_h
-#define FEBlendNEON_h
+#pragma once
 
 #if HAVE(ARM_NEON_INTRINSICS)
 
@@ -107,41 +106,6 @@ public:
     }
 };
 
-void FEBlend::platformApplySoftware()
-{
-    FilterEffect* in = inputEffect(0);
-    FilterEffect* in2 = inputEffect(1);
-
-    auto& destinationPixelBuffer = createPremultipliedImageResult();
-    if (!destinationPixelBuffer)
-        return;
-
-    auto& destinationPixelArray = destinationPixelBuffer->data();
-
-    IntRect effectADrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
-    auto sourcePixelArrayA = in->premultipliedResult(effectADrawingRect);
-
-    IntRect effectBDrawingRect = requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
-    auto sourcePixelArrayB = in2->premultipliedResult(effectBDrawingRect);
-
-    unsigned sourcePixelArrayLength = sourcePixelArrayA->length();
-    ASSERT(pixelArrayLength == sourcePixelArrayB->length());
-
-    if (sourcePixelArrayLength >= 8) {
-        platformApplyNEON(sourcePixelArrayA->data(), sourcePixelArrayB->data(), destinationPixelArray.data(), sourcePixelArrayLength);
-        return;
-    }
-    // If there is just one pixel we expand it to two.
-    ASSERT(sourcePixelArrayLength > 0);
-    uint32_t sourceA[2] = {0, 0};
-    uint32_t sourceBAndDest[2] = {0, 0};
-
-    sourceA[0] = reinterpret_cast<uint32_t*>(sourcePixelArrayA->data())[0];
-    sourceBAndDest[0] = reinterpret_cast<uint32_t*>(sourcePixelArrayB->data())[0];
-    platformApplyNEON(reinterpret_cast<uint8_t*>(sourceA), reinterpret_cast<uint8_t*>(sourceBAndDest), reinterpret_cast<uint8_t*>(sourceBAndDest), 8);
-    reinterpret_cast<uint32_t*>(destinationPixelArray.data())[0] = sourceBAndDest[0];
-}
-
 void FEBlend::platformApplyNEON(unsigned char* srcPixelArrayA, unsigned char* srcPixelArrayB, unsigned char* dstPixelArray,
                                 unsigned colorArrayLength)
 {
@@ -205,5 +169,3 @@ void FEBlend::platformApplyNEON(unsigned char* srcPixelArrayA, unsigned char* sr
 } // namespace WebCore
 
 #endif // HAVE(ARM_NEON_INTRINSICS)
-
-#endif // FEBlendNEON_h

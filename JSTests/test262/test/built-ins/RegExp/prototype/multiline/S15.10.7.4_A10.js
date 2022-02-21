@@ -10,17 +10,11 @@ includes: [propertyHelper.js]
 
 var __re = RegExp.prototype;
 
-//CHECK#1
-if (__re.hasOwnProperty('multiline') !== true) {
-  throw new Test262Error('#1: __re = RegExp.prototype; __re.hasOwnProperty(\'multiline\') === true');
-}
+assert.sameValue(__re.hasOwnProperty('multiline'), true, '__re.hasOwnProperty(\'multiline\') must return true');
 
 var __sample = /\n/;
 var __obj = __sample.multiline;
 
 verifyNotWritable(__sample, "multiline", "multiline", "shifted");
 
-//CHECK#2
-if (__sample.multiline !== __obj) {
-  throw new Test262Error('#2: __sample = /\n/; __obj = __sample.multiline; __sample.multiline = "shifted"; __sample.multiline === __obj. Actual: ' + (__sample.multiline));
-}
+assert.sameValue(__sample.multiline, __obj, 'The value of __sample.multiline is expected to equal the value of __obj');

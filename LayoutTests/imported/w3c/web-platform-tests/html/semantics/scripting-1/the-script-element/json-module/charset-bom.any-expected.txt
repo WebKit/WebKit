@@ -1,0 +1,9 @@
+
+FAIL UTF-8 BOM should be stripped when decoding JSON module script promise_test: Unhandled rejection with value: object "TypeError: 'application/json' is not a valid JavaScript MIME type."
+FAIL UTF-16BE BOM should result in parse error in JSON module script promise_rejects_js: Expected parse error from UTF-16BE BOM function "function () { throw e }" threw object "TypeError: 'application/json' is not a valid JavaScript MIME type." ("TypeError") expected instance of function "function SyntaxError() {
+    [native code]
+}" ("SyntaxError")
+FAIL UTF-16LE BOM should result in parse error in JSON module script promise_rejects_js: Expected parse error from UTF-16LE BOM function "function () { throw e }" threw object "TypeError: 'application/json' is not a valid JavaScript MIME type." ("TypeError") expected instance of function "function SyntaxError() {
+    [native code]
+}" ("SyntaxError")
+

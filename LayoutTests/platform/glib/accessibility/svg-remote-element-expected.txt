@@ -26,7 +26,7 @@ NoseY: 206
 Mouth role: AXRole: AXButton
 Mouth label: AXTitle: smile
 MouthX: 116
-MouthY: 276
+MouthY: 275
 
 
 PASS successfullyParsed is true

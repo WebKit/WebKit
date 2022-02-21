@@ -77,7 +77,7 @@ public:
     // used for compositing purposes.
     virtual void prepareForDisplayWithPaint() { }
     virtual void paintRenderingResultsToCanvas() { }
-    virtual PlatformLayer* platformLayer() const { return 0; }
+    virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
 
     bool hasActiveInspectorCanvasCallTracer() const { return m_hasActiveInspectorCanvasCallTracer; }
     void setHasActiveInspectorCanvasCallTracer(bool hasActiveInspectorCanvasCallTracer) { m_hasActiveInspectorCanvasCallTracer = hasActiveInspectorCanvasCallTracer; }

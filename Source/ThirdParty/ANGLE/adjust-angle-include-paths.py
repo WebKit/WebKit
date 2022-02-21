@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/python3
 
 # WebKit builds ANGLE as a static library, and exports some of the
 # internal header files as "public headers" in the Xcode project for
@@ -29,6 +29,7 @@ else:
     # External build
     output_dir = os.getenv('BUILT_PRODUCTS_DIR') + os.getenv('PUBLIC_HEADERS_FOLDER_PATH')
 
+
 def replace(line):
     match = re.match('#include [<"](.*)[>"]', line)
     if match:
@@ -44,6 +45,7 @@ def replace(line):
 
     return line
 
+
 os.chdir(output_dir)
 for filename in os.listdir('.'):
     if not os.path.isfile(filename):
@@ -51,7 +53,7 @@ for filename in os.listdir('.'):
     if not (filename.endswith('.h') or filename.endswith('.inc')):
         continue
     lines = open(filename, 'r').readlines()
-    newLines = [ replace(line) for line in lines ]
+    newLines = [replace(line) for line in lines]
     if lines != newLines:
         open(filename, 'w').writelines(newLines)
         print("Postprocessed ANGLE header {}".format(filename))

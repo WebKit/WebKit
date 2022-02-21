@@ -51,7 +51,7 @@ public:
     };
 
     explicit AVPlaybackTargetPicker(Client& client)
-        : m_client(makeWeakPtr(&client))
+        : m_client(client)
     {
     }
     virtual ~AVPlaybackTargetPicker() = default;

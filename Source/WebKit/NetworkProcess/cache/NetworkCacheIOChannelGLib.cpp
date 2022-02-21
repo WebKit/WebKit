@@ -92,7 +92,7 @@ struct ReadAsyncData {
 
     RefPtr<IOChannel> channel;
     GRefPtr<GBytes> buffer;
-    Ref<WorkQueue> queue;
+    Ref<WTF::WorkQueueBase> queue;
     size_t bytesToRead;
     Function<void(Data&, int error)> completionHandler;
     Data data;
@@ -134,7 +134,7 @@ static void inputStreamReadReadyCallback(GInputStream* stream, GAsyncResult* res
         reinterpret_cast<GAsyncReadyCallback>(inputStreamReadReadyCallback), asyncData.release());
 }
 
-void IOChannel::read(size_t offset, size_t size, WorkQueue& queue, Function<void(Data&, int error)>&& completionHandler)
+void IOChannel::read(size_t offset, size_t size, WTF::WorkQueueBase& queue, Function<void(Data&, int error)>&& completionHandler)
 {
     RefPtr<IOChannel> protectedThis(this);
     if (!m_inputStream) {
@@ -160,11 +160,11 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue& queue, Function<void
         reinterpret_cast<GAsyncReadyCallback>(inputStreamReadReadyCallback), asyncData);
 }
 
-void IOChannel::readSyncInThread(size_t offset, size_t size, WorkQueue& queue, Function<void(Data&, int error)>&& completionHandler)
+void IOChannel::readSyncInThread(size_t offset, size_t size, WTF::WorkQueueBase& queue, Function<void(Data&, int error)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    Thread::create("IOChannel::readSync", [this, protectedThis = makeRef(*this), size, queue = makeRef(queue), completionHandler = WTFMove(completionHandler)] () mutable {
+    Thread::create("IOChannel::readSync", [this, protectedThis = Ref { *this }, size, queue = Ref { queue }, completionHandler = WTFMove(completionHandler)] () mutable {
         size_t bufferSize = std::min(size, gDefaultReadBufferSize);
         uint8_t* bufferData = static_cast<uint8_t*>(fastMalloc(bufferSize));
         GRefPtr<GBytes> readBuffer = adoptGRef(g_bytes_new_with_free_func(bufferData, bufferSize, fastFree, bufferData));
@@ -204,7 +204,7 @@ struct WriteAsyncData {
 
     RefPtr<IOChannel> channel;
     GRefPtr<GBytes> buffer;
-    Ref<WorkQueue> queue;
+    Ref<WTF::WorkQueueBase> queue;
     Function<void(int error)> completionHandler;
 };
 
@@ -234,7 +234,7 @@ static void outputStreamWriteReadyCallback(GOutputStream* stream, GAsyncResult* 
         reinterpret_cast<GAsyncReadyCallback>(outputStreamWriteReadyCallback), asyncData.release());
 }
 
-void IOChannel::write(size_t offset, const Data& data, WorkQueue& queue, Function<void(int error)>&& completionHandler)
+void IOChannel::write(size_t offset, const Data& data, WTF::WorkQueueBase& queue, Function<void(int error)>&& completionHandler)
 {
     RefPtr<IOChannel> protectedThis(this);
     if (!m_outputStream && !m_ioStream) {

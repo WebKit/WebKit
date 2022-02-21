@@ -38,7 +38,7 @@ class AuxiliaryProcess;
 
 bool hasRequestedCrossWebsiteTrackingPermission();
 bool hasProhibitedUsageStrings();
-std::optional<Vector<WebCore::RegistrableDomain>> getAppBoundDomainsTesting(const String&);
+Span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const String&);
 bool isRunningTest(const String& bundleID);
 void determineITPState();
 bool doesAppHaveITPEnabled();

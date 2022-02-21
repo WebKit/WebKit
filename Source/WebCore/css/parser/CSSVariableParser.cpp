@@ -1,5 +1,5 @@
 // Copyright 2015 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -32,6 +32,7 @@
 
 #include "CSSCustomPropertyValue.h"
 #include "CSSParserContext.h"
+#include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
 
@@ -161,7 +162,7 @@ static CSSValueID classifyVariableRange(CSSParserTokenRange range, bool& hasRefe
     range.consumeWhitespace();
     if (range.peek().type() == IdentToken) {
         CSSValueID id = range.consumeIncludingWhitespace().id();
-        if (range.atEnd() && (id == CSSValueInherit || id == CSSValueInitial || id == CSSValueUnset || id == CSSValueRevert))
+        if (range.atEnd() && isCSSWideKeyword(id))
             return id;
     }
 
@@ -190,7 +191,7 @@ RefPtr<CSSCustomPropertyValue> CSSVariableParser::parseDeclarationValue(const At
     if (type == CSSValueInvalid)
         return nullptr;
     if (type == CSSValueInternalVariableValue)
-        return CSSCustomPropertyValue::createUnresolved(variableName, CSSVariableReferenceValue::create(range));
+        return CSSCustomPropertyValue::createUnresolved(variableName, CSSVariableReferenceValue::create(range, parserContext));
     return CSSCustomPropertyValue::createUnresolved(variableName, type);
 }
 

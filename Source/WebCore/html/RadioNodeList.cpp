@@ -42,7 +42,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RadioNodeList);
 RadioNodeList::RadioNodeList(ContainerNode& rootNode, const AtomString& name)
     : CachedLiveNodeList(rootNode, InvalidateForFormControls)
     , m_name(name)
-    , m_isRootedAtDocument(is<HTMLFormElement>(rootNode))
+    , m_isRootedAtTreeScope(is<HTMLFormElement>(rootNode))
 {
 }
 

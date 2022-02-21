@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ public:
     static constexpr bool needsDestruction = true;
 
     template<typename CellType, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
         return vm.callbackConstructorSpace<mode>();
     }
@@ -46,7 +46,7 @@ public:
     static JSCallbackConstructor* create(JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, JSObjectCallAsConstructorCallback callback) 
     {
         VM& vm = getVM(globalObject);
-        JSCallbackConstructor* constructor = new (NotNull, allocateCell<JSCallbackConstructor>(vm.heap)) JSCallbackConstructor(globalObject, structure, classRef, callback);
+        JSCallbackConstructor* constructor = new (NotNull, allocateCell<JSCallbackConstructor>(vm)) JSCallbackConstructor(globalObject, structure, classRef, callback);
         constructor->finishCreation(globalObject, classRef);
         return constructor;
     }

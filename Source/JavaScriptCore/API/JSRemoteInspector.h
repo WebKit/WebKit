@@ -30,6 +30,7 @@
 #include <JavaScriptCore/WebKitAvailability.h>
 
 #if defined(WIN32) || defined(_WIN32)
+#include <stdint.h>
 typedef int JSProcessID;
 #else
 #include <unistd.h>

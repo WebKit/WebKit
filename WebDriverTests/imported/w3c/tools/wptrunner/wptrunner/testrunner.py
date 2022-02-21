@@ -1,13 +1,11 @@
-from __future__ import unicode_literals
-
-import multiprocessing
 import threading
 import traceback
-from six.moves.queue import Empty
+from queue import Empty
 from collections import namedtuple
-from multiprocessing import Process, current_process, Queue
 
 from mozlog import structuredlog, capture
+
+from . import mpcontext
 
 # Special value used as a sentinal in various commands
 Stop = object()
@@ -24,30 +22,12 @@ def release_mozlog_lock():
         pass
 
 
-class MessageLogger(object):
-    def __init__(self, message_func):
-        self.send_message = message_func
+class LogMessageHandler:
+    def __init__(self, send_message):
+        self.send_message = send_message
 
-    def _log_data(self, action, **kwargs):
-        self.send_message("log", action, kwargs)
-
-    def process_output(self, process, data, command):
-        self._log_data("process_output", process=process, data=data, command=command)
-
-
-def _log_func(level_name):
-    def log(self, message):
-        self._log_data(level_name.lower(), message=message)
-    log.__doc__ = """Log a message with level %s
-
-:param message: The string message to log
-""" % level_name
-    log.__name__ = str(level_name).lower()
-    return log
-
-# Create all the methods on StructuredLog for debug levels
-for level_name in structuredlog.log_levels:
-    setattr(MessageLogger, level_name.lower(), _log_func(level_name))
+    def __call__(self, data):
+        self.send_message("log", data)
 
 
 class TestRunner(object):
@@ -68,7 +48,7 @@ class TestRunner(object):
         self.result_queue = result_queue
 
         self.executor = executor
-        self.name = current_process().name
+        self.name = mpcontext.get_context().current_process().name
         self.logger = logger
 
     def __enter__(self):
@@ -98,7 +78,12 @@ class TestRunner(object):
     def run(self):
         """Main loop accepting commands over the pipe and triggering
         the associated methods"""
-        self.setup()
+        try:
+            self.setup()
+        except Exception:
+            self.logger.warning("An error occured during executor setup:\n%s" %
+                                traceback.format_exc())
+            raise
         commands = {"run_test": self.run_test,
                     "reset": self.reset,
                     "stop": self.stop,
@@ -153,7 +138,9 @@ def start_runner(runner_command_queue, runner_result_queue,
     # in the logging module unlocked
     release_mozlog_lock()
 
-    logger = MessageLogger(send_message)
+    proc_name = mpcontext.get_context().current_process().name
+    logger = structuredlog.StructuredLogger(proc_name)
+    logger.add_handler(LogMessageHandler(send_message))
 
     with capture.CaptureIO(logger, capture_stdio):
         try:
@@ -265,7 +252,7 @@ class BrowserManager(object):
 
 class _RunnerManagerState(object):
     before_init = namedtuple("before_init", [])
-    initializing = namedtuple("initializing_browser",
+    initializing = namedtuple("initializing",
                               ["test", "test_group", "group_metadata", "failure_count"])
     running = namedtuple("running", ["test", "test_group", "group_metadata"])
     restarting = namedtuple("restarting", ["test", "test_group", "group_metadata"])
@@ -306,9 +293,11 @@ class TestRunnerManager(threading.Thread):
         self.executor_cls = executor_cls
         self.executor_kwargs = executor_kwargs
 
+        mp = mpcontext.get_context()
+
         # Flags used to shut down this thread if we get a sigint
         self.parent_stop_flag = stop_flag
-        self.child_stop_flag = multiprocessing.Event()
+        self.child_stop_flag = mp.Event()
 
         self.rerun = rerun
         self.run_count = 0
@@ -321,8 +310,8 @@ class TestRunnerManager(threading.Thread):
         assert recording is not None
         self.recording = recording
 
-        self.command_queue = Queue()
-        self.remote_queue = Queue()
+        self.command_queue = mp.Queue()
+        self.remote_queue = mp.Queue()
 
         self.test_runner_proc = None
 
@@ -332,6 +321,7 @@ class TestRunnerManager(threading.Thread):
 
         self.test_count = 0
         self.unexpected_count = 0
+        self.unexpected_pass_count = 0
 
         # This may not really be what we want
         self.daemon = True
@@ -354,7 +344,8 @@ class TestRunnerManager(threading.Thread):
         spins."""
         self.recording.set(["testrunner", "startup"])
         self.logger = structuredlog.StructuredLogger(self.suite_name)
-        with self.browser_cls(self.logger, **self.browser_kwargs) as browser:
+        with self.browser_cls(self.logger, remote_queue=self.command_queue,
+                              **self.browser_kwargs) as browser:
             self.browser = BrowserManager(self.logger,
                                           browser,
                                           self.command_queue,
@@ -494,6 +485,7 @@ class TestRunnerManager(threading.Thread):
                                                    self.state.failure_count + 1)
         else:
             self.executor_kwargs["group_metadata"] = self.state.group_metadata
+            self.executor_kwargs["browser_settings"] = self.browser.browser_settings
             self.start_test_runner()
 
     def start_test_runner(self):
@@ -514,9 +506,11 @@ class TestRunnerManager(threading.Thread):
                 executor_browser_kwargs,
                 self.capture_stdio,
                 self.child_stop_flag)
-        self.test_runner_proc = Process(target=start_runner,
-                                        args=args,
-                                        name="TestRunner-%i" % self.manager_number)
+
+        mp = mpcontext.get_context()
+        self.test_runner_proc = mp.Process(target=start_runner,
+                                           args=args,
+                                           name="TestRunner-%i" % self.manager_number)
         self.test_runner_proc.start()
         self.logger.debug("Test runner started")
         # Now we wait for either an init_succeeded event or an init_failed event
@@ -605,6 +599,7 @@ class TestRunnerManager(threading.Thread):
             return
         if self.timer is not None:
             self.timer.cancel()
+
         # Write the result of each subtest
         file_result, test_results = results
         subtest_unexpected = False
@@ -625,6 +620,11 @@ class TestRunnerManager(threading.Thread):
                 self.unexpected_count += 1
                 self.logger.debug("Unexpected count in this thread %i" % self.unexpected_count)
                 subtest_unexpected = True
+
+            is_unexpected_pass = is_unexpected and result.status == "PASS"
+            if is_unexpected_pass:
+                self.unexpected_pass_count += 1
+
             self.logger.test_status(test.id,
                                     result.name,
                                     result.status,
@@ -632,6 +632,17 @@ class TestRunnerManager(threading.Thread):
                                     expected=expected,
                                     known_intermittent=known_intermittent,
                                     stack=result.stack)
+
+        expected = test.expected()
+        known_intermittent = test.known_intermittent()
+        status = file_result.status
+
+        if self.browser.check_crash(test.id) and status != "CRASH":
+            if test.test_type == "crashtest" or status == "EXTERNAL-TIMEOUT":
+                self.logger.info("Found a crash dump file; changing status to CRASH")
+                status = "CRASH"
+            else:
+                self.logger.warning("Found a crash dump; should change status from %s to CRASH but this causes instability" % (status,))
 
         # We have a couple of status codes that are used internally, but not exposed to the
         # user. These are used to indicate that some possibly-broken state was reached
@@ -641,16 +652,7 @@ class TestRunnerManager(threading.Thread):
         # because the test didn't return a result after reaching the test-internal timeout
         status_subns = {"INTERNAL-ERROR": "ERROR",
                         "EXTERNAL-TIMEOUT": "TIMEOUT"}
-        expected = test.expected()
-        known_intermittent = test.known_intermittent()
-        status = status_subns.get(file_result.status, file_result.status)
-
-        if self.browser.check_crash(test.id) and status != "CRASH":
-            if test.test_type == "crashtest":
-                self.logger.info("Found a crash dump file; changing status to CRASH")
-                status = "CRASH"
-            else:
-                self.logger.warning("Found a crash dump; should change status from %s to CRASH but this causes instability" % (status,))
+        status = status_subns.get(status, status)
 
         self.test_count += 1
         is_unexpected = expected != status and status not in known_intermittent
@@ -658,9 +660,13 @@ class TestRunnerManager(threading.Thread):
             self.unexpected_count += 1
             self.logger.debug("Unexpected count in this thread %i" % self.unexpected_count)
 
+        is_unexpected_pass = is_unexpected and status == "OK"
+        if is_unexpected_pass:
+            self.unexpected_pass_count += 1
+
         if "assertion_count" in file_result.extra:
-            assertion_count = file_result.extra.pop("assertion_count")
-            if assertion_count > 0:
+            assertion_count = file_result.extra["assertion_count"]
+            if assertion_count is not None and assertion_count > 0:
                 self.logger.assertion_count(test.id,
                                             int(assertion_count),
                                             test.min_assertion_count,
@@ -722,8 +728,8 @@ class TestRunnerManager(threading.Thread):
         self.stop_runner()
         return RunnerManagerState.initializing(self.state.test, self.state.test_group, self.state.group_metadata, 0)
 
-    def log(self, action, kwargs):
-        getattr(self.logger, action)(**kwargs)
+    def log(self, data):
+        self.logger.log_raw(data)
 
     def error(self, message):
         self.logger.error(message)
@@ -761,20 +767,26 @@ class TestRunnerManager(threading.Thread):
         self.logger.debug("waiting for runner process to end")
         self.test_runner_proc.join(10)
         self.logger.debug("After join")
+        mp = mpcontext.get_context()
         if self.test_runner_proc.is_alive():
             # This might leak a file handle from the queue
             self.logger.warning("Forcibly terminating runner process")
             self.test_runner_proc.terminate()
+            self.logger.debug("After terminating runner process")
 
             # Multiprocessing queues are backed by operating system pipes. If
             # the pipe in the child process had buffered data at the time of
             # forced termination, the queue is no longer in a usable state
             # (subsequent attempts to retrieve items may block indefinitely).
             # Discard the potentially-corrupted queue and create a new one.
+            self.logger.debug("Recreating command queue")
+            self.command_queue.cancel_join_thread()
             self.command_queue.close()
-            self.command_queue = Queue()
+            self.command_queue = mp.Queue()
+            self.logger.debug("Recreating remote queue")
+            self.remote_queue.cancel_join_thread()
             self.remote_queue.close()
-            self.remote_queue = Queue()
+            self.remote_queue = mp.Queue()
         else:
             self.logger.debug("Runner process exited with code %i" % self.test_runner_proc.exitcode)
 
@@ -915,3 +927,6 @@ class ManagerGroup(object):
 
     def unexpected_count(self):
         return sum(manager.unexpected_count for manager in self.pool)
+
+    def unexpected_pass_count(self):
+        return sum(manager.unexpected_pass_count for manager in self.pool)

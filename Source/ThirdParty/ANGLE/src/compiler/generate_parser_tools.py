@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Copyright 2019 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -148,12 +148,12 @@ def generate_parser(basename, generate_header):
     # Call flex and bison to generate the lexer and parser.
     flex_result = run_flex(basename)
     if flex_result != 0:
-        print 'Failed to run flex. Error ' + str(flex_result)
+        print('Failed to run flex. Error %s' % str(flex_result))
         return 1
 
     bison_result = run_bison(basename, generate_header)
     if bison_result != 0:
-        print 'Failed to run bison. Error ' + str(bison_result)
+        print('Failed to run bison. Error %s' % str(bison_result))
         return 2
 
     return 0

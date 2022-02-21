@@ -208,7 +208,7 @@ void OfflineAudioContext::finishedRendering(bool didRendering)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    auto uninitializeOnExit = WTF::makeScopeExit([this] {
+    auto uninitializeOnExit = makeScopeExit([this] {
         uninitialize();
         clear();
     });

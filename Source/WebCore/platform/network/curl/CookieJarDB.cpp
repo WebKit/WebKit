@@ -488,6 +488,18 @@ bool CookieJarDB::hasHttpOnlyCookie(const String& name, const String& domain, co
     return statement.step() == SQLITE_ROW;
 }
 
+static bool checkSecureCookie(const Cookie& cookie)
+{
+    if (cookie.name.startsWith("__Secure-"_s) && !cookie.secure)
+        return false;
+
+    // Cookies for __Host must have the Secure attribute, path explicitly set to "/", and no domain attribute
+    if (cookie.name.startsWith("__Host-"_s) && (!cookie.secure || cookie.path != "/"_s || !cookie.domain.isEmpty()))
+        return false;
+
+    return true;
+}
+
 bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const URL& firstParty, const URL& url, CookieJarDB::Source source)
 {
 #if ENABLE(PUBLIC_SUFFIX_LIST)
@@ -511,7 +523,7 @@ bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const URL& firstParty, c
 bool CookieJarDB::setCookie(const Cookie& cookie)
 {
     auto expires = cookie.expires.value_or(0.0);
-    if (!cookie.session && MonotonicTime::fromRawSeconds(expires / WTF::msPerSecond) <= MonotonicTime::now())
+    if (!cookie.session && MonotonicTime::fromRawSeconds(expires / msPerSecond) <= MonotonicTime::now())
         return deleteCookieInternal(cookie.name, cookie.domain, cookie.path);
 
     auto& statement = preparedStatement(SET_COOKIE_SQL);
@@ -538,7 +550,10 @@ bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String&
         return false;
 
     auto cookie = CookieUtil::parseCookieHeader(body);
-    if (!cookie)
+    if (!cookie || (cookie->name.isEmpty() && cookie->value.isEmpty()))
+        return false;
+
+    if (!checkSecureCookie(*cookie))
         return false;
 
     if (cookie->domain.isEmpty())
@@ -553,7 +568,7 @@ bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String&
     if (cappedLifetime && cookie->expires) {
         ASSERT(*cappedLifetime >= 0_s);
         auto cappedExpires = WallTime::now() + *cappedLifetime;
-        if (cappedExpires < WallTime::fromRawSeconds(*cookie->expires / WTF::msPerSecond))
+        if (cappedExpires < WallTime::fromRawSeconds(*cookie->expires / msPerSecond))
             cookie->expires = cappedExpires.secondsSinceEpoch().milliseconds();
     }
 

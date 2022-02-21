@@ -63,7 +63,7 @@ class PacketRouter : public PacingController::PacketSender {
   // Send REMB feedback.
   void SendRemb(int64_t bitrate_bps, std::vector<uint32_t> ssrcs);
 
-  // Sends |packets| in one or more IP packets.
+  // Sends `packets` in one or more IP packets.
   void SendCombinedRtcpPacket(
       std::vector<std::unique_ptr<rtcp::RtcpPacket>> packets);
 

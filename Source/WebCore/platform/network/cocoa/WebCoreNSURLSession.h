@@ -30,6 +30,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/Ref.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -49,6 +50,8 @@ class PlatformMediaResourceLoader;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
+class FragmentedSharedBuffer;
+class SharedBufferDataView;
 class WebCoreNSURLSessionDataTaskClient;
 enum class ShouldContinuePolicyCheck : bool;
 }
@@ -122,29 +125,29 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     RefPtr<WebCore::PlatformMediaResource> _resource;
     RetainPtr<NSURLResponse> _response;
     NSUInteger _taskIdentifier;
-    NSURLRequest *_originalRequest;
-    NSURLRequest *_currentRequest;
+    RetainPtr<NSURLRequest> _originalRequest;
+    RetainPtr<NSURLRequest> _currentRequest;
     int64_t _countOfBytesReceived;
     int64_t _countOfBytesSent;
     int64_t _countOfBytesExpectedToSend;
     int64_t _countOfBytesExpectedToReceive;
     NSURLSessionTaskState _state;
-    NSError *_error;
-    NSString *_taskDescription;
+    RetainPtr<NSError> _error;
+    RetainPtr<NSString> _taskDescription;
     float _priority;
 }
 
 @property NSUInteger taskIdentifier;
-@property (copy) NSURLRequest *originalRequest;
-@property (copy) NSURLRequest *currentRequest;
-@property (readonly, copy) NSURLResponse *response;
-@property int64_t countOfBytesReceived;
+@property (nullable, readonly, copy) NSURLRequest *originalRequest;
+@property (nullable, readonly, copy) NSURLRequest *currentRequest;
+@property (nullable, readonly, copy) NSURLResponse *response;
+@property (assign, atomic) int64_t countOfBytesReceived;
 @property int64_t countOfBytesSent;
 @property int64_t countOfBytesExpectedToSend;
 @property int64_t countOfBytesExpectedToReceive;
 @property NSURLSessionTaskState state;
-@property (copy) NSError *error;
-@property (copy) NSString *taskDescription;
+@property (nullable, readonly, copy) NSError *error;
+@property (nullable, copy) NSString *taskDescription;
 @property float priority;
 - (void)cancel;
 - (void)suspend;
@@ -155,7 +158,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource sentBytes:(unsigned long long)bytesSent totalBytesToBeSent:(unsigned long long)totalBytesToBeSent;
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedResponse:(const WebCore::ResourceResponse&)response completionHandler:(CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&)completionHandler;
 - (BOOL)resource:(nullable WebCore::PlatformMediaResource*)resource shouldCacheResponse:(const WebCore::ResourceResponse&)response;
-- (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedData:(const uint8_t*)data length:(int)length;
+- (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedData:(RetainPtr<NSData>&&)data;
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedRedirect:(const WebCore::ResourceResponse&)response request:(WebCore::ResourceRequest&&)request completionHandler:(CompletionHandler<void(WebCore::ResourceRequest&&)>&&)completionHandler;
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource accessControlCheckFailedWithError:(const WebCore::ResourceError&)error;
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource loadFailedWithError:(const WebCore::ResourceError&)error;

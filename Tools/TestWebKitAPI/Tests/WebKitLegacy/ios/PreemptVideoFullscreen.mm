@@ -27,6 +27,7 @@
 
 #if HAVE(UIWEBVIEW)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import <UIKit/UIKit.h>
 #import <WebKit/DOMHTMLMediaElement.h>
@@ -35,7 +36,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 
-static bool didFinishLoad = false;
 static bool gotMainFrame = false;
 static RetainPtr<WebFrame> mainFrame;
 static int countOfVideoElementsCanPlay = 0;

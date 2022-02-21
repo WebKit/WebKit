@@ -30,6 +30,8 @@
 #include "config.h"
 #include "EvalCodeBlock.h"
 
+#include "JSCellInlines.h"
+
 namespace JSC {
 
 const ClassInfo EvalCodeBlock::s_info = {

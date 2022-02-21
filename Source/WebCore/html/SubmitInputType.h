@@ -41,7 +41,7 @@ public:
 
 private:
     const AtomString& formControlType() const override;
-    bool appendFormData(DOMFormData&, bool) const override;
+    bool appendFormData(DOMFormData&) const override;
     bool supportsRequired() const override;
     void handleDOMActivateEvent(Event&) override;
     bool canBeSuccessfulSubmitButton() override;

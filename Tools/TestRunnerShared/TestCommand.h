@@ -35,8 +35,10 @@ struct TestCommand {
     std::string pathOrURL;
     std::filesystem::path absolutePath;
     std::string expectedPixelHash;
+    std::string selfComparisonHeader;
     WTF::Seconds timeout;
     bool shouldDumpPixels { false };
+    bool forceDumpPixels { false };
     bool dumpJSConsoleLogInStdErr { false };
 };
 

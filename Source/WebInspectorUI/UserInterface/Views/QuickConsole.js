@@ -33,7 +33,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
         this._toggleOrFocusKeyboardShortcut.implicitlyPreventsDefault = false;
         this._keyboardShortcutDisabled = false;
 
-        this._useExecutionContextOfInspectedNode = InspectorBackend.hasDomain("DOM");
+        this._useExecutionContextOfInspectedNode = this._canUseExecutionContextOfInspectedNode();
         this._restoreSelectedExecutionContextForFrame = null;
 
         this.element.classList.add("quick-console");
@@ -243,7 +243,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
         let activeExecutionContext = WI.runtimeManager.activeExecutionContext;
 
-        if (InspectorBackend.hasDomain("DOM")) {
+        if (this._canUseExecutionContextOfInspectedNode()) {
             let executionContextForInspectedNode = this._resolveDesiredActiveExecutionContext(true);
             contextMenu.appendCheckboxItem(WI.UIString("Auto \u2014 %s").format(this._displayNameForExecutionContext(executionContextForInspectedNode, maxLength)), () => {
                 this._useExecutionContextOfInspectedNode = true;
@@ -356,7 +356,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
         if (WI.runtimeManager.activeExecutionContext.type !== WI.ExecutionContext.Type.Internal)
             return;
 
-        this._useExecutionContextOfInspectedNode = InspectorBackend.hasDomain("DOM");
+        this._useExecutionContextOfInspectedNode = this._canUseExecutionContextOfInspectedNode();
         this._setActiveExecutionContext(this._resolveDesiredActiveExecutionContext());
     }
 
@@ -388,20 +388,24 @@ WI.QuickConsole = class QuickConsole extends WI.View
             return;
         }
 
-        // If this frame is navigating and it is selected in the UI we want to reselect its new item after navigation.
-        if (committingProvisionalLoad && !this._restoreSelectedExecutionContextForFrame) {
+        // If this frame is navigating and it is selected in the UI we want to reselect its new item after navigation,
+        // however when `_useExecutionContextOfInspectedNode` is true, we should keep the execution context set to `Auto`.
+        if (committingProvisionalLoad && !this._restoreSelectedExecutionContextForFrame && !this._useExecutionContextOfInspectedNode) {
             this._restoreSelectedExecutionContextForFrame = event.target;
 
             // As a fail safe, if the frame never gets an execution context, clear the restore value.
             setTimeout(() => {
-                if (this._restoreSelectedExecutionContextForFrame)
-                    this._updateActiveExecutionContextDisplay();
+                if (!this._restoreSelectedExecutionContextForFrame)
+                    return;
                 this._restoreSelectedExecutionContextForFrame = null;
-            }, 10);
+
+                this._useExecutionContextOfInspectedNode = this._canUseExecutionContextOfInspectedNode();
+                this._setActiveExecutionContext(this._resolveDesiredActiveExecutionContext());
+            }, 100);
             return;
         }
 
-        this._useExecutionContextOfInspectedNode = InspectorBackend.hasDomain("DOM");
+        this._useExecutionContextOfInspectedNode = this._canUseExecutionContextOfInspectedNode();
         this._setActiveExecutionContext(this._resolveDesiredActiveExecutionContext());
     }
 
@@ -428,7 +432,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
             return;
         }
 
-        this._useExecutionContextOfInspectedNode = InspectorBackend.hasDomain("DOM");
+        this._useExecutionContextOfInspectedNode = this._canUseExecutionContextOfInspectedNode();
         this._setActiveExecutionContext(this._resolveDesiredActiveExecutionContext());
     }
 
@@ -438,6 +442,11 @@ WI.QuickConsole = class QuickConsole extends WI.View
             return;
 
         this._setActiveExecutionContext(this._resolveDesiredActiveExecutionContext());
+    }
+
+    _canUseExecutionContextOfInspectedNode()
+    {
+        return InspectorBackend.hasDomain("DOM");
     }
 
     _toggleOrFocus(event)

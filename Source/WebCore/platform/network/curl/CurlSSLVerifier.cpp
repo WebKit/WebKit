@@ -44,7 +44,7 @@ CurlSSLVerifier::CurlSSLVerifier(void* sslCtx)
     SSL_CTX_set_verify(ctx, SSL_CTX_get_verify_mode(ctx), verifyCallback);
 
 #if defined(LIBRESSL_VERSION_NUMBER)
-    if (auto data = WTF::get_if<CertificateInfo::Certificate>(sslHandle.getCACertInfo()))
+    if (auto data = std::get_if<CertificateInfo::Certificate>(&sslHandle.getCACertInfo()))
         SSL_CTX_load_verify_mem(ctx, static_cast<void*>(const_cast<uint8_t*>(data->data())), data->size());
 #endif
 

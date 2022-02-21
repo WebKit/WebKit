@@ -7,24 +7,28 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
-function isFilteringEnabled()
+async function isFilteringEnabled()
 {
+    let resolve, reject;
+    const promise = new Promise((res, rej) => { resolve = res; reject = rej; });
+    setTimeout(() => { reject("Test timed out"); }, 5000);
+
     var pc = new RTCPeerConnection();
     pc.createDataChannel("");
 
     var candidates = [];
-    return new Promise((resolve, reject) => {
-        pc.onicecandidate = (event) => {
-            if (event.candidate === null) {
-                resolve(!candidates.length);
-                return;
-            }
+    pc.onicecandidate = (event) => {
+        if (event.candidate === null) {
+            resolve(!candidates.length);
+            return;
+        }
+        if (event.candidate.candidate.indexOf('.local') === -1)
             candidates.push(event.candidate.candidate);
-        };
-        pc.createOffer().then((offer) => {
-            pc.setLocalDescription(offer);
-        });
-    });
+    };
+
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    return promise;
 }
 
 function endTest(message)

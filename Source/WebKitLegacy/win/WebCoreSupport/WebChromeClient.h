@@ -85,7 +85,7 @@ public:
     bool canRunBeforeUnloadConfirmPanel() final;
     bool runBeforeUnloadConfirmPanel(const WTF::String& message, WebCore::Frame&) final;
 
-    void closeWindowSoon() final;
+    void closeWindow() final;
 
     void runJavaScriptAlert(WebCore::Frame&, const WTF::String&) final;
     bool runJavaScriptConfirm(WebCore::Frame&, const WTF::String&) final;
@@ -182,6 +182,12 @@ public:
     RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>&) final;
 
     void didFinishLoadingImageForElement(WebCore::HTMLImageElement&) final;
+
+    void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&);
+
+    void classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<WebCore::ModalContainerControlType>&&)>&&) final;
+
+    void decidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType>, CompletionHandler<void(WebCore::ModalContainerDecision)>&&) final;
 
 private:
     COMPtr<IWebUIDelegate> uiDelegate();

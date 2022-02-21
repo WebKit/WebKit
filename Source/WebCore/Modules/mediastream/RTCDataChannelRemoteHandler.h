@@ -38,7 +38,8 @@ namespace WebCore {
 
 class RTCDataChannelHandlerClient;
 class RTCDataChannelRemoteHandlerConnection;
-class SharedBuffer;
+class RTCError;
+class FragmentedSharedBuffer;
 
 class RTCDataChannelRemoteHandler final : public RTCDataChannelHandler, public CanMakeWeakPtr<RTCDataChannelRemoteHandler> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -50,7 +51,7 @@ public:
     WEBCORE_EXPORT void didChangeReadyState(RTCDataChannelState);
     WEBCORE_EXPORT void didReceiveStringData(String&&);
     WEBCORE_EXPORT void didReceiveRawData(const uint8_t*, size_t);
-    WEBCORE_EXPORT void didDetectError();
+    WEBCORE_EXPORT void didDetectError(Ref<RTCError>&&);
     WEBCORE_EXPORT void bufferedAmountIsDecreasing(size_t);
 
     WEBCORE_EXPORT void readyToSend();
@@ -72,7 +73,7 @@ private:
 
     struct Message {
         bool isRaw { false };
-        Ref<SharedBuffer> buffer;
+        Ref<FragmentedSharedBuffer> buffer;
     };
     Vector<Message> m_pendingMessages;
     bool m_isPendingClose { false };

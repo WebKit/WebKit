@@ -122,7 +122,8 @@
 
         // Allow fetches for resources that use a registered custom URL scheme.
         if (_allowedURLSchemesForCSP && [self.mainResourceURLsForCSP containsObject:requestURL]) {
-            NSString *stringForCSPPolicy = [NSString stringWithFormat:@"connect-src * %@:", [_allowedURLSchemesForCSP.get().allObjects componentsJoinedByString:@": "]];
+            NSString *listOfCustomProtocols = [NSString stringWithFormat:@"%@:", [_allowedURLSchemesForCSP.get().allObjects componentsJoinedByString:@": "]];
+            NSString *stringForCSPPolicy = [NSString stringWithFormat:@"connect-src * %@; img-src * file: blob: resource: %@", listOfCustomProtocols, listOfCustomProtocols];
             [headerFields setObject:stringForCSPPolicy forKey:@"Content-Security-Policy"];
         }
 

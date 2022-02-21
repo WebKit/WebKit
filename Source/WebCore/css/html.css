@@ -299,7 +299,7 @@ ol {
 
 li {
     display: list-item;
-    text-align: -webkit-match-parent;
+    text-align: match-parent;
 }
 
 /* FIXME: this should also match ::before::marker and ::after::marker but we don't support
@@ -377,11 +377,11 @@ button {
 }
 
 /* Form controls don't go vertical. */
-input, textarea, keygen, select, button, meter, progress {
+input, textarea, select, button, meter, progress {
     -webkit-writing-mode: horizontal-tb !important;
 }
 
-input, textarea, keygen, select, button {
+input, textarea, select, button {
     margin: 0__qem;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     font: -webkit-small-control;
@@ -447,13 +447,6 @@ input::-webkit-textfield-decoration-container {
     display: flex;
     align-items: center;
     content: none !important;
-}
-
-input::-webkit-clear-button {
-    -webkit-appearance: searchfield-cancel-button;
-    display: inline-block;
-    flex: none;
-    margin-left: 2px;
 }
 
 input[type="search"]::-webkit-search-cancel-button {
@@ -705,7 +698,6 @@ input::-webkit-list-button {
     -webkit-user-select: none;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     width: 11px;
-    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 71 42"><path fill="-apple-system-blue" d="M35.48 38.029c1.424 0 2.645-.529 3.743-1.668L63.352 11.987c.854-.895 1.343-1.994 1.343-3.296C64.695 6.046 62.579 3.971 59.975 3.971c-1.261 0-2.482.529-3.418 1.465L35.52 26.839 14.443 5.436C13.507 4.5 12.327 3.971 10.984 3.971c-2.604 0-4.679 2.075-4.679 4.72 0 1.302.448 2.401 1.343 3.296l24.129 24.373c1.139 1.139 2.319 1.668 3.703 1.668z"/></svg>');
     /* Make it easier to hit the button on iOS */
     padding: 7px;
     margin: -7px;
@@ -716,12 +708,8 @@ input::-webkit-list-button {
 }
 #endif
 
-keygen, select {
+select {
     border-radius: 5px;
-}
-
-keygen::-webkit-keygen-select {
-    margin: 0px;
 }
 
 textarea {
@@ -767,10 +755,6 @@ input::placeholder {
     line-height: initial;
 }
 
-input[type="password"] {
-    -webkit-text-security: disc !important;
-}
-
 input:is([type="hidden"], [type="image"], [type="file"]) {
     -webkit-appearance: initial;
     padding: initial;
@@ -784,17 +768,21 @@ input[type="file"] {
     text-align: start !important;
 }
 
+input:-webkit-autofill-and-obscured {
+    -webkit-text-security: disc !important;
+}
+
 input:-webkit-autofill-strong-password {
     -webkit-user-select: none !important;
 }
 
 input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable {
-    -webkit-text-security: none !important;
+    input-security: none !important;
     cursor: default !important;
     font-family: monospace;
 }
 
-input:-webkit-autofill, input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable {
+input:-webkit-autofill, input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable, input:-webkit-autofill-and-obscured {
     background-color: #FAFFBD !important;
     background-image: none !important;
     color: #000000 !important;
@@ -919,7 +907,7 @@ input[readonly], textarea[readonly] {
 
 input:is([type="button"], [type="submit"], [type="reset"]):disabled,
 input[type="file"]:disabled::file-selector-button, button:disabled,
-select:disabled, keygen:disabled, optgroup:disabled, option:disabled,
+select:disabled, optgroup:disabled, option:disabled,
 select[disabled]>option {
     color: GrayText;
 }
@@ -1189,7 +1177,6 @@ progress {
 }
 
 progress::-webkit-progress-inner-element {
-    -webkit-appearance: inherit;
     box-sizing: inherit;
     height: 100%;
     width: 100%;
@@ -1267,7 +1254,7 @@ nobr {
 
 /* states */
 
-:-internal-direct-focus {
+:focus-visible {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     outline: auto 3px -webkit-focus-ring-color;
 #else
@@ -1281,7 +1268,7 @@ html:focus, body:focus, input[readonly]:focus, applet:focus, embed:focus, iframe
 }
 
 #if !defined(WTF_PLATFORM_IOS_FAMILY) || !WTF_PLATFORM_IOS_FAMILY
-input:focus, textarea:focus, keygen:focus, select:focus {
+input:focus, textarea:focus, select:focus {
     outline-offset: -2px;
 }
 #endif
@@ -1309,7 +1296,7 @@ ruby, rt {
 
 rt {
     line-height: normal;
-    -webkit-text-emphasis: none;
+    text-emphasis: none;
 }
 
 ruby > rt {
@@ -1404,4 +1391,9 @@ attachment {
 /* Default support for "Smart Invert" where all content color except media is inverted. */ 
 @media (inverted-colors) {
     img, picture, video { filter: invert(100%); } /* Images and videos double-inverted. */
+}
+
+/* https://drafts.csswg.org/css-text-decor-4/#text-decoration-skipping */
+ins, del {
+    text-decoration-skip: none;
 }

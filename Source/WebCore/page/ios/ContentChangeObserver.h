@@ -74,7 +74,7 @@ public:
 
     void willNotProceedWithFixedObservationTimeWindow();
 
-    void setHiddenTouchTarget(Element& targetElement) { m_hiddenTouchTargetElement = makeWeakPtr(targetElement); }
+    void setHiddenTouchTarget(Element& targetElement) { m_hiddenTouchTargetElement = targetElement; }
     void resetHiddenTouchTarget() { m_hiddenTouchTargetElement = { }; }
     Element* hiddenTouchTarget() const { return m_hiddenTouchTargetElement.get(); }
 

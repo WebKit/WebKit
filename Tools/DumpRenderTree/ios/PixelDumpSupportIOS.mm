@@ -81,6 +81,8 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     if (!bitmapContext)
         return nullptr;
 
+    bitmapContext->setScaleFactor(deviceScaleFactor);
+
     CGContextDrawImage(bitmapContext->cgContext(), CGRectMake(0, 0, bufferWidth, bufferHeight), cgImage.get());
     return bitmapContext;
 }

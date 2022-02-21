@@ -1,4 +1,6 @@
 
+PASS Response with no Content-Type: compileStreaming
+PASS Response with no Content-Type: instantiateStreaming
 PASS Response with Content-Type "": compileStreaming
 PASS Response with Content-Type "": instantiateStreaming
 PASS Response with Content-Type "application/javascript": compileStreaming

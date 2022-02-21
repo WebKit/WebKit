@@ -6,7 +6,4 @@ info: The Number constructor has the property "MIN_VALUE"
 es5id: 15.7.3_A3
 description: Checking existence of the property "MIN_VALUE"
 ---*/
-
-if (!Number.hasOwnProperty("MIN_VALUE")) {
-  throw new Test262Error('#1: The Number constructor has the property "MIN_VALUE"');
-}
+assert(Number.hasOwnProperty("MIN_VALUE"), 'Number.hasOwnProperty("MIN_VALUE") must return true');

@@ -34,47 +34,47 @@
 
 PAS_BEGIN_EXTERN_C;
 
-PAS_API pas_segregated_global_size_directory*
-pas_heap_ensure_size_directory_for_count_slow(
+PAS_API pas_segregated_size_directory*
+pas_heap_ensure_size_directory_for_size_slow(
     pas_heap* heap,
-    size_t count,
+    size_t size,
     size_t alignment,
-    pas_count_lookup_mode force_count_lookup,
+    pas_size_lookup_mode force_size_lookup,
     pas_heap_config* config,
     unsigned* cached_index);
 
-static PAS_ALWAYS_INLINE pas_segregated_global_size_directory*
-pas_heap_ensure_size_directory_for_count(
+static PAS_ALWAYS_INLINE pas_segregated_size_directory*
+pas_heap_ensure_size_directory_for_size(
     pas_heap* heap,
-    size_t count,
+    size_t size,
     size_t alignment,
-    pas_count_lookup_mode force_count_lookup,
+    pas_size_lookup_mode force_size_lookup,
     pas_heap_config config,
     unsigned* cached_index,
     pas_allocator_counts* counts)
 {
     static const bool verbose = false;
 
-    pas_segregated_global_size_directory* result;
+    pas_segregated_size_directory* result;
 
     PAS_UNUSED_PARAM(counts);
     
     if (verbose) {
-        pas_log("%p: getting directory with count = %zu, alignment = %zu.\n",
-                heap, count, alignment);
+        pas_log("%p: getting directory with size = %zu, alignment = %zu.\n",
+                heap, size, alignment);
     }
     
-    result = pas_segregated_heap_size_directory_for_count(
-        &heap->segregated_heap, count, config, cached_index);
-    if (result && pas_segregated_global_size_directory_alignment(result) >= alignment)
+    result = pas_segregated_heap_size_directory_for_size(
+        &heap->segregated_heap, size, config, cached_index);
+    if (result && pas_segregated_size_directory_alignment(result) >= alignment)
         return result;
 
 #if PAS_ENABLE_TESTING
     counts->slow_paths++;
 #endif /* PAS_ENABLE_TESTING */
     
-    return pas_heap_ensure_size_directory_for_count_slow(
-        heap, count, alignment, force_count_lookup, config.config_ptr, cached_index);
+    return pas_heap_ensure_size_directory_for_size_slow(
+        heap, size, alignment, force_size_lookup, config.config_ptr, cached_index);
 }
 
 PAS_END_EXTERN_C;

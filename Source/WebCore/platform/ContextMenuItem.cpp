@@ -153,6 +153,7 @@ bool isValidContextMenuAction(ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemTagOpenImageInNewWindow:
     case ContextMenuAction::ContextMenuItemTagDownloadImageToDisk:
     case ContextMenuAction::ContextMenuItemTagCopyImageToClipboard:
+    case ContextMenuAction::ContextMenuItemTagCopyCroppedImage:
 #if PLATFORM(GTK)
     case ContextMenuAction::ContextMenuItemTagCopyImageUrlToClipboard:
 #endif

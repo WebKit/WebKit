@@ -99,9 +99,16 @@ void CroppingWindowCapturer::OnCaptureResult(
     return;
   }
 
-  callback_->OnCaptureResult(
-      Result::SUCCESS,
-      CreateCroppedDesktopFrame(std::move(screen_frame), window_rect));
+  std::unique_ptr<DesktopFrame> cropped_frame =
+      CreateCroppedDesktopFrame(std::move(screen_frame), window_rect);
+
+  if (!cropped_frame) {
+    RTC_LOG(LS_WARNING) << "Window is outside of the captured display";
+    callback_->OnCaptureResult(Result::ERROR_TEMPORARY, nullptr);
+    return;
+  }
+
+  callback_->OnCaptureResult(Result::SUCCESS, std::move(cropped_frame));
 }
 
 bool CroppingWindowCapturer::IsOccluded(const DesktopVector& pos) {

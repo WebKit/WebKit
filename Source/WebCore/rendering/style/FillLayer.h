@@ -85,7 +85,7 @@ public:
     const LengthSize& sizeLength() const { return m_sizeLength; }
     FillSizeType sizeType() const { return static_cast<FillSizeType>(m_sizeType); }
     FillSize size() const { return FillSize(static_cast<FillSizeType>(m_sizeType), m_sizeLength); }
-    MaskSourceType maskSourceType() const { return static_cast<MaskSourceType>(m_maskSourceType); }
+    MaskMode maskMode() const { return static_cast<MaskMode>(m_maskMode); }
 
     const FillLayer* next() const { return m_next.get(); }
     FillLayer* next() { return m_next.get(); }
@@ -103,7 +103,7 @@ public:
     bool isCompositeSet() const { return m_compositeSet; }
     bool isBlendModeSet() const { return m_blendModeSet; }
     bool isSizeSet() const { return static_cast<FillSizeType>(m_sizeType) != FillSizeType::None; }
-    bool isMaskSourceTypeSet() const { return m_maskSourceTypeSet; }
+    bool isMaskModeSet() const { return m_maskModeSet; }
 
     bool isEmpty() const { return (sizeType() == FillSizeType::Size && m_sizeLength.isEmpty()) || sizeType() == FillSizeType::None; }
 
@@ -122,7 +122,7 @@ public:
     void setSizeType(FillSizeType b) { m_sizeType = static_cast<unsigned>(b); }
     void setSizeLength(LengthSize l) { m_sizeLength = l; }
     void setSize(FillSize f) { m_sizeType = static_cast<unsigned>(f.type); m_sizeLength = f.size; }
-    void setMaskSourceType(MaskSourceType m) { m_maskSourceType = static_cast<unsigned>(m); m_maskSourceTypeSet = true; }
+    void setMaskMode(MaskMode m) { m_maskMode = static_cast<unsigned>(m); m_maskModeSet = true; }
 
     void clearImage() { m_image = nullptr; m_imageSet = false; }
 
@@ -137,7 +137,7 @@ public:
     void clearComposite() { m_compositeSet = false; }
     void clearBlendMode() { m_blendModeSet = false; }
     void clearSize() { m_sizeType = static_cast<unsigned>(FillSizeType::None); }
-    void clearMaskSourceType() { m_maskSourceTypeSet = false; }
+    void clearMaskMode() { m_maskModeSet = false; }
 
     void setNext(RefPtr<FillLayer>&& next) { m_next = WTFMove(next); }
 
@@ -170,7 +170,7 @@ public:
     static Length initialFillXPosition(FillLayerType) { return Length(0.0f, LengthType::Percent); }
     static Length initialFillYPosition(FillLayerType) { return Length(0.0f, LengthType::Percent); }
     static StyleImage* initialFillImage(FillLayerType) { return nullptr; }
-    static MaskSourceType initialFillMaskSourceType(FillLayerType) { return MaskSourceType::Alpha; }
+    static MaskMode initialFillMaskMode(FillLayerType) { return MaskMode::MatchSource; }
 
 private:
     friend class RenderStyle;
@@ -192,14 +192,14 @@ private:
     LengthSize m_sizeLength;
 
     unsigned m_attachment : 2; // FillAttachment
-    unsigned m_clip : 2; // FillBox
+    unsigned m_clip : 3; // FillBox
     unsigned m_origin : 2; // FillBox
     unsigned m_repeatX : 3; // FillRepeat
     unsigned m_repeatY : 3; // FillRepeat
     unsigned m_composite : 4; // CompositeOperator
     unsigned m_sizeType : 2; // FillSizeType
     unsigned m_blendMode : 5; // BlendMode
-    unsigned m_maskSourceType : 1; // MaskSourceType
+    unsigned m_maskMode : 2; // MaskMode
 
     unsigned m_imageSet : 1;
     unsigned m_attachmentSet : 1;
@@ -215,7 +215,7 @@ private:
     unsigned m_backgroundYOrigin : 2; // Edge
     unsigned m_compositeSet : 1;
     unsigned m_blendModeSet : 1;
-    unsigned m_maskSourceTypeSet : 1;
+    unsigned m_maskModeSet : 1;
 
     unsigned m_type : 1; // FillLayerType
 

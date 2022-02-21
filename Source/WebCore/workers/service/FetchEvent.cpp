@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FetchEvent.h"
 
+#include "CachedResourceRequestInitiators.h"
 #include "JSDOMPromise.h"
 #include "JSFetchResponse.h"
 #include "Logging.h"
@@ -41,15 +42,27 @@ Ref<FetchEvent> FetchEvent::createForTesting(ScriptExecutionContext& context)
 {
     FetchEvent::Init init;
     init.request = FetchRequest::create(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable, { }), { }, { }, { });
-    return FetchEvent::create("fetch", WTFMove(init), Event::IsTrusted::Yes);
+    return FetchEvent::create(*context.globalObject(), "fetch", WTFMove(init), Event::IsTrusted::Yes);
 }
 
-FetchEvent::FetchEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+static inline Ref<DOMPromise> retrieveHandledPromise(JSC::JSGlobalObject& globalObject, RefPtr<DOMPromise>&& promise)
+{
+    if (promise)
+        return promise.releaseNonNull();
+
+    JSC::JSLockHolder lock(globalObject.vm());
+
+    auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(&globalObject);
+    auto deferredPromise = DeferredPromise::create(jsDOMGlobalObject);
+    return DOMPromise::create(jsDOMGlobalObject, *JSC::jsCast<JSC::JSPromise*>(deferredPromise->promise()));
+}
+
+FetchEvent::FetchEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted)
     : ExtendableEvent(type, initializer, isTrusted)
     , m_request(initializer.request.releaseNonNull())
     , m_clientId(WTFMove(initializer.clientId))
-    , m_reservedClientId(WTFMove(initializer.reservedClientId))
-    , m_targetClientId(WTFMove(initializer.targetClientId))
+    , m_resultingClientId(WTFMove(initializer.resultingClientId))
+    , m_handled(retrieveHandledPromise(globalObject, WTFMove(initializer.handled)))
 {
 }
 
@@ -78,7 +91,7 @@ ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
     m_respondPromise = WTFMove(promise);
     addExtendLifetimePromise(*m_respondPromise);
 
-    auto isRegistered = m_respondPromise->whenSettled([this, protectedThis = makeRef(*this)] {
+    auto isRegistered = m_respondPromise->whenSettled([this, protectedThis = Ref { *this }] {
         promiseIsSettled();
     });
 
@@ -134,7 +147,45 @@ void FetchEvent::promiseIsSettled()
         return;
     }
 
-    processResponse(makeRef(*response));
+    processResponse(Ref { *response });
+}
+
+FetchEvent::PreloadResponsePromise& FetchEvent::preloadResponse(ScriptExecutionContext& context)
+{
+    if (!m_preloadResponsePromise) {
+        m_preloadResponsePromise = makeUnique<PreloadResponsePromise>();
+        if (!m_navigationPreloadIdentifier) {
+            auto* globalObject = context.globalObject();
+            if (globalObject) {
+                JSC::Strong<JSC::Unknown> value { globalObject->vm(), JSC::jsUndefined() };
+                m_preloadResponsePromise->resolve(value);
+            }
+            return *m_preloadResponsePromise;
+        }
+
+        auto request = FetchRequest::create(context, { }, FetchHeaders::create(), ResourceRequest { m_request->internalRequest() } , FetchOptions { m_request->fetchOptions() }, String { m_request->internalRequestReferrer() });
+        request->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
+        FetchResponse::fetch(context, request.get(), [protectedThis = Ref { *this }](auto&& result) {
+            if (result.hasException()) {
+                protectedThis->m_preloadResponsePromise->reject(result.releaseException());
+                return;
+            }
+
+            Ref response = result.releaseReturnValue();
+            auto* context = response->scriptExecutionContext();
+            if (!context)
+                return;
+            auto* globalObject = context->globalObject();
+            if (!globalObject)
+                return;
+
+            auto& vm = globalObject->vm();
+            JSC::JSLockHolder lock(vm);
+            JSC::Strong<JSC::Unknown> value { vm, toJS(globalObject, JSC::jsCast<JSDOMGlobalObject*>(globalObject), response.get()) };
+            protectedThis->m_preloadResponsePromise->resolve(value);
+        }, cachedResourceRequestInitiators().navigation);
+    }
+    return *m_preloadResponsePromise;
 }
 
 } // namespace WebCore

@@ -44,10 +44,7 @@ class SourceBuffer;
 class SourceBufferList final : public RefCounted<SourceBufferList>, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(SourceBufferList);
 public:
-    static Ref<SourceBufferList> create(ScriptExecutionContext* context)
-    {
-        return adoptRef(*new SourceBufferList(context));
-    }
+    static Ref<SourceBufferList> create(ScriptExecutionContext*);
     virtual ~SourceBufferList();
 
     unsigned long length() const { return m_list.size(); }

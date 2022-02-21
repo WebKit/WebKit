@@ -8,7 +8,7 @@
 <body>
 <script>
 test(function() {
-    assert_throws(new TypeError(), function() {
+    assert_throws_js(TypeError, function() {
         new ClipboardEvent();
     });
 }, "First parameter is mandatory");
@@ -64,7 +64,7 @@ test(function() {
 }, "bubbles / cancelable / composed members");
 
 test(function() {
-    assert_throws(new TypeError(), function() {
+    assert_throws_js(TypeError, function() {
         new ClipboardEvent("foo", {clipboardData: document});
     });
 }, "Passing a bad type for clipboardData member should throw");

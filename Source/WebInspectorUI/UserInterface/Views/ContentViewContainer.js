@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013–2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,11 @@
 
 WI.ContentViewContainer = class ContentViewContainer extends WI.View
 {
-    constructor()
+    constructor({disableBackForwardNavigation} = {})
     {
         super();
+
+        this._disableBackForwardNavigation = !!disableBackForwardNavigation;
 
         this.element.classList.add("content-view-container");
 
@@ -79,6 +81,11 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
 
     showContentView(contentView, cookie)
     {
+        if (this._disableBackForwardNavigation && this.currentContentView) {
+            this.replaceContentView(this.currentContentView, contentView, cookie);
+            return;
+        }
+
         console.assert(contentView instanceof WI.ContentView);
         if (!(contentView instanceof WI.ContentView))
             return null;
@@ -140,6 +147,8 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
 
         this.showBackForwardEntryForIndex(newIndex);
 
+        console.assert(!this._disableBackForwardNavigation || this._backForwardList.length <= 1);
+
         return contentView;
     }
 
@@ -164,7 +173,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         this.dispatchEventToListeners(WI.ContentViewContainer.Event.CurrentContentViewDidChange);
     }
 
-    replaceContentView(oldContentView, newContentView)
+    replaceContentView(oldContentView, newContentView, newCookie)
     {
         console.assert(oldContentView instanceof WI.ContentView);
         if (!(oldContentView instanceof WI.ContentView))
@@ -196,7 +205,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         for (var i = 0; i < this._backForwardList.length; ++i) {
             if (this._backForwardList[i].contentView === oldContentView) {
                 console.assert(!this._backForwardList[i].tombstone);
-                let currentCookie = this._backForwardList[i].cookie;
+                let currentCookie = newCookie ?? this._backForwardList[i].cookie;
                 this._backForwardList[i] = new WI.BackForwardEntry(newContentView, currentCookie);
             }
         }
@@ -208,6 +217,8 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
             this._showEntry(this.currentBackForwardEntry);
             this.dispatchEventToListeners(WI.ContentViewContainer.Event.CurrentContentViewDidChange);
         }
+
+        console.assert(!this._disableBackForwardNavigation || this._backForwardList.length <= 1);
     }
 
     closeContentView(contentViewToClose)
@@ -410,6 +421,15 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
             return;
         }
 
+        if (contentView.constructor.shouldNotRemoveFromDOMWhenHidden()) {
+            // Hidden/non-visible extension tabs must remain attached to the DOM to avoid reloading.
+            if (!contentView.visible)
+                return;
+
+            if (contentView.isAttached)
+                this.removeSubview(contentView);
+        }
+
         console.assert(!contentView.isAttached);
 
         if (!contentView._parentContainer)
@@ -446,6 +466,10 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
 
         if (!this.subviews.includes(entry.contentView))
             this.addSubview(entry.contentView);
+        else if (entry.contentView.constructor.shouldNotRemoveFromDOMWhenHidden()) {
+            entry.contentView.visible = true;
+            entry.contentView._didMoveToParent(this);
+        }
 
         entry.prepareToShow();
     }
@@ -460,8 +484,13 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
             return;
 
         entry.prepareToHide();
-        if (this.subviews.includes(entry.contentView))
-            this.removeSubview(entry.contentView);
+        if (this.subviews.includes(entry.contentView)) {
+            if (entry.contentView.constructor.shouldNotRemoveFromDOMWhenHidden()) {
+                entry.contentView.visible = false;
+                entry.contentView._didMoveToParent(null);
+            } else
+                this.removeSubview(entry.contentView);
+        }
     }
 
     _tombstoneContentViewContainersForContentView(contentView)

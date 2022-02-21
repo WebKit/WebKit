@@ -28,12 +28,39 @@
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
 
+#include "Logging.h"
 #include <WebCore/GraphicsContextCG.h>
 #include <WebCore/PixelBuffer.h>
 #include <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebKit {
+
+class GraphicsContextCGDisplayList : public WebCore::GraphicsContextCG {
+public:
+    GraphicsContextCGDisplayList(CGContextRef cgContext, double immutableBaseScaleFactor)
+        : GraphicsContextCG(cgContext)
+        , m_scaleTransform(immutableBaseScaleFactor, 0, 0, immutableBaseScaleFactor, 0, 0)
+        , m_inverseScaleTransform(1. / immutableBaseScaleFactor, 0, 0, 1. / immutableBaseScaleFactor, 0, 0)
+    {
+    }
+
+    void setCTM(const WebCore::AffineTransform& transform) final
+    {
+        GraphicsContextCG::setCTM(m_inverseScaleTransform * transform);
+    }
+
+    WebCore::AffineTransform getCTM(IncludeDeviceScale includeDeviceScale) const final
+    {
+        return m_scaleTransform * GraphicsContextCG::getCTM(includeDeviceScale);
+    }
+
+    bool canUseShadowBlur() const final { return false; }
+
+private:
+    WebCore::AffineTransform m_scaleTransform;
+    WebCore::AffineTransform m_inverseScaleTransform;
+};
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CGDisplayListImageBufferBackend);
 
@@ -47,15 +74,15 @@ size_t CGDisplayListImageBufferBackend::calculateMemoryCost(const Parameters& pa
 
 std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend::create(const Parameters& parameters)
 {
-    auto backendSize = calculateBackendSize(parameters);
-    if (backendSize.isEmpty())
+    auto logicalSize = parameters.logicalSize;
+    if (logicalSize.isEmpty())
         return nullptr;
 
-    auto cgContext = adoptCF(WKCGCommandsContextCreate(backendSize, nullptr));
+    auto cgContext = adoptCF(WKCGCommandsContextCreate(logicalSize, nullptr));
     if (!cgContext)
         return nullptr;
 
-    auto context = makeUnique<WebCore::GraphicsContextCG>(cgContext.get());
+    auto context = makeUnique<GraphicsContextCGDisplayList>(cgContext.get(), parameters.resolutionScale);
     return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, WTFMove(context)));
 }
 
@@ -70,10 +97,15 @@ CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameter
 {
 }
 
-ImageBufferBackendHandle CGDisplayListImageBufferBackend::createImageBufferBackendHandle() const
+ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle() const
 {
     auto data = adoptCF(WKCGCommandsContextCopyEncodedData(m_context->platformContext()));
     ASSERT(data);
+
+#if !RELEASE_LOG_DISABLED
+    auto size = backendSize();
+    RELEASE_LOG(RemoteLayerTree, "CGDisplayListImageBufferBackend of size %dx%d encoded display list of %ld bytes", size.width(), size.height(), CFDataGetLength(data.get()));
+#endif
 
     return ImageBufferBackendHandle { IPC::SharedBufferCopy { WebCore::SharedBuffer::create(data.get()) } };
 }

@@ -79,7 +79,6 @@ class PyWebSocket(http_server.Lighttpd):
         self._ca_certificate = ca_certificate
         if self._port:
             self._port = int(self._port)
-        self._wsin = None
         self._wsout = None
         self._mappings = [{'port': self._port}]
 
@@ -96,7 +95,8 @@ class PyWebSocket(http_server.Lighttpd):
             try:
                 self._layout_tests = self._port_obj.layout_tests_dir()
                 self._web_socket_tests = self._filesystem.join(self._layout_tests, 'http', 'tests', 'websocket', 'tests')
-            except:
+            except Exception as e:
+                _log.error('Failed to join path for layout_test websocket server: %s' % str(e))
                 self._web_socket_tests = None
 
         if self._use_tls:
@@ -110,9 +110,6 @@ class PyWebSocket(http_server.Lighttpd):
     def _prepare_config(self):
         self._filesystem.maybe_make_directory(self._output_dir)
         log_file_name = self._log_prefix
-        # FIXME: Doesn't Executive have a devnull, so that we don't have to use os.devnull directly?
-        self._wsin = open(os.devnull, 'r')
-
         error_log = self._filesystem.join(self._output_dir, log_file_name + "-err.txt")
         output_log = self._filesystem.join(self._output_dir, log_file_name + "-out.txt")
         self._wsout = self._filesystem.open_text_file_for_writing(output_log)
@@ -128,7 +125,7 @@ class PyWebSocket(http_server.Lighttpd):
         pywebsocket_script = self._filesystem.join(pywebsocket_base, 'mod_pywebsocket', 'standalone.py')
         start_cmd = [
             python_interp, '-u', pywebsocket_script,
-            '--server-host', 'localhost',
+            '--server-host', '0.0.0.0' if self._port_obj.get_option("http_all_interfaces") else 'localhost',
             '--port', str(self._port),
             # FIXME: Don't we have a self._port_obj.layout_test_path?
             '--document-root', self._filesystem.join(self._layout_tests, 'http', 'tests'),
@@ -165,16 +162,13 @@ class PyWebSocket(http_server.Lighttpd):
 
     def _spawn_process(self):
         _log.debug('Starting %s server, cmd="%s"' % (self._name, self._start_cmd))
-        self._process = self._executive.popen(self._start_cmd, env=self._env, shell=False, stdin=self._wsin, stdout=self._wsout, stderr=self._executive.STDOUT)
+        self._process = self._executive.popen(self._start_cmd, env=self._env, shell=False, stdin=self._executive.PIPE, stdout=self._wsout, stderr=self._executive.STDOUT)
         self._filesystem.write_text_file(self._pid_file, str(self._process.pid))
         return self._process.pid
 
     def _stop_running_server(self):
         super(PyWebSocket, self)._stop_running_server()
 
-        if self._wsin:
-            self._wsin.close()
-            self._wsin = None
         if self._wsout:
             self._wsout.close()
             self._wsout = None

@@ -53,7 +53,7 @@ static int compareIcons(const LinkIcon& a, const LinkIcon& b)
     // Apple Touch icons always come first.
     if (a.type == LinkIconType::Favicon && b.type != LinkIconType::Favicon)
         return 1;
-    if (a.type == LinkIconType::Favicon && b.type != LinkIconType::Favicon)
+    if (b.type == LinkIconType::Favicon && a.type != LinkIconType::Favicon)
         return -1;
 
     unsigned aSize = iconSize(a);
@@ -75,7 +75,7 @@ static int compareIcons(const LinkIcon& a, const LinkIcon& b)
 
 auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vector<LinkIcon>
 {
-    auto head = makeRefPtr(m_document.head());
+    RefPtr head = m_document.head();
     if (!head)
         return { };
 
@@ -102,8 +102,8 @@ auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vecto
 
         Vector<std::pair<String, String>> attributes;
         if (linkElement.hasAttributes()) {
-            attributes.reserveCapacity(linkElement.attributeCount());
-            for (const Attribute& attribute : linkElement.attributesIterator())
+            attributes.reserveInitialCapacity(linkElement.attributeCount());
+            for (auto& attribute : linkElement.attributesIterator())
                 attributes.uncheckedAppend({ attribute.localName(), attribute.value() });
         }
 

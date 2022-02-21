@@ -33,6 +33,7 @@
 #import "ProcessAssertion.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
+#import "WebIDBServer.h"
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
@@ -55,11 +56,6 @@ void NetworkProcess::initializeProcessName(const AuxiliaryProcessInitializationP
 
 void NetworkProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&)
 {
-}
-
-void NetworkProcess::allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo& certificateInfo, const String& host)
-{
-    [NSURLRequest setAllowsSpecificHTTPSCertificate:(NSArray *)certificateInfo.certificateChain() forHost:host];
 }
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
@@ -113,17 +109,6 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
     // We synchronously take a process assertion when beginning a SQLite transaction so that we don't get suspended
     // while holding a locked file. We would get killed if suspended while holding locked files.
     m_holdingLockedFileAssertion = ProcessAssertion::create(getCurrentProcessID(), "Network Process is holding locked files"_s, ProcessAssertionType::FinishTaskInterruptable, ProcessAssertion::Mode::Sync);
-    m_holdingLockedFileAssertion->setPrepareForInvalidationHandler([this, weakThis = makeWeakPtr(*this)]() mutable {
-        ASSERT(isMainRunLoop());
-        if (!weakThis)
-            return;
-
-        if (!m_shouldSuspendIDBServers)
-            return;
-
-        for (auto& server : m_webIDBServers.values())
-            server->suspend();
-    });
 }
 
 } // namespace WebKit

@@ -879,9 +879,6 @@ TEST_P(DepthStencilFormatsTest, VerifyDepthStencilUploadData)
     // http://anglebug.com/3689
     ANGLE_SKIP_TEST_IF(IsWindows() && IsVulkan() && IsAMD());
 
-    // http://anglebug.com/4908
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMetal());
-
     bool shouldHaveTextureSupport = (IsGLExtensionEnabled("GL_OES_packed_depth_stencil") &&
                                      IsGLExtensionEnabled("GL_OES_depth_texture")) ||
                                     (getClientMajorVersion() >= 3);
@@ -1118,9 +1115,9 @@ TEST_P(DepthStencilFormatsTest, VerifyDepth16UploadData)
     ASSERT_GL_NO_ERROR();
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2(DepthStencilFormatsTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DepthStencilFormatsTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(DepthStencilFormatsTestES3);
 
 class TinyDepthStencilWorkaroundTest : public ANGLETest
@@ -1150,6 +1147,10 @@ TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
     // http://anglebug.com/4092
     ANGLE_SKIP_TEST_IF((IsAndroid() && IsOpenGLES()) || (IsLinux() && IsVulkan()));
     ANGLE_SKIP_TEST_IF(isSwiftshader());
+
+    // TODO(anglebug.com/5491)
+    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
+
     constexpr char kDrawVS[] =
         "#version 100\n"
         "attribute vec3 vertex;\n"
@@ -1254,4 +1255,5 @@ TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
     }
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TinyDepthStencilWorkaroundTest);
 ANGLE_INSTANTIATE_TEST_ES3(TinyDepthStencilWorkaroundTest);

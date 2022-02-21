@@ -36,7 +36,7 @@ namespace WebCore {
 struct NowPlayingInfoArtwork {
     String src;
     String mimeType;
-    RefPtr<SharedBuffer> imageData;
+    RefPtr<FragmentedSharedBuffer> imageData;
 
     bool operator==(const NowPlayingInfoArtwork& other) const
     {
@@ -67,7 +67,7 @@ template<class Decoder> inline std::optional<NowPlayingInfoArtwork> NowPlayingIn
     if (!decoder.decode(mimeType))
         return { };
 
-    RefPtr<SharedBuffer> imageData;
+    RefPtr<FragmentedSharedBuffer> imageData;
     if (!decoder.decode(imageData))
         return { };
 

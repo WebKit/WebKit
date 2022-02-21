@@ -113,7 +113,7 @@ class LockRunner : public rtc::MessageHandlerAutoCleanup {
     EXPECT_EQ(0, shared_value_);
     int old = shared_value_;
 
-    // Use a loop to increase the chance of race. If the |locker_|
+    // Use a loop to increase the chance of race. If the `locker_`
     // implementation is faulty, it would be improbable that the error slips
     // through.
     for (int i = 0; i < kOperationsToRun; ++i) {

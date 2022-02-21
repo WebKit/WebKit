@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +56,26 @@ struct Range {
         , epoch(epoch)
     {
     }
+
+    explicit Range(pas_large_sharing_node* node)
+        : begin(node->range.begin)
+        , end(node->range.end)
+        , isCommitted(node->is_committed)
+        , numLiveBytes(node->num_live_bytes)
+        , epoch(node->use_epoch)
+    {
+    }
+
+    bool operator==(Range other) const
+    {
+        return begin == other.begin
+            && end == other.end
+            && isCommitted == other.isCommitted
+            && numLiveBytes == other.numLiveBytes
+            && epoch == other.epoch;
+    }
+
+    bool operator!=(Range other) const { return !(*this == other); }
     
     uintptr_t begin;
     uintptr_t end;
@@ -64,24 +84,51 @@ struct Range {
     uint64_t epoch;
 };
 
-void assertState(const vector<Range>& ranges)
+ostream& operator<<(ostream& out, Range range)
 {
-    size_t index = 0;
-    forEachLargeSharingPoolNode(
-        [&] (pas_large_sharing_node* node) -> bool {
-            CHECK_LESS(index, ranges.size());
-            Range expectedRange = ranges[index++];
-            CHECK_EQUAL(node->range.begin, expectedRange.begin);
-            CHECK_EQUAL(node->range.end, expectedRange.end);
-            CHECK_EQUAL(node->is_committed, expectedRange.isCommitted);
-            CHECK_EQUAL(node->num_live_bytes, expectedRange.numLiveBytes);
-            CHECK_EQUAL(node->use_epoch, expectedRange.epoch);
-            return true;
-        });
-    CHECK_EQUAL(index, ranges.size());
+    out << reinterpret_cast<void*>(range.begin) << "..." << reinterpret_cast<void*>(range.end)
+        << ", " << (range.isCommitted ? "committed" : "decommitted") << ", "
+        << range.numLiveBytes << "/" << (range.end - range.begin) << ", " << range.epoch;
+    return out;
 }
 
-void testBadCoalesceEpochUpdate()
+void assertState(const vector<Range>& ranges)
+{
+    vector<pas_large_sharing_node*> nodes = largeSharingPoolAsVector();
+    
+    bool allGood = true;
+
+    if (nodes.size() != ranges.size()) {
+        cout << "State does not match because we expected " << ranges.size() << " ranges but got "
+             << nodes.size() << " ranges.\n";
+        allGood = false;
+    } else {
+        for (size_t index = 0; index < nodes.size(); ++index) {
+            pas_large_sharing_node* node = nodes[index];
+            Range actualRange(node);
+            Range expectedRange = ranges[index];
+            if (expectedRange != actualRange) {
+                cout << "State does not match at index " << index << ": expected:\n"
+                     << "    " << expectedRange << ", but got:\n"
+                     << "    " << actualRange << "\n";
+                allGood = false;
+            }
+        }
+    }
+
+    if (!allGood) {
+        cout << "Got mismatch in states. Expected the state to be:\n";
+        for (Range range : ranges)
+            cout << "    " << range << "\n";
+        cout << "But got:\n";
+        for (pas_large_sharing_node* node : nodes)
+            cout << "    " << Range(node) << "\n";
+    }
+
+    CHECK(allGood);
+}
+
+void testGoodCoalesceEpochUpdate()
 {
     static constexpr bool verbose = false;
     
@@ -95,7 +142,8 @@ void testBadCoalesceEpochUpdate()
     pas_heap_lock_lock();
     pas_large_sharing_pool_boot_free(
         pas_range_create(10 * PG, 20 * PG),
-        pas_physical_memory_is_locked_by_virtual_range_common_lock);
+        pas_physical_memory_is_locked_by_virtual_range_common_lock,
+        pas_may_mmap);
     pas_heap_lock_unlock();
 
     assertState({ Range(0, 10 * PG, pas_committed, 10 * PG, 0),
@@ -105,7 +153,8 @@ void testBadCoalesceEpochUpdate()
     pas_heap_lock_lock();
     pas_large_sharing_pool_boot_free(
         pas_range_create(20 * PG, 30 * PG),
-        pas_physical_memory_is_locked_by_virtual_range_common_lock);
+        pas_physical_memory_is_locked_by_virtual_range_common_lock,
+        pas_may_mmap);
     pas_heap_lock_unlock();
 
     assertState({ Range(0, 10 * PG, pas_committed, 10 * PG, 0),
@@ -117,16 +166,14 @@ void testBadCoalesceEpochUpdate()
     CHECK(pas_large_sharing_pool_allocate_and_commit(
               pas_range_create(10 * PG, 30 * PG),
               &transaction,
-              pas_physical_memory_is_locked_by_virtual_range_common_lock));
+              pas_physical_memory_is_locked_by_virtual_range_common_lock,
+              pas_may_mmap));
     pas_heap_lock_unlock();
     
     if (verbose)
         dumpLargeSharingPool();
 
-    assertState({ Range(0, 10 * PG, pas_committed, 10 * PG, 0),
-                  Range(10 * PG, 30 * PG, pas_committed, 20 * PG, 3),
-                  Range(30 * PG, END, pas_committed, END - 30 * PG, 0) });
-    
+    assertState({ Range(0, END, pas_committed, END, 3) });
 }
 
 } // anonymous namespace
@@ -138,7 +185,7 @@ void addLargeSharingPoolTests()
 #if TLC
     EpochIsCounter epochIsCounter;
     
-    ADD_TEST(testBadCoalesceEpochUpdate());
+    ADD_TEST(testGoodCoalesceEpochUpdate());
 #endif // TLC
 }
 

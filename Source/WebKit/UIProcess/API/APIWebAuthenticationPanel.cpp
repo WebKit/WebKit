@@ -51,12 +51,11 @@ WebAuthenticationPanel::WebAuthenticationPanel()
 
 WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type, const WTF::String& userName)
     : m_client(makeUniqueRef<WebAuthenticationPanelClient>())
-    , m_weakManager(makeWeakPtr(manager))
+    , m_weakManager(manager)
     , m_rpId(rpId)
     , m_clientDataType(type)
     , m_userName(userName)
 {
-    m_transports = Vector<AuthenticatorTransport>();
     m_transports.reserveInitialCapacity(AuthenticatorManager::maxTransportNumber);
     if (transports.contains(AuthenticatorTransport::Usb))
         m_transports.uncheckedAppend(AuthenticatorTransport::Usb);
@@ -71,7 +70,7 @@ WebAuthenticationPanel::~WebAuthenticationPanel() = default;
 void WebAuthenticationPanel::handleRequest(WebAuthenticationRequestData&& request, Callback&& callback)
 {
     ASSERT(m_manager);
-    request.weakPanel = makeWeakPtr(*this);
+    request.weakPanel = *this;
     m_manager->handleRequest(WTFMove(request), WTFMove(callback));
 }
 

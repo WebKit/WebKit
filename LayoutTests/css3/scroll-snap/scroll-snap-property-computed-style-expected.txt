@@ -134,10 +134,10 @@ PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-rig
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is 'calc(10% + 50px)'
 
 various units: `1em 5mm 2in 4cm`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '16px 18.89763832092285px 192px 151.1811065673828px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '16px 18.897638px 192px 151.181107px'
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '16px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '151.1811065673828px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '18.89763832092285px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '151.181107px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '18.897638px'
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '192px'
 
 subpixel values: `10.4375px 6.5px`
@@ -218,10 +218,10 @@ PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '20px'
 
 various units: `1em 5mm 2in 4cm`
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '16px 18.89763832092285px 192px 151.1811065673828px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '16px 18.897638px 192px 151.181107px'
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '16px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '151.1811065673828px'
-PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '18.89763832092285px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '151.181107px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '18.897638px'
 PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '192px'
 
 subpixel values: `10.4375px 6.5px`

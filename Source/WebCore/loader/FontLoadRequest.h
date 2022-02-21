@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2021 Metrological Group B.V.
  * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +32,7 @@
 namespace WebCore {
 
 class Font;
+class FontCreationContext;
 class FontDescription;
 class FontLoadRequest;
 struct FontSelectionSpecifiedCapabilities;
@@ -51,7 +53,7 @@ public:
     virtual bool errorOccurred() const = 0;
 
     virtual bool ensureCustomFontData(const AtomString& remoteURI) = 0;
-    virtual RefPtr<Font> createFont(const FontDescription&, const AtomString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, FontSelectionSpecifiedCapabilities) = 0;
+    virtual RefPtr<Font> createFont(const FontDescription&, const AtomString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontCreationContext&) = 0;
 
     virtual void setClient(FontLoadRequestClient*) = 0;
 

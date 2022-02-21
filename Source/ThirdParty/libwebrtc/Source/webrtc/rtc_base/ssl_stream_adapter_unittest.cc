@@ -378,7 +378,7 @@ class SSLStreamAdapterTestBase : public ::testing::Test,
   virtual void CreateStreams() = 0;
 
   // Recreate the client/server identities with the specified validity period.
-  // |not_before| and |not_after| are offsets from the current time in number
+  // `not_before` and `not_after` are offsets from the current time in number
   // of seconds.
   void ResetIdentitiesWithValidity(int not_before, int not_after) {
     CreateStreams();
@@ -1245,7 +1245,7 @@ TEST_P(SSLStreamAdapterTestDTLS, TestDTLSDelayedIdentityWithBogusDigest) {
 // Test DTLS-SRTP with all high ciphers
 TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpHigh) {
   std::vector<int> high;
-  high.push_back(rtc::SRTP_AES128_CM_SHA1_80);
+  high.push_back(rtc::kSrtpAes128CmSha1_80);
   SetDtlsSrtpCryptoSuites(high, true);
   SetDtlsSrtpCryptoSuites(high, false);
   TestHandshake();
@@ -1256,13 +1256,13 @@ TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpHigh) {
   ASSERT_TRUE(GetDtlsSrtpCryptoSuite(false, &server_cipher));
 
   ASSERT_EQ(client_cipher, server_cipher);
-  ASSERT_EQ(client_cipher, rtc::SRTP_AES128_CM_SHA1_80);
+  ASSERT_EQ(client_cipher, rtc::kSrtpAes128CmSha1_80);
 }
 
 // Test DTLS-SRTP with all low ciphers
 TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpLow) {
   std::vector<int> low;
-  low.push_back(rtc::SRTP_AES128_CM_SHA1_32);
+  low.push_back(rtc::kSrtpAes128CmSha1_32);
   SetDtlsSrtpCryptoSuites(low, true);
   SetDtlsSrtpCryptoSuites(low, false);
   TestHandshake();
@@ -1273,15 +1273,15 @@ TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpLow) {
   ASSERT_TRUE(GetDtlsSrtpCryptoSuite(false, &server_cipher));
 
   ASSERT_EQ(client_cipher, server_cipher);
-  ASSERT_EQ(client_cipher, rtc::SRTP_AES128_CM_SHA1_32);
+  ASSERT_EQ(client_cipher, rtc::kSrtpAes128CmSha1_32);
 }
 
 // Test DTLS-SRTP with a mismatch -- should not converge
 TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpHighLow) {
   std::vector<int> high;
-  high.push_back(rtc::SRTP_AES128_CM_SHA1_80);
+  high.push_back(rtc::kSrtpAes128CmSha1_80);
   std::vector<int> low;
-  low.push_back(rtc::SRTP_AES128_CM_SHA1_32);
+  low.push_back(rtc::kSrtpAes128CmSha1_32);
   SetDtlsSrtpCryptoSuites(high, true);
   SetDtlsSrtpCryptoSuites(low, false);
   TestHandshake();
@@ -1295,8 +1295,8 @@ TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpHighLow) {
 // Test DTLS-SRTP with each side being mixed -- should select high
 TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpMixed) {
   std::vector<int> mixed;
-  mixed.push_back(rtc::SRTP_AES128_CM_SHA1_80);
-  mixed.push_back(rtc::SRTP_AES128_CM_SHA1_32);
+  mixed.push_back(rtc::kSrtpAes128CmSha1_80);
+  mixed.push_back(rtc::kSrtpAes128CmSha1_32);
   SetDtlsSrtpCryptoSuites(mixed, true);
   SetDtlsSrtpCryptoSuites(mixed, false);
   TestHandshake();
@@ -1307,13 +1307,13 @@ TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpMixed) {
   ASSERT_TRUE(GetDtlsSrtpCryptoSuite(false, &server_cipher));
 
   ASSERT_EQ(client_cipher, server_cipher);
-  ASSERT_EQ(client_cipher, rtc::SRTP_AES128_CM_SHA1_80);
+  ASSERT_EQ(client_cipher, rtc::kSrtpAes128CmSha1_80);
 }
 
 // Test DTLS-SRTP with all GCM-128 ciphers.
 TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpGCM128) {
   std::vector<int> gcm128;
-  gcm128.push_back(rtc::SRTP_AEAD_AES_128_GCM);
+  gcm128.push_back(rtc::kSrtpAeadAes128Gcm);
   SetDtlsSrtpCryptoSuites(gcm128, true);
   SetDtlsSrtpCryptoSuites(gcm128, false);
   TestHandshake();
@@ -1324,13 +1324,13 @@ TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpGCM128) {
   ASSERT_TRUE(GetDtlsSrtpCryptoSuite(false, &server_cipher));
 
   ASSERT_EQ(client_cipher, server_cipher);
-  ASSERT_EQ(client_cipher, rtc::SRTP_AEAD_AES_128_GCM);
+  ASSERT_EQ(client_cipher, rtc::kSrtpAeadAes128Gcm);
 }
 
 // Test DTLS-SRTP with all GCM-256 ciphers.
 TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpGCM256) {
   std::vector<int> gcm256;
-  gcm256.push_back(rtc::SRTP_AEAD_AES_256_GCM);
+  gcm256.push_back(rtc::kSrtpAeadAes256Gcm);
   SetDtlsSrtpCryptoSuites(gcm256, true);
   SetDtlsSrtpCryptoSuites(gcm256, false);
   TestHandshake();
@@ -1341,15 +1341,15 @@ TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpGCM256) {
   ASSERT_TRUE(GetDtlsSrtpCryptoSuite(false, &server_cipher));
 
   ASSERT_EQ(client_cipher, server_cipher);
-  ASSERT_EQ(client_cipher, rtc::SRTP_AEAD_AES_256_GCM);
+  ASSERT_EQ(client_cipher, rtc::kSrtpAeadAes256Gcm);
 }
 
 // Test DTLS-SRTP with mixed GCM-128/-256 ciphers -- should not converge.
 TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpGCMMismatch) {
   std::vector<int> gcm128;
-  gcm128.push_back(rtc::SRTP_AEAD_AES_128_GCM);
+  gcm128.push_back(rtc::kSrtpAeadAes128Gcm);
   std::vector<int> gcm256;
-  gcm256.push_back(rtc::SRTP_AEAD_AES_256_GCM);
+  gcm256.push_back(rtc::kSrtpAeadAes256Gcm);
   SetDtlsSrtpCryptoSuites(gcm128, true);
   SetDtlsSrtpCryptoSuites(gcm256, false);
   TestHandshake();
@@ -1363,8 +1363,8 @@ TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpGCMMismatch) {
 // Test DTLS-SRTP with both GCM-128/-256 ciphers -- should select GCM-256.
 TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpGCMMixed) {
   std::vector<int> gcmBoth;
-  gcmBoth.push_back(rtc::SRTP_AEAD_AES_256_GCM);
-  gcmBoth.push_back(rtc::SRTP_AEAD_AES_128_GCM);
+  gcmBoth.push_back(rtc::kSrtpAeadAes256Gcm);
+  gcmBoth.push_back(rtc::kSrtpAeadAes128Gcm);
   SetDtlsSrtpCryptoSuites(gcmBoth, true);
   SetDtlsSrtpCryptoSuites(gcmBoth, false);
   TestHandshake();
@@ -1375,7 +1375,7 @@ TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpGCMMixed) {
   ASSERT_TRUE(GetDtlsSrtpCryptoSuite(false, &server_cipher));
 
   ASSERT_EQ(client_cipher, server_cipher);
-  ASSERT_EQ(client_cipher, rtc::SRTP_AEAD_AES_256_GCM);
+  ASSERT_EQ(client_cipher, rtc::kSrtpAeadAes256Gcm);
 }
 
 // Test SRTP cipher suite lengths.
@@ -1383,26 +1383,26 @@ TEST_P(SSLStreamAdapterTestDTLS, TestDTLSSrtpKeyAndSaltLengths) {
   int key_len;
   int salt_len;
 
-  ASSERT_FALSE(rtc::GetSrtpKeyAndSaltLengths(rtc::SRTP_INVALID_CRYPTO_SUITE,
+  ASSERT_FALSE(rtc::GetSrtpKeyAndSaltLengths(rtc::kSrtpInvalidCryptoSuite,
                                              &key_len, &salt_len));
 
-  ASSERT_TRUE(rtc::GetSrtpKeyAndSaltLengths(rtc::SRTP_AES128_CM_SHA1_32,
-                                            &key_len, &salt_len));
+  ASSERT_TRUE(rtc::GetSrtpKeyAndSaltLengths(rtc::kSrtpAes128CmSha1_32, &key_len,
+                                            &salt_len));
   ASSERT_EQ(128 / 8, key_len);
   ASSERT_EQ(112 / 8, salt_len);
 
-  ASSERT_TRUE(rtc::GetSrtpKeyAndSaltLengths(rtc::SRTP_AES128_CM_SHA1_80,
-                                            &key_len, &salt_len));
+  ASSERT_TRUE(rtc::GetSrtpKeyAndSaltLengths(rtc::kSrtpAes128CmSha1_80, &key_len,
+                                            &salt_len));
   ASSERT_EQ(128 / 8, key_len);
   ASSERT_EQ(112 / 8, salt_len);
 
-  ASSERT_TRUE(rtc::GetSrtpKeyAndSaltLengths(rtc::SRTP_AEAD_AES_128_GCM,
-                                            &key_len, &salt_len));
+  ASSERT_TRUE(rtc::GetSrtpKeyAndSaltLengths(rtc::kSrtpAeadAes128Gcm, &key_len,
+                                            &salt_len));
   ASSERT_EQ(128 / 8, key_len);
   ASSERT_EQ(96 / 8, salt_len);
 
-  ASSERT_TRUE(rtc::GetSrtpKeyAndSaltLengths(rtc::SRTP_AEAD_AES_256_GCM,
-                                            &key_len, &salt_len));
+  ASSERT_TRUE(rtc::GetSrtpKeyAndSaltLengths(rtc::kSrtpAeadAes256Gcm, &key_len,
+                                            &salt_len));
   ASSERT_EQ(256 / 8, key_len);
   ASSERT_EQ(96 / 8, salt_len);
 }

@@ -36,7 +36,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class SharedBuffer;
+class FragmentedSharedBuffer;
 }
 
 namespace WebKit {

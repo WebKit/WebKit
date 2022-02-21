@@ -26,12 +26,14 @@
 #ifndef PlatformContentFilter_h
 #define PlatformContentFilter_h
 
+#include "SharedBuffer.h"
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class ContentFilterUnblockHandler;
+class FragmentedSharedBuffer;
 class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
@@ -54,9 +56,9 @@ public:
     virtual ~PlatformContentFilter() = default;
     virtual void willSendRequest(ResourceRequest&, const ResourceResponse&) = 0;
     virtual void responseReceived(const ResourceResponse&) = 0;
-    virtual void addData(const uint8_t* data, int length) = 0;
+    virtual void addData(const SharedBuffer&) = 0;
     virtual void finishedAddingData() = 0;
-    virtual Ref<SharedBuffer> replacementData() const = 0;
+    virtual Ref<FragmentedSharedBuffer> replacementData() const = 0;
 #if ENABLE(CONTENT_FILTERING)
     virtual ContentFilterUnblockHandler unblockHandler() const = 0;
 #endif

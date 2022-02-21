@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,17 +30,26 @@ class LightSource;
 
 class FEDiffuseLighting : public FELighting {
 public:
-    static Ref<FEDiffuseLighting> create(Filter&, const Color&, float, float, float, float, Ref<LightSource>&&);
-    virtual ~FEDiffuseLighting();
+    WEBCORE_EXPORT static Ref<FEDiffuseLighting> create(const Color& lightingColor, float surfaceScale, float diffuseConstant, float, float, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
+    static Ref<FEDiffuseLighting> create(const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
 
     float diffuseConstant() const { return m_diffuseConstant; }
     bool setDiffuseConstant(float);
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
+
+    template<class Decoder> static std::optional<Ref<FEDiffuseLighting>> decode(Decoder&);
 
 private:
-    FEDiffuseLighting(Filter&, const Color&, float, float, float, float, Ref<LightSource>&&);
+    FEDiffuseLighting(const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
 };
+
+template<class Decoder>
+std::optional<Ref<FEDiffuseLighting>> FEDiffuseLighting::decode(Decoder& decoder)
+{
+    return FELighting::decode<Decoder, FEDiffuseLighting>(decoder);
+}
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEDiffuseLighting)

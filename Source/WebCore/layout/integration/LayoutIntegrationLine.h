@@ -36,27 +36,31 @@ namespace LayoutIntegration {
 class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Line(size_t firstRunIndex, size_t runCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float contentLeft, float contentWidth)
-        : m_firstRunIndex(firstRunIndex)
-        , m_runCount(runCount)
+    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth, bool isHorizontal)
+        : m_firstBoxIndex(firstBoxIndex)
+        , m_boxCount(boxCount)
         , m_lineBoxRect(lineBoxRect)
         , m_enclosingContentTop(enclosingContentTop)
         , m_enclosingContentBottom(enclosingContentBottom)
         , m_scrollableOverflow(scrollableOverflow)
         , m_inkOverflow(inkOverflow)
         , m_baseline(baseline)
-        , m_contentLeft(contentLeft)
-        , m_contentWidth(contentWidth)
+        , m_contentLogicalOffset(contentLogicalOffset)
+        , m_contentLogicalWidth(contentLogicalWidth)
+        , m_baselineType(baselineType)
+        , m_isHorizontal(isHorizontal)
     {
     }
 
-    size_t firstRunIndex() const { return m_firstRunIndex; }
-    size_t runCount() const { return m_runCount; }
+    size_t firstBoxIndex() const { return m_firstBoxIndex; }
+    size_t boxCount() const { return m_boxCount; }
 
     float lineBoxTop() const { return m_lineBoxRect.y(); }
     float lineBoxBottom() const { return m_lineBoxRect.maxY(); }
     float lineBoxLeft() const { return m_lineBoxRect.x(); }
     float lineBoxRight() const { return m_lineBoxRect.maxX(); }
+    float lineBoxHeight() const { return m_lineBoxRect.height(); }
+    float lineBoxWidth() const { return m_lineBoxRect.width(); }
 
     float enclosingContentTop() const { return m_enclosingContentTop; }
     float enclosingContentBottom() const { return m_enclosingContentBottom; }
@@ -65,13 +69,16 @@ public:
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
 
     float baseline() const { return m_baseline; }
+    FontBaseline baselineType() const { return m_baselineType; }
 
-    float contentLeft() const { return m_contentLeft; }
-    float contentWidth() const { return m_contentWidth; }
+    bool isHorizontal() const { return m_isHorizontal; }
+
+    float contentLogicalOffset() const { return m_contentLogicalOffset; }
+    float contentLogicalWidth() const { return m_contentLogicalWidth; }
 
 private:
-    size_t m_firstRunIndex { 0 };
-    size_t m_runCount { 0 };
+    size_t m_firstBoxIndex { 0 };
+    size_t m_boxCount { 0 };
     // This is line box geometry (see https://www.w3.org/TR/css-inline-3/#line-box).
     FloatRect m_lineBoxRect;
     // Enclosing top and bottom includes all inline level boxes (border box) vertically.
@@ -82,36 +89,10 @@ private:
     FloatRect m_scrollableOverflow;
     FloatRect m_inkOverflow;
     float m_baseline { 0 };
-    float m_contentLeft { 0 };
-    float m_contentWidth { 0 };
-};
-
-class NonRootInlineBox {
-public:
-    NonRootInlineBox(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect& rect, bool hasScrollableContent)
-        : m_lineIndex(lineIndex)
-        , m_layoutBox(makeWeakPtr(layoutBox))
-        , m_rect(rect)
-        , m_hasScrollableContent(hasScrollableContent)
-    {
-    }
-
-    const Layout::Box& layoutBox() const { return *m_layoutBox; }
-    const RenderStyle& style() const { return m_layoutBox->style(); }
-
-    size_t lineIndex() const { return m_lineIndex; }
-
-    FloatRect rect() const { return m_rect; }
-
-    void setVerticalPositionIntegral() { m_rect.setY(roundToInt(m_rect.y())); }
-
-    bool hasScrollableContent() const { return m_hasScrollableContent; }
-
-private:
-    const size_t m_lineIndex;
-    WeakPtr<const Layout::Box> m_layoutBox;
-    FloatRect m_rect;
-    bool m_hasScrollableContent { false };
+    float m_contentLogicalOffset { 0 };
+    float m_contentLogicalWidth { 0 };
+    FontBaseline m_baselineType { AlphabeticBaseline };
+    bool m_isHorizontal { true };
 };
 
 }

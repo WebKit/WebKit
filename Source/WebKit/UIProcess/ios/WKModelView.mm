@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKModelView.h"
 
-#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 
 #import "Logging.h"
 #import "RemoteLayerTreeViews.h"
@@ -99,6 +99,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
 
     _modelInteractionGestureRecognizer = adoptNS([[WKModelInteractionGestureRecognizer alloc] init]);
     [self addGestureRecognizer:_modelInteractionGestureRecognizer.get()];
+    self.userInteractionEnabled = NO;
 
     return self;
 }
@@ -120,7 +121,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
         return NO;
     }
 
-    auto fileName = FileSystem::encodeForFileName(createCanonicalUUIDString()) + ".usdz";
+    auto fileName = FileSystem::encodeForFileName(createVersion4UUIDString()) + ".usdz";
     auto filePath = FileSystem::pathByAppendingComponent(pathToDirectory, fileName);
     auto file = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Write);
     if (file <= 0)
@@ -156,8 +157,11 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
             return;
         }
 
-        [self.layer.context addFence:fenceHandle];
-        [fenceHandle invalidate];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.layer.context addFence:fenceHandle];
+            [_preview setFrameWithinFencedTransaction:bounds];
+            [fenceHandle invalidate];
+        });
     }];
 }
 

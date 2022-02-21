@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,15 +33,26 @@ WI.Gradient = class Gradient
 
     // Static
 
+    static angleFromString(string)
+    {
+        let match = string.match(/([-\d\.]+)(\w+)/);
+        if (!match || !Object.values(WI.Gradient.AngleUnits).includes(match[2]))
+            return null;
+
+        return {value: parseFloat(match[1]), units: match[2]};
+    }
+
     static fromString(cssString)
     {
         var type;
         var openingParenthesisIndex = cssString.indexOf("(");
         var typeString = cssString.substring(0, openingParenthesisIndex);
-        if (typeString.indexOf(WI.Gradient.Types.Linear) !== -1)
+        if (typeString.includes(WI.Gradient.Types.Linear))
             type = WI.Gradient.Types.Linear;
-        else if (typeString.indexOf(WI.Gradient.Types.Radial) !== -1)
+        else if (typeString.includes(WI.Gradient.Types.Radial))
             type = WI.Gradient.Types.Radial;
+        else if (typeString.includes(WI.Gradient.Types.Conic))
+            type = WI.Gradient.Types.Conic;
         else
             return null;
 
@@ -88,11 +99,20 @@ WI.Gradient = class Gradient
         if (openParentheses !== -1)
             return null;
 
-        var gradient;
-        if (type === WI.Gradient.Types.Linear)
+        let gradient = null;
+        switch (type) {
+        case WI.Gradient.Types.Linear:
             gradient = WI.LinearGradient.fromComponents(components);
-        else
+            break;
+
+        case WI.Gradient.Types.Radial:
             gradient = WI.RadialGradient.fromComponents(components);
+            break;
+
+        case WI.Gradient.Types.Conic:
+            gradient = WI.ConicGradient.fromComponents(components);
+            break;
+        }
 
         if (gradient)
             gradient.repeats = typeString.startsWith("repeating");
@@ -149,6 +169,30 @@ WI.Gradient = class Gradient
 
     // Public
 
+    get angleValue()
+    {
+        return this._angle.value.maxDecimals(2);
+    }
+
+    set angleValue(value)
+    {
+        this._angle.value = value;
+    }
+
+    get angleUnits()
+    {
+        return this._angle.units;
+    }
+
+    set angleUnits(units)
+    {
+        if (units === this._angle.units)
+            return;
+
+        this._angle.value = this._angleValueForUnits(units);
+        this._angle.units = units;
+    }
+
     copy()
     {
         // Implemented by subclasses.
@@ -158,11 +202,63 @@ WI.Gradient = class Gradient
     {
         // Implemented by subclasses.
     }
+
+    // Private
+
+    _angleValueForUnits(units)
+    {
+        if (units === this._angle.units)
+            return this._angle.value;
+
+        let deg = 0;
+
+        switch (this._angle.units) {
+        case WI.Gradient.AngleUnits.DEG:
+            deg = this._angle.value;
+            break;
+
+        case WI.Gradient.AngleUnits.RAD:
+            deg = this._angle.value * 180 / Math.PI;
+            break;
+
+        case WI.Gradient.AngleUnits.GRAD:
+            deg = this._angle.value / 400 * 360;
+            break;
+
+        case WI.Gradient.AngleUnits.TURN:
+            deg = this._angle.value * 360;
+            break;
+        }
+
+        switch (units) {
+        case WI.Gradient.AngleUnits.DEG:
+            return deg;
+
+        case WI.Gradient.AngleUnits.RAD:
+            return deg * Math.PI / 180;
+
+        case WI.Gradient.AngleUnits.GRAD:
+            return deg / 360 * 400;
+
+        case WI.Gradient.AngleUnits.TURN:
+            return deg / 360;
+        }
+
+        return 0;
+    }
 };
 
 WI.Gradient.Types = {
     Linear: "linear-gradient",
-    Radial: "radial-gradient"
+    Radial: "radial-gradient",
+    Conic: "conic-gradient",
+};
+
+WI.Gradient.AngleUnits = {
+    DEG: "deg",
+    RAD: "rad",
+    GRAD: "grad",
+    TURN: "turn",
 };
 
 WI.LinearGradient = class LinearGradient extends WI.Gradient
@@ -177,15 +273,13 @@ WI.LinearGradient = class LinearGradient extends WI.Gradient
 
     static fromComponents(components)
     {
-        let angle = {value: 180, units: WI.LinearGradient.AngleUnits.DEG};
+        let angle = {value: 180, units: WI.Gradient.AngleUnits.DEG};
 
         if (components[0].length === 1 && !WI.Color.fromString(components[0][0])) {
-            let match = components[0][0].match(/([-\d\.]+)(\w+)/);
-            if (!match || !Object.values(WI.LinearGradient.AngleUnits).includes(match[2]))
-                return null;
+            angle = WI.Gradient.angleFromString(components[0][0]);
 
-            angle.value = parseFloat(match[1]);
-            angle.units = match[2];
+            if (!angle)
+                return null;
 
             components.shift();
         } else if (components[0][0] === "to") {
@@ -226,32 +320,12 @@ WI.LinearGradient = class LinearGradient extends WI.Gradient
             return null;
         }
 
-        var stops = WI.Gradient.stopsWithComponents(components);
+        let stops = WI.Gradient.stopsWithComponents(components);
         if (!stops)
             return null;
 
         return new WI.LinearGradient(angle, stops);
     }
-
-    // Public
-
-    set angleValue(value) { this._angle.value = value; }
-
-    get angleValue()
-    {
-        return this._angle.value.maxDecimals(2);
-    }
-
-    set angleUnits(units)
-    {
-        if (units === this._angle.units)
-            return;
-
-        this._angle.value = this._angleValueForUnits(units);
-        this._angle.units = units;
-    }
-
-    get angleUnits() { return this._angle.units; }
 
     copy()
     {
@@ -280,74 +354,13 @@ WI.LinearGradient = class LinearGradient extends WI.Gradient
         else if (deg !== 180)
             str += this.angleValue + this.angleUnits;
 
-        if (str !== "")
+        if (str)
             str += ", ";
 
         str += this.stringFromStops(this.stops);
 
         return (this.repeats ? "repeating-" : "") + this.type + "(" + str + ")";
     }
-
-    // Private
-
-    _angleValueForUnits(units)
-    {
-        if (units === this._angle.units)
-            return this._angle.value;
-
-        let deg = 0;
-
-        switch (this._angle.units) {
-        case WI.LinearGradient.AngleUnits.DEG:
-            deg = this._angle.value;
-            break;
-
-        case WI.LinearGradient.AngleUnits.RAD:
-            deg = this._angle.value * 180 / Math.PI;
-            break;
-
-        case WI.LinearGradient.AngleUnits.GRAD:
-            deg = this._angle.value / 400 * 360;
-            break;
-
-        case WI.LinearGradient.AngleUnits.TURN:
-            deg = this._angle.value * 360;
-            break;
-
-        default:
-            WI.reportInternalError(`Unknown angle units "${this._angle.units}"`);
-            return 0;
-        }
-
-        let value = 0;
-
-        switch (units) {
-        case WI.LinearGradient.AngleUnits.DEG:
-            value = deg;
-            break;
-
-        case WI.LinearGradient.AngleUnits.RAD:
-            value = deg * Math.PI / 180;
-            break;
-
-        case WI.LinearGradient.AngleUnits.GRAD:
-            value = deg / 360 * 400;
-            break;
-
-        case WI.LinearGradient.AngleUnits.TURN:
-            value = deg / 360;
-            break;
-        }
-
-        return value;
-    }
-};
-
-WI.LinearGradient.AngleUnits = {
-    DEG: "deg",
-    RAD: "rad",
-    GRAD: "grad",
-    TURN: "turn",
 };
 
 WI.RadialGradient = class RadialGradient extends WI.Gradient
@@ -362,9 +375,9 @@ WI.RadialGradient = class RadialGradient extends WI.Gradient
 
     static fromComponents(components)
     {
-        var sizing = !WI.Color.fromString(components[0].join(" ")) ? components.shift().join(" ") : "";
+        let sizing = !WI.Color.fromString(components[0].join(" ")) ? components.shift().join(" ") : "";
 
-        var stops = WI.Gradient.stopsWithComponents(components);
+        let stops = WI.Gradient.stopsWithComponents(components);
         if (!stops)
             return null;
 
@@ -373,6 +386,26 @@ WI.RadialGradient = class RadialGradient extends WI.Gradient
 
     // Public
 
+    get angleValue()
+    {
+        return 0;
+    }
+
+    set angleValue(value)
+    {
+        console.assert(false, "CSS radial gradients do not have an angle");
+    }
+
+    get angleUnits()
+    {
+        return "";
+    }
+
+    set angleUnits(units)
+    {
+        console.assert(false, "CSS radial gradients do not have an angle");
+    }
+
     copy()
     {
         return new WI.RadialGradient(this.sizing, this.stops.concat());
@@ -380,9 +413,82 @@ WI.RadialGradient = class RadialGradient extends WI.Gradient
 
     toString()
     {
-        var str = this.sizing;
+        let str = this.sizing;
 
-        if (str !== "")
+        if (str)
+            str += ", ";
+
+        str += this.stringFromStops(this.stops);
+
+        return (this.repeats ? "repeating-" : "") + this.type + "(" + str + ")";
+    }
+};
+
+WI.ConicGradient = class ConicGradient extends WI.Gradient
+{
+    constructor(angle, position, stops)
+    {
+        super(WI.Gradient.Types.Conic, stops);
+
+        this._angle = angle;
+        this._position = position;
+    }
+
+    // Static
+
+    static fromComponents(components)
+    {
+        let angle = {value: 0, units: WI.Gradient.AngleUnits.DEG};
+        let position = null;
+        let hasCustomAngleOrPosition = false;
+
+        if (components[0][0] == "from") {
+            components[0].shift();
+            angle = WI.Gradient.angleFromString(components[0][0]);
+            if (!angle)
+                return null;
+            components[0].shift();
+            hasCustomAngleOrPosition = true;
+        }
+        if (components[0][0] == "at") {
+            components[0].shift();
+            // FIXME: <https://webkit.org/b/234643> (Web Inspector: allow editing positions in gradient editor)
+            if (components[0].length <= 0)
+                return null;
+            position = components[0].join(" ");
+            hasCustomAngleOrPosition = true;
+        }
+        if (hasCustomAngleOrPosition)
+            components.shift();
+
+        let stops = WI.Gradient.stopsWithComponents(components);
+        if (!stops)
+            return null;
+
+        return new WI.ConicGradient(angle, position, stops);
+    }
+
+    // Public
+
+    copy()
+    {
+        return new WI.ConicGradient(this._angle, this._position, this.stops.concat());
+    }
+
+    toString()
+    {
+        let str = "";
+
+        if (this._angle.value)
+            str += `from ${this._angle.value}${this._angle.units}`;
+
+        if (this._position) {
+            if (str)
+                str += " ";
+            str += `at ${this._position}`;
+        }
+
+        if (str)
             str += ", ";
 
         str += this.stringFromStops(this.stops);

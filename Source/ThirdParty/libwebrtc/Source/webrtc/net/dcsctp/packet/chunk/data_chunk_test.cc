@@ -67,7 +67,7 @@ TEST(DataChunkTest, SerializeAndDeserialize) {
   EXPECT_THAT(chunk.payload(), ElementsAre(1, 2, 3, 4, 5));
 
   EXPECT_EQ(deserialized.ToString(),
-            "DATA, type=ordered::middle, tsn=123, stream_id=456, ppid=9090, "
+            "DATA, type=ordered::middle, tsn=123, sid=456, ssn=789, ppid=9090, "
             "length=5");
 }
 }  // namespace

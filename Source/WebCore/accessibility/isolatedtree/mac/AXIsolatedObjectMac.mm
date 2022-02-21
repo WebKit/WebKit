@@ -32,8 +32,16 @@
 
 namespace WebCore {
 
-void AXIsolatedObject::initializePlatformProperties(const AXCoreObject& object)
+void AXIsolatedObject::initializePlatformProperties(const AXCoreObject& object, bool isRoot)
 {
+    setProperty(AXPropertyName::HasApplePDFAnnotationAttribute, object.hasApplePDFAnnotationAttribute());
+    setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
+    setProperty(AXPropertyName::SpeechHint, object.speechHintAttributeValue().isolatedCopy());
+    setProperty(AXPropertyName::CaretBrowsingEnabled, object.caretBrowsingEnabled());
+
+    if (isRoot)
+        setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, object.preventKeyboardDOMEventDispatch());
+
     if (object.isScrollView()) {
         m_platformWidget = object.platformWidget();
         m_remoteParent = object.remoteParentObject();
@@ -46,6 +54,20 @@ RemoteAXObjectRef AXIsolatedObject::remoteParentObject() const
         return object.isScrollView();
     });
     return is<AXIsolatedObject>(scrollView) ? downcast<AXIsolatedObject>(scrollView)->m_remoteParent.get() : nil;
+}
+
+FloatRect AXIsolatedObject::convertRectToPlatformSpace(const FloatRect& rect, AccessibilityConversionSpace space) const
+{
+    return Accessibility::retrieveValueFromMainThread<FloatRect>([&rect, &space, this]() -> FloatRect {
+        if (auto* axObject = associatedAXObject())
+            return axObject->convertRectToPlatformSpace(rect, space);
+        return { };
+    });
+}
+
+bool AXIsolatedObject::isDetached() const
+{
+    return !wrapper() || [wrapper() axBackingObject] != this;
 }
 
 void AXIsolatedObject::attachPlatformWrapper(AccessibilityObjectWrapper* wrapper)
@@ -61,10 +83,34 @@ void AXIsolatedObject::detachPlatformWrapper(AccessibilityDetachmentType detachm
 
 AXTextMarkerRangeRef AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& range) const
 {
-    return Accessibility::retrieveValueFromMainThread<AXTextMarkerRangeRef>([&range, this] () -> AXTextMarkerRangeRef {
+    return Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([&range, this] () -> RetainPtr<AXTextMarkerRangeRef> {
         auto* axObject = associatedAXObject();
         return axObject ? axObject->textMarkerRangeForNSRange(range) : nullptr;
     });
+}
+
+bool AXIsolatedObject::preventKeyboardDOMEventDispatch() const
+{
+    if (auto root = tree()->rootNode())
+        return root->boolAttributeValue(AXPropertyName::PreventKeyboardDOMEventDispatch);
+    return false;
+}
+
+void AXIsolatedObject::setPreventKeyboardDOMEventDispatch(bool value)
+{
+    performFunctionOnMainThread([&value](AXCoreObject* object) {
+        object->setPreventKeyboardDOMEventDispatch(value);
+    });
+}
+
+String AXIsolatedObject::descriptionAttributeValue() const
+{
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::Description);
+}
+
+String AXIsolatedObject::titleAttributeValue() const
+{
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::TitleAttributeValue);
 }
 
 } // WebCore

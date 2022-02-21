@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,10 +36,12 @@
 #include "pas_page_sharing_pool.h"
 #include "pas_segregated_heap.h"
 #include "pas_segregated_page_inlines.h"
-#include "pas_segregated_global_size_directory.h"
+#include "pas_segregated_size_directory.h"
+
+size_t pas_segregated_exclusive_view_count;
 
 pas_segregated_exclusive_view* pas_segregated_exclusive_view_create(
-    pas_segregated_global_size_directory* directory,
+    pas_segregated_size_directory* directory,
     size_t index)
 {
     static const bool verbose = false;
@@ -54,67 +56,18 @@ pas_segregated_exclusive_view* pas_segregated_exclusive_view_create(
         "pas_segregated_exclusive_view",
         pas_object_allocation);
 
+    pas_segregated_exclusive_view_count++;
+
     /* We allocate this lazily. */
     result->page_boundary = NULL;
-    pas_compact_segregated_global_size_directory_ptr_store(&result->directory, directory);
+    pas_compact_segregated_size_directory_ptr_store(&result->directory, directory);
     result->index = (unsigned)index;
     PAS_ASSERT(result->index == index);
-    result->ownership_kind = pas_segregated_exclusive_view_not_owned;
+    result->is_owned = false;
     pas_lock_construct(&result->commit_lock);
     pas_lock_construct(&result->ownership_lock);
 
     return result;
-}
-
-bool pas_segregated_exclusive_view_should_table(
-    pas_segregated_exclusive_view* view,
-    pas_segregated_page_config* page_config)
-{
-    if (!pas_segregated_exclusive_view_ownership_kind_is_owned(view->ownership_kind))
-        return true;
-
-    return !pas_segregated_page_for_boundary(view->page_boundary, *page_config)->num_non_empty_words;
-}
-
-void pas_segregated_exclusive_ish_view_note_eligibility_impl(
-    pas_segregated_page* page,
-    pas_segregated_directory* directory,
-    pas_segregated_view eligible_owning_view,
-    unsigned view_index)
-{
-    static const bool verbose = false;
-
-    PAS_TESTING_ASSERT(pas_segregated_view_is_eligible_kind(eligible_owning_view));
-    
-    if (verbose)
-        pas_log("Noting eligibility in exclusive %p/%p.\n", eligible_owning_view, page);
-        
-    if (page->lock_ptr)
-        pas_lock_testing_assert_held(page->lock_ptr);
-    
-    if (page->is_in_use_for_allocation) {
-        if (verbose)
-            pas_log("Deferring eligibility notification.\n");
-        page->eligibility_notification_has_been_deferred = true;
-    } else {
-        if (verbose)
-            pas_log("Telling the directory that we are eligible.\n");
-        pas_segregated_directory_view_did_become_eligible_at_index(directory, view_index);
-    }
-    
-    /* Clear the ineligible bit from the owner field. */
-    page->owner = eligible_owning_view;
-}
-
-void pas_segregated_exclusive_view_note_eligibility(
-    pas_segregated_exclusive_view* view,
-    pas_segregated_page* page)
-{
-    pas_segregated_exclusive_ish_view_note_eligibility_impl(
-        page,
-        &pas_compact_segregated_global_size_directory_ptr_load_non_null(&view->directory)->base,
-        pas_segregated_exclusive_view_as_view_non_null(view),
-        view->index);
 }
 
 void pas_segregated_exclusive_view_note_emptiness(
@@ -130,16 +83,15 @@ void pas_segregated_exclusive_view_note_emptiness(
         return;
     }
 
-    directory = &pas_compact_segregated_global_size_directory_ptr_load_non_null(&view->directory)->base;
+    directory = &pas_compact_segregated_size_directory_ptr_load_non_null(&view->directory)->base;
     view_index = view->index;
     
     pas_segregated_directory_view_did_become_empty_at_index(directory, view_index);
 }
 
-pas_heap_summary pas_segregated_exclusive_ish_view_compute_summary_impl(
-    pas_segregated_exclusive_view* view)
+static pas_heap_summary compute_summary_impl(pas_segregated_exclusive_view* view)
 {
-    pas_segregated_global_size_directory* size_directory;
+    pas_segregated_size_directory* size_directory;
     pas_segregated_directory* directory;
     pas_segregated_page_config* page_config_ptr;
     pas_segregated_page_config page_config;
@@ -150,12 +102,12 @@ pas_heap_summary pas_segregated_exclusive_ish_view_compute_summary_impl(
     size_t offset;
     size_t begin;
     size_t end;
-    pas_segregated_global_size_directory_data* data;
+    pas_segregated_size_directory_data* data;
 
-    size_directory = pas_compact_segregated_global_size_directory_ptr_load_non_null(&view->directory);
+    size_directory = pas_compact_segregated_size_directory_ptr_load_non_null(&view->directory);
 
-    if (!pas_segregated_exclusive_view_ownership_kind_is_owned(view->ownership_kind)) {
-        return pas_segregated_global_size_directory_compute_summary_for_unowned_exclusive(
+    if (!view->is_owned) {
+        return pas_segregated_size_directory_compute_summary_for_unowned_exclusive(
             size_directory);
     }
 
@@ -165,7 +117,7 @@ pas_heap_summary pas_segregated_exclusive_ish_view_compute_summary_impl(
     
     result = pas_heap_summary_create_empty();
 
-    data = pas_segregated_global_size_directory_data_ptr_load(&size_directory->data);
+    data = pas_segregated_size_directory_data_ptr_load(&size_directory->data);
     boundary = view->page_boundary;
     page = pas_segregated_page_for_boundary(boundary, page_config);
 
@@ -173,8 +125,7 @@ pas_heap_summary pas_segregated_exclusive_ish_view_compute_summary_impl(
 
     object_size = size_directory->object_size;
 
-    begin = pas_segregated_page_offset_from_page_boundary_to_first_object(
-        page, size_directory, page_config);
+    begin = data->offset_from_page_boundary_to_first_object;
     end = data->offset_from_page_boundary_to_end_of_last_object;
 
     pas_page_base_add_free_range(
@@ -209,7 +160,7 @@ pas_heap_summary pas_segregated_exclusive_view_compute_summary(
     pas_heap_summary result;
     
     pas_lock_lock(&view->ownership_lock);
-    result = pas_segregated_exclusive_ish_view_compute_summary_impl(view);
+    result = compute_summary_impl(view);
     pas_lock_unlock(&view->ownership_lock);
 
     return result;
@@ -220,13 +171,13 @@ void pas_segregated_exclusive_view_install_full_use_counts(
 {
     void* boundary;
     pas_segregated_page* page;
-    pas_segregated_global_size_directory* directory;
+    pas_segregated_size_directory* directory;
     pas_segregated_page_config page_config;
     pas_page_granule_use_count* use_counts;
     pas_page_granule_use_count* full_use_counts;
     size_t num_granules;
 
-    directory = pas_compact_segregated_global_size_directory_ptr_load_non_null(&view->directory);
+    directory = pas_compact_segregated_size_directory_ptr_load_non_null(&view->directory);
     page_config = *pas_segregated_page_config_kind_get_config(directory->base.page_config_kind);
     boundary = view->page_boundary;
     page = pas_segregated_page_for_boundary(boundary, page_config);
@@ -237,7 +188,7 @@ void pas_segregated_exclusive_view_install_full_use_counts(
     num_granules = (page_config.base.page_size / page_config.base.granule_size);
 
     full_use_counts = pas_compact_tagged_page_granule_use_count_ptr_load_non_null(
-        &pas_segregated_global_size_directory_get_extended_data(directory)->full_use_counts);
+        &pas_segregated_size_directory_get_extended_data(directory)->full_use_counts);
     
     memcpy(use_counts,
            full_use_counts,
@@ -247,14 +198,14 @@ void pas_segregated_exclusive_view_install_full_use_counts(
 bool pas_segregated_exclusive_view_is_eligible(pas_segregated_exclusive_view* view)
 {
     return PAS_SEGREGATED_DIRECTORY_GET_BIT(
-        &pas_compact_segregated_global_size_directory_ptr_load_non_null(&view->directory)->base,
+        &pas_compact_segregated_size_directory_ptr_load_non_null(&view->directory)->base,
         view->index, eligible);
 }
 
 bool pas_segregated_exclusive_view_is_empty(pas_segregated_exclusive_view* view)
 {
     return PAS_SEGREGATED_DIRECTORY_GET_BIT(
-        &pas_compact_segregated_global_size_directory_ptr_load_non_null(&view->directory)->base,
+        &pas_compact_segregated_size_directory_ptr_load_non_null(&view->directory)->base,
         view->index, empty);
 }
 

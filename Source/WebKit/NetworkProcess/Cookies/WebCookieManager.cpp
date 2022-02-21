@@ -144,7 +144,7 @@ void WebCookieManager::stopObservingCookieChanges(PAL::SessionID sessionID)
 
 void WebCookieManager::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
 {
-    platformSetHTTPCookieAcceptPolicy(policy, [policy, process = makeRef(m_process), completionHandler = WTFMove(completionHandler)] () mutable {
+    platformSetHTTPCookieAcceptPolicy(policy, [policy, process = Ref { m_process }, completionHandler = WTFMove(completionHandler)] () mutable {
         process->cookieAcceptPolicyChanged(policy);
         completionHandler();
     });

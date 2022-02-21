@@ -192,9 +192,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     if (WKStringIsEqualToUTF8CString(messageName, "BeginTest")) {
         ASSERT(messageBody);
         auto messageBodyDictionary = dictionaryValue(messageBody);
-        m_dumpPixels = booleanValue(messageBodyDictionary, "DumpPixels");
-        m_timeout = Seconds::fromMilliseconds(uint64Value(messageBodyDictionary, "Timeout"));
-        m_dumpJSConsoleLogInStdErr = booleanValue(messageBodyDictionary, "DumpJSConsoleLogInStdErr");
         WKBundlePagePostMessage(page, toWK("Ack").get(), toWK("BeginTest").get());
         beginTesting(messageBodyDictionary, BegingTestingMode::New);
         return;
@@ -440,6 +437,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "NotifyDone")) {
+        InjectedBundle::page()->dump();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "CallUISideScriptCallback")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto callbackID = uint64Value(messageBodyDictionary, "CallbackID");
@@ -484,12 +486,23 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ViewPortSnapshotTaken")) {
+        ASSERT(messageBody);
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        m_testRunner->viewPortSnapshotTaken(static_cast<WKStringRef>(messageBody));
+        return;
+    }
+
     postPageMessage("Error", "Unknown");
 }
 
 void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode testingMode)
 {
     m_state = Testing;
+
+    m_dumpPixels = booleanValue(settings, "DumpPixels");
+    m_timeout = Seconds::fromMilliseconds(uint64Value(settings, "Timeout"));
+    m_dumpJSConsoleLogInStdErr = booleanValue(settings, "DumpJSConsoleLogInStdErr");
 
     m_pixelResult.clear();
     m_repaintRects.clear();
@@ -498,7 +511,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     m_gcController = GCController::create();
     m_eventSendingController = EventSendingController::create();
     m_textInputController = TextInputController::create();
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     m_accessibilityController = AccessibilityController::create();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     m_accessibilityController->setIsolatedTreeMode(m_accessibilityIsolatedTreeMode);
@@ -546,7 +559,7 @@ void InjectedBundle::done()
     page()->stopLoading();
     setTopLoadingFrame(0);
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     m_accessibilityController->resetToConsistentState();
 #endif
 
@@ -581,7 +594,7 @@ void InjectedBundle::dumpToStdErr(const String& output)
     postPageMessage("DumpToStdErr", string ? string->data() : "Out of memory\n");
 }
 
-void InjectedBundle::outputText(const String& output)
+void InjectedBundle::outputText(const String& output, IsFinalTestOutput isFinalTestOutput)
 {
     if (m_state != Testing)
         return;
@@ -592,7 +605,8 @@ void InjectedBundle::outputText(const String& output)
     // We use WKBundlePagePostMessageIgnoringFullySynchronousMode() instead of WKBundlePagePostMessage() to make sure that all text output
     // is done via asynchronous IPC, even if the connection is in fully synchronous mode due to a WKBundlePagePostSynchronousMessageForTesting()
     // call. Otherwise, messages logged via sync and async IPC may end up out of order and cause flakiness.
-    WKBundlePagePostMessageIgnoringFullySynchronousMode(page()->page(), toWK("TextOutput").get(), toWK(string ? string->data() : "Out of memory\n").get());
+    auto messageName = isFinalTestOutput == IsFinalTestOutput::Yes ? toWK("FinalTextOutput") : toWK("TextOutput");
+    WKBundlePagePostMessageIgnoringFullySynchronousMode(page()->page(), messageName.get(), toWK(string ? string->data() : "Out of memory\n").get());
 }
 
 void InjectedBundle::postNewBeforeUnloadReturnValue(bool value)
@@ -649,9 +663,14 @@ void InjectedBundle::postSetViewSize(double width, double height)
     WKBundlePagePostSynchronousMessageForTesting(page()->page(), toWK("SetViewSize").get(), body.get(), 0);
 }
 
-void InjectedBundle::postSimulateWebNotificationClick(uint64_t notificationID)
+void InjectedBundle::postSimulateWebNotificationClick(WKDataRef notificationID)
 {
-    postPageMessage("SimulateWebNotificationClick", adoptWK(WKUInt64Create(notificationID)));
+    postPageMessage("SimulateWebNotificationClick", notificationID);
+}
+
+void InjectedBundle::postSimulateWebNotificationClickForServiceWorkerNotifications()
+{
+    postPageMessage("SimulateWebNotificationClickForServiceWorkerNotifications");
 }
 
 void InjectedBundle::postSetAddsVisitedLinks(bool addsVisitedLinks)
@@ -922,6 +941,12 @@ void postPageMessage(const char* name, const char* value)
 }
 
 void postPageMessage(const char* name, WKStringRef value)
+{
+    if (auto page = InjectedBundle::singleton().pageRef())
+        WKBundlePagePostMessage(page, toWK(name).get(), value);
+}
+
+void postPageMessage(const char* name, WKDataRef value)
 {
     if (auto page = InjectedBundle::singleton().pageRef())
         WKBundlePagePostMessage(page, toWK(name).get(), value);

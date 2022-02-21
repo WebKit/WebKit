@@ -26,9 +26,11 @@
 #include "config.h"
 #include "WebPasteboardOverrides.h"
 
+#include <WebCore/PasteboardItemInfo.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
+using namespace WebCore;
 
 WebPasteboardOverrides& WebPasteboardOverrides::sharedPasteboardOverrides()
 {
@@ -81,6 +83,20 @@ Vector<String> WebPasteboardOverrides::overriddenTypes(const String& pasteboardN
         result.append(type);
 
     return result;
+}
+
+std::optional<WebCore::PasteboardItemInfo> WebPasteboardOverrides::overriddenInfo(const String& pasteboardName)
+{
+    auto types = this->overriddenTypes(pasteboardName);
+    if (types.isEmpty())
+        return std::nullopt;
+
+    PasteboardItemInfo item;
+    item.platformTypesByFidelity = types;
+    // FIXME: This is currently appropriate for all clients that rely on PasteboardItemInfo, but we may need to adjust
+    // this in the future so that we don't treat 'inline' types such as plain text as uploaded files.
+    item.platformTypesForFileUpload = types;
+    return { WTFMove(item) };
 }
 
 bool WebPasteboardOverrides::getDataForOverride(const String& pasteboardName, const String& type, Vector<uint8_t>& data) const

@@ -58,7 +58,7 @@ def main():
     if (os.path.isdir(webkit_build_directory)):
         shutil.rmtree(webkit_build_directory)
 
-    subprocess.Popen(['python', os.path.join(os.path.dirname(__file__), "..", "Scripts", "clean-webkit")])
+    subprocess.Popen(['python3', os.path.join(os.path.dirname(__file__), "..", "Scripts", "clean-webkit")])
 
 if __name__ == '__main__':
     sys.exit(main())

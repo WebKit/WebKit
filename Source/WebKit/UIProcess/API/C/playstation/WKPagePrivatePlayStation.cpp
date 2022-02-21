@@ -31,6 +31,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
+#include "WKAPICast.h"
 #include "WebEventFactory.h"
 #include "WebPageProxy.h"
 #include <cairo.h>
@@ -41,7 +42,7 @@ static void drawPageBackground(cairo_t* ctx, const std::optional<WebCore::Color>
     if (!backgroundColor || backgroundColor.value().isVisible())
         return;
 
-    auto [r, g, b, a] = backgroundColor.value().toSRGBALossy<uint8_t>();
+    auto [r, g, b, a] = backgroundColor.value().toColorTypeLossy<WebCore::SRGBA<uint8_t>>().resolved();
 
     cairo_set_source_rgba(ctx, r, g, b, a);
     cairo_rectangle(ctx, rect.x(), rect.y(), rect.width(), rect.height());

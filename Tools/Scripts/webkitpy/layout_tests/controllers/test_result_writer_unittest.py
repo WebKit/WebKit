@@ -30,6 +30,7 @@ from webkitpy.layout_tests.controllers import test_result_writer
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.port.driver import DriverOutput
 from webkitpy.port.test import TestPort
+from webkitpy.port.image_diff import ImageDiffResult
 
 
 class TestResultWriterTest(unittest.TestCase):
@@ -39,9 +40,9 @@ class TestResultWriterTest(unittest.TestCase):
         used_tolerance_values = []
 
         class ImageDiffTestPort(TestPort):
-            def diff_image(self, expected_contents, actual_contents, tolerance=None):
+            def diff_image(self, expected_contents, actual_contents, tolerance):
                 used_tolerance_values.append(tolerance)
-                return (True, 1, None)
+                return ImageDiffResult(passed=False, diff_image=b'', difference=1, tolerance=tolerance)
 
         host = MockHost()
         port = ImageDiffTestPort(host)
@@ -49,7 +50,7 @@ class TestResultWriterTest(unittest.TestCase):
         test_reference_file = host.filesystem.join(port.layout_tests_dir(), 'failures/unexpected/reftest-expected.html')
         driver_output1 = DriverOutput('text1', 'image1', 'imagehash1', 'audio1')
         driver_output2 = DriverOutput('text2', 'image2', 'imagehash2', 'audio2')
-        failures = [test_failures.FailureReftestMismatch(test_reference_file)]
+        failures = [test_failures.FailureReftestMismatch(test_reference_file, ImageDiffResult(passed=False, diff_image=b'', difference=1, tolerance=1))]
         test_result_writer.write_test_result(host.filesystem, ImageDiffTestPort(host), port.results_directory(), test_name,
                                              driver_output1, driver_output2, failures)
         self.assertEqual([0], used_tolerance_values)

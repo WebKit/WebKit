@@ -31,7 +31,9 @@
 #include "AudioMediaStreamTrackRendererInternalUnitManager.h"
 #include "GPUProcessConnection.h"
 #include "RemoteRealtimeAudioSource.h"
+#include "RemoteRealtimeDisplaySource.h"
 #include "RemoteRealtimeVideoSource.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "UserMediaCaptureManagerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
@@ -69,18 +71,21 @@ const char* UserMediaCaptureManager::supplementName()
     return "UserMediaCaptureManager";
 }
 
-void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess)
+void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess, bool shouldCaptureDisplayInGPUProcess, bool shouldUseGPUProcessRemoteFrames)
 {
+    m_shouldUseGPUProcessRemoteFrames = shouldUseGPUProcessRemoteFrames;
+    // FIXME(rdar://84278146): Adopt AVCaptureSession attribution API for camera access in the web process if shouldCaptureVideoInGPUProcess is false.
     MockRealtimeMediaSourceCenter::singleton().setMockAudioCaptureEnabled(!shouldCaptureAudioInUIProcess && !shouldCaptureAudioInGPUProcess);
     MockRealtimeMediaSourceCenter::singleton().setMockVideoCaptureEnabled(!shouldCaptureVideoInUIProcess && !shouldCaptureVideoInGPUProcess);
-    MockRealtimeMediaSourceCenter::singleton().setMockDisplayCaptureEnabled(!shouldCaptureDisplayInUIProcess);
+    MockRealtimeMediaSourceCenter::singleton().setMockDisplayCaptureEnabled(!shouldCaptureDisplayInUIProcess && !shouldCaptureDisplayInGPUProcess);
 
     m_audioFactory.setShouldCaptureInGPUProcess(shouldCaptureAudioInGPUProcess);
     m_videoFactory.setShouldCaptureInGPUProcess(shouldCaptureVideoInGPUProcess);
+    m_displayFactory.setShouldCaptureInGPUProcess(shouldCaptureDisplayInGPUProcess);
 
     if (shouldCaptureAudioInGPUProcess) {
-        WebCore::AudioMediaStreamTrackRendererUnit::setCreateInternalUnitFunction([](auto&& renderCallback) {
-            return WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().createRemoteInternalUnit(WTFMove(renderCallback));
+        WebCore::AudioMediaStreamTrackRendererUnit::setCreateInternalUnitFunction([](auto&& renderCallback, auto&& resetCallback) {
+            return WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().createRemoteInternalUnit(WTFMove(renderCallback), WTFMove(resetCallback));
         });
     }
 
@@ -88,78 +93,123 @@ void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIP
         RealtimeMediaSourceCenter::singleton().setAudioCaptureFactory(m_audioFactory);
     if (shouldCaptureVideoInUIProcess || shouldCaptureVideoInGPUProcess)
         RealtimeMediaSourceCenter::singleton().setVideoCaptureFactory(m_videoFactory);
-    if (shouldCaptureDisplayInUIProcess)
+    if (shouldCaptureDisplayInUIProcess || shouldCaptureDisplayInGPUProcess)
         RealtimeMediaSourceCenter::singleton().setDisplayCaptureFactory(m_displayFactory);
 }
 
-void UserMediaCaptureManager::addAudioSource(Ref<RemoteRealtimeAudioSource>&& source)
+void UserMediaCaptureManager::addSource(Ref<RemoteRealtimeAudioSource>&& source)
 {
     auto identifier = source->identifier();
-    ASSERT(!m_audioSources.contains(identifier));
-    m_audioSources.add(identifier, WTFMove(source));
+    ASSERT(!m_sources.contains(identifier));
+    m_sources.add(identifier, Source(WTFMove(source)));
 }
 
-void UserMediaCaptureManager::removeAudioSource(RealtimeMediaSourceIdentifier identifier)
-{
-    ASSERT(m_audioSources.contains(identifier));
-    m_audioSources.remove(identifier);
-}
-
-void UserMediaCaptureManager::addVideoSource(Ref<RemoteRealtimeVideoSource>&& source)
+void UserMediaCaptureManager::addSource(Ref<RemoteRealtimeVideoSource>&& source)
 {
     auto identifier = source->identifier();
-    ASSERT(!m_videoSources.contains(identifier));
-    m_videoSources.add(identifier, WTFMove(source));
+    ASSERT(!m_sources.contains(identifier));
+    m_sources.add(identifier, Source(WTFMove(source)));
 }
 
-void UserMediaCaptureManager::removeVideoSource(RealtimeMediaSourceIdentifier identifier)
+void UserMediaCaptureManager::addSource(Ref<RemoteRealtimeDisplaySource>&& source)
 {
-    ASSERT(m_videoSources.contains(identifier));
-    m_videoSources.remove(identifier);
+    auto identifier = source->identifier();
+    ASSERT(!m_sources.contains(identifier));
+    m_sources.add(identifier, Source(WTFMove(source)));
+}
+
+void UserMediaCaptureManager::removeSource(RealtimeMediaSourceIdentifier identifier)
+{
+    ASSERT(m_sources.contains(identifier));
+    m_sources.remove(identifier);
 }
 
 void UserMediaCaptureManager::sourceStopped(RealtimeMediaSourceIdentifier identifier)
 {
-    if (auto source = m_audioSources.get(identifier))
+    auto iterator = m_sources.find(identifier);
+    if (iterator == m_sources.end())
+        return;
+
+    switchOn(iterator->value, [](Ref<RemoteRealtimeAudioSource>& source) {
         source->captureStopped();
-    else if (auto source = m_videoSources.get(identifier))
+    }, [](Ref<RemoteRealtimeVideoSource>& source) {
         source->captureStopped();
+    }, [](Ref<RemoteRealtimeDisplaySource>& source) {
+        source->captureStopped();
+    }, [](std::nullptr_t) { });
 }
 
-void UserMediaCaptureManager::captureFailed(RealtimeMediaSourceIdentifier id)
+void UserMediaCaptureManager::captureFailed(RealtimeMediaSourceIdentifier identifier)
 {
-    if (auto source = m_audioSources.get(id))
+    auto iterator = m_sources.find(identifier);
+    if (iterator == m_sources.end())
+        return;
+
+    switchOn(iterator->value, [](Ref<RemoteRealtimeAudioSource>& source) {
         source->captureFailed();
-    else if (auto source = m_videoSources.get(id))
+    }, [](Ref<RemoteRealtimeVideoSource>& source) {
         source->captureFailed();
+    }, [](Ref<RemoteRealtimeDisplaySource>& source) {
+        source->captureFailed();
+    }, [](std::nullptr_t) { });
 }
 
-void UserMediaCaptureManager::sourceMutedChanged(RealtimeMediaSourceIdentifier id, bool muted)
+void UserMediaCaptureManager::sourceMutedChanged(RealtimeMediaSourceIdentifier identifier, bool muted)
 {
-    if (auto source = m_audioSources.get(id))
-        source->setMuted(muted);
-    else if (auto source = m_videoSources.get(id))
-        source->setMuted(muted);
+    auto iterator = m_sources.find(identifier);
+    if (iterator == m_sources.end())
+        return;
+
+    switchOn(iterator->value, [muted](Ref<RemoteRealtimeAudioSource>& source) {
+        source->sourceMutedChanged(muted);
+    }, [muted](Ref<RemoteRealtimeVideoSource>& source) {
+        source->sourceMutedChanged(muted);
+    }, [muted](Ref<RemoteRealtimeDisplaySource>& source) {
+        source->sourceMutedChanged(muted);
+    }, [](std::nullptr_t) { });
 }
 
-void UserMediaCaptureManager::sourceSettingsChanged(RealtimeMediaSourceIdentifier id, RealtimeMediaSourceSettings&& settings)
+void UserMediaCaptureManager::sourceSettingsChanged(RealtimeMediaSourceIdentifier identifier, RealtimeMediaSourceSettings&& settings)
 {
-    if (auto source = m_audioSources.get(id))
+    auto iterator = m_sources.find(identifier);
+    if (iterator == m_sources.end())
+        return;
+
+    switchOn(iterator->value, [&](Ref<RemoteRealtimeAudioSource>& source) {
         source->setSettings(WTFMove(settings));
-    else if (auto source = m_videoSources.get(id))
+    }, [&](Ref<RemoteRealtimeVideoSource>& source) {
         source->setSettings(WTFMove(settings));
+    }, [&](Ref<RemoteRealtimeDisplaySource>& source) {
+        source->setSettings(WTFMove(settings));
+    }, [](std::nullptr_t) { });
 }
 
-void UserMediaCaptureManager::applyConstraintsSucceeded(RealtimeMediaSourceIdentifier id, RealtimeMediaSourceSettings&& settings)
+void UserMediaCaptureManager::applyConstraintsSucceeded(RealtimeMediaSourceIdentifier identifier, RealtimeMediaSourceSettings&& settings)
 {
-    if (auto source = m_audioSources.get(id))
+    auto iterator = m_sources.find(identifier);
+    if (iterator == m_sources.end())
+        return;
+
+    switchOn(iterator->value, [&](Ref<RemoteRealtimeAudioSource>& source) {
         source->applyConstraintsSucceeded(WTFMove(settings));
+    }, [&](Ref<RemoteRealtimeVideoSource>& source) {
+    }, [&](Ref<RemoteRealtimeDisplaySource>& source) {
+        source->applyConstraintsSucceeded(WTFMove(settings));
+    }, [](std::nullptr_t) { });
 }
 
-void UserMediaCaptureManager::applyConstraintsFailed(RealtimeMediaSourceIdentifier id, String&& failedConstraint, String&& message)
+void UserMediaCaptureManager::applyConstraintsFailed(RealtimeMediaSourceIdentifier identifier, String&& failedConstraint, String&& message)
 {
-    if (auto source = m_audioSources.get(id))
+    auto iterator = m_sources.find(identifier);
+    if (iterator == m_sources.end())
+        return;
+
+    switchOn(iterator->value, [&](Ref<RemoteRealtimeAudioSource>& source) {
         source->applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
+    }, [&](Ref<RemoteRealtimeVideoSource>& source) {
+    }, [&](Ref<RemoteRealtimeDisplaySource>& source) {
+        source->applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
+    }, [](std::nullptr_t) { });
 }
 
 CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
@@ -183,21 +233,42 @@ void UserMediaCaptureManager::AudioFactory::setShouldCaptureInGPUProcess(bool va
     m_shouldCaptureInGPUProcess = value;
 }
 
+void UserMediaCaptureManager::VideoFactory::setShouldCaptureInGPUProcess(bool value)
+{
+    m_shouldCaptureInGPUProcess = value;
+}
+
 CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
 #if !ENABLE(GPU_PROCESS)
     if (m_shouldCaptureInGPUProcess)
         return CaptureSourceOrError { "Video capture in GPUProcess is not implemented"_s };
 #endif
+    if (m_shouldCaptureInGPUProcess)
+        m_manager.m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
 
-    return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess)));
+    bool shouldUseIOSurface = !m_manager.m_shouldUseGPUProcessRemoteFrames;
+    return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess), shouldUseIOSurface));
 }
 
-CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints)
+CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
-    return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, { }, m_manager, false)));
-}
-
-}
-
+#if !ENABLE(GPU_PROCESS)
+    if (m_shouldCaptureInGPUProcess)
+        return CaptureSourceOrError { "Display capture in GPUProcess is not implemented"_s };
 #endif
+    if (m_shouldCaptureInGPUProcess)
+        m_manager.m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
+
+    return RemoteRealtimeDisplaySource::create(device, constraints, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess);
+}
+
+void UserMediaCaptureManager::DisplayFactory::setShouldCaptureInGPUProcess(bool value)
+{
+    m_shouldCaptureInGPUProcess = value;
+}
+
+
+}
+
+#endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)

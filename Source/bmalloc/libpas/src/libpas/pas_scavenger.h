@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,9 @@
 #define PAS_SCAVENGER_H
 
 #include "pas_utils.h"
+#if PAS_OS(DARWIN)
 #include <sys/qos.h>
+#endif
 
 PAS_BEGIN_EXTERN_C;
 
@@ -70,8 +72,10 @@ PAS_API extern double pas_scavenger_period_in_milliseconds; /* How long to sleep
 PAS_API extern uint64_t pas_scavenger_max_epoch_delta; /* How much to subtract from the current epoch
                                                           to compute the max epoch. */
 
+#if PAS_OS(DARWIN)
 /* It's legal to set this anytime. */
 PAS_API extern qos_class_t pas_scavenger_requested_qos_class;
+#endif
 
 typedef void (*pas_scavenger_activity_callback)(void);
 
@@ -98,7 +102,9 @@ PAS_API void pas_scavenger_resume(void);
 PAS_API void pas_scavenger_clear_all_non_tlc_caches(void);
 PAS_API void pas_scavenger_clear_all_caches_except_remote_tlcs(void);
 PAS_API void pas_scavenger_clear_all_caches(void);
-PAS_API void pas_scavenger_decommit_free_memory(void);
+PAS_API void pas_scavenger_decommit_expendable_memory(void);
+PAS_API void pas_scavenger_fake_decommit_expendable_memory(void); /* Useful for testing. */
+PAS_API size_t pas_scavenger_decommit_free_memory(void);
 
 PAS_API void pas_scavenger_run_synchronously_now(void);
 
@@ -107,6 +113,7 @@ typedef enum {
     pas_scavenger_clear_all_non_tlc_caches_kind,
     pas_scavenger_clear_all_caches_except_remote_tlcs_kind,
     pas_scavenger_clear_all_caches_kind,
+    pas_scavenger_decommit_expendable_memory_kind,
     pas_scavenger_decommit_free_memory_kind,
     pas_scavenger_run_synchronously_now_kind
 } pas_scavenger_synchronous_operation_kind;

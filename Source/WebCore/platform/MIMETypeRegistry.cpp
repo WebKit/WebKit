@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -111,6 +111,9 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
 #if !USE(CG) && USE(OPENJPEG)
     "image/jpeg2000",
 #endif
+#if USE(JPEGXL)
+    "image/jxl",
+#endif
 #if PLATFORM(IOS_FAMILY)
     "image/ms-bmp",
     "image/pipeg",
@@ -190,8 +193,8 @@ constexpr ComparableLettersLiteral supportedJavaScriptMIMETypeArray[] = {
 
 HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedNonImageMIMETypes()
 {
-    static auto supportedNonImageMIMETypes = makeNeverDestroyed([] {
-        HashSet<String, ASCIICaseInsensitiveHash> supportedNonImageMIMETypes = std::initializer_list<String> {
+    static NeverDestroyed types = [] {
+        HashSet<String, ASCIICaseInsensitiveHash> types = std::initializer_list<String> {
             "text/html"_s,
             "text/xml"_s,
             "text/xsl"_s,
@@ -214,25 +217,25 @@ HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedNonImageMI
         // This can result in cross-site scripting vulnerabilities.
         };
         for (auto& type : supportedJavaScriptMIMETypeArray)
-            supportedNonImageMIMETypes.add(type.literal);
+            types.add(type.literal);
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-        ArchiveFactory::registerKnownArchiveMIMETypes(supportedNonImageMIMETypes);
+        ArchiveFactory::registerKnownArchiveMIMETypes(types);
 #endif
-        return supportedNonImageMIMETypes;
-    }());
-    return supportedNonImageMIMETypes;
+        return types;
+    }();
+    return types;
 }
 
 const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedMediaMIMETypes()
 {
-    static const auto supportedMediaMIMETypes = makeNeverDestroyed([] {
-        HashSet<String, ASCIICaseInsensitiveHash> supportedMediaMIMETypes;
+    static NeverDestroyed types = [] {
+        HashSet<String, ASCIICaseInsensitiveHash> types;
 #if ENABLE(VIDEO)
-        MediaPlayer::getSupportedTypes(supportedMediaMIMETypes);
+        MediaPlayer::getSupportedTypes(types);
 #endif
-        return supportedMediaMIMETypes;
-    }());
-    return supportedMediaMIMETypes;
+        return types;
+    }();
+    return types;
 }
 
 constexpr ComparableLettersLiteral pdfMIMETypeArray[] = {
@@ -458,7 +461,7 @@ std::unique_ptr<MIMETypeRegistryThreadGlobalData> MIMETypeRegistry::createMIMETy
     }
 #else
     HashSet<String, ASCIICaseInsensitiveHash> supportedImageMIMETypesForEncoding = std::initializer_list<String> {
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
         // FIXME: Add Windows support for all the supported UTI's when a way to convert from MIMEType to UTI reliably is found.
         // For now, only support PNG, JPEG and GIF. See <rdar://problem/6095286>.
         "image/png"_s,
@@ -658,6 +661,11 @@ bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)
         return true;
 #endif
 
+#if ENABLE(MODEL_ELEMENT)
+    if (isSupportedModelMIMEType(mimeType))
+        return true;
+#endif
+
     if (startsWithLettersIgnoringASCIICase(mimeType, "text/"))
         return !isUnsupportedTextMIMEType(mimeType);
 
@@ -670,22 +678,27 @@ const String& defaultMIMEType()
     return defaultMIMEType;
 }
 
-constexpr ComparableLettersLiteral systemPreviewMIMETypeArray[] = {
+constexpr ComparableLettersLiteral usdMIMETypeArray[] = {
     "model/usd", // Unofficial, but supported because we documented this.
     "model/vnd.pixar.usd", // Unofficial, but supported because we documented this.
     "model/vnd.reality",
     "model/vnd.usdz+zip", // The official type: https://www.iana.org/assignments/media-types/model/vnd.usdz+zip
 };
 
-FixedVector<const char*> MIMETypeRegistry::systemPreviewMIMETypes()
+FixedVector<const char*> MIMETypeRegistry::usdMIMETypes()
 {
-    return makeFixedVector(systemPreviewMIMETypeArray);
+    return makeFixedVector(usdMIMETypeArray);
 }
 
-bool MIMETypeRegistry::isSystemPreviewMIMEType(const String& mimeType)
+bool MIMETypeRegistry::isUSDMIMEType(const String& mimeType)
 {
-    static constexpr SortedArraySet systemPreviewMIMETypeSet { systemPreviewMIMETypeArray };
-    return systemPreviewMIMETypeSet.contains(mimeType);
+    static constexpr SortedArraySet usdMIMETypeSet { usdMIMETypeArray };
+    return usdMIMETypeSet.contains(mimeType);
+}
+
+bool MIMETypeRegistry::isSupportedModelMIMEType(const String& mimeType)
+{
+    return MIMETypeRegistry::isUSDMIMEType(mimeType);
 }
 
 // FIXME: Not great that CURL needs this concept; other platforms do not.
@@ -770,7 +783,7 @@ String MIMETypeRegistry::preferredImageMIMETypeForEncoding(const Vector<String>&
 {
     auto allowedMIMETypes = MIMETypeRegistry::allowedMIMETypes(mimeTypes, extensions);
 
-    auto position = allowedMIMETypes.findMatching([](const auto& mimeType) {
+    auto position = allowedMIMETypes.findIf([](const auto& mimeType) {
         return MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType);
     });
     

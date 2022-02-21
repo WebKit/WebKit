@@ -42,17 +42,28 @@ class Metadata
     def struct(op)
         return if empty?
 
-        def convertFields(prefix, fields)
+        def generateOffsetOfFunctions(prefix, fieldNames)
+            fieldNames.map do |fieldName|
+                "#{prefix}static ptrdiff_t offsetOf#{fieldName[0].upcase}#{fieldName[1..-1]}() { return OBJECT_OFFSETOF(Metadata, m_#{fieldName}); }"
+            end.join("\n")
+        end
+
+        def convertFields(prefix, fields, fieldNames)
             fields.map do |field, type|
                 if type.kind_of? Hash
-                    "#{prefix}union {\n#{convertFields(prefix + '    ', type)}\n#{prefix}};"
+                    "#{prefix}union {\n#{convertFields(prefix + '    ', type, fieldNames)}\n#{prefix}};"
                 else
-                    "#{prefix}#{type.to_s} m_#{field.to_s};"
+                    fieldName = field.to_s
+                    fieldNames.push(fieldName)
+                    "#{prefix}#{type.to_s} m_#{fieldName};"
                 end
             end.join("\n")
         end
 
-        fields = convertFields("        ", @fields)
+        fieldNames = []
+        prefix = "        "
+        fields = convertFields(prefix, @fields, fieldNames)
+        fields = fields + "\n" + generateOffsetOfFunctions(prefix, fieldNames)
 
         inits = nil
         if @initializers && (not @initializers.empty?)

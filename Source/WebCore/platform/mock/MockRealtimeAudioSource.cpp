@@ -71,7 +71,7 @@ MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, String&& nam
     ASSERT(device);
     m_device = *device;
 
-    setSampleRate(WTF::get<MockMicrophoneProperties>(m_device.properties).defaultSampleRate);
+    setSampleRate(std::get<MockMicrophoneProperties>(m_device.properties).defaultSampleRate);
     initializeEchoCancellation(true);
 }
 
@@ -142,7 +142,7 @@ void MockRealtimeAudioSource::startProducingData()
 #endif
 
     if (!sampleRate())
-        setSampleRate(WTF::get<MockMicrophoneProperties>(m_device.properties).defaultSampleRate);
+        setSampleRate(std::get<MockMicrophoneProperties>(m_device.properties).defaultSampleRate);
 
     m_startTime = MonotonicTime::now();
     m_timer.startRepeating(renderInterval());
@@ -170,7 +170,7 @@ void MockRealtimeAudioSource::tick()
     Seconds delta = now - m_lastRenderTime;
     m_lastRenderTime = now;
 
-    m_workQueue->dispatch([this, delta, protectedThis = makeRef(*this)] {
+    m_workQueue->dispatch([this, delta, protectedThis = Ref { *this }] {
         render(delta);
     });
 }

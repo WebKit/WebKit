@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x154
+  RenderBlock {html} at (0,0) size 800x154
+    RenderInline {body} at (0,0) size 300x17
+      RenderText {#text} at (0,0) size 0x0
+      RenderSVGRoot {svg} at (0,0) size 200x50
+        RenderSVGRect {rect} at (0,0) size 100x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+        RenderSVGForeignObject {foreignObject} at (0,0) size 200x50
+          RenderBlock {html} at (0,0) size 200x50
+            RenderBody {body} at (8,0) size 184x50
+              RenderBlock {div} at (0,0) size 184x50 [bgcolor=#008000]
+      RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0

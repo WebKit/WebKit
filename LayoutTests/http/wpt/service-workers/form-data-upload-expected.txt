@@ -1,0 +1,12 @@
+OPEN FILE PANEL
+
+
+PASS Setup worker
+PASS Create channel with worker
+PASS Setup frame
+PASS Setup file to upload
+PASS Setup file form data
+PASS Upload intercepted by service worker
+PASS Upload cloned by service worker
+PASS Delete temporary file
+

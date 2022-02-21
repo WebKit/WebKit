@@ -25,11 +25,11 @@
 #include "config.h"
 #include "TrailingObjects.h"
 
-#include "InlineIterator.h"
+#include "LegacyInlineIterator.h"
 
 namespace WebCore {
 
-void TrailingObjects::updateWhitespaceCollapsingTransitionsForTrailingBoxes(LineWhitespaceCollapsingState& lineWhitespaceCollapsingState, const InlineIterator& lBreak, CollapseFirstSpace collapseFirstSpace)
+void TrailingObjects::updateWhitespaceCollapsingTransitionsForTrailingBoxes(LineWhitespaceCollapsingState& lineWhitespaceCollapsingState, const LegacyInlineIterator& lBreak, CollapseFirstSpace collapseFirstSpace)
 {
     if (!m_whitespace)
         return;
@@ -63,7 +63,7 @@ void TrailingObjects::updateWhitespaceCollapsingTransitionsForTrailingBoxes(Line
         // Add a new end transition that stops right at the very end.
         unsigned length = m_whitespace->text().length();
         unsigned pos = length >= 2 ? length - 2 : UINT_MAX;
-        InlineIterator endMid(0, m_whitespace, pos);
+        LegacyInlineIterator endMid(0, m_whitespace, pos);
         lineWhitespaceCollapsingState.startIgnoringSpaces(endMid);
         for (size_t i = 0; i < m_boxes.size(); ++i)
             lineWhitespaceCollapsingState.ensureLineBoxInsideIgnoredSpaces(m_boxes[i]);

@@ -36,21 +36,21 @@ namespace WebKit {
 
 class GPUProcessConnection;
 class MediaPlayerPrivateRemote;
-struct TrackPrivateRemoteConfiguration;
+struct AudioTrackPrivateRemoteConfiguration;
 
 class AudioTrackPrivateRemote final : public WebCore::AudioTrackPrivate {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateRemote)
 public:
-    static Ref<AudioTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TrackPrivateRemoteConfiguration&& configuration)
+    static Ref<AudioTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, AudioTrackPrivateRemoteConfiguration&& configuration)
     {
         return adoptRef(*new AudioTrackPrivateRemote(gpuProcessConnection, playerIdentifier, idendifier, WTFMove(configuration)));
     }
 
     AtomString id() const final { return m_id; }
-    void updateConfiguration(TrackPrivateRemoteConfiguration&&);
+    void updateConfiguration(AudioTrackPrivateRemoteConfiguration&&);
 
 private:
-    AudioTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
+    AudioTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, AudioTrackPrivateRemoteConfiguration&&);
 
     using AudioTrackKind = WebCore::AudioTrackPrivate::Kind;
     AudioTrackKind kind() const final { return m_kind; }
@@ -66,6 +66,7 @@ private:
     AtomString m_label;
     AtomString m_language;
     int m_trackIndex { -1 };
+
     MediaTime m_startTimeVariance { MediaTime::zeroTime() };
     WebCore::MediaPlayerIdentifier m_playerIdentifier;
     TrackPrivateRemoteIdentifier m_idendifier;

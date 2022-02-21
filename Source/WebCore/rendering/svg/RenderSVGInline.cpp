@@ -25,7 +25,9 @@
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGText.h"
+#include "SVGGraphicsElement.h"
 #include "SVGInlineFlowBox.h"
+#include "SVGRenderSupport.h"
 #include "SVGResourcesCache.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -36,7 +38,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGInline);
 RenderSVGInline::RenderSVGInline(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderInline(element, WTFMove(style))
 {
-    setAlwaysCreateLineBoxes();
 }
 
 std::unique_ptr<LegacyInlineFlowBox> RenderSVGInline::createInlineFlowBox()

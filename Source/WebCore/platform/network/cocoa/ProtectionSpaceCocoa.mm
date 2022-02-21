@@ -30,63 +30,63 @@
 
 namespace WebCore {
 
-static ProtectionSpaceServerType type(NSURLProtectionSpace *space)
+static ProtectionSpace::ServerType type(NSURLProtectionSpace *space)
 {
     if ([space isProxy]) {
         NSString *proxyType = space.proxyType;
         if ([proxyType isEqualToString:NSURLProtectionSpaceHTTPProxy])
-            return ProtectionSpaceProxyHTTP;
+            return ProtectionSpace::ServerType::ProxyHTTP;
         if ([proxyType isEqualToString:NSURLProtectionSpaceHTTPSProxy])
-            return ProtectionSpaceProxyHTTPS;
+            return ProtectionSpace::ServerType::ProxyHTTPS;
         if ([proxyType isEqualToString:NSURLProtectionSpaceFTPProxy])
-            return ProtectionSpaceProxyFTP;
+            return ProtectionSpace::ServerType::ProxyFTP;
         if ([proxyType isEqualToString:NSURLProtectionSpaceSOCKSProxy])
-            return ProtectionSpaceProxySOCKS;
+            return ProtectionSpace::ServerType::ProxySOCKS;
 
         ASSERT_NOT_REACHED();
-        return ProtectionSpaceProxyHTTP;
+        return ProtectionSpace::ServerType::ProxyHTTP;
     }
 
     NSString *protocol = space.protocol;
     if ([protocol caseInsensitiveCompare:@"http"] == NSOrderedSame)
-        return ProtectionSpaceServerHTTP;
+        return ProtectionSpace::ServerType::HTTP;
     if ([protocol caseInsensitiveCompare:@"https"] == NSOrderedSame)
-        return ProtectionSpaceServerHTTPS;
+        return ProtectionSpace::ServerType::HTTPS;
     if ([protocol caseInsensitiveCompare:@"ftp"] == NSOrderedSame)
-        return ProtectionSpaceServerFTP;
+        return ProtectionSpace::ServerType::FTP;
     if ([protocol caseInsensitiveCompare:@"ftps"] == NSOrderedSame)
-        return ProtectionSpaceServerFTPS;
+        return ProtectionSpace::ServerType::FTPS;
 
     ASSERT_NOT_REACHED();
-    return ProtectionSpaceServerHTTP;
+    return ProtectionSpace::ServerType::HTTP;
 }
 
-static ProtectionSpaceAuthenticationScheme scheme(NSURLProtectionSpace *space)
+static ProtectionSpace::AuthenticationScheme scheme(NSURLProtectionSpace *space)
 {
     NSString *method = space.authenticationMethod;
     if ([method isEqualToString:NSURLAuthenticationMethodDefault])
-        return ProtectionSpaceAuthenticationSchemeDefault;
+        return ProtectionSpace::AuthenticationScheme::Default;
     if ([method isEqualToString:NSURLAuthenticationMethodHTTPBasic])
-        return ProtectionSpaceAuthenticationSchemeHTTPBasic;
+        return ProtectionSpace::AuthenticationScheme::HTTPBasic;
     if ([method isEqualToString:NSURLAuthenticationMethodHTTPDigest])
-        return ProtectionSpaceAuthenticationSchemeHTTPDigest;
+        return ProtectionSpace::AuthenticationScheme::HTTPDigest;
     if ([method isEqualToString:NSURLAuthenticationMethodHTMLForm])
-        return ProtectionSpaceAuthenticationSchemeHTMLForm;
+        return ProtectionSpace::AuthenticationScheme::HTMLForm;
     if ([method isEqualToString:NSURLAuthenticationMethodNTLM])
-        return ProtectionSpaceAuthenticationSchemeNTLM;
+        return ProtectionSpace::AuthenticationScheme::NTLM;
     if ([method isEqualToString:NSURLAuthenticationMethodNegotiate])
-        return ProtectionSpaceAuthenticationSchemeNegotiate;
+        return ProtectionSpace::AuthenticationScheme::Negotiate;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     if ([method isEqualToString:NSURLAuthenticationMethodClientCertificate])
-        return ProtectionSpaceAuthenticationSchemeClientCertificateRequested;
+        return ProtectionSpace::AuthenticationScheme::ClientCertificateRequested;
     if ([method isEqualToString:NSURLAuthenticationMethodServerTrust])
-        return ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
+        return ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested;
 #endif
     if ([method isEqualToString:NSURLAuthenticationMethodOAuth])
-        return ProtectionSpaceAuthenticationSchemeOAuth;
+        return ProtectionSpace::AuthenticationScheme::OAuth;
 
     ASSERT_NOT_REACHED();
-    return ProtectionSpaceAuthenticationSchemeUnknown;
+    return ProtectionSpace::AuthenticationScheme::Unknown;
 }
 
 ProtectionSpace::ProtectionSpace(NSURLProtectionSpace *space)
@@ -103,28 +103,28 @@ NSURLProtectionSpace *ProtectionSpace::nsSpace() const
     NSString *proxyType = nil;
     NSString *protocol = nil;
     switch (serverType()) {
-    case ProtectionSpaceServerHTTP:
+    case ProtectionSpace::ServerType::HTTP:
         protocol = @"http";
         break;
-    case ProtectionSpaceServerHTTPS:
+    case ProtectionSpace::ServerType::HTTPS:
         protocol = @"https";
         break;
-    case ProtectionSpaceServerFTP:
+    case ProtectionSpace::ServerType::FTP:
         protocol = @"ftp";
         break;
-    case ProtectionSpaceServerFTPS:
+    case ProtectionSpace::ServerType::FTPS:
         protocol = @"ftps";
         break;
-    case ProtectionSpaceProxyHTTP:
+    case ProtectionSpace::ServerType::ProxyHTTP:
         proxyType = NSURLProtectionSpaceHTTPProxy;
         break;
-    case ProtectionSpaceProxyHTTPS:
+    case ProtectionSpace::ServerType::ProxyHTTPS:
         proxyType = NSURLProtectionSpaceHTTPSProxy;
         break;
-    case ProtectionSpaceProxyFTP:
+    case ProtectionSpace::ServerType::ProxyFTP:
         proxyType = NSURLProtectionSpaceFTPProxy;
         break;
-    case ProtectionSpaceProxySOCKS:
+    case ProtectionSpace::ServerType::ProxySOCKS:
         proxyType = NSURLProtectionSpaceSOCKSProxy;
         break;
     default:
@@ -133,33 +133,33 @@ NSURLProtectionSpace *ProtectionSpace::nsSpace() const
   
     NSString *method = nil;
     switch (authenticationScheme()) {
-    case ProtectionSpaceAuthenticationSchemeDefault:
+    case ProtectionSpace::AuthenticationScheme::Default:
         method = NSURLAuthenticationMethodDefault;
         break;
-    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
+    case ProtectionSpace::AuthenticationScheme::HTTPBasic:
         method = NSURLAuthenticationMethodHTTPBasic;
         break;
-    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
+    case ProtectionSpace::AuthenticationScheme::HTTPDigest:
         method = NSURLAuthenticationMethodHTTPDigest;
         break;
-    case ProtectionSpaceAuthenticationSchemeHTMLForm:
+    case ProtectionSpace::AuthenticationScheme::HTMLForm:
         method = NSURLAuthenticationMethodHTMLForm;
         break;
-    case ProtectionSpaceAuthenticationSchemeNTLM:
+    case ProtectionSpace::AuthenticationScheme::NTLM:
         method = NSURLAuthenticationMethodNTLM;
         break;
-    case ProtectionSpaceAuthenticationSchemeNegotiate:
+    case ProtectionSpace::AuthenticationScheme::Negotiate:
         method = NSURLAuthenticationMethodNegotiate;
         break;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+    case ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested:
         method = NSURLAuthenticationMethodServerTrust;
         break;
-    case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+    case ProtectionSpace::AuthenticationScheme::ClientCertificateRequested:
         method = NSURLAuthenticationMethodClientCertificate;
         break;
 #endif
-    case ProtectionSpaceAuthenticationSchemeOAuth:
+    case ProtectionSpace::AuthenticationScheme::OAuth:
         method = NSURLAuthenticationMethodOAuth;
         break;
     default:

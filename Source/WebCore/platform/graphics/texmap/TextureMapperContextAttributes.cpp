@@ -35,13 +35,13 @@
 
 namespace WebCore {
 
-static WTF::ThreadSpecific<TextureMapperContextAttributes>& threadSpecificAttributes()
+static ThreadSpecific<TextureMapperContextAttributes>& threadSpecificAttributes()
 {
-    static WTF::ThreadSpecific<TextureMapperContextAttributes>* s_textureMapperContextAttributes;
+    static ThreadSpecific<TextureMapperContextAttributes>* s_textureMapperContextAttributes;
     static std::once_flag s_onceFlag;
     std::call_once(s_onceFlag,
         [] {
-            s_textureMapperContextAttributes = new WTF::ThreadSpecific<TextureMapperContextAttributes>;
+            s_textureMapperContextAttributes = new ThreadSpecific<TextureMapperContextAttributes>;
         });
     return *s_textureMapperContextAttributes;
 }

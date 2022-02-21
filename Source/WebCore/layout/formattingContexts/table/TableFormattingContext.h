@@ -38,15 +38,13 @@
 namespace WebCore {
 namespace Layout {
 
-class InvalidationState;
-
 // This class implements the layout logic for table formatting contexts.
 // https://www.w3.org/TR/CSS22/tables.html
 class TableFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(TableFormattingContext);
 public:
     TableFormattingContext(const ContainerBox& formattingContextRoot, TableFormattingState&);
-    void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
+    void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
 
     const TableFormattingGeometry& formattingGeometry() const final { return m_tableFormattingGeometry; }

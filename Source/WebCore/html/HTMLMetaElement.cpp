@@ -26,6 +26,7 @@
 #include "Attribute.h"
 #include "Color.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLHeadElement.h"
@@ -84,7 +85,7 @@ bool HTMLMetaElement::mediaAttributeMatches()
 const Color& HTMLMetaElement::contentColor()
 {
     if (!m_contentColor)
-        m_contentColor = CSSParser::parseColor(content());
+        m_contentColor = CSSParser::parseColorWithoutContext(content());
     return *m_contentColor;
 }
 

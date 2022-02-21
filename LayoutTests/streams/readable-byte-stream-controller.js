@@ -20,7 +20,7 @@ test(function() {
         type: "bytes"
     });
 
-    assert_throws(new TypeError("Can only call ReadableByteStreamController.error on instances of ReadableByteStreamController"),
+    assert_throws_js(TypeError,
         function() { controller.error.apply(rs); });
 }, "Calling error() with a this object different from ReadableByteStreamController should throw a TypeError");
 
@@ -34,7 +34,7 @@ test(function() {
         type: "bytes"
     });
 
-    assert_throws(new TypeError("Can only call ReadableByteStreamController.close on instances of ReadableByteStreamController"),
+    assert_throws_js(TypeError,
         function() { controller.close.apply(rs); });
 }, "Calling close() with a this object different from ReadableByteStreamController should throw a TypeError");
 
@@ -48,7 +48,7 @@ test(function() {
         type: "bytes"
     });
 
-    assert_throws(new TypeError("Can only call ReadableByteStreamController.enqueue on instances of ReadableByteStreamController"),
+    assert_throws_js(TypeError,
         function() { controller.enqueue.apply(rs, new Int8Array(1)); });
 }, "Calling enqueue() with a this object different from ReadableByteStreamController should throw a TypeError");
 
@@ -65,7 +65,7 @@ test(function() {
     controller.enqueue(new Int8Array(2));
     controller.close();
 
-    assert_throws(new TypeError("ReadableByteStreamController is requested to close"),
+    assert_throws_js(TypeError,
         function() { controller.enqueue(new Int8Array(1)); });
 }, "Calling enqueue() when close has been requested but not yet performed should throw a TypeError");
 
@@ -80,7 +80,7 @@ test(function() {
     });
     controller.close();
 
-    assert_throws(new TypeError("ReadableStream is not readable"),
+    assert_throws_js(TypeError,
         function() {
             controller.enqueue(new Int8Array(1));
         });
@@ -98,7 +98,7 @@ test(function() {
 
     const invalidChunk = function() {};
 
-    assert_throws(new TypeError("Provided chunk is not an object"),
+    assert_throws_js(TypeError,
         function() { controller.enqueue(invalidChunk); });
 }, "Calling enqueue() with a chunk that is not an object should trhow a TypeError");
 
@@ -114,7 +114,7 @@ test(function() {
 
     const invalidChunk = {};
 
-    assert_throws(new TypeError("Provided chunk is not an object"),
+    assert_throws_js(TypeError,
         function() { controller.enqueue(invalidChunk); });
 }, "Calling enqueue() with a chunk that is not an ArrayBufferView should throw a TypeError");
 
@@ -128,7 +128,7 @@ test(function() {
         type: "bytes"
     });
 
-    assert_throws(new TypeError("ReadableStream is not readable"),
+    assert_throws_js(TypeError,
         function() {
             controller.close();
             controller.error();
@@ -145,7 +145,7 @@ test(function() {
         type: "bytes"
     });
 
-    assert_throws(new TypeError("ReadableStream is not readable"),
+    assert_throws_js(TypeError,
         function() {
             controller.error();
             controller.error();
@@ -162,7 +162,7 @@ test(function() {
         type: "bytes"
     });
 
-    assert_throws(new TypeError("Close has already been requested"),
+    assert_throws_js(TypeError,
         function() {
             controller.close();
             controller.close();
@@ -179,7 +179,7 @@ test(function() {
         type: "bytes"
     });
 
-    assert_throws(new TypeError("ReadableStream is not readable"),
+    assert_throws_js(TypeError,
         function() {
             controller.error();
             controller.close();
@@ -198,7 +198,7 @@ promise_test(function(test) {
     const myError = new Error("my error");
     controller.error(myError);
 
-    return promise_rejects(test, myError, rs.getReader().read());
+    return promise_rejects_exactly(test, myError, rs.getReader().read());
 }, "Calling read() on a reader associated to a controller that has been errored should fail with provided error");
 
 promise_test(function() {
@@ -234,7 +234,7 @@ promise_test(function(test) {
     let readingPromise = rs.getReader().read();
     controller.error(myError);
 
-    return promise_rejects(test, myError, readingPromise);
+    return promise_rejects_exactly(test, myError, readingPromise);
 }, "Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is undefined)");
 
 promise_test(function(test) {
@@ -252,7 +252,7 @@ promise_test(function(test) {
     let readingPromise = rs.getReader().read();
     controller.error(myError);
 
-    return promise_rejects(test, myError, readingPromise);
+    return promise_rejects_exactly(test, myError, readingPromise);
 }, "Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is specified)");
 
 promise_test(function() {

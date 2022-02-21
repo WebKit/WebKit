@@ -48,23 +48,24 @@
 #include "HTMLUnknownElement.h"
 #include "JSCustomElementInterface.h"
 #include "NotImplemented.h"
-#include "SVGElement.h"
+#include "SVGElementInlines.h"
 #include "Text.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline void setAttributes(Element& element, Vector<Attribute>& attributes, ParserContentPolicy parserContentPolicy)
+static inline void setAttributes(Element& element, Vector<Attribute>& attributes, HasDuplicateAttribute hasDuplicateAttribute, ParserContentPolicy parserContentPolicy)
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
         element.stripScriptingAttributes(attributes);
     element.parserSetAttributes(attributes);
+    element.setHasDuplicateAttribute(hasDuplicateAttribute == HasDuplicateAttribute::Yes);
 }
 
 static inline void setAttributes(Element& element, AtomHTMLToken& token, ParserContentPolicy parserContentPolicy)
 {
-    setAttributes(element, token.attributes(), parserContentPolicy);
+    setAttributes(element, token.attributes(), token.hasDuplicateAttribute(), parserContentPolicy);
 }
 
 static bool hasImpliedEndTag(const HTMLStackItem& item)
@@ -131,7 +132,7 @@ static inline void executeReparentTask(HTMLConstructionSiteTask& task)
     ASSERT(task.operation == HTMLConstructionSiteTask::Reparent);
     ASSERT(!task.nextChild);
 
-    if (auto parent = makeRefPtr(task.child->parentNode()))
+    if (RefPtr parent = task.child->parentNode())
         parent->parserRemoveChild(*task.child);
 
     if (task.child->parentNode())
@@ -161,7 +162,7 @@ static inline void executeTakeAllChildrenAndReparentTask(HTMLConstructionSiteTas
     ASSERT(task.operation == HTMLConstructionSiteTask::TakeAllChildrenAndReparent);
     ASSERT(!task.nextChild);
 
-    auto furthestBlock = makeRefPtr(task.oldParent());
+    RefPtr furthestBlock = task.oldParent();
     task.parent->takeAllChildrenFrom(furthestBlock.get());
 
     RELEASE_ASSERT(!task.parent->parentNode());
@@ -271,7 +272,7 @@ void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
     if (m_isParsingFragment)
         return;
 
-    if (auto frame = makeRefPtr(m_document.frame()))
+    if (RefPtr frame = m_document.frame())
         frame->injectUserScripts(UserScriptInjectionTime::DocumentStart);
 }
 
@@ -291,6 +292,9 @@ void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomHTMLToken&& t
 {
     if (token.attributes().isEmpty())
         return;
+
+    if (!scriptingContentIsAllowed(m_parserContentPolicy))
+        element.stripScriptingAttributes(token.attributes());
 
     for (auto& tokenAttribute : token.attributes()) {
         if (!element.elementData() || !element.findAttributeByName(tokenAttribute.name()))
@@ -513,7 +517,7 @@ std::unique_ptr<CustomElementConstructionData> HTMLConstructionSite::insertHTMLE
 
 void HTMLConstructionSite::insertCustomElement(Ref<Element>&& element, const AtomString& localName, Vector<Attribute>&& attributes)
 {
-    setAttributes(element, attributes, m_parserContentPolicy);
+    setAttributes(element, attributes, HasDuplicateAttribute::No, m_parserContentPolicy);
     attachLater(currentNode(), element.copyRef());
     m_openElements.push(HTMLStackItem::create(WTFMove(element), localName, WTFMove(attributes)));
     executeQueuedTasks();
@@ -779,7 +783,7 @@ void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
 
     if (auto* lastTableElementRecord = m_openElements.topmost(tableTag->localName())) {
         auto& lastTableElement = lastTableElementRecord->element();
-        auto parent = makeRefPtr(lastTableElement.parentNode());
+        RefPtr parent = lastTableElement.parentNode();
         // When parsing HTML fragments, we skip step 4.2 ("Let root be a new html element with no attributes") for efficiency,
         // and instead use the DocumentFragment as a root node. So we must treat the root node (DocumentFragment) as if it is a html element here.
         bool parentCanBeFosterParent = parent && (parent->isElementNode() || (m_isParsingFragment && parent == &m_openElements.rootNode()));

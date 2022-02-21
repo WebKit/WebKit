@@ -41,13 +41,13 @@ using namespace WebCore;
 
 PreconnectTask::PreconnectTask(NetworkSession& networkSession, NetworkLoadParameters&& parameters, CompletionHandler<void(const ResourceError&)>&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))
+    , m_timeout(60_s)
     , m_timeoutTimer([this] { didFinish(ResourceError { String(), 0, m_networkLoad->parameters().request.url(), "Preconnection timed out"_s, ResourceError::Type::Timeout }); })
 {
     RELEASE_LOG(Network, "%p - PreconnectTask::PreconnectTask()", this);
 
     ASSERT(parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
     m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), networkSession);
-    m_timeoutTimer.startOneShot(60000_s);
 }
 
 void PreconnectTask::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
@@ -55,8 +55,14 @@ void PreconnectTask::setH2PingCallback(const URL& url, CompletionHandler<void(Ex
     m_networkLoad->setH2PingCallback(url, WTFMove(completionHandler));
 }
 
+void PreconnectTask::setTimeout(Seconds timeout)
+{
+    m_timeout = timeout;
+}
+
 void PreconnectTask::start()
 {
+    m_timeoutTimer.startOneShot(m_timeout);
     m_networkLoad->start();
 }
 
@@ -67,13 +73,13 @@ void PreconnectTask::willSendRedirectedRequest(ResourceRequest&&, ResourceReques
     // HSTS redirection may happen here.
 }
 
-void PreconnectTask::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
+void PreconnectTask::didReceiveResponse(ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
 {
     ASSERT_NOT_REACHED();
     completionHandler(PolicyAction::Ignore);
 }
 
-void PreconnectTask::didReceiveBuffer(Ref<SharedBuffer>&&, int reportedEncodedDataLength)
+void PreconnectTask::didReceiveBuffer(const FragmentedSharedBuffer&, int reportedEncodedDataLength)
 {
     ASSERT_NOT_REACHED();
 }

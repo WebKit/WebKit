@@ -1,0 +1,43 @@
+
+FAIL getComputedStyle() for ::selection assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+PASS getComputedStyle() for ::selection: should be element's default
+PASS getComputedStyle() for ::selection) should be element's default
+PASS getComputedStyle() for ::selection( should be element's default
+PASS getComputedStyle() for ::selection(foo) should be element's default
+PASS getComputedStyle() for ::selection() should be element's default
+PASS getComputedStyle() for :::selection should be element's default
+PASS getComputedStyle() for ::selection. should be element's default
+FAIL getComputedStyle() for ::target-text assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+PASS getComputedStyle() for ::target-text: should be element's default
+PASS getComputedStyle() for ::target-text) should be element's default
+PASS getComputedStyle() for ::target-text( should be element's default
+PASS getComputedStyle() for ::target-text(foo) should be element's default
+PASS getComputedStyle() for ::target-text() should be element's default
+PASS getComputedStyle() for :::target-text should be element's default
+PASS getComputedStyle() for ::target-text. should be element's default
+FAIL getComputedStyle() for ::spelling-error assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+PASS getComputedStyle() for ::spelling-error: should be element's default
+PASS getComputedStyle() for ::spelling-error) should be element's default
+PASS getComputedStyle() for ::spelling-error( should be element's default
+PASS getComputedStyle() for ::spelling-error(foo) should be element's default
+PASS getComputedStyle() for ::spelling-error() should be element's default
+PASS getComputedStyle() for :::spelling-error should be element's default
+PASS getComputedStyle() for ::spelling-error. should be element's default
+FAIL getComputedStyle() for ::grammar-error assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+PASS getComputedStyle() for ::grammar-error: should be element's default
+PASS getComputedStyle() for ::grammar-error) should be element's default
+PASS getComputedStyle() for ::grammar-error( should be element's default
+PASS getComputedStyle() for ::grammar-error(foo) should be element's default
+PASS getComputedStyle() for ::grammar-error() should be element's default
+PASS getComputedStyle() for :::grammar-error should be element's default
+PASS getComputedStyle() for ::grammar-error. should be element's default
+FAIL getComputedStyle() for ::highlight(foo) assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+PASS getComputedStyle() for ::highlight(foo): should be element's default
+PASS getComputedStyle() for ::highlight(foo)) should be element's default
+PASS getComputedStyle() for ::highlight(foo)( should be element's default
+PASS getComputedStyle() for ::highlight(foo)(foo) should be element's default
+PASS getComputedStyle() for ::highlight(foo)() should be element's default
+PASS getComputedStyle() for :::highlight(foo) should be element's default
+PASS getComputedStyle() for ::highlight(foo). should be element's default
+FAIL Different getComputedStyle() for ::highlight(bar) and same element assert_equals: Background color is blue. expected "rgb(0, 0, 255)" but got "rgba(0, 0, 0, 0)"
+

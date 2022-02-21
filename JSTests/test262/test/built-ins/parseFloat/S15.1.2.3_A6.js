@@ -19,7 +19,6 @@ var indexP;
 var indexO = 0;
 for (var index = 0; index <= 65535; index++) {
   if ((index < 0x0030) || (index > 0x0039)) {
-    var hex = decimalToHexString(index);
     if (parseFloat("0.1e1" + String.fromCharCode(index)) !== 1) {
       if (indexO === 0) {
         indexO = index;

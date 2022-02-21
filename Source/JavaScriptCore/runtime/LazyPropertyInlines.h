@@ -57,7 +57,7 @@ void LazyProperty<OwnerType, ElementType>::setMayBeNull(VM& vm, const OwnerType*
 {
     m_pointer = bitwise_cast<uintptr_t>(value);
     RELEASE_ASSERT(!(m_pointer & lazyTag));
-    vm.heap.writeBarrier(owner, value);
+    vm.writeBarrier(owner, value);
 }
 
 template<typename OwnerType, typename ElementType>

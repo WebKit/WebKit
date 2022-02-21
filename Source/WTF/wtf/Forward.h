@@ -25,6 +25,7 @@
 
 namespace WTF {
 
+class ASCIILiteral;
 class AbstractLocker;
 class AtomString;
 class AtomStringImpl;
@@ -47,8 +48,8 @@ class StringView;
 class SuspendableWorkQueue;
 class TextPosition;
 class TextStream;
-class UniquedStringImpl;
 class URL;
+class UniquedStringImpl;
 class WallTime;
 
 struct AnyThreadsAccessTraits;
@@ -69,6 +70,7 @@ template<typename> class FixedVector;
 template<typename> class Function;
 template<typename, typename = AnyThreadsAccessTraits> class LazyNeverDestroyed;
 template<typename, typename = AnyThreadsAccessTraits> class NeverDestroyed;
+template<typename> class ObjectIdentifier;
 template<typename> class OptionSet;
 template<typename> class Packed;
 template<typename T, size_t = alignof(T)> class PackedAlignedPtr;
@@ -83,7 +85,6 @@ template<typename> class StringBuffer;
 template<typename> class StringParsingBuffer;
 template<typename, typename = void> class StringTypeAdapter;
 template<typename> class UniqueRef;
-template<typename...> class Variant;
 template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename Malloc = VectorMalloc> class Vector;
 template<typename, typename = EmptyCounter> class WeakPtr;
 
@@ -119,6 +120,7 @@ template<class, class> class expected;
 template<class> class unexpected;
 }}} // namespace std::experimental::fundamentals_v3
 
+using WTF::ASCIILiteral;
 using WTF::AbstractLocker;
 using WTF::AtomString;
 using WTF::AtomStringImpl;
@@ -136,6 +138,7 @@ using WTF::LazyNeverDestroyed;
 using WTF::Lock;
 using WTF::Logger;
 using WTF::NeverDestroyed;
+using WTF::ObjectIdentifier;
 using WTF::OptionSet;
 using WTF::OrdinalNumber;
 using WTF::PrintStream;
@@ -157,8 +160,8 @@ using WTF::TextPosition;
 using WTF::TextStream;
 using WTF::URL;
 using WTF::UniqueRef;
-using WTF::Variant;
 using WTF::Vector;
+using WTF::WeakPtr;
 
 template<class T, class E> using Expected = std::experimental::expected<T, E>;
 template<class E> using Unexpected = std::experimental::unexpected<E>;

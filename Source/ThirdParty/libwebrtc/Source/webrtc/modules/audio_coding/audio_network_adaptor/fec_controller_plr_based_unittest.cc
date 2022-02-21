@@ -100,9 +100,9 @@ void UpdateNetworkMetrics(FecControllerPlrBasedTestStates* states,
   }
 }
 
-// Checks that the FEC decision and |uplink_packet_loss_fraction| given by
-// |states->controller->MakeDecision| matches |expected_enable_fec| and
-// |expected_uplink_packet_loss_fraction|, respectively.
+// Checks that the FEC decision and `uplink_packet_loss_fraction` given by
+// `states->controller->MakeDecision` matches `expected_enable_fec` and
+// `expected_uplink_packet_loss_fraction`, respectively.
 void CheckDecision(FecControllerPlrBasedTestStates* states,
                    bool expected_enable_fec,
                    float expected_uplink_packet_loss_fraction) {
@@ -221,7 +221,7 @@ TEST(FecControllerPlrBasedTest, MaintainFecOffForLowBandwidth) {
 
 TEST(FecControllerPlrBasedTest, MaintainFecOffForVeryLowBandwidth) {
   auto states = CreateFecControllerPlrBased(false);
-  // Below |kEnablingBandwidthLow|, no packet loss fraction can cause FEC to
+  // Below `kEnablingBandwidthLow`, no packet loss fraction can cause FEC to
   // turn on.
   UpdateNetworkMetrics(&states, kEnablingBandwidthLow - 1, 1.0);
   CheckDecision(&states, false, 1.0);
@@ -272,7 +272,7 @@ TEST(FecControllerPlrBasedTest, DisableFecForLowBandwidth) {
 
 TEST(FecControllerPlrBasedTest, DisableFecForVeryLowBandwidth) {
   auto states = CreateFecControllerPlrBased(true);
-  // Below |kEnablingBandwidthLow|, any packet loss fraction can cause FEC to
+  // Below `kEnablingBandwidthLow`, any packet loss fraction can cause FEC to
   // turn off.
   UpdateNetworkMetrics(&states, kDisablingBandwidthLow - 1, 1.0);
   CheckDecision(&states, false, 1.0);

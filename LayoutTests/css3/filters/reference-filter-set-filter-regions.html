@@ -1,6 +1,9 @@
 <head>
     <style>
         .box {
+          position: absolute;
+          left: 40px;
+          top: 40px;
           width: 200px;
           height: 200px;
           background-color: silver;
@@ -18,7 +21,7 @@
         <filter id="filter">
             <feTurbulence type="turbulence" baseFrequency="0.01" numOctaves="1" seed="5" stitchTiles="stitch"/>
             <feColorMatrix type="saturate" values="0"/>
-            <feComponentTransfer>
+            <feComponentTransfer color-interpolation-filters="sRGB">
                 <feFuncR type="linear" slope="0" intercept="0"/>
                 <feFuncG type="linear" slope="0" intercept="0.5"/>
                 <feFuncB type="linear" slope="0" intercept="0"/>

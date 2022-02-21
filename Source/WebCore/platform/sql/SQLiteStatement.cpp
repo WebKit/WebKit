@@ -30,8 +30,8 @@
 #include "SQLValue.h"
 #include "SQLiteDatabaseTracker.h"
 #include <sqlite3.h>
+#include <variant>
 #include <wtf/Assertions.h>
-#include <wtf/Variant.h>
 #include <wtf/text/StringView.h>
 
 // SQLite 3.6.16 makes sqlite3_prepare_v2 automatically retry preparing the statement
@@ -284,7 +284,7 @@ String SQLiteStatement::columnBlobAsString(int col)
         return String();
 
     ASSERT(!(size % sizeof(UChar)));
-    return String(static_cast<const UChar*>(blob), size / sizeof(UChar));
+    return StringImpl::create8BitIfPossible(static_cast<const UChar*>(blob), size / sizeof(UChar));
 }
 
 Vector<uint8_t> SQLiteStatement::columnBlob(int col)

@@ -38,7 +38,7 @@ public:
     RenderVideo(HTMLVideoElement&, RenderStyle&&);
     virtual ~RenderVideo();
 
-    HTMLVideoElement& videoElement() const;
+    WEBCORE_EXPORT HTMLVideoElement& videoElement() const;
 
     WEBCORE_EXPORT IntRect videoBox() const;
 

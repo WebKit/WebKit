@@ -189,16 +189,16 @@ void webkit_dom_dom_token_list_add(WebKitDOMDOMTokenList* self, GError** error, 
     g_return_if_fail(!error || !*error);
     WebCore::DOMTokenList* item = WebKit::core(self);
     va_list variadicParameterList;
-    Vector<WTF::String> convertedTokens;
     va_start(variadicParameterList, error);
-    while (gchar* variadicParameter = va_arg(variadicParameterList, gchar*))
-        convertedTokens.append(WTF::String::fromUTF8(variadicParameter));
-    va_end(variadicParameterList);
-    auto result = item->add(WTFMove(convertedTokens));
-    if (result.hasException()) {
-        auto description = WebCore::DOMException::description(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
+    while (gchar* variadicParameter = va_arg(variadicParameterList, gchar*)) {
+        auto result = item->add(WTF::String::fromUTF8(variadicParameter));
+        if (result.hasException()) {
+            auto description = WebCore::DOMException::description(result.releaseException().code());
+            g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
+            break;
+        }
     }
+    va_end(variadicParameterList);
 }
 
 void webkit_dom_dom_token_list_remove(WebKitDOMDOMTokenList* self, GError** error, ...)
@@ -210,14 +210,15 @@ void webkit_dom_dom_token_list_remove(WebKitDOMDOMTokenList* self, GError** erro
     va_list variadicParameterList;
     Vector<WTF::String> convertedTokens;
     va_start(variadicParameterList, error);
-    while (gchar* variadicParameter = va_arg(variadicParameterList, gchar*))
-        convertedTokens.append(WTF::String::fromUTF8(variadicParameter));
-    va_end(variadicParameterList);
-    auto result = item->remove(WTFMove(convertedTokens));
-    if (result.hasException()) {
-        auto description = WebCore::DOMException::description(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
+    while (gchar* variadicParameter = va_arg(variadicParameterList, gchar*)) {
+        auto result = item->remove(WTF::String::fromUTF8(variadicParameter));
+        if (result.hasException()) {
+            auto description = WebCore::DOMException::description(result.releaseException().code());
+            g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
+            break;
+        }
     }
+    va_end(variadicParameterList);
 }
 
 gboolean webkit_dom_dom_token_list_toggle(WebKitDOMDOMTokenList* self, const gchar* token, gboolean force, GError** error)

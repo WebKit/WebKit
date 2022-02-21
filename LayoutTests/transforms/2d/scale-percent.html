@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .box {
+            margin: 10px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="box" style="transform: scale(80%)"></div>
+    <div class="box" style="transform: scale(80%, 0.8)"></div>
+    <div class="box" style="transform: scale(calc(100% * 0.8), 0.8)"></div>
+    <div class="box" style="scale: 80%"></div>
+    <div class="box" style="scale: calc(100% * 0.8)"></div>
+</body>
+</html>

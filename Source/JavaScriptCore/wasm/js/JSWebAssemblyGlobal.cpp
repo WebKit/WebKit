@@ -44,7 +44,7 @@ JSWebAssemblyGlobal* JSWebAssemblyGlobal::tryCreate(JSGlobalObject* globalObject
         return nullptr;
     }
 
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyGlobal>(vm.heap)) JSWebAssemblyGlobal(vm, structure, WTFMove(global));
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyGlobal>(vm)) JSWebAssemblyGlobal(vm, structure, WTFMove(global));
     instance->global()->setOwner(instance);
     instance->finishCreation(vm);
     return instance;
@@ -105,14 +105,14 @@ JSObject* JSWebAssemblyGlobal::type(JSGlobalObject* globalObject)
     case Wasm::TypeKind::F64:
         valueString = jsNontrivialString(vm, "f64");
         break;
-    case Wasm::TypeKind::Externref:
-        valueString = jsNontrivialString(vm, "externref");
-        break;
-    case Wasm::TypeKind::Funcref:
-        valueString = jsNontrivialString(vm, "funcref");
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
+    default: {
+        if (Wasm::isFuncref(valueType))
+            valueString = jsNontrivialString(vm, "anyfunc");
+        else if (Wasm::isExternref(valueType))
+            valueString = jsNontrivialString(vm, "externref");
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+    }
     }
     result->putDirect(vm, Identifier::fromString(vm, "value"), valueString);
 

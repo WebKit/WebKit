@@ -183,6 +183,21 @@ void PageClientImplCocoa::cameraCaptureWillChange()
     [m_webView willChangeValueForKey:@"cameraCaptureState"];
 }
 
+void PageClientImplCocoa::displayCaptureWillChange()
+{
+    [m_webView willChangeValueForKey:@"_displayCaptureState"];
+}
+
+void PageClientImplCocoa::displayCaptureSurfacesWillChange()
+{
+    [m_webView willChangeValueForKey:@"_displayCaptureSurfaces"];
+}
+
+void PageClientImplCocoa::systemAudioCaptureWillChange()
+{
+    [m_webView willChangeValueForKey:@"_systemAudioCaptureState"];
+}
+
 void PageClientImplCocoa::microphoneCaptureChanged()
 {
     [m_webView didChangeValueForKey:@"microphoneCaptureState"];
@@ -191,6 +206,31 @@ void PageClientImplCocoa::microphoneCaptureChanged()
 void PageClientImplCocoa::cameraCaptureChanged()
 {
     [m_webView didChangeValueForKey:@"cameraCaptureState"];
+}
+
+void PageClientImplCocoa::displayCaptureChanged()
+{
+    [m_webView didChangeValueForKey:@"_displayCaptureState"];
+}
+
+void PageClientImplCocoa::displayCaptureSurfacesChanged()
+{
+    [m_webView didChangeValueForKey:@"_displayCaptureSurfaces"];
+}
+
+void PageClientImplCocoa::systemAudioCaptureChanged()
+{
+    [m_webView didChangeValueForKey:@"_systemAudioCaptureState"];
+}
+
+WindowKind PageClientImplCocoa::windowKind()
+{
+    auto window = [m_webView window];
+    if (!window)
+        return WindowKind::Unparented;
+    if ([window isKindOfClass:NSClassFromString(@"_SCNSnapshotWindow")])
+        return WindowKind::InProcessSnapshotting;
+    return WindowKind::Normal;
 }
 
 }

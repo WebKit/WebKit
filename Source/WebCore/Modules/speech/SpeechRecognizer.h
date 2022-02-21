@@ -31,6 +31,7 @@
 #include <wtf/UniqueRef.h>
 
 #if HAVE(SPEECHRECOGNIZER)
+#include <CoreMedia/CMTime.h>
 #include <wtf/RetainPtr.h>
 OBJC_CLASS WebSpeechRecognizerTask;
 #endif
@@ -82,6 +83,7 @@ private:
 
 #if HAVE(SPEECHRECOGNIZER)
     RetainPtr<WebSpeechRecognizerTask> m_task;
+    CMTime m_currentAudioSampleTime;
 #endif
 };
 

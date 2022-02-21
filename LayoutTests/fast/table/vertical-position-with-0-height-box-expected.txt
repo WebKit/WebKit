@@ -1,0 +1,2 @@
+The zero height inline level box is supposed to be aligned with the bottom of the green box (20px).
+Inline level box logical top: 20px

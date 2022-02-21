@@ -44,10 +44,6 @@
     attribute EventHandler onclose;
     attribute EventHandler onerror;
     attribute EventHandler onversionchange;
-
-    // Non-standard: This is not part of the spec, but is needed for compatibility.
-    // See https://github.com/w3c/IndexedDB/issues/85
-    IDBTransaction transaction(DOMStringList storeNames, optional IDBTransactionMode mode = "readonly");
 };
 
 dictionary IDBObjectStoreParameters {

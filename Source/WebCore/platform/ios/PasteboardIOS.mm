@@ -128,6 +128,10 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(pasteboardImage, m_pasteboardName, context());
 }
 
+void Pasteboard::write(const PasteboardBuffer&)
+{
+}
+
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
 {
     // FIXME: We vend "public.text" here for backwards compatibility with pre-iOS 11 apps. In the future, we should stop vending this UTI,

@@ -1,0 +1,22 @@
+From 899ea681894380233b0a20db882f73c2e1cd7303 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Sat, 12 Feb 2022 11:51:19 +0000
+Subject: [PATCH] Bump libnice to current git master HEAD
+
+---
+ elements/components/libnice.bst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/elements/components/libnice.bst b/elements/components/libnice.bst
+index c89fdf3df..75c41dc1a 100644
+--- a/elements/components/libnice.bst
++++ b/elements/components/libnice.bst
+@@ -29,4 +29,4 @@ sources:
+ - kind: git_tag
+   url: freedesktop:libnice/libnice.git
+   track: master
+-  ref: 0.1.18-0-g55b71d47f2b427b3baa8812818ed3f059acc748d
++  ref: 0.1.18-0-g2f35957ab869762568dc269db1eba3a1d4459be7
+-- 
+2.34.1
+

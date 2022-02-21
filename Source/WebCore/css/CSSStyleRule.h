@@ -46,7 +46,7 @@ public:
 private:
     CSSStyleRule(StyleRule&, CSSStyleSheet*);
 
-    CSSRule::Type type() const final { return STYLE_RULE; }
+    StyleRuleType styleRuleType() const final { return StyleRuleType::Style; }
     String cssText() const final;
     void reattach(StyleRuleBase&) final;
 
@@ -58,4 +58,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSStyleRule, CSSRule::STYLE_RULE)
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSStyleRule, StyleRuleType::Style)

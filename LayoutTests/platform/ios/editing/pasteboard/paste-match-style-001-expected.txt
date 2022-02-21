@@ -23,17 +23,17 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x60
           RenderText {#text} at (0,1) size 66x28
             text run at (0,1) width 66: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (65,1) size 1x28
           RenderText {#text} at (0,31) size 264x28
             text run at (0,31) width 264: "Pasting and matching style."
         RenderBlock {DIV} at (14,90) size 756x120
           RenderText {#text} at (0,1) size 190x28
             text run at (0,1) width 190: "Expected Results: "
-          RenderBR {BR} at (189,0) size 1x28
+          RenderBR {BR} at (189,1) size 1x28
           RenderText {#text} at (0,31) size 738x58
             text run at (0,31) width 738: "The pasted letter should match the style of the preexisting bold letter. Should"
             text run at (0,61) width 364: "see this content in the red box below: "
-          RenderBR {BR} at (363,60) size 1x28
+          RenderBR {BR} at (363,61) size 1x28
           RenderInline {B} at (0,0) size 26x28
             RenderText {#text} at (0,91) size 26x28
               text run at (0,91) width 26: "ab"

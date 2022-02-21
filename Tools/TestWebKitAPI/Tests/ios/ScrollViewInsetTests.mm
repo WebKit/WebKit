@@ -58,7 +58,7 @@
 
 @implementation AsyncPolicyDelegateForInsetTest
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     _navigationComplete = true;
 }

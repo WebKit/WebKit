@@ -41,7 +41,7 @@ class DocumentLoader;
 class ApplicationManifestLoader final : private CachedRawResourceClient {
 WTF_MAKE_NONCOPYABLE(ApplicationManifestLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef WTF::Function<void (CachedResourceHandle<CachedApplicationManifest>)> CompletionHandlerType;
+    typedef Function<void (CachedResourceHandle<CachedApplicationManifest>)> CompletionHandlerType;
 
     ApplicationManifestLoader(DocumentLoader&, const URL&, bool);
     virtual ~ApplicationManifestLoader();

@@ -37,8 +37,8 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-struct ServiceWorkerFetchResult;
 struct ServiceWorkerJobData;
+struct WorkerFetchResult;
 class TextResourceDecoder;
 }
 
@@ -50,7 +50,7 @@ class NetworkSession;
 class ServiceWorkerSoftUpdateLoader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerSoftUpdateLoader> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using Handler = CompletionHandler<void(const WebCore::ServiceWorkerFetchResult&)>;
+    using Handler = CompletionHandler<void(const WebCore::WorkerFetchResult&)>;
     static void start(NetworkSession*, WebCore::ServiceWorkerJobData&&, bool shouldRefreshCache, WebCore::ResourceRequest&&, Handler&&);
 
     ~ServiceWorkerSoftUpdateLoader();
@@ -63,8 +63,8 @@ private:
     bool isSynchronous() const final { return false; }
     bool isAllowedToAskUserForCredentials() const final { return false; }
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) final;
-    void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) final;
-    void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) final;
+    void didReceiveResponse(WebCore::ResourceResponse&&, PrivateRelayed, ResponseCompletionHandler&&) final;
+    void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&, int reportedEncodedDataLength) final;
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) final;
     void didFailLoading(const WebCore::ResourceError&) final;
 

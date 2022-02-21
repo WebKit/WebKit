@@ -68,6 +68,8 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_ALIGNED(amount) __attribute__((aligned(amount)))
 
+#define PAS_FORMAT_PRINTF(fmt, args) __attribute__((format(__printf__, fmt, args)))
+
 #define PAS_UNUSED __attribute__((unused))
 
 #define PAS_OFFSETOF(type, field) __PAS_OFFSETOF(type, field)
@@ -77,12 +79,91 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_UNUSED_PARAM(variable) __PAS_UNUSED_PARAM(variable)
 
 #define PAS_ARM64 __PAS_ARM64
+#define PAS_ARM64E __PAS_ARM64E
 #define PAS_ARM32 __PAS_ARM32
 
 #define PAS_ARM __PAS_ARM
 
+#define PAS_X86 __PAS_X86
+#define PAS_X86_64 __PAS_X86_64
+
+#define PAS_RISCV __PAS_RISCV
+
+#if PAS_ARM64 && !PAS_ARM64E && !PAS_OS(MAC) && !defined(__ARM_FEATURE_ATOMICS)
+/* Just using LL/SC does not guarantee that the ordering of accesses around the loop. For example,
+ *
+ *    access(A)
+ *  0:
+ *    LL (ldaxr)
+ *    ...
+ *    SC (stlxr)
+ *    cond-branch 0
+ *    access(B)
+ *
+ * In the above code case, the ordering A -> LL -> SC -> B is not guaranteed and it can be
+ * LL -> A -> B -> SC or LL -> B -> A -> SC: memory access may happen in the middle of RMW atomics.
+ * This breaks pas_versioned_field's assumption where they are ordered as A -> LL -> SC -> B.
+ *
+ * https://stackoverflow.com/questions/35217406/partial-reordering-of-c11-atomics-on-aarch64
+ * https://stackoverflow.com/questions/21535058/arm64-ldxr-stxr-vs-ldaxr-stlxr
+ * http://lists.infradead.org/pipermail/linux-arm-kernel/2014-February/229588.html
+ *
+ * Another example is that the following can happen if we use CAS loop without barrier.
+ *
+ *     == thread A ==
+ *     *a = 1;
+ *     spin_lock(&lock);
+ *     *b = 1;
+ *
+ *     == thread B ==
+ *     b_value = atomic_get(&b);
+ *     a_value = atomic_get(&a);
+ *     assert(a_value || !b_value); // can fail
+ *
+ * https://github.com/zephyrproject-rtos/zephyr/issues/32133
+ * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65697
+ *
+ * To guarantee A -> (atomic) -> B ordering, we insert barrier (dmb ish) just after the loop.
+ *
+ *    access(A)
+ *  0:
+ *    LL (ldxr)
+ *    ...
+ *    SC (stlxr)
+ *    cond-branch 0
+ *    dmb ish
+ *    access(B)
+ *
+ * `dmb ish` ensures B is done after (atomic) region. And this barrier also ensures that A cannot happen after
+ * For this CAS emulation loop, we do not need to have acquire, so we can use ldxr.
+ * (atomic) region. SC ensures A does not happen after SC. But still, A and LL can be reordered.
+ * If A is storing to the same location X, then it will be detected due to ldxr's exclusiveness.
+ *
+ *      data = LL(X)
+ *      store(X, 42) // Reordered here
+ *      => SC will fail.
+ *
+ * If A is storing to the different location, then we have no way to observe the difference.
+ *
+ *     data = LL(X)
+ *     store(A, 42) // Reordered here. But there is no way to know whether this access happens before or after LL.
+ *
+ * To achieve that, when we are not building with ARM LSE Atomics, we use inline assembly instead of
+ * clang's builtin (e.g. __c11_atomic_compare_exchange_weak).
+ */
+#define PAS_COMPILER_ARM64_ATOMICS_LL_SC 1
+#endif
+
+#ifdef __cplusplus
+#define PAS_TYPEOF(a) decltype (a)
+#else
+#define PAS_TYPEOF(a) typeof (a)
+#endif
+
 /* NOTE: panic format string must have \n at the end. */
-PAS_API PAS_NO_RETURN void pas_panic(const char* format, ...);
+PAS_API PAS_NO_RETURN void pas_panic(const char* format, ...) PAS_FORMAT_PRINTF(1, 2);
+
+PAS_API PAS_NEVER_INLINE PAS_NO_RETURN void pas_panic_on_out_of_memory_error(void);
 
 #define pas_set_deallocation_did_fail_callback __pas_set_deallocation_did_fail_callback
 #define pas_set_reallocation_did_fail_callback __pas_set_reallocation_did_fail_callback
@@ -94,18 +175,41 @@ PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_reallocation_did_fail(const char
                                                                       void* target_heap,
                                                                       void* old_ptr,
                                                                       size_t old_size,
-                                                                      size_t new_count);
+                                                                      size_t new_size);
 
-PAS_API PAS_NO_RETURN void pas_assertion_failed(const char* filename, int line, const char* function, const char* expression);
+#if PAS_ENABLE_TESTING
+PAS_API PAS_NO_RETURN void pas_assertion_failed(
+    const char* filename, int line, const char* function, const char* expression);
+#else /* PAS_ENABLE_TESTING -> so !PAS_ENABLE_TESTING */
+static PAS_ALWAYS_INLINE PAS_NO_RETURN void pas_assertion_failed(
+    const char* filename, int line, const char* function, const char* expression)
+{
+    PAS_UNUSED_PARAM(filename);
+    PAS_UNUSED_PARAM(line);
+    PAS_UNUSED_PARAM(function);
+    PAS_UNUSED_PARAM(expression);
+    __builtin_trap();
+}
+#endif /* PAS_ENABLE_TESTING -> so end of !PAS_ENABLE_TESTING */
+
+PAS_IGNORE_WARNINGS_BEGIN("missing-noreturn")
+static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer(
+    const char* filename, int line, const char* function, const char* expression)
+{
+    pas_assertion_failed(filename, line, function, expression);
+}
+PAS_IGNORE_WARNINGS_END
 
 #define PAS_LIKELY(x) __PAS_LIKELY(x)
 #define PAS_UNLIKELY(x) __PAS_UNLIKELY(x)
 
 #define PAS_ASSERT(exp) \
     do { \
+        if (!PAS_ENABLE_ASSERT) \
+            break; \
         if (PAS_LIKELY(exp)) \
             break; \
-        pas_assertion_failed(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
+        pas_assertion_failed_noreturn_silencer(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
     } while (0)
 
 #define PAS_TESTING_ASSERT(exp) \
@@ -114,7 +218,7 @@ PAS_API PAS_NO_RETURN void pas_assertion_failed(const char* filename, int line, 
             break; \
         if (PAS_LIKELY(exp)) \
             break; \
-        pas_assertion_failed(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
+        pas_assertion_failed_noreturn_silencer(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
     } while (0)
 
 static inline bool pas_is_power_of_2(uintptr_t value)
@@ -199,64 +303,280 @@ static inline uint64_t pas_make_mask64(uint64_t num_bits)
     return ((uint64_t)1 << num_bits) - 1;
 }
 
-static inline bool pas_compare_and_swap_uintptr_weak(uintptr_t* ptr, uintptr_t old_value, uintptr_t new_value)
+static inline void pas_atomic_store_uint8(uint8_t* ptr, uint8_t value)
 {
-    return __c11_atomic_compare_exchange_weak((_Atomic uintptr_t*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
+    asm volatile (
+        "stlrb %w[value], [%x[ptr]]\t\n"
+        /* outputs */  :
+        /* inputs  */  : [value]"r"(value), [ptr]"r"(ptr)
+        /* clobbers */ : "memory"
+    );
+#elif PAS_COMPILER(CLANG)
+    __c11_atomic_store((_Atomic uint8_t*)ptr, value, __ATOMIC_SEQ_CST);
+#else
+    __atomic_store_n(ptr, value, __ATOMIC_SEQ_CST);
+#endif
 }
 
-static inline uintptr_t pas_compare_and_swap_uintptr_strong(uintptr_t* ptr, uintptr_t old_value, uintptr_t new_value)
+static inline bool pas_compare_and_swap_uint8_weak(uint8_t* ptr, uint8_t old_value, uint8_t new_value)
 {
-    __c11_atomic_compare_exchange_strong((_Atomic uintptr_t*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
+    uint32_t value = 0;
+    uint32_t cond = 0;
+    asm volatile (
+        "ldxrb %w[value], [%x[ptr]]\t\n"
+        "cmp %w[value], %w[old_value], uxtb\t\n"
+        "b.ne 1f\t\n"
+        "stlxrb %w[cond], %w[new_value], [%x[ptr]]\t\n"
+        "cbz %w[cond], 0f\t\n"
+        "b 2f\t\n"
+    "0:\t\n"
+        "mov %w[cond], #1\t\n"
+        "b 3f\t\n"
+    "1:\t\n"
+        "clrex\t\n"
+    "2:\t\n"
+        "mov %w[cond], wzr\t\n"
+    "3:\t\n"
+        "dmb ish\t\n"
+        /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
+        /* inputs  */  : [old_value]"r"((uint32_t)old_value), [new_value]"r"((uint32_t)new_value), [ptr]"r"(ptr)
+        /* clobbers */ : "cc", "memory"
+    );
+    return cond;
+#elif PAS_COMPILER(CLANG)
+    return __c11_atomic_compare_exchange_weak((_Atomic uint8_t*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#else
+    return __atomic_compare_exchange_n((uint8_t*)ptr, &old_value, new_value, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#endif
+}
+
+static inline uint8_t pas_compare_and_swap_uint8_strong(uint8_t* ptr, uint8_t old_value, uint8_t new_value)
+{
+#if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
+    uint32_t value = 0;
+    uint32_t cond = 0;
+    asm volatile (
+    "0:\t\n"
+        "ldxrb %w[value], [%x[ptr]]\t\n"
+        "cmp %w[value], %w[old_value], uxtb\t\n"
+        "b.ne 1f\t\n"
+        "stlxrb %w[cond], %w[new_value], [%x[ptr]]\t\n"
+        "cbnz %w[cond], 0b\t\n"
+        "b 2f\t\n"
+    "1:\t\n"
+        "clrex\t\n"
+    "2:\t\n"
+        "dmb ish\t\n"
+        /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
+        /* inputs  */  : [old_value]"r"((uint32_t)old_value), [new_value]"r"((uint32_t)new_value), [ptr]"r"(ptr)
+        /* clobbers */ : "cc", "memory"
+    );
+    return value;
+#elif PAS_COMPILER(CLANG)
+    __c11_atomic_compare_exchange_strong((_Atomic uint8_t*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
     return old_value;
-}
-
-static inline bool pas_compare_and_swap_bool_weak(bool* ptr, bool old_value, bool new_value)
-{
-    return __c11_atomic_compare_exchange_weak((_Atomic bool*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
-}
-
-static inline bool pas_compare_and_swap_bool_strong(bool* ptr, bool old_value, bool new_value)
-{
-    __c11_atomic_compare_exchange_strong((_Atomic bool*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#else
+    __atomic_compare_exchange_n((uint8_t*)ptr, &old_value, new_value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
     return old_value;
+#endif
 }
 
 static inline bool pas_compare_and_swap_uint16_weak(uint16_t* ptr, uint16_t old_value, uint16_t new_value)
 {
+#if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
+    uint32_t value = 0;
+    uint32_t cond = 0;
+    asm volatile (
+        "ldxrh %w[value], [%x[ptr]]\t\n"
+        "cmp %w[value], %w[old_value], uxth\t\n"
+        "b.ne 1f\t\n"
+        "stlxrh %w[cond], %w[new_value], [%x[ptr]]\t\n"
+        "cbz %w[cond], 0f\t\n"
+        "b 2f\t\n"
+    "0:\t\n"
+        "mov %w[cond], #1\t\n"
+        "b 3f\t\n"
+    "1:\t\n"
+        "clrex\t\n"
+    "2:\t\n"
+        "mov %w[cond], wzr\t\n"
+    "3:\t\n"
+        "dmb ish\t\n"
+        /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
+        /* inputs  */  : [old_value]"r"((uint32_t)old_value), [new_value]"r"((uint32_t)new_value), [ptr]"r"(ptr)
+        /* clobbers */ : "cc", "memory"
+    );
+    return cond;
+#elif PAS_COMPILER(CLANG)
     return __c11_atomic_compare_exchange_weak((_Atomic uint16_t*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#else
+    return __atomic_compare_exchange_n((uint16_t*)ptr, &old_value, new_value, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#endif
 }
 
 static inline bool pas_compare_and_swap_uint32_weak(uint32_t* ptr, uint32_t old_value, uint32_t new_value)
 {
+#if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
+    uint32_t value = 0;
+    uint32_t cond = 0;
+    asm volatile (
+        "ldxr %w[value], [%x[ptr]]\t\n"
+        "cmp %w[value], %w[old_value]\t\n"
+        "b.ne 1f\t\n"
+        "stlxr %w[cond], %w[new_value], [%x[ptr]]\t\n"
+        "cbz %w[cond], 0f\t\n"
+        "b 2f\t\n"
+    "0:\t\n"
+        "mov %w[cond], #1\t\n"
+        "b 3f\t\n"
+    "1:\t\n"
+        "clrex\t\n"
+    "2:\t\n"
+        "mov %w[cond], wzr\t\n"
+    "3:\t\n"
+        "dmb ish\t\n"
+        /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
+        /* inputs  */  : [old_value]"r"(old_value), [new_value]"r"(new_value), [ptr]"r"(ptr)
+        /* clobbers */ : "cc", "memory"
+    );
+    return cond;
+#elif PAS_COMPILER(CLANG)
     return __c11_atomic_compare_exchange_weak((_Atomic uint32_t*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#else
+    return __atomic_compare_exchange_n((uint32_t*)ptr, &old_value, new_value, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#endif
 }
 
 static inline uint32_t pas_compare_and_swap_uint32_strong(uint32_t* ptr, uint32_t old_value, uint32_t new_value)
 {
+#if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
+    uint32_t value = 0;
+    uint32_t cond = 0;
+    asm volatile (
+    "0:\t\n"
+        "ldxr %w[value], [%x[ptr]]\t\n"
+        "cmp %w[value], %w[old_value]\t\n"
+        "b.ne 1f\t\n"
+        "stlxr %w[cond], %w[new_value], [%x[ptr]]\t\n"
+        "cbnz %w[cond], 0b\t\n"
+        "b 2f\t\n"
+    "1:\t\n"
+        "clrex\t\n"
+    "2:\t\n"
+        "dmb ish\t\n"
+        /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
+        /* inputs  */  : [old_value]"r"(old_value), [new_value]"r"(new_value), [ptr]"r"(ptr)
+        /* clobbers */ : "cc", "memory"
+    );
+    return value;
+#elif PAS_COMPILER(CLANG)
     __c11_atomic_compare_exchange_strong((_Atomic uint32_t*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
     return old_value;
+#else
+    __atomic_compare_exchange_n((uint32_t*)ptr, &old_value, new_value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+    return old_value;
+#endif
 }
 
 static inline bool pas_compare_and_swap_uint64_weak(uint64_t* ptr, uint64_t old_value, uint64_t new_value)
 {
+#if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
+    uint64_t value = 0;
+    uint64_t cond = 0;
+    asm volatile (
+        "ldxr %x[value], [%x[ptr]]\t\n"
+        "cmp %x[value], %x[old_value]\t\n"
+        "b.ne 1f\t\n"
+        "stlxr %w[cond], %x[new_value], [%x[ptr]]\t\n"
+        "cbz %w[cond], 0f\t\n"
+        "b 2f\t\n"
+    "0:\t\n"
+        "mov %x[cond], #1\t\n"
+        "b 3f\t\n"
+    "1:\t\n"
+        "clrex\t\n"
+    "2:\t\n"
+        "mov %x[cond], xzr\t\n"
+    "3:\t\n"
+        "dmb ish\t\n"
+        /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
+        /* inputs  */  : [old_value]"r"(old_value), [new_value]"r"(new_value), [ptr]"r"(ptr)
+        /* clobbers */ : "cc", "memory"
+    );
+    return cond;
+#elif PAS_COMPILER(CLANG)
     return __c11_atomic_compare_exchange_weak((_Atomic uint64_t*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#else
+    return __atomic_compare_exchange_n((uint64_t*)ptr, &old_value, new_value, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#endif
 }
 
 static inline uint64_t pas_compare_and_swap_uint64_strong(uint64_t* ptr, uint64_t old_value, uint64_t new_value)
 {
+#if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
+    uint64_t value = 0;
+    uint64_t cond = 0;
+    asm volatile (
+    "0:\t\n"
+        "ldxr %x[value], [%x[ptr]]\t\n"
+        "cmp %x[value], %x[old_value]\t\n"
+        "b.ne 1f\t\n"
+        "stlxr %w[cond], %x[new_value], [%x[ptr]]\t\n"
+        "cbnz %w[cond], 0b\t\n"
+        "b 2f\t\n"
+    "1:\t\n"
+        "clrex\t\n"
+    "2:\t\n"
+        "dmb ish\t\n"
+        /* outputs */  : [value]"=&r"(value), [cond]"=&r"(cond)
+        /* inputs  */  : [old_value]"r"(old_value), [new_value]"r"(new_value), [ptr]"r"(ptr)
+        /* clobbers */ : "cc", "memory"
+    );
+    return value;
+#elif PAS_COMPILER(CLANG)
     __c11_atomic_compare_exchange_strong((_Atomic uint64_t*)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
     return old_value;
+#else
+    __atomic_compare_exchange_n((uint64_t*)ptr, &old_value, new_value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+    return old_value;
+#endif
+}
+
+static inline void pas_atomic_store_bool(bool* ptr, bool value)
+{
+    pas_atomic_store_uint8((uint8_t*)ptr, value ? 1 : 0);
+}
+
+static inline bool pas_compare_and_swap_bool_weak(bool* ptr, bool old_value, bool new_value)
+{
+    return pas_compare_and_swap_uint8_weak((uint8_t*)ptr, old_value ? 1 : 0, new_value ? 1 : 0);
+}
+
+static inline bool pas_compare_and_swap_bool_strong(bool* ptr, bool old_value, bool new_value)
+{
+    return pas_compare_and_swap_uint8_strong((uint8_t*)ptr, old_value ? 1 : 0, new_value ? 1 : 0);
+}
+
+static inline bool pas_compare_and_swap_uintptr_weak(uintptr_t* ptr, uintptr_t old_value, uintptr_t new_value)
+{
+    return pas_compare_and_swap_uint64_weak((uint64_t*)ptr, (uint64_t)old_value, (uint64_t)new_value);
+}
+
+static inline uintptr_t pas_compare_and_swap_uintptr_strong(uintptr_t* ptr, uintptr_t old_value, uintptr_t new_value)
+{
+    return (uintptr_t)pas_compare_and_swap_uint64_strong((uint64_t*)ptr, (uint64_t)old_value, (uint64_t)new_value);
 }
 
 static inline bool pas_compare_and_swap_ptr_weak(void* ptr, const void* old_value, const void* new_value)
 {
-    return __c11_atomic_compare_exchange_weak((const void* _Atomic *)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+    return pas_compare_and_swap_uint64_weak((uint64_t*)ptr, (uint64_t)old_value, (uint64_t)new_value);
 }
 
 static inline void* pas_compare_and_swap_ptr_strong(void* ptr, const void* old_value, const void* new_value)
 {
-    __c11_atomic_compare_exchange_strong((const void* _Atomic *)ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
-    return (void*)(uintptr_t)old_value;
+    return (void*)pas_compare_and_swap_uint64_strong((uint64_t*)ptr, (uint64_t)old_value, (uint64_t)new_value);
 }
 
 #define pas_compiler_fence __pas_compiler_fence
@@ -287,6 +607,8 @@ static PAS_ALWAYS_INLINE uintptr_t pas_opaque(uintptr_t value)
     return value;
 }
 
+#if PAS_COMPILER(CLANG)
+
 struct pas_pair;
 typedef struct pas_pair pas_pair;
 
@@ -303,37 +625,181 @@ static inline pas_pair pas_pair_create(uintptr_t low, uintptr_t high)
     return result;
 }
 
+static inline uintptr_t pas_pair_low(pas_pair pair)
+{
+    return pair.low;
+}
+
+static inline uintptr_t pas_pair_high(pas_pair pair)
+{
+    return pair.high;
+}
+
+#else
+
+typedef __uint128_t pas_pair;
+
+static inline pas_pair pas_pair_create(uintptr_t low, uintptr_t high)
+{
+    return ((pas_pair)low) | ((pas_pair)(high) << 64);
+}
+
+static inline uintptr_t pas_pair_low(pas_pair pair)
+{
+    return pair;
+}
+
+static inline uintptr_t pas_pair_high(pas_pair pair)
+{
+    return pair >> 64;
+}
+
+#endif
+
 static inline bool pas_compare_and_swap_pair_weak(void* raw_ptr,
                                                   pas_pair old_value, pas_pair new_value)
 {
+#if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
+    uintptr_t low = 0;
+    uintptr_t high = 0;
+    uintptr_t old_low = pas_pair_low(old_value);
+    uintptr_t old_high = pas_pair_high(old_value);
+    uintptr_t new_low = pas_pair_low(new_value);
+    uintptr_t new_high = pas_pair_high(new_value);
+    uintptr_t cond = 0;
+    uintptr_t temp = 0;
+    asm volatile (
+        "ldxp %x[low], %x[high], [%x[ptr]]\t\n"
+        "eor %x[cond], %x[high], %x[old_high]\t\n"
+        "eor %x[temp], %x[low], %x[old_low]\t\n"
+        "orr %x[cond], %x[temp], %x[cond]\t\n"
+        "cbnz %x[cond], 1f\t\n"
+        "stlxp %w[cond], %x[new_low], %x[new_high], [%x[ptr]]\t\n"
+        "cbz %w[cond], 0f\t\n"
+        "b 2f\t\n"
+    "0:\t\n"
+        "mov %x[cond], #1\t\n"
+        "b 3f\t\n"
+    "1:\t\n"
+        "clrex\t\n"
+    "2:\t\n"
+        "mov %x[cond], xzr\t\n"
+    "3:\t\n"
+        "dmb ish\t\n"
+        /* outputs */  : [low]"=&r"(low), [high]"=&r"(high), [cond]"=&r"(cond), [temp]"=&r"(temp)
+        /* inputs  */  : [old_low]"r"(old_low), [old_high]"r"(old_high), [new_low]"r"(new_low), [new_high]"r"(new_high), [ptr]"r"(raw_ptr)
+        /* clobbers */ : "cc", "memory"
+    );
+    return cond;
+#elif PAS_COMPILER(CLANG)
     return __c11_atomic_compare_exchange_weak((_Atomic pas_pair*)raw_ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#else
+    return __atomic_compare_exchange_n((pas_pair*)raw_ptr, &old_value, new_value, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+#endif
 }
 
 static inline pas_pair pas_compare_and_swap_pair_strong(void* raw_ptr,
                                                         pas_pair old_value, pas_pair new_value)
 {
+#if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
+    uintptr_t low = 0;
+    uintptr_t high = 0;
+    uintptr_t old_low = pas_pair_low(old_value);
+    uintptr_t old_high = pas_pair_high(old_value);
+    uintptr_t new_low = pas_pair_low(new_value);
+    uintptr_t new_high = pas_pair_high(new_value);
+    uintptr_t cond = 0;
+    uintptr_t temp = 0;
+    asm volatile (
+    "0:\t\n"
+        "ldxp %x[low], %x[high], [%x[ptr]]\t\n"
+        "eor %x[cond], %x[high], %x[old_high]\t\n"
+        "eor %x[temp], %x[low], %x[old_low]\t\n"
+        "orr %x[cond], %x[temp], %x[cond]\t\n"
+        "cbnz %x[cond], 1f\t\n"
+        "stlxp %w[cond], %x[new_low], %x[new_high], [%x[ptr]]\t\n"
+        "cbnz %w[cond], 0b\t\n"
+        "b 2f\t\n"
+    "1:\t\n"
+        "clrex\t\n"
+    "2:\t\n"
+        "dmb ish\t\n"
+        /* outputs */  : [low]"=&r"(low), [high]"=&r"(high), [cond]"=&r"(cond), [temp]"=&r"(temp)
+        /* inputs  */  : [old_low]"r"(old_low), [old_high]"r"(old_high), [new_low]"r"(new_low), [new_high]"r"(new_high), [ptr]"r"(raw_ptr)
+        /* clobbers */ : "cc", "memory"
+    );
+    return pas_pair_create(low, high);
+#elif PAS_COMPILER(CLANG)
     __c11_atomic_compare_exchange_strong((_Atomic pas_pair*)raw_ptr, &old_value, new_value, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
     return old_value;
+#else
+    __atomic_compare_exchange_n((pas_pair*)raw_ptr, &old_value, new_value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+    return old_value;
+#endif
 }
 
-static inline pas_pair pas_atomic_load_pair(void* raw_ptr)
+static inline pas_pair pas_atomic_load_pair_relaxed(void* raw_ptr)
 {
+#if PAS_COMPILER(CLANG)
+    /* Since it is __ATOMIC_RELAXED, we do not need to care about memory barrier even when the implementation uses LL/SC. */
     return __c11_atomic_load((_Atomic pas_pair*)raw_ptr, __ATOMIC_RELAXED);
+#else
+    return __atomic_load_n((pas_pair*)raw_ptr, __ATOMIC_RELAXED);
+#endif
 }
 
 static inline void pas_atomic_store_pair(void* raw_ptr, pas_pair value)
 {
+#if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
+    uintptr_t low = pas_pair_low(value);
+    uintptr_t high = pas_pair_high(value);
+    uintptr_t cond = 0;
+    asm volatile (
+    "0:\t\n"
+        "ldxp xzr, %x[cond], [%x[ptr]]\t\n"
+        "stlxp %w[cond], %x[low], %x[high], [%x[ptr]]\t\n"
+        "cbnz %w[cond], 0b\t\n"
+        "dmb ish\t\n"
+        /* outputs */  : [cond]"=&r"(cond)
+        /* inputs  */  : [low]"r"(low), [high]"r"(high), [ptr]"r"(raw_ptr)
+        /* clobbers */ : "cc", "memory"
+    );
+#elif PAS_COMPILER(CLANG)
     __c11_atomic_store((_Atomic pas_pair*)raw_ptr, value, __ATOMIC_SEQ_CST);
+#else
+    __atomic_store_n((pas_pair*)raw_ptr, value, __ATOMIC_SEQ_CST);
+#endif
+}
+
+static PAS_ALWAYS_INLINE bool pas_compare_ptr_opaque(uintptr_t a, uintptr_t b)
+{
+#if PAS_COMPILER(CLANG)
+#if PAS_ARM64
+    uint32_t cond = 0;
+    asm volatile (
+        "cmp %x[a], %x[b]\t\n"
+        "cset %w[cond], eq\t\n"
+        /* outputs */  : [cond]"=&r"(cond)
+        /* inputs  */  : [a]"r"(a), [b]"r"(b)
+        /* clobbers */ : "cc", "memory"
+    );
+    return cond;
+#else
+    return a == b;
+#endif
+#else
+    return a == b;
+#endif
 }
 
 #define PAS_MIN(a, b) ({ \
-        typeof (a) _tmp_a = (a); \
-        typeof (b) _tmp_b = (b); \
+        PAS_TYPEOF(a) _tmp_a = (a); \
+        PAS_TYPEOF(b) _tmp_b = (b); \
         _tmp_a < _tmp_b ? _tmp_a : _tmp_b; \
     })
 #define PAS_MAX(a, b) ({ \
-        typeof (a) _tmp_a = (a); \
-        typeof (b) _tmp_b = (b); \
+        PAS_TYPEOF(a) _tmp_a = (a); \
+        PAS_TYPEOF(b) _tmp_b = (b); \
         _tmp_a > _tmp_b ? _tmp_a : _tmp_b; \
     })
 #define PAS_CLIP(x, min, max) PAS_MIN(PAS_MAX(x, min), max)
@@ -372,13 +838,13 @@ static inline unsigned pas_hash_ptr(const void* ptr)
 /* Undefined for value == 0. */
 static inline unsigned pas_log2(uintptr_t value)
 {
-    return (sizeof(uintptr_t) * 8 - 1) - __builtin_clzl(value);
+    return (sizeof(uintptr_t) * 8 - 1) - (unsigned)__builtin_clzl(value);
 }
 
 /* Undefined for value <= 1. */
 static inline unsigned pas_log2_rounded_up(uintptr_t value)
 {
-    return (sizeof(uintptr_t) * 8 - 1) - (__builtin_clzl(value - 1) - 1);
+    return (sizeof(uintptr_t) * 8 - 1) - ((unsigned)__builtin_clzl(value - 1) - 1);
 }
 
 static inline unsigned pas_log2_rounded_up_safe(uintptr_t value)
@@ -388,8 +854,13 @@ static inline unsigned pas_log2_rounded_up_safe(uintptr_t value)
     return pas_log2_rounded_up(value);
 }
 
+static inline uintptr_t pas_round_up_to_next_power_of_2(uintptr_t value)
+{
+    return (uintptr_t)1 << pas_log2_rounded_up_safe(value);
+}
+
 #define PAS_SWAP(left, right) do { \
-        typeof (left) _swap_tmp = left; \
+        PAS_TYPEOF(left) _swap_tmp = left; \
         left = right; \
         right = _swap_tmp; \
     } while (0)
@@ -450,6 +921,14 @@ static inline bool pas_is_divisible_by(unsigned value, uint64_t magic_constant)
 }
 
 #define PAS_CONCAT(a, b) a ## b
+
+#ifdef __cplusplus
+enum cpp_initialization_t { cpp_initialization };
+#endif
+
+#define PAS_SYSCALL(x) do { \
+    while ((x) == -1 && errno == EAGAIN) { } \
+} while (0)
 
 PAS_END_EXTERN_C;
 

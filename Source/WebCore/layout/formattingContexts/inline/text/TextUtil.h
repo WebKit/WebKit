@@ -27,7 +27,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "Font.h"
 #include "InlineItem.h"
+#include "InlineLine.h"
 #include "LayoutUnits.h"
 #include <wtf/text/TextBreakIterator.h>
 
@@ -42,22 +44,36 @@ class InlineTextItem;
 
 class TextUtil {
 public:
-    static InlineLayoutUnit width(const InlineTextItem&, InlineLayoutUnit contentLogicalLeft);
-    static InlineLayoutUnit width(const InlineTextItem&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
-    static InlineLayoutUnit width(const InlineTextBox&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
+    static InlineLayoutUnit width(const InlineTextItem&, const FontCascade&, InlineLayoutUnit contentLogicalLeft);
+    static InlineLayoutUnit width(const InlineTextItem&, const FontCascade&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
 
-    struct MidWordBreak {
-        size_t start { 0 };
+    enum class UseTrailingWhitespaceMeasuringOptimization : uint8_t { Yes, No };
+    static InlineLayoutUnit width(const InlineTextBox&, const FontCascade&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft, UseTrailingWhitespaceMeasuringOptimization = UseTrailingWhitespaceMeasuringOptimization::Yes);
+    static InlineLayoutUnit spaceWidth(const FontCascade&);
+
+    static InlineLayoutUnit trailingWhitespaceWidth(const InlineTextBox&, const FontCascade&, size_t startPosition, size_t endPosition);
+
+    using FallbackFontList = HashSet<const Font*>;
+    enum class IncludeHyphen : uint8_t { No, Yes };
+    static FallbackFontList fallbackFontsForText(StringView, const RenderStyle&, IncludeHyphen);
+
+    struct WordBreakLeft {
         size_t length { 0 };
         InlineLayoutUnit logicalWidth { 0 };
     };
-    static MidWordBreak midWordBreak(const InlineTextItem&, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
+    static WordBreakLeft breakWord(const InlineTextBox&, size_t start, size_t length, InlineLayoutUnit width, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft, const FontCascade&);
+    static WordBreakLeft breakWord(const InlineTextItem&, const FontCascade&, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
 
     static unsigned findNextBreakablePosition(LazyLineBreakIterator&, unsigned startPosition, const RenderStyle&);
     static LineBreakIteratorMode lineBreakIteratorMode(LineBreak);
 
     static bool shouldPreserveSpacesAndTabs(const Box&);
     static bool shouldPreserveNewline(const Box&);
+    static bool isWrappingAllowed(const RenderStyle&);
+    static bool containsStrongDirectionalityText(StringView);
+
+    static size_t firstUserPerceivedCharacterLength(const InlineTextItem&);
+    static TextDirection directionForTextContent(StringView);
 };
 
 }

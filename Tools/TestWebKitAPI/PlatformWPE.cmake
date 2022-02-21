@@ -63,7 +63,6 @@ list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/Source
     ${FORWARDING_HEADERS_DIR}
     ${WPEBACKEND_FDO_INCLUDE_DIRS}
-    ${TOOLS_DIR}/wpe/backends
 )
 
 list(APPEND TestWebKit_SYSTEM_INCLUDE_DIRECTORIES
@@ -73,7 +72,7 @@ list(APPEND TestWebKit_SYSTEM_INCLUDE_DIRECTORIES
 
 list(APPEND TestWebKit_LIBRARIES
     ${WPEBACKEND_FDO_LIBRARIES}
-    WPEToolingBackends
+    WebKit::WPEToolingBackends
 )
 
 # TestWebKitAPIBase
@@ -111,7 +110,12 @@ set(TestJSC_PRIVATE_INCLUDE_DIRECTORIES
 set(TestJSC_LIBRARIES
     ${GLIB_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
-    WebKit::JavaScriptCore
+)
+
+set(TestJSC_FRAMEWORKS
+    JavaScriptCore
+    WTF
+    bmalloc
 )
 
 set(TestJSC_DEFINITIONS

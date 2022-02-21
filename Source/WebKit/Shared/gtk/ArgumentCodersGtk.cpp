@@ -95,7 +95,7 @@ void ArgumentCoder<SelectionData>::encode(Encoder& encoder, const SelectionData&
     bool hasCustomData = selection.hasCustomData();
     encoder << hasCustomData;
     if (hasCustomData)
-        encoder << RefPtr<SharedBuffer>(selection.customData());
+        encoder << RefPtr<FragmentedSharedBuffer>(selection.customData());
 
     bool canSmartReplace = selection.canSmartReplace();
     encoder << canSmartReplace;

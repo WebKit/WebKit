@@ -41,6 +41,6 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("_WKRemoteObjectRegistry", macos(10.10, 10.
 
 - (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody;
 
-@property (assign) id <WKConnectionDelegate> delegate;
+@property (nonatomic, weak) id <WKConnectionDelegate> delegate;
 
 @end

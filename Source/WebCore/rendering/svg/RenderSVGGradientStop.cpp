@@ -20,7 +20,10 @@
 #include "config.h"
 #include "RenderSVGGradientStop.h"
 
+#include "ElementInlines.h"
+#include "RenderSVGGradientStopInlines.h"
 #include "RenderSVGResourceContainer.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
 #include "SVGResourcesCache.h"

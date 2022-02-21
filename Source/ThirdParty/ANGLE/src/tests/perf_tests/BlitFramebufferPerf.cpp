@@ -250,3 +250,6 @@ ANGLE_INSTANTIATE_TEST(BlitFramebufferPerf,
                        D3D11(BufferType::DEPTH, 2),
                        D3D11(BufferType::STENCIL, 2),
                        D3D11(BufferType::DEPTH_STENCIL, 2));
+
+// This test suite is not instantiated on some OSes.
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BlitFramebufferPerf);

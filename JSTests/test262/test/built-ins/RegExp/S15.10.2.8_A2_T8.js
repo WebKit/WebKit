@@ -12,7 +12,4 @@ description: Execute /(\.(?!com|org)|\/)/.test("ah.com") and check results
 
 var __executed = /(\.(?!com|org)|\/)/.test("ah.com");
 
-//CHECK#1
-if (__executed) {
-	throw new Test262Error('#1: /(\\.(?!com|org)|\\/)/.test("ah.com") === false');
-}
+assert(!__executed, 'The value of !__executed is expected to be true');

@@ -31,6 +31,12 @@
 
 @property (nonatomic) double shadowOpacity;
 @property (nonatomic) double shadowBlur;
+@property (nonatomic) double shadowLength;
+
+@property (nonatomic, readonly) BOOL hasShadow;
+@property (nonatomic, readonly) BOOL hasUnderline;
+@property (nonatomic, readonly) BOOL hasStrikeThrough;
+@property (nonatomic, readonly) NSColor *foregroundColor;
 
 - (void)toggleShadow;
 - (void)chooseUnderlineMenuItemWithTitle:(NSString *)itemTitle;

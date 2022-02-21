@@ -32,7 +32,7 @@
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
-#include <WebCore/TextEncoding.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
@@ -73,7 +73,7 @@ void StorageTracker::internalInitialize()
 
     // Make sure text encoding maps have been built on the main thread, as the StorageTracker thread might try to do it there instead.
     // FIXME (<rdar://problem/9127819>): Is there a more explicit way of doing this besides accessing the UTF8Encoding?
-    UTF8Encoding();
+    PAL::UTF8Encoding();
     
     storageTracker->setIsActive(true);
     storageTracker->m_thread->start();  

@@ -45,7 +45,7 @@ class CallLinkInfo;
 namespace Wasm {
 
 class BBQCallee;
-class CodeBlock;
+class CalleeGroup;
 class EmbedderEntrypointCallee;
 
 class BBQPlan final : public EntryPlan {
@@ -54,7 +54,7 @@ public:
 
     using Base::Base;
 
-    BBQPlan(Context*, Ref<ModuleInformation>, uint32_t functionIndex, CodeBlock*, CompletionTask&&);
+    BBQPlan(Context*, Ref<ModuleInformation>, uint32_t functionIndex, CalleeGroup*, CompletionTask&&);
 
     bool hasWork() const final
     {
@@ -83,11 +83,14 @@ private:
     std::unique_ptr<InternalFunction> compileFunction(uint32_t functionIndex, CompilationContext&, Vector<UnlinkedWasmToWasmCall>&, TierUpCount*);
 
     Vector<std::unique_ptr<InternalFunction>> m_wasmInternalFunctions;
-    HashMap<uint32_t, std::unique_ptr<InternalFunction>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderToWasmInternalFunctions;
+    Vector<std::unique_ptr<LinkBuffer>> m_wasmInternalFunctionLinkBuffers;
+    Vector<Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>> m_exceptionHandlerLocations;
+    HashMap<uint32_t, std::pair<std::unique_ptr<LinkBuffer>, std::unique_ptr<InternalFunction>>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderToWasmInternalFunctions;
     Vector<CompilationContext> m_compilationContexts;
     Vector<std::unique_ptr<TierUpCount>> m_tierUpCounts;
+    Vector<Vector<CodeLocationLabel<WasmEntryPtrTag>>> m_allLoopEntrypoints;
 
-    RefPtr<CodeBlock> m_codeBlock { nullptr };
+    RefPtr<CalleeGroup> m_calleeGroup { nullptr };
     uint32_t m_functionIndex;
 };
 

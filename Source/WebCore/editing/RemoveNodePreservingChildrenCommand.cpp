@@ -42,7 +42,7 @@ RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(Ref<Nod
 void RemoveNodePreservingChildrenCommand::doApply()
 {
     Vector<Ref<Node>> children;
-    auto parent = makeRefPtr(m_node->parentNode());
+    RefPtr parent { m_node->parentNode() };
     if (!parent || (m_shouldAssumeContentIsAlwaysEditable == DoNotAssumeContentIsAlwaysEditable && !isEditableNode(*parent)))
         return;
 

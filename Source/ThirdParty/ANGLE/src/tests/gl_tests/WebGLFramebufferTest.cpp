@@ -791,12 +791,6 @@ void WebGLFramebufferTest::testDrawingMissingAttachment()
 // Determine if we can attach both color and depth or color and depth_stencil
 TEST_P(WebGLFramebufferTest, CheckValidColorDepthCombination)
 {
-    // In FL9_3, we don't have a good way to handle non-color framebuffer rendering.
-    if (IsD3D11_FL93())
-    {
-        ignoreD3D11SDKLayersWarnings();
-    }
-
     GLenum depthFormat     = GL_NONE;
     GLenum depthAttachment = GL_NONE;
 

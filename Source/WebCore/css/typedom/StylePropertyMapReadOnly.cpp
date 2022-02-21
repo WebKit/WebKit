@@ -36,7 +36,7 @@
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSStyleImageValue.h"
-#include "CSSStyleValue.h"
+#include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
 #include "CSSUnparsedValue.h"
 #include "Document.h"
@@ -47,15 +47,8 @@ RefPtr<CSSStyleValue> StylePropertyMapReadOnly::reifyValue(CSSValue* value, Docu
 {
     if (!value)
         return nullptr;
-
-    // FIXME: Properly reify all length values.
-    if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).primitiveType() == CSSUnitType::CSS_PX)
-        return CSSUnitValue::create(downcast<CSSPrimitiveValue>(*value).doubleValue(), "px");
-
-    if (is<CSSImageValue>(*value))
-        return CSSStyleImageValue::create(downcast<CSSImageValue>(*value), document);
-
-    return CSSStyleValue::create(makeRefPtr(value));
+    auto result = CSSStyleValueFactory::reifyValue(*value, &document);
+    return (result.hasException() ? nullptr : RefPtr<CSSStyleValue> { result.releaseReturnValue() });
 }
 
 RefPtr<CSSStyleValue> StylePropertyMapReadOnly::customPropertyValueOrDefault(const String& name, Document& document, CSSValue* inputValue, Element* element)
@@ -68,7 +61,7 @@ RefPtr<CSSStyleValue> StylePropertyMapReadOnly::customPropertyValueOrDefault(con
             return StylePropertyMapReadOnly::reifyValue(value.get(), document, element);
         }
 
-        return CSSStyleValue::create();
+        return nullptr;
     }
 
     return StylePropertyMapReadOnly::reifyValue(inputValue, document, element);

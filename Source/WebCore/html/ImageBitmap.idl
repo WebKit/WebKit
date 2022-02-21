@@ -24,9 +24,9 @@
  */
 
 [
-    EnabledAtRuntime=ImageBitmap,
+    EnabledAtRuntime=ImageBitmapEnabled,
     Exposed=(Window,Worker),
-    ImplementationLacksVTable
+    ReportExtraMemoryCost
 ] interface ImageBitmap {
     readonly attribute unsigned long width;
     readonly attribute unsigned long height;

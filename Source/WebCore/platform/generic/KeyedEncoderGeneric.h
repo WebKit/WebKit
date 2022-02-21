@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class KeyedEncoderGeneric final : public KeyedEncoder {
 public:

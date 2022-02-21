@@ -33,7 +33,8 @@
 #import "UserInterfaceIdiom.h"
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
-#import <WebCore/Color.h>
+#import <WebCore/ColorCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #pragma mark - WKColorPicker
 
@@ -73,21 +74,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(DATALIST_ELEMENT)
 - (NSArray<UIColor *> *)focusedElementSuggestedColors
 {
-    size_t numColorSuggestions = _view.focusedElementInformation.suggestedColors.size();
-    if (!numColorSuggestions)
+    auto& colors = _view.focusedElementInformation.suggestedColors;
+
+    if (colors.isEmpty())
         return nil;
 
-    NSMutableArray<UIColor *> *colors = [NSMutableArray array];
-    for (const WebCore::Color& color : _view.focusedElementInformation.suggestedColors)
-        [colors addObject:[UIColor colorWithCGColor:cachedCGColor(color)]];
-
-    return colors;
+    return createNSArray(colors, [] (auto& color) {
+        return cocoaColor(color);
+    }).autorelease();
 }
 #endif
 
 - (void)updateColorPickerState
 {
-    [_colorPickerViewController setSelectedColor:[UIColor colorWithCGColor:cachedCGColor(_view.focusedElementInformation.colorValue)]];
+    [_colorPickerViewController setSelectedColor:cocoaColor(_view.focusedElementInformation.colorValue).get()];
 #if ENABLE(DATALIST_ELEMENT)
     if ([_colorPickerViewController respondsToSelector:@selector(_setSuggestedColors:)])
         [_colorPickerViewController _setSuggestedColors:[self focusedElementSuggestedColors]];

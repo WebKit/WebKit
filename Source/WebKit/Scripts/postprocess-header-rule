@@ -46,7 +46,7 @@ function rewrite_headers () {
     ditto "${SOURCE_FILE}" "${WORK_FILE}"
 
     if [[ ! -z `grep '#import <WebKitAdditions/.*\.h>' "${WORK_FILE}"` ]]; then
-        python "${SRCROOT}/mac/replace-webkit-additions-includes.py" "${WORK_FILE}" "${BUILT_PRODUCTS_DIR}" "${SDKROOT}" || exit $?
+        python3 "${SRCROOT}/mac/replace-webkit-additions-includes.py" "${WORK_FILE}" "${BUILT_PRODUCTS_DIR}" "${SDKROOT}" || exit $?
     fi
 
     if [[ "${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" != "YES" ]]; then

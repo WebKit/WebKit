@@ -38,7 +38,7 @@ namespace ContentExtensions {
 class WEBCORE_EXPORT DFACombiner {
 public:
     void addDFA(DFA&&);
-    void combineDFAs(unsigned minimumSize, const WTF::Function<void(DFA&&)>& handler);
+    void combineDFAs(unsigned minimumSize, const Function<void(DFA&&)>& handler);
 
 private:
     Vector<DFA> m_dfas;

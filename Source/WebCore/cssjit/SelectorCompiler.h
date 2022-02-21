@@ -61,7 +61,7 @@ inline unsigned ruleCollectorSimpleSelectorChecker(CompiledSelector& compiledSel
         return vmEntryToCSSJIT(bitwise_cast<uintptr_t>(element), bitwise_cast<uintptr_t>(value), 0, compiledSelector.codeRef.code().executableAddress());
 #endif
     using RuleCollectorSimpleSelectorChecker = unsigned(*)(const Element*, unsigned*);
-    return WTF::untagCFunctionPtr<RuleCollectorSimpleSelectorChecker, JSC::CSSSelectorPtrTag>(compiledSelector.codeRef.code().executableAddress())(element, value);
+    return untagCFunctionPtr<RuleCollectorSimpleSelectorChecker, JSC::CSSSelectorPtrTag>(compiledSelector.codeRef.code().executableAddress())(element, value);
 }
 
 inline unsigned querySelectorSimpleSelectorChecker(CompiledSelector& compiledSelector, const Element* element)
@@ -72,7 +72,7 @@ inline unsigned querySelectorSimpleSelectorChecker(CompiledSelector& compiledSel
         return vmEntryToCSSJIT(bitwise_cast<uintptr_t>(element), 0, 0, compiledSelector.codeRef.code().executableAddress());
 #endif
     using QuerySelectorSimpleSelectorChecker = unsigned(*)(const Element*);
-    return WTF::untagCFunctionPtr<QuerySelectorSimpleSelectorChecker, JSC::CSSSelectorPtrTag>(compiledSelector.codeRef.code().executableAddress())(element);
+    return untagCFunctionPtr<QuerySelectorSimpleSelectorChecker, JSC::CSSSelectorPtrTag>(compiledSelector.codeRef.code().executableAddress())(element);
 }
 
 inline unsigned ruleCollectorSelectorCheckerWithCheckingContext(CompiledSelector& compiledSelector, const Element* element, SelectorChecker::CheckingContext* context, unsigned* value)
@@ -83,7 +83,7 @@ inline unsigned ruleCollectorSelectorCheckerWithCheckingContext(CompiledSelector
         return vmEntryToCSSJIT(bitwise_cast<uintptr_t>(element), bitwise_cast<uintptr_t>(context), bitwise_cast<uintptr_t>(value), compiledSelector.codeRef.code().executableAddress());
 #endif
     using RuleCollectorSelectorCheckerWithCheckingContext = unsigned(*)(const Element*, SelectorChecker::CheckingContext*, unsigned*);
-    return WTF::untagCFunctionPtr<RuleCollectorSelectorCheckerWithCheckingContext, JSC::CSSSelectorPtrTag>(compiledSelector.codeRef.code().executableAddress())(element, context, value);
+    return untagCFunctionPtr<RuleCollectorSelectorCheckerWithCheckingContext, JSC::CSSSelectorPtrTag>(compiledSelector.codeRef.code().executableAddress())(element, context, value);
 }
 
 inline unsigned querySelectorSelectorCheckerWithCheckingContext(CompiledSelector& compiledSelector, const Element* element, const SelectorChecker::CheckingContext* context)
@@ -94,7 +94,7 @@ inline unsigned querySelectorSelectorCheckerWithCheckingContext(CompiledSelector
         return vmEntryToCSSJIT(bitwise_cast<uintptr_t>(element), bitwise_cast<uintptr_t>(context), 0, compiledSelector.codeRef.code().executableAddress());
 #endif
     using QuerySelectorSelectorCheckerWithCheckingContext = unsigned(*)(const Element*, const SelectorChecker::CheckingContext*);
-    return WTF::untagCFunctionPtr<QuerySelectorSelectorCheckerWithCheckingContext, JSC::CSSSelectorPtrTag>(compiledSelector.codeRef.code().executableAddress())(element, context);
+    return untagCFunctionPtr<QuerySelectorSelectorCheckerWithCheckingContext, JSC::CSSSelectorPtrTag>(compiledSelector.codeRef.code().executableAddress())(element, context);
 }
 
 } // namespace SelectorCompiler

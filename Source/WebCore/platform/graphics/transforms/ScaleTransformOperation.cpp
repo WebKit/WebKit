@@ -35,23 +35,35 @@ bool ScaleTransformOperation::operator==(const TransformOperation& other) const
     return m_x == s.m_x && m_y == s.m_y && m_z == s.m_z;
 }
 
+static double blendScaleComponent(double from, double to, const BlendingContext& context)
+{
+    switch (context.compositeOperation) {
+    case CompositeOperation::Replace:
+        return WebCore::blend(from, to, context);
+    case CompositeOperation::Add:
+        ASSERT(context.progress == 1.0);
+        return from * to;
+    case CompositeOperation::Accumulate:
+        ASSERT(context.progress == 1.0);
+        return from + to - 1;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 Ref<TransformOperation> ScaleTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
-    if (from && !from->isSameType(*this))
-        return *this;
-    
     if (blendToIdentity)
-        return ScaleTransformOperation::create(WebCore::blend(m_x, 1.0, context),
-                                               WebCore::blend(m_y, 1.0, context),
-                                               WebCore::blend(m_z, 1.0, context), type());
-    
+        return ScaleTransformOperation::create(blendScaleComponent(m_x, 1.0, context), blendScaleComponent(m_y, 1.0, context), blendScaleComponent(m_z, 1.0, context), type());
+
+    auto outputType = sharedPrimitiveType(from);
+    if (!outputType)
+        return *this;
+
     const ScaleTransformOperation* fromOp = downcast<ScaleTransformOperation>(from);
     double fromX = fromOp ? fromOp->m_x : 1.0;
     double fromY = fromOp ? fromOp->m_y : 1.0;
     double fromZ = fromOp ? fromOp->m_z : 1.0;
-    return ScaleTransformOperation::create(WebCore::blend(fromX, m_x, context),
-                                           WebCore::blend(fromY, m_y, context),
-                                           WebCore::blend(fromZ, m_z, context), type());
+    return ScaleTransformOperation::create(blendScaleComponent(fromX, m_x, context), blendScaleComponent(fromY, m_y, context), blendScaleComponent(fromZ, m_z, context), *outputType);
 }
 
 void ScaleTransformOperation::dump(TextStream& ts) const

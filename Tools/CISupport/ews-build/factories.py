@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,15 +24,15 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance,
+from steps import (ApplyPatch, ApplyWatchList, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckPatchStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests,
                    InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo,
                    RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
-                   RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
+                   RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory,
-                   ValidatePatch, ValidateChangeLogAndReviewer, ValidateCommiterAndReviewer, WaitForCrashCollection,
+                   ValidateChange, ValidateChangeLogAndReviewer, ValidateCommiterAndReviewer, WaitForCrashCollection,
                    InstallBuiltProduct, VerifyGitHubIntegrity)
 
 
@@ -43,11 +43,12 @@ class Factory(factory.BuildFactory):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments))
         if checkRelevance:
-            self.addStep(CheckPatchRelevance())
+            self.addStep(CheckChangeRelevance())
         if self.findModifiedLayoutTests:
             self.addStep(FindModifiedLayoutTests())
-        self.addStep(ValidatePatch())
+        self.addStep(ValidateChange())
         self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
         # CheckOutSource step pulls the latest revision, since we use alwaysUseLatest=True. Without alwaysUseLatest Buildbot will
         # automatically apply the patch to the repo, and that doesn't handle ChangeLogs well. See https://webkit.org/b/193138
@@ -56,19 +57,22 @@ class Factory(factory.BuildFactory):
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
         self.addStep(ApplyPatch())
+        self.addStep(CheckOutPullRequest())
 
 
 class StyleFactory(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments))
-        self.addStep(ValidatePatch())
+        self.addStep(ValidateChange())
         self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ApplyPatch())
+        self.addStep(CheckOutPullRequest())
         self.addStep(CheckStyle())
 
 
@@ -76,13 +80,15 @@ class WatchListFactory(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments))
-        self.addStep(ValidatePatch())
+        self.addStep(ValidateChange())
         self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ApplyPatch())
+        self.addStep(CheckOutPullRequest())
         self.addStep(ApplyWatchList())
 
 
@@ -240,7 +246,7 @@ class WindowsFactory(Factory):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=True)
         self.addStep(KillOldProcesses())
         self.addStep(CompileWebKit(skipUpload=True))
-        self.addStep(ValidatePatch(verifyBugClosed=False, addURLs=False))
+        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
         self.addStep(RunWebKit1Tests())
         self.addStep(SetBuildSummary())
 
@@ -257,7 +263,7 @@ class GTKBuildFactory(BuildFactory):
 
 
 class GTKTestsFactory(TestFactory):
-    LayoutTestClass = RunWebKitTests
+    LayoutTestClass = RunWebKitTestsRedTree
 
 
 class WPEFactory(Factory):
@@ -282,10 +288,10 @@ class CommitQueueFactory(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments))
-        self.addStep(ValidatePatch(verifycqplus=True))
+        self.addStep(ValidateChange(verifycqplus=True))
         self.addStep(ValidateCommiterAndReviewer())
         self.addStep(PrintConfiguration())
-        self.addStep(CleanGitRepo())
+        self.addStep(CleanGitRepo(default_branch='master'))
         self.addStep(CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'))
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
@@ -297,10 +303,10 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(KillOldProcesses())
         self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(KillOldProcesses())
-        self.addStep(ValidatePatch(addURLs=False, verifycqplus=True))
+        self.addStep(ValidateChange(addURLs=False, verifycqplus=True))
         self.addStep(CheckPatchStatusOnEWSQueues())
         self.addStep(RunWebKitTests())
-        self.addStep(ValidatePatch(addURLs=False, verifycqplus=True))
+        self.addStep(ValidateChange(addURLs=False, verifycqplus=True))
         self.addStep(CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'))
         self.addStep(ShowIdentifier())
         self.addStep(UpdateWorkingDirectory())

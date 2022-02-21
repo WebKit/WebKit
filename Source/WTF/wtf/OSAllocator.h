@@ -39,11 +39,18 @@ public:
         JSJITCodePages = VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY,
     };
 
+    // The requested alignment must be a power of two and greater than the system page size.
+    // The memory returned by this cannot be released as on Windows there's no guaranteed API to
+    // get an aligned address and the size + alignment then rounding trick cannot release the unused parts
+    // due to how the Windows syscalls work.
+    WTF_EXPORT_PRIVATE static void* tryReserveUncommittedAligned(size_t size, size_t alignment, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
+
     // These methods are symmetric; reserveUncommitted allocates VM in an uncommitted state,
     // releaseDecommitted should be called on a region of VM allocated by a single reservation,
     // the memory must all currently be in a decommitted state. reserveUncommitted returns to
     // you memory that is zeroed.
     WTF_EXPORT_PRIVATE static void* reserveUncommitted(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
+    WTF_EXPORT_PRIVATE static void* tryReserveUncommitted(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
     WTF_EXPORT_PRIVATE static void releaseDecommitted(void*, size_t);
 
     // These methods are symmetric; they commit or decommit a region of VM (uncommitted VM should
@@ -56,6 +63,7 @@ public:
     // decommitAndRelease should be called on a region of VM allocated by a single reservation,
     // the memory must all currently be in a committed state.
     WTF_EXPORT_PRIVATE static void* reserveAndCommit(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
+    WTF_EXPORT_PRIVATE static void* tryReserveAndCommit(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool jitCageEnabled = false, bool includesGuardPages = false);
     static void decommitAndRelease(void* base, size_t size);
 
     // These methods are akin to reserveAndCommit/decommitAndRelease, above - however rather than

@@ -261,6 +261,7 @@ TEST_P(EGLProgramCacheControlTest, LinkProgramWithBadShaders)
     glDeleteProgram(program);
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLProgramCacheControlTest);
 ANGLE_INSTANTIATE_TEST(EGLProgramCacheControlTest,
                        ES2_D3D9(),
                        ES2_D3D11(),

@@ -1,0 +1,3 @@
+
+FAIL list of available images does not coalesce in-flight requests assert_equals: The server should have seen exactly two requests, since the second image request above did not coalesce with the first in-flight one expected "2" but got "1"
+

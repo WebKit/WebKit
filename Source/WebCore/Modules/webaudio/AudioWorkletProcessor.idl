@@ -28,10 +28,11 @@
 
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=WebAudioEnabled,
     Exposed=AudioWorklet,
-    ImplementationLacksVTable,
-    JSCustomMarkFunction
+    GenerateIsReachable=Impl,
+    JSCustomMarkFunction,
 ] interface AudioWorkletProcessor {
-    [CallWith=ScriptExecutionContext] constructor();
+    [CallWith=CurrentScriptExecutionContext] constructor();
     readonly attribute MessagePort port;
 };

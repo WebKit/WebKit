@@ -1796,7 +1796,7 @@ void testInterpreter()
     data.append(1);
     data.append(0);
 
-    if (shouldBeVerbose())
+    if (shouldBeVerbose(proc))
         dataLog("data = ", listDump(data), "\n");
 
     // We'll write a program that prints the numbers 1..100.
@@ -1832,7 +1832,7 @@ void testInterpreter()
 
     code.append(Stop);
 
-    if (shouldBeVerbose())
+    if (shouldBeVerbose(proc))
         dataLog("code = ", listDump(code), "\n");
 
     CHECK(!invoke<intptr_t>(*interpreter, data.data(), code.data(), &stream));
@@ -1841,7 +1841,7 @@ void testInterpreter()
     for (unsigned i = 0; i < 100; ++i)
         CHECK(stream[i] == i + 1);
 
-    if (shouldBeVerbose())
+    if (shouldBeVerbose(proc))
         dataLog("stream = ", listDump(stream), "\n");
 }
 
@@ -2602,7 +2602,7 @@ void testMemoryFence()
     auto code = compileProc(proc);
     CHECK_EQ(invoke<int>(*code), 42);
     if (isX86())
-        checkUsesInstruction(*code, "lock or $0x0, (%rsp)");
+        checkUsesInstruction(*code, "lock orl $0x0, (%rsp)");
     if (isARM64())
         checkUsesInstruction(*code, dmbIsh);
     checkDoesNotUseInstruction(*code, "mfence");
@@ -2783,14 +2783,14 @@ void testMoveConstants()
     auto check = [] (Procedure& proc) {
         proc.resetReachability();
     
-        if (shouldBeVerbose()) {
+        if (shouldBeVerbose(proc)) {
             dataLog("IR before:\n");
             dataLog(proc);
         }
     
         moveConstants(proc);
     
-        if (shouldBeVerbose()) {
+        if (shouldBeVerbose(proc)) {
             dataLog("IR after:\n");
             dataLog(proc);
         }

@@ -38,10 +38,8 @@
 
 namespace WebKit {
 
-void WebPage::updateSettingsGenerated(const WebPreferencesStore& store)
+void WebPage::updateSettingsGenerated(const WebPreferencesStore& store, WebCore::Settings& settings)
 {
-    WebCore::Settings& settings = m_page->settings();
-
 <%- for @pref in @preferencesBoundToSetting do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>

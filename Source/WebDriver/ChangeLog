@@ -1,3 +1,124 @@
+2022-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add a javascript atom to get the visible text
+        https://bugs.webkit.org/show_bug.cgi?id=174617
+        <rdar://problem/32307461>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Generate the JavaScript atoms using the new command and use the new atom to get element text.
+
+        * CMakeLists.txt:
+        * Session.cpp:
+        (WebDriver::Session::getElementText):
+
+2022-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WebDriver] Add support for shadow roots
+        https://bugs.webkit.org/show_bug.cgi?id=230614
+        <rdar://problem/83667535>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add implementation of new shadow root commands.
+
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::httpStatusCode const): Handle NoSuchShadowRoot and DetachedShadowRoot errors
+        (WebDriver::CommandResult::errorString const): Ditto.
+        * CommandResult.h:
+        * Session.cpp:
+        (WebDriver::Session::shadowRootIdentifier): Return shadow root identifier.
+        (WebDriver::Session::createShadowRoot): Create shadow root elment using the shadow root identifier.
+        (WebDriver::Session::findElements): Add ElementIsShadowRoot parameters to handle DetachedShadowRoot error.
+        (WebDriver::Session::getElementShadowRoot): Return the element shadow root.
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::findElement): Pass ElementIsShadowRoot::No to Session::findElements().
+        (WebDriver::WebDriverService::findElements): Ditto.
+        (WebDriver::WebDriverService::findElementFromElement): Ditto.
+        (WebDriver::WebDriverService::findElementsFromElement): Ditto.
+        (WebDriver::WebDriverService::findElementFromShadowRoot):
+        (WebDriver::WebDriverService::findElementsFromShadowRoot):
+        (WebDriver::WebDriverService::getElementShadowRoot):
+        * WebDriverService.h:
+
+2022-02-02  Youenn Fablet  <youenn@apple.com>
+
+        Clarify that some UUID routines are dedicated to UUID v4
+        https://bugs.webkit.org/show_bug.cgi?id=235430
+
+        Reviewed by Darin Adler.
+
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::startAutomationSession):
+        * socket/SessionHostSocket.cpp:
+        (WebDriver::SessionHost::startAutomationSession):
+
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Stop using makeRef(*this) / makeRefPtr(this)
+        https://bugs.webkit.org/show_bug.cgi?id=230464
+
+        Reviewed by Alex Christensen.
+
+        * Session.cpp:
+        (WebDriver::Session::closeAllToplevelBrowsingContexts):
+        (WebDriver::Session::createTopLevelBrowsingContext):
+        (WebDriver::Session::handleUserPrompts):
+        (WebDriver::Session::go):
+        (WebDriver::Session::getCurrentURL):
+        (WebDriver::Session::back):
+        (WebDriver::Session::forward):
+        (WebDriver::Session::refresh):
+        (WebDriver::Session::getTitle):
+        (WebDriver::Session::getWindowHandle):
+        (WebDriver::Session::closeTopLevelBrowsingContext):
+        (WebDriver::Session::switchToWindow):
+        (WebDriver::Session::getWindowHandles):
+        (WebDriver::Session::newWindow):
+        (WebDriver::Session::switchToFrame):
+        (WebDriver::Session::switchToParentFrame):
+        (WebDriver::Session::getToplevelBrowsingContextRect):
+        (WebDriver::Session::setWindowRect):
+        (WebDriver::Session::maximizeWindow):
+        (WebDriver::Session::minimizeWindow):
+        (WebDriver::Session::fullscreenWindow):
+        (WebDriver::Session::computeElementLayout):
+        (WebDriver::Session::findElements):
+        (WebDriver::Session::getActiveElement):
+        (WebDriver::Session::isElementSelected):
+        (WebDriver::Session::getElementText):
+        (WebDriver::Session::getElementTagName):
+        (WebDriver::Session::getElementRect):
+        (WebDriver::Session::isElementEnabled):
+        (WebDriver::Session::isElementDisplayed):
+        (WebDriver::Session::getElementAttribute):
+        (WebDriver::Session::getElementProperty):
+        (WebDriver::Session::getElementCSSValue):
+        (WebDriver::Session::waitForNavigationToComplete):
+        (WebDriver::Session::elementIsFileUpload):
+        (WebDriver::Session::selectOptionElement):
+        (WebDriver::Session::elementClick):
+        (WebDriver::Session::elementIsEditable):
+        (WebDriver::Session::elementClear):
+        (WebDriver::Session::setInputFileUploadFiles):
+        (WebDriver::Session::elementSendKeys):
+        (WebDriver::Session::getPageSource):
+        (WebDriver::Session::executeScript):
+        (WebDriver::Session::performMouseInteraction):
+        (WebDriver::Session::performKeyboardInteractions):
+        (WebDriver::Session::getAllCookies):
+        (WebDriver::Session::addCookie):
+        (WebDriver::Session::deleteCookie):
+        (WebDriver::Session::deleteAllCookies):
+        (WebDriver::Session::performActions):
+        (WebDriver::Session::releaseActions):
+        (WebDriver::Session::dismissAlert):
+        (WebDriver::Session::acceptAlert):
+        (WebDriver::Session::getAlertText):
+        (WebDriver::Session::sendAlertText):
+        (WebDriver::Session::takeScreenshot):
+
 2021-06-08  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of reinterpret_cast<> in the codebase

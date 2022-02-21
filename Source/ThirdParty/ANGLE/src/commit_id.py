@@ -12,6 +12,8 @@ import os
 
 usage = """\
 Usage: commit_id.py check                - check if git is present
+       commit_id.py unpack <ref_file>    - check if <ref_file> exists, and if not
+                                           create it based on .git/packed-refs
        commit_id.py position             - print commit position
        commit_id.py gen <file_to_write>  - generate commit.h"""
 
@@ -25,6 +27,24 @@ def get_commit_position(cwd):
     return grab_output('git rev-list HEAD --count', cwd)
 
 
+def unpack_ref(ref_file, ref_file_full_path, packed_refs_full_path):
+
+    with open(packed_refs_full_path) as fin:
+        refs = fin.read().strip().split('\n')
+
+    # Strip comments
+    refs = [ref.split(' ') for ref in refs if ref.strip()[0] != '#']
+
+    # Parse lines (which are in the format <hash> <ref_file>) and find the input file
+    refs = [git_hash for (git_hash, file_path) in refs if file_path == ref_file]
+
+    assert (len(refs) == 1)
+    git_hash = refs[0]
+
+    with open(ref_file_full_path, 'w') as fout:
+        fout.write(git_hash + '\n')
+
+
 if len(sys.argv) < 2:
     sys.exit(usage)
 
@@ -32,6 +52,9 @@ operation = sys.argv[1]
 
 # Set the root of ANGLE's repo as the working directory
 cwd = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
+aosp_angle_path = os.path.join(os.path.dirname('.'), 'external', 'angle')
+if os.path.exists(aosp_angle_path):
+    cwd = aosp_angle_path
 
 git_dir_exists = os.path.exists(os.path.join(cwd, '.git', 'HEAD'))
 
@@ -40,6 +63,19 @@ if operation == 'check':
         print("1")
     else:
         print("0")
+    sys.exit(0)
+elif operation == 'unpack':
+    if len(sys.argv) < 3:
+        sys.exit(usage)
+
+    ref_file = sys.argv[2]
+    ref_file_full_path = os.path.join(cwd, '.git', ref_file)
+    ref_file_exists = os.path.exists(ref_file_full_path)
+
+    if not ref_file_exists:
+        packed_refs_full_path = os.path.join(cwd, '.git', 'packed-refs')
+        unpack_ref(ref_file, ref_file_full_path, packed_refs_full_path)
+
     sys.exit(0)
 elif operation == 'position':
     if git_dir_exists:

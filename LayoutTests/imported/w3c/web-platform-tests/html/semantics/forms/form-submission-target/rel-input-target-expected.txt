@@ -2,10 +2,10 @@
 Harness Error (TIMEOUT), message = null
 
 PASS <form rel=""> with <input formtarget>
-FAIL <form rel="noopener"> with <input formtarget> assert_false: opener expected false got true
-FAIL <form rel="noreferrer"> with <input formtarget> assert_equals: referrer expected "" but got "http://localhost:8800/html/semantics/forms/form-submission-target/rel-input-target.html"
+PASS <form rel="noopener"> with <input formtarget>
+PASS <form rel="noreferrer"> with <input formtarget>
 PASS <form rel="opener"> with <input formtarget>
-FAIL <form rel="noopener noreferrer"> with <input formtarget> assert_equals: referrer expected "" but got "http://localhost:8800/html/semantics/forms/form-submission-target/rel-input-target.html"
-FAIL <form rel="noreferrer opener"> with <input formtarget> assert_equals: referrer expected "" but got "http://localhost:8800/html/semantics/forms/form-submission-target/rel-input-target.html"
-FAIL <form rel="opener noopener"> with <input formtarget> assert_false: opener expected false got true
+PASS <form rel="noopener noreferrer"> with <input formtarget>
+PASS <form rel="noreferrer opener"> with <input formtarget>
+PASS <form rel="opener noopener"> with <input formtarget>
 

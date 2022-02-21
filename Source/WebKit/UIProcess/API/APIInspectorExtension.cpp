@@ -37,7 +37,7 @@ namespace API {
 
 InspectorExtension::InspectorExtension(const WTF::String& identifier, WebKit::WebInspectorUIExtensionControllerProxy& extensionControllerProxy)
     : m_identifier(identifier)
-    , m_extensionControllerProxy(makeWeakPtr(extensionControllerProxy))
+    , m_extensionControllerProxy(extensionControllerProxy)
 {
 }
 
@@ -79,6 +79,18 @@ void InspectorExtension::reloadIgnoringCache(const std::optional<bool>& ignoreCa
     }
 
     m_extensionControllerProxy->reloadForExtension(m_identifier, ignoreCache, userAgent, injectedScript, WTFMove(completionHandler));
+}
+
+// For testing.
+
+void InspectorExtension::evaluateScriptInExtensionTab(const Inspector::ExtensionTabID& extensionTabID, const WTF::String& scriptSource, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
+{
+    if (!m_extensionControllerProxy) {
+        completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
+        return;
+    }
+
+    m_extensionControllerProxy->evaluateScriptInExtensionTab(extensionTabID, scriptSource, WTFMove(completionHandler));
 }
 
 } // namespace API

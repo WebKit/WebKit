@@ -26,26 +26,51 @@
             height: 80px;
         }
     </style>
+    <script src="../../resources/ui-helper.js"></script>
     <script>
-        function scrollTest()
+        async function scrollTest()
         {
-            eventSender.mouseMoveTo(20, 20);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "changed", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "none", "continue");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "none", "continue");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
-            eventSender.callAfterScrollingCompletes(() => {
-                testRunner.notifyDone();
-            });
+            const events = [
+                {
+                    type : "wheel",
+                    viewX : 20,
+                    viewY : 20,
+                    deltaY : -10,
+                    phase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    phase : "ended"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    momentumPhase : "changed"
+                },
+                {
+                    type : "wheel",
+                    momentumPhase : "ended"
+                }
+            ];
+
+            await UIHelper.mouseWheelSequence({ events: events });
+            testRunner.notifyDone();
         }
 
         function startTest()
         {
             if (window.eventSender) {
                 testRunner.waitUntilDone();
-
-                eventSender.monitorWheelEvents();
                 setTimeout(scrollTest, 0);
             }
         }

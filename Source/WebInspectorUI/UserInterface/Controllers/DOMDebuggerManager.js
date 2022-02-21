@@ -464,6 +464,30 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         return this._urlBreakpoints.find((breakpoint) => breakpoint.url === url) || null;
     }
 
+    urlBreakpointsMatchingURL(url)
+    {
+        return this._urlBreakpoints
+            .filter((urlBreakpoint) => {
+                switch (urlBreakpoint.type) {
+                case WI.URLBreakpoint.Type.Text:
+                    return urlBreakpoint.url.toLowerCase() === url.toLowerCase();
+
+                case WI.URLBreakpoint.Type.RegularExpression:
+                    return (new RegExp(urlBreakpoint.url, "i")).test(url);
+                }
+
+                return false;
+            })
+            .sort((a, b) => {
+                // Order URL breakpoints based on how closely they match the given URL.
+                const typeRankings = [
+                    WI.URLBreakpoint.Type.Text,
+                    WI.URLBreakpoint.Type.RegularExpression,
+                ];
+                return typeRankings.indexOf(a.type) - typeRankings.indexOf(b.type);
+            });
+    }
+
     addURLBreakpoint(breakpoint)
     {
         console.assert(breakpoint instanceof WI.URLBreakpoint, breakpoint);

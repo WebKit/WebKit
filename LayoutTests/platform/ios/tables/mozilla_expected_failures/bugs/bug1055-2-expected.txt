@@ -68,68 +68,68 @@ layer at (0,0) size 800x923
         RenderTableSection {TBODY} at (13,13) size 562x113
           RenderTableRow {TR} at (0,2) size 562x35
             RenderTableCell {TD} at (2,2) size 185x35 [border: (6.50px double #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (7,8) size 9x19
-                text run at (7,8) width 9: "1"
+              RenderText {#text} at (7,7) size 9x20
+                text run at (7,7) width 9: "1"
             RenderTableCell {TD} at (188,2) size 186x35 [border: (6.50px solid #FF0000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (7,8) size 9x19
-                text run at (7,8) width 9: "2"
+              RenderText {#text} at (7,7) size 9x20
+                text run at (7,7) width 9: "2"
             RenderTableCell {TD} at (375,2) size 186x35 [border: (6.50px groove #00FF00)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (7,8) size 9x19
-                text run at (7,8) width 9: "3"
+              RenderText {#text} at (7,7) size 9x20
+                text run at (7,7) width 9: "3"
           RenderTableRow {TR} at (0,39) size 562x35
             RenderTableCell {TD} at (2,39) size 185x35 [border: (6.50px inset #0000FF)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (7,8) size 9x19
-                text run at (7,8) width 9: "4"
+              RenderText {#text} at (7,7) size 9x20
+                text run at (7,7) width 9: "4"
             RenderTableCell {TD} at (188,39) size 186x35 [border: (6.50px double #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (7,8) size 9x19
-                text run at (7,8) width 9: "5"
+              RenderText {#text} at (7,7) size 9x20
+                text run at (7,7) width 9: "5"
             RenderTableCell {TD} at (375,39) size 186x35 [border: (6.50px solid #FF0000)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (7,8) size 9x19
-                text run at (7,8) width 9: "6"
+              RenderText {#text} at (7,7) size 9x20
+                text run at (7,7) width 9: "6"
           RenderTableRow {TR} at (0,76) size 562x35
             RenderTableCell {TD} at (2,76) size 185x35 [border: (6.50px groove #00FF00)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (7,8) size 9x19
-                text run at (7,8) width 9: "7"
+              RenderText {#text} at (7,7) size 9x20
+                text run at (7,7) width 9: "7"
             RenderTableCell {TD} at (188,76) size 186x35 [border: (6.50px inset #0000FF)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (7,8) size 9x19
-                text run at (7,8) width 9: "8"
+              RenderText {#text} at (7,7) size 9x20
+                text run at (7,7) width 9: "8"
             RenderTableCell {TD} at (375,76) size 186x35 [border: (6.50px double #000000)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (7,8) size 9x19
-                text run at (7,8) width 9: "9"
+              RenderText {#text} at (7,7) size 9x20
+                text run at (7,7) width 9: "9"
       RenderBlock (anonymous) at (0,574) size 784x21
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (98,594) size 588x106 [border: (6.50px double #FFFF00)]
         RenderTableSection {TBODY} at (6,6) size 576x93
           RenderTableRow {TR} at (0,0) size 575x32
             RenderTableCell {TD} at (0,0) size 201x32 [border: (6.50px double #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (7,8) size 9x19
-                text run at (7,8) width 9: "1"
+              RenderText {#text} at (7,7) size 9x20
+                text run at (7,7) width 9: "1"
             RenderTableCell {TD} at (200,0) size 170x32 [border: (6.50px solid #FF0000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,8) size 9x19
-                text run at (4,8) width 9: "2"
+              RenderText {#text} at (4,7) size 9x20
+                text run at (4,7) width 9: "2"
             RenderTableCell {TD} at (369,0) size 207x32 [border: (6.50px groove #00FF00)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,8) size 9x19
-                text run at (4,8) width 9: "3"
+              RenderText {#text} at (4,7) size 9x20
+                text run at (4,7) width 9: "3"
           RenderTableRow {TR} at (0,31) size 575x29
             RenderTableCell {TD} at (0,31) size 201x29 [border: (3.50px inset #0000FF)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (7,5) size 9x19
-                text run at (7,5) width 9: "4"
+              RenderText {#text} at (7,4) size 9x20
+                text run at (7,4) width 9: "4"
             RenderTableCell {TD} at (200,31) size 170x29 [border: (3.50px double #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,5) size 9x19
-                text run at (4,5) width 9: "5"
+              RenderText {#text} at (4,4) size 9x20
+                text run at (4,4) width 9: "5"
             RenderTableCell {TD} at (369,31) size 207x29 [border: (3.50px solid #FF0000)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,5) size 9x19
-                text run at (4,5) width 9: "6"
+              RenderText {#text} at (4,4) size 9x20
+                text run at (4,4) width 9: "6"
           RenderTableRow {TR} at (0,60) size 575x32
             RenderTableCell {TD} at (0,60) size 201x32 [border: (3.50px groove #00FF00)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (7,5) size 9x19
-                text run at (7,5) width 9: "7"
+              RenderText {#text} at (7,4) size 9x20
+                text run at (7,4) width 9: "7"
             RenderTableCell {TD} at (200,60) size 170x32 [border: (3.50px inset #0000FF)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,5) size 9x19
-                text run at (4,5) width 9: "8"
+              RenderText {#text} at (4,4) size 9x20
+                text run at (4,4) width 9: "8"
             RenderTableCell {TD} at (369,60) size 207x32 [border: (3.50px double #000000)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,5) size 9x19
-                text run at (4,5) width 9: "9"
+              RenderText {#text} at (4,4) size 9x20
+                text run at (4,4) width 9: "9"
       RenderBlock {P} at (0,715) size 784x41
         RenderText {#text} at (0,0) size 772x39
           text run at (0,0) width 311: "Si toutes les conditions exprim\x{E9}es par les r\x{E8}gles "

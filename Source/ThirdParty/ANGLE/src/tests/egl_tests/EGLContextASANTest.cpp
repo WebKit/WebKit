@@ -195,6 +195,7 @@ TEST_P(EGLContextASANTest, DestroyContextInUse)
 }
 }  // anonymous namespace
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLContextASANTest);
 ANGLE_INSTANTIATE_TEST(EGLContextASANTest,
                        ES2_D3D9(),
                        ES2_D3D11(),

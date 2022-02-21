@@ -28,9 +28,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineFormattingContext.h"
-#include "InlineLineBox.h"
 #include "InlineLineBuilder.h"
-#include "InlineLineGeometry.h"
+#include "TextUtil.h"
 
 namespace WebCore {
 namespace Layout {
@@ -38,29 +37,30 @@ namespace Layout {
 class Box;
 class ContainerBox;
 class LayoutState;
+struct LayoutBoundsMetrics;
 
 class LineBoxBuilder {
 public:
     LineBoxBuilder(const InlineFormattingContext&);
 
-    struct LineBoxAndGeometry {
-        LineBox lineBox;
-        LineGeometry lineGeometry;
-    };
-    LineBoxAndGeometry build(const LineBuilder::LineContent&);
+    LineBox build(const LineBuilder::LineContent&, size_t lineIndex);
 
 private:
-    void setVerticalGeometryForInlineBox(InlineLevelBox&) const;
-    InlineLayoutUnit constructAndAlignInlineLevelBoxes(LineBox&, const Line::RunList&);
+    void setBaselineAndLayoutBounds(InlineLevelBox&, const LayoutBoundsMetrics&) const;
+    void adjustLayoutBoundsWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline) const;
+    TextUtil::FallbackFontList collectFallbackFonts(const InlineLevelBox& parentInlineBox, const Line::Run&, const RenderStyle&);
+
+    void constructInlineLevelBoxes(LineBox&, const LineBuilder::LineContent&, size_t lineIndex);
+    void adjustIdeographicBaselineIfApplicable(LineBox&, size_t lineIndex);
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const Box& rootBox() const { return formattingContext().root(); }
     LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
-    bool isRootLayoutBox(const ContainerBox& containerBox) const { return &containerBox == &rootBox(); }
-
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
+    bool m_fallbackFontRequiresIdeographicBaseline { false };
+    HashMap<const InlineLevelBox*, TextUtil::FallbackFontList> m_fallbackFontsForInlineBoxes;
 };
 
 }

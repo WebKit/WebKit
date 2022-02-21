@@ -21,29 +21,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import atexit
-import json
 import os
 import requests
 import unittest
 
 from flask import Flask
-from flask.wrappers import Response
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from resultsdbpy.flask_support.flask_test_context import FlaskTestContext
-
-
-class FlaskRequestsResponse(Response):
-    @property
-    def text(self):
-        return self.data.decode('utf-8')
-
-    @property
-    def content(self):
-        return self.data
-
-    def json(self):
-        return json.loads(self.text)
+from webkitflaskpy import Response
 
 
 class FlaskTestCase(unittest.TestCase):
@@ -104,7 +90,7 @@ class FlaskTestCase(unittest.TestCase):
         def decorator(method):
             def real_method(val, method=method, **kwargs):
                 app = Flask('testing')
-                app.response_class = FlaskRequestsResponse
+                app.response_class = Response
                 app.config['TESTING'] = True
                 val.setup_webserver(app, **kwargs)
                 app.add_url_rule('/__health', 'health', lambda: 'ok', methods=('GET',))

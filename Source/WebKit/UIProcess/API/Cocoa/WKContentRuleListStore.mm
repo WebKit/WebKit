@@ -36,6 +36,7 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if ENABLE(CONTENT_EXTENSIONS)
 static WKErrorCode toWKErrorCode(const std::error_code& error)
 {
     ASSERT(error.category() == API::contentRuleListStoreErrorCategory());
@@ -52,6 +53,7 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
     ASSERT_NOT_REACHED();
     return WKErrorUnknown;
 }
+#endif
 
 @implementation WKContentRuleListStore
 
@@ -67,21 +69,41 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
 + (instancetype)defaultStore
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     return wrapper(API::ContentRuleListStore::defaultStore());
+#else
+    return nil;
+#endif
 }
 
 + (instancetype)storeWithURL:(NSURL *)url
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation));
+#else
+    return nil;
+#endif
 }
 
 - (void)compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *)encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
 {
-    [self _compileContentRuleListForIdentifier:identifier encodedContentRuleList:encodedContentRuleList completionHandler:completionHandler];
+#if ENABLE(CONTENT_EXTENSIONS)
+    _contentRuleListStore->compileContentRuleList(identifier, encodedContentRuleList, [completionHandler = makeBlockPtr(completionHandler)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
+        if (error) {
+            auto userInfo = @{ NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Rule list compilation failed: %s", error.message().c_str()] };
+
+            // error.value() could have a specific compiler error that is not equal to WKErrorContentRuleListStoreCompileFailed.
+            // We want to use error.message, but here we want to only pass on CompileFailed with userInfo from the std::error_code.
+            return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorContentRuleListStoreCompileFailed userInfo:userInfo]);
+        }
+        completionHandler(wrapper(*contentRuleList), nil);
+    });
+#endif
 }
 
 - (void)lookUpContentRuleListForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     _contentRuleListStore->lookupContentRuleList(identifier, [completionHandler = makeBlockPtr(completionHandler)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
         if (error) {
             auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Rule list lookup failed: %s", error.message().c_str()]};
@@ -92,17 +114,21 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
         completionHandler(wrapper(*contentRuleList), nil);
     });
+#endif
 }
 
 - (void)getAvailableContentRuleListIdentifiers:(void (^)(NSArray<NSString *>*))completionHandler
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     _contentRuleListStore->getAvailableContentRuleListIdentifiers([completionHandler = makeBlockPtr(completionHandler)](Vector<String> identifiers) {
         completionHandler(createNSArray(identifiers).get());
     });
+#endif
 }
 
 - (void)removeContentRuleListForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     _contentRuleListStore->removeContentRuleList(identifier, [completionHandler = makeBlockPtr(completionHandler)](std::error_code error) {
         if (error) {
             auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Rule list removal failed: %s", error.message().c_str()]};
@@ -112,6 +138,7 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
         completionHandler(nil);
     });
+#endif
 }
 
 #pragma mark WKObject protocol implementation
@@ -129,16 +156,21 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
 - (void)_removeAllContentRuleLists
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     _contentRuleListStore->synchronousRemoveAllContentRuleLists();
+#endif
 }
 
 - (void)_invalidateContentRuleListVersionForIdentifier:(NSString *)identifier
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     _contentRuleListStore->invalidateContentRuleListVersion(identifier);
+#endif
 }
 
 - (void)_getContentRuleListSourceForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSString*))completionHandler
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     auto handler = adoptNS([completionHandler copy]);
     _contentRuleListStore->getContentRuleListSource(identifier, [handler](String source) {
         auto rawHandler = (void (^)(NSString *))handler.get();
@@ -147,30 +179,25 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
         else
             rawHandler(source);
     });
-}
-
-- (void)_compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *) encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
-{
-    _contentRuleListStore->compileContentRuleList(identifier, encodedContentRuleList, [completionHandler = makeBlockPtr(completionHandler)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
-        if (error) {
-            auto userInfo = @{NSHelpAnchorErrorKey: [NSString stringWithFormat:@"Rule list compilation failed: %s", error.message().c_str()]};
-
-            // error.value() could have a specific compiler error that is not equal to WKErrorContentRuleListStoreCompileFailed.
-            // We want to use error.message, but here we want to only pass on CompileFailed with userInfo from the std::error_code.
-            return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorContentRuleListStoreCompileFailed userInfo:userInfo]);
-        }
-        completionHandler(wrapper(*contentRuleList), nil);
-    });
+#endif
 }
 
 + (instancetype)defaultStoreWithLegacyFilename
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     return wrapper(API::ContentRuleListStore::defaultStore());
+#else
+    return nil;
+#endif
 }
 
 + (instancetype)storeWithURLAndLegacyFilename:(NSURL *)url
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation));
+#else
+    return nil;
+#endif
 }
 
 - (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *)encodedContentExtension completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler

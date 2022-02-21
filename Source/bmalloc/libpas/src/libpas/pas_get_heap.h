@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,8 @@
 #ifndef PAS_GET_HEAP_H
 #define PAS_GET_HEAP_H
 
-#include "pas_bitfit_global_directory.h"
+#include "pas_bitfit_directory.h"
+#include "pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h"
 #include "pas_heap.h"
 #include "pas_heap_config.h"
 #include "pas_large_map.h"
@@ -35,59 +36,69 @@
 
 PAS_BEGIN_EXTERN_C;
 
-static PAS_ALWAYS_INLINE pas_heap*
-pas_get_heap_known_segregated(uintptr_t begin,
-                              pas_segregated_page_config page_config)
-{
-    return pas_heap_for_segregated_heap(
-        pas_segregated_page_get_directory_for_address_and_page_config(
-            begin, page_config)->heap);
-}
-
 static PAS_ALWAYS_INLINE pas_heap* pas_get_heap(void* ptr,
                                                 pas_heap_config config)
 {
     uintptr_t begin;
+    pas_page_base* page_base;
     
     begin = (uintptr_t)ptr;
     
     switch (config.fast_megapage_kind_func(begin)) {
-    case pas_small_segregated_fast_megapage_kind:
+    case pas_small_exclusive_segregated_fast_megapage_kind:
         return pas_heap_for_segregated_heap(
             pas_segregated_page_get_directory_for_address_and_page_config(
-                begin, config.small_segregated_config)->heap);
-    case pas_small_bitfit_fast_megapage_kind:
-        return pas_heap_for_segregated_heap(
-            pas_compact_bitfit_global_directory_ptr_load_non_null(
-                &pas_compact_atomic_bitfit_view_ptr_load_non_null(
-                    &pas_bitfit_page_for_address_and_page_config(
-                        begin, config.small_bitfit_config)->owner)->global_directory)->heap);
+                begin, config.small_segregated_config, pas_segregated_page_exclusive_role)->heap);
+    case pas_small_other_fast_megapage_kind: {
+        pas_page_base_and_kind page_and_kind;
+        page_and_kind = pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, config);
+        switch (page_and_kind.page_kind) {
+        case pas_small_shared_segregated_page_kind:
+            return pas_heap_for_segregated_heap(
+                pas_segregated_page_get_directory_for_address_in_page(
+                    pas_page_base_get_segregated(page_and_kind.page_base),
+                    begin, config.small_segregated_config, pas_segregated_page_shared_role)->heap);
+        case pas_small_bitfit_page_kind:
+            page_base = page_and_kind.page_base;
+            goto bitfit_case_with_page_base;
+        default:
+            PAS_ASSERT(!"Should not be reached");
+            return NULL;
+        }
+    }
     case pas_not_a_fast_megapage_kind: {
-        pas_page_base* page_base;
         pas_large_map_entry entry;
         pas_heap* result;
 
         page_base = config.page_header_func(begin);
         if (page_base) {
             switch (pas_page_base_get_kind(page_base)) {
-            case pas_small_segregated_page_kind:
+            case pas_small_shared_segregated_page_kind:
                 PAS_ASSERT(!config.small_segregated_is_in_megapage);
                 return pas_heap_for_segregated_heap(
                     pas_segregated_page_get_directory_for_address_in_page(
                         pas_page_base_get_segregated(page_base),
-                        begin, config.small_segregated_config)->heap);
-            case pas_medium_segregated_page_kind:
+                        begin, config.small_segregated_config, pas_segregated_page_shared_role)->heap);
+            case pas_small_exclusive_segregated_page_kind:
+                PAS_ASSERT(!config.small_segregated_is_in_megapage);
                 return pas_heap_for_segregated_heap(
                     pas_segregated_page_get_directory_for_address_in_page(
                         pas_page_base_get_segregated(page_base),
-                        begin, config.medium_segregated_config)->heap);
+                        begin, config.small_segregated_config, pas_segregated_page_exclusive_role)->heap);
+            case pas_medium_shared_segregated_page_kind:
+                return pas_heap_for_segregated_heap(
+                    pas_segregated_page_get_directory_for_address_in_page(
+                        pas_page_base_get_segregated(page_base),
+                        begin, config.medium_segregated_config, pas_segregated_page_shared_role)->heap);
+            case pas_medium_exclusive_segregated_page_kind:
+                return pas_heap_for_segregated_heap(
+                    pas_segregated_page_get_directory_for_address_in_page(
+                        pas_page_base_get_segregated(page_base),
+                        begin, config.medium_segregated_config, pas_segregated_page_exclusive_role)->heap);
             case pas_small_bitfit_page_kind:
             case pas_medium_bitfit_page_kind:
             case pas_marge_bitfit_page_kind:
-                return pas_heap_for_segregated_heap(
-                    pas_compact_bitfit_global_directory_ptr_load_non_null(
-                        &pas_compact_atomic_bitfit_view_ptr_load_non_null(
-                            &pas_page_base_get_bitfit(page_base)->owner)->global_directory)->heap);
+                goto bitfit_case_with_page_base;
             }
             PAS_ASSERT(!"Bad page kind");
             return NULL;
@@ -110,6 +121,12 @@ static PAS_ALWAYS_INLINE pas_heap* pas_get_heap(void* ptr,
     
     PAS_ASSERT(!"Should not be reached");
     return NULL;
+
+bitfit_case_with_page_base:
+    return pas_heap_for_segregated_heap(
+        pas_compact_bitfit_directory_ptr_load_non_null(
+            &pas_compact_atomic_bitfit_view_ptr_load_non_null(
+                &pas_page_base_get_bitfit(page_base)->owner)->directory)->heap);
 }
 
 PAS_END_EXTERN_C;

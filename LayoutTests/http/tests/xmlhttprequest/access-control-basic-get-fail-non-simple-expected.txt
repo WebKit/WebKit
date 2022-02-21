@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Preflight response is not successful
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 500
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-get-fail-non-simple.cgi due to access control checks.
 PASS: Exception thrown. Cross-domain access was denied in 'send'. [ A network error occurred.].
 

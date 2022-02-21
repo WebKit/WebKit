@@ -6,11 +6,14 @@ info: The "length" property of the "toDateString" is 0
 esid: sec-date.prototype.todatestring
 description: The "length" property of the "toDateString" is 0
 ---*/
+assert.sameValue(
+  Date.prototype.toDateString.hasOwnProperty("length"),
+  true,
+  'Date.prototype.toDateString.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.toDateString.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The toDateString has a "length" property');
-}
-
-if (Date.prototype.toDateString.length !== 0) {
-  throw new Test262Error('#2: The "length" property of the toDateString is 0');
-}
+assert.sameValue(
+  Date.prototype.toDateString.length,
+  0,
+  'The value of Date.prototype.toDateString.length is expected to be 0'
+);

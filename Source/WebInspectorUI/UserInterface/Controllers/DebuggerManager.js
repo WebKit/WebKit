@@ -80,6 +80,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._blackboxedURLsSetting = new WI.Setting("debugger-blackboxed-urls", []);
         this._blackboxedPatternsSetting = new WI.Setting("debugger-blackboxed-patterns", []);
         this._blackboxedPatternDataMap = new Map;
+        this._blackboxedCallFrameGroupsToAutoExpand = [];
 
         this._activeCallFrame = null;
 
@@ -528,6 +529,25 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         }
 
         this.dispatchEventToListeners(DebuggerManager.Event.BlackboxChanged);
+    }
+
+    rememberBlackboxedCallFrameGroupToAutoExpand(blackboxedCallFrameGroup)
+    {
+        console.assert(!this.shouldAutoExpandBlackboxedCallFrameGroup(blackboxedCallFrameGroup), blackboxedCallFrameGroup);
+
+        this._blackboxedCallFrameGroupsToAutoExpand.push(blackboxedCallFrameGroup);
+    }
+
+    shouldAutoExpandBlackboxedCallFrameGroup(blackboxedCallFrameGroup)
+    {
+        console.assert(Array.isArray(blackboxedCallFrameGroup) && blackboxedCallFrameGroup.length && blackboxedCallFrameGroup.every((callFrame) => callFrame instanceof WI.CallFrame && callFrame.blackboxed), blackboxedCallFrameGroup);
+
+        return this._blackboxedCallFrameGroupsToAutoExpand.some((blackboxedCallFrameGroupToAutoExpand) => {
+            if (blackboxedCallFrameGroupToAutoExpand.length !== blackboxedCallFrameGroup.length)
+                return false;
+
+            return blackboxedCallFrameGroupToAutoExpand.every((item, i) => item.isEqual(blackboxedCallFrameGroup[i]));
+        });
     }
 
     get asyncStackTraceDepth()
@@ -1417,6 +1437,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             this._activeCallFrame = null;
             activeCallFrameDidChange = true;
         }
+
+        this._blackboxedCallFrameGroupsToAutoExpand = [];
 
         this.dataForTarget(target).updateForResume();
 

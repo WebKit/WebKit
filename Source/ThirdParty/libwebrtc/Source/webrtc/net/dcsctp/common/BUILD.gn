@@ -10,7 +10,7 @@ import("../../../webrtc.gni")
 
 rtc_source_set("internal_types") {
   deps = [
-    "../public:strong_alias",
+    "../../../rtc_base:rtc_base_approved",
     "../public:types",
   ]
   sources = [ "internal_types.h" ]
@@ -19,11 +19,6 @@ rtc_source_set("internal_types") {
 rtc_source_set("math") {
   deps = []
   sources = [ "math.h" ]
-}
-
-rtc_source_set("pair_hash") {
-  deps = []
-  sources = [ "pair_hash.h" ]
 }
 
 rtc_source_set("sequence_numbers") {
@@ -44,7 +39,6 @@ if (rtc_include_tests) {
     defines = []
     deps = [
       ":math",
-      ":pair_hash",
       ":sequence_numbers",
       ":str_join",
       "../../../api:array_view",
@@ -55,9 +49,17 @@ if (rtc_include_tests) {
     ]
     sources = [
       "math_test.cc",
-      "pair_hash_test.cc",
       "sequence_numbers_test.cc",
       "str_join_test.cc",
     ]
   }
+}
+
+rtc_library("handover_testing") {
+  deps = [ "../public:socket" ]
+  testonly = true
+  sources = [
+    "handover_testing.cc",
+    "handover_testing.h",
+  ]
 }

@@ -68,6 +68,21 @@ private:
     const ContainerNode& m_root;
 };
 
+template<typename ElementType> class InclusiveElementDescendantRange {
+public:
+    InclusiveElementDescendantRange(const ContainerNode& root);
+    ElementDescendantIterator<ElementType> begin() const;
+    static constexpr std::nullptr_t end() { return nullptr; }
+    ElementDescendantIterator<ElementType> beginAt(ElementType&) const;
+    ElementDescendantIterator<ElementType> from(Element&) const;
+
+    ElementType* first() const;
+    ElementType* last() const;
+
+private:
+    const ContainerNode& m_root;
+};
+
 template<typename ElementType> class DoubleElementDescendantRange {
 public:
     typedef ElementDescendantRange<ElementType> SingleAdapter;
@@ -155,8 +170,8 @@ template<typename ElementType> ElementDescendantIterator<ElementType> ElementDes
 template<typename ElementType> ElementDescendantIterator<ElementType> ElementDescendantRange<ElementType>::from(Element& descendant) const
 {
     ASSERT(descendant.isDescendantOf(m_root));
-    if (is<ElementType>(descendant))
-        return ElementDescendantIterator<ElementType>(m_root, downcast<ElementType>(&descendant));
+    if (auto descendantElement = dynamicDowncast<ElementType>(descendant))
+        return ElementDescendantIterator<ElementType>(m_root, descendantElement);
     ElementType* next = Traversal<ElementType>::next(descendant, &m_root);
     return ElementDescendantIterator<ElementType>(m_root, next);
 }
@@ -169,6 +184,43 @@ template<typename ElementType> ElementType* ElementDescendantRange<ElementType>:
 template<typename ElementType> ElementType* ElementDescendantRange<ElementType>::last() const
 {
     return Traversal<ElementType>::lastWithin(m_root);
+}
+
+// InclusiveElementDescendantRange
+
+template<typename ElementType> InclusiveElementDescendantRange<ElementType>::InclusiveElementDescendantRange(const ContainerNode& root)
+    : m_root(root)
+{
+}
+
+template<typename ElementType> ElementDescendantIterator<ElementType> InclusiveElementDescendantRange<ElementType>::begin() const
+{
+    return ElementDescendantIterator<ElementType>(m_root, Traversal<ElementType>::inclusiveFirstWithin(const_cast<ContainerNode&>(m_root)));
+}
+
+template<typename ElementType> ElementDescendantIterator<ElementType> InclusiveElementDescendantRange<ElementType>::beginAt(ElementType& descendant) const
+{
+    ASSERT(&m_root == &descendant || descendant.isDescendantOf(m_root));
+    return ElementDescendantIterator<ElementType>(m_root, &descendant);
+}
+
+template<typename ElementType> ElementDescendantIterator<ElementType> InclusiveElementDescendantRange<ElementType>::from(Element& descendant) const
+{
+    ASSERT(&m_root == &descendant || descendant.isDescendantOf(m_root));
+    if (auto descendantElement = dynamicDowncast<ElementType>(descendant))
+        return ElementDescendantIterator<ElementType>(m_root, descendantElement);
+    ElementType* next = Traversal<ElementType>::next(descendant, &m_root);
+    return ElementDescendantIterator<ElementType>(m_root, next);
+}
+
+template<typename ElementType> ElementType* InclusiveElementDescendantRange<ElementType>::first() const
+{
+    return Traversal<ElementType>::inclusiveFirstWithin(m_root);
+}
+
+template<typename ElementType> ElementType* InclusiveElementDescendantRange<ElementType>::last() const
+{
+    return Traversal<ElementType>::inclusiveLastWithin(m_root);
 }
 
 // DoubleElementDescendantRange
@@ -249,6 +301,11 @@ template<typename ElementType, bool filter(const ElementType&)> ElementType* Fil
 template<typename ElementType> ElementDescendantRange<ElementType> descendantsOfType(ContainerNode& root)
 {
     return ElementDescendantRange<ElementType>(root);
+}
+
+template<typename ElementType> InclusiveElementDescendantRange<ElementType> inclusiveDescendantsOfType(ContainerNode& root)
+{
+    return InclusiveElementDescendantRange<ElementType>(root);
 }
 
 template<typename ElementType> ElementDescendantRange<const ElementType> descendantsOfType(const ContainerNode& root)

@@ -195,8 +195,8 @@ void main()
             mOrigTimer.stop();
             // This timer indicates draw time for an already-created texture resident on the GPU,
             // which needs no updates. It will be faster than the other draws.
-            std::cout << "Original texture draw: " << mOrigTimer.getElapsedTime() * 1000 << "msec"
-                      << std::endl;
+            std::cout << "Original texture draw: " << mOrigTimer.getElapsedWallClockTime() * 1000
+                      << "msec" << std::endl;
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -212,9 +212,9 @@ void main()
             // causing the underlying resource to be allocated, and then resized, requiring resource
             // reallocation and related overhead.
             std::cout << "Resized texture definition: "
-                      << mResizeDefineTimer.getElapsedTime() * 1000 << "msec" << std::endl;
-            std::cout << "Resized texture draw: " << mResizeDrawTimer.getElapsedTime() * 1000
-                      << "msec" << std::endl;
+                      << mResizeDefineTimer.getElapsedWallClockTime() * 1000 << "msec" << std::endl;
+            std::cout << "Resized texture draw: "
+                      << mResizeDrawTimer.getElapsedWallClockTime() * 1000 << "msec" << std::endl;
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -231,9 +231,9 @@ void main()
             // is no already-resident texture object to manage. This draw is expected to be faster
             // than the resized texture draw.
             std::cout << "Newly created texture definition: "
-                      << mNewTexDefineTimer.getElapsedTime() * 1000 << "msec" << std::endl;
-            std::cout << "Newly created texture draw: " << mNewTexDrawTimer.getElapsedTime() * 1000
-                      << "msec" << std::endl;
+                      << mNewTexDefineTimer.getElapsedWallClockTime() * 1000 << "msec" << std::endl;
+            std::cout << "Newly created texture draw: "
+                      << mNewTexDrawTimer.getElapsedWallClockTime() * 1000 << "msec" << std::endl;
         }
 
         if (mFrameCount == 5)

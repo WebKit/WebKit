@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMSessionMediaSourceAVFObjC_h
-#define CDMSessionMediaSourceAVFObjC_h
+#pragma once
 
 #include "LegacyCDMSession.h"
 #include "SourceBufferPrivateAVFObjC.h"
@@ -87,5 +86,3 @@ inline CDMSessionMediaSourceAVFObjC* toCDMSessionMediaSourceAVFObjC(LegacyCDMSes
 }
 
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
-
-#endif // CDMSessionMediaSourceAVFObjC_h

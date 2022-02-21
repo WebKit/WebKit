@@ -11,6 +11,7 @@ if (window.testRunner)
 function test()
 {
     var backslashDivElement = document.getElementById("backslash");
+    getSelection().collapse(backslashDivElement, 0);
     getSelection().extend(backslashDivElement, 1);
     document.execCommand("Transpose");
 

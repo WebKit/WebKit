@@ -105,7 +105,7 @@ ObjectPropertyConditionSet ObjectPropertyConditionSet::mergedWith(
     Vector<ObjectPropertyCondition> result;
     
     if (!isEmpty())
-        result.append(m_data->m_vector.begin(), m_data->m_vector.size());
+        result.append(m_data->begin(), m_data->size());
     
     for (const ObjectPropertyCondition& newCondition : other) {
         bool foundMatch = false;
@@ -175,7 +175,7 @@ void ObjectPropertyConditionSet::dumpInContext(PrintStream& out, DumpContext* co
     
     out.print("[");
     if (m_data)
-        out.print(listDumpInContext(m_data->m_vector, context));
+        out.print(listDumpInContext(*m_data, context));
     out.print("]");
 }
 
@@ -189,7 +189,7 @@ bool ObjectPropertyConditionSet::isValidAndWatchable() const
     if (!isValid())
         return false;
 
-    for (auto& condition : m_data->m_vector) {
+    for (auto& condition : *m_data) {
         if (!condition.isWatchable())
             return false;
     }

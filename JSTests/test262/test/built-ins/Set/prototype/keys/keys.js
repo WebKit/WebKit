@@ -2,10 +2,10 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-  description: >
-      The initial value of the keys property is the same function object as the
-      initial value of the values property.
-  es6id: 23.2.3.8
+esid: sec-set.prototype.keys
+description: >
+    The initial value of the keys property is the same function object as the
+    initial value of the values property.
 ---*/
 
 assert.sameValue(

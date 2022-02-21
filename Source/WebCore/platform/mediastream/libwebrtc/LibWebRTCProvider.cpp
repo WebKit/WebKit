@@ -26,10 +26,16 @@
 #include "config.h"
 #include "LibWebRTCProvider.h"
 
+#include "MediaCapabilitiesDecodingInfo.h"
+#include "MediaCapabilitiesEncodingInfo.h"
+#include "MediaDecodingConfiguration.h"
+#include "MediaEncodingConfiguration.h"
+#include "ProcessQualified.h"
+
 #if USE(LIBWEBRTC)
+#include "ContentType.h"
 #include "LibWebRTCAudioModule.h"
 #include "Logging.h"
-#include "RTCRtpCapabilities.h"
 #include <dlfcn.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -38,11 +44,11 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 #include <webrtc/api/audio_codecs/builtin_audio_decoder_factory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_encoder_factory.h>
 #include <webrtc/api/create_peerconnection_factory.h>
-#include <webrtc/api/peer_connection_factory_proxy.h>
 #include <webrtc/modules/audio_processing/include/audio_processing.h>
 #include <webrtc/p2p/base/basic_packet_socket_factory.h>
 #include <webrtc/p2p/client/basic_port_allocator.h>
 #include <webrtc/pc/peer_connection_factory.h>
+#include <webrtc/pc/peer_connection_factory_proxy.h>
 #include <webrtc/rtc_base/physical_socket_server.h>
 
 ALLOW_UNUSED_PARAMETERS_END
@@ -64,6 +70,16 @@ bool LibWebRTCProvider::webRTCAvailable()
     return false;
 }
 #endif
+
+#if USE(LIBWEBRTC)
+LibWebRTCProvider::LibWebRTCProvider()
+{
+}
+#endif
+
+LibWebRTCProvider::~LibWebRTCProvider()
+{
+}
 
 #if !USE(LIBWEBRTC) || !PLATFORM(COCOA)
 void LibWebRTCProvider::registerWebKitVP9Decoder()
@@ -88,11 +104,11 @@ static inline rtc::SocketAddress prepareSocketAddress(const rtc::SocketAddress& 
     return result;
 }
 
-class BasicPacketSocketFactory : public rtc::BasicPacketSocketFactory {
+class BasicPacketSocketFactory : public rtc::PacketSocketFactory {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit BasicPacketSocketFactory(rtc::Thread& networkThread)
-        : m_socketFactory(makeUniqueRefWithoutFastMallocCheck<rtc::BasicPacketSocketFactory>(&networkThread))
+        : m_socketFactory(makeUniqueRefWithoutFastMallocCheck<rtc::BasicPacketSocketFactory>(networkThread.socketserver()))
     {
     }
 
@@ -112,6 +128,7 @@ public:
     {
         return m_socketFactory->CreateClientTcpSocket(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections), remoteAddress, info, name, options);
     }
+    rtc::AsyncResolverInterface* CreateAsyncResolver() final { return m_socketFactory->CreateAsyncResolver(); }
 
 private:
     bool m_disableNonLocalhostConnections { false };
@@ -266,9 +283,17 @@ webrtc::PeerConnectionFactoryInterface* LibWebRTCProvider::factory()
     return m_factory;
 }
 
+void LibWebRTCProvider::clearFactory()
+{
+    m_audioModule = nullptr;
+    m_factory = nullptr;
+}
+
 rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread)
 {
-    auto audioModule = rtc::scoped_refptr<webrtc::AudioDeviceModule>(new rtc::RefCountedObject<LibWebRTCAudioModule>());
+    ASSERT(!m_audioModule);
+    auto audioModule = rtc::scoped_refptr<LibWebRTCAudioModule>(new rtc::RefCountedObject<LibWebRTCAudioModule>());
+    m_audioModule = audioModule.get();
 
     return webrtc::CreatePeerConnectionFactory(networkThread, signalingThread, signalingThread, WTFMove(audioModule), webrtc::CreateBuiltinAudioEncoderFactory(), webrtc::CreateBuiltinAudioDecoderFactory(), createEncoderFactory(), createDecoderFactory(), nullptr, nullptr, nullptr);
 }
@@ -299,7 +324,7 @@ void LibWebRTCProvider::enableEnumeratingAllNetworkInterfaces()
     m_enableEnumeratingAllNetworkInterfaces = true;
 }
 
-rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
+rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(ScriptExecutionContextIdentifier, webrtc::PeerConnectionObserver& observer, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
     // Default WK1 implementation.
     ASSERT(m_useNetworkThreadWithSocketServer);
@@ -379,6 +404,30 @@ void LibWebRTCProvider::prepareCertificateGenerator(Function<void(rtc::RTCCertif
     });
 }
 
+void LibWebRTCProvider::setH265Support(bool value)
+{
+    m_supportsH265 = value;
+    m_videoDecodingCapabilities = { };
+    m_videoEncodingCapabilities = { };
+}
+
+void LibWebRTCProvider::setVP9Support(bool supportsVP9Profile0, bool supportsVP9Profile2)
+{
+    m_supportsVP9Profile0 = supportsVP9Profile0;
+    m_supportsVP9Profile2 = supportsVP9Profile2;
+
+    m_videoDecodingCapabilities = { };
+    m_videoEncodingCapabilities = { };
+}
+
+void LibWebRTCProvider::setVP9VTBSupport(bool value)
+{
+    m_supportsVP9VTB = value;
+
+    m_videoDecodingCapabilities = { };
+    m_videoEncodingCapabilities = { };
+}
+
 static inline std::optional<cricket::MediaType> typeFromKind(const String& kind)
 {
     if (kind == "audio"_s)
@@ -431,11 +480,39 @@ std::optional<RTCRtpCapabilities> LibWebRTCProvider::receiverCapabilities(const 
     if (!mediaType)
         return { };
 
-    auto* factory = this->factory();
-    if (!factory)
+    switch (*mediaType) {
+    case cricket::MediaType::MEDIA_TYPE_AUDIO:
+        return audioDecodingCapabilities();
+    case cricket::MediaType::MEDIA_TYPE_VIDEO:
+        return videoDecodingCapabilities();
+    case cricket::MediaType::MEDIA_TYPE_DATA:
+        ASSERT_NOT_REACHED();
         return { };
+    case cricket::MediaType::MEDIA_TYPE_UNSUPPORTED:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
 
-    return toRTCRtpCapabilities(factory->GetRtpReceiverCapabilities(*mediaType));
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+std::optional<RTCRtpCapabilities>& LibWebRTCProvider::audioDecodingCapabilities()
+{
+    if (!m_audioDecodingCapabilities) {
+        if (auto* factory = this->factory())
+            m_audioDecodingCapabilities = toRTCRtpCapabilities(factory->GetRtpReceiverCapabilities(cricket::MediaType::MEDIA_TYPE_AUDIO));
+    }
+    return m_audioDecodingCapabilities;
+}
+
+std::optional<RTCRtpCapabilities>& LibWebRTCProvider::videoDecodingCapabilities()
+{
+    if (!m_videoDecodingCapabilities) {
+        if (auto* factory = this->factory())
+            m_videoDecodingCapabilities = toRTCRtpCapabilities(factory->GetRtpReceiverCapabilities(cricket::MediaType::MEDIA_TYPE_VIDEO));
+    }
+    return m_videoDecodingCapabilities;
 }
 
 std::optional<RTCRtpCapabilities> LibWebRTCProvider::senderCapabilities(const String& kind)
@@ -444,13 +521,138 @@ std::optional<RTCRtpCapabilities> LibWebRTCProvider::senderCapabilities(const St
     if (!mediaType)
         return { };
 
-    auto* factory = this->factory();
-    if (!factory)
+    switch (*mediaType) {
+    case cricket::MediaType::MEDIA_TYPE_AUDIO:
+        return audioEncodingCapabilities();
+    case cricket::MediaType::MEDIA_TYPE_VIDEO:
+        return videoEncodingCapabilities();
+    case cricket::MediaType::MEDIA_TYPE_DATA:
+        ASSERT_NOT_REACHED();
         return { };
-
-    return toRTCRtpCapabilities(factory->GetRtpSenderCapabilities(*mediaType));
+    case cricket::MediaType::MEDIA_TYPE_UNSUPPORTED:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
+std::optional<RTCRtpCapabilities>& LibWebRTCProvider::audioEncodingCapabilities()
+{
+    if (!m_audioEncodingCapabilities) {
+        if (auto* factory = this->factory())
+            m_audioEncodingCapabilities = toRTCRtpCapabilities(factory->GetRtpSenderCapabilities(cricket::MediaType::MEDIA_TYPE_AUDIO));
+    }
+    return m_audioEncodingCapabilities;
+}
+
+std::optional<RTCRtpCapabilities>& LibWebRTCProvider::videoEncodingCapabilities()
+{
+    if (!m_videoEncodingCapabilities) {
+        if (auto* factory = this->factory())
+            m_videoEncodingCapabilities = toRTCRtpCapabilities(factory->GetRtpSenderCapabilities(cricket::MediaType::MEDIA_TYPE_VIDEO));
+    }
+    return m_videoEncodingCapabilities;
+}
+
+std::optional<RTCRtpCodecCapability> LibWebRTCProvider::codecCapability(const ContentType& contentType, const std::optional<RTCRtpCapabilities>& capabilities)
+{
+    if (!capabilities)
+        return { };
+
+    auto containerType = contentType.containerType();
+    for (auto& codec : capabilities->codecs) {
+        if (equalIgnoringASCIICase(containerType, codec.mimeType))
+            return codec;
+    }
+    return { };
+}
 #endif // USE(LIBWEBRTC)
+
+void LibWebRTCProvider::createDecodingConfiguration(MediaDecodingConfiguration&& configuration, DecodingConfigurationCallback&& callback)
+{
+    ASSERT(configuration.type == MediaDecodingType::WebRTC);
+
+#if USE(LIBWEBRTC)
+    // FIXME: Validate additional parameters, in particular mime type parameters.
+    MediaCapabilitiesDecodingInfo info { WTFMove(configuration) };
+
+    if (info.supportedConfiguration.video) {
+        ContentType contentType { info.supportedConfiguration.video->contentType };
+        auto codec = codecCapability(contentType, videoDecodingCapabilities());
+        if (!codec) {
+            callback({ });
+            return;
+        }
+        info.supported = true;
+#if PLATFORM(COCOA)
+        auto containerType = contentType.containerType();
+        if (containerType == "video/vp8")
+            info.powerEfficient = false;
+        else if (containerType == "video/vp9")
+            info.powerEfficient = isSupportingVP9VTB();
+        else
+            info.powerEfficient = true;
+        info.smooth = info.powerEfficient;
+#endif
+    }
+    if (info.supportedConfiguration.audio) {
+        ContentType contentType { info.supportedConfiguration.audio->contentType };
+        auto codec = codecCapability(contentType, audioDecodingCapabilities());
+        if (!codec) {
+            callback({ });
+            return;
+        }
+        info.supported = true;
+    }
+    callback(WTFMove(info));
+#else
+    UNUSED_PARAM(configuration);
+    callback({ });
+#endif // USE(LIBWEBRTC)
+}
+
+void LibWebRTCProvider::createEncodingConfiguration(MediaEncodingConfiguration&& configuration, EncodingConfigurationCallback&& callback)
+{
+    ASSERT(configuration.type == MediaEncodingType::WebRTC);
+
+#if USE(LIBWEBRTC)
+    // FIXME: Validate additional parameters, in particular mime type parameters.
+    MediaCapabilitiesEncodingInfo info { WTFMove(configuration) };
+
+    if (info.supportedConfiguration.video) {
+        ContentType contentType { info.supportedConfiguration.video->contentType };
+        auto codec = codecCapability(contentType, videoEncodingCapabilities());
+        if (!codec) {
+            callback({ });
+            return;
+        }
+        info.supported = true;
+#if PLATFORM(COCOA)
+        auto containerType = contentType.containerType();
+        if (containerType == "video/vp8")
+            info.powerEfficient = false;
+        else if (containerType == "video/vp9")
+            info.powerEfficient = isSupportingVP9VTB();
+        else
+            info.powerEfficient = true;
+        info.smooth = info.powerEfficient;
+#endif
+    }
+    if (info.supportedConfiguration.audio) {
+        ContentType contentType { info.supportedConfiguration.audio->contentType };
+        auto codec = codecCapability(contentType, audioEncodingCapabilities());
+        if (!codec) {
+            callback({ });
+            return;
+        }
+        info.supported = true;
+    }
+    callback(WTFMove(info));
+#else
+    UNUSED_PARAM(configuration);
+    callback({ });
+#endif // USE(LIBWEBRTC)
+}
 
 } // namespace WebCore

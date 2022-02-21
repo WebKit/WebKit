@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (C) 2016 Apple Inc. All rights reserved.
 #
@@ -144,7 +144,7 @@ class CodeGenerator:
             self.advance()
             self.consume(")")
         elif argumentRegex.match(self.token()):
-            result = "arg" + self.token()[1:]
+            result = "get(arg" + self.token()[1:] + ")"
             self.advance()
         else:
             op = self.token()
@@ -156,13 +156,16 @@ class CodeGenerator:
 
         return result
 
+    def makeResult(self, resultValue):
+        return resultValue + ";\n" + "result = push(resultValue->type());\n" + "m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), result, resultValue);"
+
     def generate(self, wasmOp):
         if len(self.tokens) == 1:
-            params = ["arg" + str(param) for param in range(len(wasmOp["parameter"]))]
-            return "    result = m_currentBlock->appendNew<Value>(m_proc, B3::" + self.token() + ", origin(), " + ", ".join(params) + ")"
+            params = ["get(arg" + str(param) + ")" for param in range(len(wasmOp["parameter"]))]
+            return self.makeResult("    Value* resultValue = m_currentBlock->appendNew<Value>(m_proc, B3::" + self.token() + ", origin(), " + ", ".join(params) + ")")
         result = self.generateOpcode()
-        self.code.append("result = " + result)
-        return "    " + "    \n".join(self.code)
+        self.code.append("Value* resultValue = " + result)
+        return self.makeResult("    " + "    \n".join(self.code))
 
 
 def temp(index):
@@ -191,7 +194,7 @@ def generateSimpleCode(op):
     return """
 template<> auto B3IRGenerator::addOp<OpType::""" + wasm.toCpp(op["name"]) + ">(" + ", ".join(args) + """) -> PartialResult
 {
-""" + generateB3Code(opcode, b3op) + """;
+""" + generateB3Code(opcode, b3op) + """
     return { };
 }
 """

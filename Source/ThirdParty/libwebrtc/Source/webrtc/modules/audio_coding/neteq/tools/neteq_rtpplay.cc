@@ -157,7 +157,7 @@ ABSL_FLAG(bool,
 namespace {
 
 // Parses the input string for a valid SSRC (at the start of the string). If a
-// valid SSRC is found, it is written to the output variable |ssrc|, and true is
+// valid SSRC is found, it is written to the output variable `ssrc`, and true is
 // returned. Otherwise, false is returned.
 bool ParseSsrc(const std::string& str, uint32_t* ssrc) {
   if (str.empty())
@@ -247,7 +247,7 @@ bool ValidateOutputFilesOptions(bool textlog,
               << std::endl;
     return false;
   }
-  // Without |output_audio_filename|, |output_files_base_name| is required when
+  // Without `output_audio_filename`, `output_files_base_name` is required when
   // plotting output files must be generated (in order to form a valid output
   // file name).
   if (output_audio_filename.empty() && plotting &&

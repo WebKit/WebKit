@@ -31,6 +31,7 @@
 #include "MessageNames.h"
 #include "StreamConnectionBuffer.h"
 #include "StreamConnectionEncoder.h"
+#include "StreamMessageReceiver.h"
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
@@ -60,6 +61,9 @@ protected:
 
     void startReceivingMessagesImpl(ReceiverName, uint64_t destinationID);
     void stopReceivingMessagesImpl(ReceiverName, uint64_t destinationID);
+
+    void startReceivingMessagesImpl(ReceiverName);
+    void stopReceivingMessagesImpl(ReceiverName);
 
     // MessageReceiveQueue
     void enqueueMessage(Connection&, std::unique_ptr<Decoder>&&) final;
@@ -131,7 +135,6 @@ void StreamServerConnectionBase::sendSyncReply(Connection::SyncRequestID syncReq
 //   void didReceiveStreamMessage(StreamServerConnectionBase&, Decoder&);
 //
 // The StreamServerConnection does not trust the StreamClientConnection.
-template<typename Receiver>
 class StreamServerConnection final : public StreamServerConnectionBase {
 public:
     static Ref<StreamServerConnection> create(Connection& connection, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
@@ -140,9 +143,12 @@ public:
     }
     ~StreamServerConnection() final = default;
 
-    void startReceivingMessages(Receiver&, ReceiverName, uint64_t destinationID);
+    void startReceivingMessages(StreamMessageReceiver&, ReceiverName, uint64_t destinationID);
     // Stops the message receipt. Note: already received messages might still be delivered.
     void stopReceivingMessages(ReceiverName, uint64_t destinationID);
+
+    inline void startReceivingMessages(ReceiverName);
+    inline void stopReceivingMessages(ReceiverName);
 
     // StreamServerConnectionBase overrides.
     DispatchResult dispatchStreamMessages(size_t messageLimit) final;
@@ -152,157 +158,23 @@ private:
         : StreamServerConnectionBase(connection, WTFMove(streamBuffer), workQueue)
     {
     }
-    bool processSetStreamDestinationID(Decoder&&, RefPtr<Receiver>& currentReceiver);
-    bool dispatchStreamMessage(Decoder&&, Receiver&);
+    bool processSetStreamDestinationID(Decoder&&, RefPtr<StreamMessageReceiver>& currentReceiver);
+    bool dispatchStreamMessage(Decoder&&, StreamMessageReceiver&);
     bool dispatchOutOfStreamMessage(Decoder&&);
     Lock m_receiversLock;
-    using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<Receiver>>;
+    using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<StreamMessageReceiver>>;
     ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
     uint64_t m_currentDestinationID { 0 };
 };
 
-template<typename Receiver>
-void StreamServerConnection<Receiver>::startReceivingMessages(Receiver& receiver, ReceiverName receiverName, uint64_t destinationID)
+void StreamServerConnection::startReceivingMessages(ReceiverName receiverName)
 {
-    {
-        auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
-        Locker locker { m_receiversLock };
-        ASSERT(!m_receivers.contains(key));
-        m_receivers.add(key, makeRef(receiver));
-    }
-    StreamServerConnectionBase::startReceivingMessagesImpl(receiverName, destinationID);
+    StreamServerConnectionBase::startReceivingMessagesImpl(receiverName);
 }
 
-template<typename Receiver>
-void StreamServerConnection<Receiver>::stopReceivingMessages(ReceiverName receiverName, uint64_t destinationID)
+void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName)
 {
-    StreamServerConnectionBase::stopReceivingMessagesImpl(receiverName, destinationID);
-    auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
-    Locker locker { m_receiversLock };
-    ASSERT(m_receivers.contains(key));
-    m_receivers.remove(key);
-}
-
-template<typename Receiver>
-StreamServerConnectionBase::DispatchResult StreamServerConnection<Receiver>::dispatchStreamMessages(size_t messageLimit)
-{
-    RefPtr<Receiver> currentReceiver;
-    // FIXME: Implement WTF::isValid(ReceiverName).
-    uint8_t currentReceiverName = static_cast<uint8_t>(ReceiverName::Invalid);
-
-    for (size_t i = 0; i < messageLimit; ++i) {
-        auto span = tryAcquire();
-        if (!span)
-            return DispatchResult::HasNoMessages;
-        IPC::Decoder decoder { span->data, span->size, m_currentDestinationID };
-        if (!decoder.isValid()) {
-            m_connection->dispatchDidReceiveInvalidMessage(decoder.messageName());
-            return DispatchResult::HasNoMessages;
-        }
-        if (decoder.messageName() == MessageName::SetStreamDestinationID) {
-            if (!processSetStreamDestinationID(WTFMove(decoder), currentReceiver))
-                return DispatchResult::HasNoMessages;
-            continue;
-        }
-        if (decoder.messageName() == MessageName::ProcessOutOfStreamMessage) {
-            if (!dispatchOutOfStreamMessage(WTFMove(decoder)))
-                return DispatchResult::HasNoMessages;
-            continue;
-        }
-        if (currentReceiverName != static_cast<uint8_t>(decoder.messageReceiverName())) {
-            currentReceiverName = static_cast<uint8_t>(decoder.messageReceiverName());
-            currentReceiver = nullptr;
-        }
-        if (!currentReceiver) {
-            auto key = std::make_pair(static_cast<uint8_t>(currentReceiverName), m_currentDestinationID);
-            if (!ReceiversMap::isValidKey(key)) {
-                m_connection->dispatchDidReceiveInvalidMessage(decoder.messageName());
-                return DispatchResult::HasNoMessages;
-            }
-            Locker locker { m_receiversLock };
-            currentReceiver = m_receivers.get(key);
-        }
-        if (!currentReceiver) {
-            // Valid scenario is when receiver has been removed, but there are messages for it in the buffer.
-            // FIXME: Since we do not have a receiver, we don't know how to decode the message.
-            // This means we must timeout every receiver in the stream connection.
-            // Currently we assert that the receivers are empty, as we only have up to one receiver in
-            // a stream connection until possibility of skipping is implemented properly.
-            Locker locker { m_receiversLock };
-            ASSERT(m_receivers.isEmpty());
-            return DispatchResult::HasNoMessages;
-        }
-        if (!dispatchStreamMessage(WTFMove(decoder), *currentReceiver))
-            return DispatchResult::HasNoMessages;
-    }
-    return DispatchResult::HasMoreMessages;
-}
-
-template<typename Receiver>
-bool StreamServerConnection<Receiver>::processSetStreamDestinationID(Decoder&& decoder, RefPtr<Receiver>& currentReceiver)
-{
-    uint64_t destinationID = 0;
-    if (!decoder.decode(destinationID)) {
-        m_connection->dispatchDidReceiveInvalidMessage(decoder.messageName());
-        return false;
-    }
-    if (m_currentDestinationID != destinationID) {
-        m_currentDestinationID = destinationID;
-        currentReceiver = nullptr;
-    }
-    release(decoder.currentBufferPosition());
-    return true;
-}
-
-template<typename Receiver>
-bool StreamServerConnection<Receiver>::dispatchStreamMessage(Decoder&& decoder, Receiver& receiver)
-{
-    ASSERT(!m_isDispatchingStreamMessage);
-    m_isDispatchingStreamMessage = true;
-    receiver.didReceiveStreamMessage(*this, decoder);
-    m_isDispatchingStreamMessage = false;
-    if (!decoder.isValid()) {
-        m_connection->dispatchDidReceiveInvalidMessage(decoder.messageName());
-        return false;
-    }
-    if (decoder.isSyncMessage())
-        releaseAll();
-    else
-        release(decoder.currentBufferPosition());
-    return true;
-}
-
-template<typename Receiver>
-bool StreamServerConnection<Receiver>::dispatchOutOfStreamMessage(Decoder&& decoder)
-{
-    std::unique_ptr<Decoder> message;
-    {
-        Locker locker { m_outOfStreamMessagesLock };
-        if (m_outOfStreamMessages.isEmpty())
-            return false;
-        message = m_outOfStreamMessages.takeFirst();
-    }
-    if (!message)
-        return false;
-
-    RefPtr<Receiver> receiver;
-    {
-        auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), message->destinationID());
-        Locker locker { m_receiversLock };
-        receiver = m_receivers.get(key);
-    }
-    if (receiver) {
-        receiver->didReceiveStreamMessage(*this, *message);
-        if (!message->isValid()) {
-            m_connection->dispatchDidReceiveInvalidMessage(message->messageName());
-            return false;
-        }
-    }
-    // If receiver does not exist if it has been removed but messages are still pending to be
-    // processed. It's ok to skip such messages.
-    // FIXME: Note, corresponding skip is not possible at the moment for stream messages.
-    release(decoder.currentBufferPosition());
-    return true;
+    StreamServerConnectionBase::stopReceivingMessagesImpl(receiverName);
 }
 
 }

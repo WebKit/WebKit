@@ -219,22 +219,22 @@ static WebCore::BoxSide boxSide(WebCore::ScrollDirection direction)
         case Key::LeftArrow:
         case Key::RightArrow:
             if (altPressed)
-                return WebCore::ScrollGranularity::ScrollByPage;
-            return WebCore::ScrollGranularity::ScrollByLine;
+                return WebCore::ScrollGranularity::Page;
+            return WebCore::ScrollGranularity::Line;
         case Key::UpArrow:
         case Key::DownArrow:
             if (altPressed)
-                return WebCore::ScrollGranularity::ScrollByPage;
+                return WebCore::ScrollGranularity::Page;
             if (cmdPressed)
-                return WebCore::ScrollGranularity::ScrollByDocument;
-            return WebCore::ScrollGranularity::ScrollByLine;
+                return WebCore::ScrollGranularity::Document;
+            return WebCore::ScrollGranularity::Line;
         case Key::PageUp:
         case Key::PageDown:
         case Key::Space:
-            return WebCore::ScrollGranularity::ScrollByPage;
+            return WebCore::ScrollGranularity::Page;
         case Key::Other:
             ASSERT_NOT_REACHED();
-            return WebCore::ScrollGranularity::ScrollByLine;
+            return WebCore::ScrollGranularity::Line;
         };
     }();
 
@@ -293,7 +293,7 @@ static WebCore::BoxSide boxSide(WebCore::ScrollDirection direction)
     _scrollTriggeringKeyIsPressed = YES;
     _currentScroll = scroll;
 
-    if (scroll->granularity == WebCore::ScrollGranularity::ScrollByDocument) {
+    if (scroll->granularity == WebCore::ScrollGranularity::Document) {
         _velocity = { };
         [self stopAnimatedScroll];
         [self stopDisplayLink];
@@ -545,13 +545,13 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 
     if (!_delegateRespondsToDistanceForIncrement) {
         switch (increment) {
-        case WebCore::ScrollGranularity::ScrollByDocument:
+        case WebCore::ScrollGranularity::Document:
             return directionIsHorizontal ? scrollView.contentSize.width : scrollView.contentSize.height;
-        case WebCore::ScrollGranularity::ScrollByPage:
+        case WebCore::ScrollGranularity::Page:
             return (directionIsHorizontal ? scrollView.frame.size.width : scrollView.frame.size.height) * defaultPageScrollFraction;
-        case WebCore::ScrollGranularity::ScrollByLine:
+        case WebCore::ScrollGranularity::Line:
             return defaultLineScrollHeight * scrollView.zoomScale;
-        case WebCore::ScrollGranularity::ScrollByPixel:
+        case WebCore::ScrollGranularity::Pixel:
             return 0;
         }
         ASSERT_NOT_REACHED();

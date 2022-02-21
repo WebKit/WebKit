@@ -39,7 +39,24 @@ accessibility/atk/WebKitAccessibleInterfaceText.cpp
 accessibility/atk/WebKitAccessibleInterfaceValue.cpp
 accessibility/atk/WebKitAccessibleUtil.cpp
 
+accessibility/atspi/AccessibilityAtspi.cpp
+accessibility/atspi/AccessibilityObjectAtspi.cpp
+accessibility/atspi/AccessibilityObjectActionAtspi.cpp
+accessibility/atspi/AccessibilityObjectComponentAtspi.cpp
+accessibility/atspi/AccessibilityObjectDocumentAtspi.cpp
+accessibility/atspi/AccessibilityObjectHyperlinkAtspi.cpp
+accessibility/atspi/AccessibilityObjectHypertextAtspi.cpp
+accessibility/atspi/AccessibilityObjectImageAtspi.cpp
+accessibility/atspi/AccessibilityObjectSelectionAtspi.cpp
+accessibility/atspi/AccessibilityObjectTableAtspi.cpp
+accessibility/atspi/AccessibilityObjectTableCellAtspi.cpp
+accessibility/atspi/AccessibilityObjectTextAtspi.cpp
+accessibility/atspi/AccessibilityObjectValueAtspi.cpp
+accessibility/atspi/AccessibilityRootAtspi.cpp
+accessibility/atspi/AXObjectCacheAtspi.cpp
+
 editing/atk/FrameSelectionAtk.cpp
+editing/atspi/FrameSelectionAtspi.cpp
 editing/libwpe/EditorLibWPE.cpp
 
 loader/soup/ResourceLoaderSoup.cpp
@@ -56,15 +73,14 @@ page/scrolling/nicosia/ScrollingTreeOverflowScrollProxyNode.cpp
 page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp
 page/scrolling/nicosia/ScrollingTreePositionedNode.cpp
 page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeStickyNode.cpp
+page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.cpp
 
-platform/ScrollAnimationKinetic.cpp
 platform/UserAgentQuirks.cpp
 
 platform/adwaita/ScrollbarThemeAdwaita.cpp
 platform/adwaita/ThemeAdwaita.cpp
 
-platform/generic/ScrollAnimatorGeneric.cpp
+platform/generic/ScrollbarsControllerGeneric.cpp
 
 platform/graphics/ANGLEWebKitBridge.cpp
 platform/graphics/GLContext.cpp
@@ -72,6 +88,8 @@ platform/graphics/PlatformDisplay.cpp
 
 platform/graphics/egl/GLContextEGL.cpp
 platform/graphics/egl/GLContextEGLLibWPE.cpp
+
+platform/graphics/gbm/GBMDevice.cpp
 
 platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 

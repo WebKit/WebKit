@@ -24,7 +24,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=WebRTCInsertableStreams,
+    EnabledBySetting=WebRTCEncodedTransformEnabled,
     Exposed=Worker,
     InterfaceName=RTCTransformEvent,
 ] interface RTCTransformEvent : Event {

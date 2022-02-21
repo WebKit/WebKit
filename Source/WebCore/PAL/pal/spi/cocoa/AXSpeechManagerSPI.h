@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 
 // FIXME: Undo when isSystemVoice is available in all SDKs.
 #if USE(APPLE_INTERNAL_SDK) && 0
@@ -42,5 +42,5 @@
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(COCOA)
 

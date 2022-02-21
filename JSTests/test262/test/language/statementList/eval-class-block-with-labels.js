@@ -33,6 +33,6 @@ info: |
 ---*/
 
 
-var result = eval('class C {}{x: 42};;');
+var result = eval('class C {}{x: 42};');
 
 assert.sameValue(result, 42, 'it does not evaluate to an Object with the property x');

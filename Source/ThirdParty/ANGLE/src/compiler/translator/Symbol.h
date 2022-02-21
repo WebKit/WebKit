@@ -31,6 +31,12 @@ class TSymbol : angle::NonCopyable
             SymbolClass symbolClass,
             TExtension extension = TExtension::UNDEFINED);
 
+    TSymbol(TSymbolTable *symbolTable,
+            const ImmutableString &name,
+            SymbolType symbolType,
+            SymbolClass symbolClass,
+            const std::array<TExtension, 3u> &extensions);
+
     // Note that we can't have a virtual destructor in order to support constexpr symbols. Data is
     // either statically allocated or pool allocated.
     ~TSymbol() = default;
@@ -48,18 +54,40 @@ class TSymbol : angle::NonCopyable
 
     const TSymbolUniqueId &uniqueId() const { return mUniqueId; }
     SymbolType symbolType() const { return mSymbolType; }
-    TExtension extension() const { return mExtension; }
+    const std::array<TExtension, 3u> extensions() const { return mExtensions; }
+
+    template <size_t ExtensionCount>
+    constexpr const std::array<TExtension, 3u> CreateExtensionList(
+        const std::array<TExtension, ExtensionCount> &extensions)
+    {
+        switch (extensions.size())
+        {
+            case 1:
+                return std::array<TExtension, 3u>{
+                    {extensions[0], TExtension::UNDEFINED, TExtension::UNDEFINED}};
+            case 2:
+                return std::array<TExtension, 3u>{
+                    {extensions[0], extensions[1], TExtension::UNDEFINED}};
+            case 3:
+                return std::array<TExtension, 3u>{{extensions[0], extensions[1], extensions[2]}};
+            default:
+                UNREACHABLE();
+                return std::array<TExtension, 3u>{
+                    {TExtension::UNDEFINED, TExtension::UNDEFINED, TExtension::UNDEFINED}};
+        }
+    }
 
   protected:
+    template <size_t ExtensionCount>
     constexpr TSymbol(const TSymbolUniqueId &id,
                       const ImmutableString &name,
                       SymbolType symbolType,
-                      TExtension extension,
+                      const std::array<TExtension, ExtensionCount> &extensions,
                       SymbolClass symbolClass)
         : mName(name),
           mUniqueId(id),
+          mExtensions(CreateExtensionList(extensions)),
           mSymbolType(symbolType),
-          mExtension(extension),
           mSymbolClass(symbolClass)
     {}
 
@@ -67,13 +95,15 @@ class TSymbol : angle::NonCopyable
 
   private:
     const TSymbolUniqueId mUniqueId;
-    const SymbolType mSymbolType;
-    const TExtension mExtension;
+    const std::array<TExtension, 3u> mExtensions;
+    const SymbolType mSymbolType : 4;
 
     // We use this instead of having virtual functions for querying the class in order to support
     // constexpr symbols.
-    const SymbolClass mSymbolClass;
+    const SymbolClass mSymbolClass : 4;
 };
+
+static_assert(sizeof(TSymbol) <= 24, "Size check failed");
 
 // Variable.
 // May store the value of a constant variable of any type (float, int, bool or struct).
@@ -85,6 +115,12 @@ class TVariable : public TSymbol
               const TType *type,
               SymbolType symbolType,
               TExtension ext = TExtension::UNDEFINED);
+
+    TVariable(TSymbolTable *symbolTable,
+              const ImmutableString &name,
+              const TType *type,
+              SymbolType symbolType,
+              const std::array<TExtension, 3u> &extensions);
 
     const TType &getType() const { return *mType; }
 
@@ -98,7 +134,22 @@ class TVariable : public TSymbol
                         SymbolType symbolType,
                         TExtension extension,
                         const TType *type)
-        : TSymbol(id, name, symbolType, extension, SymbolClass::Variable),
+        : TSymbol(id,
+                  name,
+                  symbolType,
+                  std::array<TExtension, 1u>{{extension}},
+                  SymbolClass::Variable),
+          mType(type),
+          unionArray(nullptr)
+    {}
+
+    template <size_t ExtensionCount>
+    constexpr TVariable(const TSymbolUniqueId &id,
+                        const ImmutableString &name,
+                        SymbolType symbolType,
+                        const std::array<TExtension, ExtensionCount> &extensions,
+                        const TType *type)
+        : TSymbol(id, name, symbolType, extensions, SymbolClass::Variable),
           mType(type),
           unionArray(nullptr)
     {}
@@ -133,12 +184,28 @@ class TStructure : public TSymbol, public TFieldListCollection
     TStructure(const TSymbolUniqueId &id,
                const ImmutableString &name,
                TExtension extension,
-               const TFieldList *fields);
+               const TFieldList *fields)
+        : TSymbol(id,
+                  name,
+                  SymbolType::BuiltIn,
+                  std::array<TExtension, 1u>{{extension}},
+                  SymbolClass::Struct),
+          TFieldListCollection(fields)
+    {}
+
+    template <size_t ExtensionCount>
+    TStructure(const TSymbolUniqueId &id,
+               const ImmutableString &name,
+               const std::array<TExtension, ExtensionCount> &extensions,
+               const TFieldList *fields)
+        : TSymbol(id, name, SymbolType::BuiltIn, extensions, SymbolClass::Struct),
+          TFieldListCollection(fields)
+    {}
 
     // TODO(zmo): Find a way to get rid of the const_cast in function
     // setName().  At the moment keep this function private so only
     // friend class RegenerateStructNames may call it.
-    friend class RegenerateStructNames;
+    friend class RegenerateStructNamesTraverser;
     void setName(const ImmutableString &name);
 
     bool mAtGlobalScope;
@@ -156,6 +223,13 @@ class TInterfaceBlock : public TSymbol, public TFieldListCollection
                     SymbolType symbolType,
                     TExtension extension = TExtension::UNDEFINED);
 
+    TInterfaceBlock(TSymbolTable *symbolTable,
+                    const ImmutableString &name,
+                    const TFieldList *fields,
+                    const TLayoutQualifier &layoutQualifier,
+                    SymbolType symbolType,
+                    const std::array<TExtension, 3u> &extensions);
+
     TLayoutBlockStorage blockStorage() const { return mBlockStorage; }
     int blockBinding() const { return mBinding; }
 
@@ -165,7 +239,27 @@ class TInterfaceBlock : public TSymbol, public TFieldListCollection
     TInterfaceBlock(const TSymbolUniqueId &id,
                     const ImmutableString &name,
                     TExtension extension,
-                    const TFieldList *fields);
+                    const TFieldList *fields)
+        : TSymbol(id,
+                  name,
+                  SymbolType::BuiltIn,
+                  std::array<TExtension, 1u>{{extension}},
+                  SymbolClass::InterfaceBlock),
+          TFieldListCollection(fields),
+          mBlockStorage(EbsUnspecified),
+          mBinding(0)
+    {}
+
+    template <size_t ExtensionCount>
+    TInterfaceBlock(const TSymbolUniqueId &id,
+                    const ImmutableString &name,
+                    const std::array<TExtension, ExtensionCount> &extensions,
+                    const TFieldList *fields)
+        : TSymbol(id, name, SymbolType::BuiltIn, extensions, SymbolClass::InterfaceBlock),
+          TFieldListCollection(fields),
+          mBlockStorage(EbsUnspecified),
+          mBinding(0)
+    {}
 
     TLayoutBlockStorage mBlockStorage;
     int mBinding;
@@ -225,6 +319,8 @@ class TFunction : public TSymbol
     bool isDefined() const { return defined; }
     void setHasPrototypeDeclaration() { mHasPrototypeDeclaration = true; }
     bool hasPrototypeDeclaration() const { return mHasPrototypeDeclaration; }
+    void setHasVoidParameter() { mHasVoidParameter = true; }
+    bool hasVoidParameter() const { return mHasVoidParameter; }
 
     size_t getParamCount() const { return mParamCount; }
     const TVariable *getParam(size_t i) const { return mParameters[i]; }
@@ -234,8 +330,6 @@ class TFunction : public TSymbol
     bool isMain() const;
     bool isImageFunction() const;
     bool isAtomicCounterFunction() const;
-    bool hasSamplerInStructOrArrayParams() const;
-    bool hasSamplerInStructOrArrayOfArrayParams() const;
 
     // Note: Only to be used for static built-in functions!
     constexpr TFunction(const TSymbolUniqueId &id,
@@ -246,16 +340,43 @@ class TFunction : public TSymbol
                         const TType *retType,
                         TOperator op,
                         bool knownToNotHaveSideEffects)
-        : TSymbol(id, name, SymbolType::BuiltIn, extension, SymbolClass::Function),
+        : TSymbol(id,
+                  name,
+                  SymbolType::BuiltIn,
+                  std::array<TExtension, 1u>{{extension}},
+                  SymbolClass::Function),
           mParametersVector(nullptr),
           mParameters(parameters),
-          mParamCount(paramCount),
           returnType(retType),
           mMangledName(nullptr),
+          mParamCount(paramCount),
           mOp(op),
           defined(false),
           mHasPrototypeDeclaration(false),
-          mKnownToNotHaveSideEffects(knownToNotHaveSideEffects)
+          mKnownToNotHaveSideEffects(knownToNotHaveSideEffects),
+          mHasVoidParameter(false)
+    {}
+
+    template <size_t ExtensionCount>
+    constexpr TFunction(const TSymbolUniqueId &id,
+                        const ImmutableString &name,
+                        const std::array<TExtension, ExtensionCount> &extensions,
+                        const TVariable *const *parameters,
+                        size_t paramCount,
+                        const TType *retType,
+                        TOperator op,
+                        bool knownToNotHaveSideEffects)
+        : TSymbol(id, name, SymbolType::BuiltIn, extensions, SymbolClass::Function),
+          mParametersVector(nullptr),
+          mParameters(parameters),
+          returnType(retType),
+          mMangledName(nullptr),
+          mParamCount(paramCount),
+          mOp(op),
+          defined(false),
+          mHasPrototypeDeclaration(false),
+          mKnownToNotHaveSideEffects(knownToNotHaveSideEffects),
+          mHasVoidParameter(false)
     {}
 
   private:
@@ -264,13 +385,16 @@ class TFunction : public TSymbol
     typedef TVector<const TVariable *> TParamVector;
     TParamVector *mParametersVector;
     const TVariable *const *mParameters;
-    size_t mParamCount;
     const TType *const returnType;
     mutable ImmutableString mMangledName;
+    size_t mParamCount : 32;
     const TOperator mOp;  // Only set for built-ins
-    bool defined;
-    bool mHasPrototypeDeclaration;
-    bool mKnownToNotHaveSideEffects;
+    bool defined : 1;
+    bool mHasPrototypeDeclaration : 1;
+    bool mKnownToNotHaveSideEffects : 1;
+    // Whether the parameter list of the function starts with void.  This is used to generate an
+    // error if any other parameter follows.
+    bool mHasVoidParameter : 1;
 };
 
 }  // namespace sh

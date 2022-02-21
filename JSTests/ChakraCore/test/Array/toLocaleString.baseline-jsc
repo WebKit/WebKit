@@ -18,7 +18,7 @@ length: [object Object] -->
 
 
 3. Array: element toLocaleString not callable
-0,[object Object]
+TypeError : toLocaleString is not callable
 
 
 4. Array: element toLocaleString
@@ -30,7 +30,7 @@ length: [object Object] -->
 
 
 6. Object: element toLocaleString not callable
-0,[object Object]
+TypeError : toLocaleString is not callable
 
 
 7. Object: element toLocaleString

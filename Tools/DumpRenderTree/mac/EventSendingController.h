@@ -58,6 +58,11 @@
 
 - (void)handleEvent:(DOMEvent *)event;
 
+#if PLATFORM(MAC)
+// Timestamp is mach_absolute_time() units.
+- (void)sendScrollEventAt:(NSPoint)mouseLocation deltaX:(double)deltaX deltaY:(double)deltaY units:(CGScrollEventUnit)units wheelPhase:(CGGesturePhase)wheelPhase momentumPhase:(CGMomentumScrollPhase)momentumPhase timestamp:(uint64_t)timestamp;
+#endif
+
 @end
 
 extern NSPoint lastMousePosition;

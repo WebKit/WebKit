@@ -33,11 +33,11 @@ struct NetworkSessionCreationParameters;
 
 class NetworkSessionCurl final : public NetworkSession {
 public:
-    static std::unique_ptr<NetworkSession> create(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
+    static std::unique_ptr<NetworkSession> create(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
     {
-        return makeUnique<NetworkSessionCurl>(networkProcess, WTFMove(parameters));
+        return makeUnique<NetworkSessionCurl>(networkProcess, parameters);
     }
-    NetworkSessionCurl(NetworkProcess&, NetworkSessionCreationParameters&&);
+    NetworkSessionCurl(NetworkProcess&, const NetworkSessionCreationParameters&);
     ~NetworkSessionCurl();
 };
 

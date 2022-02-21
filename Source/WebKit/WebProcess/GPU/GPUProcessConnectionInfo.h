@@ -27,6 +27,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUProcessConnectionInitializationParameters.h"
+
 namespace WebKit {
 
 struct GPUProcessConnectionInfo {
@@ -34,6 +36,7 @@ struct GPUProcessConnectionInfo {
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> auditToken;
 #endif
+    GPUProcessConnectionInitializationParameters parameters;
 
     IPC::Connection::Identifier identifier() const
     {
@@ -66,6 +69,7 @@ struct GPUProcessConnectionInfo {
 #if HAVE(AUDIT_TOKEN)
         encoder << auditToken;
 #endif
+        encoder << parameters;
     }
     
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder& decoder, GPUProcessConnectionInfo& info)
@@ -76,6 +80,11 @@ struct GPUProcessConnectionInfo {
         if (!decoder.decode(info.auditToken))
             return false;
 #endif
+        std::optional<GPUProcessConnectionInitializationParameters> parameters;
+        decoder >> parameters;
+        if (!parameters)
+            return false;
+        info.parameters = WTFMove(*parameters);
         return true;
     }
 };

@@ -277,8 +277,8 @@ void OpusTest::Run(TestPackStereo* channel,
         ASSERT_GE(bitstream_len_byte_int, 0);
         bitstream_len_byte = static_cast<size_t>(bitstream_len_byte_int);
 
-        // Simulate packet loss by setting |packet_loss_| to "true" in
-        // |percent_loss| percent of the loops.
+        // Simulate packet loss by setting `packet_loss_` to "true" in
+        // `percent_loss` percent of the loops.
         // TODO(tlegrand): Move handling of loss simulation to TestPackStereo.
         if (percent_loss > 0) {
           if (counter_ == floor((100 / percent_loss) + 0.5)) {

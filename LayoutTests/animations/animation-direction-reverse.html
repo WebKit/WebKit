@@ -34,7 +34,7 @@
 <body>
 <div id="box"></div>
 <script>
-    async_test(async t => {
+    promise_test(async t => {
         const delay = 100;
 
         const test = new AnimationTest({
@@ -56,8 +56,6 @@
 
         // Finally, check the values recorded earlier in the test.
         test.checkRecordedValues();
-
-        t.done();
     }, `Pausing an animation using the animation-play-state property stops animating styles with animation-direction: reverse.`);
 </script>
 </body>

@@ -40,6 +40,7 @@
 #import <sys/stat.h>
 #import <wtf/FileSystem.h>
 #import <wtf/SHA1.h>
+#import <wtf/SafeStrerror.h>
 #import <wtf/Scope.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/spi/darwin/DataVaultSPI.h>
@@ -304,7 +305,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     const char* tempFileName = [cachePathString stringByAppendingString:@".tmp"].UTF8String;
     int fd = open(cacheFileName, O_CREAT | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0600);
     if (fd == -1) {
-        error = makeString("Could not open or lock the bytecode cache file. It's likely another VM or process is already using it. Error: ", strerror(errno));
+        error = makeString("Could not open or lock the bytecode cache file. It's likely another VM or process is already using it. Error: ", safeStrerror(errno).data());
         return NO;
     }
 
@@ -314,7 +315,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     int tempFD = open(tempFileName, O_CREAT | O_RDWR | O_EXLOCK | O_NONBLOCK, 0600);
     if (tempFD == -1) {
-        error = makeString("Could not open or lock the bytecode cache temp file. Error: ", strerror(errno));
+        error = makeString("Could not open or lock the bytecode cache temp file. Error: ", safeStrerror(errno).data());
         return NO;
     }
 

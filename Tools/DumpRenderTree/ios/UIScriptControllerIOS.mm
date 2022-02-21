@@ -50,7 +50,7 @@ void UIScriptControllerIOS::doAsyncTask(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    WorkQueue::main().dispatch([this, protectedThis = makeRef(*this), callbackID] {
+    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -61,8 +61,8 @@ void UIScriptControllerIOS::zoomToScale(double scale, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    WorkQueue::main().dispatch([this, protectedThis = makeRef(*this), scale, callbackID] {
-        [gWebScrollView zoomToScale:scale animated:YES completionHandler:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, scale, callbackID] {
+        [gWebScrollView zoomToScale:scale animated:YES completionHandler:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
             if (!m_context)
                 return;
             m_context->asyncTaskComplete(callbackID);

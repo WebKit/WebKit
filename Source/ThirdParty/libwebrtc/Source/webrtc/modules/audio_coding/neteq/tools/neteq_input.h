@@ -51,7 +51,7 @@ class NetEqInput {
   absl::optional<int64_t> NextEventTime() const {
     const auto a = NextPacketTime();
     const auto b = NextOutputEventTime();
-    // Return the minimum of non-empty |a| and |b|, or empty if both are empty.
+    // Return the minimum of non-empty `a` and `b`, or empty if both are empty.
     if (a) {
       return b ? std::min(*a, *b) : a;
     }

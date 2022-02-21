@@ -27,8 +27,8 @@
 
 #include "Decoder.h"
 #include "MessageReceiveQueue.h"
+#include <variant>
 #include <wtf/HashMap.h>
-#include <wtf/Variant.h>
 
 namespace IPC {
 
@@ -51,7 +51,7 @@ public:
 
     MessageReceiveQueue* get(const Decoder&) const;
 private:
-    using StoreType = Variant<MessageReceiveQueue*, std::unique_ptr<MessageReceiveQueue>>;
+    using StoreType = std::variant<MessageReceiveQueue*, std::unique_ptr<MessageReceiveQueue>>;
     void addImpl(StoreType&&, ReceiverName, uint64_t destinationID);
     using QueueMap = HashMap<std::pair<uint8_t, uint64_t>, StoreType>;
     QueueMap m_queues;

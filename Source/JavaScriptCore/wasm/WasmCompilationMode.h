@@ -30,11 +30,57 @@ namespace JSC { namespace Wasm {
 enum class CompilationMode : uint8_t {
     LLIntMode,
     BBQMode,
+    BBQForOSREntryMode,
     OMGMode,
     OMGForOSREntryMode,
     EmbedderEntrypointMode,
 };
 
 const char* makeString(CompilationMode);
+
+constexpr inline bool isOSREntry(CompilationMode compilationMode)
+{
+    switch (compilationMode) {
+    case CompilationMode::LLIntMode:
+    case CompilationMode::BBQMode:
+    case CompilationMode::OMGMode:
+    case CompilationMode::EmbedderEntrypointMode:
+        return false;
+    case CompilationMode::BBQForOSREntryMode:
+    case CompilationMode::OMGForOSREntryMode:
+        return true;
+    }
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(false);
+}
+
+constexpr inline bool isAnyBBQ(CompilationMode compilationMode)
+{
+    switch (compilationMode) {
+    case CompilationMode::BBQMode:
+    case CompilationMode::BBQForOSREntryMode:
+        return true;
+    case CompilationMode::OMGForOSREntryMode:
+    case CompilationMode::LLIntMode:
+    case CompilationMode::OMGMode:
+    case CompilationMode::EmbedderEntrypointMode:
+        return false;
+    }
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(false);
+}
+
+constexpr inline bool isAnyOMG(CompilationMode compilationMode)
+{
+    switch (compilationMode) {
+    case CompilationMode::OMGMode:
+    case CompilationMode::OMGForOSREntryMode:
+        return true;
+    case CompilationMode::BBQMode:
+    case CompilationMode::BBQForOSREntryMode:
+    case CompilationMode::LLIntMode:
+    case CompilationMode::EmbedderEntrypointMode:
+        return false;
+    }
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(false);
+}
 
 } } // namespace JSC::Wasm

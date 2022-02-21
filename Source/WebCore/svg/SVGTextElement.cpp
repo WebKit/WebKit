@@ -23,6 +23,7 @@
 
 #include "RenderSVGResource.h"
 #include "RenderSVGText.h"
+#include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"

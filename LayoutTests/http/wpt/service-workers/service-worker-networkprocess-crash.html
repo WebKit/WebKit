@@ -35,7 +35,10 @@ async function registerServiceWorker()
 }
 
 promise_test(async (test) => {
-    await registerServiceWorker();
+    const registration = await registerServiceWorker();
+    // Enable preload to validate preload persistency.
+    await registration.navigationPreload.enable();
+    await registration.navigationPreload.setHeaderValue("test");
 }, "Setup worker");
 
 promise_test(async (test) => {
@@ -52,14 +55,23 @@ promise_test(async (test) => {
         testRunner.terminateNetworkProcess();
 
     let count = 0;
-    while (count++ < 20) {
+    while (count++ < 100) {
         const frame = await withFrame(scope + "/empty.html");
-        if (frame.contentWindow.navigator.serviceWorker.controller)
+        if (frame.contentWindow.navigator.serviceWorker.controller) {
+            frame.remove();
             break;
+        }
         frame.remove();
         await new Promise(resolve => setTimeout(resolve, 50));
     }
-    assert_true(count < 20);
+    assert_true(count < 100);
+
+    const registration = await navigator.serviceWorker.getRegistration(scope);
+
+    // Validate preload persistency.
+    const state = await registration.navigationPreload.getState();
+    assert_true(state.enabled, "state.enabled");
+    assert_equals(state.headerValue, "test");
 }, "Frame being controlled after network process crash");
 </script>
 </body>

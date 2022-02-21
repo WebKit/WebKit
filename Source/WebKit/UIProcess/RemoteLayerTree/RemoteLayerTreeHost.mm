@@ -64,6 +64,33 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
     clearLayers();
 }
 
+RemoteLayerBackingStore::LayerContentsType RemoteLayerTreeHost::layerContentsType() const
+{
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    // CAMachPort currently does not work on macOS (or macCatalyst): rdar://problem/31247730
+    return RemoteLayerBackingStore::LayerContentsType::IOSurface;
+#else
+    // If a surface will be referenced by multiple layers (as in the tile debug indicator), CAMachPort cannot be used.
+    if (m_drawingArea->hasDebugIndicator())
+        return RemoteLayerBackingStore::LayerContentsType::IOSurface;
+
+    // If e.g. SceneKit will be doing an in-process snapshot of the layer tree, CAMachPort cannot be used: rdar://problem/47481972
+    if (m_drawingArea->page().windowKind() == WindowKind::InProcessSnapshotting)
+        return RemoteLayerBackingStore::LayerContentsType::IOSurface;
+
+    return RemoteLayerBackingStore::LayerContentsType::CAMachPort;
+#endif
+}
+
+bool RemoteLayerTreeHost::replayCGDisplayListsIntoBackingStore() const
+{
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    return m_drawingArea->page().preferences().replayCGDisplayListsIntoBackingStore();
+#else
+    return false;
+#endif
+}
+
 bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& transaction, float indicatorScaleFactor)
 {
     if (!m_drawingArea)
@@ -89,13 +116,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     };
     Vector<LayerAndClone> clonesToUpdate;
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    // Can't use the iOS code on macOS yet: rdar://problem/31247730
-    auto layerContentsType = RemoteLayerBackingStore::LayerContentsType::IOSurface;
-#else
-    auto layerContentsType = m_drawingArea->hasDebugIndicator() ? RemoteLayerBackingStore::LayerContentsType::IOSurface : RemoteLayerBackingStore::LayerContentsType::CAMachPort;
-#endif
-    
+    auto layerContentsType = this->layerContentsType();
     for (auto& [layerID, propertiesPointer] : transaction.changedLayerProperties()) {
         const RemoteLayerTreeTransaction::LayerProperties& properties = *propertiesPointer;
 
@@ -275,6 +296,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 #if ENABLE(MODEL_ELEMENT)
     case PlatformCALayer::LayerTypeModelLayer:
 #endif
+    case PlatformCALayer::LayerTypeContentsProvidedLayer:
         return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
 
     case PlatformCALayer::LayerTypeTransformLayer:
@@ -291,7 +313,6 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 #endif
     case PlatformCALayer::LayerTypeCustom:
     case PlatformCALayer::LayerTypeAVPlayerLayer:
-    case PlatformCALayer::LayerTypeContentsProvidedLayer:
         if (m_isDebugLayerTreeHost)
             return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
         return makeWithLayer([CALayer _web_renderLayerWithContextID:properties.hostingContextID]);

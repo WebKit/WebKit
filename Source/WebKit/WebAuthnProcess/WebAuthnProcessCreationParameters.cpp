@@ -41,10 +41,13 @@ WebAuthnProcessCreationParameters::WebAuthnProcessCreationParameters() = default
 
 void WebAuthnProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
+    encoder << auxiliaryProcessParameters;
 }
 
 bool WebAuthnProcessCreationParameters::decode(IPC::Decoder& decoder, WebAuthnProcessCreationParameters& result)
 {
+    if (!decoder.decode(result.auxiliaryProcessParameters))
+        return false;
     return true;
 }
 

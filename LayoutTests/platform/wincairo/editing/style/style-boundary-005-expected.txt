@@ -36,14 +36,14 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x55
           RenderText {#text} at (0,0) size 66x26
             text run at (0,0) width 66: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (66,0) size 0x26
           RenderText {#text} at (0,27) size 694x27
             text run at (0,27) width 694: "Pasting at style boundary does not crash or produce empty style span(s)."
         RenderBlock {DIV} at (14,85) size 756x83
           RenderBlock (anonymous) at (0,0) size 756x55
             RenderText {#text} at (0,0) size 189x26
               text run at (0,0) width 189: "Expected Results: "
-            RenderBR {BR} at (189,0) size 0x27
+            RenderBR {BR} at (189,0) size 0x26
             RenderText {#text} at (0,27) size 436x27
               text run at (0,27) width 436: "Should see this content in the red box below: "
             RenderBR {BR} at (436,27) size 0x27

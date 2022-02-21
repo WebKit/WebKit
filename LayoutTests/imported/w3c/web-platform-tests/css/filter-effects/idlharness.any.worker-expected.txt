@@ -1,0 +1,58 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS SVGFilterElement includes SVGURIReference: member names are unique
+PASS SVGFEBlendElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFEColorMatrixElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFEComponentTransferElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFECompositeElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFEConvolveMatrixElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFEDiffuseLightingElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFEDisplacementMapElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFEDropShadowElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFEFloodElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFEGaussianBlurElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFEImageElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFEImageElement includes SVGURIReference: member names are unique
+PASS SVGFEMergeElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFEMorphologyElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFEOffsetElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFESpecularLightingElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFETileElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGFETurbulenceElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
+PASS SVGElement includes GlobalEventHandlers: member names are unique
+PASS SVGElement includes DocumentAndElementEventHandlers: member names are unique
+PASS SVGElement includes SVGElementInstance: member names are unique
+PASS SVGElement includes HTMLOrSVGElement: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS SVGFilterElement interface: existence and properties of interface object
+PASS SVGFEBlendElement interface: existence and properties of interface object
+PASS SVGFEColorMatrixElement interface: existence and properties of interface object
+PASS SVGFEComponentTransferElement interface: existence and properties of interface object
+PASS SVGComponentTransferFunctionElement interface: existence and properties of interface object
+PASS SVGFEFuncRElement interface: existence and properties of interface object
+PASS SVGFEFuncGElement interface: existence and properties of interface object
+PASS SVGFEFuncBElement interface: existence and properties of interface object
+PASS SVGFEFuncAElement interface: existence and properties of interface object
+PASS SVGFECompositeElement interface: existence and properties of interface object
+PASS SVGFEConvolveMatrixElement interface: existence and properties of interface object
+PASS SVGFEDiffuseLightingElement interface: existence and properties of interface object
+PASS SVGFEDistantLightElement interface: existence and properties of interface object
+PASS SVGFEPointLightElement interface: existence and properties of interface object
+PASS SVGFESpotLightElement interface: existence and properties of interface object
+PASS SVGFEDisplacementMapElement interface: existence and properties of interface object
+PASS SVGFEDropShadowElement interface: existence and properties of interface object
+PASS SVGFEFloodElement interface: existence and properties of interface object
+PASS SVGFEGaussianBlurElement interface: existence and properties of interface object
+PASS SVGFEImageElement interface: existence and properties of interface object
+PASS SVGFEMergeElement interface: existence and properties of interface object
+PASS SVGFEMergeNodeElement interface: existence and properties of interface object
+PASS SVGFEMorphologyElement interface: existence and properties of interface object
+PASS SVGFEOffsetElement interface: existence and properties of interface object
+PASS SVGFESpecularLightingElement interface: existence and properties of interface object
+PASS SVGFETileElement interface: existence and properties of interface object
+PASS SVGFETurbulenceElement interface: existence and properties of interface object
+

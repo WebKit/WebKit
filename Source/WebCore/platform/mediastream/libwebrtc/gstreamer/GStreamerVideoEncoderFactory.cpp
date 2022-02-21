@@ -24,11 +24,10 @@
 #include "GStreamerVideoEncoderFactory.h"
 
 #include "GStreamerVideoCommon.h"
-#include "GStreamerVideoEncoder.h"
 #include "GStreamerVideoFrameLibWebRTC.h"
 #include "LibWebRTCWebKitMacros.h"
+#include "webrtc/api/video_codecs/vp9_profile.h"
 #include "webrtc/common_video/h264/h264_common.h"
-#include "webrtc/media/base/vp9_profile.h"
 #include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
 #include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
 #include "webrtc/modules/video_coding/codecs/vp8/libvpx_vp8_encoder.h"
@@ -228,7 +227,7 @@ public:
             return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
         }
 
-        auto sample = GStreamerSampleFromLibWebRTCVideoFrame(frame);
+        auto sample = convertLibWebRTCVideoFrameToGStreamerSample(frame);
         auto buffer = gst_sample_get_buffer(sample.get());
 
         if (!GST_CLOCK_TIME_IS_VALID(m_firstFramePts)) {
@@ -423,9 +422,6 @@ GStreamerVideoEncoderFactory::GStreamerVideoEncoderFactory(bool isSupportingVP9P
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_webrtcenc_debug, "webkitlibwebrtcvideoencoder", 0, "WebKit WebRTC video encoder");
-        auto factory = adoptGRef(gst_element_factory_find("webrtcvideoencoder"));
-        if (!factory)
-            gst_element_register(nullptr, "webrtcvideoencoder", GST_RANK_NONE, WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER);
     });
 }
 

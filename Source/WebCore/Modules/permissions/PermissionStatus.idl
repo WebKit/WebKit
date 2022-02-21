@@ -24,13 +24,14 @@
  */
  
 // https://w3c.github.io/permissions/#permissionstatus
-
+// FIXME: Add worker support: https://bugs.webkit.org/show_bug.cgi?id=236443.
 [
     ActiveDOMObject,
-    EnabledBySetting=PermissionsAPI,
-    Exposed=(Window,Worker)
+    EnabledBySetting=PermissionsAPIEnabled,
+    Exposed=(Window)
 ] interface PermissionStatus : EventTarget {
     readonly attribute PermissionState state;
     readonly attribute PermissionName name;
-    attribute EventHandler onchange;
+    // FIXME: Add support for onchange.
+    // attribute EventHandler onchange;
 };

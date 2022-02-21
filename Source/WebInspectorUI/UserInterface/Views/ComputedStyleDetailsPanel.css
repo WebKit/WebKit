@@ -32,21 +32,34 @@
     background-color: var(--background-color);
 }
 
-.sidebar > .panel.details.css-style > .content > .computed > .details-section > .content {
+/* Ensure that font is overwritten for both top-level and nested details sections. */
+.sidebar > .panel.details.css-style > .content > .computed .details-section > .content {
     font: 12px -webkit-system-font, sans-serif;
 }
 
 .sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-properties > .header > .options.filter {
     width: 13px;
     height: 13px;
+    color: var(--glyph-color);
+}
+
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-properties > .header > .options.filter:active {
+    color: var(--glyph-color-pressed);
+}
+
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-properties > .header > .options.filter.active {
+    color: var(--glyph-color-active);
+}
+
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-properties > .header > .options.filter.active:active {
+    color: var(--glyph-color-active-pressed);
 }
 
 .sidebar > .panel.details.css-style > .content > .computed .spreadsheet-style-declaration-editor {
     padding-bottom: 3px;
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .property {
-    position: relative;
+.sidebar > .panel.details.css-style > .content > .computed .details-section.computed-style-variables .computed-property-item {
     text-indent: -13px; /* width of "--" in `11px Menlo` */
 }
 
@@ -58,4 +71,19 @@
 
 .sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .property:not(:hover) .go-to-arrow {
     display: none;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode {
+    margin-top: -1px;
+    font-weight: normal;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode:not(:hover) {
+    --scope-bar-text-color-override: var(--text-color);
+    --scope-bar-background-color-override: transparent;
+    --scope-bar-border-color-override: transparent;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode:hover {
+    --scope-bar-background-opacity-override: 0.5;
 }

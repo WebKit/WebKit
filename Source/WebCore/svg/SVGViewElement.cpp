@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGViewElement.h"
 
+#include "RenderElement.h"
 #include "RenderSVGResource.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"

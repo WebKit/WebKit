@@ -8,12 +8,12 @@ layer at (0,0) size 800x188
           text run at (0,0) width 247: "The word \"fail\" should not appear below."
       RenderBlock {DIV} at (16,36) size 240x121 [color=#FFFFFF] [bgcolor=#FFFFFF]
         RenderBlock (floating) {P} at (0,0) size 40x21 [color=#000080]
-          RenderText {#text} at (0,0) size 40x19
+          RenderText {#text} at (0,0) size 40x20
             text run at (0,0) width 40: "TEST:"
         RenderBlock (floating) {P} at (0,20) size 240x21 [color=#00FFFF] [bgcolor=#008080]
-          RenderText {#text} at (100,0) size 39x19
+          RenderText {#text} at (100,0) size 39x20
             text run at (100,0) width 39: "PASS"
-        RenderText {#text} at (39,0) size 227x119
+        RenderText {#text} at (39,0) size 227x120
           text run at (39,0) width 186: "fail fail fail fail fail fail fail fail fail"
           text run at (0,40) width 21: "fail "
           text run at (21,40) width 206: "fail fail fail fail fail fail fail fail fail fail"

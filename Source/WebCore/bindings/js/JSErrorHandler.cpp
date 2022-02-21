@@ -49,7 +49,7 @@ namespace WebCore {
 using namespace JSC;
 
 inline JSErrorHandler::JSErrorHandler(JSObject& listener, JSObject& wrapper, bool isAttribute, DOMWrapperWorld& world)
-    : JSEventListener(&listener, &wrapper, isAttribute, world)
+    : JSEventListener(&listener, &wrapper, isAttribute, CreatedFromMarkup::No, world)
 {
 }
 
@@ -84,7 +84,10 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
         auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(vm, jsFunction->globalObject());
         if (jsFunctionWindow) {
             savedEvent = jsFunctionWindow->currentEvent();
-            jsFunctionWindow->setCurrentEvent(&event);
+
+            // window.event should not be set when the target is inside a shadow tree, as per the DOM specification.
+            if (!event.currentTargetIsInShadowTree())
+                jsFunctionWindow->setCurrentEvent(&event);
         }
 
         auto& errorEvent = downcast<ErrorEvent>(event);

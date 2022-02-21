@@ -37,23 +37,28 @@ class GPUProcess;
 class RemoteAudioSessionProxy;
 
 class RemoteAudioSessionProxyManager
-    : private WebCore::AudioSession::InterruptionObserver
+    : public WebCore::AudioSession::InterruptionObserver
     , private WebCore::AudioSession::ConfigurationChangeObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteAudioSessionProxyManager();
+    RemoteAudioSessionProxyManager(GPUProcess&);
     ~RemoteAudioSessionProxyManager();
 
-    void addProxy(RemoteAudioSessionProxy&);
+    void addProxy(RemoteAudioSessionProxy&, std::optional<audit_token_t>);
     void removeProxy(RemoteAudioSessionProxy&);
 
     void updateCategory();
-    void setPreferredBufferSizeForProcess(RemoteAudioSessionProxy&, size_t);
+    void updatePreferredBufferSizeForProcess();
 
     bool tryToSetActiveForProcess(RemoteAudioSessionProxy&, bool);
 
     WebCore::AudioSession& session() { return WebCore::AudioSession::sharedSession(); }
     const WebCore::AudioSession& session() const { return WebCore::AudioSession::sharedSession(); }
+
+    void updatePresentingProcesses();
+
+    using WebCore::AudioSession::InterruptionObserver::weakPtrFactory;
+    using WeakValueType = WebCore::AudioSession::InterruptionObserver::WeakValueType;
 
 private:
     void beginAudioSessionInterruption() final;
@@ -64,6 +69,7 @@ private:
     void sampleRateDidChange(const WebCore::AudioSession&) final;
     void configurationDidChange(const WebCore::AudioSession&);
 
+    GPUProcess& m_gpuProcess;
     WeakHashSet<RemoteAudioSessionProxy> m_proxies;
 };
 

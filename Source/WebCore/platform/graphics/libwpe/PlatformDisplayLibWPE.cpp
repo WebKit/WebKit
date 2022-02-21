@@ -68,7 +68,8 @@ PlatformDisplayLibWPE::PlatformDisplayLibWPE()
 
 PlatformDisplayLibWPE::~PlatformDisplayLibWPE()
 {
-    wpe_renderer_backend_egl_destroy(m_backend);
+    if (m_backend)
+        wpe_renderer_backend_egl_destroy(m_backend);
 }
 
 bool PlatformDisplayLibWPE::initialize(int hostFd)

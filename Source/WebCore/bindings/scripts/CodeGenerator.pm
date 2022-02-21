@@ -195,7 +195,7 @@ sub ProcessDocument
         return;
     }
 
-    die "Processing document " . $useDocument->fileName . " did not generate anything.";
+    # die "Processing document " . $useDocument->fileName . " did not generate anything.";
 }
 
 sub GenerateEmptyHeaderAndCpp
@@ -488,12 +488,15 @@ sub ProcessDictionarySupplementalDependencies
 }
 
 # Attributes / Operations / Constants of supplemental interfaces can have an [Exposed=XX] attribute which restricts
-# on which global contexts they should be exposed.
+# on which global contexts they should be exposed. [Exposed=*] will expose the attribute on the interface for all
+# supported global contexts.
 sub shouldPropertyBeExposed
 {
     my ($context, $target) = @_;
 
     my $exposedAttribute = $target->extendedAttributes->{"Exposed"} || "Window";
+    return 1 if $exposedAttribute eq "*";
+
     $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
     my @targetGlobalContexts = split(",", $exposedAttribute);
 
@@ -1115,6 +1118,7 @@ sub GetterExpression
         } elsif ($generator->IsSVGAnimatedType($attributeType)) {
             $functionName = "getAttribute";
         } else {
+            $implIncludes->{"ElementInlines.h"} = 1;
             $functionName = "attributeWithoutSynchronization";
         }
     }
@@ -1209,7 +1213,7 @@ sub InterfaceHasRegularToJSONOperation
     return 0;
 }
 
-# https://heycam.github.io/webidl/#dfn-json-types
+# https://webidl.spec.whatwg.org/#dfn-json-types
 sub IsJSONType
 {
     my ($object, $interface, $type) = @_;
@@ -1418,13 +1422,14 @@ sub GenerateCompileTimeCheckForEnumsIfNeeded
 
     return () if $interface->extendedAttributes->{"DoNotCheckConstants"} || !@{$interface->constants};
 
-    my $baseScope = $interface->extendedAttributes->{"ConstantsScope"} || $interface->type->name;
+    my $enum = $interface->extendedAttributes->{"ConstantsEnum"};
+    my $baseScope = $enum || $interface->extendedAttributes->{"ConstantsScope"} || $interface->type->name;
 
     my @checks = ();
     foreach my $constant (@{$interface->constants}) {
         my $scope = $constant->extendedAttributes->{"ImplementedBy"} || $baseScope;
         my $name = $constant->extendedAttributes->{"ImplementedAs"} || $constant->name;
-        my $value = $constant->value;
+        my $value = $enum ? "static_cast<" . $enum . ">(" . $constant->value . ")" : $constant->value;
         my $conditional = $constant->extendedAttributes->{"Conditional"};
         push(@checks, "#if " . $generator->GenerateConditionalStringFromAttributeValue($conditional) . "\n") if $conditional;
         push(@checks, "static_assert(${scope}::${name} == ${value}, \"${name} in ${scope} does not match value from IDL\");\n");
@@ -1442,6 +1447,7 @@ sub ExtendedAttributeContains
     my $keyword = shift;
 
     my @extendedAttributeKeywords = split /\s*\&\s*/, $extendedAttribute;
+    return grep { /$keyword/ } @extendedAttributeKeywords if ref($keyword) eq "Regexp";
     return grep { $_ eq $keyword } @extendedAttributeKeywords;
 }
 

@@ -27,6 +27,8 @@
 
 #include "FreeList.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config> class IsoPage;
@@ -52,3 +54,4 @@ private:
 
 } // namespace bmalloc
 
+#endif

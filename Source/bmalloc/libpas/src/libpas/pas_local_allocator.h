@@ -31,7 +31,7 @@
 #include "pas_bitfit_allocator.h"
 #include "pas_config.h"
 #include "pas_local_allocator_config_kind.h"
-#include "pas_local_allocator_line.h"
+#include "pas_local_allocator_scavenger_data.h"
 #include "pas_lock.h"
 #include "pas_segregated_page_config.h"
 #include "pas_segregated_view.h"
@@ -50,6 +50,12 @@ typedef struct pas_segregated_heap pas_segregated_heap;
 typedef struct pas_segregated_page pas_segregated_page;
 
 struct pas_local_allocator {
+    pas_local_allocator_scavenger_data scavenger_data;
+    
+    uint8_t alignment_shift;
+    pas_local_allocator_config_kind config_kind : 8;
+    bool current_word_is_valid; /* This is just used by enumeration. */
+
     /* This has to have a pointer to our index within the view. We can get to the view using
        page_ish. Maybe worth reconsidering that, but then again maybe it's good enough. 
     
@@ -71,17 +77,12 @@ struct pas_local_allocator {
     pas_segregated_view view; /* points to a partial view if we're in partial mode or the size
                                  directory otherwise. This will point to a partial view in either
                                  primordial partial mode or in normal partial mode. */
-    uint16_t num_lines;
-    uint8_t alignment_shift;
-    pas_local_allocator_config_kind config_kind : 8;
-    bool is_in_use;
-    uint8_t should_stop_count;
-    bool dirty;
-    bool current_word_is_valid; /* This is just used by enumeration. */
     uint64_t bits[1];
 };
 
 #define PAS_LOCAL_ALLOCATOR_NULL_INITIALIZER ((pas_local_allocator){ \
+        .scavenger_data = \
+            PAS_LOCAL_ALLOCATOR_SCAVENGER_DATA_INITIALIZER(pas_local_allocator_allocator_kind), \
         .payload_end = 0, \
         .remaining = 0, \
         .object_size = 0, \
@@ -89,10 +90,10 @@ struct pas_local_allocator {
         .current_offset = 0, \
         .end_offset = 0, \
         .view = NULL, \
-        .config_kind = pas_local_allocator_config_kind_normal_null, \
-        .is_in_use = false, \
-        .should_stop_count = 0, \
-        .dirty = false \
+        .alignment_shift = 0, \
+        .current_word_is_valid = false, \
+        .current_word = 0, \
+        .config_kind = pas_local_allocator_config_kind_null \
     })
 
 #define PAS_LOCAL_ALLOCATOR_SIZE(num_alloc_bits) \
@@ -101,7 +102,17 @@ struct pas_local_allocator {
          sizeof(uint64_t) * PAS_BITVECTOR_NUM_WORDS64(num_alloc_bits), \
          PAS_ROUND_UP_TO_POWER_OF_2(sizeof(pas_bitfit_allocator), sizeof(uint64_t))))
 
-PAS_API extern uint8_t pas_local_allocator_should_stop_count_for_suspend;
+#define PAS_LOCAL_ALLOCATOR_UNSELECTED_SIZE PAS_OFFSETOF(pas_local_allocator, bits)
+#define PAS_LOCAL_ALLOCATOR_UNSELECTED_INDEX 0u
+#define PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES (PAS_LOCAL_ALLOCATOR_UNSELECTED_SIZE / 8)
+
+#define PAS_LOCAL_ALLOCATOR_MEASURE_REFILL_EFFICIENCY 0
+
+#if PAS_LOCAL_ALLOCATOR_MEASURE_REFILL_EFFICIENCY
+PAS_API extern double pas_local_allocator_refill_efficiency_sum;
+PAS_API extern double pas_local_allocator_refill_efficiency_n;
+PAS_DECLARE_LOCK(pas_local_allocator_refill_efficiency);
+#endif /* PAS_LOCAL_ALLOCATOR_MEASURE_REFILL_EFFICIENCY */
 
 static inline bool pas_local_allocator_is_null(pas_local_allocator* allocator)
 {
@@ -134,9 +145,9 @@ static inline uintptr_t pas_local_allocator_page_boundary(pas_local_allocator* a
 }
 
 PAS_API void pas_local_allocator_construct(pas_local_allocator* allocator,
-                                           pas_segregated_global_size_directory* directory);
+                                           pas_segregated_size_directory* directory);
 
-PAS_API void pas_local_allocator_destruct(pas_local_allocator* allocator);
+PAS_API void pas_local_allocator_construct_unselected(pas_local_allocator* allocator);
 
 PAS_API void pas_local_allocator_reset(pas_local_allocator* allocator);
 

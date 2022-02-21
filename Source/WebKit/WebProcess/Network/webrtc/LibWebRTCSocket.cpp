@@ -179,27 +179,16 @@ int LibWebRTCSocket::SetOption(rtc::Socket::Option option, int value)
 void LibWebRTCSocket::resume()
 {
     m_isSuspended = false;
-
-    // On resume, we notify libwebrtc that TCP sockets are errored.
-    // We notify libwebrtc that all pending UDP packets have been sent even though we actually dropped them.
-    if (m_type != Type::UDP) {
-        signalClose(-1);
-        return;
-    }
-
-    auto currentTime = rtc::TimeMillis();
-    while (!m_beingSentPacketSizes.isEmpty())
-        signalSentPacket(-1, currentTime);
 }
 
 void LibWebRTCSocket::suspend()
 {
     m_isSuspended = true;
 
-    // On suspend, we close TCP sockets as we cannot make sure packets are delivered reliably.
-    if (m_type == Type::UDP)
+    if (m_state == STATE_CLOSED)
         return;
 
+    signalClose(-1);
     if (auto* connection = m_factory.connection())
         connection->send(Messages::NetworkRTCProvider::CloseSocket { m_identifier }, 0);
 }

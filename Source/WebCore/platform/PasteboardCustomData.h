@@ -25,9 +25,9 @@
 
 #pragma once
 
+#include <variant>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/text/WTFString.h>
@@ -48,7 +48,7 @@ public:
 
         String type;
         String customData;
-        Variant<String, Ref<SharedBuffer>> platformData;
+        std::variant<String, Ref<SharedBuffer>> platformData;
     };
 
     WEBCORE_EXPORT PasteboardCustomData();
@@ -83,7 +83,7 @@ public:
 
     void forEachType(Function<void(const String&)>&&) const;
     void forEachPlatformString(Function<void(const String& type, const String& data)>&&) const;
-    void forEachPlatformStringOrBuffer(Function<void(const String& type, const Variant<String, Ref<SharedBuffer>>& data)>&&) const;
+    void forEachPlatformStringOrBuffer(Function<void(const String& type, const std::variant<String, Ref<SharedBuffer>>& data)>&&) const;
     void forEachCustomString(Function<void(const String& type, const String& data)>&&) const;
 
     bool hasData() const;

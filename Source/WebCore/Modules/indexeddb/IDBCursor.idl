@@ -36,9 +36,9 @@
     [SameObject] readonly attribute IDBRequest request;
 
     undefined advance([EnforceRange] unsigned long count);
-    [CallWith=GlobalObject, ImplementedAs=continueFunction] undefined continue(optional any key);
-    [CallWith=GlobalObject] undefined continuePrimaryKey(any key, any primaryKey);
+    [CallWith=CurrentGlobalObject, ImplementedAs=continueFunction] undefined continue(optional any key);
+    [CallWith=CurrentGlobalObject] undefined continuePrimaryKey(any key, any primaryKey);
 
-    [NewObject, CallWith=GlobalObject] IDBRequest update(any value);
-    [NewObject, CallWith=GlobalObject, ImplementedAs=deleteFunction] IDBRequest delete();
+    [NewObject, CallWith=CurrentGlobalObject] IDBRequest update(any value);
+    [NewObject, ImplementedAs=deleteFunction] IDBRequest delete();
 };

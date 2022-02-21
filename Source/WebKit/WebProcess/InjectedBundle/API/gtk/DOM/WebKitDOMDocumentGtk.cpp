@@ -54,7 +54,7 @@
 #include "WebKitDOMXPathResultPrivate.h"
 #include <WebCore/CSSImportRule.h>
 #include <WebCore/DOMException.h>
-#include <WebCore/Document.h>
+#include <WebCore/DocumentInlines.h>
 #include <WebCore/FullscreenManager.h>
 #include <WebCore/JSExecState.h>
 #include <WebCore/SecurityOrigin.h>
@@ -1312,16 +1312,20 @@ void webkit_dom_document_webkit_cancel_fullscreen(WebKitDOMDocument* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_DOCUMENT(self));
+#if ENABLE(FULLSCREEN_API)
     WebCore::Document* item = WebKit::core(self);
     item->fullscreenManager().cancelFullscreen();
+#endif
 }
 
 void webkit_dom_document_webkit_exit_fullscreen(WebKitDOMDocument* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_DOCUMENT(self));
+#if ENABLE(FULLSCREEN_API)
     WebCore::Document* item = WebKit::core(self);
     item->fullscreenManager().exitFullscreen();
+#endif
 }
 
 void webkit_dom_document_exit_pointer_lock(WebKitDOMDocument* self)
@@ -1822,45 +1826,65 @@ gboolean webkit_dom_document_get_webkit_is_fullscreen(WebKitDOMDocument* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), FALSE);
+#if ENABLE(FULLSCREEN_API)
     WebCore::Document* item = WebKit::core(self);
     gboolean result = item->fullscreenManager().isFullscreen();
     return result;
+#else
+    return FALSE;
+#endif
 }
 
 gboolean webkit_dom_document_get_webkit_fullscreen_keyboard_input_allowed(WebKitDOMDocument* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), FALSE);
+#if ENABLE(FULLSCREEN_API)
     WebCore::Document* item = WebKit::core(self);
     gboolean result = item->fullscreenManager().isFullscreenKeyboardInputAllowed();
     return result;
+#else
+    return FALSE;
+#endif
 }
 
 WebKitDOMElement* webkit_dom_document_get_webkit_current_fullscreen_element(WebKitDOMDocument* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
+#if ENABLE(FULLSCREEN_API)
     WebCore::Document* item = WebKit::core(self);
     RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->fullscreenManager().currentFullscreenElement());
     return WebKit::kit(gobjectResult.get());
+#else
+    return NULL;
+#endif
 }
 
 gboolean webkit_dom_document_get_webkit_fullscreen_enabled(WebKitDOMDocument* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), FALSE);
+#if ENABLE(FULLSCREEN_API)
     WebCore::Document* item = WebKit::core(self);
     gboolean result = item->fullscreenManager().isFullscreenEnabled();
     return result;
+#else
+    return FALSE;
+#endif
 }
 
 WebKitDOMElement* webkit_dom_document_get_webkit_fullscreen_element(WebKitDOMDocument* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
+#if ENABLE(FULLSCREEN_API)
     WebCore::Document* item = WebKit::core(self);
     RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->fullscreenManager().fullscreenElement());
     return WebKit::kit(gobjectResult.get());
+#else
+    return NULL;
+#endif
 }
 
 WebKitDOMElement* webkit_dom_document_get_pointer_lock_element(WebKitDOMDocument* self)

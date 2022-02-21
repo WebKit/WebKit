@@ -14,9 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/workers/non-automated/application-cache-dedicated.html
-/LayoutTests/imported/w3c/web-platform-tests/workers/non-automated/application-cache-dedicated.js
-/LayoutTests/imported/w3c/web-platform-tests/workers/non-automated/cache.manifest
 /LayoutTests/imported/w3c/web-platform-tests/workers/non-automated/infinite-nested.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/non-automated/infinite-nested.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/non-automated/infinite-sibling-and-nested.html

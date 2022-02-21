@@ -58,6 +58,8 @@ TEST_F(PayloadTypeMapperTest, WebRTCPayloadTypes) {
                       48000,
                       2,
                       {{"minptime", "10"}, {"useinbandfec", "1"}}}));
+  EXPECT_EQ(
+      63, mapper_.FindMappingFor({kRedCodecName, 48000, 2, {{"", "111/111"}}}));
   // TODO(solenberg): Remove 16k, 32k, 48k DTMF checks once these payload types
   // are dynamically assigned.
   EXPECT_EQ(110, mapper_.FindMappingFor({kDtmfCodecName, 48000, 1}));

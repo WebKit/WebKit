@@ -50,23 +50,28 @@ WorkQueue& WorkQueue::main()
     return *mainWorkQueue.get();
 }
 
-Ref<WorkQueue> WorkQueue::create(const char* name, Type type, QOS qos)
-{
-    return adoptRef(*new WorkQueue(name, type, qos));
-}
-
-WorkQueue::WorkQueue(const char* name, Type type, QOS qos)
+WorkQueueBase::WorkQueueBase(const char* name, Type type, QOS qos)
 {
     platformInitialize(name, type, qos);
 }
 
-WorkQueue::~WorkQueue()
+WorkQueueBase::~WorkQueueBase()
 {
     platformInvalidate();
 }
 
+Ref<WorkQueue> WorkQueue::create(const char* name, QOS qos)
+{
+    return adoptRef(*new WorkQueue(name, qos));
+}
+
+Ref<ConcurrentWorkQueue> ConcurrentWorkQueue::create(const char* name, QOS qos)
+{
+    return adoptRef(*new ConcurrentWorkQueue(name, qos));
+}
+
 #if !PLATFORM(COCOA)
-void WorkQueue::dispatchSync(Function<void()>&& function)
+void WorkQueueBase::dispatchSync(Function<void()>&& function)
 {
     BinarySemaphore semaphore;
     dispatch([&semaphore, function = WTFMove(function)]() mutable {
@@ -76,7 +81,12 @@ void WorkQueue::dispatchSync(Function<void()>&& function)
     semaphore.wait();
 }
 
-void WorkQueue::concurrentApply(size_t iterations, WTF::Function<void (size_t index)>&& function)
+void WorkQueueBase::dispatchWithQOS(Function<void()>&& function, QOS)
+{
+    dispatch(WTFMove(function));
+}
+
+void ConcurrentWorkQueue::apply(size_t iterations, WTF::Function<void(size_t index)>&& function)
 {
     if (!iterations)
         return;

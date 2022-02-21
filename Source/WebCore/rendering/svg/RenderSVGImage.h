@@ -25,14 +25,14 @@
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
-#include "RenderSVGModelObject.h"
+#include "LegacyRenderSVGModelObject.h"
 
 namespace WebCore {
 
 class RenderImageResource;
 class SVGImageElement;
 
-class RenderSVGImage final : public RenderSVGModelObject {
+class RenderSVGImage final : public LegacyRenderSVGModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGImage);
 public:
     RenderSVGImage(SVGImageElement&, RenderStyle&&);

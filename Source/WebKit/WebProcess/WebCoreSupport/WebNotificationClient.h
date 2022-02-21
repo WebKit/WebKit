@@ -45,15 +45,14 @@ public:
     virtual ~WebNotificationClient();
 
 private:
-    bool show(WebCore::Notification*) override;
-    void cancel(WebCore::Notification*) override;
-    void clearNotifications(WebCore::ScriptExecutionContext*) override;
-    void notificationObjectDestroyed(WebCore::Notification*) override;
+    bool show(WebCore::Notification&) override;
+    void cancel(WebCore::Notification&) override;
+    void notificationObjectDestroyed(WebCore::Notification&) override;
     void notificationControllerDestroyed() override;
     void requestPermission(WebCore::ScriptExecutionContext&, PermissionHandler&&) override;
     WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) override;
     
-    WebPage* m_page;
+    WebPage* m_page { nullptr };
 };
 
 } // namespace WebKit

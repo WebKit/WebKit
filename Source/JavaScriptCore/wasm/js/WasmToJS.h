@@ -35,14 +35,14 @@
 
 namespace JSC {
 
-class CallLinkInfo;
+class OptimizingCallLinkInfo;
 class VM;
 
 namespace Wasm {
 
 class Instance;
 
-Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM&, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex, unsigned importIndex);
+Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM&, Bag<OptimizingCallLinkInfo>& callLinkInfos, SignatureIndex, unsigned importIndex);
 
 void emitThrowWasmToJSException(CCallHelpers&, GPRReg wasmInstance, Wasm::ExceptionType);
 

@@ -153,6 +153,14 @@ void PaymentAuthorizationViewController::present(UIViewController *presentingVie
     completionHandler(true);
 }
 
+#if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+void PaymentAuthorizationViewController::presentInScene(const String&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT_NOT_REACHED();
+    completionHandler(false);
+}
+#endif
+
 #endif
 
 } // namespace WebKit

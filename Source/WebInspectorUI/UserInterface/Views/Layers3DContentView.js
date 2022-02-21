@@ -175,6 +175,8 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
         this.element.appendChild(this._renderer.domElement);
 
+        this.element.appendChild(WI.createReferencePageLink("layers-tab"));
+
         this._animate();
     }
 
@@ -269,7 +271,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         const zInterval = 25;
         newLayers.forEach((layer, index) => {
             let layerGroup = this._layerGroupsById.get(layer.layerId);
-            layerGroup.position.set(layer.bounds.x, -layer.bounds.y, index * zInterval);
+            layerGroup.position.set(0, 0, index * zInterval);
         });
 
         this._boundingBox.setFromObject(this._scene);
@@ -286,14 +288,14 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         return layerGroup;
     }
 
-    _createLayerMesh({width, height}, isOutline = false)
+    _createLayerMesh({x, y, width, height}, isOutline = false)
     {
         let geometry = new THREE.Geometry;
         geometry.vertices.push(
-            new THREE.Vector3(0,     0,       0),
-            new THREE.Vector3(0,     -height, 0),
-            new THREE.Vector3(width, -height, 0),
-            new THREE.Vector3(width, 0,       0),
+            new THREE.Vector3(x, -y, 0),
+            new THREE.Vector3(x, -y - height, 0),
+            new THREE.Vector3(x + width, -y - height, 0),
+            new THREE.Vector3(x + width, -y, 0),
         );
 
         if (isOutline) {

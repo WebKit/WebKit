@@ -37,11 +37,10 @@
 #include "Frame.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "JSDOMWindowBase.h"
+#include "JSDOMWindowCustom.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "ScriptController.h"
-#include "ScriptState.h"
 #include "SecurityOrigin.h"
 #include "UserGestureEmulationScope.h"
 #include <JavaScriptCore/InjectedScript.h>
@@ -91,7 +90,7 @@ Protocol::ErrorStringOr<void> PageRuntimeAgent::disable()
 void PageRuntimeAgent::frameNavigated(Frame& frame)
 {
     // Ensure execution context is created for the frame even if it doesn't have scripts.
-    mainWorldExecState(&frame);
+    mainWorldGlobalObject(frame);
 }
 
 void PageRuntimeAgent::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
@@ -106,8 +105,7 @@ void PageRuntimeAgent::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld
 InjectedScript PageRuntimeAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (!executionContextId) {
-        JSC::JSGlobalObject* scriptState = mainWorldExecState(&m_inspectedPage.mainFrame());
-        InjectedScript result = injectedScriptManager().injectedScriptFor(scriptState);
+        InjectedScript result = injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(m_inspectedPage.mainFrame()));
         if (result.hasNoValue())
             errorString = "Internal error: main world execution context not found"_s;
         return result;
@@ -135,25 +133,25 @@ void PageRuntimeAgent::reportExecutionContextCreation()
     if (!pageAgent)
         return;
 
-    for (auto* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
-            continue;
+    m_inspectedPage.forEachFrame([&](Frame& frame) {
+        if (!frame.script().canExecuteScripts(NotAboutToExecuteScript))
+            return;
 
-        auto frameId = pageAgent->frameId(frame);
+        auto frameId = pageAgent->frameId(&frame);
 
         // Always send the main world first.
-        auto* mainGlobalObject = mainWorldExecState(frame);
-        notifyContextCreated(frameId, mainGlobalObject, mainThreadNormalWorld());
+        auto& mainGlobalObject = mainWorldGlobalObject(frame);
+        notifyContextCreated(frameId, &mainGlobalObject, mainThreadNormalWorld());
 
-        for (auto& jsWindowProxy : frame->windowProxy().jsWindowProxiesAsVector()) {
+        for (auto& jsWindowProxy : frame.windowProxy().jsWindowProxiesAsVector()) {
             auto* globalObject = jsWindowProxy->window();
-            if (globalObject == mainGlobalObject)
+            if (globalObject == &mainGlobalObject)
                 continue;
 
             auto& securityOrigin = downcast<DOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
             notifyContextCreated(frameId, globalObject, jsWindowProxy->world(), &securityOrigin);
         }
-    }
+    });
 }
 
 static Protocol::Runtime::ExecutionContextType toProtocol(DOMWrapperWorld::Type type)

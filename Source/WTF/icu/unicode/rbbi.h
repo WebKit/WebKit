@@ -99,7 +99,7 @@ private:
      * If present, UStack of LanguageBreakEngine objects that might handle
      * dictionary characters. Searched from top to bottom to find an object to
      * handle a given character.
-     * @internal
+     * @internal (private)
      */
     UStack              *fLanguageBreakEngines;
 
@@ -107,15 +107,15 @@ private:
      *
      * If present, the special LanguageBreakEngine used for handling
      * characters that are in the dictionary set, but not handled by any
-     * LangugageBreakEngine.
-     * @internal
+     * LanguageBreakEngine.
+     * @internal (private)
      */
     UnhandledEngine     *fUnhandledBreakEngine;
 
     /**
      * Counter for the number of characters encountered with the "dictionary"
      *   flag set.
-     * @internal
+     * @internal (private)
      */
     uint32_t            fDictionaryCharCount;
 
@@ -150,7 +150,7 @@ private:
      *
      *             The break iterator adopts the memory, and will
      *             free it when done.
-     * @internal
+     * @internal (private)
      */
     RuleBasedBreakIterator(RBBIDataHeader* data, UErrorCode &status);
 
@@ -260,7 +260,7 @@ public:
      * @return TRUE if both BreakIterators are not same.
      *  @stable ICU 2.0
      */
-    UBool operator!=(const BreakIterator& that) const;
+    inline UBool operator!=(const BreakIterator& that) const;
 
     /**
      * Returns a newly-constructed RuleBasedBreakIterator with the same

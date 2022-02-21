@@ -31,7 +31,7 @@
 namespace WebCore {
 
 WorkletPendingTasks::WorkletPendingTasks(Worklet& worklet, DOMPromiseDeferred<void>&& promise, int counter)
-    : m_worklet(makeWeakPtr(worklet))
+    : m_worklet(worklet)
     , m_promise(WTFMove(promise))
     , m_counter(counter)
 {

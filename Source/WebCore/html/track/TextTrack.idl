@@ -30,7 +30,7 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
     ActiveDOMObject,
     Conditional=VIDEO,
     ExportToWrappedFunction,
-    GenerateIsReachable=ImplElementRoot,
+    GenerateIsReachable,
     GenerateAddOpaqueRoot,
     SkipVTableValidation,
     Exposed=Window
@@ -38,7 +38,7 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
     readonly attribute DOMString id;
     [ImplementedAs=kindForBindings] attribute TextTrackKind kind;
     readonly attribute DOMString label;
-    [SettingsConditionallyReadWrite=MediaSource] attribute DOMString language;
+    [SettingsConditionallyReadWrite=MediaSourceEnabled] attribute DOMString language;
     readonly attribute DOMString inBandMetadataTrackDispatchType;
 
     attribute TextTrackMode mode;

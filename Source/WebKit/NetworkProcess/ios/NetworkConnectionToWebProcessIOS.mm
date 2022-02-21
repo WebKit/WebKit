@@ -25,9 +25,11 @@
 
 #import "config.h"
 #import "NetworkConnectionToWebProcess.h"
+#import "NetworkProcessProxyMessages.h"
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "NetworkProcess.h"
 #import "NetworkSessionCocoa.h"
 #import "PaymentAuthorizationController.h"
 
@@ -51,6 +53,13 @@ UIViewController *NetworkConnectionToWebProcess::paymentCoordinatorPresentingVie
 {
     return nil;
 }
+
+#if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+void NetworkConnectionToWebProcess::getWindowSceneIdentifierForPaymentPresentation(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetWindowSceneIdentifierForPaymentPresentation(webPageProxyIdentifier), WTFMove(completionHandler));
+}
+#endif
 
 const String& NetworkConnectionToWebProcess::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
 {

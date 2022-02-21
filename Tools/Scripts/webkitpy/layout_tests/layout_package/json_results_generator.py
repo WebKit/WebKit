@@ -285,8 +285,6 @@ class JSONResultsGenerator(object):
         return True
 
     def generate_times_ms_file(self):
-        # FIXME: rename to generate_times_ms_file. This needs to be coordinated with
-        # changing the calls to this on the chromium build workers.
         times = test_timings_trie(self._port, self._test_results_map.values())
         file_path = self._filesystem.join(self._results_directory, self.TIMES_MS_FILENAME)
         write_json(self._filesystem, times, file_path)

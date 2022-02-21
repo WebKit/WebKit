@@ -158,6 +158,64 @@ TEST_P(EGLCreateContextAttribsTest, IncompatibleConfig)
     eglTerminate(mDisplay);
 }
 
+// EGL_IMG_context_priority - set and get attribute
+TEST_P(EGLCreateContextAttribsTest, IMGContextPriorityExtension)
+{
+    const EGLint configAttributes[] = {EGL_RED_SIZE,  8, EGL_GREEN_SIZE,   8,
+                                       EGL_BLUE_SIZE, 8, EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+                                       EGL_NONE};
+
+    // Get all the configs
+    EGLint count;
+    EGLConfig config;
+    EXPECT_EGL_TRUE(eglChooseConfig(mDisplay, configAttributes, &config, 1, &count));
+    EXPECT_TRUE(count == 1);
+
+    EGLContext context      = EGL_NO_CONTEXT;
+    EGLint contextAttribs[] = {EGL_CONTEXT_MAJOR_VERSION,
+                               2,
+                               EGL_CONTEXT_MINOR_VERSION,
+                               0,
+                               EGL_CONTEXT_PRIORITY_LEVEL_IMG,
+                               EGL_CONTEXT_PRIORITY_HIGH_IMG,
+                               EGL_NONE};
+
+    if (IsEGLDisplayExtensionEnabled(mDisplay, "EGL_IMG_context_priority"))
+    {
+        context = eglCreateContext(mDisplay, config, nullptr, contextAttribs);
+        EXPECT_NE(context, EGL_NO_CONTEXT);
+        ASSERT_EGL_ERROR(EGL_SUCCESS);
+
+        EGLint value = 0;
+        EXPECT_EGL_TRUE(eglQueryContext(mDisplay, context, EGL_CONTEXT_PRIORITY_LEVEL_IMG, &value));
+        ASSERT_EGL_ERROR(EGL_SUCCESS);
+    }
+    else  // Not supported so should get EGL_BAD_ATTRIBUTE
+    {
+        context = eglCreateContext(mDisplay, config, nullptr, contextAttribs);
+        EXPECT_EQ(context, EGL_NO_CONTEXT);
+        ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+
+        EGLint noExtensionContextAttribs[] = {EGL_CONTEXT_MAJOR_VERSION, 2,
+                                              EGL_CONTEXT_MINOR_VERSION, 0, EGL_NONE};
+
+        context = eglCreateContext(mDisplay, config, nullptr, noExtensionContextAttribs);
+        EXPECT_NE(context, EGL_NO_CONTEXT);
+        ASSERT_EGL_ERROR(EGL_SUCCESS);
+
+        EGLint value = 0;
+        EXPECT_EGL_FALSE(
+            eglQueryContext(mDisplay, context, EGL_CONTEXT_PRIORITY_LEVEL_IMG, &value));
+        ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+    }
+
+    // Cleanup contexts
+    ASSERT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    eglDestroyContext(mDisplay, context);
+    eglTerminate(mDisplay);
+}
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLCreateContextAttribsTest);
 ANGLE_INSTANTIATE_TEST(EGLCreateContextAttribsTest,
                        WithNoFixture(ES2_D3D9()),
                        WithNoFixture(ES2_D3D11()),

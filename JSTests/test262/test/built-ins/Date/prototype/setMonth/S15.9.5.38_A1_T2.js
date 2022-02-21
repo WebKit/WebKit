@@ -6,11 +6,11 @@ info: The Date.prototype property "setMonth" has { DontEnum } attributes
 esid: sec-date.prototype.setmonth
 description: Checking absence of DontDelete attribute
 ---*/
+assert.notSameValue(delete Date.prototype.setMonth, false, 'The value of delete Date.prototype.setMonth is not false');
 
-if (delete Date.prototype.setMonth === false) {
-  throw new Test262Error('#1: The Date.prototype.setMonth property has not the attributes DontDelete');
-}
+assert(
+  !Date.prototype.hasOwnProperty('setMonth'),
+  'The value of !Date.prototype.hasOwnProperty(\'setMonth\') is expected to be true'
+);
 
-if (Date.prototype.hasOwnProperty('setMonth')) {
-  throw new Test262Error('#2: The Date.prototype.setMonth property has not the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

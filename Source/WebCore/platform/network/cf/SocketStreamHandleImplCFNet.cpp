@@ -96,11 +96,12 @@ static inline auto callbacksRunLoopMode()
 #endif
 }
 
-SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider)
+SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider, bool acceptInsecureCertificates)
     : SocketStreamHandle(url, client)
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)
     , m_sentStoredCredentials(false)
+    , m_shouldAcceptInsecureCertificates(acceptInsecureCertificates)
     , m_credentialPartition(credentialPartition)
     , m_auditData(WTFMove(auditData))
     , m_storageSessionProvider(provider)
@@ -119,7 +120,7 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
         && !sessionID.isEphemeral()
         && _CFNetworkIsKnownHSTSHostWithSession(m_httpsURL.get(), nullptr)) {
         // Call this asynchronously because the socket stream is not fully constructed at this point.
-        callOnMainThread([this, protectedThis = makeRef(*this)] {
+        callOnMainThread([this, protectedThis = Ref { *this }] {
             m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "WebSocket connection failed because it violates HTTP Strict Transport Security."));
         });
         return;
@@ -357,7 +358,8 @@ void SocketStreamHandleImpl::createStreams()
     }
 
     if (shouldUseSSL()) {
-        CFBooleanRef validateCertificateChain = DeprecatedGlobalSettings::allowsAnySSLCertificate() ? kCFBooleanFalse : kCFBooleanTrue;
+        // FIXME: rdar://86641948 Remove shouldAcceptInsecureCertificatesForWebSockets once HAVE(NSURLSESSION_WEBSOCKET) is supported on all Cocoa platforms.
+        CFBooleanRef validateCertificateChain = DeprecatedGlobalSettings::allowsAnySSLCertificate() || m_shouldAcceptInsecureCertificates ? kCFBooleanFalse : kCFBooleanTrue;
         const void* keys[] = {
             kCFStreamSSLPeerName,
             kCFStreamSSLLevel,
@@ -399,18 +401,18 @@ bool SocketStreamHandleImpl::getStoredCONNECTProxyCredentials(const ProtectionSp
     return true;
 }
 
-static ProtectionSpaceAuthenticationScheme authenticationSchemeFromAuthenticationMethod(CFStringRef method)
+static ProtectionSpace::AuthenticationScheme authenticationSchemeFromAuthenticationMethod(CFStringRef method)
 {
     if (CFEqual(method, kCFHTTPAuthenticationSchemeBasic))
-        return ProtectionSpaceAuthenticationSchemeHTTPBasic;
+        return ProtectionSpace::AuthenticationScheme::HTTPBasic;
     if (CFEqual(method, kCFHTTPAuthenticationSchemeDigest))
-        return ProtectionSpaceAuthenticationSchemeHTTPDigest;
+        return ProtectionSpace::AuthenticationScheme::HTTPDigest;
     if (CFEqual(method, kCFHTTPAuthenticationSchemeNTLM))
-        return ProtectionSpaceAuthenticationSchemeNTLM;
+        return ProtectionSpace::AuthenticationScheme::NTLM;
     if (CFEqual(method, kCFHTTPAuthenticationSchemeNegotiate))
-        return ProtectionSpaceAuthenticationSchemeNegotiate;
+        return ProtectionSpace::AuthenticationScheme::Negotiate;
     ASSERT_NOT_REACHED();
-    return ProtectionSpaceAuthenticationSchemeUnknown;
+    return ProtectionSpace::AuthenticationScheme::Unknown;
 }
     
 static void setCONNECTProxyAuthorizationForStream(CFReadStreamRef stream, CFStringRef proxyAuthorizationString)
@@ -447,7 +449,7 @@ void SocketStreamHandleImpl::addCONNECTCredentials(CFHTTPMessageRef proxyRespons
         return;
     }
 
-    ProtectionSpace protectionSpace(String(m_proxyHost.get()), port, ProtectionSpaceProxyHTTPS, String(realmCF.get()), authenticationSchemeFromAuthenticationMethod(methodCF.get()));
+    ProtectionSpace protectionSpace(String(m_proxyHost.get()), port, ProtectionSpace::ServerType::ProxyHTTPS, String(realmCF.get()), authenticationSchemeFromAuthenticationMethod(methodCF.get()));
     String login;
     String password;
     if (!m_sentStoredCredentials && getStoredCONNECTProxyCredentials(protectionSpace, login, password)) {

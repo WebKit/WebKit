@@ -68,15 +68,25 @@ static BOOL themeWindowHasKeyAppearance;
 }
 @end
 
-@implementation WebCoreThemeView
+@implementation WebCoreThemeView {
+    RetainPtr<WebCoreThemeWindow> _window;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    // Using defer:YES prevents us from wasting any window server resources for this window, since we're not actually
+    // going to draw into it. The other arguments match what you get when calling -[NSWindow init].
+    _window = adoptNS([[WebCoreThemeWindow alloc] initWithContentRect:NSMakeRect(100, 100, 100, 100) styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
+
+    return self;
+}
 
 - (NSWindow *)window
 {
-    // Using defer:YES prevents us from wasting any window server resources for this window, since we're not actually
-    // going to draw into it. The other arguments match what you get when calling -[NSWindow init].
-    static WebCoreThemeWindow *window = [[WebCoreThemeWindow alloc] initWithContentRect:NSMakeRect(100, 100, 100, 100)
-        styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES];
-    return window;
+    return _window.get();
 }
 
 - (BOOL)isFlipped
@@ -271,14 +281,13 @@ static const int* checkboxMargins(NSControlSize controlSize)
     return margins[controlSize];
 }
 
-static LengthSize checkboxSize(const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor)
+static LengthSize checkboxSize(const LengthSize& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
     if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
         return zoomedSize;
 
-    // Use the font size to determine the intrinsic width of the control.
-    return sizeFromFont(font, zoomedSize, zoomFactor, checkboxSizes());
+    return sizeFromNSControlSize(NSControlSizeSmall, zoomedSize, zoomFactor, checkboxSizes());
 }
 
 // Radio Buttons
@@ -312,14 +321,13 @@ static const int* radioMargins(NSControlSize controlSize)
     return margins[controlSize];
 }
 
-static LengthSize radioSize(const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor)
+static LengthSize radioSize(const LengthSize& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
     if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
         return zoomedSize;
 
-    // Use the font size to determine the intrinsic width of the control.
-    return sizeFromFont(font, zoomedSize, zoomFactor, radioSizes());
+    return sizeFromNSControlSize(NSControlSizeSmall, zoomedSize, zoomFactor, radioSizes());
 }
     
 static void configureToggleButton(NSCell* cell, ControlPart buttonType, const ControlStates& states, const IntSize& zoomedSize, float zoomFactor, bool isStateChange)
@@ -381,8 +389,8 @@ static bool drawCellFocusRingWithFrameAtTime(NSCell *cell, NSRect cellFrame, NSV
 
     // FIXME: This color should be shared with RenderThemeMac. For now just use the same NSColor color.
     // The color is expected to be opaque, since CoreGraphics will apply opacity when drawing (because opacity is normally animated).
-    auto color = colorFromNSColor([NSColor keyboardFocusIndicatorColor]).opaqueColor();
-    auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, cachedCGColor(color)));
+    auto color = colorFromCocoaColor([NSColor keyboardFocusIndicatorColor]).opaqueColor();
+    auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, cachedCGColor(color).get()));
     CGContextSetStyle(cgContext, style.get());
 
     CGContextBeginTransparencyLayerWithRect(cgContext, NSRectToCGRect(cellFrame), nullptr);
@@ -726,7 +734,7 @@ bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell *cell, GraphicsCont
 
     if (useImageBuffer) {
         NSRect imageBufferDrawRect = NSRect(FloatRect(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth, rect.width(), rect.height()));
-        auto imageBuffer = ImageBuffer::createCompatibleBuffer(rect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), deviceScaleFactor, DestinationColorSpace::SRGB(), context);
+        auto imageBuffer = context.createImageBuffer(rect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), { deviceScaleFactor, deviceScaleFactor });
         if (!imageBuffer)
             return needsRepaint;
         {
@@ -812,9 +820,9 @@ LengthSize ThemeMac::controlSize(ControlPart part, const FontCascade& font, cons
 {
     switch (part) {
     case CheckboxPart:
-        return checkboxSize(font, zoomedSize, zoomFactor);
+        return checkboxSize(zoomedSize, zoomFactor);
     case RadioPart:
-        return radioSize(font, zoomedSize, zoomFactor);
+        return radioSize(zoomedSize, zoomFactor);
     case PushButtonPart:
         // Height is reset to auto so that specified heights can be ignored.
         return sizeFromFont(font, { zoomedSize.width, { } }, zoomFactor, buttonSizes());
@@ -936,12 +944,12 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, const ControlStates& st
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void ThemeMac::paint(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance, bool useDarkAppearance)
+void ThemeMac::paint(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance, bool useDarkAppearance, const Color& tintColor)
 {
     UNUSED_PARAM(useSystemAppearance);
     UNUSED_PARAM(pageScaleFactor);
 
-    LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
+    LocalDefaultSystemAppearance localAppearance(useDarkAppearance, tintColor);
 
     switch (part) {
         case CheckboxPart:

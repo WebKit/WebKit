@@ -28,7 +28,6 @@
 
 from webkitpy.tool import steps
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
-from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 
 
 class ApplyWatchListLocal(AbstractSequencedCommand):

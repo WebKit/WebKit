@@ -50,7 +50,8 @@ public:
     std::optional<ByteRange> byteRange() const final { return m_byteRange; }
 
     AtomString trackID() const final;
-    WebCore::PlatformSample platformSample() final;
+    WebCore::PlatformSample platformSample() const final;
+    WebCore::PlatformSample::Type platformSampleType() const final { return WebCore::PlatformSample::ByteRangeSampleType; }
     void offsetTimestampsBy(const MediaTime&) final;
     void setTimestamps(const MediaTime&, const MediaTime&) final;
 

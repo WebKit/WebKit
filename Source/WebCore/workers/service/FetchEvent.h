@@ -27,13 +27,19 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DOMPromiseProxy.h"
 #include "ExtendableEvent.h"
 #include "FetchRequest.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 
+namespace JSC {
+class JSGlobalObject;
+}
+
 namespace WebCore {
 
+class DOMPromise;
 class FetchResponse;
 class ResourceError;
 
@@ -43,15 +49,15 @@ public:
     struct Init : ExtendableEventInit {
         RefPtr<FetchRequest> request;
         String clientId;
-        String reservedClientId;
-        String targetClientId;
+        String resultingClientId;
+        RefPtr<DOMPromise> handled;
     };
 
     WEBCORE_EXPORT static Ref<FetchEvent> createForTesting(ScriptExecutionContext&);
 
-    static Ref<FetchEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<FetchEvent> create(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new FetchEvent(type, WTFMove(initializer), isTrusted));
+        return adoptRef(*new FetchEvent(globalObject, type, WTFMove(initializer), isTrusted));
     }
     ~FetchEvent();
 
@@ -64,15 +70,20 @@ public:
 
     FetchRequest& request() { return m_request.get(); }
     const String& clientId() const { return m_clientId; }
-    const String& reservedClientId() const { return m_reservedClientId; }
-    const String& targetClientId() const { return m_targetClientId; }
+    const String& resultingClientId() const { return m_resultingClientId; }
+    DOMPromise& handled() const { return m_handled.get(); }
 
     bool respondWithEntered() const { return m_respondWithEntered; }
 
     static ResourceError createResponseError(const URL&, const String&, ResourceError::IsSanitized = ResourceError::IsSanitized::No);
 
+    using PreloadResponsePromise = DOMPromiseProxy<IDLAny>;
+    PreloadResponsePromise& preloadResponse(ScriptExecutionContext&);
+
+    void setNavigationPreloadIdentifier(FetchIdentifier);
+
 private:
-    WEBCORE_EXPORT FetchEvent(const AtomString&, Init&&, IsTrusted);
+    WEBCORE_EXPORT FetchEvent(JSC::JSGlobalObject&, const AtomString&, Init&&, IsTrusted);
 
     void promiseIsSettled();
     void processResponse(Expected<Ref<FetchResponse>, std::optional<ResourceError>>&&);
@@ -80,16 +91,26 @@ private:
 
     Ref<FetchRequest> m_request;
     String m_clientId;
-    String m_reservedClientId;
-    String m_targetClientId;
+    String m_resultingClientId;
 
     bool m_respondWithEntered { false };
     bool m_waitToRespond { false };
     bool m_respondWithError { false };
     RefPtr<DOMPromise> m_respondPromise;
+    Ref<DOMPromise> m_handled;
 
     ResponseCallback m_onResponse;
+
+    FetchIdentifier m_navigationPreloadIdentifier;
+    std::unique_ptr<PreloadResponsePromise> m_preloadResponsePromise;
 };
+
+inline void FetchEvent::setNavigationPreloadIdentifier(FetchIdentifier identifier)
+{
+    ASSERT(!m_navigationPreloadIdentifier);
+    ASSERT(identifier);
+    m_navigationPreloadIdentifier = identifier;
+}
 
 } // namespace WebCore
 

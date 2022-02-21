@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-CompleteSubspace::CompleteSubspace(CString name, Heap& heap, HeapCellType* heapCellType, AlignedMemoryAllocator* alignedMemoryAllocator)
+CompleteSubspace::CompleteSubspace(CString name, Heap& heap, const HeapCellType& heapCellType, AlignedMemoryAllocator* alignedMemoryAllocator)
     : Subspace(name, heap)
 {
     initialize(heapCellType, alignedMemoryAllocator);
@@ -45,14 +45,9 @@ CompleteSubspace::~CompleteSubspace()
 {
 }
 
-Allocator CompleteSubspace::allocatorFor(size_t size, AllocatorForMode mode)
+Allocator CompleteSubspace::allocatorForNonInline(size_t size, AllocatorForMode mode)
 {
-    return allocatorForNonVirtual(size, mode);
-}
-
-void* CompleteSubspace::allocate(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
-{
-    return allocateNonVirtual(vm, size, deferralContext, failureMode);
+    return allocatorFor(size, mode);
 }
 
 Allocator CompleteSubspace::allocatorForSlow(size_t size)
@@ -120,11 +115,11 @@ void* CompleteSubspace::allocateSlow(VM& vm, size_t size, GCDeferralContext* def
 void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* deferralContext)
 {
     if constexpr (validateDFGDoesGC)
-        vm.heap.verifyCanGC();
+        vm.verifyCanGC();
 
     sanitizeStackForVM(vm);
-    
-    if (Allocator allocator = allocatorFor(size, AllocatorForMode::EnsureAllocator))
+
+    if (Allocator allocator = allocatorForNonInline(size, AllocatorForMode::EnsureAllocator))
         return allocator.allocate(vm.heap, deferralContext, AllocationFailureMode::ReturnNull);
     
     if (size <= Options::preciseAllocationCutoff()
@@ -156,7 +151,7 @@ void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* 
 void* CompleteSubspace::reallocatePreciseAllocationNonVirtual(VM& vm, HeapCell* oldCell, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
     if constexpr (validateDFGDoesGC)
-        vm.heap.verifyCanGC();
+        vm.verifyCanGC();
 
     // The following conditions are met in Butterfly for example.
     ASSERT(oldCell->isPreciseAllocation());

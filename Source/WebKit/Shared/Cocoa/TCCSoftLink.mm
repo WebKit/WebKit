@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#import "TCCSPI.h"
+#import <pal/spi/cocoa/TCCSPI.h>
 
 #import <wtf/SoftLinking.h>
 
@@ -40,3 +40,6 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(WebKit, TCC, kTCCServiceWebKitIntelligentTrackingP
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebKit, TCC, TCCAccessCheckAuditToken, Boolean, (CFStringRef service, audit_token_t auditToken, CFDictionaryRef options), (service, auditToken, options))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebKit, TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebKit, TCC, TCCAccessPreflightWithAuditToken, TCCAccessPreflightResult, (CFStringRef service, audit_token_t token, CFDictionaryRef options), (service, token, options))
+#if HAVE(TCC_IOS_14_BIG_SUR_SPI)
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebKit, TCC, tcc_identity_create, tcc_identity_t, (tcc_identity_type_t type, const char * identifier), (type, identifier));
+#endif // HAVE(TCC_IOS_14_BIG_SUR_SPI)

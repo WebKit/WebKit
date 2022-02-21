@@ -24,7 +24,6 @@
  */
 
 [
-    ImplementationLacksVTable,
     Exposed=(Window,Worker)
 ] interface IDBKeyRange {
     readonly attribute [OverrideIDLType=IDLIDBKey] any lower;
@@ -32,10 +31,10 @@
     readonly attribute boolean lowerOpen;
     readonly attribute boolean upperOpen;
 
-    [NewObject, CallWith=GlobalObject] static IDBKeyRange only(any value);
-    [NewObject, CallWith=GlobalObject] static IDBKeyRange lowerBound(any lower, optional boolean open = false);
-    [NewObject, CallWith=GlobalObject] static IDBKeyRange upperBound(any upper, optional boolean open = false);
-    [NewObject, CallWith=GlobalObject] static IDBKeyRange bound(any lower, any upper, optional boolean lowerOpen = false, optional boolean upperOpen = false);
+    [NewObject, CallWith=CurrentGlobalObject] static IDBKeyRange only(any value);
+    [NewObject, CallWith=CurrentGlobalObject] static IDBKeyRange lowerBound(any lower, optional boolean open = false);
+    [NewObject, CallWith=CurrentGlobalObject] static IDBKeyRange upperBound(any upper, optional boolean open = false);
+    [NewObject, CallWith=CurrentGlobalObject] static IDBKeyRange bound(any lower, any upper, optional boolean lowerOpen = false, optional boolean upperOpen = false);
 
-    [CallWith=GlobalObject] boolean includes(any key);
+    [CallWith=CurrentGlobalObject] boolean includes(any key);
 };

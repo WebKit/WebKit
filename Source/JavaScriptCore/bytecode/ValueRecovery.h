@@ -60,6 +60,9 @@ enum ValueRecoveryTechnique : uint8_t {
     DisplacedInJSStack,
     // It's in the stack, at a different location, and it's unboxed.
     Int32DisplacedInJSStack,
+#if USE(JSVALUE32_64)
+    Int32TagDisplacedInJSStack, // int32 stored in tag field
+#endif
     Int52DisplacedInJSStack,
     StrictInt52DisplacedInJSStack,
     DoubleDisplacedInJSStack,
@@ -187,7 +190,19 @@ public:
         result.m_source = WTFMove(u);
         return result;
     }
-    
+
+#if USE(JSVALUE32_64)
+    static ValueRecovery calleeSaveRegDisplacedInJSStack(VirtualRegister virtualReg, bool inTag)
+    {
+        ValueRecovery result;
+        UnionType u;
+        u.virtualReg = virtualReg.offset();
+        result.m_source = WTFMove(u);
+        result.m_technique = inTag ? Int32TagDisplacedInJSStack : Int32DisplacedInJSStack;
+        return result;
+    }
+#endif
+
     static ValueRecovery constant(JSValue value)
     {
         ValueRecovery result;
@@ -258,6 +273,9 @@ public:
         switch (m_technique) {
         case DisplacedInJSStack:
         case Int32DisplacedInJSStack:
+#if USE(JSVALUE32_64)
+        case Int32TagDisplacedInJSStack:
+#endif
         case Int52DisplacedInJSStack:
         case StrictInt52DisplacedInJSStack:
         case DoubleDisplacedInJSStack:
@@ -282,6 +300,9 @@ public:
             return DataFormatJS;
         case UnboxedInt32InGPR:
         case Int32DisplacedInJSStack:
+#if USE(JSVALUE32_64)
+        case Int32TagDisplacedInJSStack:
+#endif
             return DataFormatInt32;
         case UnboxedInt52InGPR:
         case Int52DisplacedInJSStack:
@@ -358,6 +379,9 @@ public:
         switch (m_technique) {
         case DisplacedInJSStack:
         case Int32DisplacedInJSStack:
+#if USE(JSVALUE32_64)
+        case Int32TagDisplacedInJSStack:
+#endif
         case DoubleDisplacedInJSStack:
         case CellDisplacedInJSStack:
         case BooleanDisplacedInJSStack:

@@ -47,12 +47,6 @@ HTMLPictureElement::~HTMLPictureElement()
 {
 }
 
-void HTMLPictureElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
-{
-    HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
-    sourcesChanged();
-}
-
 Ref<HTMLPictureElement> HTMLPictureElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLPictureElement(tagName, document));

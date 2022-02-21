@@ -25,9 +25,8 @@
 
 [
     InterfaceName=CSSVariableReferenceValue,
-    EnabledAtRuntime=CSSTypedOM,
+    EnabledAtRuntime=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
-    ImplementationLacksVTable,
     Exposed=(Window,Worker,PaintWorklet),
 ] interface CSSOMVariableReferenceValue {
     constructor(USVString variable, optional CSSUnparsedValue? fallback = null);

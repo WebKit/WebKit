@@ -387,6 +387,8 @@ private:
                 
                 break;
             }
+            case CheckInBoundsInt52:
+                break;
                 
             case GetMyArgumentByVal:
             case GetMyArgumentByValOutOfBounds: {
@@ -679,7 +681,7 @@ private:
                 if (JSValue constant = property.value()) {
                     if (constant.isString()) {
                         JSString* string = asString(constant);
-                        if (CacheableIdentifier::isCacheableIdentifierCell(string)) {
+                        if (CacheableIdentifier::isCacheableIdentifierCell(string) && !parseIndex(CacheableIdentifier::createFromCell(string).uid())) {
                             const StringImpl* impl = string->tryGetValueImpl();
                             RELEASE_ASSERT(impl);
                             m_graph.freezeStrong(string);
@@ -734,9 +736,7 @@ private:
                                 Structure* structure = rareData->objectAllocationStructure();
                                 JSObject* prototype = rareData->objectAllocationPrototype();
                                 if (structure
-                                    && (structure->hasMonoProto() || prototype)
-                                    && rareData->allocationProfileWatchpointSet().isStillValid()) {
-
+                                    && (structure->hasMonoProto() || prototype)) {
                                     m_graph.freeze(rareData);
                                     m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                                     node->convertToNewObject(m_graph.registerStructure(structure));
@@ -756,7 +756,6 @@ private:
                                     }
                                     changed = true;
                                     break;
-
                                 }
                             }
                         }
@@ -779,8 +778,7 @@ private:
                                 Structure* structure = rareData->internalFunctionAllocationStructure();
                                 if (structure
                                     && structure->classInfo() == (node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())
-                                    && structure->globalObject() == globalObject
-                                    && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                                    && structure->globalObject() == globalObject) {
                                     m_graph.freeze(rareData);
                                     m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                                     node->convertToNewInternalFieldObject(m_graph.registerStructure(structure));
@@ -805,8 +803,7 @@ private:
                                     Structure* structure = rareData->internalFunctionAllocationStructure();
                                     if (structure
                                         && structure->classInfo() == classInfo
-                                        && structure->globalObject() == globalObject
-                                        && rareData->allocationProfileWatchpointSet().isStillValid()) {
+                                        && structure->globalObject() == globalObject) {
                                         m_graph.freeze(rareData);
                                         m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                                         node->convertToNewInternalFieldObjectWithInlineFields(newOp, m_graph.registerStructure(structure));
@@ -839,8 +836,17 @@ private:
                     Structure* structure = nullptr;
                     if (base.isNull())
                         structure = globalObject->nullPrototypeObjectStructure();
-                    else if (base.isObject())
+                    else if (base.isObject()) {
+                        // Having a bad time clears the structureCache, and so it should invalidate this structure.
+                        bool isHavingABadTime = globalObject->isHavingABadTime();
+                        // Normally, we would always install a watchpoint. In this case, however, if we haveABadTime, we
+                        // still want to optimize. There is no watchpoint for that case though, so we need to make sure this load
+                        // does not get hoisted above the check.
+                        WTF::loadLoadFence();
+                        if (!isHavingABadTime)
+                            m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
                         structure = globalObject->vm().structureCache.emptyObjectStructureConcurrently(globalObject, base.getObject(), JSFinalObject::defaultInlineCapacity());
+                    }
                     
                     if (structure) {
                         node->convertToNewObject(m_graph.registerStructure(structure));

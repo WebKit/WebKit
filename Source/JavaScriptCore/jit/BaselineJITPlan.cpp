@@ -34,11 +34,17 @@ BaselineJITPlan::BaselineJITPlan(CodeBlock* codeBlock, BytecodeIndex loopOSREntr
     : JITPlan(JITCompilationMode::Baseline, codeBlock)
     , m_jit(codeBlock->vm(), codeBlock, loopOSREntryBytecodeIndex)
 {
+#if CPU(ARM64E)
+    m_jit.m_assembler.buffer().arm64eHash().deallocatePinForCurrentThread();
+#endif
     m_jit.doMainThreadPreparationBeforeCompile();
 }
 
 auto BaselineJITPlan::compileInThreadImpl() -> CompilationPath
 {
+#if CPU(ARM64E)
+    m_jit.m_assembler.buffer().arm64eHash().allocatePinForCurrentThreadAndInitializeHash();
+#endif
     m_jit.compileAndLinkWithoutFinalizing(JITCompilationCanFail);
     return BaselinePath;
 }
@@ -50,7 +56,7 @@ size_t BaselineJITPlan::codeSize() const
 
 CompilationResult BaselineJITPlan::finalize()
 {
-    CompilationResult result = m_jit.finalizeOnMainThread();
+    CompilationResult result = m_jit.finalizeOnMainThread(m_codeBlock);
     switch (result) {
     case CompilationFailed:
         CODEBLOCK_LOG_EVENT(m_codeBlock, "delayJITCompile", ("compilation failed"));

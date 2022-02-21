@@ -9,9 +9,6 @@ PASS element.labels.length is 0
 Check input
 PASS element.labels.length is 1
 PASS element.labels.length is 0
-Check keygen
-PASS element.labels.length is 1
-PASS element.labels.length is 0
 Check meter
 PASS element.labels.length is 1
 PASS element.labels.length is 0

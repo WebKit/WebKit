@@ -47,7 +47,9 @@ void pas_fast_megapage_table_initialize_static_by_index(pas_fast_megapage_table*
 
     pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
 
+    PAS_IGNORE_WARNINGS_BEGIN("type-limits")
     PAS_ASSERT(index < PAS_NUM_STATIC_FAST_MEGAPAGE_TABLES);
+    PAS_IGNORE_WARNINGS_END
     PAS_ASSERT(table->instances[index] == &pas_fast_megapage_table_impl_null);
 
     num_fields = end - begin + 1; /* Make end inclusive to allow end to straddle a fast_megapage boundary. */
@@ -92,11 +94,12 @@ void pas_fast_megapage_table_set_by_index(pas_fast_megapage_table* table,
     pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
 
     if (index < PAS_NUM_FAST_FAST_MEGAPAGE_BITS
-        && value == pas_small_segregated_fast_megapage_kind) {
+        && value == pas_small_exclusive_segregated_fast_megapage_kind) {
         pas_bitvector_set(table->fast_bits, index, true);
         return;
     }
 
+    PAS_IGNORE_WARNINGS_BEGIN("type-limits")
     for (table_index = 0; table_index < PAS_NUM_STATIC_FAST_MEGAPAGE_TABLES; ++table_index) {
         instance = table->instances[table_index];
         index_begin = instance->index_begin;
@@ -112,6 +115,7 @@ void pas_fast_megapage_table_set_by_index(pas_fast_megapage_table* table,
         pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
         return;
     }
+    PAS_IGNORE_WARNINGS_END
 
     PAS_ASSERT(PAS_USE_DYNAMIC_FAST_MEGAPAGE_TABLE);
 

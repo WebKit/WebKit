@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x81
           RenderText {#text} at (0,0) size 65x26
             text run at (0,0) width 65: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (64,0) size 1x26
           RenderText {#text} at (0,27) size 690x53
             text run at (0,27) width 690: "Deleting when a selection starts in the middle of the last paragraph and"
             text run at (0,54) width 348: "extends to the end of that paragraph"
@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,27) size 738x80
             text run at (0,27) width 738: "Should see the four lines in the red box. First line should be \"one\". Next one"
             text run at (0,54) width 167: "should be \"two\". "
-            text run at (167,54) width 509: "Next one should be \"three\". Last one should be \"fo\"."
+            text run at (166,54) width 509: "Next one should be \"three\". Last one should be \"fo\"."
             text run at (0,81) width 668: "Insertion point should be blinking at the start of the fourth (last) line."
       RenderBlock {DIV} at (0,257) size 784x112
         RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]

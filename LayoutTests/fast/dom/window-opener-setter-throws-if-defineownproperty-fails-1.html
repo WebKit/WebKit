@@ -10,7 +10,7 @@
 <script>
 test(() => {
     Object.defineProperty(window, "opener", { configurable: false });
-    assert_throws(new TypeError, () => { window.opener = 1; });
+    assert_throws_js(TypeError, () => { window.opener = 1; });
 
     const desc = Object.getOwnPropertyDescriptor(window, "opener");
     assert_false("value" in desc);

@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,21 +22,26 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteRenderingBackend {
+messages -> RemoteRenderingBackend NotRefCounted Stream {
     CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::PixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-    WakeUpAndApplyDisplayList(struct WebKit::GPUProcessWakeupMessageArguments arguments)
-    UpdateSharedMemoryForGetPixelBuffer(uint32_t byteCount) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous
-    SemaphoreForGetPixelBuffer() -> (IPC::Semaphore semaphore) Synchronous
-    UpdateSharedMemoryAndSemaphoreForGetPixelBuffer(uint32_t byteCount) -> (WebKit::SharedMemory::IPCHandle handle, IPC::Semaphore semaphore) Synchronous
+    GetPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, struct WebCore::PixelBufferFormat outputFormat, WebCore::IntRect srcRect) -> () Synchronous
+    GetPixelBufferForImageBufferWithNewMemory(WebCore::RenderingResourceIdentifier imageBuffer, WebKit::SharedMemory::IPCHandle handle, struct WebCore::PixelBufferFormat outputFormat, WebCore::IntRect srcRect) -> () Synchronous NotStreamEncodable
     DestroyGetPixelBufferSharedMemory()
+    PutPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, WebCore::PixelBuffer pixelBuffer,  WebCore::IntRect srcRect, WebCore::IntPoint destPoint, enum:uint8_t WebCore::AlphaPremultiplication destFormat)
     GetDataURLForImageBuffer(String mimeType, std::optional<double> quality, enum:uint8_t WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (String urlString) Synchronous
     GetDataForImageBuffer(String mimeType, std::optional<double> quality, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (Vector<uint8_t> data) Synchronous
-    GetShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, enum:uint8_t WebCore::PreserveResolution preserveResolution) -> (WebKit::ShareableBitmap::Handle handle) Synchronous
-    CacheNativeImage(WebKit::ShareableBitmap::Handle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-    CacheFont(IPC::FontReference font)
+    GetShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, enum:uint8_t WebCore::PreserveResolution preserveResolution) -> (WebKit::ShareableBitmap::Handle handle) Synchronous NotStreamEncodableReply
+    GetFilteredImageForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, IPC::FilterReference filter) -> (WebKit::ShareableBitmap::Handle handle) Synchronous NotStreamEncodableReply
+    CacheNativeImage(WebKit::ShareableBitmap::Handle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
+    CacheFont(IPC::FontReference font) NotStreamEncodable
     DeleteAllFonts()
-    DidCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier identifier, WebKit::SharedMemory::IPCHandle handle, WebCore::RenderingResourceIdentifier destinationBufferIdentifier)
-    ReleaseRemoteResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
+    ReleaseRemoteResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+
+    MarkSurfaceNonVolatile(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (std::optional<WebKit::ImageBufferBackendHandle> backendHandle, bool bufferWasEmpty) Synchronous NotStreamEncodableReply
+    SwapToValidFrontBuffer(struct WebKit::BufferIdentifierSet bufferSet) -> (struct WebKit::BufferIdentifierSet swappedBufferSet, std::optional<WebKit::ImageBufferBackendHandle> frontBufferHandle, bool frontBufferWasEmpty) Synchronous NotStreamEncodableReply
+
+    MarkSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier> renderingResourceIdentifiers) -> (Vector<WebCore::RenderingResourceIdentifier> inUseBufferIdentifiers) Synchronous
+
     FinalizeRenderingUpdate(WebKit::RenderingUpdateID renderingUpdateID)
 }
 

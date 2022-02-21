@@ -1,0 +1,27 @@
+This tests that an append of non-overlapping samples of varying durations, some of them under a millisecond, don't trigger accidental erasure.
+This is done in some MP4 files, where decode durations are manipulated to code media containing B-frames while maintaining a start PTS = 0.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(makeSamples(1)))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '5') OK
+{PTS({0/10000 = 0.000000}), DTS({0/10000 = 0.000000}), duration({1/10000 = 0.000100}), flags(1), generation(1)}
+{PTS({2000/10000 = 0.200000}), DTS({1/10000 = 0.000100}), duration({999/10000 = 0.099900}), flags(0), generation(1)}
+{PTS({1000/10000 = 0.100000}), DTS({1000/10000 = 0.100000}), duration({1/10000 = 0.000100}), flags(0), generation(1)}
+{PTS({4000/10000 = 0.400000}), DTS({1001/10000 = 0.100100}), duration({999/10000 = 0.099900}), flags(0), generation(1)}
+{PTS({3000/10000 = 0.300000}), DTS({2000/10000 = 0.200000}), duration({1000/10000 = 0.100000}), flags(0), generation(1)}
+Testing the behavior is consistent when re-appending.
+RUN(sourceBuffer.appendBuffer(makeSamples(2)))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '5') OK
+{PTS({0/10000 = 0.000000}), DTS({0/10000 = 0.000000}), duration({1/10000 = 0.000100}), flags(1), generation(2)}
+{PTS({2000/10000 = 0.200000}), DTS({1/10000 = 0.000100}), duration({999/10000 = 0.099900}), flags(0), generation(2)}
+{PTS({1000/10000 = 0.100000}), DTS({1000/10000 = 0.100000}), duration({1/10000 = 0.000100}), flags(0), generation(2)}
+{PTS({4000/10000 = 0.400000}), DTS({1001/10000 = 0.100100}), duration({999/10000 = 0.099900}), flags(0), generation(2)}
+{PTS({3000/10000 = 0.300000}), DTS({2000/10000 = 0.200000}), duration({1000/10000 = 0.100000}), flags(0), generation(2)}
+END OF TEST
+

@@ -11,12 +11,5 @@ description: Creating an object with "new Object(null,2,3)"
 
 var obj = new Object(null, 2, 3);
 
-//CHECK#1
-if (obj.constructor !== Object) {
-  throw new Test262Error('#1: Since Object as a function calling is the same as function calling list of arguments can appears in braces;');
-}
-
-//CHECK#2
-if (typeof obj !== "object") {
-  throw new Test262Error('#2: Since Object as a function calling is the same as function calling list of arguments can appears in braces;');
-}
+assert.sameValue(obj.constructor, Object, 'The value of obj.constructor is expected to equal the value of Object');
+assert.sameValue(typeof obj, "object", 'The value of `typeof obj` is expected to be "object"');

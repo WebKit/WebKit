@@ -1,3 +1,0 @@
-
-PASS Author origin style rule overrides meta color-scheme.
-

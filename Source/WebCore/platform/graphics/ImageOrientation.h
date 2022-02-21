@@ -30,6 +30,12 @@
 #include "FloatSize.h"
 #include <wtf/EnumTraits.h>
 
+// X11 headers define a bunch of macros with common terms, interfering with WebCore and WTF enum values.
+// As a workaround, we explicitly undef them here.
+#if defined(None)
+#undef None
+#endif
+
 namespace WebCore {
 
 struct ImageOrientation {
@@ -100,6 +106,36 @@ struct ImageOrientation {
 
         ASSERT_NOT_REACHED();
         return AffineTransform();
+    }
+
+    ImageOrientation withFlippedY() const
+    {
+        ASSERT(isValidEXIFOrientation(m_orientation));
+
+        switch (m_orientation) {
+        case FromImage:
+            ASSERT_NOT_REACHED();
+            return None;
+        case OriginTopLeft:
+            return OriginBottomLeft;
+        case OriginTopRight:
+            return OriginBottomRight;
+        case OriginBottomRight:
+            return OriginTopRight;
+        case OriginBottomLeft:
+            return OriginTopLeft;
+        case OriginLeftTop:
+            return OriginLeftBottom;
+        case OriginRightTop:
+            return OriginRightBottom;
+        case OriginRightBottom:
+            return OriginRightTop;
+        case OriginLeftBottom:
+            return OriginLeftTop;
+        }
+
+        ASSERT_NOT_REACHED();
+        return None;
     }
 
 private:

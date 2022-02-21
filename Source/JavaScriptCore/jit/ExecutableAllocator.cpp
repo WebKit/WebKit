@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,11 +29,11 @@
 #if ENABLE(JIT)
 
 #include "ExecutableAllocationFuzz.h"
-#include "IterationStatus.h"
 #include "JITOperationValidation.h"
 #include "LinkBuffer.h"
 #include <wtf/FastBitVector.h>
 #include <wtf/FileSystem.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/PageReservation.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RedBlackTree.h>
@@ -43,6 +43,7 @@
 
 #if USE(LIBPAS_JIT_HEAP)
 #include <bmalloc/jit_heap.h>
+#include <bmalloc/jit_heap_config.h>
 #else
 #include <wtf/MetaAllocator.h>
 #endif
@@ -84,10 +85,12 @@ namespace JSC {
 
 using namespace WTF;
 
+#if USE(LIBPAS_JIT_HEAP)
+static constexpr size_t minimumPoolSizeForSegregatedHeap = 256 * MB;
+#endif
+
 #if defined(FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB) && FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB > 0
 static constexpr size_t fixedExecutableMemoryPoolSize = FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB * MB;
-#elif CPU(ARM)
-static constexpr size_t fixedExecutableMemoryPoolSize = 16 * MB;
 #elif CPU(ARM64)
 #if ENABLE(JUMP_ISLANDS)
 static constexpr size_t fixedExecutableMemoryPoolSize = 512 * MB;
@@ -140,7 +143,7 @@ void ExecutableAllocator::setJITEnabled(bool enabled)
     g_jscConfig.jitDisabled = !enabled;
 
 #if HAVE(IOS_JIT_RESTRICTIONS)
-    if (!enabled) {
+    if (!enabled && processHasEntitlement("dynamic-codesigning")) {
         // Because of an OS quirk, even after the JIT region has been unmapped,
         // the OS thinks that region is reserved, and as such, can cause Gigacage
         // allocation to fail. We work around this by initializing the Gigacage
@@ -354,17 +357,22 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
     }
     reservation.size = std::max(roundUpToMultipleOf(pageSize(), reservation.size), pageSize() * 2);
 
+#if USE(LIBPAS_JIT_HEAP)
+    if (reservation.size < minimumPoolSizeForSegregatedHeap)
+        jit_heap_runtime_config.max_segregated_object_size = 0;
+#endif
+
     auto tryCreatePageReservation = [] (size_t reservationSize) {
 #if OS(LINUX)
         // If we use uncommitted reservation, mmap operation is recorded with small page size in perf command's output.
         // This makes the following JIT code logging broken and some of JIT code is not recorded correctly.
         // To avoid this problem, we use committed reservation if we need perf JITDump logging.
         if (Options::logJITCodeForPerf())
-            return PageReservation::reserveAndCommitWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
+            return PageReservation::tryReserveAndCommitWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
 #endif
         if (Options::useJITCage() && JSC_ALLOW_JIT_CAGE_SPECIFIC_RESERVATION)
-            return PageReservation::reserve(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, Options::useJITCage());
-        return PageReservation::reserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
+            return PageReservation::tryReserve(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, Options::useJITCage());
+        return PageReservation::tryReserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
     };
 
     reservation.pageReservation = tryCreatePageReservation(reservation.size);
@@ -400,10 +408,10 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
 #endif
 
         void* reservationEnd = reinterpret_cast<uint8_t*>(reservation.base) + reservation.size;
-        g_jscConfig.startExecutableMemory = tagCodePtr<ExecutableMemoryPtrTag>(reservation.base);
-        g_jscConfig.endExecutableMemory = tagCodePtr<ExecutableMemoryPtrTag>(reservationEnd);
+        g_jscConfig.startExecutableMemory = reservation.base;
+        g_jscConfig.endExecutableMemory = reservationEnd;
 
-#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+#if !USE(SYSTEM_MALLOC) && ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
         WebConfig::g_config[0] = bitwise_cast<uintptr_t>(reservation.base);
         WebConfig::g_config[1] = bitwise_cast<uintptr_t>(reservationEnd);
 #endif
@@ -471,9 +479,8 @@ public:
         m_reservation.deallocate();
     }
 
-    void* memoryStart() { return untagCodePtr<ExecutableMemoryPtrTag>(g_jscConfig.startExecutableMemory); }
-    void* memoryEnd() { return untagCodePtr<ExecutableMemoryPtrTag>(g_jscConfig.endExecutableMemory); }
-    bool isJITPC(void* pc) { return memoryStart() <= pc && pc < memoryEnd(); }
+    void* memoryStart() { return g_jscConfig.startExecutableMemory; }
+    void* memoryEnd() { return g_jscConfig.endExecutableMemory; }
     bool isValid() { return !!m_reservation; }
 
     RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes)
@@ -771,7 +778,7 @@ private:
             RELEASE_ASSERT(!m_start);
             RELEASE_ASSERT(!m_end);
             m_start = reinterpret_cast<uintptr_t>(start);
-            m_end = m_start + sizeInBytes; 
+            m_end = m_start + sizeInBytes;
             jit_heap_add_fresh_memory(pas_range_create(m_start, m_end));
         }
 
@@ -1129,12 +1136,6 @@ void* endOfFixedExecutableMemoryPoolImpl()
     return allocator->memoryEnd();
 }
 
-bool isJITPC(void* pc)
-{
-    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
-    return allocator && allocator->isJITPC(pc);
-}
-
 void dumpJITMemory(const void* dst, const void* src, size_t size)
 {
     RELEASE_ASSERT(Options::dumpJITMemoryPath());
@@ -1188,7 +1189,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
     static std::once_flag once;
     std::call_once(once, [] {
         buffer = bitwise_cast<uint8_t*>(malloc(bufferSize));
-        flushQueue.construct(WorkQueue::create("jsc.dumpJITMemory.queue", WorkQueue::Type::Serial, WorkQueue::QOS::Background));
+        flushQueue.construct(WorkQueue::create("jsc.dumpJITMemory.queue", WorkQueue::QOS::Background));
         std::atexit([] {
             Locker locker { dumpJITMemoryLock };
             DumpJIT::flush();

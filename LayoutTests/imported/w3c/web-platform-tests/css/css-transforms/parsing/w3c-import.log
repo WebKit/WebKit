@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/backface-visibility-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/backface-visibility-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/backface-visibility-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/perspective-origin-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/perspective-origin-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/perspective-origin-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/rotate-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/rotate-parsing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/scale-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/scale-parsing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-box-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-box-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-box-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-origin-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-origin-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-origin-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/transform-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/translate-parsing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/parsing/translate-parsing-valid.html

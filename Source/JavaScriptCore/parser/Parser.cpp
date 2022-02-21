@@ -3576,6 +3576,27 @@ template <class TreeBuilder> typename TreeBuilder::ImportSpecifier Parser<LexerT
 }
 
 template <typename LexerType>
+template <class TreeBuilder> typename TreeBuilder::ImportAssertionList Parser<LexerType>::parseImportAssertions(TreeBuilder& context)
+{
+    auto assertionList = context.createImportAssertionList();
+    consumeOrFail(OPENBRACE, "Expected opening '{' at the start of import assertion");
+    while (!match(CLOSEBRACE)) {
+        failIfFalse(matchIdentifierOrKeyword() || match(STRING), "Expected an assertion key");
+        auto key = m_token.m_data.ident;
+        next();
+        consumeOrFail(COLON, "Expected ':' after assertion key");
+        failIfFalse(match(STRING), "Expected an assertion value");
+        auto value = m_token.m_data.ident;
+        next();
+        context.appendImportAssertion(assertionList, *key, *value);
+        if (!consume(COMMA))
+            break;
+    }
+    handleProductionOrFail2(CLOSEBRACE, "}", "end", "import assertion");
+    return assertionList;
+}
+
+template <typename LexerType>
 template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclaration(TreeBuilder& context)
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-imports
@@ -3587,10 +3608,19 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
 
     if (match(STRING)) {
         // import ModuleSpecifier ;
+        // import ModuleSpecifier [no LineTerminator here] AssertClause ;
         auto moduleName = parseModuleName(context);
         failIfFalse(moduleName, "Cannot parse the module name");
+
+        typename TreeBuilder::ImportAssertionList assertionList = 0;
+        if (Options::useImportAssertion() && !m_lexer->hasLineTerminatorBeforeToken() && matchContextualKeyword(m_vm.propertyNames->builtinNames().assertPublicName())) {
+            next();
+            assertionList = parseImportAssertions(context);
+            failIfFalse(assertionList, "Unable to parse import assertion");
+        }
+
         failIfFalse(autoSemiColon(), "Expected a ';' following a targeted import declaration");
-        return context.createImportDeclaration(importLocation, specifierList, moduleName);
+        return context.createImportDeclaration(importLocation, specifierList, moduleName, assertionList);
     }
 
     bool isFinishedParsingImport = false;
@@ -3640,9 +3670,18 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
 
     auto moduleName = parseModuleName(context);
     failIfFalse(moduleName, "Cannot parse the module name");
+
+    // [no LineTerminator here] AssertClause ;
+    typename TreeBuilder::ImportAssertionList assertionList = 0;
+    if (Options::useImportAssertion() && !m_lexer->hasLineTerminatorBeforeToken() && matchContextualKeyword(m_vm.propertyNames->builtinNames().assertPublicName())) {
+        next();
+        assertionList = parseImportAssertions(context);
+        failIfFalse(assertionList, "Unable to parse import assertion");
+    }
+
     failIfFalse(autoSemiColon(), "Expected a ';' following a targeted import declaration");
 
-    return context.createImportDeclaration(importLocation, specifierList, moduleName);
+    return context.createImportDeclaration(importLocation, specifierList, moduleName, assertionList);
 }
 
 template <typename LexerType>
@@ -3714,6 +3753,15 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         next();
         auto moduleName = parseModuleName(context);
         failIfFalse(moduleName, "Cannot parse the 'from' clause");
+
+        // [no LineTerminator here] AssertClause ;
+        typename TreeBuilder::ImportAssertionList assertionList = 0;
+        if (Options::useImportAssertion() && !m_lexer->hasLineTerminatorBeforeToken() && matchContextualKeyword(m_vm.propertyNames->builtinNames().assertPublicName())) {
+            next();
+            assertionList = parseImportAssertions(context);
+            failIfFalse(assertionList, "Unable to parse import assertion");
+        }
+
         failIfFalse(autoSemiColon(), "Expected a ';' following a targeted export declaration");
 
         if (exportedName) {
@@ -3722,10 +3770,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             auto localName = &m_vm.propertyNames->starNamespacePrivateName;
             auto specifier = context.createExportSpecifier(specifierLocation, *localName, *exportedName);
             context.appendExportSpecifier(specifierList, specifier);
-            return context.createExportNamedDeclaration(exportLocation, specifierList, moduleName);
+            return context.createExportNamedDeclaration(exportLocation, specifierList, moduleName, assertionList);
         }
 
-        return context.createExportAllDeclaration(exportLocation, moduleName);
+        return context.createExportAllDeclaration(exportLocation, moduleName, assertionList);
     }
 
     case DEFAULT: {
@@ -3847,10 +3895,18 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         handleProductionOrFail2(CLOSEBRACE, "}", "end", "export list");
 
         typename TreeBuilder::ModuleName moduleName = 0;
+        typename TreeBuilder::ImportAssertionList assertionList = 0;
         if (matchContextualKeyword(m_vm.propertyNames->from)) {
             next();
             moduleName = parseModuleName(context);
             failIfFalse(moduleName, "Cannot parse the 'from' clause");
+
+            // [no LineTerminator here] AssertClause ;
+            if (Options::useImportAssertion() && !m_lexer->hasLineTerminatorBeforeToken() && matchContextualKeyword(m_vm.propertyNames->builtinNames().assertPublicName())) {
+                next();
+                assertionList = parseImportAssertions(context);
+                failIfFalse(assertionList, "Unable to parse import assertion");
+            }
         } else
             semanticFailIfTrue(hasReferencedModuleExportNames, "Cannot use module export names if they reference variable names in the current module");
         failIfFalse(autoSemiColon(), "Expected a ';' following a targeted export declaration");
@@ -3872,7 +3928,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             }
         }
 
-        return context.createExportNamedDeclaration(exportLocation, specifierList, moduleName);
+        return context.createExportNamedDeclaration(exportLocation, specifierList, moduleName, assertionList);
     }
 
     default: {
@@ -4238,6 +4294,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
     bool hasLogicalOperator = false;
     bool hasCoalesceOperator = false;
 
+    int previousOperator = 0;
     while (true) {
         JSTextPosition exprStart = tokenStartPosition();
         int initialAssignments = m_parserState.assignmentCount;
@@ -4250,7 +4307,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
             currentScope()->usePrivateName(*ident);
             m_seenPrivateNameUseInNonReparsingFunctionMode = true;
             next();
-            semanticFailIfTrue(m_token.m_type != INTOKEN, "Bare private name can only be used as the left-hand side of an `in` expression");
+            semanticFailIfTrue(m_token.m_type != INTOKEN || previousOperator >= INTOKEN, "Bare private name can only be used as the left-hand side of an `in` expression");
             current = context.createPrivateIdentifierNode(location, *ident);
         } else
             current = parseUnaryExpression(context);
@@ -4307,6 +4364,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
             context.operatorStackPop(operatorStackDepth);
         }
         context.operatorStackAppend(operatorStackDepth, operatorToken, precedence);
+        previousOperator = operatorToken;
     }
     while (operatorStackDepth) {
         ASSERT(operandStackDepth > 1);
@@ -4978,7 +5036,7 @@ template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(Tre
     consumeOrFailWithFlags(OPENPAREN, TreeBuilder::DontBuildStrings, "Expected opening '(' at start of argument list");
     JSTokenLocation location(tokenLocation());
     if (match(CLOSEPAREN)) {
-        next(TreeBuilder::DontBuildStrings);
+        next();
         return context.createArguments();
     }
     auto argumentsStart = m_token.m_startPosition;
@@ -5094,7 +5152,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             newCount--;
             next();
         } else {
-            failIfTrue(match(IDENT), "\"new.\" can only followed with target");
+            failIfTrue(match(IDENT), "\"new.\" can only be followed with target");
             failDueToUnexpectedToken();
         }
     }
@@ -5129,16 +5187,24 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 base = context.createImportMetaExpr(location, createResolveAndUseVariable(context, &m_vm.propertyNames->metaPrivateName, false, expressionStart, location));
                 next();
             } else {
-                failIfTrue(match(IDENT), "\"import.\" can only followed with meta");
+                failIfTrue(match(IDENT), "\"import.\" can only be followed with meta");
                 failDueToUnexpectedToken();
             }
         } else {
             semanticFailIfTrue(newCount, "Cannot use new with import");
-            consumeOrFail(OPENPAREN, "import call expects exactly one argument");
+            consumeOrFail(OPENPAREN, "import call expects one or two arguments");
             TreeExpression expr = parseAssignmentExpression(context);
             failIfFalse(expr, "Cannot parse expression");
-            consumeOrFail(CLOSEPAREN, "import call expects exactly one argument");
-            base = context.createImportExpr(location, expr, expressionStart, expressionEnd, lastTokenEndPosition());
+            TreeExpression optionExpression = 0;
+            if (consume(COMMA)) {
+                if (!match(CLOSEPAREN)) {
+                    optionExpression = parseAssignmentExpression(context);
+                    failIfFalse(optionExpression, "Cannot parse expression");
+                    consume(COMMA);
+                }
+            }
+            consumeOrFail(CLOSEPAREN, "import call expects one or two arguments");
+            base = context.createImportExpr(location, expr, optionExpression, expressionStart, expressionEnd, lastTokenEndPosition());
         }
     } else if (!baseIsNewTarget) {
         const bool isAsync = matchContextualKeyword(m_vm.propertyNames->async);

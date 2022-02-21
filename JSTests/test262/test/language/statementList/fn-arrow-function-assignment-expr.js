@@ -49,4 +49,4 @@ info: |
 ---*/
 
 
-function fn() {}() => 42;;
+function fn() {}() => 42;

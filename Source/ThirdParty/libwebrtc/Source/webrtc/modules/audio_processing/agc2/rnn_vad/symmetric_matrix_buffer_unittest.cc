@@ -58,17 +58,17 @@ TEST(RnnVadTest, SymmetricMatrixBufferUseCase) {
     SCOPED_TRACE(t);
     const int t_removed = ring_buf.GetArrayView(kRingBufSize - 1)[0];
     ring_buf.Push({&t, 1});
-    // The head of the ring buffer is |t|.
+    // The head of the ring buffer is `t`.
     ASSERT_EQ(t, ring_buf.GetArrayView(0)[0]);
-    // Create the comparisons between |t| and the older elements in the ring
+    // Create the comparisons between `t` and the older elements in the ring
     // buffer.
     std::array<PairType, kRingBufSize - 1> new_comparions;
     for (int i = 0; i < kRingBufSize - 1; ++i) {
-      // Start comparing |t| to the second newest element in the ring buffer.
+      // Start comparing `t` to the second newest element in the ring buffer.
       const int delay = i + 1;
       const auto t_prev = ring_buf.GetArrayView(delay)[0];
       ASSERT_EQ(std::max(0, t - delay), t_prev);
-      // Compare the last element |t| with |t_prev|.
+      // Compare the last element `t` with `t_prev`.
       new_comparions[i].first = t_prev;
       new_comparions[i].second = t;
     }

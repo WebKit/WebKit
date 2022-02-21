@@ -26,6 +26,7 @@
 #ifndef BMALLOC_HEAP_INNARDS_H
 #define BMALLOC_HEAP_INNARDS_H
 
+#include "bmalloc_type.h"
 #include "pas_config.h"
 #include "pas_allocator_counts.h"
 #include "pas_dynamic_primitive_heap_map.h"
@@ -36,6 +37,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
+PAS_API extern const bmalloc_type bmalloc_common_primitive_type;
 PAS_API extern pas_heap bmalloc_common_primitive_heap;
 PAS_API extern pas_intrinsic_heap_support bmalloc_common_primitive_heap_support;
 PAS_API extern pas_allocator_counts bmalloc_allocator_counts;

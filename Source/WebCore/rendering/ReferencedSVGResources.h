@@ -27,13 +27,17 @@
 
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
 class CSSSVGResourceElementClient;
-class ReferenceClipPathOperation;
+class Document;
+class ReferencePathOperation;
 class ReferenceFilterOperation;
+class RenderElement;
 class RenderSVGResourceClipper;
 class RenderSVGResourceFilter;
 class RenderStyle;
@@ -51,7 +55,7 @@ public:
     void updateReferencedResources(Document&, const Vector<std::pair<AtomString, QualifiedName>>&);
 
     // Clipping needs a renderer, filters use an element.
-    RenderSVGResourceClipper* referencedClipperRenderer(Document&, const ReferenceClipPathOperation&);
+    RenderSVGResourceClipper* referencedClipperRenderer(Document&, const ReferencePathOperation&);
     SVGFilterElement* referencedFilterElement(Document&, const ReferenceFilterOperation&);
 
 private:

@@ -96,9 +96,8 @@ private:
     bool increaseBufferedAmount(size_t);
     void decreaseBufferedAmount(size_t);
     template<typename T> void sendMessage(T&&, size_t byteLength);
-    void enqueueTask(Function<void()>&&);
 
-    unsigned long progressIdentifier() const final { return m_inspector.progressIdentifier(); }
+    WebCore::WebSocketChannelIdentifier progressIdentifier() const final { return m_inspector.progressIdentifier(); }
     bool hasCreatedHandshake() const final { return !m_url.isNull(); }
     bool isConnected() const final { return !m_handshakeResponse.isNull(); }
     WebCore::ResourceRequest clientHandshakeRequest(const CookieGetter&) const final { return m_handshakeRequest; }
@@ -111,8 +110,6 @@ private:
     String m_extensions;
     size_t m_bufferedAmount { 0 };
     bool m_isClosing { false };
-    bool m_isSuspended { false };
-    Deque<Function<void()>> m_pendingTasks;
     WebCore::NetworkSendQueue m_messageQueue;
     WebCore::WebSocketChannelInspector m_inspector;
     WebCore::ResourceRequest m_handshakeRequest;

@@ -63,7 +63,7 @@ RenderMarquee::RenderMarquee(RenderLayer* layer)
 {
     ASSERT(layer);
     ASSERT(layer->scrollableArea());
-    layer->scrollableArea()->setConstrainsScrollingToContentEdge(false);
+    layer->scrollableArea()->setScrollClamping(ScrollClamping::Unclamped);
 }
 
 RenderMarquee::~RenderMarquee() = default;

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
@@ -34,7 +34,7 @@ try:
     from .models import ObjectType, EnumType, Frameworks
     from .objc_generator import ObjCTypeCategory, ObjCGenerator
     from .objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
-except ValueError:
+except ImportError:
     from generator import Generator, ucfirst
     from models import ObjectType, EnumType, Frameworks
     from objc_generator import ObjCTypeCategory, ObjCGenerator

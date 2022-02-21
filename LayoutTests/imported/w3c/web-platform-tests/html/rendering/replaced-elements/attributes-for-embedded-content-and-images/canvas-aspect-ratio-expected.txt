@@ -12,4 +12,5 @@ PASS Computed style test: canvas with {"width":null,"height":null}
 PASS Computed style test: canvas with {"width":"10","height":null}
 PASS Computed style test: canvas with {"width":null,"height":"20"}
 PASS Computed style test: canvas with {"width":"xx","height":"20"}
+PASS Computed style test: canvas with {"width":"20","height":"xx"}
 

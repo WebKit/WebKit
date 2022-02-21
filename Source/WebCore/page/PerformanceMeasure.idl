@@ -27,5 +27,5 @@
 [
     Exposed=(Window,Worker),
 ] interface PerformanceMeasure : PerformanceEntry {
-    [CallWith=GlobalObject, CachedAttribute] readonly attribute any detail;
+    [CallWith=CurrentGlobalObject, CachedAttribute] readonly attribute any detail;
 };

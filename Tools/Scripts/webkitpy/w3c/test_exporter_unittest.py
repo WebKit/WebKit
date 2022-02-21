@@ -130,9 +130,9 @@ class TestExporterTest(unittest.TestCase):
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-b', '1234', '-c', '-n', 'USER', '-t', 'TOKEN'])
         exporter = WebPlatformTestExporter(host, options, TestExporterTest.MockGit, TestExporterTest.MockBugzilla, MockWPTGitHub, TestExporterTest.MockWPTLinter)
         exporter.do_export()
-        self.assertEquals(exporter._github.calls, ['create_pr', 'add_label "webkit-export"'])
+        self.assertEqual(exporter._github.calls, ['create_pr', 'add_label "webkit-export"'])
         self.assertTrue('WebKit export' in exporter._github.pull_requests_created[0][1])
-        self.assertEquals(exporter._git.calls, [
+        self.assertEqual(exporter._git.calls, [
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests',
             'fetch',
             'checkout master',
@@ -148,11 +148,11 @@ class TestExporterTest(unittest.TestCase):
             'delete branch wpt-export-for-webkit-1234',
             'checkout master',
             'reset hard origin/master'])
-        self.assertEquals(exporter._bugzilla.calls, [
+        self.assertEqual(exporter._bugzilla.calls, [
             'fetch bug 1234',
             'Append https://github.com/web-platform-tests/wpt/pull/5678 to see also list',
             'post comment to bug 1234 : Submitted web-platform-tests pull request: https://github.com/web-platform-tests/wpt/pull/5678'])
-        self.assertEquals(mock_linter.calls, ['/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests', 'lint'])
+        self.assertEqual(mock_linter.calls, ['/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests', 'lint'])
 
     def test_export_with_specific_branch(self):
         host = TestExporterTest.MyMockHost()
@@ -160,7 +160,7 @@ class TestExporterTest(unittest.TestCase):
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-b', '1234', '-c', '-n', 'USER', '-t', 'TOKEN', '-bn', 'wpt-export-branch'])
         exporter = WebPlatformTestExporter(host, options, TestExporterTest.MockGit, TestExporterTest.MockBugzilla, MockWPTGitHub, TestExporterTest.MockWPTLinter)
         exporter.do_export()
-        self.assertEquals(exporter._git.calls, [
+        self.assertEqual(exporter._git.calls, [
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests',
             'fetch',
             'checkout master',

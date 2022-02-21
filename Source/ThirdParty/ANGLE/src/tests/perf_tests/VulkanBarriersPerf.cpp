@@ -402,6 +402,7 @@ TEST_P(VulkanBarriersPerfBenchmark, Run)
     run();
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanBarriersPerfBenchmark);
 ANGLE_INSTANTIATE_TEST(VulkanBarriersPerfBenchmark,
                        VulkanBarriersPerfParams(false, false, false),
                        VulkanBarriersPerfParams(true, false, false),

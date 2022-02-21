@@ -31,7 +31,7 @@
 #import <Foundation/Foundation.h>
 
 #ifdef __OBJC__
-#import "WebCoreThread.h"
+#import <WebCore/WebCoreThread.h>
 #endif // __OBJC__
 
 #if defined(__cplusplus)

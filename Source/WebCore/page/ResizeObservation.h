@@ -25,9 +25,9 @@
 
 #pragma once
 
-#if ENABLE(RESIZE_OBSERVER)
 #include "FloatRect.h"
 #include "LayoutSize.h"
+#include "ResizeObserverBoxOptions.h"
 
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -39,26 +39,37 @@ class Element;
 class ResizeObservation : public RefCounted<ResizeObservation> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ResizeObservation> create(Element& target);
+    static Ref<ResizeObservation> create(Element& target, ResizeObserverBoxOptions);
 
     ~ResizeObservation();
+    
+    struct BoxSizes {
+        LayoutSize contentBoxSize;
+        LayoutSize contentBoxLogicalSize;
+        LayoutSize borderBoxLogicalSize;
+    };
 
-    void updateObservationSize(const LayoutSize&);
-    LayoutSize computeObservedSize() const;
-    LayoutPoint computeTargetLocation() const;
+    std::optional<BoxSizes> elementSizeChanged() const;
+    void updateObservationSize(const BoxSizes&);
+
     FloatRect computeContentRect() const;
+    FloatSize borderBoxSize() const;
+    FloatSize contentBoxSize() const;
+    FloatSize snappedContentBoxSize() const;
 
-    bool elementSizeChanged(LayoutSize&) const;
     Element* target() const { return m_target.get(); }
+    ResizeObserverBoxOptions observedBox() const { return m_observedBox; }
     size_t targetElementDepth() const;
 
 private:
-    ResizeObservation(Element& target);
+    ResizeObservation(Element&, ResizeObserverBoxOptions);
+
+    BoxSizes computeObservedSizes() const;
+    LayoutPoint computeTargetLocation() const;
 
     WeakPtr<Element> m_target;
-    LayoutSize m_lastObservationSize;
+    BoxSizes m_lastObservationSizes;
+    ResizeObserverBoxOptions m_observedBox;
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(RESIZE_OBSERVER)

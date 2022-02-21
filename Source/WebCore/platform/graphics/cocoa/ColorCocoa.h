@@ -25,19 +25,30 @@
 
 #pragma once
 
+#import "Color.h"
+
+#if USE(APPKIT)
 OBJC_CLASS NSColor;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
 OBJC_CLASS UIColor;
+#endif
 
 namespace WebCore {
 
 class Color;
 
 #if USE(APPKIT)
-WEBCORE_EXPORT NSColor *platformColor(const Color&);
+using CocoaColor = NSColor;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-WEBCORE_EXPORT UIColor *platformColor(const Color&);
+using CocoaColor = UIColor;
 #endif
+
+WEBCORE_EXPORT RetainPtr<CocoaColor> cocoaColor(const Color&);
+WEBCORE_EXPORT RetainPtr<CocoaColor> cocoaColorOrNil(const Color&); // Returns nil if the color is invalid.
+WEBCORE_EXPORT Color colorFromCocoaColor(CocoaColor *);
 
 } // namespace WebCore

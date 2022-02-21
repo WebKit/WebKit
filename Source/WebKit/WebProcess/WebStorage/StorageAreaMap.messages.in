@@ -21,10 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> StorageAreaMap NotRefCounted {
-    DidSetItem(uint64_t storageMapSeed, String key, bool quotaException)
-    DidRemoveItem(uint64_t storageMapSeed, String key)
-    DidClear(uint64_t storageMapSeed)
-
-    DispatchStorageEvent(std::optional<WebKit::StorageAreaImplIdentifier> storageAreaImplID, String key, String oldValue, String newValue, String urlString)
-    ClearCache()
+    DispatchStorageEvent(std::optional<WebKit::StorageAreaImplIdentifier> storageAreaImplID, String key, String oldValue, String newValue, String urlString, uint64_t messageIdentifier)
+    ClearCache(uint64_t messageIdentifier)
 }

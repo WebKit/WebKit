@@ -65,7 +65,7 @@ ApplicationCacheResourceLoader::~ApplicationCacheResourceLoader()
 
 void ApplicationCacheResourceLoader::cancel(Error error)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     if (auto callback = WTFMove(m_callback))
         callback(makeUnexpected(error));
@@ -99,9 +99,9 @@ void ApplicationCacheResourceLoader::responseReceived(CachedResource& resource, 
     m_applicationCacheResource = ApplicationCacheResource::create(m_resource->url(), response, m_type);
 }
 
-void ApplicationCacheResourceLoader::dataReceived(CachedResource&, const uint8_t* data, int length)
+void ApplicationCacheResourceLoader::dataReceived(CachedResource&, const SharedBuffer& buffer)
 {
-    m_applicationCacheResource->data().append(data, length);
+    m_applicationCacheResource->append(buffer);
 }
 
 void ApplicationCacheResourceLoader::redirectReceived(CachedResource&, ResourceRequest&& newRequest, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& callback)
@@ -119,7 +119,7 @@ void ApplicationCacheResourceLoader::redirectReceived(CachedResource&, ResourceR
 
 void ApplicationCacheResourceLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     ASSERT_UNUSED(resource, &resource == m_resource);
 

@@ -38,6 +38,7 @@ set(TestWTF_SOURCES
     Tests/WTF/DataMutex.cpp
     Tests/WTF/DateMath.cpp
     Tests/WTF/Deque.cpp
+    Tests/WTF/EmbeddedFixedVector.cpp
     Tests/WTF/EnumTraits.cpp
     Tests/WTF/Expected.cpp
     Tests/WTF/FileSystem.cpp
@@ -49,6 +50,7 @@ set(TestWTF_SOURCES
     Tests/WTF/Hasher.cpp
     Tests/WTF/HexNumber.cpp
     Tests/WTF/IndexSparseSet.cpp
+    Tests/WTF/Int128.cpp
     Tests/WTF/IntegerToStringConversion.cpp
     Tests/WTF/IteratorRange.cpp
     Tests/WTF/JSONValue.cpp
@@ -73,6 +75,7 @@ set(TestWTF_SOURCES
     Tests/WTF/PriorityQueue.cpp
     Tests/WTF/RedBlackTree.cpp
     Tests/WTF/Ref.cpp
+    Tests/WTF/RefCountedFixedVector.cpp
     Tests/WTF/RefCounter.cpp
     Tests/WTF/RefLogger.cpp
     Tests/WTF/RefPtr.cpp
@@ -80,9 +83,11 @@ set(TestWTF_SOURCES
     Tests/WTF/RobinHoodHashSet.cpp
     Tests/WTF/RunLoop.cpp
     Tests/WTF/SHA1.cpp
+    Tests/WTF/SafeStrerror.cpp
     Tests/WTF/SaturatedArithmeticOperations.cpp
     Tests/WTF/Scope.cpp
     Tests/WTF/ScopedLambda.cpp
+    Tests/WTF/SentinelLinkedList.cpp
     Tests/WTF/SetForScope.cpp
     Tests/WTF/Span.cpp
     Tests/WTF/StdLibExtras.cpp
@@ -104,7 +109,6 @@ set(TestWTF_SOURCES
     Tests/WTF/URLParser.cpp
     Tests/WTF/UniqueArray.cpp
     Tests/WTF/UniqueRef.cpp
-    Tests/WTF/Variant.cpp
     Tests/WTF/Vector.cpp
     Tests/WTF/WTFString.cpp
     Tests/WTF/WeakPtr.cpp
@@ -253,6 +257,7 @@ if (ENABLE_WEBKIT)
         Tests/WebKit/CanHandleRequest.cpp
         Tests/WebKit/DOMWindowExtensionBasic.cpp
         Tests/WebKit/DOMWindowExtensionNoCache.cpp
+        Tests/WebKit/DidNotHandleKeyDown.cpp
         Tests/WebKit/DocumentStartUserScriptAlertCrash.cpp
         Tests/WebKit/DownloadDecideDestinationCrash.cpp
         Tests/WebKit/EnumerateMediaDevices.cpp

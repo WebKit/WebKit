@@ -27,4 +27,5 @@ import sys
 from webkitscmpy import program
 
 
-sys.exit(program.main())
+if '__main__' == __name__:
+    sys.exit(program.main())

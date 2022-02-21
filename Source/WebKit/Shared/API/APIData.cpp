@@ -35,7 +35,7 @@ namespace API {
 
 RefPtr<Data> Data::create(const IPC::DataReference& data)
 {
-    if (data.isEmpty())
+    if (data.empty())
         return nullptr;
     return create(data.data(), data.size());
 }

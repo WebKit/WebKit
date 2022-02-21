@@ -60,7 +60,7 @@ void WheelEventTestMonitor::clearAllTestDeferrals()
     LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::clearAllTestDeferrals: cleared all test state.");
 }
 
-void WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, WTF::Function<void()>&& functionCallback)
+void WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, Function<void()>&& functionCallback)
 {
     Locker locker { m_lock };
 
@@ -126,7 +126,7 @@ void WheelEventTestMonitor::receivedWheelEvent(const PlatformWheelEvent& event)
 
 void WheelEventTestMonitor::scheduleCallbackCheck()
 {
-    ensureOnMainThread([weakPage = makeWeakPtr(m_page)] {
+    ensureOnMainThread([weakPage = WeakPtr { m_page }] {
         if (weakPage)
             weakPage->scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
     });
@@ -174,6 +174,7 @@ TextStream& operator<<(TextStream& ts, WheelEventTestMonitor::DeferReason reason
     case WheelEventTestMonitor::PostMainThreadWheelEventHandling: ts << "post-main thread event handling"; break;
     case WheelEventTestMonitor::RubberbandInProgress: ts << "rubberbanding"; break;
     case WheelEventTestMonitor::ScrollSnapInProgress: ts << "scroll-snapping"; break;
+    case WheelEventTestMonitor::ScrollAnimationInProgress: ts << "scroll animation"; break;
     case WheelEventTestMonitor::ScrollingThreadSyncNeeded: ts << "scrolling thread sync needed"; break;
     case WheelEventTestMonitor::ContentScrollInProgress: ts << "content scrolling"; break;
     case WheelEventTestMonitor::RequestedScrollPosition: ts << "requested scroll position"; break;

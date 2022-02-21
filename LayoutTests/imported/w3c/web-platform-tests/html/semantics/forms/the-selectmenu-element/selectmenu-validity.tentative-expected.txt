@@ -1,0 +1,4 @@
+
+FAIL Validation for placeholder option assert_true: A selectmenu element is a submittable element that is a candidate for constraint validation. expected true got undefined
+FAIL Check form not submitted for invalid selectmenu assert_equals: expected (string) "" but got (undefined) undefined
+

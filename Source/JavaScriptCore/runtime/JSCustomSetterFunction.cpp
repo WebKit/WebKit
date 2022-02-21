@@ -54,7 +54,7 @@ JSCustomSetterFunction* JSCustomSetterFunction::create(VM& vm, JSGlobalObject* g
     ASSERT(setter);
     NativeExecutable* executable = vm.getHostFunction(customSetterFunctionCall, callHostFunctionAsConstructor, String(propertyName.publicName()));
     Structure* structure = globalObject->customSetterFunctionStructure();
-    JSCustomSetterFunction* function = new (NotNull, allocateCell<JSCustomSetterFunction>(vm.heap)) JSCustomSetterFunction(vm, executable, globalObject, structure, propertyName, setter);
+    JSCustomSetterFunction* function = new (NotNull, allocateCell<JSCustomSetterFunction>(vm)) JSCustomSetterFunction(vm, executable, globalObject, structure, propertyName, setter);
 
     // Can't do this during initialization because getHostFunction might do a GC allocation.
     auto name = makeString("set ", propertyName.publicName());

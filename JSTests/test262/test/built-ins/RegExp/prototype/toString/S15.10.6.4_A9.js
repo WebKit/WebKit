@@ -10,18 +10,22 @@ description: >
     Checking if deleting the RegExp.prototype.toString.length property
     fails
 ---*/
+assert.sameValue(
+  RegExp.prototype.toString.hasOwnProperty('length'),
+  true,
+  'RegExp.prototype.toString.hasOwnProperty(\'length\') must return true'
+);
 
-//CHECK#0
-if ((RegExp.prototype.toString.hasOwnProperty('length') !== true)) {
-	throw new Test262Error('#0: RegExp.prototype.toString.hasOwnProperty(\'length\') === true');
-}
+assert.sameValue(
+  delete RegExp.prototype.toString.length,
+  true,
+  'The value of `delete RegExp.prototype.toString.length` is expected to be true'
+);
 
-//CHECK#1
-if (delete RegExp.prototype.toString.length !== true) {
-	throw new Test262Error('#1: delete RegExp.prototype.toString.length === true');
-}
+assert.sameValue(
+  RegExp.prototype.toString.hasOwnProperty('length'),
+  false,
+  'RegExp.prototype.toString.hasOwnProperty(\'length\') must return false'
+);
 
-//CHECK#2
-if (RegExp.prototype.toString.hasOwnProperty('length') !== false) {
-	throw new Test262Error('#2: delete RegExp.prototype.toString.length; RegExp.prototype.toString.hasOwnProperty(\'length\') === false');
-}
+// TODO: Convert to verifyProperty() format.

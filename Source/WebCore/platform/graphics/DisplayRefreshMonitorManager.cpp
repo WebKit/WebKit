@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ DisplayRefreshMonitor* DisplayRefreshMonitorManager::ensureMonitorForDisplayID(P
 
     LOG_WITH_STREAM(DisplayLink, stream << "[Web] DisplayRefreshMonitorManager::ensureMonitorForDisplayID() - created monitor " << monitor.get() << " for display " << displayID);
     DisplayRefreshMonitor* result = monitor.get();
-    m_monitors.append({ WTFMove(monitor) });
+    m_monitors.append(DisplayRefreshMonitorWrapper { WTFMove(monitor) });
     return result;
 }
 
@@ -119,7 +119,7 @@ void DisplayRefreshMonitorManager::displayWasUpdated(PlatformDisplayID displayID
 
 size_t DisplayRefreshMonitorManager::findMonitorForDisplayID(PlatformDisplayID displayID) const
 {
-    return m_monitors.findMatching([&](auto& monitorWrapper) {
+    return m_monitors.findIf([&](auto& monitorWrapper) {
         return monitorWrapper.monitor->displayID() == displayID;
     });
 }

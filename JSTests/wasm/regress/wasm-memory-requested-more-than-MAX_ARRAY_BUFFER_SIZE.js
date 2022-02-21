@@ -1,10 +1,10 @@
 var exception;
 
 try {
-    new WebAssembly.Memory({ initial: 0x8000, maximum: 0x8000 }).buffer;
+    new WebAssembly.Memory({ initial: 0x10001, maximum: 0x10001 }).buffer;
 } catch (e) {
     exception = e;
 }
 
-if (exception != "RangeError: Out of memory")
-    throw "FAILED";
+if (exception != "RangeError: WebAssembly.Memory 'initial' page count is too large")
+    throw "FAILED, exception was: " + exception;

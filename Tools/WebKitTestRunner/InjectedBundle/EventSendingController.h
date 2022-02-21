@@ -58,6 +58,7 @@ public:
     void mouseForceChanged(double force);
     void mouseScrollBy(int x, int y);
     void mouseScrollByWithWheelAndMomentumPhases(int x, int y, JSStringRef phase, JSStringRef momentum);
+    void setWheelHasPreciseDeltas(bool);
     void continuousMouseScrollBy(int x, int y, bool paged);
     JSValueRef contextClick();
     void leapForward(int milliseconds);
@@ -67,6 +68,8 @@ public:
     void callAfterScrollingCompletes(JSValueRef functionCallback);
 
     void keyDown(JSStringRef key, JSValueRef modifierArray, int location);
+    void rawKeyDown(JSStringRef key, JSValueRef modifierArray, int location);
+    void rawKeyUp(JSStringRef key, JSValueRef modifierArray, int location);
     void scheduleAsynchronousKeyDown(JSStringRef key);
 
     void textZoomIn();

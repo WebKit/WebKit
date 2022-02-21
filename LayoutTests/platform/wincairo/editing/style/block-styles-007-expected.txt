@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x83
           RenderText {#text} at (0,0) size 66x26
             text run at (0,0) width 66: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (66,0) size 0x26
           RenderText {#text} at (0,27) size 158x27
             text run at (0,27) width 158: "Fix for this bug: "
           RenderInline {A} at (0,0) size 257x27 [color=#0000EE]
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,0) size 756x55
             RenderText {#text} at (0,0) size 189x26
               text run at (0,0) width 189: "Expected Results: "
-            RenderBR {BR} at (189,0) size 0x27
+            RenderBR {BR} at (189,0) size 0x26
             RenderText {#text} at (0,27) size 430x27
               text run at (0,27) width 430: "Should see this content in the red box below:"
           RenderBlock {DIV} at (0,55) size 756x55

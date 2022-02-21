@@ -37,12 +37,10 @@ class RegExp;
 
 namespace Yarr {
 
-class YarrCodeBlock;
-
 class MatchingContextHolder {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    MatchingContextHolder(VM&, YarrCodeBlock*, RegExp*, MatchFrom);
+    MatchingContextHolder(VM&, bool, RegExp*, MatchFrom);
     ~MatchingContextHolder();
 
     static ptrdiff_t offsetOfStackLimit() { return OBJECT_OFFSETOF(MatchingContextHolder, m_stackLimit); }
@@ -61,7 +59,7 @@ private:
     MatchFrom m_matchFrom;
 };
 
-inline MatchingContextHolder::MatchingContextHolder(VM& vm, YarrCodeBlock* yarrCodeBlock, RegExp* regExp, MatchFrom matchFrom)
+inline MatchingContextHolder::MatchingContextHolder(VM& vm, bool usesPatternContextBuffer, RegExp* regExp, MatchFrom matchFrom)
     : m_vm(vm)
     , m_matchFrom(matchFrom)
 {
@@ -74,12 +72,12 @@ inline MatchingContextHolder::MatchingContextHolder(VM& vm, YarrCodeBlock* yarrC
     }
 
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-    if (yarrCodeBlock && yarrCodeBlock->usesPatternContextBuffer()) {
+    if (usesPatternContextBuffer) {
         m_patternContextBuffer = m_vm.acquireRegExpPatternContexBuffer();
         m_patternContextBufferSize = VM::patternContextBufferSize;
     }
 #else
-    UNUSED_PARAM(yarrCodeBlock);
+    UNUSED_PARAM(usesPatternContextBuffer);
 #endif
 }
 

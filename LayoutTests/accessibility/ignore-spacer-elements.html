@@ -25,7 +25,7 @@
             var container = accessibilityController.focusedElement.childAtIndex(0);
 
             // The Gtk and EFL ports ATs expect the bold inline text to not have accessible objects.
-            var expectedCount = accessibilityController.platformName == "atk" ? 2 : 4;
+            var expectedCount = accessibilityController.platformName == "atspi" ? 2 : 4;
             if (container.childrenCount == expectedCount) {
                 result.innerText += "Test passed\n";
             }

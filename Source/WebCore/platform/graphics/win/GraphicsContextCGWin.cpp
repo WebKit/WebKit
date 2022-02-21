@@ -114,7 +114,7 @@ void GraphicsContextCG::drawFocusRing(const Vector<FloatRect>& rects, float widt
 {
     float radius = (width - 1) / 2.0f;
     offset += radius;
-    CGColorRef colorRef = color.isValid() ? cachedCGColor(color) : nullptr;
+    auto colorRef = color.isValid() ? cachedCGColor(color) : nullptr;
 
     auto focusRingPath = adoptCF(CGPathCreateMutable());
     unsigned rectCount = rects.size();
@@ -131,7 +131,7 @@ void GraphicsContextCG::drawFocusRing(const Vector<FloatRect>& rects, float widt
     // Find out from CG if this is their bug.
     CGContextSetRGBFillColor(context, 0, 0, 0, 0);
 
-    CGContextSetFocusRingWithColor(context, radius, colorRef, 0, (CFDictionaryRef)0);
+    CGContextSetFocusRingWithColor(context, radius, colorRef.get(), 0, (CFDictionaryRef)0);
     CGContextFillPath(context);
 
     CGContextRestoreGState(context);
@@ -165,7 +165,7 @@ void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, Documen
     static constexpr auto spellingPatternColor = Color::red;
     static constexpr auto grammarPatternColor = Color::darkGreen;
 
-    auto [r, g, b, a] = style.mode == DocumentMarkerLineStyle::Mode::Grammar ? grammarPatternColor : spellingPatternColor;
+    auto [r, g, b, a] = style.mode == DocumentMarkerLineStyle::Mode::Grammar ? grammarPatternColor.resolved() : spellingPatternColor.resolved();
     CGContextSetRGBStrokeColor(context, r, g, b, a);
 
     CGAffineTransform userToBase = getUserToBaseCTM(context);

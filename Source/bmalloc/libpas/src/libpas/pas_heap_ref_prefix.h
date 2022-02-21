@@ -33,9 +33,9 @@ typedef struct __pas_heap_type __pas_heap_type;
 typedef struct __pas_heap __pas_heap;
 
 struct __pas_heap_ref {
-    __pas_heap_type* type;
+    const __pas_heap_type* type;
     __pas_heap* heap; /* initialize to NULL */
-    unsigned allocator_index; /* initialize to UINT_MAX */
+    unsigned allocator_index; /* initialize to 0 */
 };
 
 __PAS_END_EXTERN_C;

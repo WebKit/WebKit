@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DatasetDOMStringMap.h"
 
-#include "Element.h"
+#include "ElementInlines.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/AtomString.h>

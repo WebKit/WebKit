@@ -55,7 +55,7 @@ public:
 
     static ExceptionOr<RefPtr<TimingFunction>> createFromCSSText(const String&);
     static RefPtr<TimingFunction> createFromCSSValue(const CSSValue&);
-    double transformTime(double, double, bool before = false) const;
+    double transformProgress(double progress, double duration, bool before = false) const;
     String cssText() const;
 
 protected:
@@ -222,7 +222,20 @@ public:
         if (!is<StepsTimingFunction>(other))
             return false;
         auto& otherSteps = downcast<StepsTimingFunction>(other);
-        return m_steps == otherSteps.m_steps && m_stepPosition == otherSteps.m_stepPosition;
+
+        if (m_steps != otherSteps.m_steps)
+            return false;
+
+        if (m_stepPosition == otherSteps.m_stepPosition)
+            return true;
+
+        if (!m_stepPosition && *otherSteps.m_stepPosition == StepPosition::End)
+            return true;
+
+        if (*m_stepPosition == StepPosition::End && !otherSteps.m_stepPosition)
+            return true;
+
+        return false;
     }
     
     int numberOfSteps() const { return m_steps; }

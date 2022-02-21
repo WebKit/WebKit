@@ -34,10 +34,10 @@
 #include "ApplePayShippingMethod.h"
 #include "ApplePayShippingMethodUpdate.h"
 #include "Document.h"
+#include "ExceptionDetails.h"
 #include "LinkIconCollector.h"
 #include "Logging.h"
 #include "Page.h"
-#include "PaymentAuthorizationStatus.h"
 #include "PaymentCoordinatorClient.h"
 #include "PaymentSession.h"
 #include "UserContentProvider.h"
@@ -66,23 +66,16 @@ bool PaymentCoordinator::supportsVersion(Document&, unsigned version) const
     return supportsVersion;
 }
 
-bool PaymentCoordinator::canMakePayments(Document& document)
+bool PaymentCoordinator::canMakePayments()
 {
     auto canMakePayments = m_client.canMakePayments();
     PAYMENT_COORDINATOR_RELEASE_LOG("canMakePayments() -> %d", canMakePayments);
-
-    if (!canMakePayments)
-        return false;
-
-    if (!setApplePayIsActiveIfAllowed(document))
-        return false;
-
-    return true;
+    return canMakePayments;
 }
 
-void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, WTF::Function<void(bool)>&& completionHandler)
+void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, Function<void(bool)>&& completionHandler)
 {
-    m_client.canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), [this, weakThis = makeWeakPtr(*this), document = makeWeakPtr(document), completionHandler = WTFMove(completionHandler)](bool canMakePayments) {
+    m_client.canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), [this, weakThis = WeakPtr { *this }, document = WeakPtr { document }, completionHandler = WTFMove(completionHandler)](bool canMakePayments) {
         if (!weakThis)
             return completionHandler(false);
 
@@ -91,14 +84,14 @@ void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const
         if (!canMakePayments)
             return completionHandler(false);
 
-        if (!document || !setApplePayIsActiveIfAllowed(*document))
+        if (!document)
             return completionHandler(false);
 
         completionHandler(true);
     });
 }
 
-void PaymentCoordinator::openPaymentSetup(Document& document, const String& merchantIdentifier, WTF::Function<void(bool)>&& completionHandler)
+void PaymentCoordinator::openPaymentSetup(Document& document, const String& merchantIdentifier, Function<void(bool)>&& completionHandler)
 {
     PAYMENT_COORDINATOR_RELEASE_LOG("openPaymentSetup()");
     m_client.openPaymentSetup(merchantIdentifier, document.domain(), WTFMove(completionHandler));
@@ -107,9 +100,6 @@ void PaymentCoordinator::openPaymentSetup(Document& document, const String& merc
 bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession& paymentSession, const ApplePaySessionPaymentRequest& paymentRequest)
 {
     ASSERT(!m_activeSession);
-
-    if (!setApplePayIsActiveIfAllowed(document))
-        return false;
 
     Vector<URL> linkIconURLs;
     for (auto& icon : LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }))
@@ -163,11 +153,11 @@ void PaymentCoordinator::completeCouponCodeChange(std::optional<ApplePayCouponCo
 
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
-void PaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&& result)
+void PaymentCoordinator::completePaymentSession(ApplePayPaymentAuthorizationResult&& result)
 {
     ASSERT(m_activeSession);
 
-    bool isFinalState = isFinalStateResult(result);
+    bool isFinalState = result.isFinalState();
     PAYMENT_COORDINATOR_RELEASE_LOG("completePaymentSession() (isFinalState: %d)", isFinalState);
     m_client.completePaymentSession(WTFMove(result));
 
@@ -285,53 +275,10 @@ std::optional<String> PaymentCoordinator::validatedPaymentNetwork(Document&, uns
     return m_client.validatedPaymentNetwork(paymentNetwork);
 }
 
-bool PaymentCoordinator::shouldEnableApplePayAPIs(Document& document) const
-{
-    if (m_client.supportsUnrestrictedApplePay())
-        return true;
-
-    bool shouldEnableAPIs = true;
-    document.page()->userContentProvider().forEachUserScript([&](DOMWrapperWorld&, const UserScript&) {
-        shouldEnableAPIs = false;
-    });
-
-    if (!shouldEnableAPIs)
-        PAYMENT_COORDINATOR_RELEASE_LOG("shouldEnableApplePayAPIs() -> false (user scripts)");
-
-    return shouldEnableAPIs;
-}
-
-bool PaymentCoordinator::setApplePayIsActiveIfAllowed(Document& document) const
-{
-    auto hasEvaluatedUserAgentScripts = document.hasEvaluatedUserAgentScripts();
-    auto isRunningUserScripts = document.isRunningUserScripts();
-    auto supportsUnrestrictedApplePay = m_client.supportsUnrestrictedApplePay();
-
-    if (!supportsUnrestrictedApplePay && (hasEvaluatedUserAgentScripts || isRunningUserScripts)) {
-        ASSERT(!document.isApplePayActive());
-        PAYMENT_COORDINATOR_RELEASE_LOG("setApplePayIsActiveIfAllowed() -> false (hasEvaluatedUserAgentScripts: %d, isRunningUserScripts: %d)", hasEvaluatedUserAgentScripts, isRunningUserScripts);
-        return false;
-    }
-
-    document.setApplePayIsActive();
-    return true;
-}
-
-Expected<void, ExceptionDetails> PaymentCoordinator::shouldAllowUserAgentScripts(Document& document) const
-{
-    if (m_client.supportsUnrestrictedApplePay() || !document.isApplePayActive())
-        return { };
-
-    ASSERT(!document.hasEvaluatedUserAgentScripts());
-    ASSERT(!document.isRunningUserScripts());
-    PAYMENT_COORDINATOR_RELEASE_LOG_ERROR("shouldAllowUserAgentScripts() -> false (active session)");
-    return makeUnexpected(ExceptionDetails { m_client.userAgentScriptsBlockedErrorMessage() });
-}
-
 void PaymentCoordinator::getSetupFeatures(const ApplePaySetupConfiguration& configuration, const URL& url, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&& completionHandler)
 {
     PAYMENT_COORDINATOR_RELEASE_LOG("getSetupFeatures()");
-    m_client.getSetupFeatures(configuration, url, [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)](Vector<Ref<ApplePaySetupFeature>>&& features) mutable {
+    m_client.getSetupFeatures(configuration, url, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](Vector<Ref<ApplePaySetupFeature>>&& features) mutable {
         if (!weakThis)
             return;
         PAYMENT_COORDINATOR_RELEASE_LOG("getSetupFeatures() completed (features: %zu)", features.size());
@@ -342,7 +289,7 @@ void PaymentCoordinator::getSetupFeatures(const ApplePaySetupConfiguration& conf
 void PaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration& configuration, const URL& url, Vector<RefPtr<ApplePaySetupFeature>>&& features, CompletionHandler<void(bool)>&& completionHandler)
 {
     PAYMENT_COORDINATOR_RELEASE_LOG("beginApplePaySetup()");
-    m_client.beginApplePaySetup(configuration, url, WTFMove(features), [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)](bool success) mutable {
+    m_client.beginApplePaySetup(configuration, url, WTFMove(features), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](bool success) mutable {
         if (!weakThis)
             return;
         PAYMENT_COORDINATOR_RELEASE_LOG("beginApplePaySetup() completed (success: %d)", success);

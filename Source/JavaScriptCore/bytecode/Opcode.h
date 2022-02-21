@@ -126,11 +126,19 @@ static constexpr unsigned bitWidthForMaxOpcodeLength = WTF::getMSBSetConstexpr(m
     macro(OpRshift) \
     macro(OpGetPrivateName) \
 
-#define FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(macro) \
+#define FOR_EACH_OPCODE_WITH_CALL_LINK_INFO(macro) \
+    macro(OpCall) \
+    macro(OpTailCall) \
+    macro(OpCallEval) \
+    macro(OpConstruct) \
+    macro(OpIteratorOpen) \
+    macro(OpIteratorNext) \
     macro(OpCallVarargs) \
     macro(OpTailCallVarargs) \
     macro(OpTailCallForwardArguments) \
     macro(OpConstructVarargs) \
+
+#define FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(macro) \
     macro(OpGetByVal) \
     macro(OpInByVal) \
     macro(OpPutByVal) \
@@ -139,6 +147,7 @@ static constexpr unsigned bitWidthForMaxOpcodeLength = WTF::getMSBSetConstexpr(m
     macro(OpEnumeratorGetByVal) \
     macro(OpEnumeratorInByVal) \
     macro(OpEnumeratorHasOwnProperty) \
+    FOR_EACH_OPCODE_WITH_CALL_LINK_INFO(macro) \
 
 #define FOR_EACH_OPCODE_WITH_ARRAY_ALLOCATION_PROFILE(macro) \
     macro(OpNewArray) \
@@ -148,13 +157,16 @@ static constexpr unsigned bitWidthForMaxOpcodeLength = WTF::getMSBSetConstexpr(m
 #define FOR_EACH_OPCODE_WITH_OBJECT_ALLOCATION_PROFILE(macro) \
     macro(OpNewObject) \
 
-#define FOR_EACH_OPCODE_WITH_LLINT_CALL_LINK_INFO(macro) \
-    macro(OpCall) \
-    macro(OpTailCall) \
-    macro(OpCallEval) \
-    macro(OpConstruct) \
-    macro(OpIteratorOpen) \
-    macro(OpIteratorNext) \
+#define FOR_EACH_OPCODE_WITH_BINARY_ARITH_PROFILE(macro) \
+    macro(OpAdd) \
+    macro(OpMul) \
+    macro(OpDiv) \
+    macro(OpSub) \
+
+#define FOR_EACH_OPCODE_WITH_UNARY_ARITH_PROFILE(macro) \
+    macro(OpInc) \
+    macro(OpDec) \
+    macro(OpNegate) \
 
 
 IGNORE_WARNINGS_BEGIN("type-limits")
@@ -199,6 +211,7 @@ inline bool isBranch(OpcodeID opcodeID)
     case op_jneq_null:
     case op_jundefined_or_null:
     case op_jnundefined_or_null:
+    case op_jeq_ptr:
     case op_jneq_ptr:
     case op_jless:
     case op_jlesseq:

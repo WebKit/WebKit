@@ -54,29 +54,35 @@ public:
         return m_done;
     }
 
+    void redirectReceived(const URL& redirectURL)
+    {
+        if (m_client)
+            m_client->redirectReceived(redirectURL);
+    }
+
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
     {
         if (m_client)
             m_client->didSendData(bytesSent, totalBytesToBeSent);
     }
 
-    void didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+    void didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
     {
         if (m_client)
             m_client->didReceiveResponse(identifier, response);
     }
 
-    void didReceiveData(const uint8_t* data, int dataLength)
+    void didReceiveData(const SharedBuffer& buffer)
     {
         if (m_client)
-            m_client->didReceiveData(data, dataLength);
+            m_client->didReceiveData(buffer);
     }
 
-    void didFinishLoading(unsigned long identifier)
+    void didFinishLoading(ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& metrics)
     {
         m_done = true;
         if (m_client)
-            m_client->didFinishLoading(identifier);
+            m_client->didFinishLoading(identifier, metrics);
     }
 
     void notifyIsDone(bool isDone)
@@ -92,7 +98,7 @@ public:
             m_client->didFail(error);
     }
 
-    void didReceiveAuthenticationCancellation(unsigned long identifier, const ResourceResponse& response)
+    void didReceiveAuthenticationCancellation(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
     {
         if (m_client)
             m_client->didReceiveResponse(identifier, response);

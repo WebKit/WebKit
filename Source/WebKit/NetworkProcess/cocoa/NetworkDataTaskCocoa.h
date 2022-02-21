@@ -29,13 +29,16 @@
 #include "NetworkDataTask.h"
 #include "NetworkLoadParameters.h"
 #include <WebCore/NetworkLoadMetrics.h>
+#include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSHTTPCookieStorage;
 OBJC_CLASS NSURLSessionDataTask;
+OBJC_CLASS NSMutableURLRequest;
 
 namespace WebCore {
 class RegistrableDomain;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -59,8 +62,8 @@ public:
     void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&);
     void didNegotiateModernTLS(const URL&);
     void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&);
-    void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, ResponseCompletionHandler&&);
-    void didReceiveData(Ref<WebCore::SharedBuffer>&&);
+    void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&&);
+    void didReceiveData(const WebCore::SharedBuffer&);
 
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&);
     void transferSandboxExtensionToDownload(Download&);
@@ -92,7 +95,7 @@ private:
     bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&);
     void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>&, bool shouldContentSniff, bool shouldContentEncodingSniff);
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     static NSHTTPCookieStorage *statelessCookieStorage();
 #if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
     void updateFirstPartyInfoForSession(const URL&);
@@ -112,7 +115,7 @@ private:
     WebCore::PageIdentifier m_pageID;
     WebPageProxyIdentifier m_webPageProxyID;
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     bool m_hasBeenSetToUseStatelessCookieStorage { false };
 #if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
     Seconds m_ageCapForCNAMECloakedCookies { 24_h * 7 };
@@ -126,5 +129,6 @@ private:
 };
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);
+void setPCMDataCarriedOnRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *);
 
 } // namespace WebKit

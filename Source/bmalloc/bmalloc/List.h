@@ -23,8 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef List_h
-#define List_h
+#pragma once
+
+#include "BPlatform.h"
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -42,7 +45,7 @@ class List {
         T* operator*() { return static_cast<T*>(m_node); }
         T* operator->() { return static_cast<T*>(m_node); }
 
-        bool operator!=(const iterator& other) { return m_node != other.m_node; }
+        bool operator!=(const iterator& other) const { return m_node != other.m_node; }
 
         iterator& operator++()
         {
@@ -120,4 +123,4 @@ private:
 
 } // namespace bmalloc
 
-#endif // List_h
+#endif

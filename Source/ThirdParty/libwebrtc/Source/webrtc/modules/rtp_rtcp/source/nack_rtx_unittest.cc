@@ -218,7 +218,6 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
       if (length > 0)
         rtp_rtcp_module_->SendNACK(nack_list, length);
       fake_clock.AdvanceTimeMilliseconds(28);  //  33ms - 5ms delay.
-      rtp_rtcp_module_->Process();
       // Prepare next frame.
       timestamp += 3000;
     }
@@ -265,7 +264,6 @@ TEST_F(RtpRtcpRtxNackTest, LongNackList) {
     // Prepare next frame.
     timestamp += 3000;
     fake_clock.AdvanceTimeMilliseconds(33);
-    rtp_rtcp_module_->Process();
   }
   EXPECT_FALSE(transport_.expected_sequence_numbers_.empty());
   EXPECT_FALSE(media_stream_.sequence_numbers_.empty());

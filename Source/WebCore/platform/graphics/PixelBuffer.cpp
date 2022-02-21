@@ -74,6 +74,8 @@ std::optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& forma
     auto bufferSize = computeBufferSize(format, size);
     if (bufferSize.hasOverflowed())
         return std::nullopt;
+    if (bufferSize > std::numeric_limits<int32_t>::max())
+        return std::nullopt;
     auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(bufferSize);
     if (!pixelArray)
         return std::nullopt;

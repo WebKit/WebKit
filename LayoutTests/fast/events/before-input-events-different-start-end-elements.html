@@ -9,7 +9,6 @@
             if (!window.eventSender || !window.internals || !window.testRunner)
                 return;
 
-            internals.settings.setInputEventsEnabled(true);
             testRunner.dumpAsText();
             document.querySelector("#foo").focus();
 

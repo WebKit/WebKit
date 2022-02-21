@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,11 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
+import sys
 
-from webkitcorepy import Editor, OutputCapture, testing
+from webkitcorepy import Editor, OutputCapture, testing, mocks as wkmocks
 from webkitcorepy.mocks import Terminal as MockTerminal
-from webkitscmpy import program, mocks
+from webkitscmpy import local, program, mocks
 
 
 class TestSetup(testing.PathTestCase):
@@ -36,21 +38,21 @@ class TestSetup(testing.PathTestCase):
         os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_svn(self):
-        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn(self.path):
             self.assertEqual(1, program.main(
-                args=('setup',),
+                args=('setup', '-v'),
                 path=self.path,
             ))
         self.assertEqual(captured.stderr.getvalue(), 'No setup required for {}\n'.format(self.path))
 
     def test_github(self):
-        with OutputCapture() as captured, MockTerminal.input('y'), mocks.remote.GitHub() as remote:
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y'), mocks.remote.GitHub() as remote:
             self.assertEqual(0, program.main(
-                args=('-C', 'https://{}'.format(remote.remote), 'setup'),
+                args=('-C', 'https://{}'.format(remote.remote), 'setup', '-v'),
                 path=self.path,
             ))
 
-        self.assertEqual(captured.stdout.getvalue(), "Create a private fork of 'WebKit' belonging to 'username' (Yes/No): \n")
+        self.assertEqual(captured.stdout.getvalue(), "Create a private fork of 'WebKit' belonging to 'username' ([Yes]/No): \nSetup succeeded!\n")
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
             captured.root.log.getvalue(),
@@ -62,9 +64,11 @@ Created a private fork of 'WebKit' belonging to 'username'!
         )
 
     def test_git(self):
-        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, \
+            mocks.local.Svn(), wkmocks.Environment(EMAIL_ADDRESS=''):
+
             self.assertEqual(0, program.main(
-                args=('setup', '--defaults'),
+                args=('setup', '--defaults', '-v'),
                 path=self.path,
             ))
 
@@ -76,29 +80,34 @@ Created a private fork of 'WebKit' belonging to 'username'!
             self.assertEqual('auto', config.get('color.branch', ''))
             self.assertEqual('true', config.get('pull.rebase', ''))
 
-        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stdout.getvalue(), 'Setup succeeded!\n')
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
             captured.root.log.getvalue(),
             '''Setting git user email for {repository}...
-Set git user email to 'tapple@webkit.org'
+Set git user email to 'tapple@webkit.org' for this repository
 Setting git user name for {repository}...
-Set git user name to 'Tim Apple'
-Setting better Objective-C diffing behavior...
-Set better Objective-C diffing behavior!
-Using a rebase merge strategy
+Set git user name to 'Tim Apple' for this repository
+No project git config found, continuing
+Setting better Objective-C diffing behavior for this repository...
+Set better Objective-C diffing behavior for this repository!
+Using a rebase merge strategy for this repository
 Setting git editor for {repository}...
-Using the default git editor
+Using the default git editor for this repository
 '''.format(repository=self.path),
         )
 
     def test_github_checkout(self):
-        with OutputCapture() as captured, mocks.remote.GitHub() as remote, \
-            MockTerminal.input('n', 'committer@webkit.org', 'n', 'Committer', 'n', '1', 'y'), \
-            mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo:
+        self.maxDiff = None
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
+            MockTerminal.input('n', 'committer@webkit.org', 'n', 'Committer', 'n', 'overwrite', 'disabled', '1', 'y', 'y'), \
+            mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
+            wkmocks.Environment(EMAIL_ADDRESS=''):
+
+            self.assertEqual('https://github.example.com/WebKit/WebKit.git', local.Git(self.path).url())
 
             self.assertEqual(0, program.main(
-                args=('setup',),
+                args=('setup', '-v'),
                 path=self.path,
             ))
 
@@ -106,33 +115,43 @@ Using the default git editor
             self.assertNotIn('color.status', config)
             self.assertEqual('Committer', config.get('user.name', ''))
             self.assertEqual('committer@webkit.org', config.get('user.email', ''))
+            self.assertEqual('git@github.example.com:WebKit/WebKit.git', local.Git(self.path).url())
 
         programs = ['default'] + [p.name for p in Editor.programs()]
         self.assertEqual(
             captured.stdout.getvalue(),
-            '''Set 'tapple@webkit.org' as the git user email (Yes/No): 
-Git user email: 
-Set 'Tim Apple' as the git user name (Yes/No): 
-Git user name: 
-Auto-color status, diff, and branch? (Yes/No): 
-Pick a commit message editor:
+            '''Set 'tapple@webkit.org' as the git user email for this repository ([Yes]/No): 
+Enter git user email for this repository: 
+Set 'Tim Apple' as the git user name for this repository ([Yes]/No): 
+Enter git user name for this repository: 
+Auto-color status, diff, and branch for this repository? ([Yes]/No): 
+Would you like to create new branches to retain history when you overwrite
+a pull request branch? ([when-user-owned]/disabled/always/never): 
+Pick a commit message editor for this repository:
     {}
 : 
-Create a private fork of 'WebKit' belonging to 'username' (Yes/No): 
-'''.format('\n    '.join(['{}) {}'.format(count + 1, programs[count]) for count in range(len(programs))])))
+http(s) based remotes will prompt for your password every time when pushing,
+it is recommended to convert to a ssh remote, would you like to convert to a ssh remote? ([Yes]/No): 
+Create a private fork of 'WebKit' belonging to 'username' ([Yes]/No): 
+Setup succeeded!
+'''.format('\n    '.join([
+            '{}) {}'.format(
+                count + 1, programs[count] if count else '[{}]'.format(programs[count]),
+            ) for count in range(len(programs))])))
         self.assertEqual(captured.stderr.getvalue(), '')
-        self.maxDiff = None
+
         self.assertEqual(
             captured.root.log.getvalue(),
             '''Setting git user email for {repository}...
-Set git user email to 'committer@webkit.org'
+Set git user email to 'committer@webkit.org' for this repository
 Setting git user name for {repository}...
-Set git user name to 'Committer'
-Setting better Objective-C diffing behavior...
-Set better Objective-C diffing behavior!
-Using a rebase merge strategy
+Set git user name to 'Committer' for this repository
+No project git config found, continuing
+Setting better Objective-C diffing behavior for this repository...
+Set better Objective-C diffing behavior for this repository!
+Using a rebase merge strategy for this repository
 Setting git editor for {repository}...
-Using the default git editor
+Using the default git editor for this repository
 Saving GitHub credentials in system credential store...
 GitHub credentials saved via Keyring!
 Verifying user owned fork...
@@ -140,6 +159,40 @@ Created a private fork of 'WebKit' belonging to 'username'!
 Adding forked remote as 'username' and 'fork'...
 Added remote 'username'
 Added remote 'fork'
-Fetching 'https://github.example.com/username/WebKit.git'
+Fetching 'git@github.example.com:username/WebKit.git'
 '''.format(repository=self.path),
         )
+
+    def test_commit_message(self):
+        with OutputCapture(level=logging.INFO), mocks.local.Git(self.path) as git, mocks.local.Svn():
+            self.assertEqual(0, program.main(
+                args=('setup', '--defaults', '-v'),
+                path=self.path,
+                hooks=os.path.join(os.path.abspath(os.path.dirname(__file__)), 'hooks')
+            ))
+            pcm = os.path.join(self.path, '.git', 'hooks', 'prepare-commit-msg')
+            self.assertTrue(os.path.isfile(pcm))
+            os.rename(pcm, os.path.join(os.path.dirname(pcm), 'prepare_commit_msg.py'))
+
+            sys.path.insert(0, os.path.dirname(pcm))
+
+            try:
+                from prepare_commit_msg import main
+                self.assertEqual(
+                    main(os.path.join(self.path, 'COMMIT_MESSAGE')),
+                    0,
+                )
+                with open(os.path.join(self.path, 'COMMIT_MESSAGE'), 'r') as file:
+                    self.assertEqual(
+                        file.read(),
+                        '''Generated commit message
+# Please populate the above commit message. Lines starting
+# with '#' will be ignored
+
+# 'On branch main
+# Your branch is up to date with 'origin/main'.
+# 
+# nothing to commit, working tree clean
+''')
+            finally:
+                sys.path.remove(os.path.dirname(pcm))

@@ -24,8 +24,8 @@ class TIntermBlock;
 class TSymbolTable;
 
 ANGLE_NO_DISCARD bool NameEmbeddedStructUniformsMetal(TCompiler *compiler,
-                                                 TIntermBlock *root,
-                                                 TSymbolTable *symbolTable);
+                                                      TIntermBlock *root,
+                                                      TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_NAMEEMBEDDEDUNIFORMSTRUCTSMETAL_H_

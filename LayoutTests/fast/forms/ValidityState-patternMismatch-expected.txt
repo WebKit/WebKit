@@ -66,7 +66,7 @@ PASS patternMismatchFor("invalid-05") is false
 PASS patternMismatchFor("invalid-06") is false
 PASS patternMismatchFor("invalid-07") is false
 PASS patternMismatchFor("invalid-08") is false
-PASS patternMismatchFor("disabled") is false
+PASS patternMismatchFor("disabled") is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

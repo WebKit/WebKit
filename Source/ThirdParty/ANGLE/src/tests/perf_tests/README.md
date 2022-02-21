@@ -6,9 +6,9 @@ You can also build your own dashboards. For example, a comparison of ANGLE's bac
 
 ## Running the Tests
 
-You can follow the usual instructions to [check out and build ANGLE](../../../doc/DevSetup.md). Build the `angle_perftests` target. Note that all test scores are higher-is-better. You should also ensure `is_debug=false` in your build. Running with `dcheck_always_on` or debug validation enabled is not recommended.
+You can follow the usual instructions to [check out and build ANGLE](../../../doc/DevSetup.md). Build the `angle_perftests` target. Note that all test scores are higher-is-better. You should also ensure `is_debug=false` in your build. Running with `angle_assert_always_on` or debug validation enabled is not recommended.
 
-Variance can be a problem when benchmarking. We have a test harness to run a single test in an infinite loop and print some statistics to help mitigate variance. See [`scripts/perf_test_runner.py`](https://chromium.googlesource.com/angle/angle/+/master/scripts/perf_test_runner.py). To use the script first compile `angle_perftests` into a folder with the word `Release` in it. Then provide the name of the test as the argument to the script. The script will automatically pick up the most current `angle_perftests` and run in an infinite loop.
+Variance can be a problem when benchmarking. We have a test harness to run a single test in an infinite loop and print some statistics to help mitigate variance. See [`scripts/perf_test_runner.py`](https://chromium.googlesource.com/angle/angle/+/main/scripts/perf_test_runner.py). To use the script first compile `angle_perftests` into a folder with the word `Release` in it. Then provide the name of the test as the argument to the script. The script will automatically pick up the most current `angle_perftests` and run in an infinite loop.
 
 ### Choosing the Test to Run
 
@@ -29,15 +29,19 @@ Several command-line arguments control how the tests run:
 * `--steps-per-trial x`: Fixed number of steps to run for each test trial.
 * `--max-steps-performed x`: Upper maximum on total number of steps for the entire test run.
 * `--screenshot-dir dir`: Directory to store test screenshots. Only implemented in `TracePerfTest`.
+* `--screenshot-frame <frame>`: Which frame to capture a screenshot of. Defaults to first frame (1). Only implemented in `TracePerfTest`.
 * `--render-test-output-dir=dir`: Equivalent to `--screenshot-dir dir`.
 * `--verbose`: Print extra timing information.
 * `--warmup-loops x`: Number of times to warm up the test before starting timing. Defaults to 3.
 * `--no-warmup`: Skip warming up the tests. Equivalent to `--warmup-steps 0`.
 * `--calibration-time`: Run each test calibration step in a fixed time. Defaults to 1 second.
-* `--test-time`: Run each test trial in a fixed time. Defaults to 10 seconds.
+* `--max-trial-time x`: Run each test trial under this max time. Defaults to 10 seconds.
+* `--fixed-test-time x`: Run the tests until this much time has elapsed.
 * `--trials`: Number of times to repeat testing. Defaults to 3.
 * `--no-finish`: Don't call glFinish after each test trial.
 * `--enable-all-trace-tests`: Offscreen and vsync-limited trace tests are disabled by default to reduce test time.
+* `--minimize-gpu-work`: Modify API calls so that GPU work is reduced to minimum.
+* `--validation`: Enable serialization validation in the trace tests. Normally used with SwiftShader and retracing.
 
 For example, for an endless run with no warmup, run:
 

@@ -111,7 +111,7 @@ RenderTheme& RenderTheme::singleton()
 
 bool RenderThemeAdwaita::supportsFocusRing(const RenderStyle& style) const
 {
-    switch (style.appearance()) {
+    switch (style.effectiveAppearance()) {
     case PushButtonPart:
     case ButtonPart:
     case TextFieldPart:
@@ -135,49 +135,49 @@ bool RenderThemeAdwaita::shouldHaveCapsLockIndicator(const HTMLInputElement& ele
     return element.isPasswordField();
 }
 
-Color RenderThemeAdwaita::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).activeSelectionBackgroundColor();
 }
 
-Color RenderThemeAdwaita::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).inactiveSelectionBackgroundColor();
 }
 
-Color RenderThemeAdwaita::platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformActiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).activeSelectionForegroundColor();
 }
 
-Color RenderThemeAdwaita::platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformInactiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).inactiveSelectionForegroundColor();
 }
 
-Color RenderThemeAdwaita::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).activeSelectionBackgroundColor();
 }
 
-Color RenderThemeAdwaita::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).inactiveSelectionBackgroundColor();
 }
 
-Color RenderThemeAdwaita::platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).activeSelectionForegroundColor();
 }
 
-Color RenderThemeAdwaita::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeAdwaita::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).inactiveSelectionForegroundColor();
 }
 
-Color RenderThemeAdwaita::platformFocusRingColor(OptionSet<StyleColor::Options> options) const
+Color RenderThemeAdwaita::platformFocusRingColor(OptionSet<StyleColorOptions> options) const
 {
-    return ThemeAdwaita::focusColor(options.contains(StyleColor::Options::UseDarkAppearance));
+    return ThemeAdwaita::focusColor(options.contains(StyleColorOptions::UseDarkAppearance));
 }
 
 void RenderThemeAdwaita::platformColorsDidChange()
@@ -203,9 +203,9 @@ Vector<String, 2> RenderThemeAdwaita::mediaControlsScripts()
 }
 #endif
 
-Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
+Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOptions> options) const
 {
-    const bool useDarkAppearance = options.contains(StyleColor::Options::UseDarkAppearance);
+    const bool useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance);
 
     switch (cssValueID) {
     case CSSValueActivecaption:
@@ -360,7 +360,7 @@ void RenderThemeAdwaita::adjustMenuListButtonStyle(RenderStyle& style, const Ele
 
 LengthBox RenderThemeAdwaita::popupInternalPaddingBox(const RenderStyle& style, const Settings&) const
 {
-    if (style.appearance() == NoControlPart)
+    if (style.effectiveAppearance() == NoControlPart)
         return { };
 
     int leftPadding = menuListButtonPadding + (style.direction() == TextDirection::RTL ? menuListButtonArrowSize : 0);
@@ -382,7 +382,7 @@ bool RenderThemeAdwaita::paintMenuList(const RenderObject& renderObject, const P
     if (isHovered(renderObject))
         states.add(ControlStates::States::Hovered);
     ControlStates controlStates(states);
-    Theme::singleton().paint(ButtonPart, controlStates, graphicsContext, rect, 1., nullptr, 1., 1., false, renderObject.useDarkAppearance());
+    Theme::singleton().paint(ButtonPart, controlStates, graphicsContext, rect, 1., nullptr, 1., 1., false, renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
 
     FloatRect fieldRect = rect;
     fieldRect.inflate(menuListButtonBorderSize);
@@ -498,7 +498,7 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
     auto& graphicsContext = paintInfo.context();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    ControlPart part = renderObject.style().appearance();
+    ControlPart part = renderObject.style().effectiveAppearance();
     ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart);
 
     FloatRect fieldRect = rect;
@@ -581,7 +581,7 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
 
 void RenderThemeAdwaita::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
-    ControlPart part = style.appearance();
+    ControlPart part = style.effectiveAppearance();
     if (part != SliderThumbHorizontalPart && part != SliderThumbVerticalPart)
         return;
 
@@ -594,7 +594,7 @@ bool RenderThemeAdwaita::paintSliderThumb(const RenderObject& renderObject, cons
     auto& graphicsContext = paintInfo.context();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    ASSERT(renderObject.style().appearance() == SliderThumbHorizontalPart || renderObject.style().appearance() == SliderThumbVerticalPart);
+    ASSERT(renderObject.style().effectiveAppearance() == SliderThumbHorizontalPart || renderObject.style().effectiveAppearance() == SliderThumbVerticalPart);
 
     SRGBA<uint8_t> sliderThumbBackgroundColor;
     SRGBA<uint8_t> sliderThumbBackgroundHoveredColor;
@@ -761,5 +761,11 @@ Seconds RenderThemeAdwaita::caretBlinkInterval() const
     return shouldBlink ? 500_us * time : 0_s;
 }
 #endif
+
+void RenderThemeAdwaita::setAccentColor(const Color& color)
+{
+    static_cast<ThemeAdwaita&>(Theme::singleton()).setAccentColor(color);
+    platformColorsDidChange();
+}
 
 } // namespace WebCore

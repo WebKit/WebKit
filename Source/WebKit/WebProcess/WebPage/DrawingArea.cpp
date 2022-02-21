@@ -40,6 +40,9 @@
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
 #include "DrawingAreaCoordinatedGraphics.h"
 #endif
+#if USE(GRAPHICS_LAYER_WC)
+#include "DrawingAreaWC.h"
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -49,14 +52,18 @@ std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPage
     switch (parameters.drawingAreaType) {
 #if PLATFORM(COCOA)
 #if !PLATFORM(IOS_FAMILY)
-    case DrawingAreaTypeTiledCoreAnimation:
+    case DrawingAreaType::TiledCoreAnimation:
         return makeUnique<TiledCoreAnimationDrawingArea>(webPage, parameters);
 #endif
-    case DrawingAreaTypeRemoteLayerTree:
+    case DrawingAreaType::RemoteLayerTree:
         return makeUnique<RemoteLayerTreeDrawingArea>(webPage, parameters);
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    case DrawingAreaTypeCoordinatedGraphics:
+    case DrawingAreaType::CoordinatedGraphics:
         return makeUnique<DrawingAreaCoordinatedGraphics>(webPage, parameters);
+#endif
+#if USE(GRAPHICS_LAYER_WC)
+    case DrawingAreaType::WC:
+        return makeUnique<DrawingAreaWC>(webPage, parameters);
 #endif
     }
 
@@ -82,6 +89,11 @@ void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void 
     function();
 }
 
+void DrawingArea::tryMarkLayersVolatile(CompletionHandler<void(bool)>&& completionFunction)
+{
+    completionFunction(true);
+}
+
 void DrawingArea::removeMessageReceiverIfNeeded()
 {
     if (m_hasRemovedMessageReceiver)
@@ -100,14 +112,18 @@ bool DrawingArea::supportsGPUProcessRendering(DrawingAreaType type)
     switch (type) {
 #if PLATFORM(COCOA)
 #if !PLATFORM(IOS_FAMILY)
-    case DrawingAreaTypeTiledCoreAnimation:
+    case DrawingAreaType::TiledCoreAnimation:
         return false;
 #endif
-    case DrawingAreaTypeRemoteLayerTree:
+    case DrawingAreaType::RemoteLayerTree:
         return true;
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    case DrawingAreaTypeCoordinatedGraphics:
+    case DrawingAreaType::CoordinatedGraphics:
         return false;
+#endif
+#if USE(GRAPHICS_LAYER_WC)
+    case DrawingAreaType::WC:
+        return true;
 #endif
     default:
         return false;

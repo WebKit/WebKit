@@ -103,6 +103,9 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     auto bitmapContext = createBitmapContext(pixelsWide, pixelsHigh, rowBytes, buffer);
     if (!bitmapContext)
         return nullptr;
+
+    bitmapContext->setScaleFactor(deviceScaleFactor);
+
     CGContextRef context = bitmapContext->cgContext();
     // The final scaling gets doubled on the screen capture surface when we use the hidpi backingScaleFactor value for CTM.
     // This is a workaround to push the scaling back.

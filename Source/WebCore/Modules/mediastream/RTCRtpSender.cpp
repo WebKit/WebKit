@@ -45,7 +45,7 @@
 namespace WebCore {
 
 #if !RELEASE_LOG_DISABLED
-#define LOGIDENTIFIER_SENDER WTF::Logger::LogSiteIdentifier(logClassName(), __func__, m_connection->logIdentifier())
+#define LOGIDENTIFIER_SENDER Logger::LogSiteIdentifier(logClassName(), __func__, m_connection->logIdentifier())
 #else
 #define LOGIDENTIFIER_SENDER
 #endif
@@ -67,7 +67,7 @@ Ref<RTCRtpSender> RTCRtpSender::create(RTCPeerConnection& connection, String&& t
 RTCRtpSender::RTCRtpSender(RTCPeerConnection& connection, String&& trackKind, std::unique_ptr<RTCRtpSenderBackend>&& backend)
     : m_trackKind(WTFMove(trackKind))
     , m_backend(WTFMove(backend))
-    , m_connection(makeWeakPtr(connection))
+    , m_connection(connection)
 #if !RELEASE_LOG_DISABLED
     , m_logger(connection.logger())
     , m_logIdentifier(connection.logIdentifier())
@@ -119,7 +119,7 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, Ref<Deferr
         return;
     }
 
-    m_connection->chainOperation(WTFMove(promise), [this, weakThis = makeWeakPtr(this), withTrack = WTFMove(withTrack)](auto&& promise) mutable {
+    m_connection->chainOperation(WTFMove(promise), [this, weakThis = WeakPtr { *this }, withTrack = WTFMove(withTrack)](auto&& promise) mutable {
         if (!weakThis)
             return;
         if (isStopped()) {
@@ -136,7 +136,7 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, Ref<Deferr
         if (!context)
             return;
 
-        context->postTask([this, protectedThis = makeRef(*this), withTrack = WTFMove(withTrack), promise = WTFMove(promise)](auto&) mutable {
+        context->postTask([this, protectedThis = Ref { *this }, withTrack = WTFMove(withTrack), promise = WTFMove(promise)](auto&) mutable {
             if (!m_connection || m_connection->isClosed())
                 return;
 
@@ -162,14 +162,14 @@ void RTCRtpSender::setParameters(const RTCRtpSendParameters& parameters, DOMProm
     return m_backend->setParameters(parameters, WTFMove(promise));
 }
 
-ExceptionOr<void> RTCRtpSender::setStreams(const Vector<std::reference_wrapper<MediaStream>>& streams)
+ExceptionOr<void> RTCRtpSender::setStreams(const FixedVector<std::reference_wrapper<MediaStream>>& streams)
 {
     return setMediaStreamIds(WTF::map(streams, [](auto& stream) -> String {
         return stream.get().id();
     }));
 }
 
-ExceptionOr<void> RTCRtpSender::setMediaStreamIds(const Vector<String>& streamIds)
+ExceptionOr<void> RTCRtpSender::setMediaStreamIds(const FixedVector<String>& streamIds)
 {
     if (!m_connection || m_connection->isClosed() || !m_backend)
         return Exception { InvalidStateError, "connection is closed"_s };

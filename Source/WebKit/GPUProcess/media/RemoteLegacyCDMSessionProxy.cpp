@@ -59,17 +59,18 @@ static RefPtr<Uint8Array> convertToUint8Array(IPC::SharedBufferCopy&& buffer)
     if (!buffer.buffer())
         return nullptr;
 
-    size_t sizeInBytes = buffer.size();
-    auto arrayBuffer = ArrayBuffer::create(buffer.data(), sizeInBytes);
-    return Uint8Array::create(WTFMove(arrayBuffer), 0, sizeInBytes);
+    auto arrayBuffer = buffer.buffer()->tryCreateArrayBuffer();
+    if (!arrayBuffer)
+        return nullptr;
+    return Uint8Array::create(arrayBuffer.releaseNonNull(), 0, buffer.size());
 }
 
 template <typename T>
-static std::optional<IPC::SharedBufferCopy> convertToOptionalDataReference(T array)
+static std::optional<IPC::SharedBufferCopy> convertToOptionalSharedBuffer(T array)
 {
     if (!array)
         return std::nullopt;
-    return { SharedBuffer::create((const char*)array->data(), array->byteLength()) };
+    return { IPC::SharedBufferCopy(SharedBuffer::create((const char*)array->data(), array->byteLength())) };
 }
 
 void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, IPC::SharedBufferCopy&& initData, GenerateKeyCallback&& completion)
@@ -88,7 +89,7 @@ void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, IPC
 
     destinationURL = "this is a test string"_s;
 
-    completion(convertToOptionalDataReference(keyRequest), destinationURL, errorCode, systemCode);
+    completion(convertToOptionalSharedBuffer(keyRequest), destinationURL, errorCode, systemCode);
 }
 
 void RemoteLegacyCDMSessionProxy::releaseKeys()
@@ -110,7 +111,7 @@ void RemoteLegacyCDMSessionProxy::update(IPC::SharedBufferCopy&& update, UpdateC
 
     bool succeeded = m_session->update(updateArray.get(), nextMessage, errorCode, systemCode);
 
-    completion(succeeded, convertToOptionalDataReference(nextMessage), errorCode, systemCode);
+    completion(succeeded, convertToOptionalSharedBuffer(nextMessage), errorCode, systemCode);
 }
 
 RefPtr<ArrayBuffer> RemoteLegacyCDMSessionProxy::getCachedKeyForKeyId(const String& keyId)
@@ -120,7 +121,7 @@ RefPtr<ArrayBuffer> RemoteLegacyCDMSessionProxy::getCachedKeyForKeyId(const Stri
 
 void RemoteLegacyCDMSessionProxy::cachedKeyForKeyID(String keyId, CachedKeyForKeyIDCallback&& completion)
 {
-    completion(convertToOptionalDataReference(getCachedKeyForKeyId(keyId)));
+    completion(convertToOptionalSharedBuffer(getCachedKeyForKeyId(keyId)));
 }
 
 void RemoteLegacyCDMSessionProxy::sendMessage(Uint8Array* message, String destinationURL)
@@ -132,7 +133,7 @@ void RemoteLegacyCDMSessionProxy::sendMessage(Uint8Array* message, String destin
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->connection().send(Messages::RemoteLegacyCDMSession::SendMessage(convertToOptionalDataReference(message), destinationURL), m_identifier);
+    gpuConnectionToWebProcess->connection().send(Messages::RemoteLegacyCDMSession::SendMessage(convertToOptionalSharedBuffer(message), destinationURL), m_identifier);
 }
 
 void RemoteLegacyCDMSessionProxy::sendError(MediaKeyErrorCode errorCode, uint32_t systemCode)

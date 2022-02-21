@@ -30,7 +30,9 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
-@implementation TestUIDelegate
+@implementation TestUIDelegate {
+    BOOL _showedInspector;
+}
 
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
@@ -81,6 +83,17 @@
     return result.autorelease();
 }
 
+- (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector
+{
+    _showedInspector = YES;
+}
+
+- (void)waitForInspectorToShow
+{
+    while (!_showedInspector)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
 @end
 
 @implementation WKWebView (TestUIDelegateExtras)
@@ -93,6 +106,15 @@
     NSString *alert = [uiDelegate waitForAlert];
     self.UIDelegate = nil;
     return alert;
+}
+
+- (void)_test_waitForInspectorToShow
+{
+    EXPECT_FALSE(self.UIDelegate);
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    self.UIDelegate = uiDelegate.get();
+    [uiDelegate waitForInspectorToShow];
+    self.UIDelegate = nil;
 }
 
 @end

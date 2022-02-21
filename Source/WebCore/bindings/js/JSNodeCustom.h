@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "ElementInlines.h"
 #include "JSDOMBinding.h"
 #include "JSNode.h"
 
@@ -68,16 +69,11 @@ inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalOb
 // root. In the JavaScript DOM, a node tree survives as long as there is a
 // reference to any node in the tree. To model the JavaScript DOM on top of
 // the C++ DOM, we ensure that the root of every tree has a JavaScript wrapper.
-void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node* root);
-inline void willCreatePossiblyOrphanedTreeByRemoval(Node* root)
+void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node& root);
+inline void willCreatePossiblyOrphanedTreeByRemoval(Node& root)
 {
-    if (root->wrapper())
-        return;
-
-    if (!root->hasChildNodes())
-        return;
-
-    willCreatePossiblyOrphanedTreeByRemovalSlowCase(root);
+    if (!root.wrapper() && root.hasChildNodes())
+        willCreatePossiblyOrphanedTreeByRemovalSlowCase(root);
 }
 
 inline void* root(Node* node)

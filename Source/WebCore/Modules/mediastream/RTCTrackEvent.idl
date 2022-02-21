@@ -30,7 +30,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     Exposed=Window
 ] interface RTCTrackEvent : Event {
     constructor(DOMString type, RTCTrackEventInit eventInitDict);

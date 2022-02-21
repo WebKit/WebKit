@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,8 @@ typedef struct jit_heap_config_root_data jit_heap_config_root_data;
 typedef struct pas_page_header_table pas_page_header_table;
 
 struct jit_heap_config_root_data {
-    pas_page_header_table* small_bitfit_page_header_table;
-    pas_page_header_table* medium_bitfit_page_header_table;
+    pas_page_header_table* small_page_header_table;
+    pas_page_header_table* medium_page_header_table;
 };
 
 PAS_END_EXTERN_C;

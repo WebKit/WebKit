@@ -143,14 +143,6 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
     // resize regular FBO
     ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
     ASSERT(m_texture);
-#if PLATFORM(COCOA)
-    if (!allocateIOSurfaceBackingStore(size)) {
-        RELEASE_LOG(WebGL, "Fatal: Unable to allocate backing store of size %d x %d", width, height);
-        forceContextLost();
-        return true;
-    }
-    ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, m_texture, 0);
-#else
     ::glBindTexture(GL_TEXTURE_2D, m_texture);
     ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_texture, 0);
@@ -164,7 +156,6 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
         ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
         ::glBindTexture(GL_TEXTURE_2D, 0);
     }
-#endif
 #endif
 
     attachDepthAndStencilBufferIfNeeded(internalDepthStencilFormat, width, height);
@@ -354,10 +345,10 @@ void GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenu
         type = GL_HALF_FLOAT_ARB;
     }
 
-    ASSERT(format != ExtensionsGL::SRGB8_ALPHA8_EXT);
-    if (format == ExtensionsGL::SRGB_ALPHA_EXT)
+    ASSERT(format != GraphicsContextGL::SRGB8_ALPHA8_EXT);
+    if (format == GraphicsContextGL::SRGB_ALPHA_EXT)
         openGLFormat = GL_RGBA;
-    else if (format == ExtensionsGL::SRGB_EXT)
+    else if (format == GraphicsContextGL::SRGB_EXT)
         openGLFormat = GL_RGB;
 #endif
 
@@ -407,7 +398,7 @@ void GraphicsContextGLOpenGL::clearDepth(GCGLclampf depth)
 }
 
 #if !PLATFORM(GTK)
-ExtensionsGLOpenGLCommon& GraphicsContextGLOpenGL::getExtensions()
+ExtensionsGLOpenGL& GraphicsContextGLOpenGL::getExtensions()
 {
     if (!m_extensions)
         m_extensions = makeUnique<ExtensionsGLOpenGL>(this, isGLES2Compliant());

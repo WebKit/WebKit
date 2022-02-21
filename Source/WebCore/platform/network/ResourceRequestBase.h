@@ -105,6 +105,8 @@ public:
     WEBCORE_EXPORT void addHTTPHeaderField(HTTPHeaderName, const String& value);
     WEBCORE_EXPORT void addHTTPHeaderField(const String& name, const String& value);
     WEBCORE_EXPORT void addHTTPHeaderFieldIfNotPresent(HTTPHeaderName, const String&);
+    void removeHTTPHeaderField(const String& name);
+    void removeHTTPHeaderField(HTTPHeaderName);
 
     WEBCORE_EXPORT bool hasHTTPHeaderField(HTTPHeaderName) const;
 
@@ -196,7 +198,7 @@ public:
     WEBCORE_EXPORT static bool equal(const ResourceRequest&, const ResourceRequest&);
 
     bool isAppInitiated() const { return m_isAppInitiated; }
-    void setIsAppInitiated(bool isAppInitiated) { m_isAppInitiated = isAppInitiated; };
+    WEBCORE_EXPORT void setIsAppInitiated(bool);
 
 protected:
     // Used when ResourceRequest is initialized from a platform representation of the request

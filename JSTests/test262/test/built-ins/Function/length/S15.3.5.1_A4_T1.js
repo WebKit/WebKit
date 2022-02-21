@@ -11,17 +11,13 @@ description: >
 
 var f = new Function("arg1,arg2,arg3", null);
 
-//CHECK#1
-if (!(f.hasOwnProperty('length'))) {
-  throw new Test262Error('#1: the function has length property.');
-}
+assert(f.hasOwnProperty('length'), 'f.hasOwnProperty(\'length\') must return true');
 
 for (var key in f) {
   if (key == "length") {
     var lengthenumed = true;
   }
 }
-//CHECK#2
-if (lengthenumed) {
-  throw new Test262Error('#2: the length property has the attributes { DontEnum }');
-}
+assert(!lengthenumed, 'The value of !lengthenumed is expected to be true');
+
+// TODO: Convert to verifyProperty() format.

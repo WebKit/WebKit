@@ -44,7 +44,7 @@
 namespace WebCore {
 
 CSSFontFaceSet::CSSFontFaceSet(CSSFontSelector* owningFontSelector)
-    : m_owningFontSelector(makeWeakPtr(owningFontSelector))
+    : m_owningFontSelector(owningFontSelector)
 {
 }
 
@@ -119,7 +119,7 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
     if (!m_owningFontSelector->scriptExecutionContext())
         return;
     AllowUserInstalledFonts allowUserInstalledFonts = m_owningFontSelector->scriptExecutionContext()->settingsValues().shouldAllowUserInstalledFonts ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No;
-    Vector<FontSelectionCapabilities> capabilities = m_owningFontSelector->scriptExecutionContext()->fontCache().getFontSelectionCapabilitiesInFamily(familyName, allowUserInstalledFonts);
+    Vector<FontSelectionCapabilities> capabilities = FontCache::forCurrentThread().getFontSelectionCapabilitiesInFamily(familyName, allowUserInstalledFonts);
     if (capabilities.isEmpty())
         return;
 
@@ -252,7 +252,7 @@ void CSSFontFaceSet::removeFromFacesLookupTable(const CSSFontFace& face, const C
 
 void CSSFontFaceSet::remove(const CSSFontFace& face)
 {
-    auto protect = makeRef(face);
+    Ref protect { face };
 
     m_cache.clear();
 
@@ -428,11 +428,9 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
         }
     }
 
-    Vector<std::reference_wrapper<CSSFontFace>> result;
-    result.reserveInitialCapacity(resultConstituents.size());
-    for (auto* constituent : resultConstituents)
-        result.uncheckedAppend(*constituent);
-    return result;
+    return WTF::map(resultConstituents, [](auto* constituent) -> std::reference_wrapper<CSSFontFace> {
+        return *constituent;
+    });
 }
 
 ExceptionOr<bool> CSSFontFaceSet::check(const String& font, const String& text)
@@ -486,12 +484,9 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
     }
 
     if (!candidateFontFaces.isEmpty()) {
-        Vector<FontSelectionCapabilities> capabilities;
-        capabilities.reserveInitialCapacity(candidateFontFaces.size());
-        for (auto& face : candidateFontFaces) {
-            auto fontSelectionCapabilities = face.get().fontSelectionCapabilities();
-            capabilities.uncheckedAppend(*fontSelectionCapabilities);
-        }
+        auto capabilities = candidateFontFaces.map([](auto& face) {
+            return *face.get().fontSelectionCapabilities();
+        });
         FontSelectionAlgorithm fontSelectionAlgorithm(request, capabilities);
         std::stable_sort(candidateFontFaces.begin(), candidateFontFaces.end(), [&fontSelectionAlgorithm](const CSSFontFace& first, const CSSFontFace& second) {
             auto firstCapabilities = first.fontSelectionCapabilities();

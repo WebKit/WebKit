@@ -114,6 +114,7 @@ protected:
 
 private:
     const char* configurationNameForLogging(Configuration) const;
+    bool supportsFeatures(const String& features) const;
 
     bool m_isMediaSource { false };
     HashSet<String, ASCIICaseInsensitiveHash> m_decoderMimeTypeSet;

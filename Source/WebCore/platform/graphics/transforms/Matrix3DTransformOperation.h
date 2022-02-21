@@ -52,6 +52,7 @@ private:
 
     bool isRepresentableIn2D() const final;
 
+    bool operator==(const Matrix3DTransformOperation& other) const { return operator==(static_cast<const TransformOperation&>(other)); }
     bool operator==(const TransformOperation&) const override;
 
     bool apply(TransformationMatrix& transform, const FloatSize&) const override

@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=MenuItemElement,
+    EnabledAtRuntime=MenuItemElementEnabled,
     Exposed=Window
 ] interface HTMLMenuItemElement : HTMLElement {
 };

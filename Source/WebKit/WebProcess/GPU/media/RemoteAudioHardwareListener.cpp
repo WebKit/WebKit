@@ -45,7 +45,7 @@ Ref<RemoteAudioHardwareListener> RemoteAudioHardwareListener::create(AudioHardwa
 RemoteAudioHardwareListener::RemoteAudioHardwareListener(AudioHardwareListener::Client& client, WebProcess& webProcess)
     : AudioHardwareListener(client)
     , m_identifier(RemoteAudioHardwareListenerIdentifier::generate())
-    , m_gpuProcessConnection(makeWeakPtr(WebProcess::singleton().ensureGPUProcessConnection()))
+    , m_gpuProcessConnection(WebProcess::singleton().ensureGPUProcessConnection())
 {
     m_gpuProcessConnection->addClient(*this);
     m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteAudioHardwareListener::messageReceiverName(), m_identifier.toUInt64(), *this);

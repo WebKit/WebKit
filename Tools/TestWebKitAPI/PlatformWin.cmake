@@ -124,6 +124,8 @@ if (ENABLE_WEBKIT)
     list(APPEND TestWebKit_SOURCES
         ${test_main_SOURCES}
 
+        Tests/WebKit/CookieStorageFile.cpp
+
         win/PlatformUtilitiesWin.cpp
         win/PlatformWebViewWin.cpp
         win/UtilitiesWin.cpp

@@ -33,6 +33,7 @@
 #include "HTMLOutputElement.h"
 
 #include "DOMTokenList.h"
+#include "Document.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include <wtf/IsoMallocInlines.h>

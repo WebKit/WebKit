@@ -94,6 +94,8 @@ public:
     const void* sourceBufferLogIdentifier() final { return logIdentifier(); }
 #endif
 
+    size_t platformMaximumBufferSize() const override;
+
 private:
     SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer*, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
 

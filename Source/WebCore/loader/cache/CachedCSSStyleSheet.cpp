@@ -81,7 +81,7 @@ const String CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint,
         return m_decodedSheetText;
 
     // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory
-    return m_decoder->decodeAndFlush(m_data->data(), m_data->size());
+    return m_decoder->decodeAndFlush(m_data->makeContiguous()->data(), m_data->size());
 }
 
 void CachedCSSStyleSheet::setBodyDataFrom(const CachedResource& resource)
@@ -97,13 +97,18 @@ void CachedCSSStyleSheet::setBodyDataFrom(const CachedResource& resource)
         saveParsedStyleSheet(*sheet.m_parsedStyleSheetCache);
 }
 
-void CachedCSSStyleSheet::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedCSSStyleSheet::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
-    m_data = data;
-    setEncodedSize(data ? data->size() : 0);
-    // Decode the data to find out the encoding and keep the sheet text around during checkNotify()
-    if (data)
-        m_decodedSheetText = m_decoder->decodeAndFlush(data->data(), data->size());
+    if (data) {
+        auto contiguousData = data->makeContiguous();
+        setEncodedSize(data->size());
+        // Decode the data to find out the encoding and keep the sheet text around during checkNotify()
+        m_decodedSheetText = m_decoder->decodeAndFlush(contiguousData->data(), data->size());
+        m_data = WTFMove(contiguousData);
+    } else {
+        m_data = nullptr;
+        setEncodedSize(0);
+    }
     setLoading(false);
     checkNotify(metrics);
     // Clear the decoded text as it is unlikely to be needed immediately again and is cheap to regenerate.

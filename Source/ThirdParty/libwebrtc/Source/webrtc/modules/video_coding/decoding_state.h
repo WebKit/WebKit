@@ -14,7 +14,6 @@
 #if defined(WEBRTC_WEBKIT_BUILD)
 #include <cstdint>
 #endif
-
 #include <map>
 #include <set>
 #include <vector>

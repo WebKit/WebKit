@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        function checkForScroll()
+        {
+            shouldBeTrue('window.scrollY > 0');
+            testRunner.notifyDone();
+        }
+
+        async function scrollTest()
+        {
+            // Gesture that starts horizontal then has some upward trajectory at the end.
+            const events = [
+                {
+                    type : "wheel",
+                    viewX : 100,
+                    viewY : 100,
+                    deltaX : 1,
+                    phase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaX : 4,
+                    deltaY : -1,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    viewX : 101, // defeat coalescing
+                    deltaX : 6,
+                    deltaY : -2,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    viewX : 100, // defeat coalescing
+                    deltaX : 10,
+                    deltaY : -4,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    viewX : 101, // defeat coalescing
+                    deltaX : 8,
+                    deltaY : -6,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    phase : "ended"
+                },
+                {
+                    type : "wheel",
+                    viewX : 100, // defeat coalescing
+                    deltaX : 10,
+                    deltaY : -6,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    viewX : 101, // defeat coalescing
+                    deltaX : 12,
+                    deltaY : -5,
+                    momentumPhase : "changed"
+                },
+                {
+                    type : "wheel",
+                    viewX : 100, // defeat coalescing
+                    deltaX : 8,
+                    deltaY : -4,
+                    momentumPhase : "changed"
+                },
+                {
+                    type : "wheel",
+                    viewX : 101, // defeat coalescing
+                    deltaX : 6,
+                    deltaY : -2,
+                    momentumPhase : "changed"
+                },
+                {
+                    type : "wheel",
+                    viewX : 100, // defeat coalescing
+                    deltaX : 4,
+                    deltaY : -1,
+                    momentumPhase : "changed"
+                },
+                {
+                    type : "wheel",
+                    momentumPhase : "ended"
+                }
+            ];
+            
+            await UIHelper.mouseWheelSequence({ events });
+            checkForScroll();
+        }
+
+        function startTest()
+        {
+            if (!window.eventSender) {
+                setTimeout(scrollTest, 0);
+                return;
+            }
+
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+
+            setTimeout(scrollTest, 0);
+        }
+        
+        window.addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

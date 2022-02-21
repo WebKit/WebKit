@@ -33,21 +33,21 @@ namespace JSC {
 
 class InternalFunctionAllocationProfile {
 public:
-    static inline ptrdiff_t offsetOfStructure() { return OBJECT_OFFSETOF(InternalFunctionAllocationProfile, m_structure); }
+    static inline ptrdiff_t offsetOfStructureID() { return OBJECT_OFFSETOF(InternalFunctionAllocationProfile, m_structureID); }
 
-    Structure* structure() { return m_structure.get(); }
+    Structure* structure() { return m_structureID.get(); }
     Structure* createAllocationStructureFromBase(VM&, JSGlobalObject*, JSCell* owner, JSObject* prototype, Structure* base);
 
-    void clear() { m_structure.clear(); }
-    template<typename Visitor> void visitAggregate(Visitor& visitor) { visitor.append(m_structure); }
+    void clear() { m_structureID.clear(); }
+    template<typename Visitor> void visitAggregate(Visitor& visitor) { visitor.append(m_structureID); }
 
 private:
-    WriteBarrier<Structure> m_structure;
+    WriteBarrierStructureID m_structureID;
 };
 
 inline Structure* InternalFunctionAllocationProfile::createAllocationStructureFromBase(VM& vm, JSGlobalObject* baseGlobalObject, JSCell* owner, JSObject* prototype, Structure* baseStructure)
 {
-    ASSERT(!m_structure || m_structure.get()->classInfo() != baseStructure->classInfo() || m_structure->globalObject() != baseGlobalObject);
+    ASSERT(!m_structureID || m_structureID.get()->classInfo() != baseStructure->classInfo() || m_structureID->globalObject() != baseStructure->globalObject());
     ASSERT(baseStructure->hasMonoProto());
 
     Structure* structure;
@@ -61,8 +61,8 @@ inline Structure* InternalFunctionAllocationProfile::createAllocationStructureFr
     // Ensure that if another thread sees the structure, it will see it properly created.
     WTF::storeStoreFence();
 
-    m_structure.set(vm, owner, structure);
-    return m_structure.get();
+    m_structureID.set(vm, owner, structure);
+    return structure;
 }
 
 } // namespace JSC

@@ -58,61 +58,33 @@ WebNotificationClient::WebNotificationClient(WebView *webView)
 {
 }
 
-bool WebNotificationClient::show(Notification* notification)
+bool WebNotificationClient::show(Notification& notification)
 {
     if (![m_webView _notificationProvider])
         return false;
 
     uint64_t notificationID = generateNotificationID();
-    RetainPtr<WebNotification> webNotification = adoptNS([[WebNotification alloc] initWithCoreNotification:notification notificationID:notificationID]);
-    m_notificationMap.set(notification, webNotification);
-
-    auto it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<RetainPtr<WebNotification>>()).iterator;
-    it->value.append(webNotification);
+    RetainPtr<WebNotification> webNotification = adoptNS([[WebNotification alloc] initWithCoreNotification:&notification notificationID:notificationID]);
+    m_notificationMap.set(&notification, webNotification);
 
     [[m_webView _notificationProvider] showNotification:webNotification.get() fromWebView:m_webView];
     return true;
 }
 
-void WebNotificationClient::cancel(Notification* notification)
+void WebNotificationClient::cancel(Notification& notification)
 {
-    WebNotification *webNotification = m_notificationMap.get(notification).get();
+    WebNotification *webNotification = m_notificationMap.get(&notification).get();
     if (!webNotification)
         return;
 
     [[m_webView _notificationProvider] cancelNotification:webNotification];
 }
 
-void WebNotificationClient::clearNotifications(ScriptExecutionContext* context)
+void WebNotificationClient::notificationObjectDestroyed(Notification& notification)
 {
-    auto it = m_notificationContextMap.find(context);
-    if (it == m_notificationContextMap.end())
-        return;
-    
-    auto finalizedNotificationIDs = createNSArray(it->value, [&] (auto& notification) {
-        auto& coreNotification = *core(notification.get());
-        coreNotification.finalize();
-        m_notificationMap.remove(&coreNotification);
-        return @([notification notificationID]);
-    });
-
-    [[m_webView _notificationProvider] clearNotifications:finalizedNotificationIDs.get()];
-    m_notificationContextMap.remove(it);
-}
-
-void WebNotificationClient::notificationObjectDestroyed(Notification* notification)
-{
-    RetainPtr<WebNotification> webNotification = m_notificationMap.take(notification);
+    RetainPtr<WebNotification> webNotification = m_notificationMap.take(&notification);
     if (!webNotification)
         return;
-
-    auto it = m_notificationContextMap.find(notification->scriptExecutionContext());
-    ASSERT(it != m_notificationContextMap.end());
-    size_t index = it->value.find(webNotification);
-    ASSERT(index != notFound);
-    it->value.remove(index);
-    if (it->value.isEmpty())
-        m_notificationContextMap.remove(it);
 
     [[m_webView _notificationProvider] notificationDestroyed:webNotification.get()];
 }
@@ -192,12 +164,12 @@ uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* 
 }
 
 #if PLATFORM(IOS_FAMILY)
-- (void)denyOnlyThisRequest
+- (void)denyOnlyThisRequest NO_RETURN_DUE_TO_ASSERT
 {
     ASSERT_NOT_REACHED();
 }
 
-- (BOOL)shouldClearCache
+- (BOOL)shouldClearCache NO_RETURN_DUE_TO_ASSERT
 {
     ASSERT_NOT_REACHED();
     return NO;

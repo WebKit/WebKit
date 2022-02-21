@@ -28,7 +28,8 @@
 #include "config.h"
 #include "XPathFunctions.h"
 
-#include "Element.h"
+#include "Attribute.h"
+#include "ElementInlines.h"
 #include "ProcessingInstruction.h"
 #include "TreeScope.h"
 #include "XMLNames.h"
@@ -714,7 +715,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, FunctionMapValue> createF
 
 std::unique_ptr<Function> Function::create(const String& name, unsigned numArguments)
 {
-    static const auto functionMap = makeNeverDestroyed(createFunctionMap());
+    static NeverDestroyed functionMap = createFunctionMap();
 
     auto it = functionMap.get().find(name);
     if (it == functionMap.get().end())

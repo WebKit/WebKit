@@ -53,7 +53,7 @@ public:
     CachedImage(const URL&, Image*, PAL::SessionID, const CookieJar*, const String& domainForCachePartition);
     virtual ~CachedImage();
 
-    WEBCORE_EXPORT Image* image(); // Returns the nullImage() if the image is not available yet.
+    WEBCORE_EXPORT Image* image() const; // Returns the nullImage() if the image is not available yet.
     WEBCORE_EXPORT Image* imageForRenderer(const RenderObject*); // Returns the nullImage() if the image is not available yet.
     bool hasImage() const { return m_image.get(); }
     bool hasSVGImage() const;
@@ -69,8 +69,8 @@ public:
     bool imageHasRelativeWidth() const { return m_image && m_image->hasRelativeWidth(); }
     bool imageHasRelativeHeight() const { return m_image && m_image->hasRelativeHeight(); }
 
-    void updateBuffer(SharedBuffer&) override;
-    void finishLoading(SharedBuffer*, const NetworkLoadMetrics&) override;
+    void updateBuffer(const FragmentedSharedBuffer&) override;
+    void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) override;
 
     enum SizeType {
         UsedSize,
@@ -125,10 +125,10 @@ private:
     void destroyDecodedData() override;
 
     bool shouldDeferUpdateImageData() const;
-    RefPtr<SharedBuffer> convertedDataIfNeeded(SharedBuffer* data) const;
+    RefPtr<SharedBuffer> convertedDataIfNeeded(const FragmentedSharedBuffer* data) const;
     void didUpdateImageData();
     EncodedDataStatus updateImageData(bool allDataReceived);
-    void updateData(const uint8_t* data, unsigned length) override;
+    void updateData(const SharedBuffer&) override;
     void error(CachedResource::Status) override;
     void responseReceived(const ResourceResponse&) override;
 
@@ -169,7 +169,7 @@ private:
     void changedInRect(const Image&, const IntRect*);
     void scheduleRenderingUpdate(const Image&);
 
-    void updateBufferInternal(SharedBuffer&);
+    void updateBufferInternal(const SharedBuffer&);
 
     void didReplaceSharedBufferContents() override;
 

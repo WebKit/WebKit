@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 // The behavior of many of the functions in the <ctype.h> header is dependent
 // on the current locale. But almost all uses of these functions are for
 // locale-independent, ASCII-specific purposes. In WebKit code we use our own
@@ -38,8 +40,8 @@
 // Also generates errors on wx on Windows, presumably because these functions
 // are used from wx headers. On GTK+ for Mac many GTK+ files include <libintl.h>
 // or <glib/gi18n-lib.h>, which in turn include <xlocale/_ctype.h> which uses
-// isacii(). 
-#if !(OS(DARWIN) && PLATFORM(GTK)) && !defined(_LIBCPP_VERSION) && defined(__GLIBC__)
+// isacii(). Additionally, regex.h uses tolower on Linux.
+#if !OS(LINUX) && !defined(_LIBCPP_VERSION) && defined(__GLIBC__)
 
 #include <ctype.h>
 

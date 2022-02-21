@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,19 +32,22 @@
 #include "Timer.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/HashSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class CaptionUserPreferencesTestingModeToken;
 class HTMLMediaElement;
+class Page;
 class PageGroup;
 class AudioTrackList;
 class TextTrackList;
 struct MediaSelectionOption;
 
-class CaptionUserPreferences {
+class CaptionUserPreferences : public RefCounted<CaptionUserPreferences>, public CanMakeWeakPtr<CaptionUserPreferences> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CaptionUserPreferences(PageGroup&);
+    static Ref<CaptionUserPreferences> create(PageGroup&);
     virtual ~CaptionUserPreferences();
 
     enum CaptionDisplayMode {
@@ -96,17 +99,29 @@ public:
     void setPrimaryAudioTrackLanguageOverride(const String& language) { m_primaryAudioTrackLanguageOverride = language;  }
     String primaryAudioTrackLanguageOverride() const;
 
-    virtual bool testingMode() const { return m_testingMode; }
-    void setTestingMode(bool override) { m_testingMode = override; }
+    virtual bool testingMode() const { return m_testingModeCount; }
+
+    friend class CaptionUserPreferencesTestingModeToken;
+    UniqueRef<CaptionUserPreferencesTestingModeToken> createTestingModeToken() { return makeUniqueRef<CaptionUserPreferencesTestingModeToken>(*this); }
     
     PageGroup& pageGroup() const { return m_pageGroup; }
 
 protected:
+    explicit CaptionUserPreferences(PageGroup&);
+
     void updateCaptionStyleSheetOverride();
     void beginBlockingNotifications();
     void endBlockingNotifications();
 
 private:
+    void incrementTestingModeCount() { ++m_testingModeCount; }
+    void decrementTestingModeCount()
+    {
+        ASSERT(m_testingModeCount);
+        if (m_testingModeCount)
+            --m_testingModeCount;
+    }
+
     void timerFired();
     void notify();
     Page* currentPage() const;
@@ -119,8 +134,25 @@ private:
     String m_captionsStyleSheetOverride;
     String m_primaryAudioTrackLanguageOverride;
     unsigned m_blockNotificationsCounter { 0 };
-    bool m_testingMode { false };
     bool m_havePreferences { false };
+    unsigned m_testingModeCount { 0 };
+};
+
+class CaptionUserPreferencesTestingModeToken {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    CaptionUserPreferencesTestingModeToken(CaptionUserPreferences& parent)
+        : m_parent(parent)
+    {
+        parent.incrementTestingModeCount();
+    }
+    ~CaptionUserPreferencesTestingModeToken()
+    {
+        if (m_parent)
+            m_parent->decrementTestingModeCount();
+    }
+private:
+    WeakPtr<CaptionUserPreferences> m_parent;
 };
     
 }

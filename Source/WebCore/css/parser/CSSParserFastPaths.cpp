@@ -630,8 +630,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyColorInterpolation:
     case CSSPropertyColorInterpolationFilters:
         return valueID == CSSValueAuto || valueID == CSSValueSRGB || valueID == CSSValueLinearRGB;
-    case CSSPropertyColorRendering:
-        return valueID == CSSValueAuto || valueID == CSSValueOptimizeSpeed || valueID == CSSValueOptimizeQuality;
     case CSSPropertyDirection: // ltr | rtl
         return valueID == CSSValueLtr || valueID == CSSValueRtl;
     case CSSPropertyDominantBaseline:
@@ -649,6 +647,10 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueFromImage || valueID == CSSValueNone;
     case CSSPropertyImageRendering: // auto | optimizeContrast | pixelated | optimizeSpeed | crispEdges | optimizeQuality | webkit-crispEdges
         return valueID == CSSValueAuto || valueID == CSSValueOptimizeSpeed || valueID == CSSValueOptimizeQuality || valueID == CSSValueWebkitCrispEdges || valueID == CSSValueWebkitOptimizeContrast || valueID == CSSValueCrispEdges || valueID == CSSValuePixelated;
+    case CSSPropertyInputSecurity:
+        if (!context.inputSecurityEnabled)
+            return false;
+        return valueID == CSSValueAuto || valueID == CSSValueNone;
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyIsolation: // auto | isolate
         return valueID == CSSValueAuto || valueID == CSSValueIsolate;
@@ -751,8 +753,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNone || valueID == CSSValueNonScalingStroke;
     case CSSPropertyVisibility: // visible | hidden | collapse
         return valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueCollapse;
-    case CSSPropertyWebkitAppearance:
-        return (valueID >= CSSValueCheckbox && valueID <= CSSValueCapsLockIndicator) || valueID == CSSValueNone;
+    case CSSPropertyAppearance:
+        return (valueID >= CSSValueCheckbox && valueID <= CSSValueCapsLockIndicator) || valueID == CSSValueNone || valueID == CSSValueAuto;
     case CSSPropertyBackfaceVisibility:
         return valueID == CSSValueVisible || valueID == CSSValueHidden;
 #if ENABLE(CSS_COMPOSITING)
@@ -792,7 +794,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNowrap || valueID == CSSValueWrap || valueID == CSSValueWrapReverse;
     case CSSPropertyWebkitHyphens:
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueManual;
-    case CSSPropertyWebkitFontKerning:
+    case CSSPropertyFontKerning:
         return valueID == CSSValueAuto || valueID == CSSValueNormal || valueID == CSSValueNone;
     case CSSPropertyWebkitFontSmoothing:
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueAntialiased || valueID == CSSValueSubpixelAntialiased;
@@ -802,12 +804,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueLoose || valueID == CSSValueNormal || valueID == CSSValueStrict || valueID == CSSValueAfterWhiteSpace || valueID == CSSValueAnywhere;
     case CSSPropertyWebkitLineSnap:
         return valueID == CSSValueNone || valueID == CSSValueBaseline || valueID == CSSValueContain;
-    case CSSPropertyWebkitMarginAfterCollapse:
-    case CSSPropertyWebkitMarginBeforeCollapse:
-    case CSSPropertyWebkitMarginBottomCollapse:
-    case CSSPropertyWebkitMarginTopCollapse:
-        return valueID == CSSValueCollapse || valueID == CSSValueSeparate || valueID == CSSValueDiscard;
-    case CSSPropertyWebkitPrintColorAdjust:
+    case CSSPropertyPrintColorAdjust:
         return valueID == CSSValueExact || valueID == CSSValueEconomy;
     case CSSPropertyWebkitRtlOrdering:
         return valueID == CSSValueLogical || valueID == CSSValueVisual;
@@ -815,6 +812,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueBefore || valueID == CSSValueAfter || valueID == CSSValueInterCharacter;
     case CSSPropertyWebkitTextCombine:
         return valueID == CSSValueNone || valueID == CSSValueHorizontal;
+    case CSSPropertyTextCombineUpright:
+        return valueID == CSSValueNone || valueID == CSSValueAll;
     case CSSPropertyWebkitTextSecurity: // disc | circle | square | none
         return valueID == CSSValueDisc || valueID == CSSValueCircle || valueID == CSSValueSquare || valueID == CSSValueNone;
     case CSSPropertyTransformStyle:
@@ -841,8 +840,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNormal || valueID == CSSValuePre || valueID == CSSValuePreWrap || valueID == CSSValuePreLine || valueID == CSSValueNowrap || valueID == CSSValueBreakSpaces;
     case CSSPropertyWordBreak: // normal | break-all | keep-all | break-word (this is a custom extension)
         return valueID == CSSValueNormal || valueID == CSSValueBreakAll || valueID == CSSValueKeepAll || valueID == CSSValueBreakWord;
-    case CSSPropertyWebkitBorderFit:
-        return valueID == CSSValueBorder || valueID == CSSValueLines;
 #if ENABLE(CSS_TRAILING_WORD)
     case CSSPropertyAppleTrailingWord: // auto | -apple-partially-balanced
         return valueID == CSSValueAuto || valueID == CSSValueWebkitPartiallyBalanced;
@@ -901,6 +898,11 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyFontOpticalSizing:
         return valueID == CSSValueAuto || valueID == CSSValueNone;
 #endif
+    case CSSPropertyTextDecorationSkipInk:
+        return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueAll;
+    case CSSPropertyContainerType:
+        // FIXME: Support 'style', 'state'. Those will require parsing the value as a list.
+        return valueID == CSSValueNone || valueID == CSSValueSize || valueID == CSSValueInlineSize;
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -933,11 +935,13 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyFlexDirection:
     case CSSPropertyFlexWrap:
     case CSSPropertyFloat:
+    case CSSPropertyFontKerning:
     case CSSPropertyFontVariantAlternates:
     case CSSPropertyFontVariantCaps:
     case CSSPropertyFontVariantPosition:
     case CSSPropertyImageOrientation:
     case CSSPropertyImageRendering:
+    case CSSPropertyInputSecurity:
     case CSSPropertyListStylePosition:
     case CSSPropertyListStyleType:
     case CSSPropertyObjectFit:
@@ -959,32 +963,27 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyTransformStyle:
     case CSSPropertyUnicodeBidi:
     case CSSPropertyVisibility:
-    case CSSPropertyWebkitAppearance:
+    case CSSPropertyAppearance:
     case CSSPropertyBackfaceVisibility:
-    case CSSPropertyWebkitBorderFit:
     case CSSPropertyWebkitBoxAlign:
     case CSSPropertyWebkitBoxDirection:
     case CSSPropertyWebkitBoxLines:
     case CSSPropertyWebkitBoxOrient:
     case CSSPropertyWebkitBoxPack:
     case CSSPropertyWebkitColumnAxis:
-    case CSSPropertyWebkitFontKerning:
     case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyWebkitHyphens:
     case CSSPropertyWebkitLineAlign:
     case CSSPropertyLineBreak:
     case CSSPropertyWebkitLineSnap:
-    case CSSPropertyWebkitMarginAfterCollapse:
-    case CSSPropertyWebkitMarginBeforeCollapse:
-    case CSSPropertyWebkitMarginBottomCollapse:
-    case CSSPropertyWebkitMarginTopCollapse:
     case CSSPropertyWebkitMarqueeDirection:
     case CSSPropertyWebkitMarqueeStyle:
     case CSSPropertyWebkitNbspMode:
-    case CSSPropertyWebkitPrintColorAdjust:
+    case CSSPropertyPrintColorAdjust:
     case CSSPropertyWebkitRtlOrdering:
     case CSSPropertyWebkitRubyPosition:
     case CSSPropertyWebkitTextCombine:
+    case CSSPropertyTextCombineUpright:
     case CSSPropertyTextDecorationStyle:
     case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitTextSecurity:
@@ -1003,7 +1002,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyClipRule:
     case CSSPropertyColorInterpolation:
     case CSSPropertyColorInterpolationFilters:
-    case CSSPropertyColorRendering:
     case CSSPropertyDominantBaseline:
     case CSSPropertyFillRule:
     case CSSPropertyMaskType:
@@ -1019,13 +1017,11 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
 
     // FIXME-NEWPARSER: Add the following unprefixed properties:
     // case CSSPropertyBackfaceVisibility:
-    // case CSSPropertyFontKerning:
     // case CSSPropertyHyphens:
     // case CSSPropertyOverflowAnchor:
     // case CSSPropertyScrollSnapType:
     // case CSSPropertyTextAlignLast:
     // case CSSPropertyTextCombineUpright:
-    // case CSSPropertyTextDecorationStyle:
     // case CSSPropertyTextJustify:
     // case CSSPropertyUserSelect:
 #if ENABLE(CSS_TRAILING_WORD)
@@ -1061,6 +1057,8 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyFontOpticalSizing:
 #endif
     case CSSPropertyMathStyle:
+    case CSSPropertyTextDecorationSkipInk:
+    case CSSPropertyContainerType:
         return true;
     default:
         return false;
@@ -1112,19 +1110,11 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView s
     if (!valueID)
         return nullptr;
 
-    if (!parsingDescriptor) {
-        if (valueID == CSSValueInherit)
-            return CSSValuePool::singleton().createInheritedValue();
-        if (valueID == CSSValueInitial)
-            return CSSValuePool::singleton().createExplicitInitialValue();
-        if (valueID == CSSValueUnset)
-            return CSSValuePool::singleton().createUnsetValue();
-        if (valueID == CSSValueRevert)
-            return CSSValuePool::singleton().createRevertValue();
-    }
-    
+    if (!parsingDescriptor && isCSSWideKeyword(valueID))
+        return CSSValuePool::singleton().createIdentifierValue(valueID);
+
     if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyId, valueID, context))
-        return CSSPrimitiveValue::createIdentifier(valueID);
+        return CSSValuePool::singleton().createIdentifierValue(valueID);
     return nullptr;
 }
 
@@ -1132,7 +1122,7 @@ template <typename CharType>
 static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsigned expectedCount, CSSFunctionValue* transformValue)
 {
     while (expectedCount) {
-        size_t delimiter = WTF::find(pos, end - pos, expectedCount == 1 ? ')' : ',');
+        size_t delimiter = find(pos, end - pos, expectedCount == 1 ? ')' : ',');
         if (delimiter == notFound)
             return false;
         unsigned argumentLength = static_cast<unsigned>(delimiter);
@@ -1154,7 +1144,7 @@ static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsi
 template <typename CharType>
 static bool parseTransformAngleArgument(CharType*& pos, CharType* end, CSSFunctionValue* transformValue)
 {
-    size_t delimiter = WTF::find(pos, end - pos, ')');
+    size_t delimiter = find(pos, end - pos, ')');
     if (delimiter == notFound)
         return false;
 
@@ -1176,7 +1166,7 @@ template <typename CharType>
 static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigned expectedCount, CSSFunctionValue* transformValue)
 {
     while (expectedCount) {
-        size_t delimiter = WTF::find(pos, end - pos, expectedCount == 1 ? ')' : ',');
+        size_t delimiter = find(pos, end - pos, expectedCount == 1 ? ')' : ',');
         if (delimiter == notFound)
             return false;
         unsigned argumentLength = static_cast<unsigned>(delimiter);
@@ -1350,7 +1340,7 @@ static bool transformCanLikelyUseFastPath(const CharType* chars, unsigned length
         default:
             return false;
         }
-        size_t argumentsEnd = WTF::find(chars, length, ')', i);
+        size_t argumentsEnd = find(chars, length, ')', i);
         if (argumentsEnd == notFound)
             return false;
         // Advance to the end of the arguments.
@@ -1392,7 +1382,7 @@ static RefPtr<CSSValue> parseSimpleTransform(CSSPropertyID propertyID, StringVie
     return parseSimpleTransformList(string.characters16(), string.length());
 }
 
-static RefPtr<CSSValue> parseCaretColor(StringView string, const CSSParserContext& context)
+static RefPtr<CSSValue> parseColorWithAuto(StringView string, const CSSParserContext& context)
 {
     ASSERT(!string.isEmpty());
     if (cssValueKeywordID(string) == CSSValueAuto)
@@ -1404,8 +1394,8 @@ RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, S
 {
     if (auto result = parseSimpleLengthValue(propertyID, string, context.mode))
         return result;
-    if (propertyID == CSSPropertyCaretColor)
-        return parseCaretColor(string, context);
+    if (propertyID == CSSPropertyCaretColor || (propertyID == CSSPropertyAccentColor && context.accentColorEnabled))
+        return parseColorWithAuto(string, context);
     if (CSSProperty::isColorProperty(propertyID))
         return parseColor(string, context);
     if (auto result = parseKeywordValue(propertyID, string, context))

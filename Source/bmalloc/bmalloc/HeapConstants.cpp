@@ -26,6 +26,8 @@
 #include "HeapConstants.h"
 #include <algorithm>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 DEFINE_STATIC_PER_PROCESS_STORAGE(HeapConstants);
@@ -129,3 +131,5 @@ void HeapConstants::initializePageMetadata()
 }
 
 } // namespace bmalloc
+
+#endif

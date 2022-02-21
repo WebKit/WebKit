@@ -52,7 +52,7 @@ typedef struct {
     \
     pas_segregated_shared_page_directory* \
     name ## _page_config_select_shared_page_directory( \
-        pas_segregated_heap* heap, pas_segregated_global_size_directory* size_directory) \
+        pas_segregated_heap* heap, pas_segregated_size_directory* size_directory) \
     { \
         PAS_UNUSED_PARAM(size_directory); \
         \

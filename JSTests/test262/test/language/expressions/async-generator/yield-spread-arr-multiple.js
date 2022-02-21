@@ -41,7 +41,7 @@ item.then(({ done, value }) => {
   item = iter.next(value);
 
   item.then(({ done, value }) => {
-    assert(compareArray(value, arr));
+    assert.compareArray(value, arr);
     assert.sameValue(done, false);
   }).then($DONE, $DONE);
 }).catch($DONE);

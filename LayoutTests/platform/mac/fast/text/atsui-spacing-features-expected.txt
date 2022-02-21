@@ -36,15 +36,31 @@ layer at (0,0) size 800x372
               RenderBlock {DIV} at (1,1) size 202x178
                 RenderBlock {DIV} at (0,0) size 202x56 [border: (1px solid #0000FF)]
                   RenderText {#text} at (52,1) size 192x54
-                    text run at (52,1) width 149 RTL: "\x{5D9}\x{5B0}\x{5D4}\x{5B4}\x{5D9}, \x{5D0}\x{5B8}\x{5D7}\x{5B4}\x{5D9}, \x{5DC}\x{5B0}\x{5DA}\x{5B8} \x{5E1}\x{5B5}\x{5E4}\x{5B6}\x{5E8}"
+                    text run at (52,1) width 29 RTL: "\x{5E1}\x{5B5}\x{5E4}\x{5B6}\x{5E8}"
+                    text run at (90,1) width 6 RTL: " "
+                    text run at (95,1) width 18 RTL: "\x{5DC}\x{5B0}\x{5DA}\x{5B8}"
+                    text run at (122,1) width 6 RTL: " "
+                    text run at (127,1) width 33 RTL: "\x{5D0}\x{5B8}\x{5D7}\x{5B4}\x{5D9},"
+                    text run at (169,1) width 6 RTL: " "
+                    text run at (174,1) width 27 RTL: "\x{5D9}\x{5B0}\x{5D4}\x{5B4}\x{5D9},"
                     text run at (9,19) width 54 RTL: "\x{5E6}\x{5B0}\x{5DE}\x{5B4}\x{5D9}\x{5EA}\x{5D5}\x{5BC}\x{5EA}"
-                    text run at (62,19) width 139 RTL: "\x{5E9}\x{5C1}\x{5B0}\x{5DC}\x{5B7}\x{5D7}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5} \x{5D5}\x{5BC}\x{5DE}\x{5B4}\x{5DE}\x{5B0}\x{5DB}\x{5BC}\x{5B6}\x{5E8}\x{5B6}\x{5EA} "
-                    text run at (114,37) width 87 RTL: "\x{5DC}\x{5B8}\x{5DA}\x{5B0} \x{5DE}\x{5B0}\x{5DB}\x{5B7}\x{5E8}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5}."
+                    text run at (72,19) width 6 RTL: " "
+                    text run at (77,19) width 57 RTL: "\x{5D5}\x{5BC}\x{5DE}\x{5B4}\x{5DE}\x{5B0}\x{5DB}\x{5BC}\x{5B6}\x{5E8}\x{5B6}\x{5EA}"
+                    text run at (143,19) width 6 RTL: " "
+                    text run at (148,19) width 53 RTL: "\x{5E9}\x{5C1}\x{5B0}\x{5DC}\x{5B7}\x{5D7}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5}"
+                    text run at (114,37) width 55 RTL: "\x{5DE}\x{5B0}\x{5DB}\x{5B7}\x{5E8}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5}."
+                    text run at (178,37) width 7 RTL: " "
+                    text run at (184,37) width 17 RTL: "\x{5DC}\x{5B8}\x{5DA}\x{5B0}"
                 RenderBlock {DIV} at (0,61) size 202x56 [border: (1px solid #0000FF)]
                   RenderText {#text} at (1,1) size 173x54
-                    text run at (1,1) width 173: "Lore\x{300}m ipsum dolor sit"
-                    text run at (1,19) width 130: "ame\x{300}t, consectetuer"
-                    text run at (1,37) width 105: "adipiscing e\x{300}lit."
+                    text run at (1,1) width 43: "Lore\x{300}m"
+                    text run at (53,1) width 44: " ipsum"
+                    text run at (106,1) width 39: " dolor"
+                    text run at (154,1) width 20: " sit"
+                    text run at (1,19) width 36: "ame\x{300}t,"
+                    text run at (46,19) width 85: " consectetuer"
+                    text run at (1,37) width 66: "adipiscing"
+                    text run at (76,37) width 30: " e\x{300}lit."
                 RenderBlock {DIV} at (0,122) size 202x56 [border: (1px solid #008000)]
                   RenderText {#text} at (1,1) size 173x54
                     text run at (1,1) width 43: "Lorem"
@@ -80,8 +96,8 @@ layer at (0,0) size 800x372
                 RenderBlock {DIV} at (0,0) size 202x38 [border: (1px solid #0000FF)]
                   RenderText {#text} at (1,1) size 200x36
                     text run at (1,1) width 200 RTL: "\x{5D9}\x{5B0}\x{5D4}\x{5B4}\x{5D9}, \x{5D0}\x{5B8}\x{5D7}\x{5B4}\x{5D9}, \x{5DC}\x{5B0}\x{5DA}\x{5B8} \x{5E1}\x{5B5}\x{5E4}\x{5B6}\x{5E8} \x{5E9}\x{5C1}\x{5B0}\x{5DC}\x{5B7}\x{5D7}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5}"
-                    text run at (1,19) width 138 RTL: "\x{5E6}\x{5B0}\x{5DE}\x{5B4}\x{5D9}\x{5EA}\x{5D5}\x{5BC}\x{5EA} \x{5DC}\x{5B8}\x{5DA}\x{5B0} \x{5DE}\x{5B0}\x{5DB}\x{5B7}\x{5E8}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5}."
-                    text run at (138,19) width 63 RTL: "\x{5D5}\x{5BC}\x{5DE}\x{5B4}\x{5DE}\x{5B0}\x{5DB}\x{5BC}\x{5B6}\x{5E8}\x{5B6}\x{5EA} "
+                    text run at (5,19) width 136 RTL: "\x{5E6}\x{5B0}\x{5DE}\x{5B4}\x{5D9}\x{5EA}\x{5D5}\x{5BC}\x{5EA} \x{5DC}\x{5B8}\x{5DA}\x{5B0} \x{5DE}\x{5B0}\x{5DB}\x{5B7}\x{5E8}\x{5B0}\x{5EA}\x{5BC}\x{5B4}\x{5D9}\x{5D5}."
+                    text run at (140,19) width 61 RTL: "\x{5D5}\x{5BC}\x{5DE}\x{5B4}\x{5DE}\x{5B0}\x{5DB}\x{5BC}\x{5B6}\x{5E8}\x{5B6}\x{5EA} "
                 RenderBlock {DIV} at (0,43) size 202x38 [border: (1px solid #0000FF)]
                   RenderText {#text} at (1,1) size 200x36
                     text run at (1,1) width 200: "Lore\x{300}m ipsum dolor sit ame\x{300}t,"

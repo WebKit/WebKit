@@ -24,12 +24,12 @@
  */
 
 // https://w3c.github.io/permissions/#permissions-interface
+// FIXME: Add worker support: https://bugs.webkit.org/show_bug.cgi?id=236443.
 
 [
-    EnabledBySetting=PermissionsAPI,
+    EnabledBySetting=PermissionsAPIEnabled,
     GenerateIsReachable=ReachableFromNavigator,
-    ImplementationLacksVTable,
-    Exposed=(Window,Worker)
+    Exposed=(Window)
 ] interface Permissions {
     Promise<PermissionStatus> query(object permissionDesc);
 };

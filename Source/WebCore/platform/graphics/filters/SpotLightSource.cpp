@@ -6,6 +6,7 @@
  * Copyright (C) 2010 Zoltan Herczeg <zherczeg@webkit.org>
  * Copyright (C) 2011 University of Szeged
  * Copyright (C) 2011 Renata Hodovan <reni@webkit.org>
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,28 +33,45 @@
 #include "config.h"
 #include "SpotLightSource.h"
 
-#include "FilterEffect.h"
+#include "Filter.h"
+#include "FilterImage.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
 // spot-light edge darkening depends on an absolute treshold
 // according to the SVG 1.1 SE light regression tests
-static const float antiAliasTreshold = 0.016f;
+static const float antialiasThreshold = 0.016f;
 
-void SpotLightSource::initPaintingData(const FilterEffect& filterEffect, PaintingData& paintingData)
+Ref<SpotLightSource> SpotLightSource::create(const FloatPoint3D& position, const FloatPoint3D& direction, float specularExponent, float limitingConeAngle)
 {
-    m_bufferPosition.setXY(filterEffect.mapPointFromUserSpaceToBuffer(m_userSpacePosition.xy()));
+    return adoptRef(*new SpotLightSource(position, direction, specularExponent, limitingConeAngle));
+}
+
+SpotLightSource::SpotLightSource(const FloatPoint3D& position, const FloatPoint3D& direction, float specularExponent, float limitingConeAngle)
+    : LightSource(LS_SPOT)
+    , m_userSpacePosition(position)
+    , m_userSpacePointsAt(direction)
+    , m_specularExponent(specularExponent)
+    , m_limitingConeAngle(limitingConeAngle)
+{
+}
+
+void SpotLightSource::initPaintingData(const Filter& filter, const FilterImage& result, PaintingData& paintingData) const
+{
+    auto absolutePosition = filter.scaledByFilterScale(m_userSpacePosition.xy());
+    m_bufferPosition.setXY(result.mappedAbsolutePoint(absolutePosition));
+
     // To scale Z, map a point offset from m_userSpacePosition in the x direction by z.
-    FloatPoint mappedZ = filterEffect.mapPointFromUserSpaceToBuffer({ m_userSpacePosition.x() + m_userSpacePosition.z(), m_userSpacePosition.y() });
-    m_bufferPosition.setZ(mappedZ.x() - m_bufferPosition.x());
+    auto absoluteMappedZ = filter.scaledByFilterScale(FloatPoint { m_userSpacePosition.x() + m_userSpacePosition.z(), m_userSpacePosition.y() });
+    m_bufferPosition.setZ(result.mappedAbsolutePoint(absoluteMappedZ).x() - m_bufferPosition.x());
     
     paintingData.directionVector = m_userSpacePointsAt - m_userSpacePosition;
     paintingData.directionVector.normalize();
 
     if (!m_limitingConeAngle) {
         paintingData.coneCutOffLimit = 0.0f;
-        paintingData.coneFullLight = -antiAliasTreshold;
+        paintingData.coneFullLight = -antialiasThreshold;
     } else {
         float limitingConeAngle = m_limitingConeAngle;
         if (limitingConeAngle < 0.0f)
@@ -61,7 +79,7 @@ void SpotLightSource::initPaintingData(const FilterEffect& filterEffect, Paintin
         if (limitingConeAngle > 90.0f)
             limitingConeAngle = 90.0f;
         paintingData.coneCutOffLimit = cosf(deg2rad(180.0f - limitingConeAngle));
-        paintingData.coneFullLight = paintingData.coneCutOffLimit - antiAliasTreshold;
+        paintingData.coneFullLight = paintingData.coneCutOffLimit - antialiasThreshold;
     }
 
     // Optimization for common specularExponent values

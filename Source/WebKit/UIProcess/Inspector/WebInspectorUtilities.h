@@ -44,4 +44,8 @@ WebProcessPool& defaultInspectorProcessPool(unsigned inspectionLevel);
 bool isInspectorProcessPool(WebProcessPool&);
 bool isInspectorPage(WebPageProxy&);
 
+#if PLATFORM(COCOA)
+CFStringRef bundleIdentifierForSandboxBroker();
+#endif
+
 }

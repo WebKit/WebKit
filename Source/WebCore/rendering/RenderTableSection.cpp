@@ -933,7 +933,7 @@ static inline bool compareCellPositionsWithOverflowingCells(RenderTableCell* ele
 
 void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    LayoutPoint cellPoint = flipForWritingModeForChild(cell, paintOffset);
+    LayoutPoint cellPoint = flipForWritingModeForChild(*cell, paintOffset);
     PaintPhase paintPhase = paintInfo.phase;
     RenderTableRow& row = downcast<RenderTableRow>(*cell->parent());
 
@@ -1229,7 +1229,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
                             shouldPaintRowGroupBorder = false;
                         }
 
-                        LayoutPoint cellPoint = flipForWritingModeForChild(cell, paintOffset);
+                        LayoutPoint cellPoint = flipForWritingModeForChild(*cell, paintOffset);
                         cell->paintCollapsedBorders(paintInfo, cellPoint);
                     }
                 }
@@ -1291,7 +1291,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
 
             if (paintInfo.phase == PaintPhase::CollapsedTableBorders) {
                 for (unsigned i = cells.size(); i > 0; --i) {
-                    LayoutPoint cellPoint = flipForWritingModeForChild(cells[i - 1], paintOffset);
+                    LayoutPoint cellPoint = flipForWritingModeForChild(*cells[i - 1], paintOffset);
                     cells[i - 1]->paintCollapsedBorders(paintInfo, cellPoint);
                 }
             } else {
@@ -1465,7 +1465,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
             // table-specific hit-test method (which we should do for performance reasons anyway),
             // then we can remove this check.
             if (!row->hasSelfPaintingLayer()) {
-                LayoutPoint childPoint = flipForWritingModeForChild(row, adjustedLocation);
+                LayoutPoint childPoint = flipForWritingModeForChild(*row, adjustedLocation);
                 if (row->nodeAtPoint(request, result, locationInContainer, childPoint, action)) {
                     updateHitTestResult(result, toLayoutPoint(locationInContainer.point() - childPoint));
                     return true;
@@ -1496,7 +1496,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
             for (unsigned i = current.cells.size() ; i; ) {
                 --i;
                 RenderTableCell* cell = current.cells[i];
-                LayoutPoint cellPoint = flipForWritingModeForChild(cell, adjustedLocation);
+                LayoutPoint cellPoint = flipForWritingModeForChild(*cell, adjustedLocation);
                 if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, locationInContainer, cellPoint, action)) {
                     updateHitTestResult(result, locationInContainer.point() - toLayoutSize(cellPoint));
                     return true;

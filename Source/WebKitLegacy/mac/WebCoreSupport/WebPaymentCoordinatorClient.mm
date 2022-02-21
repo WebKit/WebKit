@@ -92,7 +92,7 @@ void WebPaymentCoordinatorClient::completeCouponCodeChange(std::optional<WebCore
 
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
-void WebPaymentCoordinatorClient::completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&&)
+void WebPaymentCoordinatorClient::completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&)
 {
 }
 
@@ -107,11 +107,6 @@ void WebPaymentCoordinatorClient::cancelPaymentSession()
 void WebPaymentCoordinatorClient::paymentCoordinatorDestroyed()
 {
     delete this;
-}
-
-bool WebPaymentCoordinatorClient::supportsUnrestrictedApplePay() const
-{
-    return false;
 }
 
 #endif

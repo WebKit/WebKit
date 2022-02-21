@@ -30,6 +30,7 @@
 #include "MediaStreamTrack.h"
 #include "Timer.h"
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -50,7 +51,7 @@ public:
 private:
     const char* activeDOMObjectName() const override;
 
-    class Source final : public RealtimeMediaSource, private CanvasObserver {
+    class Source final : public RealtimeMediaSource, private CanvasObserver, private CanvasDisplayBufferObserver {
     public:
         static Ref<Source> create(HTMLCanvasElement&, std::optional<double>&& frameRequestRate);
         
@@ -60,18 +61,21 @@ private:
     private:
         Source(HTMLCanvasElement&, std::optional<double>&&);
 
-        // CanvasObserver API
+        // CanvasObserver overrides.
         void canvasChanged(CanvasBase&, const std::optional<FloatRect>&) final;
         void canvasResized(CanvasBase&) final;
         void canvasDestroyed(CanvasBase&) final;
 
-        // RealtimeMediaSource API
+        // CanvasDisplayBufferObserver overrides.
+        void canvasDisplayBufferPrepared(CanvasBase&) final;
+
+        // RealtimeMediaSource overrides.
         void startProducingData() final;
         void stopProducingData()  final;
         const RealtimeMediaSourceCapabilities& capabilities() final { return RealtimeMediaSourceCapabilities::emptyCapabilities(); }
         const RealtimeMediaSourceSettings& settings() final;
         void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
-
+        void scheduleCaptureCanvas();
         void captureCanvas();
         void requestFrameTimerFired();
 

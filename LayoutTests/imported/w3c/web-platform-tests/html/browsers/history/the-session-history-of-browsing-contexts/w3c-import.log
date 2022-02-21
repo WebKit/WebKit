@@ -14,8 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-session-history-of-browsing-contexts/navigation-in-onload.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-session-history-of-browsing-contexts/navigation-in-onload_form-submission-1.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-session-history-of-browsing-contexts/navigation-in-onload_form-submission-2.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-session-history-of-browsing-contexts/navigation-in-onload_form-submission-dynamic-iframe.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-session-history-of-browsing-contexts/navigation-in-onload_form-submission-iframe.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-session-history-of-browsing-contexts/navigation-in-onload.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-session-history-of-browsing-contexts/navigation-in-onload_form-submission-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-session-history-of-browsing-contexts/navigation-in-onload_form-submission-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-session-history-of-browsing-contexts/navigation-in-onload_form-submission-dynamic-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-session-history-of-browsing-contexts/navigation-in-onload_form-submission-iframe.html

@@ -1,3 +1,0 @@
-
-PASS Passing empty string to the EventSource constructor
-

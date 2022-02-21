@@ -43,6 +43,10 @@ public:
     static ElementType* firstWithin(const ContainerNode&);
     static ElementType* lastWithin(const Node&);
     static ElementType* lastWithin(const ContainerNode&);
+    static ElementType* inclusiveFirstWithin(Node&);
+    static ElementType* inclusiveFirstWithin(ContainerNode&);
+    static ElementType* inclusiveLastWithin(Node&);
+    static ElementType* inclusiveLastWithin(ContainerNode&);
 
     // Pre-order traversal skipping non-ElementType nodes.
     static ElementType* next(const Node&);
@@ -233,6 +237,38 @@ template <typename ElementType>
 inline ElementType* Traversal<ElementType>::lastChild(const ContainerNode& current) { return lastChildTemplate(current); }
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::lastChild(const Node& current) { return lastChildTemplate(current); }
+
+template <typename ElementType>
+inline ElementType* Traversal<ElementType>::inclusiveFirstWithin(ContainerNode& current)
+{
+    if (is<ElementType>(current))
+        return &downcast<ElementType>(current);
+    return firstWithin(current);
+}
+
+template <typename ElementType>
+inline ElementType* Traversal<ElementType>::inclusiveFirstWithin(Node& current)
+{
+    if (is<ElementType>(current))
+        return &downcast<ElementType>(current);
+    return firstWithin(current);
+}
+
+template <typename ElementType>
+inline ElementType* Traversal<ElementType>::inclusiveLastWithin(ContainerNode& current)
+{
+    if (is<ElementType>(current))
+        return &downcast<ElementType>(current);
+    return lastWithin(current);
+}
+
+template <typename ElementType>
+inline ElementType* Traversal<ElementType>::inclusiveLastWithin(Node& current)
+{
+    if (is<ElementType>(current))
+        return &downcast<ElementType>(current);
+    return lastWithin(current);
+}
 
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::firstWithin(const ContainerNode& current) { return firstWithinTemplate(current); }

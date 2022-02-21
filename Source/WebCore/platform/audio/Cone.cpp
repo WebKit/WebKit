@@ -37,7 +37,7 @@ namespace WebCore {
 
 ConeEffect::ConeEffect() = default;
 
-double ConeEffect::gain(FloatPoint3D sourcePosition, FloatPoint3D sourceOrientation, FloatPoint3D listenerPosition)
+double ConeEffect::gain(FloatPoint3D sourcePosition, FloatPoint3D sourceOrientation, FloatPoint3D listenerPosition) const
 {
     if (sourceOrientation.isZero() || ((m_innerAngle == 360.0) && (m_outerAngle == 360.0)))
         return 1.0; // no cone specified - unity gain
@@ -46,12 +46,14 @@ double ConeEffect::gain(FloatPoint3D sourcePosition, FloatPoint3D sourceOrientat
     FloatPoint3D sourceToListener = listenerPosition - sourcePosition;
     sourceToListener.normalize();
 
-    FloatPoint3D normalizedSourceOrientation = sourceOrientation;
-    normalizedSourceOrientation.normalize();
+    sourceOrientation.normalize();
+
+    // Due to precision issues, the dot product may be very slightly outside the range [-1.0, 1.0], which would
+    // acos() to return NaN. For this reason, we have to make sure we clamp the dot product before calling acos().
+    auto dotProduct = clampTo(sourceToListener.dot(sourceOrientation), -1.0, 1.0);
 
     // Angle between the source orientation vector and the source-listener vector
-    double dotProduct = sourceToListener.dot(normalizedSourceOrientation);
-    double angle = 180.0 * acos(dotProduct) / piDouble;
+    double angle = rad2deg(acos(dotProduct));
     double absAngle = fabs(angle);
 
     // Divide by 2.0 here since API is entire angle (not half-angle)
@@ -59,13 +61,13 @@ double ConeEffect::gain(FloatPoint3D sourcePosition, FloatPoint3D sourceOrientat
     double absOuterAngle = fabs(m_outerAngle) / 2.0;
     double gain = 1.0;
 
-    if (absAngle <= absInnerAngle)
+    if (absAngle <= absInnerAngle) {
         // No attenuation
         gain = 1.0;
-    else if (absAngle >= absOuterAngle)
+    } else if (absAngle >= absOuterAngle) {
         // Max attenuation
         gain = m_outerGain;
-    else {
+    } else {
         // Between inner and outer cones
         // inner -> outer, x goes from 0 -> 1
         double x = (absAngle - absInnerAngle) / (absOuterAngle - absInnerAngle);

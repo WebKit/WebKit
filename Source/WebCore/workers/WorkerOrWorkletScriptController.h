@@ -38,6 +38,7 @@
 namespace JSC {
 class Exception;
 class JSGlobalObject;
+class JSModuleRecord;
 class VM;
 }
 
@@ -55,7 +56,6 @@ class WorkerOrWorkletScriptController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WorkerOrWorkletScriptController(WorkerThreadType, Ref<JSC::VM>&&, WorkerOrWorkletGlobalScope*);
-    explicit WorkerOrWorkletScriptController(WorkerThreadType, WorkerOrWorkletGlobalScope*);
     ~WorkerOrWorkletScriptController();
 
     void releaseHeapAccess();
@@ -99,7 +99,7 @@ public:
     JSC::JSValue evaluateModule(JSC::JSModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
 
     void linkAndEvaluateModule(WorkerScriptFetcher&, const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
-    MessageQueueWaitResult loadModuleSynchronously(WorkerScriptFetcher&, const ScriptSourceCode&);
+    bool loadModuleSynchronously(WorkerScriptFetcher&, const ScriptSourceCode&);
 
     void loadAndEvaluateModule(const URL& moduleURL, FetchOptions::Credentials, CompletionHandler<void(std::optional<Exception>&&)>&&);
 

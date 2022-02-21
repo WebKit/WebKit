@@ -38,12 +38,12 @@ enum MediaKeyStatus {
 
 [
     Conditional=ENCRYPTED_MEDIA,
-    EnabledBySetting=EncryptedMediaAPI,
+    EnabledBySetting=EncryptedMediaAPIEnabled,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
     Exposed=Window
 ] interface MediaKeyStatusMap {
     iterable<BufferSource, MediaKeyStatus>;
     readonly attribute unsigned long size;
     boolean has(BufferSource keyId);
-    [CallWith=GlobalObject] any get(BufferSource keyId);
+    [CallWith=CurrentGlobalObject] any get(BufferSource keyId);
 };

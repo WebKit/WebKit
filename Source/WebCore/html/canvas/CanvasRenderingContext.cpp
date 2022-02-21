@@ -29,6 +29,7 @@
 #include "CachedImage.h"
 #include "CanvasPattern.h"
 #include "DestinationColorSpace.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -83,6 +84,11 @@ void CanvasRenderingContext::deref()
     m_canvas.derefCanvasBase();
 }
 
+RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext::layerContentsDisplayDelegate()
+{
+    return nullptr;
+}
+
 PixelFormat CanvasRenderingContext::pixelFormat() const
 {
     return PixelFormat::BGRA8;
@@ -116,7 +122,7 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLImageElement* element)
     if (!cachedImage)
         return false;
 
-    auto image = makeRefPtr(cachedImage->image());
+    RefPtr image = cachedImage->image();
     if (!image)
         return false;
 

@@ -9,11 +9,14 @@ es5id: 15.10.4.1_A5_T3
 description: Checking by using eval, try to use eval("\"migr\"") as F
 ---*/
 
-//CHECK#1
 try {
-	throw new Test262Error('#1.1: new RegExp("",eval("\\"migr\\"")) throw SyntaxError. Actual: ' + (new RegExp("",eval("\"migr\""))));
+    throw new Test262Error('#1.1: new RegExp("",eval("\\"migr\\"")) throw SyntaxError. Actual: ' + (new RegExp("",eval("\"migr\""))));
 } catch (e) {
-	if ((e instanceof SyntaxError) !== true) {
-		throw new Test262Error('#1.2: new RegExp("",eval("\\"migr\\"")) throw SyntaxError. Actual: ' + (e));
-	}
+  assert.sameValue(
+    e instanceof SyntaxError,
+    true,
+    'The result of evaluating (e instanceof SyntaxError) is expected to be true'
+  );
 }
+
+// TODO: Convert to assert.throws() format.

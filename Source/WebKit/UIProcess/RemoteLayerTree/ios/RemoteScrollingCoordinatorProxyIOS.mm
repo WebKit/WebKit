@@ -218,6 +218,20 @@ bool RemoteScrollingCoordinatorProxy::shouldSetScrollViewDecelerationRateFast() 
     return shouldSnapForMainFrameScrolling(ScrollEventAxis::Horizontal) || shouldSnapForMainFrameScrolling(ScrollEventAxis::Vertical);
 }
 
+void RemoteScrollingCoordinatorProxy::setRootNodeIsInUserScroll(bool value)
+{
+    ScrollingTreeNode* root = m_scrollingTree->rootNode();
+    if (!root || !root->isFrameScrollingNode())
+        return;
+
+    if (value)
+        m_uiState.addNodeWithActiveUserScroll(root->scrollingNodeID());
+    else
+        m_uiState.removeNodeWithActiveUserScroll(root->scrollingNodeID());
+
+    sendUIStateChangedIfNecessary();
+}
+
 bool RemoteScrollingCoordinatorProxy::shouldSnapForMainFrameScrolling(ScrollEventAxis axis) const
 {
     ScrollingTreeNode* root = m_scrollingTree->rootNode();

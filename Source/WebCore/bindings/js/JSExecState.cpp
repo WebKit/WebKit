@@ -29,14 +29,13 @@
 #include "EventLoop.h"
 #include "RejectedPromiseTracker.h"
 #include "ScriptExecutionContext.h"
-#include "ScriptState.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
 void JSExecState::didLeaveScriptContext(JSC::JSGlobalObject* lexicalGlobalObject)
 {
-    ScriptExecutionContext* context = scriptExecutionContextFromExecState(lexicalGlobalObject);
+    auto context = executionContext(lexicalGlobalObject);
     if (!context)
         return;
     context->eventLoop().performMicrotaskCheckpoint();
@@ -51,6 +50,13 @@ JSC::JSValue functionCallHandlerFromAnyThread(JSC::JSGlobalObject* lexicalGlobal
 JSC::JSValue evaluateHandlerFromAnyThread(JSC::JSGlobalObject* lexicalGlobalObject, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
 {
     return JSExecState::evaluate(lexicalGlobalObject, source, thisValue, returnedException);
+}
+
+ScriptExecutionContext* executionContext(JSC::JSGlobalObject* globalObject)
+{
+    if (!globalObject || !globalObject->inherits<JSDOMGlobalObject>(globalObject->vm()))
+        return nullptr;
+    return JSC::jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext();
 }
 
 } // namespace WebCore

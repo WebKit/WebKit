@@ -7,6 +7,9 @@
 
 description('This tests inserting content with an event handler. WebKit should never execute event handlers.');
 
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
 editor.focus();
 
 function insertHTML(markup) {
@@ -61,6 +64,11 @@ editor.addEventListener('beforeinput', () => {
 insertHTML(`<iframe name='named-frame'></iframe>`);
 shouldBeFalse('didExecute');
 didExecute = true;
+
+setTimeout(() => {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
 
 </script>
 </body>

@@ -27,6 +27,7 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
@@ -102,11 +103,11 @@ void HTMLTableCellElement::collectPresentationalHintsForAttribute(const Qualifie
     if (name == nowrapAttr)
         addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
     else if (name == widthAttr) {
-        if (parseHTMLInteger(value).value_or(0) > 0) // width="0" is ignored for compatibility with WinIE.
-            addHTMLLengthToStyle(style, CSSPropertyWidth, value);
+        // width="0" is not allowed for compatibility with WinIE.
+        addHTMLLengthToStyle(style, CSSPropertyWidth, value, AllowZeroValue::No);
     } else if (name == heightAttr) {
-        if (parseHTMLInteger(value).value_or(0) > 0) // height="0" is ignored for compatibility with WinIE.
-            addHTMLLengthToStyle(style, CSSPropertyHeight, value);
+        // width="0" is not allowed for compatibility with WinIE.
+        addHTMLLengthToStyle(style, CSSPropertyHeight, value, AllowZeroValue::No);
     } else
         HTMLTablePartElement::collectPresentationalHintsForAttribute(name, value, style);
 }

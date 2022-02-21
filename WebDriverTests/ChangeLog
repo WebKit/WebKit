@@ -1,3 +1,89 @@
+2022-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add a javascript atom to get the visible text
+        https://bugs.webkit.org/show_bug.cgi?id=174617
+        <rdar://problem/32307461>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove expectations of tests that are now passing.
+
+        * TestExpectations.json:
+
+2022-02-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WebDriver] Add support for shadow roots
+        https://bugs.webkit.org/show_bug.cgi?id=230614
+        <rdar://problem/83667535>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update test expectations.
+
+        * TestExpectations.json:
+
+2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add another missing file after r288871.
+
+        * imported/w3c/tools/webdriver/webdriver/bidi/error.py: Added.
+
+2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add missing files after r283798.
+
+        * imported/selenium/py/selenium/webdriver/common/bidi/__init__.py: Added.
+        * imported/selenium/py/selenium/webdriver/common/bidi/cdp.py: Added.
+        * imported/selenium/py/selenium/webdriver/remote/script_key.py: Added.
+
+2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add missing file after r288871.
+
+        * imported/w3c/webdriver/tests/bidi/session_subscribe/subscribe.py: Added.
+
+2022-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/webdriver/webdriver/bidi/client.py:
+        * imported/w3c/tools/webdriver/webdriver/client.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/firefox_android.py:
+        * imported/w3c/webdriver/tests/conftest.py:
+        * imported/w3c/webdriver/tests/find_element_from_shadow_root/find.py:
+        * imported/w3c/webdriver/tests/find_element_from_shadow_root/user_prompts.py:
+        * imported/w3c/webdriver/tests/find_elements_from_shadow_root/find.py:
+        * imported/w3c/webdriver/tests/find_elements_from_shadow_root/user_prompts.py:
+        * imported/w3c/webdriver/tests/print/printcmd.py:
+        * imported/w3c/webdriver/tests/support/asserts.py:
+        * imported/w3c/webdriver/tests/support/fixtures.py:
+        * imported/w3c/webdriver/tests/support/fixtures_bidi.py: Added.
+        * imported/w3c/webdriver/tests/support/fixtures_http.py: Added.
+
+2021-11-19  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB][WebDriver] Gardening COOP-related timeouts
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
+2021-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WebDriver] Update w3c and selenium tests
+        https://bugs.webkit.org/show_bug.cgi?id=230551
+        <rdar://problem/83620518>
+
+        Reviewed by Jonathan Bedard.
+
+        * imported/selenium/common/src/web/javascriptPage.html:
+        * imported/selenium/importer.json:
+        * imported/selenium/py/:
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/:
+        * imported/w3c/webdriver/:
+
 2021-08-22  Lauro Moura  <lmoura@igalia.com>
 
         [WPE][WebDriver] Basic fullscreen support for the headless backend

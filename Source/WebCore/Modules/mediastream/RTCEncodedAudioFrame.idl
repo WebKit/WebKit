@@ -34,9 +34,8 @@ dictionary RTCEncodedAudioFrameMetadata {
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=WebRTCInsertableStreams,
+    EnabledBySetting=WebRTCEncodedTransformEnabled,
     Exposed=DedicatedWorker,
-    ImplementationLacksVTable,
 ] interface RTCEncodedAudioFrame {
     readonly attribute unsigned long long timestamp;
     attribute ArrayBuffer data;

@@ -4,10 +4,7 @@
 
 ANGLE emulates transform feedback using the vertexPipelineStoresAndAtomics features in Vulkan.
 But some GPU vendors do not support these atomics. Also the emulation becomes more difficult in
-GLES 3.2. Therefore ANGLE must support using the VK_EXT_transform_feedback extension .
-
-But some GPU vendor does not support this feature, So we need another implementation using
-VK_EXT_transform_feedback.
+GLES 3.2. Therefore ANGLE must support using the VK_EXT_transform_feedback extension.
 
 We also expect a performance gain when we use this extension.
 
@@ -37,66 +34,12 @@ source access of `VK_ACCESS_TRANSFORM_FEEDBACK_COUNTER_WRITE_BIT_EXT` at pipelin
 There is no equivalent function for glTransformFeedbackVaryings in Vulkan. The Vulkan specification
 states that the last vertex processing stage shader must be declared with the XFB execution mode.
 
-So we need to modify gl shader code to have transform feedback qualifiers. The glsl code will be
-converted proper SPIR-V code.
-
-we add the below layout qualifier for built-in XFB varyings.
-
-```
-out gl_PerVertex
-
-{
-
-layout(xfb_buffer = buffer_num, xfb_offset = offset, xfb_stride = stride) varying_type varying_name;
-
-}
-```
-
- And for user xfb varyings.
-
-```
-layout(xfb_buffer = buffer_num, xfb_offset = offset, xfb_stride = stride, location = num )
-out varying_type varying_name;
-
-```
-
-There are some corner cases we should handle.
-
-If more than 2 built-in varyings are used in the shader, and only one varying is declared as a
-transformFeedback varying, we can generate a layout qualifier like this.
-
-```
-out gl_PerVertex
-
-{
-
-layout(xfb_buffer = buffer_num, xfb_offset = offset, xfb_stride = stride) varying_type varying_name1;
-
-varying_type varying_name2;
-
-...
-
-}
-```
+The SPIR-V transformer takes care of adding this execution mode, as well as decorating the variables
+that need to be captured.
 
 ANGLE modifies gl_position.z in vertex shader for the Vulkan coordinate system. So, if we capture
-the value of 'gl_position' in the XFB buffer, the captured values will be incorrect.
-
-To resolve this, we declare user declare an internal position varying and copy the value from
-'gl_position'. We capture the internal position varying during transform feedback operation.
-
-```
-layout(xfb_buffer = buffer_num, xfb_offset = offset, xfb_stride = stride, location = num )
-out vec4 xfbANGLEPosition;
-
-....
-
-void main(){
-
-...
-
-xfbANGLEPosition = gl_Position;
-(gl_Position.z = ((gl_Position.z + gl_Position.w) * 0.5));
-}
-```
-
+the value of 'gl_position' in the XFB buffer, the captured values will be incorrect. To resolve
+this, we declare an internal position varying and copy the value from 'gl_position'. We capture the
+internal position varying during transform feedback operation. For simplicity, we do this for every
+captured varying, even though we could decorate the `gl_PerVertex` struct members in SPIR-V
+directly.

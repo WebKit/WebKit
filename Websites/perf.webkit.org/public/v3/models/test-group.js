@@ -344,10 +344,10 @@ class TestGroup extends LabeledObject {
             return 0;
         }
 
-        console.assert(['alternating', 'sequential'].includes(this.repetitionType()));
+        console.assert(TriggerableConfiguration.isValidRepetitionType(this.repetitionType()));
         const repetitionLimit = maxRetryFactor * this.initialRepetitionCount();
-        const {retryCount, stopFutureRetries} = await (this.repetitionType() == 'alternating' ?
-            this._createAlternatingRetriesForTestGroup(repetitionLimit) : this._createSequentialRetriesForTestGroup(repetitionLimit));
+        const {retryCount, stopFutureRetries} = await (this.repetitionType() == 'sequential' ?
+            this._createSequentialRetriesForTestGroup(repetitionLimit): this._createAlternatingRetriesForTestGroup(repetitionLimit));
 
         if (stopFutureRetries)
             await this.clearMayNeedMoreBuildRequests();

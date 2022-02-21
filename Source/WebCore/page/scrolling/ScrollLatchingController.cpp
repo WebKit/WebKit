@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -118,7 +118,7 @@ void ScrollLatchingController::updateAndFetchLatchingStateForFrame(Frame& frame,
         if (!hasStateForFrame(frame)) {
             FrameState state;
             state.frame = &frame;
-            state.wheelEventElement = makeWeakPtr(latchedElement.get());
+            state.wheelEventElement = latchedElement;
             if (shouldLatchToScrollableArea(frame, scrollableArea.get(), m_cumulativeEventDelta))
                 state.scrollableArea = scrollableArea;
             state.isOverWidget = isOverWidget;
@@ -158,7 +158,7 @@ void ScrollLatchingController::removeLatchingStateForTarget(const Element& eleme
     if (m_frameStateStack.isEmpty())
         return;
 
-    auto findResult = m_frameStateStack.findMatching([&element] (const auto& state) {
+    auto findResult = m_frameStateStack.findIf([&element] (const auto& state) {
         auto* wheelElement = state.wheelEventElement.get();
         return wheelElement && element.isEqualNode(wheelElement);
     });

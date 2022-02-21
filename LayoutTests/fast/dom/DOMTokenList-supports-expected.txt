@@ -7,46 +7,48 @@ PASS DOMTokenList.prototype.supports is an instance of Function
 
 * HTMLLinkElement.relList
 PASS link.relList.__proto__ is DOMTokenList.prototype
-PASS link.relList.supports(linkRelSupportedValues[i]) is true
-PASS link.relList.supports(linkRelSupportedValues[i].toUpperCase()) is true
-PASS link.relList.supports(linkRelSupportedValues[i]) is true
-PASS link.relList.supports(linkRelSupportedValues[i].toUpperCase()) is true
-PASS link.relList.supports(linkRelSupportedValues[i]) is true
-PASS link.relList.supports(linkRelSupportedValues[i].toUpperCase()) is true
-PASS link.relList.supports(linkRelSupportedValues[i]) is true
-PASS link.relList.supports(linkRelSupportedValues[i].toUpperCase()) is true
+PASS link.relList.supports('alternate') is true
+PASS link.relList.supports('ALTERNATE') is true
+PASS link.relList.supports('dns-prefetch') is true
+PASS link.relList.supports('DNS-PREFETCH') is true
+PASS link.relList.supports('icon') is true
+PASS link.relList.supports('ICON') is true
+PASS link.relList.supports('stylesheet') is true
+PASS link.relList.supports('STYLESHEET') is true
 PASS link.relList.supports('unsupported') is false
 
 * HTMLAnchorElement.relList
 PASS anchor.relList.__proto__ is DOMTokenList.prototype
-PASS anchor.relList.supports(anchorRelSupportedValues[i]) is true
-PASS anchor.relList.supports(anchorRelSupportedValues[i].toUpperCase()) is true
-PASS anchor.relList.supports(anchorRelSupportedValues[i]) is true
-PASS anchor.relList.supports(anchorRelSupportedValues[i].toUpperCase()) is true
+PASS anchor.relList.supports('noreferrer') is true
+PASS anchor.relList.supports('NOREFERRER') is true
+PASS anchor.relList.supports('noopener') is true
+PASS anchor.relList.supports('NOOPENER') is true
+PASS anchor.relList.supports('opener') is true
+PASS anchor.relList.supports('OPENER') is true
 PASS anchor.relList.supports('unsupported') is false
 
 * HTMLAreaElement.relList
 PASS area.relList.__proto__ is DOMTokenList.prototype
-PASS area.relList.supports(areaRelSupportedValues[i]) is true
-PASS area.relList.supports(areaRelSupportedValues[i].toUpperCase()) is true
-PASS area.relList.supports(areaRelSupportedValues[i]) is true
-PASS area.relList.supports(areaRelSupportedValues[i].toUpperCase()) is true
+PASS area.relList.supports('noreferrer') is true
+PASS area.relList.supports('NOREFERRER') is true
+PASS area.relList.supports('noopener') is true
+PASS area.relList.supports('NOOPENER') is true
 PASS area.relList.supports('unsupported') is false
 
 * HTMLIFrameElement.sandbox
 PASS iframe.sandbox.__proto__ is DOMTokenList.prototype
-PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i]) is true
-PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase()) is true
-PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i]) is true
-PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase()) is true
-PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i]) is true
-PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase()) is true
-PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i]) is true
-PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase()) is true
-PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i]) is true
-PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase()) is true
-PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i]) is true
-PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase()) is true
+PASS iframe.sandbox.supports('allow-forms') is true
+PASS iframe.sandbox.supports('ALLOW-FORMS') is true
+PASS iframe.sandbox.supports('allow-same-origin') is true
+PASS iframe.sandbox.supports('ALLOW-SAME-ORIGIN') is true
+PASS iframe.sandbox.supports('allow-scripts') is true
+PASS iframe.sandbox.supports('ALLOW-SCRIPTS') is true
+PASS iframe.sandbox.supports('allow-top-navigation') is true
+PASS iframe.sandbox.supports('ALLOW-TOP-NAVIGATION') is true
+PASS iframe.sandbox.supports('allow-pointer-lock') is true
+PASS iframe.sandbox.supports('ALLOW-POINTER-LOCK') is true
+PASS iframe.sandbox.supports('allow-popups') is true
+PASS iframe.sandbox.supports('ALLOW-POPUPS') is true
 PASS iframe.sandbox.supports('unsupported') is false
 
 * HTMLLinkElement.sizes

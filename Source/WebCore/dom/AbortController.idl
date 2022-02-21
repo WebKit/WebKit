@@ -25,12 +25,11 @@
 
 [
     Exposed=(Window,Worker),
-    ImplementationLacksVTable,
     GenerateAddOpaqueRoot=signal
 ] interface AbortController {
-    [CallWith=ScriptExecutionContext] constructor();
+    [CallWith=CurrentScriptExecutionContext] constructor();
 
     [SameObject] readonly attribute AbortSignal signal;
 
-    undefined abort();
+    [CallWith=CurrentGlobalObject] undefined abort(optional any reason);
 };

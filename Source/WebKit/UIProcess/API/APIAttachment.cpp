@@ -41,7 +41,7 @@ Ref<Attachment> Attachment::create(const WTF::String& identifier, WebKit::WebPag
 
 Attachment::Attachment(const WTF::String& identifier, WebKit::WebPageProxy& webPage)
     : m_identifier(identifier)
-    , m_webPage(makeWeakPtr(webPage))
+    , m_webPage(webPage)
 {
 }
 
@@ -98,7 +98,7 @@ std::optional<uint64_t> Attachment::fileSizeForDisplay() const
     return std::nullopt;
 }
 
-RefPtr<WebCore::SharedBuffer> Attachment::enclosingImageData() const
+RefPtr<WebCore::FragmentedSharedBuffer> Attachment::enclosingImageData() const
 {
     return nullptr;
 }

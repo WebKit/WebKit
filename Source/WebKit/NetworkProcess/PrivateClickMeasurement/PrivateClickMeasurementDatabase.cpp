@@ -34,42 +34,41 @@
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <WebCore/SQLiteTransaction.h>
 
-namespace WebKit {
-
-namespace PCM {
+namespace WebKit::PCM {
 
 constexpr auto setUnattributedPrivateClickMeasurementAsExpiredQuery = "UPDATE UnattributedPrivateClickMeasurement SET timeOfAdClick = -1.0"_s;
 constexpr auto insertUnattributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO UnattributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
-    "sourceID, timeOfAdClick, token, signature, keyID) VALUES (?, ?, ?, ?, ?, ?, ?)"_s;
+    "sourceID, timeOfAdClick, token, signature, keyID, sourceApplicationBundleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"_s;
 constexpr auto insertAttributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO AttributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
-    "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
-constexpr auto findUnattributedQuery = "SELECT * FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
-constexpr auto findAttributedQuery = "SELECT * FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
-constexpr auto removeUnattributedQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
+    "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination, sourceApplicationBundleID, destinationToken, destinationSignature, destinationKeyID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
+constexpr auto findUnattributedQuery = "SELECT * FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
+constexpr auto findAttributedQuery = "SELECT * FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
+constexpr auto removeUnattributedQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
 constexpr auto allAttributedPrivateClickMeasurementQuery = "SELECT *, MIN(earliestTimeToSendToSource, earliestTimeToSendToDestination) as minVal "
     "FROM AttributedPrivateClickMeasurement WHERE earliestTimeToSendToSource IS NOT NULL AND earliestTimeToSendToDestination IS NOT NULL "
     "UNION ALL SELECT *, earliestTimeToSendToSource as minVal FROM AttributedPrivateClickMeasurement WHERE earliestTimeToSendToDestination IS NULL "
     "UNION ALL SELECT *, earliestTimeToSendToDestination as minVal FROM AttributedPrivateClickMeasurement WHERE earliestTimeToSendToSource IS NULL ORDER BY minVal"_s;
 constexpr auto allUnattributedPrivateClickMeasurementAttributionsQuery = "SELECT * FROM UnattributedPrivateClickMeasurement"_s;
 constexpr auto clearExpiredPrivateClickMeasurementQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE ? > timeOfAdClick"_s;
-constexpr auto markReportAsSentToSourceQuery = "UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSendToSource = null WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
-constexpr auto markReportAsSentToDestinationQuery = "UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSendToDestination = null WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
-constexpr auto earliestTimesToSendQuery = "SELECT earliestTimeToSendToSource, earliestTimeToSendToDestination FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
+constexpr auto markReportAsSentToSourceQuery = "UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSendToSource = null WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
+constexpr auto markReportAsSentToDestinationQuery = "UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSendToDestination = null WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
+constexpr auto earliestTimesToSendQuery = "SELECT earliestTimeToSendToSource, earliestTimeToSendToDestination FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s;
 constexpr auto domainIDFromStringQuery = "SELECT domainID FROM PCMObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto domainStringFromDomainIDQuery = "SELECT registrableDomain FROM PCMObservedDomains WHERE domainID = ?"_s;
 constexpr auto createUnattributedPrivateClickMeasurement = "CREATE TABLE UnattributedPrivateClickMeasurement ("
     "sourceSiteDomainID INTEGER NOT NULL, destinationSiteDomainID INTEGER NOT NULL, sourceID INTEGER NOT NULL, "
-    "timeOfAdClick REAL NOT NULL, token TEXT, signature TEXT, keyID TEXT, FOREIGN KEY(sourceSiteDomainID) "
+    "timeOfAdClick REAL NOT NULL, token TEXT, signature TEXT, keyID TEXT, sourceApplicationBundleID TEXT, FOREIGN KEY(sourceSiteDomainID) "
     "REFERENCES PCMObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(destinationSiteDomainID) REFERENCES "
     "PCMObservedDomains(domainID) ON DELETE CASCADE)"_s;
 constexpr auto createAttributedPrivateClickMeasurement = "CREATE TABLE AttributedPrivateClickMeasurement ("
     "sourceSiteDomainID INTEGER NOT NULL, destinationSiteDomainID INTEGER NOT NULL, sourceID INTEGER NOT NULL, "
     "attributionTriggerData INTEGER NOT NULL, priority INTEGER NOT NULL, timeOfAdClick REAL NOT NULL, "
-    "earliestTimeToSendToSource REAL, token TEXT, signature TEXT, keyID TEXT, earliestTimeToSendToDestination REAL, "
+    "earliestTimeToSendToSource REAL, token TEXT, signature TEXT, keyID TEXT, earliestTimeToSendToDestination REAL, sourceApplicationBundleID TEXT, "
+    "destinationToken TEXT, destinationSignature TEXT, destinationKeyID TEXT, "
     "FOREIGN KEY(sourceSiteDomainID) REFERENCES PCMObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(destinationSiteDomainID) REFERENCES "
     "PCMObservedDomains(domainID) ON DELETE CASCADE)"_s;
-constexpr auto createUniqueIndexUnattributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS UnattributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID on UnattributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID )"_s;
-constexpr auto createUniqueIndexAttributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS AttributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID on AttributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID )"_s;
+constexpr auto createUniqueIndexUnattributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS UnattributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID_sourceApplicationBundleID on UnattributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID, sourceApplicationBundleID )"_s;
+constexpr auto createUniqueIndexAttributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS AttributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID_sourceApplicationBundleID on AttributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID, sourceApplicationBundleID )"_s;
 constexpr auto createPCMObservedDomain = "CREATE TABLE PCMObservedDomains ("
     "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL)"_s;
 constexpr auto insertObservedDomainQuery = "INSERT INTO PCMObservedDomains (registrableDomain) VALUES (?)"_s;
@@ -88,6 +87,7 @@ Database::Database(const String& storageDirectory)
     ASSERT(!RunLoop::isMain());
     openDatabaseAndCreateSchemaIfNecessary();
     enableForeignKeys();
+    addDestinationTokenColumnsIfNecessary();
     allDatabases().add(this);
 }
 
@@ -98,11 +98,43 @@ Database::~Database()
     allDatabases().remove(this);
 }
 
+const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& Database::expectedTableAndIndexQueries()
+{
+    static NeverDestroyed expectedTableAndIndexQueries = MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair> {
+        { "PCMObservedDomains"_s, std::make_pair<String, std::optional<String>>(createPCMObservedDomain, std::nullopt) },
+        { "UnattributedPrivateClickMeasurement"_s, std::make_pair<String, std::optional<String>>(createUnattributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexUnattributedPrivateClickMeasurement)) },
+        { "AttributedPrivateClickMeasurement"_s, std::make_pair<String, std::optional<String>>(createAttributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexAttributedPrivateClickMeasurement)) },
+    };
+
+    return expectedTableAndIndexQueries;
+}
+
+Span<const ASCIILiteral> Database::sortedTables()
+{
+    static std::array sortedTables {
+        "PCMObservedDomains"_s,
+        "UnattributedPrivateClickMeasurement"_s,
+        "AttributedPrivateClickMeasurement"_s
+    };
+
+    return { sortedTables.data(), sortedTables.size() };
+}
+
 void Database::interruptAllDatabases()
 {
     ASSERT(!RunLoop::isMain());
     for (auto database : allDatabases())
         database->interrupt();
+}
+
+bool Database::createUniqueIndices()
+{
+    if (!m_database.executeCommand(createUniqueIndexUnattributedPrivateClickMeasurement)
+        || !m_database.executeCommand(createUniqueIndexAttributedPrivateClickMeasurement)) {
+        LOG_ERROR("Error creating indexes");
+        return false;
+    }
+    return true;
 }
 
 bool Database::createSchema()
@@ -143,11 +175,12 @@ void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& 
     if (!sourceID || !attributionDestinationID)
         return;
 
-    auto& sourceUnlinkableToken = attribution.sourceUnlinkableToken();
+    auto& sourceSecretToken = attribution.sourceSecretToken();
     if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
         auto attributionTriggerData = attribution.attributionTriggerData() ? attribution.attributionTriggerData().value().data : -1;
         auto priority = attribution.attributionTriggerData() ? attribution.attributionTriggerData().value().priority : -1;
         auto sourceEarliestTimeToSend = attribution.timesToSend().sourceEarliestTimeToSend ? attribution.timesToSend().sourceEarliestTimeToSend.value().secondsSinceEpoch().value() : -1;
+        auto destinationSecretToken = attribution.attributionTriggerData() ? attribution.attributionTriggerData().value().destinationSecretToken : std::nullopt;
         auto destinationEarliestTimeToSend = attribution.timesToSend().destinationEarliestTimeToSend ? attribution.timesToSend().destinationEarliestTimeToSend.value().secondsSinceEpoch().value() : -1;
 
         // We should never be inserting an attributed private click measurement value into the database without valid report times.
@@ -162,10 +195,14 @@ void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& 
             || statement->bindInt(5, priority) != SQLITE_OK
             || statement->bindDouble(6, attribution.timeOfAdClick().secondsSinceEpoch().value()) != SQLITE_OK
             || statement->bindDouble(7, sourceEarliestTimeToSend) != SQLITE_OK
-            || statement->bindText(8, sourceUnlinkableToken ? sourceUnlinkableToken->tokenBase64URL : emptyString()) != SQLITE_OK
-            || statement->bindText(9, sourceUnlinkableToken ? sourceUnlinkableToken->signatureBase64URL : emptyString()) != SQLITE_OK
-            || statement->bindText(10, sourceUnlinkableToken ? sourceUnlinkableToken->keyIDBase64URL : emptyString()) != SQLITE_OK
+            || statement->bindText(8, sourceSecretToken ? sourceSecretToken->tokenBase64URL : emptyString()) != SQLITE_OK
+            || statement->bindText(9, sourceSecretToken ? sourceSecretToken->signatureBase64URL : emptyString()) != SQLITE_OK
+            || statement->bindText(10, sourceSecretToken ? sourceSecretToken->keyIDBase64URL : emptyString()) != SQLITE_OK
             || statement->bindDouble(11, destinationEarliestTimeToSend) != SQLITE_OK
+            || statement->bindText(12, attribution.sourceApplicationBundleID()) != SQLITE_OK
+            || statement->bindText(13, destinationSecretToken ? destinationSecretToken->tokenBase64URL : emptyString()) != SQLITE_OK
+            || statement->bindText(14, destinationSecretToken ? destinationSecretToken->signatureBase64URL : emptyString()) != SQLITE_OK
+            || statement->bindText(15, destinationSecretToken ? destinationSecretToken->keyIDBase64URL : emptyString()) != SQLITE_OK
             || statement->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::insertPrivateClickMeasurement insertAttributedPrivateClickMeasurementQuery, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
@@ -181,9 +218,10 @@ void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& 
         || statement->bindInt(2, *attributionDestinationID) != SQLITE_OK
         || statement->bindInt(3, attribution.sourceID().id) != SQLITE_OK
         || statement->bindDouble(4, attribution.timeOfAdClick().secondsSinceEpoch().value()) != SQLITE_OK
-        || statement->bindText(5, sourceUnlinkableToken ? sourceUnlinkableToken->tokenBase64URL : emptyString()) != SQLITE_OK
-        || statement->bindText(6, sourceUnlinkableToken ? sourceUnlinkableToken->signatureBase64URL : emptyString()) != SQLITE_OK
-        || statement->bindText(7, sourceUnlinkableToken ? sourceUnlinkableToken->keyIDBase64URL : emptyString()) != SQLITE_OK
+        || statement->bindText(5, sourceSecretToken ? sourceSecretToken->tokenBase64URL : emptyString()) != SQLITE_OK
+        || statement->bindText(6, sourceSecretToken ? sourceSecretToken->signatureBase64URL : emptyString()) != SQLITE_OK
+        || statement->bindText(7, sourceSecretToken ? sourceSecretToken->keyIDBase64URL : emptyString()) != SQLITE_OK
+        || statement->bindText(8, attribution.sourceApplicationBundleID()) != SQLITE_OK
         || statement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::insertPrivateClickMeasurement insertUnattributedPrivateClickMeasurementQuery, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -201,7 +239,7 @@ void Database::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting()
     }
 }
 
-std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::optional<Database::AttributedPrivateClickMeasurement>> Database::findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite)
+std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::optional<Database::AttributedPrivateClickMeasurement>> Database::findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, const ApplicationBundleIdentifier& applicationBundleIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     auto sourceSiteDomainID = domainID(sourceSite.registrableDomain);
@@ -212,7 +250,8 @@ std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::opt
     auto findUnattributedScopedStatement = this->scopedStatement(m_findUnattributedStatement, findUnattributedQuery, "findPrivateClickMeasurement"_s);
     if (!findUnattributedScopedStatement
         || findUnattributedScopedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
-        || findUnattributedScopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK) {
+        || findUnattributedScopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK
+        || findUnattributedScopedStatement->bindText(3, applicationBundleIdentifier) != SQLITE_OK) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::findPrivateClickMeasurement findUnattributedQuery, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
@@ -220,7 +259,8 @@ std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::opt
     auto findAttributedScopedStatement = this->scopedStatement(m_findAttributedStatement, findAttributedQuery, "findPrivateClickMeasurement"_s);
     if (!findAttributedScopedStatement
         || findAttributedScopedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
-        || findAttributedScopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK) {
+        || findAttributedScopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK
+        || findAttributedScopedStatement->bindText(3, applicationBundleIdentifier) != SQLITE_OK) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::findPrivateClickMeasurement findAttributedQuery, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
@@ -236,7 +276,7 @@ std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::opt
     return std::make_pair(unattributedPrivateClickMeasurement, attributedPrivateClickMeasurement);
 }
 
-std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>, DebugInfo> Database::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, WebCore::PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData)
+std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>, DebugInfo> Database::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, const ApplicationBundleIdentifier& applicationBundleIdentifier, WebCore::PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, WebCore::PrivateClickMeasurement::IsRunningLayoutTest isRunningTest)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -255,14 +295,14 @@ std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUnti
 
     WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData secondsUntilSend { std::nullopt, std::nullopt };
 
-    auto attribution = findPrivateClickMeasurement(sourceSite, destinationSite);
+    auto attribution = findPrivateClickMeasurement(sourceSite, destinationSite, applicationBundleIdentifier);
     auto& previouslyUnattributed = attribution.first;
     auto& previouslyAttributed = attribution.second;
 
     if (previouslyUnattributed) {
         // Always convert the pending attribution and remove it from the unattributed map.
         removeUnattributed(*previouslyUnattributed);
-        secondsUntilSend = previouslyUnattributed.value().attributeAndGetEarliestTimeToSend(WTFMove(attributionTriggerData));
+        secondsUntilSend = previouslyUnattributed.value().attributeAndGetEarliestTimeToSend(WTFMove(attributionTriggerData), isRunningTest);
 
         // We should always have a valid secondsUntilSend value for a previouslyUnattributed value because there can be no previous attribution with a higher priority.
         if (!secondsUntilSend.hasValidSecondsUntilSendValues()) {
@@ -284,7 +324,7 @@ std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUnti
         // If we have no new attribution, re-attribute the old one to respect the new priority, but only if this report has
         // not been sent to the source or destination site yet.
         if (!previouslyAttributed.value().hasPreviouslyBeenReported()) {
-            auto secondsUntilSend = previouslyAttributed.value().attributeAndGetEarliestTimeToSend(WTFMove(attributionTriggerData));
+            auto secondsUntilSend = previouslyAttributed.value().attributeAndGetEarliestTimeToSend(WTFMove(attributionTriggerData), isRunningTest);
             if (!secondsUntilSend.hasValidSecondsUntilSendValues())
                 return { std::nullopt, WTFMove(debugInfo) };
 
@@ -314,6 +354,7 @@ void Database::removeUnattributed(WebCore::PrivateClickMeasurement& attribution)
     if (!scopedStatement
         || scopedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
         || scopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK
+        || scopedStatement->bindText(3, attribution.sourceApplicationBundleID()) != SQLITE_OK
         || scopedStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::removeUnattributed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -364,7 +405,7 @@ String Database::privateClickMeasurementToStringForTesting() const
     while (unattributedScopedStatement->step() == SQLITE_ROW) {
         const char* prefix = unattributedNumber ? "" : "Unattributed Private Click Measurements:";
         builder.append(prefix, "\nWebCore::PrivateClickMeasurement ", ++unattributedNumber, '\n',
-            attributionToStringForTesting(*unattributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Unattributed));
+            attributionToStringForTesting(buildPrivateClickMeasurementFromDatabase(*unattributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Unattributed)));
     }
 
     auto attributedScopedStatement = this->scopedStatement(m_allAttributedPrivateClickMeasurementStatement, allAttributedPrivateClickMeasurementQuery, "privateClickMeasurementToStringForTesting"_s);
@@ -380,39 +421,42 @@ String Database::privateClickMeasurementToStringForTesting() const
         if (!attributedNumber)
             builder.append(unattributedNumber ? "\n" : "", "Attributed Private Click Measurements:");
         builder.append("\nWebCore::PrivateClickMeasurement ", ++attributedNumber + unattributedNumber, '\n',
-            attributionToStringForTesting(*attributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed));
+            attributionToStringForTesting(buildPrivateClickMeasurementFromDatabase(*attributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed)));
     }
     return builder.toString();
 }
 
-String Database::attributionToStringForTesting(WebCore::SQLiteStatement& statement, PrivateClickMeasurementAttributionType attributionType) const
+String Database::attributionToStringForTesting(const WebCore::PrivateClickMeasurement& pcm) const
 {
     ASSERT(!RunLoop::isMain());
-    auto sourceSiteDomain = getDomainStringFromDomainID(statement.columnInt(0));
-    auto destinationSiteDomain = getDomainStringFromDomainID(statement.columnInt(1));
-    auto sourceID = statement.columnInt(2);
+    auto sourceSiteDomain = pcm.sourceSite().registrableDomain;
+    auto destinationSiteDomain = pcm.destinationSite().registrableDomain;
+    auto sourceID = pcm.sourceID().id;
 
     StringBuilder builder;
     builder.append("Source site: ", sourceSiteDomain, "\nAttribute on site: ", destinationSiteDomain, "\nSource ID: ", sourceID);
 
-    if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
-        auto attributionTriggerData = statement.columnInt(3);
-        auto priority = statement.columnInt(4);
-        auto earliestTimeToSend = statement.columnInt(6);
+    if (auto& triggerData = pcm.attributionTriggerData()) {
+        auto attributionTriggerData = triggerData->data;
+        auto priority = triggerData->priority;
+        auto earliestTimeToSend = pcm.timesToSend().sourceEarliestTimeToSend;
 
-        if (attributionTriggerData != -1) {
-            builder.append("\nAttribution trigger data: ", attributionTriggerData, "\nAttribution priority: ", priority, "\nAttribution earliest time to send: ");
-            if (earliestTimeToSend == -1)
-                builder.append("Not set");
-            else {
-                auto secondsUntilSend = WallTime::fromRawSeconds(earliestTimeToSend) - WallTime::now();
-                builder.append((secondsUntilSend >= 24_h && secondsUntilSend <= 48_h) ? "Within 24-48 hours" : "Outside 24-48 hours");
-            }
-        } else
-            builder.append("\nNo attribution trigger data.");
+        builder.append("\nAttribution trigger data: ", attributionTriggerData, "\nAttribution priority: ", priority, "\nAttribution earliest time to send: ");
+        if (!earliestTimeToSend)
+            builder.append("Not set");
+        else {
+            auto secondsUntilSend = *earliestTimeToSend - WallTime::now();
+            builder.append((secondsUntilSend >= 24_h && secondsUntilSend <= 48_h) ? "Within 24-48 hours" : "Outside 24-48 hours");
+        }
+
+        builder.append("\nDestination token: ");
+        if (!triggerData->destinationSecretToken)
+            builder.append("Not set");
+        else
+            builder.append("\ntoken: ", triggerData->destinationSecretToken->tokenBase64URL, "\nsignature: ", triggerData->destinationSecretToken->signatureBase64URL, "\nkey: ", triggerData->destinationSecretToken->keyIDBase64URL);
     } else
         builder.append("\nNo attribution trigger data.");
-    builder.append('\n');
+    builder.append("\nApplication bundle identifier: ", pcm.sourceApplicationBundleID(), '\n');
 
     return builder.toString();
 }
@@ -489,6 +533,7 @@ void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributi
 
     auto sourceSiteDomainID = domainID(attribution.sourceSite().registrableDomain);
     auto destinationSiteDomainID = domainID(attribution.destinationSite().registrableDomain);
+    auto sourceApplicationBundleID = attribution.sourceApplicationBundleID();
 
     if (!sourceSiteDomainID || !destinationSiteDomainID)
         return;
@@ -499,7 +544,7 @@ void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributi
             ASSERT_NOT_REACHED();
             return;
         }
-        markReportAsSentToSource(*sourceSiteDomainID, *destinationSiteDomainID);
+        markReportAsSentToSource(*sourceSiteDomainID, *destinationSiteDomainID, sourceApplicationBundleID);
         sourceEarliestTimeToSend = std::nullopt;
         break;
     case WebCore::PrivateClickMeasurement::AttributionReportEndpoint::Destination:
@@ -507,7 +552,7 @@ void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributi
             ASSERT_NOT_REACHED();
             return;
         }
-        markReportAsSentToDestination(*sourceSiteDomainID, *destinationSiteDomainID);
+        markReportAsSentToDestination(*sourceSiteDomainID, *destinationSiteDomainID, sourceApplicationBundleID);
         destinationEarliestTimeToSend = std::nullopt;
     }
 
@@ -515,17 +560,18 @@ void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributi
     if (destinationEarliestTimeToSend || sourceEarliestTimeToSend)
         return;
 
-    auto clearAttributedStatement = m_database.prepareStatement("DELETE FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s);
+    auto clearAttributedStatement = m_database.prepareStatement("DELETE FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ? AND sourceApplicationBundleID = ?"_s);
     if (!clearAttributedStatement
         || clearAttributedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
         || clearAttributedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK
+        || clearAttributedStatement->bindText(3, sourceApplicationBundleID) != SQLITE_OK
         || clearAttributedStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::clearSentAttribution failed to step, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
 }
 
-void Database::markReportAsSentToDestination(SourceDomainID sourceSiteDomainID, DestinationDomainID destinationSiteDomainID)
+void Database::markReportAsSentToDestination(SourceDomainID sourceSiteDomainID, DestinationDomainID destinationSiteDomainID, const ApplicationBundleIdentifier& sourceApplicationBundleID)
 {
     ASSERT(!RunLoop::isMain());
     auto scopedStatement = this->scopedStatement(m_markReportAsSentToDestinationStatement, markReportAsSentToDestinationQuery, "markReportAsSentToDestination"_s);
@@ -533,13 +579,14 @@ void Database::markReportAsSentToDestination(SourceDomainID sourceSiteDomainID, 
     if (!scopedStatement
         || scopedStatement->bindInt(1, sourceSiteDomainID) != SQLITE_OK
         || scopedStatement->bindInt(2, destinationSiteDomainID) != SQLITE_OK
+        || scopedStatement->bindText(3, sourceApplicationBundleID) != SQLITE_OK
         || scopedStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "Database::markReportAsSentToDestination, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
 }
 
-void Database::markReportAsSentToSource(SourceDomainID sourceSiteDomainID, DestinationDomainID destinationSiteDomainID)
+void Database::markReportAsSentToSource(SourceDomainID sourceSiteDomainID, DestinationDomainID destinationSiteDomainID, const ApplicationBundleIdentifier& sourceApplicationBundleID)
 {
     ASSERT(!RunLoop::isMain());
     auto scopedStatement = this->scopedStatement(m_markReportAsSentToSourceStatement, markReportAsSentToSourceQuery, "markReportAsSentToSource"_s);
@@ -547,6 +594,7 @@ void Database::markReportAsSentToSource(SourceDomainID sourceSiteDomainID, Desti
     if (!scopedStatement
         || scopedStatement->bindInt(1, sourceSiteDomainID) != SQLITE_OK
         || scopedStatement->bindInt(2, destinationSiteDomainID) != SQLITE_OK
+        || scopedStatement->bindText(3, sourceApplicationBundleID) != SQLITE_OK
         || scopedStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "Database::markReportAsSentToSource, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -567,9 +615,11 @@ std::pair<std::optional<Database::SourceEarliestTimeToSend>, std::optional<Datab
     if (!scopedStatement
         || scopedStatement->bindInt(1, *sourceSiteDomainID) != SQLITE_OK
         || scopedStatement->bindInt(2, *destinationSiteDomainID) != SQLITE_OK
+        || scopedStatement->bindText(3, attribution.sourceApplicationBundleID()) != SQLITE_OK
         || scopedStatement->step() != SQLITE_ROW) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "Database::earliestTimesToSend, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
+        return { };
     }
 
     std::optional<SourceEarliestTimeToSend> earliestTimeToSendToSource;
@@ -660,6 +710,49 @@ void Database::destroyStatements()
     m_insertObservedDomainStatement = nullptr;
 }
 
-} // namespace PCM
+void Database::addDestinationTokenColumnsIfNecessary()
+{
+    String attributedTableName("AttributedPrivateClickMeasurement"_s);
+    String destinationKeyIDColumnName("destinationKeyID"_s);
+    auto columns = columnsForTable(attributedTableName);
+    if (!columns.size() || columns.last() != destinationKeyIDColumnName) {
+        addMissingColumnToTable(attributedTableName, "destinationToken TEXT"_s);
+        addMissingColumnToTable(attributedTableName, "destinationSignature TEXT"_s);
+        addMissingColumnToTable(attributedTableName, "destinationKeyID TEXT");
+    }
+}
 
-} // namespace WebKit
+Vector<String> Database::columnsForTable(const String& tableName)
+{
+    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA table_info(", tableName, ")"));
+
+    if (!statement) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::columnsForTable Unable to prepare statement to fetch schema for table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    Vector<String> columns;
+    while (statement->step() == SQLITE_ROW) {
+        auto name = statement->columnText(1);
+        columns.append(name);
+    }
+
+    return columns;
+}
+
+void Database::addMissingColumnToTable(const String& tableName, const String& columnName)
+{
+    auto statement = m_database.prepareStatementSlow(makeString("ALTER TABLE ", tableName, " ADD COLUMN ", columnName));
+    if (!statement) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::addMissingColumnToTable Unable to prepare statement to add missing columns to table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (statement->step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::addMissingColumnToTable error executing statement to add missing columns to table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+    }
+}
+
+} // namespace WebKit::PCM

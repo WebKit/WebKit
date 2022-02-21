@@ -64,3 +64,13 @@
     min-width: 30px;
     min-height: 30px;
 }
+
+.tooltip-content hr {
+    border: .5px solid black;
+}
+
+@media (prefers-color-scheme: dark) {
+    .tooltip-content hr {
+        border: .5px solid white;
+    }  
+}

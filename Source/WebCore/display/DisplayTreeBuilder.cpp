@@ -119,8 +119,6 @@ TreeBuilder::~TreeBuilder() = default;
 
 std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
 {
-    ASSERT(layoutState.hasRoot());
-
     auto& rootLayoutBox = layoutState.root();
 
 #if ENABLE(TREE_DEBUGGING)
@@ -303,33 +301,33 @@ StackingItem* TreeBuilder::insertIntoTree(std::unique_ptr<Box>&& box, InsertionP
 
 void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState, const Layout::ContainerBox& inlineFormattingRoot, InsertionPosition& insertionPosition)
 {
-    auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
+    auto& inlineFormattingState = layoutState.formattingStateForInlineFormattingContext(inlineFormattingRoot);
 
-    for (auto& run : inlineFormattingState.runs()) {
-        if (run.isRootInlineBox()) {
+    for (auto& box : inlineFormattingState.boxes()) {
+        if (box.isRootInlineBox()) {
             // Not supported yet.
             continue;
         }
 
-        if (run.text()) {
-            auto& lineGeometry = inlineFormattingState.lines().at(run.lineIndex());
-            auto textBox = m_boxFactory.displayBoxForTextRun(run, lineGeometry, positioningContext().inFlowContainingBlockContext());
+        if (box.text()) {
+            auto& lineGeometry = inlineFormattingState.lines().at(box.lineIndex());
+            auto textBox = m_boxFactory.displayBoxForTextRun(box, lineGeometry, positioningContext().inFlowContainingBlockContext());
             insert(WTFMove(textBox), insertionPosition);
             accountForBoxPaintingExtent(*insertionPosition.currentChild);
             continue;
         }
 
-        if (is<Layout::ContainerBox>(run.layoutBox())) {
-            recursiveBuildDisplayTree(layoutState, run.layoutBox(), insertionPosition);
+        if (is<Layout::ContainerBox>(box.layoutBox())) {
+            recursiveBuildDisplayTree(layoutState, box.layoutBox(), insertionPosition);
             continue;
         }
 
         // FIXME: Workaround for webkit.orgb/b/219335.
-        if (run.layoutBox().isLineBreakBox() && run.layoutBox().isOutOfFlowPositioned())
+        if (box.layoutBox().isLineBreakBox() && box.layoutBox().isOutOfFlowPositioned())
             continue;
 
-        auto geometry = layoutState.geometryForBox(run.layoutBox());
-        auto displayBox = m_boxFactory.displayBoxForLayoutBox(run.layoutBox(), geometry, positioningContext().inFlowContainingBlockContext());
+        auto geometry = layoutState.geometryForBox(box.layoutBox());
+        auto displayBox = m_boxFactory.displayBoxForLayoutBox(box.layoutBox(), geometry, positioningContext().inFlowContainingBlockContext());
         insertIntoTree(WTFMove(displayBox), insertionPosition, WillTraverseDescendants::No);
     }
 }

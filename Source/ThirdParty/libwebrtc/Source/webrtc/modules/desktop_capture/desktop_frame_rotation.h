@@ -24,27 +24,27 @@ enum class Rotation {
   CLOCK_WISE_270,
 };
 
-// Rotates input DesktopFrame |source|, copies pixel in an unrotated rectangle
-// |source_rect| into the target rectangle of another DesktopFrame |target|.
-// Target rectangle here is the rotated |source_rect| plus |target_offset|.
-// |rotation| specifies |source| to |target| rotation. |source_rect| is in
-// |source| coordinate. |target_offset| is in |target| coordinate.
-// This function triggers check failure if |source| does not cover the
-// |source_rect|, or |target| does not cover the rotated |rect|.
+// Rotates input DesktopFrame `source`, copies pixel in an unrotated rectangle
+// `source_rect` into the target rectangle of another DesktopFrame `target`.
+// Target rectangle here is the rotated `source_rect` plus `target_offset`.
+// `rotation` specifies `source` to `target` rotation. `source_rect` is in
+// `source` coordinate. `target_offset` is in `target` coordinate.
+// This function triggers check failure if `source` does not cover the
+// `source_rect`, or `target` does not cover the rotated `rect`.
 void RotateDesktopFrame(const DesktopFrame& source,
                         const DesktopRect& source_rect,
                         const Rotation& rotation,
                         const DesktopVector& target_offset,
                         DesktopFrame* target);
 
-// Returns a reverse rotation of |rotation|.
+// Returns a reverse rotation of `rotation`.
 Rotation ReverseRotation(Rotation rotation);
 
-// Returns a rotated DesktopSize of |size|.
+// Returns a rotated DesktopSize of `size`.
 DesktopSize RotateSize(DesktopSize size, Rotation rotation);
 
-// Returns a rotated DesktopRect of |rect|. The |size| represents the size of
-// the DesktopFrame which |rect| belongs in.
+// Returns a rotated DesktopRect of `rect`. The `size` represents the size of
+// the DesktopFrame which `rect` belongs in.
 DesktopRect RotateRect(DesktopRect rect, DesktopSize size, Rotation rotation);
 
 }  // namespace webrtc

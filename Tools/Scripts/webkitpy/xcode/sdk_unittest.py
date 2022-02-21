@@ -72,48 +72,48 @@ class SDKTest(unittest.TestCase):
 
     def test_iphoneos(self):
         preferred_sdk = sdk.SDK.get_preferred_sdk_for_platform("iphoneos", self.executive)
-        self.assertEquals("iphoneos", preferred_sdk.platform)
-        self.assertEquals("12.0", preferred_sdk.version)
+        self.assertEqual("iphoneos", preferred_sdk.platform)
+        self.assertEqual("12.0", preferred_sdk.version)
         self.assertTrue(preferred_sdk.internal)
 
     def test_iphonesim(self):
         preferred_sdk = sdk.SDK.get_preferred_sdk_for_platform("iphonesimulator", self.executive)
-        self.assertEquals("iphonesimulator", preferred_sdk.platform)
-        self.assertEquals("12.0", preferred_sdk.version)
+        self.assertEqual("iphonesimulator", preferred_sdk.platform)
+        self.assertEqual("12.0", preferred_sdk.version)
         self.assertFalse(preferred_sdk.internal)
 
     def test_macos(self):
         preferred_sdk = sdk.SDK.get_preferred_sdk_for_platform("macosx", self.executive)
-        self.assertEquals("macosx", preferred_sdk.platform)
-        self.assertEquals("10.14", preferred_sdk.version)
+        self.assertEqual("macosx", preferred_sdk.platform)
+        self.assertEqual("10.14", preferred_sdk.version)
         self.assertTrue(preferred_sdk.internal)
 
     def test_appletvos(self):
         preferred_sdk = sdk.SDK.get_preferred_sdk_for_platform("appletvos", self.executive)
-        self.assertEquals("appletvos", preferred_sdk.platform)
-        self.assertEquals("12.0", preferred_sdk.version)
+        self.assertEqual("appletvos", preferred_sdk.platform)
+        self.assertEqual("12.0", preferred_sdk.version)
         self.assertTrue(preferred_sdk.internal)
 
     def test_appletvsim(self):
         preferred_sdk = sdk.SDK.get_preferred_sdk_for_platform("appletvsimulator", self.executive)
-        self.assertEquals("appletvsimulator", preferred_sdk.platform)
-        self.assertEquals("12.0", preferred_sdk.version)
+        self.assertEqual("appletvsimulator", preferred_sdk.platform)
+        self.assertEqual("12.0", preferred_sdk.version)
         self.assertFalse(preferred_sdk.internal)
 
     def test_watchos(self):
         preferred_sdk = sdk.SDK.get_preferred_sdk_for_platform("watchos", self.executive)
-        self.assertEquals("watchos", preferred_sdk.platform)
-        self.assertEquals("4.0", preferred_sdk.version)
+        self.assertEqual("watchos", preferred_sdk.platform)
+        self.assertEqual("4.0", preferred_sdk.version)
         self.assertTrue(preferred_sdk.internal)
 
     def test_watchsimulator(self):
         preferred_sdk = sdk.SDK.get_preferred_sdk_for_platform("watchsimulator", self.executive)
-        self.assertEquals("watchsimulator", preferred_sdk.platform)
-        self.assertEquals("4.0", preferred_sdk.version)
+        self.assertEqual("watchsimulator", preferred_sdk.platform)
+        self.assertEqual("4.0", preferred_sdk.version)
         self.assertFalse(preferred_sdk.internal)
 
     def test_prodos(self):
         preferred_sdk = sdk.SDK.get_preferred_sdk_for_platform("prodos", self.executive)
-        self.assertEquals("prodos", preferred_sdk.platform)
-        self.assertEquals(None, preferred_sdk.version)
-        self.assertEquals(None, preferred_sdk.internal)
+        self.assertEqual("prodos", preferred_sdk.platform)
+        self.assertEqual(None, preferred_sdk.version)
+        self.assertEqual(None, preferred_sdk.internal)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,15 +90,20 @@ inline JSValue StructureRareData::cachedSpecialProperty(CachedSpecialPropertyKey
 
 inline JSPropertyNameEnumerator* StructureRareData::cachedPropertyNameEnumerator() const
 {
-    return m_cachedPropertyNameEnumerator.get();
+    return bitwise_cast<JSPropertyNameEnumerator*>(m_cachedPropertyNameEnumeratorAndFlag & cachedPropertyNameEnumeratorMask);
 }
 
-inline void StructureRareData::setCachedPropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator)
+inline uintptr_t StructureRareData::cachedPropertyNameEnumeratorAndFlag() const
 {
-    m_cachedPropertyNameEnumerator.set(vm, this, enumerator);
+    return m_cachedPropertyNameEnumeratorAndFlag;
+}
+
+inline void StructureRareData::setCachedPropertyNameEnumerator(VM& vm, Structure* baseStructure, JSPropertyNameEnumerator* enumerator, StructureChain* chain)
+{
     m_cachedPropertyNameEnumeratorWatchpoints = FixedVector<StructureChainInvalidationWatchpoint>();
-    bool validatedViaWatchpoint = tryCachePropertyNameEnumeratorViaWatchpoint(vm, enumerator->cachedPrototypeChain());
-    enumerator->setValidatedViaWatchpoint(validatedViaWatchpoint);
+    bool validatedViaWatchpoint = tryCachePropertyNameEnumeratorViaWatchpoint(vm, baseStructure, chain);
+    m_cachedPropertyNameEnumeratorAndFlag = ((validatedViaWatchpoint ? 0 : cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag) | bitwise_cast<uintptr_t>(enumerator));
+    vm.writeBarrier(this, enumerator);
 }
 
 inline JSImmutableButterfly* StructureRareData::cachedPropertyNames(CachedPropertyNamesKind kind) const
@@ -169,16 +174,19 @@ inline void StructureChainInvalidationWatchpoint::fireInternal(VM&, const FireDe
 {
     if (!m_structureRareData->isLive())
         return;
-    m_structureRareData->invalidateWatchpointBasedValidation();
+    m_structureRareData->clearCachedPropertyNameEnumerator();
 }
 
-inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM& vm, StructureChain* chain)
+inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM&, Structure* baseStructure, StructureChain* chain)
 {
+    if (baseStructure->hasPolyProto())
+        return false;
+
     unsigned size = 0;
     for (auto* current = chain->head(); *current; ++current) {
         ++size;
         StructureID structureID = *current;
-        Structure* structure = vm.getStructure(structureID);
+        Structure* structure = structureID.decode();
         if (!structure->propertyNameEnumeratorShouldWatch())
             return false;
     }
@@ -186,16 +194,16 @@ inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM& v
     unsigned index = 0;
     for (auto* current = chain->head(); *current; ++current) {
         StructureID structureID = *current;
-        Structure* structure = vm.getStructure(structureID);
+        Structure* structure = structureID.decode();
         m_cachedPropertyNameEnumeratorWatchpoints[index].install(this, structure);
         ++index;
     }
     return true;
 }
 
-inline void StructureRareData::invalidateWatchpointBasedValidation()
+inline void StructureRareData::clearCachedPropertyNameEnumerator()
 {
-    m_cachedPropertyNameEnumerator.clear();
+    m_cachedPropertyNameEnumeratorAndFlag = 0;
     m_cachedPropertyNameEnumeratorWatchpoints = FixedVector<StructureChainInvalidationWatchpoint>();
 }
 

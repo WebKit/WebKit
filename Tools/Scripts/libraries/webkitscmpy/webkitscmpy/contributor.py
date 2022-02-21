@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@ class Contributor(object):
     SVN_AUTHOR_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*) \| \d+ lines?')
     SVN_AUTHOR_Q_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*)')
     SVN_PATCH_FROM_RE = re.compile(r'Patch by (?P<author>.*) <(?P<email>.*)> on \d+-\d+-\d+')
+    REVIEWER = 'reviewer'
 
     class Encoder(json.JSONEncoder):
 
@@ -43,8 +44,14 @@ class Contributor(object):
                 return super(Contributor.Encoder, self).default(obj)
 
             result = dict(name=obj.name)
+            if obj.status:
+                result['status'] = obj.status
             if obj.emails:
                 result['emails'] = [str(email) for email in obj.emails]
+            if obj.github:
+                result['github'] = obj.github
+            if obj.bitbucket:
+                result['bitbucket'] = obj.bitbucket
 
             return result
 
@@ -53,34 +60,69 @@ class Contributor(object):
         def load(cls, file):
             result = cls()
             contents = json.load(file)
-            for contributor in contents.get('contributors', []):
-                result.add(Contributor(**contributor))
-            for alias, name in contents.get('mapping', {}).items():
-                contributor = result.get(name)
-                if contributor:
-                    result[alias] = contributor
+            for contributor in contents:
+                name = contributor.get('name', None)
+                if not name:
+                    continue
+                created = result.create(name, *contributor.get('emails', []))
+                created.status = contributor.get('status', created.status)
+                created.github = contributor.get('github', created.github)
+                created.bitbucket = contributor.get('bitbucket', created.bitbucket)
+
+                result.statuses.add(created.status)
+
+                if created.github:
+                    result[created.github] = created
+                if created.bitbucket:
+                    result[created.bitbucket] = created
+
+            for contributor in contents:
+                constructed = result.get(contributor.get('name'))
+                if not constructed:
+                    continue
+                for alias in contributor.get('aliases', []) + contributor.get('nicks', []):
+                    if alias in result:
+                        continue
+                    result[alias] = constructed
             return result
 
         def __init__(self):
             super(Contributor.Mapping, self).__init__(lambda: None)
+            self.statuses = set()
 
         def save(self, file):
-            mapping = {}
+            alias_to_name = defaultdict(list)
+            for alias, contributor in self.items():
+                if not contributor or alias in contributor.emails or alias == contributor.name:
+                    continue
+                alias_to_name[contributor.name].append(alias)
+
             contributors = []
             for alias, contributor in self.items():
+                if not contributor or alias != contributor.name:
+                    continue
                 contributors.append(Contributor.Encoder().default(contributor))
-                if alias != contributor.name and alias not in contributor.emails:
-                    mapping[alias] = contributor.name
+                contributors[-1]['aliases'] = alias_to_name[contributor.name]
 
-            json.dump(dict(
-                mapping=mapping,
-                contributors=contributors,
-            ), file)
+            json.dump(contributors, file)
 
         def add(self, contributor):
             if not isinstance(contributor, Contributor):
                 raise ValueError("'{}' is not a Contributor object".format(type(contributor)))
-            return self.create(contributor.name, *contributor.emails)
+
+            result = self.create(contributor.name, *contributor.emails)
+            result.status = contributor.status or result.status
+            result.github = contributor.github or result.github
+            result.bitbucket = contributor.bitbucket or result.bitbucket
+
+            self.statuses.add(result.status)
+
+            if result.github:
+                self[result.github] = result
+            if result.bitbucket:
+                self[result.bitbucket] = result
+
+            return result
 
         def create(self, name=None, *emails):
             emails = [email for email in emails or []]
@@ -109,6 +151,14 @@ class Contributor(object):
                 self[email] = contributor
                 self[email.lower()] = contributor
             return contributor
+
+        def __iter__(self):
+            yielded = set()
+            for contributor in self.values():
+                if contributor.name in yielded:
+                    continue
+                yielded.add(contributor.name)
+                yield contributor
 
 
     @classmethod
@@ -146,9 +196,12 @@ class Contributor(object):
             return contributors.create(author, email)
         return cls(author or email, emails=[email])
 
-    def __init__(self, name, emails=None):
+    def __init__(self, name, emails=None, status=None, github=None, bitbucket=None):
         self.name = string_utils.decode(name)
         self.emails = list(filter(string_utils.decode, emails or []))
+        self.status = status
+        self.github = github
+        self.bitbucket = bitbucket
 
     @property
     def email(self):

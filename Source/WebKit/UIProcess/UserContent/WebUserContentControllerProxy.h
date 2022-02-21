@@ -38,6 +38,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/URL.h>
+#include <wtf/URLHash.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/StringHash.h>
 
@@ -102,11 +104,11 @@ public:
     void addNetworkProcess(NetworkProcessProxy&);
     void removeNetworkProcess(NetworkProcessProxy&);
 
-    void addContentRuleList(API::ContentRuleList&);
+    void addContentRuleList(API::ContentRuleList&, const WTF::URL& extensionBaseURL = { });
     void removeContentRuleList(const String&);
     void removeAllContentRuleLists();
-    const HashMap<String, RefPtr<API::ContentRuleList>>& contentExtensionRules() { return m_contentRuleLists; }
-    Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleListData() const;
+    const HashMap<String, std::pair<Ref<API::ContentRuleList>, URL>>& contentExtensionRules() { return m_contentRuleLists; }
+    Vector<std::pair<WebCompiledContentRuleListData, URL>> contentRuleListData() const;
 #endif
 
     UserContentControllerIdentifier identifier() const { return m_identifier; }
@@ -130,7 +132,7 @@ private:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WeakHashSet<NetworkProcessProxy> m_networkProcesses;
-    HashMap<String, RefPtr<API::ContentRuleList>> m_contentRuleLists;
+    HashMap<String, std::pair<Ref<API::ContentRuleList>, URL>> m_contentRuleLists;
 #endif
 };
 

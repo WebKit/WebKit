@@ -21,11 +21,7 @@
                         shouldBeFalse('didFireOnError');
                         finishJSTest();
                     });
-                    try {
-                        iframe.contentWindow.eval('throw "error"');
-                    } catch (e) {
-                        testPassed("Exception thrown");
-                    }
+                    shouldThrow(`iframe.contentWindow.eval('throw "error"')`, `"error"`);
                 });
             };
             document.body.appendChild(iframe);

@@ -102,9 +102,9 @@ pas_segregated_directory_iterate_iterate_callback(
             pas_log("%zu: now combined_word = %u\n", word_index, combined_word);
     
         if (is_forward)
-            index_offset = __builtin_ctz(combined_word);
+            index_offset = (size_t)__builtin_ctz(combined_word);
         else
-            index_offset = 31 - __builtin_clz(combined_word);
+            index_offset = 31lu - (size_t)__builtin_clz(combined_word);
         index = base_index + index_offset;
 
         mask = PAS_BITVECTOR_BIT_MASK(index_offset);
@@ -116,7 +116,7 @@ pas_segregated_directory_iterate_iterate_callback(
 
         if (config->first_considered == SIZE_MAX) {
             if (verbose)
-                pas_log("%p: setting first_considered to 0\n", config->directory, config->index);
+                pas_log("%p: setting first_considered to %zu\n", config->directory, config->index);
             config->first_considered = config->index;
         } else {
             if (verbose) {
@@ -181,7 +181,7 @@ pas_segregated_directory_iterate_forward(
 
     if (verbose) {
         pas_log("Actually using segmented bitvector iteration.\n");
-        pas_log("Segmented bitvector size = %zu\n", data->bitvectors.size);
+        pas_log("Segmented bitvector size = %u\n", data->bitvectors.size);
     }
     found_index = pas_segregated_directory_segmented_bitvectors_iterate(
         &data->bitvectors, PAS_BITVECTOR_WORD_INDEX(PAS_MAX((size_t)1, config->index) - 1),
@@ -242,8 +242,7 @@ pas_segregated_directory_iterate_backward(
 
 static PAS_ALWAYS_INLINE bool
 pas_segregated_directory_iterate_forward_to_take_first_eligible(
-    pas_segregated_directory_iterate_config* config,
-    pas_segregated_directory_first_eligible_kind first_eligible_kind)
+    pas_segregated_directory_iterate_config* config)
 {
     static const bool verbose = false;
     static const bool simple_eligibility = false;
@@ -259,8 +258,7 @@ pas_segregated_directory_iterate_forward_to_take_first_eligible(
         if (verbose)
             pas_log("previous_size = %zu\n", previous_size);
 
-        first_eligible = pas_segregated_directory_watch_first_eligible(
-            config->directory, first_eligible_kind);
+        first_eligible = pas_segregated_directory_watch_first_eligible(config->directory);
 
         if (simple_eligibility)
             config->index = 0;
@@ -305,7 +303,6 @@ pas_segregated_directory_iterate_forward_to_take_first_eligible(
         
         pas_segregated_directory_update_first_eligible_after_search(
             config->directory,
-            first_eligible_kind,
             first_eligible,
             config->first_considered);
         

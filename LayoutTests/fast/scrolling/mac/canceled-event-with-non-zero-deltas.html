@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 200%;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        async function scrollTest()
+        {
+            const events = [
+                {
+                    type : "wheel",
+                    viewX : 100,
+                    viewY : 100,
+                    deltaY : -10,
+                    phase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -30,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    phase : "ended"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -40,
+                    momentumPhase : "began"
+                },
+                {
+                    type: "wheel",
+                    deltaY : -32,
+                    momentumPhase: "changed"
+                },
+                {
+                    type: "wheel",
+                    viewX : 101, // defeat coalescing
+                    deltaY : -20,
+                    momentumPhase: "changed"
+                },
+                {
+                    type: "wheel",
+                    momentumPhase: "ended"
+                },
+                {
+                    type: "wheel",
+                    phase: "maybegin"
+                },
+                {
+                    type: "wheel",
+                    deltaX : 10,
+                    deltaY : 100,
+                    phase: "cancelled"
+                }
+            ];
+
+            await UIHelper.mouseWheelSequence({ events });
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            window.addEventListener('wheel', (event) => {
+                debug('wheel event deltaY ' + event.deltaY);
+            }, { passive: true });
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

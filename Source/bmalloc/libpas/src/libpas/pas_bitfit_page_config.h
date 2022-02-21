@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,12 @@
 #ifndef PAS_BITFIT_PAGE_CONFIG_H
 #define PAS_BITFIT_PAGE_CONFIG_H
 
+#include "pas_bitfit_max_free.h"
 #include "pas_bitfit_page_config_kind.h"
 #include "pas_bitfit_page_config_variant.h"
 #include "pas_bitvector.h"
 #include "pas_fast_path_allocation_result.h"
+#include "pas_heap_runtime_config.h"
 #include "pas_page_base_config.h"
 #include "pas_page_malloc.h"
 #include "pas_utils.h"
@@ -47,9 +49,11 @@ typedef struct pas_bitfit_page_config pas_bitfit_page_config;
 typedef struct pas_heap_runtime_config pas_heap_runtime_config;
 typedef struct pas_local_allocator pas_local_allocator;
 
+typedef void* (*pas_bitfit_page_config_page_allocator)(
+    pas_segregated_heap*, pas_physical_memory_transaction* transaction);
 typedef pas_fast_path_allocation_result (*pas_bitfit_page_config_specialized_allocator_try_allocate)(
     pas_bitfit_allocator* allocator,
-    pas_local_allocator* local,
+    pas_local_allocator* local_allocator,
     size_t size,
     size_t alignment);
 typedef void (*pas_bitfit_page_config_specialized_page_deallocate_with_page)(
@@ -59,11 +63,24 @@ typedef size_t (*pas_bitfit_page_config_specialized_page_get_allocation_size_wit
 typedef void (*pas_bitfit_page_config_specialized_page_shrink_with_page)(
     pas_bitfit_page* page, uintptr_t begin, size_t new_size);
 
+#define PAS_MAX_BITFIT_OBJECT_SIZE(payload_size, min_align_shift) \
+    PAS_MIN_CONST(PAS_MAX_OBJECT_SIZE((payload_size)), \
+                  PAS_BITFIT_MAX_FREE_MAX_VALID * (1u << (min_align_shift)))
+
 struct pas_bitfit_page_config {
     pas_page_base_config base;
 
     pas_bitfit_page_config_variant variant;
     pas_bitfit_page_config_kind kind;
+
+    /* What's the first byte at which the object payload could start relative to the boundary? */
+    uintptr_t page_object_payload_offset;
+
+    /* How many bytes are provisioned for objects past that offset? */
+    size_t page_object_payload_size;
+
+    /* This is the allocator used to create pages. */
+    pas_bitfit_page_config_page_allocator page_allocator;
 
     pas_bitfit_page_config_specialized_allocator_try_allocate specialized_allocator_try_allocate;
     pas_bitfit_page_config_specialized_page_deallocate_with_page specialized_page_deallocate_with_page;
@@ -109,7 +126,7 @@ PAS_API extern bool pas_marge_bitfit_page_config_variant_is_enabled_override;
     PAS_API pas_fast_path_allocation_result \
     lower_case_page_config_name ## _specialized_allocator_try_allocate( \
         pas_bitfit_allocator* allocator, \
-        pas_local_allocator* local, \
+        pas_local_allocator* local_allocator, \
         size_t size, \
         size_t alignment); \
     PAS_API void lower_case_page_config_name ## _specialized_page_deallocate_with_page( \
@@ -119,9 +136,17 @@ PAS_API extern bool pas_marge_bitfit_page_config_variant_is_enabled_override;
     PAS_API void lower_case_page_config_name ## _specialized_page_shrink_with_page( \
         pas_bitfit_page* page, uintptr_t begin, size_t new_size)
 
-static inline bool pas_bitfit_page_config_is_enabled(pas_bitfit_page_config config)
+static inline bool pas_bitfit_page_config_is_enabled(pas_bitfit_page_config config,
+                                                     pas_heap_runtime_config* runtime_config)
 {
     if (!config.base.is_enabled)
+        return false;
+    /* Doing this check here is not super necessary, but it's sort of nice for cases where we have a heap
+       that sometimes uses bitfit exclusively or sometimes uses segregated exclusively and that's selected
+       by selecting or mutating runtime_configs. This is_enabled function is only called as part of the math
+       that sets up size classes, at least for now, so the implications of not doing this check are rather
+       tiny. */
+    if (!runtime_config->max_bitfit_object_size)
         return false;
     switch (config.variant) {
     case pas_small_bitfit_page_config_variant:
@@ -133,6 +158,12 @@ static inline bool pas_bitfit_page_config_is_enabled(pas_bitfit_page_config conf
     }
     PAS_ASSERT(!"Should not be reached");
     return false;
+}
+
+static PAS_ALWAYS_INLINE uintptr_t
+pas_bitfit_page_config_object_payload_end_offset_from_boundary(pas_bitfit_page_config config)
+{
+    return config.page_object_payload_offset + config.page_object_payload_size;
 }
 
 static PAS_ALWAYS_INLINE size_t pas_bitfit_page_config_num_alloc_bits(pas_bitfit_page_config config)
@@ -164,12 +195,6 @@ pas_bitfit_page_config_byte_offset_for_object_bits(pas_bitfit_page_config config
 {
     return PAS_BITFIT_PAGE_CONFIG_BYTE_OFFSET_FOR_OBJECT_BITS(config.base.page_size,
                                                               config.base.min_align_shift);
-}
-
-static PAS_ALWAYS_INLINE bool
-pas_bitfit_page_config_uses_subpages(pas_bitfit_page_config config)
-{
-    return config.base.page_size < pas_page_malloc_alignment();
 }
 
 PAS_END_EXTERN_C;

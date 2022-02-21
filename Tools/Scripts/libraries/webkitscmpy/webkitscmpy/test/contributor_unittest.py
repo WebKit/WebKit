@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -173,3 +173,54 @@ class TestContributor(unittest.TestCase):
         self.assertEqual(mapping_a['jbedard@apple.com'], mapping_b['jbedard@apple.com'])
         self.assertEqual(mapping_a['jbedard@apple.com'], mapping_b['JonWBedard'])
         self.assertEqual(mapping_a['slewis@apple.com'], mapping_b['slewis@apple.com'])
+
+    def test_iteration(self):
+        mapping = Contributor.Mapping()
+        mapping.create('Jonathan Bedard', 'jbedard@apple.com')
+        mapping.create('Stephanie Lewis', 'slewis@apple.com')
+
+        self.assertEqual(
+            sorted(['jbedard@apple.com', 'slewis@apple.com']),
+            sorted([contributor.email for contributor in mapping]),
+        )
+
+    def test_github(self):
+        mapping = Contributor.Mapping()
+        mapping.add(Contributor(
+            'Jonathan Bedard',
+            emails=['jbedard@apple.com'],
+            github='JonWBedard',
+        ))
+        mapping.add(Contributor(
+            'Jonathan Bedard',
+            emails=['jbedard@apple.com'],
+            github='JonWBedard',
+        ))
+        mapping.add(Contributor(
+            'Kocsen Chung',
+            emails=['kocsen_chung@apple.com'],
+            github='kocsenc',
+        ))
+
+        self.assertEqual(mapping['JonWBedard'], mapping['jbedard@apple.com'])
+        self.assertEqual(mapping['kocsenc'], mapping['kocsen_chung@apple.com'])
+        self.assertEqual(mapping['jbedard@apple.com'].github, 'JonWBedard')
+        self.assertEqual(mapping['kocsen_chung@apple.com'].github, 'kocsenc')
+
+    def test_bitbucket(self):
+        mapping = Contributor.Mapping()
+        mapping.add(Contributor(
+            'Jonathan Bedard',
+            emails=['jbedard@apple.com'],
+            bitbucket='jonathan_bedard',
+        ))
+        mapping.add(Contributor(
+            'Kocsen Chung',
+            emails=['kocsen_chung@apple.com'],
+            bitbucket='kocsen_chung',
+        ))
+
+        self.assertEqual(mapping['jonathan_bedard'], mapping['jbedard@apple.com'])
+        self.assertEqual(mapping['kocsen_chung'], mapping['kocsen_chung@apple.com'])
+        self.assertEqual(mapping['jbedard@apple.com'].bitbucket, 'jonathan_bedard')
+        self.assertEqual(mapping['kocsen_chung@apple.com'].bitbucket, 'kocsen_chung')

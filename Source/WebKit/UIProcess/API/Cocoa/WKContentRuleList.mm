@@ -50,7 +50,11 @@
 
 - (NSString *)identifier
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     return _contentRuleList->name();
+#else
+    return nil;
+#endif
 }
 
 @end
@@ -59,7 +63,11 @@
 
 + (BOOL)_supportsRegularExpression:(NSString *)regex
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     return API::ContentRuleList::supportsRegularExpression(regex);
+#else
+    return NO;
+#endif
 }
 
 @end

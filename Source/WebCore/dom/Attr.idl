@@ -34,5 +34,5 @@
 
     readonly attribute boolean specified; // Useless; always returns true.
 
-    [EnabledAtRuntime=AttrStyle] readonly attribute CSSStyleDeclaration style;
+    [EnabledAtRuntime=AttrStyleEnabled] readonly attribute CSSStyleDeclaration style;
 };

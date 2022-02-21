@@ -65,15 +65,15 @@ protected:
 private:
     String nodeValue() const final;
     ExceptionOr<void> setNodeValue(const String&) final;
-    void notifyParentAfterChange(ContainerNode::ChildChange::Source);
+    void notifyParentAfterChange(const ContainerNode::ChildChange&);
 
     String m_data;
 };
 
 inline unsigned Node::length() const
 {
-    if (is<CharacterData>(*this))
-        return downcast<CharacterData>(*this).length();
+    if (auto characterData = dynamicDowncast<CharacterData>(*this))
+        return characterData->length();
     return countChildNodes();
 }
 

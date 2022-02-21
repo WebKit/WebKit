@@ -5,5 +5,5 @@ If the element does not have a focus ring, then the test result is SUCCESS.
 Click me.
 
 PASS ":focus-visible" should be a valid selector
-FAIL Mouse focus does not show a focus ring by default assert_equals: outline-style for DIV#target should be none expected "none" but got "auto"
+PASS Mouse focus does not show a focus ring by default
 

@@ -23,6 +23,8 @@ context.decodeAudioData(null, function(){}, function(){}).then(() => {
 });
 
 var decodeCaseArray = [{url: "resources/media/24bit-44khz.wav", result: true},
+                       {url: "resources/media/128kbps-44khz.mp3", result: true},
+                       {url: "resources/media/vbr-128kbps-44khz.m4a", result: true},
                        {url: "resources/media/invalid-audio-file.txt", result: false}];
 
 function runDecodeTest(index) {

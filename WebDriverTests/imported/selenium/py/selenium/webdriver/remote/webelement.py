@@ -534,9 +534,14 @@ class WebElement(BaseWebElement):
         # transfer file to another machine only if remote driver is used
         # the same behaviour as for java binding
         if self.parent._is_remote:
-            local_file = self.parent.file_detector.is_local_file(*value)
-            if local_file is not None:
-                value = self._upload(local_file)
+            local_files = list(map(lambda keys_to_send:
+                                   self.parent.file_detector.is_local_file(keys_to_send),
+                                   ''.join(value).split('\n')))
+            if None not in local_files:
+                remote_files = []
+                for file in local_files:
+                    remote_files.append(self._upload(file))
+                value = '\n'.join(remote_files)
 
         self._execute(Command.SEND_KEYS_TO_ELEMENT,
                       {'text': "".join(keys_to_typing(value)),
@@ -704,8 +709,7 @@ class WebElement(BaseWebElement):
 
     def find_element(self, by=By.ID, value=None):
         """
-        Find an element given a By strategy and locator. Prefer the find_element_by_* methods when
-        possible.
+        Find an element given a By strategy and locator.
 
         :Usage:
             ::
@@ -732,8 +736,7 @@ class WebElement(BaseWebElement):
 
     def find_elements(self, by=By.ID, value=None):
         """
-        Find elements given a By strategy and locator. Prefer the find_elements_by_* methods when
-        possible.
+        Find elements given a By strategy and locator.
 
         :Usage:
             ::

@@ -33,10 +33,10 @@
 #include "GraphicsTypesGL.h"
 #include "PlatformXR.h"
 #include "WebXRLayer.h"
+#include <variant>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -58,7 +58,7 @@ class WebXRWebGLLayer : public WebXRLayer, private CanvasObserver {
     WTF_MAKE_ISO_ALLOCATED(WebXRWebGLLayer);
 public:
 
-    using WebXRRenderingContext = WTF::Variant<
+    using WebXRRenderingContext = std::variant<
         RefPtr<WebGLRenderingContext>
 #if ENABLE(WEBGL2)
         , RefPtr<WebGL2RenderingContext>

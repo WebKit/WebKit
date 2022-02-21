@@ -36,13 +36,15 @@ from webkitcorepy.subprocess_utils import TimeoutExpired, CompletedProcess, run
 from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDuplicate
 from webkitcorepy.task_pool import TaskPool
 from webkitcorepy.terminal import Terminal
-from webkitcorepy.credentials import credentials
+from webkitcorepy.environment import Environment
+from webkitcorepy.credentials import credentials, delete_credentials
 from webkitcorepy.measure_time import MeasureTime
 from webkitcorepy.nested_fuzzy_dict import NestedFuzzyDict
 from webkitcorepy.call_by_need import CallByNeed
 from webkitcorepy.editor import Editor
+from webkitcorepy.file_lock import FileLock
 
-version = Version(0, 10, 0)
+version = Version(0, 13, 0)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -60,8 +62,12 @@ AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dat
 AutoInstall.register(Package('entrypoints', Version(0, 3, 0)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('idna', Version(2, 10)))
-AutoInstall.register(Package('keyring', Version(7, 3, 1)))
-AutoInstall.register(Package('packaging', Version(20, 4)))
+
+if sys.version_info > (3, 0):
+    AutoInstall.register(Package('packaging', Version(21, 3)))
+else:
+    AutoInstall.register(Package('packaging', Version(20, 4)))
+
 AutoInstall.register(Package('pyparsing', Version(2, 4, 7)))
 AutoInstall.register(Package('requests', Version(2, 24)))
 AutoInstall.register(Package('setuptools_scm', Version(5, 0, 2), pypi_name='setuptools-scm'))
@@ -72,8 +78,14 @@ AutoInstall.register(Package('urllib3', Version(1, 25, 10)))
 AutoInstall.register(Package('wheel', Version(0, 35, 1)))
 AutoInstall.register(Package('whichcraft', Version(0, 6, 1)))
 
-# This is needed for python-keyring.
-if sys.platform == 'linux':
-    AutoInstall.register(Package('secretstorage', Version(2, 3, 1)))
+if sys.version_info >= (3, 6):
+    if sys.platform == 'linux':
+        AutoInstall.register(Package('jeepney', Version(0, 7, 1)))
+        AutoInstall.register(Package('cffi', Version(1, 15, 0)))
+        AutoInstall.register(Package('cryptography', Version(36, 0, 1), wheel=True, implicit_deps=['cffi']))
+        AutoInstall.register(Package('secretstorage', Version(3, 3, 1)))
+    AutoInstall.register(Package('keyring', Version(23, 2, 1)))
+else:
+    AutoInstall.register(Package('keyring', Version(18, 0, 1)))
 
 name = 'webkitcorepy'

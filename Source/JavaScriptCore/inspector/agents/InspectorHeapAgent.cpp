@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -182,7 +182,7 @@ Protocol::ErrorStringOr<std::tuple<String, RefPtr<Protocol::Debugger::FunctionDe
     // Prevent the cell from getting collected as we look it up.
     VM& vm = m_environment.vm();
     JSLockHolder lock(vm);
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
 
     unsigned heapObjectIdentifier = static_cast<unsigned>(heapObjectId);
     const std::optional<HeapSnapshotNode> optionalNode = nodeForHeapObjectIdentifier(errorString, heapObjectIdentifier);
@@ -232,7 +232,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorHeapAgent
     // Prevent the cell from getting collected as we look it up.
     VM& vm = m_environment.vm();
     JSLockHolder lock(vm);
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
 
     unsigned heapObjectIdentifier = static_cast<unsigned>(heapObjectId);
     const std::optional<HeapSnapshotNode> optionalNode = nodeForHeapObjectIdentifier(errorString, heapObjectIdentifier);

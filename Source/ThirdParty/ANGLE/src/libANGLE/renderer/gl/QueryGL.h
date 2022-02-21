@@ -59,8 +59,6 @@ class StandardQueryGL : public QueryGL
     template <typename T>
     angle::Result getResultBase(const gl::Context *context, T *params);
 
-    gl::QueryType mType;
-
     const FunctionsGL *mFunctions;
     StateManagerGL *mStateManager;
 

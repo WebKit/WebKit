@@ -43,12 +43,14 @@ class MemoryPressureMonitor {
 public:
     static MemoryPressureMonitor& singleton();
     void start();
+    static bool disabled();
 
     ~MemoryPressureMonitor();
 
 private:
     MemoryPressureMonitor() = default;
     bool m_started { false };
+    static bool s_disabled;
 };
 
 class CGroupMemoryController {

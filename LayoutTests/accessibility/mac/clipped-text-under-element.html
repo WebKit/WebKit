@@ -26,16 +26,13 @@
 <div id="console"></div>
 
 <script>
-
     description("This tests that even if an element is not visible, textUnderElement() will still give the text.");
 
     if (window.accessibilityController) {
-        document.getElementById("hidden-link").focus();
-        var hiddenLink = accessibilityController.focusedElement;
+        var hiddenLink = accessibilityController.accessibleElementById("hidden-link");
         shouldBe("hiddenLink.title", "'AXTitle: I am the hidden link text.'");
 
-        document.getElementById("visible-link").focus();
-        var visibleLink = accessibilityController.focusedElement;
+        var visibleLink = accessibilityController.accessibleElementById("visible-link");
         shouldBe("visibleLink.title", "'AXTitle: I am the visible link text.'");
     }
 

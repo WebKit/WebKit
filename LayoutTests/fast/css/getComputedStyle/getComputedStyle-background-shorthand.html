@@ -214,6 +214,40 @@ shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(1).getStr
 shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(2).getStringValue()", "'padding-box'");
 shouldBe("checkComputedStyleValue()", "true");
 
+
+e.style.background = "url(dummy://test.png), red";
+shouldBe("computedStyle.getPropertyValue('background')", "'url(\"dummy://test.png\") repeat scroll 0% 0% / auto padding-box border-box, rgb(255, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('background').cssText", "'url(\"dummy://test.png\") repeat scroll 0% 0% / auto padding-box border-box, rgb(255, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').length", "2");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(0).length", "2");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(0).item(0).length", "4");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(0).item(1).length", "3");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(0).item(0).item(0).getStringValue()", "'dummy://test.png'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(0).item(0).item(1).getStringValue()", "'repeat'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(0).item(0).item(2).getStringValue()", "'scroll'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(0).item(0).item(3).toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(0).item(0).item(3).item(0).getFloatValue(CSSPrimitiveValue.CSS_PERCENTAGE)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(0).item(0).item(3).item(1).getFloatValue(CSSPrimitiveValue.CSS_PERCENTAGE)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(0).item(1).item(0).getStringValue()", "'auto'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(0).item(1).item(1).getStringValue()", "'padding-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(0).item(1).item(2).getStringValue()", "'border-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(0).length", "5");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(1).length", "3");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(0).item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "255");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(0).item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(0).item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(0).item(1).getStringValue()", "'none'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(0).item(2).getStringValue()", "'repeat'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(0).item(3).getStringValue()", "'scroll'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(0).item(4).toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(0).item(4).item(0).getFloatValue(CSSPrimitiveValue.CSS_PERCENTAGE)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(0).item(4).item(1).getFloatValue(CSSPrimitiveValue.CSS_PERCENTAGE)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(1).item(0).getStringValue()", "'auto'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(1).item(1).getStringValue()", "'padding-box'");
+shouldBe("computedStyle.getPropertyCSSValue('background').item(1).item(1).item(2).getStringValue()", "'border-box'");
+shouldBe("checkComputedStyleValue()", "true");
+
 document.body.removeChild(testContainer);
 
 </script>

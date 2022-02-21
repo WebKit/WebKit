@@ -88,9 +88,7 @@ class EGLPresentPathD3D11 : public ANGLETest
         EGLAttrib device      = 0;
         EGLAttrib angleDevice = 0;
 
-        const char *extensionString =
-            static_cast<const char *>(eglQueryString(mDisplay, EGL_EXTENSIONS));
-        EXPECT_TRUE(strstr(extensionString, "EGL_EXT_device_query"));
+        EXPECT_TRUE(IsEGLClientExtensionEnabled("EGL_EXT_device_query"));
 
         ASSERT_EGL_TRUE(eglQueryDisplayAttribEXT(mDisplay, EGL_DEVICE_EXT, &angleDevice));
         ASSERT_EGL_TRUE(eglQueryDeviceAttribEXT(reinterpret_cast<EGLDeviceEXT>(angleDevice),
@@ -148,6 +146,8 @@ class EGLPresentPathD3D11 : public ANGLETest
 
             if (mContext != EGL_NO_CONTEXT)
             {
+                ASSERT_EGL_TRUE(
+                    eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
                 eglDestroyContext(mDisplay, mContext);
                 mContext = EGL_NO_CONTEXT;
             }

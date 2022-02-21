@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
-    Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+    Copyright (C) 2015-2022 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -131,7 +131,7 @@ protected:
 
 inline bool isSupportedPlugin(const Vector<SupportedPluginIdentifier>& pluginIdentifiers, const URL& pageURL, const String& pluginIdentifier)
 {
-    return pluginIdentifiers.findMatching([&] (auto&& plugin) {
+    return pluginIdentifiers.findIf([&] (auto&& plugin) {
         return pageURL.isMatchingDomain(plugin.matchingDomain) && plugin.pluginIdentifier == pluginIdentifier;
     }) != notFound;
 }

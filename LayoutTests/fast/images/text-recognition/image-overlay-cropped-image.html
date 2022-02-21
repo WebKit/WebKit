@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+</style>
+</head>
+<body>
+<img src="../resources/green-400x400.png"></img>
+<pre id="console"></pre>
+<script>
+addEventListener("load", () => {
+    const image = document.querySelector("img");
+
+    internals.installCroppedImageOverlay(image, new DOMRectReadOnly(0.25, 0.25, 0.5, 0.5));
+
+    croppedImage = internals.shadowRoot(image).getElementById("image-overlay-cropped-image");
+    croppedImageBackdrop = internals.shadowRoot(image).getElementById("image-overlay-cropped-image-backdrop");
+    shouldBeNonNull("croppedImage");
+    shouldBeNonNull("croppedImageBackdrop");
+
+    croppedImageRect = croppedImage.getBoundingClientRect();
+    shouldBe("croppedImageRect.x", "100");
+    shouldBe("croppedImageRect.y", "100");
+    shouldBe("croppedImageRect.width", "200");
+    shouldBe("croppedImageRect.height", "200");
+
+    internals.uninstallCroppedImageOverlay();
+
+    croppedImage = internals.shadowRoot(image).getElementById("image-overlay-cropped-image");
+    croppedImageBackdrop = internals.shadowRoot(image).getElementById("image-overlay-cropped-image-backdrop");
+    shouldBeNull("croppedImage");
+    shouldBeNull("croppedImageBackdrop");
+});
+</script>
+</body>
+</html>

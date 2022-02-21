@@ -28,6 +28,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
@@ -44,14 +45,15 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RemotePlayback);
 
 Ref<RemotePlayback> RemotePlayback::create(HTMLMediaElement& element)
 {
-    return adoptRef(*new RemotePlayback(element));
+    auto remotePlayback = adoptRef(*new RemotePlayback(element));
+    remotePlayback->suspendIfNeeded();
+    return remotePlayback;
 }
 
 RemotePlayback::RemotePlayback(HTMLMediaElement& element)
     : WebCore::ActiveDOMObject(element.scriptExecutionContext())
-    , m_mediaElement(makeWeakPtr(element))
+    , m_mediaElement(element)
 {
-    suspendIfNeeded();
 }
 
 RemotePlayback::~RemotePlayback()
@@ -108,7 +110,7 @@ void RemotePlayback::watchAvailability(Ref<RemotePlaybackAvailabilityCallback>&&
         m_callbackMap.add(callbackId, WTFMove(callback));
 
         // 8. Fulfill promise with the callbackId and run the following steps in parallel:
-        promise->whenSettled([this, protectedThis = makeRefPtr(this), callbackId] {
+        promise->whenSettled([this, protectedThis = Ref { *this }, callbackId] {
             // 8.1 Queue a task to invoke the callback with the current availability for the media element.
             queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, callbackId, available = m_available] {
                 if (isContextStopped())
@@ -407,13 +409,7 @@ void RemotePlayback::availabilityChanged(bool available)
             return;
 
         // Protect m_callbackMap against mutation while it's being iterated over.
-        Vector<Ref<RemotePlaybackAvailabilityCallback>> callbacks;
-        callbacks.reserveInitialCapacity(m_callbackMap.size());
-
-        // Can't use copyValuesToVector() here because Ref<> has a deleted assignment operator.
-        for (auto& callback : m_callbackMap.values())
-            callbacks.uncheckedAppend(callback.copyRef());
-        for (auto& callback : callbacks)
+        for (auto& callback : copyToVector(m_callbackMap.values()))
             callback->handleEvent(available);
     });
 }

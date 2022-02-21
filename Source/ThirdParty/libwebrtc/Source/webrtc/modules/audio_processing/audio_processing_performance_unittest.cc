@@ -476,34 +476,31 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
     int num_capture_channels = 1;
     switch (simulation_config_.simulation_settings) {
       case SettingsType::kDefaultApmMobile: {
-        apm_.reset(AudioProcessingBuilderForTesting().Create());
+        apm_ = AudioProcessingBuilderForTesting().Create();
         ASSERT_TRUE(!!apm_);
         set_default_mobile_apm_runtime_settings(apm_.get());
         break;
       }
       case SettingsType::kDefaultApmDesktop: {
-        Config config;
-        apm_.reset(AudioProcessingBuilderForTesting().Create(config));
+        apm_ = AudioProcessingBuilderForTesting().Create();
         ASSERT_TRUE(!!apm_);
         set_default_desktop_apm_runtime_settings(apm_.get());
         break;
       }
       case SettingsType::kAllSubmodulesTurnedOff: {
-        apm_.reset(AudioProcessingBuilderForTesting().Create());
+        apm_ = AudioProcessingBuilderForTesting().Create();
         ASSERT_TRUE(!!apm_);
         turn_off_default_apm_runtime_settings(apm_.get());
         break;
       }
       case SettingsType::kDefaultApmDesktopWithoutDelayAgnostic: {
-        Config config;
-        apm_.reset(AudioProcessingBuilderForTesting().Create(config));
+        apm_ = AudioProcessingBuilderForTesting().Create();
         ASSERT_TRUE(!!apm_);
         set_default_desktop_apm_runtime_settings(apm_.get());
         break;
       }
       case SettingsType::kDefaultApmDesktopWithoutExtendedFilter: {
-        Config config;
-        apm_.reset(AudioProcessingBuilderForTesting().Create(config));
+        apm_ = AudioProcessingBuilderForTesting().Create();
         ASSERT_TRUE(!!apm_);
         set_default_desktop_apm_runtime_settings(apm_.get());
         break;
@@ -544,7 +541,7 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
   // Thread related variables.
   Random rand_gen_;
 
-  std::unique_ptr<AudioProcessing> apm_;
+  rtc::scoped_refptr<AudioProcessing> apm_;
   const SimulationConfig simulation_config_;
   FrameCounters frame_counters_;
   LockedFlag capture_call_checker_;

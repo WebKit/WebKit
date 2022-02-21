@@ -44,15 +44,8 @@
 #import <JavaScriptCore/JSContextInternal.h>
 #import <JavaScriptCore/JSLock.h>
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-#import "c_instance.h"
-#import "NP_jsobject.h"
-#import "npruntime_impl.h"
-#endif
-
 @interface NSObject (WebPlugin)
 - (id)objectForWebScript;
-- (NPObject *)createPluginScriptableObject;
 - (RefPtr<JSC::Bindings::Instance>)createPluginBindingsInstance:(Ref<JSC::Bindings::RootObject>&&)rootObject;
 @end
 
@@ -77,21 +70,6 @@ RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(
             return nullptr;
         return JSC::Bindings::ObjcInstance::create(objectForWebScript, WTFMove(rootObject));
     }
-
-    if ([widgetView respondsToSelector:@selector(createPluginScriptableObject)]) {
-#if !ENABLE(NETSCAPE_PLUGIN_API)
-        return nullptr;
-#else
-        NPObject* npObject = [widgetView createPluginScriptableObject];
-        if (!npObject)
-            return nullptr;
-        auto instance = JSC::Bindings::CInstance::create(npObject, WTFMove(rootObject));
-        // -createPluginScriptableObject returns a retained NPObject.  The caller is expected to release it.
-        _NPN_ReleaseObject(npObject);
-        return WTFMove(instance);
-#endif
-    }
-
     return nullptr;
 }
 
@@ -125,7 +103,7 @@ void ScriptController::updatePlatformScriptObjects()
 {
     if (m_windowScriptObject) {
         JSC::Bindings::RootObject* root = bindingRootObject();
-        [m_windowScriptObject.get() _setOriginRootObject:root andRootObject:root];
+        [m_windowScriptObject _setOriginRootObject:root andRootObject:root];
     }
 }
 

@@ -65,6 +65,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_document_write.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_document_write_onload-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_document_write_onload.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same_origin_frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/scripted_click_assign_during_load-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/scripted_click_assign_during_load-2.html

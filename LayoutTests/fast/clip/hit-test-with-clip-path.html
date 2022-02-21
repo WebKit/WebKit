@@ -38,7 +38,8 @@ if (window.testRunner)
   </div>
 </div>
 <script>
-result.innerText += "\n" + document.elementFromPoint(candidate1.offsetLeft, candidate1.offsetTop).id;
+let rect1 = candidate1.getBoundingClientRect();
+result.innerText += "\n" + document.elementFromPoint(rect1.left, rect1.top).id;
 </script>
 
 <!-- non-top level paint root hittest -->
@@ -50,7 +51,8 @@ result.innerText += "\n" + document.elementFromPoint(candidate1.offsetLeft, cand
   </div>
 </div>
 <script>
-result.innerText += "\n" + document.elementFromPoint(candidate2.offsetLeft, candidate2.offsetTop).id;
+let rect2 = candidate2.getBoundingClientRect();
+result.innerText += "\n" + document.elementFromPoint(rect2.left, rect2.top).id;
 </script>
 
 <!-- multi-level non-top level paint root hittest -->
@@ -65,5 +67,6 @@ result.innerText += "\n" + document.elementFromPoint(candidate2.offsetLeft, cand
   </div>
 </div>
 <script>
-result.innerText += "\n" + document.elementFromPoint(candidate3.offsetLeft, candidate3.offsetTop).id;
+let rect3 = candidate3.getBoundingClientRect();
+result.innerText += "\n" + document.elementFromPoint(rect3.left, rect3.top).id;
 </script>

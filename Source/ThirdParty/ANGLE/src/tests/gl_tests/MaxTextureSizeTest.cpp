@@ -5,6 +5,7 @@
 //
 
 #include "test_utils/ANGLETest.h"
+#include "test_utils/gl_raii.h"
 
 using namespace angle;
 
@@ -279,9 +280,59 @@ TEST_P(MaxTextureSizeTest, RenderToTexture)
     glDeleteTextures(1, &textureId);
 }
 
+TEST_P(MaxTextureSizeTest, Render1xTexture)
+{
+    // This is not spec compliant but checking for now anyway. We can fix it
+    // if we find a driver for which this is not true.
+    float power = std::roundf(std::logf(mMaxTexture2DSize) / std::logf(2.0f));
+    EXPECT_EQ(std::powf(2, power), mMaxTexture2DSize);
+
+    // Make a the largest possbile texture but not too big.
+    const GLint testSize = std::min(mMaxTexture2DSize, 128 * 1024);
+
+    glUseProgram(mTextureProgram);
+    glUniform1i(mTextureUniformLocation, 0);
+
+    constexpr GLColor testColor(0, 255, 128, 255);
+    std::vector<GLColor> data(testSize, testColor);
+
+    // Test a wide texture.
+    {
+        GLTexture texture1Id;
+        glBindTexture(GL_TEXTURE_2D, texture1Id);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mMaxTexture2DSize, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     data.data());
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        drawQuad(mTextureProgram, "position", 0.5f);
+
+        EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), testColor);
+    }
+
+    // Test a tall texture.
+    {
+        GLTexture texture2Id;
+        glBindTexture(GL_TEXTURE_2D, texture2Id);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, mMaxTexture2DSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     data.data());
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        drawQuad(mTextureProgram, "position", 0.5f);
+    }
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), testColor);
+
+    EXPECT_GL_NO_ERROR();
+}
+
 // TODO(geofflang): Fix the dependence on glBlitFramebufferANGLE without checks and assuming the
 // default framebuffer is BGRA to enable the GL and GLES backends. (http://anglebug.com/1289)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST(MaxTextureSizeTest, ES2_D3D9(), ES2_D3D11(), ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST(MaxTextureSizeTest, ES2_D3D9(), ES2_D3D11(), ES2_VULKAN(), ES2_METAL());
+
+// This test suite is not instantiated on some OSes.
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MaxTextureSizeTest);

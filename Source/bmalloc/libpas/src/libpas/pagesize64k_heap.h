@@ -40,7 +40,7 @@ PAS_API extern pas_intrinsic_heap_support pagesize64k_common_primitive_heap_supp
 
 PAS_API void* pagesize64k_allocate_common_primitive(size_t size);
 PAS_API void* pagesize64k_allocate(pas_heap_ref* heap_ref);
-PAS_API void* pagesize64k_allocate_array(pas_heap_ref* heap_ref, size_t count, size_t alignment);
+PAS_API void* pagesize64k_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment);
 PAS_API void pagesize64k_deallocate(void* ptr);
 PAS_API pas_heap* pagesize64k_heap_ref_get_heap(pas_heap_ref* heap_ref);
 

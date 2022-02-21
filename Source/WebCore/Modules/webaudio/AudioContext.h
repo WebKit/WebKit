@@ -65,7 +65,7 @@ public:
 
     double baseLatency();
 
-    AudioTimestamp getOutputTimestamp(DOMWindow&);
+    AudioTimestamp getOutputTimestamp();
 
 #if ENABLE(VIDEO)
     ExceptionOr<Ref<MediaElementAudioSourceNode>> createMediaElementSource(HTMLMediaElement&);
@@ -116,7 +116,7 @@ private:
     bool isOfflineContext() const final { return false; }
 
     // MediaProducer
-    MediaProducer::MediaStateFlags mediaState() const final;
+    MediaProducerMediaStateFlags mediaState() const final;
     void pageMutedStateDidChange() final;
 
     // PlatformMediaSessionClient

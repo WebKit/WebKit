@@ -29,6 +29,7 @@
 
 #include "LibWebRTCMacros.h"
 #include "RTCDtlsTransportState.h"
+#include "RTCError.h"
 #include "RTCIceCandidate.h"
 #include "RTCPeerConnection.h"
 #include "RTCRtpSendParameters.h"
@@ -427,6 +428,34 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
 
     fields.usernameFragment = fromStdString(candidate.username());
     return fields;
+}
+
+static std::optional<RTCErrorDetailType> toRTCErrorDetailType(webrtc::RTCErrorDetailType type)
+{
+    switch (type) {
+    case webrtc::RTCErrorDetailType::DATA_CHANNEL_FAILURE:
+        return RTCErrorDetailType::DataChannelFailure;
+    case webrtc::RTCErrorDetailType::DTLS_FAILURE:
+        return RTCErrorDetailType::DtlsFailure;
+    case webrtc::RTCErrorDetailType::FINGERPRINT_FAILURE:
+        return RTCErrorDetailType::FingerprintFailure;
+    case webrtc::RTCErrorDetailType::SCTP_FAILURE:
+        return RTCErrorDetailType::SctpFailure;
+    case webrtc::RTCErrorDetailType::SDP_SYNTAX_ERROR:
+        return RTCErrorDetailType::SdpSyntaxError;
+    case webrtc::RTCErrorDetailType::HARDWARE_ENCODER_NOT_AVAILABLE:
+    case webrtc::RTCErrorDetailType::HARDWARE_ENCODER_ERROR:
+    case webrtc::RTCErrorDetailType::NONE:
+        return { };
+    };
+}
+
+RefPtr<RTCError> toRTCError(const webrtc::RTCError& rtcError)
+{
+    auto detail = toRTCErrorDetailType(rtcError.error_detail());
+    if (!detail)
+        return nullptr;
+    return RTCError::create(*detail, rtcError.message());
 }
 
 } // namespace WebCore

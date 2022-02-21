@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "AudioSampleBufferList.h"
+#include "AudioSampleDataConverter.h"
+#include "CARingBuffer.h"
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
@@ -33,12 +34,13 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
+typedef struct OpaqueAudioConverter* AudioConverterRef;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
-class CAAudioStreamDescription;
-class CARingBuffer;
+class AudioSampleBufferList;
+class PlatformAudioData;
 
 class AudioSampleDataSource : public ThreadSafeRefCounted<AudioSampleDataSource, WTF::DestructionThread::MainRunLoop>
 #if !RELEASE_LOG_DISABLED
@@ -46,7 +48,7 @@ class AudioSampleDataSource : public ThreadSafeRefCounted<AudioSampleDataSource,
 #endif
     {
 public:
-    static Ref<AudioSampleDataSource> create(size_t, WTF::LoggerHelper&, size_t waitToStartForPushCount = 2);
+    static Ref<AudioSampleDataSource> create(size_t, LoggerHelper&, size_t waitToStartForPushCount = 2);
 
     ~AudioSampleDataSource();
 
@@ -57,10 +59,10 @@ public:
     void pushSamples(const AudioStreamBasicDescription&, CMSampleBufferRef);
 
     enum PullMode { Copy, Mix };
-    bool pullSamples(AudioSampleBufferList&, size_t, uint64_t, double, PullMode);
     bool pullSamples(AudioBufferList&, size_t, uint64_t, double, PullMode);
 
     bool pullAvailableSamplesAsChunks(AudioBufferList&, size_t frameCount, uint64_t timeStamp, Function<void()>&&);
+    bool pullAvailableSampleChunk(AudioBufferList&, size_t frameCount, uint64_t timeStamp, PullMode);
 
     void setVolume(float volume) { m_volume = volume; }
     float volume() const { return m_volume; }
@@ -69,6 +71,9 @@ public:
     bool muted() const { return m_muted; }
 
     const CAAudioStreamDescription* inputDescription() const { return m_inputDescription ? &m_inputDescription.value() : nullptr; }
+    const CAAudioStreamDescription* outputDescription() const { return m_outputDescription ? &m_outputDescription.value() : nullptr; }
+
+    void recomputeSampleOffset() { m_shouldComputeOutputSampleOffset = true; }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
@@ -82,9 +87,9 @@ private:
     AudioSampleDataSource(size_t, LoggerHelper&, size_t waitToStartForPushCount);
 
     OSStatus setupConverter();
-    bool pullSamplesInternal(AudioBufferList&, size_t, uint64_t, double, PullMode);
 
     void pushSamplesInternal(const AudioBufferList&, const MediaTime&, size_t frameCount);
+    bool pullSamplesInternal(AudioBufferList&, size_t sampleCount, uint64_t timeStamp, PullMode);
 
     std::optional<CAAudioStreamDescription> m_inputDescription;
     std::optional<CAAudioStreamDescription> m_outputDescription;
@@ -98,13 +103,15 @@ private:
 
     uint64_t m_lastPushedSampleCount { 0 };
     size_t m_waitToStartForPushCount { 2 };
-    MediaTime m_expectedNextPushedSampleTime { MediaTime::invalidTime() };
-    bool m_isFirstPull { true };
 
-    MediaTime m_inputSampleOffset;
+    int64_t m_expectedNextPushedSampleTimeValue { 0 };
+    int64_t m_converterInputOffset { 0 };
+    std::optional<int64_t> m_inputSampleOffset;
     int64_t m_outputSampleOffset { 0 };
+    uint64_t m_lastBufferedAmount { 0 };
 
-    AudioConverterRef m_converter;
+    AudioSampleDataConverter m_converter;
+
     RefPtr<AudioSampleBufferList> m_scratchBuffer;
 
     UniqueRef<CARingBuffer> m_ringBuffer;
@@ -113,10 +120,8 @@ private:
     float m_volume { 1.0 };
     bool m_muted { false };
     bool m_shouldComputeOutputSampleOffset { true };
-    uint64_t m_endFrameWhenNotEnoughData { 0 };
 
     bool m_isInNeedOfMoreData { false };
-
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;

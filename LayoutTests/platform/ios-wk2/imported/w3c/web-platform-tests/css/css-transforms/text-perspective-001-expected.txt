@@ -1,0 +1,12 @@
+layer at (0,0) size 4400x644
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600
+layer at (0,0) size 800x117
+  RenderBlock {DIV} at (0,0) size 800x117
+layer at (0,0) size 800x117
+  RenderBlock {DIV} at (0,0) size 800x117
+    RenderBlock {H1} at (0,0) size 800x117
+      RenderText {#text} at (0,2) size 73x112
+        text run at (0,2) width 73: "X"

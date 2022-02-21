@@ -44,7 +44,7 @@ constexpr char kFeatureCategoryD3DCompilerWorkarounds[] = "D3D compiler workarou
 constexpr char kFeatureCategoryVulkanWorkarounds[]      = "Vulkan workarounds";
 constexpr char kFeatureCategoryVulkanFeatures[]         = "Vulkan features";
 constexpr char kFeatureCategoryMetalFeatures[]          = "Metal features";
-constexpr char kFeatureCategoryMetalWorkarounds[]       = "Metal Workarounds";
+constexpr char kFeatureCategoryMetalWorkarounds[]       = "Metal workarounds";
 constexpr char kFeatureCategoryUnknown[]                = "Unknown";
 
 inline const char *FeatureCategoryToString(const FeatureCategory &fc)

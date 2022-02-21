@@ -60,24 +60,21 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
 
 Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> identifier)
 {
-    return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier, nullptr));
+    return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier));
 }
 
-Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, FontCache* fontCacheForVerticalData, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> identifier)
-{
-    return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier, fontCacheForVerticalData));
-}
-
-Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool syntheticBold, bool syntheticItalic, FontCache* fontCacheForVerticalData)
+Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool syntheticBold, bool syntheticItalic)
 {
     bool wrapping;
     auto customFontData = CachedFont::createCustomFontData(fontFaceData.get(), { }, wrapping);
     FontDescription description;
     description.setComputedSize(fontSize);
-    return Font::create(CachedFont::platformDataFromCustomData(*customFontData, description, syntheticBold, syntheticItalic, { }, { }), origin, fontCacheForVerticalData);
+    // FIXME: Why doesn't this pass in any meaningful data for the last few arguments?
+    auto platformData = CachedFont::platformDataFromCustomData(*customFontData, description, syntheticBold, syntheticItalic, { });
+    return Font::create(WTFMove(platformData), origin);
 }
 
-Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier, FontCache* fontCacheForVerticalData)
+Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
     : m_platformData(platformData)
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
     , m_origin(origin)
@@ -98,11 +95,9 @@ Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial int
     platformCharWidthInit();
 #if ENABLE(OPENTYPE_VERTICAL)
     if (platformData.orientation() == FontOrientation::Vertical && orientationFallback == OrientationFallback::No) {
-        m_verticalData = fontCacheForVerticalData ? fontCacheForVerticalData->verticalData(platformData) : FontCache::singleton().verticalData(platformData);
+        m_verticalData = FontCache::forCurrentThread().verticalData(platformData);
         m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
     }
-#else
-    UNUSED_PARAM(fontCacheForVerticalData);
 #endif
 }
 
@@ -137,19 +132,12 @@ void Font::platformGlyphInit()
     auto* glyphPageZeroWidthSpace = glyphPage(0);
     UChar32 zeroWidthSpaceCharacter = 0;
 #endif
-    auto* glyphPageCharacterZero = glyphPage(GlyphPage::pageNumberForCodePoint('0'));
-    auto* glyphPageSpace = glyphPage(GlyphPage::pageNumberForCodePoint(space));
 
     if (glyphPageZeroWidthSpace)
         m_zeroWidthSpaceGlyph = glyphPageZeroWidthSpace->glyphDataForCharacter(zeroWidthSpaceCharacter).glyph;
 
-    // Nasty hack to determine if we should round or ceil space widths.
-    // If the font is monospace or fake monospace we ceil to ensure that 
-    // every character and the space are the same width. Otherwise we round.
-    if (glyphPageSpace)
-        m_spaceGlyph = glyphPageSpace->glyphDataForCharacter(space).glyph;
-    if (glyphPageCharacterZero)
-        m_zeroGlyph = glyphPageCharacterZero->glyphDataForCharacter('0').glyph;
+    if (auto* page = glyphPage(GlyphPage::pageNumberForCodePoint(space)))
+        m_spaceGlyph = page->glyphDataForCharacter(space).glyph;
 
     // Force the glyph for ZERO WIDTH SPACE to have zero width, unless it is shared with SPACE.
     // Helvetica is an example of a non-zero width ZERO WIDTH SPACE glyph.
@@ -157,14 +145,31 @@ void Font::platformGlyphInit()
     if (m_zeroWidthSpaceGlyph == m_spaceGlyph)
         m_zeroWidthSpaceGlyph = 0;
 
-    float width = widthForGlyph(m_spaceGlyph);
-    m_spaceWidth = width;
-    m_fontMetrics.setZeroWidth(widthForGlyph(m_zeroGlyph));
+    // widthForGlyph depends on m_zeroWidthSpaceGlyph having the correct value.
+    // Therefore all calls to widthForGlyph must happen after this point.
+
+    Glyph zeroGlyph = { 0 };
+    if (auto* page = glyphPage(GlyphPage::pageNumberForCodePoint('0')))
+        zeroGlyph = page->glyphDataForCharacter('0').glyph;
+    if (zeroGlyph)
+        m_fontMetrics.setZeroWidth(widthForGlyph(zeroGlyph));
+
+    // Use the width of the CJK water ideogram (U+6C34) as the
+    // approximated width of ideograms in the font, as mentioned in
+    // https://www.w3.org/TR/css-values-4/#ic. This is currently only used
+    // to support the ic unit. If the width is not available, falls back to
+    // 1em as specified.
+    if (auto* page = glyphPage(GlyphPage::pageNumberForCodePoint(cjkWater))) {
+        auto glyph = page->glyphDataForCharacter(cjkWater).glyph;
+        m_fontMetrics.setIdeogramWidth(widthForGlyph(glyph));
+    } else
+        m_fontMetrics.setIdeogramWidth(platformData().size());
+
+    m_spaceWidth = widthForGlyph(m_spaceGlyph, SyntheticBoldInclusion::Exclude); // spaceWidth() handles adding in the synthetic bold.
     auto amountToAdjustLineGap = std::min(m_fontMetrics.floatLineGap(), 0.0f);
     m_fontMetrics.setLineGap(m_fontMetrics.floatLineGap() - amountToAdjustLineGap);
     m_fontMetrics.setLineSpacing(m_fontMetrics.floatLineSpacing() - amountToAdjustLineGap);
     determinePitch();
-    m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
 }
 
 Font::~Font()
@@ -325,11 +330,11 @@ static void overrideControlCharacters(Vector<UChar>& buffer, unsigned start, uns
     };
 
     // Code points 0x0 - 0x20 and 0x7F - 0xA0 are control character and shouldn't render. Map them to ZERO WIDTH SPACE.
-    overwriteCodePoints(0x0, 0x20, zeroWidthSpace);
-    overwriteCodePoints(0x7F, 0xA0, zeroWidthSpace);
+    overwriteCodePoints(nullCharacter, space, zeroWidthSpace);
+    overwriteCodePoints(deleteCharacter, noBreakSpace, zeroWidthSpace);
     overwriteCodePoint(softHyphen, zeroWidthSpace);
-    overwriteCodePoint('\n', space);
-    overwriteCodePoint('\t', space);
+    overwriteCodePoint(newlineCharacter, space);
+    overwriteCodePoint(tabCharacter, space);
     overwriteCodePoint(noBreakSpace, space);
     overwriteCodePoint(leftToRightMark, zeroWidthSpace);
     overwriteCodePoint(rightToLeftMark, zeroWidthSpace);
@@ -581,13 +586,13 @@ static SystemFallbackCache& systemFallbackCache()
     return map.get();
 }
 
-RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontDescription& description, IsForPlatformFont isForPlatformFont, FontCache& fontCache) const
+RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontDescription& description, IsForPlatformFont isForPlatformFont) const
 {
     auto fontAddResult = systemFallbackCache().add(this, CharacterFallbackMap());
 
     if (!character) {
         UChar codeUnit = 0;
-        return fontCache.systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, &codeUnit, 1);
+        return FontCache::forCurrentThread().systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, &codeUnit, 1);
     }
 
     auto key = CharacterFallbackMapKey { description.computedLocale(), character, isForPlatformFont != IsForPlatformFont::No };
@@ -602,7 +607,7 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
             codeUnits[1] = U16_TRAIL(character);
             codeUnitsLength = 2;
         }
-        auto font = fontCache.systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, codeUnits, codeUnitsLength).get();
+        auto font = FontCache::forCurrentThread().systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, codeUnits, codeUnitsLength).get();
         if (font)
             font->m_isUsedInSystemFallbackCache = true;
         return font;

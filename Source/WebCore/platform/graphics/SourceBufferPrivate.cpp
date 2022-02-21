@@ -28,13 +28,16 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "AudioTrackPrivate.h"
 #include "Logging.h"
 #include "MediaDescription.h"
 #include "MediaSample.h"
 #include "PlatformTimeRanges.h"
 #include "SampleMap.h"
+#include "SharedBuffer.h"
 #include "SourceBufferPrivateClient.h"
 #include "TimeRanges.h"
+#include "VideoTrackPrivate.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MediaTime.h>
 #include <wtf/StringPrintStream.h>
@@ -450,7 +453,7 @@ static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMa
     MediaTime earliestSample = MediaTime::positiveInfiniteTime();
     MediaTime latestSample = MediaTime::zeroTime();
     uint64_t bytesRemoved = 0;
-    auto logIdentifier = WTF::Logger::LogSiteIdentifier(sourceBufferPrivate->logClassName(), logPrefix, sourceBufferPrivate->logIdentifier());
+    auto logIdentifier = Logger::LogSiteIdentifier(sourceBufferPrivate->logClassName(), logPrefix, sourceBufferPrivate->logIdentifier());
     auto& logger = sourceBufferPrivate->logger();
     auto willLog = logger.willLog(sourceBufferPrivate->logChannel(), WTFLogLevel::Debug);
 #endif
@@ -691,8 +694,8 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximu
     // If there still isn't enough free space and there buffers in time ranges after the current range (ie. there is a gap after
     // the current buffered range), delete 30 seconds at a time from duration back to the current time range or 30 seconds after
     // currenTime whichever we hit first.
-    auto buffered = m_buffered->ranges();
-    uint64_t currentTimeRange = buffered.find(currentTime);
+    auto buffered = m_buffered->ranges().copyWithEpsilon(timeFudgeFactor());
+    uint64_t currentTimeRange = buffered.findWithEpsilon(currentTime, timeFudgeFactor());
     if (!buffered.length() || currentTimeRange == buffered.length() - 1) {
 #if !RELEASE_LOG_DISABLED
         ERROR_LOG(LOGIDENTIFIER, "FAILED to free enough after evicting ", initialBufferedSize - totalTrackBufferSizeInBytes());
@@ -1166,7 +1169,7 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
                     break;
 
                 MediaTime highestBufferedTime = trackBuffer.buffered.maximumBufferedTime();
-                MediaTime eraseBeginTime = trackBuffer.highestPresentationTimestamp - contiguousFrameTolerance;
+                MediaTime eraseBeginTime = trackBuffer.highestPresentationTimestamp;
                 MediaTime eraseEndTime = frameEndTimestamp - contiguousFrameTolerance;
 
                 PresentationOrderSampleMap::iterator_range range;
@@ -1313,6 +1316,16 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
         m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp);
 
     updateHighestPresentationTimestamp();
+}
+
+void SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
+{
+    append(buffer->extractData());
+}
+
+void SourceBufferPrivate::append(Vector<unsigned char>&&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

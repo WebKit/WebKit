@@ -31,6 +31,10 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
+namespace WebAuthn {
+enum class Scope;
+}
+
 namespace WebCore {
 
 class AbortSignal;
@@ -40,6 +44,7 @@ class Document;
 
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
+struct CredentialRequestOptions;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
@@ -53,9 +58,10 @@ public:
     WEBCORE_EXPORT void setClient(std::unique_ptr<AuthenticatorCoordinatorClient>&&);
 
     // The following methods implement static methods of PublicKeyCredential.
-    void create(const Document&, const PublicKeyCredentialCreationOptions&, bool sameOriginWithAncestors, RefPtr<AbortSignal>&&, CredentialPromise&&) const;
-    void discoverFromExternalSource(const Document&, const PublicKeyCredentialRequestOptions&, bool sameOriginWithAncestors, RefPtr<AbortSignal>&&, CredentialPromise&&) const;
+    void create(const Document&, const PublicKeyCredentialCreationOptions&, WebAuthn::Scope, RefPtr<AbortSignal>&&, CredentialPromise&&) const;
+    void discoverFromExternalSource(const Document&, CredentialRequestOptions&&, WebAuthn::Scope, CredentialPromise&&) const;
     void isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&&) const;
+    void isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&&) const;
 
     void resetUserGestureRequirement();
 

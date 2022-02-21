@@ -152,7 +152,7 @@ void Subspace::forEachLiveCell(const Func& func)
         });
 }
 
-inline const CellAttributes& Subspace::attributes() const
+inline CellAttributes Subspace::attributes() const
 {
     return m_heapCellType->attributes();
 }

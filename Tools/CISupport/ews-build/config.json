@@ -16,40 +16,45 @@
     { "name": "igalia7-gtk-wk2-ews", "platform": "gtk" },
     { "name": "igalia8-gtk-wk2-ews", "platform": "gtk" },
     { "name": "igalia9-gtk-wk2-ews", "platform": "gtk" },
+    { "name": "igalia10-gtk-wk2-ews", "platform": "gtk" },
+    { "name": "igalia11-gtk-wk2-ews", "platform": "gtk" },
+    { "name": "igalia12-gtk-wk2-ews", "platform": "gtk" },
+    { "name": "igalia13-gtk-wk2-ews", "platform": "gtk" },
     { "name": "aperez-gtk-ews", "platform": "gtk" },
     { "name": "igalia-wpe-ews", "platform": "wpe" },
+    { "name": "igalia2-wpe-ews", "platform": "wpe" },
     { "name": "aperez-wpe-ews", "platform": "wpe" },
     { "name": "wincairo-ews-001", "platform": "wincairo" },
     { "name": "wincairo-ews-002", "platform": "wincairo" },
     { "name": "wincairo-ews-003", "platform": "wincairo" },
     { "name": "wincairo-ews-004", "platform": "wincairo" },
-    { "name": "ews100", "platform": "mac-catalina" },
-    { "name": "ews101", "platform": "mac-catalina" },
-    { "name": "ews102", "platform": "mac-catalina" },
-    { "name": "ews103", "platform": "mac-catalina" },
-    { "name": "ews104", "platform": "mac-catalina" },
-    { "name": "ews105", "platform": "mac-catalina" },
-    { "name": "ews106", "platform": "mac-catalina" },
-    { "name": "ews107", "platform": "mac-catalina" },
-    { "name": "ews108", "platform": "ios-14" },
+    { "name": "ews100", "platform": "mac-bigsur" },
+    { "name": "ews101", "platform": "mac-bigsur" },
+    { "name": "ews102", "platform": "mac-bigsur" },
+    { "name": "ews103", "platform": "mac-bigsur" },
+    { "name": "ews104", "platform": "mac-bigsur" },
+    { "name": "ews105", "platform": "mac-bigsur" },
+    { "name": "ews106", "platform": "mac-bigsur" },
+    { "name": "ews107", "platform": "mac-bigsur" },
+    { "name": "ews108", "platform": "*" },
     { "name": "ews109", "platform": "*" },
-    { "name": "ews112", "platform": "mac-catalina" },
-    { "name": "ews113", "platform": "mac-catalina" },
-    { "name": "ews114", "platform": "mac-catalina" },
-    { "name": "ews115", "platform": "mac-catalina" },
-    { "name": "ews116", "platform": "mac-catalina" },
-    { "name": "ews117", "platform": "mac-catalina" },
-    { "name": "ews118", "platform": "mac-catalina" },
-    { "name": "ews119", "platform": "mac-catalina" },
-    { "name": "ews120", "platform": "mac-catalina" },
-    { "name": "ews121", "platform": "ios-simulator-14" },
-    { "name": "ews122", "platform": "ios-simulator-14" },
-    { "name": "ews123", "platform": "ios-simulator-14" },
-    { "name": "ews124", "platform": "ios-simulator-14" },
-    { "name": "ews125", "platform": "ios-simulator-14" },
-    { "name": "ews126", "platform": "ios-simulator-14" },
-    { "name": "ews127", "platform": "mac-catalina" },
-    { "name": "ews128", "platform": "mac-catalina" },
+    { "name": "ews112", "platform": "mac-bigsur" },
+    { "name": "ews113", "platform": "mac-bigsur" },
+    { "name": "ews114", "platform": "mac-bigsur" },
+    { "name": "ews115", "platform": "mac-bigsur" },
+    { "name": "ews116", "platform": "mac-bigsur" },
+    { "name": "ews117", "platform": "mac-bigsur" },
+    { "name": "ews118", "platform": "mac-bigsur" },
+    { "name": "ews119", "platform": "mac-bigsur" },
+    { "name": "ews120", "platform": "mac-bigsur" },
+    { "name": "ews121", "platform": "ios-simulator-15" },
+    { "name": "ews122", "platform": "ios-simulator-15" },
+    { "name": "ews123", "platform": "ios-simulator-15" },
+    { "name": "ews124", "platform": "ios-simulator-15" },
+    { "name": "ews125", "platform": "ios-simulator-15" },
+    { "name": "ews126", "platform": "ios-simulator-15" },
+    { "name": "ews127", "platform": "mac-bigsur" },
+    { "name": "ews128", "platform": "mac-bigsur" },
     { "name": "ews150", "platform": "*" },
     { "name": "ews151", "platform": "*", "max_builds": 3 },
     { "name": "ews152", "platform": "*" },
@@ -70,7 +75,7 @@
     { "name": "ews167", "platform": "*" },
     { "name": "ews168", "platform": "*" },
     { "name": "ews169", "platform": "mac-bigsur" },
-    { "name": "ews170", "platform": "tvos-simulator-14" },
+    { "name": "ews170", "platform": "tvos-simulator-15" },
     { "name": "ews171", "platform": "mac-bigsur" },
     { "name": "ews172", "platform": "mac-bigsur" },
     { "name": "ews173", "platform": "mac-bigsur" },
@@ -81,17 +86,20 @@
     { "name": "ews178", "platform": "mac-bigsur" },
     { "name": "ews179", "platform": "mac-bigsur" },
     { "name": "ews180", "platform": "mac-bigsur" },
-    { "name": "ews181", "platform": "mac-catalina" },
-    { "name": "ews182", "platform": "mac-catalina" },
+    { "name": "ews181", "platform": "mac-bigsur" },
+    { "name": "ews182", "platform": "mac-bigsur" },
+    { "name": "ews183", "platform": "*" },
+    { "name": "ews184", "platform": "ios-simulator-15" },
+    { "name": "ews185", "platform": "ios-simulator-15" },
     { "name": "ews210", "platform": "win" },
     { "name": "ews211", "platform": "win" },
     { "name": "ews212", "platform": "win" },
     { "name": "ews213", "platform": "win" },
     { "name": "ews214", "platform": "win" },
     { "name": "ews215", "platform": "win" },
-    { "name": "webkit-cq-01", "platform": "mac-catalina" },
-    { "name": "webkit-cq-02", "platform": "mac-catalina" },
-    { "name": "webkit-cq-03", "platform": "mac-catalina" }
+    { "name": "webkit-cq-01", "platform": "mac-bigsur" },
+    { "name": "webkit-cq-02", "platform": "mac-bigsur" },
+    { "name": "webkit-cq-03", "platform": "mac-bigsur" }
   ],
   "builders": [
     {
@@ -108,34 +116,35 @@
       "name": "GTK-Build-EWS", "shortname": "gtk", "icon": "buildOnly",
       "factory": "GTKBuildFactory", "platform": "gtk",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggers": ["api-tests-gtk-ews"],
-      "workernames": ["igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "aperez-gtk-ews"]
+      "triggers": ["api-tests-gtk-ews", "gtk-wk2-tests-ews"],
+      "workernames": ["aperez-gtk-ews", "igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "igalia13-gtk-wk2-ews"]
     },
     {
       "name": "GTK-WK2-Tests-EWS", "shortname": "gtk-wk2", "icon": "testOnly",
       "factory": "GTKTestsFactory", "platform": "gtk",
       "configuration": "release", "architectures": ["x86_64"],
-      "workernames": ["igalia5-gtk-wk2-ews", "igalia6-gtk-wk2-ews", "igalia7-gtk-wk2-ews", "igalia8-gtk-wk2-ews", "igalia9-gtk-wk2-ews"]
+      "triggered_by": ["gtk-build-ews"],
+      "workernames": ["igalia5-gtk-wk2-ews", "igalia6-gtk-wk2-ews", "igalia7-gtk-wk2-ews", "igalia8-gtk-wk2-ews", "igalia9-gtk-wk2-ews", "igalia10-gtk-wk2-ews", "igalia11-gtk-wk2-ews", "igalia12-gtk-wk2-ews"]
     },
     {
-      "name": "iOS-14-Build-EWS", "shortname": "ios", "icon": "buildOnly",
-      "factory": "iOSEmbeddedBuildFactory", "platform": "ios-14",
+      "name": "iOS-15-Build-EWS", "shortname": "ios", "icon": "buildOnly",
+      "factory": "iOSEmbeddedBuildFactory", "platform": "ios-15",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews152", "ews154", "ews108", "ews109"]
     },
     {
-      "name": "iOS-14-Simulator-Build-EWS", "shortname": "ios-sim", "icon": "buildOnly",
-      "factory": "iOSBuildFactory", "platform": "ios-simulator-14",
+      "name": "iOS-15-Simulator-Build-EWS", "shortname": "ios-sim", "icon": "buildOnly",
+      "factory": "iOSBuildFactory", "platform": "ios-simulator-15",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggers": ["api-tests-ios-sim-ews", "ios-14-sim-wk2-tests-ews"],
-      "workernames": ["ews152", "ews154", "ews156", "ews157", "ews109"]
+      "triggers": ["api-tests-ios-sim-ews", "ios-15-sim-wk2-tests-ews"],
+      "workernames": ["ews152", "ews154", "ews156", "ews157", "ews108", "ews109"]
     },
     {
-      "name": "iOS-14-Simulator-WK2-Tests-EWS", "shortname": "ios-wk2", "icon": "testOnly",
-      "factory": "iOSTestsFactory", "platform": "ios-simulator-14",
+      "name": "iOS-15-Simulator-WK2-Tests-EWS", "shortname": "ios-wk2", "icon": "testOnly",
+      "factory": "iOSTestsFactory", "platform": "ios-simulator-15",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggered_by": ["ios-14-sim-build-ews"],
-      "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
+      "triggered_by": ["ios-15-sim-build-ews"],
+      "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
     },
     {
       "name": "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly",
@@ -149,72 +158,72 @@
       "factory": "macOSWK2Factory", "platform": "mac-bigsur",
       "configuration": "debug", "architectures": ["arm64"],
       "triggered_by": ["macos-applesilicon-big-sur-debug-build-ews"],
-      "workernames": ["ews173", "ews174", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
+      "workernames": ["ews172", "ews173", "ews174", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
     },
     {
-      "name": "macOS-Catalina-Release-Build-EWS", "shortname": "mac", "icon": "buildOnly",
-      "factory": "macOSBuildFactory", "platform": "mac-catalina",
+      "name": "macOS-BigSur-Release-Build-EWS", "shortname": "mac", "icon": "buildOnly",
+      "factory": "macOSBuildFactory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggers": ["api-tests-mac-ews", "macos-catalina-release-wk1-tests-ews", "macos-catalina-release-wk2-tests-ews", "macos-release-wk2-stress-tests-ews"],
+      "triggers": ["api-tests-mac-ews", "macos-bigsur-release-wk1-tests-ews", "macos-bigsur-release-wk2-tests-ews", "macos-release-wk2-stress-tests-ews"],
       "workernames": ["ews118", "ews119", "ews120", "ews150"]
     },
     {
-      "name": "macOS-Catalina-Release-WK1-Tests-EWS", "shortname": "mac-wk1", "icon": "testOnly",
-      "factory": "macOSWK1Factory", "platform": "mac-catalina",
+      "name": "macOS-BigSur-Release-WK1-Tests-EWS", "shortname": "mac-wk1", "icon": "testOnly",
+      "factory": "macOSWK1Factory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggered_by": ["macos-catalina-release-build-ews"],
+      "triggered_by": ["macos-bigsur-release-build-ews"],
       "workernames": ["ews100", "ews101", "ews103"]
     },
     {
-      "name": "macOS-Catalina-Release-WK2-Tests-EWS", "shortname": "mac-wk2", "icon": "testOnly",
-      "factory": "macOSWK2Factory", "platform": "mac-catalina",
+      "name": "macOS-BigSur-Release-WK2-Tests-EWS", "shortname": "mac-wk2", "icon": "testOnly",
+      "factory": "macOSWK2Factory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggered_by": ["macos-catalina-release-build-ews"],
+      "triggered_by": ["macos-bigsur-release-build-ews"],
       "workernames": ["ews104", "ews105", "ews106", "ews107"]
     },
     {
       "name": "macOS-Release-WK2-Stress-Tests-EWS", "shortname": "mac-wk2-stress", "icon": "testOnly",
-      "factory": "StressTestFactory", "platform": "mac-catalina",
+      "factory": "StressTestFactory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
-      "triggered_by": ["macos-catalina-release-build-ews"],
+      "triggered_by": ["macos-bigsur-release-build-ews"],
       "workernames": ["ews181", "ews182"]
     },
     {
-      "name": "macOS-Catalina-Debug-Build-EWS", "shortname": "mac-debug", "icon": "buildOnly",
-      "factory": "macOSBuildFactory", "platform": "mac-catalina",
+      "name": "macOS-BigSur-Debug-Build-EWS", "shortname": "mac-debug", "icon": "buildOnly",
+      "factory": "macOSBuildFactory", "platform": "mac-bigsur",
       "configuration": "debug", "architectures": ["x86_64"],
-      "triggers": ["macos-catalina-debug-wk1-tests-ews"],
+      "triggers": ["macos-bigsur-debug-wk1-tests-ews"],
       "workernames": ["ews112", "ews113", "ews115", "ews117", "ews153"]
     },
     {
-      "name": "macOS-Catalina-Debug-WK1-Tests-EWS", "shortname": "mac-debug-wk1", "icon": "testOnly",
-      "factory": "macOSWK1Factory", "platform": "mac-catalina",
+      "name": "macOS-BigSur-Debug-WK1-Tests-EWS", "shortname": "mac-debug-wk1", "icon": "testOnly",
+      "factory": "macOSWK1Factory", "platform": "mac-bigsur",
       "configuration": "debug", "architectures": ["x86_64"],
-      "triggered_by": ["macos-catalina-debug-build-ews"],
+      "triggered_by": ["macos-bigsur-debug-build-ews"],
       "workernames": ["ews112", "ews113", "ews115", "ews117"]
     },
     {
-      "name": "watchOS-7-Build-EWS", "shortname": "watch", "icon": "buildOnly",
-      "factory": "watchOSBuildFactory", "platform": "watchos-7",
+      "name": "watchOS-8-Build-EWS", "shortname": "watch", "icon": "buildOnly",
+      "factory": "watchOSBuildFactory", "platform": "watchos-8",
       "configuration": "release", "architectures": ["arm64_32", "armv7k"],
       "workernames": ["ews163", "ews164", "ews165"]
     },
     {
-      "name": "watchOS-7-Simulator-Build-EWS", "shortname": "watch-sim", "icon": "buildOnly",
-      "factory": "watchOSBuildFactory", "platform": "watchos-simulator-7",
+      "name": "watchOS-8-Simulator-Build-EWS", "shortname": "watch-sim", "icon": "buildOnly",
+      "factory": "watchOSBuildFactory", "platform": "watchos-simulator-8",
       "configuration": "release", "architectures": ["i386"],
       "workernames": ["ews164", "ews165", "ews166"]
     },
     {
-      "name": "tvOS-14-Build-EWS", "shortname": "tv", "icon": "buildOnly",
-      "factory": "tvOSBuildFactory", "platform": "tvos-14",
+      "name": "tvOS-15-Build-EWS", "shortname": "tv", "icon": "buildOnly",
+      "factory": "tvOSBuildFactory", "platform": "tvos-15",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews167", "ews168"]
     },
     {
-      "name": "tvOS-14-Simulator-Build-EWS", "shortname": "tv-sim", "icon": "buildOnly",
-      "factory": "tvOSBuildFactory", "platform": "tvos-simulator-14",
-      "configuration": "release", "architectures": ["x86_64"],
+      "name": "tvOS-15-Simulator-Build-EWS", "shortname": "tv-sim", "icon": "buildOnly",
+      "factory": "tvOSBuildFactory", "platform": "tvos-simulator-15",
+      "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews168", "ews170"]
     },
     {
@@ -233,11 +242,11 @@
       "name": "WPE-EWS", "shortname": "wpe", "icon": "buildOnly",
       "factory": "WPEFactory", "platform": "wpe",
       "configuration": "release", "architectures": ["x86_64"],
-      "workernames": ["igalia-wpe-ews", "aperez-wpe-ews"]
+      "workernames": ["aperez-wpe-ews", "igalia-wpe-ews", "igalia2-wpe-ews"]
     },
     {
       "name": "JSC-Tests-EWS", "shortname": "jsc", "icon": "buildAndTest",
-      "factory": "JSCBuildAndTestsFactory", "platform": "mac-catalina",
+      "factory": "JSCBuildAndTestsFactory", "platform": "mac-bigsur",
       "configuration": "release", "runTests": "true",
       "workernames": ["ews127", "ews128"]
     },
@@ -294,19 +303,20 @@
     {
       "name": "API-Tests-iOS-Simulator-EWS", "shortname": "api-ios", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
-      "triggered_by": ["ios-14-sim-build-ews"],
-      "workernames": ["ews156", "ews157", "ews158", "ews159"]
+      "triggered_by": ["ios-15-sim-build-ews"],
+      "workernames": ["ews156", "ews157", "ews158", "ews159", "ews183"]
     },
     {
       "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
-      "triggered_by": ["macos-catalina-release-build-ews"],
+      "triggered_by": ["macos-bigsur-release-build-ews"],
       "workernames": ["ews119", "ews150", "ews153", "ews155"]
     },
     {
       "name": "API-Tests-GTK-EWS", "shortname": "api-gtk", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "gtk",
       "configuration": "release", "architectures": ["x86_64"],
+      "triggered_by": ["gtk-build-ews"],
       "workernames": ["igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews"]
     },
     {
@@ -316,7 +326,7 @@
     },
     {
       "name": "Commit-Queue", "shortname": "commit", "icon": "buildAndTest",
-      "factory": "CommitQueueFactory", "platform": "mac-catalina",
+      "factory": "CommitQueueFactory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03"]
     }
@@ -325,11 +335,11 @@
     {
       "type": "Try_Userpass", "name": "try", "port": 5555,
       "builderNames": [
-            "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-14-Build-EWS", "iOS-14-Simulator-Build-EWS",
+            "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-15-Build-EWS", "iOS-15-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
-            "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-Catalina-Debug-Build-EWS", "macOS-Catalina-Release-Build-EWS",
-            "Services-EWS", "Style-EWS", "tvOS-14-Build-EWS", "tvOS-14-Simulator-Build-EWS", "watchOS-7-Build-EWS",
-            "watchOS-7-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
+            "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-BigSur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
+            "Services-EWS", "Style-EWS", "tvOS-15-Build-EWS", "tvOS-15-Simulator-Build-EWS", "watchOS-8-Build-EWS",
+            "watchOS-8-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
       ]
     },
     {
@@ -337,24 +347,34 @@
       "builderNames": ["Commit-Queue"]
     },
     {
-      "type": "Triggerable", "name": "macos-catalina-debug-build-ews",
-      "builderNames": ["macOS-Catalina-Debug-Build-EWS"]
+      "type": "AnyBranchScheduler", "name": "pullrequest",
+      "builderNames": [
+            "Bindings-Tests-EWS", "iOS-15-Build-EWS", "iOS-15-Simulator-Build-EWS",
+            "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
+            "macOS-AppleSilicon-Big-Sur-Debug-Build-EWS", "macOS-BigSur-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
+            "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-15-Build-EWS", "tvOS-15-Simulator-Build-EWS", "watchOS-8-Build-EWS",
+            "watchOS-8-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
+      ]
     },
     {
-      "type": "Triggerable", "name": "macos-catalina-debug-wk1-tests-ews",
-      "builderNames": ["macOS-Catalina-Debug-WK1-Tests-EWS"]
+      "type": "Triggerable", "name": "macos-bigsur-debug-build-ews",
+      "builderNames": ["macOS-BigSur-Debug-Build-EWS"]
     },
     {
-      "type": "Triggerable", "name": "macos-catalina-release-build-ews",
-      "builderNames": ["macOS-Catalina-Release-Build-EWS"]
+      "type": "Triggerable", "name": "macos-bigsur-debug-wk1-tests-ews",
+      "builderNames": ["macOS-BigSur-Debug-WK1-Tests-EWS"]
     },
     {
-      "type": "Triggerable", "name": "macos-catalina-release-wk1-tests-ews",
-      "builderNames": ["macOS-Catalina-Release-WK1-Tests-EWS"]
+      "type": "Triggerable", "name": "macos-bigsur-release-build-ews",
+      "builderNames": ["macOS-BigSur-Release-Build-EWS"]
     },
     {
-      "type": "Triggerable", "name": "macos-catalina-release-wk2-tests-ews",
-      "builderNames": ["macOS-Catalina-Release-WK2-Tests-EWS"]
+      "type": "Triggerable", "name": "macos-bigsur-release-wk1-tests-ews",
+      "builderNames": ["macOS-BigSur-Release-WK1-Tests-EWS"]
+    },
+    {
+      "type": "Triggerable", "name": "macos-bigsur-release-wk2-tests-ews",
+      "builderNames": ["macOS-BigSur-Release-WK2-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "macos-release-wk2-stress-tests-ews",
@@ -369,12 +389,12 @@
       "builderNames": ["macOS-AppleSilicon-Big-Sur-Debug-WK2-Tests-EWS"]
     },
     {
-      "type": "Triggerable", "name": "ios-14-sim-build-ews",
-      "builderNames": ["iOS-14-Simulator-Build-EWS"]
+      "type": "Triggerable", "name": "ios-15-sim-build-ews",
+      "builderNames": ["iOS-15-Simulator-Build-EWS"]
     },
     {
-      "type": "Triggerable", "name": "ios-14-sim-wk2-tests-ews",
-      "builderNames": ["iOS-14-Simulator-WK2-Tests-EWS"]
+      "type": "Triggerable", "name": "ios-15-sim-wk2-tests-ews",
+      "builderNames": ["iOS-15-Simulator-WK2-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "api-tests-ios-sim-ews",
@@ -385,11 +405,15 @@
       "builderNames": ["API-Tests-macOS-EWS"]
     },
     {
+      "type": "Triggerable", "name": "gtk-build-ews",
+      "builderNames": ["GTK-Build-EWS"]
+    },
+    {
       "type": "Triggerable", "name": "api-tests-gtk-ews",
       "builderNames": ["API-Tests-GTK-EWS"]
     },
     {
-      "type": "Try_Userpass", "name": "gtk-wk2-tests-ews-disabled", "port": 5558,
+      "type": "Triggerable", "name": "gtk-wk2-tests-ews",
       "builderNames": ["GTK-WK2-Tests-EWS"]
     },
     {

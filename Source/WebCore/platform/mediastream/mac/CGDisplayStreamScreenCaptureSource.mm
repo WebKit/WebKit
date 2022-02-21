@@ -75,7 +75,7 @@ static std::optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displa
     return std::nullopt;
 }
 
-Expected<UniqueRef<DisplayCaptureSourceMac::Capturer>, String> CGDisplayStreamScreenCaptureSource::create(const String& deviceID)
+Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> CGDisplayStreamScreenCaptureSource::create(const String& deviceID)
 {
     auto displayID = parseInteger<uint32_t>(deviceID);
     if (!displayID)
@@ -85,7 +85,7 @@ Expected<UniqueRef<DisplayCaptureSourceMac::Capturer>, String> CGDisplayStreamSc
     if (!actualDisplayID)
         return makeUnexpected("Invalid display ID"_s);
 
-    return UniqueRef<DisplayCaptureSourceMac::Capturer>(makeUniqueRef<CGDisplayStreamScreenCaptureSource>(actualDisplayID.value()));
+    return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<CGDisplayStreamScreenCaptureSource>(actualDisplayID.value()));
 }
 
 CGDisplayStreamScreenCaptureSource::CGDisplayStreamScreenCaptureSource(uint32_t displayID)
@@ -111,14 +111,26 @@ bool CGDisplayStreamScreenCaptureSource::checkDisplayStream()
     return true;
 }
 
-RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayStream(FrameAvailableCallback frameAvailableHandler, dispatch_queue_t queue)
+RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayStream()
 {
     static const int screenQueueMaximumLength = 6;
 
     ASSERT(!displayStream());
     ASSERT(m_displayID == updateDisplayID(m_displayID));
 
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "frame rate ", frameRate(), ", size ", width(), "x", height());
+    auto width = this->width();
+    auto height = this->height();
+    if (!width || !height) {
+        auto displayMode = adoptCF(CGDisplayCopyDisplayMode(m_displayID));
+        width = CGDisplayModeGetPixelsWide(displayMode.get());
+        height = CGDisplayModeGetPixelsHigh(displayMode.get());
+    }
+    if (!width || !height) {
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "unable to get screen width/height");
+        return nullptr;
+    }
+    ASSERT(frameRate());
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "frame rate ", frameRate(), ", size ", width, "x", height);
 
     NSDictionary* streamOptions = @{
         (__bridge NSString *)kCGDisplayStreamMinimumFrameTime : @(1 / frameRate()),
@@ -127,7 +139,7 @@ RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayS
         (__bridge NSString *)kCGDisplayStreamShowCursor : @YES,
     };
 
-    return adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, width(), height(), preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, queue, frameAvailableHandler));
+    return adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, width, height, preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, captureQueue(), frameAvailableHandler()));
 }
 
 IntSize CGDisplayStreamScreenCaptureSource::intrinsicSize() const

@@ -7,7 +7,7 @@
 test(function() {
     var theError = new Error('a unique string');
 
-    assert_throws(theError, function() {
+    assert_throws_exactly(theError, function() {
         new WritableStream({}, {
             get size() {
                 throw theError;
@@ -64,7 +64,7 @@ test2.step(function() {
         });
 
         var writeFunction = function(i, r) {
-            assert_throws(new RangeError(), function() { throw r; }, 'write should reject with a RangeError for ' + elements[i]);
+            assert_throws_js(RangeError, function() { throw r; }, 'write should reject with a RangeError for ' + elements[i]);
             theError[i] = r;
         };
         ws.write('a').then(
@@ -86,7 +86,7 @@ test2.step(function() {
 test(function() {
     var theError = new Error('a unique string');
 
-    assert_throws(theError, function() {
+    assert_throws_exactly(theError, function() {
         new WritableStream({}, {
             size: function() {
                 return 1;
@@ -100,7 +100,7 @@ test(function() {
 
 test(function() {
     for (var highWaterMark of [-1, -Infinity]) {
-        assert_throws(new RangeError(), function() {
+        assert_throws_js(RangeError, function() {
             new WritableStream({}, {
                 size: function() {
                     return 1;
@@ -111,7 +111,7 @@ test(function() {
     }
 
     for (var highWaterMark of [NaN, 'foo', {}]) {
-        assert_throws(new RangeError(), function() {
+        assert_throws_js(RangeError, function() {
             new WritableStream({}, {
                 size: function() {
                     return 1;

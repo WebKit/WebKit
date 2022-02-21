@@ -12,7 +12,8 @@ description: >
 var __string = {toString:function(){return "abcdefghi";}};
 var __re = /a[a-z]{2,4}?/;
 
-//CHECK#0
-if (__re.test(__string) !== (__re.exec(__string) !== null)) {
-	throw new Test262Error('#0: var __string = {toString:function(){return "abcdefghi";}}; __re = /a[a-z]{2,4}?/; __re.test(__string) === (__re.exec(__string) !== null)');
-}
+assert.sameValue(
+  __re.test(__string),
+  __re.exec(__string) !== null,
+  '__re.test({toString:function(){return "abcdefghi";}}) must return __re.exec(__string) !== null'
+);

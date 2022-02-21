@@ -78,6 +78,24 @@ constexpr bool isX86_64()
 #endif
 }
 
+constexpr bool isMIPS()
+{
+#if CPU(MIPS)
+    return true;
+#else
+    return false;
+#endif
+}
+
+constexpr bool isRISCV64()
+{
+#if CPU(RISCV64)
+    return true;
+#else
+    return false;
+#endif
+}
+
 constexpr bool is64Bit()
 {
 #if USE(JSVALUE64)
@@ -100,15 +118,6 @@ constexpr bool isAddress64Bit()
 constexpr bool isAddress32Bit()
 {
     return !isAddress64Bit();
-}
-
-constexpr bool isMIPS()
-{
-#if CPU(MIPS)
-    return true;
-#else
-    return false;
-#endif
 }
 
 inline bool optimizeForARMv7IDIVSupported()

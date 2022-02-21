@@ -43,3 +43,19 @@ assert.throws(RangeError, function() {
 assert.throws(RangeError, function() {
   displayNames.of('abc def');
 }, 'interstitial space');
+
+assert.throws(RangeError, function() {
+  displayNames.of('123_abc');
+}, '2 segments, minimum length, underscore');
+
+assert.throws(RangeError, function() {
+  displayNames.of('12345678_abcdefgh');
+}, '2 segments, maximum length, underscore');
+
+assert.throws(RangeError, function() {
+  displayNames.of('123_abc_ABC');
+}, '3 segments, minimum length, underscore');
+
+assert.throws(RangeError, function() {
+  displayNames.of('12345678_abcdefgh_ABCDEFGH');
+}, '3 segments, maximum length, underscore');

@@ -75,10 +75,12 @@ my $shouldRunStaticAnalyzer = 0;
 my $noExperimentalFeatures = 0;
 my $ltoMode = "default";
 my $xcbuild = undef;
+my $useWorkspace = undef;
 my $startTime = time();
 my $archs32bit = 0;
 my $skipLibraryUpdate = 0;
 my $useCCache = -1;
+my $exportCompileCommands = 0;
 
 my @features = getFeatureOptionList();
 
@@ -103,13 +105,13 @@ foreach (@features) {
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
-  --help                            Show this help message
-  --verbose                         Show verbose build output
+  -h, --help                        Show this help message
+  -v, --verbose                     Show verbose build output
   --clean                           Cleanup the build directory
   --generate-project-only           Only generate project files
   --debug                           Compile with Debug configuration
   --release                         Compile with Release configuration
-  --sdk=<sdk>                       Use a specific Xcode SDK (iOS and Mac only)
+  --sdk=<sdk>                       Use a specific Xcode SDK (Apple platforms only)
   --ios-device                      Use "iphoneos.internal" SDK if installed, else "iphoneos" SDK (iOS only)
   --device                          DEPRECATED alias of --ios-device
   --ios-simulator                   Use "iphonesimulator.internal" SDK if installed, else "iphonesimulator" SDK (iOS only)
@@ -119,9 +121,10 @@ Usage: $programName [options] [options to pass to build system]
   --watchos-device                  Use "watchos.internal" SDK if installed, else "watchos" SDK (watchOS only)
   --watchos-simulator               Use "watchsimulator" (watchOS only)
   --coverage                        Enable code coverage support (Mac only)
-  --analyze                         Enable static anaylsis (iOS and Mac only)
+  --analyze                         Enable static anaylsis (Apple platforms only)
   --lto-mode=<mode>                 Set Link Time Optimization mode (full, thin, or none) (LLVM only)
-  --[no-]xcbuild                    Force the use of XCBuild or not
+  --[no-]xcbuild                    DEPRECATED use of XCBuild or not
+  --[no-]use-workspace              Use WebKit.xcworkspace and XCBuild (Apple platforms only)
 
   --ftw                             Build the FTW Windows port
   --gtk                             Build the GTK+ port
@@ -144,10 +147,12 @@ Usage: $programName [options] [options to pass to build system]
 
   --[no-]use-ccache                 Enable (or disable) CCache, if available
 
+  --export-compile-commands         Generate compile_commands.json (Apple platforms only)
+
 EOF
 
 my %options = (
-    'help' => \$showHelp,
+    'h|help' => \$showHelp,
     'v|verbose' => \$verbose,
     'clean' => \$clean,
     'install-headers=s' => \$installHeaders,
@@ -162,8 +167,10 @@ my %options = (
     'no-experimental-features' => \$noExperimentalFeatures,
     'lto-mode=s' => \$ltoMode,
     'xcbuild!' => \$xcbuild,
+    'use-workspace!' => \$useWorkspace,
     'skip-library-update' => \$skipLibraryUpdate,
     'use-ccache!' => \$useCCache,
+    'export-compile-commands' => \$exportCompileCommands
 );
 
 # Build usage text and options list from features
@@ -188,11 +195,18 @@ if ($useCCache == 1) {
     $ENV{'WK_USE_CCACHE'} = "NO";
 }
 
+$ENV{'EXPORT_COMPILE_COMMANDS'} = "YES" if $exportCompileCommands;
 
 my $productDir = productDir();
 
 # Check that all the project directories are there.
-my @projects = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKitLegacy");
+my @projects = ("Source/JavaScriptCore");
+if (isAppleCocoaWebKit()) {
+    push @projects, ("Source/WebGPU");
+}
+push @projects, ("Source/WebCore");
+push @projects, ("Source/WebKitLegacy");
+
 
 # Build WTF as a separate static library on ports which support it.
 splice @projects, 0, 0, "Source/WTF" if isAppleWebKit() or isWinCairo() or isFTW();
@@ -216,13 +230,13 @@ my @options = ();
 
 if (isAppleCocoaWebKit()) {
     push @options, XcodeOptions();
-
-    # Temporarily disable default use of XCBuild until issues with it are ironed out.
-    #if ((not defined $xcbuild or $xcbuild) and canUseXCBuild()) {
-    if ($xcbuild and canUseXCBuild()) {
+    if ($xcbuild) {
+        # Deprecated: Eventually, all XCBuild invocations will build through the workspace.
         push @options, "-UseNewBuildSystem=YES";
-    } else {
+    } elsif (!$useWorkspace) {
         push @options, "-UseNewBuildSystem=NO";
+    } elsif (defined $xcbuild) {
+        die "Error: --use-workspace and --no-xcbuild are not compatible. Workspaces builds require XCBuild.\n";
     }
 
     sub option($$)
@@ -237,29 +251,32 @@ if (isAppleCocoaWebKit()) {
         push @options, $option unless $option eq "";
     }
 
-    # ANGLE and libwebrtc must come before WebCore
-    splice @projects, 0, 0, ("Source/ThirdParty/ANGLE");
-    # if (not $archs32bit and (portName() eq Mac or portName() eq iOS or portName() eq watchOS)) {
-    if (portName() eq Mac or portName() eq iOS) {
-        splice @projects, 0, 0, ("Source/ThirdParty/libwebrtc");
+    # In workspaces, build order is determined by XCBuild.
+    if (!$useWorkspace) {
+        # ANGLE and libwebrtc must come before WebCore
+        splice @projects, 0, 0, ("Source/ThirdParty/ANGLE");
+        # if (not $archs32bit and (portName() eq Mac or portName() eq iOS or portName() eq watchOS)) {
+        if (portName() eq Mac or portName() eq iOS) {
+            splice @projects, 0, 0, ("Source/ThirdParty/libwebrtc");
+        }
+
+        push @projects, ("Source/WebKit");
+
+        if (!isEmbeddedWebKit()) {
+            push @projects, ("Tools/MiniBrowser");
+
+            # WebInspectorUI must come after JavaScriptCore and WebCore but before WebKit and WebKit2
+            my $webKitIndex = first { $projects[$_] eq "Source/WebKitLegacy" } 0..$#projects;
+            splice(@projects, $webKitIndex, 0, "Source/WebInspectorUI");
+        }
+
+        if (isAppleMacWebKit()) {
+            push @projects, ("Tools/lldb/lldbWebKitTester");
+        }
+
+        # Build Tools needed for Apple ports (except for tvOS)
+        push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
     }
-
-    push @projects, ("Source/WebKit");
-
-    if (!isEmbeddedWebKit()) {
-        push @projects, ("Tools/MiniBrowser");
-
-        # WebInspectorUI must come after JavaScriptCore and WebCore but before WebKit and WebKit2
-        my $webKitIndex = first { $projects[$_] eq "Source/WebKitLegacy" } 0..$#projects;
-        splice(@projects, $webKitIndex, 0, "Source/WebInspectorUI");
-    }
-
-    if (isAppleMacWebKit()) {
-        push @projects, ("Tools/lldb/lldbWebKitTester");
-    }
-
-    # Build Tools needed for Apple ports (except for tvOS)
-    push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
 
 } elsif (isWinCairo() && !$skipLibraryUpdate) {
     (system("python Tools/Scripts/update-webkit-wincairo-libs.py") == 0) or die;
@@ -333,25 +350,33 @@ if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
 } elsif (isAppleCocoaWebKit() && !isCMakeBuild()) {
     exit 0 if isGenerateProjectOnly();
 
+    my @local_options = @options;
+    push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
+    push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
+    push @local_options, "WK_LTO_MODE=$ltoMode" if ($ltoMode ne "default");
+
     # Build, and abort if the build fails.
-    for my $dir (@projects) {
-        chdir $dir or die;
-        $result = 0;
-
-        my $project = basename($dir);
-        
-        my @local_options = @options;
-        push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
-        push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
-        push @local_options, "WK_LTO_MODE=$ltoMode" if ($ltoMode ne "default");
-        my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
-        $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
-
-        # Various build* calls above may change the CWD.
-        chdirWebKit();
-
+    if ($useWorkspace) {
+        my $scheme = $onlyWebKitProject ? "WebKitLegacy" : "All Modules";
+        $result = buildXCodeWorkspace("WebKit.xcworkspace", $scheme, $clean, @local_options, @ARGV);
         if (exitStatus($result)) {
             exit exitStatus($result);
+        }
+    } else {
+        for my $dir (@projects) {
+            chdir $dir or die;
+            $result = 0;
+
+            my $project = basename($dir);
+            my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
+            $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
+
+            # Various build* calls above may change the CWD.
+            chdirWebKit();
+
+            if (exitStatus($result)) {
+                exit exitStatus($result);
+            }
         }
     }
 

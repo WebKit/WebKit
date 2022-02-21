@@ -140,7 +140,7 @@ bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfac
         return false;
     }
 
-    auto index = configs.findMatching([&](EGLConfig value) {
+    auto index = configs.findIf([&](EGLConfig value) {
         EGLint redSize, greenSize, blueSize, alphaSize;
         eglGetConfigAttrib(display, value, EGL_RED_SIZE, &redSize);
         eglGetConfigAttrib(display, value, EGL_GREEN_SIZE, &greenSize);
@@ -364,6 +364,19 @@ GLContextEGL::GLContextEGL(PlatformDisplay& display, EGLContext context, EGLSurf
     ASSERT(type == Surfaceless || surface != EGL_NO_SURFACE);
     RELEASE_ASSERT(m_display.eglDisplay() != EGL_NO_DISPLAY);
     RELEASE_ASSERT(context != EGL_NO_CONTEXT);
+
+    if (display.eglCheckVersion(1, 5)) {
+        m_eglCreateImage = reinterpret_cast<PFNEGLCREATEIMAGEPROC>(eglGetProcAddress("eglCreateImage"));
+        m_eglDestroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEPROC>(eglGetProcAddress("eglDestroyImage"));
+        RELEASE_ASSERT(!m_eglCreateImage == !m_eglDestroyImage);
+    } else {
+        const char* extensions = eglQueryString(display.eglDisplay(), EGL_EXTENSIONS);
+        if (GLContext::isExtensionSupported(extensions, "EGL_KHR_image_base")) {
+            m_eglCreateImageKHR = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
+            m_eglDestroyImageKHR = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
+        }
+        RELEASE_ASSERT(!m_eglCreateImageKHR == !m_eglDestroyImageKHR);
+    }
 }
 
 GLContextEGL::~GLContextEGL()
@@ -384,6 +397,32 @@ GLContextEGL::~GLContextEGL()
 #if USE(WPE_RENDERER)
     destroyWPETarget();
 #endif
+}
+
+EGLImage GLContextEGL::createImage(EGLenum target, EGLClientBuffer clientBuffer, const Vector<EGLAttrib>& attribList) const
+{
+    if (m_eglCreateImage)
+        return m_eglCreateImage(m_display.eglDisplay(), attribList.isEmpty() ? m_context : EGL_NO_CONTEXT, target, clientBuffer, attribList.data());
+
+    if (m_eglCreateImageKHR) {
+        if (attribList.isEmpty())
+            return m_eglCreateImageKHR(m_display.eglDisplay(), m_context, target, clientBuffer, nullptr);
+
+        auto intAttribList = attribList.map<Vector<EGLint>>([] (EGLAttrib value) {
+            return value;
+        });
+        return m_eglCreateImageKHR(m_display.eglDisplay(), EGL_NO_CONTEXT, target, clientBuffer, intAttribList.data());
+    }
+    return EGL_NO_IMAGE;
+}
+
+bool GLContextEGL::destroyImage(EGLImage image) const
+{
+    if (m_eglDestroyImage)
+        return m_eglDestroyImage(m_display.eglDisplay(), image);
+    if (m_eglDestroyImageKHR)
+        return m_eglDestroyImageKHR(m_display.eglDisplay(), image);
+    return false;
 }
 
 bool GLContextEGL::canRenderToDefaultFramebuffer()
@@ -495,7 +534,7 @@ void GLContextEGL::swapInterval(int interval)
     eglSwapInterval(m_display.eglDisplay(), interval);
 }
 
-PlatformGraphicsContextGL GLContextEGL::platformContext()
+GCGLContext GLContextEGL::platformContext()
 {
     return m_context;
 }

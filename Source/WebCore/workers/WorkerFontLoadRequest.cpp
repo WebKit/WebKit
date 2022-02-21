@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile, Inc.
  * Copyright (C) 2021 Metrological Group B.V.
  * Copyright (C) 2021 Igalia S.L.
@@ -29,11 +29,11 @@
 #include "WorkerFontLoadRequest.h"
 
 #include "Font.h"
+#include "FontCreationContext.h"
 #include "FontCustomPlatformData.h"
 #include "FontSelectionAlgorithm.h"
 #include "ResourceLoaderOptions.h"
 #include "ServiceWorker.h"
-#include "SharedBuffer.h"
 #include "WOFFFileFormat.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThreadableLoader.h"
@@ -48,7 +48,7 @@ WorkerFontLoadRequest::WorkerFontLoadRequest(URL&& url, LoadedFromOpaqueSource l
 
 void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
 {
-    m_context = makeWeakPtr(static_cast<ScriptExecutionContext*>(&workerGlobalScope));
+    m_context = workerGlobalScope;
 
     ResourceRequest request { m_url };
     ASSERT(request.httpMethod() == "GET");
@@ -62,7 +62,7 @@ void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
 
     ThreadableLoaderOptions options { WTFMove(fetchOptions) };
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
-    options.contentSecurityPolicyEnforcement = m_context->shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceChildSrcDirective;
+    options.contentSecurityPolicyEnforcement = m_context->shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective;
     options.loadedFromOpaqueSource = m_loadedFromOpaqueSource;
 
     options.serviceWorkersMode = ServiceWorkersMode::All;
@@ -77,9 +77,13 @@ void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
 bool WorkerFontLoadRequest::ensureCustomFontData(const AtomString&)
 {
     if (!m_fontCustomPlatformData && !m_errorOccurred && !m_isLoading) {
-        convertWOFFToSfntIfNecessary(m_data);
-        if (m_data) {
-            m_fontCustomPlatformData = createFontCustomPlatformData(*m_data, m_url.fragmentIdentifier().toString());
+        RefPtr<SharedBuffer> contiguousData;
+        if (m_data)
+            contiguousData = m_data.takeAsContiguous();
+        convertWOFFToSfntIfNecessary(contiguousData);
+        if (contiguousData) {
+            m_fontCustomPlatformData = createFontCustomPlatformData(*contiguousData, m_url.fragmentIdentifier().toString());
+            m_data = WTFMove(contiguousData);
             if (!m_fontCustomPlatformData)
                 m_errorOccurred = true;
         }
@@ -88,11 +92,11 @@ bool WorkerFontLoadRequest::ensureCustomFontData(const AtomString&)
     return m_fontCustomPlatformData.get();
 }
 
-RefPtr<Font> WorkerFontLoadRequest::createFont(const FontDescription& fontDescription, const AtomString&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
+RefPtr<Font> WorkerFontLoadRequest::createFont(const FontDescription& fontDescription, const AtomString&, bool syntheticBold, bool syntheticItalic, const FontCreationContext& fontCreationContext)
 {
     ASSERT(m_fontCustomPlatformData);
     ASSERT(m_context);
-    return Font::create(m_fontCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceCapabilities), Font::Origin::Remote, &m_context->fontCache());
+    return Font::create(m_fontCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontCreationContext), Font::Origin::Remote);
 }
 
 void WorkerFontLoadRequest::setClient(FontLoadRequestClient* client)
@@ -105,24 +109,21 @@ void WorkerFontLoadRequest::setClient(FontLoadRequestClient* client)
     }
 }
 
-void WorkerFontLoadRequest::didReceiveResponse(unsigned long, const ResourceResponse& response)
+void WorkerFontLoadRequest::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode())
         m_errorOccurred = true;
 }
 
-void WorkerFontLoadRequest::didReceiveData(const uint8_t* data, int dataLength)
+void WorkerFontLoadRequest::didReceiveData(const SharedBuffer& buffer)
 {
     if (m_errorOccurred)
         return;
 
-    if (!m_data)
-        m_data = SharedBuffer::create();
-
-    m_data->append(data, dataLength);
+    m_data.append(buffer);
 }
 
-void WorkerFontLoadRequest::didFinishLoading(unsigned long)
+void WorkerFontLoadRequest::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&)
 {
     m_isLoading = false;
 

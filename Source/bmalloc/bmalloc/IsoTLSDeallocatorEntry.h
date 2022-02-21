@@ -30,6 +30,8 @@
 #include "Mutex.h"
 #include <mutex>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config>
@@ -51,3 +53,4 @@ private:
 
 } // namespace bmalloc
 
+#endif

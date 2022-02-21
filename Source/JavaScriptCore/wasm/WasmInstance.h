@@ -56,10 +56,9 @@ public:
 
     static Ref<Instance> create(Context*, Ref<Module>&&, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&&);
 
-    void finalizeCreation(void* owner, Ref<CodeBlock>&& codeBlock)
+    void setOwner(void* owner)
     {
         m_owner = owner;
-        m_codeBlock = WTFMove(codeBlock);
     }
 
     JS_EXPORT_PRIVATE ~Instance();
@@ -71,9 +70,9 @@ public:
 
     Wasm::Context* context() const { return m_context; }
 
-    Module& module() { return m_module.get(); }
-    CodeBlock* codeBlock() { return m_codeBlock.get(); }
-    Memory* memory() { return m_memory.get(); }
+    Module& module() const { return m_module.get(); }
+    CalleeGroup* calleeGroup() const { return module().calleeGroupFor(memory()->mode()); }
+    Memory* memory() const { return m_memory.get(); }
     Table* table(unsigned);
     void setTable(unsigned, Ref<Table>&&);
     const Element* elementAt(unsigned) const;
@@ -82,7 +81,7 @@ public:
 
     bool isImportFunction(uint32_t functionIndex) const
     {
-        return functionIndex < m_codeBlock->functionImportCount();
+        return functionIndex < calleeGroup()->functionImportCount();
     }
 
     void tableInit(uint32_t dstOffset, uint32_t srcOffset, uint32_t length, uint32_t elementIndex, uint32_t tableIndex);
@@ -210,6 +209,9 @@ public:
         m_storeTopCallFrame(callFrame);
     }
 
+    const Tag& tag(unsigned i) const { return *m_tags[i]; }
+    void setTag(unsigned, Ref<const Tag>&&);
+
 private:
     Instance(Context*, Ref<Module>&&, EntryFrame**, void**, StoreTopCallFrameCallback&&);
     
@@ -222,7 +224,6 @@ private:
     CagedPtr<Gigacage::Primitive, void, tagCagedPtr> m_cachedMemory;
     size_t m_cachedBoundsCheckingSize { 0 };
     Ref<Module> m_module;
-    RefPtr<CodeBlock> m_codeBlock;
     RefPtr<Memory> m_memory;
 
     MallocPtr<Global::Value, VMMalloc> m_globals;
@@ -237,6 +238,7 @@ private:
     HashMap<uint32_t, Ref<Global>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_linkedGlobals;
     BitVector m_passiveElements;
     BitVector m_passiveDataSegments;
+    FixedVector<RefPtr<const Tag>> m_tags;
 };
 
 } } // namespace JSC::Wasm

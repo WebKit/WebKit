@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,7 @@ void ScrollingTreeNode::removeChild(ScrollingTreeNode& node)
 {
     RELEASE_ASSERT(m_scrollingTree.inCommitTreeState());
 
-    size_t index = m_children.findMatching([&](auto& child) {
+    size_t index = m_children.findIf([&](auto& child) {
         return &node == child.ptr();
     });
 
@@ -84,9 +84,9 @@ bool ScrollingTreeNode::isRootNode() const
     return m_scrollingTree.rootNode() == this;
 }
 
-void ScrollingTreeNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingTreeNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
-    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeNodeIDs)
+    if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs)
         ts.dumpProperty("nodeID", scrollingNodeID());
 }
 
@@ -108,7 +108,7 @@ ScrollingTreeScrollingNode* ScrollingTreeNode::enclosingScrollingNodeIncludingSe
     return downcast<ScrollingTreeScrollingNode>(node);
 }
 
-void ScrollingTreeNode::dump(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingTreeNode::dump(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     dumpProperties(ts, behavior);
 

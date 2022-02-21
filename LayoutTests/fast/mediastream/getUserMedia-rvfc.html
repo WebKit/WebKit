@@ -1,0 +1,89 @@
+<!doctype html><!-- webkit-test-runner [ RequestVideoFrameCallbackEnabled=true ] -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing rvfc on getUserMedia stream</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <script>
+async function grabNextMetadata(video)
+{
+    return new Promise((resolve, reject) => {
+        const identifier = video.requestVideoFrameCallback((now, metadata) => {
+            resolve(metadata);
+        });
+        setTimeout(() => {
+            reject("no metadata for " + identifier);
+            video.cancelVideoFrameCallback(identifier);
+        }, 5000);
+    });
+}
+
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({video: { width: 640, height: 480 } });
+    video.srcObject = localStream;
+    await video.play();
+
+    let resolve;
+    let promise = new Promise(r => resolve = r);
+    const id1 = video.requestVideoFrameCallback((now, metadata) => {
+        video.cancelVideoFrameCallback(id1);
+        video.cancelVideoFrameCallback(id2);
+
+        const id3 = video.requestVideoFrameCallback((now, metadata) => { assert_not_reached(); });
+        video.cancelVideoFrameCallback(id3);
+        setTimeout(resolve, 100);
+    });
+
+    const id2 = video.requestVideoFrameCallback((now, metadata) => {
+        assert_not_reached();
+    });
+
+    return promise;
+}, "Validate callbacks can be updated within a callback");
+
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({video: { width: 640, height: 480 } });
+    video.srcObject = localStream;
+    await video.play();
+
+    let metadata = await grabNextMetadata(video);
+    assert_equals(metadata.width, 640);
+    assert_equals(metadata.height, 480);
+    assert_greater_than(metadata.presentedFrames, 0);
+    const presentedFrames = metadata.presentedFrames;
+
+    await localStream.getVideoTracks()[0].applyConstraints({width: 320, height: 240});
+
+    let counter = 0;
+    while (++counter < 100 && metadata.width !== 320) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        metadata = await grabNextMetadata(video);
+    }
+    assert_equals(metadata.width, 320);
+    assert_greater_than(metadata.presentedFrames, presentedFrames);
+}, "Validate callbacks and metadata for getUserMedia");
+
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({video: { width: 640, height: 480 } });
+    video.srcObject = localStream;
+    await video.play();
+
+    let counter = 0;
+    let resolve;
+    const promise = new Promise(r => resolve = r);
+    video.requestVideoFrameCallback(() => {
+        ++counter;
+        resolve();
+    });
+    await promise;
+
+    await new Promise(resolve => video.requestVideoFrameCallback(resolve));
+    assert_equals(counter, 1);
+}, "Validate callbacks are called only once");
+        </script>
+    </body>
+</html>

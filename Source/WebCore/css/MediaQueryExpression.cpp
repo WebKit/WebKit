@@ -107,7 +107,7 @@ static inline bool featureWithValidDensity(const String& mediaFeature, const CSS
 
 static inline bool featureWithValidPositiveLength(const String& mediaFeature, const CSSPrimitiveValue& value)
 {
-    if (!(value.isLength() || (value.isNumber() && !value.doubleValue())) || value.doubleValue() < 0)
+    if (!(value.isLength() || (value.isNumberOrInteger() && !value.doubleValue())) || value.doubleValue() < 0)
         return false;
     
     return mediaFeature == MediaFeatureNames::height
@@ -139,14 +139,14 @@ static inline bool featureExpectingPositiveInteger(const String& mediaFeature)
 
 static inline bool featureWithPositiveInteger(const String& mediaFeature, const CSSPrimitiveValue& value)
 {
-    if (!value.isNumber())
+    if (!value.isInteger())
         return false;
     return featureExpectingPositiveInteger(mediaFeature);
 }
 
 static inline bool featureWithPositiveNumber(const String& mediaFeature, const CSSPrimitiveValue& value)
 {
-    if (!value.isNumber())
+    if (!value.isNumberOrInteger())
         return false;
     
     return mediaFeature == MediaFeatureNames::transform3d
@@ -160,7 +160,7 @@ static inline bool featureWithPositiveNumber(const String& mediaFeature, const C
 
 static inline bool featureWithZeroOrOne(const String& mediaFeature, const CSSPrimitiveValue& value)
 {
-    if (!value.isNumber() || !(value.doubleValue() == 1 || !value.doubleValue()))
+    if (!value.isNumberOrInteger() || !(value.doubleValue() == 1 || !value.doubleValue()))
         return false;
     
     return mediaFeature == MediaFeatureNames::grid;
@@ -215,7 +215,7 @@ static inline bool isFeatureValidWithoutValue(const AtomString& mediaFeature, co
 
 inline RefPtr<CSSPrimitiveValue> consumeFirstValue(const String& mediaFeature, CSSParserTokenRange& range)
 {
-    if (auto value = CSSPropertyParserHelpers::consumeInteger(range, 0))
+    if (auto value = CSSPropertyParserHelpers::consumeIntegerZeroAndGreater(range))
         return value;
 
     if (!featureExpectingPositiveInteger(mediaFeature) && !isAspectRatioFeature(mediaFeature)) {
@@ -249,7 +249,7 @@ MediaQueryExpression::MediaQueryExpression(const String& feature, CSSParserToken
     }
     // Create value for media query expression that must have 1 or more values.
     if (isAspectRatioFeature(m_mediaFeature)) {
-        if (!firstValue->isNumber() || !firstValue->doubleValue())
+        if (!firstValue->isNumberOrInteger() || !firstValue->doubleValue())
             return;
         if (!CSSPropertyParserHelpers::consumeSlashIncludingWhitespace(range))
             return;

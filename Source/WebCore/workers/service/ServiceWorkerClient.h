@@ -29,6 +29,7 @@
 
 #include "ContextDestructionObserver.h"
 #include "ExceptionOr.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerClientData.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/RefCounted.h>
@@ -46,7 +47,7 @@ struct StructuredSerializeOptions;
 
 class ServiceWorkerClient : public RefCounted<ServiceWorkerClient>, public ContextDestructionObserver {
 public:
-    using Identifier = ServiceWorkerClientIdentifier;
+    using Identifier = ScriptExecutionContextIdentifier;
 
     using Type = ServiceWorkerClientType;
     using FrameType = ServiceWorkerClientFrameType;

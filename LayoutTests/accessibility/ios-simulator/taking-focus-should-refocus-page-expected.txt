@@ -1,0 +1,25 @@
+This test ensures that making an element focused via accessibility (e.g. full keyboard access) re-focuses the page so that a focus ring can be drawn.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(button).getPropertyValue('outline-width') is '0px'
+PASS getComputedStyle(textInput).getPropertyValue('outline-width') is '0px'
+
+Taking focus via accessibilityController for id #button
+PASS getComputedStyle(button).getPropertyValue('outline-width') is '3px'
+PASS getComputedStyle(textInput).getPropertyValue('outline-width') is '0px'
+
+Taking focus via accessibilityController for id #text-input
+PASS getComputedStyle(button).getPropertyValue('outline-width') is '0px'
+PASS getComputedStyle(textInput).getPropertyValue('outline-width') is '3px'
+
+Making the entire page un-focused
+
+Taking focus via accessibilityController for id #button
+PASS getComputedStyle(button).getPropertyValue('outline-width') is '3px'
+PASS getComputedStyle(textInput).getPropertyValue('outline-width') is '0px'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me

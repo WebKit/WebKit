@@ -8,8 +8,7 @@ info: |
 es5id: 15.7.4_A2
 description: Checking Object.prototype.isPrototypeOf(Number.prototype)
 ---*/
-
-//CHECK#1
-if (!Object.prototype.isPrototypeOf(Number.prototype)) {
-  throw new Test262Error('#1: Object prototype object is the prototype of Number prototype object');
-}
+assert(
+  Object.prototype.isPrototypeOf(Number.prototype),
+  'Object.prototype.isPrototypeOf(Number.prototype) must return true'
+);

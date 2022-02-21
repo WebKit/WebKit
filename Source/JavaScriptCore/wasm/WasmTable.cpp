@@ -42,9 +42,7 @@ uint32_t Table::allocatedLength(uint32_t length)
 void Table::setLength(uint32_t length)
 {
     m_length = length;
-    m_mask = WTF::maskForSize(length);
     ASSERT(isValidLength(length));
-    ASSERT(m_mask == WTF::maskForSize(allocatedLength(length)));
 }
 
 Table::Table(uint32_t initial, std::optional<uint32_t> maximum, TableElementType type)
@@ -115,13 +113,14 @@ std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
     };
 
     if (auto* funcRefTable = asFuncrefTable()) {
-        if (!checkedGrow(funcRefTable->m_importableFunctions, [] (auto&) { }))
+        if (!checkedGrow(funcRefTable->m_importableFunctions, [](auto&) { }))
             return std::nullopt;
-        if (!checkedGrow(funcRefTable->m_instances, [] (auto&) { }))
+        if (!checkedGrow(funcRefTable->m_instances, [](auto&) { }))
             return std::nullopt;
     }
 
-    if (!checkedGrow(m_jsValues, [defaultValue] (WriteBarrier<Unknown>& slot) { slot.setStartingValue(defaultValue); }))
+    VM& vm = m_owner->vm();
+    if (!checkedGrow(m_jsValues, [&](WriteBarrier<Unknown>& slot) { slot.set(vm, m_owner, defaultValue); }))
         return std::nullopt;
 
     setLength(newLength);
@@ -141,11 +140,11 @@ void Table::clear(uint32_t index)
     RELEASE_ASSERT(index < length());
     RELEASE_ASSERT(m_owner);
     if (auto* funcRefTable = asFuncrefTable()) {
-        funcRefTable->m_importableFunctions.get()[index & m_mask] = WasmToWasmImportableFunction();
-        ASSERT(funcRefTable->m_importableFunctions.get()[index & m_mask].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
-        funcRefTable->m_instances.get()[index & m_mask] = nullptr;
+        funcRefTable->m_importableFunctions.get()[index] = WasmToWasmImportableFunction();
+        ASSERT(funcRefTable->m_importableFunctions.get()[index].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
+        funcRefTable->m_instances.get()[index] = nullptr;
     }
-    m_jsValues.get()[index & m_mask].setStartingValue(jsNull());
+    m_jsValues.get()[index].setStartingValue(jsNull());
 }
 
 void Table::set(uint32_t index, JSValue value)
@@ -154,14 +153,14 @@ void Table::set(uint32_t index, JSValue value)
     RELEASE_ASSERT(isExternrefTable());
     RELEASE_ASSERT(m_owner);
     clear(index);
-    m_jsValues.get()[index & m_mask].set(m_owner->vm(), m_owner, value);
+    m_jsValues.get()[index].set(m_owner->vm(), m_owner, value);
 }
 
 JSValue Table::get(uint32_t index) const
 {
     RELEASE_ASSERT(index < length());
     RELEASE_ASSERT(m_owner);
-    return m_jsValues.get()[index & m_mask].get();
+    return m_jsValues.get()[index].get();
 }
 
 template<typename Visitor>
@@ -178,9 +177,9 @@ DEFINE_VISIT_AGGREGATE(Table);
 Type Table::wasmType() const
 {
     if (isExternrefTable())
-        return Types::Externref;
+        return externrefType();
     ASSERT(isFuncrefTable());
-    return Types::Funcref;
+    return funcrefType();
 }
 
 FuncRefTable* Table::asFuncrefTable()
@@ -209,19 +208,19 @@ void FuncRefTable::setFunction(uint32_t index, JSObject* optionalWrapper, WasmTo
     RELEASE_ASSERT(m_owner);
     clear(index);
     if (optionalWrapper)
-        m_jsValues.get()[index & m_mask].set(m_owner->vm(), m_owner, optionalWrapper);
-    m_importableFunctions.get()[index & m_mask] = function;
-    m_instances.get()[index & m_mask] = instance;
+        m_jsValues.get()[index].set(m_owner->vm(), m_owner, optionalWrapper);
+    m_importableFunctions.get()[index] = function;
+    m_instances.get()[index] = instance;
 }
 
 const WasmToWasmImportableFunction& FuncRefTable::function(uint32_t index) const
 {
-    return m_importableFunctions.get()[index & m_mask];
+    return m_importableFunctions.get()[index];
 }
 
 Instance* FuncRefTable::instance(uint32_t index) const
 {
-    return m_instances.get()[index & m_mask];
+    return m_instances.get()[index];
 }
 
 void FuncRefTable::copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex)

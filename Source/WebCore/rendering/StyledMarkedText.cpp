@@ -57,24 +57,29 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
             auto decorationStyle = renderStyle->textDecorationStyle();
             auto decorations = renderStyle->textDecorationsInEffect();
 
-            if (decorations.contains(TextDecoration::Underline)) {
+            if (decorations.contains(TextDecorationLine::Underline)) {
                 style.textDecorationStyles.underlineColor = color;
                 style.textDecorationStyles.underlineStyle = decorationStyle;
             }
-            if (decorations.contains(TextDecoration::Overline)) {
+            if (decorations.contains(TextDecorationLine::Overline)) {
                 style.textDecorationStyles.overlineColor = color;
                 style.textDecorationStyles.overlineStyle = decorationStyle;
             }
-            if (decorations.contains(TextDecoration::LineThrough)) {
+            if (decorations.contains(TextDecorationLine::LineThrough)) {
                 style.textDecorationStyles.linethroughColor = color;
                 style.textDecorationStyles.linethroughStyle = decorationStyle;
             }
         }
         break;
+    case MarkedText::FragmentHighlight: {
+        OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
+        style.backgroundColor = renderer.theme().annotationHighlightColor(styleColorOptions);
+        break;
+    }
 #if ENABLE(APP_HIGHLIGHTS)
     case MarkedText::AppHighlight: {
-        OptionSet<StyleColor::Options> styleColorOptions = { StyleColor::Options::UseSystemAppearance };
-        style.backgroundColor = renderer.theme().appHighlightColor(styleColorOptions);
+        OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
+        style.backgroundColor = renderer.theme().annotationHighlightColor(styleColorOptions);
         break;
     }
 #endif
@@ -92,7 +97,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
     }
     case MarkedText::TextMatch: {
         // Text matches always use the light system appearance.
-        OptionSet<StyleColor::Options> styleColorOptions = { StyleColor::Options::UseSystemAppearance };
+        OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
 #if PLATFORM(MAC)
         style.textStyles.fillColor = renderer.theme().systemColor(CSSValueAppleSystemLabel, styleColorOptions);
 #endif
@@ -111,7 +116,6 @@ static StyledMarkedText::Style computeStyleForUnmarkedMarkedText(const RenderTex
     style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationsInEffect(), isFirstLine);
     style.textStyles = computeTextPaintStyle(renderer.frame(), lineStyle, paintInfo);
     style.textShadow = ShadowData::clone(paintInfo.forceTextColor() ? nullptr : lineStyle.textShadow());
-    style.alpha = 1;
     return style;
 }
 

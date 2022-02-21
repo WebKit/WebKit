@@ -25,6 +25,7 @@
 #include "CounterNode.h"
 #include "Document.h"
 #include "Element.h"
+#include "ElementInlines.h"
 #include "ElementTraversal.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
@@ -57,15 +58,33 @@ static CounterMaps& counterMaps()
     return staticCounterMaps;
 }
 
+static Element* ancestorStyleContainmentObject(const Element& element)
+{
+    Element* ancestor = is<PseudoElement>(element) ? downcast<PseudoElement>(element).hostElement() : element.parentElement();
+    while (ancestor) {
+        if (auto* style = ancestor->existingComputedStyle()) {
+            if (style->containsStyle())
+                break;
+        }
+        // FIXME: this should use parentInComposedTree but for now matches the rest of RenderCounter.
+        ancestor = ancestor->parentElement();
+    }
+    return ancestor;
+}
+
 // This function processes the renderer tree in the order of the DOM tree
 // including pseudo elements as defined in CSS 2.1.
 static RenderElement* previousInPreOrder(const RenderElement& renderer)
 {
     ASSERT(renderer.element());
     Element* previous = ElementTraversal::previousIncludingPseudo(*renderer.element());
+    Element* styleContainAncestor = ancestorStyleContainmentObject(*renderer.element());
+
     while (previous && !previous->renderer())
-        previous = ElementTraversal::previousIncludingPseudo(*previous);
-    return previous ? previous->renderer() : 0;
+        previous = ElementTraversal::previousIncludingPseudo(*previous, styleContainAncestor);
+    if (!previous)
+        return nullptr;
+    return previous->renderer();
 }
 
 static inline Element* parentOrPseudoHostElement(const RenderElement& renderer)
@@ -96,6 +115,8 @@ static Element* previousSiblingOrParentElement(const Element& element)
     auto* parent = element.parentElement();
     if (parent && !parent->renderer())
         parent = previousSiblingOrParentElement(*parent);
+    if (parent && parent->renderer() && parent->renderer()->style().containsStyle())
+        return nullptr;
     return parent;
 }
 
@@ -291,7 +312,8 @@ static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, co
                         previousSibling = currentCounter;
                         // We are no longer interested in previous siblings of the currentRenderer or their children
                         // as counters they may have attached cannot be the previous sibling of the counter we are placing.
-                        currentRenderer = parentOrPseudoHostElement(*currentRenderer)->renderer();
+                        auto* parent = parentOrPseudoHostElement(*currentRenderer);
+                        currentRenderer = parent ? parent->renderer() : nullptr;
                         continue;
                     }
                 } else
@@ -335,7 +357,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
     maps.add(&renderer, makeUnique<CounterMap>()).iterator->value->add(identifier, newNode.copyRef());
     renderer.setHasCounterNodeMap(true);
 
-    if (newNode->parent())
+    if (newNode->parent() || shouldApplyStyleContainment(renderer))
         return newNode.ptr();
 
     // Check if some nodes that were previously root nodes should become children of this node now.
@@ -343,7 +365,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
     auto* stayWithin = parentOrPseudoHostElement(renderer);
     bool skipDescendants = false;
     while ((currentRenderer = nextInPreOrder(*currentRenderer, stayWithin, skipDescendants))) {
-        skipDescendants = false;
+        skipDescendants = shouldApplyStyleContainment(*currentRenderer);
         if (!currentRenderer->hasCounterNodeMap())
             continue;
         auto* currentCounter = maps.find(currentRenderer)->value->get(identifier);
@@ -549,8 +571,10 @@ void RenderCounter::rendererSubtreeAttached(RenderElement& renderer)
         element = renderer.generatingElement();
     if (element && !element->renderer())
         return; // No need to update if the parent is not attached yet
+    bool crossedStyleContainmentBoundary = false;
     for (RenderObject* descendant = &renderer; descendant; descendant = descendant->nextInPreOrder(&renderer)) {
-        if (is<RenderElement>(*descendant))
+        crossedStyleContainmentBoundary = crossedStyleContainmentBoundary || shouldApplyStyleContainment(*descendant);
+        if (crossedStyleContainmentBoundary && is<RenderElement>(*descendant))
             updateCounters(downcast<RenderElement>(*descendant));
     }
 }

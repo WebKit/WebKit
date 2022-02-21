@@ -504,7 +504,7 @@ void SetSsrcToZero(std::string* sdp) {
   }
 }
 
-// Check if |streams| contains the specified track.
+// Check if `streams` contains the specified track.
 bool ContainsTrack(const std::vector<cricket::StreamParams>& streams,
                    const std::string& stream_id,
                    const std::string& track_id) {
@@ -516,7 +516,7 @@ bool ContainsTrack(const std::vector<cricket::StreamParams>& streams,
   return false;
 }
 
-// Check if |senders| contains the specified sender, by id.
+// Check if `senders` contains the specified sender, by id.
 bool ContainsSender(
     const std::vector<rtc::scoped_refptr<RtpSenderInterface>>& senders,
     const std::string& id) {
@@ -528,7 +528,7 @@ bool ContainsSender(
   return false;
 }
 
-// Check if |senders| contains the specified sender, by id and stream id.
+// Check if `senders` contains the specified sender, by id and stream id.
 bool ContainsSender(
     const std::vector<rtc::scoped_refptr<RtpSenderInterface>>& senders,
     const std::string& id,
@@ -1096,10 +1096,10 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
   }
 
   // This function creates a MediaStream with label kStreams[0] and
-  // |number_of_audio_tracks| and |number_of_video_tracks| tracks and the
+  // `number_of_audio_tracks` and `number_of_video_tracks` tracks and the
   // corresponding SessionDescriptionInterface. The SessionDescriptionInterface
   // is returned and the MediaStream is stored in
-  // |reference_collection_|
+  // `reference_collection_`
   std::unique_ptr<SessionDescriptionInterface>
   CreateSessionDescriptionAndReference(size_t number_of_audio_tracks,
                                        size_t number_of_video_tracks) {
@@ -3217,7 +3217,7 @@ TEST_P(PeerConnectionInterfaceTest, CurrentAndPendingDescriptions) {
 // Tests that it won't crash when calling StartRtcEventLog or StopRtcEventLog
 // after the PeerConnection is closed.
 // This version tests the StartRtcEventLog version that receives an object
-// of type |RtcEventLogOutput|.
+// of type `RtcEventLogOutput`.
 TEST_P(PeerConnectionInterfaceTest,
        StartAndStopLoggingToOutputAfterPeerConnectionClosed) {
   CreatePeerConnection();
@@ -3473,7 +3473,7 @@ TEST_P(PeerConnectionInterfaceTest,
 }
 
 // Test that the audio and video content will be added to an offer if both
-// |offer_to_receive_audio| and |offer_to_receive_video| options are 1.
+// `offer_to_receive_audio` and `offer_to_receive_video` options are 1.
 TEST_P(PeerConnectionInterfaceTest, CreateOfferWithAudioVideoOptions) {
   RTCOfferAnswerOptions rtc_options;
   rtc_options.offer_to_receive_audio = 1;
@@ -3488,7 +3488,7 @@ TEST_P(PeerConnectionInterfaceTest, CreateOfferWithAudioVideoOptions) {
 }
 
 // Test that only audio content will be added to the offer if only
-// |offer_to_receive_audio| options is 1.
+// `offer_to_receive_audio` options is 1.
 TEST_P(PeerConnectionInterfaceTest, CreateOfferWithAudioOnlyOptions) {
   RTCOfferAnswerOptions rtc_options;
   rtc_options.offer_to_receive_audio = 1;
@@ -3502,7 +3502,7 @@ TEST_P(PeerConnectionInterfaceTest, CreateOfferWithAudioOnlyOptions) {
   EXPECT_EQ(nullptr, GetFirstVideoContent(offer->description()));
 }
 
-// Test that only video content will be added if only |offer_to_receive_video|
+// Test that only video content will be added if only `offer_to_receive_video`
 // options is 1.
 TEST_P(PeerConnectionInterfaceTest, CreateOfferWithVideoOnlyOptions) {
   RTCOfferAnswerOptions rtc_options;
@@ -3530,7 +3530,7 @@ TEST_P(PeerConnectionInterfaceTest, CreateOfferWithDefaultOfferAnswerOptions) {
   EXPECT_EQ(nullptr, GetFirstVideoContent(offer->description()));
 }
 
-// Test that if |ice_restart| is true, the ufrag/pwd will change, otherwise
+// Test that if `ice_restart` is true, the ufrag/pwd will change, otherwise
 // ufrag/pwd will be the same in the new offer.
 TEST_P(PeerConnectionInterfaceTest, CreateOfferWithIceRestart) {
   CreatePeerConnection();
@@ -3547,14 +3547,14 @@ TEST_P(PeerConnectionInterfaceTest, CreateOfferWithIceRestart) {
   auto pwd1 =
       offer->description()->GetTransportInfoByName(mid)->description.ice_pwd;
 
-  // |ice_restart| is false, the ufrag/pwd shouldn't change.
+  // `ice_restart` is false, the ufrag/pwd shouldn't change.
   CreateOfferWithOptionsAsLocalDescription(&offer, rtc_options);
   auto ufrag2 =
       offer->description()->GetTransportInfoByName(mid)->description.ice_ufrag;
   auto pwd2 =
       offer->description()->GetTransportInfoByName(mid)->description.ice_pwd;
 
-  // |ice_restart| is true, the ufrag/pwd should change.
+  // `ice_restart` is true, the ufrag/pwd should change.
   rtc_options.ice_restart = true;
   CreateOfferWithOptionsAsLocalDescription(&offer, rtc_options);
   auto ufrag3 =
@@ -3568,7 +3568,7 @@ TEST_P(PeerConnectionInterfaceTest, CreateOfferWithIceRestart) {
   EXPECT_NE(pwd2, pwd3);
 }
 
-// Test that if |use_rtp_mux| is true, the bundling will be enabled in the
+// Test that if `use_rtp_mux` is true, the bundling will be enabled in the
 // offer; if it is false, there won't be any bundle group in the offer.
 TEST_P(PeerConnectionInterfaceTest, CreateOfferWithRtpMux) {
   RTCOfferAnswerOptions rtc_options;

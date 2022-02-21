@@ -37,7 +37,7 @@ struct GradientAttributes {
     SVGSpreadMethodType spreadMethod() const { return static_cast<SVGSpreadMethodType>(m_spreadMethod); }
     SVGUnitTypes::SVGUnitType gradientUnits() const { return static_cast<SVGUnitTypes::SVGUnitType>(m_gradientUnits); }
     AffineTransform gradientTransform() const { return m_gradientTransform; }
-    const Gradient::ColorStopVector& stops() const { return m_stops; }
+    const GradientColorStops& stops() const { return m_stops; }
 
     void setSpreadMethod(SVGSpreadMethodType value)
     {
@@ -57,7 +57,7 @@ struct GradientAttributes {
         m_gradientTransformSet = true;
     }
 
-    void setStops(Gradient::ColorStopVector&& value)
+    void setStops(GradientColorStops&& value)
     {
         m_stops = WTFMove(value);
     }
@@ -70,7 +70,7 @@ struct GradientAttributes {
 private:
     // Properties
     AffineTransform m_gradientTransform;
-    Gradient::ColorStopVector m_stops;
+    GradientColorStops m_stops;
 
     unsigned m_spreadMethod : 2;
     unsigned m_gradientUnits : 2;
@@ -83,7 +83,7 @@ private:
 
 struct SameSizeAsGradientAttributes {
     AffineTransform a;
-    Gradient::ColorStopVector b;
+    GradientColorStops b;
     unsigned c : 7;
 };
 

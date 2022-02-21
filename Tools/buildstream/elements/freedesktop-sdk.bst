@@ -1,19 +1,11 @@
 kind: junction
-
 sources:
 - kind: git_tag
   url: gitlab_com:freedesktop-sdk/freedesktop-sdk.git
-  # Changed to track git commit from upstream bst
-  track: 'release/20.08'
-  ref: freedesktop-sdk-20.08.14-44-g58e021412f056f614a5f277c5852416fc3758edf
+  track: 'release/21.08'
+  ref: freedesktop-sdk-21.08.10-21-g7f2b952d70b0cd71ef9156983947b1dc713a393f
 - kind: patch
-  path: patches/nettle-no-debug.diff
-- kind: patch
-  path: patches/fdo-0001-pango-Bump-to-1.47.patch
-- kind: patch
-  path: patches/fdo-0001-dav1d-Bump-to-version-0.8.2.patch
-- kind: patch
-  path: patches/fdo-0001-libvpx-Enable-high-bit-depth-support.patch
+  path: patches/fdo-0001-Bump-libnice-to-current-git-master-HEAD.patch
 config:
   options:
     target_arch: '%{arch}'

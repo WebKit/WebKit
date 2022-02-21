@@ -30,7 +30,7 @@
 #include "InputMethodState.h"
 #include "PageClientImpl.h"
 
-#if USE(ATK)
+#if ENABLE(ACCESSIBILITY)
 #include <atk/atk.h>
 #endif
 
@@ -47,7 +47,7 @@ struct wpe_view_backend* WebPageProxy::viewBackend()
 
 void WebPageProxy::bindAccessibilityTree(const String& plugID)
 {
-#if USE(ATK)
+#if ENABLE(ACCESSIBILITY)
     auto* accessible = static_cast<PageClientImpl&>(pageClient()).accessible();
     atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().data()));
     atk_object_notify_state_change(accessible, ATK_STATE_TRANSIENT, FALSE);

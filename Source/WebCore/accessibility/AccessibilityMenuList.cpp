@@ -81,19 +81,9 @@ void AccessibilityMenuList::addChildren()
         return;
     }
 
-    m_haveChildren = true;
-    m_children.append(list);
-
+    m_childrenInitialized = true;
+    addChild(list);
     list->addChildren();
-}
-
-void AccessibilityMenuList::childrenChanged()
-{
-    if (m_children.isEmpty())
-        return;
-
-    ASSERT(m_children.size() == 1);
-    m_children[0]->childrenChanged();
 }
 
 bool AccessibilityMenuList::isCollapsed() const

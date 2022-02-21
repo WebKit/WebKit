@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Copyright 2015 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -183,7 +183,7 @@ def do_format(format_data):
         'mipAutoGen': macro_prefix + 'MIPGEN'
     }
 
-    for format_name, format_support in sorted(format_data.iteritems()):
+    for format_name, format_support in sorted(format_data.items()):
 
         always_supported = set()
         never_supported = set()
@@ -198,7 +198,7 @@ def do_format(format_data):
         fl_10_0_check_10_1_supported = set()
         fl_10_0_check_11_0_supported = set()
 
-        for json_flag, support in format_support.iteritems():
+        for json_flag, support in sorted(format_support.items()):
 
             d3d_flag = [json_flag_to_d3d[json_flag]]
 
@@ -306,9 +306,9 @@ def main():
         outputs = ['dxgi_support_table_autogen.cpp']
 
         if sys.argv[1] == 'inputs':
-            print ','.join(inputs)
+            print(','.join(inputs))
         elif sys.argv[1] == 'outputs':
-            print ','.join(outputs)
+            print(','.join(outputs))
         else:
             print('Invalid script parameters')
             return 1

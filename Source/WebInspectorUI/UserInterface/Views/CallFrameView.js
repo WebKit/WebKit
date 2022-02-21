@@ -38,7 +38,7 @@ WI.CallFrameView = class CallFrameView extends WI.Object
         var sourceCodeLocation = callFrame.sourceCodeLocation;
         if (sourceCodeLocation) {
             if (indicateIfBlackboxed)
-                callFrameElement.classList.toggle("blackboxed", WI.debuggerManager.blackboxDataForSourceCode(callFrame.sourceCodeLocation.sourceCode));
+                callFrameElement.classList.toggle("blackboxed", callFrame.blackboxed);
 
             WI.linkifyElement(callFrameElement, sourceCodeLocation, {
                 ignoreNetworkTab: true,
@@ -69,7 +69,7 @@ WI.CallFrameView = class CallFrameView extends WI.Object
             var imgElement = document.createElement("img");
             imgElement.classList.add("icon");
 
-            titleElement.append(imgElement, callFrame.functionName || WI.UIString("(anonymous function)"));
+            titleElement.append(imgElement, callFrame.displayName);
         }
 
         callFrameElement.append(titleElement, subtitleElement);

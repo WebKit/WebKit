@@ -63,7 +63,7 @@ class CoreAudioBase : public IAudioSessionEvents {
 
   // Callback definition for notifications of run-time error messages. It can
   // be called e.g. when an active audio device is removed and an audio stream
-  // is disconnected (|error| is then set to kStreamDisconnected). Both input
+  // is disconnected (`error` is then set to kStreamDisconnected). Both input
   // and output clients implements OnErrorCallback() and will trigger an
   // internal restart sequence for kStreamDisconnected.
   // This method is currently always called on the audio thread.
@@ -103,13 +103,13 @@ class CoreAudioBase : public IAudioSessionEvents {
   // Releases all allocated COM resources in the base class.
   void ReleaseCOMObjects();
 
-  // Returns number of active devices given the specified |direction_| set
+  // Returns number of active devices given the specified `direction_` set
   // by the parent (input or output).
   int NumberOfActiveDevices() const;
 
   // Returns total number of enumerated audio devices which is the sum of all
   // active devices plus two extra (one default and one default
-  // communications). The value in |direction_| determines if capture or
+  // communications). The value in `direction_` determines if capture or
   // render devices are counted.
   int NumberOfEnumeratedDevices() const;
 

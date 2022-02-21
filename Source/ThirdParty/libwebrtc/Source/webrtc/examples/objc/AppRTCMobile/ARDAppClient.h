@@ -48,7 +48,7 @@ typedef NS_ENUM(NSInteger, ARDAppClientState) {
 
 - (void)appClient:(ARDAppClient *)client didError:(NSError *)error;
 
-- (void)appClient:(ARDAppClient *)client didGetStats:(NSArray *)stats;
+- (void)appClient:(ARDAppClient *)client didGetStats:(RTC_OBJC_TYPE(RTCStatisticsReport) *)stats;
 
 @optional
 - (void)appClient:(ARDAppClient *)client
@@ -63,7 +63,7 @@ typedef NS_ENUM(NSInteger, ARDAppClientState) {
 // class should only be called from the main queue.
 @interface ARDAppClient : NSObject
 
-// If |shouldGetStats| is true, stats will be reported in 1s intervals through
+// If `shouldGetStats` is true, stats will be reported in 1s intervals through
 // the delegate.
 @property(nonatomic, assign) BOOL shouldGetStats;
 @property(nonatomic, readonly) ARDAppClientState state;
@@ -75,8 +75,8 @@ typedef NS_ENUM(NSInteger, ARDAppClientState) {
 - (instancetype)initWithDelegate:(id<ARDAppClientDelegate>)delegate;
 
 // Establishes a connection with the AppRTC servers for the given room id.
-// |settings| is an object containing settings such as video codec for the call.
-// If |isLoopback| is true, the call will connect to itself.
+// `settings` is an object containing settings such as video codec for the call.
+// If `isLoopback` is true, the call will connect to itself.
 - (void)connectToRoomWithId:(NSString *)roomId
                    settings:(ARDSettingsModel *)settings
                  isLoopback:(BOOL)isLoopback;

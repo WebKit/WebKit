@@ -822,8 +822,10 @@ Synchronousness AbstractModuleRecord::link(JSGlobalObject* globalObject, JSValue
     if (auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(vm, this))
         return jsModuleRecord->link(globalObject, scriptFetcher);
 #if ENABLE(WEBASSEMBLY)
+    // WebAssembly module imports and exports are set up in the module record's
+    // evaluate() step. At this point, imports are just initialized as TDZ.
     if (auto* wasmModuleRecord = jsDynamicCast<WebAssemblyModuleRecord*>(vm, this))
-        return wasmModuleRecord->link(globalObject, scriptFetcher, nullptr, Wasm::CreationMode::FromModuleLoader);
+        return wasmModuleRecord->link(globalObject, scriptFetcher);
 #endif
     RELEASE_ASSERT_NOT_REACHED();
     return Synchronousness::Sync;
@@ -832,11 +834,21 @@ Synchronousness AbstractModuleRecord::link(JSGlobalObject* globalObject, JSValue
 JS_EXPORT_PRIVATE JSValue AbstractModuleRecord::evaluate(JSGlobalObject* globalObject, JSValue sentValue, JSValue resumeMode)
 {
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(vm, this))
-        return jsModuleRecord->evaluate(globalObject, sentValue, resumeMode);
+        RELEASE_AND_RETURN(scope, jsModuleRecord->evaluate(globalObject, sentValue, resumeMode));
 #if ENABLE(WEBASSEMBLY)
-    if (auto* wasmModuleRecord = jsDynamicCast<WebAssemblyModuleRecord*>(vm, this))
-        return wasmModuleRecord->evaluate(globalObject);
+    if (auto* wasmModuleRecord = jsDynamicCast<WebAssemblyModuleRecord*>(vm, this)) {
+        // WebAssembly imports need to be supplied during evaluation so that, e.g.,
+        // JS module exports are actually available to be read and installed as import
+        // bindings.
+        wasmModuleRecord->initializeImports(globalObject, nullptr, Wasm::CreationMode::FromModuleLoader);
+        RETURN_IF_EXCEPTION(scope, jsUndefined());
+        wasmModuleRecord->initializeExports(globalObject);
+        RETURN_IF_EXCEPTION(scope, jsUndefined());
+        RELEASE_AND_RETURN(scope, wasmModuleRecord->evaluate(globalObject));
+    }
 #endif
     RELEASE_ASSERT_NOT_REACHED();
     return jsUndefined();

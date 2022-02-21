@@ -65,9 +65,24 @@ static NSMenuItem *findMenuItemWithTitle(NSPopUpButton *button, NSString *title)
     return static_cast<NSBox *>(result);
 }
 
+- (NSPopUpButton *)underlineToolbarButton
+{
+    return (NSPopUpButton *)[self _toolbarItemWithIdentifier:@"NSFontPanelUnderlineToolbarItem"].view;
+}
+
+- (NSPopUpButton *)strikeThroughToolbarButton
+{
+    return (NSPopUpButton *)[self _toolbarItemWithIdentifier:@"NSFontPanelStrikethroughToolbarItem"].view;
+}
+
+- (NSColorWell *)foregroundColorToolbarColorWell
+{
+    return (NSColorWell *)[self _toolbarItemWithIdentifier:@"NSFontPanelTextColorToolbarItem"].view;
+}
+
 - (void)chooseUnderlineMenuItemWithTitle:(NSString *)itemTitle
 {
-    NSPopUpButton *button = (NSPopUpButton *)[self _toolbarItemWithIdentifier:@"NSFontPanelUnderlineToolbarItem"].view;
+    NSPopUpButton *button = [self underlineToolbarButton];
     [button selectItem:findMenuItemWithTitle(button, itemTitle)];
     [self.fontEffectsBox _openEffectsButton:button];
     [self _didChangeAttributes];
@@ -75,7 +90,7 @@ static NSMenuItem *findMenuItemWithTitle(NSPopUpButton *button, NSString *title)
 
 - (void)chooseStrikeThroughMenuItemWithTitle:(NSString *)itemTitle
 {
-    NSPopUpButton *button = (NSPopUpButton *)[self _toolbarItemWithIdentifier:@"NSFontPanelStrikethroughToolbarItem"].view;
+    NSPopUpButton *button = [self strikeThroughToolbarButton];
     [button selectItem:findMenuItemWithTitle(button, itemTitle)];
     [self.fontEffectsBox _openEffectsButton:button];
     [self _didChangeAttributes];
@@ -98,9 +113,19 @@ static NSMenuItem *findMenuItemWithTitle(NSPopUpButton *button, NSString *title)
     return (NSSlider *)findSubviewOfClass([self _toolbarItemWithIdentifier:@"NSFontPanelShadowOpacityToolbarItem"].view, NSSlider.class);
 }
 
+- (NSSlider *)shadowLengthSlider
+{
+    return (NSSlider *)findSubviewOfClass([self _toolbarItemWithIdentifier:@"NSFontPanelShadowOffsetToolbarItem"].view, NSSlider.class);
+}
+
 - (NSButton *)shadowToggleButton
 {
     return (NSButton *)[self _toolbarItemWithIdentifier:@"NSFontPanelShadowToggleToolbarItem"].view;
+}
+
+- (BOOL)hasShadow
+{
+    return self.shadowToggleButton.state == NSControlStateValueOn;
 }
 
 - (void)toggleShadow
@@ -108,6 +133,16 @@ static NSMenuItem *findMenuItemWithTitle(NSPopUpButton *button, NSString *title)
     NSButton *shadowToggleButton = self.shadowToggleButton;
     shadowToggleButton.state = shadowToggleButton.state == NSControlStateValueOff ? NSControlStateValueOn : NSControlStateValueOff;
     [self _didChangeAttributes];
+}
+
+- (double)shadowLength
+{
+    return self.shadowLengthSlider.doubleValue;
+}
+
+- (void)setShadowLength:(double)shadowLength
+{
+    self.shadowLengthSlider.doubleValue = shadowLength;
 }
 
 - (double)shadowOpacity
@@ -141,6 +176,23 @@ static NSMenuItem *findMenuItemWithTitle(NSPopUpButton *button, NSString *title)
             return item;
     }
     return nil;
+}
+
+- (BOOL)hasUnderline
+{
+    NSMenuItem *singleUnderlineMenuItem = [self.underlineToolbarButton itemAtIndex:2];
+    return singleUnderlineMenuItem.state == NSControlStateValueOn;
+}
+
+- (BOOL)hasStrikeThrough
+{
+    NSMenuItem *singleStrikeThroughMenuItem = [self.strikeThroughToolbarButton itemAtIndex:2];
+    return singleStrikeThroughMenuItem.state == NSControlStateValueOn;
+}
+
+- (NSColor *)foregroundColor
+{
+    return self.foregroundColorToolbarColorWell.color;
 }
 
 @end

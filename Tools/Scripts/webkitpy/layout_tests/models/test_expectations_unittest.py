@@ -199,7 +199,7 @@ class MiscTests(Base):
     def test_parse_warnings_are_logged_if_not_in_lint_mode(self):
         with OutputCapture() as captured:
             self.parse_exp('-- this should be a syntax error', is_lint_mode=False)
-        self.assertNotEquals(captured.root.log.getvalue(), '')
+        self.assertNotEqual(captured.root.log.getvalue(), '')
 
     def test_error_on_different_platform(self):
         # parse_exp uses a Windows port. Assert errors on Mac show up in lint mode.

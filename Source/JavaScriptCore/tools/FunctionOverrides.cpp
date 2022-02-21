@@ -31,6 +31,7 @@
 #include <string.h>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SafeStrerror.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
@@ -283,7 +284,7 @@ void FunctionOverrides::parseOverridesInFile(const char* fileName)
     
     int result = fclose(file);
     if (result)
-        dataLogF("Failed to close file %s: %s\n", fileName, strerror(errno));
+        dataLogF("Failed to close file %s: %s\n", fileName, safeStrerror(errno).data());
 }
     
 } // namespace JSC

@@ -17,12 +17,5 @@ function FACTORY() {
 
 var obj = new FACTORY("", 1, 2, "A");
 
-//CHECK#1
-if (this["shifted"] !== "42") {
-  throw new Test262Error('#1: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
-}
-
-//CHECK#2
-if (typeof obj.shifted !== "undefined") {
-  throw new Test262Error('#2: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
-}
+assert.sameValue(this["shifted"], "42", 'The value of this["shifted"] is expected to be "42"');
+assert.sameValue(typeof obj.shifted, "undefined", 'The value of `typeof obj.shifted` is expected to be "undefined"');

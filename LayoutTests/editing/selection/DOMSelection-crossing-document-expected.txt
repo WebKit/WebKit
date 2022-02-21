@@ -8,7 +8,7 @@ PASS mainSel.anchorNode is null
 PASS foreignSel.anchorNode is null
 PASS mainSel.anchorNode is null
 PASS foreignSel.anchorNode is null
-PASS mainSel.anchorNode is null
+PASS mainSel.anchorNode is not null
 PASS foreignSel.anchorNode is null
 PASS mainSel.anchorNode is null
 PASS foreignSel.anchorNode is null

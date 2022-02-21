@@ -102,7 +102,7 @@ static NSArray<NSString *> *controlArray()
     self.wantsLayer = YES;
     _cachedIcons = adoptNS([[NSMutableDictionary alloc] init]);
     _pluginIdentifier = pluginIdentifier;
-    _page = makeWeakPtr(page);
+    _page = page;
     _deviceScaleFactor = page.deviceScaleFactor();
     _visible = YES;
     [self _setupLayer:self.layer];
@@ -269,7 +269,7 @@ static NSArray<NSString *> *controlArray()
     _layer = adoptNS([[CALayer alloc] init]);
     [_layer setCornerRadius:layerCornerRadius];
     
-    [_layer setBackgroundColor:WebCore::cachedCGColor({ WebCore::SRGBA<float>(layerGrayComponent, layerGrayComponent, layerGrayComponent) })];
+    [_layer setBackgroundColor:WebCore::cachedCGColor({ WebCore::SRGBA<float>(layerGrayComponent, layerGrayComponent, layerGrayComponent) }).get()];
     [self _setLayerOpacity:layerAlpha];
     
     [self _loadIconImages];

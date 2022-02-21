@@ -28,44 +28,45 @@
 
 #if ENABLE(VIDEO)
 
-#include "HTMLMediaElement.h"
+#include "Document.h"
 #include "InbandDataTextTrack.h"
 #include "InbandGenericTextTrack.h"
 #include "InbandTextTrackPrivate.h"
 #include "InbandWebVTTTextTrack.h"
+#include "TextTrackClient.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InbandTextTrack);
 
-Ref<InbandTextTrack> InbandTextTrack::create(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
+Ref<InbandTextTrack> InbandTextTrack::create(Document& document, InbandTextTrackPrivate& trackPrivate)
 {
     switch (trackPrivate.cueFormat()) {
     case InbandTextTrackPrivate::CueFormat::Data:
-        return InbandDataTextTrack::create(document, client, trackPrivate);
+        return InbandDataTextTrack::create(document, trackPrivate);
     case InbandTextTrackPrivate::CueFormat::Generic:
-        return InbandGenericTextTrack::create(document, client, trackPrivate);
+        return InbandGenericTextTrack::create(document, trackPrivate);
     case InbandTextTrackPrivate::CueFormat::WebVTT:
-        return InbandWebVTTTextTrack::create(document, client, trackPrivate);
+        return InbandWebVTTTextTrack::create(document, trackPrivate);
     }
     ASSERT_NOT_REACHED();
-    auto textTrack = InbandDataTextTrack::create(document, client, trackPrivate);
+    auto textTrack = InbandDataTextTrack::create(document, trackPrivate);
     textTrack->suspendIfNeeded();
     return textTrack;
 }
 
-InbandTextTrack::InbandTextTrack(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
-    : TextTrack(&document, &client, emptyAtom(), trackPrivate.id(), trackPrivate.label(), trackPrivate.language(), InBand)
+InbandTextTrack::InbandTextTrack(Document& document, InbandTextTrackPrivate& trackPrivate)
+    : TextTrack(&document, emptyAtom(), trackPrivate.id(), trackPrivate.label(), trackPrivate.language(), InBand)
     , m_private(trackPrivate)
 {
-    m_private->setClient(this);
+    m_private->setClient(*this);
     updateKindFromPrivate();
 }
 
 InbandTextTrack::~InbandTextTrack()
 {
-    m_private->setClient(nullptr);
+    m_private->clearClient();
 }
 
 void InbandTextTrack::setPrivate(InbandTextTrackPrivate& trackPrivate)
@@ -73,9 +74,9 @@ void InbandTextTrack::setPrivate(InbandTextTrackPrivate& trackPrivate)
     if (m_private.ptr() == &trackPrivate)
         return;
 
-    m_private->setClient(nullptr);
+    m_private->clearClient();
     m_private = trackPrivate;
-    m_private->setClient(this);
+    m_private->setClient(*this);
 
     setModeInternal(mode());
     updateKindFromPrivate();
@@ -159,10 +160,9 @@ void InbandTextTrack::languageChanged(const AtomString& language)
 
 void InbandTextTrack::willRemove()
 {
-    auto element = makeRefPtr(mediaElement().get());
-    if (!element)
-        return;
-    element->removeTextTrack(*this);
+    m_clients.forEach([&] (auto& client) {
+        client.willRemoveTextTrack(*this);
+    });
 }
 
 void InbandTextTrack::updateKindFromPrivate()
@@ -195,14 +195,6 @@ void InbandTextTrack::updateKindFromPrivate()
 MediaTime InbandTextTrack::startTimeVariance() const
 {
     return m_private->startTimeVariance();
-}
-
-void InbandTextTrack::setMediaElement(WeakPtr<HTMLMediaElement> element)
-{
-    TrackBase::setMediaElement(element);
-#if !RELEASE_LOG_DISABLED
-    m_private->setLogger(logger(), logIdentifier());
-#endif
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -111,6 +111,8 @@ public:
 #if PLATFORM(MAC)
         m_eventNumber = webEvent.eventNumber();
         m_menuTypeForEvent = webEvent.menuTypeForEvent();
+#elif PLATFORM(GTK)
+        m_isTouchEvent = webEvent.isTouchEvent();
 #endif
         m_modifierFlags = 0;
         if (webEvent.shiftKey())
@@ -169,6 +171,8 @@ public:
         m_hasPreciseScrollingDeltas = webEvent.hasPreciseScrollingDeltas();
 #endif
 #if PLATFORM(COCOA)
+        m_ioHIDEventTimestamp = webEvent.ioHIDEventTimestamp();
+        m_rawPlatformDelta = webEvent.rawPlatformDelta();
         m_scrollCount = webEvent.scrollCount();
         m_unacceleratedScrollingDeltaX = webEvent.unacceleratedScrollingDelta().width();
         m_unacceleratedScrollingDeltaY = webEvent.unacceleratedScrollingDelta().height();

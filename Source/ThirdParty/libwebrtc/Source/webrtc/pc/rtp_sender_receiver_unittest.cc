@@ -494,7 +494,7 @@ class RtpSenderReceiverTest
   }
 
   // Check that minimum Jitter Buffer delay is propagated to the underlying
-  // |media_channel|.
+  // `media_channel`.
   void VerifyRtpReceiverDelayBehaviour(cricket::Delayable* media_channel,
                                        RtpReceiverInterface* receiver,
                                        uint32_t ssrc) {
@@ -509,13 +509,13 @@ class RtpSenderReceiverTest
   rtc::Thread* const network_thread_;
   rtc::Thread* const worker_thread_;
   webrtc::RtcEventLogNull event_log_;
-  // The |rtp_dtls_transport_| and |rtp_transport_| should be destroyed after
-  // the |channel_manager|.
+  // The `rtp_dtls_transport_` and `rtp_transport_` should be destroyed after
+  // the `channel_manager`.
   std::unique_ptr<cricket::DtlsTransportInternal> rtp_dtls_transport_;
   std::unique_ptr<webrtc::RtpTransportInternal> rtp_transport_;
   std::unique_ptr<webrtc::VideoBitrateAllocatorFactory>
       video_bitrate_allocator_factory_;
-  // |media_engine_| is actually owned by |channel_manager_|.
+  // `media_engine_` is actually owned by `channel_manager_`.
   cricket::FakeMediaEngine* media_engine_;
   std::unique_ptr<cricket::ChannelManager> channel_manager_;
   cricket::FakeCall fake_call_;
@@ -534,28 +534,28 @@ class RtpSenderReceiverTest
   rtc::UniqueRandomIdGenerator ssrc_generator_;
 };
 
-// Test that |voice_channel_| is updated when an audio track is associated
+// Test that `voice_channel_` is updated when an audio track is associated
 // and disassociated with an AudioRtpSender.
 TEST_F(RtpSenderReceiverTest, AddAndDestroyAudioRtpSender) {
   CreateAudioRtpSender();
   DestroyAudioRtpSender();
 }
 
-// Test that |video_channel_| is updated when a video track is associated and
+// Test that `video_channel_` is updated when a video track is associated and
 // disassociated with a VideoRtpSender.
 TEST_F(RtpSenderReceiverTest, AddAndDestroyVideoRtpSender) {
   CreateVideoRtpSender();
   DestroyVideoRtpSender();
 }
 
-// Test that |voice_channel_| is updated when a remote audio track is
+// Test that `voice_channel_` is updated when a remote audio track is
 // associated and disassociated with an AudioRtpReceiver.
 TEST_F(RtpSenderReceiverTest, AddAndDestroyAudioRtpReceiver) {
   CreateAudioRtpReceiver();
   DestroyAudioRtpReceiver();
 }
 
-// Test that |video_channel_| is updated when a remote video track is
+// Test that `video_channel_` is updated when a remote video track is
 // associated and disassociated with a VideoRtpReceiver.
 TEST_F(RtpSenderReceiverTest, AddAndDestroyVideoRtpReceiver) {
   CreateVideoRtpReceiver();
@@ -1260,6 +1260,30 @@ TEST_F(RtpSenderReceiverTest, VideoSenderDetectInvalidScaleResolutionDownBy) {
   DestroyVideoRtpSender();
 }
 
+TEST_F(RtpSenderReceiverTest, VideoSenderCanSetNumTemporalLayers) {
+  CreateVideoRtpSender();
+
+  RtpParameters params = video_rtp_sender_->GetParameters();
+  params.encodings[0].num_temporal_layers = 2;
+
+  EXPECT_TRUE(video_rtp_sender_->SetParameters(params).ok());
+  params = video_rtp_sender_->GetParameters();
+  EXPECT_EQ(2, params.encodings[0].num_temporal_layers);
+
+  DestroyVideoRtpSender();
+}
+
+TEST_F(RtpSenderReceiverTest, VideoSenderDetectInvalidNumTemporalLayers) {
+  CreateVideoRtpSender();
+
+  RtpParameters params = video_rtp_sender_->GetParameters();
+  params.encodings[0].num_temporal_layers = webrtc::kMaxTemporalStreams + 1;
+  RTCError result = video_rtp_sender_->SetParameters(params);
+  EXPECT_EQ(RTCErrorType::INVALID_RANGE, result.type());
+
+  DestroyVideoRtpSender();
+}
+
 TEST_F(RtpSenderReceiverTest, VideoSenderCanSetMaxFramerate) {
   CreateVideoRtpSender();
 
@@ -1423,7 +1447,7 @@ TEST_F(RtpSenderReceiverTest, PropagatesVideoTrackContentHint) {
 
   video_track_->set_enabled(true);
 
-  // |video_track_| is not screencast by default.
+  // `video_track_` is not screencast by default.
   EXPECT_EQ(false, video_media_channel_->options().is_screencast);
   // No content hint should be set by default.
   EXPECT_EQ(VideoTrackInterface::ContentHint::kNone,
@@ -1453,7 +1477,7 @@ TEST_F(RtpSenderReceiverTest,
 
   video_track_->set_enabled(true);
 
-  // |video_track_| with a screencast source should be screencast by default.
+  // `video_track_` with a screencast source should be screencast by default.
   EXPECT_EQ(true, video_media_channel_->options().is_screencast);
   // No content hint should be set by default.
   EXPECT_EQ(VideoTrackInterface::ContentHint::kNone,
@@ -1518,8 +1542,8 @@ TEST_F(RtpSenderReceiverTest, VideoSenderDoesNotHaveDtmfSender) {
   EXPECT_EQ(nullptr, video_rtp_sender_->GetDtmfSender());
 }
 
-// Test that the DTMF sender is really using |voice_channel_|, and thus returns
-// true/false from CanSendDtmf based on what |voice_channel_| returns.
+// Test that the DTMF sender is really using `voice_channel_`, and thus returns
+// true/false from CanSendDtmf based on what `voice_channel_` returns.
 TEST_F(RtpSenderReceiverTest, CanInsertDtmf) {
   AddDtmfCodec();
   CreateAudioRtpSender();

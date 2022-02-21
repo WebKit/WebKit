@@ -1,3 +1,1955 @@
+2022-02-20  Brandon Stewart  <brandonstewart@apple.com>
+
+        Generate compile_commands.json on macOS Builds
+        https://bugs.webkit.org/show_bug.cgi?id=235686
+
+        Reviewed by Saam Barati.
+
+        Add support for generating compile_commands.json file to WebKit.
+
+        compile_commands.json can be used by tools like clangd to provide code complete,
+        refactoring, formatting, and cross references.
+        
+        Steps to generate the compile commands file:
+        make d EXPORT_COMPILE_COMMANDS=YES
+        generate-compile-commands WebKitBuild/Debug
+
+        * Makefile.shared:
+
+2022-02-19  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][GTK] Enable Thunder and remove old Clearkey CDM/Decryptor
+        https://bugs.webkit.org/show_bug.cgi?id=235492
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Enable Thunder in developer builds, this is now needed for the clearkey EME layout tests.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2022-02-18  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r290149.
+
+        Broke Debug Builds.
+
+        Reverted changeset:
+
+        "Generate compile_commands.json on macOS Builds"
+        https://bugs.webkit.org/show_bug.cgi?id=235686
+        https://commits.webkit.org/r290149
+
+2022-02-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace trac URLs in Introduction.md by equivalent GitHub URLs
+        https://bugs.webkit.org/show_bug.cgi?id=236826
+
+        Reviewed by Sihui Liu.
+
+        Replaced track links by equivalent Github links in Introduction.md.
+
+        Also replaced an example of a reference test since the previously referenced test
+        had been converted to a manual test, and updated documentations around preferences
+        as they had been refactored since this was originally written. 
+
+        * Introduction.md:
+
+2022-02-18  Brandon Stewart  <brandonstewart@apple.com>
+
+        Generate compile_commands.json on macOS Builds
+        https://bugs.webkit.org/show_bug.cgi?id=235686
+
+        Reviewed by Saam Barati.
+
+        Add support for generating compile_commands.json file to WebKit.
+        
+        compile_commands.json can be used by tools like clangd to provide code complete,
+        refactoring, formatting, and cross references.
+
+        Steps to generate the compile commands file:
+        make r EXPORT_COMPILE_COMMANDS=YES
+        generate-compile-commands WebKitBuild/Release
+
+        * Makefile.shared:
+
+2022-02-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Cannot find OpenGL when system provides opengl.pc instead of gl.pc
+        https://bugs.webkit.org/show_bug.cgi?id=236592
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/FindOpenGL.cmake: Rewrite to use imported targets, try the "opengl" and "glx"
+        pkg-config modules first, otherwise keep the existing logic that tried the "gl" pkg-config
+        module with fallbacks to find_path/find_library.
+        * Source/cmake/OptionsGTK.cmake: Check for the presence of the OpenGL::GLX target instead of
+        te GLX_FOUND variable.
+
+2022-02-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r289949.
+        https://bugs.webkit.org/show_bug.cgi?id=236757
+
+        Breaks WPE builds with -DUSE_ANGLE_WEBGL=ON
+
+        Reverted changeset:
+
+        "[CMake] Cannot find OpenGL when system provides opengl.pc
+        instead of gl.pc"
+        https://bugs.webkit.org/show_bug.cgi?id=236592
+        https://commits.webkit.org/r289949
+
+2022-02-16  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][PlayStation] Add find module for WPE Backend for PlayStation
+        https://bugs.webkit.org/show_bug.cgi?id=236721
+
+        Reviewed by Michael Catanzaro.
+
+        Add the find module to detect the presence of the WPE Backend for PlayStation platforms.
+        Currently its not required to have the WPE Backend so its presence is conditional. When
+        there USE(WPE_BACKEND_PLAYSTATION) will be true.
+
+        * Source/cmake/FindWPEBackendPlayStation.cmake: Added.
+        * Source/cmake/OptionsPlayStation.cmake:
+
+2022-02-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Cannot find OpenGL when system provides opengl.pc instead of gl.pc
+        https://bugs.webkit.org/show_bug.cgi?id=236592
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/FindOpenGL.cmake: Rewrite to use imported targets, try the "opengl" and "glx"
+        pkg-config modules first, otherwise keep the existing logic that tried the "gl" pkg-config
+        module with fallbacks to find_path/find_library.
+        * Source/cmake/OptionsGTK.cmake: Check for the presence of the OpenGL::GLX target instead of
+        te GLX_FOUND variable.
+
+2022-02-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Checks uses of execute_process() for correct command splitting
+        https://bugs.webkit.org/show_bug.cgi?id=236366
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/FindGObjectIntrospection.cmake: Remove macro _GIR_GET_PKGCONFIG_VAR, which used
+        execute_process(), in favor of pkg_get_variable(), which has been supported since CMake 3.4
+
+2022-02-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Check for MAP_ALIGNED support
+        https://bugs.webkit.org/show_bug.cgi?id=236522
+
+        Reviewed by Keith Miller.
+
+        Add a symbol check for MAP_ALIGNED in the CMake.
+
+        * Source/cmake/OptionsCommon.cmake:
+
+2022-02-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Use ld.lld by default for development builds where available
+        https://bugs.webkit.org/show_bug.cgi?id=235979
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsCommon.cmake: Enable USE_LD_LLD by default for developers builds
+        when ld.lld is available. While at it, improve the match on LD_VERSION to be more robust.
+
+2022-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, add an alternate email address.
+
+        * metadata/contributors.json:
+
+2022-02-10  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Perform a full build when analyzing
+        https://bugs.webkit.org/show_bug.cgi?id=236421
+
+        Reviewed by Alexey Proskuryakov.
+
+        `xcodebuild analyze` does just enough work to run the analyzer on each target, and doesn't
+        appear to run build phases that only impact consumers of the target. In particular, it
+        doesn't copy framework headers.
+        
+        Fix by telling xcodebuild to build _and_ analyze at once. AFAICT, this is exactly what
+        Xcode's Product > Analyze command does.
+
+        * Makefile.shared: s/analyze/build analyze
+
+2022-02-10  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Improve device detection in the GbmDevice
+        https://bugs.webkit.org/show_bug.cgi?id=236436
+
+        Reviewed by Chris Lord.
+
+        * Source/cmake/OptionsGTK.cmake: Search for drm and gbm libraries
+        when compiling WebGL ANGLE support.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
+2022-02-10  Tim Nguyen  <ntim@apple.com>
+
+        Unreviewed, update my (Tim Nguyen) status to reviewer
+
+        * metadata/contributors.json:
+
+2022-02-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        SharedMemoryUnix should use SHM_ANON when available
+        https://bugs.webkit.org/show_bug.cgi?id=236416
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsCommon.cmake: Check for SHM_ANON.
+
+2022-02-09  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] REGRESSION(r288994): Setting multiple values in LDFLAGS causes incorrect linker detection
+        https://bugs.webkit.org/show_bug.cgi?id=236365
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/OptionsCommon.cmake: Use separate_arguments() to turn plain command strings
+        into lists of strings, which can then be passed down to execute_process() as it knows how
+        to handle lists properly.
+
+2022-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.35.3 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
+2022-02-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Allow repositories to declare their bug trackers
+        https://bugs.webkit.org/show_bug.cgi?id=236306
+        <rdar://problem/88633018>
+
+        Reviewed by Dewei Zhu.
+
+        * metadata/trackers.json: Added.
+
+2022-02-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Running distcheck with USE_SOUP2=OFF fails to install documentation
+        https://bugs.webkit.org/show_bug.cgi?id=236235
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/PlatformWPE.cmake: Use WPE_API_DOC_VERSION instead of WPE_API_VERSION for the documentation.
+
+2022-02-07  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] REGRESSION(r288994): Linker does not get passed --disable-new-dtags
+        https://bugs.webkit.org/show_bug.cgi?id=236205
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsCommon.cmake: Arrange passing --disable-new-dtags to linkers that
+        are known to support the option. While at it, reorganize a bit how detected linker/archiver
+        features are printed out for better readability.
+
+2022-02-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Two bopomofo tone marks are not moved to the correct place in vertical text with a particular bopomofo font
+        https://bugs.webkit.org/show_bug.cgi?id=235257
+        <rdar://problem/87625596>
+
+        Reviewed by Darin Adler.
+
+        Thank you so much to Bobby Tung and But Ko for reporting this bug and providing a test font for it!!!
+
+        * metadata/contributors.json:
+
+2022-02-03  Elliott Williams  <emw@apple.com>
+
+        Add Elliott Williams to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2022-01-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Configure default branch management 
+        https://bugs.webkit.org/show_bug.cgi?id=235378
+        <rdar://problem/87989533>
+
+        Reviewed by Dewei Zhu.
+
+        * metadata/project_config: Added.
+
+2022-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.35.2 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
+2022-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK] Apply the same cmake changes of r289029 to GTK port
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2022-02-02  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE] Fix for non-unified builds with ACCESSIBILITY=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=236024
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2022-02-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Stop defaulting to ld.gold
+        https://bugs.webkit.org/show_bug.cgi?id=235476
+
+        Reviewed by Michael Catanzaro.
+
+        Remove the USE_LD_GOLD option, and let the build use by default the system linker.
+
+        The output from running the linker with -Wl,--version is matched to determine which linker
+        is currently in use, and set variables LD_SUPPORTS_<feature> accordingly. This is needed
+        because not all of them support certain features and after a few attempts at doing feature
+        checks it was becoming clear that on one hand the checks were getting gnarly, and on the
+        other hand vetting certain linkers provides a stronger guarantee of sucessful builds.
+
+        Similarly, extend the check used to determine whether the static library archiver supports
+        thin archivers to cover the one included with LLVM (llvm-ar), and enable usage of think
+        archivers if they can be both created by the archiver and consumed by the linker. Previously
+        the build system was enabling thin archives without knowing whether the linker would succeed
+        using them.
+
+        * Source/cmake/OptionsCommon.cmake:
+
+2022-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Switch to use ATSPI instead of ATK
+        https://bugs.webkit.org/show_bug.cgi?id=235942
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use ATSPI by default.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2022-02-01  Tim Nguyen  <ntim@apple.com>
+
+        Entirely remove support for -apple-trailing-word
+        https://bugs.webkit.org/show_bug.cgi?id=234672
+
+        Reviewed by Simon Fraser.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
+2022-01-28  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Small corrections to build-webkit and Makefile for workspace builds
+        https://bugs.webkit.org/show_bug.cgi?id=235747
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Makefile: Set SCRIPTS_PATH correctly from the root of the repo
+
+2022-01-28  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE] Build error with ACCESSIBILITY=OFF after r288731
+        https://bugs.webkit.org/show_bug.cgi?id=235764
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2022-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][a11y] Add option to build with ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=235701
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2022-01-27  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Do not require GNU Gold usage to enable DEBUG_FISSION
+        https://bugs.webkit.org/show_bug.cgi?id=235737
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsCommon.cmake: Allow enabling DEBUG_FISSION with any linker.
+
+2022-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add .clangd similar to .ccls
+        https://bugs.webkit.org/show_bug.cgi?id=235743
+
+        Reviewed by Saam Barati.
+
+        This patch adds .clangd local configuration, which is similar to .ccls.
+
+        * .clangd: Added.
+
+2022-01-26  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Pass -pipe to compilers that support it
+        https://bugs.webkit.org/show_bug.cgi?id=235641
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/WebKitCompilerFlags.cmake: Add -pipe to compiler options where supported.
+
+2022-01-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add another test for locale-specific shaping
+        https://bugs.webkit.org/show_bug.cgi?id=235558
+
+        Reviewed by Darin Adler.
+
+        Thanks so much to Just van Rossum for contributing the test font!!!
+
+        * metadata/contributors.json:
+
+2022-01-20  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Build via the workspace with USE_WORKSPACE=YES
+        https://bugs.webkit.org/show_bug.cgi?id=235385
+        rdar://87489695
+
+        Reviewed by Alexey Proskuryakov.
+
+        Experimental XCBuild support is available by passing USE_WORKSPACE=YES to Make. This is
+        roughly equivalent to opening WebKit.xcworkspace and building a scheme in the IDE.
+
+        A workspace build is only one `xcodebuild` invocation, in contrast with the traditional
+        recursive-Make build that iterates through each project directory. As a result, workspace
+        builds are faster: the build system can schedule targets from different projects to build
+        simultaneously, and there's lower xcodebuild overhead.
+
+        Workspaces build _schemes_, which are a collection of targets. By default, Make looks for a
+        scheme whose name matches the source directory (Source/WebCore => build scheme "WebCore").
+        Makefiles can customize this by setting SCHEME.
+
+        At this time, there is no guarantee of correctness when building with USE_WORKSPACE=YES, and
+        workspace builds are not checked by builders.
+
+        * Makefile: Use workspace logic when USE_WORKSPACE=YES
+        * Makefile.shared: xcodebuild invocation logic for workspace builds
+        * Source/Makefile: Use workspace logic and set custom SCHEME name
+        * WebKit.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings: Use XCBuild for workspace
+        builds
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Modules.xcscheme: Added, to correspond with
+        the top-level Makefile
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme: Let XCBuild determine build
+        order
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Tools.xcscheme: Let XCBuild determine build
+        order
+
+2022-01-20  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo] Make USE_CF conditional on ENABLE_WEBKIT_LEGACY
+        https://bugs.webkit.org/show_bug.cgi?id=235393
+
+        Reviewed by Fujii Hironori.
+
+        CoreFoundation is used heavily in WebKitLegacy on Windows and won't compile without it.
+        Modern WebKit doesn't have this requirement so tie CoreFoundation usage to whether
+        WebKitLegacy is being used.
+
+        * Source/cmake/OptionsWinCairo.cmake:
+
+2022-01-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] ENABLE_JOURNALD_LOG has weird value
+        https://bugs.webkit.org/show_bug.cgi?id=235339
+
+        Reviewed by Philippe Normand.
+
+        Clean up the code that checks for journald.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2022-01-18  Brandon Stewart  <brandonstewart@apple.com>
+
+        Fix typos in Introduction.md
+        https://bugs.webkit.org/show_bug.cgi?id=235321
+
+        Reviewed by Michael Saboff.
+        
+        Fix several typos in Introduction file.
+
+        * Introduction.md:
+
+2022-01-17  Brandon Stewart  <brandonstewart@apple.com>
+
+        Fix typo in README
+        https://bugs.webkit.org/show_bug.cgi?id=235309
+
+        Reviewed by Michael Saboff.
+        
+        Fix typo in ReadMe. Updated 'embededded' to 'embedded'.
+
+        * ReadMe.md:
+
+2022-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][a11y] Stop using isolated tree for the ATSPI implementation
+        https://bugs.webkit.org/show_bug.cgi?id=235229
+
+        Reviewed by Adrian Perez de Castro.
+
+        Do not enable isolated tree for ATSPI.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2022-01-14  Yusuke Suzuki  <ysuzuki@apple.com> and Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        [JSC] Fix Linux 64bit compilation
+        https://bugs.webkit.org/show_bug.cgi?id=235232
+
+        Reviewed by Saam Barati.
+
+        * Source/cmake/OptionsCommon.cmake:
+
+2022-01-13  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE][WebGL2] compilation fixes
+        https://bugs.webkit.org/show_bug.cgi?id=225563
+
+        Reviewed by Chris Lord.
+
+        Fix the compilation and add the ANGLE dependency, the architecture
+        is still not the final one but it is handy to use WebGL2 demos for
+        testing already.
+
+        * Source/cmake/OptionsGTK.cmake: Added dependency with ANGLE.
+        * Source/cmake/OptionsWPE.cmake: Added dependency with
+        ANGLE. Remove the default ENABLE_WEBGL2 because it is the same
+        default value in WebKitFeatures.cmake.
+
+2022-01-12  Chris Lord  <clord@igalia.com>
+
+        [WPE] Fix building WebXR with ANGLE enabled
+        https://bugs.webkit.org/show_bug.cgi?id=235108
+
+        Reviewed by Alejandro G. Castro.
+
+        Remove conflict between WebXR and ANGLE WebGL for WPE.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2022-01-12  Chris Lord  <clord@igalia.com>
+
+        [WPE] Enable WebGL ANGLE support
+        https://bugs.webkit.org/show_bug.cgi?id=235064
+
+        Reviewed by Alejandro G. Castro.
+
+        Add the USE_ANGLE_WEBGL option for WPE. This is currently incompatible
+        with WebXR as there isn't an ANGLE GL context code-path there.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2022-01-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove Direct2D code (part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=235097
+
+        Reviewed by Yusuke Suzuki.
+
+        * Source/cmake/OptionsAppleWin.cmake:
+
+2022-01-10  Alex Christensen  <achristensen@webkit.org>
+
+        Start using C++20
+        https://bugs.webkit.org/show_bug.cgi?id=233963
+
+        Reviewed by Yusuke Suzuki.
+
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
+2022-01-09  Sam Weinig  <weinig@apple.com>
+
+        Remove support for Direct2D
+        https://bugs.webkit.org/show_bug.cgi?id=234999
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsFTW.cmake: Removed.
+
+2022-01-07  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r287698.
+
+        Broke an internal build
+
+        Reverted changeset:
+
+        "Start using C++20"
+        https://bugs.webkit.org/show_bug.cgi?id=233963
+        https://commits.webkit.org/r287698
+
+2022-01-07  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r287718.
+
+        Broke an internal build
+
+        Reverted changeset:
+
+        "[PlayStation] Fix build break after r287698"
+        https://bugs.webkit.org/show_bug.cgi?id=234931
+        https://commits.webkit.org/r287718
+
+2022-01-06  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Fix build break after r287698
+        https://bugs.webkit.org/show_bug.cgi?id=234931
+
+        Unreviewed build fix
+
+        * Source/cmake/OptionsPlayStation.cmake: Workaround for not having u8string for gtest.
+
+2022-01-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MSVC] Suppress new warnings C5054 and C5055 introduced by /permissive-
+        https://bugs.webkit.org/show_bug.cgi?id=234929
+
+        Reviewed by Ross Kirsling.
+
+        After 245790@main enabled C++20 which implicitly enabled
+        /permissive- switch, WinCairo builds emit a lot of new compilation
+        warnings.
+
+        * Source/cmake/OptionsMSVC.cmake: Suppress the warnings.
+
+2022-01-06  Alex Christensen  <achristensen@webkit.org>
+
+        Start using C++20
+        https://bugs.webkit.org/show_bug.cgi?id=233963
+
+        Reviewed by Yusuke Suzuki.
+
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
+2022-01-05  Jonathan Bedard  <JonWBedard@gmail.com>
+
+        [EWS] Add  Commit Queue and EWS GitHub usernames
+        https://bugs.webkit.org/show_bug.cgi?id=234905
+        <rdar://problem/87169628>
+
+        Reviewed by Ryan Haddad.
+
+        * metadata/contributors.json:
+
+2022-01-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        clang-format: Change SpaceAfterTemplateKeyword to false
+        https://bugs.webkit.org/show_bug.cgi?id=234655
+
+        Reviewed by Don Olmstead.
+
+        Bug 183302 added the initial .clang-format file which were
+        including SpaceAfterTemplateKeyword:true. However, even though it
+        is undocumented, typical WebKit code is using a style having no
+        space ater the `template` keyword.
+
+        * .clang-format:
+
+2022-01-01  Jeff Miller  <jeffm@apple.com>
+
+        Update user-visible copyright strings to include 2022
+        https://bugs.webkit.org/show_bug.cgi?id=234263
+
+        Reviewed by Anders Carlsson.
+
+        * Source/cmake/tools/scripts/COPYRIGHT-END-YEAR:
+
+2021-12-25  Sergey Rubanov  <chi187@gmail.com>
+
+        Add my github username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231666
+
+        Reviewed by Alexey Proskuryakov.
+
+        * metadata/contributors.json:
+
+2021-12-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Add __pycache__ and DerivedData to the .gitignore file
+        https://bugs.webkit.org/show_bug.cgi?id=234656
+
+        Reviewed by Daniel Bates.
+
+        * .gitignore:
+
+2021-12-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r287412)[WinCairo] error C2338: You've instantiated std::aligned_storage<Len, Align> with an extended alignment (in other words, Align > alignof(max_align_t)).
+        https://bugs.webkit.org/show_bug.cgi?id=234658
+
+        Unreviewed build fix.
+
+        After r287412, WinCairo Debug can't compile due to the following error.
+
+        > C:\MSVS\VC\Tools\MSVC\14.28.29910\include\type_traits(1066):
+        >   error C2338: You've instantiated std::aligned_storage<Len, Align> with an extended alignment (in other words, Align > alignof(max_align_t)).
+        >   Before VS 2017 15.8, the member "type" would non-conformingly have an alignment of only alignof(max_align_t).
+        >   VS 2017 15.8 was fixed to handle this correctly, but the fix inherently changes layout and breaks binary compatibility
+        >   (*only* for uses of aligned_storage with extended alignments).
+        >   Please define either (1) _ENABLE_EXTENDED_ALIGNED_STORAGE to acknowledge that you understand this message and that you actually want a type with an extended alignment,
+        >   or (2) _DISABLE_EXTENDED_ALIGNED_STORAGE to silence this message and get the old non-conforming behavior.
+
+        * Source/cmake/OptionsMSVC.cmake: Added _ENABLE_EXTENDED_ALIGNED_STORAGE macro.
+
+2021-12-23  ChangSeok Oh  <changseok@webkit.org>
+
+        Add changseok's github username.
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-12-15  Chris Lord  <clord@igalia.com>
+
+        [GTK] Use libgbm and the ANGLE gbm backend to fix initialisation
+        https://bugs.webkit.org/show_bug.cgi?id=234293
+
+        Reviewed by Don Olmstead.
+
+        Add cmake files to find gbm and libdrm.
+
+        * Source/cmake/FindGBM.cmake: Added.
+        * Source/cmake/FindLibDRM.cmake: Added.
+
+2021-12-11  Aakash Jain  <aakash_jain@apple.com>
+
+        Update my github username.
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-12-10  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Mark myself (Mikhail R. Gadelha) as committer
+        https://bugs.webkit.org/show_bug.cgi?id=234157
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-12-10  Chris Lord  <clord@igalia.com>
+
+        Change contributor status of Chris Lord from committer to reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=234136
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-12-09  Lauro Moura  <lmoura@igalia.com>
+
+        Adds Lauro Moura's GitHub username to constributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-11-30  Tyler Wilcock  <tyler_w@apple.com>
+
+        Move tyler_w@apple.com to first entry in "emails" key
+
+        Unreviewed.
+
+        In order to cq+, your committer e-mail address must be the
+        first entry in the "emails" key.
+
+        * metadata/contributors.json:
+
+2021-11-29  Tyler Wilcock  <tyler_w@apple.com>
+
+        Mark myself (Tyler Wilcock) as committer
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-11-29  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Fix ATOMICS_REQUIRE_LIBATOMIC testcase on 32-bits
+        https://bugs.webkit.org/show_bug.cgi?id=233551
+
+        Unreviewed build fix.
+
+        There's a syntax error when compiling the test program
+        on 32-bits. This was not an issue on ARM as atomics are
+        built in on that platform, but broke the MIPS build.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
+2021-11-29  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        [LBSE] Add runtime flag for Layer-based SVG engine (LBSE)
+        https://bugs.webkit.org/show_bug.cgi?id=233211
+        <rdar://problem/85711597>
+
+        Reviewed by Sam Weinig.
+
+        Add build option ('build-webkit --(no-)layer-based-svg-engine') and
+        runtime flag ('LayerBasedSVGEngineEnabled' in LBSE enabled builds) to
+        switch between the SVG engines.
+
+        The actual SVG code changes will follow in subsequent patches,
+        this just adds the infrastructure for LBSE.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
+2021-11-28  Matt Woodrow  <matt.woodrow@gmail.com>
+
+        Add mattwoodrow to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=233301
+
+        Reviewed by Cameron McCormack.
+
+        * metadata/contributors.json:
+
+2021-11-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add WebGPU to the "All Source" scheme in WebKit.xcworkspace
+        https://bugs.webkit.org/show_bug.cgi?id=233542
+
+        Reviewed by Dean Jackson.
+
+        This scheme should build WebGPU.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
+2021-11-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, update atomics detection to make libpas built on Linux
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
+2021-11-26  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.35.1 release
+
+        * Source/cmake/OptionsWPE.cmake: Bump version numbers.
+
+2021-11-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.35.1 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
+2021-11-23  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Allow enabling JPEG-XL support at build time
+        https://bugs.webkit.org/show_bug.cgi?id=233325
+
+        Reviewed by Michael Catanzaro.
+
+        Adds a new USE_JPEGXL build option, disabled by default for release builds and
+        enabled for developer builds.
+
+        * Source/cmake/OptionsGTK.cmake: Add USE_JPEGXL build option.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
+2021-11-22  Alejandro G. Castro  <alex@igalia.com>
+
+        Add alexg's GitHub username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=233425
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-11-19  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Workaround for failing mips tests
+        https://bugs.webkit.org/show_bug.cgi?id=233359
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add a compiler flag on GCC+mips to work around a code generation bug
+        resulting in SIGBUS. This only manifests when running 32-bit mips code
+        on mips64 hardware (which the buildbots do).
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
+2021-11-18  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        Implement JPEG XL image decoder using libjxl
+        https://bugs.webkit.org/show_bug.cgi?id=233113
+
+        Reviewed by Michael Catanzaro.
+
+        This patch introduces the initial version of JPEG XL image decoder.
+        JPEG XL is a royalty-free raster-graphics file format that supports
+        both lossy and lossless compression and is experimentally supported by
+        Chrome, FireFox, and Edge.
+        The image decoder implemented by this patch uses libjxl, a reference
+        implementation of JPEG XL decoder (and encoder). JPEG XL animations
+        will be supported later.
+
+        * Source/cmake/FindJPEGXL.cmake: Added.
+        * Source/cmake/OptionsWinCairo.cmake: Enable JPEG XL support if
+        libjxl is available.
+
+2021-11-17  Patrick Angle  <pangle@apple.com>
+
+        Update my (Patrick Angle's) status to reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=233270
+
+        Unreviewed.
+
+        Update my status to reviewer, as well as drive-by updates to set my github name and update the area of
+        expertise.
+
+        * metadata/contributors.json:
+
+2021-11-17  Chris Lord  <clord@igalia.com>
+
+        Add Chris Lord's GitHub username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=233254
+
+        Unreviewed
+
+        * metadata/contributors.json:
+
+2021-11-16  Alex Atwater  <alexandera_22@apple.com>
+
+        Add my GitHub username to contributors.json
+
+        Reviewed by Jonathan Bedard
+
+        * metadata/contributors.json:
+
+2021-11-15  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Add my GitHub username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=233122
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add WebGPU.xcodeproj to WebKit.xcworkspace
+        https://bugs.webkit.org/show_bug.cgi?id=233078
+
+        Reviewed by Dean Jackson.
+
+        Mechanical change. When building WebGPU becomes required,
+        people using this workspace will need it.
+
+        * WebKit.xcworkspace/contents.xcworkspacedata:
+
+2021-11-12  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo] Add Little-CMS support
+        https://bugs.webkit.org/show_bug.cgi?id=233024
+
+        Reviewed by Michael Catanzaro.
+
+        Search for LCMS2 and if its present turn it on for WinCairo.
+
+        * Source/cmake/OptionsWinCairo.cmake:
+
+2021-11-11  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Warray-bounds, -Wstringop-truncation, -Wstringop-overread warnings in Packed.h
+        https://bugs.webkit.org/show_bug.cgi?id=226557
+        <rdar://problem/79103658>
+
+        Reviewed by Darin Adler.
+
+        Suppress -Wstringop-overread for all of WebKit when building with GCC 11 or newer. This is
+        an unfortunate way to deal with false positives that we ought to be able to silence in just
+        a few places, but when warnings do not respect pragmas we have few alternatives, and trying
+        to remove derived sources from the unified build in order to build them with special flags
+        is just not worth the effort.
+
+        This is part of a larger trend of oversensitive warnings from GCC 11.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
+2021-11-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Coding style for inner namespaces is should be simplified to not indented
+        https://bugs.webkit.org/show_bug.cgi?id=232073
+
+        Reviewed by Antti Koivisto.
+
+        * .clang-format:
+        Do not indent contents of inner namespaces, match current code.
+
+2021-11-09  J Pascoe  <j_pascoe@apple.com>
+
+        Add j_pascoe to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=232904
+        <rdar://problem/85222703>
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-11-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make WebGPU.xcodeproj and WebGPU.framework
+        https://bugs.webkit.org/show_bug.cgi?id=231661
+
+        Reviewed by Dean Jackson and Robin Morisset.
+
+        * Source/Makefile:
+
+2021-11-08  Peng Liu  <peng.liu6@apple.com>
+
+        Update Peng Liu's contributor status to reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=232859
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-11-08  Cameron McCormack  <heycam@apple.com>
+
+        Update my status to reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=232854
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-11-04  Roy Reapor  <rreapor@apple.com>
+
+        Update rreapor's status in contributors.json.
+        https://bugs.webkit.org/show_bug.cgi?id=232685
+
+        Reviewed by Aakash Jain.
+
+        * metadata/contributors.json:
+
+2021-11-04  Diego Pino Garcia  <dpino@igalia.com>
+
+        Disable MEDIA_SESSION_PLAYLIST in WebKitGTK and WPE
+        https://bugs.webkit.org/show_bug.cgi?id=232694
+
+        Reviewed by Žan Doberšek.
+
+        Since the feature depends on MEDIA_SESSION_COORDINATOR, whichs is
+        disabled, this feature should also be disabled and not experimental.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-11-03  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [cmake] Check "cortex" string in the CMAKE_SYSTEM_PROCESSOR for defining WTF_CPU_* vars
+        https://bugs.webkit.org/show_bug.cgi?id=232623
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Source/cmake/WebKitCommon.cmake:
+
+2021-11-01  Don Olmstead  <don.olmstead@sony.com>
+
+        [Curl] Explicitly disable libcurl's internal cookie support
+        https://bugs.webkit.org/show_bug.cgi?id=232586
+
+        Reviewed by Ross Kirsling.
+
+        Setting CURLOPT_COOKIEFILE to NULL to disable the cookie engine was not added till 7.77.0
+        so require that version or later.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+
+2021-11-01  David Kilzer  <ddkilzer@apple.com>
+
+        Add ddkilzer's GitHub name to contributors.json
+        <https://webkit.org/b/232587>
+
+        Reviewed by Jonathan Bedard.
+
+        * metadata/contributors.json:
+
+2021-11-01  Robert Jenner  <Jenner@apple.com>
+
+        Add my GitHub name (robert-jenner) to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=232581
+
+        Reviewed by Jonathan Bedard.
+
+        * metadata/contributors.json:
+
+2021-11-01  Beth Dakin  <bdakin@apple.com>
+
+        Add my GitHub name to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=232495
+
+        Reviewed by Alexey Proskuryakov.
+
+        * metadata/contributors.json:
+
+2021-11-01  BJ Burg  <bburg@apple.com>
+
+        Add bburg's GitHub username to contributors.json.
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+        Also, canonicalize a recent change.
+
+2021-10-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] New GraphicsLayer for GPU process mode
+        https://bugs.webkit.org/show_bug.cgi?id=228308
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsWinCairo.cmake:
+
+2021-10-29  Oriol Brufau  <obrufau@igalia.com>
+
+        Add Aakash's GitHub username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-29  Oriol Brufau  <obrufau@igalia.com>
+
+        Add obrufau's GitHub username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        The space glyph in the Filicudi font is not substituted by shaping in the complex text codepath, thereby breaking the visual effect of the font
+        https://bugs.webkit.org/show_bug.cgi?id=232293
+
+        Reviewed by Darin Adler.
+
+        Big thanks to Ulrike Rausch and Frank Grießhammer for contributing the test font!!!
+
+        * metadata/contributors.json:
+
+2021-10-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        Add Aditya Keerthi as a reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=232450
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+        Add myself as a reviewer, and add GitHub username.
+
+2021-10-27  Roy Reapor  <rreapor@apple.com>
+
+        Add rreapor's GitHub username to contributors.json.
+        https://bugs.webkit.org/show_bug.cgi?id=232385
+
+        Reviewed by Aakash Jain.
+
+        * metadata/contributors.json:
+
+2021-10-26  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. [WPE] Bump version numbers
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-10-26  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Multiple build issues with ENABLE_VIDEO=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=232264
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/WebKitFeatures.cmake: Make ENABLE_MEDIA_SESSION depend on ENABLE_VIDEO.
+
+2021-10-25  Jonathan Bedard  <jbedard@apple.com>
+
+        Add GitHub usernames for bedison and darinadler
+
+        Unreviewed.
+
+        * metadata/contributors.json: Add beidson and darinadler.
+
+2021-10-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Add zdobersek's GitHub name to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=232234
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-25  Martin Robinson  <mrobinson@webkit.org>
+
+        Add mrobinson's GitHub name to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=232232
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-24  Alexey Shvayka  <ashvayka@apple.com>
+
+        Add my GitHub username to contributors.json and update credentials
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-22  Guillaume Emont  <guijemont@igalia.com>
+
+        Add Guillaume Emont's github username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=232144
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-22  Pablo Correa Gómez  <ablocorrea@hotmail.com>
+
+        Enable logging under non-systemd linux distros
+        https://bugs.webkit.org/show_bug.cgi?id=232080
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/FindJournald.cmake: Renamed from Source/cmake/FindSystemd.cmake.
+        * Source/cmake/OptionsGTK.cmake: Replace USE_SYSTEMD for
+        ENABLE_JOURNALD_LOG
+        * Source/cmake/OptionsWPE.cmake: Replace USE_SYSTEMD for
+        ENABLE_JOURNALD_LOG
+
+2021-10-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Add GitHub name to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=232131
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-21  Chris Lord  <clord@igalia.com>
+
+        [WPE][GTK] Enable smooth scrolling by default
+        https://bugs.webkit.org/show_bug.cgi?id=220512
+
+        Reviewed by Carlos Garcia Campos.
+
+        Build smooth scrolling by default on WPE to match other platforms.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-10-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Add ObjC as supported .clang-format language
+        https://bugs.webkit.org/show_bug.cgi?id=230401
+
+        Reviewed by Jonathan Bedard.
+
+        Add ObjC and change few properties useful
+        for ObjC formatting.
+
+        * .clang-format:
+
+2021-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Reenable -fvisibility=hidden and -fvisibility-inlines-hidden
+        https://bugs.webkit.org/show_bug.cgi?id=222860
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-10-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [CMake] Align OptionsMac with Xcode build
+        https://bugs.webkit.org/show_bug.cgi?id=231982
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsMac.cmake:
+        Ensure that the listed options (1) are not redundant with the defaults in WebKitFeatures.cmake and
+        (2) match the options for the Xcode build as closely as possible.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        Remove an outdated feature, ENABLE_APPLE_PAY_SESSION_V9,
+        and let ENABLE_MAC_GESTURE_EVENTS be handled by PlatformEnable, since it depends on USE_APPLE_INTERNAL_SDK.
+
+2021-10-19  Tyler Wilcock  <tyler_w@apple.com>
+
+        Add AX team GitHub usernames to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231966
+
+        Reviewed by Chris Fleizach.
+
+        * metadata/contributors.json:
+        Add Chris Fleizach's and Andres Gonzalez's GitHub usernames. Add Tyler
+        Wilcock as a contributor. Run validate-committer-lists --canonicalize
+        to fix some style issues.
+
+2021-10-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-18  Ms2ger  <Ms2ger@igalia.com>
+
+        Add my github username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231893
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-18  Rob Buis  <rbuis@igalia.com>
+
+        Add my github username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231889
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * metadata/contributors.json:
+
+2021-10-18  Xan Lopez  <xan@igalia.com>
+
+        Add my github username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231887
+
+        Unreviewed.
+
+        * metadata/contributors.json: add my github username.
+
+2021-10-18  Miguel Gomez  <magomez@igalia.com>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-16  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Add github username for tetsuharuohzeki to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231864
+
+        Reviewed by Fujii Hironori.
+
+        * metadata/contributors.json:
+
+2021-10-16  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Add my github username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231861
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-16  Caitlin Potter  <caitp@igalia.com>
+
+        Add github username for myself
+        https://bugs.webkit.org/show_bug.cgi?id=231857
+
+        Reviewed by Yusuke Suzuki.
+
+        * metadata/contributors.json:
+
+2021-10-15  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Add flag to turn off Iso heap
+        https://bugs.webkit.org/show_bug.cgi?id=231823
+
+        Reviewed by Yusuke Suzuki.
+
+        Added USE_ISO_MALLOC feature flags which is on by default for most platforms.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
+2021-10-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Realize Mac CMake build of WebCore and WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=231749
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitMacros.cmake:
+
+2021-10-15  Jonathan Bedard  <jbedard@apple.com>
+
+        Add github username for Dewei Zhu
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-15  Andres Gonzalez  <andresg_22@apple.com>
+
+        Change Andres Gonzalez status to reviewer.
+        https://bugs.webkit.org/show_bug.cgi?id=231738
+
+        Reviewed by Chris Fleizach.
+
+        * metadata/contributors.json:
+
+2021-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK build with ubuntu 18.04
+
+        GLib version bump in r284152 was too high for ubuntu 18.04 even though it followed our dependencies policy.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-10-14  Ali Juma  <ajuma@chromium.org>
+
+        Add my GitHub username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-14  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        Add my GitHub username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r283878.
+        https://bugs.webkit.org/show_bug.cgi?id=231735
+
+        It
+
+        Reverted changeset:
+
+        "[WPE] Reenable -fvisibility=hidden and -fvisibility-inlines-
+        hidden"
+        https://bugs.webkit.org/show_bug.cgi?id=222860
+        https://commits.webkit.org/r283878
+
+2021-10-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Bump GLib version to 2.58.3
+        https://bugs.webkit.org/show_bug.cgi?id=231726
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-10-14  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [contributors.json] Add eocanha github account and canonicalize
+        https://bugs.webkit.org/show_bug.cgi?id=231729
+
+        Unreviewed.
+
+        Added eocanha github user to contributors.json and canonicalize the file to make the style checker happy.
+
+        * metadata/contributors.json:
+
+2021-10-13  Tim Horton  <timothy_horton@apple.com>
+
+        Add my GitHub username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Add webpushd executable
+        https://bugs.webkit.org/show_bug.cgi?id=231650
+
+        Reviewed by Brady Eidson.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+
+2021-10-12  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation] Enable RemoteInspector by default
+        https://bugs.webkit.org/show_bug.cgi?id=231599
+
+        Reviewed by Fujii Hironori.
+
+        It was treated as experimental feature but we've depended on this feature in various situation.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
+2021-10-12  Philippe Normand  <pnormand@igalia.com>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-11  Patrick Griffis  <pgriffis@igalia.com>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-11  Sam Weinig  <weinig@apple.com>
+
+        Add my github username and keep my expertise where it is because, while not up to date, it is fun
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-11  Theresa O'Connor  <hober@apple.com>
+
+        Various updates to my contributors.json entry.
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-11  Devin Rousso  <drousso@apple.com>
+
+        Add my github and update my expertise
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-10  Noam Rosenthal  <noam@webkit.org>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-11 Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Add my GitHub username to contributors.json.
+        https://bugs.webkit.org/show_bug.cgi?id=231507
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-11  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Add my github username to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        Add GitHub username for Diego Pino Garcia
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-10  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Add GitHub username for Pablo Saavedra
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-10  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed. Add GitHub username for Xabier Rodriguez Calvar
+
+        * metadata/contributors.json:
+
+2021-10-10  Cameron McCormack  <heycam@apple.com>
+
+        Add GitHub account to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=231497
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-10  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE] Reenable -fvisibility=hidden and -fvisibility-inlines-hidden
+        https://bugs.webkit.org/show_bug.cgi?id=222860
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-10-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Add GitHub username for Adrian Perez de Castro
+
+        While at it, run "validate-committer-lists --canonicalize".
+
+        * metadata/contributors.json:
+
+2021-10-09  Alberto Garcia  <berto@igalia.com>
+
+        Add GitHub account to contributors.json
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-09  Jean-Yves Avenard  <jya@apple.com>
+
+        Unreviewed, add my GitHub username
+
+        * metadata/contributors.json:
+
+2021-10-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Add GitHub account to contributors.json and update expertise field
+        https://bugs.webkit.org/show_bug.cgi?id=231476
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-08  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Add github username for Joonghun Park.
+
+        * metadata/contributors.json:
+
+2021-10-08  Jonathan Bedard  <jbedard@apple.com>
+
+        Add github username for Michael Catanzaro
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
+2021-10-08  Kenneth Russell  <kbr@chromium.org>
+
+        Add github username for kbr
+        https://bugs.webkit.org/show_bug.cgi?id=231462
+
+        Reviewed by Dean Jackson.
+
+        * metadata/contributors.json:
+
+2021-10-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, add GitHub usernames for Sony contributors.
+
+        * metadata/contributors.json:
+
+2021-10-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, add my GitHub username
+
+        * metadata/contributors.json:
+
+2021-10-08  Tim Nguyen  <ntim@apple.com>
+
+        [contributors.json] Add more Github usernames
+        https://bugs.webkit.org/show_bug.cgi?id=231453
+
+        Reviewed by Jonathan Bedard.
+
+        * metadata/contributors.json:
+
+2021-10-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [contributors.json] Support GitHub usernames
+        https://bugs.webkit.org/show_bug.cgi?id=231400
+        <rdar://problem/84005266>
+
+        Reviewed by Dewei Zhu.
+
+        * metadata/contributors.json: Add some GitHub usernames.
+
+2021-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Reenable -fvisibility=hidden
+        https://bugs.webkit.org/show_bug.cgi?id=181916
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2021-10-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark Kimmo Kinnunen as reviewer in the right contributors.json file this time.
+
+        * metadata/contributors.json:
+
+2021-10-03  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Enable release log to stderr
+        https://bugs.webkit.org/show_bug.cgi?id=230725
+        <rdar://problem/83740529>
+
+        Reviewed by Michael Catanzaro.
+
+        Introduced new flags, USE_LOG_STDERR for release logging to stderr.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
+2021-10-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Enable bwrap launcher build on bots
+        https://bugs.webkit.org/show_bug.cgi?id=230969
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Upgrade GCC requirement to 8.3.0
+        https://bugs.webkit.org/show_bug.cgi?id=231042
+
+        Reviewed by Darin Adler.
+
+        Based on the roadmap[1], we upgrade GCC requirement to 8.3.0, which is default GCC in Debian one-old-stable (buster) right now.
+        This paves the way to enabling some of useful C++20 features, e.g. default initializer for bitfields.
+
+        [1]: https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
+
+        * Source/cmake/WebKitCommon.cmake:
+
+2021-09-29  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        MediaStream canvas.captureStream() fails for WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=230613
+        <rdar://82307293>
+
+        Reviewed by Youenn Fablet.
+
+        Add a manual test to interact with media stream
+        captureStream() behavior until the implementation is
+        testable.
+
+        * ManualTests/mediastream/mediastream-canvas-to-video.html: Added.
+
+2021-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Bump libsoup3 version to 3.0.0
+        https://bugs.webkit.org/show_bug.cgi?id=230601
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MSVC] The "/Zc:lambda" switch is recommended to use the new lambda processor.
+        https://bugs.webkit.org/show_bug.cgi?id=226070
+
+        Reviewed by Ross Kirsling.
+
+        Visual Studio 16.5 added the "/Zc:lambda" switch for the better
+        C++ conformance, but it had a compiler crashing bug. Visual Studio
+        16.9 fixed the bug.
+
+        * Source/cmake/OptionsMSVC.cmake: Added /Zc:lambda for Visual
+        Studio 16.9 or later. I will remove the MSVC_VERSION check after
+        AppleWin bots will upgrade MSVC.
+
+2021-09-17  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Unbreak GCC_OFFLINEASM_SOURCE_MAP when LTO is in use
+        https://bugs.webkit.org/show_bug.cgi?id=230061
+        <rdar://problem/83166173>
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsCommon.cmake:
+
+        Re-enable GCC_OFFLINEASM_SOURCE_MAP.
+
+2021-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK] Bump version numbers
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2021-09-17  Martin Robinson  <mrobinson@webkit.org>
+
+        Add Martin Robinson as a reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=230392
+
+        Unreviewed.
+
+        * metadata/contributors.json: Add myself as a reviewer and update my specializations.
+
+2021-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][a11y] Add a build option to enable ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=230254
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add USE_ATSPI build option that disables ATK and enables isolated tree.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2021-09-16  Philip Chimento  <pchimento@igalia.com>
+
+        Fixes for build-webkit --minimal
+        https://bugs.webkit.org/show_bug.cgi?id=229780
+
+        Reviewed by Fujii Hironori.
+
+        Remove ENABLE_RESIZE_OBSERVER build-time option. This option is
+        quite broken if you try to disable it.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
+2021-09-15  Philip Chimento  <pchimento@igalia.com>
+
+        Fixes for build-webkit --minimal
+        https://bugs.webkit.org/show_bug.cgi?id=229780
+
+        Reviewed by Fujii Hironori.
+
+        Remove ENABLE_INTERSECTION_OBSERVER build-time option. This option is
+        quite broken if you try to disable it.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
+2021-09-14  John Wilander  <wilander@apple.com>
+
+        Rename RESOURCE_LOAD_STATISTICS to INTELLIGENT_TRACKING_PREVENTION
+        https://bugs.webkit.org/show_bug.cgi?id=230279
+        <rdar://problem/83118683>
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
+2021-09-14  Hoa Dinh  <dvh@apple.com>
+
+        Add dvh@apple.com to the list of contributors.
+        https://bugs.webkit.org/show_bug.cgi?id=230276
+
+        Reviewed by Jonathan Bedard.
+
+        * metadata/contributors.json:
+
+2021-09-13  Sam Sneddon  <gsnedders@apple.com>
+
+        Move ENABLE_RESOLUTION_MEDIA_QUERY to a runtime flag, start running tests again
+        https://bugs.webkit.org/show_bug.cgi?id=229776
+
+        Reviewed by Simon Fraser.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
+2021-09-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GLIB] MediaSession is not enabled
+        https://bugs.webkit.org/show_bug.cgi?id=217991
+        <rdar://problem/70740119>
+
+        Reviewed by Michael Catanzaro.
+
+        Enable MediaSession as an experimental build feature in CMake ports. The spec status is
+        currently Draft.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
+2021-09-08  Justin Michaud  <justin_michaud@apple.com>
+
+        Change Justin Michaud's primary email to apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=230069
+
+        Reviewed by Robin Morisset.
+
+        * metadata/contributors.json:
+
+2021-09-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Support prefers-color-scheme media query
+        https://bugs.webkit.org/show_bug.cgi?id=229976
+
+        Reviewed by Don Olmstead.
+
+        Just turned on ENABLE_DARK_MODE_CSS and HAVE_OS_DARK_MODE_SUPPORT.
+        It's always the light mode.
+
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+
+2021-09-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] Prefer python3 over python2
+        https://bugs.webkit.org/show_bug.cgi?id=229969
+
+        Reviewed by Michael Catanzaro.
+
+        Use the CMake module FindPython instead of FindPythonInterp.
+        FindPython looks preferably for version 3 of Python. If not found, then it looks for version 2.
+
+        * Source/cmake/WebKitCommon.cmake:
+
 2021-09-03  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Disable GCC_OFFLINEASM_SOURCE_MAP

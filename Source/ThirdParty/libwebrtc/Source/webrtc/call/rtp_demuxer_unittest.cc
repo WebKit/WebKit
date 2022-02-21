@@ -631,13 +631,13 @@ TEST_F(RtpDemuxerTest, FirstSsrcAssociatedWithAnRsidIsNotForgotten) {
 
   constexpr uint32_t shared_ssrc = 100;
 
-  // First a packet with |rsid_a| is received, and |sink_a| is associated with
+  // First a packet with `rsid_a` is received, and `sink_a` is associated with
   // its SSRC.
   auto packet_a = CreatePacketWithSsrcRsid(shared_ssrc, rsid_a);
   EXPECT_CALL(sink_a, OnRtpPacket(SamePacketAs(*packet_a))).Times(1);
   EXPECT_TRUE(demuxer_.OnRtpPacket(*packet_a));
 
-  // Second, a packet with |rsid_b| is received. We guarantee that |sink_b|
+  // Second, a packet with `rsid_b` is received. We guarantee that `sink_b`
   // receives it.
   auto packet_b = CreatePacketWithSsrcRsid(shared_ssrc, rsid_b);
   EXPECT_CALL(sink_a, OnRtpPacket(_)).Times(0);
@@ -645,7 +645,7 @@ TEST_F(RtpDemuxerTest, FirstSsrcAssociatedWithAnRsidIsNotForgotten) {
   EXPECT_TRUE(demuxer_.OnRtpPacket(*packet_b));
 
   // Known edge-case; adding a new RSID association makes us re-examine all
-  // SSRCs. |sink_b| may or may not be associated with the SSRC now; we make
+  // SSRCs. `sink_b` may or may not be associated with the SSRC now; we make
   // no promises on that. However, since the RSID is specified and it cannot be
   // found the packet should be dropped.
   MockRtpPacketSink sink_c;

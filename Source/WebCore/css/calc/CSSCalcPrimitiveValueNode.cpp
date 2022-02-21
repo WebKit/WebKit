@@ -31,6 +31,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CalcExpressionLength.h"
 #include "CalcExpressionNumber.h"
+#include "Logging.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -66,7 +67,7 @@ CSSCalcPrimitiveValueNode::CSSCalcPrimitiveValueNode(Ref<CSSPrimitiveValue>&& va
 // FIXME: Use calcUnitCategory?
 bool CSSCalcPrimitiveValueNode::isNumericValue() const
 {
-    return m_value->isLength() || m_value->isNumber() || m_value->isPercentage() || m_value->isAngle()
+    return m_value->isLength() || m_value->isNumber() || m_value->isInteger() || m_value->isPercentage() || m_value->isAngle()
         || m_value->isTime() || m_value->isResolution() || m_value->isFlex() || m_value->isFrequency();
 }
 
@@ -84,8 +85,10 @@ void CSSCalcPrimitiveValueNode::negate()
 void CSSCalcPrimitiveValueNode::invert()
 {
     ASSERT(isNumericValue());
-    if (!m_value->doubleValue())
+    if (!m_value->doubleValue()) {
         m_value = CSSPrimitiveValue::create(std::numeric_limits<double>::infinity(), m_value->primitiveType());
+        return;
+    }
 
     m_value = CSSPrimitiveValue::create(1.0 / m_value->doubleValue(), m_value->primitiveType());
 }

@@ -151,9 +151,9 @@ angle::Result FramebufferNULL::blit(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-bool FramebufferNULL::checkStatus(const gl::Context *context) const
+gl::FramebufferStatus FramebufferNULL::checkStatus(const gl::Context *context) const
 {
-    return true;
+    return gl::FramebufferStatus::Complete();
 }
 
 angle::Result FramebufferNULL::syncState(const gl::Context *context,

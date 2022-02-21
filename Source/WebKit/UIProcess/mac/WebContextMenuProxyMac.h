@@ -53,6 +53,7 @@ public:
 
 #if ENABLE(SERVICE_CONTROLS)
     void clearServicesMenu();
+    void applyMarkupToControlledImage();
 #endif
 
     NSWindow *window() const;

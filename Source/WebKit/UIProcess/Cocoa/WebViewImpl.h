@@ -28,8 +28,8 @@
 #if PLATFORM(MAC)
 
 #include "PDFPluginIdentifier.h"
-#include "PluginComplexTextInputState.h"
 #include "ShareableBitmap.h"
+#include "TextRecognitionUtilities.h"
 #include "WKLayoutMode.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/FocusDirection.h>
@@ -56,7 +56,6 @@ OBJC_CLASS NSPopover;
 OBJC_CLASS NSTextInputContext;
 OBJC_CLASS NSView;
 OBJC_CLASS QLPreviewPanel;
-OBJC_CLASS VKImageAnalyzer;
 OBJC_CLASS WKAccessibilitySettingsObserver;
 OBJC_CLASS WKBrowsingContextController;
 OBJC_CLASS WKDOMPasteMenuDelegate;
@@ -135,8 +134,6 @@ struct TranslationContextMenuInfo;
 - (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
 - (void)_web_didPerformDragOperation:(BOOL)handled;
 #endif
-
-- (void)_web_grantDOMPasteAccess;
 
 @optional
 - (void)_web_didAddMediaControlsManager:(id)controlsManager;
@@ -262,7 +259,7 @@ public:
     void setViewScale(CGFloat);
     CGFloat viewScale() const;
 
-    void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(Variant<ContinueUnsafeLoad, URL>&&)>&&);
+    void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(std::variant<ContinueUnsafeLoad, URL>&&)>&&);
     void clearSafeBrowsingWarning();
     void clearSafeBrowsingWarningIfForMainFrameNavigation();
 
@@ -315,8 +312,8 @@ public:
     WebCore::DestinationColorSpace colorSpace();
 
     void setUnderlayColor(NSColor *);
-    NSColor *underlayColor() const;
-    NSColor *pageExtendedBackgroundColor() const;
+    RetainPtr<NSColor> underlayColor() const;
+    RetainPtr<NSColor> pageExtendedBackgroundColor() const;
     
     _WKRectEdge pinnedState();
     _WKRectEdge rubberBandingEnabled();
@@ -341,14 +338,6 @@ public:
     void resetSecureInputState();
     bool inSecureInputState() const { return m_inSecureInputState; }
     void notifyInputContextAboutDiscardedComposition();
-    void setPluginComplexTextInputStateAndIdentifier(PluginComplexTextInputState, uint64_t identifier);
-    void disableComplexTextInputIfNecessary();
-    bool handlePluginComplexTextInputKeyDown(NSEvent *);
-    bool tryHandlePluginComplexTextInputKeyDown(NSEvent *);
-    void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus, uint64_t pluginComplexTextInputIdentifier);
-    bool tryPostProcessPluginComplexTextInputKeyDown(NSEvent *);
-    PluginComplexTextInputState pluginComplexTextInputState() const { return m_pluginComplexTextInputState; }
-    uint64_t pluginComplexTextInputIdentifier() const { return m_pluginComplexTextInputIdentifier; }
     
     void handleAcceptedAlternativeText(const String&);
     NSInteger spellCheckerDocumentTag();
@@ -509,7 +498,7 @@ public:
 
     void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle& image);
     void setFileAndURLTypes(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *);
-    void setPromisedDataForImage(WebCore::Image*, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::SharedBuffer* archiveBuffer, NSString *pasteboardName, NSString *pasteboardOrigin);
+    void setPromisedDataForImage(WebCore::Image*, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::FragmentedSharedBuffer* archiveBuffer, NSString *pasteboardName, NSString *pasteboardOrigin);
     void pasteboardChangedOwner(NSPasteboard *);
     void provideDataForPasteboard(NSPasteboard *, NSString *type);
     NSArray *namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestination);
@@ -601,7 +590,7 @@ public:
     bool shouldRequestCandidates() const;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
     void computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType, CompletionHandler<void(bool)>&&);
 #endif
 
@@ -611,8 +600,7 @@ public:
 
     bool windowIsFrontWindowUnderMouse(NSEvent *);
 
-    void setRequiresUserActionForEditingControlsManager(bool requiresUserActionForEditingControlsManager) { m_requiresUserActionForEditingControlsManager = requiresUserActionForEditingControlsManager; }
-    bool requiresUserActionForEditingControlsManager() const { return m_requiresUserActionForEditingControlsManager; }
+    bool requiresUserActionForEditingControlsManager() const;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection();
     void setUserInterfaceLayoutDirection(NSUserInterfaceLayoutDirection);
@@ -656,9 +644,10 @@ public:
     void takeFocus(WebCore::FocusDirection);
     void clearPromisedDragImage();
 
-    void requestDOMPasteAccess(const WebCore::IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
-    void handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse);
+    void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const WebCore::IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
+    void handleDOMPasteRequestForCategoryWithResult(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteAccessResponse);
     NSMenu *domPasteMenu() const { return m_domPasteMenu.get(); }
+    void hideDOMPasteMenuWithResult(WebCore::DOMPasteAccessResponse);
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuTranslation() const;
@@ -718,8 +707,6 @@ private:
 
     void postFakeMouseMovedEventForFlagsChangedEvent(NSEvent *);
 
-    void setPluginComplexTextInputState(PluginComplexTextInputState);
-
     void sendToolTipMouseExited();
     void sendToolTipMouseEntered();
 
@@ -754,7 +741,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    VKImageAnalyzer *ensureImageAnalyzer();
+    CocoaImageAnalyzer *ensureImageAnalyzer();
 #endif
 
     WeakObjCPtr<NSView<WebViewImplDelegate>> m_view;
@@ -790,12 +777,6 @@ private:
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
 
     ValidationMap m_validationMap;
-
-    // The identifier of the plug-in we want to send complex text input to, or 0 if there is none.
-    uint64_t m_pluginComplexTextInputIdentifier { 0 };
-
-    // The state of complex text input for the plug-in.
-    PluginComplexTextInputState m_pluginComplexTextInputState { PluginComplexTextInputDisabled };
 
 #if ENABLE(FULLSCREEN_API)
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;
@@ -877,7 +858,6 @@ private:
     NSInteger m_lastCandidateRequestSequenceNumber;
     NSRange m_softSpaceRange { NSNotFound, 0 };
     bool m_isHandlingAcceptedCandidate { false };
-    bool m_requiresUserActionForEditingControlsManager { false };
     bool m_editableElementIsFocused { false };
     bool m_isTextInsertionReplacingSoftSpace { false };
     RetainPtr<WKSafeBrowsingWarning> m_safeBrowsingWarning;
@@ -906,7 +886,7 @@ private:
 
 #if ENABLE(IMAGE_ANALYSIS)
     RefPtr<WorkQueue> m_imageAnalyzerQueue;
-    RetainPtr<VKImageAnalyzer> m_imageAnalyzer;
+    RetainPtr<CocoaImageAnalyzer> m_imageAnalyzer;
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)

@@ -32,13 +32,32 @@
 namespace WebCore {
 namespace Style {
 
-void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClassType pseudoClass, InvalidationScope invalidationScope)
+Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSSSelector::PseudoClassType pseudoClass, const Element& element)
+{
+    Vector<PseudoClassInvalidationKey, 4> keys;
+
+    if (!element.idForStyleResolution().isEmpty())
+        keys.append(makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Id, element.idForStyleResolution()));
+
+    if (element.hasClass()) {
+        auto classCount = element.classNames().size();
+        for (size_t i = 0; i < classCount; ++i)
+            keys.append(makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Class, element.classNames()[i]));
+    }
+
+    keys.append(makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Tag, element.localName().convertToASCIILowercase()));
+    keys.append(makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Universal));
+
+    return keys;
+};
+
+void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClassType pseudoClass, bool value, InvalidationScope invalidationScope)
 {
     bool shouldInvalidateCurrent = false;
     bool mayAffectStyleInShadowTree = false;
 
     traverseRuleFeatures(m_element, [&] (const RuleFeatureSet& features, bool mayAffectShadowTree) {
-        if (mayAffectShadowTree && features.pseudoClassRules.contains(pseudoClass))
+        if (mayAffectShadowTree && features.pseudoClassTypes.contains(pseudoClass))
             mayAffectStyleInShadowTree = true;
         if (m_element.shadowRoot() && features.pseudoClassesAffectingHost.contains(pseudoClass))
             shouldInvalidateCurrent = true;
@@ -52,33 +71,53 @@ void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClass
     if (shouldInvalidateCurrent)
         m_element.invalidateStyle();
 
+    for (auto& key : makePseudoClassInvalidationKeys(pseudoClass, m_element))
+        collectRuleSets(key, value, invalidationScope);
+}
+
+void PseudoClassChangeInvalidation::collectRuleSets(const PseudoClassInvalidationKey& key, bool value, InvalidationScope invalidationScope)
+{
     auto& ruleSets = m_element.styleResolver().ruleSets();
-    if (auto* invalidationRuleSets = ruleSets.pseudoClassInvalidationRuleSets(pseudoClass)) {
-        for (auto& invalidationRuleSet : *invalidationRuleSets) {
-            // For focus/hover we flip the whole ancestor chain. We only need to do deep invalidation traversal in the change root.
-            auto shouldInvalidate = [&] {
-                switch (invalidationScope) {
-                case InvalidationScope::All:
-                    return true;
-                case InvalidationScope::SelfChildrenAndSiblings:
-                    return invalidationRuleSet.matchElement != MatchElement::Ancestor;
-                case InvalidationScope::Descendants:
-                    return invalidationRuleSet.matchElement == MatchElement::Ancestor;
-                }
-                ASSERT_NOT_REACHED();
+    auto* invalidationRuleSets = ruleSets.pseudoClassInvalidationRuleSets(key);
+    if (!invalidationRuleSets)
+        return;
+
+    for (auto& invalidationRuleSet : *invalidationRuleSets) {
+        // For focus/hover we flip the whole ancestor chain. We only need to do deep invalidation traversal in the change root.
+        auto shouldInvalidate = [&] {
+            bool invalidatesAllDescendants = invalidationRuleSet.matchElement == MatchElement::Ancestor && isUniversalInvalidation(key);
+            switch (invalidationScope) {
+            case InvalidationScope::All:
                 return true;
-            }();
-            if (!shouldInvalidate)
-                continue;
-            Invalidator::addToMatchElementRuleSets(m_matchElementRuleSets, invalidationRuleSet);
-        }
+            case InvalidationScope::SelfChildrenAndSiblings:
+                return !invalidatesAllDescendants;
+            case InvalidationScope::Descendants:
+                return invalidatesAllDescendants;
+            }
+            ASSERT_NOT_REACHED();
+            return true;
+        }();
+        if (!shouldInvalidate)
+            continue;
+
+        bool invalidateBeforeChange = invalidationRuleSet.isNegation == IsNegation::Yes ? value : !value;
+        if (invalidateBeforeChange)
+            Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
+        else
+            Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
     }
 }
 
-void PseudoClassChangeInvalidation::invalidateStyleWithRuleSets()
+void PseudoClassChangeInvalidation::invalidateBeforeChange()
 {
-    Invalidator::invalidateWithMatchElementRuleSets(m_element, m_matchElementRuleSets);
+    Invalidator::invalidateWithMatchElementRuleSets(m_element, m_beforeChangeRuleSets);
 }
+
+void PseudoClassChangeInvalidation::invalidateAfterChange()
+{
+    Invalidator::invalidateWithMatchElementRuleSets(m_element, m_afterChangeRuleSets);
+}
+
 
 }
 }

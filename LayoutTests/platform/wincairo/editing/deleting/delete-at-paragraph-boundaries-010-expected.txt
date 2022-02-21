@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x111
           RenderText {#text} at (0,0) size 66x26
             text run at (0,0) width 66: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (66,0) size 0x26
           RenderText {#text} at (0,27) size 730x55
             text run at (0,27) width 730: "Deleting when a selection starts at the beginning of a text following a nested"
             text run at (0,55) width 680: "block, and extends out of the enclosing block into the following block. "
@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,141) size 756x167
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,0) size 0x27
+          RenderBR {BR} at (189,0) size 0x26
           RenderText {#text} at (0,27) size 756x139
             text run at (0,27) width 714: "Should see a total of five lines in the red box, with the third line inside of a"
             text run at (0,55) width 668: "nested red box. First line should be \"one\". Next line should be \"two\". "

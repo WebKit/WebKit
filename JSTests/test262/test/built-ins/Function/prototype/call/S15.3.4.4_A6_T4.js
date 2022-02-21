@@ -25,12 +25,10 @@ new Function(p, p, p, "this.shifted=a3+a2+a1.length;").call(obj, (function() {
   return arguments;
 })("a", "b", "c", "d"), "", 2);
 
-//CHECK#1
-if (obj["shifted"] !== "24") {
-  throw new Test262Error('#1: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
-}
+assert.sameValue(obj["shifted"], "24", 'The value of obj["shifted"] is expected to be "24"');
 
-//CHECK#2
-if (typeof this["shifted"] !== "undefined") {
-  throw new Test262Error('#2: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
-}
+assert.sameValue(
+  typeof this["shifted"],
+  "undefined",
+  'The value of `typeof this["shifted"]` is expected to be "undefined"'
+);

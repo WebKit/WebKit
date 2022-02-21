@@ -37,14 +37,15 @@ ConstantPcmPacketSource::ConstantPcmPacketSource(size_t payload_len_samples,
 
 std::unique_ptr<Packet> ConstantPcmPacketSource::NextPacket() {
   RTC_CHECK_GT(packet_len_bytes_, kHeaderLenBytes);
-  uint8_t* packet_memory = new uint8_t[packet_len_bytes_];
+  rtc::CopyOnWriteBuffer packet_buffer(packet_len_bytes_);
+  uint8_t* packet_memory = packet_buffer.MutableData();
   // Fill the payload part of the packet memory with the pre-encoded value.
   for (unsigned i = 0; i < 2 * payload_len_samples_; ++i)
     packet_memory[kHeaderLenBytes + i] = encoded_sample_[i % 2];
   WriteHeader(packet_memory);
-  // |packet| assumes ownership of |packet_memory|.
-  std::unique_ptr<Packet> packet(
-      new Packet(packet_memory, packet_len_bytes_, next_arrival_time_ms_));
+  // `packet` assumes ownership of `packet_memory`.
+  auto packet =
+      std::make_unique<Packet>(std::move(packet_buffer), next_arrival_time_ms_);
   next_arrival_time_ms_ += payload_len_samples_ / samples_per_ms_;
   return packet;
 }

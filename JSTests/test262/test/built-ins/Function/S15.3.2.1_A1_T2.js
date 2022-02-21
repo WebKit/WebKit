@@ -22,19 +22,11 @@ var body = {
   }
 };
 
-//CHECK#1
 try {
   var f = new Function(body);
 } catch (e) {
   throw new Test262Error('#1: test failed with error ' + e);
 }
 
-//CHECK#2
-if (f.constructor !== Function) {
-  throw new Test262Error('#2: When the Function constructor is called with one argument then body be that argument and creates a new Function object as specified in 13.2');
-}
-
-//CHECK#3
-if (f() !== 1) {
-  throw new Test262Error('#3: hen the Function constructor is called with one argument then body be that argument the following steps are taken...');
-}
+assert.sameValue(f.constructor, Function, 'The value of f.constructor is expected to equal the value of Function');
+assert.sameValue(f(), 1, 'f() must return 1');

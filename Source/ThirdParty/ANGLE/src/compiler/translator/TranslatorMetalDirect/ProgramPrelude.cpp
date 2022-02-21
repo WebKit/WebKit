@@ -9,8 +9,6 @@
 #include "compiler/translator/InfoSink.h"
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
-#include "compiler/translator/TranslatorMetalDirect/ConstantNames.h"
-#include "compiler/translator/TranslatorMetalDirect/Debug.h"
 #include "compiler/translator/TranslatorMetalDirect/Name.h"
 #include "compiler/translator/TranslatorMetalDirect/ProgramPrelude.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
@@ -79,11 +77,19 @@ class ProgramPrelude : public TIntermTraverser
 
     static FuncToEmitter BuildFuncToEmitter();
 
+    void visitOperator(TOperator op, const TFunction *func, const TType *argType0);
+
     void visitOperator(TOperator op,
                        const TFunction *func,
                        const TType *argType0,
-                       const TType *argType1 = nullptr,
-                       const TType *argType2 = nullptr);
+                       const TType *argType1);
+
+    void visitOperator(TOperator op,
+                       const TFunction *func,
+                       const TType *argType0,
+                       const TType *argType1,
+                       const TType *argType2);
+
     void visitVariable(const Name &name, const TType &type);
     void visitVariable(const TVariable &var);
     void visitStructure(const TStructure &s);
@@ -149,6 +155,7 @@ class ProgramPrelude : public TIntermTraverser
     void inverse2();
     void inverse3();
     void inverse4();
+    void equalScalar();
     void equalVector();
     void equalMatrix();
     void notEqualVector();
@@ -298,7 +305,6 @@ PROGRAM_PRELUDE_DECLARE(transform_feedback_guard, R"(
     #define __VERTEX_OUT(args) args
 #endif
 )")
-
 
 PROGRAM_PRELUDE_DECLARE(ALWAYS_INLINE, R"(
 #define ANGLE_ALWAYS_INLINE __attribute__((always_inline))
@@ -511,7 +517,7 @@ struct ANGLE_normalize_impl
 {
     static ANGLE_ALWAYS_INLINE T exec(T x)
     {
-        return metal::normalize(x);
+        return metal::fast::normalize(x);
     }
 };
 template <typename T>
@@ -728,7 +734,6 @@ ANGLE_ALWAYS_INLINE X ANGLE_mod(X x, Y y)
 
 PROGRAM_PRELUDE_DECLARE(mixBool,
                         R"(
-                        
 template <typename T, int N>
 ANGLE_ALWAYS_INLINE metal::vec<T,N> ANGLE_mix_bool(metal::vec<T, N> a, metal::vec<T, N> b, metal::vec<bool, N> c)
 {
@@ -736,7 +741,6 @@ ANGLE_ALWAYS_INLINE metal::vec<T,N> ANGLE_mix_bool(metal::vec<T, N> a, metal::ve
 }
 )",
                         include_metal_common())
-
 
 PROGRAM_PRELUDE_DECLARE(pack_half_2x16,
                         R"(
@@ -1069,10 +1073,13 @@ template <typename T, size_t N>
 ANGLE_ALWAYS_INLINE bool ANGLE_equal(metal::array<T, N> u, metal::array<T, N> v)
 {
     for(size_t i = 0; i < N; i++)
-        if (u[i] != v[i]) return false;
+        if (!ANGLE_equal(u[i], v[i])) return false;
     return true;
 }
-)")
+)",
+                        equalScalar(),
+                        equalVector(),
+                        equalMatrix())
 
 PROGRAM_PRELUDE_DECLARE(equalStructArray,
                         R"(
@@ -1088,8 +1095,6 @@ ANGLE_ALWAYS_INLINE bool ANGLE_equalStructArray(metal::array<T, N> u, metal::arr
 }
 )")
 
-
-
 PROGRAM_PRELUDE_DECLARE(notEqualArray,
                         R"(
 template <typename T, size_t N>
@@ -1099,6 +1104,16 @@ ANGLE_ALWAYS_INLINE bool ANGLE_notEqual(metal::array<T, N> u, metal::array<T, N>
 }
 )",
                         equalArray())
+
+PROGRAM_PRELUDE_DECLARE(equalScalar,
+                        R"(
+template <typename T>
+ANGLE_ALWAYS_INLINE bool ANGLE_equal(T u, T v)
+{
+    return u == v;
+}
+)",
+                        include_metal_math())
 
 PROGRAM_PRELUDE_DECLARE(equalVector,
                         R"(
@@ -1224,8 +1239,7 @@ struct ANGLE_SwizzleRef
 template <typename T, int N>
 ANGLE_ALWAYS_INLINE ANGLE_VectorElemRef<T, N> ANGLE_swizzle_ref(thread metal::vec<T, N> &vec, int i0)
 {
-    const int is[] = { i0 };
-    return ANGLE_VectorElemRef<T, N>(vec, is);
+    return ANGLE_VectorElemRef<T, N>(vec, i0);
 }
 template <typename T, int N>
 ANGLE_ALWAYS_INLINE ANGLE_SwizzleRef<T, N, 2> ANGLE_swizzle_ref(thread metal::vec<T, N> &vec, int i0, int i1)
@@ -1459,7 +1473,7 @@ PROGRAM_PRELUDE_DECLARE(writeSampleMask,
 ANGLE_ALWAYS_INLINE void ANGLE_writeSampleMask(const uint mask,
                                                thread uint& gl_SampleMask)
 {
-    if (ANGLE_CoverageMaskEnabled)
+    if (ANGLECoverageMaskEnabled)
     {
         gl_SampleMask = as_type<int>(mask);
     }
@@ -1477,6 +1491,7 @@ struct ANGLE_TextureEnv
 };
 )")
 
+// Note: for the time being, names must match those in TranslatorMetal.
 PROGRAM_PRELUDE_DECLARE(functionConstants,
                         R"(
 #define ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX 0
@@ -1484,10 +1499,10 @@ PROGRAM_PRELUDE_DECLARE(functionConstants,
 #define ANGLE_RASTERIZATION_DISCARD_INDEX   2
 #define ANGLE_COVERAGE_MASK_ENABLED_INDEX   3
 
-constant bool ANGLE_UseSampleCompareGradient [[function_constant(ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX)]];
-constant bool ANGLE_UseSampleCompareLod      [[function_constant(ANGLE_SAMPLE_COMPARE_LOD_INDEX)]];
-constant bool ANGLE_RasterizationDiscard     [[function_constant(ANGLE_RASTERIZATION_DISCARD_INDEX)]];
-constant bool ANGLE_CoverageMaskEnabled      [[function_constant(ANGLE_COVERAGE_MASK_ENABLED_INDEX)]];
+constant bool ANGLEUseSampleCompareGradient [[function_constant(ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX)]];
+constant bool ANGLEUseSampleCompareLod      [[function_constant(ANGLE_SAMPLE_COMPARE_LOD_INDEX)]];
+constant bool ANGLERasterizerDisabled       [[function_constant(ANGLE_RASTERIZATION_DISCARD_INDEX)]];
+constant bool ANGLECoverageMaskEnabled      [[function_constant(ANGLE_COVERAGE_MASK_ENABLED_INDEX)]];
 )")
 
 PROGRAM_PRELUDE_DECLARE(texelFetch,
@@ -1880,7 +1895,6 @@ ANGLE_ALWAYS_INLINE auto ANGLE_texture2DRect_impl(
 )",
                         textureEnv())
 
-
 PROGRAM_PRELUDE_DECLARE(texture2DLod,
                         R"(
 #define ANGLE_texture2DLod(env, ...) ANGLE_texture2DLod_impl(*env.texture, *env.sampler, __VA_ARGS__)
@@ -1926,7 +1940,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_texture2DProj_impl(
 PROGRAM_PRELUDE_DECLARE(texture2DRectProj,
                         R"(
 #define ANGLE_texture2DRectProj(env, ...) ANGLE_texture2DRectProj_impl(*env.texture, *env.sampler, __VA_ARGS__)
-                        
+
 template <typename Texture>
 ANGLE_ALWAYS_INLINE auto ANGLE_texture2DRectProj_impl(
     thread Texture &texture,
@@ -2155,7 +2169,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureGrad_impl(
     metal::float2 const dPdx,
     metal::float2 const dPdy)
 {
-    if (ANGLE_UseSampleCompareGradient)
+    if (ANGLEUseSampleCompareGradient)
     {
         return static_cast<T>(texture.sample_compare(sampler, coord.xy, coord.z, metal::gradient2d(dPdx, dPdy)));
     }
@@ -2178,7 +2192,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureGrad_impl(
     metal::float2 const dPdx,
     metal::float2 const dPdy)
 {
-    if (ANGLE_UseSampleCompareGradient)
+    if (ANGLEUseSampleCompareGradient)
     {
         return static_cast<T>(texture.sample_compare(sampler, coord.xy, uint(metal::round(coord.z)), coord.w, metal::gradient2d(dPdx, dPdy)));
     }
@@ -2201,7 +2215,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureGrad_impl(
     metal::float3 const dPdx,
     metal::float3 const dPdy)
 {
-    if (ANGLE_UseSampleCompareGradient)
+    if (ANGLEUseSampleCompareGradient)
     {
         return static_cast<T>(texture.sample_compare(sampler, coord.xyz, coord.w, metal::gradientcube(dPdx, dPdy)));
     }
@@ -2295,7 +2309,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureGradOffset_impl(
     metal::float2 const dPdy,
     metal::int2 const offset)
 {
-    if (ANGLE_UseSampleCompareGradient)
+    if (ANGLEUseSampleCompareGradient)
     {
         return static_cast<T>(texture.sample_compare(sampler, coord.xy, coord.z, metal::gradient2d(dPdx, dPdy), offset));
     }
@@ -2319,7 +2333,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureGradOffset_impl(
     metal::float2 const dPdy,
     metal::int2 const offset)
 {
-    if (ANGLE_UseSampleCompareGradient)
+    if (ANGLEUseSampleCompareGradient)
     {
         return static_cast<T>(texture.sample_compare(sampler, coord.xy, uint(metal::round(coord.z)), coord.w, metal::gradient2d(dPdx, dPdy), offset));
     }
@@ -2407,7 +2421,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureLod_impl(
     metal::float3 const coord,
     float level)
 {
-    if (ANGLE_UseSampleCompareLod)
+    if (ANGLEUseSampleCompareLod)
     {
         return static_cast<T>(texture.sample_compare(sampler, coord.xy, coord.z, metal::level(level)));
     }
@@ -2482,7 +2496,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureLodOffset_impl(
     float level,
     int2 const offset)
 {
-    if (ANGLE_UseSampleCompareLod)
+    if (ANGLEUseSampleCompareLod)
     {
         return static_cast<T>(texture.sample_compare(sampler, coord.xy, coord.z, metal::level(level), offset));
     }
@@ -2689,7 +2703,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureProjGrad_impl(
     metal::float2 const dPdx,
     metal::float2 const dPdy)
 {
-    if (ANGLE_UseSampleCompareGradient)
+    if (ANGLEUseSampleCompareGradient)
     {
         return static_cast<T>(texture.sample_compare(sampler, coord.xy/coord.w, coord.z/coord.w, metal::gradient2d(dPdx, dPdy)));
     }
@@ -2766,7 +2780,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureProjGradOffset_impl(
     metal::float2 const dPdy,
     int2 const offset)
 {
-    if (ANGLE_UseSampleCompareGradient)
+    if (ANGLEUseSampleCompareGradient)
     {
         return static_cast<T>(texture.sample_compare(sampler, coord.xy/coord.w, coord.z/coord.w, metal::gradient2d(dPdx, dPdy), offset));
     }
@@ -2838,7 +2852,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureProjLod_impl(
     metal::float4 const coord,
     float level)
 {
-    if (ANGLE_UseSampleCompareLod)
+    if (ANGLEUseSampleCompareLod)
     {
         return static_cast<T>(texture.sample_compare(sampler, coord.xy/coord.w, coord.z/coord.w, metal::level(level)));
     }
@@ -2899,7 +2913,7 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureProjLodOffset_impl(
     float level,
     int2 const offset)
 {
-    if (ANGLE_UseSampleCompareLod)
+    if (ANGLEUseSampleCompareLod)
     {
         return static_cast<T>(texture.sample_compare(sampler, coord.xy/coord.w, coord.z/coord.w, metal::level(level), offset));
     }
@@ -3138,7 +3152,7 @@ ProgramPrelude::FuncToEmitter ProgramPrelude::BuildFuncToEmitter()
             }
             return pp.texture_generic_float3();
         }
-        TODO();
+        UNIMPLEMENTED();
     });
     putBuiltIn("texture1DLod", EMIT_METHOD(texture1DLod));
     putBuiltIn("texture1DProj", EMIT_METHOD(texture1DProj));
@@ -3204,7 +3218,7 @@ ProgramPrelude::FuncToEmitter ProgramPrelude::BuildFuncToEmitter()
         {
             return pp.textureGrad_generic_floatN_floatN_floatN();
         }
-        TODO();
+        UNIMPLEMENTED();
     });
     putBuiltIn("textureGradOffset", [](ProgramPrelude &pp, const TFunction &func) {
         const ImmutableString textureName =
@@ -3254,7 +3268,7 @@ ProgramPrelude::FuncToEmitter ProgramPrelude::BuildFuncToEmitter()
         {
             return pp.textureGradOffset_generic_floatN_floatN_floatN_intN();
         }
-        TODO();
+        UNIMPLEMENTED();
     });
     putBuiltIn("textureLod", [](ProgramPrelude &pp, const TFunction &func) {
         const ImmutableString textureName =
@@ -3288,7 +3302,7 @@ ProgramPrelude::FuncToEmitter ProgramPrelude::BuildFuncToEmitter()
         {
             return pp.textureLod_generic_float3();
         }
-        TODO();
+        UNIMPLEMENTED();
     });
     putBuiltIn("textureLodOffset", EMIT_METHOD(textureLodOffset));
     putBuiltIn("textureOffset", EMIT_METHOD(textureOffset));
@@ -3323,7 +3337,7 @@ ProgramPrelude::FuncToEmitter ProgramPrelude::BuildFuncToEmitter()
         {
             return pp.textureProjGrad_generic_float4_float2_float2();
         }
-        TODO();
+        UNIMPLEMENTED();
     });
     putBuiltIn("textureProjGradOffset", [](ProgramPrelude &pp, const TFunction &func) {
         const ImmutableString textureName =
@@ -3355,7 +3369,7 @@ ProgramPrelude::FuncToEmitter ProgramPrelude::BuildFuncToEmitter()
         {
             return pp.textureProjGradOffset_generic_float4_float2_float2_int2();
         }
-        TODO();
+        UNIMPLEMENTED();
     });
     putBuiltIn("textureProjLod", [](ProgramPrelude &pp, const TFunction &func) {
         const ImmutableString textureName =
@@ -3385,7 +3399,7 @@ ProgramPrelude::FuncToEmitter ProgramPrelude::BuildFuncToEmitter()
         {
             return pp.textureProjLod_generic_float4();
         }
-        TODO();
+        UNIMPLEMENTED();
     });
     putBuiltIn("textureProjLodOffset", EMIT_METHOD(textureProjLodOffset));
     putBuiltIn("textureProjOffset", EMIT_METHOD(textureProjOffset));
@@ -3396,6 +3410,18 @@ ProgramPrelude::FuncToEmitter ProgramPrelude::BuildFuncToEmitter()
 #undef EMIT_METHOD
 }
 
+void ProgramPrelude::visitOperator(TOperator op, const TFunction *func, const TType *argType0)
+{
+    visitOperator(op, func, argType0, nullptr, nullptr);
+}
+
+void ProgramPrelude::visitOperator(TOperator op,
+                                   const TFunction *func,
+                                   const TType *argType0,
+                                   const TType *argType1)
+{
+    visitOperator(op, func, argType0, argType1, nullptr);
+}
 void ProgramPrelude::visitOperator(TOperator op,
                                    const TFunction *func,
                                    const TType *argType0,
@@ -3480,11 +3506,12 @@ void ProgramPrelude::visitOperator(TOperator op,
             {
                 equalArray();
             }
-            if(argType0->getStruct() && argType1->getStruct() && argType0->isArray() && argType1->isArray())
+            if (argType0->getStruct() && argType1->getStruct() && argType0->isArray() &&
+                argType1->isArray())
             {
                 equalStructArray();
             }
-            if(argType0->isMatrix() && argType1->isMatrix())
+            if (argType0->isMatrix() && argType1->isMatrix())
             {
                 equalMatrix();
             }
@@ -3504,11 +3531,12 @@ void ProgramPrelude::visitOperator(TOperator op,
             {
                 notEqualArray();
             }
-            if(argType0->getStruct() && argType1->getStruct() && argType0->isArray() && argType1->isArray())
+            if (argType0->getStruct() && argType1->getStruct() && argType0->isArray() &&
+                argType1->isArray())
             {
                 notEqualStructArray();
             }
-            if(argType0->isMatrix() && argType1->isMatrix())
+            if (argType0->isMatrix() && argType1->isMatrix())
             {
                 notEqualMatrix();
             }
@@ -3531,7 +3559,7 @@ void ProgramPrelude::visitOperator(TOperator op,
             break;
         case TOperator::EOpMix:
             include_metal_common();
-            if(argType2->getBasicType() == TBasicType::EbtBool)
+            if (argType2->getBasicType() == TBasicType::EbtBool)
             {
                 mixBool();
             }
@@ -3575,9 +3603,9 @@ void ProgramPrelude::visitOperator(TOperator op,
                 subMatrixScalar();
             }
             break;
-            
+
         case TOperator::EOpSubAssign:
-            if(argType0->isMatrix() && argType1->isScalar())
+            if (argType0->isMatrix() && argType1->isScalar())
             {
                 subMatrixScalarAssign();
             }
@@ -3604,7 +3632,7 @@ void ProgramPrelude::visitOperator(TOperator op,
             }
             break;
 
-        case TOperator::EOpMulMatrixComponentWise:
+        case TOperator::EOpMatrixCompMult:
             if (argType0->isMatrix() && argType1->isMatrix())
             {
                 componentWiseMultiply();
@@ -3628,7 +3656,7 @@ void ProgramPrelude::visitOperator(TOperator op,
                     inverse4();
                     break;
                 default:
-                    LOGIC_ERROR();
+                    UNREACHABLE();
             }
             break;
 
@@ -3662,8 +3690,6 @@ void ProgramPrelude::visitOperator(TOperator op,
             {
                 postDecrementMatrix();
             }
-            break;
-
             break;
 
         case TOperator::EOpNegative:
@@ -3703,7 +3729,7 @@ void ProgramPrelude::visitOperator(TOperator op,
         case TOperator::EOpLogicalAnd:
         case TOperator::EOpPositive:
         case TOperator::EOpLogicalNot:
-        case TOperator::EOpLogicalNotComponentWise:
+        case TOperator::EOpNotComponentWise:
         case TOperator::EOpBitwiseNot:
         case TOperator::EOpVectorTimesScalarAssign:
         case TOperator::EOpVectorTimesMatrixAssign:
@@ -3779,11 +3805,11 @@ void ProgramPrelude::visitOperator(TOperator op,
         case TOperator::EOpAtomicCompSwap:
         case TOperator::EOpEmitVertex:
         case TOperator::EOpEndPrimitive:
-        case TOperator::EOpFTransform:
+        case TOperator::EOpFtransform:
         case TOperator::EOpPackDouble2x32:
         case TOperator::EOpUnpackDouble2x32:
         case TOperator::EOpArrayLength:
-            TODO();
+            UNIMPLEMENTED();
             break;
 
         case TOperator::EOpConstruct:
@@ -3792,7 +3818,7 @@ void ProgramPrelude::visitOperator(TOperator op,
 
         case TOperator::EOpCallFunctionInAST:
         case TOperator::EOpCallInternalRawFunction:
-        case TOperator::EOpCallBuiltInFunction:
+        default:
             ASSERT(func);
             if (mHandled.insert(func).second)
             {
@@ -3830,7 +3856,7 @@ void ProgramPrelude::visitVariable(const Name &name, const TType &type)
     }
     else
     {
-        if (name == constant_names::kRasterizationDiscardEnabled)
+        if (name.rawName() == sh::mtl::kRasterizerDiscardEnabledConstName)
         {
             functionConstants();
         }
@@ -3907,7 +3933,7 @@ bool ProgramPrelude::visitAggregate(Visit visit, TIntermAggregate *node)
             visitOperator(node->getOp(), func, &argType0, &argType1);
         }
         break;
-            
+
         case 3:
         {
             const TType &argType0 = getArgType(0);

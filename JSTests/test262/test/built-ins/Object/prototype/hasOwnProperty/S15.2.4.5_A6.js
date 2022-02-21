@@ -8,9 +8,8 @@ description: >
     Checking if obtaining the prototype property of
     Object.prototype.hasOwnProperty fails
 ---*/
-
-//CHECK#1
-if (Object.prototype.hasOwnProperty.prototype !== undefined) {
-  throw new Test262Error('#1: Object.prototype.hasOwnProperty has not prototype property' + Object.prototype.hasOwnProperty.prototype);
-}
-//
+assert.sameValue(
+  Object.prototype.hasOwnProperty.prototype,
+  undefined,
+  'The value of Object.prototype.hasOwnProperty.prototype is expected to equal undefined'
+);

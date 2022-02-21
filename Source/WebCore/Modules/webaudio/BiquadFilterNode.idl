@@ -25,10 +25,11 @@
 
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     Exposed=Window
 ] interface BiquadFilterNode : AudioNode {
-    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional BiquadFilterOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional BiquadFilterOptions options);
 
     attribute BiquadFilterType type;
     

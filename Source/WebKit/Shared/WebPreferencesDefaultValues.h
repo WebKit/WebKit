@@ -40,12 +40,14 @@ bool isFeatureFlagEnabled(const char*, bool defaultValue = false);
 #if PLATFORM(IOS_FAMILY)
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
 bool defaultCSSOMViewScrollingAPIEnabled();
+bool defaultAlternateFormControlDesignEnabled();
 #if ENABLE(TEXT_AUTOSIZING)
 bool defaultTextAutosizingUsesIdempotentMode();
 #endif
 #endif
 
 #if PLATFORM(MAC)
+bool defaultScrollAnimatorEnabled();
 bool defaultPassiveWheelListenersAsDefaultOnDocument();
 bool defaultWheelEventGesturesBecomeNonBlocking();
 #endif
@@ -87,10 +89,6 @@ bool defaultWebRTCCodecsInGPUProcess();
 bool defaultIncrementalPDFEnabled();
 #endif
 
-#if ENABLE(WEBXR)
-bool defaultWebXREnabled();
-#endif
-
 #if ENABLE(WEBM_FORMAT_READER)
 bool defaultWebMFormatReaderEnabled();
 #endif
@@ -103,11 +101,23 @@ bool defaultVP9SWDecoderEnabledOnBattery();
 
 #if ENABLE(MEDIA_SOURCE)
 bool defaultWebMParserEnabled();
-bool defaultWebMWebAudioEnabled();
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)
+bool defaultMediaSourceEnabled();
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 bool defaultMediaSessionCoordinatorEnabled();
+#endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+bool defaultScreenCaptureKitEnabled();
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS)
+bool defaultTextRecognitionEnhancementsEnabled();
+bool defaultImageAnalysisQueueEnabled();
 #endif
 
 } // namespace WebKit

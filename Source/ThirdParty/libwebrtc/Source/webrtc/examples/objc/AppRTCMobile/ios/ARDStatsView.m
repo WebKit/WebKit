@@ -34,10 +34,8 @@
   return self;
 }
 
-- (void)setStats:(NSArray *)stats {
-  for (RTC_OBJC_TYPE(RTCLegacyStatsReport) * report in stats) {
-    [_statsBuilder parseStatsReport:report];
-  }
+- (void)setStats:(RTC_OBJC_TYPE(RTCStatisticsReport) *)stats {
+  _statsBuilder.stats = stats;
   _statsLabel.text = _statsBuilder.statsString;
 }
 

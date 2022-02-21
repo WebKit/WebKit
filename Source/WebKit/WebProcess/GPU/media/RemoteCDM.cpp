@@ -84,7 +84,7 @@ bool RemoteCDM::supportsSessionTypeWithConfiguration(const CDMSessionType&, cons
     return false;
 }
 
-bool RemoteCDM::supportsInitData(const AtomString& type, const SharedBuffer& data) const
+bool RemoteCDM::supportsInitData(const AtomString& type, const FragmentedSharedBuffer& data) const
 {
     // This check will be done, later, inside RemoteCDMInstanceSessionProxy::requestLicense().
     return true;
@@ -118,7 +118,7 @@ RefPtr<CDMInstance> RemoteCDM::createInstance()
     m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMProxy::CreateInstance(), Messages::RemoteCDMProxy::CreateInstance::Reply(identifier, configuration), m_identifier);
     if (!identifier)
         return nullptr;
-    return RemoteCDMInstance::create(makeWeakPtr(m_factory.get()), WTFMove(identifier), WTFMove(configuration));
+    return RemoteCDMInstance::create(m_factory.get(), WTFMove(identifier), WTFMove(configuration));
 }
 
 void RemoteCDM::loadAndInitialize()
@@ -129,7 +129,7 @@ void RemoteCDM::loadAndInitialize()
     m_factory->gpuProcessConnection().connection().send(Messages::RemoteCDMProxy::LoadAndInitialize(), m_identifier);
 }
 
-RefPtr<SharedBuffer> RemoteCDM::sanitizeResponse(const SharedBuffer& response) const
+RefPtr<FragmentedSharedBuffer> RemoteCDM::sanitizeResponse(const FragmentedSharedBuffer& response) const
 {
     // This check will be done, later, inside RemoteCDMInstanceSessionProxy::updateLicense().
     return response.copy();

@@ -33,7 +33,7 @@ enum RemotePlaybackState {
 [
     ActiveDOMObject,
     Conditional=WIRELESS_PLAYBACK_TARGET,
-    EnabledBySetting=RemotePlayback,
+    EnabledBySetting=RemotePlaybackEnabled,
     Exposed=Window,
     GenerateIsReachable=ImplOwnerNodeRoot,
     GenerateAddOpaqueRoot=opaqueRootConcurrently

@@ -29,10 +29,11 @@ WI.OverlayManager = class OverlayManager extends WI.Object
     {
         super();
 
-        this._gridOverlayForNodeMap = new Map;
+        this._overlayForNodeMap = new Map;
         this._nextDefaultGridColorIndex = 0;
-        this._gridColorForNodeMap = new WeakMap;
-        this._gridColorSettingForNodeMap = new WeakMap;
+        this._nextDefaultFlexColorIndex = 0;
+        this._colorForNodeMap = new WeakMap;
+        this._colorSettingForNodeMap = new WeakMap;
 
         WI.settings.gridOverlayShowExtendedGridLines.addEventListener(WI.Setting.Event.Changed, this._handleGridSettingChanged, this);
         WI.settings.gridOverlayShowLineNames.addEventListener(WI.Setting.Event.Changed, this._handleGridSettingChanged, this);
@@ -44,7 +45,7 @@ WI.OverlayManager = class OverlayManager extends WI.Object
 
     // Public
 
-    showGridOverlay(domNode, {color, initiator} = {})
+    showOverlay(domNode, {color, initiator} = {})
     {
         console.assert(!domNode.destroyed, domNode);
         if (domNode.destroyed)
@@ -52,109 +53,133 @@ WI.OverlayManager = class OverlayManager extends WI.Object
 
         console.assert(domNode instanceof WI.DOMNode, domNode);
         console.assert(!color || color instanceof WI.Color, color);
-        console.assert(domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid, domNode.layoutContextType);
+        console.assert(Object.values(WI.DOMNode.LayoutContextType).includes(domNode.layoutContextType), domNode);
 
-        color ||= this.getGridColorForNode(domNode);
+        color ||= this.getColorForNode(domNode);
         let target = WI.assumingMainTarget();
-        let commandArguments = {
-            nodeId: domNode.id,
-            gridColor: color.toProtocol(),
-            showLineNames: WI.settings.gridOverlayShowLineNames.value,
-            showLineNumbers: WI.settings.gridOverlayShowLineNumbers.value,
-            showExtendedGridLines: WI.settings.gridOverlayShowExtendedGridLines.value,
-            showTrackSizes: WI.settings.gridOverlayShowTrackSizes.value,
-            showAreaNames: WI.settings.gridOverlayShowAreaNames.value,
-        };
-        target.DOMAgent.showGridOverlay.invoke(commandArguments);
+        let commandArguments = {nodeId: domNode.id};
+
+        switch (domNode.layoutContextType) {
+        case WI.DOMNode.LayoutContextType.Grid:
+            commandArguments.gridColor = color.toProtocol();
+            commandArguments.showLineNames = WI.settings.gridOverlayShowLineNames.value;
+            commandArguments.showLineNumbers = WI.settings.gridOverlayShowLineNumbers.value;
+            commandArguments.showExtendedGridLines = WI.settings.gridOverlayShowExtendedGridLines.value;
+            commandArguments.showTrackSizes = WI.settings.gridOverlayShowTrackSizes.value;
+            commandArguments.showAreaNames = WI.settings.gridOverlayShowAreaNames.value;
+            target.DOMAgent.showGridOverlay.invoke(commandArguments);
+            break;
+
+        case WI.DOMNode.LayoutContextType.Flex:
+            commandArguments.flexColor = color.toProtocol();
+            target.DOMAgent.showFlexOverlay.invoke(commandArguments);
+            break;
+        }
 
         let overlay = {domNode, ...commandArguments, initiator};
 
         // The method to show the overlay will be called repeatedly while updating the grid overlay color. Avoid adding duplicate event listeners
-        if (!this._gridOverlayForNodeMap.has(domNode))
+        if (!this._overlayForNodeMap.has(domNode))
             domNode.addEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
 
-        this._gridOverlayForNodeMap.set(domNode, overlay);
+        this._overlayForNodeMap.set(domNode, overlay);
 
-        this.dispatchEventToListeners(WI.OverlayManager.Event.GridOverlayShown, overlay);
+        this.dispatchEventToListeners(WI.OverlayManager.Event.OverlayShown, overlay);
     }
 
-    hideGridOverlay(domNode)
+    hideOverlay(domNode)
     {
         console.assert(domNode instanceof WI.DOMNode, domNode);
         console.assert(!domNode.destroyed, domNode);
-        console.assert(domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid, domNode.layoutContextType);
+        console.assert(Object.values(WI.DOMNode.LayoutContextType).includes(domNode.layoutContextType), domNode);
         if (domNode.destroyed)
             return;
 
-        let overlay = this._gridOverlayForNodeMap.take(domNode);
+        let overlay = this._overlayForNodeMap.take(domNode);
         if (!overlay)
             return;
 
         let target = WI.assumingMainTarget();
-        target.DOMAgent.hideGridOverlay(domNode.id);
+
+        switch (domNode.layoutContextType) {
+        case WI.DOMNode.LayoutContextType.Grid:
+            target.DOMAgent.hideGridOverlay(domNode.id);
+            break;
+
+        case WI.DOMNode.LayoutContextType.Flex:
+            target.DOMAgent.hideFlexOverlay(domNode.id);
+            break;
+        }
 
         domNode.removeEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
-        this.dispatchEventToListeners(WI.OverlayManager.Event.GridOverlayHidden, overlay);
+        this.dispatchEventToListeners(WI.OverlayManager.Event.OverlayHidden, overlay);
     }
 
     hasVisibleGridOverlays()
     {
-        return this._gridOverlayForNodeMap.size > 0;
+        for (let domNode of this._overlayForNodeMap.keys()) {
+            if (domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid)
+                return true;
+        }
+        return false;
     }
 
-    isGridOverlayVisible(domNode)
+    hasVisibleOverlay(domNode)
     {
-        return this._gridOverlayForNodeMap.has(domNode);
+        return this._overlayForNodeMap.has(domNode);
     }
 
-    toggleGridOverlay(domNode, options)
+    toggleOverlay(domNode, options)
     {
-        if (this.isGridOverlayVisible(domNode))
-            this.hideGridOverlay(domNode);
+        if (this.hasVisibleOverlay(domNode))
+            this.hideOverlay(domNode);
         else
-            this.showGridOverlay(domNode, options);
+            this.showOverlay(domNode, options);
     }
 
-    getGridColorForNode(domNode)
+    getColorForNode(domNode)
     {
-        let color = this._gridColorForNodeMap.get(domNode);
+        let color = this._colorForNodeMap.get(domNode);
         if (color)
             return color;
 
-        const defaultGridHSLColors = [
-            [329, 91, 70],
-            [207, 96, 69],
-            [92, 90, 64],
-            [291, 73, 68],
-            [40, 97, 57],
-        ];
-
-        let colorSetting = this._gridColorSettingForNodeMap.get(domNode);
+        let colorSetting = this._colorSettingForNodeMap.get(domNode);
         if (!colorSetting) {
-            let defaultColor = defaultGridHSLColors[this._nextDefaultGridColorIndex];
-            this._nextDefaultGridColorIndex = (this._nextDefaultGridColorIndex + 1) % defaultGridHSLColors.length;
+            let nextColorIndex;
+            switch (domNode.layoutContextType) {
+            case WI.DOMNode.LayoutContextType.Grid:
+                nextColorIndex = this._nextDefaultGridColorIndex;
+                this._nextDefaultGridColorIndex = (nextColorIndex + 1) % WI.OverlayManager._defaultHSLColors.length;
+                break;
+
+            case WI.DOMNode.LayoutContextType.Flex:
+                nextColorIndex = this._nextDefaultFlexColorIndex;
+                this._nextDefaultFlexColorIndex = (nextColorIndex + 1) % WI.OverlayManager._defaultHSLColors.length;
+                break;
+            }
+            let defaultColor = WI.OverlayManager._defaultHSLColors[nextColorIndex];
 
             let url = domNode.ownerDocument.documentURL || WI.networkManager.mainFrame.url;
-            colorSetting = new WI.Setting(`grid-overlay-color-${url.hash}-${domNode.path().hash}`, defaultColor);
-            this._gridColorSettingForNodeMap.set(domNode, colorSetting);
+            colorSetting = new WI.Setting(`overlay-color-${url.hash}-${domNode.path().hash}`, defaultColor);
+            this._colorSettingForNodeMap.set(domNode, colorSetting);
         }
 
         color = new WI.Color(WI.Color.Format.HSL, colorSetting.value);
-        this._gridColorForNodeMap.set(domNode, color);
+        this._colorForNodeMap.set(domNode, color);
 
         return color;
     }
 
-    setGridColorForNode(domNode, color)
+    setColorForNode(domNode, color)
     {
         console.assert(domNode instanceof WI.DOMNode, domNode);
         console.assert(color instanceof WI.Color, color);
 
-        let colorSetting = this._gridColorSettingForNodeMap.get(domNode);
-        console.assert(colorSetting, "There should already be a setting created form a previous call to getGridColorForNode()");
+        let colorSetting = this._colorSettingForNodeMap.get(domNode);
+        console.assert(colorSetting, "There should already be a setting created form a previous call to getColorForNode()");
         colorSetting.value = color.hsl;
 
-        this._gridColorForNodeMap.set(domNode, color);
+        this._colorForNodeMap.set(domNode, color);
     }
 
     // Private
@@ -162,20 +187,20 @@ WI.OverlayManager = class OverlayManager extends WI.Object
     _handleLayoutContextTypeChanged(event)
     {
         let domNode = event.target;
-        console.assert(domNode.layoutContextType !== WI.DOMNode.LayoutContextType.Grid, domNode);
 
         domNode.removeEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
 
-        // When the context type changes, the overlay is automatically hidden on the backend. Here, we only update the map and notify listeners.
-        let overlay = this._gridOverlayForNodeMap.take(domNode);
-        this.dispatchEventToListeners(WI.OverlayManager.Event.GridOverlayHidden, overlay);
+        // When the context type changes, the overlay is automatically hidden on the backend (even if it changes from Grid to Flex, or vice-versa).
+        // Here, we only update the map and notify listeners.
+        let overlay = this._overlayForNodeMap.take(domNode);
+        this.dispatchEventToListeners(WI.OverlayManager.Event.OverlayHidden, overlay);
     }
 
     _handleGridSettingChanged(event)
     {
-        for (let [domNode, overlay] of this._gridOverlayForNodeMap) {
-            // Refresh all shown overlays. Latest settings values will be used.
-            this.showGridOverlay(domNode, {color: overlay.color, initiator: overlay.initiator});
+        for (let [domNode, overlay] of this._overlayForNodeMap) {
+            if (domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid)
+                this.showOverlay(domNode, {color: overlay.color, initiator: overlay.initiator});
         }
     }
 
@@ -191,10 +216,19 @@ WI.OverlayManager = class OverlayManager extends WI.Object
         //
         // `domNode.id` is different for the same DOM element after page reload.
         this._nextDefaultGridColorIndex = 0;
+        this._nextDefaultFlexColorIndex = 0;
     }
 };
 
+WI.OverlayManager._defaultHSLColors = [
+    [329, 91, 70],
+    [207, 96, 69],
+    [92, 90, 64],
+    [291, 73, 68],
+    [40, 97, 57],
+];
+
 WI.OverlayManager.Event = {
-    GridOverlayShown: "overlay-manager-grid-overlay-shown",
-    GridOverlayHidden: "overlay-manager-grid-overlay-hidden",
+    OverlayShown: "overlay-manager-overlay-shown",
+    OverlayHidden: "overlay-manager-overlay-hidden",
 };

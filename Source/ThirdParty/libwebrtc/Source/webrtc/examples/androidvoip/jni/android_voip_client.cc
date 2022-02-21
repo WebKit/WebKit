@@ -61,8 +61,8 @@ rtc::IPAddress QueryDefaultLocalAddress(int family) {
   RTC_DCHECK(thread->socketserver() != nullptr);
   RTC_DCHECK(family == AF_INET || family == AF_INET6);
 
-  std::unique_ptr<rtc::AsyncSocket> socket(
-      thread->socketserver()->CreateAsyncSocket(family, SOCK_DGRAM));
+  std::unique_ptr<rtc::Socket> socket(
+      thread->socketserver()->CreateSocket(family, SOCK_DGRAM));
   if (!socket) {
     RTC_LOG_ERR(LERROR) << "Socket creation failed";
     return rtc::IPAddress();

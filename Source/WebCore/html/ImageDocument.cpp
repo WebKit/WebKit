@@ -141,7 +141,7 @@ void ImageDocument::updateDuringParsing()
     if (!m_imageElement)
         createDocumentStructure();
 
-    if (RefPtr<SharedBuffer> buffer = loader()->mainResourceData())
+    if (RefPtr<FragmentedSharedBuffer> buffer = loader()->mainResourceData())
         m_imageElement->cachedImage()->updateBuffer(*buffer);
 
     imageUpdated();
@@ -151,7 +151,7 @@ void ImageDocument::finishedParsing()
 {
     if (!parser()->isStopped() && m_imageElement) {
         CachedImage& cachedImage = *m_imageElement->cachedImage();
-        RefPtr<SharedBuffer> data = loader()->mainResourceData();
+        RefPtr<FragmentedSharedBuffer> data = loader()->mainResourceData();
 
         // If this is a multipart image, make a copy of the current part, since the resource data
         // will be overwritten by the next part.
@@ -168,7 +168,7 @@ void ImageDocument::finishedParsing()
         if (size.width()) {
             // Compute the title. We use the decoded filename of the resource, falling
             // back on the hostname if there is no path.
-            String name = decodeURLEscapeSequences(url().lastPathComponent());
+            String name = PAL::decodeURLEscapeSequences(url().lastPathComponent());
             if (name.isEmpty())
                 name = url().host().toString();
             setTitle(imageTitle(name, size));
@@ -198,7 +198,7 @@ void ImageDocumentParser::finish()
 }
 
 ImageDocument::ImageDocument(Frame& frame, const URL& url)
-    : HTMLDocument(&frame, frame.settings(), url, ImageDocumentClass)
+    : HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::Image })
     , m_imageElement(nullptr)
     , m_imageSizeIsKnown(false)
 #if !PLATFORM(IOS_FAMILY)
@@ -242,6 +242,7 @@ void ImageDocument::createDocumentStructure()
     imageElement->setSrc(url().string());
     imageElement->cachedImage()->setResponse(loader()->response());
     body->appendChild(imageElement);
+    imageElement->setLoadManually(false);
     
     if (m_shouldShrinkImage) {
 #if PLATFORM(IOS_FAMILY)

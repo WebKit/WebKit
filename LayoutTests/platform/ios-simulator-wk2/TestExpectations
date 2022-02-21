@@ -4,10 +4,6 @@
 #
 
 http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
-http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Failure ]
-http/tests/security/cross-origin-worker-indexeddb.html [ Failure ]
-
-fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
 
 webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.html [ Pass Failure ]
 
@@ -88,8 +84,6 @@ webkit.org/b/214730 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCPeerConn
 webkit.org/b/214730 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html [ Skip ]
 webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Skip ]
 webkit.org/b/214730 [ Debug ] webrtc/simulcast-h264.html [ Skip ]
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-candidate-in-sdp.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/webrtc/protocol/crypto-suite.https.html [ Failure ]
 
 webkit.org/b/214358 fast/scrolling/ios/programmatic-scroll-while-zoomed.html [ Pass Failure ]
 
@@ -97,25 +91,20 @@ webkit.org/b/214731 imported/w3c/web-platform-tests/IndexedDB/key-generators/rea
 
 webkit.org/b/214732 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-store.any.serviceworker.html [ Pass Failure ]
 
-webkit.org/b/214735 http/tests/security/xssAuditor/cached-frame.html [ Pass Timeout ]
-
 webkit.org/b/214736 imported/w3c/web-platform-tests/css/css-flexbox/align-self-014.html [ Pass Timeout ]
 
 webkit.org/b/214739 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-center.html [ Pass Timeout ]
 
 webkit.org/b/214751 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html [ Pass Failure ]
 
-webkit.org/b/214752 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Pass Failure ]
+# See bug 232916; this test can't pass as we do not support mid-stream resolution change.
+webkit.org/b/214752 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Skip ]
 
 webkit.org/b/214755 http/tests/navigation/subframe-pagehide-handler-starts-load2.html [ Pass Timeout ]
 
 webkit.org/b/214757 imported/w3c/web-platform-tests/css/css-fonts/crash-font-face-invalid-descriptor.html [ Pass Timeout ]
 
 webkit.org/b/214824 [ Debug ] js/throw-large-string-oom.html [ Skip ]
-
-webkit.org/b/214877 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage.html [ Pass Failure ]
-
-webkit.org/b/215025 imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-maxChannels.html [ Pass Crash ]
 
 webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html [ Pass Failure ]
 
@@ -143,6 +132,8 @@ webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-activate.ht
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Timeout Failure ]
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Timeout Failure ]
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Timeout Failure ]
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-push.https.html [ Pass Timeout Failure ]
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-pushsubscriptionchange.https.html [ Pass Timeout Failure ]
 
 webkit.org/b/217687 accessibility/aria-current.html [ Pass Timeout ]
 webkit.org/b/217687 accessibility/insert-newline.html [ Pass Timeout ]
@@ -150,10 +141,6 @@ webkit.org/b/217687 accessibility/ios-simulator/abbreviation.html [ Pass Timeout
 webkit.org/b/217687 accessibility/ios-simulator/accessibility-aria-table-children.html [ Pass Timeout ]
 
 webkit.org/b/217759 media/now-playing-status-without-media.html [ Pass Failure ]
-
-webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
-
-webkit.org/b/222808 imported/w3c/web-platform-tests/webrtc/protocol/candidate-exchange.https.html [ Pass Failure ]
 
 # webkit.org/b/209139 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
 

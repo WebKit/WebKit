@@ -26,7 +26,7 @@
 #ifndef PAS_REDUNDANT_LOCAL_ALLOCATOR_NODE_H
 #define PAS_REDUNDANT_LOCAL_ALLOCATOR_NODE_H
 
-#include "pas_compact_segregated_global_size_directory_ptr.h"
+#include "pas_compact_segregated_size_directory_ptr.h"
 #include "pas_compact_atomic_thread_local_cache_layout_node.h"
 #include "pas_allocator_index.h"
 
@@ -36,13 +36,12 @@ struct pas_redundant_local_allocator_node;
 typedef struct pas_redundant_local_allocator_node pas_redundant_local_allocator_node;
 
 struct pas_redundant_local_allocator_node {
-    pas_compact_atomic_thread_local_cache_layout_node next;
-    pas_compact_segregated_global_size_directory_ptr directory;
+    pas_compact_segregated_size_directory_ptr directory;
     pas_allocator_index allocator_index;
 };
 
 PAS_API pas_redundant_local_allocator_node*
-pas_redundant_local_allocator_node_create(pas_segregated_global_size_directory* directory);
+pas_redundant_local_allocator_node_create(pas_segregated_size_directory* directory);
 
 PAS_END_EXTERN_C;
 

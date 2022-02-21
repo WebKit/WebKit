@@ -1,0 +1,44 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface ServiceWorkerRegistration: original interface defined
+PASS Partial interface ServiceWorkerRegistration: member names are unique
+PASS Partial interface ServiceWorkerGlobalScope: original interface defined
+PASS Partial interface ServiceWorkerGlobalScope: valid exposure set
+PASS Partial interface ServiceWorkerGlobalScope: member names are unique
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
+PASS PushManager interface: existence and properties of interface object
+PASS PushManager interface object length
+PASS PushManager interface object name
+PASS PushManager interface: existence and properties of interface prototype object
+PASS PushManager interface: existence and properties of interface prototype object's "constructor" property
+PASS PushManager interface: existence and properties of interface prototype object's @@unscopables property
+PASS PushManager interface: attribute supportedContentEncodings
+PASS PushManager interface: operation subscribe(optional PushSubscriptionOptionsInit)
+PASS PushManager interface: operation getSubscription()
+PASS PushManager interface: operation permissionState(optional PushSubscriptionOptionsInit)
+PASS PushSubscriptionOptions interface: existence and properties of interface object
+PASS PushSubscriptionOptions interface object length
+PASS PushSubscriptionOptions interface object name
+PASS PushSubscriptionOptions interface: existence and properties of interface prototype object
+PASS PushSubscriptionOptions interface: existence and properties of interface prototype object's "constructor" property
+PASS PushSubscriptionOptions interface: existence and properties of interface prototype object's @@unscopables property
+PASS PushSubscriptionOptions interface: attribute userVisibleOnly
+PASS PushSubscriptionOptions interface: attribute applicationServerKey
+PASS PushSubscription interface: existence and properties of interface object
+PASS PushSubscription interface object length
+PASS PushSubscription interface object name
+PASS PushSubscription interface: existence and properties of interface prototype object
+PASS PushSubscription interface: existence and properties of interface prototype object's "constructor" property
+PASS PushSubscription interface: existence and properties of interface prototype object's @@unscopables property
+PASS PushSubscription interface: attribute endpoint
+PASS PushSubscription interface: attribute expirationTime
+PASS PushSubscription interface: attribute options
+PASS PushSubscription interface: operation getKey(PushEncryptionKeyName)
+PASS PushSubscription interface: operation unsubscribe()
+PASS PushSubscription interface: operation toJSON()
+PASS PushMessageData interface: existence and properties of interface object
+PASS PushEvent interface: existence and properties of interface object
+PASS PushSubscriptionChangeEvent interface: existence and properties of interface object
+FAIL ServiceWorkerRegistration interface: attribute pushManager assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
+

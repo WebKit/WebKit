@@ -94,8 +94,8 @@ public:
                     return m_adapter.indexToValue(*m_sparceSetIterator);
                 }
 
-                bool operator==(const iterator& other) { return m_sparceSetIterator == other.m_sparceSetIterator; }
-                bool operator!=(const iterator& other) { return m_sparceSetIterator != other.m_sparceSetIterator; }
+                bool operator==(const iterator& other) const { return m_sparceSetIterator == other.m_sparceSetIterator; }
+                bool operator!=(const iterator& other) const { return m_sparceSetIterator != other.m_sparceSetIterator; }
 
             private:
                 Adapter& m_adapter;

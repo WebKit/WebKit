@@ -31,6 +31,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin_3.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/events.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/hashchange_event.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/history-traversal-navigate-parent-while-child-loading.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/history-traversal-navigates-multiple-frames.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/popstate_event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/same-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/scroll-restoration-order.html

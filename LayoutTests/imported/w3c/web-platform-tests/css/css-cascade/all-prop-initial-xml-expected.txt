@@ -2,12 +2,14 @@
 
 PASS setup
 PASS stylesheet takes effect
+PASS accent-color
 PASS align-content
 PASS align-items
 PASS align-self
 PASS alignment-baseline
 PASS all
 PASS alt
+PASS animation-composition
 PASS animation-delay
 PASS animation-direction
 PASS animation-duration
@@ -16,6 +18,7 @@ PASS animation-iteration-count
 PASS animation-name
 PASS animation-play-state
 PASS animation-timing-function
+PASS appearance
 PASS aspect-ratio
 PASS backface-visibility
 PASS background-attachment
@@ -84,7 +87,6 @@ PASS clip-rule
 PASS color
 PASS color-interpolation
 PASS color-interpolation-filters
-PASS color-rendering
 PASS color-scheme
 PASS column-count
 PASS column-fill
@@ -95,6 +97,8 @@ PASS column-rule-width
 PASS column-span
 PASS column-width
 PASS contain
+PASS container-name
+PASS container-type
 PASS content
 PASS counter-increment
 PASS counter-reset
@@ -119,7 +123,9 @@ PASS flood-color
 PASS flood-opacity
 PASS font-family
 PASS font-feature-settings
+PASS font-kerning
 PASS font-optical-sizing
+PASS font-palette
 PASS font-size
 PASS font-stretch
 PASS font-style
@@ -149,6 +155,7 @@ PASS height
 PASS image-orientation
 PASS image-rendering
 PASS inline-size
+PASS input-security
 PASS inset-block-end
 PASS inset-block-start
 PASS inset-inline-end
@@ -177,7 +184,13 @@ PASS margin-top
 PASS marker-end
 PASS marker-mid
 PASS marker-start
-PASS mask
+PASS mask-clip
+PASS mask-composite
+PASS mask-image
+PASS mask-mode
+PASS mask-origin
+PASS mask-repeat
+PASS mask-size
 PASS mask-type
 PASS math-style
 PASS max-block-size
@@ -191,6 +204,11 @@ PASS min-width
 PASS mix-blend-mode
 PASS object-fit
 PASS object-position
+PASS offset-anchor
+PASS offset-distance
+PASS offset-path
+PASS offset-position
+PASS offset-rotate
 PASS opacity
 PASS order
 PASS orphans
@@ -220,6 +238,7 @@ PASS perspective-origin-x
 PASS perspective-origin-y
 PASS pointer-events
 PASS position
+PASS print-color-adjust
 PASS quotes
 PASS r
 PASS resize
@@ -266,12 +285,17 @@ PASS tab-size
 PASS table-layout
 PASS text-align
 PASS text-anchor
+PASS text-combine-upright
 PASS text-decoration
 PASS text-decoration-color
 PASS text-decoration-line
 PASS text-decoration-skip
+PASS text-decoration-skip-ink
 PASS text-decoration-style
 PASS text-decoration-thickness
+PASS text-emphasis-color
+PASS text-emphasis-position
+PASS text-emphasis-style
 PASS text-indent
 PASS text-orientation
 PASS text-overflow
@@ -312,14 +336,10 @@ PASS zoom
 PASS -apple-color-filter
 PASS -apple-pay-button-style
 PASS -apple-pay-button-type
-PASS -apple-trailing-word
-PASS -webkit-appearance
 PASS -webkit-backdrop-filter
 PASS -webkit-background-clip
-PASS -webkit-background-composite
 PASS -webkit-background-origin
 PASS -webkit-background-size
-PASS -webkit-border-fit
 PASS -webkit-border-horizontal-spacing
 PASS -webkit-border-image
 PASS -webkit-border-vertical-spacing
@@ -340,7 +360,6 @@ PASS -webkit-column-break-before
 PASS -webkit-column-break-inside
 PASS -webkit-column-progression
 PASS -webkit-cursor-visibility
-PASS -webkit-font-kerning
 PASS -webkit-font-smoothing
 PASS -webkit-hyphenate-character
 PASS -webkit-hyphenate-limit-after
@@ -354,10 +373,6 @@ PASS -webkit-line-clamp
 PASS -webkit-line-grid
 PASS -webkit-line-snap
 PASS -webkit-locale
-PASS -webkit-margin-after-collapse
-PASS -webkit-margin-before-collapse
-PASS -webkit-margin-bottom-collapse
-PASS -webkit-margin-top-collapse
 PASS -webkit-mask-box-image
 PASS -webkit-mask-box-image-outset
 PASS -webkit-mask-box-image-repeat
@@ -366,21 +381,13 @@ PASS -webkit-mask-box-image-source
 PASS -webkit-mask-box-image-width
 PASS -webkit-mask-clip
 PASS -webkit-mask-composite
-PASS -webkit-mask-image
-PASS -webkit-mask-origin
 PASS -webkit-mask-position-x
 PASS -webkit-mask-position-y
-PASS -webkit-mask-repeat
-PASS -webkit-mask-size
 PASS -webkit-mask-source-type
 PASS -webkit-nbsp-mode
-PASS -webkit-print-color-adjust
 PASS -webkit-rtl-ordering
 PASS -webkit-ruby-position
 PASS -webkit-text-combine
-PASS -webkit-text-emphasis-color
-PASS -webkit-text-emphasis-position
-PASS -webkit-text-emphasis-style
 PASS -webkit-text-fill-color
 PASS -webkit-text-orientation
 PASS -webkit-text-security

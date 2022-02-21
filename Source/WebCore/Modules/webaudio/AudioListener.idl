@@ -29,8 +29,8 @@
 
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=WebAudioEnabled,
     Exposed=Window,
-    ImplementationLacksVTable
 ] interface AudioListener {
     readonly attribute AudioParam positionX;
     readonly attribute AudioParam positionY;

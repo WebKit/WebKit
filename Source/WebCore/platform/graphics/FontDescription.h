@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -16,14 +16,15 @@
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIother.m_  If not, write to
+ * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301, USm_
+ * Boston, MA 02110-1301, USA.
  *
  */
 
 #pragma once
 
+#include "FontPalette.h"
 #include "FontRenderingMode.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
@@ -98,6 +99,7 @@ public:
     FontStyleAxis fontStyleAxis() const { return m_fontStyleAxis ? FontStyleAxis::ital : FontStyleAxis::slnt; }
     AllowUserInstalledFonts shouldAllowUserInstalledFonts() const { return static_cast<AllowUserInstalledFonts>(m_shouldAllowUserInstalledFonts); }
     bool shouldDisableLigaturesForSpacing() const { return m_shouldDisableLigaturesForSpacing; }
+    FontPalette fontPalette() const { return m_fontPalette; }
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setItalic(std::optional<FontSelectionValue> italic) { m_fontSelectionRequest.slope = italic; }
@@ -132,6 +134,7 @@ public:
     void setFontStyleAxis(FontStyleAxis axis) { m_fontStyleAxis = axis == FontStyleAxis::ital; }
     void setShouldAllowUserInstalledFonts(AllowUserInstalledFonts shouldAllowUserInstalledFonts) { m_shouldAllowUserInstalledFonts = static_cast<unsigned>(shouldAllowUserInstalledFonts); }
     void setShouldDisableLigaturesForSpacing(bool shouldDisableLigaturesForSpacing) { m_shouldDisableLigaturesForSpacing = shouldDisableLigaturesForSpacing; }
+    void setFontPalette(FontPalette fontPalette) { m_fontPalette = fontPalette; }
 
     static AtomString platformResolveGenericFamily(UScriptCode, const AtomString& locale, const AtomString& familyName);
 
@@ -145,6 +148,7 @@ private:
     // FIXME: Investigate moving these into their own object on the heap (to save memory).
     FontFeatureSettings m_featureSettings;
     FontVariationSettings m_variationSettings;
+    FontPalette m_fontPalette;
     AtomString m_locale;
     AtomString m_specifiedLocale;
 
@@ -209,7 +213,8 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_opticalSizing == other.m_opticalSizing
         && m_fontStyleAxis == other.m_fontStyleAxis
         && m_shouldAllowUserInstalledFonts == other.m_shouldAllowUserInstalledFonts
-        && m_shouldDisableLigaturesForSpacing == other.m_shouldDisableLigaturesForSpacing;
+        && m_shouldDisableLigaturesForSpacing == other.m_shouldDisableLigaturesForSpacing
+        && m_fontPalette == other.m_fontPalette;
 }
 
 template<class Encoder>
@@ -247,6 +252,7 @@ void FontDescription::encode(Encoder& encoder) const
     encoder << fontStyleAxis();
     encoder << shouldAllowUserInstalledFonts();
     encoder << shouldDisableLigaturesForSpacing();
+    encoder << fontPalette();
 }
 
 template<class Decoder>
@@ -413,6 +419,11 @@ std::optional<FontDescription> FontDescription::decode(Decoder& decoder)
     if (!shouldDisableLigaturesForSpacing)
         return std::nullopt;
 
+    std::optional<FontPalette> fontPalette;
+    decoder >> fontPalette;
+    if (!fontPalette)
+        return std::nullopt;
+
     fontDescription.setFeatureSettings(WTFMove(*featureSettings));
     fontDescription.setVariationSettings(WTFMove(*variationSettings));
     fontDescription.setSpecifiedLocale(*locale);
@@ -445,6 +456,7 @@ std::optional<FontDescription> FontDescription::decode(Decoder& decoder)
     fontDescription.setFontStyleAxis(*fontStyleAxis);
     fontDescription.setShouldAllowUserInstalledFonts(*shouldAllowUserInstalledFonts);
     fontDescription.setShouldDisableLigaturesForSpacing(*shouldDisableLigaturesForSpacing);
+    fontDescription.setFontPalette(*fontPalette);
 
     return fontDescription;
 }

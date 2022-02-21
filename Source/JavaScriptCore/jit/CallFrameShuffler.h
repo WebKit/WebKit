@@ -46,6 +46,7 @@ public:
 
     // Any register that has been locked or acquired must be released
     // before calling prepareForTailCall() or prepareForSlowPath().
+    // Unless you know the register is not the target of a recovery.
     void lockGPR(GPRReg gpr)
     {
         ASSERT(!m_lockedRegisters.get(gpr));
@@ -104,6 +105,7 @@ public:
         CallFrameShuffleData data;
         data.numLocals = numLocals();
         data.numPassedArgs = m_numPassedArgs;
+        data.numParameters = m_numParameters;
         data.callee = getNew(VirtualRegister { CallFrameSlot::callee })->recovery();
         data.args.resize(argCount());
         for (size_t i = 0; i < argCount(); ++i)
@@ -115,6 +117,15 @@ public:
 
 #if USE(JSVALUE64)
             data.registers[reg] = cachedRecovery->recovery();
+#elif USE(JSVALUE32_64)
+            ValueRecovery recovery = cachedRecovery->recovery();
+            if (recovery.technique() == DisplacedInJSStack) {
+                JSValueRegs wantedJSValueReg = cachedRecovery->wantedJSValueRegs();
+                ASSERT(reg == wantedJSValueReg.payloadGPR() || reg == wantedJSValueReg.tagGPR());
+                bool inTag = reg == wantedJSValueReg.tagGPR();
+                data.registers[reg] = ValueRecovery::calleeSaveRegDisplacedInJSStack(recovery.virtualRegister(), inTag);
+            } else
+                data.registers[reg] = recovery;
 #else
             RELEASE_ASSERT_NOT_REACHED();
 #endif
@@ -662,6 +673,32 @@ private:
         cachedRecovery->setWantedJSValueRegs(jsValueRegs);
     }
 
+#if USE(JSVALUE32_64)
+    void addNew(GPRReg gpr, ValueRecovery recovery)
+    {
+        ASSERT(gpr != InvalidGPRReg && !m_newRegisters[gpr]);
+        ASSERT(recovery.technique() == Int32DisplacedInJSStack
+            || recovery.technique() == Int32TagDisplacedInJSStack);
+        CachedRecovery* cachedRecovery = addCachedRecovery(recovery);
+        if (JSValueRegs oldRegs { cachedRecovery->wantedJSValueRegs() }) {
+            // Combine with the other CSR in the same virtual register slot
+            ASSERT(oldRegs.tagGPR() == InvalidGPRReg);
+            ASSERT(oldRegs.payloadGPR() != InvalidGPRReg && oldRegs.payloadGPR() != gpr);
+            if (recovery.technique() == Int32DisplacedInJSStack) {
+                ASSERT(cachedRecovery->recovery().technique() == Int32TagDisplacedInJSStack);
+                cachedRecovery->setWantedJSValueRegs(JSValueRegs(oldRegs.payloadGPR(), gpr));
+            } else {
+                ASSERT(cachedRecovery->recovery().technique() == Int32DisplacedInJSStack);
+                cachedRecovery->setWantedJSValueRegs(JSValueRegs(gpr, oldRegs.payloadGPR()));
+            }
+            cachedRecovery->setRecovery(
+                ValueRecovery::displacedInJSStack(recovery.virtualRegister(), DataFormatJS));
+        } else
+            cachedRecovery->setWantedJSValueRegs(JSValueRegs::payloadOnly(gpr));
+        m_newRegisters[gpr] = cachedRecovery;
+    }
+#endif
+
     void addNew(FPRReg fpr, ValueRecovery recovery)
     {
         ASSERT(fpr != InvalidFPRReg && !m_newRegisters[fpr]);
@@ -798,6 +835,7 @@ private:
     bool performSafeWrites();
     
     unsigned m_numPassedArgs { UINT_MAX };
+    unsigned m_numParameters { UINT_MAX };
 };
 
 } // namespace JSC

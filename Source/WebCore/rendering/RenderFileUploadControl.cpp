@@ -243,8 +243,7 @@ VisiblePosition RenderFileUploadControl::positionForPoint(const LayoutPoint&, co
 HTMLInputElement* RenderFileUploadControl::uploadButton() const
 {
     ASSERT(inputElement().shadowRoot());
-    Node* buttonNode = inputElement().shadowRoot()->firstChild();
-    return is<HTMLInputElement>(buttonNode) ? downcast<HTMLInputElement>(buttonNode) : nullptr;
+    return dynamicDowncast<HTMLInputElement>(inputElement().shadowRoot()->firstChild());
 }
 
 String RenderFileUploadControl::buttonValue()

@@ -44,7 +44,7 @@ using namespace WebKit;
 namespace API {
 
 HTTPCookieStore::HTTPCookieStore(WebKit::WebsiteDataStore& websiteDataStore)
-    : m_owningDataStore(makeWeakPtr(websiteDataStore))
+    : m_owningDataStore(websiteDataStore)
 {
 }
 
@@ -81,7 +81,7 @@ void HTTPCookieStore::cookies(CompletionHandler<void(const Vector<WebCore::Cooki
     if (!m_owningDataStore)
         return completionHandler({ });
     auto& cookieManager = m_owningDataStore->networkProcess().cookieManager();
-    cookieManager.getAllCookies(m_owningDataStore->sessionID(), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (Vector<WebCore::Cookie>&& cookies) mutable {
+    cookieManager.getAllCookies(m_owningDataStore->sessionID(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (Vector<WebCore::Cookie>&& cookies) mutable {
         filterAppBoundCookies(WTFMove(cookies), WTFMove(completionHandler));
     });
 }
@@ -91,14 +91,14 @@ void HTTPCookieStore::cookiesForURL(WTF::URL&& url, CompletionHandler<void(Vecto
     if (!m_owningDataStore)
         return completionHandler({ });
     auto& cookieManager = m_owningDataStore->networkProcess().cookieManager();
-    cookieManager.getCookies(m_owningDataStore->sessionID(), url, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (Vector<WebCore::Cookie>&& cookies) mutable {
+    cookieManager.getCookies(m_owningDataStore->sessionID(), url, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (Vector<WebCore::Cookie>&& cookies) mutable {
         filterAppBoundCookies(WTFMove(cookies), WTFMove(completionHandler));
     });
 }
 
 void HTTPCookieStore::setCookies(Vector<WebCore::Cookie>&& cookies, CompletionHandler<void()>&& completionHandler)
 {
-    filterAppBoundCookies(WTFMove(cookies), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (auto&& appBoundCookies) mutable {
+    filterAppBoundCookies(WTFMove(cookies), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (auto&& appBoundCookies) mutable {
         if (!m_owningDataStore)
             return;
         auto& cookieManager = m_owningDataStore->networkProcess().cookieManager();
@@ -158,7 +158,7 @@ private:
 
 void HTTPCookieStore::registerObserver(Observer& observer)
 {
-    m_observers.add(&observer);
+    m_observers.add(observer);
 
     if (m_cookieManagerProxyObserver || !m_owningDataStore)
         return;
@@ -167,7 +167,7 @@ void HTTPCookieStore::registerObserver(Observer& observer)
 
     m_cookieManagerProxyObserver = makeUnique<APIWebCookieManagerProxyObserver>(*this);
 
-    m_observedCookieManagerProxy = makeWeakPtr(m_owningDataStore->networkProcess().cookieManager());
+    m_observedCookieManagerProxy = m_owningDataStore->networkProcess().cookieManager();
     m_observedCookieManagerProxy->registerObserver(m_owningDataStore->sessionID(), *m_cookieManagerProxyObserver);
 }
 

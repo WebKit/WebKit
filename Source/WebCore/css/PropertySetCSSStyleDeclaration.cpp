@@ -341,7 +341,7 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleDeclaration::wrapForDeprecatedCS
         return clonedValue.get();
 
     RefPtr<DeprecatedCSSOMValue> wrapper = internalValue->createDeprecatedCSSOMWrapper(*this);
-    clonedValue = makeWeakPtr(wrapper.get());
+    clonedValue = wrapper;
     return wrapper;
 }
 

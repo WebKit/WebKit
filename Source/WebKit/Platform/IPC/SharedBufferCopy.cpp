@@ -26,10 +26,9 @@
 #include "config.h"
 #include "SharedBufferCopy.h"
 
-#include "ArgumentCoders.h"
-#include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace IPC {
 
@@ -37,24 +36,22 @@ using namespace WebCore;
 
 void SharedBufferCopy::encode(Encoder& encoder) const
 {
-    uint64_t bufferSize = m_buffer ? m_buffer->size() : 0;
-    encoder.reserve(sizeof(bufferSize) + bufferSize);
-    encoder << bufferSize;
-    if (!bufferSize)
-        return;
-    for (auto& segment : *m_buffer)
-        encoder.encodeFixedLengthData(segment.segment->data(), segment.segment->size(), 1);
+    encoder << m_buffer;
 }
 
 std::optional<SharedBufferCopy> SharedBufferCopy::decode(Decoder& decoder)
 {
-    IPC::DataReference data;
-    if (!decoder.decode(data))
-        return std::nullopt;
     RefPtr<SharedBuffer> buffer;
-    if (data.size())
-        buffer = SharedBuffer::create(data.data(), data.size());
-    return { WTFMove(buffer) };
+    if (!decoder.decode(buffer))
+        return std::nullopt;
+    return { IPC::SharedBufferCopy(WTFMove(buffer)) };
+}
+
+const uint8_t* SharedBufferCopy::data() const
+{
+    if (!m_buffer)
+        return nullptr;
+    return downcast<SharedBuffer>(m_buffer.get())->data();
 }
 
 } // namespace IPC

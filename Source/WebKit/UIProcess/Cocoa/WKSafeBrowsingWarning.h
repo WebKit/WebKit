@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "CocoaColor.h"
 #import "WKFoundation.h"
+#import <WebCore/ColorCocoa.h>
+#import <variant>
 #import <wtf/CompletionHandler.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -54,10 +55,10 @@ using RectType = CGRect;
 @interface WKSafeBrowsingBox : ViewType {
 @package
 #if PLATFORM(MAC)
-    RetainPtr<CocoaColor> _backgroundColor;
+    RetainPtr<WebCore::CocoaColor> _backgroundColor;
 #endif
 }
-- (void)setSafeBrowsingBackgroundColor:(CocoaColor *)color;
+- (void)setSafeBrowsingBackgroundColor:(WebCore::CocoaColor *)color;
 @end
 
 #if PLATFORM(MAC)
@@ -67,7 +68,7 @@ using RectType = CGRect;
 #endif
 {
 @package
-    CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)> _completionHandler;
+    CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)> _completionHandler;
     RefPtr<const WebKit::SafeBrowsingWarning> _warning;
     WeakObjCPtr<WKSafeBrowsingTextView> _details;
     WeakObjCPtr<WKSafeBrowsingBox> _box;
@@ -76,7 +77,7 @@ using RectType = CGRect;
 #endif
 }
 
-- (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
+- (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
 
 - (BOOL)forMainFrameNavigation;
 

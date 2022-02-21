@@ -23,7 +23,8 @@ ANGLE_NO_DISCARD bool EmitMetal(TCompiler &compiler,
                                 IdGen &idGen,
                                 const PipelineStructs &pipelineStructs,
                                 SymbolEnv &symbolEnv,
-                                const ProgramPreludeConfig &ppc);
+                                const ProgramPreludeConfig &ppc,
+                                TSymbolTable *symbolTable);
 
 }  // namespace sh
 

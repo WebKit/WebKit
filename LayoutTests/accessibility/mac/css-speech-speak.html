@@ -39,34 +39,23 @@ div.spell-and-literal { speak-as: spell-out literal-punctuation; }
 
     description("This tests that using the CSS3-speech property 'speak-as' works as from a WebCore level (not a platform level, that is up to the platforms)");
 
+    var element;
+    function expectValueForId(id, expectedValue) {
+        debug(`Testing #${id}`)
+        element = accessibilityController.accessibleElementById(id);
+        shouldBe("element.childAtIndex(0).speakAs", `"${expectedValue}"`);
+    }
+
     if (window.accessibilityController) {
-
-          document.getElementById("initial").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal'");
-
-          document.getElementById("speech-normal").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal'");
-
-          document.getElementById("speech-spellout").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'spell-out'");
-
-          document.getElementById("speech-digits").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, digits'");
-
-          document.getElementById("speech-literalpunc").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, literal-punctuation'");
-
-          document.getElementById("speech-nopunc").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, no-punctuation'");
-
-          document.getElementById("speech-digits-and-literal").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, digits, literal-punctuation'");
-
-          document.getElementById("speech-spell-and-literal").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'spell-out, literal-punctuation'");
-
-          document.getElementById("testlink").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, digits'");
+        expectValueForId("initial", "normal");
+        expectValueForId("speech-normal", "normal");
+        expectValueForId("speech-spellout", "spell-out");
+        expectValueForId("speech-digits", "normal, digits");
+        expectValueForId("speech-literalpunc", "normal, literal-punctuation");
+        expectValueForId("speech-nopunc", "normal, no-punctuation");
+        expectValueForId("speech-digits-and-literal", "normal, digits, literal-punctuation");
+        expectValueForId("speech-spell-and-literal", "spell-out, literal-punctuation");
+        expectValueForId("testlink", "normal, digits");
     }
 
 </script>

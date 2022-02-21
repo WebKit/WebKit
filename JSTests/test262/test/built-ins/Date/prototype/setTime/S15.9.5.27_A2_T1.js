@@ -6,11 +6,10 @@ info: The "length" property of the "setTime" is 1
 esid: sec-date.prototype.settime
 description: The "length" property of the "setTime" is 1
 ---*/
+assert.sameValue(
+  Date.prototype.setTime.hasOwnProperty("length"),
+  true,
+  'Date.prototype.setTime.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.setTime.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The setTime has a "length" property');
-}
-
-if (Date.prototype.setTime.length !== 1) {
-  throw new Test262Error('#2: The "length" property of the setTime is 1');
-}
+assert.sameValue(Date.prototype.setTime.length, 1, 'The value of Date.prototype.setTime.length is expected to be 1');

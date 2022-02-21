@@ -58,6 +58,7 @@
 #import "RenderWidget.h"
 #import "ScrollView.h"
 #import "TextCheckerClient.h"
+#import "TextIterator.h"
 #import "VisibleUnits.h"
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -260,7 +261,7 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
     }).autorelease();
 }
 
-NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& children)
+NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& children)
 {
     return createNSArray(children, [] (const auto& child) -> id {
         auto wrapper = child->wrapper();
@@ -289,18 +290,18 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
 
 - (void)attachAXObject:(AXCoreObject*)axObject
 {
-    ASSERT(axObject && (_identifier == InvalidAXID || _identifier == axObject->objectID()));
+    ASSERT(axObject && (!_identifier.isValid() || _identifier == axObject->objectID()));
     m_axObject = axObject;
-    if (_identifier == InvalidAXID)
+    if (!_identifier.isValid())
         _identifier = m_axObject->objectID();
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)attachIsolatedObject:(AXCoreObject*)isolatedObject
 {
-    ASSERT(isolatedObject && (_identifier == InvalidAXID || _identifier == isolatedObject->objectID()));
+    ASSERT(isolatedObject && (!_identifier.isValid() || _identifier == isolatedObject->objectID()));
     m_isolatedObject = isolatedObject;
-    if (_identifier == InvalidAXID)
+    if (!_identifier.isValid())
         _identifier = m_isolatedObject->objectID();
 }
 #endif
@@ -308,14 +309,14 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
 - (void)detach
 {
     ASSERT(isMainThread());
-    _identifier = InvalidAXID;
+    _identifier = { };
     m_axObject = nullptr;
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)detachIsolatedObject:(AccessibilityDetachmentType)detachmentType
 {
-    ASSERT_UNUSED(detachmentType, detachmentType == AccessibilityDetachmentType::ElementChanged ? _identifier != InvalidAXID && m_axObject : true);
+    ASSERT_UNUSED(detachmentType, detachmentType == AccessibilityDetachmentType::ElementChanged ? _identifier.isValid() && m_axObject : true);
     m_isolatedObject = nullptr;
 }
 #endif
@@ -363,11 +364,16 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
 
 - (WebCore::AXCoreObject*)axBackingObject
 {
+    if (isMainThread())
+        return m_axObject;
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (AXObjectCache::isIsolatedTreeEnabled())
-        return m_isolatedObject;
+    ASSERT(AXObjectCache::isIsolatedTreeEnabled());
+    return m_isolatedObject;
+#else
+    ASSERT_NOT_REACHED();
+    return nullptr;
 #endif
-    return m_axObject;
 }
 
 - (BOOL)isIsolatedObject
@@ -459,6 +465,27 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
         convertPathToScreenSpaceFunction(conversion, pathElement);
     });
     return convertedPath.autorelease();
+}
+
+// Determine the visible range by checking intersection of unobscuredContentRect and a range of text by
+// advancing forward by line from top and backwards by line from the bottom, until we have a visible range.
+- (NSRange)accessibilityVisibleCharacterRange
+{
+    return Accessibility::retrieveValueFromMainThread<NSRange>([protectedSelf = retainPtr(self)] () -> NSRange {
+        auto backingObject = protectedSelf.get().baseUpdateBackingStore;
+        if (!backingObject)
+            return NSMakeRange(NSNotFound, 0);
+
+        auto elementRange = makeNSRange(backingObject->elementRange());
+        if (elementRange.location == NSNotFound)
+            return elementRange;
+        
+        auto visibleRange = makeNSRange(backingObject->visibleCharacterRange());
+        if (visibleRange.location == NSNotFound)
+            return visibleRange;
+
+        return NSMakeRange(visibleRange.location - elementRange.location, visibleRange.length);
+    });
 }
 
 - (id)_accessibilityWebDocumentView
@@ -590,7 +617,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     AXAttributeStringSetFont(attrString, style.fontCascade().primaryFont().getCTFont(), range);
 
     auto decor = style.textDecorationsInEffect();
-    if (decor & TextDecoration::Underline)
+    if (decor & TextDecorationLine::Underline)
         AXAttributeStringSetNumber(attrString, UIAccessibilityTokenUnderline, @YES, range);
 
     // Add code context if this node is within a <code> block.
@@ -620,6 +647,49 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     AXAttributeStringSetHeadingLevel(attrString, node->renderer(), attrStringRange);
     AXAttributeStringSetBlockquoteLevel(attrString, node->renderer(), attrStringRange);
     AXAttributeStringSetLanguage(attrString, node->renderer(), attrStringRange);
+}
+
+NSRange makeNSRange(std::optional<SimpleRange> range)
+{
+    if (!range)
+        return NSMakeRange(NSNotFound, 0);
+    
+    auto& document = range->start.document();
+    auto* frame = document.frame();
+    if (!frame)
+        return NSMakeRange(NSNotFound, 0);
+
+    auto* rootEditableElement = frame->selection().selection().rootEditableElement();
+    auto* scope = rootEditableElement ? rootEditableElement : document.documentElement();
+    if (!scope)
+        return NSMakeRange(NSNotFound, 0);
+
+    // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
+    // that is not inside the current editable region. These checks ensure we don't produce
+    // potentially invalid data when responding to such requests.
+    if (!scope->contains(range->start.container.ptr()) || !scope->contains(range->end.container.ptr()))
+        return NSMakeRange(NSNotFound, 0);
+
+    return NSMakeRange(characterCount({ { *scope, 0 }, range->start }), characterCount(*range));
+}
+
+std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
+{
+    if (range.location == NSNotFound)
+        return std::nullopt;
+
+    // our critical assumption is that we are only called by input methods that
+    // concentrate on a given area containing the selection
+    // We have to do this because of text fields and textareas. The DOM for those is not
+    // directly in the document DOM, so serialization is problematic. Our solution is
+    // to use the root editable element of the selection start as the positional base.
+    // That fits with AppKit's idea of an input context.
+    auto selectionRoot = document->frame()->selection().selection().rootEditableElement();
+    auto scope = selectionRoot ? selectionRoot : document->documentElement();
+    if (!scope)
+        return std::nullopt;
+
+    return resolveCharacterRange(makeRangeSelectingNodeContents(*scope), range);
 }
 
 // Returns an array of strings and AXObject wrappers corresponding to the text
@@ -675,18 +745,26 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return array.autorelease();
 }
 
-- (NSArray<NSDictionary *> *)lineRectsAndText
+- (WebCore::AXCoreObject*)baseUpdateBackingStore
 {
 #if PLATFORM(MAC)
     auto* backingObject = self.updateObjectBackingStore;
     if (!backingObject)
-        return nil;
+        return nullptr;
 #else
     if (![self _prepareAccessibilityCall])
-        return nil;
+        return nullptr;
     auto* backingObject = self.axBackingObject;
 #endif
+    return backingObject;
+}
 
+- (NSArray<NSDictionary *> *)lineRectsAndText
+{
+    auto backingObject = self.baseUpdateBackingStore;
+    if (!backingObject)
+        return nil;
+    
     auto range = backingObject->elementRange();
     if (!range)
         return nil;

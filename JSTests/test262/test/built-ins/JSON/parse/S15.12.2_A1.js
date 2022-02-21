@@ -8,9 +8,11 @@ description: Tests that JSON.parse treats "__proto__" as a regular property name
 ---*/
 
 var x = JSON.parse('{"__proto__":[]}');
-if (Object.getPrototypeOf(x) !== Object.prototype) {
-  throw new Test262Error('#1: JSON.parse confused by "__proto__"');
-}
-if (!Array.isArray(x.__proto__)) {
-  throw new Test262Error('#2: JSON.parse did not set "__proto__" as a regular property');
-}
+
+assert.sameValue(
+  Object.getPrototypeOf(x),
+  Object.prototype,
+  'Object.getPrototypeOf("JSON.parse(\'{"__proto__":[]}\')") returns Object.prototype'
+);
+
+assert(Array.isArray(x.__proto__), 'Array.isArray(x.__proto__) must return true');

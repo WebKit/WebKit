@@ -26,6 +26,7 @@
 #ifndef PAS_GET_ALLOCATION_SIZE_H
 #define PAS_GET_ALLOCATION_SIZE_H
 
+#include "pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h"
 #include "pas_heap_config.h"
 #include "pas_heap_lock.h"
 #include "pas_large_map.h"
@@ -43,11 +44,28 @@ static PAS_ALWAYS_INLINE size_t pas_get_allocation_size(void* ptr,
     begin = (uintptr_t)ptr;
 
     switch (config.fast_megapage_kind_func(begin)) {
-    case pas_small_segregated_fast_megapage_kind:
+    case pas_small_exclusive_segregated_fast_megapage_kind:
         return pas_segregated_page_get_object_size_for_address_and_page_config(
-            begin, config.small_segregated_config);
-    case pas_small_bitfit_fast_megapage_kind:
-        return pas_bitfit_page_get_allocation_size(begin, config.small_bitfit_config);
+            begin, config.small_segregated_config, pas_segregated_page_exclusive_role);
+    case pas_small_other_fast_megapage_kind: {
+        pas_page_base_and_kind page_and_kind;
+        page_and_kind = pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, config);
+        switch (page_and_kind.page_kind) {
+        case pas_small_shared_segregated_page_kind:
+            return pas_segregated_page_get_object_size_for_address_in_page(
+                pas_page_base_get_segregated(page_and_kind.page_base),
+                begin,
+                config.small_segregated_config,
+                pas_segregated_page_shared_role);
+        case pas_small_bitfit_page_kind:
+            return config.small_bitfit_config.specialized_page_get_allocation_size_with_page(
+                pas_page_base_get_bitfit(page_and_kind.page_base),
+                begin);
+        default:
+            PAS_ASSERT(!"Should not be reached");
+            return 0;
+        }
+    }
     case pas_not_a_fast_megapage_kind: {
         pas_page_base* page_base;
         pas_large_map_entry entry;
@@ -56,22 +74,37 @@ static PAS_ALWAYS_INLINE size_t pas_get_allocation_size(void* ptr,
         page_base = config.page_header_func(begin);
         if (page_base) {
             switch (pas_page_base_get_kind(page_base)) {
-            case pas_small_segregated_page_kind:
+            case pas_small_shared_segregated_page_kind:
                 PAS_ASSERT(!config.small_segregated_is_in_megapage);
                 return pas_segregated_page_get_object_size_for_address_in_page(
                     pas_page_base_get_segregated(page_base),
                     begin,
-                    config.small_segregated_config);
+                    config.small_segregated_config,
+                    pas_segregated_page_shared_role);
+            case pas_small_exclusive_segregated_page_kind:
+                PAS_ASSERT(!config.small_segregated_is_in_megapage);
+                return pas_segregated_page_get_object_size_for_address_in_page(
+                    pas_page_base_get_segregated(page_base),
+                    begin,
+                    config.small_segregated_config,
+                    pas_segregated_page_exclusive_role);
             case pas_small_bitfit_page_kind:
                 PAS_ASSERT(!config.small_bitfit_is_in_megapage);
                 return config.small_bitfit_config.specialized_page_get_allocation_size_with_page(
                     pas_page_base_get_bitfit(page_base),
                     begin);
-            case pas_medium_segregated_page_kind:
+            case pas_medium_shared_segregated_page_kind:
                 return pas_segregated_page_get_object_size_for_address_in_page(
                     pas_page_base_get_segregated(page_base),
                     begin,
-                    config.medium_segregated_config);
+                    config.medium_segregated_config,
+                    pas_segregated_page_shared_role);
+            case pas_medium_exclusive_segregated_page_kind:
+                return pas_segregated_page_get_object_size_for_address_in_page(
+                    pas_page_base_get_segregated(page_base),
+                    begin,
+                    config.medium_segregated_config,
+                    pas_segregated_page_exclusive_role);
             case pas_medium_bitfit_page_kind:
                 return config.medium_bitfit_config.specialized_page_get_allocation_size_with_page(
                     pas_page_base_get_bitfit(page_base),

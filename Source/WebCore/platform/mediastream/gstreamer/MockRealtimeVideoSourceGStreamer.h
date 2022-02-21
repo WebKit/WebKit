@@ -42,16 +42,18 @@ private:
 
 class MockDisplayCaptureSourceGStreamer final : public RealtimeMediaSource, RealtimeMediaSource::VideoSampleObserver {
 public:
-    static CaptureSourceOrError create(const CaptureDevice&, const MediaConstraints*);
+    static CaptureSourceOrError create(const CaptureDevice&, String&&, const MediaConstraints*);
 
     void requestToEnd(Observer&) final;
+    bool isProducingData() const final { return m_source->isProducingData(); }
+    void setMuted(bool isMuted) final;
 
 protected:
     // RealtimeMediaSource::VideoSampleObserver
-    void videoSampleAvailable(MediaSample&) final;
+    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
 
 private:
-    MockDisplayCaptureSourceGStreamer(Ref<MockRealtimeVideoSourceGStreamer>&&, CaptureDevice::DeviceType);
+    MockDisplayCaptureSourceGStreamer(RealtimeMediaSource::Type, Ref<MockRealtimeVideoSourceGStreamer>&&, String&&, CaptureDevice::DeviceType);
     ~MockDisplayCaptureSourceGStreamer();
 
     void startProducingData() final { m_source->start(); }
@@ -60,14 +62,14 @@ private:
     bool isCaptureSource() const final { return true; }
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
-    CaptureDevice::DeviceType deviceType() const { return m_type; }
+    CaptureDevice::DeviceType deviceType() const { return m_deviceType; }
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MockDisplayCaptureSourceGStreamer"; }
 #endif
 
     Ref<MockRealtimeVideoSourceGStreamer> m_source;
-    CaptureDevice::DeviceType m_type;
+    CaptureDevice::DeviceType m_deviceType;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
 };

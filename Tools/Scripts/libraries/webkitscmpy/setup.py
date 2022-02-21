@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@ def readme():
 
 setup(
     name='webkitscmpy',
-    version='2.1.1',
+    version='4.3.1',
     description='Library designed to interact with git and svn repositories.',
     long_description=readme(),
     classifiers=[
@@ -42,7 +42,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     keywords='git svn',
-    url='https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/libraries/webkitscmpy',
+    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitscmpy',
     author='Jonathan Bedard',
     author_email='jbedard@apple.com',
     license='Modified BSD',
@@ -58,7 +58,7 @@ setup(
         'webkitscmpy.test',
     ],
     scripts=['git-webkit'],
-    install_requires=['fasteners', 'monotonic', 'webkitcorepy', 'xmltodict'],
+    install_requires=['fasteners', 'inspect2', 'jinja2', 'monotonic', 'webkitcorepy', 'webkitbugspy', 'xmltodict'],
     include_package_data=True,
     zip_safe=False,
 )

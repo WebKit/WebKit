@@ -29,7 +29,7 @@
 #include "pas_config.h"
 
 #include "pas_hashtable.h"
-#include "pas_segregated_global_size_directory.h"
+#include "pas_segregated_size_directory.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -52,7 +52,7 @@ pas_exclusive_view_template_memo_key_create(
     return result;
 }
 
-typedef pas_segregated_global_size_directory* pas_exclusive_view_template_memo_entry;
+typedef pas_segregated_size_directory* pas_exclusive_view_template_memo_entry;
 
 static inline pas_exclusive_view_template_memo_entry
 pas_exclusive_view_template_memo_entry_create_empty(void)

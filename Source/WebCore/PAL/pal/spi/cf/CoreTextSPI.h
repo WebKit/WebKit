@@ -87,7 +87,17 @@ enum {
     kCTFontTraitEmphasized = kCTFontTraitBold,
 };
 
+typedef CF_ENUM(CFIndex, CTFontPalette)
+{
+    kCTFontPaletteLight = -1,
+    kCTFontPaletteDark = -2
+};
+
 typedef const struct __OTSVGTable * OTSVGTableRef;
+
+typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions) {
+    kCTFontDescriptorOptionThisIsNotARealOption = 0xFFFFFFFF
+};
 
 #endif
 
@@ -124,6 +134,8 @@ void CTFontGetUnsummedAdvancesForGlyphsAndStyle(CTFontRef, CTFontOrientation, CG
 CTFontDescriptorRef CTFontDescriptorCreateForCSSFamily(CFStringRef cssFamily, CFStringRef language);
 bool CTFontGetGlyphsForCharacterRange(CTFontRef, CGGlyph glyphs[], CFRange);
 
+bool CTFontHasTable(CTFontRef, CTFontTableTag);
+
 CTFontDescriptorRef CTFontDescriptorCreateForUIType(CTFontUIFontType, CGFloat size, CFStringRef language);
 CTFontDescriptorRef CTFontDescriptorCreateWithTextStyle(CFStringRef style, CFStringRef size, CFStringRef language);
 CTFontDescriptorRef CTFontDescriptorCreateCopyWithSymbolicTraits(CTFontDescriptorRef original, CTFontSymbolicTraits symTraitValue, CTFontSymbolicTraits symTraitMask);
@@ -148,6 +160,9 @@ extern const CFStringRef kCTFontUIFontDesignSerif;
 extern const CFStringRef kCTFontUIFontDesignMonospaced;
 extern const CFStringRef kCTFontUIFontDesignRounded;
 
+extern const CFStringRef kCTFontPaletteAttribute;
+extern const CFStringRef kCTFontPaletteColorsAttribute;
+
 extern const CFStringRef kCTFrameMaximumNumberOfLinesAttributeName;
 
 bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
@@ -158,6 +173,7 @@ CTFontRef CTFontCreateForCharactersWithLanguage(CTFontRef currentFont, const UTF
 CTFontRef CTFontCreateForCharactersWithLanguageAndOption(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CTFontFallbackOption, CFIndex *coveredLength);
 CTFontRef CTFontCopyPhysicalFont(CTFontRef);
 CTFontSymbolicTraits CTFontGetPhysicalSymbolicTraits(CTFontRef);
+CFArrayRef CTFontCopyVariationAxesInternal(CTFontRef);
 
 extern const CFStringRef kCTUIFontTextStyleShortHeadline;
 extern const CFStringRef kCTUIFontTextStyleShortBody;
@@ -209,5 +225,7 @@ CTFontDescriptorRef CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(
 bool CTFontIsAppleColorEmoji(CTFontRef);
 CTFontRef CTFontCreateForCharacters(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFIndex *coveredLength);
 CGFloat CTFontGetSbixImageSizeForGlyphAndContentsScale(CTFontRef, const CGGlyph, CGFloat contentsScale);
+
+CTFontDescriptorOptions CTFontDescriptorGetOptions(CTFontDescriptorRef);
 
 WTF_EXTERN_C_END

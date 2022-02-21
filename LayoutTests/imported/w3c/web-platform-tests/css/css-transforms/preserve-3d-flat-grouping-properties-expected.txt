@@ -1,0 +1,12 @@
+
+PASS Preserve-3d element not flattened
+PASS Preserve-3d element flattened due to opacity
+PASS Preserve-3d element flattened due to overflow clip
+PASS Preserve-3d element flattened due to filter
+PASS Preserve-3d element flattened due to backdrop-filter
+PASS Preserve-3d element flattened due to mix-blend-mode
+PASS Preserve-3d element flattened due to clip CSS
+PASS Preserve-3d element flattened due to clip-path
+PASS Preserve-3d element flattened due to isolation
+PASS Preserve-3d element flattened due to mask
+

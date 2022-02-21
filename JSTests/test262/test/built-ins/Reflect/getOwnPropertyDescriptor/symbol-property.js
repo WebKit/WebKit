@@ -27,10 +27,9 @@ o[s] = 42;
 
 var result = Reflect.getOwnPropertyDescriptor(o, s);
 
-assert(
-  compareArray(
-    Object.getOwnPropertyNames(result), ['value', 'writable', 'enumerable', 'configurable']
-  )
+assert.compareArray(
+  Object.getOwnPropertyNames(result),
+  ['value', 'writable', 'enumerable', 'configurable']
 );
 assert.sameValue(result.value, 42);
 assert.sameValue(result.enumerable, true);

@@ -236,11 +236,11 @@ HRESULT WebDownload::cancelForResume()
     if (!m_download)
         return E_FAIL;
 
-    HRESULT hr = S_OK;
     RetainPtr<CFDataRef> resumeData;
     if (m_destination.isEmpty()) {
         CFURLDownloadCancel(m_download.get());
-        goto exit;
+        m_download = nullptr;
+        return S_OK;
     }
 
     CFURLDownloadSetDeletesUponFailure(m_download.get(), false);
@@ -249,16 +249,16 @@ HRESULT WebDownload::cancelForResume()
     resumeData = adoptCF(CFURLDownloadCopyResumeData(m_download.get()));
     if (!resumeData) {
         LOG(Download, "WebDownload - Unable to create resume data for download (%p)", this);
-        goto exit;
+        m_download = nullptr;
+        return S_OK;
     }
 
     auto* resumeBytes = reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(resumeData.get()));
     uint32_t resumeLength = CFDataGetLength(resumeData.get());
     DownloadBundle::appendResumeData(resumeBytes, resumeLength, m_bundlePath);
 
-exit:
     m_download = nullptr;
-    return hr;
+    return S_OK;
 }
 
 HRESULT WebDownload::deletesFileUponFailure(_Out_ BOOL* result)

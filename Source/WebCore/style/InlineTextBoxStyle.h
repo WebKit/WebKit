@@ -26,7 +26,7 @@
 #pragma once
 
 #include "FontCascade.h"
-#include "LayoutIntegrationRunIterator.h"
+#include "InlineIteratorBox.h"
 #include "RenderStyleConstants.h"
 
 namespace WebCore {
@@ -52,7 +52,7 @@ struct WavyStrokeParameters {
     float step { 0 };
 };
 WavyStrokeParameters getWavyStrokeParameters(float fontSize);
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const LayoutIntegration::TextRunIterator&);
-float computeUnderlineOffset(TextUnderlinePosition, TextUnderlineOffset, const FontMetrics&, const LayoutIntegration::TextRunIterator&, float textDecorationThickness);
+GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const InlineIterator::TextBoxIterator&);
+float computeUnderlineOffset(TextUnderlinePosition, TextUnderlineOffset, const FontMetrics&, const InlineIterator::TextBoxIterator&, float textDecorationThickness);
     
 } // namespace WebCore

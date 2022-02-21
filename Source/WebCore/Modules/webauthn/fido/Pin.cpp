@@ -73,8 +73,8 @@ static Vector<uint8_t> makePinAuth(const CryptoKeyHMAC& key, const Vector<uint8_
 Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_t>& y)
 {
     Vector<uint8_t> rawKey;
-    rawKey.reserveCapacity(1 + x.size() + y.size());
-    rawKey.append(0x04);
+    rawKey.reserveInitialCapacity(1 + x.size() + y.size());
+    rawKey.uncheckedAppend(0x04);
     rawKey.appendVector(x);
     rawKey.appendVector(y);
     return rawKey;

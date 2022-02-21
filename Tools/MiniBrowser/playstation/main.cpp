@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H && defined(BUILDING_WITH_CMAKE)
+#include "cmakeconfig.h"
+#endif
 #include "MainWindow.h"
 #include <WebKit/WKRunLoop.h>
 #include <dlfcn.h>
@@ -53,7 +56,9 @@ static void initialize()
     loadLibraryOrExit("libcairo");
     loadLibraryOrExit("libToolKitten");    
     loadLibraryOrExit("libSceNKWebKitRequirements");
+#if !(defined(ENABLE_STATIC_JSC) && ENABLE_STATIC_JSC)
     loadLibraryOrExit("libJavaScriptCore");
+#endif
     loadLibraryOrExit("libWebKit");
 }
 
@@ -71,7 +76,7 @@ private:
     }
 };
 
-int main(int, char *[])
+int main(int argc, char *argv[])
 {
     WKRunLoopInitializeMain();
 
@@ -79,7 +84,7 @@ int main(int, char *[])
     auto& app = Application::singleton();
     app.init(&applicationClient);
 
-    auto mainWindow = std::make_unique<MainWindow>();
+    auto mainWindow = std::make_unique<MainWindow>(argc > 1 ? argv[1] : nullptr);
     mainWindow->setFocused();
     app.setRootWidget(move(mainWindow));
 

@@ -36,6 +36,7 @@
 #include "LLIntData.h"
 #include "Options.h"
 #include "SigillCrashAnalyzer.h"
+#include "StructureAlignedMemoryAllocator.h"
 #include "SuperSampler.h"
 #include "VMTraps.h"
 #include "WasmCalleeRegistry.h"
@@ -71,7 +72,12 @@ void initialize()
             if (!g_jscConfig.vm.canUseJIT) {
                 Options::useJIT() = false;
                 Options::recomputeDependentOptions();
+            } else {
+#if CPU(ARM64E) && ENABLE(JIT)
+                g_jscConfig.arm64eHashPins.initializeAtStartup();
+#endif
             }
+            StructureAlignedMemoryAllocator::initializeStructureAddressSpace();
         }
         Options::finalize();
 

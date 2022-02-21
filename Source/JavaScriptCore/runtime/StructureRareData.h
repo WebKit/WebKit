@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 namespace JSC {
 
 class JSPropertyNameEnumerator;
+class LLIntOffsetsExtractor;
 class Structure;
 class StructureChain;
 class CachedSpecialPropertyAdaptiveStructureWatchpoint;
@@ -51,8 +52,9 @@ enum class CachedSpecialPropertyKey : uint8_t {
     ToString,
     ValueOf,
     ToPrimitive,
+    ToJSON,
 };
-static constexpr unsigned numberOfCachedSpecialPropertyKeys = 4;
+static constexpr unsigned numberOfCachedSpecialPropertyKeys = 5;
 
 class StructureRareData;
 class StructureChainInvalidationWatchpoint;
@@ -63,9 +65,9 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     template<typename CellType, SubspaceAccess>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.structureRareDataSpace;
+        return &vm.structureRareDataSpace();
     }
 
     static StructureRareData* create(VM&, Structure*);
@@ -88,7 +90,9 @@ public:
     void cacheSpecialProperty(JSGlobalObject*, VM&, Structure* baseStructure, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
 
     JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
-    void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
+    uintptr_t cachedPropertyNameEnumeratorAndFlag() const;
+    void setCachedPropertyNameEnumerator(VM&, Structure*, JSPropertyNameEnumerator*, StructureChain*);
+    void clearCachedPropertyNameEnumerator();
 
     JSImmutableButterfly* cachedPropertyNames(CachedPropertyNamesKind) const;
     JSImmutableButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind) const;
@@ -107,18 +111,20 @@ public:
         return OBJECT_OFFSETOF(StructureRareData, m_cachedPropertyNames) + sizeof(WriteBarrier<JSImmutableButterfly>) * static_cast<unsigned>(kind);
     }
 
-    static ptrdiff_t offsetOfCachedPropertyNameEnumerator()
+    static ptrdiff_t offsetOfCachedPropertyNameEnumeratorAndFlag()
     {
-        return OBJECT_OFFSETOF(StructureRareData, m_cachedPropertyNameEnumerator);
+        return OBJECT_OFFSETOF(StructureRareData, m_cachedPropertyNameEnumeratorAndFlag);
     }
 
     DECLARE_EXPORT_INFO;
 
     void finalizeUnconditionally(VM&);
 
-    void invalidateWatchpointBasedValidation();
+    static constexpr uintptr_t cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag = 1;
+    static constexpr uintptr_t cachedPropertyNameEnumeratorMask = ~static_cast<uintptr_t>(1);
 
 private:
+    friend class LLIntOffsetsExtractor;
     friend class Structure;
     friend class CachedSpecialPropertyAdaptiveStructureWatchpoint;
     friend class CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint;
@@ -133,12 +139,11 @@ private:
     bool canCacheSpecialProperty(CachedSpecialPropertyKey);
     void giveUpOnSpecialPropertyCache(CachedSpecialPropertyKey);
 
-    bool tryCachePropertyNameEnumeratorViaWatchpoint(VM&, StructureChain*);
+    bool tryCachePropertyNameEnumeratorViaWatchpoint(VM&, Structure*, StructureChain*);
 
-    WriteBarrier<Structure> m_previous;
     // FIXME: We should have some story for clearing these property names caches in GC.
     // https://bugs.webkit.org/show_bug.cgi?id=192659
-    WriteBarrier<JSPropertyNameEnumerator> m_cachedPropertyNameEnumerator;
+    uintptr_t m_cachedPropertyNameEnumeratorAndFlag { 0 };
     FixedVector<StructureChainInvalidationWatchpoint> m_cachedPropertyNameEnumeratorWatchpoints;
     WriteBarrier<JSImmutableButterfly> m_cachedPropertyNames[numberOfCachedPropertyNames] { };
 
@@ -151,6 +156,7 @@ private:
     std::unique_ptr<SpecialPropertyCache> m_specialPropertyCache;
     Box<InlineWatchpointSet> m_polyProtoWatchpoint;
 
+    WriteBarrierStructureID m_previous;
     PropertyOffset m_maxOffset;
     PropertyOffset m_transitionOffset;
 };

@@ -25,12 +25,12 @@ function testImageSetRule(description, property, rule)
     if (property == 'cursor')
         rule += ', default';
 
-    if (testComputedStyle(property, rule) == rule.replace(/x(?=[,)])/g, 'dppx'))
+    if (testComputedStyle(property, rule) == rule)
         debug("Unprefixed: PASS");
     else
         debug("Unprefixed: FAIL");
 
-    if (testComputedStyle(property, "-webkit-" + rule) == rule.replace(/x(?=[,)])/g, 'dppx'))
+    if (testComputedStyle(property, "-webkit-" + rule) == rule)
         debug("Prefixed: PASS");
     else
         debug("Prefixed: FAIL");

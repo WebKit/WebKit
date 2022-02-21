@@ -14,8 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/clearinterval-from-callback.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/cleartimeout-clearinterval.any.js
-/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/evil-spec-example.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/evil-spec-example.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/missing-timeout-setinterval.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/negative-setinterval.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.any.js

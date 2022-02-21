@@ -21,7 +21,6 @@
 
 #include "ImageBuffer.h"
 #include "RenderSVGResourceContainer.h"
-#include "SVGMaskElement.h"
 #include "SVGUnitTypes.h"
 
 #include <wtf/HashMap.h>
@@ -29,6 +28,7 @@
 namespace WebCore {
 
 class GraphicsContext;
+class SVGMaskElement;
 
 struct MaskerData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -41,15 +41,15 @@ public:
     RenderSVGResourceMasker(SVGMaskElement&, RenderStyle&&);
     virtual ~RenderSVGResourceMasker();
 
-    SVGMaskElement& maskElement() const { return downcast<SVGMaskElement>(RenderSVGResourceContainer::element()); }
+    inline SVGMaskElement& maskElement() const;
 
     void removeAllClientsFromCache(bool markForInvalidation = true) override;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
     bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
     FloatRect resourceBoundingBox(const RenderObject&) override;
 
-    SVGUnitTypes::SVGUnitType maskUnits() const { return maskElement().maskUnits(); }
-    SVGUnitTypes::SVGUnitType maskContentUnits() const { return maskElement().maskContentUnits(); }
+    inline SVGUnitTypes::SVGUnitType maskUnits() const;
+    inline SVGUnitTypes::SVGUnitType maskContentUnits() const;
 
     RenderSVGResourceType resourceType() const override { return MaskerResourceType; }
 

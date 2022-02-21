@@ -29,6 +29,7 @@
 [
     Exposed=AudioWorklet,
     Conditional=WEB_AUDIO,
+    JSCustomMarkFunction,
     JSGenerateToNativeObject,
     IsImmutablePrototypeExoticObject,
     IsImmutablePrototypeExoticObjectOnPrototype,

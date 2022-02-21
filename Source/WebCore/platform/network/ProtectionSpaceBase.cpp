@@ -33,89 +33,51 @@
 #endif
 
 namespace WebCore {
-
-// Need to enforce empty, non-null strings due to the pickiness of the String == String operator
-// combined with the semantics of the String(NSString*) constructor
-ProtectionSpaceBase::ProtectionSpaceBase()
-    : m_host(emptyString())
-    , m_port(0)
-    , m_serverType(ProtectionSpaceServerHTTP)
-    , m_realm(emptyString())
-    , m_authenticationScheme(ProtectionSpaceAuthenticationSchemeDefault)
-    , m_isHashTableDeletedValue(false)
-{
-}
  
 // Need to enforce empty, non-null strings due to the pickiness of the String == String operator
 // combined with the semantics of the String(NSString*) constructor
-ProtectionSpaceBase::ProtectionSpaceBase(const String& host, int port, ProtectionSpaceServerType serverType, const String& realm, ProtectionSpaceAuthenticationScheme authenticationScheme)
+ProtectionSpaceBase::ProtectionSpaceBase(const String& host, int port, ServerType serverType, const String& realm, AuthenticationScheme authenticationScheme)
     : m_host(host.length() ? host : emptyString())
+    , m_realm(realm.length() ? realm : emptyString())
     , m_port(port)
     , m_serverType(serverType)
-    , m_realm(realm.length() ? realm : emptyString())
     , m_authenticationScheme(authenticationScheme)
-    , m_isHashTableDeletedValue(false)
 {    
-}
-    
-const String& ProtectionSpaceBase::host() const
-{
-    return m_host; 
-}
-
-int ProtectionSpaceBase::port() const
-{
-    return m_port; 
-}
-
-ProtectionSpaceServerType ProtectionSpaceBase::serverType() const
-{
-    return m_serverType;
 }
 
 bool ProtectionSpaceBase::isProxy() const
 {
-    return (m_serverType == ProtectionSpaceProxyHTTP ||
-            m_serverType == ProtectionSpaceProxyHTTPS ||
-            m_serverType == ProtectionSpaceProxyFTP ||
-            m_serverType == ProtectionSpaceProxySOCKS);
-}
-
-const String& ProtectionSpaceBase::realm() const
-{ 
-    return m_realm; 
-}
-
-ProtectionSpaceAuthenticationScheme ProtectionSpaceBase::authenticationScheme() const
-{ 
-    return m_authenticationScheme; 
+    return m_serverType == ServerType::ProxyHTTP
+        || m_serverType == ServerType::ProxyHTTPS
+        || m_serverType == ServerType::ProxyFTP
+        || m_serverType == ServerType::ProxySOCKS;
 }
 
 bool ProtectionSpaceBase::receivesCredentialSecurely() const
 {
-    return (m_serverType == ProtectionSpaceServerHTTPS ||
-            m_serverType == ProtectionSpaceServerFTPS || 
-            m_serverType == ProtectionSpaceProxyHTTPS || 
-            m_authenticationScheme == ProtectionSpaceAuthenticationSchemeHTTPDigest); 
+    return m_serverType == ServerType::HTTPS
+        || m_serverType == ServerType::FTPS
+        || m_serverType == ServerType::ProxyHTTPS
+        || m_authenticationScheme == AuthenticationScheme::HTTPDigest;
 }
 
 bool ProtectionSpaceBase::isPasswordBased() const
 {
     switch (m_authenticationScheme) {
-    case ProtectionSpaceAuthenticationSchemeDefault:
-    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
-    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
-    case ProtectionSpaceAuthenticationSchemeHTMLForm:
-    case ProtectionSpaceAuthenticationSchemeNTLM:
-    case ProtectionSpaceAuthenticationSchemeNegotiate:
-    case ProtectionSpaceAuthenticationSchemeOAuth:
+    case AuthenticationScheme::Default:
+    case AuthenticationScheme::HTTPBasic:
+    case AuthenticationScheme::HTTPDigest:
+    case AuthenticationScheme::HTMLForm:
+    case AuthenticationScheme::NTLM:
+    case AuthenticationScheme::Negotiate:
+    case AuthenticationScheme::OAuth:
 #if USE(GLIB)
-    case ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested:
+    case AuthenticationScheme::ClientCertificatePINRequested:
 #endif
         return true;
-    case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
-    case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
-    case ProtectionSpaceAuthenticationSchemeUnknown:
+    case AuthenticationScheme::ClientCertificateRequested:
+    case AuthenticationScheme::ServerTrustEvaluationRequested:
+    case AuthenticationScheme::Unknown:
         return false;
     }
 

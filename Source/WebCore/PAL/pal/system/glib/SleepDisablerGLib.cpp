@@ -28,6 +28,7 @@
 
 #include <gio/gio.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/Sandbox.h>
 
 namespace PAL {
 
@@ -49,49 +50,29 @@ SleepDisablerGLib::SleepDisablerGLib(const char* reason, Type type)
     // ever need this distinction, which seems unlikely, then we'll need to
     // audit all use of SleepDisabler.
 
-    // First, try to use the ScreenSaver API.
+    const char* busName = shouldUsePortal() ? "org.freedesktop.portal.Desktop" : "org.freedesktop.ScreenSaver";
+    const char* objectPath = shouldUsePortal() ? "/org/freedesktop/portal/desktop" : "/org/freedesktop/ScreenSaver";
+    const char* interfaceName = shouldUsePortal() ? "org.freedesktop.portal.Inhibit" : "org.freedesktop.ScreenSaver";
     g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION, static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
-        nullptr, "org.freedesktop.ScreenSaver", "/org/freedesktop/ScreenSaver", "org.freedesktop.ScreenSaver", m_cancellable.get(),
-        [](GObject*, GAsyncResult* result, gpointer userData) {
-            GUniqueOutPtr<GError> error;
-            GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
-            if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+        nullptr, busName, objectPath, interfaceName, m_cancellable.get(), [](GObject*, GAsyncResult* result, gpointer userData) {
+        GUniqueOutPtr<GError> error;
+        GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
+        if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+            return;
+
+        auto* self = static_cast<SleepDisablerGLib*>(userData);
+        if (proxy) {
+            GUniquePtr<char> nameOwner(g_dbus_proxy_get_name_owner(proxy.get()));
+            if (nameOwner) {
+                self->m_screenSaverProxy = WTFMove(proxy);
+                self->acquireInhibitor();
                 return;
-
-            auto* self = static_cast<SleepDisablerGLib*>(userData);
-            if (proxy) {
-                // Under Flatpak, we'll get a useless proxy with no name owner.
-                GUniquePtr<char> nameOwner(g_dbus_proxy_get_name_owner(proxy.get()));
-                if (nameOwner) {
-                    self->m_screenSaverProxy = WTFMove(proxy);
-                    self->acquireInhibitor();
-                    return;
-                }
             }
+        }
 
-            // It failed. Try to use the Flatpak portal instead.
-            g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION, static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
-                nullptr, "org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop", "org.freedesktop.portal.Inhibit", self->m_cancellable.get(),
-                [](GObject*, GAsyncResult* result, gpointer userData) {
-                    GUniqueOutPtr<GError> error;
-                    GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
-                    if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                        return;
-
-                    auto* self = static_cast<SleepDisablerGLib*>(userData);
-                    if (proxy) {
-                        GUniquePtr<char> nameOwner(g_dbus_proxy_get_name_owner(proxy.get()));
-                        if (nameOwner) {
-                            self->m_inhibitPortalProxy = WTFMove(proxy);
-                            self->acquireInhibitor();
-                            return;
-                        }
-                    }
-
-                    // Give up. Don't warn the user: this is expected.
-                    self->m_cancellable = nullptr;
-            }, self);
-        }, this);
+        // Give up. Don't warn the user: this is expected.
+        self->m_cancellable = nullptr;
+    }, this);
 }
 
 SleepDisablerGLib::~SleepDisablerGLib()
@@ -104,105 +85,67 @@ SleepDisablerGLib::~SleepDisablerGLib()
 
 void SleepDisablerGLib::acquireInhibitor()
 {
-    if (m_screenSaverProxy) {
-        ASSERT(!m_inhibitPortalProxy);
-        acquireInhibitorViaScreenSaverProxy();
-    } else {
-        ASSERT(m_inhibitPortalProxy);
-        acquireInhibitorViaInhibitPortalProxy();
-    }
-}
+    GVariant* parameters;
+    if (shouldUsePortal()) {
+        GVariantBuilder builder;
+        g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
+        g_variant_builder_add(&builder, "{sv}", "reason", g_variant_new_string(m_reason.data()));
+        parameters = g_variant_new("(su@a{sv})", "" /* no window */, 8 /* idle */, g_variant_builder_end(&builder));
+    } else
+        parameters = g_variant_new("(ss)", g_get_prgname(), m_reason.data());
 
-void SleepDisablerGLib::acquireInhibitorViaScreenSaverProxy()
-{
-    g_dbus_proxy_call(m_screenSaverProxy.get(), "Inhibit", g_variant_new("(ss)", g_get_prgname(), m_reason.data()),
-        G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(), [](GObject* proxy, GAsyncResult* result, gpointer userData) {
-            GUniqueOutPtr<GError> error;
-            GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(proxy), result, &error.outPtr()));
-            if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                return;
+    g_dbus_proxy_call(m_screenSaverProxy.get(), "Inhibit", parameters, G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(), [](GObject* proxy, GAsyncResult* result, gpointer userData) {
+        GUniqueOutPtr<GError> error;
+        GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(proxy), result, &error.outPtr()));
+        if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+            return;
 
-            auto* self = static_cast<SleepDisablerGLib*>(userData);
-            if (error)
-                g_warning("Calling %s.Inhibit failed: %s", g_dbus_proxy_get_interface_name(G_DBUS_PROXY(proxy)), error->message);
-            else {
-                ASSERT(returnValue);
-                g_variant_get(returnValue.get(), "(u)", &self->m_screenSaverCookie);
-            }
-            self->m_cancellable = nullptr;
-        }, this);
-}
-
-void SleepDisablerGLib::acquireInhibitorViaInhibitPortalProxy()
-{
-    GVariantBuilder builder;
-    g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&builder, "{sv}", "reason", g_variant_new_string(m_reason.data()));
-    g_dbus_proxy_call(m_inhibitPortalProxy.get(), "Inhibit", g_variant_new("(su@a{sv})", "" /* no window */, 8 /* idle */, g_variant_builder_end(&builder)),
-        G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(), [](GObject* proxy, GAsyncResult* result, gpointer userData) {
-            GUniqueOutPtr<GError> error;
-            GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(proxy), result, &error.outPtr()));
-            if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                return;
-
-            auto* self = static_cast<SleepDisablerGLib*>(userData);
-            if (error)
-                g_warning("Calling %s.Inhibit failed: %s", g_dbus_proxy_get_interface_name(G_DBUS_PROXY(proxy)), error->message);
-            else {
-                ASSERT(returnValue);
+        auto* self = static_cast<SleepDisablerGLib*>(userData);
+        if (error)
+            g_warning("Calling %s.Inhibit failed: %s", g_dbus_proxy_get_interface_name(G_DBUS_PROXY(proxy)), error->message);
+        else {
+            ASSERT(returnValue);
+            if (shouldUsePortal())
                 g_variant_get(returnValue.get(), "(o)", &self->m_inhibitPortalRequestObjectPath.outPtr());
-            }
-            self->m_cancellable = nullptr;
-        }, this);
+            else
+                g_variant_get(returnValue.get(), "(u)", &self->m_screenSaverCookie);
+        }
+        self->m_cancellable = nullptr;
+    }, this);
 }
 
 void SleepDisablerGLib::releaseInhibitor()
 {
-    if (m_screenSaverProxy) {
-        ASSERT(!m_inhibitPortalProxy);
-        releaseInhibitorViaScreenSaverProxy();
-    } else {
-        ASSERT(m_inhibitPortalProxy);
-        releaseInhibitorViaInhibitPortalProxy();
-    }
-}
-
-void SleepDisablerGLib::releaseInhibitorViaScreenSaverProxy()
-{
-    ASSERT(m_screenSaverCookie);
-
-    g_dbus_proxy_call(m_screenSaverProxy.get(), "UnInhibit", g_variant_new("(u)", m_screenSaverCookie),
-        G_DBUS_CALL_FLAGS_NONE, -1, nullptr, [](GObject* proxy, GAsyncResult* result, gpointer) {
+    if (!shouldUsePortal()) {
+        ASSERT(m_screenSaverCookie);
+        g_dbus_proxy_call(m_screenSaverProxy.get(), "UnInhibit", g_variant_new("(u)", m_screenSaverCookie), G_DBUS_CALL_FLAGS_NONE, -1, nullptr, [](GObject* proxy, GAsyncResult* result, gpointer) {
             GUniqueOutPtr<GError> error;
             GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(proxy), result, &error.outPtr()));
             if (error)
                 g_warning("Calling %s.UnInhibit failed: %s", g_dbus_proxy_get_interface_name(G_DBUS_PROXY(proxy)), error->message);
-    }, nullptr);
-}
-
-void SleepDisablerGLib::releaseInhibitorViaInhibitPortalProxy()
-{
-    ASSERT(m_inhibitPortalRequestObjectPath);
-
-    g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION, static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
-        nullptr, "org.freedesktop.portal.Desktop", m_inhibitPortalRequestObjectPath.get(), "org.freedesktop.portal.Request", nullptr,
-        [](GObject*, GAsyncResult* result, gpointer) {
-            GUniqueOutPtr<GError> error;
-            GRefPtr<GDBusProxy> requestProxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
-            if (error) {
-                g_warning("Failed to create org.freedesktop.portal.Request proxy: %s", error->message);
-                return;
-            }
-
-            ASSERT(requestProxy);
-            g_dbus_proxy_call(requestProxy.get(), "Close", g_variant_new("()"), G_DBUS_CALL_FLAGS_NONE, -1, nullptr,
-                [](GObject* proxy, GAsyncResult* result, gpointer) {
-                    GUniqueOutPtr<GError> error;
-                    GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(proxy), result, &error.outPtr()));
-                    if (error)
-                        g_warning("Calling %s.Close failed: %s", g_dbus_proxy_get_interface_name(G_DBUS_PROXY(proxy)), error->message);
-                }, nullptr);
         }, nullptr);
+
+        return;
+    }
+
+    ASSERT(m_inhibitPortalRequestObjectPath);
+    g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION, static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
+        nullptr, "org.freedesktop.portal.Desktop", m_inhibitPortalRequestObjectPath.get(), "org.freedesktop.portal.Request", nullptr, [](GObject*, GAsyncResult* result, gpointer) {
+        GUniqueOutPtr<GError> error;
+        GRefPtr<GDBusProxy> requestProxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
+        if (error) {
+            g_warning("Failed to create org.freedesktop.portal.Request proxy: %s", error->message);
+            return;
+        }
+
+        ASSERT(requestProxy);
+        g_dbus_proxy_call(requestProxy.get(), "Close", g_variant_new("()"), G_DBUS_CALL_FLAGS_NONE, -1, nullptr, [](GObject* proxy, GAsyncResult* result, gpointer) {
+            GUniqueOutPtr<GError> error;
+            GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(proxy), result, &error.outPtr()));
+            if (error)
+                g_warning("Calling %s.Close failed: %s", g_dbus_proxy_get_interface_name(G_DBUS_PROXY(proxy)), error->message);
+        }, nullptr);
+    }, nullptr);
 }
 
 } // namespace PAL

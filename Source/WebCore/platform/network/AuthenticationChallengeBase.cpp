@@ -82,7 +82,7 @@ void AuthenticationChallengeBase::nullify()
     m_isNull = true;
 }
 
-bool AuthenticationChallengeBase::compare(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
+bool AuthenticationChallengeBase::equalForWebKitLegacyChallengeComparison(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
 {
     if (a.isNull() && b.isNull())
         return true;
@@ -99,9 +99,9 @@ bool AuthenticationChallengeBase::compare(const AuthenticationChallenge& a, cons
     if (a.previousFailureCount() != b.previousFailureCount())
         return false;
         
-    if (a.failureResponse() != b.failureResponse())
+    if (!ResourceResponseBase::equalForWebKitLegacyChallengeComparison(a.failureResponse(), b.failureResponse()))
         return false;
-        
+
     if (a.error() != b.error())
         return false;
         

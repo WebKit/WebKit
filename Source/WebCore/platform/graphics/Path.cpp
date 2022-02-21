@@ -40,7 +40,6 @@
 
 namespace WebCore {
 
-#if !USE(DIRECT2D)
 float Path::length() const
 {
     PathTraversalState traversalState(PathTraversalState::Action::TotalLength);
@@ -51,7 +50,6 @@ float Path::length() const
 
     return traversalState.totalLength();
 }
-#endif
 
 #if !HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
 
@@ -125,7 +123,7 @@ void Path::addRoundedRect(const FloatRoundedRect& r, RoundedRectStrategy strateg
     }
 
     if (strategy == RoundedRectStrategy::PreferNative) {
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
         platformAddPathForRoundedRect(rect, radii.topLeft(), radii.topRight(), radii.bottomLeft(), radii.bottomRight());
         return;
 #endif
@@ -176,13 +174,13 @@ void Path::apply(const PathApplierFunction& function) const
     if (hasInlineData<MoveData>()) {
         PathElement element;
         element.type = PathElement::Type::MoveToPoint;
-        element.points[0] = WTF::get<MoveData>(m_inlineData).location;
+        element.points[0] = std::get<MoveData>(m_inlineData).location;
         function(element);
         return;
     }
 
     if (hasInlineData<LineData>()) {
-        auto& line = WTF::get<LineData>(m_inlineData);
+        auto& line = std::get<LineData>(m_inlineData);
         PathElement element;
         element.type = PathElement::Type::MoveToPoint;
         element.points[0] = line.start;
@@ -194,7 +192,7 @@ void Path::apply(const PathApplierFunction& function) const
     }
 
     if (hasInlineData<BezierCurveData>()) {
-        auto& curve = WTF::get<BezierCurveData>(m_inlineData);
+        auto& curve = std::get<BezierCurveData>(m_inlineData);
         PathElement element;
         element.type = PathElement::Type::MoveToPoint;
         element.points[0] = curve.startPoint;
@@ -208,7 +206,7 @@ void Path::apply(const PathApplierFunction& function) const
     }
 
     if (hasInlineData<QuadCurveData>()) {
-        auto& curve = WTF::get<QuadCurveData>(m_inlineData);
+        auto& curve = std::get<QuadCurveData>(m_inlineData);
         PathElement element;
         element.type = PathElement::Type::MoveToPoint;
         element.points[0] = curve.startPoint;
@@ -273,6 +271,26 @@ FloatPoint Path::currentPoint() const
 #endif
 
     return currentPointSlowCase();
+}
+
+bool Path::isClosed() const
+{
+    bool lastElementIsClosed = false;
+
+    // The path is closed if the type of the last PathElement is CloseSubpath. Unfortunately,
+    // the only way to access PathElements is sequentially through apply(), there's no random
+    // access as if they're in a vector.
+    // The lambda below sets lastElementIsClosed if the last PathElement is CloseSubpath.
+    // Because lastElementIsClosed is overridden if there are any remaining PathElements
+    // to be iterated, its final value is the value of the last iteration.
+    // (i.e the last PathElement).
+    // FIXME: find a more efficient way to implement this, that does not require iterating
+    // through all PathElements.
+    apply([&lastElementIsClosed](const WebCore::PathElement& element) {
+        lastElementIsClosed = (element.type == PathElement::Type::CloseSubpath);
+    });
+
+    return lastElementIsClosed;
 }
 
 size_t Path::elementCount() const
@@ -348,7 +366,7 @@ void Path::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endP
 #if ENABLE(INLINE_PATH_DATA)
     if (isNull() || hasInlineData<MoveData>()) {
         QuadCurveData curve;
-        curve.startPoint = hasInlineData() ? WTF::get<MoveData>(m_inlineData).location : FloatPoint();
+        curve.startPoint = hasInlineData() ? std::get<MoveData>(m_inlineData).location : FloatPoint();
         curve.controlPoint = controlPoint;
         curve.endPoint = endPoint;
         m_inlineData = { WTFMove(curve) };
@@ -364,7 +382,7 @@ void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& c
 #if ENABLE(INLINE_PATH_DATA)
     if (isNull() || hasInlineData<MoveData>()) {
         BezierCurveData curve;
-        curve.startPoint = hasInlineData() ? WTF::get<MoveData>(m_inlineData).location : FloatPoint();
+        curve.startPoint = hasInlineData() ? std::get<MoveData>(m_inlineData).location : FloatPoint();
         curve.controlPoint1 = controlPoint1;
         curve.controlPoint2 = controlPoint2;
         curve.endPoint = endPoint;
@@ -504,7 +522,7 @@ std::optional<FloatRect> Path::boundingRectFromInlineData() const
 
 #endif
 
-#if !USE(CG) && !USE(DIRECT2D)
+#if !USE(CG)
 Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
 {
     Path path;

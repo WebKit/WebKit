@@ -33,6 +33,8 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute boolean noValidate;
     [CEReactions=NotNeeded, Reflect] attribute DOMString target;
+    [CEReactions, Reflect] attribute DOMString rel;
+    [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
 
     readonly attribute HTMLFormControlsCollection elements;
     readonly attribute unsigned long length;
@@ -40,8 +42,8 @@
     getter (RadioNodeList or Element)? (DOMString name);
 
     [ImplementedAs=submitFromJavaScript] undefined submit();
-    [EnabledBySetting=RequestSubmit] undefined requestSubmit(optional HTMLElement? submitter);
+    [EnabledBySetting=RequestSubmitEnabled] undefined requestSubmit(optional HTMLElement? submitter);
     [CEReactions=NotNeeded] undefined reset();
     boolean checkValidity();
-    [EnabledBySetting=InteractiveFormValidation] boolean reportValidity();
+    [EnabledBySetting=InteractiveFormValidationEnabled] boolean reportValidity();
 };

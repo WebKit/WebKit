@@ -27,7 +27,7 @@ layer at (-207,8) size 984x367 backgroundClip at (0,0) size 785x758 clip at (0,0
       RenderText {#text} at (0,0) size 36x169
         text run at (0,0) width 169: "Header Two"
     RenderBlock (anonymous) at (357,0) size 215x367
-      RenderText {#text} at (0,0) size 213x362
+      RenderText {#text} at (0,0) size 214x362
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (18,0) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (36,0) width 325: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -36,9 +36,9 @@ layer at (-207,8) size 984x367 backgroundClip at (0,0) size 785x758 clip at (0,0
         text run at (90,0) width 340: "sem. Nam nonummy enim. Nullam bibendum lobortis"
         text run at (108,0) width 344: "neque. Vestibulum velit orci, tempus euismod, pretium"
         text run at (142,0) width 344: "quis, interdum vitae, nulla. Phasellus eget ante et tortor"
-        text run at (160,0) width 343: "condimentum vestibulum. Suspendisse hendrerit quam"
-        text run at (178,0) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
-        text run at (196,0) width 229: "sit amet, consectetuer adipiscing elit."
+        text run at (160,0) width 344: "condimentum vestibulum. Suspendisse hendrerit quam"
+        text run at (178,0) width 363: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
+        text run at (196,0) width 230: "sit amet, consectetuer adipiscing elit."
     RenderBlock {H1} at (593,0) size 38x367
       RenderText {#text} at (0,0) size 36x190
         text run at (0,0) width 190: "Header Three"

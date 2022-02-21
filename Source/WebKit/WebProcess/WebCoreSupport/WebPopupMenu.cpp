@@ -115,12 +115,6 @@ void WebPopupMenu::show(const IntRect& rect, FrameView* view, int selectedIndex)
     setUpPlatformData(pageCoordinates, platformData);
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowPopupMenu(pageCoordinates, static_cast<uint64_t>(m_popupClient->menuStyle().textDirection()), items, selectedIndex, platformData), m_page->identifier());
-
-#if USE(DIRECT2D)
-    // Don't destroy the shared handle in the WebContent process. It will be destroyed in the UIProcess.
-    platformData.m_notSelectedBackingStore->leakSharedResource();
-    platformData.m_selectedBackingStore->leakSharedResource();
-#endif
 }
 
 void WebPopupMenu::hide()

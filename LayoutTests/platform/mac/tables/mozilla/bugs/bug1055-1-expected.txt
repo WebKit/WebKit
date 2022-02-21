@@ -38,8 +38,8 @@ layer at (0,0) size 785x2031
                 text run at (2,11) width 442: "Every cell in this table should have a 10-pixel solid green top border."
           RenderTableRow {TR} at (0,41) size 456x68
             RenderTableCell {TD} at (5,59) size 112x32 [border: (10px solid #008000) (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,11) size 54x19
-                text run at (2,12) width 54: "Cell one"
+              RenderText {#text} at (2,10) size 54x20
+                text run at (2,11) width 54: "Cell one"
             RenderTableCell {TD} at (121,41) size 330x68 [border: (10px solid #008000) (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (2,11) size 325x18
                 RenderText {#text} at (0,0) size 55x18
@@ -218,8 +218,8 @@ layer at (0,0) size 785x2031
                 text run at (2,2) width 467: "Every cell in this table should have a 10-pixel solid green bottom border."
           RenderTableRow {TR} at (0,41) size 481x68
             RenderTableCell {TD} at (5,59) size 119x32 [border: (1px inset #808080) (10px solid #008000) (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 54x19
-                text run at (2,3) width 54: "Cell one"
+              RenderText {#text} at (2,1) size 54x20
+                text run at (2,2) width 54: "Cell one"
             RenderTableCell {TD} at (128,41) size 348x68 [border: (1px inset #808080) (10px solid #008000) (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (2,2) size 343x18
                 RenderText {#text} at (0,0) size 55x18

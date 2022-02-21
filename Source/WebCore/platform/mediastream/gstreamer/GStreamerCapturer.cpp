@@ -23,11 +23,14 @@
 #include "config.h"
 
 #if ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
+
 #include "GStreamerCapturer.h"
+#include "VideoFrameMetadataGStreamer.h"
 
 #include <gst/app/gstappsink.h>
 #include <gst/app/gstappsrc.h>
 #include <mutex>
+#include <wtf/MonotonicTime.h>
 
 GST_DEBUG_CATEGORY(webkit_capturer_debug);
 #define GST_CAT_DEFAULT webkit_capturer_debug
@@ -87,7 +90,7 @@ void GStreamerCapturer::removeObserver(Observer& observer)
 void GStreamerCapturer::forEachObserver(const Function<void(Observer&)>& apply)
 {
     ASSERT(isMainThread());
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     m_observers.forEach(apply);
 }
 
@@ -99,9 +102,20 @@ GstElement* GStreamerCapturer::createSource()
         if (GST_IS_APP_SRC(m_src.get()))
             g_object_set(m_src.get(), "is-live", true, "format", GST_FORMAT_TIME, nullptr);
 
+        auto srcPad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
+        if (m_deviceType == CaptureDevice::DeviceType::Camera) {
+            gst_pad_add_probe(srcPad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_PUSH | GST_PAD_PROBE_TYPE_BUFFER), [](GstPad*, GstPadProbeInfo* info, gpointer) -> GstPadProbeReturn {
+                VideoSampleMetadata metadata;
+                metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
+                auto* buffer = GST_PAD_PROBE_INFO_BUFFER(info);
+                auto* modifiedBuffer = webkitGstBufferSetVideoSampleMetadata(buffer, metadata);
+                gst_buffer_replace(&buffer, modifiedBuffer);
+                return GST_PAD_PROBE_OK;
+            }, nullptr, nullptr);
+        }
+
         if (m_deviceType == CaptureDevice::DeviceType::Screen) {
-            auto pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
-            gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, [](GstPad*, GstPadProbeInfo* info, void* userData) -> GstPadProbeReturn {
+            gst_pad_add_probe(srcPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, [](GstPad*, GstPadProbeInfo* info, void* userData) -> GstPadProbeReturn {
                 auto* event = gst_pad_probe_info_get_event(info);
                 if (GST_EVENT_TYPE(event) != GST_EVENT_CAPS)
                     return GST_PAD_PROBE_OK;

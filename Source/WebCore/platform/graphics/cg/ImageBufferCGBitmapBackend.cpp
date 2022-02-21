@@ -81,7 +81,7 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
     size_t numBytes = backendSize.height() * bytesPerRow;
     verifyImageBufferIsBigEnough(data, numBytes);
 
-    auto cgContext = adoptCF(CGBitmapContextCreate(data, backendSize.width(), backendSize.height(), 8, bytesPerRow, parameters.colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    auto cgContext = adoptCF(CGBitmapContextCreate(data, backendSize.width(), backendSize.height(), 8, bytesPerRow, parameters.colorSpace.platformColorSpace(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
     if (!cgContext)
         return nullptr;
 
@@ -115,8 +115,10 @@ ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& paramet
     ASSERT(m_data);
     ASSERT(m_dataProvider);
     ASSERT(m_context);
-    setupContext();
+    applyBaseTransformToContext();
 }
+
+ImageBufferCGBitmapBackend::~ImageBufferCGBitmapBackend() = default;
 
 GraphicsContext& ImageBufferCGBitmapBackend::context() const
 {
@@ -145,7 +147,7 @@ RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy
         auto backendSize = this->backendSize();
         return NativeImage::create(adoptCF(CGImageCreate(
             backendSize.width(), backendSize.height(), 8, 32, bytesPerRow(),
-            colorSpace().platformColorSpace(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, m_dataProvider.get(),
+            colorSpace().platformColorSpace(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host), m_dataProvider.get(),
             0, true, kCGRenderingIntentDefault)));
     }
 

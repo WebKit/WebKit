@@ -29,8 +29,8 @@
 
 #include "COMPtr.h"
 #include "ClipboardUtilitiesWin.h"
-#include "TextEncoding.h"
 #include <objidl.h>
+#include <pal/text/TextEncoding.h>
 #include <shlwapi.h>
 #include <wininet.h>
 #include <wtf/Forward.h>
@@ -103,16 +103,11 @@ String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) c
 
 bool DragData::containsFiles() const
 {
-#if USE(CF)
     return (m_platformDragData) ? SUCCEEDED(m_platformDragData->QueryGetData(cfHDropFormat())) : m_dragDataMap.contains(cfHDropFormat()->cfFormat);
-#else
-    return false;
-#endif
 }
 
 unsigned DragData::numberOfFiles() const
 {
-#if USE(CF)
     if (!m_platformDragData)
         return 0;
 
@@ -131,16 +126,12 @@ unsigned DragData::numberOfFiles() const
     GlobalUnlock(medium.hGlobal);
 
     return numFiles;
-#else
-    return 0;
-#endif
 }
 
 Vector<String> DragData::asFilenames() const
 {
     Vector<String> result;
 
-#if USE(CF)
     if (m_platformDragData) {
         WCHAR filename[MAX_PATH];
 
@@ -167,7 +158,6 @@ Vector<String> DragData::asFilenames() const
         return result;
     }
     result = m_dragDataMap.get(cfHDropFormat()->cfFormat);
-#endif
 
     return result;
 }

@@ -13,6 +13,7 @@
 # as necessary.
 
 import os
+import platform
 import sys
 
 # We always want the real system version
@@ -31,10 +32,14 @@ if sys.platform == 'darwin':
         libraries = os.path.expanduser('~/Library/webkitpy')
 
 from webkitcorepy import AutoInstall, Package, Version
-AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.format(sys.version_info[0])))
+AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
 
 if sys.version_info >= (3, 5):
     AutoInstall.register(Package('pylint', Version(2, 6, 0)))
+    AutoInstall.register(Package('pytest_asyncio', Version(0, 14), pypi_name='pytest-asyncio'))
+    AutoInstall.register(Package('pytest_timeout', Version(1, 4, 2), pypi_name='pytest-timeout'))
+    AutoInstall.register(Package('pytest', Version(6, 1, 2), implicit_deps=['pytest_asyncio', 'pytest_timeout']))
+    AutoInstall.register(Package('websockets', Version(8, 1)))
 elif sys.version_info >= (2, 7) and sys.version_info < (3,):
     AutoInstall.register(Package('pylint', Version(0, 28, 0)))
     AutoInstall.register(Package('logilab.common', Version(0, 58, 1), pypi_name='logilab-common', aliases=['logilab']))
@@ -43,6 +48,11 @@ elif sys.version_info >= (2, 7) and sys.version_info < (3,):
 else:
     raise ImportError("Unsupported Python version! (%s)" % sys.version)
 
+if sys.version_info >= (3, 6):
+    AutoInstall.register(Package('importlib_metadata', Version(4, 8, 1)))
+else:
+    AutoInstall.register(Package('importlib_metadata', Version(1, 7, 0)))
+
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
 AutoInstall.register(Package('attr', Version(18, 1, 0), pypi_name='attrs'))
 AutoInstall.register(Package('bs4', Version(4, 9, 3), pypi_name='beautifulsoup4'))
@@ -50,20 +60,18 @@ AutoInstall.register(Package('configparser', Version(4, 0, 2)))
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
 AutoInstall.register(Package('coverage', Version(5, 2, 1)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
-AutoInstall.register(Package('importlib_metadata', Version(1, 7, 0)))
 AutoInstall.register(Package('genshi', Version(0, 7, 3), pypi_name='Genshi'))
 AutoInstall.register(Package('html5lib', Version(1, 1)))
+AutoInstall.register(Package('iniconfig', Version(1, 1, 1)))
 AutoInstall.register(Package('mechanize', Version(0, 4, 5)))
 AutoInstall.register(Package('more_itertools', Version(4, 2, 0), pypi_name='more-itertools'))
-AutoInstall.register(Package('mozprocess', Version(1, 2, 0)))
-AutoInstall.register(Package('mozlog', Version(6, 1)))
+AutoInstall.register(Package('mozprocess', Version(1, 3, 0)))
+AutoInstall.register(Package('mozlog', Version(7, 1, 0), wheel=True))
 AutoInstall.register(Package('mozterm', Version(1, 0, 0)))
-AutoInstall.register(Package('pluggy', Version(0, 5, 2)))
+AutoInstall.register(Package('pluggy', Version(0, 13, 1)))
 AutoInstall.register(Package('py', Version(1, 5, 2)))
-AutoInstall.register(Package('pytest_timeout', Version(1, 4, 2), pypi_name='pytest-timeout'))
-# Pytest held to 3.x due to WPT webdriver compatibility
-AutoInstall.register(Package('pytest', Version(3, 6, 2), implicit_deps=['pytest_timeout']))
 AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
+AutoInstall.register(Package('pyfakefs', Version(3, 7, 2)))
 AutoInstall.register(Package('scandir', Version(1, 10, 0)))
 AutoInstall.register(Package('soupsieve', Version(1, 9, 6)))
 AutoInstall.register(Package('selenium', Version(3, 141, 0)))
@@ -73,6 +81,11 @@ AutoInstall.register(Package('webencodings', Version(0, 5, 1)))
 AutoInstall.register(Package('zipp', Version(1, 2, 0)))
 AutoInstall.register(Package('zope.interface', Version(5, 1, 0), aliases=['zope'], pypi_name='zope-interface'))
 
-AutoInstall.register(Package('webkitscmpy', Version(0, 12, 5)), local=True)
+if sys.version_info > (3, 0):
+    AutoInstall.register(Package('reporelaypy', Version(0, 4, 1)), local=True)
+
+AutoInstall.register(Package('webkitflaskpy', Version(0, 3, 0)), local=True)
+AutoInstall.register(Package('webkitscmpy', Version(4, 0, 0)), local=True)
+AutoInstall.register(Package('webkitbugspy', Version(0, 3, 1)), local=True)
 
 import webkitscmpy

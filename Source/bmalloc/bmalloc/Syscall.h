@@ -23,13 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Syscall_h
-#define Syscall_h
+#pragma once
 
 #include <errno.h>
 
 #define SYSCALL(x) do { \
     while ((x) == -1 && errno == EAGAIN) { } \
 } while (0);
-
-#endif // Syscall_h

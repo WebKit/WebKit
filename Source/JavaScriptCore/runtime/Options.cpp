@@ -354,8 +354,8 @@ static void overrideDefaults()
 
 #if PLATFORM(MAC) && CPU(ARM64)
     Options::numberOfGCMarkers() = 4;
-    Options::numberOfDFGCompilerThreads() = 2;
-    Options::numberOfFTLCompilerThreads() = 2;
+    Options::numberOfDFGCompilerThreads() = 3;
+    Options::numberOfFTLCompilerThreads() = 3;
 #endif
 
 #if USE(BMALLOC_MEMORY_FOOTPRINT_API)
@@ -434,8 +434,6 @@ void Options::recomputeDependentOptions()
     Options::useConcurrentGC() = false;
 #endif
 
-    if (!isARM64())
-        Options::useDataIC() = false;
     if (!Options::useDataIC())
         Options::useDataICInOptimizingJIT() = false;
 

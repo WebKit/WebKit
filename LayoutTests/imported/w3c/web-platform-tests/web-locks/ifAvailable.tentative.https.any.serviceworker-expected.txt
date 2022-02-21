@@ -1,0 +1,12 @@
+
+PASS Lock request with ifAvailable - lock available
+PASS Lock request with ifAvailable - lock not available
+PASS Lock request with ifAvailable - lock not available, callback throws
+PASS Lock request with ifAvailable - unrelated lock held
+PASS Shared lock request with ifAvailable - shared lock held
+PASS Exclusive lock request with ifAvailable - shared lock held
+PASS Shared lock request with ifAvailable - exclusive lock held
+PASS Returned Promise rejects if callback throws synchronously
+PASS Returned Promise rejects if async callback yields rejected promise
+PASS Locks are available once previous release is processed
+

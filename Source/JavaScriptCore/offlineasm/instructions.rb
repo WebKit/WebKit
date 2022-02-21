@@ -387,10 +387,6 @@ ARM64_INSTRUCTIONS =
      "bfiq", # Bit field insert <source reg> <last bit written> <width immediate> <dest reg>
      "pcrtoaddr",   # Address from PC relative offset - adr instruction
      "globaladdr",
-     "divi",
-     "divis",
-     "divq",
-     "divqs",
      "notq",
      "loadlinkacqb",
      "loadlinkacqh",
@@ -438,7 +434,15 @@ RISC_INSTRUCTIONS =
      "addis",   # Add integers and set a flag.
      "subis",   # Same, but for subtraction.
      "oris",    # Same, but for bitwise or.
-     "addps"    # addis but for pointers.
+     "addps",   # addis but for pointers.
+     "divi",
+     "divis",
+     "divq",
+     "divqs",
+     "remi",
+     "remis",
+     "remq",
+     "remqs"
     ]
 
 MIPS_INSTRUCTIONS =
@@ -459,6 +463,8 @@ CXX_INSTRUCTIONS =
      "cloopCallNative",         # operands: callee
      "cloopCallSlowPath",       # operands: callTarget, currentFrame, currentPC
      "cloopCallSlowPathVoid",   # operands: callTarget, currentFrame, currentPC
+     "cloopCallSlowPath3",      # operands: callTarget, a0, a1, a2
+     "cloopCallSlowPath4",      # operands: callTarget, a0, a1, a2, a3
 
      # For debugging only:
      # Takes no operands but simply emits whatever follows in // comments as

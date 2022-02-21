@@ -181,6 +181,11 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/enum_casing"]),
 
     ([
+     # Forward declarations of GLib/GIO functions use underscores.
+     os.path.join('Source', 'WTF', 'wtf', 'glib', 'GRefPtr.h')],
+     ["-readability/naming/underscores"]),
+
+    ([
       # To use GStreamer GL without conflicts of GL symbols,
       # we should include gst/gl/gl.h before including OpenGL[ES]Shims
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'MediaPlayerPrivateGStreamer.cpp')],
@@ -256,6 +261,7 @@ _PATH_RULES_SPECIFIER = [
     #   No carriage-return line endings: since this is easy to correct.
     #
     ([os.path.join('webkitpy', 'thirdparty'),
+      os.path.join('Source', 'bmalloc', 'bmalloc', 'valgrind.h'),
       os.path.join('Source', 'ThirdParty', 'ANGLE'),
       os.path.join('Source', 'ThirdParty', 'libwebrtc'),
       os.path.join('Source', 'ThirdParty', 'openvr'),
@@ -266,8 +272,9 @@ _PATH_RULES_SPECIFIER = [
       "+pep8/W291",  # Trailing white space
       "+whitespace/carriage_return"]),
 
-    ([  # Source/JavaScriptCore/disassembler/udis86/ is generated code.
-      os.path.join('Source', 'JavaScriptCore', 'disassembler', 'udis86')],
+    ([
+      # Source/JavaScriptCore/disassembler/zydis/ is third-party code.
+      os.path.join('Source', 'JavaScriptCore', 'disassembler', 'zydis')],
      ["-readability/naming/underscores",
       "-whitespace/declaration",
       "-whitespace/indent"]),
@@ -362,6 +369,7 @@ _NEVER_SKIPPED_JS_FILES = [
 
 _NEVER_SKIPPED_FILES = _NEVER_SKIPPED_JS_FILES + [
     'TestExpectations',
+    'TestExpectations.json',
     '.py'
 ]
 
@@ -392,7 +400,9 @@ _SKIPPED_FILES_WITH_WARNING = [
     os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'webkit.h'),
     os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'gtk', 'webkit-web-extension.h'),
     os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe', 'webkit-web-extension.h'),
-    os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe', 'DOM', 'webkitdom.h')]
+    os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe', 'DOM', 'webkitdom.h'),
+    os.path.join('Source', 'WebGPU', 'WebGPU', 'WebGPU.h'),
+    os.path.join('Source', 'WebGPU', 'WebGPU', 'WebGPUExt.h')]
 
 # Files to skip that are more common or obvious.
 #

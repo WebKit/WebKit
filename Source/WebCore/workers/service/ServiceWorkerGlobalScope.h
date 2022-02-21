@@ -27,7 +27,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "ServiceWorkerClientIdentifier.h"
+#include "NotificationClient.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerRegistration.h"
 #include "WorkerGlobalScope.h"
@@ -37,15 +38,19 @@ namespace WebCore {
 
 class DeferredPromise;
 class ExtendableEvent;
-struct ServiceWorkerClientData;
+class Page;
 class ServiceWorkerClient;
 class ServiceWorkerClients;
 class ServiceWorkerThread;
 
+enum class NotificationEventType : bool;
+
+struct ServiceWorkerClientData;
+
 class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(ServiceWorkerGlobalScope);
 public:
-    static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID);
 
     ~ServiceWorkerGlobalScope();
 
@@ -61,7 +66,7 @@ public:
 
     ServiceWorkerThread& thread();
 
-    ServiceWorkerClient* serviceWorkerClient(ServiceWorkerClientIdentifier);
+    ServiceWorkerClient* serviceWorkerClient(ScriptExecutionContextIdentifier);
     void addServiceWorkerClient(ServiceWorkerClient&);
     void removeServiceWorkerClient(ServiceWorkerClient&);
 
@@ -76,28 +81,41 @@ public:
     const CertificateInfo& certificateInfo() const { return m_contextData.certificateInfo; }
 
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Serviceworker; }
-    
-private:
-    ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
+    WEBCORE_EXPORT Page* serviceWorkerPage();
+
+#if ENABLE(NOTIFICATION_EVENT)
+    void postTaskToFireNotificationEvent(NotificationEventType, Notification&, const String& action);
+#endif
+
+private:
+    ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID);
+    void notifyServiceWorkerPageOfCreationIfNecessary();
+
+    Type type() const final { return Type::ServiceWorker; }
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
+
+    NotificationClient* notificationClient() final { return m_notificationClient.get(); }
+    std::optional<PAL::SessionID> sessionID() const final { return m_sessionID; }
 
     ServiceWorkerContextData m_contextData;
     Ref<ServiceWorkerRegistration> m_registration;
     Ref<ServiceWorker> m_serviceWorker;
     Ref<ServiceWorkerClients> m_clients;
-    HashMap<ServiceWorkerClientIdentifier, ServiceWorkerClient*> m_clientMap;
+    HashMap<ScriptExecutionContextIdentifier, ServiceWorkerClient*> m_clientMap;
     Vector<Ref<ExtendableEvent>> m_extendedEvents;
 
     uint64_t m_lastRequestIdentifier { 0 };
     HashMap<uint64_t, RefPtr<DeferredPromise>> m_pendingSkipWaitingPromises;
+    PAL::SessionID m_sessionID;
+    std::unique_ptr<NotificationClient> m_notificationClient;
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ServiceWorkerGlobalScope)
-    static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkerGlobalScope>(context) && downcast<WebCore::WorkerGlobalScope>(context).isServiceWorkerGlobalScope(); }
-    static bool isType(const WebCore::WorkerGlobalScope& context) { return context.isServiceWorkerGlobalScope(); }
+    static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkerGlobalScope>(context) && downcast<WebCore::WorkerGlobalScope>(context).type() == WebCore::WorkerGlobalScope::Type::ServiceWorker; }
+    static bool isType(const WebCore::WorkerGlobalScope& context) { return context.type() == WebCore::WorkerGlobalScope::Type::ServiceWorker; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(SERVICE_WORKER)

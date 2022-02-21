@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const deviceId = stream.getTracks()[0].getSettings().deviceId;
+    await stream.getTracks()[0].applyConstraints({deviceId: {exact: deviceId}});
+}, "applyConstraint deviceId for audio");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({video:true});
+    const deviceId = stream.getTracks()[0].getSettings().deviceId;
+    await stream.getTracks()[0].applyConstraints({deviceId: {exact: deviceId}});
+}, "applyConstraint deviceId for video");
+        </script>
+    </body>
+</html>

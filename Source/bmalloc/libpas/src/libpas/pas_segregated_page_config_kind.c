@@ -31,6 +31,21 @@
 
 #include "pas_all_heap_configs.h"
 
+const char* pas_segregated_page_config_kind_get_string(pas_segregated_page_config_kind kind)
+{
+    switch (kind) {
+#define PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(name, value) \
+    case pas_segregated_page_config_kind_ ## name: \
+        return #name;
+#include "pas_segregated_page_config_kind.def"
+#undef PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND
+    }
+    PAS_ASSERT(!"Invalid kind");
+    return NULL;
+}
+
+PAS_BEGIN_EXTERN_C;
+
 bool pas_segregated_page_config_kind_for_each(
     pas_segregated_page_config_kind_callback callback,
     void *arg)
@@ -56,5 +71,7 @@ pas_segregated_page_config* pas_segregated_page_config_kind_for_config_table[
 #include "pas_segregated_page_config_kind.def"
 #undef PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND
 };
+
+PAS_END_EXTERN_C;
 
 #endif /* LIBPAS_ENABLED */

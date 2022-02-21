@@ -72,7 +72,7 @@ void ObjectPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 ObjectPrototype* ObjectPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    ObjectPrototype* prototype = new (NotNull, allocateCell<ObjectPrototype>(vm.heap)) ObjectPrototype(vm, structure);
+    ObjectPrototype* prototype = new (NotNull, allocateCell<ObjectPrototype>(vm)) ObjectPrototype(vm, structure);
     prototype->finishCreation(vm, globalObject);
     return prototype;
 }
@@ -85,7 +85,7 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncValueOf, (JSGlobalObject* globalObject, 
     JSObject* valueObj = thisValue.toObject(globalObject);
     if (UNLIKELY(!valueObj))
         return encodedJSValue();
-    Integrity::auditStructureID(globalObject->vm(), valueObj->structureID());
+    Integrity::auditStructureID(valueObj->structureID());
     return JSValue::encode(valueObj);
 }
 
@@ -317,7 +317,7 @@ inline static bool isPokerBros()
     auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
     return bundleID
         && CFEqual(bundleID, CFSTR("com.kpgame.PokerBros"))
-        && applicationSDKVersion() < DYLD_IOS_VERSION_14_0;
+        && !linkedOnOrAfter(SDKVersion::FirstWithoutPokerBrosBuiltInTagQuirk);
 }
 #endif
 
@@ -361,7 +361,7 @@ JSString* objectPrototypeToString(JSGlobalObject* globalObject, JSValue thisValu
     JSObject* thisObject = thisValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    Integrity::auditStructureID(vm, thisObject->structureID());
+    Integrity::auditStructureID(thisObject->structureID());
     auto result = thisObject->structure(vm)->cachedSpecialProperty(CachedSpecialPropertyKey::ToStringTag);
     if (result)
         return asString(result);

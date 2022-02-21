@@ -33,37 +33,28 @@
 #include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
 
-namespace WebCore {
-    
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
-class WEBCORE_EXPORT DFABytecodeInterpreter {
+class DFABytecodeInterpreter {
 public:
-    DFABytecodeInterpreter(const DFABytecode* bytecode, unsigned bytecodeLength)
-        : m_bytecode(bytecode)
-        , m_bytecodeLength(bytecodeLength)
-    {
-    }
-    
-    typedef HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> Actions;
-    
-    Actions interpret(const CString&, uint16_t flags);
-    Actions interpretWithConditions(const CString&, uint16_t flags, const DFABytecodeInterpreter::Actions& conditionActions);
+    DFABytecodeInterpreter(Span<const uint8_t> bytecode)
+        : m_bytecode(bytecode) { }
+
+    using Actions = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+
+    WEBCORE_EXPORT Actions interpret(const String&, ResourceFlags);
     Actions actionsMatchingEverything();
 
 private:
-    void interpretAppendAction(unsigned& programCounter, Actions&, bool ifCondition);
-    void interpretTestFlagsAndAppendAction(unsigned& programCounter, uint16_t flags, Actions&, bool ifCondition);
+    void interpretAppendAction(unsigned& programCounter, Actions&);
+    void interpretTestFlagsAndAppendAction(unsigned& programCounter, ResourceFlags, Actions&);
 
     template<bool caseSensitive>
-    void interpetJumpTable(const char* url, uint32_t& urlIndex, uint32_t& programCounter, bool& urlIndexIsAfterEndOfString);
+    void interpetJumpTable(Span<const char> url, uint32_t& urlIndex, uint32_t& programCounter);
 
-    const DFABytecode* m_bytecode;
-    const unsigned m_bytecodeLength;
-    const DFABytecodeInterpreter::Actions* m_topURLActions { nullptr };
+    const Span<const uint8_t> m_bytecode;
 };
 
-} // namespace ContentExtensions    
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

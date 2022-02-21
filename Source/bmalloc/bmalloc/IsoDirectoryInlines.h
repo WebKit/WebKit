@@ -27,6 +27,8 @@
 
 #include "IsoDirectory.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config>
@@ -155,3 +157,4 @@ void IsoDirectory<Config, passedNumPages>::forEachCommittedPage(const LockHolder
     
 } // namespace bmalloc
 
+#endif

@@ -87,6 +87,7 @@ protected:
     bool WARN_UNUSED_RETURN parseValueType(const ModuleInformation&, Type&);
     bool WARN_UNUSED_RETURN parseRefType(const ModuleInformation&, Type&);
     bool WARN_UNUSED_RETURN parseExternalKind(ExternalKind&);
+    bool WARN_UNUSED_RETURN parseHeapType(const ModuleInformation&, int32_t&);
 
     size_t m_offset = 0;
 
@@ -294,6 +295,31 @@ ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::p
 }
 
 template<typename SuccessType>
+ALWAYS_INLINE bool Parser<SuccessType>::parseHeapType(const ModuleInformation& info, int32_t& result)
+{
+    if (!Options::useWebAssemblyTypedFunctionReferences())
+        return false;
+
+    int32_t heapType;
+    if (!parseVarInt32(heapType))
+        return false;
+
+    if (heapType < 0) {
+        if (isValidHeapTypeKind(static_cast<TypeKind>(heapType))) {
+            result = heapType;
+            return true;
+        }
+        return false;
+    }
+
+    if (static_cast<size_t>(heapType) >= info.usedSignatures.size())
+        return false;
+
+    result = heapType;
+    return true;
+}
+
+template<typename SuccessType>
 ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& info, Type& result)
 {
     int8_t kind;
@@ -305,26 +331,16 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& 
     TypeKind typeKind = static_cast<TypeKind>(kind);
     bool isNullable = true;
     SignatureIndex sigIndex = 0;
-    if (typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull) {
-        if (!Options::useWebAssemblyTypedFunctionReferences())
-            return false;
 
-        int32_t heapType;
+    if (Options::useWebAssemblyTypedFunctionReferences() && (typeKind == TypeKind::Funcref || typeKind == TypeKind::Externref)) {
+        sigIndex = static_cast<SignatureIndex>(typeKind);
+        typeKind = TypeKind::RefNull;
+    } else if (typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull) {
         isNullable = typeKind == TypeKind::RefNull;
-
-        if (!parseVarInt32(heapType))
+        int32_t heapType;
+        if (!parseHeapType(info, heapType))
             return false;
-        if (heapType < 0) {
-            TypeKind heapKind = static_cast<TypeKind>(heapType);
-            if (!isValidHeapTypeKind(heapKind))
-                return false;
-            typeKind = heapKind;
-        } else {
-            typeKind = TypeKind::TypeIdx;
-            if (static_cast<size_t>(heapType) >= info.usedSignatures.size())
-                return false;
-            sigIndex = SignatureInformation::get(info.usedSignatures[heapType].get());
-        }
+        sigIndex = heapType < 0 ? static_cast<SignatureIndex>(heapType) : SignatureInformation::get(info.usedSignatures[heapType].get());
     }
 
     Type type = { typeKind, static_cast<Nullable>(isNullable), sigIndex };

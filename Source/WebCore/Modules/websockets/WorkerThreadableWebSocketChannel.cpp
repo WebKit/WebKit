@@ -55,6 +55,7 @@ WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel(WorkerGlobalS
     , m_workerClientWrapper(ThreadableWebSocketChannelClientWrapper::create(context, client))
     , m_bridge(Bridge::create(m_workerClientWrapper.copyRef(), m_workerGlobalScope.copyRef(), taskMode, provider))
     , m_socketProvider(provider)
+    , m_progressIdentifier(WebSocketChannelIdentifier::generateThreadSafe())
 {
     m_bridge->initialize();
 }
@@ -591,10 +592,10 @@ void WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion()
     if (!m_workerGlobalScope)
         return;
     WorkerRunLoop& runLoop = m_workerGlobalScope->thread().runLoop();
-    MessageQueueWaitResult result = MessageQueueMessageReceived;
+    bool success = true;
     ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.ptr();
-    while (m_workerGlobalScope && clientWrapper && !clientWrapper->syncMethodDone() && result != MessageQueueTerminated) {
-        result = runLoop.runInMode(m_workerGlobalScope.get(), m_taskMode); // May cause this bridge to get disconnected, which makes m_workerGlobalScope become null.
+    while (m_workerGlobalScope && clientWrapper && !clientWrapper->syncMethodDone() && success) {
+        success = runLoop.runInMode(m_workerGlobalScope.get(), m_taskMode); // May cause this bridge to get disconnected, which makes m_workerGlobalScope become null.
         clientWrapper = m_workerClientWrapper.ptr();
     }
 }

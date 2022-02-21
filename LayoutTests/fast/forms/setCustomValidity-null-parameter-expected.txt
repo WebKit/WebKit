@@ -6,7 +6,6 @@ PASS input Element
 PASS select Element
 PASS textarea Element
 PASS fieldset Element
-PASS keygen Element
 PASS object Element
 PASS output Element
 

@@ -35,13 +35,6 @@
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
-#if USE(DIRECT2D)
-interface ID3D11Device1;
-interface ID3D11DeviceContext1;
-interface ID3D11RenderTargetView;
-interface IDXGISwapChain;
-#endif
-
 namespace WebCore {
 class IntSize;
 }
@@ -76,17 +69,14 @@ public:
     void setScrollOffsetOnNextResize(const WebCore::IntSize&);
     void initialize();
     void setToolTip(const String&);
+    void setUsesOffscreenRendering(bool);
+    bool usesOffscreenRendering() const;
 
     void setViewNeedsDisplay(const WebCore::Region&);
 
     WebPageProxy* page() const { return m_page.get(); }
 
     DrawingAreaProxy* drawingArea() { return page() ? page()->drawingArea() : nullptr; }
-
-#if USE(DIRECT2D)
-    ID3D11Device1* d3dDevice() const { return m_d3dDevice.get(); }
-    ID3D11DeviceContext1* d3dImmediateContext() const { return m_immediateContext.get(); }
-#endif
 
 private:
     WebView(RECT, const API::PageConfiguration&, HWND parentWindow);
@@ -144,11 +134,6 @@ private:
     // WebCore::WindowMessageListener
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 
-#if USE(DIRECT2D)
-    void setupSwapChain(const WebCore::IntSize&);
-    void configureBackingStore(const WebCore::IntSize&);
-#endif
-
     HWND m_window { nullptr };
     HWND m_topLevelParentWindow { nullptr };
     HWND m_toolTipWindow { nullptr };
@@ -165,15 +150,10 @@ private:
     bool m_wasActivatedByMouseEvent { false };
     bool m_trackingMouseLeave { false };
     bool m_isBeingDestroyed { false };
+    bool m_usesOffscreenRendering { false };
 
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebPageProxy> m_page;
-#if USE(DIRECT2D)
-    COMPtr<ID3D11Device1> m_d3dDevice;
-    COMPtr<ID3D11DeviceContext1> m_immediateContext;
-    COMPtr<ID3D11RenderTargetView> m_renderTargetView; 
-    COMPtr<IDXGISwapChain> m_swapChain;
-#endif
 };
 
 } // namespace WebKit

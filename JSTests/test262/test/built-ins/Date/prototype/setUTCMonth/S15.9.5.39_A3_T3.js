@@ -8,13 +8,13 @@ info: |
 esid: sec-date.prototype.setutcmonth
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.prototype.setUTCMonth.propertyIsEnumerable('length')) {
-  throw new Test262Error('#1: The Date.prototype.setUTCMonth.length property has the attribute DontEnum');
-}
+assert(
+  !Date.prototype.setUTCMonth.propertyIsEnumerable('length'),
+  'The value of !Date.prototype.setUTCMonth.propertyIsEnumerable(\'length\') is expected to be true'
+);
 
 for (var x in Date.prototype.setUTCMonth) {
-  if (x === "length") {
-    throw new Test262Error('#2: The Date.prototype.setUTCMonth.length has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "length", 'The value of x is not "length"');
 }
+
+// TODO: Convert to verifyProperty() format.

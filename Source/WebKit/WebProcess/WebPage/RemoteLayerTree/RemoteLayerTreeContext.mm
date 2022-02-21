@@ -29,8 +29,8 @@
 #import "GenericCallback.h"
 #import "GraphicsLayerCARemote.h"
 #import "PlatformCALayerRemote.h"
-#import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeTransaction.h"
+#import "RemoteLayerWithRemoteRenderingBackingStoreCollection.h"
 #import "WebPage.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
@@ -43,8 +43,11 @@ using namespace WebCore;
 
 RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage& webPage)
     : m_webPage(webPage)
-    , m_currentTransaction(nullptr)
 {
+    if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM))
+        m_backingStoreCollection = makeUnique<RemoteLayerWithRemoteRenderingBackingStoreCollection>(*this);
+    else
+        m_backingStoreCollection = makeUnique<RemoteLayerBackingStoreCollection>(*this);
 }
 
 RemoteLayerTreeContext::~RemoteLayerTreeContext()
@@ -118,21 +121,6 @@ void RemoteLayerTreeContext::graphicsLayerDidEnterContext(GraphicsLayerCARemote&
 void RemoteLayerTreeContext::graphicsLayerWillLeaveContext(GraphicsLayerCARemote& layer)
 {
     m_liveGraphicsLayers.remove(&layer);
-}
-
-void RemoteLayerTreeContext::backingStoreWasCreated(RemoteLayerBackingStore& backingStore)
-{
-    m_backingStoreCollection.backingStoreWasCreated(backingStore);
-}
-
-void RemoteLayerTreeContext::backingStoreWillBeDestroyed(RemoteLayerBackingStore& backingStore)
-{
-    m_backingStoreCollection.backingStoreWillBeDestroyed(backingStore);
-}
-
-bool RemoteLayerTreeContext::backingStoreWillBeDisplayed(RemoteLayerBackingStore& backingStore)
-{
-    return m_backingStoreCollection.backingStoreWillBeDisplayed(backingStore);
 }
 
 Ref<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(WebCore::GraphicsLayer::Type layerType, GraphicsLayerClient& client)

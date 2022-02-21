@@ -25,8 +25,7 @@
 
 [
     Conditional=LEGACY_ENCRYPTED_MEDIA,
-    ImplementationLacksVTable,
-    EnabledBySetting=LegacyEncryptedMediaAPI,
+    EnabledBySetting=LegacyEncryptedMediaAPIEnabled,
     Exposed=Window
 ] interface WebKitMediaKeyError {
     const unsigned short MEDIA_KEYERR_UNKNOWN = 1;

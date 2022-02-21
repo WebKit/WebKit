@@ -60,6 +60,11 @@ public:
     void selectionQuadsDidChange(Frame&, const Vector<FloatQuad>&);
     void elementUnderMouseDidChange(Frame&, Element*);
 
+#if ENABLE(DATA_DETECTION)
+    WEBCORE_EXPORT bool hasActiveDataDetectorHighlightForTesting() const;
+    void textRecognitionResultsChanged(HTMLElement&);
+#endif
+
     void documentDetached(const Document&);
 
 private:

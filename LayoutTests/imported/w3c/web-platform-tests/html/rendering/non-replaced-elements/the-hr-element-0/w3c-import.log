@@ -15,10 +15,13 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/align-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/align-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/align.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/color-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/color-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/color.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/hr.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/setting-overflow-visible.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/width-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/width-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-hr-element-0/width.html

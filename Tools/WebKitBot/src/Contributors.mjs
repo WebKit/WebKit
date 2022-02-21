@@ -49,4 +49,13 @@ export default class Contributors {
     {
         return this.emails.get(email);
     }
+
+    queryWithSlackId(slackId)
+    {
+        for (let entry of this.emails.values()) {
+            if (entry.slackId === slackId)
+                return entry;
+        }
+        return null;
+    }
 }

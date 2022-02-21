@@ -32,8 +32,15 @@
 #include "RegistrableDomain.h"
 #include "SecurityOrigin.h"
 
-namespace WebCore {
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
+
+static_assert(!(ResourceTypeMask & LoadTypeMask), "ResourceTypeMask and LoadTypeMask should be mutually exclusive because they are stored in the same uint32_t");
+static_assert(!(ResourceTypeMask & LoadContextMask), "ResourceTypeMask and LoadContextMask should be mutually exclusive because they are stored in the same uint32_t");
+static_assert(!(ResourceTypeMask & ActionConditionMask), "ResourceTypeMask and ActionConditionMask should be mutually exclusive because they are stored in the same uint32_t");
+static_assert(!(LoadContextMask & LoadTypeMask), "LoadContextMask and LoadTypeMask should be mutually exclusive because they are stored in the same uint32_t");
+static_assert(!(LoadContextMask & ActionConditionMask), "LoadContextMask and ActionConditionMask should be mutually exclusive because they are stored in the same uint32_t");
+static_assert(!(LoadTypeMask & ActionConditionMask), "LoadTypeMask and ActionConditionMask should be mutually exclusive because they are stored in the same uint32_t");
+static_assert(static_cast<uint64_t>(AllResourceFlags) << 32 == ActionFlagMask, "ActionFlagMask should cover all the action flags");
 
 OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceRequestBase::Requester requester)
 {
@@ -98,13 +105,13 @@ std::optional<OptionSet<ResourceType>> readResourceType(StringView name)
     if (name == "font")
         return { ResourceType::Font };
     if (name == "raw")
-        return {{ ResourceType::Fetch, ResourceType::WebSocket, ResourceType::Other, ResourceType::Ping }};
+        return { { ResourceType::Fetch, ResourceType::WebSocket, ResourceType::Other, ResourceType::Ping } };
     if (name == "websocket")
         return { ResourceType::WebSocket };
     if (name == "fetch")
         return { ResourceType::Fetch };
     if (name == "other")
-        return {{ ResourceType::Other, ResourceType::Ping }};
+        return { { ResourceType::Other, ResourceType::Ping, ResourceType::CSPReport } };
     if (name == "svg-document")
         return { ResourceType::SVGDocument };
     if (name == "media")
@@ -113,6 +120,8 @@ std::optional<OptionSet<ResourceType>> readResourceType(StringView name)
         return { ResourceType::Popup };
     if (name == "ping")
         return { ResourceType::Ping };
+    if (name == "csp-report")
+        return { ResourceType::CSPReport };
     return std::nullopt;
 }
 
@@ -149,7 +158,6 @@ ResourceFlags ResourceLoadInfo::getResourceFlags() const
     return flags;
 }
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

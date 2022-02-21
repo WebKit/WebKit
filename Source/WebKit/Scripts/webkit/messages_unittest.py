@@ -21,9 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Examples of how to run:
-# python Source/WebKit/Scripts/webkit/messages_unittest.py [-r]
-# cd Source/WebKit/Scripts && python -m webkit.messages_unittest
-# cd Source/WebKit/Scripts && python -m unittest discover -p '*_unittest.py'
+# python3 Source/WebKit/Scripts/webkit/messages_unittest.py [-r]
+# cd Source/WebKit/Scripts && python3 -m webkit.messages_unittest
+# cd Source/WebKit/Scripts && python3 -m unittest discover -p '*_unittest.py'
 
 import os
 import re
@@ -84,9 +84,9 @@ class GeneratedFileContentsTest(unittest.TestCase):
             expected_line_list = expected_file_contents.splitlines(False)
 
             for index, actual_line in enumerate(actual_line_list):
-                self.assertEquals(actual_line, expected_line_list[index])
+                self.assertEqual(actual_line, expected_line_list[index])
 
-            self.assertEquals(len(actual_line_list), len(expected_line_list))
+            self.assertEqual(len(actual_line_list), len(expected_line_list))
         except Exception:
             sys.stderr.write('In expected file %s\n' % expected_file_name)
             raise

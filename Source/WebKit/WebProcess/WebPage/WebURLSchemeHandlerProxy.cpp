@@ -43,7 +43,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebURLSchemeHandlerProxy::WebURLSchemeHandlerProxy(WebPage& page, uint64_t identifier)
+WebURLSchemeHandlerProxy::WebURLSchemeHandlerProxy(WebPage& page, WebURLSchemeHandlerIdentifier identifier)
     : m_webPage(page)
     , m_identifier(identifier)
 {
@@ -63,7 +63,7 @@ void WebURLSchemeHandlerProxy::startNewTask(ResourceLoader& loader, WebFrame& we
     result.iterator->value->startLoading();
 }
 
-void WebURLSchemeHandlerProxy::loadSynchronously(ResourceLoadIdentifier loadIdentifier, WebFrame& webFrame, const ResourceRequest& request, ResourceResponse& response, ResourceError& error, Vector<uint8_t>& data)
+void WebURLSchemeHandlerProxy::loadSynchronously(WebCore::ResourceLoaderIdentifier loadIdentifier, WebFrame& webFrame, const ResourceRequest& request, ResourceResponse& response, ResourceError& error, Vector<uint8_t>& data)
 {
     data.shrink(0);
     if (!m_webPage.sendSync(Messages::WebPageProxy::LoadSynchronousURLSchemeTask(URLSchemeTaskParameters { m_identifier, loadIdentifier, request, webFrame.info() }), Messages::WebPageProxy::LoadSynchronousURLSchemeTask::Reply(response, error, data))) {
@@ -78,7 +78,7 @@ void WebURLSchemeHandlerProxy::stopAllTasks()
         m_tasks.begin()->value->stopLoading();
 }
 
-void WebURLSchemeHandlerProxy::taskDidPerformRedirection(uint64_t taskIdentifier, WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& newRequest, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+void WebURLSchemeHandlerProxy::taskDidPerformRedirection(WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& newRequest, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     auto* task = m_tasks.get(taskIdentifier);
     if (!task)
@@ -87,7 +87,7 @@ void WebURLSchemeHandlerProxy::taskDidPerformRedirection(uint64_t taskIdentifier
     task->didPerformRedirection(WTFMove(redirectResponse), WTFMove(newRequest), WTFMove(completionHandler));
 }
 
-void WebURLSchemeHandlerProxy::taskDidReceiveResponse(uint64_t taskIdentifier, const ResourceResponse& response)
+void WebURLSchemeHandlerProxy::taskDidReceiveResponse(WebCore::ResourceLoaderIdentifier taskIdentifier, const ResourceResponse& response)
 {
     auto* task = m_tasks.get(taskIdentifier);
     if (!task)
@@ -96,16 +96,16 @@ void WebURLSchemeHandlerProxy::taskDidReceiveResponse(uint64_t taskIdentifier, c
     task->didReceiveResponse(response);
 }
 
-void WebURLSchemeHandlerProxy::taskDidReceiveData(uint64_t taskIdentifier, size_t size, const uint8_t* data)
+void WebURLSchemeHandlerProxy::taskDidReceiveData(WebCore::ResourceLoaderIdentifier taskIdentifier, const SharedBuffer& data)
 {
     auto* task = m_tasks.get(taskIdentifier);
     if (!task)
         return;
 
-    task->didReceiveData(size, data);
+    task->didReceiveData(data);
 }
 
-void WebURLSchemeHandlerProxy::taskDidComplete(uint64_t taskIdentifier, const ResourceError& error)
+void WebURLSchemeHandlerProxy::taskDidComplete(WebCore::ResourceLoaderIdentifier taskIdentifier, const ResourceError& error)
 {
     if (auto task = removeTask(taskIdentifier))
         task->didComplete(error);
@@ -117,7 +117,7 @@ void WebURLSchemeHandlerProxy::taskDidStopLoading(WebURLSchemeTaskProxy& task)
     removeTask(task.identifier());
 }
 
-RefPtr<WebURLSchemeTaskProxy> WebURLSchemeHandlerProxy::removeTask(uint64_t identifier)
+RefPtr<WebURLSchemeTaskProxy> WebURLSchemeHandlerProxy::removeTask(WebCore::ResourceLoaderIdentifier identifier)
 {
     auto task = m_tasks.take(identifier);
     if (!task)

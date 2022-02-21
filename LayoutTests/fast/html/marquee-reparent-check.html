@@ -1,4 +1,4 @@
-<!DOCTYPE HTML><!-- webkit-test-runner [ KeygenElementEnabled=true ] -->
+<!DOCTYPE HTML>
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
@@ -30,8 +30,10 @@
     <keygen autofocus="autofocus">
     <iframe>Test Frame</iframe>
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.preventPopupWindows();
+        }
 
         description("The test passes if it does not ASSERT in debug builds.");
 

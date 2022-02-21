@@ -27,8 +27,11 @@
 
 #include "Document.h"
 #include "ElementAncestorIterator.h"
+#include "ElementIterator.h"
 #include "HTMLNames.h"
+#include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderMenuList.h"
 #include "NodeRenderStyle.h"
 #include "StyleResolver.h"
@@ -54,7 +57,7 @@ Ref<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagNam
 
 bool HTMLOptGroupElement::isDisabledFormControl() const
 {
-    return hasAttributeWithoutSynchronization(disabledAttr);
+    return m_isDisabled;
 }
 
 bool HTMLOptGroupElement::isFocusable() const
@@ -74,6 +77,15 @@ const AtomString& HTMLOptGroupElement::formControlType() const
 
 void HTMLOptGroupElement::childrenChanged(const ChildChange& change)
 {
+    bool isRelevant = change.affectsElements();
+    RefPtr select = isRelevant ? ownerSelectElement() : nullptr;
+    if (!isRelevant || !select) {
+        HTMLElement::childrenChanged(change);
+        return;
+    }
+
+    auto selectOptionIfNecessaryScope = select->optionToSelectFromChildChangeScope(change, this);
+
     recalcSelectOptions();
     HTMLElement::childrenChanged(change);
 }
@@ -83,13 +95,23 @@ void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const AtomSt
     HTMLElement::parseAttribute(name, value);
     recalcSelectOptions();
 
-    if (name == disabledAttr)
-        invalidateStyleForSubtree();
+    if (name == disabledAttr) {
+        bool newDisabled = !value.isNull();
+        if (m_isDisabled != newDisabled) {
+            Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClassDisabled, newDisabled }, { CSSSelector::PseudoClassEnabled, !newDisabled } });
+
+            Vector<Style::PseudoClassChangeInvalidation> optionInvalidation;
+            for (auto& descendant : descendantsOfType<HTMLOptionElement>(*this))
+                optionInvalidation.append({ descendant, { { CSSSelector::PseudoClassDisabled, newDisabled }, { CSSSelector::PseudoClassEnabled, !newDisabled } } });
+
+            m_isDisabled = newDisabled;
+        }
+    }
 }
 
 void HTMLOptGroupElement::recalcSelectOptions()
 {
-    if (auto selectElement = makeRefPtr(ancestorsOfType<HTMLSelectElement>(*this).first())) {
+    if (RefPtr selectElement = ownerSelectElement()) {
         selectElement->setRecalcListItems();
         selectElement->updateValidity();
     }
@@ -109,12 +131,12 @@ String HTMLOptGroupElement::groupLabelText() const
     
 HTMLSelectElement* HTMLOptGroupElement::ownerSelectElement() const
 {
-    return const_cast<HTMLSelectElement*>(ancestorsOfType<HTMLSelectElement>(*this).first());
+    return dynamicDowncast<HTMLSelectElement>(parentNode());
 }
 
 bool HTMLOptGroupElement::accessKeyAction(bool)
 {
-    RefPtr<HTMLSelectElement> select = ownerSelectElement();
+    RefPtr select = ownerSelectElement();
     // send to the parent to bring focus to the list box
     if (select && !select->focused())
         return select->accessKeyAction(false);

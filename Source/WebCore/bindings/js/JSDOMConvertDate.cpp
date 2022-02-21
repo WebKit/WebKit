@@ -30,21 +30,24 @@
 namespace WebCore {
 using namespace JSC;
 
-JSValue jsDate(JSGlobalObject& lexicalGlobalObject, double value)
+JSValue jsDate(JSGlobalObject& lexicalGlobalObject, WallTime value)
 {
-    return DateInstance::create(lexicalGlobalObject.vm(), lexicalGlobalObject.dateStructure(), value);
+    return DateInstance::create(lexicalGlobalObject.vm(), lexicalGlobalObject.dateStructure(), value.secondsSinceEpoch().milliseconds());
 }
 
-double valueToDate(JSC::JSGlobalObject& lexicalGlobalObject, JSValue value)
+WallTime valueToDate(JSC::JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
+    double milliseconds = std::numeric_limits<double>::quiet_NaN();
+
     auto& vm = lexicalGlobalObject.vm();
     if (value.inherits<DateInstance>(vm))
-        return jsCast<DateInstance*>(value)->internalNumber();
-    if (value.isNumber())
-        return value.asNumber();
-    if (value.isString())
-        return vm.dateCache.parseDate(&lexicalGlobalObject, vm, value.getString(&lexicalGlobalObject));
-    return std::numeric_limits<double>::quiet_NaN();
+        milliseconds = jsCast<DateInstance*>(value)->internalNumber();
+    else if (value.isNumber())
+        milliseconds = value.asNumber();
+    else if (value.isString())
+        milliseconds = vm.dateCache.parseDate(&lexicalGlobalObject, vm, value.getString(&lexicalGlobalObject));
+
+    return WallTime::fromRawSeconds(Seconds::fromMilliseconds(milliseconds).value());
 }
 
 } // namespace WebCore

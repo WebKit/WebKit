@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IncrementalSweeper.h"
 
-#include "DeferGC.h"
+#include "DeferGCInlines.h"
 #include "HeapInlines.h"
 #include "MarkedBlock.h"
 #include "VM.h"
@@ -84,7 +84,7 @@ bool IncrementalSweeper::sweepNextBlock(VM& vm)
     }
     
     if (block) {
-        DeferGCForAWhile deferGC(vm.heap);
+        DeferGCForAWhile deferGC(vm);
         block->sweep(nullptr);
         vm.heap.objectSpace().freeOrShrinkBlock(block);
         return true;

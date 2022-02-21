@@ -40,6 +40,7 @@ namespace WebCore {
 struct ContentRuleListResults;
 class Document;
 class FrameLoader;
+class Page;
 struct ServiceWorkerRegistrationData;
 enum class ReferrerPolicy : uint8_t;
 
@@ -105,7 +106,7 @@ public:
     static String acceptHeaderValueFromType(CachedResource::Type);
 
 #if ENABLE(SERVICE_WORKER)
-    void setClientIdentifierIfNeeded(DocumentIdentifier);
+    void setClientIdentifierIfNeeded(ScriptExecutionContextIdentifier);
     void setSelectedServiceWorkerRegistrationIdentifierIfNeeded(ServiceWorkerRegistrationIdentifier);
     void setNavigationServiceWorkerRegistrationData(const std::optional<ServiceWorkerRegistrationData>&);
 #endif

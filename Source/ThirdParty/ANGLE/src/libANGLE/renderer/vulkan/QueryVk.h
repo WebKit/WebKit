@@ -35,17 +35,44 @@ class QueryVk : public QueryImpl
     angle::Result isResultAvailable(const gl::Context *context, bool *available) override;
 
     void onTransformFeedbackEnd(GLsizeiptr primitivesDrawn);
-    vk::QueryHelper *getQueryHelper() { return &mQueryHelper; }
-    angle::Result stashQueryHelper(ContextVk *contextVk);
-    angle::Result retrieveStashedQueryResult(ContextVk *contextVk, uint64_t *result);
+    bool hasQueryBegun() const { return mQueryHelper.isReferenced(); }
+    vk::QueryHelper *getQueryHelper()
+    {
+        ASSERT(mQueryHelper.isReferenced());
+        return &mQueryHelper.get();
+    }
+
+    // Called by ContextVk on render pass start / end for render pass queries.  These will
+    // stash and create new queries as needed.
+    angle::Result onRenderPassStart(ContextVk *contextVk);
+    void onRenderPassEnd(ContextVk *contextVk);
 
   private:
     angle::Result getResult(const gl::Context *context, bool wait);
 
-    // Used for AnySamples, AnySamplesConservative, Timestamp and TimeElapsed (end).
-    vk::QueryHelper mQueryHelper;
-    // Used for occlusion query that we may end up with multiple outstanding query helper objects.
-    std::vector<vk::QueryHelper> mStashedQueryHelpers;
+    bool isUsedInRecordedCommands() const;
+    bool isCurrentlyInUse(Serial lastCompletedSerial) const;
+    angle::Result finishRunningCommands(ContextVk *contextVk);
+    void stashQueryHelper();
+    uint32_t getQueryResultCount(ContextVk *contextVk) const;
+    angle::Result accumulateStashedQueryResult(ContextVk *contextVk, vk::QueryResult *result);
+
+    // Manage query allocations
+    angle::Result allocateQuery(ContextVk *contextVk);
+    void assignSharedQuery(QueryVk *shareQuery);
+    void releaseQueries(ContextVk *contextVk);
+    void releaseStashedQueries(ContextVk *contextVk);
+
+    // Prepare for begin by handling peculiarities such as the two transform feedback queries
+    // sharing QueryHelpers.
+    angle::Result setupBegin(ContextVk *contextVk);
+
+    // Used for all queries, except TimeElapsed (begin) or those that are emulated.  For transform
+    // feedback queries, these can be shared if the two queries are simultaneously active.
+    vk::Shared<vk::QueryHelper> mQueryHelper;
+    // Used for queries that may end up with multiple outstanding query helper objects as they end
+    // and begin again with render passes.
+    std::vector<vk::Shared<vk::QueryHelper>> mStashedQueryHelpers;
     // An additional query used for TimeElapsed (begin), as it is implemented using Timestamp.
     vk::QueryHelper mQueryHelperTimeElapsedBegin;
     // Used with TransformFeedbackPrimitivesWritten when transform feedback is emulated.

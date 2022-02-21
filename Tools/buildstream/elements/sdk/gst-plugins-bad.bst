@@ -1,21 +1,21 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.18.4.tar.xz
-  ref: 74e806bc5595b18c70e9ca93571e27e79dfb808e5d2e7967afa952b52e99c85f
-# Should be shipped in GStreamer 1.20. https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/2125
+  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.20.0.tar.xz
+  ref: 015b8d4d9a395ebf444d40876867a2034dd3304b3ad48bc3a0dd0c1ee71dc11d
+# To be shipped in 1.20.1.
 - kind: patch
-  path: patches/gst-plugins-bad-0001-debugutils-Add-fakeaudiosink-element.patch
+  path: patches/gstreamer-0001-dtlstransport-Notify-ICE-transport-property-changes.patch
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
 - sdk/gstreamer.bst
 - sdk/gst-plugins-base.bst
-- sdk/openjpeg.bst
-- sdk/libdrm.bst
+- freedesktop-sdk.bst:components/openjpeg.bst
+- freedesktop-sdk.bst:components/libdrm.bst
 - sdk/libkate.bst
 - sdk/libusrsctp.bst
-- sdk-build-depends/libusb.bst
+- freedesktop-sdk.bst:components/libusb.bst
 - filtered-openh264.bst
 - freedesktop-sdk.bst:components/aom.bst
 - freedesktop-sdk.bst:components/librsvg.bst
@@ -62,9 +62,12 @@ variables:
     -Dflite=disabled
     -Dfluidsynth=disabled
     -Dgme=disabled
+    -Dgs=disabled
     -Dgsm=disabled
     -Diqa=disabled
+    -Disac=disabled
     -Dladspa=disabled
+    -Dldac=disabled
     -Dlibde265=disabled
     -Dlibmms=disabled
     -Dlv2=disabled
@@ -80,13 +83,16 @@ variables:
     -Dnvdec=disabled
     -Dnvenc=disabled
     -Dofa=disabled
+    -Donnx=disabled
     -Dopenal=disabled
+    -Dopenaptx=disabled
     -Dopencv=disabled
     -Dopenexr=disabled
     -Dopenh264=disabled
     -Dopenmpt=disabled
     -Dopenni2=disabled
     -Dopensles=disabled
+    -Dqroverlay=disabled
     -Dresindvd=disabled
     -Drsvg=disabled
     -Drtmp=disabled
@@ -108,7 +114,6 @@ variables:
     -Dwasapi=disabled
     -Dwasapi2=disabled
     -Dwebp=disabled
-    -Dwebrtcdsp=disabled
     -Dwildmidi=disabled
     -Dwinks=disabled
     -Dwinscreencap=disabled
@@ -116,7 +121,6 @@ variables:
     -Dx265=disabled
     -Dzbar=disabled
     -Dzxing=disabled
-
 public:
   bst:
     split-rules:

@@ -53,7 +53,7 @@ static double networkLoadTimeToDOMHighResTimeStamp(MonotonicTime timeOrigin, Mon
 
 static double fetchStart(MonotonicTime timeOrigin, const ResourceTiming& resourceTiming)
 {
-    if (auto fetchStart = resourceTiming.networkLoadMetrics().fetchStart)
+    if (auto fetchStart = resourceTiming.networkLoadMetrics().fetchStart; fetchStart && !resourceTiming.networkLoadMetrics().failsTAOCheck)
         return networkLoadTimeToDOMHighResTimeStamp(timeOrigin, fetchStart);
 
     // fetchStart is a required property.
@@ -99,6 +99,9 @@ PerformanceResourceTiming::~PerformanceResourceTiming() = default;
 
 const String& PerformanceResourceTiming::nextHopProtocol() const
 {
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
+        return emptyString();
+
     return m_resourceTiming.networkLoadMetrics().protocol;
 }
 

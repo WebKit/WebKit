@@ -30,6 +30,6 @@
     DOMString title = "";
     DOMString artist = "";
     DOMString album = "";
-    [Conditional=MEDIA_SESSION_PLAYLIST, EnabledBySetting=MediaSessionPlaylist] DOMString trackIdentifier = "";
+    [Conditional=MEDIA_SESSION_PLAYLIST, EnabledBySetting=MediaSessionPlaylistEnabled] DOMString trackIdentifier = "";
     sequence<MediaImage> artwork = [];
 };

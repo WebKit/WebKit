@@ -1,0 +1,12 @@
+
+PASS BroadcastChannel works in workers
+FAIL BroadcastChannel works in shared workers Shared workers are not supported
+PASS Closing and re-opening a channel works.
+PASS BroadcastChannel created after a worker self.close()
+PASS BroadcastChannel messages from closed worker to parent should be ignored (BC created before closing)
+PASS BroadcastChannel messages from closed worker to parent should be ignored (BC created after closing)
+PASS BroadcastChannel messages from parent to closed worker should be ignored (BC created before closing)
+PASS BroadcastChannel messages from parent to closed worker should be ignored (BC created after closing)
+PASS BroadcastChannel messages within closed worker should be ignored (BCs created before closing)
+PASS BroadcastChannel messages within closed worker should be ignored (BCs created after closing)
+

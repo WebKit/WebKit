@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,10 @@
 #ifndef PAS_DESIGNATED_INTRINSIC_HEAP_INLINES_H
 #define PAS_DESIGNATED_INTRINSIC_HEAP_INLINES_H
 
+#include "pas_allocator_index.h"
 #include "pas_designated_intrinsic_heap.h"
-#include "pas_segregated_global_size_directory_inlines.h"
+#include "pas_local_allocator.h"
+#include "pas_segregated_size_directory_inlines.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -35,10 +37,8 @@ static PAS_ALWAYS_INLINE pas_allocator_index
 pas_designated_intrinsic_heap_num_allocator_indices(pas_heap_config config)
 {
     return PAS_MAX(
-        pas_segregated_global_size_directory_num_allocator_indices_for_config(
-            config.small_segregated_config),
-        pas_segregated_global_size_directory_num_allocator_indices_for_config(
-            config.medium_segregated_config));
+        pas_segregated_size_directory_num_allocator_indices_for_config(config.small_segregated_config),
+        pas_segregated_size_directory_num_allocator_indices_for_config(config.medium_segregated_config));
 }
 
 typedef struct {
@@ -65,11 +65,22 @@ pas_designated_index_result_create_success(size_t index)
 }
 
 static PAS_ALWAYS_INLINE size_t
-pas_designated_intrinsic_heap_num_designated_indices(pas_heap_config config)
+pas_designated_index_result_get_allocator_index(pas_designated_index_result result,
+                                                pas_heap_config config)
+{
+    PAS_TESTING_ASSERT(result.did_succeed);
+
+    return PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES +
+        result.index * pas_designated_intrinsic_heap_num_allocator_indices(config);
+}
+
+static PAS_ALWAYS_INLINE size_t
+pas_designated_intrinsic_heap_num_designated_indices_for_small_config(
+    pas_segregated_page_config small_config)
 {
     /* FIXME: These constants have to match what we do with set_up_range in
        pas_designated_intrinsic_heap_initialize. */
-    switch (pas_segregated_page_config_min_align(config.small_segregated_config)) {
+    switch (pas_segregated_page_config_min_align(small_config)) {
     case 8:
         return 38;
     case 16:
@@ -82,20 +93,37 @@ pas_designated_intrinsic_heap_num_designated_indices(pas_heap_config config)
     }
 }
 
-static PAS_ALWAYS_INLINE pas_designated_index_result pas_designated_intrinsic_heap_designated_index(
+static PAS_ALWAYS_INLINE pas_designated_index_result
+pas_designated_intrinsic_heap_designated_index_for_small_config(
     size_t index,
     pas_intrinsic_heap_designation_mode designation_mode,
-    pas_heap_config config)
+    pas_segregated_page_config small_config)
 {
     if (!designation_mode)
         return pas_designated_index_result_create_failure();
 
     /* NOTE: We could do math here. We choose not to because so far that has proved to be
        a perf problem. */
-    if (index <= pas_designated_intrinsic_heap_num_designated_indices(config))
+    if (index <= pas_designated_intrinsic_heap_num_designated_indices_for_small_config(small_config))
         return pas_designated_index_result_create_success(index);
 
     return pas_designated_index_result_create_failure();
+}
+
+static PAS_ALWAYS_INLINE size_t
+pas_designated_intrinsic_heap_num_designated_indices(pas_heap_config config)
+{
+    return pas_designated_intrinsic_heap_num_designated_indices_for_small_config(
+        config.small_segregated_config);
+}
+
+static PAS_ALWAYS_INLINE pas_designated_index_result pas_designated_intrinsic_heap_designated_index(
+    size_t index,
+    pas_intrinsic_heap_designation_mode designation_mode,
+    pas_heap_config config)
+{
+    return pas_designated_intrinsic_heap_designated_index_for_small_config(
+        index, designation_mode, config.small_segregated_config);
 }
 
 PAS_END_EXTERN_C;

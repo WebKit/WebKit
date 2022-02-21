@@ -120,13 +120,13 @@ class ChartPane extends ChartPaneBase {
         const createWithTestGroupCheckbox = this.content('create-with-test-group');
         const repetitionCount = this.content('confirm-repetition');
         const notifyOnCompletion = this.content('notify-on-completion');
-        const repetitionType = this.content('repetition-type');
+        const repetitionTypeSelection = this.part('repetition-type-selector');
         createWithTestGroupCheckbox.onchange = () => {
             // FIXME: should invoke "enqueueToRender" instead.
             const shouldDisable = !createWithTestGroupCheckbox.checked;
             repetitionCount.disabled = shouldDisable;
             notifyOnCompletion.disabled = shouldDisable;
-            repetitionType.disabled = shouldDisable;
+            repetitionTypeSelection.disabled = shouldDisable;
         };
     }
 
@@ -246,7 +246,7 @@ class ChartPane extends ChartPaneBase {
         const createWithTestGroup = this.content('create-with-test-group').checked;
         const repetitionCount = this.content('confirm-repetition').value;
         const notifyOnCompletion = this.content('notify-on-completion').checked;
-        const repetitionType = this.content('repetition-type').value;
+        const repetitionType = this.part('repetition-type-selector').selectedRepetitionType;
 
         try {
             const analysisTask = await (createWithTestGroup ?
@@ -319,6 +319,7 @@ class ChartPane extends ChartPaneBase {
         const selectedPoints = this._mainChart.selectedPoints('current');
         const hasSelectedPoints = selectedPoints && selectedPoints.length();
         if (hasSelectedPoints) {
+            this.part('repetition-type-selector').setTestAndPlatform(metric.test(), platform);
             actions.push(this._makePopoverActionItem(analyzePopover, 'Analyze', false));
             analyzePopover.onsubmit = this.createEventHandler(() => {
                 this._analyzeRange(selectedPoints.firstPoint(), selectedPoints.lastPoint());
@@ -596,10 +597,7 @@ class ChartPane extends ChartPaneBase {
                         </li>
                         <li>
                             <label>In</label>
-                            <select id="repetition-type">
-                                <option value="alternating" selected>alternate (ABAB)</option>
-                                <option value="sequential">sequence (AABB)</option>
-                            </select>
+                            <repetition-type-selection id="repetition-type-selector"></repetition-type-selection>
                         </li>
                         <li>
                             <label><input type="checkbox" id="notify-on-completion" checked>Notify on completion</label>

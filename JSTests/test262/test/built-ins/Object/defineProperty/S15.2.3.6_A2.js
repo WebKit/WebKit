@@ -17,6 +17,8 @@ function getter() {
 Object.defineProperty(base, 'foo', {
   get: getter
 });
-if (derived.hasOwnProperty('foo')) {
-  throw new Test262Error('Accessor properties inherit as own properties');
-}
+
+assert(
+  !derived.hasOwnProperty('foo'),
+  'The value of !derived.hasOwnProperty("foo") is expected to be true'
+);

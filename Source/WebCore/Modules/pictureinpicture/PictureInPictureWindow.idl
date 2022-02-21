@@ -26,7 +26,7 @@
 
 [
     Conditional=PICTURE_IN_PICTURE_API,
-    EnabledBySetting=PictureInPictureAPI,
+    EnabledBySetting=PictureInPictureAPIEnabled,
     Exposed=Window
 ] interface PictureInPictureWindow : EventTarget {
   readonly attribute long width;

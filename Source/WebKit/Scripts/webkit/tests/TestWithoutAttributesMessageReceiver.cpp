@@ -29,7 +29,7 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "Decoder.h"
-#if ENABLE(DEPRECATED_FEATURE) || ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(DEPRECATED_FEATURE) || ENABLE(FEATURE_FOR_TESTING)
 #include "DummyType.h"
 #endif
 #if PLATFORM(MAC)
@@ -82,52 +82,52 @@ namespace WebKit {
 
 void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithoutAttributes::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::LoadURL>(decoder, this, &TestWithoutAttributes::loadURL);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::LoadURL>(connection, decoder, this, &TestWithoutAttributes::loadURL);
 #if ENABLE(TOUCH_EVENTS)
     if (decoder.messageName() == Messages::TestWithoutAttributes::LoadSomething::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::LoadSomething>(decoder, this, &TestWithoutAttributes::loadSomething);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::LoadSomething>(connection, decoder, this, &TestWithoutAttributes::loadSomething);
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
     if (decoder.messageName() == Messages::TestWithoutAttributes::TouchEvent::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::TouchEvent>(decoder, this, &TestWithoutAttributes::touchEvent);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::TouchEvent>(connection, decoder, this, &TestWithoutAttributes::touchEvent);
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     if (decoder.messageName() == Messages::TestWithoutAttributes::AddEvent::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::AddEvent>(decoder, this, &TestWithoutAttributes::addEvent);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::AddEvent>(connection, decoder, this, &TestWithoutAttributes::addEvent);
 #endif
 #if ENABLE(TOUCH_EVENTS)
     if (decoder.messageName() == Messages::TestWithoutAttributes::LoadSomethingElse::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::LoadSomethingElse>(decoder, this, &TestWithoutAttributes::loadSomethingElse);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::LoadSomethingElse>(connection, decoder, this, &TestWithoutAttributes::loadSomethingElse);
 #endif
     if (decoder.messageName() == Messages::TestWithoutAttributes::DidReceivePolicyDecision::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::DidReceivePolicyDecision>(decoder, this, &TestWithoutAttributes::didReceivePolicyDecision);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::DidReceivePolicyDecision>(connection, decoder, this, &TestWithoutAttributes::didReceivePolicyDecision);
     if (decoder.messageName() == Messages::TestWithoutAttributes::Close::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::Close>(decoder, this, &TestWithoutAttributes::close);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::Close>(connection, decoder, this, &TestWithoutAttributes::close);
     if (decoder.messageName() == Messages::TestWithoutAttributes::PreferencesDidChange::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::PreferencesDidChange>(decoder, this, &TestWithoutAttributes::preferencesDidChange);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::PreferencesDidChange>(connection, decoder, this, &TestWithoutAttributes::preferencesDidChange);
     if (decoder.messageName() == Messages::TestWithoutAttributes::SendDoubleAndFloat::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::SendDoubleAndFloat>(decoder, this, &TestWithoutAttributes::sendDoubleAndFloat);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::SendDoubleAndFloat>(connection, decoder, this, &TestWithoutAttributes::sendDoubleAndFloat);
     if (decoder.messageName() == Messages::TestWithoutAttributes::SendInts::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::SendInts>(decoder, this, &TestWithoutAttributes::sendInts);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::SendInts>(connection, decoder, this, &TestWithoutAttributes::sendInts);
     if (decoder.messageName() == Messages::TestWithoutAttributes::TestParameterAttributes::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::TestParameterAttributes>(decoder, this, &TestWithoutAttributes::testParameterAttributes);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::TestParameterAttributes>(connection, decoder, this, &TestWithoutAttributes::testParameterAttributes);
     if (decoder.messageName() == Messages::TestWithoutAttributes::TemplateTest::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::TemplateTest>(decoder, this, &TestWithoutAttributes::templateTest);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::TemplateTest>(connection, decoder, this, &TestWithoutAttributes::templateTest);
     if (decoder.messageName() == Messages::TestWithoutAttributes::SetVideoLayerID::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::SetVideoLayerID>(decoder, this, &TestWithoutAttributes::setVideoLayerID);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::SetVideoLayerID>(connection, decoder, this, &TestWithoutAttributes::setVideoLayerID);
 #if PLATFORM(MAC)
     if (decoder.messageName() == Messages::TestWithoutAttributes::DidCreateWebProcessConnection::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::DidCreateWebProcessConnection>(decoder, this, &TestWithoutAttributes::didCreateWebProcessConnection);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::DidCreateWebProcessConnection>(connection, decoder, this, &TestWithoutAttributes::didCreateWebProcessConnection);
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
     if (decoder.messageName() == Messages::TestWithoutAttributes::DeprecatedOperation::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::DeprecatedOperation>(decoder, this, &TestWithoutAttributes::deprecatedOperation);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::DeprecatedOperation>(connection, decoder, this, &TestWithoutAttributes::deprecatedOperation);
 #endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(FEATURE_FOR_TESTING)
     if (decoder.messageName() == Messages::TestWithoutAttributes::ExperimentalOperation::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::ExperimentalOperation>(decoder, this, &TestWithoutAttributes::experimentalOperation);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::ExperimentalOperation>(connection, decoder, this, &TestWithoutAttributes::experimentalOperation);
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
@@ -135,25 +135,25 @@ void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::
     if (connection.ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
 }
 
 bool TestWithoutAttributes::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithoutAttributes::CreatePlugin::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::CreatePlugin>(decoder, *replyEncoder, this, &TestWithoutAttributes::createPlugin);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::CreatePlugin>(connection, decoder, *replyEncoder, this, &TestWithoutAttributes::createPlugin);
     if (decoder.messageName() == Messages::TestWithoutAttributes::RunJavaScriptAlert::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::RunJavaScriptAlert>(decoder, *replyEncoder, this, &TestWithoutAttributes::runJavaScriptAlert);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::RunJavaScriptAlert>(connection, decoder, *replyEncoder, this, &TestWithoutAttributes::runJavaScriptAlert);
     if (decoder.messageName() == Messages::TestWithoutAttributes::GetPlugins::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::GetPlugins>(decoder, *replyEncoder, this, &TestWithoutAttributes::getPlugins);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::GetPlugins>(connection, decoder, *replyEncoder, this, &TestWithoutAttributes::getPlugins);
     if (decoder.messageName() == Messages::TestWithoutAttributes::GetPluginProcessConnection::name())
         return IPC::handleMessageSynchronous<Messages::TestWithoutAttributes::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &TestWithoutAttributes::getPluginProcessConnection);
     if (decoder.messageName() == Messages::TestWithoutAttributes::TestMultipleAttributes::name())
         return IPC::handleMessageSynchronousWantsConnection<Messages::TestWithoutAttributes::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &TestWithoutAttributes::testMultipleAttributes);
 #if PLATFORM(MAC)
     if (decoder.messageName() == Messages::TestWithoutAttributes::InterpretKeyEvent::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::InterpretKeyEvent>(decoder, *replyEncoder, this, &TestWithoutAttributes::interpretKeyEvent);
+        return IPC::handleMessage<Messages::TestWithoutAttributes::InterpretKeyEvent>(connection, decoder, *replyEncoder, this, &TestWithoutAttributes::interpretKeyEvent);
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);

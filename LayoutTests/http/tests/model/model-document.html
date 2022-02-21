@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<body>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="resources/model-document.js"></script>
+<script>
+
+model_document_test(async modelDocument => {
+    assert_true(!!modelDocument.querySelector("model"), "The frame contains a <model> element");
+    assert_true(!!modelDocument.querySelector("model source"), "The <model> element contains a <source> element");
+}, "Loading a standalone model resource creates a standalone <model> document.");
+
+</script>
+</body>
+</html>

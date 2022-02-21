@@ -165,6 +165,7 @@ const tableToPrefixMap = {
     'triggerable_configurations': 'trigconfig',
     'triggerable_repository_groups': 'repositorygroup',
     'triggerable_repositories': 'trigrepo',
+    'triggerable_configuration_repetition_types': 'configrepetition',
     'platforms': 'platform',
     'platform_groups': 'platformgroup',
     'reports': 'report',

@@ -23,9 +23,11 @@
 #include "HTMLDetailsElement.h"
 
 #include "AXObjectCache.h"
+#include "DocumentInlines.h"
 #include "ElementIterator.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "GCReachableRef.h"
 #include "HTMLSlotElement.h"
 #include "HTMLSummaryElement.h"
 #include "LocalizedStrings.h"
@@ -122,7 +124,7 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
     if (summary.parentNode() != this)
         return false;
 
-    auto slot = makeRefPtr(shadowRoot()->findAssignedSlot(summary));
+    RefPtr slot = shadowRoot()->findAssignedSlot(summary);
     if (!slot)
         return false;
     return slot == m_summarySlot;
@@ -134,7 +136,7 @@ void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomStr
         bool oldValue = m_isOpen;
         m_isOpen = !value.isNull();
         if (oldValue != m_isOpen) {
-            auto root = makeRefPtr(shadowRoot());
+            RefPtr root = shadowRoot();
             ASSERT(root);
             if (m_isOpen)
                 root->appendChild(*m_defaultSlot);

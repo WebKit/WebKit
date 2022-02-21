@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ KeygenElementEnabled=true ] -->
+<!DOCTYPE html>
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
@@ -48,7 +48,7 @@ container.innerHTML = '<form id="form1">' +
 
 var owner = document.getElementById('form1');
 
-shouldBe('owner.elements.length', '23');
+shouldBe('owner.elements.length', '22');
 shouldBe('owner.elements[0].id', "'button1'");
 shouldBe('owner.elements[1].id', "'fieldset1'");
 shouldBe('owner.elements[2].id', "'inputhidden'");
@@ -67,11 +67,10 @@ shouldBe('owner.elements[14].id', "'inputfile'");
 shouldBe('owner.elements[15].id', "'inputsubmit'");
 shouldBe('owner.elements[16].id', "'inputreset'");
 shouldBe('owner.elements[17].id', "'inputbutton'");
-shouldBe('owner.elements[18].id', "'keygen1'");
-shouldBe('owner.elements[19].id', "'object1'");
-shouldBe('owner.elements[20].id', "'output1'");
-shouldBe('owner.elements[21].id', "'select1'");
-shouldBe('owner.elements[22].id', "'textarea1'");
+shouldBe('owner.elements[18].id', "'object1'");
+shouldBe('owner.elements[19].id', "'output1'");
+shouldBe('owner.elements[20].id', "'select1'");
+shouldBe('owner.elements[21].id', "'textarea1'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

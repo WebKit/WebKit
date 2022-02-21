@@ -39,10 +39,16 @@ namespace WebCore {
 // N bytes : CueSettingsBox : box : optional
 // N bytes : CuePayloadBox : box : required
 
-class WEBCORE_EXPORT ISOWebVTTCue final : public ISOBox {
+class ISOWebVTTCue final : public ISOBox {
 public:
     ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration);
-    ISOWebVTTCue(MediaTime&& presentationTime, MediaTime&& duration, String&& sourceID, String&& id, String&& originalStartTime, String&& settings, String&& cueText);
+    WEBCORE_EXPORT ISOWebVTTCue(MediaTime&& presentationTime, MediaTime&& duration, String&& cueID, String&& cueText, String&& settings = { }, String&& sourceID = { }, String&& originalStartTime = { });
+    ISOWebVTTCue(const ISOWebVTTCue&) = default;
+    WEBCORE_EXPORT ISOWebVTTCue(ISOWebVTTCue&&);
+    WEBCORE_EXPORT ~ISOWebVTTCue();
+
+    ISOWebVTTCue& operator=(const ISOWebVTTCue&) = default;
+    ISOWebVTTCue& operator=(ISOWebVTTCue&&) = default;
 
     static FourCC boxTypeName() { return "vttc"; }
 
@@ -110,11 +116,11 @@ public:
         return {{
             WTFMove(*presentationTime),
             WTFMove(*duration),
-            WTFMove(*sourceID),
             WTFMove(*identifier),
-            WTFMove(*originalStartTime),
+            WTFMove(*cueText),
             WTFMove(*settings),
-            WTFMove(*cueText)
+            WTFMove(*sourceID),
+            WTFMove(*originalStartTime)
         }};
     }
 

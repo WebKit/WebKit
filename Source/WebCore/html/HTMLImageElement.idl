@@ -23,7 +23,7 @@
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
     Exposed=Window,
-    LegacyFactoryFunctionCallWith=Document,
+    LegacyFactoryFunctionCallWith=CurrentDocument,
     LegacyFactoryFunction=Image(optional unsigned long width, optional unsigned long height)
 ] interface HTMLImageElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString alt;
@@ -39,9 +39,9 @@
     readonly attribute long naturalWidth;
     readonly attribute boolean complete;
     readonly attribute USVString currentSrc;
-    [CEReactions=NotNeeded, EnabledBySetting=ReferrerPolicyAttribute, ImplementedAs=referrerPolicyForBindings] attribute DOMString referrerPolicy;
+    [CEReactions=NotNeeded, EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings] attribute DOMString referrerPolicy;
     [CEReactions=NotNeeded] attribute DOMString decoding;
-    [CEReactions, EnabledBySetting=LazyImageLoading, ImplementedAs=loadingForBindings] attribute DOMString loading;
+    [CEReactions, EnabledBySetting=LazyImageLoadingEnabled, ImplementedAs=loadingForBindings] attribute DOMString loading;
 
     Promise<undefined> decode();
 
@@ -56,6 +56,6 @@
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString border;
 
     // Non-standard
-    [Conditional=ATTACHMENT_ELEMENT, EnabledAtRuntime=AttachmentElement] readonly attribute DOMString attachmentIdentifier;
+    [Conditional=ATTACHMENT_ELEMENT, EnabledAtRuntime=AttachmentElementEnabled] readonly attribute DOMString attachmentIdentifier;
 };
 

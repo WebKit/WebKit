@@ -40,8 +40,8 @@
 #import "WebViewImpl.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
-#import <WebCore/VersionChecks.h>
 #import <pal/spi/mac/NSTextFinderSPI.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)
 {
@@ -167,6 +167,7 @@ WEBCORE_COMMAND(alignJustified)
 WEBCORE_COMMAND(alignLeft)
 WEBCORE_COMMAND(alignRight)
 WEBCORE_COMMAND(copy)
+WEBCORE_COMMAND(copyFont)
 WEBCORE_COMMAND(cut)
 WEBCORE_COMMAND(delete)
 WEBCORE_COMMAND(deleteBackward)
@@ -240,6 +241,7 @@ WEBCORE_COMMAND(pageUp)
 WEBCORE_COMMAND(pageUpAndModifySelection)
 WEBCORE_COMMAND(paste)
 WEBCORE_COMMAND(pasteAsPlainText)
+WEBCORE_COMMAND(pasteFont)
 WEBCORE_COMMAND(scrollLineDown)
 WEBCORE_COMMAND(scrollLineUp)
 WEBCORE_COMMAND(scrollToBeginningOfDocument)
@@ -1197,7 +1199,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([uiDelegate respondsToSelector:@selector(_webView:dragDestinationActionMaskForDraggingInfo:)])
         return [uiDelegate _webView:self dragDestinationActionMaskForDraggingInfo:draggingInfo];
 
-    if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
+    if (!linkedOnOrAfter(SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
         return WKDragDestinationActionAny;
 
     return WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
@@ -1230,11 +1232,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)_web_gestureEventWasNotHandledByWebCore:(NSEvent *)event
 {
     [self _gestureEventWasNotHandledByWebCore:event];
-}
-
-- (void)_web_grantDOMPasteAccess
-{
-    _impl->handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse::GrantedForGesture);
 }
 
 - (void)_takeFindStringFromSelectionInternal:(id)sender
@@ -1355,7 +1352,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSColor *)_underlayColor
 {
-    return _impl->underlayColor();
+    return _impl->underlayColor().autorelease();
 }
 
 - (void)_setUnderlayColor:(NSColor *)underlayColor

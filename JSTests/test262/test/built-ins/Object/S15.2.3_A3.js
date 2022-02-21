@@ -6,13 +6,9 @@ info: Object constructor has length property whose value is 1
 es5id: 15.2.3_A3
 description: Checking Object.length
 ---*/
+assert(
+  !!Object.hasOwnProperty("length"),
+  'The value of !!Object.hasOwnProperty("length") is expected to be true'
+);
 
-//CHECK#1
-if (!Object.hasOwnProperty("length")) {
-  throw new Test262Error('#1: The Object constructor has the property "length"');
-}
-
-//CHECK#2
-if (Object.length !== 1) {
-  throw new Test262Error('#2: Object.length property value should be 1');
-}
+assert.sameValue(Object.length, 1, 'The value of Object.length is expected to be 1');

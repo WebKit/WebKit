@@ -26,6 +26,8 @@
 #include "config.h"
 #include "BytecodeCacheError.h"
 
+#include <wtf/SafeStrerror.h>
+
 namespace JSC {
 
 bool BytecodeCacheError::StandardError::isValid() const
@@ -35,7 +37,7 @@ bool BytecodeCacheError::StandardError::isValid() const
 
 String BytecodeCacheError::StandardError::message() const
 {
-    return strerror(m_errno);
+    return safeStrerror(m_errno).data();
 }
 
 bool BytecodeCacheError::WriteError::isValid() const

@@ -25,10 +25,11 @@
 
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     Exposed=Window
 ] interface DynamicsCompressorNode : AudioNode {
-    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional DynamicsCompressorOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional DynamicsCompressorOptions options);
 
     readonly attribute AudioParam threshold; // in Decibels
     readonly attribute AudioParam knee; // in Decibels

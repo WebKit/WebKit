@@ -108,9 +108,9 @@ class NetEqQualityTest : public ::testing::Test {
   void SetUp() override;
 
   // EncodeBlock(...) does the following:
-  // 1. encodes a block of audio, saved in |in_data| and has a length of
-  // |block_size_samples| (samples per channel),
-  // 2. save the bit stream to |payload| of |max_bytes| bytes in size,
+  // 1. encodes a block of audio, saved in `in_data` and has a length of
+  // `block_size_samples` (samples per channel),
+  // 2. save the bit stream to `payload` of `max_bytes` bytes in size,
   // 3. returns the length of the payload (in bytes),
   virtual int EncodeBlock(int16_t* in_data,
                           size_t block_size_samples,
@@ -122,12 +122,12 @@ class NetEqQualityTest : public ::testing::Test {
   bool PacketLost();
 
   // DecodeBlock() decodes a block of audio using the payload stored in
-  // |payload_| with the length of |payload_size_bytes_| (bytes). The decoded
-  // audio is to be stored in |out_data_|.
+  // `payload_` with the length of `payload_size_bytes_` (bytes). The decoded
+  // audio is to be stored in `out_data_`.
   int DecodeBlock();
 
-  // Transmit() uses |rtp_generator_| to generate a packet and passes it to
-  // |neteq_|.
+  // Transmit() uses `rtp_generator_` to generate a packet and passes it to
+  // `neteq_`.
   int Transmit();
 
   // Runs encoding / transmitting / decoding.

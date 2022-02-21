@@ -39,6 +39,7 @@
 #import "JSWrapperMapTests.h"
 #import "Regress141275.h"
 #import "Regress141809.h"
+#import <wtf/SafeStrerror.h>
 #import <wtf/spi/darwin/DataVaultSPI.h>
 
 
@@ -559,6 +560,11 @@ static void runJITThreadLimitTests()
 
 static void testObjectiveCAPIMain()
 {
+    @autoreleasepool {
+        JSValue *value = [JSValue valueWithJSValueRef:nil inContext:nil];
+        checkResult(@"nil JSValue creation", !value);
+    }
+
     @autoreleasepool {
         JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];
         JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
@@ -1883,11 +1889,9 @@ static void checkModuleCodeRan(JSContext *context, JSValue *promise, JSValue *ex
 
 static void checkModuleWasRejected(JSContext *context, JSValue *promise)
 {
-    __block BOOL promiseWasRejected = false;
     [promise invokeMethod:@"then" withArguments:@[^() {
         checkResult(@"module was rejected as expected", NO);
     }, ^(JSValue *error) {
-        promiseWasRejected = true;
         NSLog(@"%@", [error toString]);
         checkResult(@"module graph was rejected with error", ![error isEqualWithTypeCoercionToObject:[JSValue valueWithNullInContext:context]]);
     }]];
@@ -2448,7 +2452,7 @@ static NSURL *resolvePathToScripts()
         const size_t maxLength = 10000;
         char cwd[maxLength];
         if (!getcwd(cwd, maxLength)) {
-            NSLog(@"getcwd errored with code: %s", strerror(errno));
+            NSLog(@"getcwd errored with code: %s", safeStrerror(errno).data());
             exit(1);
         }
         NSURL *cwdURL = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%s", cwd]];
@@ -2739,16 +2743,7 @@ static void testMicrotaskWithFunction()
 {
     @autoreleasepool {
 #if PLATFORM(COCOA)
-        bool useLegacyDrain = false;
-#if PLATFORM(MAC)
-        useLegacyDrain = applicationSDKVersion() < DYLD_MACOSX_VERSION_12_00;
-#elif PLATFORM(WATCH)
-            // Don't check, JSC isn't API on watch anyway.
-#elif PLATFORM(IOS_FAMILY)
-        useLegacyDrain = applicationSDKVersion() < DYLD_IOS_VERSION_15_0;
-#else
-#error "Unsupported Cocoa Platform"
-#endif
+        bool useLegacyDrain = !linkedOnOrAfter(SDKVersion::FirstThatDoesNotDrainTheMicrotaskQueueWhenCallingObjC);
         if (useLegacyDrain)
             return;
 #endif

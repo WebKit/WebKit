@@ -51,7 +51,7 @@ PAS_API void pas_string_stream_construct(pas_string_stream* stream,
 PAS_API void pas_string_stream_destruct(pas_string_stream* stream);
 PAS_API void pas_string_stream_reset(pas_string_stream* stream);
 
-PAS_API void pas_string_stream_vprintf(pas_string_stream* stream, const char* format, va_list);
+PAS_API void pas_string_stream_vprintf(pas_string_stream* stream, const char* format, va_list) PAS_FORMAT_PRINTF(2, 0);
 
 #define pas_string_stream_printf(stream, ...) \
     pas_stream_printf((pas_stream*)(stream), __VA_ARGS__)

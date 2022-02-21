@@ -115,6 +115,9 @@ class MockFileSystem(object):
         self.files[destination] = self.files[source]
         self.written_files[destination] = self.files[source]
 
+    def copymode(self, source, destination):
+        pass
+
     def dirname(self, path):
         return self._split(path)[0]
 

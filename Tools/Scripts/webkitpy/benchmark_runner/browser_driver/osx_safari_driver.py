@@ -1,13 +1,11 @@
-#!/usr/bin/env python
-
 import logging
 import os
+import sys
 import re
 import subprocess
 import time
 
 from webkitpy.benchmark_runner.browser_driver.osx_browser_driver import OSXBrowserDriver
-from webkitpy.benchmark_runner.utils import force_remove
 
 
 _log = logging.getLogger(__name__)
@@ -67,7 +65,11 @@ class OSXSafariDriver(OSXBrowserDriver):
             _log.info('Checking if any open file is from "{}".'.format(browser_build_path))
             # Cannot use 'check_call' here as '+D' option will have non-zero return code when not all files under
             # specified folder are used.
-            process = subprocess.Popen(['/usr/sbin/lsof', '-a', '-p', str(self._safari_process.pid), '+D', browser_build_absolute_path], stdout=subprocess.PIPE)
+            process = subprocess.Popen(
+                ['/usr/sbin/lsof', '-a', '-p', str(self._safari_process.pid), '+D', browser_build_absolute_path],
+                stdout=subprocess.PIPE,
+                **(dict(encoding='utf-8') if sys.version_info >= (3, 6) else dict())
+            )
             output = process.communicate()[0]
             if has_safari_app:
                 assert 'Safari.app/Contents/MacOS/Safari' in output, 'Safari.app is not launched from "{}"'.format(browser_build_path)

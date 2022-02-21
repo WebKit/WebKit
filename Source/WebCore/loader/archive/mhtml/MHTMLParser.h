@@ -42,11 +42,11 @@ namespace WebCore {
 class ArchiveResource;
 class MHTMLArchive;
 class MIMEHeader;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class MHTMLParser {
 public:
-    explicit MHTMLParser(SharedBuffer*);
+    explicit MHTMLParser(FragmentedSharedBuffer*);
 
     RefPtr<MHTMLArchive> parseArchive();
 

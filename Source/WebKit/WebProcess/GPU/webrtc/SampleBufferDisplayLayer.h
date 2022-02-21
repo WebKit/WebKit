@@ -30,6 +30,7 @@
 #include "GPUProcessConnection.h"
 #include "MessageReceiver.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
+#include "SharedVideoFrame.h"
 #include <WebCore/SampleBufferDisplayLayer.h>
 #include <wtf/WeakPtr.h>
 
@@ -51,6 +52,7 @@ public:
 
 private:
     SampleBufferDisplayLayer(SampleBufferDisplayLayerManager&, WebCore::SampleBufferDisplayLayer::Client&);
+    void disconnectGPUProcessConnectionIfNeeded();
 
     // WebCore::SampleBufferDisplayLayer
     void initialize(bool hideRootLayer, WebCore::IntSize, CompletionHandler<void(bool)>&&) final;
@@ -73,7 +75,9 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     void setDidFail(bool);
+    bool copySharedVideoFrame(CVPixelBufferRef);
 
+    GPUProcessConnection* m_gpuProcessConnection;
     WeakPtr<SampleBufferDisplayLayerManager> m_manager;
     Ref<IPC::Connection> m_connection;
     SampleBufferDisplayLayerIdentifier m_identifier;
@@ -81,6 +85,8 @@ private:
     PlatformLayerContainer m_videoLayer;
     bool m_didFail { false };
     bool m_paused { false };
+
+    SharedVideoFrameWriter m_sharedVideoFrameWriter;
 };
 
 }

@@ -49,7 +49,7 @@ PAS_API extern pas_fd_stream pas_log_stream;
 
 PAS_API void pas_fd_stream_construct(pas_fd_stream* stream, int fd);
 
-PAS_API void pas_fd_stream_vprintf(pas_fd_stream* stream, const char* format, va_list arg_list);
+PAS_API void pas_fd_stream_vprintf(pas_fd_stream* stream, const char* format, va_list arg_list) PAS_FORMAT_PRINTF(2, 0);
 
 #define pas_fd_stream_printf(stream, ...) \
     pas_stream_printf((pas_stream*)(stream), __VA_ARGS__)

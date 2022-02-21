@@ -19,10 +19,10 @@
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
 #include "api/jsep_session_description.h"
-#include "api/peer_connection_proxy.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "pc/peer_connection.h"
+#include "pc/peer_connection_proxy.h"
 #include "pc/peer_connection_wrapper.h"
 #include "pc/sdp_utils.h"
 #include "pc/webrtc_sdp.h"
@@ -208,7 +208,7 @@ TEST_P(PeerConnectionSignalingTest, FailToSetNullRemoteDescription) {
 // methods on PeerConnection will succeed/fail depending on what is the
 // PeerConnection's signaling state. Note that the test tries many different
 // forms of SignalingState::kClosed by arriving at a valid state then calling
-// |Close()|. This is intended to catch cases where the PeerConnection signaling
+// `Close()`. This is intended to catch cases where the PeerConnection signaling
 // method ignores the closed flag but may work/not work because of the single
 // state the PeerConnection was created in before it was closed.
 
@@ -1025,7 +1025,7 @@ TEST_P(PeerConnectionSignalingTest, ReceiveFlexFecReoffer) {
   ASSERT_EQ(flexfec_it->id, 35);
   auto av1_it = std::find_if(
       offer_codecs.begin(), offer_codecs.end(),
-      [](const cricket::Codec& codec) { return codec.name == "AV1X"; });
+      [](const cricket::Codec& codec) { return codec.name == "AV1"; });
   if (av1_it != offer_codecs.end()) {
     ASSERT_NE(av1_it->id, 35);
   }

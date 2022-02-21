@@ -25,7 +25,6 @@
 
 [
     Exposed=(Window,Worker),
-    ImplementationLacksVTable,
 ] interface FileList {
     readonly attribute unsigned long length;
     getter File item(unsigned long index);

@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeBlockInlines.h"
 #include "DFGJITCode.h"
 #include "DFGOperations.h"
 #include "JIT.h"
@@ -119,10 +120,10 @@ void handleExitCounts(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     int32_t clippedValue;
     switch (jit.codeBlock()->jitType()) {
     case JITType::DFGJIT:
-        clippedValue = BaselineExecutionCounter::clippedThreshold(jit.codeBlock()->globalObject(), targetValue);
+        clippedValue = BaselineExecutionCounter::clippedThreshold(targetValue);
         break;
     case JITType::FTLJIT:
-        clippedValue = UpperTierExecutionCounter::clippedThreshold(jit.codeBlock()->globalObject(), targetValue);
+        clippedValue = UpperTierExecutionCounter::clippedThreshold(targetValue);
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -142,11 +143,8 @@ static MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCo
 {
     callerIsLLInt = Options::forceOSRExitToLLInt() || baselineCodeBlockForCaller->jitType() == JITType::InterpreterThunk;
 
-    if (callBytecodeIndex.checkpoint()) {
-        if (!callerIsLLInt)
-            baselineCodeBlockForCaller->m_hasLinkedOSRExit = true;
+    if (callBytecodeIndex.checkpoint())
         return LLInt::checkpointOSRExitFromInlinedCallTrampolineThunk().code();
-    }
 
     MacroAssemblerCodePtr<JSEntryPtrTag> jumpTarget;
 
@@ -168,10 +166,10 @@ static MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCo
             jumpTarget = LLINT_RETURN_LOCATION(op_construct);
             break;
         case InlineCallFrame::CallVarargs:
-            jumpTarget = LLINT_RETURN_LOCATION(op_call_varargs_slow);
+            jumpTarget = LLINT_RETURN_LOCATION(op_call_varargs);
             break;
         case InlineCallFrame::ConstructVarargs:
-            jumpTarget = LLINT_RETURN_LOCATION(op_construct_varargs_slow);
+            jumpTarget = LLINT_RETURN_LOCATION(op_construct_varargs);
             break;
         case InlineCallFrame::GetterCall: {
             if (callInstruction.opcodeID() == op_get_by_id)
@@ -198,17 +196,17 @@ static MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCo
 #undef LLINT_RETURN_LOCATION
 
     } else {
-        baselineCodeBlockForCaller->m_hasLinkedOSRExit = true;
-
         switch (trueCallerCallKind) {
         case InlineCallFrame::Call:
         case InlineCallFrame::Construct:
         case InlineCallFrame::CallVarargs:
         case InlineCallFrame::ConstructVarargs: {
-            CallLinkInfo* callLinkInfo =
-                baselineCodeBlockForCaller->getCallLinkInfoForBytecodeIndex(callBytecodeIndex);
+            CallLinkInfo* callLinkInfo = nullptr;
+            {
+                ConcurrentJSLocker locker(baselineCodeBlockForCaller->m_lock);
+                callLinkInfo = baselineCodeBlockForCaller->getCallLinkInfoForBytecodeIndex(locker, callBytecodeIndex);
+            }
             RELEASE_ASSERT(callLinkInfo);
-
             jumpTarget = callLinkInfo->doneLocation().retagged<JSEntryPtrTag>();
             break;
         }
@@ -232,7 +230,7 @@ static MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCo
 
 CCallHelpers::Address calleeSaveSlot(InlineCallFrame* inlineCallFrame, CodeBlock* baselineCodeBlock, GPRReg calleeSave)
 {
-    const RegisterAtOffsetList* calleeSaves = baselineCodeBlock->calleeSaveRegisters();
+    const RegisterAtOffsetList* calleeSaves = baselineCodeBlock->jitCode()->calleeSaveRegisters();
     for (unsigned i = 0; i < calleeSaves->size(); i++) {
         RegisterAtOffset entry = calleeSaves->at(i);
         if (entry.reg() != calleeSave)
@@ -313,6 +311,10 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
             CodeBlock* baselineCodeBlockForCaller = jit.baselineCodeBlockFor(*trueCaller);
             jit.storePtr(CCallHelpers::TrustedImmPtr(baselineCodeBlockForCaller->metadataTable()), calleeSaveSlot(inlineCallFrame, baselineCodeBlock, LLInt::Registers::metadataTableGPR));
             jit.storePtr(CCallHelpers::TrustedImmPtr(baselineCodeBlockForCaller->instructionsRawPointer()), calleeSaveSlot(inlineCallFrame, baselineCodeBlock, LLInt::Registers::pbGPR));
+        } else if (trueCaller) {
+            CodeBlock* baselineCodeBlockForCaller = jit.baselineCodeBlockFor(*trueCaller);
+            jit.storePtr(CCallHelpers::TrustedImmPtr(baselineCodeBlockForCaller->metadataTable()), calleeSaveSlot(inlineCallFrame, baselineCodeBlock, JIT::s_metadataGPR));
+            jit.storePtr(CCallHelpers::TrustedImmPtr(baselineCodeBlockForCaller->baselineJITData()), calleeSaveSlot(inlineCallFrame, baselineCodeBlock, JIT::s_constantsGPR));
         }
 
         if (!inlineCallFrame->isVarargs())
@@ -404,7 +406,8 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
         jit.move(CCallHelpers::TrustedImm32(bytecodeIndex.offset()), LLInt::Registers::pcGPR);
         jumpTarget = destination.retagged<OSRExitPtrTag>().executableAddress();
     } else {
-        codeBlockForExit->m_hasLinkedOSRExit = true;
+        jit.move(CCallHelpers::TrustedImmPtr(codeBlockForExit->metadataTable()), JIT::s_metadataGPR);
+        jit.move(CCallHelpers::TrustedImmPtr(codeBlockForExit->baselineJITData()), JIT::s_constantsGPR);
 
         BytecodeIndex exitIndex = exit.m_codeOrigin.bytecodeIndex();
         MacroAssemblerCodePtr<JSEntryPtrTag> destination;
@@ -420,12 +423,16 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
         jumpTarget = destination.retagged<OSRExitPtrTag>().executableAddress();
     }
 
-    jit.addPtr(AssemblyHelpers::TrustedImm32(JIT::stackPointerOffsetFor(codeBlockForExit) * sizeof(Register)), GPRInfo::callFrameRegister, AssemblyHelpers::stackPointerRegister);
     if (exit.isExceptionHandler()) {
+        ASSERT(!RegisterSet::vmCalleeSaveRegisters().contains(LLInt::Registers::pcGPR));
+        jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, AssemblyHelpers::selectScratchGPR(LLInt::Registers::pcGPR));
+
         // Since we're jumping to op_catch, we need to set callFrameForCatch.
         jit.storePtr(GPRInfo::callFrameRegister, vm.addressOfCallFrameForCatch());
     }
-    
+
+    jit.addPtr(AssemblyHelpers::TrustedImm32(JIT::stackPointerOffsetFor(codeBlockForExit) * sizeof(Register)), GPRInfo::callFrameRegister, AssemblyHelpers::stackPointerRegister);
+
     jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::regT2);
     jit.farJump(GPRInfo::regT2, OSRExitPtrTag);
 }

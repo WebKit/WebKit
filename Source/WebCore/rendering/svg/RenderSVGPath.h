@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "RenderSVGShape.h"
+#include "LegacyRenderSVGShape.h"
 
 namespace WebCore {
 
-class RenderSVGPath final : public RenderSVGShape {
+class RenderSVGPath final : public LegacyRenderSVGShape {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGPath);
 public:
     RenderSVGPath(SVGGraphicsElement&, RenderStyle&&);

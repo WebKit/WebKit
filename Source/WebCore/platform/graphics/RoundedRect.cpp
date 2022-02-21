@@ -165,7 +165,11 @@ void RoundedRect::excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeft
 
 bool RoundedRect::isRenderable() const
 {
-    return m_radii.topLeft().width() + m_radii.topRight().width() <= m_rect.width()
+    return m_radii.topLeft().width() >= 0 && m_radii.topLeft().height() >= 0
+        && m_radii.bottomLeft().width() >= 0 && m_radii.bottomLeft().height() >= 0
+        && m_radii.topRight().width() >= 0 && m_radii.topRight().height() >= 0
+        && m_radii.bottomRight().width() >= 0 && m_radii.bottomRight().height() >= 0
+        && m_radii.topLeft().width() + m_radii.topRight().width() <= m_rect.width()
         && m_radii.bottomLeft().width() + m_radii.bottomRight().width() <= m_rect.width()
         && m_radii.topLeft().height() + m_radii.bottomLeft().height() <= m_rect.height()
         && m_radii.topRight().height() + m_radii.bottomRight().height() <= m_rect.height();

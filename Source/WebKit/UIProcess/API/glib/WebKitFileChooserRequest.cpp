@@ -25,8 +25,8 @@
 #include "APIString.h"
 #include "WebKitFileChooserRequestPrivate.h"
 #include "WebOpenPanelResultListenerProxy.h"
-#include <WebCore/TextEncoding.h>
 #include <glib/gi18n-lib.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GRefPtr.h>
@@ -315,7 +315,7 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
     GRefPtr<GPtrArray> selectedFiles = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     Vector<String> chosenFiles;
     for (int i = 0; files[i]; i++) {
-        chosenFiles.append(WebCore::decodeURLEscapeSequences(String::fromUTF8(files[i])));
+        chosenFiles.append(PAL::decodeURLEscapeSequences(String::fromUTF8(files[i])));
         g_ptr_array_add(selectedFiles.get(), g_strdup(files[i]));
     }
     g_ptr_array_add(selectedFiles.get(), nullptr);

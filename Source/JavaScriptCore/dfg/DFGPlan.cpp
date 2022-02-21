@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGArgumentsEliminationPhase.h"
-#include "DFGBackwardsPropagationPhase.h"
 #include "DFGByteCodeParser.h"
 #include "DFGCFAPhase.h"
 #include "DFGCFGSimplificationPhase.h"
@@ -199,8 +198,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         parse(dfg);
     }
 
-    m_codeBlock->setCalleeSaveRegisters(RegisterSet::dfgCalleeSaveRegisters());
-
     bool changed = false;
 
 #define RUN_PHASE(phase)                                         \
@@ -255,7 +252,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     if (validationEnabled())
         validate(dfg);
     
-    RUN_PHASE(performBackwardsPropagation);
     RUN_PHASE(performPredictionPropagation);
     RUN_PHASE(performFixup);
     RUN_PHASE(performInvalidationPointInjection);
@@ -566,7 +562,7 @@ CompilationResult Plan::finalize()
             for (WriteBarrier<JSCell>& reference : m_codeBlock->jitCode()->dfgCommon()->m_weakReferences)
                 trackedReferences.add(reference.get());
             for (StructureID structureID : m_codeBlock->jitCode()->dfgCommon()->m_weakStructureReferences)
-                trackedReferences.add(m_vm->getStructure(structureID));
+                trackedReferences.add(structureID.decode());
             for (WriteBarrier<Unknown>& constant : m_codeBlock->constants())
                 trackedReferences.add(constant.get());
 
@@ -585,7 +581,7 @@ CompilationResult Plan::finalize()
     }();
 
     // We will establish new references from the code block to things. So, we need a barrier.
-    m_vm->heap.writeBarrier(m_codeBlock);
+    m_vm->writeBarrier(m_codeBlock);
 
     m_callback->compilationDidComplete(m_codeBlock, m_profiledDFGCodeBlock, result);
 

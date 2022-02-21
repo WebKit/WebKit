@@ -27,6 +27,7 @@
 #import "WebCoreCALayerExtras.h"
 
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation CALayer (WebCoreCALayerExtras)
 

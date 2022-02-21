@@ -41,11 +41,17 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemDirectoryReader);
 
+Ref<FileSystemDirectoryReader> FileSystemDirectoryReader::create(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory)
+{
+    auto reader = adoptRef(*new FileSystemDirectoryReader(context, directory));
+    reader->suspendIfNeeded();
+    return reader;
+}
+
 FileSystemDirectoryReader::FileSystemDirectoryReader(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory)
     : ActiveDOMObject(&context)
     , m_directory(directory)
 {
-    suspendIfNeeded();
 }
 
 FileSystemDirectoryReader::~FileSystemDirectoryReader() = default;
@@ -82,7 +88,7 @@ void FileSystemDirectoryReader::readEntries(ScriptExecutionContext& context, Ref
 
     m_isReading = true;
     auto pendingActivity = makePendingActivity(*this);
-    callOnMainThread([this, context = makeRef(context), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
+    callOnMainThread([this, context = Ref { context }, successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
         m_isReading = false;
         m_directory->filesystem().listDirectory(context, m_directory, [this, successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)](ExceptionOr<Vector<Ref<FileSystemEntry>>>&& result) mutable {
             auto* document = this->document();

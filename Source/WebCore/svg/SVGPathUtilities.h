@@ -57,4 +57,8 @@ unsigned getSVGPathSegAtLengthFromSVGPathByteStream(const SVGPathByteStream&, fl
 float getTotalLengthOfSVGPathByteStream(const SVGPathByteStream&);
 FloatPoint getPointAtLengthOfSVGPathByteStream(const SVGPathByteStream&, float length);
 
+// Convert an SVG path byte stream containing a mixed of relative/absolute draw commands into another byte stream
+// such that all draw commands are absolute. Returns nullptr if an error occurs.
+std::unique_ptr<SVGPathByteStream> convertSVGPathByteStreamToAbsoluteCoordinates(const SVGPathByteStream&);
+
 } // namespace WebCore

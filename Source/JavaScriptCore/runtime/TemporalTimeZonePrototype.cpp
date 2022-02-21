@@ -55,7 +55,7 @@ const ClassInfo TemporalTimeZonePrototype::s_info = { "Temporal.TimeZone", &Base
 
 TemporalTimeZonePrototype* TemporalTimeZonePrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    TemporalTimeZonePrototype* object = new (NotNull, allocateCell<TemporalTimeZonePrototype>(vm.heap)) TemporalTimeZonePrototype(vm, structure);
+    TemporalTimeZonePrototype* object = new (NotNull, allocateCell<TemporalTimeZonePrototype>(vm)) TemporalTimeZonePrototype(vm, structure);
     object->finishCreation(vm, globalObject);
     return object;
 }

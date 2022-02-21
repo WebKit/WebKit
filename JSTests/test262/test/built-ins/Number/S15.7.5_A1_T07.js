@@ -8,13 +8,14 @@ info: |
 es5id: 15.7.5_A1_T07
 description: Checking property toPrecision
 ---*/
+assert.sameValue(
+  (new Number()).hasOwnProperty("toPrecision"),
+  false,
+  '(new Number()).hasOwnProperty("toPrecision") must return false'
+);
 
-//CHECK#1
-if ((new Number()).hasOwnProperty("toPrecision") !== false) {
-  throw new Test262Error('#1: Number instance must have no special property "toPrecision"');
-}
-
-//CHECK#2
-if ((new Number()).toPrecision !== Number.prototype.toPrecision) {
-  throw new Test262Error('#2: Number instance property "toPrecision" must be inherited from Number prototype object');
-}
+assert.sameValue(
+  (new Number()).toPrecision,
+  Number.prototype.toPrecision,
+  'The value of (new Number()).toPrecision is expected to equal the value of Number.prototype.toPrecision'
+);

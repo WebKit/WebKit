@@ -53,7 +53,7 @@ DateTimeFieldElement::FieldOwner::~FieldOwner() = default;
 
 DateTimeFieldElement::DateTimeFieldElement(Document& document, FieldOwner& fieldOwner)
     : HTMLDivElement(divTag, document)
-    , m_fieldOwner(makeWeakPtr(fieldOwner))
+    , m_fieldOwner(fieldOwner)
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -63,9 +63,9 @@ void DateTimeFieldElement::initialize(const AtomString& pseudo)
     setPseudo(pseudo);
 }
 
-std::optional<Style::ElementStyle> DateTimeFieldElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
+std::optional<Style::ElementStyle> DateTimeFieldElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
 {
-    auto elementStyle = resolveStyle(&parentStyle);
+    auto elementStyle = resolveStyle(resolutionContext);
     if (!elementStyle.renderStyle)
         return std::nullopt;
 

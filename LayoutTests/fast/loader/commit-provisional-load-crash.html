@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script id="script">
+if (window.testRunner)
+    testRunner.dumpAsText();
+function runTest() {
+  document.createElement("audio").load(); 
+  window.stop(); 
+}
+let num = 0;
+function eventhandler() {
+  if (num < 2) {
+    num++;
+    script.appendChild(iframe); 
+  }
+  document.onreadystatechange = eventhandler;
+}
+</script>
+<body onload=runTest()>
+<iframe id="iframe" onload="eventhandler()" srcdoc="foo"></iframe>
+<p>This test has PASSED if it does not CRASH.</p>
+</body>

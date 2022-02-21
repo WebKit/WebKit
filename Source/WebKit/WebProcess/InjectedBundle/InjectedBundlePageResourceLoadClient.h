@@ -51,14 +51,14 @@ class InjectedBundlePageResourceLoadClient : public API::InjectedBundle::Resourc
 public:
     explicit InjectedBundlePageResourceLoadClient(const WKBundlePageResourceLoadClientBase*);
 
-    void didInitiateLoadForResource(WebPage&, WebFrame&, uint64_t identifier, const WebCore::ResourceRequest&, bool /*pageIsProvisionallyLoading*/) override;
-    void willSendRequestForFrame(WebPage&, WebFrame&, uint64_t identifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse&) override;
-    void didReceiveResponseForResource(WebPage&, WebFrame&, uint64_t identifier, const WebCore::ResourceResponse&) override;
-    void didReceiveContentLengthForResource(WebPage&, WebFrame&, uint64_t identifier, uint64_t contentLength) override;
-    void didFinishLoadForResource(WebPage&, WebFrame&, uint64_t identifier) override;
-    void didFailLoadForResource(WebPage&, WebFrame&, uint64_t identifier, const WebCore::ResourceError&) override;
-    bool shouldCacheResponse(WebPage&, WebFrame&, uint64_t identifier) override;
-    bool shouldUseCredentialStorage(WebPage&, WebFrame&, uint64_t identifier) override;
+    void didInitiateLoadForResource(WebPage&, WebFrame&, WebCore::ResourceLoaderIdentifier, const WebCore::ResourceRequest&, bool /*pageIsProvisionallyLoading*/) override;
+    void willSendRequestForFrame(WebPage&, WebFrame&, WebCore::ResourceLoaderIdentifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse&) override;
+    void didReceiveResponseForResource(WebPage&, WebFrame&, WebCore::ResourceLoaderIdentifier, const WebCore::ResourceResponse&) override;
+    void didReceiveContentLengthForResource(WebPage&, WebFrame&, WebCore::ResourceLoaderIdentifier, uint64_t contentLength) override;
+    void didFinishLoadForResource(WebPage&, WebFrame&, WebCore::ResourceLoaderIdentifier) override;
+    void didFailLoadForResource(WebPage&, WebFrame&, WebCore::ResourceLoaderIdentifier, const WebCore::ResourceError&) override;
+    bool shouldCacheResponse(WebPage&, WebFrame&, WebCore::ResourceLoaderIdentifier) override;
+    bool shouldUseCredentialStorage(WebPage&, WebFrame&, WebCore::ResourceLoaderIdentifier) override;
 };
 
 } // namespace WebKit

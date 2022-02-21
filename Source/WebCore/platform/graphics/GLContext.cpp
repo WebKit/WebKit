@@ -25,16 +25,21 @@
 #include <wtf/ThreadSpecific.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#elif USE(OPENGL_ES)
+#include <GLES2/gl2.h>
+#else
+#include "OpenGLShims.h"
+#endif
+
 #if USE(EGL)
 #include "GLContextEGL.h"
 #endif
 
 #if USE(GLX)
 #include "GLContextGLX.h"
-#include "OpenGLShims.h"
 #endif
-
-using WTF::ThreadSpecific;
 
 namespace WebCore {
 
@@ -60,7 +65,7 @@ inline ThreadGlobalGLContext* currentContext()
 
 static bool initializeOpenGLShimsIfNeeded()
 {
-#if USE(OPENGL_ES) || USE(LIBEPOXY) || USE(ANGLE)
+#if USE(OPENGL_ES) || USE(LIBEPOXY) || (USE(ANGLE) && !(PLATFORM(GTK) || PLATFORM(WPE)))
     return true;
 #else
     static bool initialized = false;

@@ -7,11 +7,14 @@ info: The "length" property of the "getMilliseconds" is 0
 es5id: 15.9.5.24_A2_T1
 description: The "length" property of the "getMilliseconds" is 0
 ---*/
+assert.sameValue(
+  Date.prototype.getMilliseconds.hasOwnProperty("length"),
+  true,
+  'Date.prototype.getMilliseconds.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.getMilliseconds.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The getMilliseconds has a "length" property');
-}
-
-if (Date.prototype.getMilliseconds.length !== 0) {
-  throw new Test262Error('#2: The "length" property of the getMilliseconds is 0');
-}
+assert.sameValue(
+  Date.prototype.getMilliseconds.length,
+  0,
+  'The value of Date.prototype.getMilliseconds.length is expected to be 0'
+);

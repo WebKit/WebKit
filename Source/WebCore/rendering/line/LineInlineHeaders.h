@@ -56,7 +56,7 @@ inline bool requiresLineBoxForContent(const RenderInline& flow, const LineInfo& 
         const RenderStyle& parentStyle = lineStyle(*parent, lineInfo);
         if (flowStyle.lineHeight() != parentStyle.lineHeight()
             || flowStyle.verticalAlign() != parentStyle.verticalAlign()
-            || !parentStyle.fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(flowStyle.fontCascade().fontMetrics()))
+            || !parentStyle.fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(flowStyle.fontCascade().metricsOfPrimaryFont()))
         return true;
     }
     return false;
@@ -72,7 +72,7 @@ inline bool shouldCollapseWhiteSpace(const RenderStyle* style, const LineInfo& l
         || (whitespacePosition == TrailingWhitespace && style->whiteSpace() == WhiteSpace::PreWrap && (!lineInfo.isEmpty() || !lineInfo.previousLineBrokeCleanly()));
 }
 
-inline bool skipNonBreakingSpace(const InlineIterator& it, const LineInfo& lineInfo)
+inline bool skipNonBreakingSpace(const LegacyInlineIterator& it, const LineInfo& lineInfo)
 {
     if (it.renderer()->style().nbspMode() != NBSPMode::Space || it.current() != noBreakSpace)
         return false;
@@ -96,7 +96,7 @@ inline bool alwaysRequiresLineBox(const RenderInline& flow)
     return isEmptyInline(flow) && hasInlineDirectionBordersPaddingOrMargin(flow);
 }
 
-inline bool requiresLineBox(const InlineIterator& it, const LineInfo& lineInfo = LineInfo(), WhitespacePosition whitespacePosition = LeadingWhitespace)
+inline bool requiresLineBox(const LegacyInlineIterator& it, const LineInfo& lineInfo = LineInfo(), WhitespacePosition whitespacePosition = LeadingWhitespace)
 {
     if (it.renderer()->isFloatingOrOutOfFlowPositioned())
         return false;

@@ -27,6 +27,7 @@
 #import "FontAttributes.h"
 
 #import "ColorCocoa.h"
+#import "FontCocoa.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -87,14 +88,14 @@ RetainPtr<NSTextList> TextList::createTextList() const
 RetainPtr<NSDictionary> FontAttributes::createDictionary() const
 {
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-    if (font)
-        attributes[NSFontAttributeName] = font.get();
+    if (auto cocoaFont = font ? (__bridge CocoaFont *)font->getCTFont() : nil)
+        attributes[NSFontAttributeName] = cocoaFont;
 
     if (foregroundColor.isValid())
-        attributes[NSForegroundColorAttributeName] = platformColor(foregroundColor);
+        attributes[NSForegroundColorAttributeName] = cocoaColor(foregroundColor).get();
 
     if (backgroundColor.isValid())
-        attributes[NSBackgroundColorAttributeName] = platformColor(backgroundColor);
+        attributes[NSBackgroundColorAttributeName] = cocoaColor(backgroundColor).get();
 
     if (fontShadow.color.isValid() && (!fontShadow.offset.isZero() || fontShadow.blurRadius))
         attributes[NSShadowAttributeName] = fontShadow.createShadow().get();

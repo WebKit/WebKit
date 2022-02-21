@@ -40,6 +40,27 @@ TextStream& operator<<(TextStream& ts, CalcOperator op)
     case CalcOperator::Min: ts << "min"; break;
     case CalcOperator::Max: ts << "max"; break;
     case CalcOperator::Clamp: ts << "clamp"; break;
+    case CalcOperator::Pow: ts << "pow"; break;
+    case CalcOperator::Sqrt: ts << "sqrt"; break;
+    case CalcOperator::Hypot: ts << "hypot"; break;
+    case CalcOperator::Sin: ts << "sin"; break;
+    case CalcOperator::Cos: ts << "cos"; break;
+    case CalcOperator::Tan: ts << "tan"; break;
+    case CalcOperator::Exp: ts << "exp"; break;
+    case CalcOperator::Log: ts << "log"; break;
+    case CalcOperator::Asin: ts << "asin"; break;
+    case CalcOperator::Acos: ts << "acos"; break;
+    case CalcOperator::Atan: ts << "atan"; break;
+    case CalcOperator::Atan2: ts << "atan2"; break;
+    case CalcOperator::Abs: ts << "abs"; break;
+    case CalcOperator::Sign: ts << "sign"; break;
+    case CalcOperator::Mod: ts << "mod"; break;
+    case CalcOperator::Rem: ts << "rem"; break;
+    case CalcOperator::Round: ts << "round"; break;
+    case CalcOperator::Up: ts << "up"; break;
+    case CalcOperator::Down: ts << "down"; break;
+    case CalcOperator::ToZero: ts << "to-zero"; break;
+    case CalcOperator::Nearest: ts << "nearest"; break;
     }
     return ts;
 }

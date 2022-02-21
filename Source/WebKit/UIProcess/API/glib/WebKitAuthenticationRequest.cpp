@@ -79,28 +79,28 @@ static guint signals[LAST_SIGNAL] = { 0, };
 
 WEBKIT_DEFINE_TYPE(WebKitAuthenticationRequest, webkit_authentication_request, G_TYPE_OBJECT)
 
-static inline WebKitAuthenticationScheme toWebKitAuthenticationScheme(WebCore::ProtectionSpaceAuthenticationScheme coreScheme)
+static inline WebKitAuthenticationScheme toWebKitAuthenticationScheme(WebCore::ProtectionSpace::AuthenticationScheme coreScheme)
 {
     switch (coreScheme) {
-    case WebCore::ProtectionSpaceAuthenticationSchemeDefault:
+    case WebCore::ProtectionSpace::AuthenticationScheme::Default:
         return WEBKIT_AUTHENTICATION_SCHEME_DEFAULT;
-    case WebCore::ProtectionSpaceAuthenticationSchemeHTTPBasic:
+    case WebCore::ProtectionSpace::AuthenticationScheme::HTTPBasic:
         return WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC;
-    case WebCore::ProtectionSpaceAuthenticationSchemeHTTPDigest:
+    case WebCore::ProtectionSpace::AuthenticationScheme::HTTPDigest:
         return WEBKIT_AUTHENTICATION_SCHEME_HTTP_DIGEST;
-    case WebCore::ProtectionSpaceAuthenticationSchemeHTMLForm:
+    case WebCore::ProtectionSpace::AuthenticationScheme::HTMLForm:
         return WEBKIT_AUTHENTICATION_SCHEME_HTML_FORM;
-    case WebCore::ProtectionSpaceAuthenticationSchemeNTLM:
+    case WebCore::ProtectionSpace::AuthenticationScheme::NTLM:
         return WEBKIT_AUTHENTICATION_SCHEME_NTLM;
-    case WebCore::ProtectionSpaceAuthenticationSchemeNegotiate:
+    case WebCore::ProtectionSpace::AuthenticationScheme::Negotiate:
         return WEBKIT_AUTHENTICATION_SCHEME_NEGOTIATE;
-    case WebCore::ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+    case WebCore::ProtectionSpace::AuthenticationScheme::ClientCertificateRequested:
         return WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_REQUESTED;
-    case WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+    case WebCore::ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested:
         return WEBKIT_AUTHENTICATION_SCHEME_SERVER_TRUST_EVALUATION_REQUESTED;
-    case WebCore::ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested:
+    case WebCore::ProtectionSpace::AuthenticationScheme::ClientCertificatePINRequested:
         return WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_PIN_REQUESTED;
-    case WebCore::ProtectionSpaceAuthenticationSchemeUnknown:
+    case WebCore::ProtectionSpace::AuthenticationScheme::Unknown:
         return WEBKIT_AUTHENTICATION_SCHEME_UNKNOWN;
     default:
         ASSERT_NOT_REACHED();
@@ -348,22 +348,22 @@ WebKitSecurityOrigin* webkit_authentication_request_get_security_origin(WebKitAu
     const auto& protectionSpace = request->priv->authenticationChallenge->core().protectionSpace();
     String protocol;
     switch (protectionSpace.serverType()) {
-    case ProtectionSpaceServerHTTP:
-    case ProtectionSpaceProxyHTTP:
+    case ProtectionSpace::ServerType::HTTP:
+    case ProtectionSpace::ServerType::ProxyHTTP:
         protocol = "http"_s;
         break;
-    case ProtectionSpaceServerHTTPS:
-    case ProtectionSpaceProxyHTTPS:
+    case ProtectionSpace::ServerType::HTTPS:
+    case ProtectionSpace::ServerType::ProxyHTTPS:
         protocol = "https"_s;
         break;
-    case ProtectionSpaceServerFTP:
-    case ProtectionSpaceProxyFTP:
+    case ProtectionSpace::ServerType::FTP:
+    case ProtectionSpace::ServerType::ProxyFTP:
         protocol = "ftp"_s;
         break;
-    case ProtectionSpaceServerFTPS:
+    case ProtectionSpace::ServerType::FTPS:
         protocol = "ftps"_s;
         break;
-    case ProtectionSpaceProxySOCKS:
+    case ProtectionSpace::ServerType::ProxySOCKS:
         protocol = "socks"_s;
         break;
     }

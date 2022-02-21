@@ -74,7 +74,7 @@ void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(PlatformView*, cons
     LOG(Media, "MediaPlaybackTargetPickerMock::showPlaybackTargetPicker - checkActiveRoute = %i, useDarkAppearance = %i", (int)checkActiveRoute, (int)useDarkAppearance);
 
     m_showingMenu = true;
-    callOnMainThread([this, weakThis = makeWeakPtr(*this)] {
+    callOnMainThread([this, weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
 
@@ -87,7 +87,7 @@ void MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets()
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets");
 
-    callOnMainThread([this, weakThis = makeWeakPtr(*this)] {
+    callOnMainThread([this, weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
 
@@ -114,7 +114,7 @@ void MediaPlaybackTargetPickerMock::setState(const String& deviceName, MediaPlay
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::setState - name = %s, state = 0x%x", deviceName.utf8().data(), (unsigned)state);
 
-    callOnMainThread([this, weakThis = makeWeakPtr(*this), state, deviceName] {
+    callOnMainThread([this, weakThis = WeakPtr { *this }, state, deviceName] {
         if (!weakThis)
             return;
 

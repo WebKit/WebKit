@@ -11,14 +11,8 @@ description: First argument is this, and this have needed variable
 
 var f = Function.call(this, "return planet;");
 
-//CHECK#1
-if (f() !== undefined) {
-  throw new Test262Error('#1: ');
-}
+assert.sameValue(f(), undefined, 'f() returns undefined');
 
 var planet = "mars";
 
-//CHECK#2
-if (f() !== "mars") {
-  throw new Test262Error('#2: ');
-}
+assert.sameValue(f(), "mars", 'f() must return "mars"');

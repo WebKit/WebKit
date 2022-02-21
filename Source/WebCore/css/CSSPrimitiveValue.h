@@ -90,6 +90,8 @@ public:
     bool isQuirkyEms() const { return primitiveType() == CSSUnitType::CSS_QUIRKY_EMS; }
     bool isLength() const { return isLength(static_cast<CSSUnitType>(primitiveType())); }
     bool isNumber() const { return primitiveType() == CSSUnitType::CSS_NUMBER; }
+    bool isInteger() const { return primitiveType() == CSSUnitType::CSS_INTEGER; }
+    bool isNumberOrInteger() const { return isNumber() || isInteger(); }
     bool isPercentage() const { return primitiveType() == CSSUnitType::CSS_PERCENTAGE; }
     bool isPx() const { return primitiveType() == CSSUnitType::CSS_PX; }
     bool isRect() const { return primitiveUnitType() == CSSUnitType::CSS_RECT; }
@@ -108,15 +110,20 @@ public:
     bool isDotsPerInch() const { return primitiveType() == CSSUnitType::CSS_DPI; }
     bool isDotsPerPixel() const { return primitiveType() == CSSUnitType::CSS_DPPX; }
     bool isDotsPerCentimeter() const { return primitiveType() == CSSUnitType::CSS_DPCM; }
+    bool isX() const { return primitiveType() == CSSUnitType::CSS_X; }
     bool isResolution() const { return unitCategory(primitiveType()) == CSSUnitCategory::Resolution; }
     bool isViewportPercentageLength() const { return isViewportPercentageLength(primitiveUnitType()); }
-    bool isViewportPercentageWidth() const { return primitiveUnitType() == CSSUnitType::CSS_VW; }
-    bool isViewportPercentageHeight() const { return primitiveUnitType() == CSSUnitType::CSS_VH; }
-    bool isViewportPercentageMax() const { return primitiveUnitType() == CSSUnitType::CSS_VMAX; }
-    bool isViewportPercentageMin() const { return primitiveUnitType() == CSSUnitType::CSS_VMIN; }
     bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
     bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
+
+    bool isInitialValue() const { return valueID() == CSSValueInitial; }
+    bool isImplicitInitialValue() const { return isInitialValue() && m_isImplicit; }
+    bool isInheritValue() const { return valueID() == CSSValueInherit; }
+    bool isUnsetValue() const { return valueID() == CSSValueUnset; }
+    bool isRevertValue() const { return valueID() == CSSValueRevert; }
+    bool isRevertLayerValue() const { return valueID() == CSSValueRevertLayer; }
+    bool isCSSWideKeyword() const;
 
     static Ref<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(*new CSSPrimitiveValue(valueID)); }
     static Ref<CSSPrimitiveValue> createIdentifier(CSSPropertyID propertyID) { return adoptRef(*new CSSPrimitiveValue(propertyID)); }
@@ -127,6 +134,7 @@ public:
     static Ref<CSSPrimitiveValue> create(const LengthSize& value, const RenderStyle& style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
 
     template<typename T> static Ref<CSSPrimitiveValue> create(T&&);
+    template<typename T> static Ref<CSSPrimitiveValue> create(T&&, CSSPropertyID);
 
     ~CSSPrimitiveValue();
 
@@ -149,6 +157,8 @@ public:
 
     // It's usually wrong to call this; it can trigger type conversion in calc without sufficient context to resolve relative length units.
     double doubleValue() const;
+    
+    double doubleValueDividingBy100IfPercentage() const;
 
     // These return nullopt for calc, for which range checking is not done at parse time: <https://www.w3.org/TR/css3-values/#calc-range>.
     std::optional<bool> isZero() const;
@@ -184,7 +194,7 @@ public:
 
     bool equals(const CSSPrimitiveValue&) const;
 
-    static double conversionToCanonicalUnitsScaleFactor(CSSUnitType);
+    static std::optional<double> conversionToCanonicalUnitsScaleFactor(CSSUnitType);
     static String unitTypeString(CSSUnitType);
 
     static double computeUnzoomedNonCalcLengthDouble(CSSUnitType, double value, CSSPropertyID, const FontMetrics* = nullptr, const FontCascadeDescription* = nullptr, const FontCascadeDescription* rootFontDescription = nullptr, const RenderView* = nullptr);
@@ -199,6 +209,7 @@ public:
 
 private:
     friend class CSSValuePool;
+    friend class StaticCSSValuePool;
     friend LazyNeverDestroyed<CSSPrimitiveValue>;
 
     CSSPrimitiveValue(CSSValueID);
@@ -213,8 +224,11 @@ private:
     CSSPrimitiveValue(StaticCSSValueTag, CSSValueID);
     CSSPrimitiveValue(StaticCSSValueTag, const Color&);
     CSSPrimitiveValue(StaticCSSValueTag, double, CSSUnitType);
+    enum ImplicitInitialValueTag { ImplicitInitialValue };
+    CSSPrimitiveValue(StaticCSSValueTag, ImplicitInitialValueTag);
 
     template<typename T> CSSPrimitiveValue(T); // Defined in CSSPrimitiveValueMappings.h
+    template<typename T> CSSPrimitiveValue(T, CSSPropertyID); // Defined in CSSPrimitiveValueMappings.h
     template<typename T> CSSPrimitiveValue(RefPtr<T>&&);
     template<typename T> CSSPrimitiveValue(Ref<T>&&);
 
@@ -240,6 +254,7 @@ private:
 
     ALWAYS_INLINE String formatNumberForCustomCSSText() const;
     NEVER_INLINE String formatNumberValue(StringView) const;
+    NEVER_INLINE String formatIntegerValue(StringView) const;
     static constexpr bool isFontIndependentLength(CSSUnitType);
     static constexpr bool isFontRelativeLength(CSSUnitType);
     static constexpr bool isResolution(CSSUnitType);
@@ -279,6 +294,7 @@ constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
         || type == CSSUnitType::CSS_RLHS
         || type == CSSUnitType::CSS_REMS
         || type == CSSUnitType::CSS_CHS
+        || type == CSSUnitType::CSS_IC
         || type == CSSUnitType::CSS_QUIRKY_EMS;
 }
 
@@ -294,6 +310,7 @@ constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
         || type == CSSUnitType::CSS_PC
         || type == CSSUnitType::CSS_REMS
         || type == CSSUnitType::CSS_CHS
+        || type == CSSUnitType::CSS_IC
         || type == CSSUnitType::CSS_Q
         || type == CSSUnitType::CSS_LHS
         || type == CSSUnitType::CSS_RLHS
@@ -310,15 +327,17 @@ constexpr bool CSSPrimitiveValue::isResolution(CSSUnitType type)
 
 constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_VW
-        || type == CSSUnitType::CSS_VH
-        || type == CSSUnitType::CSS_VMIN
-        || type == CSSUnitType::CSS_VMAX;
+    return type >= CSSUnitType::FirstViewportCSSUnitType && type <= CSSUnitType::LastViewporCSSUnitType;
 }
 
 template<typename T> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(T&& value)
 {
     return adoptRef(*new CSSPrimitiveValue(std::forward<T>(value)));
+}
+
+template<typename T> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(T&& value, CSSPropertyID propertyID)
+{
+    return adoptRef(*new CSSPrimitiveValue(std::forward<T>(value), propertyID));
 }
 
 template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> inline T CSSPrimitiveValue::computeTime() const

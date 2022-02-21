@@ -84,7 +84,7 @@ void ResourceUsageThread::waitUntilObservers()
         m_condition.wait(m_observersLock);
 
         // Wait a bit after waking up for the first time.
-        WTF::sleep(10_ms);
+        sleep(10_ms);
     }
 }
 
@@ -126,7 +126,7 @@ void ResourceUsageThread::createThreadIfNeeded()
 NO_RETURN void ResourceUsageThread::threadBody()
 {
     // Wait a bit after waking up for the first time.
-    WTF::sleep(10_ms);
+    sleep(10_ms);
     
     while (true) {
         // Only do work if we have observers.
@@ -147,7 +147,7 @@ NO_RETURN void ResourceUsageThread::threadBody()
         // so if this interval changes Web Inspector may need to change.
         auto duration = WallTime::now() - start;
         auto difference = 500_ms - duration;
-        WTF::sleep(difference);
+        sleep(difference);
     }
 }
 

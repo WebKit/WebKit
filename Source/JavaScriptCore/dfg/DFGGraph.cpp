@@ -262,7 +262,7 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
     if (node->hasTransition()) {
         out.print(comma, pointerDumpInContext(node->transition(), context));
 #if USE(JSVALUE64)
-        out.print(", ID:", node->transition()->next->id());
+        out.print(", ID:", node->transition()->next->id().bits());
 #else
         out.print(", ID:", RawPointer(node->transition()->next.get()));
 #endif
@@ -1843,10 +1843,12 @@ bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
     if (!value.m_structure.isFinite())
         return false;
 
-    ArrayPrototype* arrayPrototype = globalObjectFor(node->child1()->origin.semantic)->arrayPrototype();
+    JSGlobalObject* globalObject = globalObjectFor(node->child1()->origin.semantic);
+    ArrayPrototype* arrayPrototype = globalObject->arrayPrototype();
     bool allGood = true;
     value.m_structure.forEach([&] (RegisteredStructure structure) {
-        allGood &= structure->hasMonoProto()
+        allGood &= structure->globalObject() == globalObject 
+            && structure->hasMonoProto()
             && structure->storedPrototype() == arrayPrototype
             && !structure->isDictionary()
             && structure->getConcurrently(m_vm.propertyNames->iteratorSymbol.impl()) == invalidOffset

@@ -59,7 +59,7 @@ CachedPage::CachedPage(Page& page)
     : m_page(page)
     , m_expirationTime(MonotonicTime::now() + page.settings().backForwardCacheExpirationInterval())
     , m_cachedMainFrame(makeUnique<CachedFrame>(page.mainFrame()))
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     , m_loadedSubresourceDomains(page.mainFrame().loader().client().loadedSubresourceDomains())
 #endif
 {
@@ -132,8 +132,8 @@ void CachedPage::restore(Page& page)
 
     // Restore the focus appearance for the focused element.
     // FIXME: Right now we don't support pages w/ frames in the b/f cache.  This may need to be tweaked when we add support for that.
-    Document* focusedDocument = page.focusController().focusedOrMainFrame().document();
-    if (Element* element = focusedDocument->focusedElement()) {
+    RefPtr focusedDocument = CheckedRef(page.focusController())->focusedOrMainFrame().document();
+    if (RefPtr element = focusedDocument->focusedElement()) {
 #if PLATFORM(IOS_FAMILY)
         // We don't want focused nodes changing scroll position when restoring from the cache
         // as it can cause ugly jumps before we manage to restore the cached position.
@@ -171,7 +171,7 @@ void CachedPage::restore(Page& page)
 
     firePageShowAndPopStateEvents(page);
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     for (auto& domain : m_loadedSubresourceDomains)
         page.mainFrame().loader().client().didLoadFromRegistrableDomain(WTFMove(domain));
 #endif
@@ -189,7 +189,7 @@ void CachedPage::clear()
 #endif
     m_needsDeviceOrPageScaleChanged = false;
     m_needsUpdateContentsSize = false;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     m_loadedSubresourceDomains.clear();
 #endif
 }

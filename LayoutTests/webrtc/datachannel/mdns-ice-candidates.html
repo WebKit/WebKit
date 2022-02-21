@@ -68,6 +68,7 @@ promise_test(async (test) => {
     });
 
     assert_true(connection.localDescription.sdp.includes(".local "));
+    closeConnections();
 }, "Getting some MDNS candidates");
 
 var finishTest;
@@ -86,6 +87,7 @@ promise_test((test) => {
         });
         setTimeout(() => { reject("Test timed out"); }, 5000);
     });
+    closeConnections();
 }, "Basic data channel exchange from offerer to receiver");
 
 promise_test((test) => {
@@ -103,6 +105,7 @@ promise_test((test) => {
         });
         setTimeout(() => { reject("Test timed out"); }, 5000);
     });
+    closeConnections();
 }, "Basic data channel exchange from receiver to offerer");
 
 
@@ -121,6 +124,7 @@ promise_test((test) => {
         }, { filterOutICECandidate: (candidate) => { return candidate && candidate.candidate.toLowerCase().indexOf("udp") == -1; } });
         setTimeout(() => { reject("Test timed out"); }, 5000);
     });
+    closeConnections();
 }, "Basic data channel exchange from offerer to receiver using UDP only");
 
 promise_test((test) => {
@@ -149,6 +153,7 @@ promise_test((test) => {
         });
         setTimeout(() => { reject("Test timed out"); }, 5000);
     });
+    closeConnections();
 }, "Basic data channel exchange from offerer to receiver 2");
 
 promise_test(async (test) => {
@@ -160,10 +165,13 @@ promise_test(async (test) => {
 
     const channel2 = pc.createDataChannel('sendDataChannel2');
     const offer2 = await pc.createOffer();
-    const description = pc.localDescription;
 
     // Make sure we can apply the filtered description.
-    await pc.setLocalDescription(description);
+    await pc.setLocalDescription(pc.localDescription);
+
+    // Reapply description which should have candidates.
+    await pc.setLocalDescription(offer2);
+    const description = pc.localDescription;
 
     const lines = description.sdp.split('\r\n').filter(line => {
         return line.indexOf('a=candidate') === 0;

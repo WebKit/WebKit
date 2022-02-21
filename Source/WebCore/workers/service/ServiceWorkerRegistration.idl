@@ -31,12 +31,13 @@
     SecureContext,
     Exposed=(Window,ServiceWorker),
     Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=ServiceWorker,
+    EnabledAtRuntime=ServiceWorkerEnabled,
     GenerateIsReachable=Impl,
 ] interface ServiceWorkerRegistration : EventTarget {
     readonly attribute ServiceWorker? installing;
     readonly attribute ServiceWorker? waiting;
     readonly attribute ServiceWorker? active;
+    [SameObject, EnabledBySetting=ServiceWorkerNavigationPreloadEnabled] readonly attribute NavigationPreloadManager navigationPreload;
 
     readonly attribute USVString scope;
     readonly attribute ServiceWorkerUpdateViaCache updateViaCache;
@@ -44,6 +45,15 @@
     [NewObject] Promise<undefined> update();
     [NewObject] Promise<boolean> unregister();
 
+    [Conditional=NOTIFICATION_EVENT, EnabledAtRuntime=NotificationEventEnabled, CallWith=CurrentScriptExecutionContext] Promise<undefined> showNotification(DOMString title, optional NotificationOptions options);
+    [Conditional=NOTIFICATION_EVENT, EnabledAtRuntime=NotificationEventEnabled, CallWith=CurrentScriptExecutionContext] Promise<sequence<Notification>> getNotifications(optional GetNotificationOptions filter);
+
     // event
     attribute EventHandler onupdatefound;
+};
+
+[
+    Conditional=NOTIFICATION_EVENT
+] dictionary GetNotificationOptions {
+    DOMString tag = "";
 };

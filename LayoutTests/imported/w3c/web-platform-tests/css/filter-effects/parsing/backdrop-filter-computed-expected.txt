@@ -1,0 +1,30 @@
+
+FAIL Property backdrop-filter value 'none' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'blur(100px)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'blur()' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'brightness(0)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'brightness(300%)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'brightness()' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'contrast(0)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'contrast(300%)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'contrast()' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'drop-shadow(1px 2px)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'drop-shadow(rgb(4, 5, 6) 1px 2px 0px)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'grayscale(50%)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'grayscale()' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'hue-rotate(90deg)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'hue-rotate()' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'invert(0)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'invert(100%)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'invert()' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'opacity(0)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'opacity(100%)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'opacity()' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'saturate(0)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'saturate(300%)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'saturate()' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'sepia(0)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'sepia(100%)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'sepia()' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+FAIL Property backdrop-filter value 'blur(10px) url("https://www.example.com/picture.svg#f") contrast(20) brightness(30)' assert_true: backdrop-filter doesn't seem to be supported in the computed style expected true got false
+

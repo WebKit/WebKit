@@ -44,7 +44,7 @@ DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName,
 
 static inline bool tokenContainsHTMLSpace(const String& token)
 {
-    return token.find(isHTMLSpace) != notFound;
+    return token.find(isHTMLSpace<UChar>) != notFound;
 }
 
 ExceptionOr<void> DOMTokenList::validateToken(const String& token)
@@ -97,7 +97,7 @@ inline ExceptionOr<void> DOMTokenList::addInternal(const String* newTokens, size
     return { };
 }
 
-ExceptionOr<void> DOMTokenList::add(const Vector<String>& tokens)
+ExceptionOr<void> DOMTokenList::add(const FixedVector<String>& tokens)
 {
     return addInternal(tokens.data(), tokens.size());
 }
@@ -122,7 +122,7 @@ inline ExceptionOr<void> DOMTokenList::removeInternal(const String* tokensToRemo
     return { };
 }
 
-ExceptionOr<void> DOMTokenList::remove(const Vector<String>& tokens)
+ExceptionOr<void> DOMTokenList::remove(const FixedVector<String>& tokens)
 {
     return removeInternal(tokens.data(), tokens.size());
 }

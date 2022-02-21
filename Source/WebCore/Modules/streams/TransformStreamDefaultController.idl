@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=TransformStreamAPI,
+    EnabledBySetting=TransformStreamAPIEnabled,
     Exposed=(Window,Worker),
     JSBuiltin,
     PrivateIdentifier,

@@ -44,7 +44,7 @@ class StorageSessionProvider;
 
 class SocketStreamHandleImpl : public SocketStreamHandle, public CurlStream::Client {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&, const StorageSessionProvider* provider) { return adoptRef(*new SocketStreamHandleImpl(url, client, provider)); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&, const StorageSessionProvider* provider, bool) { return adoptRef(*new SocketStreamHandleImpl(url, client, provider)); }
 
     virtual ~SocketStreamHandleImpl();
 
@@ -59,9 +59,10 @@ private:
     std::optional<size_t> platformSendInternal(const uint8_t*, size_t);
     bool sendPendingData();
 
+    // CurlStream::Client
     void didOpen(CurlStreamID) final;
     void didSendData(CurlStreamID, size_t) final;
-    void didReceiveData(CurlStreamID, const uint8_t*, size_t) final;
+    void didReceiveData(CurlStreamID, const SharedBuffer&) final;
     void didFail(CurlStreamID, CURLcode) final;
 
     bool isStreamInvalidated() { return m_streamID == invalidCurlStreamID; }

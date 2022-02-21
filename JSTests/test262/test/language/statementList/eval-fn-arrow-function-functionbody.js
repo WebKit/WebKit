@@ -49,6 +49,6 @@ info: |
 ---*/
 
 
-var result = eval('function fn() {}() => { return 42; };;');
+var result = eval('function fn() {}() => { return 42; };');
 
 assert.sameValue(result(), 42);

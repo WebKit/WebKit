@@ -28,57 +28,61 @@ promise_test((test) => {
 
         localConnection.addTrack(stream.getVideoTracks()[0], stream);
         return localConnection.createOffer();
-    }).then((desc) => {
+    }).then(async (desc) => {
         currentSDP = desc.sdp;
 
-        assert_equals(localConnection.currentLocalDescription, null);
-        assert_equals(localConnection.pendingLocalDescription, null);
-        assert_equals(localConnection.localDescription, null);
+        assert_equals(localConnection.currentLocalDescription, null, "test 1");
+        assert_equals(localConnection.pendingLocalDescription, null, "test 2");
+        assert_equals(localConnection.localDescription, null, "test 3");
 
-        assert_equals(remoteConnection.currentRemoteDescription, null);
-        assert_equals(remoteConnection.pendingRemoteDescription, null);
-        assert_equals(remoteConnection.remoteDescription, null);
+        assert_equals(remoteConnection.currentRemoteDescription, null, "test 4");
+        assert_equals(remoteConnection.pendingRemoteDescription, null, "test 5");
+        assert_equals(remoteConnection.remoteDescription, null, "test 6");
 
         localDescriptionPromise = localConnection.setLocalDescription(desc);
+        assert_equals(localConnection.currentLocalDescription, null, "test 7");
+        assert_equals(localConnection.pendingLocalDescription, null, "test 8");
+
+        await localDescriptionPromise;
+        assert_equals(sdpWithoutCandidate(localConnection.pendingLocalDescription.sdp), sdpWithoutCandidate(currentSDP), "test 9");
+        assert_equals(sdpWithoutCandidate(localConnection.localDescription.sdp), sdpWithoutCandidate(currentSDP), "test 10");
+
         remoteDescriptionPromise = remoteConnection.setRemoteDescription(desc);
+        assert_equals(remoteConnection.currentLocalDescription, null, "test 11");
+        assert_equals(remoteConnection.pendingLocalDescription, null, "test 12");
 
-        assert_equals(localConnection.currentLocalDescription, null, "test 1");
-        assert_equals(sdpWithoutCandidate(localConnection.pendingLocalDescription.sdp), sdpWithoutCandidate(currentSDP), "test 2");
-        assert_equals(sdpWithoutCandidate(localConnection.localDescription.sdp), sdpWithoutCandidate(currentSDP), "test 3");
-
-        assert_equals(remoteConnection.currentRemoteDescription, null);
-        assert_equals(remoteConnection.pendingRemoteDescription.sdp, currentSDP, "test 4");
-        assert_equals(remoteConnection.remoteDescription.sdp, currentSDP, "test 5");
-
-        return Promise.all([localDescriptionPromise, remoteDescriptionPromise]);
+        await remoteDescriptionPromise;
+        assert_equals(remoteConnection.currentRemoteDescription, null, "test 13");
+        assert_equals(remoteConnection.pendingRemoteDescription.sdp, currentSDP, "test 14");
+        assert_equals(remoteConnection.remoteDescription.sdp, currentSDP, "test 15");
     }).then(() => {
         return remoteConnection.createAnswer();
-    }).then((desc) => {
-        assert_equals(localConnection.currentLocalDescription, null);
-        assert_equals(localConnection.localDescription.sdp, localConnection.pendingLocalDescription.sdp, "test 7");
+    }).then(async (desc) => {
+        const remoteDescriptionPromise = localConnection.setRemoteDescription(desc);
+        assert_equals(localConnection.currentRemoteDescription, null, "test 16");
+        assert_equals(localConnection.pendingRemoteDescription, null, "test 17");
 
-        localConnection.setRemoteDescription(desc);
+        await remoteDescriptionPromise;
+        assert_equals(localConnection.pendingRemoteDescription, null, "test 18");
+        assert_not_equals(localConnection.currentRemoteDescription, null, "test 19");
 
-        assert_equals(localConnection.currentLocalDescription.sdp, localConnection.localDescription.sdp, "test 8");
-        assert_equals(localConnection.pendingLocalDescription, null);
+        const localDescriptionPromise = remoteConnection.setLocalDescription(desc);
+        assert_equals(remoteConnection.currentLocalDescription, null, "test 20");
+        assert_equals(remoteConnection.pendingLocalDescription, null, "test 21");
 
-        assert_equals(remoteConnection.currentRemoteDescription, null);
-        assert_equals(remoteConnection.pendingRemoteDescription.sdp, remoteConnection.remoteDescription.sdp, "test 10");
-
-        promise = remoteConnection.setLocalDescription(desc);
-
-        assert_equals(remoteConnection.pendingRemoteDescription, null);
-        return promise;
+        await localDescriptionPromise;
+        assert_not_equals(remoteConnection.currentLocalDescription, null, "test 22");
+        assert_equals(remoteConnection.pendingLocalDescription, null, "test 23");
     }).then(() => {
         desc = remoteConnection.currentRemoteDescription;
 
         localConnection.createDataChannel("test");
 
-        assert_equals(localConnection.currentLocalDescription.sdp, localConnection.localDescription.sdp, "test 14");
-        assert_equals(localConnection.pendingLocalDescription, null);
+        assert_equals(localConnection.currentLocalDescription.sdp, localConnection.localDescription.sdp, "test 24");
+        assert_equals(localConnection.pendingLocalDescription, null, "test 25");
 
-        assert_equals(remoteConnection.currentRemoteDescription.sdp, remoteConnection.remoteDescription.sdp, "test 16");
-        assert_equals(remoteConnection.pendingRemoteDescription, null);
+        assert_equals(remoteConnection.currentRemoteDescription.sdp, remoteConnection.remoteDescription.sdp, "test 26");
+        assert_equals(remoteConnection.pendingRemoteDescription, null, "test 27");
     });
 }, "description getters when changing description from video to video & data channel");
         </script>

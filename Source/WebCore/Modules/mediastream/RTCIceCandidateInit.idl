@@ -32,7 +32,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject
 ] dictionary RTCIceCandidateInit {
     DOMString candidate = "";

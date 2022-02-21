@@ -63,8 +63,11 @@ def main():
     tester = Tester()
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts'), 'webkitpy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitcorepy'), 'webkitcorepy')
+    tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitbugspy'), 'webkitbugspy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitscmpy'), 'webkitscmpy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitflaskpy'), 'webkitflaskpy')
+    if sys.version_info > (3, 0):
+        tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'reporelaypy'), 'reporelaypy')
 
     # AppleWin is the only platform that does not support Modern WebKit
     # FIXME: Find a better way to detect this currently assuming cygwin means AppleWin
@@ -188,6 +191,12 @@ class Tester(object):
         sys.path = self.finder.additional_paths(sys.path) + sys.path
 
         from webkitcorepy import AutoInstall
+
+        # Force registration of all autoinstalled packages.
+        if sys.version_info > (3, 0):
+            import reporelaypy
+        import webkitflaskpy
+
         AutoInstall.install_everything()
 
         start_time = time.time()

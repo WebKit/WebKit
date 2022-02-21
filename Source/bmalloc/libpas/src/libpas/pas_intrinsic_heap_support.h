@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 #define PAS_INTRINSIC_HEAP_SUPPORT_H
 
 #include "pas_allocator_index.h"
-#include "pas_compact_atomic_segregated_global_size_directory_ptr.h"
+#include "pas_compact_atomic_segregated_size_directory_ptr.h"
 #include "pas_internal_config.h"
 #include "pas_utils.h"
 
@@ -37,23 +37,31 @@ struct pas_intrinsic_heap_support;
 typedef struct pas_intrinsic_heap_support pas_intrinsic_heap_support;
 
 struct pas_intrinsic_heap_support {
-    pas_compact_atomic_segregated_global_size_directory_ptr index_to_size_directory[
+    pas_compact_atomic_segregated_size_directory_ptr index_to_size_directory[
         PAS_NUM_INTRINSIC_SIZE_CLASSES];
     pas_allocator_index index_to_allocator_index[PAS_NUM_INTRINSIC_SIZE_CLASSES];
+#ifdef __cplusplus
+    constexpr pas_intrinsic_heap_support(cpp_initialization_t)
+        : index_to_size_directory { }
+        , index_to_allocator_index { }
+    {
+        for (unsigned i = 0; i < PAS_NUM_INTRINSIC_SIZE_CLASSES; ++i) {
+            index_to_size_directory[i] = PAS_COMPACT_ATOMIC_PTR_INITIALIZER;
+            index_to_allocator_index[i] = 0;
+        }
+    }
+#endif
 };
 
-#define PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER_THREAD_LOCAL_CACHE_FIELDS \
-    .index_to_allocator_index = {[0 ... PAS_NUM_INTRINSIC_SIZE_CLASSES - 1] = \
-                                     (pas_allocator_index)UINT_MAX},
-
-#define PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER_SEGREGATED_HEAP_FIELDS \
-    .index_to_size_directory = {[0 ... PAS_NUM_INTRINSIC_SIZE_CLASSES - 1] = \
-                                    PAS_COMPACT_ATOMIC_PTR_INITIALIZER}, \
-    PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER_THREAD_LOCAL_CACHE_FIELDS
-
+#ifdef __cplusplus
+#define PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER { cpp_initialization }
+#else
 #define PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER { \
-        PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER_SEGREGATED_HEAP_FIELDS \
+        .index_to_size_directory = {[0 ... PAS_NUM_INTRINSIC_SIZE_CLASSES - 1] = \
+                                        PAS_COMPACT_ATOMIC_PTR_INITIALIZER}, \
+        .index_to_allocator_index = {[0 ... PAS_NUM_INTRINSIC_SIZE_CLASSES - 1] = 0}, \
     }
+#endif
 
 PAS_END_EXTERN_C;
 

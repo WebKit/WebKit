@@ -113,15 +113,21 @@ public:
 private:
     PannerNode(BaseAudioContext&, const PannerOptions&);
 
-    void calculateAzimuthElevation(double* outAzimuth, double* outElevation, const FloatPoint3D& position, const FloatPoint3D& listenerPosition, const FloatPoint3D& listenerForward, const FloatPoint3D& listenerUp) WTF_REQUIRES_LOCK(m_processLock);
-    float calculateDistanceConeGain(const FloatPoint3D& position, const FloatPoint3D& orientation, const FloatPoint3D& listenerPosition) WTF_REQUIRES_LOCK(m_processLock);
+    struct AzimuthElevation {
+        double azimuth { 0. };
+        double elevation { 0. };
+    };
+    static AzimuthElevation calculateAzimuthElevation(const FloatPoint3D& position, const FloatPoint3D& listenerPosition, const FloatPoint3D& listenerForward, const FloatPoint3D& listenerUp);
+    static float calculateDistanceConeGain(const FloatPoint3D& position, const FloatPoint3D& orientation, const FloatPoint3D& listenerPosition, const DistanceEffect&, const ConeEffect&);
 
     // Returns the combined distance and cone gain attenuation.
     float distanceConeGain() WTF_REQUIRES_LOCK(m_processLock);
 
     bool requiresTailProcessing() const final;
 
-    void azimuthElevation(double* outAzimuth, double* outElevation) WTF_REQUIRES_LOCK(m_processLock);
+    void invalidateCachedPropertiesIfNecessary() WTF_REQUIRES_LOCK(m_processLock);
+
+    const AzimuthElevation& azimuthElevation() WTF_REQUIRES_LOCK(m_processLock);
     void processSampleAccurateValues(AudioBus* destination, const AudioBus* source, size_t framesToProcess) WTF_REQUIRES_LOCK(m_processLock);
     bool hasSampleAccurateValues() const WTF_REQUIRES_LOCK(m_processLock);
     bool shouldUseARate() const WTF_REQUIRES_LOCK(m_processLock);
@@ -144,6 +150,11 @@ private:
     Ref<AudioParam> m_orientationX WTF_GUARDED_BY_LOCK(m_processLock);
     Ref<AudioParam> m_orientationY WTF_GUARDED_BY_LOCK(m_processLock);
     Ref<AudioParam> m_orientationZ WTF_GUARDED_BY_LOCK(m_processLock);
+
+    mutable std::optional<AzimuthElevation> m_cachedAzimuthElevation WTF_GUARDED_BY_LOCK(m_processLock);
+    mutable std::optional<float> m_cachedConeGain WTF_GUARDED_BY_LOCK(m_processLock);
+    FloatPoint3D m_lastPosition WTF_GUARDED_BY_LOCK(m_processLock);
+    FloatPoint3D m_lastOrientation WTF_GUARDED_BY_LOCK(m_processLock);
 
     // Synchronize process() with setting of the panning model, source's location
     // information, listener, distance parameters and sound cones.

@@ -32,7 +32,7 @@
 #import "WebGLBlocklist.h"
 #import <sys/stat.h>
 #import <sys/time.h>
-#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 // The time after which we'll check the blocklist data.
 static time_t blocklistNextCheckTime;

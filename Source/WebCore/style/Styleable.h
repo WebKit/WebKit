@@ -28,13 +28,13 @@
 #include "Element.h"
 #include "KeyframeEffectStack.h"
 #include "PseudoElement.h"
-#include "RenderElement.h"
 #include "RenderStyleConstants.h"
 #include "WebAnimationTypes.h"
 
 namespace WebCore {
 
 class KeyframeEffectStack;
+class RenderElement;
 class RenderStyle;
 class WebAnimation;
 
@@ -56,12 +56,7 @@ struct Styleable {
         return Styleable(element, element.pseudoId());
     }
 
-    static const std::optional<const Styleable> fromRenderer(const RenderElement& renderer)
-    {
-        if (auto* element = renderer.element())
-            return fromElement(*element);
-        return std::nullopt;
-    }
+    static const std::optional<const Styleable> fromRenderer(const RenderElement&);
 
     bool operator==(const Styleable& other) const
     {
@@ -72,6 +67,19 @@ struct Styleable {
     {
         return !(*this == other);
     }
+
+    RenderElement* renderer() const;
+
+    std::unique_ptr<RenderStyle> computeAnimatedStyle() const;
+
+    // If possible, compute the visual extent of any transform animation using the given rect,
+    // returning the result in the rect. Return false if there is some transform animation but
+    // we were unable to cheaply compute its effect on the extent.
+    bool computeAnimationExtent(LayoutRect&) const;
+
+    bool isRunningAcceleratedTransformAnimation() const;
+
+    bool runningAnimationsAreAllAccelerated() const;
 
     KeyframeEffectStack* keyframeEffectStack() const
     {
@@ -88,9 +96,9 @@ struct Styleable {
         return element.hasKeyframeEffects(pseudoId);
     }
 
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle, const RenderStyle* parentElementStyle) const
+    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext) const
     {
-        return element.ensureKeyframeEffectStack(pseudoId).applyKeyframeEffects(targetStyle, previousLastStyleChangeEventStyle, parentElementStyle);
+        return element.ensureKeyframeEffectStack(pseudoId).applyKeyframeEffects(targetStyle, previousLastStyleChangeEventStyle, resolutionContext);
     }
 
     const AnimationCollection* animations() const
@@ -148,6 +156,13 @@ struct Styleable {
         element.setLastStyleChangeEventStyle(pseudoId, WTFMove(style));
     }
 
+    void keyframesRuleDidChange() const
+    {
+        element.keyframesRuleDidChange(pseudoId);
+    }
+
+    bool animationListContainsNewlyValidAnimation(const AnimationList&) const;
+
     void elementWasRemoved() const;
 
     void willChangeRenderer() const;
@@ -158,7 +173,7 @@ struct Styleable {
 
     void removeDeclarativeAnimationFromListsForOwningElement(WebAnimation&) const;
 
-    void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const RenderStyle* parentElementStyle) const;
+    void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const Style::ResolutionContext&) const;
     void updateCSSTransitions(const RenderStyle& currentStyle, const RenderStyle& newStyle) const;
 };
 

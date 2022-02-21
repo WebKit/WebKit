@@ -1,7 +1,0 @@
-CONFIRM NAVIGATION: Opt to stay on the page
-main frame - has 1 onunload handler(s)
-main frame - has 1 onunload handler(s)
-main frame - has 1 onunload handler(s)
-
-FAIL Traversing the history, unload event is fired on doucment assert_array_equals: Pages opened during history navigation lengths differ, expected 1 got 2
-

@@ -23,23 +23,17 @@
 #pragma once
 
 #include "LegacyInlineBox.h"
-#include "MarkedText.h"
 #include "RenderText.h"
+#include "TextBoxSelectableRange.h"
 #include "TextRun.h"
 
 namespace WebCore {
 
 class RenderCombineText;
-class RenderedDocumentMarker;
-class TextPainter;
-struct CompositionUnderline;
-struct MarkedText;
-struct StyledMarkedText;
-struct TextBoxSelectableRange;
-struct TextPaintStyle;
 
-const unsigned short cNoTruncation = USHRT_MAX;
-const unsigned short cFullTruncation = USHRT_MAX - 1;
+namespace InlineIterator {
+class BoxLegacyPath;
+}
 
 class LegacyInlineTextBox : public LegacyInlineBox {
     WTF_MAKE_ISO_ALLOCATED(LegacyInlineTextBox);
@@ -77,7 +71,7 @@ public:
 
     void offsetRun(int d) { ASSERT(!isDirty()); ASSERT(d > 0 || m_start >= static_cast<unsigned>(-d)); m_start += d; }
 
-    unsigned short truncation() const { return m_truncation; }
+    auto truncation() const { return m_truncation; }
 
     TextBoxSelectableRange selectableRange() const;
 
@@ -93,8 +87,6 @@ public:
     using LegacyInlineBox::setForceRightExpansion;
     using LegacyInlineBox::forceLeftExpansion;
     using LegacyInlineBox::setForceLeftExpansion;
-
-    static inline bool compareByStart(const LegacyInlineTextBox* first, const LegacyInlineTextBox* second) { return first->start() < second->start(); }
 
     LayoutUnit baselinePosition(FontBaseline) const final;
     LayoutUnit lineHeight() const final;
@@ -122,7 +114,6 @@ private:
 
 public:
     virtual LayoutRect localSelectionRect(unsigned startPos, unsigned endPos) const;
-    bool isSelectable(unsigned startPosition, unsigned endPosition) const;
     std::pair<unsigned, unsigned> selectionStartEnd() const;
 
 protected:
@@ -135,10 +126,10 @@ private:
     void attachLine() final;
     
 public:
-    RenderObject::HighlightState selectionState() final;
+    RenderObject::HighlightState selectionState() const final;
 
 private:
-    void clearTruncation() final { m_truncation = cNoTruncation; }
+    void clearTruncation() final { m_truncation = { }; }
     float placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) final;
 
 public:
@@ -155,34 +146,14 @@ private:
     float textPos() const; // returns the x position relative to the left start of the text line.
 
 public:
-    virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
-    virtual float positionForOffset(unsigned offset) const;
-
     bool hasMarkers() const;
-    FloatRect calculateUnionOfAllDocumentMarkerBounds() const;
-    FloatRect calculateDocumentMarkerBounds(const MarkedText&) const;
 
 private:
-    FloatPoint textOriginFromBoxRect(const FloatRect&) const;
-
-    void paintMarkedTexts(PaintInfo&, MarkedText::PaintPhase, const FloatRect& boxRect, const Vector<StyledMarkedText>&, const FloatRect& decorationClipOutRect = { });
-
-    void paintPlatformDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, const MarkedText&);
-    void paintPlatformDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin);
-
-    void paintCompositionBackground(PaintInfo&, const FloatPoint& boxOrigin);
-    void paintCompositionUnderlines(PaintInfo&, const FloatPoint& boxOrigin) const;
-    void paintCompositionUnderline(PaintInfo&, const FloatPoint& boxOrigin, const CompositionUnderline&) const;
-
-    enum class MarkedTextBackgroundStyle : bool { Default, Rounded };
-    void paintMarkedTextBackground(PaintInfo&, const FloatPoint& boxOrigin, const Color&, unsigned clampedStartOffset, unsigned clampedEndOffset, MarkedTextBackgroundStyle = MarkedTextBackgroundStyle::Default);
-    void paintMarkedTextForeground(PaintInfo&, const FloatRect& boxRect, const StyledMarkedText&);
-    void paintMarkedTextDecoration(PaintInfo&, const FloatRect& boxRect, const FloatRect& clipOutRect, const StyledMarkedText&);
+    friend class InlineIterator::BoxLegacyPath;
+    friend class TextBoxPainter;
 
     const RenderCombineText* combinedText() const;
     const FontCascade& lineFont() const;
-
-    ShadowData* debugTextShadow();
 
     String text(bool ignoreCombinedText = false, bool ignoreHyphen = false) const; // The effective text for the run.
     TextRun createTextRun(bool ignoreCombinedText = false, bool ignoreHyphen = false) const;
@@ -194,12 +165,11 @@ private:
     LegacyInlineTextBox* m_prevTextBox { nullptr }; // The previous box that also uses our RenderObject
     LegacyInlineTextBox* m_nextTextBox { nullptr }; // The next box that also uses our RenderObject
 
+    // Where to truncate when text overflow is applied.
+    std::optional<unsigned short> m_truncation;
+
     unsigned m_start { 0 };
     unsigned short m_len { 0 };
-
-    // Where to truncate when text overflow is applied. We use special constants to
-    // denote no truncation (the whole run paints) and full truncation (nothing paints at all).
-    unsigned short m_truncation { cNoTruncation };
 };
 
 LayoutRect snappedSelectionRect(const LayoutRect&, float logicalRight, float selectionTop, float selectionHeight, bool isHorizontal);

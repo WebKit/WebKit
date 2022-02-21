@@ -42,6 +42,7 @@
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "HTMLIFrameElement.h"
 #include "HitTestResult.h"
 #include "InspectorController.h"
 #include "InspectorDebuggableType.h"
@@ -55,7 +56,7 @@
 #include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
-#include "ScriptState.h"
+#include "ScriptController.h"
 #include "Settings.h"
 #include "SystemSoundManager.h"
 #include "UserGestureIndicator.h"
@@ -69,6 +70,7 @@
 namespace WebCore {
 
 using namespace Inspector;
+using ValueOrException = Expected<JSC::JSValue, ExceptionDetails>;
 
 #if ENABLE(CONTEXT_MENUS)
 class FrontendMenuProvider : public ContextMenuProvider {
@@ -158,15 +160,15 @@ void InspectorFrontendHost::disconnectClient()
 
 void InspectorFrontendHost::addSelfToGlobalObjectInWorld(DOMWrapperWorld& world)
 {
-    auto& lexicalGlobalObject = *globalObject(world, m_frontendPage ? &m_frontendPage->mainFrame() : nullptr);
-    auto& vm = lexicalGlobalObject.vm();
+    // FIXME: What guarantees m_frontendPage is non-null?
+    // FIXME: What guarantees globalObject's return value is non-null?
+    auto& globalObject = *m_frontendPage->mainFrame().script().globalObject(world);
+    auto& vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
-    globalObject.putDirect(vm, JSC::Identifier::fromString(vm, "InspectorFrontendHost"), toJS<IDLInterface<InspectorFrontendHost>>(lexicalGlobalObject, globalObject, *this));
+    globalObject.putDirect(vm, JSC::Identifier::fromString(vm, "InspectorFrontendHost"), toJS<IDLInterface<InspectorFrontendHost>>(globalObject, globalObject, *this));
     if (UNLIKELY(scope.exception()))
-        reportException(&lexicalGlobalObject, scope.exception());
+        reportException(&globalObject, scope.exception());
 }
 
 void InspectorFrontendHost::loaded()
@@ -399,8 +401,6 @@ String InspectorFrontendHost::platformVersionName() const
     return "big-sur"_s;
 #elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
     return "catalina"_s;
-#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    return "mojave"_s;
 #else
     return emptyString();
 #endif
@@ -503,19 +503,20 @@ static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&&
 void InspectorFrontendHost::showContextMenu(Event& event, Vector<ContextMenuItem>&& items)
 {
 #if ENABLE(CONTEXT_MENUS)
+    // FIXME: What guarantees m_frontendPage is non-null?
+    // FIXME: What guarantees globalObject's return value is non-null?
     ASSERT(m_frontendPage);
-
-    auto& lexicalGlobalObject = *globalObject(debuggerWorld(), &m_frontendPage->mainFrame());
-    auto& vm = lexicalGlobalObject.vm();
-    auto value = lexicalGlobalObject.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "InspectorFrontendAPI"));
+    auto& globalObject = *m_frontendPage->mainFrame().script().globalObject(debuggerWorld());
+    auto& vm = globalObject.vm();
+    auto value = globalObject.get(&globalObject, JSC::Identifier::fromString(vm, "InspectorFrontendAPI"));
     ASSERT(value);
     ASSERT(value.isObject());
     auto* frontendAPIObject = asObject(value);
-    
+
     ContextMenu menu;
     populateContextMenu(WTFMove(items), menu);
 
-    auto menuProvider = FrontendMenuProvider::create(this, { &lexicalGlobalObject, frontendAPIObject }, menu.items());
+    auto menuProvider = FrontendMenuProvider::create(this, { &globalObject, frontendAPIObject }, menu.items());
     m_menuProvider = menuProvider.ptr();
     m_frontendPage->contextMenuController().showContextMenu(event, menuProvider);
 #else
@@ -691,12 +692,16 @@ bool InspectorFrontendHost::supportsWebExtensions()
 }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-void InspectorFrontendHost::didShowExtensionTab(const String& extensionID, const String& extensionTabID)
+void InspectorFrontendHost::didShowExtensionTab(const String& extensionID, const String& extensionTabID, HTMLIFrameElement& extensionFrameElement)
 {
     if (!m_client)
         return;
-    
-    m_client->didShowExtensionTab(extensionID, extensionTabID);
+
+    Frame* frame = extensionFrameElement.contentFrame();
+    if (!frame)
+        return;
+
+    m_client->didShowExtensionTab(extensionID, extensionTabID, valueOrDefault(frame->frameID()));
 }
 
 void InspectorFrontendHost::didHideExtensionTab(const String& extensionID, const String& extensionTabID)
@@ -706,6 +711,44 @@ void InspectorFrontendHost::didHideExtensionTab(const String& extensionID, const
     
     m_client->didHideExtensionTab(extensionID, extensionTabID);
 }
+
+void InspectorFrontendHost::didNavigateExtensionTab(const String& extensionID, const String& extensionTabID, const String& newURLString)
+{
+    if (!m_client)
+        return;
+    
+    m_client->didNavigateExtensionTab(extensionID, extensionTabID, { URL(), newURLString });
+}
+
+void InspectorFrontendHost::inspectedPageDidNavigate(const String& newURLString)
+{
+    if (!m_client)
+        return;
+    
+    m_client->inspectedPageDidNavigate({ URL(), newURLString });
+}
+
+ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrameElement, const String& scriptSource)
+{
+    Frame* frame = extensionFrameElement.contentFrame();
+    if (!frame)
+        return Exception { InvalidStateError, "Unable to find global object for <iframe>"_s };
+
+    Ref<Frame> protectedFrame(*frame);
+
+    JSDOMGlobalObject* frameGlobalObject = frame->script().globalObject(mainThreadNormalWorld());
+    if (!frameGlobalObject)
+        return Exception { InvalidStateError, "Unable to find global object for <iframe>"_s };
+
+    JSC::SuspendExceptionScope scope(&frameGlobalObject->vm());
+    ValueOrException result = frame->script().evaluateInWorld(ScriptSourceCode(scriptSource), mainThreadNormalWorld());
+    
+    if (!result)
+        return Exception { InvalidStateError, result.error().message };
+
+    return WTFMove(result.value());
+}
+
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
 

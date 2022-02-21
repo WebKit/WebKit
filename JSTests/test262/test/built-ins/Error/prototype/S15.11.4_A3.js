@@ -7,13 +7,7 @@ es5id: 15.11.4_A3
 description: Checking if call of Error prototype as a function fails
 ---*/
 
-//////////////////////////////////////////////////////////////////////////////
-//CHECK#1
-try {
+assert.throws(TypeError, () => {
   Error.prototype();
-  throw new Test262Error('#1: "Error.prototype()" lead to throwing exception');
-} catch (e) {
-  if (e instanceof Test262Error) throw e;
-}
-//
-//////////////////////////////////////////////////////////////////////////////
+  throw new Test262Error();
+});

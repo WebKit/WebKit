@@ -10,7 +10,7 @@ sys.stdout.write(
     'Expires: Thu, 01 Dec 2003 16:00:00 GMT\r\n'
     'Cache-Control: no-cache, must-revalidate\r\n'
     'Pragma: no-cache\r\n'
-    'Content-Type: text/html\r\n\r\n'
+    'Content-Type: text/javascript\r\n\r\n'
     'postMessage(\'Sub: Original test string: \' + String.fromCharCode(0x41F, 0x440, 0x438, 0x432, 0x435, 0x442));'
     'postMessage(\'Sub: Test string encoded using koi8-r: {}.\');'
     'postMessage(\'Sub: Test string encoded using Windows-1251: {}.\');'

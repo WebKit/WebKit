@@ -56,7 +56,7 @@ private:
     const AtomString& formControlType() const final;
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
-    bool appendFormData(DOMFormData&, bool) const final;
+    bool appendFormData(DOMFormData&) const final;
     bool valueMissing(const String&) const final;
     String valueMissingText() const final;
     void handleDOMActivateEvent(Event&) final;
@@ -77,7 +77,7 @@ private:
 #endif
 
     Icon* icon() const final;
-    void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) final;
+    void createShadowSubtreeAndUpdateInnerTextElementEditability(bool) final;
     void disabledStateChanged() final;
     void attributeChanged(const QualifiedName&) final;
     String defaultToolTip() const final;

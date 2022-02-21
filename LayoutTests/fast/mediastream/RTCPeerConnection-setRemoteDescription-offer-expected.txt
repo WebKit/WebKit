@@ -11,13 +11,13 @@ PASS pc.pendingRemoteDescription is null
 PASS pc.currentRemoteDescription is null
 
 PASS remoteOffer1 set as remote description
-FAIL pc.signalingState should be have-remote-offer. Was stable.
+PASS pc.signalingState is 'have-remote-offer'
 FAIL pc.remoteDescription should be [object Object]. Was null.
 FAIL pc.pendingRemoteDescription should be [object Object]. Was null.
 PASS pc.currentRemoteDescription is null
 
 PASS remoteOffer1 set as remote description (again)
-FAIL pc.signalingState should be have-remote-offer. Was stable.
+PASS pc.signalingState is 'have-remote-offer'
 
 *** Try setting local descriptions with bad types for the current state
 PASS promise pc.setRemoteDescription({type:'answer', sdp:remoteOffer1.sdp}); rejected with InvalidStateError: The object is in an invalid state.
@@ -25,10 +25,10 @@ PASS promise pc.setRemoteDescription({type:'pranswer', sdp:remoteOffer1.sdp}); r
 
 *** Create (remote) offer with video (remoteOffer2)
 *** Done, start testing with remoteOffer2
-FAIL pc.signalingState should be have-remote-offer. Was stable.
+PASS pc.signalingState is 'have-remote-offer'
 
 PASS remoteOffer2 set as remote description
-FAIL pc.signalingState should be have-remote-offer. Was stable.
+PASS pc.signalingState is 'have-remote-offer'
 FAIL pc.remoteDescription should be [object Object]. Was null.
 FAIL pc.pendingRemoteDescription should be [object Object]. Was null.
 PASS pc.currentRemoteDescription is null

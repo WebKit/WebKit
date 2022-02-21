@@ -27,13 +27,14 @@
 #include "DOMMatrix.h"
 
 #include "ScriptExecutionContext.h"
+#include <JavaScriptCore/Float32Array.h>
 #include <cmath>
 #include <limits>
 
 namespace WebCore {
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrixreadonly-dommatrixreadonly
-ExceptionOr<Ref<DOMMatrix>> DOMMatrix::create(ScriptExecutionContext& scriptExecutionContext, std::optional<Variant<String, Vector<double>>>&& init)
+ExceptionOr<Ref<DOMMatrix>> DOMMatrix::create(ScriptExecutionContext& scriptExecutionContext, std::optional<std::variant<String, Vector<double>>>&& init)
 {
     if (!init)
         return adoptRef(*new DOMMatrix);

@@ -37,7 +37,7 @@ namespace Layout {
 class LineBreakBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(LineBreakBox);
 public:
-    LineBreakBox(bool isOptional, RenderStyle&&);
+    LineBreakBox(bool isOptional, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
 
     bool isOptional() const { return m_isOptional; }
 

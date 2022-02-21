@@ -1,0 +1,44 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-3args-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-3args-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-3args-invalid-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-3args-invalid-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-3args-invalid-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-3args-invalid-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-3args-invalid-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-3args-invalid-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-3args-invalid-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-3args-invalid-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-3args-invalid-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-3args-invalid-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-45-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-45-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-45-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-45-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-45-022-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-45-022.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-90-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-90-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-90-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-90-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-90-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-90-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-90-016-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-90-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-90-021-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/rotate/svg-rotate-angle-90-021.html

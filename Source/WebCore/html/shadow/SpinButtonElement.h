@@ -79,7 +79,7 @@ private:
     void startRepeatingTimer();
     void stopRepeatingTimer();
     void repeatingTimerFired();
-    void setHovered(bool, Style::InvalidationScope) override;
+    void setHovered(bool, Style::InvalidationScope, HitTestRequest) override;
     bool shouldRespondToMouseEvents();
     bool isMouseFocusable() const override { return false; }
 

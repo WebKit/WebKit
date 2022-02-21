@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+img {
+    width: 300px;
+    height: 300px;
+}
+</style>
+</head>
+<body>
+<textarea></textarea>
+<img src="../resources/green-400x400.png"></img>
+<pre id="console"></pre>
+<script>
+addEventListener("load", () => {
+    const image = document.querySelector("img");
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.3),
+            bottomLeft : new DOMPointReadOnly(0, 0.3),
+            hasTrailingNewline: false,
+            children: [
+                {
+                    text : "this",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(0.7, 0),
+                    bottomRight : new DOMPointReadOnly(0.7, 0.3),
+                    bottomLeft : new DOMPointReadOnly(0, 0.3),
+                },
+                {
+                    text : "is",
+                    topLeft : new DOMPointReadOnly(0.7, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.3),
+                    bottomLeft : new DOMPointReadOnly(0.7, 0.3),
+                }
+            ],
+        },
+        {
+            topLeft : new DOMPointReadOnly(0, 0.3),
+            topRight : new DOMPointReadOnly(1, 0.3),
+            bottomRight : new DOMPointReadOnly(1, 0.7),
+            bottomLeft : new DOMPointReadOnly(0, 0.7),
+            children: [
+                {
+                    text : "a",
+                    topLeft : new DOMPointReadOnly(0, 0.3),
+                    topRight : new DOMPointReadOnly(0.3, 0.3),
+                    bottomRight : new DOMPointReadOnly(0.3, 0.7),
+                    bottomLeft : new DOMPointReadOnly(0, 0.7),
+                },
+                {
+                    text : "test",
+                    topLeft : new DOMPointReadOnly(0.3, 0.3),
+                    topRight : new DOMPointReadOnly(1, 0.3),
+                    bottomRight : new DOMPointReadOnly(1, 0.7),
+                    bottomLeft : new DOMPointReadOnly(0.3, 0.7),
+                }
+            ],
+        },
+        {
+            topLeft : new DOMPointReadOnly(0, 0.7),
+            topRight : new DOMPointReadOnly(0.7, 0.7),
+            bottomRight : new DOMPointReadOnly(0.7, 1),
+            bottomLeft : new DOMPointReadOnly(0, 1),
+            children: [
+                {
+                    text : "foo",
+                    topLeft : new DOMPointReadOnly(0, 0.7),
+                    topRight : new DOMPointReadOnly(0.7, 0.7),
+                    bottomRight : new DOMPointReadOnly(0.7, 1),
+                    bottomLeft : new DOMPointReadOnly(0, 1),
+                }
+            ],
+        }
+    ]);
+
+    getSelection().selectAllChildren(internals.shadowRoot(image).getElementById("image-overlay"));
+    document.execCommand("Copy");
+
+    textarea = document.querySelector("textarea");
+    textarea.focus();
+
+    document.execCommand("Paste");
+    shouldBeEqualToString("textarea.value", "this is a test\nfoo");
+});
+</script>
+</body>
+</html>

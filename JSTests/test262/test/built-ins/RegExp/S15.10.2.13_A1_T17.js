@@ -12,7 +12,4 @@ description: Execute /[]/.exec("a[b\n[]\tc]d") and check results
 
 var __executed = /[]/.exec("a[b\n[]\tc]d");
 
-//CHECK#1
-if (__executed !== null) {
-	throw new Test262Error('#1: /[]/.exec("a[b\\n[]\\tc]d") === false');
-}
+assert.sameValue(__executed, null, 'The value of __executed is expected to be null');

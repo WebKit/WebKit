@@ -27,6 +27,7 @@
 
 #include "GCAssertions.h"
 #include "HandleTypes.h"
+#include "StructureID.h"
 #include <type_traits>
 #include <wtf/RawPtrTraits.h>
 #include <wtf/RawValueTraits.h>
@@ -97,7 +98,7 @@ public:
     T* get() const
     {
         // Copy m_cell to a local to avoid multiple-read issues. (See <http://webkit.org/b/110854>)
-        StorageType cell = m_cell;
+        StorageType cell = this->cell();
         if (cell)
             validateCell(reinterpret_cast<JSCell*>(static_cast<void*>(Traits::unwrap(cell))));
         return Traits::unwrap(cell);
@@ -105,7 +106,7 @@ public:
 
     T* operator*() const
     {
-        StorageType cell = m_cell;
+        StorageType cell = this->cell();
         ASSERT(cell);
         auto unwrapped = Traits::unwrap(cell);
         validateCell<T>(unwrapped);
@@ -114,7 +115,7 @@ public:
 
     T* operator->() const
     {
-        StorageType cell = m_cell;
+        StorageType cell = this->cell();
         ASSERT(cell);
         auto unwrapped = Traits::unwrap(cell);
         validateCell(unwrapped);
@@ -134,9 +135,9 @@ public:
         return SlotHelper<T, Traits>::reinterpret(&m_cell);
     }
     
-    explicit operator bool() const { return !!m_cell; }
+    explicit operator bool() const { return !!cell(); }
     
-    bool operator!() const { return !m_cell; }
+    bool operator!() const { return !cell(); }
 
     void setWithoutWriteBarrier(T* value)
     {
@@ -146,9 +147,11 @@ public:
         Traits::exchange(this->m_cell, value);
     }
 
-    T* unvalidatedGet() const { return Traits::unwrap(m_cell); }
+    T* unvalidatedGet() const { return Traits::unwrap(cell()); }
 
 private:
+    StorageType cell() const { return m_cell; }
+
     StorageType m_cell;
 };
 
@@ -247,5 +250,105 @@ inline bool operator==(const WriteBarrierBase<U, TraitsU>& lhs, const WriteBarri
 {
     return lhs.get() == rhs.get();
 }
+
+class WriteBarrierStructureID {
+public:
+    constexpr WriteBarrierStructureID() = default;
+
+    WriteBarrierStructureID(VM& vm, const JSCell* owner, Structure* value)
+    {
+        set(vm, owner, value);
+    }
+
+    WriteBarrierStructureID(DFG::DesiredWriteBarrier&, Structure* value)
+    {
+        ASSERT(isCompilationThread());
+        setWithoutWriteBarrier(value);
+    }
+
+    enum MayBeNullTag { MayBeNull };
+    WriteBarrierStructureID(VM& vm, const JSCell* owner, Structure* value, MayBeNullTag)
+    {
+        setMayBeNull(vm, owner, value);
+    }
+
+    void set(VM&, const JSCell* owner, Structure* value);
+
+    void setMayBeNull(VM&, const JSCell* owner, Structure* value);
+
+    // Should only be used by JSCell during early initialisation
+    // when some basic types aren't yet completely instantiated
+    void setEarlyValue(VM&, const JSCell* owner, Structure* value);
+
+    Structure* get() const
+    {
+        // Copy m_structureID to a local to avoid multiple-read issues. (See <http://webkit.org/b/110854>)
+        StructureID structureID = value();
+        if (structureID) {
+            Structure* structure = structureID.decode();
+            validateCell(reinterpret_cast<JSCell*>(structure));
+            return structure;
+        }
+        return nullptr;
+    }
+
+    Structure* operator*() const
+    {
+        StructureID structureID = value();
+        ASSERT(structureID);
+        Structure* structure = structureID.decode();
+        validateCell(reinterpret_cast<JSCell*>(structure));
+        return structure;
+    }
+
+    Structure* operator->() const
+    {
+        StructureID structureID = value();
+        ASSERT(structureID);
+        Structure* structure = structureID.decode();
+        validateCell(reinterpret_cast<JSCell*>(structure));
+        return structure;
+    }
+
+    void clear()
+    {
+        m_structureID = { };
+    }
+
+    explicit operator bool() const
+    {
+        return !!value();
+    }
+
+    bool operator!() const
+    {
+        return !value();
+    }
+
+    void setWithoutWriteBarrier(Structure* value)
+    {
+#if ENABLE(WRITE_BARRIER_PROFILING)
+        WriteBarrierCounters::usesWithoutBarrierFromCpp.count();
+#endif
+        if (!value) {
+            m_structureID = { };
+            return;
+        }
+        m_structureID = StructureID::encode(value);
+    }
+
+    Structure* unvalidatedGet() const
+    {
+        StructureID structureID = value();
+        if (structureID)
+            return structureID.decode();
+        return nullptr;
+    }
+
+    StructureID value() const { return m_structureID; }
+
+private:
+    StructureID m_structureID;
+};
 
 } // namespace JSC

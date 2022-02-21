@@ -28,4 +28,5 @@
     cursor: default;
     direction: ltr;
     will-change: z-index;
+    z-index: 1;
 }

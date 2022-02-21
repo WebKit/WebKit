@@ -24,11 +24,12 @@
 #include <WebCore/DOMException.h>
 #include <WebCore/DOMRect.h>
 #include <WebCore/Document.h>
-#include "GObjectEventListener.h"
+#include <WebCore/ElementInlines.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/JSExecState.h>
 #include <WebCore/ScrollIntoViewOptions.h>
 #include <WebCore/StyledElement.h>
+#include "GObjectEventListener.h"
 #include "WebKitDOMAttrPrivate.h"
 #include "WebKitDOMCSSStyleDeclarationPrivate.h"
 #include "WebKitDOMClientRectListPrivate.h"
@@ -892,8 +893,10 @@ void webkit_dom_element_webkit_request_fullscreen(WebKitDOMElement* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_ELEMENT(self));
+#if ENABLE(FULLSCREEN_API)
     WebCore::Element* item = WebKit::core(self);
     item->webkitRequestFullscreen();
+#endif
 }
 
 WebKitDOMElement* webkit_dom_element_insert_adjacent_element(WebKitDOMElement* self, const gchar* where, WebKitDOMElement* element, GError** error)

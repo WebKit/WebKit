@@ -39,11 +39,29 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
         this._extensionTabID = extensionTabID;
         this._tabInfo = tabInfo;
         this._sourceURL = sourceURL;
+
+        this._iframeFinishedInitialLoad = false;
+        this._whenPageAvailablePromise = new WI.WrappedPromise;
+
+        this._iframeElement = this.element.appendChild(document.createElement("iframe"));
+        this._iframeElement.addEventListener("load", this._extensionFrameDidLoad.bind(this));
+    }
+
+    // Static
+
+    static shouldSaveTab() { return false; }
+    static shouldNotRemoveFromDOMWhenHidden() { return true; }
+
+    static isTabAllowed()
+    {
+        return InspectorFrontendHost.supportsWebExtensions;
     }
 
     // Public
 
+    get extension() { return this._extension; }
     get extensionTabID() { return this._extensionTabID; }
+    get iframeElement() { return this._iframeElement; }
 
     get type()
     {
@@ -55,12 +73,21 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
         return true;
     }
 
+    get savedTabPositionKey()
+    {
+        return `ExtensionTab-${this._extension.extensionBundleIdentifier}-${this._tabInfo.displayName}`;
+    }
+
+    whenPageAvailable()
+    {
+        return this._whenPageAvailablePromise.promise;
+    }
+
     attached()
     {
         super.attached();
 
-        if (InspectorFrontendHost.supportsWebExtensions)
-            InspectorFrontendHost.didShowExtensionTab(this._extension.extensionID, this._extensionTabID);
+        this._maybeDispatchDidShowExtensionTab();
     }
 
     detached()
@@ -71,6 +98,11 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
         super.detached();
     }
 
+    dispose()
+    {
+        this.element?.remove();
+    }
+
     tabInfo()
     {
         return this._tabInfo;
@@ -78,14 +110,48 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
 
     static shouldSaveTab() { return false; }
 
-    // Protected
+    static shouldNotRemoveFromDOMWhenHidden() {
+        // This is necessary to avoid the <iframe> content from being reloaded when the extension tab is hidden.
+        return true;
+    }
 
-    initialLayout()
+    // Private
+
+    _extensionFrameDidLoad()
     {
-        super.initialLayout();
+        // Bounce from the initial empty page to the requested sourceURL.
+        if (!this._iframeFinishedInitialLoad) {
+            this._iframeFinishedInitialLoad = true;
+            WI.sharedApp.extensionController.evaluateScriptInExtensionTab(this._extensionTabID, `document.location.replace("${this._sourceURL}");`);
+            return;
+        }
 
-        let iframeElement = this.element.appendChild(document.createElement("iframe"));
-        iframeElement.src = this._sourceURL;
+        // Signal that the page is available since we already bounced to the requested page.
+        if (!this._whenPageAvailablePromise.settled)
+            this._whenPageAvailablePromise.resolve(this._sourceURL);
+
+        this._maybeDispatchDidNavigateExtensionTab();
+    }
+
+    async _maybeDispatchDidNavigateExtensionTab()
+    {
+        if (!this.element.isConnected)
+            return;
+
+        let payload = await WI.sharedApp.extensionController.evaluateScriptInExtensionTab(this._extensionTabID, "document.location.href");
+        console.assert(payload.result, "Should be able to unwrap evaluation in extension tab!", payload.result);
+
+        if (InspectorFrontendHost.supportsWebExtensions)
+            InspectorFrontendHost.didNavigateExtensionTab(this._extension.extensionID, this._extensionTabID, payload.result);
+    }
+
+    _maybeDispatchDidShowExtensionTab()
+    {
+        if (!this.element.isConnected)
+            return;
+
+        if (InspectorFrontendHost.supportsWebExtensions)
+            InspectorFrontendHost.didShowExtensionTab(this._extension.extensionID, this._extensionTabID, this._iframeElement);
     }
 };
 

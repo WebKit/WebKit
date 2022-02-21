@@ -28,16 +28,9 @@
 #import "WKFoundation.h"
 
 #import "APIFullscreenClient.h"
+#import "WKWebView.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
-
-#if PLATFORM(MAC)
-@class NSView;
-using WKFullscreenClientView = NSView;
-#else
-@class WKWebView;
-using WKFullscreenClientView = WKWebView;
-#endif
 
 @protocol _WKFullscreenDelegate;
 
@@ -45,7 +38,7 @@ namespace WebKit {
 
 class FullscreenClient : public API::FullscreenClient {
 public:
-    explicit FullscreenClient(WKFullscreenClientView *);
+    explicit FullscreenClient(WKWebView *);
     ~FullscreenClient() { };
 
     bool isType(API::FullscreenClient::Type target) const override { return target == API::FullscreenClient::WebKitType; };
@@ -59,7 +52,7 @@ public:
     void didExitFullscreen(WebPageProxy*) override;
 
 private:
-    WKFullscreenClientView *m_webView;
+    WKWebView *m_webView;
     WeakObjCPtr<id <_WKFullscreenDelegate> > m_delegate;
 
     struct {

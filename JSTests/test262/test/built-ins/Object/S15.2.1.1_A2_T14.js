@@ -13,17 +13,7 @@ description: >
 
 var obj = Object("" + 1);
 
-//CHECK#2
-if (obj.constructor !== String) {
-  throw new Test262Error('#2: Object(expression) returns ToObject(expression)');
-}
-
-//CHECK#3
-if (typeof obj !== "object") {
-  throw new Test262Error('#3: Object(expression) returns ToObject(expression)');
-}
-
-//CHECK#4
-if ((obj != "1") || (obj === "1")) {
-  throw new Test262Error('#4: Object(expression) returns ToObject(expression)');
-}
+assert.sameValue(obj.constructor, String, 'The value of obj.constructor is expected to equal the value of String');
+assert.sameValue(typeof obj, "object", 'The value of `typeof obj` is expected to be "object"');
+assert(obj == "1", 'The result of evaluating (obj == "1") is expected to be true');
+assert.notSameValue(obj, "1", 'The value of obj is not "1"');

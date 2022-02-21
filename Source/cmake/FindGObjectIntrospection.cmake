@@ -15,21 +15,7 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 
-macro(_GIR_GET_PKGCONFIG_VAR _outvar _varname _extra_args)
-    execute_process(
-        COMMAND ${PKG_CONFIG_EXECUTABLE} --variable=${_varname} ${_extra_args} gobject-introspection-1.0
-        OUTPUT_VARIABLE _result
-        RESULT_VARIABLE _null
-    )
 
-    if (_null)
-    else ()
-        string(REGEX REPLACE "[\r\n]" " " _result "${_result}")
-        string(REGEX REPLACE " +$" ""  _result "${_result}")
-        separate_arguments(_result)
-        set(${_outvar} ${_result} CACHE INTERNAL "")
-    endif ()
-endmacro(_GIR_GET_PKGCONFIG_VAR)
 
 find_package(PkgConfig QUIET)
 if (PKG_CONFIG_FOUND)
@@ -39,11 +25,11 @@ if (PKG_CONFIG_FOUND)
     pkg_check_modules(_pc_gir gobject-introspection-1.0${_gir_version_cmp})
     if (_pc_gir_FOUND)
         set(INTROSPECTION_FOUND TRUE)
-        _gir_get_pkgconfig_var(INTROSPECTION_SCANNER "g_ir_scanner" "")
-        _gir_get_pkgconfig_var(INTROSPECTION_COMPILER "g_ir_compiler" "")
-        _gir_get_pkgconfig_var(INTROSPECTION_GENERATE "g_ir_generate" "")
-        _gir_get_pkgconfig_var(INTROSPECTION_GIRDIR "girdir" "")
-        _gir_get_pkgconfig_var(INTROSPECTION_TYPELIBDIR "typelibdir" "")
+        pkg_get_variable(INTROSPECTION_SCANNER gobject-introspection-1.0 g_ir_scanner)
+        pkg_get_variable(INTROSPECTION_COMPILER gobject-introspection-1.0 g_ir_compiler)
+        pkg_get_variable(INTROSPECTION_GENERATE gobject-introspection-1.0 g_ir_generate)
+        pkg_get_variable(INTROSPECTION_GIRDIR gobject-introspection-1.0 girdir)
+        pkg_get_variable(INTROSPECTION_TYPELIBDIR gobject-introspection-1.0 typelibdir)
         set(INTROSPECTION_VERSION "${_pc_gir_VERSION}")
         if (${INTROSPECTION_VERSION} VERSION_GREATER_EQUAL "1.59.1")
             set(INTROSPECTION_HAVE_SOURCES_TOP_DIRS YES)

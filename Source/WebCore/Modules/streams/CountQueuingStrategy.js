@@ -23,6 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@getter
+function highWaterMark()
+{
+    "use strict";
+
+    const highWaterMark = @getByIdDirectPrivate(this, "highWaterMark");
+    if (highWaterMark === @undefined)
+        @throwTypeError("CountQueuingStrategy.highWaterMark getter called on incompatible |this| value.");
+
+    return highWaterMark;
+}
+
 function size()
 {
     "use strict";
@@ -34,17 +46,5 @@ function initializeCountQueuingStrategy(parameters)
 {
     "use strict";
 
-    if (!arguments.length || !@isObject(parameters))
-        @throwTypeError("CountQueuingStrategy constructor takes an object as first argument");
-
-    const highWaterMark = parameters.highWaterMark;
-    if (highWaterMark === @undefined)
-        @throwTypeError("Member QueuingStrategyInit.highWaterMark is required");
-
-    @Object.@defineProperty(this, "highWaterMark", {
-        value: @toNumber(highWaterMark),
-        configurable: true,
-        enumerable: true,
-        writable: true
-    });
+    @putByIdDirectPrivate(this, "highWaterMark", @extractHighWaterMarkFromQueuingStrategyInit(parameters));
 }

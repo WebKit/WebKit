@@ -14,50 +14,59 @@ const addWorkerForReport = require('./resources/common-operations.js').addWorker
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 const BrowserPrivilegedAPI = require('../public/v3/privileged-api.js').PrivilegedAPI;
 
-const configWithOneTesterTwoBuilders = {
-    triggerableName: 'build-webkit',
-    lookbackCount: 2,
-    buildRequestArgument: 'build-request-id',
-    workerName: 'sync-worker',
-    workerPassword: 'password',
-    repositoryGroups: {
-        'webkit': {
-            repositories: {'WebKit': {acceptsPatch: true}},
-            testProperties: {'wk': {'revision': 'WebKit'}, 'roots': {'roots': {}}},
-            buildProperties: {'wk': {'revision': 'WebKit'}, 'wk-patch': {'patch': 'WebKit'},
-                'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-wk'},
-                'build-wk': {'ifRepositorySet': ['WebKit'], 'value': true},
-                'owned-commits': {'ownedRevisions': 'WebKit'}},
-            acceptsRoots: true,
-        }
-    },
-    types: {
-        'some': {
-            test: ['some test'],
-            properties: {'test': 'some-test'},
-        }
-    },
-    builders: {
-        'builder-1': {
-            builder: 'some tester',
-            properties: {forcescheduler: 'force-ab-tests'},
+function configWithOneTesterTwoBuilders(testConfigurationsOverride = [{types: ['some'], platforms: ['some platform'], builders: ['builder-1'],
+    supportedRepetitionTypes: ['alternating', 'sequential']}])
+{
+    return {
+        triggerableName: 'build-webkit',
+        lookbackCount: 2,
+        buildRequestArgument: 'build-request-id',
+        workerName: 'sync-worker',
+        workerPassword: 'password',
+        repositoryGroups: {
+            'webkit': {
+                repositories: {'WebKit': {acceptsPatch: true}},
+                testProperties: {'wk': {'revision': 'WebKit'}, 'roots': {'roots': {}}},
+                buildProperties: {'wk': {'revision': 'WebKit'}, 'wk-patch': {'patch': 'WebKit'},
+                    'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-wk'},
+                    'build-wk': {'ifRepositorySet': ['WebKit'], 'value': true},
+                    'owned-commits': {'ownedRevisions': 'WebKit'}},
+                acceptsRoots: true,
+            }
         },
-        'builder-2': {
-            builder: 'some builder',
-            properties: {forcescheduler: 'force-ab-builds'},
+        types: {
+            'some': {
+                test: ['some test'],
+                properties: {'test': 'some-test'},
+            }
         },
-        'builder-3': {
-            builder: 'other builder',
-            properties: {forcescheduler: 'force-ab-builds'},
+        builders: {
+            'builder-1': {
+                builder: 'some tester',
+                properties: {forcescheduler: 'force-ab-tests'},
+                supportedRepetitionTypes: ['alternating', 'sequential']
+            },
+            'builder-2': {
+                builder: 'some builder',
+                properties: {forcescheduler: 'force-ab-builds'},
+                supportedRepetitionTypes: ['alternating', 'sequential', 'paired-parallel']
+            },
+            'builder-3': {
+                builder: 'other builder',
+                properties: {forcescheduler: 'force-ab-builds'},
+                supportedRepetitionTypes: ['alternating', 'sequential', 'paired-parallel']
+            },
         },
-    },
-    buildConfigurations: [
-        {platforms: ['some platform'], builders: ['builder-2', 'builder-3']},
-    ],
-    testConfigurations: [
-        {types: ['some'], platforms: ['some platform'], builders: ['builder-1']},
-    ],
-};
+        buildConfigurations: [
+            {
+                platforms: ['some platform'],
+                builders: ['builder-2', 'builder-3'],
+                supportedRepetitionTypes: ['alternating', 'sequential', 'paired-parallel']
+            },
+        ],
+        testConfigurations: testConfigurationsOverride
+    };
+}
 
 const configWithPlatformName = {
     triggerableName: 'build-webkit',
@@ -87,21 +96,33 @@ const configWithPlatformName = {
         'builder-1': {
             builder: 'some tester',
             properties: {forcescheduler: 'force-ab-tests'},
+            supportedRepetitionTypes: ['alternating', 'sequential']
         },
         'builder-2': {
             builder: 'some builder',
             properties: {forcescheduler: 'force-ab-builds'},
+            supportedRepetitionTypes: ['alternating', 'sequential', 'paired-parallel']
         },
         'builder-3': {
             builder: 'other builder',
             properties: {forcescheduler: 'force-ab-builds'},
+            supportedRepetitionTypes: ['alternating', 'sequential', 'paired-parallel']
         },
     },
     buildConfigurations: [
-        {platforms: ['some platform'], builders: ['builder-2', 'builder-3']},
+        {
+            platforms: ['some platform'],
+            builders: ['builder-2', 'builder-3'],
+            supportedRepetitionTypes: ['alternating', 'sequential', 'paired-parallel'],
+        },
     ],
     testConfigurations: [
-        {types: ['some'], platforms: ['some platform'], builders: ['builder-1']},
+        {
+            types: ['some'],
+            platforms: ['some platform'],
+            builders: ['builder-1'],
+            supportedRepetitionTypes: ['alternating', 'sequential'],
+        },
     ],
 };
 
@@ -132,14 +153,21 @@ const configWithTwoTesters = {
         'builder-1': {
             builder: 'some tester',
             properties: {forcescheduler: 'force-ab-tests'},
+            supportedRepetitionTypes: ['alternating', 'sequential']
         },
         'builder-2': {
             builder: 'another tester',
             properties: {forcescheduler: 'force-ab-builds'},
+            supportedRepetitionTypes: ['alternating', 'sequential']
         },
     },
     testConfigurations: [
-        {types: ['some'], platforms: ['some platform'], builders: ['builder-1', 'builder-2']},
+        {
+            types: ['some'],
+            platforms: ['some platform'],
+            builders: ['builder-1', 'builder-2'],
+            supportedRepetitionTypes: ['alternating', 'sequential'],
+        },
     ]
 };
 
@@ -150,7 +178,7 @@ function assertAndResolveRequest(request, method, url, contentToResolve)
     request.resolve(contentToResolve);
 }
 
-function createTriggerable(config = configWithOneTesterTwoBuilders)
+function createTriggerable(config = configWithOneTesterTwoBuilders())
 {
     let triggerable;
     return MockData.addMockConfiguration(TestServer.database()).then(() => {
@@ -178,7 +206,7 @@ function createTestGroup(task_name='custom task') {
     });
 }
 
-async function createTestGroupWithPatch()
+async function createTestGroupWithPatch(repetitionType = 'alternating')
 {
     const patchFile = await TemporaryFile.makeTemporaryFile('patch.dat', 'patch file');
     const originalPrivilegedAPI = global.PrivilegedAPI;
@@ -193,7 +221,7 @@ async function createTestGroupWithPatch()
     set1.setRevisionForRepository(webkit, '191622', uploadedPatchFile);
     const set2 = new CustomCommitSet;
     set2.setRevisionForRepository(webkit, '191622');
-    const task = await TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, 'alternating', [set1, set2]);
+    const task = await TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, repetitionType, [set1, set2]);
 
     return TestGroup.findAllByTask(task.id())[0];
 }
@@ -238,7 +266,6 @@ describe('sync-buildbot', function () {
         MockRemoteAPI.reset('http://build.webkit.org');
         PrivilegedAPI.configure('test', 'password');
     });
-
 
     it('should not schedule on another builder if the build was scheduled on one builder before', () => {
         const requests = MockRemoteAPI.requests;
@@ -681,6 +708,218 @@ describe('sync-buildbot', function () {
         assert(otherWebkitRoot instanceof UploadedFile);
         assert.strictEqual(otherWebkitRoot.filename(), 'root124.dat');
         assert.deepEqual(otherCommitSet.allRootFiles(), [otherWebkitRoot]);
+    });
+
+    async function resolveSyncerToBuildBotRequests(requestResolutionList)
+    {
+        const requests = MockRemoteAPI.requests;
+        let resolutionIndexOffset = 0;
+        for (let i = 0; i < requestResolutionList.length; i++) {
+            const resolutions = requestResolutionList[i];
+            assert.strictEqual(requests.length, resolutionIndexOffset + resolutions.length);
+            resolutions.forEach((resolution, index) => {
+                assertAndResolveRequest(requests[resolutionIndexOffset + index], resolution.method, resolution.url, resolution.resolve);
+                if ('data' in resolution)
+                    assert.deepEqual(requests[resolutionIndexOffset + index].data, resolution.data)
+            });
+            resolutionIndexOffset += resolutions.length;
+            if (i != requestResolutionList.length - 1)
+                await MockRemoteAPI.waitForRequest();
+        }
+        MockRemoteAPI.reset();
+    }
+
+    function validateFirstTwoBuildRequestsInTestGroup(testGroup, buildRequestOverride = {}, otherBuildRequestOverride = {})
+    {
+        const webkit = Repository.findById(MockData.webkitRepositoryId());
+        assert.strictEqual(testGroup.buildRequests().length, 6);
+
+        const buildRequest = testGroup.buildRequests()[0];
+        assert(buildRequest.isBuild());
+        assert(!buildRequest.isTest());
+        assert.strictEqual(buildRequest.statusLabel(), buildRequestOverride.statusLabel || 'Waiting');
+        assert.strictEqual(buildRequest.statusUrl(), buildRequestOverride.statusUrl || null);
+        assert.strictEqual(buildRequest.statusDescription(), buildRequestOverride.statusDescription || null);
+        assert.strictEqual(buildRequest.buildId(), buildRequestOverride.buildId || null);
+
+        const commitSet = buildRequest.commitSet();
+        assert.strictEqual(commitSet.revisionForRepository(webkit), '191622');
+        const webkitPatch = commitSet.patchForRepository(webkit);
+        assert(webkitPatch instanceof UploadedFile);
+        assert.strictEqual(webkitPatch.filename(), 'patch.dat');
+        if (!buildRequestOverride.webkitRootUploaded) {
+            assert.strictEqual(commitSet.rootForRepository(webkit), null);
+            assert.deepEqual(commitSet.allRootFiles(), []);
+        }
+        else {
+            const webkitRoot = commitSet.rootForRepository(webkit);
+            assert(webkitRoot instanceof UploadedFile);
+            assert.strictEqual(webkitRoot.filename(), 'root123.dat');
+            assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
+        }
+
+        const otherBuildRequest = testGroup.buildRequests()[1];
+        assert(otherBuildRequest.isBuild());
+        assert(!otherBuildRequest.isTest());
+        assert.strictEqual(otherBuildRequest.statusLabel(), otherBuildRequestOverride.statusLabel || 'Waiting');
+        assert.strictEqual(otherBuildRequest.statusUrl(), otherBuildRequestOverride.statusUrl || null);
+        assert.strictEqual(otherBuildRequest.statusDescription(), otherBuildRequestOverride.statusDescription || null);
+        assert.strictEqual(otherBuildRequest.buildId(), otherBuildRequestOverride.buildId || null);
+
+        const otherCommitSet = otherBuildRequest.commitSet();
+        assert.strictEqual(otherCommitSet.revisionForRepository(webkit), '191622');
+        assert.strictEqual(otherCommitSet.patchForRepository(webkit), null);
+
+        if (!otherBuildRequestOverride.webkitRootUploaded) {
+            assert.strictEqual(otherCommitSet.rootForRepository(webkit), null);
+            assert.deepEqual(otherCommitSet.allRootFiles(), []);
+        }
+        else {
+            const otherWebkitRoot = otherCommitSet.rootForRepository(webkit);
+            assert(otherWebkitRoot instanceof UploadedFile);
+            assert.strictEqual(otherWebkitRoot.filename(), 'root124.dat');
+            assert.deepEqual(otherCommitSet.allRootFiles(), [otherWebkitRoot]);
+        }
+    }
+
+    it('should be able to schedule a "paired-parallel" build request for building a patch on buildbot', async () => {
+        let syncPromise;
+        const triggerable = await createTriggerable(configWithOneTesterTwoBuilders([
+            { builders: ['builder-1'], types: ['some'], platforms: ['some platform'], supportedRepetitionTypes: ['alternating', 'paired-parallel'] }]));
+        const firstBuildNumber = 123;
+        const secondBuildNumber = 124;
+        let testGroup = await createTestGroupWithPatch('paired-parallel');
+
+        const taskId = testGroup.task().id();
+        assert.strictEqual(testGroup.buildRequests().length, 6);
+        validateFirstTwoBuildRequestsInTestGroup(testGroup);
+
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        await resolveSyncerToBuildBotRequests([
+            [
+                { method: 'GET', url: MockData.buildbotBuildersURL(), resolve: MockData.mockBuildbotBuilders() },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber, statusDescription: 'Compiling WTF'}) },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.runningBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber, statusDescription: 'Compiling WTF'}) },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+            ]
+        ]);
+        await syncPromise;
+
+        let testGroups = await TestGroup.fetchForTask(taskId, true);
+        assert.strictEqual(testGroups.length, 1);
+        assert.strictEqual(testGroups[0].buildRequests().length, 6);
+        validateFirstTwoBuildRequestsInTestGroup(testGroups[0], {statusLabel: 'Running', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), statusDescription: 'Compiling WTF'});
+
+        await uploadRoot(parseInt(testGroups[0].buildRequests()[0].id()), firstBuildNumber);
+        testGroups = await TestGroup.fetchForTask(taskId, true);
+        assert.strictEqual(testGroups.length, 1);
+        validateFirstTwoBuildRequestsInTestGroup(testGroups[0], {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), statusDescription: 'Compiling WTF', buildId: '1', webkitRootUploaded: true});
+
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        await resolveSyncerToBuildBotRequests([
+            [
+                { method: 'GET', url: MockData.buildbotBuildersURL(), resolve: MockData.mockBuildbotBuilders() },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('some builder'), buildRequestId: '1', buildTag: firstBuildNumber}) },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+            ],
+            [
+                {
+                    method: 'POST', url: '/api/v2/forceschedulers/force-ab-builds', resolve: 'OK',
+                    data: {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params': {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'build-wk': true}}
+                },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: {
+                    builds: [
+                        MockData.runningBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2, buildTag: secondBuildNumber}),
+                        MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber})
+                    ]} },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+            ]
+        ]);
+        await syncPromise;
+
+        await TestGroup.fetchForTask(taskId, true);
+        assert.strictEqual(testGroups.length, 1);
+        validateFirstTwoBuildRequestsInTestGroup(testGroups[0], {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), buildId: '1', webkitRootUploaded: true},
+            {statusLabel: 'Running', statusUrl: MockData.statusUrl('some builder', secondBuildNumber)});
+
+        await uploadRoot(parseInt(testGroups[0].buildRequests()[1].id()), 124);
+        testGroups = await TestGroup.fetchForTask(taskId, true);
+        assert.strictEqual(testGroups.length, 1);
+        validateFirstTwoBuildRequestsInTestGroup(testGroups[0], {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', firstBuildNumber), buildId: '1', webkitRootUploaded: true},
+            {statusLabel: 'Completed', statusUrl: MockData.statusUrl('some builder', secondBuildNumber), buildId: '2', webkitRootUploaded: true});
+
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        await resolveSyncerToBuildBotRequests([
+            [
+                { method: 'GET', url: MockData.buildbotBuildersURL(), resolve: MockData.mockBuildbotBuilders() },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: { builds: [
+                    MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2, buildTag: secondBuildNumber}),
+                    MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber})]}},
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: { builds: [
+                    MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2, buildTag: secondBuildNumber}),
+                    MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1, buildTag: firstBuildNumber})]}},
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+            ]
+        ]);
+        await syncPromise;
+
+        await TestGroup.fetchForTask(taskId, true);
+        assert.strictEqual(testGroups.length, 1);
+        assert.strictEqual(testGroups[0].buildRequests().length, 6);
+
+        const buildRequest = testGroups[0].buildRequests()[2];
+        assert(buildRequest.isTest());
+        assert.strictEqual(buildRequest.statusLabel(), 'Waiting');
     });
 
     it('should schedule a build to build a patch', () => {

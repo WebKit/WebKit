@@ -95,6 +95,13 @@ enum class ThreadType : uint8_t {
     Audio,
 };
 
+class ThreadSuspendLocker {
+    WTF_MAKE_NONCOPYABLE(ThreadSuspendLocker);
+public:
+    WTF_EXPORT_PRIVATE ThreadSuspendLocker();
+    WTF_EXPORT_PRIVATE ~ThreadSuspendLocker();
+};
+
 class Thread : public ThreadSafeRefCounted<Thread> {
     static std::atomic<uint32_t> s_uid;
 public:
@@ -171,9 +178,9 @@ public:
     using PlatformSuspendError = DWORD;
 #endif
 
-    WTF_EXPORT_PRIVATE Expected<void, PlatformSuspendError> suspend();
-    WTF_EXPORT_PRIVATE void resume();
-    WTF_EXPORT_PRIVATE size_t getRegisters(PlatformRegisters&);
+    WTF_EXPORT_PRIVATE Expected<void, PlatformSuspendError> suspend(const ThreadSuspendLocker&);
+    WTF_EXPORT_PRIVATE void resume(const ThreadSuspendLocker&);
+    WTF_EXPORT_PRIVATE size_t getRegisters(const ThreadSuspendLocker&, PlatformRegisters&);
 
 #if USE(PTHREADS)
 #if OS(LINUX)
@@ -231,7 +238,7 @@ public:
     }
 #endif
 
-    void* savedStackPointerAtVMEntry()
+    void* savedStackPointerAtVMEntry() const
     {
         return m_savedStackPointerAtVMEntry;
     }
@@ -241,7 +248,7 @@ public:
         m_savedStackPointerAtVMEntry = stackPointerAtVMEntry;
     }
 
-    void* savedLastStackTop()
+    void* savedLastStackTop() const
     {
         return m_savedLastStackTop;
     }
@@ -422,6 +429,7 @@ inline Thread& Thread::current()
 
 } // namespace WTF
 
+using WTF::ThreadSuspendLocker;
 using WTF::Thread;
 using WTF::ThreadType;
 using WTF::GCThreadType;

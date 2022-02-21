@@ -26,16 +26,16 @@
 
 namespace WebCore {
 
-SharedBuffer::SharedBuffer(GBytes* bytes)
+FragmentedSharedBuffer::FragmentedSharedBuffer(GBytes* bytes)
 {
     ASSERT(bytes);
     m_size = g_bytes_get_size(bytes);
     m_segments.append({ 0, DataSegment::create(GRefPtr<GBytes>(bytes)) });
 }
 
-Ref<SharedBuffer> SharedBuffer::create(GBytes* bytes)
+Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(GBytes* bytes)
 {
-    return adoptRef(*new SharedBuffer(bytes));
+    return adoptRef(*new FragmentedSharedBuffer(bytes));
 }
 
 GRefPtr<GBytes> SharedBuffer::createGBytes() const
@@ -45,23 +45,6 @@ GRefPtr<GBytes> SharedBuffer::createGBytes() const
         static_cast<SharedBuffer*>(data)->deref();
     }, const_cast<SharedBuffer*>(this)));
     return bytes;
-}
-
-RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
-{
-    if (filePath.isEmpty())
-        return nullptr;
-
-    CString filename = FileSystem::fileSystemRepresentation(filePath);
-    GUniqueOutPtr<gchar> contents;
-    gsize size;
-    GUniqueOutPtr<GError> error;
-    if (!g_file_get_contents(filename.data(), &contents.outPtr(), &size, &error.outPtr())) {
-        LOG_ERROR("Failed to fully read contents of file %s - %s", FileSystem::filenameForDisplay(filePath).utf8().data(), error->message);
-        return nullptr;
-    }
-
-    return SharedBuffer::create(contents.get(), size);
 }
 
 } // namespace WebCore

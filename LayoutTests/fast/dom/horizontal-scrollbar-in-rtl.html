@@ -32,6 +32,8 @@
 
             onload = function()
             {
+                if (window.internals)
+                    internals.settings.setScrollAnimatorEnabled(false);
                 if (window.testRunner)
                     testRunner.dumpAsText();
 

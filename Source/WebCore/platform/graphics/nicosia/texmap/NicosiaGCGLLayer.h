@@ -28,7 +28,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGL) && USE(NICOSIA) && USE(TEXTURE_MAPPER)
+#if ENABLE(WEBGL) && USE(NICOSIA) && USE(TEXTURE_MAPPER) && !USE(ANGLE)
 
 #include "GraphicsContextGLOpenGL.h"
 #include "NicosiaContentLayerTextureMapperImpl.h"
@@ -49,7 +49,7 @@ public:
 
     ContentLayer& contentLayer() const { return m_contentLayer; }
     virtual bool makeContextCurrent();
-    virtual PlatformGraphicsContextGL platformContext() const;
+    virtual GCGLContext platformContext() const;
 
     void swapBuffersIfNeeded() override;
 

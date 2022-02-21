@@ -97,6 +97,9 @@
     'pc': {
       'filepath': '^pc/.*',
     },
+    'logging' : {
+      'filepath': 'logging/.*',
+    },
   },
 
   'WATCHLISTS': {
@@ -164,14 +167,12 @@
                          'zhengzhonghou@agora.io'],
     'bitrate_controller': ['mflodman@webrtc.org',
                            'stefan@webrtc.org',
-                           'srte@webrtc.org',
                            'zhuangzesen@agora.io'],
-    'congestion_controller': ['srte@webrtc.org'],
+    'congestion_controller': [],
     'remote_bitrate_estimator': ['mflodman@webrtc.org',
                                  'stefan@webrtc.org',
                                  'zhuangzesen@agora.io'],
     'pacing': ['mflodman@webrtc.org',
-               'srte@webrtc.org',
                'stefan@webrtc.org',
                'zhuangzesen@agora.io'],
     'rtp_rtcp': ['mflodman@webrtc.org',
@@ -184,5 +185,6 @@
                         'peah@webrtc.org',
                         'zhengzhonghou@agora.io'],
     'pc': ['steveanton+watch@webrtc.org'],
+    'logging': ['terelius@webrtc.org'],
   },
 }

@@ -15,6 +15,7 @@ DOMWindow
 EventSource
 FileReader
 FontFaceSet
+GPUDevice
 IDBDatabase
 IDBOpenDBRequest
 IDBRequest
@@ -23,7 +24,7 @@ MediaController conditional=VIDEO
 MediaDevices conditional=MEDIA_STREAM
 MediaKeySession conditional=ENCRYPTED_MEDIA
 MediaQueryList
-MediaRecorder conditional=MEDIA_STREAM
+MediaRecorder conditional=MEDIA_RECORDER
 MediaSessionCoordinator conditional=MEDIA_SESSION_COORDINATOR
 MediaSource conditional=MEDIA_SOURCE
 MediaStream conditional=MEDIA_STREAM
@@ -45,10 +46,13 @@ RTCIceTransport conditional=WEB_RTC
 RTCPeerConnection conditional=WEB_RTC
 RTCRtpSFrameTransform conditional=WEB_RTC
 RTCRtpScriptTransform conditional=WEB_RTC
+RTCSctpTransport conditional=WEB_RTC
 ServiceWorker conditional=SERVICE_WORKER
 ServiceWorkerContainer conditional=SERVICE_WORKER
 ServiceWorkerGlobalScope conditional=SERVICE_WORKER
 ServiceWorkerRegistration conditional=SERVICE_WORKER
+SharedWorker
+SharedWorkerGlobalScope
 SourceBuffer conditional=MEDIA_SOURCE
 SourceBufferList conditional=MEDIA_SOURCE
 SpeechRecognition

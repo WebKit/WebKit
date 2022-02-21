@@ -82,7 +82,7 @@ public:
     virtual ~VTTCue();
 
     enum AutoKeyword { Auto };
-    using LineAndPositionSetting = Variant<double, AutoKeyword>;
+    using LineAndPositionSetting = std::variant<double, AutoKeyword>;
 
     void setTrack(TextTrack*);
 
@@ -136,10 +136,11 @@ public:
     void removeDisplayTree() final;
     void markFutureAndPastNodes(ContainerNode*, const MediaTime&, const MediaTime&);
 
-    int calculateComputedLinePosition();
+    int calculateComputedLinePosition() const;
     std::pair<double, double> getPositionCoordinates() const;
 
-    std::pair<double, double> getCSSPosition() const;
+    using DisplayPosition = std::pair<std::optional<double>, std::optional<double>>;
+    const DisplayPosition& getCSSPosition() const { return m_displayPosition; };
 
     CSSValueID getCSSAlignment() const;
     int getCSSSize() const;
@@ -207,8 +208,6 @@ private:
 
     void parseSettings(const String&);
 
-    bool textPositionIsAuto() const;
-
     void determineTextDirection();
     void calculateDisplayParameters();
 
@@ -223,13 +222,11 @@ private:
     };
     CueSetting settingName(VTTScanner&);
 
-    static constexpr double undefinedPosition = -1;
-
     String m_content;
     String m_settings;
-    double m_linePosition { std::numeric_limits<double>::quiet_NaN() };
-    double m_computedLinePosition { std::numeric_limits<double>::quiet_NaN() };
-    double m_textPosition { std::numeric_limits<double>::quiet_NaN() };
+    std::optional<double> m_linePosition;
+    std::optional<double> m_computedLinePosition;
+    std::optional<double> m_textPosition;
     int m_cueSize { 100 };
 
     WritingDirection m_writingDirection { Horizontal };
@@ -245,7 +242,7 @@ private:
 
     CSSValueID m_displayDirection { CSSValueLtr };
     int m_displaySize { 0 };
-    std::pair<float, float> m_displayPosition;
+    DisplayPosition m_displayPosition;
 
     MediaTime m_originalStartTime;
 

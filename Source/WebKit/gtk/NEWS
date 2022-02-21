@@ -1,4 +1,41 @@
 ================
+WebKitGTK 2.35.3
+================
+
+What's new in WebKitGTK 2.35.3?
+
+  - Fix a crash at startup when bubblewrap sandbox is enabled.
+  - Fix a crash when starting a drag an drop on touchscreen.
+  - Fix several crashes and rendering issues.
+
+================
+WebKitGTK 2.35.2
+================
+
+What's new in WebKitGTK 2.35.2?
+
+  - Add new accessibility implementation using ATSPI DBus interfaces instead of ATK.
+  - Use native GtkWidgets for form validation popups.
+  - Add support for requestVideoFrameCallback.
+  - Add support for accent colors.
+  - Fix pinch zooming from a link to not activate the link.
+  - Fix kinetic scrolling via touch screen.
+  - Fix several crashes and rendering issues.
+
+================
+WebKitGTK 2.35.1
+================
+
+What's new in WebKitGTK 2.35.1?
+
+  - Make user interactive threads (event handler, scrolling, ...) real time in linux.
+  - Add new API to set HTTP response information to custom uri schemes.
+  - Add support for media session.
+  - Change hardware-acceleration-policy setting default value to always.
+  - Fix jsc_value_object_define_property_accessor() to work with objects not having a wrapped instance.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.33.3
 ================
 

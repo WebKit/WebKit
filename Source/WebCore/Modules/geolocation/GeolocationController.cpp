@@ -52,19 +52,25 @@ GeolocationController::~GeolocationController()
     m_client.geolocationDestroyed();
 }
 
+void GeolocationController::didNavigatePage()
+{
+    while (!m_observers.isEmpty())
+        removeObserver(m_observers.begin()->get());
+}
+
 void GeolocationController::addObserver(Geolocation& observer, bool enableHighAccuracy)
 {
-    // This may be called multiple times with the same observer, though removeObserver()
-    // is called only once with each.
-    bool wasEmpty = m_observers.isEmpty();
+    bool highAccuracyWasRequired = needsHighAccuracy();
+
     m_observers.add(observer);
     if (enableHighAccuracy)
         m_highAccuracyObservers.add(observer);
 
-    if (enableHighAccuracy)
-        m_client.setEnableHighAccuracy(true);
-    if (wasEmpty && m_page.isVisible())
-        m_client.startUpdating(observer.authorizationToken());
+    if (m_isUpdating) {
+        if (!highAccuracyWasRequired && enableHighAccuracy)
+            m_client.setEnableHighAccuracy(true);
+    } else
+        startUpdatingIfNecessary();
 }
 
 void GeolocationController::removeObserver(Geolocation& observer)
@@ -72,12 +78,17 @@ void GeolocationController::removeObserver(Geolocation& observer)
     if (!m_observers.contains(observer))
         return;
 
+    bool highAccuracyWasRequired = needsHighAccuracy();
+
     m_observers.remove(observer);
     m_highAccuracyObservers.remove(observer);
 
+    if (!m_isUpdating)
+        return;
+
     if (m_observers.isEmpty())
-        m_client.stopUpdating();
-    else if (m_highAccuracyObservers.isEmpty())
+        stopUpdatingIfNecessary();
+    else if (highAccuracyWasRequired && !needsHighAccuracy())
         m_client.setEnableHighAccuracy(false);
 }
 
@@ -107,21 +118,13 @@ void GeolocationController::cancelPermissionRequest(Geolocation& geolocation)
 void GeolocationController::positionChanged(const std::optional<GeolocationPositionData>& position)
 {
     m_lastPosition = position;
-    Vector<Ref<Geolocation>> observersVector;
-    observersVector.reserveInitialCapacity(m_observers.size());
-    for (auto& observer : m_observers)
-        observersVector.uncheckedAppend(observer.copyRef());
-    for (auto& observer : observersVector)
+    for (auto& observer : copyToVectorOf<Ref<Geolocation>>(m_observers))
         observer->positionChanged();
 }
 
 void GeolocationController::errorOccurred(GeolocationError& error)
 {
-    Vector<Ref<Geolocation>> observersVector;
-    observersVector.reserveInitialCapacity(m_observers.size());
-    for (auto& observer : m_observers)
-        observersVector.uncheckedAppend(observer.copyRef());
-    for (auto& observer : observersVector)
+    for (auto& observer : copyToVectorOf<Ref<Geolocation>>(m_observers))
         observer->setError(error);
 }
 
@@ -139,9 +142,9 @@ void GeolocationController::activityStateDidChange(OptionSet<ActivityState::Flag
     auto changed = oldActivityState ^ newActivityState;
     if (changed & ActivityState::IsVisible && !m_observers.isEmpty()) {
         if (newActivityState & ActivityState::IsVisible)
-            m_client.startUpdating((*m_observers.random())->authorizationToken());
+            startUpdatingIfNecessary();
         else
-            m_client.stopUpdating();
+            stopUpdatingIfNecessary();
     }
 
     if (!m_page.isVisible())
@@ -150,6 +153,24 @@ void GeolocationController::activityStateDidChange(OptionSet<ActivityState::Flag
     auto pendedPermissionRequests = WTFMove(m_pendingPermissionRequest);
     for (auto& permissionRequest : pendedPermissionRequests)
         m_client.requestPermission(permissionRequest.get());
+}
+
+void GeolocationController::startUpdatingIfNecessary()
+{
+    if (m_isUpdating || !m_page.isVisible() || m_observers.isEmpty())
+        return;
+
+    m_client.startUpdating((*m_observers.random())->authorizationToken(), needsHighAccuracy());
+    m_isUpdating = true;
+}
+
+void GeolocationController::stopUpdatingIfNecessary()
+{
+    if (!m_isUpdating)
+        return;
+
+    m_client.stopUpdating();
+    m_isUpdating = false;
 }
 
 const char* GeolocationController::supplementName()

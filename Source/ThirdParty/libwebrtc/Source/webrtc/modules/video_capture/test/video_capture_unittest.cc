@@ -152,7 +152,7 @@ class VideoCaptureTest : public ::testing::Test {
 
   void SetUp() override {
     device_info_.reset(VideoCaptureFactory::CreateDeviceInfo());
-    assert(device_info_.get());
+    RTC_DCHECK(device_info_.get());
     number_of_devices_ = device_info_->NumberOfDevices();
     ASSERT_GT(number_of_devices_, 0u);
   }

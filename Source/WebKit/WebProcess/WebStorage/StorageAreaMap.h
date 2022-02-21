@@ -28,6 +28,7 @@
 #include "MessageReceiver.h"
 #include "StorageAreaIdentifier.h"
 #include "StorageAreaImplIdentifier.h"
+#include "StorageAreaMapIdentifier.h"
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/StorageArea.h>
 #include <wtf/Forward.h>
@@ -49,7 +50,7 @@ class StorageNamespaceImpl;
 class StorageAreaMap final : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StorageAreaMap(StorageNamespaceImpl&, Ref<WebCore::SecurityOrigin>&&);
+    StorageAreaMap(StorageNamespaceImpl&, Ref<const WebCore::SecurityOrigin>&&);
     ~StorageAreaMap();
 
     WebCore::StorageType type() const { return m_type; }
@@ -66,8 +67,9 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     const WebCore::SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
-    const std::optional<StorageAreaIdentifier>& identifier() const { return m_mapID; }
+    StorageAreaMapIdentifier identifier() const { return m_identifier; }
 
+    void connect();
     void disconnect();
 
     void incrementUseCount();
@@ -78,8 +80,8 @@ private:
     void didRemoveItem(uint64_t mapSeed, const String& key);
     void didClear(uint64_t mapSeed);
 
-    void dispatchStorageEvent(const std::optional<StorageAreaImplIdentifier>& sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
-    void clearCache();
+    void dispatchStorageEvent(const std::optional<StorageAreaImplIdentifier>& sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString, uint64_t messageIdentifier);
+    void clearCache(uint64_t messageIdentifier);
 
     void resetValues();
     WebCore::StorageMap& ensureMap();
@@ -90,14 +92,19 @@ private:
     void dispatchSessionStorageEvent(const std::optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
     void dispatchLocalStorageEvent(const std::optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
 
-    void connect();
+    enum class SendMode : bool { Async, Sync };
+    void sendConnectMessage(SendMode);
+    void connectSync();
+    void didConnect(StorageAreaIdentifier, HashMap<String, String>&&, uint64_t messageIdentifier);
 
+    StorageAreaMapIdentifier m_identifier;
+    uint64_t m_lastHandledMessageIdentifier { 0 };
     StorageNamespaceImpl& m_namespace;
-    Ref<WebCore::SecurityOrigin> m_securityOrigin;
+    Ref<const WebCore::SecurityOrigin> m_securityOrigin;
     std::unique_ptr<WebCore::StorageMap> m_map;
-    std::optional<StorageAreaIdentifier> m_mapID;
+    std::optional<StorageAreaIdentifier> m_remoteAreaIdentifier;
     HashCountedSet<String> m_pendingValueChanges;
-    uint64_t m_currentSeed { 0 };
+    uint64_t m_currentSeed { 1 };
     unsigned m_quotaInBytes;
     WebCore::StorageType m_type;
     uint64_t m_useCount { 0 };

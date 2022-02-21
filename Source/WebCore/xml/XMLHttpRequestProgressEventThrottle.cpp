@@ -81,7 +81,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchReadyStateChangeEvent(Event& e
 void XMLHttpRequestProgressEventThrottle::dispatchEventWhenPossible(Event& event)
 {
     if (m_shouldDeferEventsDueToSuspension)
-        m_target.queueTaskToDispatchEvent(m_target, TaskSource::Networking, makeRef(event));
+        m_target.queueTaskToDispatchEvent(m_target, TaskSource::Networking, event);
     else
         m_target.dispatchEvent(event);
 }

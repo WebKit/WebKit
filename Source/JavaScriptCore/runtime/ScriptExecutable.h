@@ -45,7 +45,7 @@ public:
     CodeBlockHash hashFor(CodeSpecializationKind) const;
 
     const SourceCode& source() const { return m_source; }
-    intptr_t sourceID() const { return m_source.providerID(); }
+    SourceID sourceID() const { return m_source.providerID(); }
     const SourceOrigin& sourceOrigin() const { return m_source.provider()->sourceOrigin(); }
     // This is NOT the path that should be used for computing relative paths from a script. Use SourceOrigin's URL for that, the values may or may not be the same... This should only be used for `error.sourceURL` and stack traces.
     const String& sourceURL() const { return m_source.provider()->sourceURL(); }

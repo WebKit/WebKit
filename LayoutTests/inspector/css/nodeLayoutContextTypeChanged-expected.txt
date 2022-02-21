@@ -10,3 +10,15 @@ PASS: Layout context should now be `null`.
 PASS: Layout context should be `null`.
 PASS: Layout context should now be `grid`.
 
+-- Running test case: CSS.nodeLayoutContextTypeChanged.FlexToNonFlex
+PASS: Layout context should be `flex`.
+PASS: Layout context should now be `null`.
+
+-- Running test case: CSS.nodeLayoutContextTypeChanged.NonFlexToFlex
+PASS: Layout context should be `null`.
+PASS: Layout context should now be `flex`.
+
+-- Running test case: CSS.nodeLayoutContextTypeChanged.GridToFlex
+PASS: Layout context should now be `grid`.
+PASS: Layout context should now be `flex`.
+

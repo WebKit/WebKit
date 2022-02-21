@@ -29,9 +29,9 @@
 #include "ChannelInterpretation.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/Variant.h>
 
 #define DEBUG_AUDIONODE_REFERENCES 0
 
@@ -231,7 +231,7 @@ protected:
     virtual void updatePullStatus() { }
 
 private:
-    using WeakOrStrongContext = Variant<Ref<BaseAudioContext>, WeakPtr<BaseAudioContext>>;
+    using WeakOrStrongContext = std::variant<Ref<BaseAudioContext>, WeakPtr<BaseAudioContext>>;
     static WeakOrStrongContext toWeakOrStrongContext(BaseAudioContext&, NodeType);
 
     // EventTarget

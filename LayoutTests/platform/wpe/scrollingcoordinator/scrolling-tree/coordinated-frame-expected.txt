@@ -43,7 +43,7 @@
                   (anchor edges: AnchorEdgeTop AnchorEdgeBottom)
                   (top offset 10.00)
                   (bottom offset 10.00)
-                  (containing block rect at (2,2) size 385x1760)
+                  (containing block rect at (0,0) size 385x1760)
                   (sticky box rect at (0,830) size 100x100)
                   (constraining rect at (0,0) size 385x285)
                   (sticky offset at last layout width=0 height=-655)

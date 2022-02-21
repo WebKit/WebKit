@@ -1,62 +1,45 @@
-find_package(Libxkbcommon 0.4.0 REQUIRED)
-find_package(Wayland REQUIRED)
-find_package(WaylandProtocols 1.12 REQUIRED)
-find_package(WPEBackend_fdo 1.3.0 REQUIRED)
+set(WPEToolingBackends_LIBRARY_TYPE STATIC)
+set(WPEToolingBackends_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/WPEToolingBackends/DerivedSources")
+set(WPEToolingBackends_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WPEToolingBackends/Headers")
 
-file(MAKE_DIRECTORY ${DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR})
+file(MAKE_DIRECTORY ${WPEToolingBackends_DERIVED_SOURCES_DIR})
+
+set(WPEToolingBackends_PUBLIC_HEADERS
+    HeadlessViewBackend.h
+    ViewBackend.h
+)
 
 set(WPEToolingBackends_SOURCES
-    ${DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR}/xdg-shell-unstable-v6-protocol.c
-    ${TOOLS_DIR}/wpe/backends/HeadlessViewBackend.cpp
-    ${TOOLS_DIR}/wpe/backends/ViewBackend.cpp
-    ${TOOLS_DIR}/wpe/backends/WebKitAccessibleApplication.cpp
-    ${TOOLS_DIR}/wpe/backends/WindowViewBackend.cpp
+    HeadlessViewBackend.cpp
+    ViewBackend.cpp
 )
 
-set(WPEToolingBackends_INCLUDE_DIRECTORIES
-    ${DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR}
-)
-
-set(WPEToolingBackends_SYSTEM_INCLUDE_DIRECTORIES
-    ${ATK_INCLUDE_DIRS}
-    ${GLIB_INCLUDE_DIRS}
-    ${LIBEPOXY_INCLUDE_DIRS}
-    ${WPEBACKEND_FDO_INCLUDE_DIRS}
+set(WPEToolingBackends_PRIVATE_INCLUDE_DIRECTORIES
+    ${WPEToolingBackends_DERIVED_SOURCES_DIR}
+    ${TOOLS_DIR}/wpe/backends
 )
 
 set(WPEToolingBackends_LIBRARIES
     Cairo::Cairo
     WPE::libwpe
-    ${ATK_LIBRARIES}
-    ${GLIB_LIBRARIES}
-    ${LIBEPOXY_LIBRARIES}
-    ${LIBXKBCOMMON_LIBRARIES}
-    ${WAYLAND_LIBRARIES}
-    ${WPEBACKEND_FDO_LIBRARIES}
 )
 
-add_definitions(${LIBEPOXY_DEFINITIONS})
-
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR}/xdg-shell-unstable-v6-protocol.c
-    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v6.xml
-    DEPENDS ${DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR}/xdg-shell-unstable-v6-client-protocol.h
-    COMMAND ${WAYLAND_SCANNER} code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v6.xml ${DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR}/xdg-shell-unstable-v6-protocol.c
-    VERBATIM)
-
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR}/xdg-shell-unstable-v6-client-protocol.h
-    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v6.xml
-    COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v6.xml ${DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR}/xdg-shell-unstable-v6-client-protocol.h
-    VERBATIM)
-
-if (ENABLE_ACCESSIBILITY)
-    add_definitions(-DHAVE_ACCESSIBILITY=1)
-    add_definitions(-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_40)
-    list(APPEND WPEToolingBackends_LIBRARIES ATK::Bridge)
+if (USE_CAIRO)
+    list(APPEND WPEToolingBackends_DEFINITIONS USE_CAIRO=1)
 endif ()
 
-add_library(WPEToolingBackends STATIC ${WPEToolingBackends_SOURCES})
-include_directories(${WPEToolingBackends_INCLUDE_DIRECTORIES})
-include_directories(SYSTEM ${WPEToolingBackends_SYSTEM_INCLUDE_DIRECTORIES})
-target_link_libraries(WPEToolingBackends ${WPEToolingBackends_LIBRARIES})
+set(WPEToolingBackends_INTERFACE_LIBRARIES WPEToolingBackends)
+set(WPEToolingBackends_INTERFACE_INCLUDE_DIRECTORIES ${WPEToolingBackends_FRAMEWORK_HEADERS_DIR})
+set(WPEToolingBackends_INTERFACE_DEPENDENCIES WPEToolingBackends_CopyHeaders)
+
+WEBKIT_FRAMEWORK_DECLARE(WPEToolingBackends)
+WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
+WEBKIT_COPY_FILES(WPEToolingBackends_CopyHeaders
+    DESTINATION ${WPEToolingBackends_FRAMEWORK_HEADERS_DIR}/WPEToolingBackends
+    FILES ${WPEToolingBackends_PUBLIC_HEADERS}
+    FLATTENED
+)
+
+WEBKIT_FRAMEWORK(WPEToolingBackends)
+WEBKIT_FRAMEWORK_TARGET(WPEToolingBackends)

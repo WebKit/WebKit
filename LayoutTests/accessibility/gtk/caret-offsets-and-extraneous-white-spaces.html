@@ -2,7 +2,6 @@
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
-<script src="resources/atk-helpers.js"></script>
 </head>
 
 <body>
@@ -22,6 +21,11 @@ function globalListener(object, name, offset)
     if (name == 'AXTextCaretMoved') {
         caretMovedData += role + '|' + offset;
     }
+}
+
+function setCaretOffset(accessibleText, offset)
+{
+    return accessibleText.setSelectedTextRange(offset, 0);
 }
 
 function resetCaretOffsetForObject(object, offset)

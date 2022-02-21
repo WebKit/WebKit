@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CachedTypes.h"
 
+#include "BaselineJITCode.h"
 #include "BuiltinNames.h"
 #include "BytecodeCacheError.h"
 #include "BytecodeLivenessAnalysis.h"
@@ -394,7 +395,7 @@ static std::enable_if_t<!std::is_same<T, SourceType<T>>::value, SourceType<T>>&&
 
 template<typename Source>
 class CachedObject {
-    WTF_MAKE_NONCOPYABLE(CachedObject<Source>);
+    WTF_MAKE_NONCOPYABLE(CachedObject);
 
 public:
     using SourceType_ = Source;
@@ -1036,11 +1037,11 @@ class CachedCompactTDZEnvironment : public CachedObject<CompactTDZEnvironment> {
 public:
     void encode(Encoder& encoder, const CompactTDZEnvironment& env)
     {
-        if (WTF::holds_alternative<CompactTDZEnvironment::Compact>(env.m_variables))
-            m_variables.encode(encoder, WTF::get<CompactTDZEnvironment::Compact>(env.m_variables));
+        if (std::holds_alternative<CompactTDZEnvironment::Compact>(env.m_variables))
+            m_variables.encode(encoder, std::get<CompactTDZEnvironment::Compact>(env.m_variables));
         else {
             CompactTDZEnvironment::Compact compact;
-            for (auto& key : WTF::get<CompactTDZEnvironment::Inflated>(env.m_variables))
+            for (auto& key : std::get<CompactTDZEnvironment::Inflated>(env.m_variables))
                 compact.append(key);
             m_variables.encode(encoder, compact);
         }
@@ -1916,6 +1917,11 @@ public:
 
     UnlinkedCodeBlock::RareData* rareData(Decoder& decoder) const { return m_rareData.decode(decoder); }
 
+    unsigned numValueProfiles() const { return m_numValueProfiles; }
+    unsigned numArrayProfiles() const { return m_numArrayProfiles; }
+    unsigned numBinaryArithProfiles() const { return m_numBinaryArithProfiles; }
+    unsigned numUnaryArithProfiles() const { return m_numUnaryArithProfiles; }
+
 private:
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
@@ -1946,6 +1952,11 @@ private:
     int m_numVars;
     int m_numCalleeLocals;
     int m_numParameters;
+
+    unsigned m_numValueProfiles;
+    unsigned m_numArrayProfiles;
+    unsigned m_numBinaryArithProfiles;
+    unsigned m_numUnaryArithProfiles;
 
     CachedMetadataTable m_metadata;
 
@@ -1979,7 +1990,7 @@ public:
 
     UnlinkedProgramCodeBlock* decode(Decoder& decoder) const
     {
-        UnlinkedProgramCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedProgramCodeBlock>(decoder.vm().heap)) UnlinkedProgramCodeBlock(decoder, *this);
+        UnlinkedProgramCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedProgramCodeBlock>(decoder.vm())) UnlinkedProgramCodeBlock(decoder, *this);
         codeBlock->finishCreation(decoder.vm());
         Base::decode(decoder, *codeBlock);
         m_varDeclarations.decode(decoder, codeBlock->m_varDeclarations);
@@ -2004,7 +2015,7 @@ public:
 
     UnlinkedModuleProgramCodeBlock* decode(Decoder& decoder) const
     {
-        UnlinkedModuleProgramCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedModuleProgramCodeBlock>(decoder.vm().heap)) UnlinkedModuleProgramCodeBlock(decoder, *this);
+        UnlinkedModuleProgramCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedModuleProgramCodeBlock>(decoder.vm())) UnlinkedModuleProgramCodeBlock(decoder, *this);
         codeBlock->finishCreation(decoder.vm());
         Base::decode(decoder, *codeBlock);
         codeBlock->m_moduleEnvironmentSymbolTableConstantRegisterOffset = m_moduleEnvironmentSymbolTableConstantRegisterOffset;
@@ -2028,7 +2039,7 @@ public:
 
     UnlinkedEvalCodeBlock* decode(Decoder& decoder) const
     {
-        UnlinkedEvalCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedEvalCodeBlock>(decoder.vm().heap)) UnlinkedEvalCodeBlock(decoder, *this);
+        UnlinkedEvalCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedEvalCodeBlock>(decoder.vm())) UnlinkedEvalCodeBlock(decoder, *this);
         codeBlock->finishCreation(decoder.vm());
         Base::decode(decoder, *codeBlock);
         m_variables.decode(decoder, codeBlock->m_variables);
@@ -2052,7 +2063,7 @@ public:
 
     UnlinkedFunctionCodeBlock* decode(Decoder& decoder) const
     {
-        UnlinkedFunctionCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedFunctionCodeBlock>(decoder.vm().heap)) UnlinkedFunctionCodeBlock(decoder, *this);
+        UnlinkedFunctionCodeBlock* codeBlock = new (NotNull, allocateCell<UnlinkedFunctionCodeBlock>(decoder.vm())) UnlinkedFunctionCodeBlock(decoder, *this);
         codeBlock->finishCreation(decoder.vm());
         Base::decode(decoder, *codeBlock);
         return codeBlock;
@@ -2151,8 +2162,11 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
 
     , m_metadata(cachedCodeBlock.metadata(decoder))
     , m_instructions(cachedCodeBlock.instructions(decoder))
-
     , m_rareData(cachedCodeBlock.rareData(decoder))
+    , m_valueProfiles(cachedCodeBlock.numValueProfiles())
+    , m_arrayProfiles(cachedCodeBlock.numArrayProfiles())
+    , m_binaryArithProfiles(cachedCodeBlock.numBinaryArithProfiles())
+    , m_unaryArithProfiles(cachedCodeBlock.numUnaryArithProfiles())
 {
 }
 
@@ -2229,7 +2243,7 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
 
 ALWAYS_INLINE UnlinkedFunctionExecutable* CachedFunctionExecutable::decode(Decoder& decoder) const
 {
-    UnlinkedFunctionExecutable* executable = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(decoder.vm().heap)) UnlinkedFunctionExecutable(decoder, *this);
+    UnlinkedFunctionExecutable* executable = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(decoder.vm())) UnlinkedFunctionExecutable(decoder, *this);
     executable->finishCreation(decoder.vm());
     return executable;
 }
@@ -2328,6 +2342,10 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_codeGenerationMode = codeBlock.m_codeGenerationMode;
     m_codeType = codeBlock.m_codeType;
     m_hasCheckpoints = codeBlock.m_hasCheckpoints;
+    m_numValueProfiles = codeBlock.m_valueProfiles.size();
+    m_numArrayProfiles = codeBlock.m_arrayProfiles.size();
+    m_numBinaryArithProfiles = codeBlock.m_binaryArithProfiles.size();
+    m_numUnaryArithProfiles = codeBlock.m_unaryArithProfiles.size();
 
     m_metadata.encode(encoder, codeBlock.m_metadata.get());
     m_rareData.encode(encoder, codeBlock.m_rareData.get());
@@ -2526,7 +2544,7 @@ UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, Ref<Cac
     Ref<Decoder> decoder = Decoder::create(vm, WTFMove(cachedBytecode), &key.source().provider());
     std::pair<SourceCodeKey, UnlinkedCodeBlock*> entry;
     {
-        DeferGC deferGC(vm.heap);
+        DeferGC deferGC(vm);
         if (!cachedEntry->decode(decoder.get(), entry))
             return nullptr;
     }

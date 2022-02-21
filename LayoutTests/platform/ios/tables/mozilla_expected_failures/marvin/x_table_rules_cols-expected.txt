@@ -17,14 +17,14 @@ layer at (0,0) size 800x150
         RenderTableSection {thead} at (0,0) size 181x23
           RenderTableRow {tr} at (0,0) size 180x23
             RenderTableCell {th} at (0,0) size 60x23 [border: (0.50px none #808080) (0.50px solid #808080) none (0.50px solid #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,2) size 58x19
-                text run at (1,2) width 58: "THEAD"
+              RenderText {#text} at (1,1) size 58x20
+                text run at (1,1) width 58: "THEAD"
             RenderTableCell {th} at (59,0) size 61x23 [border: (0.50px none #808080) (0.50px solid #808080) none (0.50px solid #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,2) size 58x19
-                text run at (1,2) width 58: "THEAD"
+              RenderText {#text} at (1,1) size 58x20
+                text run at (1,1) width 58: "THEAD"
             RenderTableCell {th} at (119,0) size 61x23 [border: (0.50px none #808080) (0.50px solid #808080) none (0.50px solid #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,2) size 58x19
-                text run at (1,2) width 58: "THEAD"
+              RenderText {#text} at (1,1) size 58x20
+                text run at (1,1) width 58: "THEAD"
         RenderTableSection {tfoot} at (0,67) size 181x23
           RenderTableRow {tr} at (0,0) size 180x23
             RenderTableCell {td} at (0,0) size 60x23 [border: none (0.50px solid #808080) (0.50px none #808080) (0.50px solid #808080)] [r=0 c=0 rs=1 cs=1]

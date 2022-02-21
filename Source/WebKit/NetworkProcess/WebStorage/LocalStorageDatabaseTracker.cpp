@@ -29,7 +29,7 @@
 #include "Logging.h"
 #include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SQLiteStatement.h>
-#include <WebCore/TextEncoding.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
@@ -119,21 +119,14 @@ Vector<SecurityOriginData> LocalStorageDatabaseTracker::origins() const
 
 Vector<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::originDetailsCrossThreadCopy()
 {
-    Vector<OriginDetails> result;
-    auto databaseOrigins = origins();
-    result.reserveInitialCapacity(databaseOrigins.size());
-
-    for (const auto& origin : databaseOrigins) {
-        String path = databasePath(origin);
-
-        OriginDetails details;
-        details.originIdentifier = crossThreadCopy(origin.databaseIdentifier());
-        details.creationTime = SQLiteFileSystem::databaseCreationTime(path);
-        details.modificationTime = SQLiteFileSystem::databaseModificationTime(path);
-        result.uncheckedAppend(WTFMove(details));
-    }
-
-    return result;
+    return origins().map([this](auto& origin) {
+        auto path = databasePath(origin);
+        return OriginDetails {
+            crossThreadCopy(origin.databaseIdentifier()),
+            SQLiteFileSystem::databaseCreationTime(path),
+            SQLiteFileSystem::databaseModificationTime(path)
+        };
+    });
 }
 
 String LocalStorageDatabaseTracker::databasePath(const String& filename) const

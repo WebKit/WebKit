@@ -167,7 +167,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE eventPhase(_Out_ unsigned short* result);
     virtual HRESULT STDMETHODCALLTYPE bubbles(_Out_ BOOL* result);
     virtual HRESULT STDMETHODCALLTYPE cancelable(_Out_ BOOL* result);
-    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ DOMTimeStamp* result);
+    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ EpochTimeStamp* result);
     virtual HRESULT STDMETHODCALLTYPE stopPropagation();
     virtual HRESULT STDMETHODCALLTYPE preventDefault();
     virtual HRESULT STDMETHODCALLTYPE initEvent(_In_ BSTR eventTypeArg, BOOL canBubbleArg, BOOL cancelableArg);
@@ -263,7 +263,7 @@ public:
         return DOMEvent::cancelable(result);
     }
     
-    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ DOMTimeStamp* result)
+    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ EpochTimeStamp* result)
     {
         return DOMEvent::timeStamp(result);
     }
@@ -380,7 +380,7 @@ public:
         return DOMEvent::cancelable(result);
     }
     
-    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ DOMTimeStamp* result)
+    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ EpochTimeStamp* result)
     {
         return DOMEvent::timeStamp(result);
     }
@@ -548,7 +548,7 @@ public:
         return DOMEvent::cancelable(result);
     }
     
-    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ DOMTimeStamp* result)
+    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ EpochTimeStamp* result)
     {
         return DOMEvent::timeStamp(result);
     }
@@ -725,7 +725,7 @@ public:
         return DOMEvent::cancelable(result);
     }
     
-    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ DOMTimeStamp* result)
+    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ EpochTimeStamp* result)
     {
         return DOMEvent::timeStamp(result);
     }
@@ -840,7 +840,7 @@ public:
         return DOMEvent::cancelable(result);
     }
     
-    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ DOMTimeStamp* result)
+    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ EpochTimeStamp* result)
     {
         return DOMEvent::timeStamp(result);
     }
@@ -950,7 +950,7 @@ public:
         return DOMEvent::cancelable(result);
     }
     
-    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ DOMTimeStamp* result)
+    virtual HRESULT STDMETHODCALLTYPE timeStamp(_Out_ EpochTimeStamp* result)
     {
         return DOMEvent::timeStamp(result);
     }

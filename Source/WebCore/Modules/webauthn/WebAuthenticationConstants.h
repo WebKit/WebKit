@@ -77,6 +77,26 @@ enum class ClientDataType : bool {
     Get
 };
 
+// rdar://88104045 - Remove once staged change completed
 const char LocalAuthenticatiorAccessGroup[] = "com.apple.webkit.webauthn";
 
+constexpr const char LocalAuthenticatorAccessGroup[] = "com.apple.webkit.webauthn";
+
+// Credential serialization
+constexpr const char privateKeyKey[] = "priv";
+constexpr const char keyTypeKey[] = "key_type";
+constexpr const char keySizeKey[] = "key_size";
+constexpr const char relyingPartyKey[] = "rp";
+constexpr const char applicationTagKey[] = "tag";
+
 } // namespace WebCore
+
+namespace WebAuthn {
+
+enum class Scope {
+    CrossOrigin,
+    SameOrigin,
+    SameSite
+};
+
+} // namespace WebAuthn

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,7 +61,7 @@ JSC::VM& commonVMSlow()
     RunLoop* runLoop = nullptr;
 #endif
 
-    auto& vm = JSC::VM::create(JSC::LargeHeap, runLoop).leakRef();
+    auto& vm = JSC::VM::create(JSC::HeapType::Large, runLoop).leakRef();
 
     g_commonVMOrNull = &vm;
 

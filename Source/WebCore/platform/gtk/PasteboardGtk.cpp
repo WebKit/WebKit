@@ -183,6 +183,10 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
     }
 }
 
+void Pasteboard::write(const PasteboardBuffer&)
+{
+}
+
 void Pasteboard::write(const PasteboardWebContent& pasteboardContent)
 {
     if (m_selectionData) {
@@ -451,7 +455,7 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
             return FileContentState::MayContainFilePaths;
     }
 
-    auto result = types.findMatching([](const String& type) {
+    auto result = types.findIf([](const String& type) {
         return MIMETypeRegistry::isSupportedImageMIMEType(type);
     });
     return result == notFound ? FileContentState::NoFileOrImageData : FileContentState::MayContainFilePaths;

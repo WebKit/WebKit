@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@ namespace WebCore {
 
 class CaptureDevice {
 public:
-    enum class DeviceType { Unknown, Microphone, Speaker, Camera, Screen, Window };
+    enum class DeviceType { Unknown, Microphone, Speaker, Camera, Screen, Window, SystemAudio };
 
     CaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString(), bool isEnabled = false, bool isDefault = false, bool isMock = false)
         : m_persistentId(persistentId)
@@ -154,7 +154,7 @@ inline bool haveDevicesChanged(const Vector<CaptureDevice>& oldDevices, const Ve
         if (newDevice.type() != CaptureDevice::DeviceType::Camera && newDevice.type() != CaptureDevice::DeviceType::Microphone)
             continue;
 
-        auto index = oldDevices.findMatching([&newDevice](auto& oldDevice) {
+        auto index = oldDevices.findIf([&newDevice](auto& oldDevice) {
             return newDevice.persistentId() == oldDevice.persistentId() && newDevice.enabled() != oldDevice.enabled();
         });
 
@@ -191,7 +191,8 @@ template<> struct EnumTraits<WebCore::CaptureDevice::DeviceType> {
         WebCore::CaptureDevice::DeviceType::Speaker,
         WebCore::CaptureDevice::DeviceType::Camera,
         WebCore::CaptureDevice::DeviceType::Screen,
-        WebCore::CaptureDevice::DeviceType::Window
+        WebCore::CaptureDevice::DeviceType::Window,
+        WebCore::CaptureDevice::DeviceType::SystemAudio
     >;
 };
 

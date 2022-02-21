@@ -27,6 +27,7 @@
 
 #if !PLATFORM(IOS_FAMILY_SIMULATOR) && ENABLE(FULLSCREEN_API)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
@@ -36,8 +37,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
 
-static bool didEnterPiP;
-static bool didExitPiP;
 static bool didEnterFullscreen;
 static bool didExitFullscreen;
 

@@ -67,7 +67,7 @@ void UserContentProvider::registerForUserMessageHandlerInvalidation(UserContentP
 {
     ASSERT(!m_userMessageHandlerInvalidationClients.contains(invalidationClient));
 
-    m_userMessageHandlerInvalidationClients.add(&invalidationClient);
+    m_userMessageHandlerInvalidationClients.add(invalidationClient);
 }
 
 void UserContentProvider::unregisterForUserMessageHandlerInvalidation(UserContentProviderInvalidationClient& invalidationClient)

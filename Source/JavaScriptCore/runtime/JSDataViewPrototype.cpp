@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -106,7 +106,7 @@ JSDataViewPrototype::JSDataViewPrototype(VM& vm, Structure* structure)
 JSDataViewPrototype* JSDataViewPrototype::create(VM& vm, Structure* structure)
 {
     JSDataViewPrototype* prototype =
-        new (NotNull, allocateCell<JSDataViewPrototype>(vm.heap))
+        new (NotNull, allocateCell<JSDataViewPrototype>(vm))
         JSDataViewPrototype(vm, structure);
     prototype->finishCreation(vm);
     return prototype;
@@ -136,11 +136,11 @@ EncodedJSValue getData(JSGlobalObject* globalObject, CallFrame* callFrame)
     if (!dataView)
         return throwVMTypeError(globalObject, scope, "Receiver of DataView method must be a DataView"_s);
     
-    unsigned byteOffset = callFrame->argument(0).toIndex(globalObject, "byteOffset");
+    size_t byteOffset = callFrame->argument(0).toIndex(globalObject, "byteOffset");
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     bool littleEndian = false;
-    unsigned elementSize = sizeof(typename Adaptor::Type);
+    size_t elementSize = sizeof(typename Adaptor::Type);
     if (elementSize > 1 && callFrame->argumentCount() >= 2) {
         littleEndian = callFrame->uncheckedArgument(1).toBoolean(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -149,7 +149,7 @@ EncodedJSValue getData(JSGlobalObject* globalObject, CallFrame* callFrame)
     if (dataView->isDetached())
         return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
 
-    unsigned byteLength = dataView->length();
+    size_t byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
         return throwVMRangeError(globalObject, scope, "Out of bounds access"_s);
 
@@ -182,7 +182,7 @@ EncodedJSValue setData(JSGlobalObject* globalObject, CallFrame* callFrame)
     if (!dataView)
         return throwVMTypeError(globalObject, scope, "Receiver of DataView method must be a DataView"_s);
     
-    unsigned byteOffset = callFrame->argument(0).toIndex(globalObject, "byteOffset");
+    size_t byteOffset = callFrame->argument(0).toIndex(globalObject, "byteOffset");
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     const unsigned dataSize = sizeof(typename Adaptor::Type);
@@ -195,7 +195,7 @@ EncodedJSValue setData(JSGlobalObject* globalObject, CallFrame* callFrame)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     bool littleEndian = false;
-    unsigned elementSize = sizeof(typename Adaptor::Type);
+    size_t elementSize = sizeof(typename Adaptor::Type);
     if (elementSize > 1 && callFrame->argumentCount() >= 3) {
         littleEndian = callFrame->uncheckedArgument(2).toBoolean(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -204,7 +204,7 @@ EncodedJSValue setData(JSGlobalObject* globalObject, CallFrame* callFrame)
     if (dataView->isDetached())
         return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
 
-    unsigned byteLength = dataView->length();
+    size_t byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
         return throwVMRangeError(globalObject, scope, "Out of bounds access"_s);
 

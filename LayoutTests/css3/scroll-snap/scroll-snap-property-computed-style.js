@@ -60,7 +60,7 @@ testComputedScrollSnapRule("two percentages", "scroll-padding", "10% 20%", "10% 
 testComputedScrollSnapRule("three lengths", "scroll-padding", "1px 2px 3px", "1px 2px 3px", { top: "1px", left: "2px", right: "2px", bottom: "3px" });
 testComputedScrollSnapRule("four values", "scroll-padding", "50px 10% 20% 50px", "50px 10% 20% 50px", { top: "50px", left: "50px", right: "10%", bottom: "20%" });
 testComputedScrollSnapRule("calc expression", "scroll-padding", "calc(50px + 10%) 20px", "calc(10% + 50px) 20px", { top: "calc(10% + 50px)", left: "20px", right: "20px", bottom: "calc(10% + 50px)" });
-testComputedScrollSnapRule("various units", "scroll-padding", "1em 5mm 2in 4cm", "16px 18.89763832092285px 192px 151.1811065673828px", { top: "16px", left: "151.1811065673828px", right: "18.89763832092285px", bottom: "192px" });
+testComputedScrollSnapRule("various units", "scroll-padding", "1em 5mm 2in 4cm", "16px 18.897638px 192px 151.181107px", { top: "16px", left: "151.181107px", right: "18.897638px", bottom: "192px" });
 testComputedScrollSnapRule("subpixel values", "scroll-padding", "10.4375px 6.5px", "10.4375px 6.5px", { top: "10.4375px", left: "6.5px", right: "6.5px", bottom: "10.4375px" });
 
 // Test the scroll-snap-margin property
@@ -76,7 +76,7 @@ testComputedScrollSnapRule("single length", "scroll-snap-margin", "10px", "10px"
 testComputedScrollSnapRule("two lengths", "scroll-snap-margin", "10px 20px", "10px 20px", { top: "10px", left: "20px", right: "20px", bottom: "10px" });
 testComputedScrollSnapRule("three lengths", "scroll-snap-margin", "1px 2px 3px", "1px 2px 3px", { top: "1px", left: "2px", right: "2px", bottom: "3px" });
 testComputedScrollSnapRule("four lengths", "scroll-snap-margin", "50px 10px 20px 50px", "50px 10px 20px 50px", { top: "50px", left: "50px", right: "10px", bottom: "20px" });
-testComputedScrollSnapRule("various units", "scroll-snap-margin", "1em 5mm 2in 4cm", "16px 18.89763832092285px 192px 151.1811065673828px", { top: "16px", left: "151.1811065673828px", right: "18.89763832092285px", bottom: "192px" });
+testComputedScrollSnapRule("various units", "scroll-snap-margin", "1em 5mm 2in 4cm", "16px 18.897638px 192px 151.181107px", { top: "16px", left: "151.181107px", right: "18.897638px", bottom: "192px" });
 testComputedScrollSnapRule("subpixel values", "scroll-snap-margin", "10.4375px 6.5px", "10.4375px 6.5px", { top: "10.4375px", left: "6.5px", right: "6.5px", bottom: "10.4375px" });
 
 successfullyParsed = true;

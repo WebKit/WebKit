@@ -68,9 +68,14 @@ public:
     DFG::CommonData* dfgCommon() override;
     static ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
     void shrinkToFit(const ConcurrentJSLocker&) override;
+
+    PCToCodeOriginMap* pcToCodeOriginMap() override { return common.m_pcToCodeOriginMap.get(); }
+
+    const RegisterAtOffsetList* calleeSaveRegisters() const { return &m_calleeSaveRegisters; }
     
     DFG::CommonData common;
     Vector<OSRExit> m_osrExit;
+    RegisterAtOffsetList m_calleeSaveRegisters;
     SegmentedVector<OSRExitDescriptor, 8> osrExitDescriptors;
     Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
     

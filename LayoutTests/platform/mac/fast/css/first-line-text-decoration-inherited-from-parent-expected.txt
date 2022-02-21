@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,0) size 784x66 [color=#008000]
           RenderText {#text} at (0,10) size 626x28
             text run at (0,10) width 626: "Underline Underline Underline Underline"
-          RenderBR {BR} at (625,18) size 1x18
+          RenderBR {BR} at (625,10) size 1x28
           RenderText {#text} at (0,48) size 286x18
             text run at (0,48) width 286: "Underline Underline Underline Underline"
           RenderBR {BR} at (285,48) size 1x18
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,0) size 784x66 [color=#008000]
           RenderText {#text} at (0,10) size 553x28
             text run at (0,10) width 553: "Overline Overline Overline Overline"
-          RenderBR {BR} at (552,18) size 1x18
+          RenderBR {BR} at (552,10) size 1x28
           RenderText {#text} at (0,48) size 251x18
             text run at (0,48) width 251: "Overline Overline Overline Overline"
           RenderBR {BR} at (250,48) size 1x18
@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,0) size 784x66 [color=#008000]
           RenderText {#text} at (0,10) size 709x28
             text run at (0,10) width 709: "Line-Through Line-Through Line-Through Line"
-          RenderBR {BR} at (708,18) size 1x18
+          RenderBR {BR} at (708,10) size 1x28
           RenderText {#text} at (0,48) size 399x18
             text run at (0,48) width 399: "Line-Through Line-Through Line-Through Line-Through"
           RenderBR {BR} at (398,48) size 1x18

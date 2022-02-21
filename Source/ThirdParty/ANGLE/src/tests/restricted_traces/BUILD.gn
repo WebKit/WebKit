@@ -9,6 +9,7 @@ import("../../../gni/angle.gni")
 angle_shared_library("angle_restricted_trace_loader") {
   sources = [
     "restricted_traces_autogen.h",
+    "restricted_traces_export.h",
     "trace_egl_loader_autogen.cpp",
     "trace_egl_loader_autogen.h",
     "trace_gles_loader_autogen.cpp",
@@ -18,55 +19,34 @@ angle_shared_library("angle_restricted_trace_loader") {
   deps = [ "$angle_root:includes" ]
 }
 
+angle_trace_fixture("angle_restricted_trace_fixture") {
+  gl_header = "angle_trace_gl.h"
+  public_deps = [
+    ":angle_restricted_trace_loader",
+    "$angle_root/util:angle_util",
+  ]
+  public_configs = [ "$angle_root:no_gl_prototypes" ]
+}
+
 # Imports "angle_restricted_traces"
 import("restricted_traces_autogen.gni")
 _traces = []
+_trace_headers = []
 
-foreach(_test_info, angle_restricted_traces) {
-  # Empty out the "_test_and_ctx" list so GN doesn't complain about replacing non-empty list.
-  _test_and_ctx = []
-  _test_and_ctx = string_split(_test_info)
-  _test = _test_and_ctx[0]
-  _ctx = _test_and_ctx[1]
-  _test_dir = "${_test}"
-  _test_ctx = "${_test_dir}/${_test}_capture_context${_ctx}"
-  _target = "angle_restricted_trace_" + _test
-  _traces += [ ":$_target" ]
-  angle_shared_library(_target) {
-    testonly = true
+foreach(_trace_data, angle_restricted_traces) {
+  _trace = _trace_data[0]
+  _trace_ctx = _trace_data[1]
+  _target = "angle_restricted_trace_${_trace}"
 
-    # Similar to capture replay sample, use the file index for sources
-    sources = [ "angle_trace_gl.h" ] +
-              rebase_path(read_file("${_test_ctx}_files.txt", "list lines"),
-                          ".",
-                          "${_test_dir}") +
-              [
-                "${_test_ctx}.cpp",
-                "${_test_ctx}.h",
-              ]
-
-    configs += [ "$angle_root:no_gl_prototypes" ]
-    data = [ "${_test_dir}/${_test}_capture_context${_ctx}.angledata.gz" ]
-    defines = [ "ANGLE_REPLAY_IMPLEMENTATION" ]
-    inputs = [ "${_test}.tar.gz.sha1" ]
-    suppressed_configs += [ "$angle_root:constructor_and_destructor_warnings" ]
-
-    public_deps = [ ":angle_restricted_trace_loader" ]
-    deps = [ "$angle_root:includes" ]
-
-    # Disable optimization in the trace perf tests to avoid optimizing huge files.
-    if (!is_debug) {
-      suppressed_configs += [
-        "//build/config/compiler:afdo",
-        "//build/config/compiler:afdo_optimize_size",
-        "//build/config/compiler:default_optimization",
-        "//build/config/compiler/pgo:default_pgo_flags",
-      ]
-      configs += [ "//build/config/compiler:no_optimize" ]
-    }
-
-    include_dirs = [ "." ]
+  angle_trace(_target) {
+    sources = _trace_data[2]
+    data = _trace_data[3]
+    trace_prefix = _trace_data[4]
+    fixture = ":angle_restricted_trace_fixture"
   }
+
+  _traces += [ ":${_target}" ]
+  _trace_headers += [ ":${_target}_headers" ]
 }
 
 angle_shared_library("angle_restricted_traces") {
@@ -75,15 +55,18 @@ angle_shared_library("angle_restricted_traces") {
   sources = [
     "restricted_traces_autogen.cpp",
     "restricted_traces_autogen.h",
+    "restricted_traces_export.h",
   ]
 
-  data = []
+  data = [ "restricted_traces.json" ]
+
+  data_deps = _traces
   defines = [ "ANGLE_TRACE_IMPLEMENTATION" ]
 
   deps = [
            "$angle_root:angle_common",
            "$angle_root/util:angle_util",
-         ] + _traces
+         ] + _trace_headers
 
   public_deps = [ ":angle_restricted_trace_loader" ]
 }
@@ -113,7 +96,7 @@ group("angle_restricted_trace_gold_tests") {
   data = [
     "restricted_trace_gold_tests.py",
     "restricted_traces.json",
-    "skia_gold/",
+    "../skia_gold/",
     "//build/skia_gold_common/",
     "//testing/scripts/common.py",
     "//testing/xvfb.py",

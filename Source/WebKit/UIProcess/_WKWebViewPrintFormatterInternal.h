@@ -37,6 +37,9 @@
 @end
 
 @protocol _WKWebViewPrintProvider <NSObject>
+#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+@property (nonatomic, readonly) BOOL _wk_printFormatterRequiresMainThread;
+#endif
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter;
 @property (nonatomic, readonly) CGPDFDocumentRef _wk_printedDocument;
 @end

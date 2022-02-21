@@ -8,7 +8,7 @@ PASS getAnimations for CSS Animations that have finished
 PASS getAnimations for CSS Animations that have finished but are forwards filling
 PASS getAnimations for CSS Animations with animation-name: none
 PASS getAnimations for CSS Animations with animation-name: missing
-FAIL getAnimations for CSS Animations where the @keyframes rule is added later assert_equals: getAnimations includes Animation when @keyframes rule is added later expected 2 but got 1
+PASS getAnimations for CSS Animations where the @keyframes rule is added later
 PASS getAnimations for CSS Animations with duplicated animation-name
 PASS getAnimations for CSS Animations with empty keyframes rule
 PASS getAnimations for CSS animations in delay phase

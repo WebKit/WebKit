@@ -24,7 +24,7 @@
 
 messages -> NetworkContentRuleListManager NotRefCounted {
     Remove(WebKit::UserContentControllerIdentifier identifier)
-    AddContentRuleLists(WebKit::UserContentControllerIdentifier identifier, Vector<std::pair<String, WebKit::WebCompiledContentRuleListData>> contentFilters)
+    AddContentRuleLists(WebKit::UserContentControllerIdentifier identifier, Vector<std::pair<WebKit::WebCompiledContentRuleListData, URL>> contentFilters)
     RemoveContentRuleList(WebKit::UserContentControllerIdentifier identifier, String name)
     RemoveAllContentRuleLists(WebKit::UserContentControllerIdentifier identifier)
 }

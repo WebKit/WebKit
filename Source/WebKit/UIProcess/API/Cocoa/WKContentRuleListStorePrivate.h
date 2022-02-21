@@ -32,8 +32,6 @@
 - (void)_invalidateContentRuleListVersionForIdentifier:(NSString *)identifier;
 - (void)_getContentRuleListSourceForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSString *))completionHandler;
 
-- (void)_compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *) encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler;
-
 // FIXME: Remove _WKUserContentExtensionStore.
 + (instancetype)defaultStoreWithLegacyFilename;
 + (instancetype)storeWithURLAndLegacyFilename:(NSURL *)url;

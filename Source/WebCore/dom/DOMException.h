@@ -60,9 +60,10 @@ public:
     static ASCIILiteral name(ExceptionCode ec) { return description(ec).name; }
     static ASCIILiteral message(ExceptionCode ec) { return description(ec).message; }
 
-private:
+protected:
     DOMException(LegacyCode, const String& name, const String& message);
 
+private:
     LegacyCode m_legacyCode;
     String m_name;
     String m_message;

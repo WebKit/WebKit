@@ -44,11 +44,16 @@
 #include "JSRTCSessionDescription.h"
 #include "JSReadableStream.h"
 #include "JSRemoteDOMWindow.h"
+#include "JSShadowRealmGlobalScope.h"
+#include "JSShadowRealmGlobalScopeBase.h"
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
+#include "JSWritableStream.h"
 #include "RejectedPromiseTracker.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ScriptController.h"
 #include "ScriptModuleLoader.h"
+#include "ShadowRealmGlobalScope.h"
 #include "StructuredClone.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
@@ -60,6 +65,7 @@
 #include <JavaScriptCore/JSCustomSetterFunction.h>
 #include <JavaScriptCore/JSInternalPromise.h>
 #include <JavaScriptCore/StructureInlines.h>
+#include <JavaScriptCore/VMEntryScope.h>
 #include <JavaScriptCore/VMTrapsInlines.h>
 #include <JavaScriptCore/WasmStreamingCompiler.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
@@ -71,7 +77,8 @@ JSC_DECLARE_HOST_FUNCTION(makeThisTypeErrorForBuiltins);
 JSC_DECLARE_HOST_FUNCTION(makeGetterTypeErrorForBuiltins);
 JSC_DECLARE_HOST_FUNCTION(makeDOMExceptionForBuiltins);
 JSC_DECLARE_HOST_FUNCTION(isReadableByteStreamAPIEnabled);
-JSC_DECLARE_HOST_FUNCTION(isWritableStreamAPIEnabled);
+JSC_DECLARE_HOST_FUNCTION(createWritableStreamFromInternal);
+JSC_DECLARE_HOST_FUNCTION(getInternalWritableStream);
 JSC_DECLARE_HOST_FUNCTION(whenSignalAborted);
 JSC_DECLARE_HOST_FUNCTION(isAbortSignal);
 
@@ -158,9 +165,27 @@ JSC_DEFINE_HOST_FUNCTION(isReadableByteStreamAPIEnabled, (JSGlobalObject*, CallF
     return JSValue::encode(jsBoolean(RuntimeEnabledFeatures::sharedFeatures().readableByteStreamAPIEnabled()));
 }
 
-JSC_DEFINE_HOST_FUNCTION(isWritableStreamAPIEnabled, (JSGlobalObject*, CallFrame*))
+JSC_DEFINE_HOST_FUNCTION(getInternalWritableStream, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    return JSValue::encode(jsBoolean(RuntimeEnabledFeatures::sharedFeatures().writableStreamAPIEnabled()));
+    ASSERT(callFrame);
+    ASSERT(callFrame->argumentCount() == 1);
+
+    auto& vm = globalObject->vm();
+    auto* writableStream = jsDynamicCast<JSWritableStream*>(vm, callFrame->uncheckedArgument(0));
+    if (UNLIKELY(!writableStream))
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(writableStream->wrapped().internalWritableStream());
+}
+
+JSC_DEFINE_HOST_FUNCTION(createWritableStreamFromInternal, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    ASSERT(callFrame);
+    ASSERT(callFrame->argumentCount() == 1);
+    ASSERT(callFrame->uncheckedArgument(0).isObject());
+
+    auto* jsDOMGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(globalObject);
+    auto internalWritableStream = InternalWritableStream::fromObject(*jsDOMGlobalObject, *callFrame->uncheckedArgument(0).toObject(globalObject));
+    return JSValue::encode(toJSNewlyCreated(globalObject, jsDOMGlobalObject, WritableStream::create(WTFMove(internalWritableStream))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(whenSignalAborted, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -173,8 +198,7 @@ JSC_DEFINE_HOST_FUNCTION(whenSignalAborted, (JSGlobalObject* globalObject, CallF
     if (UNLIKELY(!abortSignal))
         return JSValue::encode(JSValue(JSC::JSValue::JSFalse));
 
-    auto* jsDOMGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(globalObject);
-    Ref<AbortAlgorithm> abortAlgorithm = JSAbortAlgorithm::create(callFrame->uncheckedArgument(1).getObject(), jsDOMGlobalObject);
+    Ref<AbortAlgorithm> abortAlgorithm = JSAbortAlgorithm::create(vm, callFrame->uncheckedArgument(1).getObject());
 
     bool result = AbortSignal::whenSignalAborted(abortSignal->wrapped(), WTFMove(abortAlgorithm));
     return JSValue::encode(result ? JSValue(JSC::JSValue::JSTrue) : JSValue(JSC::JSValue::JSFalse));
@@ -212,8 +236,9 @@ SUPPRESS_ASAN void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamWaitingPrivateName(), jsNumber(5), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamWritablePrivateName(), jsNumber(6), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().readableByteStreamAPIEnabledPrivateName(), JSFunction::create(vm, this, 0, String(), isReadableByteStreamAPIEnabled), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
-        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().writableStreamAPIEnabledPrivateName(), JSFunction::create(vm, this, 0, String(), isWritableStreamAPIEnabled), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().isAbortSignalPrivateName(), JSFunction::create(vm, this, 1, String(), isAbortSignal), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().getInternalWritableStreamPrivateName(), JSFunction::create(vm, this, 1, String(), getInternalWritableStream), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().createWritableStreamFromInternalPrivateName(), JSFunction::create(vm, this, 1, String(), createWritableStreamFromInternal), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
     };
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
 }
@@ -244,6 +269,8 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
         return jsCast<const JSDOMWindowBase*>(this)->scriptExecutionContext();
     if (inherits<JSRemoteDOMWindowBase>(vm()))
         return nullptr;
+    if (inherits<JSShadowRealmGlobalScopeBase>(vm()))
+        return jsCast<const JSShadowRealmGlobalScopeBase*>(this)->scriptExecutionContext();
     if (inherits<JSWorkerGlobalScopeBase>(vm()))
         return jsCast<const JSWorkerGlobalScopeBase*>(this)->scriptExecutionContext();
     if (inherits<JSWorkletGlobalScopeBase>(vm()))
@@ -326,7 +353,7 @@ JSFunction* JSDOMGlobalObject::createCrossOriginFunction(JSGlobalObject* lexical
 
     // WeakGCMap::ensureValue's functor must not invoke GC since GC can modify WeakGCMap in the middle of HashMap::ensure.
     // We use DeferGC here (1) not to invoke GC when executing WeakGCMap::ensureValue and (2) to avoid looking up HashMap twice.
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     return m_crossOriginFunctionMap.ensureValue(key, [&] {
         return JSFunction::create(vm, lexicalGlobalObject, length, propertyName.publicName(), nativeFunction);
     });
@@ -340,7 +367,7 @@ GetterSetter* JSDOMGlobalObject::createCrossOriginGetterSetter(JSGlobalObject* l
 
     // WeakGCMap::ensureValue's functor must not invoke GC since GC can modify WeakGCMap in the middle of HashMap::ensure.
     // We use DeferGC here (1) not to invoke GC when executing WeakGCMap::ensureValue and (2) to avoid looking up HashMap twice.
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     return m_crossOriginGetterSetterMap.ensureValue(key, [&] {
         return GetterSetter::create(vm, lexicalGlobalObject,
             getter ? JSCustomGetterFunction::create(vm, lexicalGlobalObject, propertyName, getter) : nullptr,
@@ -484,6 +511,8 @@ static ScriptModuleLoader* scriptModuleLoader(JSDOMGlobalObject* globalObject)
             return &document->moduleLoader();
         return nullptr;
     }
+    if (globalObject->inherits<JSShadowRealmGlobalScopeBase>(vm))
+        return &jsCast<const JSShadowRealmGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
     if (globalObject->inherits<JSRemoteDOMWindowBase>(vm))
         return nullptr;
     if (globalObject->inherits<JSWorkerGlobalScopeBase>(vm))
@@ -548,6 +577,56 @@ JSC::JSObject* JSDOMGlobalObject::moduleLoaderCreateImportMetaProperties(JSC::JS
     return constructEmptyObject(globalObject->vm(), globalObject->nullPrototypeObjectStructure());
 }
 
+JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlobalObject* globalObject)
+{
+    auto& vm = globalObject->vm();
+
+    auto domGlobalObject = jsCast<JSDOMGlobalObject*>(globalObject);
+    auto context = domGlobalObject->scriptExecutionContext();
+    if (is<Document>(context)) {
+        // Same-origin iframes present a difficult circumstance because the
+        // shadow realm global object cannot retain the incubating realm's
+        // global object (that would be a refcount loop); but, same-origin
+        // iframes can create objects that outlive their global object.
+        //
+        // Our solution is to walk up the parent tree of documents as far as
+        // possible while still staying in the same origin to insure we don't
+        // allow the ShadowRealm to fetch modules masquerading as the wrong
+        // origin while avoiding any lifetime issues (since the topmost document
+        // with a given wrapper world should outlive other objects in that
+        // world)
+        auto document = &downcast<Document>(*context);
+        auto const& originalOrigin = document->securityOrigin();
+        auto& originalWorld = domGlobalObject->world();
+
+        while (!document->isTopDocument()) {
+            auto candidateDocument = document->parentDocument();
+
+            if (!candidateDocument->securityOrigin().isSameOriginDomain(originalOrigin))
+                break;
+
+            document = candidateDocument;
+            domGlobalObject = candidateDocument->frame()->script().globalObject(originalWorld);
+        }
+    }
+
+    ASSERT(domGlobalObject);
+    auto scope = ShadowRealmGlobalScope::create(domGlobalObject, scriptModuleLoader(domGlobalObject));
+
+    auto structure = JSShadowRealmGlobalScope::createStructure(vm, nullptr, JSC::jsNull());
+    auto proxyStructure = JSProxy::createStructure(vm, nullptr, JSC::jsNull());
+    auto proxy = JSProxy::create(vm, proxyStructure);
+    auto wrapper = JSShadowRealmGlobalScope::create(vm, structure, WTFMove(scope), proxy);
+
+    wrapper->setPrototypeDirect(vm, wrapper->objectPrototype());
+    proxy->setTarget(vm, wrapper);
+
+    wrapper->setConsoleClient(domGlobalObject->consoleClient());
+
+    return wrapper;
+}
+
+
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext& context, DOMWrapperWorld& world)
 {
     if (is<Document>(context))
@@ -558,6 +637,80 @@ JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext& context, DOMWrapp
 
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+static JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame* callFrame, bool skipFirstFrame, bool lookUpFromVMEntryScope)
+{
+    VM& vm = lexicalGlobalObject.vm();
+    if (callFrame) {
+        class GetCallerGlobalObjectFunctor {
+        public:
+            GetCallerGlobalObjectFunctor(bool skipFirstFrame)
+                : m_skipFirstFrame(skipFirstFrame)
+            { }
+
+            StackVisitor::Status operator()(StackVisitor& visitor) const
+            {
+                if (m_skipFirstFrame) {
+                    if (!m_hasSkippedFirstFrame) {
+                        m_hasSkippedFirstFrame = true;
+                        return StackVisitor::Continue;
+                    }
+                }
+
+                if (auto* codeBlock = visitor->codeBlock())
+                    m_globalObject = codeBlock->globalObject();
+                else {
+                    ASSERT(visitor->callee().rawPtr());
+                    // FIXME: Callee is not an object if the caller is Web Assembly.
+                    // Figure out what to do here. We can probably get the global object
+                    // from the top-most Wasm Instance. https://bugs.webkit.org/show_bug.cgi?id=165721
+                    if (visitor->callee().isCell() && visitor->callee().asCell()->isObject())
+                        m_globalObject = jsCast<JSObject*>(visitor->callee().asCell())->globalObject();
+                }
+                return StackVisitor::Done;
+            }
+
+            JSC::JSGlobalObject* globalObject() const { return m_globalObject; }
+
+        private:
+            bool m_skipFirstFrame { false };
+            mutable bool m_hasSkippedFirstFrame { false };
+            mutable JSC::JSGlobalObject* m_globalObject { nullptr };
+        };
+
+        GetCallerGlobalObjectFunctor iter(skipFirstFrame);
+        callFrame->iterate(vm, iter);
+        if (iter.globalObject())
+            return *jsCast<JSDOMGlobalObject*>(iter.globalObject());
+    }
+
+    // In the case of legacyActiveGlobalObjectForAccessor, it is possible that vm.topCallFrame is nullptr when the script is evaluated as JSONP.
+    // Since we put JSGlobalObject to VMEntryScope, we can retrieve the right globalObject from that.
+    // For callerGlobalObject, we do not check vm.entryScope to keep it the old behavior.
+    if (lookUpFromVMEntryScope) {
+        if (vm.entryScope) {
+            if (auto* result = vm.entryScope->globalObject())
+                return *jsCast<JSDOMGlobalObject*>(result);
+        }
+    }
+
+    // If we cannot find JSGlobalObject in caller frames, we just return the current lexicalGlobalObject.
+    return *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+}
+
+JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame* callFrame)
+{
+    constexpr bool skipFirstFrame = true;
+    constexpr bool lookUpFromVMEntryScope = false;
+    return callerGlobalObject(lexicalGlobalObject, callFrame, skipFirstFrame, lookUpFromVMEntryScope);
+}
+
+JSDOMGlobalObject& legacyActiveGlobalObjectForAccessor(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame* callFrame)
+{
+    constexpr bool skipFirstFrame = false;
+    constexpr bool lookUpFromVMEntryScope = true;
+    return callerGlobalObject(lexicalGlobalObject, callFrame, skipFirstFrame, lookUpFromVMEntryScope);
 }
 
 } // namespace WebCore

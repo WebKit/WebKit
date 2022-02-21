@@ -96,7 +96,7 @@ void StreamGenerator::set_capacity_bps(int capacity_bps) {
   capacity_ = capacity_bps;
 }
 
-// Divides |bitrate_bps| among all streams. The allocated bitrate per stream
+// Divides `bitrate_bps` among all streams. The allocated bitrate per stream
 // is decided by the current allocation ratios.
 void StreamGenerator::SetBitrateBps(int bitrate_bps) {
   ASSERT_GE(streams_.size(), 0u);
@@ -253,8 +253,8 @@ bool DelayBasedBweTest::GenerateAndProcessFrame(uint32_t ssrc,
   return overuse;
 }
 
-// Run the bandwidth estimator with a stream of |number_of_frames| frames, or
-// until it reaches |target_bitrate|.
+// Run the bandwidth estimator with a stream of `number_of_frames` frames, or
+// until it reaches `target_bitrate`.
 // Can for instance be used to run the estimator for some time to get it
 // into a steady state.
 uint32_t DelayBasedBweTest::SteadyStateRun(uint32_t ssrc,
@@ -265,7 +265,7 @@ uint32_t DelayBasedBweTest::SteadyStateRun(uint32_t ssrc,
                                            uint32_t target_bitrate) {
   uint32_t bitrate_bps = start_bitrate;
   bool bitrate_update_seen = false;
-  // Produce |number_of_frames| frames and give them to the estimator.
+  // Produce `number_of_frames` frames and give them to the estimator.
   for (int i = 0; i < max_number_of_frames; ++i) {
     bool overuse = GenerateAndProcessFrame(ssrc, bitrate_bps);
     if (overuse) {
@@ -476,7 +476,7 @@ void DelayBasedBweTest::TestTimestampGroupingTestHelper() {
   const int kTimestampGroupLength = 15;
   for (int i = 0; i < 100; ++i) {
     for (int j = 0; j < kTimestampGroupLength; ++j) {
-      // Insert |kTimestampGroupLength| frames with just 1 timestamp ticks in
+      // Insert `kTimestampGroupLength` frames with just 1 timestamp ticks in
       // between. Should be treated as part of the same group by the estimator.
       IncomingFeedback(clock_.TimeInMilliseconds(), send_time_ms, 100);
       clock_.AdvanceTimeMilliseconds(kFrameIntervalMs / kTimestampGroupLength);

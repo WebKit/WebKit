@@ -26,6 +26,8 @@
 #include "config.h"
 #include "APIContentRuleListAction.h"
 
+#if ENABLE(CONTENT_EXTENSIONS)
+
 namespace API {
 
 Ref<ContentRuleListAction> ContentRuleListAction::create(WebCore::ContentRuleListResults::Result&& result)
@@ -55,9 +57,21 @@ bool ContentRuleListAction::blockedCookies() const
     return m_result.blockedCookies;
 }
 
+bool ContentRuleListAction::redirected() const
+{
+    return m_result.redirected;
+}
+
+bool ContentRuleListAction::modifiedHeaders() const
+{
+    return m_result.modifiedHeaders;
+}
+
 const Vector<WTF::String>& ContentRuleListAction::notifications() const
 {
     return m_result.notifications;
 }
 
 } // namespace API
+
+#endif // ENABLE(CONTENT_EXTENSIONS)

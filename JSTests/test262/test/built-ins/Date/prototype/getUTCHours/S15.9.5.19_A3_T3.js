@@ -8,13 +8,13 @@ info: |
 esid: sec-date.prototype.getutchours
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.prototype.getUTCHours.propertyIsEnumerable('length')) {
-  throw new Test262Error('#1: The Date.prototype.getUTCHours.length property has the attribute DontEnum');
-}
+assert(
+  !Date.prototype.getUTCHours.propertyIsEnumerable('length'),
+  'The value of !Date.prototype.getUTCHours.propertyIsEnumerable(\'length\') is expected to be true'
+);
 
 for (var x in Date.prototype.getUTCHours) {
-  if (x === "length") {
-    throw new Test262Error('#2: The Date.prototype.getUTCHours.length has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "length", 'The value of x is not "length"');
 }
+
+// TODO: Convert to verifyProperty() format.

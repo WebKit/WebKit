@@ -24,10 +24,11 @@
 
 [
     Conditional=WEB_AUDIO&MEDIA_STREAM,
+    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     Exposed=Window
 ] interface MediaStreamAudioSourceNode : AudioNode {
-    [EnabledBySetting=WebAudio] constructor (AudioContext context, MediaStreamAudioSourceOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor (AudioContext context, MediaStreamAudioSourceOptions options);
 
     readonly attribute MediaStream mediaStream;
 };

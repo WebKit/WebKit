@@ -51,8 +51,8 @@ WI.GridOverlayConfigurationDiagnosticEventRecorder = class GridOverlayConfigurat
         window.addEventListener("blur", this, options);
         window.addEventListener("keydown", this, options);
         window.addEventListener("mousedown", this, options);
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayShown, this._handleGridOverlayShown, this);
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._handleGridOverlayHidden, this);
+        WI.overlayManager.addEventListener(WI.OverlayManager.Event.OverlayShown, this._handleGridOverlayShown, this);
+        WI.overlayManager.addEventListener(WI.OverlayManager.Event.OverlayHidden, this._handleGridOverlayHidden, this);
     }
 
     teardown()
@@ -64,14 +64,17 @@ WI.GridOverlayConfigurationDiagnosticEventRecorder = class GridOverlayConfigurat
         window.removeEventListener("blur", this, options);
         window.removeEventListener("keydown", this, options);
         window.removeEventListener("mousedown", this, options);
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayShown, this._handleGridOverlayShown, this);
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._handleGridOverlayHidden, this);
+        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.OverlayShown, this._handleGridOverlayShown, this);
+        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.OverlayHidden, this._handleGridOverlayHidden, this);
 
         this._stopEventSamplingTimerIfNeeded();
     }
 
     _handleGridOverlayShown(event)
     {
+        if (event.data.domNode.layoutContextType !== WI.DOMNode.LayoutContextType.Grid)
+            return;
+
         this._overlayOptions.showTrackSizes = event.data.showTrackSizes;
         this._overlayOptions.showLineNumbers = event.data.showLineNumbers;
         this._overlayOptions.showLineNames = event.data.showLineNames;

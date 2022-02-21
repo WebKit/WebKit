@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGFontFaceFormatElement.h"
 
+#include "SVGElementTypeHelpers.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
@@ -48,7 +49,7 @@ void SVGFontFaceFormatElement::childrenChanged(const ChildChange& change)
     if (!parentNode() || !parentNode()->hasTagName(font_face_uriTag))
         return;
     
-    auto ancestor = makeRefPtr(parentNode()->parentNode());
+    RefPtr ancestor = parentNode()->parentNode();
     if (!ancestor || !ancestor->hasTagName(font_face_srcTag))
         return;
     

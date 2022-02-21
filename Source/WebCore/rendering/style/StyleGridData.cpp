@@ -55,6 +55,8 @@ StyleGridData::StyleGridData()
     , autoRepeatRowsInsertionPoint(RenderStyle::initialGridAutoRepeatInsertionPoint())
     , autoRepeatColumnsType(RenderStyle::initialGridAutoRepeatType())
     , autoRepeatRowsType(RenderStyle::initialGridAutoRepeatType())
+    , subgridRows(false)
+    , subgridColumns(false)
 {
 }
 
@@ -84,6 +86,8 @@ inline StyleGridData::StyleGridData(const StyleGridData& o)
     , autoRepeatRowsInsertionPoint(o.autoRepeatRowsInsertionPoint)
     , autoRepeatColumnsType(o.autoRepeatColumnsType)
     , autoRepeatRowsType(o.autoRepeatRowsType)
+    , subgridRows(o.subgridRows)
+    , subgridColumns(o.subgridColumns)
 {
 }
 

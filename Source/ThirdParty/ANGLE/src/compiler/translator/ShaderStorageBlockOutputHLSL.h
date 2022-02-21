@@ -10,9 +10,9 @@
 #ifndef COMPILER_TRANSLATOR_SHADERSTORAGEBLOCKOUTPUTHLSL_H_
 #define COMPILER_TRANSLATOR_SHADERSTORAGEBLOCKOUTPUTHLSL_H_
 
+#include "compiler/translator/IntermNode.h"
 #include "compiler/translator/ShaderStorageBlockFunctionHLSL.h"
 #include "compiler/translator/blocklayout.h"
-#include "compiler/translator/tree_util/IntermTraverse.h"
 
 namespace sh
 {
@@ -36,15 +36,14 @@ using BlockMemberInfoMap = std::map<const TField *, BlockMemberInfo>;
 
 using ShaderVarToFieldMap = std::map<std::string, const TField *>;
 
-class ShaderStorageBlockOutputHLSL : public TIntermTraverser
+class ShaderStorageBlockOutputHLSL
 {
   public:
     ShaderStorageBlockOutputHLSL(OutputHLSL *outputHLSL,
-                                 TSymbolTable *symbolTable,
                                  ResourcesHLSL *resourcesHLSL,
                                  const std::vector<InterfaceBlock> &shaderStorageBlocks);
 
-    ~ShaderStorageBlockOutputHLSL() override;
+    ~ShaderStorageBlockOutputHLSL();
 
     // This writes part of the function call to store a value to a SSBO to the output stream. After
     // calling this, ", <stored value>)" should be written to the output stream to complete the
@@ -59,26 +58,21 @@ class ShaderStorageBlockOutputHLSL : public TIntermTraverser
 
     void writeShaderStorageBlocksHeader(TInfoSinkBase &out) const;
 
-  protected:
-    void visitSymbol(TIntermSymbol *) override;
-    void visitConstantUnion(TIntermConstantUnion *) override;
-    bool visitSwizzle(Visit visit, TIntermSwizzle *node) override;
-    bool visitBinary(Visit visit, TIntermBinary *) override;
-    bool visitAggregate(Visit visit, TIntermAggregate *node) override;
-    bool visitTernary(Visit visit, TIntermTernary *) override;
-    bool visitUnary(Visit visit, TIntermUnary *) override;
-
   private:
     void traverseSSBOAccess(TIntermTyped *node, SSBOMethod method);
-    void setMatrixStride(TIntermTyped *node, TLayoutBlockStorage storage, bool rowMajor);
-    bool isEndOfSSBOAccessChain();
-    void writeEOpIndexDirectOrIndirectOutput(TInfoSinkBase &out, Visit visit, TIntermBinary *node);
+    TIntermTyped *traverseNode(TInfoSinkBase &out,
+                               TIntermTyped *node,
+                               BlockMemberInfo *blockMemberInfo);
+    int getMatrixStride(TIntermTyped *node,
+                        TLayoutBlockStorage storage,
+                        bool rowMajor,
+                        bool *isRowMajor) const;
+    TIntermTyped *writeEOpIndexDirectOrIndirectOutput(TInfoSinkBase &out,
+                                                      TIntermBinary *node,
+                                                      BlockMemberInfo *blockMemberInfo);
     // Common part in dot operations.
-    void writeDotOperatorOutput(TInfoSinkBase &out, const TField *field);
-
-    int mMatrixStride;
-    bool mRowMajor;
-    bool mLocationAsTheLastArgument;
+    TIntermTyped *createFieldOffset(const TField *field, BlockMemberInfo *blockMemberInfo);
+    void collectShaderStorageBlocks(TIntermTyped *node);
     OutputHLSL *mOutputHLSL;
     ShaderStorageBlockFunctionHLSL *mSSBOFunctionHLSL;
     ResourcesHLSL *mResourcesHLSL;

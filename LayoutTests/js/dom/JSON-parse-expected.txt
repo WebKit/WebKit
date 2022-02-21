@@ -85,7 +85,7 @@ PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Propert
 function (jsonObject){
         return jsonObject.parse('{"a":5,"a",}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Expected ':'.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Expected ':' before value in object property definition.
 function (jsonObject){
         return jsonObject.parse('{"a":(5,"a"),}');
     }

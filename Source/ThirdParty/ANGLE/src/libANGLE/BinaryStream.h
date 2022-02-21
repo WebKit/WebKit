@@ -121,6 +121,13 @@ class BinaryInputStream : angle::NonCopyable
         mOffset = checkedOffset.ValueOrDie();
     }
 
+    float readFloat()
+    {
+        float f;
+        read(&f, 1);
+        return f;
+    }
+
     void skip(size_t length)
     {
         angle::CheckedNumeric<size_t> checkedOffset(mOffset);
@@ -197,6 +204,7 @@ class BinaryOutputStream : angle::NonCopyable
     template <class IntT>
     void writeInt(IntT param)
     {
+        static_assert(std::is_integral<IntT>::value, "Not an integral type");
         static_assert(!std::is_same<bool, std::remove_cv<IntT>()>(), "Use writeBool");
         using PromotedIntT = typename PromotedIntegerType<IntT>::type;
         ASSERT(angle::IsValueInRangeForNumericType<PromotedIntT>(param));
@@ -248,6 +256,8 @@ class BinaryOutputStream : angle::NonCopyable
         int intValue = value ? 1 : 0;
         write(&intValue, 1);
     }
+
+    void writeFloat(float value) { write(&value, 1); }
 
     size_t length() const { return mData.size(); }
 

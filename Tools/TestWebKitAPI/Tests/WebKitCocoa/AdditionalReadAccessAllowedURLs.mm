@@ -29,6 +29,7 @@
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
 
 #import "AdditionalReadAccessAllowedURLsProtocol.h"
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -38,8 +39,6 @@
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <wtf/RetainPtr.h>
-
-static bool done;
 
 TEST(WebKit, AdditionalReadAccessAllowedURLs)
 {

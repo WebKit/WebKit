@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -40,7 +41,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
-static bool isDone;
 static RetainPtr<WKNavigation> currentNavigation;
 static RetainPtr<NSURL> redirectURL;
 static NSTimeInterval redirectDelay;
@@ -822,4 +822,191 @@ TEST(WKNavigation, SimultaneousNavigationWithFontsFinishes)
 
     [webView loadRequest:server.request()];
     Util::run(&finishedNavigation);
+}
+
+TEST(WKNavigation, LoadRadarURLFromSandboxedFrameAllowPopups)
+{
+    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-popups'></iframe>";
+    const char* frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>";
+
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/", { mainHTML } },
+        { "/frame.html", { frameHTML } },
+    });
+
+    auto webView = adoptNS([WKWebView new]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool didTryToLoadRadarURL = false;
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.scheme isEqualToString:@"rdar"]) {
+            didTryToLoadRadarURL = true;
+            completionHandler(WKNavigationActionPolicyCancel);
+        } else
+            completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    __block bool finishedNavigation = false;
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+
+    [webView loadRequest:server.request()];
+    Util::run(&finishedNavigation);
+
+    Util::run(&didTryToLoadRadarURL);
+}
+
+TEST(WKNavigation, LoadRadarURLFromSandboxedFrameAllowTopNavigation)
+{
+    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-top-navigation'></iframe>";
+    const char* frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>";
+
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/", { mainHTML } },
+        { "/frame.html", { frameHTML } },
+    });
+
+    auto webView = adoptNS([WKWebView new]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool didTryToLoadRadarURL = false;
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.scheme isEqualToString:@"rdar"]) {
+            didTryToLoadRadarURL = true;
+            completionHandler(WKNavigationActionPolicyCancel);
+        } else
+            completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    __block bool finishedNavigation = false;
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+
+    [webView loadRequest:server.request()];
+    Util::run(&finishedNavigation);
+
+    Util::run(&didTryToLoadRadarURL);
+}
+
+TEST(WKNavigation, LoadRadarURLFromSandboxedFrameWithUserGesture)
+{
+    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-top-navigation-by-user-activation'></iframe>";
+    const char* frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a></script>";
+
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/", { mainHTML } },
+        { "/frame.html", { frameHTML } },
+    });
+
+    auto webView = adoptNS([WKWebView new]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block RetainPtr<WKFrameInfo> iframe;
+    __block bool didTryToLoadRadarURL = false;
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if (!action.targetFrame.isMainFrame)
+            iframe = action.targetFrame;
+        if ([action.request.URL.scheme isEqualToString:@"rdar"]) {
+            didTryToLoadRadarURL = true;
+            completionHandler(WKNavigationActionPolicyCancel);
+        } else
+            completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    __block bool finishedNavigation = false;
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+
+    [webView loadRequest:server.request()];
+    Util::run(&finishedNavigation);
+
+    ASSERT_TRUE(!!iframe);
+
+    // Running Javascript simulates a user gesture so the navigation should be permitted due to 'allow-top-navigation-by-user-activation'.
+    [webView evaluateJavaScript:@"document.getElementById('testLink').click()" inFrame:iframe.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+
+    Util::run(&didTryToLoadRadarURL);
+}
+
+TEST(WKNavigation, LoadRadarURLFromSandboxedFrame)
+{
+    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts'></iframe>";
+    const char* frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>";
+
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/", { mainHTML } },
+        { "/frame.html", { frameHTML } },
+    });
+
+    auto webView = adoptNS([WKWebView new]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool didTryToLoadRadarURL = false;
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.scheme isEqualToString:@"rdar"]) {
+            didTryToLoadRadarURL = true;
+            completionHandler(WKNavigationActionPolicyCancel);
+        } else
+            completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    __block bool finishedNavigation = false;
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+
+    [webView loadRequest:server.request()];
+    Util::run(&finishedNavigation);
+
+    Util::sleep(0.5);
+
+    EXPECT_FALSE(didTryToLoadRadarURL);
+}
+
+TEST(WKNavigation, LoadRadarURLFromSandboxedFrameMissingUserGesture)
+{
+    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-top-navigation-by-user-activation'></iframe>";
+    const char* frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>";
+
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/", { mainHTML } },
+        { "/frame.html", { frameHTML } },
+    });
+
+    auto webView = adoptNS([WKWebView new]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool didTryToLoadRadarURL = false;
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.scheme isEqualToString:@"rdar"]) {
+            didTryToLoadRadarURL = true;
+            completionHandler(WKNavigationActionPolicyCancel);
+        } else
+            completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    __block bool finishedNavigation = false;
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+
+    [webView loadRequest:server.request()];
+    Util::run(&finishedNavigation);
+
+    Util::sleep(0.5);
+
+    EXPECT_FALSE(didTryToLoadRadarURL);
 }

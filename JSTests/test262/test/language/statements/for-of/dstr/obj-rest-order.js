@@ -34,7 +34,7 @@ Object.defineProperty(o, Symbol('foo'), { get: () => { calls.push("Symbol(foo)")
 var counter = 0;
 
 for ({...rest} of [o]) {
-  assert(compareArray(calls, [1, 'z', 'a', "Symbol(foo)"]));
+  assert.compareArray(calls, [1, 'z', 'a', "Symbol(foo)"]);
   assert.sameValue(Object.keys(rest).length, 3);
   counter += 1;
 }

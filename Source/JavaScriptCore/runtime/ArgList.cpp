@@ -27,7 +27,7 @@ using std::min;
 
 namespace JSC {
 
-void MarkedArgumentBuffer::addMarkSet(JSValue v)
+void MarkedArgumentBufferBase::addMarkSet(JSValue v)
 {
     if (m_markSet)
         return;
@@ -52,20 +52,20 @@ void ArgList::getSlice(int startIndex, ArgList& result) const
 }
 
 template<typename Visitor>
-void MarkedArgumentBuffer::markLists(Visitor& visitor, ListSet& markSet)
+void MarkedArgumentBufferBase::markLists(Visitor& visitor, ListSet& markSet)
 {
     ListSet::iterator end = markSet.end();
     for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
-        MarkedArgumentBuffer* list = *it;
+        MarkedArgumentBufferBase* list = *it;
         for (int i = 0; i < list->m_size; ++i)
             visitor.appendUnbarriered(JSValue::decode(list->slotFor(i)));
     }
 }
 
-template void MarkedArgumentBuffer::markLists(AbstractSlotVisitor&, ListSet&);
-template void MarkedArgumentBuffer::markLists(SlotVisitor&, ListSet&);
+template void MarkedArgumentBufferBase::markLists(AbstractSlotVisitor&, ListSet&);
+template void MarkedArgumentBufferBase::markLists(SlotVisitor&, ListSet&);
 
-void MarkedArgumentBuffer::slowEnsureCapacity(size_t requestedCapacity)
+void MarkedArgumentBufferBase::slowEnsureCapacity(size_t requestedCapacity)
 {
     setNeedsOverflowCheck();
     auto checkedNewCapacity = CheckedInt32(requestedCapacity);
@@ -74,7 +74,7 @@ void MarkedArgumentBuffer::slowEnsureCapacity(size_t requestedCapacity)
     expandCapacity(checkedNewCapacity);
 }
 
-void MarkedArgumentBuffer::expandCapacity()
+void MarkedArgumentBufferBase::expandCapacity()
 {
     setNeedsOverflowCheck();
     auto checkedNewCapacity = CheckedInt32(m_capacity) * 2;
@@ -83,7 +83,7 @@ void MarkedArgumentBuffer::expandCapacity()
     expandCapacity(checkedNewCapacity);
 }
 
-void MarkedArgumentBuffer::expandCapacity(int newCapacity)
+void MarkedArgumentBufferBase::expandCapacity(int newCapacity)
 {
     setNeedsOverflowCheck();
     ASSERT(m_capacity < newCapacity);
@@ -105,7 +105,7 @@ void MarkedArgumentBuffer::expandCapacity(int newCapacity)
     m_capacity = newCapacity;
 }
 
-void MarkedArgumentBuffer::slowAppend(JSValue v)
+void MarkedArgumentBufferBase::slowAppend(JSValue v)
 {
     ASSERT(m_size <= m_capacity);
     if (m_size == m_capacity)

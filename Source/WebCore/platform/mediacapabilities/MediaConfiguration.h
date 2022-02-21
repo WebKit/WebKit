@@ -27,6 +27,7 @@
 
 #include "AudioConfiguration.h"
 #include "VideoConfiguration.h"
+#include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
 
@@ -34,9 +35,16 @@ struct MediaConfiguration {
     std::optional<VideoConfiguration> video;
     std::optional<AudioConfiguration> audio;
 
+    MediaConfiguration isolatedCopy() const;
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<MediaConfiguration> decode(Decoder&);
 };
+
+inline MediaConfiguration MediaConfiguration::isolatedCopy() const
+{
+    return { crossThreadCopy(video),  crossThreadCopy(audio) };
+}
 
 template<class Encoder>
 void MediaConfiguration::encode(Encoder& encoder) const

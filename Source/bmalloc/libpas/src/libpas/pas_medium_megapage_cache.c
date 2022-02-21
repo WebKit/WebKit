@@ -37,7 +37,9 @@
 void* pas_medium_megapage_cache_try_allocate(
     pas_megapage_cache* cache,
     pas_page_base_config* config,
-    bool should_zero)
+    bool should_zero,
+    pas_heap* heap,
+    pas_physical_memory_transaction* transaction)
 {
     pas_megapage_cache_config cache_config;
 
@@ -50,7 +52,7 @@ void* pas_medium_megapage_cache_try_allocate(
     cache_config.table_set_by_index_arg = NULL;
     cache_config.should_zero = should_zero;
     
-    return pas_megapage_cache_try_allocate(cache, &cache_config);
+    return pas_megapage_cache_try_allocate(cache, &cache_config, heap, transaction);
 }
 
 #endif /* LIBPAS_ENABLED */

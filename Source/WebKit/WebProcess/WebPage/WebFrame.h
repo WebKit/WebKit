@@ -58,6 +58,7 @@ class IntRect;
 
 namespace WebKit {
 
+class InjectedBundleCSSStyleDeclarationHandle;
 class InjectedBundleHitTestResult;
 class InjectedBundleNodeHandle;
 class InjectedBundleRangeHandle;
@@ -115,6 +116,7 @@ public:
     Ref<API::Array> childFrames();
     JSGlobalContextRef jsContext();
     JSGlobalContextRef jsContextForWorld(InjectedBundleScriptWorld*);
+    JSGlobalContextRef jsContextForServiceWorkerWorld(InjectedBundleScriptWorld*);
     WebCore::IntRect contentBounds() const;
     WebCore::IntRect visibleContentBounds() const;
     WebCore::IntRect visibleContentBoundsExcludingScrollbars() const;
@@ -144,7 +146,9 @@ public:
     void setAccessibleName(const String&);
 
     static WebFrame* frameForContext(JSContextRef);
+    static WebFrame* contentFrameForWindowOrFrameElement(JSContextRef, JSValueRef);
 
+    JSValueRef jsWrapperForWorld(InjectedBundleCSSStyleDeclarationHandle*, InjectedBundleScriptWorld*);
     JSValueRef jsWrapperForWorld(InjectedBundleNodeHandle*, InjectedBundleScriptWorld*);
     JSValueRef jsWrapperForWorld(InjectedBundleRangeHandle*, InjectedBundleScriptWorld*);
 
@@ -172,7 +176,7 @@ public:
         virtual void didFinishLoad(WebFrame*) = 0;
         virtual void didFailLoad(WebFrame*, bool wasCancelled) = 0;
     };
-    void setLoadListener(LoadListener* loadListener) { m_loadListener = makeWeakPtr(loadListener); }
+    void setLoadListener(LoadListener* loadListener) { m_loadListener = loadListener; }
     LoadListener* loadListener() const { return m_loadListener.get(); }
     
 #if PLATFORM(COCOA)

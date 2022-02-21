@@ -57,14 +57,11 @@ TEST(WebArchive, CreateCustomScheme)
 
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         const char* bytes = nullptr;
-        NSString *mimeType;
-        if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/main.html"]) {
+        if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/main.html"])
             bytes = mainBytes;
-            mimeType = @"text/html";
-        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/script.js"]) {
+        else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/script.js"])
             bytes = scriptBytes;
-            mimeType = @"application/javascript";
-        } else
+        else
             FAIL();
 
         auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);

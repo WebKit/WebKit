@@ -99,6 +99,7 @@ public:
     String asString() const;
     RefPtr<Value> asValue();
     virtual RefPtr<Object> asObject();
+    virtual RefPtr<const Object> asObject() const;
     virtual RefPtr<Array> asArray();
 
     static RefPtr<Value> parseJSON(const String&);
@@ -160,7 +161,7 @@ private:
     } m_value;
 };
 
-class WTF_EXPORT_PRIVATE ObjectBase : public Value {
+class ObjectBase : public Value {
 private:
     using DataStorage = HashMap<String, Ref<Value>>;
     using OrderStorage = Vector<String>;
@@ -169,9 +170,10 @@ public:
     using iterator = DataStorage::iterator;
     using const_iterator = DataStorage::const_iterator;
 
-    RefPtr<Object> asObject() final;
+    WTF_EXPORT_PRIVATE RefPtr<Object> asObject() final;
+    WTF_EXPORT_PRIVATE RefPtr<const Object> asObject() const final;
 
-    size_t memoryCost() const final;
+    WTF_EXPORT_PRIVATE size_t memoryCost() const final;
 
 protected:
     ~ObjectBase() override;
@@ -188,15 +190,15 @@ protected:
     iterator find(const String& name);
     const_iterator find(const String& name) const;
 
-    std::optional<bool> getBoolean(const String& name) const;
-    std::optional<double> getDouble(const String& name) const;
-    std::optional<int> getInteger(const String& name) const;
-    String getString(const String& name) const;
-    RefPtr<Object> getObject(const String& name) const;
-    RefPtr<Array> getArray(const String& name) const;
-    RefPtr<Value> getValue(const String& name) const;
+    WTF_EXPORT_PRIVATE std::optional<bool> getBoolean(const String& name) const;
+    WTF_EXPORT_PRIVATE std::optional<double> getDouble(const String& name) const;
+    WTF_EXPORT_PRIVATE std::optional<int> getInteger(const String& name) const;
+    WTF_EXPORT_PRIVATE String getString(const String& name) const;
+    WTF_EXPORT_PRIVATE RefPtr<Object> getObject(const String& name) const;
+    WTF_EXPORT_PRIVATE RefPtr<Array> getArray(const String& name) const;
+    WTF_EXPORT_PRIVATE RefPtr<Value> getValue(const String& name) const;
 
-    void remove(const String& name);
+    WTF_EXPORT_PRIVATE void remove(const String& name);
 
     void writeJSON(StringBuilder& output) const final;
 
@@ -209,10 +211,10 @@ protected:
 
     // FIXME: <http://webkit.org/b/179847> remove these functions when legacy InspectorObject symbols are no longer needed.
     bool getBoolean(const String& name, bool& output) const;
-    bool getString(const String& name, String& output) const;
+    WTF_EXPORT_PRIVATE bool getString(const String& name, String& output) const;
     bool getObject(const String& name, RefPtr<Object>& output) const;
     bool getArray(const String& name, RefPtr<Array>& output) const;
-    bool getValue(const String& name, RefPtr<Value>& output) const;
+    WTF_EXPORT_PRIVATE bool getValue(const String& name, RefPtr<Value>& output) const;
 
 protected:
     ObjectBase();

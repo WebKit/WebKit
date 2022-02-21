@@ -289,6 +289,16 @@ Value* Value::uModConstant(Procedure&, const Value*) const
     return nullptr;
 }
 
+Value* Value::fMinConstant(Procedure&, const Value*) const
+{
+    return nullptr;
+}
+
+Value* Value::fMaxConstant(Procedure&, const Value*) const
+{
+    return nullptr;
+}
+
 Value* Value::bitAndConstant(Procedure&, const Value*) const
 {
     return nullptr;
@@ -523,7 +533,7 @@ TriState Value::asTriState() const
 
 Effects Value::effects() const
 {
-    Effects result;
+    Effects result = Effects::none();
     switch (opcode()) {
     case Nop:
     case Identity:
@@ -577,6 +587,8 @@ Effects Value::effects() const
     case Select:
     case Depend:
     case Extract:
+    case FMin:
+    case FMax:
         break;
     case Div:
     case UDiv:
@@ -717,6 +729,8 @@ ValueKey Value::key() const
     case UDiv:
     case Mod:
     case UMod:
+    case FMax:
+    case FMin:
     case BitAnd:
     case BitOr:
     case BitXor:
@@ -815,6 +829,8 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
     case UDiv:
     case Mod:
     case UMod:
+    case FMax:
+    case FMin:
     case Neg:
     case BitAnd:
     case BitOr:

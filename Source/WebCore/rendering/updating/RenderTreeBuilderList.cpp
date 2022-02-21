@@ -24,7 +24,7 @@
 #include "config.h"
 #include "RenderTreeBuilderList.h"
 
-#include "InlineIterator.h"
+#include "LegacyInlineIterator.h"
 #include "LineInlineHeaders.h"
 #include "RenderChildIterator.h"
 #include "RenderListMarker.h"
@@ -34,10 +34,10 @@
 
 namespace WebCore {
 
-// FIXME: This shouldn't need InlineIterator
+// FIXME: This shouldn't need LegacyInlineIterator
 static bool generatesLineBoxesForInlineChild(RenderBlock& current, RenderObject* inlineObj)
 {
-    InlineIterator it(&current, inlineObj, 0);
+    LegacyInlineIterator it(&current, inlineObj, 0);
     while (!it.atEnd() && !requiresLineBox(it))
         it.increment();
     return !it.atEnd();

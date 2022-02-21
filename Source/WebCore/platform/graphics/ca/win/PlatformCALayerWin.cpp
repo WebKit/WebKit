@@ -577,7 +577,7 @@ Color PlatformCALayerWin::backgroundColor() const
 
 void PlatformCALayerWin::setBackgroundColor(const Color& value)
 {
-    CACFLayerSetBackgroundColor(m_layer.get(), cachedCGColor(value));
+    CACFLayerSetBackgroundColor(m_layer.get(), cachedCGColor(value).get());
     setNeedsCommit();
 }
 
@@ -720,7 +720,7 @@ static void printLayer(StringBuilder& builder, const PlatformCALayer* layer, int
     builder.append('\n');
     printIndent(builder, indent);
 
-    char* layerTypeName = nullptr;
+    const char* layerTypeName = nullptr;
     switch (layer->layerType()) {
     case PlatformCALayer::LayerTypeLayer: layerTypeName = "layer"; break;
     case PlatformCALayer::LayerTypeWebLayer: layerTypeName = "web-layer"; break;

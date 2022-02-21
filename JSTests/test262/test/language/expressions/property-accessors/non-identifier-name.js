@@ -11,8 +11,8 @@ description: >
       MemberExpression[?Yield, ?Await] . IdentifierName
 
 negative:
-  type: SyntaxError
   phase: parse
+  type: SyntaxError
 ---*/
 
 $DONOTEVALUATE();

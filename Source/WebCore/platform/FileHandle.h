@@ -36,15 +36,14 @@ namespace WebCore {
 class WEBCORE_EXPORT FileHandle final {
 public:
     FileHandle() = default;
+    ~FileHandle();
     FileHandle(const String& path, FileSystem::FileOpenMode);
     FileHandle(const String& path, FileSystem::FileOpenMode, OptionSet<FileSystem::FileLockMode>);
-    FileHandle(const FileHandle& other) = delete;
     FileHandle(FileHandle&& other);
-
-    ~FileHandle();
-
-    FileHandle& operator=(const FileHandle& other) = delete;
     FileHandle& operator=(FileHandle&& other);
+    FileHandle(const FileHandle&) = delete;
+    FileHandle& operator=(const FileHandle&) = delete;
+    explicit FileHandle(FileSystem::PlatformFileHandle&&);
 
     explicit operator bool() const;
 
@@ -54,6 +53,8 @@ public:
     int write(const void* data, int length);
     bool printf(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
     void close();
+
+    FileSystem::PlatformFileHandle handle() const;
 
 private:
     String m_path;

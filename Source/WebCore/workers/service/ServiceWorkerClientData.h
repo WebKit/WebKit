@@ -27,7 +27,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "ServiceWorkerClientIdentifier.h"
+#include "ProcessQualified.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerClientType.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/URL.h>
@@ -40,7 +41,7 @@ class ScriptExecutionContext;
 enum class LastNavigationWasAppInitiated : bool { No, Yes };
 
 struct ServiceWorkerClientData {
-    ServiceWorkerClientIdentifier identifier;
+    ScriptExecutionContextIdentifier identifier;
     ServiceWorkerClientType type;
     ServiceWorkerClientFrameType frameType;
     URL url;
@@ -48,7 +49,7 @@ struct ServiceWorkerClientData {
 
     ServiceWorkerClientData isolatedCopy() const;
 
-    static ServiceWorkerClientData from(ScriptExecutionContext&, SWClientConnection&);
+    static ServiceWorkerClientData from(ScriptExecutionContext&);
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerClientData> decode(Decoder&);
@@ -63,7 +64,7 @@ void ServiceWorkerClientData::encode(Encoder& encoder) const
 template<class Decoder>
 std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& decoder)
 {
-    std::optional<ServiceWorkerClientIdentifier> identifier;
+    std::optional<ScriptExecutionContextIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
@@ -91,7 +92,7 @@ std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& 
     return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url), WTFMove(*lastNavigationWasAppInitiated) } };
 }
 
-using ServiceWorkerClientsMatchAllCallback = WTF::CompletionHandler<void(Vector<ServiceWorkerClientData>&&)>;
+using ServiceWorkerClientsMatchAllCallback = CompletionHandler<void(Vector<ServiceWorkerClientData>&&)>;
 
 } // namespace WebCore
 

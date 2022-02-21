@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,8 @@
 #import "WheelEventDeltaFilterMac.h"
 
 #import "FloatPoint.h"
+#import "Logging.h"
+#import "PlatformWheelEvent.h"
 #import <pal/spi/mac/NSScrollingInputFilterSPI.h>
 
 namespace WebCore {
@@ -36,33 +38,75 @@ namespace WebCore {
 WheelEventDeltaFilterMac::WheelEventDeltaFilterMac()
     : WheelEventDeltaFilter()
     , m_predominantAxisFilter(adoptNS([[_NSScrollingPredominantAxisFilter alloc] init]))
+    , m_initialWallTime(WallTime::now())
 {
 }
 
-void WheelEventDeltaFilterMac::beginFilteringDeltas()
+void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
 {
-    m_beginFilteringDeltasTime = MonotonicTime::now();
-    m_isFilteringDeltas = true;
-}
-
-void WheelEventDeltaFilterMac::updateFromDelta(const FloatSize& delta)
-{
-    if (!m_isFilteringDeltas)
+    if (event.momentumPhase() != PlatformWheelEventPhase::None) {
+        if (event.momentumPhase() == PlatformWheelEventPhase::Began)
+            updateCurrentVelocityFromEvent(event);
+        m_lastIOHIDEventTimestamp = event.ioHIDEventTimestamp();
         return;
+    }
+
+    switch (event.phase()) {
+    case PlatformWheelEventPhase::None:
+    case PlatformWheelEventPhase::Ended:
+        break;
+
+    case PlatformWheelEventPhase::Began:
+        reset();
+        updateCurrentVelocityFromEvent(event);
+        break;
+
+    case PlatformWheelEventPhase::Changed:
+        updateCurrentVelocityFromEvent(event);
+        break;
+
+    case PlatformWheelEventPhase::MayBegin:
+    case PlatformWheelEventPhase::Cancelled:
+    case PlatformWheelEventPhase::Stationary:
+        reset();
+        break;
+    }
+
+    m_lastIOHIDEventTimestamp = event.ioHIDEventTimestamp();
+}
+
+void WheelEventDeltaFilterMac::updateCurrentVelocityFromEvent(const PlatformWheelEvent& event)
+{
+    // The absolute value of timestamp doesn't matter; the filter looks at deltas from the previous event.
+    auto timestamp = event.timestamp() - m_initialWallTime;
 
     NSPoint filteredDeltaResult;
     NSPoint filteredVelocityResult;
-    [m_predominantAxisFilter filterInputDelta:NSPoint(FloatPoint(delta.width(), delta.height())) timestamp:(MonotonicTime::now() - m_beginFilteringDeltasTime).seconds() outputDelta:&filteredDeltaResult velocity:&filteredVelocityResult];
-    m_currentFilteredVelocity = FloatSize(filteredVelocityResult.x, filteredVelocityResult.y);
-    m_currentFilteredDelta = FloatSize(filteredDeltaResult.x, filteredDeltaResult.y);
+
+    [m_predominantAxisFilter filterInputDelta:toFloatPoint(event.delta()) timestamp:timestamp.seconds() outputDelta:&filteredDeltaResult velocity:&filteredVelocityResult];
+    auto axisFilteredVelocity = toFloatSize(filteredVelocityResult);
+    m_currentFilteredDelta = toFloatSize(filteredDeltaResult);
+
+    // Use a 1ms minimum to avoid divide by zero. The usual cadence of these events matches screen refresh rate.
+    auto deltaFromLastEvent = std::max(event.ioHIDEventTimestamp() - m_lastIOHIDEventTimestamp, 1_ms);
+    m_currentFilteredVelocity = event.delta() / deltaFromLastEvent.seconds();
+
+    // Apply the axis-locking that m_predominantAxisFilter does.
+    if (!axisFilteredVelocity.width())
+        m_currentFilteredVelocity.setWidth(0);
+    if (!axisFilteredVelocity.height())
+        m_currentFilteredVelocity.setHeight(0);
+
+    LOG(ScrollAnimations, "WheelEventDeltaFilterMac::updateFromEvent: _NSScrollingPredominantAxisFilter velocity %.2f, %2f, IOHIDEvent velocity %.2f,%.2f",
+        axisFilteredVelocity.width(), axisFilteredVelocity.height(), m_currentFilteredVelocity.width(), m_currentFilteredVelocity.height());
 }
 
-void WheelEventDeltaFilterMac::endFilteringDeltas()
+void WheelEventDeltaFilterMac::reset()
 {
-    m_currentFilteredDelta = FloatSize(0, 0);
-    m_beginFilteringDeltasTime = MonotonicTime();
     [m_predominantAxisFilter reset];
-    m_isFilteringDeltas = false;
+    m_currentFilteredVelocity = { };
+    m_currentFilteredDelta = { };
+    m_lastIOHIDEventTimestamp = { };
 }
 
 }

@@ -16,7 +16,8 @@ PASS ReadableStream with byte source: Test that closing a stream does not releas
 PASS ReadableStream with byte source: Test that closing a stream does not release a BYOB reader automatically
 PASS ReadableStream with byte source: Test that erroring a stream does not release a reader automatically
 PASS ReadableStream with byte source: Test that erroring a stream does not release a BYOB reader automatically
-PASS ReadableStream with byte source: releaseLock() on ReadableStreamDefaultReader with pending read() must throw
+FAIL ReadableStream with byte source: releaseLock() on ReadableStreamDefaultReader must reject pending read() promise_test: Unhandled rejection with value: object "TypeError: There are still pending read requests, cannot release the lock"
+FAIL ReadableStream with byte source: releaseLock() on ReadableStreamBYOBReader must reject pending read() promise_test: Unhandled rejection with value: object "TypeError: There are still pending read requests, cannot release the lock"
 PASS ReadableStream with byte source: Automatic pull() after start()
 PASS ReadableStream with byte source: Automatic pull() after start() and read()
 FAIL ReadableStream with byte source: autoAllocateChunkSize assert_equals: pull() must have been invoked twice expected 2 but got 1
@@ -36,7 +37,7 @@ FAIL ReadableStream with byte source: Respond to pull() by enqueue() assert_equa
 FAIL ReadableStream with byte source: Respond to pull() by enqueue() asynchronously assert_equals: byobRequest should be null expected (object) null but got (undefined) undefined
 TIMEOUT ReadableStream with byte source: Respond to multiple pull() by separate enqueue() Test timed out
 NOTRUN ReadableStream with byte source: read(view), then respond()
-NOTRUN ReadableStream with byte source: read(view), then respond() with a transferred ArrayBuffer
+NOTRUN ReadableStream with byte source: read(view), then respondWithNewView() with a transferred ArrayBuffer
 NOTRUN ReadableStream with byte source: read(view), then respond() with too big value
 NOTRUN ReadableStream with byte source: respond(3) to read(view) with 2 element Uint16Array enqueues the 1 byte remainder
 NOTRUN ReadableStream with byte source: enqueue(), getReader(), then read(view)
@@ -56,6 +57,7 @@ PASS ReadableStream with byte source: Throw if close()-ed more than once
 PASS ReadableStream with byte source: Throw on enqueue() after close()
 NOTRUN ReadableStream with byte source: read(view), then respond() and close() in pull()
 NOTRUN ReadableStream with byte source: read(view) with Uint32Array, then fill it by multiple respond() calls
+NOTRUN ReadableStream with byte source: read(view) with Uint32Array, then fill it by multiple enqueue() calls
 NOTRUN ReadableStream with byte source: read() twice, then enqueue() twice
 NOTRUN ReadableStream with byte source: Multiple read(view), close() and respond()
 NOTRUN ReadableStream with byte source: Multiple read(view), big enqueue()
@@ -74,7 +76,8 @@ NOTRUN ReadableStream with byte source: Throwing in pull in response to read(vie
 NOTRUN calling respond() twice on the same byobRequest should throw
 NOTRUN calling respondWithNewView() twice on the same byobRequest should throw
 NOTRUN calling respond(0) twice on the same byobRequest should throw even when closed
-NOTRUN pull() resolving should not make releaseLock() possible
+NOTRUN calling respond() should throw when canceled
+NOTRUN pull() resolving should not resolve read()
 NOTRUN ReadableStream with byte source: default reader + autoAllocateChunkSize + byobRequest interaction
 FAIL ReadableStream with byte source: autoAllocateChunkSize cannot be 0 assert_throws_js: controller cannot be setup with autoAllocateChunkSize = 0 function "() => new ReadableStream({ autoAllocateChunkSize: 0, type: 'bytes' })" threw object "RangeError: autoAllocateChunkSize value is negative or equal to positive or negative infinity" ("RangeError") expected instance of function "function TypeError() {
     [native code]
@@ -84,4 +87,21 @@ PASS ReadableStreamBYOBReader constructor requires a ReadableStream argument
 PASS ReadableStreamBYOBReader constructor requires an unlocked ReadableStream
 PASS ReadableStreamBYOBReader constructor requires a ReadableStream with type "bytes"
 PASS ReadableStream constructor should not accept a strategy with a size defined if type is "bytes"
+NOTRUN ReadableStream with byte source: respondWithNewView() with a smaller view
+NOTRUN ReadableStream with byte source: respondWithNewView() with a zero-length view (in the closed state)
+NOTRUN ReadableStream with byte source: respondWithNewView() with a transferred non-zero-length view (in the readable state)
+NOTRUN ReadableStream with byte source: respondWithNewView() with a transferred zero-length view (in the closed state)
+NOTRUN ReadableStream with byte source: enqueue() discards auto-allocated BYOB request
+NOTRUN ReadableStream with byte source: releaseLock() with pending read(view), read(view) on second reader, respond()
+NOTRUN ReadableStream with byte source: releaseLock() with pending read(view), read(view) on second reader with 1 element Uint16Array, respond(1)
+NOTRUN ReadableStream with byte source: releaseLock() with pending read(view), read(view) on second reader with 2 element Uint8Array, respond(3)
+NOTRUN ReadableStream with byte source: releaseLock() with pending read(view), read(view) on second reader, respondWithNewView()
+NOTRUN ReadableStream with byte source: releaseLock() with pending read(view), read(view) on second reader, enqueue()
+NOTRUN ReadableStream with byte source: releaseLock() with pending read(view), read(view) on second reader, close(), respond(0)
+NOTRUN ReadableStream with byte source: autoAllocateChunkSize, releaseLock() with pending read(), read() on second reader, respond()
+NOTRUN ReadableStream with byte source: autoAllocateChunkSize, releaseLock() with pending read(), read() on second reader, enqueue()
+NOTRUN ReadableStream with byte source: autoAllocateChunkSize, releaseLock() with pending read(), read(view) on second reader, respond()
+NOTRUN ReadableStream with byte source: autoAllocateChunkSize, releaseLock() with pending read(), read(view) on second reader, enqueue()
+NOTRUN ReadableStream with byte source: read(view) with 1 element Uint16Array, respond(1), releaseLock(), read(view) on second reader with 1 element Uint16Array, respond(1)
+NOTRUN ReadableStream with byte source: read(view) with 1 element Uint16Array, respond(1), releaseLock(), read() on second reader, enqueue()
 

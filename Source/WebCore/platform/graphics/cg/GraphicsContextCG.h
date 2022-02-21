@@ -82,7 +82,7 @@ public:
 
     ~GraphicsContextCG();
 
-    bool hasPlatformContext() const;
+    bool hasPlatformContext() const final;
     CGContextRef platformContext() const final;
 
     void save() final;
@@ -135,7 +135,7 @@ public:
     void setMiterLimit(float) final;
 
     void drawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) final;
-    void drawPattern(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;
+    void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;
 
     using GraphicsContext::scale;
     void scale(const FloatSize&) final;
@@ -143,9 +143,9 @@ public:
     void translate(float x, float y) final;
 
     void concatCTM(const AffineTransform&) final;
-    void setCTM(const AffineTransform&) final;
+    void setCTM(const AffineTransform&) override;
 
-    AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const final;
+    AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const override;
 
     FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides) final;
 
@@ -167,7 +167,9 @@ public:
 
     bool supportsInternalLinks() const final;
 
-    void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final;
+    void didUpdateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final;
+
+    virtual bool canUseShadowBlur() const;
 
 #if OS(WINDOWS)
     GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;

@@ -25,7 +25,7 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "LayoutSize.h"
-#include "RenderSVGRoot.h"
+#include "LegacyRenderSVGRoot.h"
 #include "SVGImage.h"
 #include "SVGImageForContainer.h"
 

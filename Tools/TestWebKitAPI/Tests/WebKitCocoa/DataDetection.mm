@@ -142,7 +142,7 @@ TEST(WebKit, AddAndRemoveDataDetectors)
         EXPECT_TRUE([results[0].value containsString:@"2 Apple Park Way, Cupertino 95014"]);
         EXPECT_WK_STREQ("SignatureBlock", results[0].type);
         EXPECT_WK_STREQ("Date", results[1].type);
-        EXPECT_WK_STREQ("December 21, 2021", results[1].value);
+        EXPECT_WK_STREQ("December 21, 2099", results[1].value);
         EXPECT_WK_STREQ("FlightInformation", results[2].type);
         EXPECT_WK_STREQ("AC780", results[2].value);
 

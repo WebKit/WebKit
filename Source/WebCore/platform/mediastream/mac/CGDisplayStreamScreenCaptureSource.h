@@ -41,7 +41,7 @@ namespace WebCore {
 
 class CGDisplayStreamScreenCaptureSource final : public CGDisplayStreamCaptureSource {
 public:
-    static Expected<UniqueRef<DisplayCaptureSourceMac::Capturer>, String> create(const String&);
+    static Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> create(const String&);
 
     explicit CGDisplayStreamScreenCaptureSource(uint32_t);
     ~CGDisplayStreamScreenCaptureSource() = default;
@@ -51,7 +51,7 @@ public:
 
 private:
 
-    // DisplayCaptureSourceMac::Capturer
+    // DisplayCaptureSourceCocoa::Capturer
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
     RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor; }
     IntSize intrinsicSize() const final;
@@ -60,40 +60,8 @@ private:
 #endif
 
     // CGDisplayStreamCaptureSource
-    RetainPtr<CGDisplayStreamRef> createDisplayStream(FrameAvailableCallback, dispatch_queue_t) final;
+    RetainPtr<CGDisplayStreamRef> createDisplayStream() final;
     bool checkDisplayStream() final;
-
-    class DisplaySurface {
-    public:
-        DisplaySurface() = default;
-        explicit DisplaySurface(IOSurfaceRef surface)
-            : m_surface(surface)
-        {
-            if (m_surface)
-                IOSurfaceIncrementUseCount(m_surface.get());
-        }
-
-        ~DisplaySurface()
-        {
-            if (m_surface)
-                IOSurfaceDecrementUseCount(m_surface.get());
-        }
-
-        DisplaySurface& operator=(IOSurfaceRef surface)
-        {
-            if (m_surface)
-                IOSurfaceDecrementUseCount(m_surface.get());
-            if (surface)
-                IOSurfaceIncrementUseCount(surface);
-            m_surface = surface;
-            return *this;
-        }
-
-        IOSurfaceRef ioSurface() const { return m_surface.get(); }
-
-    private:
-        RetainPtr<IOSurfaceRef> m_surface;
-    };
 
     RetainPtr<CGDisplayStreamRef> m_displayStream;
 

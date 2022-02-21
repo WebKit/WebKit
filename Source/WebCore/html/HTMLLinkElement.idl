@@ -36,9 +36,9 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
     [CEReactions=NotNeeded] attribute DOMString as;
     [CEReactions=NotNeeded] attribute DOMString? crossOrigin;
-    [CEReactions=NotNeeded, Reflect, EnabledBySetting=LinkPreloadResponsiveImages] attribute DOMString imageSrcset;
-    [CEReactions=NotNeeded, Reflect, EnabledBySetting=LinkPreloadResponsiveImages] attribute DOMString imageSizes;
-    [EnabledBySetting=ReferrerPolicyAttribute, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
+    [CEReactions=NotNeeded, Reflect, EnabledBySetting=LinkPreloadResponsiveImagesEnabled] attribute DOMString imageSrcset;
+    [CEReactions=NotNeeded, Reflect, EnabledBySetting=LinkPreloadResponsiveImagesEnabled] attribute DOMString imageSizes;
+    [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
 
     // DOM Level 2 Style
     readonly attribute StyleSheet sheet;
@@ -46,6 +46,6 @@
     [PutForwards=value] readonly attribute DOMTokenList relList;
 
     [Reflect] attribute DOMString nonce;
-    [CEReactions=NotNeeded, Reflect, EnabledBySetting=SubresourceIntegrity] attribute DOMString integrity;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString integrity;
 };
 

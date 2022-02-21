@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
+
+PASS Removing iframe in promise reject handler should not crash
+

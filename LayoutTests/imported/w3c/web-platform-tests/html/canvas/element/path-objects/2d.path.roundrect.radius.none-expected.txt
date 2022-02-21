@@ -1,6 +1,8 @@
 2d.path.roundrect.radius.none
-Check that roundRect throws an IndexSizeError if radii is an empty array.
+Check that roundRect throws an RangeError if radii is an empty array.
 Actual output:
 
-FAIL Check that roundRect throws an IndexSizeError if radii is an empty array. assert_throws_dom: function "function () { ctx.roundRect(0, 0, 100, 50, []); }" threw object "TypeError: ctx.roundRect is not a function. (In 'ctx.roundRect(0, 0, 100, 50, [])', 'ctx.roundRect' is undefined)" that is not a DOMException INDEX_SIZE_ERR: property "code" is equal to undefined, expected 1
+FAIL Check that roundRect throws an RangeError if radii is an empty array. assert_throws_js: function "() => { ctx.roundRect(0, 0, 100, 50, [])}" threw object "TypeError: ctx.roundRect is not a function. (In 'ctx.roundRect(0, 0, 100, 50, [])', 'ctx.roundRect' is undefined)" ("TypeError") expected instance of function "function RangeError() {
+    [native code]
+}" ("RangeError")
 

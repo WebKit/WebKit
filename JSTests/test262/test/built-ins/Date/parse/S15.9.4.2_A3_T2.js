@@ -8,11 +8,11 @@ info: |
 esid: sec-date.parse
 description: Checking DontDelete attribute
 ---*/
+assert.sameValue(delete Date.parse.length, true, 'The value of `delete Date.parse.length` is expected to be true');
 
-if (delete Date.parse.length !== true) {
-  throw new Test262Error('#1: The Date.parse.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.parse.hasOwnProperty('length'),
+  'The value of !Date.parse.hasOwnProperty(\'length\') is expected to be true'
+);
 
-if (Date.parse.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.parse.length property does not have the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

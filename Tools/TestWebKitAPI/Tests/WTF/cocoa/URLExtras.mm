@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "Test.h"
 #import "WTFStringUtilities.h"
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
@@ -78,7 +79,11 @@ TEST(WTF_URLExtras, URLExtras)
     EXPECT_STREQ("-a.example.com", [WTF::decodeHostName(@"-a.example.com") UTF8String]);
     EXPECT_STREQ("a-.example.com", [WTF::decodeHostName(@"a-.example.com") UTF8String]);
     EXPECT_STREQ("ab--cd.example.com", [WTF::decodeHostName(@"ab--cd.example.com") UTF8String]);
+#if HAVE(NSURL_EMPTY_PUNYCODE_CHECK)
+    EXPECT_NULL([WTF::decodeHostName(@"xn--.example.com") UTF8String]);
+#else
     EXPECT_STREQ(".example.com", [WTF::decodeHostName(@"xn--.example.com") UTF8String]);
+#endif
     EXPECT_STREQ("a..example.com", [WTF::decodeHostName(@"a..example.com") UTF8String]);
 }
     
@@ -244,10 +249,10 @@ TEST(WTF_URLExtras, URLExtras_ParsingError)
 
 TEST(WTF_URLExtras, URLExtras_Nil)
 {
-    NSURL *url1 = WTF::URLWithUserTypedString(nil, nil);
+    NSURL *url1 = WTF::URLWithUserTypedString(nil);
     EXPECT_TRUE(url1 == nil);
 
-    NSURL *url2 = WTF::URLWithUserTypedStringDeprecated(nil, nil);
+    NSURL *url2 = WTF::URLWithUserTypedStringDeprecated(nil);
     EXPECT_TRUE(url2 == nil);
 }
 

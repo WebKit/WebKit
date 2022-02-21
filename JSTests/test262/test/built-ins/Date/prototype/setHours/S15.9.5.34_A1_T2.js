@@ -6,11 +6,11 @@ info: The Date.prototype property "setHours" has { DontEnum } attributes
 esid: sec-date.prototype.sethours
 description: Checking absence of DontDelete attribute
 ---*/
+assert.notSameValue(delete Date.prototype.setHours, false, 'The value of delete Date.prototype.setHours is not false');
 
-if (delete Date.prototype.setHours === false) {
-  throw new Test262Error('#1: The Date.prototype.setHours property has not the attributes DontDelete');
-}
+assert(
+  !Date.prototype.hasOwnProperty('setHours'),
+  'The value of !Date.prototype.hasOwnProperty(\'setHours\') is expected to be true'
+);
 
-if (Date.prototype.hasOwnProperty('setHours')) {
-  throw new Test262Error('#2: The Date.prototype.setHours property has not the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

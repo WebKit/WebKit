@@ -73,7 +73,7 @@ void AccessGenerationState::succeed()
 {
     restoreScratch();
     if (jit->codeBlock()->useDataIC())
-        jit->ret();
+        jit->farJump(CCallHelpers::Address(stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfDoneLocation()), JSInternalPtrTag);
     else
         success.append(jit->jump());
 }
@@ -110,6 +110,8 @@ const RegisterSet& AccessGenerationState::calculateLiveRegistersForCallAndExcept
             RELEASE_ASSERT(JITCode::isOptimizingJIT(jit->codeBlock()->jitType()));
 
         m_liveRegistersForCall = RegisterSet(m_liveRegistersToPreserveAtExceptionHandlingCallSite, allocator->usedRegisters());
+        if (jit->codeBlock()->useDataIC())
+            m_liveRegistersForCall.add(stubInfo->m_stubInfoGPR);
         m_liveRegistersForCall.exclude(calleeSaveRegisters());
     }
     return m_liveRegistersForCall;
@@ -128,11 +130,12 @@ auto AccessGenerationState::preserveLiveRegistersToStackForCall(const RegisterSe
     };
 }
 
-auto AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions(const RegisterSet& extra) -> SpillState
+auto AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions() -> SpillState
 {
     RegisterSet liveRegisters = allocator->usedRegisters();
+    if (jit->codeBlock()->useDataIC())
+        liveRegisters.add(stubInfo->m_stubInfoGPR);
     liveRegisters.exclude(calleeSaveRegisters());
-    liveRegisters.merge(extra);
 
     constexpr unsigned extraStackPadding = 0;
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegisters, extraStackPadding);
@@ -250,6 +253,22 @@ void AccessGenerationState::emitExplicitExceptionHandler()
     }
 }
 
+ScratchRegisterAllocator AccessGenerationState::makeDefaultScratchAllocator(GPRReg extraToLock)
+{
+    ScratchRegisterAllocator allocator(stubInfo->usedRegisters);
+    allocator.lock(stubInfo->baseRegs());
+    allocator.lock(valueRegs);
+    allocator.lock(u.thisGPR);
+#if USE(JSVALUE32_64)
+    allocator.lock(stubInfo->v.thisTagGPR);
+#endif
+    allocator.lock(stubInfo->m_stubInfoGPR);
+    allocator.lock(stubInfo->m_arrayProfileGPR);
+    allocator.lock(extraToLock);
+
+    return allocator;
+}
+
 PolymorphicAccess::PolymorphicAccess() { }
 PolymorphicAccess::~PolymorphicAccess() { }
 
@@ -362,7 +381,7 @@ bool PolymorphicAccess::visitWeak(VM& vm) const
     }
     if (m_stubRoutine) {
         for (StructureID weakReference : m_stubRoutine->weakStructures()) {
-            Structure* structure = vm.getStructure(weakReference);
+            Structure* structure = weakReference.decode();
             if (!vm.heap.isMarked(structure))
                 return false;
         }
@@ -480,23 +499,8 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
     }
     m_list.resize(dstIndex);
 
-    ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
+    auto allocator = state.makeDefaultScratchAllocator();
     state.allocator = &allocator;
-    allocator.lock(state.baseGPR);
-    if (state.u.thisGPR != InvalidGPRReg)
-        allocator.lock(state.u.thisGPR);
-    if (state.valueRegs)
-        allocator.lock(state.valueRegs);
-#if USE(JSVALUE32_64)
-    allocator.lock(stubInfo.baseTagGPR);
-    if (stubInfo.v.thisTagGPR != InvalidGPRReg)
-        allocator.lock(stubInfo.v.thisTagGPR);
-#endif
-    if (stubInfo.m_stubInfoGPR != InvalidGPRReg)
-        allocator.lock(stubInfo.m_stubInfoGPR);
-    if (stubInfo.m_arrayProfileGPR != InvalidGPRReg)
-        allocator.lock(stubInfo.m_arrayProfileGPR);
-
     state.scratchGPR = allocator.allocateScratchGPR();
 
     for (auto& accessCase : cases) {
@@ -596,16 +600,11 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
     CCallHelpers jit(codeBlock);
     state.jit = &jit;
 
-    if (codeBlock->useDataIC()) {
-        if (state.m_doesJSGetterSetterCalls) {
-            // We have no guarantee that stack-pointer is the expected one. This is not a problem if we do not have JS getter / setter calls since stack-pointer is
-            // a callee-save register in the C calling convension. However, our JS executable call does not save stack-pointer. So we are adjusting stack-pointer after
-            // JS getter / setter calls. But this could be different from the initial stack-pointer, and makes PAC tagging broken.
-            // To ensure PAC-tagging work, we first adjust stack-pointer to the appropriate one.
-            jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-            jit.tagReturnAddress();
-        } else
-            jit.tagReturnAddress();
+    if (!canBeShared && ASSERT_ENABLED) {
+        jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, jit.scratchRegister());
+        auto ok = jit.branchPtr(CCallHelpers::Equal, CCallHelpers::stackPointerRegister, jit.scratchRegister());
+        jit.breakpoint();
+        ok.link(&jit);
     }
 
     state.preservedReusedRegisterState =

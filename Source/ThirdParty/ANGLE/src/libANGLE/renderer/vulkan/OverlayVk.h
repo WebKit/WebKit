@@ -25,12 +25,13 @@ class OverlayVk : public OverlayImpl
     OverlayVk(const gl::OverlayState &state);
     ~OverlayVk() override;
 
-    angle::Result init(const gl::Context *context) override;
+    angle::Result init(const gl::Context *context, bool *successOut) override;
     void onDestroy(const gl::Context *context) override;
 
     angle::Result onPresent(ContextVk *contextVk,
                             vk::ImageHelper *imageToPresent,
-                            const vk::ImageView *imageToPresentView);
+                            const vk::ImageView *imageToPresentView,
+                            bool is90DegreeRotation);
 
     uint32_t getEnabledWidgetCount() const { return mState.getEnabledWidgetCount(); }
 

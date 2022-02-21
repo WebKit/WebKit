@@ -19,6 +19,7 @@ webkit_plugin_get_type
 webkit_mime_info_get_type
 webkit_web_inspector_get_type
 webkit_uri_scheme_request_get_type
+webkit_uri_scheme_response_get_type
 webkit_context_menu_get_type
 webkit_context_menu_item_get_type
 webkit_web_extension_get_type

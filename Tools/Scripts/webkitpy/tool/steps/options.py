@@ -68,3 +68,4 @@ class Options(object):
     update = make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory.")
     update_changelogs = make_option("--update-changelogs", action="store_true", dest="update_changelogs", default=False, help="Update existing ChangeLog entries with new date, bug description, and touched files/functions.")
     changelog_count = make_option("--changelog-count", action="store", type="int", dest="changelog_count", help="Number of changelogs to parse.")
+    format_cpp_files = make_option("--no-format-cpp-files", action="store_false", dest="format_cpp_files", default=True, help="Skip formatting of C/C++ files.")

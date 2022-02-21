@@ -43,7 +43,7 @@ public:
     }
 
     static void ensurePrivateBrowsingSession(WebsiteDataStoreParameters&&);
-    static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
+    static void ensureWebsiteDataStoreSession(const WebsiteDataStoreParameters&);
 
     WebFrameLoaderClient* webFrameLoaderClient() const;
 

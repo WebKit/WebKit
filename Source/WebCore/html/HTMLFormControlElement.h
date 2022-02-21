@@ -76,7 +76,7 @@ public:
 
     bool isEnumeratable() const override { return false; }
 
-    bool isRequired() const;
+    bool isRequired() const { return m_isRequired; }
 
     const AtomString& type() const { return formControlType(); }
 
@@ -86,7 +86,7 @@ public:
 
     // Override in derived classes to get the encoded name=value pair for submitting.
     // Return true for a successful control (see HTML4-17.13.2).
-    bool appendFormData(DOMFormData&, bool) override { return false; }
+    bool appendFormData(DOMFormData&) override { return false; }
 
     virtual bool isSuccessfulSubmitButton() const { return false; }
     virtual bool isActivatedSubmit() const { return false; }
@@ -116,9 +116,6 @@ public:
     bool isReadOnly() const { return m_isReadOnly; }
     bool isDisabledOrReadOnly() const { return isDisabledFormControl() || m_isReadOnly; }
 
-    bool hasAutofocused() { return m_hasAutofocused; }
-    void setAutofocused() { m_hasAutofocused = true; }
-
     WEBCORE_EXPORT String autocomplete() const;
     WEBCORE_EXPORT void setAutocomplete(const String&);
 
@@ -128,7 +125,7 @@ public:
 
     virtual bool isSubmitButton() const { return false; }
 
-    virtual String resultForDialogSubmit() const { return attributeWithoutSynchronization(HTMLNames::valueAttr); }
+    virtual String resultForDialogSubmit() const;
 
     using Node::ref;
     using Node::deref;
@@ -169,6 +166,8 @@ protected:
 private:
     void refFormAssociatedElement() override { ref(); }
     void derefFormAssociatedElement() override { deref(); }
+
+    void runFocusingStepsForAutofocus() final;
 
     bool matchesValidPseudoClass() const override;
     bool matchesInvalidPseudoClass() const override;
@@ -215,8 +214,6 @@ private:
     unsigned m_isValid : 1;
 
     unsigned m_wasChangedSinceLastFormControlChangeEvent : 1;
-
-    unsigned m_hasAutofocused : 1;
 };
 
 class DelayedUpdateValidityScope {

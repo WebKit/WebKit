@@ -44,7 +44,7 @@ InlineLayoutUnit InlineFormattingQuirks::initialLineHeight() const
     ASSERT(!layoutState().inStandardsMode());
     // Negative lineHeight value means the line-height is not set
     auto& rootStyle = formattingContext().root().style();
-    return rootStyle.lineHeight().isNegative() ? rootStyle.fontMetrics().floatHeight() : rootStyle.computedLineHeight();
+    return rootStyle.lineHeight().isNegative() ? rootStyle.metricsOfPrimaryFont().floatHeight() : rootStyle.computedLineHeight();
 }
 
 bool InlineFormattingQuirks::inlineLevelBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox, const LineBox& lineBox) const

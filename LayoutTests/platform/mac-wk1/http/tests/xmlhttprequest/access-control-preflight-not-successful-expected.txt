@@ -1,12 +1,12 @@
 CONSOLE MESSAGE: Cross-origin redirection denied by Cross-Origin Resource Sharing policy.
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 200
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 302
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 404
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 404
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py due to access control checks.
 Tests that not successful preflight responses make preflight failing
 

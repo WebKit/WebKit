@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,13 +48,13 @@ DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID)
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     CVReturn error = CVDisplayLinkCreateWithCGDisplay(displayID, &m_displayLink);
     if (error) {
-        WTFLogAlways("Could not create a display link for display %u: error %d", displayID, error);
+        RELEASE_LOG_FAULT(DisplayLink, "Could not create a display link for display %u: error %d", displayID, error);
         return;
     }
     
     error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
     if (error) {
-        WTFLogAlways("Could not set the display link output callback for display %u: error %d", displayID, error);
+        RELEASE_LOG_FAULT(DisplayLink, "DisplayLink: Could not set the display link output callback for display %u: error %d", displayID, error);
         return;
     }
 
@@ -101,11 +101,12 @@ void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID
 
     if (!CVDisplayLinkIsRunning(m_displayLink)) {
         LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " starting CVDisplayLink with fps " << m_displayNominalFramesPerSecond);
-        CVReturn error = CVDisplayLinkStart(m_displayLink);
-        if (error)
-            WTFLogAlways("Could not start the display link: %d", error);
 
         m_currentUpdate = { 0, m_displayNominalFramesPerSecond };
+
+        CVReturn error = CVDisplayLinkStart(m_displayLink);
+        if (error)
+            RELEASE_LOG_FAULT(DisplayLink, "DisplayLink: Could not start the display link: %d", error);
     }
 }
 
@@ -194,7 +195,7 @@ void DisplayLink::setPreferredFramesPerSecond(IPC::Connection& connection, Displ
         return;
 
     auto& connectionInfo = it->value;
-    auto index = connectionInfo.observers.findMatching([observerID](const auto& observer) {
+    auto index = connectionInfo.observers.findIf([observerID](const auto& observer) {
         return observer.observerID == observerID;
     });
 
@@ -235,9 +236,9 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
             << " observers, on background queue " << shouldSendIPCOnBackgroundQueue << " maxFramesPerSecond " << observersMaxFramesPerSecond << " full speed clients " << connectionInfo.fullSpeedUpdatesClientCount << " relevant " << mainThreadWantsUpdate);
 
         if (connectionInfo.fullSpeedUpdatesClientCount) {
-            IPC::Connection::send(connectionID, Messages::EventDispatcher::DisplayWasRefreshed(m_displayID, m_currentUpdate, mainThreadWantsUpdate), 0);
+            IPC::Connection::send(connectionID, Messages::EventDispatcher::DisplayWasRefreshed(m_displayID, m_currentUpdate, mainThreadWantsUpdate), 0, { }, Thread::QOS::UserInteractive);
         } else if (mainThreadWantsUpdate)
-            IPC::Connection::send(connectionID, Messages::WebProcess::DisplayWasRefreshed(m_displayID, m_currentUpdate), 0);
+            IPC::Connection::send(connectionID, Messages::WebProcess::DisplayWasRefreshed(m_displayID, m_currentUpdate), 0, { }, Thread::QOS::UserInteractive);
     }
 
     m_currentUpdate = m_currentUpdate.nextUpdate();

@@ -15,6 +15,7 @@
 #include "../perf_tests/third_party/perf/perf_result_reporter.h"
 #include "ANGLEPerfTestArgs.h"
 #include "common/platform.h"
+#include "common/string_utils.h"
 #include "common/system_utils.h"
 #include "test_utils/angle_test_configs.h"
 #include "test_utils/angle_test_instantiate.h"
@@ -149,7 +150,7 @@ class GLMark2Benchmark : public testing::TestWithParam<GLMark2TestParams>
         }
         args.push_back(nullptr);
 
-        ProcessHandle process(args, true, false);
+        ProcessHandle process(args, ProcessOutputCapture::StdoutOnly);
         ASSERT_TRUE(process && process->started());
         ASSERT_TRUE(process->finish());
 
@@ -193,8 +194,13 @@ class GLMark2Benchmark : public testing::TestWithParam<GLMark2TestParams>
         std::istringstream glmark2Output(output);
         std::string line;
 
+        // Forward any INFO: lines that may have been generated.
+        while (std::getline(glmark2Output, line) && BeginsWith(line, "INFO:"))
+        {
+            fprintf(stderr, "%s\n", line.c_str());
+        }
+
         // Expect ==== at the top of the header
-        std::getline(glmark2Output, line);
         ASSERT_EQ('=', line[0]);
 
         // Skip one line

@@ -35,8 +35,11 @@
 
 namespace WebCore {
 
+class GPU;
 class ScriptExecutionContext;
 class ServiceWorkerContainer;
+class StorageManager;
+class WebLockManager;
 
 class NavigatorBase : public RefCounted<NavigatorBase>, public ContextDestructionObserver, public CanMakeWeakPtr<NavigatorBase> {
 public:
@@ -58,8 +61,17 @@ public:
     static String language();
     static Vector<String> languages();
 
+    StorageManager& storage();
+    WebLockManager& locks();
+
+    static int hardwareConcurrency();
+
 protected:
     explicit NavigatorBase(ScriptExecutionContext*);
+
+private:
+    RefPtr<StorageManager> m_storageManager;
+    RefPtr<WebLockManager> m_webLockManager;
 
 #if ENABLE(SERVICE_WORKER)
 public:

@@ -25,13 +25,14 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
-#include "ClipPathOperation.h"
 #include "CounterDirectives.h"
 #include "FillLayer.h"
 #include "GapLength.h"
 #include "LengthPoint.h"
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
+#include "OffsetRotation.h"
+#include "PathOperation.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "ShapeValue.h"
@@ -64,6 +65,8 @@ class StyleResolver;
 class StyleTransformData;
 
 struct LengthSize;
+
+constexpr int appearanceBitWidth = 7;
 
 // Page size type.
 // StyleRareNonInheritedData::pageSize is meaningful only when
@@ -164,7 +167,7 @@ public:
 
     int order;
 
-    RefPtr<ClipPathOperation> clipPath;
+    RefPtr<PathOperation> clipPath;
 
     Color textDecorationColor;
     Color visitedLinkTextDecorationColor;
@@ -188,21 +191,20 @@ public:
     RefPtr<RotateTransformOperation> rotate;
     RefPtr<ScaleTransformOperation> scale;
     RefPtr<TranslateTransformOperation> translate;
+    RefPtr<PathOperation> offsetPath;
 
     OptionSet<TouchAction> touchActions;
 
     unsigned pageSizeType : 2; // PageSizeType
     unsigned transformStyle3D : 2; // TransformStyle3D
+    unsigned transformStyleForcedToFlat : 1; // The used value for transform-style is forced to flat by a grouping property.
     unsigned backfaceVisibility : 1; // BackfaceVisibility
 
     unsigned userDrag : 2; // UserDrag
     unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
     unsigned useSmoothScrolling : 1; // ScrollBehavior
-    unsigned marginBeforeCollapse : 2; // MarginCollapse
-    unsigned marginAfterCollapse : 2; // MarginCollapse
-    unsigned appearance : 6; // EAppearance
-    unsigned borderFit : 1; // BorderFit
-    unsigned textCombine : 1; // CSS3 text-combine properties
+    unsigned appearance : appearanceBitWidth; // EAppearance
+    unsigned effectiveAppearance : appearanceBitWidth; // EAppearance
 
     unsigned textDecorationStyle : 3; // TextDecorationStyle
 
@@ -225,12 +227,23 @@ public:
     unsigned breakInside : 3; // BreakInside
     unsigned resize : 2; // Resize
 
+    unsigned inputSecurity : 1; // InputSecurity
+
     unsigned hasAttrContent : 1;
 
     unsigned isNotFinal : 1;
 
+    unsigned containerType : 2; // ContainerType
+
+    Vector<AtomString> containerNames;
+
     GapLength columnGap;
     GapLength rowGap;
+
+    Length offsetDistance;
+    LengthPoint offsetPosition;
+    LengthPoint offsetAnchor;
+    OffsetRotation offsetRotate;
 
 private:
     StyleRareNonInheritedData();

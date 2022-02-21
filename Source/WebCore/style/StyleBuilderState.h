@@ -28,7 +28,9 @@
 #include "CSSToLengthConversionData.h"
 #include "CSSToStyleMap.h"
 #include "CascadeLevel.h"
+#include "PropertyCascade.h"
 #include "RenderStyle.h"
+#include "RuleSet.h"
 #include "SelectorChecker.h"
 #include <wtf/Bitmap.h>
 
@@ -88,7 +90,7 @@ public:
 
     bool useSVGZoomRules() const;
     bool useSVGZoomRulesForLength() const;
-    ScopeOrdinal styleScopeOrdinal() const { return m_styleScopeOrdinal; }
+    ScopeOrdinal styleScopeOrdinal() const { return m_currentProperty->styleScopeOrdinal; }
 
     Ref<CSSValue> resolveImageStyles(CSSValue&);
     RefPtr<StyleImage> createStyleImage(CSSValue&);
@@ -134,8 +136,7 @@ private:
     Bitmap<numCSSProperties> m_inProgressProperties;
     HashSet<String> m_inProgressPropertiesCustom;
 
-    CascadeLevel m_cascadeLevel { };
-    ScopeOrdinal m_styleScopeOrdinal { };
+    const PropertyCascade::Property* m_currentProperty { nullptr };
     SelectorChecker::LinkMatchMask m_linkMatch { };
 
     bool m_fontDirty { false };

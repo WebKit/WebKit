@@ -11,7 +11,6 @@
 // clang-format off
 
 #include "tes31Context.hpp"
-#include "gluRenderContext.hpp"
 #include "gluRenderConfig.hpp"
 #include "gluFboRenderContext.hpp"
 #include "gluContextInfo.hpp"
@@ -23,10 +22,11 @@ namespace deqp
 namespace gles31
 {
 
-Context::Context (tcu::TestContext& testCtx)
+Context::Context (tcu::TestContext& testCtx, glu::ApiType apiType)
     : m_testCtx     (testCtx)
     , m_renderCtx   (DE_NULL)
     , m_contextInfo (DE_NULL)
+    , m_apiType     (apiType)
 {
     if (m_testCtx.getCommandLine().getRunMode() == tcu::RUNMODE_EXECUTE)
         createRenderContext();
@@ -50,21 +50,15 @@ void Context::createRenderContext (void)
 
     try
     {
+
 // Issue 3687
-// OpenGL ES 3.2 contexts are not supported yet, and the 3.2 context creation failure results in
-// tests that pass with the recreated 3.1 context being marked "fail".
+// OpenGL ES 3.2 contexts are not fully supported yet. Creating a 3.2 context results in a number of test
+// failures as they assume the existence of extensions that are not supported.
 // Revert with Issue 3688
 #if 0
-        try
-        {
-            m_renderCtx     = glu::createDefaultRenderContext(m_testCtx.getPlatform(), m_testCtx.getCommandLine(), glu::ApiType::es(3, 2));
-        }
-        catch (...)
-        {
-            m_renderCtx     = glu::createDefaultRenderContext(m_testCtx.getPlatform(), m_testCtx.getCommandLine(), glu::ApiType::es(3, 1));
-        }
+        m_renderCtx        = glu::createDefaultRenderContext(m_testCtx.getPlatform(), m_testCtx.getCommandLine(), m_apiType);
 #else
-        // Override the original behavior (above) to only create a 3.1 context
+        // Override the original behavior (above) to create a 3.1 context
         m_renderCtx     = glu::createDefaultRenderContext(m_testCtx.getPlatform(), m_testCtx.getCommandLine(), glu::ApiType::es(3, 1));
 #endif
         m_contextInfo   = glu::ContextInfo::create(*m_renderCtx);

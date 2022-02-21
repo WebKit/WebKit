@@ -26,14 +26,32 @@ endif ()
 
 
 set(WebDriver_SCRIPTS
-    ${WEBKIT_DIR}/UIProcess/Automation/atoms/ElementAttribute.js
-    ${WEBKIT_DIR}/UIProcess/Automation/atoms/ElementDisplayed.js
-    ${WEBKIT_DIR}/UIProcess/Automation/atoms/ElementEnabled.js
-    ${WEBKIT_DIR}/UIProcess/Automation/atoms/EnterFullscreen.js
-    ${WEBKIT_DIR}/UIProcess/Automation/atoms/FindNodes.js
-    ${WEBKIT_DIR}/UIProcess/Automation/atoms/FormElementClear.js
-    ${WEBKIT_DIR}/UIProcess/Automation/atoms/FormSubmit.js
+    ${WebDriver_DERIVED_SOURCES_DIR}/ElementAttribute.js
+    ${WebDriver_DERIVED_SOURCES_DIR}/ElementDisplayed.js
+    ${WebDriver_DERIVED_SOURCES_DIR}/ElementEnabled.js
+    ${WebDriver_DERIVED_SOURCES_DIR}/ElementText.js
+    ${WebDriver_DERIVED_SOURCES_DIR}/EnterFullscreen.js
+    ${WebDriver_DERIVED_SOURCES_DIR}/FindNodes.js
+    ${WebDriver_DERIVED_SOURCES_DIR}/FormElementClear.js
+    ${WebDriver_DERIVED_SOURCES_DIR}/FormSubmit.js
 )
+
+macro(GENERATE_ATOMS _inputs)
+    foreach (_file IN ITEMS ${_inputs})
+        get_filename_component(_name ${_file} NAME)
+        add_custom_command(
+            OUTPUT ${_file}
+            MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-automation-atom.py
+            DEPENDS
+                ${WEBKIT_DIR}/UIProcess/Automation/atoms/${_name}
+                ${WEBKIT_DIR}/UIProcess/Automation/atoms/utils.js
+            COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-automation-atom.py ${WEBKIT_DIR}/UIProcess/Automation/atoms/${_name} ${_file}
+            VERBATIM
+        )
+    endforeach ()
+endmacro()
+
+GENERATE_ATOMS("${WebDriver_SCRIPTS}")
 
 MAKE_JS_FILE_ARRAYS(
     ${WebDriver_DERIVED_SOURCES_DIR}/WebDriverAtoms.cpp

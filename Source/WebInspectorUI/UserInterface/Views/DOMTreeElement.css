@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.tree-outline.dom .badge-css-grid {
+.tree-outline.dom .layout-badge {
     /* Using sans-serif San Francisco font here creates a badge 1px taller than the selected
     area. Use the same monospace font as the rest of the DOM tree outline. */
 
@@ -38,19 +38,19 @@
     box-shadow: 0 0 1px hsla(0, 0%, 0%, 0.5);
 }
 
-.tree-outline.dom .badge-css-grid.activated {
+.tree-outline.dom .layout-badge.activated {
     background: var(--glyph-color-active);
     color: white;
 }
 
-body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .badge-css-grid {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .layout-badge {
     /* Override `li.selected * {color: inherited}` from DOMTreeOutline.css */
     color: var(--text-color);
 }
 
 
 @media (prefers-color-scheme: dark) {
-    .tree-outline.dom .badge-css-grid {
+    .tree-outline.dom .layout-badge {
         background: hsla(0, 0%, 30%, 0.8);
         border-color: hsla(0, 0%, 100%, 0.1);
     }

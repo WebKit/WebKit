@@ -43,25 +43,59 @@
 
 - (BOOL)blockedLoad
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     return _action->blockedLoad();
+#else
+    return NO;
+#endif
 }
 
 - (BOOL)blockedCookies
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     return _action->blockedCookies();
+#else
+    return NO;
+#endif
 }
 
 - (BOOL)madeHTTPS
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     return _action->madeHTTPS();
+#else
+    return NO;
+#endif
+}
+
+- (BOOL)redirected
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    return _action->redirected();
+#else
+    return NO;
+#endif
+}
+
+- (BOOL)modifiedHeaders
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    return _action->modifiedHeaders();
+#else
+    return NO;
+#endif
 }
 
 - (NSArray<NSString *> *)notifications
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     auto& vector = _action->notifications();
     if (vector.isEmpty())
         return nil;
     return createNSArray(vector).autorelease();
+#else
+    return nil;
+#endif
 }
 
 - (API::Object&)_apiObject

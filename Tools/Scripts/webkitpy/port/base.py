@@ -56,6 +56,7 @@ from webkitpy.port import driver
 from webkitpy.port import image_diff
 from webkitpy.port import server_process
 from webkitpy.port.factory import PortFactory
+from webkitpy.port.image_diff import ImageDiffResult
 from webkitpy.layout_tests.servers import apache_http_server, http_server, http_server_base
 from webkitpy.layout_tests.servers import web_platform_test_server
 from webkitpy.layout_tests.servers import websocket_server
@@ -306,11 +307,14 @@ class Port(object):
         If an error occurs (like ImageDiff isn't found, or crashes, we log an error and return True (for a diff).
         """
         if not actual_contents and not expected_contents:
-            return (None, 0, None)
+            return ImageDiffResult(passed=True, diff_image=None, difference=0)
+
         if not actual_contents or not expected_contents:
-            return (True, 0, None)
+            return ImageDiffResult(passed=False, diff_image=b'', difference=1)
+
         if not self._image_differ:
             self._image_differ = image_diff.ImageDiffer(self)
+
         self.set_option_default('tolerance', 0.1)
         if tolerance is None:
             tolerance = self.get_option('tolerance')
@@ -544,7 +548,7 @@ class Port(object):
             except ValueError:
                 return val
 
-        return [tryint(chunk) for chunk in re.split(r'(\d+)', string_to_split)]
+        return [(tryint(chunk), chunk) for chunk in re.split(r'(\d+)', string_to_split)]
 
     def test_dirs(self):
         """Returns the list of top-level test directories."""

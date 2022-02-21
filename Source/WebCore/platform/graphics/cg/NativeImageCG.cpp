@@ -50,7 +50,7 @@ Color NativeImage::singlePixelSolidColor() const
         return Color();
 
     unsigned char pixel[4]; // RGBA
-    auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
+    auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), sRGBColorSpaceRef(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
 
     if (!bitmapContext)
         return Color();
@@ -62,6 +62,11 @@ Color NativeImage::singlePixelSolidColor() const
         return Color::transparentBlack;
 
     return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
+}
+
+DestinationColorSpace NativeImage::colorSpace() const
+{
+    return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
 }
 
 void NativeImage::clearSubimages()

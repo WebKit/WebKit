@@ -38,6 +38,9 @@ class WEBCORE_EXPORT ImageBufferCGBackend : public ImageBufferBackend {
 public:
     static unsigned calculateBytesPerRow(const IntSize& backendSize);
 
+    static constexpr bool isOriginAtBottomLeftCorner = true;
+
+protected:
     RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const override;
     RefPtr<Image> sinkIntoImage(PreserveResolution) override;
 
@@ -51,13 +54,11 @@ public:
 
     std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override;
 
-    static constexpr bool isOriginAtBottomLeftCorner = true;
+    bool originAtBottomLeftCorner() const override;
 
-protected:
     using ImageBufferBackend::ImageBufferBackend;
 
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
-    void setupContext() const;
 
     virtual void prepareToDrawIntoContext(GraphicsContext&);
 

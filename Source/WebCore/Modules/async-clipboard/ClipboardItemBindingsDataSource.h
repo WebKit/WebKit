@@ -28,17 +28,17 @@
 #include "ClipboardItemDataSource.h"
 #include "ExceptionCode.h"
 #include "FileReaderLoaderClient.h"
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Blob;
+class SharedBuffer;
 class DOMPromise;
 class FileReaderLoader;
 class PasteboardCustomData;
 class ScriptExecutionContext;
-class SharedBuffer;
 
 class ClipboardItemBindingsDataSource : public ClipboardItemDataSource {
     WTF_MAKE_FAST_ALLOCATED;
@@ -53,7 +53,7 @@ private:
 
     void invokeCompletionHandler();
 
-    using BufferOrString = Variant<String, Ref<SharedBuffer>>;
+    using BufferOrString = std::variant<String, Ref<SharedBuffer>>;
     class ClipboardItemTypeLoader : public FileReaderLoaderClient, public RefCounted<ClipboardItemTypeLoader> {
     public:
         static Ref<ClipboardItemTypeLoader> create(const String& type, CompletionHandler<void()>&& completionHandler)

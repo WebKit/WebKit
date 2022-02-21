@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentParser.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
@@ -69,7 +70,7 @@ void HTMLHtmlElement::insertedByParser()
     if (!document().frame())
         return;
 
-    auto documentLoader = makeRefPtr(document().frame()->loader().documentLoader());
+    RefPtr documentLoader = document().frame()->loader().documentLoader();
     if (!documentLoader)
         return;
 

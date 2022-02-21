@@ -48,6 +48,11 @@ public:
         return adoptRef(*new SecurityOrigin(securityOrigin.data().isolatedCopy()));
     }
 
+    static Ref<SecurityOrigin> create(const WebCore::SecurityOriginData& securityOriginData)
+    {
+        return adoptRef(*new SecurityOrigin(securityOriginData.isolatedCopy()));
+    }
+
     const WebCore::SecurityOriginData& securityOrigin() const { return m_securityOrigin; }
 
 private:

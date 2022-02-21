@@ -47,6 +47,8 @@ PAS_API pas_allocation_result pas_reserved_memory_provider_try_allocate(
     size_t size,
     pas_alignment alignment,
     const char* name,
+    pas_heap* heap,
+    pas_physical_memory_transaction* transaction,
     void* arg);
 
 PAS_END_EXTERN_C;

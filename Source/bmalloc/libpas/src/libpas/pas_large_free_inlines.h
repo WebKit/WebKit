@@ -33,7 +33,11 @@
 
 PAS_BEGIN_EXTERN_C;
 
-static PAS_ALWAYS_INLINE pas_large_free
+static
+#ifndef WK_WORKAROUND_RDAR_87613908_ASAN_STACK_USE_AFTER_SCOPE
+PAS_ALWAYS_INLINE
+#endif
+pas_large_free
 pas_large_free_create_merged(pas_large_free left,
                              pas_large_free right,
                              pas_large_free_heap_config* config)
@@ -42,25 +46,28 @@ pas_large_free_create_merged(pas_large_free left,
 
     PAS_TESTING_ASSERT(left.offset_in_type < config->type_size);
     PAS_TESTING_ASSERT(right.offset_in_type < config->type_size);
-    
-    if (left.begin == right.end)
-        return pas_large_free_create_merged(right, left, config);
-    
-    result = pas_large_free_create_empty();
-    
-    if (left.end != right.begin)
-        return result;
-    
-    if (pas_large_free_offset_in_type_at_end(left, config)
-        != right.offset_in_type)
-        return result;
-    
-    result.begin = left.begin;
-    result.end = right.end;
-    result.offset_in_type = left.offset_in_type;
-    result.zero_mode = pas_zero_mode_merge(left.zero_mode, right.zero_mode);
 
-    return result;
+    for (;;) {
+        if (left.begin == right.end) {
+            PAS_SWAP(left, right);
+            continue;
+        }
+        
+        result = pas_large_free_create_empty();
+        
+        if (left.end != right.begin)
+            return result;
+        
+        if (pas_large_free_offset_in_type_at_end(left, config)
+            != right.offset_in_type)
+            return result;
+        
+        result.begin = left.begin;
+        result.end = right.end;
+        result.offset_in_type = left.offset_in_type;
+        result.zero_mode = pas_zero_mode_merge(left.zero_mode, right.zero_mode);
+        return result;
+    }
 }
 
 static PAS_ALWAYS_INLINE pas_large_split

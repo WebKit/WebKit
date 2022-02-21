@@ -26,8 +26,8 @@
 #pragma once
 
 #include "IDBKey.h"
+#include <variant>
 #include <wtf/StdSet.h>
-#include <wtf/Variant.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -130,13 +130,13 @@ public:
             break;
         case IndexedDB::KeyType::Number:
         case IndexedDB::KeyType::Date:
-            hashCodes.append(StringHasher::hashMemory<sizeof(double)>(&WTF::get<double>(m_value)));
+            hashCodes.append(StringHasher::hashMemory<sizeof(double)>(&std::get<double>(m_value)));
             break;
         case IndexedDB::KeyType::String:
-            hashCodes.append(StringHash::hash(WTF::get<String>(m_value)));
+            hashCodes.append(StringHash::hash(std::get<String>(m_value)));
             break;
         case IndexedDB::KeyType::Binary: {
-            auto* data = WTF::get<ThreadSafeDataBuffer>(m_value).data();
+            auto* data = std::get<ThreadSafeDataBuffer>(m_value).data();
             if (!data)
                 hashCodes.append(0);
             else
@@ -144,7 +144,7 @@ public:
             break;
         }
         case IndexedDB::KeyType::Array:
-            for (auto& key : WTF::get<Vector<IDBKeyData>>(m_value))
+            for (auto& key : std::get<Vector<IDBKeyData>>(m_value))
                 hashCodes.append(key.hash());
             break;
         }
@@ -155,31 +155,31 @@ public:
     String string() const
     {
         ASSERT(m_type == IndexedDB::KeyType::String);
-        return WTF::get<String>(m_value);
+        return std::get<String>(m_value);
     }
 
     double date() const
     {
         ASSERT(m_type == IndexedDB::KeyType::Date);
-        return WTF::get<double>(m_value);
+        return std::get<double>(m_value);
     }
 
     double number() const
     {
         ASSERT(m_type == IndexedDB::KeyType::Number);
-        return WTF::get<double>(m_value);
+        return std::get<double>(m_value);
     }
 
     const ThreadSafeDataBuffer& binary() const
     {
         ASSERT(m_type == IndexedDB::KeyType::Binary);
-        return WTF::get<ThreadSafeDataBuffer>(m_value);
+        return std::get<ThreadSafeDataBuffer>(m_value);
     }
 
     const Vector<IDBKeyData>& array() const
     {
         ASSERT(m_type == IndexedDB::KeyType::Array);
-        return WTF::get<Vector<IDBKeyData>>(m_value);
+        return std::get<Vector<IDBKeyData>>(m_value);
     }
 
     size_t size() const;
@@ -193,7 +193,7 @@ private:
     bool m_isNull { false };
     bool m_isDeletedValue { false };
 
-    Variant<Vector<IDBKeyData>, String, double, ThreadSafeDataBuffer> m_value;
+    std::variant<Vector<IDBKeyData>, String, double, ThreadSafeDataBuffer> m_value;
 };
 
 struct IDBKeyDataHash {
@@ -235,17 +235,17 @@ void IDBKeyData::encode(Encoder& encoder) const
     case IndexedDB::KeyType::Min:
         break;
     case IndexedDB::KeyType::Array:
-        encoder << WTF::get<Vector<IDBKeyData>>(m_value);
+        encoder << std::get<Vector<IDBKeyData>>(m_value);
         break;
     case IndexedDB::KeyType::Binary:
-        encoder << WTF::get<ThreadSafeDataBuffer>(m_value);
+        encoder << std::get<ThreadSafeDataBuffer>(m_value);
         break;
     case IndexedDB::KeyType::String:
-        encoder << WTF::get<String>(m_value);
+        encoder << std::get<String>(m_value);
         break;
     case IndexedDB::KeyType::Date:
     case IndexedDB::KeyType::Number:
-        encoder << WTF::get<double>(m_value);
+        encoder << std::get<double>(m_value);
         break;
     }
 }
@@ -270,23 +270,23 @@ std::optional<IDBKeyData> IDBKeyData::decode(Decoder& decoder)
         break;
     case IndexedDB::KeyType::Array:
         keyData.m_value = Vector<IDBKeyData>();
-        if (!decoder.decode(WTF::get<Vector<IDBKeyData>>(keyData.m_value)))
+        if (!decoder.decode(std::get<Vector<IDBKeyData>>(keyData.m_value)))
             return std::nullopt;
         break;
     case IndexedDB::KeyType::Binary:
         keyData.m_value = ThreadSafeDataBuffer();
-        if (!decoder.decode(WTF::get<ThreadSafeDataBuffer>(keyData.m_value)))
+        if (!decoder.decode(std::get<ThreadSafeDataBuffer>(keyData.m_value)))
             return std::nullopt;
         break;
     case IndexedDB::KeyType::String:
         keyData.m_value = String();
-        if (!decoder.decode(WTF::get<String>(keyData.m_value)))
+        if (!decoder.decode(std::get<String>(keyData.m_value)))
             return std::nullopt;
         break;
     case IndexedDB::KeyType::Date:
     case IndexedDB::KeyType::Number:
         keyData.m_value = 0.0;
-        if (!decoder.decode(WTF::get<double>(keyData.m_value)))
+        if (!decoder.decode(std::get<double>(keyData.m_value)))
             return std::nullopt;
         break;
     }

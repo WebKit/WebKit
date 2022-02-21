@@ -381,7 +381,7 @@ struct GSUBTable : TableBase {
 
 static bool loadHmtxTable(const FontPlatformData& platformData, Vector<uint16_t>& advanceWidths)
 {
-    RefPtr<SharedBuffer> buffer = platformData.openTypeTable(OpenType::HheaTag);
+    auto buffer = platformData.openTypeTable(OpenType::HheaTag);
     const OpenType::HheaTable* hhea = OpenType::validateTable<OpenType::HheaTable>(buffer);
     if (!hhea)
         return false;
@@ -424,7 +424,7 @@ OpenTypeVerticalData::OpenTypeVerticalData(const FontPlatformData& platformData,
 void OpenTypeVerticalData::loadMetrics(const FontPlatformData& platformData)
 {
     // Load vhea first. This table is required for fonts that support vertical flow.
-    RefPtr<SharedBuffer> buffer = platformData.openTypeTable(OpenType::VheaTag);
+    auto buffer = platformData.openTypeTable(OpenType::VheaTag);
     const OpenType::VheaTable* vhea = OpenType::validateTable<OpenType::VheaTable>(buffer);
     if (!vhea)
         return;
@@ -486,7 +486,7 @@ void OpenTypeVerticalData::loadMetrics(const FontPlatformData& platformData)
 
 void OpenTypeVerticalData::loadVerticalGlyphSubstitutions(const FontPlatformData& platformData)
 {
-    RefPtr<SharedBuffer> buffer = platformData.openTypeTable(OpenType::GSUBTag);
+    auto buffer = platformData.openTypeTable(OpenType::GSUBTag);
     const OpenType::GSUBTable* gsub = OpenType::validateTable<OpenType::GSUBTable>(buffer);
     if (gsub)
         gsub->getVerticalGlyphSubstitutions(&m_verticalGlyphMap, *buffer.get());

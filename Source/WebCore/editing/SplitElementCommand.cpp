@@ -28,6 +28,7 @@
 
 #include "CompositeEditCommand.h"
 #include "Element.h"
+#include "ElementInlines.h"
 #include "HTMLNames.h"
 #include <wtf/Assertions.h>
 

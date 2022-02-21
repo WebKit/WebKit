@@ -7,11 +7,14 @@ navigator.clipboard is OK
 navigator.contacts is OK
 navigator.cookieEnabled is OK
 navigator.getStorageUpdates() is OK
+navigator.hardwareConcurrency is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.languages is OK
+navigator.locks is OK
 navigator.maxTouchPoints is OK
 navigator.mediaCapabilities is OK
+navigator.mediaSession is OK
 navigator.mimeTypes is OK
 navigator.onLine is OK
 navigator.permissions is OK
@@ -22,6 +25,7 @@ navigator.productSub is OK
 navigator.requestMediaKeySystemAccess() is OK
 navigator.sendBeacon() threw err TypeError: Not enough arguments
 navigator.serviceWorker is OK
+navigator.storage is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
@@ -34,11 +38,14 @@ navigator.clipboard is OK
 navigator.contacts is OK
 navigator.cookieEnabled is OK
 navigator.getStorageUpdates() is OK
+navigator.hardwareConcurrency is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.languages is OK
+navigator.locks is OK
 navigator.maxTouchPoints is OK
 navigator.mediaCapabilities is OK
+navigator.mediaSession is OK
 navigator.mimeTypes is OK
 navigator.onLine is OK
 navigator.permissions is OK
@@ -49,6 +56,7 @@ navigator.productSub is OK
 navigator.requestMediaKeySystemAccess() is OK
 navigator.sendBeacon() threw err TypeError: Not enough arguments
 navigator.serviceWorker is OK
+navigator.storage is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK

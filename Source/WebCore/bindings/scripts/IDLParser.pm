@@ -47,7 +47,7 @@ struct( IDLDocument => {
     fileName => '$',
 });
 
-# https://heycam.github.io/webidl/#idl-types
+# https://webidl.spec.whatwg.org/#idl-types
 struct( IDLType => {
     name =>         '$', # Type identifier
     isNullable =>   '$', # Is the type Nullable (T?)
@@ -86,7 +86,7 @@ struct( IDLArgument => {
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#idl-operations
+# https://webidl.spec.whatwg.org/#idl-operations
 struct( IDLOperation => {
     name => '$',
     type => 'IDLType', # Return type
@@ -98,7 +98,7 @@ struct( IDLOperation => {
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#idl-attributes
+# https://webidl.spec.whatwg.org/#idl-attributes
 struct( IDLAttribute => {
     name => '$',
     type => 'IDLType',
@@ -110,7 +110,7 @@ struct( IDLAttribute => {
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#idl-iterable
+# https://webidl.spec.whatwg.org/#idl-iterable
 struct( IDLIterable => {
     isKeyValue => '$',
     keyType => 'IDLType',
@@ -119,7 +119,7 @@ struct( IDLIterable => {
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#idl-async-iterable
+# https://webidl.spec.whatwg.org/#idl-async-iterable
 struct( IDLAsyncIterable => {
     isKeyValue => '$',
     keyType => 'IDLType',
@@ -128,7 +128,7 @@ struct( IDLAsyncIterable => {
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#es-maplike
+# https://webidl.spec.whatwg.org/#es-maplike
 struct( IDLMapLike => {
     isReadOnly => '$',
     keyType => 'IDLType',
@@ -136,14 +136,14 @@ struct( IDLMapLike => {
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#es-setlike
+# https://webidl.spec.whatwg.org/#es-setlike
 struct( IDLSetLike => {
     isReadOnly => '$',
     itemType => 'IDLType',
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#idl-constants
+# https://webidl.spec.whatwg.org/#idl-constants
 struct( IDLConstant => {
     name => '$',
     type => 'IDLType',
@@ -151,7 +151,7 @@ struct( IDLConstant => {
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#idl-enums
+# https://webidl.spec.whatwg.org/#idl-enums
 struct( IDLEnum => {
     name => '$',
     type => 'IDLType',
@@ -159,7 +159,7 @@ struct( IDLEnum => {
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#dfn-dictionary-member
+# https://webidl.spec.whatwg.org/#dfn-dictionary-member
 struct( IDLDictionaryMember => {
     name => '$',
     type => 'IDLType',
@@ -168,7 +168,7 @@ struct( IDLDictionaryMember => {
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#idl-dictionaries
+# https://webidl.spec.whatwg.org/#idl-dictionaries
 struct( IDLDictionary => {
     type => 'IDLType',
     parentType => 'IDLType',
@@ -177,14 +177,14 @@ struct( IDLDictionary => {
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#idl-callback-functions
+# https://webidl.spec.whatwg.org/#idl-callback-functions
 struct( IDLCallbackFunction => {
     type => '$',
     operation => 'IDLOperation',
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#idl-namespaces
+# https://webidl.spec.whatwg.org/#idl-namespaces
 struct( IDLNamespace => {
     name => '$',
     operations => '@', # List of 'IDLOperation'
@@ -193,14 +193,14 @@ struct( IDLNamespace => {
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#includes-statement
+# https://webidl.spec.whatwg.org/#includes-statement
 struct( IDLIncludesStatement => {
     interfaceIdentifier => '$',
     mixinIdentifier => '$',
     extendedAttributes => '%',
 });
 
-# https://heycam.github.io/webidl/#idl-typedefs
+# https://webidl.spec.whatwg.org/#idl-typedefs
 struct( IDLTypedef => {
     type => 'IDLType',
 });
@@ -597,10 +597,10 @@ sub addBuiltinTypedefs()
     push(@{$bufferSourceType->subtypes}, makeSimpleType("ArrayBuffer"));
     $typedefs{"BufferSource"} = IDLTypedef->new(type => $bufferSourceType);
 
-    # typedef unsigned long long DOMTimeStamp;
+    # typedef unsigned long long EpochTimeStamp;
 
-    my $DOMTimeStampType = IDLType->new(name => "unsigned long long");
-    $typedefs{"DOMTimeStamp"} = IDLTypedef->new(type => $DOMTimeStampType);
+    my $EpochTimeStampType = IDLType->new(name => "unsigned long long");
+    $typedefs{"EpochTimeStamp"} = IDLTypedef->new(type => $EpochTimeStampType);
 }
 
 my $nextOptionallyReadonlyAttribute_1 = '^(readonly|attribute)$';
@@ -2371,6 +2371,10 @@ sub parseExtendedAttributeRest2
         my @arguments = $self->parseIdentifierList();
         $self->assertTokenValue($self->getToken(), ")", __LINE__);
         return \@arguments;
+    }
+    if ($next->value() eq "*") {
+        $self->assertTokenValue($self->getToken(), "*", __LINE__);
+        return "*";
     }
     if ($next->type() == IdentifierToken) {
         my $name = $self->parseName();

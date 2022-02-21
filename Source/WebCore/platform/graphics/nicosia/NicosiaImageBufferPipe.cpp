@@ -25,14 +25,13 @@
  */
 
 #include "config.h"
-#include "ImageBuffer.h"
+#include "NicosiaImageBufferPipe.h"
 
-#include "ImageBufferPipe.h"
+#include "ImageBuffer.h"
 #include "NativeImage.h"
-#include "NicosiaContentLayerTextureMapperImpl.h"
 #include "NicosiaPlatformLayer.h"
 #include "TextureMapperPlatformLayerBuffer.h"
-#include "TextureMapperPlatformLayerProxy.h"
+#include "TextureMapperPlatformLayerProxyGL.h"
 
 #if USE(CAIRO)
 #include <cairo.h>
@@ -43,36 +42,6 @@
 namespace Nicosia {
 
 using namespace WebCore;
-
-class NicosiaImageBufferPipeSource final : public ImageBufferPipe::Source, public ContentLayerTextureMapperImpl::Client {
-public:
-    NicosiaImageBufferPipeSource();
-    virtual ~NicosiaImageBufferPipeSource();
-
-    void handle(RefPtr<ImageBuffer>&&) final;
-
-    PlatformLayer* platformLayer() const;
-
-private:
-    void swapBuffersIfNeeded() override;
-
-    RefPtr<ContentLayer> m_nicosiaLayer;
-
-    mutable Lock m_imageBufferLock;
-    RefPtr<ImageBuffer> m_imageBuffer;
-};
-
-class NicosiaImageBufferPipe final : public ImageBufferPipe {
-public:
-    NicosiaImageBufferPipe();
-    virtual ~NicosiaImageBufferPipe() = default;
-
-private:
-    RefPtr<ImageBufferPipe::Source> source() const final;
-    PlatformLayer* platformLayer() const final;
-
-    RefPtr<NicosiaImageBufferPipeSource> m_source;
-};
 
 NicosiaImageBufferPipeSource::NicosiaImageBufferPipeSource()
 {
@@ -93,7 +62,7 @@ void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
 
     if (!m_imageBuffer) {
         auto proxyOperation = [this] (TextureMapperPlatformLayerProxy& proxy) mutable {
-            return proxy.scheduleUpdateOnCompositorThread([this] () mutable {
+            return downcast<TextureMapperPlatformLayerProxyGL>(proxy).scheduleUpdateOnCompositorThread([this] () mutable {
                 auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
                 Locker locker { proxy.lock() };
 
@@ -126,7 +95,7 @@ void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
 
                 auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
                 layerBuffer->setExtraFlags(TextureMapperGL::ShouldBlend);
-                proxy.pushNextBuffer(WTFMove(layerBuffer));
+                downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
             });
         };
         proxyOperation(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy());
@@ -135,30 +104,24 @@ void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
     m_imageBuffer = WTFMove(buffer);
 }
 
-PlatformLayer* NicosiaImageBufferPipeSource::platformLayer() const
-{
-    return m_nicosiaLayer.get();
-}
-
 void NicosiaImageBufferPipeSource::swapBuffersIfNeeded()
 {
 }
 
 NicosiaImageBufferPipe::NicosiaImageBufferPipe()
+    : m_source(adoptRef(*new NicosiaImageBufferPipeSource))
+    , m_layerContentsDisplayDelegate(NicosiaImageBufferPipeSourceDisplayDelegate::create(m_source->platformLayer()))
 {
-    m_source = adoptRef(new NicosiaImageBufferPipeSource);
 }
 
 RefPtr<ImageBufferPipe::Source> NicosiaImageBufferPipe::source() const
 {
-    return m_source;
+    return m_source.ptr();
 }
 
-PlatformLayer* NicosiaImageBufferPipe::platformLayer() const
+RefPtr<GraphicsLayerContentsDisplayDelegate> NicosiaImageBufferPipe::layerContentsDisplayDelegate()
 {
-    if (m_source)
-        return m_source->platformLayer();
-    return nullptr;
+    return m_layerContentsDisplayDelegate.ptr();
 }
 
 } // namespace Nicosia

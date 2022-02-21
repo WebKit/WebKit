@@ -30,6 +30,8 @@
 #include "NetworkCacheFileSystem.h"
 #include "NetworkCacheIOChannel.h"
 #include "NetworkProcess.h"
+#include "NetworkSession.h"
+#include "NetworkStorageManager.h"
 #include "WebsiteDataType.h"
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/RetrieveRecordsOptions.h>
@@ -59,6 +61,11 @@ String Engine::cachesRootPath(const WebCore::ClientOrigin& origin)
     return FileSystem::pathByAppendingComponent(rootPath(), key.hashAsString());
 }
 
+Ref<Engine> Engine::create(NetworkSession& networkSession, String&& rootPath)
+{
+    return adoptRef(*new Engine(networkSession, WTFMove(rootPath)));
+}
+
 Engine::~Engine()
 {
     for (auto& caches : m_caches.values())
@@ -81,119 +88,94 @@ Engine::~Engine()
         callback(Data { }, 1);
 }
 
-void Engine::from(NetworkProcess& networkProcess, PAL::SessionID sessionID, Function<void(Engine&)>&& callback)
+void Engine::fetchEntries(NetworkSession& networkSession, bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
 {
-    if (auto* engine = networkProcess.findCacheEngine(sessionID)) {
-        callback(*engine);
-        return;
-    }
-
-    networkProcess.cacheStorageRootPath(sessionID, [networkProcess = makeRef(networkProcess), sessionID, callback = WTFMove(callback)] (auto&& rootPath) mutable {
-        callback(networkProcess->ensureCacheEngine(sessionID, [&] {
-            return adoptRef(*new Engine { sessionID, networkProcess.get(), WTFMove(rootPath) });
-        }));
-    });
-}
-
-void Engine::destroyEngine(NetworkProcess& networkProcess, PAL::SessionID sessionID)
-{
-#if !USE(SOUP) && !USE(CURL)
-    // cURL and Soup based ports destroy the default session right before the process exits to avoid leaking
-    // network resources like the cookies database.
-    ASSERT(sessionID != PAL::SessionID::defaultSessionID());
-#endif
-
-    networkProcess.removeCacheEngine(sessionID);
-}
-
-void Engine::fetchEntries(NetworkProcess& networkProcess, PAL::SessionID sessionID, bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
-{
-    from(networkProcess, sessionID, [shouldComputeSize, completionHandler = WTFMove(completionHandler)] (auto& engine) mutable {
+    networkSession.ensureCacheEngine([shouldComputeSize, completionHandler = WTFMove(completionHandler)] (auto& engine) mutable {
         engine.fetchEntries(shouldComputeSize, WTFMove(completionHandler));
     });
 }
 
-void Engine::open(NetworkProcess& networkProcess, PAL::SessionID sessionID, WebCore::ClientOrigin&& origin, String&& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
+void Engine::open(NetworkSession& networkSession, WebCore::ClientOrigin&& origin, String&& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
 {
-    from(networkProcess, sessionID, [origin = WTFMove(origin), cacheName = WTFMove(cacheName), callback = WTFMove(callback)](auto& engine) mutable {
+    networkSession.ensureCacheEngine([origin = WTFMove(origin), cacheName = WTFMove(cacheName), callback = WTFMove(callback)](auto& engine) mutable {
         engine.open(origin, cacheName, WTFMove(callback));
     });
 }
 
-void Engine::remove(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
+void Engine::remove(NetworkSession& networkSession, uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
 {
-    from(networkProcess, sessionID, [cacheIdentifier, callback = WTFMove(callback)](auto& engine) mutable {
+    networkSession.ensureCacheEngine([cacheIdentifier, callback = WTFMove(callback)](auto& engine) mutable {
         engine.remove(cacheIdentifier, WTFMove(callback));
     });
 }
 
-void Engine::retrieveCaches(NetworkProcess& networkProcess, PAL::SessionID sessionID, WebCore::ClientOrigin&& origin, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&& callback)
+void Engine::retrieveCaches(NetworkSession& networkSession, WebCore::ClientOrigin&& origin, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&& callback)
 {
-    from(networkProcess, sessionID, [origin = WTFMove(origin), updateCounter, callback = WTFMove(callback)](auto& engine) mutable {
+    networkSession.ensureCacheEngine([origin = WTFMove(origin), updateCounter, callback = WTFMove(callback)](auto& engine) mutable {
         engine.retrieveCaches(origin, updateCounter, WTFMove(callback));
     });
 }
 
 
-void Engine::retrieveRecords(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RecordsCallback&& callback)
+void Engine::retrieveRecords(NetworkSession& networkSession, uint64_t cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RecordsCallback&& callback)
 {
-    from(networkProcess, sessionID, [cacheIdentifier, options = WTFMove(options), callback = WTFMove(callback)](auto& engine) mutable {
+    networkSession.ensureCacheEngine([cacheIdentifier, options = WTFMove(options), callback = WTFMove(callback)](auto& engine) mutable {
         engine.retrieveRecords(cacheIdentifier, WTFMove(options), WTFMove(callback));
     });
 }
 
-void Engine::putRecords(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void Engine::putRecords(NetworkSession& networkSession, uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
-    from(networkProcess, sessionID, [cacheIdentifier, records = WTFMove(records), callback = WTFMove(callback)](auto& engine) mutable {
+    networkSession.ensureCacheEngine([cacheIdentifier, records = WTFMove(records), callback = WTFMove(callback)](auto& engine) mutable {
         engine.putRecords(cacheIdentifier, WTFMove(records), WTFMove(callback));
     });
 }
 
-void Engine::deleteMatchingRecords(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void Engine::deleteMatchingRecords(NetworkSession& networkSession, uint64_t cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
-    from(networkProcess, sessionID, [cacheIdentifier, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](auto& engine) mutable {
+    networkSession.ensureCacheEngine([cacheIdentifier, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](auto& engine) mutable {
         engine.deleteMatchingRecords(cacheIdentifier, WTFMove(request), WTFMove(options), WTFMove(callback));
     });
 }
 
-void Engine::lock(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier)
+void Engine::lock(NetworkSession& networkSession, uint64_t cacheIdentifier)
 {
-    from(networkProcess, sessionID, [cacheIdentifier](auto& engine) mutable {
+    networkSession.ensureCacheEngine([cacheIdentifier](auto& engine) mutable {
         engine.lock(cacheIdentifier);
     });
 }
 
-void Engine::unlock(NetworkProcess& networkProcess, PAL::SessionID sessionID, uint64_t cacheIdentifier)
+void Engine::unlock(NetworkSession& networkSession, uint64_t cacheIdentifier)
 {
-    from(networkProcess, sessionID, [cacheIdentifier](auto& engine) mutable {
+    networkSession.ensureCacheEngine([cacheIdentifier](auto& engine) mutable {
         engine.unlock(cacheIdentifier);
     });
 }
 
-void Engine::clearMemoryRepresentation(NetworkProcess& networkProcess, PAL::SessionID sessionID, WebCore::ClientOrigin&& origin, WebCore::DOMCacheEngine::CompletionCallback&& callback)
+void Engine::clearMemoryRepresentation(NetworkSession& networkSession, WebCore::ClientOrigin&& origin, WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
-    from(networkProcess, sessionID, [origin = WTFMove(origin), callback = WTFMove(callback)](auto& engine) mutable {
+    networkSession.ensureCacheEngine([origin = WTFMove(origin), callback = WTFMove(callback)](auto& engine) mutable {
         engine.clearMemoryRepresentation(origin, WTFMove(callback));
     });
 }
 
-void Engine::representation(NetworkProcess& networkProcess, PAL::SessionID sessionID, CompletionHandler<void(String&&)>&& callback)
+void Engine::representation(NetworkSession& networkSession, CompletionHandler<void(String&&)>&& callback)
 {
-    from(networkProcess, sessionID, [callback = WTFMove(callback)](auto& engine) mutable {
+    networkSession.ensureCacheEngine([callback = WTFMove(callback)](auto& engine) mutable {
         callback(engine.representation());
     });
 }
 
-void Engine::clearAllCaches(NetworkProcess& networkProcess, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void Engine::clearAllCaches(NetworkSession& networkSession, CompletionHandler<void()>&& completionHandler)
 {
-    from(networkProcess, sessionID, [completionHandler = WTFMove(completionHandler)](auto& engine) mutable {
+    networkSession.ensureCacheEngine([completionHandler = WTFMove(completionHandler)](auto& engine) mutable {
         engine.clearAllCaches(WTFMove(completionHandler));
     });
 }
 
-void Engine::clearCachesForOrigin(NetworkProcess& networkProcess, PAL::SessionID sessionID, WebCore::SecurityOriginData&& originData, CompletionHandler<void()>&& completionHandler)
+void Engine::clearCachesForOrigin(NetworkSession& networkSession, WebCore::SecurityOriginData&& originData, CompletionHandler<void()>&& completionHandler)
 {
-    from(networkProcess, sessionID, [originData = WTFMove(originData), completionHandler = WTFMove(completionHandler)](auto& engine) mutable {
+    networkSession.ensureCacheEngine([originData = WTFMove(originData), completionHandler = WTFMove(completionHandler)](auto& engine) mutable {
         engine.clearCachesForOrigin(originData, WTFMove(completionHandler));
     });
 }
@@ -222,49 +204,61 @@ static uint64_t getDirectorySize(const String& directoryPath)
     return directorySize;
 }
 
-uint64_t Engine::diskUsage(const String& rootPath, const WebCore::ClientOrigin& origin)
+String Engine::storagePath(const String& rootDirectory, const WebCore::ClientOrigin& origin)
+{
+    ASSERT(!isMainRunLoop());
+    
+    if (rootDirectory.isEmpty())
+        return emptyString();
+
+    String saltPath = FileSystem::pathByAppendingComponent(rootDirectory, "salt"_s);
+    auto salt = FileSystem::readOrMakeSalt(saltPath);
+    if (!salt)
+        return emptyString();
+
+    Key key(origin.topOrigin.toString(), origin.clientOrigin.toString(), { }, { }, *salt);
+    return FileSystem::pathByAppendingComponent(rootDirectory, key.hashAsString());
+}
+
+uint64_t Engine::diskUsage(const String& originDirectory)
 {
     ASSERT(!isMainRunLoop());
 
-    if (rootPath.isEmpty())
+    if (originDirectory.isEmpty())
         return 0;
 
-    String saltPath = FileSystem::pathByAppendingComponent(rootPath, "salt"_s);
-    auto salt = FileSystem::readOrMakeSalt(saltPath);
-    if (!salt)
-        return 0;
-
-    Key key(origin.topOrigin.toString(), origin.clientOrigin.toString(), { }, { }, *salt);
-    String directoryPath = FileSystem::pathByAppendingComponent(rootPath, key.hashAsString());
-
-    String sizeFilePath = Caches::cachesSizeFilename(directoryPath);
+    String sizeFilePath = Caches::cachesSizeFilename(originDirectory);
     if (auto recordedSize = readSizeFile(sizeFilePath))
         return *recordedSize;
 
-    return getDirectorySize(directoryPath);
+    return getDirectorySize(originDirectory);
 }
 
-void Engine::requestSpace(const WebCore::ClientOrigin& origin, uint64_t spaceRequested, CompletionHandler<void(WebCore::StorageQuotaManager::Decision)>&& callback)
+void Engine::requestSpace(const WebCore::ClientOrigin& origin, uint64_t spaceRequested, CompletionHandler<void(bool)>&& callback)
 {
     ASSERT(isMainThread());
 
     if (!m_networkProcess)
-        callback(WebCore::StorageQuotaManager::Decision::Deny);
+        callback(false);
 
-    RefPtr<WebCore::StorageQuotaManager> storageQuotaManager = m_networkProcess->storageQuotaManager(m_sessionID, origin);
-    if (!storageQuotaManager)
-        callback(WebCore::StorageQuotaManager::Decision::Deny);
+    auto* session = m_networkProcess->networkSession(m_sessionID);
+    if (!session)
+        callback(false);
 
-    storageQuotaManager->requestSpaceOnMainThread(spaceRequested, WTFMove(callback));
+    auto* storageManager = session->storageManager();
+    if (!storageManager)
+        callback(false);
+
+    storageManager->requestSpace(origin, spaceRequested, WTFMove(callback));
 }
 
-Engine::Engine(PAL::SessionID sessionID, NetworkProcess& process, String&& rootPath)
-    : m_sessionID(sessionID)
-    , m_networkProcess(makeWeakPtr(process))
+Engine::Engine(NetworkSession& networkSession, String&& rootPath)
+    : m_sessionID(networkSession.sessionID())
+    , m_networkProcess(networkSession.networkProcess())
     , m_rootPath(WTFMove(rootPath))
 {
     if (!m_rootPath.isNull())
-        m_ioQueue = WorkQueue::create("com.apple.WebKit.CacheStorageEngine.serial.default", WorkQueue::Type::Serial, WorkQueue::QOS::Default);
+        m_ioQueue = WorkQueue::create("com.apple.WebKit.CacheStorageEngine.serial.default", WorkQueue::QOS::Default);
 }
 
 void Engine::open(const WebCore::ClientOrigin& origin, const String& cacheName, CacheIdentifierCallback&& callback)
@@ -368,7 +362,7 @@ void Engine::initialize(CompletionCallback&& callback)
     if (!shouldComputeSalt)
         return;
 
-    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), rootPath = m_rootPath.isolatedCopy()] () mutable {
+    m_ioQueue->dispatch([this, weakThis = WeakPtr { *this }, rootPath = m_rootPath.isolatedCopy()] () mutable {
         FileSystem::makeAllDirectories(rootPath);
         String saltPath = FileSystem::pathByAppendingComponent(rootPath, "salt"_s);
         RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), salt = FileSystem::readOrMakeSalt(saltPath)]() mutable {
@@ -421,7 +415,7 @@ void Engine::readCache(uint64_t cacheIdentifier, CacheCallback&& callback)
         return;
     }
     if (!cache->isOpened()) {
-        cache->open([this, protectedThis = makeRef(*this), cacheIdentifier, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
+        cache->open([this, protectedThis = Ref { *this }, cacheIdentifier, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
             if (error) {
                 callback(makeUnexpected(error.value()));
                 return;
@@ -458,7 +452,7 @@ void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCor
     }
 
     m_pendingWriteCallbacks.add(++m_pendingCallbacksCounter, WTFMove(callback));
-    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), identifier = m_pendingCallbacksCounter, data = WTFMove(data), filename = filename.isolatedCopy()]() mutable {
+    m_ioQueue->dispatch([this, weakThis = WeakPtr { *this }, identifier = m_pendingCallbacksCounter, data = WTFMove(data), filename = filename.isolatedCopy()]() mutable {
 
         String directoryPath = FileSystem::parentPath(filename);
         if (!FileSystem::fileExists(directoryPath))
@@ -490,7 +484,7 @@ void Engine::readFile(const String& filename, CompletionHandler<void(const Netwo
     }
 
     m_pendingReadCallbacks.add(++m_pendingCallbacksCounter, WTFMove(callback));
-    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), identifier = m_pendingCallbacksCounter, filename = filename.isolatedCopy()]() mutable {
+    m_ioQueue->dispatch([this, weakThis = WeakPtr { *this }, identifier = m_pendingCallbacksCounter, filename = filename.isolatedCopy()]() mutable {
         auto channel = IOChannel::open(filename, IOChannel::Type::Read);
         if (!channel->isOpened()) {
             RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), identifier]() mutable {
@@ -555,29 +549,11 @@ std::optional<uint64_t> Engine::readSizeFile(const String& path)
     ASSERT(!RunLoop::isMain());
 
     Locker locker { globalSizeFileLock };
-    auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
-    auto closeFileHandle = makeScopeExit([&] {
-        FileSystem::closeFile(fileHandle);
-    });
-
-    if (!FileSystem::isHandleValid(fileHandle))
+    auto buffer = FileSystem::readEntireFile(path);
+    if (!buffer)
         return std::nullopt;
 
-    auto fileSize = FileSystem::fileSize(path).value_or(0);
-    if (!fileSize)
-        return std::nullopt;
-
-    unsigned bytesToRead;
-    if (!WTF::convertSafely(fileSize, bytesToRead))
-        return std::nullopt;
-
-    // FIXME: No reason we need a heap buffer to read an arbitrary number of bytes when we only support small files that contain numerals.
-    Vector<char> buffer(bytesToRead);
-    unsigned totalBytesRead = FileSystem::readFromFile(fileHandle, buffer.data(), buffer.size());
-    if (totalBytesRead != bytesToRead)
-        return std::nullopt;
-
-    return parseInteger<uint64_t>({ buffer.data(), totalBytesRead });
+    return parseInteger<uint64_t>({ buffer->data(), static_cast<unsigned>(buffer->size()) });
 }
 
 class ReadOriginsTaskCounter : public RefCounted<ReadOriginsTaskCounter> {
@@ -633,7 +609,7 @@ void Engine::fetchEntries(bool shouldComputeSize, CompletionHandler<void(Vector<
         return;
     }
 
-    getDirectories([this, weakThis = makeWeakPtr(this), path = m_rootPath.isolatedCopy(), shouldComputeSize, completionHandler = WTFMove(completionHandler)](const auto& folderPaths) mutable {
+    getDirectories([this, weakThis = WeakPtr { *this }, path = m_rootPath.isolatedCopy(), shouldComputeSize, completionHandler = WTFMove(completionHandler)](const auto& folderPaths) mutable {
         if (!weakThis)
             return completionHandler({ });
         fetchDirectoryEntries(shouldComputeSize, folderPaths, WTFMove(completionHandler));
@@ -644,7 +620,7 @@ void Engine::fetchDirectoryEntries(bool shouldComputeSize, const Vector<String>&
 {
     auto taskCounter = ReadOriginsTaskCounter::create(WTFMove(completionHandler));
     for (auto& folderPath : folderPaths) {
-        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [protectedThis = makeRef(*this), shouldComputeSize, taskCounter] (auto&& origin) mutable {
+        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [protectedThis = Ref { *this }, shouldComputeSize, taskCounter] (auto&& origin) mutable {
             ASSERT(RunLoop::isMain());
             if (!origin)
                 return;
@@ -668,7 +644,7 @@ void Engine::fetchDirectoryEntries(bool shouldComputeSize, const Vector<String>&
 CompletionHandler<void()> Engine::createClearTask(CompletionHandler<void()>&& completionHandler)
 {
     ++m_clearTaskCounter;
-    return [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    return [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
         if (!--m_clearTaskCounter) {
             auto callbacks = WTFMove(m_pendingClearCallbacks);
@@ -730,7 +706,7 @@ void Engine::clearCachesForOrigin(const WebCore::SecurityOriginData& origin, Com
 void Engine::clearCachesForOriginFromDisk(const WebCore::SecurityOriginData& origin, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    getDirectories([this, weakThis = makeWeakPtr(this), origin, completionHandler = WTFMove(completionHandler)](const auto& folderPaths) mutable {
+    getDirectories([this, weakThis = WeakPtr { *this }, origin, completionHandler = WTFMove(completionHandler)](const auto& folderPaths) mutable {
         if (!weakThis)
             return completionHandler();
         clearCachesForOriginFromDirectories(folderPaths, origin, WTFMove(completionHandler));
@@ -741,7 +717,7 @@ void Engine::clearCachesForOriginFromDirectories(const Vector<String>& folderPat
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     for (auto& folderPath : folderPaths) {
-        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [this, protectedThis = makeRef(*this), origin, callbackAggregator, folderPath] (std::optional<WebCore::ClientOrigin>&& folderOrigin) mutable {
+        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [this, protectedThis = Ref { *this }, origin, callbackAggregator, folderPath] (std::optional<WebCore::ClientOrigin>&& folderOrigin) mutable {
             if (!folderOrigin)
                 return;
             if (folderOrigin->topOrigin != origin && folderOrigin->clientOrigin != origin)
@@ -809,23 +785,21 @@ String Engine::representation()
     ASSERT(m_pendingClearCallbacks.isEmpty());
     ASSERT(m_initializationCallbacks.isEmpty());
 
-    bool isFirst = true;
-    StringBuilder builder;
-    builder.append("{ \"path\": \"");
-    builder.append(m_rootPath);
-    builder.append("\", \"origins\": [");
-    for (auto& keyValue : m_caches) {
-        if (!isFirst)
-            builder.append(",");
-        isFirst = false;
+    auto origins = WTF::map(m_caches, [](auto& keyValue) {
+        StringBuilder originBuilder;
+        originBuilder.append("\n{ \"origin\" : { \"topOrigin\" : \"", keyValue.key.topOrigin.toString(), "\", \"clientOrigin\": \"", keyValue.key.clientOrigin.toString(), "\" }, \"caches\" : ");
+        keyValue.value->appendRepresentation(originBuilder);
+        originBuilder.append('}');
+        return originBuilder.toString();
+    });
+    std::sort(origins.begin(), origins.end(), [](auto& a, auto& b) { return codePointCompareLessThan(a, b); });
 
-        builder.append("\n{ \"origin\" : { \"topOrigin\" : \"");
-        builder.append(keyValue.key.topOrigin.toString());
-        builder.append("\", \"clientOrigin\": \"");
-        builder.append(keyValue.key.clientOrigin.toString());
-        builder.append("\" }, \"caches\" : ");
-        keyValue.value->appendRepresentation(builder);
-        builder.append("}");
+    StringBuilder builder;
+    builder.append("{ \"path\": \"", m_rootPath, "\", \"origins\": [");
+    const char* divider = "";
+    for (auto& origin : origins) {
+        builder.append(divider, origin);
+        divider = ",";
     }
     builder.append("]}");
     return builder.toString();

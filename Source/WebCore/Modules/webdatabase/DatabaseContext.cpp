@@ -97,9 +97,6 @@ namespace WebCore {
 DatabaseContext::DatabaseContext(Document& document)
     : ActiveDOMObject(document)
 {
-    // ActiveDOMObject expects this to be called to set internal flags.
-    suspendIfNeeded();
-
     ASSERT(!document.databaseContext());
     document.setDatabaseContext(this);
 }
@@ -179,36 +176,38 @@ bool DatabaseContext::stopDatabases(DatabaseTaskSynchronizer* synchronizer)
 
 bool DatabaseContext::allowDatabaseAccess() const
 {
-    if (is<Document>(*m_scriptExecutionContext)) {
-        Document& document = downcast<Document>(*m_scriptExecutionContext);
+    auto* context = scriptExecutionContext();
+    if (is<Document>(*context)) {
+        auto& document = downcast<Document>(*context);
         if (!document.page() || (document.page()->usesEphemeralSession() && !LegacySchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document.securityOrigin().protocol())))
             return false;
         return true;
     }
-    ASSERT(m_scriptExecutionContext->isWorkerGlobalScope());
+    ASSERT(context->isWorkerGlobalScope());
     // allowDatabaseAccess is not yet implemented for workers.
     return true;
 }
 
 void DatabaseContext::databaseExceededQuota(const String& name, DatabaseDetails details)
 {
-    if (is<Document>(*m_scriptExecutionContext)) {
-        Document& document = downcast<Document>(*m_scriptExecutionContext);
+    auto* context = scriptExecutionContext();
+    if (is<Document>(*context)) {
+        auto& document = downcast<Document>(*context);
         if (Page* page = document.page())
             page->chrome().client().exceededDatabaseQuota(*document.frame(), name, details);
         return;
     }
-    ASSERT(m_scriptExecutionContext->isWorkerGlobalScope());
+    ASSERT(context->isWorkerGlobalScope());
 }
 
 const SecurityOriginData& DatabaseContext::securityOrigin() const
 {
-    return m_scriptExecutionContext->securityOrigin()->data();
+    return scriptExecutionContext()->securityOrigin()->data();
 }
 
 bool DatabaseContext::isContextThread() const
 {
-    return m_scriptExecutionContext->isContextThread();
+    return scriptExecutionContext()->isContextThread();
 }
 
 } // namespace WebCore

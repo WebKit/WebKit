@@ -26,6 +26,7 @@
 
 POSTPROCESS_HEADER_RULE="${SRCROOT}/scripts/postprocess-header-rule"
 [[ -x "${POSTPROCESS_HEADER_RULE}" ]] || { echo "### Unable to find ${POSTPROCESS_HEADER_RULE}"; exit 1; }
+TIMESTAMP="${TARGET_TEMP_DIR}/postprocess-headers-timestamp"
 
 function rewrite_headers ()
 {
@@ -38,3 +39,4 @@ function rewrite_headers ()
 }
 
 rewrite_headers "${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}" Private
+touch "${TIMESTAMP}"

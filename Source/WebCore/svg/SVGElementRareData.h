@@ -61,7 +61,7 @@ public:
     const WeakHashSet<SVGResourceElementClient>& referencingCSSClients() const { return m_referencingCSSClients; }
 
     SVGElement* correspondingElement() { return m_correspondingElement.get(); }
-    void setCorrespondingElement(SVGElement* correspondingElement) { m_correspondingElement = makeWeakPtr(correspondingElement); }
+    void setCorrespondingElement(SVGElement* correspondingElement) { m_correspondingElement = correspondingElement; }
 
     MutableStyleProperties* animatedSMILStyleProperties() const { return m_animatedSMILStyleProperties.get(); }
     MutableStyleProperties& ensureAnimatedSMILStyleProperties()
@@ -77,7 +77,7 @@ public:
             return nullptr;
         if (!m_overrideComputedStyle || m_needsOverrideComputedStyleUpdate) {
             // The style computed here contains no CSS Animations/Transitions or SMIL induced rules - this is needed to compute the "base value" for the SMIL animation sandwhich model.
-            m_overrideComputedStyle = element.styleResolver().styleForElement(element, parentStyle, nullptr, RuleMatchingBehavior::MatchAllRulesExcludingSMIL).renderStyle;
+            m_overrideComputedStyle = element.styleResolver().styleForElement(element, { parentStyle }, RuleMatchingBehavior::MatchAllRulesExcludingSMIL).renderStyle;
             m_needsOverrideComputedStyleUpdate = false;
         }
         ASSERT(m_overrideComputedStyle);

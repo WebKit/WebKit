@@ -89,13 +89,16 @@ void RemoteMediaResourceManager::dataSent(RemoteMediaResourceIdentifier identifi
     resource->dataSent(bytesSent, totalBytesToBeSent);
 }
 
-void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier identifier, const IPC::DataReference& data)
+void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier identifier, const SharedMemory::IPCHandle& bufferHandle)
 {
     auto* resource = m_remoteMediaResources.get(identifier);
     if (!resource || !resource->ready())
         return;
 
-    resource->dataReceived(data.data(), data.size());
+    auto sharedMemory = SharedMemory::map(bufferHandle.handle, SharedMemory::Protection::ReadOnly);
+    if (!sharedMemory)
+        return;
+    resource->dataReceived(sharedMemory->createSharedBuffer(bufferHandle.dataSize));
 }
 
 void RemoteMediaResourceManager::accessControlCheckFailed(RemoteMediaResourceIdentifier identifier, const ResourceError& error)

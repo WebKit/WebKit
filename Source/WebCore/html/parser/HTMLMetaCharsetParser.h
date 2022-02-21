@@ -27,11 +27,13 @@
 
 #include "HTMLTokenizer.h"
 #include "SegmentedString.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
+
+namespace PAL {
+class TextCodec;
+}
 
 namespace WebCore {
-
-class TextCodec;
 
 class HTMLMetaCharsetParser {
     WTF_MAKE_NONCOPYABLE(HTMLMetaCharsetParser); WTF_MAKE_FAST_ALLOCATED;
@@ -41,21 +43,21 @@ public:
     // Returns true if done checking, regardless whether an encoding is found.
     bool checkForMetaCharset(const char*, size_t);
 
-    const TextEncoding& encoding() { return m_encoding; }
+    const PAL::TextEncoding& encoding() { return m_encoding; }
 
     // The returned encoding might not be valid.
     typedef Vector<std::pair<String, String>> AttributeList;
-    static TextEncoding encodingFromMetaAttributes(const AttributeList&);
+    static PAL::TextEncoding encodingFromMetaAttributes(const AttributeList&);
 
 private:
     bool processMeta(HTMLToken&);
 
     HTMLTokenizer m_tokenizer;
-    const std::unique_ptr<TextCodec> m_codec;
+    const std::unique_ptr<PAL::TextCodec> m_codec;
     SegmentedString m_input;
     bool m_inHeadSection { true };
     bool m_doneChecking { false };
-    TextEncoding m_encoding;
+    PAL::TextEncoding m_encoding;
 };
 
 } // namespace WebCore

@@ -29,7 +29,7 @@ class DesktopFrameProvider {
   ~DesktopFrameProvider();
 
   // The caller takes ownership of the returned desktop frame. Otherwise
-  // returns null if |display_id| is invalid or not ready. Note that this
+  // returns null if `display_id` is invalid or not ready. Note that this
   // function does not remove the frame from the internal container. Caller
   // has to call the Release function.
   std::unique_ptr<DesktopFrame> TakeLatestFrameForDisplay(

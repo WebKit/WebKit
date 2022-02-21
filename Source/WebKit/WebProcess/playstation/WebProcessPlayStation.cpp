@@ -26,9 +26,18 @@
 #include "config.h"
 #include "WebProcess.h"
 
+#include "LogInitialization.h"
+#include <WebCore/LogInitialization.h>
+#include <wtf/LogInitialization.h>
+
 namespace WebKit {
 
-void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&)
+void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
+{
+    applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
+}
+
+void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
 }
 

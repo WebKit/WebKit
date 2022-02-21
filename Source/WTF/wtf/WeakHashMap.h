@@ -72,7 +72,14 @@ public:
     };
 
     template <typename MapType, typename IteratorType, typename IteratorPeekPtrType, typename IteratorPeekType>
-    class WeakHashMapIteratorBase : public std::iterator<std::forward_iterator_tag, IteratorPeekType, std::ptrdiff_t, IteratorPeekPtrType, IteratorPeekType> {
+    class WeakHashMapIteratorBase {
+    public:
+        using iterator_category = std::forward_iterator_tag;
+        using value_type = IteratorPeekType;
+        using difference_type = ptrdiff_t;
+        using pointer = IteratorPeekPtrType;
+        using reference = IteratorPeekType;
+
     protected:
         WeakHashMapIteratorBase(MapType& weakHashMap, IteratorType position)
             : m_weakHashMap { weakHashMap }
@@ -214,7 +221,7 @@ public:
     void set(const T& key, V&& value)
     {
         amortizedCleanupIfNeeded();
-        m_map.set(makeKeyImpl(key), WTFMove(value));
+        m_map.set(makeKeyImpl(key), std::forward<V>(value));
     }
 
     iterator find(const KeyType& key)
@@ -351,7 +358,7 @@ private:
     template <typename T>
     static RefType makeKeyImpl(const T& key)
     {
-        return *makeWeakPtr<KeyType>(const_cast<T&>(key)).m_impl;
+        return *key.weakPtrFactory().template createWeakPtr<T>(const_cast<T&>(key)).m_impl;
     }
 
     template <typename T>

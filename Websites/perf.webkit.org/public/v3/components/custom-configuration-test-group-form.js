@@ -38,7 +38,7 @@ class CustomConfigurationTestGroupForm extends TestGroupForm {
         const commitSets = configurator.commitSets();
         const platform = configurator.platform();
         const test = configurator.tests()[0]; // FIXME: Add the support for specifying multiple tests.
-        const repetitionType = this.content('repetition-type').value;
+        const repetitionType = this.part('repetition-type-selector').selectedRepetitionType;
         console.assert(!!this._hasTask === !taskName);
         if (!this._hasTask)
             this.dispatchAction('startTesting', testGroupName, this._repetitionCount, repetitionType, commitSets, platform, test, this._notifyOnCompletion, taskName);
@@ -49,8 +49,15 @@ class CustomConfigurationTestGroupForm extends TestGroupForm {
     didConstructShadowTree()
     {
         super.didConstructShadowTree();
+        const configurator = this.part('configurator');
+        configurator.listenToAction('testConfigChange', () => {
+            const tests = configurator.tests();
+            const platform = configurator.platform();
+            if (platform && tests.length)
+                this.setTestAndPlatform(tests[0], platform);
 
-        this.part('configurator').listenToAction('testConfigChange', () => this.enqueueToRender());
+            this.enqueueToRender();
+        });
 
         this.content('task-name').oninput = () => this.enqueueToRender();
         this.content('group-name').oninput = () => this.enqueueToRender();

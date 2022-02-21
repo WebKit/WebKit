@@ -67,7 +67,7 @@ template<typename T> EventSender<T>::EventSender(const AtomString& eventType)
 
 template<typename T> void EventSender<T>::dispatchEventSoon(T& sender)
 {
-    m_dispatchSoonList.append(makeWeakPtr(sender));
+    m_dispatchSoonList.append(sender);
     if (!m_timer.isActive())
         m_timer.startOneShot(0_s);
 }

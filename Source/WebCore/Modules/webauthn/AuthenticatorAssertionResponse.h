@@ -49,6 +49,8 @@ public:
     const String& displayName() const { return m_displayName; }
     size_t numberOfCredentials() const { return m_numberOfCredentials; }
     SecAccessControlRef accessControl() const { return m_accessControl.get(); }
+    const String& group() const { return m_group; }
+    bool synchronizable() const { return m_synchronizable; }
     LAContext * laContext() const { return m_laContext.get(); }
 
     WEBCORE_EXPORT void setAuthenticatorData(Vector<uint8_t>&&);
@@ -56,6 +58,8 @@ public:
     void setName(const String& name) { m_name = name; }
     void setDisplayName(const String& displayName) { m_displayName = displayName; }
     void setNumberOfCredentials(size_t numberOfCredentials) { m_numberOfCredentials = numberOfCredentials; }
+    void setGroup(const String& group) { m_group = group; }
+    void setSynchronizable(bool synchronizable) { m_synchronizable = synchronizable; }
     void setLAContext(LAContext *context) { m_laContext = context; }
 
 private:
@@ -71,6 +75,8 @@ private:
 
     String m_name;
     String m_displayName;
+    String m_group;
+    bool m_synchronizable;
     size_t m_numberOfCredentials { 0 };
     RetainPtr<SecAccessControlRef> m_accessControl;
     RetainPtr<LAContext> m_laContext;

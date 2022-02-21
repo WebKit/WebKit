@@ -176,7 +176,7 @@ if(is_android)
 endif()
 
 
-if(is_mac)
+if(angle_enable_cgl)
     list(APPEND _gl_backend_sources
         "src/libANGLE/renderer/gl/cgl/ContextCGL.cpp"
         "src/libANGLE/renderer/gl/cgl/ContextCGL.h"
@@ -192,6 +192,28 @@ if(is_mac)
         "src/libANGLE/renderer/gl/cgl/RendererCGL.h"
         "src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
         "src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm"
+    )
+endif()
+
+
+if(angle_enable_eagl)
+    list(APPEND _gl_backend_sources
+        "src/libANGLE/renderer/gl/eagl/ContextEAGL.cpp"
+        "src/libANGLE/renderer/gl/eagl/ContextEAGL.h"
+        "src/libANGLE/renderer/gl/eagl/DeviceEAGL.cpp"
+        "src/libANGLE/renderer/gl/eagl/DeviceEAGL.h"
+        "src/libANGLE/renderer/gl/eagl/DisplayEAGL.h"
+        "src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm"
+        "src/libANGLE/renderer/gl/eagl/FunctionsEAGL.h"
+        "src/libANGLE/renderer/gl/eagl/FunctionsEAGL.mm"
+        "src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.h"
+        "src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm"
+        "src/libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.cpp"
+        "src/libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
+        "src/libANGLE/renderer/gl/eagl/RendererEAGL.cpp"
+        "src/libANGLE/renderer/gl/eagl/RendererEAGL.h"
+        "src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
+        "src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm"
     )
 endif()
 

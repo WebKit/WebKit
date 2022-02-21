@@ -27,7 +27,6 @@
 
 #include <wtf/Bag.h>
 #include <wtf/Platform.h>
-#include <wtf/RefCountedArray.h>
 #include <wtf/RefPtr.h>
 
 #if OS(DARWIN)
@@ -46,8 +45,6 @@ static_assert(sizeof(Bag<DummyStruct>) == sizeof(void*), "");
 static_assert(sizeof(Ref<DummyStruct>) == sizeof(DummyStruct*), "");
 
 static_assert(sizeof(RefPtr<DummyStruct>) == sizeof(DummyStruct*), "");
-
-static_assert(sizeof(RefCountedArray<DummyStruct>) == sizeof(void*), "");
 
 #if OS(DARWIN) && CPU(ADDRESS64)
 // NaN boxing encoding relies on this.

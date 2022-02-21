@@ -23,6 +23,7 @@ dialog:-internal-modal-dialog {
     inset-block-end: 0;
     max-width: calc(100% - 6px - 2em);
     max-height: calc(100% - 6px - 2em);
+    visibility: visible;
 }
 
 dialog::backdrop {

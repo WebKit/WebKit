@@ -23,18 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://immersive-web.github.io/webxr/#xrview
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
     JSCustomMarkFunction,
-    ImplementationLacksVTable,
     InterfaceName=XRView
 ] interface WebXRView {
     readonly attribute XREye eye;
     [CustomGetter] readonly attribute Float32Array projectionMatrix;
     [SameObject] readonly attribute WebXRRigidTransform transform;
     readonly attribute double? recommendedViewportScale;
+
     undefined requestViewportScale(double? scale);
 };

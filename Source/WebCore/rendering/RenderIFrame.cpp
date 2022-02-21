@@ -86,7 +86,7 @@ bool RenderIFrame::flattenFrame() const
 
     if (style().width().isFixed() && style().height().isFixed()) {
         // Do not flatten iframes with scrolling="no".
-        if (iframeElement().scrollingMode() == ScrollbarAlwaysOff)
+        if (iframeElement().scrollingMode() == ScrollbarMode::AlwaysOff)
             return false;
         // Do not flatten iframes that have zero size, as flattening might make them visible.
         if (style().width().value() <= 0 || style().height().value() <= 0)

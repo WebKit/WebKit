@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
 ] dictionary FakeXRInputSourceInit {
     required XRHandedness handedness;
@@ -41,4 +41,7 @@
     sequence<FakeXRButtonStateInit> supportedButtons;
     // If not set the controller is assumed to not be tracked.
     FakeXRRigidTransformInit gripOrigin;
+    // Optional hand input. For now we don't care about the actual
+    // data. We're just creating the object for testing.
+    [Conditional=WEBXR_HANDS] boolean simulateHand = false;
 };

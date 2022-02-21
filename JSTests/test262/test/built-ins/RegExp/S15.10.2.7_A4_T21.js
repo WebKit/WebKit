@@ -11,7 +11,4 @@ description: Execute /[xyz]*1/.test('a0.b2.c3') and check results
 
 var __executed = /[xyz]*1/.test('a0.b2.c3');
 
-//CHECK#1
-if (__executed) {
-	throw new Test262Error('#1: /[xyz]*1/.test(\'a0.b2.c3\') === false');
-}
+assert(!__executed, 'The value of !__executed is expected to be true');

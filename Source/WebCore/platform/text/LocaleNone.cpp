@@ -73,7 +73,7 @@ const Vector<String>& LocaleNone::monthLabels()
         return m_monthLabels;
     m_monthLabels.reserveCapacity(WTF_ARRAY_LENGTH(WTF::monthFullName));
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthFullName); ++i)
-        m_monthLabels.append(WTF::monthFullName[i]);
+        m_monthLabels.uncheckedAppend(WTF::monthFullName[i]);
     return m_monthLabels;
 }
 
@@ -116,9 +116,9 @@ const Vector<String>& LocaleNone::shortMonthLabels()
 {
     if (!m_shortMonthLabels.isEmpty())
         return m_shortMonthLabels;
-    m_shortMonthLabels.reserveCapacity(WTF_ARRAY_LENGTH(WTF::monthName));
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthName); ++i)
-        m_shortMonthLabels.append(WTF::monthName[i]);
+    m_shortMonthLabels.reserveCapacity(std::size(WTF::monthName));
+    for (auto* monthName : WTF::monthName)
+        m_shortMonthLabels.uncheckedAppend(monthName);
     return m_shortMonthLabels;
 }
 
@@ -137,8 +137,8 @@ const Vector<String>& LocaleNone::timeAMPMLabels()
     if (!m_timeAMPMLabels.isEmpty())
         return m_timeAMPMLabels;
     m_timeAMPMLabels.reserveCapacity(2);
-    m_timeAMPMLabels.append("AM");
-    m_timeAMPMLabels.append("PM");
+    m_timeAMPMLabels.uncheckedAppend("AM");
+    m_timeAMPMLabels.uncheckedAppend("PM");
     return m_timeAMPMLabels;
 }
 

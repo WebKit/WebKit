@@ -234,6 +234,18 @@ window.onload = function () {
         [15, 15, 35, 20],
         [0, 30, 50, 20]]);
 
+    // Out-of-order rects:
+
+    testRects([580, 340], [
+        [60, 0, 30, 20],
+        [0, 0, 30, 20],
+        [30, 0, 30, 20]]);
+
+    testRects([580, 380], [
+        [30, 0, 30, 20],
+        [60, 0, 30, 20],
+        [0, 0, 30, 20]]);
+
     // More than 20 (our shrinkwrapping limit):
 
     testRects([580, 300], [

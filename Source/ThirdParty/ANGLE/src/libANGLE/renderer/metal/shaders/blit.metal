@@ -334,7 +334,7 @@ kernel void blitStencilToBufferCS(ushort2 gIndices [[thread_position_in_grid]],
 }
 
 // Fragment's stencil output is only available since Metal 2.1
-#if __METAL_VERSION__ >= 210
+@@#if __METAL_VERSION__ >= 210
 
 struct FragmentStencilOut
 {
@@ -397,4 +397,4 @@ fragment FragmentDepthStencilOut blitDepthStencilFS(
                       srcStencilTextureCube, input.texCoords, options.srcLevel, options.srcLayer);
     return re;
 }
-#endif  // __METAL_VERSION__ >= 210
+@@#endif  // __METAL_VERSION__ >= 210

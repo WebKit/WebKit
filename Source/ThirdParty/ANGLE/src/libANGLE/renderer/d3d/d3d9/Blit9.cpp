@@ -681,11 +681,11 @@ void Blit9::render()
 {
     IDirect3DDevice9 *device = mRenderer->getDevice();
 
-    HRESULT hr = device->SetStreamSource(0, mQuadVertexBuffer, 0, 2 * sizeof(float));
-    hr         = device->SetVertexDeclaration(mQuadVertexDeclaration);
+    device->SetStreamSource(0, mQuadVertexBuffer, 0, 2 * sizeof(float));
+    device->SetVertexDeclaration(mQuadVertexDeclaration);
 
     mRenderer->startScene();
-    hr = device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+    device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 }
 
 void Blit9::saveState()

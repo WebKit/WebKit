@@ -56,8 +56,8 @@ public:
     WEBCORE_EXPORT IDBRequestData isolatedCopy() const;
 
     IDBConnectionIdentifier serverConnectionIdentifier() const;
-    IDBResourceIdentifier requestIdentifier() const;
-    IDBResourceIdentifier transactionIdentifier() const;
+    WEBCORE_EXPORT IDBResourceIdentifier requestIdentifier() const;
+    WEBCORE_EXPORT IDBResourceIdentifier transactionIdentifier() const;
     uint64_t objectStoreIdentifier() const;
     uint64_t indexIdentifier() const;
     IndexedDB::IndexRecordType indexRecordType() const;

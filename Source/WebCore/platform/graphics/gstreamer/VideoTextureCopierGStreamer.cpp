@@ -26,7 +26,6 @@
 #include "FloatRect.h"
 #include "GLContext.h"
 #include "ImageOrientation.h"
-#include "TextureMapperShaderProgram.h"
 
 namespace WebCore {
 
@@ -161,7 +160,11 @@ bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(TextureMappe
     using Buffer = TextureMapperPlatformLayerBuffer;
     TextureMapperShaderProgram::Options options;
     WTF::switchOn(inputTexture.textureVariant(),
-        [&](const Buffer::RGBTexture&) { options = TextureMapperShaderProgram::TextureRGB | (premultiplyAlpha ? TextureMapperShaderProgram::Premultiply : 0); },
+        [&](const Buffer::RGBTexture&) {
+            options = TextureMapperShaderProgram::TextureRGB;
+            if (premultiplyAlpha)
+                options.add(TextureMapperShaderProgram::Premultiply);
+        },
         [&](const Buffer::YUVTexture& texture) {
             switch (texture.numberOfPlanes) {
             case 1:

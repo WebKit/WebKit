@@ -1,0 +1,8 @@
+ selectMenu0-button
+
+FAIL Button controller code should not run if the click event is preventDefaulted. assert_false: expected false got undefined
+FAIL Listbox controller code should not run if the click event is preventDefaulted. assert_true: expected true got undefined
+FAIL <selectmenu> should fire input and change events when new option is selected assert_true: expected true got undefined
+FAIL <selectmenu> should fire input and change events even when new selected option has the same value as the old assert_true: expected true got undefined
+FAIL <selectmenu> should fire input and change events when option in listbox is clicked assert_true: expected true got undefined
+

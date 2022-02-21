@@ -48,16 +48,19 @@ public:
 
     ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>&&);
 
-    IOSurface* surface();
+    static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
 
+    IOSurface* surface();
     GraphicsContext& context() const override;
     void flushContext() override;
 
+protected:
     IntSize backendSize() const override;
     
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
     RefPtr<NativeImage> sinkIntoNativeImage() override;
 
+    void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
     void drawConsuming(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
 
     std::optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const override;
@@ -65,12 +68,13 @@ public:
 
     bool isInUse() const override;
     void releaseGraphicsContext() override;
-    VolatilityState setVolatile(bool) override;
     void releaseBufferToPool() override;
 
-    static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
+    bool setVolatile() override;
+    VolatilityState setNonVolatile() override;
 
-protected:
+    void ensureNativeImagesHaveCopiedBackingStore() final;
+
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
     unsigned bytesPerRow() const override;
 

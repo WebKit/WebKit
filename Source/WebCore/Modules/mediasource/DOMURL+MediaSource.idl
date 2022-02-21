@@ -32,8 +32,8 @@
 // FIXME: This should be restricted to being exposed on Window.
 [
     Conditional=MEDIA_SOURCE,
-    EnabledBySetting=MediaSource,
+    EnabledBySetting=MediaSourceEnabled,
     ImplementedBy=DOMURLMediaSource
 ] partial interface DOMURL {
-    [CallWith=ScriptExecutionContext] static DOMString createObjectURL(MediaSource source);
+    [CallWith=CurrentScriptExecutionContext] static DOMString createObjectURL(MediaSource source);
 };

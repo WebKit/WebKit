@@ -140,18 +140,4 @@ FAIL setConfiguration(config) - with turns server, credentialType password, and 
           accessToken: ''
         }
       }] })" did not throw
-FAIL new RTCPeerConnection(config) - with turns server, credentialType oauth, and string credential should throw InvalidAccessError assert_throws_dom: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turns:turn.example.org',
-        credentialType: 'oauth',
-        username: 'user',
-        credential: 'cred'
-      }] })" did not throw
-FAIL setConfiguration(config) - with turns server, credentialType oauth, and string credential should throw InvalidAccessError assert_throws_dom: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turns:turn.example.org',
-        credentialType: 'oauth',
-        username: 'user',
-        credential: 'cred'
-      }] })" did not throw
 

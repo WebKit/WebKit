@@ -126,12 +126,44 @@ inline typename MacroAssemblerType::TrustedImm32 mask8OnCondition(MacroAssembler
     return typename MacroAssemblerType::TrustedImm32(static_cast<int8_t>(value.m_value));
 }
 
+template<typename MacroAssemblerType>
+inline typename MacroAssemblerType::TrustedImm32 mask16OnCondition(MacroAssemblerType&, typename MacroAssemblerType::RelationalCondition cond, typename MacroAssemblerType::TrustedImm32 value)
+{
+    if (isUnsigned<MacroAssemblerType>(cond))
+        return typename MacroAssemblerType::TrustedImm32(static_cast<uint16_t>(value.m_value));
+    return typename MacroAssemblerType::TrustedImm32(static_cast<int16_t>(value.m_value));
+}
+
+template<typename MacroAssemblerType>
+inline typename MacroAssemblerType::TrustedImm32 mask16OnCondition(MacroAssemblerType&, typename MacroAssemblerType::ResultCondition cond, typename MacroAssemblerType::TrustedImm32 value)
+{
+    // If condition is Zero or NonZero, upper bits are unrelated.
+    // Since branchTest32 handles -1 in an optimized manner, we keep -1 as is instead of converting it to 0xffff.
+    if (cond == MacroAssemblerType::Zero || cond == MacroAssemblerType::NonZero) {
+        if (value.m_value == -1)
+            return value;
+    }
+    if (isUnsigned<MacroAssemblerType>(cond))
+        return typename MacroAssemblerType::TrustedImm32(static_cast<uint16_t>(value.m_value));
+    ASSERT_WITH_MESSAGE(cond != MacroAssemblerType::Overflow, "Overflow is not used for 16bit test operations.");
+    ASSERT(isSigned<MacroAssemblerType>(cond));
+    return typename MacroAssemblerType::TrustedImm32(static_cast<int16_t>(value.m_value));
+}
+
 template<typename MacroAssemblerType, typename Condition, typename ...Args>
 void load8OnCondition(MacroAssemblerType& jit, Condition cond, Args... args)
 {
     if (isUnsigned<MacroAssemblerType>(cond))
         return jit.load8(std::forward<Args>(args)...);
     return jit.load8SignedExtendTo32(std::forward<Args>(args)...);
+}
+
+template<typename MacroAssemblerType, typename Condition, typename ...Args>
+void load16OnCondition(MacroAssemblerType& jit, Condition cond, Args... args)
+{
+    if (isUnsigned<MacroAssemblerType>(cond))
+        return jit.load16(std::forward<Args>(args)...);
+    return jit.load16SignedExtendTo32(std::forward<Args>(args)...);
 }
 
 } } // namespace JSC

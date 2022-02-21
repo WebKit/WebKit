@@ -56,7 +56,7 @@ static void defaultPrologueGenerator(CCallHelpers& jit, Code& code)
 Code::Code(Procedure& proc)
     : m_proc(proc)
     , m_cfg(new CFG(*this))
-    , m_preserveB3Origins(proc.needsPCToOriginMap() || Options::dumpAirGraphAtEachPhase() || Options::dumpFTLDisassembly())
+    , m_preserveB3Origins(Options::dumpAirGraphAtEachPhase() || Options::dumpFTLDisassembly())
     , m_lastPhaseName("initial")
     , m_defaultPrologueGenerator(createSharedTask<PrologueGeneratorFunction>(&defaultPrologueGenerator))
 {
@@ -331,12 +331,9 @@ unsigned Code::jsHash() const
     return result;
 }
 
-void Code::setNumEntrypoints(unsigned numEntrypoints)
+void Code::setNumEntrypoints(unsigned numEntryPoints)
 {
-    m_prologueGenerators.clear();
-    m_prologueGenerators.reserveCapacity(numEntrypoints);
-    for (unsigned i = 0; i < numEntrypoints; ++i)
-        m_prologueGenerators.uncheckedAppend(m_defaultPrologueGenerator.copyRef());
+    m_prologueGenerators = { numEntryPoints, m_defaultPrologueGenerator.copyRef() };
 }
 
 } } } // namespace JSC::B3::Air

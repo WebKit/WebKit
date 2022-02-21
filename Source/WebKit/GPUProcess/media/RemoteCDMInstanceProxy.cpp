@@ -53,7 +53,7 @@ RemoteCDMInstanceProxy::RemoteCDMInstanceProxy(WeakPtr<RemoteCDMProxy>&& cdm, Re
     , m_configuration(WTFMove(configuration))
     , m_identifier(identifier)
 {
-    m_instance->setClient(makeWeakPtr<CDMInstanceClient>(this));
+    m_instance->setClient(*this);
 }
 
 RemoteCDMInstanceProxy::~RemoteCDMInstanceProxy()
@@ -61,7 +61,7 @@ RemoteCDMInstanceProxy::~RemoteCDMInstanceProxy()
     m_instance->clearClient();
 }
 
-void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String& type, Ref<SharedBuffer>&& initData)
+void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String& type, Ref<FragmentedSharedBuffer>&& initData)
 {
     if (!m_cdm)
         return;
@@ -74,7 +74,7 @@ void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String&
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstance::UnrequestedInitializationDataReceived(type, WTFMove(initData)), m_identifier);
+    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstance::UnrequestedInitializationDataReceived(type, IPC::SharedBufferCopy(WTFMove(initData))), m_identifier);
 }
 
 void RemoteCDMInstanceProxy::initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers allowDistinctiveIdentifiers, AllowPersistentState allowPersistentState, CompletionHandler<void(SuccessValue)>&& completion)
@@ -105,7 +105,7 @@ void RemoteCDMInstanceProxy::createSession(CompletionHandler<void(const RemoteCD
         return;
     }
     auto identifier = RemoteCDMInstanceSessionIdentifier::generate();
-    auto session = RemoteCDMInstanceSessionProxy::create(makeWeakPtr(m_cdm.get()), privSession.releaseNonNull(), identifier);
+    auto session = RemoteCDMInstanceSessionProxy::create(m_cdm.get(), privSession.releaseNonNull(), identifier);
     m_cdm->factory()->addSession(identifier, WTFMove(session));
     completion(identifier);
 }

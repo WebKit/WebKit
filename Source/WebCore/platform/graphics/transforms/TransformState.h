@@ -113,6 +113,7 @@ public:
     std::optional<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
 
     TransformationMatrix* accumulatedTransform() const { return m_accumulatedTransform.get(); }
+    TransformDirection direction() const { return m_direction; }
 
 private:
     void translateTransform(const LayoutSize&);
@@ -120,7 +121,6 @@ private:
     void flattenWithTransform(const TransformationMatrix&, bool* wasClamped);
     void applyAccumulatedOffset();
     
-    TransformDirection direction() const { return m_direction; }
     TransformDirection inverseDirection() const;
 
     void mapQuad(FloatQuad&, TransformDirection, bool* clamped = nullptr) const;

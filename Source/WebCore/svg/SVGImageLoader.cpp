@@ -25,6 +25,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLParserIdioms.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
 
 namespace WebCore {

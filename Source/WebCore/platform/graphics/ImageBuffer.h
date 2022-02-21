@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "DisplayListFlushIdentifier.h"
+#include "GraphicsContextFlushIdentifier.h"
 #include "ImageBufferBackend.h"
 #include "RenderingMode.h"
 #include "RenderingResourceIdentifier.h"
@@ -36,22 +36,15 @@
 
 namespace WebCore {
 
-namespace DisplayList {
-class DisplayList;
-class DrawingContext;
-struct ItemBufferHandle;
-}
+class Filter;
 
-class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer>, public CanMakeWeakPtr<ImageBuffer> {
+class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer, WTF::DestructionThread::Main>, public CanMakeWeakPtr<ImageBuffer> {
 public:
     // Will return a null pointer on allocation failure.
     WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, ShouldUseDisplayList, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, const HostWindow* = nullptr);
     WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, float resolutionScale, const DestinationColorSpace&, PixelFormat, const HostWindow* = nullptr);
 
-    // Create an image buffer compatible with the context, with suitable resolution for drawing into the buffer and then into this context.
-    static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const GraphicsContext&);
-    static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const DestinationColorSpace&, const GraphicsContext&);
-    static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, float resolutionScale, const DestinationColorSpace&, const GraphicsContext&);
+    RefPtr<ImageBuffer> clone() const;
 
     // These functions are used when clamping the ImageBuffer which is created for filter, masker or clipper.
     static bool sizeNeedsClamping(const FloatSize&);
@@ -60,9 +53,7 @@ public:
     static FloatSize clampedSize(const FloatSize&, FloatSize& scale);
     static FloatRect clampedRect(const FloatRect&);
 
-    static IntSize compatibleBufferSize(const FloatSize&, const GraphicsContext&);
-    
-    WEBCORE_EXPORT virtual ~ImageBuffer() = default;
+    virtual ~ImageBuffer() = default;
 
     virtual void setBackend(std::unique_ptr<ImageBufferBackend>&&) = 0;
     virtual void clearBackend() = 0;
@@ -76,16 +67,14 @@ public:
     virtual GraphicsContext& context() const = 0;
     virtual void flushContext() = 0;
 
-    virtual DisplayList::DrawingContext* drawingContext() { return nullptr; }
+    virtual GraphicsContext* drawingContext() { return nullptr; }
     virtual bool prefersPreparationForDisplay() { return false; }
     virtual void flushDrawingContext() { }
     virtual void flushDrawingContextAsync() { }
-    virtual void didFlush(DisplayList::FlushIdentifier) { }
+    virtual void didFlush(GraphicsContextFlushIdentifier) { }
 
-    virtual void changeDestinationImageBuffer(RenderingResourceIdentifier) { }
-    virtual void prepareToAppendDisplayListItems(DisplayList::ItemBufferHandle&&) { }
-
-    virtual IntSize logicalSize() const = 0;
+    virtual FloatSize logicalSize() const = 0;
+    virtual IntSize truncatedLogicalSize() const = 0; // This truncates the real size. You probably should be calling logicalSize() instead.
     virtual float resolutionScale() const = 0;
     virtual DestinationColorSpace colorSpace() const = 0;
     virtual PixelFormat pixelFormat() const = 0;
@@ -99,16 +88,17 @@ public:
 
     virtual bool isInUse() const = 0;
     virtual void releaseGraphicsContext() = 0;
-    virtual VolatilityState setVolatile(bool) = 0;
     virtual void releaseBufferToPool() = 0;
+
+    // Returns true on success.
+    virtual bool setVolatile() = 0;
+    virtual VolatilityState setNonVolatile() = 0;
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() = 0;
 
     virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const = 0;
     virtual RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const = 0;
-
-    // Create an image buffer compatible with the context and copy rect from this buffer into this new one.
-    RefPtr<ImageBuffer> copyRectToBuffer(const FloatRect&, const DestinationColorSpace&, const GraphicsContext&);
+    virtual RefPtr<Image> filteredImage(Filter&) = 0;
 
     virtual void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), const ImagePaintingOptions& = { }) = 0;
     virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
@@ -141,7 +131,5 @@ protected:
     virtual RefPtr<Image> sinkIntoImage(PreserveResolution = PreserveResolution::No) = 0;
     virtual void drawConsuming(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
 };
-
-using ImageBufferHashMap = HashMap<RenderingResourceIdentifier, Ref<ImageBuffer>>;
 
 } // namespace WebCore

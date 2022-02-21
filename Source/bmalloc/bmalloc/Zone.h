@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Zone_h
-#define Zone_h
+#pragma once
 
 #include "FixedVector.h"
 #include "Mutex.h"
@@ -32,6 +31,8 @@
 #include "StaticPerProcess.h"
 #include <malloc/malloc.h>
 #include <mutex>
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -73,4 +74,4 @@ inline void Zone::addRange(Range range)
 
 } // namespace bmalloc
 
-#endif // Zone_h
+#endif

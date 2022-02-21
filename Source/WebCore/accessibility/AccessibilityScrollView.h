@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AccessibilityObject.h"
+#include "ScrollView.h"
 
 namespace WebCore {
     
@@ -37,7 +38,7 @@ class AccessibilityScrollView final : public AccessibilityObject {
 public:
     static Ref<AccessibilityScrollView> create(ScrollView*);
     AccessibilityRole roleValue() const override { return AccessibilityRole::ScrollArea; }
-    ScrollView* scrollView() const override { return m_scrollView.get(); }
+    ScrollView* scrollView() const override { return currentScrollView(); }
 
     virtual ~AccessibilityScrollView();
 
@@ -47,7 +48,8 @@ private:
     explicit AccessibilityScrollView(ScrollView*);
     void detachRemoteParts(AccessibilityDetachmentType) override;
 
-    ScrollableArea* getScrollableAreaIfScrollable() const override;
+    ScrollView* currentScrollView() const;
+    ScrollableArea* getScrollableAreaIfScrollable() const override { return currentScrollView(); }
     void scrollTo(const IntPoint&) const override;
     bool computeAccessibilityIsIgnored() const override;
     bool isAccessibilityScrollViewInstance() const override { return true; }
@@ -55,7 +57,7 @@ private:
     
     bool isAttachment() const override;
     PlatformWidget platformWidget() const override;
-    Widget* widgetForAttachmentView() const override;
+    Widget* widgetForAttachmentView() const override { return currentScrollView(); }
     
     AccessibilityObject* scrollBar(AccessibilityOrientation) override;
     void addChildren() override;
@@ -67,17 +69,19 @@ private:
     void setFocused(bool) override;
     bool canSetFocusAttribute() const override;
     bool isFocused() const override;
-    
+
+    Document* document() const override;
     FrameView* documentFrameView() const override;
     LayoutRect elementRect() const override;
     AccessibilityObject* parentObject() const override;
-    AccessibilityObject* parentObjectIfExists() const override;
+    AccessibilityObject* parentObjectIfExists() const override { return parentObject(); }
 
     AccessibilityObject* firstChild() const override { return webAreaObject(); }
     AccessibilityScrollbar* addChildScrollbar(Scrollbar*);
     void removeChildScrollbar(AccessibilityObject*);
-    
+
     WeakPtr<ScrollView> m_scrollView;
+    WeakPtr<HTMLFrameOwnerElement> m_frameOwnerElement;
     RefPtr<AccessibilityObject> m_horizontalScrollbar;
     RefPtr<AccessibilityObject> m_verticalScrollbar;
     bool m_childrenDirty;

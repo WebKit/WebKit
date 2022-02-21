@@ -83,17 +83,18 @@ void FetchLoader::startLoadingBlobURL(ScriptExecutionContext& context, const URL
     m_isStarted = m_loader;
 }
 
-void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& request)
+void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& request, const String& initiator)
 {
     ResourceLoaderOptions resourceLoaderOptions = request.fetchOptions();
     resourceLoaderOptions.preflightPolicy = PreflightPolicy::Consider;
     ThreadableLoaderOptions options(resourceLoaderOptions,
         context.shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective,
-        String(cachedResourceRequestInitiators().fetch),
+        String(initiator),
         ResponseFilteringPolicy::Disable);
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
     options.dataBufferingPolicy = DataBufferingPolicy::DoNotBufferData;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+    options.navigationPreloadIdentifier = request.navigationPreloadIdentifier();
 
     ResourceRequest fetchRequest = request.resourceRequest();
 
@@ -134,7 +135,7 @@ void FetchLoader::stop()
         m_loader->cancel();
 }
 
-RefPtr<SharedBuffer> FetchLoader::startStreaming()
+RefPtr<FragmentedSharedBuffer> FetchLoader::startStreaming()
 {
     ASSERT(m_consumer);
     auto firstChunk = m_consumer->takeData();
@@ -142,23 +143,23 @@ RefPtr<SharedBuffer> FetchLoader::startStreaming()
     return firstChunk;
 }
 
-void FetchLoader::didReceiveResponse(unsigned long, const ResourceResponse& response)
+void FetchLoader::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     m_client.didReceiveResponse(response);
 }
 
-void FetchLoader::didReceiveData(const uint8_t* value, int size)
+void FetchLoader::didReceiveData(const SharedBuffer& buffer)
 {
     if (!m_consumer) {
-        m_client.didReceiveData(value, size);
+        m_client.didReceiveData(buffer);
         return;
     }
-    m_consumer->append(value, size);
+    m_consumer->append(buffer);
 }
 
-void FetchLoader::didFinishLoading(unsigned long)
+void FetchLoader::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics& metrics)
 {
-    m_client.didSucceed();
+    m_client.didSucceed(metrics);
 }
 
 void FetchLoader::didFail(const ResourceError& error)

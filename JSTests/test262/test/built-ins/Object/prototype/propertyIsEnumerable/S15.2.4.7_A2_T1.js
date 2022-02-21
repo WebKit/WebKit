@@ -14,14 +14,15 @@ description: >
     Checking the type of Object.prototype.propertyIsEnumerable and the
     returned result
 ---*/
+assert.sameValue(
+  typeof Object.prototype.propertyIsEnumerable,
+  "function",
+  'The value of `typeof Object.prototype.propertyIsEnumerable` is expected to be "function"'
+);
 
-//CHECK#1
-if (typeof Object.prototype.propertyIsEnumerable !== "function") {
-  throw new Test262Error('#1: hasOwnProperty method is defined');
-}
+assert(
+  !Object.prototype.propertyIsEnumerable("propertyIsEnumerable"),
+  'The value of !Object.prototype.propertyIsEnumerable("propertyIsEnumerable") is expected to be true'
+);
 
-//CHECK#2
-if (Object.prototype.propertyIsEnumerable("propertyIsEnumerable")) {
-  throw new Test262Error('#2: hasOwnProperty method works properly');
-}
-//
+// TODO: Convert to verifyProperty() format.

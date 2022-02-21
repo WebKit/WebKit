@@ -106,7 +106,7 @@ precision mediump float;
 varying mediump vec2 texCoord;
 uniform mediump samplerVideoWEBGL s;
 
-vec4 wrapTextureVideoWEBGL(samplerVideoWEBGL sampler, vec2 coord)
+vec4 wrapTextureVideoWEBGL(mediump samplerVideoWEBGL sampler, vec2 coord)
 {
     return textureVideoWEBGL(sampler, coord);
 }
@@ -251,5 +251,7 @@ void main()
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WEBGLVideoTextureTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WEBGLVideoTextureES300Test);
 ANGLE_INSTANTIATE_TEST_ES3(WEBGLVideoTextureES300Test);
 }  // namespace

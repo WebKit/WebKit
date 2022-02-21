@@ -38,6 +38,10 @@
 #include <JavaScriptCore/Options.h>
 #include <wtf/NeverDestroyed.h>
 
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+#include "MediaSessionManagerCocoa.h"
+#endif
+
 namespace WebCore {
 
 RuntimeEnabledFeatures::RuntimeEnabledFeatures()
@@ -74,6 +78,16 @@ void RuntimeEnabledFeatures::setOpusDecoderEnabled(bool isEnabled)
 {
     m_opusDecoderEnabled = isEnabled;
     PlatformMediaSessionManager::setOpusDecoderEnabled(isEnabled);
+}
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
+void RuntimeEnabledFeatures::setMediaSourceInlinePaintingEnabled(bool isEnabled)
+{
+    m_mediaSourceInlinePaintingEnabled = isEnabled;
+#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    MediaSessionManagerCocoa::setMediaSourceInlinePaintingEnabled(isEnabled);
+#endif
 }
 #endif
 

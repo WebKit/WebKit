@@ -70,7 +70,7 @@ protected:
 #endif
 
     virtual bool needsContainer() const;
-    void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) override;
+    void createShadowSubtreeAndUpdateInnerTextElementEditability(bool) override;
     void destroyShadowSubtree() override;
     void attributeChanged(const QualifiedName&) override;
     void disabledStateChanged() final;
@@ -98,7 +98,7 @@ private:
     bool shouldRespectListAttribute() override;
     HTMLElement* placeholderElement() const final;
     void updatePlaceholderText() final;
-    bool appendFormData(DOMFormData&, bool multipart) const final;
+    bool appendFormData(DOMFormData&) const final;
     void subtreeHasChanged() final;
     void capsLockStateMayHaveChanged() final;
     void updateAutoFillButton() final;

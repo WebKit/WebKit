@@ -104,11 +104,12 @@ Vector<MarkedText> MarkedText::subdivide(const Vector<MarkedText>& markedTexts, 
     return result;
 }
 
-Vector<MarkedText> MarkedText::collectForHighlights(RenderText& renderer, RenderBoxModelObject& parentRenderer, const TextBoxSelectableRange& selectableRange, PaintPhase phase)
+Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, const TextBoxSelectableRange& selectableRange, PaintPhase phase)
 {
     Vector<MarkedText> markedTexts;
     HighlightData highlightData;
     if (RuntimeEnabledFeatures::sharedFeatures().highlightAPIEnabled()) {
+        auto& parentRenderer = *renderer.parent();
         auto& parentStyle = parentRenderer.style();
         if (auto highlightRegister = renderer.document().highlightRegisterIfExists()) {
             for (auto& highlight : highlightRegister->map()) {
@@ -128,6 +129,22 @@ Vector<MarkedText> MarkedText::collectForHighlights(RenderText& renderer, Render
             }
         }
     }
+    
+    if (renderer.document().settings().scrollToTextFragmentEnabled()) {
+        if (auto fragmentHighlightRegister = renderer.document().fragmentHighlightRegisterIfExists()) {
+            for (auto& highlight : fragmentHighlightRegister->map()) {
+                for (auto& rangeData : highlight.value->rangesData()) {
+                    if (!highlightData.setRenderRange(rangeData))
+                        continue;
+
+                    auto [highlightStart, highlightEnd] = highlightData.rangeForTextBox(renderer, selectableRange);
+                    if (highlightStart < highlightEnd)
+                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::FragmentHighlight });
+                }
+            }
+        }
+    }
+    
 #if ENABLE(APP_HIGHLIGHTS)
     if (auto appHighlightRegister = renderer.document().appHighlightRegisterIfExists()) {
         if (appHighlightRegister->highlightsVisibility() == HighlightVisibility::Visible) {
@@ -147,7 +164,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(RenderText& renderer, Render
     return markedTexts;
 }
 
-Vector<MarkedText> MarkedText::collectForDocumentMarkers(RenderText& renderer, const TextBoxSelectableRange& selectableRange, PaintPhase phase)
+Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& renderer, const TextBoxSelectableRange& selectableRange, PaintPhase phase)
 {
     if (!renderer.textNode())
         return { };
@@ -252,7 +269,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(RenderText& renderer, c
     return markedTexts;
 }
 
-Vector<MarkedText> MarkedText::collectForDraggedContent(RenderText& renderer, const TextBoxSelectableRange& selectableRange)
+Vector<MarkedText> MarkedText::collectForDraggedContent(const RenderText& renderer, const TextBoxSelectableRange& selectableRange)
 {
     auto draggedContentRanges = renderer.draggedContentRangesBetweenOffsets(selectableRange.start, selectableRange.start + selectableRange.length);
 

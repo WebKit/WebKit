@@ -7,6 +7,7 @@
 //   Test EXT_blend_func_extended
 
 #include "test_utils/ANGLETest.h"
+#include "test_utils/gl_raii.h"
 
 #include "util/shader_utils.h"
 
@@ -134,13 +135,28 @@ class EXTBlendFuncExtendedDrawTest : public ANGLETest
         ASSERT_NE(0u, mProgram);
     }
 
+    virtual GLint getVertexAttribLocation(const char *name)
+    {
+        return glGetAttribLocation(mProgram, name);
+    }
+
+    virtual GLint getFragmentUniformLocation(const char *name)
+    {
+        return glGetUniformLocation(mProgram, name);
+    }
+
+    virtual void setUniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
+    {
+        glUniform4f(location, v0, v1, v2, v3);
+    }
+
     void drawTest()
     {
         glUseProgram(mProgram);
 
-        GLint position = glGetAttribLocation(mProgram, essl1_shaders::PositionAttrib());
-        GLint src0     = glGetUniformLocation(mProgram, "src0");
-        GLint src1     = glGetUniformLocation(mProgram, "src1");
+        GLint position = getVertexAttribLocation(essl1_shaders::PositionAttrib());
+        GLint src0     = getFragmentUniformLocation("src0");
+        GLint src1     = getFragmentUniformLocation("src1");
         ASSERT_GL_NO_ERROR();
 
         glBindBuffer(GL_ARRAY_BUFFER, mVBO);
@@ -152,8 +168,8 @@ class EXTBlendFuncExtendedDrawTest : public ANGLETest
         static const float kSrc0[4] = {1.0f, 1.0f, 1.0f, 1.0f};
         static const float kSrc1[4] = {0.3f, 0.6f, 0.9f, 0.7f};
 
-        glUniform4f(src0, kSrc0[0], kSrc0[1], kSrc0[2], kSrc0[3]);
-        glUniform4f(src1, kSrc1[0], kSrc1[1], kSrc1[2], kSrc1[3]);
+        setUniform4f(src0, kSrc0[0], kSrc0[1], kSrc0[2], kSrc0[3]);
+        setUniform4f(src1, kSrc1[0], kSrc1[1], kSrc1[2], kSrc1[3]);
         ASSERT_GL_NO_ERROR();
 
         glEnable(GL_BLEND);
@@ -216,7 +232,8 @@ class EXTBlendFuncExtendedDrawTestES3 : public EXTBlendFuncExtendedDrawTest
             mIsES31OrNewer = true;
         }
     }
-    void checkOutputIndexQuery(const char *name, GLint expectedIndex)
+
+    virtual void checkOutputIndexQuery(const char *name, GLint expectedIndex)
     {
         GLint index = glGetFragDataIndexEXT(mProgram, name);
         EXPECT_EQ(expectedIndex, index);
@@ -246,6 +263,109 @@ class EXTBlendFuncExtendedDrawTestES3 : public EXTBlendFuncExtendedDrawTest
     bool mIsES31OrNewer;
 };
 
+class EXTBlendFuncExtendedDrawTestES31 : public EXTBlendFuncExtendedDrawTestES3
+{
+  protected:
+    EXTBlendFuncExtendedDrawTestES31()
+        : EXTBlendFuncExtendedDrawTestES3(), mPipeline(0), mVertexProgram(0), mFragProgram(0)
+    {}
+
+    GLint getVertexAttribLocation(const char *name) override
+    {
+        return glGetAttribLocation(mVertexProgram, name);
+    }
+
+    GLint getFragmentUniformLocation(const char *name) override
+    {
+        return glGetUniformLocation(mFragProgram, name);
+    }
+
+    void setUniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3) override
+    {
+        glActiveShaderProgram(mPipeline, mFragProgram);
+        EXTBlendFuncExtendedDrawTest::setUniform4f(location, v0, v1, v2, v3);
+    }
+
+    void checkOutputIndexQuery(const char *name, GLint expectedIndex) override
+    {
+        GLint index = glGetFragDataIndexEXT(mFragProgram, name);
+        EXPECT_EQ(expectedIndex, index);
+        index = glGetProgramResourceLocationIndexEXT(mFragProgram, GL_PROGRAM_OUTPUT, name);
+        EXPECT_EQ(expectedIndex, index);
+    }
+
+    void setupProgramPipeline(const char *vertexSource, const char *fragmentSource)
+    {
+        mVertexProgram = createShaderProgram(GL_VERTEX_SHADER, vertexSource);
+        ASSERT_NE(mVertexProgram, 0u);
+        mFragProgram = createShaderProgram(GL_FRAGMENT_SHADER, fragmentSource);
+        ASSERT_NE(mFragProgram, 0u);
+
+        // Generate a program pipeline and attach the programs to their respective stages
+        glGenProgramPipelines(1, &mPipeline);
+        EXPECT_GL_NO_ERROR();
+        glUseProgramStages(mPipeline, GL_VERTEX_SHADER_BIT, mVertexProgram);
+        EXPECT_GL_NO_ERROR();
+        glUseProgramStages(mPipeline, GL_FRAGMENT_SHADER_BIT, mFragProgram);
+        EXPECT_GL_NO_ERROR();
+        glBindProgramPipeline(mPipeline);
+        EXPECT_GL_NO_ERROR();
+    }
+
+    GLuint createShaderProgram(GLenum type, const GLchar *shaderString)
+    {
+        GLShader shader(type);
+        if (!shader.get())
+        {
+            return 0;
+        }
+
+        glShaderSource(shader, 1, &shaderString, nullptr);
+        glCompileShader(shader);
+
+        GLuint program = glCreateProgram();
+
+        if (program)
+        {
+            GLint compiled;
+            glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+            glProgramParameteri(program, GL_PROGRAM_SEPARABLE, GL_TRUE);
+            if (compiled)
+            {
+                glAttachShader(program, shader);
+                glLinkProgram(program);
+                glDetachShader(program, shader);
+            }
+        }
+
+        EXPECT_GL_NO_ERROR();
+
+        return program;
+    }
+
+    void testTearDown() override
+    {
+        EXTBlendFuncExtendedDrawTest::testTearDown();
+        if (mVertexProgram)
+        {
+            glDeleteProgram(mVertexProgram);
+        }
+        if (mFragProgram)
+        {
+            glDeleteProgram(mFragProgram);
+        }
+        if (mPipeline)
+        {
+            glDeleteProgramPipelines(1, &mPipeline);
+        }
+
+        ASSERT_GL_NO_ERROR();
+    }
+
+    GLuint mPipeline;
+    GLuint mVertexProgram;
+    GLuint mFragProgram;
+};
 }  // namespace
 
 // Test EXT_blend_func_extended related gets.
@@ -286,6 +406,12 @@ TEST_P(EXTBlendFuncExtendedDrawTest, FragColor)
 TEST_P(EXTBlendFuncExtendedDrawTest, FragData)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    // Suspected VK driver bug http://anglebug.com/5523
+    ANGLE_SKIP_TEST_IF(IsVulkan() && (IsNVIDIA() || IsPixel2()));
+
+    // Suspected AMD VK driver bug http://anglebug.com/5537
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsWindows() && IsAMD());
 
     const char *kFragColorShader =
         "#extension GL_EXT_blend_func_extended : require\n"
@@ -395,6 +521,9 @@ TEST_P(EXTBlendFuncExtendedDrawTestES3, FragmentArrayOutputLocationsAPI)
 
     // TODO: Investigate this mac-only failure.  http://angleproject.com/1085
     ANGLE_SKIP_TEST_IF(IsOSX());
+
+    // Suspected VK driver bug http://anglebug.com/5523
+    ANGLE_SKIP_TEST_IF(IsVulkan() && (IsNVIDIA() || IsPixel2()));
 
     constexpr char kFS[] = R"(#version 300 es
 #extension GL_EXT_blend_func_extended : require
@@ -708,8 +837,109 @@ void main() {
     glDeleteProgram(program);
 }
 
+// Use a program pipeline with EXT_blend_func_extended
+TEST_P(EXTBlendFuncExtendedDrawTestES31, UseProgramPipeline)
+{
+    // Only the Vulkan backend supports PPO
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    // Create two separable program objects from a
+    // single source string respectively (vertSrc and fragSrc)
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    const char *kFragColorShader = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+precision mediump float;
+uniform vec4 src0;
+uniform vec4 src1;
+layout(location = 0, index = 1) out vec4 outSrc1;
+layout(location = 0, index = 0) out vec4 outSrc0;
+void main() {
+    outSrc0 = src0;
+    outSrc1 = src1;
+})";
+
+    setupProgramPipeline(essl3_shaders::vs::Simple(), kFragColorShader);
+
+    checkOutputIndexQuery("outSrc0", 0);
+    checkOutputIndexQuery("outSrc1", 1);
+
+    ASSERT_EQ(mProgram, 0u);
+    drawTest();
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Use program pipeline where the fragment program is changed
+TEST_P(EXTBlendFuncExtendedDrawTestES31, UseTwoProgramStages)
+{
+    // Only the Vulkan backend supports PPO
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    // Create two separable program objects from a
+    // single source string respectively (vertSrc and fragSrc)
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    const char *kFragColorShaderFlipped = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+precision mediump float;
+uniform vec4 src0;
+uniform vec4 src1;
+layout(location = 0, index = 0) out vec4 outSrc1;
+layout(location = 0, index = 1) out vec4 outSrc0;
+void main() {
+    outSrc0 = src0;
+    outSrc1 = src1;
+})";
+
+    const char *kFragColorShader = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+precision mediump float;
+uniform vec4 src0;
+uniform vec4 src1;
+layout(location = 0, index = 1) out vec4 outSrc1;
+layout(location = 0, index = 0) out vec4 outSrc0;
+void main() {
+    outSrc0 = src0;
+    outSrc1 = src1;
+})";
+
+    setupProgramPipeline(essl3_shaders::vs::Simple(), kFragColorShaderFlipped);
+
+    // Check index values frag shader with the "flipped" index values
+    checkOutputIndexQuery("outSrc0", 1);
+    checkOutputIndexQuery("outSrc1", 0);
+
+    GLuint previousProgram = mFragProgram;
+    mFragProgram           = createShaderProgram(GL_FRAGMENT_SHADER, kFragColorShader);
+    ASSERT_NE(mFragProgram, 0u);
+
+    // Change the Fragment program of the pipeline
+    glUseProgramStages(mPipeline, GL_FRAGMENT_SHADER_BIT, mFragProgram);
+    EXPECT_GL_NO_ERROR();
+
+    checkOutputIndexQuery("outSrc0", 0);
+    checkOutputIndexQuery("outSrc1", 1);
+
+    ASSERT_EQ(mProgram, 0u);
+    drawTest();
+
+    if (previousProgram)
+    {
+        glDeleteProgram(previousProgram);
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2(EXTBlendFuncExtendedTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EXTBlendFuncExtendedTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(EXTBlendFuncExtendedTestES3);
 
 ANGLE_INSTANTIATE_TEST_ES2(EXTBlendFuncExtendedDrawTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EXTBlendFuncExtendedDrawTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND_ES31(EXTBlendFuncExtendedDrawTestES3);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EXTBlendFuncExtendedDrawTestES31);
+ANGLE_INSTANTIATE_TEST_ES31(EXTBlendFuncExtendedDrawTestES31);

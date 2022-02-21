@@ -31,9 +31,13 @@
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,
 ] interface WorkerNavigator {
+    readonly attribute unsigned long long hardwareConcurrency;
 };
 
 WorkerNavigator includes NavigatorID;
 WorkerNavigator includes NavigatorLanguage;
+WorkerNavigator includes NavigatorLocks;
 WorkerNavigator includes NavigatorOnLine;
 WorkerNavigator includes NavigatorServiceWorker;
+WorkerNavigator includes NavigatorStorage;
+WorkerNavigator includes NavigatorGPU;

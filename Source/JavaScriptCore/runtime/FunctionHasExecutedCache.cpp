@@ -30,18 +30,19 @@
 
 namespace JSC {
 
-bool FunctionHasExecutedCache::hasExecutedAtOffset(intptr_t id, unsigned offset)
+bool FunctionHasExecutedCache::hasExecutedAtOffset(SourceID id, unsigned offset)
 {
-    if (m_rangeMap.find(id) == m_rangeMap.end())
+    auto iterator = m_rangeMap.find(id);
+    if (iterator == m_rangeMap.end())
         return false;
 
-    RangeMap& map = m_rangeMap.find(id)->second;
+    RangeMap& map = iterator->value;
     unsigned distance = UINT_MAX;
     bool hasExecuted = false;
     for (auto& pair : map) {
-        const FunctionRange& range = pair.first;
+        const FunctionRange& range = pair.key.key();
         if (range.m_start <= offset && offset <= range.m_end && range.m_end - range.m_start < distance) {
-            hasExecuted = pair.second;
+            hasExecuted = pair.value;
             distance = range.m_end - range.m_start;
         }
     }
@@ -49,48 +50,43 @@ bool FunctionHasExecutedCache::hasExecutedAtOffset(intptr_t id, unsigned offset)
     return hasExecuted;
 }
 
-void FunctionHasExecutedCache::insertUnexecutedRange(intptr_t id, unsigned start, unsigned end) 
+void FunctionHasExecutedCache::insertUnexecutedRange(SourceID id, unsigned start, unsigned end)
 {
-    if (m_rangeMap.find(id) == m_rangeMap.end()) {
-        RangeMap map;
-        m_rangeMap[id] = map;
-    }
-
-    RangeMap& map = m_rangeMap.find(id)->second;
+    RangeMap& map = m_rangeMap.add(id, RangeMap { }).iterator->value;
     FunctionRange range;
     range.m_start = start;
     range.m_end = end;
     // Only insert unexecuted ranges once for a given sourceID because we may run into a situation where an executable executes, then is GCed, and then is allocated again,
     // and tries to reinsert itself, claiming it has never run, but this is false because it indeed already executed.
-    if (map.find(range) == map.end())
-        map[range] = false;
+    map.add(range, false);
 }
 
-void FunctionHasExecutedCache::removeUnexecutedRange(intptr_t id, unsigned start, unsigned end)
+void FunctionHasExecutedCache::removeUnexecutedRange(SourceID id, unsigned start, unsigned end)
 {
     // FIXME: We should never have an instance where we return here, but currently do in some situations. Find out why.
-    if (m_rangeMap.find(id) == m_rangeMap.end())
+    auto iterator = m_rangeMap.find(id);
+    if (iterator == m_rangeMap.end())
         return;
 
-    RangeMap& map = m_rangeMap.find(id)->second;
+    RangeMap& map = iterator->value;
 
     FunctionRange range;
     range.m_start = start;
     range.m_end = end;
-    map[range] = true;
+    map.set(range, true);
 }
 
-Vector<std::tuple<bool, unsigned, unsigned>> FunctionHasExecutedCache::getFunctionRanges(intptr_t id)
+Vector<std::tuple<bool, unsigned, unsigned>> FunctionHasExecutedCache::getFunctionRanges(SourceID id)
 {
     Vector<std::tuple<bool, unsigned, unsigned>> ranges(0);
-    auto findResult = m_rangeMap.find(id);
-    if (findResult == m_rangeMap.end())
+    auto iterator = m_rangeMap.find(id);
+    if (iterator == m_rangeMap.end())
         return ranges;
 
-    RangeMap& map = m_rangeMap.find(id)->second;
+    RangeMap& map = iterator->value;
     for (auto& pair : map) {
-        const FunctionRange& range = pair.first;
-        bool hasExecuted = pair.second;
+        const FunctionRange& range = pair.key.key();
+        bool hasExecuted = pair.value;
         ranges.append(std::tuple<bool, unsigned, unsigned>(hasExecuted, range.m_start, range.m_end));
     }
 

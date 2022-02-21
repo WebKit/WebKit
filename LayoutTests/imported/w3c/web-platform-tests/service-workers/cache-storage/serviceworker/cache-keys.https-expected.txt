@@ -12,6 +12,8 @@ PASS Cache.keys supports ignoreVary
 PASS Cache.keys with URL containing fragment
 PASS Cache.keys with string fragment "http" as query
 PASS Cache.keys without parameters
+PASS Cache.keys with explicitly undefined request
+PASS Cache.keys with explicitly undefined request and empty options
 PASS Cache.keys without parameters and VARY entries
 PASS Cache.keys with a HEAD Request
 

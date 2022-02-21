@@ -20,16 +20,16 @@
 #pragma once
 
 #include "RenderBlockFlow.h"
-#include "SVGGraphicsElement.h"
 
 namespace WebCore {
 
 class SVGElement;
+class SVGGraphicsElement;
 
 class RenderSVGBlock : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGBlock);
 public:
-    SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(nodeForNonAnonymous()); }
+    inline SVGGraphicsElement& graphicsElement() const;
 
 protected:
     RenderSVGBlock(SVGGraphicsElement&, RenderStyle&&);
@@ -47,6 +47,15 @@ private:
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+
+    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const final;
+    std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* container, VisibleRectContext) const final;
+    std::optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const final;
+
+    void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const final;
+    const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const final;
+
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
 };
 
 } // namespace WebCore

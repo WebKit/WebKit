@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,27 +25,29 @@
     GenerateIsReachable,
     JSCustomHeader,
     JSCustomMarkFunction,
+    ConstantsEnum=StyleRuleType
 ] interface CSSRule {
     attribute DOMString? cssText;
     readonly attribute CSSRule? parentRule;
     readonly attribute CSSStyleSheet? parentStyleSheet;
 
     readonly attribute unsigned short type;
-    const unsigned short UNKNOWN_RULE = 0;
-    const unsigned short STYLE_RULE = 1;
-    const unsigned short CHARSET_RULE = 2;
-    const unsigned short IMPORT_RULE = 3;
-    const unsigned short MEDIA_RULE = 4;
-    const unsigned short FONT_FACE_RULE = 5;
-    const unsigned short PAGE_RULE = 6;
-    const unsigned short KEYFRAMES_RULE = 7;
-    const unsigned short KEYFRAME_RULE = 8;
-    const unsigned short MARGIN_RULE = 9;
-    const unsigned short NAMESPACE_RULE = 10;
-    [EnabledBySetting=CSSCounterStyleAtRules] const unsigned short COUNTER_STYLE_RULE = 11;
-    const unsigned short SUPPORTS_RULE = 12;
+    
+    [ImplementedAs=Unknown] const unsigned short UNKNOWN_RULE = 0;
+    [ImplementedAs=Style] const unsigned short STYLE_RULE = 1;
+    [ImplementedAs=Charset] const unsigned short CHARSET_RULE = 2;
+    [ImplementedAs=Import] const unsigned short IMPORT_RULE = 3;
+    [ImplementedAs=Media] const unsigned short MEDIA_RULE = 4;
+    [ImplementedAs=FontFace] const unsigned short FONT_FACE_RULE = 5;
+    [ImplementedAs=Page] const unsigned short PAGE_RULE = 6;
+    [ImplementedAs=Keyframes] const unsigned short KEYFRAMES_RULE = 7;
+    [ImplementedAs=Keyframe] const unsigned short KEYFRAME_RULE = 8;
+    [ImplementedAs=Margin] const unsigned short MARGIN_RULE = 9;
+    [ImplementedAs=Namespace] const unsigned short NAMESPACE_RULE = 10;
+    [ImplementedAs=CounterStyle, EnabledBySetting=CSSCounterStyleAtRulesEnabled] const unsigned short COUNTER_STYLE_RULE = 11;
+    [ImplementedAs=Supports] const unsigned short SUPPORTS_RULE = 12;
 
     // Legacy synonyms for the above, kept to avoid breaking existing content.
-    const unsigned short WEBKIT_KEYFRAMES_RULE = 7;
-    const unsigned short WEBKIT_KEYFRAME_RULE = 8;
+    [ImplementedAs=Keyframes] const unsigned short WEBKIT_KEYFRAMES_RULE = 7;
+    [ImplementedAs=Keyframe] const unsigned short WEBKIT_KEYFRAME_RULE = 8;
 };

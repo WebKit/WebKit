@@ -69,7 +69,6 @@ PASS Window method: scrollBy
 PASS Window readonly attribute: history
 PASS Window readonly attribute: frameElement
 PASS Window readonly attribute: navigator
-PASS Window readonly attribute: applicationCache
 PASS Window readonly attribute: sessionStorage
 PASS Window readonly attribute: localStorage
 PASS Window attribute: name

@@ -5,6 +5,7 @@ Testing that CSSStyleDeclaration update immediately after modifying its properti
 -- Running test case: Update value when CSSStyleDeclaration is not locked
 PASS: "font-size" property value should update immediately.
 PASS: Style declaration text should update immediately.
+PASS: styleSheetTextRange should correspond to "font-size: 10px;"
 
 -- Running test case: Update value when CSSStyleDeclaration is locked
 PASS: "font-size" property value should update immediately.
@@ -39,4 +40,8 @@ PASS: Uncommented property should be enabled.
 PASS: Commented out property should be disabled.
 PASS: Style declaration text should update immediately with commented out property.
 PASS: Uncommented property should be enabled.
+
+-- Running test case: ModifyCSSProperty.ReplacePropertyName
+PASS: Style declaration text should be empty.
+PASS: Style declaration text should have new property name.
 

@@ -1,5 +1,5 @@
 
-FAIL getting name Can't find variable: SharedWorker
-FAIL getting name 1 Can't find variable: SharedWorker
-FAIL getting name 2 Can't find variable: SharedWorker
+PASS getting name
+PASS getting name 1
+PASS getting name 2
 

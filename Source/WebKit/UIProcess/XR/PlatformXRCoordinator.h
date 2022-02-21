@@ -32,6 +32,10 @@
 #include <WebCore/PlatformXR.h>
 #include <wtf/Function.h>
 
+namespace WebCore {
+struct SecurityOriginData;
+}
+
 namespace WebKit {
 
 class WebPageProxy;
@@ -46,9 +50,19 @@ public:
     using DeviceInfoCallback = Function<void(std::optional<XRDeviceInfo>)>;
     virtual void getPrimaryDeviceInfo(DeviceInfoCallback&&) = 0;
 
+    using FeatureListCallback = CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>;
+    virtual void requestPermissionOnSessionFeatures(WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, FeatureListCallback&& completionHandler) { completionHandler(granted); }
+
+    class SessionEventClient : public CanMakeWeakPtr<SessionEventClient> {
+    public:
+        virtual ~SessionEventClient() = default;
+
+        virtual void sessionDidEnd(XRDeviceIdentifier) = 0;
+        virtual void sessionDidUpdateVisibilityState(XRDeviceIdentifier, PlatformXR::VisibilityState) = 0;
+    };
+
     // Session creation/termination.
-    using OnSessionEndCallback = Function<void(XRDeviceIdentifier)>;
-    virtual void startSession(WebPageProxy&, OnSessionEndCallback&&) = 0;
+    virtual void startSession(WebPageProxy&, WeakPtr<SessionEventClient>&&) = 0;
     virtual void endSessionIfExists(WebPageProxy&) = 0;
 
     // Session display loop.

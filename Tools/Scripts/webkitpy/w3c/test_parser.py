@@ -30,6 +30,8 @@
 import logging
 import re
 
+from collections import deque
+
 from webkitpy.common.host import Host
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup as Parser
 
@@ -81,9 +83,13 @@ class TestParser(object):
         if ref_contents is not None:
             self.ref_doc = Parser(ref_contents)
 
-        # First check if it's a reftest
         matches = self.reference_links_of_type('match') + self.reference_links_of_type('mismatch')
-        if matches:
+
+        # Manual tests may also have properties that make them look like non-manual reference or JS
+        # tests, so exclude them first.
+        if self.is_wpt_manualtest() and not self.is_reference_filename():
+            test_info = {'test': self.filename, 'manualtest': True}
+        elif matches:
             if len(matches) > 1:
                 # FIXME: Is this actually true? We should fix this.
                 _log.warning('Multiple references are not supported. Importing the first ref defined in %s',
@@ -95,6 +101,8 @@ class TestParser(object):
                     ref_file = self.filesystem.join(self.source_root_directory, href_match_file.lstrip('/'))
                 else:
                     ref_file = self.filesystem.join(self.filesystem.dirname(self.filename), href_match_file)
+
+                reference_type = matches[0]['rel'][0] if isinstance(matches[0]['rel'], list) else matches[0]['rel']
             except KeyError as e:
                 # FIXME: Figure out what to do w/ invalid test files.
                 _log.error('%s has a reference link but is missing the "href"', self.filesystem)
@@ -106,7 +114,7 @@ class TestParser(object):
             if self.ref_doc is None:
                 self.load_file(ref_file, True)
 
-            test_info = {'test': self.filename, 'reference': ref_file}
+            test_info = {'test': self.filename, 'reference': ref_file, 'type': reference_type}
 
             # If the ref file does not live in the same directory as the test file, check it for support files
             test_info['reference_support_info'] = {}
@@ -116,22 +124,18 @@ class TestParser(object):
                     reference_relpath = self.filesystem.relpath(self.filesystem.dirname(self.filename), self.filesystem.dirname(ref_file)) + self.filesystem.sep
                     test_info['reference_support_info'] = {'reference_relpath': reference_relpath, 'files': reference_support_files}
 
-        # not all reference tests have a <link rel='match'> element in WPT repo
-        elif self.is_wpt_reftest():
-            test_info = {'test': self.filename, 'reference': self.potential_ref_filename()}
-            test_info['reference_support_info'] = {}
-        # we check for wpt manual test before checking for jstest, as some WPT manual tests can be classified as CSS JS tests
-        elif self.is_wpt_manualtest():
-            test_info = {'test': self.filename, 'manualtest': True}
         elif self.is_jstest():
             test_info = {'test': self.filename, 'jstest': True}
-        elif '-ref' in self.filename or 'reference' in self.filename:
+        elif self.is_reference_filename():
             test_info = {'referencefile': self.filename}
         elif self.options['all'] is True:
             test_info = {'test': self.filename}
 
         if test_info and self.is_slow_test():
             test_info['slow'] = True
+
+        if test_info:
+            test_info['fuzzy'] = self.fuzzy_metadata()
 
         return test_info
 
@@ -161,17 +165,80 @@ class TestParser(object):
 
         return False
 
+    def is_reference_filename(self):
+        # From tools/manifest/sourcefile.py in WPT repository
+        # https://github.com/web-platform-tests/wpt/blob/22f29564bb82b407aeaf6507c8efffdbd51b9974/tools/manifest/sourcefile.py#L405
+        reference_file_re = re.compile(r'(^|[\-_])(not)?ref[0-9]*([\-_]|$)')
+        return "/reference/" in self.filename or bool(reference_file_re.search(self.filename))
+
     def is_slow_test(self):
         return any([match.name == 'meta' and match['name'] == 'timeout' for match in self.test_doc.findAll(content='long')])
 
-    def potential_ref_filename(self):
-        parts = self.filesystem.splitext(self.filename)
-        return parts[0] + '-ref' + parts[1]
+    def has_fuzzy_metadata(self):
+        return any([match['name'] == 'fuzzy' for match in self.test_doc.findAll('meta')])
 
-    def is_wpt_reftest(self):
-        """Returns whether the test is a ref test according WPT rules (i.e. file has a -ref.html counterpart)."""
-        parts = self.filesystem.splitext(self.filename)
-        return  self.filesystem.isfile(self.potential_ref_filename())
+    def fuzzy_metadata(self):
+        fuzzy_nodes = self.test_doc.findAll('meta', attrs={"name": "fuzzy"})
+        if not fuzzy_nodes:
+            return None
+
+        args = [u"maxDifference", u"totalPixels"]
+        result = {}
+
+        # Taken from wpt/tools/manifest/sourcefile.py, and copied to avoid having webkitpy depend on wpt.
+        for node in fuzzy_nodes:
+            content = node['content']
+            key = None
+            # from parse_ref_keyed_meta; splits out the optional reference prefix.
+            parts = content.rsplit(u":", 1)
+            if len(parts) == 1:
+                fuzzy_data = parts[0]
+            else:
+                ref_file = parts[0]
+                key = ref_file
+                fuzzy_data = parts[1]
+
+            ranges = fuzzy_data.split(u";")
+            if len(ranges) != 2:
+                raise ValueError("Malformed fuzzy value %s" % value)
+
+            arg_values = {}  # type: Dict[Text, List[int]]
+            positional_args = deque()  # type: Deque[List[int]]
+
+            for range_str_value in ranges:  # type: Text
+                name = None  # type: Optional[Text]
+                if u"=" in range_str_value:
+                    name, range_str_value = [part.strip() for part in range_str_value.split(u"=", 1)]
+                    if name not in args:
+                        raise ValueError("%s is not a valid fuzzy property" % name)
+                    if arg_values.get(name):
+                        raise ValueError("Got multiple values for argument %s" % name)
+
+                if u"-" in range_str_value:
+                    range_min, range_max = range_str_value.split(u"-")
+                else:
+                    range_min = range_str_value
+                    range_max = range_str_value
+                try:
+                    range_value = [int(x.strip()) for x in (range_min, range_max)]
+                except ValueError:
+                    raise ValueError("Fuzzy value %s must be a range of integers" % range_str_value)
+
+                if name is None:
+                    positional_args.append(range_value)
+                else:
+                    arg_values[name] = range_value
+
+            result[key] = []
+            for arg_name in args:
+                if arg_values.get(arg_name):
+                    arg_value = arg_values.pop(arg_name)
+                else:
+                    arg_value = positional_args.popleft()
+                result[key].append(arg_value)
+            assert len(arg_values) == 0 and len(positional_args) == 0
+
+        return result
 
     def support_files(self, doc):
         """ Searches the file for all paths specified in url()'s, href or src attributes."""

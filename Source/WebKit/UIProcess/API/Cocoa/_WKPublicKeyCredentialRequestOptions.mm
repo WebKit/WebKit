@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,15 @@
     self.userVerification = _WKUserVerificationRequirementPreferred;
     self.authenticatorAttachment = _WKAuthenticatorAttachmentAll;
     return self;
+}
+
+- (void)dealloc
+{
+    [_timeout release];
+    [_relyingPartyIdentifier release];
+    [_allowCredentials release];
+    [_extensions release];
+    [super dealloc];
 }
 
 @end

@@ -39,7 +39,7 @@ const ScreenId kInvalidScreenId = -2;
 // Integers to attach to each DesktopFrame to differentiate the generator of
 // the frame. The entries in this namespace should remain in sync with the
 // SequentialDesktopCapturerId enum, which is logged via UMA.
-// |kScreenCapturerWinGdi| and |kScreenCapturerWinDirectx| values are preserved
+// `kScreenCapturerWinGdi` and `kScreenCapturerWinDirectx` values are preserved
 // to maintain compatibility
 namespace DesktopCapturerId {
 constexpr uint32_t CreateFourCC(char a, char b, char c, char d) {

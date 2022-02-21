@@ -39,5 +39,9 @@
         "Low": "EGL_CONTEXT_PRIORITY_LOW_IMG",
         "Medium": "EGL_CONTEXT_PRIORITY_MEDIUM_IMG",
         "High": "EGL_CONTEXT_PRIORITY_HIGH_IMG"
+    },
+    "ColorSpace": {
+        "sRGB": "EGL_COLORSPACE_sRGB",
+        "Linear": "EGL_COLORSPACE_LINEAR"
     }
 }

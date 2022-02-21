@@ -62,7 +62,7 @@
                 activateElement("targetLink");
             } else if (window.location.search === "?stepTwo") {
                 window.testRunner.markPrivateClickMeasurementsAsExpiredForTesting();
-                window.testRunner.simulateResourceLoadStatisticsSessionRestart();
+                window.testRunner.simulatePrivateClickMeasurementSessionRestart();
                 convert(function() {
                     testRunner.dumpPrivateClickMeasurement();
                     document.body.removeChild(document.getElementById("targetLink"));

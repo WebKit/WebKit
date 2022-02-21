@@ -169,6 +169,71 @@ private:
                 break;
             }
 
+            case FMax:
+            case FMin: {
+                if (isX86()) {
+                    bool isMax = m_value->opcode() == FMax;
+
+                    Value* a = m_value->child(0);
+                    Value* b = m_value->child(1);
+
+                    Value* isEqualValue = m_insertionSet.insert<Value>(
+                        m_index, Equal, m_origin, a, b);
+
+                    BasicBlock* before = m_blockInsertionSet.splitForward(m_block, m_index, &m_insertionSet);
+
+                    BasicBlock* isEqual = m_blockInsertionSet.insertBefore(m_block);
+                    BasicBlock* notEqual = m_blockInsertionSet.insertBefore(m_block);
+                    BasicBlock* isLessThan = m_blockInsertionSet.insertBefore(m_block);
+                    BasicBlock* notLessThan = m_blockInsertionSet.insertBefore(m_block);
+                    BasicBlock* isGreaterThan = m_blockInsertionSet.insertBefore(m_block);
+                    BasicBlock* isNaN = m_blockInsertionSet.insertBefore(m_block);
+
+                    before->replaceLastWithNew<Value>(m_proc, Branch, m_origin, isEqualValue);
+                    before->setSuccessors(FrequentedBlock(isEqual), FrequentedBlock(notEqual));
+
+                    Value* lessThanValue = notEqual->appendNew<Value>(m_proc, LessThan, m_origin, a, b);
+                    notEqual->appendNew<Value>(m_proc, Branch, m_origin, lessThanValue);
+                    notEqual->setSuccessors(FrequentedBlock(isLessThan), FrequentedBlock(notLessThan));
+
+                    Value* greaterThanValue = notLessThan->appendNew<Value>(m_proc, GreaterThan, m_origin, a, b);
+                    notLessThan->appendNew<Value>(m_proc, Branch, m_origin, greaterThanValue);
+                    notLessThan->setSuccessors(FrequentedBlock(isGreaterThan), FrequentedBlock(isNaN));
+
+                    UpsilonValue* isLessThanResult = isLessThan->appendNew<UpsilonValue>(
+                        m_proc, m_origin, isMax ? b : a);
+                    isLessThan->appendNew<Value>(m_proc, Jump, m_origin);
+                    isLessThan->setSuccessors(FrequentedBlock(m_block));
+
+                    UpsilonValue* isGreaterThanResult = isGreaterThan->appendNew<UpsilonValue>(
+                        m_proc, m_origin, isMax ? a : b);
+                    isGreaterThan->appendNew<Value>(m_proc, Jump, m_origin);
+                    isGreaterThan->setSuccessors(FrequentedBlock(m_block));
+
+                    UpsilonValue* isEqualResult = isEqual->appendNew<UpsilonValue>(
+                        m_proc, m_origin, isEqual->appendNew<Value>(m_proc, isMax ? BitAnd : BitOr, m_origin, a, b));
+                    isEqual->appendNew<Value>(m_proc, Jump, m_origin);
+                    isEqual->setSuccessors(FrequentedBlock(m_block));
+
+                    UpsilonValue* isNaNResult = isNaN->appendNew<UpsilonValue>(
+                        m_proc, m_origin, isNaN->appendNew<Value>(m_proc, Add, m_origin, a, b));
+                    isNaN->appendNew<Value>(m_proc, Jump, m_origin);
+                    isNaN->setSuccessors(FrequentedBlock(m_block));
+
+                    Value* phi = m_insertionSet.insert<Value>(
+                        m_index, Phi, m_value->type(), m_origin);
+                    isLessThanResult->setPhi(phi);
+                    isGreaterThanResult->setPhi(phi);
+                    isEqualResult->setPhi(phi);
+                    isNaNResult->setPhi(phi);
+
+                    m_value->replaceWithIdentity(phi);
+                    before->updatePredecessorsAfter();
+                    m_changed = true;
+                }
+                break;
+            }
+
             case Div: {
                 if (m_value->isChill())
                     makeDivisionChill(Div);

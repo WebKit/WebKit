@@ -23,6 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.console-find-banner {
+    --find-banner-outer-child-margin: 0;
+    --find-banner-input-margin-start: 0;
+}
+
+.message-channel-scope-bar.default-item-selected:not(:hover) {
+    --scope-bar-text-color-override: var(--text-color);
+    --scope-bar-background-color-override: transparent;
+    --scope-bar-border-color-override: transparent;
+}
+
+.message-channel-scope-bar.default-item-selected:hover {
+    --scope-bar-background-opacity-override: 0.5;
+}
+
+.log-scope-bar + .message-channel-scope-bar {
+    padding-inline-start: 0;
+}
+
+.console-other-filters-button > .glyph {
+    width: 16px;
+    height: 16px;
+    color: var(--glyph-color);
+    opacity: var(--glyph-opacity);
+}
+
+.console-other-filters-button:active > .glyph {
+    color: var(--glyph-color-pressed);
+}
+
+.console-other-filters-button.active > .glyph {
+    color: var(--glyph-color-active);
+}
+
+.console-other-filters-button.active:active > .glyph {
+    color: var(--glyph-color-active-pressed);
+}
+
 .content-view.log {
     display: flex;
     flex-direction: column;

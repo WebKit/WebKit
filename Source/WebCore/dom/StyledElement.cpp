@@ -36,6 +36,7 @@
 #include "CachedResource.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTokenList.h"
+#include "ElementInlines.h"
 #include "ElementRareData.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
@@ -45,6 +46,7 @@
 #include "ScriptableDocumentParser.h"
 #include "StyleProperties.h"
 #include "StylePropertyMap.h"
+#include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/IsoMallocInlines.h>
@@ -113,6 +115,13 @@ private:
         }
 
         CSSPropertyID propertyID = cssPropertyID(name);
+
+        auto shorthand = shorthandForProperty(propertyID);
+        for (auto longhand : shorthand) {
+            if (auto cssValue = element.inlineStyle()->getPropertyCSSValue(longhand))
+                return StylePropertyMapReadOnly::reifyValue(cssValue.get(), element.document(), &element);
+        }
+        
         if (!propertyID)
             return nullptr;
 
@@ -193,11 +202,11 @@ void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
 
 void StyledElement::styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason reason)
 {
-    auto startLineNumber = WTF::OrdinalNumber::beforeFirst();
+    auto startLineNumber = OrdinalNumber::beforeFirst();
     if (document().scriptableDocumentParser() && !document().isInDocumentWrite())
         startLineNumber = document().scriptableDocumentParser()->textPosition().m_line;
 
-    if (reason == ModifiedByCloning || document().contentSecurityPolicy()->allowInlineStyle(document().url().string(), startLineNumber, { }, isInUserAgentShadowTree()))
+    if (reason == ModifiedByCloning || document().contentSecurityPolicy()->allowInlineStyle(document().url().string(), startLineNumber, newStyleString.string(), CheckUnsafeHashes::Yes, *this, nonce(), isInUserAgentShadowTree()))
         setInlineStyleFromString(newStyleString);
 
     elementData()->setStyleAttributeIsDirty(false);

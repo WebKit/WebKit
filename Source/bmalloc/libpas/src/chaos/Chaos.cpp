@@ -362,10 +362,10 @@ int main(int argc, char** argv)
     }
 
     if (!enableBitFit)
-        iso_intrinsic_primitive_runtime_config.base.max_bitfit_object_size = 0;
+        iso_intrinsic_runtime_config.base.max_bitfit_object_size = 0;
 
     if (!enableSegregated)
-        iso_intrinsic_primitive_runtime_config.base.max_segregated_object_size = 0;
+        iso_intrinsic_runtime_config.base.max_segregated_object_size = 0;
 
     pas_status_reporter_enabled = enableStatusReporter;
 

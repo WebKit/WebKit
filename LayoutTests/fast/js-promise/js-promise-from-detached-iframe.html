@@ -1,0 +1,15 @@
+<!doctype html>
+<script src="../../resources/js-test.js"></script>
+<body></body>
+<script>
+description("Tests that the promise from detached iframes do get resolved.");
+jsTestIsAsync = true;
+
+frame = document.createElement('iframe');
+document.body.appendChild(frame);
+frame.contentWindow.Promise.resolve("test").then(() => {
+    testPassed("Promise was resolved");
+    finishJSTest();
+});
+frame.remove();
+</script>

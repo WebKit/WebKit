@@ -33,6 +33,8 @@
 #include <mach/vm_param.h>
 #endif
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename T>
@@ -237,3 +239,5 @@ struct PackedPtrTraits {
 };
 
 } // namespace bmalloc
+
+#endif

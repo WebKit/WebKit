@@ -44,7 +44,7 @@ public:
 
 protected:
     explicit FrameNetworkingContext(Frame* frame)
-        : m_frame(makeWeakPtr(frame))
+        : m_frame(frame)
     {
     }
 

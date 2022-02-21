@@ -45,10 +45,6 @@ void marshallJSResult(CCallHelpers& jit, const Signature& signature, const CallI
         case TypeKind::Void:
             jit.moveTrustedValue(jsUndefined(), dst);
             break;
-        case TypeKind::Externref:
-        case TypeKind::Funcref:
-            jit.move(src.gpr(), dst.payloadGPR());
-            break;
         case TypeKind::I32:
             jit.zeroExtend32ToWord(src.gpr(), dst.payloadGPR());
             jit.boxInt32(dst.payloadGPR(), dst, DoNotHaveTagRegisters);
@@ -63,9 +59,12 @@ void marshallJSResult(CCallHelpers& jit, const Signature& signature, const CallI
             isNaN.link(&jit);
             break;
         }
-        default:
-            jit.breakpoint();
-            break;
+        default: {
+            if (isFuncref(type) || isExternref(type))
+                jit.move(src.gpr(), dst.payloadGPR());
+            else
+                jit.breakpoint();
+        }
         }
     };
 
@@ -179,9 +178,9 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
     jit.emitZeroToCallFrameHeader(CallFrameSlot::codeBlock);
     MacroAssembler::DataLabelPtr calleeMoveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), GPRInfo::nonPreservedNonReturnGPR);
     jit.emitPutToCallFrameHeader(GPRInfo::nonPreservedNonReturnGPR, CallFrameSlot::callee);
-    CodeLocationDataLabelPtr<WasmEntryPtrTag>* linkedCalleeMove = &result->calleeMoveLocation;
+    Vector<CodeLocationDataLabelPtr<WasmEntryPtrTag>>* linkedCalleeMove = &result->calleeMoveLocations;
     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-        *linkedCalleeMove = linkBuffer.locationOf<WasmEntryPtrTag>(calleeMoveLocation);
+        linkedCalleeMove->append(linkBuffer.locationOf<WasmEntryPtrTag>(calleeMoveLocation));
     });
 
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();

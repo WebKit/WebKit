@@ -19,20 +19,22 @@ var __expected = ["123","456","789"];
 do{
     var __executed = __re.exec("123 456 789");
     if (__executed !== null) {
-    	__matched.push(__executed[0]);
+        __matched.push(__executed[0]);
     } else {
-    	break;
+        break;
     }
 }while(true);
 
-//CHECK#1
-if (__expected.length !== __matched.length) {
-  throw new Test262Error('#1: __executed = /\\d+/g.exec("123 456 789"); __matched.length === ' + (__expected.length) + '.Actual: ' + (__matched.length));
-}
+assert.sameValue(
+  __expected.length,
+  __matched.length,
+  'The value of __expected.length is expected to equal the value of __matched.length'
+);
 
-//CHECK#2
 for(var index=0; index<__expected.length; index++) {
-  if (__expected[index] !== __matched[index]) {
-    throw new Test262Error('#2: __executed = /\\d+/g.exec("123 456 789"); __matched[' + index + '] === ' + __expected[index] + '. Actual: ' + __matched[index]);
-  }
+  assert.sameValue(
+    __expected[index],
+    __matched[index],
+    'The value of __expected[index] is expected to equal the value of __matched[index]'
+  );
 }

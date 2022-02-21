@@ -53,7 +53,7 @@ public:
     WEBCORE_EXPORT void mediaEngineChanged();
 
     WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) final;
-    void updateForEventName(const WTF::AtomString&);
+    void updateForEventName(const AtomString&);
     bool operator==(const EventListener& rhs) const final { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
 
     WEBCORE_EXPORT void addClient(PlaybackSessionModelClient&);
@@ -108,8 +108,8 @@ private:
     WEBCORE_EXPORT PlaybackSessionModelMediaElement();
 
     void progressEventTimerFired();
-    static const Vector<WTF::AtomString>& observedEventNames();
-    const WTF::AtomString& eventNameAll();
+    static const Vector<AtomString>& observedEventNames();
+    const AtomString& eventNameAll();
 
     RefPtr<HTMLMediaElement> m_mediaElement;
     bool m_isListening { false };

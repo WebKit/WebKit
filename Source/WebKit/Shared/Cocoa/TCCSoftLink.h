@@ -25,7 +25,7 @@
 
 #pragma once
 
-#import "TCCSPI.h"
+#import <pal/spi/cocoa/TCCSPI.h>
 
 #import <wtf/SoftLinking.h>
 
@@ -43,3 +43,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebKit, TCC, TCCAccessPreflight, TCCAccessPrefligh
 #define TCCAccessPreflight WebKit::softLink_TCC_TCCAccessPreflight
 SOFT_LINK_FUNCTION_FOR_HEADER(WebKit, TCC, TCCAccessPreflightWithAuditToken, TCCAccessPreflightResult, (CFStringRef service, audit_token_t token, CFDictionaryRef options), (service, token, options))
 #define TCCAccessPreflightWithAuditToken WebKit::softLink_TCC_TCCAccessPreflightWithAuditToken
+#if HAVE(TCC_IOS_14_BIG_SUR_SPI)
+SOFT_LINK_FUNCTION_FOR_HEADER(WebKit, TCC, tcc_identity_create, tcc_identity_t, (tcc_identity_type_t type, const char * identifier), (type, identifier));
+#define tcc_identity_create WebKit::softLink_TCC_tcc_identity_create
+#endif // HAVE(TCC_IOS_14_BIG_SUR_SPI)

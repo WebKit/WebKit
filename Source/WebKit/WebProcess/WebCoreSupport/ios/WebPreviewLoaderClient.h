@@ -29,6 +29,7 @@
 
 #include <WebCore/LegacyPreviewLoaderClient.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -45,7 +46,7 @@ public:
 
 private:
     WebPreviewLoaderClient(const String& fileName, const String& uti, WebCore::PageIdentifier);
-    void didReceiveBuffer(const WebCore::SharedBuffer&) override;
+    void didReceiveData(const WebCore::SharedBuffer&) override;
     void didFinishLoading() override;
     void didFail() override;
     bool supportsPasswordEntry() const override { return true; }
@@ -54,7 +55,7 @@ private:
     const String m_fileName;
     const String m_uti;
     const WebCore::PageIdentifier m_pageID;
-    Ref<WebCore::SharedBuffer> m_buffer;
+    WebCore::SharedBufferBuilder m_buffer;
 };
 
 } // namespace WebKit

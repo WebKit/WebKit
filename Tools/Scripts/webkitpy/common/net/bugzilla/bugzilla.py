@@ -457,6 +457,10 @@ class Bugzilla(object):
 
     def _parse_bug_dictionary_from_xml(self, page):
         soup = BeautifulStoneSoup(page, convertEntities=BeautifulStoneSoup.XML_ENTITIES)
+        bug_element = soup.find('bug')
+        if bug_element and bug_element.get('error', '') == 'NotPermitted':
+            _log.warning("You don't have permission to view this bug.")
+            return {}
         bug = {}
         bug["id"] = int(soup.find("bug_id").string)
         bug["title"] = self._string_contents(soup.find("short_desc"))
@@ -490,7 +494,10 @@ class Bugzilla(object):
     # FIXME: A BugzillaCache object should provide all these fetch_ methods.
 
     def fetch_bug(self, bug_id):
-        return Bug(self.fetch_bug_dictionary(bug_id), self)
+        bug_dictionary = self.fetch_bug_dictionary(bug_id)
+        if bug_dictionary:
+            return Bug(bug_dictionary, self)
+        return None
 
     def fetch_attachment_contents(self, attachment_id):
         attachment_url = self.attachment_url_for_id(attachment_id)

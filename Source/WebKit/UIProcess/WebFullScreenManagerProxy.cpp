@@ -56,12 +56,14 @@ WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
 
 void WebFullScreenManagerProxy::willEnterFullScreen()
 {
+    m_fullscreenState = FullscreenState::EnteringFullscreen;
     m_page.fullscreenClient().willEnterFullscreen(&m_page);
     m_page.send(Messages::WebFullScreenManager::WillEnterFullScreen());
 }
 
 void WebFullScreenManagerProxy::didEnterFullScreen()
 {
+    m_fullscreenState = FullscreenState::InFullscreen;
     m_page.fullscreenClient().didEnterFullscreen(&m_page);
     m_page.send(Messages::WebFullScreenManager::DidEnterFullScreen());
 
@@ -73,6 +75,7 @@ void WebFullScreenManagerProxy::didEnterFullScreen()
 
 void WebFullScreenManagerProxy::willExitFullScreen()
 {
+    m_fullscreenState = FullscreenState::ExitingFullscreen;
     m_page.fullscreenClient().willExitFullscreen(&m_page);
     m_page.send(Messages::WebFullScreenManager::WillExitFullScreen());
 }
@@ -92,6 +95,7 @@ void WebFullScreenManagerProxy::closeWithCallback(CompletionHandler<void()>&& co
 
 void WebFullScreenManagerProxy::didExitFullScreen()
 {
+    m_fullscreenState = FullscreenState::NotInFullscreen;
     m_page.fullscreenClient().didExitFullscreen(&m_page);
     m_page.send(Messages::WebFullScreenManager::DidExitFullScreen());
     

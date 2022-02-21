@@ -12,18 +12,22 @@ angle_perf_tests_sources = [
   "perf_tests/DrawElementsPerf.cpp",
   "perf_tests/DynamicPromotionPerfTest.cpp",
   "perf_tests/EGLMakeCurrentPerf.cpp",
+  "perf_tests/FramebufferAttachmentPerfTest.cpp",
   "perf_tests/GenerateMipmapPerf.cpp",
   "perf_tests/IndexConversionPerf.cpp",
   "perf_tests/InstancingPerf.cpp",
   "perf_tests/InterleavedAttributeData.cpp",
   "perf_tests/LinkProgramPerfTest.cpp",
+  "perf_tests/MapBufferRange.cpp",
   "perf_tests/MultisampledRenderToTexturePerf.cpp",
   "perf_tests/MultiviewPerf.cpp",
   "perf_tests/PointSprites.cpp",
+  "perf_tests/PreRotationPerf.cpp",
   "perf_tests/TextureSampling.cpp",
   "perf_tests/TextureUploadPerf.cpp",
   "perf_tests/TexturesPerf.cpp",
   "perf_tests/UniformsPerf.cpp",
+  "perf_tests/VertexArrayPerfTest.cpp",
   "perf_tests/VulkanBarriersPerf.cpp",
   "perf_tests/glmark2Benchmark.cpp",
   "test_utils/ANGLETest.cpp",
@@ -42,11 +46,6 @@ angle_white_box_perf_tests_sources = [
                                        # non-standard EP.
   "perf_tests/ResultPerf.cpp",
 ]
-
-if (is_win) {
-  angle_white_box_perf_tests_sources +=
-      [ "perf_tests/IndexDataManagerTest.cpp" ]
-}
 
 angle_white_box_perf_tests_vulkan_sources = [
   "perf_tests/VulkanCommandBufferPerf.cpp",

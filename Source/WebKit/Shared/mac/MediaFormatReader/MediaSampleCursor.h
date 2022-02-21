@@ -29,10 +29,10 @@
 
 #include "CoreMediaWrapped.h"
 #include <WebCore/SampleMap.h>
+#include <variant>
 #include <wtf/Identified.h>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
-#include <wtf/Variant.h>
 
 DECLARE_CORE_MEDIA_TRAITS(SampleCursor);
 
@@ -52,7 +52,7 @@ class MediaSampleCursor : public CoreMediaWrapped<MediaSampleCursor>, ThreadSafe
 public:
     using DecodeOrderIterator = WebCore::DecodeOrderSampleMap::iterator;
     using PresentationOrderIterator = WebCore::PresentationOrderSampleMap::iterator;
-    using Locator = Variant<MediaTime, DecodeOrderIterator, PresentationOrderIterator>;
+    using Locator = std::variant<MediaTime, DecodeOrderIterator, PresentationOrderIterator>;
 
     struct Timing {
         MediaTime decodeTime;

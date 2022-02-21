@@ -11,7 +11,7 @@ description: >
   properties have "get " or "set " prepended to the property name string.
 
 includes: [propertyHelper.js]
-features: [resizable-arraybuffer]
+features: [SharedArrayBuffer, resizable-arraybuffer]
 ---*/
 
 var desc = Object.getOwnPropertyDescriptor(SharedArrayBuffer.prototype, 'growable');

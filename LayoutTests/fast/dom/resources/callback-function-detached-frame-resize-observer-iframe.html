@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<script>
+function createResizeObserver(FunctionConstructor = Function) {
+    const resizeObserver = new parent.ResizeObserver(new FunctionConstructor(`
+        if (this.isInitialEntry) {
+            this.isInitialEntry = false;
+            return;
+        }
+
+        this.callbackInvocations++;
+    `));
+
+    resizeObserver.isInitialEntry = true;
+    resizeObserver.callbackInvocations = 0;
+    resizeObserver.observe(parent.resizeObserverTestRoot);
+
+    return resizeObserver;
+}
+</script>

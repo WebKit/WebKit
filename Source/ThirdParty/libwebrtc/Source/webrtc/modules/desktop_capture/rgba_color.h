@@ -37,10 +37,10 @@ struct RgbaColor final {
   // instance from the ToUInt32() result of another RgbaColor instance.
   explicit RgbaColor(uint32_t bgra);
 
-  // Returns true if |this| and |right| is the same color.
+  // Returns true if `this` and `right` is the same color.
   bool operator==(const RgbaColor& right) const;
 
-  // Returns true if |this| and |right| are different colors.
+  // Returns true if `this` and `right` are different colors.
   bool operator!=(const RgbaColor& right) const;
 
   uint32_t ToUInt32() const;

@@ -12,13 +12,11 @@ import sys
 import re
 import os
 import argparse
-from datetime import date
 
 root_targets = [
     "//:libGLESv2",
     "//:libGLESv1_CM",
     "//:libEGL",
-    "//:libfeature_support",
 ]
 
 sdk_version = '28'
@@ -79,6 +77,24 @@ def write_blueprint_key_value(output, name, value, indent=1):
 
 
 def write_blueprint(output, target_type, values):
+    if target_type == 'license':
+        comment = """
+// Added automatically by a large-scale-change that took the approach of
+// 'apply every license found to every target'. While this makes sure we respect
+// every license restriction, it may not be entirely correct.
+//
+// e.g. GPL in an MIT project might only apply to the contrib/ directory.
+//
+// Please consider splitting the single license below into multiple licenses,
+// taking care not to lose any license_kind information, and overriding the
+// default license using the 'licenses: [...]' property on targets as needed.
+//
+// For unused files, consider creating a 'fileGroup' with "//visibility:private"
+// to attach the license to, and including a comment whether the files may be
+// used in the current project.
+// See: http://go/android-license-faq"""
+        output.append(comment)
+
     output.append('%s {' % target_type)
     for (key, value) in values.items():
         write_blueprint_key_value(output, key, value)
@@ -91,7 +107,7 @@ def gn_target_to_blueprint_target(target, target_info):
 
     # Split the gn target name (in the form of //gn_file_path:target_name) into gn_file_path and
     # target_name
-    target_regex = re.compile(r"^//([a-zA-Z0-9\-_/]*):([a-zA-Z0-9\-_.]+)$")
+    target_regex = re.compile(r"^//([a-zA-Z0-9\-\+_/]*):([a-zA-Z0-9\-\+_.]+)$")
     match = re.match(target_regex, target)
     assert match is not None
 
@@ -163,8 +179,17 @@ target_blockist = [
     '//third_party/vulkan-validation-layers/src:vulkan_clean_old_validation_layer_objects',
 ]
 
+third_party_target_allowlist = [
+    '//third_party/abseil-cpp',
+    '//third_party/vulkan-deps',
+    '//third_party/vulkan_memory_allocator',
+    '//third_party/zlib',
+]
+
 include_blocklist = [
-    '//out/Android/gen/third_party/glslang/src/include/',
+    '//buildtools/third_party/libc++/',
+    '//out/Android/gen/third_party/vulkan-deps/glslang/src/include/',
+    '//third_party/android_ndk/sources/android/cpufeatures/',
 ]
 
 
@@ -178,7 +203,8 @@ def gn_deps_to_blueprint_deps(target_info, build_info):
         return static_libs, defaults
 
     for dep in target_info['deps']:
-        if dep not in target_blockist:
+        if dep not in target_blockist and (not dep.startswith('//third_party') or any(
+                dep.startswith(substring) for substring in third_party_target_allowlist)):
             dep_info = build_info[dep]
             blueprint_dep_name = gn_target_to_blueprint_target(dep, dep_info)
 
@@ -204,6 +230,13 @@ def gn_deps_to_blueprint_deps(target_info, build_info):
             # target depends on another's genrule, it wont find the outputs. Propogate generated
             # headers up the dependency stack.
             generated_headers += child_generated_headers
+        elif dep == '//third_party/android_ndk:cpu_features':
+            # chrome_zlib needs cpufeatures from the Android NDK. Rather than including the
+            # entire NDK is a dep in the ANGLE checkout, use the library that's already part
+            # of Android.
+            dep_info = build_info[dep]
+            blueprint_dep_name = gn_target_to_blueprint_target(dep, dep_info)
+            static_libs.append('cpufeatures')
 
     return static_libs, shared_libs, defaults, generated_headers, header_libs
 
@@ -236,9 +269,6 @@ def escape_quotes(string):
     return string.replace("\"", "\\\"").replace("\'", "\\\'")
 
 
-angle_cpu_bits_define = r'^ANGLE_IS_[0-9]+_BIT_CPU$'
-
-
 def gn_cflags_to_blueprint_cflags(target_info):
     result = []
 
@@ -258,6 +288,10 @@ def gn_cflags_to_blueprint_cflags(target_info):
     # Chrome and Android use different versions of Clang which support differnt warning options.
     # Ignore errors about unrecognized warning flags.
     result.append('-Wno-unknown-warning-option')
+
+    # Override AOSP build flags to match ANGLE's CQ testing and reduce binary size
+    result.append('-Os')
+    result.append('-fno-unwind-tables')
 
     if 'defines' in target_info:
         for define in target_info['defines']:
@@ -339,6 +373,9 @@ def library_target_to_blueprint(target, build_info):
 
         bp['sdk_version'] = sdk_version
         bp['stl'] = stl
+        if target in root_targets:
+            bp['vendor'] = True
+            bp['target'] = {'android': {'relative_install_path': 'egl'}}
         bps_for_abis[abi] = bp
 
     common_bp = merge_bps(bps_for_abis)
@@ -351,8 +388,10 @@ def gn_action_args_to_blueprint_args(blueprint_inputs, blueprint_outputs, args):
     # path. b/150457277
     remap_folders = [
         # Specific special-cases first, since the other will strip the prefixes.
-        ('gen/third_party/glslang/src/include/glslang/build_info.h', 'glslang/build_info.h'),
-        ('third_party/glslang/src', 'external/angle/third_party/glslang/src'),
+        ('gen/third_party/vulkan-deps/glslang/src/include/glslang/build_info.h',
+         'glslang/build_info.h'),
+        ('third_party/vulkan-deps/glslang/src',
+         'external/angle/third_party/vulkan-deps/glslang/src'),
         ('../../', ''),
         ('gen/', ''),
     ]
@@ -500,12 +539,67 @@ def main():
     for target in targets_to_write:
         blueprint_targets.append(gn_target_to_blueprint(target, build_info))
 
-    # Add APKs with all of the root libraries
-    blueprint_targets.append(('filegroup', {
-        'name': 'ANGLE_srcs',
-        'srcs': ['src/**/*.java',],
+    # Add license build rules
+    blueprint_targets.append(('package', {
+        'default_applicable_licenses': ['external_angle_license'],
+    }))
+    blueprint_targets.append(('license', {
+        'name':
+            'external_angle_license',
+        'visibility': [':__subpackages__'],
+        'license_kinds': [
+            'SPDX-license-identifier-Apache-2.0',
+            'SPDX-license-identifier-BSD',
+            'SPDX-license-identifier-GPL',
+            'SPDX-license-identifier-GPL-2.0',
+            'SPDX-license-identifier-GPL-3.0',
+            'SPDX-license-identifier-LGPL',
+            'SPDX-license-identifier-MIT',
+            'SPDX-license-identifier-Zlib',
+            'legacy_unencumbered',
+        ],
+        'license_text': [
+            'LICENSE',
+            'src/common/third_party/smhasher/LICENSE',
+            'src/common/third_party/xxhash/LICENSE',
+            'src/libANGLE/renderer/vulkan/shaders/src/third_party/ffx_spd/LICENSE',
+            'src/tests/test_utils/third_party/LICENSE',
+            'src/third_party/libXNVCtrl/LICENSE',
+            'src/third_party/volk/LICENSE.md',
+            'third_party/abseil-cpp/LICENSE',
+            'third_party/android_system_sdk/LICENSE',
+            'third_party/bazel/LICENSE',
+            'third_party/colorama/LICENSE',
+            'third_party/proguard/LICENSE',
+            'third_party/r8/LICENSE',
+            'third_party/turbine/LICENSE',
+            'third_party/vulkan-deps/glslang/LICENSE',
+            'third_party/vulkan-deps/glslang/src/LICENSE.txt',
+            'third_party/vulkan-deps/LICENSE',
+            'third_party/vulkan-deps/spirv-headers/LICENSE',
+            'third_party/vulkan-deps/spirv-headers/src/LICENSE',
+            'third_party/vulkan-deps/spirv-tools/LICENSE',
+            'third_party/vulkan-deps/spirv-tools/src/LICENSE',
+            'third_party/vulkan-deps/spirv-tools/src/utils/vscode/src/lsp/LICENSE',
+            'third_party/vulkan-deps/vulkan-headers/LICENSE.txt',
+            'third_party/vulkan-deps/vulkan-headers/src/LICENSE.txt',
+            'third_party/vulkan_memory_allocator/LICENSE.txt',
+            'third_party/zlib/LICENSE',
+            'tools/flex-bison/third_party/m4sugar/LICENSE',
+            'tools/flex-bison/third_party/skeletons/LICENSE',
+            'util/windows/third_party/StackWalker/LICENSE',
+        ],
     }))
 
+    # Add APKs with all of the root libraries
+    blueprint_targets.append((
+        'filegroup',
+        {
+            'name': 'ANGLE_srcs',
+            # Only add EmptyMainActivity.java since we just need to be able to reply to the intent
+            # android.app.action.ANGLE_FOR_ANDROID to indicate ANGLE is present on the device.
+            'srcs': ['src/android_system_settings/src/com/android/angle/EmptyMainActivity.java'],
+        }))
     blueprint_targets.append((
         'java_defaults',
         {
@@ -522,47 +616,30 @@ def main():
             'aaptflags': [
                 # Don't compress *.json files
                 '-0 .json',
-                # Give com.android.angle.common Java files access to the R class
-                '--extra-packages com.android.angle.common',
             ],
             'srcs': [':ANGLE_srcs'],
             'plugins': ['java_api_finder',],
             'privileged': True,
+            'product_specific': True,
             'owner': 'google',
-        }))
-
-    blueprint_targets.append((
-        'android_library',
-        {
-            'name': 'ANGLE_library',
-            'sdk_version': 'system_current',
-            'min_sdk_version': sdk_version,
-            'resource_dirs': ['src/android_system_settings/res',],
-            'asset_dirs': ['src/android_system_settings/assets',],
-            'aaptflags': [
-                # Don't compress *.json files
-                '-0 .json',
-            ],
-            'manifest': 'src/android_system_settings/src/com/android/angle/AndroidManifest.xml',
-            'static_libs': ['androidx.preference_preference',],
         }))
 
     blueprint_targets.append(('android_app', {
         'name': 'ANGLE',
         'defaults': ['ANGLE_java_defaults'],
-        'static_libs': ['ANGLE_library'],
-        'manifest': 'src/android_system_settings/src/com/android/angle/AndroidManifest.xml',
+        'manifest': 'android/AndroidManifest.xml',
+        'asset_dirs': ['src/android_system_settings/assets',],
     }))
 
     output = [
         """// GENERATED FILE - DO NOT EDIT.
 // Generated by %s
 //
-// Copyright %s The ANGLE Project Authors. All rights reserved.
+// Copyright 2020 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-""" % (sys.argv[0], date.today().year)
+""" % sys.argv[0]
     ]
     for (blueprint_type, blueprint_data) in blueprint_targets:
         write_blueprint(output, blueprint_type, blueprint_data)

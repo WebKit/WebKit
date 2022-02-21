@@ -36,13 +36,14 @@
 
 static const bool verbose = false;
 
-void pas_commit_span_construct(pas_commit_span* span)
+void pas_commit_span_construct(pas_commit_span* span, pas_mmap_capability mmap_capability)
 {
     if (verbose)
-        pas_log("%p: creating commit span.\n");
+        pas_log("%p: creating commit span.\n", span);
     span->index_of_start_of_span = UINTPTR_MAX;
     span->did_add_first = false;
     span->total_bytes = 0;
+    span->mmap_capability = mmap_capability;
 }
 
 void pas_commit_span_add_to_change(pas_commit_span* span, uintptr_t granule_index)
@@ -66,7 +67,7 @@ void pas_commit_span_add_unchanged(pas_commit_span* span,
         return;
     
     if (verbose)
-        pas_log("%p: adding a thing.\n");
+        pas_log("%p: adding a thing.\n", span);
 
     PAS_ASSERT(span->index_of_start_of_span < granule_index);
 
@@ -84,8 +85,11 @@ void pas_commit_span_add_unchanged(pas_commit_span* span,
 
 static void commit(void* base, size_t size, void* arg)
 {
-    PAS_ASSERT(!arg);
-    pas_page_malloc_commit(base, size);
+    pas_commit_span* span;
+
+    span = arg;
+    
+    pas_page_malloc_commit(base, size, span->mmap_capability);
 }
 
 void pas_commit_span_add_unchanged_and_commit(pas_commit_span* span,
@@ -93,7 +97,7 @@ void pas_commit_span_add_unchanged_and_commit(pas_commit_span* span,
                                               uintptr_t granule_index,
                                               pas_page_base_config* config)
 {
-    pas_commit_span_add_unchanged(span, page, granule_index, config, commit, NULL);
+    pas_commit_span_add_unchanged(span, page, granule_index, config, commit, span);
 }
 
 typedef struct {
@@ -117,7 +121,8 @@ static void decommit(void* base, size_t size, void* arg)
         pas_virtual_range_create(
             (uintptr_t)base,
             (uintptr_t)base + size,
-            data->span->did_add_first ? NULL : data->commit_lock),
+            data->span->did_add_first ? NULL : data->commit_lock,
+            data->span->mmap_capability),
         data->heap_lock_hold_mode);
 }
 

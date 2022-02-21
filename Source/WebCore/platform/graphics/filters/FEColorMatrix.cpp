@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,28 +24,26 @@
 #include "config.h"
 #include "FEColorMatrix.h"
 
+#include "FEColorMatrixSoftwareApplier.h"
 #include "Filter.h"
-#include "GraphicsContext.h"
-#include "PixelBuffer.h"
-#include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
-#if USE(ACCELERATE)
-#include <Accelerate/Accelerate.h>
+#if USE(CORE_IMAGE)
+#include "FEColorMatrixCoreImageApplier.h"
 #endif
 
 namespace WebCore {
 
-FEColorMatrix::FEColorMatrix(Filter& filter, ColorMatrixType type, Vector<float>&& values)
-    : FilterEffect(filter, Type::ColorMatrix)
+Ref<FEColorMatrix> FEColorMatrix::create(ColorMatrixType type, Vector<float>&& values)
+{
+    return adoptRef(*new FEColorMatrix(type, WTFMove(values)));
+}
+
+FEColorMatrix::FEColorMatrix(ColorMatrixType type, Vector<float>&& values)
+    : FilterEffect(FilterEffect::Type::FEColorMatrix)
     , m_type(type)
     , m_values(WTFMove(values))
 {
-}
-
-Ref<FEColorMatrix> FEColorMatrix::create(Filter& filter, ColorMatrixType type, Vector<float>&& values)
-{
-    return adoptRef(*new FEColorMatrix(filter, type, WTFMove(values)));
 }
 
 bool FEColorMatrix::setType(ColorMatrixType type)
@@ -63,258 +62,68 @@ bool FEColorMatrix::setValues(const Vector<float> &values)
     return true;
 }
 
-inline void matrix(float& red, float& green, float& blue, float& alpha, const Vector<float>& values)
+void FEColorMatrix::calculateSaturateComponents(float* components, float value)
 {
-    float r = red;
-    float g = green;
-    float b = blue;
-    float a = alpha;
-
-    red     = values[ 0] * r + values[ 1] * g + values[ 2] * b + values[ 3] * a + values[ 4] * 255;
-    green   = values[ 5] * r + values[ 6] * g + values [7] * b + values[ 8] * a + values[ 9] * 255;
-    blue    = values[10] * r + values[11] * g + values[12] * b + values[13] * a + values[14] * 255;
-    alpha   = values[15] * r + values[16] * g + values[17] * b + values[18] * a + values[19] * 255;
+    components[0] = (0.213 + 0.787 * value);
+    components[1] = (0.715 - 0.715 * value);
+    components[2] = (0.072 - 0.072 * value);
+    components[3] = (0.213 - 0.213 * value);
+    components[4] = (0.715 + 0.285 * value);
+    components[5] = (0.072 - 0.072 * value);
+    components[6] = (0.213 - 0.213 * value);
+    components[7] = (0.715 - 0.715 * value);
+    components[8] = (0.072 + 0.928 * value);
 }
 
-inline void saturateAndHueRotate(float& red, float& green, float& blue, const float* components)
+void FEColorMatrix::calculateHueRotateComponents(float* components, float value)
 {
-    float r = red;
-    float g = green;
-    float b = blue;
-
-    red     = r * components[0] + g * components[1] + b * components[2];
-    green   = r * components[3] + g * components[4] + b * components[5];
-    blue    = r * components[6] + g * components[7] + b * components[8];
+    float cosHue = cos(value * piFloat / 180);
+    float sinHue = sin(value * piFloat / 180);
+    components[0] = 0.213 + cosHue * 0.787 - sinHue * 0.213;
+    components[1] = 0.715 - cosHue * 0.715 - sinHue * 0.715;
+    components[2] = 0.072 - cosHue * 0.072 + sinHue * 0.928;
+    components[3] = 0.213 - cosHue * 0.213 + sinHue * 0.143;
+    components[4] = 0.715 + cosHue * 0.285 + sinHue * 0.140;
+    components[5] = 0.072 - cosHue * 0.072 - sinHue * 0.283;
+    components[6] = 0.213 - cosHue * 0.213 - sinHue * 0.787;
+    components[7] = 0.715 - cosHue * 0.715 + sinHue * 0.715;
+    components[8] = 0.072 + cosHue * 0.928 + sinHue * 0.072;
 }
 
-// FIXME: this should use the luminance(...) function in ColorLuminance.h.
-inline void luminance(float& red, float& green, float& blue, float& alpha)
+Vector<float> FEColorMatrix::normalizedFloats(const Vector<float>& values)
 {
-    alpha = 0.2125 * red + 0.7154 * green + 0.0721 * blue;
-    red = 0;
-    green = 0;
-    blue = 0;
+    Vector<float> normalizedValues(values.size());
+    for (size_t i = 0; i < values.size(); ++i)
+        normalizedValues[i] = normalizedFloat(values[i]);
+    return normalizedValues;
 }
 
-#if USE(ACCELERATE)
-template<ColorMatrixType filterType>
-bool effectApplyAccelerated(Uint8ClampedArray& pixelArray, const Vector<float>& values, float components[9], IntSize bufferSize)
+bool FEColorMatrix::resultIsAlphaImage(const FilterImageVector&) const
 {
-    ASSERT(pixelArray.length() == bufferSize.area() * 4);
-    
-    if (filterType == FECOLORMATRIX_TYPE_MATRIX) {
-        // vImageMatrixMultiply_ARGB8888 takes a 4x4 matrix, if any value in the last column of the FEColorMatrix 5x4 matrix
-        // is not zero, fall back to non-vImage code.
-        if (values[4] != 0 || values[9] != 0 || values[14] != 0 || values[19] != 0)
-            return false;
-    }
-
-    const int32_t divisor = 256;
-    uint8_t* data = pixelArray.data();
-
-    vImage_Buffer src;
-    src.width = bufferSize.width();
-    src.height = bufferSize.height();
-    src.rowBytes = bufferSize.width() * 4;
-    src.data = data;
-    
-    vImage_Buffer dest;
-    dest.width = bufferSize.width();
-    dest.height = bufferSize.height();
-    dest.rowBytes = bufferSize.width() * 4;
-    dest.data = data;
-
-    switch (filterType) {
-    case FECOLORMATRIX_TYPE_MATRIX: {
-        const int16_t matrix[4 * 4] = {
-            static_cast<int16_t>(roundf(values[ 0] * divisor)),
-            static_cast<int16_t>(roundf(values[ 5] * divisor)),
-            static_cast<int16_t>(roundf(values[10] * divisor)),
-            static_cast<int16_t>(roundf(values[15] * divisor)),
-
-            static_cast<int16_t>(roundf(values[ 1] * divisor)),
-            static_cast<int16_t>(roundf(values[ 6] * divisor)),
-            static_cast<int16_t>(roundf(values[11] * divisor)),
-            static_cast<int16_t>(roundf(values[16] * divisor)),
-
-            static_cast<int16_t>(roundf(values[ 2] * divisor)),
-            static_cast<int16_t>(roundf(values[ 7] * divisor)),
-            static_cast<int16_t>(roundf(values[12] * divisor)),
-            static_cast<int16_t>(roundf(values[17] * divisor)),
-
-            static_cast<int16_t>(roundf(values[ 3] * divisor)),
-            static_cast<int16_t>(roundf(values[ 8] * divisor)),
-            static_cast<int16_t>(roundf(values[13] * divisor)),
-            static_cast<int16_t>(roundf(values[18] * divisor)),
-        };
-        vImageMatrixMultiply_ARGB8888(&src, &dest, matrix, divisor, nullptr, nullptr, kvImageNoFlags);
-        break;
-    }
-
-    case FECOLORMATRIX_TYPE_SATURATE:
-    case FECOLORMATRIX_TYPE_HUEROTATE: {
-        const int16_t matrix[4 * 4] = {
-            static_cast<int16_t>(roundf(components[0] * divisor)),
-            static_cast<int16_t>(roundf(components[3] * divisor)),
-            static_cast<int16_t>(roundf(components[6] * divisor)),
-            0,
-
-            static_cast<int16_t>(roundf(components[1] * divisor)),
-            static_cast<int16_t>(roundf(components[4] * divisor)),
-            static_cast<int16_t>(roundf(components[7] * divisor)),
-            0,
-
-            static_cast<int16_t>(roundf(components[2] * divisor)),
-            static_cast<int16_t>(roundf(components[5] * divisor)),
-            static_cast<int16_t>(roundf(components[8] * divisor)),
-            0,
-
-            0,
-            0,
-            0,
-            divisor,
-        };
-        vImageMatrixMultiply_ARGB8888(&src, &dest, matrix, divisor, nullptr, nullptr, kvImageNoFlags);
-        break;
-    }
-    case FECOLORMATRIX_TYPE_LUMINANCETOALPHA: {
-        const int16_t matrix[4 * 4] = {
-            0,
-            0,
-            0,
-            static_cast<int16_t>(roundf(0.2125 * divisor)),
-
-            0,
-            0,
-            0,
-            static_cast<int16_t>(roundf(0.7154 * divisor)),
-
-            0,
-            0,
-            0,
-            static_cast<int16_t>(roundf(0.0721 * divisor)),
-
-            0,
-            0,
-            0,
-            0,
-        };
-        vImageMatrixMultiply_ARGB8888(&src, &dest, matrix, divisor, nullptr, nullptr, kvImageNoFlags);
-        break;
-    }
-    }
-    
-    return true;
+    return m_type == FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
 }
-#endif
 
-template<ColorMatrixType filterType>
-void effectType(Uint8ClampedArray& pixelArray, const Vector<float>& values, IntSize bufferSize)
+bool FEColorMatrix::supportsAcceleratedRendering() const
 {
-    float components[9];
-
-    if (filterType == FECOLORMATRIX_TYPE_SATURATE)
-        FEColorMatrix::calculateSaturateComponents(components, values[0]);
-    else if (filterType == FECOLORMATRIX_TYPE_HUEROTATE)
-        FEColorMatrix::calculateHueRotateComponents(components, values[0]);
-
-    unsigned pixelArrayLength = pixelArray.length();
-
-#if USE(ACCELERATE)
-    if (effectApplyAccelerated<filterType>(pixelArray, values, components, bufferSize))
-        return;
+#if USE(CORE_IMAGE)
+    return FEColorMatrixCoreImageApplier::supportsCoreImageRendering(*this);
 #else
-    UNUSED_PARAM(bufferSize);
+    return false;
 #endif
-
-    switch (filterType) {
-    case FECOLORMATRIX_TYPE_MATRIX:
-        for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
-            float red = pixelArray.item(pixelByteOffset);
-            float green = pixelArray.item(pixelByteOffset + 1);
-            float blue = pixelArray.item(pixelByteOffset + 2);
-            float alpha = pixelArray.item(pixelByteOffset + 3);
-            matrix(red, green, blue, alpha, values);
-            pixelArray.set(pixelByteOffset, red);
-            pixelArray.set(pixelByteOffset + 1, green);
-            pixelArray.set(pixelByteOffset + 2, blue);
-            pixelArray.set(pixelByteOffset + 3, alpha);
-        }
-        break;
-
-    case FECOLORMATRIX_TYPE_SATURATE:
-    case FECOLORMATRIX_TYPE_HUEROTATE:
-        for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
-            float red = pixelArray.item(pixelByteOffset);
-            float green = pixelArray.item(pixelByteOffset + 1);
-            float blue = pixelArray.item(pixelByteOffset + 2);
-            float alpha = pixelArray.item(pixelByteOffset + 3);
-            saturateAndHueRotate(red, green, blue, components);
-            pixelArray.set(pixelByteOffset, red);
-            pixelArray.set(pixelByteOffset + 1, green);
-            pixelArray.set(pixelByteOffset + 2, blue);
-            pixelArray.set(pixelByteOffset + 3, alpha);
-        }
-        break;
-
-    case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-        for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
-            float red = pixelArray.item(pixelByteOffset);
-            float green = pixelArray.item(pixelByteOffset + 1);
-            float blue = pixelArray.item(pixelByteOffset + 2);
-            float alpha = pixelArray.item(pixelByteOffset + 3);
-            luminance(red, green, blue, alpha);
-            pixelArray.set(pixelByteOffset, red);
-            pixelArray.set(pixelByteOffset + 1, green);
-            pixelArray.set(pixelByteOffset + 2, blue);
-            pixelArray.set(pixelByteOffset + 3, alpha);
-        }
-        break;
-    }
 }
 
-void FEColorMatrix::platformApplySoftware()
+std::unique_ptr<FilterEffectApplier> FEColorMatrix::createAcceleratedApplier() const
 {
-    FilterEffect* in = inputEffect(0);
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FEColorMatrixCoreImageApplier>(*this);
+#else
+    return nullptr;
+#endif
+}
 
-    ImageBuffer* resultImage = createImageBufferResult();
-    if (!resultImage)
-        return;
-
-    ImageBuffer* inBuffer = in->imageBufferResult();
-    if (inBuffer)
-        resultImage->context().drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
-
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, resultColorSpace() };
-    IntRect imageRect(IntPoint(), resultImage->logicalSize());
-    auto pixelBuffer = resultImage->getPixelBuffer(format, imageRect);
-    if (!pixelBuffer)
-        return;
-
-    auto& pixelArray = pixelBuffer->data();
-    auto pixelArrayDimensions = pixelBuffer->size();
-
-    Vector<float> values = normalizedFloats(m_values);
-    
-    switch (m_type) {
-    case FECOLORMATRIX_TYPE_UNKNOWN:
-        break;
-    case FECOLORMATRIX_TYPE_MATRIX:
-        effectType<FECOLORMATRIX_TYPE_MATRIX>(pixelArray, values, pixelArrayDimensions);
-        break;
-    case FECOLORMATRIX_TYPE_SATURATE: 
-        effectType<FECOLORMATRIX_TYPE_SATURATE>(pixelArray, values, pixelArrayDimensions);
-        break;
-    case FECOLORMATRIX_TYPE_HUEROTATE:
-        effectType<FECOLORMATRIX_TYPE_HUEROTATE>(pixelArray, values, pixelArrayDimensions);
-        break;
-    case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-        effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(pixelArray, values, pixelArrayDimensions);
-        setIsAlphaImage(true);
-        break;
-    }
-
-    resultImage->putPixelBuffer(*pixelBuffer, imageRect);
+std::unique_ptr<FilterEffectApplier> FEColorMatrix::createSoftwareApplier() const
+{
+    return FilterEffectApplier::create<FEColorMatrixSoftwareApplier>(*this);
 }
 
 static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)
@@ -339,10 +148,11 @@ static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)
     return ts;
 }
 
-TextStream& FEColorMatrix::externalRepresentation(TextStream& ts, RepresentationType representation) const
+TextStream& FEColorMatrix::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     ts << indent << "[feColorMatrix";
     FilterEffect::externalRepresentation(ts, representation);
+
     ts << " type=\"" << m_type << "\"";
     if (!m_values.isEmpty()) {
         ts << " values=\"";
@@ -351,15 +161,13 @@ TextStream& FEColorMatrix::externalRepresentation(TextStream& ts, Representation
         while (ptr < end) {
             ts << *ptr;
             ++ptr;
-            if (ptr < end) 
+            if (ptr < end)
                 ts << " ";
         }
         ts << "\"";
     }
+
     ts << "]\n";
-    
-    TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts, representation);
     return ts;
 }
 

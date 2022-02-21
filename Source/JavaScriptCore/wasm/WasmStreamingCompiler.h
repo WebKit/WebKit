@@ -29,6 +29,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "DeferredWorkTimer.h"
 #include "JSCJSValue.h"
 
 namespace JSC {
@@ -72,7 +73,7 @@ private:
     bool m_threadedCompilationStarted { false };
     Lock m_lock;
     unsigned m_remainingCompilationRequests { 0 };
-    JSPromise* m_promise; // Raw pointer, but held by DeferredWorkTimer.
+    DeferredWorkTimer::Ticket m_ticket;
     Ref<Wasm::ModuleInformation> m_info;
     StreamingParser m_parser;
     RefPtr<LLIntPlan> m_plan;

@@ -1,0 +1,9 @@
+
+FAIL ":host-context(.a)" should be a valid selector The string did not match the expected pattern.
+FAIL ":host-context(div.a)" should be a valid selector The string did not match the expected pattern.
+PASS ":host-context" should be an invalid selector
+PASS ":host-context()" should be an invalid selector
+PASS ":host-context(.a, .b)" should be an invalid selector
+PASS ":host-context(.a + .b)" should be an invalid selector
+PASS ":host-context(.a + .b, #c > #d)" should be an invalid selector
+

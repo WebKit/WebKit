@@ -28,10 +28,11 @@
 #include "FloatConversion.h"
 #include "FloatQuad.h"
 #include "InlineRunAndOffset.h"
+#include "LegacyRenderSVGRoot.h"
 #include "RenderBlock.h"
-#include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
-#include "SVGInlineTextBox.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGInlineTextBoxInlines.h"
 #include "SVGRenderingContext.h"
 #include "SVGRootInlineBox.h"
 #include "StyleFontSizeFunctions.h"
@@ -154,7 +155,7 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
     if (!firstTextBox() || text().isEmpty())
         return createVisiblePosition(0, Affinity::Downstream);
 
-    float baseline = m_scaledFont.fontMetrics().floatAscent();
+    float baseline = m_scaledFont.metricsOfPrimaryFont().floatAscent();
 
     RenderBlock* containingBlock = this->containingBlock();
     ASSERT(containingBlock);

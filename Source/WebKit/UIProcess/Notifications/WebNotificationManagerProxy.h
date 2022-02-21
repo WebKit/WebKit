@@ -31,10 +31,11 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/NotificationClient.h>
 #include <wtf/HashMap.h>
+#include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
-enum class NotificationDirection : uint8_t;
+struct NotificationData;
 }
 
 namespace API {
@@ -56,22 +57,23 @@ public:
 
     static Ref<WebNotificationManagerProxy> create(WebProcessPool*);
 
+    static WebNotificationManagerProxy& sharedServiceWorkerManager();
+
     void setProvider(std::unique_ptr<API::NotificationProvider>&&);
     HashMap<String, bool> notificationPermissions();
 
-    void show(WebPageProxy*, const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t pageNotificationID);
-    void cancel(WebPageProxy*, uint64_t pageNotificationID);
+    void show(WebPageProxy*, IPC::Connection&, const WebCore::NotificationData&);
+    void cancel(WebPageProxy*, const UUID& pageNotificationID);
     void clearNotifications(WebPageProxy*);
-    void clearNotifications(WebPageProxy*, const Vector<uint64_t>& pageNotificationIDs);
-    void didDestroyNotification(WebPageProxy*, uint64_t pageNotificationID);
+    void clearNotifications(WebPageProxy*, const Vector<UUID>& pageNotificationIDs);
+    void didDestroyNotification(WebPageProxy*, const UUID& pageNotificationID);
 
     void providerDidShowNotification(uint64_t notificationID);
     void providerDidClickNotification(uint64_t notificationID);
+    void providerDidClickNotification(const UUID& notificationID);
     void providerDidCloseNotifications(API::Array* notificationIDs);
     void providerDidUpdateNotificationPolicy(const API::SecurityOrigin*, bool allowed);
     void providerDidRemoveNotificationPolicies(API::Array* origins);
-
-    uint64_t notificationLocalIDForTesting(WebNotification*);
 
     using API::Object::ref;
     using API::Object::deref;
@@ -79,19 +81,15 @@ public:
 private:
     explicit WebNotificationManagerProxy(WebProcessPool*);
 
-    typedef bool (*NotificationFilterFunction)(WebPageProxyIdentifier pageID, uint64_t pageNotificationID, WebPageProxyIdentifier desiredPageID, const Vector<uint64_t>& desiredPageNotificationIDs);
-    void clearNotifications(WebPageProxy*, const Vector<uint64_t>& pageNotificationIDs, NotificationFilterFunction);
-
     // WebContextSupplement
     void processPoolDestroyed() override;
     void refWebContextSupplement() override;
     void derefWebContextSupplement() override;
 
     std::unique_ptr<API::NotificationProvider> m_provider;
-    // Pair comprised of web page ID and the web process's notification ID
-    HashMap<uint64_t, std::pair<WebPageProxyIdentifier, uint64_t>> m_globalNotificationMap;
-    // Key pair comprised of web page ID and the web process's notification ID; value pair comprised of global notification ID, and notification object
-    HashMap<std::pair<WebPageProxyIdentifier, uint64_t>, std::pair<uint64_t, RefPtr<WebNotification>>> m_notifications;
+
+    HashMap<uint64_t, UUID> m_globalNotificationMap;
+    HashMap<UUID, Ref<WebNotification>> m_notifications;
 };
 
 } // namespace WebKit

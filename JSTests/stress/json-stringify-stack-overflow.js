@@ -1,4 +1,5 @@
-//@ if $buildType == "release" and $architecture != "arm" then runDefault else skip end
+//@ skip if $memoryLimited
+//@ if $buildType == "release" then runDefault else skip end
 
 function shouldThrowStackOverflow(fn) {
     let caught;

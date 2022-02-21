@@ -41,8 +41,9 @@ public:
     static Ref<InbandTextTrackPrivate> create(CueFormat format) { return adoptRef(*new InbandTextTrackPrivate(format)); }
     virtual ~InbandTextTrackPrivate() = default;
 
-    InbandTextTrackPrivateClient* client() const override { return m_client; }
-    void setClient(InbandTextTrackPrivateClient* client) { m_client = client; }
+    InbandTextTrackPrivateClient* client() const override { return m_client.get(); }
+    virtual void setClient(InbandTextTrackPrivateClient& client) { m_client = client; }
+    void clearClient() { m_client = nullptr; }
 
     enum class Mode : uint8_t {
         Disabled,
@@ -74,7 +75,7 @@ public:
     AtomString id() const override { return emptyAtom(); }
     virtual AtomString inBandMetadataTrackDispatchType() const { return emptyAtom(); }
 
-    virtual CueFormat cueFormat() const { return m_format; }
+    CueFormat cueFormat() const { return m_format; }
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "InbandTextTrackPrivate"; }
@@ -88,7 +89,7 @@ protected:
 
 private:
     CueFormat m_format;
-    InbandTextTrackPrivateClient* m_client { nullptr };
+    WeakPtr<InbandTextTrackPrivateClient> m_client { nullptr };
     Mode m_mode { Mode::Disabled };
 };
 

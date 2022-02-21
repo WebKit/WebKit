@@ -69,9 +69,6 @@
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
-#import <WebKit/WKRetainPtr.h>
-#import <WebKit/WKString.h>
-#import <WebKit/WKStringCF.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebCache.h>
@@ -107,6 +104,7 @@
 #import <wtf/UniqueArray.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/CrashReporter.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
@@ -275,14 +273,14 @@ static int showWebView;
 static int printTestCount;
 static int checkForWorldLeaks;
 static BOOL printSeparators;
+static std::set<std::string> allowedHosts;
+static std::string webCoreLogging;
 
 static RetainPtr<CFStringRef>& persistentUserStyleSheetLocation()
 {
     static NeverDestroyed<RetainPtr<CFStringRef>> persistentUserStyleSheetLocation;
     return persistentUserStyleSheetLocation;
 }
-
-static std::set<std::string> allowedHosts;
 
 static RetainPtr<WebHistoryItem>& prevTestBFItem()
 {
@@ -429,6 +427,8 @@ static NSSet *allowedFontFamilySet()
         @"Songti TC",
         @"STFangsong",
         @"STHeiti",
+        @"STIX Two Math",
+        @"STIX Two Text",
         @"STIXGeneral",
         @"STIXSizeOneSym",
         @"STKaiti",
@@ -456,7 +456,7 @@ static NSSet *allowedFontFamilySet()
 
 static NSArray *fontAllowList()
 {
-    static auto availableFonts = makeNeverDestroyed([] {
+    static NeverDestroyed availableFonts = [] {
         auto availableFonts = adoptNS([[NSMutableArray alloc] init]);
         for (NSString *fontFamily in allowedFontFamilySet()) {
             NSArray* fontsForFamily = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:fontFamily];
@@ -467,7 +467,7 @@ static NSArray *fontAllowList()
             }
         }
         return availableFonts;
-    }());
+    }();
     return availableFonts.get().get();
 }
 
@@ -1007,6 +1007,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"show-webview", no_argument, &showWebView, YES},
         {"print-test-count", no_argument, &printTestCount, YES},
         {"world-leaks", no_argument, &checkForWorldLeaks, NO},
+        {"webcore-logging", required_argument, nullptr, 'w'},
         {nullptr, 0, nullptr, 0}
     };
 
@@ -1020,6 +1021,8 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
             case 'a': // "allowed-host"
                 allowedHosts.insert(optarg);
                 break;
+            case 'w': // "webcore-logging"
+                webCoreLogging = optarg;
         }
     }
 }
@@ -1127,6 +1130,9 @@ static void prepareConsistentTestingEnvironment()
     static NeverDestroyed<RetainPtr<id>> assertion = [[NSProcessInfo processInfo] beginActivityWithOptions:options reason:@"DumpRenderTree should not be subject to process suppression"];
     ASSERT_UNUSED(assertion, assertion.get());
 #endif
+
+    if (webCoreLogging.length())
+        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithUTF8String:webCoreLogging.c_str()] forKey:@"WebCoreLogging"];
 }
 
 const char crashedMessage[] = "#CRASHED\n";
@@ -1396,16 +1402,17 @@ static RetainPtr<NSString> dumpFramesAsText(WebFrame *frame)
         result = adoptNS([[NSMutableString alloc] init]);
 
     NSString *innerText = [documentElement innerText];
-    // We use WKStringGetUTF8CStringNonStrict() to convert innerText to a WK String since
-    // WKStringGetUTF8CStringNonStrict() can handle dangling surrogates and the NSString
+
+    // We use WTF::String::tryGetUtf8 to convert innerText to a UTF8 buffer since
+    // it can handle dangling surrogates and the NSString
     // conversion methods cannot. After the conversion to a buffer, we turn that buffer into
     // a CFString via fromUTF8WithLatin1Fallback().createCFString() which can be appended to
     // the result without any conversion.
-    WKRetainPtr<WKStringRef> stringRef = adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)innerText));
-    size_t bufferSize = WKStringGetMaximumUTF8CStringSize(stringRef.get());
-    auto buffer = makeUniqueArray<char>(bufferSize);
-    size_t stringLength = WKStringGetUTF8CStringNonStrict(stringRef.get(), buffer.get(), bufferSize);
-    [result appendFormat:@"%@\n", String::fromUTF8WithLatin1Fallback(buffer.get(), stringLength - 1).createCFString().get()];
+    if (auto utf8Result = WTF::String(innerText).tryGetUtf8()) {
+        auto string = WTFMove(utf8Result.value());
+        [result appendFormat:@"%@\n", String::fromUTF8WithLatin1Fallback(string.data(), string.length()).createCFString().get()];
+    } else
+        [result appendString:@"\n"];
 
     if (gTestRunner->dumpChildFramesAsText()) {
         NSArray *kids = [frame childFrames];
@@ -1620,11 +1627,11 @@ void dump()
             resultMimeType = @"application/pdf";
         } else if (gTestRunner->dumpDOMAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame DOMDocument] webArchive];
-            resultString = WebCoreTestSupport::createXMLStringFromWebArchiveData((__bridge CFDataRef)[webArchive data]);
+            resultString = bridge_cast(WebCoreTestSupport::createXMLStringFromWebArchiveData(bridge_cast([webArchive data])));
             resultMimeType = @"application/x-webarchive";
         } else if (gTestRunner->dumpSourceAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame dataSource] webArchive];
-            resultString = WebCoreTestSupport::createXMLStringFromWebArchiveData((__bridge CFDataRef)[webArchive data]);
+            resultString = bridge_cast(WebCoreTestSupport::createXMLStringFromWebArchiveData(bridge_cast([webArchive data])));
             resultMimeType = @"application/x-webarchive";
         } else if (gTestRunner->isPrinting())
             resultString = [mainFrame renderTreeAsExternalRepresentationForPrinting];

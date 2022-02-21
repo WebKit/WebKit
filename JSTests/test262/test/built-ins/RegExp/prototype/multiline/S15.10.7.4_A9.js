@@ -11,17 +11,8 @@ description: Checking if deleting the multiline property succeeds
 
 var __re = RegExp.prototype;
 
-//CHECK#0
-if (__re.hasOwnProperty('multiline') !== true) {
-  throw new Test262Error('#0: __re = RegExp.prototype; __re.hasOwnProperty(\'multiline\') === true');
-}
+assert.sameValue(__re.hasOwnProperty('multiline'), true, '__re.hasOwnProperty(\'multiline\') must return true');
+assert.sameValue(delete __re.multiline, true, 'The value of `delete __re.multiline` is expected to be true');
+assert.sameValue(__re.hasOwnProperty('multiline'), false, '__re.hasOwnProperty(\'multiline\') must return false');
 
-//CHECK#1
-if ((delete __re.multiline) !== true) {
-  throw new Test262Error('#1: __re = RegExp.prototype; (delete __re.multiline) === true');
-}
-
-//CHECK#2
-if (__re.hasOwnProperty('multiline') !== false) {
-  throw new Test262Error('#2: __re = RegExp.prototype;delete __re.multiline === true; __re.hasOwnProperty(\'multiline\') === false');
-}
+// TODO: Convert to verifyProperty() format.

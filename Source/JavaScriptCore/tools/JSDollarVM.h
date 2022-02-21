@@ -42,7 +42,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
     
     DECLARE_EXPORT_INFO;
@@ -56,12 +56,12 @@ public:
     static JSDollarVM* create(VM& vm, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        JSDollarVM* instance = new (NotNull, allocateCell<JSDollarVM>(vm.heap)) JSDollarVM(vm, structure);
+        JSDollarVM* instance = new (NotNull, allocateCell<JSDollarVM>(vm)) JSDollarVM(vm, structure);
         instance->finishCreation(vm);
         return instance;
     }
 
-    Structure* objectDoingSideEffectPutWithoutCorrectSlotStatusStructure() { return m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.get(); }
+    Structure* objectDoingSideEffectPutWithoutCorrectSlotStatusStructure() { return m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.get(); }
     
 private:
     JSDollarVM(VM& vm, Structure* structure)
@@ -76,7 +76,7 @@ private:
 
     DECLARE_VISIT_CHILDREN;
 
-    WriteBarrier<Structure> m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure;
+    WriteBarrierStructureID m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID;
 };
 
 } // namespace JSC

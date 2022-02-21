@@ -1,0 +1,7 @@
+[
+    Exposed=*
+] interface ExposedStar : EventTarget {
+    [Exposed=*] undefined operationForAllContexts();
+    [Exposed=Window] undefined operationJustForWindowContexts();
+    [Exposed=Worker] undefined operationJustForWorkerContexts();
+};

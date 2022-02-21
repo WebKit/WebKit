@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceHyperlinkImpl.h"
 
-#if ENABLE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include "WebKitAccessibleHyperlink.h"
 
@@ -34,4 +34,4 @@ void webkitAccessibleHyperlinkImplInterfaceInit(AtkHyperlinkImplIface* iface)
     iface->get_hyperlink = webkitAccessibleHyperlinkImplGetHyperlink;
 }
 
-#endif // ENABLE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATK)

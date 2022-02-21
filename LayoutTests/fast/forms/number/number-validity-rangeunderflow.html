@@ -16,7 +16,7 @@ function checkUnderflow(value, min, disabled)
     input.disabled = !!disabled;
     var underflow = input.validity.rangeUnderflow;
     var resultText = 'The value "' + input.value + '" ' +
-        (underflow ? 'undeflows' : 'doesn\'t underflow') +
+        (underflow ? 'underflows' : 'doesn\'t underflow') +
         ' the minimum value "' + input.min + '"' + (disabled ? ' when disabled.' : '.');
     if (underflow)
         testPassed(resultText);
@@ -63,7 +63,7 @@ input.max = '100';  // value < min && value > max
 checkUnderflow('101', '200');
 
 // Disabled
-checkNotUnderflow('99', '1E+2', true);
+checkUnderflow('99', '1E+2', true);
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

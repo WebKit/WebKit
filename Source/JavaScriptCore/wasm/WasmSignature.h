@@ -28,16 +28,13 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmOps.h"
-#include <cstdint>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
+#include <wtf/Lock.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
-
-namespace WTF {
-class PrintStream;
-}
 
 namespace JSC {
 

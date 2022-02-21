@@ -273,7 +273,7 @@ TEST_P(FramebufferMultiviewTest, CopyTex)
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, 1, 1, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
     glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, 0, 1);
-    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     ASSERT_GL_NO_ERROR();
 
     // Test glCopyTexImage2D and glCopyTexSubImage2D.
@@ -340,7 +340,7 @@ TEST_P(FramebufferMultiviewTest, Blit)
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, 1, 1, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
     glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, 0, 1);
-    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     ASSERT_GL_NO_ERROR();
 
     glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
@@ -368,7 +368,7 @@ TEST_P(FramebufferMultiviewTest, ReadPixels)
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, 1, 1, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
     glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, 0, 1);
-    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     ASSERT_GL_NO_ERROR();
 
     glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
@@ -432,15 +432,22 @@ TEST_P(FramebufferMultiviewTest, IncompleteViewTargetsLayered)
     glBindTexture(GL_TEXTURE_2D_ARRAY, otherTexLayered);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, 1, 1, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-    // Test framebuffer completeness when the base view index differs.
-    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, otherTexLayered, 0, 1,
-                                     2);
+    // Test framebuffer completeness when the 1st attachment has a non-multiview layout.
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, otherTexLayered, 0, 0);
     ASSERT_GL_NO_ERROR();
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_VIEW_TARGETS_OVR,
                      glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
-    // Test framebuffer completeness when the 1st attachment has a non-multiview layout.
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, otherTexLayered, 0, 0);
+    // Test that framebuffer is complete when the base view index differs.
+    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, otherTexLayered, 0, 1,
+                                     2);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Test framebuffer completeness when an attachment's base+count layers is beyond the texture
+    // layers.
+    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, otherTexLayered, 0, 3,
+                                     2);
     ASSERT_GL_NO_ERROR();
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_VIEW_TARGETS_OVR,
                      glCheckFramebufferStatus(GL_FRAMEBUFFER));
@@ -450,7 +457,7 @@ TEST_P(FramebufferMultiviewTest, IncompleteViewTargetsLayered)
     glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, otherTexLayered, 0, 0,
                                      2);
     ASSERT_GL_NO_ERROR();
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 }
 
 // Test that glClear clears the contents of the color buffer for only the attached layers to a
@@ -759,13 +766,20 @@ TEST_P(FramebufferMultiviewTest, NegativeMultisampledFramebufferTest)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferMultiviewTest);
 ANGLE_INSTANTIATE_TEST(FramebufferMultiviewTest,
                        VertexShaderOpenGL(3, 0, ExtensionName::multiview),
+                       VertexShaderVulkan(3, 0, ExtensionName::multiview),
                        GeomShaderD3D11(3, 0, ExtensionName::multiview),
                        VertexShaderOpenGL(3, 0, ExtensionName::multiview2),
+                       VertexShaderVulkan(3, 0, ExtensionName::multiview2),
                        GeomShaderD3D11(3, 0, ExtensionName::multiview2));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferMultiviewLayeredClearTest);
 ANGLE_INSTANTIATE_TEST(FramebufferMultiviewLayeredClearTest,
                        VertexShaderOpenGL(3, 0, ExtensionName::multiview),
+                       VertexShaderVulkan(3, 0, ExtensionName::multiview),
                        GeomShaderD3D11(3, 0, ExtensionName::multiview),
                        VertexShaderOpenGL(3, 0, ExtensionName::multiview2),
+                       VertexShaderVulkan(3, 0, ExtensionName::multiview2),
                        GeomShaderD3D11(3, 0, ExtensionName::multiview2));

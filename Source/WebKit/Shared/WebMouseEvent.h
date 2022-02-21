@@ -31,6 +31,7 @@
 
 #include "WebEvent.h"
 #include <WebCore/IntPoint.h>
+#include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PointerEventTypeNames.h>
 #include <WebCore/PointerID.h>
 
@@ -53,6 +54,8 @@ public:
 
 #if PLATFORM(MAC)
     WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force, SyntheticClickType = NoTap, int eventNumber = -1, int menuType = 0, GestureWasCancelled = GestureWasCancelled::No);
+#elif PLATFORM(GTK)
+    WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force = 0, SyntheticClickType = NoTap, WebCore::PlatformMouseEvent::IsTouch m_isTouchEvent = WebCore::PlatformMouseEvent::IsTouch::No, WebCore::PointerID = WebCore::mousePointerID, const String& pointerType = WebCore::mousePointerEventType(), GestureWasCancelled = GestureWasCancelled::No);
 #else
     WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force = 0, SyntheticClickType = NoTap, WebCore::PointerID = WebCore::mousePointerID, const String& pointerType = WebCore::mousePointerEventType(), GestureWasCancelled = GestureWasCancelled::No);
 #endif
@@ -68,6 +71,8 @@ public:
 #if PLATFORM(MAC)
     int32_t eventNumber() const { return m_eventNumber; }
     int32_t menuTypeForEvent() const { return m_menuTypeForEvent; }
+#elif PLATFORM(GTK)
+    WebCore::PlatformMouseEvent::IsTouch isTouchEvent() const { return m_isTouchEvent; }
 #endif
     double force() const { return m_force; }
     SyntheticClickType syntheticClickType() const { return static_cast<SyntheticClickType>(m_syntheticClickType); }
@@ -92,6 +97,8 @@ private:
 #if PLATFORM(MAC)
     int32_t m_eventNumber { -1 };
     int32_t m_menuTypeForEvent { 0 };
+#elif PLATFORM(GTK)
+    WebCore::PlatformMouseEvent::IsTouch m_isTouchEvent { WebCore::PlatformMouseEvent::IsTouch::No };
 #endif
     double m_force { 0 };
     uint32_t m_syntheticClickType { NoTap };

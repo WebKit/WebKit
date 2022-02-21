@@ -32,7 +32,7 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceAction.h"
 
-#if ENABLE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include "AccessibilityObject.h"
 #include "NotImplemented.h"
@@ -91,7 +91,7 @@ static const gchar* webkitAccessibleActionGetName(AtkAction* action, gint)
     auto* accessible = WEBKIT_ACCESSIBLE(action);
     returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
-    return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedActionName, core(action)->actionVerb().utf8());
+    return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedActionName, core(action)->localizedActionVerb().utf8());
 }
 
 void webkitAccessibleActionInterfaceInit(AtkActionIface* iface)

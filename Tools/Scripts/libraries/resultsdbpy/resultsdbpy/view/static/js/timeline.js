@@ -194,6 +194,9 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=n
                     ${node.label.author ? `<br>Author: ${escapeHTML(node.label.author.name)}
                             &#60<a href="mailto:${escapeHTML(node.label.author.emails[0])}">${escapeHTML(node.label.author.emails[0])}</a>&#62` : ''}
                     ${node.label.message ? `<br><div>${linkify(escapeHTML(node.label.message.split('\n')[0]))}</div>` : ''}
+                    ${node.label.bugUrls || node.label.radarUrls ? '<hr>' : ''}
+                    ${node.label.bugUrls ? `<div>${linkify(escapeHTML(node.label.bugUrls.join('\n').split('\n')[0]))}</div>` : ''}
+                    ${node.label.radarUrls ? `<div>${linkify(escapeHTML(node.label.radarUrls.join('\n').split('\n')[0]))}</div>` : ''}
                 </div>`,
                 node.tipPoints.map((point) => {
                     return {x: canvas.x + point.x, y: canvas.y + scrollDelta + point.y};

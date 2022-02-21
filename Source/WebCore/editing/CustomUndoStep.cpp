@@ -34,7 +34,7 @@
 namespace WebCore {
 
 CustomUndoStep::CustomUndoStep(UndoItem& item)
-    : m_undoItem(makeWeakPtr(item))
+    : m_undoItem(item)
 {
 }
 

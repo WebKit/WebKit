@@ -44,7 +44,7 @@ PAS_BEGIN_EXTERN_C;
     PAS_NEVER_INLINE bool lower_case_page_config_name ## _specialized_local_allocator_start_allocating_in_primordial_partial_view( \
         pas_local_allocator* allocator, \
         pas_segregated_partial_view* partial, \
-        pas_segregated_global_size_directory* size_directory) \
+        pas_segregated_size_directory* size_directory) \
     { \
         return pas_local_allocator_start_allocating_in_primordial_partial_view( \
             allocator, partial, size_directory, (page_config_value)); \
@@ -54,17 +54,14 @@ PAS_BEGIN_EXTERN_C;
         pas_local_allocator* allocator, \
         pas_allocator_counts* counts) \
     { \
-        bool skip_bitfit; \
-        skip_bitfit = false; \
-        return pas_local_allocator_refill_with_known_config( \
-            allocator, counts, (page_config_value), skip_bitfit); \
+        return pas_local_allocator_refill_with_known_config(allocator, counts, (page_config_value)); \
     } \
     \
     void lower_case_page_config_name ## _specialized_local_allocator_return_memory_to_page( \
         pas_local_allocator* allocator, \
         pas_segregated_view view, \
         pas_segregated_page* page, \
-        pas_segregated_global_size_directory* directory, \
+        pas_segregated_size_directory* directory, \
         pas_lock_hold_mode heap_lock_hold_mode) \
     { \
         pas_local_allocator_return_memory_to_page( \

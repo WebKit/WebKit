@@ -18,7 +18,15 @@
 
 namespace angle
 {
+namespace
+{
 constexpr unsigned int kIterationsPerStep = 128;
+
+enum TestMode
+{
+    VertexArray,
+    MultipleBindings,
+};
 
 enum AllocationStyle
 {
@@ -42,6 +50,7 @@ struct BindingsParams final : public RenderTestParams
     }
 
     std::string story() const override;
+    TestMode testMode = TestMode::MultipleBindings;
     size_t numObjects;
     AllocationStyle allocationStyle;
 };
@@ -57,19 +66,27 @@ std::string BindingsParams::story() const
     std::stringstream strstr;
 
     strstr << RenderTestParams::story();
-    strstr << "_" << numObjects << "_objects";
 
-    switch (allocationStyle)
+    if (testMode == TestMode::VertexArray)
     {
-        case EVERY_ITERATION:
-            strstr << "_allocated_every_iteration";
-            break;
-        case AT_INITIALIZATION:
-            strstr << "_allocated_at_initialization";
-            break;
-        default:
-            strstr << "_err";
-            break;
+        strstr << "_vertexarray";
+    }
+    else
+    {
+        strstr << "_" << numObjects << "_objects";
+
+        switch (allocationStyle)
+        {
+            case EVERY_ITERATION:
+                strstr << "_allocated_every_iteration";
+                break;
+            case AT_INITIALIZATION:
+                strstr << "_allocated_at_initialization";
+                break;
+            default:
+                strstr << "_err";
+                break;
+        }
     }
 
     return strstr.str();
@@ -89,12 +106,13 @@ class BindingsBenchmark : public ANGLERenderTest,
     // TODO: Test binding perf of more than just buffers
     std::vector<GLuint> mBuffers;
     std::vector<GLenum> mBindingPoints;
+    GLuint mMaxVertexAttribs = 0;
 };
 
 BindingsBenchmark::BindingsBenchmark() : ANGLERenderTest("Bindings", GetParam())
 {
-    // Flaky on Windows Intel OpenGL. http://crbug.com/974083
-    if (IsIntel() && GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
+    // Flaky on OpenGL. http://anglebug.com/6264
+    if (GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
     {
         mSkipTest = true;
     }
@@ -102,7 +120,7 @@ BindingsBenchmark::BindingsBenchmark() : ANGLERenderTest("Bindings", GetParam())
 
 void BindingsBenchmark::initializeBenchmark()
 {
-    const auto &params = GetParam();
+    const BindingsParams &params = GetParam();
 
     mBuffers.resize(params.numObjects, 0);
     if (params.allocationStyle == AT_INITIALIZATION)
@@ -115,29 +133,38 @@ void BindingsBenchmark::initializeBenchmark()
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    mBindingPoints.push_back(GL_ARRAY_BUFFER);
-    mBindingPoints.push_back(GL_ELEMENT_ARRAY_BUFFER);
-    if (params.majorVersion >= 3)
+    if (params.testMode == TestMode::MultipleBindings)
     {
-        mBindingPoints.push_back(GL_PIXEL_PACK_BUFFER);
-        mBindingPoints.push_back(GL_PIXEL_UNPACK_BUFFER);
-        mBindingPoints.push_back(GL_COPY_READ_BUFFER);
-        mBindingPoints.push_back(GL_COPY_WRITE_BUFFER);
-        mBindingPoints.push_back(GL_TRANSFORM_FEEDBACK_BUFFER);
-        mBindingPoints.push_back(GL_UNIFORM_BUFFER);
+        mBindingPoints.push_back(GL_ARRAY_BUFFER);
+        mBindingPoints.push_back(GL_ELEMENT_ARRAY_BUFFER);
+        if (params.majorVersion >= 3)
+        {
+            mBindingPoints.push_back(GL_PIXEL_PACK_BUFFER);
+            mBindingPoints.push_back(GL_PIXEL_UNPACK_BUFFER);
+            mBindingPoints.push_back(GL_COPY_READ_BUFFER);
+            mBindingPoints.push_back(GL_COPY_WRITE_BUFFER);
+            mBindingPoints.push_back(GL_TRANSFORM_FEEDBACK_BUFFER);
+            mBindingPoints.push_back(GL_UNIFORM_BUFFER);
+        }
+        if (params.majorVersion > 3 || (params.majorVersion == 3 && params.minorVersion >= 1))
+        {
+            mBindingPoints.push_back(GL_ATOMIC_COUNTER_BUFFER);
+            mBindingPoints.push_back(GL_SHADER_STORAGE_BUFFER);
+            mBindingPoints.push_back(GL_DRAW_INDIRECT_BUFFER);
+            mBindingPoints.push_back(GL_DISPATCH_INDIRECT_BUFFER);
+        }
     }
-    if (params.majorVersion > 3 || (params.majorVersion == 3 && params.minorVersion >= 1))
+    else
     {
-        mBindingPoints.push_back(GL_ATOMIC_COUNTER_BUFFER);
-        mBindingPoints.push_back(GL_SHADER_STORAGE_BUFFER);
-        mBindingPoints.push_back(GL_DRAW_INDIRECT_BUFFER);
-        mBindingPoints.push_back(GL_DISPATCH_INDIRECT_BUFFER);
+        mBindingPoints.resize(mBuffers.size(), GL_ARRAY_BUFFER);
     }
+
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, reinterpret_cast<GLint *>(&mMaxVertexAttribs));
 }
 
 void BindingsBenchmark::destroyBenchmark()
 {
-    const auto &params = GetParam();
+    const BindingsParams &params = GetParam();
     if (params.allocationStyle == AT_INITIALIZATION)
     {
         glDeleteBuffers(static_cast<GLsizei>(mBuffers.size()), mBuffers.data());
@@ -146,7 +173,7 @@ void BindingsBenchmark::destroyBenchmark()
 
 void BindingsBenchmark::drawBenchmark()
 {
-    const auto &params = GetParam();
+    const BindingsParams &params = GetParam();
 
     for (unsigned int it = 0; it < params.iterationsPerStep; ++it)
     {
@@ -159,12 +186,12 @@ void BindingsBenchmark::drawBenchmark()
         // Fetch a few variables from the underlying data structure to keep them in registers.
         // Otherwise each loop iteration they'll be fetched again because the compiler cannot
         // guarantee that those are unchanged when calling glBindBuffer.
-        unsigned int *buffers       = mBuffers.data();
-        unsigned int *bindingPoints = mBindingPoints.data();
+        const GLuint *buffers       = mBuffers.data();
+        const GLenum *bindingPoints = mBindingPoints.data();
         size_t bindingPointsSize    = mBindingPoints.size();
         size_t buffersSize          = mBuffers.size();
         size_t bindingIndex         = it % bindingPointsSize;
-        for (size_t bufferIdx = 0; bufferIdx < buffersSize; bufferIdx++)
+        for (GLuint bufferIdx = 0; bufferIdx < buffersSize; bufferIdx++)
         {
             GLenum binding = bindingPoints[bindingIndex];
             glBindBuffer(binding, buffers[bufferIdx]);
@@ -173,6 +200,12 @@ void BindingsBenchmark::drawBenchmark()
             // do a bounds-check and reset the index.
             ++bindingIndex;
             bindingIndex = (bindingIndex >= bindingPointsSize) ? 0 : bindingIndex;
+
+            if (params.testMode == TestMode::VertexArray)
+            {
+                GLuint vertexAttribIndex = bufferIdx % mMaxVertexAttribs;
+                glVertexAttribPointer(vertexAttribIndex, 1, GL_FLOAT, GL_FALSE, 0, 0);
+            }
         }
 
         // Delete all the buffers
@@ -201,11 +234,12 @@ BindingsParams OpenGLOrGLESParams(AllocationStyle allocationStyle)
     return params;
 }
 
-BindingsParams VulkanParams(AllocationStyle allocationStyle)
+BindingsParams VulkanParams(AllocationStyle allocationStyle, TestMode testMode)
 {
     BindingsParams params;
     params.eglParameters   = egl_platform::VULKAN_NULL();
     params.allocationStyle = allocationStyle;
+    params.testMode        = testMode;
     return params;
 }
 
@@ -213,13 +247,15 @@ TEST_P(BindingsBenchmark, Run)
 {
     run();
 }
+}  // namespace
 
 ANGLE_INSTANTIATE_TEST(BindingsBenchmark,
                        D3D11Params(EVERY_ITERATION),
                        D3D11Params(AT_INITIALIZATION),
                        OpenGLOrGLESParams(EVERY_ITERATION),
                        OpenGLOrGLESParams(AT_INITIALIZATION),
-                       VulkanParams(EVERY_ITERATION),
-                       VulkanParams(AT_INITIALIZATION));
+                       VulkanParams(EVERY_ITERATION, TestMode::MultipleBindings),
+                       VulkanParams(AT_INITIALIZATION, TestMode::MultipleBindings),
+                       VulkanParams(AT_INITIALIZATION, TestMode::VertexArray));
 
 }  // namespace angle

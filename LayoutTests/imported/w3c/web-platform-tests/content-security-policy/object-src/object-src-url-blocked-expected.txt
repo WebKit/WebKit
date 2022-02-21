@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Should block the object and fire a spv
+PASS Should block the object and fire a spv
 

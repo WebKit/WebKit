@@ -33,14 +33,29 @@ class ANGLE_UTIL_EXPORT WGLWindow : public GLWindowBase
                       angle::GLESDriverType driverType,
                       const EGLPlatformParameters &platformParams,
                       const ConfigParameters &configParams) override;
+
+    GLWindowResult initializeGLWithResult(OSWindow *osWindow,
+                                          angle::Library *glWindowingLibrary,
+                                          angle::GLESDriverType driverType,
+                                          const EGLPlatformParameters &platformParams,
+                                          const ConfigParameters &configParams) override;
+
     void destroyGL() override;
     bool isGLInitialized() const override;
-
     bool makeCurrent() override;
     void swap() override;
     bool hasError() const override;
     bool setSwapInterval(EGLint swapInterval) override;
     angle::GenericProc getProcAddress(const char *name) override;
+    // Initializes WGL resources.
+    GLWindowContext getCurrentContextGeneric() override;
+    GLWindowContext createContextGeneric(GLWindowContext share) override;
+    bool makeCurrentGeneric(GLWindowContext context) override;
+
+    // Create a WGL context with this window's configuration
+    HGLRC createContext(const ConfigParameters &configParams, HGLRC shareContext);
+    // Make the WGL context current
+    bool makeCurrent(HGLRC context);
 
   private:
     WGLWindow(int glesMajorVersion, int glesMinorVersion);

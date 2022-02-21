@@ -32,9 +32,9 @@ class C {
   }
 }
 
-assert(compareArray(['function'], fn), 'body');
-assert(compareArray(['function'], fnParam), 'parameter');
-assert(compareArray(['generator function'], gen), 'body');
-assert(compareArray(['generator function'], genParam), 'parameter');
-assert(compareArray(['async function'], asyncFn), 'body');
-assert(compareArray(['async function'], asyncFnParam), 'parameter');
+assert.compareArray(['function'], fn, 'body');
+assert.compareArray(['function'], fnParam, 'parameter');
+assert.compareArray(['generator function'], gen, 'body');
+assert.compareArray(['generator function'], genParam, 'parameter');
+assert.compareArray(['async function'], asyncFn, 'body');
+assert.compareArray(['async function'], asyncFnParam, 'parameter');

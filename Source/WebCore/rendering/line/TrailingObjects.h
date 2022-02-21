@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class InlineIterator;
+class LegacyInlineIterator;
 class RenderBoxModelObject;
 class RenderText;
 
@@ -38,8 +38,8 @@ struct BidiIsolatedRun;
 template <class Iterator, class Run> class BidiResolver;
 template <class Iterator, class Run, class IsolateRun> class BidiResolverWithIsolate;
 template <class Iterator> class WhitespaceCollapsingState;
-typedef BidiResolverWithIsolate<InlineIterator, BidiRun, BidiIsolatedRun> InlineBidiResolver;
-typedef WhitespaceCollapsingState<InlineIterator> LineWhitespaceCollapsingState;
+typedef BidiResolverWithIsolate<LegacyInlineIterator, BidiRun, BidiIsolatedRun> InlineBidiResolver;
+typedef WhitespaceCollapsingState<LegacyInlineIterator> LineWhitespaceCollapsingState;
 
 class TrailingObjects {
 public:
@@ -57,7 +57,7 @@ public:
     }
 
     enum class CollapseFirstSpace { No, Yes };
-    void updateWhitespaceCollapsingTransitionsForTrailingBoxes(LineWhitespaceCollapsingState&, const InlineIterator& lBreak, CollapseFirstSpace);
+    void updateWhitespaceCollapsingTransitionsForTrailingBoxes(LineWhitespaceCollapsingState&, const LegacyInlineIterator& lBreak, CollapseFirstSpace);
 
 private:
     RenderText* m_whitespace { nullptr };

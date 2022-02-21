@@ -44,7 +44,7 @@ void CallStatistics::DecodedByNetEq(AudioFrame::SpeechType speech_type,
       break;
     }
     case AudioFrame::kUndefined: {
-      // If the audio is decoded by NetEq, |kUndefined| is not an option.
+      // If the audio is decoded by NetEq, `kUndefined` is not an option.
       RTC_NOTREACHED();
     }
   }

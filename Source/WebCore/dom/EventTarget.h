@@ -36,15 +36,21 @@
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <memory>
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
-#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
+
+namespace JSC {
+class JSValue;
+class JSObject;
+}
 
 namespace WebCore {
 
 struct AddEventListenerOptions;
 class DOMWrapperWorld;
+class JSEventListener;
 
 struct EventTargetData {
     WTF_MAKE_NONCOPYABLE(EventTargetData); WTF_MAKE_FAST_ALLOCATED;
@@ -68,9 +74,9 @@ public:
     WEBCORE_EXPORT virtual bool isNode() const;
     WEBCORE_EXPORT virtual bool isPaymentRequest() const;
 
-    using AddEventListenerOptionsOrBoolean = Variant<AddEventListenerOptions, bool>;
+    using AddEventListenerOptionsOrBoolean = std::variant<AddEventListenerOptions, bool>;
     WEBCORE_EXPORT void addEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&&, AddEventListenerOptionsOrBoolean&&);
-    using EventListenerOptionsOrBoolean = Variant<EventListenerOptions, bool>;
+    using EventListenerOptionsOrBoolean = std::variant<EventListenerOptions, bool>;
     WEBCORE_EXPORT void removeEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&&, EventListenerOptionsOrBoolean&&);
     WEBCORE_EXPORT ExceptionOr<bool> dispatchEventForBindings(Event&);
 
@@ -82,8 +88,10 @@ public:
     WEBCORE_EXPORT virtual void uncaughtExceptionInEventHandler();
 
     // Used for legacy "onevent" attributes.
+    template<typename JSMaybeErrorEventListener>
+    void setAttributeEventListener(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
     bool setAttributeEventListener(const AtomString& eventType, RefPtr<EventListener>&&, DOMWrapperWorld&);
-    EventListener* attributeEventListener(const AtomString& eventType, DOMWrapperWorld&);
+    JSEventListener* attributeEventListener(const AtomString& eventType, DOMWrapperWorld&);
 
     bool hasEventListeners() const;
     bool hasEventListeners(const AtomString& eventType) const;
@@ -103,7 +111,7 @@ public:
     const EventTargetData* eventTargetData() const;
 
 protected:
-    virtual ~EventTarget() = default;
+    WEBCORE_EXPORT virtual ~EventTarget();
     
     virtual EventTargetData* eventTargetData() = 0;
     virtual EventTargetData* eventTargetDataConcurrently() = 0;

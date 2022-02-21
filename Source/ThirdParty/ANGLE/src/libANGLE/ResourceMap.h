@@ -47,7 +47,7 @@ class ResourceMap final : angle::NonCopyable
     void clear();
 
     using IndexAndResource = std::pair<GLuint, ResourceType *>;
-    using HashMap          = std::unordered_map<GLuint, ResourceType *>;
+    using HashMap          = angle::HashMap<GLuint, ResourceType *>;
 
     class Iterator final
     {
@@ -297,8 +297,8 @@ bool ResourceMap<ResourceType, IDType>::Iterator::operator!=(const Iterator &oth
 }
 
 template <typename ResourceType, typename IDType>
-typename ResourceMap<ResourceType, IDType>::Iterator &ResourceMap<ResourceType, IDType>::Iterator::
-operator++()
+typename ResourceMap<ResourceType, IDType>::Iterator &
+ResourceMap<ResourceType, IDType>::Iterator::operator++()
 {
     if (mFlatIndex < static_cast<GLuint>(mOrigin.mFlatResourcesSize))
     {
@@ -313,15 +313,15 @@ operator++()
 }
 
 template <typename ResourceType, typename IDType>
-const typename ResourceMap<ResourceType, IDType>::IndexAndResource
-    *ResourceMap<ResourceType, IDType>::Iterator::operator->() const
+const typename ResourceMap<ResourceType, IDType>::IndexAndResource *
+ResourceMap<ResourceType, IDType>::Iterator::operator->() const
 {
     return &mValue;
 }
 
 template <typename ResourceType, typename IDType>
-const typename ResourceMap<ResourceType, IDType>::IndexAndResource
-    &ResourceMap<ResourceType, IDType>::Iterator::operator*() const
+const typename ResourceMap<ResourceType, IDType>::IndexAndResource &
+ResourceMap<ResourceType, IDType>::Iterator::operator*() const
 {
     return mValue;
 }

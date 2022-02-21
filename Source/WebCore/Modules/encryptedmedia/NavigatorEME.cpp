@@ -80,13 +80,13 @@ inline void infoLog(Logger& logger, const Arguments&... arguments)
 #endif
 }
 
-static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, RefPtr<DeferredPromise>&&, Ref<Logger>&&, WTF::Logger::LogSiteIdentifier&&);
+static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, RefPtr<DeferredPromise>&&, Ref<Logger>&&, Logger::LogSiteIdentifier&&);
 
 void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& document, const String& keySystem, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, Ref<DeferredPromise>&& promise)
 {
     // https://w3c.github.io/encrypted-media/#dom-navigator-requestmediakeysystemaccess
     // W3C Editor's Draft 09 November 2016
-    auto identifier = WTF::Logger::LogSiteIdentifier("NavigatorEME", __func__, &navigator);
+    auto identifier = Logger::LogSiteIdentifier("NavigatorEME", __func__, &navigator);
     Ref<Logger> logger = document.logger();
 
     infoLog(logger, identifier, "keySystem(", keySystem, "), supportedConfigurations(", supportedConfigurations, ")");
@@ -123,7 +123,7 @@ void NavigatorEME::requestMediaKeySystemAccess(Navigator& navigator, Document& d
     request->start();
 }
 
-static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, RefPtr<DeferredPromise>&& promise, Ref<Logger>&& logger, WTF::Logger::LogSiteIdentifier&& identifier)
+static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, RefPtr<DeferredPromise>&& promise, Ref<Logger>&& logger, Logger::LogSiteIdentifier&& identifier)
 {
     // 6.3. For each value in supportedConfigurations:
     if (!supportedConfigurations.isEmpty()) {

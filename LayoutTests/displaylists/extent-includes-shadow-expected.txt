@@ -7,6 +7,7 @@
   (change-flags 512)
   (shadow-blur 12.00)
   (shadow-offset width=10 height=20)
+  (shadow-color #000000)
   (shadows-use-legacy-radius 0))
 (fill-composited-rect
   (rect at (50,50) size 100x100)

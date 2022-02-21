@@ -33,6 +33,10 @@
 #include "WebAuthnProcess.h"
 #include <WebCore/AuthenticatorResponseData.h>
 
+#if ENABLE(IPC_TESTING_API)
+#include "IPCTesterMessages.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -67,19 +71,42 @@ void WebAuthnConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& c
     CRASH();
 }
 
+bool WebAuthnConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+#if ENABLE(IPC_TESTING_API)
+    if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
+        m_ipcTester.didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
+    return false;
+}
+
+bool WebAuthnConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+{
+#if ENABLE(IPC_TESTING_API)
+    if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
+        m_ipcTester.didReceiveSyncMessage(connection, decoder, replyEncoder);
+        return true;
+    }
+#endif
+    return false;
+}
+
+
 void WebAuthnConnectionToWebProcess::makeCredential(Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, processingUserGesture, String(), nullptr }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, processingUserGesture, String(), nullptr, std::nullopt }, WTFMove(handler));
 }
 
 void WebAuthnConnectionToWebProcess::getAssertion(Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, processingUserGesture, String(), nullptr }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), nullptr, WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, processingUserGesture, String(), nullptr, std::nullopt }, WTFMove(handler));
 }
 
 void WebAuthnConnectionToWebProcess::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
 {
-    auto callback = [handler = WTFMove(handler)] (Variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
+    auto callback = [handler = WTFMove(handler)] (std::variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
         ASSERT(RunLoop::isMain());
         WTF::switchOn(result, [&](const Ref<AuthenticatorResponse>& response) {
             handler(response->data(), response->attachment(), { });

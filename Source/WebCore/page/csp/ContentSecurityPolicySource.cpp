@@ -29,7 +29,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "SecurityOriginData.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -75,7 +75,9 @@ static bool wildcardMatches(StringView host, const String& hostWithWildcard)
 bool ContentSecurityPolicySource::hostMatches(const URL& url) const
 {
     auto host = url.host();
-    return equalIgnoringASCIICase(host, m_host) || (m_hostHasWildcard && wildcardMatches(host, m_host));
+    if (m_hostHasWildcard)
+        return wildcardMatches(host, m_host);
+    return equalIgnoringASCIICase(host, m_host);
 }
 
 bool ContentSecurityPolicySource::pathMatches(const URL& url) const
@@ -83,7 +85,7 @@ bool ContentSecurityPolicySource::pathMatches(const URL& url) const
     if (m_path.isEmpty())
         return true;
 
-    auto path = decodeURLEscapeSequences(url.path());
+    auto path = PAL::decodeURLEscapeSequences(url.path());
 
     if (m_path.endsWith("/"))
         return path.startsWith(m_path);

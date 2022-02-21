@@ -184,6 +184,14 @@ public:
     void setAppInitiatedOverrideValueForTesting(WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting) { m_appInitiatedOverrideValueForTesting = appInitiatedOverrideValueForTesting; }
 #endif
 
+#if HAVE(TOUCH_BAR)
+    bool requiresUserActionForEditingControlsManager() const { return m_requiresUserActionForEditingControlsManager; }
+    void setRequiresUserActionForEditingControlsManager(bool value) { m_requiresUserActionForEditingControlsManager = value; }
+#endif
+
+    bool isCaptivePortalModeExplicitlySet() const;
+    bool captivePortalModeEnabled() const;
+
 private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
@@ -238,6 +246,10 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     WebKit::AttributionOverrideTesting m_appInitiatedOverrideValueForTesting { WebKit::AttributionOverrideTesting::NoOverride };
+#endif
+
+#if HAVE(TOUCH_BAR)
+    bool m_requiresUserActionForEditingControlsManager { false };
 #endif
 };
 

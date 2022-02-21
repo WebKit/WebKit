@@ -26,11 +26,10 @@
 [
     ActiveDOMObject,
     Conditional=APPLE_PAY,
-    EnabledBySetting=ApplePay,
-    EnabledForContext,
+    EnabledBySetting=ApplePayEnabled,
     Exposed=Window
 ] interface ApplePaySession : EventTarget {
-    [CallWith=Document] constructor(unsigned long version, ApplePayPaymentRequest paymentRequest);
+    [CallWith=CurrentDocument] constructor(unsigned long version, ApplePayPaymentRequest paymentRequest);
 
     const unsigned short STATUS_SUCCESS = 0;
     const unsigned short STATUS_FAILURE = 1;
@@ -41,14 +40,14 @@
     const unsigned short STATUS_PIN_INCORRECT = 6;
     const unsigned short STATUS_PIN_LOCKOUT = 7;
 
-    [CallWith=Document] static boolean supportsVersion(unsigned long version);
-    [CallWith=Document] static boolean canMakePayments();
-    [CallWith=Document] static Promise<boolean> canMakePaymentsWithActiveCard(DOMString merchantIdentifier);
-    [CallWith=Document] static Promise<boolean> openPaymentSetup(DOMString merchantIdentifier);
+    [CallWith=CurrentDocument] static boolean supportsVersion(unsigned long version);
+    [CallWith=CurrentDocument] static boolean canMakePayments();
+    [CallWith=CurrentDocument] static Promise<boolean> canMakePaymentsWithActiveCard(DOMString merchantIdentifier);
+    [CallWith=CurrentDocument] static Promise<boolean> openPaymentSetup(DOMString merchantIdentifier);
 
-    [CallWith=Document] undefined begin();
+    [CallWith=CurrentDocument] undefined begin();
     undefined abort();
-    [CallWith=GlobalObject] undefined completeMerchantValidation(any merchantSession);
+    [CallWith=CurrentGlobalObject] undefined completeMerchantValidation(any merchantSession);
     undefined completeShippingMethodSelection(ApplePayShippingMethodUpdate update);
     undefined completeShippingContactSelection(ApplePayShippingContactUpdate update);
     undefined completePaymentMethodSelection(ApplePayPaymentMethodUpdate update);

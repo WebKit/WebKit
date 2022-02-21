@@ -44,17 +44,16 @@ public:
     {
     }
 
-    RefPtr<CSSCalcExpressionNode> parseCalc(CSSParserTokenRange, CSSValueID function);
+    RefPtr<CSSCalcExpressionNode> parseCalc(CSSParserTokenRange, CSSValueID function, bool allowsNegativePercentage);
     
 private:
     char operatorValue(const CSSParserToken&);
 
-    bool parseValue(CSSParserTokenRange&, RefPtr<CSSCalcExpressionNode>&);
-    bool parseValueTerm(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
+    bool parseValue(CSSParserTokenRange&, CSSValueID, RefPtr<CSSCalcExpressionNode>&);
     bool parseCalcFunction(CSSParserTokenRange&, CSSValueID, int depth, RefPtr<CSSCalcExpressionNode>&);
-    bool parseCalcSum(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
-    bool parseCalcProduct(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
-    bool parseCalcValue(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
+    bool parseCalcSum(CSSParserTokenRange&, CSSValueID, int depth, RefPtr<CSSCalcExpressionNode>&);
+    bool parseCalcProduct(CSSParserTokenRange&, CSSValueID, int depth, RefPtr<CSSCalcExpressionNode>&);
+    bool parseCalcValue(CSSParserTokenRange&, CSSValueID, int depth, RefPtr<CSSCalcExpressionNode>&);
 
     CalculationCategory m_destinationCategory;
     const CSSCalcSymbolTable& m_symbolTable;

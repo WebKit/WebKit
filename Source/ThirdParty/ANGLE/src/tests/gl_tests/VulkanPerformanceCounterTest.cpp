@@ -43,7 +43,10 @@ class VulkanPerformanceCounterTest : public ANGLETest
     {
         // Hack the angle!
         const gl::Context *context = static_cast<const gl::Context *>(getEGLWindow()->getContext());
-        return rx::GetImplAs<const rx::ContextVk>(context)->getPerfCounters();
+        rx::ContextVk *contextVk   = rx::GetImplAs<rx::ContextVk>(context);
+        // This will be implicitly called when using the extension.
+        contextVk->syncObjectPerfCounters();
+        return contextVk->getPerfCounters();
     }
 
     static constexpr GLsizei kInvalidateTestSize = 16;
@@ -444,10 +447,12 @@ TEST_P(VulkanPerformanceCounterTest_ES31, MultisampleResolveWithBlit)
     EXPECT_EQ(counters.resolveImageCommands, 0u);
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
-    EXPECT_PIXEL_NEAR(0, 0, 0, 0, 0, 255, 1.0);                      // Black
-    EXPECT_PIXEL_NEAR(kSize - 1, 1, 239, 0, 0, 255, 1.0);            // Red
-    EXPECT_PIXEL_NEAR(0, kSize - 1, 0, 239, 0, 255, 1.0);            // Green
-    EXPECT_PIXEL_NEAR(kSize - 1, kSize - 1, 239, 239, 0, 255, 1.0);  // Yellow
+    constexpr uint8_t kHalfPixelGradient = 256 / kSize / 2;
+    EXPECT_PIXEL_NEAR(0, 0, kHalfPixelGradient, kHalfPixelGradient, 0, 255, 1.0);
+    EXPECT_PIXEL_NEAR(kSize - 1, 0, 255 - kHalfPixelGradient, kHalfPixelGradient, 0, 255, 1.0);
+    EXPECT_PIXEL_NEAR(0, kSize - 1, kHalfPixelGradient, 255 - kHalfPixelGradient, 0, 255, 1.0);
+    EXPECT_PIXEL_NEAR(kSize - 1, kSize - 1, 255 - kHalfPixelGradient, 255 - kHalfPixelGradient, 0,
+                      255, 1.0);
 }
 
 // Ensures a read-only depth-stencil feedback loop works in a single RenderPass.
@@ -2083,6 +2088,8 @@ TEST_P(VulkanPerformanceCounterTest, RenderToTextureDepthStencilRenderbufferShou
 {
     // http://anglebug.com/5083
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
+    // http://anglebug.com/5380
+    ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsVulkan());
 
     // http://crbug.com/1134286
     ANGLE_SKIP_TEST_IF(IsWindows7() && IsNVIDIA() && IsVulkan());
@@ -2464,6 +2471,65 @@ TEST_P(VulkanPerformanceCounterTest, ReadOnlyDepthBufferLayout)
     EXPECT_PIXEL_COLOR_EQ(1 + kSize / 2, 1, GLColor::red);
     actualReadOnlyDepthStencilCount = counters.readOnlyDepthStencilRenderPasses;
     EXPECT_EQ(expectedReadOnlyDepthStencilCount, actualReadOnlyDepthStencilCount);
+}
+
+// Ensures depth/stencil is not loaded after storeOp=DONT_CARE due to optimization (as opposed to
+// invalidate)
+TEST_P(VulkanPerformanceCounterTest, RenderPassAfterRenderPassWithoutDepthStencilWrite)
+{
+    const rx::vk::PerfCounters &counters = hackANGLE();
+    rx::vk::PerfCounters expected;
+
+    // Expect rpCount+1, depth(Clears+0, Loads+0, Stores+0), stencil(Clears+0, Load+0, Stores+0)
+    setExpectedCountersForInvalidateTest(counters, 1, 0, 0, 0, 0, 0, 0, &expected);
+
+    constexpr GLsizei kSize = 64;
+
+    // Create FBO with color, depth and stencil.  Leave depth/stencil uninitialized.
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kSize, kSize);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              renderbuffer);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw to the FBO, without enabling depth/stencil.
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorUniformLocation =
+        glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorUniformLocation);
+    ASSERT_GL_NO_ERROR();
+
+    glViewport(0, 0, kSize, kSize);
+    glUniform4f(colorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 1.0f);
+
+    // Break the render pass and ensure no depth/stencil load/store was done.
+    swapBuffers();
+    compareDepthStencilCountersForInvalidateTest(counters, expected);
+
+    // Expect rpCount+1, depth(Clears+0, Loads+0, Stores+0), stencil(Clears+0, Load+0, Stores+0)
+    setExpectedCountersForInvalidateTest(counters, 1, 0, 0, 0, 0, 0, 0, &expected);
+
+    // Draw again with similar conditions, and again make sure no load/store is done.
+    glUniform4f(colorUniformLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 1.0f);
+
+    // Break the render pass and ensure no depth/stencil load/store was done.
+    swapBuffers();
+    compareDepthStencilCountersForInvalidateTest(counters, expected);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 // Ensures repeated clears of various kind (all attachments, some attachments, scissored, masked
@@ -2854,6 +2920,270 @@ TEST_P(VulkanPerformanceCounterTest, ScissorDoesNotBreakRenderPass)
                          kMaskedDrawY2 - kClearY2, GLColor::transparentBlack);
     EXPECT_PIXEL_RECT_EQ(kClearX2, kMaskedDrawY, kDrawX - kClearX2, kMaskedDrawHeight,
                          GLColor::transparentBlack);
+}
+
+// Tests that changing UBO bindings does not allocate new descriptor sets.
+TEST_P(VulkanPerformanceCounterTest, ChangingUBOsHitsDescriptorSetCache)
+{
+    // Set up two UBOs, one filled with "1" and the second with "2".
+    constexpr GLsizei kCount = 64;
+    std::vector<GLint> data1(kCount, 1);
+    std::vector<GLint> data2(kCount, 2);
+
+    GLBuffer ubo1;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo1);
+    glBufferData(GL_UNIFORM_BUFFER, kCount * sizeof(data1[0]), data1.data(), GL_STATIC_DRAW);
+
+    GLBuffer ubo2;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo2);
+    glBufferData(GL_UNIFORM_BUFFER, kCount * sizeof(data2[0]), data2.data(), GL_STATIC_DRAW);
+
+    // Set up a program that verifies the contents of uniform blocks.
+    constexpr char kVS[] = R"(#version 300 es
+precision mediump float;
+in vec4 position;
+void main()
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform buf {
+    int data[64/4];
+};
+uniform int checkValue;
+out vec4 outColor;
+
+void main()
+{
+    for (int i = 0; i < 64/4; ++i) {
+        if (data[i] != checkValue) {
+            outColor = vec4(1, 0, 0, 1);
+            return;
+        }
+    }
+    outColor = vec4(0, 1, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    GLint uniLoc = glGetUniformLocation(program, "checkValue");
+    ASSERT_NE(-1, uniLoc);
+
+    GLuint blockIndex = glGetUniformBlockIndex(program, "buf");
+    ASSERT_NE(blockIndex, GL_INVALID_INDEX);
+
+    glUniformBlockBinding(program, blockIndex, 0);
+    ASSERT_GL_NO_ERROR();
+
+    // Set up the rest of the GL state.
+    auto quadVerts = GetQuadVertices();
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, quadVerts.size() * sizeof(quadVerts[0]), quadVerts.data(),
+                 GL_STATIC_DRAW);
+
+    GLint posLoc = glGetAttribLocation(program, "position");
+    ASSERT_NE(-1, posLoc);
+
+    glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posLoc);
+
+    // Draw a few times with each UBO. Stream out one pixel for post-render verification.
+    constexpr int kIterations         = 5;
+    constexpr GLsizei kPackBufferSize = sizeof(GLColor) * kIterations * 2;
+
+    GLBuffer packBuffer;
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, packBuffer);
+    glBufferData(GL_PIXEL_PACK_BUFFER, kPackBufferSize, nullptr, GL_STREAM_READ);
+
+    GLsizei offset = 0;
+
+    uint32_t descriptorSetAllocationsBefore = 0;
+
+    for (int iteration = 0; iteration < kIterations; ++iteration)
+    {
+        glUniform1i(uniLoc, 1);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo1);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+                     reinterpret_cast<GLvoid *>(static_cast<uintptr_t>(offset)));
+        offset += sizeof(GLColor);
+        glUniform1i(uniLoc, 2);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo2);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+                     reinterpret_cast<GLvoid *>(static_cast<uintptr_t>(offset)));
+        offset += sizeof(GLColor);
+
+        // Capture the allocations counter after the first run.
+        if (iteration == 0)
+        {
+            descriptorSetAllocationsBefore = hackANGLE().descriptorSetAllocations;
+        }
+    }
+
+    // TODO(syoussefi): Validate.
+    ANGLE_UNUSED_VARIABLE(descriptorSetAllocationsBefore);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Verify correctness first.
+    std::vector<GLColor> expectedData(kIterations * 2, GLColor::green);
+    std::vector<GLColor> actualData(kIterations * 2, GLColor::black);
+
+    void *mapPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kPackBufferSize, GL_MAP_READ_BIT);
+    ASSERT_NE(nullptr, mapPtr);
+    memcpy(actualData.data(), mapPtr, kPackBufferSize);
+
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+
+    EXPECT_EQ(expectedData, actualData);
+
+    // Check for unnecessary descriptor set allocations.
+    uint32_t descriptorSetAllocationsAfter = hackANGLE().descriptorSetAllocations;
+    EXPECT_EQ(descriptorSetAllocationsAfter, 0u);
+}
+
+// Test that mapping a buffer that the GPU is using as read-only ghosts the buffer, rather than
+// waiting for the GPU access to complete before returning a pointer to the buffer.
+TEST_P(VulkanPerformanceCounterTest, MappingGpuReadOnlyBufferGhostsBuffer)
+{
+    const rx::vk::PerfCounters &counters = hackANGLE();
+
+    // 1. Create a buffer, map it, fill it with red
+    // 2. Draw with buffer (GPU read-only)
+    // 3. Map the same buffer and fill with white
+    //    - This should ghost the buffer, rather than ending the render pass.
+    // 4. Draw with buffer
+    // 5. Update the buffer with glBufferSubData()
+    // 6. Draw with the buffer
+    // The render pass should only be broken (counters.renderPasses == 0) due to the glReadPixels()
+    // to verify the draw at the end.
+
+    const std::array<GLColor, 4> kInitialData = {GLColor::red, GLColor::red, GLColor::red,
+                                                 GLColor::red};
+    const std::array<GLColor, 4> kUpdateData1 = {GLColor::white, GLColor::white, GLColor::white,
+                                                 GLColor::white};
+    const std::array<GLColor, 4> kUpdateData2 = {GLColor::blue, GLColor::blue, GLColor::blue,
+                                                 GLColor::blue};
+
+    GLBuffer buffer;
+    glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(kInitialData), kInitialData.data(), GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, buffer);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw
+    constexpr char kVerifyUBO[] = R"(#version 300 es
+precision mediump float;
+uniform block {
+    uvec4 data;
+} ubo;
+uniform uint expect;
+uniform vec4 successOutput;
+out vec4 colorOut;
+void main()
+{
+    if (all(equal(ubo.data, uvec4(expect))))
+        colorOut = successOutput;
+    else
+        colorOut = vec4(1.0, 0, 0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(verifyUbo, essl3_shaders::vs::Simple(), kVerifyUBO);
+    glUseProgram(verifyUbo);
+
+    GLint expectLoc = glGetUniformLocation(verifyUbo, "expect");
+    ASSERT_NE(-1, expectLoc);
+    GLint successLoc = glGetUniformLocation(verifyUbo, "successOutput");
+    ASSERT_NE(-1, successLoc);
+
+    glUniform1ui(expectLoc, kInitialData[0].asUint());
+    glUniform4f(successLoc, 0, 1, 0, 1);
+
+    drawQuad(verifyUbo, essl3_shaders::PositionAttrib(), 0.5);
+    ASSERT_GL_NO_ERROR();
+
+    // Map the buffer and update it.
+    // This should ghost the buffer and avoid breaking the render pass, since the GPU is only
+    // reading it.
+    void *mappedBuffer =
+        glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(kInitialData), GL_MAP_WRITE_BIT);
+    // 'renderPasses == 0' here means the render pass was broken and a new one was started.
+    ASSERT_EQ(counters.renderPasses, 1u);
+    ASSERT_EQ(counters.buffersGhosted, 1u);
+
+    memcpy(mappedBuffer, kUpdateData1.data(), sizeof(kInitialData));
+
+    glUnmapBuffer(GL_UNIFORM_BUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify that the buffer has the updated value.
+    glUniform1ui(expectLoc, kUpdateData1[0].asUint());
+    glUniform4f(successLoc, 0, 0, 1, 1);
+
+    drawQuad(verifyUbo, essl3_shaders::PositionAttrib(), 0.5);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_EQ(counters.renderPasses, 1u);
+
+    // Update the buffer with glBufferSubData
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(kUpdateData2), kUpdateData2.data());
+    ASSERT_GL_NO_ERROR();
+    ASSERT_EQ(counters.renderPasses, 1u);
+
+    // Verify that the buffer has the updated value.
+    glUniform1ui(expectLoc, kUpdateData2[0].asUint());
+    glUniform4f(successLoc, 0, 1, 1, 1);
+
+    drawQuad(verifyUbo, essl3_shaders::PositionAttrib(), 0.5);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_EQ(counters.renderPasses, 1u);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
+}
+
+// Verifies that BufferSubData calls don't trigger state updates for non-translated formats.
+TEST_P(VulkanPerformanceCounterTest, BufferSubDataShouldNotTriggerSyncState)
+{
+    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glUseProgram(testProgram);
+
+    GLint posLoc = glGetAttribLocation(testProgram, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLoc);
+
+    setupQuadVertexBuffer(0.5f, 1.0f);
+    glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(posLoc);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    EXPECT_EQ(hackANGLE().vertexArraySyncStateCalls, 1u);
+
+    const std::array<Vector3, 6> &quadVertices = GetQuadVertices();
+    size_t bufferSize                          = sizeof(quadVertices[0]) * quadVertices.size();
+
+    glBufferSubData(GL_ARRAY_BUFFER, 0, bufferSize, quadVertices.data());
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    EXPECT_EQ(hackANGLE().vertexArraySyncStateCalls, 1u);
+
+    // Verify the BufferData with a whole buffer size is treated like the SubData call.
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices[0]) * quadVertices.size(),
+                 quadVertices.data(), GL_STATIC_DRAW);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    EXPECT_EQ(hackANGLE().vertexArraySyncStateCalls, 1u);
 }
 
 ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest, ES3_VULKAN());

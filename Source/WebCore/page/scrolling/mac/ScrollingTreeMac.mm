@@ -28,16 +28,18 @@
 
 #import "Logging.h"
 #import "PlatformCALayer.h"
+#import "PlatformCALayerContentsDelayedReleaser.h"
 #import "ScrollingTreeFixedNode.h"
 #import "ScrollingTreeFrameHostingNode.h"
 #import "ScrollingTreeFrameScrollingNodeMac.h"
 #import "ScrollingTreeOverflowScrollProxyNode.h"
 #import "ScrollingTreeOverflowScrollingNodeMac.h"
 #import "ScrollingTreePositionedNode.h"
-#import "ScrollingTreeStickyNode.h"
+#import "ScrollingTreeStickyNodeCocoa.h"
 #import "WebCoreCALayerExtras.h"
 #import "WebLayer.h"
 #import "WheelEventTestMonitor.h"
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
@@ -69,7 +71,7 @@ Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeTy
     case ScrollingNodeType::Fixed:
         return ScrollingTreeFixedNode::create(*this, nodeID);
     case ScrollingNodeType::Sticky:
-        return ScrollingTreeStickyNode::create(*this, nodeID);
+        return ScrollingTreeStickyNodeCocoa::create(*this, nodeID);
     case ScrollingNodeType::Positioned:
         return ScrollingTreePositionedNode::create(*this, nodeID);
     }
@@ -238,6 +240,37 @@ void ScrollingTreeMac::lockLayersForHitTesting()
 void ScrollingTreeMac::unlockLayersForHitTesting()
 {
     m_layerHitTestMutex.unlock();
+}
+
+void ScrollingTreeMac::didCompleteRenderingUpdate()
+{
+    bool hasActiveCATransaction = [CATransaction currentState];
+    if (!hasActiveCATransaction)
+        renderingUpdateComplete();
+}
+
+void ScrollingTreeMac::didCompletePlatformRenderingUpdate()
+{
+    renderingUpdateComplete();
+}
+
+void ScrollingTreeMac::applyLayerPositionsInternal()
+{
+    if (ScrollingThread::isCurrentThread())
+        registerForPlatformRenderingUpdateCallback();
+
+    ThreadedScrollingTree::applyLayerPositionsInternal();
+}
+
+void ScrollingTreeMac::registerForPlatformRenderingUpdateCallback()
+{
+    [CATransaction addCommitHandler:[] {
+        PlatformCALayerContentsDelayedReleaser::singleton().scrollingThreadCommitWillStart();
+    } forPhase:kCATransactionPhasePreLayout];
+
+    [CATransaction addCommitHandler:[] {
+        PlatformCALayerContentsDelayedReleaser::singleton().scrollingThreadCommitDidEnd();
+    } forPhase:kCATransactionPhasePostCommit];
 }
 
 void ScrollingTreeMac::setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& monitor)

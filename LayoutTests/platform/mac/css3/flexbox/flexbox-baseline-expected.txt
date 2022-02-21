@@ -190,8 +190,8 @@ layer at (400,0) size 360x417
       RenderTableSection {TBODY} at (0,0) size 289x84
         RenderTableRow {TR} at (0,2) size 289x80
           RenderTableCell {TD} at (2,61) size 48x21 [r=0 c=0 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 46x19
-              text run at (1,2) width 46: "bottom"
+            RenderText {#text} at (1,0) size 46x20
+              text run at (1,1) width 46: "bottom"
           RenderTableCell {TD} at (51,39) size 55x20 [r=0 c=1 rs=1 cs=1]
             RenderText {#text} at (1,1) size 53x18
               text run at (1,1) width 53: "baseline"

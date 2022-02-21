@@ -23,10 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY_RECURRING_LINE_ITEM|APPLE_PAY_DEFERRED_LINE_ITEM,
-] enum ApplePayPaymentTiming {
-    "immediate",
-    "recurring",
-    "deferred"
+enum ApplePayPaymentTiming {
+    "immediate"
+#if defined(ENABLE_APPLE_PAY_RECURRING_LINE_ITEM) && ENABLE_APPLE_PAY_RECURRING_LINE_ITEM
+    , "recurring"
+#endif
+#if defined(ENABLE_APPLE_PAY_DEFERRED_LINE_ITEM) && ENABLE_APPLE_PAY_DEFERRED_LINE_ITEM
+    , "deferred"
+#endif
 };

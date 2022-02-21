@@ -98,12 +98,12 @@ static RetainPtr<NSError> createNSErrorFromResourceErrorBase(const ResourceError
     RetainPtr<NSMutableDictionary> userInfo = adoptNS([[NSMutableDictionary alloc] init]);
 
     if (!resourceError.localizedDescription().isEmpty())
-        [userInfo.get() setValue:resourceError.localizedDescription() forKey:NSLocalizedDescriptionKey];
+        [userInfo setValue:resourceError.localizedDescription() forKey:NSLocalizedDescriptionKey];
 
     if (!resourceError.failingURL().isEmpty()) {
-        [userInfo.get() setValue:(NSString *)resourceError.failingURL().string() forKey:@"NSErrorFailingURLStringKey"];
+        [userInfo setValue:(NSString *)resourceError.failingURL().string() forKey:@"NSErrorFailingURLStringKey"];
         if (NSURL *cocoaURL = (NSURL *)resourceError.failingURL())
-            [userInfo.get() setValue:cocoaURL forKey:@"NSErrorFailingURLKey"];
+            [userInfo setValue:cocoaURL forKey:@"NSErrorFailingURLKey"];
     }
 
     return adoptNS([[NSError alloc] initWithDomain:resourceError.domain() code:resourceError.errorCode() userInfo:userInfo.get()]);
@@ -136,14 +136,14 @@ const String& ResourceError::getCFErrorDomainCFNetwork() const
 
 void ResourceError::mapPlatformError()
 {
-    static_assert(NSURLErrorTimedOut == kCFURLErrorTimedOut, "NSURLErrorTimedOut needs to equal kCFURLErrorTimedOut");
-    static_assert(NSURLErrorCancelled == kCFURLErrorCancelled, "NSURLErrorCancelled needs to equal kCFURLErrorCancelled");
+    static_assert(static_cast<NSInteger>(NSURLErrorTimedOut) == static_cast<NSInteger>(kCFURLErrorTimedOut), "NSURLErrorTimedOut needs to equal kCFURLErrorTimedOut");
+    static_assert(static_cast<NSInteger>(NSURLErrorCancelled) == static_cast<NSInteger>(kCFURLErrorCancelled), "NSURLErrorCancelled needs to equal kCFURLErrorCancelled");
 
     if (!m_platformError)
         return;
 
-    auto domain = [m_platformError.get() domain];
-    auto errorCode = [m_platformError.get() code];
+    auto domain = [m_platformError domain];
+    auto errorCode = [m_platformError code];
 
     if ([domain isEqualToString:NSURLErrorDomain] || [domain isEqualToString:(__bridge NSString *)kCFErrorDomainCFNetwork])
         setType((errorCode == NSURLErrorTimedOut) ? Type::Timeout : (errorCode == NSURLErrorCancelled) ? Type::Cancellation : Type::General);
@@ -156,17 +156,17 @@ void ResourceError::platformLazyInit()
     if (m_dataIsUpToDate)
         return;
 
-    m_domain = [m_platformError.get() domain];
-    m_errorCode = [m_platformError.get() code];
+    m_domain = [m_platformError domain];
+    m_errorCode = [m_platformError code];
 
-    if (NSString* failingURLString = [[m_platformError.get() userInfo] valueForKey:@"NSErrorFailingURLStringKey"])
+    if (NSString* failingURLString = [[m_platformError userInfo] valueForKey:@"NSErrorFailingURLStringKey"])
         m_failingURL = URL(URL(), failingURLString);
     else
-        m_failingURL = URL((NSURL *)[[m_platformError.get() userInfo] valueForKey:@"NSErrorFailingURLKey"]);
+        m_failingURL = URL((NSURL *)[[m_platformError userInfo] valueForKey:@"NSErrorFailingURLKey"]);
     // Workaround for <rdar://problem/6554067>
     m_localizedDescription = m_failingURL.string();
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    m_localizedDescription = [m_platformError.get() _web_localizedDescription];
+    m_localizedDescription = [m_platformError _web_localizedDescription];
     END_BLOCK_OBJC_EXCEPTIONS
 
     m_dataIsUpToDate = true;

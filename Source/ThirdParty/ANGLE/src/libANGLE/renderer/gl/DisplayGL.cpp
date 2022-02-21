@@ -22,6 +22,51 @@
 namespace rx
 {
 
+// On Linux with the amdgpu driver, the renderer string looks like:
+//
+// AMD Radeon (TM) <GPU model> Graphics (<GPUgeneration>, DRM <DRMversion>, <kernelversion>,
+// LLVM <LLVMversion>) eg. AMD Radeon (TM) RX 460 Graphics (POLARIS11,
+// DRM 3.35.0, 5.4.0-65-generic, LLVM 11.0.0)
+//
+// We also want to handle the case without GPUGeneration:
+// AMD Radeon GPU model (DRM DRMversion, kernelversion, LLVM LLVMversion)
+//
+// Thanks to Jeff Gilbert of Mozilla for this example
+// https://phabricator.services.mozilla.com/D105636
+std::string SanitizeRendererString(std::string rendererString)
+{
+    size_t pos = rendererString.find(", DRM ");
+    if (pos != std::string::npos)
+    {
+        rendererString.resize(pos);
+        rendererString.push_back(')');
+        return rendererString;
+    }
+    pos = rendererString.find(" (DRM ");
+    if (pos != std::string::npos)
+    {
+        rendererString.resize(pos);
+        return rendererString;
+    }
+    return rendererString;
+}
+
+// OpenGL ES requires a prefix of "OpenGL ES" for the GL_VERSION string.
+// We can also add the prefix to desktop OpenGL for consistency.
+std::string SanitizeVersionString(std::string versionString, bool isES)
+{
+    if (versionString.find("OpenGL") == std::string::npos)
+    {
+        std::string prefix = "OpenGL ";
+        if (isES)
+        {
+            prefix += "ES ";
+        }
+        versionString = prefix + versionString;
+    }
+    return versionString;
+}
+
 DisplayGL::DisplayGL(const egl::DisplayState &state) : DisplayImpl(state) {}
 
 DisplayGL::~DisplayGL() {}
@@ -37,6 +82,15 @@ ImageImpl *DisplayGL::createImage(const egl::ImageState &state,
                                   const gl::Context *context,
                                   EGLenum target,
                                   const egl::AttributeMap &attribs)
+{
+    UNIMPLEMENTED();
+    return nullptr;
+}
+
+SurfaceImpl *DisplayGL::createPbufferFromClientBuffer(const egl::SurfaceState &state,
+                                                      EGLenum buftype,
+                                                      EGLClientBuffer clientBuffer,
+                                                      const egl::AttributeMap &attribs)
 {
     UNIMPLEMENTED();
     return nullptr;
@@ -91,7 +145,7 @@ void DisplayGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
     // Advertise robust resource initialization on all OpenGL backends for testing even though it is
     // not fully implemented.
-    outExtensions->robustResourceInitialization = true;
+    outExtensions->robustResourceInitializationANGLE = true;
 }
 
 egl::Error DisplayGL::makeCurrentSurfaceless(gl::Context *context)
@@ -99,4 +153,29 @@ egl::Error DisplayGL::makeCurrentSurfaceless(gl::Context *context)
     UNIMPLEMENTED();
     return egl::NoError();
 }
+
+std::string DisplayGL::getRendererDescription()
+{
+    std::string rendererString        = GetRendererString(getRenderer()->getFunctions());
+    const angle::FeaturesGL &features = getRenderer()->getFeatures();
+
+    if (features.sanitizeAmdGpuRendererString.enabled)
+    {
+        return SanitizeRendererString(rendererString);
+    }
+    return rendererString;
+}
+
+std::string DisplayGL::getVendorString()
+{
+    return GetVendorString(getRenderer()->getFunctions());
+}
+
+std::string DisplayGL::getVersionString()
+{
+    std::string versionString = GetVersionString(getRenderer()->getFunctions());
+    return SanitizeVersionString(versionString,
+                                 getRenderer()->getFunctions()->standard == STANDARD_GL_ES);
+}
+
 }  // namespace rx

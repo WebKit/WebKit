@@ -26,16 +26,15 @@
 [
     GenerateIsReachable=ReachableFromDOMWindow,
     JSCustomMarkFunction,
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface History {
     readonly attribute unsigned long length;
     attribute ScrollRestoration scrollRestoration;
     [Custom] readonly attribute any state;
 
-    [CallWith=Document] undefined back();
-    [CallWith=Document] undefined forward();
-    [CallWith=Document] undefined go(optional long delta = 0);
+    [CallWith=RelevantDocument] undefined back();
+    [CallWith=RelevantDocument] undefined forward();
+    [CallWith=RelevantDocument] undefined go(optional long delta = 0);
 
     // FIXME: title should not be nullable as per the HTML specification.
     undefined pushState(SerializedScriptValue data, DOMString? title, optional USVString? url = null);

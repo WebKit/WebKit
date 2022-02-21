@@ -29,6 +29,7 @@
 
 #include "HTMLMediaElement.h"
 #include "Supplementable.h"
+#include "VideoFrameRequestCallback.h"
 #include <memory>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ class HTMLImageLoader;
 class ImageBuffer;
 class RenderVideo;
 class PictureInPictureObserver;
+class VideoFrameRequestCallback;
 
 enum class PixelFormat : uint8_t;
 enum class RenderingMode : bool;
@@ -77,7 +79,8 @@ public:
     // Used by canvas to gain raw pixel access
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
-    RefPtr<NativeImage> nativeImageForCurrentTime();
+    WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForCurrentTime();
+    std::optional<DestinationColorSpace> colorSpace() const;
 
     WEBCORE_EXPORT bool shouldDisplayPosterImage() const;
 
@@ -109,6 +112,12 @@ public:
 
     RenderVideo* renderer() const;
 
+    bool shouldServiceRequestVideoFrameCallbacks() const { return !m_videoFrameRequests.isEmpty(); }
+    void serviceRequestVideoFrameCallbacks(ReducedResolutionSeconds);
+
+    unsigned requestVideoFrameCallback(Ref<VideoFrameRequestCallback>&&);
+    void cancelVideoFrameCallback(unsigned);
+
 private:
     HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
 
@@ -132,6 +141,8 @@ private:
 
     PlatformMediaSession::MediaType presentationType() const final { return PlatformMediaSession::MediaType::Video; }
 
+    void mediaPlayerEngineUpdated() final;
+
     std::unique_ptr<HTMLImageLoader> m_imageLoader;
 
     AtomString m_defaultPosterURL;
@@ -147,6 +158,22 @@ private:
 #if ENABLE(PICTURE_IN_PICTURE_API)
     PictureInPictureObserver* m_pictureInPictureObserver { nullptr };
 #endif
+
+    struct VideoFrameRequest {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        VideoFrameRequest(unsigned identifier, Ref<VideoFrameRequestCallback>&& callback)
+            : identifier(identifier)
+            , callback(WTFMove(callback))
+        {
+        }
+
+        unsigned identifier { 0 };
+        Ref<VideoFrameRequestCallback> callback;
+        bool cancelled { false };
+    };
+    Vector<UniqueRef<VideoFrameRequest>> m_videoFrameRequests;
+    Vector<UniqueRef<VideoFrameRequest>> m_servicedVideoFrameRequests;
+    unsigned m_nextVideoFrameRequestIndex { 0 };
 };
 
 } // namespace WebCore

@@ -8,8 +8,8 @@ info: |
 es5id: 15.3.4_A1
 description: Object.prototype.toString returns [object+[[Class]]+]
 ---*/
-
-if (Object.prototype.toString.call(Function.prototype) !== "[object Function]") {
-  throw new Test262Error('#2: The Function prototype object is itself a Function ' +
-    'object (its [[Class]] is "Function") (15.3.4)');
-}
+assert.sameValue(
+  Object.prototype.toString.call(Function.prototype),
+  "[object Function]",
+  'Object.prototype.toString.call(Function.prototype) must return "[object Function]"'
+);

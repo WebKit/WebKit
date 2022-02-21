@@ -41,13 +41,13 @@
 namespace WebCore {
 
 LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender)
-    : m_peerConnectionBackend(makeWeakPtr(&backend))
+    : m_peerConnectionBackend(backend)
     , m_rtcSender(WTFMove(rtcSender))
 {
 }
 
 LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender, Source&& source)
-    : m_peerConnectionBackend(makeWeakPtr(&backend))
+    : m_peerConnectionBackend(backend)
     , m_rtcSender(WTFMove(rtcSender))
     , m_source(WTFMove(source))
 {
@@ -59,21 +59,10 @@ LibWebRTCRtpSenderBackend::~LibWebRTCRtpSenderBackend()
     stopSource();
 }
 
-static bool operator==(const LibWebRTCRtpSenderBackend::Source& a, const LibWebRTCRtpSenderBackend::Source& b)
-{
-    return switchOn(a, [&b](const Ref<RealtimeOutgoingAudioSource>& source) {
-        return WTF::holds_alternative<Ref<RealtimeOutgoingAudioSource>>(b) && source.ptr() == WTF::get<Ref<RealtimeOutgoingAudioSource>>(b).ptr();
-    }, [&b](const Ref<RealtimeOutgoingVideoSource>& source) {
-        return WTF::holds_alternative<Ref<RealtimeOutgoingVideoSource>>(b) && source.ptr() == WTF::get<Ref<RealtimeOutgoingVideoSource>>(b).ptr();
-    }, [&b](std::nullptr_t) {
-        return WTF::holds_alternative<std::nullptr_t>(b);
-    });
-}
-
 void LibWebRTCRtpSenderBackend::startSource()
 {
     // We asynchronously start the sources to guarantee media goes through the transform if a transform is set when creating the track.
-    callOnMainThread([weakThis = makeWeakPtr(this), source = m_source]() mutable {
+    callOnMainThread([weakThis = WeakPtr { *this }, source = m_source]() mutable {
         if (!weakThis || weakThis->m_source != source)
             return;
         switchOn(source, [](Ref<RealtimeOutgoingAudioSource>& source) {
@@ -150,7 +139,7 @@ void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parame
 
     auto error = m_rtcSender->SetParameters(rtcParameters);
     if (!error.ok()) {
-        promise.reject(Exception { InvalidStateError, error.message() });
+        promise.reject(toException(error));
         return;
     }
     promise.resolve();
@@ -174,7 +163,7 @@ std::unique_ptr<RTCDtlsTransportBackend> LibWebRTCRtpSenderBackend::dtlsTranspor
     return backend ? makeUnique<LibWebRTCDtlsTransportBackend>(WTFMove(backend)) : nullptr;
 }
 
-void LibWebRTCRtpSenderBackend::setMediaStreamIds(const Vector<String>& streamIds)
+void LibWebRTCRtpSenderBackend::setMediaStreamIds(const FixedVector<String>& streamIds)
 {
     std::vector<std::string> ids;
     for (auto& id : streamIds)
@@ -184,7 +173,7 @@ void LibWebRTCRtpSenderBackend::setMediaStreamIds(const Vector<String>& streamId
 
 RealtimeOutgoingVideoSource* LibWebRTCRtpSenderBackend::videoSource()
 {
-    return switchOn(m_source,
+    return WTF::switchOn(m_source,
         [](Ref<RealtimeOutgoingVideoSource>& source) { return source.ptr(); },
         [](const auto&) -> RealtimeOutgoingVideoSource* { return nullptr; }
     );
@@ -192,7 +181,7 @@ RealtimeOutgoingVideoSource* LibWebRTCRtpSenderBackend::videoSource()
 
 bool LibWebRTCRtpSenderBackend::hasSource() const
 {
-    return switchOn(m_source,
+    return WTF::switchOn(m_source,
         [](const std::nullptr_t&) { return false; },
         [](const auto&) { return true; }
     );
@@ -201,16 +190,14 @@ bool LibWebRTCRtpSenderBackend::hasSource() const
 void LibWebRTCRtpSenderBackend::setSource(Source&& source)
 {
     stopSource();
-    m_source = WTFMove(source);
+    m_source = std::exchange(source, nullptr);
     startSource();
 }
 
 void LibWebRTCRtpSenderBackend::takeSource(LibWebRTCRtpSenderBackend& backend)
 {
     ASSERT(backend.hasSource());
-    stopSource();
-    m_source = WTFMove(backend.m_source);
-    backend.m_source = nullptr;
+    setSource(WTFMove(backend.m_source));
 }
 
 } // namespace WebCore

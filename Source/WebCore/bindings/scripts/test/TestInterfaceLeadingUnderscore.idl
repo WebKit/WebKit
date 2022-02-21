@@ -28,7 +28,6 @@
 
 // Identifiers with a leading underscore, which should be removed.
 [
-    ImplementationLacksVTable,
     Exposed=TestGlobalObject
 ] interface _TestInterfaceLeadingUnderscore {
    readonly attribute DOMString _readonly;

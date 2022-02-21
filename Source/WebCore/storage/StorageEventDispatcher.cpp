@@ -40,65 +40,65 @@
 
 namespace WebCore {
 
-void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOriginData& securityOrigin, Frame* sourceFrame)
+void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOrigin& securityOrigin, Frame* sourceFrame)
 {
     Page* page = sourceFrame->page();
     if (!page)
         return;
 
-    Vector<RefPtr<Frame>> frames;
+    Vector<Ref<Frame>> frames;
 
     // Send events only to our page.
     for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (!frame->document())
+        if (auto* window = frame->window(); !window || !window->hasEventListeners(eventNames().storageEvent))
             continue;
-        if (sourceFrame != frame && frame->document()->securityOrigin().equal(securityOrigin.securityOrigin().ptr()))
-            frames.append(frame);
+        if (sourceFrame != frame && frame->document()->securityOrigin().equal(&securityOrigin))
+            frames.append(*frame);
     }
 
     dispatchSessionStorageEventsToFrames(*page, frames, key, oldValue, newValue, sourceFrame->document()->url().string(), securityOrigin);
 }
 
-void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOriginData& securityOrigin, Frame* sourceFrame)
+void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOrigin& securityOrigin, Frame* sourceFrame)
 {
     Page* page = sourceFrame->page();
     if (!page)
         return;
 
-    Vector<RefPtr<Frame>> frames;
+    Vector<Ref<Frame>> frames;
 
     // Send events to every page.
     for (auto& pageInGroup : page->group().pages()) {
         for (auto* frame = &pageInGroup.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-            if (!frame->document())
+            if (auto* window = frame->window(); !window || !window->hasEventListeners(eventNames().storageEvent))
                 continue;
-            if (sourceFrame != frame && frame->document()->securityOrigin().equal(securityOrigin.securityOrigin().ptr()))
-                frames.append(frame);
+            if (sourceFrame != frame && frame->document()->securityOrigin().equal(&securityOrigin))
+                frames.append(*frame);
         }
     }
 
     dispatchLocalStorageEventsToFrames(page->group(), frames, key, oldValue, newValue, sourceFrame->document()->url().string(), securityOrigin);
 }
 
-void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOriginData& securityOrigin)
+void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, const Vector<Ref<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOrigin& securityOrigin)
 {
-    InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Session, securityOrigin.securityOrigin().ptr());
+    InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Session, securityOrigin);
 
     for (auto& frame : frames) {
-        auto document = makeRefPtr(frame->document());
+        RefPtr document = frame->document();
         auto result = document->domWindow()->sessionStorage();
         if (!result.hasException()) // https://html.spec.whatwg.org/multipage/webstorage.html#the-storage-event:event-storage
             document->queueTaskToDispatchEventOnWindow(TaskSource::DOMManipulation, StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, result.releaseReturnValue()));
     }
 }
 
-void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageGroup, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOriginData& securityOrigin)
+void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageGroup, const Vector<Ref<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOrigin& securityOrigin)
 {
     for (auto& page : pageGroup.pages())
-        InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Local, securityOrigin.securityOrigin().ptr());
+        InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Local, securityOrigin);
 
     for (auto& frame : frames) {
-        auto document = makeRefPtr(frame->document());
+        RefPtr document = frame->document();
         auto result = document->domWindow()->localStorage();
         if (!result.hasException()) // https://html.spec.whatwg.org/multipage/webstorage.html#the-storage-event:event-storage
             document->queueTaskToDispatchEventOnWindow(TaskSource::DOMManipulation, StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, result.releaseReturnValue()));

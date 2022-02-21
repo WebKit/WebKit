@@ -38,7 +38,7 @@ class SharedBuffer;
 
 namespace WebKit {
     
-class ShareableResource : public RefCounted<ShareableResource> {
+class ShareableResource : public ThreadSafeRefCounted<ShareableResource> {
 public:
 
     class Handle {
@@ -84,8 +84,8 @@ private:
 
     Ref<SharedMemory> m_sharedMemory;
 
-    unsigned m_offset;
-    unsigned m_size;    
+    const unsigned m_offset;
+    const unsigned m_size;
 };
 
 } // namespace WebKit

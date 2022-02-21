@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CompositeOperation.h"
 #include "IntPoint.h"
 #include "LayoutPoint.h"
 
@@ -33,32 +34,42 @@ namespace WebCore {
 struct BlendingContext {
     double progress { 0 };
     bool isDiscrete { false };
+    CompositeOperation compositeOperation { CompositeOperation::Replace };
 
-    BlendingContext(double progress = 0, bool isDiscrete = false)
+    BlendingContext(double progress = 0, bool isDiscrete = false, CompositeOperation compositeOperation = CompositeOperation::Replace)
         : progress(progress)
         , isDiscrete(isDiscrete)
+        , compositeOperation(compositeOperation)
     {
     }
 };
 
 inline int blend(int from, int to, const BlendingContext& context)
 {  
-    return static_cast<int>(lround(static_cast<double>(from) + static_cast<double>(to - from) * context.progress));
+    if (context.compositeOperation == CompositeOperation::Replace)
+        return static_cast<int>(roundTowardsPositiveInfinity(from + (static_cast<double>(to) - from) * context.progress));
+    return static_cast<int>(roundTowardsPositiveInfinity(static_cast<double>(from) + static_cast<double>(from) + static_cast<double>(to - from) * context.progress));
 }
 
 inline unsigned blend(unsigned from, unsigned to, const BlendingContext& context)
 {
-    return static_cast<unsigned>(lround(to > from ? static_cast<double>(from) + static_cast<double>(to - from) * context.progress : static_cast<double>(from) - static_cast<double>(from - to) * context.progress));
+    if (context.compositeOperation == CompositeOperation::Replace)
+        return static_cast<unsigned>(lround(from + (static_cast<double>(to) - from) * context.progress));
+    return static_cast<unsigned>(lround(from + from + (static_cast<double>(to) - from) * context.progress));
 }
 
 inline double blend(double from, double to, const BlendingContext& context)
 {  
-    return from + (to - from) * context.progress;
+    if (context.compositeOperation == CompositeOperation::Replace)
+        return from + (to - from) * context.progress;
+    return from + from + (to - from) * context.progress;
 }
 
 inline float blend(float from, float to, const BlendingContext& context)
 {  
-    return static_cast<float>(from + (to - from) * context.progress);
+    if (context.compositeOperation == CompositeOperation::Replace)
+        return static_cast<float>(from + (to - from) * context.progress);
+    return static_cast<float>(from + from + (to - from) * context.progress);
 }
 
 inline LayoutUnit blend(LayoutUnit from, LayoutUnit to, const BlendingContext& context)

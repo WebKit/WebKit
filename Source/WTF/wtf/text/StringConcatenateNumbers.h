@@ -128,6 +128,41 @@ private:
     const FormattedNumber& m_number;
 };
 
+class FormattedCSSNumber {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static FormattedCSSNumber create(double number)
+    {
+        FormattedCSSNumber numberFormatter;
+        numberToCSSString(number, numberFormatter.m_buffer);
+        numberFormatter.m_length = std::strlen(&numberFormatter.m_buffer[0]);
+        return numberFormatter;
+    } 
+
+    unsigned length() const { return m_length; }
+    const LChar* buffer() const { return reinterpret_cast<const LChar*>(&m_buffer[0]); }
+
+private:
+    NumberToCSSStringBuffer m_buffer;
+    unsigned m_length;
+};
+
+template<> class StringTypeAdapter<FormattedCSSNumber> {
+public:
+    StringTypeAdapter(const FormattedCSSNumber& number)
+        : m_number { number }
+    {
+    }
+
+    unsigned length() const { return m_number.length(); }
+    bool is8Bit() const { return true; }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, m_number.buffer(), m_number.length()); }
+
+private:
+    const FormattedCSSNumber& m_number;
+};
+
 }
 
 using WTF::FormattedNumber;
+using WTF::FormattedCSSNumber;

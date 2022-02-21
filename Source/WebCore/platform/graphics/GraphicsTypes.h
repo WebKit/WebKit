@@ -87,16 +87,16 @@ enum class InterpolationQuality : uint8_t {
     High
 };
 
-enum LineCap {
-    ButtCap,
-    RoundCap,
-    SquareCap
+enum class LineCap : uint8_t {
+    Butt,
+    Round,
+    Square
 };
 
-enum LineJoin {
-    MiterJoin,
-    RoundJoin,
-    BevelJoin
+enum class LineJoin : uint8_t {
+    Miter,
+    Round,
+    Bevel
 };
 
 enum HorizontalAlignment {
@@ -204,18 +204,18 @@ template<> struct EnumTraits<WebCore::InterpolationQuality> {
 template<> struct EnumTraits<WebCore::LineCap> {
     using values = EnumValues<
     WebCore::LineCap,
-    WebCore::LineCap::ButtCap,
-    WebCore::LineCap::RoundCap,
-    WebCore::LineCap::SquareCap
+    WebCore::LineCap::Butt,
+    WebCore::LineCap::Round,
+    WebCore::LineCap::Square
     >;
 };
 
 template<> struct EnumTraits<WebCore::LineJoin> {
     using values = EnumValues<
     WebCore::LineJoin,
-    WebCore::LineJoin::MiterJoin,
-    WebCore::LineJoin::RoundJoin,
-    WebCore::LineJoin::BevelJoin
+    WebCore::LineJoin::Miter,
+    WebCore::LineJoin::Round,
+    WebCore::LineJoin::Bevel
     >;
 };
 

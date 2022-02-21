@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ActivateFonts_h
-#define ActivateFonts_h
+#pragma once
 
 namespace WTR {
 
@@ -33,5 +32,3 @@ void installFakeHelvetica(WKStringRef configuration);
 void uninstallFakeHelvetica();
 
 } // namespace WTR
-
-#endif // ActivateFonts_h

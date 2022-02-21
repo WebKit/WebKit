@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2021 Igalia S.L. All rights reserved.
+ *  Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,12 +25,14 @@
 #include "JSGlobalObject.h"
 #include "JSObjectInlines.h"
 #include "ObjectPrototype.h"
+#include "TemporalInstant.h"
 #include "TemporalTimeZone.h"
 
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(TemporalNow);
 
+static JSC_DECLARE_HOST_FUNCTION(temporalNowFuncInstant);
 static JSC_DECLARE_HOST_FUNCTION(temporalNowFuncTimeZone);
 
 } // namespace JSC
@@ -40,6 +43,7 @@ namespace JSC {
 
 /* Source for TemporalNow.lut.h
 @begin temporalNowTable
+    instant         temporalNowFuncInstant      DontEnum|Function 0
     timeZone        temporalNowFuncTimeZone     DontEnum|Function 0
 @end
 */
@@ -53,7 +57,7 @@ TemporalNow::TemporalNow(VM& vm, Structure* structure)
 
 TemporalNow* TemporalNow::create(VM& vm, Structure* structure)
 {
-    TemporalNow* object = new (NotNull, allocateCell<TemporalNow>(vm.heap)) TemporalNow(vm, structure);
+    TemporalNow* object = new (NotNull, allocateCell<TemporalNow>(vm)) TemporalNow(vm, structure);
     object->finishCreation(vm);
     return object;
 }
@@ -70,6 +74,12 @@ void TemporalNow::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.now.instant
+JSC_DEFINE_HOST_FUNCTION(temporalNowFuncInstant, (JSGlobalObject* globalObject, CallFrame*))
+{
+    return JSValue::encode(TemporalInstant::tryCreateIfValid(globalObject, ISO8601::ExactTime::now()));
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal.now.timezone
 // https://tc39.es/proposal-temporal/#sec-temporal-systemtimezone
 JSC_DEFINE_HOST_FUNCTION(temporalNowFuncTimeZone, (JSGlobalObject* globalObject, CallFrame*))
@@ -77,7 +87,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalNowFuncTimeZone, (JSGlobalObject* globalObject,
     VM& vm = globalObject->vm();
 
     String timeZoneString = vm.dateCache.defaultTimeZone();
-    std::optional<TimeZoneID> identifier = TemporalTimeZone::idForTimeZoneName(timeZoneString);
+    std::optional<TimeZoneID> identifier = ISO8601::parseTimeZoneName(timeZoneString);
     if (!identifier)
         return JSValue::encode(TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), 0));
     return JSValue::encode(TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), identifier.value()));

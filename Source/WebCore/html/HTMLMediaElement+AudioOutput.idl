@@ -26,7 +26,7 @@
 
 [
     Conditional=VIDEO&MEDIA_STREAM,
-    EnabledBySetting=ExposeSpeakers&PerElementSpeakerSelection
+    EnabledBySetting=ExposeSpeakersEnabled&PerElementSpeakerSelectionEnabled
 ] partial interface HTMLMediaElement {
     [ImplementedAs=audioOutputHashedDeviceId] readonly attribute DOMString sinkId;
     [ImplementedAs=setAudioOutputDevice] Promise<undefined> setSinkId(DOMString deviceId);

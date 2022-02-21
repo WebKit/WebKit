@@ -49,12 +49,9 @@ struct WebsiteDataRecord {
 
     void add(WebsiteDataType, const WebCore::SecurityOriginData&);
     void addCookieHostName(const String& hostName);
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    void addPluginDataHostName(const String& hostName);
-#endif
     void addHSTSCacheHostname(const String& hostName);
     void addAlternativeServicesHostname(const String& hostName);
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     void addResourceLoadStatisticsRegistrableDomain(const WebCore::RegistrableDomain&);
 #endif
 
@@ -74,12 +71,9 @@ struct WebsiteDataRecord {
 
     HashSet<WebCore::SecurityOriginData> origins;
     HashSet<String> cookieHostNames;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    HashSet<String> pluginDataHostNames;
-#endif
     HashSet<String> HSTSCacheHostNames;
     HashSet<String> alternativeServicesHostNames;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     HashSet<WebCore::RegistrableDomain> resourceLoadStatisticsRegistrableDomains;
 #endif
 };

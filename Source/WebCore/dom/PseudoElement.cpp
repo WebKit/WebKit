@@ -29,7 +29,6 @@
 #include "PseudoElement.h"
 
 #include "ContentData.h"
-#include "DocumentTimeline.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffectStack.h"
 #include "RenderElement.h"

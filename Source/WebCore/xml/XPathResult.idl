@@ -19,7 +19,6 @@
 
 [
     ExportToWrappedFunction,
-    ImplementationLacksVTable,
     JSCustomMarkFunction,
     Exposed=Window
 ] interface XPathResult {

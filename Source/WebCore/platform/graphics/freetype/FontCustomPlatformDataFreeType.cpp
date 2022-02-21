@@ -24,6 +24,7 @@
 
 #include "CairoUtilities.h"
 #include "FontCacheFreeType.h"
+#include "FontCreationContext.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "SharedBuffer.h"
@@ -37,12 +38,12 @@ namespace WebCore {
 
 static void releaseCustomFontData(void* data)
 {
-    static_cast<SharedBuffer*>(data)->deref();
+    static_cast<FragmentedSharedBuffer*>(data)->deref();
 }
 
 static cairo_user_data_key_t freeTypeFaceKey;
 
-FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, SharedBuffer& buffer)
+FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, FragmentedSharedBuffer& buffer)
     : m_fontFace(adoptRef(cairo_ft_font_face_create_for_ft_face(freeTypeFace, FT_LOAD_DEFAULT)))
 {
     buffer.ref(); // This is balanced by the buffer->deref() in releaseCustomFontData.
@@ -73,18 +74,20 @@ static RefPtr<FcPattern> defaultFontconfigOptions()
     return adoptRef(FcPatternDuplicate(pattern));
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& description, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, FontSelectionSpecifiedCapabilities)
+FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& description, bool bold, bool italic, const FontCreationContext& fontCreationContext)
 {
     auto* freeTypeFace = static_cast<FT_Face>(cairo_font_face_get_user_data(m_fontFace.get(), &freeTypeFaceKey));
     ASSERT(freeTypeFace);
     RefPtr<FcPattern> pattern = defaultFontconfigOptions();
     FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(freeTypeFace->family_name));
 
-    for (auto& fontFaceFeature : fontFaceFeatures) {
-        if (fontFaceFeature.enabled()) {
-            const auto& tag = fontFaceFeature.tag();
-            const char buffer[] = { tag[0], tag[1], tag[2], tag[3], '\0' };
-            FcPatternAddString(pattern.get(), FC_FONT_FEATURES, reinterpret_cast<const FcChar8*>(buffer));
+    if (fontCreationContext.fontFaceFeatures()) {
+        for (auto& fontFaceFeature : *fontCreationContext.fontFaceFeatures()) {
+            if (fontFaceFeature.enabled()) {
+                const auto& tag = fontFaceFeature.tag();
+                const char buffer[] = { tag[0], tag[1], tag[2], tag[3], '\0' };
+                FcPatternAddString(pattern.get(), FC_FONT_FEATURES, reinterpret_cast<const FcChar8*>(buffer));
+            }
         }
     }
 

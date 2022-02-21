@@ -42,7 +42,8 @@ public:
         static_assert(sizeof...(Ts) == RowCount * ColumnCount);
     }
 
-    constexpr ColorComponents<float, 4> transformedColorComponents(const ColorComponents<float, 4>&) const;
+    template<size_t NumberOfComponents>
+    constexpr ColorComponents<float, NumberOfComponents> transformedColorComponents(const ColorComponents<float, NumberOfComponents>&) const;
 
     constexpr float at(size_t row, size_t column) const
     {
@@ -120,24 +121,25 @@ inline ColorMatrix<3, 3> hueRotateColorMatrix(float angleInDegrees)
 }
 
 template<size_t ColumnCount, size_t RowCount>
-constexpr ColorComponents<float, 4> ColorMatrix<ColumnCount, RowCount>::transformedColorComponents(const ColorComponents<float, 4>& inputVector) const
+template<size_t NumberOfComponents>
+constexpr auto ColorMatrix<ColumnCount, RowCount>::transformedColorComponents(const ColorComponents<float, NumberOfComponents>& inputVector) const -> ColorComponents<float, NumberOfComponents>
 {
-    static_assert(ColorComponents<float, 4>::Size >= RowCount);
+    static_assert(ColorComponents<float, NumberOfComponents>::Size >= RowCount);
     
-    ColorComponents<float, 4> result;
+    ColorComponents<float, NumberOfComponents> result;
     for (size_t row = 0; row < RowCount; ++row) {
-        if constexpr (ColumnCount <= ColorComponents<float, 4>::Size) {
+        if constexpr (ColumnCount <= ColorComponents<float, NumberOfComponents>::Size) {
             for (size_t column = 0; column < ColumnCount; ++column)
                 result[row] += at(row, column) * inputVector[column];
-        } else if constexpr (ColumnCount > ColorComponents<float, 4>::Size) {
-            for (size_t column = 0; column < ColorComponents<float, 4>::Size; ++column)
+        } else if constexpr (ColumnCount > ColorComponents<float, NumberOfComponents>::Size) {
+            for (size_t column = 0; column < ColorComponents<float, NumberOfComponents>::Size; ++column)
                 result[row] += at(row, column) * inputVector[column];
-            for (size_t additionalColumn = ColorComponents<float, 4>::Size; additionalColumn < ColumnCount; ++additionalColumn)
+            for (size_t additionalColumn = ColorComponents<float, NumberOfComponents>::Size; additionalColumn < ColumnCount; ++additionalColumn)
                 result[row] += at(row, additionalColumn);
         }
     }
-    if constexpr (ColorComponents<float, 4>::Size > RowCount) {
-        for (size_t additionalRow = RowCount; additionalRow < ColorComponents<float, 4>::Size; ++additionalRow)
+    if constexpr (ColorComponents<float, NumberOfComponents>::Size > RowCount) {
+        for (size_t additionalRow = RowCount; additionalRow < ColorComponents<float, NumberOfComponents>::Size; ++additionalRow)
             result[additionalRow] = inputVector[additionalRow];
     }
 

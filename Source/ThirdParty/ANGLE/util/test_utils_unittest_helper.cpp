@@ -44,6 +44,7 @@ int main(int argc, char **argv)
     if (env == "")
     {
         printf("%s", kRunAppTestStdout);
+        fflush(stdout);
         fprintf(stderr, "%s", kRunAppTestStderr);
     }
     else

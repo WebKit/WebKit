@@ -22,6 +22,7 @@
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
 #include <WebCore/SoupVersioning.h>
+#include <libsoup/soup.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <wtf/HashMap.h>
@@ -95,16 +96,18 @@ public:
         {
         }
 
-        URISchemeHandler(const char* reply, int replyLength, const char* mimeType)
+        URISchemeHandler(const char* reply, int replyLength, const char* mimeType, int statusCode = 200)
             : reply(reply)
             , replyLength(replyLength)
             , mimeType(mimeType)
+            , statusCode(statusCode)
         {
         }
 
         CString reply;
         int replyLength;
         CString mimeType;
+        int statusCode;
     };
 
     static void uriSchemeRequestCallback(WebKitURISchemeRequest* request, gpointer userData)
@@ -113,11 +116,25 @@ public:
         test->m_uriSchemeRequest = request;
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
 
-        g_assert_true(webkit_uri_scheme_request_get_web_view(request) == test->m_webView);
+        if (test->m_uriSchemeRequestCallbackUsesTestWebView)
+            g_assert_true(webkit_uri_scheme_request_get_web_view(request) == test->m_webView);
 
         const char* scheme = webkit_uri_scheme_request_get_scheme(request);
         g_assert_nonnull(scheme);
         g_assert_true(test->m_handlersMap.contains(String::fromUTF8(scheme)));
+
+        const char* method = webkit_uri_scheme_request_get_http_method(request);
+        g_assert_nonnull(method);
+        if (!g_strcmp0(scheme, "post"))
+            g_assert_cmpstr(method, ==, "POST");
+        else
+            g_assert_cmpstr(method, ==, "GET");
+
+        if (!g_strcmp0(scheme, "headers")) {
+            auto* headers = webkit_uri_scheme_request_get_http_headers(request);
+            g_assert_cmpstr(soup_message_headers_get_one(headers, "x-test"), ==, "A");
+            g_assert_cmpstr(soup_message_headers_get_list(headers, "x-test2"), ==, "1, 2, 3, 4");
+        }
 
         const URISchemeHandler& handler = test->m_handlersMap.get(String::fromUTF8(scheme));
 
@@ -153,17 +170,27 @@ public:
         else if (!handler.reply.isNull())
             g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), handler.reply.data(), handler.reply.length(), 0);
 
-        webkit_uri_scheme_request_finish(request, inputStream.get(), handler.replyLength, handler.mimeType.data());
+        auto response = adoptGRef(webkit_uri_scheme_response_new(inputStream.get(), handler.replyLength));
+        webkit_uri_scheme_response_set_status(response.get(), handler.statusCode, nullptr);
+        webkit_uri_scheme_response_set_content_type(response.get(), handler.mimeType.data());
+        if (!g_strcmp0(scheme, "headersresp")) {
+            auto* headers = soup_message_headers_new(SOUP_MESSAGE_HEADERS_RESPONSE);
+            soup_message_headers_append(headers, "x-test", "test_value");
+            webkit_uri_scheme_response_set_http_headers(response.get(), headers);
+        }
+        webkit_uri_scheme_request_finish_with_response(request, response.get());
     }
 
-    void registerURISchemeHandler(const char* scheme, const char* reply, int replyLength, const char* mimeType)
+    void registerURISchemeHandler(const char* scheme, const char* reply, int replyLength, const char* mimeType, int statusCode = 200)
     {
-        m_handlersMap.set(String::fromUTF8(scheme), URISchemeHandler(reply, replyLength, mimeType));
+        m_handlersMap.set(String::fromUTF8(scheme), URISchemeHandler(reply, replyLength, mimeType, statusCode));
         webkit_web_context_register_uri_scheme(m_webContext.get(), scheme, uriSchemeRequestCallback, this, 0);
     }
 
     GRefPtr<WebKitURISchemeRequest> m_uriSchemeRequest;
     HashMap<String, URISchemeHandler> m_handlersMap;
+    bool m_uriSchemeRequestCallbackUsesTestWebView { true };
+    int m_loadCounter { 0 };
 };
 
 String generateHTMLContent(unsigned contentLength)
@@ -191,6 +218,21 @@ String generateHTMLContent(unsigned contentLength)
     builder.append("</body></html>");
 
     return builder.toString();
+}
+
+static GRefPtr<WebKitWebView> createTestWebViewWithWebContext(WebKitWebContext* context)
+{
+    WebKitWebView* view = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
+        "web-context", context,
+        nullptr));
+
+#if PLATFORM(GTK)
+    g_object_ref_sink(view);
+#endif
+    return adoptGRef(view);
 }
 
 static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
@@ -278,6 +320,85 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
     g_assert_true(test->m_loadFailed);
     g_assert_error(test->m_error.get(), G_IO_ERROR, G_IO_ERROR_CLOSED);
+
+    test->registerURISchemeHandler("notfound", kBarHTML, strlen(kBarHTML), "text/html", 404);
+    test->m_loadEvents.clear();
+    test->loadURI("notfound:blank");
+    test->waitUntilLoadFinished();
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+
+    test->registerURISchemeHandler("nocontent", nullptr, 0, "application/json", 204);
+    test->m_loadEvents.clear();
+    test->loadURI("nocontent:blank");
+    test->waitUntilLoadFinished();
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
+
+    static const char* formHTML = "<html><body><form id=\"test-form\" method=\"POST\" action=\"post:data\"></form></body></html>";
+    test->registerURISchemeHandler("post", nullptr, 0, "application/json", 204);
+    test->m_loadEvents.clear();
+    test->loadHtml(formHTML, "post:form");
+    test->waitUntilLoadFinished();
+    GUniqueOutPtr<GError> postError;
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('test-form').submit()", &postError.outPtr());
+    g_assert_no_error(postError.get());
+    test->waitUntilLoadFinished();
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
+
+    static const char* headersHTML = "<html><body><script>let hdrs = new Headers({'X-Test': 'A', 'X-Test2': '1, 2, 3'});hdrs.append('X-Test2', '4');fetch('headers:data', {headers: hdrs})</script></body></html>";
+    test->registerURISchemeHandler("headers", nullptr, 0, "application/json", 204);
+    test->m_loadEvents.clear();
+    test->loadHtml(headersHTML, "headers:form");
+    test->waitUntilLoadFinished();
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
+
+    static const char* respHTML = "<html><head><script>fetch('headersresp:data').then((d)=>{if(d.headers.get('X-Test') !== 'test_value') window.hasError=1}).catch((e)=> window.hasError=1)</script></head></html>";
+    test->registerURISchemeHandler("headersresp", nullptr, 0, "application/json", 204);
+    test->m_loadEvents.clear();
+    test->loadHtml(respHTML, "headersresp:form");
+    test->waitUntilLoadFinished();
+    GUniqueOutPtr<GError> respError;
+    test->runJavaScriptAndWaitUntilFinished("if(window.hasError) throw 'Headers are missing or invalid'", &respError.outPtr());
+    g_assert_no_error(respError.get());
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
+
+    // Torture test time: make sure it still works if we issue a bunch of different requests all at
+    // once. Each request should finish and return exactly the same data.
+    int numIterations = 25;
+    GRefPtr<WebKitWebView> views[numIterations];
+    test->m_uriSchemeRequestCallbackUsesTestWebView = false;
+    for (int i = 0; i < numIterations; i++) {
+        views[i] = createTestWebViewWithWebContext(test->m_webContext.get());
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(views[i].get()));
+        webkit_web_view_load_uri(views[i].get(), "foo:blank");
+        g_signal_connect(views[i].get(), "load-changed", G_CALLBACK(+[] (WebKitWebView* webView, WebKitLoadEvent loadEvent, gpointer userData) {
+            auto* test = static_cast<URISchemeTest*>(userData);
+            if (loadEvent != WEBKIT_LOAD_FINISHED)
+                return;
+            test->m_loadCounter--;
+            if (!test->m_loadCounter)
+                g_main_loop_quit(test->m_mainLoop);
+        }), test);
+    }
+    test->m_loadCounter = numIterations;
+    g_main_loop_run(test->m_mainLoop);
+
+    for (int i = 0; i < numIterations; i++) {
+        WebKitWebResource* resource = webkit_web_view_get_main_resource(views[i].get());
+        g_assert_nonnull(resource);
+        webkit_web_resource_get_data(resource, nullptr, +[] (GObject* object, GAsyncResult* result, gpointer userData) {
+            auto* test = static_cast<URISchemeTest*>(userData);
+            gsize dataSize;
+            unsigned char* data = webkit_web_resource_get_data_finish(WEBKIT_WEB_RESOURCE(object), result, &dataSize, nullptr);
+            g_assert_cmpint(strncmp(reinterpret_cast<char*>(data), kBarHTML, dataSize), ==, 0);
+            g_main_loop_quit(test->m_mainLoop);
+        }, test);
+        g_main_loop_run(test->m_mainLoop);
+    }
+    test->m_uriSchemeRequestCallbackUsesTestWebView = true;
 }
 
 #if PLATFORM(GTK)

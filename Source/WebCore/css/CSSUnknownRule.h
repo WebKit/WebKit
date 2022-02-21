@@ -38,7 +38,7 @@ public:
     void reattach(StyleRuleBase&) final { }
 
 private:
-    CSSRule::Type type() const final { return UNKNOWN_RULE; }
+    StyleRuleType styleRuleType() const final { return StyleRuleType::Unknown; }
 };
 
 } // namespace WebCore

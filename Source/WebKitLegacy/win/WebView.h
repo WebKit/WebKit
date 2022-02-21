@@ -77,13 +77,6 @@ WebView* kit(WebCore::Page*);
 WebCore::Page* core(IWebView*);
 
 interface IDropTargetHelper;
-#if USE(DIRECT2D)
-interface ID2D1Bitmap;
-interface ID2D1BitmapRenderTarget;
-interface ID2D1GdiInteropRenderTarget;
-interface ID2D1HwndRenderTarget;
-interface ID2D1RenderTarget;
-#endif
 
 class WebView final
     : public IWebView
@@ -427,7 +420,6 @@ public:
     bool keyDown(WPARAM, LPARAM, bool systemKeyDown = false);
     bool keyUp(WPARAM, LPARAM, bool systemKeyDown = false);
     bool keyPress(WPARAM, LPARAM, bool systemKeyDown = false);
-    void paintWithDirect2D();
     void paint(HDC, LPARAM);
     void paintIntoWindow(HDC bitmapDC, HDC windowDC, const WebCore::IntRect& dirtyRect);
     bool ensureBackingStore();
@@ -438,8 +430,6 @@ public:
     void repaint(const WebCore::IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false);
     void frameRect(RECT* rect);
     void closeWindow();
-    void closeWindowSoon();
-    void closeWindowTimerFired();
     bool didClose() const { return m_didClose; }
 
     bool transparent() const { return m_transparent; }
@@ -628,12 +618,6 @@ protected:
 
     HMENU m_currentContextMenu { nullptr };
     RefPtr<WebCore::SharedGDIObject<HBITMAP>> m_backingStoreBitmap;
-#if USE(DIRECT2D)
-    COMPtr<ID2D1HwndRenderTarget> m_renderTarget;
-    COMPtr<ID2D1Bitmap> m_backingStoreD2DBitmap;
-    COMPtr<ID2D1BitmapRenderTarget> m_backingStoreRenderTarget;
-    COMPtr<ID2D1GdiInteropRenderTarget> m_backingStoreGdiInterop;
-#endif
     SIZE m_backingStoreSize;
     RefPtr<WebCore::SharedGDIObject<HRGN>> m_backingStoreDirtyRegion;
 
@@ -680,7 +664,6 @@ protected:
 
     static bool s_allowSiteSpecificHacks;
 
-    WebCore::SuspendableTimerBase* m_closeWindowTimer { nullptr };
     std::unique_ptr<TRACKMOUSEEVENT> m_mouseOutTracker;
 
     HWND m_topLevelParent { nullptr };

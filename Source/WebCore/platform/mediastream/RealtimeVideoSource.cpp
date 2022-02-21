@@ -30,14 +30,19 @@
 
 #if PLATFORM(COCOA)
 #include "ImageTransferSessionVT.h"
+#include "MediaSampleAVFObjC.h"
 #endif
 
 namespace WebCore {
 
-RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& source)
+RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& source, bool shouldUseIOSurface)
     : RealtimeMediaSource(Type::Video, String { source->name() }, String { source->persistentID() }, String { source->deviceIDHashSalt() })
     , m_source(WTFMove(source))
+#if PLATFORM(COCOA)
+    , m_shouldUseIOSurface(shouldUseIOSurface)
+#endif
 {
+    UNUSED_PARAM(shouldUseIOSurface);
     m_source->addObserver(*this);
     m_currentSettings = m_source->settings();
     setSize(m_source->size());
@@ -52,7 +57,7 @@ RealtimeVideoSource::~RealtimeVideoSource()
 
 void RealtimeVideoSource::whenReady(CompletionHandler<void(String)>&& callback)
 {
-    m_source->whenReady([this, protectedThis = makeRef(*this), callback = WTFMove(callback)](auto message) mutable {
+    m_source->whenReady([this, protectedThis = Ref { *this }, callback = WTFMove(callback)](auto message) mutable {
         setName(String { m_source->name() });
         m_currentSettings = m_source->settings();
         setSize(m_source->size());
@@ -165,8 +170,16 @@ void RealtimeVideoSource::sourceStopped()
 #if PLATFORM(COCOA)
 RefPtr<MediaSample> RealtimeVideoSource::adaptVideoSample(MediaSample& sample)
 {
+    if (sample.platformSample().type != PlatformSample::CMSampleBufferType) {
+        // FIXME: Support more efficiently downsampling of remote video frames by downsampling in GPUProcess.
+        auto newSample = MediaSampleAVFObjC::createImageSample(sample.pixelBuffer(), sample.videoRotation(), sample.videoMirrored(), sample.presentationTime(), { });
+        if (!newSample)
+            return nullptr;
+        return adaptVideoSample(*newSample);
+    }
+    ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
     if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != sample.videoPixelFormat())
-        m_imageTransferSession = ImageTransferSessionVT::create(sample.videoPixelFormat());
+        m_imageTransferSession = ImageTransferSessionVT::create(sample.videoPixelFormat(), m_shouldUseIOSurface);
 
     ASSERT(m_imageTransferSession);
     if (!m_imageTransferSession)
@@ -179,7 +192,7 @@ RefPtr<MediaSample> RealtimeVideoSource::adaptVideoSample(MediaSample& sample)
 }
 #endif
 
-void RealtimeVideoSource::videoSampleAvailable(MediaSample& sample)
+void RealtimeVideoSource::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata)
 {
     if (m_frameDecimation > 1 && ++m_frameDecimationCounter % m_frameDecimation)
         return;
@@ -193,13 +206,13 @@ void RealtimeVideoSource::videoSampleAvailable(MediaSample& sample)
     auto size = this->size();
     if (!size.isEmpty() && size != expandedIntSize(sample.presentationSize())) {
         if (auto mediaSample = adaptVideoSample(sample)) {
-            RealtimeMediaSource::videoSampleAvailable(*mediaSample);
+            RealtimeMediaSource::videoSampleAvailable(*mediaSample, metadata);
             return;
         }
     }
 #endif
 
-    RealtimeMediaSource::videoSampleAvailable(sample);
+    RealtimeMediaSource::videoSampleAvailable(sample, metadata);
 }
 
 Ref<RealtimeMediaSource> RealtimeVideoSource::clone()

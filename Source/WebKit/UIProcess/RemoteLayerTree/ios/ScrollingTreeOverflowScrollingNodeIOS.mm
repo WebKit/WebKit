@@ -67,15 +67,28 @@ void ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren(const WebC
 
 void ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(stateNode);
-
     const auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
     m_scrollingNodeDelegate->commitStateAfterChildren(scrollingStateNode);
+
+    ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(stateNode);
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::repositionScrollingLayers()
 {
     m_scrollingNodeDelegate->repositionScrollingLayers();
+}
+
+bool ScrollingTreeOverflowScrollingNodeIOS::startAnimatedScrollToPosition(FloatPoint destinationPosition)
+{
+    bool started = m_scrollingNodeDelegate->startAnimatedScrollToPosition(destinationPosition);
+    if (started)
+        willStartAnimatedScroll();
+    return started;
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::stopAnimatedScroll()
+{
+    m_scrollingNodeDelegate->stopAnimatedScroll();
 }
 
 } // namespace WebKit

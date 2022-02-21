@@ -1,0 +1,30 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+    <head>
+        <style>
+            html, body {
+                margin: 0px;
+            }
+            ::-webkit-scrollbar {
+                display: none;
+            }
+            .sticky {
+                position: sticky;
+                top: 0px;
+            }
+            .parent {
+                height: 150vh;
+            }
+            .child {
+                background: green;
+                height: 4vh;
+                width: 4vh;
+            }
+        <script src="../../resources/js-test.js"></script>
+        </style>
+    </head>
+    <body>
+    <div class="parent">
+        <div class="sticky child"></div>
+    </body>
+</html>

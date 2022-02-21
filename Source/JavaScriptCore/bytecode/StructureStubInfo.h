@@ -32,6 +32,8 @@
 #include "JITStubRoutine.h"
 #include "MacroAssembler.h"
 #include "Options.h"
+#include "PolymorphicAccess.h"
+#include "PutKind.h"
 #include "RegisterSet.h"
 #include "Structure.h"
 #include "StructureSet.h"
@@ -56,6 +58,7 @@ enum class AccessType : int8_t {
     GetByVal,
     PutById,
     PutByVal,
+    PutPrivateName,
     InById,
     InByVal,
     HasPrivateName,
@@ -78,11 +81,33 @@ enum class CacheType : int8_t {
     StringLength
 };
 
+struct UnlinkedStructureStubInfo;
+
 class StructureStubInfo {
     WTF_MAKE_NONCOPYABLE(StructureStubInfo);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StructureStubInfo(AccessType, CodeOrigin);
+    StructureStubInfo(AccessType accessType, CodeOrigin codeOrigin)
+        : codeOrigin(codeOrigin)
+        , accessType(accessType)
+        , bufferingCountdown(Options::repatchBufferingCountdown())
+        , resetByGC(false)
+        , tookSlowPath(false)
+        , everConsidered(false)
+        , prototypeIsKnownObject(false)
+        , sawNonCell(false)
+        , hasConstantIdentifier(true)
+        , propertyIsString(false)
+        , propertyIsInt32(false)
+        , propertyIsSymbol(false)
+    {
+        regs.thisGPR = InvalidGPRReg;
+    }
+
+    StructureStubInfo()
+        : StructureStubInfo(AccessType::GetById, { })
+    { }
+
     ~StructureStubInfo();
 
     void initGetByIdSelf(const ConcurrentJSLockerBase&, CodeBlock*, Structure* inlineAccessBaseStructure, PropertyOffset, CacheableIdentifier);
@@ -97,6 +122,8 @@ public:
 
     void deref();
     void aboutToDie();
+
+    void initializeFromUnlinkedStructureStubInfo(CodeBlock*, UnlinkedStructureStubInfo&);
 
     DECLARE_VISIT_AGGREGATE;
 
@@ -185,6 +212,10 @@ public:
         return considerCaching(vm, codeBlock, structure, impl);
     }
 
+    Structure* inlineAccessBaseStructure(VM&)
+    {
+        return m_inlineAccessBaseStructureID.get();
+    }
 private:
     ALWAYS_INLINE bool considerCaching(VM& vm, CodeBlock* codeBlock, Structure* structure, CacheableIdentifier impl)
     {
@@ -252,7 +283,7 @@ private:
                 isNewlyAdded = m_bufferedStructures.add({ structure, impl }).isNewEntry;
             }
             if (isNewlyAdded)
-                vm.heap.writeBarrier(codeBlock);
+                vm.writeBarrier(codeBlock);
             return isNewlyAdded;
         }
         countdown--;
@@ -324,14 +355,18 @@ private:
     };
 
 public:
+    static ptrdiff_t offsetOfByIdSelfOffset() { return OBJECT_OFFSETOF(StructureStubInfo, byIdSelfOffset); }
+    static ptrdiff_t offsetOfInlineAccessBaseStructureID() { return OBJECT_OFFSETOF(StructureStubInfo, m_inlineAccessBaseStructureID); }
+    static ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(StructureStubInfo, m_codePtr); }
+    static ptrdiff_t offsetOfDoneLocation() { return OBJECT_OFFSETOF(StructureStubInfo, doneLocation); }
+    static ptrdiff_t offsetOfSlowPathStartLocation() { return OBJECT_OFFSETOF(StructureStubInfo, slowPathStartLocation); }
+    static ptrdiff_t offsetOfSlowOperation() { return OBJECT_OFFSETOF(StructureStubInfo, m_slowOperation); }
+    static ptrdiff_t offsetOfCountdown() { return OBJECT_OFFSETOF(StructureStubInfo, countdown); }
+
     CodeOrigin codeOrigin;
-    union {
-        struct {
-            PropertyOffset offset;
-        } byIdSelf;
-        PolymorphicAccess* stub;
-    } u;
-    WriteBarrier<Structure> m_inlineAccessBaseStructure;
+    PropertyOffset byIdSelfOffset;
+    std::unique_ptr<PolymorphicAccess> m_stub;
+    WriteBarrierStructureID m_inlineAccessBaseStructureID;
 private:
     CacheableIdentifier m_identifier;
     // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.
@@ -350,11 +385,6 @@ public:
     };
 
     MacroAssemblerCodePtr<JITStubRoutinePtrTag> m_codePtr;
-
-    static ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(StructureStubInfo, m_codePtr); }
-    static ptrdiff_t offsetOfSlowPathStartLocation() { return OBJECT_OFFSETOF(StructureStubInfo, slowPathStartLocation); }
-    static ptrdiff_t offsetOfSlowOperation() { return OBJECT_OFFSETOF(StructureStubInfo, m_slowOperation); }
-    static ptrdiff_t offsetOfCountdown() { return OBJECT_OFFSETOF(StructureStubInfo, countdown); }
 
     RegisterSet usedRegisters;
 
@@ -389,10 +419,11 @@ public:
     uint8_t countdown { 1 };
     uint8_t repatchCount { 0 };
     uint8_t numberOfCoolDowns { 0 };
-
-    CallSiteIndex callSiteIndex;
-
     uint8_t bufferingCountdown;
+private:
+    Lock m_bufferedStructuresLock;
+public:
+    CallSiteIndex callSiteIndex;
     bool resetByGC : 1;
     bool tookSlowPath : 1;
     bool everConsidered : 1;
@@ -402,8 +433,6 @@ public:
     bool propertyIsString : 1;
     bool propertyIsInt32 : 1;
     bool propertyIsSymbol : 1;
-private:
-    Lock m_bufferedStructuresLock;
 };
 
 inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)
@@ -446,6 +475,18 @@ inline auto appropriateGenericGetByIdFunction(AccessType type) -> decltype(&oper
         return nullptr;
     }
 }
+
+struct UnlinkedStructureStubInfo {
+    AccessType accessType;
+    PutKind putKind;
+    PrivateFieldPutKind privateFieldPutKind { PrivateFieldPutKind::none() };
+    ECMAMode ecmaMode { ECMAMode::sloppy() };
+    bool propertyIsInt32 { false };
+    BytecodeIndex bytecodeIndex;
+    CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
+    CodeLocationLabel<JSInternalPtrTag> doneLocation;
+    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
+};
 
 #else
 

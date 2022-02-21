@@ -442,10 +442,10 @@ Ref<BasicShape> BasicShapeInset::blend(const BasicShape& from, const BlendingCon
     result->setBottom(WebCore::blend(fromInset.bottom(), bottom(), context));
     result->setLeft(WebCore::blend(fromInset.left(), left(), context));
 
-    result->setTopLeftRadius(WebCore::blend(fromInset.topLeftRadius(), topLeftRadius(), context));
-    result->setTopRightRadius(WebCore::blend(fromInset.topRightRadius(), topRightRadius(), context));
-    result->setBottomRightRadius(WebCore::blend(fromInset.bottomRightRadius(), bottomRightRadius(), context));
-    result->setBottomLeftRadius(WebCore::blend(fromInset.bottomLeftRadius(), bottomLeftRadius(), context));
+    result->setTopLeftRadius(WebCore::blend(fromInset.topLeftRadius(), topLeftRadius(), context, ValueRange::NonNegative));
+    result->setTopRightRadius(WebCore::blend(fromInset.topRightRadius(), topRightRadius(), context, ValueRange::NonNegative));
+    result->setBottomRightRadius(WebCore::blend(fromInset.bottomRightRadius(), bottomRightRadius(), context, ValueRange::NonNegative));
+    result->setBottomLeftRadius(WebCore::blend(fromInset.bottomLeftRadius(), bottomLeftRadius(), context, ValueRange::NonNegative));
 
     return result;
 }
@@ -494,4 +494,3 @@ TextStream& operator<<(TextStream& ts, const BasicShape& shape)
 }
 
 } // namespace WebCore
-

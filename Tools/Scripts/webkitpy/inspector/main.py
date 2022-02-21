@@ -26,6 +26,7 @@
 import os
 import os.path
 import shutil
+import sys
 import tempfile
 from webkitpy.common.checkout.scm.detection import detect_scm_system
 from webkitpy.common.system.executive import ScriptError
@@ -38,7 +39,7 @@ class InspectorGeneratorTests:
         self.executive = executive
 
     def generate_from_json(self, json_file, output_directory):
-        cmd = ['python',
+        cmd = [sys.executable,
                'JavaScriptCore/inspector/scripts/generate-inspector-protocol-bindings.py',
                '--outputDir', output_directory,
                '--force',

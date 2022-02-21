@@ -10,19 +10,19 @@
 #define rewrite_indices_shared_h
 #define MTL_FIX_INDEX_BUFFER_KEY_FUNCTION_CONSTANT_INDEX 1
 
-#define MtlFixIndexBufferKeyTypeMask             0x03U
-#define MtlFixIndexBufferKeyInShift              0U
-#define MtlFixIndexBufferKeyOutShift             2U
-#define MtlFixIndexBufferKeyVoid                 0U
-#define MtlFixIndexBufferKeyUint16               2U
-#define MtlFixIndexBufferKeyUint32               3U
-#define MtlFixIndexBufferKeyModeMask             0x0FU
-#define MtlFixIndexBufferKeyModeShift            4U
-#define MtlFixIndexBufferKeyPoints               0x00U
-#define MtlFixIndexBufferKeyLines                0x01U
-#define MtlFixIndexBufferKeyLineStrip            0x03U
-#define MtlFixIndexBufferKeyTriangles            0x04U
-#define MtlFixIndexBufferKeyTriangleStrip        0x05U
-#define MtlFixIndexBufferKeyPrimRestart          0x00100U
-#define MtlFixIndexBufferKeyProvokingVertexLast  0x00200U
+#define MtlFixIndexBufferKeyTypeMask 0x03U
+#define MtlFixIndexBufferKeyInShift 0U
+#define MtlFixIndexBufferKeyOutShift 2U
+#define MtlFixIndexBufferKeyVoid 0U
+#define MtlFixIndexBufferKeyUint16 2U
+#define MtlFixIndexBufferKeyUint32 3U
+#define MtlFixIndexBufferKeyModeMask 0x0FU
+#define MtlFixIndexBufferKeyModeShift 4U
+#define MtlFixIndexBufferKeyPoints 0x00U
+#define MtlFixIndexBufferKeyLines 0x01U
+#define MtlFixIndexBufferKeyLineStrip 0x03U
+#define MtlFixIndexBufferKeyTriangles 0x04U
+#define MtlFixIndexBufferKeyTriangleStrip 0x05U
+#define MtlFixIndexBufferKeyPrimRestart 0x00100U
+#define MtlFixIndexBufferKeyProvokingVertexLast 0x00200U
 #endif /* rewrite_indices_shared_h */

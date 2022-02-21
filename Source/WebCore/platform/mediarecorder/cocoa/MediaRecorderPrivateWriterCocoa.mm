@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaRecorderPrivateWriterCocoa.h"
 
-#if ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#if ENABLE(MEDIA_RECORDER)
 
 #include "AudioSampleBufferCompressor.h"
 #include "AudioStreamDescription.h"
@@ -103,7 +103,7 @@ RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(bool hasAu
 
 void MediaRecorderPrivateWriter::compressedVideoOutputBufferCallback(void *mediaRecorderPrivateWriter, CMBufferQueueTriggerToken)
 {
-    callOnMainThread([weakWriter = makeWeakPtr(static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter))] {
+    callOnMainThread([weakWriter = WeakPtr { static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter) }] {
         if (weakWriter)
             weakWriter->processNewCompressedVideoSampleBuffers();
     });
@@ -111,7 +111,7 @@ void MediaRecorderPrivateWriter::compressedVideoOutputBufferCallback(void *media
 
 void MediaRecorderPrivateWriter::compressedAudioOutputBufferCallback(void *mediaRecorderPrivateWriter, CMBufferQueueTriggerToken)
 {
-    callOnMainThread([weakWriter = makeWeakPtr(static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter))] {
+    callOnMainThread([weakWriter = WeakPtr { static_cast<MediaRecorderPrivateWriter*>(mediaRecorderPrivateWriter) }] {
         if (weakWriter)
             weakWriter->processNewCompressedAudioSampleBuffers();
     });
@@ -137,10 +137,8 @@ MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
         m_writer.clear();
     }
 
-    // At this pointer, we should no longer be writing any data, so it should be safe to close and nullify m_data without locking.
     if (m_writerDelegate)
         [m_writerDelegate close];
-    m_data = nullptr;
 
     if (auto completionHandler = WTFMove(m_fetchDataCompletionHandler))
         completionHandler(nullptr, 0);
@@ -158,7 +156,7 @@ bool MediaRecorderPrivateWriter::initialize(const MediaRecorderPrivateOptions& o
     }
 
     m_writerDelegate = adoptNS([[WebAVAssetWriterDelegate alloc] initWithWriter: *this]);
-    [m_writer.get() setDelegate:m_writerDelegate.get()];
+    [m_writer setDelegate:m_writerDelegate.get()];
 
     if (m_hasAudio) {
         m_audioCompressor = AudioSampleBufferCompressor::create(compressedAudioOutputBufferCallback, this);
@@ -219,29 +217,29 @@ void MediaRecorderPrivateWriter::startAssetWriter()
         if (m_videoTransform)
             m_videoAssetWriterInput.get().transform = *m_videoTransform;
 
-        if (![m_writer.get() canAddInput:m_videoAssetWriterInput.get()]) {
+        if (![m_writer canAddInput:m_videoAssetWriterInput.get()]) {
             RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriter::startAssetWriter failed canAddInput for video");
             return;
         }
-        [m_writer.get() addInput:m_videoAssetWriterInput.get()];
+        [m_writer addInput:m_videoAssetWriterInput.get()];
     }
 
     if (m_hasAudio) {
         m_audioAssetWriterInput = adoptNS([PAL::allocAVAssetWriterInputInstance() initWithMediaType:AVMediaTypeAudio outputSettings:nil sourceFormatHint:m_audioFormatDescription.get()]);
         [m_audioAssetWriterInput setExpectsMediaDataInRealTime:true];
-        if (![m_writer.get() canAddInput:m_audioAssetWriterInput.get()]) {
+        if (![m_writer canAddInput:m_audioAssetWriterInput.get()]) {
             RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriter::startAssetWriter failed canAddInput for audio");
             return;
         }
-        [m_writer.get() addInput:m_audioAssetWriterInput.get()];
+        [m_writer addInput:m_audioAssetWriterInput.get()];
     }
 
-    if (![m_writer.get() startWriting]) {
+    if (![m_writer startWriting]) {
         RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriter::startAssetWriter failed startWriting");
         return;
     }
 
-    [m_writer.get() startSessionAtSourceTime:PAL::kCMTimeZero];
+    [m_writer startSessionAtSourceTime:PAL::kCMTimeZero];
 
     appendCompressedSampleBuffers();
 
@@ -263,14 +261,14 @@ bool MediaRecorderPrivateWriter::appendCompressedAudioSampleBufferIfPossible()
     }
 
     while (!m_pendingAudioSampleQueue.isEmpty() && [m_audioAssetWriterInput isReadyForMoreMediaData])
-        [m_audioAssetWriterInput.get() appendSampleBuffer:m_pendingAudioSampleQueue.takeFirst().get()];
+        [m_audioAssetWriterInput appendSampleBuffer:m_pendingAudioSampleQueue.takeFirst().get()];
 
     if (![m_audioAssetWriterInput isReadyForMoreMediaData]) {
         m_pendingAudioSampleQueue.append(WTFMove(buffer));
         return true;
     }
 
-    [m_audioAssetWriterInput.get() appendSampleBuffer:buffer.get()];
+    [m_audioAssetWriterInput appendSampleBuffer:buffer.get()];
     return true;
 }
 
@@ -307,7 +305,7 @@ void MediaRecorderPrivateWriter::appendCompressedVideoSampleBuffer(CMSampleBuffe
     m_lastVideoDecodingTime = PAL::CMSampleBufferGetDecodeTimeStamp(buffer);
     m_hasEncodedVideoSamples = true;
 
-    [m_videoAssetWriterInput.get() appendSampleBuffer:buffer];
+    [m_videoAssetWriterInput appendSampleBuffer:buffer];
 }
 
 void MediaRecorderPrivateWriter::appendCompressedSampleBuffers()
@@ -350,14 +348,14 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
 
     ASSERT(!m_isFlushingSamples);
     m_isFlushingSamples = true;
-    auto block = makeBlockPtr([this, weakThis = makeWeakPtr(*this), hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoSampleQueue), callback = WTFMove(callback)]() mutable {
+    auto block = makeBlockPtr([this, weakThis = WeakPtr { *this }, hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoSampleQueue), callback = WTFMove(callback)]() mutable {
         if (!weakThis) {
             callback();
             return;
         }
 
         while (!audioSampleQueue.isEmpty() && [m_audioAssetWriterInput isReadyForMoreMediaData])
-            [m_audioAssetWriterInput.get() appendSampleBuffer:audioSampleQueue.takeFirst().get()];
+            [m_audioAssetWriterInput appendSampleBuffer:audioSampleQueue.takeFirst().get()];
 
         while (!videoSampleQueue.isEmpty() && [m_videoAssetWriterInput isReadyForMoreMediaData])
             appendCompressedVideoSampleBuffer(videoSampleQueue.takeFirst().get());
@@ -453,7 +451,7 @@ void MediaRecorderPrivateWriter::stopRecording()
 
     m_isStopping = true;
     // We hop to the main thread since finishing the video compressor might trigger starting the writer asynchronously.
-    callOnMainThread([this, weakThis = makeWeakPtr(this)]() mutable {
+    callOnMainThread([this, weakThis = WeakPtr { *this }]() mutable {
         if (!weakThis)
             return;
 
@@ -495,7 +493,7 @@ void MediaRecorderPrivateWriter::stopRecording()
     });
 }
 
-void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<SharedBuffer>&&, double)>&& completionHandler)
+void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)>&& completionHandler)
 {
     m_fetchDataCompletionHandler = WTFMove(completionHandler);
 
@@ -507,7 +505,7 @@ void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<SharedB
         return;
     }
 
-    flushCompressedSampleBuffers([weakThis = makeWeakPtr(this)]() mutable {
+    flushCompressedSampleBuffers([weakThis = WeakPtr { *this }]() mutable {
         if (!weakThis)
             return;
 
@@ -537,18 +535,13 @@ void MediaRecorderPrivateWriter::completeFetchData()
 void MediaRecorderPrivateWriter::appendData(const uint8_t* data, size_t size)
 {
     Locker locker { m_dataLock };
-    if (!m_data) {
-        m_data = SharedBuffer::create(data, size);
-        return;
-    }
-    m_data->append(data, size);
+    m_data.append(data, size);
 }
 
-RefPtr<SharedBuffer> MediaRecorderPrivateWriter::takeData()
+RefPtr<FragmentedSharedBuffer> MediaRecorderPrivateWriter::takeData()
 {
     Locker locker { m_dataLock };
-    auto data = WTFMove(m_data);
-    return data;
+    return m_data.take();
 }
 
 void MediaRecorderPrivateWriter::pause()
@@ -582,4 +575,4 @@ unsigned MediaRecorderPrivateWriter::videoBitRate() const
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#endif // ENABLE(MEDIA_RECORDER)

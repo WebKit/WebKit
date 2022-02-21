@@ -19,11 +19,13 @@
         var range = p.textMarkerRangeForElement(p);
         var length = p.textMarkerRangeLength(range);
         var current = p.startTextMarkerForTextMarkerRange(range);
+        let output = "";
         for (let i = 0; i < length; ++i) {
             let character = p.stringForTextMarkerRange(p.textMarkerRangeForMarkers(current, p.nextTextMarker(current)));
-            debug(`${i} ${character} ${p.lineIndexForTextMarker(current)}`);
+            output += `${i} ${character} ${p.lineIndexForTextMarker(current)}\n`;
             current = p.nextTextMarker(current);
         }
+        debug(output);
     }
 
     if (window.accessibilityController) {

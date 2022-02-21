@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "PlatformXRCoordinator.h"
+#import "PlatformXRSystem.h"
 
 #if ENABLE(WEBXR) && USE(APPLE_INTERNAL_SDK)
 

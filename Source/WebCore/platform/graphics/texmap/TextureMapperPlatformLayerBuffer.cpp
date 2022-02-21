@@ -34,8 +34,8 @@
 namespace WebCore {
 
 TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(RefPtr<BitmapTexture>&& texture, TextureMapperGL::Flags flags)
-    : m_texture(WTFMove(texture))
-    , m_variant(RGBTexture { 0 })
+    : m_variant(RGBTexture { 0 })
+    , m_texture(WTFMove(texture))
     , m_extraFlags(flags)
     , m_hasManagedTexture(true)
 {
@@ -83,12 +83,12 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerBuff
             static_cast<BitmapTextureGL&>(clonedTexture.get()).copyFromExternalTexture(texture.id);
             return makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(clonedTexture), m_extraFlags);
         },
-        [](const YUVTexture&)
+        [](const YUVTexture&) -> std::unique_ptr<TextureMapperPlatformLayerBuffer>
         {
             notImplemented();
             return nullptr;
         },
-        [](const ExternalOESTexture&)
+        [](const ExternalOESTexture&) -> std::unique_ptr<TextureMapperPlatformLayerBuffer>
         {
             notImplemented();
             return nullptr;

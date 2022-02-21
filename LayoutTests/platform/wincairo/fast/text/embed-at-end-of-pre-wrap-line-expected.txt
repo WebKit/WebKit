@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
           text run at (73,5) width 2: " "
         RenderInline {SPAN} at (0,0) size 35x19
           RenderText {#text} at (5,25) size 35x19
-            text run at (5,25) width 35 RTL override: "muspi"
+            text run at (5,25) width 35 RTL: "muspi"
         RenderText {#text} at (40,25) size 0x19
           text run at (40,25) width 0: " "
       RenderBlock {DIV} at (0,94) size 80x50 [border: (1px solid #000000)]

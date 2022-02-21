@@ -1,12 +1,13 @@
+<textarea id="textarea">
+text
+text2
+text3</textarea>
+<iframe srcdoc="foo"></iframe>
 <script>
+textarea.focus();
 onload = function() {
     document.execCommand('selectAll');
     selection = document.getSelection();
     selection.deleteFromDocument();
 }
 </script>
-<textarea autofocus >
-text
-text2
-text3</textarea>
-<iframe srcdoc="foo"></iframe>

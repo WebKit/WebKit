@@ -7,22 +7,17 @@ description: >
 includes: [compareArray.js]
 ---*/
 
-if (compareArray([,], [,]) !== true) {
-  throw new Error('Sparse arrays of the same length are equivalent.');
-}
 
-if (compareArray([,], [,,]) !== false) {
-  throw new Error('Sparse arrays of differing lengths are not equivalent.');
-}
-
-if (compareArray([,,], [,]) !== false) {
-  throw new Error('Sparse arrays of differing lengths are not equivalent.');
-}
-
-if (compareArray([,], []) !== false) {
-  throw new Error('Sparse arrays are not equivalent to empty arrays.');
-}
-
-if (compareArray([], [,]) !== false) {
-  throw new Error('Sparse arrays are not equivalent to empty arrays.');
-}
+assert.compareArray([,], [,], 'Sparse arrays of the same length are equivalent.');
+assert.throws(Test262Error, () => {
+  assert.compareArray([,], [,,]);
+}, 'Sparse arrays of differing lengths are not equivalent.');
+assert.throws(Test262Error, () => {
+  assert.compareArray([,,], [,]);
+}, 'Sparse arrays of differing lengths are not equivalent.');
+assert.throws(Test262Error, () => {
+  assert.compareArray([,], []);
+}, 'Sparse arrays are not equivalent to empty arrays.');
+assert.throws(Test262Error, () => {
+  assert.compareArray([], [,]);
+}, 'Sparse arrays are not equivalent to empty arrays.');

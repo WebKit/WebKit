@@ -27,7 +27,6 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
@@ -417,6 +416,26 @@ TEST(ContentRuleList, TopFrameChildFrame)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe fetched successfully");
 }
 
+TEST(ContentRuleList, CSPReport)
+{
+    TestWebKitAPI::HTTPServer server({ { "/", { {
+        { "Content-Security-Policy", "frame-src 'none'; report-uri resources/save-report.py" }
+    }, "<iframe src=\"https://webkit.org/\"></iframe>" } } });
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:makeContentRuleList(@"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"resource-type\":[\"csp-report\"]}}]").get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    auto delegate = adoptNS([ContentRuleListNotificationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:server.request()];
+    while (notificationList.isEmpty())
+        TestWebKitAPI::Util::spinRunLoop();
+
+    URL expectedURL = server.request().URL;
+    expectedURL.setPath("/resources/save-report.py");
+    EXPECT_STREQ(expectedURL.string().utf8().data(), notificationList.first().url.utf8().data());
+}
+
 TEST(ContentRuleList, LegacyVersionAndName)
 {
     NSString *directory = [NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentRuleListTestDirectory"];
@@ -479,11 +498,9 @@ TEST(ContentRuleList, LegacyVersionAndName)
     TestWebKitAPI::Util::run(&removed);
     
     setupLegacyContentRuleList();
-    __block bool foundAvailable = false;
     [store getAvailableContentRuleListIdentifiers:^(NSArray<NSString *> *identifiers) {
         EXPECT_EQ(identifiers.count, 1u);
         EXPECT_WK_STREQ(identifiers[0], @"test");
-        foundAvailable = true;
     }];
     TestWebKitAPI::Util::run(&removed);
 
@@ -495,39 +512,15 @@ TEST(ContentRuleList, LegacyVersionAndName)
     TestWebKitAPI::Util::run(&gotSource);
 }
 
-#if HAVE(SSL)
-
 TEST(WebKit, RedirectToPlaintextHTTPSUpgrade)
 {
     using namespace TestWebKitAPI;
-    TCPServer server([connectionCount = 0] (int socket) mutable {
-        TCPServer::read(socket);
-        if (!connectionCount++) {
-            const char* connectionEstablished =
-                "HTTP/1.1 200 Connection Established\r\n"
-                "Connection: close\r\n"
-                "\r\n";
-            TCPServer::write(socket, connectionEstablished, strlen(connectionEstablished));
-            TCPServer::startSecureConnection(socket, [] (SSL* ssl) {
-                TCPServer::read(ssl);
-                const char* redirect = ""
-                "HTTP/1.1 302 Found\r\n"
-                "Location: http://download/\r\n"
-                "Content-Length: 0\r\n\r\n";
-                TCPServer::write(ssl, redirect, strlen(redirect));
-            });
-            return;
-        }
-        const char* content = ""
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Length: 34\r\n\r\n"
-        "<script>alert('success!')</script>";
-        TCPServer::write(socket, content, strlen(content));
-    }, 2);
+    HTTPServer plaintextServer({ { "http://download/redirectTarget", { "<script>alert('success!')</script>" } } });
+    HTTPServer secureServer({ { "/originalRequest", { 302, { { "Location", "http://download/redirectTarget" } }, "" } } }, HTTPServer::Protocol::HttpsProxy);
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
-    [storeConfiguration setHTTPProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
-    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    [storeConfiguration setHTTPProxy:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", plaintextServer.port()]]];
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", secureServer.port()]]];
     [storeConfiguration setAllowsServerPreconnect:NO];
     auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
     [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
@@ -537,8 +530,6 @@ TEST(WebKit, RedirectToPlaintextHTTPSUpgrade)
         completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
     };
     webView.get().navigationDelegate = delegate.get();
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://download/"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://download/originalRequest"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
-
-#endif

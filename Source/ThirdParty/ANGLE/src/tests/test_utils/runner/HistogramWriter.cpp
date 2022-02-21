@@ -34,16 +34,11 @@ namespace angle
 {
 namespace
 {
-std::string AsJsonString(const std::string string)
-{
-    return "\"" + string + "\"";
-}
-
 std::string GetUnitAndDirection(proto::UnitAndDirection unit)
 {
     ASSERT(unit.improvement_direction() == proto::SMALLER_IS_BETTER);
     ASSERT(unit.unit() == proto::MS_BEST_FIT_FORMAT);
-    return "msBestFitFormat";
+    return "msBestFitFormat_smallerIsBetter";
 }
 }  // namespace
 
@@ -73,7 +68,7 @@ void HistogramWriter::addSample(const std::string &measurement,
 
         proto::Diagnostic stories;
         proto::GenericSet *genericSet = stories.mutable_generic_set();
-        genericSet->add_values(AsJsonString(story));
+        genericSet->add_values(story);
         mHistograms[measurementAndStory]->AddDiagnostic(catapult::kStoriesDiagnostic, stories);
     }
 

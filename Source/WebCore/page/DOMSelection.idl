@@ -30,7 +30,6 @@
 // https://www.w3.org/TR/selection-api/#idl-def-Selection
 [
     GenerateIsReachable=ReachableFromDOMWindow,
-    ImplementationLacksVTable,
     InterfaceName=Selection,
     Exposed=Window
 ] interface DOMSelection {
@@ -46,7 +45,7 @@
 
     Range getRangeAt(unsigned long index);
     undefined addRange(Range range);
-    [EnabledBySetting=LiveRangeSelection] undefined removeRange(Range range);
+    [EnabledBySetting=LiveRangeSelectionEnabled] undefined removeRange(Range range);
     undefined removeAllRanges();
 
     undefined empty();

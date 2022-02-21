@@ -52,6 +52,8 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
             return CSSUnitType::CSS_Q;
         case 's':
             return CSSUnitType::CSS_S;
+        case 'x':
+            return CSSUnitType::CSS_X;
         }
         break;
     case 2:
@@ -81,8 +83,12 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
                 return CSSUnitType::CSS_HZ;
             break;
         case 'i':
-            if (toASCIILower(data[1]) == 'n')
+            switch (toASCIILower(data[1])) {
+            case 'c':
+                return CSSUnitType::CSS_IC;
+            case 'n':
                 return CSSUnitType::CSS_IN;
+            }
             break;
         case 'l':
             if (toASCIILower(data[1]) == 'h' && RuntimeEnabledFeatures::sharedFeatures().lineHeightUnitsEnabled())
@@ -108,8 +114,12 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
             break;
         case 'v':
             switch (toASCIILower(data[1])) {
+            case 'b':
+                return CSSUnitType::CSS_VB;
             case 'h':
                 return CSSUnitType::CSS_VH;
+            case 'i':
+                return CSSUnitType::CSS_VI;
             case 'w':
                 return CSSUnitType::CSS_VW;
             }
@@ -128,8 +138,34 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
                 if (toASCIILower(data[2]) == 'i')
                     return CSSUnitType::CSS_DPI;
                 break;
+            case 'v':
+                switch (toASCIILower(data[2])) {
+                case 'b':
+                    return CSSUnitType::CSS_DVB;
+                case 'h':
+                    return CSSUnitType::CSS_DVH;
+                case 'i':
+                    return CSSUnitType::CSS_DVI;
+                case 'w':
+                    return CSSUnitType::CSS_DVW;
+                }
+                break;
             }
-        break;
+            break;
+        case 'l':
+            if (toASCIILower(data[1]) == 'v') {
+                switch (toASCIILower(data[2])) {
+                case 'b':
+                    return CSSUnitType::CSS_LVB;
+                case 'h':
+                    return CSSUnitType::CSS_LVH;
+                case 'i':
+                    return CSSUnitType::CSS_LVI;
+                case 'w':
+                    return CSSUnitType::CSS_LVW;
+                }
+            }
+            break;
         case 'k':
             if (toASCIILower(data[1]) == 'h' && toASCIILower(data[2]) == 'z')
                 return CSSUnitType::CSS_KHZ;
@@ -149,9 +185,23 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
                     return CSSUnitType::CSS_RLHS;
                 break;
             }
+            break;
+        case 's':
+            if (toASCIILower(data[1]) == 'v') {
+                switch (toASCIILower(data[2])) {
+                case 'b':
+                    return CSSUnitType::CSS_SVB;
+                case 'h':
+                    return CSSUnitType::CSS_SVH;
+                case 'i':
+                    return CSSUnitType::CSS_SVI;
+                case 'w':
+                    return CSSUnitType::CSS_SVW;
+                }
+            }
+            break;
+        }
         break;
-    }
-    break;
     case 4:
         switch (toASCIILower(data[0])) {
         case 'd':
@@ -167,9 +217,9 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
                         return CSSUnitType::CSS_DPPX;
                     break;
                 }
+                break;
+            }
             break;
-        }
-        break;
         case 'g':
             if (toASCIILower(data[1]) == 'r' && toASCIILower(data[2]) == 'a' && toASCIILower(data[3]) == 'd')
                 return CSSUnitType::CSS_GRAD;
@@ -201,6 +251,48 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
         case '_':
             if (toASCIILower(data[1]) == '_' && toASCIILower(data[2]) == 'q' && toASCIILower(data[3]) == 'e' && toASCIILower(data[4]) == 'm')
                 return CSSUnitType::CSS_QUIRKY_EMS;
+            break;
+        case 'd':
+            if (toASCIILower(data[1]) == 'v' && toASCIILower(data[2]) == 'm') {
+                switch (toASCIILower(data[3])) {
+                case 'a':
+                    if (toASCIILower(data[4]) == 'x')
+                        return CSSUnitType::CSS_DVMAX;
+                    break;
+                case 'i':
+                    if (toASCIILower(data[4]) == 'n')
+                        return CSSUnitType::CSS_DVMIN;
+                    break;
+                }
+            }
+            break;
+        case 'l':
+            if (toASCIILower(data[1]) == 'v' && toASCIILower(data[2]) == 'm') {
+                switch (toASCIILower(data[3])) {
+                case 'a':
+                    if (toASCIILower(data[4]) == 'x')
+                        return CSSUnitType::CSS_LVMAX;
+                    break;
+                case 'i':
+                    if (toASCIILower(data[4]) == 'n')
+                        return CSSUnitType::CSS_LVMIN;
+                    break;
+                }
+            }
+            break;
+        case 's':
+            if (toASCIILower(data[1]) == 'v' && toASCIILower(data[2]) == 'm') {
+                switch (toASCIILower(data[3])) {
+                case 'a':
+                    if (toASCIILower(data[4]) == 'x')
+                        return CSSUnitType::CSS_SVMAX;
+                    break;
+                case 'i':
+                    if (toASCIILower(data[4]) == 'n')
+                        return CSSUnitType::CSS_SVMIN;
+                    break;
+                }
+            }
             break;
         }
         break;

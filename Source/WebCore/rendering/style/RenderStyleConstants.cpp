@@ -127,15 +127,6 @@ TextStream& operator<<(TextStream& ts, BorderCollapse collapse)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, BorderFit borderFit)
-{
-    switch (borderFit) {
-    case BorderFit::Border: ts << "border"; break;
-    case BorderFit::Lines: ts << "lines"; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, BorderStyle borderStyle)
 {
     switch (borderStyle) {
@@ -507,6 +498,7 @@ TextStream& operator<<(TextStream& ts, FillBox fill)
     case FillBox::Padding: ts << "padding"; break;
     case FillBox::Content: ts << "content"; break;
     case FillBox::Text: ts << "text"; break;
+    case FillBox::NoClip: ts << "no-clip"; break;
     }
     return ts;
 }
@@ -718,16 +710,6 @@ TextStream& operator<<(TextStream& ts, ListStyleType styleType)
     return ts << getValueName(toCSSValueID(styleType));
 }
 
-TextStream& operator<<(TextStream& ts, MarginCollapse collapse)
-{
-    switch (collapse) {
-    case MarginCollapse::Collapse: ts << "collapse"; break;
-    case MarginCollapse::Separate: ts << "separate"; break;
-    case MarginCollapse::Discard: ts << "discard"; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, MarqueeBehavior marqueeBehavior)
 {
     switch (marqueeBehavior) {
@@ -753,11 +735,12 @@ TextStream& operator<<(TextStream& ts, MarqueeDirection marqueeDirection)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, MaskSourceType maskSource)
+TextStream& operator<<(TextStream& ts, MaskMode maskMode)
 {
-    switch (maskSource) {
-    case MaskSourceType::Alpha: ts << "alpha"; break;
-    case MaskSourceType::Luminance: ts << "luminance"; break;
+    switch (maskMode) {
+    case MaskMode::Alpha: ts << "alpha"; break;
+    case MaskMode::Luminance: ts << "luminance"; break;
+    case MaskMode::MatchSource: ts << "match-source"; break;
     }
 
     return ts;
@@ -1049,33 +1032,29 @@ TextStream& operator<<(TextStream& ts, TextCombine textCombine)
 {
     switch (textCombine) {
     case TextCombine::None: ts << "none"; break;
-    case TextCombine::Horizontal: ts << "horizontal"; break;
+    case TextCombine::All: ts << "all"; break;
     }
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextDecoration textDecoration)
+TextStream& operator<<(TextStream& ts, TextDecorationLine line)
 {
-    switch (textDecoration) {
-    case TextDecoration::None: ts << "none"; break;
-    case TextDecoration::Underline: ts << "underline"; break;
-    case TextDecoration::Overline: ts << "overline"; break;
-    case TextDecoration::LineThrough: ts << "line-through"; break;
-    case TextDecoration::Blink: ts << "blink"; break;
-#if ENABLE(LETTERPRESS)
-    case TextDecoration::Letterpress: ts << "letterpress"; break;
-#endif
+    switch (line) {
+    case TextDecorationLine::None: ts << "none"; break;
+    case TextDecorationLine::Underline: ts << "underline"; break;
+    case TextDecorationLine::Overline: ts << "overline"; break;
+    case TextDecorationLine::LineThrough: ts << "line-through"; break;
+    case TextDecorationLine::Blink: ts << "blink"; break;
     }
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextDecorationSkip skip)
+TextStream& operator<<(TextStream& ts, TextDecorationSkipInk skip)
 {
     switch (skip) {
-    case TextDecorationSkip::None: ts << "none"; break;
-    case TextDecorationSkip::Ink: ts << "ink"; break;
-    case TextDecorationSkip::Objects: ts << "objects"; break;
-    case TextDecorationSkip::Auto: ts << "auto"; break;
+    case TextDecorationSkipInk::None: ts << "none"; break;
+    case TextDecorationSkipInk::Auto: ts << "auto"; break;
+    case TextDecorationSkipInk::All: ts << "all"; break;
     }
     return ts;
 }
@@ -1305,6 +1284,25 @@ TextStream& operator<<(TextStream& ts, MathStyle mathStyle)
 bool alwaysPageBreak(BreakBetween between)
 {
     return between >= BreakBetween::Page;
+}
+
+CSSBoxType transformBoxToCSSBoxType(TransformBox transformBox)
+{
+    switch (transformBox) {
+    case TransformBox::StrokeBox:
+        return CSSBoxType::StrokeBox;
+    case TransformBox::ContentBox:
+        return CSSBoxType::ContentBox;
+    case TransformBox::BorderBox:
+        return CSSBoxType::BorderBox;
+    case TransformBox::FillBox:
+        return CSSBoxType::FillBox;
+    case TransformBox::ViewBox:
+        return CSSBoxType::ViewBox;
+    default:
+        ASSERT_NOT_REACHED();
+        return CSSBoxType::BorderBox;
+    }
 }
 
 const float defaultMiterLimit = 4;

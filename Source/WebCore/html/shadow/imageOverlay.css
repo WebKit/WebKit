@@ -24,18 +24,40 @@
 
 div#image-overlay {
     display: inline-block;
+    pointer-events: none;
     position: relative;
     overflow: hidden;
     color: transparent;
     text-shadow: none;
+    text-indent: 0;
     text-align: center;
+    font-family: system-ui;
+}
+
+div.image-overlay-line {
     white-space: nowrap;
     line-height: 100%;
-    font-family: system-ui;
     font-size: 1024px; /* This large font size is chosen to minimize gaps when painting selection quads. */
 }
 
-div.image-overlay-line, .image-overlay-text {
+div.image-overlay-line, div.image-overlay-block {
+    pointer-events: auto;
+}
+
+div.image-overlay-block {
+    background-color: rgba(255, 255, 255, 0.75);
+    border-radius: calc(clamp(2px, 0.1em, 12px));
+    box-shadow: rgba(100, 100, 100, 0.2) 3px 4px 8px 4px;
+    color: rgb(90, 90, 90);
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    -webkit-backdrop-filter: blur(8px);
+}
+
+div.image-overlay-line, .image-overlay-text, div.image-overlay-block {
     position: absolute;
     overflow: hidden;
 }
@@ -48,5 +70,19 @@ div.image-overlay-line, .image-overlay-text {
 div.image-overlay-data-detector-result {
     position: absolute;
     -webkit-user-select: none;
+}
+
+img#image-overlay-cropped-image {
+    position: absolute;
+    pointer-events: none;
+}
+
+div#image-overlay-cropped-image-backdrop {
+    position: absolute;
+    background: white;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0;
     pointer-events: none;
 }

@@ -1,12 +1,16 @@
 describe('CustomAnalysisTaskConfigurator', () => {
-    const scripts = ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js', 'models/data-model.js', 'models/commit-log.js',
-        'models/commit-set.js', 'models/repository.js', 'models/metric.js', 'models/triggerable.js', 'models/test.js', 'models/platform.js', 'components/test-group-form.js',
-        'components/custom-analysis-task-configurator.js', 'components/instant-file-uploader.js', 'lazily-evaluated-function.js'];
+    const scripts = ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js',
+        'models/data-model.js', 'models/commit-log.js', 'models/commit-set.js', 'models/repository.js',
+        'models/metric.js', 'models/triggerable.js', 'models/test.js', 'models/platform.js',
+        'components/test-group-form.js', 'components/custom-analysis-task-configurator.js',
+        'components/instant-file-uploader.js', 'lazily-evaluated-function.js'];
 
     async function createCustomAnalysisTaskConfiguratorWithContext(context)
     {
-        await context.importScripts(scripts, 'ComponentBase', 'DataModelObject', 'Repository', 'CommitLog', 'Platform', 'Test', 'Metric', 'Triggerable',
-            'TriggerableRepositoryGroup', 'CustomCommitSet', 'CustomAnalysisTaskConfigurator', 'MockRemoteAPI', 'LazilyEvaluatedFunction');
+        await context.importScripts(scripts, 'ComponentBase', 'LabeledObject', 'DataModelObject', 'Repository',
+            'CommitLog', 'Platform', 'Test', 'Metric', 'Triggerable', 'TriggerableConfiguration',
+            'TriggerableRepositoryGroup', 'CustomCommitSet', 'CustomAnalysisTaskConfigurator', 'MockRemoteAPI',
+            'LazilyEvaluatedFunction');
         const customAnalysisTaskConfigurator = new context.symbols.CustomAnalysisTaskConfigurator;
         context.document.body.appendChild(customAnalysisTaskConfigurator.element());
         return customAnalysisTaskConfigurator;
@@ -40,7 +44,7 @@ describe('CustomAnalysisTaskConfigurator', () => {
             name: 'test-triggerable',
             isDisabled: false,
             repositoryGroups: [triggerableRepositoryGroup],
-            configurations: [{test, platform}],
+            configurations: [{test, platform, supportedRepetitionTypes: ['alternating', 'sequential']}],
         });
         customAnalysisTaskConfigurator.selectTests([test]);
         customAnalysisTaskConfigurator.selectPlatform(platform);
@@ -124,7 +128,7 @@ describe('CustomAnalysisTaskConfigurator', () => {
             name: 'test-triggerable',
             isDisabled: false,
             repositoryGroups: [triggerableRepositoryGroup],
-            configurations: [{test, platform}],
+            configurations: [{test, platform, supportedRepetitionTypes: ['alternating', 'sequential']}],
         });
         customAnalysisTaskConfigurator.selectTests([test]);
         customAnalysisTaskConfigurator.selectPlatform(platform);
@@ -216,7 +220,8 @@ describe('CustomAnalysisTaskConfigurator', () => {
             name: 'test-triggerable',
             isDisabled: false,
             repositoryGroups: [triggerableRepositoryGroup],
-            configurations: [{test, platform: mojave}, {test, platform: highSierra}],
+            configurations: [{test, platform: mojave, supportedRepetitionTypes: ['alternating', 'sequential']},
+                {test, platform: highSierra, supportedRepetitionTypes: ['alternating', 'sequential']}],
         });
         customAnalysisTaskConfigurator.selectTests([test]);
         customAnalysisTaskConfigurator.selectPlatform(mojave);
@@ -295,7 +300,8 @@ describe('CustomAnalysisTaskConfigurator', () => {
             name: 'test-triggerable',
             isDisabled: false,
             repositoryGroups: [triggerableRepositoryGroup],
-            configurations: [{test, platform: mojave}, {test, platform: highSierra}],
+            configurations: [{test, platform: mojave, supportedRepetitionTypes: ['alternating', 'sequential']},
+                {test, platform: highSierra, supportedRepetitionTypes: ['alternating', 'sequential']}],
         });
         customAnalysisTaskConfigurator.selectTests([test]);
         customAnalysisTaskConfigurator.selectPlatform(mojave);
@@ -356,7 +362,8 @@ describe('CustomAnalysisTaskConfigurator', () => {
             name: 'test-triggerable',
             isDisabled: false,
             repositoryGroups: [triggerableRepositoryGroup],
-            configurations: [{test, platform: mojave}, {test, platform: highSierra}],
+            configurations: [{test, platform: mojave, supportedRepetitionTypes: ['alternating', 'sequential']},
+                {test, platform: highSierra, supportedRepetitionTypes: ['alternating', 'sequential']}],
         });
         customAnalysisTaskConfigurator.selectTests([test]);
         customAnalysisTaskConfigurator.selectPlatform(mojave);

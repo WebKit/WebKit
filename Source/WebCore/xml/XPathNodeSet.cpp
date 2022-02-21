@@ -27,7 +27,9 @@
 #include "XPathNodeSet.h"
 
 #include "Attr.h"
-#include "Element.h"
+#include "Attribute.h"
+#include "Document.h"
+#include "ElementInlines.h"
 #include "NodeTraversal.h"
 
 namespace WebCore {

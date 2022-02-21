@@ -11,6 +11,7 @@
 #ifndef LIBANGLE_CONTEXT_INL_H_
 #define LIBANGLE_CONTEXT_INL_H_
 
+#include "libANGLE/Context.h"
 #include "libANGLE/GLES1Renderer.h"
 #include "libANGLE/renderer/ContextImpl.h"
 
@@ -84,18 +85,18 @@ ANGLE_INLINE bool Context::noopDraw(PrimitiveMode mode, GLsizei count) const
     return count < kMinimumPrimitiveCounts[mode];
 }
 
-ANGLE_INLINE angle::Result Context::syncDirtyBits()
+ANGLE_INLINE angle::Result Context::syncDirtyBits(Command command)
 {
     const State::DirtyBits &dirtyBits = mState.getDirtyBits();
-    ANGLE_TRY(mImplementation->syncState(this, dirtyBits, mAllDirtyBits));
+    ANGLE_TRY(mImplementation->syncState(this, dirtyBits, mAllDirtyBits, command));
     mState.clearDirtyBits();
     return angle::Result::Continue;
 }
 
-ANGLE_INLINE angle::Result Context::syncDirtyBits(const State::DirtyBits &bitMask)
+ANGLE_INLINE angle::Result Context::syncDirtyBits(const State::DirtyBits &bitMask, Command command)
 {
     const State::DirtyBits &dirtyBits = (mState.getDirtyBits() & bitMask);
-    ANGLE_TRY(mImplementation->syncState(this, dirtyBits, bitMask));
+    ANGLE_TRY(mImplementation->syncState(this, dirtyBits, bitMask, command));
     mState.clearDirtyBits(dirtyBits);
     return angle::Result::Continue;
 }
@@ -116,7 +117,7 @@ ANGLE_INLINE angle::Result Context::prepareForDraw(PrimitiveMode mode)
     ANGLE_TRY(syncDirtyObjects(mDrawDirtyObjects, Command::Draw));
     ASSERT(!isRobustResourceInitEnabled() ||
            !mState.getDrawFramebuffer()->hasResourceThatNeedsInit());
-    return syncDirtyBits();
+    return syncDirtyBits(Command::Draw);
 }
 
 ANGLE_INLINE void Context::drawArrays(PrimitiveMode mode, GLint first, GLsizei count)
@@ -124,6 +125,7 @@ ANGLE_INLINE void Context::drawArrays(PrimitiveMode mode, GLint first, GLsizei c
     // No-op if count draws no primitives for given mode
     if (noopDraw(mode, count))
     {
+        ANGLE_CONTEXT_TRY(mImplementation->handleNoopDrawEvent());
         return;
     }
 
@@ -140,6 +142,7 @@ ANGLE_INLINE void Context::drawElements(PrimitiveMode mode,
     // No-op if count draws no primitives for given mode
     if (noopDraw(mode, count))
     {
+        ANGLE_CONTEXT_TRY(mImplementation->handleNoopDrawEvent());
         return;
     }
 

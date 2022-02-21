@@ -176,11 +176,9 @@ function exchangeIceCandidates(pc1, pc2) {
     localPc.addEventListener('icecandidate', event => {
       const { candidate } = event;
 
-      // candidate may be null to indicate end of candidate gathering.
-      // There is ongoing discussion on w3c/webrtc-pc#1213
-      // that there should be an empty candidate string event
-      // for end of candidate for each m= section.
-      if(candidate && remotePc.signalingState !== 'closed') {
+      // Guard against already closed peerconnection to
+      // avoid unrelated exceptions.
+      if (remotePc.signalingState !== 'closed') {
         remotePc.addIceCandidate(candidate);
       }
     });
@@ -242,8 +240,7 @@ async function waitForIceGatheringState(pc, wantedStates) {
 async function listenForSSRCs(t, receiver) {
   while (true) {
     const ssrcs = receiver.getSynchronizationSources();
-    assert_true(Array.isArray(ssrcs));
-    if (ssrcs.length > 0) {
+    if (Array.isArray(ssrcs) && ssrcs.length > 0) {
       return ssrcs;
     }
     await new Promise(r => t.step_timeout(r, 0));
@@ -410,6 +407,15 @@ const trackFactories = {
       ctx.fillStyle = `rgb(${count%255}, ${count*count%255}, ${count%255})`;
       count += 1;
       ctx.fillRect(0, 0, width, height);
+      // Add some bouncing boxes in contrast color to add a little more noise.
+      const contrast = count + 128;
+      ctx.fillStyle = `rgb(${contrast%255}, ${contrast*contrast%255}, ${contrast%255})`;
+      const xpos = count % (width - 20);
+      const ypos = count % (height - 20);
+      ctx.fillRect(xpos, ypos, xpos + 20, ypos + 20);
+      const xpos2 = (count + width / 2) % (width - 20);
+      const ypos2 = (count + height / 2) % (height - 20);
+      ctx.fillRect(xpos2, ypos2, xpos2 + 20, ypos2 + 20);
       // If signal is set (0-255), add a constant-color box of that luminance to
       // the video frame at coordinates 20 to 60 in both X and Y direction.
       // (big enough to avoid color bleed from surrounding video in some codecs,

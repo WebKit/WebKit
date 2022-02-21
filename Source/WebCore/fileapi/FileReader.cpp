@@ -147,7 +147,7 @@ void FileReader::abort()
     stop();
     m_error = DOMException::create(Exception { AbortError });
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     fireEvent(eventNames().abortEvent);
     fireEvent(eventNames().loadendEvent);
 }
@@ -209,7 +209,7 @@ void FileReader::fireEvent(const AtomString& type)
     dispatchEvent(ProgressEvent::create(type, true, m_loader ? m_loader->bytesLoaded() : 0, m_loader ? m_loader->totalBytes() : 0));
 }
 
-std::optional<Variant<String, RefPtr<JSC::ArrayBuffer>>> FileReader::result() const
+std::optional<std::variant<String, RefPtr<JSC::ArrayBuffer>>> FileReader::result() const
 {
     if (!m_loader || m_error || m_state != DONE)
         return std::nullopt;

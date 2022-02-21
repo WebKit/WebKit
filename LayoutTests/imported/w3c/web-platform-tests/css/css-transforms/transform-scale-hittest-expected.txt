@@ -1,0 +1,4 @@
+
+PASS Hit test within unscaled box
+PASS Hit test intersecting scaled box
+

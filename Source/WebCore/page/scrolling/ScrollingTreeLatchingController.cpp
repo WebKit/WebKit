@@ -112,7 +112,7 @@ void ScrollingTreeLatchingController::nodeDidHandleEvent(ScrollingNodeID scrolli
         if (!wheelEvent.isGestureContinuation())
             return false;
 
-        if (m_processingStepsForCurrentGesture.value_or(OptionSet<WheelEventProcessingSteps> { }).contains(WheelEventProcessingSteps::MainThreadForScrolling) && processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
+        if (valueOrDefault(m_processingStepsForCurrentGesture).contains(WheelEventProcessingSteps::MainThreadForScrolling) && processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
             return true;
 
         return false;

@@ -19,7 +19,8 @@
  */
 
 [
-    Exposed=Window
+    Exposed=Window,
+    GenerateForEachWindowEventHandlerContentAttribute,
 ] interface HTMLBodyElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString aLink;
     [CEReactions=NotNeeded, Reflect] attribute DOMString background;
@@ -41,7 +42,6 @@
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
-    [NotEnumerable, DocumentEventHandler] attribute EventHandler onselectionchange;
 };
 
 HTMLBodyElement includes WindowEventHandlers;

@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "PlatformLayer.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -35,7 +35,7 @@ namespace WebCore {
 
 class ImageBuffer;
 
-// Used to provide a PlatformLayer for an externally managed ImageBuffer; e.g. an ImageBuffer created and owned by a Worker thread
+// Used to provide GraphicsLayer contents for an externally managed ImageBuffer; e.g. an ImageBuffer created and owned by a Worker thread
 class ImageBufferPipe : public RefCounted<ImageBufferPipe> {
 public:
     class Source : public ThreadSafeRefCounted<Source> {
@@ -50,7 +50,7 @@ public:
     virtual ~ImageBufferPipe() = default;
 
     virtual RefPtr<Source> source() const = 0;
-    virtual PlatformLayer* platformLayer() const = 0;
+    virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() =0;
 };
 
 } // namespace WebCore

@@ -44,12 +44,12 @@ static const size_t kMinimumRecvSize = 128;
 
 static const int kListenBacklog = 5;
 
-// Binds and connects |socket|
-AsyncSocket* AsyncTCPSocketBase::ConnectSocket(
-    rtc::AsyncSocket* socket,
+// Binds and connects `socket`
+Socket* AsyncTCPSocketBase::ConnectSocket(
+    rtc::Socket* socket,
     const rtc::SocketAddress& bind_address,
     const rtc::SocketAddress& remote_address) {
-  std::unique_ptr<rtc::AsyncSocket> owned_socket(socket);
+  std::unique_ptr<rtc::Socket> owned_socket(socket);
   if (socket->Bind(bind_address) < 0) {
     RTC_LOG(LS_ERROR) << "Bind() failed with error " << socket->GetError();
     return nullptr;
@@ -61,7 +61,7 @@ AsyncSocket* AsyncTCPSocketBase::ConnectSocket(
   return owned_socket.release();
 }
 
-AsyncTCPSocketBase::AsyncTCPSocketBase(AsyncSocket* socket,
+AsyncTCPSocketBase::AsyncTCPSocketBase(Socket* socket,
                                        bool listen,
                                        size_t max_packet_size)
     : socket_(socket),
@@ -193,16 +193,16 @@ void AsyncTCPSocketBase::AppendToOutBuffer(const void* pv, size_t cb) {
   outbuf_.AppendData(static_cast<const uint8_t*>(pv), cb);
 }
 
-void AsyncTCPSocketBase::OnConnectEvent(AsyncSocket* socket) {
+void AsyncTCPSocketBase::OnConnectEvent(Socket* socket) {
   SignalConnect(this);
 }
 
-void AsyncTCPSocketBase::OnReadEvent(AsyncSocket* socket) {
+void AsyncTCPSocketBase::OnReadEvent(Socket* socket) {
   RTC_DCHECK(socket_.get() == socket);
 
   if (listen_) {
     rtc::SocketAddress address;
-    rtc::AsyncSocket* new_socket = socket->Accept(&address);
+    rtc::Socket* new_socket = socket->Accept(&address);
     if (!new_socket) {
       // TODO(stefan): Do something better like forwarding the error
       // to the user.
@@ -259,7 +259,7 @@ void AsyncTCPSocketBase::OnReadEvent(AsyncSocket* socket) {
   }
 }
 
-void AsyncTCPSocketBase::OnWriteEvent(AsyncSocket* socket) {
+void AsyncTCPSocketBase::OnWriteEvent(Socket* socket) {
   RTC_DCHECK(socket_.get() == socket);
 
   if (outbuf_.size() > 0) {
@@ -271,15 +271,15 @@ void AsyncTCPSocketBase::OnWriteEvent(AsyncSocket* socket) {
   }
 }
 
-void AsyncTCPSocketBase::OnCloseEvent(AsyncSocket* socket, int error) {
+void AsyncTCPSocketBase::OnCloseEvent(Socket* socket, int error) {
   SignalClose(this, error);
 }
 
 // AsyncTCPSocket
-// Binds and connects |socket| and creates AsyncTCPSocket for
-// it. Takes ownership of |socket|. Returns null if bind() or
-// connect() fail (|socket| is destroyed in that case).
-AsyncTCPSocket* AsyncTCPSocket::Create(AsyncSocket* socket,
+// Binds and connects `socket` and creates AsyncTCPSocket for
+// it. Takes ownership of `socket`. Returns null if bind() or
+// connect() fail (`socket` is destroyed in that case).
+AsyncTCPSocket* AsyncTCPSocket::Create(Socket* socket,
                                        const SocketAddress& bind_address,
                                        const SocketAddress& remote_address) {
   return new AsyncTCPSocket(
@@ -287,7 +287,7 @@ AsyncTCPSocket* AsyncTCPSocket::Create(AsyncSocket* socket,
       false);
 }
 
-AsyncTCPSocket::AsyncTCPSocket(AsyncSocket* socket, bool listen)
+AsyncTCPSocket::AsyncTCPSocket(Socket* socket, bool listen)
     : AsyncTCPSocketBase(socket, listen, kBufSize) {}
 
 int AsyncTCPSocket::Send(const void* pv,
@@ -343,7 +343,7 @@ void AsyncTCPSocket::ProcessInput(char* data, size_t* len) {
   }
 }
 
-void AsyncTCPSocket::HandleIncomingConnection(AsyncSocket* socket) {
+void AsyncTCPSocket::HandleIncomingConnection(Socket* socket) {
   SignalNewConnection(this, new AsyncTCPSocket(socket, false));
 }
 

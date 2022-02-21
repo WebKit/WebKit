@@ -29,6 +29,11 @@
 
 namespace WebCore {
 
+enum class DOMPasteAccessCategory : uint8_t {
+    General,
+    Fonts,
+};
+
 enum class DOMPasteAccessPolicy : uint8_t {
     NotRequestedYet,
     Denied,
@@ -44,6 +49,14 @@ enum class DOMPasteAccessResponse : uint8_t {
 } // namespace WebCore
 
 namespace WTF {
+
+template<> struct EnumTraits<WebCore::DOMPasteAccessCategory> {
+    using values = EnumValues<
+        WebCore::DOMPasteAccessCategory,
+        WebCore::DOMPasteAccessCategory::General,
+        WebCore::DOMPasteAccessCategory::Fonts
+    >;
+};
 
 template<> struct EnumTraits<WebCore::DOMPasteAccessResponse> {
     using values = EnumValues<

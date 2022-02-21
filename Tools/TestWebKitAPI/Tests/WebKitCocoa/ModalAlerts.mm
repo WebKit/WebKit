@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferences.h>
@@ -36,7 +37,6 @@
 
 @class ModalAlertsUIDelegate;
 
-static bool isDone;
 static RetainPtr<TestWKWebView> openedWebView;
 static RetainPtr<ModalAlertsUIDelegate> sharedUIDelegate;
 

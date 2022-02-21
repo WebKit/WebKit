@@ -30,18 +30,15 @@
 
 #include "AudioBus.h"
 #include "AudioUtilities.h"
+#include "VectorMath.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
-// Use a 50ms smoothing / de-zippering time-constant.
-constexpr float SmoothingTimeConstant = 0.050f;
-
 namespace WebCore {
 
-EqualPowerPanner::EqualPowerPanner(float sampleRate)
+EqualPowerPanner::EqualPowerPanner()
     : Panner(PanningModelType::Equalpower)
 {
-    m_smoothingConstant = AudioUtilities::discreteTimeConstantForSampleRate(SmoothingTimeConstant, sampleRate);
 }
 
 void EqualPowerPanner::calculateDesiredGain(double& desiredGainL, double& desiredGainR, double azimuth, unsigned numberOfChannels)
@@ -114,8 +111,6 @@ void EqualPowerPanner::pan(double azimuth, double /*elevation*/, const AudioBus*
         azimuth = 180 - azimuth;
 
     double desiredPanPosition;
-    double desiredGainL;
-    double desiredGainR;
 
     if (numberOfInputChannels == 1) { // For mono source case.
         // Pan smoothly from left to right with azimuth going from -90 -> +90 degrees.
@@ -132,57 +127,20 @@ void EqualPowerPanner::pan(double azimuth, double /*elevation*/, const AudioBus*
         }
     }
 
-    desiredGainL = cos(0.5 * piDouble * desiredPanPosition);
-    desiredGainR = sin(0.5 * piDouble * desiredPanPosition);
-   
-    // Don't de-zipper on first render call.
-    if (m_isFirstRender) {
-        m_isFirstRender = false;
-        m_gainL = desiredGainL;
-        m_gainR = desiredGainR;
-    }
-    
-    // Cache in local variables.
-    double gainL = m_gainL;
-    double gainR = m_gainR;
-    
-    // Get local copy of smoothing constant.
-    const double SmoothingConstant = m_smoothingConstant;
-    
-    int n = framesToProcess;
-
+    double desiredGainL = std::cos(piOverTwoDouble * desiredPanPosition);
+    double desiredGainR = std::sin(piOverTwoDouble * desiredPanPosition);
     if (numberOfInputChannels == 1) { // For mono source case.
-        while (n--) {
-            float inputL = *sourceL++;
-            gainL += (desiredGainL - gainL) * SmoothingConstant;
-            gainR += (desiredGainR - gainR) * SmoothingConstant;
-            *destinationL++ = static_cast<float>(inputL * gainL);
-            *destinationR++ = static_cast<float>(inputL * gainR);
-        }
+        VectorMath::multiplyByScalar(sourceL, desiredGainL, destinationL, framesToProcess);
+        VectorMath::multiplyByScalar(sourceL, desiredGainR, destinationR, framesToProcess);
     } else { // For stereo source case.
         if (azimuth <= 0) { // from -90 -> 0
-            while (n--) {
-                float inputL = *sourceL++;
-                float inputR = *sourceR++;
-                gainL += (desiredGainL - gainL) * SmoothingConstant;
-                gainR += (desiredGainR - gainR) * SmoothingConstant;
-                *destinationL++ = static_cast<float>(inputL + inputR * gainL);
-                *destinationR++ = static_cast<float>(inputR * gainR);
-            }
+            VectorMath::multiplyByScalarThenAddToVector(sourceR, desiredGainL, sourceL, destinationL, framesToProcess);
+            VectorMath::multiplyByScalar(sourceR, desiredGainR, destinationR, framesToProcess);
         } else { // from 0 -> +90
-            while (n--) {
-                float inputL = *sourceL++;
-                float inputR = *sourceR++;
-                gainL += (desiredGainL - gainL) * SmoothingConstant;
-                gainR += (desiredGainR - gainR) * SmoothingConstant;
-                *destinationL++ = static_cast<float>(inputL * gainL);
-                *destinationR++ = static_cast<float>(inputR + inputL * gainR);
-            }
+            VectorMath::multiplyByScalar(sourceL, desiredGainL, destinationL, framesToProcess);
+            VectorMath::multiplyByScalarThenAddToVector(sourceL, desiredGainR, sourceR, destinationR, framesToProcess);
         }
     }
-
-    m_gainL = gainL;
-    m_gainR = gainR;
 }
 
 void EqualPowerPanner::panWithSampleAccurateValues(double* azimuth, double*, const AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess)

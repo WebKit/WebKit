@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>getDisplayMedia and size</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+        <video id="video1" autoplay></video>
+        <video id="video2" autoplay></video>
+        <script>
+promise_test(async () => {
+    const stream1 = await callGetDisplayMedia({ video: { width: 640, height:480 } });
+    video1.srcObject = stream1;
+    await video1.play();
+
+    assert_equals(video1.videoWidth, 640);
+
+    const stream2 = stream1.clone();
+    await stream2.getVideoTracks()[0].applyConstraints({ width: 320, height: 240 });
+    video2.srcObject = stream2;
+    await video2.play();
+
+    assert_equals(video2.videoWidth, 320);
+
+    test(() => {
+        assert_equals(video1.videoWidth, 640);
+    }, "original source should stay at a small size");
+}, "Ensure getDisplayMedia size can be reduced with applyConstraints");
+
+promise_test(async () => {
+    const stream1 = await callGetDisplayMedia({ video: { width: 640, height:480 } });
+    video1.srcObject = stream1;
+    await video1.play();
+
+    assert_equals(video1.videoWidth, 640);
+
+    const stream2 = stream1.clone();
+    await stream2.getVideoTracks()[0].applyConstraints({ width: 1280, height: 960 });
+    video2.srcObject = stream2;
+    await video2.play();
+
+    assert_equals(video2.videoWidth, 1280);
+
+    test(() => {
+        assert_equals(video1.videoWidth, 640);
+    }, "original source should stay at a big size");
+}, "Ensure getDisplayMedia size can be increased with applyConstraints");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,212 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import json
+import math
+import os
+import subprocess
+import sys
+import time
+
+import reporelaypy
+import webkitcorepy
+
+scripts = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if os.path.isdir(os.path.join(scripts, 'webkitpy')):
+    sys.path.insert(0, scripts)
+    import webkitpy
+
+from reporelaypy import Checkout, Database, HookProcessor, HookReceiver, Redirector
+from webkitcorepy import arguments, AutoInstall
+from whichcraft import which
+
+
+def main(args=None):
+    parser = argparse.ArgumentParser(description='Run a git relay server for testing')
+
+    group = parser.add_argument_group('Repository')
+    group.add_argument(
+        '--path', '-p', '-C',
+        dest='path', default=os.getcwd(), action='store',
+        help='Set the repository path to be used',
+    )
+    group.add_argument(
+        '--http-proxy', dest='http_proxy', default=None, action='store',
+        help='Set an http proxy',
+    )
+    group.add_argument(
+        '--url', dest='url', default=None, action='store',
+        help='Set the repository path to be used',
+    )
+    parser.add_argument(
+        '--sentinal', '--no-sentinal', action=arguments.NoAction, dest='sentinal', default=False,
+        help='Lay down sentinal file on disk to determine checkout state.',
+    )
+    group.add_argument(
+        '--update', dest='update_interval', default=0, action='store', type=int,
+        help='Set the number of seconds to wait between polling git checkout',
+    )
+    group.add_argument(
+        '--fallback', dest='fallback', default=None, action='store', type=str,
+        help='Fallback repository URL',
+    )
+    group.add_argument(
+        '--remote', dest='remotes', action='append',
+        help="Add an additional remote to forward changes to, formatted as 'name:url'",
+    )
+
+    group = parser.add_argument_group('Database')
+    group.add_argument(
+        '--redis-host', dest='redis_host', default=None, action='store',
+        help="Set the hostname of the Redis database to be used. (Environment variable '{}' used by default)".format(Database.HOST_ENV),
+    )
+    group.add_argument(
+        '--redis-password', dest='redis_password', default=None, action='store',
+        help="Set the password of the Redis database to be used. (Environment variable '{}' used by default)".format(Database.PASSWORD_ENV),
+    )
+    group.add_argument(
+        '--redis-expiration', dest='redis_expiration', default=Database.DEFAULT_EXPIRATION, action='store', type=int,
+        help="Set the default Redis expiration time in seconds",
+    )
+
+    group = parser.add_argument_group('Webserver')
+    group.add_argument(
+        '--port', dest='port', default=5000, action='store',
+        help='Port to expose webserver on.',
+    )
+    group.add_argument(
+        '--poll', dest='poll', default=10, action='store',
+        help='Number of seconds between polls of the webserver process.',
+    )
+    group.add_argument(
+        '--redirector', '-r', dest='redirector', action='append',
+        help='Base URL to redirect user to for commit information.',
+    )
+
+    group = parser.add_argument_group('Hooks')
+    group.add_argument(
+        '--hooks', '--no-hooks', action=arguments.NoAction, dest='hooks', default=False,
+        help='Enable or disable hook end-points (disabled by default)',
+    )
+    group.add_argument(
+        '--debug', '--no-debug', action=arguments.NoAction, dest='hooks_debug', default=True,
+        help='Enable endpoint to report hooks being processed (enabled by default)',
+    )
+
+    args = parser.parse_args(args=args)
+
+    database = Database(host=args.redis_host, password=args.redis_password)
+    print('Constructed database with parameters:')
+    print('    Host: {}'.format(database.host or 'None (in-memory fake database)'))
+    if database.password:
+        print('    Password: {}'.format(len(database.password) * '*'))
+    if database.default_expiration:
+        print('    Expiration: {} hours'.format(database.default_expiration / (60.0 * 60.0)))
+    print('Connecting to database...')
+    database.ping()
+    print('Connected to database!')
+
+    remotes = {}
+    for pair in args.remotes:
+        name, remote = pair.split(':', 1)
+        if not remote:
+            sys.stderr("Invalid forwarding remote '{}'".format(pair))
+            return 1
+        remotes[name] = remote
+
+    print('Finding checkout...')
+    checkout = Checkout(
+        path=args.path,
+        url=args.url,
+        http_proxy=args.http_proxy,
+        sentinal=args.sentinal,
+        fallback_url=args.fallback,
+        remotes=remotes,
+    )
+    print('Git checkout:')
+    print('    Path: {}'.format(checkout.path))
+    print('    URL: {}'.format(checkout.url))
+    if checkout.fallback_repository:
+        print('    Fallback: {}'.format(checkout.fallback_repository.url))
+    if not checkout.repository:
+        print('    Cloning repository...')
+
+    if args.update_interval:
+        print('    Polling checkout with interval of {} seconds, doing first poll now...'.format(args.update_interval))
+        checkout.update_all()
+    if remotes:
+        print('Forwarding updates to:')
+        for name, url in remotes.items():
+            print('    {}: {}'.format(name, url))
+
+    if args.redirector:
+        print('User specified the following redirect urls:')
+        for url in args.redirector:
+            redirector = Redirector(url)
+            print('    {}: {}'.format(redirector.name, redirector.url))
+
+    passenv = dict(
+        PYTHONPATH=':'.join(sys.path),
+        CHECKOUT=json.dumps(checkout, cls=Checkout.Encoder),
+        REDIRECTORS=json.dumps([Redirector(url) for url in args.redirector or []], cls=Redirector.Encoder),
+        HOOKS=json.dumps({'enabled': args.hooks, 'debug': args.hooks_debug}),
+    )
+
+    if AutoInstall.directory:
+        passenv['AUTOINSTALL_PATH'] = AutoInstall.directory
+    if database.host:
+        passenv[database.HOST_ENV] = database.host
+    if database.password:
+        passenv[database.PASSWORD_ENV] = database.password
+    if database.default_expiration:
+        passenv[database.EXPIRATION_ENV] = str(database.default_expiration)
+    if os.environ.get(HookReceiver.SECRET_ENV):
+        passenv[HookReceiver.SECRET_ENV] = os.environ.get(HookReceiver.SECRET_ENV)
+
+    processor = HookProcessor(checkout=checkout, database=database) if args.hooks else None
+
+    with subprocess.Popen(
+        [which('gunicorn'), 'reporelaypy.webserver:app'],
+        cwd=os.path.dirname(os.path.dirname(reporelaypy.__file__)),
+        env=passenv,
+    ) as webserver:
+        last_poll = time.time()
+        last_pull = time.time()
+
+        while True:
+            if last_poll + args.poll < time.time():
+                if webserver.poll() is None:
+                    break
+                last_poll = time.time()
+            if last_pull + args.update_interval < time.time():
+                processor.process_hooks() if processor else checkout.update_all()
+                last_pull = time.time()
+            time.sleep(math.gcd(args.poll, args.update_interval))
+
+    return 0
+
+
+if '__main__' == __name__:
+    sys.exit(main(args=sys.argv[1:]))

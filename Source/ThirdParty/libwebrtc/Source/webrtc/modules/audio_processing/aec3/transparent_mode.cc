@@ -11,6 +11,7 @@
 #include "modules/audio_processing/aec3/transparent_mode.h"
 
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 #include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
@@ -228,11 +229,14 @@ class LegacyTransparentModeImpl : public TransparentMode {
 std::unique_ptr<TransparentMode> TransparentMode::Create(
     const EchoCanceller3Config& config) {
   if (config.ep_strength.bounded_erl || DeactivateTransparentMode()) {
+    RTC_LOG(LS_INFO) << "AEC3 Transparent Mode: Disabled";
     return nullptr;
   }
   if (ActivateTransparentModeHmm()) {
+    RTC_LOG(LS_INFO) << "AEC3 Transparent Mode: HMM";
     return std::make_unique<TransparentModeImpl>();
   }
+  RTC_LOG(LS_INFO) << "AEC3 Transparent Mode: Legacy";
   return std::make_unique<LegacyTransparentModeImpl>(config);
 }
 

@@ -28,12 +28,11 @@
 [
     Conditional=VIDEO,
     LegacyNoInterfaceObject,
-    ImplementationLacksVTable,
 ] interface VideoPlaybackQuality {
     readonly attribute unrestricted double creationTime;
     readonly attribute unsigned long totalVideoFrames;
     readonly attribute unsigned long droppedVideoFrames;
     readonly attribute unsigned long corruptedVideoFrames;
-    [EnabledBySetting=videoQualityIncludesDisplayCompositing] readonly attribute unsigned long displayCompositedVideoFrames;
+    [EnabledBySetting=videoQualityIncludesDisplayCompositingEnabled] readonly attribute unsigned long displayCompositedVideoFrames;
     readonly attribute unrestricted double totalFrameDelay;
 };

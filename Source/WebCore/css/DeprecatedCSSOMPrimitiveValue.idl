@@ -18,7 +18,6 @@
  */
 
 [
-    ImplementationLacksVTable,
     InterfaceName=CSSPrimitiveValue,
     Exposed=Window
 ] interface DeprecatedCSSOMPrimitiveValue : DeprecatedCSSOMValue {
@@ -49,10 +48,7 @@
     const unsigned short CSS_COUNTER = 23;
     const unsigned short CSS_RECT = 24;
     const unsigned short CSS_RGBCOLOR = 25;
-    const unsigned short CSS_VW = 26;
-    const unsigned short CSS_VH = 27;
-    const unsigned short CSS_VMIN = 28;
-    const unsigned short CSS_VMAX = 29;
+    // Do not add new units here; this is deprecated and we shouldn't expose anything not in DOM Level 2 Style.
     
     readonly attribute unsigned short primitiveType;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -319,6 +319,17 @@ void Node::convertToRegExpMatchFastGlobalWithoutChecks(FrozenValue* regExp)
     children.child2() = Edge(children.child3().node(), KnownStringUse);
     children.child3() = Edge();
     m_opInfo = regExp;
+}
+
+void Node::convertToRegExpTestInline(FrozenValue* globalObject, FrozenValue* regExp)
+{
+    ASSERT(op() == RegExpTest);
+    setOpAndDefaultFlags(RegExpTestInline);
+    children.child1() = Edge(children.child1().node(), KnownCellUse);
+    children.child2() = Edge(children.child2().node(), RegExpObjectUse);
+    // We keep the existing child3.
+    m_opInfo = globalObject;
+    m_opInfo2 = regExp;
 }
 
 String Node::tryGetString(Graph& graph)

@@ -68,7 +68,7 @@ CompositingRunLoop::~CompositingRunLoop()
 {
     ASSERT(RunLoop::isMain());
     // Make sure the RunLoop is stopped after the CompositingRunLoop, because m_updateTimer has a reference.
-    RunLoop::main().dispatch([runLoop = makeRef(*m_runLoop)] {
+    RunLoop::main().dispatch([runLoop = Ref { *m_runLoop }] {
         runLoop->stop();
         runLoop->dispatch([] {
             RunLoop::current().stop();

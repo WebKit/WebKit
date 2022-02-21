@@ -26,28 +26,25 @@
 #include "config.h"
 #include "WebPreferencesDefaultValues.h"
 
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-
 #include <wtf/WindowsExtras.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-bool isFeatureFlagEnabled(const String& featureName)
+bool isFeatureFlagEnabled(const char* featureName, bool defaultValue)
 {
+    auto featureNameWide = String(featureName).wideCharacters();
     DWORD data;
     DWORD dataSize = sizeof data;
     DWORD keyType;
-    HRESULT hr = getRegistryValue(HKEY_CURRENT_USER, L"Software\\WebKit", featureName.wideCharacters().data(), &keyType, &data, &dataSize);
+    HRESULT hr = getRegistryValue(HKEY_CURRENT_USER, L"Software\\WebKit", featureNameWide.data(), &keyType, &data, &dataSize);
     if (hr != ERROR_SUCCESS)
-        return false;
+        return defaultValue;
     if (keyType != REG_DWORD)
-        return false;
+        return defaultValue;
     if (dataSize != sizeof data)
-        return false;
+        return defaultValue;
     return data;
 }
 
 } // namespace WebKit
-
-#endif

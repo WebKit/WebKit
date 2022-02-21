@@ -43,7 +43,7 @@ class MediaPlayerPrivateAVFoundationObjC;
 class PlatformResourceMediaLoader;
 class ResourceError;
 class ResourceResponse;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class WebCoreAVFResourceLoader : public RefCounted<WebCoreAVFResourceLoader> {
     WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader); WTF_MAKE_FAST_ALLOCATED;
@@ -65,7 +65,7 @@ private:
     void responseReceived(const ResourceResponse&);
     void loadFailed(const ResourceError&);
     void loadFinished();
-    void newDataStoredInSharedBuffer(SharedBuffer&);
+    void newDataStoredInSharedBuffer(const FragmentedSharedBuffer&);
 
     MediaPlayerPrivateAVFoundationObjC* m_parent;
     RetainPtr<AVAssetResourceLoadingRequest> m_avRequest;

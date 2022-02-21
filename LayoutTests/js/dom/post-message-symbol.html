@@ -7,16 +7,16 @@
 <body>
 <script>
 test(() => {
-    assert_throws("DATA_CLONE_ERR", () => {
+    assert_throws_dom("DATA_CLONE_ERR", () => {
         window.postMessage(Symbol("Cocoa"), "*");
     });
-    assert_throws("DATA_CLONE_ERR", () => {
+    assert_throws_dom("DATA_CLONE_ERR", () => {
         window.postMessage({0: Symbol("Cocoa")}, "*");
     });
-    assert_throws("DATA_CLONE_ERR", () => {
+    assert_throws_dom("DATA_CLONE_ERR", () => {
         window.postMessage({hello: Symbol("Cocoa")}, "*");
     });
-    assert_throws("DATA_CLONE_ERR", () => {
+    assert_throws_dom("DATA_CLONE_ERR", () => {
         window.postMessage([Symbol("Cocoa")], "*");
     });
 }, "Tests that posting a message that contains Symbols fails.");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,10 @@
 #define PAS_SEGREGATED_PARTIAL_VIEW_H
 
 #include "pas_compact_segregated_shared_view_ptr.h"
-#include "pas_compact_segregated_global_size_directory_ptr.h"
-#include "pas_compact_tagged_unsigned_ptr.h"
-#include "pas_segregated_page_config.h"
+#include "pas_compact_segregated_size_directory_ptr.h"
+#include "pas_lenient_compact_unsigned_ptr.h"
 #include "pas_page_granule_use_count.h"
+#include "pas_segregated_page_config.h"
 #include "pas_segregated_view.h"
 #include "pas_utils.h"
 
@@ -38,17 +38,19 @@ PAS_BEGIN_EXTERN_C;
 
 struct pas_segregated_partial_view;
 struct pas_segregated_shared_view;
-struct pas_segregated_global_size_directory;
+struct pas_segregated_size_directory;
 typedef struct pas_segregated_partial_view pas_segregated_partial_view;
 typedef struct pas_segregated_shared_view pas_segregated_shared_view;
-typedef struct pas_segregated_global_size_directory pas_segregated_global_size_directory;
+typedef struct pas_segregated_size_directory pas_segregated_size_directory;
+
+PAS_API extern size_t pas_segregated_partial_view_count;
 
 struct pas_segregated_partial_view {
     unsigned inline_alloc_bits;
     
     pas_compact_segregated_shared_view_ptr shared_view;
-    pas_compact_segregated_global_size_directory_ptr directory;
-    pas_compact_tagged_unsigned_ptr alloc_bits;
+    pas_compact_segregated_size_directory_ptr directory;
+    pas_lenient_compact_unsigned_ptr alloc_bits;
 
     /* The index can be small since we would never create a high-indexed partial view. That would not
        have a meaningful effect on the footprint of the directory.
@@ -94,7 +96,7 @@ pas_segregated_partial_view_as_view_non_null(pas_segregated_partial_view* view)
 
 PAS_API pas_segregated_partial_view*
 pas_segregated_partial_view_create(
-    pas_segregated_global_size_directory* directory,
+    pas_segregated_size_directory* directory,
     size_t index);
 
 PAS_API void pas_segregated_partial_view_note_eligibility(

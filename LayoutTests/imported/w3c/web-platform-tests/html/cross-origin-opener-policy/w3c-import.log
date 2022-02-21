@@ -35,6 +35,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-popup.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-popup.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-same-origin-allow-popups-document-write.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-sandbox-cuts-opener.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-sandbox-redirects-cuts-opener.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-sandbox.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-sandbox.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing.https.html

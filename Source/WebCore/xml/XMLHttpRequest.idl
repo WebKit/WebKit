@@ -41,13 +41,13 @@ enum XMLHttpRequestResponseType {
 [
     ActiveDOMObject,
     ExportMacro=WEBCORE_EXPORT,
-    Exposed=(Window,DedicatedWorker),
+    Exposed=(Window,DedicatedWorker,SharedWorker),
     JSCustomMarkFunction,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
     ReportExtraMemoryCost,
 ] interface XMLHttpRequest : XMLHttpRequestEventTarget {
-    [CallWith=ScriptExecutionContext] constructor();
+    [CallWith=CurrentScriptExecutionContext] constructor();
 
     // event handler
     attribute EventHandler onreadystatechange;

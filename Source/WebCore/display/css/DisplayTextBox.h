@@ -28,7 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
-#include "InlineLineRun.h"
+#include "InlineDisplayBox.h"
 
 namespace WebCore {
 namespace Display {
@@ -38,17 +38,17 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TextBox);
 class TextBox : public Box {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TextBox);
 public:
-    TextBox(Tree&, UnadjustedAbsoluteFloatRect borderBox, Style&&, const Layout::Run&);
+    TextBox(Tree&, UnadjustedAbsoluteFloatRect borderBox, Style&&, const InlineDisplay::Box&);
 
-    Layout::Run::Expansion expansion() const { return m_expansion; }
-    const Layout::Run::Text& text() const { return m_text; }
+    InlineDisplay::Box::Expansion expansion() const { return m_expansion; }
+    const InlineDisplay::Box::Text& text() const { return m_text; }
 
 private:
     const char* boxName() const final;
     String debugDescription() const final;
     
-    Layout::Run::Expansion m_expansion;
-    Layout::Run::Text m_text;
+    InlineDisplay::Box::Expansion m_expansion;
+    InlineDisplay::Box::Text m_text;
 };
 
 } // namespace Display

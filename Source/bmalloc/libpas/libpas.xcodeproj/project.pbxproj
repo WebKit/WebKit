@@ -39,27 +39,23 @@
 /* Begin PBXBuildFile section */
 		0F037AF325AEA91A0079B582 /* pas_medium_megapage_cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F037AF125AEA9190079B582 /* pas_medium_megapage_cache.c */; };
 		0F037AF425AEA91A0079B582 /* pas_medium_megapage_cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F037AF225AEA91A0079B582 /* pas_medium_megapage_cache.h */; };
-		0F04C2142460DB6F001D31F0 /* pas_segregated_biasing_directory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C2022460DB6D001D31F0 /* pas_segregated_biasing_directory.h */; };
-		0F04C2152460DB6F001D31F0 /* pas_segregated_global_size_directory.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F04C2032460DB6E001D31F0 /* pas_segregated_global_size_directory.c */; };
-		0F04C2162460DB6F001D31F0 /* pas_segregated_global_size_directory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C2042460DB6E001D31F0 /* pas_segregated_global_size_directory.h */; };
-		0F04C2192460DB6F001D31F0 /* pas_segregated_exclusive_view_ownership_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C2072460DB6E001D31F0 /* pas_segregated_exclusive_view_ownership_kind.h */; };
-		0F04C21A2460DB6F001D31F0 /* pas_magazine.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C2082460DB6E001D31F0 /* pas_magazine.h */; };
-		0F04C21C2460DB6F001D31F0 /* pas_segregated_biasing_view.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F04C20A2460DB6E001D31F0 /* pas_segregated_biasing_view.c */; };
 		0F04C21D2460DB6F001D31F0 /* pas_heap_config_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C20B2460DB6E001D31F0 /* pas_heap_config_inlines.h */; };
-		0F04C21E2460DB6F001D31F0 /* pas_segregated_biasing_view.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C20C2460DB6E001D31F0 /* pas_segregated_biasing_view.h */; };
 		0F04C21F2460DB6F001D31F0 /* pas_lock.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F04C20D2460DB6E001D31F0 /* pas_lock.c */; };
-		0F04C2202460DB6F001D31F0 /* pas_segregated_biasing_directory.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F04C20E2460DB6E001D31F0 /* pas_segregated_biasing_directory.c */; };
-		0F04C2212460DB6F001D31F0 /* pas_segregated_global_size_directory_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C20F2460DB6E001D31F0 /* pas_segregated_global_size_directory_inlines.h */; };
-		0F04C2222460DB6F001D31F0 /* pas_segregated_view_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C2102460DB6F001D31F0 /* pas_segregated_view_inlines.h */; };
-		0F04C2242460DB6F001D31F0 /* pas_magazine.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F04C2122460DB6F001D31F0 /* pas_magazine.c */; };
 		0F04C2252460DB6F001D31F0 /* pas_compact_atomic_page_sharing_pool_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C2132460DB6F001D31F0 /* pas_compact_atomic_page_sharing_pool_ptr.h */; };
-		0F04C22824611CFD001D31F0 /* pas_compact_segregated_global_size_directory_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C22624611CFD001D31F0 /* pas_compact_segregated_global_size_directory_ptr.h */; };
-		0F04C22924611CFD001D31F0 /* pas_compact_atomic_segregated_global_size_directory_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C22724611CFD001D31F0 /* pas_compact_atomic_segregated_global_size_directory_ptr.h */; };
 		0F083F5A22C2979B00F3CDB3 /* pas_segregated_page_config_utils_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F083F5822C2979B00F3CDB3 /* pas_segregated_page_config_utils_inlines.h */; };
 		0F083F5B22C2979B00F3CDB3 /* pas_heap_config_utils_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F083F5922C2979B00F3CDB3 /* pas_heap_config_utils_inlines.h */; };
 		0F09226A22B07C21007D5D3A /* pas_mutation_count.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F09226922B07C21007D5D3A /* pas_mutation_count.h */; };
 		0F09226C22B2D88E007D5D3A /* pas_segregated_page_config_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F09226B22B2D88E007D5D3A /* pas_segregated_page_config_utils.h */; };
 		0F09226E22B2D909007D5D3A /* pas_heap_config_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F09226D22B2D909007D5D3A /* pas_heap_config_utils.h */; };
+		0F148710269B7518006887A9 /* pas_segregated_deallocation_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F14870A269B7517006887A9 /* pas_segregated_deallocation_mode.h */; };
+		0F148711269B7518006887A9 /* pas_compact_atomic_segregated_size_directory_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F14870B269B7518006887A9 /* pas_compact_atomic_segregated_size_directory_ptr.h */; };
+		0F148712269B7518006887A9 /* pas_local_view_cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F14870C269B7518006887A9 /* pas_local_view_cache.h */; };
+		0F148713269B7518006887A9 /* pas_compact_segregated_exclusive_view_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F14870D269B7518006887A9 /* pas_compact_segregated_exclusive_view_ptr.h */; };
+		0F148714269B7518006887A9 /* pas_heap_runtime_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F14870E269B7518006887A9 /* pas_heap_runtime_config.c */; };
+		0F148715269B7518006887A9 /* pas_compact_segregated_size_directory_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F14870F269B7518006887A9 /* pas_compact_segregated_size_directory_ptr.h */; };
+		0F148720269F5FCA006887A9 /* pas_local_view_cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F14871B269F5FCA006887A9 /* pas_local_view_cache.c */; };
+		0F148721269F5FCA006887A9 /* pas_segregated_size_directory_creation_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F14871C269F5FCA006887A9 /* pas_segregated_size_directory_creation_mode.h */; };
+		0F148723269F5FCA006887A9 /* pas_thread_local_cache_layout_node_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F14871E269F5FCA006887A9 /* pas_thread_local_cache_layout_node_kind.h */; };
 		0F1518FD23441E3200832B5C /* pas_has_object.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1518FC23441E3200832B5C /* pas_has_object.h */; };
 		0F18E63E2628BFB700F6903D /* pas_shared_page_directory_by_size.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F18E63C2628BFB600F6903D /* pas_shared_page_directory_by_size.h */; };
 		0F18E63F2628BFB700F6903D /* pas_shared_page_directory_by_size.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E63D2628BFB600F6903D /* pas_shared_page_directory_by_size.c */; };
@@ -75,25 +71,16 @@
 		0F19326922F3B3F300FBA713 /* pas_large_heap_physical_page_sharing_cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F19326722F3B3F300FBA713 /* pas_large_heap_physical_page_sharing_cache.h */; };
 		0F19326C22F73E8500FBA713 /* pas_scavenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F19326A22F73E8400FBA713 /* pas_scavenger.h */; };
 		0F19326D22F73E8500FBA713 /* pas_scavenger.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F19326B22F73E8400FBA713 /* pas_scavenger.c */; };
-		0F1AECE826581961000C5218 /* pas_all_magazines.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F1AECE626581960000C5218 /* pas_all_magazines.c */; };
-		0F1AECE926581961000C5218 /* pas_all_magazines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1AECE726581961000C5218 /* pas_all_magazines.h */; };
 		0F1BFD44266457F100CEC28D /* pas_heap_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F1BFD43266457F100CEC28D /* pas_heap_config.c */; };
 		0F2150EB2484BB2A000D634B /* pas_allocator_index.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2150EA2484BB2A000D634B /* pas_allocator_index.h */; };
 		0F2150ED2484BB86000D634B /* pas_compact_atomic_allocator_index_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2150EC2484BB86000D634B /* pas_compact_atomic_allocator_index_ptr.h */; };
-		0F31A63C23DCF804002C0CA3 /* pas_skip_list_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F31A63923DCF804002C0CA3 /* pas_skip_list_inlines.h */; };
-		0F31A63D23DCF804002C0CA3 /* pas_skip_list.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F31A63A23DCF804002C0CA3 /* pas_skip_list.c */; };
-		0F31A63E23DCF804002C0CA3 /* pas_skip_list.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F31A63B23DCF804002C0CA3 /* pas_skip_list.h */; };
-		0F31A64023DCF848002C0CA3 /* pas_compact_skip_list_node_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F31A63F23DCF848002C0CA3 /* pas_compact_skip_list_node_ptr.h */; };
-		0F31A64223DD4E02002C0CA3 /* SkipListTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F31A64123DD4E02002C0CA3 /* SkipListTests.cpp */; };
 		0F31A64423E3509E002C0CA3 /* pas_list_direction.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F31A64323E3509E002C0CA3 /* pas_list_direction.h */; };
-		0F31A64623E4C441002C0CA3 /* pas_compact_skip_list_node_ptr_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F31A64523E4C441002C0CA3 /* pas_compact_skip_list_node_ptr_ptr.h */; };
 		0F31A66623E8A942002C0CA3 /* pas_cartesian_tree.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F31A66523E8A942002C0CA3 /* pas_cartesian_tree.h */; };
 		0F31A66823E8B336002C0CA3 /* CartesianTreeTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F31A66723E8B336002C0CA3 /* CartesianTreeTests.cpp */; };
 		0F31A66A23E8E594002C0CA3 /* pas_tree_direction.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F31A66923E8E594002C0CA3 /* pas_tree_direction.h */; };
 		0F329A2123F1132A00A133C4 /* pas_basic_heap_runtime_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F329A1D23F1132A00A133C4 /* pas_basic_heap_runtime_config.h */; };
 		0F329A2223F1132B00A133C4 /* pas_basic_heap_page_caches.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F329A1E23F1132A00A133C4 /* pas_basic_heap_page_caches.h */; };
 		0F329A2323F1132B00A133C4 /* pas_heap_runtime_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F329A1F23F1132A00A133C4 /* pas_heap_runtime_config.h */; };
-		0F329A2423F1132B00A133C4 /* pas_basic_segregated_page_caches.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F329A2023F1132A00A133C4 /* pas_basic_segregated_page_caches.h */; };
 		0F329A2B23F1D63600A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F329A2523F1D63500A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.h */; };
 		0F329A2C23F1D63600A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F329A2623F1D63500A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.c */; };
 		0F329A2D23F1D63600A133C4 /* pas_ensure_heap_forced_into_reserved_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F329A2723F1D63500A133C4 /* pas_ensure_heap_forced_into_reserved_memory.h */; };
@@ -107,6 +94,9 @@
 		0F443B482341761500BE50D1 /* mbmalloc_iso_common_primitive.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF08F5522A86E2E00386575 /* mbmalloc_iso_common_primitive.c */; settings = {COMPILER_FLAGS = "-DPAS_VERIFIED"; }; };
 		0F443B4A2341761500BE50D1 /* libpas.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FDEA5D92295FC8C0085E340 /* libpas.dylib */; };
 		0F443B4F2341778300BE50D1 /* libpas_verifier.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F443B3A23416A7C00BE50D1 /* libpas_verifier.dylib */; };
+		0F45D5A926AB731400C35D93 /* pas_local_allocator_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F45D5A626AB731400C35D93 /* pas_local_allocator_kind.h */; };
+		0F45D5AA26AB731400C35D93 /* pas_local_allocator_scavenger_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F45D5A726AB731400C35D93 /* pas_local_allocator_scavenger_data.c */; };
+		0F45D5AB26AB731400C35D93 /* pas_local_allocator_scavenger_data.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F45D5A826AB731400C35D93 /* pas_local_allocator_scavenger_data.h */; };
 		0F47C31A23396D1F002A1CF7 /* pas_allocation_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F47C31823396D1F002A1CF7 /* pas_allocation_kind.h */; };
 		0F47C31B23396D1F002A1CF7 /* pas_heap_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F47C31923396D1F002A1CF7 /* pas_heap_kind.h */; };
 		0F47C31E23396E0B002A1CF7 /* pas_allocation_callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F47C31C23396E0B002A1CF7 /* pas_allocation_callbacks.c */; };
@@ -144,7 +134,6 @@
 		0F4F61CA25A4CD3B008B4A82 /* pas_payload_reservation_page_list.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F61C825A4CD3B008B4A82 /* pas_payload_reservation_page_list.h */; };
 		0F4F61CB25A4CD3B008B4A82 /* pas_payload_reservation_page_list.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F4F61C925A4CD3B008B4A82 /* pas_payload_reservation_page_list.c */; };
 		0F508D53258ECFD300151ED8 /* pas_segregated_directory_first_eligible_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F508D52258ECFD300151ED8 /* pas_segregated_directory_first_eligible_kind.h */; };
-		0F508D5C258EDCA700151ED8 /* IsoHeapTablingTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F508D5B258EDCA700151ED8 /* IsoHeapTablingTests.cpp */; };
 		0F516EE324560FF5004E2B8D /* pas_internal_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F516EE224560FF5004E2B8D /* pas_internal_config.h */; };
 		0F516EE724561A60004E2B8D /* iso_heap_innards.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F516EE624561A60004E2B8D /* iso_heap_innards.h */; };
 		0F5193E7266AE5D400483A2C /* JITHeapTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5193E6266AE5D400483A2C /* JITHeapTests.cpp */; };
@@ -248,7 +237,6 @@
 		0F8792B3238A1D0C00AEE7F1 /* pas_heap_ref_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8792B2238A1D0C00AEE7F1 /* pas_heap_ref_kind.h */; };
 		0F8A800D25CF64C900790B4A /* pas_tri_state.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8A800C25CF64C900790B4A /* pas_tri_state.h */; };
 		0F8A802925EC588800790B4A /* pas_line_word_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8A802725EC588800790B4A /* pas_line_word_config.h */; };
-		0F8A802A25EC588800790B4A /* pas_local_allocator_line.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8A802825EC588800790B4A /* pas_local_allocator_line.h */; };
 		0F8A803725EECBAF00790B4A /* libpas.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FDEA5D92295FC8C0085E340 /* libpas.dylib */; };
 		0F8A805525EECBD400790B4A /* mbmalloc_bmalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F8A805425EECBD400790B4A /* mbmalloc_bmalloc.c */; };
 		0F8A806525EECC1D00790B4A /* bmalloc_heap_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8A805E25EECC1C00790B4A /* bmalloc_heap_inlines.h */; };
@@ -268,35 +256,25 @@
 		0F8A810625F6A79500790B4A /* hotbit_heap_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8A810025F6A79500790B4A /* hotbit_heap_inlines.h */; };
 		0F97E62E22A9A85F00C355F8 /* pas_segregated_page_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F97E62D22A9A85F00C355F8 /* pas_segregated_page_config.h */; };
 		0F97E63022A9AAC100C355F8 /* pas_segregated_page_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F97E62F22A9AAC100C355F8 /* pas_segregated_page_config.c */; };
-		0F99F98C25CB2CE800EEE449 /* pas_size_thunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F99F98B25CB2CE800EEE449 /* pas_size_thunk.h */; };
-		0F9A1CE32559961700C8D11B /* pas_subpage_map_entry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1C972559961100C8D11B /* pas_subpage_map_entry.h */; };
-		0F9A1CE42559961700C8D11B /* pas_bitfit_global_directory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1C982559961100C8D11B /* pas_bitfit_global_directory.h */; };
 		0F9A1CE52559961700C8D11B /* pas_fast_path_allocation_result_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1C992559961100C8D11B /* pas_fast_path_allocation_result_kind.h */; };
 		0F9A1CE62559961700C8D11B /* pas_bitfit_page_config_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1C9A2559961100C8D11B /* pas_bitfit_page_config_utils.h */; };
 		0F9A1CE72559961700C8D11B /* pas_bitfit_max_free.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1C9B2559961100C8D11B /* pas_bitfit_max_free.h */; };
-		0F9A1CE82559961700C8D11B /* pas_subpage_map_entry.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1C9C2559961100C8D11B /* pas_subpage_map_entry.c */; };
 		0F9A1CE92559961700C8D11B /* pas_shared_handle_or_page_boundary.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1C9D2559961100C8D11B /* pas_shared_handle_or_page_boundary.h */; };
 		0F9A1CEB2559961700C8D11B /* pas_segregated_page_config_variant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1C9F2559961100C8D11B /* pas_segregated_page_config_variant.h */; };
 		0F9A1CEC2559961700C8D11B /* pas_fast_megapage_cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CA02559961200C8D11B /* pas_fast_megapage_cache.c */; };
 		0F9A1CED2559961700C8D11B /* pas_bitfit_view.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CA12559961200C8D11B /* pas_bitfit_view.h */; };
 		0F9A1CEE2559961700C8D11B /* pas_bitfit_view.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CA22559961200C8D11B /* pas_bitfit_view.c */; };
-		0F9A1CEF2559961700C8D11B /* pas_allocation_result.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CA32559961200C8D11B /* pas_allocation_result.c */; };
 		0F9A1CF02559961700C8D11B /* pas_commit_span.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CA42559961200C8D11B /* pas_commit_span.c */; };
 		0F9A1CF12559961700C8D11B /* pas_compact_biasing_directory_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CA52559961200C8D11B /* pas_compact_biasing_directory_ptr.h */; };
 		0F9A1CF22559961700C8D11B /* pas_page_header_table.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CA62559961200C8D11B /* pas_page_header_table.c */; };
-		0F9A1CF32559961700C8D11B /* pas_bitfit_biasing_directory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CA72559961200C8D11B /* pas_bitfit_biasing_directory.h */; };
 		0F9A1CF42559961700C8D11B /* pas_commit_span.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CA82559961200C8D11B /* pas_commit_span.h */; };
 		0F9A1CF52559961700C8D11B /* pas_biasing_directory_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CA92559961200C8D11B /* pas_biasing_directory_kind.h */; };
-		0F9A1CF62559961700C8D11B /* pas_bitfit_directory_and_index.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CAA2559961200C8D11B /* pas_bitfit_directory_and_index.h */; };
 		0F9A1CF72559961700C8D11B /* pas_page_base_config_utils_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CAB2559961200C8D11B /* pas_page_base_config_utils_inlines.h */; };
 		0F9A1CF82559961700C8D11B /* pas_page_base_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CAC2559961200C8D11B /* pas_page_base_inlines.h */; };
 		0F9A1CF92559961700C8D11B /* pas_promote_intrinsic_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CAD2559961300C8D11B /* pas_promote_intrinsic_heap.h */; };
 		0F9A1CFA2559961700C8D11B /* pas_bitfit_page_config_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CAE2559961300C8D11B /* pas_bitfit_page_config_kind.h */; };
-		0F9A1CFB2559961700C8D11B /* pas_bitfit_global_size_class.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CAF2559961300C8D11B /* pas_bitfit_global_size_class.h */; };
-		0F9A1CFC2559961700C8D11B /* pas_bitfit_biasing_directory.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CB02559961300C8D11B /* pas_bitfit_biasing_directory.c */; };
 		0F9A1CFD2559961700C8D11B /* pas_versioned_field.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CB12559961300C8D11B /* pas_versioned_field.c */; };
 		0F9A1CFE2559961700C8D11B /* pas_fast_path_allocation_result.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CB22559961300C8D11B /* pas_fast_path_allocation_result.h */; };
-		0F9A1CFF2559961700C8D11B /* pas_bitfit_directory_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CB32559961300C8D11B /* pas_bitfit_directory_kind.h */; };
 		0F9A1D002559961700C8D11B /* pas_free_granules.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CB42559961300C8D11B /* pas_free_granules.c */; };
 		0F9A1D012559961700C8D11B /* pas_bitfit_page_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CB52559961300C8D11B /* pas_bitfit_page_inlines.h */; };
 		0F9A1D022559961700C8D11B /* pas_bitfit_directory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CB62559961300C8D11B /* pas_bitfit_directory.h */; };
@@ -306,39 +284,29 @@
 		0F9A1D062559961700C8D11B /* pas_page_base.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CBA2559961400C8D11B /* pas_page_base.c */; };
 		0F9A1D072559961700C8D11B /* pas_bitfit_allocation_result.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CBB2559961400C8D11B /* pas_bitfit_allocation_result.h */; };
 		0F9A1D082559961700C8D11B /* pas_bitfit_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CBC2559961400C8D11B /* pas_bitfit_allocator.h */; };
-		0F9A1D092559961700C8D11B /* pas_bitfit_global_directory.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CBD2559961400C8D11B /* pas_bitfit_global_directory.c */; };
-		0F9A1D0A2559961700C8D11B /* pas_all_biasing_directories.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CBE2559961400C8D11B /* pas_all_biasing_directories.c */; };
-		0F9A1D0B2559961700C8D11B /* pas_biasing_directory_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CBF2559961400C8D11B /* pas_biasing_directory_inlines.h */; };
 		0F9A1D0C2559961700C8D11B /* pas_page_base_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CC02559961400C8D11B /* pas_page_base_config.h */; };
 		0F9A1D0D2559961700C8D11B /* pas_bitfit_directory.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CC12559961400C8D11B /* pas_bitfit_directory.c */; };
-		0F9A1D0E2559961700C8D11B /* pas_subpage_map.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CC22559961400C8D11B /* pas_subpage_map.h */; };
-		0F9A1D0F2559961700C8D11B /* pas_compact_subpage_map_entry_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CC32559961400C8D11B /* pas_compact_subpage_map_entry_ptr.h */; };
 		0F9A1D102559961700C8D11B /* pas_bitfit_allocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CC42559961400C8D11B /* pas_bitfit_allocator.c */; };
 		0F9A1D112559961700C8D11B /* pas_bitfit_page.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CC52559961400C8D11B /* pas_bitfit_page.c */; };
 		0F9A1D122559961700C8D11B /* pas_page_config_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CC62559961400C8D11B /* pas_page_config_kind.h */; };
-		0F9A1D132559961700C8D11B /* pas_biasing_directory.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CC72559961500C8D11B /* pas_biasing_directory.c */; };
 		0F9A1D142559961700C8D11B /* pas_bitfit_directory_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CC82559961500C8D11B /* pas_bitfit_directory_inlines.h */; };
 		0F9A1D152559961700C8D11B /* pas_bitfit_page_config_kind.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CC92559961500C8D11B /* pas_bitfit_page_config_kind.c */; };
 		0F9A1D162559961700C8D11B /* pas_fast_megapage_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CCA2559961500C8D11B /* pas_fast_megapage_kind.h */; };
 		0F9A1D172559961700C8D11B /* pas_bitfit_page_config_variant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CCB2559961500C8D11B /* pas_bitfit_page_config_variant.h */; };
 		0F9A1D182559961700C8D11B /* pas_bitfit_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CCD2559961500C8D11B /* pas_bitfit_heap.h */; };
 		0F9A1D192559961700C8D11B /* pas_fast_megapage_table.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CCE2559961500C8D11B /* pas_fast_megapage_table.h */; };
-		0F9A1D1B2559961700C8D11B /* pas_all_biasing_directories.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CD02559961500C8D11B /* pas_all_biasing_directories.h */; };
 		0F9A1D1C2559961700C8D11B /* pas_bitfit_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CD12559961500C8D11B /* pas_bitfit_heap.c */; };
 		0F9A1D1D2559961700C8D11B /* pas_bitfit_allocator_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CD22559961500C8D11B /* pas_bitfit_allocator_inlines.h */; };
 		0F9A1D1E2559961700C8D11B /* pas_compact_tagged_page_granule_use_count_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CD32559961600C8D11B /* pas_compact_tagged_page_granule_use_count_ptr.h */; };
 		0F9A1D1F2559961700C8D11B /* pas_page_base_config_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CD42559961600C8D11B /* pas_page_base_config_utils.h */; };
 		0F9A1D202559961700C8D11B /* pas_page_header_placement_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CD52559961600C8D11B /* pas_page_header_placement_mode.h */; };
 		0F9A1D212559961700C8D11B /* pas_bitfit_size_class.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CD62559961600C8D11B /* pas_bitfit_size_class.h */; };
-		0F9A1D222559961700C8D11B /* pas_subpage_map.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CD72559961600C8D11B /* pas_subpage_map.c */; };
-		0F9A1D232559961700C8D11B /* pas_biasing_directory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CD82559961600C8D11B /* pas_biasing_directory.h */; };
 		0F9A1D242559961700C8D11B /* pas_page_sharing_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CD92559961600C8D11B /* pas_page_sharing_mode.h */; };
 		0F9A1D252559961700C8D11B /* pas_page_granule_use_count.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CDA2559961600C8D11B /* pas_page_granule_use_count.h */; };
 		0F9A1D262559961700C8D11B /* pas_shared_handle_or_page_boundary_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CDB2559961600C8D11B /* pas_shared_handle_or_page_boundary_inlines.h */; };
 		0F9A1D272559961700C8D11B /* pas_compact_page_granule_use_count_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CDC2559961600C8D11B /* pas_compact_page_granule_use_count_ptr.h */; };
 		0F9A1D282559961700C8D11B /* pas_bitfit_page_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CDD2559961600C8D11B /* pas_bitfit_page_config.h */; };
 		0F9A1D292559961700C8D11B /* pas_page_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CDE2559961600C8D11B /* pas_page_kind.h */; };
-		0F9A1D2A2559961700C8D11B /* pas_bitfit_global_size_class.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CDF2559961600C8D11B /* pas_bitfit_global_size_class.c */; };
 		0F9A1D2B2559961700C8D11B /* pas_bitfit_size_class.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F9A1CE02559961700C8D11B /* pas_bitfit_size_class.c */; };
 		0F9A1D2C2559961700C8D11B /* pas_free_granules.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CE12559961700C8D11B /* pas_free_granules.h */; };
 		0F9A1D2D2559961700C8D11B /* pas_page_header_table.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9A1CE22559961700C8D11B /* pas_page_header_table.h */; };
@@ -400,6 +368,7 @@
 		0FC682312129CB46003C6A13 /* ExtendedGCDTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC6822F2129CB43003C6A13 /* ExtendedGCDTests.cpp */; };
 		0FC682382129D4EE003C6A13 /* CoalignTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC682362129D4EB003C6A13 /* CoalignTests.cpp */; };
 		0FC84795232D694900B386B6 /* pas_large_sharing_pool_epoch_update_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC84794232D694900B386B6 /* pas_large_sharing_pool_epoch_update_mode.h */; };
+		0FCBD03426ADF92500D26D68 /* pas_page_sharing_pool_scavenge_result.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCBD03326ADF92500D26D68 /* pas_page_sharing_pool_scavenge_result.h */; };
 		0FCCD1412655E6E700171A1F /* pas_compact_atomic_enumerable_range_list_chunk_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCCD1402655E6E700171A1F /* pas_compact_atomic_enumerable_range_list_chunk_ptr.h */; };
 		0FCFA49A238352EC00CCD726 /* pas_large_sharing_pool.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCFA498238352EB00CCD726 /* pas_large_sharing_pool.h */; };
 		0FCFA49B238352EC00CCD726 /* pas_large_sharing_pool.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FCFA499238352EC00CCD726 /* pas_large_sharing_pool.c */; };
@@ -428,7 +397,6 @@
 		0FD48B4023A9ABB30026C46D /* pas_baseline_allocator_result.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD48B0523A9ABB00026C46D /* pas_baseline_allocator_result.h */; };
 		0FD48B4123A9ABB30026C46D /* pas_segregated_exclusive_view.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD48B0623A9ABB00026C46D /* pas_segregated_exclusive_view.h */; };
 		0FD48B4423A9ABB30026C46D /* pas_immortal_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD48B0923A9ABB10026C46D /* pas_immortal_heap.h */; };
-		0FD48B4523A9ABB30026C46D /* pas_count_lookup_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD48B0A23A9ABB10026C46D /* pas_count_lookup_mode.h */; };
 		0FD48B4623A9ABB30026C46D /* pas_all_shared_page_directories.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FD48B0B23A9ABB10026C46D /* pas_all_shared_page_directories.c */; };
 		0FD48B4723A9ABB30026C46D /* pas_segregated_directory_bit_reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD48B0C23A9ABB10026C46D /* pas_segregated_directory_bit_reference.h */; };
 		0FD48B4823A9ABB30026C46D /* pas_segregated_shared_handle.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FD48B0D23A9ABB10026C46D /* pas_segregated_shared_handle.c */; };
@@ -513,7 +481,6 @@
 		0FE7EE1422960142004F4166 /* pas_heap_ref_prefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F47D40A2140DB05008C41F0 /* pas_heap_ref_prefix.h */; };
 		0FE7EE1522960142004F4166 /* pas_heap_ref.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC681C7210F7C9F003C6A13 /* pas_heap_ref.h */; };
 		0FE7EE1622960142004F4166 /* pas_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC681C0210F7C9E003C6A13 /* pas_heap.h */; };
-		0FE7EE1A22960142004F4166 /* pas_intrinsic_allocation_result.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDEA427228B64330085E340 /* pas_intrinsic_allocation_result.h */; };
 		0FE7EE1C22960142004F4166 /* pas_large_free_heap_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC68246212A0F1F003C6A13 /* pas_large_free_heap_config.h */; };
 		0FE7EE1E22960142004F4166 /* pas_large_free.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC681A82103CAC9003C6A13 /* pas_large_free.h */; };
 		0FE7EE1F22960142004F4166 /* pas_large_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC681A72103B0E6003C6A13 /* pas_large_heap.h */; };
@@ -531,7 +498,6 @@
 		0FE7EE3322960142004F4166 /* pas_stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC6821921253627003C6A13 /* pas_stream.h */; };
 		0FE7EE3422960142004F4166 /* pas_thread_local_cache_layout.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC681CA210F7C9F003C6A13 /* pas_thread_local_cache_layout.h */; };
 		0FE7EE3522960142004F4166 /* pas_thread_local_cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC681C4210F7C9E003C6A13 /* pas_thread_local_cache.h */; };
-		0FE7EE3722960142004F4166 /* pas_typed_allocation_result.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDEA476228B65430085E340 /* pas_typed_allocation_result.h */; };
 		0FE7EE3822960142004F4166 /* pas_utility_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC682412129ED51003C6A13 /* pas_utility_heap.h */; };
 		0FE7EE3922960142004F4166 /* pas_utils_prefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC641962140CADC0040CE5E /* pas_utils_prefix.h */; };
 		0FE7EE3A22960142004F4166 /* pas_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC6818821027B46003C6A13 /* pas_utils.h */; };
@@ -540,7 +506,6 @@
 		0FE7EE5622974335004F4166 /* iso_heap_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE7EE5422974335004F4166 /* iso_heap_config.h */; };
 		0FE7EE5722974335004F4166 /* iso_heap_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FE7EE5522974335004F4166 /* iso_heap_config.c */; };
 		0FE7EE60229E14FA004F4166 /* pas_get_allocation_size.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE7EE58229E14F9004F4166 /* pas_get_allocation_size.h */; };
-		0FE7EE61229E14FA004F4166 /* pas_try_allocate_intrinsic_primitive.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE7EE59229E14F9004F4166 /* pas_try_allocate_intrinsic_primitive.h */; };
 		0FE7EE62229E14FA004F4166 /* pas_try_allocate_array.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE7EE5A229E14F9004F4166 /* pas_try_allocate_array.h */; };
 		0FE7EE63229E14FA004F4166 /* pas_try_allocate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE7EE5B229E14F9004F4166 /* pas_try_allocate.h */; };
 		0FE7EE64229E14FA004F4166 /* pas_get_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE7EE5C229E14F9004F4166 /* pas_get_heap.h */; };
@@ -581,6 +546,44 @@
 		0FF8D62722C04A7700EC72FE /* pas_segregated_page_config_kind.def in Headers */ = {isa = PBXBuildFile; fileRef = 0FF8D62622C04A6D00EC72FE /* pas_segregated_page_config_kind.def */; };
 		0FF8D62922C166F500EC72FE /* pas_segregated_page_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF8D62822C166F500EC72FE /* pas_segregated_page_inlines.h */; };
 		0FFFD515256B0FBD001EB94C /* pas_deallocation_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFD514256B0FBC001EB94C /* pas_deallocation_mode.h */; };
+		2B2A58992742D803005EE07C /* pas_probabilistic_guard_malloc_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B2A58972742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.h */; };
+		2B2A589A2742D803005EE07C /* pas_probabilistic_guard_malloc_allocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 2B2A58982742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.c */; };
+		2B2A589C2742D815005EE07C /* PGMTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B2A589B2742D815005EE07C /* PGMTests.cpp */; };
+		2C11E88E2728A783002162D0 /* bmalloc_type.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C11E88C2728A783002162D0 /* bmalloc_type.h */; };
+		2C11E88F2728A783002162D0 /* pas_simple_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C11E88D2728A783002162D0 /* pas_simple_type.c */; };
+		2C11E8912728A893002162D0 /* bmalloc_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C11E8902728A893002162D0 /* bmalloc_type.c */; };
+		2C16DAE0279E07290042E919 /* ViewCacheTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C16DADF279E07290042E919 /* ViewCacheTests.cpp */; };
+		2C340000275815D0005565CB /* pas_segregated_page_config_kind_and_role.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C34FFFF275815D0005565CB /* pas_segregated_page_config_kind_and_role.c */; };
+		2C34000227581687005565CB /* pas_page_base_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C34000127581687005565CB /* pas_page_base_config.c */; };
+		2C34FFFA27571D2F005565CB /* pas_page_base_and_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C34FFF527571D2F005565CB /* pas_page_base_and_kind.h */; };
+		2C34FFFB27571D2F005565CB /* pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C34FFF627571D2F005565CB /* pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h */; };
+		2C34FFFC27571D2F005565CB /* pas_segregated_deallocation_logging_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C34FFF727571D2F005565CB /* pas_segregated_deallocation_logging_mode.h */; };
+		2C34FFFD27571D2F005565CB /* pas_segregated_page_config_kind_and_role.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C34FFF827571D2F005565CB /* pas_segregated_page_config_kind_and_role.h */; };
+		2C34FFFE27571D2F005565CB /* pas_segregated_page_role.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C34FFF927571D2F005565CB /* pas_segregated_page_role.h */; };
+		2C3D0FC7272B9241005C5A02 /* HeapRefAllocatorIndexTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C3D0FC6272B9241005C5A02 /* HeapRefAllocatorIndexTests.cpp */; };
+		2C473152277A540F00B62C49 /* pas_mmap_capability.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C47314F277A540F00B62C49 /* pas_mmap_capability.h */; };
+		2C473153277A540F00B62C49 /* pas_large_virtual_range_min_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C473150277A540F00B62C49 /* pas_large_virtual_range_min_heap.h */; };
+		2C473154277A540F00B62C49 /* pas_large_virtual_range.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C473151277A540F00B62C49 /* pas_large_virtual_range.h */; };
+		2C473162277D4C9E00B62C49 /* TLCDecommitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C473161277D4C9E00B62C49 /* TLCDecommitTests.cpp */; };
+		2C47316A277D4EA800B62C49 /* pas_committed_pages_vector.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C473164277D4CCC00B62C49 /* pas_committed_pages_vector.c */; };
+		2C481326273F341A006CAB55 /* pas_large_expendable_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C481320273F341A006CAB55 /* pas_large_expendable_memory.c */; };
+		2C481327273F341A006CAB55 /* pas_compact_expendable_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C481321273F341A006CAB55 /* pas_compact_expendable_memory.c */; };
+		2C481328273F341A006CAB55 /* pas_expendable_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C481322273F341A006CAB55 /* pas_expendable_memory.c */; };
+		2C481329273F341A006CAB55 /* pas_compact_expendable_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C481323273F341A006CAB55 /* pas_compact_expendable_memory.h */; };
+		2C48132A273F341A006CAB55 /* pas_large_expendable_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C481324273F341A006CAB55 /* pas_large_expendable_memory.h */; };
+		2C48132B273F341A006CAB55 /* pas_expendable_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C481325273F341A006CAB55 /* pas_expendable_memory.h */; };
+		2C48132D273F4159006CAB55 /* ExpendableMemoryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C48132C273F4159006CAB55 /* ExpendableMemoryTests.cpp */; };
+		2C734C90277680EF0017BFFE /* MemalignTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C734C8F277680EF0017BFFE /* MemalignTests.cpp */; };
+		2C8548B127B48FC5001750BB /* pas_thread_suspend_lock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C8548AF27B48FC5001750BB /* pas_thread_suspend_lock.h */; };
+		2C8548B227B48FC5001750BB /* pas_thread_suspend_lock.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C8548B027B48FC5001750BB /* pas_thread_suspend_lock.c */; };
+		2C85DC4127128F0F00367905 /* pas_try_allocate_intrinsic.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C85DC4027128F0F00367905 /* pas_try_allocate_intrinsic.h */; };
+		2C91E5502718DA9A00D67FF9 /* pas_size_lookup_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C91E54F2718DA9A00D67FF9 /* pas_size_lookup_mode.h */; };
+		2CB9B158278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CB9B154278F85ED003A8C1B /* pas_lenient_compact_unsigned_ptr.h */; };
+		2CB9B159278F85EE003A8C1B /* pas_lenient_compact_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CB9B155278F85ED003A8C1B /* pas_lenient_compact_ptr.h */; };
+		2CB9B15A278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CB9B156278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.c */; };
+		2CB9B15B278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CB9B157278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h */; };
+		2CB9B15D278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */; };
+		2CE2AE35275A953E00D02BBC /* BitfitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -729,27 +732,23 @@
 /* Begin PBXFileReference section */
 		0F037AF125AEA9190079B582 /* pas_medium_megapage_cache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_medium_megapage_cache.c; sourceTree = "<group>"; };
 		0F037AF225AEA91A0079B582 /* pas_medium_megapage_cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_medium_megapage_cache.h; sourceTree = "<group>"; };
-		0F04C2022460DB6D001D31F0 /* pas_segregated_biasing_directory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_biasing_directory.h; sourceTree = "<group>"; };
-		0F04C2032460DB6E001D31F0 /* pas_segregated_global_size_directory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_segregated_global_size_directory.c; sourceTree = "<group>"; };
-		0F04C2042460DB6E001D31F0 /* pas_segregated_global_size_directory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_global_size_directory.h; sourceTree = "<group>"; };
-		0F04C2072460DB6E001D31F0 /* pas_segregated_exclusive_view_ownership_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_exclusive_view_ownership_kind.h; sourceTree = "<group>"; };
-		0F04C2082460DB6E001D31F0 /* pas_magazine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_magazine.h; sourceTree = "<group>"; };
-		0F04C20A2460DB6E001D31F0 /* pas_segregated_biasing_view.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_segregated_biasing_view.c; sourceTree = "<group>"; };
 		0F04C20B2460DB6E001D31F0 /* pas_heap_config_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_heap_config_inlines.h; sourceTree = "<group>"; };
-		0F04C20C2460DB6E001D31F0 /* pas_segregated_biasing_view.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_biasing_view.h; sourceTree = "<group>"; };
 		0F04C20D2460DB6E001D31F0 /* pas_lock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_lock.c; sourceTree = "<group>"; };
-		0F04C20E2460DB6E001D31F0 /* pas_segregated_biasing_directory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_segregated_biasing_directory.c; sourceTree = "<group>"; };
-		0F04C20F2460DB6E001D31F0 /* pas_segregated_global_size_directory_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_global_size_directory_inlines.h; sourceTree = "<group>"; };
-		0F04C2102460DB6F001D31F0 /* pas_segregated_view_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_view_inlines.h; sourceTree = "<group>"; };
-		0F04C2122460DB6F001D31F0 /* pas_magazine.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_magazine.c; sourceTree = "<group>"; };
 		0F04C2132460DB6F001D31F0 /* pas_compact_atomic_page_sharing_pool_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_atomic_page_sharing_pool_ptr.h; sourceTree = "<group>"; };
-		0F04C22624611CFD001D31F0 /* pas_compact_segregated_global_size_directory_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_segregated_global_size_directory_ptr.h; sourceTree = "<group>"; };
-		0F04C22724611CFD001D31F0 /* pas_compact_atomic_segregated_global_size_directory_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_atomic_segregated_global_size_directory_ptr.h; sourceTree = "<group>"; };
 		0F083F5822C2979B00F3CDB3 /* pas_segregated_page_config_utils_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_page_config_utils_inlines.h; sourceTree = "<group>"; };
 		0F083F5922C2979B00F3CDB3 /* pas_heap_config_utils_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_heap_config_utils_inlines.h; sourceTree = "<group>"; };
 		0F09226922B07C21007D5D3A /* pas_mutation_count.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_mutation_count.h; sourceTree = "<group>"; };
 		0F09226B22B2D88E007D5D3A /* pas_segregated_page_config_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_page_config_utils.h; sourceTree = "<group>"; };
 		0F09226D22B2D909007D5D3A /* pas_heap_config_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_heap_config_utils.h; sourceTree = "<group>"; };
+		0F14870A269B7517006887A9 /* pas_segregated_deallocation_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_deallocation_mode.h; sourceTree = "<group>"; };
+		0F14870B269B7518006887A9 /* pas_compact_atomic_segregated_size_directory_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_atomic_segregated_size_directory_ptr.h; sourceTree = "<group>"; };
+		0F14870C269B7518006887A9 /* pas_local_view_cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_local_view_cache.h; sourceTree = "<group>"; };
+		0F14870D269B7518006887A9 /* pas_compact_segregated_exclusive_view_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_segregated_exclusive_view_ptr.h; sourceTree = "<group>"; };
+		0F14870E269B7518006887A9 /* pas_heap_runtime_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_heap_runtime_config.c; sourceTree = "<group>"; };
+		0F14870F269B7518006887A9 /* pas_compact_segregated_size_directory_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_segregated_size_directory_ptr.h; sourceTree = "<group>"; };
+		0F14871B269F5FCA006887A9 /* pas_local_view_cache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_local_view_cache.c; sourceTree = "<group>"; };
+		0F14871C269F5FCA006887A9 /* pas_segregated_size_directory_creation_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_size_directory_creation_mode.h; sourceTree = "<group>"; };
+		0F14871E269F5FCA006887A9 /* pas_thread_local_cache_layout_node_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_thread_local_cache_layout_node_kind.h; sourceTree = "<group>"; };
 		0F1518FC23441E3200832B5C /* pas_has_object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_has_object.h; sourceTree = "<group>"; };
 		0F18E63C2628BFB600F6903D /* pas_shared_page_directory_by_size.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_shared_page_directory_by_size.h; sourceTree = "<group>"; };
 		0F18E63D2628BFB600F6903D /* pas_shared_page_directory_by_size.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_shared_page_directory_by_size.c; sourceTree = "<group>"; };
@@ -765,25 +764,16 @@
 		0F19326722F3B3F300FBA713 /* pas_large_heap_physical_page_sharing_cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_large_heap_physical_page_sharing_cache.h; sourceTree = "<group>"; };
 		0F19326A22F73E8400FBA713 /* pas_scavenger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_scavenger.h; sourceTree = "<group>"; };
 		0F19326B22F73E8400FBA713 /* pas_scavenger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_scavenger.c; sourceTree = "<group>"; };
-		0F1AECE626581960000C5218 /* pas_all_magazines.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_all_magazines.c; sourceTree = "<group>"; };
-		0F1AECE726581961000C5218 /* pas_all_magazines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_all_magazines.h; sourceTree = "<group>"; };
 		0F1BFD43266457F100CEC28D /* pas_heap_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_heap_config.c; sourceTree = "<group>"; };
 		0F2150EA2484BB2A000D634B /* pas_allocator_index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_allocator_index.h; sourceTree = "<group>"; };
 		0F2150EC2484BB86000D634B /* pas_compact_atomic_allocator_index_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_atomic_allocator_index_ptr.h; sourceTree = "<group>"; };
-		0F31A63923DCF804002C0CA3 /* pas_skip_list_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_skip_list_inlines.h; sourceTree = "<group>"; };
-		0F31A63A23DCF804002C0CA3 /* pas_skip_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_skip_list.c; sourceTree = "<group>"; };
-		0F31A63B23DCF804002C0CA3 /* pas_skip_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_skip_list.h; sourceTree = "<group>"; };
-		0F31A63F23DCF848002C0CA3 /* pas_compact_skip_list_node_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_skip_list_node_ptr.h; sourceTree = "<group>"; };
-		0F31A64123DD4E02002C0CA3 /* SkipListTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkipListTests.cpp; sourceTree = "<group>"; };
 		0F31A64323E3509E002C0CA3 /* pas_list_direction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_list_direction.h; sourceTree = "<group>"; };
-		0F31A64523E4C441002C0CA3 /* pas_compact_skip_list_node_ptr_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_skip_list_node_ptr_ptr.h; sourceTree = "<group>"; };
 		0F31A66523E8A942002C0CA3 /* pas_cartesian_tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_cartesian_tree.h; sourceTree = "<group>"; };
 		0F31A66723E8B336002C0CA3 /* CartesianTreeTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CartesianTreeTests.cpp; sourceTree = "<group>"; };
 		0F31A66923E8E594002C0CA3 /* pas_tree_direction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_tree_direction.h; sourceTree = "<group>"; };
 		0F329A1D23F1132A00A133C4 /* pas_basic_heap_runtime_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_basic_heap_runtime_config.h; sourceTree = "<group>"; };
 		0F329A1E23F1132A00A133C4 /* pas_basic_heap_page_caches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_basic_heap_page_caches.h; sourceTree = "<group>"; };
 		0F329A1F23F1132A00A133C4 /* pas_heap_runtime_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_heap_runtime_config.h; sourceTree = "<group>"; };
-		0F329A2023F1132A00A133C4 /* pas_basic_segregated_page_caches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_basic_segregated_page_caches.h; sourceTree = "<group>"; };
 		0F329A2523F1D63500A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_create_basic_heap_page_caches_with_reserved_memory.h; sourceTree = "<group>"; };
 		0F329A2623F1D63500A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_create_basic_heap_page_caches_with_reserved_memory.c; sourceTree = "<group>"; };
 		0F329A2723F1D63500A133C4 /* pas_ensure_heap_forced_into_reserved_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_ensure_heap_forced_into_reserved_memory.h; sourceTree = "<group>"; };
@@ -795,6 +785,9 @@
 		0F443B3A23416A7C00BE50D1 /* libpas_verifier.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpas_verifier.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F443B3F23416B6300BE50D1 /* Verifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Verifier.h; sourceTree = "<group>"; };
 		0F443B4E2341761500BE50D1 /* libmbmalloc_iso_common_primitive_verified.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmbmalloc_iso_common_primitive_verified.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F45D5A626AB731400C35D93 /* pas_local_allocator_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_local_allocator_kind.h; sourceTree = "<group>"; };
+		0F45D5A726AB731400C35D93 /* pas_local_allocator_scavenger_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_local_allocator_scavenger_data.c; sourceTree = "<group>"; };
+		0F45D5A826AB731400C35D93 /* pas_local_allocator_scavenger_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_local_allocator_scavenger_data.h; sourceTree = "<group>"; };
 		0F47C31823396D1F002A1CF7 /* pas_allocation_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_allocation_kind.h; sourceTree = "<group>"; };
 		0F47C31923396D1F002A1CF7 /* pas_heap_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_heap_kind.h; sourceTree = "<group>"; };
 		0F47C31C23396E0B002A1CF7 /* pas_allocation_callbacks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_allocation_callbacks.c; sourceTree = "<group>"; };
@@ -834,7 +827,6 @@
 		0F4F61C825A4CD3B008B4A82 /* pas_payload_reservation_page_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_payload_reservation_page_list.h; sourceTree = "<group>"; };
 		0F4F61C925A4CD3B008B4A82 /* pas_payload_reservation_page_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_payload_reservation_page_list.c; sourceTree = "<group>"; };
 		0F508D52258ECFD300151ED8 /* pas_segregated_directory_first_eligible_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_directory_first_eligible_kind.h; sourceTree = "<group>"; };
-		0F508D5B258EDCA700151ED8 /* IsoHeapTablingTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IsoHeapTablingTests.cpp; sourceTree = "<group>"; };
 		0F516EE224560FF5004E2B8D /* pas_internal_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_internal_config.h; sourceTree = "<group>"; };
 		0F516EE624561A60004E2B8D /* iso_heap_innards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iso_heap_innards.h; sourceTree = "<group>"; };
 		0F5193E6266AE5D400483A2C /* JITHeapTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITHeapTests.cpp; sourceTree = "<group>"; };
@@ -941,7 +933,6 @@
 		0F8792B2238A1D0C00AEE7F1 /* pas_heap_ref_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_heap_ref_kind.h; sourceTree = "<group>"; };
 		0F8A800C25CF64C900790B4A /* pas_tri_state.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_tri_state.h; sourceTree = "<group>"; };
 		0F8A802725EC588800790B4A /* pas_line_word_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_line_word_config.h; sourceTree = "<group>"; };
-		0F8A802825EC588800790B4A /* pas_local_allocator_line.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_local_allocator_line.h; sourceTree = "<group>"; };
 		0F8A803B25EECBAF00790B4A /* libmbmalloc_bmalloc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmbmalloc_bmalloc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F8A805425EECBD400790B4A /* mbmalloc_bmalloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mbmalloc_bmalloc.c; sourceTree = "<group>"; };
 		0F8A805E25EECC1C00790B4A /* bmalloc_heap_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_heap_inlines.h; sourceTree = "<group>"; };
@@ -961,35 +952,25 @@
 		0F8A810025F6A79500790B4A /* hotbit_heap_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hotbit_heap_inlines.h; sourceTree = "<group>"; };
 		0F97E62D22A9A85F00C355F8 /* pas_segregated_page_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_page_config.h; sourceTree = "<group>"; };
 		0F97E62F22A9AAC100C355F8 /* pas_segregated_page_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_segregated_page_config.c; sourceTree = "<group>"; };
-		0F99F98B25CB2CE800EEE449 /* pas_size_thunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_size_thunk.h; sourceTree = "<group>"; };
-		0F9A1C972559961100C8D11B /* pas_subpage_map_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_subpage_map_entry.h; sourceTree = "<group>"; };
-		0F9A1C982559961100C8D11B /* pas_bitfit_global_directory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_global_directory.h; sourceTree = "<group>"; };
 		0F9A1C992559961100C8D11B /* pas_fast_path_allocation_result_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_fast_path_allocation_result_kind.h; sourceTree = "<group>"; };
 		0F9A1C9A2559961100C8D11B /* pas_bitfit_page_config_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_page_config_utils.h; sourceTree = "<group>"; };
 		0F9A1C9B2559961100C8D11B /* pas_bitfit_max_free.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_max_free.h; sourceTree = "<group>"; };
-		0F9A1C9C2559961100C8D11B /* pas_subpage_map_entry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_subpage_map_entry.c; sourceTree = "<group>"; };
 		0F9A1C9D2559961100C8D11B /* pas_shared_handle_or_page_boundary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_shared_handle_or_page_boundary.h; sourceTree = "<group>"; };
 		0F9A1C9F2559961100C8D11B /* pas_segregated_page_config_variant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_page_config_variant.h; sourceTree = "<group>"; };
 		0F9A1CA02559961200C8D11B /* pas_fast_megapage_cache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_fast_megapage_cache.c; sourceTree = "<group>"; };
 		0F9A1CA12559961200C8D11B /* pas_bitfit_view.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_view.h; sourceTree = "<group>"; };
 		0F9A1CA22559961200C8D11B /* pas_bitfit_view.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_bitfit_view.c; sourceTree = "<group>"; };
-		0F9A1CA32559961200C8D11B /* pas_allocation_result.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_allocation_result.c; sourceTree = "<group>"; };
 		0F9A1CA42559961200C8D11B /* pas_commit_span.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_commit_span.c; sourceTree = "<group>"; };
 		0F9A1CA52559961200C8D11B /* pas_compact_biasing_directory_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_biasing_directory_ptr.h; sourceTree = "<group>"; };
 		0F9A1CA62559961200C8D11B /* pas_page_header_table.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_page_header_table.c; sourceTree = "<group>"; };
-		0F9A1CA72559961200C8D11B /* pas_bitfit_biasing_directory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_biasing_directory.h; sourceTree = "<group>"; };
 		0F9A1CA82559961200C8D11B /* pas_commit_span.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_commit_span.h; sourceTree = "<group>"; };
 		0F9A1CA92559961200C8D11B /* pas_biasing_directory_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_biasing_directory_kind.h; sourceTree = "<group>"; };
-		0F9A1CAA2559961200C8D11B /* pas_bitfit_directory_and_index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_directory_and_index.h; sourceTree = "<group>"; };
 		0F9A1CAB2559961200C8D11B /* pas_page_base_config_utils_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_base_config_utils_inlines.h; sourceTree = "<group>"; };
 		0F9A1CAC2559961200C8D11B /* pas_page_base_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_base_inlines.h; sourceTree = "<group>"; };
 		0F9A1CAD2559961300C8D11B /* pas_promote_intrinsic_heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_promote_intrinsic_heap.h; sourceTree = "<group>"; };
 		0F9A1CAE2559961300C8D11B /* pas_bitfit_page_config_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_page_config_kind.h; sourceTree = "<group>"; };
-		0F9A1CAF2559961300C8D11B /* pas_bitfit_global_size_class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_global_size_class.h; sourceTree = "<group>"; };
-		0F9A1CB02559961300C8D11B /* pas_bitfit_biasing_directory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_bitfit_biasing_directory.c; sourceTree = "<group>"; };
 		0F9A1CB12559961300C8D11B /* pas_versioned_field.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_versioned_field.c; sourceTree = "<group>"; };
 		0F9A1CB22559961300C8D11B /* pas_fast_path_allocation_result.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_fast_path_allocation_result.h; sourceTree = "<group>"; };
-		0F9A1CB32559961300C8D11B /* pas_bitfit_directory_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_directory_kind.h; sourceTree = "<group>"; };
 		0F9A1CB42559961300C8D11B /* pas_free_granules.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_free_granules.c; sourceTree = "<group>"; };
 		0F9A1CB52559961300C8D11B /* pas_bitfit_page_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_page_inlines.h; sourceTree = "<group>"; };
 		0F9A1CB62559961300C8D11B /* pas_bitfit_directory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_directory.h; sourceTree = "<group>"; };
@@ -999,17 +980,11 @@
 		0F9A1CBA2559961400C8D11B /* pas_page_base.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_page_base.c; sourceTree = "<group>"; };
 		0F9A1CBB2559961400C8D11B /* pas_bitfit_allocation_result.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_allocation_result.h; sourceTree = "<group>"; };
 		0F9A1CBC2559961400C8D11B /* pas_bitfit_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_allocator.h; sourceTree = "<group>"; };
-		0F9A1CBD2559961400C8D11B /* pas_bitfit_global_directory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_bitfit_global_directory.c; sourceTree = "<group>"; };
-		0F9A1CBE2559961400C8D11B /* pas_all_biasing_directories.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_all_biasing_directories.c; sourceTree = "<group>"; };
-		0F9A1CBF2559961400C8D11B /* pas_biasing_directory_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_biasing_directory_inlines.h; sourceTree = "<group>"; };
 		0F9A1CC02559961400C8D11B /* pas_page_base_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_base_config.h; sourceTree = "<group>"; };
 		0F9A1CC12559961400C8D11B /* pas_bitfit_directory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_bitfit_directory.c; sourceTree = "<group>"; };
-		0F9A1CC22559961400C8D11B /* pas_subpage_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_subpage_map.h; sourceTree = "<group>"; };
-		0F9A1CC32559961400C8D11B /* pas_compact_subpage_map_entry_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_subpage_map_entry_ptr.h; sourceTree = "<group>"; };
 		0F9A1CC42559961400C8D11B /* pas_bitfit_allocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_bitfit_allocator.c; sourceTree = "<group>"; };
 		0F9A1CC52559961400C8D11B /* pas_bitfit_page.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_bitfit_page.c; sourceTree = "<group>"; };
 		0F9A1CC62559961400C8D11B /* pas_page_config_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_config_kind.h; sourceTree = "<group>"; };
-		0F9A1CC72559961500C8D11B /* pas_biasing_directory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_biasing_directory.c; sourceTree = "<group>"; };
 		0F9A1CC82559961500C8D11B /* pas_bitfit_directory_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_directory_inlines.h; sourceTree = "<group>"; };
 		0F9A1CC92559961500C8D11B /* pas_bitfit_page_config_kind.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_bitfit_page_config_kind.c; sourceTree = "<group>"; };
 		0F9A1CCA2559961500C8D11B /* pas_fast_megapage_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_fast_megapage_kind.h; sourceTree = "<group>"; };
@@ -1017,22 +992,18 @@
 		0F9A1CCC2559961500C8D11B /* pas_bitfit_page_config_kind.def */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pas_bitfit_page_config_kind.def; sourceTree = "<group>"; };
 		0F9A1CCD2559961500C8D11B /* pas_bitfit_heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_heap.h; sourceTree = "<group>"; };
 		0F9A1CCE2559961500C8D11B /* pas_fast_megapage_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_fast_megapage_table.h; sourceTree = "<group>"; };
-		0F9A1CD02559961500C8D11B /* pas_all_biasing_directories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_all_biasing_directories.h; sourceTree = "<group>"; };
 		0F9A1CD12559961500C8D11B /* pas_bitfit_heap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_bitfit_heap.c; sourceTree = "<group>"; };
 		0F9A1CD22559961500C8D11B /* pas_bitfit_allocator_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_allocator_inlines.h; sourceTree = "<group>"; };
 		0F9A1CD32559961600C8D11B /* pas_compact_tagged_page_granule_use_count_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_tagged_page_granule_use_count_ptr.h; sourceTree = "<group>"; };
 		0F9A1CD42559961600C8D11B /* pas_page_base_config_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_base_config_utils.h; sourceTree = "<group>"; };
 		0F9A1CD52559961600C8D11B /* pas_page_header_placement_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_header_placement_mode.h; sourceTree = "<group>"; };
 		0F9A1CD62559961600C8D11B /* pas_bitfit_size_class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_size_class.h; sourceTree = "<group>"; };
-		0F9A1CD72559961600C8D11B /* pas_subpage_map.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_subpage_map.c; sourceTree = "<group>"; };
-		0F9A1CD82559961600C8D11B /* pas_biasing_directory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_biasing_directory.h; sourceTree = "<group>"; };
 		0F9A1CD92559961600C8D11B /* pas_page_sharing_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_sharing_mode.h; sourceTree = "<group>"; };
 		0F9A1CDA2559961600C8D11B /* pas_page_granule_use_count.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_granule_use_count.h; sourceTree = "<group>"; };
 		0F9A1CDB2559961600C8D11B /* pas_shared_handle_or_page_boundary_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_shared_handle_or_page_boundary_inlines.h; sourceTree = "<group>"; };
 		0F9A1CDC2559961600C8D11B /* pas_compact_page_granule_use_count_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_page_granule_use_count_ptr.h; sourceTree = "<group>"; };
 		0F9A1CDD2559961600C8D11B /* pas_bitfit_page_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_bitfit_page_config.h; sourceTree = "<group>"; };
 		0F9A1CDE2559961600C8D11B /* pas_page_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_kind.h; sourceTree = "<group>"; };
-		0F9A1CDF2559961600C8D11B /* pas_bitfit_global_size_class.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_bitfit_global_size_class.c; sourceTree = "<group>"; };
 		0F9A1CE02559961700C8D11B /* pas_bitfit_size_class.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_bitfit_size_class.c; sourceTree = "<group>"; };
 		0F9A1CE12559961700C8D11B /* pas_free_granules.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_free_granules.h; sourceTree = "<group>"; };
 		0F9A1CE22559961700C8D11B /* pas_page_header_table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_header_table.h; sourceTree = "<group>"; };
@@ -1148,6 +1119,7 @@
 		0FC6824C212A5BFE003C6A13 /* pas_deallocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_deallocator.h; sourceTree = "<group>"; };
 		0FC6825D212CA76D003C6A13 /* pas_lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lock.h; sourceTree = "<group>"; };
 		0FC84794232D694900B386B6 /* pas_large_sharing_pool_epoch_update_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_large_sharing_pool_epoch_update_mode.h; sourceTree = "<group>"; };
+		0FCBD03326ADF92500D26D68 /* pas_page_sharing_pool_scavenge_result.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_sharing_pool_scavenge_result.h; sourceTree = "<group>"; };
 		0FCCD1402655E6E700171A1F /* pas_compact_atomic_enumerable_range_list_chunk_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_atomic_enumerable_range_list_chunk_ptr.h; sourceTree = "<group>"; };
 		0FCFA498238352EB00CCD726 /* pas_large_sharing_pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_large_sharing_pool.h; sourceTree = "<group>"; };
 		0FCFA499238352EC00CCD726 /* pas_large_sharing_pool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_large_sharing_pool.c; sourceTree = "<group>"; };
@@ -1176,7 +1148,6 @@
 		0FD48B0523A9ABB00026C46D /* pas_baseline_allocator_result.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_baseline_allocator_result.h; sourceTree = "<group>"; };
 		0FD48B0623A9ABB00026C46D /* pas_segregated_exclusive_view.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_exclusive_view.h; sourceTree = "<group>"; };
 		0FD48B0923A9ABB10026C46D /* pas_immortal_heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_immortal_heap.h; sourceTree = "<group>"; };
-		0FD48B0A23A9ABB10026C46D /* pas_count_lookup_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_count_lookup_mode.h; sourceTree = "<group>"; };
 		0FD48B0B23A9ABB10026C46D /* pas_all_shared_page_directories.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_all_shared_page_directories.c; sourceTree = "<group>"; };
 		0FD48B0C23A9ABB10026C46D /* pas_segregated_directory_bit_reference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_directory_bit_reference.h; sourceTree = "<group>"; };
 		0FD48B0D23A9ABB10026C46D /* pas_segregated_shared_handle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_segregated_shared_handle.c; sourceTree = "<group>"; };
@@ -1220,11 +1191,9 @@
 		0FDEA41A228B64320085E340 /* pas_cares_about_size_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_cares_about_size_mode.h; sourceTree = "<group>"; };
 		0FDEA41B228B64320085E340 /* pas_utility_heap_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_utility_heap_config.h; sourceTree = "<group>"; };
 		0FDEA423228B64330085E340 /* pas_utility_heap_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_utility_heap_config.c; sourceTree = "<group>"; };
-		0FDEA427228B64330085E340 /* pas_intrinsic_allocation_result.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_intrinsic_allocation_result.h; sourceTree = "<group>"; };
 		0FDEA42B228B64330085E340 /* pas_alignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_alignment.h; sourceTree = "<group>"; };
 		0FDEA45D228B651B0085E340 /* BitfieldVectorTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitfieldVectorTests.cpp; sourceTree = "<group>"; };
 		0FDEA46D228B65430085E340 /* pas_zero_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_zero_mode.h; sourceTree = "<group>"; };
-		0FDEA476228B65430085E340 /* pas_typed_allocation_result.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_typed_allocation_result.h; sourceTree = "<group>"; };
 		0FDEA576228E23440085E340 /* pas_simple_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_simple_type.h; sourceTree = "<group>"; };
 		0FDEA577228E23440085E340 /* pas_primitive_heap_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_primitive_heap_ref.h; sourceTree = "<group>"; };
 		0FDEA578228E23450085E340 /* pas_primitive_heap_ref.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_primitive_heap_ref.c; sourceTree = "<group>"; };
@@ -1235,7 +1204,6 @@
 		0FE7EE5422974335004F4166 /* iso_heap_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iso_heap_config.h; sourceTree = "<group>"; };
 		0FE7EE5522974335004F4166 /* iso_heap_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso_heap_config.c; sourceTree = "<group>"; };
 		0FE7EE58229E14F9004F4166 /* pas_get_allocation_size.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_get_allocation_size.h; sourceTree = "<group>"; };
-		0FE7EE59229E14F9004F4166 /* pas_try_allocate_intrinsic_primitive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_try_allocate_intrinsic_primitive.h; sourceTree = "<group>"; };
 		0FE7EE5A229E14F9004F4166 /* pas_try_allocate_array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_try_allocate_array.h; sourceTree = "<group>"; };
 		0FE7EE5B229E14F9004F4166 /* pas_try_allocate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_try_allocate.h; sourceTree = "<group>"; };
 		0FE7EE5C229E14F9004F4166 /* pas_get_heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_get_heap.h; sourceTree = "<group>"; };
@@ -1278,6 +1246,49 @@
 		0FF8D62622C04A6D00EC72FE /* pas_segregated_page_config_kind.def */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = pas_segregated_page_config_kind.def; sourceTree = "<group>"; };
 		0FF8D62822C166F500EC72FE /* pas_segregated_page_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_page_inlines.h; sourceTree = "<group>"; };
 		0FFFD514256B0FBC001EB94C /* pas_deallocation_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_deallocation_mode.h; sourceTree = "<group>"; };
+		2B2A58972742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_probabilistic_guard_malloc_allocator.h; sourceTree = "<group>"; };
+		2B2A58982742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_probabilistic_guard_malloc_allocator.c; sourceTree = "<group>"; };
+		2B2A589B2742D815005EE07C /* PGMTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PGMTests.cpp; sourceTree = "<group>"; };
+		2C11E88C2728A783002162D0 /* bmalloc_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_type.h; sourceTree = "<group>"; };
+		2C11E88D2728A783002162D0 /* pas_simple_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_simple_type.c; sourceTree = "<group>"; };
+		2C11E8902728A893002162D0 /* bmalloc_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bmalloc_type.c; sourceTree = "<group>"; };
+		2C16DADF279E07290042E919 /* ViewCacheTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewCacheTests.cpp; sourceTree = "<group>"; };
+		2C34000127581687005565CB /* pas_page_base_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_page_base_config.c; sourceTree = "<group>"; };
+		2C34FFF527571D2F005565CB /* pas_page_base_and_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_base_and_kind.h; sourceTree = "<group>"; };
+		2C34FFF627571D2F005565CB /* pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h; sourceTree = "<group>"; };
+		2C34FFF727571D2F005565CB /* pas_segregated_deallocation_logging_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_deallocation_logging_mode.h; sourceTree = "<group>"; };
+		2C34FFF827571D2F005565CB /* pas_segregated_page_config_kind_and_role.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_page_config_kind_and_role.h; sourceTree = "<group>"; };
+		2C34FFF927571D2F005565CB /* pas_segregated_page_role.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_page_role.h; sourceTree = "<group>"; };
+		2C34FFFF275815D0005565CB /* pas_segregated_page_config_kind_and_role.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_segregated_page_config_kind_and_role.c; sourceTree = "<group>"; };
+		2C3D0FC6272B9241005C5A02 /* HeapRefAllocatorIndexTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapRefAllocatorIndexTests.cpp; sourceTree = "<group>"; };
+		2C47314F277A540F00B62C49 /* pas_mmap_capability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_mmap_capability.h; sourceTree = "<group>"; };
+		2C473150277A540F00B62C49 /* pas_large_virtual_range_min_heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_large_virtual_range_min_heap.h; sourceTree = "<group>"; };
+		2C473151277A540F00B62C49 /* pas_large_virtual_range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_large_virtual_range.h; sourceTree = "<group>"; };
+		2C473161277D4C9E00B62C49 /* TLCDecommitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TLCDecommitTests.cpp; sourceTree = "<group>"; };
+		2C473163277D4CCC00B62C49 /* pas_decommit_exclusion_range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_decommit_exclusion_range.h; sourceTree = "<group>"; };
+		2C473164277D4CCC00B62C49 /* pas_committed_pages_vector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_committed_pages_vector.c; sourceTree = "<group>"; };
+		2C473165277D4CCC00B62C49 /* pas_committed_pages_vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_committed_pages_vector.h; sourceTree = "<group>"; };
+		2C473166277D4CCC00B62C49 /* pas_platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_platform.h; sourceTree = "<group>"; };
+		2C473167277D4CCC00B62C49 /* pas_thread_local_cache_layout_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_thread_local_cache_layout_entry.h; sourceTree = "<group>"; };
+		2C473168277D4CCC00B62C49 /* pas_compact_thread_local_cache_layout_node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_thread_local_cache_layout_node.h; sourceTree = "<group>"; };
+		2C481320273F341A006CAB55 /* pas_large_expendable_memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_large_expendable_memory.c; sourceTree = "<group>"; };
+		2C481321273F341A006CAB55 /* pas_compact_expendable_memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_compact_expendable_memory.c; sourceTree = "<group>"; };
+		2C481322273F341A006CAB55 /* pas_expendable_memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_expendable_memory.c; sourceTree = "<group>"; };
+		2C481323273F341A006CAB55 /* pas_compact_expendable_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_expendable_memory.h; sourceTree = "<group>"; };
+		2C481324273F341A006CAB55 /* pas_large_expendable_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_large_expendable_memory.h; sourceTree = "<group>"; };
+		2C481325273F341A006CAB55 /* pas_expendable_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_expendable_memory.h; sourceTree = "<group>"; };
+		2C48132C273F4159006CAB55 /* ExpendableMemoryTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExpendableMemoryTests.cpp; sourceTree = "<group>"; };
+		2C734C8F277680EF0017BFFE /* MemalignTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemalignTests.cpp; sourceTree = "<group>"; };
+		2C8548AF27B48FC5001750BB /* pas_thread_suspend_lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_thread_suspend_lock.h; sourceTree = "<group>"; };
+		2C8548B027B48FC5001750BB /* pas_thread_suspend_lock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_thread_suspend_lock.c; sourceTree = "<group>"; };
+		2C85DC4027128F0F00367905 /* pas_try_allocate_intrinsic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_try_allocate_intrinsic.h; sourceTree = "<group>"; };
+		2C91E54F2718DA9A00D67FF9 /* pas_size_lookup_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_size_lookup_mode.h; sourceTree = "<group>"; };
+		2CB9B154278F85ED003A8C1B /* pas_lenient_compact_unsigned_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lenient_compact_unsigned_ptr.h; sourceTree = "<group>"; };
+		2CB9B155278F85ED003A8C1B /* pas_lenient_compact_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lenient_compact_ptr.h; sourceTree = "<group>"; };
+		2CB9B156278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_lenient_compact_unsigned_ptr.c; sourceTree = "<group>"; };
+		2CB9B157278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lenient_compact_ptr_inlines.h; sourceTree = "<group>"; };
+		2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LotsOfHeapsAndThreads.cpp; sourceTree = "<group>"; };
+		2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitfitTests.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1370,34 +1381,40 @@
 			isa = PBXGroup;
 			children = (
 				0FDEA45D228B651B0085E340 /* BitfieldVectorTests.cpp */,
+				2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */,
 				0F53181022C954ED003F7B6A /* BitvectorTests.cpp */,
 				0F31A66723E8B336002C0CA3 /* CartesianTreeTests.cpp */,
 				0FC682362129D4EB003C6A13 /* CoalignTests.cpp */,
+				2C48132C273F4159006CAB55 /* ExpendableMemoryTests.cpp */,
 				0FC6822F2129CB43003C6A13 /* ExtendedGCDTests.cpp */,
 				0FC6821321248A77003C6A13 /* HashtableTests.cpp */,
 				0FEB666B231F11D2009C001B /* HeapLocker.h */,
+				2C3D0FC6272B9241005C5A02 /* HeapRefAllocatorIndexTests.cpp */,
 				0FEA45C4236E10AA00B5A375 /* IsoDynamicPrimitiveHeapTests.cpp */,
 				0FA18545236B3C82003609AD /* IsoHeapChaosTests.cpp */,
 				0FF248FB230CC4C70077202E /* IsoHeapPageSharingTests.cpp */,
 				0FD48B6623B589910026C46D /* IsoHeapPartialAndBaselineTests.cpp */,
 				0F5B6093235E919900CAE629 /* IsoHeapReservedMemoryTests.cpp */,
-				0F508D5B258EDCA700151ED8 /* IsoHeapTablingTests.cpp */,
 				0F5193E6266AE5D400483A2C /* JITHeapTests.cpp */,
 				0FC64190213745FA0040CE5E /* LargeFreeHeapTests.cpp */,
 				0FEB6666231C87BC009C001B /* LargeSharingPoolDump.cpp */,
 				0FEB6667231C87BC009C001B /* LargeSharingPoolDump.h */,
 				0FEB6669231DA86F009C001B /* LargeSharingPoolTests.cpp */,
 				0FEA45BE236CDAED00B5A375 /* LockFreeReadPtrPtrHashtableTests.cpp */,
+				2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */,
+				2C734C8F277680EF0017BFFE /* MemalignTests.cpp */,
 				0FD22D0722CD8A7500B21841 /* MinHeapTests.cpp */,
+				2B2A589B2742D815005EE07C /* PGMTests.cpp */,
 				0F5E483923D69F610046DA5C /* RaceTests.cpp */,
 				0FF08F3522A59DB300386575 /* RedBlackTreeTests.cpp */,
-				0F31A64123DD4E02002C0CA3 /* SkipListTests.cpp */,
 				0FDE52552342B7C400A0808F /* SuspendScavenger.h */,
 				0FC681EB21127A16003C6A13 /* TestHarness.cpp */,
 				0FC681EA210FEDB5003C6A13 /* TestHarness.h */,
 				0F8700B225B0AB29000E1ABF /* ThingyAndUtilityHeapAllocationTests.cpp */,
+				2C473161277D4C9E00B62C49 /* TLCDecommitTests.cpp */,
 				0F8700DE25B14C68000E1ABF /* TSDTests.cpp */,
 				0F53181222C9609D003F7B6A /* UtilsTests.cpp */,
+				2C16DADF279E07290042E919 /* ViewCacheTests.cpp */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -1412,6 +1429,8 @@
 				0F8A805E25EECC1C00790B4A /* bmalloc_heap_inlines.h */,
 				0F8A806425EECC1D00790B4A /* bmalloc_heap_innards.h */,
 				0F8A806325EECC1D00790B4A /* bmalloc_heap_ref.h */,
+				2C11E8902728A893002162D0 /* bmalloc_type.c */,
+				2C11E88C2728A783002162D0 /* bmalloc_type.h */,
 				0F8A80FE25F6A79500790B4A /* hotbit_heap.c */,
 				0F8A80FF25F6A79500790B4A /* hotbit_heap.h */,
 				0F8A80FB25F6A79500790B4A /* hotbit_heap_config.c */,
@@ -1446,20 +1465,15 @@
 				0FC681F3211CD5DF003C6A13 /* pas_aligned_allocator.h */,
 				0FDEA416228B64320085E340 /* pas_alignment.c */,
 				0FDEA42B228B64330085E340 /* pas_alignment.h */,
-				0F9A1CBE2559961400C8D11B /* pas_all_biasing_directories.c */,
-				0F9A1CD02559961500C8D11B /* pas_all_biasing_directories.h */,
 				0F59A3912667F00E00A38657 /* pas_all_heap_configs.h */,
 				0FC681EE2114D983003C6A13 /* pas_all_heaps.c */,
 				0FC681EF2114D984003C6A13 /* pas_all_heaps.h */,
-				0F1AECE626581960000C5218 /* pas_all_magazines.c */,
-				0F1AECE726581961000C5218 /* pas_all_magazines.h */,
 				0FD48B0B23A9ABB10026C46D /* pas_all_shared_page_directories.c */,
 				0FD48B2723A9ABB30026C46D /* pas_all_shared_page_directories.h */,
 				0F47C31C23396E0B002A1CF7 /* pas_allocation_callbacks.c */,
 				0F47C31D23396E0B002A1CF7 /* pas_allocation_callbacks.h */,
 				0F78088C22FA534100F37451 /* pas_allocation_config.h */,
 				0F47C31823396D1F002A1CF7 /* pas_allocation_kind.h */,
-				0F9A1CA32559961200C8D11B /* pas_allocation_result.c */,
 				0FC681B221065A00003C6A13 /* pas_allocation_result.h */,
 				0FDBB07A22BBFF83006BA5FC /* pas_allocator_counts.h */,
 				0F2150EA2484BB2A000D634B /* pas_allocator_index.h */,
@@ -1474,27 +1488,15 @@
 				0F4F616C259BFF91008B4A82 /* pas_basic_heap_config_root_data.h */,
 				0F329A1E23F1132A00A133C4 /* pas_basic_heap_page_caches.h */,
 				0F329A1D23F1132A00A133C4 /* pas_basic_heap_runtime_config.h */,
-				0F329A2023F1132A00A133C4 /* pas_basic_segregated_page_caches.h */,
-				0F9A1CC72559961500C8D11B /* pas_biasing_directory.c */,
-				0F9A1CD82559961600C8D11B /* pas_biasing_directory.h */,
-				0F9A1CBF2559961400C8D11B /* pas_biasing_directory_inlines.h */,
 				0F9A1CA92559961200C8D11B /* pas_biasing_directory_kind.h */,
 				0FDEA419228B64320085E340 /* pas_bitfield_vector.h */,
 				0F9A1CBB2559961400C8D11B /* pas_bitfit_allocation_result.h */,
 				0F9A1CC42559961400C8D11B /* pas_bitfit_allocator.c */,
 				0F9A1CBC2559961400C8D11B /* pas_bitfit_allocator.h */,
 				0F9A1CD22559961500C8D11B /* pas_bitfit_allocator_inlines.h */,
-				0F9A1CB02559961300C8D11B /* pas_bitfit_biasing_directory.c */,
-				0F9A1CA72559961200C8D11B /* pas_bitfit_biasing_directory.h */,
 				0F9A1CC12559961400C8D11B /* pas_bitfit_directory.c */,
 				0F9A1CB62559961300C8D11B /* pas_bitfit_directory.h */,
-				0F9A1CAA2559961200C8D11B /* pas_bitfit_directory_and_index.h */,
 				0F9A1CC82559961500C8D11B /* pas_bitfit_directory_inlines.h */,
-				0F9A1CB32559961300C8D11B /* pas_bitfit_directory_kind.h */,
-				0F9A1CBD2559961400C8D11B /* pas_bitfit_global_directory.c */,
-				0F9A1C982559961100C8D11B /* pas_bitfit_global_directory.h */,
-				0F9A1CDF2559961600C8D11B /* pas_bitfit_global_size_class.c */,
-				0F9A1CAF2559961300C8D11B /* pas_bitfit_global_size_class.h */,
 				0F9A1CD12559961500C8D11B /* pas_bitfit_heap.c */,
 				0F9A1CCD2559961500C8D11B /* pas_bitfit_heap.h */,
 				0F9A1C9B2559961100C8D11B /* pas_bitfit_max_free.h */,
@@ -1527,6 +1529,8 @@
 				0F19324C22ED04A500FBA713 /* pas_commit_mode.h */,
 				0F9A1CA42559961200C8D11B /* pas_commit_span.c */,
 				0F9A1CA82559961200C8D11B /* pas_commit_span.h */,
+				2C473164277D4CCC00B62C49 /* pas_committed_pages_vector.c */,
+				2C473165277D4CCC00B62C49 /* pas_committed_pages_vector.h */,
 				0F2150EC2484BB86000D634B /* pas_compact_atomic_allocator_index_ptr.h */,
 				0F9A1D46255E284200C8D11B /* pas_compact_atomic_biasing_directory_ptr.h */,
 				0F9A1D3A255A4BA600C8D11B /* pas_compact_atomic_bitfit_biasing_directory_ptr.h */,
@@ -1538,9 +1542,9 @@
 				0F04C2132460DB6F001D31F0 /* pas_compact_atomic_page_sharing_pool_ptr.h */,
 				0F6D564123CAA1B900F40DBB /* pas_compact_atomic_ptr.h */,
 				0F66D542248760A800FC7347 /* pas_compact_atomic_segregated_exclusive_view_ptr.h */,
-				0F04C22724611CFD001D31F0 /* pas_compact_atomic_segregated_global_size_directory_ptr.h */,
 				0F6D565F23CBD19D00F40DBB /* pas_compact_atomic_segregated_heap_page_sharing_pools_ptr.h */,
 				0F6D565923CBD19C00F40DBB /* pas_compact_atomic_segregated_partial_view_ptr.h */,
+				0F14870B269B7518006887A9 /* pas_compact_atomic_segregated_size_directory_ptr.h */,
 				0F6D566023CBD19D00F40DBB /* pas_compact_atomic_segregated_view.h */,
 				0FA5E4552492D5B900CE962A /* pas_compact_atomic_thread_local_cache_layout_node.h */,
 				0F6D565123CBD19C00F40DBB /* pas_compact_atomic_unsigned_ptr.h */,
@@ -1551,6 +1555,8 @@
 				0F6D564323CAA1B900F40DBB /* pas_compact_bootstrap_free_heap.c */,
 				0F6D564023CAA1B900F40DBB /* pas_compact_bootstrap_free_heap.h */,
 				0F4F61BF25A4CB09008B4A82 /* pas_compact_cartesian_tree_node_ptr.h */,
+				2C481321273F341A006CAB55 /* pas_compact_expendable_memory.c */,
+				2C481323273F341A006CAB55 /* pas_compact_expendable_memory.h */,
 				0F6D565E23CBD19D00F40DBB /* pas_compact_heap_ptr.h */,
 				0F6D565C23CBD19C00F40DBB /* pas_compact_heap_reservation.c */,
 				0F6D565623CBD19C00F40DBB /* pas_compact_heap_reservation.h */,
@@ -1559,24 +1565,22 @@
 				0F9A1CDC2559961600C8D11B /* pas_compact_page_granule_use_count_ptr.h */,
 				0F6D563F23CAA1B900F40DBB /* pas_compact_ptr.h */,
 				0F66D541248760A800FC7347 /* pas_compact_segregated_biasing_directory_ptr.h */,
-				0F04C22624611CFD001D31F0 /* pas_compact_segregated_global_size_directory_ptr.h */,
+				0F14870D269B7518006887A9 /* pas_compact_segregated_exclusive_view_ptr.h */,
 				0F6D567523CC141E00F40DBB /* pas_compact_segregated_heap_ptr.h */,
 				0F6D565523CBD19C00F40DBB /* pas_compact_segregated_shared_page_directory_ptr.h */,
 				0F6D565B23CBD19C00F40DBB /* pas_compact_segregated_shared_view_ptr.h */,
+				0F14870F269B7518006887A9 /* pas_compact_segregated_size_directory_ptr.h */,
 				0F6D565323CBD19C00F40DBB /* pas_compact_segregated_view.h */,
-				0F31A63F23DCF848002C0CA3 /* pas_compact_skip_list_node_ptr.h */,
-				0F31A64523E4C441002C0CA3 /* pas_compact_skip_list_node_ptr_ptr.h */,
-				0F9A1CC32559961400C8D11B /* pas_compact_subpage_map_entry_ptr.h */,
 				0F6D564D23CABA6500F40DBB /* pas_compact_tagged_atomic_ptr.h */,
 				0F9A1CD32559961600C8D11B /* pas_compact_tagged_page_granule_use_count_ptr.h */,
 				0F6D564423CAA1B900F40DBB /* pas_compact_tagged_ptr.h */,
 				0F6D567823CD705900F40DBB /* pas_compact_tagged_unsigned_ptr.h */,
+				2C473168277D4CCC00B62C49 /* pas_compact_thread_local_cache_layout_node.h */,
 				0F6D564F23CBD19B00F40DBB /* pas_compact_unsigned_ptr.h */,
 				0FC4EC35234A91E300B710A3 /* pas_compute_summary_object_callbacks.c */,
 				0FC4EC30234A91E200B710A3 /* pas_compute_summary_object_callbacks.h */,
 				0FC681A22103917B003C6A13 /* pas_config.h */,
 				0F85EFD522E2BEC7003A362B /* pas_config_prefix.h */,
-				0FD48B0A23A9ABB10026C46D /* pas_count_lookup_mode.h */,
 				0F329A2623F1D63500A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.c */,
 				0F329A2523F1D63500A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.h */,
 				0FE7EE5F229E14FA004F4166 /* pas_deallocate.c */,
@@ -1587,6 +1591,7 @@
 				0F373E512659EA5E0034BA96 /* pas_debug_heap.h */,
 				0FBC62C0265F12A3005A5720 /* pas_debug_spectrum.c */,
 				0FBC62C1265F12A3005A5720 /* pas_debug_spectrum.h */,
+				2C473163277D4CCC00B62C49 /* pas_decommit_exclusion_range.h */,
 				0F78089822FA6F0800F37451 /* pas_deferred_decommit_log.c */,
 				0F78089922FA6F0800F37451 /* pas_deferred_decommit_log.h */,
 				0F5B83BB2491888A00F41052 /* pas_designated_intrinsic_heap.c */,
@@ -1623,6 +1628,8 @@
 				0F19324D22ED04A500FBA713 /* pas_epoch.h */,
 				0FD48AF923A9ABAF0026C46D /* pas_exclusive_view_template_memo_table.c */,
 				0FD48B2023A9ABB30026C46D /* pas_exclusive_view_template_memo_table.h */,
+				2C481322273F341A006CAB55 /* pas_expendable_memory.c */,
+				2C481325273F341A006CAB55 /* pas_expendable_memory.h */,
 				0FC6822B2129C98C003C6A13 /* pas_extended_gcd.c */,
 				0FC6822C2129C98C003C6A13 /* pas_extended_gcd.h */,
 				0FF08F4122A627C000386575 /* pas_fast_large_free_heap.c */,
@@ -1651,6 +1658,7 @@
 				0FE7EE5C229E14F9004F4166 /* pas_get_heap.h */,
 				0F9A1D4B255F2CD700C8D11B /* pas_get_object_kind.h */,
 				0F9A1D4E256305B400C8D11B /* pas_get_page_base.h */,
+				2C34FFF627571D2F005565CB /* pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h */,
 				0F1518FC23441E3200832B5C /* pas_has_object.h */,
 				0FC6820A2121F6E8003C6A13 /* pas_hashtable.h */,
 				0FC681C8210F7C9F003C6A13 /* pas_heap.c */,
@@ -1675,6 +1683,7 @@
 				0FC681C7210F7C9F003C6A13 /* pas_heap_ref.h */,
 				0F8792B2238A1D0C00AEE7F1 /* pas_heap_ref_kind.h */,
 				0F47D40A2140DB05008C41F0 /* pas_heap_ref_prefix.h */,
+				0F14870E269B7518006887A9 /* pas_heap_runtime_config.c */,
 				0F329A1F23F1132A00A133C4 /* pas_heap_runtime_config.h */,
 				0FC4EC31234A91E200B710A3 /* pas_heap_summary.c */,
 				0FEB6664231B2A57009C001B /* pas_heap_summary.h */,
@@ -1685,8 +1694,9 @@
 				0FD48B0923A9ABB10026C46D /* pas_immortal_heap.h */,
 				0FD48AFC23A9ABB00026C46D /* pas_immutable_vector.h */,
 				0F516EE224560FF5004E2B8D /* pas_internal_config.h */,
-				0FDEA427228B64330085E340 /* pas_intrinsic_allocation_result.h */,
 				0FF08F4922A8446B00386575 /* pas_intrinsic_heap_support.h */,
+				2C481320273F341A006CAB55 /* pas_large_expendable_memory.c */,
+				2C481324273F341A006CAB55 /* pas_large_expendable_memory.h */,
 				0FC681A82103CAC9003C6A13 /* pas_large_free.h */,
 				0FC68246212A0F1F003C6A13 /* pas_large_free_heap_config.h */,
 				0F66D53F248760A700FC7347 /* pas_large_free_heap_declarations.def */,
@@ -1709,34 +1719,45 @@
 				0FC84794232D694900B386B6 /* pas_large_sharing_pool_epoch_update_mode.h */,
 				0F6D547523C573E000F40DBB /* pas_large_utility_free_heap.c */,
 				0F6D547223C573E000F40DBB /* pas_large_utility_free_heap.h */,
+				2C473151277A540F00B62C49 /* pas_large_virtual_range.h */,
+				2C473150277A540F00B62C49 /* pas_large_virtual_range_min_heap.h */,
+				2CB9B155278F85ED003A8C1B /* pas_lenient_compact_ptr.h */,
+				2CB9B157278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h */,
+				2CB9B156278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.c */,
+				2CB9B154278F85ED003A8C1B /* pas_lenient_compact_unsigned_ptr.h */,
 				0F8A802725EC588800790B4A /* pas_line_word_config.h */,
 				0F31A64323E3509E002C0CA3 /* pas_list_direction.h */,
 				0FDBB07122B875A6006BA5FC /* pas_local_allocator.c */,
 				0FDBB07222B875A6006BA5FC /* pas_local_allocator.h */,
 				0FD48B0223A9ABB00026C46D /* pas_local_allocator_config_kind.h */,
 				0FDBB07622B877FA006BA5FC /* pas_local_allocator_inlines.h */,
-				0F8A802825EC588800790B4A /* pas_local_allocator_line.h */,
+				0F45D5A626AB731400C35D93 /* pas_local_allocator_kind.h */,
 				0FDBB07022B875A6006BA5FC /* pas_local_allocator_refill_mode.h */,
 				0FC681BF210F7C9E003C6A13 /* pas_local_allocator_result.h */,
+				0F45D5A726AB731400C35D93 /* pas_local_allocator_scavenger_data.c */,
+				0F45D5A826AB731400C35D93 /* pas_local_allocator_scavenger_data.h */,
+				0F14871B269F5FCA006887A9 /* pas_local_view_cache.c */,
+				0F14870C269B7518006887A9 /* pas_local_view_cache.h */,
 				0F04C20D2460DB6E001D31F0 /* pas_lock.c */,
 				0FC6825D212CA76D003C6A13 /* pas_lock.h */,
 				0FEA45BA236CD5AC00B5A375 /* pas_lock_free_read_ptr_ptr_hashtable.c */,
 				0FEA45BB236CD5AC00B5A375 /* pas_lock_free_read_ptr_ptr_hashtable.h */,
 				0F9E945623452262009FAFDD /* pas_log.c */,
 				0F9E945723452262009FAFDD /* pas_log.h */,
-				0F04C2122460DB6F001D31F0 /* pas_magazine.c */,
-				0F04C2082460DB6E001D31F0 /* pas_magazine.h */,
 				0F037AF125AEA9190079B582 /* pas_medium_megapage_cache.c */,
 				0F037AF225AEA91A0079B582 /* pas_medium_megapage_cache.h */,
 				0FC6820021210B19003C6A13 /* pas_megapage_cache.c */,
 				0FC681FD21210B18003C6A13 /* pas_megapage_cache.h */,
 				0FD22CFB22CAF16400B21841 /* pas_min_heap.h */,
+				2C47314F277A540F00B62C49 /* pas_mmap_capability.h */,
 				0FD48B1023A9ABB10026C46D /* pas_monotonic_time.c */,
 				0FD48AFD23A9ABB00026C46D /* pas_monotonic_time.h */,
 				0F09226922B07C21007D5D3A /* pas_mutation_count.h */,
 				0F9A1D4A255F2CD700C8D11B /* pas_object_kind.h */,
 				0F9A1CBA2559961400C8D11B /* pas_page_base.c */,
 				0F9A1CB92559961300C8D11B /* pas_page_base.h */,
+				2C34FFF527571D2F005565CB /* pas_page_base_and_kind.h */,
+				2C34000127581687005565CB /* pas_page_base_config.c */,
 				0F9A1CC02559961400C8D11B /* pas_page_base_config.h */,
 				0F9A1D42255AF73200C8D11B /* pas_page_base_config_inlines.h */,
 				0F9A1CD42559961600C8D11B /* pas_page_base_config_utils.h */,
@@ -1756,14 +1777,18 @@
 				0F19325B22F1193D00FBA713 /* pas_page_sharing_participant_kind.h */,
 				0FD22CFE22CC01D300B21841 /* pas_page_sharing_pool.c */,
 				0FD22CFD22CC01D300B21841 /* pas_page_sharing_pool.h */,
+				0FCBD03326ADF92500D26D68 /* pas_page_sharing_pool_scavenge_result.h */,
 				0FF248F822FC9EDB0077202E /* pas_page_sharing_pool_take_result.h */,
 				0F4F61C925A4CD3B008B4A82 /* pas_payload_reservation_page_list.c */,
 				0F4F61C825A4CD3B008B4A82 /* pas_payload_reservation_page_list.h */,
 				0F6D547323C573E000F40DBB /* pas_physical_memory_synchronization_style.h */,
 				0FF248F722FC9EDA0077202E /* pas_physical_memory_transaction.c */,
 				0F78088622FA2E4900F37451 /* pas_physical_memory_transaction.h */,
+				2C473166277D4CCC00B62C49 /* pas_platform.h */,
 				0FDEA578228E23450085E340 /* pas_primitive_heap_ref.c */,
 				0FDEA577228E23440085E340 /* pas_primitive_heap_ref.h */,
+				2B2A58982742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.c */,
+				2B2A58972742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.h */,
 				0F9A1CAD2559961300C8D11B /* pas_promote_intrinsic_heap.h */,
 				0F4F615A259BF6EC008B4A82 /* pas_ptr_hash_map.h */,
 				0F4F6146259BB109008B4A82 /* pas_ptr_hash_set.h */,
@@ -1792,10 +1817,8 @@
 				0F19326B22F73E8400FBA713 /* pas_scavenger.c */,
 				0F19326A22F73E8400FBA713 /* pas_scavenger.h */,
 				0F68127122BD4BF40036A02B /* pas_segmented_vector.h */,
-				0F04C20E2460DB6E001D31F0 /* pas_segregated_biasing_directory.c */,
-				0F04C2022460DB6D001D31F0 /* pas_segregated_biasing_directory.h */,
-				0F04C20A2460DB6E001D31F0 /* pas_segregated_biasing_view.c */,
-				0F04C20C2460DB6E001D31F0 /* pas_segregated_biasing_view.h */,
+				2C34FFF727571D2F005565CB /* pas_segregated_deallocation_logging_mode.h */,
+				0F14870A269B7517006887A9 /* pas_segregated_deallocation_mode.h */,
 				0FD48B1E23A9ABB20026C46D /* pas_segregated_directory.c */,
 				0FD48B1B23A9ABB20026C46D /* pas_segregated_directory.h */,
 				0FD48B0C23A9ABB10026C46D /* pas_segregated_directory_bit_reference.h */,
@@ -1805,10 +1828,6 @@
 				0FD48B1823A9ABB20026C46D /* pas_segregated_exclusive_view.c */,
 				0FD48B0623A9ABB00026C46D /* pas_segregated_exclusive_view.h */,
 				0FE672B625C21D53006F60A2 /* pas_segregated_exclusive_view_inlines.h */,
-				0F04C2072460DB6E001D31F0 /* pas_segregated_exclusive_view_ownership_kind.h */,
-				0F04C2032460DB6E001D31F0 /* pas_segregated_global_size_directory.c */,
-				0F04C2042460DB6E001D31F0 /* pas_segregated_global_size_directory.h */,
-				0F04C20F2460DB6E001D31F0 /* pas_segregated_global_size_directory_inlines.h */,
 				0FC681C1210F7C9E003C6A13 /* pas_segregated_heap.c */,
 				0FC681C5210F7C9F003C6A13 /* pas_segregated_heap.h */,
 				0FD48AF023A9ABAF0026C46D /* pas_segregated_heap_inlines.h */,
@@ -1822,11 +1841,14 @@
 				0FD48B2323A9ABB30026C46D /* pas_segregated_page_config_kind.c */,
 				0FF8D62622C04A6D00EC72FE /* pas_segregated_page_config_kind.def */,
 				0FDEA40A228B64310085E340 /* pas_segregated_page_config_kind.h */,
+				2C34FFFF275815D0005565CB /* pas_segregated_page_config_kind_and_role.c */,
+				2C34FFF827571D2F005565CB /* pas_segregated_page_config_kind_and_role.h */,
 				0F09226B22B2D88E007D5D3A /* pas_segregated_page_config_utils.h */,
 				0F083F5822C2979B00F3CDB3 /* pas_segregated_page_config_utils_inlines.h */,
 				0F9A1C9F2559961100C8D11B /* pas_segregated_page_config_variant.h */,
 				0FC4EC782351707B00B710A3 /* pas_segregated_page_emptiness_kind.h */,
 				0FF8D62822C166F500EC72FE /* pas_segregated_page_inlines.h */,
+				2C34FFF927571D2F005565CB /* pas_segregated_page_role.h */,
 				0FD48B1123A9ABB10026C46D /* pas_segregated_partial_view.c */,
 				0FD48AFA23A9ABB00026C46D /* pas_segregated_partial_view.h */,
 				0FD48B2A23A9ABB30026C46D /* pas_segregated_partial_view_inlines.h */,
@@ -1840,11 +1862,11 @@
 				0F5E5CF123BFBFB800AA0B6F /* pas_segregated_shared_view_inlines.h */,
 				0FD48B2123A9ABB30026C46D /* pas_segregated_size_directory.c */,
 				0FD48B2923A9ABB30026C46D /* pas_segregated_size_directory.h */,
+				0F14871C269F5FCA006887A9 /* pas_segregated_size_directory_creation_mode.h */,
 				0FD48B1923A9ABB20026C46D /* pas_segregated_size_directory_inlines.h */,
 				0FD48AFB23A9ABB00026C46D /* pas_segregated_view.c */,
 				0FD48B0E23A9ABB10026C46D /* pas_segregated_view.h */,
 				0FE672C625C21F67006F60A2 /* pas_segregated_view_allocator_inlines.h */,
-				0F04C2102460DB6F001D31F0 /* pas_segregated_view_inlines.h */,
 				0FD48B1423A9ABB20026C46D /* pas_segregated_view_kind.h */,
 				0F9A1C9D2559961100C8D11B /* pas_shared_handle_or_page_boundary.h */,
 				0F9A1CDB2559961600C8D11B /* pas_shared_handle_or_page_boundary_inlines.h */,
@@ -1856,11 +1878,9 @@
 				0F6D564523CAA1B900F40DBB /* pas_simple_free_heap_helpers.h */,
 				0FF08F3C22A5DC6900386575 /* pas_simple_large_free_heap.c */,
 				0FF08F3B22A5DC6900386575 /* pas_simple_large_free_heap.h */,
+				2C11E88D2728A783002162D0 /* pas_simple_type.c */,
 				0FDEA576228E23440085E340 /* pas_simple_type.h */,
-				0F99F98B25CB2CE800EEE449 /* pas_size_thunk.h */,
-				0F31A63A23DCF804002C0CA3 /* pas_skip_list.c */,
-				0F31A63B23DCF804002C0CA3 /* pas_skip_list.h */,
-				0F31A63923DCF804002C0CA3 /* pas_skip_list_inlines.h */,
+				2C91E54F2718DA9A00D67FF9 /* pas_size_lookup_mode.h */,
 				0FC641842130DFB60040CE5E /* pas_slow_path_mode.h */,
 				0F47D40E2140DB05008C41F0 /* pas_slow_path_mode_prefix.h */,
 				0F6D547823C573E100F40DBB /* pas_small_large_map_entry.h */,
@@ -1871,29 +1891,28 @@
 				0FC6821921253627003C6A13 /* pas_stream.h */,
 				0FC4EC2E234A91E200B710A3 /* pas_string_stream.c */,
 				0FC4EC33234A91E200B710A3 /* pas_string_stream.h */,
-				0F9A1CD72559961600C8D11B /* pas_subpage_map.c */,
-				0F9A1CC22559961400C8D11B /* pas_subpage_map.h */,
-				0F9A1C9C2559961100C8D11B /* pas_subpage_map_entry.c */,
-				0F9A1C972559961100C8D11B /* pas_subpage_map_entry.h */,
 				0FC681C9210F7C9F003C6A13 /* pas_thread_local_cache.c */,
 				0FC681C4210F7C9E003C6A13 /* pas_thread_local_cache.h */,
 				0FC681C2210F7C9E003C6A13 /* pas_thread_local_cache_layout.c */,
 				0FC681CA210F7C9F003C6A13 /* pas_thread_local_cache_layout.h */,
+				2C473167277D4CCC00B62C49 /* pas_thread_local_cache_layout_entry.h */,
 				0FA5E4512492D5B900CE962A /* pas_thread_local_cache_layout_node.c */,
 				0FA5E4532492D5B900CE962A /* pas_thread_local_cache_layout_node.h */,
+				0F14871E269F5FCA006887A9 /* pas_thread_local_cache_layout_node_kind.h */,
 				0F7F51BC23159EC0007552AE /* pas_thread_local_cache_node.c */,
 				0F7F51BD23159EC0007552AE /* pas_thread_local_cache_node.h */,
+				2C8548B027B48FC5001750BB /* pas_thread_suspend_lock.c */,
+				2C8548AF27B48FC5001750BB /* pas_thread_suspend_lock.h */,
 				0F6D547123C573E000F40DBB /* pas_tiny_large_map_entry.h */,
 				0F31A66923E8E594002C0CA3 /* pas_tree_direction.h */,
 				0F8A800C25CF64C900790B4A /* pas_tri_state.h */,
 				0FE7EE5B229E14F9004F4166 /* pas_try_allocate.h */,
 				0FE7EE5A229E14F9004F4166 /* pas_try_allocate_array.h */,
 				0FD48B0323A9ABB00026C46D /* pas_try_allocate_common.h */,
-				0FE7EE59229E14F9004F4166 /* pas_try_allocate_intrinsic_primitive.h */,
+				2C85DC4027128F0F00367905 /* pas_try_allocate_intrinsic.h */,
 				0FE7EE5D229E14FA004F4166 /* pas_try_allocate_primitive.h */,
 				0FE7EE7822A048BA004F4166 /* pas_try_reallocate.h */,
 				0F59A3922667F00E00A38657 /* pas_try_shrink.h */,
-				0FDEA476228B65430085E340 /* pas_typed_allocation_result.h */,
 				0FC6823E2129ED51003C6A13 /* pas_utility_heap.c */,
 				0FC682412129ED51003C6A13 /* pas_utility_heap.h */,
 				0FDEA423228B64330085E340 /* pas_utility_heap_config.c */,
@@ -2010,6 +2029,7 @@
 				0F8A806525EECC1D00790B4A /* bmalloc_heap_inlines.h in Headers */,
 				0F8A806B25EECC1D00790B4A /* bmalloc_heap_innards.h in Headers */,
 				0F8A806A25EECC1D00790B4A /* bmalloc_heap_ref.h in Headers */,
+				2C11E88E2728A783002162D0 /* bmalloc_type.h in Headers */,
 				0F8A810525F6A79500790B4A /* hotbit_heap.h in Headers */,
 				0F8A810325F6A79500790B4A /* hotbit_heap_config.h in Headers */,
 				0F8A810625F6A79500790B4A /* hotbit_heap_inlines.h in Headers */,
@@ -2031,10 +2051,8 @@
 				0FE7EDFE22960142004F4166 /* pas_aligned_allocation_result.h in Headers */,
 				0FE7EDFF22960142004F4166 /* pas_aligned_allocator.h in Headers */,
 				0FE7EE0022960142004F4166 /* pas_alignment.h in Headers */,
-				0F9A1D1B2559961700C8D11B /* pas_all_biasing_directories.h in Headers */,
 				0F59A3952667F00E00A38657 /* pas_all_heap_configs.h in Headers */,
 				0FE7EE0122960142004F4166 /* pas_all_heaps.h in Headers */,
-				0F1AECE926581961000C5218 /* pas_all_magazines.h in Headers */,
 				0FD48B6223A9ABB30026C46D /* pas_all_shared_page_directories.h in Headers */,
 				0F47C31F23396E0B002A1CF7 /* pas_allocation_callbacks.h in Headers */,
 				0F78089222FA534100F37451 /* pas_allocation_config.h in Headers */,
@@ -2050,21 +2068,13 @@
 				0F4F616D259BFF91008B4A82 /* pas_basic_heap_config_root_data.h in Headers */,
 				0F329A2223F1132B00A133C4 /* pas_basic_heap_page_caches.h in Headers */,
 				0F329A2123F1132A00A133C4 /* pas_basic_heap_runtime_config.h in Headers */,
-				0F329A2423F1132B00A133C4 /* pas_basic_segregated_page_caches.h in Headers */,
-				0F9A1D232559961700C8D11B /* pas_biasing_directory.h in Headers */,
-				0F9A1D0B2559961700C8D11B /* pas_biasing_directory_inlines.h in Headers */,
 				0F9A1CF52559961700C8D11B /* pas_biasing_directory_kind.h in Headers */,
 				0FE7EE0322960142004F4166 /* pas_bitfield_vector.h in Headers */,
 				0F9A1D072559961700C8D11B /* pas_bitfit_allocation_result.h in Headers */,
 				0F9A1D082559961700C8D11B /* pas_bitfit_allocator.h in Headers */,
 				0F9A1D1D2559961700C8D11B /* pas_bitfit_allocator_inlines.h in Headers */,
-				0F9A1CF32559961700C8D11B /* pas_bitfit_biasing_directory.h in Headers */,
 				0F9A1D022559961700C8D11B /* pas_bitfit_directory.h in Headers */,
-				0F9A1CF62559961700C8D11B /* pas_bitfit_directory_and_index.h in Headers */,
 				0F9A1D142559961700C8D11B /* pas_bitfit_directory_inlines.h in Headers */,
-				0F9A1CFF2559961700C8D11B /* pas_bitfit_directory_kind.h in Headers */,
-				0F9A1CE42559961700C8D11B /* pas_bitfit_global_directory.h in Headers */,
-				0F9A1CFB2559961700C8D11B /* pas_bitfit_global_size_class.h in Headers */,
 				0F9A1D182559961700C8D11B /* pas_bitfit_heap.h in Headers */,
 				0F9A1CE72559961700C8D11B /* pas_bitfit_max_free.h in Headers */,
 				0F9A1D032559961700C8D11B /* pas_bitfit_page.h in Headers */,
@@ -2098,9 +2108,9 @@
 				0F04C2252460DB6F001D31F0 /* pas_compact_atomic_page_sharing_pool_ptr.h in Headers */,
 				0F6D564923CAA1BA00F40DBB /* pas_compact_atomic_ptr.h in Headers */,
 				0F66D549248760A800FC7347 /* pas_compact_atomic_segregated_exclusive_view_ptr.h in Headers */,
-				0F04C22924611CFD001D31F0 /* pas_compact_atomic_segregated_global_size_directory_ptr.h in Headers */,
 				0F6D567123CBD19D00F40DBB /* pas_compact_atomic_segregated_heap_page_sharing_pools_ptr.h in Headers */,
 				0F6D566B23CBD19D00F40DBB /* pas_compact_atomic_segregated_partial_view_ptr.h in Headers */,
+				0F148711269B7518006887A9 /* pas_compact_atomic_segregated_size_directory_ptr.h in Headers */,
 				0F6D567223CBD19D00F40DBB /* pas_compact_atomic_segregated_view.h in Headers */,
 				0FA5E45A2492D5BA00CE962A /* pas_compact_atomic_thread_local_cache_layout_node.h in Headers */,
 				0F6D566423CBD19D00F40DBB /* pas_compact_atomic_unsigned_ptr.h in Headers */,
@@ -2110,20 +2120,19 @@
 				0F9A1D39255A447300C8D11B /* pas_compact_bitfit_view_ptr.h in Headers */,
 				0F6D564823CAA1BA00F40DBB /* pas_compact_bootstrap_free_heap.h in Headers */,
 				0F4F61C025A4CB09008B4A82 /* pas_compact_cartesian_tree_node_ptr.h in Headers */,
+				2C481329273F341A006CAB55 /* pas_compact_expendable_memory.h in Headers */,
 				0F6D567023CBD19D00F40DBB /* pas_compact_heap_ptr.h in Headers */,
 				0F6D566823CBD19D00F40DBB /* pas_compact_heap_reservation.h in Headers */,
 				0F66D545248760A800FC7347 /* pas_compact_large_utility_free_heap.h in Headers */,
 				0F9A1D272559961700C8D11B /* pas_compact_page_granule_use_count_ptr.h in Headers */,
 				0F6D564723CAA1BA00F40DBB /* pas_compact_ptr.h in Headers */,
 				0F66D548248760A800FC7347 /* pas_compact_segregated_biasing_directory_ptr.h in Headers */,
-				0F04C22824611CFD001D31F0 /* pas_compact_segregated_global_size_directory_ptr.h in Headers */,
+				0F148713269B7518006887A9 /* pas_compact_segregated_exclusive_view_ptr.h in Headers */,
 				0F6D567723CC141E00F40DBB /* pas_compact_segregated_heap_ptr.h in Headers */,
 				0F6D566723CBD19D00F40DBB /* pas_compact_segregated_shared_page_directory_ptr.h in Headers */,
 				0F6D566D23CBD19D00F40DBB /* pas_compact_segregated_shared_view_ptr.h in Headers */,
+				0F148715269B7518006887A9 /* pas_compact_segregated_size_directory_ptr.h in Headers */,
 				0F6D566523CBD19D00F40DBB /* pas_compact_segregated_view.h in Headers */,
-				0F31A64023DCF848002C0CA3 /* pas_compact_skip_list_node_ptr.h in Headers */,
-				0F31A64623E4C441002C0CA3 /* pas_compact_skip_list_node_ptr_ptr.h in Headers */,
-				0F9A1D0F2559961700C8D11B /* pas_compact_subpage_map_entry_ptr.h in Headers */,
 				0F6D564E23CABA6500F40DBB /* pas_compact_tagged_atomic_ptr.h in Headers */,
 				0F9A1D1E2559961700C8D11B /* pas_compact_tagged_page_granule_use_count_ptr.h in Headers */,
 				0F6D564B23CAA1BA00F40DBB /* pas_compact_tagged_ptr.h in Headers */,
@@ -2132,7 +2141,6 @@
 				0FC4EC39234A91E300B710A3 /* pas_compute_summary_object_callbacks.h in Headers */,
 				0FE7EE0A22960142004F4166 /* pas_config.h in Headers */,
 				0F85EFDA22E2BEC7003A362B /* pas_config_prefix.h in Headers */,
-				0FD48B4523A9ABB30026C46D /* pas_count_lookup_mode.h in Headers */,
 				0F329A2B23F1D63600A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.h in Headers */,
 				0FE7EE66229E14FA004F4166 /* pas_deallocate.h in Headers */,
 				0FFFD515256B0FBD001EB94C /* pas_deallocation_mode.h in Headers */,
@@ -2159,6 +2167,7 @@
 				0F4F611C259838B1008B4A82 /* pas_enumerator_region.h in Headers */,
 				0F19325422ED04A600FBA713 /* pas_epoch.h in Headers */,
 				0FD48B5B23A9ABB30026C46D /* pas_exclusive_view_template_memo_table.h in Headers */,
+				2C48132B273F341A006CAB55 /* pas_expendable_memory.h in Headers */,
 				0FE7EE0C22960142004F4166 /* pas_extended_gcd.h in Headers */,
 				0FF08F4422A627C100386575 /* pas_fast_large_free_heap.h in Headers */,
 				0F9A1D042559961700C8D11B /* pas_fast_megapage_cache.h in Headers */,
@@ -2181,6 +2190,7 @@
 				0FE7EE64229E14FA004F4166 /* pas_get_heap.h in Headers */,
 				0F9A1D4D255F2CD700C8D11B /* pas_get_object_kind.h in Headers */,
 				0F9A1D4F256305B400C8D11B /* pas_get_page_base.h in Headers */,
+				2C34FFFB27571D2F005565CB /* pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h in Headers */,
 				0F1518FD23441E3200832B5C /* pas_has_object.h in Headers */,
 				0FE7EE1022960142004F4166 /* pas_hashtable.h in Headers */,
 				0FE7EE1622960142004F4166 /* pas_heap.h in Headers */,
@@ -2204,8 +2214,8 @@
 				0FD48B4423A9ABB30026C46D /* pas_immortal_heap.h in Headers */,
 				0FD48B3723A9ABB30026C46D /* pas_immutable_vector.h in Headers */,
 				0F516EE324560FF5004E2B8D /* pas_internal_config.h in Headers */,
-				0FE7EE1A22960142004F4166 /* pas_intrinsic_allocation_result.h in Headers */,
 				0FF08F4A22A8446B00386575 /* pas_intrinsic_heap_support.h in Headers */,
+				2C48132A273F341A006CAB55 /* pas_large_expendable_memory.h in Headers */,
 				0FE7EE1E22960142004F4166 /* pas_large_free.h in Headers */,
 				0FE7EE1C22960142004F4166 /* pas_large_free_heap_config.h in Headers */,
 				0F66D54B248760AF00FC7347 /* pas_large_free_heap_declarations.def in Headers */,
@@ -2221,25 +2231,33 @@
 				0FCFA49A238352EC00CCD726 /* pas_large_sharing_pool.h in Headers */,
 				0FC84795232D694900B386B6 /* pas_large_sharing_pool_epoch_update_mode.h in Headers */,
 				0F6D547A23C573E100F40DBB /* pas_large_utility_free_heap.h in Headers */,
+				2C473154277A540F00B62C49 /* pas_large_virtual_range.h in Headers */,
+				2C473153277A540F00B62C49 /* pas_large_virtual_range_min_heap.h in Headers */,
+				2CB9B159278F85EE003A8C1B /* pas_lenient_compact_ptr.h in Headers */,
+				2CB9B15B278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h in Headers */,
+				2CB9B158278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.h in Headers */,
 				0F8A802925EC588800790B4A /* pas_line_word_config.h in Headers */,
 				0F31A64423E3509E002C0CA3 /* pas_list_direction.h in Headers */,
 				0FDBB07522B875A6006BA5FC /* pas_local_allocator.h in Headers */,
 				0FD48B3D23A9ABB30026C46D /* pas_local_allocator_config_kind.h in Headers */,
 				0FDBB07722B877FA006BA5FC /* pas_local_allocator_inlines.h in Headers */,
-				0F8A802A25EC588800790B4A /* pas_local_allocator_line.h in Headers */,
+				0F45D5A926AB731400C35D93 /* pas_local_allocator_kind.h in Headers */,
 				0FDBB07322B875A6006BA5FC /* pas_local_allocator_refill_mode.h in Headers */,
 				0FE7EE0E22960142004F4166 /* pas_local_allocator_result.h in Headers */,
+				0F45D5AB26AB731400C35D93 /* pas_local_allocator_scavenger_data.h in Headers */,
+				0F148712269B7518006887A9 /* pas_local_view_cache.h in Headers */,
 				0FE7EE2122960142004F4166 /* pas_lock.h in Headers */,
 				0FEA45BD236CD5AC00B5A375 /* pas_lock_free_read_ptr_ptr_hashtable.h in Headers */,
 				0F9E945923452262009FAFDD /* pas_log.h in Headers */,
-				0F04C21A2460DB6F001D31F0 /* pas_magazine.h in Headers */,
 				0F037AF425AEA91A0079B582 /* pas_medium_megapage_cache.h in Headers */,
 				0FE7EE2222960142004F4166 /* pas_megapage_cache.h in Headers */,
 				0FD22CFC22CAF16400B21841 /* pas_min_heap.h in Headers */,
+				2C473152277A540F00B62C49 /* pas_mmap_capability.h in Headers */,
 				0FD48B3823A9ABB30026C46D /* pas_monotonic_time.h in Headers */,
 				0F09226A22B07C21007D5D3A /* pas_mutation_count.h in Headers */,
 				0F9A1D4C255F2CD700C8D11B /* pas_object_kind.h in Headers */,
 				0F9A1D052559961700C8D11B /* pas_page_base.h in Headers */,
+				2C34FFFA27571D2F005565CB /* pas_page_base_and_kind.h in Headers */,
 				0F9A1D0C2559961700C8D11B /* pas_page_base_config.h in Headers */,
 				0F9A1D43255AF73200C8D11B /* pas_page_base_config_inlines.h in Headers */,
 				0F9A1D1F2559961700C8D11B /* pas_page_base_config_utils.h in Headers */,
@@ -2255,11 +2273,13 @@
 				0F19326322F1193D00FBA713 /* pas_page_sharing_participant.h in Headers */,
 				0F19326022F1193D00FBA713 /* pas_page_sharing_participant_kind.h in Headers */,
 				0FD22CFF22CC01D300B21841 /* pas_page_sharing_pool.h in Headers */,
+				0FCBD03426ADF92500D26D68 /* pas_page_sharing_pool_scavenge_result.h in Headers */,
 				0FF248FA22FC9EDB0077202E /* pas_page_sharing_pool_take_result.h in Headers */,
 				0F4F61CA25A4CD3B008B4A82 /* pas_payload_reservation_page_list.h in Headers */,
 				0F6D547B23C573E100F40DBB /* pas_physical_memory_synchronization_style.h in Headers */,
 				0F78088722FA2E4900F37451 /* pas_physical_memory_transaction.h in Headers */,
 				0FE7EE2922960142004F4166 /* pas_primitive_heap_ref.h in Headers */,
+				2B2A58992742D803005EE07C /* pas_probabilistic_guard_malloc_allocator.h in Headers */,
 				0F9A1CF92559961700C8D11B /* pas_promote_intrinsic_heap.h in Headers */,
 				0F4F615B259BF6EC008B4A82 /* pas_ptr_hash_map.h in Headers */,
 				0F4F6147259BB109008B4A82 /* pas_ptr_hash_set.h in Headers */,
@@ -2280,8 +2300,8 @@
 				0F4F60FB25979BC8008B4A82 /* pas_root.h in Headers */,
 				0F19326C22F73E8500FBA713 /* pas_scavenger.h in Headers */,
 				0F68127222BD4BF40036A02B /* pas_segmented_vector.h in Headers */,
-				0F04C2142460DB6F001D31F0 /* pas_segregated_biasing_directory.h in Headers */,
-				0F04C21E2460DB6F001D31F0 /* pas_segregated_biasing_view.h in Headers */,
+				2C34FFFC27571D2F005565CB /* pas_segregated_deallocation_logging_mode.h in Headers */,
+				0F148710269B7518006887A9 /* pas_segregated_deallocation_mode.h in Headers */,
 				0FD48B5623A9ABB30026C46D /* pas_segregated_directory.h in Headers */,
 				0FD48B4723A9ABB30026C46D /* pas_segregated_directory_bit_reference.h in Headers */,
 				0F508D53258ECFD300151ED8 /* pas_segregated_directory_first_eligible_kind.h in Headers */,
@@ -2289,9 +2309,6 @@
 				0FD48B5D23A9ABB30026C46D /* pas_segregated_directory_kind.h in Headers */,
 				0FD48B4123A9ABB30026C46D /* pas_segregated_exclusive_view.h in Headers */,
 				0FE672B725C21D53006F60A2 /* pas_segregated_exclusive_view_inlines.h in Headers */,
-				0F04C2192460DB6F001D31F0 /* pas_segregated_exclusive_view_ownership_kind.h in Headers */,
-				0F04C2162460DB6F001D31F0 /* pas_segregated_global_size_directory.h in Headers */,
-				0F04C2212460DB6F001D31F0 /* pas_segregated_global_size_directory_inlines.h in Headers */,
 				0FE7EE2F22960142004F4166 /* pas_segregated_heap.h in Headers */,
 				0FD48B2B23A9ABB30026C46D /* pas_segregated_heap_inlines.h in Headers */,
 				0FE7EE2E22960142004F4166 /* pas_segregated_heap_lookup_kind.h in Headers */,
@@ -2301,11 +2318,13 @@
 				0FDBB07922B98054006BA5FC /* pas_segregated_page_config_inlines.h in Headers */,
 				0FF8D62722C04A7700EC72FE /* pas_segregated_page_config_kind.def in Headers */,
 				0FE7EE1122960142004F4166 /* pas_segregated_page_config_kind.h in Headers */,
+				2C34FFFD27571D2F005565CB /* pas_segregated_page_config_kind_and_role.h in Headers */,
 				0F09226C22B2D88E007D5D3A /* pas_segregated_page_config_utils.h in Headers */,
 				0F083F5A22C2979B00F3CDB3 /* pas_segregated_page_config_utils_inlines.h in Headers */,
 				0F9A1CEB2559961700C8D11B /* pas_segregated_page_config_variant.h in Headers */,
 				0FC4EC792351707B00B710A3 /* pas_segregated_page_emptiness_kind.h in Headers */,
 				0FF8D62922C166F500EC72FE /* pas_segregated_page_inlines.h in Headers */,
+				2C34FFFE27571D2F005565CB /* pas_segregated_page_role.h in Headers */,
 				0FD48B3523A9ABB30026C46D /* pas_segregated_partial_view.h in Headers */,
 				0FD48B6523A9ABB30026C46D /* pas_segregated_partial_view_inlines.h in Headers */,
 				0FD48B5523A9ABB30026C46D /* pas_segregated_shared_handle.h in Headers */,
@@ -2314,10 +2333,10 @@
 				0FD48B6023A9ABB30026C46D /* pas_segregated_shared_view.h in Headers */,
 				0F5E5CF223BFBFB900AA0B6F /* pas_segregated_shared_view_inlines.h in Headers */,
 				0FD48B6423A9ABB30026C46D /* pas_segregated_size_directory.h in Headers */,
+				0F148721269F5FCA006887A9 /* pas_segregated_size_directory_creation_mode.h in Headers */,
 				0FD48B5423A9ABB30026C46D /* pas_segregated_size_directory_inlines.h in Headers */,
 				0FD48B4923A9ABB30026C46D /* pas_segregated_view.h in Headers */,
 				0FE672C725C21F67006F60A2 /* pas_segregated_view_allocator_inlines.h in Headers */,
-				0F04C2222460DB6F001D31F0 /* pas_segregated_view_inlines.h in Headers */,
 				0FD48B4F23A9ABB30026C46D /* pas_segregated_view_kind.h in Headers */,
 				0F9A1CE92559961700C8D11B /* pas_shared_handle_or_page_boundary.h in Headers */,
 				0F9A1D262559961700C8D11B /* pas_shared_handle_or_page_boundary_inlines.h in Headers */,
@@ -2325,9 +2344,7 @@
 				0F6D564C23CAA1BA00F40DBB /* pas_simple_free_heap_helpers.h in Headers */,
 				0FF08F3D22A5DC6900386575 /* pas_simple_large_free_heap.h in Headers */,
 				0FE7EDFD22960142004F4166 /* pas_simple_type.h in Headers */,
-				0F99F98C25CB2CE800EEE449 /* pas_size_thunk.h in Headers */,
-				0F31A63E23DCF804002C0CA3 /* pas_skip_list.h in Headers */,
-				0F31A63C23DCF804002C0CA3 /* pas_skip_list_inlines.h in Headers */,
+				2C91E5502718DA9A00D67FF9 /* pas_size_lookup_mode.h in Headers */,
 				0FE7EE2D22960142004F4166 /* pas_slow_path_mode.h in Headers */,
 				0FE7EE2C22960142004F4166 /* pas_slow_path_mode_prefix.h in Headers */,
 				0F6D548023C573E100F40DBB /* pas_small_large_map_entry.h in Headers */,
@@ -2335,23 +2352,22 @@
 				0FC4EC3D234A91E300B710A3 /* pas_status_reporter.h in Headers */,
 				0FE7EE3322960142004F4166 /* pas_stream.h in Headers */,
 				0FC4EC3C234A91E300B710A3 /* pas_string_stream.h in Headers */,
-				0F9A1D0E2559961700C8D11B /* pas_subpage_map.h in Headers */,
-				0F9A1CE32559961700C8D11B /* pas_subpage_map_entry.h in Headers */,
 				0FE7EE3522960142004F4166 /* pas_thread_local_cache.h in Headers */,
 				0FE7EE3422960142004F4166 /* pas_thread_local_cache_layout.h in Headers */,
 				0FA5E4582492D5BA00CE962A /* pas_thread_local_cache_layout_node.h in Headers */,
+				0F148723269F5FCA006887A9 /* pas_thread_local_cache_layout_node_kind.h in Headers */,
 				0F7F51BF23159EC0007552AE /* pas_thread_local_cache_node.h in Headers */,
+				2C8548B127B48FC5001750BB /* pas_thread_suspend_lock.h in Headers */,
 				0F6D547923C573E100F40DBB /* pas_tiny_large_map_entry.h in Headers */,
 				0F31A66A23E8E594002C0CA3 /* pas_tree_direction.h in Headers */,
 				0F8A800D25CF64C900790B4A /* pas_tri_state.h in Headers */,
 				0FE7EE63229E14FA004F4166 /* pas_try_allocate.h in Headers */,
 				0FE7EE62229E14FA004F4166 /* pas_try_allocate_array.h in Headers */,
 				0FD48B3E23A9ABB30026C46D /* pas_try_allocate_common.h in Headers */,
-				0FE7EE61229E14FA004F4166 /* pas_try_allocate_intrinsic_primitive.h in Headers */,
+				2C85DC4127128F0F00367905 /* pas_try_allocate_intrinsic.h in Headers */,
 				0FE7EE65229E14FA004F4166 /* pas_try_allocate_primitive.h in Headers */,
 				0FE7EE7922A048BB004F4166 /* pas_try_reallocate.h in Headers */,
 				0F59A3962667F00E00A38657 /* pas_try_shrink.h in Headers */,
-				0FE7EE3722960142004F4166 /* pas_typed_allocation_result.h in Headers */,
 				0FE7EE3822960142004F4166 /* pas_utility_heap.h in Headers */,
 				0FE7EE0D22960142004F4166 /* pas_utility_heap_config.h in Headers */,
 				0FD48B2D23A9ABB30026C46D /* pas_utility_heap_support.h in Headers */,
@@ -2621,30 +2637,36 @@
 			buildActionMask = 2147483647;
 			files = (
 				0FDEA461228B651B0085E340 /* BitfieldVectorTests.cpp in Sources */,
+				2CE2AE35275A953E00D02BBC /* BitfitTests.cpp in Sources */,
 				0F53181122C954ED003F7B6A /* BitvectorTests.cpp in Sources */,
 				0F31A66823E8B336002C0CA3 /* CartesianTreeTests.cpp in Sources */,
 				0FC682382129D4EE003C6A13 /* CoalignTests.cpp in Sources */,
+				2C48132D273F4159006CAB55 /* ExpendableMemoryTests.cpp in Sources */,
 				0FC682312129CB46003C6A13 /* ExtendedGCDTests.cpp in Sources */,
 				0FC6821521248A79003C6A13 /* HashtableTests.cpp in Sources */,
+				2C3D0FC7272B9241005C5A02 /* HeapRefAllocatorIndexTests.cpp in Sources */,
 				0FEA45C5236E10AA00B5A375 /* IsoDynamicPrimitiveHeapTests.cpp in Sources */,
 				0FA18546236B3C82003609AD /* IsoHeapChaosTests.cpp in Sources */,
 				0FF248FD230CC4CB0077202E /* IsoHeapPageSharingTests.cpp in Sources */,
 				0FD48B6723B589910026C46D /* IsoHeapPartialAndBaselineTests.cpp in Sources */,
 				0F5B6094235E919900CAE629 /* IsoHeapReservedMemoryTests.cpp in Sources */,
-				0F508D5C258EDCA700151ED8 /* IsoHeapTablingTests.cpp in Sources */,
 				0F5193E7266AE5D400483A2C /* JITHeapTests.cpp in Sources */,
 				0FC64191213745FA0040CE5E /* LargeFreeHeapTests.cpp in Sources */,
 				0FEB6668231C87BC009C001B /* LargeSharingPoolDump.cpp in Sources */,
 				0FEB666A231DA86F009C001B /* LargeSharingPoolTests.cpp in Sources */,
 				0FEA45BF236CDAED00B5A375 /* LockFreeReadPtrPtrHashtableTests.cpp in Sources */,
+				2CB9B15D278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp in Sources */,
+				2C734C90277680EF0017BFFE /* MemalignTests.cpp in Sources */,
 				0FD22D0822CD8A7500B21841 /* MinHeapTests.cpp in Sources */,
+				2B2A589C2742D815005EE07C /* PGMTests.cpp in Sources */,
 				0F5E483A23D69F610046DA5C /* RaceTests.cpp in Sources */,
 				0FF08F3622A59DB300386575 /* RedBlackTreeTests.cpp in Sources */,
-				0F31A64223DD4E02002C0CA3 /* SkipListTests.cpp in Sources */,
 				0FC681ED21127A19003C6A13 /* TestHarness.cpp in Sources */,
 				0F8700C225B0B26A000E1ABF /* ThingyAndUtilityHeapAllocationTests.cpp in Sources */,
+				2C473162277D4C9E00B62C49 /* TLCDecommitTests.cpp in Sources */,
 				0F8700F525B14C8B000E1ABF /* TSDTests.cpp in Sources */,
 				0F53181322C9609D003F7B6A /* UtilsTests.cpp in Sources */,
+				2C16DAE0279E07290042E919 /* ViewCacheTests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2654,6 +2676,7 @@
 			files = (
 				0F8A806625EECC1D00790B4A /* bmalloc_heap.c in Sources */,
 				0F8A806825EECC1D00790B4A /* bmalloc_heap_config.c in Sources */,
+				2C11E8912728A893002162D0 /* bmalloc_type.c in Sources */,
 				0F8A810425F6A79500790B4A /* hotbit_heap.c in Sources */,
 				0F8A810125F6A79500790B4A /* hotbit_heap_config.c in Sources */,
 				0FE7EE76229F010F004F4166 /* iso_heap.c in Sources */,
@@ -2667,21 +2690,14 @@
 				0FBD67F325BE078700A490D2 /* pagesize64k_heap.c in Sources */,
 				0FBD67F025BE078700A490D2 /* pagesize64k_heap_config.c in Sources */,
 				0FE7EDB422960142004F4166 /* pas_alignment.c in Sources */,
-				0F9A1D0A2559961700C8D11B /* pas_all_biasing_directories.c in Sources */,
 				0FE7EDB522960142004F4166 /* pas_all_heaps.c in Sources */,
-				0F1AECE826581961000C5218 /* pas_all_magazines.c in Sources */,
 				0FD48B4623A9ABB30026C46D /* pas_all_shared_page_directories.c in Sources */,
 				0F47C31E23396E0B002A1CF7 /* pas_allocation_callbacks.c in Sources */,
-				0F9A1CEF2559961700C8D11B /* pas_allocation_result.c in Sources */,
 				0FD48B6323A9ABB30026C46D /* pas_baseline_allocator.c in Sources */,
 				0FD48B3F23A9ABB30026C46D /* pas_baseline_allocator_table.c in Sources */,
 				0F59A39C266844A300A38657 /* pas_basic_heap_config_enumerator_data.c in Sources */,
-				0F9A1D132559961700C8D11B /* pas_biasing_directory.c in Sources */,
 				0F9A1D102559961700C8D11B /* pas_bitfit_allocator.c in Sources */,
-				0F9A1CFC2559961700C8D11B /* pas_bitfit_biasing_directory.c in Sources */,
 				0F9A1D0D2559961700C8D11B /* pas_bitfit_directory.c in Sources */,
-				0F9A1D092559961700C8D11B /* pas_bitfit_global_directory.c in Sources */,
-				0F9A1D2A2559961700C8D11B /* pas_bitfit_global_size_class.c in Sources */,
 				0F9A1D1C2559961700C8D11B /* pas_bitfit_heap.c in Sources */,
 				0F9A1D112559961700C8D11B /* pas_bitfit_page.c in Sources */,
 				0F9A1D152559961700C8D11B /* pas_bitfit_page_config_kind.c in Sources */,
@@ -2691,7 +2707,9 @@
 				0F5B6083235E572000CAE629 /* pas_bootstrap_heap_page_provider.c in Sources */,
 				0FE7EDB922960142004F4166 /* pas_coalign.c in Sources */,
 				0F9A1CF02559961700C8D11B /* pas_commit_span.c in Sources */,
+				2C47316A277D4EA800B62C49 /* pas_committed_pages_vector.c in Sources */,
 				0F6D564A23CAA1BA00F40DBB /* pas_compact_bootstrap_free_heap.c in Sources */,
+				2C481327273F341A006CAB55 /* pas_compact_expendable_memory.c in Sources */,
 				0F6D566E23CBD19D00F40DBB /* pas_compact_heap_reservation.c in Sources */,
 				0F66D547248760A800FC7347 /* pas_compact_large_utility_free_heap.c in Sources */,
 				0FC4EC3E234A91E300B710A3 /* pas_compute_summary_object_callbacks.c in Sources */,
@@ -2715,6 +2733,7 @@
 				0F4F611B259838B1008B4A82 /* pas_enumerator_region.c in Sources */,
 				0F19325622ED04A600FBA713 /* pas_epoch.c in Sources */,
 				0FD48B3423A9ABB30026C46D /* pas_exclusive_view_template_memo_table.c in Sources */,
+				2C481328273F341A006CAB55 /* pas_expendable_memory.c in Sources */,
 				0FE7EDBA22960142004F4166 /* pas_extended_gcd.c in Sources */,
 				0FF08F4322A627C100386575 /* pas_fast_large_free_heap.c in Sources */,
 				0F9A1CEC2559961700C8D11B /* pas_fast_megapage_cache.c in Sources */,
@@ -2728,9 +2747,11 @@
 				0FC2FD39237615130053DD41 /* pas_heap_for_config.c in Sources */,
 				0FE7EDBE22960142004F4166 /* pas_heap_lock.c in Sources */,
 				0FE7EDBF22960142004F4166 /* pas_heap_ref.c in Sources */,
+				0F148714269B7518006887A9 /* pas_heap_runtime_config.c in Sources */,
 				0FC4EC3A234A91E300B710A3 /* pas_heap_summary.c in Sources */,
 				0F6D547C23C573E100F40DBB /* pas_heap_table.c in Sources */,
 				0FD48B3923A9ABB30026C46D /* pas_immortal_heap.c in Sources */,
+				2C481326273F341A006CAB55 /* pas_large_expendable_memory.c in Sources */,
 				0F78088F22FA534100F37451 /* pas_large_free_heap_deferred_commit_log.c in Sources */,
 				0F66D54A248760A800FC7347 /* pas_large_free_heap_helpers.c in Sources */,
 				0FE7EDC622960142004F4166 /* pas_large_heap.c in Sources */,
@@ -2738,15 +2759,18 @@
 				0FE7EDC722960142004F4166 /* pas_large_map.c in Sources */,
 				0FCFA49B238352EC00CCD726 /* pas_large_sharing_pool.c in Sources */,
 				0F6D547D23C573E100F40DBB /* pas_large_utility_free_heap.c in Sources */,
+				2CB9B15A278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.c in Sources */,
 				0FDBB07422B875A6006BA5FC /* pas_local_allocator.c in Sources */,
+				0F45D5AA26AB731400C35D93 /* pas_local_allocator_scavenger_data.c in Sources */,
+				0F148720269F5FCA006887A9 /* pas_local_view_cache.c in Sources */,
 				0F04C21F2460DB6F001D31F0 /* pas_lock.c in Sources */,
 				0FEA45BC236CD5AC00B5A375 /* pas_lock_free_read_ptr_ptr_hashtable.c in Sources */,
 				0F9E945823452262009FAFDD /* pas_log.c in Sources */,
-				0F04C2242460DB6F001D31F0 /* pas_magazine.c in Sources */,
 				0F037AF325AEA91A0079B582 /* pas_medium_megapage_cache.c in Sources */,
 				0FE7EDC822960142004F4166 /* pas_megapage_cache.c in Sources */,
 				0FD48B4B23A9ABB30026C46D /* pas_monotonic_time.c in Sources */,
 				0F9A1D062559961700C8D11B /* pas_page_base.c in Sources */,
+				2C34000227581687005565CB /* pas_page_base_config.c in Sources */,
 				0F9A1CF22559961700C8D11B /* pas_page_header_table.c in Sources */,
 				0FE7EDCB22960142004F4166 /* pas_page_malloc.c in Sources */,
 				0F19326222F1193D00FBA713 /* pas_page_sharing_participant.c in Sources */,
@@ -2754,6 +2778,7 @@
 				0F4F61CB25A4CD3B008B4A82 /* pas_payload_reservation_page_list.c in Sources */,
 				0FF248F922FC9EDB0077202E /* pas_physical_memory_transaction.c in Sources */,
 				0FE7EDCC22960142004F4166 /* pas_primitive_heap_ref.c in Sources */,
+				2B2A589A2742D803005EE07C /* pas_probabilistic_guard_malloc_allocator.c in Sources */,
 				0F4F6151259BC333008B4A82 /* pas_ptr_worklist.c in Sources */,
 				0F5E483823D6960F0046DA5C /* pas_race_test_hooks.c in Sources */,
 				0FD48B3023A9ABB30026C46D /* pas_random.c in Sources */,
@@ -2762,15 +2787,13 @@
 				0F5B6091235E88EF00CAE629 /* pas_reserved_memory_provider.c in Sources */,
 				0F4F60FA25979BC8008B4A82 /* pas_root.c in Sources */,
 				0F19326D22F73E8500FBA713 /* pas_scavenger.c in Sources */,
-				0F04C2202460DB6F001D31F0 /* pas_segregated_biasing_directory.c in Sources */,
-				0F04C21C2460DB6F001D31F0 /* pas_segregated_biasing_view.c in Sources */,
 				0FD48B5923A9ABB30026C46D /* pas_segregated_directory.c in Sources */,
 				0FD48B5323A9ABB30026C46D /* pas_segregated_exclusive_view.c in Sources */,
-				0F04C2152460DB6F001D31F0 /* pas_segregated_global_size_directory.c in Sources */,
 				0FE7EDCF22960142004F4166 /* pas_segregated_heap.c in Sources */,
 				0FE7EDD122960142004F4166 /* pas_segregated_page.c in Sources */,
 				0F97E63022A9AAC100C355F8 /* pas_segregated_page_config.c in Sources */,
 				0FD48B5E23A9ABB30026C46D /* pas_segregated_page_config_kind.c in Sources */,
+				2C340000275815D0005565CB /* pas_segregated_page_config_kind_and_role.c in Sources */,
 				0FD48B4C23A9ABB30026C46D /* pas_segregated_partial_view.c in Sources */,
 				0FD48B4823A9ABB30026C46D /* pas_segregated_shared_handle.c in Sources */,
 				0FD48B2E23A9ABB30026C46D /* pas_segregated_shared_page_directory.c in Sources */,
@@ -2780,16 +2803,15 @@
 				0F18E63F2628BFB700F6903D /* pas_shared_page_directory_by_size.c in Sources */,
 				0F6D564623CAA1BA00F40DBB /* pas_simple_free_heap_helpers.c in Sources */,
 				0FF08F3E22A5DC6900386575 /* pas_simple_large_free_heap.c in Sources */,
-				0F31A63D23DCF804002C0CA3 /* pas_skip_list.c in Sources */,
+				2C11E88F2728A783002162D0 /* pas_simple_type.c in Sources */,
 				0FC4EC3B234A91E300B710A3 /* pas_status_reporter.c in Sources */,
 				0FE7EDD322960142004F4166 /* pas_stream.c in Sources */,
 				0FC4EC37234A91E300B710A3 /* pas_string_stream.c in Sources */,
-				0F9A1D222559961700C8D11B /* pas_subpage_map.c in Sources */,
-				0F9A1CE82559961700C8D11B /* pas_subpage_map_entry.c in Sources */,
 				0FE7EDD522960142004F4166 /* pas_thread_local_cache.c in Sources */,
 				0FE7EDD422960142004F4166 /* pas_thread_local_cache_layout.c in Sources */,
 				0FA5E4562492D5BA00CE962A /* pas_thread_local_cache_layout_node.c in Sources */,
 				0F7F51BE23159EC0007552AE /* pas_thread_local_cache_node.c in Sources */,
+				2C8548B227B48FC5001750BB /* pas_thread_suspend_lock.c in Sources */,
 				0FE7EDD722960142004F4166 /* pas_utility_heap.c in Sources */,
 				0FE7EDBB22960142004F4166 /* pas_utility_heap_config.c in Sources */,
 				0FE7EDD822960142004F4166 /* pas_utils.c in Sources */,
@@ -2911,7 +2933,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2927,7 +2949,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2949,7 +2971,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2967,7 +2989,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2989,7 +3011,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3007,7 +3029,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3029,7 +3051,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3047,7 +3069,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3151,6 +3173,11 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_FLOAT_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -3159,7 +3186,15 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-DLIBPAS=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3175,11 +3210,24 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_FLOAT_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-DLIBPAS=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3203,7 +3251,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3221,7 +3269,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3283,7 +3331,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_DIR = "$(SRCROOT)/clang+llvm-internal";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx.internal;
@@ -3342,7 +3390,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_DIR = "$(SRCROOT)/clang+llvm-internal";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx.internal;
 				SUPPORTED_PLATFORMS = "macosx iphoneos";

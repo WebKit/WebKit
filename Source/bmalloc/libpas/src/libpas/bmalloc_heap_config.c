@@ -36,23 +36,31 @@
 #include "pas_heap_config_utils_inlines.h"
 #include "pas_root.h"
 
+PAS_BEGIN_EXTERN_C;
+
 pas_heap_config bmalloc_heap_config = BMALLOC_HEAP_CONFIG;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
     bmalloc, BMALLOC,
-    .allocate_page_should_zero = false);
+    .allocate_page_should_zero = false,
+    .intrinsic_view_cache_capacity = pas_heap_runtime_config_aggressive_view_cache_capacity);
 
 void bmalloc_heap_config_activate(void)
 {
-    // FIXME: Temporarily disable it for now until bmalloc is replaced with libpas.
-    static const bool register_with_libmalloc = false;
+#if PAS_OS(DARWIN)
+    static const bool register_with_libmalloc = true;
+#endif
     
     pas_designated_intrinsic_heap_initialize(&bmalloc_common_primitive_heap.segregated_heap,
                                              &bmalloc_heap_config);
 
-    if (register_with_libmalloc)
+#if PAS_OS(DARWIN)
+    if (register_with_libmalloc && !pas_debug_heap_is_enabled(pas_heap_config_kind_bmalloc))
         pas_root_ensure_for_libmalloc_enumeration();
+#endif
 }
+
+PAS_END_EXTERN_C;
 
 #endif /* PAS_ENABLE_BMALLOC */
 

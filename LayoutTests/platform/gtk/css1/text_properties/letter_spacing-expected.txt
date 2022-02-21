@@ -32,9 +32,9 @@ layer at (0,0) size 785x1378
           text run at (264,150) width 0: " "
       RenderBlock {HR} at (0,212) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,230) size 769x72
-        RenderText {#text} at (0,0) size 711x71
+        RenderText {#text} at (0,0) size 710x71
           text run at (0,0) width 687: "This letters in this"
-          text run at (0,18) width 711: "sentence should have"
+          text run at (0,18) width 710: "sentence should have"
           text run at (0,36) width 675: "extra space between"
           text run at (0,54) width 179: "them."
       RenderBlock {P} at (0,318) size 769x54
@@ -91,9 +91,9 @@ layer at (0,0) size 785x1378
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x548 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x72
-                RenderText {#text} at (0,0) size 711x71
+                RenderText {#text} at (0,0) size 710x71
                   text run at (0,0) width 687: "This letters in this"
-                  text run at (0,18) width 711: "sentence should have"
+                  text run at (0,18) width 710: "sentence should have"
                   text run at (0,36) width 675: "extra space between"
                   text run at (0,54) width 179: "them."
               RenderBlock {P} at (4,92) size 747x54

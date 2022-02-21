@@ -1,5 +1,5 @@
 // Copyright 2015 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "CSSParserContext.h"
 #include "CSSValue.h"
 
 namespace WebCore {
@@ -42,23 +43,27 @@ class BuilderState;
 
 class CSSVariableReferenceValue : public CSSValue {
 public:
-    static Ref<CSSVariableReferenceValue> create(const CSSParserTokenRange&);
+    static Ref<CSSVariableReferenceValue> create(const CSSParserTokenRange&, const CSSParserContext&);
+    static Ref<CSSVariableReferenceValue> create(Ref<CSSVariableData>&&, const CSSParserContext& = strictCSSParserContext());
 
     bool equals(const CSSVariableReferenceValue&) const;
     String customCSSText() const;
 
     RefPtr<CSSVariableData> resolveVariableReferences(Style::BuilderState&) const;
+    const CSSParserContext& context() const { return m_context; }
 
-    // The maximum number of tokens that may be produced by a var()
-    // reference or var() fallback value.
+    // The maximum number of tokens that may be produced by a var() reference or var() fallback value.
     // https://drafts.csswg.org/css-variables/#long-variables
     static constexpr size_t maxSubstitutionTokens = 65536;
+    
+    const CSSVariableData& data() const { return m_data.get(); }
 
 private:
-    explicit CSSVariableReferenceValue(Ref<CSSVariableData>&&);
+    explicit CSSVariableReferenceValue(Ref<CSSVariableData>&&, const CSSParserContext&);
 
     Ref<CSSVariableData> m_data;
     mutable String m_stringValue;
+    const CSSParserContext m_context;
 };
 
 } // namespace WebCore

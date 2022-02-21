@@ -1,5 +1,22 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSMathMax
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSMathMax
-
+FAIL CSSMathMax with one argument serializes correctly assert_equals: expected "max(1)" but got ""
+FAIL CSSMathMax with more than one argument serializes correctly assert_equals: expected "max(1, 2, 3)" but got ""
+FAIL CSSMathMax containing nested CSSMathValues serializes correctly assert_equals: expected "max(1 + 2, 3)" but got ""
+FAIL CSSMathMin with one argument serializes correctly assert_equals: expected "min(1)" but got ""
+FAIL CSSMathMin with more than one argument serializes correctly assert_equals: expected "min(1, 2, 3)" but got ""
+FAIL CSSMathMin containing nested CSSMathValues serializes correctly assert_equals: expected "min(1 + 2, 3)" but got ""
+FAIL CSSMathSum with one argument serializes correctly assert_equals: expected "calc(1)" but got ""
+FAIL CSSMathSum with more than one argument serializes correctly assert_equals: expected "calc(1 + 2 + 3)" but got ""
+FAIL CSSMathSum with a CSSMathNegate as first value serializes correctly assert_equals: expected "calc((-1) + 2 + 3)" but got ""
+FAIL CSSMathSum containing a CSSMathNegate after first value serializes correctly assert_equals: expected "calc(1 - 2 + 3)" but got ""
+FAIL CSSMathSum nested inside a CSSMathValue serializes correctly assert_equals: expected "calc((1 + 2) + 3)" but got ""
+FAIL CSSMathNegate serializes correctly assert_equals: expected "calc(-1)" but got ""
+FAIL CSSMathNegate nested inside a CSSMathValue serializes correctly assert_equals: expected "calc((-1))" but got ""
+FAIL CSSMathProduct with one argument serializes correctly assert_equals: expected "calc(1)" but got ""
+FAIL CSSMathProduct with more than one argument serializes correctly assert_equals: expected "calc(1 * 2 * 3)" but got ""
+FAIL CSSMathProduct with a CSSMathInvert as first value serializes correctly assert_equals: expected "calc((1 / 1) * 2 * 3)" but got ""
+FAIL CSSMathProduct containing a CSSMathInvert after first value serializes correctly assert_equals: expected "calc(1 / 2 * 3)" but got ""
+FAIL CSSMathProduct nested inside a CSSMathValue serializes correctly assert_equals: expected "calc((1 * 2) * 3)" but got ""
+FAIL CSSMathInvert serializes correctly assert_equals: expected "calc(1 / 1)" but got ""
+FAIL CSSMathInvert nested inside a CSSMathValue serializes correctly assert_equals: expected "calc((1 / 1))" but got ""
 

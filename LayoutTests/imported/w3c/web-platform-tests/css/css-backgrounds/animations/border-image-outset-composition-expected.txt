@@ -1,44 +1,44 @@
 
 PASS Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (-0.25) should be [0]
-FAIL Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (0) should be [2 4 6 8] assert_equals: expected "2 4 6 8 " but got "1 2 3 4 "
-FAIL Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (0.25) should be [27 29 31 33] assert_equals: expected "27 29 31 33 " but got "26 27 28 29 "
-FAIL Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (0.5) should be [52 54 56 58] assert_equals: expected "52 54 56 58 " but got "51 52 53 54 "
-FAIL Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (0.75) should be [77 79 81 83] assert_equals: expected "77 79 81 83 " but got "76 77 78 79 "
-FAIL Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (1) should be [102 104 106 108] assert_equals: expected "102 104 106 108 " but got "101 102 103 104 "
-FAIL Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (1.25) should be [127 129 131 133] assert_equals: expected "127 129 131 133 " but got "126 127 128 129 "
-FAIL Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (-0.25) should be [175 250 300 450] assert_equals: expected "175 250 300 450 " but got "75 50 0 "
-FAIL Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (0) should be [200 300 400 500] assert_equals: expected "200 300 400 500 " but got "100 "
-FAIL Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (0.25) should be [225 350 500 550] assert_equals: expected "225 350 500 550 " but got "125 150 200 "
-FAIL Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (0.5) should be [250 400 600 600] assert_equals: expected "250 400 600 600 " but got "150 200 300 "
-FAIL Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (0.75) should be [275 450 700 650] assert_equals: expected "275 450 700 650 " but got "175 250 400 "
-FAIL Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (1) should be [300 500 800 700] assert_equals: expected "300 500 800 700 " but got "200 300 500 "
-FAIL Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (1.25) should be [325 550 900 750] assert_equals: expected "325 550 900 750 " but got "225 350 600 "
+PASS Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (0) should be [2 4 6 8]
+PASS Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (0.25) should be [27 29 31 33]
+PASS Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (0.5) should be [52 54 56 58]
+PASS Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (0.75) should be [77 79 81 83]
+PASS Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (1) should be [102 104 106 108]
+PASS Compositing: property <border-image-outset> underlying [1 2 3 4] from add [1 2 3 4] to add [101 102 103 104] at (1.25) should be [127 129 131 133]
+PASS Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (-0.25) should be [175 250 300 450]
+PASS Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (0) should be [200 300 400 500]
+PASS Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (0.25) should be [225 350 500 550]
+PASS Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (0.5) should be [250 400 600 600]
+PASS Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (0.75) should be [275 450 700 650]
+PASS Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (1) should be [300 500 800 700]
+PASS Compositing: property <border-image-outset> underlying [100 200 300 400] from add [100] to add [200 300 500] at (1.25) should be [325 550 900 750]
 PASS Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (-0.25) should be [0 0 0px 0px]
-FAIL Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (0) should be [2 4 6px 8px] assert_equals: expected "2 4 6px 8px " but got "1 2 3px 4px "
-FAIL Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (0.25) should be [27 29 31px 33px] assert_equals: expected "27 29 31px 33px " but got "26 27 28px 29px "
-FAIL Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (0.5) should be [52 54 56px 58px] assert_equals: expected "52 54 56px 58px " but got "51 52 53px 54px "
-FAIL Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (0.75) should be [77 79 81px 83px] assert_equals: expected "77 79 81px 83px " but got "76 77 78px 79px "
-FAIL Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (1) should be [102 104 106px 108px] assert_equals: expected "102 104 106px 108px " but got "101 102 103px 104px "
-FAIL Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (1.25) should be [127 129 131px 133px] assert_equals: expected "127 129 131px 133px " but got "126 127 128px 129px "
-FAIL Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (-0.25) should be [225px 225px 350px 350px] assert_equals: expected "225px 225px 350px 350px " but got "215px 205px 340px 330px "
-FAIL Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (0) should be [200px 200px 300px 300px] assert_equals: expected "200px 200px 300px 300px " but got "190px 180px 290px 280px "
-FAIL Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (0.25) should be [175px 175px 250px 250px] assert_equals: expected "175px 175px 250px 250px " but got "165px 155px 240px 230px "
-FAIL Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (0.5) should be [150px 150px 200px 200px] assert_equals: expected "150px 150px 200px 200px " but got "140px 130px 190px 180px "
-FAIL Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (0.75) should be [125px 125px 150px 150px] assert_equals: expected "125px 125px 150px 150px " but got "115px 105px 140px 130px "
-FAIL Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (1) should be [100px] assert_equals: expected "100px " but got "90px 80px "
-FAIL Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (1.25) should be [75px 75px 50px 50px] assert_equals: expected "75px 75px 50px 50px " but got "65px 55px 40px 30px "
-FAIL Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (-0.25) should be [75 75px] assert_equals: expected "75 75px " but got "77.5 80px "
+PASS Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (0) should be [2 4 6px 8px]
+PASS Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (0.25) should be [27 29 31px 33px]
+PASS Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (0.5) should be [52 54 56px 58px]
+PASS Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (0.75) should be [77 79 81px 83px]
+PASS Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (1) should be [102 104 106px 108px]
+PASS Compositing: property <border-image-outset> underlying [1 2 3px 4px] from add [1 2 3px 4px] to add [101 102 103px 104px] at (1.25) should be [127 129 131px 133px]
+PASS Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (-0.25) should be [225px 225px 350px 350px]
+PASS Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (0) should be [200px 200px 300px 300px]
+PASS Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (0.25) should be [175px 175px 250px 250px]
+PASS Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (0.5) should be [150px 150px 200px 200px]
+PASS Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (0.75) should be [125px 125px 150px 150px]
+PASS Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (1) should be [100px]
+PASS Compositing: property <border-image-outset> underlying [10px 20px] from add [190px 180px 290px 280px] to add [90px 80px] at (1.25) should be [75px 75px 50px 50px]
+PASS Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (-0.25) should be [75 75px]
 PASS Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (0) should be [100 100px]
-FAIL Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (0.25) should be [125 125px] assert_equals: expected "125 125px " but got "122.5 120px "
-FAIL Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (0.5) should be [150 150px] assert_equals: expected "150 150px " but got "145 140px "
-FAIL Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (0.75) should be [175 175px] assert_equals: expected "175 175px " but got "167.5 160px "
-FAIL Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (1) should be [200 200px] assert_equals: expected "200 200px " but got "190 180px "
-FAIL Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (1.25) should be [225 225px] assert_equals: expected "225 225px " but got "212.5 200px "
-FAIL Compositing: property <border-image-outset> underlying [10px 20] from add [90px 80] to replace [0px 0 0px 0] at (-0.25) should be [125px 125] assert_equals: expected "125px 125 " but got "112.5px 100 "
-FAIL Compositing: property <border-image-outset> underlying [10px 20] from add [90px 80] to replace [0px 0 0px 0] at (0) should be [100px 100] assert_equals: expected "100px 100 " but got "90px 80 "
-FAIL Compositing: property <border-image-outset> underlying [10px 20] from add [90px 80] to replace [0px 0 0px 0] at (0.25) should be [75px 75] assert_equals: expected "75px 75 " but got "67.5px 60 "
-FAIL Compositing: property <border-image-outset> underlying [10px 20] from add [90px 80] to replace [0px 0 0px 0] at (0.5) should be [50px 50] assert_equals: expected "50px 50 " but got "45px 40 "
-FAIL Compositing: property <border-image-outset> underlying [10px 20] from add [90px 80] to replace [0px 0 0px 0] at (0.75) should be [25px 25] assert_equals: expected "25px 25 " but got "22.5px 20 "
+PASS Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (0.25) should be [125 125px]
+PASS Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (0.5) should be [150 150px]
+PASS Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (0.75) should be [175 175px]
+PASS Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (1) should be [200 200px]
+PASS Compositing: property <border-image-outset> underlying [10 20px] from replace [100 100px] to add [190 180px] at (1.25) should be [225 225px]
+PASS Compositing: property <border-image-outset> underlying [10px 20] from add [90px 80] to replace [0px 0 0px 0] at (-0.25) should be [125px 125]
+PASS Compositing: property <border-image-outset> underlying [10px 20] from add [90px 80] to replace [0px 0 0px 0] at (0) should be [100px 100]
+PASS Compositing: property <border-image-outset> underlying [10px 20] from add [90px 80] to replace [0px 0 0px 0] at (0.25) should be [75px 75]
+PASS Compositing: property <border-image-outset> underlying [10px 20] from add [90px 80] to replace [0px 0 0px 0] at (0.5) should be [50px 50]
+PASS Compositing: property <border-image-outset> underlying [10px 20] from add [90px 80] to replace [0px 0 0px 0] at (0.75) should be [25px 25]
 PASS Compositing: property <border-image-outset> underlying [10px 20] from add [90px 80] to replace [0px 0 0px 0] at (1) should be [0px 0]
 PASS Compositing: property <border-image-outset> underlying [10px 20] from add [90px 80] to replace [0px 0 0px 0] at (1.25) should be [0px 0]
 PASS Compositing: property <border-image-outset> underlying [10 20] from add [100px 150px] to add [200px 250px] at (-0.25) should be [75px 125px]

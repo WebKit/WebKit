@@ -48,7 +48,7 @@ Ref<WebXRInputSource> WebXRInputSource::create(Document& document, WebXRSession&
 }
 
 WebXRInputSource::WebXRInputSource(Document& document, WebXRSession& session, double timestamp, const PlatformXR::Device::FrameData::InputSource& source)
-    : m_session(makeWeakPtr(session))
+    : m_session(session)
     , m_targetRaySpace(WebXRInputSpace::create(document, session, source.pointerOrigin))
     , m_connectTime(timestamp)
 #if ENABLE(GAMEPAD)
@@ -67,7 +67,7 @@ WebXRSession* WebXRInputSource::session()
 
 void WebXRInputSource::update(double timestamp, const PlatformXR::Device::FrameData::InputSource& source)
 {
-    auto session = makeRefPtr(m_session.get());
+    RefPtr session = m_session.get();
     if (!session)
         return;
 
@@ -86,6 +86,18 @@ void WebXRInputSource::update(double timestamp, const PlatformXR::Device::FrameD
 #if ENABLE(GAMEPAD)
     m_gamepad->updateFromPlatformGamepad(WebXRGamepad(timestamp, m_connectTime, source));
 #endif
+
+#if ENABLE(WEBXR_HANDS)
+    if (source.simulateHand) {
+        // FIXME: This currently creates an object just for use in testing.
+        // The real implementation will use actual data and only be visible
+        // if hand-tracking was requested at session start.
+        if (!m_hand)
+            m_hand = WebXRHand::create(*this);
+    } else
+        m_hand = nullptr;
+#endif
+
 }
 
 bool WebXRInputSource::requiresInputSourceChange(const InputSource& source)
@@ -106,14 +118,14 @@ void WebXRInputSource::disconnect()
 
 void WebXRInputSource::pollEvents(Vector<Ref<XRInputSourceEvent>>& events)
 {
-    auto session = makeRefPtr(m_session.get());
+    RefPtr session = m_session.get();
     if (!session)
         return;
 
     auto createEvent = [this, session](const AtomString& name) -> Ref<XRInputSourceEvent> {
         XRInputSourceEvent::Init init;
         init.frame = WebXRFrame::create(*session, WebXRFrame::IsAnimationFrame::No);
-        init.inputSource = makeRefPtr(*this);
+        init.inputSource = RefPtr { this };
 
         return XRInputSourceEvent::create(name, init);
     };

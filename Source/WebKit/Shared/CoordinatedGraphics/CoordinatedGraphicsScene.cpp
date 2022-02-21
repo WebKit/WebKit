@@ -373,7 +373,7 @@ void CoordinatedGraphicsScene::updateSceneState()
             updateBackingStore(entry.layer.get(), compositionState, entry.update);
 
             if (compositionState.backingStore)
-                backingStoresWithPendingBuffers.add(makeRef(*compositionState.backingStore));
+                backingStoresWithPendingBuffers.add(*compositionState.backingStore);
         }
 
         layersByBacking.backingStore = { };
@@ -384,7 +384,7 @@ void CoordinatedGraphicsScene::updateSceneState()
             auto& proxy = entry.proxy.get();
             if (entry.needsActivation)
                 proxy.activateOnCompositingThread(this, &entry.layer.get());
-            proxiesForSwapping.add(makeRef(proxy));
+            proxiesForSwapping.add(proxy);
         }
 
         layersByBacking.contentLayer = { };
@@ -396,7 +396,7 @@ void CoordinatedGraphicsScene::updateSceneState()
             updateImageBacking(entry.layer.get(), compositionState, entry.update);
 
             if (compositionState.backingStore)
-                backingStoresWithPendingBuffers.add(makeRef(*compositionState.backingStore));
+                backingStoresWithPendingBuffers.add(*compositionState.backingStore);
         }
 
         layersByBacking.imageBacking = { };

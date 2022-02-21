@@ -42,7 +42,7 @@ PASS rules[2].cssRules[0].type is CSSRule.SUPPORTS_RULE
 PASS rules[2].cssRules[0].conditionText is "( padding: 0)"
 PASS rules[0].cssRules[1].cssRules.length is 1
 PASS rules[2].cssRules[0].cssRules[0].type is CSSRule.PAGE_RULE
-PASS rules[2].cssText is "@media all { \n  @supports ( padding: 0) {\n  @page :left { top: 0px; }\n}\n}"
+PASS rules[2].cssText is "@media all {\n  @supports ( padding: 0) {\n  @page :left { top: 0px; }\n}\n}"
 
 No extra parens should be added to the conditionText.
 PASS rules[3].conditionText is "(border: black) and (padding: 0) and (width: 0)"

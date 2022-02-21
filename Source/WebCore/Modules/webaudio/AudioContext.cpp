@@ -31,9 +31,10 @@
 #include "AudioContextOptions.h"
 #include "AudioTimestamp.h"
 #include "DOMWindow.h"
+#include "DocumentInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
-#include "Page.h"
+#include "PageInlines.h"
 #include "Performance.h"
 #include "PlatformMediaSessionManager.h"
 #include "Quirks.h"
@@ -175,18 +176,17 @@ double AudioContext::baseLatency()
     return static_cast<double>(destination().framesPerBuffer()) / sampleRate();
 }
 
-AudioTimestamp AudioContext::getOutputTimestamp(DOMWindow& window)
+AudioTimestamp AudioContext::getOutputTimestamp()
 {
-    auto& performance = window.performance();
-
     auto position = outputPosition();
 
     // The timestamp of what is currently being played (contextTime) cannot be
     // later than what is being rendered. (currentTime)
     position.position = Seconds { std::min(position.position.seconds(), currentTime()) };
 
-    auto performanceTime = performance.relativeTimeFromTimeOriginInReducedResolution(position.timestamp);
-    performanceTime = std::max(performanceTime, 0.0);
+    DOMHighResTimeStamp performanceTime = 0.0;
+    if (document() && document()->domWindow())
+        performanceTime = std::max(document()->domWindow()->performance().relativeTimeFromTimeOriginInReducedResolution(position.timestamp), 0.0);
 
     return { position.position.seconds(), performanceTime };
 }
@@ -306,7 +306,7 @@ void AudioContext::startRendering()
         return;
 
     lazyInitialize();
-    destination().startRendering([this, protectedThis = makeRef(*this), pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
+    destination().startRendering([this, protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
         if (!exception)
             setState(State::Running);
     });
@@ -356,10 +356,10 @@ bool AudioContext::willPausePlayback()
     return m_mediaSession->clientWillPausePlayback();
 }
 
-MediaProducer::MediaStateFlags AudioContext::mediaState() const
+MediaProducerMediaStateFlags AudioContext::mediaState() const
 {
     if (!isStopped() && destination().isPlayingAudio())
-        return MediaProducer::MediaState::IsPlayingAudio;
+        return MediaProducerMediaState::IsPlayingAudio;
 
     return MediaProducer::IsNotPlaying;
 }
@@ -379,7 +379,7 @@ void AudioContext::mayResumePlayback(bool shouldResume)
 
     lazyInitialize();
 
-    destination().resume([this, protectedThis = makeRef(*this), pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
+    destination().resume([this, protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
         setState(exception ? State::Suspended : State::Running);
     });
 }
@@ -419,7 +419,7 @@ bool AudioContext::willBeginPlayback()
 void AudioContext::visibilityStateChanged()
 {
     // Do not suspend if audio is audible.
-    if (!document() || mediaState() == MediaProducer::MediaState::IsPlayingAudio || isStopped())
+    if (!document() || mediaState() == MediaProducerMediaState::IsPlayingAudio || isStopped())
         return;
 
     if (document()->hidden()) {
@@ -465,7 +465,7 @@ void AudioContext::suspendPlayback()
 
     lazyInitialize();
 
-    destination().suspend([this, protectedThis = makeRef(*this), pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
+    destination().suspend([this, protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
         if (exception)
             return;
 
@@ -476,7 +476,7 @@ void AudioContext::suspendPlayback()
 
 MediaSessionGroupIdentifier AudioContext::mediaSessionGroupIdentifier() const
 {
-    auto* document = downcast<Document>(m_scriptExecutionContext);
+    auto* document = downcast<Document>(scriptExecutionContext());
     return document && document->page() ? document->page()->mediaSessionGroupIdentifier() : MediaSessionGroupIdentifier { };
 }
 
@@ -511,7 +511,7 @@ void AudioContext::isPlayingAudioDidChange()
 
     // Make sure to call Document::updateIsPlayingMedia() on the main thread, since
     // we could be on the audio I/O thread here and the call into WebCore could block.
-    callOnMainThread([protectedThis = makeRef(*this)] {
+    callOnMainThread([protectedThis = Ref { *this }] {
         if (auto* document = protectedThis->document())
             document->updateIsPlayingMedia();
     });

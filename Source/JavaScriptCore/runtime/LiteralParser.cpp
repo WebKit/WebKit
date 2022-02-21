@@ -30,6 +30,7 @@
 #include "CodeBlock.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
+#include "JSONAtomStringCacheInlines.h"
 #include "Lexer.h"
 #include "ObjectConstructor.h"
 #include <wtf/ASCIICType.h>
@@ -56,14 +57,6 @@ ALWAYS_INLINE bool compare4Chars(const CharType* source, CharType c0, CharType c
         return COMPARE_4CHARS(source, c0, c1, c2, c3);
     else
         return COMPARE_4UCHARS(source, c0, c1, c2, c3);
-}
-
-template <typename CharType>
-static ALWAYS_INLINE bool isJSONWhiteSpace(const CharType& c)
-{
-    // The JSON RFC 4627 defines a list of allowed characters to be considered
-    // insignificant white space: http://www.ietf.org/rfc/rfc4627.txt (2. JSON Grammar).
-    return c == ' ' || c == 0x9 || c == 0xA || c == 0xD;
 }
 
 template <typename CharType>
@@ -149,44 +142,27 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
     } while (m_lexer.currentToken()->type == TokIdentifier);
     return m_lexer.currentToken()->type == TokEnd;
 }
-    
+
 template <typename CharType>
-template <typename LiteralCharType>
-ALWAYS_INLINE Identifier LiteralParser<CharType>::makeIdentifier(const LiteralCharType* characters, size_t length)
+ALWAYS_INLINE Identifier LiteralParser<CharType>::makeIdentifier(VM& vm, typename Lexer::LiteralParserTokenPtr token)
 {
-    VM& vm = m_globalObject->vm();
-    if (!length)
-        return vm.propertyNames->emptyIdentifier;
+    if (token->stringIs8Bit)
+        return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->stringToken8, token->stringLength));
+    return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->stringToken16, token->stringLength));
+}
 
-    auto firstCharacter = characters[0];
-    if (length == 1) {
-        if constexpr (sizeof(LiteralCharType) == 1)
-            return Identifier::fromString(vm, vm.smallStrings.singleCharacterStringRep(firstCharacter));
-        if (firstCharacter <= maxSingleCharacterString)
-            return Identifier::fromString(vm, vm.smallStrings.singleCharacterStringRep(firstCharacter));
-        return Identifier::fromString(vm, characters, length);
+template <typename CharType>
+ALWAYS_INLINE JSString* LiteralParser<CharType>::makeJSString(VM& vm, typename Lexer::LiteralParserTokenPtr token)
+{
+    constexpr unsigned maxAtomizeStringLength = 10;
+    if (token->stringIs8Bit) {
+        if (token->stringLength > maxAtomizeStringLength)
+            return jsString(vm, String(token->stringToken8, token->stringLength));
+        return jsString(vm, Identifier::fromString(vm, token->stringToken8, token->stringLength).string());
     }
-
-    if (firstCharacter >= maximumCachableCharacter)
-        return Identifier::fromString(vm, characters, length);
-
-    // 0 means no entry since m_recentIdentifiersIndex is zero-filled initially.
-    uint8_t indexPlusOne = m_recentIdentifiersIndex[firstCharacter];
-    if (indexPlusOne) {
-        uint8_t index = indexPlusOne - 1;
-        auto& ident = m_recentIdentifiers[index];
-        if (Identifier::equal(ident.impl(), characters, length))
-            return ident;
-        auto result = Identifier::fromString(vm, characters, length);
-        m_recentIdentifiers[index] = result;
-        return result;
-    }
-
-    auto result = Identifier::fromString(vm, characters, length);
-    m_recentIdentifiers.uncheckedAppend(result);
-    indexPlusOne = m_recentIdentifiers.size();
-    m_recentIdentifiersIndex[firstCharacter] = indexPlusOne;
-    return result;
+    if (token->stringLength > maxAtomizeStringLength)
+        return jsString(vm, String(token->stringToken16, token->stringLength));
+    return jsString(vm, Identifier::fromString(vm, token->stringToken16, token->stringLength).string());
 }
 
 static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(LChar)
@@ -200,6 +176,8 @@ static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(UChar)
 }
 
 // 256 Latin-1 codes
+// The JSON RFC 4627 defines a list of allowed characters to be considered
+// insignificant white space: http://www.ietf.org/rfc/rfc4627.txt (2. JSON Grammar).
 static constexpr const TokenType tokenTypesOfLatin1Characters[256] = {
 /*   0 - Null               */ TokError,
 /*   1 - Start of Heading   */ TokError,
@@ -210,11 +188,11 @@ static constexpr const TokenType tokenTypesOfLatin1Characters[256] = {
 /*   6 - Acknowledgment     */ TokError,
 /*   7 - Bell               */ TokError,
 /*   8 - Back Space         */ TokError,
-/*   9 - Horizontal Tab     */ TokError,
-/*  10 - Line Feed          */ TokError,
+/*   9 - Horizontal Tab     */ TokErrorSpace,
+/*  10 - Line Feed          */ TokErrorSpace,
 /*  11 - Vertical Tab       */ TokError,
 /*  12 - Form Feed          */ TokError,
-/*  13 - Carriage Return    */ TokError,
+/*  13 - Carriage Return    */ TokErrorSpace,
 /*  14 - Shift Out          */ TokError,
 /*  15 - Shift In           */ TokError,
 /*  16 - Data Line Escape   */ TokError,
@@ -233,7 +211,7 @@ static constexpr const TokenType tokenTypesOfLatin1Characters[256] = {
 /*  29 - Group Separator    */ TokError,
 /*  30 - Record Separator   */ TokError,
 /*  31 - Unit Separator     */ TokError,
-/*  32 - Space              */ TokError,
+/*  32 - Space              */ TokErrorSpace,
 /*  33 - !                  */ TokError,
 /*  34 - "                  */ TokString,
 /*  35 - #                  */ TokError,
@@ -720,6 +698,12 @@ static constexpr const bool safeStringLatin1CharactersInStrictJSON[256] = {
 };
 
 template <typename CharType>
+static ALWAYS_INLINE bool isJSONWhiteSpace(const CharType& c)
+{
+    return isLatin1(c) && tokenTypesOfLatin1Characters[c] == TokErrorSpace;
+}
+
+template <typename CharType>
 ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<CharType>& token)
 {
 #if ASSERT_ENABLED
@@ -783,6 +767,7 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<C
             return lexNumber(token);
 
         case TokError:
+        case TokErrorSpace:
             break;
 
         default:
@@ -1111,6 +1096,110 @@ TokenType LiteralParser<CharType>::Lexer::lexNumber(LiteralParserToken<CharType>
 }
 
 template <typename CharType>
+void LiteralParser<CharType>::setErrorMessageForToken(TokenType tokenType)
+{
+    switch (tokenType) {
+    case TokRBrace:
+        m_parseErrorMessage = "Expected '}'"_s;
+        break;
+    case TokRBracket:
+        m_parseErrorMessage = "Expected ']'"_s;
+        break;
+    case TokColon:
+        m_parseErrorMessage = "Expected ':' before value in object property definition"_s;
+        break;
+    default: {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    }
+}
+
+template <typename CharType>
+ALWAYS_INLINE JSValue LiteralParser<CharType>::parsePrimitiveValue(VM& vm)
+{
+    switch (m_lexer.currentToken()->type) {
+    case TokString: {
+        JSString* result = makeJSString(vm, m_lexer.currentToken());
+        m_lexer.next();
+        return result;
+    }
+    case TokNumber: {
+        JSValue result = jsNumber(m_lexer.currentToken()->numberToken);
+        m_lexer.next();
+        return result;
+    }
+    case TokNull:
+        m_lexer.next();
+        return jsNull();
+    case TokTrue:
+        m_lexer.next();
+        return jsBoolean(true);
+    case TokFalse:
+        m_lexer.next();
+        return jsBoolean(false);
+    case TokRBracket:
+        m_parseErrorMessage = "Unexpected token ']'"_s;
+        return { };
+    case TokRBrace:
+        m_parseErrorMessage = "Unexpected token '}'"_s;
+        return { };
+    case TokIdentifier: {
+        auto token = m_lexer.currentToken();
+
+        auto tryMakeErrorString = [&] (unsigned length) -> String {
+            bool addEllipsis = length != token->stringLength;
+            if (token->stringIs8Bit)
+                return tryMakeString("Unexpected identifier \"", StringView { token->stringToken8, length }, addEllipsis ? "..." : "", '"');
+            return tryMakeString("Unexpected identifier \"", StringView { token->stringToken16, length }, addEllipsis ? "..." : "", '"');
+        };
+
+        constexpr unsigned maxLength = 200;
+
+        String errorString = tryMakeErrorString(std::min(token->stringLength, maxLength));
+        if (!errorString) {
+            constexpr unsigned shortLength = 10;
+            if (token->stringLength > shortLength)
+                errorString = tryMakeErrorString(shortLength);
+            if (!errorString)
+                errorString = "Unexpected identifier";
+        }
+
+        m_parseErrorMessage = errorString;
+        return { };
+    }
+    case TokColon:
+        m_parseErrorMessage = "Unexpected token ':'"_s;
+        return { };
+    case TokLParen:
+        m_parseErrorMessage = "Unexpected token '('"_s;
+        return { };
+    case TokRParen:
+        m_parseErrorMessage = "Unexpected token ')'"_s;
+        return { };
+    case TokComma:
+        m_parseErrorMessage = "Unexpected token ','"_s;
+        return { };
+    case TokDot:
+        m_parseErrorMessage = "Unexpected token '.'"_s;
+        return { };
+    case TokAssign:
+        m_parseErrorMessage = "Unexpected token '='"_s;
+        return { };
+    case TokSemi:
+        m_parseErrorMessage = "Unexpected token ';'"_s;
+        return { };
+    case TokEnd:
+        m_parseErrorMessage = "Unexpected EOF"_s;
+        return { };
+    case TokError:
+    default:
+        // Error
+        m_parseErrorMessage = "Could not parse value expression"_s;
+        return { };
+    }
+}
+
+template <typename CharType>
 JSValue LiteralParser<CharType>::parse(ParserState initialState)
 {
     VM& vm = m_globalObject->vm();
@@ -1123,297 +1212,256 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
     HashSet<JSObject*> visitedUnderscoreProto;
     while (1) {
         switch(state) {
-            startParseArray:
-            case StartParseArray: {
-                JSArray* array = constructEmptyArray(m_globalObject, nullptr);
-                RETURN_IF_EXCEPTION(scope, JSValue());
-                objectStack.appendWithCrashOnOverflow(array);
-            }
-            doParseArrayStartExpression:
-            FALLTHROUGH;
-            case DoParseArrayStartExpression: {
-                TokenType lastToken = m_lexer.currentToken()->type;
-                if (m_lexer.next() == TokRBracket) {
-                    if (lastToken == TokComma) {
-                        m_parseErrorMessage = "Unexpected comma at the end of array expression"_s;
-                        return JSValue();
-                    }
-                    m_lexer.next();
-                    lastValue = objectStack.takeLast();
-                    break;
-                }
-
-                stateStack.append(DoParseArrayEndExpression);
-                goto startParseExpression;
-            }
-            case DoParseArrayEndExpression: {
-                JSArray* array = asArray(objectStack.last());
-                array->putDirectIndex(m_globalObject, array->length(), lastValue);
-                RETURN_IF_EXCEPTION(scope, JSValue());
-
-                if (m_lexer.currentToken()->type == TokComma)
-                    goto doParseArrayStartExpression;
-
-                if (m_lexer.currentToken()->type != TokRBracket) {
-                    m_parseErrorMessage = "Expected ']'"_s;
-                    return JSValue();
-                }
-                
-                m_lexer.next();
-                lastValue = objectStack.takeLast();
-                break;
-            }
-            startParseObject:
-            case StartParseObject: {
-                JSObject* object = constructEmptyObject(m_globalObject);
-                objectStack.appendWithCrashOnOverflow(object);
-
-                TokenType type = m_lexer.next();
-                if (type == TokString || (m_mode != StrictJSON && type == TokIdentifier)) {
-                    typename Lexer::LiteralParserTokenPtr identifierToken = m_lexer.currentToken();
-                    if (identifierToken->stringIs8Bit)
-                        identifierStack.append(makeIdentifier(identifierToken->stringToken8, identifierToken->stringLength));
-                    else
-                        identifierStack.append(makeIdentifier(identifierToken->stringToken16, identifierToken->stringLength));
-
-                    // Check for colon
-                    if (m_lexer.next() != TokColon) {
-                        m_parseErrorMessage = "Expected ':' before value in object property definition"_s;
-                        return JSValue();
-                    }
-                    
-                    m_lexer.next();
-                    stateStack.append(DoParseObjectEndExpression);
-                    goto startParseExpression;
-                }
-                if (type != TokRBrace)  {
-                    m_parseErrorMessage = "Expected '}'"_s;
-                    return JSValue();
+        startParseArray:
+        case StartParseArray: {
+            JSArray* array = constructEmptyArray(m_globalObject, nullptr);
+            RETURN_IF_EXCEPTION(scope, { });
+            objectStack.appendWithCrashOnOverflow(array);
+        }
+        doParseArrayStartExpression:
+        FALLTHROUGH;
+        case DoParseArrayStartExpression: {
+            TokenType lastToken = m_lexer.currentToken()->type;
+            if (m_lexer.next() == TokRBracket) {
+                if (UNLIKELY(lastToken == TokComma)) {
+                    m_parseErrorMessage = "Unexpected comma at the end of array expression"_s;
+                    return { };
                 }
                 m_lexer.next();
                 lastValue = objectStack.takeLast();
                 break;
             }
-            doParseObjectStartExpression:
-            case DoParseObjectStartExpression: {
-                TokenType type = m_lexer.next();
-                if (type != TokString && (m_mode == StrictJSON || type != TokIdentifier)) {
-                    m_parseErrorMessage = "Property name must be a string literal"_s;
-                    return JSValue();
-                }
-                typename Lexer::LiteralParserTokenPtr identifierToken = m_lexer.currentToken();
-                if (identifierToken->stringIs8Bit)
-                    identifierStack.append(makeIdentifier(identifierToken->stringToken8, identifierToken->stringLength));
-                else
-                    identifierStack.append(makeIdentifier(identifierToken->stringToken16, identifierToken->stringLength));
 
-                // Check for colon
-                if (m_lexer.next() != TokColon) {
-                    m_parseErrorMessage = "Expected ':'"_s;
-                    return JSValue();
-                }
+            stateStack.append(DoParseArrayEndExpression);
+            goto startParseExpression;
+        }
+        case DoParseArrayEndExpression: {
+            JSArray* array = asArray(objectStack.last());
+            array->putDirectIndex(m_globalObject, array->length(), lastValue);
+            RETURN_IF_EXCEPTION(scope, { });
 
-                m_lexer.next();
-                stateStack.append(DoParseObjectEndExpression);
-                goto startParseExpression;
+            if (m_lexer.currentToken()->type == TokComma)
+                goto doParseArrayStartExpression;
+
+            if (UNLIKELY(m_lexer.currentToken()->type != TokRBracket)) {
+                setErrorMessageForToken(TokRBracket);
+                return { };
             }
-            case DoParseObjectEndExpression:
-            {
-                JSObject* object = asObject(objectStack.last());
-                Identifier ident = identifierStack.takeLast();
-                if (m_mode != StrictJSON && ident == vm.propertyNames->underscoreProto) {
-                    if (!visitedUnderscoreProto.add(object).isNewEntry) {
-                        m_parseErrorMessage = "Attempted to redefine __proto__ property"_s;
-                        return JSValue();
+            
+            m_lexer.next();
+            lastValue = objectStack.takeLast();
+            break;
+        }
+        startParseObject:
+        case StartParseObject: {
+            JSObject* object = constructEmptyObject(m_globalObject);
+
+            TokenType type = m_lexer.next();
+            if (type == TokString || (m_mode != StrictJSON && type == TokIdentifier)) {
+                while (true) {
+                    Identifier ident = makeIdentifier(vm, m_lexer.currentToken());
+
+                    if (UNLIKELY(m_lexer.next() != TokColon)) {
+                        setErrorMessageForToken(TokColon);
+                        return { };
                     }
-                    PutPropertySlot slot(object, m_nullOrCodeBlock ? m_nullOrCodeBlock->ownerExecutable()->isInStrictContext() : false);
-                    objectStack.last().put(m_globalObject, ident, lastValue, slot);
-                } else {
-                    if (std::optional<uint32_t> index = parseIndex(ident))
-                        object->putDirectIndex(m_globalObject, index.value(), lastValue);
-                    else
-                        object->putDirect(vm, ident, lastValue);
-                }
-                RETURN_IF_EXCEPTION(scope, JSValue());
-                if (m_lexer.currentToken()->type == TokComma)
-                    goto doParseObjectStartExpression;
-                if (m_lexer.currentToken()->type != TokRBrace) {
-                    m_parseErrorMessage = "Expected '}'"_s;
-                    return JSValue();
-                }
-                m_lexer.next();
-                lastValue = objectStack.takeLast();
-                break;
-            }
-            startParseExpression:
-            case StartParseExpression: {
-                switch (m_lexer.currentToken()->type) {
-                    case TokLBracket:
+
+                    TokenType nextType = m_lexer.next();
+                    if (nextType == TokLBrace || nextType == TokLBracket) {
+                        objectStack.appendWithCrashOnOverflow(object);
+                        identifierStack.append(WTFMove(ident));
+                        stateStack.append(DoParseObjectEndExpression);
+                        if (nextType == TokLBrace)
+                            goto startParseObject;
+                        ASSERT(nextType == TokLBracket);
                         goto startParseArray;
-                    case TokLBrace:
-                        goto startParseObject;
-                    case TokString: {
-                        typename Lexer::LiteralParserTokenPtr stringToken = m_lexer.currentToken();
-                        if (stringToken->stringIs8Bit)
-                            lastValue = jsString(vm, makeIdentifier(stringToken->stringToken8, stringToken->stringLength).string());
-                        else
-                            lastValue = jsString(vm, makeIdentifier(stringToken->stringToken16, stringToken->stringLength).string());
-                        m_lexer.next();
-                        break;
                     }
-                    case TokNumber: {
-                        typename Lexer::LiteralParserTokenPtr numberToken = m_lexer.currentToken();
-                        lastValue = jsNumber(numberToken->numberToken);
-                        m_lexer.next();
-                        break;
-                    }
-                    case TokNull:
-                        m_lexer.next();
-                        lastValue = jsNull();
-                        break;
 
-                    case TokTrue:
-                        m_lexer.next();
-                        lastValue = jsBoolean(true);
-                        break;
+                    // Leaf object construction fast path.
+                    JSValue primitive = parsePrimitiveValue(vm);
+                    if (UNLIKELY(!primitive))
+                        return { };
 
-                    case TokFalse:
-                        m_lexer.next();
-                        lastValue = jsBoolean(false);
-                        break;
-                    case TokRBracket:
-                        m_parseErrorMessage = "Unexpected token ']'"_s;
-                        return JSValue();
-                    case TokRBrace:
-                        m_parseErrorMessage = "Unexpected token '}'"_s;
-                        return JSValue();
-                    case TokIdentifier: {
-                        auto token = m_lexer.currentToken();
-
-                        auto tryMakeErrorString = [&] (unsigned length) -> String {
-                            bool addEllipsis = length != token->stringLength;
-                            if (token->stringIs8Bit)
-                                return tryMakeString("Unexpected identifier \"", StringView { token->stringToken8, length }, addEllipsis ? "..." : "", '"');
-                            return tryMakeString("Unexpected identifier \"", StringView { token->stringToken16, length }, addEllipsis ? "..." : "", '"');
-                        };
-
-                        constexpr unsigned maxLength = 200;
-
-                        String errorString = tryMakeErrorString(std::min(token->stringLength, maxLength));
-                        if (!errorString) {
-                            constexpr unsigned shortLength = 10;
-                            if (token->stringLength > shortLength)
-                                errorString = tryMakeErrorString(shortLength);
-                            if (!errorString)
-                                errorString = "Unexpected identifier";
+                    if (m_mode != StrictJSON && ident == vm.propertyNames->underscoreProto) {
+                        if (UNLIKELY(!visitedUnderscoreProto.add(object).isNewEntry)) {
+                            m_parseErrorMessage = "Attempted to redefine __proto__ property"_s;
+                            return { };
                         }
-
-                        m_parseErrorMessage = errorString;
-                        return JSValue();
+                        PutPropertySlot slot(object, m_nullOrCodeBlock ? m_nullOrCodeBlock->ownerExecutable()->isInStrictContext() : false);
+                        JSValue(object).put(m_globalObject, ident, primitive, slot);
+                        RETURN_IF_EXCEPTION(scope, { });
+                    } else {
+                        if (std::optional<uint32_t> index = parseIndex(ident)) {
+                            object->putDirectIndex(m_globalObject, index.value(), primitive);
+                            RETURN_IF_EXCEPTION(scope, { });
+                        } else
+                            object->putDirect(vm, ident, primitive);
                     }
-                    case TokColon:
-                        m_parseErrorMessage = "Unexpected token ':'"_s;
-                        return JSValue();
-                    case TokLParen:
-                        m_parseErrorMessage = "Unexpected token '('"_s;
-                        return JSValue();
-                    case TokRParen:
-                        m_parseErrorMessage = "Unexpected token ')'"_s;
-                        return JSValue();
-                    case TokComma:
-                        m_parseErrorMessage = "Unexpected token ','"_s;
-                        return JSValue();
-                    case TokDot:
-                        m_parseErrorMessage = "Unexpected token '.'"_s;
-                        return JSValue();
-                    case TokAssign:
-                        m_parseErrorMessage = "Unexpected token '='"_s;
-                        return JSValue();
-                    case TokSemi:
-                        m_parseErrorMessage = "Unexpected token ';'"_s;
-                        return JSValue();
-                    case TokEnd:
-                        m_parseErrorMessage = "Unexpected EOF"_s;
-                        return JSValue();
-                    case TokError:
-                    default:
-                        // Error
-                        m_parseErrorMessage = "Could not parse value expression"_s;
-                        return JSValue();
+
+                    if (m_lexer.currentToken()->type != TokComma)
+                        break;
+
+                    nextType = m_lexer.next();
+                    if (UNLIKELY(nextType != TokString && (m_mode == StrictJSON || nextType != TokIdentifier))) {
+                        m_parseErrorMessage = "Property name must be a string literal"_s;
+                        return { };
+                    }
                 }
+
+                if (UNLIKELY(m_lexer.currentToken()->type != TokRBrace)) {
+                    setErrorMessageForToken(TokRBrace);
+                    return { };
+                }
+                m_lexer.next();
+                lastValue = object;
                 break;
             }
-            case StartParseStatement: {
-                switch (m_lexer.currentToken()->type) {
-                    case TokLBracket:
-                    case TokNumber:
-                    case TokString:
-                        goto startParseExpression;
 
-                    case TokLParen: {
-                        m_lexer.next();
-                        stateStack.append(StartParseStatementEndStatement);
-                        goto startParseExpression;
-                    }
-                    case TokRBracket:
-                        m_parseErrorMessage = "Unexpected token ']'"_s;
-                        return JSValue();
-                    case TokLBrace:
-                        m_parseErrorMessage = "Unexpected token '{'"_s;
-                        return JSValue();
-                    case TokRBrace:
-                        m_parseErrorMessage = "Unexpected token '}'"_s;
-                        return JSValue();
-                    case TokIdentifier:
-                        m_parseErrorMessage = "Unexpected identifier"_s;
-                        return JSValue();
-                    case TokColon:
-                        m_parseErrorMessage = "Unexpected token ':'"_s;
-                        return JSValue();
-                    case TokRParen:
-                        m_parseErrorMessage = "Unexpected token ')'"_s;
-                        return JSValue();
-                    case TokComma:
-                        m_parseErrorMessage = "Unexpected token ','"_s;
-                        return JSValue();
-                    case TokTrue:
-                        m_parseErrorMessage = "Unexpected token 'true'"_s;
-                        return JSValue();
-                    case TokFalse:
-                        m_parseErrorMessage = "Unexpected token 'false'"_s;
-                        return JSValue();
-                    case TokNull:
-                        m_parseErrorMessage = "Unexpected token 'null'"_s;
-                        return JSValue();
-                    case TokEnd:
-                        m_parseErrorMessage = "Unexpected EOF"_s;
-                        return JSValue();
-                    case TokDot:
-                        m_parseErrorMessage = "Unexpected token '.'"_s;
-                        return JSValue();
-                    case TokAssign:
-                        m_parseErrorMessage = "Unexpected token '='"_s;
-                        return JSValue();
-                    case TokSemi:
-                        m_parseErrorMessage = "Unexpected token ';'"_s;
-                        return JSValue();
-                    case TokError:
-                    default:
-                        m_parseErrorMessage = "Could not parse statement"_s;
-                        return JSValue();
+            if (UNLIKELY(type != TokRBrace)) {
+                setErrorMessageForToken(TokRBrace);
+                return { };
+            }
+
+            m_lexer.next();
+            lastValue = object;
+            break;
+        }
+        doParseObjectStartExpression:
+        case DoParseObjectStartExpression: {
+            TokenType type = m_lexer.next();
+            if (UNLIKELY(type != TokString && (m_mode == StrictJSON || type != TokIdentifier))) {
+                m_parseErrorMessage = "Property name must be a string literal"_s;
+                return { };
+            }
+            identifierStack.append(makeIdentifier(vm, m_lexer.currentToken()));
+
+            // Check for colon
+            if (UNLIKELY(m_lexer.next() != TokColon)) {
+                setErrorMessageForToken(TokColon);
+                return { };
+            }
+
+            m_lexer.next();
+            stateStack.append(DoParseObjectEndExpression);
+            goto startParseExpression;
+        }
+        case DoParseObjectEndExpression:
+        {
+            JSObject* object = asObject(objectStack.last());
+            Identifier ident = identifierStack.takeLast();
+            if (m_mode != StrictJSON && ident == vm.propertyNames->underscoreProto) {
+                if (UNLIKELY(!visitedUnderscoreProto.add(object).isNewEntry)) {
+                    m_parseErrorMessage = "Attempted to redefine __proto__ property"_s;
+                    return { };
                 }
+                PutPropertySlot slot(object, m_nullOrCodeBlock ? m_nullOrCodeBlock->ownerExecutable()->isInStrictContext() : false);
+                JSValue(object).put(m_globalObject, ident, lastValue, slot);
+                RETURN_IF_EXCEPTION(scope, { });
+            } else {
+                if (std::optional<uint32_t> index = parseIndex(ident)) {
+                    object->putDirectIndex(m_globalObject, index.value(), lastValue);
+                    RETURN_IF_EXCEPTION(scope, { });
+                } else
+                    object->putDirect(vm, ident, lastValue);
             }
-            case StartParseStatementEndStatement: {
-                ASSERT(stateStack.isEmpty());
-                if (m_lexer.currentToken()->type != TokRParen)
-                    return JSValue();
-                if (m_lexer.next() == TokEnd)
-                    return lastValue;
-                m_parseErrorMessage = "Unexpected content at end of JSON literal"_s;
-                return JSValue();
+            if (m_lexer.currentToken()->type == TokComma)
+                goto doParseObjectStartExpression;
+            if (UNLIKELY(m_lexer.currentToken()->type != TokRBrace)) {
+                setErrorMessageForToken(TokRBrace);
+                return { };
             }
+            m_lexer.next();
+            lastValue = objectStack.takeLast();
+            break;
+        }
+        startParseExpression:
+        case StartParseExpression: {
+            TokenType type = m_lexer.currentToken()->type;
+            if (type == TokLBracket)
+                goto startParseArray;
+            if (type == TokLBrace)
+                goto startParseObject;
+            lastValue = parsePrimitiveValue(vm);
+            if (UNLIKELY(!lastValue))
+                return { };
+            break;
+        }
+        case StartParseStatement: {
+            switch (m_lexer.currentToken()->type) {
+            case TokLBracket:
+            case TokNumber:
+            case TokString: {
+                lastValue = parsePrimitiveValue(vm);
+                if (UNLIKELY(!lastValue))
+                    return { };
+                break;
+            }
+
+            case TokLParen: {
+                m_lexer.next();
+                stateStack.append(StartParseStatementEndStatement);
+                goto startParseExpression;
+            }
+            case TokRBracket:
+                m_parseErrorMessage = "Unexpected token ']'"_s;
+                return { };
+            case TokLBrace:
+                m_parseErrorMessage = "Unexpected token '{'"_s;
+                return { };
+            case TokRBrace:
+                m_parseErrorMessage = "Unexpected token '}'"_s;
+                return { };
+            case TokIdentifier:
+                m_parseErrorMessage = "Unexpected identifier"_s;
+                return { };
+            case TokColon:
+                m_parseErrorMessage = "Unexpected token ':'"_s;
+                return { };
+            case TokRParen:
+                m_parseErrorMessage = "Unexpected token ')'"_s;
+                return { };
+            case TokComma:
+                m_parseErrorMessage = "Unexpected token ','"_s;
+                return { };
+            case TokTrue:
+                m_parseErrorMessage = "Unexpected token 'true'"_s;
+                return { };
+            case TokFalse:
+                m_parseErrorMessage = "Unexpected token 'false'"_s;
+                return { };
+            case TokNull:
+                m_parseErrorMessage = "Unexpected token 'null'"_s;
+                return { };
+            case TokEnd:
+                m_parseErrorMessage = "Unexpected EOF"_s;
+                return { };
+            case TokDot:
+                m_parseErrorMessage = "Unexpected token '.'"_s;
+                return { };
+            case TokAssign:
+                m_parseErrorMessage = "Unexpected token '='"_s;
+                return { };
+            case TokSemi:
+                m_parseErrorMessage = "Unexpected token ';'"_s;
+                return { };
+            case TokError:
             default:
-                RELEASE_ASSERT_NOT_REACHED();
+                m_parseErrorMessage = "Could not parse statement"_s;
+                return { };
+            }
+            break;
+        }
+        case StartParseStatementEndStatement: {
+            ASSERT(stateStack.isEmpty());
+            if (m_lexer.currentToken()->type != TokRParen)
+                return { };
+            if (m_lexer.next() == TokEnd)
+                return lastValue;
+            m_parseErrorMessage = "Unexpected content at end of JSON literal"_s;
+            return { };
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
         }
         if (stateStack.isEmpty())
             return lastValue;

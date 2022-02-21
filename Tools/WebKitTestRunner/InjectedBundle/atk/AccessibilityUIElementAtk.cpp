@@ -28,7 +28,7 @@
 #include "config.h"
 #include "AccessibilityUIElement.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
@@ -221,17 +221,26 @@ String attributeSetToString(AtkAttributeSet* attributeSet, String separator=", "
     if (!attributeSet)
         return String();
 
-    StringBuilder builder;
+    Vector<String> attributeList;
     for (AtkAttributeSet* attributes = attributeSet; attributes; attributes = attributes->next) {
         AtkAttribute* attribute = static_cast<AtkAttribute*>(attributes->data);
-        builder.append(attribute->name);
-        builder.append(':');
-        builder.append(attribute->value);
-        if (attributes->next)
-            builder.append(separator);
+        if (!g_strcmp0(attribute->name, "html-id") || !g_strcmp0(attribute->name, "toolkit"))
+            continue;
+
+        attributeList.append(makeString(attribute->name, ':', attribute->value));
     }
     atk_attribute_set_free(attributeSet);
 
+    std::sort(attributeList.begin(), attributeList.end(), WTF::codePointCompareLessThan);
+
+    StringBuilder builder;
+    bool isFirst = true;
+    for (const auto& attribute : attributeList) {
+        if (!isFirst)
+            builder.append(separator);
+        builder.append(attribute);
+        isFirst = false;
+    }
     return builder.toString();
 }
 
@@ -745,6 +754,10 @@ void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >
     int count = childrenCount();
     for (int i = 0; i < count; i++) {
         GRefPtr<AtkObject> child = adoptGRef(atk_object_ref_accessible_child(ATK_OBJECT(m_element.get()), i));
+
+        if (!ATK_IS_OBJECT(child.get()))
+            continue;
+
         children.append(AccessibilityUIElement::create(child.get()));
     }
 }
@@ -756,6 +769,10 @@ void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIE
     unsigned end = location + length;
     for (unsigned i = location; i < end; i++) {
         GRefPtr<AtkObject> child = adoptGRef(atk_object_ref_accessible_child(ATK_OBJECT(m_element.get()), i));
+
+        if (!ATK_IS_OBJECT(child.get()))
+            continue;
+
         children.append(AccessibilityUIElement::create(child.get()));
     }
 }
@@ -1098,6 +1115,11 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
     }
 
     return 0;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
+{
+    return nullptr;
 }
 
 JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attribute) const
@@ -2299,4 +2321,4 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
 
 } // namespace WTR
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATK)

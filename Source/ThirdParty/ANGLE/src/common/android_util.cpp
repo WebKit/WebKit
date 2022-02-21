@@ -219,6 +219,55 @@ T1 *offsetPointer(T2 *ptr, int bytes)
     return reinterpret_cast<T1 *>(reinterpret_cast<intptr_t>(ptr) + bytes);
 }
 
+GLenum getPixelFormatInfo(int pixelFormat, bool *isYUV)
+{
+    *isYUV = false;
+    switch (pixelFormat)
+    {
+        case AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM:
+            return GL_RGBA8;
+        case AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM:
+            return GL_RGB8;
+        case AHARDWAREBUFFER_FORMAT_R8G8B8_UNORM:
+            return GL_RGB8;
+        case AHARDWAREBUFFER_FORMAT_R5G6B5_UNORM:
+            return GL_RGB565;
+        case AHARDWAREBUFFER_FORMAT_B8G8R8A8_UNORM:
+            return GL_BGRA8_EXT;
+        case AHARDWAREBUFFER_FORMAT_B5G5R5A1_UNORM:
+            return GL_RGB5_A1;
+        case AHARDWAREBUFFER_FORMAT_B4G4R4A4_UNORM:
+            return GL_RGBA4;
+        case AHARDWAREBUFFER_FORMAT_R16G16B16A16_FLOAT:
+            return GL_RGBA16F;
+        case AHARDWAREBUFFER_FORMAT_R10G10B10A2_UNORM:
+            return GL_RGB10_A2;
+        case AHARDWAREBUFFER_FORMAT_BLOB:
+            return GL_NONE;
+        case AHARDWAREBUFFER_FORMAT_D16_UNORM:
+            return GL_DEPTH_COMPONENT16;
+        case AHARDWAREBUFFER_FORMAT_D24_UNORM:
+            return GL_DEPTH_COMPONENT24;
+        case AHARDWAREBUFFER_FORMAT_D24_UNORM_S8_UINT:
+            return GL_DEPTH24_STENCIL8;
+        case AHARDWAREBUFFER_FORMAT_D32_FLOAT:
+            return GL_DEPTH_COMPONENT32F;
+        case AHARDWAREBUFFER_FORMAT_D32_FLOAT_S8_UINT:
+            return GL_DEPTH32F_STENCIL8;
+        case AHARDWAREBUFFER_FORMAT_S8_UINT:
+            return GL_STENCIL_INDEX8;
+        case AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420:
+            *isYUV = true;
+            return GL_RGB8;
+        default:
+            // Treat unknown formats as RGB. They are vendor-specific YUV formats that would sample
+            // as RGB.
+            WARN() << "Unknown pixelFormat: " << pixelFormat << ". Treating as RGB8";
+            *isYUV = true;
+            return GL_RGB8;
+    }
+}
+
 }  // anonymous namespace
 
 namespace angle
@@ -277,67 +326,30 @@ EGLClientBuffer CreateEGLClientBufferFromAHardwareBuffer(int width,
     }
 
     return AHardwareBufferToClientBuffer(aHardwareBuffer);
-#endif  // ANGLE_AHARDWARE_BUFFER_SUPPORT
+#else
     return nullptr;
+#endif  // ANGLE_AHARDWARE_BUFFER_SUPPORT
 }
 
 void GetANativeWindowBufferProperties(const ANativeWindowBuffer *buffer,
                                       int *width,
                                       int *height,
                                       int *depth,
-                                      int *pixelFormat)
+                                      int *pixelFormat,
+                                      uint64_t *usage)
 {
     *width       = buffer->width;
     *height      = buffer->height;
     *depth       = static_cast<int>(buffer->layerCount);
     *height      = buffer->height;
     *pixelFormat = buffer->format;
+    *usage       = buffer->usage;
 }
 
 GLenum NativePixelFormatToGLInternalFormat(int pixelFormat)
 {
-    switch (pixelFormat)
-    {
-        case AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM:
-            return GL_RGBA8;
-        case AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM:
-            return GL_RGB8;
-        case AHARDWAREBUFFER_FORMAT_R8G8B8_UNORM:
-            return GL_RGB8;
-        case AHARDWAREBUFFER_FORMAT_R5G6B5_UNORM:
-            return GL_RGB565;
-        case AHARDWAREBUFFER_FORMAT_B8G8R8A8_UNORM:
-            return GL_BGRA8_EXT;
-        case AHARDWAREBUFFER_FORMAT_B5G5R5A1_UNORM:
-            return GL_RGB5_A1;
-        case AHARDWAREBUFFER_FORMAT_B4G4R4A4_UNORM:
-            return GL_RGBA4;
-        case AHARDWAREBUFFER_FORMAT_R16G16B16A16_FLOAT:
-            return GL_RGBA16F;
-        case AHARDWAREBUFFER_FORMAT_R10G10B10A2_UNORM:
-            return GL_RGB10_A2;
-        case AHARDWAREBUFFER_FORMAT_BLOB:
-            return GL_NONE;
-        case AHARDWAREBUFFER_FORMAT_D16_UNORM:
-            return GL_DEPTH_COMPONENT16;
-        case AHARDWAREBUFFER_FORMAT_D24_UNORM:
-            return GL_DEPTH_COMPONENT24;
-        case AHARDWAREBUFFER_FORMAT_D24_UNORM_S8_UINT:
-            return GL_DEPTH24_STENCIL8;
-        case AHARDWAREBUFFER_FORMAT_D32_FLOAT:
-            return GL_DEPTH_COMPONENT32F;
-        case AHARDWAREBUFFER_FORMAT_D32_FLOAT_S8_UINT:
-            return GL_DEPTH32F_STENCIL8;
-        case AHARDWAREBUFFER_FORMAT_S8_UINT:
-            return GL_STENCIL_INDEX8;
-        case AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420:
-            return GL_RGB8;
-        default:
-            // Treat unknown formats as RGB. They are vendor-specific YUV formats that would sample
-            // as RGB.
-            WARN() << "Unknown pixelFormat: " << pixelFormat << ". Treating as RGB8";
-            return GL_RGB8;
-    }
+    bool isYuv = false;
+    return getPixelFormatInfo(pixelFormat, &isYuv);
 }
 
 int GLInternalFormatToNativePixelFormat(GLenum internalFormat)
@@ -380,6 +392,13 @@ int GLInternalFormatToNativePixelFormat(GLenum internalFormat)
     }
 }
 
+bool NativePixelFormatIsYUV(int pixelFormat)
+{
+    bool isYuv = false;
+    getPixelFormatInfo(pixelFormat, &isYuv);
+    return isYuv;
+}
+
 AHardwareBuffer *ANativeWindowBufferToAHardwareBuffer(ANativeWindowBuffer *windowBuffer)
 {
     return offsetPointer<AHardwareBuffer>(windowBuffer,
@@ -392,5 +411,10 @@ EGLClientBuffer AHardwareBufferToClientBuffer(const AHardwareBuffer *hardwareBuf
                                           kAHardwareBufferToANativeWindowBufferOffset);
 }
 
+AHardwareBuffer *ClientBufferToAHardwareBuffer(EGLClientBuffer clientBuffer)
+{
+    return offsetPointer<AHardwareBuffer>(clientBuffer,
+                                          -kAHardwareBufferToANativeWindowBufferOffset);
+}
 }  // namespace android
 }  // namespace angle

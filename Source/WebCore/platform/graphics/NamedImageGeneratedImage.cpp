@@ -51,7 +51,7 @@ ImageDrawResult NamedImageGeneratedImage::draw(GraphicsContext& context, const F
         context.scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
     context.translate(-srcRect.location());
 
-    Theme::singleton().drawNamedImage(m_name, context, dstRect);
+    Theme::singleton().drawNamedImage(m_name, context, dstRect.size());
     return ImageDrawResult::DidDraw;
 #else
     UNUSED_PARAM(context);
@@ -65,15 +65,15 @@ ImageDrawResult NamedImageGeneratedImage::draw(GraphicsContext& context, const F
 void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
 #if USE(NEW_THEME)
-    auto imageBuffer = ImageBuffer::createCompatibleBuffer(size(), context);
+    auto imageBuffer = context.createCompatibleImageBuffer(size());
     if (!imageBuffer)
         return;
 
     GraphicsContext& graphicsContext = imageBuffer->context();
-    Theme::singleton().drawNamedImage(m_name, graphicsContext, FloatRect(0, 0, size().width(), size().height()));
+    Theme::singleton().drawNamedImage(m_name, graphicsContext, size());
 
     // Tile the image buffer into the context.
-    imageBuffer->drawPattern(context, dstRect, srcRect, patternTransform, phase, spacing, options);
+    context.drawPattern(*imageBuffer, dstRect, srcRect, patternTransform, phase, spacing, options);
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(dstRect);

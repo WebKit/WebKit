@@ -116,8 +116,6 @@ public:
         u.reg = reg;
     }
 
-    ValueRep(const ValueRep&) = default;
-
     ValueRep(Kind kind)
         : m_kind(kind)
     {

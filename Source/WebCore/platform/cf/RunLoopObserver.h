@@ -35,7 +35,7 @@ namespace WebCore {
 class RunLoopObserver {
     WTF_MAKE_NONCOPYABLE(RunLoopObserver); WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef WTF::Function<void ()> RunLoopObserverCallback;
+    typedef Function<void ()> RunLoopObserverCallback;
 
     RunLoopObserver(CFIndex order, RunLoopObserverCallback&& callback)
         : m_order(order)

@@ -31,6 +31,7 @@
 #pragma once
 
 #include "ExceptionCode.h"
+#include "SharedBuffer.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ public:
 
     virtual void didStartLoading() = 0;
     virtual void didReceiveData() = 0;
+    virtual void didReceiveBinaryChunk(const SharedBuffer&) { }
     virtual void didFinishLoading() = 0;
     virtual void didFail(ExceptionCode errorCode) = 0;
 };

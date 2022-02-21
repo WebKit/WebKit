@@ -37,7 +37,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/DragController.h>
 #import <WebCore/Editor.h>
-#import <WebCore/Element.h>
+#import <WebCore/ElementInlines.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameDestructionObserver.h>
 #import <WebCore/FrameView.h>
@@ -150,14 +150,13 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
     NSURLResponse *response = image->response().nsURLResponse();
     
-    RefPtr<SharedBuffer> imageBuffer = image->image()->data();
+    auto imageBuffer = image->image()->data();
     size_t imageSize = imageBuffer->size();
-    SharedMemory::Handle imageHandle;
-    
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(imageBuffer->size());
+
+    auto sharedMemoryBuffer = SharedMemory::copyBuffer(*imageBuffer);
     if (!sharedMemoryBuffer)
         return;
-    memcpy(sharedMemoryBuffer->data(), imageBuffer->data(), imageSize);
+    SharedMemory::Handle imageHandle;
     sharedMemoryBuffer->createHandle(imageHandle, SharedMemory::Protection::ReadOnly);
     
     RetainPtr<CFDataRef> data = archive ? archive->rawDataRepresentation() : 0;
@@ -165,11 +164,10 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     size_t archiveSize = 0;
     if (data) {
         auto archiveBuffer = SharedBuffer::create((__bridge NSData *)data.get());
-        RefPtr<SharedMemory> archiveSharedMemoryBuffer = SharedMemory::allocate(archiveBuffer->size());
+        auto archiveSharedMemoryBuffer = SharedMemory::copyBuffer(archiveBuffer.get());
         if (!archiveSharedMemoryBuffer)
             return;
         archiveSize = archiveBuffer->size();
-        memcpy(archiveSharedMemoryBuffer->data(), archiveBuffer->data(), archiveSize);
         archiveSharedMemoryBuffer->createHandle(archiveHandle, SharedMemory::Protection::ReadOnly);
     }
 
@@ -187,7 +185,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
 {
-    if (auto frame = makeRefPtr(element.document().frame()))
+    if (RefPtr frame = element.document().frame())
         frame->editor().writeImageToPasteboard(*Pasteboard::createForDragAndDrop(PagePasteboardContext::create(frame->pageID())), element, url, label);
 }
 

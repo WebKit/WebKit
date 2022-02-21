@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LibWebRTCDTMFSenderBackend.h"
 
-#if ENABLE(WEB_RTC)
+#if USE(LIBWEBRTC)
 
 #include <wtf/MainThread.h>
 
@@ -79,7 +79,7 @@ void LibWebRTCDTMFSenderBackend::OnToneChange(const std::string& tone, const std
     // We are just interested in notifying the end of the tone, which corresponds to the empty string.
     if (!tone.empty())
         return;
-    callOnMainThread([this, weakThis = makeWeakPtr(*this), tone = toWTFString(tone)] {
+    callOnMainThread([this, weakThis = WeakPtr { *this }, tone = toWTFString(tone)] {
         if (!weakThis)
             return;
         if (m_onTonePlayed)
@@ -94,4 +94,4 @@ void LibWebRTCDTMFSenderBackend::onTonePlayed(Function<void(const String&)>&& on
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_RTC)
+#endif // USE(LIBWEBRTC)

@@ -42,14 +42,14 @@ struct DataChannelInit {
   // The max period of time in milliseconds in which retransmissions will be
   // sent. After this time, no more retransmissions will be sent.
   //
-  // Cannot be set along with |maxRetransmits|.
-  // This is called |maxPacketLifeTime| in the WebRTC JS API.
+  // Cannot be set along with `maxRetransmits`.
+  // This is called `maxPacketLifeTime` in the WebRTC JS API.
   // Negative values are ignored, and positive values are clamped to [0-65535]
   absl::optional<int> maxRetransmitTime;
 
   // The max number of retransmissions.
   //
-  // Cannot be set along with |maxRetransmitTime|.
+  // Cannot be set along with `maxRetransmitTime`.
   // Negative values are ignored, and positive values are clamped to [0-65535]
   absl::optional<int> maxRetransmits;
 
@@ -57,7 +57,7 @@ struct DataChannelInit {
   std::string protocol;
 
   // True if the channel has been externally negotiated and we do not send an
-  // in-band signalling in the form of an "open" message. If this is true, |id|
+  // in-band signalling in the form of an "open" message. If this is true, `id`
   // below must be set; otherwise it should be unset and will be negotiated
   // in-band.
   bool negotiated = false;
@@ -70,7 +70,7 @@ struct DataChannelInit {
 };
 
 // At the JavaScript level, data can be passed in as a string or a blob, so
-// this structure's |binary| flag tells whether the data should be interpreted
+// this structure's `binary` flag tells whether the data should be interpreted
 // as binary or text.
 struct DataBuffer {
   DataBuffer(const rtc::CopyOnWriteBuffer& data, bool binary)
@@ -180,7 +180,7 @@ class RTC_EXPORT DataChannelInterface : public rtc::RefCountInterface {
   // https://tools.ietf.org/html/draft-ietf-rtcweb-data-channel-13#section-6.7
   virtual void Close() = 0;
 
-  // Sends |data| to the remote peer. If the data can't be sent at the SCTP
+  // Sends `data` to the remote peer. If the data can't be sent at the SCTP
   // level (due to congestion control), it's buffered at the data channel level,
   // up to a maximum of 16MB. If Send is called while this buffer is full, the
   // data channel will be closed abruptly.

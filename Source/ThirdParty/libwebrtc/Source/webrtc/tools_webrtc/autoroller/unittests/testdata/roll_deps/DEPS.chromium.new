@@ -11,16 +11,15 @@ deps = {
   'src/third_party/depot_tools':
     Var('chromium_git') + '/chromium/tools/depot_tools.git' + '@' +  Var('depot_tools_revision'),
 
-  'src/third_party/xstream': {
-      'packages': [
-          {
-              'package': 'chromium/third_party/xstream',
-              # This is updated compared to the DEPS file.
-              'version': 'version:1.10.0-cr0',
-          },
-      ],
-      'condition': 'checkout_android',
-      'dep_type': 'cipd',
+  'src/buildtools/linux64': {
+    'packages': [
+      {
+        'package': 'gn/gn/linux-amd64',
+        'version': 'git_revision:new-revision',
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'checkout_linux',
   },
 
   # Script expects to find these markers.

@@ -371,7 +371,7 @@ void PlatformCAAnimationWin::setFromValue(const WebCore::Color& value)
     if (animationType() != Basic)
         return;
 
-    auto components = value.toSRGBALossy<uint8_t>();
+    auto components = value.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
     CGFloat a[4] = { components.red, components.green, components.blue, components.alpha };
     RetainPtr<CACFVectorRef> v = adoptCF(CACFVectorCreate(4, a));
     CACFAnimationSetFromValue(m_animation.get(), v.get());
@@ -423,7 +423,7 @@ void PlatformCAAnimationWin::setToValue(const WebCore::Color& value)
     if (animationType() != Basic)
         return;
 
-    auto components = value.toSRGBALossy<uint8_t>();
+    auto components = value.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
     CGFloat a[4] = { components.red, components.green, components.blue, components.alpha };
     RetainPtr<CACFVectorRef> v = adoptCF(CACFVectorCreate(4, a));
     CACFAnimationSetToValue(m_animation.get(), v.get());
@@ -493,7 +493,7 @@ void PlatformCAAnimationWin::setValues(const Vector<WebCore::Color>& value)
         
     RetainPtr<CFMutableArrayRef> array = adoptCF(CFArrayCreateMutable(0, value.size(), &kCFTypeArrayCallBacks));
     for (size_t i = 0; i < value.size(); ++i) {
-        auto components = value[i].toSRGBALossy<uint8_t>();
+        auto components = value[i].toColorTypeLossy<SRGBA<uint8_t>>().resolved();
         CGFloat a[4] = { components.red, components.green, components.blue, components.alpha };
         RetainPtr<CACFVectorRef> v = adoptCF(CACFVectorCreate(4, a));
         CFArrayAppendValue(array.get(), v.get());
@@ -561,7 +561,7 @@ void PlatformCAAnimationWin::setAnimations(const Vector<RefPtr<PlatformCAAnimati
 {
     auto array = adoptCF(CFArrayCreateMutable(0, value.size(), &kCFTypeArrayCallBacks));
     for (auto& animation : value) {
-        if (is<PlatformCAAnimationWin>(animation.get()))
+        if (is<PlatformCAAnimationWin>(animation))
             CFArrayAppendValue(array.get(), downcast<PlatformCAAnimationWin>(*animation).m_animation.get());
     }
 

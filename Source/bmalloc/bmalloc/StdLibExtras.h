@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StdLibExtras_h
-#define StdLibExtras_h
+#pragma once
 
 #include "BCompiler.h"
 #include <memory>
@@ -47,5 +46,3 @@ inline ToType bitwise_cast(FromType from)
 }
 
 } // namespace bmalloc
-
-#endif // StdLibExtras_h

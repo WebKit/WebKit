@@ -43,7 +43,6 @@ class FrameInfo;
 namespace WebCore {
 class ResourceError;
 class ResourceResponse;
-class SharedBuffer;
 }
 
 namespace WebKit {
@@ -61,7 +60,7 @@ public:
 
     ~WebURLSchemeTask();
 
-    uint64_t identifier() const { ASSERT(RunLoop::isMain()); return m_identifier; }
+    WebCore::ResourceLoaderIdentifier resourceLoaderID() const { ASSERT(RunLoop::isMain()); return m_resourceLoaderID; }
     WebPageProxyIdentifier pageProxyID() const { ASSERT(RunLoop::isMain()); return m_pageProxyID; }
     WebCore::PageIdentifier webPageID() const { ASSERT(RunLoop::isMain()); return m_webPageID; }
     WebProcessProxy* process() { ASSERT(RunLoop::isMain()); return m_process.get(); }
@@ -84,7 +83,7 @@ public:
     ExceptionType willPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&,  Function<void(WebCore::ResourceRequest&&)>&&);
     ExceptionType didPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
     ExceptionType didReceiveResponse(const WebCore::ResourceResponse&);
-    ExceptionType didReceiveData(Ref<WebCore::SharedBuffer>&&);
+    ExceptionType didReceiveData(const WebCore::SharedBuffer&);
     ExceptionType didComplete(const WebCore::ResourceError&);
 
     void stop();
@@ -101,7 +100,7 @@ private:
 
     Ref<WebURLSchemeHandler> m_urlSchemeHandler;
     RefPtr<WebProcessProxy> m_process;
-    uint64_t m_identifier;
+    WebCore::ResourceLoaderIdentifier m_resourceLoaderID;
     WebPageProxyIdentifier m_pageProxyID;
     WebCore::PageIdentifier m_webPageID;
     WebCore::ResourceRequest m_request WTF_GUARDED_BY_LOCK(m_requestLock);
@@ -115,7 +114,7 @@ private:
 
     SyncLoadCompletionHandler m_syncCompletionHandler;
     WebCore::ResourceResponse m_syncResponse;
-    RefPtr<WebCore::SharedBuffer> m_syncData;
+    WebCore::SharedBufferBuilder m_syncData;
 
     bool m_waitingForRedirectCompletionHandlerCallback { false };
 };

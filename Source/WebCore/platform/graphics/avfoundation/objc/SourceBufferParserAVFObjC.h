@@ -60,7 +60,7 @@ public:
     void resetParserState() final;
     void invalidate() final;
 #if !RELEASE_LOG_DISABLED
-    void setLogger(const WTF::Logger&, const void* identifier) final;
+    void setLogger(const Logger&, const void* identifier) final;
 #endif
 
     void didParseStreamDataAsAsset(AVAsset*);
@@ -68,10 +68,11 @@ public:
     void didProvideMediaDataForTrackID(uint64_t trackID, CMSampleBufferRef, const String& mediaType, unsigned flags);
     void willProvideContentKeyRequestInitializationDataForTrackID(uint64_t trackID);
     void didProvideContentKeyRequestInitializationDataForTrackID(NSData*, uint64_t trackID);
+    void didProvideContentKeyRequestSpecifierForTrackID(NSData*, uint64_t trackID);
 
 private:
 #if !RELEASE_LOG_DISABLED
-    const WTF::Logger* loggerPtr() const { return m_logger.get(); }
+    const Logger* loggerPtr() const { return m_logger.get(); }
     const void* logIdentifier() const { return m_logIdentifier; }
 #endif
 
@@ -80,7 +81,7 @@ private:
     bool m_parserStateWasReset { false };
 
 #if !RELEASE_LOG_DISABLED
-    RefPtr<const WTF::Logger> m_logger;
+    RefPtr<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };
 #endif
 };

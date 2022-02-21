@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "NodeRareData.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
 #include <wtf/IsoMallocInlines.h>
@@ -180,8 +181,10 @@ void HTMLFieldSetElement::addInvalidDescendant(const HTMLFormControlElement& inv
     ASSERT(static_cast<const Element&>(invalidFormControlElement).matchesInvalidPseudoClass());
     ASSERT_WITH_MESSAGE(!m_invalidDescendants.contains(invalidFormControlElement), "Updating the fieldset on validity change is not an efficient operation, it should only be done when necessary.");
 
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (m_invalidDescendants.computesEmpty())
-        invalidateStyleForSubtree();
+        emplace(styleInvalidation, *this, { { CSSSelector::PseudoClassValid, false }, { CSSSelector::PseudoClassInvalid, true } });
+
     m_invalidDescendants.add(invalidFormControlElement);
 }
 
@@ -190,9 +193,11 @@ void HTMLFieldSetElement::removeInvalidDescendant(const HTMLFormControlElement& 
     ASSERT_WITH_MESSAGE(!is<HTMLFieldSetElement>(formControlElement), "FieldSet are never candidates for constraint validation.");
     ASSERT_WITH_MESSAGE(m_invalidDescendants.contains(formControlElement), "Updating the fieldset on validity change is not an efficient operation, it should only be done when necessary.");
 
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
+    if (m_invalidDescendants.computeSize() == 1)
+        emplace(styleInvalidation, *this, { { CSSSelector::PseudoClassValid, true }, { CSSSelector::PseudoClassInvalid, false } });
+
     m_invalidDescendants.remove(formControlElement);
-    if (m_invalidDescendants.computesEmpty())
-        invalidateStyleForSubtree();
 }
 
 } // namespace

@@ -43,23 +43,29 @@
 <img alt="Cake" src="resources/cake.png">
 <img alt="Cake" src="resources/cake.png">
 <br>
-<!-- Inputs. -->
+
+<!-- Buttons. -->
 <input type="submit" value="Submit">
+<button>Button</button>
+<div role="button">Role button</div>
+<!-- The following two are popup buttons. -->
+<button aria-haspopup="menu">Button with aria-haspopup</button>
+<div role="button" aria-haspopup="menu">Role button with aria-haspopup</div>
+<!-- The following two are toggle buttons. -->
+<button aria-pressed="false">Button with aria-pressed</button>
+<div role="button" aria-pressed="false">Role button with aria-pressed</div>
+<br>
+
+<!-- Non-button controls. -->
 <div role="checkbox">Role checkbox</div>
 <div role="radio">Role radio</div>
 <div role="searchbox">Role searchbox</div>
 <div role="switch">Role switch</div>
-<br>
-
-<!-- Form controls. -->
-<button>Button</button>
-<div role="button">Role button</div>
-<div role="combobox">Role combobox</div>
-<div role="slider">Role slider</div>
 <div role="textbox">Role textbox</div>
-<!-- The following two are popup buttons and are also form controls. -->
-<button aria-haspopup="menu">Button with aria-haspopup</button>
-<div role="button" aria-haspopup="menu">Role button with aria-haspopup</div>
+<div role="combobox">Role combobox</div>
+<div role="listbox">Role listbox</div>
+<div role="slider">Role slider</div>
+<textarea>Textarea</textarea>
 
 </div>
 
@@ -85,14 +91,14 @@
         // Images.
         var imageCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXGraphicSearchKey", "", false);
         shouldBe("imageCount", "4");
-        
-        // Inputs.
-        var inputCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXButtonSearchKey", "", false);
-        shouldBe("inputCount", "5");
 
-        // Form controls include inputs, so the count should be the sum of inputs and controls.
+        // Buttons.
+        var buttonCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXButtonSearchKey", "", false);
+        shouldBe("buttonCount", "7");
+
+        // Form controls include buttons, checkboxes, etc, so the count should be the sum of buttons and other controls.
         var controlCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXControlSearchKey", "", false);
-        shouldBe("controlCount", "12");
+        shouldBe("controlCount", "16");
 
         // Headings.
         var headingCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false);

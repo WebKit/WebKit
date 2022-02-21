@@ -14,26 +14,13 @@ description: >
 var f = Function.call(this, "return this.planet;");
 var g = Function.call(this, "return this.color;");
 
-//CHECK#1
-if (f() !== undefined) {
-  throw new Test262Error('#2: ');
-}
+assert.sameValue(f(), undefined, 'f() returns undefined');
 
 var planet = "mars";
 
-//CHECK#2
-if (f() !== "mars") {
-  throw new Test262Error('#2: ');
-}
-
-//CHECK#3
-if (g() !== undefined) {
-  throw new Test262Error('#3: ');
-}
+assert.sameValue(f(), "mars", 'f() must return "mars"');
+assert.sameValue(g(), undefined, 'g() returns undefined');
 
 this.color = "red";
 
-//CHECK#4
-if (g() !== "red") {
-  throw new Test262Error('#4: ');
-}
+assert.sameValue(g(), "red", 'g() must return "red"');

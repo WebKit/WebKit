@@ -13,26 +13,27 @@
 </model>
 <pre id="layers"></pre>
 <script>
-    let layers = document.getElementById("layers");
+    window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
 
-    if (window.testRunner) {
-        testRunner.waitUntilDone();
-        testRunner.dumpAsText();
-    } else
-        layers.textContent = "This test requires testRunner.";
+    const layers = document.getElementById("layers");
+    const model = document.getElementById("model");
 
-    let model = document.getElementById("model");
-
-    model.ready.then(value => {
-        if (window.testRunner)
-            layers.innerText = window.internals.platformLayerTreeAsText(model);
+    const modelDidLoad = () => {
+        layers.innerText = window.internals?.platformLayerTreeAsText(model) ?? "This test requires testRunner.";
         model.remove();
-    }, reason => {
-        layers.textContent = `Failed. Model did not load: ${reason}`;
-    }).finally(() => { 
-        if (window.testRunner)
-            testRunner.notifyDone();
-    });
+        window.testRunner?.notifyDone();
+    };
+
+    if (model.complete)
+        modelDidLoad();
+    else {
+        model.addEventListener("load", modelDidLoad);
+        model.addEventListener("error", event => {
+            layers.textContent = `Failed. Model did not load.`;
+            window.testRunner?.notifyDone();
+        });
+    }
 </script>
 </body>
 </html>

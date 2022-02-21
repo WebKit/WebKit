@@ -40,7 +40,7 @@ RTCDataChannelRemoteManagerProxy::RTCDataChannelRemoteManagerProxy()
 
 void RTCDataChannelRemoteManagerProxy::registerConnectionToWebProcess(NetworkConnectionToWebProcess& connectionToWebProcess)
 {
-    m_queue->dispatch([this, protectedThis = makeRef(*this), identifier = connectionToWebProcess.webProcessIdentifier(), connectionID = connectionToWebProcess.connection().uniqueID()]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier(), connectionID = connectionToWebProcess.connection().uniqueID()]() mutable {
         ASSERT(!m_webProcessConnections.contains(identifier));
         m_webProcessConnections.add(identifier, connectionID);
     });
@@ -49,7 +49,7 @@ void RTCDataChannelRemoteManagerProxy::registerConnectionToWebProcess(NetworkCon
 
 void RTCDataChannelRemoteManagerProxy::unregisterConnectionToWebProcess(NetworkConnectionToWebProcess& connectionToWebProcess)
 {
-    m_queue->dispatch([this, protectedThis = makeRef(*this), identifier = connectionToWebProcess.webProcessIdentifier()] {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier()] {
         ASSERT(m_webProcessConnections.contains(identifier));
         m_webProcessConnections.remove(identifier);
     });
@@ -80,10 +80,10 @@ void RTCDataChannelRemoteManagerProxy::receiveData(WebCore::RTCDataChannelIdenti
         IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::ReceiveData { identifier, isRaw, data }, 0);
 }
 
-void RTCDataChannelRemoteManagerProxy::detectError(WebCore::RTCDataChannelIdentifier identifier)
+void RTCDataChannelRemoteManagerProxy::detectError(WebCore::RTCDataChannelIdentifier identifier, WebCore::RTCErrorDetailType detail, const String& message)
 {
     if (auto connectionID = m_webProcessConnections.get(identifier.processIdentifier))
-        IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::DetectError { identifier }, 0);
+        IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::DetectError { identifier, detail, message }, 0);
 }
 
 void RTCDataChannelRemoteManagerProxy::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier identifier, size_t amount)

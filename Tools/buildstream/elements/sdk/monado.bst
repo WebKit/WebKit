@@ -1,5 +1,4 @@
 kind: meson
-
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 
@@ -8,7 +7,8 @@ depends:
 - freedesktop-sdk.bst:components/mesa-headers.bst
 - freedesktop-sdk.bst:components/glslang.bst
 - freedesktop-sdk.bst:components/sdl2.bst
-- freedesktop-sdk.bst:components/vulkan.bst
+- freedesktop-sdk.bst:components/vulkan-headers.bst
+- freedesktop-sdk.bst:components/vulkan-icd-loader.bst
 - sdk/eigen.bst
 - sdk/gst-plugins-base.bst
 

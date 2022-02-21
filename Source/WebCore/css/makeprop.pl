@@ -71,30 +71,22 @@ my %nameIsHighPriority;
 my %nameIsInherited;
 my %namePriorityShouldSink;
 my %logicalPropertyGroups;
-my %resolverKinds = (
+my %logicalPropertyGroupResolvers = (
     "logical" => {
-        "block" => "axis",
-        "inline" => "axis",
-        "block-start" => "side",
-        "block-end" => "side",
-        "inline-start" => "side",
-        "inline-end" => "side",
-        "start-start" => "corner",
-        "start-end" => "corner",
-        "end-start" => "corner",
-        "end-end" => "corner",
+        # Order matches LogicalBoxAxis enum in Source/WebCore/platform/text/WritingMode.h.
+        "axis" => ["inline", "block"],
+        # Order matches LogicalBoxSide enum in Source/WebCore/platform/text/WritingMode.h.
+        "side" => ["block-start", "inline-end", "block-end", "inline-start"],
+        # Order matches LogicalBoxCorner enum in Source/WebCore/platform/text/WritingMode.h.
+        "corner" => ["start-start", "start-end", "end-start", "end-end"],
     },
     "physical" => {
-        "horizontal" => "axis",
-        "vertical" => "axis",
-        "top" => "side",
-        "right" => "side",
-        "bottom" => "side",
-        "left" => "side",
-        "top-left" => "corner",
-        "top-right" => "corner",
-        "bottom-right" => "corner",
-        "bottom-left" => "corner",
+        # Order matches BoxAxis enum in Source/WebCore/platform/text/WritingMode.h.
+        "axis" => ["horizontal", "vertical"],
+        # Order matches BoxSide enum in Source/WebCore/platform/text/WritingMode.h.
+        "side" => ["top", "right", "bottom", "left"],
+        # Order matches BoxCorner enum in Source/WebCore/platform/text/WritingMode.h.
+        "corner" => ["top-left", "top-right", "bottom-right", "bottom-left"],
     },
 );
 my %propertiesWithStyleBuilderOptions;
@@ -117,6 +109,8 @@ my %styleBuilderOptions = (
 );
 my %nameToId;
 my %nameToAliases;
+my %synonyms;
+my %namesToSynonyms;
 my %relatedProperty;
 
 for my $name (@allNames) {
@@ -134,16 +128,15 @@ for my $name (@allNames) {
 }
 
 while (my ($groupName, $logicalPropertyGroup) = each %logicalPropertyGroups) {
-    for my $logic (keys %resolverKinds) {
+    my $kind = $logicalPropertyGroup->{"kind"};
+    while (my ($logic, $resolversForLogic) = each %logicalPropertyGroupResolvers) {
         my $properties = $logicalPropertyGroup->{$logic};
         if (!$properties) {
             die "Logical property group \"$groupName\" has no \"$logic\" property.";
         }
-        while (my ($resolver, $kind) = each %{ $resolverKinds{$logic} }) {
-            if ($kind eq $logicalPropertyGroup->{"kind"}) {
-                if (!$properties->{$resolver}) {
-                    die "Logical property group \"$groupName\" requires a \"$resolver\" property.";
-                }
+        for my $resolver (@{ $resolversForLogic->{$kind} }) {
+            if (!$properties->{$resolver}) {
+                die "Logical property group \"$groupName\" requires a \"$resolver\" property.";
             }
         }
     }
@@ -298,6 +291,9 @@ sub addProperty($$)
                     $relatedProperty{$name} = $codegenProperties->{"related-property"}
                 } elsif ($codegenOptionName eq "aliases") {
                     $nameToAliases{$name} = $codegenProperties->{"aliases"};
+                } elsif ($codegenOptionName eq "synonym") {
+                    $synonyms{$name} = 1;
+                    push @{$namesToSynonyms{$codegenProperties->{"synonym"}}}, $name;
                 } elsif ($styleBuilderOptions{$codegenOptionName}) {
                     $propertiesWithStyleBuilderOptions{$name}{$codegenOptionName} = $codegenProperties->{$codegenOptionName};
                 } elsif ($codegenOptionName eq "internal-only") {
@@ -314,11 +310,17 @@ sub addProperty($$)
                     my $resolver = $codegenProperties->{$codegenOptionName}{"resolver"};
                     my $kind;
                     my $logic;
-                    if ($kind = $resolverKinds{"logical"}{$resolver}) {
-                        $logic = "logical";
-                    } elsif ($kind = $resolverKinds{"physical"}{$resolver}) {
-                        $logic = "physical";
-                    } else {
+                    while (my ($currentLogic, $resolversForLogic) = each %logicalPropertyGroupResolvers) {
+                        while (my ($currentKind, $resolverList) = each %{ $resolversForLogic }) {
+                            for my $currentResolver (@{ $resolverList }) {
+                                if ($currentResolver eq $resolver) {
+                                    $kind = $currentKind;
+                                    $logic = $currentLogic;
+                                }
+                            }
+                        }
+                    }
+                    if (!$kind) {
                         die "Unrecognized resolver \"$resolver\" for codegen property \"$codegenOptionName\" for $name property.";
                     }
                     my $otherKind = $logicalPropertyGroups{$groupName}{"kind"};
@@ -338,9 +340,9 @@ sub addProperty($$)
                 }
             }
         } elsif ($optionName eq "animatable") {
-             $propertiesWithStyleBuilderOptions{$name}{"animatable"} = $optionsHashRef->{"animatable"};
+            $propertiesWithStyleBuilderOptions{$name}{"animatable"} = $optionsHashRef->{"animatable"};
         } elsif ($optionName eq "inherited") {
-            $nameIsInherited{$name} = 1;
+            $nameIsInherited{$name} = $optionsHashRef->{"inherited"};
         } elsif ($optionName eq "values") {
             # FIXME: Implement.
         }
@@ -500,7 +502,7 @@ EOF
 
 foreach my $name (keys %settingsFlags) {
   print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
-  print GPERF "        return settings->" . $settingsFlags{$name} . "Enabled();\n";
+  print GPERF "        return settings->" . $settingsFlags{$name} . "();\n";
 }
 
 print GPERF << "EOF";
@@ -562,7 +564,7 @@ String getJSPropertyName(CSSPropertyID id)
         *resultPointer++ = character;
     }
     *resultPointer = '\\0';
-    return WTF::String(result);
+    return String(result);
 }
 
 static const bool isInheritedPropertyTable[numCSSProperties + $numPredefinedProperties] = {
@@ -721,17 +723,8 @@ for my $logicalPropertyGroup (values %logicalPropertyGroups) {
         my $kind = $logicalPropertyGroup->{"kind"};
         my $kindId = nameToId($kind);
         my $resolverEnum = "LogicalBox" . $kindId . "::" . nameToId($resolver);
-        my @physicals;
-        if ($kind eq "side") {
-            @physicals = ("top", "right", "bottom", "left");
-        } elsif ($kind eq "corner") {
-            @physicals = ("top-left", "top-right", "bottom-right", "bottom-left");
-        } elsif ($kind eq "axis") {
-            @physicals = ("horizontal", "vertical");
-        } else {
-            die "Property \"$name\" belongs to a logical property group of unrecognized kind \"$kind\".";
-        }
-        my @properties = map { "CSSProperty" . $nameToId{$logicalPropertyGroup->{"physical"}{$_}} } @physicals;
+        my $physicals = $logicalPropertyGroupResolvers{"physical"}->{$kind};
+        my @properties = map { "CSSProperty" . $nameToId{$logicalPropertyGroup->{"physical"}{$_}} } @{ $physicals };
         print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ": {\n";
         print GPERF "        static constexpr CSSPropertyID properties[" . scalar(@properties) . "] = { " . join(", ", @properties) . " };\n";
         print GPERF "        return properties[static_cast<size_t>(mapLogical" . $kindId . "ToPhysical" . $kindId . "(textflow, " . $resolverEnum . "))];\n";
@@ -841,9 +834,9 @@ bool isInternalCSSProperty(const CSSPropertyID);
 bool isEnabledCSSProperty(const CSSPropertyID);
 bool isCSSPropertyEnabledBySettings(const CSSPropertyID, const Settings* = nullptr);
 const char* getPropertyName(CSSPropertyID);
-const WTF::AtomString& getPropertyNameAtomString(CSSPropertyID id);
-WTF::String getPropertyNameString(CSSPropertyID id);
-WTF::String getJSPropertyName(CSSPropertyID);
+const AtomString& getPropertyNameAtomString(CSSPropertyID id);
+String getPropertyNameString(CSSPropertyID id);
+String getJSPropertyName(CSSPropertyID);
 CSSPropertyID getRelatedPropertyId(CSSPropertyID id);
 
 inline CSSPropertyID convertToCSSPropertyID(int value)
@@ -1062,8 +1055,8 @@ sub generateAnimationPropertyInitialValueSetter {
   my $setter = $propertiesWithStyleBuilderOptions{$name}{"setter"};
   my $initial = $propertiesWithStyleBuilderOptions{$name}{"initial"};
   $setterContent .= $indent . "list.animation(0)." . $setter . "(Animation::" . $initial . "());\n";
-  $setterContent .= $indent . "for (size_t i = 1; i < list.size(); ++i)\n";
-  $setterContent .= $indent . "    list.animation(i)." . getClearFunction($name) . "();\n";
+  $setterContent .= $indent . "for (auto& animation : list)\n";
+  $setterContent .= $indent . "    animation->" . getClearFunction($name) . "();\n";
 
   return $setterContent;
 }
@@ -1179,8 +1172,6 @@ sub generateFillLayerPropertyValueSetter {
   my $name = shift;
   my $indent = shift;
 
-  my $CSSPropertyId = "CSSProperty" . $nameToId{$name};
-
   my $setterContent = "";
   $setterContent .= $indent . "auto* child = &builderState.style()." . getLayersAccessorFunction($name) . "();\n";
   $setterContent .= $indent . "FillLayer* previousChild = nullptr;\n";
@@ -1191,12 +1182,12 @@ sub generateFillLayerPropertyValueSetter {
   $setterContent .= $indent . "            previousChild->setNext(FillLayer::create(" . getFillLayerType($name) . "));\n";
   $setterContent .= $indent . "            child = previousChild->next();\n";
   $setterContent .= $indent . "        }\n";
-  $setterContent .= $indent . "        builderState.styleMap()." . getFillLayerMapfunction($name) . "(" . $CSSPropertyId . ", *child, item);\n";
+  $setterContent .= $indent . "        builderState.styleMap()." . getFillLayerMapfunction($name) . "(propertyID, *child, item);\n";
   $setterContent .= $indent . "        previousChild = child;\n";
   $setterContent .= $indent . "        child = child->next();\n";
   $setterContent .= $indent . "    }\n";
   $setterContent .= $indent . "} else {\n";
-  $setterContent .= $indent . "    builderState.styleMap()." . getFillLayerMapfunction($name) . "(" . $CSSPropertyId . ", *child, value);\n";
+  $setterContent .= $indent . "    builderState.styleMap()." . getFillLayerMapfunction($name) . "(propertyID, *child, value);\n";
   $setterContent .= $indent . "    child = child->next();\n";
   $setterContent .= $indent . "}\n";
   $setterContent .= $indent . "for (; child; child = child->next())\n";
@@ -1295,15 +1286,23 @@ sub generateValueSetter {
   my $name = shift;
   my $indent = shift;
 
+  my $valueApplierFirstArgument = "";
+  if (exists $propertiesWithStyleBuilderOptions{$name}{"fill-layer-property"}) {
+    $valueApplierFirstArgument = "CSSPropertyID propertyID, ";
+  }
+
   my $setterContent = "";
-  $setterContent .= $indent . "static void applyValue" . $nameToId{$name} . "(BuilderState& builderState, CSSValue& value)\n";
+  $setterContent .= $indent . "static void applyValue" . $nameToId{$name} . "(" . $valueApplierFirstArgument . "BuilderState& builderState, CSSValue& value)\n";
   $setterContent .= $indent . "{\n";
+
   my $convertedValue;
   if (exists($propertiesWithStyleBuilderOptions{$name}{"converter"})) {
     $convertedValue = "BuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"converter"} . "(builderState, value)";
   } elsif (exists($propertiesWithStyleBuilderOptions{$name}{"conditional-converter"})) {
     $setterContent .= $indent . "    auto convertedValue = BuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"conditional-converter"} . "(builderState, value);\n";
     $convertedValue = "WTFMove(convertedValue.value())";
+  } elsif ($nameIsColorProperty{$name}) {
+    $convertedValue = colorFromPrimitiveValue("downcast<CSSPrimitiveValue>(value)");
   } else {
     $convertedValue = "downcast<CSSPrimitiveValue>(value)";
   }
@@ -1374,6 +1373,7 @@ foreach my $name (@names) {
   # Skip Shorthand properties and properties that do not use the StyleBuilder.
   next if (exists $propertiesWithStyleBuilderOptions{$name}{"longhands"});
   next if (exists $propertiesWithStyleBuilderOptions{$name}{"skip-builder"});
+  next if (exists $synonyms{$name});
 
   my $indent = "    ";
   if (!$propertiesWithStyleBuilderOptions{$name}{"custom"}{"Initial"}) {
@@ -1408,7 +1408,18 @@ void BuilderGenerated::applyProperty(CSSPropertyID property, BuilderState& build
 EOF
 
 foreach my $name (@names) {
+  next if (exists $synonyms{$name});
+
   print STYLEBUILDER "    case CSSProperty" . $nameToId{$name} . ":\n";
+
+  my $valueApplierFirstArgument = "";
+  if (exists $propertiesWithStyleBuilderOptions{$name}{"fill-layer-property"}) {
+    $valueApplierFirstArgument = "property, ";
+  }
+  foreach my $synonym (@{$namesToSynonyms{$name}}) {
+    print STYLEBUILDER "    case CSSProperty" . $nameToId{$synonym} . ":\n";
+  }
+
   if (exists $propertiesWithStyleBuilderOptions{$name}{"longhands"}) {
     print STYLEBUILDER "        ASSERT(isShorthandCSSProperty(property));\n";
     print STYLEBUILDER "        ASSERT_NOT_REACHED();\n";
@@ -1418,7 +1429,7 @@ foreach my $name (@names) {
     print STYLEBUILDER "        else if (isInherit)\n";
     print STYLEBUILDER "            " . getScopeForFunction($name, "Inherit") . "::applyInherit" . $nameToId{$name} . "(builderState);\n";
     print STYLEBUILDER "        else\n";
-    print STYLEBUILDER "            " . getScopeForFunction($name, "Value") . "::applyValue" . $nameToId{$name} . "(builderState, value);\n";
+    print STYLEBUILDER "            " . getScopeForFunction($name, "Value") . "::applyValue" . $nameToId{$name} . "(" . $valueApplierFirstArgument . "builderState, value);\n";
   }
   print STYLEBUILDER "        break;\n";
 }
@@ -1643,7 +1654,7 @@ foreach my $nameOrAlias (@namesAndAliases) {
 
     my @extendedAttributeValues = ("DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute", "CallWith=PropertyName");
     push(@extendedAttributeValues, "EnabledBySetting=${settingsFlags{$name}}") if $settingsFlags{$name};
-    push(@extendedAttributeValues, "EnabledAtRuntime=${runtimeFlags{$name}}") if $runtimeFlags{$name};
+    push(@extendedAttributeValues, "EnabledAtRuntime=Enabled${runtimeFlags{$name}}") if $runtimeFlags{$name};
     my $extendedAttributes = join(", ", @extendedAttributeValues);
 
     print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL "    [CEReactions, ${extendedAttributes}] attribute [LegacyNullToEmptyString] CSSOMString ${camelCasedAttributeName};\n";
@@ -1666,7 +1677,7 @@ foreach my $nameOrAlias (grep { $_ =~ /^\-webkit\-/ } @namesAndAliases) {
 
     my @extendedAttributeValues = ("DelegateToSharedSyntheticAttribute=propertyValueForWebKitCasedIDLAttribute", "CallWith=PropertyName");
     push(@extendedAttributeValues, "EnabledBySetting=${settingsFlags{$name}}") if $settingsFlags{$name};
-    push(@extendedAttributeValues, "EnabledAtRuntime=${runtimeFlags{$name}}") if $runtimeFlags{$name};
+    push(@extendedAttributeValues, "EnabledAtRuntime=Enabled${runtimeFlags{$name}}") if $runtimeFlags{$name};
     my $extendedAttributes = join(", ", @extendedAttributeValues);
 
     print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL "    [CEReactions, ${extendedAttributes}] attribute [LegacyNullToEmptyString] CSSOMString ${webkitCasedAttributeName};\n";
@@ -1688,7 +1699,7 @@ foreach my $nameOrAlias (grep { $_ =~ /\-/ } @namesAndAliases) {
 
     my @extendedAttributeValues = ("DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute", "CallWith=PropertyName");
     push(@extendedAttributeValues, "EnabledBySetting=${settingsFlags{$name}}") if $settingsFlags{$name};
-    push(@extendedAttributeValues, "EnabledAtRuntime=${runtimeFlags{$name}}") if $runtimeFlags{$name};
+    push(@extendedAttributeValues, "EnabledAtRuntime=Enabled${runtimeFlags{$name}}") if $runtimeFlags{$name};
     my $extendedAttributes = join(", ", @extendedAttributeValues);
 
     print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL "    [CEReactions, ${extendedAttributes}] attribute [LegacyNullToEmptyString] CSSOMString ${dashedAttributeName};\n";
@@ -1710,7 +1721,7 @@ foreach my $nameOrAlias (grep { $_ =~ /^\-epub\-/ } @namesAndAliases) {
 
     my @extendedAttributeValues = ("DelegateToSharedSyntheticAttribute=propertyValueForEpubCasedIDLAttribute", "CallWith=PropertyName");
     push(@extendedAttributeValues, "EnabledBySetting=${settingsFlags{$name}}") if $settingsFlags{$name};
-    push(@extendedAttributeValues, "EnabledAtRuntime=${runtimeFlags{$name}}") if $runtimeFlags{$name};
+    push(@extendedAttributeValues, "EnabledAtRuntime=Enabled${runtimeFlags{$name}}") if $runtimeFlags{$name};
     my $extendedAttributes = join(", ", @extendedAttributeValues);
 
     print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL "    [CEReactions, ${extendedAttributes}] attribute [LegacyNullToEmptyString] CSSOMString ${epubCasedAttributeName};\n";

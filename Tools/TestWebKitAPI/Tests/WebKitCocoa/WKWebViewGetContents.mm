@@ -30,7 +30,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WebKit.h>
-#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 TEST(WKWebView, GetContentsShouldReturnString)
 {
@@ -45,6 +45,23 @@ TEST(WKWebView, GetContentsShouldReturnString)
         EXPECT_WK_STREQ(@"Simple HTML file.", string);
         finished = true;
     }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WKWebView, GetContentsShouldFailWhenClosingPage)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    __block bool finished = false;
+
+    [webView _getContentsAsStringWithCompletionHandlerKeepIPCConnectionAliveForTesting:^(NSString *string, NSError *error) {
+        finished = true;
+    }];
+
+    [webView _close];
 
     TestWebKitAPI::Util::run(&finished);
 }

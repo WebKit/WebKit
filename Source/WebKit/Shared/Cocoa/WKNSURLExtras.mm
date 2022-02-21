@@ -27,9 +27,6 @@
 #import "WKNSURLExtras.h"
 
 #import <wtf/URL.h>
-#import <wtf/cf/CFURLExtras.h>
-#import <wtf/text/CString.h>
-#import <wtf/text/WTFString.h>
 
 @implementation NSURL (WKExtras)
 
@@ -37,20 +34,6 @@
 {
     URL url { URL { }, string };
     return (NSURL *)url;
-}
-
-+ (instancetype)_web_URLWithWTFString:(const String&)string relativeToURL:(NSURL *)baseURL
-{
-    URL url { URL { baseURL }, string };
-    return (NSURL *)url;
-}
-
-- (String)_web_originalDataAsWTFString
-{
-    // FIXME: Why is it OK to ignore base URL here?
-    CString originalData;
-    WTF::getURLBytes((__bridge CFURLRef)self, originalData);
-    return String::fromUTF8(originalData);
 }
 
 @end

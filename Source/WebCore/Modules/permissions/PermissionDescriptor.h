@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PermissionName.h"
+#include <optional>
 
 namespace WebCore {
 

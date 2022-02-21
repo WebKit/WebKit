@@ -187,6 +187,8 @@ public:
     bool hasPlayedSinceLastInterruption() const { return m_hasPlayedSinceLastInterruption; }
     void clearHasPlayedSinceLastInterruption() { m_hasPlayedSinceLastInterruption = false; }
 
+    bool preparingToPlay() const { return m_preparingToPlay; }
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const override { return m_logIdentifier; }
@@ -225,6 +227,7 @@ private:
     bool m_notifyingClient { false };
     bool m_isPlayingToWirelessPlaybackTarget { false };
     bool m_hasPlayedSinceLastInterruption { false };
+    bool m_preparingToPlay { false };
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

@@ -107,7 +107,7 @@ static inline pas_red_black_tree_node* pas_red_black_tree_node_get_right(pas_red
 
 static inline pas_red_black_tree_node* pas_red_black_tree_node_get_parent(pas_red_black_tree_node* node)
 {
-    return (pas_red_black_tree_node*)(pas_red_black_tree_node_tagged_ptr_load(&node->parent) & ~1);
+    return (pas_red_black_tree_node*)(pas_red_black_tree_node_tagged_ptr_load(&node->parent) & ~1lu);
 }
 
 static inline pas_red_black_tree_color pas_red_black_tree_node_get_color(pas_red_black_tree_node* node)
@@ -153,7 +153,7 @@ static inline void pas_red_black_tree_node_set_color(pas_red_black_tree_node* no
                                                      pas_red_black_tree_color value)
 {
     uintptr_t tagged_value = pas_red_black_tree_node_tagged_ptr_load(&node->parent);
-    tagged_value = (tagged_value & ~1) | (uintptr_t)value;
+    tagged_value = (tagged_value & ~1lu) | (uintptr_t)value;
     pas_red_black_tree_validate_enumerable();
     pas_red_black_tree_node_tagged_ptr_store(&node->parent, tagged_value);
     pas_red_black_tree_validate_enumerable();

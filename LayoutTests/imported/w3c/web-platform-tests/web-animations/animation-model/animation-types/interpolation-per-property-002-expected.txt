@@ -38,6 +38,14 @@ PASS list-style-type (type: discrete) has testInterpolation function
 PASS list-style-type uses discrete animation when animating between "circle" and "square" with linear easing
 PASS list-style-type uses discrete animation when animating between "circle" and "square" with effect easing
 PASS list-style-type uses discrete animation when animating between "circle" and "square" with keyframe easing
+PASS mask (type: discrete) has testInterpolation function
+FAIL mask uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-1\") 0% 0% / auto repeat border-box border-box add match-source"
+FAIL mask uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-1\") 0% 0% / auto repeat border-box border-box add match-source"
+FAIL mask uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-1\") 0% 0% / auto repeat border-box border-box add match-source"
+PASS mask-image (type: discrete) has testInterpolation function
+FAIL mask-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 499ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL mask-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+FAIL mask-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
 PASS mix-blend-mode (type: discrete) has testInterpolation function
 PASS mix-blend-mode uses discrete animation when animating between "multiply" and "screen" with linear easing
 PASS mix-blend-mode uses discrete animation when animating between "multiply" and "screen" with effect easing
@@ -46,6 +54,15 @@ PASS object-fit (type: discrete) has testInterpolation function
 PASS object-fit uses discrete animation when animating between "fill" and "contain" with linear easing
 PASS object-fit uses discrete animation when animating between "fill" and "contain" with effect easing
 PASS object-fit uses discrete animation when animating between "fill" and "contain" with keyframe easing
+PASS offset-distance (type: lengthPercentageOrCalc) has testInterpolation function
+PASS offset-distance supports animating as a length
+PASS offset-distance supports animating as a length of rem
+PASS offset-distance supports animating as a percentage
+PASS offset-distance supports animating as combination units "px" and "%"
+PASS offset-distance supports animating as combination units "%" and "em"
+PASS offset-distance supports animating as combination units "em" and "rem"
+PASS offset-distance supports animating as combination units "px" and "calc"
+PASS offset-distance supports animating as a calc
 PASS order (type: integer) has testInterpolation function
 PASS order supports animating as an integer
 PASS outline-color (type: color) has testInterpolation function
@@ -124,10 +141,10 @@ PASS stop-color supports animating as color of #RGBa
 PASS stop-color supports animating as color of rgba()
 PASS stop-color supports animating as color of hsla()
 PASS stop-opacity (type: opacity) has testInterpolation function
-FAIL stop-opacity supports animating as a [0, 1] number assert_equals: The value should be 0.55 at 500ms expected "0.55" but got "0.550000011920929"
+PASS stop-opacity supports animating as a [0, 1] number
 PASS stroke-dasharray (type: dasharray) has testInterpolation function
 PASS stroke-dasharray supports animating as a percentage
-FAIL stroke-dasharray supports animating as a positive number assert_equals: The value should be 1.3px at 500ms expected "1.3px" but got "1.2999999523162842px"
+PASS stroke-dasharray supports animating as a positive number
 PASS stroke-dasharray supports animating as a dasharray (mismatched length)
 PASS stroke-dasharray supports animating as a dasharray (mixed lengths and percentages)
 PASS stroke-dasharray (type: discrete) has testInterpolation function
@@ -135,9 +152,9 @@ PASS stroke-dasharray uses discrete animation when animating between "none" and 
 PASS stroke-dasharray uses discrete animation when animating between "none" and "10px, 20px" with effect easing
 PASS stroke-dasharray uses discrete animation when animating between "none" and "10px, 20px" with keyframe easing
 PASS stroke-miterlimit (type: positiveNumber) has testInterpolation function
-FAIL stroke-miterlimit supports animating as a positive number assert_equals: The value should be 1.3 at 500ms expected "1.3" but got "1.2999999523162842"
+PASS stroke-miterlimit supports animating as a positive number
 PASS stroke-opacity (type: opacity) has testInterpolation function
-FAIL stroke-opacity supports animating as a [0, 1] number assert_equals: The value should be 0.55 at 500ms expected "0.55" but got "0.550000011920929"
+PASS stroke-opacity supports animating as a [0, 1] number
 PASS table-layout (type: discrete) has testInterpolation function
 PASS table-layout uses discrete animation when animating between "auto" and "fixed" with linear easing
 PASS table-layout uses discrete animation when animating between "auto" and "fixed" with effect easing
@@ -161,6 +178,17 @@ PASS text-decoration-style (type: discrete) has testInterpolation function
 PASS text-decoration-style uses discrete animation when animating between "solid" and "dotted" with linear easing
 PASS text-decoration-style uses discrete animation when animating between "solid" and "dotted" with effect easing
 PASS text-decoration-style uses discrete animation when animating between "solid" and "dotted" with keyframe easing
+PASS text-emphasis-color (type: color) has testInterpolation function
+FAIL text-emphasis-color supports animating as color of rgb() assert_equals: The value should be rgb(128, 0, 128) at 500ms expected "rgb(128, 0, 128)" but got "rgb(0, 0, 255)"
+FAIL text-emphasis-color supports animating as color of #RGB assert_equals: The value should be rgb(128, 0, 128) at 500ms expected "rgb(128, 0, 128)" but got "rgb(0, 0, 255)"
+FAIL text-emphasis-color supports animating as color of hsl() assert_equals: The value should be rgb(128, 0, 128) at 500ms expected "rgb(128, 0, 128)" but got "rgb(0, 0, 255)"
+FAIL text-emphasis-color supports animating as color of #RGBa assert_equals: The value should be rgba(85, 0, 170, 0.6) at 500ms expected "rgba(85, 0, 170, 0.6)" but got "rgba(0, 0, 255, 0.8)"
+FAIL text-emphasis-color supports animating as color of rgba() assert_equals: The value should be rgba(85, 0, 170, 0.6) at 500ms expected "rgba(85, 0, 170, 0.6)" but got "rgba(0, 0, 255, 0.8)"
+FAIL text-emphasis-color supports animating as color of hsla() assert_equals: The value should be rgba(85, 0, 170, 0.6) at 500ms expected "rgba(85, 0, 170, 0.6)" but got "rgba(0, 0, 255, 0.8)"
+PASS text-emphasis-position (type: discrete) has testInterpolation function
+PASS text-emphasis-position uses discrete animation when animating between "over" and "under left" with linear easing
+PASS text-emphasis-position uses discrete animation when animating between "over" and "under left" with effect easing
+PASS text-emphasis-position uses discrete animation when animating between "over" and "under left" with keyframe easing
 PASS text-overflow (type: discrete) has testInterpolation function
 PASS text-overflow uses discrete animation when animating between "clip" and "ellipsis" with linear easing
 PASS text-overflow uses discrete animation when animating between "clip" and "ellipsis" with effect easing
@@ -188,17 +216,17 @@ PASS transform: scale
 PASS transform: skew
 PASS transform: rotate and translate
 PASS transform: translate and rotate
-FAIL transform: extend shorter list (from) assert_approx_equals: expected matrix(-1, 0, 0, -1, -50, 0) but got matrix(1, 0, 0, 1, 50, 0): The value should be matrix(-1, 0, 0, -1, -50, 0) at 500ms but got matrix(1, 0, 0, 1, 50, 0) expected -1 +/- 0.0001 but got 1
-FAIL transform: extend shorter list (to) assert_approx_equals: expected matrix(-1, 0, 0, -1, -50, 0) but got matrix(1, 0, 0, 1, 50, 0): The value should be matrix(-1, 0, 0, -1, -50, 0) at 500ms but got matrix(1, 0, 0, 1, 50, 0) expected -1 +/- 0.0001 but got 1
+PASS transform: extend shorter list (from)
+PASS transform: extend shorter list (to)
 PASS transform: mismatch order of translate and rotate
 PASS transform: matrix
 PASS transform: rotate3d
 PASS transform: matrix3d
 PASS transform: mismatched 3D transforms
 PASS transform: rotateY
-FAIL transform: non-invertible matrices assert_approx_equals: expected matrix(-1, 0, 0, -1, 200, 0) but got matrix(-0.070657, 0.719998, -0.395146, -0.260079, 87.65015, 62.44985): The value should be matrix(-1, 0, 0, -1, 200, 0) at 499ms but got matrix(-0.070657, 0.719998, -0.395146, -0.260079, 87.65015, 62.44985) expected -1 +/- 0.0001 but got -0.070657
-FAIL transform: non-invertible matrices in matched transform lists assert_approx_equals: expected matrix(0, -1, 1, 0, 250, 0) but got matrix(-0.229966, -0.692507, 0.329012, -0.3263, 162.600147, 62.44985): The value should be matrix(0, -1, 1, 0, 250, 0) at 499ms but got matrix(-0.229966, -0.692507, 0.329012, -0.3263, 162.600147, 62.44985) expected 0 +/- 0.0001 but got -0.229966
-FAIL transform: non-invertible matrices in mismatched transform lists assert_approx_equals: expected matrix(-2, 0, 0, -2, 250, 0) but got matrix(0.457235, 1.576158, -1.117609, -0.657221, 112.65025, 49.9): The value should be matrix(-2, 0, 0, -2, 250, 0) at 499ms but got matrix(0.457235, 1.576158, -1.117609, -0.657221, 112.65025, 49.9) expected -2 +/- 0.0001 but got 0.457235
+PASS transform: non-invertible matrices
+PASS transform: non-invertible matrices in matched transform lists
+PASS transform: non-invertible matrices in mismatched transform lists
 PASS transform: perspective
 PASS transform-box (type: discrete) has testInterpolation function
 PASS transform-box uses discrete animation when animating between "fill-box" and "border-box" with linear easing
@@ -217,7 +245,7 @@ PASS translate (type: translateList) has testInterpolation function
 PASS translate with two unspecified values
 PASS translate with one unspecified value
 PASS translate with all three values specified
-FAIL translate with combination of percentages and lengths assert_equals: The value should be calc(0% + 200px) calc(25% - 50.5px) 200px at 500ms expected "calc(0% + 200px) calc(25% - 50.5px) 200px" but got "200px -50.5px 200px"
+PASS translate with combination of percentages and lengths
 PASS scale (type: scaleList) has testInterpolation function
 PASS scale with two unspecified values
 PASS scale with one unspecified value

@@ -29,6 +29,8 @@
 #include "IsoPage.h"
 #include "Mutex.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config>
@@ -52,3 +54,4 @@ private:
 
 } // namespace bmalloc
 
+#endif

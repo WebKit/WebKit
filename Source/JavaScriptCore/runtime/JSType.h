@@ -25,6 +25,7 @@ namespace JSC {
 enum JSType : uint8_t {
     // The CellType value must come before any JSType that is a JSCell.
     CellType,
+    StructureType,
     StringType,
     HeapBigIntType,
     LastMaybeFalsyCellPrimitive = HeapBigIntType,
@@ -109,6 +110,7 @@ enum JSType : uint8_t {
     // End JSScope types.
 
     ModuleNamespaceObjectType,
+    ShadowRealmType,
     RegExpObjectType,
     JSDateType,
     ProxyObjectType,

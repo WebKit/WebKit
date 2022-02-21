@@ -26,7 +26,7 @@ p.then(function() {
   throw new Test262Error("Should not be called -- Promise rejected.");
 }, function() {
   sequence.push(3);
-  assert.sameValue(sequence.length, 3);
+  assert.sameValue(sequence.length, 3, 'The value of sequence.length is expected to be 3');
   checkSequence(sequence, "Should be first");
 }).catch($DONE);
 
@@ -36,12 +36,12 @@ Promise.resolve().then(function() {
     throw new Test262Error("Should not be called (2) -- Promise rejected.");
   }, function() {
     sequence.push(5);
-    assert.sameValue(sequence.length, 5);
+    assert.sameValue(sequence.length, 5, 'The value of sequence.length is expected to be 5');
   checkSequence(sequence, "Should be third");
   }).then($DONE, $DONE);
 
   sequence.push(4);
-  assert.sameValue(sequence.length, 4);
+  assert.sameValue(sequence.length, 4, 'The value of sequence.length is expected to be 4');
   checkSequence(sequence, "Should be second");
 }).catch($DONE);
 

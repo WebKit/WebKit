@@ -159,7 +159,7 @@ bool ExecutionCounter<countingVariant>::setThreshold(CodeBlock* codeBlock)
         return true;
     }
 
-    threshold = clippedThreshold(codeBlock ? codeBlock->globalObject() : nullptr, threshold);
+    threshold = clippedThreshold(threshold);
     
     m_counter = static_cast<int32_t>(-threshold);
         

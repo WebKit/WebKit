@@ -45,7 +45,7 @@ std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(WebPageProxy&
 std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(ProvisionalPageProxy& provisionalPage, const String& targetId, Inspector::InspectorTargetType type)
 {
     auto target = InspectorTargetProxy::create(provisionalPage.page(), targetId, type);
-    target->m_provisionalPage = makeWeakPtr(provisionalPage);
+    target->m_provisionalPage = provisionalPage;
     return target;
 }
 

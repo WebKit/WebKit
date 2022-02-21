@@ -171,6 +171,7 @@ CurlShareHandle::CurlShareHandle()
     m_shareHandle = curl_share_init();
     curl_share_setopt(m_shareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_COOKIE);
     curl_share_setopt(m_shareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
+    curl_share_setopt(m_shareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_SSL_SESSION);
     curl_share_setopt(m_shareHandle, CURLSHOPT_LOCKFUNC, lockCallback);
     curl_share_setopt(m_shareHandle, CURLSHOPT_UNLOCKFUNC, unlockCallback);
 }
@@ -198,6 +199,7 @@ Lock* CurlShareHandle::mutexFor(curl_lock_data data)
     static Lock cookieMutex;
     static Lock dnsMutex;
     static Lock shareMutex;
+    static Lock sslSessionMutex;
 
     switch (data) {
     case CURL_LOCK_DATA_COOKIE:
@@ -206,6 +208,8 @@ Lock* CurlShareHandle::mutexFor(curl_lock_data data)
         return &dnsMutex;
     case CURL_LOCK_DATA_SHARE:
         return &shareMutex;
+    case CURL_LOCK_DATA_SSL_SESSION:
+        return &sslSessionMutex;
     default:
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -217,9 +221,6 @@ Lock* CurlShareHandle::mutexFor(curl_lock_data data)
 CurlMultiHandle::CurlMultiHandle()
 {
     m_multiHandle = curl_multi_init();
-
-    if (CurlContext::singleton().isHttp2Enabled())
-        curl_multi_setopt(m_multiHandle, CURLMOPT_PIPELINING, CURLPIPE_MULTIPLEX);
 }
 
 CurlMultiHandle::~CurlMultiHandle()
@@ -294,6 +295,7 @@ CurlHandle::CurlHandle()
     m_handle = curl_easy_init();
     curl_easy_setopt(m_handle, CURLOPT_ERRORBUFFER, m_errorBuffer);
     curl_easy_setopt(m_handle, CURLOPT_NOSIGNAL, 1L);
+    curl_easy_setopt(m_handle, CURLOPT_COOKIEFILE, nullptr);
 
     enableShareHandle();
     enableAllowedProtocols();
@@ -347,7 +349,7 @@ void CurlHandle::enableSSLForHost(const String& host)
 #if OS(WINDOWS)
     curl_easy_setopt(m_handle, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
 #else
-    if (auto* path = WTF::get_if<String>(sslHandle.getCACertInfo()))
+    if (auto* path = std::get_if<String>(&sslHandle.getCACertInfo()))
         setCACertPath(path->utf8().data());
 #endif
 }
@@ -771,6 +773,20 @@ std::optional<long> CurlHandle::getHttpVersion()
     return version;
 }
 
+std::optional<SSL*> CurlHandle::sslConnection() const
+{
+    curl_tlssessioninfo* info = nullptr;
+
+    auto errorCode = curl_easy_getinfo(m_handle, CURLINFO_TLS_SSL_PTR, &info);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    if (!info || info->backend != CURLSSLBACKEND_OPENSSL || !info->internals)
+        return std::nullopt;
+
+    return static_cast<SSL*>(info->internals);
+}
+
 std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTime startTime)
 {
     double nameLookup = 0.0;
@@ -862,24 +878,52 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     if (errorCode != CURLE_OK)
         return;
 
-    networkLoadMetrics.requestHeaderBytesSent = requestHeaderSize;
-    networkLoadMetrics.requestBodyBytesSent = requestBodySize;
-    networkLoadMetrics.responseHeaderBytesReceived = responseHeaderSize;
     networkLoadMetrics.responseBodyBytesReceived = responseBodySize;
 
-    if (ip) {
-        networkLoadMetrics.remoteAddress = String(ip);
-        if (port)
-            networkLoadMetrics.remoteAddress.append(":" + String::number(port));
+    auto additionalMetrics = AdditionalNetworkLoadMetricsForWebInspector::create();
+    if (!m_tlsConnectionInfo) {
+        if (auto ssl = sslConnection()) {
+            m_tlsConnectionInfo = makeUnique<TLSConnectionInfo>();
+            m_tlsConnectionInfo->protocol = OpenSSL::tlsVersion(*ssl);
+            m_tlsConnectionInfo->cipher = OpenSSL::tlsCipherName(*ssl);
+        }
     }
+
+    additionalMetrics->requestHeaderBytesSent = requestHeaderSize;
+    additionalMetrics->requestBodyBytesSent = requestBodySize;
+    additionalMetrics->responseHeaderBytesReceived = responseHeaderSize;
+
+    if (ip) {
+        additionalMetrics->remoteAddress = String(ip);
+        if (port)
+            additionalMetrics->remoteAddress.append(":" + String::number(port));
+    }
+
+    if (m_tlsConnectionInfo) {
+        additionalMetrics->tlsProtocol = m_tlsConnectionInfo->protocol;
+        additionalMetrics->tlsCipher = m_tlsConnectionInfo->cipher;
+    }
+
+    networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTFMove(additionalMetrics);
 }
 
 std::optional<CertificateInfo> CurlHandle::certificateInfo() const
 {
-    if (!m_sslVerifier)
-        return std::nullopt;
+    if (m_sslVerifier && !m_sslVerifier->certificateInfo().isEmpty())
+        return m_sslVerifier->certificateInfo();
 
-    return m_sslVerifier->certificateInfo();
+    // If you use an existing HTTP/2 connection, SSLVerifier does not exist.
+    if (m_certificateInfo)
+        return *m_certificateInfo;
+
+    if (auto ssl = sslConnection()) {
+        if (auto certificateInfo = OpenSSL::createCertificateInfo(*ssl)) {
+            m_certificateInfo = WTFMove(certificateInfo);
+            return *m_certificateInfo;
+        }
+    }
+
+    return std::nullopt;
 }
 
 long long CurlHandle::maxCurlOffT()

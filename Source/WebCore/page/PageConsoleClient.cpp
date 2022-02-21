@@ -148,7 +148,7 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
     if (document)
         document->getParserLocation(url, line, column);
 
-    addMessage(source, level, message, url, line, column, 0, JSExecState::currentState(), requestIdentifier);
+    addMessage(source, level, message, url, line, column, nullptr, JSExecState::currentState(), requestIdentifier);
 }
 
 void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, Ref<ScriptCallStack>&& callStack)

@@ -1,0 +1,5 @@
+Target
+
+PASS ":focus-visible" should be a valid selector
+PASS :focus-visible stop matching after blur
+

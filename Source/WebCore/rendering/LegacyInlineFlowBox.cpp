@@ -25,6 +25,7 @@
 #include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "InlineBoxPainter.h"
 #include "LegacyEllipsisBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
@@ -41,6 +42,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "Text.h"
+#include "TextBoxPainter.h"
 #include <math.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -122,11 +124,11 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
         const RenderStyle& parentStyle = lineStyle();
         const RenderStyle& childStyle = child->lineStyle();
         bool shouldClearDescendantsHaveSameLineHeightAndBaseline = false;
-        if (child->renderer().isReplaced())
+        if (child->renderer().isReplacedOrInlineBlock())
             shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         else if (child->behavesLikeText()) {
             if (child->renderer().isLineBreak() || child->renderer().parent() != &renderer()) {
-                if (!parentStyle.fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
+                if (!parentStyle.fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().metricsOfPrimaryFont())
                     || parentStyle.lineHeight() != childStyle.lineHeight()
                     || (parentStyle.verticalAlign() != VerticalAlign::Baseline && !isRootInlineBox()) || childStyle.verticalAlign() != VerticalAlign::Baseline)
                     shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
@@ -144,7 +146,7 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
                 auto& childFlowBox = downcast<LegacyInlineFlowBox>(*child);
                 // Check the child's bit, and then also check for differences in font, line-height, vertical-align
                 if (!childFlowBox.descendantsHaveSameLineHeightAndBaseline()
-                    || !parentStyle.fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
+                    || !parentStyle.fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().metricsOfPrimaryFont())
                     || parentStyle.lineHeight() != childStyle.lineHeight()
                     || (parentStyle.verticalAlign() != VerticalAlign::Baseline && !isRootInlineBox()) || childStyle.verticalAlign() != VerticalAlign::Baseline
                     || childStyle.hasBorder() || childStyle.hasPadding() || childStyle.hasTextCombine())
@@ -167,7 +169,7 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
             }
             if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMark::None || childStyle->hasPositiveStrokeWidth() || hasMarkers || !childStyle->textUnderlineOffset().isAuto() || !childStyle->textDecorationThickness().isAuto() || childStyle->textUnderlinePosition() != TextUnderlinePosition::Auto)
                 child->clearKnownToHaveNoOverflow();
-        } else if (child->renderer().isReplaced()) {
+        } else if (child->renderer().isReplacedOrInlineBlock()) {
             const RenderBox& box = downcast<RenderBox>(child->renderer());
             if (box.hasRenderOverflow() || box.hasSelfPaintingLayer())
                 child->clearKnownToHaveNoOverflow();
@@ -575,7 +577,7 @@ void LegacyInlineFlowBox::computeLogicalBoxHeights(LegacyRootInlineBox& rootBox,
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
         
-        LegacyInlineFlowBox* inlineFlowBox = is<LegacyInlineFlowBox>(*child) ? downcast<LegacyInlineFlowBox>(child) : nullptr;
+        auto* inlineFlowBox = dynamicDowncast<LegacyInlineFlowBox>(*child);
         
         bool affectsAscent = false;
         bool affectsDescent = false;
@@ -665,7 +667,7 @@ static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox
             continue;
         }
 
-        LegacyInlineFlowBox* inlineFlowBox = is<LegacyInlineFlowBox>(*child) ? downcast<LegacyInlineFlowBox>(child) : nullptr;
+        auto* inlineFlowBox = dynamicDowncast<LegacyInlineFlowBox>(*child);
         bool childAffectsTopBottomPos = true;
 
         if (child->verticalAlign() == VerticalAlign::Top && verticalAlignApplies(child->renderer()))
@@ -687,7 +689,7 @@ static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox
 
         const RenderStyle& childLineStyle = child->lineStyle();
         if (child->behavesLikeText() || is<LegacyInlineFlowBox>(*child)) {
-            const FontMetrics& fontMetrics = childLineStyle.fontMetrics();
+            const FontMetrics& fontMetrics = childLineStyle.metricsOfPrimaryFont();
             newLogicalTop += child->baselinePosition(baselineType) - fontMetrics.ascent(baselineType);
             if (is<LegacyInlineFlowBox>(*child)) {
                 RenderBoxModelObject& boxObject = downcast<LegacyInlineFlowBox>(*child).renderer();
@@ -760,36 +762,22 @@ void LegacyInlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit 
     LayoutUnit& lineTopIncludingMargins, LayoutUnit& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline baselineType)
 {
     bool isRootBox = isRootInlineBox();
-    LayoutUnit rootInlineBoxRoundedOverflow;
-    if (isRootBox) {
-        const FontMetrics& fontMetrics = lineStyle().fontMetrics();
-        // RootInlineBoxes are always placed on at pixel boundaries in their logical y direction. Not doing
-        // so results in incorrect rendering of text decorations, most notably underlines.
-        auto logicalTop = top + maxAscent - fontMetrics.ascent(baselineType);
-        // FIXME: Let's do device pixel snapping at paint time instead (webkit.org/b/227751).
-        auto adjustedLogicalTop = roundToInt(logicalTop);
-        setLogicalTop(adjustedLogicalTop);
-        rootInlineBoxRoundedOverflow = LayoutUnit { adjustedLogicalTop } - logicalTop;
-    }
+    if (isRootBox)
+        setLogicalTop(top + maxAscent - lineStyle().metricsOfPrimaryFont().ascent(baselineType));
 
     placeChildInlineBoxesInBlockDirection(*this, top, maxHeight, maxAscent, strictMode, lineTop, lineBottom, setLineTop, lineTopIncludingMargins, lineBottomIncludingMargins, hasAnnotationsBefore, hasAnnotationsAfter, baselineType);
 
     if (isRootBox) {
         if (strictMode || hasTextChildren() || (descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
-            // The root inlinebox is supposed to fit the [top, top + maxHeight] space. However due to the integral rounding on the root inlinebox's logical top,
-            // it may accidentally leak out of the containing block and trigger unintended layout overflow (see above).
-            // Make sure we don't stretch the line with the rounded root inlinebox.
-            auto rootInlineBoxLogicalTop = LayoutUnit { logicalTop() } - rootInlineBoxRoundedOverflow;
-            auto rootInlineBoxLogicalBottom = LayoutUnit { logicalBottom() } - rootInlineBoxRoundedOverflow;
             if (!setLineTop) {
                 setLineTop = true;
-                lineTop = rootInlineBoxLogicalTop;
+                lineTop = logicalTop();
                 lineTopIncludingMargins = lineTop;
             } else {
-                lineTop = std::min(lineTop, rootInlineBoxLogicalTop);
+                lineTop = std::min(lineTop, LayoutUnit(logicalTop()));
                 lineTopIncludingMargins = std::min(lineTop, lineTopIncludingMargins);
             }
-            lineBottom = std::max(lineBottom, rootInlineBoxLogicalBottom);
+            lineBottom = std::max(lineBottom, LayoutUnit(logicalBottom()));
             lineBottomIncludingMargins = std::max(lineBottom, lineBottomIncludingMargins);
         }
         
@@ -936,7 +924,7 @@ inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& t
     
     logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow, logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
 
-    auto documentMarkerBounds = textBox.calculateUnionOfAllDocumentMarkerBounds();
+    auto documentMarkerBounds = TextBoxPainter::calculateUnionOfAllDocumentMarkerBounds(textBox);
     documentMarkerBounds.move(textBox.logicalLeft(), textBox.logicalTop());
     logicalVisualOverflow = unionRect(logicalVisualOverflow, LayoutRect(documentMarkerBounds));
 
@@ -1068,44 +1056,17 @@ bool LegacyInlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
         return false;
 
     // Check children first.
-    // We need to account for culled inline parents of the hit-tested nodes, so that they may also get included in area-based hit-tests.
-    RenderElement* culledParent = nullptr;
     for (auto* child = lastChild(); child; child = child->previousOnLine()) {
         if (is<RenderText>(child->renderer()) || !child->boxModelObject()->hasSelfPaintingLayer()) {
-            RenderElement* newParent = nullptr;
-            // Culled parents are only relevant for area-based hit-tests, so ignore it in point-based ones.
-            if (locationInContainer.isRectBasedTest()) {
-                newParent = child->renderer().parent();
-                if (newParent == &renderer())
-                    newParent = nullptr;
-            }
-            // Check the culled parent after all its children have been checked, to do this we wait until
-            // we are about to test an element with a different parent.
-            if (newParent != culledParent) {
-                if (!newParent || !newParent->isDescendantOf(culledParent)) {
-                    while (culledParent && culledParent != &renderer() && culledParent != newParent) {
-                        if (is<RenderInline>(*culledParent) && downcast<RenderInline>(*culledParent).hitTestCulledInline(request, result, locationInContainer, accumulatedOffset))
-                            return true;
-                        culledParent = culledParent->parent();
-                    }
-                }
-                culledParent = newParent;
-            }
             if (child->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, lineTop, lineBottom, hitTestAction)) {
                 renderer().updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
                 return true;
             }
         }
     }
-    // Check any culled ancestor of the final children tested.
-    while (culledParent && culledParent != &renderer()) {
-        if (is<RenderInline>(*culledParent) && downcast<RenderInline>(*culledParent).hitTestCulledInline(request, result, locationInContainer, accumulatedOffset))
-            return true;
-        culledParent = culledParent->parent();
-    }
 
     // Now check ourselves. Pixel snap hit testing.
-    if (!visibleToHitTesting(request))
+    if (!renderer().visibleToHitTesting(request))
         return false;
 
     // Do not hittest content beyond the ellipsis box.
@@ -1152,45 +1113,8 @@ void LegacyInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
         return;
 
     if (paintInfo.phase != PaintPhase::ChildOutlines) {
-        if (paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) {
-            // Add ourselves to the paint info struct's list of inlines that need to paint their
-            // outlines.
-            if (renderer().style().visibility() == Visibility::Visible && renderer().hasOutline() && !isRootInlineBox()) {
-                RenderInline& inlineFlow = downcast<RenderInline>(renderer());
-
-                RenderBlock* containingBlock = nullptr;
-                bool containingBlockPaintsContinuationOutline = inlineFlow.continuation() || inlineFlow.isContinuation();
-                if (containingBlockPaintsContinuationOutline) {
-                    // FIXME: See https://bugs.webkit.org/show_bug.cgi?id=54690. We currently don't reconnect inline continuations
-                    // after a child removal. As a result, those merged inlines do not get seperated and hence not get enclosed by
-                    // anonymous blocks. In this case, it is better to bail out and paint it ourself.
-                    RenderBlock* enclosingAnonymousBlock = renderer().containingBlock();
-                    if (!enclosingAnonymousBlock->isAnonymousBlock())
-                        containingBlockPaintsContinuationOutline = false;
-                    else {
-                        containingBlock = enclosingAnonymousBlock->containingBlock();
-                        for (auto* box = &renderer(); box != containingBlock; box = &box->parent()->enclosingBoxModelObject()) {
-                            if (box->hasSelfPaintingLayer()) {
-                                containingBlockPaintsContinuationOutline = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (containingBlockPaintsContinuationOutline) {
-                    // Add ourselves to the containing block of the entire continuation so that it can
-                    // paint us atomically.
-                    containingBlock->addContinuationWithOutline(downcast<RenderInline>(renderer().element()->renderer()));
-                } else if (!inlineFlow.isContinuation())
-                    paintInfo.outlineObjects->add(&inlineFlow);
-            }
-        } else if (paintInfo.phase == PaintPhase::Mask)
-            paintMask(paintInfo, paintOffset);
-        else {
-            // Paint our background, border and box-shadow.
-            paintBoxDecorations(paintInfo, paintOffset);
-        }
+        InlineBoxPainter painter(*this, paintInfo, paintOffset);
+        painter.paint();
     }
 
     if (paintInfo.phase == PaintPhase::Mask)
@@ -1210,276 +1134,6 @@ void LegacyInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     }
 }
 
-void LegacyInlineFlowBox::paintFillLayers(const PaintInfo& paintInfo, const Color& color, const FillLayer& fillLayer, const LayoutRect& rect, CompositeOperator op)
-{
-    Vector<const FillLayer*, 8> layers;
-    for (auto* layer = &fillLayer; layer; layer = layer->next())
-        layers.append(layer);
-    layers.reverse();
-    for (auto* layer : layers)
-        paintFillLayer(paintInfo, color, *layer, rect, op);
-}
-
-bool LegacyInlineFlowBox::boxShadowCanBeAppliedToBackground(const FillLayer& lastBackgroundLayer) const
-{
-    // The checks here match how paintFillLayer() decides whether to clip (if it does, the shadow
-    // would be clipped out, so it has to be drawn separately).
-    StyleImage* image = lastBackgroundLayer.image();
-    bool hasFillImage = image && image->canRender(&renderer(), renderer().style().effectiveZoom());
-    return (!hasFillImage && !renderer().style().hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent();
-}
-
-void LegacyInlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& color, const FillLayer& fillLayer, const LayoutRect& rect, CompositeOperator op)
-{
-    auto* image = fillLayer.image();
-    bool hasFillImage = image && image->canRender(&renderer(), renderer().style().effectiveZoom());
-    if ((!hasFillImage && !renderer().style().hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent())
-        renderer().paintFillLayerExtended(paintInfo, color, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
-    else if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone) {
-        GraphicsContextStateSaver stateSaver(paintInfo.context());
-        paintInfo.context().clip({ rect.x(), rect.y(), LayoutUnit(width()), LayoutUnit(height()) });
-        renderer().paintFillLayerExtended(paintInfo, color, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
-    }
-#endif
-    else {
-        // We have a fill image that spans multiple lines.
-        // We need to adjust tx and ty by the width of all previous lines.
-        // Think of background painting on inlines as though you had one long line, a single continuous
-        // strip. Even though that strip has been broken up across multiple lines, you still paint it
-        // as though you had one single line. This means each line has to pick up the background where
-        // the previous line left off.
-        LayoutUnit logicalOffsetOnLine;
-        LayoutUnit totalLogicalWidth;
-        if (renderer().style().direction() == TextDirection::LTR) {
-            for (auto* curr = prevLineBox(); curr; curr = curr->prevLineBox())
-                logicalOffsetOnLine += curr->logicalWidth();
-            totalLogicalWidth = logicalOffsetOnLine;
-            for (auto* curr = this; curr; curr = curr->nextLineBox())
-                totalLogicalWidth += curr->logicalWidth();
-        } else {
-            for (auto* curr = nextLineBox(); curr; curr = curr->nextLineBox())
-                logicalOffsetOnLine += curr->logicalWidth();
-            totalLogicalWidth = logicalOffsetOnLine;
-            for (auto* curr = this; curr; curr = curr->prevLineBox())
-                totalLogicalWidth += curr->logicalWidth();
-        }
-        LayoutUnit stripX = rect.x() - (isHorizontal() ? logicalOffsetOnLine : 0_lu);
-        LayoutUnit stripY = rect.y() - (isHorizontal() ? 0_lu : logicalOffsetOnLine);
-        LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : LayoutUnit(width());
-        LayoutUnit stripHeight = isHorizontal() ? LayoutUnit(height()) : totalLogicalWidth;
-
-        GraphicsContextStateSaver stateSaver(paintInfo.context());
-        paintInfo.context().clip({ rect.x(), rect.y(), LayoutUnit(width()), LayoutUnit(height()) });
-        renderer().paintFillLayerExtended(paintInfo, color, fillLayer, LayoutRect(stripX, stripY, stripWidth, stripHeight), BackgroundBleedNone, this, rect.size(), op);
-    }
-}
-
-void LegacyInlineFlowBox::paintBoxShadow(const PaintInfo& info, const RenderStyle& style, ShadowStyle shadowStyle, const LayoutRect& paintRect)
-{
-    if ((!prevLineBox() && !nextLineBox()) || !parent())
-        renderer().paintBoxShadow(info, paintRect, style, shadowStyle);
-    else {
-        // FIXME: We can do better here in the multi-line case. We want to push a clip so that the shadow doesn't
-        // protrude incorrectly at the edges, and we want to possibly include shadows cast from the previous/following lines
-        renderer().paintBoxShadow(info, paintRect, style, shadowStyle, includeLogicalLeftEdge(), includeLogicalRightEdge());
-    }
-}
-
-void LegacyInlineFlowBox::constrainToLineTopAndBottomIfNeeded(LayoutRect& rect) const
-{
-    bool noQuirksMode = renderer().document().inNoQuirksMode();
-    if (!noQuirksMode && !hasTextChildren() && !(descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
-        const LegacyRootInlineBox& rootBox = root();
-        LayoutUnit logicalTop = isHorizontal() ? rect.y() : rect.x();
-        LayoutUnit logicalHeight = isHorizontal() ? rect.height() : rect.width();
-        LayoutUnit bottom = std::min(rootBox.lineBottom(), logicalTop + logicalHeight);
-        logicalTop = std::max(rootBox.lineTop(), logicalTop);
-        logicalHeight = bottom - logicalTop;
-        if (isHorizontal()) {
-            rect.setY(logicalTop);
-            rect.setHeight(logicalHeight);
-        } else {
-            rect.setX(logicalTop);
-            rect.setWidth(logicalHeight);
-        }
-    }
-}
-
-static LayoutRect clipRectForNinePieceImageStrip(LegacyInlineFlowBox* box, const NinePieceImage& image, const LayoutRect& paintRect)
-{
-    LayoutRect clipRect(paintRect);
-    auto& style = box->renderer().style();
-    LayoutBoxExtent outsets = style.imageOutsets(image);
-    if (box->isHorizontal()) {
-        clipRect.setY(paintRect.y() - outsets.top());
-        clipRect.setHeight(paintRect.height() + outsets.top() + outsets.bottom());
-        if (box->includeLogicalLeftEdge()) {
-            clipRect.setX(paintRect.x() - outsets.left());
-            clipRect.setWidth(paintRect.width() + outsets.left());
-        }
-        if (box->includeLogicalRightEdge())
-            clipRect.setWidth(clipRect.width() + outsets.right());
-    } else {
-        clipRect.setX(paintRect.x() - outsets.left());
-        clipRect.setWidth(paintRect.width() + outsets.left() + outsets.right());
-        if (box->includeLogicalLeftEdge()) {
-            clipRect.setY(paintRect.y() - outsets.top());
-            clipRect.setHeight(paintRect.height() + outsets.top());
-        }
-        if (box->includeLogicalRightEdge())
-            clipRect.setHeight(clipRect.height() + outsets.bottom());
-    }
-    return clipRect;
-}
-
-void LegacyInlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhase::Foreground)
-        return;
-
-    // You can use p::first-line to specify a background. If so, the root line boxes for
-    // a line may actually have to paint a background.
-    if (parent() && !renderer().hasVisibleBoxDecorations())
-        return;
-    const RenderStyle& lineStyle = this->lineStyle();
-    if (!parent() && (!isFirstLine() || &lineStyle == &renderer().style()))
-        return;
-
-    LayoutRect frameRect(this->frameRect());
-    constrainToLineTopAndBottomIfNeeded(frameRect);
-    
-    // Move x/y to our coordinates.
-    LayoutRect localRect(frameRect);
-    flipForWritingMode(localRect);
-
-    LayoutPoint adjustedPaintoffset = paintOffset + localRect.location();
-    GraphicsContext& context = paintInfo.context();
-    LayoutRect paintRect = LayoutRect(adjustedPaintoffset, frameRect.size());
-    // Shadow comes first and is behind the background and border.
-    if (!renderer().boxShadowShouldBeAppliedToBackground(adjustedPaintoffset, BackgroundBleedNone, this))
-        paintBoxShadow(paintInfo, lineStyle, ShadowStyle::Normal, paintRect);
-
-    auto color = lineStyle.visitedDependentColor(CSSPropertyBackgroundColor);
-    auto compositeOp = renderer().document().compositeOperatorForBackgroundColor(color, renderer());
-
-    color = lineStyle.colorByApplyingColorFilter(color);
-
-    paintFillLayers(paintInfo, color, lineStyle.backgroundLayers(), paintRect, compositeOp);
-    paintBoxShadow(paintInfo, lineStyle, ShadowStyle::Inset, paintRect);
-
-    // :first-line cannot be used to put borders on a line. Always paint borders with our
-    // non-first-line style.
-    if (!parent() || !renderer().style().hasVisibleBorderDecoration())
-        return;
-    const NinePieceImage& borderImage = renderer().style().borderImage();
-    StyleImage* borderImageSource = borderImage.image();
-    bool hasBorderImage = borderImageSource && borderImageSource->canRender(&renderer(), lineStyle.effectiveZoom());
-    if (hasBorderImage && !borderImageSource->isLoaded())
-        return; // Don't paint anything while we wait for the image to load.
-
-    // The simple case is where we either have no border image or we are the only box for this object. In those
-    // cases only a single call to draw is required.
-    if (!hasBorderImage || (!prevLineBox() && !nextLineBox()))
-        renderer().paintBorder(paintInfo, paintRect, lineStyle, BackgroundBleedNone, includeLogicalLeftEdge(), includeLogicalRightEdge());
-    else {
-        // We have a border image that spans multiple lines.
-        // We need to adjust tx and ty by the width of all previous lines.
-        // Think of border image painting on inlines as though you had one long line, a single continuous
-        // strip. Even though that strip has been broken up across multiple lines, you still paint it
-        // as though you had one single line. This means each line has to pick up the image where
-        // the previous line left off.
-        // FIXME: What the heck do we do with RTL here? The math we're using is obviously not right,
-        // but it isn't even clear how this should work at all.
-        LayoutUnit logicalOffsetOnLine;
-        for (auto* curr = prevLineBox(); curr; curr = curr->prevLineBox())
-            logicalOffsetOnLine += curr->logicalWidth();
-        LayoutUnit totalLogicalWidth = logicalOffsetOnLine;
-        for (auto* curr = this; curr; curr = curr->nextLineBox())
-            totalLogicalWidth += curr->logicalWidth();
-        LayoutUnit stripX = adjustedPaintoffset.x() - (isHorizontal() ? logicalOffsetOnLine : 0_lu);
-        LayoutUnit stripY = adjustedPaintoffset.y() - (isHorizontal() ? 0_lu : logicalOffsetOnLine);
-        LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
-        LayoutUnit stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
-
-        LayoutRect clipRect = clipRectForNinePieceImageStrip(this, borderImage, paintRect);
-        GraphicsContextStateSaver stateSaver(context);
-        context.clip(clipRect);
-        renderer().paintBorder(paintInfo, LayoutRect(stripX, stripY, stripWidth, stripHeight), lineStyle);
-    }
-}
-
-void LegacyInlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible || paintInfo.phase != PaintPhase::Mask)
-        return;
-
-    LayoutRect frameRect(this->frameRect());
-    constrainToLineTopAndBottomIfNeeded(frameRect);
-    
-    // Move x/y to our coordinates.
-    LayoutRect localRect(frameRect);
-    flipForWritingMode(localRect);
-    LayoutPoint adjustedPaintOffset = paintOffset + localRect.location();
-
-    const NinePieceImage& maskNinePieceImage = renderer().style().maskBoxImage();
-    StyleImage* maskBoxImage = renderer().style().maskBoxImage().image();
-
-    // Figure out if we need to push a transparency layer to render our mask.
-    bool pushTransparencyLayer = false;
-    bool compositedMask = renderer().hasLayer() && renderer().layer()->hasCompositedMask();
-    bool flattenCompositingLayers = renderer().view().frameView().paintBehavior().contains(PaintBehavior::FlattenCompositingLayers);
-    CompositeOperator compositeOp = CompositeOperator::SourceOver;
-    if (!compositedMask || flattenCompositingLayers) {
-        if ((maskBoxImage && renderer().style().maskLayers().hasImage()) || renderer().style().maskLayers().next())
-            pushTransparencyLayer = true;
-        
-        compositeOp = CompositeOperator::DestinationIn;
-        if (pushTransparencyLayer) {
-            paintInfo.context().setCompositeOperation(CompositeOperator::DestinationIn);
-            paintInfo.context().beginTransparencyLayer(1.0f);
-            compositeOp = CompositeOperator::SourceOver;
-        }
-    }
-
-    LayoutRect paintRect = LayoutRect(adjustedPaintOffset, frameRect.size());
-    paintFillLayers(paintInfo, Color(), renderer().style().maskLayers(), paintRect, compositeOp);
-    
-    bool hasBoxImage = maskBoxImage && maskBoxImage->canRender(&renderer(), renderer().style().effectiveZoom());
-    if (!hasBoxImage || !maskBoxImage->isLoaded()) {
-        if (pushTransparencyLayer)
-            paintInfo.context().endTransparencyLayer();
-        return; // Don't paint anything while we wait for the image to load.
-    }
-
-    // The simple case is where we are the only box for this object. In those
-    // cases only a single call to draw is required.
-    if (!prevLineBox() && !nextLineBox())
-        renderer().paintNinePieceImage(paintInfo.context(), LayoutRect(adjustedPaintOffset, frameRect.size()), renderer().style(), maskNinePieceImage, compositeOp);
-    else {
-        // We have a mask image that spans multiple lines.
-        // We need to adjust _tx and _ty by the width of all previous lines.
-        LayoutUnit logicalOffsetOnLine;
-        for (auto* curr = prevLineBox(); curr; curr = curr->prevLineBox())
-            logicalOffsetOnLine += curr->logicalWidth();
-        LayoutUnit totalLogicalWidth = logicalOffsetOnLine;
-        for (auto* curr = this; curr; curr = curr->nextLineBox())
-            totalLogicalWidth += curr->logicalWidth();
-        LayoutUnit stripX = adjustedPaintOffset.x() - (isHorizontal() ? logicalOffsetOnLine : 0_lu);
-        LayoutUnit stripY = adjustedPaintOffset.y() - (isHorizontal() ? 0_lu : logicalOffsetOnLine);
-        LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
-        LayoutUnit stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
-
-        LayoutRect clipRect = clipRectForNinePieceImageStrip(this, maskNinePieceImage, paintRect);
-        GraphicsContextStateSaver stateSaver(paintInfo.context());
-        paintInfo.context().clip(clipRect);
-        renderer().paintNinePieceImage(paintInfo.context(), LayoutRect(stripX, stripY, stripWidth, stripHeight), renderer().style(), maskNinePieceImage, compositeOp);
-    }
-    
-    if (pushTransparencyLayer)
-        paintInfo.context().endTransparencyLayer();
-}
-
 LegacyInlineBox* LegacyInlineFlowBox::firstLeafDescendant() const
 {
     LegacyInlineBox* leaf = nullptr;
@@ -1496,7 +1150,7 @@ LegacyInlineBox* LegacyInlineFlowBox::lastLeafDescendant() const
     return leaf;
 }
 
-RenderObject::HighlightState LegacyInlineFlowBox::selectionState()
+RenderObject::HighlightState LegacyInlineFlowBox::selectionState() const
 {
     return RenderObject::HighlightState::None;
 }
@@ -1555,7 +1209,7 @@ LayoutUnit LegacyInlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allow
         if (is<LegacyInlineFlowBox>(*child))
             result = std::max(result, downcast<LegacyInlineFlowBox>(*child).computeOverAnnotationAdjustment(allowedPosition));
         
-        if (child->renderer().isReplaced() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::Before) {
+        if (child->renderer().isReplacedOrInlineBlock() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::Before) {
             auto& rubyRun = downcast<RenderRubyRun>(child->renderer());
             RenderRubyText* rubyText = rubyRun.rubyText();
             if (!rubyText)
@@ -1603,7 +1257,7 @@ LayoutUnit LegacyInlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allo
         if (is<LegacyInlineFlowBox>(*child))
             result = std::max(result, downcast<LegacyInlineFlowBox>(*child).computeUnderAnnotationAdjustment(allowedPosition));
 
-        if (child->renderer().isReplaced() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::After) {
+        if (child->renderer().isReplacedOrInlineBlock() && is<RenderRubyRun>(child->renderer()) && child->renderer().style().rubyPosition() == RubyPosition::After) {
             auto& rubyRun = downcast<RenderRubyRun>(child->renderer());
             RenderRubyText* rubyText = rubyRun.rubyText();
             if (!rubyText)
@@ -1639,59 +1293,6 @@ LayoutUnit LegacyInlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allo
         }
     }
     return result;
-}
-
-void LegacyInlineFlowBox::collectLeafBoxesInLogicalOrder(Vector<LegacyInlineBox*>& leafBoxesInLogicalOrder, CustomInlineBoxRangeReverse customReverseImplementation, void* userData) const
-{
-    LegacyInlineBox* leaf = firstLeafDescendant();
-
-    // FIXME: The reordering code is a copy of parts from BidiResolver::createBidiRunsForLine, operating directly on InlineBoxes, instead of BidiRuns.
-    // Investigate on how this code could possibly be shared.
-    unsigned char minLevel = 128;
-    unsigned char maxLevel = 0;
-
-    // First find highest and lowest levels, and initialize leafBoxesInLogicalOrder with the leaf boxes in visual order.
-    for (; leaf; leaf = leaf->nextLeafOnLine()) {
-        minLevel = std::min(minLevel, leaf->bidiLevel());
-        maxLevel = std::max(maxLevel, leaf->bidiLevel());
-        leafBoxesInLogicalOrder.append(leaf);
-    }
-
-    if (renderer().style().rtlOrdering() == Order::Visual)
-        return;
-
-    // Reverse of reordering of the line (L2 according to Bidi spec):
-    // L2. From the highest level found in the text to the lowest odd level on each line,
-    // reverse any contiguous sequence of characters that are at that level or higher.
-
-    // Reversing the reordering of the line is only done up to the lowest odd level.
-    if (!(minLevel % 2))
-        ++minLevel;
-
-    Vector<LegacyInlineBox*>::iterator end = leafBoxesInLogicalOrder.end();
-    while (minLevel <= maxLevel) {
-        Vector<LegacyInlineBox*>::iterator it = leafBoxesInLogicalOrder.begin();
-        while (it != end) {
-            while (it != end) {
-                if ((*it)->bidiLevel() >= minLevel)
-                    break;
-                ++it;
-            }
-            Vector<LegacyInlineBox*>::iterator first = it;
-            while (it != end) {
-                if ((*it)->bidiLevel() < minLevel)
-                    break;
-                ++it;
-            }
-            Vector<LegacyInlineBox*>::iterator last = it;
-            if (customReverseImplementation) {
-                ASSERT(userData);
-                (*customReverseImplementation)(userData, first, last);
-            } else
-                std::reverse(first, last);
-        }                
-        ++minLevel;
-    }
 }
 
 void LegacyInlineFlowBox::computeReplacedAndTextLineTopAndBottom(LayoutUnit& lineTop, LayoutUnit& lineBottom) const

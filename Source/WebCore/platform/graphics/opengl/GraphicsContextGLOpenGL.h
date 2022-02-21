@@ -25,52 +25,16 @@
 
 #pragma once
 
-#if ENABLE(WEBGL)
+#if ENABLE(WEBGL) && !USE(ANGLE)
 
-#include "GraphicsContextGL.h"
-#include <memory>
-#include <wtf/HashCountedSet.h>
-#include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/UniqueArray.h>
-#include <wtf/UniqueRef.h>
-
-#if PLATFORM(COCOA)
-#include "GraphicsContextGLANGLEEGLUtilities.h"
-#include "IOSurface.h"
-#endif
-
-#if USE(CA)
-#include "PlatformCALayer.h"
-#endif
-
-#if USE(ANGLE)
-#include "GraphicsContextGLANGLEUtilities.h"
-#else
 #include "ANGLEWebKitBridge.h"
 #include "ExtensionsGLOpenGLCommon.h"
-#endif
-
-#if PLATFORM(MAC)
-#include "ScopedHighPerformanceGPURequest.h"
-#endif
-
-// FIXME: Find a better way to avoid the name confliction for NO_ERROR.
-#if PLATFORM(WIN)
-#undef NO_ERROR
-#elif PLATFORM(GTK)
-// This define is from the X11 headers, but it's used below, so we must undefine it.
-#undef VERSION
-#endif
-
-#if PLATFORM(COCOA)
-OBJC_CLASS CALayer;
-OBJC_CLASS WebGLLayer;
-namespace WebCore {
-class GraphicsContextGLIOSurfaceSwapChain;
-}
-#endif // PLATFORM(COCOA)
+#include "GraphicsContextGL.h"
+#include "GraphicsContextGLState.h"
+#include <memory>
+#include <wtf/HashMap.h>
+#include <wtf/ListHashSet.h>
+#include <wtf/UniqueRef.h>
 
 #if USE(NICOSIA)
 namespace Nicosia {
@@ -79,12 +43,9 @@ class GCGLLayer;
 #endif
 
 namespace WebCore {
-class ExtensionsGL;
-#if USE(ANGLE)
-class ExtensionsGLANGLE;
-#elif USE(OPENGL_ES)
+#if USE(OPENGL_ES)
 class ExtensionsGLOpenGLES;
-#elif USE(OPENGL)
+#else
 class ExtensionsGLOpenGL;
 #endif
 class HostWindow;
@@ -95,41 +56,13 @@ class PixelBuffer;
 class TextureMapperGCGLPlatformLayer;
 #endif
 
-typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
+typedef HashMap<CString, uint64_t> ShaderNameHash;
 
-class WEBCORE_EXPORT GraphicsContextGLOpenGL final : public GraphicsContextGL
+// Base class for GraphicsContextGL contexts that use OpenGL or OpenGL ES.
+class WEBCORE_EXPORT GraphicsContextGLOpenGL : public GraphicsContextGL
 {
 public:
-    static RefPtr<GraphicsContextGLOpenGL> create(GraphicsContextGLAttributes, HostWindow*);
     virtual ~GraphicsContextGLOpenGL();
-
-#if PLATFORM(COCOA)
-    static Ref<GraphicsContextGLOpenGL> createShared(GraphicsContextGLOpenGL& sharedContext);
-    static Ref<GraphicsContextGLOpenGL> createForGPUProcess(const GraphicsContextGLAttributes&, GraphicsContextGLIOSurfaceSwapChain*);
-
-    CALayer* platformLayer() const final { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
-    PlatformGraphicsContextGLDisplay platformDisplay() const { return m_displayObj; }
-    PlatformGraphicsContextGLConfig platformConfig() const { return m_configObj; }
-    static GCGLenum drawingBufferTextureTargetQuery();
-    static GCGLint EGLDrawingBufferTextureTarget();
-#else
-    static Ref<GraphicsContextGLOpenGL> createForGPUProcess(const GraphicsContextGLAttributes&);
-    PlatformLayer* platformLayer() const final;
-#endif
-#if USE(ANGLE)
-    static GCGLenum drawingBufferTextureTarget();
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    enum class ReleaseBehavior {
-        PreserveThreadResources,
-        ReleaseThreadResources
-    };
-    static bool releaseCurrentContext(ReleaseBehavior);
-#endif
-#if PLATFORM(COCOA)
-    static void releaseAllResourcesIfUnused();
-#endif
 
     // With multisampling on, blit from multisampleFBO to regular FBO.
     void prepareTexture();
@@ -143,15 +76,10 @@ public:
     // Equivalent to ::glTexImage2D(). Allows pixels==0 with no allocation.
     void texImage2DDirect(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels);
 
-#if !USE(ANGLE)
-    // Helper to texImage2D with pixel==0 case: pixels are initialized to 0.
-    // Return true if no GL error is synthesized.
-    // By default, alignment is 4, the OpenGL default setting.
     bool texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint alignment = 4);
-#endif
 
+    // GraphicsContextGL overrides.
     bool isGLES2Compliant() const final;
-
     //----------------------------------------------------------------------
     // Entry points for WebGL.
     //
@@ -217,9 +145,7 @@ public:
     GCGLint64 getInteger64(GCGLenum pname) final;
     GCGLint64 getInteger64i(GCGLenum pname, GCGLuint index) final;
     GCGLint getProgrami(PlatformGLObject program, GCGLenum pname) final;
-#if !USE(ANGLE)
     void getNonBuiltInActiveSymbolCount(PlatformGLObject program, GCGLenum pname, GCGLint* value);
-#endif // !USE(ANGLE)
     String getProgramInfoLog(PlatformGLObject) final;
     String getUnmangledInfoLog(PlatformGLObject[2], GCGLsizei, const String&);
     GCGLint getRenderbufferParameteri(GCGLenum target, GCGLenum pname) final;
@@ -297,10 +223,8 @@ public:
 
     void useProgram(PlatformGLObject) final;
     void validateProgram(PlatformGLObject) final;
-#if !USE(ANGLE)
     bool checkVaryingsPacking(PlatformGLObject vertexShader, PlatformGLObject fragmentShader) const;
     bool precisionsMatch(PlatformGLObject vertexShader, PlatformGLObject fragmentShader) const;
-#endif
 
     void vertexAttrib1f(GCGLuint index, GCGLfloat x) final;
     void vertexAttrib1fv(GCGLuint index, GCGLSpan<const GCGLfloat, 1> values) final;
@@ -328,10 +252,8 @@ public:
 
     // ========== WebGL2 entry points.
 
-#if !USE(ANGLE)
     void bufferData(GCGLenum target, const void* data, GCGLenum usage, GCGLuint srcOffset, GCGLuint length);
     void bufferSubData(GCGLenum target, GCGLintptr dstByteOffset, const void* srcData, GCGLuint srcOffset, GCGLuint length);
-#endif
     void copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size) final;
 
     void getBufferSubData(GCGLenum target, GCGLintptr offset, GCGLSpan<GCGLvoid> data) final;
@@ -447,20 +369,16 @@ public:
     void multiDrawElementsANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLsizei drawcount) override;
     void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount) override;
 
+    bool supportsExtension(const String&) final;
+    void ensureExtensionEnabled(const String&) final;
+    bool isExtensionEnabled(const String&) final;
+    GLint getGraphicsResetStatusARB() final;
+    void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
+    String getTranslatedShaderSourceANGLE(PlatformGLObject) final;
+
     // Helper methods.
-    void markContextChanged() final;
-    void markLayerComposited() final;
-    bool layerComposited() const final;
     void forceContextLost();
     void recycleContext();
-
-    // Maintenance of auto-clearing of color/depth/stencil buffers. The
-    // reset method is present to keep calling code simpler, so it
-    // doesn't have to know which buffers were allocated.
-    void resetBuffersToAutoClear();
-    void setBuffersToAutoClear(GCGLbitfield) final;
-    GCGLbitfield getBuffersToAutoClear() const final;
-    void enablePreserveDrawingBuffer() final;
 
     void dispatchContextChangedNotification();
 
@@ -470,18 +388,6 @@ public:
 
     std::optional<PixelBuffer> readRenderingResultsForPainting();
     std::optional<PixelBuffer> readCompositedResultsForPainting();
-
-#if ENABLE(VIDEO)
-    bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
-#endif
-
-#if USE(OPENGL) && ENABLE(WEBGL2)
-    void primitiveRestartIndex(GCGLuint);
-#endif
-
-#if PLATFORM(COCOA)
-    void displayWasReconfigured();
-#endif
 
     void setContextVisibility(bool) final;
 
@@ -505,50 +411,25 @@ public:
 
     // Support for extensions. Returns a non-null object, though not
     // all methods it contains may necessarily be supported on the
-    // current hardware. Must call ExtensionsGL::supports() to
+    // current hardware. Must call ExtensionsGLOpenGL{ES}::supports() to
     // determine this.
-#if !USE(ANGLE)
-    // Use covariant return type for OPENGL/OPENGL_ES
-    ExtensionsGLOpenGLCommon& getExtensions() final;
+#if USE(OPENGL_ES)
+    ExtensionsGLOpenGLES& getExtensions();
 #else
-    ExtensionsGL& getExtensions() final;
+    ExtensionsGLOpenGL& getExtensions();
 #endif
-
     void simulateEventForTesting(SimulatedEventForTesting) override;
 
-    unsigned textureSeed(GCGLuint texture) { return m_state.textureSeedCount.count(texture); }
+    void prepareForDisplay() override;
 
-    void prepareForDisplay() final;
+protected:
+    GraphicsContextGLOpenGL(GraphicsContextGLAttributes);
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
-    GraphicsContextGLCV* asCV() final;
-#endif
-
-    static void paintToCanvas(const GraphicsContextGLAttributes&, PixelBuffer&&, const IntSize& canvasSize, GraphicsContext&);
-
-#if PLATFORM(COCOA)
-    enum class PbufferAttachmentUsage { Read, Write, ReadWrite };
-    // Returns a handle which, if non-null, must be released via the
-    // detach call below.
-    void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
-    void destroyPbufferAndDetachIOSurface(void* handle);
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-    void* attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
-    void detachIOSurfaceFromSharedTexture(void* handle);
-#endif
-#endif
-
-private:
-#if PLATFORM(COCOA)
-    GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext = nullptr, GraphicsContextGLIOSurfaceSwapChain* = nullptr);
-#else
-    GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext = nullptr);
-#endif
+    GCGLuint m_texture { 0 };
 
     // Called once by all the public entry points that eventually call OpenGL.
-    // Called once by all the public entry points of ExtensionsGL that eventually call OpenGL.
+    // Called once by all the public entry points of ExtensionsGLOpenGL/ExtensionGLOpenGLES that eventually call OpenGL.
     bool makeContextCurrent() WARN_UNUSED_RETURN;
-    void clearCurrentContext();
 
     // Take into account the user's requested context creation attributes,
     // in particular stencil and antialias, and determine which could or
@@ -571,30 +452,7 @@ private:
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
     void attachDepthAndStencilBufferIfNeeded(GCGLuint internalDepthStencilFormat, int width, int height);
 
-#if PLATFORM(COCOA)
-    bool reshapeDisplayBufferBacking();
-    bool allocateAndBindDisplayBufferBacking();
-    bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
-#endif
-#if USE(ANGLE)
-    // Returns false if context should be lost due to timeout.
-    bool waitAndUpdateOldestFrame() WARN_UNUSED_RETURN;
-#endif
 
-#if PLATFORM(COCOA)
-    GraphicsContextGLIOSurfaceSwapChain* m_swapChain { nullptr };
-    // TODO: this should be removed once the context draws to a image buffer. See https://bugs.webkit.org/show_bug.cgi?id=218179 .
-    RetainPtr<WebGLLayer> m_webGLLayer;
-    ScopedEGLDefaultDisplay m_displayObj;
-    PlatformGraphicsContextGL m_contextObj { nullptr };
-    PlatformGraphicsContextGLConfig m_configObj { nullptr };
-#endif // PLATFORM(COCOA)
-
-#if PLATFORM(WIN) && USE(CA)
-    RefPtr<PlatformCALayer> m_webGLLayer;
-#endif
-
-#if !USE(ANGLE)
     typedef HashMap<String, UniqueRef<sh::ShaderVariable>> ShaderSymbolMap;
 
     struct ShaderSourceEntry {
@@ -661,83 +519,34 @@ private:
     std::optional<String> originalSymbolInShaderSourceMap(PlatformGLObject shader, ANGLEShaderSymbolType, const String& name);
 
     std::unique_ptr<ShaderNameHash> nameHashMapForShaders;
-#endif // !USE(ANGLE)
 
-#if USE(ANGLE)
-    friend class ExtensionsGLANGLE;
-    std::unique_ptr<ExtensionsGLANGLE> m_extensions;
-#elif USE(OPENGL_ES)
+    friend class ExtensionsGLOpenGLCommon;
+#if USE(OPENGL_ES)
     friend class ExtensionsGLOpenGLES;
-    friend class ExtensionsGLOpenGLCommon;
     std::unique_ptr<ExtensionsGLOpenGLES> m_extensions;
-#elif USE(OPENGL)
+#else
     friend class ExtensionsGLOpenGL;
-    friend class ExtensionsGLOpenGLCommon;
     std::unique_ptr<ExtensionsGLOpenGL> m_extensions;
 #endif
 
     Vector<Vector<float>> m_vertexArray;
 
-#if !USE(ANGLE)
     ANGLEWebKitBridge m_compiler;
-#endif
 
-    GCGLuint m_texture { 0 };
     GCGLuint m_fbo { 0 };
 #if USE(COORDINATED_GRAPHICS)
     GCGLuint m_compositorTexture { 0 };
     GCGLuint m_intermediateTexture { 0 };
 #endif
 
-#if !USE(ANGLE) && USE(OPENGL_ES)
+#if USE(OPENGL_ES)
     GCGLuint m_depthBuffer { 0 };
     GCGLuint m_stencilBuffer { 0 };
 #endif
     GCGLuint m_depthStencilBuffer { 0 };
 
-    bool m_layerComposited { false };
     GCGLuint m_internalColorFormat { 0 };
-#if USE(ANGLE)
-    GCGLuint m_internalDepthStencilFormat { 0 };
-#endif
-    struct GraphicsContextGLState {
-        GCGLuint boundReadFBO { 0 };
-        GCGLuint boundDrawFBO { 0 };
-        GCGLenum activeTextureUnit { GraphicsContextGL::TEXTURE0 };
 
-        using BoundTextureMap = HashMap<GCGLenum,
-            std::pair<GCGLuint, GCGLenum>,
-            WTF::IntHash<GCGLenum>,
-            WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>,
-            WTF::PairHashTraits<WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>
-        >;
-        BoundTextureMap boundTextureMap;
-        GCGLuint currentBoundTexture() const { return boundTexture(activeTextureUnit); }
-        GCGLuint boundTexture(GCGLenum textureUnit) const
-        {
-            auto iterator = boundTextureMap.find(textureUnit);
-            if (iterator != boundTextureMap.end())
-                return iterator->value.first;
-            return 0;
-        }
-
-        GCGLuint currentBoundTarget() const { return boundTarget(activeTextureUnit); }
-        GCGLenum boundTarget(GCGLenum textureUnit) const
-        {
-            auto iterator = boundTextureMap.find(textureUnit);
-            if (iterator != boundTextureMap.end())
-                return iterator->value.second;
-            return 0;
-        }
-
-        void setBoundTexture(GCGLenum textureUnit, GCGLuint texture, GCGLenum target)
-        {
-            boundTextureMap.set(textureUnit, std::make_pair(texture, target));
-        }
-
-        using TextureSeedCount = HashCountedSet<GCGLuint, WTF::IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>;
-        TextureSeedCount textureSeedCount;
-    };
 
     GraphicsContextGLState m_state;
 
@@ -745,18 +554,6 @@ private:
     GCGLuint m_multisampleFBO { 0 };
     GCGLuint m_multisampleDepthStencilBuffer { 0 };
     GCGLuint m_multisampleColorBuffer { 0 };
-
-#if USE(ANGLE)
-    // For preserveDrawingBuffer:true without multisampling.
-    GCGLuint m_preserveDrawingBufferTexture { 0 };
-    // Attaches m_texture when m_preserveDrawingBufferTexture is non-zero.
-    GCGLuint m_preserveDrawingBufferFBO { 0 };
-#endif
-
-    // A bitmask of GL buffer bits (GL_COLOR_BUFFER_BIT,
-    // GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT) which need to be
-    // auto-cleared.
-    GCGLbitfield m_buffersToAutoClear { 0 };
 
     // Errors raised by synthesizeGLError().
     ListHashSet<GCGLenum> m_syntheticErrors;
@@ -778,28 +575,8 @@ private:
 #if USE(CAIRO)
     PlatformGLObject m_vao { 0 };
 #endif
-
-#if PLATFORM(COCOA)
-    // Backing store for the the buffer which is eventually used for display.
-    // When preserveDrawingBuffer == false, this is the drawing buffer backing store.
-    // When preserveDrawingBuffer == true, this is blitted to during display prepare.
-    std::unique_ptr<IOSurface> m_displayBufferBacking;
-    void* m_displayBufferPbuffer { nullptr };
-#endif
-#if PLATFORM(MAC)
-    bool m_supportsPowerPreference { false };
-    ScopedHighPerformanceGPURequest m_highPerformanceGPURequest;
-#endif
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
-    std::unique_ptr<GraphicsContextGLCV> m_cv;
-#endif
-#if USE(ANGLE)
-    static constexpr size_t maxPendingFrames = 3;
-    size_t m_oldestFrameCompletionFence { 0 };
-    ScopedGLFence m_frameCompletionFences[maxPendingFrames];
-#endif
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL)
+#endif // ENABLE(WEBGL) && !USE(ANGLE)

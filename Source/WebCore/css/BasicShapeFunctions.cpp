@@ -65,7 +65,25 @@ static Ref<CSSPrimitiveValue> basicShapeRadiusToCSSValue(const RenderStyle& styl
     return pool.createIdentifierValue(CSSValueClosestSide);
 }
 
-Ref<CSSPrimitiveValue> valueForBasicShape(const RenderStyle& style, const BasicShape& basicShape)
+static std::unique_ptr<SVGPathByteStream> copySVGPathByteStream(const SVGPathByteStream& source, SVGPathConversion conversion)
+{
+    switch (conversion) {
+    case SVGPathConversion::None:
+        return source.copy();
+
+    case SVGPathConversion::ForceAbsolute:
+        // Only returns the resulting absolute path if the conversion succeeds.
+        if (auto result = convertSVGPathByteStreamToAbsoluteCoordinates(source))
+            return result;
+
+        return source.copy();
+    }
+
+    ASSERT_NOT_REACHED();
+    return source.copy();
+}
+
+Ref<CSSPrimitiveValue> valueForBasicShape(const RenderStyle& style, const BasicShape& basicShape, SVGPathConversion conversion)
 {
     auto& cssValuePool = CSSValuePool::singleton();
 
@@ -108,10 +126,15 @@ Ref<CSSPrimitiveValue> valueForBasicShape(const RenderStyle& style, const BasicS
     }
     case BasicShape::Type::Path: {
         auto& pathShape = downcast<BasicShapePath>(basicShape);
-        auto pathShapeValue = CSSBasicShapePath::create(pathShape.pathData()->copy());
+
+        ASSERT(pathShape.pathData());
+        auto pathByteStream = copySVGPathByteStream(*pathShape.pathData(), conversion);
+
+        auto pathShapeValue = CSSBasicShapePath::create(WTFMove(pathByteStream));
         pathShapeValue->setWindRule(pathShape.windRule());
 
         basicShapeValue = WTFMove(pathShapeValue);
+
         break;
     }
     case BasicShape::Type::Inset: {

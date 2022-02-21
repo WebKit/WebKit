@@ -20,9 +20,11 @@
 #include "config.h"
 #include "RenderSVGResourceContainer.h"
 
+#include "LegacyRenderSVGRoot.h"
 #include "RenderLayer.h"
-#include "RenderSVGRoot.h"
 #include "RenderView.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGGraphicsElement.h"
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include <wtf/IsoMallocInlines.h>
@@ -51,7 +53,7 @@ void RenderSVGResourceContainer::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     // Invalidate all resources if our layout changed.
     if (selfNeedsClientInvalidation())
-        RenderSVGRoot::addResourceForClientInvalidation(this);
+        LegacyRenderSVGRoot::addResourceForClientInvalidation(this);
 
     RenderSVGHiddenContainer::layout();
 }
@@ -240,7 +242,7 @@ bool RenderSVGResourceContainer::shouldTransformOnTextPainting(const RenderEleme
 // FIXME: This does not belong here.
 AffineTransform RenderSVGResourceContainer::transformOnNonScalingStroke(RenderObject* object, const AffineTransform& resourceTransform)
 {
-    if (!object->isSVGShape())
+    if (!object->isSVGShapeOrLegacySVGShape())
         return resourceTransform;
 
     SVGGraphicsElement* element = downcast<SVGGraphicsElement>(object->node());

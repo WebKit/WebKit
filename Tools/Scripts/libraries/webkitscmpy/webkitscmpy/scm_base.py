@@ -24,7 +24,9 @@ import logging
 import re
 import six
 import sys
+import time
 
+from datetime import datetime
 from logging import NullHandler
 from webkitscmpy import Commit, Contributor, log
 
@@ -40,10 +42,18 @@ class ScmBase(object):
     GIT_SVN_REVISION = re.compile(r'^git-svn-id: \S+:\/\/.+@(?P<revision>\d+) .+-.+-.+-.+', flags=re.MULTILINE)
     DEFAULT_BRANCHES = ['main', 'master', 'trunk']
 
+    @classmethod
+    def gmtoffset(cls):
+        if sys.version_info >= (3, 0):
+            return int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+
+        ts = time.time()
+        return int((datetime.fromtimestamp(ts) - datetime.utcfromtimestamp(ts)).total_seconds() * 100 / (60 * 60))
+
     def __init__(self, dev_branches=None, prod_branches=None, contributors=None, id=None):
         self.dev_branches = dev_branches or self.DEV_BRANCHES
         self.prod_branches = prod_branches or self.PROD_BRANCHES
-        self.path = None
+        self.path = getattr(self, 'path', None)
         self.contributors = Contributor.Mapping() if contributors is None else contributors
 
         if id and not isinstance(id, six.string_types):

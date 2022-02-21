@@ -26,21 +26,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum MediaKeyMessageType {
-    "license-request",
-    "license-renewal",
-    "license-release",
-    "individualization-request"
-};
-
-dictionary MediaKeyMessageEventInit : EventInit {
-    required MediaKeyMessageType messageType;
-    required ArrayBuffer message;
-};
-
 [
     Conditional=ENCRYPTED_MEDIA,
-    EnabledBySetting=EncryptedMediaAPI,
+    EnabledBySetting=EncryptedMediaAPIEnabled,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
     Exposed=Window
 ] interface MediaKeyMessageEvent : Event {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef PAS_GET_PAGE_BASE_H
 #define PAS_GET_PAGE_BASE_H
 
+#include "pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h"
 #include "pas_heap_config.h"
 #include "pas_page_base.h"
 #include "pas_large_map.h"
@@ -40,10 +41,10 @@ static PAS_ALWAYS_INLINE pas_page_base* pas_get_page_base(void* ptr,
     begin = (uintptr_t)ptr;
     
     switch (config.fast_megapage_kind_func(begin)) {
-    case pas_small_segregated_fast_megapage_kind:
+    case pas_small_exclusive_segregated_fast_megapage_kind:
         return pas_page_base_for_address_and_page_config(begin, config.small_segregated_config.base);
-    case pas_small_bitfit_fast_megapage_kind:
-        return pas_page_base_for_address_and_page_config(begin, config.small_bitfit_config.base);
+    case pas_small_other_fast_megapage_kind:
+        return pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, config).page_base;
     case pas_not_a_fast_megapage_kind: {
         pas_page_base* page_base;
 

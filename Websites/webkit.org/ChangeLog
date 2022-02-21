@@ -1,3 +1,96 @@
+2022-02-15  Jon Davis  <jond@apple.com>
+
+        Fix WordPress wpautop to account for the Dialog element.
+        https://bugs.webkit.org/show_bug.cgi?id=236320
+
+        Reviewed by Darin Adler.
+
+        * wp-content/themes/webkit/functions.php:
+
+2022-02-07  Tim Nguyen  <ntim@apple.com>
+
+        Unreviewed, make <dialog> demos dark theme work in iframes
+
+        Add rules for <body>.
+
+        * demos/dialog-element/dark-theme.css:
+        (@media (prefers-color-scheme: dark) body):
+
+2022-02-04  Tim Nguyen  <ntim@apple.com>
+
+        Add <dialog> element demos for blog post
+        https://bugs.webkit.org/show_bug.cgi?id=236143
+
+        Reviewed by Simon Fraser.
+
+        * demos/dialog-element/confirmation-dialog-basic.html: Added.
+        * demos/dialog-element/confirmation-dialog-form.html: Added.
+        * demos/dialog-element/dark-theme.css: Added.
+        (body):
+        (@media (prefers-color-scheme: dark) dialog):
+        * demos/dialog-element/styled-dialog.html: Added.
+
+2022-02-02  Jon Davis  <jond@apple.com>
+
+        Improve color contrast of dark mode syntax highlighting
+        https://bugs.webkit.org/show_bug.cgi?id=236041
+
+        Reviewed by Simon Fraser.
+
+        * wp-content/themes/webkit/style.css:
+        (@media(prefers-color-scheme:dark) :root):
+
+2021-12-07  Cameron McCormack  <heycam@apple.com>
+
+        Puzzle feature detection followup
+        https://bugs.webkit.org/show_bug.cgi?id=233946
+
+        Unreviewed.
+
+        * blog-files/wide-gamut-canvas/puzzle.html:
+
+2021-12-07  Cameron McCormack  <heycam@apple.com>
+
+        Tweak puzzle to use feature detection
+        https://bugs.webkit.org/show_bug.cgi?id=233946
+
+        Unreviewed.
+
+        * blog-files/wide-gamut-canvas/puzzle.html:
+
+2021-11-30  Cameron McCormack  <heycam@apple.com>
+
+        Add resources for an upcoming blog post
+        https://bugs.webkit.org/show_bug.cgi?id=233681
+
+        Unreviewed.
+
+        * blog-files/wide-gamut-canvas/pinwheels.html: Added.
+        * blog-files/wide-gamut-canvas/puzzle.html: Added.
+        * blog-files/wide-gamut-canvas/puzzle.jpg: Added.
+        * blog-files/wide-gamut-canvas/squares.html: Added.
+        * blog-files/wide-gamut-canvas/stripes.html: Added.
+
+2021-11-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Coding style for inner namespaces is should be simplified to not indented
+        https://bugs.webkit.org/show_bug.cgi?id=232073
+
+        Reviewed by Antti Koivisto.
+
+        * code-style.md:
+        Simplify coding style to match the existing code: contents of inner namespaces
+        should not be indented.
+
+2021-11-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add Monterey to WebKit Build Archives page
+        https://bugs.webkit.org/show_bug.cgi?id=232739
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wp-content/themes/webkit/build-archives.php:
+
 2021-09-02  Jonathan Bedard  <jbedard@apple.com>
 
         [contributors.json] Relocation (Part 3)

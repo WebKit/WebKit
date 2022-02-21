@@ -52,7 +52,7 @@ const ClassInfo TemporalTimeZoneConstructor::s_info = { "Function", &InternalFun
 
 TemporalTimeZoneConstructor* TemporalTimeZoneConstructor::create(VM& vm, Structure* structure, TemporalTimeZonePrototype* temporalTimeZonePrototype)
 {
-    TemporalTimeZoneConstructor* constructor = new (NotNull, allocateCell<TemporalTimeZoneConstructor>(vm.heap)) TemporalTimeZoneConstructor(vm, structure);
+    TemporalTimeZoneConstructor* constructor = new (NotNull, allocateCell<TemporalTimeZoneConstructor>(vm)) TemporalTimeZoneConstructor(vm, structure);
     constructor->finishCreation(vm, temporalTimeZonePrototype);
     return constructor;
 }
@@ -74,6 +74,7 @@ void TemporalTimeZoneConstructor::finishCreation(VM& vm, TemporalTimeZonePrototy
 {
     Base::finishCreation(vm, 0, "TimeZone"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, temporalTimeZonePrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    temporalTimeZonePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 JSC_DEFINE_HOST_FUNCTION(constructTemporalTimeZone, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -92,7 +93,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalTimeZone, (JSGlobalObject* globalObjec
     if (utcOffset)
         return JSValue::encode(TemporalTimeZone::createFromUTCOffset(vm, structure, utcOffset.value()));
 
-    std::optional<TimeZoneID> identifier = TemporalTimeZone::idForTimeZoneName(timeZoneString);
+    std::optional<TimeZoneID> identifier = ISO8601::parseTimeZoneName(timeZoneString);
     if (!identifier) {
         throwRangeError(globalObject, scope, "argument needs to be UTC offset string or TimeZone identifier"_s);
         return { };

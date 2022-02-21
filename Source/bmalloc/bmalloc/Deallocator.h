@@ -23,13 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Deallocator_h
-#define Deallocator_h
+#pragma once
 
 #include "BExport.h"
 #include "FixedVector.h"
 #include "SmallPage.h"
 #include <mutex>
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -80,4 +81,4 @@ inline void Deallocator::deallocate(void* object)
 
 } // namespace bmalloc
 
-#endif // Deallocator_h
+#endif

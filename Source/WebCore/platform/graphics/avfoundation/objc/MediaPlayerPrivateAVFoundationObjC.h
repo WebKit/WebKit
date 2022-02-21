@@ -28,10 +28,13 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include "MediaPlayerPrivateAVFoundation.h"
+#include <CoreMedia/CMTime.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/Observer.h>
 
 OBJC_CLASS AVAssetImageGenerator;
+OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVAssetResourceLoadingRequest;
 OBJC_CLASS AVMediaSelectionGroup;
 OBJC_CLASS AVOutputContext;
@@ -50,6 +53,8 @@ OBJC_CLASS WebCoreAVFPullDelegate;
 
 typedef struct CGImage *CGImageRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
+typedef NSString *AVMediaCharacteristic;
+typedef double NSTimeInterval;
 
 namespace WebCore {
 
@@ -58,11 +63,13 @@ class AudioTrackPrivateAVFObjC;
 class CDMInstanceFairPlayStreamingAVFObjC;
 class CDMSessionAVFoundationObjC;
 class ImageRotationSessionVT;
+class InbandChapterTrackPrivateAVFObjC;
 class InbandMetadataTextTrackPrivateAVF;
 class MediaPlaybackTarget;
 class MediaSelectionGroupAVFObjC;
 class PixelBufferConformerCV;
-class SharedBuffer;
+class QueuedVideoOutput;
+class FragmentedSharedBuffer;
 class VideoLayerManagerObjC;
 class VideoTrackPrivateAVFObjC;
 class WebCoreAVFResourceLoader;
@@ -76,6 +83,7 @@ public:
 
     void setAsset(RetainPtr<id>&&);
     void didEnd() final;
+    void metadataLoaded() final;
 
     void processCue(NSArray *, NSArray *, const MediaTime&);
     void flushCues();
@@ -96,7 +104,7 @@ public:
     void playbackBufferFullWillChange();
     void playbackBufferFullDidChange(bool);
     void loadedTimeRangesDidChange(RetainPtr<NSArray>&&);
-    void seekableTimeRangesDidChange(RetainPtr<NSArray>&&);
+    void seekableTimeRangesDidChange(RetainPtr<NSArray>&&, NSTimeInterval, NSTimeInterval);
     void tracksDidChange(const RetainPtr<NSArray>&);
     void hasEnabledAudioDidChange(bool);
     void presentationSizeDidChange(FloatSize);
@@ -118,6 +126,7 @@ public:
 
     MediaTime currentMediaTime() const final;
     void outputMediaDataWillChange();
+    void processChapterTracks();
 
 private:
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -253,10 +262,10 @@ private:
     bool updateLastPixelBuffer();
     bool videoOutputHasAvailableFrame();
     void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
+    RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     RefPtr<NativeImage> nativeImageForCurrentTime() final;
+    DestinationColorSpace colorSpace() final;
     void waitForVideoOutputMediaDataWillChange();
-
-    RetainPtr<CVPixelBufferRef> pixelBufferForCurrentTime() final;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void keyAdded() final;
@@ -272,8 +281,9 @@ private:
     AVMediaSelectionGroup *safeMediaSelectionGroupForAudibleMedia();
     AVMediaSelectionGroup *safeMediaSelectionGroupForVisualMedia();
 
-    NSArray *safeAVAssetTracksForAudibleMedia();
-    NSArray *safeAVAssetTracksForVisualMedia();
+    AVAssetTrack* firstEnabledAudibleTrack() const;
+    AVAssetTrack* firstEnabledVisibleTrack() const;
+    AVAssetTrack* firstEnabledTrack(AVMediaCharacteristic) const;
 
 #if ENABLE(DATACUE_VALUE)
     void processMetadataTrack();
@@ -333,6 +343,15 @@ private:
     bool supportsPauseAtHostTime() const final { return true; }
     bool playAtHostTime(const MonotonicTime&) final;
     bool pauseAtHostTime(const MonotonicTime&) final;
+    bool haveBeenAskedToPaint() const { return m_haveBeenAskedToPaint; }
+
+    void startVideoFrameMetadataGathering() final;
+    void stopVideoFrameMetadataGathering() final;
+    std::optional<VideoFrameMetadata> videoFrameMetadata() final { return std::exchange(m_videoFrameMetadata, { }); }
+    void checkNewVideoFrameMetadata();
+
+    std::optional<bool> allTracksArePlayable() const;
+    bool trackIsPlayable(AVAssetTrack*) const;
 
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
@@ -352,7 +371,7 @@ private:
 #endif
 
     RetainPtr<AVAssetImageGenerator> m_imageGenerator;
-    RetainPtr<AVPlayerItemVideoOutput> m_videoOutput;
+    RefPtr<QueuedVideoOutput> m_videoOutput;
     RetainPtr<WebCoreAVFPullDelegate> m_videoOutputDelegate;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     RefPtr<NativeImage> m_lastImage;
@@ -378,9 +397,11 @@ private:
     RefPtr<InbandMetadataTextTrackPrivateAVF> m_metadataTrack;
 #endif
 
+    HashMap<String, RefPtr<InbandChapterTrackPrivateAVFObjC>> m_chapterTracks;
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(MAC)
     RetainPtr<AVOutputContext> m_outputContext;
-    RefPtr<MediaPlaybackTarget> m_playbackTarget { nullptr };
+    RefPtr<MediaPlaybackTarget> m_playbackTarget;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -410,7 +431,7 @@ private:
     mutable std::optional<WallTime> m_wallClockAtCachedCurrentTime;
     mutable int m_timeControlStatusAtCachedCurrentTime { 0 };
     mutable double m_requestedRateAtCachedCurrentTime { 0 };
-    RefPtr<SharedBuffer> m_keyID;
+    RefPtr<FragmentedSharedBuffer> m_keyID;
     double m_cachedRate { 0 };
     bool m_requestedPlaying { false };
     double m_requestedRate { 1.0 };
@@ -418,6 +439,7 @@ private:
     mutable long long m_cachedTotalBytes { 0 };
     unsigned m_pendingStatusChanges { 0 };
     int m_cachedItemStatus;
+    int m_runLoopNestingLevel { 0 };
     MediaPlayer::BufferingPolicy m_bufferingPolicy { MediaPlayer::BufferingPolicy::Default };
     bool m_cachedLikelyToKeepUp { false };
     bool m_cachedBufferEmpty { false };
@@ -428,7 +450,9 @@ private:
     bool m_cachedCanPlayFastForward { false };
     bool m_cachedCanPlayFastReverse { false };
     mutable bool m_cachedAssetIsLoaded { false };
+    mutable bool m_cachedTracksAreLoaded { false };
     mutable std::optional<bool> m_cachedAssetIsPlayable;
+    mutable std::optional<bool> m_cachedTracksArePlayable;
     bool m_muted { false };
     bool m_shouldObserveTimeControlStatus { false };
     mutable std::optional<bool> m_tracksArePlayable;
@@ -437,7 +461,17 @@ private:
     mutable bool m_allowsWirelessVideoPlayback { true };
     bool m_shouldPlayToPlaybackTarget { false };
 #endif
-    bool m_runningModalPaint { false };
+    bool m_haveProcessedChapterTracks { false };
+    bool m_waitForVideoOutputMediaDataWillChangeTimedOut { false };
+    bool m_haveBeenAskedToPaint { false };
+    uint64_t m_sampleCount { 0 };
+    RetainPtr<id> m_videoFrameMetadataGatheringObserver;
+    bool m_isGatheringVideoFrameMetadata { false };
+    std::optional<VideoFrameMetadata> m_videoFrameMetadata;
+    mutable std::optional<NSTimeInterval> m_cachedSeekableTimeRangesLastModifiedTime;
+    mutable std::optional<NSTimeInterval> m_cachedLiveUpdateInterval;
+    std::unique_ptr<Observer<void()>> m_currentImageChangedObserver;
+    std::unique_ptr<Observer<void()>> m_waitForVideoOutputMediaDataWillChangeObserver;
 };
 
 }

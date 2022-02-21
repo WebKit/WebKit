@@ -29,16 +29,16 @@
 
 #include "CommandLineAPIHost.h"
 #include "DOMWindow.h"
+#include "InspectorWebAgentBase.h"
+#include "JSExecState.h"
 #include "Logging.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
-#include "ScriptState.h"
 #include "WebInjectedScriptManager.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptArguments.h>
 #include <wtf/text/StringBuilder.h>
-
 
 namespace WebCore {
 
@@ -49,38 +49,33 @@ WebConsoleAgent::WebConsoleAgent(WebAgentContext& context)
 {
 }
 
-WebConsoleAgent::~WebConsoleAgent() = default;
-
-void WebConsoleAgent::frameWindowDiscarded(DOMWindow* window)
+void WebConsoleAgent::frameWindowDiscarded(DOMWindow& window)
 {
-    for (auto& message : m_consoleMessages) {
-        JSC::JSGlobalObject* lexicalGlobalObject = message->globalObject();
-        if (!lexicalGlobalObject)
-            continue;
-        if (domWindowFromExecState(lexicalGlobalObject) != window)
-            continue;
-        message->clear();
+    if (auto* document = window.document()) {
+        for (auto& message : m_consoleMessages) {
+            if (executionContext(message->globalObject()) == document)
+                message->clear();
+        }
     }
-
     static_cast<WebInjectedScriptManager&>(m_injectedScriptManager).discardInjectedScriptsFor(window);
 }
 
-void WebConsoleAgent::didReceiveResponse(unsigned long requestIdentifier, const ResourceResponse& response)
+void WebConsoleAgent::didReceiveResponse(ResourceLoaderIdentifier requestIdentifier, const ResourceResponse& response)
 {
     if (response.httpStatusCode() >= 400) {
         auto message = makeString("Failed to load resource: the server responded with a status of ", response.httpStatusCode(), " (", ScriptArguments::truncateStringForConsoleMessage(response.httpStatusText()), ')');
-        addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message, response.url().string(), 0, 0, nullptr, requestIdentifier));
+        addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message, response.url().string(), 0, 0, nullptr, requestIdentifier.toUInt64()));
     }
 }
 
-void WebConsoleAgent::didFailLoading(unsigned long requestIdentifier, const ResourceError& error)
+void WebConsoleAgent::didFailLoading(ResourceLoaderIdentifier requestIdentifier, const ResourceError& error)
 {
     // Report failures only.
     if (error.isCancellation())
         return;
 
     auto message = makeString("Failed to load resource", error.localizedDescription().isEmpty() ? "" : ": ", error.localizedDescription());
-    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message, error.failingURL().string(), 0, 0, nullptr, requestIdentifier));
+    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message, error.failingURL().string(), 0, 0, nullptr, requestIdentifier.toUInt64()));
 }
 
 } // namespace WebCore

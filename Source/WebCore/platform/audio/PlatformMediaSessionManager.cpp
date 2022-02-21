@@ -39,11 +39,11 @@ namespace WebCore {
 bool PlatformMediaSessionManager::m_webMFormatReaderEnabled;
 #endif
 
-#if ENABLE(VORBIS) && PLATFORM(MAC)
+#if ENABLE(VORBIS)
 bool PlatformMediaSessionManager::m_vorbisDecoderEnabled;
 #endif
 
-#if ENABLE(OPUS) && PLATFORM(MAC)
+#if ENABLE(OPUS)
 bool PlatformMediaSessionManager::m_opusDecoderEnabled;
 #endif
 
@@ -74,12 +74,12 @@ PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists(
     return sharedPlatformMediaSessionManager().get();
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && (!USE(GLIB) || !ENABLE(MEDIA_SESSION))
 std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create()
 {
     return std::unique_ptr<PlatformMediaSessionManager>(new PlatformMediaSessionManager);
 }
-#endif // !PLATFORM(COCOA)
+#endif // !PLATFORM(COCOA) && (!USE(GLIB) || !ENABLE(MEDIA_SESSION))
 
 void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
 {
@@ -176,7 +176,7 @@ void PlatformMediaSessionManager::endInterruption(PlatformMediaSession::EndInter
 void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)
 {
     ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
-    m_sessions.append(makeWeakPtr(session));
+    m_sessions.append(session);
     if (m_interrupted)
         session.setState(PlatformMediaSession::Interrupted);
 
@@ -285,7 +285,7 @@ void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& s
         return;
 
     m_sessions.remove(pausingSessionIndex);
-    m_sessions.append(makeWeakPtr(session));
+    m_sessions.append(session);
 
     ALWAYS_LOG(LOGIDENTIFIER, "session moved from index ", pausingSessionIndex, " to ", lastPlayingSessionIndex);
 }
@@ -308,7 +308,7 @@ void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& sessio
         return;
 
     m_sessions.remove(index);
-    m_sessions.insert(0, makeWeakPtr(session));
+    m_sessions.insert(0, session);
     
     ALWAYS_LOG(LOGIDENTIFIER, "session moved from index ", index, " to 0");
 }
@@ -656,7 +656,7 @@ void PlatformMediaSessionManager::setWebMFormatReaderEnabled(bool enabled)
 
 bool PlatformMediaSessionManager::vorbisDecoderEnabled()
 {
-#if ENABLE(VORBIS) && PLATFORM(MAC)
+#if ENABLE(VORBIS)
     return m_vorbisDecoderEnabled;
 #else
     return false;
@@ -665,7 +665,7 @@ bool PlatformMediaSessionManager::vorbisDecoderEnabled()
 
 void PlatformMediaSessionManager::setVorbisDecoderEnabled(bool enabled)
 {
-#if ENABLE(VORBIS) && PLATFORM(MAC)
+#if ENABLE(VORBIS)
     m_vorbisDecoderEnabled = enabled;
 #else
     UNUSED_PARAM(enabled);
@@ -674,7 +674,7 @@ void PlatformMediaSessionManager::setVorbisDecoderEnabled(bool enabled)
 
 bool PlatformMediaSessionManager::opusDecoderEnabled()
 {
-#if ENABLE(OPUS) && PLATFORM(MAC)
+#if ENABLE(OPUS)
     return m_opusDecoderEnabled;
 #else
     return false;
@@ -683,7 +683,7 @@ bool PlatformMediaSessionManager::opusDecoderEnabled()
 
 void PlatformMediaSessionManager::setOpusDecoderEnabled(bool enabled)
 {
-#if ENABLE(OPUS) && PLATFORM(MAC)
+#if ENABLE(OPUS)
     m_opusDecoderEnabled = enabled;
 #else
     UNUSED_PARAM(enabled);

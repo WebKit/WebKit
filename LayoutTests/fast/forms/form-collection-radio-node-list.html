@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ KeygenElementEnabled=true ] -->
+<!DOCTYPE html>
 <html>
 <body>
 <script src="../../resources/js-test-pre.js"></script>
@@ -43,7 +43,7 @@ description("This test is for RadioNodeList specified at http://www.whatwg.org/s
 debug("");
 var owner = document.getElementById('form1');
 
-shouldBe('owner.elements.length', '23');
+shouldBe('owner.elements.length', '22');
 
 var elementsList = owner.elements;
 var radioNodeList = elementsList.namedItem("inputcommon");
@@ -96,7 +96,7 @@ var container = document.getElementById("divId");
 debug("");
 debug("Check RadioNodeList is updated after adding a new element");
 shouldBe('container.appendChild(nonSubtreeElement); radioNodeList.length', '5');
-shouldBe('owner.elements.length', '24');
+shouldBe('owner.elements.length', '23');
 shouldBe('radioNodeList[4].value', "'non subtree element'");
 
 debug("");

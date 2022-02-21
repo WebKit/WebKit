@@ -65,11 +65,8 @@ void WebsiteData::encode(IPC::Encoder& encoder) const
 {
     encoder << entries;
     encoder << hostNamesWithCookies;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    encoder << hostNamesWithPluginData;
-#endif
     encoder << hostNamesWithHSTSCache;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     encoder << registrableDomainsWithResourceLoadStatistics;
 #endif
 }
@@ -80,13 +77,9 @@ bool WebsiteData::decode(IPC::Decoder& decoder, WebsiteData& result)
         return false;
     if (!decoder.decode(result.hostNamesWithCookies))
         return false;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (!decoder.decode(result.hostNamesWithPluginData))
-        return false;
-#endif
     if (!decoder.decode(result.hostNamesWithHSTSCache))
         return false;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (!decoder.decode(result.registrableDomainsWithResourceLoadStatistics))
         return false;
 #endif
@@ -118,10 +111,6 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
         return WebsiteDataProcessType::Network;
     case WebsiteDataType::SearchFieldRecentSearches:
         return WebsiteDataProcessType::UI;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    case WebsiteDataType::PlugInData:
-        return WebsiteDataProcessType::UI;
-#endif
     case WebsiteDataType::ResourceLoadStatistics:
         return WebsiteDataProcessType::Network;
     case WebsiteDataType::Credentials:
@@ -140,6 +129,8 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
     case WebsiteDataType::AlternativeServices:
         return WebsiteDataProcessType::Network;
 #endif
+    case WebsiteDataType::FileSystem:
+        return WebsiteDataProcessType::Network;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -161,11 +152,8 @@ WebsiteData WebsiteData::isolatedCopy() const
     return WebsiteData {
         crossThreadCopy(entries),
         crossThreadCopy(hostNamesWithCookies),
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        crossThreadCopy(hostNamesWithPluginData),
-#endif
         crossThreadCopy(hostNamesWithHSTSCache),
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
         crossThreadCopy(registrableDomainsWithResourceLoadStatistics),
 #endif
     };

@@ -32,6 +32,7 @@
 #include "LegacyCDMSessionClearKey.h"
 #include "ContentType.h"
 #include "MediaPlayer.h"
+#include "PlatformMediaResourceLoader.h"
 
 namespace WebCore {
 

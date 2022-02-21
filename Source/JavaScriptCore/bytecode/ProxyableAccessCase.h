@@ -40,7 +40,7 @@ public:
     static Ref<AccessCase> create(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
         bool viaProxy = false, WatchpointSet* additionalSet = nullptr, RefPtr<PolyProtoAccessChain>&& = nullptr);
 
-    void dumpImpl(PrintStream&, CommaPrinter&) const override;
+    void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const override;
     Ref<AccessCase> clone() const override;
 
     ~ProxyableAccessCase() override;

@@ -59,11 +59,8 @@ struct WebsiteData {
     Vector<Entry> entries;
     HashSet<String> hostNamesWithCookies;
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    HashSet<String> hostNamesWithPluginData;
-#endif
     HashSet<String> hostNamesWithHSTSCache;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     HashSet<WebCore::RegistrableDomain> registrableDomainsWithResourceLoadStatistics;
 #endif
 

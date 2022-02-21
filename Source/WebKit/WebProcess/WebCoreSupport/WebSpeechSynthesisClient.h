@@ -53,6 +53,7 @@ public:
 private:
     void setObserver(WeakPtr<WebCore::SpeechSynthesisClientObserver> observer) override { m_observer = observer; }
     WeakPtr<WebCore::SpeechSynthesisClientObserver> observer() const override { return m_observer; }
+    void resetState() override;
 
     WebCore::SpeechSynthesisClientObserver* corePageObserver() const;
     

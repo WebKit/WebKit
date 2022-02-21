@@ -42,27 +42,15 @@ enum pas_heap_config_kind {
 
 typedef enum pas_heap_config_kind pas_heap_config_kind;
 
-static const unsigned pas_heap_config_kind_num_kinds =
+enum { pas_heap_config_kind_num_kinds =
     0
 #define PAS_DEFINE_HEAP_CONFIG_KIND(name, value) \
     + 1
 #include "pas_heap_config_kind.def"
 #undef PAS_DEFINE_HEAP_CONFIG_KIND
-    ;
+};
 
-static inline const char*
-pas_heap_config_kind_get_string(pas_heap_config_kind kind)
-{
-    switch (kind) {
-#define PAS_DEFINE_HEAP_CONFIG_KIND(name, value) \
-    case pas_heap_config_kind_ ## name: \
-        return #name;
-#include "pas_heap_config_kind.def"
-#undef PAS_DEFINE_HEAP_CONFIG_KIND
-    }
-    PAS_ASSERT(!"Invalid kind");
-    return NULL;
-}
+PAS_API const char* pas_heap_config_kind_get_string(pas_heap_config_kind kind);
 
 typedef bool (*pas_heap_config_kind_callback)(pas_heap_config_kind kind,
                                               pas_heap_config* config,
@@ -74,14 +62,14 @@ PAS_API bool pas_heap_config_kind_for_each(
 
 #define PAS_EACH_HEAP_CONFIG_KIND(kind) \
     kind = (pas_heap_config_kind)0; \
-    kind < pas_heap_config_kind_num_kinds; \
+    (unsigned)kind < (unsigned)pas_heap_config_kind_num_kinds; \
     kind = (pas_heap_config_kind)((unsigned)kind + 1)
 
 PAS_API extern pas_heap_config* pas_heap_config_kind_for_config_table[];
 
 static inline pas_heap_config* pas_heap_config_kind_get_config(pas_heap_config_kind kind)
 {
-    PAS_TESTING_ASSERT(kind < pas_heap_config_kind_num_kinds);
+    PAS_TESTING_ASSERT((unsigned)kind < (unsigned)pas_heap_config_kind_num_kinds);
     return pas_heap_config_kind_for_config_table[kind];
 }
 
@@ -89,7 +77,7 @@ PAS_API extern unsigned pas_heap_config_kind_is_active_bitvector[];
 
 static inline bool pas_heap_config_kind_is_active(pas_heap_config_kind kind)
 {
-    PAS_TESTING_ASSERT(kind < pas_heap_config_kind_num_kinds);
+    PAS_TESTING_ASSERT((unsigned)kind < (unsigned)pas_heap_config_kind_num_kinds);
     return pas_bitvector_get(pas_heap_config_kind_is_active_bitvector, (size_t)kind);
 }
 

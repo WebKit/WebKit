@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2015, 2016 Canon Inc. All rights reserved.
- *  Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,7 @@ public:
     using Base = JSDOMConstructorBase;
 
     template<typename CellType, JSC::SubspaceAccess>
-    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         static_assert(sizeof(CellType) == sizeof(JSDOMBuiltinConstructorBase));
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(CellType, JSDOMBuiltinConstructorBase);
@@ -37,8 +37,8 @@ public:
     }
 
 protected:
-    JSDOMBuiltinConstructorBase(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
-        : JSDOMConstructorBase(structure, globalObject)
+    JSDOMBuiltinConstructorBase(JSC::VM& vm, JSC::Structure* structure, JSC::NativeFunction functionForConstruct)
+        : Base(vm, structure, functionForConstruct)
     {
     }
 
@@ -47,10 +47,8 @@ protected:
     JSC::JSFunction* initializeFunction();
     void setInitializeFunction(JSC::VM&, JSC::JSFunction&);
 
-    static void callFunctionWithCurrentArguments(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject& thisObject, JSC::JSFunction&);
-
 private:
-    static JSC::IsoSubspace* subspaceForImpl(JSC::VM&);
+    static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM&);
 
     JSC::WriteBarrier<JSC::JSFunction> m_initializeFunction;
 };

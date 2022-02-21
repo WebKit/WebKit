@@ -68,12 +68,16 @@ pas_allocation_result pas_reserved_memory_provider_try_allocate(
     size_t size,
     pas_alignment alignment,
     const char* name,
+    pas_heap* heap,
+    pas_physical_memory_transaction* transaction,
     void* arg)
 {
     pas_reserved_memory_provider* provider;
     pas_large_free_heap_config config;
 
     PAS_UNUSED_PARAM(name);
+    PAS_UNUSED_PARAM(heap);
+    PAS_UNUSED_PARAM(transaction);
 
     provider = arg;
 

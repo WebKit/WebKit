@@ -23,8 +23,8 @@ layer at (0,0) size 800x228
               RenderText {#text} at (4,4) size 45x18
                 text run at (4,4) width 45: "groove"
             RenderTableCell {TD} at (51,72) size 52x21 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 44x19
-                text run at (1,2) width 44: "hidden"
+              RenderText {#text} at (1,0) size 44x20
+                text run at (1,1) width 44: "hidden"
             RenderTableCell {TD} at (102,70) size 53x25 [border: (3px groove #00FF00) none] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,4) size 45x18
                 text run at (1,4) width 45: "groove"
@@ -33,8 +33,8 @@ layer at (0,0) size 800x228
               RenderText {#text} at (4,4) size 45x18
                 text run at (4,4) width 45: "groove"
             RenderTableCell {TD} at (51,126) size 52x23 [border: none (2px groove #00FF00)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,1) size 45x19
-                text run at (4,2) width 45: "groove"
+              RenderText {#text} at (4,0) size 45x20
+                text run at (4,1) width 45: "groove"
             RenderTableCell {TD} at (102,125) size 53x25 [border: (3px groove #00FF00)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (4,4) size 45x18
                 text run at (4,4) width 45: "groove"

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,11 +41,17 @@ unsigned pas_baseline_allocator_table_bound = PAS_NUM_BASELINE_ALLOCATORS;
 
 static void initialize(void)
 {
+    pas_baseline_allocator* table;
+    size_t index;
     pas_heap_lock_lock();
-    pas_baseline_allocator_table = pas_immortal_heap_allocate(
+    table = pas_immortal_heap_allocate(
         PAS_NUM_BASELINE_ALLOCATORS * sizeof(pas_baseline_allocator),
         "pas_baseline_allocator_table",
         pas_object_allocation);
+    for (index = PAS_NUM_BASELINE_ALLOCATORS; index--;)
+        table[index] = PAS_BASELINE_ALLOCATOR_INITIALIZER;
+    pas_store_store_fence();
+    pas_baseline_allocator_table = table;
     pas_heap_lock_unlock();
 }
 

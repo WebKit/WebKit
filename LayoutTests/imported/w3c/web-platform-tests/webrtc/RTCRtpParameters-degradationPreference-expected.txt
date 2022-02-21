@@ -1,0 +1,4 @@
+
+FAIL setParameters with degradationPreference set should succeed assert_not_equals: Expect sender param.rtcp.cname to be set got disallowed value undefined
+FAIL setParameters with degradationPreference unset should succeed assert_not_equals: Expect sender param.rtcp.cname to be set got disallowed value undefined
+

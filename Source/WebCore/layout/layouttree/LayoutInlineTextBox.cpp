@@ -36,10 +36,11 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineTextBox);
 
-InlineTextBox::InlineTextBox(String content, bool canUseSimplifiedContentMeasuring, RenderStyle&& style)
-    : Box({ }, WTFMove(style), Box::InlineTextBoxFlag)
+InlineTextBox::InlineTextBox(String content, bool canUseSimplifiedContentMeasuring, bool canUseSimpleFontCodePath, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+    : Box({ }, WTFMove(style), WTFMove(firstLineStyle), Box::InlineTextBoxFlag)
     , m_content(content)
     , m_canUseSimplifiedContentMeasuring(canUseSimplifiedContentMeasuring)
+    , m_canUseSimpleFontCodePath(canUseSimpleFontCodePath)
 {
     setIsAnonymous();
 }

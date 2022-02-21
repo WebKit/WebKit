@@ -6,11 +6,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Make sure window.showModalDialog is undefined when modal dialogs are not allowed.
 internals.setCanShowModalDialogOverride(false)
 PASS window.showModalDialog is undefined
-PASS window.hasOwnProperty('showModalDialog') is false
+PASS window.hasOwnProperty('showModalDialog') is true
+PASS Object.getOwnPropertyNames(window).includes('showModalDialog') is true
 
 Tests having a named property with name 'showModalDialog'.
 document.body.append(testFrame)
-PASS window.showModalDialog is testFrame.contentWindow
+PASS window.showModalDialog is undefined
 testFrame.remove()
 PASS window.showModalDialog is undefined
 
@@ -19,6 +20,7 @@ internals.setCanShowModalDialogOverride(true)
 PASS window.showModalDialog is not undefined
 PASS window.hasOwnProperty('showModalDialog') is true
 PASS window.showModalDialog is an instance of Function
+PASS window.showModalDialog.name is 'showModalDialog'
 
 Make sure window.showModalDialog can be shadowed.
 window.showModalDialog = 1

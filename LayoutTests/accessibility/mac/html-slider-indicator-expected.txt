@@ -12,11 +12,17 @@ PASS range.intValue is 49
 PASS valueIndicator.intValue is 49
 PASS range.intValue is 50
 PASS valueIndicator.intValue is 50
+PASS range.intValue is 55
+PASS valueIndicator.intValue is 55
+PASS range.intValue is 50
+PASS valueIndicator.intValue is 50
 PASS valueIndicator.isEqual(hitTestIndicator) is true
 PASS range.isEqual(hitTestRange) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
+Successfully received AXValueChanged
+Successfully received AXValueChanged
 Successfully received AXValueChanged
 Successfully received AXValueChanged
 

@@ -44,8 +44,6 @@ public:
 
 private:
     HTMLPictureElement(const QualifiedName&, Document&);
-
-    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 };
 
 } // namespace WebCore

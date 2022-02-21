@@ -42,6 +42,7 @@
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -55,15 +56,6 @@
 #endif
 
 namespace WebCore {
-
-static Vector<String> isolatedCopy(const Vector<String>& original)
-{
-    Vector<String> copy;
-    copy.reserveInitialCapacity(original.size());
-    for (auto& string : original)
-        copy.uncheckedAppend(string.isolatedCopy());
-    return copy;
-}
 
 std::unique_ptr<DatabaseTracker> DatabaseTracker::trackerWithDatabasePath(const String& databasePath)
 {
@@ -308,7 +300,7 @@ String DatabaseTracker::originPath(const SecurityOriginData& origin) const
 
 static String generateDatabaseFileName()
 {
-    return makeString(createCanonicalUUIDString(), ".db");
+    return makeString(createVersion4UUIDString(), ".db");
 }
 
 String DatabaseTracker::fullPathForDatabaseNoLock(const SecurityOriginData& origin, const String& name, bool createIfNotExists)
@@ -419,12 +411,8 @@ Vector<String> DatabaseTracker::databaseNamesNoLock(const SecurityOriginData& or
 
 Vector<String> DatabaseTracker::databaseNames(const SecurityOriginData& origin)
 {
-    Vector<String> names;
-    {
-        Locker lockDatabase { m_databaseGuard };
-        names = databaseNamesNoLock(origin);
-    }
-    return isolatedCopy(names);
+    Locker lockDatabase { m_databaseGuard };
+    return crossThreadCopy(databaseNamesNoLock(origin));
 }
 
 DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, const SecurityOriginData& origin)

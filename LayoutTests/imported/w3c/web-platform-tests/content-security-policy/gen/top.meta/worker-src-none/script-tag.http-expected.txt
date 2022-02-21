@@ -1,7 +1,9 @@
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/script.py?redirection=keep-origin&action=purge&key=37afbb1b-f193-42cb-96b0-724d48cccd35&path=%2Fmixed-content
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/script.py?redirection=no-redirect&action=purge&key=20d4feca-d1d6-499d-9cd2-247bf5d9c89e&path=%2Fmixed-content
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/script.py?redirection=swap-origin&action=purge&key=d7793ef5-116f-49e9-99ff-d0e2df126039&path=%2Fmixed-content
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/script.py?action=purge&key=19cf1c62-532a-4c65-8297-91edad83d0c9&path=%2Fmixed-content
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/script.py?redirection=keep-origin&action=purge&key=196b8f6c-49ce-45b9-881d-4f13076617bd&path=%2Fmixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/script.py?redirection=no-redirect&action=purge&key=3e210688-d547-40ba-b05c-7b2f93690166&path=%2Fmixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/script.py?redirection=swap-origin&action=purge&key=4705a92e-4782-461f-ad04-3a354f8f061b&path=%2Fmixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/script.py?action=purge&key=e09aa2e4-1508-458d-a2ed-8b2851cd5cbb&path=%2Fmixed-content
 
 FAIL Content Security Policy: Expects allowed for script-tag to cross-http origin and keep-origin redirection from http context. promise_test: Unhandled rejection with value: object "[object Event]"
 PASS Content Security Policy: Expects allowed for script-tag to cross-http origin and keep-origin redirection from http context.: securitypolicyviolation

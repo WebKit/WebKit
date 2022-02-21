@@ -1,12 +1,17 @@
 import collections
 import json
 
-from six import itervalues
+from typing import ClassVar, DefaultDict, Type
 
 
 class WebDriverException(Exception):
-    http_status = None
-    status_code = None
+    # The status_code class variable is used to map the JSON Error Code (see
+    # https://w3c.github.io/webdriver/#errors) to a WebDriverException subclass.
+    # However, http_status need not match, and both are set as instance
+    # variables, shadowing the class variables. TODO: Match on both http_status
+    # and status_code and let these be class variables only.
+    http_status = None  # type: ClassVar[int]
+    status_code = None  # type: ClassVar[str]
 
     def __init__(self, http_status=None, status_code=None, message=None, stacktrace=None):
         super(WebDriverException, self)
@@ -32,6 +37,11 @@ class WebDriverException(Exception):
             message += ("\nRemote-end stacktrace:\n\n%s" % self.stacktrace)
 
         return message
+
+
+class DetachedShadowRootException(WebDriverException):
+    http_status = 404
+    status_code = "detached shadow root"
 
 
 class ElementClickInterceptedException(WebDriverException):
@@ -112,6 +122,11 @@ class NoSuchElementException(WebDriverException):
 class NoSuchFrameException(WebDriverException):
     http_status = 404
     status_code = "no such frame"
+
+
+class NoSuchShadowRootException(WebDriverException):
+    http_status = 404
+    status_code = "no such shadow root"
 
 
 class NoSuchWindowException(WebDriverException):
@@ -209,7 +224,7 @@ def get(error_code):
     return _errors.get(error_code, WebDriverException)
 
 
-_errors = collections.defaultdict()
-for item in list(itervalues(locals())):
+_errors: DefaultDict[str, Type[WebDriverException]] = collections.defaultdict()
+for item in list(locals().values()):
     if type(item) == type and issubclass(item, WebDriverException):
         _errors[item.status_code] = item

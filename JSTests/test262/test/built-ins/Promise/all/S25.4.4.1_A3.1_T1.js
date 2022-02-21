@@ -17,7 +17,5 @@ var nonIterable = 3;
 Promise.all(nonIterable).then(function() {
   throw new Test262Error('Promise unexpectedly resolved: Promise.all(nonIterable) should throw TypeError');
 }, function(err) {
-  if (!(err instanceof TypeError)) {
-    throw new Test262Error('Expected TypeError, got ' + err);
-  }
+  assert(!!(err instanceof TypeError), 'The value of !!(err instanceof TypeError) is expected to be true');
 }).then($DONE, $DONE);

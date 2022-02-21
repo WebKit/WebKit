@@ -87,8 +87,9 @@ private:
 
     DedicatedWorkerGlobalScope(const WorkerParameters&, Ref<SecurityOrigin>&&, DedicatedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
-    bool isDedicatedWorkerGlobalScope() const final { return true; }
-    ExceptionOr<void> importScripts(const Vector<String>& urls) final;
+    Type type() const final { return Type::DedicatedWorker; }
+
+    ExceptionOr<void> importScripts(const FixedVector<String>& urls) final;
     EventTargetInterface eventTargetInterface() const final;
 
     void prepareForDestruction() final;
@@ -103,6 +104,6 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DedicatedWorkerGlobalScope)
-    static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkerGlobalScope>(context) && downcast<WebCore::WorkerGlobalScope>(context).isDedicatedWorkerGlobalScope(); }
-    static bool isType(const WebCore::WorkerGlobalScope& context) { return context.isDedicatedWorkerGlobalScope(); }
+    static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkerGlobalScope>(context) && downcast<WebCore::WorkerGlobalScope>(context).type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker; }
+    static bool isType(const WebCore::WorkerGlobalScope& context) { return context.type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker; }
 SPECIALIZE_TYPE_TRAITS_END()

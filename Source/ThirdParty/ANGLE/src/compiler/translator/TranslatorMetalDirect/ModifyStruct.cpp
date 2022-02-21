@@ -235,7 +235,7 @@ class ConvertStructState : angle::NonCopyable
             const TType mt = modified->getType();
             ASSERT(ot.isArray() == mt.isArray());
 
-            if (ot.isArray() && (ot.getLayoutQualifier().matrixPacking == EmpRowMajor  || ot != mt))
+            if (ot.isArray() && (ot.getLayoutQualifier().matrixPacking == EmpRowMajor || ot != mt))
             {
                 ASSERT(ot.getArraySizes() == mt.getArraySizes());
                 if (ot.isArrayOfArrays())
@@ -309,7 +309,8 @@ class ConvertStructState : angle::NonCopyable
         finalized = true;
         introducePacking();
         ASSERT(metalLayoutTotal == Layout::Identity());
-        // Only pad substructs. We don't want to pad the structure that contains all the UBOs, only individual UBOs.
+        // Only pad substructs. We don't want to pad the structure that contains all the UBOs, only
+        // individual UBOs.
         if (allowPadding)
             introducePadding();
     }
@@ -318,7 +319,7 @@ class ConvertStructState : angle::NonCopyable
                           TType &newType,
                           TLayoutBlockStorage storage,
                           TLayoutMatrixPacking packing,
-                          const AddressSpace * addressSpace)
+                          const AddressSpace *addressSpace)
     {
         TLayoutQualifier layoutQualifier = newType.getLayoutQualifier();
         layoutQualifier.blockStorage     = storage;
@@ -326,11 +327,10 @@ class ConvertStructState : angle::NonCopyable
         newType.setLayoutQualifier(layoutQualifier);
 
         const ImmutableString pathName(namePath);
-        TField * modifiedField = new TField(&newType, pathName, field.line(), field.symbolType());
-        if(addressSpace)
+        TField *modifiedField = new TField(&newType, pathName, field.line(), field.symbolType());
+        if (addressSpace)
         {
             symbolEnv.markAsPointer(*modifiedField, *addressSpace);
-
         }
         if (symbolEnv.isUBO(field))
         {
@@ -355,16 +355,18 @@ class ConvertStructState : angle::NonCopyable
 
     bool hasPadding() const { return padFieldCount > 0; }
 
-    bool recurse(const TStructure &structure, ModifiedStructMachinery &outMachinery, const bool isUBO)
+    bool recurse(const TStructure &structure,
+                 ModifiedStructMachinery &outMachinery,
+                 const bool isUBORecurse)
     {
         const ModifiedStructMachinery *m = outMachineries.find(structure);
         if (m == nullptr)
         {
-            TranslatorMetalReflection *reflection =
-                ((sh::TranslatorMetalDirect *)&mCompiler)->getTranslatorMetalReflection();
+            TranslatorMetalReflection *reflection = mtl::getTranslatorMetalReflection(&mCompiler);
             reflection->addOriginalName(structure.uniqueId().get(), structure.name().data());
             const Name name = idGen.createNewName(structure.name().data());
-            if (!TryCreateModifiedStruct(mCompiler, symbolEnv, idGen, config, structure, name, outMachineries, isUBO, true))
+            if (!TryCreateModifiedStruct(mCompiler, symbolEnv, idGen, config, structure, name,
+                                         outMachineries, isUBORecurse, true))
             {
                 return false;
             }
@@ -375,10 +377,7 @@ class ConvertStructState : angle::NonCopyable
         return true;
     }
 
-    bool getIsUBO() const
-    {
-        return isUBO;
-    }
+    bool getIsUBO() const { return isUBO; }
 
   private:
     void addPadding(size_t padAmount, bool updateLayout)
@@ -420,6 +419,11 @@ class ConvertStructState : angle::NonCopyable
                 ASSERT(padAmount == 1);
                 padAmount -= 1;
                 padType = new TType(TBasicType::EbtBool);
+            }
+
+            if (padType->getBasicType() != EbtBool)
+            {
+                padType->setPrecision(EbpLow);
             }
 
             if (updateLayout)
@@ -597,7 +601,7 @@ class ConvertStructState : angle::NonCopyable
     void pushNamePath(unsigned extra)
     {
         char buffer[std::numeric_limits<unsigned>::digits10 + 1];
-        sprintf(buffer, "%u", extra);
+        snprintf(buffer, sizeof(buffer), "%u", extra);
         pushNamePath(buffer);
     }
 
@@ -714,7 +718,7 @@ bool RecurseStruct(ConvertStructState &state,
     ASSERT(converter);
 
     state.addModifiedField(field, newType, storage, packing, state.symbolEnv.isPointer(field));
-    if(state.symbolEnv.isPointer(field))
+    if (state.symbolEnv.isPointer(field))
     {
         state.symbolEnv.removePointer(field);
     }
@@ -747,7 +751,7 @@ bool SplitMatrixColumns(ConvertStructState &state,
         state.pushPath(c);
 
         state.addModifiedField(field, rowType, storage, packing, state.symbolEnv.isPointer(field));
-        if(state.symbolEnv.isPointer(field))
+        if (state.symbolEnv.isPointer(field))
         {
             state.symbolEnv.removePointer(field);
         }
@@ -782,7 +786,7 @@ bool SaturateMatrixRows(ConvertStructState &state,
     const int cols = type.getCols();
     TType &satType = SetMatrixRowDim(type, saturation);
     state.addModifiedField(field, satType, storage, packing, state.symbolEnv.isPointer(field));
-    if(state.symbolEnv.isPointer(field))
+    if (state.symbolEnv.isPointer(field))
     {
         state.symbolEnv.removePointer(field);
     }
@@ -794,7 +798,7 @@ bool SaturateMatrixRows(ConvertStructState &state,
             state.addConversion([=](Access::Env &, OriginalAccess &o, ModifiedAccess &m) {
                 int firstModifiedIndex  = isRowMajor ? r : c;
                 int secondModifiedIndex = isRowMajor ? c : r;
-                auto &o_ = AccessIndex(AccessIndex(o, c), r);
+                auto &o_                = AccessIndex(AccessIndex(o, c), r);
                 auto &m_ = AccessIndex(AccessIndex(m, firstModifiedIndex), secondModifiedIndex);
                 return Access{o_, m_};
             });
@@ -862,7 +866,7 @@ bool SaturateScalarOrVectorCommon(ConvertStructState &state,
         satType.setBasicType(TBasicType::EbtUInt);
     }
     state.addModifiedField(field, satType, storage, packing, state.symbolEnv.isPointer(field));
-    if(state.symbolEnv.isPointer(field))
+    if (state.symbolEnv.isPointer(field))
     {
         state.symbolEnv.removePointer(field);
     }
@@ -915,7 +919,7 @@ bool PromoteBoolToUint(ConvertStructState &state,
     auto &promotedType = CloneType(*field.type());
     promotedType.setBasicType(TBasicType::EbtUInt);
     state.addModifiedField(field, promotedType, storage, packing, state.symbolEnv.isPointer(field));
-    if(state.symbolEnv.isPointer(field))
+    if (state.symbolEnv.isPointer(field))
     {
         state.symbolEnv.removePointer(field);
     }
@@ -972,7 +976,6 @@ bool InlineArray(ConvertStructState &state,
     const bool isMultiDim = type.isArrayOfArrays();
 
     auto &innermostType = InnermostType(type);
-    const TField innermostField(&innermostType, field.name(), field.line(), field.symbolType());
 
     if (isMultiDim)
     {
@@ -982,6 +985,15 @@ bool InlineArray(ConvertStructState &state,
     for (unsigned i = 0; i < volume; ++i)
     {
         state.pushPath(i);
+        TType setType(innermostType);
+        if (setType.getLayoutQualifier().locationsSpecified)
+        {
+            TLayoutQualifier qualifier(innermostType.getLayoutQualifier());
+            qualifier.location           = innermostType.getLayoutQualifier().location + i;
+            qualifier.locationsSpecified = 1;
+            setType.setLayoutQualifier(qualifier);
+        }
+        const TField innermostField(&setType, field.name(), field.line(), field.symbolType());
         ModifyCommon(state, innermostField, storage, packing);
         state.popPath();
     }
@@ -1047,7 +1059,8 @@ bool sh::TryCreateModifiedStruct(TCompiler &compiler,
 
     state.finalize(allowPadding);
 
-    if (identicalFieldCount == originalFields.size() && !state.hasPacking() && !state.hasPadding() && !isUBO)
+    if (identicalFieldCount == originalFields.size() && !state.hasPacking() &&
+        !state.hasPadding() && !isUBO)
     {
         return false;
     }

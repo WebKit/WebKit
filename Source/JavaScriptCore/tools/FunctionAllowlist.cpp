@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include <stdio.h>
 #include <string.h>
+#include <wtf/SafeStrerror.h>
 
 namespace JSC {
 
@@ -45,7 +46,7 @@ FunctionAllowlist::FunctionAllowlist(const char* filename)
             m_hasActiveAllowlist = true;
             m_entries.add(filename);
         } else
-            dataLogF("Failed to open file %s. Did you add the file-read-data entitlement to WebProcess.sb? Error code: %s\n", filename, strerror(errno));
+            dataLogF("Failed to open file %s. Did you add the file-read-data entitlement to WebProcess.sb? Error code: %s\n", filename, safeStrerror(errno).data());
         return;
     }
 
@@ -73,7 +74,7 @@ FunctionAllowlist::FunctionAllowlist(const char* filename)
 
     int result = fclose(f);
     if (result)
-        dataLogF("Failed to close file %s: %s\n", filename, strerror(errno));
+        dataLogF("Failed to close file %s: %s\n", filename, safeStrerror(errno).data());
 }
 
 bool FunctionAllowlist::contains(CodeBlock* codeBlock) const
@@ -93,6 +94,15 @@ bool FunctionAllowlist::contains(CodeBlock* codeBlock) const
         return true;
 
     return m_entries.contains(name + '#' + hash);
+}
+
+bool FunctionAllowlist::shouldDumpWasmFunction(uint32_t index) const
+{
+    if (!m_hasActiveAllowlist)
+        return false;
+    if (m_entries.isEmpty())
+        return false;
+    return m_entries.contains(String::number(index));
 }
 
 } // namespace JSC

@@ -70,6 +70,10 @@
     color: var(--text-color);
 }
 
+.completion-suggestions-container > .item > .matched {
+    font-weight: bold;
+}
+
 .completion-suggestions-container:not(:active) > .item.selected,
 .completion-suggestions-container > .item:active {
     background-color: var(--selected-background-color);

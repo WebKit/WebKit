@@ -52,6 +52,8 @@ public:
     bool isContentLikelyVisibleInViewport();
     bool needsPreferredWidthsRecalculation() const override;
 
+    double computeIntrinsicAspectRatio() const;
+
 protected:
     RenderReplaced(Element&, RenderStyle&&);
     RenderReplaced(Element&, RenderStyle&&, const LayoutSize& intrinsicSize);

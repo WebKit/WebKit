@@ -44,6 +44,8 @@ class InjectedScriptManager;
 namespace WebCore {
 
 class CanvasRenderingContext;
+class Frame;
+
 #if ENABLE(WEBGL)
 class InspectorShaderProgram;
 class WebGLProgram;

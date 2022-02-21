@@ -30,7 +30,7 @@
 
 #include "GPUProcessConnection.h"
 #include "RemoteImageDecoderAVFProxyMessages.h"
-#include "SharedBufferDataReference.h"
+#include "SharedBufferCopy.h"
 #include "WebProcess.h"
 #include <WebCore/AVAssetMIMETypeCache.h>
 #include <WebCore/DestinationColorSpace.h>
@@ -47,7 +47,7 @@ using namespace WebCore;
 
 RemoteImageDecoderAVF::RemoteImageDecoderAVF(RemoteImageDecoderAVFManager& manager, const WebCore::ImageDecoderIdentifier& identifier, const String& mimeType)
     : ImageDecoder()
-    , m_gpuProcessConnection(makeWeakPtr(manager.ensureGPUProcessConnection()))
+    , m_gpuProcessConnection(manager.ensureGPUProcessConnection())
     , m_manager(manager)
     , m_identifier(identifier)
     , m_mimeType(mimeType)
@@ -200,18 +200,16 @@ void RemoteImageDecoderAVF::setExpectedContentSize(long long expectedContentSize
 
 // If allDataReceived is true, the caller expects encodedDataStatus() to be >= EncodedDataStatus::SizeAvailable
 // after this function returns (in the same run loop).
-void RemoteImageDecoderAVF::setData(SharedBuffer& data, bool allDataReceived)
+void RemoteImageDecoderAVF::setData(const FragmentedSharedBuffer& data, bool allDataReceived)
 {
     if (!m_gpuProcessConnection)
         return;
-
-    IPC::SharedBufferDataReference dataReference { data };
 
     size_t frameCount;
     IntSize size;
     bool hasTrack;
     std::optional<Vector<ImageDecoder::FrameInfo>> frameInfos;
-    if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::SetData(m_identifier, dataReference, allDataReceived), Messages::RemoteImageDecoderAVFProxy::SetData::Reply(frameCount, size, hasTrack, frameInfos), 0))
+    if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::SetData(m_identifier, IPC::SharedBufferCopy(data), allDataReceived), Messages::RemoteImageDecoderAVFProxy::SetData::Reply(frameCount, size, hasTrack, frameInfos), 0))
         return;
 
     m_isAllDataReceived = allDataReceived;

@@ -88,10 +88,10 @@ Rect BoxGeometry::paddingBox() const
     auto borderBox = this->borderBox();
 
     Rect paddingBox;
-    paddingBox.setTop(borderBox.top() + borderTop());
-    paddingBox.setLeft(borderBox.left() + borderLeft());
-    paddingBox.setHeight(borderBox.bottom() - verticalSpaceForScrollbar() - borderBottom() - borderTop());
-    paddingBox.setWidth(borderBox.width() - borderRight() - horizontalSpaceForScrollbar() - borderLeft());
+    paddingBox.setTop(borderBox.top() + borderBefore());
+    paddingBox.setLeft(borderBox.left() + borderStart());
+    paddingBox.setHeight(borderBox.bottom() - verticalSpaceForScrollbar() - borderAfter() - borderBefore());
+    paddingBox.setWidth(borderBox.width() - borderEnd() - horizontalSpaceForScrollbar() - borderStart());
     return paddingBox;
 }
 

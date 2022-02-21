@@ -26,6 +26,7 @@
 import os
 import os.path
 import shutil
+import sys
 import tempfile
 from webkitpy.common.checkout.scm.detection import detect_scm_system
 from webkitpy.common.system.executive import ScriptError
@@ -38,7 +39,7 @@ class BuiltinsGeneratorTests:
         self.executive = executive
 
     def generate_from_js_builtins(self, builtins_files, output_directory, framework_name="", combined_outputs=False, generate_wrappers=False):
-        cmd = ['python',
+        cmd = [sys.executable,
                'JavaScriptCore/Scripts/generate-js-builtins.py',
                '--output-directory', output_directory,
                '--force',

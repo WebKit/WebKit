@@ -45,7 +45,7 @@ class RemoteImageDecoderAVF final
     : public WebCore::ImageDecoder
     , public CanMakeWeakPtr<RemoteImageDecoderAVF> {
 public:
-    static Ref<RemoteImageDecoderAVF> create(RemoteImageDecoderAVFManager& manager, const WebCore::ImageDecoderIdentifier& identifier, WebCore::SharedBuffer&, const String& mimeType)
+    static Ref<RemoteImageDecoderAVF> create(RemoteImageDecoderAVFManager& manager, const WebCore::ImageDecoderIdentifier& identifier, WebCore::FragmentedSharedBuffer&, const String& mimeType)
     {
         return adoptRef(*new RemoteImageDecoderAVF(manager, identifier, mimeType));
     }
@@ -80,7 +80,7 @@ public:
     WebCore::PlatformImagePtr createFrameImageAtIndex(size_t, WebCore::SubsamplingLevel = WebCore::SubsamplingLevel::Default, const WebCore::DecodingOptions& = WebCore::DecodingOptions(WebCore::DecodingMode::Synchronous)) final;
 
     void setExpectedContentSize(long long) final;
-    void setData(WebCore::SharedBuffer&, bool allDataReceived) final;
+    void setData(const WebCore::FragmentedSharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
     void clearFrameBufferCache(size_t) final;
 

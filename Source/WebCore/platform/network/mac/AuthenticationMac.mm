@@ -128,14 +128,14 @@ void AuthenticationChallenge::setAuthenticationClient(AuthenticationClient* clie
         if (m_nsChallenge)
             m_nsChallenge = adoptNS([[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:m_nsChallenge.get() sender:m_sender.get()]);
     } else {
-        if ([m_sender.get() isMemberOfClass:[WebCoreAuthenticationClientAsChallengeSender class]])
+        if ([m_sender isMemberOfClass:[WebCoreAuthenticationClientAsChallengeSender class]])
             [(WebCoreAuthenticationClientAsChallengeSender *)m_sender.get() detachClient];
     }
 }
 
 AuthenticationClient* AuthenticationChallenge::authenticationClient() const
 {
-    if ([m_sender.get() isMemberOfClass:[WebCoreAuthenticationClientAsChallengeSender class]])
+    if ([m_sender isMemberOfClass:[WebCoreAuthenticationClientAsChallengeSender class]])
         return [static_cast<WebCoreAuthenticationClientAsChallengeSender*>(m_sender.get()) client];
     
     return nullptr;

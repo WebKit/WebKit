@@ -25,8 +25,8 @@
 typedef double DOMHighResTimeStamp;
 
 [
-    Conditional=MEDIA_STREAM,
-    EnabledBySetting=MediaRecorder,
+    Conditional=MEDIA_RECORDER,
+    EnabledBySetting=MediaRecorderEnabled,
     Exposed=Window
 ]  interface BlobEvent : Event {
     constructor(DOMString type, BlobEventInit eventInitDict);

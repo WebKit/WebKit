@@ -44,7 +44,7 @@ public:
     static CompleteSubspace* subspaceFor(VM& vm)
     {
         static_assert(!CellType::needsDestruction, "");
-        return &vm.variableSizedCellSpace;
+        return &vm.variableSizedCellSpace();
     }
 
     using Base = JSSymbolTableObject;
@@ -93,7 +93,7 @@ public:
         JSLexicalEnvironment* result = 
             new (
                 NotNull,
-                allocateCell<JSLexicalEnvironment>(vm.heap, allocationSize(symbolTable)))
+                allocateCell<JSLexicalEnvironment>(vm, allocationSize(symbolTable)))
             JSLexicalEnvironment(vm, structure, currentScope, symbolTable);
         result->finishCreation(vm, initialValue);
         return result;

@@ -8,8 +8,8 @@ PASS paragraph1.parentNode.nodeName == "mark" is false
 <b> does not close <mark>:
 PASS b1.parentNode.nodeName is "MARK"
 Residual style:
-PASS getWeight("mark2") is "bold"
-PASS getWeight("span1") is "bold"
+PASS getWeight("mark2") is "700"
+PASS getWeight("span1") is "700"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -27,6 +27,7 @@
 
 #if USE(QUICK_LOOK)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestProtocol.h"
@@ -44,11 +45,10 @@
 #import <WebKit/_WKDownload.h>
 #import <WebKit/_WKDownloadDelegate.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 using namespace TestWebKitAPI;
 
-static bool isDone;
 static bool downloadIsDone;
 
 static NSString * const pagesDocumentPreviewMIMEType = @"application/pdf";
@@ -69,7 +69,7 @@ static RetainPtr<NSURL> pagesDocumentURL()
 @property (nonatomic, readonly) BOOL didFinishNavigation;
 @property (nonatomic, readonly) BOOL didFinishQuickLookLoad;
 @property (nonatomic, readonly) BOOL didStartQuickLookLoad;
-@property (nonatomic, readonly, nullable) NSError *navigationError;
+@property (nonatomic, readonly) NSError *navigationError;
 
 @end
 
@@ -97,8 +97,8 @@ static void readFile(NSURL *fileURL, NSUInteger& fileSize, RetainPtr<NSString>& 
     if ([fileURL getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:nil])
         fileType = typeIdentifier;
 
-    mimeType = adoptCF(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)typeIdentifier, kUTTagClassMIMEType));
-    fileData = [NSData dataWithContentsOfURL:fileURL];
+    mimeType = bridge_cast(adoptCF(UTTypeCopyPreferredTagWithClass(bridge_cast(typeIdentifier), kUTTagClassMIMEType)));
+    fileData = adoptNS([[NSData alloc] initWithContentsOfURL:fileURL]);
 }
 
 - (instancetype)initWithExpectedFileURL:(NSURL *)fileURL responsePolicy:(WKNavigationResponsePolicy)responsePolicy
@@ -121,7 +121,7 @@ static void readFile(NSURL *fileURL, NSUInteger& fileSize, RetainPtr<NSString>& 
     return self;
 }
 
-- (nullable NSError *)navigationError
+- (NSError *)navigationError
 {
     return _navigationError.get();
 }
@@ -452,7 +452,7 @@ TEST(QuickLook, ReloadAndSameDocumentNavigation)
     EXPECT_TRUE([delegate didStartQuickLookLoad]);
 
     isDone = false;
-    [webView evaluateJavaScript:@"window.location = '#test'; window.location.hash" completionHandler:^(id _Nullable value, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.location = '#test'; window.location.hash" completionHandler:^(id value, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_WK_STREQ(@"#test", value);
         isDone = true;

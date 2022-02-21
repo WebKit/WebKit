@@ -25,7 +25,6 @@
 
 import dotenv from "dotenv";
 import storage from "node-persist";
-import WKR from "./WKR.mjs";
 import WebKitBot from "./WebKitBot.mjs";
 import SlackWebAPI from "@slack/web-api";
 
@@ -39,7 +38,6 @@ async function main() {
     let webClient = new SlackWebAPI.WebClient(process.env.SLACK_TOKEN);
     let auth = await webClient.auth.test();
 
-    WKR.main(webClient, auth);
     WebKitBot.main(webClient, auth);
 }
 

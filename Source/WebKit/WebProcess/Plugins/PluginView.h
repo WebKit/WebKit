@@ -26,7 +26,6 @@
 #pragma once
 
 #include "LayerTreeContext.h"
-#include "NPRuntimeObjectMap.h"
 #include "Plugin.h"
 #include "PluginController.h"
 #include "WebFrame.h"
@@ -38,6 +37,7 @@
 #include <WebCore/PluginViewBase.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/Timer.h>
 #include <memory>
 #include <wtf/Deque.h>
@@ -68,14 +68,12 @@ class PluginView : public WebCore::PluginViewBase, public PluginController, priv
 public:
     static Ref<PluginView> create(WebCore::HTMLPlugInElement&, Ref<Plugin>&&, const Plugin::Parameters&);
 
-    void recreateAndInitialize(Ref<Plugin>&&);
-
     WebCore::Frame* frame() const;
 
     bool isBeingDestroyed() const { return !m_plugin || m_plugin->isBeingDestroyed(); }
 
     void manualLoadDidReceiveResponse(const WebCore::ResourceResponse&);
-    void manualLoadDidReceiveData(const uint8_t* bytes, int length);
+    void manualLoadDidReceiveData(const WebCore::SharedBuffer&);
     void manualLoadDidFinishLoading();
     void manualLoadDidFail(const WebCore::ResourceError&);
 
@@ -85,9 +83,9 @@ public:
 #if PLATFORM(COCOA)
     void setDeviceScaleFactor(float);
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates);
-    bool sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return m_plugin->pdfDocumentForPrinting(); }
-    NSObject *accessibilityObject() const;
+    id accessibilityHitTest(const WebCore::IntPoint& point) const override { return m_plugin->accessibilityHitTest(point); }
+    id accessibilityObject() const override;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
 #endif
 
@@ -115,9 +113,8 @@ public:
 
     bool shouldAllowScripting();
 
-    RefPtr<WebCore::SharedBuffer> liveResourceData() const;
+    RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
-    String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const;
 
 private:
@@ -156,14 +153,11 @@ private:
 #endif
     JSC::JSObject* scriptObject(JSC::JSGlobalObject*) override;
     void storageBlockingStateChanged() override;
-    void privateBrowsingStateChanged(bool) override;
-    bool getFormValue(String&) override;
     bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
     WebCore::Scrollbar* horizontalScrollbar() override;
     WebCore::Scrollbar* verticalScrollbar() override;
     bool wantsWheelEvents() override;
     bool shouldAllowNavigationFromDrags() const override;
-    bool shouldNotAddLayer() const override;
     void willDetachRenderer() override;
 
     // WebCore::Widget
@@ -185,45 +179,14 @@ private:
     void mediaCanStart(WebCore::Document&) override;
 
     // WebCore::MediaProducer
-    WebCore::MediaProducer::MediaStateFlags mediaState() const override;
+    WebCore::MediaProducerMediaStateFlags mediaState() const override;
     void pageMutedStateDidChange() override;
 
     // PluginController
-    void invalidate(const WebCore::IntRect&) override;
-    String userAgent() override;
     void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups) override;
-    void cancelStreamLoad(uint64_t streamID) override;
-    void continueStreamLoad(uint64_t streamID) override;
-    void cancelManualStreamLoad() override;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    NPObject* windowScriptNPObject() override;
-    NPObject* pluginElementNPObject() override;
-    bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) override;
-    void setPluginIsPlayingAudio(bool) override;
-    bool isMuted() const override;
-#endif
-    void setStatusbarText(const String&) override;
-    bool isAcceleratedCompositingEnabled() override;
-    void pluginProcessCrashed() override;
-#if PLATFORM(COCOA)
-    void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus) override;
-    void setComplexTextInputState(PluginComplexTextInputState) override;
-    const WTF::MachSendRight& compositingRenderServerPort() override;
-#endif
     float contentsScaleFactor() override;
-    String proxiesForURL(const String&) override;
-    String cookiesForURL(const String&) override;
-    void setCookiesForURL(const String& urlString, const String& cookieString) override;
-    bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password) override;
-    bool isPrivateBrowsingEnabled() override;
-    bool asynchronousPluginInitializationEnabled() const override;
-    bool asynchronousPluginInitializationEnabledForAllPlugins() const override;
-    bool artificialPluginInitializationDelayEnabled() const override;
-    void protectPluginFromDestruction() override;
-    void unprotectPluginFromDestruction() override;
 
     void didInitializePlugin() override;
-    void didFailToInitializePlugin() override;
     void destroyPluginAndReset();
 
     // WebFrame::LoadListener
@@ -234,13 +197,12 @@ private:
 
     RefPtr<WebCore::HTMLPlugInElement> m_pluginElement;
     RefPtr<Plugin> m_plugin;
-    WebPage* m_webPage;
+    WeakPtr<WebPage> m_webPage;
     Plugin::Parameters m_parameters;
 
     bool m_isInitialized { false };
     bool m_isWaitingForSynchronousInitialization { false };
     bool m_isWaitingUntilMediaCanStart { false };
-    bool m_pluginProcessHasCrashed { false };
 
     // Pending URLRequests that the plug-in has made.
     Deque<RefPtr<URLRequest>> m_pendingURLRequests;
@@ -253,11 +215,6 @@ private:
     // Streams that the plug-in has requested to load. 
     HashMap<uint64_t, RefPtr<Stream>> m_streams;
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    // A map of all related NPObjects for this plug-in view.
-    NPRuntimeObjectMap m_npRuntimeObjectMap { this };
-#endif
-
     // The manual stream state. This is used so we can deliver a manual stream to a plug-in
     // when it is initialized.
     enum class ManualStreamState { Initial, HasReceivedResponse, Finished, Failed };
@@ -265,7 +222,7 @@ private:
 
     WebCore::ResourceResponse m_manualStreamResponse;
     WebCore::ResourceError m_manualStreamError;
-    RefPtr<WebCore::SharedBuffer> m_manualStreamData;
+    WebCore::SharedBufferBuilder m_manualStreamData;
 
     // This snapshot is used to avoid side effects should the plugin run JS during painting.
     RefPtr<ShareableBitmap> m_transientPaintingSnapshot;
@@ -275,11 +232,11 @@ private:
     bool m_pluginIsPlayingAudio { false };
 };
 
-inline WebCore::MediaProducer::MediaStateFlags PluginView::mediaState() const
+inline WebCore::MediaProducerMediaStateFlags PluginView::mediaState() const
 {
-    WebCore::MediaProducer::MediaStateFlags mediaState;
+    WebCore::MediaProducerMediaStateFlags mediaState;
     if (m_pluginIsPlayingAudio)
-        mediaState.add(MediaProducer::MediaState::IsPlayingAudio);
+        mediaState.add(WebCore::MediaProducerMediaState::IsPlayingAudio);
     return mediaState;
 }
 

@@ -36,7 +36,19 @@ enum class CascadeLevel : uint8_t {
     Author      = 1 << 2
 };
 
-static constexpr OptionSet<CascadeLevel> allCascadeLevels() { return { CascadeLevel::UserAgent, CascadeLevel::User, CascadeLevel::Author }; }
+inline CascadeLevel& operator--(CascadeLevel& level)
+{
+    switch (level) {
+    case CascadeLevel::Author:
+        return level = CascadeLevel::User;
+    case CascadeLevel::User:
+        return level = CascadeLevel::UserAgent;
+    case CascadeLevel::UserAgent:
+        ASSERT_NOT_REACHED();
+        return level;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 }
 }

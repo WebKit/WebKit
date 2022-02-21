@@ -34,10 +34,8 @@
 namespace WebCore {
 
 LayerAncestorClippingStack::LayerAncestorClippingStack(Vector<CompositedClipData>&& clipDataStack)
+    : m_stack(WTF::map(WTFMove(clipDataStack), [](auto&& clipDataEntry) { return ClippingStackEntry { WTFMove(clipDataEntry), 0, nullptr }; }))
 {
-    m_stack.reserveInitialCapacity(clipDataStack.size());
-    for (auto& clipDataEntry : clipDataStack)
-        m_stack.uncheckedAppend({ WTFMove(clipDataEntry), 0, nullptr });
 }
 
 bool LayerAncestorClippingStack::equalToClipData(const Vector<CompositedClipData>& clipDataStack) const
@@ -98,7 +96,7 @@ GraphicsLayer* LayerAncestorClippingStack::lastClippingLayer() const
 
 ScrollingNodeID LayerAncestorClippingStack::lastOverflowScrollProxyNodeID() const
 {
-    for (auto& entry : WTF::makeReversedRange(m_stack)) {
+    for (auto& entry : makeReversedRange(m_stack)) {
         if (entry.overflowScrollProxyNodeID)
             return entry.overflowScrollProxyNodeID;
     }
@@ -165,13 +163,9 @@ bool LayerAncestorClippingStack::updateWithClipData(ScrollingCoordinator* scroll
 
 Vector<CompositedClipData> LayerAncestorClippingStack::compositedClipData() const
 {
-    Vector<CompositedClipData> clipData;
-    clipData.reserveInitialCapacity(m_stack.size());
-
-    for (const auto& entry : m_stack)
-        clipData.uncheckedAppend(entry.clipData);
-
-    return clipData;
+    return m_stack.map([](auto& entry) {
+        return entry.clipData;
+    });
 }
 
 static TextStream& operator<<(TextStream& ts, const LayerAncestorClippingStack::ClippingStackEntry& entry)

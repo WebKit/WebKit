@@ -37,12 +37,13 @@
 namespace WebKit {
 namespace NetworkCache {
 
-Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& buffer, const Vector<std::pair<String, String>>& varyingRequestHeaders)
+Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& buffer, const Vector<std::pair<String, String>>& varyingRequestHeaders)
     : m_key(key)
     , m_timeStamp(WallTime::now())
     , m_response(response)
     , m_varyingRequestHeaders(varyingRequestHeaders)
     , m_buffer(WTFMove(buffer))
+    , m_privateRelayed(privateRelayed)
 {
     ASSERT(m_key.type() == "Resource");
 }
@@ -90,8 +91,9 @@ Storage::Record Entry::encodeAsStorageRecord() const
     if (hasVaryingRequestHeaders)
         encoder << m_varyingRequestHeaders;
 
-    bool isRedirect = !!m_redirectRequest;
-    encoder << isRedirect;
+    uint8_t isRedirect = !!m_redirectRequest;
+    uint8_t privateRelayed = m_privateRelayed == PrivateRelayed::Yes;
+    encoder << static_cast<uint8_t>((isRedirect << 0) | (privateRelayed << 1));
     if (isRedirect)
         m_redirectRequest->encodeWithoutPlatformData(encoder);
 
@@ -101,8 +103,10 @@ Storage::Record Entry::encodeAsStorageRecord() const
 
     Data header(encoder.buffer(), encoder.bufferSize());
     Data body;
-    if (m_buffer)
-        body = { m_buffer->data(), m_buffer->size() };
+    if (m_buffer) {
+        m_buffer = m_buffer->makeContiguous();
+        body = { static_cast<WebCore::SharedBuffer*>(m_buffer.get())->data(), m_buffer->size() };
+    }
 
     return { m_key, m_timeStamp, header, body, { } };
 }
@@ -131,12 +135,15 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
         entry->m_varyingRequestHeaders = WTFMove(*varyingRequestHeaders);
     }
 
-    std::optional<bool> isRedirect;
-    decoder >> isRedirect;
-    if (!isRedirect)
+    std::optional<uint8_t> isRedirectAndPrivateRelayed;
+    decoder >> isRedirectAndPrivateRelayed;
+    if (!isRedirectAndPrivateRelayed)
         return nullptr;
 
-    if (*isRedirect) {
+    bool isRedirect = *isRedirectAndPrivateRelayed & 0x1;
+    entry->m_privateRelayed = *isRedirectAndPrivateRelayed & 0x2 ? PrivateRelayed::Yes : PrivateRelayed::No;
+    
+    if (isRedirect) {
         entry->m_redirectRequest.emplace();
         if (!entry->m_redirectRequest->decodeWithoutPlatformData(decoder))
             return nullptr;
@@ -156,7 +163,7 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
     return entry;
 }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 bool Entry::hasReachedPrevalentResourceAgeCap() const
 {
     return m_maxAgeCap && WebCore::computeCurrentAge(response(), timeStamp()) > m_maxAgeCap;
@@ -194,7 +201,7 @@ void Entry::initializeBufferFromStorageRecord() const
     m_buffer = WebCore::SharedBuffer::create(m_sourceStorageRecord.body.data(), m_sourceStorageRecord.body.size());
 }
 
-WebCore::SharedBuffer* Entry::buffer() const
+WebCore::FragmentedSharedBuffer* Entry::buffer() const
 {
     if (!m_buffer)
         initializeBufferFromStorageRecord();

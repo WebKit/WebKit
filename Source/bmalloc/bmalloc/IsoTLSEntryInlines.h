@@ -27,6 +27,8 @@
 
 #include "IsoTLSEntry.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Func>
@@ -66,3 +68,4 @@ void DefaultIsoTLSEntry<EntryType>::destruct(void* passedEntry)
 
 } // namespace bmalloc
 
+#endif

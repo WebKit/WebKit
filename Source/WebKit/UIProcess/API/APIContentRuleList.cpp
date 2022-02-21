@@ -34,15 +34,19 @@
 
 namespace API {
 
-ContentRuleList::ContentRuleList(const WTF::String& name, Ref<WebKit::WebCompiledContentRuleList>&& contentRuleList, WebKit::NetworkCache::Data&& mappedFile)
-    : m_name(name)
-    , m_compiledRuleList(WTFMove(contentRuleList))
+ContentRuleList::ContentRuleList(Ref<WebKit::WebCompiledContentRuleList>&& contentRuleList, WebKit::NetworkCache::Data&& mappedFile)
+    : m_compiledRuleList(WTFMove(contentRuleList))
     , m_mappedFile(WTFMove(mappedFile))
 {
 }
 
 ContentRuleList::~ContentRuleList()
 {
+}
+
+const WTF::String& ContentRuleList::name() const
+{
+    return m_compiledRuleList->data().identifier;
 }
 
 bool ContentRuleList::supportsRegularExpression(const WTF::String& regex)

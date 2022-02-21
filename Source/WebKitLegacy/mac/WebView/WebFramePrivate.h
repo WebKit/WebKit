@@ -29,12 +29,6 @@
 #import <WebKitLegacy/WebFrame.h>
 #import <JavaScriptCore/JSBase.h>
 
-#if !TARGET_OS_IPHONE
-#if !defined(ENABLE_NETSCAPE_PLUGIN_API)
-#define ENABLE_NETSCAPE_PLUGIN_API 1
-#endif
-#endif
-
 #if TARGET_OS_IPHONE
 #import <CoreText/CoreText.h>
 #import <WebKitLegacy/WAKAppKitStubs.h>
@@ -210,13 +204,6 @@ typedef enum {
 - (BOOL)_isDisplayingStandaloneImage;
 
 - (unsigned)_pendingFrameUnloadEventCount;
-
-#if !TARGET_OS_IPHONE
-#if ENABLE_NETSCAPE_PLUGIN_API
-- (void)_recursive_resumeNullEventsForAllNetscapePlugins;
-- (void)_recursive_pauseNullEventsForAllNetscapePlugins;
-#endif
-#endif
 
 - (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string withGlobalObject:(JSObjectRef)globalObject inScriptWorld:(WebScriptWorld *)world;
 - (JSGlobalContextRef)_globalContextForScriptWorld:(WebScriptWorld *)world;

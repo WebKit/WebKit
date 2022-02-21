@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>In-band chapter tracks.</title>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+    let tracks = { };
+    var track;
+    window.addEventListener('load', async event => {
+
+        findMediaElement();
+        video.src = findMediaFile('video', '../content/multi-language-chapters');
+
+        await waitForEvent(video, 'canplaythrough');
+        await testExpectedEventually('video.textTracks.length', 3, '==', 1000);
+
+        let checkTrack = async (t, languageCode, languageName) => {
+            consoleWrite('');
+            track = t;
+            await testExpectedEventually('track.cues.length', 6, '==', 1000);
+            testExpected('track.language', languageCode);
+            testExpected('track.kind', 'chapters');
+            for (let i = 0; i < 6; i++)
+                testExpected(`track.cues[${i}].text`, `${languageName} Chapter ${i + 1}`);
+        }
+
+        tracks = Array.from(video.textTracks);
+        tracks.sort((track1, track2) => track1.language > track2.language);
+
+        tracks.forEach(track => track.mode = 'hidden');
+        await checkTrack(tracks[0], 'en', 'English');
+        await checkTrack(tracks[1], 'es', 'Spanish');
+        await checkTrack(tracks[2], 'fr', 'French');
+
+        consoleWrite('');
+        endTest();
+    });
+
+    </script>
+ </head>
+<body>
+    <video controls></video>
+</body>
+</html>
+    

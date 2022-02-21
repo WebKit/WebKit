@@ -99,6 +99,9 @@ Ref<PageConfiguration> PageConfiguration::copy() const
 #if PLATFORM(IOS_FAMILY)
     copy->m_appInitiatedOverrideValueForTesting = this->m_appInitiatedOverrideValueForTesting;
 #endif
+#if HAVE(TOUCH_BAR)
+    copy->m_requiresUserActionForEditingControlsManager = this->m_requiresUserActionForEditingControlsManager;
+#endif
 
     return copy;
 }
@@ -192,6 +195,18 @@ RefPtr<WebKit::WebURLSchemeHandler> PageConfiguration::urlSchemeHandlerForURLSch
 void PageConfiguration::setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLSchemeHandler>&& handler, const WTF::String& scheme)
 {
     m_urlSchemeHandlers.set(scheme, WTFMove(handler));
+}
+
+bool PageConfiguration::captivePortalModeEnabled() const
+{
+    if (m_defaultWebsitePolicies)
+        return m_defaultWebsitePolicies->captivePortalModeEnabled();
+    return captivePortalModeEnabledBySystem();
+}
+
+bool PageConfiguration::isCaptivePortalModeExplicitlySet() const
+{
+    return m_defaultWebsitePolicies && m_defaultWebsitePolicies->isCaptivePortalModeExplicitlySet();
 }
 
 #if ENABLE(APPLICATION_MANIFEST)

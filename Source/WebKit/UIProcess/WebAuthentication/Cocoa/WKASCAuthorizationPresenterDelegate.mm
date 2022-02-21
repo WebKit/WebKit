@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithCoordinator:(WebKit::AuthenticatorPresenterCoordinator&)coordinator
 {
     if ((self = [super init]))
-        _coordinator = makeWeakPtr(coordinator);
+        _coordinator = coordinator;
     return self;
 }
 
@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
     if ([loginChoice isKindOfClass:WebKit::getASCSecurityKeyPublicKeyCredentialLoginChoiceClass()]) {
         auto *securityKeyLoginChoice = (ASCSecurityKeyPublicKeyCredentialLoginChoice *)loginChoice;
 
-        if ([securityKeyLoginChoice loginChoiceKind] == ASCSecurityKeyPublicKeyCredentialLoginChoiceKindAssertion) {
+        if ([securityKeyLoginChoice credentialKind] == ASCSecurityKeyPublicKeyCredentialKindAssertion) {
             String loginChoiceName = securityKeyLoginChoice.name;
             [self dispatchCoordinatorCallback:[loginChoiceName = WTFMove(loginChoiceName)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
                 coordinator.didSelectAssertionResponse(loginChoiceName, nil);

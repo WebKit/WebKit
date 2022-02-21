@@ -23,8 +23,8 @@
 messages -> WebResourceLoader LegacyReceiver {
     WillSendRequest(WebCore::ResourceRequest request, IPC::FormDataReference requestBody, WebCore::ResourceResponse redirectResponse)
     DidSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
-    DidReceiveResponse(WebCore::ResourceResponse response, bool needsContinueDidReceiveResponseMessage)
-    DidReceiveData(IPC::SharedBufferDataReference data, int64_t encodedDataLength)
+    DidReceiveResponse(WebCore::ResourceResponse response, enum:bool WebKit::PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage)
+    DidReceiveData(IPC::SharedBufferCopy data, int64_t encodedDataLength)
     DidFinishResourceLoad(WebCore::NetworkLoadMetrics networkLoadMetrics)
     DidFailResourceLoad(WebCore::ResourceError error)
     DidFailServiceWorkerLoad(WebCore::ResourceError error)
@@ -37,4 +37,11 @@ messages -> WebResourceLoader LegacyReceiver {
     // DidReceiveResource is for when we have the entire resource data available at once, such as when the resource is cached in memory
     DidReceiveResource(WebKit::ShareableResource::Handle resource)
 #endif
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    ContentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler unblockHandler, String unblockRequestDeniedScript)
+    CancelMainResourceLoadForContentFilter(WebCore::ResourceError error)
+    HandleProvisionalLoadFailureFromContentFilter(URL blockedPageURL, WebCore::SubstituteData substituteData)
+#endif
+
 }

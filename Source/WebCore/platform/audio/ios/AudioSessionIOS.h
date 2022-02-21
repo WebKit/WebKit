@@ -42,6 +42,12 @@ public:
     AudioSessionIOS();
     virtual ~AudioSessionIOS();
 
+    void setHostProcessAttribution(audit_token_t) final;
+    void setPresentingProcesses(Vector<audit_token_t>&&) final;
+
+    using CategoryChangedObserver = WTF::Observer<void(AudioSession&, CategoryType)>;
+    WEBCORE_EXPORT static void addAudioSessionCategoryChangedObserver(const CategoryChangedObserver&);
+
 private:
     // AudioSession
     CategoryType category() const final;
@@ -58,6 +64,7 @@ private:
     bool isMuted() const final;
     void handleMutedStateChange() final;
 
+    String m_lastSetPreferredAudioDeviceUID;
     Ref<WTF::WorkQueue> m_workQueue;
     RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;
 };

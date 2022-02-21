@@ -48,7 +48,7 @@ public:
     WEBCORE_EXPORT bool isNull() const;
     WEBCORE_EXPORT void nullify();
     
-    WEBCORE_EXPORT static bool compare(const AuthenticationChallenge& a, const AuthenticationChallenge& b);
+    WEBCORE_EXPORT static bool equalForWebKitLegacyChallengeComparison(const AuthenticationChallenge&, const AuthenticationChallenge&);
 
 protected:
     // The AuthenticationChallenge subclass may "shadow" this method to compare platform specific fields
@@ -61,9 +61,6 @@ protected:
     ResourceResponse m_failureResponse;
     ResourceError m_error;
 };
-
-inline bool operator==(const AuthenticationChallenge& a, const AuthenticationChallenge& b) { return AuthenticationChallengeBase::compare(a, b); }
-inline bool operator!=(const AuthenticationChallenge& a, const AuthenticationChallenge& b) { return !(a == b); }
 
 }
 

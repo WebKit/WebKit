@@ -27,8 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
 
-#include "DisplayCaptureSourceMac.h"
-#include "IOSurface.h"
+#include "DisplayCaptureSourceCocoa.h"
 #include <CoreGraphics/CGDisplayConfiguration.h>
 #include <CoreGraphics/CGDisplayStream.h>
 #include <wtf/BlockPtr.h>
@@ -40,18 +39,21 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
-class CGDisplayStreamCaptureSource : public DisplayCaptureSourceMac::Capturer, public CanMakeWeakPtr<CGDisplayStreamCaptureSource> {
+class CGDisplayStreamCaptureSource : public DisplayCaptureSourceCocoa::Capturer, public CanMakeWeakPtr<CGDisplayStreamCaptureSource> {
 public:
     explicit CGDisplayStreamCaptureSource() = default;
-    ~CGDisplayStreamCaptureSource();
+    virtual ~CGDisplayStreamCaptureSource();
 
 protected:
     using FrameAvailableCallback = void (^)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef);
-    virtual RetainPtr<CGDisplayStreamRef> createDisplayStream(FrameAvailableCallback, dispatch_queue_t) = 0;
+    virtual RetainPtr<CGDisplayStreamRef> createDisplayStream() = 0;
     virtual bool checkDisplayStream() { return true; }
 
     CGDisplayStreamRef displayStream() const { return m_displayStream.get(); }
     void invalidateDisplayStream() { m_displayStream = nullptr; }
+
+    FrameAvailableCallback frameAvailableHandler();
+    dispatch_queue_t captureQueue();
 
     uint32_t width() const { return m_width; }
     uint32_t height() const { return m_height; }
@@ -60,51 +62,18 @@ protected:
 private:
     static void displayReconfigurationCallBack(CGDirectDisplayID, CGDisplayChangeSummaryFlags, void*);
 
-    // DisplayCaptureSourceMac::Capturer
+    // DisplayCaptureSourceCocoa::Capturer
     bool start() final;
     void stop() final;
-    DisplayCaptureSourceMac::DisplayFrameType generateFrame() final;
+    DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     void commitConfiguration(const RealtimeMediaSourceSettings&) final;
 
     void displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
     bool startDisplayStream();
-    FrameAvailableCallback frameAvailableHandler();
 
-    class DisplaySurface {
-    public:
-        DisplaySurface() = default;
-        explicit DisplaySurface(IOSurfaceRef surface)
-            : m_surface(surface)
-        {
-            if (m_surface)
-                IOSurfaceIncrementUseCount(m_surface.get());
-        }
+    void newFrame(CGDisplayStreamFrameStatus, RetainPtr<IOSurfaceRef>&&);
 
-        ~DisplaySurface()
-        {
-            if (m_surface)
-                IOSurfaceDecrementUseCount(m_surface.get());
-        }
-
-        DisplaySurface& operator=(IOSurfaceRef surface)
-        {
-            if (m_surface)
-                IOSurfaceDecrementUseCount(m_surface.get());
-            if (surface)
-                IOSurfaceIncrementUseCount(surface);
-            m_surface = surface;
-            return *this;
-        }
-
-        IOSurfaceRef ioSurface() const { return m_surface.get(); }
-
-    private:
-        RetainPtr<IOSurfaceRef> m_surface;
-    };
-
-    void newFrame(CGDisplayStreamFrameStatus, DisplaySurface&&);
-
-    DisplaySurface m_currentFrame;
+    RetainPtr<IOSurfaceRef> m_currentFrame;
     RetainPtr<CGDisplayStreamRef> m_displayStream;
     OSObjectPtr<dispatch_queue_t> m_captureQueue;
     BlockPtr<void(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef)> m_frameAvailableHandler;

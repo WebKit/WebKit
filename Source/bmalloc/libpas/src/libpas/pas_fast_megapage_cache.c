@@ -35,6 +35,8 @@
 #include "pas_megapage_cache.h"
 #include "pas_page_base.h"
 
+PAS_BEGIN_EXTERN_C;
+
 typedef struct {
     pas_fast_megapage_table* table;
     pas_fast_megapage_kind kind;
@@ -44,7 +46,7 @@ static void table_set_by_index(size_t index, void* arg)
 {
     table_set_by_index_data* data;
     
-    data = arg;
+    data = (table_set_by_index_data*)arg;
     
     PAS_ASSERT(pas_fast_megapage_table_get_by_index(data->table, index)
                == pas_not_a_fast_megapage_kind);
@@ -61,7 +63,9 @@ void* pas_fast_megapage_cache_try_allocate(
     pas_fast_megapage_table* table,
     pas_page_base_config* config,
     pas_fast_megapage_kind kind,
-    bool should_zero)
+    bool should_zero,
+    pas_heap* heap,
+    pas_physical_memory_transaction* transaction)
 {
     pas_megapage_cache_config cache_config;
     table_set_by_index_data data;
@@ -78,7 +82,9 @@ void* pas_fast_megapage_cache_try_allocate(
     cache_config.table_set_by_index_arg = &data;
     cache_config.should_zero = should_zero;
     
-    return pas_megapage_cache_try_allocate(cache, &cache_config);
+    return pas_megapage_cache_try_allocate(cache, &cache_config, heap, transaction);
 }
+
+PAS_END_EXTERN_C;
 
 #endif /* LIBPAS_ENABLED */

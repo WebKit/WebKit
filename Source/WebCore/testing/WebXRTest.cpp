@@ -41,7 +41,7 @@ WebXRTest::~WebXRTest() = default;
 void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const FakeXRDeviceInit& init, WebFakeXRDevicePromise&& promise)
 {
     // https://immersive-web.github.io/webxr-test-api/#dom-xrtest-simulatedeviceconnection
-    context.postTask([this, protectedThis = makeRef(*this), init, promise = WTFMove(promise)] (ScriptExecutionContext& context) mutable {
+    context.postTask([this, protectedThis = Ref { *this }, init, promise = WTFMove(promise)] (ScriptExecutionContext& context) mutable {
         auto device = WebFakeXRDevice::create();
         auto& simulatedDevice = device->simulatedXRDevice();
 

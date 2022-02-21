@@ -199,12 +199,9 @@ Vector<Ref<VTTCue>> TextTrackLoader::getNewCues()
     if (!m_cueParser)
         return { };
 
-    auto cues = m_cueParser->takeCues();
-    Vector<Ref<VTTCue>> result;
-    result.reserveInitialCapacity(cues.size());
-    for (auto& cueData : cues)
-        result.uncheckedAppend(VTTCue::create(m_document, cueData));
-    return result;
+    return m_cueParser->takeCues().map([this](auto& cueData) {
+        return VTTCue::create(m_document, cueData);
+    });
 }
 
 Vector<Ref<VTTRegion>> TextTrackLoader::getNewRegions()

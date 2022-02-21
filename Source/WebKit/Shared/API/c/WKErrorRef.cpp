@@ -76,6 +76,10 @@ int WKErrorGetErrorCode(WKErrorRef errorRef)
         return kWKErrorCodeInsecurePlugInVersion;
     case API::Error::General::Internal:
         return kWKErrorInternal;
+    case API::Error::Network::Cancelled:
+        return kWKErrorCodeCancelled;
+    case API::Error::Network::FileDoesNotExist:
+        return kWKErrorCodeFileDoesNotExist;
     }
 
     return errorCode;

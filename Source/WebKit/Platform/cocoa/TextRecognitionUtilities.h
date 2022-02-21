@@ -27,7 +27,19 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-@class VKImageAnalysis;
+#import <pal/spi/cocoa/VisionKitCoreSPI.h>
+#import <wtf/CompletionHandler.h>
+#import <wtf/RetainPtr.h>
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+using CocoaImageAnalysis = VKCImageAnalysis;
+using CocoaImageAnalyzer = VKCImageAnalyzer;
+using CocoaImageAnalyzerRequest = VKCImageAnalyzerRequest;
+#else
+using CocoaImageAnalysis = VKImageAnalysis;
+using CocoaImageAnalyzer = VKImageAnalyzer;
+using CocoaImageAnalyzerRequest = VKImageAnalyzerRequest;
+#endif
 
 namespace WebCore {
 struct TextRecognitionResult;
@@ -36,7 +48,19 @@ struct TextRecognitionResult;
 namespace WebKit {
 
 bool isLiveTextAvailableAndEnabled();
-WebCore::TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *);
+bool textRecognitionEnhancementsSystemFeatureEnabled();
+bool imageAnalysisQueueSystemFeatureEnabled();
+bool isImageAnalysisMarkupSystemFeatureEnabled();
+
+WebCore::TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *);
+
+RetainPtr<CocoaImageAnalyzer> createImageAnalyzer();
+RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef, VKAnalysisTypes);
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+void requestImageAnalysisWithIdentifier(CocoaImageAnalyzer *, const String& identifier, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+void requestImageAnalysisMarkup(CGImageRef, CompletionHandler<void(CGImageRef, CGRect)>&&);
+#endif
 
 }
 

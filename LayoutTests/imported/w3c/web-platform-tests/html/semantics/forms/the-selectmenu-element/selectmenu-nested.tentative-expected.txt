@@ -1,0 +1,8 @@
+
+button0
+button1
+
+FAIL A <selectmenu> shouldn't apply controller code to parts nested in a <selectmenu> child assert_equals: Options nested in another <selectmenu> should not get controller code from outer <selectmenu> expected (string) "three" but got (undefined) undefined
+FAIL A <selectmenu> shouldn't apply controller code to parts nested in a <select> child assert_equals: expected (string) "three" but got (undefined) undefined
+FAIL A nested button part in a nested <selectmenu> shouldn't get controller code even if it comes first in document order assert_false: expected false got undefined
+

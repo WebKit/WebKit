@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,7 +92,7 @@ void GCController::gcTimerFired()
 void GCController::garbageCollectNow()
 {
     JSLockHolder lock(commonVM());
-    if (!commonVM().heap.isCurrentThreadBusy()) {
+    if (!commonVM().heap.currentThreadIsDoingGCWork()) {
         commonVM().heap.collectNow(Sync, CollectionScope::Full);
         WTF::releaseFastMallocFreeMemory();
     }
@@ -102,7 +102,7 @@ void GCController::garbageCollectNowIfNotDoneRecently()
 {
 #if USE(CF) || USE(GLIB)
     JSLockHolder lock(commonVM());
-    if (!commonVM().heap.isCurrentThreadBusy())
+    if (!commonVM().heap.currentThreadIsDoingGCWork())
         commonVM().heap.collectNowFullIfNotDoneRecently(Async);
 #else
     garbageCollectSoon();
@@ -154,7 +154,7 @@ void GCController::dumpHeap()
 
     String jsonData;
     {
-        DeferGCForAWhile deferGC(vm.heap); // Prevent concurrent GC from interfering with the full GC that the snapshot does.
+        DeferGCForAWhile deferGC(vm); // Prevent concurrent GC from interfering with the full GC that the snapshot does.
 
         HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::GCDebuggingSnapshot);
         snapshotBuilder.buildSnapshot();

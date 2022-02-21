@@ -25,13 +25,13 @@
 
 [
     ActiveDOMObject,
-    EnabledBySetting=BroadcastChannel,
+    EnabledBySetting=BroadcastChannelEnabled,
     Exposed=(Window,Worker)
 ] interface BroadcastChannel : EventTarget {
-    [CallWith=ScriptExecutionContext] constructor(DOMString name);
+    [CallWith=CurrentScriptExecutionContext] constructor(DOMString name);
 
     readonly attribute DOMString name;
-    [CallWith=GlobalObject] undefined postMessage(any message);
+    [CallWith=CurrentGlobalObject] undefined postMessage(any message);
     undefined close();
     attribute EventHandler onmessage;
     attribute EventHandler onmessageerror;

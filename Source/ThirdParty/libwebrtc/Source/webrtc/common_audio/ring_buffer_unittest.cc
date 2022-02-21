@@ -128,14 +128,14 @@ TEST(RingBufferTest, PassingNulltoReadBufferForcesMemcpy) {
   EXPECT_EQ(kDataSize,
             WebRtc_ReadBuffer(buffer.get(), reinterpret_cast<void**>(&data_ptr),
                               read_data, kDataSize));
-  // Copying was not necessary, so |read_data| has not been updated.
+  // Copying was not necessary, so `read_data` has not been updated.
   CheckIncrementingData(data_ptr, kDataSize, 0);
   CheckIncrementingData(read_data, kDataSize, kDataSize);
 
   EXPECT_EQ(kDataSize, WebRtc_WriteBuffer(buffer.get(), write_data, kDataSize));
   EXPECT_EQ(kDataSize,
             WebRtc_ReadBuffer(buffer.get(), nullptr, read_data, kDataSize));
-  // Passing null forces a memcpy, so |read_data| is now updated.
+  // Passing null forces a memcpy, so `read_data` is now updated.
   CheckIncrementingData(read_data, kDataSize, 0);
 }
 

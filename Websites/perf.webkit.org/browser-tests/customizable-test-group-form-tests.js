@@ -1,11 +1,20 @@
 
 describe('CustomizableTestGroupFormTests', () => {
-    const scripts = ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js', 'models/data-model.js', 'models/commit-log.js',
-        'models/commit-set.js', 'models/repository.js', 'components/test-group-form.js', 'components/customizable-test-group-form.js'];
+    const scripts = ['instrumentation.js', '../shared/common-component-base.js', 'components/base.js',
+        'models/data-model.js', 'models/commit-log.js', 'models/commit-set.js', 'models/repository.js',
+        'components/test-group-form.js', 'components/customizable-test-group-form.js',
+        'components/repetition-type-selection.js', 'models/data-model.js', 'models/triggerable.js', 'models/test.js',
+        'models/platform.js', 'lazily-evaluated-function.js'];
 
     async function createCustomizableTestGroupFormWithContext(context)
     {
-        await context.importScripts(scripts, 'ComponentBase', 'DataModelObject', 'Repository', 'CommitLog', 'CommitSet', 'CustomizableTestGroupForm', 'MockRemoteAPI');
+        await context.importScripts(scripts, 'ComponentBase', 'DataModelObject', 'LabeledObject', 'Test',
+            'Platform', 'Repository', 'CommitLog', 'CommitSet', 'CustomizableTestGroupForm', 'MockRemoteAPI',
+            'LazilyEvaluatedFunction', 'RepetitionTypeSelection', 'TriggerableConfiguration');
+        const platform = new context.symbols.Platform(5, {name: 'SomePlatform', metrics: []});
+        const test = new context.symbols.Test(10, {name: 'SomeTest'});
+        new context.symbols.TriggerableConfiguration(1,
+            {platform, test, supportedRepetitionTypes: ['alternating', 'sequential']});
         const customizableTestGroupForm = new context.symbols.CustomizableTestGroupForm;
         context.document.body.appendChild(customizableTestGroupForm.element());
         return customizableTestGroupForm;

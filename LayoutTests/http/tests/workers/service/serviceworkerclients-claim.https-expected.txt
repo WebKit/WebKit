@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Origin null is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin null is not allowed by Access-Control-Allow-Origin. Status code: 404
 CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:8443/pinkelephant due to access control checks.
 
 

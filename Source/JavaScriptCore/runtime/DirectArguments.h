@@ -50,7 +50,7 @@ public:
     static CompleteSubspace* subspaceFor(VM& vm)
     {
         static_assert(!CellType::needsDestruction, "");
-        return &vm.variableSizedCellSpace;
+        return &vm.variableSizedCellSpace();
     }
 
     // Creates an arguments object but leaves it uninitialized. This is dangerous if we GC right

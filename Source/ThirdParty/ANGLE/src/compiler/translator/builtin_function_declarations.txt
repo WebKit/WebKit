@@ -15,7 +15,7 @@
 //   object format. The metadata is applied to all following functions regardless of grouping until
 //   another "DEFAULT METADATA" line is encountered, or until the end of a top-level group.
 //   Example:
-//     DEFAULT METADATA {"op": "CallBuiltInFunction"}
+//     DEFAULT METADATA {"opSuffix": "ComponentWise"}
 //
 //   Supported function metadata properties are:
 //     "essl_level"
@@ -26,942 +26,936 @@
 //         GLSL1_4_BUILTINS, GLSL1_5_BUILTINS, GLSL3_3_BUILTINS, GLSL4_BUILTINS, GLSL4_1_BUILTINS,
 //         GLSL4_2_BUILTINS, GLSL4_3_BUILTINS, GLSL4_4_BUILTINS, GLSL4_5_BUILTINS, and
 //         GLSL4_6_BUILTINS.
-//     "op"
-//         string, either EOp code or "auto", in which case the op is derived from the function
-//         name.
+//     "opSuffix"
+//         (optional) string, suffix to add to EOp code.  The op is derived from the function name,
+//         and this suffix is applied to disambiguate between functions of the same name but in
+//         different groups.
 //     "suffix"
 //         string, suffix that is used to disambiguate C++ variable names created based on the
 //         function name from C++ keywords, or disambiguate two functions with the same name.
 //     "essl_extension"
 //         string, ESSL extension where the function is defined.
+//     "essl_extension_becomes_core_in"
+//         string, ESSL level where functions from this extension have become core.
 //     "glsl_extension"
 //         string, GLSL extension where the function is defined.
 //     "hasSideEffects"
-//         boolean, can be used to mark a function as having side effects even if it has op other
-//         than CallBuiltInFunction and it doesn't have out parameters. In case the op is
-//         CallBuiltInFunction or the function has out parameters it is automatically treated as
-//         having side effects.
+//         boolean, can be used to mark a function as having side effects. Functions with an out or
+//         inout parameter are automatically treated as having side effects.
+//         TODO: Since the removal of the CallBuiltInFunction operator, all functions that were
+//         previously given that operator have been marked as having side effect to preserve the
+//         prior behavior.  Many of these functions don't actually have side effects, and can be
+//         cleaned up.  http://anglebug.com/6061
+//         TODO: dFdx, dFdy and fwidth were explicitly marked as having side-effects by Olli.  They
+//         don't actually have side effects, and it may have been done to work around a bug.  Try
+//         and clean these up.  http://anglebug.com/6061
 //
 //   Function declarations:
 //   Lines that declare functions are in a similar format as in the GLSL spec:
 //     <return type> <function name>(<param type>, ...);
 //   Parameter types can have "out" or "inout" qualifiers.
 
-GROUP BEGIN Trigonometric
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType radians(genType);
-    genType degrees(genType);
-    genType sin(genType);
-    genType cos(genType);
-    genType tan(genType);
-    genType asin(genType);
-    genType acos(genType);
-    genType atan(genType, genType);
-    genType atan(genType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genType sinh(genType);
-    genType cosh(genType);
-    genType tanh(genType);
-    genType asinh(genType);
-    genType acosh(genType);
-    genType atanh(genType);
-GROUP END Trigonometric
+GROUP BEGIN Math {"queryFunction": true}
+  GROUP BEGIN Trigonometric
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType radians(genType);
+      genType degrees(genType);
+      genType sin(genType);
+      genType cos(genType);
+      genType tan(genType);
+      genType asin(genType);
+      genType acos(genType);
+      genType atan(genType, genType);
+      genType atan(genType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genType sinh(genType);
+      genType cosh(genType);
+      genType tanh(genType);
+      genType asinh(genType);
+      genType acosh(genType);
+      genType atanh(genType);
+  GROUP END Trigonometric
 
-GROUP BEGIN Exponential
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType pow(genType, genType);
-    genType exp(genType);
-    genType log(genType);
-    genType exp2(genType);
-    genType log2(genType);
-    genType sqrt(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType sqrt(genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType inversesqrt(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType inversesqrt(genDType);
-GROUP END Exponential
+  GROUP BEGIN Exponential
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType pow(genType, genType);
+      genType exp(genType);
+      genType log(genType);
+      genType exp2(genType);
+      genType log2(genType);
+      genType sqrt(genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType sqrt(genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType inversesqrt(genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType inversesqrt(genDType);
+  GROUP END Exponential
 
-GROUP BEGIN Common
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType abs(genType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genIType abs(genIType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType abs(genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType sign(genType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genIType sign(genIType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType sign(genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType floor(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType floor(genDType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genType trunc(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType trunc(genDType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genType round(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType round(genDType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genType roundEven(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType roundEven(genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType ceil(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType ceil(genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType fract(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType fract(genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType mod(genType, float);
-    genType mod(genType, genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType mod(genDType, double);
-    genDType mod(genDType, genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType min(genType, float);
-    genType min(genType, genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType min(genDType, genDType);
-    genDType min(genDType, double);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genIType min(genIType, genIType);
-    genIType min(genIType, int);
-    genUType min(genUType, genUType);
-    genUType min(genUType, uint);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType max(genType, float);
-    genType max(genType, genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType max(genDType, genDType);
-    genDType max(genDType, double);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genIType max(genIType, genIType);
-    genIType max(genIType, int);
-    genUType max(genUType, genUType);
-    genUType max(genUType, uint);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType clamp(genType, float, float);
-    genType clamp(genType, genType, genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType clamp(genDType, double, double);
-    genDType clamp(genDType, genDType, genDType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genIType clamp(genIType, int, int);
-    genIType clamp(genIType, genIType, genIType);
-    genUType clamp(genUType, uint, uint);
-    genUType clamp(genUType, genUType, genUType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType mix(genType, genType, float);
-    genType mix(genType, genType, genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType mix(genDType, genDType, double);
-    genDType mix(genDType, genDType, genDType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genType mix(genType, genType, genBType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType mix(genDType, genDType, genBType);
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_5_BUILTINS", "op": "auto"}
-    genIType mix(genIType, genIType, genBType);
-    genUType mix(genUType, genUType, genBType);
-    genBType mix(genBType, genBType, genBType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType step(genType, genType);
-    genType step(float, genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType step(genDType, genDType);
-    genDType step(double, genDType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType smoothstep(genDType, genDType, genDType);
-    genDType smoothstep(double, double, genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType smoothstep(genType, genType, genType);
-    genType smoothstep(float, float, genType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genType modf(genType, out genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType modf(genDType, out genDType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genBType isnan(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genBType isnan(genDType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "auto"}
-    genBType isinf(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genBType isinf(genDType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL3_3_BUILTINS", "op": "auto"}
-    genIType floatBitsToInt(genType);
-    genUType floatBitsToUint(genType);
-    genType intBitsToFloat(genIType);
-    genType uintBitsToFloat(genUType);
-  DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genType fma(genType, genType, genType);
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "auto", "essl_extension": "EXT_gpu_shader5", "suffix": "Ext"}
-    genType fma(genType, genType, genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genType fma(genDType, genDType, genDType);
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genType frexp(genType, out genIType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType frexp(genDType, out genIType);
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genType ldexp(genType, genIType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType ldexp(genDType, genIType);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL4_2_BUILTINS", "op": "auto"}
-    uint packSnorm2x16(vec2);
-    uint packHalf2x16(vec2);
-    vec2 unpackSnorm2x16(uint);
-    vec2 unpackHalf2x16(uint);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    uint packUnorm2x16(vec2);
-    vec2 unpackUnorm2x16(uint);
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    uint packUnorm4x8(vec4);
-    uint packSnorm4x8(vec4);
-    vec4 unpackUnorm4x8(uint);
-    vec4 unpackSnorm4x8(uint);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    double packDouble2x32(uvec2);
-    uvec2 unpackDouble2x32(double);
-GROUP END Common
+  GROUP BEGIN Common
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType abs(genType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genIType abs(genIType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType abs(genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType sign(genType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genIType sign(genIType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType sign(genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType floor(genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType floor(genDType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genType trunc(genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType trunc(genDType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genType round(genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType round(genDType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genType roundEven(genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType roundEven(genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType ceil(genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType ceil(genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType fract(genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType fract(genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType mod(genType, float);
+      genType mod(genType, genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType mod(genDType, double);
+      genDType mod(genDType, genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType min(genType, float);
+      genType min(genType, genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType min(genDType, genDType);
+      genDType min(genDType, double);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genIType min(genIType, genIType);
+      genIType min(genIType, int);
+      genUType min(genUType, genUType);
+      genUType min(genUType, uint);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType max(genType, float);
+      genType max(genType, genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType max(genDType, genDType);
+      genDType max(genDType, double);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genIType max(genIType, genIType);
+      genIType max(genIType, int);
+      genUType max(genUType, genUType);
+      genUType max(genUType, uint);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType clamp(genType, float, float);
+      genType clamp(genType, genType, genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType clamp(genDType, double, double);
+      genDType clamp(genDType, genDType, genDType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genIType clamp(genIType, int, int);
+      genIType clamp(genIType, genIType, genIType);
+      genUType clamp(genUType, uint, uint);
+      genUType clamp(genUType, genUType, genUType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType mix(genType, genType, float);
+      genType mix(genType, genType, genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType mix(genDType, genDType, double);
+      genDType mix(genDType, genDType, genDType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genType mix(genType, genType, genBType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType mix(genDType, genDType, genBType);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_5_BUILTINS"}
+      genIType mix(genIType, genIType, genBType);
+      genUType mix(genUType, genUType, genBType);
+      genBType mix(genBType, genBType, genBType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType step(genType, genType);
+      genType step(float, genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType step(genDType, genDType);
+      genDType step(double, genDType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType smoothstep(genDType, genDType, genDType);
+      genDType smoothstep(double, double, genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType smoothstep(genType, genType, genType);
+      genType smoothstep(float, float, genType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genType modf(genType, out genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType modf(genDType, out genDType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genBType isnan(genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genBType isnan(genDType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS"}
+      genBType isinf(genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genBType isinf(genDType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL3_3_BUILTINS"}
+      genIType floatBitsToInt(genType);
+      genUType floatBitsToUint(genType);
+      genType intBitsToFloat(genIType);
+      genType uintBitsToFloat(genUType);
+    DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS"}
+      genType fma(genType, genType, genType);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "EXT_gpu_shader5", "suffix": "Ext"}
+      genType fma(genType, genType, genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genType fma(genDType, genDType, genDType);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS"}
+      genType frexp(genType, out genIType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType frexp(genDType, out genIType);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS"}
+      genType ldexp(genType, genIType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType ldexp(genDType, genIType);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL4_2_BUILTINS"}
+      uint packSnorm2x16(vec2);
+      uint packHalf2x16(vec2);
+      vec2 unpackSnorm2x16(uint);
+      vec2 unpackHalf2x16(uint);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL4_BUILTINS"}
+      uint packUnorm2x16(vec2);
+      vec2 unpackUnorm2x16(uint);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS"}
+      uint packUnorm4x8(vec4);
+      uint packSnorm4x8(vec4);
+      vec4 unpackUnorm4x8(uint);
+      vec4 unpackSnorm4x8(uint);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      double packDouble2x32(uvec2);
+      uvec2 unpackDouble2x32(double);
+  GROUP END Common
 
-GROUP BEGIN Geometric
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    float length(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    double length(genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    float distance(genType, genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    double distance(genDType, genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    float dot(genType, genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    double dot(genDType, genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    vec3 cross(vec3, vec3);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    dvec3 cross(dvec3, dvec3);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType normalize(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType normalize(genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType faceforward(genType, genType, genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType faceforward(genDType, genDType, genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType reflect(genType, genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType reflect(genDType, genDType);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    genType refract(genType, genType, float);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genDType refract(genDType, genDType, float);
-GROUP END Geometric
+  GROUP BEGIN Geometric
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      float length(genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      double length(genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      float distance(genType, genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      double distance(genDType, genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      float dot(genType, genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      double dot(genDType, genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      vec3 cross(vec3, vec3);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      dvec3 cross(dvec3, dvec3);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType normalize(genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType normalize(genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType faceforward(genType, genType, genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType faceforward(genDType, genDType, genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType reflect(genType, genType);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType reflect(genDType, genDType);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      genType refract(genType, genType, float);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS"}
+      genDType refract(genDType, genDType, float);
+  GROUP END Geometric
 
-GROUP BEGIN GeometricVS {"shader_type": "VERTEX"}
-  DEFAULT METADATA {"glsl_level": "COMMON_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 ftransform();
-GROUP END GeometricVS
+  GROUP BEGIN GeometricVS {"shader_type": "VERTEX"}
+    DEFAULT METADATA {"glsl_level": "COMMON_BUILTINS", "hasSideEffects": "true"}
+      vec4 ftransform();
+  GROUP END GeometricVS
 
-GROUP BEGIN Matrix
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "MulMatrixComponentWise"}
-    mat2 matrixCompMult(mat2, mat2);
-    mat3 matrixCompMult(mat3, mat3);
-    mat4 matrixCompMult(mat4, mat4);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "op": "MulMatrixComponentWise"}
-    mat2x3 matrixCompMult(mat2x3, mat2x3);
-    mat3x2 matrixCompMult(mat3x2, mat3x2);
-    mat2x4 matrixCompMult(mat2x4, mat2x4);
-    mat4x2 matrixCompMult(mat4x2, mat4x2);
-    mat3x4 matrixCompMult(mat3x4, mat3x4);
-    mat4x3 matrixCompMult(mat4x3, mat4x3);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_2_BUILTINS", "op": "auto"}
-    mat2 outerProduct(vec2, vec2);
-    mat3 outerProduct(vec3, vec3);
-    mat4 outerProduct(vec4, vec4);
-    mat2x3 outerProduct(vec3, vec2);
-    mat3x2 outerProduct(vec2, vec3);
-    mat2x4 outerProduct(vec4, vec2);
-    mat4x2 outerProduct(vec2, vec4);
-    mat3x4 outerProduct(vec4, vec3);
-    mat4x3 outerProduct(vec3, vec4);
-    mat2 transpose(mat2);
-    mat3 transpose(mat3);
-    mat4 transpose(mat4);
-    mat2x3 transpose(mat3x2);
-    mat3x2 transpose(mat2x3);
-    mat2x4 transpose(mat4x2);
-    mat4x2 transpose(mat2x4);
-    mat3x4 transpose(mat4x3);
-    mat4x3 transpose(mat3x4);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "op": "auto"}
-    float determinant(mat2);
-    float determinant(mat3);
-    float determinant(mat4);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_4_BUILTINS", "op": "auto"}
-    mat2 inverse(mat2);
-    mat3 inverse(mat3);
-    mat4 inverse(mat4);
-GROUP END Matrix
+  GROUP BEGIN Matrix
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      mat2 matrixCompMult(mat2, mat2);
+      mat3 matrixCompMult(mat3, mat3);
+      mat4 matrixCompMult(mat4, mat4);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS"}
+      mat2x3 matrixCompMult(mat2x3, mat2x3);
+      mat3x2 matrixCompMult(mat3x2, mat3x2);
+      mat2x4 matrixCompMult(mat2x4, mat2x4);
+      mat4x2 matrixCompMult(mat4x2, mat4x2);
+      mat3x4 matrixCompMult(mat3x4, mat3x4);
+      mat4x3 matrixCompMult(mat4x3, mat4x3);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_2_BUILTINS"}
+      mat2 outerProduct(vec2, vec2);
+      mat3 outerProduct(vec3, vec3);
+      mat4 outerProduct(vec4, vec4);
+      mat2x3 outerProduct(vec3, vec2);
+      mat3x2 outerProduct(vec2, vec3);
+      mat2x4 outerProduct(vec4, vec2);
+      mat4x2 outerProduct(vec2, vec4);
+      mat3x4 outerProduct(vec4, vec3);
+      mat4x3 outerProduct(vec3, vec4);
+      mat2 transpose(mat2);
+      mat3 transpose(mat3);
+      mat4 transpose(mat4);
+      mat2x3 transpose(mat3x2);
+      mat3x2 transpose(mat2x3);
+      mat2x4 transpose(mat4x2);
+      mat4x2 transpose(mat2x4);
+      mat3x4 transpose(mat4x3);
+      mat4x3 transpose(mat3x4);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS"}
+      float determinant(mat2);
+      float determinant(mat3);
+      float determinant(mat4);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_4_BUILTINS"}
+      mat2 inverse(mat2);
+      mat3 inverse(mat3);
+      mat4 inverse(mat4);
+  GROUP END Matrix
 
-GROUP BEGIN Vector
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "LessThanComponentWise"}
-    bvec lessThan(vec, vec);
-    bvec lessThan(ivec, ivec);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "LessThanComponentWise"}
-    bvec lessThan(uvec, uvec);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "LessThanEqualComponentWise"}
-    bvec lessThanEqual(vec, vec);
-    bvec lessThanEqual(ivec, ivec);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "LessThanEqualComponentWise"}
-    bvec lessThanEqual(uvec, uvec);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "GreaterThanComponentWise"}
-    bvec greaterThan(vec, vec);
-    bvec greaterThan(ivec, ivec);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "GreaterThanComponentWise"}
-    bvec greaterThan(uvec, uvec);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "GreaterThanEqualComponentWise"}
-    bvec greaterThanEqual(vec, vec);
-    bvec greaterThanEqual(ivec, ivec);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "GreaterThanEqualComponentWise"}
-    bvec greaterThanEqual(uvec, uvec);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "EqualComponentWise"}
-    bvec equal(vec, vec);
-    bvec equal(ivec, ivec);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "EqualComponentWise"}
-    bvec equal(uvec, uvec);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "EqualComponentWise"}
-    bvec equal(bvec, bvec);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "NotEqualComponentWise"}
-    bvec notEqual(vec, vec);
-    bvec notEqual(ivec, ivec);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "NotEqualComponentWise"}
-    bvec notEqual(uvec, uvec);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "NotEqualComponentWise"}
-    bvec notEqual(bvec, bvec);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto"}
-    bool any(bvec);
-    bool all(bvec);
-  DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "LogicalNotComponentWise", "suffix": "Func"}
-    bvec not(bvec);
-GROUP END Vector
+  GROUP BEGIN Vector
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec lessThan(vec, vec);
+      bvec lessThan(ivec, ivec);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec lessThan(uvec, uvec);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec lessThanEqual(vec, vec);
+      bvec lessThanEqual(ivec, ivec);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec lessThanEqual(uvec, uvec);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec greaterThan(vec, vec);
+      bvec greaterThan(ivec, ivec);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec greaterThan(uvec, uvec);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec greaterThanEqual(vec, vec);
+      bvec greaterThanEqual(ivec, ivec);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec greaterThanEqual(uvec, uvec);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec equal(vec, vec);
+      bvec equal(ivec, ivec);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec equal(uvec, uvec);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec equal(bvec, bvec);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec notEqual(vec, vec);
+      bvec notEqual(ivec, ivec);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec notEqual(uvec, uvec);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "opSuffix": "ComponentWise"}
+      bvec notEqual(bvec, bvec);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS"}
+      bool any(bvec);
+      bool all(bvec);
+    DEFAULT METADATA {"essl_level": "COMMON_BUILTINS", "glsl_level": "COMMON_BUILTINS", "opSuffix": "ComponentWise", "suffix": "Func"}
+      bvec not(bvec);
+  GROUP END Vector
 
-GROUP BEGIN Integer
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "auto"}
-    genIType bitfieldExtract(genIType, int, int);
-    genUType bitfieldExtract(genUType, int, int);
-    genIType bitfieldInsert(genIType, genIType, int, int);
-    genUType bitfieldInsert(genUType, genUType, int, int);
-    genIType bitfieldReverse(genIType);
-    genUType bitfieldReverse(genUType);
-    genIType bitCount(genIType);
-    genIType bitCount(genUType);
-    genIType findLSB(genIType);
-    genIType findLSB(genUType);
-    genIType findMSB(genIType);
-    genIType findMSB(genUType);
-    genUType uaddCarry(genUType, genUType, out genUType);
-    genUType usubBorrow(genUType, genUType, out genUType);
-    void umulExtended(genUType, genUType, out genUType, out genUType);
-    void imulExtended(genIType, genIType, out genIType, out genIType);
-GROUP END Integer
+  GROUP BEGIN Integer
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS"}
+      genIType bitfieldExtract(genIType, int, int);
+      genUType bitfieldExtract(genUType, int, int);
+      genIType bitfieldInsert(genIType, genIType, int, int);
+      genUType bitfieldInsert(genUType, genUType, int, int);
+      genIType bitfieldReverse(genIType);
+      genUType bitfieldReverse(genUType);
+      genIType bitCount(genIType);
+      genIType bitCount(genUType);
+      genIType findLSB(genIType);
+      genIType findLSB(genUType);
+      genIType findMSB(genIType);
+      genIType findMSB(genUType);
+      genUType uaddCarry(genUType, genUType, out genUType);
+      genUType usubBorrow(genUType, genUType, out genUType);
+      void umulExtended(genUType, genUType, out genUType, out genUType);
+      void imulExtended(genIType, genIType, out genIType, out genIType);
+  GROUP END Integer
+GROUP END Math
 
-GROUP BEGIN TextureFirstVersions
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 texture2D(sampler2D, vec2);
-    vec4 texture2DProj(sampler2D, vec3);
-    vec4 texture2DProj(sampler2D, vec4);
-    vec4 textureCube(samplerCube, vec3);
-  DEFAULT METADATA {"glsl_level": "COMMON_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 texture1D(sampler1D, float);
-    vec4 texture1DProj(sampler1D, vec2);
-    vec4 texture1DProj(sampler1D, vec4);
-    vec4 texture3D(sampler3D, vec3);
-    vec4 texture3DProj(sampler3D, vec4);
-    vec4 shadow1D(sampler1DShadow, vec3);
-    vec4 shadow1DProj(sampler1DShadow, vec4);
-    vec4 shadow2D(sampler2DShadow, vec3);
-    vec4 shadow2DProj(sampler2DShadow, vec4);
-GROUP END TextureFirstVersions
+GROUP BEGIN Texture {"queryFunction": true}
+  GROUP BEGIN FirstVersions
+    DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "glsl_level": "COMMON_BUILTINS", "hasSideEffects": "true"}
+      vec4 texture2D(sampler2D, vec2);
+      vec4 texture2DProj(sampler2D, vec3);
+      vec4 texture2DProj(sampler2D, vec4);
+      vec4 textureCube(samplerCube, vec3);
+    DEFAULT METADATA {"glsl_level": "COMMON_BUILTINS", "hasSideEffects": "true"}
+      vec4 texture1D(sampler1D, float);
+      vec4 texture1DProj(sampler1D, vec2);
+      vec4 texture1DProj(sampler1D, vec4);
+      vec4 texture3D(sampler3D, vec3);
+      vec4 texture3DProj(sampler3D, vec4);
+      vec4 shadow1D(sampler1DShadow, vec3);
+      vec4 shadow1DProj(sampler1DShadow, vec4);
+      vec4 shadow2D(sampler2DShadow, vec3);
+      vec4 shadow2DProj(sampler2DShadow, vec4);
+    DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_3D"}
+      vec4 texture3D(sampler3D, vec3);
+      vec4 texture3DProj(sampler3D, vec4);
+    DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "hasSideEffects": "true", "essl_extension": "EXT_shadow_samplers"}
+      float shadow2DEXT(sampler2DShadow, vec3);
+      float shadow2DProjEXT(sampler2DShadow, vec4);
+    DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "essl_extension": "OES_EGL_image_external, NV_EGL_stream_consumer_external", "hasSideEffects": "true"}
+      vec4 texture2D(samplerExternalOES, vec2);
+      vec4 texture2DProj(samplerExternalOES, vec3);
+      vec4 texture2DProj(samplerExternalOES, vec4);
+    DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "hasSideEffects": "true", "essl_extension": "ARB_texture_rectangle"}
+      vec4 texture2DRect(sampler2DRect, vec2);
+      vec4 texture2DRectProj(sampler2DRect, vec3);
+      vec4 texture2DRectProj(sampler2DRect, vec4);
+    // The *Grad* variants are new to both vertex and fragment shaders; the fragment
+    // shader specific pieces are added separately below.
+    DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "hasSideEffects": "true", "essl_extension": "EXT_shader_texture_lod"}
+      vec4 texture2DGradEXT(sampler2D, vec2, vec2, vec2);
+      vec4 texture2DProjGradEXT(sampler2D, vec3, vec2, vec2);
+      vec4 texture2DProjGradEXT(sampler2D, vec4, vec2, vec2);
+      vec4 textureCubeGradEXT(samplerCube, vec3, vec3, vec3);
+    DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "glsl_level": "COMMON_BUILTINS", "hasSideEffects": "true", "extension": "WEBGL_video_texture"}
+        vec4 textureVideoWEBGL(samplerVideoWEBGL, vec2);
 
-// These are extension functions from OES_EGL_image_external and
-// NV_EGL_stream_consumer_external. We don't have a way to mark a built-in with two alternative
-// extensions, so these are marked with none. This is fine, since these functions overload core
-// function names and the functions require a samplerExternalOES parameter, which can only be
-// created if one of the extensions is enabled.
-// TODO(oetuaho): Consider implementing a cleaner solution.
-GROUP BEGIN EGL_image_external
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 texture2D(samplerExternalOES, vec2);
-    vec4 texture2DProj(samplerExternalOES, vec3);
-    vec4 texture2DProj(samplerExternalOES, vec4);
-GROUP END EGL_image_external
+    // Variants with bias are limited to fragment shaders
+    GROUP BEGIN Bias {"shader_type": "FRAGMENT", "opSuffix": "Bias"}
+      DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "glsl_level": "COMMON_BUILTINS", "hasSideEffects": "true"}
+        vec4 texture2D(sampler2D, vec2, float);
+        vec4 texture2DProj(sampler2D, vec3, float);
+        vec4 texture2DProj(sampler2D, vec4, float);
+        vec4 textureCube(samplerCube, vec3, float);
+      DEFAULT METADATA {"glsl_level": "COMMON_BUILTINS", "hasSideEffects": "true"}
+        vec4 texture3D(sampler3D, vec3, float);
+        vec4 texture3DProj(sampler3D, vec4, float);
+        vec4 texture1D(sampler1D, float, float);
+        vec4 texture1DProj(sampler1D, vec2, float);
+        vec4 texture1DProj(sampler1D, vec4, float);
+        vec4 shadow1D(sampler1DShadow, vec3, float);
+        vec4 shadow1DProj(sampler1DShadow, vec4, float);
+        vec4 shadow2D(sampler2DShadow, vec3, float);
+        vec4 shadow2DProj(sampler2DShadow, vec4, float);
+      DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_3D"}
+        vec4 texture3D(sampler3D, vec3, float);
+        vec4 texture3DProj(sampler3D, vec4, float);
+    GROUP END Bias
 
-GROUP BEGIN ARB_texture_rectangle
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "ARB_texture_rectangle"}
-    vec4 texture2DRect(sampler2DRect, vec2);
-    vec4 texture2DRectProj(sampler2DRect, vec3);
-    vec4 texture2DRectProj(sampler2DRect, vec4);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "ARB_texture_rectangle"}
-    // We don't have a rectangle texture essl_extension for OpenGL ES however based on the behavior of
-    // rectangle texture in desktop OpenGL, they should be sampled with a "texture" overload in
-    // GLSL version that have such an overload. This is the case for ESSL3 and above.
-    vec4 texture(sampler2DRect, vec2);
-    vec4 textureProj(sampler2DRect, vec3);
-    vec4 textureProj(sampler2DRect, vec4);
-GROUP END ARB_texture_rectangle
+    // Variants with lod are accessible to all shader stages in desktop GL
+    GROUP BEGIN Lod
+      DEFAULT METADATA {"glsl_level": "COMMON_BUILTINS", "hasSideEffects": "true"}
+        vec4 texture2DLod(sampler2D, vec2, float);
+        vec4 texture2DProjLod(sampler2D, vec3, float);
+        vec4 texture2DProjLod(sampler2D, vec4, float);
+        vec4 textureCubeLod(samplerCube, vec3, float);
+        vec4 texture1DLod(sampler1D, float, float);
+        vec4 texture1DProjLod(sampler1D, vec2, float);
+        vec4 texture1DProjLod(sampler1D, vec4, float);
+        vec4 shadow1DLod(sampler1DShadow, vec3, float);
+        vec4 shadow1DProjLod(sampler1DShadow, vec4, float);
+        vec4 shadow2DLod(sampler2DShadow, vec3, float);
+        vec4 shadow2DProjLod(sampler2DShadow, vec4, float);
+        vec4 texture3DLod(sampler3D, vec3, float);
+        vec4 texture3DProjLod(sampler3D, vec4, float);
+      // The GLES spec mentioning that lod variants are limited to vertex shaders, and the
+      // OES_texture_3D spec doesn't mention otherwise.  However, these functions are used in tests
+      // and seem to be expected to be available in fragment shaders too.
+      DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_3D"}
+        vec4 texture3DLod(sampler3D, vec3, float);
+        vec4 texture3DProjLod(sampler3D, vec4, float);
+    GROUP END Lod
 
-// The *Grad* variants are new to both vertex and fragment shaders; the fragment
-// shader specific pieces are added separately below.
-GROUP BEGIN EXT_shader_texture_lod
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "EXT_shader_texture_lod"}
-    vec4 texture2DGradEXT(sampler2D, vec2, vec2, vec2);
-    vec4 texture2DProjGradEXT(sampler2D, vec3, vec2, vec2);
-    vec4 texture2DProjGradEXT(sampler2D, vec4, vec2, vec2);
-    vec4 textureCubeGradEXT(samplerCube, vec3, vec3, vec3);
-GROUP END EXT_shader_texture_lod
+    // Variants with lod are limited to vertex shaders in GLES
+    GROUP BEGIN LodVS {"shader_type": "VERTEX", "opSuffix": "VS"}
+      DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "hasSideEffects": "true"}
+        vec4 texture2DLod(sampler2D, vec2, float);
+        vec4 texture2DProjLod(sampler2D, vec3, float);
+        vec4 texture2DProjLod(sampler2D, vec4, float);
+        vec4 textureCubeLod(samplerCube, vec3, float);
+    GROUP END LodVS
 
-GROUP BEGIN TextureFirstVersionsFS {"shader_type": "FRAGMENT"}
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 texture2D(sampler2D, vec2, float);
-    vec4 texture2DProj(sampler2D, vec3, float);
-    vec4 texture2DProj(sampler2D, vec4, float);
-    vec4 textureCube(samplerCube, vec3, float);
-  DEFAULT METADATA {"glsl_level": "COMMON_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 texture3D(sampler3D, vec3, float);
-    vec4 texture3DProj(sampler3D, vec4, float);
-    vec4 texture3DLod(sampler3D, vec3, float);
-    vec4 texture3DProjLod(sampler3D, vec4, float);
-    vec4 texture1D(sampler1D, float, float);
-    vec4 texture1DProj(sampler1D, vec2, float);
-    vec4 texture1DProj(sampler1D, vec4, float);
-    vec4 shadow1D(sampler1DShadow, vec3, float);
-    vec4 shadow1DProj(sampler1DShadow, vec4, float);
-    vec4 shadow2D(sampler2DShadow, vec3, float);
-    vec4 shadow2DProj(sampler2DShadow, vec4, float);
-GROUP END TextureFirstVersionsFS
+    // EXT_shader_texture_lod brings some lod variants to fragment shaders
+    GROUP BEGIN LodFS {"shader_type": "FRAGMENT", "opSuffix": "FS"}
+      DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "hasSideEffects": "true", "essl_extension": "EXT_shader_texture_lod"}
+        vec4 texture2DLodEXT(sampler2D, vec2, float);
+        vec4 texture2DProjLodEXT(sampler2D, vec3, float);
+        vec4 texture2DProjLodEXT(sampler2D, vec4, float);
+        vec4 textureCubeLodEXT(samplerCube, vec3, float);
+    GROUP END LodFS
 
-GROUP BEGIN TextureFirstVersionsFSExt {"shader_type": "FRAGMENT"}
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "op": "auto", "essl_extension": "OES_standard_derivatives", "hasSideEffects": "true", "suffix": "Ext"}
-    genType dFdx(genType);
-    genType dFdy(genType);
-    genType fwidth(genType);
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "EXT_shader_texture_lod"}
-    vec4 texture2DLodEXT(sampler2D, vec2, float);
-    vec4 texture2DProjLodEXT(sampler2D, vec3, float);
-    vec4 texture2DProjLodEXT(sampler2D, vec4, float);
-    vec4 textureCubeLodEXT(samplerCube, vec3, float);
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "EXT_shadow_samplers"}
-    float shadow2DEXT(sampler2DShadow, vec3);
-    float shadow2DProjEXT(sampler2DShadow, vec4);
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "OES_texture_3D"}
-    vec4 texture3D(sampler3D, vec3);
-    vec4 texture3DProj(sampler3D, vec4);
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "OES_texture_3D"}
-    vec4 texture3D(sampler3D, vec3, float);
-    vec4 texture3DProj(sampler3D, vec4, float);
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "OES_texture_3D"}
-    vec4 texture3DLod(sampler3D, vec3, float);
-    vec4 texture3DProjLod(sampler3D, vec4, float);
-GROUP END TextureFirstVersionsFSExt
+  GROUP END FirstVersions
 
-GROUP BEGIN TextureFirstVersionsVS {"shader_type": "VERTEX"}
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 texture2DLod(sampler2D, vec2, float);
-    vec4 texture2DProjLod(sampler2D, vec3, float);
-    vec4 texture2DProjLod(sampler2D, vec4, float);
-    vec4 textureCubeLod(samplerCube, vec3, float);
-  DEFAULT METADATA {"glsl_level": "COMMON_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 texture1DLod(sampler1D, float, float);
-    vec4 texture1DProjLod(sampler1D, vec2, float);
-    vec4 texture1DProjLod(sampler1D, vec4, float);
-    vec4 shadow1DLod(sampler1DShadow, vec3, float);
-    vec4 shadow1DProjLod(sampler1DShadow, vec4, float);
-    vec4 shadow2DLod(sampler2DShadow, vec3, float);
-    vec4 shadow2DProjLod(sampler2DShadow, vec4, float);
-GROUP END TextureFirstVersionsVS
+  GROUP BEGIN NoBias
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texture(gsampler2D, vec2);
+      gvec4 texture(gsampler3D, vec3);
+      gvec4 texture(gsamplerCube, vec3);
+      gvec4 texture(gsampler2DArray, vec3);
+      float texture(sampler2DShadow, vec3);
+      float texture(samplerCubeShadow, vec4);
+      float texture(sampler2DArrayShadow, vec4);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texture(gsampler1D, float);
+      float texture(sampler1DShadow, vec3);
+      gvec4 texture(gsampler1DArray, vec3);
+      float texture(sampler1DArrayShadow, vec3);
+    DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texture(gsampler2DRect, vec2);
+      float texture(sampler2DRectShadow, vec3);
+    DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texture(gsamplerCubeArray, vec4);
+      float texture(samplerCubeArrayShadow, vec4, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_cube_map_array, EXT_texture_cube_map_array", "suffix": "Ext"}
+      gvec4 texture(gsamplerCubeArray, vec4);
+      float texture(samplerCubeArrayShadow, vec4, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_EGL_image_external_essl3"}
+      vec4 texture(samplerExternalOES, vec2);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "EXT_YUV_target"}
+      vec4 texture(samplerExternal2DY2YEXT, vec2);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "ARB_texture_rectangle"}
+      // We don't have a rectangle texture essl_extension for OpenGL ES however based on the behavior of
+      // rectangle texture in desktop OpenGL, they should be sampled with a "texture" overload in
+      // GLSL version that have such an overload. This is the case for ESSL3 and above.
+      vec4 texture(sampler2DRect, vec2);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true", "extension": "WEBGL_video_texture"}
+      vec4 texture(samplerVideoWEBGL, vec2);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProj(gsampler2D, vec3);
+      gvec4 textureProj(gsampler2D, vec4);
+      gvec4 textureProj(gsampler3D, vec4);
+      float textureProj(sampler2DShadow, vec4);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProj(gsampler1D, vec2);
+      gvec4 textureProj(gsampler1D, vec4);
+      float textureProj(sampler1DShadow, vec4);
+    DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProj(gsampler2DRect, vec3);
+      gvec4 textureProj(gsampler2DRect, vec4);
+      float textureProj(sampler2DRectShadow, vec4);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_EGL_image_external_essl3"}
+      vec4 textureProj(samplerExternalOES, vec3);
+      vec4 textureProj(samplerExternalOES, vec4);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "EXT_YUV_target"}
+      vec4 textureProj(samplerExternal2DY2YEXT, vec3);
+      vec4 textureProj(samplerExternal2DY2YEXT, vec4);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "ARB_texture_rectangle"}
+      vec4 textureProj(sampler2DRect, vec3);
+      vec4 textureProj(sampler2DRect, vec4);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureLod(gsampler2D, vec2, float);
+      gvec4 textureLod(gsampler3D, vec3, float);
+      gvec4 textureLod(gsamplerCube, vec3, float);
+      gvec4 textureLod(gsampler2DArray, vec3, float);
+      float textureLod(sampler2DShadow, vec3, float);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureLod(gsampler1D, float, float);
+      float textureLod(sampler1DShadow, vec3, float);
+      gvec4 textureLod(gsampler1DArray, vec2, float);
+      float textureLod(sampler1DArrayShadow, vec3, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureLod(gsamplerCubeArray, vec4, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_cube_map_array, EXT_texture_cube_map_array", "suffix": "Ext"}
+      gvec4 textureLod(gsamplerCubeArray, vec4, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      ivec2 textureSize(gsampler2D, int);
+      ivec3 textureSize(gsampler3D, int);
+      ivec2 textureSize(gsamplerCube, int);
+      ivec3 textureSize(gsampler2DArray, int);
+      ivec2 textureSize(sampler2DShadow, int);
+      ivec2 textureSize(samplerCubeShadow, int);
+      ivec3 textureSize(sampler2DArrayShadow, int);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      int textureSize(gsampler1D, int);
+      int textureSize(sampler1DShadow, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+      ivec3 textureSize(gsamplerCubeArray, int);
+      ivec3 textureSize(samplerCubeArrayShadow, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_cube_map_array, EXT_texture_cube_map_array", "suffix": "Ext"}
+      ivec3 textureSize(gsamplerCubeArray, int);
+      ivec3 textureSize(samplerCubeArrayShadow, int);
+    DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      ivec2 textureSize(gsampler2DRect);
+      ivec2 textureSize(sampler2DRectShadow);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      ivec2 textureSize(gsampler1DArray, int);
+      ivec2 textureSize(sampler1DArrayShadow, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      int textureSize(gsamplerBuffer);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_buffer, EXT_texture_buffer", "suffix": "Ext"}
+      int textureSize(gsamplerBuffer);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL1_5_BUILTINS", "hasSideEffects": "true"}
+      ivec2 textureSize(gsampler2DMS);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "ANGLE_texture_multisample", "suffix": "Ext"}
+      ivec2 textureSize(gsampler2DMS);
+    DEFAULT METADATA {"glsl_level": "GLSL1_5_BUILTINS", "hasSideEffects": "true"}
+      ivec3 textureSize(gsampler2DMSArray);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_storage_multisample_2d_array", "suffix": "Ext"}
+      ivec3 textureSize(gsampler2DMSArray);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_EGL_image_external_essl3"}
+      ivec2 textureSize(samplerExternalOES, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "EXT_YUV_target"}
+      ivec2 textureSize(samplerExternal2DY2YEXT, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjLod(gsampler2D, vec3, float);
+      gvec4 textureProjLod(gsampler2D, vec4, float);
+      gvec4 textureProjLod(gsampler3D, vec4, float);
+      float textureProjLod(sampler2DShadow, vec4, float);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjLod(gsampler1D, vec2, float);
+      gvec4 textureProjLod(gsampler1D, vec4, float);
+      float textureProjLod(sampler1DShadow, vec4, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texelFetch(gsampler2D, ivec2, int);
+      gvec4 texelFetch(gsampler3D, ivec3, int);
+      gvec4 texelFetch(gsampler2DArray, ivec3, int);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texelFetch(gsampler1D, int, int);
+    DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texelFetch(gsampler2DRect, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texelFetch(gsampler1DArray, ivec2, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texelFetch(gsamplerBuffer, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_buffer, EXT_texture_buffer", "suffix": "Ext"}
+      gvec4 texelFetch(gsamplerBuffer, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL1_5_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texelFetch(gsampler2DMS, ivec2, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "ANGLE_texture_multisample", "suffix": "Ext"}
+      gvec4 texelFetch(gsampler2DMS, ivec2, int);
+    DEFAULT METADATA {"glsl_level": "GLSL1_5_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texelFetch(gsampler2DMSArray, ivec3, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_storage_multisample_2d_array", "suffix": "Ext"}
+      gvec4 texelFetch(gsampler2DMSArray, ivec3, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_EGL_image_external_essl3"}
+      vec4 texelFetch(samplerExternalOES, ivec2, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "EXT_YUV_target"}
+      vec4 texelFetch(samplerExternal2DY2YEXT, ivec2, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureGrad(gsampler2D, vec2, vec2, vec2);
+      gvec4 textureGrad(gsampler3D, vec3, vec3, vec3);
+      gvec4 textureGrad(gsamplerCube, vec3, vec3, vec3);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureGrad(gsampler2D, float, float, float);
+    DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureGrad(gsampler2DRect, vec2, vec2, vec2);
+      gvec4 textureGrad(sampler2DRectShadow, vec3, vec2, vec2);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      float textureGrad(sampler2DShadow, vec3, vec2, vec2);
+      float textureGrad(samplerCubeShadow, vec4, vec3, vec3);
+      gvec4 textureGrad(gsampler2DArray, vec3, vec2, vec2);
+      float textureGrad(sampler2DArrayShadow, vec4, vec2, vec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      float textureGrad(sampler1DShadow, vec3, float, float);
+      gvec4 textureGrad(gsampler1DArray, vec2, float, float);
+      float textureGrad(sampler1DArrayShadow, vec3, float, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureGrad(gsamplerCubeArray, vec4, vec3, vec3);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_cube_map_array, EXT_texture_cube_map_array", "suffix": "Ext"}
+      gvec4 textureGrad(gsamplerCubeArray, vec4, vec3, vec3);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjGrad(gsampler2D, vec3, vec2, vec2);
+      gvec4 textureProjGrad(gsampler2D, vec4, vec2, vec2);
+      gvec4 textureProjGrad(gsampler3D, vec4, vec3, vec3);
+      float textureProjGrad(sampler2DShadow, vec4, vec2, vec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjGrad(gsampler1D, vec2, float, float);
+      gvec4 textureProjGrad(gsampler1D, vec4, float, float);
+      float textureProjGrad(sampler1DShadow, vec4, float, float);
+    DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjGrad(gsampler2DRect, vec3, vec2, vec2);
+      gvec4 textureProjGrad(gsampler2DRect, vec4, vec2, vec2);
+      float textureProjGrad(sampler2DRectShadow, vec4, vec2, vec2);
+    DEFAULT METADATA {"glsl_level": "GLSL4_3_BUILTINS", "hasSideEffects": "true"}
+      int textureQueryLevels(gsampler1D);
+      int textureQueryLevels(gsampler2D);
+      int textureQueryLevels(gsampler3D);
+      int textureQueryLevels(gsamplerCube);
+      int textureQueryLevels(gsampler1DArray);
+      int textureQueryLevels(gsampler2DArray);
+      int textureQueryLevels(gsamplerCubeArray);
+      int textureQueryLevels(sampler1DShadow);
+      int textureQueryLevels(sampler2DShadow);
+      int textureQueryLevels(samplerCubeShadow);
+      int textureQueryLevels(sampler1DArrayShadow);
+      int textureQueryLevels(sampler2DArrayShadow);
+      int textureQueryLevels(samplerCubeArrayShadow);
+    DEFAULT METADATA {"glsl_level": "GLSL4_5_BUILTINS", "hasSideEffects": "true"}
+      int textureSamples(gsampler2DMS);
+      int textureSamples(gsampler2DMSArray);
+  GROUP END NoBias
 
-GROUP BEGIN TextureNoBias
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texture(gsampler2D, vec2);
-    gvec4 texture(gsampler3D, vec3);
-    gvec4 texture(gsamplerCube, vec3);
-    gvec4 texture(gsampler2DArray, vec3);
-    float texture(sampler2DShadow, vec3);
-    float texture(samplerCubeShadow, vec4);
-    float texture(sampler2DArrayShadow, vec4);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texture(gsampler1D, float);
-    float texture(sampler1DShadow, vec3);
-    gvec4 texture(gsampler1DArray, vec3);
-    float texture(sampler1DArrayShadow, vec3);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texture(gsampler2DRect, vec2);
-    float texture(sampler2DRectShadow, vec3);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-    float texture(samplerCubeArrayShadow, vec4, float);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProj(gsampler2D, vec3);
-    gvec4 textureProj(gsampler2D, vec4);
-    gvec4 textureProj(gsampler3D, vec4);
-    float textureProj(sampler2DShadow, vec4);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProj(gsampler1D, vec2);
-    gvec4 textureProj(gsampler1D, vec4);
-    float textureProj(sampler1DShadow, vec4);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProj(gsampler2DRect, vec3);
-    gvec4 textureProj(gsampler2DRect, vec4);
-    float textureProj(sampler2DRectShadow, vec4);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureLod(gsampler2D, vec2, float);
-    gvec4 textureLod(gsampler3D, vec3, float);
-    gvec4 textureLod(gsamplerCube, vec3, float);
-    gvec4 textureLod(gsampler2DArray, vec3, float);
-    float textureLod(sampler2DShadow, vec3, float);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureLod(gsampler1D, float, float);
-    float textureLod(sampler1DShadow, vec3, float);
-    gvec4 textureLod(gsampler1DArray, vec2, float);
-    float textureLod(sampler1DArrayShadow, vec3, float);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureLod(gsamplerCubeArray, vec4, float);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    ivec2 textureSize(gsampler2D, int);
-    ivec3 textureSize(gsampler3D, int);
-    ivec2 textureSize(gsamplerCube, int);
-    ivec3 textureSize(gsampler2DArray, int);
-    ivec2 textureSize(sampler2DShadow, int);
-    ivec2 textureSize(samplerCubeShadow, int);
-    ivec3 textureSize(sampler2DArrayShadow, int);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    int textureSize(gsampler1D, int);
-    int textureSize(sampler1DShadow, int);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-    ivec3 textureSize(gsamplerCubeArray, int);
-    ivec3 textureSize(samplerCubeArrayShadow, int);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    ivec2 textureSize(gsampler2DRect);
-    ivec2 textureSize(sampler2DRectShadow);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    ivec2 textureSize(gsampler1DArray, int);
-    ivec2 textureSize(sampler1DArrayShadow, int);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    int textureSize(gsamplerBuffer);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjLod(gsampler2D, vec3, float);
-    gvec4 textureProjLod(gsampler2D, vec4, float);
-    gvec4 textureProjLod(gsampler3D, vec4, float);
-    float textureProjLod(sampler2DShadow, vec4, float);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjLod(gsampler1D, vec2, float);
-    gvec4 textureProjLod(gsampler1D, vec4, float);
-    float textureProjLod(sampler1DShadow, vec4, float);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texelFetch(gsampler2D, ivec2, int);
-    gvec4 texelFetch(gsampler3D, ivec3, int);
-    gvec4 texelFetch(gsampler2DArray, ivec3, int);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texelFetch(gsampler1D, int, int);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texelFetch(gsampler2DRect, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texelFetch(gsampler1DArray, ivec2, int);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texelFetch(gsamplerBuffer, int);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureGrad(gsampler2D, vec2, vec2, vec2);
-    gvec4 textureGrad(gsampler3D, vec3, vec3, vec3);
-    gvec4 textureGrad(gsamplerCube, vec3, vec3, vec3);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureGrad(gsampler2D, float, float, float);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureGrad(gsampler2DRect, vec2, vec2, vec2);
-    gvec4 textureGrad(sampler2DRectShadow, vec3, vec2, vec2);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    float textureGrad(sampler2DShadow, vec3, vec2, vec2);
-    float textureGrad(samplerCubeShadow, vec4, vec3, vec3);
-    gvec4 textureGrad(gsampler2DArray, vec3, vec2, vec2);
-    float textureGrad(sampler2DArrayShadow, vec4, vec2, vec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    float textureGrad(sampler1DShadow, vec3, float, float);
-    gvec4 textureGrad(gsampler1DArray, vec2, float, float);
-    float textureGrad(sampler1DArrayShadow, vec3, float, float);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureGrad(gsamplerCubeArray, vec4, vec3, vec3);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjGrad(gsampler2D, vec3, vec2, vec2);
-    gvec4 textureProjGrad(gsampler2D, vec4, vec2, vec2);
-    gvec4 textureProjGrad(gsampler3D, vec4, vec3, vec3);
-    float textureProjGrad(sampler2DShadow, vec4, vec2, vec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjGrad(gsampler1D, vec2, float, float);
-    gvec4 textureProjGrad(gsampler1D, vec4, float, float);
-    float textureProjGrad(sampler1DShadow, vec4, float, float);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjGrad(gsampler2DRect, vec3, vec2, vec2);
-    gvec4 textureProjGrad(gsampler2DRect, vec4, vec2, vec2);
-    float textureProjGrad(sampler2DRectShadow, vec4, vec2, vec2);
-  DEFAULT METADATA {"glsl_level": "GLSL4_3_BUILTINS", "op": "CallBuiltInFunction"}
-    int textureQueryLevels(gsampler1D);
-    int textureQueryLevels(gsampler2D);
-    int textureQueryLevels(gsampler3D);
-    int textureQueryLevels(gsamplerCube);
-    int textureQueryLevels(gsampler1DArray);
-    int textureQueryLevels(gsampler2DArray);
-    int textureQueryLevels(gsamplerCubeArray);
-    int textureQueryLevels(sampler1DShadow);
-    int textureQueryLevels(sampler2DShadow);
-    int textureQueryLevels(samplerCubeShadow);
-    int textureQueryLevels(sampler1DArrayShadow);
-    int textureQueryLevels(sampler2DArrayShadow);
-    int textureQueryLevels(samplerCubeArrayShadow);
-  DEFAULT METADATA {"glsl_level": "GLSL4_5_BUILTINS", "op": "CallBuiltInFunction"}
-    int textureSamples(gsampler2DMS);
-    int textureSamples(gsampler2DMSArray);
-GROUP END TextureNoBias
+  GROUP BEGIN Bias {"shader_type": "FRAGMENT", "opSuffix": "Bias"}
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texture(gsampler2D, vec2, float);
+      gvec4 texture(gsampler3D, vec3, float);
+      gvec4 texture(gsamplerCube, vec3, float);
+      gvec4 texture(gsampler2DArray, vec3, float);
+      gvec4 textureProj(gsampler2D, vec3, float);
+      gvec4 textureProj(gsampler2D, vec4, float);
+      gvec4 textureProj(gsampler3D, vec4, float);
+      float texture(sampler2DShadow, vec3, float);
+      float texture(samplerCubeShadow, vec4, float);
+      float textureProj(sampler2DShadow, vec4, float);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texture(gsampler1D, float, float);
+      float texture(sampler1DShadow, vec3, float);
+      gvec4 texture(gsampler1DArray, vec3, float);
+      float texture(sampler1DArrayShadow, vec3, float);
+      float texture(sampler2DArrayShadow, vec4, float);
+      gvec4 textureProj(gsampler1D, vec2, float);
+      gvec4 textureProj(gsampler1D, vec4, float);
+      float textureProj(sampler1DShadow, vec4, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texture(gsamplerCubeArray, vec4, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_cube_map_array, EXT_texture_cube_map_array", "suffix": "Ext"}
+      gvec4 texture(gsamplerCubeArray, vec4, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_EGL_image_external_essl3"}
+      vec4 texture(samplerExternalOES, vec2, float);
+      vec4 textureProj(samplerExternalOES, vec3, float);
+      vec4 textureProj(samplerExternalOES, vec4, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "EXT_YUV_target"}
+      vec4 texture(samplerExternal2DY2YEXT, vec2, float);
+      vec4 textureProj(samplerExternal2DY2YEXT, vec3, float);
+      vec4 textureProj(samplerExternal2DY2YEXT, vec4, float);
+  GROUP END Bias
 
-GROUP BEGIN TextureSizeMS
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL1_5_BUILTINS", "op": "CallBuiltInFunction"}
-    ivec2 textureSize(gsampler2DMS);
-GROUP END TextureSizeMS
+  GROUP BEGIN QueryLod {"shader_type": "FRAGMENT"}
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+      vec2 textureQueryLod(gsampler1D, float);
+      vec2 textureQueryLod(gsampler2D, vec2);
+      vec2 textureQueryLod(gsampler3D, vec3);
+      vec2 textureQueryLod(gsamplerCube, vec3);
+      vec2 textureQueryLod(gsampler1DArray, float);
+      vec2 textureQueryLod(gsampler2DArray, vec2);
+      vec2 textureQueryLod(gsamplerCubeArray, vec3);
+      vec2 textureQueryLod(sampler1DShadow, float);
+      vec2 textureQueryLod(sampler2DShadow, vec2);
+      vec2 textureQueryLod(samplerCubeShadow, vec3);
+      vec2 textureQueryLod(sampler1DArrayShadow, float);
+      vec2 textureQueryLod(sampler2DArrayShadow, vec2);
+      vec2 textureQueryLod(samplerCubeArrayShadow, vec3);
+  GROUP END QueryLod
 
-GROUP BEGIN TextureSizeMSExt
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "ANGLE_texture_multisample", "suffix": "Ext"}
-    ivec2 textureSize(gsampler2DMS);
-GROUP END TextureSizeMSExt
+  GROUP BEGIN OffsetNoBias {"queryFunction": true}
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureOffset(gsampler2D, vec2, ivec2);
+      gvec4 textureOffset(gsampler3D, vec3, ivec3);
+      float textureOffset(sampler2DShadow, vec3, ivec2);
+      gvec4 textureOffset(gsampler2DArray, vec3, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureOffset(gsampler1D, float, int);
+    DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureOffset(gsampler2DRect, vec2, ivec2);
+      float textureOffset(sampler2DRectShadow, vec3, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      float textureOffset(sampler1DShadow, vec3, int);
+      gvec4 textureOffset(gsampler1DArray, vec2, int);
+      float textureOffset(sampler1DArrayShadow, vec3, int);
+    DEFAULT METADATA {"glsl_level": "GLSL4_3_BUILTINS", "hasSideEffects": "true"}
+      float textureOffset(sampler2DArrayShadow, vec4, ivec2);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjOffset(gsampler2D, vec3, ivec2);
+      gvec4 textureProjOffset(gsampler2D, vec4, ivec2);
+      gvec4 textureProjOffset(gsampler3D, vec4, ivec3);
+      float textureProjOffset(sampler2DShadow, vec4, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjOffset(gsampler1D, vec2, int);
+      gvec4 textureProjOffset(gsampler1D, vec4, int);
+    DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjOffset(gsampler2DRect, vec3, ivec2);
+      gvec4 textureProjOffset(gsampler2DRect, vec4, ivec2);
+      float textureProjOffset(sampler2DRectShadow, vec4, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      float textureProjOffset(sampler1DShadow, vec4, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureLodOffset(gsampler2D, vec2, float, ivec2);
+      gvec4 textureLodOffset(gsampler3D, vec3, float, ivec3);
+      float textureLodOffset(sampler2DShadow, vec3, float, ivec2);
+      gvec4 textureLodOffset(gsampler2DArray, vec3, float, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureLodOffset(gsampler1D, float, float, int);
+      float textureLodOffset(sampler1DShadow, vec3, float, int);
+      gvec4 textureLodOffset(gsampler1DArray, vec2, float, int);
+      float textureLodOffset(sampler1DArrayShadow, vec3, float, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjLodOffset(gsampler2D, vec3, float, ivec2);
+      gvec4 textureProjLodOffset(gsampler2D, vec4, float, ivec2);
+      gvec4 textureProjLodOffset(gsampler3D, vec4, float, ivec3);
+      float textureProjLodOffset(sampler2DShadow, vec4, float, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjLodOffset(gsampler1D, vec2, float, int);
+      gvec4 textureProjLodOffset(gsampler1D, vec4, float, int);
+      float textureProjLodOffset(sampler1DShadow, vec4, float, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texelFetchOffset(gsampler2D, ivec2, int, ivec2);
+      gvec4 texelFetchOffset(gsampler3D, ivec3, int, ivec3);
+      gvec4 texelFetchOffset(gsampler2DArray, ivec3, int, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texelFetchOffset(gsampler1D, int, int, int);
+    DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texelFetchOffset(gsampler2DRect, ivec2, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 texelFetchOffset(gsampler1DArray, ivec2, int, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureGradOffset(gsampler2D, vec2, vec2, vec2, ivec2);
+      gvec4 textureGradOffset(gsampler3D, vec3, vec3, vec3, ivec3);
+      float textureGradOffset(sampler2DShadow, vec3, vec2, vec2, ivec2);
+      gvec4 textureGradOffset(gsampler2DArray, vec3, vec2, vec2, ivec2);
+      float textureGradOffset(sampler2DArrayShadow, vec4, vec2, vec2, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureGradOffset(gsampler1D, float, float, float, int);
+    DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureGradOffset(gsampler2DRect, vec2, vec2, vec2, ivec2);
+      float textureGradOffset(sampler2DRectShadow, vec3, vec2, vec2, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      float textureGradOffset(sampler1DShadow, vec3, float, float, int);
+      gvec4 textureGradOffset(gsampler1DArray, vec2, float, float, int);
+      float textureGradOffset(sampler1DArrayShadow, vec3, float, float, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjGradOffset(gsampler2D, vec3, vec2, vec2, ivec2);
+      gvec4 textureProjGradOffset(gsampler2D, vec4, vec2, vec2, ivec2);
+      gvec4 textureProjGradOffset(gsampler3D, vec4, vec3, vec3, ivec3);
+      float textureProjGradOffset(sampler2DShadow, vec4, vec2, vec2, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjGradOffset(gsampler1D, vec2, float, float, int);
+      gvec4 textureProjGradOffset(gsampler1D, vec4, float, float, int);
+    DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjGradOffset(gsampler2DRect, vec3, vec2, vec2, ivec2);
+      gvec4 textureProjGradOffset(gsampler2DRect, vec4, vec2, vec2, ivec2);
+      float textureProjGradOffset(sampler2DRectShadow, vec4, vec2, vec2, ivec2);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      float textureProjGradOffset(sampler1DShadow, vec4, float, float, int);
+  GROUP END OffsetNoBias
 
-GROUP BEGIN TextureSizeMSArray
-  DEFAULT METADATA {"glsl_level": "GLSL1_5_BUILTINS", "op": "CallBuiltInFunction"}
-    ivec3 textureSize(gsampler2DMSArray);
-GROUP END TextureSizeMSArray
+  GROUP BEGIN OffsetBias {"queryFunction": true, "shader_type": "FRAGMENT", "opSuffix": "Bias"}
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureOffset(gsampler2D, vec2, ivec2, float);
+      gvec4 textureOffset(gsampler3D, vec3, ivec3, float);
+      float textureOffset(sampler2DShadow, vec3, ivec2, float);
+      gvec4 textureOffset(gsampler2DArray, vec3, ivec2, float);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureOffset(gsampler1D, float, int, float);
+      float textureOffset(sampler1DShadow, vec3, int, float);
+      gvec4 textureOffset(gsampler1DArray, vec2, int, float);
+      float textureOffset(sampler1DArrayShadow, vec3, int, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjOffset(gsampler2D, vec3, ivec2, float);
+      gvec4 textureProjOffset(gsampler2D, vec4, ivec2, float);
+      gvec4 textureProjOffset(gsampler3D, vec4, ivec3, float);
+      float textureProjOffset(sampler2DShadow, vec4, ivec2, float);
+    DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureProjOffset(gsampler1D, vec2, int, float);
+      gvec4 textureProjOffset(gsampler1D, vec4, int, float);
+      float textureProjOffset(sampler1DShadow, vec4, int, float);
+  GROUP END OffsetBias
 
-GROUP BEGIN TextureSizeMSArrayExt
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "OES_texture_storage_multisample_2d_array", "suffix": "Ext"}
-    ivec3 textureSize(gsampler2DMSArray);
-GROUP END TextureSizeMSArrayExt
+  GROUP BEGIN Gather {"queryFunction": true}
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureGather(gsampler2D, vec2);
+      gvec4 textureGather(gsampler2D, vec2, int);
+      gvec4 textureGather(gsampler2DArray, vec3);
+      gvec4 textureGather(gsampler2DArray, vec3, int);
+      gvec4 textureGather(gsamplerCube, vec3);
+      gvec4 textureGather(gsamplerCube, vec3, int);
+    DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureGather(gsamplerCubeArray, vec4);
+      gvec4 textureGather(gsamplerCubeArray, vec4, int);
+      vec4 textureGather(samplerCubeArrayShadow, vec4, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_cube_map_array, EXT_texture_cube_map_array", "suffix": "Ext"}
+      gvec4 textureGather(gsamplerCubeArray, vec4);
+      gvec4 textureGather(gsamplerCubeArray, vec4, int);
+      vec4 textureGather(samplerCubeArrayShadow, vec4, float);
+    DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+      gvec4 textureGather(gsampler2DRect, vec3);
+      gvec4 textureGather(gsampler2DRect, vec3, int);
+      vec4 textureGather(sampler2DRectShadow, vec2, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true"}
+      vec4 textureGather(sampler2DShadow, vec2);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+      vec4 textureGather(sampler2DShadow, vec2, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true"}
+      vec4 textureGather(sampler2DArrayShadow, vec3);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+      vec4 textureGather(sampler2DArrayShadow, vec3, float);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true"}
+      vec4 textureGather(samplerCubeShadow, vec3);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+      vec4 textureGather(samplerCubeShadow, vec3, float);
 
-// These functions are part of OES/EXT_texture_cube_map.
-// There's no way to mark alternative extensions for builtins, so these are marked with none.
-// TODO(anglebug.com/4589)
-GROUP BEGIN OES_cube_map_array
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
-    ivec3 textureSize(gsamplerCubeArray, int);
-    ivec3 textureSize(samplerCubeArrayShadow, int);
-    gvec4 texture(gsamplerCubeArray, vec4);
-    gvec4 texture(gsamplerCubeArray, vec4, float);
-    float texture(samplerCubeArrayShadow, vec4, float);
-    gvec4 textureLod(gsamplerCubeArray, vec4, float);
-    gvec4 textureGrad(gsamplerCubeArray, vec4, vec3, vec3);
-    gvec4 textureGather(gsamplerCubeArray, vec4);
-    gvec4 textureGather(gsamplerCubeArray, vec4, int);
-    vec4 textureGather(samplerCubeArrayShadow, vec4, float);
-GROUP END OES_cube_map_array
+      GROUP BEGIN Offset {"queryFunction": true}
+        GROUP BEGIN NoComp {"queryFunction": true}
+          DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+            gvec4 textureGatherOffset(gsampler2D, vec2, ivec2);
+            gvec4 textureGatherOffset(gsampler2DArray, vec3, ivec2);
+            vec4 textureGatherOffset(sampler2DShadow, vec2, float, ivec2);
+            vec4 textureGatherOffset(sampler2DArrayShadow, vec3, float, ivec2);
+          DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+            gvec4 textureGatherOffset(gsampler2DRect, vec2, ivec2);
+            vec4 textureGatherOffset(sampler2DRectShadow, vec2, float, ivec2);
+        GROUP END NoComp
+        GROUP BEGIN Comp {"queryFunction": true, "opSuffix": "Comp"}
+          DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+            gvec4 textureGatherOffset(gsampler2D, vec2, ivec2, int);
+            gvec4 textureGatherOffset(gsampler2DArray, vec3, ivec2, int);
+          DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+            gvec4 textureGatherOffset(gsampler2DRect, vec2, ivec2, int);
+        GROUP END Comp
+      GROUP END Offset
+      GROUP BEGIN Offsets {"queryFunction": true}
+        GROUP BEGIN NoComp {"queryFunction": true}
+          DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+            gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4]);
+            gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4]);
+            vec4 textureGatherOffsets(sampler2DShadow, vec2, float, ivec2[4]);
+            vec4 textureGatherOffsets(sampler2DArrayShadow, vec3, float, ivec2[4]);
+          DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "EXT_gpu_shader5", "suffix": "Ext"}
+            gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4]);
+            gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4]);
+            vec4 textureGatherOffsets(sampler2DShadow, vec2, float, ivec2[4]);
+            vec4 textureGatherOffsets(sampler2DArrayShadow, vec3, float, ivec2[4]);
+          DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+            gvec4 textureGatherOffsets(gsampler2DRect, vec2, ivec2[4]);
+            vec4 textureGatherOffsets(sampler2DRectShadow, vec2, float, ivec2[4]);
+        GROUP END NoComp
+        GROUP BEGIN Comp {"queryFunction": true, "opSuffix": "Comp"}
+          DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+            gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4], int);
+            gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4], int);
+          DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "EXT_gpu_shader5", "suffix": "Ext"}
+            gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4], int);
+            gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4], int);
+          DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
+            gvec4 textureGatherOffsets(gsampler2DRect, vec2, ivec2[4], int);
+        GROUP END Comp
+      GROUP END Offsets
+  GROUP END Gather
+GROUP END Texture
 
-// These functions are part of OES/EXT_texture_buffer.
-// There's no way to mark alternative extensions for builtins, so these are marked with none.
-// TODO(anglebug.com/4589)
-GROUP BEGIN OES_texture_buffer
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
-    int textureSize(gsamplerBuffer);
-    gvec4 texelFetch(gsamplerBuffer, int);
-GROUP END OES_texture_buffer
-
-GROUP BEGIN TexelFetchMS
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL1_5_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texelFetch(gsampler2DMS, ivec2, int);
-GROUP END TexelFetchMS
-
-GROUP BEGIN TexelFetchMSExt
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "ANGLE_texture_multisample", "suffix": "Ext"}
-    gvec4 texelFetch(gsampler2DMS, ivec2, int);
-GROUP END TexelFetchMSExt
-
-GROUP BEGIN TexelFetchMSArray
-  DEFAULT METADATA {"glsl_level": "GLSL1_5_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texelFetch(gsampler2DMSArray, ivec3, int);
-GROUP END TexelFetchMSArray
-
-GROUP BEGIN TexelFetchMSArrayExt
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "OES_texture_storage_multisample_2d_array", "suffix": "Ext"}
-    gvec4 texelFetch(gsampler2DMSArray, ivec3, int);
-GROUP END TexelFetchMSArrayExt
-
-GROUP BEGIN TextureBias {"shader_type": "FRAGMENT"}
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texture(gsampler2D, vec2, float);
-    gvec4 texture(gsampler3D, vec3, float);
-    gvec4 texture(gsamplerCube, vec3, float);
-    gvec4 texture(gsampler2DArray, vec3, float);
-    gvec4 textureProj(gsampler2D, vec3, float);
-    gvec4 textureProj(gsampler2D, vec4, float);
-    gvec4 textureProj(gsampler3D, vec4, float);
-    float texture(sampler2DShadow, vec3, float);
-    float texture(samplerCubeShadow, vec4, float);
-    float textureProj(sampler2DShadow, vec4, float);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texture(gsampler1D, float, float);
-    float texture(sampler1DShadow, vec3, float);
-    gvec4 texture(gsampler1DArray, vec3, float);
-    float texture(sampler1DArrayShadow, vec3, float);
-    float texture(sampler2DArrayShadow, vec4, float);
-    gvec4 textureProj(gsampler1D, vec2, float);
-    gvec4 textureProj(gsampler1D, vec4, float);
-    float textureProj(sampler1DShadow, vec4, float);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "OES_EGL_image_external_essl3"}
-    vec4 texture(samplerExternalOES, vec2, float);
-    vec4 textureProj(samplerExternalOES, vec3, float);
-    vec4 textureProj(samplerExternalOES, vec4, float);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "EXT_YUV_target"}
-    vec4 texture(samplerExternal2DY2YEXT, vec2, float);
-    vec4 textureProj(samplerExternal2DY2YEXT, vec3, float);
-    vec4 textureProj(samplerExternal2DY2YEXT, vec4, float);
-GROUP END TextureBias
-
-GROUP BEGIN TextureQueryLod {"shader_type": "FRAGMENT"}
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-    vec2 textureQueryLod(gsampler1D, float);
-    vec2 textureQueryLod(gsampler2D, vec2);
-    vec2 textureQueryLod(gsampler3D, vec3);
-    vec2 textureQueryLod(gsamplerCube, vec3);
-    vec2 textureQueryLod(gsampler1DArray, float);
-    vec2 textureQueryLod(gsampler2DArray, vec2);
-    vec2 textureQueryLod(gsamplerCubeArray, vec3);
-    vec2 textureQueryLod(sampler1DShadow, float);
-    vec2 textureQueryLod(sampler2DShadow, vec2);
-    vec2 textureQueryLod(samplerCubeShadow, vec3);
-    vec2 textureQueryLod(sampler1DArrayShadow, float);
-    vec2 textureQueryLod(sampler2DArrayShadow, vec2);
-    vec2 textureQueryLod(samplerCubeArrayShadow, vec3);
-GROUP END TextureQueryLod
-
-GROUP BEGIN TextureOffsetNoBias {"queryFunction": true}
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureOffset(gsampler2D, vec2, ivec2);
-    gvec4 textureOffset(gsampler3D, vec3, ivec3);
-    float textureOffset(sampler2DShadow, vec3, ivec2);
-    gvec4 textureOffset(gsampler2DArray, vec3, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureOffset(gsampler1D, float, int);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureOffset(gsampler2DRect, vec2, ivec2);
-    float textureOffset(sampler2DRectShadow, vec3, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    float textureOffset(sampler1DShadow, vec3, int);
-    gvec4 textureOffset(gsampler1DArray, vec2, int);
-    float textureOffset(sampler1DArrayShadow, vec3, int);
-  DEFAULT METADATA {"glsl_level": "GLSL4_3_BUILTINS", "op": "CallBuiltInFunction"}
-    float textureOffset(sampler2DArrayShadow, vec4, ivec2);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjOffset(gsampler2D, vec3, ivec2);
-    gvec4 textureProjOffset(gsampler2D, vec4, ivec2);
-    gvec4 textureProjOffset(gsampler3D, vec4, ivec3);
-    float textureProjOffset(sampler2DShadow, vec4, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjOffset(gsampler1D, vec2, int);
-    gvec4 textureProjOffset(gsampler1D, vec4, int);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjOffset(gsampler2DRect, vec3, ivec2);
-    gvec4 textureProjOffset(gsampler2DRect, vec4, ivec2);
-    float textureProjOffset(sampler2DRectShadow, vec4, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    float textureProjOffset(sampler1DShadow, vec4, int);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureLodOffset(gsampler2D, vec2, float, ivec2);
-    gvec4 textureLodOffset(gsampler3D, vec3, float, ivec3);
-    float textureLodOffset(sampler2DShadow, vec3, float, ivec2);
-    gvec4 textureLodOffset(gsampler2DArray, vec3, float, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureLodOffset(gsampler1D, float, float, int);
-    float textureLodOffset(sampler1DShadow, vec3, float, int);
-    gvec4 textureLodOffset(gsampler1DArray, vec2, float, int);
-    float textureLodOffset(sampler1DArrayShadow, vec3, float, int);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjLodOffset(gsampler2D, vec3, float, ivec2);
-    gvec4 textureProjLodOffset(gsampler2D, vec4, float, ivec2);
-    gvec4 textureProjLodOffset(gsampler3D, vec4, float, ivec3);
-    float textureProjLodOffset(sampler2DShadow, vec4, float, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjLodOffset(gsampler1D, vec2, float, int);
-    gvec4 textureProjLodOffset(gsampler1D, vec4, float, int);
-    float textureProjLodOffset(sampler1DShadow, vec4, float, int);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texelFetchOffset(gsampler2D, ivec2, int, ivec2);
-    gvec4 texelFetchOffset(gsampler3D, ivec3, int, ivec3);
-    gvec4 texelFetchOffset(gsampler2DArray, ivec3, int, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texelFetchOffset(gsampler1D, int, int, int);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texelFetchOffset(gsampler2DRect, ivec2, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 texelFetchOffset(gsampler1DArray, ivec2, int, int);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureGradOffset(gsampler2D, vec2, vec2, vec2, ivec2);
-    gvec4 textureGradOffset(gsampler3D, vec3, vec3, vec3, ivec3);
-    float textureGradOffset(sampler2DShadow, vec3, vec2, vec2, ivec2);
-    gvec4 textureGradOffset(gsampler2DArray, vec3, vec2, vec2, ivec2);
-    float textureGradOffset(sampler2DArrayShadow, vec4, vec2, vec2, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureGradOffset(gsampler1D, float, float, float, int);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureGradOffset(gsampler2DRect, vec2, vec2, vec2, ivec2);
-    float textureGradOffset(sampler2DRectShadow, vec3, vec2, vec2, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    float textureGradOffset(sampler1DShadow, vec3, float, float, int);
-    gvec4 textureGradOffset(gsampler1DArray, vec2, float, float, int);
-    float textureGradOffset(sampler1DArrayShadow, vec3, float, float, int);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjGradOffset(gsampler2D, vec3, vec2, vec2, ivec2);
-    gvec4 textureProjGradOffset(gsampler2D, vec4, vec2, vec2, ivec2);
-    gvec4 textureProjGradOffset(gsampler3D, vec4, vec3, vec3, ivec3);
-    float textureProjGradOffset(sampler2DShadow, vec4, vec2, vec2, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjGradOffset(gsampler1D, vec2, float, float, int);
-    gvec4 textureProjGradOffset(gsampler1D, vec4, float, float, int);
-  DEFAULT METADATA {"glsl_level": "GLSL1_4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjGradOffset(gsampler2DRect, vec3, vec2, vec2, ivec2);
-    gvec4 textureProjGradOffset(gsampler2DRect, vec4, vec2, vec2, ivec2);
-    float textureProjGradOffset(sampler2DRectShadow, vec4, vec2, vec2, ivec2);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    float textureProjGradOffset(sampler1DShadow, vec4, float, float, int);
-GROUP END TextureOffsetNoBias
-
-GROUP BEGIN TextureOffsetBias {"queryFunction": true, "shader_type": "FRAGMENT"}
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureOffset(gsampler2D, vec2, ivec2, float);
-    gvec4 textureOffset(gsampler3D, vec3, ivec3, float);
-    float textureOffset(sampler2DShadow, vec3, ivec2, float);
-    gvec4 textureOffset(gsampler2DArray, vec3, ivec2, float);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureOffset(gsampler1D, float, int, float);
-    float textureOffset(sampler1DShadow, vec3, int, float);
-    gvec4 textureOffset(gsampler1DArray, vec2, int, float);
-    float textureOffset(sampler1DArrayShadow, vec3, int, float);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjOffset(gsampler2D, vec3, ivec2, float);
-    gvec4 textureProjOffset(gsampler2D, vec4, ivec2, float);
-    gvec4 textureProjOffset(gsampler3D, vec4, ivec3, float);
-    float textureProjOffset(sampler2DShadow, vec4, ivec2, float);
-  DEFAULT METADATA {"glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureProjOffset(gsampler1D, vec2, int, float);
-    gvec4 textureProjOffset(gsampler1D, vec4, int, float);
-    float textureProjOffset(sampler1DShadow, vec4, int, float);
-GROUP END TextureOffsetBias
-
-GROUP BEGIN EGL_image_external_essl3
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "OES_EGL_image_external_essl3"}
-    vec4 texture(samplerExternalOES, vec2);
-    vec4 textureProj(samplerExternalOES, vec3);
-    vec4 textureProj(samplerExternalOES, vec4);
-    ivec2 textureSize(samplerExternalOES, int);
-    vec4 texelFetch(samplerExternalOES, ivec2, int);
-GROUP END EGL_image_external_essl3
-
-GROUP BEGIN EXT_yuv_target
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "EXT_YUV_target"}
-    vec4 texture(samplerExternal2DY2YEXT, vec2);
-    vec4 textureProj(samplerExternal2DY2YEXT, vec3);
-    vec4 textureProj(samplerExternal2DY2YEXT, vec4);
+GROUP BEGIN EXT_YUV_target
+  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "EXT_YUV_target"}
     vec3 rgb_2_yuv(vec3, yuvCscStandardEXT);
     vec3 yuv_2_rgb(vec3, yuvCscStandardEXT);
-    ivec2 textureSize(samplerExternal2DY2YEXT, int);
-    vec4 texelFetch(samplerExternal2DY2YEXT, ivec2, int);
-GROUP END EXT_yuv_target
+GROUP END EXT_YUV_target
 
-GROUP BEGIN TextureGather {"queryFunction": true}
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureGather(gsampler2D, vec2);
-    gvec4 textureGather(gsampler2D, vec2, int);
-    gvec4 textureGather(gsampler2DArray, vec3);
-    gvec4 textureGather(gsampler2DArray, vec3, int);
-    gvec4 textureGather(gsamplerCube, vec3);
-    gvec4 textureGather(gsamplerCube, vec3, int);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-    gvec4 textureGather(gsamplerCubeArray, vec4);
-    gvec4 textureGather(gsamplerCubeArray, vec4, int);
-    gvec4 textureGather(gsampler2DRect, vec3);
-    gvec4 textureGather(gsampler2DRect, vec3, int);
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 textureGather(sampler2DShadow, vec2);
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 textureGather(sampler2DShadow, vec2, float);
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 textureGather(sampler2DArrayShadow, vec3);
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 textureGather(sampler2DArrayShadow, vec3, float);
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 textureGather(samplerCubeShadow, vec3);
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 textureGather(samplerCubeShadow, vec3, float);
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-    vec4 textureGather(samplerCubeArrayShadow, vec4, float);
-    vec4 textureGather(sampler2DRectShadow, vec2, float);
-
-    GROUP BEGIN Offset {"queryFunction": true}
-      GROUP BEGIN NoComp {"queryFunction": true}
-        DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-          gvec4 textureGatherOffset(gsampler2D, vec2, ivec2);
-          gvec4 textureGatherOffset(gsampler2DArray, vec3, ivec2);
-          vec4 textureGatherOffset(sampler2DShadow, vec2, float, ivec2);
-          vec4 textureGatherOffset(sampler2DArrayShadow, vec3, float, ivec2);
-        DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-          gvec4 textureGatherOffset(gsampler2DRect, vec2, ivec2);
-          vec4 textureGatherOffset(sampler2DRectShadow, vec2, float, ivec2);
-      GROUP END NoComp
-      GROUP BEGIN Comp {"queryFunction": true}
-        DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-          gvec4 textureGatherOffset(gsampler2D, vec2, ivec2, int);
-          gvec4 textureGatherOffset(gsampler2DArray, vec3, ivec2, int);
-        DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-          gvec4 textureGatherOffset(gsampler2DRect, vec2, ivec2, int);
-      GROUP END Comp
-    GROUP END Offset
-    GROUP BEGIN Offsets {"queryFunction": true}
-      GROUP BEGIN NoComp {"queryFunction": true}
-        DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-          gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4]);
-          gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4]);
-          vec4 textureGatherOffsets(sampler2DShadow, vec2, float, ivec2[4]);
-          vec4 textureGatherOffsets(sampler2DArrayShadow, vec3, float, ivec2[4]);
-        DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "EXT_gpu_shader5", "suffix": "Ext"}
-          gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4]);
-          gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4]);
-          vec4 textureGatherOffsets(sampler2DShadow, vec2, float, ivec2[4]);
-          vec4 textureGatherOffsets(sampler2DArrayShadow, vec3, float, ivec2[4]);
-        DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-          gvec4 textureGatherOffsets(gsampler2DRect, vec2, ivec2[4]);
-          vec4 textureGatherOffsets(sampler2DRectShadow, vec2, float, ivec2[4]);
-      GROUP END NoComp
-      GROUP BEGIN Comp {"queryFunction": true}
-        DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-          gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4], int);
-          gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4], int);
-        DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "EXT_gpu_shader5", "suffix": "Ext"}
-          gvec4 textureGatherOffsets(gsampler2D, vec2, ivec2[4], int);
-          gvec4 textureGatherOffsets(gsampler2DArray, vec3, ivec2[4], int);
-        DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
-          gvec4 textureGatherOffsets(gsampler2DRect, vec2, ivec2[4], int);
-      GROUP END Comp
-    GROUP END Offsets
-GROUP END TextureGather
-
-GROUP BEGIN DerivativesFS {"shader_type": "FRAGMENT"}
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "auto", "hasSideEffects": "true"}
+GROUP BEGIN DerivativesFS {"queryFunction": true, "shader_type": "FRAGMENT"}
+  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "essl_extension": "OES_standard_derivatives", "hasSideEffects": "true", "suffix": "Ext"}
     genType dFdx(genType);
     genType dFdy(genType);
     genType fwidth(genType);
-  DEFAULT METADATA {"glsl_level": "GLSL4_5_BUILTINS", "op": "CallBuiltInFunction", "hasSideEffects": "true"}
+  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "COMMON_BUILTINS", "hasSideEffects": "true"}
+    genType dFdx(genType);
+    genType dFdy(genType);
+    genType fwidth(genType);
+  DEFAULT METADATA {"glsl_level": "GLSL4_5_BUILTINS", "hasSideEffects": "true"}
     genType dFdxFine(genType);
     genType dFdyFine(genType);
     genType dFdxCoarse(genType);
@@ -971,7 +965,7 @@ GROUP BEGIN DerivativesFS {"shader_type": "FRAGMENT"}
 GROUP END DerivativesFS
 
 GROUP BEGIN InterpolationFS {"queryFunction": true, "shader_type": "FRAGMENT"}
-  DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS","glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction"}
+  DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS","glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
     float interpolateAtCentroid(float);
     vec2 interpolateAtCentroid(vec2);
     vec3 interpolateAtCentroid(vec3);
@@ -984,7 +978,7 @@ GROUP BEGIN InterpolationFS {"queryFunction": true, "shader_type": "FRAGMENT"}
     vec2 interpolateAtOffset(vec2, vec2);
     vec3 interpolateAtOffset(vec3, vec2);
     vec4 interpolateAtOffset(vec4, vec2);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "OES_shader_multisample_interpolation", "suffix": "Ext"}
+  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_shader_multisample_interpolation", "suffix": "Ext"}
     float interpolateAtCentroid(float);
     vec2 interpolateAtCentroid(vec2);
     vec3 interpolateAtCentroid(vec3);
@@ -999,12 +993,12 @@ GROUP BEGIN InterpolationFS {"queryFunction": true, "shader_type": "FRAGMENT"}
     vec4 interpolateAtOffset(vec4, vec2);
 GROUP END InterpolationFS
 
-GROUP BEGIN AtomicCounter
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_2_BUILTINS", "op": "CallBuiltInFunction"}
+GROUP BEGIN AtomicCounter {"queryFunction": true}
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_2_BUILTINS", "hasSideEffects": "true"}
     uint atomicCounter(atomic_uint);
     uint atomicCounterIncrement(atomic_uint);
     uint atomicCounterDecrement(atomic_uint);
-  DEFAULT METADATA {"glsl_level": "GLSL4_6_BUILTINS", "op": "CallBuiltInFunction"}
+  DEFAULT METADATA {"glsl_level": "GLSL4_6_BUILTINS", "hasSideEffects": "true"}
     uint atomicCounterAdd(atomic_uint, uint);
     uint atomicCounterSubtract(atomic_uint, uint);
     uint atomicCounterMin(atomic_uint, uint);
@@ -1017,7 +1011,7 @@ GROUP BEGIN AtomicCounter
 GROUP END AtomicCounter
 
 GROUP BEGIN AtomicMemory {"queryFunction": true}
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_3_BUILTINS", "op": "auto"}
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_3_BUILTINS"}
     uint atomicAdd(inout uint, uint);
     int atomicAdd(inout int, int);
     uint atomicMin(inout uint, uint);
@@ -1038,68 +1032,62 @@ GROUP END AtomicMemory
 
 GROUP BEGIN Image {"queryFunction": true}
     GROUP BEGIN Store {"queryFunction": true}
-      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true"}
         void imageStore(gimage2D, ivec2, gvec4);
         void imageStore(gimage3D, ivec3, gvec4);
         void imageStore(gimage2DArray, ivec3, gvec4);
         void imageStore(gimageCube, ivec3, gvec4);
 
-      // These functions are part of OES/EXT_texture_cube_map.
-      // There's no way to mark alternative extensions for builtins, so these are marked with none.
-      // TODO(anglebug.com/4589)
-      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+      DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "hasSideEffects": "true"}
+        void imageStore(gimageCubeArray, ivec3, gvec4);
+      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_cube_map_array, EXT_texture_cube_map_array", "suffix": "Ext"}
         void imageStore(gimageCubeArray, ivec3, gvec4);
 
-      // These functions are part of OES/EXT_texture_buffer.
-      // There's no way to mark alternative extensions for builtins, so these are marked with none.
-      // TODO(anglebug.com/4589)
-      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+      DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "hasSideEffects": "true"}
+        void imageStore(gimageBuffer, int, gvec4);
+      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_buffer, EXT_texture_buffer", "suffix": "Ext"}
         void imageStore(gimageBuffer, int, gvec4);
 
-      DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "op": "CallBuiltInFunction"}
+      DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "hasSideEffects": "true"}
         void imageStore(writeonly IMAGE_PARAMS, gvec4);
     GROUP END Store
     GROUP BEGIN Load {"queryFunction": true}
-      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true"}
         gvec4 imageLoad(gimage2D, ivec2);
         gvec4 imageLoad(gimage3D, ivec3);
         gvec4 imageLoad(gimage2DArray, ivec3);
         gvec4 imageLoad(gimageCube, ivec3);
 
-      // These functions are part of OES/EXT_texture_cube_map.
-      // There's no way to mark alternative extensions for builtins, so these are marked with none.
-      // TODO(anglebug.com/4589)
-      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+      DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "hasSideEffects": "true"}
+        gvec4 imageLoad(gimageCubeArray, ivec3);
+      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_cube_map_array, EXT_texture_cube_map_array", "suffix": "Ext"}
         gvec4 imageLoad(gimageCubeArray, ivec3);
 
-      // These functions are part of OES/EXT_texture_buffer.
-      // There's no way to mark alternative extensions for builtins, so these are marked with none.
-      // TODO(anglebug.com/4589)
-      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+      DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "hasSideEffects": "true"}
+        gvec4 imageLoad(gimageBuffer, int);
+      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_buffer, EXT_texture_buffer", "suffix": "Ext"}
         gvec4 imageLoad(gimageBuffer, int);
 
-      DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "op": "CallBuiltInFunction"}
+      DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "hasSideEffects": "true"}
         gvec4 imageLoad(readonly IMAGE_PARAMS);
     GROUP END Load
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true"}
     ivec2 imageSize(gimage2D);
     ivec3 imageSize(gimage3D);
     ivec3 imageSize(gimage2DArray);
     ivec2 imageSize(gimageCube);
 
-  // These functions are part of OES/EXT_texture_cube_map.
-  // There's no way to mark alternative extensions for builtins, so these are marked with none.
-  // TODO(anglebug.com/4589)
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+  DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "hasSideEffects": "true"}
+    ivec3 imageSize(gimageCubeArray);
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_cube_map_array, EXT_texture_cube_map_array", "suffix": "Ext"}
     ivec3 imageSize(gimageCubeArray);
 
-    // These functions are part of OES/EXT_texture_buffer.
-  // There's no way to mark alternative extensions for builtins, so these are marked with none.
-  // TODO(anglebug.com/4589)
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction"}
+  DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS", "hasSideEffects": "true"}
+    int imageSize(gimageBuffer);
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_texture_buffer, EXT_texture_buffer", "suffix": "Ext"}
     int imageSize(gimageBuffer);
 
-  DEFAULT METADATA {"glsl_level": "GLSL4_3_BUILTINS", "op": "CallBuiltInFunction"}
+  DEFAULT METADATA {"glsl_level": "GLSL4_3_BUILTINS", "hasSideEffects": "true"}
     int imageSize(readonly writeonly gimage1D);
     ivec2 imageSize(readonly writeonly gimage2D);
     ivec3 imageSize(readonly writeonly gimage3D);
@@ -1111,11 +1099,12 @@ GROUP BEGIN Image {"queryFunction": true}
     int imageSize(readonly writeonly gimageBuffer);
     ivec2 imageSize(readonly writeonly gimage2DMS);
     ivec3 imageSize(readonly writeonly gimage2DMSArray);
-  DEFAULT METADATA {"glsl_level": "GLSL4_5_BUILTINS", "op": "CallBuiltInFunction"}
+  DEFAULT METADATA {"glsl_level": "GLSL4_5_BUILTINS", "hasSideEffects": "true"}
     int imageSamples(readonly writeonly gimage2DMS);
     int imageSamples(readonly writeonly gimage2DMSArray);
+
   GROUP BEGIN Atomic {"queryFunction": true}
-      DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "op": "CallBuiltInFunction"}
+      DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "hasSideEffects": "true"}
         uint imageAtomicAdd(IMAGE_PARAMS, uint);
         int imageAtomicAdd(IMAGE_PARAMS, int);
         uint imageAtomicMin(IMAGE_PARAMS, uint);
@@ -1130,12 +1119,12 @@ GROUP BEGIN Image {"queryFunction": true}
         int imageAtomicXor(IMAGE_PARAMS, int);
         uint imageAtomicExchange(IMAGE_PARAMS, uint);
         int imageAtomicExchange(IMAGE_PARAMS, int);
-      DEFAULT METADATA {"glsl_level": "GLSL4_5_BUILTINS", "op": "CallBuiltInFunction"}
+      DEFAULT METADATA {"glsl_level": "GLSL4_5_BUILTINS", "hasSideEffects": "true"}
         int imageAtomicExchange(IMAGE_PARAMS, float);
-      DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "op": "CallBuiltInFunction"}
+      DEFAULT METADATA {"glsl_level": "GLSL4_2_BUILTINS", "hasSideEffects": "true"}
         uint imageAtomicCompSwap(IMAGE_PARAMS, uint, uint);
         int imageAtomicCompSwap(IMAGE_PARAMS, int, int);
-      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "CallBuiltInFunction", "essl_extension": "OES_shader_image_atomic", "suffix": "Ext"}
+      DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "hasSideEffects": "true", "essl_extension": "OES_shader_image_atomic", "suffix": "Ext"}
         uint imageAtomicAdd(readonly writeonly IMAGE_PARAMS, uint);
         int imageAtomicAdd(readonly writeonly IMAGE_PARAMS, int);
         uint imageAtomicMin(readonly writeonly IMAGE_PARAMS, uint);
@@ -1157,7 +1146,7 @@ GROUP BEGIN Image {"queryFunction": true}
 GROUP END Image
 
 GROUP BEGIN Noise
-  DEFAULT METADATA {"glsl_level": "COMMON_BUILTINS", "op": "CallBuiltInFunction"}
+  DEFAULT METADATA {"glsl_level": "COMMON_BUILTINS", "hasSideEffects": "true"}
     float noise1(genType);
     vec2 noise2(genType);
     vec3 noise3(genType);
@@ -1165,53 +1154,48 @@ GROUP BEGIN Noise
 GROUP END Noise
 
 GROUP BEGIN Barrier
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_2_BUILTINS", "op": "auto", "hasSideEffects": true}
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_2_BUILTINS", "hasSideEffects": true}
     void memoryBarrier();
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_3_BUILTINS", "op": "auto", "hasSideEffects": true}
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_3_BUILTINS", "hasSideEffects": true}
     void memoryBarrierAtomicCounter();
     void memoryBarrierBuffer();
     void memoryBarrierImage();
 GROUP END Barrier
 
 GROUP BEGIN ESSL310CS {"shader_type": "COMPUTE"}
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "op": "auto", "hasSideEffects": true}
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_BUILTINS", "hasSideEffects": true}
     void barrier();
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_3_BUILTINS", "op": "auto", "hasSideEffects": true}
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "glsl_level": "GLSL4_3_BUILTINS", "hasSideEffects": true}
     void memoryBarrierShared();
     void groupMemoryBarrier();
 GROUP END ESSL310CS
 
-GROUP BEGIN ESSL310GS {"shader_type": "GEOMETRY_EXT"}
-  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "op": "auto", "essl_extension": "EXT_geometry_shader", "hasSideEffects": true}
+GROUP BEGIN ESSL310TCS {"shader_type": "TESS_CONTROL_EXT"}
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "EXT_tessellation_shader", "essl_extension_becomes_core_in": "ESSL3_2_BUILTINS", "opSuffix": "TCS", "hasSideEffects": true, "suffix": "TCS"}
+    void barrier();
+GROUP END ESSL310TCS
+
+GROUP BEGIN GS {"shader_type": "GEOMETRY"}
+  DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "EXT_geometry_shader, OES_geometry_shader", "essl_extension_becomes_core_in": "ESSL3_2_BUILTINS", "hasSideEffects": true}
     void EmitVertex();
     void EndPrimitive();
-GROUP END ESSL310GS
-
-GROUP BEGIN GLSLGS {"shader_type": "GEOMETRY"}
-  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "op": "CallBuiltInFunction", "hasSideEffects": "true"}
+  DEFAULT METADATA {"glsl_level": "GLSL1_5_BUILTINS", "hasSideEffects": "true"}
+    void EmitVertex();
+    void EndPrimitive();
+  DEFAULT METADATA {"glsl_level": "GLSL4_BUILTINS", "hasSideEffects": "true"}
     void EmitStreamVertex(int);
     void EndStreamPrimitive(int);
-  DEFAULT METADATA {"glsl_level": "GLSL1_5_BUILTINS", "op": "CallBuiltInFunction", "hasSideEffects": "true"}
-    void EmitVertex();
-    void EndPrimitive();
-GROUP END GLSLGS
+GROUP END GS
 
 GROUP BEGIN SubpassInput
-  DEFAULT METADATA {"glsl_level": "GLSL4_6_BUILTINS", "op": "CallBuiltInFunction", "hasSideEffects": true}
+  DEFAULT METADATA {"glsl_level": "GLSL4_6_BUILTINS", "essl_level": "ESSL_VULKAN_BUILTINS", "hasSideEffects": "true"}
     gvec4 subpassLoad(gsubpassInput);
     gvec4 subpassLoad(gsubpassInputMS, int);
 GROUP END SubpassInput
 
 GROUP BEGIN ShaderInvocationGroup
-  DEFAULT METADATA {"glsl_level": "GLSL4_6_BUILTINS", "op": "CallBuiltInFunction", "hasSideEffects": true}
+  DEFAULT METADATA {"glsl_level": "GLSL4_6_BUILTINS", "hasSideEffects": "true"}
     bool anyInvocation(bool);
     bool allInvocations(bool);
     bool allInvocationsEqual(bool);
 GROUP END ShaderInvocationGroup
-
-GROUP BEGIN WEBGLVideoTexture
-  DEFAULT METADATA {"essl_level": "ESSL1_BUILTINS", "glsl_level": "COMMON_BUILTINS", "op": "CallBuiltInFunction", "extension": "WEBGL_video_texture"}
-      vec4 textureVideoWEBGL(samplerVideoWEBGL, vec2);
-  DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "glsl_level": "GLSL1_3_BUILTINS", "op": "CallBuiltInFunction", "extension": "WEBGL_video_texture"}
-    vec4 texture(samplerVideoWEBGL, vec2);
-GROUP END WEBGLVideoTexture

@@ -1,0 +1,8 @@
+Nonced and non parser-inserted scripts should run with `strict-dynamic` in the script-src directive.
+
+
+PASS Script injected via `appendChild` is allowed with `strict-dynamic`.
+PASS Script injected via `appendChild` is allowed with `strict-dynamic`, even if it carries an incorrect nonce.
+PASS Script injected via `appendChild` populated via `textContent` is allowed with `strict-dynamic`.
+PASS Script injected via `appendChild` populated via `textContent` is allowed with `strict-dynamic`, even if it carries an incorrect nonce.
+

@@ -27,6 +27,8 @@
 
 #include "VMAllocate.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 ObjectTypeTable::Bits sentinelBits { nullptr, 0, 0 };
@@ -103,3 +105,5 @@ void ObjectTypeTable::set(UniqueLockHolder&, Chunk* chunk, ObjectType objectType
 }
 
 } // namespace bmalloc
+
+#endif

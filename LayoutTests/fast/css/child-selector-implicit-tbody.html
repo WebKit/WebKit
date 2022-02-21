@@ -6,8 +6,8 @@ function test()
     if (window.testRunner)
         testRunner.dumpAsText();
     result = "TEST FAILED";
-    if (getComputedStyle(document.getElementById("cell1")).fontWeight == "normal")
-        if (getComputedStyle(document.getElementById("cell2")).fontWeight == "bold")
+    if (getComputedStyle(document.getElementById("cell1")).fontWeight == "400")
+        if (getComputedStyle(document.getElementById("cell2")).fontWeight == "700")
             result = "TEST PASSED: Child rule did not affect the table.";
     document.getElementById("result").firstChild.data = result;
 }

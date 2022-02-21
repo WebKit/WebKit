@@ -24,7 +24,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection
+    EnabledBySetting=PeerConnectionEnabled
 ] enum RTCDtlsTransportState {
   "new",
   "connecting",

@@ -82,7 +82,7 @@ CairoOperationRecorder::CairoOperationRecorder(PaintingOperations& commandList)
     m_stateStack.append({ { }, { }, FloatRect::infiniteRect() });
 }
 
-void CairoOperationRecorder::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+void CairoOperationRecorder::didUpdateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
     if (flags & GraphicsContextState::StrokeThicknessChange) {
         struct StrokeThicknessChange final : PaintingOperation, OperationData<float> {
@@ -562,7 +562,7 @@ void CairoOperationRecorder::drawNativeImage(NativeImage& nativeImage, const Flo
     append(createCommand<DrawNativeImage>(nativeImage.platformImage(), destRect, srcRect, ImagePaintingOptions(options, state.imageInterpolationQuality), state.alpha, Cairo::ShadowState(state)));
 }
 
-void CairoOperationRecorder::drawPattern(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void CairoOperationRecorder::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     struct DrawPattern final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, IntSize, FloatRect, FloatRect, AffineTransform, FloatPoint, ImagePaintingOptions> {
         virtual ~DrawPattern() = default;
@@ -579,7 +579,7 @@ void CairoOperationRecorder::drawPattern(NativeImage& nativeImage, const FloatSi
     };
 
     UNUSED_PARAM(spacing);
-    append(createCommand<DrawPattern>(nativeImage.platformImage(), IntSize(imageSize), destRect, tileRect, patternTransform, phase, options));
+    append(createCommand<DrawPattern>(nativeImage.platformImage(), nativeImage.size(), destRect, tileRect, patternTransform, phase, options));
 }
 
 void CairoOperationRecorder::drawRect(const FloatRect& rect, float borderThickness)
@@ -1104,12 +1104,6 @@ FloatRect CairoOperationRecorder::roundToDevicePixels(const FloatRect& rect, Gra
 void CairoOperationRecorder::append(std::unique_ptr<PaintingOperation>&& command)
 {
     m_commandList.append(WTFMove(command));
-}
-
-GraphicsContext::ClipToDrawingCommandsResult CairoOperationRecorder::clipToDrawingCommands(const FloatRect&, const DestinationColorSpace&, Function<void(GraphicsContext&)>&&)
-{
-    // FIXME: Not implemented.
-    return ClipToDrawingCommandsResult::Success;
 }
 
 #if ENABLE(VIDEO)

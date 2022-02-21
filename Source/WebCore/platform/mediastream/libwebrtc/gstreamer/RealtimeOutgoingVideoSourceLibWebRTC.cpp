@@ -50,7 +50,7 @@ RealtimeOutgoingVideoSourceLibWebRTC::RealtimeOutgoingVideoSourceLibWebRTC(Ref<M
 {
 }
 
-void RealtimeOutgoingVideoSourceLibWebRTC::videoSampleAvailable(MediaSample& sample)
+void RealtimeOutgoingVideoSourceLibWebRTC::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata)
 {
     switch (sample.videoRotation()) {
     case MediaSample::VideoRotation::None:
@@ -69,7 +69,7 @@ void RealtimeOutgoingVideoSourceLibWebRTC::videoSampleAvailable(MediaSample& sam
 
     ASSERT(sample.platformSample().type == PlatformSample::GStreamerSampleType);
     auto& mediaSample = static_cast<MediaSampleGStreamer&>(sample);
-    auto frameBuffer = GStreamerVideoFrameLibWebRTC::create(gst_sample_ref(mediaSample.platformSample().sample.gstSample));
+    auto frameBuffer = GStreamerVideoFrameLibWebRTC::create(mediaSample.platformSample().sample.gstSample);
 
     sendFrame(WTFMove(frameBuffer));
 }

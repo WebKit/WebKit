@@ -104,7 +104,7 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
 
         auto actionsPayload = options->getArray(Protocol::Debugger::BreakpointOptions::actionsKey);
         if (auto count = actionsPayload ? actionsPayload->length() : 0) {
-            actions.reserveCapacity(count);
+            actions.reserveInitialCapacity(count);
 
             for (unsigned i = 0; i < count; ++i) {
                 auto actionObject = actionsPayload->get(i)->asObject();
@@ -133,7 +133,7 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
 
                 action.emulateUserGesture = actionObject->getBoolean(Protocol::Debugger::BreakpointAction::emulateUserGestureKey).value_or(false);
 
-                actions.append(WTFMove(action));
+                actions.uncheckedAppend(WTFMove(action));
             }
         }
 

@@ -16,10 +16,8 @@
     <textarea id="plainDestination" onbeforeinput=logInputEvent(event) oninput=logInputEvent(event)></textarea>
     <div id="output"></div>
     <script type="text/javascript">
-        if (window.internals && window.testRunner) {
-            internals.settings.setInputEventsEnabled(true);
+        if (window.internals && window.testRunner)
             testRunner.dumpAsText();
-        }
 
         if (window.eventSender) {
             moveToCenter(source);

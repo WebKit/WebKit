@@ -20,8 +20,6 @@
   'builder_groups': {
     'client.webrtc': {
       # iOS
-      'iOS32 Debug': 'ios_debug_bot_arm',
-      'iOS32 Release': 'ios_release_bot_arm',
       'iOS64 Debug': 'ios_debug_bot_arm64',
       'iOS64 Release': 'ios_release_bot_arm64',
       'iOS64 Sim Debug (iOS 12)': 'ios_debug_bot_x64',
@@ -33,6 +31,7 @@
       'Mac64 Release': 'release_bot_x64',
       'Mac64 Builder': 'pure_release_bot_x64',
       'Mac Asan': 'mac_asan_clang_release_bot_x64',
+      'MacARM64 M1 Release': 'release_bot_arm64',
 
       # Linux
       'Linux32 Debug': 'no_h264_debug_bot_x86',
@@ -91,7 +90,6 @@
       'Win64 Debug (Clang)': 'win_clang_debug_bot_x64',
       'Win64 Release (Clang)': 'win_clang_release_bot_x64',
       'Win64 ASan': 'win_asan_clang_release_bot_x64',
-      'Win64 UWP': 'win_uwp_release_bot_x64',
       'Win (more configs)': {
         'bwe_test_logging':
           'bwe_test_logging_x86',
@@ -112,6 +110,7 @@
       'Perf Android64 (M Nexus5X)': 'release_bot_x64',
       'Perf Android64 (O Pixel2)': 'release_bot_x64',
       'Perf Linux Trusty': 'release_bot_x64',
+      'Perf Linux Bionic': 'release_bot_x64',
       'Perf Mac 10.11': 'release_bot_x64',
       'Perf Win7': 'release_bot_x64',
     },
@@ -148,8 +147,6 @@
     },
     'tryserver.webrtc': {
       # iOS
-      'ios_compile_arm_dbg': 'ios_debug_bot_arm',
-      'ios_compile_arm_rel': 'ios_release_bot_arm',
       'ios_compile_arm64_dbg': 'ios_debug_bot_arm64',
       'ios_compile_arm64_rel': 'ios_release_bot_arm64',
       'ios_sim_x64_dbg_ios12': 'ios_debug_bot_x64',
@@ -233,7 +230,6 @@
       'win_asan': 'win_asan_clang_release_bot_x64',
       'win_x64_clang_dbg_win8': 'win_clang_debug_bot_x64',
       'win_x64_clang_dbg_win10': 'win_clang_debug_bot_x64',
-      'win_x64_uwp': 'win_uwp_release_bot_x64',
       'win_x86_more_configs': {
         'bwe_test_logging':
           'bwe_test_logging_x86',
@@ -340,10 +336,6 @@
       'asan', 'clang',  'full_symbols', 'openh264', 'release_bot', 'x64',
       'win_fastlink',
     ],
-    'win_uwp_release_bot_x64': [
-      # UWP passes compiler flags that are not supported by goma.
-      'no_clang', 'openh264', 'x64', 'winuwp', 'release_bot_no_goma'
-    ],
 
     # Mac
     'mac_asan_clang_release_bot_x64': [
@@ -386,14 +378,6 @@
     ],
 
     # iOS
-    'ios_debug_bot_arm': [
-      'ios', 'debug_bot', 'arm', 'no_ios_code_signing', 'ios_use_goma_rbe',
-      'xctest',
-    ],
-    'ios_release_bot_arm': [
-      'ios', 'release_bot', 'arm', 'no_ios_code_signing', 'ios_use_goma_rbe',
-      'xctest',
-    ],
     'ios_debug_bot_arm64': [
       'ios', 'debug_bot', 'arm64', 'no_ios_code_signing', 'ios_use_goma_rbe',
       'xctest',
@@ -555,14 +539,16 @@
       'gn_args': 'optimize_for_fuzzing=true',
     },
 
-    'pure_release_bot': {
-      'mixins': ['release', 'goma'],
-    },
-
     'release': {
       'gn_args': 'is_debug=false',
     },
 
+    # The 'pure_release_bot' configuration is for release bots that are doing a
+    # 100% release build without DCHECKs while 'release_bot' is a partial
+    # release configs since `dcheck_always_on` is set to true.
+    'pure_release_bot': {
+      'mixins': ['release', 'goma'],
+    },
     'release_bot': {
       'mixins': ['pure_release_bot', 'dcheck_always_on'],
     },
@@ -613,10 +599,6 @@
 
     'no_sctp': {
       'gn_args': 'rtc_enable_sctp=false',
-    },
-
-    'winuwp': {
-      'gn_args': 'target_os="winuwp"',
     },
 
     'win_undef_unicode': {

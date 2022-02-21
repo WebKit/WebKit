@@ -45,8 +45,6 @@ public:
     ~CombinedURLFilters();
 
     void addPattern(uint64_t actionId, const Vector<Term>& pattern);
-    void addDomain(uint64_t actionId, const String& domain);
-
     bool processNFAs(size_t maxNFASize, Function<bool(NFA&&)>&&);
     bool isEmpty() const;
 

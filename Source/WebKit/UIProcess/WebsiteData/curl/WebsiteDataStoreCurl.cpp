@@ -35,6 +35,7 @@ namespace WebKit {
 
 void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& parameters)
 {
+    parameters.networkSessionParameters.cookiePersistentStorageFile = resolvedCookieStorageFile();
     parameters.networkSessionParameters.proxySettings = m_proxySettings;
 }
 

@@ -89,8 +89,10 @@ private:
     const RefPtr<StyleSheetContents> m_styleSheet;
     bool m_failedParsing { false };
     bool m_disallowPseudoElements { false };
+    bool m_disallowHasPseudoClass { false };
     bool m_resistDefaultNamespace { false };
     bool m_ignoreDefaultNamespace { false };
+    std::optional<CSSSelector::PseudoElementType> m_precedingPseudoElement;
 };
 
 

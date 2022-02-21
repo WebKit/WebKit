@@ -27,8 +27,10 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "ProcessQualified.h"
 #include "RTCDataChannelHandlerClient.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -65,9 +67,9 @@ void RTCDataChannelRemoteHandler::didReceiveRawData(const uint8_t* data, size_t 
     m_client->didReceiveRawData(data, size);
 }
 
-void RTCDataChannelRemoteHandler::didDetectError()
+void RTCDataChannelRemoteHandler::didDetectError(Ref<RTCError>&& error)
 {
-    m_client->didDetectError();
+    m_client->didDetectError(WTFMove(error));
 }
 
 void RTCDataChannelRemoteHandler::bufferedAmountIsDecreasing(size_t amount)
@@ -80,7 +82,7 @@ void RTCDataChannelRemoteHandler::readyToSend()
     m_isReadyToSend = true;
 
     for (auto& message : m_pendingMessages)
-        m_connection->sendData(m_remoteIdentifier, message.isRaw, message.buffer->data(), message.buffer->size());
+        m_connection->sendData(m_remoteIdentifier, message.isRaw, message.buffer->makeContiguous()->data(), message.buffer->size());
     m_pendingMessages.clear();
 
     if (m_isPendingClose)

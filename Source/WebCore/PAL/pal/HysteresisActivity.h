@@ -39,7 +39,7 @@ enum class HysteresisState {
 
 class HysteresisActivity {
 public:
-    explicit HysteresisActivity(WTF::Function<void(HysteresisState)>&& callback = [](HysteresisState) { }, Seconds hysteresisSeconds = defaultHysteresisDuration)
+    explicit HysteresisActivity(Function<void(HysteresisState)>&& callback = [](HysteresisState) { }, Seconds hysteresisSeconds = defaultHysteresisDuration)
         : m_callback(WTFMove(callback))
         , m_hysteresisSeconds(hysteresisSeconds)
         , m_active(false)
@@ -88,7 +88,7 @@ private:
         m_callback(HysteresisState::Stopped);
     }
 
-    WTF::Function<void(HysteresisState)> m_callback;
+    Function<void(HysteresisState)> m_callback;
     Seconds m_hysteresisSeconds;
     bool m_active;
     RunLoop::Timer<HysteresisActivity> m_timer;

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
 
-FAIL Untitled ReferenceError: Can't find variable: SharedWorker
+Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'sharedWorker.port.start')
+
 

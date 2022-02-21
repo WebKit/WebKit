@@ -32,17 +32,20 @@
 
 PAS_BEGIN_EXTERN_C;
 
-PAS_API extern void (*pas_allocation_callback)(
+typedef void(*pas_allocation_callback_type)(
     void* resulting_base,
     size_t size,
     pas_heap_kind heap_kind,
     const char* name,
     pas_allocation_kind allocation_kind);
-PAS_API extern void (*pas_deallocation_callback)(
+typedef void(*pas_deallocation_callback_type)(
     void* base,
     size_t size, /* This is zero for non-free heaps like utility. */
     pas_heap_kind heap_kind,
     pas_allocation_kind allocation_kind);
+
+PAS_API extern pas_allocation_callback_type pas_allocation_callback;
+PAS_API extern pas_deallocation_callback_type pas_deallocation_callback;
 
 static inline void pas_did_allocate(
     void* resulting_base,

@@ -1,0 +1,4 @@
+
+PASS e.style['flood-color'] = "none" should not set the property value
+PASS e.style['flood-color'] = "black white" should not set the property value
+

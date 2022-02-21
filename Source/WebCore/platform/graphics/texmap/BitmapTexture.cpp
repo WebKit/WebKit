@@ -54,11 +54,6 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
 
     sourceLayer->paintGraphicsLayerContents(context, sourceRect);
 
-#if USE(DIRECT2D)
-    // We can't access the bits in the image buffer with an active beginDraw.
-    context.endDraw();
-#endif
-
     RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
     if (!image)
         return;

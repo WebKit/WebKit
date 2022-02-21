@@ -53,9 +53,10 @@ public:
     };
 
     enum class LineMode { SingleLine, MultipleLine };
-    TextStream(LineMode lineMode = LineMode::MultipleLine, OptionSet<Formatting> formattingFlags = { })
+    TextStream(LineMode lineMode = LineMode::MultipleLine, OptionSet<Formatting> formattingFlags = { }, unsigned containerSizeLimit = 0)
         : m_formattingFlags(formattingFlags)
         , m_multiLineMode(lineMode == LineMode::MultipleLine)
+        , m_containerSizeLimit(containerSizeLimit)
     {
     }
 
@@ -111,6 +112,8 @@ public:
     void decreaseIndent(int amount = 1) { m_indent -= amount; ASSERT(m_indent >= 0); }
 
     WTF_EXPORT_PRIVATE void writeIndent();
+
+    unsigned containerSizeLimit() const { return m_containerSizeLimit; }
 
     // Stream manipulators.
     TextStream& operator<<(TextStream& (*func)(TextStream&))
@@ -174,6 +177,7 @@ private:
     int m_indent { 0 };
     OptionSet<Formatting> m_formattingFlags;
     bool m_multiLineMode { true };
+    unsigned m_containerSizeLimit { 0 };
 };
 
 inline TextStream& indent(TextStream& ts)
@@ -223,12 +227,17 @@ TextStream& operator<<(TextStream& ts, const Vector<ItemType, inlineCapacity>& v
 {
     ts << "[";
 
-    unsigned size = vector.size();
-    for (unsigned i = 0; i < size; ++i) {
-        ts << vector[i];
-        if (i < size - 1)
+    unsigned count = 0;
+    for (const auto& value : vector) {
+        if (count)
             ts << ", ";
+        ts << value;
+        if (++count == ts.containerSizeLimit())
+            break;
     }
+
+    if (count != vector.size())
+        ts << ", ...";
 
     return ts << "]";
 }
@@ -262,13 +271,17 @@ TextStream& operator<<(TextStream& ts, const HashMap<KeyArg, MappedArg, HashArg,
 {
     ts << "{";
 
-    bool first = true;
+    unsigned count = 0;
     for (const auto& keyValuePair : map) {
-        ts << keyValuePair.key << ": " << keyValuePair.value;
-        if (!first)
+        if (count)
             ts << ", ";
-        first = false;
+        ts << keyValuePair.key << ": " << keyValuePair.value;
+        if (++count == ts.containerSizeLimit())
+            break;
     }
+
+    if (count != map.size())
+        ts << ", ...";
 
     return ts << "}";
 }
@@ -278,13 +291,17 @@ TextStream& operator<<(TextStream& ts, const HashSet<ValueArg, HashArg, TraitsAr
 {
     ts << "[";
 
-    bool first = true;
+    unsigned count = 0;
     for (const auto& item : set) {
-        ts << item;
-        if (!first)
+        if (count)
             ts << ", ";
-        first = false;
+        ts << item;
+        if (++count == ts.containerSizeLimit())
+            break;
     }
+
+    if (count != set.size())
+        ts << ", ...";
 
     return ts << "]";
 }
@@ -303,11 +320,63 @@ TextStream& operator<<(TextStream& ts, const OptionSet<Option>& options)
     return ts << "]";
 }
 
+template<typename, typename = void, typename = void, typename = void, typename = void, size_t = 0>
+struct supports_text_stream_insertion : std::false_type { };
+
+template<typename T>
+struct supports_text_stream_insertion<T, std::void_t<decltype(std::declval<TextStream&>() << std::declval<T>())>> : std::true_type { };
+
+template<typename ItemType, size_t inlineCapacity>
+struct supports_text_stream_insertion<Vector<ItemType, inlineCapacity>> : supports_text_stream_insertion<ItemType> { };
+
+template<typename ValueArg, typename HashArg, typename TraitsArg>
+struct supports_text_stream_insertion<HashSet<ValueArg, HashArg, TraitsArg>> : supports_text_stream_insertion<ValueArg> { };
+
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
+struct supports_text_stream_insertion<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> : std::conjunction<supports_text_stream_insertion<KeyArg>, supports_text_stream_insertion<MappedArg>> { };
+
+template<typename T, typename Traits>
+struct supports_text_stream_insertion<Markable<T, Traits>> : supports_text_stream_insertion<T> { };
+
+template<typename T>
+struct supports_text_stream_insertion<OptionSet<T>> : supports_text_stream_insertion<T> { };
+
+template<typename T>
+struct supports_text_stream_insertion<std::optional<T>> : supports_text_stream_insertion<T> { };
+
+template<typename T>
+struct supports_text_stream_insertion<WeakPtr<T>> : supports_text_stream_insertion<T> { };
+
+template<typename T>
+struct supports_text_stream_insertion<RefPtr<T>> : supports_text_stream_insertion<T> { };
+
+template<typename T>
+struct supports_text_stream_insertion<Ref<T>> : supports_text_stream_insertion<T> { };
+
+template<typename T>
+struct ValueOrEllipsis {
+    explicit ValueOrEllipsis(const T& value)
+        : value(value)
+    { }
+    const T& value;
+};
+
+template<typename T>
+TextStream& operator<<(TextStream& ts, ValueOrEllipsis<T> item)
+{
+    if constexpr (supports_text_stream_insertion<T>::value)
+        ts << item.value;
+    else
+        ts << "...";
+    return ts;
+}
+
 // Deprecated. Use TextStream::writeIndent() instead.
 WTF_EXPORT_PRIVATE void writeIndent(TextStream&, int indent);
 
 } // namespace WTF
 
 using WTF::TextStream;
+using WTF::ValueOrEllipsis;
 using WTF::ValueOrNull;
 using WTF::indent;

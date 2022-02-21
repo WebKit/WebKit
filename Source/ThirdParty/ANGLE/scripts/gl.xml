@@ -501,6 +501,7 @@ typedef unsigned int GLhandleARB;
             <enum name="GL_FRAGMENT_LIGHT6_SGIX"/>
             <enum name="GL_FRAGMENT_LIGHT7_SGIX"/>
             <enum name="GL_FRAGMENT_LIGHTING_SGIX"/>
+            <enum name="GL_FRAMEBUFFER_SRGB_EXT"/>
             <enum name="GL_FRAMEZOOM_SGIX"/>
             <enum name="GL_HISTOGRAM_EXT"/>
             <enum name="GL_INDEX_ARRAY"/>
@@ -1876,6 +1877,38 @@ typedef unsigned int GLhandleARB;
             <enum name="GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT"/>
             <enum name="GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG"/>
             <enum name="GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT"/>
+            <enum name="GL_COMPRESSED_RGBA_PVRTC_2BPPV2_IMG"/>
+            <enum name="GL_COMPRESSED_RGBA_PVRTC_4BPPV2_IMG"/>
+            <enum name="GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV2_IMG"/>
+            <enum name="GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV2_IMG"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_4x4_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_5x4_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_5x5_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_6x5_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_6x6_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_8x5_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_8x6_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_8x8_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_10x5_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_10x6_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_10x8_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_10x10_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_12x10_KHR"/>
+            <enum name="GL_COMPRESSED_RGBA_ASTC_12x12_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR"/>
+            <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR"/>
             <enum name="GL_COMPRESSED_RGBA_ASTC_3x3x3_OES"/>
             <enum name="GL_COMPRESSED_SRGB8_ALPHA8_ASTC_3x3x3_OES"/>
             <enum name="GL_COMPRESSED_RGBA_ASTC_4x3x3_OES"/>
@@ -7906,6 +7939,7 @@ typedef unsigned int GLhandleARB;
         <enum value="0x8BB8" name="GL_TILE_RASTER_ORDER_FIXED_MESA"/>
         <enum value="0x8BB9" name="GL_TILE_RASTER_ORDER_INCREASING_X_MESA"/>
         <enum value="0x8BBA" name="GL_TILE_RASTER_ORDER_INCREASING_Y_MESA"/>
+        <enum value="0x8BBB" name="GL_FRAMEBUFFER_FLIP_Y_MESA"/>
     </enums>
 
     <enums namespace="GL" start="0x8BC0" end="0x8BFF" vendor="QCOM" comment="Reassigned from AMD to QCOM">
@@ -14033,9 +14067,9 @@ typedef unsigned int GLhandleARB;
         </command>
         <command>
             <proto>void <name>glDiscardFramebufferEXT</name></proto>
-            <param><ptype>GLenum</ptype> <name>target</name></param>
+            <param group="FramebufferTarget"><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLsizei</ptype> <name>numAttachments</name></param>
-            <param len="numAttachments">const <ptype>GLenum</ptype> *<name>attachments</name></param>
+            <param len="numAttachments" group="FramebufferAttachment">const <ptype>GLenum</ptype> *<name>attachments</name></param>
         </command>
         <command>
             <proto>void <name>glDispatchCompute</name></proto>
@@ -15342,6 +15376,12 @@ typedef unsigned int GLhandleARB;
             <param><ptype>GLint</ptype> <name>param</name></param>
         </command>
         <command>
+            <proto>void <name>glFramebufferParameteriMESA</name></proto>
+            <param group="FramebufferTarget"><ptype>GLenum</ptype> <name>target</name></param>
+            <param group="FramebufferParameterName"><ptype>GLenum</ptype> <name>pname</name></param>
+            <param><ptype>GLint</ptype> <name>param</name></param>
+        </command>
+        <command>
             <proto>void <name>glFramebufferPixelLocalStorageSizeEXT</name></proto>
             <param><ptype>GLuint</ptype> <name>target</name></param>
             <param><ptype>GLsizei</ptype> <name>size</name></param>
@@ -16623,6 +16663,12 @@ typedef unsigned int GLhandleARB;
         </command>
         <command>
             <proto>void <name>glGetFramebufferParameteriv</name></proto>
+            <param group="FramebufferTarget"><ptype>GLenum</ptype> <name>target</name></param>
+            <param group="FramebufferAttachmentParameterName"><ptype>GLenum</ptype> <name>pname</name></param>
+            <param len="COMPSIZE(pname)"><ptype>GLint</ptype> *<name>params</name></param>
+        </command>
+        <command>
+            <proto>void <name>glGetFramebufferParameterivMESA</name></proto>
             <param group="FramebufferTarget"><ptype>GLenum</ptype> <name>target</name></param>
             <param group="FramebufferAttachmentParameterName"><ptype>GLenum</ptype> <name>pname</name></param>
             <param len="COMPSIZE(pname)"><ptype>GLint</ptype> *<name>params</name></param>
@@ -41314,7 +41360,7 @@ typedef unsigned int GLhandleARB;
                 <enum name="GL_DEPTH_STENCIL_TEXTURE_MODE"/>
             </require>
         </extension>
-        <extension name="GL_ARB_sync" supported="gl|glcore">
+        <extension name="GL_ARB_sync" supported="gl|glcore|gles2" comment="ANGLE hacks, should only be desktop GL">
             <require>
                 <enum name="GL_MAX_SERVER_WAIT_TIMEOUT"/>
                 <enum name="GL_OBJECT_TYPE"/>
@@ -44254,7 +44300,6 @@ typedef unsigned int GLhandleARB;
                 <command name="glProgramUniform2uivEXT"/>
                 <command name="glProgramUniform3uivEXT"/>
                 <command name="glProgramUniform4uivEXT"/>
-                <command name="glProgramUniformMatrix4fvEXT"/>
                 <command name="glProgramUniformMatrix2x3fvEXT"/>
                 <command name="glProgramUniformMatrix3x2fvEXT"/>
                 <command name="glProgramUniformMatrix2x4fvEXT"/>
@@ -45876,6 +45921,13 @@ typedef unsigned int GLhandleARB;
                 <enum name="GL_TEXTURE_2D_STACK_BINDING_MESAX"/>
             </require>
         </extension>
+        <extension name="GL_MESA_framebuffer_flip_y" supported="gl|glcore|gles2">
+            <require>
+                <enum name="GL_FRAMEBUFFER_FLIP_Y_MESA"/>
+                <command name="glFramebufferParameteriMESA"/>
+                <command name="glGetFramebufferParameterivMESA"/>
+            </require>
+        </extension>
         <extension name="GL_MESA_pack_invert" supported="gl">
             <require>
                 <enum name="GL_PACK_INVERT_MESA"/>
@@ -47224,7 +47276,7 @@ typedef unsigned int GLhandleARB;
                 <command name="glGetCombinerStageParameterfvNV"/>
             </require>
         </extension>
-        <extension name="GL_NV_robustness_video_memory_purge" supported="gl">
+        <extension name="GL_NV_robustness_video_memory_purge" supported="gl|gles2" command="ANGLE hacks, should only be gl">
             <require>
                 <enum name="GL_PURGED_CONTEXT_RESET_NV"/>
             </require>

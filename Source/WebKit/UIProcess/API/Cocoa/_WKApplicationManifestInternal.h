@@ -27,6 +27,7 @@
 
 #import "APIApplicationManifest.h"
 #import "_WKApplicationManifest.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(APPLICATION_MANIFEST)
 

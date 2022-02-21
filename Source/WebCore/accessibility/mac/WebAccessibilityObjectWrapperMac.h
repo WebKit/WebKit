@@ -37,6 +37,10 @@
 #define NSAccessibilityPrimaryScreenHeightAttribute @"_AXPrimaryScreenHeight"
 #endif
 
+#ifndef NSAccessibilityChildrenInNavigationOrderAttribute
+#define NSAccessibilityChildrenInNavigationOrderAttribute @"AXChildrenInNavigationOrder"
+#endif
+
 @interface WebAccessibilityObjectWrapper : WebAccessibilityObjectWrapperBase
 
 // FIXME: Remove these methods since clients should not need to call them and hence should not be exposed in the public interface.
@@ -65,6 +69,7 @@ struct CharacterOffset;
 // TextMarker and TextMarkerRange public funcstions.
 // FIXME: TextMarker and TextMarkerRange should become classes on their own right, wrapping the system objects.
 
+RetainPtr<AXTextMarkerRangeRef> textMarkerRangeFromMarkers(AXTextMarkerRef, AXTextMarkerRef);
 AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache*, AXTextMarkerRef);
 
 // TextMarker <-> VisiblePosition conversion.

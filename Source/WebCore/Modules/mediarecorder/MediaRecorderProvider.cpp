@@ -26,21 +26,22 @@
 #include "config.h"
 #include "MediaRecorderProvider.h"
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+#if ENABLE(MEDIA_RECORDER)
 
 #include "ContentType.h"
 #include "HTMLParserIdioms.h"
+
+#if PLATFORM(COCOA) && USE(AVFOUNDATION)
 #include "MediaRecorderPrivateAVFImpl.h"
+#endif
 
 namespace WebCore {
 
 std::unique_ptr<MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
 {
-#if HAVE(AVASSETWRITERDELEGATE)
+#if PLATFORM(COCOA) && USE(AVFOUNDATION)
     return MediaRecorderPrivateAVFImpl::create(stream, options);
 #else
-    UNUSED_PARAM(stream);
-    UNUSED_PARAM(options);
     return nullptr;
 #endif
 }

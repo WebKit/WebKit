@@ -1,0 +1,4 @@
+
+PASS Test object lifetime of Hand Input module - webgl
+PASS Test object lifetime of Hand Input module - webgl2
+

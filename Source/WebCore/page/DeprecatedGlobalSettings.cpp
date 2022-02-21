@@ -43,7 +43,6 @@ bool DeprecatedGlobalSettings::gGStreamerEnabled = true;
 
 bool DeprecatedGlobalSettings::gMockScrollbarsEnabled = false;
 bool DeprecatedGlobalSettings::gUsesOverlayScrollbars = false;
-bool DeprecatedGlobalSettings::gMockScrollAnimatorEnabled = false;
 
 #if PLATFORM(WIN)
 bool DeprecatedGlobalSettings::gShouldUseHighResolutionTimers = true;
@@ -123,16 +122,6 @@ void DeprecatedGlobalSettings::setUsesOverlayScrollbars(bool flag)
 bool DeprecatedGlobalSettings::usesOverlayScrollbars()
 {
     return gUsesOverlayScrollbars;
-}
-
-void DeprecatedGlobalSettings::setUsesMockScrollAnimator(bool flag)
-{
-    gMockScrollAnimatorEnabled = flag;
-}
-
-bool DeprecatedGlobalSettings::usesMockScrollAnimator()
-{
-    return gMockScrollAnimatorEnabled;
 }
 
 void DeprecatedGlobalSettings::setLowPowerVideoAudioBufferSizeEnabled(bool flag)

@@ -219,7 +219,7 @@ class VideoProcessor {
   std::vector<std::unique_ptr<VideoProcessorDecodeCompleteCallback>>
       decode_callback_;
 
-  // Each call to ProcessFrame() will read one frame from |input_frame_reader_|.
+  // Each call to ProcessFrame() will read one frame from `input_frame_reader_`.
   FrameReader* const input_frame_reader_;
 
   // Input frames are used as reference for frame quality evaluations.

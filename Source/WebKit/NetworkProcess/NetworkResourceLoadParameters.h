@@ -33,6 +33,9 @@
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
+#include <WebCore/NavigationRequester.h>
+#include <WebCore/ResourceLoaderIdentifier.h>
+#include <WebCore/SecurityContext.h>
 #include <wtf/Seconds.h>
 
 namespace IPC {
@@ -42,8 +45,6 @@ class Encoder;
 
 namespace WebKit {
 
-typedef uint64_t ResourceLoadIdentifier;
-
 class NetworkResourceLoadParameters : public NetworkLoadParameters {
 public:
     void encode(IPC::Encoder&) const;
@@ -51,7 +52,7 @@ public:
 
     RefPtr<WebCore::SecurityOrigin> parentOrigin() const;
 
-    mutable ResourceLoadIdentifier identifier { 0 };
+    mutable WebCore::ResourceLoaderIdentifier identifier;
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
     RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
     mutable Seconds maximumBufferingTime;
@@ -68,15 +69,25 @@ public:
     std::optional<WebCore::FrameIdentifier> parentFrameID;
     bool crossOriginAccessControlCheckEnabled { true };
     URL documentURL;
-    
+
+    bool isCrossOriginOpenerPolicyEnabled { false };
+    bool isDisplayingInitialEmptyDocument { false };
+    WebCore::SandboxFlags effectiveSandboxFlags { WebCore::SandboxNone };
+    URL openerURL;
+    WebCore::CrossOriginOpenerPolicy sourceCrossOriginOpenerPolicy;
+    uint64_t navigationID { 0 };
+    std::optional<WebCore::NavigationRequester> navigationRequester;
+
 #if ENABLE(SERVICE_WORKER)
     WebCore::ServiceWorkersMode serviceWorkersMode { WebCore::ServiceWorkersMode::None };
     std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
     OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
+    std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier;
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;
+    URL frameURL;
     std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
     

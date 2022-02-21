@@ -34,12 +34,15 @@
 #include "pas_immortal_heap.h"
 #include "pas_page_malloc.h"
 #include "pas_page_sharing_pool.h"
+#include "pas_physical_memory_transaction.h"
 #include "pas_range16.h"
 #include "pas_segregated_page_inlines.h"
 #include "pas_segregated_shared_handle.h"
 #include "pas_segregated_shared_page_directory.h"
 #include "pas_segregated_shared_view_inlines.h"
 #include "pas_shared_handle_or_page_boundary_inlines.h"
+
+size_t pas_segregated_shared_view_count = 0;
 
 pas_segregated_shared_view* pas_segregated_shared_view_create(size_t index)
 {
@@ -49,6 +52,8 @@ pas_segregated_shared_view* pas_segregated_shared_view_create(size_t index)
         sizeof(pas_segregated_shared_view),
         "pas_segregated_shared_view",
         pas_object_allocation);
+
+    pas_segregated_shared_view_count++;
 
     result->shared_handle_or_page_boundary = NULL;
 
@@ -81,6 +86,7 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
     pas_segregated_directory* directory;
     pas_segregated_shared_handle* handle;
     pas_segregated_page_config page_config;
+    pas_physical_memory_transaction transaction;
 
     PAS_UNUSED_PARAM(partial_view);
 
@@ -111,26 +117,50 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
 
     if (!handle->page_boundary) {
         pas_segregated_page* page;
+        void* page_boundary;
 
-        page = (pas_segregated_page*)
-            page_config.base.create_page_header(page_config.base.page_allocator(heap),
-                                                pas_lock_is_held);
+        page_boundary = NULL;
+
+        pas_heap_lock_unlock_conditionally(
+            pas_segregated_page_config_heap_lock_hold_mode(page_config));
         
-        if (!page) {
+        pas_physical_memory_transaction_construct(&transaction);
+        do {
+            PAS_ASSERT(!page_boundary);
+            pas_physical_memory_transaction_begin(&transaction);
+            pas_heap_lock_lock_conditionally(
+                pas_segregated_page_config_heap_lock_hold_mode(page_config));
+            page_boundary = page_config.page_allocator(
+                heap,
+                pas_segregated_page_config_heap_lock_hold_mode(page_config) ? NULL : &transaction,
+                pas_segregated_page_shared_role);
+            pas_heap_lock_unlock_conditionally(
+                pas_segregated_page_config_heap_lock_hold_mode(page_config));
+        } while (!pas_physical_memory_transaction_end(&transaction));
+        
+        pas_heap_lock_lock_conditionally(
+            pas_segregated_page_config_heap_lock_hold_mode(page_config));
+        if (!page_boundary) {
             pas_segregated_shared_handle_destroy(handle);
             pas_heap_lock_unlock_conditionally(
                 pas_segregated_page_config_heap_lock_hold_mode(page_config));
             return NULL;
         }
-
+        
+        page = (pas_segregated_page*)
+            page_config.base.create_page_header(
+                page_boundary,
+                pas_page_kind_for_segregated_variant_and_role(
+                    page_config.variant, pas_segregated_page_shared_role),
+                pas_lock_is_held);
+        
         pas_heap_lock_unlock_conditionally(
             pas_segregated_page_config_heap_lock_hold_mode(page_config));
 
         handle->page_boundary = pas_segregated_page_boundary(page, page_config);
 
         view->bump_offset = (unsigned)pas_round_up_to_power_of_2(
-            page_config.base.page_object_payload_offset,
-            pas_segregated_page_config_min_align(page_config));
+            page_config.shared_payload_offset, pas_segregated_page_config_min_align(page_config));
     } else {
         if (PAS_DEBUG_SPECTRUM_USE_FOR_COMMIT) {
             pas_debug_spectrum_add(
@@ -141,8 +171,13 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
         pas_heap_lock_unlock_conditionally(
             pas_segregated_page_config_heap_lock_hold_mode(page_config));
 
-        pas_page_malloc_commit(handle->page_boundary, page_config.base.page_size);
-        page_config.base.create_page_header(handle->page_boundary, pas_lock_is_not_held);
+        pas_page_malloc_commit(handle->page_boundary, page_config.base.page_size,
+                               page_config.base.heap_config_ptr->mmap_capability);
+        page_config.base.create_page_header(
+            handle->page_boundary,
+            pas_page_kind_for_segregated_variant_and_role(
+                page_config.variant, pas_segregated_page_shared_role),
+            pas_lock_is_not_held);
     }
 
     pas_segregated_page_construct(
@@ -240,13 +275,13 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
 
     start_of_page = 0;
     start_of_payload = pas_round_up_to_power_of_2(
-        page_config.base.page_object_payload_offset,
+        page_config.shared_payload_offset,
         pas_segregated_page_config_min_align(page_config));
     end_of_payload = view->bump_offset;
     end_of_page = page_config.base.page_size;
 
     if (verbose)
-        pas_log("index = %zu, bump_offset = %lu/%lu.\n", view->index, end_of_payload, end_of_page);
+        pas_log("index = %d, bump_offset = %lu/%lu.\n", view->index, end_of_payload, end_of_page);
     
     PAS_ASSERT(start_of_payload >= start_of_page);
     PAS_ASSERT(end_of_payload >= start_of_payload);
@@ -256,6 +291,7 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
 
     size_of_payload = end_of_payload - start_of_payload;
     size_of_meta = page_config.base.page_size - size_of_payload;
+    PAS_UNUSED_PARAM(size_of_meta);
 
     if (!view->is_owned) {
         if (verbose)
@@ -300,8 +336,8 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
         unsigned offset_end;
 
         range = data.live_objects[index];
-        offset = range.begin << page_config.base.min_align_shift;
-        offset_end = range.end << page_config.base.min_align_shift;
+        offset = (unsigned)range.begin << page_config.base.min_align_shift;
+        offset_end = (unsigned)range.end << page_config.base.min_align_shift;
 
         PAS_ASSERT(offset >= start_of_last_free);
         pas_page_base_add_free_range(
@@ -314,6 +350,9 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
     pas_page_base_add_free_range(
         &page->base, &result, pas_range_create(start_of_last_free, end_of_payload),
         pas_free_object_range);
+
+    if (view->is_in_use_for_allocation_count)
+        result.cached += page_config.base.page_size;
 
     return result;
 }

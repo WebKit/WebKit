@@ -31,6 +31,8 @@
 #include "Packed.h"
 #include "Vector.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config> class IsoHeapImpl;
@@ -94,3 +96,4 @@ private:
 
 } // namespace bmalloc
 
+#endif

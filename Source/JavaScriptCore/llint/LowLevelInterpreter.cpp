@@ -129,6 +129,8 @@ using WebConfig::g_config;
 
 namespace JSC {
 
+class CallLinkInfo;
+
 //============================================================================
 // CLoopRegister is the storage for an emulated CPU register.
 // It defines the policy of how ints smaller than intptr_t are packed into the
@@ -166,6 +168,7 @@ public:
     operator ProtoCallFrame*() { return bitwise_cast<ProtoCallFrame*>(m_value); }
     operator Register*() { return bitwise_cast<Register*>(m_value); }
     operator VM*() { return bitwise_cast<VM*>(m_value); }
+    operator CallLinkInfo*() { return bitwise_cast<CallLinkInfo*>(m_value); }
 
     template<typename T, typename = std::enable_if_t<sizeof(T) == sizeof(uintptr_t)>>
     ALWAYS_INLINE void operator=(T value) { m_value = bitwise_cast<uintptr_t>(value); }
@@ -490,7 +493,9 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     OFFLINE_ASM_OPCODE_DEBUG_LABEL(llint_##__opcode) \
     OFFLINE_ASM_LOCAL_LABEL(llint_##__opcode)
 
-#define OFFLINE_ASM_GLUE_LABEL(__opcode)   OFFLINE_ASM_LOCAL_LABEL(__opcode)
+#define OFFLINE_ASM_GLUE_LABEL(__opcode) \
+    OFFLINE_ASM_OPCODE_DEBUG_LABEL(__opcode) \
+    OFFLINE_ASM_LOCAL_LABEL(__opcode)
 
 #if CPU(ARM_THUMB2)
 #define OFFLINE_ASM_GLOBAL_LABEL(label)          \

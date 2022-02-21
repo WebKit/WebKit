@@ -33,6 +33,7 @@
 
 #import <WebKit/WKContentWorld.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKitPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
@@ -153,6 +154,18 @@ static NSString *overrideBundleIdentifier(id, SEL)
 
 #endif // PLATFORM(IOS_FAMILY)
 
+- (NSUInteger)gpuToWebProcessConnectionCount
+{
+    __block bool done = false;
+    __block NSUInteger count = 0;
+    [self _gpuToWebProcessConnectionCountForTesting:^(NSUInteger result) {
+        done = true;
+        count = result;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return count;
+}
+
 - (NSString *)contentsAsString
 {
     __block bool done = false;
@@ -203,37 +216,37 @@ static NSString *overrideBundleIdentifier(id, SEL)
 
 - (id)objectByEvaluatingJavaScript:(NSString *)script
 {
-    bool isWaitingForJavaScript = false;
+    bool callbackComplete = false;
     RetainPtr<id> evalResult;
     [self _evaluateJavaScriptWithoutUserGesture:script completionHandler:[&] (id result, NSError *error) {
         evalResult = result;
-        isWaitingForJavaScript = true;
+        callbackComplete = true;
         EXPECT_TRUE(!error);
         if (error)
             NSLog(@"Encountered error: %@ while evaluating script: %@", error, script);
     }];
-    TestWebKitAPI::Util::run(&isWaitingForJavaScript);
+    TestWebKitAPI::Util::run(&callbackComplete);
     return evalResult.autorelease();
 }
 
 - (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script
 {
-    bool isWaitingForJavaScript = false;
+    bool callbackComplete = false;
     RetainPtr<id> evalResult;
     [self evaluateJavaScript:script completionHandler:[&] (id result, NSError *error) {
         evalResult = result;
-        isWaitingForJavaScript = true;
+        callbackComplete = true;
         EXPECT_TRUE(!error);
         if (error)
             NSLog(@"Encountered error: %@ while evaluating script: %@", error, script);
     }];
-    TestWebKitAPI::Util::run(&isWaitingForJavaScript);
+    TestWebKitAPI::Util::run(&callbackComplete);
     return evalResult.autorelease();
 }
 
 - (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments error:(NSError **)errorOut
 {
-    bool isWaitingForJavaScript = false;
+    bool callbackComplete = false;
     if (errorOut)
         *errorOut = nil;
 
@@ -242,9 +255,9 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self callAsyncJavaScript:script arguments:arguments inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&] (id result, NSError *error) {
         evalResult = result;
         strongError = error;
-        isWaitingForJavaScript = true;
+        callbackComplete = true;
     }];
-    TestWebKitAPI::Util::run(&isWaitingForJavaScript);
+    TestWebKitAPI::Util::run(&callbackComplete);
 
     if (errorOut)
         *errorOut = strongError.autorelease();
@@ -859,6 +872,18 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     default:
         return [NSEvent mouseEventWithType:type location:locationInWindow modifierFlags:flags timestamp:timestamp windowNumber:[_hostWindow windowNumber] context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:clickCount pressure:0];
     }
+}
+
+- (void)wheelEventAtPoint:(CGPoint)pointInWindow wheelDelta:(CGSize)delta
+{
+    RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(nullptr, kCGScrollEventUnitPixel, 2, delta.height, delta.width, 0));
+
+    CGPoint locationInGlobalScreenCoordinates = [[self window] convertPointToScreen:pointInWindow];
+    locationInGlobalScreenCoordinates.y = [[[NSScreen screens] objectAtIndex:0] frame].size.height - locationInGlobalScreenCoordinates.y;
+    CGEventSetLocation(cgScrollEvent.get(), locationInGlobalScreenCoordinates);
+    
+    NSEvent* event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
+    [self scrollWheel:event];
 }
 
 - (NSWindow *)hostWindow

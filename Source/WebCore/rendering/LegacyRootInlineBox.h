@@ -126,21 +126,18 @@ public:
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
-    RenderObject::HighlightState selectionState() final;
-    LegacyInlineBox* firstSelectedBox();
-    LegacyInlineBox* lastSelectedBox();
-
-    GapRects lineSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
-        LayoutUnit selTop, LayoutUnit selHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
+    RenderObject::HighlightState selectionState() const final;
+    const LegacyInlineBox* firstSelectedBox() const;
+    const LegacyInlineBox* lastSelectedBox() const;
 
     using CleanLineFloatList = Vector<WeakPtr<RenderBox>>;
     void appendFloat(RenderBox& floatingBox)
     {
         ASSERT(!isDirty());
         if (m_floats)
-            m_floats->append(makeWeakPtr(floatingBox));
+            m_floats->append(floatingBox);
         else
-            m_floats = makeUnique<CleanLineFloatList>(1, makeWeakPtr(floatingBox));
+            m_floats = makeUnique<CleanLineFloatList>(1, floatingBox);
     }
 
     void removeFloat(RenderBox& floatingBox)
@@ -203,7 +200,7 @@ private:
     LayoutUnit beforeAnnotationsAdjustment() const;
 
     // Where this line ended. The exact object and the position within that object are stored so that
-    // we can create an InlineIterator beginning just after the end of this line.
+    // we can create an LegacyInlineIterator beginning just after the end of this line.
     WeakPtr<RenderObject> m_lineBreakObj;
     RefPtr<BidiContext> m_lineBreakContext;
 

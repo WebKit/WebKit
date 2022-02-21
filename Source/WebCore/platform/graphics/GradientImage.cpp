@@ -72,7 +72,7 @@ void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& d
     unsigned generatorHash = m_gradient->hash();
 
     if (!m_cachedImage || m_cachedGeneratorHash != generatorHash || m_cachedAdjustedSize != adjustedSize || !areEssentiallyEqual(destContext.scaleFactor(), m_cachedScaleFactor)) {
-        auto imageBuffer = ImageBuffer::createCompatibleBuffer(adjustedSize, DestinationColorSpace::SRGB(), destContext);
+        auto imageBuffer = destContext.createCompatibleImageBuffer(adjustedSize);
         if (!imageBuffer)
             return;
 

@@ -53,7 +53,7 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
         launchOptions.extraInitializationData.set("mediaKeysDirectory", dataStore->resolvedMediaKeysDirectory());
         launchOptions.extraInitializationData.set("applicationCacheDirectory", dataStore->resolvedApplicationCacheDirectory());
 
-        launchOptions.extraWebProcessSandboxPaths = m_processPool->sandboxPaths();
+        launchOptions.extraSandboxPaths = m_processPool->sandboxPaths();
     }
 }
 

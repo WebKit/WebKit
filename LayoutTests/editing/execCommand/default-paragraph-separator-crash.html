@@ -1,0 +1,20 @@
+<script>
+    if (window.testRunner)
+       window.testRunner.dumpAsText();
+    onload = () => {
+        let output0 = document.createElement('output');
+        document.body.appendChild(output0);
+        let h1 = document.createElement('h1');
+        output0.appendChild(h1);
+        let table0 = document.createElement('table');
+        h1.appendChild(table0);
+        table0.appendChild(document.createElement('h1'));
+        output0.appendChild(document.createElement('div'));
+        document.designMode = 'on';
+        document.execCommand('SelectAll');
+        document.execCommand('DefaultParagraphSeparator', false, 'p');
+        document.execCommand('JustifyRight');
+        document.execCommand('Undo');
+        document.write("Test passes if it does not crash.");
+    };
+</script>

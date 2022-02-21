@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-downloads' is an invalid sandbox flag.
+CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-downloads' is an invalid sandbox flag.
+CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-downloads' is an invalid sandbox flag.
+
+
+PASS window.open(download, ) triggering download in sandbox is allowed by allow-downloads.
+PASS window.open(download, "_blank") triggering download in sandbox is allowed by allow-downloads.
+PASS window.open(download, "_blank", "noopener") triggering download in sandbox is allowed by allow-downloads.
+

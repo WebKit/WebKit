@@ -5,6 +5,7 @@ inherit
 initial
 unset
 revert
+revert-layer
 
 //
 // CSS_PROP_OUTLINE_STYLE
@@ -341,7 +342,10 @@ justify
 -webkit-left
 -webkit-right
 -webkit-center
+match-parent
 -webkit-match-parent
+//start
+//end
 //
 // CSS_PROP_TEXT_JUSTIFY:
 //
@@ -923,6 +927,20 @@ padding
 padding-box
 
 //
+// CSS_PROP_MASK_CLIP
+//
+// Same as background-clip above, except with some extra values.
+no-clip
+
+//
+// CSS_PROP_MASK_COMPOSITE
+//
+add
+subtract
+intersect
+exclude
+
+//
 // Variables Implementation
 //
 var
@@ -961,11 +979,6 @@ cover
 //
 logical
 visual
-
-//
-// CSS_PROP__WEBKIT_BORDER_FIT
-//
-lines
 
 //
 // CSS_PROP__WEBKIT_ANIMATION_DIRECTION
@@ -1018,6 +1031,13 @@ jump-none
 jump-both
 // start
 // end
+
+//
+// animation-composition
+//
+// add
+accumulate
+replace
 
 //
 // CSS_PROP_ZOOM
@@ -1073,10 +1093,6 @@ no-limit
 manual
 // auto
 
-#if defined(ENABLE_LETTERPRESS) && ENABLE_LETTERPRESS
--webkit-letterpress
-#endif
-
 #if defined(ENABLE_OVERFLOW_SCROLLING_TOUCH) && ENABLE_OVERFLOW_SCROLLING_TOUCH
 // -webkit-overflow-scrolling
 // auto
@@ -1102,11 +1118,18 @@ after
 before
 inter-character
 
-// -webkit-text-emphasis-position
+// -webkit-text-combine
+// horizontal
+
+// text-combine-upright
+// all
+// none
+
+// text-emphasis-position
 over
 under
 
-// -webkit-text-emphasis-style
+// text-emphasis-style
 filled
 open
 dot
@@ -1292,6 +1315,8 @@ hsla
 hwb
 lab
 lch
+oklab
+oklch
 //color
 
 // relative color identifiers
@@ -1351,6 +1376,28 @@ calc
 min
 max
 clamp
+pow
+sqrt
+hypot
+sin
+cos
+e
+pi
+exp
+log
+asin
+acos
+atan
+atan2
+abs
+sign
+mod
+rem
+to-zero
+nearest
+infinity
+-infinity
+NaN
 
 from-image
 
@@ -1373,6 +1420,7 @@ span
 
 // grid-template-{columns|rows}
 minmax
+subgrid
 
 // grid-auto-flow
 auto-flow
@@ -1384,11 +1432,6 @@ each-line
 
 // -webkit-column-fill
 balance
-
-#if defined(ENABLE_CSS_TRAILING_WORD) && ENABLE_CSS_TRAILING_WORD
-// -apple-trailing-word
--webkit-partially-balanced
-#endif
 
 #if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
 // -apple-pay-button-style
@@ -1451,11 +1494,13 @@ sRGB
 // color() function
 a98-rgb
 display-p3
-// lab
 prophoto-rgb
 // rec2020
 // sRGB
+srgb-linear
 xyz
+xyz-d50
+xyz-d65
 
 // color-contast()
 color-contrast
@@ -1467,7 +1512,26 @@ AAA-large
 
 // color-mix()
 color-mix
+
+// color-space-interpolation
 in
+// srgb
+// srgb-linear
+// lab
+// oklab
+// xyz
+// xyz-d50
+// xyz-d65
+// hsl
+// hwb
+// lch
+// oklch
+shorter
+longer
+increasing
+decreasing
+specified
+// hue
 
 // prefers-default-appearance
 prefers
@@ -1482,11 +1546,11 @@ more
 less
 // no-preference
 
-#if defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS
-// prefers-color-scheme
+// prefers-color-scheme, font-palette
 light
 dark
 
+#if defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS
 // color-scheme
 only
 // light
@@ -1544,6 +1608,11 @@ selector
 // normal
 compact
 
+// mask-type, mask-mode
+// alpha
+// luminance
+match-source
+
 // rotate
 x
 y
@@ -1558,3 +1627,23 @@ layout
 #if !(defined(ENABLE_CSS_PAINTING_API) && ENABLE_CSS_PAINTING_API)
 paint
 #endif
+
+// container-type
+// none
+// size
+inline-size
+
+// offset-path
+// https://drafts.fxtf.org/motion-1/#offset-path-property
+ray
+// closest-side
+// closest-corner
+// farthest-side
+// farthest-corner
+sides
+// contain
+
+// for @media/@supports/@container
+and
+or
+not

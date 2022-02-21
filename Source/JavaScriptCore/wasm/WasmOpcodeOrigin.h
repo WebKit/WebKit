@@ -43,6 +43,10 @@ public:
         ASSERT(static_cast<uint32_t>(offset) == offset);
         packedData = (static_cast<uint64_t>(opcode) << 32) | offset;
     }
+    OpcodeOrigin(B3::Origin origin)
+        : packedData(bitwise_cast<uint64_t>(origin))
+    {
+    }
 
     void dump(PrintStream&) const;
 

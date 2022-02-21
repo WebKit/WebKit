@@ -59,10 +59,14 @@ StringView CachedScript::script()
     if (!m_data)
         return emptyString();
 
+    if (!m_data->isContiguous())
+        m_data = m_data->makeContiguous();
+
+    auto& contiguousData = downcast<SharedBuffer>(*m_data);
     if (m_decodingState == NeverDecoded
-        && TextEncoding(encoding()).isByteBasedEncoding()
+        && PAL::TextEncoding(encoding()).isByteBasedEncoding()
         && m_data->size()
-        && charactersAreAllASCII(m_data->data(), m_data->size())) {
+        && charactersAreAllASCII(contiguousData.data(), m_data->size())) {
 
         m_decodingState = DataAndDecodedStringHaveSameBytes;
 
@@ -70,14 +74,14 @@ StringView CachedScript::script()
         setDecodedSize(0);
         m_decodedDataDeletionTimer.stop();
 
-        m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(m_data->data(), m_data->size());
+        m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(contiguousData.data(), m_data->size());
     }
 
     if (m_decodingState == DataAndDecodedStringHaveSameBytes)
-        return { m_data->data(), static_cast<unsigned>(m_data->size()) };
+        return { contiguousData.data(), static_cast<unsigned>(m_data->size()) };
 
     if (!m_script) {
-        m_script = m_decoder->decodeAndFlush(m_data->data(), encodedSize());
+        m_script = m_decoder->decodeAndFlush(contiguousData.data(), encodedSize());
         ASSERT(!m_scriptHash || m_scriptHash == m_script.impl()->hash());
         if (m_decodingState == NeverDecoded)
             m_scriptHash = m_script.impl()->hash();
@@ -96,10 +100,15 @@ unsigned CachedScript::scriptHash()
     return m_scriptHash;
 }
 
-void CachedScript::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedScript::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
-    m_data = data;
-    setEncodedSize(data ? data->size() : 0);
+    if (data) {
+        m_data = data->makeContiguous();
+        setEncodedSize(data->size());
+    } else {
+        m_data = nullptr;
+        setEncodedSize(0);
+    }
     CachedResource::finishLoading(data, metrics);
 }
 

@@ -53,7 +53,7 @@ public:
 
 private:
     void start();
-    void perform(WTF::Function<WTF::Function<void(FileStreamClient&)>(FileStream&)>&&);
+    void perform(Function<Function<void(FileStreamClient&)>(FileStream&)>&&);
 
     struct Internals;
     std::unique_ptr<Internals> m_internals;

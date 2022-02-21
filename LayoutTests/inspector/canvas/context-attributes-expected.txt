@@ -5,7 +5,10 @@ Test that CanvasAgent is able to send context attributes.
 -- Running test case: Create2DCanvasContext
 Added canvas.
 PASS: Canvas context should be "2D".
-{}
+{
+  "colorSpace": "srgb",
+  "desynchronized": false
+}
 
 -- Running test case: CreateBitmapRendererCanvasContext
 Added canvas.

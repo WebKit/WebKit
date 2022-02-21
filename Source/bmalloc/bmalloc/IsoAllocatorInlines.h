@@ -31,6 +31,8 @@
 #include "IsoHeapImplInlines.h"
 #include "IsoPage.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config>
@@ -102,3 +104,4 @@ void IsoAllocator<Config>::scavenge(IsoHeapImpl<Config>& heap)
 
 } // namespace bmalloc
 
+#endif

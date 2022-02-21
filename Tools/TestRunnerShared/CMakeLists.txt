@@ -18,8 +18,11 @@ set(TestRunnerShared_SOURCES
 )
 
 set(TestRunnerShared_PRIVATE_LIBRARIES
-    WebKit::JavaScriptCore
     WebKit::WebCoreTestSupport
+)
+
+set(TestRunnerShared_FRAMEWORKS
+    JavaScriptCore
 )
 
 add_dependencies(TestRunnerShared WebCore_CopyPrivateHeaders)

@@ -10,14 +10,12 @@ description: catch is implemented in terms of then
 flags: [async]
 ---*/
 
-var obj = {};
+var arg = {};
 
-var p = Promise.reject(obj);
+var p = Promise.reject(arg);
 
 p.then(function() {
   throw new Test262Error("Should not be called: did not expect promise to be fulfilled");
-}).catch(function(arg) {
-  if (arg !== obj) {
-    throw new Test262Error("Should have been rejected with reason obj, got " + arg);
-  }
+}).catch(function(result) {
+  assert.sameValue(result, arg, 'The value of result is expected to equal the value of arg');
 }).then($DONE, $DONE);

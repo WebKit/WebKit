@@ -73,7 +73,7 @@ public:
     bool tooLong() const final;
     bool typeMismatch() const final;
     bool valueMissing() const final;
-    bool isValid() const final;
+    bool computeValidity() const final;
     WEBCORE_EXPORT String validationMessage() const final;
 
     // Returns the minimum value for type=date, number, or range.  Don't call this for other types.
@@ -177,6 +177,8 @@ public:
     bool isValidValue(const String&) const;
     bool hasDirtyValue() const { return !m_valueIfDirty.isNull(); };
 
+    String placeholder() const;
+
     String sanitizeValue(const String&) const;
 
     String localizeValue(const String&) const;
@@ -184,8 +186,8 @@ public:
     // The value which is drawn by a renderer.
     String visibleValue() const;
 
-    WEBCORE_EXPORT double valueAsDate() const;
-    WEBCORE_EXPORT ExceptionOr<void> setValueAsDate(double);
+    WEBCORE_EXPORT WallTime valueAsDate() const;
+    WEBCORE_EXPORT ExceptionOr<void> setValueAsDate(WallTime);
 
     WEBCORE_EXPORT double valueAsNumber() const;
     WEBCORE_EXPORT ExceptionOr<void> setValueAsNumber(double, TextFieldEventBehavior = DispatchNoEvent);
@@ -241,6 +243,9 @@ public:
 
     bool isAutoFilledAndViewable() const { return m_isAutoFilledAndViewable; }
     WEBCORE_EXPORT void setAutoFilledAndViewable(bool = true);
+
+    bool isAutoFilledAndObscured() const { return m_isAutoFilledAndObscured; }
+    WEBCORE_EXPORT void setAutoFilledAndObscured(bool = true);
 
     AutoFillButtonType lastAutoFillButtonType() const { return static_cast<AutoFillButtonType>(m_lastAutoFillButtonType); }
     AutoFillButtonType autoFillButtonType() const { return static_cast<AutoFillButtonType>(m_autoFillButtonType); }
@@ -338,11 +343,11 @@ public:
     bool shouldTruncateText(const RenderStyle&) const;
     void invalidateStyleOnFocusChangeIfNeeded();
 
-    ExceptionOr<int> selectionStartForBindings() const;
-    ExceptionOr<void> setSelectionStartForBindings(int);
+    std::optional<int> selectionStartForBindings() const;
+    ExceptionOr<void> setSelectionStartForBindings(std::optional<int>);
 
-    ExceptionOr<int> selectionEndForBindings() const;
-    ExceptionOr<void> setSelectionEndForBindings(int);
+    std::optional<int> selectionEndForBindings() const;
+    ExceptionOr<void> setSelectionEndForBindings(std::optional<int>);
 
     ExceptionOr<String> selectionDirectionForBindings() const;
     ExceptionOr<void> setSelectionDirectionForBindings(const String&);
@@ -403,7 +408,7 @@ private:
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
-    bool appendFormData(DOMFormData&, bool) final;
+    bool appendFormData(DOMFormData&) final;
 
     bool isSuccessfulSubmitButton() const final;
     bool matchesDefaultPseudoClass() const final;
@@ -474,6 +479,7 @@ private:
     unsigned m_autocomplete : 2; // AutoCompleteSetting
     bool m_isAutoFilled : 1;
     bool m_isAutoFilledAndViewable : 1;
+    bool m_isAutoFilledAndObscured : 1;
     unsigned m_autoFillButtonType : 3; // AutoFillButtonType
     unsigned m_lastAutoFillButtonType : 3; // AutoFillButtonType
     bool m_isAutoFillAvailable : 1;

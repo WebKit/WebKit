@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 #include "AuthenticationExtensionsClientInputs.h"
+#include "AuthenticatorAttachment.h"
 #include "BufferSource.h"
 #include "PublicKeyCredentialDescriptor.h"
 #include "UserVerificationRequirement.h"
@@ -56,6 +57,8 @@ template<class Encoder>
 void PublicKeyCredentialRequestOptions::encode(Encoder& encoder) const
 {
     encoder << timeout << rpId << allowCredentials << userVerification << extensions;
+    encoder << static_cast<uint64_t>(challenge.length());
+    encoder.encodeFixedLengthData(challenge.data(), challenge.length(), 1);
 }
 
 template<class Decoder>
@@ -85,6 +88,9 @@ std::optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptio
     if (!extensions)
         return std::nullopt;
     result.extensions = WTFMove(*extensions);
+
+    if (!decoder.decode(result.challenge))
+        return std::nullopt;
 
     return result;
 }

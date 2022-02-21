@@ -282,6 +282,11 @@ void TestRunner::notifyDone()
         fprintf(stderr, "TestRunner::notifyDone() called unexpectedly.");
 }
 
+void TestRunner::stopLoading()
+{
+    [mainFrame.webView stopLoading:nil];
+}
+
 void TestRunner::forceImmediateCompletion()
 {
     if (m_waitToDump) {
@@ -951,12 +956,6 @@ void TestRunner::apiTestGoToCurrentBackForwardItem()
 {
     WebView *view = [mainFrame webView];
     [view goToBackForwardItem:[[view backForwardList] currentItem]];
-}
-
-void TestRunner::setWebViewEditable(bool editable)
-{
-    WebView *view = [mainFrame webView];
-    [view setEditable:editable];
 }
 
 static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoaderRunLoopMode";

@@ -139,6 +139,9 @@ class _BiDirectionalQueue(object):
         self.incoming = incoming or multiprocessing.Queue()
 
     def send(self, object):
+        if self.outgoing._closed:
+            sys.stderr.write('Cannot send message to closed queue\n')
+            return False
         return self.outgoing.put(object)
 
     def receive(self, blocking=True):

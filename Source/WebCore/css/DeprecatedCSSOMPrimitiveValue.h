@@ -63,11 +63,8 @@ public:
         CSS_ATTR = 22,
         CSS_COUNTER = 23,
         CSS_RECT = 24,
-        CSS_RGBCOLOR = 25,
-        CSS_VW = 26,
-        CSS_VH = 27,
-        CSS_VMIN = 28,
-        CSS_VMAX = 29
+        CSS_RGBCOLOR = 25
+        // Do not add new units here; this is deprecated and we shouldn't expose anything not in DOM Level 2 Style.
     };
 
     static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSSPrimitiveValue& value, CSSStyleDeclaration& owner)
@@ -89,6 +86,8 @@ public:
     static ExceptionOr<void> setStringValue(unsigned short, const String&) { return Exception { NoModificationAllowedError }; }
 
     String stringValue() const { return m_value->stringValue(); }
+    bool isCSSWideKeyword() const { return m_value->isCSSWideKeyword(); }
+    unsigned cssValueType() const { return m_value->cssValueType(); }
 
 private:
     DeprecatedCSSOMPrimitiveValue(const CSSPrimitiveValue& value, CSSStyleDeclaration& owner)

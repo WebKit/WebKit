@@ -42,6 +42,7 @@ class ApplicationCache;
 class ApplicationCacheGroup;
 class ApplicationCacheResource;
 class ApplicationCacheStorage;
+class SharedBuffer;
 class DOMApplicationCache;
 class DocumentLoader;
 class Frame;
@@ -49,7 +50,6 @@ class ResourceError;
 class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
-class SharedBuffer;
 class SubstituteData;
 
 class ApplicationCacheHost {
@@ -95,7 +95,7 @@ public:
     void maybeLoadMainResource(const ResourceRequest&, SubstituteData&);
     void maybeLoadMainResourceForRedirect(const ResourceRequest&, SubstituteData&);
     bool maybeLoadFallbackForMainResponse(const ResourceRequest&, const ResourceResponse&);
-    void mainResourceDataReceived(const uint8_t* data, int length, long long encodedDataLength, bool allAtOnce);
+    void mainResourceDataReceived(const SharedBuffer&, long long encodedDataLength, bool allAtOnce);
     void finishedLoadingMainResource();
     void failedLoadingMainResource();
 

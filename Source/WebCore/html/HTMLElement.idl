@@ -21,8 +21,9 @@
 [
     CustomPushEventHandlerScope,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window,
+    GenerateForEachEventHandlerContentAttribute,
     JSGenerateToNativeObject,
-    Exposed=Window
 ] interface HTMLElement : Element {
     [Custom] constructor();
 
@@ -48,7 +49,7 @@
     // ElementInternals attachInternals();
 
     // Experimental: https://github.com/WICG/inert/blob/master/README.md
-    [CEReactions, Reflect, EnabledBySetting=InertAttribute] attribute boolean inert;
+    [CEReactions, Reflect, EnabledBySetting=InertAttributeEnabled] attribute boolean inert;
 
     // Non-standard: IE extension. May get added to the specification (https://github.com/whatwg/html/issues/668).
     [CEReactions] attribute [LegacyNullToEmptyString] DOMString outerText;

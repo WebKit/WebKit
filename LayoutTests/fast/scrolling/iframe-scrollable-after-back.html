@@ -16,6 +16,7 @@
             background-image: linear-gradient(white, gray)
         }
     </style>
+    <script src="../../resources/ui-helper.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -28,60 +29,49 @@
         }
 
         var scrollTopBeforeScroll;
-        var postScrollCallback;
+        var scrollTopAfterScroll;
 
         function iframeScrolled()
         {
-            var newScrollTop = document.getElementById('iframe').contentDocument.scrollingElement.scrollTop;
-            if (newScrollTop > scrollTopBeforeScroll)
-                logResult('PASS: mouseWheel caused scrolling');
-            else
-                logResult('FAIL; mouseWheel did not scroll; scrollTop is ' + newScrollTop + ', was ' + scrollTopBeforeScroll);
-
-            if (postScrollCallback)
-                postScrollCallback();
+            scrollTopAfterScroll = document.getElementById('iframe').contentDocument.scrollingElement.scrollTop;
         }
         
-        function testScrollability(completionHandler)
+        async function testScrollability()
         {
             var iframeTarget = document.getElementById('iframe');
             var iframeBounds = iframeTarget.getBoundingClientRect();
-            
+
             scrollTopBeforeScroll = iframeTarget.contentDocument.scrollingElement.scrollTop;
             logResult('Sending mouseWheel events');
 
-            eventSender.mouseMoveTo(iframeBounds.left + 10, iframeBounds.top + 10);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+            await UIHelper.mouseWheelScrollAt(iframeBounds.left + 10, iframeBounds.top + 10, 0, -1, 0, -1);
 
-            postScrollCallback = completionHandler;
+            if (scrollTopAfterScroll > scrollTopBeforeScroll)
+                logResult('PASS: mouseWheel caused scrolling');
+            else
+                logResult('FAIL; mouseWheel did not scroll; scrollTop is ' + scrollTopAfterScroll + ', was ' + scrollTopBeforeScroll);
         }
         
-        function startTest()
+        async function startTest()
         {
             if (!window.eventSender) {
                 logResult('This test must be run in DumpRenderTree/WebKitTestRunner');
                 return;
             }
 
-            testScrollability(function() {
-                window.setTimeout(function() {
-                    logResult('\nNavigating forward then back\n');
-                    window.location.href = "data:text/html,<body onload='history.back()'></body>";
-                }, 0);
-            });
-            
+            await testScrollability();
+            setTimeout(() => {
+                logResult('\nNavigating forward then back\n');
+                window.location.href = "data:text/html,<body onload='history.back()'></body>";
+            }, 0);
         }
         
         var showCount = 0;
-        function pageShowed()
+        async function pageShowed()
         {
             if (++showCount == 2) {
-                testScrollability(function() {
-                    testRunner.notifyDone();
-                });
+                await testScrollability();
+                testRunner.notifyDone();
             }
         }
         

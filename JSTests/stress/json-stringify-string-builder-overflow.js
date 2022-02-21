@@ -1,6 +1,5 @@
 //@ slow!
 //@ skip if $memoryLimited
-//@ skip if $architecture != "arm64" and $architecture != "x86-64"
 //@ runDefault if !$memoryLimited
 
 var longString = "x".repeat(2 ** 30);

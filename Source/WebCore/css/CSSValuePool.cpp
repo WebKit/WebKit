@@ -38,12 +38,8 @@ LazyNeverDestroyed<StaticCSSValuePool> staticCSSValuePool;
 
 StaticCSSValuePool::StaticCSSValuePool()
 {
-    m_inheritedValue.construct(CSSValue::StaticCSSValue);
-    m_implicitInitialValue.construct(CSSValue::StaticCSSValue, true);
-    m_explicitInitialValue.construct(CSSValue::StaticCSSValue, false);
-    m_unsetValue.construct(CSSValue::StaticCSSValue);
-    m_revertValue.construct(CSSValue::StaticCSSValue);
-
+    m_implicitInitialValue.construct(CSSValue::StaticCSSValue, CSSPrimitiveValue::ImplicitInitialValue);
+    
     m_transparentColor.construct(CSSValue::StaticCSSValue, Color::transparentBlack);
     m_whiteColor.construct(CSSValue::StaticCSSValue, Color::white);
     m_blackColor.construct(CSSValue::StaticCSSValue, Color::black);
@@ -112,8 +108,6 @@ Ref<CSSPrimitiveValue> CSSValuePool::createColorValue(const Color& color)
 
 Ref<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSUnitType type)
 {
-    ASSERT(std::isfinite(value));
-
     if (value < 0 || value > StaticCSSValuePool::maximumCacheableIntegerValue)
         return CSSPrimitiveValue::create(value, type);
 

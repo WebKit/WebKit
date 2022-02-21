@@ -24,14 +24,14 @@
 set -e
 set -x
 
-config=Debug
+config=Release
 sdk=macosx.internal
 archs=blank
 variants=all
 target=all
 port=10022
 
-function show_help {
+show_help() {
     set +x
     echo "$0 [-hcsavtpb]"
     echo

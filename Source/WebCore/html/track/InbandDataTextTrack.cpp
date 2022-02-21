@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Cable Television Labs Inc.  All rights reserved.
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,22 +30,22 @@
 #if ENABLE(VIDEO)
 
 #include "DataCue.h"
-#include "HTMLMediaElement.h"
 #include "InbandTextTrackPrivate.h"
+#include "TextTrackList.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InbandDataTextTrack);
 
-inline InbandDataTextTrack::InbandDataTextTrack(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
-    : InbandTextTrack(document, client, trackPrivate)
+inline InbandDataTextTrack::InbandDataTextTrack(Document& document, InbandTextTrackPrivate& trackPrivate)
+    : InbandTextTrack(document, trackPrivate)
 {
 }
 
-Ref<InbandDataTextTrack> InbandDataTextTrack::create(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
+Ref<InbandDataTextTrack> InbandDataTextTrack::create(Document& document, InbandTextTrackPrivate& trackPrivate)
 {
-    auto textTrack = adoptRef(*new InbandDataTextTrack(document, client, trackPrivate));
+    auto textTrack = adoptRef(*new InbandDataTextTrack(document, trackPrivate));
     textTrack->suspendIfNeeded();
     return textTrack;
 }
@@ -70,8 +70,9 @@ void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& en
         return;
     }
 
-    if (end.isPositiveInfinite() && mediaElement()) {
-        cue->setEndTime(mediaElement()->durationMediaTime());
+    auto* textTrackList = downcast<TextTrackList>(trackList());
+    if (end.isPositiveInfinite() && textTrackList && textTrackList->duration().isValid()) {
+        cue->setEndTime(textTrackList->duration());
         m_incompleteCueMap.append(&cue.get());
     }
 
@@ -82,7 +83,7 @@ void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& en
 
 RefPtr<DataCue> InbandDataTextTrack::findIncompleteCue(const SerializedPlatformDataCue& cueToFind)
 {
-    auto index = m_incompleteCueMap.findMatching([&](const auto& cue) {
+    auto index = m_incompleteCueMap.findIf([&](const auto& cue) {
         return cueToFind.isEqual(*cue->platformValue());
     });
 
@@ -101,8 +102,9 @@ void InbandDataTextTrack::updateDataCue(const MediaTime& start, const MediaTime&
     cue->willChange();
 
     MediaTime end = inEnd;
-    if (end.isPositiveInfinite() && mediaElement())
-        end = mediaElement()->durationMediaTime();
+    auto* textTrackList = downcast<TextTrackList>(trackList());
+    if (end.isPositiveInfinite() && textTrackList && textTrackList->duration().isValid())
+        end = textTrackList->duration();
     else
         m_incompleteCueMap.removeFirst(cue);
 

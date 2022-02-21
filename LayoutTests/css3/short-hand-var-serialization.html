@@ -1,0 +1,55 @@
+<html>
+<head>
+<style>
+div {
+    width: 100px;
+    height: 100px;
+    border: 3px solid red;
+}
+#div0 {
+    --v0: 50px;
+    border-radius: var(--v0);
+}
+#div1 {
+    --v0: 50px;
+    margin: var(--v0);
+}
+
+#div2 {
+    --v0: 50px;
+    border-block-width: var(--v0);
+}
+    
+#div3 {
+    --v0: 50px;
+    border-inline-width: var(--v0);
+}
+
+#div4 {
+    --v0: left;
+    perspective-origin: var(--v0);
+}
+</style>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="div0"></div>
+<div id="div1"></div>
+<div id="div2"></div>
+<div id="div3"></div>
+<div id="div4"></div>
+<script>
+description('Test that shorthand css properties set to a variable return that variable when accessed through the style sheet.');
+
+debug('- Tests -');
+//var value = document.styleSheets[1].cssRules[1].style['borderRadius'];
+var styleSheet = document.styleSheets[0];
+shouldBeEqualToString('styleSheet.rules[1].style.borderRadius', "var(--v0)");
+shouldBeEqualToString('styleSheet.rules[2].style.margin', "var(--v0)");
+shouldBeEqualToString('styleSheet.rules[3].style.borderBlockWidth', "var(--v0)");
+shouldBeEqualToString('styleSheet.rules[4].style.borderInlineWidth', "var(--v0)");
+shouldBeEqualToString('styleSheet.rules[5].style.perspectiveOrigin', "var(--v0)");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -24,9 +24,8 @@
  */
 
 [
-    EnabledBySetting=Gamepads,
+    EnabledBySetting=GamepadsEnabled,
     Conditional=GAMEPAD,
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface Gamepad {
     readonly attribute DOMString id;

@@ -30,6 +30,7 @@
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
 
@@ -73,7 +74,7 @@ private:
         completionHandler();
         pingLoadComplete({ }, response);
     }
-    void didReceiveBuffer(WebCore::ResourceHandle*, Ref<WebCore::SharedBuffer>&&, int) final { pingLoadComplete(); }
+    void didReceiveData(WebCore::ResourceHandle*, const WebCore::SharedBuffer&, int) final { pingLoadComplete(); }
     void didFinishLoading(WebCore::ResourceHandle*, const WebCore::NetworkLoadMetrics&) final { pingLoadComplete(); }
     void didFail(WebCore::ResourceHandle*, const WebCore::ResourceError& error) final { pingLoadComplete(error); }
     bool shouldUseCredentialStorage(WebCore::ResourceHandle*) final { return m_shouldUseCredentialStorage; }

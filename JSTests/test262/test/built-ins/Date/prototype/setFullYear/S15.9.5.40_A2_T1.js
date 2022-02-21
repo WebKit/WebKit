@@ -6,11 +6,14 @@ info: The "length" property of the "setFullYear" is 3
 esid: sec-date.prototype.setfullyear
 description: The "length" property of the "setFullYear" is 3
 ---*/
+assert.sameValue(
+  Date.prototype.setFullYear.hasOwnProperty("length"),
+  true,
+  'Date.prototype.setFullYear.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.setFullYear.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The setFullYear has a "length" property');
-}
-
-if (Date.prototype.setFullYear.length !== 3) {
-  throw new Test262Error('#2: The "length" property of the setFullYear is 3');
-}
+assert.sameValue(
+  Date.prototype.setFullYear.length,
+  3,
+  'The value of Date.prototype.setFullYear.length is expected to be 3'
+);

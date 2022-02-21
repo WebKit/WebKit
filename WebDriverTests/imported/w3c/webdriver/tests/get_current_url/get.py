@@ -1,11 +1,12 @@
-from six import text_type
+import pytest
 
 from tests.support import platform_name
-from tests.support.inline import inline
 from tests.support.asserts import assert_error, assert_success
 
-doc = inline("<p>frame")
-alert_doc = inline("<script>window.alert()</script>")
+
+@pytest.fixture
+def doc(inline):
+    return inline("<p>frame")
 
 
 def get_current_url(session):
@@ -18,14 +19,14 @@ def test_no_top_browsing_context(session, closed_window):
     assert_error(response, "no such window")
 
 
-def test_no_browsing_context(session, closed_frame):
+def test_no_browsing_context(session, closed_frame, doc):
     session.url = doc
 
     response = get_current_url(session)
     assert_success(response, doc)
 
 
-def test_get_current_url_matches_location(session):
+def test_get_current_url_matches_location(session, doc):
     session.url = doc
 
     response = get_current_url(session)
@@ -37,7 +38,7 @@ def test_get_current_url_payload(session):
 
     response = get_current_url(session)
     value = assert_success(response)
-    assert isinstance(value, text_type)
+    assert isinstance(value, str)
 
 
 def test_get_current_url_special_pages(session):
@@ -76,7 +77,7 @@ def test_set_malformed_url(session):
     assert_error(response, "invalid argument")
 
 
-def test_get_current_url_after_modified_location(session):
+def test_get_current_url_after_modified_location(session, doc):
     session.url = doc
 
     response = get_current_url(session)

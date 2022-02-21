@@ -105,14 +105,23 @@ class Manager(object):
         for canonicalized_binary, path in self._port.path_to_api_test_binaries().items():
             if canonicalized_binary not in specified_binaries:
                 continue
+
+            to_be_listed = path
+            if not self._port.host.platform.is_win():
+                to_be_listed = self.host.filesystem.join(self.host.filesystem.dirname(path), 'ToBeListed')
+                self.host.filesystem.copyfile(path, to_be_listed)
+                self.host.filesystem.copymode(path, to_be_listed)
             try:
                 output = self.host.executive.run_command(
-                    Runner.command_for_port(self._port, [path, '--gtest_list_tests']),
+                    Runner.command_for_port(self._port, [to_be_listed, '--gtest_list_tests']),
                     env=self._port.environment_for_api_tests())
                 available_tests += Manager._test_list_from_output(output, '{}.'.format(canonicalized_binary))
             except ScriptError:
                 _log.error('Failed to list {} tests'.format(canonicalized_binary))
                 raise
+            finally:
+                if not self._port.host.platform.is_win():
+                    self.host.filesystem.remove(to_be_listed)
 
         if len(args) == 0:
             return sorted(available_tests)

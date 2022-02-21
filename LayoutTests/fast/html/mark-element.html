@@ -25,8 +25,8 @@ testParent.innerHTML = '<b><mark id="mark2">This text should be bold.</mark> <sp
 function getWeight(id) {
     return document.defaultView.getComputedStyle(document.getElementById(id), null).getPropertyValue('font-weight');
 }
-shouldBe('getWeight("mark2")', '"bold"');
-shouldBe('getWeight("span1")', '"bold"');
+shouldBe('getWeight("mark2")', '"700"');
+shouldBe('getWeight("span1")', '"700"');
 document.body.removeChild(testParent);
 </script>
 <script src="../../resources/js-test-post.js"></script>

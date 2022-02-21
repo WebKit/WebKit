@@ -24,7 +24,7 @@ class RTC_EXPORT MouseCursor {
  public:
   MouseCursor();
 
-  // Takes ownership of |image|. |hotspot| must be within |image| boundaries.
+  // Takes ownership of `image`. `hotspot` must be within `image` boundaries.
   MouseCursor(DesktopFrame* image, const DesktopVector& hotspot);
 
   ~MouseCursor();

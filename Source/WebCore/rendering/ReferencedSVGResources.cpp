@@ -26,13 +26,17 @@
 #include "config.h"
 #include "ReferencedSVGResources.h"
 
-#include "ClipPathOperation.h"
 #include "FilterOperations.h"
+#include "PathOperation.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderStyle.h"
 #include "SVGClipPathElement.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGFilterElement.h"
 #include "SVGResourceElementClient.h"
+
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
@@ -76,7 +80,7 @@ ReferencedSVGResources::~ReferencedSVGResources()
 void ReferencedSVGResources::addClientForTarget(SVGElement& targetElement, const AtomString& targetID)
 {
     m_elementClients.ensure(targetID, [&] {
-        auto client = WTF::makeUnique<CSSSVGResourceElementClient>(m_renderer);
+        auto client = makeUnique<CSSSVGResourceElementClient>(m_renderer);
         targetElement.addReferencingCSSClient(*client);
         return client;
     });
@@ -94,8 +98,8 @@ void ReferencedSVGResources::removeClientForTarget(Document& document, const Ato
 Vector<std::pair<AtomString, QualifiedName>> ReferencedSVGResources::referencedSVGResourceIDs(const RenderStyle& style)
 {
     Vector<std::pair<AtomString, QualifiedName>> referencedResources;
-    if (is<ReferenceClipPathOperation>(style.clipPath())) {
-        auto& clipPath = downcast<ReferenceClipPathOperation>(*style.clipPath());
+    if (is<ReferencePathOperation>(style.clipPath())) {
+        auto& clipPath = downcast<ReferencePathOperation>(*style.clipPath());
         if (!clipPath.fragment().isEmpty())
             referencedResources.append({ clipPath.fragment(), SVGNames::clipPathTag });
     }
@@ -153,7 +157,7 @@ SVGFilterElement* ReferencedSVGResources::referencedFilterElement(Document& docu
     return element ? downcast<SVGFilterElement>(element) : nullptr;
 }
 
-RenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRenderer(Document& document, const ReferenceClipPathOperation& clipPath)
+RenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRenderer(Document& document, const ReferencePathOperation& clipPath)
 {
     if (clipPath.fragment().isEmpty())
         return nullptr;

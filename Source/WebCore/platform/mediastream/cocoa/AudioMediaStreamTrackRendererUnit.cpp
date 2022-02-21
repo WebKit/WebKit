@@ -46,16 +46,17 @@ void AudioMediaStreamTrackRendererUnit::setCreateInternalUnitFunction(CreateInte
 
 static UniqueRef<AudioMediaStreamTrackRendererInternalUnit> createInternalUnit(AudioMediaStreamTrackRendererUnit& unit)
 {
-    AudioMediaStreamTrackRendererInternalUnit::RenderCallback callback = [&unit](auto sampleCount, auto& list, auto sampleTime, auto hostTime, auto& flags) {
+    AudioMediaStreamTrackRendererInternalUnit::RenderCallback renderCallback = [&unit](auto sampleCount, auto& list, auto sampleTime, auto hostTime, auto& flags) {
         unit.render(sampleCount, list, sampleTime, hostTime, flags);
         return 0;
     };
+    AudioMediaStreamTrackRendererInternalUnit::ResetCallback resetCallback = [&unit]() { unit.reset(); };
 
     auto& function = getCreateInternalUnitFunction();
     if (function)
-        return function(WTFMove(callback));
+        return function(WTFMove(renderCallback), WTFMove(resetCallback));
 
-    return AudioMediaStreamTrackRendererInternalUnit::createLocalInternalUnit(WTFMove(callback));
+    return AudioMediaStreamTrackRendererInternalUnit::createLocalInternalUnit(WTFMove(renderCallback), WTFMove(resetCallback));
 }
 
 AudioMediaStreamTrackRendererUnit& AudioMediaStreamTrackRendererUnit::singleton()
@@ -137,6 +138,22 @@ void AudioMediaStreamTrackRendererUnit::stop()
     m_internalUnit->stop();
 }
 
+void AudioMediaStreamTrackRendererUnit::reset()
+{
+    RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::reset");
+    if (!isMainThread()) {
+        callOnMainThread([weakThis = WeakPtr { this }] {
+            if (weakThis)
+                weakThis->reset();
+        });
+        return;
+    }
+
+    m_resetObservers.forEach([](auto& observer) {
+        observer();
+    });
+}
+
 void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&& callback)
 {
     ASSERT(isMainThread());
@@ -165,18 +182,14 @@ void AudioMediaStreamTrackRendererUnit::render(size_t sampleCount, AudioBufferLi
 
     updateRenderSourcesIfNecessary();
 
-    if (m_renderSources.isEmpty()) {
-        actionFlags = kAudioUnitRenderAction_OutputIsSilence;
-        return;
-    }
-
     // Mix all sources.
-    bool isFirstSource = true;
+    bool hasCopiedData = false;
     for (auto& source : m_renderSources) {
-        source->pullSamples(ioData, sampleCount, sampleTime, hostTime, isFirstSource ? AudioSampleDataSource::Copy : AudioSampleDataSource::Mix);
-        isFirstSource = false;
+        if (source->pullSamples(ioData, sampleCount, sampleTime, hostTime, hasCopiedData ? AudioSampleDataSource::Mix : AudioSampleDataSource::Copy))
+            hasCopiedData = true;
     }
-    return;
+    if (!hasCopiedData)
+        actionFlags = kAudioUnitRenderAction_OutputIsSilence;
 }
 
 } // namespace WebCore

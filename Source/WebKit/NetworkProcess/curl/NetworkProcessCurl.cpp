@@ -58,7 +58,7 @@ void NetworkProcess::platformTerminate()
 void NetworkProcess::setNetworkProxySettings(PAL::SessionID sessionID, WebCore::CurlProxySettings&& settings)
 {
     if (auto* networkStorageSession = storageSession(sessionID))
-        networkStorageSession->setProxySettings(WTFMove(settings));
+        networkStorageSession->setProxySettings(settings);
     else
         ASSERT_NOT_REACHED();
 }

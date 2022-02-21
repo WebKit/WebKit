@@ -42,7 +42,7 @@ Structure* JSFinalizationRegistry::createStructure(VM& vm, JSGlobalObject* globa
 
 JSFinalizationRegistry* JSFinalizationRegistry::create(VM& vm, Structure* structure, JSObject* callback)
 {
-    JSFinalizationRegistry* instance = new (NotNull, allocateCell<JSFinalizationRegistry>(vm.heap)) JSFinalizationRegistry(vm, structure);
+    JSFinalizationRegistry* instance = new (NotNull, allocateCell<JSFinalizationRegistry>(vm)) JSFinalizationRegistry(vm, structure);
     instance->finishCreation(vm, structure->globalObject(), callback);
     return instance;
 }
@@ -149,13 +149,15 @@ void JSFinalizationRegistry::finalizeUnconditionally(VM& vm)
         return !bucket.value.size();
     });
 
-    if (!vm.deferredWorkTimer->hasPendingWork(this) && (readiedCell || deadCount(locker))) {
-        vm.deferredWorkTimer->addPendingWork(vm, this, { });
-        ASSERT(vm.deferredWorkTimer->hasPendingWork(this));
-        vm.deferredWorkTimer->scheduleWorkSoon(this, [this](DeferredWorkTimer::Ticket, DeferredWorkTimer::TicketData&&) {
+    if (!m_hasAlreadyScheduledWork && (readiedCell || deadCount(locker))) {
+        auto ticket = vm.deferredWorkTimer->addPendingWork(vm, this, { });
+        ASSERT(vm.deferredWorkTimer->hasPendingWork(ticket));
+        vm.deferredWorkTimer->scheduleWorkSoon(ticket, [this](DeferredWorkTimer::Ticket) {
             JSGlobalObject* globalObject = this->globalObject();
+            this->m_hasAlreadyScheduledWork = false;
             this->runFinalizationCleanup(globalObject);
         });
+        m_hasAlreadyScheduledWork = true;
     }
 }
 
@@ -208,7 +210,7 @@ void JSFinalizationRegistry::registerTarget(VM& vm, JSObject* target, JSValue ho
         auto result = m_liveRegistrations.add(jsSecureCast<JSObject*>(vm, token), LiveRegistrations());
         result.iterator->value.append(WTFMove(registration));
     }
-    vm.heap.writeBarrier(this);
+    vm.writeBarrier(this);
 }
 
 bool JSFinalizationRegistry::unregister(VM&, JSObject* token)

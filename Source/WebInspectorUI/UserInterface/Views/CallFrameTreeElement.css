@@ -99,5 +99,5 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
 }
 
 .tree-outline .item.call-frame.blackboxed:not(.selected) {
-    opacity: var(--blackboxed-tree-item-opacity);
+    opacity: var(--blackboxed-opacity);
 }

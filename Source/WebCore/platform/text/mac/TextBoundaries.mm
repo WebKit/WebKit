@@ -71,11 +71,11 @@ static bool isAmbiguousBoundaryCharacter(UChar32 character)
 
 static CFStringTokenizerRef tokenizerForString(CFStringRef str)
 {
-    static auto locale = makeNeverDestroyed([] {
+    static const NeverDestroyed locale = [] {
         const char* localID = currentTextBreakLocaleID();
         auto currentLocaleID = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(localID), strlen(localID), kCFStringEncodingASCII, false, kCFAllocatorNull));
         return adoptCF(CFLocaleCreate(kCFAllocatorDefault, currentLocaleID.get()));
-    }());
+    }();
 
     if (!locale.get())
         return nullptr;

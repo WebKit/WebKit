@@ -30,7 +30,6 @@
 
 #include "WebFrame.h"
 #include "WebKeyboardEvent.h"
-#include "WebKitWebPageAccessibilityObject.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/BackForwardController.h>
@@ -45,6 +44,8 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/PointerCharacteristics.h>
+#include <WebCore/RenderTheme.h>
+#include <WebCore/RenderThemeAdwaita.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WindowsKeyboardCodes.h>
@@ -54,24 +55,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebPage::platformInitialize()
-{
-#if ENABLE(ACCESSIBILITY)
-    // Create the accessible object (the plug) that will serve as the
-    // entry point to the Web process, and send a message to the UI
-    // process to connect the two worlds through the accessibility
-    // object there specifically placed for that purpose (the socket).
-    m_accessibilityObject = adoptGRef(webkitWebPageAccessibilityObjectNew(this));
-    GUniquePtr<gchar> plugID(atk_plug_get_id(ATK_PLUG(m_accessibilityObject.get())));
-    send(Messages::WebPageProxy::BindAccessibilityTree(String(plugID.get())));
-#endif
-}
-
 void WebPage::platformReinitialize()
-{
-}
-
-void WebPage::platformDetach()
 {
 }
 
@@ -82,31 +66,31 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
 
     switch (keyboardEvent.windowsVirtualKeyCode()) {
     case VK_SPACE:
-        scroll(m_page.get(), keyboardEvent.shiftKey() ? ScrollUp : ScrollDown, ScrollByPage);
+        scroll(m_page.get(), keyboardEvent.shiftKey() ? ScrollUp : ScrollDown, ScrollGranularity::Page);
         break;
     case VK_LEFT:
-        scroll(m_page.get(), ScrollLeft, ScrollByLine);
+        scroll(m_page.get(), ScrollLeft, ScrollGranularity::Line);
         break;
     case VK_RIGHT:
-        scroll(m_page.get(), ScrollRight, ScrollByLine);
+        scroll(m_page.get(), ScrollRight, ScrollGranularity::Line);
         break;
     case VK_UP:
-        scroll(m_page.get(), ScrollUp, ScrollByLine);
+        scroll(m_page.get(), ScrollUp, ScrollGranularity::Line);
         break;
     case VK_DOWN:
-        scroll(m_page.get(), ScrollDown, ScrollByLine);
+        scroll(m_page.get(), ScrollDown, ScrollGranularity::Line);
         break;
     case VK_HOME:
-        scroll(m_page.get(), ScrollUp, ScrollByDocument);
+        scroll(m_page.get(), ScrollUp, ScrollGranularity::Document);
         break;
     case VK_END:
-        scroll(m_page.get(), ScrollDown, ScrollByDocument);
+        scroll(m_page.get(), ScrollDown, ScrollGranularity::Document);
         break;
     case VK_PRIOR:
-        scroll(m_page.get(), ScrollUp, ScrollByPage);
+        scroll(m_page.get(), ScrollUp, ScrollGranularity::Page);
         break;
     case VK_NEXT:
-        scroll(m_page.get(), ScrollDown, ScrollByPage);
+        scroll(m_page.get(), ScrollDown, ScrollGranularity::Page);
         break;
     default:
         return false;
@@ -170,11 +154,16 @@ void WebPage::collapseSelectionInFrame(FrameIdentifier frameID)
 
 void WebPage::showEmojiPicker(Frame& frame)
 {
-    CompletionHandler<void(String)> completionHandler = [frame = makeRef(frame)](String result) {
+    CompletionHandler<void(String)> completionHandler = [frame = Ref { frame }](String result) {
         if (!result.isEmpty())
             frame->editor().insertText(result, nullptr);
     };
     sendWithAsyncReply(Messages::WebPageProxy::ShowEmojiPicker(frame.view()->contentsToRootView(frame.selection().absoluteCaretBounds())), WTFMove(completionHandler));
+}
+
+void WebPage::setAccentColor(WebCore::Color color)
+{
+    static_cast<RenderThemeAdwaita&>(RenderTheme::singleton()).setAccentColor(color);
 }
 
 } // namespace WebKit

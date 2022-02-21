@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="help" href="http://www.w3.org/TR/DOM-Level-3-Events/#events-WheelEvent">
 <script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 </head>
 <body onload="setupTopLevel();">
 <script>
@@ -27,7 +27,8 @@ function checkForScroll()
 
     finishJSTest();
 }
-function scrollRightMostSelect()
+
+async function scrollRightMostSelect()
 {
     if (selectLeft.scrollTop > 0)
         testPassed("Leftmost <select> was scrolled");
@@ -35,26 +36,58 @@ function scrollRightMostSelect()
         testFailed("Leftmost <select> was not scrolled");
     previousSelectLeftScrollPosition = selectLeft.scrollTop;
 
-    var startPosX = Math.round(selectRight.offsetLeft) + 10;
-    var startPosY = Math.round(selectRight.offsetTop) + 10;
-    eventSender.monitorWheelEvents();
-    eventSender.mouseMoveTo(startPosX, startPosY);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
-    eventSender.callAfterScrollingCompletes(checkForScroll);
+    const startPosX = Math.round(selectRight.offsetLeft) + 10;
+    const startPosY = Math.round(selectRight.offsetTop) + 10;
+
+    const events = [
+        {
+            type : "wheel",
+            viewX : startPosX,
+            viewY : startPosY,
+            deltaY : -10,
+            phase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            phase : "ended"
+        }
+    ];
+
+    await UIHelper.mouseWheelSequence({ events: events });
+    checkForScroll();
 }
 
-function scrollLeftMostSelect()
+async function scrollLeftMostSelect()
 {
-    var startPosX = Math.round(selectLeft.offsetLeft) + 10;
-    var startPosY = Math.round(selectLeft.offsetTop) + 10;
-    eventSender.monitorWheelEvents();
-    eventSender.mouseMoveTo(startPosX, startPosY);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
-    eventSender.callAfterScrollingCompletes(scrollRightMostSelect);
+    const startPosX = Math.round(selectLeft.offsetLeft) + 10;
+    const startPosY = Math.round(selectLeft.offsetTop) + 10;
+
+    const events = [
+        {
+            type : "wheel",
+            viewX : startPosX,
+            viewY : startPosY,
+            deltaY : -10,
+            phase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            phase : "ended"
+        }
+    ];
+
+    await UIHelper.mouseWheelSequence({ events: events });
+    scrollRightMostSelect();
 }
 
 function setupTopLevel()

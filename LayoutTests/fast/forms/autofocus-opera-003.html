@@ -6,20 +6,26 @@
  input { background:red }
  input:focus { background:lime }
 </style>
-<script language="JavaScript" type="text/javascript">
+<script>
     function log(message) {
         document.getElementById("console").innerHTML += "<li>"+message+"</li>";
     }
 
     function test() {
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
-        if (document.activeElement == document.getElementsByTagName("input")[0] &&
-            document.scrollingElement.scrollTop != 0)
-            log("SUCCESS");
-        else
-            log("FAILURE");
+        requestAnimationFrame(() => {
+            if (document.activeElement == document.getElementsByTagName("input")[0] &&
+                document.scrollingElement.scrollTop != 0)
+                log("SUCCESS");
+            else
+                log("FAILURE");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
     }
 </script>
 </head>

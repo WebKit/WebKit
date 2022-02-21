@@ -24,7 +24,7 @@
 
 #include "Color.h"
 #include "FloatPoint.h"
-#include "LayoutIntegrationRunIterator.h"
+#include "InlineIteratorTextBox.h"
 #include "RenderStyleConstants.h"
 #include <wtf/OptionSet.h>
 
@@ -44,15 +44,17 @@ class TextRun;
 class TextDecorationPainter {
 public:
     struct Styles;
-    TextDecorationPainter(GraphicsContext&, OptionSet<TextDecoration> decorations, const RenderText&, bool isFirstLine, const FontCascade&, std::optional<Styles> = std::nullopt);
+    TextDecorationPainter(GraphicsContext&, OptionSet<TextDecorationLine> decorations, const RenderText&, bool isFirstLine, const FontCascade&, std::optional<Styles> = std::nullopt);
     
-    void setTextRunIterator(LayoutIntegration::TextRunIterator textRun) { m_textRun = textRun; }
+    void setTextBox(InlineIterator::TextBoxIterator textBox) { m_textBox = textBox; }
     void setIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal; }
     void setWidth(float width) { m_width = width; }
     void setTextShadow(const ShadowData* textShadow) { m_shadow = textShadow; }
     void setShadowColorFilter(const FilterOperations* colorFilter) { m_shadowColorFilter = colorFilter; }
 
-    void paintTextDecoration(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin);
+    void paintBackgroundDecorations(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin);
+    void paintForegroundDecorations(const FloatPoint& boxOrigin);
+    void paintLineThrough(const Color&, float thickness, const FloatPoint& localOrigin);
 
     struct Styles {
         bool operator==(const Styles&) const;
@@ -66,12 +68,12 @@ public:
         TextDecorationStyle linethroughStyle;
     };
     static Color decorationColor(const RenderStyle&);
-    static OptionSet<TextDecoration> textDecorationsInEffectForStyle(const Styles&);
-    static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecoration> requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);
+    static OptionSet<TextDecorationLine> textDecorationsInEffectForStyle(const Styles&);
+    static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);
 
 private:
     GraphicsContext& m_context;
-    OptionSet<TextDecoration> m_decorations;
+    OptionSet<TextDecorationLine> m_decorations;
     float m_wavyOffset;
     float m_width { 0 };
     FloatPoint m_boxOrigin;
@@ -79,7 +81,7 @@ private:
     bool m_isHorizontal { true };
     const ShadowData* m_shadow { nullptr };
     const FilterOperations* m_shadowColorFilter { nullptr };
-    LayoutIntegration::TextRunIterator m_textRun;
+    InlineIterator::TextBoxIterator m_textBox;
     const FontCascade& m_font;
 
     Styles m_styles;

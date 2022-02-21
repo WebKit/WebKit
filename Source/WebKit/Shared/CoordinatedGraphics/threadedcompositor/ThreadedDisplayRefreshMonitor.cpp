@@ -108,8 +108,10 @@ void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
     {
         Locker locker { lock() };
         shouldHandleDisplayRefreshNotification = isScheduled() && isPreviousFrameDone();
-        if (shouldHandleDisplayRefreshNotification)
+        if (shouldHandleDisplayRefreshNotification) {
+            setIsScheduled(false);
             setIsPreviousFrameDone(false);
+        }
     }
 
     if (shouldHandleDisplayRefreshNotification) {

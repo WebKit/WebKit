@@ -222,5 +222,16 @@ void makeSafeToUseMemoryMapForPath(const String& path)
 }
 #endif
 
+bool excludeFromBackup(const String& path)
+{
+    NSError *error;
+    if (![[NSURL fileURLWithPath:(NSString *)path isDirectory:YES] setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error]) {
+        LOG_ERROR("Cannot exclude path '%s' from backup with error '%@'", path.utf8().data(), error.localizedDescription);
+        return false;
+    }
+
+    return true;
+}
+
 } // namespace FileSystemImpl
 } // namespace WTF

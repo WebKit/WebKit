@@ -24,11 +24,11 @@ class AudioSink {
   AudioSink() {}
   virtual ~AudioSink() {}
 
-  // Writes |num_samples| from |audio| to the AudioSink. Returns true if
+  // Writes `num_samples` from `audio` to the AudioSink. Returns true if
   // successful, otherwise false.
   virtual bool WriteArray(const int16_t* audio, size_t num_samples) = 0;
 
-  // Writes |audio_frame| to the AudioSink. Returns true if successful,
+  // Writes `audio_frame` to the AudioSink. Returns true if successful,
   // otherwise false.
   bool WriteAudioFrame(const AudioFrame& audio_frame) {
     return WriteArray(audio_frame.data(), audio_frame.samples_per_channel_ *

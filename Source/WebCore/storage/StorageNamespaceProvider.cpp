@@ -60,7 +60,7 @@ Ref<StorageArea> StorageNamespaceProvider::localStorageArea(Document& document)
     else
         storageNamespace = &localStorageNamespace(document.page()->sessionID());
 
-    return storageNamespace->storageArea(document.securityOrigin().data());
+    return storageNamespace->storageArea(document.securityOrigin());
 }
 
 StorageNamespace& StorageNamespaceProvider::localStorageNamespace(PAL::SessionID sessionID)

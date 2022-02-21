@@ -43,14 +43,6 @@
 #include <WebCore/Region.h>
 #include <WebCore/Settings.h>
 
-#if USE(DIRECT2D)
-#include <WebCore/GraphicsContextDirect2D.h>
-#include <WebCore/PlatformContextDirect2D.h>
-#include <d2d1.h>
-#include <d3d11_1.h>
-#endif
-
-
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
@@ -59,7 +51,7 @@ namespace WebKit {
 using namespace WebCore;
 
 DrawingAreaCoordinatedGraphics::DrawingAreaCoordinatedGraphics(WebPage& webPage, const WebPageCreationParameters& parameters)
-    : DrawingArea(DrawingAreaTypeCoordinatedGraphics, parameters.drawingAreaIdentifier, webPage)
+    : DrawingArea(DrawingAreaType::CoordinatedGraphics, parameters.drawingAreaIdentifier, webPage)
     , m_exitCompositingTimer(RunLoop::main(), this, &DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode)
     , m_discardPreviousLayerTreeHostTimer(RunLoop::main(), this, &DrawingAreaCoordinatedGraphics::discardPreviousLayerTreeHost)
     , m_supportsAsyncScrolling(parameters.store.getBoolValueForKey(WebPreferencesKey::threadedScrollingEnabledKey()))
@@ -861,10 +853,6 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
             m_webPage.drawRect(*graphicsContext, rect);
         updateInfo.updateRects.append(rect);
     }
-
-#if USE(DIRECT2D)
-    bitmap->leakSharedResource(); // It will be destroyed in the UIProcess.
-#endif
 
     m_webPage.didUpdateRendering();
 

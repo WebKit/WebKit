@@ -88,3 +88,6 @@ TEST_P(EGLAndroidFrameBufferTargetTest, MatchFramebufferTargetConfigs)
 }
 
 ANGLE_INSTANTIATE_TEST(EGLAndroidFrameBufferTargetTest, ES2_VULKAN(), ES3_VULKAN());
+
+// This test suite is not instantiated on some OSes.
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLAndroidFrameBufferTargetTest);

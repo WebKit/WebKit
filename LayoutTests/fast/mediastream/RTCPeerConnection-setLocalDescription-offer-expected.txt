@@ -18,7 +18,7 @@ PASS pc.signalingState is 'stable'
 PASS audioTransceiver.mid is null
 
 PASS firstOffer set as local description
-FAIL pc.signalingState should be have-local-offer. Was stable.
+PASS pc.signalingState is 'have-local-offer'
 FAIL pc.localDescription should be [object Object]. Was null.
 FAIL pc.pendingLocalDescription should be [object Object]. Was null.
 PASS pc.currentLocalDescription is null

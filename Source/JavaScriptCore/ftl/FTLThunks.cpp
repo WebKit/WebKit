@@ -80,7 +80,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
     
     saveAllRegisters(jit, buffer);
 
-    jit.loadPtr(framePointerRegister, GPRInfo::argumentGPR0);
+    jit.loadPtr(CCallHelpers::Address(framePointerRegister), GPRInfo::argumentGPR0);
     jit.peek(
         GPRInfo::argumentGPR1,
         (stackMisalignment - pushToSaveByteOffset) / sizeof(void*));

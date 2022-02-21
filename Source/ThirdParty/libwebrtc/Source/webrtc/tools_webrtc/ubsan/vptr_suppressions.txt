@@ -1,5 +1,5 @@
 #############################################################################
-# UBSan vptr blacklist.
+# UBSan vptr ignorelist.
 # Function and type based blacklisting use a mangled name, and it is especially
 # tricky to represent C++ types. For now, any possible changes by name manglings
 # are simply represented as wildcard expressions of regexp, and thus it might be
@@ -8,7 +8,7 @@
 # Please think twice before you add or remove these rules.
 #
 # This is a stripped down copy of Chromium's vptr_blacklist.txt, to enable
-# adding WebRTC-specific blacklist entries.
+# adding WebRTC-specific ignorelist entries.
 
 #############################################################################
 # Using raw pointer values.

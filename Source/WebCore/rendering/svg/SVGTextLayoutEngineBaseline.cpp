@@ -48,9 +48,9 @@ float SVGTextLayoutEngineBaseline::calculateBaselineShift(const SVGRenderStyle& 
     case BaselineShift::Baseline:
         return 0;
     case BaselineShift::Sub:
-        return -m_font.fontMetrics().floatHeight() / 2;
+        return -m_font.metricsOfPrimaryFont().floatHeight() / 2;
     case BaselineShift::Super:
-        return m_font.fontMetrics().floatHeight() / 2;
+        return m_font.metricsOfPrimaryFont().floatHeight() / 2;
     case BaselineShift::Length:
         break;
     }
@@ -114,7 +114,7 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
         ASSERT(baseline != AlignmentBaseline::Auto);
     }
 
-    const FontMetrics& fontMetrics = m_font.fontMetrics();
+    const FontMetrics& fontMetrics = m_font.metricsOfPrimaryFont();
 
     // Note: http://wiki.apache.org/xmlgraphics-fop/LineLayout/AlignmentHandling
     switch (baseline) {
@@ -195,7 +195,7 @@ float SVGTextLayoutEngineBaseline::calculateGlyphAdvanceAndOrientation(bool isVe
     // Spec: If if the 'glyph-orientation-vertical' results in an orientation angle that is not a multiple of
     // 180 degrees, then the current text position is incremented according to the horizontal metrics of the glyph.
 
-    const FontMetrics& fontMetrics = m_font.fontMetrics();
+    const FontMetrics& fontMetrics = m_font.metricsOfPrimaryFont();
 
     // Vertical orientation handling.
     if (isVerticalText) {

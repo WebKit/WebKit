@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Deque.h>
 #include <wtf/RefCounted.h>
@@ -33,6 +34,7 @@ namespace WebCore {
 class ResourceError;
 class ResourceLoader;
 class ResourceResponse;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -54,10 +56,10 @@ public:
 
     void didPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void didReceiveResponse(const WebCore::ResourceResponse&);
-    void didReceiveData(size_t, const uint8_t* data);
+    void didReceiveData(const WebCore::SharedBuffer&);
     void didComplete(const WebCore::ResourceError&);
 
-    unsigned long identifier() const { return m_identifier; }
+    WebCore::ResourceLoaderIdentifier identifier() const { return m_identifier; }
 
 private:
     WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy&, WebCore::ResourceLoader&, WebFrame&);
@@ -70,7 +72,7 @@ private:
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
     RefPtr<WebFrame> m_frame;
     WebCore::ResourceRequest m_request;
-    unsigned long m_identifier;
+    WebCore::ResourceLoaderIdentifier m_identifier;
     bool m_waitingForCompletionHandler { false };
     Deque<Function<void()>> m_queuedTasks;
 };

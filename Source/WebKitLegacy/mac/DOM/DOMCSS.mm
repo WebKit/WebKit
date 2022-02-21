@@ -60,20 +60,20 @@ Class kitClass(WebCore::StyleSheet* impl)
 
 Class kitClass(WebCore::CSSRule* impl)
 {
-    switch (impl->type()) {
-    case WebCore::CSSRule::UNKNOWN_RULE:
+    switch (impl->styleRuleType()) {
+    case WebCore::StyleRuleType::Unknown:
         return [DOMCSSUnknownRule class];
-    case WebCore::CSSRule::STYLE_RULE:
+    case WebCore::StyleRuleType::Style:
         return [DOMCSSStyleRule class];
-    case WebCore::CSSRule::CHARSET_RULE:
+    case WebCore::StyleRuleType::Charset:
         return [DOMCSSCharsetRule class];
-    case WebCore::CSSRule::IMPORT_RULE:
+    case WebCore::StyleRuleType::Import:
         return [DOMCSSImportRule class];
-    case WebCore::CSSRule::MEDIA_RULE:
+    case WebCore::StyleRuleType::Media:
         return [DOMCSSMediaRule class];
-    case WebCore::CSSRule::FONT_FACE_RULE:
+    case WebCore::StyleRuleType::FontFace:
         return [DOMCSSFontFaceRule class];
-    case WebCore::CSSRule::PAGE_RULE:
+    case WebCore::StyleRuleType::Page:
         return [DOMCSSPageRule class];
     default:
         return [DOMCSSRule class];

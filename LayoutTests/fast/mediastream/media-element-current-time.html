@@ -24,6 +24,7 @@ promise_test(async() => {
     assert_equals(video.currentTime, currentTime, "video is paused, currentTime must not advance");
 
     await video.play();
+    await new Promise(resolve => setTimeout(resolve, 10));
     assert_greater_than(video.currentTime, currentTime, "Playback has started, currentTime should advance");
 
 }, "Check video.currentTime behavior");

@@ -68,7 +68,7 @@ void RealtimeIncomingVideoSource::stopProducingData()
 
 void RealtimeIncomingVideoSource::OnChanged()
 {
-    callOnMainThread([protectedThis = makeRef(*this)] {
+    callOnMainThread([protectedThis = Ref { *this }] {
         if (protectedThis->m_videoTrack->state() == webrtc::MediaStreamTrackInterface::kEnded)
             protectedThis->end();
     });
@@ -102,6 +102,23 @@ void RealtimeIncomingVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourc
 {
     if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height }))
         m_currentSettings = std::nullopt;
+}
+
+VideoSampleMetadata RealtimeIncomingVideoSource::metadataFromVideoFrame(const webrtc::VideoFrame& frame)
+{
+    VideoSampleMetadata metadata;
+    if (frame.ntp_time_ms() > 0)
+        metadata.captureTime = Seconds::fromMilliseconds(frame.ntp_time_ms());
+    if (isInBounds<uint32_t>(frame.timestamp()))
+        metadata.rtpTimestamp = frame.timestamp();
+    auto lastPacketTimestamp = std::max_element(frame.packet_infos().cbegin(), frame.packet_infos().cend(), [](const auto& a, const auto& b) {
+        return a.receive_time() < b.receive_time();
+    });
+    metadata.receiveTime = Seconds::fromMicroseconds(lastPacketTimestamp->receive_time().us());
+    if (frame.processing_time())
+        metadata.processingDuration = Seconds::fromMilliseconds(frame.processing_time()->Elapsed().ms()).value();
+
+    return metadata;
 }
 
 } // namespace WebCore

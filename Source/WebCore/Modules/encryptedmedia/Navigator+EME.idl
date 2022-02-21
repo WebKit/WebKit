@@ -29,9 +29,9 @@
 // https://w3c.github.io/encrypted-media/#navigator-extension-requestmediakeysystemaccess
 [
     Conditional=ENCRYPTED_MEDIA,
-    EnabledBySetting=EncryptedMediaAPI,
+    EnabledBySetting=EncryptedMediaAPIEnabled,
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
     ImplementedBy=NavigatorEME
 ] partial interface Navigator {
-    [CallWith=Document] Promise<MediaKeySystemAccess> requestMediaKeySystemAccess(DOMString keySystem, sequence<MediaKeySystemConfiguration> supportedConfiguration);
+    [CallWith=CurrentDocument] Promise<MediaKeySystemAccess> requestMediaKeySystemAccess(DOMString keySystem, sequence<MediaKeySystemConfiguration> supportedConfiguration);
 };

@@ -16,23 +16,37 @@ As an ANGLE Sheriff. Your job is to:
 If you're not an ANGLE team member, you can contact us on the public ANGLE project
 [Google group](https://groups.google.com/forum/#!forum/angleproject).
 
+**Note**: Please review and if needed update the [wrangler schedule].
+
 **Note**: It's highly recommend that all wranglers install the [Chromium Flake Linker][Flaker]
 extension for inspecting bot builds. It'll save you a lot of time.
 
+**Note**: If you need to suppress test failures (e.g. to keep an auto-roller unblocked), see
+[Handling Test Failures](../doc/TestingAndProcesses.md).
+
 [Flaker]: https://chrome.google.com/webstore/detail/flake-linker/boamnmbgmfnobomddmenbaicodgglkhc
+
+[wrangler schedule]: https://rotations.corp.google.com/rotation/5080504293392384
 
 ## Task 1: Monitor ANGLE CI and Try Testers
 
 Your first job is to keep the
-[ANGLE Try Waterfall](https://ci.chromium.org/p/chromium/g/tryserver.chromium.angle/builders) healthy.  Some
-failures are expected on this waterfall. Developers might be testing expectedly buggy code. But
-persistent flakiness and failures should be reported and reverted.
+[ANGLE Try Waterfall](https://ci.chromium.org/p/chromium/g/tryserver.chromium.angle/builders)
+healthy.  These are also known as the CQ (commit queue) bots.  Some
+failures are expected on this waterfall. Developers might be testing expectedly buggy code. However,
+persistent flakiness and failures should be reported and appropriate CLs reverted.
 
-When encoutering an unexpected failure in your CLs please
+For ANGLE issues that require CLs, please [file an ANGLE bug](http://anglebug.com/new) and set
+the Label `Hotlist-Wrangler` on the bug.
+[Click here to see those bugs.][WranglerBugs]
+
+[WranglerBugs]:https://bugs.chromium.org/p/angleproject/issues/list?q=Hotlist%3DWrangler&can=2
+
+When encountering an unexpected failure in a CL that looks ANGLE related, please
 [file an ANGLE bug](http://anglebug.com/new) and cc the current ANGLE wrangler. If the failure is
-unrelated to ANGLE [file a Chromium bug](http://crbug.com/new) and mark the bug as
-`Hotlist-PixelWrangler`. Refer to
-[build.chromium.org](https://ci.chromium.org/p/chromium/g/main/console) to find the current ANGLE
+unrelated to ANGLE [file a Chromium bug](http://crbug.com/new) and set the Label
+`Hotlist-PixelWrangler` on the bug (see [Filing Chromium Bug Reports](#filing-chromium-bug-reports) below).
+Refer to [build.chromium.org](https://ci.chromium.org/p/chromium/g/main/console) to find the current ANGLE
 wrangler and GPU Pixel Wrangler.
 
 **NOTE: When all builds seem to be purple or otherwise broken:**
@@ -40,30 +54,40 @@ wrangler and GPU Pixel Wrangler.
 This could be a major infrastructure outage. File a high-priority bug using
 [g.co/bugatrooper](http://g.co/bugatrooper).
 
-## Task 2: Respond to Bugs
+## Task 2: Monitor Chromium FYI Testers and Respond to Bugs
 
-ANGLE bugs sometimes make it past the commit queue testing and into the master branch. This can be
+ANGLE bugs sometimes make it past the commit queue testing and into the main branch. This can be
 because of flaky tests or because the failures are specific to system configurations for which we
 lack full pre-commit testing support.
 
-The [Chromium GPU FYI Waterfall](https://ci.chromium.org/p/chromium/g/chromium.gpu.fyi/console)
+The [Chromium GPU FYI Waterfall][ChromiumFYI]
 waterfall includes a number of these one-off specialized configurations.  Monitor this console for
-persistent breakage that could be related to ANGLE.  Also follow the `Internals>GPU>ANGLE` component
-on the Chromium issue tracker to be alerted to reports of breakage on the GPU.FYI waterfall.
+persistent breakage that could be related to ANGLE.  Also follow [Chromium bugs in the `Internals>GPU>ANGLE` component][ChromiumANGLEBugs]
+to be alerted to reports of breakage on the GPU.FYI waterfall.
+
+[ChromiumFYI]:https://ci.chromium.org/p/chromium/g/chromium.gpu.fyi/console
+[ChromiumANGLEBugs]:https://bugs.chromium.org/p/chromium/issues/list?q=component%3AInternals%3EGPU%3EANGLE&can=2
+
 Googlers can use [sheriff-o-matic](https://sheriff-o-matic.appspot.com/chromium.gpu.fyi) to monitor
 the health of the GPU.FYI waterfall.
 
-Note that the GPU Pixel Wrangler is responsible for the *Chromium* bugs.  Please file issues with
-the tag `Hotlist-PixelWrangler` for bugs that aren't caused by ANGLE regressions.
+### Filing Chromium Bug Reports
 
-*IMPORTANT*: Info to include in bug reports:
+The GPU Pixel Wrangler is responsible for the *Chromium* bugs.  Please file issues with
+the Label `Hotlist-PixelWrangler` for bugs that aren't caused by ANGLE regressions.
 
- * Links to all first failing builds (eg first windows failure, first mac failure, etc).
+*IMPORTANT* info to include in Chromium bug reports:
+
+ * Links to all first failing builds (e.g. first windows failure, first mac failure, etc).
  * Related regression ranges. See below on how to determine the ANGLE regression range.
  * Relevant error messages.
- * Set components: `Internals>GPU` and/or `Internals>GPU>ANGLE`.
- * cc relevant sheriffs or blame suspects.
- * Set the `Hotlist-PixelWrangler` label.
+ * Set the **Components** to one or more value, such as (start typing "Internals" and you'll see choices):
+   * `Internals>GPU` for general GPU bugs
+   * `Internals>GPU>Testing` for failures that look infrastructure-related
+   * `Internals>GPU>ANGLE` for ANGLE-related Chromium bugs
+   * `Internals>Skia` for Skia-specific bugs
+ * Cc relevant sheriffs or blame suspects, as well as yourself or the current ANGLE Wrangler.
+ * Set the `Hotlist-PixelWrangler` Label.
 
 ### How to determine the ANGLE regression range on the GPU.FYI bots:
 
@@ -73,7 +97,7 @@ the tag `Hotlist-PixelWrangler` for bugs that aren't caused by ANGLE regressions
  1. Use this URL:
     `https://chromium.googlesource.com/angle/angle.git/+log/<last passing revision>..<first failing revision>`
 
-## Task 3: The Auto-Rollers
+## <a name="the-auto-rollers"></a>Task 3: The Auto-Rollers
 
 The [ANGLE auto-roller](https://autoroll.skia.org/r/angle-chromium-autoroll) automatically updates
 Chrome with the latest ANGLE changes.
@@ -83,32 +107,33 @@ Chrome with the latest ANGLE changes.
  1. **Chrome Branching**: You are responsible for pausing the roller 24h before branch days, and resuming afterwards.
     See the [Chrome Release Schedule](https://chromiumdash.appspot.com/schedule).
 
-We also use additional auto-rollers to roll third party libraries into ANGLE once per day:
+We also use additional auto-rollers to roll third party libraries, and Chromium, into ANGLE once per day:
 
- * [SPIRV-Tools into ANGLE](https://autoroll.skia.org/r/spirv-tools-angle-autoroll)
- * [glslang into ANGLE](https://autoroll.skia.org/r/glslang-angle-autoroll)
  * [SwiftShader into ANGLE](https://autoroll.skia.org/r/swiftshader-angle-autoroll)
- * [Vulkan-Tools into ANGLE](https://autoroll.skia.org/r/vulkan-tools-angle-autoroll)
- * [Vulkan-Loader into ANGLE](https://autoroll.skia.org/r/vulkan-loader-angle-autoroll)
- * [Vulkan-Headers into ANGLE](https://autoroll.skia.org/r/vulkan-headers-angle-autoroll)
- * [Vulkan-ValidationLayers into ANGLE](https://autoroll.skia.org/r/vulkan-validation-layers-angle-autoroll)
+ * [vulkan-deps into ANGLE](https://autoroll.skia.org/r/vulkan-deps-angle-autoroll)
+ * [VK-GL-CTS into ANGLE](https://autoroll.skia.org/r/vk-gl-cts-angle-autoroll?tab=status)
+ * [Chromium into ANGLE](https://autoroll.skia.org/r/chromium-angle-autoroll)
 
 Please ensure these rollers are also healthy and unblocked. You can trigger manual rolls using the
-dashboards to land high-priority changes.
-
-**NOTE: When Vulkan-Headers roll is broken:**
-
-The Vulkan-Tools, Vulkan-Loader, and Vulkan-ValidationLayers repos all depend on the Vulkan-Headers
-repo. When Vulkan-Headers updates, all of those repos have a roll process managed by LunarG to
-update them for the new Vulkan-Headers. This usually takes 2-3 business days after the
-Vulkan-Headers update. If Vulkan-Headers roll fails, pause the roller with a note that it should be
-re-enabled when the dependent repos have been updated for the latest Vulkan-Headers changes. This
-will require a manual roll if the two repos have to be rolled in unison. To perform a manual roll,
-create a CL that updates the DEPS file with the new SHA1 value from the desired checkout of each
-dependent repo. Once the manual roll lands, re-enable the auto-rollers for the relevant repos.
+dashboards to land high-priority changes, for example Chromium-side test expectation updates or
+suppressions. When a roll fails, stop the roller, determine if the root cause is a problem with
+ANGLE or with the upstream repo, and file an issue with an appropriate next step.
 
 The autoroller configurations live in the [skia/buildbot repository](https://skia.googlesource.com/buildbot/)
-in the [autoroll/config](https://skia.googlesource.com/buildbot/+/master/autoroll/config) folder.
+in the [autoroll/config](https://skia.googlesource.com/buildbot/+/main/autoroll/config) folder.
+
+**NOTE: vulkan-deps consists of several related Vulkan dependencies:**
+
+vulkan-deps houses Vulkan-Tools, Vulkan-Loader, Vulkan-ValidationLayers, Vulkan-Headers and other
+related repos. If the roll fails, you will have to determine the correct upstream repo and file
+an issue upstream. For more info on vulkan-deps see the
+[README](https://chromium.googlesource.com/vulkan-deps/+/refs/heads/main/README.md).
+
+Occasionally, a vulkan-deps AutoRoll CL will get an error in the `presubmit` bot.  For example,
+see: https://chromium-review.googlesource.com/c/angle/angle/+/3198390 where the
+`export_targets.py` script had trouble with the `loader_windows.h` file.  The `export_targets.py`
+script sometimes has difficulty with headers.  If you cannot see an obvious problem, create a CL
+that adds the header to `IGNORED_INCLUDES` in `export_targets.py`.
 
 ## Task 4: ANGLE Standalone Testing
 

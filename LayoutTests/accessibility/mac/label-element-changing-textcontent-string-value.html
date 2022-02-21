@@ -1,9 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
-<body id="body">
+<body>
 
 <input type="radio" id="input" />
 <label for="input" id="label">
@@ -11,36 +12,25 @@
     <span>choice</span>
 </label>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-
-    var label = 0;
-    var initialStringValue = 0;
-    var mutatedStringValue = 0;
-
     description("This tests that if a label element's children's textContent changes, the string value updates");
+
+    var label, initialStringValue;
     if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
 
-        if (window.accessibilityController) {
+        label = accessibilityController.accessibleElementById("label");
+        initialStringValue = label.stringValue;
+        shouldBe("label.role", "'AXRole: AXStaticText'");
+        shouldBe("initialStringValue", "'AXValue: first choice'");
 
-            var body = document.getElementById("body");
-            body.focus();
-            
-            label = accessibilityController.accessibleElementById("label");
-            initialStringValue = label.stringValue;
-            var first = document.getElementById("first")
-            first.textContent = "second";
-            mutatedStringValue = label.stringValue;
-
-            shouldBe("label.role", "'AXRole: AXStaticText'");
-            shouldBe("initialStringValue", "'AXValue: first choice'");
-            shouldBe("mutatedStringValue", "'AXValue: second choice'");
-        }
+        document.getElementById("first").textContent = "second";
+        setTimeout(async function() {
+            await expectAsyncExpression("label.stringValue", "'AXValue: second choice'")
+            finishJSTest();
+        }, 0);
     }
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+

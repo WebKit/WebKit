@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -16,9 +16,9 @@
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIother.m_  If not, write to
+ * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301, USm_
+ * Boston, MA 02110-1301, USA.
  *
  */
 
@@ -26,8 +26,8 @@
 
 #include "CSSValueKeywords.h"
 #include "FontDescription.h"
-#include <wtf/RefCountedArray.h>
-#include <wtf/Variant.h>
+#include <variant>
+#include <wtf/RefCountedFixedVector.h>
 
 #if PLATFORM(COCOA)
 #include "FontFamilySpecificationCoreText.h"
@@ -43,7 +43,7 @@ typedef FontFamilySpecificationCoreText FontFamilyPlatformSpecification;
 typedef FontFamilySpecificationNull FontFamilyPlatformSpecification;
 #endif
 
-typedef Variant<AtomString, FontFamilyPlatformSpecification> FontFamilySpecification;
+typedef std::variant<AtomString, FontFamilyPlatformSpecification> FontFamilySpecification;
 
 class FontCascadeDescription : public FontDescription {
 public:
@@ -52,10 +52,10 @@ public:
     bool operator==(const FontCascadeDescription&) const;
     bool operator!=(const FontCascadeDescription& other) const { return !(*this == other); }
 
-    unsigned familyCount() const { return m_families.size(); }
+    unsigned familyCount() const { return m_families->size(); }
     const AtomString& firstFamily() const { return familyAt(0); }
-    const AtomString& familyAt(unsigned i) const { return m_families[i]; }
-    const RefCountedArray<AtomString>& families() const { return m_families; }
+    const AtomString& familyAt(unsigned i) const { return m_families.get()[i]; }
+    RefCountedFixedVector<AtomString>& families() const { return m_families.get(); }
 
     static bool familyNamesAreEqual(const AtomString&, const AtomString&);
     static unsigned familyNameHash(const AtomString&);
@@ -85,9 +85,9 @@ public:
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
     bool isSpecifiedFont() const { return m_isSpecifiedFont; }
 
-    void setOneFamily(const AtomString& family) { ASSERT(m_families.size() == 1); m_families[0] = family; }
-    void setFamilies(const Vector<AtomString>& families) { m_families = RefCountedArray<AtomString>(families); }
-    void setFamilies(const RefCountedArray<AtomString>& families) { m_families = families; }
+    void setOneFamily(const AtomString& family) { ASSERT(m_families->size() == 1); m_families.get()[0] = family; }
+    void setFamilies(const Vector<AtomString>& families) { m_families = RefCountedFixedVector<AtomString>::createFromVector(families); }
+    void setFamilies(RefCountedFixedVector<AtomString>& families) { m_families = families; }
     void setSpecifiedSize(float s) { m_specifiedSize = clampToFloat(s); }
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setKerning(Kerning kerning) { m_kerning = static_cast<unsigned>(kerning); }
@@ -133,9 +133,10 @@ public:
     static FontVariantAlternates initialVariantAlternates() { return FontVariantAlternates::Normal; }
     static FontOpticalSizing initialOpticalSizing() { return FontOpticalSizing::Enabled; }
     static const AtomString& initialSpecifiedLocale() { return nullAtom(); }
+    static FontPalette initialFontPalette() { return { FontPalette::Type::Normal, nullAtom() }; }
 
 private:
-    RefCountedArray<AtomString> m_families { 1 };
+    Ref<RefCountedFixedVector<AtomString>> m_families;
 
     // Specified CSS value. Independent of rendering issues such as integer rounding, minimum font sizes, and zooming.
     float m_specifiedSize { 0 };
@@ -154,7 +155,7 @@ private:
 inline bool FontCascadeDescription::operator==(const FontCascadeDescription& other) const
 {
     return FontDescription::operator==(other)
-        && m_families == other.m_families
+        && m_families.get() == other.m_families.get()
         && m_specifiedSize == other.m_specifiedSize
         && m_isAbsoluteSize == other.m_isAbsoluteSize
         && m_kerning == other.m_kerning

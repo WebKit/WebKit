@@ -40,10 +40,9 @@ namespace fido {
 template <typename Container>
 cbor::CBORValue toArrayValue(const Container& container)
 {
-    cbor::CBORValue::ArrayValue value;
-    value.reserveInitialCapacity(container.size());
-    for (const auto& item : container)
-        value.append(cbor::CBORValue(item));
+    auto value = WTF::map(container, [](auto& item) {
+        return cbor::CBORValue(item);
+    });
     return cbor::CBORValue(WTFMove(value));
 }
 

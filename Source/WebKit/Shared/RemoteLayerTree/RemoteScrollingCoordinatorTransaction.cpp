@@ -504,13 +504,18 @@ bool ArgumentCoder<ScrollingStatePositionedNode>::decode(Decoder& decoder, Scrol
 
 void ArgumentCoder<RequestedScrollData>::encode(Encoder& encoder, const RequestedScrollData& scrollData)
 {
+    encoder << scrollData.requestType;
     encoder << scrollData.scrollPosition;
     encoder << scrollData.scrollType;
     encoder << scrollData.clamping;
+    encoder << scrollData.animated;
 }
 
 bool ArgumentCoder<RequestedScrollData>::decode(Decoder& decoder, RequestedScrollData& scrollData)
 {
+    if (!decoder.decode(scrollData.requestType))
+        return false;
+
     if (!decoder.decode(scrollData.scrollPosition))
         return false;
 
@@ -518,6 +523,9 @@ bool ArgumentCoder<RequestedScrollData>::decode(Decoder& decoder, RequestedScrol
         return false;
 
     if (!decoder.decode(scrollData.clamping))
+        return false;
+
+    if (!decoder.decode(scrollData.animated))
         return false;
 
     return true;
@@ -724,9 +732,14 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
         const auto& requestedScrollData = node.requestedScrollData();
-        ts.dumpProperty("requested-scroll-position", requestedScrollData.scrollPosition);
-        ts.dumpProperty("requested-scroll-position-is-programatic", requestedScrollData.scrollType);
-        ts.dumpProperty("requested-scroll-position-clamping", requestedScrollData.clamping);
+        if (requestedScrollData.requestType == ScrollRequestType::CancelAnimatedScroll)
+            ts.dumpProperty("requested-type", "cancel animated scroll");
+        else {
+            ts.dumpProperty("requested-scroll-position", requestedScrollData.scrollPosition);
+            ts.dumpProperty("requested-scroll-position-is-programatic", requestedScrollData.scrollType);
+            ts.dumpProperty("requested-scroll-position-clamping", requestedScrollData.clamping);
+            ts.dumpProperty("requested-scroll-position-animated", requestedScrollData.animated == ScrollIsAnimated::Yes);
+        }
     }
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))

@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=UndoManagerAPI
+    EnabledBySetting=UndoManagerAPIEnabled
 ] partial interface Document {
     // FIXME: The current Undo API says this should be on Element, not Document (https://rniwa.github.io/undo-api/)
     readonly attribute UndoManager undoManager;

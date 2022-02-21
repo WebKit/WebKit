@@ -40,6 +40,13 @@ angle::Result MemoryObjectGL::setDedicatedMemory(const gl::Context *context, boo
     return angle::Result::Continue;
 }
 
+angle::Result MemoryObjectGL::setProtectedMemory(const gl::Context *context, bool protectedMemory)
+{
+    ANGLE_UNUSED_VARIABLE(context);
+    ANGLE_UNUSED_VARIABLE(protectedMemory);
+    return angle::Result::Continue;
+}
+
 angle::Result MemoryObjectGL::importFd(gl::Context *context,
                                        GLuint64 size,
                                        gl::HandleType handleType,

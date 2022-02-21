@@ -51,7 +51,7 @@ Ref<RemoteAudioSourceProvider> RemoteAudioSourceProvider::create(WebCore::MediaP
 
 RemoteAudioSourceProvider::RemoteAudioSourceProvider(MediaPlayerIdentifier identifier, WTF::LoggerHelper& helper)
     : m_identifier(identifier)
-    , m_gpuProcessConnection(makeWeakPtr(WebProcess::singleton().ensureGPUProcessConnection()))
+    , m_gpuProcessConnection(WebProcess::singleton().ensureGPUProcessConnection())
 #if !RELEASE_LOG_DISABLED
     , m_logger(helper.logger())
     , m_logIdentifier(helper.logIdentifier())

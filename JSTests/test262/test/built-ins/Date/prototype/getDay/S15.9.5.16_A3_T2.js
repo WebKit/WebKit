@@ -9,11 +9,15 @@ info: |
 es5id: 15.9.5.16_A3_T2
 description: Checking DontDelete attribute
 ---*/
+assert.sameValue(
+  delete Date.prototype.getDay.length,
+  true,
+  'The value of `delete Date.prototype.getDay.length` is expected to be true'
+);
 
-if (delete Date.prototype.getDay.length !== true) {
-  throw new Test262Error('#1: The Date.prototype.getDay.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.prototype.getDay.hasOwnProperty('length'),
+  'The value of !Date.prototype.getDay.hasOwnProperty(\'length\') is expected to be true'
+);
 
-if (Date.prototype.getDay.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.prototype.getDay.length property does not have the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

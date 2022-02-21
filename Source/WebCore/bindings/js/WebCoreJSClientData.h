@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2009 Google, Inc. All rights reserved.
  *
@@ -25,12 +25,76 @@
 #include "WebCoreBuiltinNames.h"
 #include "WebCoreJSBuiltins.h"
 #include "WorkerThreadType.h"
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class DOMIsoSubspaces;
+class ExtendedDOMClientIsoSubspaces;
+class ExtendedDOMIsoSubspaces;
+
+class JSHeapData {
+    WTF_MAKE_NONCOPYABLE(JSHeapData);
+    WTF_MAKE_FAST_ALLOCATED;
+    friend class JSVMClientData;
+public:
+    JSHeapData(JSC::Heap&);
+
+    static JSHeapData* ensureHeapData(JSC::Heap&);
+
+    Lock& lock() { return m_lock; }
+    ExtendedDOMIsoSubspaces& subspaces() { return *m_subspaces.get(); }
+
+    Vector<JSC::IsoSubspace*>& outputConstraintSpaces() { return m_outputConstraintSpaces; }
+
+    template<typename Func>
+    void forEachOutputConstraintSpace(const Func& func)
+    {
+        for (auto* space : m_outputConstraintSpaces)
+            func(*space);
+    }
+
+private:
+    Lock m_lock;
+
+    JSC::IsoHeapCellType m_runtimeArrayHeapCellType;
+    JSC::IsoHeapCellType m_runtimeObjectHeapCellType;
+    JSC::IsoHeapCellType m_windowProxyHeapCellType;
+public:
+    JSC::IsoHeapCellType m_heapCellTypeForJSDOMWindow;
+    JSC::IsoHeapCellType m_heapCellTypeForJSDedicatedWorkerGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSRemoteDOMWindow;
+    JSC::IsoHeapCellType m_heapCellTypeForJSWorkerGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSSharedWorkerGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSShadowRealmGlobalScope;
+#if ENABLE(SERVICE_WORKER)
+    JSC::IsoHeapCellType m_heapCellTypeForJSServiceWorkerGlobalScope;
+#endif
+    JSC::IsoHeapCellType m_heapCellTypeForJSWorkletGlobalScope;
+#if ENABLE(CSS_PAINTING_API)
+    JSC::IsoHeapCellType m_heapCellTypeForJSPaintWorkletGlobalScope;
+#endif
+#if ENABLE(WEB_AUDIO)
+    JSC::IsoHeapCellType m_heapCellTypeForJSAudioWorkletGlobalScope;
+#endif
+    JSC::IsoHeapCellType m_heapCellTypeForJSIDBSerializationGlobalObject;
+
+private:
+    JSC::IsoSubspace m_domBuiltinConstructorSpace;
+    JSC::IsoSubspace m_domConstructorSpace;
+    JSC::IsoSubspace m_domNamespaceObjectSpace;
+    JSC::IsoSubspace m_domWindowPropertiesSpace;
+    JSC::IsoSubspace m_runtimeArraySpace;
+    JSC::IsoSubspace m_runtimeMethodSpace;
+    JSC::IsoSubspace m_runtimeObjectSpace;
+    JSC::IsoSubspace m_windowProxySpace;
+    JSC::IsoSubspace m_idbSerializationSpace;
+
+    std::unique_ptr<ExtendedDOMIsoSubspaces> m_subspaces;
+    Vector<JSC::IsoSubspace*> m_outputConstraintSpaces;
+};
+
 
 class JSVMClientData : public JSC::VM::ClientData {
     WTF_MAKE_NONCOPYABLE(JSVMClientData); WTF_MAKE_FAST_ALLOCATED;
@@ -59,28 +123,22 @@ public:
         m_worldSet.remove(&world);
     }
 
+    JSHeapData& heapData() { return *m_heapData; }
+
     WebCoreBuiltinNames& builtinNames() { return m_builtinNames; }
     JSBuiltinFunctions& builtinFunctions() { return m_builtinFunctions; }
     
-    JSC::IsoSubspace& domBuiltinConstructorSpace() { return m_domBuiltinConstructorSpace; }
-    JSC::IsoSubspace& domConstructorSpace() { return m_domConstructorSpace; }
-    JSC::IsoSubspace& domWindowPropertiesSpace() { return m_domWindowPropertiesSpace; }
-    JSC::IsoSubspace& runtimeArraySpace() { return m_runtimeArraySpace; }
-    JSC::IsoSubspace& runtimeMethodSpace() { return m_runtimeMethodSpace; }
-    JSC::IsoSubspace& runtimeObjectSpace() { return m_runtimeObjectSpace; }
-    JSC::IsoSubspace& windowProxySpace() { return m_windowProxySpace; }
-    JSC::IsoSubspace& idbSerializationSpace() { return m_idbSerializationSpace; }
+    JSC::GCClient::IsoSubspace& domBuiltinConstructorSpace() { return m_domBuiltinConstructorSpace; }
+    JSC::GCClient::IsoSubspace& domConstructorSpace() { return m_domConstructorSpace; }
+    JSC::GCClient::IsoSubspace& domNamespaceObjectSpace() { return m_domNamespaceObjectSpace; }
+    JSC::GCClient::IsoSubspace& domWindowPropertiesSpace() { return m_domWindowPropertiesSpace; }
+    JSC::GCClient::IsoSubspace& runtimeArraySpace() { return m_runtimeArraySpace; }
+    JSC::GCClient::IsoSubspace& runtimeMethodSpace() { return m_runtimeMethodSpace; }
+    JSC::GCClient::IsoSubspace& runtimeObjectSpace() { return m_runtimeObjectSpace; }
+    JSC::GCClient::IsoSubspace& windowProxySpace() { return m_windowProxySpace; }
+    JSC::GCClient::IsoSubspace& idbSerializationSpace() { return m_idbSerializationSpace; }
 
-    Vector<JSC::IsoSubspace*>& outputConstraintSpaces() { return m_outputConstraintSpaces; }
-
-    template<typename Func>
-    void forEachOutputConstraintSpace(const Func& func)
-    {
-        for (auto* space : m_outputConstraintSpaces)
-            func(*space);
-    }
-
-    DOMIsoSubspaces& subspaces() { return *m_subspaces.get(); }
+    ExtendedDOMClientIsoSubspaces& clientSubspaces() { return *m_clientSubspaces.get(); }
 
 private:
     HashSet<DOMWrapperWorld*> m_worldSet;
@@ -89,37 +147,65 @@ private:
     JSBuiltinFunctions m_builtinFunctions;
     WebCoreBuiltinNames m_builtinNames;
 
-    std::unique_ptr<JSC::HeapCellType> m_runtimeArrayHeapCellType;
-    std::unique_ptr<JSC::HeapCellType> m_runtimeObjectHeapCellType;
-    std::unique_ptr<JSC::HeapCellType> m_windowProxyHeapCellType;
-public:
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSDOMWindow;
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSDedicatedWorkerGlobalScope;
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSRemoteDOMWindow;
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSWorkerGlobalScope;
-#if ENABLE(SERVICE_WORKER)
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSServiceWorkerGlobalScope;
-#endif
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSWorkletGlobalScope;
-#if ENABLE(CSS_PAINTING_API)
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSPaintWorkletGlobalScope;
-#endif
-#if ENABLE(WEB_AUDIO)
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSAudioWorkletGlobalScope;
-#endif
-    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSIDBSerializationGlobalObject;
+    JSHeapData* m_heapData;
+    JSC::GCClient::IsoSubspace m_domBuiltinConstructorSpace;
+    JSC::GCClient::IsoSubspace m_domConstructorSpace;
+    JSC::GCClient::IsoSubspace m_domNamespaceObjectSpace;
+    JSC::GCClient::IsoSubspace m_domWindowPropertiesSpace;
+    JSC::GCClient::IsoSubspace m_runtimeArraySpace;
+    JSC::GCClient::IsoSubspace m_runtimeMethodSpace;
+    JSC::GCClient::IsoSubspace m_runtimeObjectSpace;
+    JSC::GCClient::IsoSubspace m_windowProxySpace;
+    JSC::GCClient::IsoSubspace m_idbSerializationSpace;
 
-private:
-    JSC::IsoSubspace m_domBuiltinConstructorSpace;
-    JSC::IsoSubspace m_domConstructorSpace;
-    JSC::IsoSubspace m_domWindowPropertiesSpace;
-    JSC::IsoSubspace m_runtimeArraySpace;
-    JSC::IsoSubspace m_runtimeMethodSpace;
-    JSC::IsoSubspace m_runtimeObjectSpace;
-    JSC::IsoSubspace m_windowProxySpace;
-    JSC::IsoSubspace m_idbSerializationSpace;
-    std::unique_ptr<DOMIsoSubspaces> m_subspaces;
-    Vector<JSC::IsoSubspace*> m_outputConstraintSpaces;
+    std::unique_ptr<ExtendedDOMClientIsoSubspaces> m_clientSubspaces;
 };
+
+
+enum class UseCustomHeapCellType { Yes, No };
+
+template<typename T, UseCustomHeapCellType useCustomHeapCellType, typename GetClient, typename SetClient, typename GetServer, typename SetServer>
+ALWAYS_INLINE JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm, GetClient getClient, SetClient setClient, GetServer getServer, SetServer setServer, JSC::HeapCellType& (*getCustomHeapCellType)(JSHeapData&) = nullptr)
+{
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& clientSubspaces = clientData.clientSubspaces();
+    if (auto* clientSpace = getClient(clientSubspaces))
+        return clientSpace;
+
+    auto& heapData = clientData.heapData();
+    Locker locker { heapData.lock() };
+
+    auto& subspaces = heapData.subspaces();
+    JSC::IsoSubspace* space = getServer(subspaces);
+    if (!space) {
+        JSC::Heap& heap = vm.heap;
+        std::unique_ptr<JSC::IsoSubspace> uniqueSubspace;
+        static_assert(useCustomHeapCellType == UseCustomHeapCellType::Yes || std::is_base_of_v<JSC::JSDestructibleObject, T> || !T::needsDestruction);
+        if constexpr (useCustomHeapCellType == UseCustomHeapCellType::Yes)
+            uniqueSubspace = makeUnique<JSC::IsoSubspace> ISO_SUBSPACE_INIT(heap, getCustomHeapCellType(heapData), T);
+        else {
+            if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, T>)
+                uniqueSubspace = makeUnique<JSC::IsoSubspace> ISO_SUBSPACE_INIT(heap, heap.destructibleObjectHeapCellType, T);
+            else
+                uniqueSubspace = makeUnique<JSC::IsoSubspace> ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, T);
+        }
+        space = uniqueSubspace.get();
+        setServer(subspaces, uniqueSubspace);
+
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+        void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = T::visitOutputConstraints;
+        void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+        if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+            heapData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    }
+
+    auto uniqueClientSubspace = makeUnique<JSC::GCClient::IsoSubspace>(*space);
+    auto* clientSpace = uniqueClientSubspace.get();
+    setClient(clientSubspaces, uniqueClientSubspace);
+    return clientSpace;
+}
 
 } // namespace WebCore

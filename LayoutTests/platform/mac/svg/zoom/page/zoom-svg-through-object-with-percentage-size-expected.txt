@@ -16,11 +16,11 @@ layer at (0,0) size 800x386
                           text run at (102,0) width 475: "Both sides should have identical size after zooming"
                   RenderTableRow {tr} at (0,69) size 693x25
                     RenderTableCell {td} at (1,69) size 345x25 [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (146,6) size 53x13
-                        text run at (146,6) width 53: "SVG Image"
+                      RenderText {#text} at (146,5) size 53x14
+                        text run at (146,5) width 53: "SVG Image"
                     RenderTableCell {td} at (347,69) size 345x25 [r=1 c=1 rs=1 cs=1]
-                      RenderText {#text} at (146,6) size 53x13
-                        text run at (146,6) width 53: "PNG Image"
+                      RenderText {#text} at (146,5) size 53x14
+                        text run at (146,5) width 53: "PNG Image"
                   RenderTableRow {tr} at (0,95) size 693x265
                     RenderTableCell {td} at (1,95) size 345x265 [r=2 c=0 rs=1 cs=1]
                       RenderEmbeddedObject {object} at (5,5) size 334x251

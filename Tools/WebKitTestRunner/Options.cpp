@@ -144,6 +144,18 @@ static bool handleOptionInternalFeature(Options& options, const char*, const cha
     return parseFeature(feature, options.features);
 }
 
+static bool handleOptionWebCoreLogging(Options& options, const char*, const char* channels)
+{
+    options.webCoreLogChannels = channels;
+    return true;
+}
+
+static bool handleOptionWebKitLogging(Options& options, const char*, const char* channels)
+{
+    options.webKitLogChannels = channels;
+    return true;
+}
+
 static bool handleOptionUnmatched(Options& options, const char* option, const char*)
 {
     if (option[0] && option[1] && option[0] == '-' && option[1] == '-')
@@ -175,6 +187,8 @@ OptionsHandler::OptionsHandler(Options& o)
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     optionList.append(Option("--accessibility-isolated-tree", "Enable accessibility isolated tree mode for tests", handleOptionAccessibilityIsolatedTreeMode));
 #endif
+    optionList.append(Option("--webcore-logging", "Enable WebCore log channels", handleOptionWebCoreLogging, true));
+    optionList.append(Option("--webkit-logging", "Enable WebKit log channels", handleOptionWebKitLogging, true));
     
     optionList.append(Option(0, 0, handleOptionUnmatched));
 }

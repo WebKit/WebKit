@@ -219,7 +219,7 @@ static const double kGravity = 9.80665;
         Vector<WeakPtr<WebCore::MotionManagerClient>> motionClients;
         motionClients.reserveInitialCapacity(m_deviceMotionClients.computeSize());
         for (auto& client : m_deviceMotionClients)
-            motionClients.uncheckedAppend(makeWeakPtr(&client));
+            motionClients.uncheckedAppend(client);
 
         for (auto& client : motionClients) {
             if (client)
@@ -244,7 +244,7 @@ static const double kGravity = 9.80665;
         Vector<WeakPtr<WebCore::MotionManagerClient>> motionClients;
         motionClients.reserveInitialCapacity(m_deviceMotionClients.computeSize());
         for (auto& client : m_deviceMotionClients)
-            motionClients.uncheckedAppend(makeWeakPtr(&client));
+            motionClients.uncheckedAppend(client);
         
         for (auto& client : motionClients) {
             if (client)
@@ -256,7 +256,7 @@ static const double kGravity = 9.80665;
         Vector<WeakPtr<WebCore::MotionManagerClient>> orientationClients;
         orientationClients.reserveInitialCapacity(m_deviceOrientationClients.computeSize());
         for (auto& client : m_deviceOrientationClients)
-            orientationClients.uncheckedAppend(makeWeakPtr(&client));
+            orientationClients.uncheckedAppend(client);
         
         // Compose the raw motion data to an intermediate ZXY-based 3x3 rotation
         // matrix (R) where [z=attitude.yaw, x=attitude.pitch, y=attitude.roll]

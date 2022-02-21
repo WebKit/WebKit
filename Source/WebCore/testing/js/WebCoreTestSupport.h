@@ -50,7 +50,7 @@ void monitorWheelEvents(WebCore::Frame&, bool clearLatchingState) TEST_SUPPORT_E
 void setWheelEventMonitorTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, WebCore::Frame&, JSContextRef, JSObjectRef) TEST_SUPPORT_EXPORT;
 void clearWheelEventTestMonitor(WebCore::Frame&) TEST_SUPPORT_EXPORT;
 
-void setLogChannelToAccumulate(const WTF::String& name) TEST_SUPPORT_EXPORT;
+void setLogChannelToAccumulate(const String& name) TEST_SUPPORT_EXPORT;
 void clearAllLogChannelsToAccumulate() TEST_SUPPORT_EXPORT;
 void initializeLogChannelsIfNecessary() TEST_SUPPORT_EXPORT;
 void setAllowsAnySSLCertificate(bool) TEST_SUPPORT_EXPORT;
@@ -59,13 +59,13 @@ void setLinkedOnOrAfterEverythingForTesting() TEST_SUPPORT_EXPORT;
 void installMockGamepadProvider() TEST_SUPPORT_EXPORT;
 void connectMockGamepad(unsigned index) TEST_SUPPORT_EXPORT;
 void disconnectMockGamepad(unsigned index) TEST_SUPPORT_EXPORT;
-void setMockGamepadDetails(unsigned index, const WTF::String& gamepadID, const WTF::String& mapping, unsigned axisCount, unsigned buttonCount) TEST_SUPPORT_EXPORT;
+void setMockGamepadDetails(unsigned index, const String& gamepadID, const String& mapping, unsigned axisCount, unsigned buttonCount) TEST_SUPPORT_EXPORT;
 void setMockGamepadAxisValue(unsigned index, unsigned axisIndex, double value) TEST_SUPPORT_EXPORT;
 void setMockGamepadButtonValue(unsigned index, unsigned buttonIndex, double value) TEST_SUPPORT_EXPORT;
 
 void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier) TEST_SUPPORT_EXPORT;
     
-void setAdditionalSupportedImageTypesForTesting(const WTF::String&) TEST_SUPPORT_EXPORT;
+void setAdditionalSupportedImageTypesForTesting(const String&) TEST_SUPPORT_EXPORT;
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
 void populateJITOperations() TEST_SUPPORT_EXPORT;

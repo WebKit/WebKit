@@ -86,12 +86,12 @@ const AtomString& CDMPrivateFairPlayStreaming::skdName()
     return skd;
 }
 
-static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
+static Vector<Ref<FragmentedSharedBuffer>> extractSinfData(const FragmentedSharedBuffer& buffer)
 {
     // JSON of the format: "{ sinf: [ <base64-encoded-string> ] }"
     if (buffer.size() > std::numeric_limits<unsigned>::max())
         return { };
-    String json { buffer.data(), static_cast<unsigned>(buffer.size()) };
+    String json { buffer.makeContiguous()->data(), static_cast<unsigned>(buffer.size()) };
 
     auto value = JSON::Value::parseJSON(json);
     if (!value)
@@ -105,7 +105,7 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
     if (!sinfArray)
         return { };
 
-    Vector<Ref<SharedBuffer>> sinfs;
+    Vector<Ref<FragmentedSharedBuffer>> sinfs;
     sinfs.reserveInitialCapacity(sinfArray->length());
 
     for (auto& value : *sinfArray) {
@@ -124,7 +124,7 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
 }
 
 using SchemeAndKeyResult = Vector<std::pair<FourCC, Vector<uint8_t>>>;
-static SchemeAndKeyResult extractSchemeAndKeyIdFromSinf(const SharedBuffer& buffer)
+static SchemeAndKeyResult extractSchemeAndKeyIdFromSinf(const FragmentedSharedBuffer& buffer)
 {
     auto buffers = extractSinfData(buffer);
     if (!buffers.size())
@@ -170,9 +170,9 @@ static SchemeAndKeyResult extractSchemeAndKeyIdFromSinf(const SharedBuffer& buff
     return result;
 }
 
-std::optional<Vector<Ref<SharedBuffer>>> CDMPrivateFairPlayStreaming::extractKeyIDsSinf(const SharedBuffer& buffer)
+std::optional<Vector<Ref<FragmentedSharedBuffer>>> CDMPrivateFairPlayStreaming::extractKeyIDsSinf(const FragmentedSharedBuffer& buffer)
 {
-    Vector<Ref<SharedBuffer>> keyIDs;
+    Vector<Ref<FragmentedSharedBuffer>> keyIDs;
     auto results = extractSchemeAndKeyIdFromSinf(buffer);
 
     for (auto& result : results) {
@@ -183,7 +183,7 @@ std::optional<Vector<Ref<SharedBuffer>>> CDMPrivateFairPlayStreaming::extractKey
     return keyIDs;
 }
 
-RefPtr<SharedBuffer> CDMPrivateFairPlayStreaming::sanitizeSinf(const SharedBuffer& buffer)
+RefPtr<FragmentedSharedBuffer> CDMPrivateFairPlayStreaming::sanitizeSinf(const FragmentedSharedBuffer& buffer)
 {
     // Common SINF Box Format
     UNUSED_PARAM(buffer);
@@ -191,17 +191,17 @@ RefPtr<SharedBuffer> CDMPrivateFairPlayStreaming::sanitizeSinf(const SharedBuffe
     return buffer.copy();
 }
 
-RefPtr<SharedBuffer> CDMPrivateFairPlayStreaming::sanitizeSkd(const SharedBuffer& buffer)
+RefPtr<FragmentedSharedBuffer> CDMPrivateFairPlayStreaming::sanitizeSkd(const FragmentedSharedBuffer& buffer)
 {
     UNUSED_PARAM(buffer);
     notImplemented();
     return buffer.copy();
 }
 
-std::optional<Vector<Ref<SharedBuffer>>> CDMPrivateFairPlayStreaming::extractKeyIDsSkd(const SharedBuffer& buffer)
+std::optional<Vector<Ref<FragmentedSharedBuffer>>> CDMPrivateFairPlayStreaming::extractKeyIDsSkd(const FragmentedSharedBuffer& buffer)
 {
     // In the 'skd' scheme, the init data is the key ID.
-    Vector<Ref<SharedBuffer>> keyIDs;
+    Vector<Ref<FragmentedSharedBuffer>> keyIDs;
     keyIDs.append(buffer.copy());
     return keyIDs;
 }
@@ -260,7 +260,7 @@ CDMPrivateFairPlayStreaming::~CDMPrivateFairPlayStreaming() = default;
 #if !RELEASE_LOG_DISABLED
 void CDMPrivateFairPlayStreaming::setLogger(Logger& logger, const void* logIdentifier)
 {
-    m_logger = makeRefPtr(logger);
+    m_logger = &logger;
     m_logIdentifier = logIdentifier;
 }
 #endif
@@ -393,7 +393,7 @@ bool CDMPrivateFairPlayStreaming::supportsSessions() const
     return true;
 }
 
-bool CDMPrivateFairPlayStreaming::supportsInitData(const AtomString& initDataType, const SharedBuffer& initData) const
+bool CDMPrivateFairPlayStreaming::supportsInitData(const AtomString& initDataType, const FragmentedSharedBuffer& initData) const
 {
     if (!validInitDataTypes().contains(initDataType))
         return false;
@@ -423,7 +423,7 @@ bool CDMPrivateFairPlayStreaming::supportsInitData(const AtomString& initDataTyp
     return false;
 }
 
-RefPtr<SharedBuffer> CDMPrivateFairPlayStreaming::sanitizeResponse(const SharedBuffer& response) const
+RefPtr<FragmentedSharedBuffer> CDMPrivateFairPlayStreaming::sanitizeResponse(const FragmentedSharedBuffer& response) const
 {
     return response.copy();
 }

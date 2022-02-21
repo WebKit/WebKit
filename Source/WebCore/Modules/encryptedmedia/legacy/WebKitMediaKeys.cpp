@@ -30,6 +30,7 @@
 
 #include "HTMLMediaElement.h"
 #include "WebKitMediaKeySession.h"
+#include <JavaScriptCore/Uint8Array.h>
 
 namespace WebCore {
 
@@ -133,7 +134,7 @@ void WebKitMediaKeys::setMediaElement(HTMLMediaElement* element)
         m_mediaElement->player()->setCDM(nullptr);
     }
 
-    m_mediaElement = makeWeakPtr(element);
+    m_mediaElement = element;
 
     if (m_mediaElement && m_mediaElement->player()) {
         m_mediaElement->player()->setCDM(m_cdm.get());

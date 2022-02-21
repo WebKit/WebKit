@@ -36,18 +36,21 @@ WI.GridOverlayDiagnosticEventRecorder = class GridOverlayDiagnosticEventRecorder
 
     setup()
     {
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayShown, this._handleGridOverlayShown, this);
+        WI.overlayManager.addEventListener(WI.OverlayManager.Event.OverlayShown, this._handleGridOverlayShown, this);
     }
 
     teardown()
     {
-        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayShown, this._handleGridOverlayShown, this);
+        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.OverlayShown, this._handleGridOverlayShown, this);
     }
 
     // Private
 
     _handleGridOverlayShown(event)
     {
+        if (event.data.domNode.layoutContextType !== WI.DOMNode.LayoutContextType.Grid)
+            return;
+
         let initiator = event.data.initiator;
         if (!initiator || !this._initiators.includes(initiator))
             return;

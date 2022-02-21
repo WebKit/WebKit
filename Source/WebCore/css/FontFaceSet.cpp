@@ -107,6 +107,8 @@ FontFaceSet::PendingPromise::~PendingPromise() = default;
 
 bool FontFaceSet::has(FontFace& face) const
 {
+    if (face.backing().cssConnection())
+        m_backing->updateStyleIfNeeded();
     return m_backing->hasFace(face.backing());
 }
 
@@ -147,6 +149,7 @@ void FontFaceSet::clear()
 
 void FontFaceSet::load(const String& font, const String& text, LoadPromise&& promise)
 {
+    m_backing->updateStyleIfNeeded();
     auto matchingFacesResult = m_backing->matchingFacesExcludingPreinstalledFonts(font, text);
     if (matchingFacesResult.hasException()) {
         promise.reject(matchingFacesResult.releaseException());

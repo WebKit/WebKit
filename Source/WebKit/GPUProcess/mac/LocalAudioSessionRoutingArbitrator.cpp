@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LocalAudioSessionRoutingArbitrator.h"
 
+#include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
 #include "GPUProcessConnectionMessages.h"
 

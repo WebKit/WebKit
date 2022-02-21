@@ -36,9 +36,34 @@ import time
 
 from webkitcorepy import BytesIO, string_utils
 
-
 _log = logging.getLogger(__name__)
 
+
+class ImageDiffResult(object):
+    def __init__(self, passed, diff_image, difference, tolerance=0, fuzzy_data=None, error_string=None):
+        self.passed = passed
+        self.diff_image = diff_image
+        self.diff_percent = difference
+        self.fuzzy_data = fuzzy_data
+        self.tolerance = tolerance
+        self.error_string = error_string
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return (self.passed == other.passed and
+                    self.diff_image == other.diff_image and
+                    self.diff_percent == other.diff_percent and
+                    self.fuzzy_data == other.fuzzy_data and
+                    self.tolerance == other.tolerance and
+                    self.error_string == other.error_string)
+
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __repr__(self):
+        return 'ImageDiffResult(Passed {} {} diff {} tolerance {} fuzzy data {} {})'.format(self.passed, self.diff_image, self.diff_percent, self.tolerance, self.fuzzy_data, self.error_string)
 
 class ImageDiffer(object):
     def __init__(self, port):
@@ -47,7 +72,7 @@ class ImageDiffer(object):
         self._process = None
 
     def diff_image(self, expected_contents, actual_contents, tolerance):
-        if tolerance != self._tolerance or (self._process and self._process.has_available_stdout()):
+        if (self._process and self._process.has_available_stdout()):
             self.stop()
         try:
             assert(expected_contents)
@@ -68,7 +93,7 @@ class ImageDiffer(object):
             return (None, 0, "Failed to compute an image diff: %s" % str(exception))
 
     def _start(self, tolerance):
-        command = [self._port._path_to_image_diff(), '--tolerance', str(tolerance)]
+        command = [self._port._path_to_image_diff(), '--difference']
         if self._port._should_use_jhbuild():
             command = self._port._jhbuild_wrapper + command
         environment = self._port.setup_environ_for_server('ImageDiff')
@@ -78,23 +103,28 @@ class ImageDiffer(object):
 
     def _read(self):
         deadline = time.time() + 2.0
-        output = None
-        output_image = b''
+        output_image = None
+        diff_output = None
+        fuzzy_data = None
 
         while not self._process.timed_out and not self._process.has_crashed():
             output = self._process.read_stdout_line(deadline)
             if self._process.timed_out or self._process.has_crashed() or not output:
                 break
 
-            if output.startswith(b'diff'):  # This is the last line ImageDiff prints.
+            if output.startswith(b'#EOF'):
                 break
+
+            if output.startswith(b'diff:'):
+                diff_output = output
+
+            if output.startswith(b'maxDifference='):
+                fuzzy_data = output
 
             if output.startswith(b'Content-Length'):
                 m = re.match(br'Content-Length: (\d+)', output)
                 content_length = int(string_utils.decode(m.group(1), target_type=str))
                 output_image = self._process.read_stdout(deadline, content_length)
-                output = self._process.read_stdout_line(deadline)
-                break
 
         stderr = string_utils.decode(self._process.pop_all_buffered_stderr(), target_type=str)
         err_str = ''
@@ -105,14 +135,24 @@ class ImageDiffer(object):
         if self._process.has_crashed():
             err_str += "ImageDiff crashed\n"
 
-        diff_percent = 0
-        if output and output.startswith(b'diff'):
-            m = re.match(b'diff: (.+)% (passed|failed)', output)
-            if m.group(2) == b'passed':
-                return (None, 0, None)
-            diff_percent = float(string_utils.decode(m.group(1), target_type=str))
+        if not diff_output or not fuzzy_data:
+            return ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=self._tolerance, fuzzy_data=None, error_string=err_str or "Failed to read ImageDiff output")
 
-        return (output_image, diff_percent, err_str or None)
+        m = re.match(b'diff: (.+)%', diff_output)
+        if not m:
+            return ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=self._tolerance, fuzzy_data=None, error_string=err_str or 'Failed to match ImageDiff diff output {}'.format(diff_output))
+
+        diff_percent = float(string_utils.decode(m.group(1), target_type=str))
+
+        m = re.match(br'maxDifference=(\d+); totalPixels=(\d+)', fuzzy_data)
+        if not m:
+            return ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=self._tolerance, fuzzy_data=None, error_string=err_str or 'Failed to match ImageDiff fuzzy data output {}'.format(fuzzy_data))
+
+        max_difference = int(string_utils.decode(m.group(1), target_type=str))
+        total_pixels = int(string_utils.decode(m.group(2), target_type=str))
+
+        passed = diff_percent <= self._tolerance
+        return ImageDiffResult(passed=passed, diff_image=output_image, difference=diff_percent, tolerance=self._tolerance, fuzzy_data={'max_difference': max_difference, 'total_pixels': total_pixels}, error_string=err_str or None)
 
     def stop(self):
         if self._process:

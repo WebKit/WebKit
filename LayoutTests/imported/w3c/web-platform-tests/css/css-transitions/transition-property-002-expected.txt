@@ -1,6 +1,6 @@
 
-FAIL parse 'none, all' assert_equals: expected "none, all" but got "all"
-FAIL parse 'all, none' assert_equals: expected "all, none" but got "all"
+PASS parse 'none, all'
+PASS parse 'all, none'
 PASS parse 'foobar'
 PASS parse 'all, foobar'
 PASS parse 'foobar, all'

@@ -33,7 +33,9 @@
 
 PAS_BEGIN_EXTERN_C;
 
+struct pas_heap_config;
 struct pas_large_heap_physical_page_sharing_cache;
+typedef struct pas_heap_config pas_heap_config;
 typedef struct pas_large_heap_physical_page_sharing_cache pas_large_heap_physical_page_sharing_cache;
 
 struct pas_large_heap_physical_page_sharing_cache {
@@ -64,6 +66,7 @@ pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment(
     pas_large_heap_physical_page_sharing_cache* cache,
     size_t size,
     pas_alignment alignment,
+    pas_heap_config* config,
     bool should_zero);
 
 PAS_END_EXTERN_C;

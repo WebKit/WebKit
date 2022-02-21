@@ -44,7 +44,7 @@ protected:
 private:
     FormControlState saveFormControlState() const override;
     void restoreFormControlState(const FormControlState&) override;
-    bool appendFormData(DOMFormData&, bool) const override;
+    bool appendFormData(DOMFormData&) const override;
     void handleKeypressEvent(KeyboardEvent&) override;
     bool canSetStringValue() const override;
     bool accessKeyAction(bool sendMouseEvents) override;

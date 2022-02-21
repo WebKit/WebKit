@@ -27,9 +27,9 @@
 
 #include "ActiveDOMObject.h"
 #include "BroadcastChannelIdentifier.h"
+#include "ClientOrigin.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "SecurityOriginData.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -56,8 +56,8 @@ public:
     using RefCounted<BroadcastChannel>::ref;
     using RefCounted<BroadcastChannel>::deref;
 
-    BroadcastChannelIdentifier identifier() const { return m_identifier; }
-    const String& name() const { return m_name; }
+    BroadcastChannelIdentifier identifier() const;
+    String name() const;
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message);
     void close();
@@ -69,6 +69,8 @@ private:
 
     void dispatchMessage(Ref<SerializedScriptValue>&&);
     void ensureOnMainThread(Function<void(Document&)>&&);
+
+    bool isEligibleForMessaging() const;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return BroadcastChannelEventTargetInterfaceType; }
@@ -82,9 +84,8 @@ private:
     bool virtualHasPendingActivity() const final;
     void stop() final { close(); }
 
-    const String m_name;
-    const SecurityOriginData m_origin;
-    const BroadcastChannelIdentifier m_identifier;
+    class MainThreadBridge;
+    Ref<MainThreadBridge> m_mainThreadBridge;
     bool m_isClosed { false };
     bool m_hasRelevantEventListener { false };
 };

@@ -24,6 +24,7 @@
 #include "FloatPoint.h"
 #include "Path.h"
 #include "PathTraversalState.h"
+#include "SVGPathAbsoluteConverter.h"
 #include "SVGPathBlender.h"
 #include "SVGPathBuilder.h"
 #include "SVGPathByteStreamBuilder.h"
@@ -208,6 +209,24 @@ FloatPoint getPointAtLengthOfSVGPathByteStream(const SVGPathByteStream& stream, 
     SVGPathByteStreamSource source(stream);
     SVGPathParser::parse(source, builder);
     return builder.currentPoint();
+}
+
+std::unique_ptr<SVGPathByteStream> convertSVGPathByteStreamToAbsoluteCoordinates(const SVGPathByteStream& stream)
+{
+    auto result = makeUnique<SVGPathByteStream>();
+
+    if (stream.isEmpty())
+        return result;
+
+    SVGPathByteStreamBuilder builder(*result);
+    SVGPathAbsoluteConverter converter(builder);
+
+    SVGPathByteStreamSource source(stream);
+
+    if (!SVGPathParser::parse(source, converter, UnalteredParsing, false))
+        return nullptr;
+
+    return result;
 }
 
 }

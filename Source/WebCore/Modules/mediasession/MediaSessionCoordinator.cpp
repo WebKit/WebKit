@@ -33,9 +33,12 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaSessionCoordinatorState.h"
 #include "Logging.h"
+#include "MediaMetadata.h"
 #include "MediaSession.h"
 #include "MediaSessionCoordinatorPrivate.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Logger.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/Seconds.h>
 
 static const Seconds CommandTimeTolerance = 50_ms;
@@ -57,7 +60,7 @@ Ref<MediaSessionCoordinator> MediaSessionCoordinator::create(ScriptExecutionCont
 
 MediaSessionCoordinator::MediaSessionCoordinator(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
-    , m_logger(makeRef(Document::sharedLogger()))
+    , m_logger(Document::sharedLogger())
     , m_logIdentifier(nextCoordinatorLogIdentifier())
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -70,7 +73,7 @@ void MediaSessionCoordinator::setMediaSessionCoordinatorPrivate(Ref<MediaSession
         m_privateCoordinator->leave();
     m_privateCoordinator = WTFMove(privateCoordinator);
     m_privateCoordinator->setLogger(m_logger.copyRef(), m_logIdentifier);
-    m_privateCoordinator->setClient(makeWeakPtr(this));
+    m_privateCoordinator->setClient(*this);
     coordinatorStateChanged(MediaSessionCoordinatorState::Waiting);
 }
 
@@ -99,7 +102,7 @@ void MediaSessionCoordinator::join(DOMPromiseDeferred<void>&& promise)
     }
     ASSERT(m_privateCoordinator, "We must be in Waiting state if no private coordinator is set");
 
-    m_privateCoordinator->join([protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
+    m_privateCoordinator->join([protectedThis = Ref { *this }, identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
             return;
@@ -156,7 +159,7 @@ void MediaSessionCoordinator::seekTo(double time, DOMPromiseDeferred<void>&& pro
         return;
     }
 
-    m_privateCoordinator->seekTo(time, [protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
+    m_privateCoordinator->seekTo(time, [protectedThis = Ref { *this }, identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
             return;
@@ -189,7 +192,7 @@ void MediaSessionCoordinator::play(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    m_privateCoordinator->play([protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
+    m_privateCoordinator->play([protectedThis = Ref { *this }, identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
             return;
@@ -222,7 +225,7 @@ void MediaSessionCoordinator::pause(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    m_privateCoordinator->pause([protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
+    m_privateCoordinator->pause([protectedThis = Ref { *this }, identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
             return;
@@ -255,7 +258,7 @@ void MediaSessionCoordinator::setTrack(const String& track, DOMPromiseDeferred<v
         return;
     }
 
-    m_privateCoordinator->setTrack(track, [protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
+    m_privateCoordinator->setTrack(track, [protectedThis = Ref { *this }, identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
             return;
@@ -274,7 +277,7 @@ void MediaSessionCoordinator::setTrack(const String& track, DOMPromiseDeferred<v
 void MediaSessionCoordinator::setMediaSession(MediaSession* session)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_session = makeWeakPtr(session);
+    m_session = session;
 
     if (m_session)
         m_session->addObserver(*this);

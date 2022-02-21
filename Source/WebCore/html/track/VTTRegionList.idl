@@ -27,7 +27,6 @@
 // FIXME: This has been removed from the spec: https://github.com/w3c/webvtt/pull/31
 [
     Conditional=VIDEO,
-    ImplementationLacksVTable,
     LegacyNoInterfaceObject,
 ] interface VTTRegionList {
     readonly attribute unsigned long length;

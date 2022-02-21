@@ -65,6 +65,7 @@ WTFLogChannel* getLogChannel(const String& name)
 
 WTFLogChannel* getLogChannel(const String& name)
 {
+    UNUSED_PARAM(name);
     return nullptr;
 }
 

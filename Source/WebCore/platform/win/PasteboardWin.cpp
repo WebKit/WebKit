@@ -34,7 +34,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
-#include "Element.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -45,9 +45,9 @@
 #include "Range.h"
 #include "RenderImage.h"
 #include "SharedBuffer.h"
-#include "TextEncoding.h"
 #include "WebCoreInstanceHandle.h"
 #include "markup.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/URL.h>
 #include <wtf/WindowsExtras.h>
 #include <wtf/text/CString.h>
@@ -371,7 +371,6 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
 
 void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t>)
 {
-#if USE(CF)
     if (m_dataObject) {
         STGMEDIUM medium;
         if (FAILED(m_dataObject->GetData(cfHDropFormat(), &medium)))
@@ -399,11 +398,6 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t>)
 
     for (auto& filename : list->value)
         reader.readFilename(filename);
-#else
-    UNUSED_PARAM(reader);
-    notImplemented();
-    return;
-#endif
 }
 
 static bool writeURL(WCDataObject *data, const URL& url, String title, bool withPlainText, bool withHTML)
@@ -671,13 +665,11 @@ static HRESULT writeFileToDataObject(IDataObject* dataObject, HGLOBAL fileDescri
     if (FAILED(hr = dataObject->SetData(fe, &medium, TRUE)))
         goto exit;
 
-#if USE(CF)
     // HDROP
     if (hDropContent) {
         medium.hGlobal = hDropContent;
         hr = dataObject->SetData(cfHDropFormat(), &medium, TRUE);
     }
-#endif
 
 exit:
     if (FAILED(hr)) {
@@ -866,7 +858,7 @@ RefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, const Simple
         HANDLE cbData = ::GetClipboardData(HTMLClipboardFormat);
         if (cbData) {
             SIZE_T dataSize = ::GlobalSize(cbData);
-            String cfhtml(UTF8Encoding().decode(static_cast<char*>(GlobalLock(cbData)), dataSize));
+            String cfhtml(PAL::UTF8Encoding().decode(static_cast<char*>(GlobalLock(cbData)), dataSize));
             GlobalUnlock(cbData);
             ::CloseClipboard();
 
@@ -974,7 +966,7 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
     return memObj;
 }
 
-static HGLOBAL createGlobalImageFileContent(SharedBuffer* data)
+static HGLOBAL createGlobalImageFileContent(FragmentedSharedBuffer* data)
 {
     HGLOBAL memObj = GlobalAlloc(GPTR, data->size());
     if (!memObj) 
@@ -986,15 +978,15 @@ static HGLOBAL createGlobalImageFileContent(SharedBuffer* data)
         return 0;
     }
 
-    if (data->data())
-        CopyMemory(fileContents, data->data(), data->size());
+    if (data->size())
+        CopyMemory(fileContents, data->makeContiguous()->data(), data->size());
 
     GlobalUnlock(memObj);
 
     return memObj;
 }
 
-static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, SharedBuffer* data)
+static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, FragmentedSharedBuffer* data)
 {
     if (fileName.isEmpty() || !data)
         return 0;
@@ -1002,7 +994,7 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
     WCHAR filePath[MAX_PATH];
 
     if (url.isLocalFile()) {
-        String localPath = decodeURLEscapeSequences(url.path());
+        String localPath = PAL::decodeURLEscapeSequences(url.path());
         // windows does not enjoy a leading slash on paths
         if (localPath[0] == '/')
             localPath = localPath.substring(1);
@@ -1038,8 +1030,8 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
         // Write the data to this temp file.
         DWORD written;
         BOOL tempWriteSucceeded = FALSE;
-        if (data->data())
-            tempWriteSucceeded = WriteFile(tempFileHandle, data->data(), data->size(), &written, 0);
+        if (data->size())
+            tempWriteSucceeded = WriteFile(tempFileHandle, data->makeContiguous()->data(), data->size(), &written, 0);
         CloseHandle(tempFileHandle);
         if (!tempWriteSucceeded)
             return 0;
@@ -1071,7 +1063,7 @@ void Pasteboard::writeImageToDataObject(Element& element, const URL& url)
     if (!cachedImage || !cachedImage->imageForRenderer(element.renderer()) || !cachedImage->isLoaded())
         return;
 
-    SharedBuffer* imageBuffer = cachedImage->imageForRenderer(element.renderer())->data();
+    FragmentedSharedBuffer* imageBuffer = cachedImage->imageForRenderer(element.renderer())->data();
     if (!imageBuffer || !imageBuffer->size())
         return;
 
@@ -1126,6 +1118,10 @@ void Pasteboard::write(const PasteboardImage&)
 {
 }
 
+void Pasteboard::write(const PasteboardBuffer&)
+{
+}
+
 void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
 {
     if (data.isEmpty() || data.size() > 1) {
@@ -1138,10 +1134,10 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
     if (::OpenClipboard(m_owner)) {
         const auto& customData = data.first();
         customData.forEachPlatformStringOrBuffer([](auto& type, auto& stringOrBuffer) {
-            if (WTF::holds_alternative<String>(stringOrBuffer)) {
+            if (std::holds_alternative<String>(stringOrBuffer)) {
                 ClipboardDataType dataType = clipboardTypeFromMIMEType(type);
 
-                String str = WTF::get<String>(stringOrBuffer);
+                String str = std::get<String>(stringOrBuffer);
                 replaceNewlinesWithWindowsStyleNewlines(str);
                 HGLOBAL cbData = createGlobalData(str);
 

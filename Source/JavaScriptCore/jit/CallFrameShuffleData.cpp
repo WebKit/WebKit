@@ -28,26 +28,39 @@
 
 #if ENABLE(JIT)
 
+#include "BytecodeStructs.h"
 #include "CodeBlock.h"
 #include "RegisterAtOffsetList.h"
 
 namespace JSC {
 
-#if USE(JSVALUE64)
-
-void CallFrameShuffleData::setupCalleeSaveRegisters(CodeBlock* codeBlock)
+void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* registerSaveLocations)
 {
     RegisterSet calleeSaveRegisters { RegisterSet::vmCalleeSaveRegisters() };
-    const RegisterAtOffsetList* registerSaveLocations = codeBlock->calleeSaveRegisters();
 
     for (size_t i = 0; i < registerSaveLocations->size(); ++i) {
         RegisterAtOffset entry { registerSaveLocations->at(i) };
         if (!calleeSaveRegisters.get(entry.reg()))
             continue;
 
-        VirtualRegister saveSlot { entry.offsetAsIndex() };
+        int saveSlotIndexInCPURegisters = entry.offsetAsIndex();
+
+#if USE(JSVALUE64)
+        // CPU registers are the same size as virtual registers
+        VirtualRegister saveSlot { saveSlotIndexInCPURegisters };
         registers[entry.reg()]
             = ValueRecovery::displacedInJSStack(saveSlot, DataFormatJS);
+#elif USE(JSVALUE32_64)
+        // On 32-bit architectures, 2 callee saved registers may be packed into the same slot
+        static_assert(!PayloadOffset || !TagOffset);
+        static_assert(PayloadOffset == 4 || TagOffset == 4);
+        bool inTag = (saveSlotIndexInCPURegisters & 1) == !!TagOffset;
+        if (saveSlotIndexInCPURegisters < 0)
+            saveSlotIndexInCPURegisters -= 1; // Round towards -inf
+        VirtualRegister saveSlot { saveSlotIndexInCPURegisters / 2 };
+        registers[entry.reg()]
+            = ValueRecovery::calleeSaveRegDisplacedInJSStack(saveSlot, inTag);
+#endif
     }
 
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
@@ -57,11 +70,39 @@ void CallFrameShuffleData::setupCalleeSaveRegisters(CodeBlock* codeBlock)
         if (registers[reg])
             continue;
 
+#if USE(JSVALUE64)
         registers[reg] = ValueRecovery::inRegister(reg, DataFormatJS);
+#elif USE(JSVALUE32_64)
+        registers[reg] = ValueRecovery::inRegister(reg, DataFormatInt32);
+#endif
     }
 }
 
-#endif // USE(JSVALUE64)
+CallFrameShuffleData CallFrameShuffleData::createForBaselineOrLLIntTailCall(const OpTailCall& bytecode, unsigned numParameters)
+{
+    CallFrameShuffleData shuffleData;
+    shuffleData.numPassedArgs = bytecode.m_argc;
+    shuffleData.numParameters = numParameters;
+#if USE(JSVALUE64)
+    shuffleData.numberTagRegister = GPRInfo::numberTagRegister;
+#endif
+    shuffleData.numLocals = bytecode.m_argv - sizeof(CallerFrameAndPC) / sizeof(Register);
+    shuffleData.args.resize(bytecode.m_argc);
+    for (unsigned i = 0; i < bytecode.m_argc; ++i) {
+        shuffleData.args[i] =
+            ValueRecovery::displacedInJSStack(
+                virtualRegisterForArgumentIncludingThis(i) - bytecode.m_argv,
+                DataFormatJS);
+    }
+#if USE(JSVALUE64)
+    shuffleData.callee = ValueRecovery::inGPR(BaselineCallRegisters::calleeJSR.payloadGPR(), DataFormatJS);
+#elif USE(JSVALUE32_64)
+    shuffleData.callee = ValueRecovery::inPair(BaselineCallRegisters::calleeJSR.tagGPR(), BaselineCallRegisters::calleeJSR.payloadGPR());
+#endif
+    shuffleData.setupCalleeSaveRegisters(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
+    shuffleData.shrinkToFit();
+    return shuffleData;
+}
 
 } // namespace JSC
 

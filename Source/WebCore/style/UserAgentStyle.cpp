@@ -50,8 +50,7 @@
 #include "Page.h"
 #include "Quirks.h"
 #include "RenderTheme.h"
-#include "RuleSet.h"
-#include "RuntimeEnabledFeatures.h"
+#include "RuleSetBuilder.h"
 #include "SVGElement.h"
 #include "StyleSheetContents.h"
 #include "UserAgentStyleSheets.h"
@@ -75,6 +74,9 @@ StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaControlsStyleSheet;
 StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
 StyleSheetContents* UserAgentStyle::plugInsStyleSheet;
+#if ENABLE(SERVICE_CONTROLS)
+StyleSheetContents* UserAgentStyle::imageControlsStyleSheet;
+#endif
 StyleSheetContents* UserAgentStyle::mediaQueryStyleSheet;
 #if ENABLE(DATALIST_ELEMENT)
 StyleSheetContents* UserAgentStyle::dataListStyleSheet;
@@ -84,6 +86,9 @@ StyleSheetContents* UserAgentStyle::colorInputStyleSheet;
 #endif
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
 StyleSheetContents* UserAgentStyle::legacyFormControlsIOSStyleSheet;
+#endif
+#if ENABLE(ALTERNATE_FORM_CONTROL_DESIGN)
+StyleSheetContents* UserAgentStyle::alternateFormControlDesignStyleSheet;
 #endif
 
 static const MediaQueryEvaluator& screenEval()
@@ -107,8 +112,11 @@ static StyleSheetContents* parseUASheet(const String& str)
 
 void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)
 {
-    defaultStyle->addRulesFromSheet(sheet, screenEval());
-    defaultPrintStyle->addRulesFromSheet(sheet, printEval());
+    RuleSetBuilder screenBuilder(*defaultStyle, screenEval());
+    screenBuilder.addRulesFromSheet(sheet);
+
+    RuleSetBuilder printBuilder(*defaultPrintStyle, printEval());
+    printBuilder.addRulesFromSheet(sheet);
 
     // Build a stylesheet consisting of non-trivial media queries seen in default style.
     // Rulesets for these can't be global and need to be built in document context.
@@ -145,7 +153,9 @@ void UserAgentStyle::initDefaultStyleSheet()
     // Quirks-mode rules.
     String quirksRules = String(StringImpl::createWithoutCopying(quirksUserAgentStyleSheet, sizeof(quirksUserAgentStyleSheet))) + RenderTheme::singleton().extraQuirksStyleSheet();
     quirksStyleSheet = parseUASheet(quirksRules);
-    defaultQuirksStyle->addRulesFromSheet(*quirksStyleSheet, screenEval());
+
+    RuleSetBuilder quirkBuilder(*defaultQuirksStyle, screenEval());
+    quirkBuilder.addRulesFromSheet(*quirksStyleSheet);
 
     ++defaultStyleVersion;
 }
@@ -161,8 +171,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
                 plugInsStyleSheet = parseUASheet(plugInsRules);
                 addToDefaultStyle(*plugInsStyleSheet);
             }
-        }
-        else if (is<HTMLDialogElement>(element) && RuntimeEnabledFeatures::sharedFeatures().dialogElementEnabled()) {
+        } else if (is<HTMLDialogElement>(element) && element.document().settings().dialogElementEnabled()) {
             if (!dialogStyleSheet) {
                 dialogStyleSheet = parseUASheet(StringImpl::createWithoutCopying(dialogUserAgentStyleSheet, sizeof(dialogUserAgentStyleSheet)));
                 addToDefaultStyle(*dialogStyleSheet);
@@ -225,6 +234,13 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
     if (!legacyFormControlsIOSStyleSheet && !element.document().settings().iOSFormControlRefreshEnabled()) {
         legacyFormControlsIOSStyleSheet = parseUASheet(StringImpl::createWithoutCopying(legacyFormControlsIOSUserAgentStyleSheet, sizeof(legacyFormControlsIOSUserAgentStyleSheet)));
         addToDefaultStyle(*legacyFormControlsIOSStyleSheet);
+    }
+#endif
+
+#if ENABLE(ALTERNATE_FORM_CONTROL_DESIGN)
+    if (!alternateFormControlDesignStyleSheet && element.document().settings().alternateFormControlDesignEnabled()) {
+        alternateFormControlDesignStyleSheet = parseUASheet(StringImpl::createWithoutCopying(alternateFormControlDesignUserAgentStyleSheet, sizeof(alternateFormControlDesignUserAgentStyleSheet)));
+        addToDefaultStyle(*alternateFormControlDesignStyleSheet);
     }
 #endif
 

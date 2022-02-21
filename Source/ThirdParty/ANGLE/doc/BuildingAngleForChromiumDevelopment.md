@@ -41,7 +41,7 @@ ninja -j 10 -k1 -C out/Debug
 
 ## Working with ANGLE in Chromium
 
-You will also want to work with a local version of ANGLE instead of the version that is pulled in by Chromium's [DEPS](https://chromium.googlesource.com/chromium/src/+/master/DEPS) file. To do this do the following:
+You will also want to work with a local version of ANGLE instead of the version that is pulled in by Chromium's [DEPS](https://chromium.googlesource.com/chromium/src/+/main/DEPS) file. To do this do the following:
 
   * cd to `chromium/`. One directory above `chromium/src`. Add this to `chromium/.gclient`:
 

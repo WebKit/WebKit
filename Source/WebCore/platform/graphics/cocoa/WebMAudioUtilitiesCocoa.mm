@@ -54,6 +54,7 @@ static bool registerDecoderFactory(const char* decoderName, OSType decoderType)
     if (comp)
         return true; // Already registered.
 
+#if PLATFORM(MAC)
     constexpr char audioComponentsDylib[] = "/System/Library/Components/AudioCodecs.component/Contents/MacOS/AudioCodecs";
     void *handle = dlopen(audioComponentsDylib, RTLD_LAZY | RTLD_LOCAL);
     if (!handle)
@@ -69,6 +70,10 @@ static bool registerDecoderFactory(const char* decoderName, OSType decoderType)
     }
 
     return true;
+#else
+    UNUSED_PARAM(decoderName);
+    return false;
+#endif
 }
 
 static RetainPtr<CMFormatDescriptionRef> createAudioFormatDescriptionForFormat(OSType formatID, Vector<uint8_t>&& magicCookie)
@@ -331,7 +336,7 @@ static Vector<uint8_t> cookieFromOpusCookieContents(const OpusCookieContents& co
 
 bool isOpusDecoderAvailable()
 {
-#if ENABLE(OPUS) && PLATFORM(MAC)
+#if ENABLE(OPUS)
     if (!PlatformMediaSessionManager::opusDecoderEnabled())
         return false;
 
@@ -343,7 +348,7 @@ bool isOpusDecoderAvailable()
 
 bool registerOpusDecoderIfNeeded()
 {
-#if ENABLE(OPUS) && PLATFORM(MAC)
+#if ENABLE(OPUS)
     static bool available;
 
     static dispatch_once_t onceToken;
@@ -434,7 +439,7 @@ static Vector<uint8_t> cookieFromVorbisCodecPrivate(size_t codecPrivateSize, con
 
 bool isVorbisDecoderAvailable()
 {
-#if ENABLE(VORBIS) && PLATFORM(MAC)
+#if ENABLE(VORBIS)
     if (!PlatformMediaSessionManager::vorbisDecoderEnabled())
         return false;
 
@@ -446,7 +451,7 @@ bool isVorbisDecoderAvailable()
 
 bool registerVorbisDecoderIfNeeded()
 {
-#if ENABLE(VORBIS) && PLATFORM(MAC)
+#if ENABLE(VORBIS)
     static bool available;
 
     static dispatch_once_t onceToken;

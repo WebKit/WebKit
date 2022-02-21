@@ -38,8 +38,13 @@ NativeWebMouseEvent::NativeWebMouseEvent(::WebEvent *event)
 {
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(Type type, Button button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier> modifiers, WallTime timestamp, double force, GestureWasCancelled gestureWasCancelled)
-    : WebMouseEvent(type, button, buttons, position, globalPosition, deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp, force, NoTap, WebCore::mousePointerID, WebCore::mousePointerEventType(), gestureWasCancelled)
+NativeWebMouseEvent::NativeWebMouseEvent(Type type, Button button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier> modifiers, WallTime timestamp, double force, GestureWasCancelled gestureWasCancelled, const String& pointerType)
+    : WebMouseEvent(type, button, buttons, position, globalPosition, deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp, force, NoTap, WebCore::mousePointerID, pointerType, gestureWasCancelled)
+{
+}
+
+NativeWebMouseEvent::NativeWebMouseEvent(const NativeWebMouseEvent& otherEvent, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ)
+    : WebMouseEvent(otherEvent.type(), otherEvent.button(), otherEvent.buttons(), position, globalPosition, deltaX, deltaY, deltaZ, otherEvent.clickCount(), otherEvent.modifiers(), otherEvent.timestamp(), otherEvent.force(), otherEvent.syntheticClickType(), otherEvent.pointerId(), otherEvent.pointerType(), otherEvent.gestureWasCancelled())
 {
 }
 

@@ -96,12 +96,9 @@ private:
     HTMLObjectElement& asHTMLElement() final { return *this; }
     const HTMLObjectElement& asHTMLElement() const final { return *this; }
 
-    bool isInteractiveContent() const final;
-
     bool isFormControlElement() const final { return false; }
 
     bool isEnumeratable() const final { return true; }
-    bool appendFormData(DOMFormData&, bool) final;
 
     bool canContainRangeEndPoint() const final;
 

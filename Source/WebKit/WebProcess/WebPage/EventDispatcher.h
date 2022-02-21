@@ -29,6 +29,7 @@
 #include "WebEvent.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformWheelEvent.h>
+#include <WebCore/RectEdges.h>
 #include <WebCore/WheelEventDeltaFilter.h>
 #include <memory>
 #include <wtf/HashMap.h>
@@ -49,6 +50,8 @@ using PlatformDisplayID = uint32_t;
 
 namespace WebKit {
 
+class MomentumEventDispatcher;
+class ScrollingAccelerationCurve;
 class WebPage;
 class WebWheelEvent;
 
@@ -60,6 +63,8 @@ class EventDispatcher : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     static Ref<EventDispatcher> create();
     ~EventDispatcher();
+
+    WorkQueue& queue() { return m_queue.get(); }
 
 #if ENABLE(SCROLLING_THREAD)
     void addScrollingTreeForPage(WebPage*);
@@ -75,6 +80,9 @@ public:
 
     void notifyScrollingTreesDisplayWasRefreshed(WebCore::PlatformDisplayID);
 
+    enum class WheelEventOrigin : bool { UIProcess, MomentumEventDispatcher };
+    void internalWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges, WheelEventOrigin);
+
 private:
     EventDispatcher();
 
@@ -82,7 +90,10 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Message handlers
-    void wheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom);
+    void wheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    void setScrollingAccelerationCurve(WebCore::PageIdentifier, std::optional<ScrollingAccelerationCurve>);
+#endif
 #if ENABLE(IOS_TOUCH_EVENTS)
     void touchEvent(WebCore::PageIdentifier, const WebTouchEvent&, CompletionHandler<void(bool)>&&);
     void touchEventWithoutCallback(WebCore::PageIdentifier, const WebTouchEvent&);
@@ -92,8 +103,8 @@ private:
 #endif
 
     // This is called on the main thread.
-    void dispatchWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>);
-    void dispatchWheelEventViaMainThread(WebCore::PageIdentifier, const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>);
+    void dispatchWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, WheelEventOrigin);
+    void dispatchWheelEventViaMainThread(WebCore::PageIdentifier, const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, WheelEventOrigin);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void dispatchTouchEvents();
@@ -114,9 +125,11 @@ private:
     void displayDidRefreshOnScrollingThread(WebCore::PlatformDisplayID);
 #endif
 
+    void pageScreenDidChange(WebCore::PageIdentifier, WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
+
     Ref<WorkQueue> m_queue;
 
-#if ENABLE(SCROLLING_THREAD)
+#if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
     Lock m_scrollingTreesLock;
     HashMap<WebCore::PageIdentifier, RefPtr<WebCore::ThreadedScrollingTree>> m_scrollingTrees WTF_GUARDED_BY_LOCK(m_scrollingTreesLock);
 #endif
@@ -124,6 +137,10 @@ private:
 #if ENABLE(IOS_TOUCH_EVENTS)
     Lock m_touchEventsLock;
     HashMap<WebCore::PageIdentifier, TouchEventQueue> m_touchEvents WTF_GUARDED_BY_LOCK(m_touchEventsLock);
+#endif
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    std::unique_ptr<MomentumEventDispatcher> m_momentumEventDispatcher;
 #endif
 };
 

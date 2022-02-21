@@ -24,8 +24,7 @@
  */
 
 [
-    EnabledBySetting=SpeechRecognition,
-    ImplementationLacksVTable,
+    EnabledBySetting=SpeechRecognitionEnabled,
     Exposed=Window
 ] interface SpeechRecognitionResult {
     readonly attribute unsigned long length;

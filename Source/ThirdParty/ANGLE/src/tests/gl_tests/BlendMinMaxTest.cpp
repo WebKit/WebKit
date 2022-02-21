@@ -180,9 +180,6 @@ TEST_P(BlendMinMaxTest, RGBA32F)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 || !IsGLExtensionEnabled("GL_EXT_float_blend") ||
                        !IsGLExtensionEnabled("GL_EXT_color_buffer_float"));
 
-    // Ignore SDK layers messages on D3D11 FL 9.3 (http://anglebug.com/1284)
-    ANGLE_SKIP_TEST_IF(IsD3D11_FL93());
-
     runTest(GL_RGBA32F, GL_FLOAT);
 }
 
@@ -193,8 +190,9 @@ TEST_P(BlendMinMaxTest, RGBA16F)
     // http://anglebug.com/4092
     ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
 
-    // http://anglebug.com/4185
-    ANGLE_SKIP_TEST_IF(IsMetal());
+    // TODO(anglebug.com/5491) Context.cpp disallows GL_EXT_color_buffer_half_float on iOS because
+    // it doesn't support GL_EXT_color_buffer_float.
+    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     runTest(GL_RGBA16F, GL_FLOAT);
 }

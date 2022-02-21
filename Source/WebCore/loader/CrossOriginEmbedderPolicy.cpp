@@ -26,8 +26,12 @@
 #include "config.h"
 #include "CrossOriginEmbedderPolicy.h"
 
+#include "Frame.h"
+#include "FrameLoader.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "JSFetchRequest.h"
+#include "PingLoader.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"

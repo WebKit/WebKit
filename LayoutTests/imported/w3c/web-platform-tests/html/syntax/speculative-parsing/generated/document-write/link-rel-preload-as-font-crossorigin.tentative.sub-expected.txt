@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <link rel=preload as=font href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=b7a7a45f-faea-4dcd-a599-a3f95b09a5f8&amp;encodingcheck=&Gbreve;" crossorigin>
+
+
+
+PASS Speculative parsing, document.write(): link-rel-preload-as-font-crossorigin
+

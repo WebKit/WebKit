@@ -39,7 +39,8 @@ struct TextBoxSelectableRange {
     {
         auto clampedOffset = std::clamp(offset, start, start + length) - start;
 
-        if (truncation)
+        // FIXME: For some reason we allow the caret move to (invisible) fully truncated text. The zero test is to keep that behavior.
+        if (truncation && *truncation)
             return std::min<unsigned>(clampedOffset, *truncation);
 
         if (clampedOffset == length)

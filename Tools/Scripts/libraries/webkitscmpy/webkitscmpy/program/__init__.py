@@ -32,6 +32,7 @@ from .clean import Clean
 from .command import Command
 from .checkout import Checkout
 from .find import Find, Info
+from .land import Land
 from .log import Log
 from .pull import Pull
 from .pull_request import PullRequest
@@ -42,7 +43,11 @@ from webkitcorepy import arguments, log as webkitcorepy_log
 from webkitscmpy import local, log, remote
 
 
-def main(args=None, path=None, loggers=None, contributors=None, identifier_template=None, subversion=None):
+def main(
+    args=None, path=None, loggers=None, contributors=None,
+    identifier_template=None, subversion=None, additional_setup=None, hooks=None,
+    canonical_svn=False,
+):
     logging.basicConfig(level=logging.WARNING)
 
     loggers = [logging.getLogger(), webkitcorepy_log,  log] + (loggers or [])
@@ -66,7 +71,7 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
     )
 
     subparsers = parser.add_subparsers(help='sub-command help')
-    programs = [Blame, Branch, Canonicalize, Checkout, Clean, Find, Info, Log, Pull, PullRequest, Setup]
+    programs = [Blame, Branch, Canonicalize, Checkout, Clean, Find, Info, Land, Log, Pull, PullRequest, Setup]
     if subversion:
         programs.append(SetupGitSvn)
 
@@ -99,9 +104,28 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
             parsed = parser.parse_args(args=args)
 
     if parsed.repository.startswith(('https://', 'http://')):
-        repository = remote.Scm.from_url(parsed.repository, contributors=contributors)
+        repository = remote.Scm.from_url(parsed.repository, contributors=None if callable(contributors) else contributors)
     else:
-        repository = local.Scm.from_path(path=parsed.repository, contributors=contributors)
+        repository = local.Scm.from_path(path=parsed.repository, contributors=None if callable(contributors) else contributors)
+
+    if callable(contributors):
+        repository.contributors = contributors(repository) or repository.contributors
+    if callable(identifier_template):
+        identifier_template = identifier_template(repository)
+    if callable(subversion):
+        subversion = subversion(repository)
+    if callable(hooks):
+        hooks = hooks(repository)
+
+    if sys.version_info > (3, 0):
+        import inspect
+    else:
+        import inspect2 as inspect
+    if callable(additional_setup) and list(inspect.signature(additional_setup).parameters.keys()) == ['repository']:
+        additional_setup = additional_setup(repository)
+
+    if callable(canonical_svn):
+        canonical_svn = canonical_svn(repository)
 
     if not getattr(parsed, 'main', None):
         parser.print_help()
@@ -112,4 +136,7 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
         repository=repository,
         identifier_template=identifier_template,
         subversion=subversion,
+        additional_setup=additional_setup,
+        hooks=hooks,
+        canonical_svn=canonical_svn,
     )

@@ -27,14 +27,14 @@
 #include "DisplayListDrawingContext.h"
 
 #include "AffineTransform.h"
-#include "DisplayListRecorder.h"
+#include "DisplayListRecorderImpl.h"
 #include "DisplayListReplayer.h"
 
 namespace WebCore {
 namespace DisplayList {
 
-DrawingContext::DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM, Recorder::Delegate* delegate)
-    : m_context(m_displayList, GraphicsContextState(), FloatRect({ }, logicalSize), initialCTM, delegate)
+DrawingContext::DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM)
+    : m_context(m_displayList, GraphicsContextState(), FloatRect({ }, logicalSize), initialCTM)
 {
 }
 

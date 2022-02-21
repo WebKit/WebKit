@@ -32,22 +32,28 @@
 
 #include "gpu_info_util/SystemInfo.h"
 
-#include <cstdlib>
-
 #include <gtest/gtest.h>
-
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
+#include <cstdlib>
+
+#include "common/debug.h"
+#if defined(ANGLE_ENABLE_VULKAN)
+#    include "gpu_info_util/SystemInfo_vulkan.h"
+#endif  // defined(ANGLE_ENABLE_VULKAN)
 
 namespace js = rapidjson;
+
+bool gFailedToFindGPU;
 
 int main(int argc, char **argv)
 {
     angle::SystemInfo info;
 
-    bool useVulkan = false;
-    bool listTests = false;
+    bool useVulkan      = false;
+    bool listTests      = false;
+    bool useSwiftShader = false;
 
     for (int arg = 1; arg < argc; ++arg)
     {
@@ -58,6 +64,10 @@ int main(int argc, char **argv)
         else if (strcmp(argv[arg], "--gtest_list_tests") == 0)
         {
             listTests = true;
+        }
+        else if (strcmp(argv[arg], "--swiftshader") == 0)
+        {
+            useSwiftShader = true;
         }
     }
 
@@ -70,8 +80,11 @@ int main(int argc, char **argv)
     if (useVulkan)
     {
 #if defined(ANGLE_ENABLE_VULKAN)
-        angle::GetSystemInfoVulkan(&info);
+        angle::vk::ICD preferredICD =
+            useSwiftShader ? angle::vk::ICD::SwiftShader : angle::vk::ICD::Default;
+        angle::GetSystemInfoVulkanWithICD(&info, preferredICD);
 #else
+        ANGLE_UNUSED_VARIABLE(useSwiftShader);
         printf("Vulkan not supported.\n");
         return EXIT_FAILURE;
 #endif  // defined(ANGLE_ENABLE_VULKAN)
@@ -79,6 +92,11 @@ int main(int argc, char **argv)
     else
     {
         angle::GetSystemInfo(&info);
+    }
+
+    if (info.gpus.empty())
+    {
+        gFailedToFindGPU = true;
     }
 
     js::Document doc;
@@ -145,4 +163,10 @@ int main(int argc, char **argv)
     return RUN_ALL_TESTS();
 }
 
-TEST(ANGLE, SystemInfo) {}
+TEST(ANGLE, SystemInfo)
+{
+    if (gFailedToFindGPU)
+    {
+        FAIL() << "Failed to find GPU info.";
+    }
+}

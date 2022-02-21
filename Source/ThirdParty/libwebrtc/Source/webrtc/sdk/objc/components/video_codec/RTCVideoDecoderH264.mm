@@ -41,6 +41,14 @@ struct RTCFrameDecodeParams {
 - (void)setError:(OSStatus)error;
 @end
 
+static void overrideColorSpaceAttachments(CVImageBufferRef imageBuffer) {
+  CVBufferRemoveAttachment(imageBuffer, kCVImageBufferCGColorSpaceKey);
+  CVBufferSetAttachment(imageBuffer, kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+  CVBufferSetAttachment(imageBuffer, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_sRGB, kCVAttachmentMode_ShouldPropagate);
+  CVBufferSetAttachment(imageBuffer, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+  CVBufferSetAttachment(imageBuffer, (CFStringRef)@"ColorInfoGuessedBy", (CFStringRef)@"RTCVideoDecoderH264", kCVAttachmentMode_ShouldPropagate);
+}
+
 // This is the callback function that VideoToolbox calls when decode is
 // complete.
 void decompressionOutputCallback(void *decoderRef,
@@ -56,6 +64,8 @@ void decompressionOutputCallback(void *decoderRef,
     RTC_LOG(LS_ERROR) << "Failed to decode frame. Status: " << status;
     return;
   }
+
+  overrideColorSpaceAttachments(imageBuffer);
 
   std::unique_ptr<RTCFrameDecodeParams> decodeParams(reinterpret_cast<RTCFrameDecodeParams *>(params));
   // TODO(tkchin): Handle CVO properly.

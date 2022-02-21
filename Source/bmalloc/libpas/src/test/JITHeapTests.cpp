@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,6 +69,11 @@ void testAllocateShrinkAndAllocate(unsigned initialObjectSize,
     jit_heap_deallocate(newPtr);
 }
 
+void testAllocationSize(size_t requestedSize, size_t actualSize)
+{
+    CHECK_EQUAL(jit_heap_get_size(jit_heap_try_allocate(requestedSize)), actualSize);
+}
+
 } // anonymous namespace
 
 #endif // PAS_ENABLE_JIT
@@ -78,13 +83,30 @@ void addJITHeapTests()
 #if PAS_ENABLE_JIT
     BootJITHeap bootJITHeap;
 
-    ADD_TEST(testAllocateShrinkAndAllocate(0, 0, 0, 0, 0, 4));
-    ADD_TEST(testAllocateShrinkAndAllocate(0, 0, 128, 64, 64, 4));
-    ADD_TEST(testAllocateShrinkAndAllocate(32, 10, 128, 64, 64, 4));
-    ADD_TEST(testAllocateShrinkAndAllocate(32, 10, 1000, 500, 1000, 4));
-    ADD_TEST(testAllocateShrinkAndAllocate(0, 0, 2048, 512, 1100, 256));
-    ADD_TEST(testAllocateShrinkAndAllocate(32, 10, 2048, 512, 1100, 256));
-    ADD_TEST(testAllocateShrinkAndAllocate(1100, 10, 2048, 512, 1100, 256));
-    ADD_TEST(testAllocateShrinkAndAllocate(0, 0, 100000, 10000, 80000, 4));
+    {
+        ForceBitfit forceBitfit;
+        ADD_TEST(testAllocateShrinkAndAllocate(0, 0, 0, 0, 0, 4));
+        ADD_TEST(testAllocateShrinkAndAllocate(0, 0, 128, 64, 64, 4));
+        ADD_TEST(testAllocateShrinkAndAllocate(32, 10, 128, 64, 64, 4));
+        ADD_TEST(testAllocateShrinkAndAllocate(32, 10, 1000, 500, 1000, 4));
+        ADD_TEST(testAllocateShrinkAndAllocate(0, 0, 2048, 512, 1100, 256));
+        ADD_TEST(testAllocateShrinkAndAllocate(32, 10, 2048, 512, 1100, 256));
+        ADD_TEST(testAllocateShrinkAndAllocate(1100, 10, 2048, 512, 1100, 256));
+        ADD_TEST(testAllocateShrinkAndAllocate(0, 0, 100000, 10000, 80000, 4));
+    }
+    
+    ADD_TEST(testAllocationSize(4, 16));
+    ADD_TEST(testAllocationSize(8, 16));
+    ADD_TEST(testAllocationSize(12, 16));
+    ADD_TEST(testAllocationSize(16, 16));
+    ADD_TEST(testAllocationSize(20, 32));
+    {
+        ForceBitfit forceBitfit;
+        ADD_TEST(testAllocationSize(4, 4));
+        ADD_TEST(testAllocationSize(8, 8));
+        ADD_TEST(testAllocationSize(12, 12));
+        ADD_TEST(testAllocationSize(16, 16));
+        ADD_TEST(testAllocationSize(20, 20));
+    }
 #endif // PAS_ENABLE_JIT
 }

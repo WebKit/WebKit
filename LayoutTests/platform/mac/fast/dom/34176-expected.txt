@@ -86,7 +86,7 @@ layer at (0,0) size 785x1458
           text run at (685,0) width 59: "This is a "
         RenderInline {SPAN} at (0,0) size 26x18
           RenderInline {EM} at (0,0) size 26x18
-            RenderInline {SPAN} at (0,0) size 1x18
+            RenderInline {SPAN} at (0,0) size 0x18
             RenderText {#text} at (743,0) size 26x18
               text run at (743,0) width 26: "Test"
       RenderBlock {DIV} at (0,313) size 769x18
@@ -122,7 +122,7 @@ layer at (0,0) size 785x1458
           text run at (682,0) width 60: "This is a "
         RenderInline {SPAN} at (0,0) size 28x18
           RenderInline {STRONG} at (0,0) size 28x18
-            RenderInline {SPAN} at (0,0) size 1x18
+            RenderInline {SPAN} at (0,0) size 0x18
             RenderText {#text} at (741,0) size 28x18
               text run at (741,0) width 28: "Test"
       RenderBlock {DIV} at (0,445) size 769x18
@@ -158,7 +158,7 @@ layer at (0,0) size 785x1458
           text run at (685,0) width 59: "This is a "
         RenderInline {SPAN} at (0,0) size 26x18
           RenderInline {I} at (0,0) size 26x18
-            RenderInline {SPAN} at (0,0) size 1x18
+            RenderInline {SPAN} at (0,0) size 0x18
             RenderText {#text} at (743,0) size 26x18
               text run at (743,0) width 26: "Test"
       RenderBlock {DIV} at (0,577) size 769x18
@@ -194,7 +194,7 @@ layer at (0,0) size 785x1458
           text run at (682,0) width 60: "This is a "
         RenderInline {SPAN} at (0,0) size 28x18
           RenderInline {B} at (0,0) size 28x18
-            RenderInline {SPAN} at (0,0) size 1x18
+            RenderInline {SPAN} at (0,0) size 0x18
             RenderText {#text} at (741,0) size 28x18
               text run at (741,0) width 28: "Test"
       RenderBlock {DIV} at (0,709) size 769x18

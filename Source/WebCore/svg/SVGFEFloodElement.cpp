@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007, 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -58,18 +59,18 @@ bool SVGFEFloodElement::setFilterEffectAttribute(FilterEffect* effect, const Qua
     return false;
 }
 
-RefPtr<FilterEffect> SVGFEFloodElement::build(SVGFilterBuilder*, Filter& filter) const
+RefPtr<FilterEffect> SVGFEFloodElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
 {
     RenderObject* renderer = this->renderer();
     if (!renderer)
         return nullptr;
-    
+
     const SVGRenderStyle& svgStyle = renderer->style().svgStyle();
 
     Color color = renderer->style().colorByApplyingColorFilter(svgStyle.floodColor());
     float opacity = svgStyle.floodOpacity();
 
-    return FEFlood::create(filter, color, opacity);
+    return FEFlood::create(color, opacity);
 }
 
-}
+} // namespace WebCore

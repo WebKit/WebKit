@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -364,12 +364,12 @@ bool WebInspectorUI::supportsWebExtensions()
     return true;
 }
 
-void WebInspectorUI::didShowExtensionTab(const String& extensionID, const String& extensionTabID)
+void WebInspectorUI::didShowExtensionTab(const String& extensionID, const String& extensionTabID, WebCore::FrameIdentifier frameID)
 {
     if (!m_extensionController)
         return;
-    
-    m_extensionController->didShowExtensionTab(extensionID, extensionTabID);
+
+    m_extensionController->didShowExtensionTab(extensionID, extensionTabID, frameID);
 }
 
 void WebInspectorUI::didHideExtensionTab(const String& extensionID, const String& extensionTabID)
@@ -378,6 +378,22 @@ void WebInspectorUI::didHideExtensionTab(const String& extensionID, const String
         return;
 
     m_extensionController->didHideExtensionTab(extensionID, extensionTabID);
+}
+
+void WebInspectorUI::didNavigateExtensionTab(const String& extensionID, const String& extensionTabID, const URL& newURL)
+{
+    if (!m_extensionController)
+        return;
+
+    m_extensionController->didNavigateExtensionTab(extensionID, extensionTabID, newURL);
+}
+
+void WebInspectorUI::inspectedPageDidNavigate(const URL& newURL)
+{
+    if (!m_extensionController)
+        return;
+
+    m_extensionController->inspectedPageDidNavigate(newURL);
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 

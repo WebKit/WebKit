@@ -26,12 +26,14 @@
 #include "config.h"
 #include "MediaRecorderPrivate.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_RECORDER)
 
 #include "MediaStreamPrivate.h"
 
 namespace WebCore {
 
+constexpr unsigned SmallAudioBitRate = 8000;
+constexpr unsigned SmallVideoBitRate = 80000;
 constexpr unsigned LargeAudioBitRate = 192000;
 constexpr unsigned LargeVideoBitRate = 10000000;
 
@@ -42,6 +44,8 @@ MediaRecorderPrivate::AudioVideoSelectedTracks MediaRecorderPrivate::selectTrack
         if (track.ended())
             return;
         switch (track.type()) {
+        case RealtimeMediaSource::Type::Screen:
+        case RealtimeMediaSource::Type::Window:
         case RealtimeMediaSource::Type::Video: {
             auto& settings = track.settings();
             if (!selectedTracks.videoTrack && settings.supportsWidth() && settings.supportsHeight())
@@ -49,6 +53,7 @@ MediaRecorderPrivate::AudioVideoSelectedTracks MediaRecorderPrivate::selectTrack
             break;
         }
         case RealtimeMediaSource::Type::Audio:
+        case RealtimeMediaSource::Type::SystemAudio:
             if (!selectedTracks.audioTrack)
                 selectedTracks.audioTrack = &track;
             break;
@@ -100,15 +105,28 @@ void MediaRecorderPrivate::resume(CompletionHandler<void()>&& completionHandler)
     resumeRecording(WTFMove(completionHandler));
 }
 
-void MediaRecorderPrivate::updateOptions(MediaRecorderPrivateOptions& options)
+MediaRecorderPrivate::BitRates MediaRecorderPrivate::computeBitRates(const MediaRecorderPrivateOptions& options, const MediaStreamPrivate* stream)
 {
-    // FIXME: Add support for options.bitsPerSecond.
-    if (!options.audioBitsPerSecond)
-        options.audioBitsPerSecond = LargeAudioBitRate;
-    if (!options.videoBitsPerSecond)
-        options.videoBitsPerSecond = LargeVideoBitRate;
+    if (options.bitsPerSecond) {
+        bool hasAudio = stream ? stream->hasAudio() : true;
+        bool hasVideo = stream ? stream->hasVideo() : true;
+        auto totalBitsPerSecond = *options.bitsPerSecond;
+
+        if (hasAudio && hasVideo) {
+            auto audioBitsPerSecond =  std::min(LargeAudioBitRate, std::max(SmallAudioBitRate, totalBitsPerSecond / 10));
+            auto remainingBitsPerSecond = totalBitsPerSecond > audioBitsPerSecond ? (totalBitsPerSecond - audioBitsPerSecond) : 0;
+            return { audioBitsPerSecond, std::max(remainingBitsPerSecond, SmallVideoBitRate) };
+        }
+
+        if (hasAudio)
+            return { std::max(SmallAudioBitRate, totalBitsPerSecond), 0 };
+
+        return { 0, std::max(SmallVideoBitRate, totalBitsPerSecond) };
+    }
+
+    return { options.audioBitsPerSecond.value_or(LargeAudioBitRate), options.videoBitsPerSecond.value_or(LargeVideoBitRate) };
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_RECORDER)

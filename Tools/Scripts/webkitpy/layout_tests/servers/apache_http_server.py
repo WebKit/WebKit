@@ -179,7 +179,26 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
     def platform(self):
         return self._port_obj.host.platform
 
+    def _remove_stale_shm_segments(self):
+        stale_segments = []
+        process = self._executive.popen(['ipcs', '-m'], stdout=self._executive.PIPE)
+        process.wait()
+        for line in process.stdout.read().splitlines()[3:]:
+            parsed_line = [token for token in line.split(b' ') if token]
+            if not parsed_line:
+                continue
+            if int(parsed_line[5]) == 0:
+                stale_segments.append(parsed_line[1].decode('utf-8'))
+
+        if stale_segments:
+            ipcrm_cmd = ['ipcrm', '-m', ' '.join(stale_segments)]
+            process = self._executive.popen(ipcrm_cmd)
+            process.wait()
+
     def _spawn_process(self):
+        if self.platform.is_linux():
+            self._remove_stale_shm_segments()
+
         _log.debug('Starting %s server, cmd="%s"' % (self._name, str(self._start_cmd)))
         retval, err = self._run(self._start_cmd)
         if retval or len(err):

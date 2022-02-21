@@ -87,6 +87,11 @@ inline ConstraintsForInFlowContent::ConstraintsForInFlowContent(HorizontalConstr
 {
 }
 
+enum class IntrinsicWidthMode {
+    Minimum,
+    Maximum
+};
+
 struct IntrinsicWidthConstraints {
     void expand(LayoutUnit horizontalValue);
     IntrinsicWidthConstraints& operator+=(const IntrinsicWidthConstraints&);

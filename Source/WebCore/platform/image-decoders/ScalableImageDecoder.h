@@ -60,7 +60,7 @@ public:
 
     // Returns nullptr if we can't sniff a supported type from the provided data (possibly
     // because there isn't enough data yet).
-    static RefPtr<ScalableImageDecoder> create(SharedBuffer& data, AlphaOption, GammaAndColorProfileOption);
+    static RefPtr<ScalableImageDecoder> create(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption);
 
     bool premultiplyAlpha() const { return m_premultiplyAlpha; }
 
@@ -70,16 +70,14 @@ public:
         return m_encodedDataStatus == EncodedDataStatus::Complete;
     }
 
-    void setData(SharedBuffer& data, bool allDataReceived) override
+    void setData(const FragmentedSharedBuffer& data, bool allDataReceived) override
     {
         Locker locker { m_lock };
         if (m_encodedDataStatus == EncodedDataStatus::Error)
             return;
 
-        if (data.data()) {
-            // SharedBuffer::data() combines all segments into one in case there's more than one.
-            m_data = data.begin()->segment.copyRef();
-        }
+        m_data = data.makeContiguous();
+
         if (m_encodedDataStatus == EncodedDataStatus::TypeAvailable) {
             m_decodingSizeFromSetData = true;
             tryDecodeSize(allDataReceived);
@@ -195,7 +193,7 @@ public:
     std::optional<IntPoint> hotSpot() const override { return std::nullopt; }
 
 protected:
-    RefPtr<SharedBuffer::DataSegment> m_data;
+    RefPtr<const SharedBuffer> m_data;
     Vector<ScalableImageDecoderFrame, 1> m_frameBufferCache WTF_GUARDED_BY_LOCK(m_lock);
     mutable Lock m_lock;
     bool m_premultiplyAlpha;
@@ -205,10 +203,6 @@ protected:
 
 private:
     virtual void tryDecodeSize(bool) = 0;
-
-#if USE(DIRECT2D)
-    void setTargetContext(ID2D1RenderTarget*) override;
-#endif
 
     IntSize m_size;
     EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::TypeAvailable };

@@ -121,7 +121,7 @@ function getBases() {
     for (let object of getObjects()) {
         Object.preventExtensions(object);
         for (let i = 0; i < 100; ++i) {
-            shouldThrow(() => { object.customValueNoSetter = {}; }, "TypeError: Attempted to assign to readonly property.");
+            shouldThrow(() => { object.customValueNoSetter = {}; }, "TypeError: Attempting to define property on object that is not extensible.");
             assert(!Reflect.set(object, "customValueNoSetter", {}));
         }
     }

@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: Refused to load yellow.mov because its MIME type does not appear in the plugin-types directive of the Content Security Policy.
-

@@ -62,6 +62,7 @@ namespace JSC {
     macro(Number) \
     macro(Array) \
     macro(ArrayBuffer) \
+    macro(ShadowRealm) \
     macro(RegExp) \
     macro(min) \
     macro(trunc) \
@@ -69,6 +70,7 @@ namespace JSC {
     macro(defineProperty) \
     macro(defaultPromiseThen) \
     macro(Set) \
+    macro(Map) \
     macro(throwTypeErrorFunction) \
     macro(typedArrayLength) \
     macro(typedArrayContentType) \
@@ -115,6 +117,9 @@ namespace JSC {
     macro(asyncGeneratorQueueItemNext) \
     macro(dateTimeFormat) \
     macro(this) \
+    macro(importInRealm) \
+    macro(evalInRealm) \
+    macro(moveFunctionToRealm) \
     macro(thisTimeValue) \
     macro(newTargetLocal) \
     macro(derivedConstructor) \
@@ -182,7 +187,10 @@ namespace JSC {
     macro(createPrivateSymbol) \
     macro(entries) \
     macro(outOfLineReactionCounts) \
-    macro(emptyPropertyNameEnumerator)
+    macro(emptyPropertyNameEnumerator) \
+    macro(sentinelString) \
+    macro(createRemoteFunction) \
+    macro(isRemoteFunction) \
 
 
 namespace Symbols {

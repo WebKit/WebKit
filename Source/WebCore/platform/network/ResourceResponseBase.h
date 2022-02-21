@@ -209,7 +209,7 @@ public:
 
     WEBCORE_EXPORT static ResourceResponse syntheticRedirectResponse(const URL& fromURL, const URL& toURL);
 
-    static bool compare(const ResourceResponse&, const ResourceResponse&);
+    static bool equalForWebKitLegacyChallengeComparison(const ResourceResponse&, const ResourceResponse&);
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, ResourceResponseBase&);
@@ -284,9 +284,6 @@ private:
 protected:
     short m_httpStatusCode { 0 };
 };
-
-inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }
-inline bool operator!=(const ResourceResponse& a, const ResourceResponse& b) { return !(a == b); }
 
 template<class Encoder>
 void ResourceResponseBase::encode(Encoder& encoder) const

@@ -26,8 +26,7 @@
 
 #pragma once
 
-#include "ExtensionsGL.h"
-
+#include "GraphicsTypesGL.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
@@ -35,16 +34,18 @@ namespace WebCore {
 
 class GraphicsContextGLOpenGL;
 
-class ExtensionsGLOpenGLCommon : public ExtensionsGL {
+class ExtensionsGLOpenGLCommon {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ExtensionsGLOpenGLCommon();
 
-    // ExtensionsGL methods.
-    bool supports(const String&) override;
-    void ensureEnabled(const String&) override;
-    bool isEnabled(const String&) override;
-    int getGraphicsResetStatusARB() override;
+    // Methods forwarded from GraphicsContextGLOpenGL.
+    virtual bool supports(const String&);
+    virtual void ensureEnabled(const String&);
+    virtual bool isEnabled(const String&);
+    virtual int getGraphicsResetStatusARB();
+    virtual String getTranslatedShaderSourceANGLE(PlatformGLObject);
+    virtual void drawBuffersEXT(GCGLSpan<const GCGLenum> bufs) = 0;
 
     // GL_OES_vertex_array_object
     virtual PlatformGLObject createVertexArrayOES() = 0;
@@ -52,18 +53,14 @@ public:
     virtual GCGLboolean isVertexArrayOES(PlatformGLObject) = 0;
     virtual void bindVertexArrayOES(PlatformGLObject) = 0;
 
-    void drawBuffersEXT(GCGLSpan<const GCGLenum>) override = 0;
-
-    String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
-
     virtual void drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) = 0;
     virtual void drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount) = 0;
     virtual void vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor) = 0;
 
     // EXT Robustness - uses getGraphicsResetStatusARB()
-    void readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data) override;
-    void getnUniformfvEXT(GCGLuint program, int location, GCGLsizei bufSize, float *params) override;
-    void getnUniformivEXT(GCGLuint program, int location, GCGLsizei bufSize, int *params) override;
+    virtual void readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data);
+    virtual void getnUniformfvEXT(GCGLuint program, int location, GCGLsizei bufSize, float *params);
+    virtual void getnUniformivEXT(GCGLuint program, int location, GCGLsizei bufSize, int *params);
 
     bool isNVIDIA() const { return m_isNVIDIA; }
     bool isAMD() const { return m_isAMD; }
@@ -78,7 +75,7 @@ protected:
     friend class ExtensionsGLOpenGLES;
     ExtensionsGLOpenGLCommon(GraphicsContextGLOpenGL*, bool useIndexedGetString);
 
-    virtual bool supportsExtension(const String&) = 0;
+    virtual bool platformSupportsExtension(const String&) = 0;
     virtual String getExtensions() = 0;
 
     virtual void initializeAvailableExtensions();

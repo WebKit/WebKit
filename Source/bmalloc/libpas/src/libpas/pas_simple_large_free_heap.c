@@ -69,8 +69,8 @@ static void dump_free_list(pas_simple_large_free_heap* heap)
         free = free_list_entry(heap, index);
         
         printf("    %p...%p: size = %zu\n",
-               (void*)free->begin,
-               (void*)free->end,
+               (void*)((uintptr_t)free->begin),
+               (void*)((uintptr_t)free->end),
                pas_large_free_size(*free));
         
         PAS_ASSERT(free->begin);
@@ -116,7 +116,7 @@ static void append(pas_simple_large_free_heap* heap, pas_large_free new_free)
 {
     if (verbose) {
         pas_log("%p: Appending %p...%p (%s)\n",
-                heap, (void*)new_free.begin, (void*)new_free.end,
+                heap, (void*)((uintptr_t)new_free.begin), (void*)((uintptr_t)new_free.end),
                 new_free.zero_mode ? "zero" : "non-zero");
     }
     
@@ -136,7 +136,7 @@ PAS_API uint64_t pas_simple_large_free_heap_num_merge_nodes_considered;
 static void merge(pas_simple_large_free_heap* heap, pas_large_free new_free,
                   pas_large_free_heap_config* config)
 {
-    static const size_t max_num_victims = 2;
+    enum { max_num_victims = 2 };
     
     size_t victim_indices[max_num_victims];
     size_t num_victims = 0;
@@ -145,7 +145,7 @@ static void merge(pas_simple_large_free_heap* heap, pas_large_free new_free,
 
     if (verbose) {
         pas_log("%p: Merging %p...%p (%s)\n",
-                heap, (void*)new_free.begin, (void*)new_free.end,
+                heap, (void*)((uintptr_t)new_free.begin), (void*)((uintptr_t)new_free.end),
                 new_free.zero_mode ? "zero" : "non-zero");
     }
     
@@ -284,7 +284,7 @@ static PAS_ALWAYS_INLINE void simple_write_cursor(
 
     if (verbose) {
         pas_log("%p: Writing %p...%p (%s)\n",
-                heap, (void*)value.begin, (void*)value.end,
+                heap, (void*)((uintptr_t)value.begin), (void*)((uintptr_t)value.end),
                 value.zero_mode ? "zero" : "non-zero");
     }
     

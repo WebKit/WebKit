@@ -29,6 +29,8 @@
 #include "Mutex.h"
 #include "Sizes.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 // Usage:
@@ -129,3 +131,5 @@ template<typename T>
 PerProcessData* PerProcess<T>::s_data { nullptr };
 
 } // namespace bmalloc
+
+#endif

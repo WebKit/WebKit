@@ -36,17 +36,11 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_HEAP_CONFIG_SPECIALIZATION_DEFINITIONS(lower_case_heap_config_name, heap_config_value) \
     PAS_NEVER_INLINE pas_allocation_result \
     lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_small_segregated_slow( \
-        pas_local_allocator* allocator, pas_allocator_counts* count) \
+        pas_local_allocator* allocator, pas_allocator_counts* count, \
+        pas_allocation_result_filter result_filter) \
     { \
         return pas_local_allocator_try_allocate_small_segregated_slow( \
-            allocator, (heap_config_value), count); \
-    } \
-    \
-    PAS_NEVER_INLINE pas_allocation_result \
-    lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_inline_cases( \
-        pas_local_allocator* allocator) \
-    { \
-        return pas_local_allocator_try_allocate_inline_cases(allocator, (heap_config_value)); \
+            allocator, (heap_config_value), count, result_filter); \
     } \
     \
     PAS_NEVER_INLINE pas_allocation_result \
@@ -58,39 +52,47 @@ PAS_BEGIN_EXTERN_C;
     } \
     \
     PAS_NEVER_INLINE pas_allocation_result \
+    lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_inline_cases( \
+        pas_local_allocator* allocator) \
+    { \
+        return pas_local_allocator_try_allocate_inline_cases(allocator, (heap_config_value)); \
+    } \
+    \
+    PAS_NEVER_INLINE pas_allocation_result \
     lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_slow( \
         pas_local_allocator* allocator, \
         size_t size, \
         size_t alignment, \
-        pas_allocator_counts* counts) \
+        pas_allocator_counts* counts, \
+        pas_allocation_result_filter result_filter) \
     { \
         return pas_local_allocator_try_allocate_slow( \
-            allocator, size, alignment, (heap_config_value), counts); \
+            allocator, size, alignment, (heap_config_value), counts, result_filter); \
     } \
     \
-    PAS_NEVER_INLINE pas_intrinsic_allocation_result \
+    PAS_NEVER_INLINE pas_allocation_result \
     lower_case_heap_config_name ## _specialized_try_allocate_common_impl_slow( \
         pas_heap_ref* heap_ref, \
         pas_heap_ref_kind heap_ref_kind, \
-        size_t aligned_count, \
         size_t size, \
         size_t alignment, \
         pas_heap_runtime_config* runtime_config, \
         pas_allocator_counts* allocator_counts, \
-        pas_count_lookup_mode count_lookup_mode) \
+        pas_size_lookup_mode size_lookup_mode) \
     { \
         return pas_try_allocate_common_impl_slow( \
-            heap_ref, heap_ref_kind, aligned_count, size, alignment, (heap_config_value), \
-            runtime_config, allocator_counts, count_lookup_mode); \
+            heap_ref, heap_ref_kind, size, alignment, (heap_config_value), \
+            runtime_config, allocator_counts, size_lookup_mode); \
     } \
     \
-    bool lower_case_heap_config_name ## _specialized_try_deallocate_not_small( \
+    bool lower_case_heap_config_name ## _specialized_try_deallocate_not_small_exclusive_segregated( \
         pas_thread_local_cache* thread_local_cache, \
         uintptr_t begin, \
-        pas_deallocation_mode deallocation_mode) \
+        pas_deallocation_mode deallocation_mode, \
+        pas_fast_megapage_kind megapage_kind) \
     { \
-        return pas_try_deallocate_not_small( \
-            thread_local_cache, begin, (heap_config_value), deallocation_mode); \
+        return pas_try_deallocate_not_small_exclusive_segregated( \
+            thread_local_cache, begin, (heap_config_value), deallocation_mode, megapage_kind); \
     } \
     \
     struct pas_dummy

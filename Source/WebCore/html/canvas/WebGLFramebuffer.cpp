@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBGL)
 
-#include "ExtensionsGL.h"
 #include "WebGLContextGroup.h"
 #include "WebGLDrawBuffers.h"
 #include "WebGLRenderingContextBase.h"
@@ -279,21 +278,21 @@ static unsigned getClearBitsByAttachmentType(GCGLenum attachment)
 {
     switch (attachment) {
     case GraphicsContextGL::COLOR_ATTACHMENT0:
-    case ExtensionsGL::COLOR_ATTACHMENT1_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT2_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT3_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT4_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT5_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT6_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT7_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT8_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT9_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT10_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT11_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT12_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT13_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT14_EXT:
-    case ExtensionsGL::COLOR_ATTACHMENT15_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT1_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT2_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT3_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT4_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT5_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT6_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT7_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT8_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT9_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT10_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT11_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT12_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT13_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT14_EXT:
+    case GraphicsContextGL::COLOR_ATTACHMENT15_EXT:
         return GraphicsContextGL::COLOR_BUFFER_BIT;
     case GraphicsContextGL::DEPTH_ATTACHMENT:
         return GraphicsContextGL::DEPTH_BUFFER_BIT;
@@ -363,8 +362,8 @@ static unsigned getClearBitsByFormat(GCGLenum format)
     case GraphicsContextGL::RGBA16I:
     case GraphicsContextGL::RGBA32I:
     case GraphicsContextGL::RGBA32UI:
-    case ExtensionsGL::SRGB_EXT:
-    case ExtensionsGL::SRGB_ALPHA_EXT:
+    case GraphicsContextGL::SRGB_EXT:
+    case GraphicsContextGL::SRGB_ALPHA_EXT:
         return GraphicsContextGL::COLOR_BUFFER_BIT;
     case GraphicsContextGL::DEPTH_COMPONENT16:
     case GraphicsContextGL::DEPTH_COMPONENT24:
@@ -633,7 +632,7 @@ GCGLenum WebGLFramebuffer::checkStatus(const char** reason) const
         GCGLenum attachmentFormat = attachment->getFormat();
 
         // Attaching an SRGB_EXT format attachment to a framebuffer is invalid.
-        if (attachmentFormat == ExtensionsGL::SRGB_EXT)
+        if (attachmentFormat == GraphicsContextGL::SRGB_EXT)
             attachmentFormat = 0;
 
         if (!attachmentFormat) {
@@ -833,18 +832,18 @@ void WebGLFramebuffer::drawBuffersIfNecessary(bool force)
             if (context()->isWebGL2())
                 context()->graphicsContextGL()->drawBuffers(m_filteredDrawBuffers);
             else
-                context()->graphicsContextGL()->getExtensions().drawBuffersEXT(m_filteredDrawBuffers);
+                context()->graphicsContextGL()->drawBuffersEXT(m_filteredDrawBuffers);
         }
     }
 }
 
 GCGLenum WebGLFramebuffer::getDrawBuffer(GCGLenum drawBuffer)
 {
-    int index = static_cast<int>(drawBuffer - ExtensionsGL::DRAW_BUFFER0_EXT);
+    int index = static_cast<int>(drawBuffer - GraphicsContextGL::DRAW_BUFFER0_EXT);
     ASSERT(index >= 0);
     if (index < static_cast<int>(m_drawBuffers.size()))
         return m_drawBuffers[index];
-    if (drawBuffer == ExtensionsGL::DRAW_BUFFER0_EXT)
+    if (drawBuffer == GraphicsContextGL::DRAW_BUFFER0_EXT)
         return GraphicsContextGL::COLOR_ATTACHMENT0;
     return GraphicsContextGL::NONE;
 }

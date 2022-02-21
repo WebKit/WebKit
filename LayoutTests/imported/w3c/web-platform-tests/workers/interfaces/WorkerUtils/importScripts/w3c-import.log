@@ -38,6 +38,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/012.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/1
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/1.headers
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/blob-url.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/catch.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/null
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/null.headers

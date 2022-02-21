@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "Filter.h"
+#include "FilterImage.h"
+#include "FilterResults.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
 
@@ -90,7 +93,8 @@ protected:
         }
     }
 
-    IntSize logicalSize() const override { return IntSize(m_parameters.logicalSize); }
+    FloatSize logicalSize() const override { return m_parameters.logicalSize; }
+    IntSize truncatedLogicalSize() const override { return IntSize(m_parameters.logicalSize); } // You probably should be calling logicalSize() instead.
     float resolutionScale() const override { return m_parameters.resolutionScale; }
     DestinationColorSpace colorSpace() const override { return m_parameters.colorSpace; }
     PixelFormat pixelFormat() const override { return m_parameters.pixelFormat; }
@@ -105,9 +109,7 @@ protected:
 
     AffineTransform baseTransform() const override
     {
-        if (BackendType::isOriginAtBottomLeftCorner)
-            return AffineTransform(1, 0, 0, -1, 0, logicalSize().height());
-        return { };
+        return BackendType::calculateBaseTransform(m_parameters, BackendType::isOriginAtBottomLeftCorner);
     }
 
     size_t memoryCost() const override
@@ -136,6 +138,26 @@ protected:
             return backend->copyImage(copyBehavior, preserveResolution);
         }
         return nullptr;
+    }
+
+    RefPtr<Image> filteredImage(Filter& filter) override
+    {
+        auto* backend = ensureBackendCreated();
+        if (!backend)
+            return nullptr;
+
+        const_cast<ConcreteImageBuffer&>(*this).flushDrawingContext();
+        
+        FilterResults results;
+        auto result = filter.apply(this, { { }, logicalSize() }, results);
+        if (!result)
+            return nullptr;
+
+        auto imageBuffer = result->imageBuffer();
+        if (!imageBuffer)
+            return nullptr;
+
+        return imageBuffer->copyImage();
     }
 
     void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options) override
@@ -267,10 +289,18 @@ protected:
             return backend->releaseGraphicsContext();
     }
 
-    VolatilityState setVolatile(bool isVolatile) override
+    bool setVolatile() override
     {
         if (auto* backend = ensureBackendCreated())
-            return backend->setVolatile(isVolatile);
+            return backend->setVolatile();
+            
+        return true; // Just claim we succeedded.
+    }
+
+    VolatilityState setNonVolatile() override
+    {
+        if (auto* backend = ensureBackendCreated())
+            return backend->setNonVolatile();
         return VolatilityState::Valid;
     }
 

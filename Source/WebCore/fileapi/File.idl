@@ -31,13 +31,13 @@ typedef (BufferSource or Blob or USVString) BlobPart;
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface File : Blob {
-    [CallWith=ScriptExecutionContext] constructor(sequence<BlobPart> fileBits, USVString fileName, optional FilePropertyBag options);
+    [CallWith=CurrentScriptExecutionContext] constructor(sequence<BlobPart> fileBits, USVString fileName, optional FilePropertyBag options);
 
     readonly attribute DOMString name;
     readonly attribute long long lastModified;
 
     // https://wicg.github.io/entries-api/#file-interface
-    [EnabledAtRuntime=DirectoryUpload, ImplementedAs=relativePath] readonly attribute USVString webkitRelativePath;
+    [EnabledAtRuntime=DirectoryUploadEnabled, ImplementedAs=relativePath] readonly attribute USVString webkitRelativePath;
 };
 
 dictionary FilePropertyBag : BlobPropertyBag {

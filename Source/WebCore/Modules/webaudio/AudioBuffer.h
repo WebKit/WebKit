@@ -32,7 +32,8 @@
 #include "AudioBufferOptions.h"
 #include "ExceptionOr.h"
 #include "JSValueInWrappedObject.h"
-#include <JavaScriptCore/Float32Array.h>
+#include <JavaScriptCore/Forward.h>
+#include <JavaScriptCore/GenericTypedArrayView.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 
@@ -92,12 +93,16 @@ private:
 
     bool hasDetachedChannelBuffer() const;
 
+    // We do not currently support having the Float32Arrays in m_channels being more than 2GB,
+    // and we have tests that we return an error promptly on trying to create such a huge AudioBuffer.
+    static constexpr uint64_t s_maxLength = (1ull << 32) / sizeof(float);
+
     float m_sampleRate;
-    mutable Lock m_channelsLock;
     size_t m_originalLength;
-    Vector<RefPtr<Float32Array>> m_channels;
-    Vector<JSValueInWrappedObject> m_channelWrappers;
+    FixedVector<RefPtr<Float32Array>> m_channels;
+    FixedVector<JSValueInWrappedObject> m_channelWrappers;
     bool m_isDetachable { true };
+    mutable Lock m_channelsLock;
 };
 
 } // namespace WebCore

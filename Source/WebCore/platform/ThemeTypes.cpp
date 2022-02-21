@@ -34,6 +34,7 @@ TextStream& operator<<(TextStream& ts, ControlPart controlPart)
 {
     switch (controlPart) {
     case NoControlPart: ts << "no-control-part"; break;
+    case AutoPart: ts << "auto-part"; break;
     case CheckboxPart: ts << "checkbox-part"; break;
     case RadioPart: ts << "radio-part"; break;
     case PushButtonPart: ts << "push-button-part"; break;
@@ -90,6 +91,9 @@ TextStream& operator<<(TextStream& ts, ControlPart controlPart)
     case ContinuousCapacityLevelIndicatorPart: ts << "continuous-capacity-level-indicator-part"; break;
     case DiscreteCapacityLevelIndicatorPart: ts << "discrete-capacity-level-indicator-part"; break;
     case RatingLevelIndicatorPart: ts << "rating-level-indicator-part"; break;
+#if ENABLE(SERVICE_CONTROLS)
+    case ImageControlsButtonPart: ts << "image-controls-button-part"; break;
+#endif
 #if ENABLE(APPLE_PAY)
     case ApplePayButtonPart: ts << "apple-pay-button-part"; break;
 #endif

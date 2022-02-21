@@ -7,13 +7,13 @@ info: The Date.prototype property "getDay" has { DontEnum } attributes
 es5id: 15.9.5.16_A1_T3
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.prototype.propertyIsEnumerable('getDay')) {
-  throw new Test262Error('#1: The Date.prototype.getDay property has the attribute DontEnum');
-}
+assert(
+  !Date.prototype.propertyIsEnumerable('getDay'),
+  'The value of !Date.prototype.propertyIsEnumerable(\'getDay\') is expected to be true'
+);
 
 for (var x in Date.prototype) {
-  if (x === "getDay") {
-    throw new Test262Error('#2: The Date.prototype.getDay has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "getDay", 'The value of x is not "getDay"');
 }
+
+// TODO: Convert to verifyProperty() format.

@@ -686,10 +686,6 @@ Win32SocketServer::~Win32SocketServer() {
 }
 
 Socket* Win32SocketServer::CreateSocket(int family, int type) {
-  return CreateAsyncSocket(family, type);
-}
-
-AsyncSocket* Win32SocketServer::CreateAsyncSocket(int family, int type) {
   Win32Socket* socket = new Win32Socket;
   if (socket->CreateT(family, type)) {
     return socket;

@@ -33,7 +33,7 @@ namespace WebKit {
 void WebSocketChannelManager::addChannel(WebSocketChannel& channel)
 {
     ASSERT(!m_channels.contains(channel.identifier()));
-    m_channels.add(channel.identifier(), makeWeakPtr(channel));
+    m_channels.add(channel.identifier(), channel);
 }
 
 void WebSocketChannelManager::networkProcessCrashed()

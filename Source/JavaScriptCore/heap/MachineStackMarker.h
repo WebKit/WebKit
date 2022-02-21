@@ -56,7 +56,7 @@ public:
 private:
     void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState&);
 
-    void tryCopyOtherThreadStack(Thread&, void*, size_t capacity, size_t*);
+    void tryCopyOtherThreadStack(const ThreadSuspendLocker&, Thread&, void*, size_t capacity, size_t*);
     bool tryCopyOtherThreadStacks(const AbstractLocker&, void*, size_t capacity, size_t*, Thread&);
 
     std::shared_ptr<ThreadGroup> m_threadGroup;

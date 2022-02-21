@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 </head>
 <body>
 <script>
@@ -21,29 +22,60 @@
         finishJSTest();
     }
 
-    function scrollTest()
+    async function scrollTest()
     {
         // Send a scroll while over the inner iframe.
-        var startPosX = 150;
-        var startPosY = 150;
-        eventSender.monitorWheelEvents();
-        eventSender.mouseMoveTo(startPosX, startPosY);
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
-        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-        eventSender.callAfterScrollingCompletes(checkForScroll);
+        const startPosX = 150;
+        const startPosY = 150;
+
+        const events = [
+            {
+                type : "wheel",
+                viewX : startPosX,
+                viewY : startPosY,
+                deltaY : -10,
+                phase : "began"
+            },
+            {
+                type : "wheel",
+                deltaY : -10,
+                phase : "changed"
+            },
+            {
+                type : "wheel",
+                deltaY : -10,
+                phase : "changed"
+            },
+            {
+                type : "wheel",
+                phase : "ended"
+            },
+            {
+                type : "wheel",
+                deltaY : -10,
+                momentumPhase : "began"
+            },
+            {
+                type : "wheel",
+                deltaY : -100,
+                momentumPhase : "changed"
+            },
+            {
+                type : "wheel",
+                momentumPhase : "ended"
+            }
+        ];
+
+        await UIHelper.mouseWheelSequence({ events: events });
+        checkForScroll();
     }
 
     function setupTopLevel()
     {
-        if (window.eventSender)
+        if (window.eventSender) {
             setTimeout(scrollTest, 0);
-    
-        setTimeout(checkForScroll, 1000);
+            return;
+        }
     }
 </script>
     <iframe id="target" scrolling="yes" style="height: 400px; width: 500px;" 

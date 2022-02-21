@@ -24,6 +24,7 @@
 
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=WebAudioEnabled,
     CustomToJSObject,
     Exposed=Window
 ] interface AudioNode : EventTarget {

@@ -25,9 +25,13 @@
 #include "config.h"
 #include "LibWebRTCRtpReceiverBackend.h"
 
+#include "Document.h"
+#include "LibWebRTCAudioModule.h"
 #include "LibWebRTCDtlsTransportBackend.h"
+#include "LibWebRTCProvider.h"
 #include "LibWebRTCRtpReceiverTransformBackend.h"
 #include "LibWebRTCUtils.h"
+#include "Page.h"
 #include "RTCRtpTransformBackend.h"
 #include "RealtimeIncomingAudioSource.h"
 #include "RealtimeIncomingVideoSource.h"
@@ -99,7 +103,7 @@ Vector<RTCRtpSynchronizationSource> LibWebRTCRtpReceiverBackend::getSynchronizat
     return sources;
 }
 
-Ref<RealtimeMediaSource> LibWebRTCRtpReceiverBackend::createSource()
+Ref<RealtimeMediaSource> LibWebRTCRtpReceiverBackend::createSource(Document& document)
 {
     auto rtcTrack = m_rtcReceiver->track();
     switch (m_rtcReceiver->media_type()) {
@@ -108,7 +112,10 @@ Ref<RealtimeMediaSource> LibWebRTCRtpReceiverBackend::createSource()
         break;
     case cricket::MEDIA_TYPE_AUDIO: {
         rtc::scoped_refptr<webrtc::AudioTrackInterface> audioTrack = static_cast<webrtc::AudioTrackInterface*>(rtcTrack.get());
-        return RealtimeIncomingAudioSource::create(WTFMove(audioTrack), fromStdString(rtcTrack->id()));
+        auto source = RealtimeIncomingAudioSource::create(WTFMove(audioTrack), fromStdString(rtcTrack->id()));
+        if (document.page())
+            source->setAudioModule(document.page()->libWebRTCProvider().audioModule());
+        return source;
     }
     case cricket::MEDIA_TYPE_VIDEO: {
         rtc::scoped_refptr<webrtc::VideoTrackInterface> videoTrack = static_cast<webrtc::VideoTrackInterface*>(rtcTrack.get());

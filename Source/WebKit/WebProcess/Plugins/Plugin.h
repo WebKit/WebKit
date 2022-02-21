@@ -44,8 +44,6 @@ OBJC_CLASS PDFDocument;
 OBJC_CLASS PDFSelection;
 #endif
 
-struct NPObject;
-
 namespace IPC {
 class Encoder;
 class Decoder;
@@ -56,6 +54,7 @@ class AffineTransform;
 class Element;
 class FloatPoint;
 class FloatSize;
+class FragmentedSharedBuffer;
 class GraphicsContext;
 class IntPoint;
 class IntRect;
@@ -72,12 +71,6 @@ class WebMouseEvent;
 class WebWheelEvent;
     
 class PluginController;
-
-enum PluginType {
-    PluginProxyType,
-    NetscapePluginType,
-    PDFPluginType,
-};
 
 enum class LayerHostingMode : uint8_t;
 
@@ -108,12 +101,6 @@ public:
     const PluginController* controller() const;
 
     virtual ~Plugin();
-
-    PluginType type() const { return m_type; }
-
-    bool isPluginProxy() const { return m_type == PluginProxyType; }
-    bool isNetscapePlugin() const { return m_type == NetscapePluginType; }
-    bool isPDFPlugin() const { return m_type == PDFPluginType; }
 
 private:
     // Initializes the plug-in. If the plug-in fails to initialize this should return false.
@@ -174,7 +161,7 @@ public:
                                           uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) = 0;
 
     // Tells the plug-in that a stream did receive data.
-    virtual void streamDidReceiveData(uint64_t streamID, const uint8_t* bytes, int length) = 0;
+    virtual void streamDidReceiveData(uint64_t streamID, const WebCore::SharedBuffer&) = 0;
 
     // Tells the plug-in that a stream has finished loading.
     virtual void streamDidFinishLoading(uint64_t streamID) = 0;
@@ -187,7 +174,7 @@ public:
                                                 uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) = 0;
 
     // Tells the plug-in that the manual stream did receive data.
-    virtual void manualStreamDidReceiveData(const uint8_t* bytes, int length) = 0;
+    virtual void manualStreamDidReceiveData(const WebCore::SharedBuffer&) = 0;
 
     // Tells the plug-in that a stream has finished loading.
     virtual void manualStreamDidFinishLoading() = 0;
@@ -231,9 +218,6 @@ public:
     // Tells the plug-in about focus changes.
     virtual void setFocus(bool) = 0;
 
-    // Get the NPObject that corresponds to the plug-in's scriptable object. Returns a retained object.
-    virtual NPObject* pluginScriptableNPObject() = 0;
-
     // Tells the plug-in about window focus changes.
     virtual void windowFocusChanged(bool) = 0;
     
@@ -243,9 +227,6 @@ public:
 #if PLATFORM(COCOA)
     // Tells the plug-in about window and plug-in frame changes.
     virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates) = 0;
-
-    // Get the per complex text input identifier.
-    virtual uint64_t pluginComplexTextInputIdentifier() const = 0;
 
     // Send the complex text input to the plug-in.
     virtual void sendComplexTextInput(const String& textInput) = 0;
@@ -260,12 +241,6 @@ public:
     // Called when the storage blocking policy for this plug-in changes.
     virtual void storageBlockingStateChanged(bool) = 0;
 
-    // Called when the private browsing state for this plug-in changes.
-    virtual void privateBrowsingStateChanged(bool) = 0;
-
-    // Gets the form value representation for the plug-in, letting plug-ins participate in form submission.
-    virtual bool getFormValue(String& formValue) = 0;
-
     // Tells the plug-in that it should scroll. The plug-in should return true if it did scroll.
     virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) = 0;
 
@@ -277,7 +252,8 @@ public:
 #if PLATFORM(COCOA)
     virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return 0; }
     virtual WebCore::FloatSize pdfDocumentSizeForPrinting() const;
-    virtual NSObject *accessibilityObject() const { return 0; }
+    virtual id accessibilityHitTest(const WebCore::IntPoint&) const { return nil; }
+    virtual id accessibilityObject() const { return nil; }
     virtual id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const { return nullptr; }
 #endif
 
@@ -287,17 +263,14 @@ public:
 
     virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint& pointInLocalCoordinates) const;
 
-    virtual RefPtr<WebCore::SharedBuffer> liveResourceData() const = 0;
+    virtual RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const = 0;
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
 
     virtual String getSelectionString() const = 0;
-    virtual String getSelectionForWordAtPoint(const WebCore::FloatPoint&) const = 0;
     virtual bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const = 0;
 
     virtual void mutedStateChanged(bool) { }
-
-    virtual bool canCreateTransientPaintingSnapshot() const { return true; }
 
     virtual bool requiresUnifiedScaleFactor() const { return false; }
 
@@ -306,9 +279,7 @@ public:
     virtual bool pluginHandlesContentOffsetForAccessibilityHitTest() const { return false; }
 
 protected:
-    Plugin(PluginType);
-
-    PluginType m_type;
+    Plugin();
 
     bool m_isBeingDestroyed { false };
 

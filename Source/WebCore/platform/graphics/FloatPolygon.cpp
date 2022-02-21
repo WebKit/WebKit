@@ -142,11 +142,9 @@ FloatPolygon::FloatPolygon(Vector<FloatPoint>&& vertices, WindRule fillRule)
 Vector<std::reference_wrapper<const FloatPolygonEdge>> FloatPolygon::overlappingEdges(float minY, float maxY) const
 {
     auto overlappingEdgeIntervals = m_edgeTree.allOverlaps({ minY, maxY });
-    Vector<std::reference_wrapper<const FloatPolygonEdge>> result;
-    result.reserveInitialCapacity(overlappingEdgeIntervals.size());
-    for (auto& interval : overlappingEdgeIntervals)
-        result.uncheckedAppend(*interval.data());
-    return result;
+    return overlappingEdgeIntervals.map([](auto& interval) -> std::reference_wrapper<const FloatPolygonEdge> {
+        return *interval.data();
+    });
 }
 
 static inline float leftSide(const FloatPoint& vertex1, const FloatPoint& vertex2, const FloatPoint& point)

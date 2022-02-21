@@ -36,4 +36,4 @@ info: |
 
 
 // length is a label!
-{length: 3000}let a, b = 42, c;b;;
+{length: 3000}let a, b = 42, c;b;

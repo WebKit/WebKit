@@ -28,7 +28,7 @@ body {
     if ("webkitRequestFullScreen" in Element.prototype) {
         var content = accessibilityController.accessibleElementById("content");
         var value;
-        if (accessibilityController.platformName == "atk")
+        if (accessibilityController.platformName == "atspi")
             value = "AXValue: ab<\\n>c<\\n>de<\\n>";
         else
             value = "AXValue: d";

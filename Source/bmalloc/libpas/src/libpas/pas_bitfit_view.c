@@ -29,13 +29,14 @@
 
 #include "pas_bitfit_view.h"
 
+#include "pas_bitfit_directory.h"
 #include "pas_bitfit_page.h"
 #include "pas_bitfit_view_inlines.h"
 #include "pas_epoch.h"
 #include "pas_page_sharing_pool.h"
 
-pas_bitfit_view* pas_bitfit_view_create(pas_bitfit_global_directory* directory,
-                                        unsigned index_in_global)
+pas_bitfit_view* pas_bitfit_view_create(pas_bitfit_directory* directory,
+                                        unsigned index)
 {
     static const bool verbose = false;
     
@@ -48,42 +49,24 @@ pas_bitfit_view* pas_bitfit_view_create(pas_bitfit_global_directory* directory,
 
     if (verbose) {
         pas_log("Creating view %p with config %s\n",
-                result, pas_bitfit_page_config_kind_get_string(directory->base.config_kind));
+                result, pas_bitfit_page_config_kind_get_string(directory->config_kind));
     }
 
     result->page_boundary = NULL;
-    pas_compact_atomic_bitfit_biasing_directory_ptr_store(&result->biasing_directory, NULL);
-    pas_compact_bitfit_global_directory_ptr_store(&result->global_directory, directory);
+    pas_compact_bitfit_directory_ptr_store(&result->directory, directory);
     result->is_owned = false;
-    result->index_in_global = index_in_global;
-    result->index_in_biasing = 0;
+    result->index = index;
     pas_lock_construct(&result->ownership_lock);
-
-    if (pas_bitfit_page_config_uses_subpages(
-            *pas_bitfit_page_config_kind_get_config(directory->base.config_kind)))
-        pas_lock_construct_disabled(&result->commit_lock);
-    else
-        pas_lock_construct(&result->commit_lock);
+    pas_lock_construct(&result->commit_lock);
 
     return result;
 }
 
-void pas_bitfit_view_lock_ownership_lock_slow(pas_bitfit_view* view)
-{
-    pas_compact_bitfit_global_directory_ptr_load(
-        &view->global_directory)->contention_did_trigger_explosion =
-        pas_bitfit_global_directory_can_explode;
-    pas_lock_lock(&view->ownership_lock);
-}
-
 void pas_bitfit_view_note_nonemptiness(pas_bitfit_view* view)
 {
-    pas_bitfit_directory_and_index directory_and_index;
-    
-    directory_and_index = pas_bitfit_view_current_directory_and_index(view);
     pas_bitfit_directory_max_free_did_become_unprocessed_unchecked(
-        directory_and_index.directory,
-        directory_and_index.index,
+        pas_compact_bitfit_directory_ptr_load_non_null(&view->directory),
+        view->index,
         "become unprocessed on note_nonemptiness");
 }
 
@@ -91,20 +74,17 @@ static void did_become_empty_for_bits(pas_bitfit_view* view, pas_bitfit_page* pa
 {
     page->use_epoch = pas_get_epoch();
 
-    pas_bitfit_global_directory_view_did_become_empty(
-        pas_compact_bitfit_global_directory_ptr_load_non_null(&view->global_directory), view);
+    pas_bitfit_directory_view_did_become_empty(
+        pas_compact_bitfit_directory_ptr_load_non_null(&view->directory), view);
 }
 
 void pas_bitfit_view_note_full_emptiness(pas_bitfit_view* view, pas_bitfit_page* page)
 {
-    pas_bitfit_directory_and_index directory_and_index;
-
     did_become_empty_for_bits(view, page);
     
-    directory_and_index = pas_bitfit_view_current_directory_and_index(view);
     pas_bitfit_directory_max_free_did_become_empty(
-        directory_and_index.directory,
-        directory_and_index.index,
+        pas_compact_bitfit_directory_ptr_load_non_null(&view->directory),
+        view->index,
         "become empty on note_emptiness");
 }
 
@@ -115,11 +95,9 @@ void pas_bitfit_view_note_partial_emptiness(pas_bitfit_view* view, pas_bitfit_pa
 
 void pas_bitfit_view_note_max_free(pas_bitfit_view* view)
 {
-    pas_bitfit_directory_and_index directory_and_index;
-    directory_and_index = pas_bitfit_view_current_directory_and_index(view);
     pas_bitfit_directory_max_free_did_become_unprocessed(
-        directory_and_index.directory,
-        directory_and_index.index,
+        pas_compact_bitfit_directory_ptr_load_non_null(&view->directory),
+        view->index,
         "become unprocessed on note_max_free");
 }
 
@@ -137,8 +115,8 @@ static pas_heap_summary compute_summary(pas_bitfit_view* view)
     size_t offset;
 
     config_ptr = pas_bitfit_page_config_kind_get_config(
-        pas_compact_bitfit_global_directory_ptr_load_non_null(
-            &view->global_directory)->base.config_kind);
+        pas_compact_bitfit_directory_ptr_load_non_null(
+            &view->directory)->config_kind);
     config = *config_ptr;
 
     result = pas_heap_summary_create_empty();
@@ -229,8 +207,7 @@ static bool for_each_live_object(
         return true;
 
     config_ptr = pas_bitfit_page_config_kind_get_config(
-        pas_compact_bitfit_global_directory_ptr_load_non_null(
-            &view->global_directory)->base.config_kind);
+        pas_compact_bitfit_directory_ptr_load_non_null(&view->directory)->config_kind);
     config = *config_ptr;
 
     boundary = view->page_boundary;

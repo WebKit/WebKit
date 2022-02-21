@@ -38,7 +38,7 @@
 #import "Document.h"
 #import "DocumentLoader.h"
 #import "Editing.h"
-#import "Element.h"
+#import "ElementInlines.h"
 #import "ElementTraversal.h"
 #import "File.h"
 #import "FontCascade.h"
@@ -322,7 +322,7 @@ private:
         unsigned int pad:26;
     } _flags;
     
-    PlatformColor *_colorForElement(Element&, CSSPropertyID);
+    RetainPtr<PlatformColor> _colorForElement(Element&, CSSPropertyID);
     
     void _traverseNode(Node&, unsigned depth, bool embedded);
     void _traverseFooterNode(Element&, unsigned depth);
@@ -400,8 +400,8 @@ AttributedString HTMLConverter::convert()
 
     Document& document = commonAncestorContainer->document();
     if (auto* body = document.bodyOrFrameset()) {
-        if (PlatformColor *backgroundColor = _colorForElement(*body, CSSPropertyBackgroundColor))
-            [_documentAttrs setObject:backgroundColor forKey:NSBackgroundColorDocumentAttribute];
+        if (auto backgroundColor = _colorForElement(*body, CSSPropertyBackgroundColor))
+            [_documentAttrs setObject:backgroundColor.get() forKey:NSBackgroundColorDocumentAttribute];
     }
 
     _domRangeStartIndex = 0;
@@ -416,12 +416,12 @@ AttributedString HTMLConverter::convert()
 // Returns the font to be used if the NSFontAttributeName doesn't exist
 static NSFont *WebDefaultFont()
 {
-    static auto defaultFont = makeNeverDestroyed([] {
+    static NeverDestroyed defaultFont = [] {
         NSFont *font = [NSFont fontWithName:@"Helvetica" size:12];
         if (!font)
             font = [NSFont systemFontOfSize:12];
-        return retainPtr(font);
-    }());
+        return RetainPtr { font };
+    }();
     return defaultFont.get().get();
 }
 #endif
@@ -518,13 +518,13 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
 
 static NSParagraphStyle *defaultParagraphStyle()
 {
-    static auto defaultParagraphStyle = makeNeverDestroyed([] {
-        auto defaultParagraphStyle = adoptNS([[PlatformNSParagraphStyle defaultParagraphStyle] mutableCopy]);
-        [defaultParagraphStyle setDefaultTabInterval:36];
-        [defaultParagraphStyle setTabStops:@[]];
-        return defaultParagraphStyle;
-    }());
-    return defaultParagraphStyle.get().get();
+    static NeverDestroyed style = [] {
+        auto style = adoptNS([[PlatformNSParagraphStyle defaultParagraphStyle] mutableCopy]);
+        [style setDefaultTabInterval:36];
+        [style setTabStops:@[]];
+        return style;
+    }();
+    return style.get().get();
 }
 
 RefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& element, CSSPropertyID propertyId)
@@ -587,7 +587,7 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
 
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         String result;
-        if (value->isInheritedValue())
+        if (value->isInheritValue())
             inherit = true;
         else if (stringFromCSSValue(*value, result))
             return result;
@@ -735,7 +735,7 @@ bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID pr
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         if (is<CSSPrimitiveValue>(*value) && floatValueFromPrimitiveValue(downcast<CSSPrimitiveValue>(*value), result))
             return true;
-        if (value->isInheritedValue())
+        if (value->isInheritValue())
             inherit = true;
     }
 
@@ -877,7 +877,7 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isRGBColor())
             return normalizedColor(downcast<CSSPrimitiveValue>(*value).color(), ignoreDefaultColor, element);
-        if (value->isInheritedValue())
+        if (value->isInheritValue())
             inherit = true;
     }
 
@@ -905,13 +905,13 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
     return Color();
 }
 
-PlatformColor *HTMLConverter::_colorForElement(Element& element, CSSPropertyID propertyId)
+RetainPtr<PlatformColor> HTMLConverter::_colorForElement(Element& element, CSSPropertyID propertyId)
 {
     Color result = _caches->colorPropertyValueForNode(element, propertyId);
     if (!result.isValid())
         return nil;
-    PlatformColor *platformResult = platformColor(result);
-    if ([[PlatformColorClass clearColor] isEqual:platformResult] || ([platformResult alphaComponent] == 0.0))
+    auto platformResult = cocoaColor(result);
+    if ([[PlatformColorClass clearColor] isEqual:platformResult.get()] || ([platformResult alphaComponent] == 0.0))
         return nil;
     return platformResult;
 }
@@ -933,9 +933,9 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
 
     PlatformFont *font = nil;
     PlatformFont *actualFont = _font(element);
-    PlatformColor *foregroundColor = _colorForElement(element, CSSPropertyColor);
-    PlatformColor *backgroundColor = _colorForElement(element, CSSPropertyBackgroundColor);
-    PlatformColor *strokeColor = _colorForElement(element, CSSPropertyWebkitTextStrokeColor);
+    auto foregroundColor = _colorForElement(element, CSSPropertyColor);
+    auto backgroundColor = _colorForElement(element, CSSPropertyBackgroundColor);
+    auto strokeColor = _colorForElement(element, CSSPropertyWebkitTextStrokeColor);
 
     float fontSize = 0;
     if (!_caches->floatPropertyValueForNode(element, CSSPropertyFontSize, fontSize) || fontSize <= 0.0)
@@ -1001,9 +1001,9 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
     if (font)
         [attrs setObject:font forKey:NSFontAttributeName];
     if (foregroundColor)
-        [attrs setObject:foregroundColor forKey:NSForegroundColorAttributeName];
+        [attrs setObject:foregroundColor.get() forKey:NSForegroundColorAttributeName];
     if (backgroundColor && !_caches->elementHasOwnBackgroundColor(element))
-        [attrs setObject:backgroundColor forKey:NSBackgroundColorAttributeName];
+        [attrs setObject:backgroundColor.get() forKey:NSBackgroundColorAttributeName];
 
     float strokeWidth = 0.0;
     if (_caches->floatPropertyValueForNode(element, CSSPropertyWebkitTextStrokeWidth, strokeWidth)) {
@@ -1011,9 +1011,9 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
         [attrs setObject:@(textStrokeWidth) forKey:NSStrokeWidthAttributeName];
     }
     if (strokeColor)
-        [attrs setObject:strokeColor forKey:NSStrokeColorAttributeName];
+        [attrs setObject:strokeColor.get() forKey:NSStrokeColorAttributeName];
 
-    String fontKerning = _caches->propertyValueForNode(element, CSSPropertyWebkitFontKerning);
+    String fontKerning = _caches->propertyValueForNode(element, CSSPropertyFontKerning);
     String letterSpacing = _caches->propertyValueForNode(element, CSSPropertyLetterSpacing);
     if (fontKerning.length() || letterSpacing.length()) {
         if (fontKerning == "none")
@@ -1273,7 +1273,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         if (auto resource = dataSource->subresource(url)) {
             auto& mimeType = resource->mimeType();
             if (!usePlaceholder || mimeType != "text/html") {
-                fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:resource->data().createNSData().get()]);
+                fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:resource->data().makeContiguous()->createNSData().get()]);
                 [fileWrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, mimeType)];
             } else
                 notFound = YES;
@@ -1448,21 +1448,21 @@ void HTMLConverter::_fillInBlock(NSTextBlock *block, Element& element, PlatformC
     else
         [block setWidth:extraMargin type:NSTextBlockAbsoluteValueType forLayer:NSTextBlockMargin edge:NSMaxYEdge];
     
-    PlatformColor *color = nil;
+    RetainPtr<PlatformColor> color;
     if ((color = _colorForElement(element, CSSPropertyBackgroundColor)))
-        [block setBackgroundColor:color];
+        [block setBackgroundColor:color.get()];
     if (!color && backgroundColor)
         [block setBackgroundColor:backgroundColor];
     
     if ((color = _colorForElement(element, CSSPropertyBorderLeftColor)))
-        [block setBorderColor:color forEdge:NSMinXEdge];
+        [block setBorderColor:color.get() forEdge:NSMinXEdge];
     
     if ((color = _colorForElement(element, CSSPropertyBorderTopColor)))
-        [block setBorderColor:color forEdge:NSMinYEdge];
+        [block setBorderColor:color.get() forEdge:NSMinYEdge];
     if ((color = _colorForElement(element, CSSPropertyBorderRightColor)))
-        [block setBorderColor:color forEdge:NSMaxXEdge];
+        [block setBorderColor:color.get() forEdge:NSMaxXEdge];
     if ((color = _colorForElement(element, CSSPropertyBorderBottomColor)))
-        [block setBorderColor:color forEdge:NSMaxYEdge];
+        [block setBorderColor:color.get() forEdge:NSMaxYEdge];
 }
 
 static inline BOOL read2DigitNumber(const char **pp, int8_t *outval)
@@ -1766,10 +1766,10 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         m_textTableFooters.add((__bridge CFTypeRef)[_textTables lastObject], &element);
         retval = NO;
     } else if (displayValue == "table-row" && [_textTables count] > 0) {
-        PlatformColor *color = _colorForElement(element, CSSPropertyBackgroundColor);
+        auto color = _colorForElement(element, CSSPropertyBackgroundColor);
         if (!color)
             color = (PlatformColor *)[PlatformColorClass clearColor];
-        [_textTableRowBackgroundColors addObject:color];
+        [_textTableRowBackgroundColors addObject:color.get()];
     } else if (displayValue == "table-cell") {
         while ([_textTables count] < [_textBlocks count] + 1)
             _addTableForElement(nil);
@@ -1886,7 +1886,6 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
     NSString *string = [_attrStr string];
     NSString *stringToInsert;
     NSDictionary *attrsToInsert = nil;
-    PlatformFont *font;
     NSParagraphStyle *paragraphStyle;
     NSTextTab *tab = nil;
     NSTextTab *tabToRemove;
@@ -1913,7 +1912,6 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
             for (NSUInteger idx = range.location; idx < NSMaxRange(range);) {
                 paragraphRange = [string paragraphRangeForRange:NSMakeRange(idx, 0)];
                 paragraphStyle = [_attrStr attribute:NSParagraphStyleAttributeName atIndex:idx effectiveRange:&styleRange];
-                font = [_attrStr attribute:NSFontAttributeName atIndex:idx effectiveRange:NULL];
                 if ([[paragraphStyle textLists] count] == listIndex + 1) {
                     stringToInsert = [NSString stringWithFormat:@"\t%@\t", [list markerForItemNumber:itemNum++]];
                     insertLength = [stringToInsert length];
@@ -2300,7 +2298,7 @@ static RetainPtr<NSFileWrapper> fileWrapperForURL(DocumentLoader* dataSource, NS
 
     if (dataSource) {
         if (RefPtr<ArchiveResource> resource = dataSource->subresource(URL)) {
-            auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:resource->data().createNSData().get()]);
+            auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:resource->data().makeContiguous()->createNSData().get()]);
             NSString *filename = resource->response().suggestedFilename();
             if (!filename || ![filename length])
                 filename = suggestedFilenameWithMIMEType(resource->url(), resource->mimeType());
@@ -2322,8 +2320,8 @@ static RetainPtr<NSFileWrapper> fileWrapperForURL(DocumentLoader* dataSource, NS
 static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement& element)
 {
     if (CachedImage* cachedImage = element.cachedImage()) {
-        if (SharedBuffer* sharedBuffer = cachedImage->resourceBuffer())
-            return adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:sharedBuffer->createNSData().get()]);
+        if (FragmentedSharedBuffer* sharedBuffer = cachedImage->resourceBuffer())
+            return adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:sharedBuffer->makeContiguous()->createNSData().get()]);
     }
 
     auto* renderer = element.renderer();
@@ -2380,9 +2378,9 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
         if (!renderer)
             continue;
         auto& style = renderer->style();
-        if (style.textDecorationsInEffect() & TextDecoration::Underline)
+        if (style.textDecorationsInEffect() & TextDecorationLine::Underline)
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
-        if (style.textDecorationsInEffect() & TextDecoration::LineThrough)
+        if (style.textDecorationsInEffect() & TextDecorationLine::LineThrough)
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
         if (auto font = style.fontCascade().primaryFont().getCTFont())
             [attrs setObject:toNSFont(font) forKey:NSFontAttributeName];
@@ -2426,13 +2424,13 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
 
         Color foregroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
         if (foregroundColor.isVisible())
-            [attrs setObject:nsColor(foregroundColor) forKey:NSForegroundColorAttributeName];
+            [attrs setObject:cocoaColor(foregroundColor).get() forKey:NSForegroundColorAttributeName];
         else
             [attrs removeObjectForKey:NSForegroundColorAttributeName];
 
         Color backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
         if (backgroundColor.isVisible())
-            [attrs setObject:nsColor(backgroundColor) forKey:NSBackgroundColorAttributeName];
+            [attrs setObject:cocoaColor(backgroundColor).get() forKey:NSBackgroundColorAttributeName];
         else
             [attrs removeObjectForKey:NSBackgroundColorAttributeName];
 

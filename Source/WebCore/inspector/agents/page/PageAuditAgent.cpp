@@ -29,12 +29,12 @@
 #include "InspectorAuditAccessibilityObject.h"
 #include "InspectorAuditDOMObject.h"
 #include "InspectorAuditResourcesObject.h"
+#include "JSDOMWindowCustom.h"
 #include "JSInspectorAuditAccessibilityObject.h"
 #include "JSInspectorAuditDOMObject.h"
 #include "JSInspectorAuditResourcesObject.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
-#include "ScriptState.h"
 #include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
@@ -60,9 +60,7 @@ InjectedScript PageAuditAgent::injectedScriptForEval(std::optional<Protocol::Run
 {
     if (executionContextId)
         return injectedScriptManager().injectedScriptForId(*executionContextId);
-
-    JSC::JSGlobalObject* scriptState = mainWorldExecState(&m_inspectedPage.mainFrame());
-    return injectedScriptManager().injectedScriptFor(scriptState);
+    return injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(m_inspectedPage.mainFrame()));
 }
 
 InjectedScript PageAuditAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)

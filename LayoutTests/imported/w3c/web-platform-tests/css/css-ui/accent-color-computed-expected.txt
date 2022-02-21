@@ -1,0 +1,9 @@
+
+PASS Property accent-color value 'initial'
+PASS Property accent-color value 'inherit'
+PASS Property accent-color value 'red'
+PASS Property accent-color value 'blue'
+PASS Property accent-color value 'auto'
+PASS Property accent-color value 'currentcolor'
+PASS Property accent-color value '#fff'
+

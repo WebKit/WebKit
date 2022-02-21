@@ -26,7 +26,7 @@
 
         var table = accessibilityController.accessibleElementById("table");
         var colHeaders = table.columnHeaders();
-        if (accessibilityController.platformName == "atk") {
+        if (accessibilityController.platformName == "atspi") {
             shouldBeTrue("colHeaders[0].isEqual(table.cellForColumnAndRow(0,0))");
             shouldBeTrue("colHeaders[1].isEqual(table.cellForColumnAndRow(1,0))");
         } else {

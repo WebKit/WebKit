@@ -21,7 +21,6 @@
 [
     ExportToWrappedFunction,
     GenerateIsReachable=ImplDocument,
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface DOMImplementation {
     [NewObject] DocumentType createDocumentType(DOMString qualifiedName, DOMString publicId, DOMString systemId);

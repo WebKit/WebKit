@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Theme.h"
 
+#include "Color.h"
 #include "GraphicsContext.h"
 #include "LengthBox.h"
 #include "LengthSize.h"
@@ -69,7 +70,7 @@ bool Theme::controlRequiresPreWhiteSpace(ControlPart) const
     return false;
 }
 
-void Theme::paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool, bool)
+void Theme::paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool, bool, const Color&)
 {
 }
 
@@ -115,7 +116,7 @@ LengthBox Theme::controlPadding(ControlPart part, const FontCascade&, const Leng
     }
 }
 
-void Theme::drawNamedImage(const String& name, GraphicsContext& context, const FloatRect& rect) const
+void Theme::drawNamedImage(const String& name, GraphicsContext& context, const FloatSize& size) const
 {
     // We only handle one icon at the moment.
     if (name != "wireless-playback")
@@ -126,7 +127,7 @@ void Theme::drawNamedImage(const String& name, GraphicsContext& context, const F
 
     // Draw a generic Wireless Playback icon.
 
-    context.scale(rect.size() / 100);
+    context.scale(size / 100);
     context.translate(8, 1);
 
     Path outline;

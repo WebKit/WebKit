@@ -26,13 +26,18 @@
 #pragma once
 
 #include "MediaSample.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
+#include <JavaScriptCore/Forward.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/Forward.h>
+#include <wtf/TypeCasts.h>
+
+using CVPixelBufferRef = struct __CVBuffer*;
 
 namespace WebCore {
 
+class FragmentedSharedBuffer;
 class PixelBuffer;
+class VideoFrameCV;
 
 class MediaSampleAVFObjC : public MediaSample {
 public:
@@ -40,6 +45,7 @@ public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, VideoRotation rotation = VideoRotation::None, bool mirrored = false) { return adoptRef(*new MediaSampleAVFObjC(sample, rotation, mirrored)); }
     static RefPtr<MediaSampleAVFObjC> createImageSample(PixelBuffer&&);
+    WEBCORE_EXPORT static RefPtr<MediaSampleAVFObjC> createImageSample(RetainPtr<CVPixelBufferRef>&&, VideoRotation, bool mirrored, MediaTime presentationTime = { }, MediaTime decodingTime = { });
 
     WEBCORE_EXPORT static void setAsDisplayImmediately(MediaSample&);
     static RetainPtr<CMSampleBufferRef> cloneSampleBufferAndSetAsDisplayImmediately(CMSampleBufferRef);
@@ -51,13 +57,13 @@ public:
     MediaTime duration() const override;
 
     AtomString trackID() const override { return m_id; }
-    void setTrackID(const String& id) override { m_id = id; }
 
     size_t sizeInBytes() const override;
     FloatSize presentationSize() const override;
 
     SampleFlags flags() const override;
-    PlatformSample platformSample() override;
+    PlatformSample platformSample() const override;
+    PlatformSample::Type platformSampleType() const override { return PlatformSample::CMSampleBufferType; }
     std::optional<ByteRange> byteRange() const override;
     WEBCORE_EXPORT void dump(PrintStream&) const override;
     void offsetTimestampsBy(const MediaTime&) override;
@@ -69,7 +75,7 @@ public:
     VideoRotation videoRotation() const override { return m_rotation; }
     bool videoMirrored() const override { return m_mirrored; }
     WEBCORE_EXPORT uint32_t videoPixelFormat() const final;
-
+    WEBCORE_EXPORT CVPixelBufferRef pixelBuffer() const final;
     CMSampleBufferRef sampleBuffer() const { return m_sample.get(); }
 
     bool isHomogeneous() const;
@@ -77,6 +83,15 @@ public:
 
     void setByteRangeOffset(size_t);
 
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    using KeyIDs = Vector<Ref<FragmentedSharedBuffer>>;
+    void setKeyIDs(KeyIDs&& keyIDs) { m_keyIDs = WTFMove(keyIDs); }
+    const KeyIDs& keyIDs() const { return m_keyIDs; }
+    KeyIDs& keyIDs() { return m_keyIDs; }
+#endif
+
+    // FIXME: To be removed once VideoFrame is not a MediaSample.
+    WEBCORE_EXPORT RefPtr<VideoFrameCV> videoFrame() const;
 protected:
     WEBCORE_EXPORT MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&&);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef);
@@ -91,6 +106,27 @@ protected:
     AtomString m_id;
     VideoRotation m_rotation { VideoRotation::None };
     bool m_mirrored { false };
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    Vector<Ref<FragmentedSharedBuffer>> m_keyIDs;
+#endif
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename Type> struct LogArgument;
+template <>
+struct LogArgument<WebCore::MediaSampleAVFObjC> {
+    static String toString(const WebCore::MediaSampleAVFObjC& sample)
+    {
+        return sample.toJSONString();
+    }
+};
+
+} // namespace WTF
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaSampleAVFObjC)
+static bool isType(const WebCore::MediaSample& sample) { return sample.platformSampleType() == WebCore::PlatformSample::CMSampleBufferType; }
+SPECIALIZE_TYPE_TRAITS_END()

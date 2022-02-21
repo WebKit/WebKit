@@ -45,12 +45,12 @@
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "SoupNetworkSession.h"
-#include "TextEncoding.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <gio/gio.h>
 #include <glib.h>
 #include <libsoup/soup.h>
+#include <pal/text/TextEncoding.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #if !COMPILER(MSVC)

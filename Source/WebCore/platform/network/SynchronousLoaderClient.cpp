@@ -29,6 +29,7 @@
 #include "AuthenticationChallenge.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
+#include "SharedBuffer.h"
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
@@ -71,9 +72,9 @@ void SynchronousLoaderClient::didReceiveResponseAsync(ResourceHandle*, ResourceR
     completionHandler();
 }
 
-void SynchronousLoaderClient::didReceiveData(ResourceHandle*, const uint8_t* data, unsigned length, int /*encodedDataLength*/)
+void SynchronousLoaderClient::didReceiveData(ResourceHandle*, const SharedBuffer& buffer, int /*encodedDataLength*/)
 {
-    m_data.append(data, length);
+    m_data.append(buffer.data(), buffer.size());
 }
 
 void SynchronousLoaderClient::didFinishLoading(ResourceHandle* handle, const NetworkLoadMetrics&)

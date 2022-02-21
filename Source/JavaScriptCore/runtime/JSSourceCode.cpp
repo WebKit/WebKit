@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSSourceCode.h"
 
+#include "JSCellInlines.h"
+
 namespace JSC {
 
 const ClassInfo JSSourceCode::s_info = { "JSSourceCode", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSSourceCode) };

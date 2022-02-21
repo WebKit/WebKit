@@ -51,7 +51,7 @@ static void materializeImportJSCell(JIT& jit, unsigned importIndex, GPRReg resul
     jit.loadPtr(JIT::Address(result, Instance::offsetOfImportFunction(importIndex)), result);
 }
 
-Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
+Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm, Bag<OptimizingCallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
 {
     // FIXME: This function doesn't properly abstract away the calling convention.
     // It'd be super easy to do so: https://bugs.webkit.org/show_bug.cgi?id=169401
@@ -98,7 +98,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         unsigned marshalledGPRs = 0;
         unsigned marshalledFPRs = 0;
         unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
-        unsigned frOffset = CallFrame::headerSizeInRegisters * static_cast<int>(sizeof(Register));
+        unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
         for (unsigned argNum = 0; argNum < argCount; ++argNum) {
             Type argType = signature.argument(argNum);
             switch (argType.kind) {
@@ -107,7 +107,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case TypeKind::RefNull:
             case TypeKind::Ref:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
-            case TypeKind::TypeIdx:
             case TypeKind::Externref:
             case TypeKind::Funcref:
             case TypeKind::I32:
@@ -162,7 +161,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         unsigned marshalledGPRs = 0;
         unsigned marshalledFPRs = 0;
         unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
-        unsigned frOffset = CallFrame::headerSizeInRegisters * static_cast<int>(sizeof(Register));
+        unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
 
         auto marshallFPR = [&] (FPRReg fprReg) {
             jit.purifyNaN(fprReg);
@@ -182,7 +181,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case TypeKind::RefNull:
             case TypeKind::Ref:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
-            case TypeKind::TypeIdx:
             case TypeKind::Externref:
             case TypeKind::Funcref:
             case TypeKind::I32:
@@ -263,7 +261,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     // FIXME Tail call if the wasm return type is void and no registers were spilled. https://bugs.webkit.org/show_bug.cgi?id=165488
 
-    CallLinkInfo* callLinkInfo = callLinkInfos.add(CodeOrigin());
+    auto* callLinkInfo = callLinkInfos.add(CodeOrigin());
     callLinkInfo->setUpCall(CallLinkInfo::Call, importJSCellGPRReg);
     auto slowPath = callLinkInfo->emitFastPath(jit, importJSCellGPRReg, InvalidGPRReg, CallLinkInfo::UseDataIC::No);
 
@@ -279,14 +277,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     auto doneLocation = jit.label();
 
     if (signature.returnCount() == 1) {
-        switch (signature.returnType(0).kind) {
-        case TypeKind::Void:
-        case TypeKind::Func:
-        case TypeKind::RefNull:
-        case TypeKind::Ref:
-            // For the JavaScript embedding, imports with these types in their signature return are a WebAssembly.Module validation error.
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
+        const auto& returnType = signature.returnType(0);
+        switch (returnType.kind) {
         case TypeKind::I64: {
             // FIXME: Optimize I64 extraction from BigInt.
             // https://bugs.webkit.org/show_bug.cgi?id=220053
@@ -324,11 +316,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             done.link(&jit);
             break;
         }
-        case TypeKind::Funcref:
-        case TypeKind::Externref:
-        case TypeKind::TypeIdx:
-            jit.move(GPRInfo::returnValueGPR, wasmCallInfo.results[0].gpr());
-            break;
         case TypeKind::F32: {
             CCallHelpers::JumpList done;
             FPRReg dest = wasmCallInfo.results[0].fpr();
@@ -389,6 +376,13 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
             done.link(&jit);
             break;
+        }
+        default:  {
+            if (Wasm::isFuncref(returnType) || Wasm::isExternref(returnType))
+                jit.move(GPRInfo::returnValueGPR, wasmCallInfo.results[0].gpr());
+            else
+                // For the JavaScript embedding, imports with these types in their signature return are a WebAssembly.Module validation error.
+                RELEASE_ASSERT_NOT_REACHED();
         }
         }
     } else if (signature.returnCount() > 1) {

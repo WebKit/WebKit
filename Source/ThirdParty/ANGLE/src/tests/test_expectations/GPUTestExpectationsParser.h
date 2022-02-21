@@ -13,9 +13,10 @@
 #include <string>
 #include <vector>
 
+#include "GPUTestConfig.h"
+
 namespace angle
 {
-
 struct GPUTestConfig;
 
 class GPUTestExpectationsParser
@@ -38,6 +39,8 @@ class GPUTestExpectationsParser
     // Return true if parsing succeeds.
     bool loadTestExpectations(const GPUTestConfig &config, const std::string &data);
     bool loadTestExpectationsFromFile(const GPUTestConfig &config, const std::string &path);
+    bool loadAllTestExpectations(const std::string &data);
+    bool loadAllTestExpectationsFromFile(const std::string &path);
 
     // Query error messages from the last LoadTestExpectations() call.
     const std::vector<std::string> &getErrorMessages() const;
@@ -47,6 +50,8 @@ class GPUTestExpectationsParser
 
     // Get the test expectation of a given test on a given bot.
     int32_t getTestExpectation(const std::string &testName);
+    int32_t getTestExpectationWithConfig(const GPUTestConfig &config, const std::string &testName);
+    void setTestExpectationsAllowMask(uint32_t mask) { mExpectationsAllowMask = mask; }
 
   private:
     struct GPUTestExpectationEntry
@@ -57,11 +62,12 @@ class GPUTestExpectationsParser
         int32_t testExpectation;
         size_t lineNumber;
         bool used;
+        GPUTestConfig::ConditionArray conditions;
     };
 
     // Parse a line of text. If we have a valid entry, save it; otherwise,
     // generate error messages.
-    bool parseLine(const GPUTestConfig &config, const std::string &lineData, size_t lineNumber);
+    bool parseLine(const GPUTestConfig *config, const std::string &lineData, size_t lineNumber);
 
     // Check a the condition assigned to a particular token.
     bool checkTokenCondition(const GPUTestConfig &config,
@@ -82,8 +88,16 @@ class GPUTestExpectationsParser
                           size_t entry1LineNumber,
                           size_t entry2LineNumber);
 
+    // Config is optional.
+    bool loadTestExpectationsFromFileImpl(const GPUTestConfig *config, const std::string &path);
+    bool loadTestExpectationsImpl(const GPUTestConfig *config, const std::string &data);
+
+    int32_t getTestExpectationImpl(const GPUTestConfig *config, const std::string &testName);
+
     std::vector<GPUTestExpectationEntry> mEntries;
     std::vector<std::string> mErrorMessages;
+
+    uint32_t mExpectationsAllowMask;
 };
 
 const char *GetConditionName(uint32_t condition);

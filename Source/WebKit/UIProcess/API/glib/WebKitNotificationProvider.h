@@ -37,7 +37,7 @@ public:
     WebKitNotificationProvider(WebNotificationManagerProxy*, WebKitWebContext*);
     ~WebKitNotificationProvider();
 
-    void show(WebPageProxy&, const WebNotification&);
+    void show(WebPageProxy*, const WebNotification&);
     void cancel(const WebNotification&);
     void clearNotifications(const Vector<uint64_t>&);
 

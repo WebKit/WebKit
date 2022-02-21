@@ -274,9 +274,9 @@ void SoupNetworkSession::clearOldSoupCache(const String& cacheDirectory)
     }
 }
 
-void SoupNetworkSession::setProxySettings(SoupNetworkProxySettings&& settings)
+void SoupNetworkSession::setProxySettings(const SoupNetworkProxySettings& settings)
 {
-    m_proxySettings = WTFMove(settings);
+    m_proxySettings = settings;
 
     GRefPtr<GProxyResolver> resolver;
     switch (m_proxySettings.mode) {

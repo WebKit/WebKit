@@ -559,7 +559,7 @@ HRESULT WebFrame::loadRequest(_In_opt_ IWebURLRequest* request)
     return S_OK;
 }
 
-void WebFrame::loadData(Ref<WebCore::SharedBuffer>&& data, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL)
+void WebFrame::loadData(Ref<WebCore::FragmentedSharedBuffer>&& data, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL)
 {
     String mimeTypeString(mimeType, SysStringLen(mimeType));
     if (!mimeType)
@@ -585,21 +585,21 @@ void WebFrame::loadData(Ref<WebCore::SharedBuffer>&& data, BSTR mimeType, BSTR t
 
 HRESULT WebFrame::loadData(_In_opt_ IStream* data, _In_ BSTR mimeType, _In_ BSTR textEncodingName, _In_ BSTR url)
 {
-    auto sharedBuffer = SharedBuffer::create();
+    SharedBufferBuilder sharedBuffer;
 
     STATSTG stat;
     if (SUCCEEDED(data->Stat(&stat, STATFLAG_NONAME))) {
         if (!stat.cbSize.HighPart && stat.cbSize.LowPart) {
             Vector<char> dataBuffer(stat.cbSize.LowPart);
             ULONG read;
-            // FIXME: this does a needless copy, would be better to read right into the SharedBuffer
+            // FIXME: this does a needless copy, would be better to read right into the FragmentedSharedBuffer
             // or adopt the Vector or something.
             if (SUCCEEDED(data->Read(dataBuffer.data(), static_cast<ULONG>(dataBuffer.size()), &read)))
-                sharedBuffer->append(dataBuffer.data(), static_cast<int>(dataBuffer.size()));
+                sharedBuffer.append(dataBuffer.data(), static_cast<int>(dataBuffer.size()));
         }
     }
 
-    loadData(WTFMove(sharedBuffer), mimeType, textEncodingName, url, nullptr);
+    loadData(sharedBuffer.take(), mimeType, textEncodingName, url, nullptr);
     return S_OK;
 }
 
@@ -1128,7 +1128,7 @@ HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** el
     if (formElement) {
         AtomString targetName((UChar*)name, SysStringLen(name));
         for (auto& associatedElement : formElement->copyAssociatedElementsVector()) {
-            if (!is<HTMLFormControlElement>(associatedElement.get()))
+            if (!is<HTMLFormControlElement>(associatedElement))
                 continue;
             auto& elt = downcast<HTMLFormControlElement>(associatedElement.get());
             // Skip option elements, other duds.

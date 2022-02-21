@@ -146,34 +146,32 @@ public:
     virtual bool supportsBoxShadow(const RenderStyle&) const { return false; }
 
     // Text selection colors.
-    Color activeSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
-    Color inactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
-    virtual Color transformSelectionBackgroundColor(const Color&, OptionSet<StyleColor::Options>) const;
-    Color activeSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
-    Color inactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
+    Color activeSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
+    Color inactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
+    virtual Color transformSelectionBackgroundColor(const Color&, OptionSet<StyleColorOptions>) const;
+    Color activeSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
+    Color inactiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
 
     // List box selection colors
-    Color activeListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
-    Color activeListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
-    Color inactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
-    Color inactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
+    Color activeListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
+    Color activeListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
+    Color inactiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
+    Color inactiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
 
     // Highlighting color for search matches.
-    Color textSearchHighlightColor(OptionSet<StyleColor::Options>) const;
+    Color textSearchHighlightColor(OptionSet<StyleColorOptions>) const;
 
-#if ENABLE(APP_HIGHLIGHTS)
     // Default highlighting color for app highlights.
-    Color appHighlightColor(OptionSet<StyleColor::Options>) const;
-#endif
+    Color annotationHighlightColor(OptionSet<StyleColorOptions>) const;
 
-    Color defaultButtonTextColor(OptionSet<StyleColor::Options>) const;
+    Color defaultButtonTextColor(OptionSet<StyleColorOptions>) const;
 
     Color datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const;
 
     virtual Color disabledTextColor(const Color& textColor, const Color& backgroundColor) const;
 
-    WEBCORE_EXPORT Color focusRingColor(OptionSet<StyleColor::Options>) const;
-    virtual Color platformFocusRingColor(OptionSet<StyleColor::Options>) const { return Color::black; }
+    WEBCORE_EXPORT Color focusRingColor(OptionSet<StyleColorOptions>) const;
+    virtual Color platformFocusRingColor(OptionSet<StyleColorOptions>) const { return Color::black; }
     static void setCustomFocusRingColor(const Color&);
     static float platformFocusRingWidth() { return 3; }
     static float platformFocusRingOffset(float outlineWidth) { return std::max<float>(outlineWidth - platformFocusRingWidth(), 0); }
@@ -187,7 +185,7 @@ public:
 
     // System fonts and colors for CSS.
     void systemFont(CSSValueID, FontCascadeDescription&) const;
-    virtual Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const;
+    virtual Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const;
 
     virtual int minimumMenuListSize(const RenderStyle&) const { return 0; }
 
@@ -249,6 +247,10 @@ public:
 
     enum FileUploadDecorations { SingleFile, MultipleFiles };
     virtual void paintFileUploadIconDecorations(const RenderObject& /*inputRenderer*/, const RenderObject& /*buttonRenderer*/, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) { }
+    
+#if ENABLE(SERVICE_CONTROLS)
+    virtual IntSize imageControlsButtonSize() const { return IntSize(); }
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const { return LayoutSize(); }
@@ -272,25 +274,23 @@ protected:
     virtual void updateCachedSystemFontDescription(CSSValueID systemFontID, FontCascadeDescription&) const = 0;
 
     // The platform selection color.
-    virtual Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
-    virtual Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
-    virtual Color platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
-    virtual Color platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
+    virtual Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
+    virtual Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
+    virtual Color platformActiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
+    virtual Color platformInactiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
 
-    virtual Color platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
-    virtual Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const;
-    virtual Color platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
-    virtual Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const;
+    virtual Color platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
+    virtual Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const;
+    virtual Color platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
+    virtual Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const;
 
-    virtual Color platformTextSearchHighlightColor(OptionSet<StyleColor::Options>) const;
-#if ENABLE(APP_HIGHLIGHTS)
-    virtual Color platformAppHighlightColor(OptionSet<StyleColor::Options>) const;
-#endif
+    virtual Color platformTextSearchHighlightColor(OptionSet<StyleColorOptions>) const;
+    virtual Color platformAnnotationHighlightColor(OptionSet<StyleColorOptions>) const;
 
-    virtual Color platformDefaultButtonTextColor(OptionSet<StyleColor::Options>) const;
+    virtual Color platformDefaultButtonTextColor(OptionSet<StyleColorOptions>) const;
 
-    virtual bool supportsSelectionForegroundColors(OptionSet<StyleColor::Options>) const { return true; }
-    virtual bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColor::Options>) const { return true; }
+    virtual bool supportsSelectionForegroundColors(OptionSet<StyleColorOptions>) const { return true; }
+    virtual bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColorOptions>) const { return true; }
 
 #if !USE(NEW_THEME)
     // Methods for each appearance value.
@@ -323,11 +323,11 @@ protected:
 
     virtual void adjustTextFieldStyle(RenderStyle&, const Element*) const;
     virtual bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
-    virtual void paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { }
+    virtual void paintTextFieldDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) { }
 
     virtual void adjustTextAreaStyle(RenderStyle&, const Element*) const;
     virtual bool paintTextArea(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
-    virtual void paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { }
+    virtual void paintTextAreaDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) { }
 
     virtual void adjustMenuListStyle(RenderStyle&, const Element*) const;
     virtual bool paintMenuList(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
@@ -357,6 +357,13 @@ protected:
 
 #if ENABLE(DATALIST_ELEMENT)
     virtual void adjustListButtonStyle(RenderStyle&, const Element*) const;
+    virtual bool paintListButton(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
+#endif
+    
+#if ENABLE(SERVICE_CONTROLS)
+    virtual void adjustImageControlsButtonStyle(RenderStyle&, const Element*) const;
+    virtual bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool isImageControl(const Element&) const { return false; }
 #endif
 
     virtual void adjustProgressBarStyle(RenderStyle&, const Element*) const;
@@ -371,7 +378,7 @@ protected:
 
     virtual void adjustSearchFieldStyle(RenderStyle&, const Element*) const;
     virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-    virtual void paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
+    virtual void paintSearchFieldDecorations(const RenderBox&, const PaintInfo&, const IntRect&) { }
 
     virtual void adjustSearchFieldCancelButtonStyle(RenderStyle&, const Element*) const;
     virtual bool paintSearchFieldCancelButton(const RenderBox&, const PaintInfo&, const IntRect&) { return true; }
@@ -443,17 +450,17 @@ protected:
         Color inactiveListBoxSelectionForegroundColor;
 
         Color textSearchHighlightColor;
-
-#if ENABLE(APP_HIGHLIGHTS)
-        Color appHighlightColor;
-#endif
+        Color annotationHighlightColor;
 
         Color defaultButtonTextColor;
     };
 
-    virtual ColorCache& colorCache(OptionSet<StyleColor::Options>) const;
+    virtual ColorCache& colorCache(OptionSet<StyleColorOptions>) const;
 
 private:
+    ControlPart autoAppearanceForElement(const Element*) const;
+    ControlPart adjustAppearanceForElement(RenderStyle&, const Element*) const;
+
     void adjustSearchFieldDecorationStyle(RenderStyle&, const Element*) const;
 
     mutable HashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;

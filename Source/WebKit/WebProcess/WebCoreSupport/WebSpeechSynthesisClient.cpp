@@ -55,16 +55,21 @@ WebCore::SpeechSynthesisClientObserver* WebSpeechSynthesisClient::corePageObserv
     return nullptr;
 }
 
+void WebSpeechSynthesisClient::resetState()
+{
+    m_page.send(Messages::WebPageProxy::SpeechSynthesisResetState());
+}
+
 void WebSpeechSynthesisClient::speak(RefPtr<WebCore::PlatformSpeechSynthesisUtterance> utterance)
 {
-    WTF::CompletionHandler<void()> startedCompletionHandler = [this, weakThis = makeWeakPtr(*this)]() mutable {
+    WTF::CompletionHandler<void()> startedCompletionHandler = [this, weakThis = WeakPtr { *this }]() mutable {
         if (!weakThis)
             return;
         if (auto observer = corePageObserver())
             observer->didStartSpeaking();
     };
 
-    WTF::CompletionHandler<void()> finishedCompletionHandler = [this, weakThis = makeWeakPtr(*this)]() mutable {
+    WTF::CompletionHandler<void()> finishedCompletionHandler = [this, weakThis = WeakPtr { *this }]() mutable {
         if (!weakThis)
             return;
         if (auto observer = corePageObserver())
@@ -89,7 +94,7 @@ void WebSpeechSynthesisClient::cancel()
 
 void WebSpeechSynthesisClient::pause()
 {
-    WTF::CompletionHandler<void()> completionHandler = [this, weakThis = makeWeakPtr(*this)]() mutable {
+    WTF::CompletionHandler<void()> completionHandler = [this, weakThis = WeakPtr { *this }]() mutable {
         if (!weakThis)
             return;
         if (auto observer = corePageObserver())
@@ -101,7 +106,7 @@ void WebSpeechSynthesisClient::pause()
 
 void WebSpeechSynthesisClient::resume()
 {
-    WTF::CompletionHandler<void()> completionHandler = [this, weakThis = makeWeakPtr(*this)]() mutable {
+    WTF::CompletionHandler<void()> completionHandler = [this, weakThis = WeakPtr { *this }]() mutable {
         if (!weakThis)
             return;
         if (auto observer = corePageObserver())

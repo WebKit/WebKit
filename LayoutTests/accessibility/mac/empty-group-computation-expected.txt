@@ -1,0 +1,32 @@
+This test ensures WebKit properly reports groups as empty (or not empty).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing element with ID: empty-group-with-title
+PASS group.subrole is 'AXSubrole: AXEmptyGroup'
+Testing element with ID: empty-div-with-label
+PASS group.subrole is 'AXSubrole: AXEmptyGroup'
+Testing element with ID: empty-group-with-title-and-br
+PASS group.subrole is 'AXSubrole: AXEmptyGroup'
+Testing element with ID: group-with-direct-text-descendant
+PASS group.subrole is 'AXSubrole: AXApplicationGroup'
+Testing element with ID: group-with-non-empty-div
+PASS group.subrole is 'AXSubrole: AXApplicationGroup'
+Testing element with ID: group-with-heading
+PASS group.subrole is 'AXSubrole: AXApplicationGroup'
+Testing element with ID: group-with-contenteditable
+PASS group.subrole is 'AXSubrole: AXApplicationGroup'
+Testing element with ID: group-with-empty-table
+PASS group.subrole is 'AXSubrole: AXApplicationGroup'
+Testing element with ID: group-with-nested-content
+PASS group.subrole is 'AXSubrole: AXApplicationGroup'
+Testing element with ID: group-with-image
+PASS group.subrole is 'AXSubrole: AXApplicationGroup'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+

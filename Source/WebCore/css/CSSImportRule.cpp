@@ -22,6 +22,8 @@
 #include "config.h"
 #include "CSSImportRule.h"
 
+#include "CSSLayerBlockRule.h"
+#include "CSSMarkup.h"
 #include "CSSStyleSheet.h"
 #include "MediaList.h"
 #include "StyleRuleImport.h"
@@ -56,13 +58,36 @@ MediaList& CSSImportRule::media() const
     return *m_mediaCSSOMWrapper;
 }
 
+String CSSImportRule::layerName() const
+{
+    auto name = m_importRule.get().cascadeLayerName();
+    if (!name)
+        return { };
+
+    return stringFromCascadeLayerName(*name);
+}
+
 String CSSImportRule::cssText() const
 {
+    StringBuilder builder;
+
+    builder.append("@import ", serializeURL(m_importRule.get().href()));
+
+    if (auto layerName = this->layerName(); !layerName.isNull()) {
+        if (layerName.isEmpty())
+            builder.append(" layer");
+        else
+            builder.append(" layer(", layerName, ')');
+    }
+
     if (auto queries = m_importRule.get().mediaQueries()) {
         if (auto mediaText = queries->mediaText(); !mediaText.isEmpty())
-            return makeString("@import url(\"", m_importRule.get().href(), "\") ", mediaText, ';');
+            builder.append(' ', mediaText);
     }
-    return makeString("@import url(\"", m_importRule.get().href(), "\");");
+
+    builder.append(';');
+
+    return builder.toString();
 }
 
 CSSStyleSheet* CSSImportRule::styleSheet() const

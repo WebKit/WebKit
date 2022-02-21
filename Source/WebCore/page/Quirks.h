@@ -38,8 +38,9 @@ class HTMLElement;
 class HTMLVideoElement;
 class LayoutUnit;
 class PlatformMouseEvent;
+struct SecurityOriginData;
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 class RegistrableDomain;
 enum class StorageAccessWasGranted : bool;
 #endif
@@ -93,6 +94,7 @@ public:
     WEBCORE_EXPORT bool shouldIgnoreAriaForFastPathContentObservationCheck() const;
     WEBCORE_EXPORT bool shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() const;
     WEBCORE_EXPORT bool shouldIgnoreContentObservationForSyntheticClick(bool isFirstSyntheticClickOnPage) const;
+    WEBCORE_EXPORT static bool shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView protocol, const SecurityOriginData& requesterOrigin);
 
     WEBCORE_EXPORT bool needsYouTubeMouseOutQuirk() const;
     
@@ -139,7 +141,7 @@ public:
     WEBCORE_EXPORT bool blocksReturnToFullscreenFromPictureInPictureQuirk() const;
     bool shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk() const;
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     static bool isMicrosoftTeamsRedirectURL(const URL&);
     static bool hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>&, const RegistrableDomain&);
     static const String& BBCRadioPlayerURLString();
@@ -147,15 +149,13 @@ public:
     StorageAccessResult requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&&) const;
 #endif
 
-#if ENABLE(WEB_AUTHN)
-    WEBCORE_EXPORT bool shouldBypassUserGestureRequirementForWebAuthn() const;
-#endif
-
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 
 #if ENABLE(IMAGE_ANALYSIS)
-    bool needsToForceUserSelectWhenInstallingImageOverlay() const;
+    bool needsToForceUserSelectAndUserDragWhenInstallingImageOverlay() const;
 #endif
+
+    bool shouldDisableWebSharePolicy() const;
 
 private:
     bool needsQuirks() const;
@@ -201,6 +201,7 @@ private:
 #endif
     mutable std::optional<bool> m_blocksReturnToFullscreenFromPictureInPictureQuirk;
     mutable std::optional<bool> m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;
+    mutable std::optional<bool> m_shouldDisableWebSharePolicy;
 };
 
 } // namespace WebCore

@@ -95,7 +95,7 @@ public:
     bool hadRulesMutation() const { return m_mutatedRules; }
     void clearHadRulesMutation() { m_mutatedRules = false; }
 
-    enum RuleMutationType { OtherMutation, RuleInsertion };
+    enum RuleMutationType { OtherMutation, RuleInsertion, KeyframesRuleMutation };
     enum WhetherContentsWereClonedForMutation { ContentsWereNotClonedForMutation = 0, ContentsWereClonedForMutation };
 
     class RuleMutationScope {
@@ -109,11 +109,12 @@ public:
         CSSStyleSheet* m_styleSheet;
         RuleMutationType m_mutationType;
         WhetherContentsWereClonedForMutation m_contentsWereClonedForMutation;
-        StyleRuleKeyframes* m_insertedKeyframesRule;
+        RefPtr<StyleRuleKeyframes> m_insertedKeyframesRule;
+        String m_modifiedKeyframesRuleName;
     };
 
     WhetherContentsWereClonedForMutation willMutateRules();
-    void didMutateRules(RuleMutationType, WhetherContentsWereClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule);
+    void didMutateRules(RuleMutationType, WhetherContentsWereClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule, const String& modifiedKeyframesRuleName);
     void didMutateRuleFromCSSStyleDeclaration();
     void didMutate();
     

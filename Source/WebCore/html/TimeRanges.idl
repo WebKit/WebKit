@@ -26,8 +26,8 @@
 [
     Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
-    ImplementationLacksVTable,
-    Exposed=Window
+    Exposed=Window,
+    TaggedWrapper
 ] interface TimeRanges {
     readonly attribute unsigned long length;
     unrestricted double start(unsigned long index);

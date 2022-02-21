@@ -28,11 +28,12 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioMediaStreamTrackRendererInternalUnit.h"
-#include <wtf/Forward.h>
+#include "BaseAudioMediaStreamTrackRendererUnit.h"
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -41,24 +42,26 @@ class AudioSampleBufferList;
 class CAAudioStreamDescription;
 class AudioMediaStreamTrackRendererInternalUnit;
 
-class AudioMediaStreamTrackRendererUnit {
+class AudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRendererUnit, public CanMakeWeakPtr<AudioMediaStreamTrackRendererUnit, WeakPtrFactoryInitialization::Eager> {
 public:
     WEBCORE_EXPORT static AudioMediaStreamTrackRendererUnit& singleton();
 
     AudioMediaStreamTrackRendererUnit();
     ~AudioMediaStreamTrackRendererUnit();
 
-    using CreateInternalUnitFunction = Function<UniqueRef<AudioMediaStreamTrackRendererInternalUnit>(AudioMediaStreamTrackRendererInternalUnit::RenderCallback&&)>;
+    using CreateInternalUnitFunction = Function<UniqueRef<AudioMediaStreamTrackRendererInternalUnit>(AudioMediaStreamTrackRendererInternalUnit::RenderCallback&&, AudioMediaStreamTrackRendererInternalUnit::ResetCallback&&)>;
     WEBCORE_EXPORT static void setCreateInternalUnitFunction(CreateInternalUnitFunction&&);
 
     WEBCORE_EXPORT void render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&);
-
-    void setAudioOutputDevice(const String&);
-
-    void addSource(Ref<AudioSampleDataSource>&&);
-    void removeSource(AudioSampleDataSource&);
+    void reset();
 
     void retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&&);
+
+    // BaseAudioMediaStreamTrackRendererUnit
+    void setAudioOutputDevice(const String&) final;
+    void addSource(Ref<AudioSampleDataSource>&&) final;
+    void removeSource(AudioSampleDataSource&) final;
+    void addResetObserver(ResetObserver& observer) final { m_resetObservers.add(observer); }
 
 private:
     void start();
@@ -73,6 +76,7 @@ private:
     bool m_hasPendingRenderSources WTF_GUARDED_BY_LOCK(m_pendingRenderSourcesLock) { false };
     Lock m_pendingRenderSourcesLock;
     UniqueRef<AudioMediaStreamTrackRendererInternalUnit> m_internalUnit;
+    WeakHashSet<ResetObserver> m_resetObservers;
 };
 
 }

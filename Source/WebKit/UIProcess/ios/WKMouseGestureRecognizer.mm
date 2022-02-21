@@ -50,6 +50,15 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     return modifiers;
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WKMouseGestureRecognizerAdditions.mm>
+#else
+static String pointerTypeForUITouchType(UITouchType)
+{
+    return WebCore::mousePointerEventType();
+}
+#endif
+
 @implementation WKMouseGestureRecognizer {
     RetainPtr<UIEvent> _currentHoverEvent;
     RetainPtr<UITouch> _currentTouch;
@@ -79,7 +88,7 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
 {
     // FIXME: We should move off of this UIKit IPI method once we have a viable SPI or API alternative
     // for opting a UIHoverGestureRecognizer subclass into receiving UITouches. See also: rdar://80700227.
-    return touch == _currentTouch;
+    return touch == _currentTouch && touch.type == UITouchTypeIndirectPointer;
 }
 
 - (WebKit::NativeWebMouseEvent *)lastMouseEvent
@@ -130,7 +139,8 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     auto delta = point - WebCore::IntPoint { [_currentTouch previousLocationInView:self.view] };
     // UITouch's timestamp uses mach_absolute_time as its timebase, same as MonotonicTime.
     auto timestamp = MonotonicTime::fromRawSeconds([_currentTouch timestamp]).approximateWallTime();
-    return WTF::makeUnique<WebKit::NativeWebMouseEvent>(type, button, buttons, point, point, delta.width(), delta.height(), 0, [_currentTouch tapCount], modifiers, timestamp, 0, cancelled ? WebKit::GestureWasCancelled::Yes : WebKit::GestureWasCancelled::No);
+
+    return WTF::makeUnique<WebKit::NativeWebMouseEvent>(type, button, buttons, point, point, delta.width(), delta.height(), 0, [_currentTouch tapCount], modifiers, timestamp, 0, cancelled ? WebKit::GestureWasCancelled::Yes : WebKit::GestureWasCancelled::No, pointerTypeForUITouchType([_currentTouch type]));
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event

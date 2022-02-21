@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,7 +99,7 @@ static inline void updateVaryInformation(RecordInformation& recordInformation, c
 
 RecordInformation Cache::toRecordInformation(const Record& record)
 {
-    Key key { "record"_s, m_uniqueName, { }, createCanonicalUUIDString(), m_caches.salt() };
+    Key key { "record"_s, m_uniqueName, { }, createVersion4UUIDString(), m_caches.salt() };
     RecordInformation recordInformation { WTFMove(key), MonotonicTime::now().secondsSinceEpoch().milliseconds(), record.identifier, 0 , record.responseBodySize, record.request.url(), false, { } };
 
     updateVaryInformation(recordInformation, record.request, record.response);
@@ -171,7 +171,7 @@ void Cache::open(CompletionCallback&& callback)
     }
     m_state = State::Opening;
     TraversalResult traversalResult { m_identifier, { }, { } };
-    m_caches.readRecordsList(*this, [caches = makeRef(m_caches), callback = WTFMove(callback), traversalResult = WTFMove(traversalResult)](const auto* storageRecord, const auto&) mutable {
+    m_caches.readRecordsList(*this, [caches = Ref { m_caches }, callback = WTFMove(callback), traversalResult = WTFMove(traversalResult)](const auto* storageRecord, const auto&) mutable {
         if (!storageRecord) {
             RunLoop::main().dispatch([caches = WTFMove(caches), callback = WTFMove(callback), traversalResult = isolatedCopy(WTFMove(traversalResult)) ]() mutable {
                 for (auto& key : traversalResult.failedRecords)
@@ -275,7 +275,7 @@ private:
 
 void Cache::retrieveRecord(const RecordInformation& record, Ref<ReadRecordTaskCounter>&& taskCounter)
 {
-    readRecordFromDisk(record, [caches = makeRef(m_caches), identifier = m_identifier, recordIdentifier = record.identifier, updateCounter = record.updateResponseCounter, taskCounter = WTFMove(taskCounter)](Expected<Record, Error>&& result) mutable {
+    readRecordFromDisk(record, [caches = Ref { m_caches }, identifier = m_identifier, recordIdentifier = record.identifier, updateCounter = record.updateResponseCounter, taskCounter = WTFMove(taskCounter)](Expected<Record, Error>&& result) mutable {
         auto* cache = caches->find(identifier);
         if (!cache)
             return;
@@ -287,7 +287,7 @@ void Cache::retrieveRecords(const RetrieveRecordsOptions& options, RecordsCallba
 {
     ASSERT(m_state == State::Open);
 
-    auto taskCounter = ReadRecordTaskCounter::create([caches = makeRef(m_caches), identifier = m_identifier, options, callback = WTFMove(callback)](Vector<Record>&& records, Vector<uint64_t>&& failedRecordIdentifiers) mutable {
+    auto taskCounter = ReadRecordTaskCounter::create([caches = Ref { m_caches }, identifier = m_identifier, options, callback = WTFMove(callback)](Vector<Record>&& records, Vector<uint64_t>&& failedRecordIdentifiers) mutable {
         auto* cache = caches->find(identifier);
         if (cache)
             cache->removeFromRecordList(failedRecordIdentifiers);
@@ -411,7 +411,7 @@ void Cache::storeRecords(Vector<Record>&& records, RecordIdentifiersCallback&& c
         auto* sameURLRecords = recordsFromURL(record.request.url());
         auto matchingRecords = queryCache(sameURLRecords, record.request, options);
 
-        auto position = !matchingRecords.isEmpty() ? sameURLRecords->findMatching([&](const auto& item) { return item.identifier == matchingRecords[0]; }) : notFound;
+        auto position = !matchingRecords.isEmpty() ? sameURLRecords->findIf([&](const auto& item) { return item.identifier == matchingRecords[0]; }) : notFound;
 
         if (position == notFound) {
             record.identifier = ++m_nextRecordIdentifier;
@@ -438,7 +438,7 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
         auto* sameURLRecords = recordsFromURL(record.request.url());
         auto matchingRecords = queryCache(sameURLRecords, record.request, options);
 
-        auto position = (sameURLRecords && !matchingRecords.isEmpty()) ? sameURLRecords->findMatching([&](const auto& item) { return item.identifier == matchingRecords[0]; }) : notFound;
+        auto position = (sameURLRecords && !matchingRecords.isEmpty()) ? sameURLRecords->findIf([&](const auto& item) { return item.identifier == matchingRecords[0]; }) : notFound;
 
         spaceRequired += record.responseBodySize;
         if (position != notFound) {
@@ -453,7 +453,7 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
         return;
     }
 
-    m_caches.requestSpace(spaceRequired, [caches = makeRef(m_caches), identifier = m_identifier, records = WTFMove(records), callback = WTFMove(callback)](std::optional<DOMCacheEngine::Error>&& error) mutable {
+    m_caches.requestSpace(spaceRequired, [caches = Ref { m_caches }, identifier = m_identifier, records = WTFMove(records), callback = WTFMove(callback)](std::optional<DOMCacheEngine::Error>&& error) mutable {
         if (error) {
             callback(makeUnexpected(error.value()));
             return;
@@ -479,7 +479,7 @@ void Cache::remove(WebCore::ResourceRequest&& request, WebCore::CacheQueryOption
     }
 
     records->removeAllMatching([this, &recordIdentifiers](auto& item) {
-        bool shouldRemove = recordIdentifiers.findMatching([&item](auto identifier) { return identifier == item.identifier; }) != notFound;
+        bool shouldRemove = recordIdentifiers.findIf([&item](auto identifier) { return identifier == item.identifier; }) != notFound;
         if (shouldRemove)
             this->removeRecordFromDisk(item);
         return shouldRemove;
@@ -499,7 +499,7 @@ void Cache::removeFromRecordList(const Vector<uint64_t>& recordIdentifiers)
     for (auto& records : m_records.values()) {
         auto* cache = this;
         records.removeAllMatching([cache, &recordIdentifiers](const auto& item) {
-            return notFound != recordIdentifiers.findMatching([cache, &item](const auto& identifier) {
+            return notFound != recordIdentifiers.findIf([cache, &item](const auto& identifier) {
                 if (item.identifier != identifier)
                     return false;
                 cache->removeRecordFromDisk(item);
@@ -520,7 +520,7 @@ void Cache::writeRecordToDisk(const RecordInformation& recordInformation, Record
 void Cache::updateRecordToDisk(RecordInformation& existingRecord, Record&& record, Ref<AsynchronousPutTaskCounter>&& taskCounter)
 {
     ++existingRecord.updateResponseCounter;
-    readRecordFromDisk(existingRecord, [caches = makeRef(m_caches), identifier = m_identifier, recordIdentifier = existingRecord.identifier, record = WTFMove(record), taskCounter = WTFMove(taskCounter)](Expected<Record, Error>&& result) mutable {
+    readRecordFromDisk(existingRecord, [caches = Ref { m_caches }, identifier = m_identifier, recordIdentifier = existingRecord.identifier, record = WTFMove(record), taskCounter = WTFMove(taskCounter)](Expected<Record, Error>&& result) mutable {
         if (!result.has_value())
             return;
 
@@ -532,7 +532,7 @@ void Cache::updateRecordToDisk(RecordInformation& existingRecord, Record&& recor
         if (!sameURLRecords)
             return;
 
-        auto position = sameURLRecords->findMatching([&] (const auto& item) { return item.identifier == recordIdentifier; });
+        auto position = sameURLRecords->findIf([&] (const auto& item) { return item.identifier == recordIdentifier; });
         if (position == notFound)
             return;
         auto& recordInfo = sameURLRecords->at(position);

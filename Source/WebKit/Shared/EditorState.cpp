@@ -46,6 +46,9 @@ void EditorState::encode(IPC::Encoder& encoder) const
     encoder << isInPlugin;
     encoder << hasComposition;
     encoder << triggeredByAccessibilitySelectionChange;
+#if PLATFORM(MAC)
+    encoder << canEnableAutomaticSpellingCorrection;
+#endif
     encoder << isMissingPostLayoutData;
     if (!isMissingPostLayoutData)
         m_postLayoutData.encode(encoder);
@@ -88,6 +91,11 @@ bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
 
     if (!decoder.decode(result.triggeredByAccessibilitySelectionChange))
         return false;
+
+#if PLATFORM(MAC)
+    if (!decoder.decode(result.canEnableAutomaticSpellingCorrection))
+        return false;
+#endif
 
     if (!decoder.decode(result.isMissingPostLayoutData))
         return false;
@@ -135,16 +143,15 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << hasPlainText;
     encoder << editableRootIsTransparentOrFullyClipped;
     encoder << caretColor;
-    encoder << atStartOfSentence;
     encoder << selectionStartIsAtParagraphBoundary;
     encoder << selectionEndIsAtParagraphBoundary;
+    encoder << selectedEditableImage;
 #endif
 #if PLATFORM(MAC)
     encoder << selectionBoundingRect;
     encoder << candidateRequestStartPosition;
     encoder << paragraphContextForCandidateRequest;
     encoder << stringForCandidateRequest;
-    encoder << canEnableAutomaticSpellingCorrection;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     encoder << surroundingContext;
@@ -218,11 +225,11 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
         return false;
     if (!decoder.decode(result.caretColor))
         return false;
-    if (!decoder.decode(result.atStartOfSentence))
-        return false;
     if (!decoder.decode(result.selectionStartIsAtParagraphBoundary))
         return false;
     if (!decoder.decode(result.selectionEndIsAtParagraphBoundary))
+        return false;
+    if (!decoder.decode(result.selectedEditableImage))
         return false;
 #endif
 #if PLATFORM(MAC)
@@ -236,9 +243,6 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
         return false;
 
     if (!decoder.decode(result.stringForCandidateRequest))
-        return false;
-
-    if (!decoder.decode(result.canEnableAutomaticSpellingCorrection))
         return false;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -287,6 +291,10 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
         ts.dumpProperty("hasComposition", editorState.hasComposition);
     if (editorState.triggeredByAccessibilitySelectionChange)
         ts.dumpProperty("triggeredByAccessibilitySelectionChange", editorState.triggeredByAccessibilitySelectionChange);
+#if PLATFORM(MAC)
+    if (!editorState.canEnableAutomaticSpellingCorrection)
+        ts.dumpProperty("canEnableAutomaticSpellingCorrection", editorState.canEnableAutomaticSpellingCorrection);
+#endif
     if (editorState.isMissingPostLayoutData)
         ts.dumpProperty("isMissingPostLayoutData", editorState.isMissingPostLayoutData);
 
@@ -356,8 +364,6 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
         ts.dumpProperty("paragraphContextForCandidateRequest", editorState.postLayoutData().paragraphContextForCandidateRequest);
     if (editorState.postLayoutData().stringForCandidateRequest.length())
         ts.dumpProperty("stringForCandidateRequest", editorState.postLayoutData().stringForCandidateRequest);
-    if (editorState.postLayoutData().canEnableAutomaticSpellingCorrection)
-        ts.dumpProperty("canEnableAutomaticSpellingCorrection", editorState.postLayoutData().canEnableAutomaticSpellingCorrection);
 #endif
 
     if (editorState.postLayoutData().canCut)

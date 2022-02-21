@@ -31,7 +31,7 @@ class Packet;
 
 class RtcEventLogSource : public PacketSource {
  public:
-  // Creates an RtcEventLogSource reading from |file_name|. If the file cannot
+  // Creates an RtcEventLogSource reading from `file_name`. If the file cannot
   // be opened, or has the wrong format, NULL will be returned.
   static std::unique_ptr<RtcEventLogSource> CreateFromFile(
       const std::string& file_name,

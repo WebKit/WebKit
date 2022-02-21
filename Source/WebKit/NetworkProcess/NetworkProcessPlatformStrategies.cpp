@@ -64,7 +64,7 @@ BlobRegistry* NetworkProcessPlatformStrategies::createBlobRegistry()
         void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) final { ASSERT_NOT_REACHED(); }
         void unregisterBlobURL(const URL&) final { ASSERT_NOT_REACHED(); }
         unsigned long long blobSize(const URL&) final { ASSERT_NOT_REACHED(); return 0; }
-        void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final { ASSERT_NOT_REACHED(); }
+        void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final { ASSERT_NOT_REACHED(); }
         void registerBlobURLHandle(const URL&) final { ASSERT_NOT_REACHED(); }
         void unregisterBlobURLHandle(const URL&) final { ASSERT_NOT_REACHED(); }
     };

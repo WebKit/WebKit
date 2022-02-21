@@ -28,6 +28,7 @@
 
 #import "PixelBuffer.h"
 #import "PixelBufferConformerCV.h"
+#import "VideoFrameCV.h"
 #import <JavaScriptCore/JSCInlines.h>
 #import <JavaScriptCore/TypedArrayInlines.h>
 #import <wtf/PrintStream.h>
@@ -95,24 +96,33 @@ RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(PixelBuffer&& p
         return nullptr;
     }
     ASSERT_UNUSED(status, !status);
+    return createImageSample(WTFMove(cvPixelBuffer), VideoRotation::None, false);
+}
 
+RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(RetainPtr<CVPixelBufferRef>&& pixelBuffer, VideoRotation rotation, bool mirrored, MediaTime presentationTime, MediaTime decodingTime)
+{
     CMVideoFormatDescriptionRef formatDescriptionRaw = nullptr;
-    status = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, cvPixelBuffer.get(), &formatDescriptionRaw);
-    ASSERT(!status);
+    auto status = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), &formatDescriptionRaw);
+    if (status || !formatDescriptionRaw) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
     auto formatDescription = adoptCF(formatDescriptionRaw);
 
-    CMSampleTimingInfo sampleTimingInformation = { PAL::kCMTimeInvalid, PAL::kCMTimeInvalid, PAL::kCMTimeInvalid };
+    CMSampleTimingInfo sampleTimingInformation = { PAL::kCMTimeInvalid, PAL::toCMTime(presentationTime), PAL::toCMTime(decodingTime) };
     CMSampleBufferRef sampleBufferRaw = nullptr;
-    status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, cvPixelBuffer.get(), formatDescription.get(), &sampleTimingInformation, &sampleBufferRaw);
-    ASSERT(!status);
+    status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), formatDescription.get(), &sampleTimingInformation, &sampleBufferRaw);
+    if (status || !sampleBufferRaw) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
     auto sampleBuffer = adoptCF(sampleBufferRaw);
-
     CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
     for (CFIndex i = 0, count = CFArrayGetCount(attachmentsArray); i < count; ++i) {
         CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
         CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
     }
-    return create(sampleBuffer.get());
+    return create(sampleBuffer.get(), rotation, mirrored);
 }
 
 MediaTime MediaSampleAVFObjC::presentationTime() const
@@ -144,7 +154,7 @@ size_t MediaSampleAVFObjC::sizeInBytes() const
     return PAL::CMSampleBufferGetTotalSampleSize(m_sample.get());
 }
 
-PlatformSample MediaSampleAVFObjC::platformSample()
+PlatformSample MediaSampleAVFObjC::platformSample() const
 {
     PlatformSample sample = { PlatformSample::CMSampleBufferType, { .cmSampleBuffer = m_sample.get() } };
     return sample;
@@ -154,6 +164,16 @@ uint32_t MediaSampleAVFObjC::videoPixelFormat() const
 {
     auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
     return CVPixelBufferGetPixelFormatType(pixelBuffer);
+}
+
+RefPtr<VideoFrameCV> MediaSampleAVFObjC::videoFrame() const
+{
+    if (!m_sample)
+        return nullptr;
+    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
+    if (!pixelBuffer)
+        return nullptr;
+    return VideoFrameCV::create(presentationTime(), m_mirrored, m_rotation, RetainPtr { pixelBuffer });
 }
 
 static bool isCMSampleBufferAttachmentRandomAccess(CFDictionaryRef attachmentDict)
@@ -417,11 +437,11 @@ Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divideIntoHomogeneousSamples
 
     CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(m_sample.get(), true);
     if (!attachmentsArray)
-        return SampleVector::from(makeRef(*this));
+        return SampleVector::from(Ref { *this });
 
     auto count = CFArrayGetCount(attachmentsArray);
     if (count <= 1)
-        return SampleVector::from(makeRef(*this));
+        return SampleVector::from(Ref { *this });
 
     CFDictionaryRef firstAttachment = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, 0));
     bool isSync = isCMSampleBufferAttachmentRandomAccess(firstAttachment);
@@ -442,7 +462,7 @@ Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divideIntoHomogeneousSamples
     ranges.append(CFRangeMake(currentRangeStart, currentRangeLength));
 
     if (ranges.size() == 1)
-        return SampleVector::from(makeRef(*this));
+        return SampleVector::from(Ref { *this });
 
     SampleVector samples;
     samples.reserveInitialCapacity(ranges.size());
@@ -524,6 +544,11 @@ std::optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRangeForAttachment
     size_t singleSizeEntry = 0;
     PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 1, &singleSizeEntry, nullptr);
     return { { CheckedSize(byteOffset), singleSizeEntry } };
+}
+
+CVPixelBufferRef MediaSampleAVFObjC::pixelBuffer() const
+{
+    return static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
 }
 
 }

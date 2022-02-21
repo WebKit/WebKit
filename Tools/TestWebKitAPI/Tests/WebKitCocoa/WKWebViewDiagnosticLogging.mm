@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -33,8 +34,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKDiagnosticLoggingDelegate.h>
 #import <wtf/RetainPtr.h>
-
-static bool isDone;
 
 @interface TestLoggingDelegate : NSObject <_WKDiagnosticLoggingDelegate>
 @end

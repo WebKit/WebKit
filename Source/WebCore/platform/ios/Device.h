@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Device_h
-#define Device_h
+#pragma once
 
 #if PLATFORM(IOS_FAMILY)
 
 #include <wtf/Forward.h>
-#include <pal/spi/ios/MobileGestaltSPI.h>
 
 namespace WebCore {
 
-WEBCORE_EXPORT MGDeviceClass deviceClass();
 String deviceName(); // Thread-safe.
 
-// FIXME: Isn't this the same as deviceClass() == MGDeviceClassiPad?
+// Returns true only for iPhone, iPod, Apple Watch.
+// Few callers should be making any decisions based on device class.
+// If a check like this is needed, often currentUserInterfaceIdiomIsSmallScreen is preferred.
+WEBCORE_EXPORT bool deviceClassIsSmallScreen();
+
+// FIXME: How does this differ from !deviceClassIsSmallScreen()?
 bool deviceHasIPadCapability();
 
 }
 
 #endif // PLATFORM(IOS_FAMILY)
-
-#endif // Device_h

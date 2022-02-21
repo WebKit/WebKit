@@ -22,13 +22,13 @@
 
 #pragma once
 
-#include "RenderSVGContainer.h"
+#include "LegacyRenderSVGContainer.h"
 
 namespace WebCore {
 
 // This is used for non-root <svg> elements and <marker> elements, neither of which are SVGTransformable
-// thus we inherit from RenderSVGContainer instead of RenderSVGTransformableContainer
-class RenderSVGViewportContainer final : public RenderSVGContainer {
+// thus we inherit from LegacyRenderSVGContainer instead of RenderSVGTransformableContainer
+class RenderSVGViewportContainer final : public LegacyRenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGViewportContainer);
 public:
     RenderSVGViewportContainer(SVGSVGElement&, RenderStyle&&);

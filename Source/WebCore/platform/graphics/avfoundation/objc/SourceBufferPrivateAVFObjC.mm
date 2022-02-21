@@ -60,6 +60,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/WTFSemaphore.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/WorkQueue.h>
 #import <wtf/text/AtomString.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/StringToIntegerConversion.h>
@@ -73,6 +74,12 @@
 - (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
 - (void)expectMinimumUpcomingSampleBufferPresentationTime: (CMTime)minimumUpcomingPresentationTime;
 - (void)resetUpcomingSampleBufferPresentationTimeExpectations;
+@end
+
+@interface AVSampleBufferDisplayLayer (WebCoreSampleBufferKeySession) <AVContentKeyRecipient>
+@end
+
+@interface AVSampleBufferAudioRenderer (WebCoreSampleBufferKeySession) <AVContentKeyRecipient>
 @end
 
 #pragma mark -
@@ -274,6 +281,24 @@ static uint64_t nextMapID()
     return ++mapID;
 }
 
+static bool sampleBufferRenderersSupportKeySession()
+{
+    static bool supports = false;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, [&] {
+        supports = [PAL::getAVSampleBufferAudioRendererClass() conformsToProtocol:@protocol(AVContentKeyRecipient)]
+            && [PAL::getAVSampleBufferDisplayLayerClass() conformsToProtocol:@protocol(AVContentKeyRecipient)];
+    });
+    return supports;
+}
+
+static Vector<Ref<FragmentedSharedBuffer>> copyKeyIDs(const Vector<Ref<FragmentedSharedBuffer>> keyIDs)
+{
+    return keyIDs.map([] (auto& keyID) {
+        return keyID.copyRef();
+    });
+}
+
 static void bufferWasConsumedCallback(CMNotificationCenterRef, const void* listener, CFStringRef notificationName, const void*, CFTypeRef)
 {
     if (!CFEqual(PAL::kCMSampleBufferConsumerNotification_BufferConsumed, notificationName))
@@ -303,9 +328,12 @@ Ref<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePr
 
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent, Ref<SourceBufferParser>&& parser)
     : m_parser(WTFMove(parser))
-    , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:makeWeakPtr(*this)]))
-    , m_isAppendingGroup(adoptOSObject(dispatch_group_create()))
+    , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:*this]))
+    , m_appendQueue(WorkQueue::create("SourceBufferPrivateAVFObjC data parser queue"))
     , m_mediaSource(parent)
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    , m_keyStatusesChangedObserver(makeUniqueRef<Observer<void()>>([this] { keyStatusesChanged(); }))
+#endif
     , m_mapID(nextMapID())
 #if !RELEASE_LOG_DISABLED
     , m_logger(parent->logger())
@@ -321,7 +349,7 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     m_parser->setLogger(m_logger.get(), m_logIdentifier);
 #endif
 
-    sourceBufferMap().add(m_mapID, makeWeakPtr(*this));
+    sourceBufferMap().add(m_mapID, *this);
 }
 
 SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
@@ -363,12 +391,15 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
 
     clearTracks();
 
+    m_protectedTrackInitDataMap.swap(m_pendingProtectedTrackInitDataMap);
+    m_pendingProtectedTrackInitDataMap.clear();
+
     for (auto videoTrackInfo : segment.videoTracks) {
-        videoTrackInfo.track->setSelectedChangedCallback([weakThis = makeWeakPtr(this), this] (VideoTrackPrivate& track, bool selected) {
+        videoTrackInfo.track->setSelectedChangedCallback([weakThis = WeakPtr { *this }, this] (VideoTrackPrivate& track, bool selected) {
             if (!weakThis)
                 return;
 
-            auto videoTrackSelectedChanged = [weakThis, this, trackRef = makeRef(track), selected] {
+            auto videoTrackSelectedChanged = [weakThis, this, trackRef = Ref { track }, selected] {
                 if (!weakThis)
                     return;
                 trackDidChangeSelected(trackRef, selected);
@@ -386,11 +417,11 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
     }
 
     for (auto audioTrackInfo : segment.audioTracks) {
-        audioTrackInfo.track->setEnabledChangedCallback([weakThis = makeWeakPtr(this), this] (AudioTrackPrivate& track, bool enabled) {
+        audioTrackInfo.track->setEnabledChangedCallback([weakThis = WeakPtr { *this }, this] (AudioTrackPrivate& track, bool enabled) {
             if (!weakThis)
                 return;
 
-            auto audioTrackEnabledChanged= [weakThis, this, trackRef = makeRef(track), enabled] {
+            auto audioTrackEnabledChanged= [weakThis, this, trackRef = Ref { track }, enabled] {
                 if (!weakThis)
                     return;
 
@@ -409,7 +440,7 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
     }
 
     m_processingInitializationSegment = true;
-    didReceiveInitializationSegment(WTFMove(segment), [this, weakThis = makeWeakPtr(*this), abortCalled = m_abortCalled]() {
+    didReceiveInitializationSegment(WTFMove(segment), [this, weakThis = WeakPtr { *this }, abortCalled = m_abortCalled]() {
         ASSERT(isMainThread());
         if (!weakThis)
             return;
@@ -457,9 +488,15 @@ void SourceBufferPrivateAVFObjC::didEncounterErrorDuringParsing(int32_t code)
     m_parsingSucceeded = false;
 }
 
-void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSample>&& mediaSample, uint64_t trackId, const String& mediaType)
+void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& mediaSample, uint64_t trackId, const String& mediaType)
 {
     UNUSED_PARAM(mediaType);
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    auto findResult = m_protectedTrackInitDataMap.find(trackId);
+    if (findResult != m_protectedTrackInitDataMap.end())
+        mediaSample->setKeyIDs(copyKeyIDs(findResult->value.keyIDs));
+#endif
 
     if (m_processingInitializationSegment) {
         DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
@@ -507,7 +544,7 @@ void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataF
 #endif
 }
 
-void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(Ref<Uint8Array>&& initData, uint64_t trackID, Box<BinarySemaphore> hasSessionSemaphore)
+void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(Ref<SharedBuffer>&& initData, uint64_t trackID, Box<BinarySemaphore> hasSessionSemaphore)
 {
     auto player = this->player();
     if (!player)
@@ -518,11 +555,15 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 
     m_protectedTrackID = trackID;
     m_initData = WTFMove(initData);
-    m_mediaSource->sourceBufferKeyNeeded(this, m_initData.get());
+    m_mediaSource->sourceBufferKeyNeeded(this, *m_initData);
+
     if (auto session = player->cdmSession()) {
-        if (auto parser = this->streamDataParser())
+        if (sampleBufferRenderersSupportKeySession()) {
+            // no-op.
+        } else if (auto parser = this->streamDataParser())
             session->addParser(parser);
-        hasSessionSemaphore->signal();
+        if (hasSessionSemaphore)
+            hasSessionSemaphore->signal();
         return;
     }
 #endif
@@ -532,14 +573,17 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     m_hasSessionSemaphore = hasSessionSemaphore;
     
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    auto initDataBuffer = SharedBuffer::create(m_initData->data(), m_initData->byteLength());
-    auto keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(initDataBuffer);
+    auto keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(*m_initData);
     if (!keyIDs)
         return;
 
+    m_pendingProtectedTrackInitDataMap.set(trackID, TrackInitData { m_initData.copyRef(), *keyIDs });
+
     if (m_cdmInstance) {
         if (auto instanceSession = m_cdmInstance->sessionForKeyIDs(keyIDs.value())) {
-            if (auto parser = this->streamDataParser())
+            if (sampleBufferRenderersSupportKeySession()) {
+                // no-op.
+            } else if (auto parser = this->streamDataParser())
                 [instanceSession->contentKeySession() addContentKeyRecipient:parser];
             if (m_hasSessionSemaphore) {
                 m_hasSessionSemaphore->signal();
@@ -551,7 +595,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     }
 
     m_keyIDs = WTFMove(keyIDs.value());
-    player->initializationDataEncountered("sinf", initDataBuffer->tryCreateArrayBuffer());
+    player->initializationDataEncountered("sinf", m_initData->tryCreateArrayBuffer());
 
     m_waitingForKey = true;
     player->waitingForKeyChanged();
@@ -562,19 +606,9 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     UNUSED_PARAM(hasSessionSemaphore);
 }
 
-static dispatch_queue_t globalDataParserQueue()
+void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
 {
-    static dispatch_queue_t globalQueue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        globalQueue = dispatch_queue_create("SourceBufferPrivateAVFObjC data parser queue", DISPATCH_QUEUE_CONCURRENT);
-    });
-    return globalQueue;
-}
-
-void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
-{
-    ALWAYS_LOG(LOGIDENTIFIER, "data length = ", data.size());
+    ALWAYS_LOG(LOGIDENTIFIER, "data length = ", data->size());
 
     ASSERT(!m_hasSessionSemaphore);
     ASSERT(!m_abortSemaphore);
@@ -582,21 +616,21 @@ void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
     if (m_client)
         m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
 
-    m_parser->setDidParseInitializationDataCallback([weakThis = makeWeakPtr(this), abortCalled = m_abortCalled] (InitializationSegment&& segment) {
+    m_parser->setDidParseInitializationDataCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (InitializationSegment&& segment) {
         ASSERT(isMainThread());
         if (!weakThis || abortCalled != weakThis->m_abortCalled)
             return;
         weakThis->didParseInitializationData(WTFMove(segment));
     });
 
-    m_parser->setDidEncounterErrorDuringParsingCallback([weakThis = makeWeakPtr(this), abortCalled = m_abortCalled] (int32_t errorCode) {
+    m_parser->setDidEncounterErrorDuringParsingCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (int32_t errorCode) {
         ASSERT(isMainThread());
         if (!weakThis || abortCalled != weakThis->m_abortCalled)
             return;
         weakThis->didEncounterErrorDuringParsing(errorCode);
     });
 
-    m_parser->setDidProvideMediaDataCallback([weakThis = makeWeakPtr(this), abortCalled = m_abortCalled] (Ref<MediaSample>&& sample, uint64_t trackId, const String& mediaType) {
+    m_parser->setDidProvideMediaDataCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (Ref<MediaSampleAVFObjC>&& sample, uint64_t trackId, const String& mediaType) {
         ASSERT(isMainThread());
         if (!weakThis || abortCalled != weakThis->m_abortCalled)
             return;
@@ -604,7 +638,7 @@ void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
     });
 
     m_abortSemaphore = Box<Semaphore>::create(0);
-    m_parser->setWillProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = makeWeakPtr(this), abortSemaphore = m_abortSemaphore, abortCalled = m_abortCalled] (uint64_t trackID) mutable {
+    m_parser->setWillProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = WeakPtr { *this }, abortSemaphore = m_abortSemaphore, abortCalled = m_abortCalled] (uint64_t trackID) mutable {
         // We must call synchronously to the main thread, as the AVStreamSession must be associated
         // with the streamDataParser before the delegate method returns.
         Box<BinarySemaphore> respondedSemaphore = Box<BinarySemaphore>::create();
@@ -625,7 +659,7 @@ void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
         }
     });
 
-    m_parser->setDidProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = makeWeakPtr(this), abortSemaphore = m_abortSemaphore, abortCalled = m_abortCalled](Ref<Uint8Array>&& initData, uint64_t trackID) mutable {
+    m_parser->setDidProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = WeakPtr { *this }, abortSemaphore = m_abortSemaphore, abortCalled = m_abortCalled](Ref<SharedBuffer>&& initData, uint64_t trackID) mutable {
         // Called on the data parser queue.
         Box<BinarySemaphore> hasSessionSemaphore = Box<BinarySemaphore>::create();
         callOnMainThread([weakThis = WTFMove(weakThis), abortCalled, initData = WTFMove(initData), trackID, hasSessionSemaphore] () mutable {
@@ -645,10 +679,16 @@ void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
         }
     });
 
-    m_parsingSucceeded = true;
-    dispatch_group_enter(m_isAppendingGroup.get());
+    m_parser->setDidProvideContentKeyRequestIdentifierForTrackIDCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (Ref<SharedBuffer>&& initData, uint64_t trackID) {
+        ASSERT(isMainThread());
+        if (!weakThis || abortCalled != weakThis->m_abortCalled)
+            return;
+        weakThis->didProvideContentKeyRequestInitializationDataForTrackID(WTFMove(initData), trackID, nullptr);
+    });
 
-    dispatch_async(globalDataParserQueue(), [data = WTFMove(data), weakThis = m_appendWeakFactory.createWeakPtr(*this), parser = m_parser, isAppendingGroup = m_isAppendingGroup, abortCalled = m_abortCalled]() mutable {
+    m_parsingSucceeded = true;
+
+    m_appendQueue->dispatch([data = WTFMove(data), weakThis = m_appendWeakFactory.createWeakPtr(*this), parser = m_parser, abortCalled = m_abortCalled]() mutable {
         parser->appendData(WTFMove(data), [weakThis = WTFMove(weakThis), abortCalled]() mutable {
             callOnMainThread([weakThis = WTFMove(weakThis), abortCalled] {
                 if (!weakThis || abortCalled != weakThis->m_abortCalled)
@@ -662,7 +702,6 @@ void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
                 weakThis->appendCompleted();
             });
         });
-        dispatch_group_leave(isAppendingGroup.get());
     });
 }
 
@@ -708,7 +747,8 @@ void SourceBufferPrivateAVFObjC::resetParserState()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    dispatch_group_wait(m_isAppendingGroup.get(), DISPATCH_TIME_FOREVER);
+    // Wait until all tasks in the workqueue have run.
+    m_appendQueue->dispatchSync([] { });
     m_mediaSamples.clear();
     m_hasPendingAppendCompletedCallback = false;
     m_processingInitializationSegment = false;
@@ -746,6 +786,11 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
         [renderer flush];
         [renderer stopRequestingMediaData];
         [m_errorListener stopObservingRenderer:renderer.get()];
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
+            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:renderer.get()];
+#endif
     }
 
     [m_errorListener invalidate];
@@ -853,7 +898,12 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
                 return;
             }
 
-            auto weakThis = makeWeakPtr(*this);
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
+            [m_cdmInstance->contentKeySession() addContentKeyRecipient:renderer.get()];
+#endif
+
+            WeakPtr weakThis { *this };
             [renderer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 if (weakThis)
                     weakThis->didBecomeReadyForMoreSamples(trackID);
@@ -870,7 +920,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
 
 AVStreamDataParser* SourceBufferPrivateAVFObjC::streamDataParser() const
 {
-    if (is<SourceBufferParserAVFObjC>(m_parser.get()))
+    if (is<SourceBufferParserAVFObjC>(m_parser))
         return downcast<SourceBufferParserAVFObjC>(m_parser.get()).streamDataParser();
     return nil;
 }
@@ -886,7 +936,7 @@ void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* ses
     if (m_session)
         m_session->removeSourceBuffer(this);
 
-    m_session = makeWeakPtr(session);
+    m_session = session;
 
     if (m_session) {
         m_session->addSourceBuffer(this);
@@ -896,7 +946,7 @@ void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* ses
         }
 
         if (m_hdcpError) {
-            callOnMainThread([weakThis = makeWeakPtr(*this)] {
+            callOnMainThread([weakThis = WeakPtr { *this }] {
                 if (!weakThis || !weakThis->m_session || !weakThis->m_hdcpError)
                     return;
 
@@ -913,13 +963,30 @@ void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* ses
 void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
 {
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    auto* fpsInstance = is<CDMInstanceFairPlayStreamingAVFObjC>(instance) ? downcast<CDMInstanceFairPlayStreamingAVFObjC>(instance) : nullptr;
+    auto* fpsInstance = dynamicDowncast<CDMInstanceFairPlayStreamingAVFObjC>(instance);
     if (fpsInstance == m_cdmInstance)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    if (sampleBufferRenderersSupportKeySession() && m_cdmInstance) {
+        if (m_displayLayer)
+            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_displayLayer.get()];
+
+        for (auto& audioRenderer : m_audioRenderers.values())
+            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:audioRenderer.get()];
+    }
+
     m_cdmInstance = fpsInstance;
+
+    if (sampleBufferRenderersSupportKeySession() && m_cdmInstance) {
+        if (m_displayLayer)
+            [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_displayLayer.get()];
+
+        for (auto& audioRenderer : m_audioRenderers.values())
+            [m_cdmInstance->contentKeySession() addContentKeyRecipient:audioRenderer.get()];
+    }
+
     attemptToDecrypt();
 #else
     UNUSED_PARAM(instance);
@@ -936,8 +1003,10 @@ void SourceBufferPrivateAVFObjC::attemptToDecrypt()
     if (!instanceSession)
         return;
 
-    if (auto parser = this->streamDataParser())
-        [instanceSession->contentKeySession() addContentKeyRecipient:parser];
+    if (!sampleBufferRenderersSupportKeySession()) {
+        if (auto parser = this->streamDataParser())
+            [instanceSession->contentKeySession() addContentKeyRecipient:parser];
+    }
     if (m_hasSessionSemaphore) {
         m_hasSessionSemaphore->signal();
         m_hasSessionSemaphore = nullptr;
@@ -1091,7 +1160,7 @@ void SourceBufferPrivateAVFObjC::flushVideo()
 
     if (m_decompressionSession) {
         m_decompressionSession->flush();
-        m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = makeWeakPtr(*this)] {
+        m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }] {
             if (weakThis && weakThis->player())
                 weakThis->player()->setHasAvailableVideoFrame(true);
         });
@@ -1115,18 +1184,88 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         player->setHasAvailableAudioSample(renderer, false);
 }
 
+bool SourceBufferPrivateAVFObjC::trackIsBlocked(uint64_t trackID) const
+{
+    for (auto& samplePair : m_blockedSamples) {
+        if (samplePair.first == trackID)
+            return true;
+    }
+    return false;
+}
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+void SourceBufferPrivateAVFObjC::keyStatusesChanged()
+{
+    while (!m_blockedSamples.isEmpty()) {
+        auto& firstPair = m_blockedSamples.first();
+
+        // If we still can't enqueue the sample, bail.
+        if (!canEnqueueSample(firstPair.first, firstPair.second))
+            return;
+
+        auto firstPairTaken = m_blockedSamples.takeFirst();
+        enqueueSample(WTFMove(firstPairTaken.second), firstPairTaken.first);
+    }
+}
+#endif
+
+bool SourceBufferPrivateAVFObjC::canEnqueueSample(uint64_t trackID, const MediaSampleAVFObjC& sample)
+{
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    // If sample buffers don't support AVContentKeySession: enqueue sample
+    if (!sampleBufferRenderersSupportKeySession())
+        return true;
+
+    // if sample is unencrytped: enqueue sample
+    if (sample.keyIDs().isEmpty())
+        return true;
+
+    // if sample is encrypted, but we are not attached to a CDM: do not enqueue sample.
+    if (!m_cdmInstance)
+        return false;
+
+    // if sample is encrypted, and keyIDs match the current set of keyIDs: enqueue sample.
+    auto findResult = m_currentTrackIDs.find(trackID);
+    if (findResult != m_currentTrackIDs.end() && findResult->value == sample.keyIDs())
+        return true;
+
+    // if sample's set of keyIDs does not match the current set of keyIDs, consult with the CDM
+    // to determine if the keyIDs are usable; if so, update the current set of keyIDs and enqueue sample.
+    if (m_cdmInstance->isAnyKeyUsable(sample.keyIDs())) {
+        m_currentTrackIDs.set(trackID, sample.keyIDs());
+        return true;
+    }
+    return false;
+#else
+    return true;
+#endif
+}
+
 void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const AtomString& trackIDString)
 {
     auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
     if (trackID != m_enabledVideoTrackID && !m_audioRenderers.contains(trackID))
         return;
 
-    PlatformSample platformSample = sample->platformSample();
-    if (platformSample.type != PlatformSample::CMSampleBufferType)
+    ASSERT(is<MediaSampleAVFObjC>(sample));
+    if (!is<MediaSampleAVFObjC>(sample))
         return;
 
+    Ref<MediaSampleAVFObjC> sampleAVFObjC = static_reference_cast<MediaSampleAVFObjC>(WTFMove(sample));
+    if (!sampleAVFObjC->keyIDs().isEmpty() && !canEnqueueSample(trackID, sampleAVFObjC)) {
+        m_blockedSamples.append({ trackID, WTFMove(sampleAVFObjC) });
+        return;
+    }
+
+    enqueueSample(WTFMove(sampleAVFObjC), trackID);
+}
+
+void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample, uint64_t trackID)
+{
     auto logSiteIdentifier = LOGIDENTIFIER;
     DEBUG_LOG(logSiteIdentifier, "track ID = ", trackID, ", sample = ", sample.get());
+
+    PlatformSample platformSample = sample->platformSample();
 
     CMFormatDescriptionRef formatDescription = PAL::CMSampleBufferGetFormatDescription(platformSample.sample.cmSampleBuffer);
     ASSERT(formatDescription);
@@ -1183,7 +1322,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
             } else {
 
                 [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-                [m_displayLayer prerollDecodeWithCompletionHandler:[this, logSiteIdentifier, weakThis = makeWeakPtr(*this)] (BOOL success) mutable {
+                [m_displayLayer prerollDecodeWithCompletionHandler:[this, logSiteIdentifier, weakThis = WeakPtr { *this }] (BOOL success) mutable {
                     if (!weakThis)
                         return;
 
@@ -1278,7 +1417,7 @@ void SourceBufferPrivateAVFObjC::willSeek()
 
 FloatSize SourceBufferPrivateAVFObjC::naturalSize()
 {
-    return m_cachedSize.value_or(FloatSize());
+    return valueOrDefault(m_cachedSize);
 }
 
 void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(uint64_t trackID)
@@ -1294,6 +1433,9 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(uint64_t trackID)
     else
         return;
 
+    if (trackIsBlocked(trackID))
+        return;
+
     provideMediaData(AtomString::number(trackID));
 }
 
@@ -1307,14 +1449,14 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomS
             });
         }
         if (m_displayLayer) {
-            auto weakThis = makeWeakPtr(*this);
+            WeakPtr weakThis { *this };
             [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
                 if (weakThis)
                     weakThis->didBecomeReadyForMoreSamples(trackID);
             }];
         }
     } else if (m_audioRenderers.contains(trackID)) {
-        auto weakThis = makeWeakPtr(*this);
+        WeakPtr weakThis { *this };
         [m_audioRenderers.get(trackID) requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
             if (weakThis)
                 weakThis->didBecomeReadyForMoreSamples(trackID);
@@ -1385,12 +1527,22 @@ void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer
         [m_displayLayer flush];
         [m_displayLayer stopRequestingMediaData];
         [m_errorListener stopObservingLayer:m_displayLayer.get()];
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
+            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_displayLayer.get()];
+#endif
     }
 
     m_displayLayer = layer;
 
     if (m_displayLayer) {
-        auto weakThis = makeWeakPtr(*this);
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
+            [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_displayLayer.get()];
+#endif
+
+        WeakPtr weakThis { *this };
         [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
             if (weakThis)
                 weakThis->didBecomeReadyForMoreSamples(m_enabledVideoTrackID);
@@ -1417,11 +1569,11 @@ void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSes
     if (!m_decompressionSession)
         return;
 
-    m_decompressionSession->requestMediaDataWhenReady([weakThis = makeWeakPtr(*this)] {
+    m_decompressionSession->requestMediaDataWhenReady([weakThis = WeakPtr { *this }] {
         if (weakThis)
             weakThis->didBecomeReadyForMoreSamples(weakThis->m_enabledVideoTrackID);
     });
-    m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = makeWeakPtr(*this)] {
+    m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }] {
         if (weakThis && weakThis->player())
             weakThis->player()->setHasAvailableVideoFrame(true);
     });

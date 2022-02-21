@@ -233,7 +233,7 @@ void WaylandCompositor::Surface::attachBuffer(struct wl_resource* buffer)
 
     if (buffer) {
         auto* compositorBuffer = WaylandCompositor::Buffer::getOrCreate(buffer);
-        m_pendingBuffer = makeWeakPtr(*compositorBuffer);
+        m_pendingBuffer = *compositorBuffer;
     }
 }
 
@@ -501,7 +501,7 @@ WaylandCompositor::WaylandCompositor()
         return;
     }
 
-    String displayName = "webkitgtk-wayland-compositor-" + createCanonicalUUIDString();
+    String displayName = "webkitgtk-wayland-compositor-" + createVersion4UUIDString();
     if (wl_display_add_socket(display.get(), displayName.utf8().data()) == -1) {
         WTFLogAlways("Nested Wayland compositor could not create display socket");
         return;
@@ -571,7 +571,7 @@ void WaylandCompositor::bindSurfaceToWebPage(WaylandCompositor::Surface* surface
 
     unbindWebPage(*webPage);
     surface->setWebPage(webPage);
-    m_pageMap.set(webPage, makeWeakPtr(*surface));
+    m_pageMap.set(webPage, *surface);
 }
 
 void WaylandCompositor::bindWebPage(WebPageProxy& webPage)

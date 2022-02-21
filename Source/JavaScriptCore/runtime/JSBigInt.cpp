@@ -55,6 +55,7 @@
 #include "StructureInlines.h"
 #include <algorithm>
 #include <wtf/Hasher.h>
+#include <wtf/Int128.h>
 #include <wtf/MathExtras.h>
 
 namespace JSC {
@@ -116,7 +117,7 @@ inline JSBigInt* JSBigInt::createWithLength(JSGlobalObject* nullOrGlobalObjectFo
     }
 
     ASSERT(length <= maxLength);
-    void* data = vm.primitiveGigacageAuxiliarySpace.allocateNonVirtual(vm, length * sizeof(Digit), nullptr, AllocationFailureMode::ReturnNull);
+    void* data = vm.primitiveGigacageAuxiliarySpace().allocate(vm, length * sizeof(Digit), nullptr, AllocationFailureMode::ReturnNull);
     if (UNLIKELY(!data)) {
         if (nullOrGlobalObjectForOOM) {
             auto scope = DECLARE_THROW_SCOPE(vm);
@@ -124,7 +125,7 @@ inline JSBigInt* JSBigInt::createWithLength(JSGlobalObject* nullOrGlobalObjectFo
         }
         return nullptr;
     }
-    JSBigInt* bigInt = new (NotNull, allocateCell<JSBigInt>(vm.heap)) JSBigInt(vm, vm.bigIntStructure.get(), reinterpret_cast<Digit*>(data), length);
+    JSBigInt* bigInt = new (NotNull, allocateCell<JSBigInt>(vm)) JSBigInt(vm, vm.bigIntStructure.get(), reinterpret_cast<Digit*>(data), length);
     bigInt->finishCreation(vm);
     return bigInt;
 }
@@ -229,6 +230,62 @@ JSBigInt* JSBigInt::createFrom(JSGlobalObject* globalObject, int64_t value)
     } else
         unsignedValue = value;
     return createFromImpl(globalObject, unsignedValue, sign);
+}
+
+JSBigInt* JSBigInt::createFrom(JSGlobalObject* globalObject, Int128 value)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!value)
+        RELEASE_AND_RETURN(scope, createZero(globalObject));
+
+    UInt128 unsignedValue;
+    bool sign = false;
+    if (value < 0) {
+        unsignedValue = static_cast<UInt128>(-(value + 1)) + 1;
+        sign = true;
+    } else
+        unsignedValue = value;
+
+    if (unsignedValue <= UINT64_MAX)
+        RELEASE_AND_RETURN(scope, createFromImpl(globalObject, static_cast<uint64_t>(unsignedValue), sign));
+
+    if constexpr (sizeof(Digit) == 8) {
+        JSBigInt* bigInt = createWithLength(globalObject, 2);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+
+        Digit lowBits = static_cast<Digit>(static_cast<uint64_t>(unsignedValue));
+        Digit highBits = static_cast<Digit>(static_cast<uint64_t>(unsignedValue >> 64));
+
+        ASSERT(highBits);
+
+        bigInt->setDigit(0, lowBits);
+        bigInt->setDigit(1, highBits);
+        bigInt->setSign(sign);
+        return bigInt;
+    }
+
+    ASSERT(sizeof(Digit) == 4);
+
+    Digit digit0 = static_cast<Digit>(static_cast<uint64_t>(unsignedValue));
+    Digit digit1 = static_cast<Digit>(static_cast<uint64_t>(unsignedValue >> 32));
+    Digit digit2 = static_cast<Digit>(static_cast<uint64_t>(unsignedValue >> 64));
+    Digit digit3 = static_cast<Digit>(static_cast<uint64_t>(unsignedValue >> 96));
+
+    ASSERT(digit2 || digit3);
+
+    int length = digit3 ? 4 : 3;
+    JSBigInt* bigInt = createWithLength(globalObject, length);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    bigInt->setDigit(0, digit0);
+    bigInt->setDigit(1, digit1);
+    bigInt->setDigit(2, digit2);
+    if (digit3)
+        bigInt->setDigit(3, digit3);
+    bigInt->setSign(sign);
+    return bigInt;
 }
 
 JSBigInt* JSBigInt::createFrom(JSGlobalObject* globalObject, bool value)

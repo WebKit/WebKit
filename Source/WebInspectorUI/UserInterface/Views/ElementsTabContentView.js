@@ -43,7 +43,7 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         if (InspectorBackend.hasDomain("LayerTree"))
             detailsSidebarPanelConstructors.push(WI.LayerTreeDetailsSidebarPanel);
 
-        super(ElementsTabContentView.tabInfo(), {detailsSidebarPanelConstructors, disableBackForward: true});
+        super(ElementsTabContentView.tabInfo(), {detailsSidebarPanelConstructors, hideBackForwardButtons: true, disableBackForwardNavigation: true});
     }
 
     static tabInfo()

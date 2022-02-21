@@ -31,6 +31,7 @@ class ContextMtl;
 namespace mtl
 {
 
+class ContextDevice;
 class CommandQueue;
 class BlitCommandEncoder;
 class Resource;
@@ -63,6 +64,10 @@ class Resource : angle::NonCopyable
     bool isCPUReadMemNeedSync() const { return mUsageRef->cpuReadMemNeedSync; }
     void resetCPUReadMemNeedSync() { mUsageRef->cpuReadMemNeedSync = false; }
 
+    bool isCPUReadMemSyncPending() const { return mUsageRef->cpuReadMemSyncPending; }
+    void setCPUReadMemSyncPending(bool value) const { mUsageRef->cpuReadMemSyncPending = value; }
+    void resetCPUReadMemSyncPending() { mUsageRef->cpuReadMemSyncPending = false; }
+
     bool isCPUReadMemDirty() const { return mUsageRef->cpuReadMemDirty; }
     void resetCPUReadMemDirty() { mUsageRef->cpuReadMemDirty = false; }
 
@@ -80,8 +85,13 @@ class Resource : angle::NonCopyable
         uint64_t cmdBufferQueueSerial = 0;
 
         // This flag means the resource was issued to be modified by GPU, if CPU wants to read
-        // its content, explicit synchornization call must be invoked.
+        // its content, explicit synchronization call must be invoked.
         bool cpuReadMemNeedSync = false;
+
+        // This flag is set when synchronization for the resource has been
+        // encoded on the GPU, and a map operation must wait
+        // until it's completed.
+        bool cpuReadMemSyncPending = false;
 
         // This flag is useful for BufferMtl to know whether it should update the shadow copy
         bool cpuReadMemDirty = false;

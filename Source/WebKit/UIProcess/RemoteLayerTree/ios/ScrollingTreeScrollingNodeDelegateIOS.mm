@@ -45,7 +45,6 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/SetForScope.h>
 
-
 @implementation WKScrollingNodeScrollViewDelegate
 
 - (instancetype)initWithScrollingTreeNodeDelegate:(WebKit::ScrollingTreeScrollingNodeDelegateIOS*)delegate
@@ -231,7 +230,8 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
         || scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::TotalContentsSize)
         || scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ReachableContentsSize)
         || scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollPosition)
-        || scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollOrigin)) {
+        || scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollOrigin)
+        || scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaParams)) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         UIScrollView *scrollView = this->scrollView();
         if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
@@ -252,7 +252,15 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
             scrollView.contentSize = scrollingStateNode.reachableContentsSize();
             recomputeInsets = true;
         }
-
+#if HAVE(UIKIT_OVERSCROLL_BEHAVIOR_SUPPORT)
+        if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaParams)) {
+            auto params = scrollingStateNode.scrollableAreaParameters();
+            scrollView.bouncesHorizontally = params.horizontalOverscrollBehavior != OverscrollBehavior::None;
+            scrollView.bouncesVertically = params.verticalOverscrollBehavior != OverscrollBehavior::None;
+            scrollView._allowsParentToBeginHorizontally = params.horizontalOverscrollBehavior == OverscrollBehavior::Auto;
+            scrollView._allowsParentToBeginVertically = params.verticalOverscrollBehavior == OverscrollBehavior::Auto;
+        }
+#endif
         if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollOrigin))
             recomputeInsets = true;
 
@@ -289,10 +297,26 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
     }
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
-        const auto& requestedScrollData = scrollingStateNode.requestedScrollData();
-        scrollingNode().scrollTo(requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
+        scrollingNode().handleScrollPositionRequest(scrollingStateNode.requestedScrollData());
         scrollingTree().setNeedsApplyLayerPositionsAfterCommit();
     }
+}
+
+bool ScrollingTreeScrollingNodeDelegateIOS::startAnimatedScrollToPosition(FloatPoint scrollPosition)
+{
+    auto scrollOffset = ScrollableArea::scrollOffsetFromPosition(scrollPosition, toFloatSize(scrollOrigin()));
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [scrollView() setContentOffset:scrollOffset animated:YES];
+    END_BLOCK_OBJC_EXCEPTIONS
+    return true;
+}
+
+void ScrollingTreeScrollingNodeDelegateIOS::stopAnimatedScroll()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [scrollView() _stopScrollingAndZoomingAnimations];
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)

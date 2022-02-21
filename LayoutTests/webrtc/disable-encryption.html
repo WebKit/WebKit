@@ -43,7 +43,7 @@ promise_test(async (test) => {
     const offer = await pc1.createOffer();
     await pc1.setLocalDescription(offer);
 
-    return promise_rejects(test, 'InvalidAccessError', pc2.setRemoteDescription(offer));
+    return promise_rejects_dom(test, 'InvalidAccessError', pc2.setRemoteDescription(offer));
 }, "Make sure a pc with encryption and a pc without encryption cannot talk");
     </script>
   </body>

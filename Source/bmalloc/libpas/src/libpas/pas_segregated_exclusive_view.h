@@ -26,24 +26,28 @@
 #ifndef PAS_SEGREGATED_EXCLUSIVE_VIEW_H
 #define PAS_SEGREGATED_EXCLUSIVE_VIEW_H
 
-#include "pas_compact_segregated_global_size_directory_ptr.h"
+#include "pas_compact_segregated_size_directory_ptr.h"
 #include "pas_lock.h"
-#include "pas_segregated_exclusive_view_ownership_kind.h"
+#include "pas_segregated_deallocation_mode.h"
 #include "pas_segregated_view.h"
 
 PAS_BEGIN_EXTERN_C;
 
 struct pas_segregated_exclusive_view;
 struct pas_segregated_page;
+struct pas_thread_local_cache;
 typedef struct pas_segregated_exclusive_view pas_segregated_exclusive_view;
 typedef struct pas_segregated_page pas_segregated_page;
+typedef struct pas_thread_local_cache pas_thread_local_cache;
+
+PAS_API extern size_t pas_segregated_exclusive_view_count;
 
 struct pas_segregated_exclusive_view {
     void* page_boundary;
     
-    pas_compact_segregated_global_size_directory_ptr directory;
+    pas_compact_segregated_size_directory_ptr directory;
 
-    pas_segregated_exclusive_view_ownership_kind ownership_kind;
+    bool is_owned;
 
     unsigned index;
 
@@ -91,29 +95,13 @@ pas_segregated_exclusive_view_as_ineligible_view_non_null(pas_segregated_exclusi
 
 PAS_API pas_segregated_exclusive_view*
 pas_segregated_exclusive_view_create(
-    pas_segregated_global_size_directory* directory,
+    pas_segregated_size_directory* directory,
     size_t index);
-
-PAS_API bool pas_segregated_exclusive_view_should_table(
-    pas_segregated_exclusive_view* view,
-    pas_segregated_page_config* page_config);
-
-PAS_API void pas_segregated_exclusive_ish_view_note_eligibility_impl(
-    pas_segregated_page* page,
-    pas_segregated_directory* directory,
-    pas_segregated_view eligible_owning_view,
-    unsigned view_index);
-
-PAS_API void pas_segregated_exclusive_view_note_eligibility(
-    pas_segregated_exclusive_view* view,
-    pas_segregated_page* page);
 
 PAS_API void pas_segregated_exclusive_view_note_emptiness(
     pas_segregated_exclusive_view* view,
     pas_segregated_page* page);
 
-PAS_API pas_heap_summary pas_segregated_exclusive_ish_view_compute_summary_impl(
-    pas_segregated_exclusive_view* view);
 PAS_API pas_heap_summary pas_segregated_exclusive_view_compute_summary(
     pas_segregated_exclusive_view* view);
 

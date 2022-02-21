@@ -64,7 +64,7 @@ void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromi
     // When this method is invoked, the user agent must run the following steps:
     // 1. Let promise be a new promise.
     // 2. Run the following steps in parallel:
-    document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = makeWeakPtr(*this), weakDocument = makeWeakPtr(document), promise = WTFMove(promise)] () mutable {
+    document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, weakDocument = WeakPtr { document }, promise = WTFMove(promise)] () mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

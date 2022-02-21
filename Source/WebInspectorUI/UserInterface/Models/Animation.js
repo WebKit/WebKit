@@ -208,8 +208,12 @@ WI.Animation = class Animation extends WI.Object
         WI.domManager.ensureDocument();
 
         let target = WI.assumingMainTarget();
-        target.AnimationAgent.requestEffectTarget(this._animationId, (error, nodeId) => {
-            this._effectTarget = !error ? WI.domManager.nodeForId(nodeId) : null;
+        target.AnimationAgent.requestEffectTarget(this._animationId, (error, effectTarget) => {
+            // COMPATIBILITY (iOS 15.4): nodeId was renamed to effectTarget and changed from DOM.NodeId to DOM.Styleable.
+            if (!isNaN(effectTarget))
+                effectTarget = {nodeId: effectTarget};
+
+            this._effectTarget = !error ? WI.DOMStyleable.fromPayload(effectTarget) : null;
 
             for (let requestEffectTargetCallback of this._requestEffectTargetCallbacks)
                 requestEffectTargetCallback(this._effectTarget);

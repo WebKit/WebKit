@@ -127,6 +127,9 @@ enum TracePointCode {
     RenderServerSnapshotEnd,
     TakeSnapshotStart,
     TakeSnapshotEnd,
+    SyntheticMomentumStart,
+    SyntheticMomentumEnd,
+    SyntheticMomentumEvent,
 
     UIProcessRange = 14000,
     CommitLayerTreeStart,
@@ -193,6 +196,7 @@ WTF_EXPORT_PRIVATE bool WTFSignpostsEnabled();
 WTF_EXPORT_PRIVATE os_log_t WTFSignpostLogHandle();
 WTF_EXTERN_C_END
 
+// These macros only emit signposts on internal builds when WEBKIT_SIGNPOSTS_ENABLED is set.
 #define WTFEmitSignpost(pointer, name, ...) \
     WTFEmitSignpostWithFunction(os_signpost_event_emit, (pointer), name, ##__VA_ARGS__)
 
@@ -211,10 +215,30 @@ do { \
     } \
 } while (0)
 
+// These macros emit signposts on all builds.
+#define WTFEmitSignpostAlways(name, format, ...) \
+    do { os_signpost_event_emit(WTFSignpostLogHandle(), OS_SIGNPOST_ID_EXCLUSIVE, name, format, ##__VA_ARGS__); } } while (0)
+
+#define WTFBeginSignpostIntervalAlways(name, format, ...) \
+    do { os_signpost_interval_begin(WTFSignpostLogHandle(), OS_SIGNPOST_ID_EXCLUSIVE, name, format, ##__VA_ARGS__); } while (0)
+
+#define WTF_OS_SIGNPOST_ANIMATION_INTERVAL_TAG "isAnimation=YES"
+
+#define WTFBeginAnimationSignpostIntervalAlways(name, format, ...) \
+    do { os_signpost_interval_begin(WTFSignpostLogHandle(), OS_SIGNPOST_ID_EXCLUSIVE, name, format " " WTF_OS_SIGNPOST_ANIMATION_INTERVAL_TAG, ##__VA_ARGS__); } while (0)
+
+#define WTFEndSignpostIntervalAlways(name, format, ...) \
+    do { os_signpost_interval_end(WTFSignpostLogHandle(), OS_SIGNPOST_ID_EXCLUSIVE, name, format, ##__VA_ARGS__); } while (0)
+
 #else
 
 #define WTFEmitSignpost(pointer, name, ...) do { } while (0)
 #define WTFBeginSignpost(pointer, name, ...) do { } while (0)
 #define WTFEndSignpost(pointer, name, ...) do { } while (0)
+
+#define WTFEmitSignpostAlways(name, format, ...) do { } while (0)
+#define WTFBeginSignpostIntervalAlways(name, format, ...) do { } while (0)
+#define WTFBeginAnimationSignpostIntervalAlways(name, format, ...) do { } while (0)
+#define WTFEndSignpostIntervalAlways(name, format, ...) do { } while (0)
 
 #endif

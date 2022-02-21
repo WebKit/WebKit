@@ -6,7 +6,6 @@
 <link rel="help" href="https://w3c.github.io/webcomponents/spec/custom/#the-defined-element-pseudo-class-defined">
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
-<link rel='stylesheet' href='../../resources/testharness.css'>
 </head>
 <body>
 <div id="log"></div>
@@ -105,28 +104,30 @@ test(function () {
 
 test(function () {
     var matchInsideConstructor = false;
+    const theException = {name: 'bad'};
     class ThrowsException extends HTMLElement {
         constructor() {
             super();
             matchInsideConstructor = this.matches(':defined');
-            throw {name: 'bad'};
+            throw theException;
         }
     };
     customElements.define('throws-exception', ThrowsException);
     var instance;
-    assert_throws({name: 'bad'}, function () { instance = new ThrowsException; });
+    assert_throws_exactly(theException, function () { instance = new ThrowsException; });
     assert_true(matchInsideConstructor);
 }, 'The defined flag of a custom element must be set inside a constructor when constructing a custom element synchronously'
     + ' even if the constructor threw an exception later');
 
 test(function () {
     var instance = document.createElement('throws-exception-2');
+    const theException = {name: 'bad'};
     document.body.appendChild(instance);
     var uncaughtError;
     window.onerror = function (message, url, lineNumber, columnNumber, error) { uncaughtError = error; return true; }
     customElements.define('throws-exception-2', class extends HTMLElement {
         constructor() {
-            throw {name: 'bad'};
+            throw theException;
         }
     });
     assert_equals(uncaughtError.name, 'bad');

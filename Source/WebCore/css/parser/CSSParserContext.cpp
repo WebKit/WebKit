@@ -46,6 +46,16 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     : baseURL(baseURL)
     , mode(mode)
 {
+    // FIXME: We should turn all of the features on from their WebCore Settings defaults.
+    if (mode == UASheetMode) {
+        individualTransformPropertiesEnabled = true;
+        focusVisibleEnabled = true;
+        inputSecurityEnabled = true;
+        containmentEnabled = true;
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+        transformStyleOptimized3DEnabled = true;
+#endif
+    }
 }
 
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
@@ -68,6 +78,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , isHTMLDocument { document.isHTMLDocument() }
     , hasDocumentSecurityOrigin { sheetBaseURL.isNull() || document.securityOrigin().canRequest(baseURL) }
     , useSystemAppearance { document.page() ? document.page()->useSystemAppearance() : false }
+    , accentColorEnabled { document.settings().accentColorEnabled() }
     , aspectRatioEnabled { document.settings().aspectRatioEnabled() }
     , colorContrastEnabled { document.settings().cssColorContrastEnabled() }
     , colorFilterEnabled { document.settings().colorFilterEnabled() }
@@ -96,10 +107,15 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , focusVisibleEnabled { document.settings().focusVisibleEnabled() }
     , hasPseudoClassEnabled { document.settings().hasPseudoClassEnabled() }
     , cascadeLayersEnabled { document.settings().cssCascadeLayersEnabled() }
+    , containerQueriesEnabled { document.settings().cssContainerQueriesEnabled() }
+    , overflowClipEnabled { document.settings().overflowClipEnabled() }
+    , gradientPremultipliedAlphaInterpolationEnabled { document.settings().cssGradientPremultipliedAlphaInterpolationEnabled() }
+    , gradientInterpolationColorSpacesEnabled { document.settings().cssGradientInterpolationColorSpacesEnabled() }
+    , inputSecurityEnabled { document.settings().cssInputSecurityEnabled() }
+    , subgridEnabled { document.settings().subgridEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
-    , overflowClipEnabled { document.settings().overflowClipEnabled() }
 {
 }
 
@@ -113,6 +129,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin
         && a.isContentOpaque == b.isContentOpaque
         && a.useSystemAppearance == b.useSystemAppearance
+        && a.accentColorEnabled == b.accentColorEnabled
         && a.aspectRatioEnabled == b.aspectRatioEnabled
         && a.colorContrastEnabled == b.colorContrastEnabled
         && a.colorFilterEnabled == b.colorFilterEnabled
@@ -141,16 +158,21 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.focusVisibleEnabled == b.focusVisibleEnabled
         && a.hasPseudoClassEnabled == b.hasPseudoClassEnabled
         && a.cascadeLayersEnabled == b.cascadeLayersEnabled
+        && a.containerQueriesEnabled == b.containerQueriesEnabled
+        && a.overflowClipEnabled == b.overflowClipEnabled
+        && a.gradientPremultipliedAlphaInterpolationEnabled == b.gradientPremultipliedAlphaInterpolationEnabled
+        && a.gradientInterpolationColorSpacesEnabled == b.gradientInterpolationColorSpacesEnabled
+        && a.inputSecurityEnabled == b.inputSecurityEnabled
 #if ENABLE(ATTACHMENT_ELEMENT)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
-        && a.overflowClipEnabled == b.overflowClipEnabled
+        && a.subgridEnabled == b.subgridEnabled
     ;
 }
 
 void add(Hasher& hasher, const CSSParserContext& context)
 {
-    unsigned bits = context.isHTMLDocument                  << 0
+    uint64_t bits = context.isHTMLDocument                  << 0
         | context.hasDocumentSecurityOrigin                 << 1
         | context.isContentOpaque                           << 2
         | context.useSystemAppearance                       << 3
@@ -180,11 +202,17 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.focusVisibleEnabled                       << 21
         | context.hasPseudoClassEnabled                     << 22
         | context.cascadeLayersEnabled                      << 23
-#if ENABLE(ATTACHMENT_ELEMENT)
-        | context.attachmentEnabled                         << 24
-#endif
+        | context.containerQueriesEnabled                   << 24
         | context.overflowClipEnabled                       << 25
-        | context.mode                                      << 26; // This is multiple bits, so keep it last.
+        | context.gradientPremultipliedAlphaInterpolationEnabled << 26
+        | context.gradientInterpolationColorSpacesEnabled   << 27
+#if ENABLE(ATTACHMENT_ELEMENT)
+        | context.attachmentEnabled                         << 28
+#endif
+        | context.accentColorEnabled                        << 29
+        | context.inputSecurityEnabled                      << 30
+        | context.subgridEnabled                            << 31
+        | (unsigned long long)context.mode                  << 32; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, bits);
 }
 
@@ -201,12 +229,16 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
     case CSSPropertySuffix:
     case CSSPropertySystem:
         return !counterStyleAtRulesEnabled;
+    case CSSPropertyAccentColor:
+        return !accentColorEnabled;
     case CSSPropertyAspectRatio:
         return !aspectRatioEnabled;
     case CSSPropertyContain:
         return !containmentEnabled;
     case CSSPropertyAppleColorFilter:
         return !colorFilterEnabled;
+    case CSSPropertyInputSecurity:
+        return !inputSecurityEnabled;
     case CSSPropertyTranslate:
     case CSSPropertyRotate:
     case CSSPropertyScale:
@@ -233,12 +265,17 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
 ResolvedURL CSSParserContext::completeURL(const String& string) const
 {
     auto result = [&] () -> ResolvedURL {
+        // See also Document::completeURL(const String&)
         if (string.isNull())
             return { };
+
+        if (CSSValue::isCSSLocalURL(string))
+            return { string, { URL(), string } };
+
         if (charset.isEmpty())
             return { string, { baseURL, string } };
-        auto encodingForURLParsing = TextEncoding { charset }.encodingForFormSubmissionOrURLParsing();
-        return { string, { baseURL, string, encodingForURLParsing == UTF8Encoding() ? nullptr : &encodingForURLParsing } };
+        auto encodingForURLParsing = PAL::TextEncoding { charset }.encodingForFormSubmissionOrURLParsing();
+        return { string, { baseURL, string, encodingForURLParsing == PAL::UTF8Encoding() ? nullptr : &encodingForURLParsing } };
     }();
 
     if (mode == WebVTTMode && !result.resolvedURL.protocolIsData())

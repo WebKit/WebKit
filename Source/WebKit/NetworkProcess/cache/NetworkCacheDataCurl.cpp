@@ -32,15 +32,15 @@ namespace WebKit {
 namespace NetworkCache {
 
 Data::Data(const uint8_t* data, size_t size)
-    : m_buffer(Box<Variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(Vector<uint8_t>(size)))
+    : m_buffer(Box<std::variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(Vector<uint8_t>(size)))
     , m_size(size)
 {
-    memcpy(WTF::get<Vector<uint8_t>>(*m_buffer).data(), data, size);
+    memcpy(std::get<Vector<uint8_t>>(*m_buffer).data(), data, size);
 }
 
-Data::Data(Variant<Vector<uint8_t>, FileSystem::MappedFileData>&& data)
-    : m_buffer(Box<Variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(WTFMove(data)))
-    , m_isMap(WTF::holds_alternative<FileSystem::MappedFileData>(*m_buffer))
+Data::Data(std::variant<Vector<uint8_t>, FileSystem::MappedFileData>&& data)
+    : m_buffer(Box<std::variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(WTFMove(data)))
+    , m_isMap(std::holds_alternative<FileSystem::MappedFileData>(*m_buffer))
 {
     m_size = WTF::switchOn(*m_buffer,
         [](const Vector<uint8_t>& buffer) -> size_t { return buffer.size(); },
@@ -113,7 +113,7 @@ RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
     if (isNull() || !isMap())
         return nullptr;
 
-    HANDLE handle = WTF::get<FileSystem::MappedFileData>(*m_buffer).fileMapping();
+    HANDLE handle = std::get<FileSystem::MappedFileData>(*m_buffer).fileMapping();
     HANDLE newHandle;
     if (!DuplicateHandle(GetCurrentProcess(), handle, GetCurrentProcess(), &newHandle, 0, false, DUPLICATE_SAME_ACCESS))
         return nullptr;

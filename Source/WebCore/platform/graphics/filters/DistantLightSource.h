@@ -29,10 +29,7 @@ namespace WebCore {
 
 class DistantLightSource : public LightSource {
 public:
-    static Ref<DistantLightSource> create(float azimuth, float elevation)
-    {
-        return adoptRef(*new DistantLightSource(azimuth, elevation));
-    }
+    WEBCORE_EXPORT static Ref<DistantLightSource> create(float azimuth, float elevation);
 
     // These are in degrees.
     float azimuth() const { return m_azimuth; }
@@ -41,22 +38,43 @@ public:
     bool setAzimuth(float) override;
     bool setElevation(float) override;
 
-    void initPaintingData(const FilterEffect&, PaintingData&) override;
+    void initPaintingData(const Filter&, const FilterImage& result, PaintingData&) const override;
     ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<Ref<DistantLightSource>> decode(Decoder&);
+
 private:
-    DistantLightSource(float azimuth, float elevation)
-        : LightSource(LS_DISTANT)
-        , m_azimuth(azimuth)
-        , m_elevation(elevation)
-    {
-    }
+    DistantLightSource(float azimuth, float elevation);
 
     float m_azimuth;
     float m_elevation;
 };
+
+template<class Encoder>
+void DistantLightSource::encode(Encoder& encoder) const
+{
+    encoder << m_azimuth;
+    encoder << m_elevation;
+}
+
+template<class Decoder>
+std::optional<Ref<DistantLightSource>> DistantLightSource::decode(Decoder& decoder)
+{
+    std::optional<float> azimuth;
+    decoder >> azimuth;
+    if (!azimuth)
+        return std::nullopt;
+
+    std::optional<float> elevation;
+    decoder >> elevation;
+    if (!elevation)
+        return std::nullopt;
+
+    return DistantLightSource::create(*azimuth, *elevation);
+}
 
 } // namespace WebCore
 

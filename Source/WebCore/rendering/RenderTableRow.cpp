@@ -93,8 +93,15 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
             // If the border width changes on a row, we need to make sure the cells in the row know to lay out again.
             // This only happens when borders are collapsed, since they end up affecting the border sides of the cell
             // itself.
-            for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell())
-                cell->setChildNeedsLayout(MarkOnlyThis);
+            auto propagageNeedsLayoutOnBorderSizeChange = [&] (auto& row) {
+                for (auto* cell = row.firstCell(); cell; cell = cell->nextCell())
+                    cell->setNeedsLayoutAndPrefWidthsRecalc();
+            };
+            propagageNeedsLayoutOnBorderSizeChange(*this);
+            if (auto* previousRow = this->previousRow())
+                propagageNeedsLayoutOnBorderSizeChange(*previousRow);
+            if (auto* nextRow = this->nextRow())
+                propagageNeedsLayoutOnBorderSizeChange(*nextRow);
         }
     }
 }
@@ -188,7 +195,7 @@ bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
         if (!cell->hasSelfPaintingLayer()) {
-            LayoutPoint cellPoint = flipForWritingModeForChild(cell, accumulatedOffset);
+            LayoutPoint cellPoint = flipForWritingModeForChild(*cell, accumulatedOffset);
             if (cell->nodeAtPoint(request, result, locationInContainer, cellPoint, action)) {
                 updateHitTestResult(result, locationInContainer.point() - toLayoutSize(cellPoint));
                 return true;

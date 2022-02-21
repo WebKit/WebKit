@@ -380,7 +380,7 @@ void JPEG2000ImageDecoder::decode(bool onlySize, bool allDataReceived)
     }
 
     struct Reader {
-        SharedBuffer::DataSegment& data;
+        const SharedBuffer& data;
         size_t offset;
     } reader = { *m_data, 0 };
 

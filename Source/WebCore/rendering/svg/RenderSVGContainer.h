@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2009 Google, Inc.  All rights reserved.
  * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2020, 2021, 2022 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +23,9 @@
 
 #pragma once
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGModelObject.h"
+#include "SVGBoundingBoxComputation.h"
 
 namespace WebCore {
 
@@ -34,52 +37,40 @@ public:
     virtual ~RenderSVGContainer();
 
     void paint(PaintInfo&, const LayoutPoint&) override;
-    void setNeedsBoundariesUpdate() final { m_needsBoundariesUpdate = true; }
-    bool needsBoundariesUpdate() final { return m_needsBoundariesUpdate; }
-    virtual bool didTransformToRootUpdate() { return false; }
     bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
+
+    FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
+    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
+    FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
 protected:
     RenderSVGContainer(SVGElement&, RenderStyle&&);
 
     const char* renderName() const override { return "RenderSVGContainer"; }
-
     bool canHaveChildren() const final { return true; }
 
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+
     void layout() override;
+    virtual void layoutChildren();
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) final;
-
-    FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
-    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
-    FloatRect repaintRectInLocalCoordinates() const final { return m_repaintBoundingBox; }
-
-    bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
-
-    // Allow RenderSVGTransformableContainer to hook in at the right time in layout()
-    virtual bool calculateLocalTransform() { return false; }
-
-    // Allow RenderSVGViewportContainer to hook in at the right times in layout(), paint() and nodeAtFloatPoint()
-    virtual void calcViewport() { }
-    virtual void applyViewportClip(PaintInfo&) { }
-    virtual bool pointIsInsideViewportClip(const FloatPoint& /*pointInParent*/) { return true; }
-
-    virtual void determineIfLayoutSizeChanged() { }
+    virtual void updateLayerInformation() { }
+    virtual void calculateViewport();
+    virtual bool pointIsInsideViewportClip(const FloatPoint&) { return true; }
 
     bool selfWillPaint();
-    void updateCachedBoundaries();
+
+    bool m_objectBoundingBoxValid { false };
+    FloatRect m_objectBoundingBox;
+    FloatRect m_strokeBoundingBox;
 
 private:
     bool isSVGContainer() const final { return true; }
-
-    FloatRect m_objectBoundingBox;
-    FloatRect m_strokeBoundingBox;
-    FloatRect m_repaintBoundingBox;
-
-    bool m_objectBoundingBoxValid { false };
-    bool m_needsBoundariesUpdate { true };
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGContainer, isSVGContainer())
+
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

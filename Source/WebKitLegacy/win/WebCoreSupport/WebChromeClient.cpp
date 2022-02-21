@@ -38,6 +38,7 @@
 #include "WebView.h"
 #include <WebCore/BString.h>
 #include <WebCore/ContextMenu.h>
+#include <WebCore/CookieConsentDecisionResult.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FileIconLoader.h>
@@ -52,6 +53,7 @@
 #include <WebCore/Icon.h>
 #include <WebCore/LocalWindowsContext.h>
 #include <WebCore/LocalizedStrings.h>
+#include <WebCore/ModalContainerTypes.h>
 #include <WebCore/NavigationAction.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -373,7 +375,7 @@ bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame& 
     return !!result;
 }
 
-void WebChromeClient::closeWindowSoon()
+void WebChromeClient::closeWindow()
 {
     // We need to remove the parent WebView from WebViewSets here, before it actually
     // closes, to make sure that JavaScript code that executes before it closes
@@ -390,7 +392,7 @@ void WebChromeClient::closeWindowSoon()
 
     m_webView->setGroupName(0);
     m_webView->stopLoading(0);
-    m_webView->closeWindowSoon();
+    m_webView->closeWindow();
 }
 
 void WebChromeClient::runJavaScriptAlert(Frame&, const String& message)
@@ -874,4 +876,19 @@ bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView& frameVi
 #else
     return false;
 #endif
+}
+
+void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)
+{
+    completion(CookieConsentDecisionResult::NotSupported);
+}
+
+void WebChromeClient::classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
+{
+    completion({ });
+}
+
+void WebChromeClient::decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&& completion)
+{
+    completion(ModalContainerDecision::Show);
 }

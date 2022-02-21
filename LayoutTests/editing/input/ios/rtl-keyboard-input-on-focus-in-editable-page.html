@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true editable=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <head>
@@ -40,6 +40,7 @@
             });
         });
 
+        await UIHelper.setWebViewEditable(true);
         await UIHelper.setKeyboardInputModeIdentifier("he_IL");
         await UIHelper.activateAndWaitForInputSessionAt(100, 250);
         await UIHelper.ensurePresentationUpdate();

@@ -51,7 +51,7 @@ Ref<IDBConnectionToServer> IDBConnectionToServer::create(IDBConnectionToServerDe
 }
 
 IDBConnectionToServer::IDBConnectionToServer(IDBConnectionToServerDelegate& delegate)
-    : m_delegate(makeWeakPtr(delegate))
+    : m_delegate(delegate)
     , m_proxy(makeUnique<IDBConnectionProxy>(*this))
 {
 }
@@ -69,7 +69,7 @@ IDBConnectionProxy& IDBConnectionToServer::proxy()
 
 void IDBConnectionToServer::callResultFunctionWithErrorLater(ResultFunction function, const IDBResourceIdentifier& requestIdentifier)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), function, requestIdentifier]() {
+    callOnMainThread([this, protectedThis = Ref { *this }, function, requestIdentifier]() {
         (this->*function)(IDBResultData::error(requestIdentifier, IDBError::serverConnectionLostError()));
     });
 }
@@ -364,7 +364,7 @@ void IDBConnectionToServer::commitTransaction(const IDBResourceIdentifier& trans
     if (m_serverConnectionIsValid)
         m_delegate->commitTransaction(transactionIdentifier, pendingRequestCount);
     else {
-        callOnMainThread([this, protectedThis = makeRef(*this), transactionIdentifier] {
+        callOnMainThread([this, protectedThis = Ref { *this }, transactionIdentifier] {
             didCommitTransaction(transactionIdentifier, IDBError::serverConnectionLostError());
         });
     }
@@ -395,7 +395,7 @@ void IDBConnectionToServer::abortTransaction(const IDBResourceIdentifier& transa
     if (m_serverConnectionIsValid)
         m_delegate->abortTransaction(transactionIdentifier);
     else {
-        callOnMainThread([this, protectedThis = makeRef(*this), transactionIdentifier] {
+        callOnMainThread([this, protectedThis = Ref { *this }, transactionIdentifier] {
             didAbortTransaction(transactionIdentifier, IDBError::serverConnectionLostError());
         });
     }
@@ -506,7 +506,7 @@ void IDBConnectionToServer::getAllDatabaseNamesAndVersions(const IDBResourceIden
         return;
     }
 
-    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier] {
+    callOnMainThread([this, protectedThis = Ref { *this }, requestIdentifier] {
         didGetAllDatabaseNamesAndVersions(requestIdentifier, { });
     });
 }

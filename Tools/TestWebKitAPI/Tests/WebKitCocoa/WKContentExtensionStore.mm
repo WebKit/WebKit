@@ -28,11 +28,18 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import <WebKit/WKContentRuleList.h>
 #import <WebKit/WKContentRuleListStorePrivate.h>
+#import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
+#import <WebKit/_WKContentRuleListAction.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
 #import <WebKit/_WKUserContentFilter.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
 
 class WKContentRuleListStoreTest : public testing::Test {
 public:
@@ -247,7 +254,7 @@ TEST_F(WKContentRuleListStoreTest, NonDefaultStore)
 
     NSData *data = [NSData dataWithContentsOfURL:[tempDir URLByAppendingPathComponent:fileName]];
     EXPECT_NOT_NULL(data);
-    EXPECT_EQ(data.length, 228u);
+    EXPECT_EQ(data.length, 241u);
     
     __block bool doneCheckingSource = false;
     [store _getContentRuleListSourceForIdentifier:identifier completionHandler:^(NSString *source) {
@@ -473,4 +480,348 @@ TEST_F(WKContentRuleListStoreTest, _WKUserContentExtensionStoreSelectors)
         doneLookingUp = true;
     }];
     TestWebKitAPI::Util::run(&doneLookingUp);
+}
+
+static RetainPtr<WKContentRuleList> compileContentRuleList(const char* json, NSString *identifier = @"testidentifier")
+{
+    [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
+
+    __block RetainPtr<WKContentRuleList> list;
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"testidentifier" encodedContentRuleList:[NSString stringWithFormat:@"%s", json] completionHandler:^(WKContentRuleList *filter, NSError *error) {
+        EXPECT_NULL(error);
+        list = filter;
+    }];
+    while (!list)
+        TestWebKitAPI::Util::spinRunLoop();
+
+    return list;
+}
+
+static RetainPtr<TestNavigationDelegate> navigationDelegateAllowingActiveActionsOnTestHost()
+{
+    static auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"*://testhost/*"] forKey:@"testidentifier"];
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    return delegate;
+}
+
+static void checkURLs(const Vector<String>& actual, const Vector<String>& expected)
+{
+    EXPECT_EQ(actual.size(), expected.size());
+    for (size_t i = 0; i < std::min(actual.size(), expected.size()); i++)
+        EXPECT_WK_STREQ(actual[i], expected[i]);
+}
+
+TEST_F(WKContentRuleListStoreTest, ModifyHeaders)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "modify-headers", "request-headers": [ {
+                "operation": "set",
+                "header": "testkey",
+                "value": "testvalue"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "request-headers": [ {
+                "operation": "remove",
+                "header": "Accept"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        }, {
+            "action": { "type": "modify-headers", "request-headers": [ {
+                "operation": "append",
+                "header": "Content-Type",
+                "value": "Modified-by-test"
+            } ] },
+            "trigger": { "url-filter": "testscheme" }
+        } ]
+    )JSON");
+
+    __block bool receivedAllRequests { false };
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id <WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        NSDictionary<NSString *, NSString *> *fields = [task.request allHTTPHeaderFields];
+        if ([path isEqualToString:@"/main.html"]) {
+            EXPECT_WK_STREQ(fields[@"Content-Type"], "Modified-by-test");
+            EXPECT_WK_STREQ(fields[@"testkey"], "testvalue");
+            EXPECT_NULL(fields[@"Accept"]);
+            return respond(task, "<iframe src='//otherhost/frame.html'></iframe>");
+        }
+        if ([path isEqualToString:@"/frame.html"]) {
+            EXPECT_NULL(fields[@"Content-Type"]);
+            EXPECT_NULL(fields[@"testkey"]);
+            EXPECT_NOT_NULL(fields[@"Accept"]);
+            return respond(task, "<script>fetch('//testhost/fetch.txt',{headers: {'Content-Type': 'application/json'}})</script>");
+        }
+        if ([path isEqualToString:@"/fetch.txt"]) {
+            EXPECT_WK_STREQ(fields[@"Content-Type"], "application/json; Modified-by-test");
+            EXPECT_WK_STREQ(fields[@"testkey"], "testvalue");
+            EXPECT_NULL(fields[@"Accept"]);
+            receivedAllRequests = true;
+            return respond(task, "");
+        }
+        ASSERT_NOT_REACHED();
+    };
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().get();
+    webView.get().navigationDelegate = delegate;
+    __block bool receivedActionNotification { false };
+    __block Vector<String> urls;
+    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        urls.append(url.absoluteString);
+        EXPECT_TRUE(action.modifiedHeaders);
+        receivedActionNotification = true;
+    };
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
+    TestWebKitAPI::Util::run(&receivedAllRequests);
+    TestWebKitAPI::Util::run(&receivedActionNotification);
+    checkURLs(urls, {
+        "testscheme://testhost/main.html",
+        "testscheme://testhost/fetch.txt"
+    });
+    
+    // FIXME: Appending to the User-Agent replaces the user agent because we haven't added the user agent yet when processing the request.
+}
+
+TEST_F(WKContentRuleListStoreTest, Redirect)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "redirect", "redirect": {
+                "url": "othertestscheme://not-testhost/1-redirected.txt"
+            } },
+            "trigger": { "url-filter": "1.txt" }
+        }, {
+            "action": { "type": "redirect", "redirect": { "transform": {
+                "port": "123",
+                "ignored-comment": "123 is a forbidden port, so this URL is not seen by the WKURLSchemeHandler."
+            } } },
+            "trigger": { "url-filter": "2.txt" }
+        }, {
+            "action": { "type": "redirect", "redirect": { "transform": {
+                "host": "newhost",
+                "username": "newusername",
+                "port": "443"
+            } } },
+            "trigger": { "url-filter": "3.txt" }
+        }, {
+            "action": { "type": "redirect", "redirect": { "transform": {
+                "port": "",
+                "scheme": "othertestscheme",
+                "query": "?key=value"
+            } } },
+            "trigger": { "url-filter": "4.txt" }
+        }, {
+            "action": { "type": "redirect", "redirect": { "transform": {
+                "password": "testpassword",
+                "query": "",
+                "fragment": "#fragment-to-be-added"
+            } } },
+            "trigger": { "url-filter": "5.txt" }
+        }, {
+            "action": { "type": "redirect", "redirect": { "transform": {
+                "password": "testpassword",
+                "fragment": ""
+            } } },
+            "trigger": { "url-filter": "6.txt" }
+        }, {
+            "action": { "type": "redirect", "redirect": { "transform": {
+                "query": "?",
+                "fragment": "#"
+            } } },
+            "trigger": { "url-filter": "7.txt" }
+        }, {
+            "action": { "type": "redirect", "redirect": { "transform": {
+                "query-transform": {
+                    "remove-parameters": [ "parameter-to-remove" ],
+                    "add-or-replace-parameters": [
+                        { "key": "key-to-add", "value": "value-to-add" },
+                        { "key": "key-to-replace-only", "value": "value-to-replace-only", "replace-only": true },
+                        { "key": "key-to-replace-only-but-not-found", "value": "value-to-replace-only-but-not-found", "replace-only": true }
+                    ]
+                }
+            } } },
+            "trigger": { "url-filter": "8.txt" }
+        } ]
+    )JSON");
+
+    __block bool receivedAllRequests { false };
+    __block auto urls = adoptNS([NSMutableArray new]);
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id <WKURLSchemeTask> task) {
+        NSURL *url = task.request.URL;
+        [urls addObject:url];
+        NSString *path = url.path;
+        if ([path isEqualToString:@"/main.html"]) {
+            return respond(task, R"HTML(
+                <script>
+                    async function fetchSubresources()
+                    {
+                        try { await fetch('1.txt') } catch(e) { };
+                        try { await fetch('//not-testhost-should-not-trigger-action/2.txt', {mode:'no-cors'}) } catch(e) { };
+                        try { await fetch('//testhost/2.txt') } catch(e) { };
+                        try { await fetch('/3.txt?query-should-not-be-removed') } catch(e) { };
+                        try { await fetch('//testhost:80/4.txt#fragment-should-not-be-removed') } catch(e) { };
+                        try { await fetch('5.txt?query-should-be-removed') } catch(e) { };
+                        try { await fetch('6.txt#fragment-should-be-removed') } catch(e) { };
+                        try { await fetch('7.txt') } catch(e) { };
+                        try { await fetch('8.txt?key-to-replace-only=pre-replacement-value') } catch(e) { };
+                    }
+                    fetchSubresources();
+                </script>
+            )HTML");
+        }
+        if ([path isEqualToString:@"/8.txt"])
+            receivedAllRequests = true;
+        respond(task, "");
+    };
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"othertestscheme"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().get();
+    webView.get().navigationDelegate = delegate;
+    __block bool receivedActionNotification { false };
+    __block Vector<String> urlsFromCallback;
+    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        urlsFromCallback.append(url.absoluteString);
+        EXPECT_TRUE(action.redirected);
+        receivedActionNotification = true;
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
+    TestWebKitAPI::Util::run(&receivedAllRequests);
+    TestWebKitAPI::Util::run(&receivedActionNotification);
+
+    Vector<String> expectedRequestedURLs {
+        "testscheme://testhost/main.html",
+        "othertestscheme://not-testhost/1-redirected.txt",
+        "testscheme://not-testhost-should-not-trigger-action/2.txt",
+        "testscheme://newusername@newhost:443/3.txt?query-should-not-be-removed",
+        "othertestscheme://testhost/4.txt?key=value#fragment-should-not-be-removed",
+        "testscheme://:testpassword@testhost/5.txt#fragment-to-be-added",
+        "testscheme://:testpassword@testhost/6.txt",
+        "testscheme://testhost/7.txt?#",
+        "testscheme://testhost/8.txt?key-to-replace-only=value-to-replace-only&key-to-add=value-to-add",
+    };
+    EXPECT_EQ(expectedRequestedURLs.size(), [urls count]);
+    for (size_t i = 0; i < expectedRequestedURLs.size(); i++)
+        EXPECT_WK_STREQ(expectedRequestedURLs[i], [[urls objectAtIndex:i] absoluteString]);
+
+    expectedRequestedURLs.remove(0);
+    expectedRequestedURLs[1] = "testscheme://testhost:123/2.txt";
+    checkURLs(urlsFromCallback, expectedRequestedURLs);
+}
+
+TEST_F(WKContentRuleListStoreTest, NullPatternSet)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "redirect", "redirect": {
+                "url": "testscheme://testhost/main-redirected.html"
+            } },
+            "trigger": { "url-filter": "main.html" }
+        } ]
+    )JSON");
+
+    __block std::optional<bool> redirectedResult;
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id <WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        if ([path isEqualToString:@"/main.html"])
+            redirectedResult = false;
+        else {
+            EXPECT_WK_STREQ(path, "/main-redirected.html");
+            redirectedResult = true;
+        }
+        respond(task, "");
+    };
+
+    __block enum class DelegateAction : uint8_t {
+        AllowAll,
+        AllowNone,
+        AllowTestHost,
+    } delegateAction;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        EXPECT_NOT_NULL(preferences._activeContentRuleListActionPatterns);
+        EXPECT_EQ(preferences._activeContentRuleListActionPatterns.count, 0u);
+        switch (delegateAction) {
+        case DelegateAction::AllowAll:
+            preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"*://*/*"] forKey:@"testidentifier"];
+            break;
+        case DelegateAction::AllowNone:
+            preferences._activeContentRuleListActionPatterns = [NSDictionary dictionary];
+            break;
+        case DelegateAction::AllowTestHost:
+            preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"*://testhost/*"] forKey:@"testidentifier"];
+            break;
+        }
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    webView.get().navigationDelegate = delegate.get();
+
+    auto getRedirectResult = ^(DelegateAction action) {
+        delegateAction = action;
+        redirectedResult = std::nullopt;
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
+        while (!redirectedResult)
+            TestWebKitAPI::Util::spinRunLoop();
+        return *redirectedResult;
+    };
+    EXPECT_TRUE(getRedirectResult(DelegateAction::AllowAll));
+    EXPECT_FALSE(getRedirectResult(DelegateAction::AllowNone));
+    EXPECT_TRUE(getRedirectResult(DelegateAction::AllowTestHost));
+}
+
+TEST_F(WKContentRuleListStoreTest, ExtensionPath)
+{
+    auto list = compileContentRuleList(R"JSON(
+        [ {
+            "action": { "type": "redirect", "redirect": {
+                "extension-path": "/redirected-to-extension?no-query#no-fragment"
+            } },
+            "trigger": { "url-filter": "main.html" }
+        } ]
+    )JSON");
+
+    __block RetainPtr<NSURL> redirectedURL;
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id <WKURLSchemeTask> task) {
+        redirectedURL = task.request.URL;
+        respond(task, "");
+    };
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"*://testhost/*"] forKey:@"testidentifier"];
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] _addContentRuleList:list.get() extensionBaseURL:[NSURL URLWithString:@"extension-scheme://extension-host/"]];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"extension-scheme"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testscheme://testhost/main.html"]]];
+    while (!redirectedURL)
+        TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_WK_STREQ([redirectedURL absoluteString], "extension-scheme://extension-host/redirected-to-extension%3Fno-query%23no-fragment");
 }

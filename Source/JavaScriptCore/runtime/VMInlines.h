@@ -26,6 +26,7 @@
 #pragma once
 
 #include "EntryFrame.h"
+#include "FuzzerAgent.h"
 #include "ProfilerDatabase.h"
 #include "VM.h"
 #include "Watchdog.h"
@@ -88,6 +89,12 @@ inline CallFrame* VM::topJSCallFrame() const
         ASSERT(!frame || !frame->isStackOverflowFrame());
     } while (frame && frame->isWasmFrame());
     return frame;
+}
+
+inline void VM::setFuzzerAgent(std::unique_ptr<FuzzerAgent>&& fuzzerAgent)
+{
+    RELEASE_ASSERT_WITH_MESSAGE(!m_fuzzerAgent, "Only one FuzzerAgent can be specified at a time.");
+    m_fuzzerAgent = WTFMove(fuzzerAgent);
 }
 
 } // namespace JSC

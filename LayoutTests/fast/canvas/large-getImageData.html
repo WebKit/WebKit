@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ runSingly=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+var width = 4096;
+var height = 4097;
+
+if (window.internals) {
+    window.internals.setMaxCanvasPixelMemory(width * height * 4);
+    window.internals.setMaxCanvasArea(width * height);
+}
+
+var canvas = document.createElement('canvas');
+canvas.width = width;
+canvas.height = height;
+var ctx = canvas.getContext("2d");
+try {
+    var data = ctx.getImageData(0, 0, width, height);
+    if (data)
+        testPassed("large getImageData worked");
+    else
+        testFailed("large getImageData returned false");
+} catch {
+    testFailed("large getImageData threw");
+}
+</script>
+</body>
+</html>

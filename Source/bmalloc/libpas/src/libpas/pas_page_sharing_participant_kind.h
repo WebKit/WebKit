@@ -36,7 +36,6 @@ enum pas_page_sharing_participant_kind {
     pas_page_sharing_participant_segregated_shared_page_directory,
     pas_page_sharing_participant_segregated_size_directory,
     pas_page_sharing_participant_bitfit_directory,
-    pas_page_sharing_participant_biasing_directory,
     pas_page_sharing_participant_large_sharing_pool
 };
 
@@ -49,14 +48,10 @@ pas_page_sharing_participant_kind_select_for_segregated_directory(
     pas_segregated_directory_kind directory_kind)
 {
     switch (directory_kind) {
-    case pas_segregated_global_size_directory_kind:
+    case pas_segregated_size_directory_kind:
         return pas_page_sharing_participant_segregated_size_directory;
     case pas_segregated_shared_page_directory_kind:
         return pas_page_sharing_participant_segregated_shared_page_directory;
-    case pas_segregated_biasing_directory_kind:
-        PAS_ASSERT(!"Should not use segregated biasing directories as sharing participants except "
-                   "via the biasing directory base");
-        return pas_page_sharing_participant_null;
     }
     PAS_ASSERT(!"Should not be reached");
     return pas_page_sharing_participant_null;
@@ -74,8 +69,6 @@ pas_page_sharing_participant_kind_get_string(pas_page_sharing_participant_kind k
         return "segregated_size_directory";
     case pas_page_sharing_participant_bitfit_directory:
         return "bitfit_directory";
-    case pas_page_sharing_participant_biasing_directory:
-        return "biasing_directory";
     case pas_page_sharing_participant_large_sharing_pool:
         return "large_sharing_pool";
     }

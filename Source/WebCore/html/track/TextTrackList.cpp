@@ -29,7 +29,6 @@
 
 #include "TextTrackList.h"
 
-#include "HTMLMediaElement.h"
 #include "InbandTextTrack.h"
 #include "InbandTextTrackPrivate.h"
 #include "LoadableTextTrack.h"
@@ -39,27 +38,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackList);
 
-TextTrackList::TextTrackList(WeakPtr<HTMLMediaElement> element, ScriptExecutionContext* context)
-    : TrackListBase(element, context)
+TextTrackList::TextTrackList(ScriptExecutionContext* context)
+    : TrackListBase(context, TrackListBase::TextTrackList)
 {
 }
 
 TextTrackList::~TextTrackList()
 {
-    clearElement();
-}
-
-void TextTrackList::clearElement()
-{
-    TrackListBase::clearElement();
-    for (auto& track : m_elementTracks) {
-        track->setMediaElement(nullptr);
-        track->clearClient();
-    }
-    for (auto& track : m_addTrackTracks) {
-        track->setMediaElement(nullptr);
-        track->clearClient();
-    }
 }
 
 unsigned TextTrackList::length() const
@@ -203,8 +188,8 @@ void TextTrackList::append(Ref<TextTrack>&& track)
 
     invalidateTrackIndexesAfterTrack(track);
 
-    ASSERT(!track->mediaElement() || track->mediaElement() == mediaElement());
-    track->setMediaElement(mediaElement());
+    if (!track->trackList())
+        track->setTrackList(*this);
 
     scheduleAddTrackEvent(WTFMove(track));
 }
@@ -233,8 +218,8 @@ void TextTrackList::remove(TrackBase& track, bool scheduleEvent)
 
     invalidateTrackIndexesAfterTrack(textTrack);
 
-    ASSERT(!track.mediaElement() || !element() || track.mediaElement() == element());
-    track.setMediaElement(nullptr);
+    if (track.trackList() == this)
+        track.clearTrackList();
 
     Ref<TrackBase> trackRef = *(*tracks)[index];
     tracks->remove(index);

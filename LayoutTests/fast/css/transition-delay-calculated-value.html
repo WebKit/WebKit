@@ -9,7 +9,7 @@ var testDiv = document.getElementById("testDiv");
 
 shouldBeEmptyString("testDiv.style['transition-delay']");
 evalAndLog("testDiv.style['transition-delay'] = 'calc(300ms/2)'");
-shouldBeEqualToString("testDiv.style['transition-delay']", "calc(150ms)");
+shouldBeEqualToString("testDiv.style['transition-delay']", "calc(0.15s)");
 shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "0.15s");
 
 </script>

@@ -32,6 +32,8 @@
 #import "HEVCUtilities.h"
 #import "MediaCapabilitiesInfo.h"
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
 #import "VideoToolboxSoftLink.h"
@@ -46,7 +48,7 @@ std::optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters
         if (!PAL::isAVFoundationFrameworkAvailable() || !PAL::canLoad_AVFoundation_AVVideoCodecTypeHEVCWithAlpha())
             return std::nullopt;
 
-        auto codecCode = FourCC::fromString(AVVideoCodecTypeHEVCWithAlpha);
+        auto codecCode = FourCC::fromString(String { AVVideoCodecTypeHEVCWithAlpha });
         if (!codecCode)
             return std::nullopt;
 
@@ -136,21 +138,18 @@ static CMVideoCodecType codecType(DoViParameters::Codec codec)
 
 static std::optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vector(CFDictionaryRef dictionary, const void* key)
 {
-    auto value = CFDictionaryGetValue(dictionary, key);
-    if (!value || CFGetTypeID(value) != CFArrayGetTypeID())
+    auto array = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(dictionary, key));
+    if (!array)
         return std::nullopt;
-    NSArray *array = (__bridge NSArray *)value;
-    Vector<uint16_t> vector;
-    vector.reserveInitialCapacity(array.count);
-    for (id value in array) {
-        if (![value isKindOfClass:NSString.class])
-            return std::nullopt;
-        auto numericValue = parseInteger<uint16_t>(String((NSString *)value));
-        if (!numericValue)
-            return std::nullopt;
-        vector.uncheckedAppend(*numericValue);
-    }
-    return vector;
+    bool parseFailed = false;
+    auto result = makeVector(bridge_cast(array), [&] (id value) {
+        auto parseResult = parseInteger<uint16_t>(String(dynamic_objc_cast<NSString>(value)));
+        parseFailed |= !parseResult;
+        return parseResult;
+    });
+    if (parseFailed)
+        return std::nullopt;
+    return result;
 }
 
 std::optional<MediaCapabilitiesInfo> validateDoViParameters(const DoViParameters& parameters, bool hasAlphaChannel, bool hdrSupport)

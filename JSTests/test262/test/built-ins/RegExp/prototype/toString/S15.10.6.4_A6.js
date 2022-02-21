@@ -6,8 +6,8 @@ info: RegExp.prototype.toString has not prototype property
 es5id: 15.10.6.4_A6
 description: Checking RegExp.prototype.toString.prototype
 ---*/
-
-//CHECK#1
-if (RegExp.prototype.toString.prototype !== undefined) {
-	throw new Test262Error('#1: RegExp.prototype.toString.prototype === undefined. Actual: ' + (RegExp.prototype.toString.prototype));
-}
+assert.sameValue(
+  RegExp.prototype.toString.prototype,
+  undefined,
+  'The value of RegExp.prototype.toString.prototype is expected to equal undefined'
+);

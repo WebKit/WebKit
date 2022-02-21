@@ -16,6 +16,16 @@ var Statistics = new (function () {
         return this.sum(values) / values.length;
     }
 
+    this.weightedMean = function (valuesWithWeights) {
+        let totalWeight = 0;
+        let sum = 0;
+        for (const entry of valuesWithWeights) {
+            totalWeight += entry.weight;
+            sum += entry.value * entry.weight;
+        }
+        return sum / totalWeight;
+    }
+
     this.median = function (values) {
         return values.sort(function (a, b) { return a - b; })[Math.floor(values.length / 2)];
     }

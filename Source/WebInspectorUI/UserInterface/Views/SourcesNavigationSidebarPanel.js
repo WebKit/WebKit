@@ -679,7 +679,22 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         let threads = [];
         let asyncBoundary = null;
 
-        while (treeElement) {
+        function addCallFrame(callFrame) {
+            if (asyncBoundary) {
+                threads.lastValue.frames.push("--- " + asyncBoundary + " ---");
+                asyncBoundary = null;
+            }
+
+            let line = callFrame.displayName;
+
+            let sourceCodeLocation = callFrame.sourceCodeLocation;
+            if (sourceCodeLocation)
+                line += " (" + sourceCodeLocation.displayLocationString() + ")";
+
+            threads.lastValue.frames.push(line);
+        }
+
+        for (; treeElement; treeElement = treeElement.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate)) {
             if (treeElement instanceof WI.ThreadTreeElement) {
                 threads.push({
                     name: treeElement.mainTitle,
@@ -687,26 +702,27 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 });
 
                 asyncBoundary = null;
-            } else if (treeElement instanceof WI.CallFrameTreeElement) {
-                if (treeElement.isAsyncBoundaryCallFrame) {
-                    asyncBoundary = treeElement.mainTitle;
-                } else if (selectedTreeElements.has(treeElement)) {
-                    if (asyncBoundary) {
-                        threads.lastValue.frames.push("--- " + asyncBoundary + " ---");
-                        asyncBoundary = null;
-                    }
 
-                    let line = treeElement.mainTitle;
-
-                    let sourceCodeLocation = treeElement.callFrame.sourceCodeLocation;
-                    if (sourceCodeLocation)
-                        line += " (" + sourceCodeLocation.displayLocationString() + ")";
-
-                    threads.lastValue.frames.push(line);
-                }
+                continue;
             }
 
-            treeElement = treeElement.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate);
+            if (treeElement.isAsyncBoundaryCallFrame)
+                asyncBoundary = treeElement.mainTitle;
+
+            if (!selectedTreeElements.has(treeElement))
+                continue;
+
+            if (treeElement instanceof WI.CallFrameTreeElement) {
+                addCallFrame(treeElement.callFrame);
+                continue;
+            }
+
+            if (treeElement instanceof WI.BlackboxedGroupTreeElement) {
+                for (let callFrame of treeElement.callFrames)
+                    addCallFrame(callFrame);
+
+                continue;
+            }
         }
 
         let multipleFramesSelected = threads.filter(({frames}) => frames.length).length > 1;

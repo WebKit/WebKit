@@ -35,9 +35,16 @@ struct MediaDecodingConfiguration : MediaConfiguration {
 
     bool canExposeVP9 { true };
 
+    MediaDecodingConfiguration isolatedCopy() const;
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<MediaDecodingConfiguration> decode(Decoder&);
 };
+
+inline MediaDecodingConfiguration MediaDecodingConfiguration::isolatedCopy() const
+{
+    return { MediaConfiguration::isolatedCopy(), type, canExposeVP9 };
+}
 
 template<class Encoder>
 void MediaDecodingConfiguration::encode(Encoder& encoder) const

@@ -60,6 +60,13 @@ public:
         }
         return false;
     }
+    
+    bool hasMatrixOperation() const
+    {
+        return std::any_of(m_operations.begin(), m_operations.end(), [](auto operation) {
+            return operation->type() == WebCore::TransformOperation::MATRIX;
+        });
+    }
 
     bool isRepresentableIn2D() const
     {
@@ -71,6 +78,11 @@ public:
     }
 
     bool operationsMatch(const TransformOperations&) const;
+
+    // Find a list of transform primitives for the given TransformOperations which are compatible with the primitives
+    // stored in sharedPrimitives. The results are written back into sharedPrimitives. This returns false if any element
+    // of TransformOperation does not have a shared primitive, otherwise it returns true.
+    bool updateSharedPrimitives(Vector<TransformOperation::OperationType>& sharedPrimitives) const;
     
     void clear()
     {
@@ -84,8 +96,16 @@ public:
 
     size_t size() const { return m_operations.size(); }
     const TransformOperation* at(size_t index) const { return index < m_operations.size() ? m_operations.at(index).get() : 0; }
-
-    TransformOperations blendByMatchingOperations(const TransformOperations& from, const BlendingContext&) const;
+    bool isInvertible(const LayoutSize& size) const
+    {
+        TransformationMatrix transform;
+        apply(size, transform);
+        return transform.isInvertible();
+    }
+    
+    bool shouldFallBackToDiscreteAnimation(const TransformOperations&, const LayoutSize&) const;
+    
+    TransformOperations blendByMatchingOperations(const TransformOperations& from, const BlendingContext&, const LayoutSize&) const;
     TransformOperations blendByUsingMatrixInterpolation(const TransformOperations& from, const BlendingContext&, const LayoutSize&) const;
     TransformOperations blend(const TransformOperations& from, const BlendingContext&, const LayoutSize&) const;
 

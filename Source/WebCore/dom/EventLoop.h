@@ -37,7 +37,6 @@ namespace WebCore {
 class ActiveDOMCallbackMicrotask;
 class EventLoopTaskGroup;
 class EventTarget;
-class Microtask;
 class MicrotaskQueue;
 class ScriptExecutionContext;
 
@@ -96,7 +95,7 @@ private:
     // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
     Vector<std::unique_ptr<EventLoopTask>> m_tasks;
     WeakHashSet<EventLoopTaskGroup> m_associatedGroups;
-    WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspenedTasks;
+    WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspendedTasks;
     bool m_isScheduledToRun { false };
 };
 
@@ -106,7 +105,7 @@ class EventLoopTaskGroup : public CanMakeWeakPtr<EventLoopTaskGroup> {
 
 public:
     EventLoopTaskGroup(EventLoop& eventLoop)
-        : m_eventLoop(makeWeakPtr(eventLoop))
+        : m_eventLoop(eventLoop)
     {
         eventLoop.registerGroup(*this);
     }
@@ -136,9 +135,17 @@ public:
         if (isReadyToStop() || isStoppedPermanently())
             return;
 
+        bool wasSuspended = isSuspended();
         m_state = State::ReadyToStop;
         if (auto* eventLoop = m_eventLoop.get())
             eventLoop->stopAssociatedGroupsIfNecessary();
+
+        if (wasSuspended && !isStoppedPermanently()) {
+            // We we get marked as ready to stop while suspended (happens when a CachedPage gets destroyed) then the
+            // queued tasks will never be able to run (since tasks don't run while suspended and we will never resume).
+            // As a result, we can simply discard our tasks and stop permanently.
+            stopAndDiscardAllTasks();
+        }
     }
 
     // This gets called by the event loop when all groups in the EventLoop as ready to stop.
@@ -168,8 +175,8 @@ public:
             eventLoop->resumeGroup(*this);
     }
 
-    bool isStoppedPermanently() { return m_state == State::Stopped; }
-    bool isSuspended() { return m_state == State::Suspended; }
+    bool isStoppedPermanently() const { return m_state == State::Stopped; }
+    bool isSuspended() const { return m_state == State::Suspended; }
     bool isReadyToStop() const { return m_state == State::ReadyToStop; }
 
     void queueTask(std::unique_ptr<EventLoopTask>&&);
@@ -193,7 +200,7 @@ private:
 
 inline EventLoopTask::EventLoopTask(TaskSource source, EventLoopTaskGroup& group)
     : m_taskSource(source)
-    , m_group(makeWeakPtr(group))
+    , m_group(group)
 { }
 
 } // namespace WebCore

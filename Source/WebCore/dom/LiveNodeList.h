@@ -43,7 +43,7 @@ public:
     virtual ~LiveNodeList();
 
     virtual bool elementMatches(Element&) const = 0;
-    virtual bool isRootedAtDocument() const = 0;
+    virtual bool isRootedAtTreeScope() const = 0;
 
     NodeListInvalidationType invalidationType() const { return m_invalidationType; }
     ContainerNode& ownerNode() const { return m_ownerNode; }
@@ -139,9 +139,8 @@ ALWAYS_INLINE void LiveNodeList::invalidateCacheForAttribute(const QualifiedName
 
 inline ContainerNode& LiveNodeList::rootNode() const
 {
-    if (isRootedAtDocument() && m_ownerNode->isConnected())
-        return document();
-
+    if (isRootedAtTreeScope() && m_ownerNode->isInTreeScope())
+        return m_ownerNode->treeScope().rootNode();
     return m_ownerNode;
 }
 

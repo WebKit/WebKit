@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Object_h
-#define Object_h
+#pragma once
 
 #include <cstddef>
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -78,4 +79,4 @@ inline bool Object::operator<=(const Object& other)
 
 }; // namespace bmalloc
 
-#endif // Object_h
+#endif

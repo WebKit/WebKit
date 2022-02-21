@@ -27,12 +27,12 @@
 #include "TrackBase.h"
 
 #include "Logging.h"
+#include "ScriptExecutionContext.h"
+#include "TrackListBase.h"
 #include <wtf/Language.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(VIDEO)
-
-#include "HTMLMediaElement.h"
 
 namespace WebCore {
 
@@ -48,8 +48,9 @@ static RefPtr<Logger>& nullLogger()
 }
 #endif
 
-TrackBase::TrackBase(Type type, const AtomString& id, const AtomString& label, const AtomString& language)
-    : m_uniqueId(++s_uniqueId)
+TrackBase::TrackBase(ScriptExecutionContext* context, Type type, const AtomString& id, const AtomString& label, const AtomString& language)
+    : ContextDestructionObserver(context)
+    , m_uniqueId(++s_uniqueId)
     , m_id(id)
     , m_label(label)
     , m_language(language)
@@ -70,21 +71,26 @@ TrackBase::TrackBase(Type type, const AtomString& id, const AtomString& label, c
 #endif
 }
 
-Element* TrackBase::element()
+void TrackBase::setTrackList(TrackListBase& trackList)
 {
-    return m_mediaElement.get();
+    m_trackList = trackList;
+}
+
+void TrackBase::clearTrackList()
+{
+    m_trackList = nullptr;
+}
+
+TrackListBase* TrackBase::trackList() const
+{
+    return m_trackList.get();
 }
 
 void* TrackBase::opaqueRoot()
 {
-    if (auto* associatedElement = element())
-        return associatedElement->opaqueRoot();
+    if (auto trackList = this->trackList())
+        return trackList->opaqueRoot();
     return this;
-}
-
-void TrackBase::setMediaElement(WeakPtr<HTMLMediaElement> element)
-{
-    m_mediaElement = element;
 }
 
 // See: https://tools.ietf.org/html/bcp47#section-2.1
@@ -148,8 +154,8 @@ void TrackBase::setLanguage(const AtomString& language)
 
     m_validBCP47Language = emptyAtom();
 
-    auto element = this->element();
-    if (!element)
+    auto context = scriptExecutionContext();
+    if (!context)
         return;
 
     String message;
@@ -158,7 +164,7 @@ void TrackBase::setLanguage(const AtomString& language)
     else
         message = makeString("The language '", language, "' is not a valid BCP 47 language tag.");
 
-    element->document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, message);
+    context->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, message);
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -174,8 +180,8 @@ WTFLogChannel& TrackBase::logChannel() const
 }
 #endif
 
-MediaTrackBase::MediaTrackBase(Type type, const AtomString& id, const AtomString& label, const AtomString& language)
-    : TrackBase(type, id, label, language)
+MediaTrackBase::MediaTrackBase(ScriptExecutionContext* context, Type type, const AtomString& id, const AtomString& label, const AtomString& language)
+    : TrackBase(context, type, id, label, language)
 {
 }
 

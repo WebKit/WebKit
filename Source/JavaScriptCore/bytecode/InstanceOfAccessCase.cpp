@@ -39,9 +39,9 @@ Ref<AccessCase> InstanceOfAccessCase::create(
     return adoptRef(*new InstanceOfAccessCase(vm, owner, accessType, structure, conditionSet, prototype));
 }
 
-void InstanceOfAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma) const
+void InstanceOfAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Indenter& indent) const
 {
-    Base::dumpImpl(out, comma);
+    Base::dumpImpl(out, comma, indent);
     out.print(comma, "prototype = ", JSValue(prototype()));
 }
 

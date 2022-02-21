@@ -27,7 +27,9 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "ProcessQualified.h"
 #include "RTCDataChannelHandler.h"
+#include "ScriptExecutionContextIdentifier.h"
 
 namespace WebCore {
 

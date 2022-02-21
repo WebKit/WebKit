@@ -8,24 +8,26 @@ description: >
     Checking if enumerating the RegExp.prototype.toString.length
     property fails
 ---*/
+assert.sameValue(
+  RegExp.prototype.toString.hasOwnProperty('length'),
+  true,
+  'RegExp.prototype.toString.hasOwnProperty(\'length\') must return true'
+);
 
-//CHECK#0
-if (RegExp.prototype.toString.hasOwnProperty('length') !== true) {
-	throw new Test262Error('#0: RegExp.prototype.toString.hasOwnProperty(\'length\') === true');
-}
+assert.sameValue(
+  RegExp.prototype.toString.propertyIsEnumerable('length'),
+  false,
+  'RegExp.prototype.toString.propertyIsEnumerable(\'length\') must return false'
+);
 
- //CHECK#1
-if (RegExp.prototype.toString.propertyIsEnumerable('length') !== false) {
-	throw new Test262Error('#1: RegExp.prototype.toString.propertyIsEnumerable(\'length\') === true');
-}
-
- //CHECK#2
 var count=0;
 
 for (var p in RegExp.prototype.toString){
-	if (p==="length") count++;
+    if (p==="length") {
+      count++;
+    }
 }
 
-if (count !== 0) {
-	throw new Test262Error('#2: count = 0; for (p in RegExp.prototype.toString){ if (p==="length") count++; } count === 0. Actual: ' + (count));
-}
+assert.sameValue(count, 0, 'The value of count is expected to be 0');
+
+// TODO: Convert to verifyProperty() format.

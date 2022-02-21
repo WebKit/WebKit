@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 <head>
     <script src="../../../../resources/basic-gestures.js"></script>
@@ -9,7 +8,7 @@
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
         }
-    
+
         async function runTest()
         {
             if (!testRunner.runUIScript)
@@ -17,21 +16,18 @@
 
             var output = '';
             var editableTargetRect = document.getElementById('editable').getBoundingClientRect();
-            var firstTargetRect = document.getElementById('firstSelection').getBoundingClientRect();
-            var secondTargetRect = document.getElementById('secondSelection').getBoundingClientRect();
-            var thirdTargetRect = document.getElementById('thirdSelection').getBoundingClientRect();
-            var editableToNoneditableOffset =  document.getElementById('noneditable').getBoundingClientRect().y - document.getElementById('editable').getBoundingClientRect().y;
-        
+
             var tapPointX = editableTargetRect.x + editableTargetRect.width / 2;
             var tapPointY = editableTargetRect.y + editableTargetRect.height / 2;
-            var doubleTapPointX = firstTargetRect.x + firstTargetRect.width / 2;
-            var doubleTapPointY = firstTargetRect.y + firstTargetRect.height / 2 - editableToNoneditableOffset;
-            var dragY = firstTargetRect.y - editableToNoneditableOffset;
-            var dragX = firstTargetRect.x;
-            var dragY2 = secondTargetRect.y - editableToNoneditableOffset;
-            var dragY3 = thirdTargetRect.y - editableToNoneditableOffset;
-            var dragY4 = firstTargetRect.y + firstTargetRect.height - editableToNoneditableOffset;
-        
+            
+            var fontHeight = 30;
+
+            var selectionChangedCount = 0;
+            var lastSelectionChangeCount = 0;
+            document.addEventListener("selectionchange", () => {
+                selectionChangedCount++;
+            });
+
             await UIHelper.tapAt(tapPointX, tapPointY);
             if (document.getSelection().type == "Caret")
                 output += 'PASS: Has Caret Selection';
@@ -41,53 +37,43 @@
 
             await didShowKeyboard();
 
-            await UIHelper.doubleTapAt(doubleTapPointX, doubleTapPointY);
-            if (document.getSelection().toString() == "at")
-                output += 'PASS: Correct Selection';
+            await UIHelper.doubleTapAt(tapPointX, tapPointY);
+            if (document.getSelection().toString() != "")
+                output += 'PASS: Has Selection';
             else
-                output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
+                output += 'FAIL: failed to select a word as a result of a double tap.';
             output += '<br>';
 
             await UIHelper.waitForDoubleTapDelay();
 
-            await touchAndDragFromPointToPoint(dragX, dragY, dragX, dragY2);
-            if (document.getSelection().toString() == "o eiusmod tempor incididunt at")
-                output += 'PASS: Correct Selection';
-            else
-                output += 'FAIL: failed to select additional line after a drag. Incorrect Selection: ' + document.getSelection().toString();
-            output += '<br>';
+            lastSelectionChangeCount = selectionChangedCount;
+            var grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
+            await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y , grabberMidpoint.x, grabberMidpoint.y - (fontHeight * 2));
 
-            await touchAndDragFromPointToPoint(dragX, dragY2, dragX, dragY3);
-            if (document.getSelection().toString() == " adipiscing elit, sed do eiusmod tempor incididunt at")
-                output += 'PASS: Correct Selection';
+            if (selectionChangedCount > lastSelectionChangeCount)
+                output += 'PASS: Selection Changed </br>';
             else
-                output += 'FAIL: failed to select additional line after a drag. Incorrect Selection: ' + document.getSelection().toString();
-            output += '<br>';
+                output += 'FAIL: Selection did not change <br>' + selectionChangedCount;
 
-            await touchAndDragFromPointToPoint(dragX, dragY3, dragX, dragY2);
-            if (document.getSelection().toString() == "o eiusmod tempor incididunt at")
-                output += 'PASS: Correct Selection';
+            lastSelectionChangeCount = selectionChangedCount;
+            grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
+            await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y , grabberMidpoint.x, grabberMidpoint.y + (fontHeight * 3));
+            await liftUpAtPoint(grabberMidpoint.x, grabberMidpoint.y - (fontHeight * 3));
+
+            if (selectionChangedCount > lastSelectionChangeCount)
+                output += 'PASS: Selection Changed </br>';
             else
-                output += 'FAIL: failed to deselect line after a drag. Incorrect Selection: ' + document.getSelection().toString();
-            output += '<br>';
+                output += 'FAIL: Selection did not change <br>' + selectionChangedCount;
+            
+            lastSelectionChangeCount = selectionChangedCount;
+            grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
+            await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y , grabberMidpoint.x, grabberMidpoint.y + (fontHeight * 2));
 
-            await touchAndDragFromPointToPoint(dragX, dragY2, dragX, dragY);
-            if (document.getSelection().toString() == "at")
-                output += 'PASS: Correct Selection';
+            if (selectionChangedCount > lastSelectionChangeCount)
+                output += 'PASS: Selection Changed </br>';
             else
-                output += 'FAIL: failed to deselect line after a drag. Incorrect Selection: ' + document.getSelection().toString();
-            output += '<br>';
+                output += 'FAIL: Selection changed <br>' + selectionChangedCount;
 
-            var result = await touchAndDragFromPointToPoint(dragX, dragY, dragX, dragY4);
-            if (document.getSelection().toString() == "at")
-                output += 'PASS: Correct Selection';
-            else
-                output += 'FAIL: failed to reduce selection to a single character by dragging down. Incorrect Selection: ' + document.getSelection().toString();
-            output += '<br>';
-            output += result;
-
-            var noneditableElement = document.getElementById('noneditable');
-            noneditableElement.parentNode.removeChild(noneditableElement);
             var editableElement = document.getElementById('editable');
             editableElement.parentNode.removeChild(editableElement);
             document.getElementById('target').innerHTML = output;
@@ -97,20 +83,6 @@
         window.addEventListener('load', runTest, false);
     </script>
     <style>
-        #noneditable {
-            height: 200px;
-            width: 300px;
-            background-color: silver;
-            font-family: monospace;
-            font-size: 18px;
-        }
-        #editable {
-            height: 200px;
-            width: 300px;
-            background-color: silver;
-            font-family: monospace;
-            font-size: 18px;
-        }
         #target {
             height: 50px;
             width: 300px;
@@ -118,18 +90,23 @@
             font-family: monospace;
             font-size: 18px;
         }
+        #editable {
+            height: 300px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 30px;
+        }
     </style>
-    <meta name="viewport" content="initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-    <div id="editable" contenteditable>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt at labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-    </div> 
-    <div id="noneditable">
-        <p>Lorem ipsum dolor sit amet, consectetur<span id="thirdSelection"></span> adipiscing elit, sed d<span id="secondSelection"></span>o eiusmod tempor incididunt <span id="firstSelection">at</span> labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-    </div>
     <div id="target">
         This test requires UIScriptController to run.
     </div>
+    <div id="editable" contenteditable>
+        <p>Here's to the crazy ones. The misfits. The rebels. The trouble makers. The round pegs in the square holes.</p>
+    </div>
 </body>
 </html>
+

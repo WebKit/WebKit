@@ -2,12 +2,10 @@
 PASS addTransceiver() with undefined sendEncodings should have default encoding parameter with active set to true
 PASS addTransceiver() with empty list sendEncodings should have default encoding parameter with active set to true
 FAIL sender.getParameters() should return sendEncodings set by addTransceiver() assert_not_own_property: rid should be removed with a single encoding unexpected property "rid" is found on object
-FAIL sender.setParameters() with mismatch number of encodings should reject with InvalidModificationError promise_rejects_dom: function "function () { throw e }" threw object "InvalidStateError: Attempted to set RtpParameters with different encoding count" that is not a DOMException InvalidModificationError: property "code" is equal to 11, expected 13
+PASS sender.setParameters() with mismatch number of encodings should reject with InvalidModificationError
 PASS sender.setParameters() with encodings unset should reject with TypeError
 FAIL setParameters() with modified encoding.rid field should reject with InvalidModificationError assert_not_equals: Expect sender param.rtcp.cname to be set got disallowed value undefined
-FAIL setParameters() with encoding.scaleResolutionDownBy field set to less than 1.0 should reject with RangeError promise_rejects_js: function "function () { throw e }" threw object "InvalidStateError: Attempted to set RtpParameters scale_resolution_down_by to an invalid value. scale_resolution_down_by must be >= 1.0" ("InvalidStateError") expected instance of function "function RangeError() {
-    [native code]
-}" ("RangeError")
+PASS setParameters() with encoding.scaleResolutionDownBy field set to less than 1.0 should reject with RangeError
 PASS setParameters() with encoding.scaleResolutionDownBy field set to greater than 1.0 should succeed
 PASS setParameters() with modified encoding.active should succeed with RTCRtpTransceiverInit
 PASS setParameters() with modified encoding.active should succeed without RTCRtpTransceiverInit

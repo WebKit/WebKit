@@ -27,7 +27,7 @@ class CustomizableTestGroupForm extends TestGroupForm {
 
     startTesting()
     {
-        const repetitionType = this.content('repetition-type').value;
+        const repetitionType = this.part('repetition-type-selector').selectedRepetitionType;
         this.dispatchAction('startTesting', this._name, this._repetitionCount, repetitionType,
             this._computeCommitSetMap(), this._notifyOnCompletion);
     }

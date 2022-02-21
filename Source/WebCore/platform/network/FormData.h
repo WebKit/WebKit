@@ -20,12 +20,16 @@
 #pragma once
 
 #include "BlobData.h"
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
+
+namespace PAL {
+class TextEncoding;
+}
 
 namespace WebCore {
 
@@ -33,12 +37,11 @@ class BlobRegistryImpl;
 class DOMFormData;
 class File;
 class SharedBuffer;
-class TextEncoding;
 
 struct FormDataElement {
     struct EncodedFileData;
     struct EncodedBlobData;
-    using Data = Variant<Vector<uint8_t>, EncodedFileData, EncodedBlobData>;
+    using Data = std::variant<Vector<uint8_t>, EncodedFileData, EncodedBlobData>;
 
     FormDataElement() = default;
     explicit FormDataElement(Data&& data)
@@ -153,10 +156,10 @@ struct FormDataElement {
         if (data.index() != other.data.index())
             return false;
         if (!data.index())
-            return WTF::get<0>(data) == WTF::get<0>(other.data);
+            return std::get<0>(data) == std::get<0>(other.data);
         if (data.index() == 1)
-            return WTF::get<1>(data) == WTF::get<1>(other.data);
-        return WTF::get<2>(data) == WTF::get<2>(other.data);
+            return std::get<1>(data) == std::get<1>(other.data);
+        return std::get<2>(data) == std::get<2>(other.data);
     }
     bool operator!=(const FormDataElement& other) const
     {
@@ -258,8 +261,8 @@ private:
     FormData();
     FormData(const FormData&);
 
-    void appendMultiPartFileValue(const File&, Vector<char>& header, TextEncoding&);
-    void appendMultiPartStringValue(const String&, Vector<char>& header, TextEncoding&);
+    void appendMultiPartFileValue(const File&, Vector<char>& header, PAL::TextEncoding&);
+    void appendMultiPartStringValue(const String&, Vector<char>& header, PAL::TextEncoding&);
     void appendMultiPartKeyValuePairItems(const DOMFormData&);
     void appendNonMultiPartKeyValuePairItems(const DOMFormData&, EncodingType);
 

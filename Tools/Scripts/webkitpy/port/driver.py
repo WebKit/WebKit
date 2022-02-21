@@ -46,16 +46,18 @@ _log = logging.getLogger(__name__)
 
 
 class DriverInput(object):
-    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, should_dump_jsconsolelog_in_stderr=None, args=None):
+    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, should_dump_jsconsolelog_in_stderr=None, args=None, self_comparison_header=None, force_dump_pixels=False):
         self.test_name = test_name
         self.timeout = timeout  # in ms
         self.image_hash = image_hash
         self.should_run_pixel_test = should_run_pixel_test
         self.should_dump_jsconsolelog_in_stderr = should_dump_jsconsolelog_in_stderr
         self.args = args or []
+        self.self_comparison_header = self_comparison_header
+        self.force_dump_pixels = force_dump_pixels
 
     def __repr__(self):
-        return "DriverInput(test_name='{}', timeout={}, image_hash={}, should_run_pixel_test={}, should_dump_jsconsolelog_in_stderr={}'".format(self.test_name, self.timeout, self.image_hash, self.should_run_pixel_test, self.should_dump_jsconsolelog_in_stderr)
+        return "DriverInput(test_name='{}', timeout={}, image_hash={}, should_run_pixel_test={}, should_dump_jsconsolelog_in_stderr={}, self_comparison_header={}, force_dump_pixels={}'".format(self.test_name, self.timeout, self.image_hash, self.should_run_pixel_test, self.should_dump_jsconsolelog_in_stderr, self.self_comparison_header, self.force_dump_pixels)
 
 
 class DriverOutput(object):
@@ -243,7 +245,7 @@ class Driver(object):
             # In the timeout case, we kill the hung process as well.
             out, err = self._server_process.stop(self._port.driver_stop_timeout() if stop_when_done else 0.0)
             if out:
-                text += string_utils.decode(out, target_type=str)
+                text += string_utils.decode(out, target_type=str, errors='backslashreplace')
             if err:
                 self.error_from_test += string_utils.decode(err, target_type=str)
             self._server_process = None
@@ -631,12 +633,19 @@ class Driver(object):
         # ' is the separator between arguments.
         if self._port.supports_per_test_timeout():
             command += "'--timeout'%s" % driver_input.timeout
-        if driver_input.should_run_pixel_test:
-            command += "'--pixel-test"
         if driver_input.should_dump_jsconsolelog_in_stderr:
             command += "'--dump-jsconsolelog-in-stderr"
-        if driver_input.image_hash:
-            command += "'" + driver_input.image_hash
+        if driver_input.self_comparison_header:
+            command += "'--self-compare-with-header'%s" % driver_input.self_comparison_header
+        if driver_input.force_dump_pixels:
+            command += "'--force-dump-pixels"
+
+        # --pixel-test must be the last argument, because the hash is optional,
+        # and any argument put in its place will be incorrectly consumed as the hash.
+        if driver_input.should_run_pixel_test:
+            command += "'--pixel-test"
+            if driver_input.image_hash:
+                command += "'" + driver_input.image_hash
         return command + "\n"
 
     def _read_first_block(self, deadline, test_name):

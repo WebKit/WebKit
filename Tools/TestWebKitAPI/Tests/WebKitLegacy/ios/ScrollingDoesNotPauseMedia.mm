@@ -27,6 +27,7 @@
 
 #if HAVE(UIWEBVIEW)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import <WebKit/DOMHTMLMediaElement.h>
 #import <WebKit/WebFramePrivate.h>
@@ -38,7 +39,6 @@
 }
 @end
 
-static bool didFinishLoad = false;
 static bool gotMainFrame = false;
 static RetainPtr<WebFrame> mainFrame;
 

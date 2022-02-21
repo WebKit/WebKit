@@ -1,0 +1,67 @@
+<!doctype html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/overscroll-behavior-support.js"></script>
+<link rel="help" href="https://drafts.csswg.org/css-overscroll-behavior">
+<style>
+    .scrolling {
+        overflow: scroll;
+    }
+    .scrollContent {
+        width: 300px;
+        height: 300px;
+    }
+    #root {
+        width: 200px;
+        height: 200px;
+    }
+    #scroller {
+        width: 100px;
+        height: 100px;
+        overscroll-behavior: none;
+        overflow: visible;
+        background: linear-gradient(135deg, red, blue);
+    }
+</style>
+<div id="root" class="scrolling">
+    <div id="scroller">
+        <div class="scrollContent"></div>
+    </div>
+    <div class="scrollContent"></div>
+</div>
+
+<script>
+const root = document.getElementById('root');
+const scroller = document.getElementById('scroller');
+
+function resetTest() {
+    root.scrollLeft = 0;
+    root.scrollTop = 0;
+    root.scrollTo(0, 0);
+}
+
+function startTest() {
+        promise_test(() => {
+            resetTest();
+            var x = scroller.clientWidth / 2;
+            var y = scroller.clientHeight / 2;
+            var delta = getDeltas("right");
+            return mouseWheelScrollAndWait(x, y, delta.X, delta.Y, delta.X, delta.Y).then(() => {
+                assert_equals(root.scrollLeft > 0, true, 'Propagate horizontal scroll');
+            });
+        }, 'Unscrollable element horizontal scroll test with overscroll-behavior: none.');
+
+        promise_test(() => {
+            resetTest();
+            var x = scroller.clientWidth / 2;
+            var y = scroller.clientHeight / 2;
+            var delta = getDeltas("down");
+            return mouseWheelScrollAndWait(x, y, delta.X, delta.Y, delta.X, delta.Y).then(() => {
+                assert_equals(root.scrollTop > 0, true, 'Propagate vertical scroll');
+            });
+        }, 'Unscrollable element vertical scroll test with overscroll-behavior: none.');
+}
+
+addEventListener("load", startTest);
+</script>

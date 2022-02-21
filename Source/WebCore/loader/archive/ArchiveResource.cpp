@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-inline ArchiveResource::ArchiveResource(Ref<SharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
+inline ArchiveResource::ArchiveResource(Ref<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
     : SubstituteResource(URL { url }, ResourceResponse { response }, WTFMove(data))
     , m_mimeType(mimeType)
     , m_textEncoding(textEncoding)
@@ -42,7 +42,7 @@ inline ArchiveResource::ArchiveResource(Ref<SharedBuffer>&& data, const URL& url
 {
 }
 
-RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<SharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
+RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
 {
     if (!data)
         return nullptr;
@@ -54,7 +54,7 @@ RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<SharedBuffer>&& data, con
     return adoptRef(*new ArchiveResource(data.releaseNonNull(), url, mimeType, textEncoding, frameName, response));
 }
 
-RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<SharedBuffer>&& data, const URL& url, const ResourceResponse& response)
+RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<FragmentedSharedBuffer>&& data, const URL& url, const ResourceResponse& response)
 {
     return create(WTFMove(data), url, response.mimeType(), response.textEncodingName(), String(), response);
 }

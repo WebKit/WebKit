@@ -43,9 +43,9 @@ public:
     int port() const;
     const String& realm() const;
     bool isProxy() const;
-    WebCore::ProtectionSpaceServerType serverType() const;
+    WebCore::ProtectionSpace::ServerType serverType() const;
     bool receivesCredentialSecurely() const;
-    WebCore::ProtectionSpaceAuthenticationScheme authenticationScheme() const;
+    WebCore::ProtectionSpace::AuthenticationScheme authenticationScheme() const;
 
     const WebCore::ProtectionSpace& protectionSpace() const { return m_coreProtectionSpace; }
 

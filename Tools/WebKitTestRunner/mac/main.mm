@@ -42,7 +42,6 @@ static void setDefaultsToConsistentValuesForTesting()
         @"AppleEnableSwipeNavigateWithScrolls": @YES,
         @"com.apple.swipescrolldirection": @1,
         @"com.apple.trackpad.forceClick": @1,
-        @"NSScrollAnimationEnabled": @NO,
         @"NSOverlayScrollersEnabled": @NO,
         @"AppleShowScrollBars": @"Always",
         @"WebKit2UseRemoteLayerTreeDrawingArea": @NO,

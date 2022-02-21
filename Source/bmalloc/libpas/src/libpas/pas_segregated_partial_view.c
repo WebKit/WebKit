@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,9 +37,11 @@
 #include "pas_segregated_shared_view_inlines.h"
 #include "pas_shared_handle_or_page_boundary_inlines.h"
 
+size_t pas_segregated_partial_view_count = 0;
+
 pas_segregated_partial_view*
 pas_segregated_partial_view_create(
-    pas_segregated_global_size_directory* directory,
+    pas_segregated_size_directory* directory,
     size_t index)
 {
     static const bool verbose = false;
@@ -54,17 +56,19 @@ pas_segregated_partial_view_create(
         "pas_segregated_partial_view",
         pas_object_allocation);
 
+    pas_segregated_partial_view_count++;
+
     /* We attach to a shared view lazily - once we know what we're allocating. */
     pas_compact_segregated_shared_view_ptr_store(&result->shared_view, NULL);
 
-    pas_compact_segregated_global_size_directory_ptr_store(&result->directory, directory);
+    pas_compact_segregated_size_directory_ptr_store(&result->directory, directory);
 
     PAS_ASSERT((uint8_t)index == index);
     result->index = (uint8_t)index;
 
     result->alloc_bits_offset = 0;
     result->alloc_bits_size = 0;
-    pas_compact_tagged_unsigned_ptr_store(&result->alloc_bits, NULL);
+    pas_lenient_compact_unsigned_ptr_store(&result->alloc_bits, NULL);
 
     result->inline_alloc_bits = 0; /* There isn't a real big need to do this, but it helps keep
                                       things sane. */
@@ -94,7 +98,7 @@ void pas_segregated_partial_view_note_eligibility(
         if (verbose)
             pas_log("%p: Actually telling the directory that we're eligible.\n", view);
         pas_segregated_directory_view_did_become_eligible(
-            &pas_compact_segregated_global_size_directory_ptr_load_non_null(&view->directory)->base,
+            &pas_compact_segregated_size_directory_ptr_load_non_null(&view->directory)->base,
             pas_segregated_partial_view_as_view_non_null(view));
     }
     view->eligibility_has_been_noted = true;
@@ -108,12 +112,12 @@ void pas_segregated_partial_view_set_is_in_use_for_allocation(
     static const bool verbose = false;
     
     pas_segregated_shared_page_directory* shared_page_directory;
-    pas_segregated_directory* directory;
     size_t index;
 
     shared_page_directory = shared_handle->directory;
-    directory = &shared_page_directory->base;
     index = shared_view->index;
+
+    PAS_UNUSED_PARAM(shared_page_directory);
 
     if (verbose) {
         pas_log("Setting partial %p, shared %p (index %zu) as in use for allocation.\n",
@@ -163,7 +167,7 @@ bool pas_segregated_partial_view_should_table(
 
 static pas_heap_summary compute_summary(pas_segregated_partial_view* view)
 {
-    pas_segregated_global_size_directory* size_directory;
+    pas_segregated_size_directory* size_directory;
     pas_segregated_directory* directory;
     pas_segregated_shared_view* shared_view;
     pas_segregated_page_config* page_config_ptr;
@@ -178,7 +182,7 @@ static pas_heap_summary compute_summary(pas_segregated_partial_view* view)
     size_t end_index;
     pas_heap_summary result;
 
-    size_directory = pas_compact_segregated_global_size_directory_ptr_load_non_null(&view->directory);
+    size_directory = pas_compact_segregated_size_directory_ptr_load_non_null(&view->directory);
     directory = &size_directory->base;
     page_config_ptr = pas_segregated_page_config_kind_get_config(directory->page_config_kind);
     page_config = *page_config_ptr;
@@ -186,7 +190,7 @@ static pas_heap_summary compute_summary(pas_segregated_partial_view* view)
 
     shared_view = pas_compact_segregated_shared_view_ptr_load_non_null(&view->shared_view);
 
-    full_alloc_bits = pas_compact_tagged_unsigned_ptr_load_non_null(&view->alloc_bits);
+    full_alloc_bits = pas_lenient_compact_unsigned_ptr_load(&view->alloc_bits);
 
     if (shared_view->is_owned) {
         page_boundary = (uintptr_t)pas_shared_handle_or_page_boundary_get_page_boundary(
@@ -207,8 +211,9 @@ static pas_heap_summary compute_summary(pas_segregated_partial_view* view)
     /* This doesn't have to be optimized since this is just for internal introspection.
      
        Note that this logic magically works even for */
-    begin_index = PAS_BITVECTOR_BIT_INDEX(view->alloc_bits_offset);
-    end_index = PAS_BITVECTOR_BIT_INDEX(view->alloc_bits_offset + view->alloc_bits_size);
+    begin_index = PAS_BITVECTOR_BIT_INDEX((unsigned)view->alloc_bits_offset);
+    end_index = PAS_BITVECTOR_BIT_INDEX((unsigned)view->alloc_bits_offset +
+                                        (unsigned)view->alloc_bits_size);
 
     result = pas_heap_summary_create_empty();
     
@@ -241,6 +246,9 @@ static pas_heap_summary compute_summary(pas_segregated_partial_view* view)
         }
     }
 
+    if (view->is_in_use_for_allocation)
+        result.cached += pas_heap_summary_total(result);
+
     return result;
 }
 
@@ -262,7 +270,7 @@ pas_heap_summary pas_segregated_partial_view_compute_summary(
 bool pas_segregated_partial_view_is_eligible(pas_segregated_partial_view* view)
 {
     return PAS_SEGREGATED_DIRECTORY_GET_BIT(
-        &pas_compact_segregated_global_size_directory_ptr_load_non_null(&view->directory)->base,
+        &pas_compact_segregated_size_directory_ptr_load_non_null(&view->directory)->base,
         view->index, eligible);
 }
 

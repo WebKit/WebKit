@@ -108,9 +108,9 @@ TEST(AppHighlights, AppHighlightCreateAndRestoreAndScroll)
     [webViewRestore _restoreAndScrollToAppHighlight:[highlight highlight]];
 
     TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
-        return [webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue == 1;
-    }, 2, @"Expected Highlights to be populated.");
-    EXPECT_NE(0, [[webViewRestore objectByEvaluatingJavaScript:@"pageYOffset"] floatValue]);
+        return [webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue == 1
+            && [[webViewRestore objectByEvaluatingJavaScript:@"pageYOffset"] floatValue] > 0;
+    }, 2, @"Expected Highlights to be populated and the page to scroll.");
 }
 
 TEST(AppHighlights, AppHighlightRestoreFailure)

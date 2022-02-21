@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderSVGResourceLinearGradient.h"
 
+#include "RenderSVGResourceLinearGradientInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -52,10 +53,12 @@ FloatPoint RenderSVGResourceLinearGradient::endPoint(const LinearGradientAttribu
 
 Ref<Gradient> RenderSVGResourceLinearGradient::buildGradient(const RenderStyle& style) const
 {
-    auto gradient = Gradient::create(Gradient::LinearData { startPoint(m_attributes), endPoint(m_attributes) });
-    gradient->setSpreadMethod(platformSpreadMethodFromSVGType(m_attributes.spreadMethod()));
-    addStops(gradient, m_attributes.stops(), style);
-    return gradient;
+    return Gradient::create(
+        Gradient::LinearData { startPoint(m_attributes), endPoint(m_attributes) },
+        { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied },
+        platformSpreadMethodFromSVGType(m_attributes.spreadMethod()),
+        stopsByApplyingColorFilter(m_attributes.stops(), style)
+    );
 }
 
 }

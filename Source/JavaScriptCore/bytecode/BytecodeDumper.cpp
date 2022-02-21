@@ -34,7 +34,7 @@
 #include "JSCJSValueInlines.h"
 #include "UnlinkedCodeBlockGenerator.h"
 #include "UnlinkedMetadataTableInlines.h"
-#include "WasmFunctionCodeBlock.h"
+#include "WasmFunctionCodeBlockGenerator.h"
 #include "WasmGeneratorTraits.h"
 #include "WasmModuleInformation.h"
 #include "WasmSignatureInlines.h"
@@ -325,7 +325,7 @@ template class CodeBlockBytecodeDumper<CodeBlock>;
 
 namespace Wasm {
 
-void BytecodeDumper::dumpBlock(FunctionCodeBlock* block, const ModuleInformation& moduleInformation, PrintStream& out)
+void BytecodeDumper::dumpBlock(FunctionCodeBlockGenerator* block, const ModuleInformation& moduleInformation, PrintStream& out)
 {
     size_t instructionCount = 0;
     size_t wide16InstructionCount = 0;
@@ -371,7 +371,7 @@ void BytecodeDumper::dumpBlock(FunctionCodeBlock* block, const ModuleInformation
 
 void BytecodeDumper::dumpConstants()
 {
-    FunctionCodeBlock* block = this->block();
+    FunctionCodeBlockGenerator* block = this->block();
     if (!block->constants().isEmpty()) {
         this->m_out.printf("\nConstants:\n");
         unsigned i = 0;
@@ -385,7 +385,7 @@ void BytecodeDumper::dumpConstants()
 
 CString BytecodeDumper::constantName(VirtualRegister index) const
 {
-    FunctionCodeBlock* block = this->block();
+    FunctionCodeBlockGenerator* block = this->block();
     auto value = formatConstant(block->getConstantType(index), block->getConstant(index));
     return toCString(value, "(", VirtualRegister(index), ")");
 }
@@ -403,14 +403,16 @@ CString BytecodeDumper::formatConstant(Type type, uint64_t constant) const
     case TypeKind::F64:
         return toCString(bitwise_cast<double>(constant));
         break;
-    case TypeKind::Externref:
-    case TypeKind::Funcref:
-        if (JSValue::decode(constant) == jsNull())
-            return "null";
-        return toCString(RawPointer(bitwise_cast<void*>(constant)));
-    default:
+    default: {
+        if (isFuncref(type) || isExternref(type)) {
+            if (JSValue::decode(constant) == jsNull())
+                return "null";
+            return toCString(RawPointer(bitwise_cast<void*>(constant)));
+        }
+
         RELEASE_ASSERT_NOT_REACHED();
         return "";
+    }
     }
 }
 

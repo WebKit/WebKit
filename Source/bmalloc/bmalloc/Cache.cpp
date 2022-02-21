@@ -30,6 +30,8 @@
 #include "Heap.h"
 #include "PerProcess.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 void Cache::scavenge(HeapKind heapKind)
@@ -103,3 +105,5 @@ BNO_INLINE void* Cache::reallocateSlowCaseNullCache(HeapKind heapKind, void* obj
 }
 
 } // namespace bmalloc
+
+#endif

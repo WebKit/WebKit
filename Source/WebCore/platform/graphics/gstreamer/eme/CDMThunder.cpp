@@ -46,6 +46,7 @@
 #include <iterator>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/PrintStream.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -122,15 +123,8 @@ const Vector<String>& CDMFactoryThunder::supportedKeySystems() const
         std::string emptyString;
         if (opencdm_is_type_supported(GStreamerEMEUtilities::s_WidevineKeySystem, emptyString.c_str()) == ERROR_NONE)
             supportedKeySystems.append(GStreamerEMEUtilities::s_WidevineKeySystem);
-        if (!supportedKeySystems.isEmpty()) {
-            unsigned thunderRank = isThunderRanked() ? 300 : 100;
-            gst_element_register(nullptr, "webkitthunder", GST_RANK_PRIMARY + thunderRank, WEBKIT_TYPE_MEDIA_THUNDER_DECRYPT);
-        }
-#ifndef NDEBUG
-        else if (isThunderRanked())
-            GST_WARNING("Thunder is up-ranked as preferred decryptor but Thunder is not supporting any encryption system. Is "
-                "Thunder running? Are the plugins built?");
-#endif
+        if (opencdm_is_type_supported(GStreamerEMEUtilities::s_ClearKeyKeySystem, emptyString.c_str()) == ERROR_NONE)
+            supportedKeySystems.append(GStreamerEMEUtilities::s_ClearKeyKeySystem);
         GST_DEBUG("%zu supported key systems", supportedKeySystems.size());
     };
     return supportedKeySystems;
@@ -219,7 +213,7 @@ bool CDMPrivateThunder::supportsSessions() const
     return true;
 }
 
-bool CDMPrivateThunder::supportsInitData(const AtomString& initDataType, const SharedBuffer& initData) const
+bool CDMPrivateThunder::supportsInitData(const AtomString& initDataType, const FragmentedSharedBuffer& initData) const
 {
     // Validate the initData buffer as an JSON object in keyids case.
     if (equalLettersIgnoringASCIICase(initDataType, "keyids") && CDMUtilities::parseJSONObject(initData))
@@ -236,16 +230,7 @@ bool CDMPrivateThunder::supportsInitData(const AtomString& initDataType, const S
     return false;
 }
 
-RefPtr<SharedBuffer> CDMPrivateThunder::sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData) const
-{
-    // Validate the initData buffer as CENC initData. FIXME: Validate it is actually CENC.
-    if (equalLettersIgnoringASCIICase(initDataType, "cenc") && !initData.isEmpty())
-        return initData.copy();
-
-    return CDMPrivate::sanitizeInitData(initDataType, initData);
-}
-
-RefPtr<SharedBuffer> CDMPrivateThunder::sanitizeResponse(const SharedBuffer& response) const
+RefPtr<FragmentedSharedBuffer> CDMPrivateThunder::sanitizeResponse(const FragmentedSharedBuffer& response) const
 {
     return response.copy();
 }
@@ -268,10 +253,10 @@ void CDMInstanceThunder::initializeWithConfiguration(const CDMKeySystemConfigura
     callback(Succeeded);
 }
 
-void CDMInstanceThunder::setServerCertificate(Ref<SharedBuffer>&& certificate,  SuccessCallback&& callback)
+void CDMInstanceThunder::setServerCertificate(Ref<FragmentedSharedBuffer>&& certificate,  SuccessCallback&& callback)
 {
-    OpenCDMError error = opencdm_system_set_server_certificate(m_thunderSystem.get(), const_cast<uint8_t*>(certificate->data()),
-        certificate->size());
+    auto data = certificate->extractData();
+    OpenCDMError error = opencdm_system_set_server_certificate(m_thunderSystem.get(), const_cast<uint8_t*>(data.data()), data.size());
     callback(!error ? Succeeded : Failed);
 }
 
@@ -288,7 +273,7 @@ CDMInstanceSessionThunder::CDMInstanceSessionThunder(CDMInstanceThunder& instanc
         const uint16_t challengeLength) {
         GST_DEBUG("Got 'challenge' OCDM notification with length %hu", challengeLength);
         ASSERT(challengeLength > 0);
-        callOnMainThread([session = makeWeakPtr(static_cast<CDMInstanceSessionThunder*>(userData)), buffer = WebCore::SharedBuffer::create(challenge,
+        callOnMainThread([session = WeakPtr { static_cast<CDMInstanceSessionThunder*>(userData) }, buffer = WebCore::SharedBuffer::create(challenge,
             challengeLength)]() mutable {
             if (!session)
                 return;
@@ -299,7 +284,7 @@ CDMInstanceSessionThunder::CDMInstanceSessionThunder(CDMInstanceThunder& instanc
         GST_DEBUG("Got 'key updated' OCDM notification");
         KeyIDType keyID;
         keyID.append(keyIDData, keyIDLength);
-        callOnMainThread([session = makeWeakPtr(static_cast<CDMInstanceSessionThunder*>(userData)), keyID = WTFMove(keyID)]() mutable {
+        callOnMainThread([session = WeakPtr { static_cast<CDMInstanceSessionThunder*>(userData) }, keyID = WTFMove(keyID)]() mutable {
             if (!session)
                 return;
             session->keyUpdatedCallback(WTFMove(keyID));
@@ -307,7 +292,7 @@ CDMInstanceSessionThunder::CDMInstanceSessionThunder(CDMInstanceThunder& instanc
     };
     m_thunderSessionCallbacks.keys_updated_callback = [](const OpenCDMSession*, void* userData) {
         GST_DEBUG("Got 'all keys updated' OCDM notification");
-        callOnMainThread([session = makeWeakPtr(static_cast<CDMInstanceSessionThunder*>(userData))]() {
+        callOnMainThread([session = WeakPtr { static_cast<CDMInstanceSessionThunder*>(userData) }]() {
             if (!session)
                 return;
             session->keysUpdateDoneCallback();
@@ -315,7 +300,7 @@ CDMInstanceSessionThunder::CDMInstanceSessionThunder(CDMInstanceThunder& instanc
     };
     m_thunderSessionCallbacks.error_message_callback = [](OpenCDMSession*, void* userData, const char message[]) {
         GST_ERROR("Got 'error' OCDM notification: %s", message);
-        callOnMainThread([session = makeWeakPtr(static_cast<CDMInstanceSessionThunder*>(userData)), buffer = WebCore::SharedBuffer::create(message,
+        callOnMainThread([session = WeakPtr { static_cast<CDMInstanceSessionThunder*>(userData) }, buffer = WebCore::SharedBuffer::create(message,
             strlen(message))]() mutable {
             if (!session)
                 return;
@@ -334,36 +319,31 @@ RefPtr<CDMInstanceSession> CDMInstanceThunder::createSession()
 class ParsedResponseMessage {
 
 public:
-    ParsedResponseMessage(const RefPtr<SharedBuffer>& buffer)
+    ParsedResponseMessage(const RefPtr<FragmentedSharedBuffer>& buffer)
     {
         if (!buffer || !buffer->size())
             return;
 
         GST_DEBUG("parsing buffer of size %zu", buffer->size());
-        GST_MEMDUMP("buffer", buffer->data(), buffer->size());
-
-        StringView payload(reinterpret_cast<const LChar*>(buffer->data()), buffer->size());
-        static NeverDestroyed<StringView> type(reinterpret_cast<const LChar*>(":Type:"), 6);
-        size_t typePosition = payload.find(type, 0);
-        StringView requestType(payload.characters8(), typePosition != notFound ? typePosition : 0);
         unsigned offset = 0u;
-        if (!requestType.isEmpty() && requestType.length() != payload.length())
-            offset = typePosition + 6;
-
-        if (requestType.length() == 1) {
-            // FIXME: There are simpler ways to convert a single digit to a number than calling parseInteger.
-            m_type = std::make_optional(static_cast<WebCore::MediaKeyMessageType>(parseInteger<int>(requestType).value_or(0)));
+        if (buffer->size() >= 7) {
+            auto data = buffer->read(0, 7);
+            StringView dataString(reinterpret_cast<const LChar*>(data.data()), data.size());
+            static NeverDestroyed<StringView> type(reinterpret_cast<const LChar*>(":Type:"), 6);
+            if (dataString.endsWith(type)) {
+                m_type.emplace(static_cast<WebCore::MediaKeyMessageType>(dataString.characterAt(0) - '0'));
+                offset = 7;
+            }
         }
-
-        m_payload = SharedBuffer::create(payload.characters8() + offset, payload.length() - offset);
-
+        auto remainingData = buffer->read(offset, buffer->size() - offset);
+        m_payload = SharedBuffer::create(WTFMove(remainingData));
         m_isValid = true;
     }
 
     bool isValid() const { return m_isValid; }
     bool hasPayload() const { return static_cast<bool>(m_payload); }
-    const Ref<SharedBuffer>& payload() const& { ASSERT(m_payload); return m_payload.value(); }
-    Ref<SharedBuffer>& payload() & { ASSERT(m_payload); return m_payload.value(); }
+    const Ref<FragmentedSharedBuffer>& payload() const& { ASSERT(m_payload); return m_payload.value(); }
+    Ref<FragmentedSharedBuffer>& payload() & { ASSERT(m_payload); return m_payload.value(); }
     bool hasType() const { return m_type.has_value(); }
     WebCore::MediaKeyMessageType type() const { ASSERT(m_type); return m_type.value(); }
     WebCore::MediaKeyMessageType typeOr(WebCore::MediaKeyMessageType alternate) const { return m_type ? m_type.value() : alternate; }
@@ -372,11 +352,11 @@ public:
 
 private:
     bool m_isValid { false };
-    std::optional<Ref<SharedBuffer>> m_payload;
+    std::optional<Ref<FragmentedSharedBuffer>> m_payload;
     std::optional<WebCore::MediaKeyMessageType> m_type;
 };
 
-void CDMInstanceSessionThunder::challengeGeneratedCallback(RefPtr<SharedBuffer>&& buffer)
+void CDMInstanceSessionThunder::challengeGeneratedCallback(RefPtr<FragmentedSharedBuffer>&& buffer)
 {
     ParsedResponseMessage parsedResponseMessage(buffer);
     if (!parsedResponseMessage) {
@@ -483,10 +463,11 @@ void CDMInstanceSessionThunder::keysUpdateDoneCallback()
     m_sessionChangedCallbacks.clear();
 }
 
-void CDMInstanceSessionThunder::errorCallback(RefPtr<SharedBuffer>&& message)
+void CDMInstanceSessionThunder::errorCallback(RefPtr<FragmentedSharedBuffer>&& message)
 {
     GST_ERROR("CDM error");
-    GST_MEMDUMP("error dump", message->data(), message->size());
+    auto data = message->extractData();
+    GST_MEMDUMP("error dump", data.data(), data.size());
     for (const auto& challengeCallback : m_challengeCallbacks)
         challengeCallback();
     m_challengeCallbacks.clear();
@@ -496,7 +477,7 @@ void CDMInstanceSessionThunder::errorCallback(RefPtr<SharedBuffer>&& message)
     m_sessionChangedCallbacks.clear();
 }
 
-void CDMInstanceSessionThunder::requestLicense(LicenseType licenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initDataSharedBuffer,
+void CDMInstanceSessionThunder::requestLicense(LicenseType licenseType, const AtomString& initDataType, Ref<FragmentedSharedBuffer>&& initDataSharedBuffer,
     LicenseCallback&& callback)
 {
     ASSERT(isMainThread());
@@ -507,14 +488,15 @@ void CDMInstanceSessionThunder::requestLicense(LicenseType licenseType, const At
     m_initData = InitData(instance->keySystem(), WTFMove(initDataSharedBuffer));
 
     GST_TRACE("Going to request a new session id, init data size %zu", m_initData.payload()->size());
-    GST_MEMDUMP("init data", m_initData.payload()->data(), m_initData.payload()->size());
+    auto payloadData = m_initData.payload()->extractData();
+    GST_MEMDUMP("init data", payloadData.data(), payloadData.size());
 
     OpenCDMSession* session = nullptr;
     opencdm_construct_session(&instance->thunderSystem(), thunderLicenseType(licenseType), initDataType.string().utf8().data(),
-        m_initData.payload()->data(), m_initData.payload()->size(), nullptr, 0, &m_thunderSessionCallbacks, this, &session);
+        payloadData.data(), payloadData.size(), nullptr, 0, &m_thunderSessionCallbacks, this, &session);
     if (!session) {
         GST_ERROR("Could not create session");
-        RefPtr<SharedBuffer> initData = m_initData.payload();
+        RefPtr<FragmentedSharedBuffer> initData = m_initData.payload();
         callback(initData.releaseNonNull(), { }, false, Failed);
         return;
     }
@@ -523,7 +505,7 @@ void CDMInstanceSessionThunder::requestLicense(LicenseType licenseType, const At
 
     auto generateChallenge = [this, callback = WTFMove(callback)]() mutable {
         ASSERT(isMainThread());
-        RefPtr<SharedBuffer> initData = m_initData.payload();
+        RefPtr<FragmentedSharedBuffer> initData = m_initData.payload();
         if (m_sessionID.isEmpty()) {
             GST_ERROR("could not create session id");
             callback(initData.releaseNonNull(), { }, false, Failed);
@@ -553,13 +535,13 @@ void CDMInstanceSessionThunder::sessionFailure()
     m_sessionChangedCallbacks.clear();
 }
 
-void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseType, Ref<SharedBuffer>&& response, LicenseUpdateCallback&& callback)
+void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseType, Ref<FragmentedSharedBuffer>&& response, LicenseUpdateCallback&& callback)
 {
     ASSERT_UNUSED(sessionID, sessionID == m_sessionID);
 
     GST_TRACE("Updating session %s", sessionID.utf8().data());
 
-    m_sessionChangedCallbacks.append([this, callback = WTFMove(callback)](bool success, RefPtr<SharedBuffer>&& responseMessage) mutable {
+    m_sessionChangedCallbacks.append([this, callback = WTFMove(callback)](bool success, RefPtr<FragmentedSharedBuffer>&& responseMessage) mutable {
         ASSERT(isMainThread());
         if (success) {
             if (!responseMessage)
@@ -570,9 +552,12 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
                 ParsedResponseMessage parsedResponseMessage(responseMessage);
                 ASSERT(parsedResponseMessage);
                 if (parsedResponseMessage.hasPayload()) {
-                    Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
+                    Ref<FragmentedSharedBuffer> message = WTFMove(parsedResponseMessage.payload());
                     GST_DEBUG("got message of size %zu", message->size());
-                    GST_MEMDUMP("message", message->data(), message->size());
+#ifndef GST_DISABLE_GST_DEBUG
+                    auto data = message->copyData();
+                    GST_MEMDUMP("message", data.data(), data.size());
+#endif
                     callback(false, std::nullopt, std::nullopt,
                         std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
                             WTFMove(message)), SuccessValue::Succeeded);
@@ -586,7 +571,8 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
             callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);
         }
     });
-    if (!m_session || m_sessionID.isEmpty() || opencdm_session_update(m_session->get(), response->data(), response->size()))
+    auto responseData = response->extractData();
+    if (!m_session || m_sessionID.isEmpty() || opencdm_session_update(m_session->get(), responseData.data(), responseData.size()))
         sessionFailure();
 }
 
@@ -594,7 +580,7 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
 {
     ASSERT_UNUSED(sessionID, sessionID == m_sessionID);
 
-    m_sessionChangedCallbacks.append([this, callback = WTFMove(callback)](bool success, RefPtr<SharedBuffer>&& responseMessage) mutable {
+    m_sessionChangedCallbacks.append([this, callback = WTFMove(callback)](bool success, RefPtr<FragmentedSharedBuffer>&& responseMessage) mutable {
         ASSERT(isMainThread());
         if (success) {
             if (!responseMessage)
@@ -605,9 +591,12 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
                 ParsedResponseMessage parsedResponseMessage(responseMessage);
                 ASSERT(parsedResponseMessage);
                 if (parsedResponseMessage.hasPayload()) {
-                    Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
+                    Ref<FragmentedSharedBuffer> message = WTFMove(parsedResponseMessage.payload());
                     GST_DEBUG("got message of size %zu", message->size());
-                    GST_MEMDUMP("message", message->data(), message->size());
+#ifndef GST_DISABLE_GST_DEBUG
+                    auto data = message->copyData();
+                    GST_MEMDUMP("message", data.data(), data.size());
+#endif
                     callback(std::nullopt, std::nullopt, std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
                         WTFMove(message)), SuccessValue::Succeeded, SessionLoadFailure::None);
                 } else {
@@ -616,11 +605,15 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
                 }
             }
         } else {
-            auto responseMessageData = responseMessage ? responseMessage->data() : nullptr;
-            auto responseMessageSize = responseMessage ? responseMessage->size() : 0;
-            StringView response(reinterpret_cast<const LChar*>(responseMessageData), responseMessageSize);
-            GST_ERROR("session %s not loaded, reason %s", m_sessionID.utf8().data(), response.utf8().data());
-            callback(std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed, sessionLoadFailureFromThunder(response));
+            GST_ERROR("session %s not loaded", m_sessionID.utf8().data());
+            if (responseMessage->isEmpty())
+                callback(std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed, sessionLoadFailureFromThunder({ }));
+            else {
+                auto responseData = responseMessage->extractData();
+                StringView response(reinterpret_cast<const LChar*>(responseData.data()), responseData.size());
+                GST_DEBUG("Error message: %s", response.utf8().data());
+                callback(std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed, sessionLoadFailureFromThunder(response));
+            }
         }
     });
     if (!m_session || m_sessionID.isEmpty() || opencdm_session_load(m_session->get()))
@@ -648,7 +641,7 @@ void CDMInstanceSessionThunder::removeSessionData(const String& sessionID, Licen
 {
     ASSERT_UNUSED(sessionID, m_sessionID == sessionID);
 
-    m_sessionChangedCallbacks.append([this, callback = WTFMove(callback)](bool success, RefPtr<SharedBuffer>&& buffer) mutable {
+    m_sessionChangedCallbacks.append([this, callback = WTFMove(callback)](bool success, RefPtr<FragmentedSharedBuffer>&& buffer) mutable {
         ASSERT(isMainThread());
         if (success) {
             if (!buffer)
@@ -657,7 +650,7 @@ void CDMInstanceSessionThunder::removeSessionData(const String& sessionID, Licen
                 ParsedResponseMessage parsedResponseMessage(buffer);
                 ASSERT(parsedResponseMessage);
                 if (parsedResponseMessage.hasPayload()) {
-                    Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
+                    Ref<FragmentedSharedBuffer> message = WTFMove(parsedResponseMessage.payload());
                     GST_DEBUG("session %s removed, message length %zu", m_sessionID.utf8().data(), message->size());
                     callback(m_keyStore.allKeysAs(MediaKeyStatus::Released), WTFMove(message), SuccessValue::Succeeded);
                 } else {

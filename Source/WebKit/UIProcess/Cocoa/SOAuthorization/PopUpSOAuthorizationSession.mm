@@ -52,7 +52,7 @@
 - (instancetype)initWithSession:(WebKit::PopUpSOAuthorizationSession *)session
 {
     if ((self = [super init])) {
-        _session = makeWeakPtr(session);
+        _session = session;
         _isFirstNavigation = YES;
     }
     return self;

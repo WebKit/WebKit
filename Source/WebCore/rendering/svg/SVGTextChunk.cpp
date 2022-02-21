@@ -21,7 +21,8 @@
 #include "config.h"
 #include "SVGTextChunk.h"
 
-#include "SVGInlineTextBox.h"
+#include "RenderSVGInlineText.h"
+#include "SVGInlineTextBoxInlines.h"
 #include "SVGTextContentElement.h"
 #include "SVGTextFragment.h"
 

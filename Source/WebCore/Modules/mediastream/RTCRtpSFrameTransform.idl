@@ -43,13 +43,13 @@ dictionary RTCRtpSFrameTransformOptions {
 [
     ActiveDOMObject,
     Conditional=WEB_RTC,
-    EnabledBySetting=WebRTCInsertableStreams,
+    EnabledBySetting=WebRTCSFrameTransformEnabled,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,DedicatedWorker),
     InterfaceName=SFrameTransform,
     JSGenerateToNativeObject,
 ] interface RTCRtpSFrameTransform : EventTarget {
-    [CallWith=ScriptExecutionContext] constructor(optional RTCRtpSFrameTransformOptions options);
+    [CallWith=CurrentScriptExecutionContext] constructor(optional RTCRtpSFrameTransformOptions options);
 
     [Custom] Promise<undefined> setEncryptionKey(CryptoKey key, optional any keyID);
     // FIXME: Add support for missing methods.

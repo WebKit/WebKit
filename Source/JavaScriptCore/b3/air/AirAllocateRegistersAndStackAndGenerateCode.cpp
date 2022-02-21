@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -581,11 +581,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             })();
             checkConsistency();
 
-            inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
-                if (!arg.isTmp())
-                    return;
-
-                Tmp tmp = arg.tmp();
+            inst.forEachTmp([&] (const Tmp& tmp, Arg::Role role, Bank, Width) {
                 if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
                     return;
 
@@ -595,6 +591,13 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                     if (Arg::isAnyDef(role))
                         m_namedDefdRegs.set(tmp.reg());
                 }
+            });
+
+            inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
+                if (!arg.isTmp())
+                    return;
+
+                Tmp tmp = arg.tmp();
 
                 // We convert any cold uses that are already in the stack to just point to
                 // the canonical stack location.
@@ -612,16 +615,18 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             });
 
             RegisterSet clobberedRegisters;
+            RegisterSet earlyNextClobberedRegisters;
             {
                 Inst* nextInst = block->get(instIndex + 1);
                 if (inst.kind.opcode == Patch || (nextInst && nextInst->kind.opcode == Patch)) {
                     if (inst.kind.opcode == Patch)
                         clobberedRegisters.merge(inst.extraClobberedRegs());
                     if (nextInst && nextInst->kind.opcode == Patch)
-                        clobberedRegisters.merge(nextInst->extraEarlyClobberedRegs());
+                        earlyNextClobberedRegisters.merge(nextInst->extraEarlyClobberedRegs());
 
                     clobberedRegisters.filter(m_allowedRegisters);
                     clobberedRegisters.exclude(m_namedDefdRegs);
+                    earlyNextClobberedRegisters.filter(m_allowedRegisters);
 
                     m_namedDefdRegs.merge(clobberedRegisters);
                 }
@@ -691,34 +696,28 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                     // We rewind this Inst to be in its previous state, however, if any arg admits stack,
                     // we move to providing that arg in stack form. This will allow us to fully allocate
                     // this inst when we rewind.
+                    inst.forEachTmpFast([&] (Tmp& tmp) {
+                        if (!tmp.isReg())
+                            return;
+                        if (isDisallowedRegister(tmp.reg()))
+                            return;
+                        Tmp originalTmp = allocationSnapshot[tmp.reg()];
+                        if (originalTmp.isReg()) {
+                            ASSERT(tmp.reg() == originalTmp.reg());
+                            // This means this Inst referred to this reg directly. We leave these as is.
+                            return;
+                        }
+                        tmp = originalTmp;
+                    });
                     inst.forEachArg([&] (Arg& arg, Arg::Role, Bank, Width) {
-                        if (!arg.isTmp())
-                            return;
+                        if (arg.isTmp() && !arg.tmp().isReg() && inst.admitsStack(arg)) {
+                            Tmp tmp = arg.tmp();
+                            auto& entry = m_map[tmp];
+                            if (Reg reg = entry.reg)
+                                spill(tmp, reg);
 
-                        Tmp tmp = arg.tmp();
-                        if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
-                            return;
-
-                        if (tmp.isReg()) {
-                            Tmp originalTmp = allocationSnapshot[tmp.reg()];
-                            if (originalTmp.isReg()) {
-                                ASSERT(tmp.reg() == originalTmp.reg());
-                                // This means this Inst referred to this reg directly. We leave these as is.
-                                return;
-                            }
-                            tmp = originalTmp;
+                            arg = Arg::addr(Tmp(GPRInfo::callFrameRegister), entry.spillSlot->offsetFromFP());
                         }
-
-                        if (!inst.admitsStack(arg)) {
-                            arg = tmp;
-                            return;
-                        }
-
-                        auto& entry = m_map[tmp];
-                        if (Reg reg = entry.reg)
-                            spill(tmp, reg);
-
-                        arg = Arg::addr(Tmp(GPRInfo::callFrameRegister), entry.spillSlot->offsetFromFP());
                     });
 
                     --instIndex;
@@ -739,30 +738,15 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 inst.reportUsedRegisters(registerSet);
             }
 
-            if (inst.isTerminal() && block->numSuccessors()) {
-                // By default, we spill everything between block boundaries. However, we have a small
-                // heuristic to pass along register state. We should eventually make this better.
-                // What we do now is if we have a successor with a single predecessor (us), and we
-                // haven't yet generated code for it, we give it our register state. If all our successors
-                // can take on our register state, we don't flush at the end of this block.
-
-                bool everySuccessorGetsOurRegisterState = true;
-                for (unsigned i = 0; i < block->numSuccessors(); ++i) {
-                    BasicBlock* successor = block->successorBlock(i);
-                    if (successor->numPredecessors() == 1 && !context.blockLabels[successor]->isSet())
-                        currentAllocationMap[successor] = currentAllocation;
-                    else
-                        everySuccessorGetsOurRegisterState = false;
+            auto clobber = [&] (const RegisterSet& set) {
+                for (Reg reg : set) {
+                    Tmp tmp(reg);
+                    ASSERT(currentAllocation[reg] == tmp);
+                    m_availableRegs[tmp.bank()].set(reg);
+                    m_currentAllocation->at(reg) = Tmp();
+                    m_map[tmp].reg = Reg();
                 }
-                if (!everySuccessorGetsOurRegisterState) {
-                    for (Tmp tmp : m_liveness->liveAtTail(block)) {
-                        if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
-                            continue;
-                        if (Reg reg = m_map[tmp].reg)
-                            flush(tmp, reg);
-                    }
-                }
-            }
+            };
 
             if (!inst.isTerminal()) {
                 CCallHelpers::Jump jump;
@@ -770,15 +754,41 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                     jump = inst.generate(*m_jit, context);
                 ASSERT_UNUSED(jump, !jump.isSet());
 
-                for (Reg reg : clobberedRegisters) {
-                    Tmp tmp(reg);
-                    ASSERT(currentAllocation[reg] == tmp);
-                    m_availableRegs[tmp.bank()].set(reg);
-                    m_currentAllocation->at(reg) = Tmp();
-                    m_map[tmp].reg = Reg();
-                }
+                allocNamed(earlyNextClobberedRegisters, true);
+                clobberedRegisters.merge(earlyNextClobberedRegisters);
+                clobber(clobberedRegisters);
             } else {
                 ASSERT(needsToGenerate);
+
+                clobber(clobberedRegisters);
+                ASSERT(earlyNextClobberedRegisters.isEmpty());
+
+                if (block->numSuccessors()) {
+                    // By default, we spill everything between block boundaries. However, we have a small
+                    // heuristic to pass along register state. We should eventually make this better.
+                    // What we do now is if we have a successor with a single predecessor (us), and we
+                    // haven't yet generated code for it, we give it our register state. If all our successors
+                    // can take on our register state, we don't flush at the end of this block.
+
+
+                    bool everySuccessorGetsOurRegisterState = true;
+                    for (unsigned i = 0; i < block->numSuccessors(); ++i) {
+                        BasicBlock* successor = block->successorBlock(i);
+                        if (successor->numPredecessors() == 1 && !context.blockLabels[successor]->isSet())
+                            currentAllocationMap[successor] = currentAllocation;
+                        else
+                            everySuccessorGetsOurRegisterState = false;
+                    }
+                    if (!everySuccessorGetsOurRegisterState) {
+                        for (Tmp tmp : m_liveness->liveAtTail(block)) {
+                            if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
+                                continue;
+                            if (Reg reg = m_map[tmp].reg)
+                                flush(tmp, reg);
+                        }
+                    }
+                }
+
                 if (inst.kind.opcode == Jump && block->successorBlock(0) == m_code.findNextBlock(block))
                     needsToGenerate = false;
 

@@ -338,6 +338,10 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
     auto frame = this->frame();
     if (!frame)
         return { };
+    
+    if (rangeCount() < 1)
+        return Exception { InvalidStateError, "extend() requires a Range to be added to the Selection" };
+
     if (frame->settings().liveRangeSelectionEnabled()) {
         if (!frame->document()->contains(node))
             return { };

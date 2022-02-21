@@ -25,7 +25,7 @@
 #pragma once
 
 #include "JSDOMConvertBufferSource.h"
-#include <JavaScriptCore/Uint8Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

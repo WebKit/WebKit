@@ -41,7 +41,6 @@ struct AudioBufferSourceOptions;
 class AudioBufferSourceNode final : public AudioScheduledSourceNode {
     WTF_MAKE_ISO_ALLOCATED(AudioBufferSourceNode);
 public:
-    static Ref<AudioBufferSourceNode> create(BaseAudioContext&, float sampleRate);
     static ExceptionOr<Ref<AudioBufferSourceNode>> create(BaseAudioContext&, AudioBufferSourceOptions&& = { });
 
     virtual ~AudioBufferSourceNode();
@@ -51,6 +50,9 @@ public:
 
     // setBufferForBindings() is called on the main thread. This is the buffer we use for playback.
     ExceptionOr<void> setBufferForBindings(RefPtr<AudioBuffer>&&);
+
+    AudioBuffer* buffer() WTF_REQUIRES_LOCK(m_processLock) { return m_buffer.get(); }
+    Lock& processLock() WTF_RETURNS_LOCK(m_processLock) { return m_processLock; }
 
     // This function does not lock before accessing the buffer and should therefore only be called on the main thread.
     AudioBuffer* bufferForBindings() WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_buffer.get(); }
@@ -80,10 +82,9 @@ public:
 
     const char* activeDOMObjectName() const override { return "AudioBufferSourceNode"; }
 
-protected:
-    explicit AudioBufferSourceNode(BaseAudioContext&);
-
 private:
+    AudioBufferSourceNode(BaseAudioContext&);
+
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }
 

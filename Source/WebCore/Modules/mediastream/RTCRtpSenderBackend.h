@@ -26,8 +26,8 @@
 
 #if ENABLE(WEB_RTC)
 
+#include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ public:
     virtual void setParameters(const RTCRtpSendParameters&, DOMPromiseDeferred<void>&&) = 0;
     virtual std::unique_ptr<RTCDTMFSenderBackend> createDTMFBackend() = 0;
     virtual Ref<RTCRtpTransformBackend> rtcRtpTransformBackend() = 0;
-    virtual void setMediaStreamIds(const Vector<String>&) = 0;
+    virtual void setMediaStreamIds(const FixedVector<String>&) = 0;
     virtual std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend() = 0;
 };
 

@@ -25,11 +25,12 @@
 
 #pragma once
 
+#include <wtf/Assertions.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringBuilder.h>
 
-#if USE(JOURNALD)
+#if ENABLE(JOURNALD_LOG)
 #define SD_JOURNAL_SUPPRESS_LOCATION
 #include <systemd/sd-journal.h>
 #endif
@@ -240,7 +241,7 @@ public:
         if (!m_enabled)
             return false;
 
-#if USE(SYSTEMD)
+#if ENABLE(JOURNALD_LOG)
         if (channel.state == WTFLogChannelState::Off)
             return false;
 #endif
@@ -311,12 +312,12 @@ private:
 
 #if RELEASE_LOG_DISABLED
         WTFLog(&channel, "%s", logMessage.utf8().data());
-#endif
-#if USE(OS_LOG) && !RELEASE_LOG_DISABLED
+#elif USE(OS_LOG)
         os_log(channel.osLogChannel, "%{public}s", logMessage.utf8().data());
-#endif
-#if USE(JOURNALD) && !RELEASE_LOG_DISABLED
+#elif ENABLE(JOURNALD_LOG)
         sd_journal_send("WEBKIT_SUBSYSTEM=%s", channel.subsystem, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8().data(), nullptr);
+#else
+        fprintf(stderr, "[%s:%s:-] %s\n", channel.subsystem, channel.name, logMessage.utf8().data());
 #endif
 
         if (channel.state == WTFLogChannelState::Off || level > channel.level)
@@ -337,17 +338,17 @@ private:
 
 #if RELEASE_LOG_DISABLED
         WTFLogVerbose(file, line, function, &channel, "%s", logMessage.utf8().data());
-#endif
-#if USE(OS_LOG) && !RELEASE_LOG_DISABLED
+#elif USE(OS_LOG)
         os_log(channel.osLogChannel, "%{public}s", logMessage.utf8().data());
         UNUSED_PARAM(file);
         UNUSED_PARAM(line);
         UNUSED_PARAM(function);
-#endif
-#if USE(JOURNALD) && !RELEASE_LOG_DISABLED
+#elif ENABLE(JOURNALD_LOG)
         auto fileString = makeString("CODE_FILE=", file);
         auto lineString = makeString("CODE_LINE=", line);
         sd_journal_send_with_location(fileString.utf8().data(), lineString.utf8().data(), function, "WEBKIT_SUBSYSTEM=%s", channel.subsystem, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8().data(), nullptr);
+#else
+        fprintf(stderr, "[%s:%s:-] %s FILE=%s:%d %s\n", channel.subsystem, channel.name, logMessage.utf8().data(), file, line, function);
 #endif
 
         if (channel.state == WTFLogChannelState::Off || level > channel.level)

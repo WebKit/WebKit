@@ -34,6 +34,7 @@
 #include "Register.h"
 #include "WasmModuleInformation.h"
 #include "WasmSignatureInlines.h"
+#include "WasmTag.h"
 #include <wtf/CheckedArithmetic.h>
 
 namespace JSC { namespace Wasm {
@@ -57,6 +58,7 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
     , m_numImportFunctions(m_module->moduleInformation().importFunctionCount())
     , m_passiveElements(m_module->moduleInformation().elementCount())
     , m_passiveDataSegments(m_module->moduleInformation().dataSegmentsCount())
+    , m_tags(m_module->moduleInformation().exceptionIndexSpaceSize())
 {
     for (unsigned i = 0; i < m_numImportFunctions; ++i)
         new (importFunctionInfo(i)) ImportFunctionInfo();
@@ -90,7 +92,9 @@ Ref<Instance> Instance::create(Context* context, Ref<Module>&& module, EntryFram
     return adoptRef(*new (NotNull, fastMalloc(allocationSize(module->moduleInformation().importFunctionCount(), module->moduleInformation().tableCount()))) Instance(context, WTFMove(module), pointerToTopEntryFrame, pointerToActualStackLimit, WTFMove(storeTopCallFrame)));
 }
 
-Instance::~Instance() { }
+Instance::~Instance()
+{
+}
 
 size_t Instance::extraMemoryAllocated() const
 {
@@ -252,8 +256,8 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
             continue;
         }
 
-        Callee& embedderEntrypointCallee = codeBlock()->embedderEntrypointCalleeFromFunctionIndexSpace(functionIndex);
-        WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = codeBlock()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
+        Callee& embedderEntrypointCallee = calleeGroup()->embedderEntrypointCalleeFromFunctionIndexSpace(functionIndex);
+        WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
         const Signature& signature = SignatureInformation::get(signatureIndex);
         // FIXME: Say we export local function "foo" at function index 0.
         // What if we also set it to the table an Element w/ index 0.
@@ -295,6 +299,11 @@ void Instance::linkGlobal(unsigned i, Ref<Global>&& global)
 {
     m_globals.get()[i].m_pointer = global->valuePointer();
     m_linkedGlobals.set(i, WTFMove(global));
+}
+
+void Instance::setTag(unsigned index, Ref<const Tag>&& tag)
+{
+    m_tags[index] = WTFMove(tag);
 }
 
 } } // namespace JSC::Wasm

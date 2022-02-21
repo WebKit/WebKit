@@ -57,7 +57,7 @@ void RemoteSampleBufferDisplayLayerManager::close()
 {
     m_connectionToWebProcess.connection().removeThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName());
     m_connectionToWebProcess.connection().removeThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName());
-    dispatchToThread([this, protectedThis = makeRef(*this)] {
+    dispatchToThread([this, protectedThis = Ref { *this }] {
         callOnMainRunLoop([layers = WTFMove(m_layers)] { });
     });
 }
@@ -80,10 +80,10 @@ bool RemoteSampleBufferDisplayLayerManager::dispatchMessage(IPC::Connection& con
 
 void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayerIdentifier identifier, bool hideRootLayer, WebCore::IntSize size, LayerCreationCallback&& callback)
 {
-    callOnMainRunLoop([this, protectedThis = makeRef(*this), identifier, hideRootLayer, size, callback = WTFMove(callback)]() mutable {
-        auto layer = RemoteSampleBufferDisplayLayer::create(identifier, m_connection.copyRef());
+    callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier, hideRootLayer, size, callback = WTFMove(callback)]() mutable {
+        auto layer = RemoteSampleBufferDisplayLayer::create(m_connectionToWebProcess, identifier, m_connection.copyRef());
         auto& layerReference = *layer;
-        layerReference.initialize(hideRootLayer, size, [this, protectedThis = makeRef(*this), callback = WTFMove(callback), identifier, layer = WTFMove(layer)](auto layerId) mutable {
+        layerReference.initialize(hideRootLayer, size, [this, protectedThis = Ref { *this }, callback = WTFMove(callback), identifier, layer = WTFMove(layer)](auto layerId) mutable {
             dispatchToThread([this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), identifier, layer = WTFMove(layer), layerId = WTFMove(layerId)]() mutable {
                 ASSERT(!m_layers.contains(identifier));
                 m_layers.add(identifier, WTFMove(layer));
@@ -95,7 +95,7 @@ void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayer
 
 void RemoteSampleBufferDisplayLayerManager::releaseLayer(SampleBufferDisplayLayerIdentifier identifier)
 {
-    callOnMainRunLoop([this, protectedThis = makeRef(*this), identifier]() mutable {
+    callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier]() mutable {
         dispatchToThread([this, protectedThis = WTFMove(protectedThis), identifier] {
             ASSERT(m_layers.contains(identifier));
             callOnMainRunLoop([layer = m_layers.take(identifier)] { });

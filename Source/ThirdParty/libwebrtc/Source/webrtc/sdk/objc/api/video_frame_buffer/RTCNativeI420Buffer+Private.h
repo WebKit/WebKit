@@ -23,6 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithFrameBuffer:(rtc::scoped_refptr<webrtc::I420BufferInterface>)i420Buffer;
 - (rtc::scoped_refptr<webrtc::I420BufferInterface>)nativeI420Buffer;
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+- (void)close;
+#endif
 @end
 
 NS_ASSUME_NONNULL_END

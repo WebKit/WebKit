@@ -235,6 +235,18 @@
     return _processPoolConfiguration->presentingApplicationPID();
 }
 
+- (void)setPresentingApplicationProcessToken:(audit_token_t)token
+{
+    _processPoolConfiguration->setPresentingApplicationProcessToken(token);
+}
+
+- (audit_token_t)presentingApplicationProcessToken
+{
+    if (_processPoolConfiguration->presentingApplicationProcessToken())
+        return *_processPoolConfiguration->presentingApplicationProcessToken();
+    return { };
+}
+
 - (void)setProcessSwapsOnNavigation:(BOOL)swaps
 {
     _processPoolConfiguration->setProcessSwapsOnNavigation(swaps);

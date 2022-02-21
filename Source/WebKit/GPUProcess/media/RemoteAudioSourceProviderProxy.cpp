@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-Ref<RemoteAudioSourceProviderProxy> RemoteAudioSourceProviderProxy::create(WebCore::MediaPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, AudioSourceProviderAVFObjC& localProvider)
+Ref<RemoteAudioSourceProviderProxy> RemoteAudioSourceProviderProxy::create(WebCore::MediaPlayerIdentifier identifier, Ref<IPC::Connection>&& connection, WebCore::AudioSourceProviderAVFObjC& localProvider)
 {
     auto remoteProvider = adoptRef(*new RemoteAudioSourceProviderProxy(identifier, WTFMove(connection)));
 
@@ -55,9 +55,9 @@ RemoteAudioSourceProviderProxy::RemoteAudioSourceProviderProxy(WebCore::MediaPla
 
 RemoteAudioSourceProviderProxy::~RemoteAudioSourceProviderProxy() = default;
 
-UniqueRef<CARingBuffer> RemoteAudioSourceProviderProxy::createRingBuffer()
+UniqueRef<WebCore::CARingBuffer> RemoteAudioSourceProviderProxy::createRingBuffer()
 {
-    return makeUniqueRef<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>([protectedThis = makeRef(*this)](SharedMemory* memory, const CAAudioStreamDescription& format, size_t frameCount) mutable {
+    return makeUniqueRef<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>([protectedThis = Ref { *this }](SharedMemory* memory, const WebCore::CAAudioStreamDescription& format, size_t frameCount) mutable {
         protectedThis->storageChanged(memory, format, frameCount);
     }));
 }
@@ -67,7 +67,7 @@ void RemoteAudioSourceProviderProxy::newAudioSamples(uint64_t startFrame, uint64
     m_connection->send(Messages::RemoteAudioSourceProviderManager::AudioSamplesAvailable { m_identifier, startFrame, numberOfFrames }, 0);
 }
 
-void RemoteAudioSourceProviderProxy::storageChanged(SharedMemory* memory, const CAAudioStreamDescription& format, size_t frameCount)
+void RemoteAudioSourceProviderProxy::storageChanged(SharedMemory* memory, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
 {
     SharedMemory::Handle handle;
     if (memory)

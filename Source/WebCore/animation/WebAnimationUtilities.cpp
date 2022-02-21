@@ -33,7 +33,6 @@
 #include "DeclarativeAnimation.h"
 #include "Element.h"
 #include "KeyframeEffectStack.h"
-#include "PseudoElement.h"
 #include "WebAnimation.h"
 
 namespace WebCore {
@@ -132,11 +131,10 @@ static bool compareCSSAnimations(const CSSAnimation& a, const CSSAnimation& b)
 
     auto& aBackingAnimation = a.backingAnimation();
     auto& bBackingAnimation = b.backingAnimation();
-    for (size_t i = 0; i < cssAnimationList->size(); ++i) {
-        auto& animation = cssAnimationList->animation(i);
-        if (animation == aBackingAnimation)
+    for (auto& animation : *cssAnimationList) {
+        if (animation.ptr() == &aBackingAnimation)
             return true;
-        if (animation == bBackingAnimation)
+        if (animation.ptr() == &bBackingAnimation)
             return false;
     }
 

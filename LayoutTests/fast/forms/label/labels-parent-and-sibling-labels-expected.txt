@@ -7,8 +7,6 @@ Check button
 PASS element.labels.length is 2
 Check input
 PASS element.labels.length is 2
-Check keygen
-PASS element.labels.length is 2
 Check meter
 PASS element.labels.length is 2
 Check output

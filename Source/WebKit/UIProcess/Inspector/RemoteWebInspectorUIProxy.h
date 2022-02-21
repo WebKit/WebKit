@@ -88,6 +88,8 @@ public:
     void load(Ref<API::DebuggableInfo>&&, const String& backendCommandsURL);
     void closeFromBackend();
     void show();
+    void showConsole();
+    void showResources();
 
     void sendMessageToFrontend(const String& message);
 

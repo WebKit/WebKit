@@ -175,7 +175,7 @@ class DrawBaseVertexBaseInstanceTest
         std::stringstream shader;
         shader << ("#version 300 es\n")
                << (isMultiDraw ? "#extension GL_ANGLE_multi_draw : require\n" : "")
-               << ("#extension GL_ANGLE_base_vertex_base_instance : require\n")
+               << ("#extension GL_ANGLE_base_vertex_base_instance_shader_builtin : require\n")
                << "#define kCountX " << kCountX << "\n"
                << "#define kCountY " << kCountY << "\n"
                << R"(
@@ -430,6 +430,11 @@ void main()
         if (!IsGLExtensionEnabled("GL_ANGLE_base_vertex_base_instance"))
         {
             return false;
+        }
+
+        if (IsGLExtensionRequestable("GL_ANGLE_base_vertex_base_instance_shader_builtin"))
+        {
+            glRequestExtensionANGLE("GL_ANGLE_base_vertex_base_instance_shader_builtin");
         }
 
         return true;
@@ -690,6 +695,7 @@ const angle::PlatformParameters platforms[] = {
     ES3_VULKAN(),
 };
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBaseVertexBaseInstanceTest);
 INSTANTIATE_TEST_SUITE_P(
     ,
     DrawBaseVertexBaseInstanceTest,

@@ -34,7 +34,8 @@
 #include "RenderObject.h"
 #include "SVGAnimateColorElement.h"
 #include "SVGAnimateElement.h"
-#include "SVGElement.h"
+#include "SVGElementInlines.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGStringList.h"
@@ -127,7 +128,7 @@ static std::optional<Vector<UnitBezier>> parseKeySplines(StringView string)
 
 bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static const auto supportedAttributes = makeNeverDestroyed([] {
+    static NeverDestroyed supportedAttributes = [] {
         MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> set;
         SVGTests::addSupportedAttributes(set);
         set.add({
@@ -142,7 +143,7 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
             SVGNames::byAttr.get(),
         });
         return set;
-    }());
+    }();
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

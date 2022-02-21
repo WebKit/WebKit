@@ -1,0 +1,41 @@
+<!doctype HTML>
+<link rel="author" title="Chris Harrelson" href="mailto:chrishtr@chromium.org">
+<link rel="help" href="https://drafts.csswg.org/css-transforms-2/#grouping-property-values">
+<script src="../../resources/js-test-pre.js"></script>
+
+<style>
+  div {
+    width: 200px;
+    height: 200px;
+  }
+  .parent {
+    transform-style: preserve-3d;
+    transform: rotateY(45deg)
+  }
+
+  .child {
+    transform: rotateY(45deg);
+    background: lightblue
+  }
+</style>
+
+<div class=parent>
+  <div id=nonflat class=child></div>
+</div>
+<div class=parent style="-webkit-mask-box-image: url(data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==) 75 75 75 75 / auto / calc(100px) 0;">
+  <div id="webkit-mask-box-image" class=child></div>
+</div>
+
+<div class=parent style="-webkit-mask-box-image-source: url(data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==);">
+  <div id="webkit-mask-box-image-source" class=child></div>
+</div>
+
+<script>
+  var nonflatWidth = nonflat.getBoundingClientRect().width;
+  shouldBe("nonflat.getBoundingClientRect().width", "nonflatWidth");
+  shouldNotBe("document.getElementById('webkit-mask-box-image').getBoundingClientRect().width", "nonflatWidth");
+  shouldNotBe("document.getElementById('webkit-mask-box-image-source').getBoundingClientRect().width", "nonflatWidth");
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+

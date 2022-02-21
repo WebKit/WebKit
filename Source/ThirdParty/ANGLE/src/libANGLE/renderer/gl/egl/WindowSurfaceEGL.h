@@ -25,6 +25,8 @@ class WindowSurfaceEGL : public SurfaceEGL
 
     egl::Error initialize(const egl::Display *display) override;
 
+    egl::Error getBufferAge(const gl::Context *context, EGLint *age) override;
+
   private:
     EGLNativeWindowType mWindow;
 };

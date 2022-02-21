@@ -10,6 +10,4 @@ description: RegExp is /undefined/ and call exec() without arguments
 ---*/
 
 var __re = /undefined/.exec()[0];
-if (__re !== "undefined") {
-	throw new Test262Error('#1: /undefined/.exec()[0] === "undefined". Actual: ' + (__re));
-}
+assert.sameValue(__re, "undefined", 'The value of __re is expected to be "undefined"');

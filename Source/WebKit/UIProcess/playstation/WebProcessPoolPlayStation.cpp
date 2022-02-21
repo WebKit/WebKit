@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebProcessPool.h"
 
+#include "WebProcessCreationParameters.h"
+
 namespace WebKit {
 
 void WebProcessPool::platformInitialize()
@@ -40,7 +42,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters&)
 {
-    notImplemented();
 }
 
 void WebProcessPool::platformInvalidateContext()

@@ -23,11 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <CoreGraphics/CoreGraphics.h>
+
+#if TARGET_OS_IPHONE
 #import <WebCore/AbstractPasteboard.h>
+#endif
 
 #if TARGET_OS_IOS
-
-struct CGSize;
 
 typedef NS_ENUM(NSInteger, WebPreferredPresentationStyle) {
     WebPreferredPresentationStyleUnspecified,

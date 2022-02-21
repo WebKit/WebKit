@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
@@ -34,7 +35,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-static bool createdWebView;
 static bool decidedPolicy;
 static bool finishedNavigation;
 static RetainPtr<WKNavigationAction> action;
@@ -63,7 +63,7 @@ static RetainPtr<WKWebView> newWebView;
     action = navigationAction;
     newWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
 
-    createdWebView = true;
+    didCreateWebView = true;
     return newWebView.get();
 }
 
@@ -88,8 +88,8 @@ TEST(WebKit, ShouldOpenExternalURLsInWindowOpen)
 
     [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
     [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
-    TestWebKitAPI::Util::run(&createdWebView);
-    createdWebView = false;
+    TestWebKitAPI::Util::run(&didCreateWebView);
+    didCreateWebView = false;
 
     // User-initiated window.open to the same host should allow external schemes but not App Links.
     ASSERT_TRUE([action _shouldOpenExternalSchemes]);
@@ -110,8 +110,8 @@ TEST(WebKit, ShouldOpenExternalURLsInWindowOpen)
 
     [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
     [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
-    TestWebKitAPI::Util::run(&createdWebView);
-    createdWebView = false;
+    TestWebKitAPI::Util::run(&didCreateWebView);
+    didCreateWebView = false;
 
     // User-initiated window.open to different host should allow external schemes and App Links.
     ASSERT_TRUE([action _shouldOpenExternalSchemes]);
@@ -157,8 +157,8 @@ TEST(WebKit, ShouldOpenExternalURLsInTargetedLink)
     ASSERT_TRUE([action _shouldOpenExternalSchemes]);
     ASSERT_FALSE([action _shouldOpenAppLinks]);
 
-    TestWebKitAPI::Util::run(&createdWebView);
-    createdWebView = false;
+    TestWebKitAPI::Util::run(&didCreateWebView);
+    didCreateWebView = false;
 
     // User-initiated targeted navigation to the same host should allow external schemes but not App Links.
     ASSERT_TRUE([action _shouldOpenExternalSchemes]);
@@ -187,8 +187,8 @@ TEST(WebKit, ShouldOpenExternalURLsInTargetedLink)
     ASSERT_TRUE([action _shouldOpenExternalSchemes]);
     ASSERT_TRUE([action _shouldOpenAppLinks]);
 
-    TestWebKitAPI::Util::run(&createdWebView);
-    createdWebView = false;
+    TestWebKitAPI::Util::run(&didCreateWebView);
+    didCreateWebView = false;
 
     // User-initiated targeted navigation to different host should allow external schemes and App Links.
     ASSERT_TRUE([action _shouldOpenExternalSchemes]);

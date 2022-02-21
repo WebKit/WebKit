@@ -25,8 +25,24 @@
 
 #pragma once
 
+#include "CompositeOperation.h"
+
 namespace WebCore {
 
 enum class CompositeOperationOrAuto : uint8_t { Replace, Add, Accumulate, Auto };
+
+constexpr CompositeOperationOrAuto toCompositeOperationOrAuto(CompositeOperation operation)
+{
+    switch (operation) {
+    case CompositeOperation::Replace:
+        return CompositeOperationOrAuto::Replace;
+    case CompositeOperation::Add:
+        return CompositeOperationOrAuto::Add;
+    case CompositeOperation::Accumulate:
+        return CompositeOperationOrAuto::Accumulate;
+    }
+    ASSERT_NOT_REACHED();
+    return CompositeOperationOrAuto::Auto;
+}
 
 } // namespace WebCore

@@ -27,10 +27,10 @@
 
 #include "DiagnosticLoggingDomain.h"
 #include "DiagnosticLoggingResultType.h"
+#include <variant>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/RandomNumber.h>
-#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -45,7 +45,7 @@ public:
     virtual void logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, ShouldSample) = 0;
     virtual void logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, ShouldSample) = 0;
 
-    using ValuePayload = Variant<String, uint64_t, int64_t, bool, double>;
+    using ValuePayload = std::variant<String, uint64_t, int64_t, bool, double>;
     using ValueDictionary = HashMap<String, ValuePayload>;
 
     virtual void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const ValueDictionary&, ShouldSample) = 0;

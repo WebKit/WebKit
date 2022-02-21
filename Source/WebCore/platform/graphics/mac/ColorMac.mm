@@ -40,7 +40,7 @@ namespace WTF {
 
 template<> RetainPtr<NSColor> TinyLRUCachePolicy<WebCore::Color, RetainPtr<NSColor>>::createValueForKey(const WebCore::Color& color)
 {
-    return [NSColor colorWithCGColor:cachedCGColor(color)];
+    return [NSColor colorWithCGColor:cachedCGColor(color).get()];
 }
 
 } // namespace WTF
@@ -103,7 +103,7 @@ static std::optional<SRGBA<uint8_t>> makeSimpleColorFromNSColor(NSColor *color)
     return convertColor<SRGBA<uint8_t>>(SRGBA<float> { static_cast<float>(redComponent), static_cast<float>(greenComponent), static_cast<float>(blueComponent), static_cast<float>(alpha) });
 }
 
-Color colorFromNSColor(NSColor *color)
+Color colorFromCocoaColor(NSColor *color)
 {
     return makeSimpleColorFromNSColor(color);
 }
@@ -113,7 +113,7 @@ Color semanticColorFromNSColor(NSColor *color)
     return Color(makeSimpleColorFromNSColor(color), Color::Flags::Semantic);
 }
 
-NSColor *nsColor(const Color& color)
+RetainPtr<NSColor> cocoaColor(const Color& color)
 {
     if (auto srgb = color.tryGetAsSRGBABytes()) {
         switch (PackedColor::RGBA { *srgb }.value) {
@@ -123,7 +123,7 @@ NSColor *nsColor(const Color& color)
             std::call_once(onceFlag, [] {
                 clearColor.construct([NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0]);
             });
-            return clearColor.get().get();
+            return clearColor.get();
         }
         case PackedColor::RGBA { Color::black }.value: {
             static LazyNeverDestroyed<RetainPtr<NSColor>> blackColor;
@@ -131,7 +131,7 @@ NSColor *nsColor(const Color& color)
             std::call_once(onceFlag, [] {
                 blackColor.construct([NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:1]);
             });
-            return blackColor.get().get();
+            return blackColor.get();
         }
         case PackedColor::RGBA { Color::white }.value: {
             static LazyNeverDestroyed<RetainPtr<NSColor>> whiteColor;
@@ -139,7 +139,7 @@ NSColor *nsColor(const Color& color)
             std::call_once(onceFlag, [] {
                 whiteColor.construct([NSColor colorWithSRGBRed:1 green:1 blue:1 alpha:1]);
             });
-            return whiteColor.get().get();
+            return whiteColor.get();
         }
         }
     }
@@ -148,7 +148,7 @@ NSColor *nsColor(const Color& color)
     Locker locker { cachedColorLock };
 
     static NeverDestroyed<TinyLRUCache<Color, RetainPtr<NSColor>, 32>> cache;
-    return cache.get().get(color).get();
+    return cache.get().get(color);
 }
 
 } // namespace WebCore

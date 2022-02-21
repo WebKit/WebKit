@@ -23,11 +23,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformDisplay_h
-#define PlatformDisplay_h
+#pragma once
 
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(EGL)
 typedef void *EGLDisplay;
@@ -41,7 +41,7 @@ typedef struct _GstGLDisplay GstGLDisplay;
 #endif // ENABLE(VIDEO) && USE(GSTREAMER_GL)
 
 #if USE(LCMS)
-typedef void* cmsHPROFILE;
+#include "LCMSUniquePtr.h"
 #endif
 
 namespace WebCore {
@@ -90,6 +90,11 @@ public:
     virtual cmsHPROFILE colorProfile() const;
 #endif
 
+#if USE(ATSPI) || USE(ATK)
+    void setAccessibilityBusAddress(String&& address) { m_accessibilityBusAddress = WTFMove(address); }
+    const String& accessibilityBusAddress() const;
+#endif
+
 protected:
     enum class NativeDisplayOwned { No, Yes };
     explicit PlatformDisplay(NativeDisplayOwned);
@@ -109,7 +114,13 @@ protected:
 #endif
 
 #if USE(LCMS)
-    mutable cmsHPROFILE m_iccProfile { nullptr };
+    mutable LCMSProfilePtr m_iccProfile;
+#endif
+
+#if USE(ATSPI) || USE(ATK)
+    virtual String plartformAccessibilityBusAddress() const { return { }; }
+
+    mutable std::optional<String> m_accessibilityBusAddress;
 #endif
 
 private:
@@ -137,5 +148,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
     static bool isType(const WebCore::PlatformDisplay& display) { return display.type() == WebCore::PlatformDisplay::Type::DisplayType; } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // PltformDisplay_h

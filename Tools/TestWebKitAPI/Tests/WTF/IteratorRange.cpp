@@ -69,4 +69,43 @@ TEST(WTF_IteratorRange, MakeConstReversedRange)
         EXPECT_EQ(value, expectedResults[index++]);
 }
 
+TEST(WTF_IteratorRange, MakeReversedRangeFromRange)
+{
+    Vector<int> intVector { 10, 11, 12, 13 };
+
+    auto range = IteratorRange { intVector.begin(), intVector.end() };
+
+    auto reversedRange = makeReversedRange(range);
+
+    EXPECT_EQ(reversedRange.begin(), intVector.rbegin());
+    EXPECT_EQ(reversedRange.end(), intVector.rend());
+
+    std::array<int, 4> expectedResults { { 13, 12, 11, 10 } };
+    size_t index = 0;
+
+    for (auto& value : reversedRange)
+        EXPECT_EQ(value, expectedResults[index++]);
+}
+
+TEST(WTF_IteratorRange, OneWayIterator)
+{
+    struct OneWayIterator {
+        int* ptr;
+
+        bool operator!=(const OneWayIterator& other) { return ptr != other.ptr; }
+        auto& operator*() const { return *ptr; }
+        void operator++() { ++ptr; }
+    };
+
+    Vector<int> intVector { 10, 11, 12, 13 };
+
+    auto range = IteratorRange { OneWayIterator { intVector.begin() }, OneWayIterator { intVector.end() } };
+
+    std::array<int, 4> expectedResults { { 10, 11, 12, 13 } };
+    size_t index = 0;
+
+    for (auto& value : range)
+        EXPECT_EQ(value, expectedResults[index++]);
+}
+
 } // namespace TestWebKitAPI

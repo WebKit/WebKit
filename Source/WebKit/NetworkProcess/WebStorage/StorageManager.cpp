@@ -37,8 +37,8 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageMap.h>
-#include <WebCore/TextEncoding.h>
 #include <memory>
+#include <pal/text/TextEncoding.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
 #include <wtf/SuspendableWorkQueue.h>

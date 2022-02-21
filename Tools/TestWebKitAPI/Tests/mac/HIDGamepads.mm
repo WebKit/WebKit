@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if HAVE(HID_FRAMEWORK) && USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK)
 
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
@@ -654,4 +654,4 @@ TEST(Gamepad, FullInfoAfterConnection)
 
 } // namespace TestWebKitAPI
 
-#endif // HAVE(HID_FRAMEWORK) && USE(APPLE_INTERNAL_SDK)
+#endif // USE(APPLE_INTERNAL_SDK)

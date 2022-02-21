@@ -96,6 +96,55 @@ SOFT_LINK_CONSTANT(UIFoundation, NSMarkedClauseSegmentAttributeName, NSString *)
 SOFT_LINK_CONSTANT(UIFoundation, NSTextAlternativesAttributeName, NSString *)
 #define NSTextAlternativesAttributeName getNSTextAlternativesAttributeName()
 
+#if HAVE(NSTEXTLIST_MARKER_FORMATS)
+#if USE(APPLE_INTERNAL_SDK)
+#import <UIKit/NSTextList.h>
+#else
+typedef NSString *NSTextListMarkerFormat;
+#endif // USE(APPLE_INTERNAL_SDK)
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerCircle, NSTextListMarkerFormat)
+#define NSTextListMarkerCircle getNSTextListMarkerCircle()
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerDisc, NSTextListMarkerFormat)
+#define NSTextListMarkerDisc getNSTextListMarkerDisc()
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerSquare, NSTextListMarkerFormat)
+#define NSTextListMarkerSquare getNSTextListMarkerSquare()
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerLowercaseHexadecimal, NSTextListMarkerFormat)
+#define NSTextListMarkerLowercaseHexadecimal getNSTextListMarkerLowercaseHexadecimal()
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerUppercaseHexadecimal, NSTextListMarkerFormat)
+#define NSTextListMarkerUppercaseHexadecimal getNSTextListMarkerUppercaseHexadecimal()
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerOctal, NSTextListMarkerFormat)
+#define NSTextListMarkerOctal getNSTextListMarkerOctal()
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerLowercaseAlpha, NSTextListMarkerFormat)
+#define NSTextListMarkerLowercaseAlpha getNSTextListMarkerLowercaseAlpha()
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerUppercaseAlpha, NSTextListMarkerFormat)
+#define NSTextListMarkerUppercaseAlpha getNSTextListMarkerUppercaseAlpha()
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerLowercaseLatin, NSTextListMarkerFormat)
+#define NSTextListMarkerLowercaseLatin getNSTextListMarkerLowercaseLatin()
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerUppercaseLatin, NSTextListMarkerFormat)
+#define NSTextListMarkerUppercaseLatin getNSTextListMarkerUppercaseLatin()
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerLowercaseRoman, NSTextListMarkerFormat)
+#define NSTextListMarkerLowercaseRoman getNSTextListMarkerLowercaseRoman()
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerUppercaseRoman, NSTextListMarkerFormat)
+#define NSTextListMarkerUppercaseRoman getNSTextListMarkerUppercaseRoman()
+SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerDecimal, NSTextListMarkerFormat)
+#define NSTextListMarkerDecimal getNSTextListMarkerDecimal()
+#else
+typedef NSString *NSTextListMarkerFormat;
+static NSTextListMarkerFormat const NSTextListMarkerCircle = @"{circle}";
+static NSTextListMarkerFormat const NSTextListMarkerDisc = @"{disc}";
+static NSTextListMarkerFormat const NSTextListMarkerSquare = @"{square}";
+static NSTextListMarkerFormat const NSTextListMarkerLowercaseHexadecimal = @"{lower-hexadecimal}";
+static NSTextListMarkerFormat const NSTextListMarkerUppercaseHexadecimal = @"{upper-hexadecimal}";
+static NSTextListMarkerFormat const NSTextListMarkerOctal = @"{octal}";
+static NSTextListMarkerFormat const NSTextListMarkerLowercaseAlpha = @"{lower-alpha}";
+static NSTextListMarkerFormat const NSTextListMarkerUppercaseAlpha = @"{upper-alpha}";
+static NSTextListMarkerFormat const NSTextListMarkerLowercaseLatin = @"{lower-latin}";
+static NSTextListMarkerFormat const NSTextListMarkerUppercaseLatin = @"{upper-latin}";
+static NSTextListMarkerFormat const NSTextListMarkerLowercaseRoman = @"{lower-roman}";
+static NSTextListMarkerFormat const NSTextListMarkerUppercaseRoman = @"{upper-roman}";
+static NSTextListMarkerFormat const NSTextListMarkerDecimal = @"{decimal}";
+#endif // HAVE(NSTEXTLIST_MARKER_FORMATS)
+
 // We don't softlink NSSuperscriptAttributeName because UIFoundation stopped exporting it.
 // This attribute is being deprecated at the API level, but internally UIFoundation
 // will continue to support it.
@@ -110,19 +159,5 @@ static NSString *const NSExcludedElementsDocumentAttribute = @"ExcludedElements"
 - (NSData *)RTFDFromRange:(NSRange)range documentAttributes:(NSDictionary *)dict;
 - (BOOL)containsAttachments;
 @end
-
-static NSString *const NSTextListMarkerCircle = @"{circle}";
-static NSString *const NSTextListMarkerDisc = @"{disc}";
-static NSString *const NSTextListMarkerSquare = @"{square}";
-static NSString *const NSTextListMarkerLowercaseHexadecimal = @"{lower-hexadecimal}";
-static NSString *const NSTextListMarkerUppercaseHexadecimal = @"{upper-hexadecimal}";
-static NSString *const NSTextListMarkerOctal = @"{octal}";
-static NSString *const NSTextListMarkerLowercaseAlpha = @"{lower-alpha}";
-static NSString *const NSTextListMarkerUppercaseAlpha = @"{upper-alpha}";
-static NSString *const NSTextListMarkerLowercaseLatin = @"{lower-latin}";
-static NSString *const NSTextListMarkerUppercaseLatin = @"{upper-latin}";
-static NSString *const NSTextListMarkerLowercaseRoman = @"{lower-roman}";
-static NSString *const NSTextListMarkerUppercaseRoman = @"{upper-roman}";
-static NSString *const NSTextListMarkerDecimal = @"{decimal}";
 
 #endif // PLATFORM(IOS_FAMILY)

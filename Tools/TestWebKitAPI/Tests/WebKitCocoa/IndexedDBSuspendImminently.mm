@@ -25,10 +25,10 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestURLSchemeHandler.h"
-
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -39,9 +39,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-static bool receivedScriptMessage;
 static bool idbAcitivitiesStarted;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @interface IndexedDBSuspendImminentlyMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -75,6 +73,12 @@ static void keepNetworkProcessActive()
 
 TEST(IndexedDB, IndexedDBSuspendImminently)
 {
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
     auto handler = adoptNS([[IndexedDBSuspendImminentlyMessageHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];

@@ -26,7 +26,7 @@
 [
     ActiveDOMObject,
     CustomToJSObject,
-    EnabledAtRuntime=DirectoryUpload,
+    EnabledAtRuntime=DirectoryUploadEnabled,
     Exposed=Window
 ] interface FileSystemEntry {
     readonly attribute boolean isFile;
@@ -35,5 +35,5 @@
     [ImplementedAs=virtualPath] readonly attribute USVString fullPath;
     readonly attribute DOMFileSystem filesystem;
 
-    [CallWith=ScriptExecutionContext] undefined getParent(optional FileSystemEntryCallback? successCallback, optional ErrorCallback? errorCallback);
+    [CallWith=CurrentScriptExecutionContext] undefined getParent(optional FileSystemEntryCallback? successCallback, optional ErrorCallback? errorCallback);
 };

@@ -151,6 +151,45 @@ ResultType intlOption(JSGlobalObject* globalObject, JSObject* options, PropertyN
     return fallback;
 }
 
+template<typename ResultType>
+ResultType intlStringOrBooleanOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, ResultType trueValue, ResultType falsyValue, std::initializer_list<std::pair<ASCIILiteral, ResultType>> values, ASCIILiteral notFoundMessage, ResultType fallback)
+{
+    // https://tc39.es/proposal-intl-numberformat-v3/out/negotiation/diff.html#sec-getstringorbooleanoption
+
+    ASSERT(values.size() > 0);
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!options)
+        return fallback;
+
+    JSValue value = options->get(globalObject, property);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!value.isUndefined()) {
+        if (value.isBoolean() && value.asBoolean())
+            return trueValue;
+
+        bool valueBoolean = value.toBoolean(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        if (!valueBoolean)
+            return falsyValue;
+
+        String stringValue = value.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        for (const auto& entry : values) {
+            if (entry.first == stringValue)
+                return entry.second;
+        }
+        throwException(globalObject, scope, createRangeError(globalObject, notFoundMessage));
+        return { };
+    }
+
+    return fallback;
+}
 
 ALWAYS_INLINE bool canUseASCIIUCADUCETComparison(UChar character)
 {
@@ -238,6 +277,24 @@ JSArray* createArrayFromStringVector(JSGlobalObject* globalObject, const Contain
     }
     for (unsigned index = 0; index < elements.size(); ++index) {
         result->putDirectIndex(globalObject, index, jsString(vm, elements[index]));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return result;
+}
+
+template<typename Container>
+JSArray* createArrayFromIntVector(JSGlobalObject* globalObject, const Container& elements)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), elements.size());
+    if (!result) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+    for (unsigned index = 0; index < elements.size(); ++index) {
+        result->putDirectIndex(globalObject, index, jsNumber(elements[index]));
         RETURN_IF_EXCEPTION(scope, { });
     }
     return result;

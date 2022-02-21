@@ -58,7 +58,8 @@ private:
     CSSTransition(const Styleable&, CSSPropertyID, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
     Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, std::optional<Seconds> timelineTime) final;
-    void resolve(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, std::optional<Seconds>) final;
+    void resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds>) final;
+    void animationDidFinish() final;
 
     CSSPropertyID m_property;
     MonotonicTime m_generationTime;

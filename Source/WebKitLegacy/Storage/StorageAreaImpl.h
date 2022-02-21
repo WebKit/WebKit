@@ -43,7 +43,7 @@ class StorageAreaSync;
 
 class StorageAreaImpl : public WebCore::StorageArea {
 public:
-    static Ref<StorageAreaImpl> create(WebCore::StorageType, const WebCore::SecurityOriginData&, RefPtr<WebCore::StorageSyncManager>&&, unsigned quota);
+    static Ref<StorageAreaImpl> create(WebCore::StorageType, const WebCore::SecurityOrigin&, RefPtr<WebCore::StorageSyncManager>&&, unsigned quota);
     virtual ~StorageAreaImpl();
 
     unsigned length() override;
@@ -76,7 +76,7 @@ public:
     void sessionChanged(bool isNewSessionPersistent);
 
 private:
-    StorageAreaImpl(WebCore::StorageType, const WebCore::SecurityOriginData&, RefPtr<WebCore::StorageSyncManager>&&, unsigned quota);
+    StorageAreaImpl(WebCore::StorageType, const WebCore::SecurityOrigin&, RefPtr<WebCore::StorageSyncManager>&&, unsigned quota);
     explicit StorageAreaImpl(const StorageAreaImpl&);
 
     void blockUntilImportComplete() const;
@@ -85,7 +85,7 @@ private:
     void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, WebCore::Frame* sourceFrame);
 
     WebCore::StorageType m_storageType;
-    WebCore::SecurityOriginData m_securityOrigin;
+    Ref<const WebCore::SecurityOrigin> m_securityOrigin;
     WebCore::StorageMap m_storageMap;
 
     RefPtr<StorageAreaSync> m_storageAreaSync;

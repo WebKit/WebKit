@@ -36,7 +36,7 @@ namespace Nicosia {
 
 SceneIntegration::SceneIntegration(Scene& scene, Client& client)
 {
-    m_client.scene = makeRef(scene);
+    m_client.scene = &scene;
     m_client.object = &client;
 }
 
@@ -67,7 +67,7 @@ void SceneIntegration::requestUpdate()
 
 std::unique_ptr<SceneIntegration::UpdateScope> SceneIntegration::createUpdateScope()
 {
-    return makeUnique<UpdateScope>(makeRef(*this));
+    return makeUnique<UpdateScope>(Ref { *this });
 }
 
 SceneIntegration::Client::~Client() = default;

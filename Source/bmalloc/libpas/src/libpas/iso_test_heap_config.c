@@ -37,7 +37,8 @@ pas_heap_config iso_test_heap_config = ISO_TEST_HEAP_CONFIG;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
     iso_test, ISO_TEST,
-    .allocate_page_should_zero = false);
+    .allocate_page_should_zero = false,
+    .intrinsic_view_cache_capacity = pas_heap_runtime_config_zero_view_cache_capacity);
 
 #endif /* PAS_ENABLE_ISO_TEST */
 

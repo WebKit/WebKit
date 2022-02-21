@@ -1,0 +1,15 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ jscOptions=--useShadowRealm=true ] -->
+<html>
+    <head>
+        <script src="../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+         description("This tests that Shadow Realm APIs are available and work properly inside worker contexts");
+         const worker = startWorker("resources/shadow-realm-worker.js");
+        </script>
+        <script src="../resources/js-test-post.js"></script>
+        <script src =../resources/testharness.js></script>
+        <script src =../resources/testharnessreport.js></script>
+    </body>
+</html>

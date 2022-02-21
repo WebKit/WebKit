@@ -33,6 +33,7 @@
 #include <wtf/WorkQueue.h>
 
 OBJC_CLASS AVAudioSession;
+OBJC_CLASS AVAudioSessionPortDescription;
 OBJC_CLASS WebAVAudioSessionAvailableInputsListener;
 
 namespace WebCore {
@@ -58,6 +59,8 @@ public:
     void disableAllDevicesQuery();
 
     void setPreferredAudioSessionDeviceUID(const String&);
+    String preferredAudioSessionDeviceUID() const { return m_preferredAudioDeviceUID; }
+    void configurePreferredAudioCaptureDevice();
 
 private:
     AVAudioSessionCaptureDeviceManager();
@@ -68,6 +71,7 @@ private:
     void refreshAudioCaptureDevices();
     Vector<AVAudioSessionCaptureDevice> retrieveAudioSessionCaptureDevices() const;
     void setAudioCaptureDevices(Vector<AVAudioSessionCaptureDevice>&&);
+    bool setPreferredAudioSessionDeviceUIDInternal(const String&);
 
     enum class AudioSessionState { NotNeeded, Inactive, Active };
 
@@ -78,7 +82,9 @@ private:
     RetainPtr<AVAudioSession> m_audioSession;
     Ref<WorkQueue> m_dispatchQueue;
     AudioSessionState m_audioSessionState { AudioSessionState::NotNeeded };
+    String m_preferredAudioDeviceUID;
     bool m_recomputeDevices { true };
+    mutable RetainPtr<AVAudioSessionPortDescription> m_lastDefaultMicrophone;
 };
 
 } // namespace WebCore

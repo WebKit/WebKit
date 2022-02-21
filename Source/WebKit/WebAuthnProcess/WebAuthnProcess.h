@@ -64,6 +64,10 @@ public:
     AuthenticatorManager& authenticatorManager() { return m_authenticatorManager.get(); }
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
+#endif
+
 private:
     void platformInitializeWebAuthnProcess(const WebAuthnProcessCreationParameters&);
     void lowMemoryHandler(Critical);

@@ -63,6 +63,8 @@ private:
     void chooseMenuAction(JSStringRef, JSValueRef) override;
 
     void activateAtPoint(long x, long y, JSValueRef callback) override;
+    
+    void sendEventStream(JSStringRef, JSValueRef) override;
 
     NSTableView *dataListSuggestionsTableView() const;
 };

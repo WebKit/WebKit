@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -122,7 +122,7 @@ private:
     void didRemoveTrack(MediaStreamTrackPrivate&) final;
     void characteristicsChanged() final;
 
-    MediaProducer::MediaStateFlags mediaState() const;
+    MediaProducerMediaStateFlags mediaState() const;
 
     // MediaCanStartListener
     void mediaCanStart(Document&) final;
@@ -137,13 +137,13 @@ private:
     void setIsActive(bool);
     void statusDidChange();
 
-    MediaStreamTrackVector trackVectorForType(RealtimeMediaSource::Type) const;
+    MediaStreamTrackVector filteredTracks(const Function<bool(const MediaStreamTrack&)>&) const;
 
     Ref<MediaStreamPrivate> m_private;
 
     HashMap<String, RefPtr<MediaStreamTrack>> m_trackSet;
 
-    MediaProducer::MediaStateFlags m_state;
+    MediaProducerMediaStateFlags m_state;
 
     bool m_isActive { false };
     bool m_isProducingData { false };

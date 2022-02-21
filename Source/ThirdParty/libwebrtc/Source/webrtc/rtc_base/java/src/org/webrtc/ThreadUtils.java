@@ -13,7 +13,7 @@ package org.webrtc;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -145,7 +145,7 @@ public class ThreadUtils {
   }
 
   /**
-   * Post |callable| to |handler| and wait for the result.
+   * Post `callable` to `handler` and wait for the result.
    */
   public static <V> V invokeAtFrontUninterruptibly(
       final Handler handler, final Callable<V> callable) {
@@ -190,7 +190,7 @@ public class ThreadUtils {
   }
 
   /**
-   * Post |runner| to |handler|, at the front, and wait for completion.
+   * Post `runner` to `handler`, at the front, and wait for completion.
    */
   public static void invokeAtFrontUninterruptibly(final Handler handler, final Runnable runner) {
     invokeAtFrontUninterruptibly(handler, new Callable<Void>() {

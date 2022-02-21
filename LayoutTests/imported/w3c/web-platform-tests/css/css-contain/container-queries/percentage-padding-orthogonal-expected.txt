@@ -1,0 +1,8 @@
+
+FAIL #container height measured with 500px width. Both container children visible assert_equals: expected 100 but got 0
+FAIL #container width 400px after padding is applied. assert_equals: expected 400 but got 500
+FAIL #container width 400px after padding is applied. #second is removed from the rendering assert_equals: expected 50 but got 100
+FAIL #container height measured with 499px width. Both container children visible assert_equals: expected 100 but got 0
+FAIL #container width 399px after padding is applied. #second is removed from the rendering assert_equals: expected 399 but got 500
+FAIL #container width 399x after padding is applied. #second is removed from the rendering assert_equals: expected 50 but got 100
+

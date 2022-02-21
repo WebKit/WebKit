@@ -191,7 +191,7 @@ private:
 - (void)replaceMatches:(NSArray *)matches withString:(NSString *)replacementText inSelectionOnly:(BOOL)selectionOnly resultCollector:(void (^)(NSUInteger replacementCount))resultCollector
 {
     Vector<uint32_t> matchIndices;
-    matchIndices.reserveCapacity(matches.count);
+    matchIndices.reserveInitialCapacity(matches.count);
     for (id match in matches) {
         if ([match isKindOfClass:WKTextFinderMatch.class])
             matchIndices.uncheckedAppend([(WKTextFinderMatch *)match index]);

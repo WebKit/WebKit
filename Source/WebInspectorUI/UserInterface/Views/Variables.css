@@ -216,7 +216,7 @@
 
     --image-button-navigation-item-width: 26px;
 
-    --blackboxed-tree-item-opacity: 0.5;
+    --blackboxed-opacity: 0.5;
 }
 
 body.window-inactive {

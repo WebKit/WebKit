@@ -30,15 +30,18 @@
 #include "DOMPlugin.h"
 #include "DOMPluginArray.h"
 #include "Document.h"
+#include "FeaturePolicy.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "GPU.h"
 #include "Geolocation.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LoaderStrategy.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
+#include "Quirks.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
@@ -124,10 +127,14 @@ static std::optional<URL> shareableURLForShareData(ScriptExecutionContext& conte
     return url;
 }
 
+static bool validateWebSharePolicy(Document& document)
+{
+    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::WebShare, document, LogFeaturePolicyFailure::Yes) || document.quirks().shouldDisableWebSharePolicy();
+}
+
 bool Navigator::canShare(Document& document, const ShareData& data)
 {
-    auto* frame = this->frame();
-    if (!frame || !frame->page())
+    if (!document.isFullyActive() || !validateWebSharePolicy(document))
         return false;
 
     bool hasShareableTitleOrText = !data.title.isNull() || !data.text.isNull();
@@ -143,6 +150,16 @@ bool Navigator::canShare(Document& document, const ShareData& data)
 
 void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPromise>&& promise)
 {
+    if (!document.isFullyActive()) {
+        promise->reject(InvalidStateError);
+        return;
+    }
+
+    if (!validateWebSharePolicy(document)) {
+        promise->reject(NotAllowedError, "Third-party iframes are not allowed to call share() unless explicitly allowed via Feature-Policy (web-share)"_s);
+        return;
+    }
+
     if (m_hasPendingShare) {
         promise->reject(NotAllowedError);
         return;
@@ -169,7 +186,7 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
     if (document.settings().webShareFileAPIEnabled() && !data.files.isEmpty()) {
         if (m_loader)
             m_loader->cancel();
-        
+
         m_loader = ShareDataReader::create([this, promise = WTFMove(promise)] (ExceptionOr<ShareDataWithParsedURL&> readData) mutable {
             showShareData(readData, WTFMove(promise));
         });
@@ -332,6 +349,26 @@ bool Navigator::standalone() const
 
 void Navigator::getStorageUpdates()
 {
+}
+
+GPU* Navigator::gpu()
+{
+    if (!m_gpuForWebGPU) {
+        auto* frame = this->frame();
+        if (!frame)
+            return nullptr;
+        auto* page = frame->page();
+        if (!page)
+            return nullptr;
+        auto gpu = page->chrome().createGPUForWebGPU();
+        if (!gpu)
+            return nullptr;
+
+        m_gpuForWebGPU = GPU::create();
+        m_gpuForWebGPU->setBacking(*gpu);
+    }
+
+    return m_gpuForWebGPU.get();
 }
 
 } // namespace WebCore

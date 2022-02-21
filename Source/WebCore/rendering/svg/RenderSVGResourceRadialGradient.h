@@ -22,7 +22,6 @@
 
 #include "RadialGradientAttributes.h"
 #include "RenderSVGResourceGradient.h"
-#include "SVGRadialGradientElement.h"
 
 namespace WebCore {
 
@@ -34,7 +33,7 @@ public:
     RenderSVGResourceRadialGradient(SVGRadialGradientElement&, RenderStyle&&);
     virtual ~RenderSVGResourceRadialGradient();
 
-    SVGRadialGradientElement& radialGradientElement() const { return downcast<SVGRadialGradientElement>(RenderSVGResourceGradient::gradientElement()); }
+    inline SVGRadialGradientElement& radialGradientElement() const;
 
     FloatPoint centerPoint(const RadialGradientAttributes&) const;
     FloatPoint focalPoint(const RadialGradientAttributes&) const;

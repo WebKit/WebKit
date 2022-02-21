@@ -30,6 +30,8 @@ namespace WebCore {
 
 class HTMLSelectElement;
 
+enum class AllowStyleInvalidation { Yes, No };
+
 class HTMLOptionElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLOptionElement);
 public:
@@ -45,7 +47,7 @@ public:
     WEBCORE_EXPORT String value() const;
     WEBCORE_EXPORT void setValue(const String&);
 
-    WEBCORE_EXPORT bool selected() const;
+    WEBCORE_EXPORT bool selected(AllowStyleInvalidation = AllowStyleInvalidation::Yes) const;
     WEBCORE_EXPORT void setSelected(bool);
 
     WEBCORE_EXPORT HTMLSelectElement* ownerSelectElement() const;
@@ -60,7 +62,8 @@ public:
 
     String textIndentedToRespectGroupLabel() const;
 
-    void setSelectedState(bool);
+    void setSelectedState(bool, AllowStyleInvalidation = AllowStyleInvalidation::Yes);
+    bool selectedWithoutUpdate() const { return m_isSelected; }
 
 private:
     HTMLOptionElement(const QualifiedName&, Document&);
@@ -71,7 +74,6 @@ private:
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
 
-    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     bool accessKeyAction(bool) final;
 
     void childrenChanged(const ChildChange&) final;
@@ -80,8 +82,9 @@ private:
 
     String collectOptionInnerText() const;
 
-    bool m_disabled;
-    bool m_isSelected;
+    bool m_disabled { false };
+    bool m_isSelected { false };
+    bool m_isDefault { false };
 };
 
 } // namespace

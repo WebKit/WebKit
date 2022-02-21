@@ -4,7 +4,7 @@
 // found in the LICENSE file.
 //
 
-// EAGLFunctions.h: Exposing the soft-linked EAGL interface.
+// FunctionsEAGL.h: Exposing the soft-linked EAGL interface.
 
 #ifndef EAGL_FUNCTIONS_H_
 #define EAGL_FUNCTIONS_H_
@@ -12,6 +12,9 @@
 #include "common/platform.h"
 
 #if defined(ANGLE_ENABLE_EAGL)
+
+// OpenGL ES is technically deprecated on iOS. Silence associated warnings.
+#    define GLES_SILENCE_DEPRECATION
 
 #    import <OpenGLES/EAGL.h>
 #    import <OpenGLES/EAGLDrawable.h>

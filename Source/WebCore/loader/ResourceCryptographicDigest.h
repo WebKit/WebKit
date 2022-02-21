@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class CachedResource;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 struct ResourceCryptographicDigest {
     enum class Algorithm {
@@ -75,7 +75,7 @@ std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDiges
 
 std::optional<ResourceCryptographicDigest> decodeEncodedResourceCryptographicDigest(const EncodedResourceCryptographicDigest&);
 
-ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptographicDigest::Algorithm, const SharedBuffer*);
+ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptographicDigest::Algorithm, const FragmentedSharedBuffer*);
 ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDigest::Algorithm, const void* bytes, size_t length);
 
 }

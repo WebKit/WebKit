@@ -58,7 +58,7 @@ bool WebFrameLoaderClient::forceLayoutOnRestoreFromBackForwardCache()
     return false;
 }
 
-RetainPtr<CFDictionaryRef> WebFrameLoaderClient::connectionProperties(DocumentLoader*, unsigned long identifier)
+RetainPtr<CFDictionaryRef> WebFrameLoaderClient::connectionProperties(DocumentLoader*, WebCore::ResourceLoaderIdentifier)
 {
     notImplemented();
     return nullptr;

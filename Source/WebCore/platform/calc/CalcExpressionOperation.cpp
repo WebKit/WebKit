@@ -26,9 +26,18 @@
 #include "config.h"
 #include "CalcExpressionOperation.h"
 
+#include <cmath>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+static std::pair<double, double> getNearestMultiples(double a, double b)
+{
+    auto absB = std::abs(b);
+    double lowerB = std::floor(a / absB) * absB;
+    double upperB = lowerB + absB;
+    return std::make_pair(lowerB, upperB);
+}
 
 float CalcExpressionOperation::evaluate(float maxValue) const
 {
@@ -85,6 +94,143 @@ float CalcExpressionOperation::evaluate(float maxValue) const
         float value = m_children[1]->evaluate(maxValue);
         float max = m_children[2]->evaluate(maxValue);
         return std::max(min, std::min(value, max));
+    }
+    case CalcOperator::Pow: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<float>::quiet_NaN();
+        float base = m_children[0]->evaluate(maxValue);
+        float power = m_children[1]->evaluate(maxValue);
+        return std::pow(base, power);
+    }
+    case CalcOperator::Sqrt: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<float>::quiet_NaN();
+        return std::sqrt(m_children[0]->evaluate(maxValue));
+    }
+    case CalcOperator::Hypot: {
+        if (m_children.isEmpty())
+            return std::numeric_limits<float>::quiet_NaN();
+        if (m_children.size() == 1)
+            return std::abs(m_children[0]->evaluate(maxValue));
+        float sum = 0;
+        for (auto& child : m_children) {
+            float value = child->evaluate(maxValue);
+            sum += (value * value);
+        }
+        return sum;
+    }
+    case CalcOperator::Sin: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::sin(m_children[0]->evaluate(maxValue));
+    }
+    case CalcOperator::Cos: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::cos(m_children[0]->evaluate(maxValue));
+    }
+    case CalcOperator::Tan: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::tan(m_children[0]->evaluate(maxValue));
+    }
+    case CalcOperator::Log: {
+        if (m_children.size() != 1 && m_children.size() != 2)
+            return std::numeric_limits<float>::quiet_NaN();
+        if (m_children.size() == 1)
+            return std::log(m_children[0]->evaluate(maxValue));
+        return std::log(m_children[0]->evaluate(maxValue)) / std::log(m_children[1]->evaluate(maxValue));
+    }
+    case CalcOperator::Exp: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<float>::quiet_NaN();
+        return std::exp(m_children[0]->evaluate(maxValue));
+    }
+    case CalcOperator::Asin: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<float>::quiet_NaN();
+        return rad2deg(std::asin(m_children[0]->evaluate(maxValue)));
+    }
+    case CalcOperator::Acos: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<float>::quiet_NaN();
+        return rad2deg(std::acos(m_children[0]->evaluate(maxValue)));
+    }
+    case CalcOperator::Atan: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<float>::quiet_NaN();
+        return rad2deg(std::atan(m_children[0]->evaluate(maxValue)));
+    }
+    case CalcOperator::Atan2: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<float>::quiet_NaN();
+        return rad2deg(atan2(m_children[0]->evaluate(maxValue), m_children[1]->evaluate(maxValue)));
+    }
+    case CalcOperator::Abs: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<float>::quiet_NaN();
+        return std::abs(m_children[0]->evaluate(maxValue));
+    }
+    case CalcOperator::Sign: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        if (m_children[0]->evaluate(maxValue) > 0)
+            return 1;
+        if (m_children[0]->evaluate(maxValue) < 0)
+            return -1;
+        return m_children[0]->evaluate(maxValue);
+    }
+    case CalcOperator::Mod: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        float left = m_children[0]->evaluate(maxValue);
+        float right = m_children[1]->evaluate(maxValue);
+        if (!right)
+            return std::numeric_limits<double>::quiet_NaN();
+        if ((left < 0) == (right < 0))
+            return std::fmod(left, right);
+        return std::remainder(left, right);
+    }
+    case CalcOperator::Rem: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        float left = m_children[0]->evaluate(maxValue);
+        float right = m_children[1]->evaluate(maxValue);
+        if (!right)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::fmod(left, right);
+    }
+    case CalcOperator::Round:
+        return std::numeric_limits<double>::quiet_NaN();
+    case CalcOperator::Up: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        auto ret = getNearestMultiples(m_children[0]->evaluate(maxValue), m_children[1]->evaluate(maxValue));
+        return ret.second;
+    }
+    case CalcOperator::Down: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        auto ret = getNearestMultiples(m_children[0]->evaluate(maxValue), m_children[1]->evaluate(maxValue));
+        return ret.first;
+    }
+    case CalcOperator::Nearest: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        auto a = m_children[0]->evaluate(maxValue);
+        auto b = m_children[1]->evaluate(maxValue);
+        auto ret = getNearestMultiples(a, b);
+        auto upperB = ret.second;
+        auto lowerB = ret.first;
+        return std::abs(upperB - a) <= std::abs(b) / 2 ? upperB : lowerB;
+    }
+    case CalcOperator::ToZero: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        auto ret = getNearestMultiples(m_children[0]->evaluate(maxValue), m_children[1]->evaluate(maxValue));
+        auto upperB = ret.second;
+        auto lowerB = ret.first;
+        return std::abs(upperB) < std::abs(lowerB) ? upperB : lowerB;
     }
     }
     ASSERT_NOT_REACHED();

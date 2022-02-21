@@ -40,6 +40,7 @@ class Node;
 class SecurityOrigin;
 class StyleRuleBase;
 class StyleRuleImport;
+class StyleRuleLayer;
 class StyleRuleNamespace;
 
 enum class CachePolicy : uint8_t;
@@ -86,8 +87,8 @@ public:
 
     bool loadCompleted() const { return m_loadCompleted; }
 
-    bool traverseRules(const WTF::Function<bool (const StyleRuleBase&)>& handler) const;
-    bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
+    bool traverseRules(const Function<bool(const StyleRuleBase&)>& handler) const;
+    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
 
     void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }
     bool isUserStyleSheet() const { return m_isUserStyleSheet; }
@@ -102,10 +103,10 @@ public:
     void clearRules();
 
     String encodingFromCharsetRule() const { return m_encodingFromCharsetRule; }
-    // Rules other than @charset and @import.
-    const Vector<RefPtr<StyleRuleBase>>& childRules() const { return m_childRules; }
+    const Vector<RefPtr<StyleRuleLayer>>& layerRulesBeforeImportRules() const { return m_layerRulesBeforeImportRules; }
     const Vector<RefPtr<StyleRuleImport>>& importRules() const { return m_importRules; }
     const Vector<RefPtr<StyleRuleNamespace>>& namespaceRules() const { return m_namespaceRules; }
+    const Vector<RefPtr<StyleRuleBase>>& childRules() const { return m_childRules; }
 
     void notifyLoadedSheet(const CachedCSSStyleSheet*);
     
@@ -160,6 +161,7 @@ private:
     String m_originalURL;
 
     String m_encodingFromCharsetRule;
+    Vector<RefPtr<StyleRuleLayer>> m_layerRulesBeforeImportRules;
     Vector<RefPtr<StyleRuleImport>> m_importRules;
     Vector<RefPtr<StyleRuleNamespace>> m_namespaceRules;
     Vector<RefPtr<StyleRuleBase>> m_childRules;

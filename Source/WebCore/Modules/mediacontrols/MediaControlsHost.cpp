@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,11 +61,11 @@
 #include "VTTCue.h"
 #include "VoidCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <variant>
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Scope.h>
 #include <wtf/UUID.h>
-#include <wtf/Variant.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/MediaControlsHostAdditions.h>
@@ -103,7 +103,7 @@ Ref<MediaControlsHost> MediaControlsHost::create(HTMLMediaElement& mediaElement)
 }
 
 MediaControlsHost::MediaControlsHost(HTMLMediaElement& mediaElement)
-    : m_mediaElement(makeWeakPtr(mediaElement))
+    : m_mediaElement(mediaElement)
 {
 }
 
@@ -131,6 +131,12 @@ String MediaControlsHost::layoutTraitsClassName() const
     return nullString();
 #endif
 #endif
+}
+
+const AtomString& MediaControlsHost::mediaControlsContainerClassName() const
+{
+    static MainThreadNeverDestroyed<const AtomString> className("media-controls-container", AtomString::ConstructFromLiteral);
+    return className;
 }
 
 Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList& trackList)
@@ -166,7 +172,7 @@ String MediaControlsHost::displayNameForTrack(const std::optional<TextOrAudioTra
     if (!page)
         return emptyString();
 
-    return WTF::visit([page] (auto& track) {
+    return std::visit([page] (auto& track) {
         return page->group().ensureCaptionPreferences().displayNameForTrack(track.get());
     }, track.value());
 }
@@ -340,7 +346,7 @@ void MediaControlsHost::setControlsDependOnPageScaleFactor(bool value)
 
 String MediaControlsHost::generateUUID()
 {
-    return createCanonicalUUIDString();
+    return createVersion4UUIDString();
 }
 
 #if ENABLE(MODERN_MEDIA_CONTROLS)
@@ -505,7 +511,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
         x2_0,
     };
 
-    using MenuData = Variant<
+    using MenuData = std::variant<
 #if ENABLE(VIDEO_PRESENTATION_MODE)
         PictureInPictureTag,
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
@@ -566,7 +572,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
             auto& captionPreferences = page->group().ensureCaptionPreferences();
             auto sortedTextTracks = captionPreferences.sortedTrackListForMenu(textTracks, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
-            bool allTracksDisabled = notFound == sortedTextTracks.findMatching([] (const auto& textTrack) {
+            bool allTracksDisabled = notFound == sortedTextTracks.findIf([] (const auto& textTrack) {
                 return textTrack->mode() == TextTrack::Mode::Showing;
             });
             bool usesAutomaticTrack = captionPreferences.captionDisplayMode() == CaptionUserPreferences::Automatic && allTracksDisabled;
@@ -600,7 +606,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
                             continue;
 
                         auto& vttCue = downcast<VTTCue>(*cue);
-                        chapterMenuItems.append(createMenuItem(makeRefPtr(vttCue), vttCue.text()));
+                        chapterMenuItems.append(createMenuItem(RefPtr { &vttCue }, vttCue.text()));
                     }
                 }
 
@@ -652,7 +658,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
     m_showMediaControlsContextMenuCallback = WTFMove(callback);
 
-    auto handleItemSelected = [weakThis = makeWeakPtr(this), idMap = WTFMove(idMap)] (MenuItemIdentifier selectedItemID) {
+    auto handleItemSelected = [weakThis = WeakPtr { *this }, idMap = WTFMove(idMap)] (MenuItemIdentifier selectedItemID) {
         if (!weakThis)
             return;
         Ref strongThis = *weakThis;
@@ -681,13 +687,13 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
             [&] (RefPtr<AudioTrack>& selectedAudioTrack) {
                 for (auto& track : idMap.values()) {
-                    if (auto* audioTrack = WTF::get_if<RefPtr<AudioTrack>>(track))
+                    if (auto* audioTrack = std::get_if<RefPtr<AudioTrack>>(&track))
                         (*audioTrack)->setEnabled(*audioTrack == selectedAudioTrack);
                 }
             },
             [&] (RefPtr<TextTrack>& selectedTextTrack) {
                 for (auto& track : idMap.values()) {
-                    if (auto* textTrack = WTF::get_if<RefPtr<TextTrack>>(track))
+                    if (auto* textTrack = std::get_if<RefPtr<TextTrack>>(&track))
                         (*textTrack)->setMode(TextTrack::Mode::Disabled);
                 }
                 mediaElement.setSelectedTextTrack(selectedTextTrack.get());

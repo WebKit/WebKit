@@ -3,7 +3,10 @@
 
 /*---
 esid: sec-temporal.calendar.prototype.month
-description: Temporal.Calendar.prototype.month throws TypeError if temporalDateLike is a PlainMonthDay object. ToTemporalDate when temporalDateLike is invalid string.
+description: >
+  Temporal.Calendar.prototype.month throws TypeError if temporalDateLike
+  is a PlainMonthDay object.
+  ToTemporalDate when temporalDateLike is invalid string.
 info: |
   4. If Type(temporalDateLike) is Object and temporalDateLike has an
     [[InitializedTemporalMonthDay]] internal slot, then

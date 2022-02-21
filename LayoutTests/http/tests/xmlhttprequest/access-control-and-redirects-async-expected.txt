@@ -1,10 +1,10 @@
-CONSOLE MESSAGE: Cross-origin redirection to http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Cross-origin redirection to http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin. Status code: 302
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
 CONSOLE MESSAGE: Cross-origin redirection to http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi denied by Cross-Origin Resource Sharing policy: redirection URL http://username:password@localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi has credentials
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?url=http://username:password@localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&access-control-allow-origin=http://127.0.0.1:8000 due to access control checks.
 CONSOLE MESSAGE: Cross-origin redirection to foo://bar.cgi denied by Cross-Origin Resource Sharing policy: not allowed to follow a cross-origin CORS redirection with non CORS scheme
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?url=foo://bar.cgi&access-control-allow-origin=http://127.0.0.1:8000 due to access control checks.
-CONSOLE MESSAGE: Preflight response is not successful
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 302
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?redirect-preflight=true&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&access-control-allow-origin=* due to access control checks.
 CONSOLE MESSAGE: Request header field x-webkit is not allowed by Access-Control-Allow-Headers.
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.

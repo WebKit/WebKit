@@ -34,10 +34,6 @@
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 
-#if PLATFORM(WIN)
-#include <d2d1.h>
-#endif
-
 namespace TestWebKitAPI {
 
 static void testGetAndSet(WebCore::IntRect rect)
@@ -516,28 +512,6 @@ TEST(IntRect, Casting)
     WebCore::IntRect rectFromGDIRect(gdiRect);
 
     checkCastRect(rectFromGDIRect);
-
-    D2D1_RECT_U d2dRectU = rect;
-
-    EXPECT_EQ(10, d2dRectU.left);
-    EXPECT_EQ(20, d2dRectU.top);
-    EXPECT_EQ(40, d2dRectU.right);
-    EXPECT_EQ(60, d2dRectU.bottom);
-
-    WebCore::IntRect rectFromD2DRectU(d2dRectU);
-
-    checkCastRect(rectFromD2DRectU);
-
-    D2D1_RECT_F d2dRectF = rect;
-
-    EXPECT_FLOAT_EQ(10.0f, d2dRectF.left);
-    EXPECT_FLOAT_EQ(20.0f, d2dRectF.top);
-    EXPECT_FLOAT_EQ(40.0f, d2dRectF.right);
-    EXPECT_FLOAT_EQ(60.0f, d2dRectF.bottom);
-
-    WebCore::IntRect rectFromD2DRectF(d2dRectF);
-
-    checkCastRect(rectFromD2DRectF);
 #endif
 }
 

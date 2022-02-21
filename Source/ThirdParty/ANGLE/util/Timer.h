@@ -13,17 +13,20 @@ class Timer final
     Timer();
     ~Timer() {}
 
-    // Use start() and stop() to record the duration and use getElapsedTime() to query that
-    // duration.  If getElapsedTime() is called in between, it will report the elapsed time since
-    // start().
+    // Use start() and stop() to record the duration and use getElapsedWallClockTime() to query that
+    // duration.  If getElapsedWallClockTime() is called in between, it will report the elapsed time
+    // since start().
     void start();
     void stop();
-    double getElapsedTime() const;
+    double getElapsedWallClockTime() const;
+    double getElapsedCpuTime() const;
 
   private:
     bool mRunning;
     double mStartTime;
     double mStopTime;
+    double mStartCpuTime;
+    double mStopCpuTime;
 };
 
 #endif  // SAMPLE_UTIL_TIMER_H

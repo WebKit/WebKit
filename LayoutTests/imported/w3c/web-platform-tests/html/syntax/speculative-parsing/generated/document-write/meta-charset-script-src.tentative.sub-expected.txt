@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <meta charset=windows-1254><script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=89d8875b-b9fc-447c-a662-1d0a499230c1&amp;encodingcheck=&Gbreve;"></script>
+
+
+
+PASS Speculative parsing, document.write(): meta-charset-script-src
+

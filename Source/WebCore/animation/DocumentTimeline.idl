@@ -23,8 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef unsigned long FramesPerSecond;
+
 [
     Exposed=Window
 ] interface DocumentTimeline : AnimationTimeline {
-    [CallWith=Document] constructor(optional DocumentTimelineOptions options);
+    [CallWith=CurrentDocument] constructor(optional DocumentTimelineOptions options);
+    [EnabledBySetting=WebAnimationsCustomEffectsEnabled] WebAnimation animate(CustomEffectCallback callback, optional (unrestricted double or CustomAnimationOptions) options);
+    [EnabledBySetting=WebAnimationsCustomFrameRateEnabled] readonly attribute FramesPerSecond? maximumFrameRate;
 };

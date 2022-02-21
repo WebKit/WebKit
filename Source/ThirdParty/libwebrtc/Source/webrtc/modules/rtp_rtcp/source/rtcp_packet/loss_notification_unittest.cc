@@ -80,7 +80,7 @@ TEST(RtcpPacketLossNotificationTest,
       test::ParseSinglePacket(packet, packet_length_bytes, &loss_notification));
 
   // Show that after shaving off a word, the packet is no longer parsable.
-  packet[3] -= 1;            // Change the |length| field of the RTCP packet.
+  packet[3] -= 1;            // Change the `length` field of the RTCP packet.
   packet_length_bytes -= 4;  // Effectively forget the last 32-bit word.
   EXPECT_FALSE(
       test::ParseSinglePacket(packet, packet_length_bytes, &loss_notification));

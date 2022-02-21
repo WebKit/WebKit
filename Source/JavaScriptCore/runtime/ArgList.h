@@ -28,29 +28,18 @@
 
 namespace JSC {
 
-class MarkedArgumentBuffer : public RecordOverflow {
-    WTF_MAKE_NONCOPYABLE(MarkedArgumentBuffer);
-    WTF_MAKE_NONMOVABLE(MarkedArgumentBuffer);
+class alignas(alignof(EncodedJSValue)) MarkedArgumentBufferBase : public RecordOverflow {
+    WTF_MAKE_NONCOPYABLE(MarkedArgumentBufferBase);
+    WTF_MAKE_NONMOVABLE(MarkedArgumentBufferBase);
     WTF_FORBID_HEAP_ALLOCATION;
     friend class VM;
     friend class ArgList;
 
 public:
     using Base = RecordOverflow;
-    static constexpr size_t inlineCapacity = 8;
-    typedef HashSet<MarkedArgumentBuffer*> ListSet;
+    typedef HashSet<MarkedArgumentBufferBase*> ListSet;
 
-    // Constructor for a read-write list, to which you may append values.
-    // FIXME: Remove all clients of this API, then remove this API.
-    MarkedArgumentBuffer()
-        : m_size(0)
-        , m_capacity(inlineCapacity)
-        , m_buffer(m_inlineBuffer)
-        , m_markSet(nullptr)
-    {
-    }
-
-    ~MarkedArgumentBuffer()
+    ~MarkedArgumentBufferBase()
     {
         ASSERT(!m_needsOverflowCheck);
         if (m_markSet)
@@ -145,6 +134,22 @@ public:
         func(reinterpret_cast<JSValue*>(&slotFor(0)));
     }
 
+protected:
+    // Constructor for a read-write list, to which you may append values.
+    // FIXME: Remove all clients of this API, then remove this API.
+    MarkedArgumentBufferBase(size_t capacity)
+        : m_size(0)
+        , m_capacity(capacity)
+        , m_buffer(inlineBuffer())
+        , m_markSet(nullptr)
+    {
+    }
+
+    EncodedJSValue* inlineBuffer()
+    {
+        return bitwise_cast<EncodedJSValue*>(bitwise_cast<uint8_t*>(this) + sizeof(MarkedArgumentBufferBase));
+    }
+
 private:
     void expandCapacity();
     void expandCapacity(int newCapacity);
@@ -161,7 +166,7 @@ private:
         
     EncodedJSValue* mallocBase()
     {
-        if (m_buffer == m_inlineBuffer)
+        if (m_buffer == inlineBuffer())
             return nullptr;
         return &slotFor(0);
     }
@@ -177,10 +182,26 @@ private:
 #endif // ASSERT_ENABLED
     int m_size;
     int m_capacity;
-    EncodedJSValue m_inlineBuffer[inlineCapacity];
     EncodedJSValue* m_buffer;
     ListSet* m_markSet;
 };
+
+template<size_t passedInlineCapacity = 8>
+class MarkedArgumentBufferWithSize : public MarkedArgumentBufferBase {
+public:
+    static constexpr size_t inlineCapacity = passedInlineCapacity;
+
+    MarkedArgumentBufferWithSize()
+        : MarkedArgumentBufferBase(inlineCapacity)
+    {
+        ASSERT(inlineBuffer() == m_inlineBuffer);
+    }
+
+private:
+    EncodedJSValue m_inlineBuffer[inlineCapacity] { };
+};
+
+using MarkedArgumentBuffer = MarkedArgumentBufferWithSize<>;
 
 class ArgList {
     WTF_MAKE_FAST_ALLOCATED;

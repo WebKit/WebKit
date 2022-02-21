@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,9 @@ struct pas_page_base {
                           from segregated_page and bitfit_page if we ever did need that space for
                           basically any reason. */
 };
+
+PAS_API size_t pas_page_base_header_size(pas_page_base_config* config,
+                                         pas_page_kind page_kind);
 
 static inline void pas_page_base_construct(pas_page_base* page_base,
                                            pas_page_kind page_kind)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +24,100 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollAnimation_h
-#define ScrollAnimation_h
+#pragma once
 
+#include "FloatPoint.h"
 #include "ScrollTypes.h"
+#include <wtf/FastMalloc.h>
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 
 class FloatPoint;
-class ScrollableArea;
-enum class ScrollClamping : bool;
+class ScrollAnimation;
+struct ScrollExtents;
 
-struct ScrollExtents {
-    ScrollPosition minimumScrollPosition;
-    ScrollPosition maximumScrollPosition;
-    IntSize visibleSize;
+class ScrollAnimationClient {
+public:
+    virtual ~ScrollAnimationClient() = default;
+
+    virtual void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& /* currentOffset */) { }
+    virtual void scrollAnimationWillStart(ScrollAnimation&) { }
+    virtual void scrollAnimationDidEnd(ScrollAnimation&) { }
+    virtual ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) = 0;
+    virtual FloatSize overscrollAmount(ScrollAnimation&) = 0;
+    virtual FloatPoint scrollOffset(ScrollAnimation&) = 0;
 };
 
 class ScrollAnimation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~ScrollAnimation() { };
-    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float /* step */, float /* multiplier */) { return true; };
-    virtual void scroll(const FloatPoint&) { };
-    virtual void stop() = 0;
-    virtual void updateVisibleLengths() { };
-    virtual void setCurrentPosition(const FloatPoint&) { };
-    virtual void serviceAnimation() { };
-    virtual bool isActive() const = 0;
+    enum class Type {
+        Smooth,
+        Kinetic,
+        Momentum,
+        RubberBand,
+    };
+
+    ScrollAnimation(Type animationType, ScrollAnimationClient& client)
+        : m_client(client)
+        , m_animationType(animationType)
+    { }
+    virtual ~ScrollAnimation() = default;
+    
+    Type type() const { return m_animationType; }
+
+    virtual ScrollClamping clamping() const { return ScrollClamping::Clamped; }
+
+    virtual bool retargetActiveAnimation(const FloatPoint& newDestinationOffset) = 0;
+    virtual void stop()
+    {
+        if (!m_isActive)
+            return;
+        didEnd();
+    }
+    virtual bool isActive() const { return m_isActive; }
+    virtual void updateScrollExtents() { };
+    
+    FloatPoint currentOffset() const { return m_currentOffset; }
+    virtual std::optional<FloatPoint> destinationOffset() const { return std::nullopt; }
+
+    virtual void serviceAnimation(MonotonicTime) = 0;
+
+    virtual String debugDescription() const = 0;
+
+protected:
+    void didStart(MonotonicTime currentTime)
+    {
+        m_startTime = currentTime;
+        m_isActive = true;
+        m_client.scrollAnimationWillStart(*this);
+    }
+    
+    void didEnd()
+    {
+        m_isActive = false;
+        m_client.scrollAnimationDidEnd(*this);
+    }
+    
+    Seconds timeSinceStart(MonotonicTime currentTime) const
+    {
+        return currentTime - m_startTime;
+    }
+
+    ScrollAnimationClient& m_client;
+    const Type m_animationType;
+    bool m_isActive { false };
+    MonotonicTime m_startTime;
+    FloatPoint m_currentOffset;
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, ScrollAnimation::Type);
+WTF::TextStream& operator<<(WTF::TextStream&, const ScrollAnimation&);
 
 } // namespace WebCore
 
-#endif // ScrollAnimation_h
+#define SPECIALIZE_TYPE_TRAITS_SCROLL_ANIMATION(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+    static bool isType(const WebCore::ScrollAnimation& scrollAnimation) { return scrollAnimation.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()

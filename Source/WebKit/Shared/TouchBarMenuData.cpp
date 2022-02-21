@@ -33,6 +33,7 @@
 #include "Encoder.h"
 #include "TouchBarMenuItemData.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/ElementInlines.h>
 #include <WebCore/HTMLMenuElement.h>
 #include <WebCore/HTMLNames.h>
 

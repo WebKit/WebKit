@@ -27,6 +27,7 @@
 
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
+#include <wtf/FixedVector.h>
 
 namespace WebCore {
 
@@ -46,7 +47,7 @@ struct VariadicConverter {
     }
 };
 
-template<typename IDLType> Vector<typename VariadicConverter<IDLType>::Item> convertVariadicArguments(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, size_t startIndex)
+template<typename IDLType> FixedVector<typename VariadicConverter<IDLType>::Item> convertVariadicArguments(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, size_t startIndex)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -55,15 +56,16 @@ template<typename IDLType> Vector<typename VariadicConverter<IDLType>::Item> con
     if (startIndex >= length)
         return { };
 
-    Vector<typename VariadicConverter<IDLType>::Item> result;
-    result.reserveInitialCapacity(length - startIndex);
+    FixedVector<typename VariadicConverter<IDLType>::Item> result(length - startIndex);
 
+    size_t resultIndex = 0;
     for (size_t i = startIndex; i < length; ++i) {
         auto value = VariadicConverter<IDLType>::convert(lexicalGlobalObject, callFrame.uncheckedArgument(i));
         EXCEPTION_ASSERT_UNUSED(scope, !!scope.exception() == !value);
         if (!value)
             return { };
-        result.uncheckedAppend(WTFMove(*value));
+        result[resultIndex] = WTFMove(*value);
+        resultIndex++;
     }
 
     return result;

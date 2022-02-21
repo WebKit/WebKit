@@ -30,6 +30,10 @@
 #include "RemoteCommandListenerCocoa.h"
 #endif
 
+#if USE(GLIB)
+#include "RemoteCommandListenerGLib.h"
+#endif
+
 namespace WebCore {
 
 static RemoteCommandListener::CreationFunction& remoteCommandListenerCreationFunction()
@@ -48,8 +52,11 @@ void RemoteCommandListener::resetCreationFunction()
     remoteCommandListenerCreationFunction() = [] (RemoteCommandListenerClient& client) {
 #if PLATFORM(COCOA)
         return RemoteCommandListenerCocoa::create(client);
+#elif USE(GLIB) && ENABLE(MEDIA_SESSION)
+        return RemoteCommandListenerGLib::create(client);
 #else
-        return RemoteCommandListener::create(client);
+        UNUSED_PARAM(client);
+        return nullptr;
 #endif
     };
 }

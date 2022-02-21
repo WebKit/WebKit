@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ModuleScriptLoader.h"
+#include "ResourceLoaderIdentifier.h"
 #include "ScriptBuffer.h"
 #include "WorkerScriptFetcher.h"
 #include "WorkerScriptLoaderClient.h"
@@ -65,7 +66,7 @@ public:
 private:
     WorkerModuleScriptLoader(ModuleScriptLoaderClient&, DeferredPromise&, WorkerScriptFetcher&, RefPtr<ModuleFetchParameters>&&);
 
-    void didReceiveResponse(unsigned long, const ResourceResponse&) final { }
+    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final { }
     void notifyFinished() final;
 
     void notifyClientFinished();

@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -36,7 +36,11 @@ class Terminal(object):
 
     @classmethod
     def input(cls, *args, **kwargs):
-        return (input if sys.version_info > (3, 0) else raw_input)(*args, **kwargs)
+        try:
+            return (input if sys.version_info > (3, 0) else raw_input)(*args, **kwargs)
+        except KeyboardInterrupt:
+            sys.stderr.write('\nUser interrupted program\n')
+            sys.exit(1)
 
     @classmethod
     def choose(cls, prompt, options=None, default=None, strict=False, numbered=False):
@@ -45,10 +49,15 @@ class Terminal(object):
         response = None
         while response is None:
             if numbered:
-                numbered_options = ['{}) {}'.format(i + 1, options[i]) for i in range(len(options))]
+                numbered_options = [
+                    ('{}) [{}]' if options[i] == default else '{}) {}').format( i + 1, options[i])
+                    for i in range(len(options))
+                ]
                 response = cls.input('{}:\n    {}\n: '.format(prompt, '\n    '.join(numbered_options)))
             else:
-                response = cls.input('{} ({}): '.format(prompt, '/'.join(options)))
+                response = cls.input('{} ({}): '.format(prompt, '/'.join([
+                    '[{}]'.format(option) if option == default else option for option in options
+                ])))
 
             if numbered and response.isdigit():
                 index = int(response) - 1

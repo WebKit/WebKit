@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
+#include "DaemonDecoder.h"
+#include "DaemonEncoder.h"
 #include "DataReference.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/CurlProxySettings.h>
@@ -50,6 +52,7 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(Decoder& decoder, Resour
     return resourceRequest.decodeWithPlatformData(decoder);
 }
 
+template<typename Encoder>
 void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateInfo& certificateInfo)
 {
     encoder << certificateInfo.verificationError();
@@ -58,30 +61,36 @@ void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateI
     for (auto certificate : certificateInfo.certificateChain())
         encoder << certificate;
 }
+template void ArgumentCoder<WebCore::CertificateInfo>::encode<Encoder>(Encoder&, const WebCore::CertificateInfo&);
+template void ArgumentCoder<WebCore::CertificateInfo>::encode<WebKit::Daemon::Encoder>(WebKit::Daemon::Encoder&, const WebCore::CertificateInfo&);
 
-bool ArgumentCoder<CertificateInfo>::decode(Decoder& decoder, CertificateInfo& certificateInfo)
+template<typename Decoder>
+std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode(Decoder& decoder)
 {
-    int verificationError;
-    if (!decoder.decode(verificationError))
-        return false;
+    std::optional<int> verificationError;
+    decoder >> verificationError;
+    if (!verificationError)
+        return std::nullopt;
 
-    size_t certificateChainSize;
-    if (!decoder.decode(certificateChainSize))
-        return false;
+    std::optional<size_t> certificateChainSize;
+    decoder >> certificateChainSize;
+    if (!certificateChainSize)
+        return std::nullopt;
 
     CertificateInfo::CertificateChain certificateChain;
-    for (size_t i = 0; i < certificateChainSize; i++) {
-        CertificateInfo::Certificate certificate;
-        if (!decoder.decode(certificate))
-            return false;
+    for (size_t i = 0; i < *certificateChainSize; i++) {
+        std::optional<CertificateInfo::Certificate> certificate;
+        decoder >> certificate;
+        if (!certificate)
+            return std::nullopt;
 
-        certificateChain.append(certificate);
+        certificateChain.append(WTFMove(*certificate));
     }
 
-    certificateInfo = CertificateInfo { verificationError, WTFMove(certificateChain) };
-
-    return true;
+    return CertificateInfo { *verificationError, WTFMove(certificateChain) };
 }
+template std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>::decode<Decoder>(Decoder&);
+template std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>::decode<WebKit::Daemon::Decoder>(WebKit::Daemon::Decoder&);
 
 void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)
 {
@@ -154,11 +163,11 @@ bool ArgumentCoder<ProtectionSpace>::decodePlatformData(Decoder& decoder, Protec
     if (!decoder.decode(realm))
         return false;
 
-    ProtectionSpaceAuthenticationScheme authenticationScheme;
+    ProtectionSpace::AuthenticationScheme authenticationScheme;
     if (!decoder.decode(authenticationScheme))
         return false;
 
-    ProtectionSpaceServerType serverType;
+    ProtectionSpace::ServerType serverType;
     if (!decoder.decode(serverType))
         return false;
 

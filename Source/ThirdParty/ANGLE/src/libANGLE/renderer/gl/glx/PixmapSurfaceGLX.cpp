@@ -132,7 +132,7 @@ egl::Error PixmapSurfaceGLX::initialize(const egl::Display *display)
     }
 
     XFlush(mDisplay);
-    displayGLX->syncXCommands();
+    displayGLX->syncXCommands(false);
 
     return egl::NoError();
 }

@@ -30,6 +30,7 @@
 
 #include "AXObjectCache.h"
 #include "DOMFormData.h"
+#include "DocumentInlines.h"
 #include "ElementTraversal.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -40,7 +41,6 @@
 #include "HTMLHRElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
-#include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
@@ -172,9 +172,6 @@ String HTMLSelectElement::validationMessage() const
 
 bool HTMLSelectElement::valueMissing() const
 {
-    if (!willValidate())
-        return false;
-
     if (!isRequired())
         return false;
 
@@ -367,14 +364,53 @@ Ref<HTMLOptionsCollection> HTMLSelectElement::options()
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLOptionsCollection>(*this, SelectOptions);
 }
 
-void HTMLSelectElement::updateListItemSelectedStates()
+void HTMLSelectElement::updateListItemSelectedStates(AllowStyleInvalidation allowStyleInvalidation)
 {
     if (m_shouldRecalcListItems)
-        recalcListItems();
+        recalcListItems(true, allowStyleInvalidation);
+}
+
+CompletionHandlerCallingScope HTMLSelectElement::optionToSelectFromChildChangeScope(const ContainerNode::ChildChange& change, HTMLOptGroupElement* parentOptGroup)
+{
+    if (multiple())
+        return { };
+
+    auto getLastSelectedOption = [](HTMLOptGroupElement& optGroup) -> HTMLOptionElement* {
+        for (auto* option = Traversal<HTMLOptionElement>::lastChild(optGroup); option; option = Traversal<HTMLOptionElement>::previousSibling(*option)) {
+            if (option->selectedWithoutUpdate())
+                return option;
+        }
+        return nullptr;
+    };
+
+    RefPtr<HTMLOptionElement> optionToSelect;
+    if (change.type == ChildChange::Type::ElementInserted) {
+        if (is<HTMLOptionElement>(change.siblingChanged)) {
+            auto& option = downcast<HTMLOptionElement>(*change.siblingChanged);
+            if (option.selectedWithoutUpdate())
+                optionToSelect = &option;
+        } else if (!parentOptGroup && is<HTMLOptGroupElement>(change.siblingChanged))
+            optionToSelect = getLastSelectedOption(*downcast<HTMLOptGroupElement>(change.siblingChanged));
+    } else if (parentOptGroup && change.type == ContainerNode::ChildChange::Type::AllChildrenReplaced)
+        optionToSelect = getLastSelectedOption(*parentOptGroup);
+
+    return CompletionHandlerCallingScope { [optionToSelect = WTFMove(optionToSelect), isInsertion = change.isInsertion(), select = Ref { *this }] {
+        if (optionToSelect)
+            select->optionSelectionStateChanged(*optionToSelect, true);
+        else if (isInsertion)
+            select->scrollToSelection();
+    } };
 }
 
 void HTMLSelectElement::childrenChanged(const ChildChange& change)
 {
+    if (!change.affectsElements()) {
+        HTMLFormControlElementWithState::childrenChanged(change);
+        return;
+    }
+
+    auto selectOptionIfNecessaryScope = optionToSelectFromChildChangeScope(change);
+
     setRecalcListItems();
     updateValidity();
     m_lastOnChangeSelection.clear();
@@ -388,12 +424,6 @@ void HTMLSelectElement::optionElementChildrenChanged()
     updateValidity();
     if (auto* cache = document().existingAXObjectCache())
         cache->childrenChanged(this);
-}
-
-bool HTMLSelectElement::accessKeyAction(bool sendMouseEvents)
-{
-    focus();
-    return dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 void HTMLSelectElement::setMultiple(bool multiple)
@@ -770,7 +800,7 @@ void HTMLSelectElement::setRecalcListItems()
         cache->childrenChanged(this);
 }
 
-void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
+void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInvalidation allowStyleInvalidation) const
 {
     m_listItems.clear();
 
@@ -778,54 +808,35 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
 
     RefPtr<HTMLOptionElement> foundSelected;
     RefPtr<HTMLOptionElement> firstOption;
-    for (RefPtr<Element> currentElement = ElementTraversal::firstWithin(*this); currentElement; ) {
-        if (!is<HTMLElement>(*currentElement)) {
-            currentElement = ElementTraversal::nextSkippingChildren(*currentElement, this);
-            continue;
-        }
-        HTMLElement& current = downcast<HTMLElement>(*currentElement);
-
-        // Only consider optgroup elements that are direct children of the select element.
-        if (is<HTMLOptGroupElement>(current) && current.parentNode() == this) {
-            m_listItems.append(&current);
-            if (RefPtr<Element> nextElement = ElementTraversal::firstWithin(current)) {
-                currentElement = nextElement;
-                continue;
+    auto handleOptionElement = [&](HTMLOptionElement& option) {
+        m_listItems.append(&option);
+        if (updateSelectedStates && !m_multiple) {
+            if (!firstOption)
+                firstOption = &option;
+            if (option.selected()) {
+                if (foundSelected)
+                    foundSelected->setSelectedState(false, allowStyleInvalidation);
+                foundSelected = &option;
+            } else if (m_size <= 1 && !foundSelected && !option.isDisabledFormControl()) {
+                foundSelected = &option;
+                foundSelected->setSelectedState(true, allowStyleInvalidation);
             }
         }
+    };
 
-        if (is<HTMLOptionElement>(current)) {
-            m_listItems.append(&current);
-
-            if (updateSelectedStates && !m_multiple) {
-                HTMLOptionElement& option = downcast<HTMLOptionElement>(current);
-                if (!firstOption)
-                    firstOption = &option;
-                if (option.selected()) {
-                    if (foundSelected)
-                        foundSelected->setSelectedState(false);
-                    foundSelected = &option;
-                } else if (m_size <= 1 && !foundSelected && !option.isDisabledFormControl()) {
-                    foundSelected = &option;
-                    foundSelected->setSelectedState(true);
-                }
-            }
-        }
-
-        if (current.hasTagName(hrTag))
-            m_listItems.append(&current);
-
-        // In conforming HTML code, only <optgroup> and <option> will be found
-        // within a <select>. We call NodeTraversal::nextSkippingChildren so that we only step
-        // into those tags that we choose to. For web-compat, we should cope
-        // with the case where odd tags like a <div> have been added but we
-        // handle this because such tags have already been removed from the
-        // <select>'s subtree at this point.
-        currentElement = ElementTraversal::nextSkippingChildren(*currentElement, this);
+    for (auto& child : childrenOfType<HTMLElement>(*const_cast<HTMLSelectElement*>(this))) {
+        if (is<HTMLOptGroupElement>(child)) {
+            m_listItems.append(&child);
+            for (auto& option : childrenOfType<HTMLOptionElement>(child))
+                handleOptionElement(option);
+        } else if (is<HTMLOptionElement>(child)) {
+            handleOptionElement(downcast<HTMLOptionElement>(child));
+        } else if (is<HTMLHRElement>(child))
+            m_listItems.append(&child);
     }
 
     if (!foundSelected && m_size <= 1 && firstOption && !firstOption->selected())
-        firstOption->setSelectedState(true);
+        firstOption->setSelectedState(true, allowStyleInvalidation);
 }
 
 int HTMLSelectElement::selectedIndex() const
@@ -1044,7 +1055,7 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
         invalidateStyleAndRenderersForSubtree();
 }
 
-bool HTMLSelectElement::appendFormData(DOMFormData& formData, bool)
+bool HTMLSelectElement::appendFormData(DOMFormData& formData)
 {
     const AtomString& name = this->name();
     if (name.isEmpty())
@@ -1357,7 +1368,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
                 updateSelectedState(listIndex, mouseEvent.ctrlKey(), mouseEvent.shiftKey());
 #endif
             }
-            if (RefPtr<Frame> frame = document().frame())
+            if (RefPtr frame = document().frame())
                 frame->eventHandler().setMouseDownMayStartAutoscroll();
 
             mouseEvent.setDefaultHandled();

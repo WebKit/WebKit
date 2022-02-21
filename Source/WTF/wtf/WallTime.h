@@ -26,7 +26,8 @@
 #pragma once
 
 #include <wtf/ClockType.h>
-#include <wtf/Seconds.h>
+#include <wtf/GenericTimeMixin.h>
+#include <wtf/Int128.h>
 
 namespace WTF {
 
@@ -38,112 +39,30 @@ class PrintStream;
 // acceptable to use this to wrap NaN times, negative times, and infinite times, so long as they
 // are relative to the same clock. Use this only if wall clock time is needed. For elapsed time
 // measurement use MonotonicTime instead.
-class WallTime final {
-    WTF_MAKE_FAST_ALLOCATED;
+class WallTime final : public GenericTimeMixin<WallTime> {
 public:
     static constexpr ClockType clockType = ClockType::Wall;
     
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - WallTime().
-    constexpr WallTime() { }
-    
-    // Call this if you know for sure that the double represents time according to
-    // WTF::currentTime(). It must be in seconds and it must be from the same time source.
-    static constexpr WallTime fromRawSeconds(double value)
-    {
-        return WallTime(value);
-    }
-    
+    constexpr WallTime() = default;
+
     WTF_EXPORT_PRIVATE static WallTime now();
-    
-    static constexpr WallTime infinity() { return fromRawSeconds(std::numeric_limits<double>::infinity()); }
-    static constexpr WallTime nan() { return fromRawSeconds(std::numeric_limits<double>::quiet_NaN()); }
-    
-    constexpr Seconds secondsSinceEpoch() const { return Seconds(m_value); }
     
     WallTime approximateWallTime() const { return *this; }
     WTF_EXPORT_PRIVATE MonotonicTime approximateMonotonicTime() const;
     
-    explicit constexpr operator bool() const { return !!m_value; }
-    
-    constexpr WallTime operator+(Seconds other) const
-    {
-        return fromRawSeconds(m_value + other.value());
-    }
-    
-    constexpr WallTime operator-(Seconds other) const
-    {
-        return fromRawSeconds(m_value - other.value());
-    }
-    
-    // Time is a scalar and scalars can be negated as this could arise from algebraic
-    // transformations. So, we allow it.
-    constexpr WallTime operator-() const
-    {
-        return fromRawSeconds(-m_value);
-    }
-    
-    WallTime& operator+=(Seconds other)
-    {
-        return *this = *this + other;
-    }
-    
-    WallTime& operator-=(Seconds other)
-    {
-        return *this = *this - other;
-    }
-    
-    constexpr Seconds operator-(WallTime other) const
-    {
-        return Seconds(m_value - other.m_value);
-    }
-    
-    constexpr bool operator==(WallTime other) const
-    {
-        return m_value == other.m_value;
-    }
-    
-    constexpr bool operator!=(WallTime other) const
-    {
-        return m_value != other.m_value;
-    }
-    
-    constexpr bool operator<(WallTime other) const
-    {
-        return m_value < other.m_value;
-    }
-    
-    constexpr bool operator>(WallTime other) const
-    {
-        return m_value > other.m_value;
-    }
-    
-    constexpr bool operator<=(WallTime other) const
-    {
-        return m_value <= other.m_value;
-    }
-    
-    constexpr bool operator>=(WallTime other) const
-    {
-        return m_value >= other.m_value;
-    }
-    
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
     
-    WallTime isolatedCopy() const
-    {
-        return *this;
-    }
-
     struct MarkableTraits;
 
 private:
+    friend class GenericTimeMixin<WallTime>;
     constexpr WallTime(double rawValue)
-        : m_value(rawValue)
+        : GenericTimeMixin<WallTime>(rawValue)
     {
     }
-
-    double m_value { 0 };
 };
+static_assert(sizeof(WallTime) == sizeof(double));
 
 struct WallTime::MarkableTraits {
     static bool isEmptyValue(WallTime time)
@@ -158,6 +77,7 @@ struct WallTime::MarkableTraits {
 };
 
 WTF_EXPORT_PRIVATE void sleep(WallTime);
+WTF_EXPORT_PRIVATE Int128 currentTimeInNanoseconds();
 
 } // namespace WTF
 

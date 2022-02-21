@@ -40,9 +40,8 @@
 #import <wtf/WeakObjCPtr.h>
 
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+#import "ARKitSoftLink.h"
 #import <pal/spi/ios/SystemPreviewSPI.h>
-SOFT_LINK_PRIVATE_FRAMEWORK(ARKit);
-SOFT_LINK_CLASS(ARKit, ARQuickLookPreviewItem);
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
 SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
 
@@ -109,7 +108,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     NSString *contentType = WebCore::UTIFromMIMEType("model/vnd.usdz+zip"_s);
 
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
-    auto previewItem = adoptNS([allocARQuickLookPreviewItemInstance() initWithFileAtURL:_downloadedURL]);
+    auto previewItem = adoptNS([WebKit::allocARQuickLookPreviewItemInstance() initWithFileAtURL:_downloadedURL]);
     [previewItem setCanonicalWebPageURL:_originatingPageURL];
 
     _item = adoptNS([allocARQuickLookWebKitItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0) previewItem:previewItem.get()]);
@@ -301,11 +300,16 @@ void SystemPreviewController::triggerSystemPreviewAction()
     page().systemPreviewActionTriggered(m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped");
 }
 
-void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uint64_t elementID, uint64_t documentID, uint64_t pageID)
+void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uint64_t elementID, NSString* documentID, uint64_t pageID)
 {
+    auto uuid = UUID::parseVersion4(String(documentID));
+    ASSERT(uuid);
+    if (!uuid)
+        return;
+
     m_systemPreviewInfo.isPreview = true;
     m_systemPreviewInfo.element.elementIdentifier = makeObjectIdentifier<WebCore::ElementIdentifierType>(elementID);
-    m_systemPreviewInfo.element.documentIdentifier = makeObjectIdentifier<WebCore::DocumentIdentifierType>(documentID);
+    m_systemPreviewInfo.element.documentIdentifier = { *uuid, m_webPageProxy.process().coreProcessIdentifier() };
     m_systemPreviewInfo.element.webPageIdentifier = makeObjectIdentifier<WebCore::PageIdentifierType>(pageID);
     triggerSystemPreviewAction();
 }

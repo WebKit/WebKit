@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +64,7 @@ static ALWAYS_INLINE JSWebAssemblyGlobal* getGlobal(JSGlobalObject* globalObject
             createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Global"_s));
         return nullptr;
     }
-    Integrity::auditStructureID(vm, result->structureID());
+    Integrity::auditStructureID(result->structureID());
     return result;
 }
 
@@ -121,7 +121,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoSetterFuncValue, (JSGlobalObject*
 
 WebAssemblyGlobalPrototype* WebAssemblyGlobalPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    auto* object = new (NotNull, allocateCell<WebAssemblyGlobalPrototype>(vm.heap)) WebAssemblyGlobalPrototype(vm, structure);
+    auto* object = new (NotNull, allocateCell<WebAssemblyGlobalPrototype>(vm)) WebAssemblyGlobalPrototype(vm, structure);
     object->finishCreation(vm, globalObject);
     return object;
 }

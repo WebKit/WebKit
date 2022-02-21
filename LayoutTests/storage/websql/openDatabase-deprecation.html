@@ -8,6 +8,7 @@
     </head>
     <body>
         <script>
+setup({ single_test: true });
 assert_equals(Object.keys(window).indexOf("openDatabase"), -1);
 window.openDatabase(null, null, null, null);
 done();

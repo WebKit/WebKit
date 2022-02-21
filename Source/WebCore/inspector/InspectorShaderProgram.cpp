@@ -30,8 +30,8 @@
 
 #include "InspectorCanvas.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
+#include <variant>
 #include <wtf/Ref.h>
-#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WEBGL)
@@ -66,7 +66,7 @@ InspectorShaderProgram::InspectorShaderProgram(WebGLProgram& program, InspectorC
 #if ENABLE(WEBGL)
 WebGLProgram* InspectorShaderProgram::program() const
 {
-    if (auto* programWrapper = WTF::get_if<std::reference_wrapper<WebGLProgram>>(m_program))
+    if (auto* programWrapper = std::get_if<std::reference_wrapper<WebGLProgram>>(&m_program))
         return &programWrapper->get();
     return nullptr;
 }
@@ -103,7 +103,7 @@ String InspectorShaderProgram::requestShaderSource(Inspector::Protocol::Canvas::
             return String();
         },
 #endif
-        [&] (Monostate) {
+        [&] (std::monostate) {
 #if ENABLE(WEBGL)
             ASSERT_NOT_REACHED();
 #endif
@@ -134,7 +134,7 @@ bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderTyp
             return false;
         },
 #endif
-        [&] (Monostate) {
+        [&] (std::monostate) {
 #if ENABLE(WEBGL)
             ASSERT_NOT_REACHED();
 #endif
@@ -152,7 +152,7 @@ Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObj
             return Inspector::Protocol::Canvas::ProgramType::Render;
         },
 #endif
-        [&] (Monostate) -> ProgramTypeType {
+        [&] (std::monostate) -> ProgramTypeType {
 #if ENABLE(WEBGL)
             ASSERT_NOT_REACHED();
 #endif

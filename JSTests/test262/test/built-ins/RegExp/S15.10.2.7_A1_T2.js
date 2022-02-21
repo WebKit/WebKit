@@ -11,7 +11,4 @@ description: Execute /\d{2,4}/.test("the 7 movie") and check results
 
 var __executed = /\d{2,4}/.test("the 7 movie");
 
-//CHECK#1
-if (__executed) {
-	throw new Test262Error('#1: /\\d{2,4}/.test("the 7 movie") === false');
-}
+assert(!__executed, 'The value of !__executed is expected to be true');

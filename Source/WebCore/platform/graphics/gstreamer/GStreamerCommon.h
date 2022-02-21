@@ -80,7 +80,19 @@ bool isThunderRanked();
 
 inline GstClockTime toGstClockTime(const MediaTime &mediaTime)
 {
+    if (mediaTime.isInvalid())
+        return GST_CLOCK_TIME_NONE;
+    if (mediaTime < MediaTime::zeroTime())
+        return 0;
     return static_cast<GstClockTime>(toGstUnsigned64Time(mediaTime));
+}
+
+inline MediaTime fromGstClockTime(GstClockTime time)
+{
+    if (!GST_CLOCK_TIME_IS_VALID(time))
+        return MediaTime::invalidTime();
+
+    return MediaTime(GST_TIME_AS_USECONDS(time), G_USEC_PER_SEC);
 }
 
 class GstMappedBuffer {
@@ -286,15 +298,16 @@ private:
 };
 
 
-void connectSimpleBusMessageCallback(GstElement* pipeline);
-void disconnectSimpleBusMessageCallback(GstElement* pipeline);
+void connectSimpleBusMessageCallback(GstElement*, Function<void(GstMessage*)>&& = [](GstMessage*) { });
+void disconnectSimpleBusMessageCallback(GstElement*);
 
 enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX };
 
 bool isGStreamerPluginAvailable(const char* name);
 bool gstElementFactoryEquals(GstElement*, const char* name);
 
-GstElement* createPlatformAudioSink();
+GstElement* createAutoAudioSink(const String& role);
+GstElement* createPlatformAudioSink(const String& role);
 
 bool webkitGstSetElementStateSynchronously(GstElement*, GstState, Function<bool(GstMessage*)>&& = [](GstMessage*) -> bool {
     return true;
@@ -306,6 +319,8 @@ GstBuffer* gstBufferNewWrappedFast(void* data, size_t length);
 GstElement* makeGStreamerElement(const char* factoryName, const char* name);
 GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 
+String gstStructureToJSONString(const GstStructure*);
+
 }
 
 #ifndef GST_BUFFER_DTS_OR_PTS
@@ -314,7 +329,7 @@ GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 
 // In GStreamer 1.20 gst_audio_format_fill_silence() will be deprecated in favor of
 // gst_audio_format_info_fill_silence().
-#if GST_CHECK_VERSION(1, 19, 0)
+#if GST_CHECK_VERSION(1, 20, 0)
 #define webkitGstAudioFormatFillSilence gst_audio_format_info_fill_silence
 #else
 #define webkitGstAudioFormatFillSilence gst_audio_format_fill_silence
@@ -322,7 +337,7 @@ GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 
 // In GStreamer 1.20 gst_element_get_request_pad() was renamed to gst_element_request_pad_simple(),
 // so create an alias for older versions.
-#if !GST_CHECK_VERSION(1, 19, 0)
+#if !GST_CHECK_VERSION(1, 20, 0)
 #define gst_element_request_pad_simple gst_element_get_request_pad
 #endif
 
@@ -372,11 +387,11 @@ public:
             return *this;
         }
 
-        bool operator==(const iterator& other)
+        bool operator==(const iterator& other) const
         {
             return m_iter == other.m_iter && m_done == other.m_done;
         }
-        bool operator!=(const iterator& other) { return !(*this == other); }
+        bool operator!=(const iterator& other) const { return !(*this == other); }
 
     private:
         GstIterator* m_iter;

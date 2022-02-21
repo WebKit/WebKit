@@ -1,0 +1,11 @@
+
+PASS The signal option must be an AbortSignal
+PASS Passing an already aborted signal aborts
+PASS An aborted request results in AbortError
+PASS Abort after a timeout
+PASS Signal that is not aborted
+PASS Synchronously signaled abort
+PASS Abort signaled after lock granted
+PASS Abort signaled after lock released
+PASS Abort should process the next pending lock request
+

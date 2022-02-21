@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: DoesNotHaveBold;
+    src: local("Times");
+}
+</style>
+</head>
+<body>
+This test makes sure that, when the width of a tab is set to be a multiple of the space width, that the space width includes the synthetic bold expansion. The test passes if the width of the green box matches in both cases.
+<div>
+<pre style="font: bold 16px 'DoesNotHaveBold'; display: inline-block; background: green; tab-size: 16;">&#x9;</pre>
+</div>
+</body>
+</html>

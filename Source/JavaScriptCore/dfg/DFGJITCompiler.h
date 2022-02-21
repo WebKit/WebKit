@@ -234,12 +234,12 @@ public:
         m_privateBrandAccesses.append(InlineCacheWrapper<JITPrivateBrandAccessGenerator>(gen, slowPath));
     }
 
-    void addJSCall(Label slowPathStart, Label doneLocation, CallLinkInfo* info)
+    void addJSCall(Label slowPathStart, Label doneLocation, OptimizingCallLinkInfo* info)
     {
         m_jsCalls.append(JSCallRecord(slowPathStart, doneLocation, info));
     }
     
-    void addJSDirectCall(Label slowPath, CallLinkInfo* info)
+    void addJSDirectCall(Label slowPath, OptimizingCallLinkInfo* info)
     {
         m_jsDirectCalls.append(JSDirectCallRecord(slowPath, info));
     }
@@ -268,7 +268,7 @@ public:
     {
         Structure* structure = weakStructure.get();
 #if USE(JSVALUE64)
-        Jump result = branch32(cond, left, TrustedImm32(structure->id()));
+        Jump result = branch32(cond, left, TrustedImm32(structure->id().bits()));
         return result;
 #else
         return branchPtr(cond, left, TrustedImmPtr(structure));
@@ -301,6 +301,16 @@ public:
     PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder() { return m_pcToCodeOriginMapBuilder; }
 
     VM& vm() { return m_graph.m_vm; }
+
+    void emitRestoreCalleeSaves()
+    {
+        emitRestoreCalleeSavesFor(&RegisterAtOffsetList::dfgCalleeSaveRegisters());
+    }
+
+    void emitSaveCalleeSaves()
+    {
+        emitSaveCalleeSavesFor(&RegisterAtOffsetList::dfgCalleeSaveRegisters());
+    }
 
 private:
     friend class OSRExitJumpPlaceholder;
@@ -338,7 +348,7 @@ private:
 
 
     struct JSCallRecord {
-        JSCallRecord(Label slowPathStart, Label doneLocation, CallLinkInfo* info)
+        JSCallRecord(Label slowPathStart, Label doneLocation, OptimizingCallLinkInfo* info)
             : slowPathStart(slowPathStart)
             , doneLocation(doneLocation)
             , info(info)
@@ -347,18 +357,18 @@ private:
         
         Label slowPathStart;
         Label doneLocation;
-        CallLinkInfo* info;
+        OptimizingCallLinkInfo* info;
     };
     
     struct JSDirectCallRecord {
-        JSDirectCallRecord(Label slowPath, CallLinkInfo* info)
+        JSDirectCallRecord(Label slowPath, OptimizingCallLinkInfo* info)
             : slowPath(slowPath)
             , info(info)
         {
         }
         
         Label slowPath;
-        CallLinkInfo* info;
+        OptimizingCallLinkInfo* info;
     };
     
     Vector<InlineCacheWrapper<JITGetByIdGenerator>, 4> m_getByIds;

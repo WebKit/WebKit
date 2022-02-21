@@ -1,4 +1,4 @@
 
-FAIL CSSStyleValue parsed from string serializes to given string red cannot be parsed as a color
-FAIL Shorthand CSSStyleValue parsed from string serializes to given string blue cannot be parsed as a background
+PASS CSSStyleValue parsed from string serializes to given string
+FAIL Shorthand CSSStyleValue parsed from string serializes to given string assert_equals: expected "blue" but got "initial"
 

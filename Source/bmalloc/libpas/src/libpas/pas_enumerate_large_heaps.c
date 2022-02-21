@@ -51,6 +51,9 @@ static bool range_list_iterate_add_large_payload_callback(pas_enumerator* enumer
 static void record_span(pas_enumerator* enumerator,
                         pas_range range)
 {
+    static const bool verbose = false;
+    if (verbose)
+        pas_log("record_span: %p...%p\n", (void*)range.begin, (void*)range.end);
     pas_enumerator_record(
         enumerator, (void*)range.begin, pas_range_size(range), pas_enumerator_payload_record);
 }
@@ -111,6 +114,8 @@ static bool tiny_large_map_hashtable_entry_callback(
 
 bool pas_enumerate_large_heaps(pas_enumerator* enumerator)
 {
+    static const bool verbose = false;
+    
     pas_range_begin_min_heap payloads;
     pas_range span;
     pas_range range;
@@ -124,15 +129,24 @@ bool pas_enumerate_large_heaps(pas_enumerator* enumerator)
             &payloads))
         return false;
 
+    if (verbose)
+        pas_log("Payloads size = %zu\n", payloads.size);
+
     span = pas_range_create_empty();
     while (!pas_range_is_empty(range = pas_range_begin_min_heap_take_min(&payloads))) {
         uintptr_t page;
 
         for (page = range.begin; page < range.end; page += enumerator->root->page_malloc_alignment) {
             PAS_ASSERT(page);
+
+            if (verbose)
+                pas_log("Looking at page %p\n", (void*)page);
             
             if (!pas_enumerator_exclude_accounted_page(enumerator, (void*)page))
                 continue;
+
+            if (verbose)
+                pas_log("    Recording as payload.\n");
 
             if (page != span.end) {
                 record_span(enumerator, span);

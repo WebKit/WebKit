@@ -34,8 +34,9 @@
 namespace WebCore {
 namespace Layout {
 
-LineBox::LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t nonSpanningInlineLevelBoxCount)
-    : m_rootInlineBox(rootLayoutBox, contentLogicalLeft, InlineLayoutSize { contentLogicalWidth, { } }, InlineLevelBox::Type::RootInlineBox)
+LineBox::LineBox(const Box& rootLayoutBox, InlineLayoutUnit rootInlineBoxAlignmentOffset, InlineLayoutUnit contentLogicalWidth, size_t lineIndex, size_t nonSpanningInlineLevelBoxCount)
+    : m_rootInlineBoxAlignmentOffset(rootInlineBoxAlignmentOffset)
+    , m_rootInlineBox({ rootLayoutBox, !lineIndex ? rootLayoutBox.firstLineStyle() : rootLayoutBox.style(), { }, InlineLayoutSize { contentLogicalWidth, { } }, InlineLevelBox::Type::RootInlineBox })
 {
     m_nonRootInlineLevelBoxList.reserveInitialCapacity(nonSpanningInlineLevelBoxCount);
     m_nonRootInlineLevelBoxMap.reserveInitialCapacity(nonSpanningInlineLevelBoxCount);
@@ -53,16 +54,15 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
     ASSERT(run.isText() || run.isSoftLineBreak());
     auto* parentInlineBox = &inlineLevelBoxForLayoutBox(run.layoutBox().parent());
     ASSERT(parentInlineBox->isInlineBox());
-    auto& fontMetrics = parentInlineBox->style().fontMetrics();
-    auto runlogicalTop = parentInlineBox->logicalTop() + parentInlineBox->baseline() - fontMetrics.ascent();
+    auto runlogicalTop = parentInlineBox->logicalTop();
+    InlineLayoutUnit logicalHeight = parentInlineBox->primarymetricsOfPrimaryFont().height();
 
     while (parentInlineBox != &m_rootInlineBox && !parentInlineBox->hasLineBoxRelativeAlignment()) {
         parentInlineBox = &inlineLevelBoxForLayoutBox(parentInlineBox->layoutBox().parent());
         ASSERT(parentInlineBox->isInlineBox());
         runlogicalTop += parentInlineBox->logicalTop();
     }
-    InlineLayoutUnit logicalHeight = fontMetrics.height();
-    return { runlogicalTop, m_rootInlineBox.logicalLeft() + run.logicalLeft(), run.logicalWidth(), logicalHeight };
+    return { runlogicalTop, run.logicalLeft(), run.logicalWidth(), logicalHeight };
 }
 
 InlineRect LineBox::logicalRectForLineBreakBox(const Box& layoutBox) const
@@ -113,7 +113,7 @@ InlineRect LineBox::logicalBorderBoxForInlineBox(const Box& layoutBox, const Box
     // This logical rect is as tall as the "text" content is. Let's adjust with vertical border and padding.
     auto verticalBorderAndPadding = boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0_lu);
     logicalRect.expandVertically(verticalBorderAndPadding);
-    logicalRect.moveVertically(-(boxGeometry.borderTop() + boxGeometry.paddingTop().value_or(0_lu)));
+    logicalRect.moveVertically(-(boxGeometry.borderBefore() + boxGeometry.paddingBefore().value_or(0_lu)));
     return logicalRect;
 }
 

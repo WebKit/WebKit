@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <sys/mman.h>
 #include <wtf/Assertions.h>
+#include <wtf/MathExtras.h>
 #include <wtf/PageBlock.h>
 
 #if ENABLE(JIT_CAGE)
@@ -43,36 +44,13 @@
 #endif // OS(DARWIN)
 #endif // ENABLE(JIT_CAGE)
 
+#if OS(DARWIN)
+#include <wtf/spi/cocoa/MachVMSPI.h>
+#endif
+
 namespace WTF {
 
-void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
-{
-#if OS(LINUX)
-    UNUSED_PARAM(usage);
-    UNUSED_PARAM(writable);
-    UNUSED_PARAM(executable);
-    UNUSED_PARAM(jitCageEnabled);
-    UNUSED_PARAM(includesGuardPages);
-
-    void* result = mmap(0, bytes, PROT_NONE, MAP_NORESERVE | MAP_PRIVATE | MAP_ANON, -1, 0);
-    if (result == MAP_FAILED)
-        CRASH();
-    madvise(result, bytes, MADV_DONTNEED);
-#else
-    void* result = reserveAndCommit(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
-#if HAVE(MADV_FREE_REUSE)
-    if (result) {
-        // To support the "reserve then commit" model, we have to initially decommit.
-        while (madvise(result, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
-    }
-#endif
-
-#endif
-
-    return result;
-}
-
-void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
 {
     // All POSIX reservations start out logically committed.
     int protection = PROT_READ;
@@ -100,7 +78,7 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
     int fd = -1;
 #endif
 
-    void* result = 0;
+    void* result = nullptr;
 #if (OS(DARWIN) && CPU(X86_64))
     if (executable) {
         ASSERT(includesGuardPages);
@@ -122,12 +100,8 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
 #endif
 
     result = mmap(result, bytes, protection, flags, fd, 0);
-    if (result == MAP_FAILED) {
-        if (executable)
-            result = 0;
-        else
-            CRASH();
-    }
+    if (result == MAP_FAILED)
+        result = nullptr;
     if (result && includesGuardPages) {
         // We use mmap to remap the guardpages rather than using mprotect as
         // mprotect results in multiple references to the code region. This
@@ -136,6 +110,116 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
         mmap(result, pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
         mmap(static_cast<char*>(result) + bytes - pageSize(), pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
     }
+    return result;
+}
+
+void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+{
+#if OS(LINUX)
+    UNUSED_PARAM(usage);
+    UNUSED_PARAM(writable);
+    UNUSED_PARAM(executable);
+    UNUSED_PARAM(jitCageEnabled);
+    UNUSED_PARAM(includesGuardPages);
+
+    void* result = mmap(0, bytes, PROT_NONE, MAP_NORESERVE | MAP_PRIVATE | MAP_ANON, -1, 0);
+    if (result == MAP_FAILED)
+        result = nullptr;
+    if (result)
+        madvise(result, bytes, MADV_DONTNEED);
+#else
+    void* result = tryReserveAndCommit(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
+#if HAVE(MADV_FREE_REUSE)
+    if (result) {
+        // To support the "reserve then commit" model, we have to initially decommit.
+        while (madvise(result, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
+    }
+#endif
+
+#endif
+
+    return result;
+}
+
+void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+{
+    void* result = tryReserveUncommitted(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
+    RELEASE_ASSERT(result);
+    return result;
+}
+
+void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+{
+    ASSERT(hasOneBitSet(alignment) && alignment >= pageSize());
+
+#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+    UNUSED_PARAM(usage); // Not supported for mach API.
+    ASSERT_UNUSED(includesGuardPages, !includesGuardPages);
+    ASSERT_UNUSED(jitCageEnabled, !jitCageEnabled); // Not supported for mach API.
+    vm_prot_t protections = VM_PROT_READ;
+    if (writable)
+        protections |= VM_PROT_WRITE;
+    if (executable)
+        protections |= VM_PROT_EXECUTE;
+
+    const vm_inherit_t childProcessInheritance = VM_INHERIT_DEFAULT;
+    const bool copy = false;
+    const int flags = VM_FLAGS_ANYWHERE;
+
+    void* aligned = nullptr;
+    kern_return_t result = mach_vm_map(mach_task_self(), reinterpret_cast<mach_vm_address_t*>(&aligned), bytes, alignment - 1, flags, MEMORY_OBJECT_NULL, 0, copy, protections, protections, childProcessInheritance);
+    ASSERT_UNUSED(result, result == KERN_SUCCESS || !aligned);
+#if HAVE(MADV_FREE_REUSE)
+    if (aligned) {
+        // To support the "reserve then commit" model, we have to initially decommit.
+        while (madvise(aligned, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
+    }
+#endif
+
+    return aligned;
+#else
+#if HAVE(MAP_ALIGNED)
+#ifndef MAP_NORESERVE
+#define MAP_NORESERVE 0
+#endif
+    UNUSED_PARAM(usage);
+    UNUSED_PARAM(writable);
+    UNUSED_PARAM(executable);
+    UNUSED_PARAM(jitCageEnabled);
+    UNUSED_PARAM(includesGuardPages);
+    void* result = mmap(0, bytes, PROT_NONE, MAP_NORESERVE | MAP_PRIVATE | MAP_ANON | MAP_ALIGNED(getLSBSet(alignment)), -1, 0);
+    if (result == MAP_FAILED)
+        return nullptr;
+    if (result)
+        madvise(result, bytes, MADV_DONTNEED);
+    return result;
+#else
+
+    // Add the alignment so we can ensure enough mapped memory to get an aligned start.
+    size_t mappedSize = bytes + alignment;
+    char* mapped = reinterpret_cast<char*>(tryReserveUncommitted(mappedSize, usage, writable, executable, jitCageEnabled, includesGuardPages));
+    char* mappedEnd = mapped + mappedSize;
+
+    char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(bytes, reinterpret_cast<uintptr_t>(mapped)));
+    char* alignedEnd = aligned + bytes;
+
+    RELEASE_ASSERT(alignedEnd <= mappedEnd);
+
+    if (size_t leftExtra = aligned - mapped)
+        releaseDecommitted(mapped, leftExtra);
+
+    if (size_t rightExtra = mappedEnd - alignedEnd)
+        releaseDecommitted(alignedEnd, rightExtra);
+
+    return aligned;
+#endif // HAVE(MAP_ALIGNED)
+#endif // PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+}
+
+void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+{
+    void* result = tryReserveAndCommit(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
+    RELEASE_ASSERT(result);
     return result;
 }
 

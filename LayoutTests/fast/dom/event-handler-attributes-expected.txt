@@ -252,7 +252,7 @@ PASS testElementAttribute(element, "search") is "target"
 PASS testElementAttribute(element, "seeked") is "target"
 PASS testElementAttribute(element, "seeking") is "target"
 PASS testElementAttribute(element, "select") is "target"
-FAIL testElementAttribute(element, "selectionchange") should be target. Was script: target; content: none.
+PASS testElementAttribute(element, "selectionchange") is "target"
 PASS testElementAttribute(element, "selectstart") is "target"
 PASS testElementAttribute(element, "stalled") is "target"
 PASS testElementAttribute(element, "submit") is "target"
@@ -345,7 +345,7 @@ PASS testElementAttribute(inputElement, "search") is "target"
 PASS testElementAttribute(inputElement, "seeked") is "target"
 PASS testElementAttribute(inputElement, "seeking") is "target"
 PASS testElementAttribute(inputElement, "select") is "target"
-FAIL testElementAttribute(inputElement, "selectionchange") should be target. Was script: target; content: none.
+PASS testElementAttribute(inputElement, "selectionchange") is "target"
 PASS testElementAttribute(inputElement, "selectstart") is "target"
 PASS testElementAttribute(inputElement, "stalled") is "target"
 PASS testElementAttribute(inputElement, "submit") is "target"
@@ -438,7 +438,7 @@ PASS testElementAttribute(audioElement, "search") is "target"
 PASS testElementAttribute(audioElement, "seeked") is "target"
 PASS testElementAttribute(audioElement, "seeking") is "target"
 PASS testElementAttribute(audioElement, "select") is "target"
-FAIL testElementAttribute(audioElement, "selectionchange") should be target. Was script: target; content: none.
+PASS testElementAttribute(audioElement, "selectionchange") is "target"
 PASS testElementAttribute(audioElement, "selectstart") is "target"
 PASS testElementAttribute(audioElement, "stalled") is "target"
 PASS testElementAttribute(audioElement, "submit") is "target"
@@ -531,7 +531,7 @@ PASS testElementAttribute(videoElement, "search") is "target"
 PASS testElementAttribute(videoElement, "seeked") is "target"
 PASS testElementAttribute(videoElement, "seeking") is "target"
 PASS testElementAttribute(videoElement, "select") is "target"
-FAIL testElementAttribute(videoElement, "selectionchange") should be target. Was script: target; content: none.
+PASS testElementAttribute(videoElement, "selectionchange") is "target"
 PASS testElementAttribute(videoElement, "selectstart") is "target"
 PASS testElementAttribute(videoElement, "stalled") is "target"
 PASS testElementAttribute(videoElement, "submit") is "target"
@@ -580,10 +580,6 @@ PASS testElementAttribute(bodyElement, "popstate") is "window"
 PASS testElementAttribute(bodyElement, "resize") is "window"
 PASS testElementAttribute(bodyElement, "storage") is "window"
 PASS testElementAttribute(bodyElement, "unload") is "window"
-
-Event names we expect to be forwarded from <body> element to document)
-
-PASS testElementAttribute(bodyElement, "selectionchange") is "document"
 
 Non-forwarded event names on <body> element
 
@@ -641,6 +637,7 @@ PASS testElementAttribute(bodyElement, "search") is "target"
 PASS testElementAttribute(bodyElement, "seeked") is "target"
 PASS testElementAttribute(bodyElement, "seeking") is "target"
 PASS testElementAttribute(bodyElement, "select") is "target"
+FAIL testElementAttribute(bodyElement, "selectionchange") should be target. Was script: target; content: document.
 PASS testElementAttribute(bodyElement, "selectstart") is "target"
 PASS testElementAttribute(bodyElement, "stalled") is "target"
 PASS testElementAttribute(bodyElement, "submit") is "target"
@@ -679,10 +676,6 @@ PASS testElementAttribute(framesetElement, "popstate") is "window"
 PASS testElementAttribute(framesetElement, "resize") is "window"
 PASS testElementAttribute(framesetElement, "storage") is "window"
 PASS testElementAttribute(framesetElement, "unload") is "window"
-
-Event names we expect to be forwarded from <frameset> element to document)
-
-FAIL testElementAttribute(framesetElement, "selectionchange") should be document. Was script: target; content: none.
 
 Non-forwarded event names on <frameset> element
 
@@ -740,6 +733,7 @@ PASS testElementAttribute(framesetElement, "search") is "target"
 PASS testElementAttribute(framesetElement, "seeked") is "target"
 PASS testElementAttribute(framesetElement, "seeking") is "target"
 PASS testElementAttribute(framesetElement, "select") is "target"
+PASS testElementAttribute(framesetElement, "selectionchange") is "target"
 PASS testElementAttribute(framesetElement, "selectstart") is "target"
 PASS testElementAttribute(framesetElement, "stalled") is "target"
 PASS testElementAttribute(framesetElement, "submit") is "target"
@@ -822,7 +816,7 @@ PASS testElementAttribute(rectElement, "search") is "target"
 PASS testElementAttribute(rectElement, "seeked") is "target"
 PASS testElementAttribute(rectElement, "seeking") is "target"
 PASS testElementAttribute(rectElement, "select") is "target"
-FAIL testElementAttribute(rectElement, "selectionchange") should be target. Was script: target; content: none.
+PASS testElementAttribute(rectElement, "selectionchange") is "target"
 PASS testElementAttribute(rectElement, "selectstart") is "target"
 PASS testElementAttribute(rectElement, "stalled") is "target"
 PASS testElementAttribute(rectElement, "submit") is "target"
@@ -941,6 +935,10 @@ PASS testElementAttribute(nonHTMLElement, "webkitanimationiteration") is "none"
 PASS testElementAttribute(nonHTMLElement, "webkitanimationstart") is "none"
 PASS testElementAttribute(nonHTMLElement, "webkittransitionend") is "none"
 PASS testElementAttribute(nonHTMLElement, "wheel") is "none"
+
+onselectionchange IDL attribute doesn't forward event listeners from <body> element to document
+
+PASS document.onselectionchange is null
 
 PASS successfullyParsed is true
 

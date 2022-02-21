@@ -205,6 +205,8 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "IsTypedArrayViewIntrinsic";
     case BoundFunctionCallIntrinsic:
         return "BoundFunctionCallIntrinsic";
+    case RemoteFunctionCallIntrinsic:
+        return "RemoteFunctionCallIntrinsic";
     case JSMapGetIntrinsic:
         return "JSMapGetIntrinsic";
     case JSMapHasIntrinsic:

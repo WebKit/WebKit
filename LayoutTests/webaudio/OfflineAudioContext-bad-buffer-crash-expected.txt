@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Failed to construct internal AudioBuffer with 1 channel(s), a sample rate of 44000 and a length of 536870912.
 This test passes if it does not crash.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

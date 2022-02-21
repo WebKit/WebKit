@@ -129,7 +129,7 @@ void CookieStorageObserver::stopObserving()
 
 void CookieStorageObserver::cookiesDidChange()
 {
-    callOnMainThread([weakThis = makeWeakPtr(*this)] {
+    callOnMainThread([weakThis = WeakPtr { *this }] {
         if (weakThis && weakThis->m_cookieChangeCallback)
             weakThis->m_cookieChangeCallback();
     });

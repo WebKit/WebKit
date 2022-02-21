@@ -72,8 +72,8 @@ LegacyTileLayerPool::LayerList& LegacyTileLayerPool::listOfLayersWithSize(const 
 
 void LegacyTileLayerPool::addLayer(const RetainPtr<LegacyTileLayer>& layer)
 {
-    IntSize layerSize([layer.get() frame].size);
-    layerSize.scale([layer.get() contentsScale]);
+    IntSize layerSize([layer frame].size);
+    layerSize.scale([layer contentsScale]);
     if (!canReuseLayerWithSize(layerSize))
         return;
 

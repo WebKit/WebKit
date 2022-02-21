@@ -20,8 +20,8 @@ layer at (0,0) size 800x428
         RenderTableSection {TBODY} at (1,1) size 68x23
           RenderTableRow {TR} at (0,1) size 68x20
             RenderTableCell {TD} at (1,1) size 66x21 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (1,1) size 64x19
-                text run at (1,2) width 64: "First Row"
+              RenderText {#text} at (1,0) size 64x20
+                text run at (1,1) width 64: "First Row"
           RenderTableRow {TR} at (0,22) size 68x0
       RenderBlock (anonymous) at (0,83) size 784x18
         RenderText {#text} at (0,0) size 304x18
@@ -40,8 +40,8 @@ layer at (0,0) size 800x428
         RenderTableSection {TBODY} at (1,1) size 70x25
           RenderTableRow {TR} at (0,1) size 70x22
             RenderTableCell {TD} at (1,1) size 68x23 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 64x19
-                text run at (2,3) width 64: "First Row"
+              RenderText {#text} at (2,1) size 64x20
+                text run at (2,2) width 64: "First Row"
           RenderTableRow {TR} at (0,24) size 70x0
       RenderBlock (anonymous) at (0,170) size 784x90
         RenderBR {BR} at (0,0) size 0x18
@@ -66,8 +66,8 @@ layer at (0,0) size 800x428
         RenderTableSection {TBODY} at (1,1) size 68x23
           RenderTableRow {TR} at (0,1) size 68x20
             RenderTableCell {TD} at (1,1) size 66x21 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (1,1) size 64x19
-                text run at (1,2) width 64: "First Row"
+              RenderText {#text} at (1,0) size 64x20
+                text run at (1,1) width 64: "First Row"
           RenderTableRow {TR} at (0,22) size 68x0
       RenderBlock (anonymous) at (0,325) size 784x18
         RenderText {#text} at (0,0) size 304x18
@@ -86,6 +86,6 @@ layer at (0,0) size 800x428
         RenderTableSection {TBODY} at (1,1) size 70x25
           RenderTableRow {TR} at (0,1) size 70x22
             RenderTableCell {TD} at (1,1) size 68x23 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 64x19
-                text run at (2,3) width 64: "First Row"
+              RenderText {#text} at (2,1) size 64x20
+                text run at (2,2) width 64: "First Row"
           RenderTableRow {TR} at (0,24) size 70x0

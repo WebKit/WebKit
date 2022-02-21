@@ -8,7 +8,7 @@ document.addEventListener("DOMNodeRemoved",  function () {
     document.designMode = document.designMode == "on" ? "off" : "on";
     document.execCommand("SelectAll");
 });
-document.addEventListener("DOMFocusIn",  function () {
+document.addEventListener("focusin",  function () {
     document.execCommand('InsertText');
     console.log("The test PASS if it does not CRASH.");
 });

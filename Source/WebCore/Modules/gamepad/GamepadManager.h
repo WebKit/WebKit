@@ -57,7 +57,7 @@ private:
     GamepadManager();
 
     void makeGamepadVisible(PlatformGamepad&, HashSet<NavigatorGamepad*>&, HashSet<DOMWindow*>&);
-    void dispatchGamepadEvent(const WTF::AtomString& eventName, PlatformGamepad&);
+    void dispatchGamepadEvent(const AtomString& eventName, PlatformGamepad&);
 
     void maybeStartMonitoringGamepads();
     void maybeStopMonitoringGamepads();

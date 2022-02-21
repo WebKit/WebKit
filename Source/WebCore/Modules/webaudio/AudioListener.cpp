@@ -123,6 +123,20 @@ void AudioListener::updateValuesIfNeeded(size_t framesToProcess)
     }
 }
 
+void AudioListener::updateDirtyState()
+{
+    ASSERT(!isMainThread());
+
+    auto lastPosition = std::exchange(m_lastPosition, position());
+    m_isPositionDirty = lastPosition != m_lastPosition;
+
+    auto lastOrientation = std::exchange(m_lastOrientation, orientation());
+    m_isOrientationDirty = lastOrientation != m_lastOrientation;
+
+    auto lastUpVector = std::exchange(m_lastUpVector, upVector());
+    m_isUpVectorDirty = lastUpVector != m_lastUpVector;
+}
+
 const float* AudioListener::positionXValues(size_t framesToProcess)
 {
     updateValuesIfNeeded(framesToProcess);

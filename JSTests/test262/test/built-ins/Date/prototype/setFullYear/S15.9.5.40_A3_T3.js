@@ -8,13 +8,13 @@ info: |
 esid: sec-date.prototype.setfullyear
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.prototype.setFullYear.propertyIsEnumerable('length')) {
-  throw new Test262Error('#1: The Date.prototype.setFullYear.length property has the attribute DontEnum');
-}
+assert(
+  !Date.prototype.setFullYear.propertyIsEnumerable('length'),
+  'The value of !Date.prototype.setFullYear.propertyIsEnumerable(\'length\') is expected to be true'
+);
 
 for (var x in Date.prototype.setFullYear) {
-  if (x === "length") {
-    throw new Test262Error('#2: The Date.prototype.setFullYear.length has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "length", 'The value of x is not "length"');
 }
+
+// TODO: Convert to verifyProperty() format.

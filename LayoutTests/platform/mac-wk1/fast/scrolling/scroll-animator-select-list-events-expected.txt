@@ -1,10 +1,15 @@
+CONSOLE MESSAGE: MainFrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderListBox: mouseEnteredContentArea
 CONSOLE MESSAGE: RenderListBox: mouseEnteredVerticalScrollbar
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderListBox: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderListBox: mouseIsDownInVerticalScrollbar
 CONSOLE MESSAGE: RenderListBox: mouseIsUpInVerticalScrollbar
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderListBox: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderListBox: mouseExitedVerticalScrollbar
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderListBox: mouseExitedContentArea
 Test for https://bugs.webkit.org/show_bug.cgi?id=153398.
 

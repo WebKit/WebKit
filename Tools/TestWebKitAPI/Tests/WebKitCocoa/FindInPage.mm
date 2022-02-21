@@ -30,7 +30,12 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import "UIKitSPI.h"
+#endif
 
 #if !PLATFORM(IOS_FAMILY)
 
@@ -321,3 +326,203 @@ TEST(WebKit, FindTextInImageOverlay)
 #endif // ENABLE(IMAGE_ANALYSIS)
 
 #endif // !PLATFORM(IOS_FAMILY)
+
+#if HAVE(UIFINDINTERACTION)
+
+@interface TestTextSearchOptions : NSObject
+@property (nonatomic) _UITextSearchMatchMethod wordMatchMethod;
+@property (nonatomic) NSStringCompareOptions stringCompareOptions;
+@end
+
+@implementation TestTextSearchOptions
+@end
+
+@interface TestSearchAggregator : NSObject <_UITextSearchAggregator>
+
+@property (readonly) NSUInteger count;
+@property (nonatomic, readonly) NSArray<UITextRange *> *foundRanges;
+
+- (instancetype)initWithCompletionHandler:(dispatch_block_t)completionHandler;
+
+@end
+
+@implementation TestSearchAggregator {
+    RetainPtr<NSMutableArray<UITextRange *>> _foundRanges;
+    BlockPtr<void()> _completionHandler;
+}
+
+- (instancetype)initWithCompletionHandler:(dispatch_block_t)completionHandler
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _foundRanges = adoptNS([[NSMutableArray alloc] init]);
+    _completionHandler = makeBlockPtr(completionHandler);
+
+    return self;
+}
+
+- (void)foundRange:(UITextRange *)range forSearchString:(NSString *)string inDocument:(_UITextSearchDocumentIdentifier)document
+{
+    [_foundRanges addObject:range];
+}
+
+- (void)finishedSearching
+{
+    if (_completionHandler)
+        _completionHandler();
+}
+
+- (NSArray<UITextRange *>*)foundRanges
+{
+    return _foundRanges.get();
+}
+
+- (NSUInteger)count
+{
+    return [_foundRanges count];
+}
+
+@end
+
+static void testPerformTextSearchWithQueryStringInWebView(WKWebView *webView, NSString *query, TestTextSearchOptions *searchOptions, NSUInteger expectedMatches)
+{
+    __block bool finishedSearching = false;
+    RetainPtr aggregator = adoptNS([[TestSearchAggregator alloc] initWithCompletionHandler:^{
+        finishedSearching = true;
+    }]);
+
+    // FIXME: (rdar://86140914) Use _UITextSearchOptions directly when the symbol is exported.
+    [webView performTextSearchWithQueryString:query usingOptions:(_UITextSearchOptions *)searchOptions resultAggregator:aggregator.get()];
+
+    TestWebKitAPI::Util::run(&finishedSearching);
+
+    EXPECT_EQ([aggregator count], expectedMatches);
+}
+
+static RetainPtr<NSArray<UITextRange *>> textRangesForQueryString(WKWebView *webView, NSString *query)
+{
+    __block bool finishedSearching = false;
+    auto aggregator = adoptNS([[TestSearchAggregator alloc] initWithCompletionHandler:^{
+        finishedSearching = true;
+    }]);
+
+    // FIXME: (rdar://86140914) Use _UITextSearchOptions directly when the symbol is exported.
+    auto options = adoptNS([[TestTextSearchOptions alloc] init]);
+    [webView performTextSearchWithQueryString:query usingOptions:(_UITextSearchOptions *)options.get() resultAggregator:aggregator.get()];
+
+    TestWebKitAPI::Util::run(&finishedSearching);
+
+    return adoptNS([[aggregator foundRanges] copy]);
+}
+
+TEST(WebKit, FindInPage)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr searchOptions = adoptNS([[TestTextSearchOptions alloc] init]);
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birthday", searchOptions.get(), 360UL);
+}
+
+TEST(WebKit, FindInPageCaseInsensitive)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr searchOptions = adoptNS([[TestTextSearchOptions alloc] init]);
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"birthday", searchOptions.get(), 0UL);
+
+    [searchOptions setStringCompareOptions:NSCaseInsensitiveSearch];
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"birthday", searchOptions.get(), 360UL);
+}
+
+TEST(WebKit, FindInPageStartsWith)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr searchOptions = adoptNS([[TestTextSearchOptions alloc] init]);
+
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birth", searchOptions.get(), 360UL);
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"day", searchOptions.get(), 360UL);
+
+    [searchOptions setWordMatchMethod:_UITextSearchMatchMethodStartsWith];
+
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birth", searchOptions.get(), 360UL);
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"day", searchOptions.get(), 0UL);
+}
+
+TEST(WebKit, FindInPageFullWord)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr searchOptions = adoptNS([[TestTextSearchOptions alloc] init]);
+
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birth", searchOptions.get(), 360UL);
+
+    [searchOptions setWordMatchMethod:_UITextSearchMatchMethodFullWord];
+
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birthday", searchOptions.get(), 360UL);
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birth", searchOptions.get(), 0UL);
+}
+
+TEST(WebKit, FindInteraction)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+
+    EXPECT_NULL([webView _findInteraction]);
+
+    [webView _setFindInteractionEnabled:YES];
+    EXPECT_NOT_NULL([webView _findInteraction]);
+
+    [webView _setFindInteractionEnabled:NO];
+    EXPECT_NULL([webView _findInteraction]);
+}
+
+TEST(WebKit, RequestRectForFoundTextRange)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<iframe srcdoc='<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Tellus in metus vulputate eu scelerisque felis imperdiet. Mi quis hendrerit dolor magna eget est lorem ipsum dolor. In cursus turpis massa tincidunt dui ut ornare. Sapien et ligula ullamcorper malesuada. Maecenas volutpat blandit aliquam etiam erat. Turpis egestas integer eget aliquet nibh praesent tristique. Ipsum dolor sit amet consectetur adipiscing. Tellus cras adipiscing enim eu turpis egestas pretium aenean pharetra. Sem fringilla ut morbi tincidunt augue interdum velit euismod. Habitant morbi tristique senectus et netus. Aenean euismod elementum nisi quis. Facilisi nullam vehicula ipsum a. Elementum facilisis leo vel fringilla. Molestie nunc non blandit massa enim. Orci ac auctor augue mauris. Pellentesque pulvinar pellentesque habitant morbi tristique senectus et. Magnis dis parturient montes nascetur ridiculus mus mauris vitae. Id leo in vitae turpis massa sed. Netus et malesuada fames ac turpis egestas sed tempus. Morbi quis commodo odio aenean sed adipiscing diam donec. Sit amet purus gravida quis blandit turpis. Odio euismod lacinia at quis risus sed vulputate. Varius duis at consectetur lorem donec massa. Sit amet consectetur adipiscing elit pellentesque habitant. Feugiat in fermentum posuere urna nec tincidunt praesent.</p>'></iframe>"];
+
+    auto ranges = textRangesForQueryString(webView.get(), @"Sapien");
+
+    __block bool done = false;
+    [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(252, 146, 44, 19)));
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    ranges = textRangesForQueryString(webView.get(), @"fermentum");
+
+    done = false;
+    [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(229, 646, 72, 19)));
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
+    done = false;
+    [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(229, 104, 72, 19)));
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+#endif // HAVE(UIFINDINTERACTION)

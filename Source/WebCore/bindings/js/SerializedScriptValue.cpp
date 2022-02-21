@@ -46,6 +46,7 @@
 #include "JSDOMPoint.h"
 #include "JSDOMQuad.h"
 #include "JSDOMRect.h"
+#include "JSExecState.h"
 #include "JSFile.h"
 #include "JSFileList.h"
 #include "JSIDBSerializationGlobalObject.h"
@@ -56,7 +57,6 @@
 #include "JSRTCCertificate.h"
 #include "JSRTCDataChannel.h"
 #include "ScriptExecutionContext.h"
-#include "ScriptState.h"
 #include "SharedBuffer.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/APICast.h>
@@ -88,11 +88,20 @@
 #include <JavaScriptCore/WasmModule.h>
 #include <JavaScriptCore/YarrFlags.h>
 #include <limits>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 #include <wtf/threads/BinarySemaphore.h>
+
+#if USE(CG)
+#include <CoreGraphics/CoreGraphics.h>
+#endif
+
+#if PLATFORM(COCOA)
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
 #include "JSOffscreenCanvas.h"
@@ -106,6 +115,7 @@
 #endif
 
 namespace WebCore {
+
 using namespace JSC;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
@@ -237,8 +247,22 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
 
 enum class PredefinedColorSpaceTag : uint8_t {
     SRGB = 0
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
     , DisplayP3 = 1
+#endif
+};
+
+enum DestinationColorSpaceTag {
+    DestinationColorSpaceSRGBTag = 0,
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+    DestinationColorSpaceLinearSRGBTag = 1,
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    DestinationColorSpaceDisplayP3Tag = 2,
+#endif
+#if PLATFORM(COCOA)
+    DestinationColorSpaceCGColorSpaceNameTag = 3,
+    DestinationColorSpaceCGColorSpacePropertyListTag = 4,
 #endif
 };
 
@@ -321,8 +345,10 @@ static unsigned countUsages(CryptoKeyUsageBitmap usages)
  * Version 6. added support for 8-bit strings.
  * Version 7. added support for File's lastModified attribute.
  * Version 8. added support for ImageData's colorSpace attribute.
+ * Version 9. added support for ImageBitmap color space.
+ * Version 10. changed the length (and offsets) of ArrayBuffers (and ArrayBufferViews) from 32 to 64 bits
  */
-static const unsigned CurrentVersion = 8;
+static const unsigned CurrentVersion = 10;
 static const unsigned TerminatorTag = 0xFFFFFFFF;
 static const unsigned StringPoolTag = 0xFFFFFFFE;
 static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
@@ -378,7 +404,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    | ObjectReference
  *    | MessagePortReferenceTag <value:uint32_t>
  *    | ArrayBuffer
- *    | ArrayBufferViewTag ArrayBufferViewSubtag <byteOffset:uint32_t> <byteLength:uint32_t> (ArrayBuffer | ObjectReference)
+ *    | ArrayBufferViewTag ArrayBufferViewSubtag <byteOffset:uint64_t> <byteLength:uint64_t> (ArrayBuffer | ObjectReference)
  *    | CryptoKeyTag <wrappedKeyLength:uint32_t> <factor:byte{wrappedKeyLength}>
  *    | DOMPoint
  *    | DOMRect
@@ -386,7 +412,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    | DOMQuad
  *    | ImageBitmapTransferTag <value:uint32_t>
  *    | RTCCertificateTag
- *    | ImageBitmapTag <originClean:uint8_t> <logicalWidth:int32_t> <logicalHeight:int32_t> <resolutionScale:double> <byteLength:uint32_t>(<imageByteData:uint8_t>)
+ *    | ImageBitmapTag <originClean:uint8_t> <logicalWidth:int32_t> <logicalHeight:int32_t> <resolutionScale:double> DestinationColorSpace <byteLength:uint32_t>(<imageByteData:uint8_t>)
  *    | OffscreenCanvasTransferTag <value:uint32_t>
  *    | WasmMemoryTag <value:uint32_t>
  *    | RTCDataChannelTransferTag <processIdentifier:uint64_t><rtcDataChannelIdentifier:uint64_t><label:String>
@@ -442,7 +468,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    ObjectReferenceTag <opIndex:IndexType>
  *
  * ArrayBuffer :-
- *    ArrayBufferTag <length:uint32_t> <contents:byte{length}>
+ *    ArrayBufferTag <length:uint64_t> <contents:byte{length}>
  *    ArrayBufferTransferTag <value:uint32_t>
  *    SharedArrayBufferTag <value:uint32_t>
  *
@@ -502,6 +528,12 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  * DOMQuadData :-
  *      <p1:DOMPointData> <p2:DOMPointData> <p3:DOMPointData> <p4:DOMPointData>
  *
+ * DestinationColorSpace :-
+ *        DestinationColorSpaceSRGBTag
+ *      | DestinationColorSpaceLinearSRGBTag
+ *      | DestinationColorSpaceDisplayP3Tag
+ *      | DestinationColorSpaceCGColorSpaceNameTag <nameDataLength:uint32_t> <nameData:uint8_t>{nameDataLength}
+ *      | DestinationColorSpaceCGColorSpacePropertyListTag <propertyListDataLength:uint32_t> <propertyListData:uint8_t>{propertyListDataLength}
  */
 
 using DeserializationResult = std::pair<JSC::JSValue, SerializationReturnCode>;
@@ -527,18 +559,14 @@ protected:
 #if ENABLE(WEB_CRYPTO)
 static bool wrapCryptoKey(JSGlobalObject* lexicalGlobalObject, const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
 {
-    ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromExecState(lexicalGlobalObject);
-    if (!scriptExecutionContext)
-        return false;
-    return scriptExecutionContext->wrapCryptoKey(key, wrappedKey);
+    auto context = executionContext(lexicalGlobalObject);
+    return context && context->wrapCryptoKey(key, wrappedKey);
 }
 
 static bool unwrapCryptoKey(JSGlobalObject* lexicalGlobalObject, const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key)
 {
-    ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromExecState(lexicalGlobalObject);
-    if (!scriptExecutionContext)
-        return false;
-    return scriptExecutionContext->unwrapCryptoKey(wrappedKey, key);
+    auto context = executionContext(lexicalGlobalObject);
+    return context && context->unwrapCryptoKey(wrappedKey, key);
 }
 #endif
 
@@ -883,7 +911,6 @@ private:
 #if USE(BIGINT32)
     void dumpBigInt32Data(int32_t integer)
     {
-        static_assert(sizeof(uint64_t) == sizeof(unsigned long long));
         write(static_cast<uint8_t>(integer < 0));
         if (!integer) {
             write(static_cast<uint32_t>(0)); // Length-in-uint64_t
@@ -893,18 +920,17 @@ private:
         int64_t value = static_cast<int64_t>(integer);
         if (value < 0)
             value = -value;
-        write(static_cast<unsigned long long>(value));
+        write(static_cast<uint64_t>(value));
     }
 #endif
 
     void dumpHeapBigIntData(JSBigInt* bigInt)
     {
-        static_assert(sizeof(uint64_t) == sizeof(unsigned long long));
         write(static_cast<uint8_t>(bigInt->sign()));
         if constexpr (sizeof(JSBigInt::Digit) == sizeof(uint64_t)) {
             write(static_cast<uint32_t>(bigInt->length()));
             for (unsigned index = 0; index < bigInt->length(); ++index)
-                write(static_cast<unsigned long long>(bigInt->digit(index)));
+                write(static_cast<uint64_t>(bigInt->digit(index)));
         } else {
             ASSERT(sizeof(JSBigInt::Digit) == sizeof(uint32_t));
             uint32_t lengthInUint64 = bigInt->length() / 2;
@@ -917,12 +943,12 @@ private:
                     value = bigInt->digit(index);
                 else {
                     value = (static_cast<uint64_t>(bigInt->digit(index)) << 32) | value;
-                    write(static_cast<unsigned long long>(value));
+                    write(static_cast<uint64_t>(value));
                     value = 0;
                 }
             }
             if (bigInt->length() & 0x1)
-                write(static_cast<unsigned long long>(value));
+                write(static_cast<uint64_t>(value));
         }
     }
 
@@ -931,7 +957,7 @@ private:
         auto& vm = m_lexicalGlobalObject->vm();
         auto* globalObject = m_lexicalGlobalObject;
         if (globalObject->inherits<JSDOMGlobalObject>(vm))
-            return toJS(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(globalObject), &arrayBuffer);
+            return toJS(globalObject, jsCast<JSDOMGlobalObject*>(globalObject), &arrayBuffer);
 
         if (auto* buffer = arrayBuffer.m_wrapper.get())
             return buffer;
@@ -971,8 +997,10 @@ private:
             return false;
 
         RefPtr<ArrayBufferView> arrayBufferView = toPossiblySharedArrayBufferView(vm, obj);
-        write(static_cast<uint32_t>(arrayBufferView->byteOffset()));
-        write(static_cast<uint32_t>(arrayBufferView->byteLength()));
+        uint64_t byteOffset = arrayBufferView->byteOffset();
+        write(byteOffset);
+        uint64_t byteLength = arrayBufferView->byteLength();
+        write(byteLength);
         RefPtr<ArrayBuffer> arrayBuffer = arrayBufferView->possiblySharedBuffer();
         if (!arrayBuffer) {
             code = SerializationReturnCode::ValidationError;
@@ -1082,8 +1110,9 @@ private:
             return;
         }
 
-        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
-        const IntSize& logicalSize = buffer->logicalSize();
+        // FIXME: We should try to avoid converting pixel format.
+        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, buffer->colorSpace() };
+        const IntSize& logicalSize = buffer->truncatedLogicalSize();
         auto pixelBuffer = buffer->getPixelBuffer(format, { IntPoint::zero(), logicalSize });
         if (!pixelBuffer) {
             code = SerializationReturnCode::ValidationError;
@@ -1101,9 +1130,15 @@ private:
         write(static_cast<int32_t>(logicalSize.width()));
         write(static_cast<int32_t>(logicalSize.height()));
         write(static_cast<double>(buffer->resolutionScale()));
+        write(buffer->colorSpace());
 
-        write(static_cast<uint32_t>(arrayBuffer->byteLength()));
-        write(static_cast<const uint8_t*>(arrayBuffer->data()), arrayBuffer->byteLength());
+        CheckedUint32 byteLength = arrayBuffer->byteLength();
+        if (byteLength.hasOverflowed()) {
+            code = SerializationReturnCode::ValidationError;
+            return;
+        }
+        write(byteLength);
+        write(static_cast<const uint8_t*>(arrayBuffer->data()), byteLength);
     }
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -1227,15 +1262,22 @@ private:
                 m_blobHandles.append(blob->handle());
                 write(blob->url().string());
                 write(blob->type());
-                write(blob->size());
+                static_assert(sizeof(uint64_t) == sizeof(decltype(blob->size())));
+                uint64_t size = blob->size();
+                write(size);
                 return true;
             }
             if (auto* data = JSImageData::toWrapped(vm, obj)) {
                 write(ImageDataTag);
                 write(data->width());
                 write(data->height());
-                write(data->data().length());
-                write(data->data().data(), data->data().length());
+                CheckedUint32 dataLength = data->data().length();
+                if (dataLength.hasOverflowed()) {
+                    code = SerializationReturnCode::DataCloneError;
+                    return true;
+                }
+                write(dataLength);
+                write(data->data().data(), dataLength);
                 write(data->colorSpace());
                 return true;
             }
@@ -1282,8 +1324,9 @@ private:
                 }
                 
                 write(ArrayBufferTag);
-                write(arrayBuffer->byteLength());
-                write(static_cast<const uint8_t*>(arrayBuffer->data()), arrayBuffer->byteLength());
+                uint64_t byteLength = arrayBuffer->byteLength();
+                write(byteLength);
+                write(static_cast<const uint8_t*>(arrayBuffer->data()), byteLength);
                 return true;
             }
             if (obj->inherits<JSArrayBufferView>(vm)) {
@@ -1346,7 +1389,7 @@ private:
                     return false;
 
                 uint32_t index = m_wasmModules.size(); 
-                m_wasmModules.append(makeRef(module->module()));
+                m_wasmModules.append(&module->module());
                 write(WasmModuleTag);
                 write(index);
                 return true;
@@ -1361,7 +1404,7 @@ private:
                     return true;
                 }
                 uint32_t index = m_wasmMemoryHandles.size();
-                m_wasmMemoryHandles.append(makeRef(memory->memory().handle()));
+                m_wasmMemoryHandles.append(&memory->memory().handle());
                 write(WasmMemoryTag);
                 write(index);
                 return true;
@@ -1421,6 +1464,11 @@ private:
         writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
     }
 
+    void write(DestinationColorSpaceTag tag)
+    {
+        writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
+    }
+
 #if ENABLE(WEB_CRYPTO)
     void write(CryptoKeyClassSubtag tag)
     {
@@ -1468,7 +1516,7 @@ private:
         writeLittleEndian(m_buffer, i);
     }
 
-    void write(unsigned long long i)
+    void write(uint64_t i)
     {
         writeLittleEndian(m_buffer, i);
     }
@@ -1564,12 +1612,74 @@ private:
         case PredefinedColorSpace::SRGB:
             writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(PredefinedColorSpaceTag::SRGB));
             break;
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
         case PredefinedColorSpace::DisplayP3:
             writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(PredefinedColorSpaceTag::DisplayP3));
             break;
 #endif
         }
+    }
+
+#if PLATFORM(COCOA)
+    void write(const RetainPtr<CFDataRef>& data)
+    {
+        uint32_t dataLength = CFDataGetLength(data.get());
+        write(dataLength);
+        write(CFDataGetBytePtr(data.get()), dataLength);
+    }
+#endif
+
+    void write(DestinationColorSpace destinationColorSpace)
+    {
+        if (destinationColorSpace == DestinationColorSpace::SRGB()) {
+            write(DestinationColorSpaceSRGBTag);
+            return;
+        }
+
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+        if (destinationColorSpace == DestinationColorSpace::LinearSRGB()) {
+            write(DestinationColorSpaceLinearSRGBTag);
+            return;
+        }
+#endif
+
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+        if (destinationColorSpace == DestinationColorSpace::DisplayP3()) {
+            write(DestinationColorSpaceDisplayP3Tag);
+            return;
+        }
+#endif
+
+#if PLATFORM(COCOA)
+        auto colorSpace = destinationColorSpace.platformColorSpace();
+
+        if (auto name = CGColorSpaceGetName(colorSpace)) {
+            auto data = adoptCF(CFStringCreateExternalRepresentation(nullptr, name, kCFStringEncodingUTF8, 0));
+            if (!data) {
+                write(DestinationColorSpaceSRGBTag);
+                return;
+            }
+
+            write(DestinationColorSpaceCGColorSpaceNameTag);
+            write(data);
+            return;
+        }
+
+        if (auto propertyList = adoptCF(CGColorSpaceCopyPropertyList(colorSpace))) {
+            auto data = adoptCF(CFPropertyListCreateData(nullptr, propertyList.get(), kCFPropertyListBinaryFormat_v1_0, 0, nullptr));
+            if (!data) {
+                write(DestinationColorSpaceSRGBTag);
+                return;
+            }
+
+            write(DestinationColorSpaceCGColorSpacePropertyListTag);
+            write(data);
+            return;
+        }
+#endif
+
+        ASSERT_NOT_REACHED();
+        write(DestinationColorSpaceSRGBTag);
     }
 
 #if ENABLE(WEB_CRYPTO)
@@ -2295,7 +2405,7 @@ private:
         return true;
     }
 
-    bool read(unsigned long long& i)
+    bool read(uint64_t& i)
     {
         return readLittleEndian(i);
     }
@@ -2345,14 +2455,13 @@ private:
         str = String(reinterpret_cast<const UChar*>(ptr), length);
         ptr += length * sizeof(UChar);
 #else
-        Vector<UChar> buffer;
-        buffer.reserveCapacity(length);
-        for (unsigned i = 0; i < length; i++) {
-            uint16_t ch;
-            readLittleEndian(ptr, end, ch);
-            buffer.append(ch);
+        UChar* characters;
+        str = String::createUninitialized(length, characters);
+        for (unsigned i = 0; i < length; ++i) {
+            uint16_t c;
+            readLittleEndian(ptr, end, c);
+            characters[i] = c;
         }
-        str = String::adopt(WTFMove(buffer));
 #endif
         return true;
     }
@@ -2455,13 +2564,14 @@ private:
         if (!m_canCreateDOMObject)
             return true;
 
-        file = File::deserialize(scriptExecutionContextFromExecState(m_lexicalGlobalObject), filePath, URL(URL(), url->string()), type->string(), name->string(), optionalLastModified);
+        file = File::deserialize(executionContext(m_lexicalGlobalObject), filePath, URL(URL(), url->string()), type->string(), name->string(), optionalLastModified);
         return true;
     }
 
-    bool readArrayBuffer(RefPtr<ArrayBuffer>& arrayBuffer)
+    template<typename LengthType>
+    bool readArrayBufferImpl(RefPtr<ArrayBuffer>& arrayBuffer)
     {
-        uint32_t length;
+        LengthType length;
         if (!read(length))
             return false;
         if (m_ptr + length > m_end)
@@ -2473,15 +2583,23 @@ private:
         return true;
     }
 
-    bool readArrayBufferView(VM& vm, JSValue& arrayBufferView)
+    bool readArrayBuffer(RefPtr<ArrayBuffer>& arrayBuffer)
+    {
+        if (m_version < 10)
+            return readArrayBufferImpl<uint32_t>(arrayBuffer);
+        return readArrayBufferImpl<uint64_t>(arrayBuffer);
+    }
+
+    template <typename LengthType>
+    bool readArrayBufferViewImpl(VM& vm, JSValue& arrayBufferView)
     {
         ArrayBufferViewSubtag arrayBufferViewSubtag;
         if (!readArrayBufferViewSubtag(arrayBufferViewSubtag))
             return false;
-        uint32_t byteOffset;
+        LengthType byteOffset;
         if (!read(byteOffset))
             return false;
-        uint32_t byteLength;
+        LengthType byteLength;
         if (!read(byteLength))
             return false;
         JSObject* arrayBufferObj = asObject(readTerminal());
@@ -2491,7 +2609,7 @@ private:
         unsigned elementSize = typedArrayElementSize(arrayBufferViewSubtag);
         if (!elementSize)
             return false;
-        unsigned length = byteLength / elementSize;
+        LengthType length = byteLength / elementSize;
         if (length * elementSize != byteLength)
             return false;
 
@@ -2538,6 +2656,13 @@ private:
         }
     }
 
+    bool readArrayBufferView(VM& vm, JSValue& arrayBufferView)
+    {
+        if (m_version < 10)
+            return readArrayBufferViewImpl<uint32_t>(vm, arrayBufferView);
+        return readArrayBufferViewImpl<uint64_t>(vm, arrayBufferView);
+    }
+
     bool read(Vector<uint8_t>& result)
     {
         ASSERT(result.isEmpty());
@@ -2561,7 +2686,7 @@ private:
         case PredefinedColorSpaceTag::SRGB:
             result = PredefinedColorSpace::SRGB;
             return true;
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
         case PredefinedColorSpaceTag::DisplayP3:
             result = PredefinedColorSpace::DisplayP3;
             return true;
@@ -2569,6 +2694,90 @@ private:
         default:
             return false;
         }
+    }
+
+    bool read(DestinationColorSpaceTag& tag)
+    {
+        if (m_ptr >= m_end)
+            return false;
+        tag = static_cast<DestinationColorSpaceTag>(*m_ptr++);
+        return true;
+    }
+
+#if PLATFORM(COCOA)
+    bool read(RetainPtr<CFDataRef>& data)
+    {
+        uint32_t dataLength;
+        if (!read(dataLength) || static_cast<uint32_t>(m_end - m_ptr) < dataLength)
+            return false;
+
+        data = adoptCF(CFDataCreateWithBytesNoCopy(nullptr, m_ptr, dataLength, kCFAllocatorNull));
+        if (!data)
+            return false;
+
+        m_ptr += dataLength;
+        return true;
+    }
+#endif
+
+    bool read(DestinationColorSpace& destinationColorSpace)
+    {
+        DestinationColorSpaceTag tag;
+        if (!read(tag))
+            return false;
+
+        switch (tag) {
+        case DestinationColorSpaceSRGBTag:
+            destinationColorSpace = DestinationColorSpace::SRGB();
+            return true;
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+        case DestinationColorSpaceLinearSRGBTag:
+            destinationColorSpace = DestinationColorSpace::LinearSRGB();
+            return true;
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+        case DestinationColorSpaceDisplayP3Tag:
+            destinationColorSpace = DestinationColorSpace::DisplayP3();
+            return true;
+#endif
+#if PLATFORM(COCOA)
+        case DestinationColorSpaceCGColorSpaceNameTag: {
+            RetainPtr<CFDataRef> data;
+            if (!read(data))
+                return false;
+
+            auto name = adoptCF(CFStringCreateFromExternalRepresentation(nullptr, data.get(), kCFStringEncodingUTF8));
+            if (!name)
+                return false;
+
+            auto colorSpace = adoptCF(CGColorSpaceCreateWithName(name.get()));
+            if (!colorSpace)
+                return false;
+
+            destinationColorSpace = DestinationColorSpace(colorSpace.get());
+            return true;
+        }
+        case DestinationColorSpaceCGColorSpacePropertyListTag: {
+            RetainPtr<CFDataRef> data;
+            if (!read(data))
+                return false;
+
+            auto propertyList = adoptCF(CFPropertyListCreateWithData(nullptr, data.get(), kCFPropertyListImmutable, nullptr, nullptr));
+            if (!propertyList)
+                return false;
+
+            auto colorSpace = adoptCF(CGColorSpaceCreateWithPropertyList(propertyList.get()));
+            if (!colorSpace)
+                return false;
+
+            destinationColorSpace = DestinationColorSpace(colorSpace.get());
+            return true;
+        }
+#endif
+        }
+
+        ASSERT_NOT_REACHED();
+        return false;
     }
 
 #if ENABLE(WEB_CRYPTO)
@@ -3085,7 +3294,7 @@ private:
         }
 
         if (!m_offscreenCanvases[index])
-            m_offscreenCanvases[index] = OffscreenCanvas::create(*scriptExecutionContextFromExecState(m_lexicalGlobalObject), WTFMove(m_detachedOffscreenCanvases.at(index)));
+            m_offscreenCanvases[index] = OffscreenCanvas::create(*executionContext(m_lexicalGlobalObject), WTFMove(m_detachedOffscreenCanvases.at(index)));
 
         auto offscreenCanvas = m_offscreenCanvases[index].get();
         return getJSValue(offscreenCanvas);
@@ -3149,7 +3358,7 @@ private:
 
         if (!m_rtcDataChannels[index]) {
             auto detachedChannel = WTFMove(m_detachedRTCDataChannels.at(index));
-            m_rtcDataChannels[index] = RTCDataChannel::create(*scriptExecutionContextFromExecState(m_lexicalGlobalObject), detachedChannel->identifier, WTFMove(detachedChannel->label), WTFMove(detachedChannel->options), detachedChannel->state);
+            m_rtcDataChannels[index] = RTCDataChannel::create(*executionContext(m_lexicalGlobalObject), detachedChannel->identifier, WTFMove(detachedChannel->label), WTFMove(detachedChannel->options), detachedChannel->state);
         }
 
         return getJSValue(m_rtcDataChannels[index].get());
@@ -3162,9 +3371,10 @@ private:
         int32_t logicalWidth;
         int32_t logicalHeight;
         double resolutionScale;
+        auto colorSpace = DestinationColorSpace::SRGB();
         RefPtr<ArrayBuffer> arrayBuffer;
 
-        if (!read(serializationState) || !read(logicalWidth) || !read(logicalHeight) || !read(resolutionScale) || !readArrayBuffer(arrayBuffer)) {
+        if (!read(serializationState) || !read(logicalWidth) || !read(logicalHeight) || !read(resolutionScale) || (m_version > 8 && !read(colorSpace)) || !readArrayBufferImpl<uint32_t>(arrayBuffer)) {
             fail();
             return JSValue();
         }
@@ -3173,13 +3383,13 @@ private:
         auto imageDataSize = logicalSize;
         imageDataSize.scale(resolutionScale);
 
-        auto buffer = ImageBitmap::createImageBuffer(*scriptExecutionContextFromExecState(m_lexicalGlobalObject), logicalSize, RenderingMode::Unaccelerated, resolutionScale);
+        auto buffer = ImageBitmap::createImageBuffer(*executionContext(m_lexicalGlobalObject), logicalSize, RenderingMode::Unaccelerated, colorSpace, resolutionScale);
         if (!buffer) {
             fail();
             return JSValue();
         }
 
-        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, colorSpace };
         auto pixelBuffer = PixelBuffer::tryCreate(format, imageDataSize, arrayBuffer.releaseNonNull());
         if (!pixelBuffer) {
             fail();
@@ -3230,8 +3440,7 @@ private:
 #if USE(BIGINT32)
         static_assert(sizeof(JSBigInt::Digit) == sizeof(uint64_t));
         if (lengthInUint64 == 1) {
-            static_assert(sizeof(unsigned long long) == sizeof(uint64_t));
-            unsigned long long digit64 = 0;
+            uint64_t digit64 = 0;
             if (!read(digit64))
                 return JSValue();
             if (sign) {
@@ -3266,8 +3475,7 @@ private:
                 return JSValue();
             }
             for (uint32_t index = 0; index < lengthInUint64; ++index) {
-                static_assert(sizeof(unsigned long long) == sizeof(uint64_t));
-                unsigned long long digit64 = 0;
+                uint64_t digit64 = 0;
                 if (!read(digit64))
                     return JSValue();
                 bigInt->setDigit(index, digit64);
@@ -3280,8 +3488,7 @@ private:
                 return JSValue();
             }
             for (uint32_t index = 0; index < lengthInUint64; ++index) {
-                static_assert(sizeof(unsigned long long) == sizeof(uint64_t));
-                unsigned long long digit64 = 0;
+                uint64_t digit64 = 0;
                 if (!read(digit64))
                     return JSValue();
                 bigInt->setDigit(index * 2, static_cast<uint32_t>(digit64));
@@ -3437,12 +3644,12 @@ private:
             CachedStringRef type;
             if (!readStringData(type))
                 return JSValue();
-            unsigned long long size = 0;
+            uint64_t size = 0;
             if (!read(size))
                 return JSValue();
             if (!m_canCreateDOMObject)
                 return jsNull();
-            return getJSValue(Blob::deserialize(scriptExecutionContextFromExecState(m_lexicalGlobalObject), URL(URL(), url->string()), type->string(), size, blobFilePathForBlobURL(url->string())).get());
+            return getJSValue(Blob::deserialize(executionContext(m_lexicalGlobalObject), URL(URL(), url->string()), type->string(), size, blobFilePathForBlobURL(url->string())).get());
         }
         case StringTag: {
             CachedStringRef cachedString;
@@ -4364,12 +4571,9 @@ uint32_t SerializedScriptValue::wireFormatVersion()
 
 Vector<String> SerializedScriptValue::blobURLs() const
 {
-    Vector<String> result;
-    result.reserveInitialCapacity(m_blobHandles.size());
-    for (auto& handle : m_blobHandles)
-        result.uncheckedAppend(handle.url().string());
-
-    return result;
+    return m_blobHandles.map([](auto& handle) {
+        return handle.url().string();
+    });
 }
 
 void SerializedScriptValue::writeBlobsToDiskForIndexedDB(CompletionHandler<void(IDBValue&&)>&& completionHandler)
@@ -4377,7 +4581,7 @@ void SerializedScriptValue::writeBlobsToDiskForIndexedDB(CompletionHandler<void(
     ASSERT(isMainThread());
     ASSERT(hasBlobURLs());
 
-    blobRegistry().writeBlobsToTemporaryFiles(blobURLs(), [completionHandler = WTFMove(completionHandler), this, protectedThis = makeRef(*this)] (auto&& blobFilePaths) mutable {
+    blobRegistry().writeBlobsToTemporaryFilesForIndexedDB(blobURLs(), [completionHandler = WTFMove(completionHandler), this, protectedThis = Ref { *this }] (auto&& blobFilePaths) mutable {
         ASSERT(isMainThread());
 
         if (blobFilePaths.isEmpty()) {

@@ -27,6 +27,8 @@
 
 #include "FreeList.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config, typename Func>
@@ -66,3 +68,4 @@ void FreeList::forEach(const Func& func) const
 
 } // namespace bmalloc
 
+#endif

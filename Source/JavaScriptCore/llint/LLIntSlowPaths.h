@@ -38,6 +38,8 @@ namespace LLInt {
 
 extern "C" SlowPathReturnType llint_trace_operand(CallFrame*, const Instruction*, int fromWhere, int operand) REFERENCED_FROM_ASM;
 extern "C" SlowPathReturnType llint_trace_value(CallFrame*, const Instruction*, int fromWhere, VirtualRegister operand) REFERENCED_FROM_ASM;
+extern "C" SlowPathReturnType llint_link_call(CallFrame*, JSCell*, CallLinkInfo*) REFERENCED_FROM_ASM;
+extern "C" SlowPathReturnType llint_virtual_call(CallFrame*, JSCell*, CallLinkInfo*) REFERENCED_FROM_ASM;
 extern "C" void llint_write_barrier_slow(CallFrame*, JSCell*) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 #define LLINT_SLOW_PATH_DECL(name) \
@@ -65,7 +67,6 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_array);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_array_with_size);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_regexp);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_instanceof);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_instanceof_custom);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_try_get_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id_direct);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id);
@@ -119,9 +120,6 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_async_generator_func_exp);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_async_func);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_async_func_exp);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_set_function_name);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_tail_call);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_construct);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_size_frame_for_varargs);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_size_frame_for_forward_arguments);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_varargs);
@@ -131,8 +129,6 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_construct_varargs);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_eval);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_eval_wide16);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_eval_wide32);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_iterator_open_call);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_iterator_next_call);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_tear_off_arguments);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_strcat);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_to_primitive);

@@ -47,7 +47,7 @@ private:
     ScrollingStateOverflowScrollProxyNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateOverflowScrollProxyNode(const ScrollingStateOverflowScrollProxyNode&, ScrollingStateTree&);
 
-    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const final;
+    void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const final;
     OptionSet<ScrollingStateNode::Property> applicableProperties() const final;
 
     ScrollingNodeID m_overflowScrollingNodeID { 0 };

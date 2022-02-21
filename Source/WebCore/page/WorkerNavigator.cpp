@@ -46,4 +46,10 @@ bool WorkerNavigator::onLine() const
     return m_isOnline;
 }
 
+GPU* WorkerNavigator::gpu()
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=233622 Implement this.
+    return nullptr;
+}
+
 } // namespace WebCore

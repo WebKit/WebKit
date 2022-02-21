@@ -101,8 +101,8 @@ static bool canPowerEfficientlyDecodeMedia(const MediaDecodingConfiguration& con
 
 static bool canEncodeMedia(const MediaEncodingConfiguration& configuration)
 {
-    // The mock implementation supports only local file playback.
-    if (configuration.type == MediaEncodingType::Record)
+    ASSERT(configuration.type == MediaEncodingType::Record);
+    if (configuration.type != MediaEncodingType::Record)
         return false;
 
     // Maxing out video encoding support at 720P.

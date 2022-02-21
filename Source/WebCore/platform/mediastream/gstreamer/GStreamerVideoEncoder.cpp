@@ -35,7 +35,7 @@ GST_DEBUG_CATEGORY(webrtc_venc_debug);
 #define KBIT_TO_BIT 1024
 
 static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-raw(ANY)"));
-static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-h264"));
+static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-h264;video/x-vp8;video/x-vp9"));
 
 using SetBitrateFunc = Function<void(GObject* encoder, const char* propertyName, int bitrate)>;
 using SetupFunc = Function<void(WebKitWebrtcVideoEncoder*)>;
@@ -51,7 +51,14 @@ struct EncoderDefinition {
     const char* keyframeIntervalPropertyName;
 };
 
-enum EncoderId { None, X264, OpenH264, OmxH264 };
+enum EncoderId {
+    None,
+    X264,
+    OpenH264,
+    OmxH264,
+    Vp8,
+    Vp9
+};
 
 class Encoders {
 public:
@@ -64,9 +71,15 @@ public:
     static void registerEncoder(EncoderId id, const char* name, const char* parserName, const char* caps, const char* encodedFormat,
         SetupFunc&& setupEncoder, const char* bitratePropertyName, SetBitrateFunc&& setBitrate, const char* keyframeIntervalPropertyName)
     {
-        auto feature = adoptGRef(gst_registry_lookup_feature(gst_registry_get(), name));
-        if (!feature)
+        auto encoderFactory = adoptGRef(gst_element_factory_find(name));
+        if (!encoderFactory)
             return;
+
+        if (parserName) {
+            auto parserFactory = adoptGRef(gst_element_factory_find(parserName));
+            if (!parserFactory)
+                return;
+        }
 
         singleton().emplace(std::make_pair(id, (EncoderDefinition) {
             .caps = adoptGRef(gst_caps_from_string(caps)),
@@ -97,7 +110,7 @@ struct _WebKitWebrtcVideoEncoderPrivate {
 
 #define webkit_webrtc_video_encoder_parent_class parent_class
 WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitWebrtcVideoEncoder, webkit_webrtc_video_encoder, GST_TYPE_BIN,
-    GST_DEBUG_CATEGORY_INIT(webrtc_venc_debug, "webrtcencoder", 0, "Video encoder for WebRTC"))
+    GST_DEBUG_CATEGORY_INIT(webrtc_venc_debug, "webkitwebrtcencoder", 0, "Video encoder for WebRTC"))
 
 enum {
     PROP_FORMAT = 1,
@@ -243,6 +256,21 @@ static void setBitrateBitPerSec(GObject* encoder, const char* propertyName, int 
     g_object_set(encoder, propertyName, bitrate * KBIT_TO_BIT, nullptr);
 }
 
+static GRefPtr<GstCaps> createSrcPadTemplateCaps()
+{
+    auto* caps = gst_caps_new_empty();
+
+    for (const auto& [id, encoder] : Encoders::singleton()) {
+        if (encoder.encodedFormat)
+            caps = gst_caps_merge(caps, gst_caps_ref(encoder.encodedFormat.get()));
+        else
+            caps = gst_caps_merge(caps, gst_caps_ref(encoder.caps.get()));
+    }
+
+    GST_DEBUG("Source pad template caps: %" GST_PTR_FORMAT, caps);
+    return caps;
+}
+
 static void webrtcVideoEncoderConstructed(GObject* encoder)
 {
     auto* self = WEBKIT_WEBRTC_VIDEO_ENCODER(encoder);
@@ -258,15 +286,9 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
     objectClass->get_property = webrtcVideoEncoderGetProperty;
     objectClass->set_property = webrtcVideoEncoderSetProperty;
 
-    g_object_class_install_property(objectClass, PROP_FORMAT, g_param_spec_boxed("format", "Format as caps", "Set the caps of the format to be used.", GST_TYPE_CAPS, WEBKIT_PARAM_READWRITE));
-
-    g_object_class_install_property(objectClass, PROP_ENCODER, g_param_spec_object("encoder", "The actual encoder element", "The encoder element", GST_TYPE_ELEMENT, WEBKIT_PARAM_READABLE));
-
-    g_object_class_install_property(objectClass, PROP_BITRATE, g_param_spec_uint("bitrate", "Bitrate", "The bitrate in kbit per second", 0, G_MAXINT, 2048,
-        static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT)));
-
-    g_object_class_install_property(objectClass, PROP_KEYFRAME_INTERVAL, g_param_spec_uint("keyframe-interval", "Keyframe interval", "The interval between keyframes", 0, G_MAXINT, 0,
-        static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT)));
+    GstElementClass* elementClass = GST_ELEMENT_CLASS(klass);
+    gst_element_class_set_static_metadata(elementClass, "WebKit WebRTC video encoder", "Codec/Encoder/Video", "Encodes video for streaming", "Igalia");
+    gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&sinkTemplate));
 
     Encoders::registerEncoder(OmxH264, "omxh264enc", "h264parse", "video/x-h264",
         "video/x-h264,alignment=au,stream-format=byte-stream,profile=baseline",
@@ -285,6 +307,27 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
         [](WebKitWebrtcVideoEncoder* self) {
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
         }, "bitrate", setBitrateBitPerSec, "gop-size");
+    Encoders::registerEncoder(Vp8, "vp8enc", nullptr, "video/x-vp8", nullptr,
+        [](WebKitWebrtcVideoEncoder* self) {
+            gst_preset_load_preset(GST_PRESET(self->priv->encoder.get()), "Profile Realtime");
+        }, "target-bitrate", setBitrateBitPerSec, "keyframe-max-dist");
+    Encoders::registerEncoder(Vp9, "vp9enc", nullptr, "video/x-vp9", nullptr,
+        [](WebKitWebrtcVideoEncoder* self) {
+            g_object_set(self->priv->encoder.get(), "threads", 4, "cpu-used", 4, "tile-rows", 2, "row-mt", true, nullptr);
+        }, "target-bitrate", setBitrateBitPerSec, "keyframe-max-dist");
+
+    auto srcPadTemplateCaps = createSrcPadTemplateCaps();
+    gst_element_class_add_pad_template(elementClass, gst_pad_template_new("src", GST_PAD_SRC, GST_PAD_ALWAYS, srcPadTemplateCaps.get()));
+
+    g_object_class_install_property(objectClass, PROP_FORMAT, g_param_spec_boxed("format", "Format as caps", "Set the caps of the format to be used.", GST_TYPE_CAPS, WEBKIT_PARAM_READWRITE));
+
+    g_object_class_install_property(objectClass, PROP_ENCODER, g_param_spec_object("encoder", "The actual encoder element", "The encoder element", GST_TYPE_ELEMENT, WEBKIT_PARAM_READABLE));
+
+    g_object_class_install_property(objectClass, PROP_BITRATE, g_param_spec_uint("bitrate", "Bitrate", "The bitrate in kbit per second", 0, G_MAXINT, 2048,
+        static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT)));
+
+    g_object_class_install_property(objectClass, PROP_KEYFRAME_INTERVAL, g_param_spec_uint("keyframe-interval", "Keyframe interval", "The interval between keyframes", 0, G_MAXINT, 0,
+        static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT)));
 }
 
 #endif // ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER)

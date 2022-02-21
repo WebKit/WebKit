@@ -44,8 +44,6 @@ namespace WebCore {
     macro(DOMActivate) \
     macro(DOMCharacterDataModified) \
     macro(DOMContentLoaded) \
-    macro(DOMFocusIn) \
-    macro(DOMFocusOut) \
     macro(DOMNodeInserted) \
     macro(DOMNodeInsertedIntoDocument) \
     macro(DOMNodeRemoved) \
@@ -89,6 +87,7 @@ namespace WebCore {
     macro(checking) \
     macro(click) \
     macro(close) \
+    macro(closing) \
     macro(complete) \
     macro(compositionend) \
     macro(compositionstart) \
@@ -189,6 +188,8 @@ namespace WebCore {
     macro(negotiationneeded) \
     macro(nexttrack) \
     macro(nomatch) \
+    macro(notificationclick) \
+    macro(notificationclose) \
     macro(noupdate) \
     macro(obsolete) \
     macro(offline) \
@@ -220,6 +221,8 @@ namespace WebCore {
     macro(previoustrack) \
     macro(processorerror) \
     macro(progress) \
+    macro(push) \
+    macro(pushsubscriptionchange) \
     macro(ratechange) \
     macro(readystatechange) \
     macro(rejectionhandled) \
@@ -324,16 +327,10 @@ namespace WebCore {
     macro(webkitnetworkinfochange) \
     macro(webkitplaybacktargetavailabilitychanged) \
     macro(webkitpresentationmodechanged) \
-    macro(webkitregionoversetchange) \
     macro(webkitremovesourcebuffer) \
     macro(webkitsourceclose) \
     macro(webkitsourceended) \
     macro(webkitsourceopen) \
-    macro(webkitspeechchange) \
-    macro(webkitwillrevealbottom) \
-    macro(webkitwillrevealleft) \
-    macro(webkitwillrevealright) \
-    macro(webkitwillrevealtop) \
     macro(wheel) \
     macro(write) \
     macro(writeend) \

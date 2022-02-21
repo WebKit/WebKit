@@ -33,7 +33,6 @@
 #include "APIFrameHandle.h"
 #include "APIGeometry.h"
 #include "APINumber.h"
-#include "APIPageGroupHandle.h"
 #include "APIPageHandle.h"
 #include "APISerializedScriptValue.h"
 #include "APIString.h"
@@ -102,15 +101,11 @@ static RefPtr<API::Object> transformGraph(API::Object& object, const UserData::T
     if (object.type() == API::Object::Type::Array) {
         auto& array = static_cast<API::Array&>(object);
 
-        Vector<RefPtr<API::Object>> elements;
-        elements.reserveInitialCapacity(array.elements().size());
-        for (const auto& element : array.elements()) {
+        auto elements = array.elements().map([&](auto& element) -> RefPtr<API::Object> {
             if (!element)
-                elements.uncheckedAppend(nullptr);
-            else
-                elements.uncheckedAppend(transformGraph(*element, transformer));
-        }
-
+                return nullptr;
+            return transformGraph(*element, transformer);
+        });
         return API::Array::create(WTFMove(elements));
     }
 
@@ -229,10 +224,6 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         encoder << handle;
         break;
     }
-
-    case API::Object::Type::PageGroupHandle:
-        static_cast<const API::PageGroupHandle&>(object).encode(encoder);
-        break;
 
     case API::Object::Type::PageHandle:
         static_cast<const API::PageHandle&>(object).encode(encoder);
@@ -415,11 +406,6 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         result = nullptr;
         break;
 
-    case API::Object::Type::PageGroupHandle:
-        if (!API::PageGroupHandle::decode(decoder, result))
-            return false;
-        break;
-
     case API::Object::Type::PageHandle:
         if (!API::PageHandle::decode(decoder, result))
             return false;
@@ -440,7 +426,7 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         if (!decoder.decode(dataReference))
             return false;
 
-        result = API::SerializedScriptValue::adopt(dataReference.vector());
+        result = API::SerializedScriptValue::adopt({ dataReference });
         break;
     }
 

@@ -43,7 +43,7 @@ constexpr angle::PackedEnumMap<WidgetType, WidgetInternalType> kWidgetTypeToInte
 constexpr size_t kMaxRenderableTextWidgets  = 32;
 constexpr size_t kMaxRenderableGraphWidgets = 32;
 constexpr size_t kMaxTextLength             = 256;
-constexpr size_t kMaxGraphDataSize          = 64;
+constexpr size_t kMaxGraphDataSize          = 256;
 
 constexpr angle::PackedEnumMap<WidgetInternalType, size_t> kWidgetInternalTypeMaxWidgets = {
     {WidgetInternalType::Text, kMaxRenderableTextWidgets},
@@ -440,6 +440,36 @@ void AppendWidgetDataHelper::AppendVulkanDescriptorSetAllocations(const overlay:
     auto format = [](size_t maxValue) {
         std::ostringstream text;
         text << "Descriptor Set Allocations (Max: " << maxValue << ")";
+        return text.str();
+    };
+
+    AppendRunningGraphCommon(widget, imageExtent, textWidget, graphWidget, widgetCounts, format);
+}
+
+void AppendWidgetDataHelper::AppendVulkanShaderBufferDSHitRate(const overlay::Widget *widget,
+                                                               const gl::Extents &imageExtent,
+                                                               TextWidgetData *textWidget,
+                                                               GraphWidgetData *graphWidget,
+                                                               OverlayWidgetCounts *widgetCounts)
+{
+    auto format = [](size_t maxValue) {
+        std::ostringstream text;
+        text << "Shader Buffer DS Hit Rate (Max: " << maxValue << "%)";
+        return text.str();
+    };
+
+    AppendRunningGraphCommon(widget, imageExtent, textWidget, graphWidget, widgetCounts, format);
+}
+
+void AppendWidgetDataHelper::AppendVulkanDynamicBufferAllocations(const overlay::Widget *widget,
+                                                                  const gl::Extents &imageExtent,
+                                                                  TextWidgetData *textWidget,
+                                                                  GraphWidgetData *graphWidget,
+                                                                  OverlayWidgetCounts *widgetCounts)
+{
+    auto format = [](size_t maxValue) {
+        std::ostringstream text;
+        text << "DynamicBuffer Allocations (Max: " << maxValue << ")";
         return text.str();
     };
 

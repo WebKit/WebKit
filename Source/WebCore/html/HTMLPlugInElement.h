@@ -35,7 +35,6 @@ class Instance;
 
 namespace WebCore {
 
-class PluginReplacement;
 class RenderWidget;
 class Widget;
 
@@ -58,11 +57,6 @@ public:
     };
     DisplayState displayState() const { return m_displayState; }
     void setDisplayState(DisplayState);
-
-    JSC::JSObject* scriptObjectForPluginReplacement();
-#if PLATFORM(COCOA)
-    JSValueInWrappedObject& pluginReplacementScriptObject() { return m_pluginReplacementScriptObject; }
-#endif
 
     bool isCapturingMouseEvents() const { return m_isCapturingMouseEvents; }
     void setIsCapturingMouseEvents(bool capturing) { m_isCapturingMouseEvents = capturing; }
@@ -99,17 +93,12 @@ protected:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
-    // Subclasses should use guardedDispatchBeforeLoadEvent instead of calling dispatchBeforeLoadEvent directly.
-    bool guardedDispatchBeforeLoadEvent(const String& sourceURL);
-
     // This will load the plugin if necessary.
     virtual RenderWidget* renderWidgetLoadingPlugin() const;
 
 private:
     void swapRendererTimerFired();
     bool shouldOverridePlugin(const String& url, const String& mimeType);
-
-    bool dispatchBeforeLoadEvent(const String& sourceURL) = delete; // Generate a compile error if someone calls this by mistake.
 
     bool supportsFocus() const final;
 
@@ -119,12 +108,7 @@ private:
 
     RefPtr<JSC::Bindings::Instance> m_instance;
     Timer m_swapRendererTimer;
-    RefPtr<PluginReplacement> m_pluginReplacement;
-#if PLATFORM(COCOA)
-    JSValueInWrappedObject m_pluginReplacementScriptObject;
-#endif
     bool m_isCapturingMouseEvents { false };
-    bool m_inBeforeLoadEventHandler { false };
     DisplayState m_displayState { Playing };
 };
 

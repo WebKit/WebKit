@@ -52,7 +52,7 @@ void AudioFrame::Reset() {
 }
 
 void AudioFrame::ResetWithoutMuting() {
-  // TODO(wu): Zero is a valid value for |timestamp_|. We should initialize
+  // TODO(wu): Zero is a valid value for `timestamp_`. We should initialize
   // to an invalid value, or add a new member to indicate invalidity.
   timestamp_ = 0;
   elapsed_time_ms_ = -1;

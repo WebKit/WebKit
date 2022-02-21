@@ -94,6 +94,16 @@ void RemoteWebInspectorUIProxy::show()
     bringToFront();
 }
 
+void RemoteWebInspectorUIProxy::showConsole()
+{
+    m_inspectorPage->send(Messages::RemoteWebInspectorUI::ShowConsole { });
+}
+
+void RemoteWebInspectorUIProxy::showResources()
+{
+    m_inspectorPage->send(Messages::RemoteWebInspectorUI::ShowResources { });
+}
+
 void RemoteWebInspectorUIProxy::sendMessageToFrontend(const String& message)
 {
     m_inspectorPage->send(Messages::RemoteWebInspectorUI::SendMessageToFrontend(message));

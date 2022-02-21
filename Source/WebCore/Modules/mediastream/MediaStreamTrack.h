@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,9 +69,9 @@ public:
     static Ref<MediaStreamTrack> create(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
     virtual ~MediaStreamTrack();
 
-    static void endCapture(Document&, MediaProducer::MediaCaptureKind);
+    static void endCapture(Document&, MediaProducerMediaCaptureKind);
 
-    static MediaProducer::MediaStateFlags captureState(Document&);
+    static MediaProducerMediaStateFlags captureState(Document&);
     static void updateCaptureAccordingToMutedState(Document&);
 
     virtual bool isCanvas() const { return false; }
@@ -90,7 +90,7 @@ public:
     bool mutedForBindings() const;
 
     enum class State { Live, Ended };
-    State readyState() const;
+    State readyState() const { return m_readyState; }
 
     bool ended() const;
 
@@ -100,6 +100,8 @@ public:
     void stopTrack(StopMode = StopMode::Silently);
 
     bool isCaptureTrack() const { return m_isCaptureTrack; }
+    bool hasVideo() const { return m_private->hasVideo(); }
+    bool hasAudio() const { return m_private->hasAudio(); }
 
     struct TrackSettings {
         std::optional<int> width;
@@ -141,7 +143,7 @@ public:
 
     RefPtr<WebAudioSourceProvider> createAudioSourceProvider();
 
-    MediaProducer::MediaStateFlags mediaState() const;
+    MediaProducerMediaStateFlags mediaState() const;
 
     void addObserver(Observer&);
     void removeObserver(Observer&);
@@ -202,6 +204,7 @@ private:
     MediaTrackConstraints m_constraints;
     std::unique_ptr<DOMPromiseDeferred<void>> m_promise;
 
+    State m_readyState { State::Live };
     bool m_muted { false };
     bool m_ended { false };
     const bool m_isCaptureTrack { false };

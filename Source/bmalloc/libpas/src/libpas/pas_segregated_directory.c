@@ -61,8 +61,7 @@ pas_segregated_directory_get_data_slow(pas_segregated_directory* directory,
             "pas_segregated_directory_data",
             pas_object_allocation);
 
-        pas_versioned_field_construct(&result->first_eligible_but_not_tabled, 0);
-        pas_versioned_field_construct(&result->first_eligible_and_tabled, 0);
+        pas_versioned_field_construct(&result->first_eligible, 0);
         pas_versioned_field_construct(&result->last_empty_plus_one, 0);
         pas_segregated_directory_segmented_bitvectors_construct(&result->bitvectors);
         pas_segregated_directory_view_vector_construct(&result->views);
@@ -112,7 +111,7 @@ uint64_t pas_segregated_directory_get_use_epoch(pas_segregated_directory* direct
             pas_segregated_view_unlock_ownership_lock(view);
             if (use_epoch) {
                 if (verbose)
-                    pas_log("%p: returning epoch %llu for index %zu\n", directory, use_epoch, index);
+                    pas_log("%p: returning epoch %llu for index %zu\n", directory, (unsigned long long)use_epoch, index);
                 PAS_ASSERT(use_epoch);
                 return use_epoch;
             }
@@ -126,6 +125,8 @@ pas_page_sharing_participant_payload*
 pas_segregated_directory_get_sharing_payload(pas_segregated_directory* directory,
                                              pas_lock_hold_mode heap_lock_hold_mode)
 {
+    static const bool verbose = false;
+    
     pas_segregated_directory_data* data;
     pas_segregated_directory_sharing_payload_ptr* payload_ptr;
     uintptr_t encoded_payload;
@@ -163,6 +164,9 @@ pas_segregated_directory_get_sharing_payload(pas_segregated_directory* directory
             pas_page_sharing_participant_payload_construct(payload);
 
             pas_segregated_directory_sharing_payload_ptr_store(payload_ptr, (uintptr_t)payload);
+
+            if (verbose)
+                pas_log("Adding directory participant to pool\n");
             
             pas_page_sharing_pool_add(
                 &pas_physical_page_sharing_pool,
@@ -186,7 +190,6 @@ pas_segregated_directory_get_sharing_payload(pas_segregated_directory* directory
 
 PAS_API void pas_segregated_directory_minimize_first_eligible(
     pas_segregated_directory* directory,
-    pas_segregated_directory_first_eligible_kind kind,
     size_t index)
 {
     pas_segregated_directory_data* data;
@@ -197,12 +200,11 @@ PAS_API void pas_segregated_directory_minimize_first_eligible(
         return;
     }
 
-    pas_versioned_field_minimize(pas_segregated_directory_data_get_first_eligible_ptr(data, kind), index);
+    pas_versioned_field_minimize(&data->first_eligible, index);
 }
 
 PAS_API void pas_segregated_directory_update_first_eligible_after_search(
     pas_segregated_directory* directory,
-    pas_segregated_directory_first_eligible_kind kind,
     pas_versioned_field first_eligible,
     size_t new_value)
 {
@@ -216,48 +218,20 @@ PAS_API void pas_segregated_directory_update_first_eligible_after_search(
     }
 
     pas_versioned_field_try_write_watched(
-        pas_segregated_directory_data_get_first_eligible_ptr(data, kind),
+        &data->first_eligible,
         first_eligible,
         new_value);
-}
-
-bool pas_segregated_directory_view_did_become_eligible_at_index_without_biasing_update(
-    pas_segregated_directory* directory,
-    size_t index)
-{
-    if (PAS_SEGREGATED_DIRECTORY_SET_BIT(directory, index, eligible, true)) {
-        pas_segregated_directory_minimize_first_eligible(
-            directory, pas_segregated_directory_first_eligible_but_not_tabled_kind, index);
-        return true;
-    }
-    return false;
 }
 
 bool pas_segregated_directory_view_did_become_eligible_at_index(
     pas_segregated_directory* directory,
     size_t index)
 {
-    pas_segregated_biasing_directory* biasing_directory;
-    
-    if (!pas_segregated_directory_view_did_become_eligible_at_index_without_biasing_update(
-            directory, index))
-        return false;
-
-    if (directory->directory_kind != pas_segregated_biasing_directory_kind)
+    if (PAS_SEGREGATED_DIRECTORY_SET_BIT(directory, index, eligible, true)) {
+        pas_segregated_directory_minimize_first_eligible(directory, index);
         return true;
-
-    biasing_directory = (pas_segregated_biasing_directory*)directory;
-
-    pas_biasing_directory_index_did_become_eligible(&biasing_directory->biasing_base, index);
-    return true;
-}
-
-bool pas_segregated_directory_view_did_become_eligible_without_biasing_update(
-    pas_segregated_directory* directory,
-    pas_segregated_view view)
-{
-    return pas_segregated_directory_view_did_become_eligible_at_index_without_biasing_update(
-        directory, pas_segregated_view_get_index(view));
+    }
+    return false;
 }
 
 bool pas_segregated_directory_view_did_become_eligible(
@@ -357,7 +331,7 @@ num_empty_views_should_consider_view_parallel(
 
     data = config->arg;
 
-    data->result += __builtin_popcount(segment.empty_bits);
+    data->result += (size_t)__builtin_popcount(segment.empty_bits);
     
     return 0;
 }
@@ -412,11 +386,7 @@ void pas_segregated_directory_append(
     case pas_segregated_exclusive_view_kind:
     case pas_segregated_ineligible_exclusive_view_kind:
     case pas_segregated_partial_view_kind:
-        PAS_ASSERT(directory->directory_kind == pas_segregated_global_size_directory_kind);
-        break;
-    case pas_segregated_biasing_view_kind:
-    case pas_segregated_ineligible_biasing_view_kind:
-        PAS_ASSERT(directory->directory_kind == pas_segregated_biasing_directory_kind);
+        PAS_ASSERT(directory->directory_kind == pas_segregated_size_directory_kind);
         break;
     case pas_segregated_shared_view_kind:
         PAS_ASSERT(directory->directory_kind == pas_segregated_shared_page_directory_kind);

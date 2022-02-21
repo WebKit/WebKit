@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,44 +33,35 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-namespace WebCore {
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
-Ref<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, ShouldCompileCSS shouldCompileCSS)
+Ref<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, URL&& extensionBaseURL, ShouldCompileCSS shouldCompileCSS)
 {
-    return adoptRef(*new ContentExtension(identifier, WTFMove(compiledExtension), shouldCompileCSS));
+    return adoptRef(*new ContentExtension(identifier, WTFMove(compiledExtension), WTFMove(extensionBaseURL), shouldCompileCSS));
 }
 
-ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, ShouldCompileCSS shouldCompileCSS)
+ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, URL&& extensionBaseURL, ShouldCompileCSS shouldCompileCSS)
     : m_identifier(identifier)
     , m_compiledExtension(WTFMove(compiledExtension))
+    , m_extensionBaseURL(WTFMove(extensionBaseURL))
 {
-    DFABytecodeInterpreter withoutConditions(m_compiledExtension->filtersWithoutConditionsBytecode(), m_compiledExtension->filtersWithoutConditionsBytecodeLength());
-    DFABytecodeInterpreter withConditions(m_compiledExtension->filtersWithConditionsBytecode(), m_compiledExtension->filtersWithConditionsBytecodeLength());
-    for (uint64_t action : withoutConditions.actionsMatchingEverything()) {
-        ASSERT(static_cast<uint32_t>(action) == action);
-        m_universalActionsWithoutConditions.append(static_cast<uint32_t>(action));
-    }
-    for (uint64_t action : withConditions.actionsMatchingEverything()) {
-        ASSERT((action & ~IfConditionFlag) == static_cast<uint32_t>(action));
-        m_universalActionsWithConditions.append(action);
-    }
+    DFABytecodeInterpreter interpreter(m_compiledExtension->urlFiltersBytecode());
+    for (uint64_t action : interpreter.actionsMatchingEverything())
+        m_universalActions.append(action);
 
     if (shouldCompileCSS == ShouldCompileCSS::Yes)
         compileGlobalDisplayNoneStyleSheet();
-    m_universalActionsWithoutConditions.shrinkToFit();
-    m_universalActionsWithConditions.shrinkToFit();
+    m_universalActions.shrinkToFit();
 }
 
 uint32_t ContentExtension::findFirstIgnorePreviousRules() const
 {
-    auto* actions = m_compiledExtension->actions();
-    uint32_t actionsLength = m_compiledExtension->actionsLength();
+    auto serializedActions = m_compiledExtension->serializedActions();
     uint32_t currentActionIndex = 0;
-    while (currentActionIndex < actionsLength) {
-        if (Action::deserializeType(actions, actionsLength, currentActionIndex) == ActionType::IgnorePreviousRules)
+    while (currentActionIndex < serializedActions.size()) {
+        if (serializedActions[currentActionIndex] == WTF::alternativeIndexV<IgnorePreviousRulesAction, ActionData>)
             return currentActionIndex;
-        currentActionIndex += Action::serializedLength(actions, actionsLength, currentActionIndex);
+        currentActionIndex += DeserializedAction::serializedLength(serializedActions, currentActionIndex);
     }
     return std::numeric_limits<uint32_t>::max();
 }
@@ -84,22 +75,22 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
 {
     uint32_t firstIgnorePreviousRules = findFirstIgnorePreviousRules();
     
-    auto* actions = m_compiledExtension->actions();
-    uint32_t actionsLength = m_compiledExtension->actionsLength();
+    auto serializedActions = m_compiledExtension->serializedActions();
 
-    auto inGlobalDisplayNoneStyleSheet = [&](const uint32_t location)
-    {
-        return location < firstIgnorePreviousRules && Action::deserializeType(actions, actionsLength, location) == ActionType::CSSDisplayNoneSelector;
+    auto inGlobalDisplayNoneStyleSheet = [&](const uint32_t location) {
+        RELEASE_ASSERT(location < serializedActions.size());
+        return location < firstIgnorePreviousRules && serializedActions[location] == WTF::alternativeIndexV<CSSDisplayNoneSelectorAction, ActionData>;
     };
     
     StringBuilder css;
-    for (uint32_t universalActionLocation : m_universalActionsWithoutConditions) {
+    for (uint64_t universalActionLocation : m_universalActions) {
         if (inGlobalDisplayNoneStyleSheet(universalActionLocation)) {
             if (!css.isEmpty())
                 css.append(',');
-            Action action = Action::deserialize(actions, actionsLength, universalActionLocation);
-            ASSERT(action.type() == ActionType::CSSDisplayNoneSelector);
-            css.append(action.stringArgument());
+            auto action = DeserializedAction::deserialize(serializedActions, universalActionLocation);
+            ASSERT(std::holds_alternative<CSSDisplayNoneSelectorAction>(action.data()));
+            if (auto* actionData = std::get_if<CSSDisplayNoneSelectorAction>(&action.data()))
+                css.append(actionData->string);
         }
     }
     if (css.isEmpty())
@@ -114,47 +105,55 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
         m_globalDisplayNoneStyleSheet = nullptr;
 
     // These actions don't need to be applied individually any more. They will all be applied to every page as a precompiled style sheet.
-    m_universalActionsWithoutConditions.removeAllMatching(inGlobalDisplayNoneStyleSheet);
+    m_universalActions.removeAllMatching(inGlobalDisplayNoneStyleSheet);
 }
 
-void ContentExtension::populateConditionCacheIfNeeded(const URL& topURL)
+void ContentExtension::populateTopURLActionCacheIfNeeded(const URL& topURL) const
 {
-    if (m_cachedTopURL != topURL) {
-        DFABytecodeInterpreter interpreter(m_compiledExtension->topURLFiltersBytecode(), m_compiledExtension->topURLFiltersBytecodeLength());
-        constexpr uint16_t allLoadTypesAndResourceTypes = LoadTypeMask | ResourceTypeMask | LoadContextMask;
-        String string = m_compiledExtension->conditionsApplyOnlyToDomain() ? topURL.host().toString() : topURL.string();
-        auto topURLActions = interpreter.interpret(string.utf8(), allLoadTypesAndResourceTypes);
-        
-        m_cachedTopURLActions.clear();
-        for (uint64_t action : topURLActions)
-            m_cachedTopURLActions.add(action);
-        for (uint64_t action : interpreter.actionsMatchingEverything())
-            m_cachedTopURLActions.add(action);
-        
-        m_cachedUniversalConditionedActions.clear();
-        for (uint64_t action : m_universalActionsWithConditions) {
-        ASSERT_WITH_MESSAGE((action & ~IfConditionFlag) == static_cast<uint32_t>(action), "Universal actions with conditions should not have flags.");
-            if (!!(action & IfConditionFlag) == m_cachedTopURLActions.contains(action))
-                m_cachedUniversalConditionedActions.append(static_cast<uint32_t>(action));
-        }
-        m_cachedUniversalConditionedActions.shrinkToFit();
-        m_cachedTopURL = topURL;
-    }
+    if (m_cachedTopURL == topURL)
+        return;
+
+    DFABytecodeInterpreter interpreter(m_compiledExtension->topURLFiltersBytecode());
+    auto topURLActions = interpreter.interpret(topURL.string(), AllResourceFlags);
+
+    m_cachedTopURLActions.clear();
+    for (uint64_t action : topURLActions)
+        m_cachedTopURLActions.add(action);
+    for (uint64_t action : interpreter.actionsMatchingEverything())
+        m_cachedTopURLActions.add(action);
+
+    m_cachedTopURL = topURL;
 }
 
-const DFABytecodeInterpreter::Actions& ContentExtension::topURLActions(const URL& topURL)
+void ContentExtension::populateFrameURLActionCacheIfNeeded(const URL& frameURL) const
 {
-    populateConditionCacheIfNeeded(topURL);
+    if (m_cachedFrameURL == frameURL)
+        return;
+
+    DFABytecodeInterpreter interpreter(m_compiledExtension->frameURLFiltersBytecode());
+    auto frameURLActions = interpreter.interpret(frameURL.string(), AllResourceFlags);
+
+    m_cachedFrameURLActions.clear();
+    for (uint64_t action : frameURLActions)
+        m_cachedFrameURLActions.add(action);
+    for (uint64_t action : interpreter.actionsMatchingEverything())
+        m_cachedFrameURLActions.add(action);
+
+    m_cachedFrameURL = frameURL;
+}
+
+const DFABytecodeInterpreter::Actions& ContentExtension::topURLActions(const URL& topURL) const
+{
+    populateTopURLActionCacheIfNeeded(topURL);
     return m_cachedTopURLActions;
 }
 
-const Vector<uint32_t>& ContentExtension::universalActionsWithConditions(const URL& topURL)
+const DFABytecodeInterpreter::Actions& ContentExtension::frameURLActions(const URL& frameURL) const
 {
-    populateConditionCacheIfNeeded(topURL);
-    return m_cachedUniversalConditionedActions;
+    populateFrameURLActionCacheIfNeeded(frameURL);
+    return m_cachedFrameURLActions;
 }
-    
-} // namespace ContentExtensions
-} // namespace WebCore
+
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

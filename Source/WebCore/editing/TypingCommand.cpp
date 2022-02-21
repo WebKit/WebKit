@@ -30,7 +30,7 @@
 #include "BreakBlockquoteCommand.h"
 #include "DataTransfer.h"
 #include "DeleteSelectionCommand.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "Element.h"

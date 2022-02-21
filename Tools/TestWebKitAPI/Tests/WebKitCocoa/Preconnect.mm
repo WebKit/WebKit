@@ -103,10 +103,6 @@ TEST(Preconnect, ConnectionCount)
     EXPECT_EQ(connectionCount, 2u);
 }
 
-// Mojave CFNetwork _preconnect SPI seems to have a bug causing this to time out.
-// That's no problem, because this is a test for SPI only to be used on later OS versions.
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-
 TEST(Preconnect, HTTPS)
 {
     bool connected = false;
@@ -135,8 +131,6 @@ TEST(Preconnect, HTTPS)
     Util::run(&requested);
     EXPECT_TRUE(receivedChallenge);
 }
-
-#endif
 
 #if HAVE(PRECONNECT_PING)
 static void pingPong(Ref<H2::Connection>&& connection, size_t* headersCount)

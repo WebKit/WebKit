@@ -5,6 +5,7 @@
 <svg xmlns="http://www.w3.org/2000/svg">
 
 <title>Testcase for gradient on text</title>
+<meta name="fuzzy" content="maxDifference=0-9; totalPixels=0-1" />
 
 <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=424586 -->
 

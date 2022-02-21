@@ -31,9 +31,24 @@
 
 #include "pas_all_heap_configs.h"
 
+PAS_BEGIN_EXTERN_C;
+
 bool pas_small_bitfit_page_config_variant_is_enabled_override = PAS_USE_SMALL_BITFIT_OVERRIDE;
 bool pas_medium_bitfit_page_config_variant_is_enabled_override = PAS_USE_MEDIUM_BITFIT_OVERRIDE;
 bool pas_marge_bitfit_page_config_variant_is_enabled_override = PAS_USE_MARGE_BITFIT_OVERRIDE;
+
+const char* pas_bitfit_page_config_kind_get_string(pas_bitfit_page_config_kind kind)
+{
+    switch (kind) {
+#define PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(name, value) \
+    case pas_bitfit_page_config_kind_ ## name: \
+        return #name;
+#include "pas_bitfit_page_config_kind.def"
+#undef PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND
+    }
+    PAS_ASSERT(!"Invalid kind");
+    return NULL;
+}
 
 bool pas_bitfit_page_config_kind_for_each(
     pas_bitfit_page_config_kind_callback callback,
@@ -60,5 +75,7 @@ pas_bitfit_page_config* pas_bitfit_page_config_kind_for_config_table[
 #include "pas_bitfit_page_config_kind.def"
 #undef PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND
 };
+
+PAS_END_EXTERN_C;
 
 #endif /* LIBPAS_ENABLED */

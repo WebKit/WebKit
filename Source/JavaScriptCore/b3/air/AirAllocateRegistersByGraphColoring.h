@@ -34,12 +34,6 @@ namespace JSC { namespace B3 { namespace Air {
 
 class Code;
 
-inline bool useIRC()
-{
-    return Options::airForceIRCAllocator()
-        || (!isARM64() && !Options::airForceBriggsAllocator());
-}
-
 // We have two register allocators, both fundamentally derived from Chaitin's Yorktown
 // allocator:
 // http://cs.gmu.edu/~white/CS640/p98-chaitin.pdf

@@ -34,7 +34,9 @@ PAS_BEGIN_EXTERN_C;
    one of the "basic" ones - created with pas_heap_config_utils or something that broadly uses
    the same defaults. In particular, it must be the kind of heap that expects the runtime_config
    to be a pas_basic_heap_runtime_config. This will copy the runtime_config you pass and combine
-   it with a basic_heap_page_caches that only uses the given reserved memory. */
+   it with a basic_heap_page_caches that only uses the given reserved memory.
+
+   Warning: This creates caches that allow type confusion. Only use this for primitive heaps! */
 PAS_API pas_heap* pas_ensure_heap_forced_into_reserved_memory(
     pas_heap_ref* heap_ref,
     pas_heap_ref_kind heap_ref_kind,

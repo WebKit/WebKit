@@ -25,6 +25,8 @@
     // Non-standard.
     [Conditional=NAVIGATOR_STANDALONE] readonly attribute boolean standalone;
 
+    readonly attribute unsigned long long hardwareConcurrency;
+
     // Non-standard.
     // FIXME: Remove this. WebKit is the only engine that still has this.
     undefined getStorageUpdates();
@@ -32,9 +34,12 @@
 
 Navigator includes NavigatorID;
 Navigator includes NavigatorLanguage;
+Navigator includes NavigatorLocks;
 Navigator includes NavigatorMaxTouchPoints;
 Navigator includes NavigatorOnLine;
 Navigator includes NavigatorCookies;
 Navigator includes NavigatorPlugins;
 Navigator includes NavigatorServiceWorker;
 Navigator includes NavigatorShare;
+Navigator includes NavigatorStorage;
+Navigator includes NavigatorGPU;

@@ -32,11 +32,11 @@
 
 namespace JSC { namespace Wasm {
 
-class FunctionCodeBlock;
+class FunctionCodeBlockGenerator;
 class Signature;
 struct ModuleInformation;
 
-Expected<std::unique_ptr<FunctionCodeBlock>, String> parseAndCompileBytecode(const uint8_t*, size_t, const Signature&, const ModuleInformation&, uint32_t functionIndex);
+Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileBytecode(const uint8_t*, size_t, const Signature&, ModuleInformation&, uint32_t functionIndex);
 
 } } // namespace JSC::Wasm
 

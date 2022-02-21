@@ -1,0 +1,3 @@
+
+PASS `importScripts(...)` is allowed by 'strict-dynamic'
+

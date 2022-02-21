@@ -22,13 +22,11 @@
 
 import bisect
 import calendar
-import fasteners
 import json
 import os
 import re
 import requests
 import tempfile
-import xmltodict
 
 from datetime import datetime
 
@@ -100,6 +98,8 @@ class Svn(Scm):
 
     @decorators.Memoize(cached=False)
     def info(self, branch=None, revision=None, tag=None):
+        import xmltodict
+
         if tag and branch:
             raise ValueError('Cannot specify both branch and tag')
         if tag and revision:
@@ -163,6 +163,8 @@ class Svn(Scm):
         return 'trunk'
 
     def list(self, category):
+        import xmltodict
+
         revision = self._latest()
         if not revision:
             return []
@@ -203,6 +205,7 @@ class Svn(Scm):
         return self.list('tags')
 
     def _cache_lock(self):
+        import fasteners
         return fasteners.InterProcessLock(os.path.join(os.path.dirname(self._cache_path), 'cache.lock'))
 
     def _cache_revisions(self, branch=None):
@@ -282,6 +285,8 @@ class Svn(Scm):
         return self._metadata_cache[branch]
 
     def _branch_for(self, revision):
+        import xmltodict
+
         response = requests.request(
             method='REPORT',
             url='{}!svn/rvr/{}'.format(self.url, revision),
@@ -332,6 +337,8 @@ class Svn(Scm):
         return self._commit_count(revision=self._metadata_cache[branch][0], branch=self.default_branch)
 
     def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
+        import xmltodict
+
         if hash:
             raise ValueError('SVN does not support Git hashes')
 
@@ -456,6 +463,8 @@ class Svn(Scm):
         )
 
     def _args_from_content(self, content, include_log=True):
+        import xmltodict
+
         xml = xmltodict.parse(content)
         date = datetime.strptime(string_utils.decode(xml['S:log-item']['S:date']).split('.')[0], '%Y-%m-%dT%H:%M:%S')
         name = string_utils.decode(xml['S:log-item']['D:creator-displayname'])

@@ -46,6 +46,13 @@
         completion(NO, nil);
         return;
     }
+
+    if (!viewController) {
+        WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization: No view controller to present, so completing with NO as success state.");
+        completion(NO, nil);
+        return;
+    }
+
     WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG("authorization: presentingViewController %p", viewController);
     _session->presentViewController(viewController, completion);
 }

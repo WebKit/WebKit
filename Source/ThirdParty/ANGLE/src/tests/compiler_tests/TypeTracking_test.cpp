@@ -304,7 +304,7 @@ TEST_F(TypeTrackingTest, StructConstructorResultNoPrecision)
         "}\n";
     compile(shaderString);
     ASSERT_FALSE(foundErrorInIntermediateTree());
-    ASSERT_TRUE(foundInIntermediateTree("Construct (structure)"));
+    ASSERT_TRUE(foundInIntermediateTree("Construct (structure 'S')"));
 }
 
 TEST_F(TypeTrackingTest, PackResultTypeAndPrecision)

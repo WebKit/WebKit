@@ -10,8 +10,7 @@ layer at (0,0) size 800x600
         text run at (205,50) width 4: " "
       RenderText {#text} at (414,50) size 4x17
         text run at (414,50) width 4: " "
-      RenderText {#text} at (623,50) size 4x17
-        text run at (623,50) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
 layer at (10,28) size 201x42 clip at (11,29) size 199x40
   RenderTextControl {TEXTAREA} at (2,20) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]

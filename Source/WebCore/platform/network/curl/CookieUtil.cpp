@@ -61,7 +61,7 @@ bool domainMatch(const String& cookieDomain, const String& host)
 {
     size_t index = host.find(cookieDomain);
 
-    bool tailMatch = (index != WTF::notFound && index + cookieDomain.length() == host.length());
+    bool tailMatch = (index != notFound && index + cookieDomain.length() == host.length());
 
     // Check if host equals cookie domain.
     if (tailMatch && !index)
@@ -82,7 +82,7 @@ bool domainMatch(const String& cookieDomain, const String& host)
 
 static std::optional<double> parseExpiresMS(const char* expires)
 {
-    double tmp = WTF::parseDateFromNullTerminatedCharacters(expires);
+    double tmp = parseDateFromNullTerminatedCharacters(expires);
     if (isnan(tmp))
         return { };
 
@@ -118,21 +118,29 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
 
     } else if (equalIgnoringASCIICase(attributeName, "max-age")) {
         if (auto maxAgeSeconds = parseIntegerAllowingTrailingJunk<int64_t>(attributeValue)) {
-            result.expires = (WallTime::now().secondsSinceEpoch().value() + *maxAgeSeconds) * WTF::msPerSecond;
+            result.expires = (WallTime::now().secondsSinceEpoch().value() + *maxAgeSeconds) * msPerSecond;
             result.session = false;
 
             // If there is a max-age attribute as well as an expires attribute
             // the rightmost max-age attribute takes precedence.
             hasMaxAge = true;
+        } else {
+            result.session = true;
+            result.expires = std::nullopt;
         }
     } else if (equalIgnoringASCIICase(attributeName, "expires") && !hasMaxAge) {
         if (auto expiryTime = parseExpiresMS(attributeValue.utf8().data())) {
             result.expires = expiryTime.value();
             result.session = false;
+        } else if (!hasMaxAge) {
+            result.session = true;
+            result.expires = std::nullopt;
         }
     } else if (equalIgnoringASCIICase(attributeName, "path")) {
         if (!attributeValue.isEmpty() && attributeValue.startsWith('/'))
             result.path = attributeValue;
+        else
+            result.path = emptyString();
     }
 }
 

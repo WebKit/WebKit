@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
 #include "Document.h"
-#include "DocumentTimeline.h"
 #include "Element.h"
 #include "FullscreenManager.h"
 #include "HTMLParserIdioms.h"
@@ -65,7 +64,7 @@
 namespace WebCore {
 
 RenderTreeUpdater::Parent::Parent(ContainerNode& root)
-    : element(is<Document>(root) ? nullptr : downcast<Element>(&root))
+    : element(dynamicDowncast<Element>(root))
     , renderTreePosition(RenderTreePosition(*root.renderer()))
 {
 }
@@ -96,7 +95,7 @@ static ContainerNode* findRenderingRoot(ContainerNode& node)
         if (!ancestor.hasDisplayContents())
             return nullptr;
     }
-    return &node.document();
+    return nullptr;
 }
 
 static ListHashSet<ContainerNode*> findRenderingRoots(const Style::Update& update)
@@ -117,7 +116,7 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
 
     if (!m_document.shouldCreateRenderers() || !m_document.renderView())
         return;
-    
+
     TraceScope scope(RenderTreeBuildStart, RenderTreeBuildEnd);
 
     m_styleUpdate = WTFMove(styleUpdate);
@@ -317,7 +316,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         elementUpdateStyle->addCachedPseudoStyle(RenderStyle::clonePtr(*it.value.style));
     }
 
-    bool shouldTearDownRenderers = elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents());
+    bool shouldTearDownRenderers = elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents() || element.isInTopLayer());
     if (shouldTearDownRenderers) {
         if (!element.renderer()) {
             // We may be tearing down a descendant renderer cached in renderTreePosition.
@@ -373,7 +372,7 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
         renderTreePosition().computeNextSibling(element);
         return renderTreePosition();
     };
-    
+
     if (!shouldCreateRenderer(element, renderTreePosition().parent()))
         return;
 
@@ -443,7 +442,7 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
     } else {
         if (parentRenderer.isRenderBlock() && !parentRenderer.childrenInline() && (!previousRenderer || !previousRenderer->isInline()))
             return false;
-        
+
         RenderObject* first = parentRenderer.firstChild();
         while (first && first->isFloatingOrOutOfFlowPositioned())
             first = first->nextSibling();

@@ -1,0 +1,6 @@
+
+PASS slice()
+PASS text()
+PASS arrayBuffer()
+PASS stream()
+

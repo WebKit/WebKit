@@ -1,0 +1,6 @@
+
+PASS Property container-name has initial value none
+PASS Property container-name does not inherit
+PASS Property container-type has initial value none
+PASS Property container-type does not inherit
+

@@ -42,7 +42,7 @@ StorageQuotaManager::StorageQuotaManager(uint64_t quota, UsageGetter&& usageGett
     : m_quota(quota)
     , m_usageGetter(WTFMove(usageGetter))
     , m_quotaIncreaseRequester(WTFMove(quotaIncreaseRequester))
-    , m_workQueue(WorkQueue::create("StorageQuotaManager Background Queue", WorkQueue::Type::Serial))
+    , m_workQueue(WorkQueue::create("StorageQuotaManager Background Queue"))
     , m_initialQuota(quota)
 {
 }
@@ -61,7 +61,7 @@ void StorageQuotaManager::requestSpaceOnMainThread(uint64_t spaceRequested, Requ
         m_quotaCountDownLock.unlock();
     }
 
-    m_workQueue->dispatch([this, protectedThis = makeRef(*this), spaceRequested, callback = WTFMove(callback)]() mutable {
+    m_workQueue->dispatch([this, protectedThis = Ref { *this }, spaceRequested, callback = WTFMove(callback)]() mutable {
         auto decision = requestSpaceOnBackgroundThread(spaceRequested);
         callOnMainThread([callback = WTFMove(callback), decision]() mutable {
             callback(decision);
@@ -86,7 +86,7 @@ StorageQuotaManager::Decision StorageQuotaManager::requestSpaceOnBackgroundThrea
 
     // Block this thread until getting decsion for quota increase.
     BinarySemaphore semaphore;
-    callOnMainThread([this, protectedThis = makeRef(*this), spaceRequested, &semaphore]() mutable {
+    callOnMainThread([this, protectedThis = Ref { *this }, spaceRequested, &semaphore]() mutable {
         RELEASE_LOG(Storage, "%p - StorageQuotaManager asks for quota increase %" PRIu64, this, spaceRequested);
         m_quotaIncreaseRequester(m_quota, m_usage, spaceRequested, [this, protectedThis = WTFMove(protectedThis), &semaphore](std::optional<uint64_t> newQuota) mutable {
             RELEASE_LOG(Storage, "%p - StorageQuotaManager receives quota increase response %" PRIu64, this, newQuota ? *newQuota : 0);

@@ -126,7 +126,7 @@ layer at (0,0) size 385x3116 backgroundClip at (0,0) size 2460x585 clip at (0,0)
           text run at (0,291) width 362: "occaecat cupidatat non proident, sunt"
           text run at (0,318) width 338: "in culpa qui officia deserunt mollit"
           text run at (0,345) width 200: "anim id est laborum."
-layer at (1250,81) size 56x56
-  RenderBlock (positioned) {DIV} at (1250,81) size 56x56 [border: (3px solid #0000FF)]
+layer at (1250,80) size 56x56
+  RenderBlock (positioned) {DIV} at (1250,80) size 56x56 [border: (3px solid #0000FF)]
 caret: position 353 of child 0 {#text} of child 11 {P} of body
 scrolled to 800,0

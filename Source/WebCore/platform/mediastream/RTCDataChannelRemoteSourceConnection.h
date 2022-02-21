@@ -28,6 +28,7 @@
 
 #include "RTCDataChannelIdentifier.h"
 #include "RTCDataChannelState.h"
+#include "RTCErrorDetailType.h"
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,7 +41,7 @@ public:
     virtual void didChangeReadyState(RTCDataChannelIdentifier, RTCDataChannelState) = 0;
     virtual void didReceiveStringData(RTCDataChannelIdentifier, const String&) = 0;
     virtual void didReceiveRawData(RTCDataChannelIdentifier, const uint8_t*, size_t) = 0;
-    virtual void didDetectError(RTCDataChannelIdentifier) = 0;
+    virtual void didDetectError(RTCDataChannelIdentifier, RTCErrorDetailType, const String&) = 0;
     virtual void bufferedAmountIsDecreasing(RTCDataChannelIdentifier, size_t) = 0;
 };
 

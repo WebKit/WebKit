@@ -34,5 +34,5 @@
     readonly attribute boolean         stepMismatch;
     readonly attribute boolean         badInput;
     readonly attribute boolean         customError;
-    [ImplementedAs=isValid] readonly attribute boolean         valid;
+    [ImplementedAs=computeValidity] readonly attribute boolean         valid;
 };

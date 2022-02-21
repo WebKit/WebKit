@@ -43,7 +43,7 @@
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ScrollingTreeFixedNode.h>
-#import <WebCore/ScrollingTreeStickyNode.h>
+#import <WebCore/ScrollingTreeStickyNodeCocoa.h>
 
 
 namespace WebKit {
@@ -107,7 +107,14 @@ void RemoteScrollingCoordinator::buildTransaction(RemoteScrollingCoordinatorTran
 // Notification from the UI process that we scrolled.
 void RemoteScrollingCoordinator::scrollPositionChangedForNode(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, bool syncLayerPosition)
 {
-    applyScrollUpdate(nodeID, scrollPosition, std::nullopt, ScrollType::User, syncLayerPosition ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set);
+    auto scrollUpdate = ScrollUpdate { nodeID, scrollPosition, { }, ScrollUpdateType::PositionUpdate, syncLayerPosition ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set };
+    applyScrollUpdate(WTFMove(scrollUpdate));
+}
+
+void RemoteScrollingCoordinator::animatedScrollDidEndForNode(ScrollingNodeID nodeID)
+{
+    auto scrollUpdate = ScrollUpdate { nodeID, { }, { }, ScrollUpdateType::AnimatedScrollDidEnd };
+    applyScrollUpdate(WTFMove(scrollUpdate));
 }
 
 void RemoteScrollingCoordinator::currentSnapPointIndicesChangedForNode(ScrollingNodeID nodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical)

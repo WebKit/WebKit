@@ -9,10 +9,16 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.prototype.getHours;
-if (x === 1)
+if (x === 1) {
   Date.prototype.getHours = 2;
-else
+} else {
   Date.prototype.getHours = 1;
-if (Date.prototype.getHours === x) {
-  throw new Test262Error('#1: The Date.prototype.getHours has not the attribute ReadOnly');
 }
+
+assert.notSameValue(
+  Date.prototype.getHours,
+  x,
+  'The value of Date.prototype.getHours is expected to not equal the value of `x`'
+);
+
+// TODO: Convert to verifyProperty() format.

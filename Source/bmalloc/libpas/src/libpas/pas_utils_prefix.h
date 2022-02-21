@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "pas_platform.h"
+
 #ifdef __cplusplus
 #define __PAS_BEGIN_EXTERN_C extern "C" { struct __pas_require_semicolon
 #define __PAS_END_EXTERN_C } struct __pas_require_semicolon
@@ -59,12 +61,18 @@ __PAS_BEGIN_EXTERN_C;
 #define __PAS_API
 #endif
 
+#if defined(PAS_BMALLOC) && PAS_BMALLOC
+#define __PAS_BAPI __attribute__((visibility("default")))
+#else
+#define __PAS_BAPI __PAS_API
+#endif
+
 #define __PAS_UNUSED_PARAM(variable) (void)variable
 
 #define __PAS_OFFSETOF(type, field) __builtin_offsetof(type, field)
 
 typedef __SIZE_TYPE__ __pas_size_t;
-typedef typeof((char*)0 - (char*)0) __pas_ptrdiff_t;
+typedef __PTRDIFF_TYPE__ __pas_ptrdiff_t;
 
 __PAS_API void __pas_set_deallocation_did_fail_callback(
     void (*callback)(const char* reason, void* begin));
@@ -94,7 +102,7 @@ static __PAS_ALWAYS_INLINE void __pas_compiler_fence(void)
 
 static __PAS_ALWAYS_INLINE void __pas_fence(void)
 {
-#if !__PAS_ARM
+#if !__PAS_ARM && !__PAS_RISCV
     if (sizeof(void*) == 8)
         asm volatile("lock; orl $0, (%%rsp)" ::: "memory");
     else
@@ -104,7 +112,7 @@ static __PAS_ALWAYS_INLINE void __pas_fence(void)
 #endif
 }
 
-static __PAS_ALWAYS_INLINE unsigned __pas_depend_impl(unsigned long input, _Bool cpu_only)
+static __PAS_ALWAYS_INLINE unsigned __pas_depend_impl(unsigned long input, int cpu_only)
 {
     unsigned output;
 #if __PAS_ARM64
@@ -140,13 +148,13 @@ static __PAS_ALWAYS_INLINE unsigned __pas_depend_impl(unsigned long input, _Bool
 
 static __PAS_ALWAYS_INLINE unsigned __pas_depend(unsigned long input)
 {
-    _Bool cpu_only = 0;
+    int cpu_only = 0;
     return __pas_depend_impl(input, cpu_only);
 }
 
 static __PAS_ALWAYS_INLINE unsigned __pas_depend_cpu_only(unsigned long input)
 {
-    _Bool cpu_only = 1;
+    int cpu_only = 1;
     return __pas_depend_impl(input, cpu_only);
 }
 

@@ -1973,7 +1973,7 @@ describe('BuildbotTriggerable', function () {
 
                 const test = Test.findById(MockData.someTestId());
                 const platform = Platform.findById(MockData.somePlatformId());
-                assert.strictEqual(Triggerable.findByTestConfiguration(test, platform), null);
+                assert.equal(Triggerable.findByTestConfiguration(test, platform), null);
 
                 const groups = TriggerableRepositoryGroup.sortByName(triggerable.repositoryGroups());
                 assert.strictEqual(groups.length, 1);

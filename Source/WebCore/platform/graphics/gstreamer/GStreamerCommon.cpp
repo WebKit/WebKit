@@ -23,8 +23,10 @@
 
 #if USE(GSTREAMER)
 
+#include "ApplicationGLib.h"
 #include "GLVideoSinkGStreamer.h"
 #include "GStreamerAudioMixer.h"
+#include "GUniquePtrGStreamer.h"
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
 #include "RuntimeApplicationChecks.h"
@@ -33,8 +35,8 @@
 #include <gst/audio/audio-info.h>
 #include <gst/gst.h>
 #include <mutex>
+#include <wtf/FileSystem.h>
 #include <wtf/Scope.h>
-#include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
@@ -54,13 +56,12 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include "GStreamerMediaStreamSource.h"
+#include "GStreamerVideoEncoder.h"
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
-#include "WebKitClearKeyDecryptorGStreamer.h"
-#if ENABLE(THUNDER)
+#if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
+#include "CDMThunder.h"
 #include "WebKitThunderDecryptorGStreamer.h"
-#endif
 #endif
 
 #if ENABLE(VIDEO)
@@ -257,7 +258,7 @@ bool ensureGStreamerInitialized()
         s_UIProcessCommandLineOptions.reset();
         char** argv = g_new0(char*, parameters.size() + 2);
         int argc = parameters.size() + 1;
-        argv[0] = g_strdup(getCurrentExecutableName().data());
+        argv[0] = g_strdup(FileSystem::currentExecutableName().data());
         for (unsigned i = 0; i < parameters.size(); i++)
             argv[i + 1] = g_strdup(parameters[i].utf8().data());
 
@@ -309,12 +310,23 @@ void registerWebKitGStreamerElements()
         gst_init_static_plugins();
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
-        gst_element_register(nullptr, "webkitclearkey", GST_RANK_PRIMARY + 200, WEBKIT_TYPE_MEDIA_CK_DECRYPT);
+#if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
+        if (!CDMFactoryThunder::singleton().supportedKeySystems().isEmpty()) {
+            unsigned thunderRank = isThunderRanked() ? 300 : 100;
+            gst_element_register(nullptr, "webkitthunder", GST_RANK_PRIMARY + thunderRank, WEBKIT_TYPE_MEDIA_THUNDER_DECRYPT);
+        }
+#ifndef NDEBUG
+        else if (isThunderRanked()) {
+            GST_WARNING("Thunder is up-ranked as preferred decryptor but Thunder is not supporting any encryption system. Is "
+                "Thunder running? Are the plugins built?");
+        }
+#endif
+
 #endif
 
 #if ENABLE(MEDIA_STREAM)
         gst_element_register(nullptr, "mediastreamsrc", GST_RANK_PRIMARY, WEBKIT_TYPE_MEDIA_STREAM_SRC);
+        gst_element_register(nullptr, "webrtcvideoencoder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEBRTC_VIDEO_ENCODER);
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
@@ -370,51 +382,67 @@ uint64_t toGstUnsigned64Time(const MediaTime& mediaTime)
     return time.timeValue();
 }
 
-static void simpleBusMessageCallback(GstBus*, GstMessage* message, GstBin* pipeline)
-{
-    switch (GST_MESSAGE_TYPE(message)) {
-    case GST_MESSAGE_ERROR:
-        GST_ERROR_OBJECT(pipeline, "Got message: %" GST_PTR_FORMAT, message);
-        {
-            WTF::String dotFileName = makeString(GST_OBJECT_NAME(pipeline), "_error");
-            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(pipeline, GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
-        }
-        break;
-    case GST_MESSAGE_STATE_CHANGED:
-        if (GST_MESSAGE_SRC(message) == GST_OBJECT(pipeline)) {
-            GstState oldState, newState, pending;
-            gst_message_parse_state_changed(message, &oldState, &newState, &pending);
-
-            GST_INFO_OBJECT(pipeline, "State changed (old: %s, new: %s, pending: %s)",
-                gst_element_state_get_name(oldState),
-                gst_element_state_get_name(newState),
-                gst_element_state_get_name(pending));
-
-            WTF::String dotFileName = makeString(
-                GST_OBJECT_NAME(pipeline), '_',
-                gst_element_state_get_name(oldState), '_',
-                gst_element_state_get_name(newState));
-
-            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(pipeline), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
-        }
-        break;
-    default:
-        break;
-    }
-}
-
 void disconnectSimpleBusMessageCallback(GstElement* pipeline)
 {
     auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(pipeline)));
-    g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(simpleBusMessageCallback), pipeline);
+    g_signal_handlers_disconnect_by_data(bus.get(), pipeline);
     gst_bus_remove_signal_watch(bus.get());
 }
 
-void connectSimpleBusMessageCallback(GstElement* pipeline)
+struct CustomMessageHandlerHolder {
+    explicit CustomMessageHandlerHolder(Function<void(GstMessage*)>&& handler)
+    {
+        this->handler = WTFMove(handler);
+    }
+    Function<void(GstMessage*)> handler;
+};
+
+void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMessage*)>&& customHandler)
 {
     auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(pipeline)));
     gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
-    g_signal_connect(bus.get(), "message", G_CALLBACK(simpleBusMessageCallback), pipeline);
+
+    auto* holder = new CustomMessageHandlerHolder(WTFMove(customHandler));
+    GQuark quark = g_quark_from_static_string("pipeline-custom-message-handler");
+    g_object_set_qdata_full(G_OBJECT(pipeline), quark, holder, [](gpointer data) {
+        delete reinterpret_cast<CustomMessageHandlerHolder*>(data);
+    });
+
+    g_signal_connect(bus.get(), "message", G_CALLBACK(+[](GstBus*, GstMessage* message, GstElement* pipeline) {
+        switch (GST_MESSAGE_TYPE(message)) {
+        case GST_MESSAGE_ERROR: {
+            GST_ERROR_OBJECT(pipeline, "Got message: %" GST_PTR_FORMAT, message);
+            auto dotFileName = makeString(GST_OBJECT_NAME(pipeline), "_error");
+            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
+            break;
+        }
+        case GST_MESSAGE_STATE_CHANGED: {
+            if (GST_MESSAGE_SRC(message) != GST_OBJECT_CAST(pipeline))
+                break;
+
+            GstState oldState;
+            GstState newState;
+            GstState pending;
+            gst_message_parse_state_changed(message, &oldState, &newState, &pending);
+
+            GST_INFO_OBJECT(pipeline, "State changed (old: %s, new: %s, pending: %s)", gst_element_state_get_name(oldState),
+                gst_element_state_get_name(newState), gst_element_state_get_name(pending));
+
+            auto dotFileName = makeString(GST_OBJECT_NAME(pipeline), '_', gst_element_state_get_name(oldState), '_', gst_element_state_get_name(newState));
+            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
+            break;
+        }
+        default:
+            break;
+        }
+
+        GQuark quark = g_quark_from_static_string("pipeline-custom-message-handler");
+        auto* holder = reinterpret_cast<CustomMessageHandlerHolder*>(g_object_get_qdata(G_OBJECT(pipeline), quark));
+        if (!holder)
+            return;
+
+        holder->handler(message);
+    }), pipeline);
 }
 
 Vector<uint8_t> GstMappedBuffer::createVector() const
@@ -440,7 +468,26 @@ bool gstElementFactoryEquals(GstElement* element, const char* name)
     return equal(GST_OBJECT_NAME(gst_element_get_factory(element)), name);
 }
 
-GstElement* createPlatformAudioSink()
+GstElement* createAutoAudioSink(const String& role)
+{
+    auto* audioSink = makeGStreamerElement("autoaudiosink", nullptr);
+    g_signal_connect_data(audioSink, "child-added", G_CALLBACK(+[](GstChildProxy*, GObject* object, gchar*, gpointer userData) {
+        auto* role = reinterpret_cast<StringImpl*>(userData);
+        auto* objectClass = G_OBJECT_GET_CLASS(object);
+        if (role && g_object_class_find_property(objectClass, "stream-properties")) {
+            GUniquePtr<GstStructure> properties(gst_structure_new("stream-properties", "media.role", G_TYPE_STRING, role->utf8().data(), nullptr));
+            g_object_set(object, "stream-properties", properties.get(), nullptr);
+            GST_DEBUG("Set media.role as %s on %" GST_PTR_FORMAT, role->utf8().data(), GST_ELEMENT_CAST(object));
+        }
+        if (g_object_class_find_property(objectClass, "client-name"))
+            g_object_set(object, "client-name", getApplicationName(), nullptr);
+    }), role.isolatedCopy().releaseImpl().leakRef(), static_cast<GClosureNotify>([](gpointer userData, GClosure*) {
+        reinterpret_cast<StringImpl*>(userData)->deref();
+    }), static_cast<GConnectFlags>(0));
+    return audioSink;
+}
+
+GstElement* createPlatformAudioSink(const String& role)
 {
     GstElement* audioSink = webkitAudioSinkNew();
     if (!audioSink) {
@@ -450,7 +497,7 @@ GstElement* createPlatformAudioSink()
         //   runtime requirements are not fullfilled.
         // - the sink was created for the WPE port, audio mixing was not requested and no
         //   WPEBackend-FDO audio receiver has been registered at runtime.
-        audioSink = makeGStreamerElement("autoaudiosink", nullptr);
+        audioSink = createAutoAudioSink(role);
     }
 
     return audioSink;
@@ -505,7 +552,8 @@ GstBuffer* gstBufferNewWrappedFast(void* data, size_t length)
 GstElement* makeGStreamerElement(const char* factoryName, const char* name)
 {
     auto* element = gst_element_factory_make(factoryName, name);
-    RELEASE_ASSERT_WITH_MESSAGE(element, "GStreamer element %s not found. Please install it", factoryName);
+    if (!element)
+        WTFLogAlways("GStreamer element %s not found. Please install it", factoryName);
     return element;
 }
 
@@ -513,8 +561,80 @@ GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads)
 {
     GUniqueOutPtr<GError> error;
     auto* bin = gst_parse_bin_from_description(description, ghostUnlinkedPads, &error.outPtr());
-    RELEASE_ASSERT_WITH_MESSAGE(bin, "Unable to create bin for description: \"%s\". Error: %s", description, error->message);
+    if (!bin)
+        WTFLogAlways("Unable to create bin for description: \"%s\". Error: %s", description, error->message);
     return bin;
+}
+
+static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure*);
+
+static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* value)
+{
+    if (GST_VALUE_HOLDS_STRUCTURE(value))
+        return gstStructureToJSON(gst_value_get_structure(value));
+
+    if (GST_VALUE_HOLDS_ARRAY(value)) {
+        unsigned size = gst_value_array_get_size(value);
+        auto array = JSON::Array::create();
+        for (unsigned i = 0; i < size; i++) {
+            if (auto innerJson = gstStructureValueToJSON(gst_value_array_get_value(value, i)))
+                array->pushValue(innerJson->releaseNonNull());
+        }
+        return array->asArray()->asValue();
+    }
+    auto valueType = G_VALUE_TYPE(value);
+    if (valueType == G_TYPE_BOOLEAN)
+        return JSON::Value::create(g_value_get_boolean(value))->asValue();
+
+    if (valueType == G_TYPE_INT)
+        return JSON::Value::create(g_value_get_int(value))->asValue();
+
+    if (valueType == G_TYPE_UINT)
+        return JSON::Value::create(static_cast<int>(g_value_get_uint(value)))->asValue();
+
+    if (valueType == G_TYPE_DOUBLE)
+        return JSON::Value::create(g_value_get_double(value))->asValue();
+
+    if (valueType == G_TYPE_FLOAT)
+        return JSON::Value::create(static_cast<double>(g_value_get_float(value)))->asValue();
+
+    // FIXME: bigint support missing in JSON.
+    if (valueType == G_TYPE_UINT64)
+        return JSON::Value::create(static_cast<int>(g_value_get_uint64(value)))->asValue();
+
+    if (valueType == G_TYPE_STRING)
+        return JSON::Value::create(makeString(g_value_get_string(value)))->asValue();
+
+    GST_WARNING("Unhandled GValue type: %s", G_VALUE_TYPE_NAME(value));
+    return { };
+}
+
+static gboolean parseGstStructureValue(GQuark fieldId, const GValue* value, gpointer userData)
+{
+    if (auto jsonValue = gstStructureValueToJSON(value)) {
+        auto* object = reinterpret_cast<JSON::Object*>(userData);
+        object->setValue(g_quark_to_string(fieldId), jsonValue->releaseNonNull());
+    }
+    return TRUE;
+}
+
+static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure* structure)
+{
+    auto jsonObject = JSON::Object::create();
+    auto resultValue = jsonObject->asObject();
+    if (!resultValue)
+        return nullptr;
+
+    gst_structure_foreach(structure, parseGstStructureValue, resultValue.get());
+    return resultValue;
+}
+
+String gstStructureToJSONString(const GstStructure* structure)
+{
+    auto value = gstStructureToJSON(structure);
+    if (!value)
+        return { };
+    return value->toJSONString();
 }
 
 }

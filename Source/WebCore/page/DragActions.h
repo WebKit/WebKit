@@ -46,15 +46,18 @@ constexpr OptionSet<DragDestinationAction> anyDragDestinationAction()
 
 // See WebDragSourceAction.
 enum class DragSourceAction : uint8_t {
-    DHTML      = 1,
-    Image      = 2,
-    Link       = 4,
-    Selection  = 8,
+    DHTML      = 1 << 0,
+    Image      = 1 << 1,
+    Link       = 1 << 2,
+    Selection  = 1 << 3,
 #if ENABLE(ATTACHMENT_ELEMENT)
-    Attachment = 16,
+    Attachment = 1 << 4,
 #endif
 #if ENABLE(INPUT_TYPE_COLOR)
-    Color      = 32,
+    Color      = 1 << 5,
+#endif
+#if ENABLE(MODEL_ELEMENT)
+    Model      = 1 << 6,
 #endif
 };
 
@@ -70,6 +73,9 @@ constexpr OptionSet<DragSourceAction> anyDragSourceAction()
 #endif
 #if ENABLE(INPUT_TYPE_COLOR)
         , DragSourceAction::Color
+#endif
+#if ENABLE(MODEL_ELEMENT)
+        , DragSourceAction::Model
 #endif
     };
 }
@@ -143,6 +149,9 @@ template<> struct EnumTraits<WebCore::DragSourceAction> {
 #endif
 #if ENABLE(INPUT_TYPE_COLOR)
         , WebCore::DragSourceAction::Color
+#endif
+#if ENABLE(MODEL_ELEMENT)
+        , WebCore::DragSourceAction::Model
 #endif
     >;
 };

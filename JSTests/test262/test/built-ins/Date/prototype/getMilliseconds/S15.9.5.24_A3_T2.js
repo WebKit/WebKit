@@ -9,11 +9,15 @@ info: |
 es5id: 15.9.5.24_A3_T2
 description: Checking DontDelete attribute
 ---*/
+assert.sameValue(
+  delete Date.prototype.getMilliseconds.length,
+  true,
+  'The value of `delete Date.prototype.getMilliseconds.length` is expected to be true'
+);
 
-if (delete Date.prototype.getMilliseconds.length !== true) {
-  throw new Test262Error('#1: The Date.prototype.getMilliseconds.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.prototype.getMilliseconds.hasOwnProperty('length'),
+  'The value of !Date.prototype.getMilliseconds.hasOwnProperty(\'length\') is expected to be true'
+);
 
-if (Date.prototype.getMilliseconds.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.prototype.getMilliseconds.length property does not have the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

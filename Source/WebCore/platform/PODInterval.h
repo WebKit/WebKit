@@ -130,10 +130,10 @@ private:
     using Base = PODIntervalBase<T, UserData>;
 };
 
-template<class T, class U> class PODInterval<T, WTF::WeakPtr<U>> : public PODIntervalBase<T, WTF::WeakPtr<U>> {
+template<class T, class U> class PODInterval<T, WeakPtr<U>> : public PODIntervalBase<T, WeakPtr<U>> {
 public:
-    PODInterval(const T& low, const T& high, WTF::WeakPtr<U>&& data)
-        : PODIntervalBase<T, WTF::WeakPtr<U>>(low, high, WTFMove(data))
+    PODInterval(const T& low, const T& high, WeakPtr<U>&& data)
+        : PODIntervalBase<T, WeakPtr<U>>(low, high, WTFMove(data))
     {
     }
 
@@ -147,7 +147,7 @@ public:
     }
 
 private:
-    using Base = PODIntervalBase<T, WTF::WeakPtr<U>>;
+    using Base = PODIntervalBase<T, WeakPtr<U>>;
 };
 
 #ifndef NDEBUG

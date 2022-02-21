@@ -33,10 +33,10 @@
 #include "GtkUtilities.h"
 #include "GtkVersioning.h"
 #include "NotImplemented.h"
-#include "TextEncoding.h"
 #include "WindowsKeyboardCodes.h"
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/HexNumber.h>
 #include <wtf/glib/GUniquePtr.h>
 

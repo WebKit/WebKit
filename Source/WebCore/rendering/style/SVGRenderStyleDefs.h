@@ -276,25 +276,6 @@ private:
     StyleShadowSVGData(const StyleShadowSVGData&);
 };
 
-// Non-inherited resources
-class StyleResourceData : public RefCounted<StyleResourceData> {
-public:
-    static Ref<StyleResourceData> create() { return adoptRef(*new StyleResourceData); }
-    Ref<StyleResourceData> copy() const;
-
-    bool operator==(const StyleResourceData&) const;
-    bool operator!=(const StyleResourceData& other) const
-    {
-        return !(*this == other);
-    }
-
-    String masker;
-
-private:
-    StyleResourceData();
-    StyleResourceData(const StyleResourceData&);
-};
-
 // Inherited resources
 class StyleInheritedResourceData : public RefCounted<StyleInheritedResourceData> {
 public:
@@ -361,7 +342,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, const StyleStopData&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleTextData&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleMiscData&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleShadowSVGData&);
-WTF::TextStream& operator<<(WTF::TextStream&, const StyleResourceData&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleInheritedResourceData&);
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleLayoutData&);
 

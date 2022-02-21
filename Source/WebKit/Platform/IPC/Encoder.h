@@ -46,6 +46,11 @@ public:
     Encoder(MessageName, uint64_t destinationID);
     ~Encoder();
 
+    Encoder(const Encoder&) = delete;
+    Encoder(Encoder&&) = delete;
+    Encoder& operator=(const Encoder&) = delete;
+    Encoder& operator=(Encoder&&) = delete;
+
     ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
     MessageName messageName() const { return m_messageName; }
     uint64_t destinationID() const { return m_destinationID; }
@@ -76,26 +81,9 @@ public:
     Vector<Attachment> releaseAttachments();
     void reserve(size_t);
 
-    static const bool isIPCEncoder = true;
-
-    template<typename T>
-    static RefPtr<WebCore::SharedBuffer> encodeSingleObject(const T& object)
-    {
-        Encoder encoder(ConstructWithoutHeader);
-        encoder << object;
-
-        if (encoder.hasAttachments()) {
-            ASSERT_NOT_REACHED();
-            return nullptr;
-        }
-
-        return WebCore::SharedBuffer::create(encoder.buffer(), encoder.bufferSize());
-    }
+    static constexpr bool isIPCEncoder = true;
 
 private:
-    enum ConstructWithoutHeaderTag { ConstructWithoutHeader };
-    Encoder(ConstructWithoutHeaderTag);
-
     uint8_t* grow(size_t alignment, size_t);
 
     bool hasAttachments() const;
@@ -109,11 +97,11 @@ private:
 
     uint8_t m_inlineBuffer[512];
 
-    uint8_t* m_buffer;
-    uint8_t* m_bufferPointer;
+    uint8_t* m_buffer { m_inlineBuffer };
+    uint8_t* m_bufferPointer { m_inlineBuffer };
     
-    size_t m_bufferSize;
-    size_t m_bufferCapacity;
+    size_t m_bufferSize { 0 };
+    size_t m_bufferCapacity { sizeof(m_inlineBuffer) };
 
     Vector<Attachment> m_attachments;
 };

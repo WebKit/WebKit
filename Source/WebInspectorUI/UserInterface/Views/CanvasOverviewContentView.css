@@ -76,13 +76,17 @@
     color: var(--text-color-gray-dark);
 }
 
-.content-view.canvas-overview > .content-view.canvas > header > .titles > .subtitle,
+.content-view.canvas-overview > .content-view.canvas > header > .titles > :matches(.subtitle, .color-space),
 .content-view.canvas-overview > .content-view.canvas > footer .memory-cost {
     color: var(--text-color-gray-medium);
 }
 
 .content-view.canvas-overview > .content-view.canvas > header .subtitle::before {
     content: "\00A0\2014\00A0"; /* &nbsp;&mdash;&nbsp; */;
+}
+
+.content-view.canvas-overview > .content-view.canvas > header .color-space::before {
+    content: "\00A0"; /* &nbsp; */;
 }
 
 .content-view.canvas-overview > .content-view.canvas.recording-active > header > .titles > .title {

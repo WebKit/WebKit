@@ -51,11 +51,13 @@ public:
 
     bool makeContextCurrent();
     EGLContext platformContext() const;
-
+    EGLDisplay platformDisplay() const;
+    EGLConfig platformConfig() const;
 private:
-    ANGLEContext(EGLDisplay, EGLContext, EGLSurface);
+    ANGLEContext(EGLDisplay, EGLConfig, EGLContext, EGLSurface);
 
     EGLDisplay m_display { nullptr };
+    EGLConfig m_config { nullptr };
     EGLContext m_context { nullptr };
     EGLSurface m_surface { nullptr };
 };

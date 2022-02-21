@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Element.h"
+#include "StyleScopeOrdinal.h"
 #if ENABLE(PICTURE_IN_PICTURE_API)
 #include "HTMLVideoElement.h"
 #endif
@@ -60,6 +61,7 @@ public:
 
     virtual ~ShadowRoot();
 
+    using TreeScope::getElementById;
     using TreeScope::rootNode;
 
     WEBCORE_EXPORT Style::Scope& styleScope();

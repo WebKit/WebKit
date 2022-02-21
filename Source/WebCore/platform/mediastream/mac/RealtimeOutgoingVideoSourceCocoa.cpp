@@ -28,6 +28,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "CVUtilities.h"
 #include "ImageRotationSessionVT.h"
 #include "Logging.h"
 #include "RealtimeIncomingVideoSourceCocoa.h"
@@ -61,7 +62,7 @@ RealtimeOutgoingVideoSourceCocoa::RealtimeOutgoingVideoSourceCocoa(Ref<MediaStre
 {
 }
 
-void RealtimeOutgoingVideoSourceCocoa::videoSampleAvailable(MediaSample& sample)
+void RealtimeOutgoingVideoSourceCocoa::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata)
 {
 #if !RELEASE_LOG_DISABLED
     if (!(++m_numberOfFrames % 60))
@@ -83,8 +84,8 @@ void RealtimeOutgoingVideoSourceCocoa::videoSampleAvailable(MediaSample& sample)
         break;
     }
 
-    ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
-    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer));
+    // FIXME: Optimize the case of PlatformSample::RemoteVideoFrameProxyType.
+    auto pixelBuffer = sample.pixelBuffer();
     auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer);
 
     RetainPtr<CVPixelBufferRef> convertedBuffer = pixelBuffer;

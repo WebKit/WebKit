@@ -49,7 +49,7 @@ struct ElementUpdate {
 
 enum class DescendantsToResolve { None, ChildrenWithExplicitInherit, Children, All };
 
-using PseudoIdToElementUpdateMap = HashMap<PseudoId, ElementUpdate, WTF::IntHash<PseudoId>, WTF::StrongEnumHashTraits<PseudoId>>;
+using PseudoIdToElementUpdateMap = HashMap<PseudoId, ElementUpdate, IntHash<PseudoId>, WTF::StrongEnumHashTraits<PseudoId>>;
 
 struct ElementUpdates {
     ElementUpdate update;
@@ -80,6 +80,7 @@ public:
 
     const Document& document() const { return m_document; }
 
+    bool isEmpty() const { return !size(); }
     unsigned size() const { return m_elements.size() + m_texts.size(); }
 
     void addElement(Element&, Element* parent, ElementUpdates&&);

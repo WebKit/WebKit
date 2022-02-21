@@ -45,8 +45,6 @@ private:
 
     // rtc::VideoSinkInterface
     void OnFrame(const webrtc::VideoFrame&) final;
-    void setCapsFromSettings();
-    GRefPtr<GstCaps> m_caps;
 };
 
 } // namespace WebCore

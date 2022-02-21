@@ -13,20 +13,13 @@ namespace sh
 {
 
 constexpr const char kUniformsVar[]               = "angleUniforms";
-constexpr const char kViewport[]                  = "viewport";
-constexpr const char kHalfRenderArea[]            = "halfRenderArea";
-constexpr const char kFlipXY[]                    = "flipXY";
-constexpr const char kNegFlipXY[]                 = "negFlipXY";
-constexpr const char kClipDistancesEnabled[]      = "clipDistancesEnabled";
-constexpr const char kXfbActiveUnpaused[]         = "xfbActiveUnpaused";
-constexpr const char kXfbVerticesPerDraw[]        = "xfbVerticesPerDraw";
-constexpr const char kXfbBufferOffsets[]          = "xfbBufferOffsets";
-constexpr const char kAcbBufferOffsets[]          = "acbBufferOffsets";
-constexpr const char kDepthRange[]                = "depthRange";
 constexpr const char kUnassignedAttributeString[] = " __unassigned_attribute__";
 
+class DriverUniform;
+class DriverUniformMetal;
+class SpecConst;
 class TOutputMSL;
-
+class TranslatorMetalReflection;
 typedef std::unordered_map<size_t, std::string> originalNamesMap;
 typedef std::unordered_map<std::string, size_t> samplerBindingMap;
 typedef std::unordered_map<std::string, size_t> textureBindingMap;
@@ -39,11 +32,15 @@ struct UBOBindingInfo
 };
 typedef std::unordered_map<std::string, UBOBindingInfo> uniformBufferBindingMap;
 
+namespace mtl
+{
+TranslatorMetalReflection *getTranslatorMetalReflection(const TCompiler *compiler);
+}
+
 class TranslatorMetalReflection
 {
   public:
-    TranslatorMetalReflection():
-        hasUBOs(false), hasFlatInput(false)  {}
+    TranslatorMetalReflection() : hasUBOs(false), hasFlatInput(false) {}
     ~TranslatorMetalReflection() {}
 
     void addOriginalName(const size_t id, const std::string &name)
@@ -69,7 +66,10 @@ class TranslatorMetalReflection
     std::string getOriginalName(const size_t id) { return originalNames.at(id); }
     samplerBindingMap getSamplerBindings() const { return samplerBindings; }
     textureBindingMap getTextureBindings() const { return textureBindings; }
-    userUniformBufferBindingMap getUserUniformBufferBindings() const { return userUniformBufferBindings; }
+    userUniformBufferBindingMap getUserUniformBufferBindings() const
+    {
+        return userUniformBufferBindings;
+    }
     uniformBufferBindingMap getUniformBufferBindings() const { return uniformBufferBindings; }
     size_t getSamplerBinding(const std::string &name) const
     {
@@ -78,7 +78,8 @@ class TranslatorMetalReflection
         {
             return it->second;
         }
-        //If we can't find a matching sampler, assert out on Debug, and return an invalid value on release.
+        // If we can't find a matching sampler, assert out on Debug, and return an invalid value on
+        // release.
         ASSERT(0);
         return std::numeric_limits<size_t>::max();
     }
@@ -89,7 +90,8 @@ class TranslatorMetalReflection
         {
             return it->second;
         }
-        //If we can't find a matching texture, assert out on Debug, and return an invalid value on release.
+        // If we can't find a matching texture, assert out on Debug, and return an invalid value on
+        // release.
         ASSERT(0);
         return std::numeric_limits<size_t>::max();
     }
@@ -100,7 +102,8 @@ class TranslatorMetalReflection
         {
             return it->second;
         }
-        //If we can't find a matching Uniform binding, assert out on Debug, and return an invalid value.
+        // If we can't find a matching Uniform binding, assert out on Debug, and return an invalid
+        // value.
         ASSERT(0);
         return std::numeric_limits<size_t>::max();
     }
@@ -111,16 +114,17 @@ class TranslatorMetalReflection
         {
             return it->second;
         }
-        //If we can't find a matching UBO binding by name, assert out on Debug, and return an invalid value.
+        // If we can't find a matching UBO binding by name, assert out on Debug, and return an
+        // invalid value.
         ASSERT(0);
         return {.bindIndex = std::numeric_limits<size_t>::max(),
                 .arraySize = std::numeric_limits<size_t>::max()};
     }
     void reset()
     {
-        hasUBOs = false;
-        hasFlatInput = false;
-        hasAtan = false;
+        hasUBOs       = false;
+        hasFlatInput  = false;
+        hasAtan       = false;
         hasInvariance = false;
         originalNames.clear();
         samplerBindings.clear();
@@ -129,9 +133,9 @@ class TranslatorMetalReflection
         uniformBufferBindings.clear();
     }
 
-    bool hasUBOs = false;
-    bool hasFlatInput = false;
-    bool hasAtan = false;
+    bool hasUBOs       = false;
+    bool hasFlatInput  = false;
+    bool hasAtan       = false;
     bool hasInvariance = false;
 
   private:
@@ -151,10 +155,6 @@ class TranslatorMetalDirect : public TCompiler
     TranslatorMetalDirect *getAsTranslatorMetalDirect() override { return this; }
 #endif
 
-    static const char *GetCoverageMaskEnabledConstName();
-    static const char *GetRasterizationDiscardEnabledConstName();
-
-    void enableEmulatedInstanceID(bool e) { mEmulatedInstanceID = e; }
     TranslatorMetalReflection *getTranslatorMetalReflection() { return &translatorMetalReflection; }
 
   protected:
@@ -165,22 +165,26 @@ class TranslatorMetalDirect : public TCompiler
     // Need to collect variables so that RemoveInactiveInterfaceVariables works.
     bool shouldCollectVariables(ShCompileOptions compileOptions) override { return true; }
 
-    ANGLE_NO_DISCARD bool translateImpl(TIntermBlock &root, ShCompileOptions compileOptions);
+    ANGLE_NO_DISCARD bool translateImpl(TInfoSinkBase &sink,
+                                        TIntermBlock *root,
+                                        ShCompileOptions compileOptions,
+                                        PerformanceDiagnostics *perfDiagnostics,
+                                        SpecConst *specConst,
+                                        DriverUniformMetal *driverUniforms);
 
     ANGLE_NO_DISCARD bool shouldFlattenPragmaStdglInvariantAll() override;
 
-    ANGLE_NO_DISCARD bool transformDepthBeforeCorrection(TIntermBlock &root,
-                                                         const TVariable &driverUniforms);
+    ANGLE_NO_DISCARD bool transformDepthBeforeCorrection(TIntermBlock *root,
+                                                         const DriverUniformMetal *driverUniforms);
+
+    ANGLE_NO_DISCARD bool appendVertexShaderDepthCorrectionToMain(TIntermBlock *root);
+
     ANGLE_NO_DISCARD bool insertSampleMaskWritingLogic(TIntermBlock &root,
-                                                       const TVariable &driverUniforms);
+                                                       DriverUniformMetal &driverUniforms);
     ANGLE_NO_DISCARD bool insertRasterizationDiscardLogic(TIntermBlock &root);
 
-    void createAdditionalGraphicsDriverUniformFields(std::vector<TField *> &fieldsOut);
-
     ANGLE_NO_DISCARD TIntermSwizzle *getDriverUniformNegFlipYRef(
-        const TVariable &driverUniforms) const;
-
-    bool mEmulatedInstanceID = false;
+        DriverUniform &driverUniforms) const;
 
     TranslatorMetalReflection translatorMetalReflection = {};
 };

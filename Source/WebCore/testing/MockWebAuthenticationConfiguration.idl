@@ -102,6 +102,7 @@
     boolean canDowngrade = false;
     boolean expectCancel = false;
     boolean supportClientPin = false;
+    boolean supportInternalUV = false;
 };
 
 [

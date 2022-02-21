@@ -53,7 +53,13 @@ public:
     PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder&& other);
 
 #if ENABLE(FTL_JIT)
-    PCToCodeOriginMapBuilder(VM&, B3::PCToOriginMap&&);
+    enum JSTag { JSCodeOriginMap };
+    PCToCodeOriginMapBuilder(JSTag, VM&, B3::PCToOriginMap);
+#endif
+
+#if ENABLE(WEBASSEMBLY_B3JIT)
+    enum WasmTag { WasmCodeOriginMap };
+    PCToCodeOriginMapBuilder(WasmTag, B3::PCToOriginMap);
 #endif
 
     void appendItem(MacroAssembler::Label, const CodeOrigin&);
@@ -69,7 +75,6 @@ private:
         CodeOrigin codeOrigin;
     };
 
-    VM& m_vm;
     Vector<CodeRange> m_codeRanges;
     bool m_shouldBuildMapping;
 };

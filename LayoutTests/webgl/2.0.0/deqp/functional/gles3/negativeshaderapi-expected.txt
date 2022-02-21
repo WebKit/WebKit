@@ -1,39 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/negativeshaderapi.html
-
-[ 1: PASS ] negative_shader_api.create_shader: Passed
-[ 2: PASS ] negative_shader_api.attach_shader: Passed
-[ 3: PASS ] negative_shader_api.detach_shader: Passed
-[ 4: PASS ] negative_shader_api.link_program: Passed
-[ 5: PASS ] negative_shader_api.use_program: Passed
-[ 6: PASS ] negative_shader_api.bind_sampler: Passed
-[ 7: PASS ] negative_shader_api.get_sampler_parameteriv: Passed
-[ 8: PASS ] negative_shader_api.get_sampler_parameterfv: Passed
-[ 9: PASS ] negative_shader_api.sampler_parameteri: Passed
-[ 10: PASS ] negative_shader_api.sampler_parameteriv: Passed
-[ 11: PASS ] negative_shader_api.sampler_parameterf: Passed
-[ 12: PASS ] negative_shader_api.get_attrib_location: Passed
-[ 13: PASS ] negative_shader_api.get_uniform_location: Passed
-[ 14: PASS ] negative_shader_api.bind_attrib_location: Passed
-[ 15: PASS ] negative_shader_api.uniform_block_binding: Passed
-[ 16: PASS ] negative_shader_api.uniformf_incompatible_type: Passed
-[ 17: PASS ] negative_shader_api.uniformfv_incompatible_type: Passed
-[ 18: PASS ] negative_shader_api.uniformfv_invalid_count: Passed
-[ 19: PASS ] negative_shader_api.uniformi_incompatible_type: Passed
-[ 20: PASS ] negative_shader_api.uniformiv_incompatible_type: Passed
-[ 21: PASS ] negative_shader_api.uniformiv_invalid_count: Passed
-[ 22: PASS ] negative_shader_api.uniformui_incompatible_type: Passed
-[ 23: PASS ] negative_shader_api.uniformuiv_incompatible_type: Passed
-[ 24: PASS ] negative_shader_api.uniformuiv_invalid_count: Passed
-[ 25: PASS ] negative_shader_api.uniform_matrixfv_incompatible_type: Passed
-[ 26: PASS ] negative_shader_api.uniform_matrixfv_invalid_count: Passed
-[ 27: PASS ] negative_shader_api.bind_transform_feedback: Passed
-[ 28: PASS ] negative_shader_api.begin_transform_feedback: Passed
-[ 29: PASS ] negative_shader_api.pause_transform_feedback: Passed
-[ 30: PASS ] negative_shader_api.resume_transform_feedback: Passed
-[ 31: PASS ] negative_shader_api.end_transform_feedback: Passed
-[ 32: FAIL ] negative_shader_api.get_transform_feedback_varying: Expected either gl.INVALID_OPERATION or gl.INVALID_VALUE, but got gl.NO_ERROR.
-[ 33: PASS ] negative_shader_api.transform_feedback_varyings: Passed
-[ 34: PASS ] negative_shader_api.transform_feedback_varyings: successfullyParsed is true
-[ FAIL ] 1 failures reported
+[ PASS ] All tests passed

@@ -57,8 +57,8 @@
 # x25 => csr8 (numberTag)
 # x26 => csr9 (notCellMask)
 # x27 => csr10
-# x28 => not used
-# x29 => not used
+# x28 => scratch register
+# x29 => scratch register
 # x30 => scratch register
 # x31 => scratch register
 #
@@ -92,16 +92,39 @@
 # f25 => csfr9
 # f26 => csfr10
 # f27 => csfr11
-# f28 => not used
-# f29 => not used
-# f30 => not used
-# f31 => not used
+# f28 => scratch register
+# f29 => scratch register
+# f30 => scratch register
+# f31 => scratch register
+
+RISCV64_EXTRA_GPRS = [SpecialRegister.new("x28"), SpecialRegister.new("x29"), SpecialRegister.new("x30"), SpecialRegister.new("x31")]
+RISCV64_EXTRA_FPRS = [SpecialRegister.new("f28"), SpecialRegister.new("f29"), SpecialRegister.new("f30"), SpecialRegister.new("f31")]
 
 
 def riscv64OperandTypes(operands)
     return operands.map {
         |op|
-        op.class
+        if op.is_a? SpecialRegister
+            case op.name
+            when /^x/
+                RegisterID
+            when /^f/
+                FPRegisterID
+            else
+                raise "Invalid SpecialRegister operand #{op.name}"
+            end
+        elsif op.is_a? Tmp
+            case op.kind
+            when :gpr
+                RegisterID
+            when :fpr
+                FPRegisterID
+            else
+                raise "Invalid Tmp operand #{op.kind}"
+            end
+        else
+            op.class
+        end
     }
 end
 
@@ -109,1154 +132,22 @@ def riscv64RaiseMismatchedOperands(operands)
     raise "Unable to match operands #{riscv64OperandTypes(operands)}"
 end
 
-def riscv64RaiseUnsupported
-    raise "Not supported for RISCV64"
+def riscv64ValidateOperands(operands, *expected)
+    riscv64RaiseMismatchedOperands(operands) unless expected.include? riscv64OperandTypes(operands)
 end
 
-def riscv64LoadInstruction(size)
-    case size
-    when :b
-        "lb"
-    when :bu
-        "lbu"
-    when :h
-        "lh"
-    when :hu
-        "lhu"
-    when :w
-        "lw"
-    when :wu
-        "lwu"
-    when :d
-        "ld"
+def riscv64ValidateImmediate(validation, value)
+    case validation
+    when :i_immediate
+        (-0x800..0x7ff).include? value
+    when :any_immediate
+        true
+    when :rv32_shift_immediate
+        (0..31).include? value
+    when :rv64_shift_immediate
+        (0..63).include? value
     else
-        raise "Unsupported size #{size}"
-    end
-end
-
-def riscv64ZeroExtendedLoadInstruction(size)
-    case size
-    when :b
-        riscv64LoadInstruction(:bu)
-    when :h
-        riscv64LoadInstruction(:hu)
-    when :w
-        riscv64LoadInstruction(:wu)
-    when :d
-        riscv64LoadInstruction(:d)
-    else
-        raise "Unsupported size #{size}"
-    end
-end
-
-def riscv64StoreInstruction(size)
-    case size
-    when :b
-        "sb"
-    when :h
-        "sh"
-    when :w
-        "sw"
-    when :d
-        "sd"
-    else
-        raise "Unsupported size #{size}"
-    end
-end
-
-def riscv64EmitRegisterMask(target, size)
-    case size
-    when :w
-        $asm.puts "li x31, 0xffffffff"
-        $asm.puts "and #{target.riscv64Operand}, #{target.riscv64Operand}, x31"
-    when :d
-    else
-        raise "Unsupported size"
-    end
-end
-
-def riscv64ConditionalBranchInstruction(condition)
-    case condition
-    when :eq
-        "beq"
-    when :neq
-        "bne"
-    when :a
-        "bgtu"
-    when :aeq
-        "bgeu"
-    when :b
-        "bltu"
-    when :beq
-        "bleu"
-    when :gt
-        "bgt"
-    when :gteq
-        "bge"
-    when :lt
-        "blt"
-    when :lteq
-        "ble"
-    else
-        raise "Unsupported condition #{condition}"
-    end
-end
-
-def riscv64EmitLoad(operands, type, mask)
-    instruction = riscv64LoadInstruction(type)
-
-    case riscv64OperandTypes(operands)
-    when [Address, RegisterID]
-        if operands[0].riscv64RequiresLoad
-            operands[0].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{instruction} #{operands[1].riscv64Operand}, 0(x31)"
-        else
-            $asm.puts "#{instruction} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-        end
-    when [BaseIndex, RegisterID]
-        operands[0].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
-        $asm.puts "#{instruction} #{operands[1].riscv64Operand}, 0(x31)"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-
-    case mask
-    when :w
-        riscv64EmitRegisterMask(operands[1], :w)
-    when :none
-    else
-        raise "Unsupported mask type"
-    end
-end
-
-def riscv64EmitStore(operands, type)
-    instruction = riscv64StoreInstruction(type)
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, Address]
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{instruction} #{operands[0].riscv64Operand}, 0(x31)"
-        else
-            $asm.puts "#{instruction} #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        end
-    when [RegisterID, BaseIndex]
-        operands[1].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
-        $asm.puts "#{instruction} #{operands[0].riscv64Operand}, 0(x31)"
-    when [Immediate, Address]
-        $asm.puts "li x30, #{operands[0].riscv64Operand}"
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{instruction} x30, 0(x31)"
-        else
-            $asm.puts "#{instruction} x30, #{operands[1].riscv64Operand}"
-        end
-    when [Immediate, BaseIndex]
-        operands[1].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
-        $asm.puts "li x30, #{operands[0].riscv64Operand}"
-        $asm.puts "#{instruction} x30, 0(x31)"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitAdditionOperation(operands, size, operation)
-    raise "Unsupported size" unless [:w, :d].include? size
-
-    def additionInstruction(size, operation)
-        case operation
-        when :add
-            size == :w ? "addw" : "add"
-        when :sub
-            size == :w ? "subw" : "sub"
-        else
-            raise "Unsupported arithmetic operation"
-        end
-    end
-
-    instruction = additionInstruction(size, operation)
-    loadInstruction = riscv64LoadInstruction(size)
-    storeInstruction = riscv64StoreInstruction(size)
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID]
-        operands = [operands[1], operands[0], operands[1]]
-    when [Immediate, RegisterID]
-        operands = [operands[1], operands[0], operands[1]]
-    when [Address, RegisterID]
-        operands = [operands[1], operands[0], operands[1]]
-    end
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID, RegisterID]
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        riscv64EmitRegisterMask(operands[2], size)
-    when [RegisterID, Immediate, RegisterID]
-        operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, x31"
-        riscv64EmitRegisterMask(operands[2], size)
-    when [Immediate, RegisterID, RegisterID]
-        operands[0].riscv64Load(RISCV64ScratchRegister.x31)
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, x31, #{operands[1].riscv64Operand}"
-        riscv64EmitRegisterMask(operands[2], size)
-    when [RegisterID, Address, RegisterID]
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{loadInstruction} x31, 0(x31)"
-        else
-            $asm.puts "#{loadInstruction} x31, #{operands[1].riscv64Operand}"
-        end
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, x31"
-        riscv64EmitRegisterMask(operands[2], size)
-    when [Immediate, Address]
-        $asm.puts "li x30, #{operands[0].riscv64Operand}"
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{loadInstruction} x31, 0(x31)"
-        else
-            $asm.puts "#{loadInstruction} x31, #{operands[1].riscv64Operand}"
-        end
-        $asm.puts "#{instruction} x30, x30, x31"
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{storeInstruction} x30, 0(x31)"
-        else
-            $asm.puts "#{storeInstruction} x30, #{operands[1].riscv64Operand}"
-        end
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitMulDivArithmetic(operands, size, operation)
-    raise "Unsupported size" unless [:w, :d].include? size
-
-    def arithmeticInstruction(size, operation)
-        case operation
-        when :mul
-            size == :w ? "mulw" : "mul"
-        when :div
-            size == :w ? "divuw" : "divu"
-        else
-            raise "Unsupported arithmetic operation"
-        end
-    end
-
-    instruction = arithmeticInstruction(size, operation)
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID]
-        operands = [operands[0], operands[1], operands[1]]
-    when [Immediate, RegisterID]
-        operands = [operands[1], operands[0], operands[1]]
-    end
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID, RegisterID]
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-    when [RegisterID, Immediate, RegisterID]
-        $asm.puts "li x31, #{operands[1].riscv64Operand}"
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, x31"
-    when [Immediate, RegisterID, RegisterID]
-        $asm.puts "li x31, #{operands[0].riscv64Operand}"
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, x31, #{operands[1].riscv64Operand}"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitConditionalBranch(operands, size, condition)
-    instruction = riscv64ConditionalBranchInstruction(condition)
-
-    def signExtendForSize(register, target, size)
-        case size
-        when :b
-            $asm.puts "slli #{target}, #{register.riscv64Operand}, 24"
-            $asm.puts "sext.w #{target}, #{target}"
-            $asm.puts "srai #{target}, #{target}, 24"
-        when :w
-            $asm.puts "sext.w #{target}, #{register.riscv64Operand}"
-        when :d
-            $asm.puts "mv #{target}, #{register.riscv64Operand}"
-        end
-    end
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID, LocalLabelReference]
-        signExtendForSize(operands[0], 'x30', size)
-        signExtendForSize(operands[1], 'x31', size)
-        $asm.puts "#{instruction} x30, x31, #{operands[2].asmLabel}"
-    when [RegisterID, Immediate, LocalLabelReference]
-        signExtendForSize(operands[0], 'x30', size)
-        $asm.puts "li x31, #{operands[1].riscv64Operand}"
-        $asm.puts "#{instruction} x30, x31, #{operands[2].asmLabel}"
-    when [RegisterID, Address, LocalLabelReference]
-        signExtendForSize(operands[0], 'x30', size)
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{riscv64LoadInstruction(size)} x31, 0(x31)"
-        else
-            $asm.puts "#{riscv64LoadInstruction(size)} x31, #{operands[1].riscv64Operand}"
-        end
-        $asm.puts "#{instruction} x30, x31, #{operands[2].asmLabel}"
-    when [RegisterID, BaseIndex, LocalLabelReference]
-        operands[1].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
-        $asm.puts "#{riscv64LoadInstruction(size)} x31, 0(x31)"
-        signExtendForSize(operands[0], 'x30', size)
-        $asm.puts "#{instruction} x30, x31, #{operands[2].asmLabel}"
-    when [Address, RegisterID, LocalLabelReference]
-        if operands[0].riscv64RequiresLoad
-            operands[0].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{riscv64LoadInstruction(size)} x30, 0(x31)"
-        else
-            $asm.puts "#{riscv64LoadInstruction(size)} x30, #{operands[0].riscv64Operand}"
-        end
-        signExtendForSize(operands[1], 'x31', size)
-        $asm.puts "#{instruction} x30, x31, #{operands[2].asmLabel}"
-    when [Address, Immediate, LocalLabelReference]
-        if operands[0].riscv64RequiresLoad
-            operands[0].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{riscv64LoadInstruction(size)} x30, 0(x31)"
-        else
-            $asm.puts "#{riscv64LoadInstruction(size)} x30, #{operands[0].riscv64Operand}"
-        end
-        $asm.puts "li x31, #{operands[1].riscv64Operand}"
-        $asm.puts "#{instruction} x30, x31, #{operands[2].asmLabel}"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitConditionalBranchForTest(operands, size, test)
-    def branchInstruction(test)
-        case test
-        when :z
-            "beqz"
-        when :nz
-            "bnez"
-        when :s
-            "bltz"
-        else
-        end
-    end
-
-    def signExtendForSize(target, size)
-        case size
-        when :b
-            $asm.puts "slli #{target}, #{target}, 24"
-            $asm.puts "sext.w #{target}, #{target}"
-            $asm.puts "srai #{target}, #{target}, 24"
-        when :h
-            $asm.puts "slli #{target}, #{target}, 16"
-            $asm.puts "sext.w #{target}, #{target}"
-            $asm.puts "srai #{target}, #{target}, 16"
-        when :w
-            $asm.puts "sext.w #{target}, #{target}"
-        when :d
-            return
-        end
-    end
-
-    bInstruction = branchInstruction(test)
-    loadInstruction = riscv64LoadInstruction(size)
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, LocalLabelReference]
-        case test
-        when :s
-            $asm.puts "mv x31, #{operands[0].riscv64Operand}"
-            signExtendForSize('x31', size)
-            $asm.puts "#{bInstruction} x31, #{operands[1].asmLabel}"
-        else
-            $asm.puts "#{bInstruction} #{operands[0].riscv64Operand}, #{operands[1].asmLabel}"
-        end
-    when [RegisterID, RegisterID, LocalLabelReference]
-        $asm.puts "and x31, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        signExtendForSize('x31', size)
-        $asm.puts "#{bInstruction} x31, #{operands[2].asmLabel}"
-    when [RegisterID, Immediate, LocalLabelReference]
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "and x31, #{operands[0].riscv64Operand}, x31"
-        else
-            $asm.puts "andi x31, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        end
-        signExtendForSize('x31', size)
-        $asm.puts "#{bInstruction} x31, #{operands[2].asmLabel}"
-    when [Address, LocalLabelReference]
-        if operands[0].riscv64RequiresLoad
-            operands[0].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{loadInstruction} x31, 0(x31)"
-        else
-            $asm.puts "#{loadInstruction} x31, #{operands[0].riscv64Operand}"
-        end
-        $asm.puts "#{bInstruction} x31, #{operands[1].asmLabel}"
-    when [Address, Immediate, LocalLabelReference]
-        if operands[0].riscv64RequiresLoad
-            operands[0].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{loadInstruction} x30, 0(x31)"
-        else
-            $asm.puts "#{loadInstruction} x30, #{operands[0].riscv64Operand}"
-        end
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "and x31, x30, x31"
-        else
-            $asm.puts "andi x31, x30, #{operands[1].riscv64Operand}"
-        end
-        signExtendForSize('x31', size)
-        $asm.puts "#{bInstruction} x31, #{operands[2].asmLabel}"
-    when [BaseIndex, LocalLabelReference]
-        operands[0].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
-        $asm.puts "#{loadInstruction} x31, 0(x31)"
-        $asm.puts "#{bInstruction} x31, #{operands[1].asmLabel}"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitConditionalBranchForAdditionOperation(operands, size, operation, test)
-    def additionInstruction(size, operation)
-        case operation
-        when :add
-            size == :w ? "addw" : "add"
-        when :sub
-            size == :w ? "subw" : "sub"
-        else
-            raise "Unsupported arithmetic operation"
-        end
-    end
-
-    def emitBranchForTest(test, target, label)
-        case test
-        when :z
-            $asm.puts "beqz #{target.riscv64Operand}, #{label.asmLabel}"
-        when :nz
-            $asm.puts "bnez #{target.riscv64Operand}, #{label.asmLabel}"
-        when :s
-            $asm.puts "bltz #{target.riscv64Operand}, #{label.asmLabel}"
-        else
-            raise "Unsupported test"
-        end
-    end
-
-    instruction = additionInstruction(size, operation)
-    loadInstruction = riscv64LoadInstruction(size)
-    storeInstruction = riscv64StoreInstruction(size)
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID, LocalLabelReference]
-        operands = [operands[1], operands[0], operands[1], operands[2]]
-    when [Immediate, RegisterID, LocalLabelReference]
-        operands = [operands[1], operands[0], operands[1], operands[2]]
-    end
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID, RegisterID, LocalLabelReference]
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        $asm.puts "mv x30, #{operands[2].riscv64Operand}"
-        riscv64EmitRegisterMask(operands[2], size)
-        emitBranchForTest(test, RISCV64ScratchRegister.x30, operands[3])
-    when [RegisterID, Immediate, RegisterID, LocalLabelReference]
-        $asm.puts "li x31, #{operands[1].riscv64Operand}"
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, x31"
-        $asm.puts "mv x30, #{operands[2].riscv64Operand}"
-        riscv64EmitRegisterMask(operands[2], size)
-        emitBranchForTest(test, RISCV64ScratchRegister.x30, operands[3])
-    when [Immediate, Address, LocalLabelReference]
-        $asm.puts "li x30, #{operands[0].riscv64Operand}"
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{loadInstruction} x31, 0(x31)"
-        else
-            $asm.puts "#{loadInstruction} x31, #{operands[1].riscv64Operand}"
-        end
-        $asm.puts "#{instruction} x30, x30, x31"
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{storeInstruction} x30, 0(x31)"
-        else
-            $asm.puts "#{storeInstruction} x30, #{operands[1].riscv64Operand}"
-        end
-        emitBranchForTest(test, RISCV64ScratchRegister.x30, operands[2])
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitConditionalBranchForMultiplicationOperation(operands, size, test)
-    raise "Unsupported size" unless size == :w
-
-    def emitMultiplication(lhs, rhs)
-        $asm.puts "sext.w x30, #{lhs.riscv64Operand}"
-        $asm.puts "sext.w x31, #{rhs.riscv64Operand}"
-        $asm.puts "mul x30, x30, x31"
-    end
-
-    def emitBranchForTest(test, label)
-        case test
-        when :z
-            $asm.puts "beqz x30, #{label.asmLabel}"
-        when :nz
-            $asm.puts "bnez x30, #{label.asmLabel}"
-        when :s
-            $asm.puts "bltz x30, #{label.asmLabel}"
-        else
-            raise "Unsupported test"
-        end
-    end
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID, LocalLabelReference]
-        emitMultiplication(operands[0], operands[1])
-        $asm.puts "mv #{operands[1].riscv64Operand}, x30"
-        riscv64EmitRegisterMask(operands[1], size)
-
-        emitBranchForTest(test, operands[2])
-    when [Immediate, RegisterID, LocalLabelReference]
-        $asm.puts "li x30, #{operands[0].riscv64Operand}"
-        emitMultiplication(RISCV64ScratchRegister.x30, operands[1])
-        $asm.puts "mv #{operands[1].riscv64Operand}, x30"
-        riscv64EmitRegisterMask(operands[1], size)
-
-        emitBranchForTest(test, operands[2])
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitOverflowBranchForOperation(operands, size, operation)
-    raise "Unsupported size" unless size == :w
-
-    def operationInstruction(operation)
-        case operation
-        when :add
-            "add"
-        when :sub
-            "sub"
-        when :mul
-            "mul"
-        else
-            raise "Unsupported operation"
-        end
-    end
-
-    instruction = operationInstruction(operation)
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID, LocalLabelReference]
-        operands = [operands[1], operands[0], operands[1], operands[2]]
-    when [Immediate, RegisterID, LocalLabelReference]
-        operands = [operands[1], operands[0], operands[1], operands[2]]
-    end
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID, RegisterID, LocalLabelReference]
-        $asm.puts "sext.w x30, #{operands[0].riscv64Operand}"
-        $asm.puts "sext.w x31, #{operands[1].riscv64Operand}"
-        $asm.puts "#{instruction} x30, x30, x31"
-
-        $asm.puts "mv #{operands[2].riscv64Operand}, x30"
-        riscv64EmitRegisterMask(operands[2], size)
-
-        $asm.puts "sext.w x31, x30"
-        $asm.puts "bne x30, x31, #{operands[3].asmLabel}"
-    when [RegisterID, Immediate, RegisterID, LocalLabelReference]
-        $asm.puts "sext.w x30, #{operands[0].riscv64Operand}"
-        $asm.puts "li x31, #{operands[1].riscv64Operand}"
-        $asm.puts "sext.w x31, x31"
-        $asm.puts "#{instruction} x30, x30, x31"
-
-        $asm.puts "mv #{operands[2].riscv64Operand}, x30"
-        riscv64EmitRegisterMask(operands[2], size)
-
-        $asm.puts "sext.w x31, x30"
-        $asm.puts "bne x30, x31, #{operands[3].asmLabel}"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitCompare(operands, size, condition)
-    def signExtendRegisterForSize(register, target, size)
-        case size
-        when :b
-            $asm.puts "slli #{target}, #{register.riscv64Operand}, 24"
-            $asm.puts "sext.w #{target}, #{target}"
-            $asm.puts "srai #{target}, #{target}, 24"
-        when :w
-            $asm.puts "sext.w #{target}, #{register.riscv64Operand}"
-        when :d
-            $asm.puts "mv #{target}, #{register.riscv64Operand}"
-        else
-            raise "Unsupported size"
-        end
-    end
-
-    def signExtendImmediateForSize(immediate, target, size)
-        $asm.puts "li #{target}, #{immediate.riscv64Operand}"
-        case size
-        when :b
-            $asm.puts "slli #{target}, #{target}, 24"
-            $asm.puts "sext.w #{target}, #{target}"
-            $asm.puts "srai #{target}, #{target}, 24"
-        when :w
-            $asm.puts "sext.w #{target}, #{target}"
-        when :d
-        else
-            raise "Unsupported size"
-        end
-    end
-
-    def loadAndSignExtendAddressForSize(address, target, size)
-        if address.riscv64RequiresLoad
-            address.riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{riscv64LoadInstruction(size)} #{target}, 0(x31)"
-        else
-            $asm.puts "#{riscv64LoadInstruction(size)} #{target}, #{address.riscv64Operand}"
-        end
-    end
-
-    def setForCondition(lhs, rhs, target, condition)
-        case condition
-        when :eq
-            $asm.puts "sub x31, #{lhs}, #{rhs}"
-            $asm.puts "seqz #{operands[2].riscv64Operand}, x31"
-        when :neq
-            $asm.puts "sub x31, #{lhs}, #{rhs}"
-            $asm.puts "snez #{operands[2].riscv64Operand}, x31"
-        when :a
-            $asm.puts "sltu #{operands[2].riscv64Operand}, #{rhs}, #{lhs}"
-        when :aeq
-            $asm.puts "sltu #{operands[2].riscv64Operand}, #{lhs}, #{rhs}"
-            $asm.puts "xori #{operands[2].riscv64Operand}, #{operands[2].riscv64Operand}, 1"
-        when :b
-            $asm.puts "sltu #{operands[2].riscv64Operand}, #{lhs}, #{rhs}"
-        when :beq
-            $asm.puts "sltu #{operands[2].riscv64Operand}, #{rhs}, #{lhs}"
-            $asm.puts "xori #{operands[2].riscv64Operand}, #{operands[2].riscv64Operand}, 1"
-        when :lt
-            $asm.puts "slt #{target.riscv64Operand}, #{lhs}, #{rhs}"
-        when :lteq
-            $asm.puts "slt #{target.riscv64Operand}, #{rhs}, #{lhs}"
-            $asm.puts "xori #{target.riscv64Operand}, #{target.riscv64Operand}, 1"
-        when :gt
-            $asm.puts "slt #{target.riscv64Operand}, #{rhs}, #{lhs}"
-        when :gteq
-            $asm.puts "slt #{target.riscv64Operand}, #{lhs}, #{rhs}"
-            $asm.puts "xori #{target.riscv64Operand}, #{target.riscv64Operand}, 1"
-        else
-            raise "Unsupported condition"
-        end
-    end
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID, RegisterID]
-        signExtendRegisterForSize(operands[0], 'x30', size)
-        signExtendRegisterForSize(operands[1], 'x31', size)
-        setForCondition('x30', 'x31', operands[2], condition)
-    when [RegisterID, Immediate, RegisterID]
-        signExtendRegisterForSize(operands[0], 'x30', size)
-        signExtendImmediateForSize(operands[1], 'x31', size)
-        setForCondition('x30', 'x31', operands[2], condition)
-    when [Address, RegisterID, RegisterID]
-        loadAndSignExtendAddressForSize(operands[0], 'x30', size)
-        signExtendRegisterForSize(operands[1], 'x31', size)
-        setForCondition('x30', 'x31', operands[2], condition)
-    when [Address, Immediate, RegisterID]
-        loadAndSignExtendAddressForSize(operands[0], 'x30', size)
-        signExtendImmediateForSize(operands[1], 'x31', size)
-        setForCondition('x30', 'x31', operands[2], condition)
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitTest(operands, size, test)
-    def testInstruction(test)
-        case test
-        when :z
-            "seqz"
-        when :nz
-            "snez"
-        else
-            raise "Unknown test type"
-        end
-    end
-
-    instruction = testInstruction(test)
-    loadInstruction = riscv64ZeroExtendedLoadInstruction(size)
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID, RegisterID]
-        $asm.puts "and x31, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, x31"
-    when [RegisterID, Immediate, RegisterID]
-        if operands[1].riscv64RequiresLoad
-            $asm.puts "li x31, #{operands[1].riscv64Operand}"
-            $asm.puts "and x31, #{operands[0].riscv64Operand}, x31"
-        else
-            $asm.puts "andi x31, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        end
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, x31"
-    when [Address, Immediate, RegisterID]
-        if operands[0].riscv64RequiresLoad
-            operands[0].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{loadInstruction} x31, 0(x31)"
-        else
-            $asm.puts "#{loadInstruction} x31, #{operands[0].riscv64Operand}"
-        end
-        if operands[1].riscv64RequiresLoad
-            $asm.puts "li x30, #{operands[1].riscv64Operand}"
-            $asm.puts "and x31, x30, x31"
-        else
-            $asm.puts "andi x31, x31, #{operands[1].riscv64Operand}"
-        end
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, x31"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitLogicalOperation(operands, size, operation)
-    def opInstruction(operation)
-        case operation
-        when :and
-            "and"
-        when :or
-            "or"
-        when :xor
-            "xor"
-        else
-            raise "Unsupported logical operation"
-        end
-    end
-
-    instruction = opInstruction(operation)
-    loadInstruction = riscv64ZeroExtendedLoadInstruction(size)
-    storeInstruction = riscv64StoreInstruction(size)
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID]
-        $asm.puts "#{instruction} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        riscv64EmitRegisterMask(operands[1], size)
-    when [RegisterID, RegisterID, RegisterID]
-        $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        riscv64EmitRegisterMask(operands[2], size)
-    when [RegisterID, Immediate, RegisterID]
-        if operands[1].riscv64RequiresLoad
-            $asm.puts "li x31, #{operands[1].riscv64Operand}"
-            $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, x31"
-        else
-            $asm.puts "#{instruction}i #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        end
-        riscv64EmitRegisterMask(operands[2], size)
-    when [Immediate, RegisterID]
-        if operands[0].riscv64RequiresLoad
-            $asm.puts "li x31, #{operands[0].riscv64Operand}"
-            $asm.puts "#{instruction} #{operands[1].riscv64Operand}, x31, #{operands[1].riscv64Operand}"
-        else
-            $asm.puts "#{instruction}i #{operands[1].riscv64Operand}, #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-        end
-        riscv64EmitRegisterMask(operands[1], size)
-    when [Immediate, Address]
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{loadInstruction} x30, 0(x31)"
-        else
-            $asm.puts "#{loadInstruction} x30, #{operands[1].riscv64Operand}"
-        end
-        $asm.puts "li x31, #{operands[0].riscv64Operand}"
-        $asm.puts "#{instruction} x30, x31, x30"
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{storeInstruction} x30, 0(x31)"
-        else
-            $asm.puts "#{storeInstruction} x30, #{operands[1].riscv64Operand}"
-        end
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitComplementOperation(operands, size, operation)
-    def complementInstruction(size, operation)
-        case operation
-        when :not
-            "not"
-        when :neg
-            size == :w ? "negw" : "neg"
-        else
-            raise "Unsupported complement operation"
-        end
-    end
-
-    instruction = complementInstruction(size, operation)
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID]
-        $asm.puts "#{instruction} #{operands[0].riscv64Operand}, #{operands[0].riscv64Operand}"
-        riscv64EmitRegisterMask(operands[0], size)
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitShift(operands, size, shift)
-    raise "Unsupported size" unless [:w, :d].include? size
-
-    def shiftInstruction(size, shift)
-        case shift
-        when :lleft
-            size == :w ? "sllw" : "sll"
-        when :lright
-            size == :w ? "srlw" : "srl"
-        when :aright
-            size == :w ? "sraw" : "sra"
-        else
-            raise "Unsupported shift type"
-        end
-    end
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, RegisterID]
-        $asm.puts "#{shiftInstruction(size, shift)} #{operands[1].riscv64Operand}, #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-        riscv64EmitRegisterMask(operands[1], size)
-    when [Immediate, RegisterID]
-        $asm.puts "li x31, #{operands[0].riscv64Operand}"
-        $asm.puts "#{shiftInstruction(size, shift)} #{operands[1].riscv64Operand}, #{operands[1].riscv64Operand}, x31"
-        riscv64EmitRegisterMask(operands[1], size)
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitBitExtension(operands, fromSize, toSize, extensionType)
-    raise "Unsupported operand types" unless riscv64OperandTypes(operands) == [RegisterID, RegisterID]
-
-    def emitShifts(operands, shiftCount)
-        $asm.puts "slli #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}, #{shiftCount}"
-        $asm.puts "sext.w #{operands[1].riscv64Operand}, #{operands[1].riscv64Operand}"
-        $asm.puts "srai #{operands[1].riscv64Operand}, #{operands[1].riscv64Operand}, #{shiftCount}"
-    end
-
-    case [fromSize, toSize, extensionType]
-    when [:b, :w, :sign], [:b, :d, :sign]
-        emitShifts(operands, 24)
-        riscv64EmitRegisterMask(operands[1], toSize)
-    when [:h, :w, :sign], [:h, :d, :sign]
-        emitShifts(operands, 16)
-        riscv64EmitRegisterMask(operands[1], toSize)
-    when [:w, :d, :sign]
-        $asm.puts "sext.w #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-    when [:w, :d, :zero]
-        $asm.puts "slli #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}, 32"
-        $asm.puts "srli #{operands[1].riscv64Operand}, #{operands[1].riscv64Operand}, 32"
-    else
-        raise "Unsupported bit-extension operation"
-    end
-end
-
-def riscv64EmitFPLoad(operands, loadInstruction)
-    case riscv64OperandTypes(operands)
-    when [Address, FPRegisterID]
-        if operands[0].riscv64RequiresLoad
-            operands[0].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{loadInstruction} #{operands[1].riscv64Operand}, 0(x31)"
-        else
-            $asm.puts "#{loadInstruction} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-        end
-    when [BaseIndex, FPRegisterID]
-        operands[0].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
-        $asm.puts "#{loadInstruction} #{operands[1].riscv64Operand}, 0(x31)"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitFPStore(operands, storeInstruction)
-    case riscv64OperandTypes(operands)
-    when [FPRegisterID, Address]
-        if operands[1].riscv64RequiresLoad
-            operands[1].riscv64Load(RISCV64ScratchRegister.x31)
-            $asm.puts "#{storeInstruction} #{operands[0].riscv64Operand}, 0(x31)"
-        else
-            $asm.puts "#{storeInstruction} #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        end
-    when [FPRegisterID, BaseIndex]
-        operands[1].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
-        $asm.puts "#{storeInstruction} #{operands[0].riscv64Operand}, 0(x31)"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitFPOperation(operands, operation)
-    case riscv64OperandTypes(operands)
-    when [FPRegisterID, FPRegisterID, FPRegisterID]
-        $asm.puts "#{operation} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-    when [FPRegisterID, FPRegisterID]
-        $asm.puts "#{operation} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitFPCompare(operands, precision, condition)
-    def suffixForPrecision(precision)
-        case precision
-        when :s
-            "s"
-        when :d
-            "d"
-        else
-            raise "Unsupported precision"
-        end
-    end
-
-    def instructionForCondition(condition, precision)
-        suffix = suffixForPrecision(precision)
-        case condition
-        when :eq, :neq
-            "feq.#{suffix}"
-        when :lt, :gt
-            "flt.#{suffix}"
-        when :lteq, :gteq
-            "fle.#{suffix}"
-        else
-            raise "Unsupported condition"
-        end
-    end
-
-    def setForCondition(operands, precision, condition)
-        instruction = instructionForCondition(condition, precision)
-        case condition
-        when :eq
-            $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        when :neq
-            $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-            $asm.puts "xori #{operands[2].riscv64Operand}, #{operands[2].riscv64Operand}, 1"
-        when :lt, :lteq
-            $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        when :gt, :gteq
-            $asm.puts "#{instruction} #{operands[2].riscv64Operand}, #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-        else
-            raise "Unsupported condition"
-        end
-    end
-
-    case riscv64OperandTypes(operands)
-    when [FPRegisterID, FPRegisterID, RegisterID]
-        setForCondition(operands, precision, condition)
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitFPBitwiseOperation(operands, precision, operation)
-    def suffixForPrecision(precision)
-        case precision
-        when :s
-            "w"
-        when :d
-            "d"
-        else
-            raise "Unsupported precision"
-        end
-    end
-
-    suffix = suffixForPrecision(precision)
-
-    case riscv64OperandTypes(operands)
-    when [FPRegisterID, FPRegisterID]
-        $asm.puts "fmv.x.#{suffix} x30, #{operands[0].riscv64Operand}"
-        $asm.puts "fmv.x.#{suffix} x31, #{operands[1].riscv64Operand}"
-        $asm.puts "#{operation} x31, x30, x31"
-        $asm.puts "fmv.#{suffix}.x #{operands[1].riscv64Operand}, x31"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitFPCopy(operands, precision)
-    def suffixForPrecision(precision)
-        case precision
-        when :s
-            "w"
-        when :d
-            "d"
-        else
-            raise "Unsupported precision"
-        end
-    end
-
-    suffix = suffixForPrecision(precision)
-
-    case riscv64OperandTypes(operands)
-    when [RegisterID, FPRegisterID]
-        $asm.puts "fmv.#{suffix}.x #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-    when [FPRegisterID, RegisterID]
-        $asm.puts "fmv.x.#{suffix} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitFPConditionalBranchForTest(operands, precision, test)
-    def suffixForPrecision(precision)
-        case precision
-        when :s
-            "s"
-        when :d
-            "d"
-        else
-            raise "Unsupported precision"
-        end
-    end
-
-    def emitBranchForUnordered(lhs, rhs, label, precision)
-        suffix = suffixForPrecision(precision)
-
-        $asm.puts "fclass.d x30, #{lhs.riscv64Operand}"
-        $asm.puts "fclass.d x31, #{rhs.riscv64Operand}"
-        $asm.puts "or x31, x30, x31"
-        $asm.puts "li x30, 0x300"
-        $asm.puts "and x31, x31, x30"
-        $asm.puts "bnez x31, #{label.asmLabel}"
-    end
-
-    def emitBranchForTest(test, lhs, rhs, branch, label, precision)
-        suffix = suffixForPrecision(precision)
-
-        $asm.puts "#{test}.#{suffix} x31, #{lhs.riscv64Operand}, #{rhs.riscv64Operand}"
-        $asm.puts "#{branch} x31, #{label.asmLabel}"
-    end
-
-    suffix = suffixForPrecision(precision)
-
-    case riscv64OperandTypes(operands)
-    when [FPRegisterID, FPRegisterID, LocalLabelReference]
-        case test
-        when :eq
-            emitBranchForTest("feq", operands[0], operands[1], "bnez", operands[2], precision)
-        when :neq
-            emitBranchForTest("feq", operands[0], operands[1], "beqz", operands[2], precision)
-        when :lt
-            emitBranchForTest("flt", operands[0], operands[1], "bnez", operands[2], precision)
-        when :lteq
-            emitBranchForTest("fle", operands[0], operands[1], "bnez", operands[2], precision)
-        when :gt
-            emitBranchForTest("flt", operands[1], operands[0], "bnez", operands[2], precision)
-        when :gteq
-            emitBranchForTest("fle", operands[1], operands[0], "bnez", operands[2], precision)
-        when :equn
-            emitBranchForUnordered(operands[0], operands[1], operands[2], precision)
-            emitBranchForTest("feq", operands[0], operands[1], "bnez", operands[2], precision)
-        when :nequn
-            emitBranchForUnordered(operands[0], operands[1], operands[2], precision)
-            emitBranchForTest("feq", operands[0], operands[1], "beqz", operands[2], precision)
-        when :ltun
-            emitBranchForUnordered(operands[0], operands[1], operands[2], precision)
-            emitBranchForTest("flt", operands[0], operands[1], "bnez", operands[2], precision)
-        when :ltequn
-            emitBranchForUnordered(operands[0], operands[1], operands[2], precision)
-            emitBranchForTest("fle", operands[0], operands[1], "bnez", operands[2], precision)
-        when :gtun
-            emitBranchForUnordered(operands[0], operands[1], operands[2], precision)
-            emitBranchForTest("flt", operands[1], operands[0], "bnez", operands[2], precision)
-        when :gtequn
-            emitBranchForUnordered(operands[0], operands[1], operands[2], precision)
-            emitBranchForTest("fle", operands[1], operands[0], "bnez", operands[2], precision)
-        else
-            raise "Unsupported test"
-        end
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitFPRoundOperation(operands, precision, roundingMode)
-    def intSuffixForPrecision(precision)
-        case precision
-        when :s
-            "w"
-        when :d
-            "l"
-        else
-            raise "Unsupported precision"
-        end
-    end
-
-    def fpSuffixForPrecision(precision)
-        case precision
-        when :s
-            "s"
-        when :d
-            "d"
-        else
-            raise "Unsupported precision"
-        end
-    end
-
-    intSuffix = intSuffixForPrecision(precision)
-    fpSuffix = fpSuffixForPrecision(precision)
-
-    case riscv64OperandTypes(operands)
-    when [FPRegisterID, FPRegisterID]
-        $asm.puts "fcvt.#{intSuffix}.#{fpSuffix} x31, #{operands[0].riscv64Operand}, #{roundingMode}"
-        $asm.puts "fcvt.#{fpSuffix}.#{intSuffix} #{operands[1].riscv64Operand}, x31, #{roundingMode}"
-    else
-        riscv64RaiseMismatchedOperands(operands)
-    end
-end
-
-def riscv64EmitFPConvertOperation(operands, fromType, toType, roundingMode)
-    def intSuffixForType(type)
-        case type
-        when :w
-            "w"
-        when :wu
-            "wu"
-        when :l
-            "l"
-        when :lu
-            "lu"
-        else
-            raise "Unsupported precision"
-        end
-    end
-
-    def fpSuffixForType(type)
-        case type
-        when :s
-            "s"
-        when :d
-            "d"
-        else
-            raise "Unsupported precision"
-        end
-    end
-
-    case riscv64OperandTypes(operands)
-    when [FPRegisterID, RegisterID]
-        fpSuffix = fpSuffixForType(fromType)
-        intSuffix = intSuffixForType(toType)
-
-        $asm.puts "fcvt.#{intSuffix}.#{fpSuffix} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}, #{roundingMode}"
-    when [RegisterID, FPRegisterID]
-        raise "Unsupported rounding mode" unless roundingMode == :none
-        intSuffix = intSuffixForType(fromType)
-        fpSuffix = fpSuffixForType(toType)
-
-        $asm.puts "fcvt.#{fpSuffix}.#{intSuffix} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-    when [FPRegisterID, FPRegisterID]
-        raise "Unsupported rounding mode" unless roundingMode == :none
-        fpFromSuffix = fpSuffixForType(fromType)
-        fpToSuffix = fpSuffixForType(toType)
-
-        $asm.puts "fcvt.#{fpToSuffix}.#{fpFromSuffix} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-    else
-        riscv64RaiseMismatchedOperands(operands)
+        raise "Invalid immediate validation #{validation}"
     end
 end
 
@@ -1378,678 +269,1327 @@ class FPRegisterID
     end
 end
 
-class RISCV64ScratchRegister
-    def initialize(name)
-        @name = name
-    end
-
+class SpecialRegister
     def riscv64Operand
-        case @name
-        when :x30
-            'x30'
-        when :x31
-            'x31'
-        else
-            raise "Unsupported scratch register"
-        end
-    end
-
-    def self.x30
-        RISCV64ScratchRegister.new(:x30)
-    end
-
-    def self.x31
-        RISCV64ScratchRegister.new(:x31)
+        @name
     end
 end
 
 class Immediate
-    def riscv64Operand
+    def riscv64Operand(validation = :i_immediate)
+        raise "Invalid immediate value #{value} at #{codeOriginString}" if riscv64RequiresLoad(validation)
         "#{value}"
     end
 
-    def riscv64RequiresLoad
-        value > 0x7ff or value < -0x800
-    end
-
-    def riscv64Load(target)
-        $asm.puts "li #{target.riscv64Operand}, #{value}"
+    def riscv64RequiresLoad(validation = :i_immediate)
+        not riscv64ValidateImmediate(validation, value)
     end
 end
 
 class Address
     def riscv64Operand
-        raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value > 0x7ff or offset.value < -0x800
+        raise "Invalid offset #{offset.value} at #{codeOriginString}" if riscv64RequiresLoad
         "#{offset.value}(#{base.riscv64Operand})"
     end
 
     def riscv64RequiresLoad
-        offset.value > 0x7ff or offset.value < -0x800
-    end
-
-    def riscv64Load(target)
-        $asm.puts "li #{target.riscv64Operand}, #{offset.value}"
-        $asm.puts "add #{target.riscv64Operand}, #{base.riscv64Operand}, #{target.riscv64Operand}"
+        not riscv64ValidateImmediate(:i_immediate, offset.value)
     end
 end
 
-class BaseIndex
-    def riscv64Load(target, scratch)
-        case riscv64OperandTypes([base, index])
-        when [RegisterID, RegisterID]
-            $asm.puts "slli #{target.riscv64Operand}, #{index.riscv64Operand}, #{scaleShift}"
-            $asm.puts "add #{target.riscv64Operand}, #{base.riscv64Operand}, #{target.riscv64Operand}"
-            if offset.value != 0
-                $asm.puts "li #{scratch.riscv64Operand}, #{offset.value}"
-                $asm.puts "add #{target.riscv64Operand}, #{target.riscv64Operand}, #{scratch.riscv64Operand}"
-            end
+class RISCV64RoundingMode < NoChildren
+    def initialize(mode)
+        @mode = mode
+    end
+
+    def riscv64RoundingMode
+        case @mode
+        when :floor
+            "rdn"
+        when :ceil
+            "rup"
+        when :round
+            "rne"
+        when :truncate
+            "rtz"
         else
-            riscv64RaiseMismatchedOperands([base, index])
+            raise "Invalid rounding mode #{@mode}"
         end
     end
 end
 
+class RISCV64MemoryOrdering < NoChildren
+    def initialize(ordering)
+        @ordering = ordering
+    end
+
+    def riscv64MemoryOrdering
+        case @ordering
+        when :rw, :iorw
+            @ordering.to_s
+        else
+            raise "Invalid memory ordering #{@ordering}"
+        end
+    end
+end
+
+def riscv64LowerEmitMask(newList, node, size, source, destination)
+    case size
+    when :b, :h, :i
+        case size
+        when :b
+            shiftSize = 56
+        when :h
+            shiftSize = 48
+        when :i
+            shiftSize = 32
+        end
+        newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, shiftSize), destination])
+        newList << Instruction.new(node.codeOrigin, "rv_srli", [destination, Immediate.new(node.codeOrigin, shiftSize), destination])
+    when :p, :q
+    else
+        raise "Invalid masking size"
+    end
+end
+
+def riscv64LowerEmitSignExtension(newList, node, size, source, destination)
+    case size
+    when :b, :h
+        case size
+        when :b
+            shiftSize = 56
+        when :h
+            shiftSize = 32
+        end
+        newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, shiftSize), destination])
+        newList << Instruction.new(node.codeOrigin, "rv_srai", [destination, Immediate.new(node.codeOrigin, shiftSize), destination])
+    when :i
+        newList << Instruction.new(node.codeOrigin, "rv_sext.w", [source, destination])
+    when :p, :q
+    else
+        raise "Invalid extension size"
+    end
+end
+
+def riscv64LowerOperandIntoRegister(newList, node, operand)
+    register = operand
+    if operand.immediate?
+        register = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_li", [operand, register])
+    end
+
+    raise "Invalid register type" unless riscv64OperandTypes([register]) == [RegisterID]
+    register
+end
+
+def riscv64LowerOperandIntoRegisterAndSignExtend(newList, node, operand, size, forcedTmp = :none)
+    source = riscv64LowerOperandIntoRegister(newList, node, operand)
+    destination = source
+
+    if ([:b, :h, :i].include? size or forcedTmp == :forced_tmp) and not destination.is_a? Tmp
+        destination = Tmp.new(node.codeOrigin, :gpr)
+    end
+
+    riscv64LowerEmitSignExtension(newList, node, size, source, destination)
+    destination
+end
+
+def riscv64LowerMisplacedAddresses(list)
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when /^b(add|sub)i(z|nz|s)$/
+                case riscv64OperandTypes(node.operands)
+                when [Immediate, Address, LocalLabelReference]
+                    tmp = Tmp.new(node.codeOrigin, :gpr)
+                    newList << Instruction.new(node.codeOrigin, "loadi", [node.operands[1], tmp])
+                    newList << Instruction.new(node.codeOrigin, "#{$1}i", [tmp, node.operands[0], tmp])
+                    newList << Instruction.new(node.codeOrigin, "storei", [tmp, node.operands[1]])
+                    newList << Instruction.new(node.codeOrigin, "bti#{$2}", [tmp, node.operands[2]])
+                else
+                    newList << node
+                end
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+def riscv64LowerAddressLoads(list)
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when "leap", "leaq"
+                case riscv64OperandTypes(node.operands)
+                when [Address, RegisterID]
+                    address, dest = node.operands[0], node.operands[1]
+                    raise "Invalid address" if address.riscv64RequiresLoad
+                    newList << Instruction.new(node.codeOrigin, "rv_addi", [address.base, address.offset, dest])
+                when [BaseIndex, RegisterID]
+                    bi, dest = node.operands[0], node.operands[1]
+                    newList << Instruction.new(node.codeOrigin, "rv_slli", [bi.index, Immediate.new(node.codeOrigin, bi.scaleShift), dest])
+                    newList << Instruction.new(node.codeOrigin, "rv_add", [dest, bi.base, dest])
+                    if bi.offset.value != 0
+                        offset = Immediate.new(node.codeOrigin, bi.offset.value)
+                        if offset.riscv64RequiresLoad
+                            tmp = Tmp.new(node.codeOrigin, :gpr)
+                            newList << Instruction.new(node.codeOrigin, "rv_li", [offset, tmp])
+                            newList << Instruction.new(node.codeOrigin, "rv_add", [dest, tmp, dest])
+                        else
+                            newList << Instruction.new(node.codeOrigin, "rv_addi", [dest, offset, dest])
+                        end
+                    end
+                when [LabelReference, RegisterID]
+                    label, dest = node.operands[0], node.operands[1]
+                    newList << Instruction.new(node.codeOrigin, "rv_lla", [label, dest])
+                    if label.offset != 0
+                        offset = Immediate.new(node.codeOrigin, label.offset)
+                        if offset.riscv64RequiresLoad
+                            tmp = Tmp.new(node.codeOrigin, :gpr)
+                            newList << Instruction.new(node.codeOrigin, "rv_li", [offset, tmp])
+                            newList << Instruction.new(node.codeOrigin, "rv_add", [dest, tmp, dest])
+                        else
+                            newList << Instruction.new(node.codeOrigin, "rv_addi", [dest, offset, dest])
+                        end
+                    end
+                else
+                    riscv64RaiseMismatchedOperands(node.operands)
+                end
+            when "globaladdr"
+                riscv64ValidateOperands(node.operands, [LabelReference, RegisterID])
+                newList << Instruction.new(node.codeOrigin, "rv_la", node.operands)
+            when "pcrtoaddr"
+                riscv64ValidateOperands(node.operands, [LabelReference, RegisterID])
+                newList << Instruction.new(node.codeOrigin, "rv_lla", node.operands)
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+def riscv64LowerImmediateSubtraction(list)
+    def emit(newList, node, size, operands)
+        riscv64ValidateOperands(operands, [RegisterID, Immediate, RegisterID])
+        nimmediate = Immediate.new(node.codeOrigin, -operands[1].value)
+        if nimmediate.riscv64RequiresLoad
+            tmp = Tmp.new(node.codeOrigin, :gpr)
+            newList << Instruction.new(node.codeOrigin, "rv_li", [operands[1], tmp])
+            newList << Instruction.new(node.codeOrigin, "rv_sub", [operands[0], tmp, operands[2]])
+        else
+            newList << Instruction.new(node.codeOrigin, "rv_addi", [operands[0], nimmediate, operands[2]])
+        end
+        riscv64LowerEmitMask(newList, node, size, operands[2], operands[2])
+    end
+
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when /^sub(i|p|q)$/
+                case riscv64OperandTypes(node.operands)
+                when [RegisterID, Immediate, RegisterID]
+                    emit(newList, node, $1.to_sym, node.operands)
+                when [Immediate, RegisterID]
+                    emit(newList, node, $1.to_sym, [node.operands[1], node.operands[0], node.operands[1]])
+                else
+                    raise "Invalid immediate subtraction pattern" if riscv64OperandTypes(node.operands).include? Immediate
+                    newList << node
+                end
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+def riscv64LowerOperation(list)
+    def emitLoadOperation(newList, node, size)
+        riscv64ValidateOperands(node.operands, [Address, RegisterID])
+
+        case size
+        when :b
+            suffix = "bu"
+        when :bsi, :bsq
+            suffix = "b"
+        when :h
+            suffix = "hu"
+        when :hsi, :hsq
+            suffix = "h"
+        when :i
+            suffix = "wu"
+        when :is
+            suffix = "w"
+        when :p, :q
+            suffix = "d"
+        else
+            raise "Invalid size #{size}"
+        end
+
+        newList << Instruction.new(node.codeOrigin, "rv_l#{suffix}", node.operands)
+
+        case size
+        when :bsi, :hsi
+            riscv64LowerEmitMask(newList, node, :i, node.operands[1], node.operands[1])
+        when :bsq, :hsq
+            # Nothing to do
+        end
+    end
+
+    def emitStoreOperation(newList, node, size)
+        riscv64ValidateOperands(node.operands, [RegisterID, Address])
+
+        case size
+        when :b
+            suffix = "b"
+        when :h
+            suffix = "h"
+        when :i
+            suffix = "w"
+        when :p, :q
+            suffix = "d"
+        else
+            raise "Invalid size #{size}"
+        end
+
+        newList << Instruction.new(node.codeOrigin, "rv_s#{suffix}", node.operands)
+    end
+
+    def emitMove(newList, node)
+        case riscv64OperandTypes(node.operands)
+        when [RegisterID, RegisterID]
+            moveOpcode = "mv"
+        when [Immediate, RegisterID]
+            moveOpcode = "li"
+        else
+            riscv64RaiseMismatchedOperands(node.operands)
+        end
+
+        newList << Instruction.new(node.codeOrigin, "rv_#{moveOpcode}", node.operands)
+    end
+
+    def emitJump(newList, node)
+        case riscv64OperandTypes(node.operands)
+        when [RegisterID]
+            jumpOpcode = "jr"
+        when [LabelReference], [LocalLabelReference]
+            jumpOpcode = "tail"
+        else
+            riscv64RaiseMismatchedOperands(node.operands)
+        end
+
+        newList << Instruction.new(node.codeOrigin, "rv_#{jumpOpcode}", node.operands)
+    end
+
+    def emitCall(newList, node)
+        case riscv64OperandTypes(node.operands)
+        when [RegisterID]
+            callOpcode = "jalr"
+        when [LabelReference]
+            callOpcode = "call"
+        else
+            riscv64RaiseMismatchedOperands(node.operands)
+        end
+
+        newList << Instruction.new(node.codeOrigin, "rv_#{callOpcode}", node.operands)
+    end
+
+    def emitPush(newList, node)
+        sp = RegisterID.forName(node.codeOrigin, 'sp')
+        size = 8 * node.operands.size
+        newList << Instruction.new(node.codeOrigin, "rv_addi", [sp, Immediate.new(node.codeOrigin, -size), sp])
+        node.operands.reverse.each_with_index {
+            | op, index |
+            offset = size - 8 * (index + 1)
+            newList << Instruction.new(node.codeOrigin, "rv_sd", [op, Address.new(node.codeOrigin, sp, Immediate.new(node.codeOrigin, offset))])
+        }
+    end
+
+    def emitPop(newList, node)
+        sp = RegisterID.forName(node.codeOrigin, 'sp')
+        size = 8 * node.operands.size
+        node.operands.each_with_index {
+            | op, index |
+            offset = size - 8 * (index + 1)
+            newList << Instruction.new(node.codeOrigin, "rv_ld", [Address.new(node.codeOrigin, sp, Immediate.new(node.codeOrigin, offset)), op])
+        }
+        newList << Instruction.new(node.codeOrigin, "rv_addi", [sp, Immediate.new(node.codeOrigin, size), sp])
+    end
+
+    def emitAdditionOperation(newList, node, operation, size)
+        operands = node.operands
+        if operands.size == 2
+            operands = [operands[1], operands[0], operands[1]]
+        end
+        if riscv64OperandTypes(operands) == [Immediate, RegisterID, RegisterID]
+            raise "Invalid subtraction pattern" if operation == :sub
+            operands = [operands[1], operands[0], operands[2]]
+        end
+        riscv64ValidateOperands(operands, [RegisterID, RegisterID, RegisterID], [RegisterID, Immediate, RegisterID])
+
+        case operation
+        when :add, :sub
+            additionOpcode = operation.to_s
+        else
+            raise "Invalid operation #{operation}"
+        end
+
+        raise "Invalid subtraction of immediate" if operands[1].is_a? Immediate and operation == :sub
+        additionOpcode += ((operands[1].is_a? Immediate) ? "i" : "") + (size == :i ? "w" : "")
+        newList << Instruction.new(node.codeOrigin, "rv_#{additionOpcode}", operands)
+        riscv64LowerEmitMask(newList, node, size, operands[2], operands[2])
+    end
+
+    def emitMultiplicationOperation(newList, node, operation, size, signedness)
+        operands = node.operands
+        if operands.size == 2
+            operands = [operands[1], operands[0], operands[1]]
+        end
+        if riscv64OperandTypes(operands) == [Immediate, RegisterID, RegisterID]
+            raise "Invalid division/remainder pattern" if [:div, :rem].include? operation
+            operands = [operands[1], operands[0], operands[2]]
+        end
+        riscv64ValidateOperands(operands, [RegisterID, RegisterID, RegisterID], [RegisterID, Immediate, RegisterID])
+
+        case operation
+        when :mul
+            multiplicationOpcode = "mul"
+        when :div, :rem
+            multiplicationOpcode = operation.to_s + (signedness != :s ? "u" : "")
+        else
+            raise "Invalid operation #{operation}"
+        end
+
+        multiplicationOpcode += (size == :i ? "w" : "")
+        newList << Instruction.new(node.codeOrigin, "rv_#{multiplicationOpcode}", operands)
+        riscv64LowerEmitMask(newList, node, size, operands[2], operands[2])
+    end
+
+    def emitShiftOperation(newList, node, operation, size)
+        operands = node.operands
+        if operands.size == 2
+            operands = [operands[1], operands[0], operands[1]]
+        end
+        riscv64ValidateOperands(operands, [RegisterID, RegisterID, RegisterID], [RegisterID, Immediate, RegisterID])
+
+        case operation
+        when :l
+            shiftOpcode = "sll"
+        when :r
+            shiftOpcode = "sra"
+        when :ur
+            shiftOpcode = "srl"
+        else
+            raise "Invalid operation #{operation}"
+        end
+
+        shiftOpcode += ((operands[1].is_a? Immediate) ? "i" : "") + (size == :i ? "w" : "")
+        newList << Instruction.new(node.codeOrigin, "rv_#{shiftOpcode}", operands)
+        riscv64LowerEmitMask(newList, node, size, operands[2], operands[2])
+    end
+
+    def emitLogicalOperation(newList, node, operation, size)
+        operands = node.operands
+        if operands.size == 2
+            operands = [operands[1], operands[0], operands[1]]
+        end
+        riscv64ValidateOperands(operands, [RegisterID, RegisterID, RegisterID], [RegisterID, Immediate, RegisterID])
+
+        case operation
+        when :and, :or, :xor
+            logicalOpcode = operation.to_s
+        else
+            raise "Invalid operation #{operation}"
+        end
+
+        if operands[1].is_a? Immediate
+            logicalOpcode += "i"
+        end
+        newList << Instruction.new(node.codeOrigin, "rv_#{logicalOpcode}", operands)
+        riscv64LowerEmitMask(newList, node, size, operands[2], operands[2])
+    end
+
+    def emitComplementOperation(newList, node, operation, size)
+        riscv64ValidateOperands(node.operands, [RegisterID])
+
+        case operation
+        when :neg
+            complementOpcode = size == :i ? "negw" : "neg"
+        when :not
+            complementOpcode = "not"
+        else
+            raise "Invalid operation #{operation}"
+        end
+
+        newList << Instruction.new(node.codeOrigin, "rv_#{complementOpcode}", [node.operands[0], node.operands[0]])
+        riscv64LowerEmitMask(newList, node, size, node.operands[0], node.operands[0])
+    end
+
+    def emitBitExtensionOperation(newList, node, extension, fromSize, toSize)
+        raise "Invalid operand types" unless riscv64OperandTypes(node.operands) == [RegisterID, RegisterID]
+
+        if [[:s, :i, :p], [:s, :i, :q]].include? [extension, fromSize, toSize]
+            newList << Instruction.new(node.codeOrigin, "rv_sext.w", node.operands)
+            return
+        end
+
+        source = node.operands[0]
+        dest = node.operands[1]
+
+        if [[:z, :i, :p], [:z, :i, :q]].include? [extension, fromSize, toSize]
+            newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 32), dest])
+            newList << Instruction.new(node.codeOrigin, "rv_srli", [dest, Immediate.new(node.codeOrigin, 32), dest])
+            return
+        end
+
+        raise "Invalid zero extension" unless extension == :s
+        case [fromSize, toSize]
+        when [:b, :i]
+            newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 56), dest])
+            newList << Instruction.new(node.codeOrigin, "rv_srai", [dest, Immediate.new(node.codeOrigin, 24), dest])
+            newList << Instruction.new(node.codeOrigin, "rv_srli", [dest, Immediate.new(node.codeOrigin, 32), dest])
+        when [:b, :q]
+            newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 56), dest])
+            newList << Instruction.new(node.codeOrigin, "rv_srai", [dest, Immediate.new(node.codeOrigin, 56), dest])
+        when [:h, :i]
+            newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 48), dest])
+            newList << Instruction.new(node.codeOrigin, "rv_srai", [dest, Immediate.new(node.codeOrigin, 16), dest])
+            newList << Instruction.new(node.codeOrigin, "rv_srli", [dest, Immediate.new(node.codeOrigin, 32), dest])
+        when [:h, :q]
+            newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 48), dest])
+            newList << Instruction.new(node.codeOrigin, "rv_srai", [dest, Immediate.new(node.codeOrigin, 48), dest])
+        else
+            raise "Invalid bit-extension combination"
+        end
+    end
+
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when /^load(b|bsi|bsq|h||hsi|hsq|i|is|p|q)$/
+                emitLoadOperation(newList, node, $1.to_sym)
+            when /^store(b|h|i|p|q)$/
+                emitStoreOperation(newList, node, $1.to_sym)
+            when "move"
+                emitMove(newList, node)
+            when "jmp"
+                emitJump(newList, node)
+            when "call"
+                emitCall(newList, node)
+            when "push"
+                emitPush(newList, node)
+            when "pop"
+                emitPop(newList, node)
+            when /^(add|sub)(i|p|q)$/
+                emitAdditionOperation(newList, node, $1.to_sym, $2.to_sym)
+            when /^(mul|div|rem)(i|p|q)(s?)$/
+                emitMultiplicationOperation(newList, node, $1.to_sym, $2.to_sym, $3.to_sym)
+            when /^(l|r|ur)shift(i|p|q)$/
+                emitShiftOperation(newList, node, $1.to_sym, $2.to_sym)
+            when /^(and|or|xor)(h|i|p|q)$/
+                emitLogicalOperation(newList, node, $1.to_sym, $2.to_sym)
+            when /^(neg|not)(i|p|q)$/
+                emitComplementOperation(newList, node, $1.to_sym, $2.to_sym)
+            when /^(s|z)x(b|h|i)2(i|p|q)$/
+                emitBitExtensionOperation(newList, node, $1.to_sym, $2.to_sym, $3.to_sym)
+            when "break"
+                newList << Instruction.new(node.codeOrigin, "rv_ebreak", [])
+            when "nop", "ret"
+                newList << Instruction.new(node.codeOrigin, "rv_#{node.opcode}", [])
+            when "memfence"
+                newList << Instruction.new(node.codeOrigin, "rv_fence", [RISCV64MemoryOrdering.new(:rw), RISCV64MemoryOrdering.new(:rw)])
+            when "fence"
+                newList << Instruction.new(node.codeOrigin, "rv_fence", [RISCV64MemoryOrdering.new(:iorw), RISCV64MemoryOrdering.new(:iorw)])
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+def riscv64LowerTest(list)
+    def branchOpcode(test)
+        case test
+        when :s
+            "bltz"
+        when :z
+            "beqz"
+        when :nz
+            "bnez"
+        else
+            raise "Invalid test-branch opcode"
+        end
+    end
+
+    def setOpcode(test)
+        case test
+        when :s
+            "sltz"
+        when :z
+            "seqz"
+        when :nz
+            "snez"
+        else
+            raise "Invalid test-set opcode"
+        end
+    end
+
+    def emit(newList, node, size, opcode)
+        if node.operands.size == 2
+            newList << Instruction.new(node.codeOrigin, "rv_#{opcode}", node.operands)
+            return
+        end
+
+        if node.operands[0].immediate? and node.operands[0].value == -1
+            newList << Instruction.new(node.codeOrigin, "rv_#{opcode}", [node.operands[1], node.operands[2]])
+            return
+        end
+
+        if node.operands[1].immediate? and node.operands[1].value == -1
+            newList << Instruction.new(node.codeOrigin, "rv_#{opcode}", [node.operands[0], node.operands[2]])
+            return
+        end
+
+        value = node.operands[0]
+        mask = node.operands[1]
+        if node.operands[0].immediate?
+            value = node.operands[1]
+            mask = node.operands[0]
+        end
+
+        tmp = Tmp.new(node.codeOrigin, :gpr)
+        if value.register? and mask.register?
+            newList << Instruction.new(node.codeOrigin, "rv_and", [value, mask, tmp])
+        else
+            newList << Instruction.new(node.codeOrigin, "rv_li", [mask, tmp]);
+            newList << Instruction.new(node.codeOrigin, "rv_and", [tmp, value, tmp]);
+        end
+
+        riscv64LowerEmitSignExtension(newList, node, size, tmp, tmp)
+        newList << Instruction.new(node.codeOrigin, "rv_#{opcode}", [tmp, node.operands[2]])
+    end
+
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when /^bt(b|i|p|q)(s|z|nz)$/
+                emit(newList, node, $1.to_sym, branchOpcode($2.to_sym))
+            when /^t(b|i|p|q)(s|z|nz)$/
+                emit(newList, node, $1.to_sym, setOpcode($2.to_sym))
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+def riscv64LowerCompare(list)
+    def emit(newList, node, size, comparison)
+        lhs = riscv64LowerOperandIntoRegisterAndSignExtend(newList, node, node.operands[0], size)
+        rhs = riscv64LowerOperandIntoRegisterAndSignExtend(newList, node, node.operands[1], size)
+        dest = node.operands[2]
+
+        case comparison
+        when :eq
+            tmp = Tmp.new(node.codeOrigin, :gpr)
+            newList << Instruction.new(node.codeOrigin, "rv_sub", [lhs, rhs, tmp])
+            newList << Instruction.new(node.codeOrigin, "rv_seqz", [tmp, dest])
+        when :neq
+            tmp = Tmp.new(node.codeOrigin, :gpr)
+            newList << Instruction.new(node.codeOrigin, "rv_sub", [lhs, rhs, tmp])
+            newList << Instruction.new(node.codeOrigin, "rv_snez", [tmp, dest])
+        when :a
+            newList << Instruction.new(node.codeOrigin, "rv_sltu", [rhs, lhs, dest])
+        when :aeq
+            newList << Instruction.new(node.codeOrigin, "rv_sltu", [lhs, rhs, dest])
+            newList << Instruction.new(node.codeOrigin, "rv_xori", [dest, Immediate.new(node.codeOrigin, 1), dest])
+        when :b
+            newList << Instruction.new(node.codeOrigin, "rv_sltu", [lhs, rhs, dest])
+        when :beq
+            newList << Instruction.new(node.codeOrigin, "rv_sltu", [rhs, lhs, dest])
+            newList << Instruction.new(node.codeOrigin, "rv_xori", [dest, Immediate.new(node.codeOrigin, 1), dest])
+        when :gt
+            newList << Instruction.new(node.codeOrigin, "rv_slt", [rhs, lhs, dest])
+        when :gteq
+            newList << Instruction.new(node.codeOrigin, "rv_slt", [lhs, rhs, dest])
+            newList << Instruction.new(node.codeOrigin, "rv_xori", [dest, Immediate.new(node.codeOrigin, 1), dest])
+        when :lt
+            newList << Instruction.new(node.codeOrigin, "rv_slt", [lhs, rhs, dest])
+        when :lteq
+            newList << Instruction.new(node.codeOrigin, "rv_slt", [rhs, lhs, dest])
+            newList << Instruction.new(node.codeOrigin, "rv_xori", [dest, Immediate.new(node.codeOrigin, 1), dest])
+        else
+            raise "Invalid comparison #{comparison}"
+        end
+    end
+
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when /^c(b|i|p|q)(eq|neq|a|aeq|b|beq|gt|gteq|lt|lteq)$/
+                emit(newList, node, $1.to_sym, $2.to_sym)
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+def riscv64LowerBranch(list)
+    def branchOpcode(condition)
+        case condition
+        when :eq
+            "beq"
+        when :neq
+            "bne"
+        when :a
+            "bgtu"
+        when :aeq
+            "bgeu"
+        when :b
+            "bltu"
+        when :beq
+            "bleu"
+        when :gt
+            "bgt"
+        when :gteq
+            "bge"
+        when :lt
+            "blt"
+        when :lteq
+            "ble"
+        when :z
+            "beqz"
+        when :nz
+            "bnez"
+        when :s
+            "bltz"
+        else
+            raise "Invalid condition #{condition}"
+        end
+    end
+
+    def emitGeneric(newList, node, size, condition)
+        lhs = riscv64LowerOperandIntoRegisterAndSignExtend(newList, node, node.operands[0], size)
+        rhs = riscv64LowerOperandIntoRegisterAndSignExtend(newList, node, node.operands[1], size)
+        dest = node.operands[2]
+
+        newList << Instruction.new(node.codeOrigin, "rv_#{branchOpcode(condition)}", [lhs, rhs, dest])
+    end
+
+    def emitAddition(newList, node, operation, size, condition)
+        operands = node.operands
+        if operands.size == 3
+            operands = [operands[1], operands[0], operands[1], operands[2]]
+        end
+
+        riscv64ValidateOperands(operands,
+            [RegisterID, RegisterID, RegisterID, LocalLabelReference],
+            [RegisterID, Immediate, RegisterID, LocalLabelReference]);
+
+        case operation
+        when :add, :sub
+            additionOpcode = operation.to_s + (size == :i ? "w" : "")
+        else
+            raise "Invalid addition operation"
+        end
+
+        lhs = riscv64LowerOperandIntoRegister(newList, node, operands[0])
+        rhs = riscv64LowerOperandIntoRegister(newList, node, operands[1])
+        newList << Instruction.new(node.codeOrigin, "rv_#{additionOpcode}", [lhs, rhs, operands[2]])
+
+        tmp = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_mv", [operands[2], tmp])
+        riscv64LowerEmitMask(newList, node, size, operands[2], operands[2])
+        newList << Instruction.new(node.codeOrigin, "rv_#{branchOpcode(condition)}", [tmp, operands[3]])
+    end
+
+    def emitMultiplication(newList, node, size, condition)
+        raise "Invalid size" unless size == :i
+
+        lhs = result = riscv64LowerOperandIntoRegisterAndSignExtend(newList, node, node.operands[0], size, :forced_tmp)
+        rhs = riscv64LowerOperandIntoRegisterAndSignExtend(newList, node, node.operands[1], size, :forced_tmp)
+        raise "Invalid lowered-operand type" unless result.is_a? Tmp
+
+        newList << Instruction.new(node.codeOrigin, "rv_mul", [lhs, rhs, result])
+        riscv64LowerEmitMask(newList, node, size, result, node.operands[1])
+        newList << Instruction.new(node.codeOrigin, "rv_#{branchOpcode(condition)}", [result, node.operands[2]])
+    end
+
+    def emitOverflow(newList, node, operation, size)
+        raise "Invalid size" unless size == :i
+
+        operands = node.operands
+        if operands.size == 3
+            operands = [operands[1], operands[0], operands[1], operands[2]]
+        end
+
+        riscv64ValidateOperands(operands,
+            [RegisterID, RegisterID, RegisterID, LocalLabelReference],
+            [RegisterID, Immediate, RegisterID, LocalLabelReference]);
+
+        case operation
+        when :add, :sub, :mul
+            operationOpcode = operation.to_s
+        else
+            raise "Invalid operation #{operation}"
+        end
+
+        lhs = tmp1 = riscv64LowerOperandIntoRegisterAndSignExtend(newList, node, operands[0], size, :forced_tmp)
+        rhs = tmp2 = riscv64LowerOperandIntoRegisterAndSignExtend(newList, node, operands[1], size, :forced_tmp)
+        raise "Invalid lowered-operand type" unless (tmp1.is_a? Tmp and tmp2.is_a? Tmp)
+
+        newList << Instruction.new(node.codeOrigin, "rv_#{operationOpcode}", [lhs, rhs, tmp1])
+        riscv64LowerEmitMask(newList, node, size, tmp1, operands[2])
+
+        newList << Instruction.new(node.codeOrigin, "rv_sext.w", [tmp1, tmp2])
+        newList << Instruction.new(node.codeOrigin, "rv_bne", [tmp1, tmp2, operands[3]])
+    end
+
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when /^b(b|i|p|q)(eq|neq|a|aeq|b|beq|gt|gteq|lt|lteq)$/
+                emitGeneric(newList, node, $1.to_sym, $2.to_sym)
+            when /^b(add|sub)(i|p|q)(z|nz|s)$/
+                emitAddition(newList, node, $1.to_sym, $2.to_sym, $3.to_sym)
+            when /^bmul(i)(z|nz|s)$/
+                emitMultiplication(newList, node, $1.to_sym, $2.to_sym)
+            when /^b(add|sub|mul)(i)o$/
+                emitOverflow(newList, node, $1.to_sym, $2.to_sym)
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+def riscv64LowerFPOperation(list)
+    def emitLoadOperation(newList, node, precision)
+        riscv64ValidateOperands(node.operands, [Address, FPRegisterID])
+        case precision
+        when :f
+            suffix = "w"
+        when :d
+            suffix = "d"
+        else
+            raise "Invalid precision #{precision}"
+        end
+
+        newList << Instruction.new(node.codeOrigin, "rv_fl#{suffix}", node.operands)
+    end
+
+    def emitStoreOperation(newList, node, precision)
+        riscv64ValidateOperands(node.operands, [FPRegisterID, Address])
+        case precision
+        when :f
+            suffix = "w"
+        when :d
+            suffix = "d"
+        else
+            raise "Invalid precision #{precision}"
+        end
+
+        newList << Instruction.new(node.codeOrigin, "rv_fs#{suffix}", node.operands)
+    end
+
+    def emitMoveOperation(newList, node, precision)
+        riscv64ValidateOperands(node.operands, [FPRegisterID, FPRegisterID])
+        raise "Invalid precision" unless [:f, :d].include? precision
+        if precision == :f
+            precision = :s
+        end
+
+        newList << Instruction.new(node.codeOrigin, "rv_fmv.#{precision.to_s}", node.operands)
+    end
+
+    def emitCopyOperation(newList, node, sourceType, destinationType)
+        def registerType(type)
+            case type
+            when :i, :p, :q
+                RegisterID
+            when :f, :d
+                FPRegisterID
+            end
+        end
+
+        def fpSuffix(type)
+            case type
+            when :f
+                "w"
+            when :d
+                "d"
+            end
+        end
+
+        riscv64ValidateOperands(node.operands, [registerType(sourceType), registerType(destinationType)])
+        case riscv64OperandTypes(node.operands)
+        when [RegisterID, FPRegisterID]
+            fmvOpcode = "rv_fmv.#{fpSuffix(destinationType)}.x"
+        when [FPRegisterID, RegisterID]
+            fmvOpcode = "rv_fmv.x.#{fpSuffix(sourceType)}"
+        else
+            riscv64RaiseMismatchedOperands
+        end
+
+        newList << Instruction.new(node.codeOrigin, fmvOpcode, node.operands)
+    end
+
+    def emitComputationalOperation(newList, node, operation, precision)
+        riscv64ValidateOperands(node.operands, [FPRegisterID, FPRegisterID])
+        raise "Invalid operation" unless [:add, :sub, :mul, :div, :sqrt, :abs, :neg].include? operation
+        raise "Invalid precision" unless [:f, :d].include? precision
+        if precision == :f
+            precision = :s
+        end
+
+        operands = [node.operands[0], node.operands[1]]
+        if [:add, :mul].include? operation
+            operands = [operands[0], operands[1], operands[1]]
+        elsif [:sub, :div].include? operation
+            operands = [operands[1], operands[0], operands[1]]
+        end
+        newList << Instruction.new(node.codeOrigin, "rv_f#{operation.to_s}.#{precision.to_s}", operands)
+    end
+
+    def emitBitwiseOperation(newList, node, operation, precision)
+        riscv64ValidateOperands(node.operands, [FPRegisterID, FPRegisterID])
+        raise "Invalid operation" unless [:and, :or].include? operation
+
+        case precision
+        when :f
+            suffix = "w"
+        when :d
+            suffix = "d"
+        else
+            raise "Invalid precision #{precision}"
+        end
+
+        tmp1 = Tmp.new(node.codeOrigin, :gpr)
+        tmp2 = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_fmv.x.#{suffix}", [node.operands[0], tmp1])
+        newList << Instruction.new(node.codeOrigin, "rv_fmv.x.#{suffix}", [node.operands[1], tmp2])
+        newList << Instruction.new(node.codeOrigin, "rv_#{operation.to_s}", [tmp1, tmp2, tmp2])
+        newList << Instruction.new(node.codeOrigin, "rv_fmv.#{suffix}.x", [tmp2, node.operands[1]])
+    end
+
+    def emitRoundingOperation(newList, node, operation, precision)
+        riscv64ValidateOperands(node.operands, [FPRegisterID, FPRegisterID])
+
+        rm = RISCV64RoundingMode.new(operation)
+        case precision
+        when :f
+            intSuffix = "w"
+            fpSuffix = "s"
+        when :d
+            intSuffix = "l"
+            fpSuffix = "d"
+        else
+            raise "Invalid precision"
+        end
+
+        tmp = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_fcvt.#{intSuffix}.#{fpSuffix}", [node.operands[0], tmp, rm])
+        newList << Instruction.new(node.codeOrigin, "rv_fcvt.#{fpSuffix}.#{intSuffix}", [tmp, node.operands[1], rm])
+    end
+
+    def emitConversionOperation(newList, node, sourceType, destinationType, signedness, roundingMode)
+        def registerType(type)
+            case type
+            when :i, :p, :q
+                RegisterID
+            when :f, :d
+                FPRegisterID
+            else
+                raise "Invalid register type #{type}"
+            end
+        end
+
+        def fpSuffix(type)
+            case type
+            when :f
+                "s"
+            when :d
+                "d"
+            end
+        end
+
+        def intSuffix(type, signedness)
+            case type
+            when :i
+                signedness == :s ? "w" : "wu"
+            when :q
+                signedness == :s ? "l" : "lu"
+            end
+        end
+
+        riscv64ValidateOperands(node.operands, [registerType(sourceType), registerType(destinationType)])
+
+        case riscv64OperandTypes(node.operands)
+        when [RegisterID, FPRegisterID]
+            raise "Invalid rounding mode" unless roundingMode == :none
+            fcvtOpcode = "rv_fcvt.#{fpSuffix(destinationType)}.#{intSuffix(sourceType, signedness)}"
+        when [FPRegisterID, RegisterID]
+            fcvtOpcode = "rv_fcvt.#{intSuffix(destinationType, signedness)}.#{fpSuffix(sourceType)}"
+        when [FPRegisterID, FPRegisterID]
+            raise "Invalid rounding mode" unless roundingMode == :none
+            fcvtOpcode = "rv_fcvt.#{fpSuffix(destinationType)}.#{fpSuffix(sourceType)}"
+        else
+            riscv64RaiseMismatchedOperands(node.operands)
+        end
+
+        operands = [node.operands[0], node.operands[1]]
+        if roundingMode != :none
+            operands += [RISCV64RoundingMode.new(roundingMode)]
+        end
+        newList << Instruction.new(node.codeOrigin, fcvtOpcode, operands)
+    end
+
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when /^load(f|d)$/
+                emitLoadOperation(newList, node, $1.to_sym)
+            when /^store(f|d)$/
+                emitStoreOperation(newList, node, $1.to_sym)
+            when /^move(d)$/
+                emitMoveOperation(newList, node, $1.to_sym)
+            when /^f(i|p|q|f|d)2(i|p|q|f|d)$/
+                emitCopyOperation(newList, node, $1.to_sym, $2.to_sym)
+            when /^(add|sub|mul|div|sqrt|abs|neg)(f|d)$/
+                emitComputationalOperation(newList, node, $1.to_sym, $2.to_sym)
+            when /^(and|or)(f|d)$/
+                emitBitwiseOperation(newList, node, $1.to_sym, $2.to_sym)
+            when /^(floor|ceil|round|truncate)(f|d)$/
+                emitRoundingOperation(newList, node, $1.to_sym, $2.to_sym)
+            when /^truncate(f|d)2(i|q)(s?)$/
+                emitConversionOperation(newList, node, $1.to_sym, $2.to_sym, $3.to_sym, :truncate)
+            when /^c(i|q|f|d)2(f|d)(s?)$/
+                emitConversionOperation(newList, node, $1.to_sym, $2.to_sym, $3.to_sym, :none)
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+def riscv64LowerFPCompare(list)
+    def emitCompare(newList, node, precision, compareOp, lhs, rhs)
+        case precision
+        when :f
+            precisionSuffix = "s"
+        when :d
+            precisionSuffix = "d"
+        else
+            raise "Invalid precision #{precision}"
+        end
+
+        newList << Instruction.new(node.codeOrigin, "rv_#{compareOp}.#{precisionSuffix}", [lhs, rhs, node.operands[2]])
+    end
+
+    def emit(newList, node, precision, condition)
+        riscv64ValidateOperands(node.operands, [FPRegisterID, FPRegisterID, RegisterID])
+        operands = node.operands
+
+        case condition
+        when :eq
+            emitCompare(newList, node, precision, "feq", operands[0], operands[1])
+        when :neq
+            emitCompare(newList, node, precision, "feq", operands[0], operands[1])
+            newList << Instruction.new(node.codeOrigin, "rv_xori", [operands[2], Immediate.new(node.codeOrigin, 1), operands[2]])
+        when :gt
+            emitCompare(newList, node, precision, "flt", operands[1], operands[0])
+        when :gteq
+            emitCompare(newList, node, precision, "fle", operands[1], operands[0])
+        when :lt
+            emitCompare(newList, node, precision, "flt", operands[0], operands[1])
+        when :lteq
+            emitCompare(newList, node, precision, "fle", operands[0], operands[1])
+        else
+            raise "Invalid condition #{condition}"
+        end
+    end
+
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when /^c(f|d)(eq|neq|gt|gteq|lt|lteq)$/
+                emit(newList, node, $1.to_sym, $2.to_sym)
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+def riscv64LowerFPBranch(list)
+    def precisionSuffix(precision)
+        case precision
+        when :f
+            "s"
+        when :d
+            "d"
+        else
+            raise "Invalid precision"
+        end
+    end
+
+    def emitBranchForUnordered(newList, node, precision)
+        tmp1 = Tmp.new(node.codeOrigin, :gpr)
+        tmp2 = Tmp.new(node.codeOrigin, :gpr)
+
+        newList << Instruction.new(node.codeOrigin, "rv_fclass.#{precisionSuffix(precision)}", [node.operands[0], tmp1])
+        newList << Instruction.new(node.codeOrigin, "rv_fclass.#{precisionSuffix(precision)}", [node.operands[1], tmp2])
+        newList << Instruction.new(node.codeOrigin, "rv_or", [tmp1, tmp2, tmp2])
+        newList << Instruction.new(node.codeOrigin, "rv_andi", [tmp2, Immediate.new(node.codeOrigin, 0x300), tmp2])
+        newList << Instruction.new(node.codeOrigin, "rv_bnez", [tmp2, node.operands[2]])
+    end
+
+    def emitBranchForTest(newList, node, precision, testOpcode, lhs, rhs, branchOpcode)
+        tmp = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_#{testOpcode}.#{precisionSuffix(precision)}", [lhs, rhs, tmp])
+        newList << Instruction.new(node.codeOrigin, "rv_#{branchOpcode}", [tmp, node.operands[2]])
+    end
+
+    def emit(newList, node, precision, condition)
+        riscv64ValidateOperands(node.operands, [FPRegisterID, FPRegisterID, LocalLabelReference])
+        operands = node.operands
+
+        if [:equn, :nequn, :gtun, :gtequn, :ltun, :ltequn].include? condition
+            emitBranchForUnordered(newList, node, precision)
+        end
+
+        case condition
+        when :eq, :equn
+            emitBranchForTest(newList, node, precision, "feq", operands[0], operands[1], "bnez")
+        when :neq, :nequn
+            emitBranchForTest(newList, node, precision, "feq", operands[0], operands[1], "beqz")
+        when :gt, :gtun
+            emitBranchForTest(newList, node, precision, "flt", operands[1], operands[0], "bnez")
+        when :gteq, :gtequn
+            emitBranchForTest(newList, node, precision, "fle", operands[1], operands[0], "bnez")
+        when :lt, :ltun
+            emitBranchForTest(newList, node, precision, "flt", operands[0], operands[1], "bnez")
+        when :lteq, :ltequn
+            emitBranchForTest(newList, node, precision, "fle", operands[0], operands[1], "bnez")
+        else
+            raise "Invalid condition"
+        end
+    end
+
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when /^b(f|d)(eq|neq|gt|gteq|lt|lteq|equn|nequn|gtun|gtequn|ltun|ltequn)$/
+                emit(newList, node, $1.to_sym, $2.to_sym)
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+def riscv64GenerateWASMPlaceholders(list)
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when "lrotatei", "lrotateq", "rrotatei", "rrotateq",
+                "tzcnti", "tzcntq", "lzcnti", "lzcntq", "cfnequn", "cdnequn",
+                "loadlinkacqb", "loadlinkacqh", "loadlinkacqi", "loadlinkacqq",
+                "storecondrelb", "storecondrelh", "storecondreli", "storecondrelq"
+                newList << Instruction.new(node.codeOrigin, "rv_ebreak", [], "WebAssembly placeholder for opcode #{node.opcode}")
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+class Sequence
+    def getModifiedListRISCV64
+        result = @list
+
+        result = riscLowerMalformedAddresses(result) {
+            | node, address |
+            if address.is_a? Address
+                !address.riscv64RequiresLoad
+            else
+                false
+            end
+        }
+        result = riscv64LowerMisplacedAddresses(result)
+        result = riscLowerMisplacedAddresses(result)
+        result = riscv64LowerAddressLoads(result)
+
+        result = riscLowerMisplacedImmediates(result, ["storeb", "storeh", "storei", "storep", "storeq"])
+        result = riscLowerMalformedImmediates(result, -0x800..0x7ff, -0x800..0x7ff)
+        result = riscv64LowerImmediateSubtraction(result)
+
+        result = riscv64LowerOperation(result)
+        result = riscv64LowerTest(result)
+        result = riscv64LowerCompare(result)
+        result = riscv64LowerBranch(result)
+
+        result = riscv64LowerFPOperation(result)
+        result = riscv64LowerFPCompare(result)
+        result = riscv64LowerFPBranch(result)
+
+        result = riscv64GenerateWASMPlaceholders(result)
+
+        result = assignRegistersToTemporaries(result, :gpr, RISCV64_EXTRA_GPRS)
+        result = assignRegistersToTemporaries(result, :fpr, RISCV64_EXTRA_FPRS)
+        return result
+    end
+end
+
 class Instruction
+    def rvop(opcode)
+        opcode[/^rv_(.+)/, 1]
+    end
+
     def lowerRISCV64
         case opcode
-        when "addi"
-            riscv64EmitAdditionOperation(operands, :w, :add)
-        when "addp", "addq"
-            riscv64EmitAdditionOperation(operands, :d, :add)
-        when "addis", "addps"
-            riscv64RaiseUnsupported
-        when "subi"
-            riscv64EmitAdditionOperation(operands, :w, :sub)
-        when "subp", "subq"
-            riscv64EmitAdditionOperation(operands, :d, :sub)
-        when "subis"
-            riscv64RaiseUnsupported
-        when "andi"
-            riscv64EmitLogicalOperation(operands, :w, :and)
-        when "andp", "andq"
-            riscv64EmitLogicalOperation(operands, :d, :and)
-        when "orh"
-            riscv64EmitLogicalOperation(operands, :h, :or)
-        when "ori"
-            riscv64EmitLogicalOperation(operands, :w, :or)
-        when "orp", "orq"
-            riscv64EmitLogicalOperation(operands, :d, :or)
-        when "xori"
-            riscv64EmitLogicalOperation(operands, :w, :xor)
-        when "xorp", "xorq"
-            riscv64EmitLogicalOperation(operands, :d, :xor)
-        when "lshifti"
-            riscv64EmitShift(operands, :w, :lleft)
-        when "lshiftp", "lshiftq"
-            riscv64EmitShift(operands, :d, :lleft)
-        when "rshifti"
-            riscv64EmitShift(operands, :w, :aright)
-        when "rshiftp", "rshiftq"
-            riscv64EmitShift(operands, :d, :aright)
-        when "urshifti"
-            riscv64EmitShift(operands, :w, :lright)
-        when "urshiftp", "urshiftq"
-            riscv64EmitShift(operands, :d, :lright)
-        when "muli"
-            riscv64EmitMulDivArithmetic(operands, :w, :mul)
-        when "mulp", "mulq"
-            riscv64EmitMulDivArithmetic(operands, :d, :mul)
-        when "divi"
-            riscv64EmitMulDivArithmetic(operands, :w, :div)
-        when "divq"
-            riscv64EmitMulDivArithmetic(operands, :d, :div)
-        when "divis", "divqs"
-            riscv64RaiseUnsupported
-        when "negi"
-            riscv64EmitComplementOperation(operands, :w, :neg)
-        when "negp", "negq"
-            riscv64EmitComplementOperation(operands, :d, :neg)
-        when "noti"
-            riscv64EmitComplementOperation(operands, :w, :not)
-        when "notq"
-            riscv64EmitComplementOperation(operands, :d, :not)
-        when "storeb"
-            riscv64EmitStore(operands, :b)
-        when "storeh"
-            riscv64EmitStore(operands, :h)
-        when "storei"
-            riscv64EmitStore(operands, :w)
-        when "storep", "storeq"
-            riscv64EmitStore(operands, :d)
-        when "loadb"
-            riscv64EmitLoad(operands, :bu, :none)
-        when "loadh"
-            riscv64EmitLoad(operands, :hu, :none)
-        when "loadi"
-            riscv64EmitLoad(operands, :wu, :none)
-        when "loadis"
-            riscv64EmitLoad(operands, :w, :none)
-        when "loadp", "loadq"
-            riscv64EmitLoad(operands, :d, :none)
-        when "loadbsi"
-            riscv64EmitLoad(operands, :b, :w)
-        when "loadbsq"
-            riscv64EmitLoad(operands, :b, :none)
-        when "loadhsi"
-            riscv64EmitLoad(operands, :h, :w)
-        when "loadhsq"
-            riscv64EmitLoad(operands, :h, :none)
-        when "bfeq"
-            riscv64EmitFPConditionalBranchForTest(operands, :s, :eq)
-        when "bflt"
-            riscv64EmitFPConditionalBranchForTest(operands, :s, :lt)
-        when "bfgt"
-            riscv64EmitFPConditionalBranchForTest(operands, :s, :gt)
-        when "bfltun"
-            riscv64EmitFPConditionalBranchForTest(operands, :s, :ltun)
-        when "bfltequn"
-            riscv64EmitFPConditionalBranchForTest(operands, :s, :ltequn)
-        when "bfgtun"
-            riscv64EmitFPConditionalBranchForTest(operands, :s, :gtun)
-        when "bfgtequn"
-            riscv64EmitFPConditionalBranchForTest(operands, :s, :gtequn)
-        when "bdeq"
-            riscv64EmitFPConditionalBranchForTest(operands, :d, :eq)
-        when "bdneq"
-            riscv64EmitFPConditionalBranchForTest(operands, :d, :neq)
-        when "bdlt"
-            riscv64EmitFPConditionalBranchForTest(operands, :d, :lt)
-        when "bdlteq"
-            riscv64EmitFPConditionalBranchForTest(operands, :d, :lteq)
-        when "bdgt"
-            riscv64EmitFPConditionalBranchForTest(operands, :d, :gt)
-        when "bdgteq"
-            riscv64EmitFPConditionalBranchForTest(operands, :d, :gteq)
-        when "bdequn"
-            riscv64EmitFPConditionalBranchForTest(operands, :d, :equn)
-        when "bdnequn"
-            riscv64EmitFPConditionalBranchForTest(operands, :d, :nequn)
-        when "bdltun"
-            riscv64EmitFPConditionalBranchForTest(operands, :d, :ltun)
-        when "bdltequn"
-            riscv64EmitFPConditionalBranchForTest(operands, :d, :ltequn)
-        when "bdgtun"
-            riscv64EmitFPConditionalBranchForTest(operands, :d, :gtun)
-        when "bdgtequn"
-            riscv64EmitFPConditionalBranchForTest(operands, :d, :gtequn)
-        when "td2i", "bcd2i", "btd2i"
-            riscv64RaiseUnsupported
-        when "movdz"
-            riscv64RaiseUnsupported
-        when "pop"
-            size = 8 * operands.size
-            operands.each_with_index {
-                | op, index |
-                $asm.puts "ld #{op.riscv64Operand}, #{size - 8 * (index + 1)}(sp)"
-            }
-            $asm.puts "addi sp, sp, #{size}"
-        when "push"
-            size = 8 * operands.size
-            $asm.puts "addi sp, sp, #{-size}"
-            operands.reverse.each_with_index {
-                | op, index |
-                $asm.puts "sd #{op.riscv64Operand}, #{size - 8 * (index + 1)}(sp)"
-            }
-        when "move"
-            case riscv64OperandTypes(operands)
-            when [RegisterID, RegisterID]
-                $asm.puts "mv #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-            when [Immediate, RegisterID]
-                $asm.puts "li #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
+        when /^rv_(jr|jalr)$/
+            riscv64ValidateOperands(operands, [RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[0].riscv64Operand}"
+        when /^rv_(call|tail)$/
+            riscv64ValidateOperands(operands, [LabelReference], [LocalLabelReference])
+            $asm.puts "#{rvop(opcode)} #{operands[0].asmLabel}"
+        when /^rv_(la|lla)$/
+            riscv64ValidateOperands(operands, [LabelReference, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].asmLabel}"
+        when "rv_mv"
+            riscv64ValidateOperands(operands, [RegisterID, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
+        when "rv_li"
+            riscv64ValidateOperands(operands, [Immediate, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand(:any_immediate)}"
+        when /^rv_l(b|bu|h|hu|w|wu|d)$/
+            riscv64ValidateOperands(operands, [Address, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
+        when /^rv_s(b|h|w|d)$/
+            riscv64ValidateOperands(operands, [RegisterID, Address])
+            $asm.puts "#{rvop(opcode)} #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
+        when /^rv_(add(w?)|sub(w?)|and|or|xor|s(ll|rl|ra)(w?)|mul(w?)|div(u?)(w?)|rem(u?)(w?))$/
+            riscv64ValidateOperands(operands, [RegisterID, RegisterID, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
+        when /^rv_addi(w?)$/, /^rv_(and|or|xor)i$/
+            riscv64ValidateOperands(operands, [RegisterID, Immediate, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
+        when /^rv_(sll|srl|sra)i(w?)$/
+            riscv64ValidateOperands(operands, [RegisterID, Immediate, RegisterID])
+            validationType = $2 == "w" ? :rv32_shift_immediate : :rv64_shift_immediate
+            raise "Invalid shit-amount immediate" unless riscv64ValidateImmediate(validationType, operands[1].value)
+            $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
+        when /^rv_neg(w?)$/, "rv_not", "rv_sext.w"
+            riscv64ValidateOperands(operands, [RegisterID, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
+        when /^rv_(slt|sltu)$/
+            riscv64ValidateOperands(operands, [RegisterID, RegisterID, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
+        when /^rv_(seqz|snez|sltz|sgtz)$/
+            riscv64ValidateOperands(operands, [RegisterID, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
+        when /^rv_b(eq|ne|gt|ge|gtu|geu|lt|le|ltu|leu)$/
+            riscv64ValidateOperands(operands, [RegisterID, RegisterID, LocalLabelReference])
+            $asm.puts "#{rvop(opcode)} #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}, #{operands[2].asmLabel}"
+        when /^rv_b(eqz|nez|ltz|gtz)$/
+            riscv64ValidateOperands(operands, [RegisterID, LocalLabelReference])
+            $asm.puts "#{rvop(opcode)} #{operands[0].riscv64Operand}, #{operands[1].asmLabel}"
+        when "rv_nop", "rv_ret", "rv_ebreak"
+            $asm.puts "#{rvop(opcode)}"
+        when "rv_fence"
+            riscv64ValidateOperands(operands, [RISCV64MemoryOrdering, RISCV64MemoryOrdering])
+            $asm.puts "#{rvop(opcode)} #{operands[0].riscv64MemoryOrdering}, #{operands[1].riscv64MemoryOrdering}"
+        when /^rv_fl(w|d)$/
+            riscv64ValidateOperands(operands, [Address, FPRegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
+        when /^rv_fs(w|d)$/
+            riscv64ValidateOperands(operands, [FPRegisterID, Address])
+            $asm.puts "#{rvop(opcode)} #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
+        when /^rv_fmv\.(s|d)$/
+            riscv64ValidateOperands(operands, [FPRegisterID, FPRegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
+        when /^rv_fmv\.(x|w|d)\.(x|w|d)$/
+            riscv64ValidateOperands(operands, [RegisterID, FPRegisterID], [FPRegisterID, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
+        when /^rv_f(add|sub|mul|div)\.(s|d)$/
+            riscv64ValidateOperands(operands, [FPRegisterID, FPRegisterID, FPRegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
+        when /^rv_f(sqrt|abs|neg)\.(s|d)$/
+            riscv64ValidateOperands(operands, [FPRegisterID, FPRegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
+        when /^rv_f(eq|lt|le)\.(s|d)$/
+            riscv64ValidateOperands(operands, [FPRegisterID, FPRegisterID, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
+        when /^rv_fcvt\.(w|wu|l|lu|s|d)\.(w|wu|l|lu|s|d)$/
+            riscv64ValidateOperands(operands,
+                [RegisterID, FPRegisterID], [FPRegisterID, RegisterID], [FPRegisterID, FPRegisterID],
+                [RegisterID, FPRegisterID, RISCV64RoundingMode], [FPRegisterID, RegisterID, RISCV64RoundingMode])
+            if operands.size == 3
+                riscv64RaiseMismatchedOperands(operands) unless operands[2].is_a? RISCV64RoundingMode
+                $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[2].riscv64RoundingMode}"
             else
-                riscv64RaiseMismatchedOperands(operands)
+                $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
             end
-        when "sxb2i"
-            riscv64EmitBitExtension(operands, :b, :w, :sign)
-        when "sxb2q"
-            riscv64EmitBitExtension(operands, :b, :d, :sign)
-        when "sxh2i"
-            riscv64EmitBitExtension(operands, :h, :w, :sign)
-        when "sxh2q"
-            riscv64EmitBitExtension(operands, :h, :d, :sign)
-        when "sxi2p", "sxi2q"
-            riscv64EmitBitExtension(operands, :w, :d, :sign)
-        when "zxi2p", "zxi2q"
-            riscv64EmitBitExtension(operands, :w, :d, :zero)
-        when "nop"
-            $asm.puts "nop"
-        when "bbeq"
-            riscv64EmitConditionalBranch(operands, :b, :eq)
-        when "bieq"
-            riscv64EmitConditionalBranch(operands, :w, :eq)
-        when "bpeq", "bqeq"
-            riscv64EmitConditionalBranch(operands, :d, :eq)
-        when "bbneq"
-            riscv64EmitConditionalBranch(operands, :b, :neq)
-        when "bineq"
-            riscv64EmitConditionalBranch(operands, :w, :neq)
-        when "bpneq", "bqneq"
-            riscv64EmitConditionalBranch(operands, :d, :neq)
-        when "bba"
-            riscv64EmitConditionalBranch(operands, :b, :a)
-        when "bia"
-            riscv64EmitConditionalBranch(operands, :w, :a)
-        when "bpa", "bqa"
-            riscv64EmitConditionalBranch(operands, :d, :a)
-        when "bbaeq"
-            riscv64EmitConditionalBranch(operands, :b, :aeq)
-        when "biaeq"
-            riscv64EmitConditionalBranch(operands, :w, :aeq)
-        when "bpaeq", "bqaeq"
-            riscv64EmitConditionalBranch(operands, :d, :aeq)
-        when "bbb"
-            riscv64EmitConditionalBranch(operands, :b, :b)
-        when "bib"
-            riscv64EmitConditionalBranch(operands, :w, :b)
-        when "bpb", "bqb"
-            riscv64EmitConditionalBranch(operands, :d, :b)
-        when "bbbeq"
-            riscv64EmitConditionalBranch(operands, :b, :beq)
-        when "bibeq"
-            riscv64EmitConditionalBranch(operands, :w, :beq)
-        when "bpbeq", "bqbeq"
-            riscv64EmitConditionalBranch(operands, :d, :beq)
-        when "bbgt"
-            riscv64EmitConditionalBranch(operands, :b, :gt)
-        when "bigt"
-            riscv64EmitConditionalBranch(operands, :w, :gt)
-        when "bpgt", "bqgt"
-            riscv64EmitConditionalBranch(operands, :d, :gt)
-        when "bbgteq"
-            riscv64EmitConditionalBranch(operands, :b, :gteq)
-        when "bigteq"
-            riscv64EmitConditionalBranch(operands, :w, :gteq)
-        when "bpgteq", "bqgteq"
-            riscv64EmitConditionalBranch(operands, :d, :gteq)
-        when "bblt"
-            riscv64EmitConditionalBranch(operands, :b, :lt)
-        when "bilt"
-            riscv64EmitConditionalBranch(operands, :w, :lt)
-        when "bplt", "bqlt"
-            riscv64EmitConditionalBranch(operands, :d, :lt)
-        when "bblteq"
-            riscv64EmitConditionalBranch(operands, :b, :lteq)
-        when "bilteq"
-            riscv64EmitConditionalBranch(operands, :w, :lteq)
-        when "bplteq", "bqlteq"
-            riscv64EmitConditionalBranch(operands, :d, :lteq)
-        when "btbz"
-            riscv64EmitConditionalBranchForTest(operands, :b, :z)
-        when "btbnz"
-            riscv64EmitConditionalBranchForTest(operands, :b, :nz)
-        when "btbs"
-            riscv64EmitConditionalBranchForTest(operands, :b, :s)
-        when "btiz"
-            riscv64EmitConditionalBranchForTest(operands, :w, :z)
-        when "btinz"
-            riscv64EmitConditionalBranchForTest(operands, :w, :nz)
-        when "btis"
-            riscv64EmitConditionalBranchForTest(operands, :w, :s)
-        when "btpz", "btqz"
-            riscv64EmitConditionalBranchForTest(operands, :d, :z)
-        when "btpnz", "btqnz"
-            riscv64EmitConditionalBranchForTest(operands, :d, :nz)
-        when "btps", "btqs"
-            riscv64EmitConditionalBranchForTest(operands, :d, :s)
-        when "baddiz"
-            riscv64EmitConditionalBranchForAdditionOperation(operands, :w, :add, :z)
-        when "baddinz"
-            riscv64EmitConditionalBranchForAdditionOperation(operands, :w, :add, :nz)
-        when "baddis"
-            riscv64EmitConditionalBranchForAdditionOperation(operands, :w, :add, :s)
-        when "baddio"
-            riscv64EmitOverflowBranchForOperation(operands, :w, :add)
-        when "baddpz", "baddqz"
-            riscv64EmitConditionalBranchForAdditionOperation(operands, :d, :add, :z)
-        when "baddpnz", "baddqnz"
-            riscv64EmitConditionalBranchForAdditionOperation(operands, :d, :add, :nz)
-        when "baddps", "baddqs"
-            riscv64EmitConditionalBranchForAdditionOperation(operands, :d, :add, :s)
-        when "baddpo", "baddqo"
-            riscv64RaiseUnsupported
-        when "bsubiz"
-            riscv64EmitConditionalBranchForAdditionOperation(operands, :w, :sub, :z)
-        when "bsubinz"
-            riscv64EmitConditionalBranchForAdditionOperation(operands, :w, :sub, :nz)
-        when "bsubis"
-            riscv64EmitConditionalBranchForAdditionOperation(operands, :w, :sub, :s)
-        when "bsubio"
-            riscv64EmitOverflowBranchForOperation(operands, :w, :sub)
-        when "bmuliz"
-            riscv64EmitConditionalBranchForMultiplicationOperation(operands, :w, :z)
-        when "bmulinz"
-            riscv64EmitConditionalBranchForMultiplicationOperation(operands, :w, :nz)
-        when "bmulis"
-            riscv64EmitConditionalBranchForMultiplicationOperation(operands, :w, :s)
-        when "bmulio"
-            riscv64EmitOverflowBranchForOperation(operands, :w, :mul)
-        when "boriz", "borinz", "boris", "borio"
-            riscv64RaiseUnsupported
-        when "jmp"
-            case riscv64OperandTypes(operands)
-            when [RegisterID, Immediate]
-                $asm.puts "jr #{operands[0].riscv64Operand}"
-            when [BaseIndex, Immediate, Immediate]
-                operands[0].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
-                $asm.puts "ld x31, 0(x31)"
-                $asm.puts "jr x31"
-            when [Address, Immediate]
-                if operands[0].riscv64RequiresLoad
-                    operands[0].riscv64Load(RISCV64ScratchRegister.x31)
-                    $asm.puts "ld x31, 0(x31)"
-                    $asm.puts "jr x31"
-                else
-                    $asm.puts "ld x31, #{operands[0].riscv64Operand}"
-                    $asm.puts "jr x31"
-                end
-            when [LabelReference]
-                $asm.puts "tail #{operands[0].asmLabel}"
-            when [LocalLabelReference]
-                $asm.puts "tail #{operands[0].asmLabel}"
-            else
-                riscv64RaiseMismatchedOperands(operands)
-            end
-        when "call"
-            case riscv64OperandTypes(operands)
-            when [RegisterID, Immediate]
-                $asm.puts "jalr #{operands[0].riscv64Operand}"
-            when [Address, Immediate]
-                if operands[0].riscv64RequiresLoad
-                    operands[0].riscv64Load(RISCV64ScratchRegister.x31)
-                    $asm.puts "ld x31, 0(x31)"
-                    $asm.puts "jalr x31"
-                else
-                    $asm.puts "ld x31, #{operands[0].riscv64Operand}"
-                    $asm.puts "jalr x31"
-                end
-            when [LabelReference]
-                $asm.puts "call #{operands[0].asmLabel}"
-            else
-                riscv64RaiseMismatchedOperands(operands)
-            end
-        when "break"
-            $asm.puts "ebreak"
-        when "ret"
-            $asm.puts "ret"
-        when "cbeq"
-            riscv64EmitCompare(operands, :b, :eq)
-        when "cieq"
-            riscv64EmitCompare(operands, :w, :eq)
-        when "cpeq", "cqeq"
-            riscv64EmitCompare(operands, :d, :eq)
-        when "cbneq"
-            riscv64EmitCompare(operands, :b, :neq)
-        when "cineq"
-            riscv64EmitCompare(operands, :w, :neq)
-        when "cpneq", "cqneq"
-            riscv64EmitCompare(operands, :d, :neq)
-        when "cba"
-            riscv64EmitCompare(operands, :b, :a)
-        when "cia"
-            riscv64EmitCompare(operands, :w, :a)
-        when "cpa", "cqa"
-            riscv64EmitCompare(operands, :d, :a)
-        when "cbaeq"
-            riscv64EmitCompare(operands, :b, :aeq)
-        when "ciaeq"
-            riscv64EmitCompare(operands, :w, :aeq)
-        when "cpaeq", "cqaeq"
-            riscv64EmitCompare(operands, :d, :aeq)
-        when "cbb"
-            riscv64EmitCompare(operands, :b, :b)
-        when "cib"
-            riscv64EmitCompare(operands, :w, :b)
-        when "cpb", "cqb"
-            riscv64EmitCompare(operands, :d, :b)
-        when "cbbeq"
-            riscv64EmitCompare(operands, :b, :beq)
-        when "cibeq"
-            riscv64EmitCompare(operands, :w, :beq)
-        when "cpbeq", "cqbeq"
-            riscv64EmitCompare(operands, :d, :beq)
-        when "cblt"
-            riscv64EmitCompare(operands, :b, :lt)
-        when "cilt"
-            riscv64EmitCompare(operands, :w, :lt)
-        when "cplt", "cqlt"
-            riscv64EmitCompare(operands, :d, :lt)
-        when "cblteq"
-            riscv64EmitCompare(operands, :b, :lteq)
-        when "cilteq"
-            riscv64EmitCompare(operands, :w, :lteq)
-        when "cplteq", "cqlteq"
-            riscv64EmitCompare(operands, :d, :lteq)
-        when "cbgt"
-            riscv64EmitCompare(operands, :b, :gt)
-        when "cigt"
-            riscv64EmitCompare(operands, :w, :gt)
-        when "cpgt", "cqgt"
-            riscv64EmitCompare(operands, :d, :gt)
-        when "cbgteq"
-            riscv64EmitCompare(operands, :b, :gteq)
-        when "cigteq"
-            riscv64EmitCompare(operands, :w, :gteq)
-        when "cpgteq", "cqgteq"
-            riscv64EmitCompare(operands, :d, :gteq)
-        when "tbz"
-            riscv64EmitTest(operands, :b, :z)
-        when "tbnz"
-            riscv64EmitTest(operands, :b, :nz)
-        when "tiz"
-            riscv64EmitTest(operands, :w, :z)
-        when "tinz"
-            riscv64EmitTest(operands, :w, :nz)
-        when "tpz", "tqz"
-            riscv64EmitTest(operands, :d, :z)
-        when "tpnz", "tqnz"
-            riscv64EmitTest(operands, :d, :nz)
-        when "tbs", "tis", "tps", "tqs"
-            riscv64RaiseUnsupported
-        when "peek", "poke"
-            riscv64RaiseUnsupported
-        when "bo", "bs", "bz", "bnz"
-            riscv64RaiseUnsupported
-        when "leap", "leaq"
-            case riscv64OperandTypes(operands)
-            when [Address, RegisterID]
-                if operands[0].riscv64RequiresLoad
-                    operands[0].riscv64Load(RISCV64ScratchRegister.x31)
-                    $asm.puts "mv #{operands[1].riscv64Operand}, x31"
-                else
-                    $asm.puts "addi #{operands[1].riscv64Operand}, #{operands[0].base.riscv64Operand}, #{operands[0].offset.value}"
-                end
-            when [BaseIndex, RegisterID]
-                operands[0].riscv64Load(RISCV64ScratchRegister.x31, RISCV64ScratchRegister.x30)
-                $asm.puts "mv #{operands[1].riscv64Operand}, x31"
-            when [LabelReference, RegisterID]
-                $asm.puts "lla #{operands[1].riscv64Operand}, #{operands[0].asmLabel}"
-            else
-                riscv64RaiseMismatchedOperands(operands)
-            end
-        when "smulli"
-            riscv64RaiseUnsupported
-        when "memfence"
-            $asm.puts "fence rw, rw"
-        when "fence"
-            $asm.puts "fence"
-        when "bfiq"
-            riscv64RaiseUnsupported
-        when "pcrtoaddr"
-            case riscv64OperandTypes(operands)
-            when [LabelReference, RegisterID]
-                $asm.puts "lla #{operands[1].riscv64Operand}, #{operands[0].asmLabel}"
-            else
-                riscv64RaiseMismatchedOperands(operands)
-            end
-        when "globaladdr"
-            case riscv64OperandTypes(operands)
-            when [LabelReference, RegisterID]
-                $asm.puts "la #{operands[1].riscv64Operand}, #{operands[0].asmLabel}"
-            else
-                riscv64RaiseMismatchedOperands(operands)
-            end
-        when "lrotatei", "lrotateq"
-            riscv64RaiseUnsupported
-        when "rrotatei", "rrotateq"
-            riscv64RaiseUnsupported
-        when "moved"
-            riscv64EmitFPOperation(operands, "fmv.d")
-        when "loadf"
-            riscv64EmitFPLoad(operands, "flw")
-        when "loadd"
-            riscv64EmitFPLoad(operands, "fld")
-        when "storef"
-            riscv64EmitFPStore(operands, "fsw")
-        when "stored"
-            riscv64EmitFPStore(operands, "fsd")
-        when "addf"
-            riscv64EmitFPOperation([operands[0], operands[1], operands[1]], "fadd.s")
-        when "addd"
-            riscv64EmitFPOperation([operands[0], operands[1], operands[1]], "fadd.d")
-        when "subf"
-            riscv64EmitFPOperation([operands[1], operands[0], operands[1]], "fsub.s")
-        when "subd"
-            riscv64EmitFPOperation([operands[1], operands[0], operands[1]], "fsub.d")
-        when "mulf"
-            riscv64EmitFPOperation([operands[0], operands[1], operands[1]], "fmul.s")
-        when "muld"
-            riscv64EmitFPOperation([operands[0], operands[1], operands[1]], "fmul.d")
-        when "divf"
-            riscv64EmitFPOperation([operands[1], operands[0], operands[1]], "fdiv.s")
-        when "divd"
-            riscv64EmitFPOperation([operands[1], operands[0], operands[1]], "fdiv.d")
-        when "sqrtf"
-            riscv64EmitFPOperation(operands, "fsqrt.s")
-        when "sqrtd"
-            riscv64EmitFPOperation(operands, "fsqrt.d")
-        when "absf"
-            riscv64EmitFPOperation(operands, "fabs.s")
-        when "absd"
-            riscv64EmitFPOperation(operands, "fabs.d")
-        when "negf"
-            riscv64EmitFPOperation(operands, "fneg.s")
-        when "negd"
-            riscv64EmitFPOperation(operands, "fneg.d")
-        when "floorf"
-            riscv64EmitFPRoundOperation(operands, :s, "rdn")
-        when "floord"
-            riscv64EmitFPRoundOperation(operands, :d, "rdn")
-        when "ceilf"
-            riscv64EmitFPRoundOperation(operands, :s, "rup")
-        when "ceild"
-            riscv64EmitFPRoundOperation(operands, :d, "rup")
-        when "roundf"
-            riscv64EmitFPRoundOperation(operands, :s, "rne")
-        when "roundd"
-            riscv64EmitFPRoundOperation(operands, :d, "rne")
-        when "truncatef"
-            riscv64EmitFPRoundOperation(operands, :s, "rtz")
-        when "truncated"
-            riscv64EmitFPRoundOperation(operands, :d, "rtz")
-        when "truncatef2i"
-            riscv64EmitFPConvertOperation(operands, :s, :wu, "rtz")
-        when "truncated2i"
-            riscv64EmitFPConvertOperation(operands, :d, :wu, "rtz")
-        when "truncatef2q"
-            riscv64EmitFPConvertOperation(operands, :s, :lu, "rtz")
-        when "truncated2q"
-            riscv64EmitFPConvertOperation(operands, :d, :lu, "rtz")
-        when "truncatef2is"
-            riscv64EmitFPConvertOperation(operands, :s, :w, "rtz")
-        when "truncated2is"
-            riscv64EmitFPConvertOperation(operands, :d, :w, "rtz")
-        when "truncatef2qs"
-            riscv64EmitFPConvertOperation(operands, :s, :l, "rtz")
-        when "truncated2qs"
-            riscv64EmitFPConvertOperation(operands, :d, :l, "rtz")
-        when "ci2f"
-            riscv64EmitFPConvertOperation(operands, :wu, :s, :none)
-        when "ci2d"
-            riscv64EmitFPConvertOperation(operands, :wu, :d, :none)
-        when "ci2fs"
-            riscv64EmitFPConvertOperation(operands, :w, :s, :none)
-        when "ci2ds"
-            riscv64EmitFPConvertOperation(operands, :w, :d, :none)
-        when "cq2f"
-            riscv64EmitFPConvertOperation(operands, :lu, :s, :none)
-        when "cq2d"
-            riscv64EmitFPConvertOperation(operands, :lu, :d, :none)
-        when "cq2fs"
-            riscv64EmitFPConvertOperation(operands, :l, :s, :none)
-        when "cq2ds"
-            riscv64EmitFPConvertOperation(operands, :l, :d, :none)
-        when "cf2d"
-            riscv64EmitFPConvertOperation(operands, :s, :d, :none)
-        when "cd2f"
-            riscv64EmitFPConvertOperation(operands, :d, :s, :none)
-        when "tzcnti", "tzcntq"
-            riscv64RaiseUnsupported
-        when "lzcnti", "lzcntq"
-            riscv64RaiseUnsupported
-        when "andf"
-            riscv64EmitFPBitwiseOperation(operands, :s, "and")
-        when "andd"
-            riscv64EmitFPBitwiseOperation(operands, :d, "and")
-        when "orf"
-            riscv64EmitFPBitwiseOperation(operands, :s, "or")
-        when "ord"
-            riscv64EmitFPBitwiseOperation(operands, :d, "or")
-        when "cfeq"
-            riscv64EmitFPCompare(operands, :s, :eq)
-        when "cfneq"
-            riscv64EmitFPCompare(operands, :s, :neq)
-        when "cflt"
-            riscv64EmitFPCompare(operands, :s, :lt)
-        when "cflteq"
-            riscv64EmitFPCompare(operands, :s, :lteq)
-        when "cfgt"
-            riscv64EmitFPCompare(operands, :s, :gt)
-        when "cfgteq"
-            riscv64EmitFPCompare(operands, :s, :gteq)
-        when "cfnequn"
-            riscv64EmitFPCompare(operands, :s, :nequn)
-        when "cdeq"
-            riscv64EmitFPCompare(operands, :d, :eq)
-        when "cdneq"
-            riscv64EmitFPCompare(operands, :d, :neq)
-        when "cdlt"
-            riscv64EmitFPCompare(operands, :d, :lt)
-        when "cdlteq"
-            riscv64EmitFPCompare(operands, :d, :lteq)
-        when "cdgt"
-            riscv64EmitFPCompare(operands, :d, :gt)
-        when "cdgteq"
-            riscv64EmitFPCompare(operands, :d, :gteq)
-        when "cdnequn"
-            riscv64EmitFPCompare(operands, :d, :nequn)
-        when "fi2f"
-            riscv64EmitFPCopy(operands, :s)
-        when "ff2i"
-            riscv64EmitFPCopy(operands, :s)
-        when "fp2d", "fq2d"
-            riscv64EmitFPCopy(operands, :d)
-        when "fd2p", "fd2q"
-            riscv64EmitFPCopy(operands, :d)
-        when "tls_loadp", "tls_storep"
-            riscv64RaiseUnsupported
-        when "loadlinkacqb", "loadlinkacqh", "loadlinkacqi", "loadlinkacqq"
-            riscv64RaiseUnsupported
-        when "storecondrelb", "storecondrelh", "storecondreli", "storecondrelq"
-            riscv64RaiseUnsupported
-        when "atomicxchgaddb", "atomicxchgaddh", "atomicxchgaddi", "atomicxchgaddq"
-            riscv64RaiseUnsupported
-        when "atomicxchgclearb", "atomicxchgclearh", "atomicxchgcleari", "atomicxchgclearq"
-            riscv64RaiseUnsupported
-        when "atomicxchgorb", "atomicxchgorh", "atomicxchgori", "atomicxchgorq"
-            riscv64RaiseUnsupported
-        when "atomicxchgxorb", "atomicxchgxorh", "atomicxchgxori", "atomicxchgxorq"
-            riscv64RaiseUnsupported
-        when "atomicxchgb", "atomicxchgh", "atomicxchgi", "atomicxchgq"
-            riscv64RaiseUnsupported
-        when "atomicweakcasb", "atomicweakcash", "atomicweakcasi", "atomicweakcasq"
-            riscv64RaiseUnsupported
-        when "atomicloadb", "atomicloadh", "atomicloadi", "atomicloadq"
-            riscv64RaiseUnsupported
+        when /^rv_fclass\.(s|d)$/
+            riscv64ValidateOperands(operands, [FPRegisterID, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
         else
             lowerDefault
         end

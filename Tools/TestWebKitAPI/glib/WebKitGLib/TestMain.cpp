@@ -21,7 +21,7 @@
 #include "TestMain.h"
 
 #include <glib/gstdio.h>
-#include <wtf/glib/GLibUtilities.h>
+#include <wtf/FileSystem.h>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
@@ -124,7 +124,7 @@ int main(int argc, char** argv)
 #else
     g_test_init(&argc, &argv, nullptr);
 #endif
-    g_set_prgname(getCurrentExecutableName().data());
+    g_set_prgname(FileSystem::currentExecutableName().data());
     g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
     g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
     g_setenv("LC_ALL", "C", TRUE);

@@ -176,7 +176,7 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
 
         if (parentID) {
             if (auto unparentedNode = m_unparentedNodes.take(newNodeID)) {
-                LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " insertNode " << newNodeID << " getting node from unparented nodes");
+                LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " insertNode reattaching node " << newNodeID);
                 newNode = unparentedNode.get();
                 nodeWasReattachedRecursive(*unparentedNode);
 
@@ -407,7 +407,7 @@ void showScrollingStateTree(const WebCore::ScrollingStateTree* tree)
         return;
     }
 
-    String output = rootNode->scrollingStateTreeAsText(WebCore::ScrollingStateTreeAsTextBehaviorDebug);
+    String output = rootNode->scrollingStateTreeAsText(WebCore::debugScrollingStateTreeAsTextBehaviors);
     WTFLogAlways("%s\n", output.utf8().data());
 }
 

@@ -25,18 +25,18 @@ layer at (0,0) size 800x600
           layer at (0,0) size 100x100
             RenderView at (0,0) size 100x100
           layer at (0,0) size 100x8
-            RenderBlock {HTML} at (0,0) size 100x8
-              RenderBody {BODY} at (8,8) size 84x0 [bgcolor=#FF0000]
+            RenderBlock {html} at (0,0) size 100x8
+              RenderBody {body} at (8,8) size 84x0 [bgcolor=#FF0000]
           layer at (0,0) size 100x100
-            RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
+            RenderBlock (positioned) {div} at (0,0) size 100x100 [bgcolor=#008000]
         RenderText {#text} at (104,90) size 4x17
           text run at (104,90) width 4: " "
         RenderIFrame {IFRAME} at (108,0) size 104x104 [border: (2px inset #000000)]
           layer at (0,0) size 100x100
             RenderView at (0,0) size 100x100
           layer at (0,0) size 100x16
-            RenderDeprecatedFlexibleBox {HTML} at (0,0) size 100x16
-              RenderBody {BODY} at (8,8) size 0x0 [bgcolor=#FF0000]
+            RenderDeprecatedFlexibleBox {html} at (0,0) size 100x16
+              RenderBody {body} at (8,8) size 0x0 [bgcolor=#FF0000]
           layer at (0,0) size 100x100
-            RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
+            RenderBlock (positioned) {div} at (0,0) size 100x100 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0

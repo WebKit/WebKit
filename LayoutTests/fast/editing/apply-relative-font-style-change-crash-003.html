@@ -1,0 +1,17 @@
+<head>
+  <style></style>
+  <script>
+    onload = () => {
+      document.styleSheets[0].insertRule(`:last-child { content: url(); }`);
+      document.styleSheets[0].insertRule(`:last-of-type { all: initial; }`);
+      document.documentElement.prepend(document.createElement('input'));
+      document.head.appendChild(document.createElement('div'));
+      document.designMode = 'on';
+      document.execCommand('SelectAll');
+      document.execCommand('FontSizeDelta', false, '1');
+      document.write("PASS");
+      if (window.testRunner)
+          testRunner.dumpAsText();
+    };
+  </script>
+</head>

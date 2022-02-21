@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-void startObservingCookieChanges(NetworkStorageSession&, WTF::Function<void()>&&)
+void startObservingCookieChanges(NetworkStorageSession&, Function<void()>&&)
 {
     notImplemented();
 }

@@ -31,8 +31,8 @@
     InterfaceName=CSS,
     Exposed=Window
 ] namespace DOMCSSNamespace {
-    [CallWith=Document] boolean supports(DOMString property, DOMString value);
-    [CallWith=Document] boolean supports(DOMString conditionText);
+    [CallWith=CurrentDocument] boolean supports(DOMString property, DOMString value);
+    [CallWith=CurrentDocument] boolean supports(DOMString conditionText);
     DOMString escape(DOMString ident);
-    [EnabledAtRuntime=HighlightAPI, CallWith=Document] readonly attribute HighlightRegister highlights;
+    [EnabledAtRuntime=HighlightAPIEnabled, CallWith=CurrentDocument] readonly attribute HighlightRegister highlights;
 };

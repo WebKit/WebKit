@@ -48,7 +48,7 @@ static void set_up_range(initialize_data* data,
                          size_t size)
 {
     pas_allocator_index designated_index;
-    pas_segregated_global_size_directory* directory;
+    pas_segregated_size_directory* directory;
     pas_allocator_index designated_end;
 
     PAS_ASSERT(
@@ -63,11 +63,12 @@ static void set_up_range(initialize_data* data,
 
     PAS_ASSERT(designated_begin == data->next_index_to_set);
 
-    if (pas_thread_local_cache_layout_last_node) {
+    pas_heap_lock_assert_held();
+
+    if (pas_thread_local_cache_layout_get_last_node()) {
         PAS_ASSERT(
             size
-            > pas_thread_local_cache_layout_node_get_directory(
-                pas_thread_local_cache_layout_last_node)->object_size);
+            > pas_thread_local_cache_layout_node_get_directory(pas_thread_local_cache_layout_get_last_node())->object_size);
     } else
         PAS_ASSERT(!designated_begin);
 
@@ -80,6 +81,9 @@ static void set_up_range(initialize_data* data,
         result = __builtin_mul_overflow(
             designated_index, data->num_allocator_indices, &target_allocator_index);
         PAS_ASSERT(!result);
+        result = __builtin_add_overflow(
+            target_allocator_index, PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES, &target_allocator_index);
+        PAS_ASSERT(!result);
         
         PAS_ASSERT(target_allocator_index >= pas_thread_local_cache_layout_next_allocator_index);
         pas_thread_local_cache_layout_next_allocator_index = target_allocator_index;
@@ -87,33 +91,37 @@ static void set_up_range(initialize_data* data,
         if (designated_index == designated_begin) {
             PAS_ASSERT(!directory);
             
-            directory = pas_segregated_heap_ensure_size_directory_for_count(
-                data->heap, size, 1, pas_force_count_lookup, data->config_ptr, NULL);
+            directory = pas_segregated_heap_ensure_size_directory_for_size(
+                data->heap, size, 1, pas_force_size_lookup, data->config_ptr, NULL,
+                pas_segregated_size_directory_initial_creation_mode);
+
+            PAS_ASSERT(directory);
+
+            PAS_ASSERT(
+                pas_segregated_size_directory_num_allocator_indices(directory)
+                <= pas_designated_intrinsic_heap_num_allocator_indices(*data->config_ptr));
             
             /* This is a weird assert - if it was false then it doesn't literally make this broken.
                It just means that there is a chance of memory wasteage. So, if we hit it, then
                maybe we can just say that that's OK and remove the assert? */
             PAS_ASSERT(directory->object_size == size);
             
-            pas_segregated_global_size_directory_create_tlc_allocator(directory);
+            pas_segregated_size_directory_create_tlc_allocator(directory);
 
-            PAS_ASSERT(
-                pas_segregated_global_size_directory_data_ptr_load(&directory->data)->allocator_index
-                == target_allocator_index);
+            PAS_ASSERT(directory->allocator_index == target_allocator_index);
         } else {
+            pas_thread_local_cache_layout_node last_node;
             pas_allocator_index resulting_index;
             
             PAS_ASSERT(directory);
             
             resulting_index = pas_thread_local_cache_layout_duplicate(directory);
             PAS_ASSERT(resulting_index == target_allocator_index);
-            PAS_ASSERT(pas_thread_local_cache_layout_node_get_directory(
-                           pas_thread_local_cache_layout_last_node) == directory);
-            PAS_ASSERT(pas_thread_local_cache_layout_node_get_allocator_index(
-                           pas_thread_local_cache_layout_last_node) == target_allocator_index);
-            PAS_ASSERT(
-                pas_segregated_global_size_directory_data_ptr_load(&directory->data)->allocator_index
-                == designated_begin * data->num_allocator_indices);
+
+            last_node = pas_thread_local_cache_layout_get_last_node();
+            PAS_ASSERT(pas_thread_local_cache_layout_node_get_directory(last_node) == directory);
+            PAS_ASSERT(pas_thread_local_cache_layout_node_get_allocator_index_for_allocator(last_node) == target_allocator_index);
+            PAS_ASSERT(directory->allocator_index == PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES + designated_begin * data->num_allocator_indices);
         }
     }
 
@@ -125,14 +133,16 @@ void pas_designated_intrinsic_heap_initialize(pas_segregated_heap* heap,
 {
     pas_heap_config config;
     initialize_data data;
+    pas_thread_local_cache_layout_node layout_node;
 
     config = *config_ptr;
 
     /* This only works if it's called before anything else happens. */
     pas_heap_lock_assert_held();
     PAS_ASSERT(!pas_thread_local_cache_node_first);
-    PAS_ASSERT(!pas_thread_local_cache_layout_next_allocator_index);
-    PAS_ASSERT(pas_compact_atomic_segregated_global_size_directory_ptr_is_null(
+    PAS_ASSERT(
+        pas_thread_local_cache_layout_next_allocator_index == PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES);
+    PAS_ASSERT(pas_compact_atomic_segregated_size_directory_ptr_is_null(
                    &heap->basic_size_directory_and_head));
 
     data.heap = heap;
@@ -199,6 +209,14 @@ void pas_designated_intrinsic_heap_initialize(pas_segregated_heap* heap,
     default:
         PAS_ASSERT(!"Unsupported minalign");
         break;
+    }
+
+    /* Cause the allocation of view caches to happen after we have laid out all of the local allocators. */
+    for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
+        if (!pas_is_wrapped_segregated_size_directory(layout_node))
+            continue;
+
+        pas_segregated_size_directory_finish_creation(pas_unwrap_segregated_size_directory(layout_node));
     }
 
     if (PAS_ENABLE_TESTING) {

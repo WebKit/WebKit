@@ -44,7 +44,7 @@ Ref<Scrollbar> RenderScrollbar::createCustomScrollbar(ScrollableArea& scrollable
 RenderScrollbar::RenderScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, Element* ownerElement, Frame* owningFrame)
     : Scrollbar(scrollableArea, orientation, ScrollbarControlSize::Regular, RenderScrollbarTheme::renderScrollbarTheme(), true)
     , m_ownerElement(ownerElement)
-    , m_owningFrame(makeWeakPtr(owningFrame))
+    , m_owningFrame(owningFrame)
 {
     ASSERT(ownerElement || owningFrame);
 
@@ -58,7 +58,7 @@ RenderScrollbar::RenderScrollbar(ScrollableArea& scrollableArea, ScrollbarOrient
         part->layout();
         width = part->width();
         height = part->height();
-    } else if (this->orientation() == HorizontalScrollbar)
+    } else if (this->orientation() == ScrollbarOrientation::Horizontal)
         width = this->width();
     else
         height = this->height();
@@ -174,7 +174,7 @@ void RenderScrollbar::updateScrollbarParts()
     updateScrollbarPart(TrackBGPart);
     
     // See if the scrollbar's thickness changed.  If so, we need to mark our owning object as needing a layout.
-    bool isHorizontal = orientation() == HorizontalScrollbar;    
+    bool isHorizontal = orientation() == ScrollbarOrientation::Horizontal;
     int oldThickness = isHorizontal ? height() : width();
     int newThickness = 0;
     RenderScrollbarPart* part = m_parts.get(ScrollbarBGPart);
@@ -275,7 +275,7 @@ IntRect RenderScrollbar::buttonRect(ScrollbarPart partType) const
         
     partRenderer->layout();
     
-    bool isHorizontal = orientation() == HorizontalScrollbar;
+    bool isHorizontal = orientation() == ScrollbarOrientation::Horizontal;
     IntSize pixelSnappedIntSize = snappedIntRect(partRenderer->frameRect()).size();
     if (partType == BackButtonStartPart)
         return IntRect(location(), IntSize(isHorizontal ? pixelSnappedIntSize.width() : width(), isHorizontal ? height() : pixelSnappedIntSize.height()));
@@ -305,7 +305,7 @@ IntRect RenderScrollbar::trackRect(int startLength, int endLength) const
     if (part)
         part->layout();
 
-    if (orientation() == HorizontalScrollbar) {
+    if (orientation() == ScrollbarOrientation::Horizontal) {
         int marginLeft = part ? static_cast<int>(part->marginLeft()) : 0;
         int marginRight = part ? static_cast<int>(part->marginRight()) : 0;
         startLength += marginLeft;
@@ -332,7 +332,7 @@ IntRect RenderScrollbar::trackPieceRectWithMargins(ScrollbarPart partType, const
     partRenderer->layout();
     
     IntRect rect = oldRect;
-    if (orientation() == HorizontalScrollbar) {
+    if (orientation() == ScrollbarOrientation::Horizontal) {
         rect.setX(rect.x() + partRenderer->marginLeft());
         rect.setWidth(rect.width() - partRenderer->horizontalMarginExtent());
     } else {
@@ -348,7 +348,7 @@ int RenderScrollbar::minimumThumbLength() const
     if (!partRenderer)
         return 0;    
     partRenderer->layout();
-    return orientation() == HorizontalScrollbar ? partRenderer->width() : partRenderer->height();
+    return orientation() == ScrollbarOrientation::Horizontal ? partRenderer->width() : partRenderer->height();
 }
 
 float RenderScrollbar::opacity() const

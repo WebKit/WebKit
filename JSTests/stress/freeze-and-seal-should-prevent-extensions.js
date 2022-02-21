@@ -31,7 +31,7 @@ function shouldThrow(func, errorMessage) {
     Object.freeze(object);
     shouldBe(object.Matcha, 'Matcha');
     shouldBe(Reflect.isExtensible(object), false);
-    shouldThrow(() => object.Mocha = 'Mocha', `TypeError: Attempted to assign to readonly property.`);
+    shouldThrow(() => object.Mocha = 'Mocha', `TypeError: Attempting to define property on object that is not extensible.`);
 }());
 
 (function () {
@@ -47,5 +47,5 @@ function shouldThrow(func, errorMessage) {
     Object.seal(object);
     shouldBe(object.Matcha, 'Matcha');
     shouldBe(Reflect.isExtensible(object), false);
-    shouldThrow(() => object.Mocha = 'Mocha', `TypeError: Attempted to assign to readonly property.`);
+    shouldThrow(() => object.Mocha = 'Mocha', `TypeError: Attempting to define property on object that is not extensible.`);
 }());

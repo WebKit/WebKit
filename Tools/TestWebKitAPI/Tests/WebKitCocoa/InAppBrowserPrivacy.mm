@@ -25,8 +25,9 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "ServiceWorkerTCPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
@@ -47,8 +48,6 @@
 
 #if ENABLE(APP_BOUND_DOMAINS)
 
-static bool isDone;
-
 @interface AppBoundDomainDelegate : NSObject <WKNavigationDelegate>
 - (void)waitForDidFinishNavigation;
 - (NSError *)waitForDidFailProvisionalNavigationError;
@@ -64,7 +63,7 @@ static bool isDone;
     _navigationFinished = true;
 }
 
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     _provisionalNavigationFailedError = error;
 }
@@ -159,7 +158,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtStart)
     [webView _test_waitForDidFinishNavigation];
 
     // Check that request to read this variable is rejected.
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_FALSE(result);
         EXPECT_TRUE(!!error);
         EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
@@ -171,7 +170,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtStart)
 
     // Disable script injection blocking to check that original attempt to set this variable was rejected.
     [[[webView configuration] preferences] _setNeedsInAppBrowserPrivacyQuirks:YES];
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_EQ(NO, [result boolValue]);
         EXPECT_FALSE(!!error);
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -199,7 +198,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtEnd)
     [webView _test_waitForDidFinishNavigation];
 
     // Check that request to read this variable is rejected.
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_FALSE(result);
         EXPECT_TRUE(!!error);
         EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
@@ -211,7 +210,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtEnd)
 
     // Disable script injection blocking to check that original attempt to set this variable was rejected.
     [[[webView configuration] preferences] _setNeedsInAppBrowserPrivacyQuirks:YES];
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_EQ(NO, [result boolValue]);
         EXPECT_FALSE(!!error);
         cleanUpInAppBrowserPrivacyTestSettings();
@@ -238,7 +237,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserAgentScripts)
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_EQ(YES, [result boolValue]);
         isDone = true;
     }];
@@ -254,7 +253,7 @@ TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserAgentScripts)
     [webView2 loadRequest:request];
     [webView2 _test_waitForDidFinishNavigation];
 
-    [webView2 evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView2 evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_FALSE(result);
         EXPECT_TRUE(!!error);
         EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
@@ -677,6 +676,7 @@ TEST(InAppBrowserPrivacy, SetCookieForNonAppBoundDomainFails)
 
     TestWebKitAPI::Util::run(&gotFlag);
     [globalCookieStore removeObserver:observer.get()];
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 TEST(InAppBrowserPrivacy, GetCookieForNonAppBoundDomainFails)
@@ -885,7 +885,7 @@ self.addEventListener("message", (event) => {
 
 )SWRESOURCE";
 
-TEST(InAppBrowserPrivacy, DISABLED_AppBoundDomainAllowsServiceWorkers)
+TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
 {
     initializeInAppBrowserPrivacyTestSettings();
     isDone = false;
@@ -898,9 +898,9 @@ TEST(InAppBrowserPrivacy, DISABLED_AppBoundDomainAllowsServiceWorkers)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    ServiceWorkerTCPServer server1({
-        { "text/html", mainBytes },
-        { "application/javascript", scriptBytes},
+    TestWebKitAPI::HTTPServer server({
+        { "/main.html", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -914,7 +914,7 @@ TEST(InAppBrowserPrivacy, DISABLED_AppBoundDomainAllowsServiceWorkers)
     
     // Expect the service worker load to complete successfully.
     expectedMessage = "Message from worker: ServiceWorker received: Hello from an app-bound domain";
-    [webView loadRequest:server1.requestWithLocalhost()];
+    [webView loadRequest:server.requestWithLocalhost("/main.html")];
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
@@ -955,9 +955,9 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorker)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainUnregisterBytes },
-        { "application/javascript", scriptBytes},
+    TestWebKitAPI::HTTPServer server({
+        { "/main.html", { mainUnregisterBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -968,7 +968,7 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorker)
     isDone = false;
 
     expectedMessage = "Unregistration success";
-    [webView loadRequest:server.requestWithLocalhost()];
+    [webView loadRequest:server.requestWithLocalhost("/main.html")];
     TestWebKitAPI::Util::run(&isDone);
 
     isDone = false;
@@ -1157,13 +1157,14 @@ TEST(InAppBrowserPrivacy, WebViewWithoutAppBoundFlagCanFreelyNavigate)
     // Navigation should be successful, but this WebView should not get app-bound domain
     // privileges like script injection.
     isDone = false;
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE(!!error);
         EXPECT_EQ(error.code, WKErrorJavaScriptAppBoundDomain);
         isDone = true;
     }];
 
     TestWebKitAPI::Util::run(&isDone);
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 TEST(InAppBrowserPrivacy, WebViewCannotUpdateAppBoundFlagOnceSet)
@@ -1219,7 +1220,7 @@ TEST(InAppBrowserPrivacy, InjectScriptThenNavigateToNonAppBoundDomainFails)
     [webView setNavigationDelegate:delegate.get()];
 
     isDone = false;
-    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"window.wkUserScriptInjected" completionHandler:^(id result, NSError *error) {
         EXPECT_FALSE(!!error);
         isDone = true;
     }];
@@ -1231,6 +1232,7 @@ TEST(InAppBrowserPrivacy, InjectScriptThenNavigateToNonAppBoundDomainFails)
     [webView loadRequest:request];
     NSError *error = [delegate waitForDidFailProvisionalNavigationError];
     EXPECT_EQ(error.code, WKErrorNavigationAppBoundDomain);
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 TEST(InAppBrowserPrivacy, InjectScriptInNonAppBoundSubframeAppBoundMainframeFails)
@@ -1340,6 +1342,7 @@ TEST(InAppBrowserPrivacy, JavaScriptInNonAppBoundFrameFails)
     }
     
     TestWebKitAPI::Util::run(&isDone);
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 TEST(InAppBrowserPrivacy, LoadFromHTMLStringsSucceedsIfAppBound)
@@ -1485,6 +1488,7 @@ static void loadRequest(RetainPtr<TestWKWebView> webView, NSString *url)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&didFinishNavigation);
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
@@ -1523,6 +1527,7 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameAppBound)
         }];
     }
     TestWebKitAPI::Util::run(&isDone);
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
@@ -1551,6 +1556,7 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
         }];
     }
     TestWebKitAPI::Util::run(&isDone);
+    cleanUpInAppBrowserPrivacyTestSettings();
 }
 
 #endif // ENABLE(APP_BOUND_DOMAINS)

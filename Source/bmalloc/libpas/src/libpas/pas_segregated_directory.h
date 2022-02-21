@@ -76,30 +76,23 @@ struct pas_segregated_directory_bitvector_segment {
     /* Empty means that the page has stuff that can be decommitted. However, this bit has no meaning if
        the eligible bit is not set. */
     unsigned empty_bits;
-
-    /* Tabled means that we have previously found this page to be totally free of objects, so we'd like
-       to defer allocating in the page until we allocate in pages that aren't totally free. */
-    unsigned tabled_bits;
 };
 
 /* FIXME: Attempt to introduce code to pack the bitvector if we don't need the empty bits. Currently
    this is not used, but should be. */
 struct pas_segregated_directory_simple_bitvector_segment {
     unsigned eligible_bits;
-    unsigned tabled_bits;
 };
 
 #define PAS_SEGREGATED_DIRECTORY_BITVECTOR_SEGMENT_INITIALIZER \
     ((pas_segregated_directory_bitvector_segment){ \
         .eligible_bits = 0, \
-        .empty_bits = 0, \
-        .tabled_bits = 0 \
+        .empty_bits = 0 \
     })
 
 #define PAS_SEGREGATED_DIRECTORY_SIMPLE_BITVECTOR_SEGMENT_INITIALIZER \
     ((pas_segregated_directory_simple_bitvector_segment){ \
-        .eligible_bits = 0, \
-        .tabled_bits = 0 \
+        .eligible_bits = 0 \
     })
 
 PAS_DECLARE_SEGMENTED_VECTOR(pas_segregated_directory_segmented_bitvectors,
@@ -127,22 +120,18 @@ struct pas_segregated_directory {
 
 #define PAS_SEGREGATED_DIRECTORY_BITS_ELIGIBLE_SHIFT       0u
 #define PAS_SEGREGATED_DIRECTORY_BITS_EMPTY_SHIFT          1u
-#define PAS_SEGREGATED_DIRECTORY_BITS_TABLED_SHIFT         2u
 
-#define PAS_SEGREGATED_DIRECTORY_BITS_MISC_SHIFT           3u
-#define PAS_SEGREGATED_DIRECTORY_BITS_OTHER_MISC_SHIFT     4u
+#define PAS_SEGREGATED_DIRECTORY_BITS_MISC_SHIFT           2u
+#define PAS_SEGREGATED_DIRECTORY_BITS_OTHER_MISC_SHIFT     3u
 
 #define PAS_SEGREGATED_DIRECTORY_BITS_ELIGIBLE_MASK \
     (1u << PAS_SEGREGATED_DIRECTORY_BITS_ELIGIBLE_SHIFT)
 #define PAS_SEGREGATED_DIRECTORY_BITS_EMPTY_MASK \
     (1u << PAS_SEGREGATED_DIRECTORY_BITS_EMPTY_SHIFT)
-#define PAS_SEGREGATED_DIRECTORY_BITS_TABLED_MASK \
-    (1u << PAS_SEGREGATED_DIRECTORY_BITS_TABLED_SHIFT)
 
 #define PAS_SEGREGATED_DIRECTORY_BITS_VIEW_MASK \
     (PAS_SEGREGATED_DIRECTORY_BITS_ELIGIBLE_MASK | \
-     PAS_SEGREGATED_DIRECTORY_BITS_EMPTY_MASK | \
-     PAS_SEGREGATED_DIRECTORY_BITS_TABLED_MASK)
+     PAS_SEGREGATED_DIRECTORY_BITS_EMPTY_MASK)
 
 #define PAS_SEGREGATED_DIRECTORY_BITS_MISC_MASK \
     (1u << PAS_SEGREGATED_DIRECTORY_BITS_MISC_SHIFT)
@@ -154,16 +143,9 @@ struct pas_segregated_directory {
     PAS_SEGREGATED_DIRECTORY_BITS_ELIGIBLE_MASK
 #define PAS_SEGREGATED_DIRECTORY_BITS_empty_MASK \
     PAS_SEGREGATED_DIRECTORY_BITS_EMPTY_MASK
-#define PAS_SEGREGATED_DIRECTORY_BITS_tabled_MASK \
-    PAS_SEGREGATED_DIRECTORY_BITS_TABLED_MASK
-
-#define PAS_SEGREGATED_DIRECTORY_BITS_eligible_AVAILABLE_IN_BIASING     true
-#define PAS_SEGREGATED_DIRECTORY_BITS_empty_AVAILABLE_IN_BIASING  false
-#define PAS_SEGREGATED_DIRECTORY_BITS_tabled_AVAILABLE_IN_BIASING       true
 
 struct PAS_ALIGNED(sizeof(pas_versioned_field)) pas_segregated_directory_data {
-    pas_versioned_field first_eligible_but_not_tabled;
-    pas_versioned_field first_eligible_and_tabled;
+    pas_versioned_field first_eligible;
     pas_versioned_field last_empty_plus_one; /* Zero means there aren't any. */
 
     pas_segregated_directory_segmented_bitvectors bitvectors;
@@ -171,14 +153,14 @@ struct PAS_ALIGNED(sizeof(pas_versioned_field)) pas_segregated_directory_data {
     pas_segregated_directory_sharing_payload_ptr sharing_payload;
 };
 
-#define PAS_SEGREGATED_DIRECTORY_SHARING_PAYLOAD_IS_INITIALIZED_BIT 1
+#define PAS_SEGREGATED_DIRECTORY_SHARING_PAYLOAD_IS_INITIALIZED_BIT 1lu
 
 #define PAS_SEGREGATED_DIRECTORY_INITIALIZER(page_config_kind_argument, sharing_mode_argument, directory_kind_argument) \
     ((pas_segregated_directory){ \
-        .page_config_kind = page_config_kind_argument, \
         .first_view = PAS_COMPACT_ATOMIC_PTR_INITIALIZER, \
         .data = PAS_COMPACT_ATOMIC_PTR_INITIALIZER, \
         .bits = 0, \
+        .page_config_kind = page_config_kind_argument, \
         .sharing_mode = (sharing_mode_argument), \
         .directory_kind = (directory_kind_argument), \
         .is_basic_size_directory = false \
@@ -261,7 +243,6 @@ pas_segregated_directory_spoof_inline_segment(pas_segregated_directory* director
     
     segment.eligible_bits = (bits >> PAS_SEGREGATED_DIRECTORY_BITS_ELIGIBLE_SHIFT) & 1u;
     segment.empty_bits = (bits >> PAS_SEGREGATED_DIRECTORY_BITS_EMPTY_SHIFT) & 1u;
-    segment.tabled_bits = (bits >> PAS_SEGREGATED_DIRECTORY_BITS_TABLED_SHIFT) & 1u;
 
     return segment;
 }
@@ -305,10 +286,6 @@ pas_segregated_directory_spoof_inline_segment(pas_segregated_directory* director
         _value = (value); \
         \
         PAS_TESTING_ASSERT(_index < pas_segregated_directory_size(directory)); \
-        PAS_TESTING_ASSERT( \
-            !_value \
-            || _directory->directory_kind != pas_segregated_biasing_directory_kind \
-            || PAS_SEGREGATED_DIRECTORY_BITS_##bit_name##_AVAILABLE_IN_BIASING); \
         \
         if (!_index) { \
             _result = pas_segregated_directory_bits_set_by_mask( \
@@ -407,37 +384,15 @@ pas_segregated_directory_start_sharing_if_necessary(pas_segregated_directory* di
     pas_segregated_directory_get_sharing_payload(directory, heap_lock_hold_mode);
 }
 
-static inline pas_versioned_field* pas_segregated_directory_data_get_first_eligible_ptr(
-    pas_segregated_directory_data* data,
-    pas_segregated_directory_first_eligible_kind kind)
-{
-    switch (kind) {
-    case pas_segregated_directory_first_eligible_but_not_tabled_kind:
-        return &data->first_eligible_but_not_tabled;
-    case pas_segregated_directory_first_eligible_and_tabled_kind:
-        return &data->first_eligible_and_tabled;
-    }
-    PAS_ASSERT(!"Should not be reached");
-    return NULL;
-}
-
 PAS_API void pas_segregated_directory_minimize_first_eligible(
     pas_segregated_directory* directory,
-    pas_segregated_directory_first_eligible_kind kind,
     size_t index);
 
 PAS_API void pas_segregated_directory_update_first_eligible_after_search(
     pas_segregated_directory* directory,
-    pas_segregated_directory_first_eligible_kind kind,
     pas_versioned_field first_eligible,
     size_t new_value);
 
-PAS_API bool pas_segregated_directory_view_did_become_eligible_at_index_without_biasing_update(
-    pas_segregated_directory* directory,
-    size_t index);
-PAS_API bool pas_segregated_directory_view_did_become_eligible_without_biasing_update(
-    pas_segregated_directory* directory,
-    pas_segregated_view view);
 PAS_API bool pas_segregated_directory_view_did_become_eligible_at_index(
     pas_segregated_directory* directory,
     size_t index);
@@ -463,12 +418,6 @@ static inline bool pas_segregated_directory_is_empty(
     return PAS_SEGREGATED_DIRECTORY_GET_BIT(directory, index, empty);
 }
 
-static inline bool pas_segregated_directory_is_tabled(
-    pas_segregated_directory* directory, size_t index)
-{
-    return PAS_SEGREGATED_DIRECTORY_GET_BIT(directory, index, tabled);
-}
-
 PAS_API bool pas_segregated_directory_is_committed(
     pas_segregated_directory* directory, size_t index);
 
@@ -483,30 +432,15 @@ PAS_API size_t pas_segregated_directory_num_empty_granules(
 
 static inline pas_versioned_field pas_segregated_directory_get_first_eligible_impl(
     pas_segregated_directory* directory,
-    pas_segregated_directory_first_eligible_kind kind,
     pas_versioned_field (*read)(pas_versioned_field* field))
 {
     pas_segregated_directory_data* data;
-    unsigned expected;
 
     data = pas_segregated_directory_data_ptr_load(&directory->data);
     if (data)
-        return read(pas_segregated_directory_data_get_first_eligible_ptr(data, kind));
+        return read(&data->first_eligible);
 
-    switch (kind) {
-    case pas_segregated_directory_first_eligible_but_not_tabled_kind:
-        expected = PAS_SEGREGATED_DIRECTORY_BITS_ELIGIBLE_MASK;
-        break;
-    case pas_segregated_directory_first_eligible_and_tabled_kind:
-        expected =
-            PAS_SEGREGATED_DIRECTORY_BITS_ELIGIBLE_MASK |
-            PAS_SEGREGATED_DIRECTORY_BITS_TABLED_MASK;
-        break;
-    }
-    
-    if ((directory->bits & (PAS_SEGREGATED_DIRECTORY_BITS_ELIGIBLE_MASK |
-                            PAS_SEGREGATED_DIRECTORY_BITS_TABLED_MASK))
-        == expected)
+    if (directory->bits & PAS_SEGREGATED_DIRECTORY_BITS_ELIGIBLE_MASK)
         return pas_versioned_field_create_with_invalid_version(0);
 
     return !pas_compact_atomic_segregated_view_is_null(&directory->first_view)
@@ -515,27 +449,24 @@ static inline pas_versioned_field pas_segregated_directory_get_first_eligible_im
 }
 
 static inline pas_versioned_field pas_segregated_directory_get_first_eligible(
-    pas_segregated_directory* directory,
-    pas_segregated_directory_first_eligible_kind kind)
+    pas_segregated_directory* directory)
 {
     return pas_segregated_directory_get_first_eligible_impl(
-        directory, kind, pas_versioned_field_read);
+        directory, pas_versioned_field_read);
 }
 
 static inline pas_versioned_field pas_segregated_directory_get_first_eligible_torn(
-    pas_segregated_directory* directory,
-    pas_segregated_directory_first_eligible_kind kind)
+    pas_segregated_directory* directory)
 {
     return pas_segregated_directory_get_first_eligible_impl(
-        directory, kind, pas_versioned_field_read_torn);
+        directory, pas_versioned_field_read_torn);
 }
 
 static inline pas_versioned_field pas_segregated_directory_watch_first_eligible(
-    pas_segregated_directory* directory,
-    pas_segregated_directory_first_eligible_kind kind)
+    pas_segregated_directory* directory)
 {
     return pas_segregated_directory_get_first_eligible_impl(
-        directory, kind, pas_versioned_field_read_to_watch);
+        directory, pas_versioned_field_read_to_watch);
 }
 
 static inline pas_versioned_field pas_segregated_directory_get_last_empty_plus_one_impl(
@@ -613,8 +544,7 @@ PAS_API void pas_segregated_directory_append(
 
 /* This has a maximally inclusion way of treating memory that multiple views may have dibs on. For
    example, shared page directories and partial views in size directories may report on the same
-   bytes of memory. Exclusive views in a global size directory may report on the same memory as
-   biasing views in biasing directories. */
+   bytes of memory. */
 PAS_API pas_heap_summary
 pas_segregated_directory_compute_summary(pas_segregated_directory* directory);
 

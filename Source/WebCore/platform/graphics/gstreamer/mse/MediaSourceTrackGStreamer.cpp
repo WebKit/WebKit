@@ -53,7 +53,7 @@ MediaSourceTrackGStreamer::~MediaSourceTrackGStreamer()
 
 Ref<MediaSourceTrackGStreamer> MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType type, AtomString trackId, GRefPtr<GstCaps>&& initialCaps)
 {
-    return makeRef(*new MediaSourceTrackGStreamer(type, trackId, WTFMove(initialCaps)));
+    return adoptRef(*new MediaSourceTrackGStreamer(type, trackId, WTFMove(initialCaps)));
 }
 
 bool MediaSourceTrackGStreamer::isReadyForMoreSamples()

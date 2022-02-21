@@ -41,6 +41,7 @@ GPUProcessCreationParameters::GPUProcessCreationParameters() = default;
 
 void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
+    encoder << auxiliaryProcessParameters;
 #if ENABLE(MEDIA_STREAM)
     encoder << useMockCaptureDevices;
 #if PLATFORM(MAC)
@@ -59,13 +60,13 @@ void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << dynamicMachExtensionHandles;
 #endif
 
-    encoder << wtfLoggingChannels;
-    encoder << webCoreLoggingChannels;
-    encoder << webKitLoggingChannels;
+    encoder << applicationVisibleName;
 }
 
 bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreationParameters& result)
 {
+    if (!decoder.decode(result.auxiliaryProcessParameters))
+        return false;
 #if ENABLE(MEDIA_STREAM)
     if (!decoder.decode(result.useMockCaptureDevices))
         return false;
@@ -110,11 +111,7 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
     result.dynamicMachExtensionHandles = WTFMove(*dynamicMachExtensionHandles);
 #endif
 
-    if (!decoder.decode(result.wtfLoggingChannels))
-        return false;
-    if (!decoder.decode(result.webCoreLoggingChannels))
-        return false;
-    if (!decoder.decode(result.webKitLoggingChannels))
+    if (!decoder.decode(result.applicationVisibleName))
         return false;
 
     return true;

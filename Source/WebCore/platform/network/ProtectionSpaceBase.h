@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,45 +31,44 @@
 namespace WebCore {
 
 class ProtectionSpace;
-
-enum ProtectionSpaceServerType {
-    ProtectionSpaceServerHTTP = 1,
-    ProtectionSpaceServerHTTPS = 2,
-    ProtectionSpaceServerFTP = 3,
-    ProtectionSpaceServerFTPS = 4,
-    ProtectionSpaceProxyHTTP = 5,
-    ProtectionSpaceProxyHTTPS = 6,
-    ProtectionSpaceProxyFTP = 7,
-    ProtectionSpaceProxySOCKS = 8
-};
-
-enum ProtectionSpaceAuthenticationScheme {
-    ProtectionSpaceAuthenticationSchemeDefault = 1,
-    ProtectionSpaceAuthenticationSchemeHTTPBasic = 2,
-    ProtectionSpaceAuthenticationSchemeHTTPDigest = 3,
-    ProtectionSpaceAuthenticationSchemeHTMLForm = 4,
-    ProtectionSpaceAuthenticationSchemeNTLM = 5,
-    ProtectionSpaceAuthenticationSchemeNegotiate = 6,
-    ProtectionSpaceAuthenticationSchemeClientCertificateRequested = 7,
-    ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested = 8,
-    ProtectionSpaceAuthenticationSchemeOAuth = 9,
-#if USE(GLIB)
-    ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested = 10,
-#endif
-    ProtectionSpaceAuthenticationSchemeUnknown = 100
-};
   
 class ProtectionSpaceBase {
-
 public:
+    enum class ServerType : uint8_t {
+        HTTP = 1,
+        HTTPS = 2,
+        FTP = 3,
+        FTPS = 4,
+        ProxyHTTP = 5,
+        ProxyHTTPS = 6,
+        ProxyFTP = 7,
+        ProxySOCKS = 8
+    };
+
+    enum class AuthenticationScheme : uint8_t {
+        Default = 1,
+        HTTPBasic = 2,
+        HTTPDigest = 3,
+        HTMLForm = 4,
+        NTLM = 5,
+        Negotiate = 6,
+        ClientCertificateRequested = 7,
+        ServerTrustEvaluationRequested = 8,
+        OAuth = 9,
+#if USE(GLIB)
+        ClientCertificatePINRequested = 10,
+#endif
+        Unknown = 100
+    };
+
     bool isHashTableDeletedValue() const { return m_isHashTableDeletedValue; }
     
-    WEBCORE_EXPORT const String& host() const;
-    WEBCORE_EXPORT int port() const;
-    WEBCORE_EXPORT ProtectionSpaceServerType serverType() const;
+    const String& host() const { return m_host; }
+    int port() const { return m_port; }
+    ServerType serverType() const { return m_serverType; }
     WEBCORE_EXPORT bool isProxy() const;
-    WEBCORE_EXPORT const String& realm() const;
-    WEBCORE_EXPORT ProtectionSpaceAuthenticationScheme authenticationScheme() const;
+    const String& realm() const { return m_realm; }
+    AuthenticationScheme authenticationScheme() const { return m_authenticationScheme; }
     
     WEBCORE_EXPORT bool receivesCredentialSecurely() const;
     WEBCORE_EXPORT bool isPasswordBased() const;
@@ -79,8 +78,8 @@ public:
     WEBCORE_EXPORT static bool compare(const ProtectionSpace&, const ProtectionSpace&);
 
 protected:
-    WEBCORE_EXPORT ProtectionSpaceBase();
-    WEBCORE_EXPORT ProtectionSpaceBase(const String& host, int port, ProtectionSpaceServerType, const String& realm, ProtectionSpaceAuthenticationScheme);
+    ProtectionSpaceBase() = default;
+    WEBCORE_EXPORT ProtectionSpaceBase(const String& host, int port, ServerType, const String& realm, AuthenticationScheme);
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     ProtectionSpaceBase(WTF::HashTableDeletedValueType) : m_isHashTableDeletedValue(true) { }
@@ -88,12 +87,15 @@ protected:
     static bool platformCompare(const ProtectionSpace&, const ProtectionSpace&) { return true; }
 
 private:
-    String m_host;
-    int m_port;
-    ProtectionSpaceServerType m_serverType;
-    String m_realm;
-    ProtectionSpaceAuthenticationScheme m_authenticationScheme;
-    bool m_isHashTableDeletedValue;
+    // Need to enforce empty, non-null strings due to the pickiness of the String == String operator
+    // combined with the semantics of the String(NSString*) constructor
+    String m_host { emptyString() };
+    String m_realm { emptyString() };
+
+    int m_port { 0 };
+    ServerType m_serverType { ServerType::HTTP };
+    AuthenticationScheme m_authenticationScheme { AuthenticationScheme::Default };
+    bool m_isHashTableDeletedValue { false };
 };
 
 inline bool operator==(const ProtectionSpace& a, const ProtectionSpace& b) { return ProtectionSpaceBase::compare(a, b); }
@@ -103,33 +105,33 @@ inline bool operator!=(const ProtectionSpace& a, const ProtectionSpace& b) { ret
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::ProtectionSpaceAuthenticationScheme> {
+template<> struct EnumTraits<WebCore::ProtectionSpaceBase::AuthenticationScheme> {
     using values = EnumValues<
-        WebCore::ProtectionSpaceAuthenticationScheme,
-        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeDefault,
-        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeHTTPBasic,
-        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeHTTPDigest,
-        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeHTMLForm,
-        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeNTLM,
-        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeNegotiate,
-        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeClientCertificateRequested,
-        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested,
-        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeOAuth,
-        WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeUnknown
+        WebCore::ProtectionSpaceBase::AuthenticationScheme,
+        WebCore::ProtectionSpaceBase::AuthenticationScheme::Default,
+        WebCore::ProtectionSpaceBase::AuthenticationScheme::HTTPBasic,
+        WebCore::ProtectionSpaceBase::AuthenticationScheme::HTTPDigest,
+        WebCore::ProtectionSpaceBase::AuthenticationScheme::HTMLForm,
+        WebCore::ProtectionSpaceBase::AuthenticationScheme::NTLM,
+        WebCore::ProtectionSpaceBase::AuthenticationScheme::Negotiate,
+        WebCore::ProtectionSpaceBase::AuthenticationScheme::ClientCertificateRequested,
+        WebCore::ProtectionSpaceBase::AuthenticationScheme::ServerTrustEvaluationRequested,
+        WebCore::ProtectionSpaceBase::AuthenticationScheme::OAuth,
+        WebCore::ProtectionSpaceBase::AuthenticationScheme::Unknown
     >;
 };
 
-template<> struct EnumTraits<WebCore::ProtectionSpaceServerType> {
+template<> struct EnumTraits<WebCore::ProtectionSpaceBase::ServerType> {
     using values = EnumValues<
-        WebCore::ProtectionSpaceServerType,
-        WebCore::ProtectionSpaceServerType::ProtectionSpaceServerHTTP,
-        WebCore::ProtectionSpaceServerType::ProtectionSpaceServerHTTPS,
-        WebCore::ProtectionSpaceServerType::ProtectionSpaceServerFTP,
-        WebCore::ProtectionSpaceServerType::ProtectionSpaceServerFTPS,
-        WebCore::ProtectionSpaceServerType::ProtectionSpaceProxyHTTP,
-        WebCore::ProtectionSpaceServerType::ProtectionSpaceProxyHTTPS,
-        WebCore::ProtectionSpaceServerType::ProtectionSpaceProxyFTP,
-        WebCore::ProtectionSpaceServerType::ProtectionSpaceProxySOCKS
+        WebCore::ProtectionSpaceBase::ServerType,
+        WebCore::ProtectionSpaceBase::ServerType::HTTP,
+        WebCore::ProtectionSpaceBase::ServerType::HTTPS,
+        WebCore::ProtectionSpaceBase::ServerType::FTP,
+        WebCore::ProtectionSpaceBase::ServerType::FTPS,
+        WebCore::ProtectionSpaceBase::ServerType::ProxyHTTP,
+        WebCore::ProtectionSpaceBase::ServerType::ProxyHTTPS,
+        WebCore::ProtectionSpaceBase::ServerType::ProxyFTP,
+        WebCore::ProtectionSpaceBase::ServerType::ProxySOCKS
     >;
 };
 

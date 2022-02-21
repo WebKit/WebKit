@@ -47,7 +47,7 @@ Ref<WebCore::RealtimeMediaSource> SpeechRecognitionRemoteRealtimeMediaSource::cr
 SpeechRecognitionRemoteRealtimeMediaSource::SpeechRecognitionRemoteRealtimeMediaSource(WebCore::RealtimeMediaSourceIdentifier identifier, SpeechRecognitionRemoteRealtimeMediaSourceManager& manager, const WebCore::CaptureDevice& captureDevice)
     : WebCore::RealtimeMediaSource(WebCore::RealtimeMediaSource::Type::Audio, String { captureDevice.label() }, String { captureDevice.persistentId() })
     , m_identifier(identifier)
-    , m_manager(makeWeakPtr(manager))
+    , m_manager(manager)
 #if PLATFORM(COCOA)
     , m_ringBuffer(makeUnique<WebCore::CARingBuffer>())
 #endif
@@ -77,8 +77,13 @@ void SpeechRecognitionRemoteRealtimeMediaSource::stopProducingData()
 
 void SpeechRecognitionRemoteRealtimeMediaSource::setStorage(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
-    m_description = description;
+    if (!numberOfFrames) {
+        m_ringBuffer = nullptr;
+        m_buffer = nullptr;
+        return;
+    }
 
+    m_description = description;
     m_ringBuffer = WebCore::CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames).moveToUniquePtr();
     m_buffer = makeUnique<WebCore::WebAudioBufferList>(description);
 }

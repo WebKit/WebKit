@@ -28,27 +28,34 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
+#import "CocoaImage.h"
+#import "Logging.h"
 #import <WebCore/TextRecognitionResult.h>
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
+#import <wtf/WorkQueue.h>
 
-// Note that this is actually declared as an Objective-C class in VisionKit headers.
-// However, for staging purposes, we define it as a protocol instead to avoid symbol
-// redefinition errors that would arise when compiling with an SDK that contains the
-// real definition of VKWKDataDetectorInfo.
-// Once the changes in rdar://77978745 have been in the SDK for a while, we can remove
-// this staging declaration and use the real Objective-C class.
-@protocol VKWKDataDetectorInfo
-@property (nonatomic, readonly) DDScannerResult *result;
-@property (nonatomic, readonly) NSArray<VKQuad *> *boundingQuads;
-@end
-
-@interface VKImageAnalysis (Staging_77978745)
-@property (nonatomic, readonly) NSArray<id <VKWKDataDetectorInfo>> *textDataDetectors;
-@end
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+RetainPtr<CocoaImageAnalyzer> createImageAnalyzer()
+{
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    return adoptNS([PAL::allocVKCImageAnalyzerInstance() init]);
+#else
+    return adoptNS([PAL::allocVKImageAnalyzerInstance() init]);
+#endif
+}
+
+RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef image, VKAnalysisTypes types)
+{
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    return adoptNS([(PAL::allocVKCImageAnalyzerRequestInstance()) initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
+#else
+    return adoptNS([PAL::allocVKImageAnalyzerRequestInstance() initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
+#endif
+}
 
 static FloatQuad floatQuad(VKQuad *quad)
 {
@@ -64,13 +71,14 @@ static Vector<FloatQuad> floatQuads(NSArray<VKQuad *> *vkQuads)
     return quads;
 }
 
-TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *analysis)
+TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
 {
-    NSArray<VKWKTextInfo *> *allLines = analysis.allLines;
+    NSArray<VKWKLineInfo *> *allLines = analysis.allLines;
     TextRecognitionResult result;
     result.lines.reserveInitialCapacity(allLines.count);
 
     bool isFirstLine = true;
+    size_t nextLineIndex = 1;
     for (VKWKLineInfo *line in allLines) {
         Vector<TextRecognitionWordData> children;
         NSArray<VKWKTextInfo *> *vkChildren = line.children;
@@ -102,18 +110,26 @@ TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *analysis)
             searchLocation = matchLocation + childText.length();
             children.uncheckedAppend({ WTFMove(childText), floatQuad(child.quad), hasLeadingWhitespace });
         }
-        result.lines.uncheckedAppend({ floatQuad(line.quad), WTFMove(children) });
+        VKWKLineInfo *nextLine = nextLineIndex < allLines.count ? allLines[nextLineIndex] : nil;
+        // The `shouldWrap` property indicates whether or not a line should wrap, relative to the previous line.
+        bool hasTrailingNewline = nextLine && (![nextLine respondsToSelector:@selector(shouldWrap)] || ![nextLine shouldWrap]);
+        result.lines.uncheckedAppend({ floatQuad(line.quad), WTFMove(children), hasTrailingNewline });
         isFirstLine = false;
+        nextLineIndex++;
     }
 
 #if ENABLE(DATA_DETECTION)
     if ([analysis respondsToSelector:@selector(textDataDetectors)]) {
-        auto dataDetectors = retainPtr(analysis.textDataDetectors);
+        auto dataDetectors = RetainPtr { analysis.textDataDetectors };
         result.dataDetectors.reserveInitialCapacity([dataDetectors count]);
-        for (id <VKWKDataDetectorInfo> info in dataDetectors.get())
+        for (VKWKDataDetectorInfo *info in dataDetectors.get())
             result.dataDetectors.uncheckedAppend({ info.result, floatQuads(info.boundingQuads) });
     }
 #endif // ENABLE(DATA_DETECTION)
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    result.platformData = { RetainPtr { analysis } };
+#endif
 
     return result;
 }
@@ -122,16 +138,38 @@ TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *analysis)
 #include <WebKitAdditions/TextRecognitionUtilitiesAdditions.mm>
 #else
 
-static bool isLiveTextEnabled()
+bool textRecognitionEnhancementsSystemFeatureEnabled()
 {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     return true;
+#else
+    return false;
+#endif
+}
+
+bool imageAnalysisQueueSystemFeatureEnabled()
+{
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool isImageAnalysisMarkupSystemFeatureEnabled()
+{
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    return true;
+#else
+    return false;
+#endif
 }
 
 #endif
 
 bool isLiveTextAvailableAndEnabled()
 {
-    return PAL::isVisionKitCoreFrameworkAvailable() && isLiveTextEnabled();
+    return PAL::isVisionKitCoreFrameworkAvailable();
 }
 
 } // namespace WebKit

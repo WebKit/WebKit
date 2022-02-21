@@ -1,8 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gnome_downloads:glib/2.69/glib-2.69.0.tar.xz
-  ref: 1cdb3fd8610f3c57b6622e5cd68e0a3210561d80b0eceb971eb51fb8b63dbfae
+  url: gnome_downloads:glib/2.70/glib-2.70.0.tar.xz
+  ref: 200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742
 depends:
 - filename: components/libffi.bst
   junction: freedesktop-sdk.bst
@@ -10,8 +10,6 @@ depends:
   junction: freedesktop-sdk.bst
 - filename: components/python3.bst
   junction: freedesktop-sdk.bst
-# a dummy dependency so our glib is always staged
-# on top of freedesktop-sdk version
 - filename: components/glib.bst
   junction: freedesktop-sdk.bst
   type: runtime

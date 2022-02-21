@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/ClockType.h>
-#include <wtf/Seconds.h>
+#include <wtf/GenericTimeMixin.h>
 
 namespace WTF {
 
@@ -37,20 +37,12 @@ class PrintStream;
 // possibly don't count downtime. This uses floating point internally so that you can reason about
 // infinity and other things that arise in math. It's acceptable to use this to wrap NaN times,
 // negative times, and infinite times, so long as they are all relative to the same clock.
-class MonotonicTime final {
-    WTF_MAKE_FAST_ALLOCATED;
+class MonotonicTime final : public GenericTimeMixin<MonotonicTime> {
 public:
     static constexpr ClockType clockType = ClockType::Monotonic;
     
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - MonotonicTime().
-    constexpr MonotonicTime() { }
-    
-    // Call this if you know for sure that the double represents monotonic time according to the
-    // same time source as MonotonicTime. It must be in seconds.
-    static constexpr MonotonicTime fromRawSeconds(double value)
-    {
-        return MonotonicTime(value);
-    }
+    constexpr MonotonicTime() = default;
 
 #if OS(DARWIN)
     WTF_EXPORT_PRIVATE static MonotonicTime fromMachAbsoluteTime(uint64_t);
@@ -59,127 +51,21 @@ public:
 
     WTF_EXPORT_PRIVATE static MonotonicTime now();
     
-    static constexpr MonotonicTime infinity() { return fromRawSeconds(std::numeric_limits<double>::infinity()); }
-    static constexpr MonotonicTime nan() { return fromRawSeconds(std::numeric_limits<double>::quiet_NaN()); }
-
-    constexpr Seconds secondsSinceEpoch() const { return Seconds(m_value); }
-    
     MonotonicTime approximateMonotonicTime() const { return *this; }
     WTF_EXPORT_PRIVATE WallTime approximateWallTime() const;
-    
-    explicit constexpr operator bool() const { return !!m_value; }
-    
-    constexpr MonotonicTime operator+(Seconds other) const
-    {
-        return fromRawSeconds(m_value + other.value());
-    }
-    
-    constexpr MonotonicTime operator-(Seconds other) const
-    {
-        return fromRawSeconds(m_value - other.value());
-    }
 
-    Seconds operator%(Seconds other) const
-    {
-        return Seconds { fmod(m_value, other.value()) };
-    }
-    
-    // Time is a scalar and scalars can be negated as this could arise from algebraic
-    // transformations. So, we allow it.
-    constexpr MonotonicTime operator-() const
-    {
-        return fromRawSeconds(-m_value);
-    }
-    
-    MonotonicTime operator+=(Seconds other)
-    {
-        return *this = *this + other;
-    }
-    
-    MonotonicTime operator-=(Seconds other)
-    {
-        return *this = *this - other;
-    }
-    
-    constexpr Seconds operator-(MonotonicTime other) const
-    {
-        return Seconds(m_value - other.m_value);
-    }
-    
-    constexpr bool operator==(MonotonicTime other) const
-    {
-        return m_value == other.m_value;
-    }
-    
-    constexpr bool operator!=(MonotonicTime other) const
-    {
-        return m_value != other.m_value;
-    }
-    
-    constexpr bool operator<(MonotonicTime other) const
-    {
-        return m_value < other.m_value;
-    }
-    
-    constexpr bool operator>(MonotonicTime other) const
-    {
-        return m_value > other.m_value;
-    }
-    
-    constexpr bool operator<=(MonotonicTime other) const
-    {
-        return m_value <= other.m_value;
-    }
-    
-    constexpr bool operator>=(MonotonicTime other) const
-    {
-        return m_value >= other.m_value;
-    }
-    
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
-
-    MonotonicTime isolatedCopy() const
-    {
-        return *this;
-    }
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << m_value;
-    }
-
-    template<class Decoder>
-    static std::optional<MonotonicTime> decode(Decoder& decoder)
-    {
-        std::optional<double> time;
-        decoder >> time;
-        if (!time)
-            return std::nullopt;
-        return MonotonicTime::fromRawSeconds(*time);
-    }
-
-    template<class Decoder>
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, MonotonicTime& time)
-    {
-        double value;
-        if (!decoder.decode(value))
-            return false;
-
-        time = MonotonicTime::fromRawSeconds(value);
-        return true;
-    }
 
     struct MarkableTraits;
 
 private:
+    friend class GenericTimeMixin<MonotonicTime>;
     constexpr MonotonicTime(double rawValue)
-        : m_value(rawValue)
+        : GenericTimeMixin<MonotonicTime>(rawValue)
     {
     }
-
-    double m_value { 0 };
 };
+static_assert(sizeof(MonotonicTime) == sizeof(double));
 
 struct MonotonicTime::MarkableTraits {
     static bool isEmptyValue(MonotonicTime time)

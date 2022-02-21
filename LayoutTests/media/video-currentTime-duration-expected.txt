@@ -1,0 +1,11 @@
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(video.currentTime = video.duration - 0.1)
+EVENT(seeked)
+RUN(video.play())
+EVENT(playing)
+EVENT(timeupdate)
+EXPECTED (video.currentTime <= video.duration == 'true') OK
+END OF TEST
+

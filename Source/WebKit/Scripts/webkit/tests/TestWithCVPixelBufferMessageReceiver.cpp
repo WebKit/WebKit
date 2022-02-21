@@ -32,6 +32,9 @@
 #include "HandleMessage.h"
 #include "TestWithCVPixelBufferMessages.h"
 #if USE(AVFOUNDATION)
+#include <WebCore/CVUtilities.h>
+#endif
+#if USE(AVFOUNDATION)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -39,10 +42,10 @@ namespace WebKit {
 
 void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 #if USE(AVFOUNDATION)
     if (decoder.messageName() == Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name())
-        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
+        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
@@ -50,15 +53,15 @@ void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::
     if (connection.ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
 }
 
 bool TestWithCVPixelBuffer::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 #if USE(AVFOUNDATION)
     if (decoder.messageName() == Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name())
-        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(decoder, *replyEncoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
+        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(connection, decoder, *replyEncoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);

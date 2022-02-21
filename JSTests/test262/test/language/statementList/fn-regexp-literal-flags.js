@@ -36,4 +36,4 @@ info: |
 ---*/
 
 
-function fn() {}/1/g;;
+function fn() {}/1/g;

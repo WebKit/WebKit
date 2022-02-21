@@ -9,9 +9,7 @@ TestPage.registerInitializer(() => {
         if (!targetData)
             return null;
 
-        const topCallFrameIsBoundary = false;
-        const truncated = false;
-        return new WI.StackTrace(targetData.callFrames, topCallFrameIsBoundary, truncated, targetData.asyncStackTrace);
+        return new WI.StackTrace(targetData.callFrames, {parentStackTrace: targetData.asyncStackTrace});
     };
 
     window.logAsyncStackTrace = function() {

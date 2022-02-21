@@ -6,6 +6,7 @@
  * Copyright (C) 2009 Google, Inc.
  * Copyright (C) 2011 Renata Hodovan <reni@webkit.org>
  * Copyright (C) 2011 University of Szeged
+ * Copyright (C) 2020, 2021, 2022 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,9 +26,11 @@
 
 #pragma once
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
+#include "SVGBoundingBoxComputation.h"
 #include "SVGGraphicsElement.h"
 #include "SVGMarkerData.h"
 #include <memory>
@@ -37,7 +40,6 @@ namespace WebCore {
 
 class FloatPoint;
 class GraphicsContextStateSaver;
-class RenderSVGContainer;
 class RenderSVGPath;
 class RenderSVGResource;
 class SVGGraphicsElement;
@@ -52,12 +54,10 @@ public:
     RenderSVGShape(SVGGraphicsElement&, RenderStyle&&);
     virtual ~RenderSVGShape();
 
-    SVGGraphicsElement& graphicsElement() const { return downcast<SVGGraphicsElement>(RenderSVGModelObject::element()); }
+    inline SVGGraphicsElement& graphicsElement() const;
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
-    void setNeedsBoundariesUpdate() final { m_needsBoundariesUpdate = true; }
-    bool needsBoundariesUpdate() final { return m_needsBoundariesUpdate; }
-    void setNeedsTransformUpdate() final { m_needsTransformUpdate = true; }
+
     virtual void fillShape(GraphicsContext&) const;
     virtual void strokeShape(GraphicsContext&) const;
     virtual bool isRenderingDisabled() const = 0;
@@ -75,6 +75,12 @@ public:
         return *m_path;
     }
     void clearPath() { m_path = nullptr; }
+
+    FloatRect objectBoundingBox() const final { return m_fillBoundingBox; }
+    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
+    FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
+
+    FloatRect computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const;
 
 protected:
     void element() const = delete;
@@ -98,30 +104,21 @@ private:
     bool fillContains(const FloatPoint&, bool requiresFill = true, const WindRule fillRule = WindRule::NonZero);
     bool strokeContains(const FloatPoint&, bool requiresStroke = true);
 
-    FloatRect repaintRectInLocalCoordinates() const final { return m_repaintBoundingBox; }
-    const AffineTransform& localToParentTransform() const final { return m_localTransform; }
-    AffineTransform localTransform() const final { return m_localTransform; }
-
     bool isSVGShape() const final { return true; }
     bool canHaveChildren() const final { return false; }
     const char* renderName() const override { return "RenderSVGShape"; }
 
     void layout() final;
     void paint(PaintInfo&, const LayoutPoint&) final;
-    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) final;
 
-    bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) final;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    FloatRect objectBoundingBox() const final { return m_fillBoundingBox; }
-    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
     FloatRect calculateObjectBoundingBox() const;
     FloatRect calculateStrokeBoundingBox() const;
-    void updateRepaintBoundingBox();
 
     bool setupNonScalingStrokeContext(AffineTransform&, GraphicsContextStateSaver&);
 
     bool shouldGenerateMarkerPositions() const;
-    FloatRect markerRect(float strokeWidth) const;
     
     std::unique_ptr<Path> createPath() const;
     void processMarkerPositions();
@@ -132,15 +129,11 @@ private:
     void fillStrokeMarkers(PaintInfo&);
     void drawMarkers(PaintInfo&);
 
+    void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
+
 private:
-    FloatRect m_repaintBoundingBox;
-    FloatRect m_repaintBoundingBoxExcludingShadow;
+    bool m_needsShapeUpdate { true };
 
-    bool m_needsBoundariesUpdate : 1;
-    bool m_needsShapeUpdate : 1;
-    bool m_needsTransformUpdate : 1;
-
-    AffineTransform m_localTransform;
     std::unique_ptr<Path> m_path;
     Vector<MarkerPosition> m_markerPositions;
 };
@@ -148,3 +141,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGShape, isSVGShape())
+
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

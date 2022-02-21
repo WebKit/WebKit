@@ -29,6 +29,7 @@
 #import "WKNSArray.h"
 #import "WKNSURLExtras.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
+#import "WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h"
 #import "WKWebProcessPlugInHitTestResultInternal.h"
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 #import "WKWebProcessPlugInRangeHandleInternal.h"
@@ -58,6 +59,11 @@
     return wrapper(WebKit::WebFrame::frameForContext(context.JSGlobalContextRef));
 }
 
++ (instancetype)lookUpContentFrameFromWindowOrFrameElement:(JSValue *)value
+{
+    return wrapper(WebKit::WebFrame::contentFrameForWindowOrFrameElement(value.context.JSGlobalContextRef, value.JSValueRef));
+}
+
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebProcessPlugInFrame.class, self))
@@ -71,6 +77,13 @@
     return [JSContext contextWithJSGlobalContextRef:_frame->jsContextForWorld(&[world _scriptWorld])];
 }
 
+- (JSContext *)jsContextForServiceWorkerWorld:(WKWebProcessPlugInScriptWorld *)world
+{
+    if (auto context = _frame->jsContextForServiceWorkerWorld(&[world _scriptWorld]))
+        return [JSContext contextWithJSGlobalContextRef:context];
+    return nil;
+}
+
 - (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point
 {
     return wrapper(_frame->hitTest(WebCore::IntPoint(point)));
@@ -82,6 +95,12 @@
     if (options & WKHitTestOptionAllowUserAgentShadowRootContent)
         types.remove(WebCore::HitTestRequest::Type::DisallowUserAgentShadowContent);
     return wrapper(_frame->hitTest(WebCore::IntPoint(point), types));
+}
+
+- (JSValue *)jsCSSStyleDeclarationForCSSStyleDeclarationHandle:(WKWebProcessPlugInCSSStyleDeclarationHandle *)cssStyleDeclarationHandle inWorld:(WKWebProcessPlugInScriptWorld *)world
+{
+    JSValueRef valueRef = _frame->jsWrapperForWorld(&[cssStyleDeclarationHandle _cssStyleDeclarationHandle], &[world _scriptWorld]);
+    return [JSValue valueWithJSValueRef:valueRef inContext:[self jsContextForWorld:world]];
 }
 
 - (JSValue *)jsNodeForNodeHandle:(WKWebProcessPlugInNodeHandle *)nodeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world
@@ -103,7 +122,7 @@
 
 - (NSURL *)URL
 {
-    return [NSURL _web_URLWithWTFString:_frame->url().string()];
+    return _frame->url();
 }
 
 - (NSArray *)childFrames

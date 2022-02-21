@@ -33,7 +33,6 @@
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptSourceCode.h"
-#include "ScriptState.h"
 #include <JavaScriptCore/FrameTracers.h>
 #include <JavaScriptCore/JSPromise.h>
 #include <wtf/RunLoop.h>
@@ -43,7 +42,7 @@ namespace WebCore {
 using EvaluationError = InspectorFrontendAPIDispatcher::EvaluationError;
 
 InspectorFrontendAPIDispatcher::InspectorFrontendAPIDispatcher(Page& frontendPage)
-    : m_frontendPage(makeWeakPtr(frontendPage))
+    : m_frontendPage(frontendPage)
 {
 }
 
@@ -82,7 +81,7 @@ void InspectorFrontendAPIDispatcher::suspend(UnsuspendSoon unsuspendSoon)
     m_suspended = true;
 
     if (unsuspendSoon == UnsuspendSoon::Yes) {
-        RunLoop::main().dispatch([protectedThis = makeRef(*this)] {
+        RunLoop::main().dispatch([protectedThis = Ref { *this }] {
             // If the frontend page has been deallocated, there's nothing to do.
             if (!protectedThis->m_frontendPage)
                 return;
@@ -176,7 +175,9 @@ void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& exp
         optionalResultHandler(makeUnexpected(EvaluationError::ContextDestroyed));
         return;
     }
-        
+    
+    JSC::JSLockHolder lock(globalObject);
+    
     auto& vm = globalObject->vm();
     auto* castedPromise = JSC::jsDynamicCast<JSC::JSPromise*>(vm, result.value());
     if (!castedPromise) {
@@ -188,14 +189,14 @@ void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& exp
     // If the result is a promise, call the result handler when the promise settles.
     Ref<DOMPromise> promise = DOMPromise::create(*globalObject, *castedPromise);
     m_pendingResponses.set(promise.copyRef(), WTFMove(optionalResultHandler));
-    auto isRegistered = promise->whenSettled([promise = promise.copyRef(), weakThis = makeWeakPtr(*this)] {
+    auto isRegistered = promise->whenSettled([promise = promise.copyRef(), weakThis = WeakPtr { *this }] {
         // If `this` is cleared or the responses map is empty, then the promise settled
         // beyond the time when we care about its result. Ignore late-settled promises.
         // We clear out completion handlers for pending responses during teardown.
         if (!weakThis)
             return;
 
-        auto strongThis = makeRef(*weakThis);
+        Ref strongThis = { *weakThis };
         if (!strongThis->m_pendingResponses.size())
             return;
 

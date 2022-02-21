@@ -10,15 +10,15 @@ shouldNotThrow(() => {
 
 shouldThrow(() => {
     checkModuleSyntax(`(import.cocoa)`);
-}, `SyntaxError: Unexpected identifier 'cocoa'. "import." can only followed with meta.:1`);
+}, `SyntaxError: Unexpected identifier 'cocoa'. "import." can only be followed with meta.:1`);
 
 shouldThrow(() => {
     checkModuleSyntax(`(import["Cocoa"])`);
-}, `SyntaxError: Unexpected token '['. import call expects exactly one argument.:1`);
+}, `SyntaxError: Unexpected token '['. import call expects one or two arguments.:1`);
 
 shouldThrow(() => {
     checkModuleSyntax(`import.cocoa`);
-}, `SyntaxError: Unexpected identifier 'cocoa'. "import." can only followed with meta.:1`);
+}, `SyntaxError: Unexpected identifier 'cocoa'. "import." can only be followed with meta.:1`);
 
 shouldThrow(() => {
     checkModuleSyntax(`import["Cocoa"]`);

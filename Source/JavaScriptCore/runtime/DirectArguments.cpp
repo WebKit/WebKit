@@ -49,7 +49,7 @@ DirectArguments* DirectArguments::createUninitialized(
     VM& vm, Structure* structure, unsigned length, unsigned capacity)
 {
     DirectArguments* result =
-        new (NotNull, allocateCell<DirectArguments>(vm.heap, allocationSize(capacity)))
+        new (NotNull, allocateCell<DirectArguments>(vm, allocationSize(capacity)))
         DirectArguments(vm, structure, length, capacity);
     result->finishCreation(vm);
     return result;
@@ -123,7 +123,7 @@ void DirectArguments::overrideThings(JSGlobalObject* globalObject)
     putDirect(vm, vm.propertyNames->callee, m_callee.get(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
-    void* backingStore = vm.gigacageAuxiliarySpace(m_mappedArguments.kind).allocateNonVirtual(vm, mappedArgumentsSize(), nullptr, AllocationFailureMode::ReturnNull);
+    void* backingStore = vm.gigacageAuxiliarySpace(m_mappedArguments.kind).allocate(vm, mappedArgumentsSize(), nullptr, AllocationFailureMode::ReturnNull);
     if (UNLIKELY(!backingStore)) {
         throwOutOfMemoryError(globalObject, scope);
         return;

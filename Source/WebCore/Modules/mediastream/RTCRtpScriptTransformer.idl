@@ -26,13 +26,15 @@
 [
     ActiveDOMObject,
     Conditional=WEB_RTC,
-    EnabledBySetting=WebRTCInsertableStreams,
+    EnabledBySetting=WebRTCEncodedTransformEnabled,
     Exposed=DedicatedWorker,
     JSGenerateToNativeObject,
 ] interface RTCRtpScriptTransformer {
     readonly attribute ReadableStream readable;
     readonly attribute WritableStream writable;
-    [CallWith=GlobalObject, CachedAttribute] readonly attribute any options;
+    [CallWith=CurrentGlobalObject, CachedAttribute] readonly attribute any options;
 
-    undefined requestKeyFrame();
+    // FIXME: Add support for RID options.
+    Promise<undefined> generateKeyFrame();
+    Promise<undefined> sendKeyFrameRequest();
 };

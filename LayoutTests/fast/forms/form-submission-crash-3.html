@@ -9,6 +9,7 @@ jsTestIsAsync = true;
 function eventhandler() {
     div1.innerHTML = "foo";
     gc();
+    setTimeout(finishJSTest, 10);
 }
  
 function eventhandler2() {
@@ -21,7 +22,6 @@ function start() {
     input.onfocus = eventhandler;
     button.click();
     testPassed('if not crashed.');
-    finishJSTest();
 }
 </script>
 </head>

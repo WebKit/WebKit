@@ -22,9 +22,9 @@
 
 #include "DictationContext.h"
 #include "SimpleRange.h"
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -96,7 +96,7 @@ public:
     };
 #endif
 
-    using Data = Variant<
+    using Data = std::variant<
         String
         , DictationData // DictationAlternatives
 #if PLATFORM(IOS_FAMILY)
@@ -175,7 +175,7 @@ inline void DocumentMarker::shiftOffsets(int delta)
 
 inline const String& DocumentMarker::description() const
 {
-    return WTF::holds_alternative<String>(m_data) ? WTF::get<String>(m_data) : emptyString();
+    return std::holds_alternative<String>(m_data) ? std::get<String>(m_data) : emptyString();
 }
 
 } // namespace WebCore

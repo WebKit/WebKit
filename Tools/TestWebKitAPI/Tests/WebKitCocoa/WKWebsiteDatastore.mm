@@ -25,9 +25,9 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "Test.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -38,8 +38,6 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
-
-static bool readyToContinue;
 
 static RetainPtr<NSURLCredential> persistentCredential;
 static bool usePersistentCredentialStorage = false;
@@ -120,7 +118,7 @@ TEST(WKWebsiteDataStore, RemoveEphemeralData)
 
 TEST(WKWebsiteDataStore, FetchNonPersistentCredentials)
 {
-    TCPServer server(TCPServer::respondWithChallengeThenOK);
+    HTTPServer server(HTTPServer::respondWithChallengeThenOK);
     
     usePersistentCredentialStorage = false;
     auto configuration = adoptNS([WKWebViewConfiguration new]);
@@ -145,7 +143,7 @@ TEST(WKWebsiteDataStore, FetchNonPersistentCredentials)
 
 TEST(WKWebsiteDataStore, FetchPersistentCredentials)
 {
-    TCPServer server(TCPServer::respondWithChallengeThenOK);
+    HTTPServer server(HTTPServer::respondWithChallengeThenOK);
 
     usePersistentCredentialStorage = true;
     auto websiteDataStore = [WKWebsiteDataStore defaultDataStore];
@@ -174,7 +172,7 @@ TEST(WKWebsiteDataStore, FetchPersistentCredentials)
 
 TEST(WKWebsiteDataStore, RemoveNonPersistentCredentials)
 {
-    TCPServer server(TCPServer::respondWithChallengeThenOK);
+    HTTPServer server(HTTPServer::respondWithChallengeThenOK);
 
     usePersistentCredentialStorage = false;
     auto configuration = adoptNS([WKWebViewConfiguration new]);

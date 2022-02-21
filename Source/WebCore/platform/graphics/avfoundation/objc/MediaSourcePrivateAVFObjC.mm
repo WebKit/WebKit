@@ -54,7 +54,7 @@ Ref<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerPriv
 }
 
 MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC& parent, MediaSourcePrivateClient* client)
-    : m_player(makeWeakPtr(parent))
+    : m_player(parent)
     , m_client(client)
     , m_isEnded(false)
 #if !RELEASE_LOG_DISABLED
@@ -195,9 +195,10 @@ void MediaSourcePrivateAVFObjC::sourceBufferPrivateDidChangeActiveState(SourceBu
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-void MediaSourcePrivateAVFObjC::sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC* buffer, Uint8Array* initData)
+void MediaSourcePrivateAVFObjC::sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC* buffer, const SharedBuffer& initData)
 {
     m_sourceBuffersNeedingSessions.append(buffer);
+
     if (m_player)
         m_player->keyNeeded(initData);
 }

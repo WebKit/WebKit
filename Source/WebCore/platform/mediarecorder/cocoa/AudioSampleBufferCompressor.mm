@@ -25,7 +25,7 @@
 #include "config.h"
 #include "AudioSampleBufferCompressor.h"
 
-#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#if ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)
 
 #include "Logging.h"
 #include <AudioToolbox/AudioCodec.h>
@@ -491,10 +491,10 @@ void AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime(CMTime l
         }
 
         CMTime nativeDuration = CMSampleBufferGetDuration(buffer.get());
-        m_currentNativePresentationTimeStamp = CMTimeAdd(m_currentNativePresentationTimeStamp, nativeDuration);
+        m_currentNativePresentationTimeStamp = PAL::CMTimeAdd(m_currentNativePresentationTimeStamp, nativeDuration);
 
         CMTime outputDuration = CMSampleBufferGetOutputDuration(buffer.get());
-        m_currentOutputPresentationTimeStamp = CMTimeAdd(m_currentOutputPresentationTimeStamp, outputDuration);
+        m_currentOutputPresentationTimeStamp = PAL::CMTimeAdd(m_currentOutputPresentationTimeStamp, outputDuration);
 
         error = CMBufferQueueEnqueue(m_outputBufferQueue.get(), buffer.get());
         if (error) {
@@ -540,4 +540,4 @@ unsigned AudioSampleBufferCompressor::bitRate() const
 
 }
 
-#endif // ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#endif // ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)

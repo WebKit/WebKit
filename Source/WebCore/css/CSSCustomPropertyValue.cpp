@@ -26,38 +26,45 @@
 #include "config.h"
 #include "CSSCustomPropertyValue.h"
 
+#include "CSSParserIdioms.h"
 #include "CSSTokenizer.h"
 
 namespace WebCore {
 
 Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createEmpty(const AtomString& name)
 {
-    return adoptRef(*new CSSCustomPropertyValue(name, Monostate { }));
+    return adoptRef(*new CSSCustomPropertyValue(name, std::monostate { }));
+}
+
+Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createWithID(const AtomString& name, CSSValueID id)
+{
+    ASSERT(WebCore::isCSSWideKeyword(id) || id == CSSValueInvalid);
+    return adoptRef(*new CSSCustomPropertyValue(name, { id }));
 }
 
 bool CSSCustomPropertyValue::equals(const CSSCustomPropertyValue& other) const
 {
     if (m_name != other.m_name || m_value.index() != other.m_value.index())
         return false;
-    return WTF::switchOn(m_value, [&](const Monostate&) {
+    return WTF::switchOn(m_value, [&](const std::monostate&) {
         return true;
     }, [&](const Ref<CSSVariableReferenceValue>& value) {
-        return value.get() == WTF::get<Ref<CSSVariableReferenceValue>>(other.m_value).get();
+        return value.get() == std::get<Ref<CSSVariableReferenceValue>>(other.m_value).get();
     }, [&](const CSSValueID& value) {
-        return value == WTF::get<CSSValueID>(other.m_value);
+        return value == std::get<CSSValueID>(other.m_value);
     }, [&](const Ref<CSSVariableData>& value) {
-        return value.get() == WTF::get<Ref<CSSVariableData>>(other.m_value).get();
+        return value.get() == std::get<Ref<CSSVariableData>>(other.m_value).get();
     }, [&](const Length& value) {
-        return value == WTF::get<Length>(other.m_value);
+        return value == std::get<Length>(other.m_value);
     }, [&](const Ref<StyleImage>& value) {
-        return value.get() == WTF::get<Ref<StyleImage>>(other.m_value).get();
+        return value.get() == std::get<Ref<StyleImage>>(other.m_value).get();
     });
 }
 
 String CSSCustomPropertyValue::customCSSText() const
 {
     if (m_stringValue.isNull()) {
-        WTF::switchOn(m_value, [&](const Monostate&) {
+        WTF::switchOn(m_value, [&](const std::monostate&) {
             m_stringValue = emptyString();
         }, [&](const Ref<CSSVariableReferenceValue>& value) {
             m_stringValue = value->cssText();
@@ -77,7 +84,7 @@ String CSSCustomPropertyValue::customCSSText() const
 Vector<CSSParserToken> CSSCustomPropertyValue::tokens() const
 {
     Vector<CSSParserToken> result;
-    WTF::switchOn(m_value, [&](const Monostate&) {
+    WTF::switchOn(m_value, [&](const std::monostate&) {
         // Do nothing.
     }, [&](const Ref<CSSVariableReferenceValue>&) {
         ASSERT_NOT_REACHED();

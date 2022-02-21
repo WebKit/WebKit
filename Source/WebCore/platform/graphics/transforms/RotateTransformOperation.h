@@ -53,6 +53,11 @@ public:
     double z() const { return m_z; }
     double angle() const { return m_angle; }
 
+    // The 2D rotation primitive doesn't handle any direction vectors other than [0, 0, 1],
+    // so even if the rotation is representable in 2D, it might be a 3D rotation.
+    OperationType primitiveType() const final { return (isRepresentableIn2D() && z() == 1.0) ? ROTATE : ROTATE_3D; }
+
+    bool operator==(const RotateTransformOperation& other) const { return operator==(static_cast<const TransformOperation&>(other)); }
     bool operator==(const TransformOperation&) const override;
 
     Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) final;

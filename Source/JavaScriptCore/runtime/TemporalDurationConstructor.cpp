@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +55,7 @@ const ClassInfo TemporalDurationConstructor::s_info = { "Function", &Base::s_inf
 
 TemporalDurationConstructor* TemporalDurationConstructor::create(VM& vm, Structure* structure, TemporalDurationPrototype* durationPrototype)
 {
-    auto* constructor = new (NotNull, allocateCell<TemporalDurationConstructor>(vm.heap)) TemporalDurationConstructor(vm, structure);
+    auto* constructor = new (NotNull, allocateCell<TemporalDurationConstructor>(vm)) TemporalDurationConstructor(vm, structure);
     constructor->finishCreation(vm, durationPrototype);
     return constructor;
 }
@@ -88,17 +89,17 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalDuration, (JSGlobalObject* globalObjec
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, durationStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
-    TemporalDuration::Subdurations subdurations;
+    ISO8601::Duration result;
     auto count = std::min<size_t>(callFrame->argumentCount(), numberOfTemporalUnits);
     for (size_t i = 0; i < count; i++) {
-        subdurations[i] = callFrame->uncheckedArgument(i).toIntegerOrInfinity(globalObject);
+        result[i] = callFrame->uncheckedArgument(i).toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
-        if (!std::isfinite(subdurations[i]))
+        if (!std::isfinite(result[i]))
             return throwVMRangeError(globalObject, scope, "Temporal.Duration properties must be finite"_s);
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTFMove(subdurations), structure)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTFMove(result), structure)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalDuration, (JSGlobalObject* globalObject, CallFrame*))

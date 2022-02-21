@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/TextEncoding.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/SetForScope.h>
 
 #if PLATFORM(GTK)
@@ -67,6 +67,7 @@ const unsigned WebInspectorUIProxy::initialWindowHeight = 650;
 WebInspectorUIProxy::WebInspectorUIProxy(WebPageProxy& inspectedPage)
     : m_inspectedPage(&inspectedPage)
     , m_inspectorClient(makeUnique<API::InspectorClient>())
+    , m_inspectedPageIdentifier(inspectedPage.identifier())
 #if PLATFORM(MAC)
     , m_closeFrontendAfterInactivityTimer(RunLoop::main(), this, &WebInspectorUIProxy::closeFrontendAfterInactivityTimerFired)
 #endif
@@ -225,6 +226,8 @@ void WebInspectorUIProxy::updateForNewPageProcess(WebPageProxy& inspectedPage)
     ASSERT(!m_inspectedPage);
 
     m_inspectedPage = &inspectedPage;
+    m_inspectedPageIdentifier = m_inspectedPage->identifier();
+
     m_inspectedPage->process().addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageID(), *this);
 
     if (m_inspectorPage)
@@ -392,7 +395,7 @@ bool WebInspectorUIProxy::isMainOrTestInspectorPage(const URL& url)
 {
     // Use URL so we can compare the paths and protocols.
     URL mainPageURL(URL(), WebInspectorUIProxy::inspectorPageURL());
-    if (url.protocol() == mainPageURL.protocol() && decodeURLEscapeSequences(url.path()) == decodeURLEscapeSequences(mainPageURL.path()))
+    if (url.protocol() == mainPageURL.protocol() && PAL::decodeURLEscapeSequences(url.path()) == PAL::decodeURLEscapeSequences(mainPageURL.path()))
         return true;
 
     // We might not have a Test URL in Production builds.
@@ -401,7 +404,7 @@ bool WebInspectorUIProxy::isMainOrTestInspectorPage(const URL& url)
         return false;
 
     URL testPageURL(URL(), testPageURLString);
-    return url.protocol() == testPageURL.protocol() && decodeURLEscapeSequences(url.path()) == decodeURLEscapeSequences(testPageURL.path());
+    return url.protocol() == testPageURL.protocol() && PAL::decodeURLEscapeSequences(url.path()) == PAL::decodeURLEscapeSequences(testPageURL.path());
 }
 
 void WebInspectorUIProxy::createFrontendPage()
@@ -419,7 +422,7 @@ void WebInspectorUIProxy::createFrontendPage()
     // Make sure the inspected page has a running WebProcess so we can inspect it.
     m_inspectedPage->launchInitialProcessIfNecessary();
 
-    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->identifier(), *this);
+    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPageIdentifier, *this);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     m_extensionController = WebInspectorUIExtensionControllerProxy::create(*m_inspectorPage);
@@ -446,7 +449,7 @@ void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underT
     if (!m_inspectorPage)
         return;
 
-    m_inspectorPage->send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPage->identifier(), infoForLocalDebuggable(), m_underTest, inspectionLevel()));
+    m_inspectorPage->send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPageIdentifier, infoForLocalDebuggable(), m_underTest, inspectionLevel()));
 
     ASSERT(!m_isActiveFrontend);
     m_isActiveFrontend = true;
@@ -497,9 +500,7 @@ void WebInspectorUIProxy::open()
     if (!m_inspectorPage)
         return;
 
-#if PLATFORM(GTK)
     SetForScope<bool> isOpening(m_isOpening, true);
-#endif
 
     m_isVisible = true;
     m_inspectorPage->send(Messages::WebInspectorUI::SetIsVisible(m_isVisible));
@@ -529,7 +530,8 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
     SetForScope<bool> reentrancyProtector(m_closing, true);
     
     // Notify WebKit client when a local inspector closes so it can clear _WKInspectorDelegate and perform other cleanup.
-    m_inspectedPage->uiClient().willCloseLocalInspector(*m_inspectedPage, *this);
+    if (m_inspectedPage)
+        m_inspectedPage->uiClient().willCloseLocalInspector(*m_inspectedPage, *this);
 
     m_isVisible = false;
     m_isProfilingPage = false;
@@ -539,12 +541,12 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
     untrackInspectorPage(m_inspectorPage);
 
     m_inspectorPage->send(Messages::WebInspectorUI::SetIsVisible(m_isVisible));
-    m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->identifier());
+    m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPageIdentifier);
 
-    if (m_isActiveFrontend) {
-        m_isActiveFrontend = false;
+    if (m_inspectedPage && m_isActiveFrontend)
         m_inspectedPage->inspectorController().disconnectFrontend(*this);
-    }
+
+    m_isActiveFrontend = false;
 
     if (m_isAttached)
         platformDetach();

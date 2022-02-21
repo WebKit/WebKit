@@ -27,8 +27,8 @@
 
 #include "AbstractSlotVisitor.h"
 #include "HandleTypes.h"
-#include "IterationStatus.h"
 #include <wtf/Forward.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/MonotonicTime.h>
 
 namespace JSC {
@@ -92,6 +92,8 @@ public:
 
     template<typename T, typename Traits> void append(const WriteBarrierBase<T, Traits>&);
     template<typename T, typename Traits> void appendHidden(const WriteBarrierBase<T, Traits>&);
+    void append(const WriteBarrierStructureID&);
+    void appendHidden(const WriteBarrierStructureID&);
     template<typename Iterator> void append(Iterator begin , Iterator end);
     ALWAYS_INLINE void appendValues(const WriteBarrierBase<Unknown, RawValueTraits<Unknown>>*, size_t count);
     ALWAYS_INLINE void appendValuesHidden(const WriteBarrierBase<Unknown, RawValueTraits<Unknown>>*, size_t count);

@@ -96,19 +96,33 @@ PAS_BEGIN_EXTERN_C;
         } \
     } \
     \
+    static inline bool name ## _is_null(name* ptr) \
+    { \
+        uintptr_t ptr_as_offset = 0; \
+        memcpy(&ptr_as_offset, ptr->payload, PAS_COMPACT_TAGGED_PTR_SIZE); \
+        ptr_as_offset &= PAS_COMPACT_TAGGED_PTR_MASK; \
+        return !ptr_as_offset; \
+    } \
+    \
     static inline type name ## _load(name* ptr) \
     { \
-        return name ## _ptr_for_offset(*(uintptr_t*)ptr & PAS_COMPACT_TAGGED_PTR_MASK); \
+        uintptr_t ptr_as_offset = 0; \
+        memcpy(&ptr_as_offset, ptr->payload, PAS_COMPACT_TAGGED_PTR_SIZE); \
+        ptr_as_offset &= PAS_COMPACT_TAGGED_PTR_MASK; \
+        return name ## _ptr_for_offset(ptr_as_offset); \
     } \
     \
     static inline type name ## _load_non_null(name* ptr) \
     { \
-        return name ## _ptr_for_offset_non_null(*(uintptr_t*)ptr & PAS_COMPACT_TAGGED_PTR_MASK); \
+        uintptr_t ptr_as_offset = 0; \
+        memcpy(&ptr_as_offset, ptr->payload, PAS_COMPACT_TAGGED_PTR_SIZE); \
+        ptr_as_offset &= PAS_COMPACT_TAGGED_PTR_MASK; \
+        return name ## _ptr_for_offset_non_null(ptr_as_offset); \
     } \
     \
     static inline type name ## _load_remote(pas_enumerator* enumerator, name* ptr) \
     { \
-        uintptr_t ptr_as_offset; \
+        uintptr_t ptr_as_offset = 0; \
         memcpy(&ptr_as_offset, ptr->payload, PAS_COMPACT_TAGGED_PTR_SIZE); \
         ptr_as_offset &= PAS_COMPACT_TAGGED_PTR_MASK; \
         return name ## _ptr_for_remote_offset(enumerator, ptr_as_offset); \

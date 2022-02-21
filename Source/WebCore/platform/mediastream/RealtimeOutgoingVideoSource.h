@@ -135,7 +135,7 @@ private:
     void trackEnded(MediaStreamTrackPrivate&) final { }
 
     // RealtimeMediaSource::VideoSampleObserver API
-    void videoSampleAvailable(MediaSample&) override { }
+    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) override { }
 
     Ref<MediaStreamTrackPrivate> m_videoSource;
     Timer m_blackFrameTimer;

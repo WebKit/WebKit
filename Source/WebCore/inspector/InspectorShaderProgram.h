@@ -28,9 +28,9 @@
 #if ENABLE(WEBGL)
 
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -73,11 +73,11 @@ private:
     String m_identifier;
     InspectorCanvas& m_canvas;
 
-    Variant<
+    std::variant<
 #if ENABLE(WEBGL)
         std::reference_wrapper<WebGLProgram>,
 #endif
-        WTF::Monostate
+        std::monostate
     > m_program;
 
     bool m_disabled { false };

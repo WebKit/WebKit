@@ -33,14 +33,18 @@ template<typename Iterator>
 class IteratorRange {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    using reverse_iterator = std::reverse_iterator<Iterator>;
+
     IteratorRange(Iterator begin, Iterator end)
         : m_begin(WTFMove(begin))
         , m_end(WTFMove(end))
     {
     }
 
-    Iterator begin() const { return m_begin; }
-    Iterator end() const { return m_end; }
+    auto begin() const { return m_begin; }
+    auto end() const { return m_end; }
+    auto rbegin() const { return reverse_iterator { m_end }; }
+    auto rend() const { return reverse_iterator { m_begin }; }
 
 private:
     Iterator m_begin;
@@ -94,3 +98,6 @@ SizedIteratorRange<Container, Iterator> makeSizedIteratorRange(const Container& 
 }
 
 } // namespace WTF
+
+using WTF::IteratorRange;
+using WTF::makeReversedRange;

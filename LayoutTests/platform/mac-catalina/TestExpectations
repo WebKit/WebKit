@@ -3,3 +3,7 @@
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 accessibility/mac/media-query-values-change.html [ Skip ]
+
+# Skip some canvas tests due to some framework debugging output that interferes.
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-drawImage-e_srgb.html [ Skip ]

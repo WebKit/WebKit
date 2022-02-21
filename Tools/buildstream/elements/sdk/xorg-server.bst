@@ -21,7 +21,7 @@ depends:
 - freedesktop-sdk.bst:components/xorg-font-util.bst
 - freedesktop-sdk.bst:components/wayland.bst
 - freedesktop-sdk.bst:components/systemd.bst
-- sdk/libdrm.bst
+- freedesktop-sdk.bst:components/libdrm.bst
 
 variables:
   conf-local: |

@@ -28,7 +28,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import <WebCore/VersionChecks.h>
+#import <wtf/RunLoop.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 namespace WebKit {
 

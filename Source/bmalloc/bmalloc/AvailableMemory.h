@@ -44,7 +44,7 @@ struct MemoryStatus {
     double percentAvailableMemoryInUse;
 };
 
-MemoryStatus memoryStatus();
+BEXPORT MemoryStatus memoryStatus();
 
 inline size_t memoryFootprint()
 {

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ImageBufferBackend.h"
 
+#include "GraphicsContext.h"
 #include "Image.h"
 #include "PixelBuffer.h"
 #include "PixelBufferConversion.h"
@@ -163,6 +164,27 @@ void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, co
     };
 
     convertImagePixels(source, destination, destinationRect.size());
+}
+
+AffineTransform ImageBufferBackend::calculateBaseTransform(const Parameters& parameters, bool originAtBottomLeftCorner)
+{
+    AffineTransform baseTransform;
+
+    if (originAtBottomLeftCorner) {
+        baseTransform.scale(1, -1);
+        baseTransform.translate(0, -calculateBackendSize(parameters).height());
+    }
+
+    baseTransform.scale(parameters.resolutionScale);
+
+    return baseTransform;
+}
+
+void ImageBufferBackend::applyBaseTransformToContext() const
+{
+    auto& context = this->context();
+    context.applyDeviceScaleFactor(m_parameters.resolutionScale);
+    context.setCTM(calculateBaseTransform(m_parameters, originAtBottomLeftCorner()));
 }
 
 } // namespace WebCore

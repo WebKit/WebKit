@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "DisplayListItems.h"
 
 #include "DisplayListReplayer.h"
+#include "Filter.h"
 #include "FontCascade.h"
 #include "ImageBuffer.h"
 #include "MediaPlayer.h"
@@ -114,83 +115,6 @@ static TextStream& operator<<(TextStream& ts, const ConcatenateCTM& item)
     return ts;
 }
 
-SetInlineFillGradient::SetInlineFillGradient(const Gradient& gradient, const AffineTransform& gradientSpaceTransform)
-    : m_data(gradient.data())
-    , m_gradientSpaceTransform(gradientSpaceTransform)
-    , m_spreadMethod(gradient.spreadMethod())
-    , m_colorStopCount(static_cast<uint8_t>(gradient.stops().size()))
-{
-    RELEASE_ASSERT(m_colorStopCount <= maxColorStopCount);
-    for (uint8_t i = 0; i < m_colorStopCount; ++i) {
-        m_offsets[i] = gradient.stops()[i].offset;
-        m_colors[i] = *gradient.stops()[i].color.tryGetAsSRGBABytes();
-    }
-}
-
-SetInlineFillGradient::SetInlineFillGradient(float offsets[maxColorStopCount], SRGBA<uint8_t> colors[maxColorStopCount], const Gradient::Data& data, const AffineTransform& gradientSpaceTransform, GradientSpreadMethod spreadMethod, uint8_t colorStopCount)
-    : m_data(data)
-    , m_gradientSpaceTransform(gradientSpaceTransform)
-    , m_spreadMethod(spreadMethod)
-    , m_colorStopCount(colorStopCount)
-{
-    RELEASE_ASSERT(m_colorStopCount <= maxColorStopCount);
-    for (uint8_t i = 0; i < m_colorStopCount; ++i) {
-        m_offsets[i] = offsets[i];
-        m_colors[i] = colors[i];
-    }
-}
-
-SetInlineFillGradient::SetInlineFillGradient(const SetInlineFillGradient& other)
-{
-    if (WTF::holds_alternative<Gradient::RadialData>(other.m_data) || WTF::holds_alternative<Gradient::LinearData>(other.m_data) || WTF::holds_alternative<Gradient::ConicData>(other.m_data)) {
-        m_data = other.m_data;
-        m_gradientSpaceTransform = other.m_gradientSpaceTransform;
-        m_spreadMethod = other.m_spreadMethod;
-        m_colorStopCount = other.m_colorStopCount;
-        if (m_colorStopCount > maxColorStopCount)
-            m_colorStopCount = 0;
-        for (uint8_t i = 0; i < m_colorStopCount; ++i) {
-            m_offsets[i] = other.m_offsets[i];
-            m_colors[i] = other.m_colors[i];
-        }
-    } else
-        m_isValid = false;
-}
-
-Ref<Gradient> SetInlineFillGradient::gradient() const
-{
-    auto gradient = Gradient::create(Gradient::Data(m_data));
-    for (uint8_t i = 0; i < m_colorStopCount; ++i)
-        gradient->addColorStop({ m_offsets[i], Color(m_colors[i]) });
-    gradient->setSpreadMethod(m_spreadMethod);
-    return gradient;
-}
-
-void SetInlineFillGradient::apply(GraphicsContext& context) const
-{
-    if (m_colorStopCount <= maxColorStopCount)
-        context.setFillGradient(gradient(), m_gradientSpaceTransform);
-}
-
-bool SetInlineFillGradient::isInline(const Gradient& gradient)
-{
-    if (gradient.stops().size() > SetInlineFillGradient::maxColorStopCount)
-        return false;
-
-    for (auto& colorStop : gradient.stops()) {
-        if (!colorStop.color.tryGetAsSRGBABytes())
-            return false;
-    }
-
-    return true;
-}
-
-static TextStream& operator<<(TextStream& ts, const SetInlineFillGradient&)
-{
-    // FIXME: Dump gradient data.
-    return ts;
-}
-
 void SetInlineFillColor::apply(GraphicsContext& context) const
 {
     context.setFillColor(color());
@@ -229,19 +153,13 @@ SetState::SetState(const GraphicsContextState& state, GraphicsContextState::Stat
 {
 }
 
-SetState::SetState(const GraphicsContextStateChange& stateChange, const PatternData& strokePattern, const PatternData& fillPattern)
+SetState::SetState(const GraphicsContextStateChange& stateChange)
     : m_stateChange(stateChange)
-    , m_strokePattern(strokePattern)
-    , m_fillPattern(fillPattern)
 {
 }
 
-void SetState::apply(GraphicsContext& context, NativeImage* strokePatternImage, NativeImage* fillPatternImage)
+void SetState::apply(GraphicsContext& context)
 {
-    if (m_stateChange.m_changeFlags.contains(GraphicsContextState::StrokePatternChange) && strokePatternImage)
-        m_stateChange.m_state.strokePattern = Pattern::create(makeRef(*strokePatternImage), m_strokePattern.parameters);
-    if (m_stateChange.m_changeFlags.contains(GraphicsContextState::FillPatternChange) && fillPatternImage)
-        m_stateChange.m_state.fillPattern = Pattern::create(makeRef(*fillPatternImage), m_fillPattern.parameters);
     m_stateChange.apply(context);
 }
 
@@ -363,16 +281,27 @@ static TextStream& operator<<(TextStream& ts, const ClipPath& item)
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const BeginClipToDrawingCommands& item)
+DrawFilteredImageBuffer::DrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter& filter)
+    : m_sourceImageIdentifier(sourceImageIdentifier)
+    , m_sourceImageRect(sourceImageRect)
+    , m_filter(filter)
 {
-    ts.dumpProperty("destination", item.destination());
-    ts.dumpProperty("color-space", item.colorSpace());
-    return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const EndClipToDrawingCommands& item)
+NO_RETURN_DUE_TO_ASSERT void DrawFilteredImageBuffer::apply(GraphicsContext&) const
 {
-    ts.dumpProperty("destination", item.destination());
+    ASSERT_NOT_REACHED();
+}
+
+void DrawFilteredImageBuffer::apply(GraphicsContext& context, ImageBuffer* sourceImage, FilterResults& results)
+{
+    context.drawFilteredImageBuffer(sourceImage, m_sourceImageRect, m_filter, results);
+}
+
+static TextStream& operator<<(TextStream& ts, const DrawFilteredImageBuffer& item)
+{
+    ts.dumpProperty("source-image-identifier", item.sourceImageIdentifier());
+    ts.dumpProperty("source-image-rect", item.sourceImageRect());
     return ts;
 }
 
@@ -469,9 +398,8 @@ static TextStream& operator<<(TextStream& ts, const DrawNativeImage& item)
     return ts;
 }
 
-DrawPattern::DrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+DrawPattern::DrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
     : m_imageIdentifier(imageIdentifier)
-    , m_imageSize(imageSize)
     , m_destination(destRect)
     , m_tileRect(tileRect)
     , m_patternTransform(patternTransform)
@@ -486,9 +414,19 @@ NO_RETURN_DUE_TO_ASSERT void DrawPattern::apply(GraphicsContext&) const
     ASSERT_NOT_REACHED();
 }
 
-void DrawPattern::apply(GraphicsContext& context, NativeImage& image) const
+void DrawPattern::apply(GraphicsContext& context, SourceImage& sourceImage) const
 {
-    context.drawPattern(image, m_imageSize, m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
+    if (auto image = sourceImage.nativeImageIfExists()) {
+        context.drawPattern(*image, m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
+        return;
+    }
+
+    if (auto imageBuffer = sourceImage.imageBufferIfExists()) {
+        context.drawPattern(*imageBuffer, m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 static TextStream& operator<<(TextStream& ts, const DrawPattern& item)
@@ -817,61 +755,6 @@ static TextStream& operator<<(TextStream& ts, const FillEllipse& item)
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const GetPixelBuffer& item)
-{
-    ts.dumpProperty("outputFormat", item.outputFormat());
-    ts.dumpProperty("srcRect", item.srcRect());
-    return ts;
-}
-
-PutPixelBuffer::PutPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
-    : m_srcRect(srcRect)
-    , m_destPoint(destPoint)
-    , m_pixelBuffer(pixelBuffer.deepClone()) // This copy is actually required to preserve the semantics of putPixelBuffer().
-    , m_destFormat(destFormat)
-{
-}
-
-PutPixelBuffer::PutPixelBuffer(PixelBuffer&& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
-    : m_srcRect(srcRect)
-    , m_destPoint(destPoint)
-    , m_pixelBuffer(WTFMove(pixelBuffer))
-    , m_destFormat(destFormat)
-{
-}
-
-PutPixelBuffer::PutPixelBuffer(const PutPixelBuffer& other)
-    : m_srcRect(other.m_srcRect)
-    , m_destPoint(other.m_destPoint)
-    , m_pixelBuffer(other.m_pixelBuffer.deepClone())
-    , m_destFormat(other.m_destFormat)
-{
-}
-
-PutPixelBuffer& PutPixelBuffer::operator=(const PutPixelBuffer& other)
-{
-    PutPixelBuffer copy { other };
-    swap(copy);
-    return *this;
-}
-
-void PutPixelBuffer::swap(PutPixelBuffer& other)
-{
-    std::swap(m_srcRect, other.m_srcRect);
-    std::swap(m_destPoint, other.m_destPoint);
-    std::swap(m_pixelBuffer, other.m_pixelBuffer);
-    std::swap(m_destFormat, other.m_destFormat);
-}
-
-static TextStream& operator<<(TextStream& ts, const PutPixelBuffer& item)
-{
-    ts.dumpProperty("pixelBufferSize", item.pixelBuffer().size());
-    ts.dumpProperty("srcRect", item.srcRect());
-    ts.dumpProperty("destPoint", item.destPoint());
-    ts.dumpProperty("destFormat", item.destFormat());
-    return ts;
-}
-
 #if ENABLE(VIDEO)
 PaintFrameForMedia::PaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
     : m_identifier(player.identifier())
@@ -1111,18 +994,6 @@ static TextStream& operator<<(TextStream& ts, const FlushContext& item)
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const MetaCommandChangeItemBuffer& item)
-{
-    ts.dumpProperty("identifier", item.identifier());
-    return ts;
-}
-
-static TextStream& operator<<(TextStream& ts, const MetaCommandChangeDestinationImageBuffer& item)
-{
-    ts.dumpProperty("identifier", item.identifier());
-    return ts;
-}
-
 static TextStream& operator<<(TextStream& ts, ItemType type)
 {
     switch (type) {
@@ -1133,7 +1004,6 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::Scale: ts << "scale"; break;
     case ItemType::SetCTM: ts << "set-ctm"; break;
     case ItemType::ConcatenateCTM: ts << "concatentate-ctm"; break;
-    case ItemType::SetInlineFillGradient: ts << "set-inline-fill-gradient"; break;
     case ItemType::SetInlineFillColor: ts << "set-inline-fill-color"; break;
     case ItemType::SetInlineStrokeColor: ts << "set-inline-stroke-color"; break;
     case ItemType::SetStrokeThickness: ts << "set-stroke-thickness"; break;
@@ -1147,8 +1017,7 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::ClipToImageBuffer: ts << "clip-to-image-buffer"; break;
     case ItemType::ClipOutToPath: ts << "clip-out-to-path"; break;
     case ItemType::ClipPath: ts << "clip-path"; break;
-    case ItemType::BeginClipToDrawingCommands: ts << "begin-clip-to-drawing-commands:"; break;
-    case ItemType::EndClipToDrawingCommands: ts << "end-clip-to-drawing-commands"; break;
+    case ItemType::DrawFilteredImageBuffer: ts << "draw-filtered-image-buffer"; break;
     case ItemType::DrawGlyphs: ts << "draw-glyphs"; break;
     case ItemType::DrawImageBuffer: ts << "draw-image-buffer"; break;
     case ItemType::DrawNativeImage: ts << "draw-native-image"; break;
@@ -1176,10 +1045,6 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::FillPath: ts << "fill-path"; break;
     case ItemType::FillEllipse: ts << "fill-ellipse"; break;
     case ItemType::FlushContext: ts << "flush-context"; break;
-    case ItemType::MetaCommandChangeDestinationImageBuffer: ts << "meta-command-change-destination-image-buffer"; break;
-    case ItemType::MetaCommandChangeItemBuffer: ts << "meta-command-change-item-buffer"; break;
-    case ItemType::GetPixelBuffer: ts << "get-pixel-buffer"; break;
-    case ItemType::PutPixelBuffer: ts << "put-pixel-buffer"; break;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia: ts << "paint-frame-for-media"; break;
 #endif
@@ -1225,9 +1090,6 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
     case ItemType::ConcatenateCTM:
         ts << item.get<ConcatenateCTM>();
         break;
-    case ItemType::SetInlineFillGradient:
-        ts << item.get<SetInlineFillGradient>();
-        break;
     case ItemType::SetInlineFillColor:
         ts << item.get<SetInlineFillColor>();
         break;
@@ -1267,11 +1129,8 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
     case ItemType::ClipPath:
         ts << item.get<ClipPath>();
         break;
-    case ItemType::BeginClipToDrawingCommands:
-        ts << item.get<BeginClipToDrawingCommands>();
-        break;
-    case ItemType::EndClipToDrawingCommands:
-        ts << item.get<EndClipToDrawingCommands>();
+    case ItemType::DrawFilteredImageBuffer:
+        ts << item.get<DrawFilteredImageBuffer>();
         break;
     case ItemType::DrawGlyphs:
         ts << item.get<DrawGlyphs>();
@@ -1349,18 +1208,6 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         break;
     case ItemType::FlushContext:
         ts << item.get<FlushContext>();
-        break;
-    case ItemType::MetaCommandChangeDestinationImageBuffer:
-        ts << item.get<MetaCommandChangeDestinationImageBuffer>();
-        break;
-    case ItemType::MetaCommandChangeItemBuffer:
-        ts << item.get<MetaCommandChangeItemBuffer>();
-        break;
-    case ItemType::GetPixelBuffer:
-        ts << item.get<GetPixelBuffer>();
-        break;
-    case ItemType::PutPixelBuffer:
-        ts << item.get<PutPixelBuffer>();
         break;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:

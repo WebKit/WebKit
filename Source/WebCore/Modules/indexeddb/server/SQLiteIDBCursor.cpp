@@ -116,17 +116,18 @@ void SQLiteIDBCursor::currentData(IDBGetResult& result, const std::optional<IDBK
     }
 
     Vector<IDBCursorRecord> prefetchedRecords;
-    prefetchedRecords.reserveCapacity(m_fetchedRecords.size());
+    prefetchedRecords.reserveInitialCapacity(m_fetchedRecords.size() - 1);
+    bool isFirst = true;
     for (auto& record : m_fetchedRecords) {
         if (record.isTerminalRecord())
             break;
-
-        prefetchedRecords.append(record.record);
+        if (isFirst) {
+            isFirst = false;
+            continue;
+        }
+        prefetchedRecords.uncheckedAppend(record.record);
     }
-
-    // First record will be returned as current record.
-    if (!prefetchedRecords.isEmpty())
-        prefetchedRecords.remove(0);
+    prefetchedRecords.shrinkToFit();
 
     result = { currentRecord.record.key, currentRecord.record.primaryKey, IDBValue(currentRecord.record.value), keyPath, WTFMove(prefetchedRecords) };
 }
@@ -269,7 +270,7 @@ bool SQLiteIDBCursor::bindArguments()
         return false;
     }
 
-    RefPtr<SharedBuffer> buffer = serializeIDBKeyData(m_currentLowerKey);
+    auto buffer = serializeIDBKeyData(m_currentLowerKey);
     if (m_statement->bindBlob(currentBindArgument++, *buffer) != SQLITE_OK) {
         LOG_ERROR("Could not create cursor statement (lower key)");
         return false;
@@ -315,7 +316,7 @@ bool SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary()
         return false;
     }
 
-    RefPtr<SharedBuffer> buffer = serializeIDBKeyData(key);
+    auto buffer = serializeIDBKeyData(key);
     if (m_preIndexStatement->bindBlob(currentBindArgument++, *buffer) != SQLITE_OK) {
         LOG_ERROR("Could not bind id argument to pre statement (key)");
         return false;

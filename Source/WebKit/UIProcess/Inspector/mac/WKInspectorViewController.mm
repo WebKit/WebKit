@@ -44,8 +44,8 @@
 #import "WebInspectorUtilities.h"
 #import "WebPageProxy.h"
 #import "_WKInspectorConfigurationInternal.h"
-#import <WebCore/VersionChecks.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 static NSString * const WKInspectorResourceScheme = @"inspector-resource";
 
@@ -286,7 +286,7 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
         return;
 
     OptionSet<WebCore::ReloadOption> reloadOptions;
-    if (WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
+    if (linkedOnOrAfter(SDKVersion::FirstWithExpiredOnlyReloadBehavior))
         reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
 
     _inspectedPage->reload(reloadOptions);

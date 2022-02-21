@@ -149,6 +149,11 @@ class MasterParser : public ElementParser {
 
   using StdHashId = std::hash<std::underlying_type<Id>::type>;
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
   // Hash functor for hashing Id enums for storage in std::unordered_map.
   struct IdHash : StdHashId {
     // Type aliases for conforming to the std::hash interface.
@@ -160,6 +165,10 @@ class MasterParser : public ElementParser {
       return StdHashId::operator()(static_cast<StdHashId::argument_type>(id));
     }
   };
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
   // The parser for parsing element Ids.
   IdParser id_parser_;

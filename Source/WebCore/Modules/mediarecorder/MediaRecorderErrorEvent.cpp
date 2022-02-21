@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaRecorderErrorEvent.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_RECORDER)
 
 #include "DOMException.h"
 #include <wtf/IsoMallocInlines.h>
@@ -65,4 +65,4 @@ EventInterface MediaRecorderErrorEvent::eventInterface() const
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_RECORDER)

@@ -46,7 +46,7 @@
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "SynchronousLoaderClient.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
 #include <wtf/text/Base64.h>
@@ -86,7 +86,7 @@ bool ResourceHandle::start()
 
     if (auto credential = getCredential(d->m_firstRequest, false)) {
         d->m_curlRequest->setUserPass(credential->user(), credential->password());
-        d->m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
+        d->m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
     }
 
     d->m_curlRequest->start();
@@ -255,7 +255,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     d->m_currentWebChallenge = challenge;
 
     if (client()) {
-        auto protectedThis = makeRef(*this);
+        Ref protectedThis { *this };
         client()->didReceiveAuthenticationChallenge(this, d->m_currentWebChallenge);
     }
 }
@@ -264,7 +264,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
 {
     ASSERT(isMainThread());
 
-    if (challenge != d->m_currentWebChallenge)
+    if (!AuthenticationChallengeBase::equalForWebKitLegacyChallengeComparison(challenge, d->m_currentWebChallenge))
         return;
 
     if (credential.isEmpty()) {
@@ -290,12 +290,12 @@ void ResourceHandle::receivedRequestToContinueWithoutCredential(const Authentica
 {
     ASSERT(isMainThread());
 
-    if (challenge != d->m_currentWebChallenge)
+    if (!AuthenticationChallengeBase::equalForWebKitLegacyChallengeComparison(challenge, d->m_currentWebChallenge))
         return;
 
     clearAuthentication();
 
-    didReceiveResponse(ResourceResponse(delegate()->response()), [this, protectedThis = makeRef(*this)] {
+    didReceiveResponse(ResourceResponse(delegate()->response()), [this, protectedThis = Ref { *this }] {
         continueAfterDidReceiveResponse();
     });
 }
@@ -304,11 +304,11 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 {
     ASSERT(isMainThread());
 
-    if (challenge != d->m_currentWebChallenge)
+    if (!AuthenticationChallengeBase::equalForWebKitLegacyChallengeComparison(challenge, d->m_currentWebChallenge))
         return;
 
     if (client()) {
-        auto protectedThis = makeRef(*this);
+        Ref protectedThis { *this };
         client()->receivedCancellation(this, challenge);
     }
 }
@@ -390,7 +390,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
     if (auto credential = handle->getCredential(handle->d->m_firstRequest, false)) {
         handle->d->m_curlRequest->setUserPass(credential->user(), credential->password());
-        handle->d->m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
+        handle->d->m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
     }
 
     handle->d->m_curlRequest->start();
@@ -483,7 +483,7 @@ void ResourceHandle::willSendRequest()
     }
 
     ResourceResponse responseCopy = delegate()->response();
-    client()->willSendRequestAsync(this, WTFMove(newRequest), WTFMove(responseCopy), [this, protectedThis = makeRef(*this)] (ResourceRequest&& request) {
+    client()->willSendRequestAsync(this, WTFMove(newRequest), WTFMove(responseCopy), [this, protectedThis = Ref { *this }] (ResourceRequest&& request) {
         continueAfterWillSendRequest(WTFMove(request));
     });
 }
@@ -549,8 +549,8 @@ void ResourceHandle::handleDataURL()
     response.setURL(d->m_firstRequest.url());
 
     if (base64) {
-        data = decodeURLEscapeSequences(data);
-        didReceiveResponse(WTFMove(response), [this, protectedThis = makeRef(*this)] {
+        data = PAL::decodeURLEscapeSequences(data);
+        didReceiveResponse(WTFMove(response), [this, protectedThis = Ref { *this }] {
             continueAfterDidReceiveResponse();
         });
 
@@ -561,15 +561,15 @@ void ResourceHandle::handleDataURL()
                 client()->didReceiveBuffer(this, SharedBuffer::create(decodedData->data(), decodedData->size()), originalSize);
         }
     } else {
-        TextEncoding encoding(charset);
-        data = decodeURLEscapeSequences(data, encoding);
-        didReceiveResponse(WTFMove(response), [this, protectedThis = makeRef(*this)] {
+        PAL::TextEncoding encoding(charset);
+        data = PAL::decodeURLEscapeSequences(data, encoding);
+        didReceiveResponse(WTFMove(response), [this, protectedThis = Ref { *this }] {
             continueAfterDidReceiveResponse();
         });
 
         // didReceiveResponse might cause the client to be deleted.
         if (client()) {
-            auto encodedData = encoding.encode(data, UnencodableHandling::URLEncodedEntities);
+            auto encodedData = encoding.encode(data, PAL::UnencodableHandling::URLEncodedEntities);
             if (encodedData.size())
                 client()->didReceiveBuffer(this, SharedBuffer::create(WTFMove(encodedData)), originalSize);
         }

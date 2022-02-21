@@ -58,7 +58,10 @@ public:
             return;
 
         Checked<size_t> initialSize = sizeof(T) * n;
-        const size_t alignment = 16;
+        // Accelerate.framework behaves differently based on input vector alignment. And each implementation
+        // has very small difference in output! We ensure 32byte alignment so that we will always take the most
+        // optimized implementation if possible, which makes the result deterministic.
+        constexpr size_t alignment = 32;
 
         fastAlignedFree(m_allocation);
 

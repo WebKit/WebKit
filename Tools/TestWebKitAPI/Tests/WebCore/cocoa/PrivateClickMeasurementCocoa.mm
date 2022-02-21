@@ -28,21 +28,27 @@
 
 #if HAVE(RSA_BSSA)
 
+#include "ASN1Utilities.h"
 #include "CoreCryptoSPI.h"
-
 #include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 
-using namespace WebCore;
-
 namespace TestWebKitAPI {
+using namespace WebCore;
 
 TEST(PrivateClickMeasurement, ValidBlindedSecret)
 {
-    auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFabcdef0123456789"_s };
+    auto ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFabcdef0123456789"_s };
     EXPECT_TRUE(ephemeralNonce.isValid());
 
-    PrivateClickMeasurement pcm;
+    WebCore::PrivateClickMeasurement pcm(
+        WebCore::PrivateClickMeasurement::SourceID({ }),
+        WebCore::PrivateClickMeasurement::SourceSite(URL()),
+        WebCore::PrivateClickMeasurement::AttributionDestinationSite(URL()),
+        { },
+        WallTime::now(),
+        WebCore::PrivateClickMeasurement::AttributionEphemeral::No
+    );
     pcm.setEphemeralSourceNonce(WTFMove(ephemeralNonce));
 
     // Generate the server key pair.
@@ -63,27 +69,21 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     const struct ccrsabssa_ciphersuite *ciphersuite = &ccrsabssa_ciphersuite_rsa4096_sha384;
 
     size_t exportSize = ccder_encode_rsa_pub_size(rsaPublicKey);
-    auto publicKey = adoptNS([[NSMutableData alloc] initWithLength:exportSize]);
-    ccder_encode_rsa_pub(rsaPublicKey, static_cast<uint8_t*>([publicKey mutableBytes]), static_cast<uint8_t*>([publicKey mutableBytes]) + [publicKey length]);
+    Vector<uint8_t> rawKeyBytes(exportSize);
+    ccder_encode_rsa_pub(rsaPublicKey, rawKeyBytes.data(), rawKeyBytes.data() + exportSize);
 
-    auto secKey = adoptCF(SecKeyCreateWithData((__bridge CFDataRef)publicKey.get(), (__bridge CFDictionaryRef)@{
-        (__bridge id)kSecAttrKeyType: (__bridge id)kSecAttrKeyTypeRSA,
-        (__bridge id)kSecAttrKeyClass: (__bridge id)kSecAttrKeyClassPublic
-    }, nil));
-    EXPECT_NOT_NULL(secKey);
-
-    auto spkiData = adoptCF(SecKeyCopySubjectPublicKeyInfo(secKey.get()));
-    auto *nsSpkiData = (__bridge NSData *)spkiData.get();
+    auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(WTFMove(rawKeyBytes));
 
     // Continue the test.
-    auto errorMessage = pcm.calculateAndUpdateSourceUnlinkableToken(base64URLEncodeToString(nsSpkiData.bytes, nsSpkiData.length));
+    auto errorMessage = pcm.calculateAndUpdateSourceUnlinkableToken(base64URLEncodeToString(wrappedKeyBytes.data(), wrappedKeyBytes.size()));
     EXPECT_FALSE(errorMessage);
+    
     auto sourceUnlinkableToken = pcm.tokenSignatureJSON();
     EXPECT_EQ(sourceUnlinkableToken->asObject()->size(), 4ul);
     EXPECT_STREQ(sourceUnlinkableToken->getString("source_engagement_type"_s).utf8().data(), "click");
     EXPECT_STREQ(sourceUnlinkableToken->getString("source_nonce"_s).utf8().data(), "ABCDEFabcdef0123456789");
     EXPECT_FALSE(sourceUnlinkableToken->getString("source_unlinkable_token"_s).isEmpty());
-    EXPECT_EQ(sourceUnlinkableToken->getInteger("version"_s), 2);
+    EXPECT_EQ(sourceUnlinkableToken->getInteger("version"_s), 3);
 
     // Generate the signature.
     auto blindedMessage = base64URLDecode(sourceUnlinkableToken->getString("source_unlinkable_token"_s));
@@ -94,7 +94,7 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     // Continue the test.
     errorMessage = pcm.calculateAndUpdateSourceSecretToken(base64URLEncodeToString([blindedSignature bytes], [blindedSignature length]));
     EXPECT_FALSE(errorMessage);
-    auto& persistentToken = pcm.sourceUnlinkableToken();
+    auto& persistentToken = pcm.sourceSecretToken();
     EXPECT_TRUE(persistentToken);
     EXPECT_FALSE(persistentToken->tokenBase64URL.isEmpty());
     EXPECT_FALSE(persistentToken->keyIDBase64URL.isEmpty());

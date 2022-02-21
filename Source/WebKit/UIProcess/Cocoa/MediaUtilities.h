@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-_WKMediaCaptureStateDeprecated toWKMediaCaptureStateDeprecated(WebCore::MediaProducer::MediaStateFlags);
-_WKMediaMutedState toWKMediaMutedState(WebCore::MediaProducer::MutedStateFlags);
+_WKMediaCaptureStateDeprecated toWKMediaCaptureStateDeprecated(WebCore::MediaProducerMediaStateFlags);
+_WKMediaMutedState toWKMediaMutedState(WebCore::MediaProducerMutedStateFlags);
 
 } // namespace WebKit

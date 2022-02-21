@@ -72,8 +72,11 @@ class HitTestResult;
 class Node;
 class Page;
 class PseudoElement;
+class RenderObject;
 class RevalidateStyleAttributeTask;
 class ShadowRoot;
+
+struct Styleable;
 
 class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
@@ -147,6 +150,8 @@ public:
     Inspector::Protocol::ErrorStringOr<void> highlightFrame(const Inspector::Protocol::Network::FrameId&, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor);
     Inspector::Protocol::ErrorStringOr<void> showGridOverlay(Inspector::Protocol::DOM::NodeId, Ref<JSON::Object>&& gridColor, std::optional<bool>&& showLineNames, std::optional<bool>&& showLineNumbers, std::optional<bool>&& showExtendedGridLines, std::optional<bool>&& showTrackSizes, std::optional<bool>&& showAreaNames);
     Inspector::Protocol::ErrorStringOr<void> hideGridOverlay(std::optional<Inspector::Protocol::DOM::NodeId>&&);
+    Inspector::Protocol::ErrorStringOr<void> showFlexOverlay(Inspector::Protocol::DOM::NodeId, Ref<JSON::Object>&& flexColor);
+    Inspector::Protocol::ErrorStringOr<void> hideFlexOverlay(std::optional<Inspector::Protocol::DOM::NodeId>&&);
     Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> moveTo(Inspector::Protocol::DOM::NodeId nodeId, Inspector::Protocol::DOM::NodeId targetNodeId, std::optional<Inspector::Protocol::DOM::NodeId>&& insertBeforeNodeId);
     Inspector::Protocol::ErrorStringOr<void> undo();
     Inspector::Protocol::ErrorStringOr<void> redo();
@@ -178,12 +183,16 @@ public:
     void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     bool isEventListenerDisabled(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void eventDidResetAfterDispatch(const Event&);
+    void flexibleBoxRendererBeganLayout(const RenderObject&);
+    void flexibleBoxRendererWrappedToNextLine(const RenderObject&, size_t lineStartItemIndex);
 
     // Callbacks that don't directly correspond to an instrumentation entry point.
     void setDocument(Document*);
 
     void styleAttributeInvalidated(const Vector<Element*>& elements);
 
+    Inspector::Protocol::DOM::NodeId pushStyleableElementToFrontend(const Styleable&);
+    Ref<Inspector::Protocol::DOM::Styleable> pushStyleablePathToFrontend(Inspector::Protocol::ErrorString, const Styleable&);
     Inspector::Protocol::DOM::NodeId pushNodeToFrontend(Node*);
     Inspector::Protocol::DOM::NodeId pushNodeToFrontend(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId documentNodeId, Node*);
     Inspector::Protocol::DOM::NodeId pushNodePathToFrontend(Node*);
@@ -199,6 +208,7 @@ public:
 
     InspectorHistory* history() { return m_history.get(); }
     Vector<Document*> documents();
+    Vector<size_t> flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject&);
     void reset();
 
     Node* assertNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
@@ -244,6 +254,8 @@ private:
 
     void destroyedNodesTimerFired();
 
+    void relayoutDocument();
+
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DOMBackendDispatcher> m_backendDispatcher;
@@ -263,6 +275,7 @@ private:
     std::unique_ptr<InspectorOverlay::Highlight::Config> m_inspectModeHighlightConfig;
     std::unique_ptr<InspectorHistory> m_history;
     std::unique_ptr<DOMEditor> m_domEditor;
+    WeakHashMap<RenderObject, Vector<size_t>> m_flexibleBoxRendererCachedItemsAtStartOfLine;
 
     Vector<Inspector::Protocol::DOM::NodeId> m_destroyedDetachedNodeIdentifiers;
     Vector<std::pair<Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOM::NodeId>> m_destroyedAttachedNodeIdentifiers;

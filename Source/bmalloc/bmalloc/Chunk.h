@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Chunk_h
-#define Chunk_h
+#pragma once
 
 #include "Object.h"
 #include "Sizes.h"
@@ -32,6 +31,8 @@
 #include "SmallPage.h"
 #include "VMAllocate.h"
 #include <array>
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -64,14 +65,6 @@ private:
 
     std::array<SmallLine, chunkSize / smallLineSize> m_lines { };
     std::array<SmallPage, chunkSize / smallPageSize> m_pages { };
-};
-
-struct ChunkHash {
-    static unsigned hash(Chunk* key)
-    {
-        return static_cast<unsigned>(
-            reinterpret_cast<uintptr_t>(key) / chunkSize);
-    }
 };
 
 inline size_t Chunk::metadataSize(size_t pageSize)
@@ -181,4 +174,4 @@ inline SmallPage* Object::page()
 
 }; // namespace bmalloc
 
-#endif // Chunk
+#endif

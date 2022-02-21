@@ -34,11 +34,6 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/URL.h>
 
-#if USE(DIRECT2D)
-#include "GraphicsContext.h"
-#include "PlatformContextDirect2D.h"
-#endif
-
 namespace WebCore {
 
 ImageSource::ImageSource(BitmapImage* image, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
@@ -72,7 +67,7 @@ ImageSource::~ImageSource()
     ASSERT(&m_runLoop == &RunLoop::current());
 }
 
-bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
+bool ImageSource::ensureDecoderAvailable(FragmentedSharedBuffer* data)
 {
     if (!data || isDecoderAvailable())
         return true;
@@ -81,7 +76,7 @@ bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
     if (!isDecoderAvailable())
         return false;
 
-    m_decoder->setEncodedDataStatusChangeCallback([weakThis = makeWeakPtr(this)] (auto status) {
+    m_decoder->setEncodedDataStatusChangeCallback([weakThis = WeakPtr { *this }] (auto status) {
         if (weakThis)
             weakThis->encodedDataStatusChanged(status);
     });
@@ -96,7 +91,7 @@ bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
     return true;
 }
 
-void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
+void ImageSource::setData(FragmentedSharedBuffer* data, bool allDataReceived)
 {
     if (!data || !ensureDecoderAvailable(data))
         return;
@@ -104,13 +99,13 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
     m_decoder->setData(*data, allDataReceived);
 }
 
-void ImageSource::resetData(SharedBuffer* data)
+void ImageSource::resetData(FragmentedSharedBuffer* data)
 {
     m_decoder = nullptr;
     setData(data, isAllDataReceived());
 }
 
-EncodedDataStatus ImageSource::dataChanged(SharedBuffer* data, bool allDataReceived)
+EncodedDataStatus ImageSource::dataChanged(FragmentedSharedBuffer* data, bool allDataReceived)
 {
     setData(data, allDataReceived);
     clearMetadata();
@@ -323,7 +318,7 @@ void ImageSource::cachePlatformImageAtIndexAsync(PlatformImagePtr&& platformImag
 WorkQueue& ImageSource::decodingQueue()
 {
     if (!m_decodingQueue)
-        m_decodingQueue = WorkQueue::create("org.webkit.ImageDecoder", WorkQueue::Type::Serial, WorkQueue::QOS::Default);
+        m_decodingQueue = WorkQueue::create("org.webkit.ImageDecoder", WorkQueue::QOS::Default);
 
     return *m_decodingQueue;
 }
@@ -353,7 +348,7 @@ void ImageSource::startAsyncDecodingQueue()
     ASSERT(isMainThread());
 
     // We need to protect this, m_decodingQueue and m_decoder from being deleted while we are in the decoding loop.
-    decodingQueue().dispatch([protectedThis = makeRef(*this), protectedDecodingQueue = makeRef(decodingQueue()), protectedFrameRequestQueue = makeRef(frameRequestQueue()), protectedDecoder = makeRef(*m_decoder), sourceURL = sourceURL().string().isolatedCopy()] () mutable {
+    decodingQueue().dispatch([protectedThis = Ref { *this }, protectedDecodingQueue = Ref { decodingQueue() }, protectedFrameRequestQueue = Ref { frameRequestQueue() }, protectedDecoder = Ref { *m_decoder }, sourceURL = sourceURL().string().isolatedCopy()] () mutable {
         ImageFrameRequest frameRequest;
         Seconds minDecodingDuration = protectedThis->frameDecodingDurationForTesting();
 
@@ -692,14 +687,6 @@ ImageOrientation ImageSource::frameOrientationAtIndex(size_t index)
 {
     return frameAtIndexCacheIfNeeded(index, ImageFrame::Caching::Metadata).orientation();
 }
-
-#if USE(DIRECT2D)
-void ImageSource::setTargetContext(const GraphicsContext* targetContext)
-{
-    if (isDecoderAvailable() && targetContext)
-        m_decoder->setTargetContext(targetContext->platformContext()->renderTarget());
-}
-#endif
 
 RefPtr<NativeImage> ImageSource::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
 {

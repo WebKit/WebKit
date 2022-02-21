@@ -31,7 +31,7 @@
 #include "WebProcess.h"
 #include <glib.h>
 
-#if ENABLE(ACCESSIBILITY)
+#if USE(ATK)
 #include <atk-bridge.h>
 #include <atk/atk.h>
 #endif
@@ -43,7 +43,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-#if ENABLE(ACCESSIBILITY)
+#if USE(ATK)
 static void initializeAccessibility()
 {
     auto* atkUtilClass = ATK_UTIL_CLASS(g_type_class_ref(ATK_TYPE_UTIL));
@@ -93,7 +93,7 @@ public:
         // FIXME: This should be probably called in other processes as well.
         g_set_prgname("WPEWebProcess");
 
-#if ENABLE(ACCESSIBILITY)
+#if USE(ATK)
         initializeAccessibility();
 #endif
 

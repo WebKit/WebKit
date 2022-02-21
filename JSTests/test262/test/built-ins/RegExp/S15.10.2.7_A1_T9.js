@@ -11,7 +11,4 @@ description: Execute /b{42,93}c/.exec("aaabbbbcccddeeeefffff") and check results
 
 var __executed = /b{42,93}c/.test("aaabbbbcccddeeeefffff");
 
-//CHECK#1
-if (__executed) {
-	throw new Test262Error('#1: /b{42,93}c/.test("aaabbbbcccddeeeefffff") === false');
-}
+assert(!__executed, 'The value of !__executed is expected to be true');

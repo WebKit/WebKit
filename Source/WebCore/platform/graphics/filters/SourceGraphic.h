@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,41 +19,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SourceGraphic_h
-#define SourceGraphic_h
+#pragma once
 
 #include "FilterEffect.h"
-#include "Filter.h"
 
 namespace WebCore {
 
 class SourceGraphic : public FilterEffect {
 public:        
-    static Ref<SourceGraphic> create(Filter&);
+    WEBCORE_EXPORT static Ref<SourceGraphic> create();
 
-    static const AtomString& effectName();
+    static AtomString effectName() { return FilterEffect::sourceGraphicName(); }
 
 private:
-    SourceGraphic(Filter& filter)
-        : FilterEffect(filter, Type::SourceGraphic)
-    {
-        setOperatingColorSpace(DestinationColorSpace::SRGB());
-    }
+    SourceGraphic();
 
-    const char* filterName() const final { return "SourceGraphic"; }
+    unsigned numberOfEffectInputs() const override { return 0; }
 
-    void determineAbsolutePaintRect() override;
-    void platformApplySoftware() override;
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
+    bool supportsAcceleratedRendering() const override;
+    std::unique_ptr<FilterEffectApplier> createAcceleratedApplier() const override;
+    std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 
-    FilterEffectType filterEffectType() const override { return FilterEffectTypeSourceInput; }
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 };
 
 } //namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SourceGraphic)
-    static bool isType(const WebCore::FilterEffect& effect) { return effect.filterEffectClassType() == WebCore::FilterEffect::Type::SourceGraphic; }
-SPECIALIZE_TYPE_TRAITS_END()
-
-
-#endif // SourceGraphic_h
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(SourceGraphic)

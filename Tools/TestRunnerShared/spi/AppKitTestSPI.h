@@ -27,17 +27,8 @@
 
 #import <AppKit/NSDraggingItem.h>
 
-// FIXME: Move this to PlatformHave.h.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-#define HAVE_NSDRAGGINGITEM_INITWITHITEM 1
-#endif
-
 @interface NSDraggingItem ()
-#if HAVE(NSDRAGGINGITEM_INITWITHITEM)
 - (instancetype)_initWithItem:(id)item;
-#else
-- (void)setItem:(id)item;
-#endif
 @end
 
 #endif // PLATFORM(MAC)

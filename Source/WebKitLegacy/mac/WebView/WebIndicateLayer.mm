@@ -51,7 +51,7 @@ using namespace WebCore;
 
     // Blue highlight color.
     constexpr auto highlightColor = SRGBA<uint8_t> { 111, 168, 220, 168 };
-    self.backgroundColor = cachedCGColor(highlightColor);
+    self.backgroundColor = cachedCGColor(highlightColor).get();
 
     return self;
 }

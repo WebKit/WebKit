@@ -32,31 +32,32 @@
 
 namespace WebCore {
 
-class ImageBufferCGBitmapBackend : public ImageBufferCGBackend {
+class ImageBufferCGBitmapBackend final : public ImageBufferCGBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferCGBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferCGBitmapBackend);
 public:
-    WEBCORE_EXPORT static IntSize calculateSafeBackendSize(const Parameters&);
-    WEBCORE_EXPORT static size_t calculateMemoryCost(const Parameters&);
+    ~ImageBufferCGBitmapBackend();
 
-    WEBCORE_EXPORT static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const HostWindow*);
+    static IntSize calculateSafeBackendSize(const Parameters&);
+    static size_t calculateMemoryCost(const Parameters&);
+
+    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const HostWindow*);
 
     // FIXME: Rename to createUsingColorSpaceOfGraphicsContext() (or something like that).
-    WEBCORE_EXPORT static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const GraphicsContext&);
+    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const GraphicsContext&);
 
-    GraphicsContext& context() const override;
-
-    IntSize backendSize() const override;
-
-    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
-
-    std::optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const override;
-    void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
+    GraphicsContext& context() const final;
 
 private:
     ImageBufferCGBitmapBackend(const Parameters&, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContext>&&);
 
-    unsigned bytesPerRow() const override;
+    IntSize backendSize() const final;
+    unsigned bytesPerRow() const final;
+
+    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const final;
+
+    std::optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const final;
+    void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) final;
 
     void* m_data;
     RetainPtr<CGDataProviderRef> m_dataProvider;

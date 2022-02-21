@@ -9,7 +9,7 @@
 
 #include <functional>
 
-#include "util/frame_capture_test_utils.h"
+#include "util/capture/frame_capture_test_utils.h"
 
 // Build the right context header based on replay ID
 // This will expand to "angle_capture_context<#>.h"

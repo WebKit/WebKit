@@ -155,7 +155,7 @@ void AecDumpImpl::WriteRenderStreamMessage(
 
   audioproc::ReverseStream* msg = event->mutable_reverse_stream();
 
-  for (size_t i = 0; i < src.num_channels(); ++i) {
+  for (int i = 0; i < src.num_channels(); ++i) {
     const auto& channel_view = src.channel(i);
     msg->add_channel(channel_view.begin(), sizeof(float) * channel_view.size());
   }

@@ -39,7 +39,7 @@ namespace WebKit {
 using namespace WebCore;
 
 WebIDBConnectionToClient::WebIDBConnectionToClient(IPC::Connection& connection, WebCore::IDBConnectionIdentifier serverConnectionIdentifier)
-    : m_connection(makeRef(connection))
+    : m_connection(connection)
     , m_identifier(serverConnectionIdentifier)
     , m_connectionToClient(IDBServer::IDBConnectionToClient::create(*this))
 {

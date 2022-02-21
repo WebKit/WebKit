@@ -178,11 +178,9 @@ static MediaTrackConstraintSetMap convertToInternalForm(ConstraintSetType setTyp
 
 static Vector<MediaTrackConstraintSetMap> convertAdvancedToInternalForm(const Vector<MediaTrackConstraintSet>& vector)
 {
-    Vector<MediaTrackConstraintSetMap> result;
-    result.reserveInitialCapacity(vector.size());
-    for (auto& set : vector)
-        result.uncheckedAppend(convertToInternalForm(ConstraintSetType::Advanced, set));
-    return result;
+    return vector.map([](auto& set) {
+        return convertToInternalForm(ConstraintSetType::Advanced, set);
+    });
 }
 
 static Vector<MediaTrackConstraintSetMap> convertAdvancedToInternalForm(const std::optional<Vector<MediaTrackConstraintSet>>& optionalVector)

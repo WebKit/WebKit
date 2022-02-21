@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<button id="button">Click me</button>
+
+<select multiple id="select">
+    <option id="option1">Option 1</option>
+    <option>Option 2</option>
+    <option>Option 3</option>
+</select>
+
+<script>
+    description("This test ensures that dynamically changing elements disabled and aria-disabled attributes properly updates their isEnabled property.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var axOption = accessibilityController.accessibleElementById("option1");
+        var domOption = document.getElementById("option1");
+        var axButton = accessibilityController.accessibleElementById("button");
+        var domButton = document.getElementById("button");
+        debug("Verifying initial element enabled state.");
+        shouldBe("axButton.isEnabled", "true");
+        shouldBe("axOption.isEnabled", "true");
+
+        setTimeout(async function() {
+            evalAndLog("domButton.ariaDisabled = true");
+            await expectAsyncExpression("axButton.isEnabled", "false");
+
+            evalAndLog("domButton.ariaDisabled = false");
+            await expectAsyncExpression("axButton.isEnabled", "true");
+
+            evalAndLog("domButton.disabled = true");
+            await expectAsyncExpression("axButton.isEnabled", "false");
+
+            evalAndLog("domButton.disabled = false");
+            await expectAsyncExpression("axButton.isEnabled", "true");
+
+            evalAndLog("domOption.ariaDisabled = true");
+            await expectAsyncExpression("axOption.isEnabled", "false");
+
+            evalAndLog("domOption.ariaDisabled = false");
+            await expectAsyncExpression("axOption.isEnabled", "true");
+
+            evalAndLog("domOption.disabled = true");
+            await expectAsyncExpression("axOption.isEnabled", "false");
+
+            evalAndLog("domOption.disabled = false");
+            await expectAsyncExpression("axOption.isEnabled", "true");
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

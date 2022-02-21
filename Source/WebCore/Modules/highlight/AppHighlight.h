@@ -38,7 +38,7 @@ enum class CreateNewGroupForHighlight : bool { No, Yes };
 enum class HighlightRequestOriginatedInApp : bool { No, Yes };
 
 struct AppHighlight {
-    Ref<WebCore::SharedBuffer> highlight;
+    Ref<WebCore::FragmentedSharedBuffer> highlight;
     std::optional<String> text;
     CreateNewGroupForHighlight isNewGroup;
     HighlightRequestOriginatedInApp requestOriginatedInApp;
@@ -52,7 +52,7 @@ template<class Encoder>
 void AppHighlight::encode(Encoder& encoder) const
 {
     encoder << static_cast<size_t>(highlight->size());
-    encoder.encodeFixedLengthData(highlight->data(), highlight->size(), 1);
+    encoder.encodeFixedLengthData(highlight->makeContiguous()->data(), highlight->size(), 1);
 
     encoder << text;
 

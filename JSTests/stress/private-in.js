@@ -2,6 +2,22 @@ function assert(b) {
   if (!b) throw new Error;
 }
 
+function shouldNotThrow(script) {
+    eval(script);
+}
+
+function shouldThrowSyntaxError(script) {
+    let error;
+    try {
+        eval(script);
+    } catch (e) {
+        error = e;
+    }
+
+    if (!(error instanceof SyntaxError))
+        throw new Error('Expected SyntaxError!');
+}
+
 function shouldThrowTypeError(func) {
     let error;
     try {
@@ -59,3 +75,14 @@ noInline(test);
 
 for (let i = 0; i < 10000; i++)
   test();
+
+shouldNotThrow(() => { class C { #x; f() { 0 == #x in {}; } } });
+shouldNotThrow(() => { class C { #x; f() { 0 != #x in {}; } } });
+shouldNotThrow(() => { class C { #x; f() { 0 === #x in {}; } } });
+shouldNotThrow(() => { class C { #x; f() { 0 !== #x in {}; } } });
+shouldThrowSyntaxError('class C { #x; f() { 0 < #x in {}; } }');
+shouldThrowSyntaxError('class C { #x; f() { 0 > #x in {}; } }');
+shouldThrowSyntaxError('class C { #x; f() { 0 <= #x in {}; } }');
+shouldThrowSyntaxError('class C { #x; f() { 0 >= #x in {}; } }');
+shouldThrowSyntaxError('class C { #x; f() { 0 instanceof #x in {}; } }');
+shouldThrowSyntaxError('class C { #x; f() { 0 in #x in {}; } }');

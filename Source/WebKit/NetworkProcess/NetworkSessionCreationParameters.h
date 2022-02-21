@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ResourceLoadStatisticsParameters.h"
+#include "WebPushDaemonConnectionConfiguration.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <pal/SessionID.h>
 #include <wtf/Seconds.h>
@@ -86,6 +87,7 @@ struct NetworkSessionCreationParameters {
 #endif
     bool deviceManagementRestrictionsEnabled { false };
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
+    WebPushD::WebPushDaemonConnectionConfiguration webPushDaemonConnectionConfiguration;
 
     String networkCacheDirectory;
     SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
@@ -98,10 +100,17 @@ struct NetworkSessionCreationParameters {
     bool suppressesConnectionTerminationOnSystemChange { false };
     bool allowsServerPreconnect { true };
     bool requiresSecureHTTPSProxyConnection { false };
+    bool shouldRunServiceWorkersOnMainThreadForTesting { false };
     bool preventsSystemHTTPProxyAuthentication { false };
     bool appHasRequestedCrossWebsiteTrackingPermission { false };
     bool useNetworkLoader { false };
     bool allowsHSTSWithUntrustedRootCertificate { false };
+    String pcmMachServiceName;
+    String webPushMachServiceName;
+    bool enablePrivateClickMeasurementDebugMode { false };
+#if !HAVE(NSURLSESSION_WEBSOCKET)
+    bool shouldAcceptInsecureCertificatesForWebSockets { false };
+#endif
 
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };

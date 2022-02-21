@@ -28,20 +28,21 @@
 
 [
     Conditional=WEB_AUDIO,
-    ImplementationLacksVTable,
+    EnabledBySetting=WebAudioEnabled,
+    GenerateIsReachable=Impl,
     JSCustomMarkFunction,
     JSGenerateToJSObject,
     ReportExtraMemoryCost,
     Exposed=Window
 ] interface AudioBuffer {
-    [EnabledBySetting=WebAudio] constructor(AudioBufferOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor(AudioBufferOptions options);
     [ImplementedAs=originalLength] readonly attribute unsigned long length; // in sample-frames
     [ImplementedAs=originalDuration] readonly attribute double duration; // in seconds
     readonly attribute float sampleRate; // in sample-frames per second
     readonly attribute unsigned long numberOfChannels;
 
     // Channel access
-    [CallWith=GlobalObject] any getChannelData(unsigned long channelIndex);
+    [CallWith=CurrentGlobalObject] any getChannelData(unsigned long channelIndex);
     undefined copyFromChannel(Float32Array destination, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
     undefined copyToChannel(Float32Array source, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
 };

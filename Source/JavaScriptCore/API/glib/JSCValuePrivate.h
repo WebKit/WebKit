@@ -23,3 +23,4 @@
 
 JS_EXPORT_PRIVATE JSValueRef jscValueGetJSValue(JSCValue*);
 JSCValue* jscValueCreate(JSCContext*, JSValueRef);
+void jscValueAddPropertyAccessor(JSCValue*, const char*, GType, GCallback, GCallback, gpointer, GDestroyNotify);

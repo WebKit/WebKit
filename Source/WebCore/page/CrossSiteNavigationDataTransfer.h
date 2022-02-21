@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -50,4 +50,4 @@ template<> struct EnumTraits<WebCore::CrossSiteNavigationDataTransfer::Flag> {
 };
 
 } // namespace WTF
-#endif // ENABLE(RESOURCE_LOAD_STATISTICS)
+#endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)

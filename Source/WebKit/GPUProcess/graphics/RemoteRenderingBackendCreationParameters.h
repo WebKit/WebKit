@@ -36,13 +36,12 @@ namespace WebKit {
 
 struct RemoteRenderingBackendCreationParameters {
     RenderingBackendIdentifier identifier;
-    IPC::Semaphore resumeDisplayListSemaphore;
     WebPageProxyIdentifier pageProxyID;
     WebCore::PageIdentifier pageID;
 
     void encode(IPC::Encoder& encoder) const
     {
-        encoder << identifier << resumeDisplayListSemaphore << pageProxyID << pageID;
+        encoder << identifier << pageProxyID << pageID;
     }
 
     static std::optional<RemoteRenderingBackendCreationParameters> decode(IPC::Decoder& decoder)
@@ -50,11 +49,6 @@ struct RemoteRenderingBackendCreationParameters {
         std::optional<RenderingBackendIdentifier> identifier;
         decoder >> identifier;
         if (!identifier)
-            return std::nullopt;
-
-        std::optional<IPC::Semaphore> resumeDisplayListSemaphore;
-        decoder >> resumeDisplayListSemaphore;
-        if (!resumeDisplayListSemaphore)
             return std::nullopt;
 
         std::optional<WebPageProxyIdentifier> pageProxyID;
@@ -67,7 +61,7 @@ struct RemoteRenderingBackendCreationParameters {
         if (!pageID)
             return std::nullopt;
 
-        return {{ *identifier, WTFMove(*resumeDisplayListSemaphore), *pageProxyID, *pageID }};
+        return { { *identifier, *pageProxyID, *pageID } };
     }
 };
 

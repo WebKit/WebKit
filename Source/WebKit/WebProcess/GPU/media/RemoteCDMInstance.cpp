@@ -78,14 +78,14 @@ void RemoteCDMInstance::initializeWithConfiguration(const WebCore::CDMKeySystemC
     m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::InitializeWithConfiguration(configuration, distinctiveIdentifiers, persistentState), WTFMove(callback), m_identifier);
 }
 
-void RemoteCDMInstance::setServerCertificate(Ref<WebCore::SharedBuffer>&& certificate, SuccessCallback&& callback)
+void RemoteCDMInstance::setServerCertificate(Ref<WebCore::FragmentedSharedBuffer>&& certificate, SuccessCallback&& callback)
 {
     if (!m_factory) {
         callback(Failed);
         return;
     }
 
-    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(certificate.get()), WTFMove(callback), m_identifier);
+    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(IPC::SharedBufferCopy(WTFMove(certificate))), WTFMove(callback), m_identifier);
 }
 
 void RemoteCDMInstance::setStorageDirectory(const String& directory)
@@ -105,7 +105,7 @@ RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
     m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(), Messages::RemoteCDMInstanceProxy::CreateSession::Reply(identifier), m_identifier);
     if (!identifier)
         return nullptr;
-    auto session = RemoteCDMInstanceSession::create(makeWeakPtr(m_factory.get()), WTFMove(identifier));
+    auto session = RemoteCDMInstanceSession::create(m_factory.get(), WTFMove(identifier));
     m_factory->addSession(session.copyRef());
     return session;
 }

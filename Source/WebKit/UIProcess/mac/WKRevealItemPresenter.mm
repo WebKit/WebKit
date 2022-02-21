@@ -53,7 +53,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _impl = makeWeakPtr(impl);
+    _impl = impl;
     _presenter = adoptNS([PAL::allocRVPresenterInstance() init]);
     _presentingContext = adoptNS([PAL::allocRVPresentingContextInstance() initWithPointerLocationInView:menuLocationInView inView:impl.view() highlightDelegate:self]);
     _item = item;

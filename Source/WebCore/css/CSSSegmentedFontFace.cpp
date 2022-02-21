@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,9 @@
 #include "CSSFontFace.h"
 #include "Font.h"
 #include "FontCache.h"
+#include "FontCreationContext.h"
 #include "FontDescription.h"
+#include "FontPaletteValues.h"
 #include "FontSelector.h"
 
 namespace WebCore {
@@ -58,16 +60,16 @@ void CSSSegmentedFontFace::fontLoaded(CSSFontFace&)
 
 class CSSFontAccessor final : public FontAccessor {
 public:
-    static Ref<CSSFontAccessor> create(CSSFontFace& fontFace, const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
+    static Ref<CSSFontAccessor> create(CSSFontFace& fontFace, const FontDescription& fontDescription, const FontPaletteValues& fontPaletteValues, bool syntheticBold, bool syntheticItalic)
     {
-        return adoptRef(*new CSSFontAccessor(fontFace, fontDescription, syntheticBold, syntheticItalic));
+        return adoptRef(*new CSSFontAccessor(fontFace, fontDescription, fontPaletteValues, syntheticBold, syntheticItalic));
     }
 
     const Font* font(ExternalResourceDownloadPolicy policy) const final
     {
         if (!m_result || (policy == ExternalResourceDownloadPolicy::Allow
             && (m_fontFace->status() == CSSFontFace::Status::Pending || m_fontFace->status() == CSSFontFace::Status::Loading || m_fontFace->status() == CSSFontFace::Status::TimedOut))) {
-            const auto result = m_fontFace->font(m_fontDescription, m_syntheticBold, m_syntheticItalic, policy);
+            const auto result = m_fontFace->font(m_fontDescription, m_syntheticBold, m_syntheticItalic, policy, m_fontPaletteValues);
             if (!m_result)
                 m_result = result;
         }
@@ -75,9 +77,10 @@ public:
     }
 
 private:
-    CSSFontAccessor(CSSFontFace& fontFace, const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
+    CSSFontAccessor(CSSFontFace& fontFace, const FontDescription& fontDescription, const FontPaletteValues& fontPaletteValues, bool syntheticBold, bool syntheticItalic)
         : m_fontFace(fontFace)
         , m_fontDescription(fontDescription)
+        , m_fontPaletteValues(fontPaletteValues)
         , m_syntheticBold(syntheticBold)
         , m_syntheticItalic(syntheticItalic)
     {
@@ -91,6 +94,7 @@ private:
     mutable std::optional<RefPtr<Font>> m_result; // Caches nullptr too
     mutable Ref<CSSFontFace> m_fontFace;
     FontDescription m_fontDescription;
+    FontPaletteValues m_fontPaletteValues;
     bool m_syntheticBold;
     bool m_syntheticItalic;
 };
@@ -106,9 +110,9 @@ static void appendFont(FontRanges& ranges, Ref<FontAccessor>&& fontAccessor, con
         ranges.appendRange({ range.from, range.to, fontAccessor.copyRef() });
 }
 
-FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescription)
+FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescription, const FontPaletteValues& fontPaletteValues)
 {
-    auto addResult = m_cache.add(FontDescriptionKey(fontDescription), FontRanges());
+    auto addResult = m_cache.add(std::make_tuple(FontDescriptionKey(fontDescription), fontPaletteValues), FontRanges());
     auto& ranges = addResult.iterator->value;
 
     if (!addResult.isNewEntry)
@@ -126,7 +130,7 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
         bool syntheticItalic = (fontDescription.fontSynthesis() & FontSynthesisStyle) && !isItalic(selectionCapabilities.slope.maximum) && isItalic(desiredRequest.slope);
 
         // Metrics used for layout come from FontRanges::fontForFirstRange(), which assumes that the first font is non-null.
-        auto fontAccessor = CSSFontAccessor::create(face, fontDescription, syntheticBold, syntheticItalic);
+        auto fontAccessor = CSSFontAccessor::create(face, fontDescription, fontPaletteValues, syntheticBold, syntheticItalic);
         if (ranges.isNull() && !fontAccessor->font(ExternalResourceDownloadPolicy::Forbid))
             continue;
         

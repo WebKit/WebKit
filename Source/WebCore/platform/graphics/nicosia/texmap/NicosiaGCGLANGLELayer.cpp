@@ -32,11 +32,65 @@
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
 #include "ANGLEHeaders.h"
+#include "ImageBuffer.h"
 #include "Logging.h"
+#include "TextureMapperGL.h"
+#include "TextureMapperPlatformLayerDmabuf.h"
+#include "TextureMapperPlatformLayerProxyGL.h"
 
 namespace Nicosia {
 
 using namespace WebCore;
+
+void GCGLANGLELayer::swapBuffersIfNeeded()
+{
+    if (m_context.layerComposited())
+        return;
+
+    m_context.prepareTexture();
+
+    auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(contentLayer().impl()).proxy();
+    auto size = m_context.getInternalFramebufferSize();
+
+    if (m_context.m_compositorTextureBacking) {
+        if (m_context.m_compositorTextureBacking->isReleased())
+            return;
+
+        auto format = m_context.m_compositorTextureBacking->format();
+        auto stride = m_context.m_compositorTextureBacking->stride();
+        auto fd = m_context.m_compositorTextureBacking->fd();
+
+        {
+            Locker locker { proxy.lock() };
+            ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
+            downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(makeUnique<TextureMapperPlatformLayerDmabuf>(size, format, stride, fd));
+        }
+
+        m_context.markLayerComposited();
+        return;
+    }
+
+    // Fallback path, read back texture to main memory
+    RefPtr<WebCore::ImageBuffer> imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!imageBuffer)
+        return;
+    m_context.paintRenderingResultsToCanvas(*imageBuffer.get());
+
+    auto flags = m_context.contextAttributes().alpha ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag;
+    {
+        Locker locker { proxy.lock() };
+        ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
+        std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = downcast<TextureMapperPlatformLayerProxyGL>(proxy).getAvailableBuffer(size, m_context.m_internalColorFormat);
+        if (!layerBuffer) {
+            auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), flags, m_context.m_internalColorFormat);
+            layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture), flags);
+        }
+
+        layerBuffer->textureGL().setPendingContents(ImageBuffer::sinkIntoImage(WTFMove(imageBuffer)));
+        downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
+    }
+    m_context.markLayerComposited();
+}
 
 const char* GCGLANGLELayer::ANGLEContext::errorString(int statusCode)
 {
@@ -69,9 +123,15 @@ const char* GCGLANGLELayer::ANGLEContext::lastErrorString()
     return errorString(EGL_GetError());
 }
 
-std::unique_ptr<GCGLANGLELayer::ANGLEContext> GCGLANGLELayer::ANGLEContext::createContext()
+std::unique_ptr<GCGLANGLELayer::ANGLEContext> GCGLANGLELayer::ANGLEContext::createContext(bool isForWebGL2)
 {
-    EGLDisplay display = EGL_GetDisplay(EGL_DEFAULT_DISPLAY);
+    Vector<EGLint> displayAttributes {
+        EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE,
+        EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_EGL_ANGLE,
+        EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE, EGL_PLATFORM_SURFACELESS_MESA,
+        EGL_NONE,
+    };
+    EGLDisplay display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttributes.data());
     if (display == EGL_NO_DISPLAY)
         return nullptr;
 
@@ -92,6 +152,8 @@ std::unique_ptr<GCGLANGLELayer::ANGLEContext> GCGLANGLELayer::ANGLEContext::crea
         EGL_GREEN_SIZE, 8,
         EGL_BLUE_SIZE, 8,
         EGL_ALPHA_SIZE, 8,
+        EGL_DEPTH_SIZE, 0,
+        EGL_STENCIL_SIZE, 0,
         EGL_NONE
     };
     EGLint numberConfigsReturned = 0;
@@ -109,12 +171,31 @@ std::unique_ptr<GCGLANGLELayer::ANGLEContext> GCGLANGLELayer::ANGLEContext::crea
     }
 
     std::vector<EGLint> contextAttributes;
-    contextAttributes.push_back(EGL_CONTEXT_CLIENT_VERSION);
-    contextAttributes.push_back(2);
+    if (isForWebGL2) {
+        contextAttributes.push_back(EGL_CONTEXT_CLIENT_VERSION);
+        contextAttributes.push_back(3);
+    } else {
+        contextAttributes.push_back(EGL_CONTEXT_CLIENT_VERSION);
+        contextAttributes.push_back(2);
+        // ANGLE will upgrade the context to ES3 automatically unless this is specified.
+        contextAttributes.push_back(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE);
+        contextAttributes.push_back(EGL_FALSE);
+    }
     contextAttributes.push_back(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
     contextAttributes.push_back(EGL_TRUE);
-    contextAttributes.push_back(EGL_EXTENSIONS_ENABLED_ANGLE);
+
+    // WebGL requires that all resources are cleared at creation.
+    contextAttributes.push_back(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
     contextAttributes.push_back(EGL_TRUE);
+
+    // WebGL doesn't allow client arrays.
+    contextAttributes.push_back(EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE);
+    contextAttributes.push_back(EGL_FALSE);
+
+    // WebGL doesn't allow implicit creation of objects on bind.
+    contextAttributes.push_back(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
+    contextAttributes.push_back(EGL_FALSE);
+
     if (strstr(displayExtensions, "EGL_ANGLE_power_preference")) {
         contextAttributes.push_back(EGL_POWER_PREFERENCE_ANGLE);
         // EGL_LOW_POWER_ANGLE is the default. Change to
@@ -130,11 +211,12 @@ std::unique_ptr<GCGLANGLELayer::ANGLEContext> GCGLANGLELayer::ANGLEContext::crea
     }
     LOG(WebGL, "Got EGLContext");
 
-    return std::unique_ptr<ANGLEContext>(new ANGLEContext(display, context, EGL_NO_SURFACE));
+    return std::unique_ptr<ANGLEContext>(new ANGLEContext(display, config, context, EGL_NO_SURFACE));
 }
 
-GCGLANGLELayer::ANGLEContext::ANGLEContext(EGLDisplay display, EGLContext context, EGLSurface surface)
+GCGLANGLELayer::ANGLEContext::ANGLEContext(EGLDisplay display, EGLConfig config, EGLContext context, EGLSurface surface)
     : m_display(display)
+    , m_config(config)
     , m_context(context)
     , m_surface(surface)
 {
@@ -143,7 +225,7 @@ GCGLANGLELayer::ANGLEContext::ANGLEContext(EGLDisplay display, EGLContext contex
 GCGLANGLELayer::ANGLEContext::~ANGLEContext()
 {
     if (m_context) {
-        gl::BindFramebuffer(GL_FRAMEBUFFER, 0);
+        GL_BindFramebuffer(GL_FRAMEBUFFER, 0);
         EGL_MakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         EGL_DestroyContext(m_display, m_context);
     }
@@ -161,19 +243,31 @@ bool GCGLANGLELayer::ANGLEContext::makeContextCurrent()
     return true;
 }
 
-PlatformGraphicsContextGL GCGLANGLELayer::ANGLEContext::platformContext() const
+GCGLContext GCGLANGLELayer::ANGLEContext::platformContext() const
 {
     return m_context;
 }
 
-GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLOpenGL& context)
-    : GCGLLayer(context)
-    , m_angleContext(ANGLEContext::createContext())
+GCGLDisplay GCGLANGLELayer::ANGLEContext::platformDisplay() const
+{
+    return m_display;
+}
+
+GCGLConfig GCGLANGLELayer::ANGLEContext::platformConfig() const
+{
+    return m_config;
+}
+
+GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLANGLE& context)
+    : m_context(context)
+    , m_angleContext(ANGLEContext::createContext(context.m_isForWebGL2))
+    , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {
 }
 
 GCGLANGLELayer::~GCGLANGLELayer()
 {
+    downcast<ContentLayerTextureMapperImpl>(m_contentLayer->impl()).invalidateClient();
 }
 
 bool GCGLANGLELayer::makeContextCurrent()
@@ -183,7 +277,19 @@ bool GCGLANGLELayer::makeContextCurrent()
 
 }
 
-PlatformGraphicsContextGL GCGLANGLELayer::platformContext() const
+GCGLContext GCGLANGLELayer::platformContext() const
+{
+    ASSERT(m_angleContext);
+    return m_angleContext->platformContext();
+}
+
+GCGLDisplay GCGLANGLELayer::platformDisplay() const
+{
+    ASSERT(m_angleContext);
+    return m_angleContext->platformDisplay();
+}
+
+GCGLConfig GCGLANGLELayer::platformConfig() const
 {
     ASSERT(m_angleContext);
     return m_angleContext->platformContext();

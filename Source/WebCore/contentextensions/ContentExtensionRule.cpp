@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,11 @@
 #include "config.h"
 #include "ContentExtensionRule.h"
 
+#include <wtf/CrossThreadCopier.h>
+
 #if ENABLE(CONTENT_EXTENSIONS)
 
-namespace WebCore {
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 ContentExtensionRule::ContentExtensionRule(Trigger&& trigger, Action&& action)
     : m_trigger(WTFMove(trigger))
@@ -39,78 +39,60 @@ ContentExtensionRule::ContentExtensionRule(Trigger&& trigger, Action&& action)
     ASSERT(!m_trigger.urlFilter.isEmpty());
 }
 
-static String deserializeString(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t beginIndex)
-{
-    uint32_t prefixLength = sizeof(uint32_t) + sizeof(bool);
-    uint32_t stringStartIndex = beginIndex + prefixLength;
-    RELEASE_ASSERT(actionsLength >= stringStartIndex);
-    uint32_t stringLength = *reinterpret_cast<const uint32_t*>(&actions[beginIndex]);
-    bool wideCharacters = actions[beginIndex + sizeof(uint32_t)];
+template<size_t index, typename... Types>
+struct VariantDeserializerHelper {
+    using VariantType = typename std::variant_alternative<index, std::variant<Types...>>::type;
+    static std::variant<Types...> deserialize(Span<const uint8_t> span, size_t i)
+    {
+        if (i == index)
+            return VariantType::deserialize(span);
+        return VariantDeserializerHelper<index - 1, Types...>::deserialize(span, i);
+    }
+    static size_t serializedLength(Span<const uint8_t> span, size_t i)
+    {
+        if (i == index)
+            return VariantType::serializedLength(span);
+        return VariantDeserializerHelper<index - 1, Types...>::serializedLength(span, i);
+    }
+};
 
-    if (wideCharacters) {
-        RELEASE_ASSERT(actionsLength >= stringStartIndex + stringLength * sizeof(UChar));
-        return String(reinterpret_cast<const UChar*>(&actions[stringStartIndex]), stringLength);
+template<typename... Types>
+struct VariantDeserializerHelper<0, Types...> {
+    using VariantType = typename std::variant_alternative<0, std::variant<Types...>>::type;
+    static std::variant<Types...> deserialize(Span<const uint8_t> span, size_t i)
+    {
+        ASSERT_UNUSED(i, !i);
+        return VariantType::deserialize(span);
     }
-    RELEASE_ASSERT(actionsLength >= stringStartIndex + stringLength * sizeof(LChar));
-    return String(reinterpret_cast<const LChar*>(&actions[stringStartIndex]), stringLength);
+    static size_t serializedLength(Span<const uint8_t> span, size_t i)
+    {
+        ASSERT_UNUSED(i, !i);
+        return VariantType::serializedLength(span);
+    }
+};
+
+template<typename T> struct VariantDeserializer;
+template<typename... Types> struct VariantDeserializer<std::variant<Types...>> {
+    static std::variant<Types...> deserialize(Span<const uint8_t> span, size_t i)
+    {
+        return VariantDeserializerHelper<sizeof...(Types) - 1, Types...>::deserialize(span, i);
+    }
+    static size_t serializedLength(Span<const uint8_t> span, size_t i)
+    {
+        return VariantDeserializerHelper<sizeof...(Types) - 1, Types...>::serializedLength(span, i);
+    }
+};
+
+DeserializedAction DeserializedAction::deserialize(Span<const uint8_t> serializedActions, uint32_t location)
+{
+    RELEASE_ASSERT(location < serializedActions.size());
+    return { location, VariantDeserializer<ActionData>::deserialize(serializedActions.subspan(location + 1), serializedActions[location]) };
 }
 
-Action Action::deserialize(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location)
+size_t DeserializedAction::serializedLength(Span<const uint8_t> serializedActions, uint32_t location)
 {
-    RELEASE_ASSERT(location < actionsLength);
-    auto actionType = static_cast<ActionType>(actions[location]);
-    switch (actionType) {
-    case ActionType::BlockCookies:
-    case ActionType::BlockLoad:
-    case ActionType::IgnorePreviousRules:
-    case ActionType::MakeHTTPS:
-        return Action(actionType, location);
-    case ActionType::CSSDisplayNoneSelector:
-    case ActionType::Notify:
-        return Action(actionType, deserializeString(actions, actionsLength, location + sizeof(ActionType)), location);
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-    
-ActionType Action::deserializeType(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location)
-{
-    RELEASE_ASSERT(location < actionsLength);
-    ActionType type = static_cast<ActionType>(actions[location]);
-    switch (type) {
-    case ActionType::BlockCookies:
-    case ActionType::BlockLoad:
-    case ActionType::Notify:
-    case ActionType::IgnorePreviousRules:
-    case ActionType::CSSDisplayNoneSelector:
-    case ActionType::MakeHTTPS:
-        return type;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-    
-uint32_t Action::serializedLength(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location)
-{
-    RELEASE_ASSERT(location < actionsLength);
-    switch (static_cast<ActionType>(actions[location])) {
-    case ActionType::BlockCookies:
-    case ActionType::BlockLoad:
-    case ActionType::IgnorePreviousRules:
-    case ActionType::MakeHTTPS:
-        return sizeof(ActionType);
-    case ActionType::Notify:
-    case ActionType::CSSDisplayNoneSelector: {
-        uint32_t prefixLength = sizeof(ActionType) + sizeof(uint32_t) + sizeof(bool);
-        uint32_t stringStartIndex = location + prefixLength;
-        RELEASE_ASSERT(actionsLength >= stringStartIndex);
-        uint32_t stringLength = *reinterpret_cast<const unsigned*>(&actions[location + sizeof(ActionType)]);
-        bool wideCharacters = actions[location + sizeof(ActionType) + sizeof(uint32_t)];
-        
-        if (wideCharacters)
-            return prefixLength + stringLength * sizeof(UChar);
-        return prefixLength + stringLength * sizeof(LChar);
-    }
-    }
-    RELEASE_ASSERT_NOT_REACHED();
+    RELEASE_ASSERT(location < serializedActions.size());
+    return 1 + VariantDeserializer<ActionData>::serializedLength(serializedActions.subspan(location + 1), serializedActions[location]);
 }
 
 Trigger Trigger::isolatedCopy() const
@@ -118,31 +100,18 @@ Trigger Trigger::isolatedCopy() const
     return {
         urlFilter.isolatedCopy(),
         urlFilterIsCaseSensitive,
-        topURLConditionIsCaseSensitive,
+        topURLFilterIsCaseSensitive,
+        frameURLFilterIsCaseSensitive,
         flags,
-        conditions.isolatedCopy(),
-        conditionType
+        conditions.isolatedCopy()
     };
 }
 
 Action Action::isolatedCopy() const
 {
-    if (hasStringArgument(m_type)) {
-        return {
-            m_type,
-            m_stringArgument.isolatedCopy(),
-            m_actionID
-        };
-    } else {
-        return {
-            m_type,
-            m_actionID
-        };
-    }
+    return { crossThreadCopy(m_data) };
 }
 
-} // namespace ContentExtensions
-
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

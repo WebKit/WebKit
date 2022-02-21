@@ -39,7 +39,8 @@ pas_heap_config pagesize64k_heap_config = PAGESIZE64K_HEAP_CONFIG;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
     pagesize64k, PAGESIZE64K,
-    .allocate_page_should_zero = false);
+    .allocate_page_should_zero = false,
+    .intrinsic_view_cache_capacity = pas_heap_runtime_config_zero_view_cache_capacity);
 
 void pagesize64k_heap_config_activate(void)
 {

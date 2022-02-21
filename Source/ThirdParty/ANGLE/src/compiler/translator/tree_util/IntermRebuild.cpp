@@ -251,7 +251,7 @@ bool TIntermRebuild::traverseAnyAs(TIntermNode &node, Node *&out)
         return true;
     }
     out = asNode<Node>(result.mSingle);
-    return out;
+    return out != nullptr;
 }
 
 bool TIntermRebuild::traverseAggregateBaseChildren(TIntermAggregateBase &node)
@@ -285,6 +285,10 @@ bool TIntermRebuild::traverseAggregateBaseChildren(TIntermAggregateBase &node)
                 break;
 
             case Action::Fail:
+                return false;
+
+            default:
+                ASSERT(false);
                 return false;
         }
     }
@@ -382,6 +386,9 @@ PreResult TIntermRebuild::traversePre(TIntermNode &originalNode)
             return visitLoopPre(*originalNode.getAsLoopNode());
         case NodeType::Branch:
             return visitBranchPre(*originalNode.getAsBranchNode());
+        default:
+            ASSERT(false);
+            return Fail();
     }
 }
 
@@ -445,6 +452,9 @@ TIntermNode *TIntermRebuild::traverseChildren(NodeType currNodeType,
             return traverseLoopChildren(*currNode.getAsLoopNode());
         case NodeType::Branch:
             return traverseBranchChildren(*currNode.getAsBranchNode());
+        default:
+            ASSERT(false);
+            return nullptr;
     }
 }
 
@@ -513,6 +523,9 @@ PostResult TIntermRebuild::traversePost(NodeType currNodeType,
             return visitLoopPost(*currNode.getAsLoopNode());
         case NodeType::Branch:
             return visitBranchPost(*currNode.getAsBranchNode());
+        default:
+            ASSERT(false);
+            return Fail();
     }
 }
 
@@ -781,6 +794,9 @@ TIntermNode *TIntermRebuild::traverseLoopChildren(TIntermLoop &node)
             ASSERT(cond);
             ASSERT(!init && !expr);
             break;
+        default:
+            ASSERT(false);
+            break;
     }
 #endif
 
@@ -813,6 +829,9 @@ TIntermNode *TIntermRebuild::traverseLoopChildren(TIntermLoop &node)
             case TLoopType::ELoopDoWhile:
                 GUARD(newCond && newBody);
                 GUARD(!newInit && !newExpr);
+                break;
+            default:
+                ASSERT(false);
                 break;
         }
         return new TIntermLoop(loopType, newInit, newCond, newExpr, newBody);

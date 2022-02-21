@@ -196,6 +196,7 @@ private:
     friend class HTMLElementEquivalent;
     friend class HTMLAttributeEquivalent;
     friend class HTMLTextDecorationEquivalent;
+    friend class HTMLFontWeightEquivalent;
 };
 
 class StyleChange {

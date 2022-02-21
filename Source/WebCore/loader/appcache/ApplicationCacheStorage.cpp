@@ -783,7 +783,6 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     auto dataStatement = m_database.prepareStatement("INSERT INTO CacheResourceData (data, path) VALUES (?, ?)"_s);
     if (!dataStatement)
         return false;
-    
 
     String fullPath;
     if (!resource->path().isEmpty())
@@ -815,7 +814,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
         dataStatement->bindText(2, path);
     } else {
         if (resource->data().size())
-            dataStatement->bindBlob(1, resource->data());
+            dataStatement->bindBlob(1, resource->data().makeContiguous().get());
     }
     
     if (!dataStatement->executeCommand()) {
@@ -873,12 +872,12 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     
     if (!executeStatement(entryStatement.value()))
         return false;
-    
+
     // Did we successfully write the resource data to a file? If so,
     // release the resource's data and free up a potentially large amount
     // of memory:
     if (!fullPath.isEmpty())
-        resource->data().clear();
+        resource->clear();
 
     resource->setStorageID(resourceId);
     return true;
@@ -1273,14 +1272,14 @@ bool ApplicationCacheStorage::shouldStoreResourceAsFlatFile(ApplicationCacheReso
     return startsWithLettersIgnoringASCIICase(type, "audio/") || startsWithLettersIgnoringASCIICase(type, "video/");
 }
     
-bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer& data, const String& directory, String& path, const String& fileExtension)
+bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(FragmentedSharedBuffer& data, const String& directory, String& path, const String& fileExtension)
 {
     String fullPath;
     
     do {
-        path = FileSystem::encodeForFileName(createCanonicalUUIDString()) + fileExtension;
+        path = FileSystem::encodeForFileName(createVersion4UUIDString()) + fileExtension;
         // Guard against the above function being called on a platform which does not implement
-        // createCanonicalUUIDString().
+        // createVersion4UUIDString().
         ASSERT(!path.isEmpty());
         if (path.isEmpty())
             return false;

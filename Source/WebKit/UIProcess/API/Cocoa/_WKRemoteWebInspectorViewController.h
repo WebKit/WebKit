@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #import <WebKit/WKFoundation.h>
 #import <WebKit/_WKInspectorExtensionHost.h>
+#import <WebKit/_WKInspectorIBActions.h>
 
 #if !TARGET_OS_IPHONE
 
@@ -37,9 +38,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(macos(10.12.3))
-@interface _WKRemoteWebInspectorViewController : NSObject <_WKInspectorExtensionHost>
+@interface _WKRemoteWebInspectorViewController : NSObject <_WKInspectorExtensionHost, _WKInspectorIBActions>
 
-@property (nonatomic, assign) id <_WKRemoteWebInspectorViewControllerDelegate> delegate;
+@property (nonatomic, weak) id <_WKRemoteWebInspectorViewControllerDelegate> delegate;
 
 @property (nonatomic, readonly, retain) NSWindow *window;
 @property (nonatomic, readonly, retain) WKWebView *webView;
@@ -47,8 +48,6 @@ WK_CLASS_AVAILABLE(macos(10.12.3))
 
 - (instancetype)initWithConfiguration:(_WKInspectorConfiguration *)configuration WK_API_AVAILABLE(macos(12.0));
 - (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL WK_API_AVAILABLE(macos(12.0));
-- (void)close;
-- (void)show;
 
 - (void)sendMessageToFrontend:(NSString *)message;
 

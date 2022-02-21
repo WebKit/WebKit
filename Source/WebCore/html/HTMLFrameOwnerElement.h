@@ -51,7 +51,7 @@ public:
 
     ExceptionOr<Document&> getSVGDocument() const;
 
-    virtual ScrollbarMode scrollingMode() const { return ScrollbarAuto; }
+    virtual ScrollbarMode scrollingMode() const { return ScrollbarMode::Auto; }
 
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
 

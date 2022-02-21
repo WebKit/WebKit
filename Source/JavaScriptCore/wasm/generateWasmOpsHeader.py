@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (C) 2016-2017 Apple Inc. All rights reserved.
 #
@@ -53,7 +53,7 @@ def cppMacro(wasmOpcode, value, b3, inc, *extraArgs):
 def typeMacroizer():
     inc = 0
     for ty in wasm.types:
-        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc)
+        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc, ty)
         inc += 1
 
 type_definitions = ["#define FOR_EACH_WASM_TYPE(macro)"]
@@ -194,6 +194,7 @@ contents = wasm.header + """
 #if ENABLE(WEBASSEMBLY)
 
 #include <cstdint>
+#include <wtf/PrintStream.h>
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
 #include "B3Type.h"

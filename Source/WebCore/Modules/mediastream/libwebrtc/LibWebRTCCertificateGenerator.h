@@ -35,7 +35,7 @@ class SecurityOrigin;
 
 namespace LibWebRTCCertificateGenerator {
 
-void generateCertificate(Ref<SecurityOrigin>&&, LibWebRTCProvider&, const PeerConnectionBackend::CertificateInformation&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
+void generateCertificate(Ref<SecurityOrigin>&&, LibWebRTCProvider&, const PeerConnectionBackend::CertificateInformation&, Function<void(ExceptionOr<Ref<RTCCertificate>>&&)>&&);
 
 } // namespace LibWebRTCCertificateGenerator
 

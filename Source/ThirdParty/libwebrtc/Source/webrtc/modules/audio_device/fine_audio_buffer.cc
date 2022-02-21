@@ -113,7 +113,7 @@ void FineAudioBuffer::DeliverRecordedData(
   record_buffer_.AppendData(audio_buffer.data(), audio_buffer.size());
   // Consume samples from buffer in chunks of 10ms until there is not
   // enough data left. The number of remaining samples in the cache is given by
-  // the new size of the internal |record_buffer_|.
+  // the new size of the internal `record_buffer_`.
   const size_t num_elements_10ms =
       record_channels_ * record_samples_per_channel_10ms_;
   while (record_buffer_.size() >= num_elements_10ms) {

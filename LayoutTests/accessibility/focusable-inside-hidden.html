@@ -30,7 +30,7 @@
 
        setTimeout(function() {
            button = accessibilityController.focusedElement;
-           if (accessibilityController.platformName == "atk") {
+           if (accessibilityController.platformName == "atspi") {
                shouldBe("button.title", "'AXTitle: BUTTON'");
            } else {
                shouldBe("button.description", "'AXDescription: BUTTON'");
@@ -38,7 +38,7 @@
 
            button = accessibilityController.accessibleElementById("button");
 
-           if (accessibilityController.platformName == "atk") {
+           if (accessibilityController.platformName == "atspi") {
                shouldBe("button.title", "'AXTitle: BUTTON'");
            } else {
                shouldBe("button.description", "'AXDescription: BUTTON'");

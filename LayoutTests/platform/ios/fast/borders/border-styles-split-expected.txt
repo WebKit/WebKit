@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 83x190 [bgcolor=#DDDDDD] [border: (20px solid #808080)]
             RenderText {#text} at (35,21) size 48x54
               text run at (35,21) width 48: "    "
-            RenderBR {BR} at (83,0) size 0x54
+            RenderBR {BR} at (83,21) size 0x54
             RenderText {#text} at (0,117) size 48x54
               text run at (0,117) width 48: "    "
           RenderText {#text} at (0,0) size 0x0
@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 83x190 [bgcolor=#DDDDDD] [border: (20px groove #808080)]
             RenderText {#text} at (35,21) size 48x54
               text run at (35,21) width 48: "    "
-            RenderBR {BR} at (83,0) size 0x54
+            RenderBR {BR} at (83,21) size 0x54
             RenderText {#text} at (0,117) size 48x54
               text run at (0,117) width 48: "    "
           RenderText {#text} at (0,0) size 0x0
@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 83x190 [bgcolor=#DDDDDD] [border: (20px ridge #808080)]
             RenderText {#text} at (35,21) size 48x54
               text run at (35,21) width 48: "    "
-            RenderBR {BR} at (83,0) size 0x54
+            RenderBR {BR} at (83,21) size 0x54
             RenderText {#text} at (0,117) size 48x54
               text run at (0,117) width 48: "    "
           RenderText {#text} at (0,0) size 0x0
@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 83x190 [bgcolor=#DDDDDD] [border: (20px outset #808080)]
             RenderText {#text} at (35,21) size 48x54
               text run at (35,21) width 48: "    "
-            RenderBR {BR} at (83,0) size 0x54
+            RenderBR {BR} at (83,21) size 0x54
             RenderText {#text} at (0,117) size 48x54
               text run at (0,117) width 48: "    "
           RenderText {#text} at (0,0) size 0x0
@@ -48,7 +48,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 83x190 [bgcolor=#DDDDDD] [border: (20px inset #808080)]
             RenderText {#text} at (35,21) size 48x54
               text run at (35,21) width 48: "    "
-            RenderBR {BR} at (83,0) size 0x54
+            RenderBR {BR} at (83,21) size 0x54
             RenderText {#text} at (0,117) size 48x54
               text run at (0,117) width 48: "    "
           RenderText {#text} at (0,0) size 0x0
@@ -58,7 +58,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 83x190 [bgcolor=#DDDDDD] [border: (20px double #808080)]
             RenderText {#text} at (35,21) size 48x54
               text run at (35,21) width 48: "    "
-            RenderBR {BR} at (83,0) size 0x54
+            RenderBR {BR} at (83,21) size 0x54
             RenderText {#text} at (0,117) size 48x54
               text run at (0,117) width 48: "    "
           RenderText {#text} at (0,0) size 0x0
@@ -68,7 +68,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 83x190 [bgcolor=#DDDDDD] [border: (20px solid #808080)]
             RenderText {#text} at (35,21) size 48x54
               text run at (35,21) width 48: "    "
-            RenderBR {BR} at (83,0) size 0x54
+            RenderBR {BR} at (83,21) size 0x54
             RenderText {#text} at (0,117) size 48x54
               text run at (0,117) width 48: "    "
           RenderText {#text} at (0,0) size 0x0
@@ -78,7 +78,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 83x190 [bgcolor=#DDDDDD] [border: (20px groove #808080)]
             RenderText {#text} at (35,21) size 48x54
               text run at (35,21) width 48: "    "
-            RenderBR {BR} at (83,0) size 0x54
+            RenderBR {BR} at (83,21) size 0x54
             RenderText {#text} at (0,117) size 48x54
               text run at (0,117) width 48: "    "
           RenderText {#text} at (0,0) size 0x0
@@ -88,7 +88,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 83x190 [bgcolor=#DDDDDD] [border: (20px ridge #808080)]
             RenderText {#text} at (35,21) size 48x54
               text run at (35,21) width 48: "    "
-            RenderBR {BR} at (83,0) size 0x54
+            RenderBR {BR} at (83,21) size 0x54
             RenderText {#text} at (0,117) size 48x54
               text run at (0,117) width 48: "    "
           RenderText {#text} at (0,0) size 0x0
@@ -98,7 +98,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 83x190 [bgcolor=#DDDDDD] [border: (20px outset #808080)]
             RenderText {#text} at (35,21) size 48x54
               text run at (35,21) width 48: "    "
-            RenderBR {BR} at (83,0) size 0x54
+            RenderBR {BR} at (83,21) size 0x54
             RenderText {#text} at (0,117) size 48x54
               text run at (0,117) width 48: "    "
           RenderText {#text} at (0,0) size 0x0
@@ -108,7 +108,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 83x190 [bgcolor=#DDDDDD] [border: (20px inset #808080)]
             RenderText {#text} at (35,21) size 48x54
               text run at (35,21) width 48: "    "
-            RenderBR {BR} at (83,0) size 0x54
+            RenderBR {BR} at (83,21) size 0x54
             RenderText {#text} at (0,117) size 48x54
               text run at (0,117) width 48: "    "
           RenderText {#text} at (0,0) size 0x0
@@ -118,7 +118,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 83x190 [bgcolor=#DDDDDD] [border: (20px double #808080)]
             RenderText {#text} at (35,21) size 48x54
               text run at (35,21) width 48: "    "
-            RenderBR {BR} at (83,0) size 0x54
+            RenderBR {BR} at (83,21) size 0x54
             RenderText {#text} at (0,117) size 48x54
               text run at (0,117) width 48: "    "
           RenderText {#text} at (0,0) size 0x0

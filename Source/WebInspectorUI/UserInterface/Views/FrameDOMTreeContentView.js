@@ -62,6 +62,9 @@ WI.FrameDOMTreeContentView = class FrameDOMTreeContentView extends WI.DOMTreeCon
 
     _rootDOMNodeAvailable(rootDOMNode)
     {
+        if (this.isClosed)
+            return;
+
         this.domTreeOutline.rootDOMNode = rootDOMNode;
 
         if (!rootDOMNode) {

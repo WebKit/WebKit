@@ -65,10 +65,6 @@ static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *website
         return WebsiteDataType::MediaKeys;
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeSearchFieldRecentSearches])
         return WebsiteDataType::SearchFieldRecentSearches;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if ([websiteDataType isEqualToString:_WKWebsiteDataTypePlugInData])
-        return WebsiteDataType::PlugInData;
-#endif
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeResourceLoadStatistics])
         return WebsiteDataType::ResourceLoadStatistics;
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeCredentials])
@@ -81,6 +77,8 @@ static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *website
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeAlternativeServices])
         return WebsiteDataType::AlternativeServices;
 #endif
+    if ([websiteDataType isEqualToString:_WKWebsiteDataTypeFileSystem])
+        return WebsiteDataType::FileSystem;
     return std::nullopt;
 }
 
@@ -128,10 +126,6 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeMediaKeys];
     if (websiteDataTypes.contains(WebsiteDataType::SearchFieldRecentSearches))
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeSearchFieldRecentSearches];
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (websiteDataTypes.contains(WebsiteDataType::PlugInData))
-        [wkWebsiteDataTypes addObject:_WKWebsiteDataTypePlugInData];
-#endif
     if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics))
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeResourceLoadStatistics];
     if (websiteDataTypes.contains(WebsiteDataType::Credentials))
@@ -142,6 +136,8 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
     if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices))
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeAlternativeServices];
 #endif
+    if (websiteDataTypes.contains(WebsiteDataType::FileSystem))
+        [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeFileSystem];
 
     return wkWebsiteDataTypes;
 }

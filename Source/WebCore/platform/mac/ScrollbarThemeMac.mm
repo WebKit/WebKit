@@ -34,7 +34,6 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "NSScrollerImpDetails.h"
 #import "PlatformMouseEvent.h"
-#import "ScrollAnimatorMac.h"
 #import "ScrollView.h"
 #import <Carbon/Carbon.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -170,7 +169,7 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar& scrollbar)
     if (scrollbar.isCustomScrollbar())
         return;
 
-    bool isHorizontal = scrollbar.orientation() == HorizontalScrollbar;
+    bool isHorizontal = scrollbar.orientation() == ScrollbarOrientation::Horizontal;
     auto scrollerImp = retainPtr([NSScrollerImp scrollerImpWithStyle:ScrollerStyle::recommendedScrollerStyle() controlSize:scrollbarControlSizeToNSControlSize(scrollbar.controlSize()) horizontal:isHorizontal replacingScrollerImp:nil]);
     scrollbarMap().add(&scrollbar, WTFMove(scrollerImp));
     didCreateScrollerImp(scrollbar);
@@ -296,7 +295,7 @@ inline constexpr unsigned scrollbarSizeToIndex(ScrollbarControlSize scrollbarSiz
 
 bool ScrollbarThemeMac::hasButtons(Scrollbar& scrollbar)
 {
-    if (scrollbar.enabled() && buttonsPlacement() != ScrollbarButtonsNone && (scrollbar.orientation() == HorizontalScrollbar))
+    if (scrollbar.enabled() && buttonsPlacement() != ScrollbarButtonsNone && (scrollbar.orientation() == ScrollbarOrientation::Horizontal))
         return scrollbar.width();
     return scrollbar.height() >= 2 * (cRealButtonLength[scrollbarSizeToIndex(scrollbar.controlSize())] - cButtonHitInset[scrollbarSizeToIndex(scrollbar.controlSize())]);
 }
@@ -309,7 +308,7 @@ bool ScrollbarThemeMac::hasThumb(Scrollbar& scrollbar)
     minLengthForThumb = [painter knobMinLength] + [painter trackOverlapEndInset] + [painter knobOverlapEndInset]
         + 2 * ([painter trackEndInset] + [painter knobEndInset]);
 
-    return scrollbar.enabled() && (scrollbar.orientation() == HorizontalScrollbar ?
+    return scrollbar.enabled() && (scrollbar.orientation() == ScrollbarOrientation::Horizontal ?
              scrollbar.width() :
              scrollbar.height()) >= minLengthForThumb;
 }
@@ -319,7 +318,7 @@ static IntRect buttonRepaintRect(const IntRect& buttonRect, ScrollbarOrientation
     ASSERT(gButtonPlacement != ScrollbarButtonsNone);
 
     IntRect paintRect(buttonRect);
-    if (orientation == HorizontalScrollbar) {
+    if (orientation == ScrollbarOrientation::Horizontal) {
         paintRect.setWidth(cRealButtonLength[scrollbarSizeToIndex(controlSize)]);
         if (!start)
             paintRect.setX(buttonRect.x() - (cRealButtonLength[scrollbarSizeToIndex(controlSize)] - buttonRect.width()));
@@ -345,7 +344,7 @@ IntRect ScrollbarThemeMac::backButtonRect(Scrollbar& scrollbar, ScrollbarPart pa
     int thickness = scrollbarThickness(scrollbar.controlSize());
     bool outerButton = part == BackButtonStartPart && (buttonsPlacement() == ScrollbarButtonsDoubleStart || buttonsPlacement() == ScrollbarButtonsDoubleBoth);
     if (outerButton) {
-        if (scrollbar.orientation() == HorizontalScrollbar)
+        if (scrollbar.orientation() == ScrollbarOrientation::Horizontal)
             result = IntRect(scrollbar.x(), scrollbar.y(), cOuterButtonLength[scrollbarSizeToIndex(scrollbar.controlSize())] + (painting ? cOuterButtonOverlap : 0), thickness);
         else
             result = IntRect(scrollbar.x(), scrollbar.y(), thickness, cOuterButtonLength[scrollbarSizeToIndex(scrollbar.controlSize())] + (painting ? cOuterButtonOverlap : 0));
@@ -353,7 +352,7 @@ IntRect ScrollbarThemeMac::backButtonRect(Scrollbar& scrollbar, ScrollbarPart pa
     }
     
     // Our repaint rect is slightly larger, since we are a button that is adjacent to the track.
-    if (scrollbar.orientation() == HorizontalScrollbar) {
+    if (scrollbar.orientation() == ScrollbarOrientation::Horizontal) {
         int start = part == BackButtonStartPart ? scrollbar.x() : scrollbar.x() + scrollbar.width() - cOuterButtonLength[scrollbarSizeToIndex(scrollbar.controlSize())] - cButtonLength[scrollbarSizeToIndex(scrollbar.controlSize())];
         result = IntRect(start, scrollbar.y(), cButtonLength[scrollbarSizeToIndex(scrollbar.controlSize())], thickness);
     } else {
@@ -382,7 +381,7 @@ IntRect ScrollbarThemeMac::forwardButtonRect(Scrollbar& scrollbar, ScrollbarPart
     
     bool outerButton = part == ForwardButtonEndPart && (buttonsPlacement() == ScrollbarButtonsDoubleEnd || buttonsPlacement() == ScrollbarButtonsDoubleBoth);
     if (outerButton) {
-        if (scrollbar.orientation() == HorizontalScrollbar) {
+        if (scrollbar.orientation() == ScrollbarOrientation::Horizontal) {
             result = IntRect(scrollbar.x() + scrollbar.width() - outerButtonLength, scrollbar.y(), outerButtonLength, thickness);
             if (painting)
                 result.inflateX(cOuterButtonOverlap);
@@ -394,7 +393,7 @@ IntRect ScrollbarThemeMac::forwardButtonRect(Scrollbar& scrollbar, ScrollbarPart
         return result;
     }
     
-    if (scrollbar.orientation() == HorizontalScrollbar) {
+    if (scrollbar.orientation() == ScrollbarOrientation::Horizontal) {
         int start = part == ForwardButtonEndPart ? scrollbar.x() + scrollbar.width() - buttonLength : scrollbar.x() + outerButtonLength;
         result = IntRect(start, scrollbar.y(), buttonLength, thickness);
     } else {
@@ -438,7 +437,7 @@ IntRect ScrollbarThemeMac::trackRect(Scrollbar& scrollbar, bool painting)
     }
     
     int totalWidth = startWidth + endWidth;
-    if (scrollbar.orientation() == HorizontalScrollbar)
+    if (scrollbar.orientation() == ScrollbarOrientation::Horizontal)
         return IntRect(scrollbar.x() + startWidth, scrollbar.y(), scrollbar.width() - totalWidth, thickness);
     return IntRect(scrollbar.x(), scrollbar.y() + startWidth, thickness, scrollbar.height() - totalWidth);
 }
@@ -578,7 +577,7 @@ void ScrollbarThemeMac::paintScrollCorner(ScrollableArea&, GraphicsContext& cont
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
 static RetainPtr<CGColorRef> linenBackgroundColor()
 {
     NSImage *image = nil;
@@ -603,7 +602,7 @@ void ScrollbarThemeMac::setUpOverhangAreaBackground(CALayer *layer, const Color&
     static CGColorRef cachedLinenBackgroundColor = linenBackgroundColor().leakRef();
     // We operate on the CALayer directly here, since GraphicsLayer doesn't have the concept
     // of pattern images, and we know that WebCore won't touch this layer.
-    layer.backgroundColor = customBackgroundColor.isValid() ? cachedCGColor(customBackgroundColor) : cachedLinenBackgroundColor;
+    layer.backgroundColor = customBackgroundColor.isValid() ? cachedCGColor(customBackgroundColor).get() : cachedLinenBackgroundColor;
 }
 
 void ScrollbarThemeMac::removeOverhangAreaBackground(CALayer *layer)

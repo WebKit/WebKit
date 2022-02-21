@@ -47,19 +47,15 @@ public:
     using PermissionHandler = CompletionHandler<void(Permission)>;
 
     // Requests that a notification be shown.
-    virtual bool show(Notification*) = 0;
+    virtual bool show(Notification&) = 0;
 
     // Requests that a notification that has already been shown be canceled.
-    virtual void cancel(Notification*) = 0;
+    virtual void cancel(Notification&) = 0;
 
-    // When the user closes a page, or quits the client application, all of the page's
-    // associated notifications are cleared.
-    virtual void clearNotifications(ScriptExecutionContext*) { }
-    
     // Informs the presenter that a Notification object has been destroyed
     // (such as by a page transition). The presenter may continue showing
     // the notification, but must not attempt to call the event handlers.
-    virtual void notificationObjectDestroyed(Notification*) = 0;
+    virtual void notificationObjectDestroyed(Notification&) = 0;
 
     // Informs the presenter the controller attached to the page has been destroyed.
     virtual void notificationControllerDestroyed() = 0;
@@ -72,7 +68,6 @@ public:
     // Checks the current level of permission.
     virtual Permission checkPermission(ScriptExecutionContext*) = 0;
 
-protected:
     virtual ~NotificationClient() = default;
 };
 

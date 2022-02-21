@@ -30,6 +30,10 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+struct PasteboardItemInfo;
+}
+
 namespace WebKit {
 
 class WebPasteboardOverrides {
@@ -40,6 +44,7 @@ public:
     void addOverride(const String& pasteboardName, const String& type, const Vector<uint8_t>&);
     void removeOverride(const String& pasteboardName, const String& type);
 
+    std::optional<WebCore::PasteboardItemInfo> overriddenInfo(const String& pasteboardName);
     Vector<String> overriddenTypes(const String& pasteboardName);
 
     bool getDataForOverride(const String& pasteboardName, const String& type, Vector<uint8_t>&) const;

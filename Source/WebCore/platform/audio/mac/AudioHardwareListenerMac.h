@@ -37,7 +37,7 @@ namespace WebCore {
 
 class AudioHardwareListenerMac : public AudioHardwareListener, public CanMakeWeakPtr<AudioHardwareListenerMac> {
 public:
-    static WTF::Ref<AudioHardwareListenerMac> create(Client&);
+    static Ref<AudioHardwareListenerMac> create(Client&);
 
 private:
     AudioHardwareListenerMac(Client&);

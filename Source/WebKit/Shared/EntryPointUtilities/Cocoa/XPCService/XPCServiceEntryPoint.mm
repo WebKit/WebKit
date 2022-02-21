@@ -88,6 +88,16 @@ bool XPCServiceInitializerDelegate::getClientSDKVersion(uint32_t& clientSDKVersi
     return version.has_value();
 }
 
+bool XPCServiceInitializerDelegate::getLinkedOnOrAfterOverride(std::optional<LinkedOnOrAfterOverride>& linkedOnOrAfterOverride)
+{
+    auto linkedOnOrAfterOverrideValue = xpc_dictionary_get_value(m_initializerMessage, "client-linked-on-or-after-override");
+    if (linkedOnOrAfterOverrideValue)
+        linkedOnOrAfterOverride = xpc_bool_get_value(linkedOnOrAfterOverrideValue) ? LinkedOnOrAfterOverride::AfterEverything : LinkedOnOrAfterOverride::BeforeEverything;
+    else
+        linkedOnOrAfterOverride = std::nullopt;
+    return true;
+}
+
 bool XPCServiceInitializerDelegate::getProcessIdentifier(WebCore::ProcessIdentifier& identifier)
 {
     auto parsedIdentifier = parseInteger<uint64_t>(xpc_dictionary_get_string(m_initializerMessage, "process-identifier"));

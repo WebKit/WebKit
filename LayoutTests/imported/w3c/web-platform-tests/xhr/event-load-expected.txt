@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: The send() method: Fire an event named load (synchronous flag is unset)
-

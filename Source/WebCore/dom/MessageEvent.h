@@ -33,16 +33,16 @@
 #include "SerializedScriptValue.h"
 #include "ServiceWorker.h"
 #include "WindowProxy.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebCore {
 
 class Blob;
 
 #if ENABLE(SERVICE_WORKER)
-using MessageEventSource = Variant<RefPtr<WindowProxy>, RefPtr<MessagePort>, RefPtr<ServiceWorker>>;
+using MessageEventSource = std::variant<RefPtr<WindowProxy>, RefPtr<MessagePort>, RefPtr<ServiceWorker>>;
 #else
-using MessageEventSource = Variant<RefPtr<WindowProxy>, RefPtr<MessagePort>>;
+using MessageEventSource = std::variant<RefPtr<WindowProxy>, RefPtr<MessagePort>>;
 #endif
 
 class MessageEvent final : public Event {
@@ -73,9 +73,11 @@ public:
     const std::optional<MessageEventSource>& source() const { return m_source; }
     const Vector<RefPtr<MessagePort>>& ports() const { return m_ports; }
 
-    using DataType = Variant<JSValueInWrappedObject, Ref<SerializedScriptValue>, String, Ref<Blob>, Ref<ArrayBuffer>>;
+    struct JSValueTag { };
+    using DataType = std::variant<JSValueTag, Ref<SerializedScriptValue>, String, Ref<Blob>, Ref<ArrayBuffer>>;
     const DataType& data() const { return m_data; }
 
+    JSValueInWrappedObject& jsData() { return m_jsData; }
     JSValueInWrappedObject& cachedData() { return m_cachedData; }
     JSValueInWrappedObject& cachedPorts() { return m_cachedPorts; }
 
@@ -95,8 +97,11 @@ private:
     std::optional<MessageEventSource> m_source;
     Vector<RefPtr<MessagePort>> m_ports;
 
+    JSValueInWrappedObject m_jsData;
     JSValueInWrappedObject m_cachedData;
     JSValueInWrappedObject m_cachedPorts;
+
+    mutable Lock m_concurrentDataAccessLock;
 };
 
 } // namespace WebCore

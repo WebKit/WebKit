@@ -32,6 +32,10 @@
 #include "XRDeviceProxy.h"
 #include <WebCore/PlatformXR.h>
 
+namespace WebCore {
+struct SecurityOriginData;
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -42,6 +46,7 @@ public:
     virtual ~PlatformXRSystemProxy();
 
     void enumerateImmersiveXRDevices(CompletionHandler<void(const PlatformXR::Instance::DeviceList&)>&&);
+    void requestPermissionOnSessionFeatures(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& /* granted */, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&);
     void initializeTrackingAndRendering();
     void shutDownTrackingAndRendering();
     void requestFrame(PlatformXR::Device::RequestFrameCallback&&);
@@ -56,6 +61,7 @@ private:
 
     // Message handlers
     void sessionDidEnd(XRDeviceIdentifier);
+    void sessionDidUpdateVisibilityState(XRDeviceIdentifier, PlatformXR::VisibilityState);
 
     PlatformXR::Instance::DeviceList m_devices;
     WebPage& m_page;

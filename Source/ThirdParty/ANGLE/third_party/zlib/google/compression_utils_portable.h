@@ -13,49 +13,51 @@
  * zlib.
  */
 #if defined(USE_SYSTEM_ZLIB)
-#include <zlib.h>
+#    include <zlib.h>
 /* AOSP build requires relative paths. */
 #else
-#include "zlib.h"
+#    include "zlib.h"
 #endif
 
-namespace zlib_internal {
+namespace zlib_internal
+{
 
-enum WrapperType {
-  ZLIB,
-  GZIP,
-  ZRAW,
+enum WrapperType
+{
+    ZLIB,
+    GZIP,
+    ZRAW,
 };
 
 uLongf GzipExpectedCompressedSize(uLongf input_size);
 
-uint32_t GetGzipUncompressedSize(const Bytef* compressed_data, size_t length);
+uint32_t GetGzipUncompressedSize(const Bytef *compressed_data, size_t length);
 
-int GzipCompressHelper(Bytef* dest,
-                       uLongf* dest_length,
-                       const Bytef* source,
+int GzipCompressHelper(Bytef *dest,
+                       uLongf *dest_length,
+                       const Bytef *source,
                        uLong source_length,
-                       void* (*malloc_fn)(size_t),
-                       void (*free_fn)(void*));
+                       void *(*malloc_fn)(size_t),
+                       void (*free_fn)(void *));
 
 int CompressHelper(WrapperType wrapper_type,
-                   Bytef* dest,
-                   uLongf* dest_length,
-                   const Bytef* source,
+                   Bytef *dest,
+                   uLongf *dest_length,
+                   const Bytef *source,
                    uLong source_length,
                    int compression_level,
-                   void* (*malloc_fn)(size_t),
-                   void (*free_fn)(void*));
+                   void *(*malloc_fn)(size_t),
+                   void (*free_fn)(void *));
 
-int GzipUncompressHelper(Bytef* dest,
-                         uLongf* dest_length,
-                         const Bytef* source,
+int GzipUncompressHelper(Bytef *dest,
+                         uLongf *dest_length,
+                         const Bytef *source,
                          uLong source_length);
 
 int UncompressHelper(WrapperType wrapper_type,
-                     Bytef* dest,
-                     uLongf* dest_length,
-                     const Bytef* source,
+                     Bytef *dest,
+                     uLongf *dest_length,
+                     const Bytef *source,
                      uLong source_length);
 
 }  // namespace zlib_internal

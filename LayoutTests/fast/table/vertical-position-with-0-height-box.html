@@ -1,0 +1,30 @@
+<style>
+td {
+  padding: 0px;
+  vertical-align: baseline;
+}
+
+div {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: green;
+}
+
+#zero {
+  height: 0px;
+}
+</style>
+<table>
+<tr>
+  <td><div></div></td>
+  <td><div id=zero></div></td>
+</tr>
+</table>
+<pre id=result></pre>
+<script>
+document.body.offsetHeight;
+if (window.testRunner)
+  testRunner.dumpAsText();
+result.innerText = "The zero height inline level box is supposed to be aligned with the bottom of the green box (20px).\nInline level box logical top: " + zero.offsetTop + "px";
+</script>

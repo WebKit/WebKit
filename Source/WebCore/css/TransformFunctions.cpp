@@ -136,13 +136,13 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             double sx = 1.0;
             double sy = 1.0;
             if (transformValue.name() == CSSValueScaleY)
-                sy = firstValue.doubleValue();
+                sy = firstValue.doubleValueDividingBy100IfPercentage();
             else {
-                sx = firstValue.doubleValue();
+                sx = firstValue.doubleValueDividingBy100IfPercentage();
                 if (transformValue.name() != CSSValueScaleX) {
                     if (transformValue.length() > 1) {
                         auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
-                        sy = secondValue.doubleValue();
+                        sy = secondValue.doubleValueDividingBy100IfPercentage();
                     } else
                         sy = sx;
                 }
@@ -156,19 +156,19 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             double sy = 1.0;
             double sz = 1.0;
             if (transformValue.name() == CSSValueScaleZ)
-                sz = firstValue.doubleValue();
+                sz = firstValue.doubleValueDividingBy100IfPercentage();
             else if (transformValue.name() == CSSValueScaleY)
-                sy = firstValue.doubleValue();
+                sy = firstValue.doubleValueDividingBy100IfPercentage();
             else {
-                sx = firstValue.doubleValue();
+                sx = firstValue.doubleValueDividingBy100IfPercentage();
                 if (transformValue.name() != CSSValueScaleX) {
                     if (transformValue.length() > 2) {
                         auto& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
-                        sz = thirdValue.doubleValue();
+                        sz = thirdValue.doubleValueDividingBy100IfPercentage();
                     }
                     if (transformValue.length() > 1) {
                         auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
-                        sy = secondValue.doubleValue();
+                        sy = secondValue.doubleValueDividingBy100IfPercentage();
                     } else
                         sy = sx;
                 }
@@ -322,21 +322,25 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             break;
         }
         case CSSValuePerspective: {
-            Length p = Length(0, LengthType::Fixed);
-            if (firstValue.isLength())
-                p = convertToFloatLength(&firstValue, conversionData);
-            else {
-                // This is a quirk that should go away when 3d transforms are finalized.
-                double val = firstValue.doubleValue();
-                p = val >= 0 ? Length(clampToPositiveInteger(val), LengthType::Fixed) : Length(LengthType::Undefined);
-            }
+            std::optional<Length> perspectiveLength;
+            if (!firstValue.isValueID()) {
+                if (firstValue.isLength())
+                    perspectiveLength = convertToFloatLength(&firstValue, conversionData);
+                else {
+                    // This is a quirk that should go away when 3d transforms are finalized.
+                    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232669
+                    // This does not deal properly with calc(), because we aren't passing conversionData here.
+                    double doubleValue = firstValue.doubleValue();
+                    if (doubleValue < 0) {
+                        operations.clear();
+                        return false;
+                    }
+                    perspectiveLength = Length(clampToPositiveInteger(doubleValue), LengthType::Fixed);
+                }
+            } else
+                ASSERT(firstValue.valueID() == CSSValueNone);
 
-            if (p.isUndefined()) {
-                operations.clear();
-                return false;
-            }
-
-            operations.append(PerspectiveTransformOperation::create(p));
+            operations.append(PerspectiveTransformOperation::create(perspectiveLength));
             break;
         }
         default:
@@ -396,13 +400,13 @@ RefPtr<ScaleTransformOperation> scaleForValue(const CSSValue& value)
         if (!is<CSSPrimitiveValue>(valueItem))
             return nullptr;
         if (!i) {
-            sx = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+            sx = downcast<CSSPrimitiveValue>(*valueItem).doubleValueDividingBy100IfPercentage();
             sy = sx;
         } else if (i == 1)
-            sy = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+            sy = downcast<CSSPrimitiveValue>(*valueItem).doubleValueDividingBy100IfPercentage();
         else if (i == 2) {
             type = TransformOperation::SCALE_3D;
-            sz = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+            sz = downcast<CSSPrimitiveValue>(*valueItem).doubleValueDividingBy100IfPercentage();
         }
     }
 

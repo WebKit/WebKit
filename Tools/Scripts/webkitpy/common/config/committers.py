@@ -1,4 +1,4 @@
-# Copyright (c) 2011, Apple Inc. All rights reserved.
+# Copyright (c) 2011, 2021 Apple Inc. All rights reserved.
 # Copyright (c) 2009, 2011, 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@ from webkitpy.common.system.filesystem import FileSystem
 
 
 class Contributor(object):
-    def __init__(self, name, email_or_emails, irc_nickname_or_nicknames=None, alias_or_aliases=None, expertise=None):
+    def __init__(self, name, email_or_emails, irc_nickname_or_nicknames=None, alias_or_aliases=None, expertise=None, github=None):
         assert(name)
         assert(email_or_emails)
         self.full_name = name
@@ -52,6 +52,7 @@ class Contributor(object):
             self.emails = email_or_emails
         self._case_preserved_emails = self.emails
         self.emails = list(map(lambda email: email.lower(), self.emails))  # Emails are case-insensitive.
+        self.github = github
 
         if isinstance(irc_nickname_or_nicknames, str):
             self.irc_nicknames = [irc_nickname_or_nicknames]
@@ -177,7 +178,8 @@ class Contributor(object):
             name=self.full_name,
             emails=self._case_preserved_emails,
         )
-
+        if self.github:
+            info["github"] = self.github
         if self.aliases:
             info["aliases"] = self.aliases
 
@@ -199,20 +201,20 @@ class Contributor(object):
 
 
 class Committer(Contributor):
-    def __init__(self, name, email_or_emails, irc_nickname=None, alias_or_aliases=None, expertise=None):
-        Contributor.__init__(self, name, email_or_emails, irc_nickname, alias_or_aliases, expertise)
+    def __init__(self, name, email_or_emails, irc_nickname=None, alias_or_aliases=None, expertise=None, github=None):
+        Contributor.__init__(self, name, email_or_emails, irc_nickname, alias_or_aliases, expertise, github)
         self.can_commit = True
 
 
 class Reviewer(Committer):
-    def __init__(self, name, email_or_emails, irc_nickname=None, alias_or_aliases=None, expertise=None):
-        Committer.__init__(self, name, email_or_emails, irc_nickname, alias_or_aliases, expertise)
+    def __init__(self, name, email_or_emails, irc_nickname=None, alias_or_aliases=None, expertise=None, github=None):
+        Committer.__init__(self, name, email_or_emails, irc_nickname, alias_or_aliases, expertise, github)
         self.can_review = True
 
 
 class Bot(Contributor):
-    def __init__(self, name, email_or_emails, irc_nickname=None, alias_or_aliases=None, expertise=None):
-        Contributor.__init__(self, name, email_or_emails, irc_nickname, alias_or_aliases, expertise)
+    def __init__(self, name, email_or_emails, irc_nickname=None, alias_or_aliases=None, expertise=None, github=None):
+        Contributor.__init__(self, name, email_or_emails, irc_nickname, alias_or_aliases, expertise, github)
         self.is_bot = True
 
 
@@ -252,16 +254,16 @@ class CommitterList(object):
             if not name:
                 continue
             if status == "reviewer":
-                contributor = Reviewer(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
+                contributor = Reviewer(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'), data.get('github'))
                 self._reviewers.append(contributor)
                 self._committers.append(contributor)
             elif status == "committer":
-                contributor = Committer(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
+                contributor = Committer(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'), data.get('github'))
                 self._committers.append(contributor)
             elif status == 'bot':
-                contributor = Bot(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
+                contributor = Bot(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'), data.get('github'))
             else:
-                contributor = Contributor(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
+                contributor = Contributor(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'), data.get('github'))
 
             self._contributors.append(contributor)
 

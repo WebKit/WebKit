@@ -16,6 +16,7 @@
 </style>
 
 <script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <script>
 
 var deltaOfZero = false;
@@ -30,35 +31,67 @@ function checkForZero()
     testRunner.notifyDone();
 }
 
-function didScroll(event) {
+function didScroll(event)
+{
     if (event.wheelDeltaX == 0 && event.wheelDeltaY == 0)
         deltaOfZero = true;
 }
 
-function scrollTest()
+async function scrollTest()
 {
-    var startPosX = 100;
-    var startPosY = 100;
-    eventSender.mouseMoveTo(startPosX, startPosY);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-    eventSender.callAfterScrollingCompletes(checkForZero);
+    const startPosX = 100;
+    const startPosY = 100;
+
+    const events = [
+        {
+            type : "wheel",
+            viewX : startPosX,
+            viewY : startPosY,
+            deltaY : -10,
+            phase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            phase : "ended"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            momentumPhase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            momentumPhase : "changed"
+        },
+        {
+            type : "wheel",
+            momentumPhase : "ended"
+        }
+    ];
+
+    await UIHelper.mouseWheelSequence({ events: events });
+    checkForZero();
 }
 
-function setUp() {
+function setUp()
+{
     var scrolly = document.getElementById("scrolly");
     scrolly.addEventListener("mousewheel", didScroll);
 
     if (window.eventSender) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
-
-        eventSender.monitorWheelEvents();
         setTimeout(scrollTest, 0);
     }
 }

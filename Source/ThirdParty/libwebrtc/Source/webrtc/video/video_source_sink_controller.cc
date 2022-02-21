@@ -157,7 +157,7 @@ rtc::VideoSinkWants VideoSourceSinkController::CurrentSettingsToSinkWants()
     const {
   rtc::VideoSinkWants wants;
   wants.rotation_applied = rotation_applied_;
-  // |wants.black_frames| is not used, it always has its default value false.
+  // `wants.black_frames` is not used, it always has its default value false.
   wants.max_pixel_count =
       rtc::dchecked_cast<int>(restrictions_.max_pixels_per_frame().value_or(
           std::numeric_limits<int>::max()));

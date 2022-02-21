@@ -6,5 +6,5 @@ PASS Value of letter-spacing on the <math> root
 PASS Value of line-height on the <math> root
 PASS Value of word-spacing on the <math> root
 PASS Value of font-style on the <math> root
-FAIL Value of font-weight on the <math> root assert_equals: when specified from the UA sheet expected "400" but got "bold"
+FAIL Value of font-weight on the <math> root assert_equals: when specified from the UA sheet expected "400" but got "700"
 

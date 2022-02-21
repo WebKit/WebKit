@@ -36,10 +36,10 @@
 #include "FileReaderLoader.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptWrappable.h"
+#include "URLRegistry.h"
+#include <variant>
 #include <wtf/IsoMalloc.h>
 #include <wtf/URL.h>
-#include "URLRegistry.h"
-#include <wtf/Variant.h>
 
 namespace JSC {
 class ArrayBufferView;
@@ -53,11 +53,11 @@ class BlobLoader;
 class DeferredPromise;
 class ReadableStream;
 class ScriptExecutionContext;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 template<typename> class ExceptionOr;
 
-using BlobPartVariant = Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String>;
+using BlobPartVariant = std::variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String>;
 
 class Blob : public ScriptWrappable, public URLRegistrable, public RefCounted<Blob>, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(Blob, WEBCORE_EXPORT);
@@ -111,11 +111,11 @@ public:
     // URLRegistrable
     URLRegistry& registry() const override;
 
-    Ref<Blob> slice(ScriptExecutionContext&, long long start, long long end, const String& contentType) const;
+    Ref<Blob> slice(long long start, long long end, const String& contentType) const;
 
-    void text(ScriptExecutionContext&, Ref<DeferredPromise>&&);
-    void arrayBuffer(ScriptExecutionContext&, Ref<DeferredPromise>&&);
-    ExceptionOr<Ref<ReadableStream>> stream(ScriptExecutionContext&);
+    void text(Ref<DeferredPromise>&&);
+    void arrayBuffer(Ref<DeferredPromise>&&);
+    ExceptionOr<Ref<ReadableStream>> stream();
 
     // Keeping the handle alive will keep the Blob data alive (but not the Blob object).
     BlobURLHandle handle() const;
@@ -138,7 +138,7 @@ protected:
     Blob(ScriptExecutionContext*, const URL& srcURL, long long start, long long end, const String& contentType);
 
 private:
-    void loadBlob(ScriptExecutionContext&, FileReaderLoader::ReadType, CompletionHandler<void(BlobLoader&)>&&);
+    void loadBlob(FileReaderLoader::ReadType, CompletionHandler<void(BlobLoader&)>&&);
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const override;

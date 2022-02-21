@@ -23,14 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Cache_h
-#define Cache_h
+#pragma once
 
 #include "Allocator.h"
 #include "BExport.h"
 #include "Deallocator.h"
 #include "HeapKind.h"
 #include "PerThread.h"
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -124,4 +125,4 @@ inline void* Cache::reallocate(HeapKind heapKind, void* object, size_t newSize)
 
 } // namespace bmalloc
 
-#endif // Cache_h
+#endif

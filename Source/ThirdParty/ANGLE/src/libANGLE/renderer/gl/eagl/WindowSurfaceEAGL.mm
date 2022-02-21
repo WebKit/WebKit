@@ -33,7 +33,7 @@
 
 #    endif
 
-@interface WebSwapLayerEAGL : CAEAGLLayer {
+@interface SwapLayerEAGL : CAEAGLLayer {
     EAGLContextObj mDisplayContext;
 
     bool initialized;
@@ -47,7 +47,7 @@
             withFunctions:(const rx::FunctionsGL *)functions;
 @end
 
-@implementation WebSwapLayerEAGL
+@implementation SwapLayerEAGL
 - (id)initWithSharedState:(rx::SharedSwapState *)swapState
               withContext:(EAGLContextObj)displayContext
             withFunctions:(const rx::FunctionsGL *)functions
@@ -182,9 +182,9 @@ egl::Error WindowSurfaceEAGL::initialize(const egl::Display *display)
     mSwapState.lastRendered   = &mSwapState.textures[1];
     mSwapState.beingPresented = &mSwapState.textures[2];
 
-    mSwapLayer = [[WebSwapLayerEAGL alloc] initWithSharedState:&mSwapState
-                                                   withContext:mContext
-                                                 withFunctions:mFunctions];
+    mSwapLayer = [[SwapLayerEAGL alloc] initWithSharedState:&mSwapState
+                                                withContext:mContext
+                                              withFunctions:mFunctions];
     [mLayer addSublayer:mSwapLayer];
     [mSwapLayer setContentsScale:[mLayer contentsScale]];
 

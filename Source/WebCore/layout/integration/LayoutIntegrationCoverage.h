@@ -33,13 +33,14 @@
 namespace WebCore {
 
 class RenderBlockFlow;
+class RenderInline;
 
 namespace LayoutIntegration {
 
 enum class AvoidanceReason : uint64_t {
     FlowIsInsideANonMultiColumnThread            = 1LLU  << 0,
-    FlowHasHorizonalWritingMode                  = 1LLU  << 1,
-    ContentHasOutline                            = 1LLU  << 2,
+    // Unused                                    = 1LLU  << 1,
+    // Unused                                    = 1LLU  << 2,
     ContentIsRuby                                = 1LLU  << 3,
     FlowIsPaginated                              = 1LLU  << 4,
     FlowHasTextOverflow                          = 1LLU  << 5,
@@ -52,58 +53,59 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 12,
     FlowHasOverflowNotVisible                    = 1LLU  << 13,
     // Unused                                    = 1LLU  << 14,
-    FlowIsNotLTR                                 = 1LLU  << 15,
+    // Unused                                    = 1LLU  << 15,
     FlowHasLineBoxContainProperty                = 1LLU  << 16,
-    FlowIsNotTopToBottom                         = 1LLU  << 17,
-    FlowHasNonNormalUnicodeBiDi                  = 1LLU  << 18,
-    FlowHasRTLOrdering                           = 1LLU  << 19,
+    FlowHasUnsupportedWritingMode                = 1LLU  << 17,
+    // Unused                                    = 1LLU  << 18,
+    // Unused                                    = 1LLU  << 19,
     FlowHasLineAlignEdges                        = 1LLU  << 20,
     FlowHasLineSnap                              = 1LLU  << 21,
     FlowHasTextEmphasisFillOrMark                = 1LLU  << 22,
-    FlowHasTextShadow                            = 1LLU  << 23,
-    FlowHasPseudoFirstLine                       = 1LLU  << 24,
+    // Unused                                    = 1LLU  << 23,
+    // Unused                                    = 1LLU  << 24,
     FlowHasPseudoFirstLetter                     = 1LLU  << 25,
     FlowHasTextCombine                           = 1LLU  << 26,
-    FlowHasTextFillBox                           = 1LLU  << 27,
-    FlowHasBorderFitLines                        = 1LLU  << 28,
+    // Unused                                    = 1LLU  << 27,
+    // Unused                                    = 1LLU  << 28,
     FlowHasAfterWhiteSpaceLineBreak              = 1LLU  << 29,
-    FlowHasTextSecurity                          = 1LLU  << 30,
+    // Unused                                    = 1LLU  << 30,
     FlowHasSVGFont                               = 1LLU  << 31,
     FlowTextHasDirectionCharacter                = 1LLU  << 32,
-    FlowIsMissingPrimaryFont                     = 1LLU  << 33,
-    FlowPrimaryFontIsInsufficient                = 1LLU  << 34,
+    // Unused                                    = 1LLU  << 33,
+    // Unused                                    = 1LLU  << 34,
     FlowTextIsCombineText                        = 1LLU  << 35,
     FlowTextIsRenderCounter                      = 1LLU  << 36,
-    FlowTextIsRenderQuote                        = 1LLU  << 37,
+    ContentIsRenderQuote                         = 1LLU  << 37,
     FlowTextIsTextFragment                       = 1LLU  << 38,
     FlowTextIsSVGInlineText                      = 1LLU  << 39,
-    FlowHasComplexFontCodePath                   = 1LLU  << 40,
+    // Unused                                    = 1LLU  << 40,
     FeatureIsDisabled                            = 1LLU  << 41,
     FlowDoesNotEstablishInlineFormattingContext  = 1LLU  << 42,
-    FlowChildIsSelected                          = 1LLU  << 43,
+    // Unused                                    = 1LLU  << 43,
     FlowHasHangingPunctuation                    = 1LLU  << 44,
     FlowHasLineBoxContainGlyphs                  = 1LLU  << 45,
-    FlowTextHasSurrogatePair                     = 1LLU  << 46,
+    // Unused                                    = 1LLU  << 46,
     MultiColumnFlowIsNotTopLevel                 = 1LLU  << 47,
     MultiColumnFlowHasColumnSpanner              = 1LLU  << 48,
     MultiColumnFlowVerticalAlign                 = 1LLU  << 49,
     MultiColumnFlowIsFloating                    = 1LLU  << 50,
-    FlowIncludesDocumentMarkers                  = 1LLU  << 51,
-    FlowIncludesHighlights                       = 1LLU  << 52,
-    FlowHasJustifiedNonBreakingSpace             = 1LLU  << 53,
+    // Unused                                    = 1LLU  << 51,
+    // Unused                                    = 1LLU  << 52,
+    // Unused                                    = 1LLU  << 53,
     UnsupportedFieldset                          = 1LLU  << 54,
     ChildBoxIsFloatingOrPositioned               = 1LLU  << 55,
     ContentIsSVG                                 = 1LLU  << 56,
-    ChildBoxHasUnsupportedStyle                  = 1LLU  << 57,
+    ChildBoxIsNotInlineBlock                     = 1LLU  << 57,
     UnsupportedImageMap                          = 1LLU  << 58,
     InlineBoxNeedsLayer                          = 1LLU  << 59,
-    InlineBoxHasBorderOrBorderImage              = 1LLU  << 60,
-    InlineBoxHasBackground                       = 1LLU  << 61,
+    BoxDecorationBreakClone                      = 1LLU  << 60,
+    // Unused                                    = 1LLU  << 61,
     EndOfReasons                                 = 1LLU  << 62
 };
 
 bool canUseForLineLayout(const RenderBlockFlow&);
 bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow&, StyleDifference);
+bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline&, StyleDifference);
 
 enum class IncludeReasons { First , All };
 OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow&, IncludeReasons);

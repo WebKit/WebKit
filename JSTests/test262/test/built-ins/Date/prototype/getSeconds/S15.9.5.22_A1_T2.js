@@ -6,11 +6,15 @@ info: The Date.prototype property "getSeconds" has { DontEnum } attributes
 esid: sec-date.prototype.getseconds
 description: Checking absence of DontDelete attribute
 ---*/
+assert.notSameValue(
+  delete Date.prototype.getSeconds,
+  false,
+  'The value of delete Date.prototype.getSeconds is not false'
+);
 
-if (delete Date.prototype.getSeconds === false) {
-  throw new Test262Error('#1: The Date.prototype.getSeconds property has not the attributes DontDelete');
-}
+assert(
+  !Date.prototype.hasOwnProperty('getSeconds'),
+  'The value of !Date.prototype.hasOwnProperty(\'getSeconds\') is expected to be true'
+);
 
-if (Date.prototype.hasOwnProperty('getSeconds')) {
-  throw new Test262Error('#2: The Date.prototype.getSeconds property has not the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

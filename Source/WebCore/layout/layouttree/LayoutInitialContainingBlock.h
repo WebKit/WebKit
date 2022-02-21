@@ -36,7 +36,7 @@ namespace Layout {
 class InitialContainingBlock final : public ContainerBox {
     WTF_MAKE_ISO_ALLOCATED(InitialContainingBlock);
 public:
-    InitialContainingBlock(RenderStyle&&);
+    InitialContainingBlock(RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
     virtual ~InitialContainingBlock() = default;
 
 private:

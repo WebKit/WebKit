@@ -150,7 +150,7 @@ if (is_android) {
       "../sdk/android:video_api_java",
       "../sdk/android:video_java",
       "androidapp/third_party/autobanh:autobanh_java",
-      "//third_party/android_deps:com_android_support_support_annotations_java",
+      "//third_party/androidx:androidx_annotation_annotation_java",
     ]
   }
 
@@ -216,6 +216,7 @@ if (is_android) {
       "../sdk/android:video_api_java",
       "../sdk/android:video_java",
       "//third_party/android_support_test_runner:runner_java",
+      "//third_party/androidx:androidx_test_runner_java",
       "//third_party/junit",
     ]
   }
@@ -238,11 +239,6 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
 
   config("apprtc_signaling_config") {
     include_dirs = [ "objc/AppRTCMobile" ]
-    cflags_objc = [
-      # TODO(bugs.webrtc.org/10837): Remove this when usage of
-      # archivedDataWithRootObject will be removed.
-      "-Wno-unguarded-availability",
-    ]
   }
 
   rtc_library("apprtc_signaling") {
@@ -253,8 +249,6 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
       "objc/AppRTCMobile/ARDAppClient.m",
       "objc/AppRTCMobile/ARDAppEngineClient.h",
       "objc/AppRTCMobile/ARDAppEngineClient.m",
-      "objc/AppRTCMobile/ARDBitrateTracker.h",
-      "objc/AppRTCMobile/ARDBitrateTracker.m",
       "objc/AppRTCMobile/ARDCaptureController.h",
       "objc/AppRTCMobile/ARDCaptureController.m",
       "objc/AppRTCMobile/ARDExternalSampleCapturer.h",
@@ -344,14 +338,14 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "../sdk:base_objc",
         "../sdk:helpers_objc",
         "../sdk:mediaconstraints_objc",
+        "../sdk:metal_objc",
         "../sdk:peerconnectionfactory_base_objc",
         "../sdk:peerconnectionfactory_base_objc",
-        "../sdk:ui_objc",
         "../sdk:videocapture_objc",
         "../sdk:videocodec_objc",
       ]
-      if (rtc_use_metal_rendering) {
-        deps += [ "../sdk:metal_objc" ]
+      if (rtc_ios_macos_use_opengl_rendering) {
+        deps += [ "../sdk:opengl_ui_objc" ]
       }
 
       frameworks = [ "AVFoundation.framework" ]
@@ -501,14 +495,14 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "../sdk:base_objc",
         "../sdk:default_codec_factory_objc",
         "../sdk:helpers_objc",
+        "../sdk:metal_objc",
         "../sdk:native_api",
-        "../sdk:ui_objc",
         "../sdk:videocapture_objc",
         "../sdk:videotoolbox_objc",
       ]
 
-      if (current_cpu == "arm64") {
-        deps += [ "../sdk:metal_objc" ]
+      if (rtc_ios_macos_use_opengl_rendering) {
+        deps += [ "../sdk:opengl_ui_objc" ]
       }
     }
 
@@ -546,9 +540,9 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "../sdk:helpers_objc",
         "../sdk:mediaconstraints_objc",
         "../sdk:metal_objc",
+        "../sdk:opengl_ui_objc",
         "../sdk:peerconnectionfactory_base_objc",
         "../sdk:peerconnectionfactory_base_objc",
-        "../sdk:ui_objc",
         "../sdk:videocapture_objc",
         "../sdk:videocodec_objc",
       ]
@@ -762,6 +756,7 @@ if (is_linux || is_chromeos || is_win) {
       "peerconnection/server/utils.h",
     ]
     deps = [
+      "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",
       "../system_wrappers:field_trial",
       "../test:field_trial",
@@ -869,7 +864,7 @@ if (is_android) {
       "../sdk/android:peerconnection_java",
       "../sdk/android:video_api_java",
       "../sdk/android:video_java",
-      "//third_party/android_deps:com_android_support_support_annotations_java",
+      "//third_party/androidx:androidx_annotation_annotation_java",
     ]
   }
 
@@ -885,7 +880,7 @@ if (is_android) {
       "../rtc_base:base_java",
       "../sdk/android:libjingle_peerconnection_java",
       "../sdk/android:libjingle_peerconnection_metrics_default_java",
-      "//third_party/android_deps:com_android_support_support_annotations_java",
+      "//third_party/androidx:androidx_annotation_annotation_java",
     ]
   }
 

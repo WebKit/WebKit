@@ -24,7 +24,7 @@ rect.setAttribute("fill", "url(#reference)");
 rect.setAttribute("stroke", "url(#reference)");
 rootSVGElement.appendChild(rect);
 
-shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).mask", 'url("#reference")');
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).mask", 'url("#reference") 0% 0% / auto repeat border-box border-box add match-source');
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).markerStart", 'url("#reference")');
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).markerMid", 'url("#reference")');
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).markerEnd", 'url("#reference")');

@@ -46,6 +46,10 @@
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK) && PLATFORM(MAC)
+#import <WebKitAdditions/WKShareSheetAdditionsBefore.mm>
+#endif
+
 #if PLATFORM(MAC)
 @interface WKShareSheet () <NSSharingServiceDelegate, NSSharingServicePickerDelegate>
 @end
@@ -178,9 +182,18 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
         NSRect mouseLocationInWindow = [webView.window convertRectFromScreen:mouseLocationRect];
         presentationRect = [webView convertRect:mouseLocationInWindow fromView:nil];
     }
-    [_sharingServicePicker showRelativeToRect:presentationRect ofView:webView preferredEdge:NSMinYEdge];
+
+    if ([self canShowPickerAsync:_sharingServicePicker.get()])
+        [self showPickerAsync:_sharingServicePicker.get() showRelativeToRect:presentationRect ofView:webView completion:^{ }];
+    else
+        [_sharingServicePicker showRelativeToRect:presentationRect ofView:webView preferredEdge:NSMinYEdge];
 #else
     _shareSheetViewController = adoptNS([[UIActivityViewController alloc] initWithActivityItems:sharingItems applicationActivities:nil]);
+
+#if HAVE(UIACTIVITYTYPE_SHAREPLAY)
+    [_shareSheetViewController setExcludedActivityTypes:@[ UIActivityTypeSharePlay ]];
+#endif
+
     [_shareSheetViewController setCompletionWithItemsHandler:^(NSString *, BOOL completed, NSArray *, NSError *) {
         _didShareSuccessfully |= completed;
 
@@ -326,10 +339,10 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 
 + (NSURL *)createRandomSharingDirectoryForFile:(NSURL *)temporaryDirectory
 {
-    NSString *randomDirectory = createCanonicalUUIDString();
+    NSString *randomDirectory = createVersion4UUIDString();
     if (![randomDirectory length] || !temporaryDirectory)
         return nil;
-    NSURL *dataPath = [temporaryDirectory URLByAppendingPathComponent:randomDirectory];
+    NSURL *dataPath = [temporaryDirectory URLByAppendingPathComponent:randomDirectory isDirectory:YES];
     
     if (![[NSFileManager defaultManager] createDirectoryAtURL:dataPath withIntermediateDirectories:NO attributes:nil error:nil])
         return nil;
@@ -346,7 +359,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     if (!temporaryDirectoryForFile)
         return nil;
     
-    NSURL *fileURL = [temporaryDirectoryForFile URLByAppendingPathComponent:fileName];
+    NSURL *fileURL = [temporaryDirectoryForFile URLByAppendingPathComponent:fileName isDirectory:NO];
 
     if (![fileData writeToURL:fileURL options:NSDataWritingAtomic error:nil])
         return nil;
@@ -356,6 +369,21 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 #endif
     return fileURL;
 }
+
+#if PLATFORM(MAC)
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKShareSheetAdditions.mm>
+#else
+- (BOOL)canShowPickerAsync:(NSSharingServicePicker *)picker
+{
+    return false;
+}
+- (void)showPickerAsync:(NSSharingServicePicker *)picker showRelativeToRect:(NSRect)presentationRect ofView:(WKWebView *)webView completion:(void (^)(void))completionHandler
+{
+
+}
+#endif
+#endif
 
 @end
 

@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class CacheStorageConnection;
+class StorageConnection;
 
 // A proxy to talk to the loader context. Normally, the document on the main thread
 // provides loading services for the subordinate workers. This interface provides 2-way
@@ -49,6 +50,9 @@ public:
 
     // Creates a cache storage connection to be used on the main thread. Method must be called on the main thread.
     virtual RefPtr<CacheStorageConnection> createCacheStorageConnection() = 0;
+
+    // Get the storage connection to be used on the main thread.
+    virtual StorageConnection* storageConnection() { return nullptr; };
 
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() = 0;
 

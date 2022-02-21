@@ -197,8 +197,8 @@ StatsReport::Id IdFromCertIdString(const std::string& cert_id) {
   return TypedIdFromIdString(StatsReport::kStatsReportTypeCertificate, cert_id);
 }
 
-// Finds the |n|-th report of type |type| in |reports|.
-// |n| starts from 1 for finding the first report.
+// Finds the `n`-th report of type `type` in `reports`.
+// `n` starts from 1 for finding the first report.
 const StatsReport* FindNthReportByType(const StatsReports& reports,
                                        const StatsReport::StatsType& type,
                                        int n) {
@@ -212,10 +212,10 @@ const StatsReport* FindNthReportByType(const StatsReports& reports,
   return nullptr;
 }
 
-// Returns the value of the stat identified by |name| in the |n|-th report of
-// type |type| in |reports|.
-// |n| starts from 1 for finding the first report.
-// If either the |n|-th report is not found, or the stat is not present in that
+// Returns the value of the stat identified by `name` in the `n`-th report of
+// type `type` in `reports`.
+// `n` starts from 1 for finding the first report.
+// If either the `n`-th report is not found, or the stat is not present in that
 // report, then nullopt is returned.
 absl::optional<std::string> GetValueInNthReportByType(
     const StatsReports& reports,
@@ -674,7 +674,7 @@ class StatsCollectorTest : public ::testing::Test {
     // Fake stats to process.
     TransportChannelStats channel_stats;
     channel_stats.component = 1;
-    channel_stats.srtp_crypto_suite = rtc::SRTP_AES128_CM_SHA1_80;
+    channel_stats.srtp_crypto_suite = rtc::kSrtpAes128CmSha1_80;
     channel_stats.ssl_cipher_suite =
         internal::TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA;
     pc->SetTransportStats(kTransportName, channel_stats);
@@ -729,7 +729,7 @@ class StatsCollectorTest : public ::testing::Test {
     std::string srtp_crypto_suite =
         ExtractStatsValue(StatsReport::kStatsReportTypeComponent, reports,
                           StatsReport::kStatsValueNameSrtpCipher);
-    EXPECT_EQ(rtc::SrtpCryptoSuiteToName(rtc::SRTP_AES128_CM_SHA1_80),
+    EXPECT_EQ(rtc::SrtpCryptoSuiteToName(rtc::kSrtpAes128CmSha1_80),
               srtp_crypto_suite);
   }
 };
@@ -1101,17 +1101,17 @@ TEST_P(StatsCollectorTrackTest, TrackAndSsrcObjectExistAfterUpdateSsrcStats) {
   StatsReports reports;
   stats->GetStats(nullptr, &reports);
 
-  // |reports| should contain at least one session report, one track report,
+  // `reports` should contain at least one session report, one track report,
   // and one ssrc report.
   EXPECT_LE(3u, reports.size());
   const StatsReport* track_report =
       FindNthReportByType(reports, StatsReport::kStatsReportTypeTrack, 1);
   EXPECT_TRUE(track_report);
 
-  // Get report for the specific |track|.
+  // Get report for the specific `track`.
   reports.clear();
   stats->GetStats(track_, &reports);
-  // |reports| should contain at least one session report, one track report,
+  // `reports` should contain at least one session report, one track report,
   // and one ssrc report.
   EXPECT_LE(3u, reports.size());
   track_report =
@@ -1248,7 +1248,7 @@ TEST_P(StatsCollectorTrackTest, ReportsFromRemoteTrack) {
   StatsReports reports;
   stats->GetStats(nullptr, &reports);
 
-  // |reports| should contain at least one session report, one track report,
+  // `reports` should contain at least one session report, one track report,
   // and one ssrc report.
   EXPECT_LE(3u, reports.size());
   const StatsReport* track_report =
@@ -1508,8 +1508,8 @@ TEST_P(StatsCollectorTrackTest, FilterOutNegativeInitialValues) {
   voice_sender_info.packets_lost = -1;
   voice_sender_info.jitter_ms = -1;
 
-  // Some of the contents in |voice_sender_info| needs to be updated from the
-  // |audio_track_|.
+  // Some of the contents in `voice_sender_info` needs to be updated from the
+  // `audio_track_`.
   UpdateVoiceSenderInfoFromAudioTrack(local_track.get(), &voice_sender_info,
                                       true);
 
@@ -1669,8 +1669,8 @@ TEST_P(StatsCollectorTrackTest, LocalAndRemoteTracksWithSameSsrc) {
 
   VoiceSenderInfo voice_sender_info;
   InitVoiceSenderInfo(&voice_sender_info);
-  // Some of the contents in |voice_sender_info| needs to be updated from the
-  // |audio_track_|.
+  // Some of the contents in `voice_sender_info` needs to be updated from the
+  // `audio_track_`.
   UpdateVoiceSenderInfoFromAudioTrack(audio_track_.get(), &voice_sender_info,
                                       true);
 

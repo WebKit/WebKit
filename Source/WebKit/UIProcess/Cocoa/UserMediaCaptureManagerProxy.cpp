@@ -30,6 +30,7 @@
 
 #include "Connection.h"
 #include "RemoteCaptureSampleManagerMessages.h"
+#include "RemoteVideoFrameObjectHeap.h"
 #include "SharedRingBufferStorage.h"
 #include "UserMediaCaptureManagerMessages.h"
 #include "UserMediaCaptureManagerProxyMessages.h"
@@ -40,6 +41,7 @@
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/ImageRotationSessionVT.h>
 #include <WebCore/MediaConstraints.h>
+#include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeVideoSource.h>
 #include <WebCore/RemoteVideoSample.h>
@@ -57,17 +59,22 @@ class UserMediaCaptureManagerProxy::SourceProxy
     , private RealtimeMediaSource::VideoSampleObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, Ref<RealtimeMediaSource>&& source)
+    SourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, ProcessIdentity&& resourceOwner, Ref<RealtimeMediaSource>&& source, RefPtr<RemoteVideoFrameObjectHeap>&& videoFrameObjectHeap)
         : m_id(id)
         , m_connection(WTFMove(connection))
+        , m_resourceOwner(WTFMove(resourceOwner))
         , m_source(WTFMove(source))
+        , m_videoFrameObjectHeap(WTFMove(videoFrameObjectHeap))
     {
         m_source->addObserver(*this);
         switch (m_source->type()) {
         case RealtimeMediaSource::Type::Audio:
+        case RealtimeMediaSource::Type::SystemAudio:
             m_source->addAudioSampleObserver(*this);
             break;
         case RealtimeMediaSource::Type::Video:
+        case RealtimeMediaSource::Type::Screen:
+        case RealtimeMediaSource::Type::Window:
             m_source->addVideoSampleObserver(*this);
             break;
         case RealtimeMediaSource::Type::None:
@@ -82,9 +89,12 @@ public:
 
         switch (m_source->type()) {
         case RealtimeMediaSource::Type::Audio:
+        case RealtimeMediaSource::Type::SystemAudio:
             m_source->removeAudioSampleObserver(*this);
             break;
         case RealtimeMediaSource::Type::Video:
+        case RealtimeMediaSource::Type::Screen:
+        case RealtimeMediaSource::Type::Window:
             m_source->removeVideoSampleObserver(*this);
             break;
         case RealtimeMediaSource::Type::None:
@@ -154,7 +164,7 @@ private:
             m_startTime = time;
             m_captureSemaphore = makeUnique<IPC::Semaphore>();
             ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
-            m_description = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
+            m_description = *std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
 
             m_frameChunkSize = std::max(WebCore::AudioUtilities::renderQuantumSize, AudioSession::sharedSession().preferredBufferSize());
 
@@ -176,16 +186,35 @@ private:
             m_captureSemaphore->signal();
     }
 
-    void videoSampleAvailable(MediaSample& sample) final
+    RefPtr<MediaSample> rotateVideoFrameIfNeeded(MediaSample& sample)
     {
-        std::unique_ptr<RemoteVideoSample> remoteSample;
         if (m_shouldApplyRotation && sample.videoRotation() != MediaSample::VideoRotation::None) {
             auto pixelBuffer = rotatePixelBuffer(sample);
-            remoteSample = RemoteVideoSample::create(pixelBuffer.get(), sample.presentationTime());
-        } else
-            remoteSample = RemoteVideoSample::create(sample);
-        if (remoteSample)
-            m_connection->send(Messages::RemoteCaptureSampleManager::VideoSampleAvailable(m_id, WTFMove(*remoteSample)), 0);
+            return MediaSampleAVFObjC::createImageSample(WTFMove(pixelBuffer), MediaSample::VideoRotation::None, sample.videoMirrored(), sample.presentationTime(), sample.decodeTime());
+        }
+        return &sample;
+    }
+
+    void videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata) final
+    {
+        auto videoSample = rotateVideoFrameIfNeeded(sample);
+        if (!videoSample)
+            return;
+
+        auto remoteSample = RemoteVideoSample::create(*videoSample);
+        if (!remoteSample)
+            return;
+
+        if (m_resourceOwner)
+            remoteSample->setOwnershipIdentity(m_resourceOwner);
+
+        std::optional<RemoteVideoFrameIdentifier> remoteIdentifier;
+        if (m_videoFrameObjectHeap) {
+            remoteIdentifier = m_videoFrameObjectHeap->createRemoteVideoFrame(sample);
+            remoteSample->clearIOSurface();
+        }
+
+        m_connection->send(Messages::RemoteCaptureSampleManager::VideoSampleAvailable(m_id, WTFMove(*remoteSample), remoteIdentifier, metadata), 0);
     }
 
     RetainPtr<CVPixelBufferRef> rotatePixelBuffer(MediaSample& sample)
@@ -236,6 +265,7 @@ private:
     RealtimeMediaSourceIdentifier m_id;
     WeakPtr<PlatformMediaSessionManager> m_sessionManager;
     Ref<IPC::Connection> m_connection;
+    ProcessIdentity m_resourceOwner;
     Ref<RealtimeMediaSource> m_source;
     std::unique_ptr<CARingBuffer> m_ringBuffer;
     CAAudioStreamDescription m_description { };
@@ -249,6 +279,7 @@ private:
     size_t m_frameChunkSize { 0 };
     MediaTime m_startTime;
     bool m_shouldReset { false };
+    RefPtr<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
 };
 
 UserMediaCaptureManagerProxy::UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&& connectionProxy)
@@ -262,7 +293,7 @@ UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
     m_connectionProxy->removeMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName());
 }
 
-void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(RealtimeMediaSourceIdentifier id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& mediaConstraints, CreateSourceCallback&& completionHandler)
+void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(RealtimeMediaSourceIdentifier id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& mediaConstraints, bool shouldUseGPUProcessRemoteFrames, CreateSourceCallback&& completionHandler)
 {
     if (!m_connectionProxy->willStartCapture(device.type()))
         return completionHandler(false, "Request is not allowed"_s, RealtimeMediaSourceSettings { }, { }, { }, { }, 0);
@@ -281,8 +312,9 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         break;
     case WebCore::CaptureDevice::DeviceType::Screen:
     case WebCore::CaptureDevice::DeviceType::Window:
-        sourceOrError = RealtimeMediaSourceCenter::singleton().displayCaptureFactory().createDisplayCaptureSource(device, constraints);
+        sourceOrError = RealtimeMediaSourceCenter::singleton().displayCaptureFactory().createDisplayCaptureSource(device, WTFMove(hashSalt), constraints);
         break;
+    case WebCore::CaptureDevice::DeviceType::SystemAudio:
     case WebCore::CaptureDevice::DeviceType::Speaker:
     case WebCore::CaptureDevice::DeviceType::Unknown:
         ASSERT_NOT_REACHED();
@@ -312,10 +344,10 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         }
 
         ASSERT(!m_proxies.contains(id));
-        m_proxies.add(id, makeUnique<SourceProxy>(id, m_connectionProxy->connection(), WTFMove(source)));
+        auto proxy = makeUnique<SourceProxy>(id, m_connectionProxy->connection(), ProcessIdentity { m_connectionProxy->resourceOwner() }, WTFMove(source), shouldUseGPUProcessRemoteFrames ? m_connectionProxy->remoteVideoFrameObjectHeap() : nullptr);
+        m_proxies.add(id, WTFMove(proxy));
     } else
         invalidConstraints = WTFMove(sourceOrError.errorMessage);
-
 
     completionHandler(succeeded, invalidConstraints, WTFMove(settings), WTFMove(capabilities), WTFMove(presets), size, frameRate);
 }
@@ -331,6 +363,10 @@ void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentif
         return;
     }
 
+#if ENABLE(APP_PRIVACY_REPORT)
+    m_connectionProxy->setTCCIdentity();
+#endif
+    m_connectionProxy->startProducingData(proxy->source().type());
     proxy->start();
 }
 
@@ -374,7 +410,7 @@ void UserMediaCaptureManagerProxy::clone(RealtimeMediaSourceIdentifier clonedID,
     MESSAGE_CHECK(m_proxies.contains(clonedID));
     MESSAGE_CHECK(!m_proxies.contains(newSourceID));
     if (auto* proxy = m_proxies.get(clonedID))
-        m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, m_connectionProxy->connection(), proxy->source().clone()));
+        m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, m_connectionProxy->connection(), ProcessIdentity { m_connectionProxy->resourceOwner() }, proxy->source().clone(), m_connectionProxy->remoteVideoFrameObjectHeap()));
 }
 
 void UserMediaCaptureManagerProxy::requestToEnd(RealtimeMediaSourceIdentifier sourceID)

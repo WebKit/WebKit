@@ -70,3 +70,6 @@ ANGLE_INSTANTIATE_TEST(FloatingPointSurfaceTest,
                        ES2_D3D11(),
                        ES3_D3D11(),
                        ES2_D3D11_PRESENT_PATH_FAST());
+
+// This test suite is not instantiated on some OSes.
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FloatingPointSurfaceTest);

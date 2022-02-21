@@ -31,6 +31,7 @@
 #include "Element.h"
 #include "IntRect.h"
 #include "LayoutRect.h"
+#include "Range.h"
 #include "ScrollAlignment.h"
 #include "ScrollBehavior.h"
 #include "Timer.h"
@@ -104,6 +105,8 @@ public:
     void nodeWillBeRemoved(Node&);
 
 private:
+    void clearCaretPositionWithoutUpdatingStyle();
+
     VisiblePosition m_position;
 };
 
@@ -375,7 +378,7 @@ inline void FrameSelection::clearTypingStyle()
     m_typingStyle = nullptr;
 }
 
-#if !(ENABLE(ACCESSIBILITY) && (PLATFORM(COCOA) || USE(ATK)))
+#if !(ENABLE(ACCESSIBILITY) && (PLATFORM(COCOA) || USE(ATK) || USE(ATSPI)))
 
 inline void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChangeIntent&)
 {

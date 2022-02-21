@@ -1,0 +1,108 @@
+From e9ceecb54cdfbf45b6eeb296fb078072e83327c2 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 29 Sep 2021 10:22:00 +0100
+Subject: [PATCH] cmake: Look for resources in cmake's install lib dir
+
+---
+ CMakeLists.txt  |  4 ++++
+ src/config.h.in |  7 +++++++
+ src/util.cc     | 30 ++++++++++--------------------
+ 3 files changed, 21 insertions(+), 20 deletions(-)
+ create mode 100644 src/config.h.in
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e28d95aa..d38b3df2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -49,6 +49,10 @@ configure_file(
+   ${CMAKE_SOURCE_DIR}/src/git_revision.h.in
+   ${CMAKE_BINARY_DIR}/git_revision.h
+ )
++configure_file(
++  ${CMAKE_SOURCE_DIR}/src/config.h.in
++  ${CMAKE_BINARY_DIR}/config.h
++)
+ 
+ set(FLAGS_COMMON "-D__USE_LARGEFILE64 -pthread")
+ set(supports32bit true)
+diff --git a/src/config.h.in b/src/config.h.in
+new file mode 100644
+index 00000000..b1188ba7
+--- /dev/null
++++ b/src/config.h.in
+@@ -0,0 +1,7 @@
++#ifndef RR_CONFIG_H_
++#define RR_CONFIG_H_
++
++#define RESOURCES_PATH "@CMAKE_INSTALL_PREFIX@/"
++#define RESOURCES_LIB_PATH "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/"
++
++#endif
+diff --git a/src/util.cc b/src/util.cc
+index c57ae7b6..debc3310 100644
+--- a/src/util.cc
++++ b/src/util.cc
+@@ -45,6 +45,7 @@
+ #include "kernel_metadata.h"
+ #include "log.h"
+ #include "seccomp-bpf.h"
++#include "config.h"
+ 
+ void good_random(uint8_t* out, size_t out_len);
+ 
+@@ -1245,26 +1246,20 @@ string real_path(const string& path) {
+   return path;
+ }
+ 
+-static string read_exe_dir() {
+-  KernelMapping km =
+-      AddressSpace::read_local_kernel_mapping((uint8_t*)&read_exe_dir);
+-  string exe_path = km.fsname();
+-  int end = exe_path.length();
+-  // Chop off the filename
+-  while (end > 0 && exe_path[end - 1] != '/') {
+-    --end;
++string resource_path() {
++  string resource_path = Flags::get().resource_path;
++  if (resource_path.empty()) {
++    return RESOURCES_PATH;
+   }
+-  exe_path.erase(end);
+-  return exe_path;
++  return resource_path;
+ }
+ 
+-string resource_path() {
++string resource_lib_path() {
+   string resource_path = Flags::get().resource_path;
+   if (resource_path.empty()) {
+-    static string exe_path = read_exe_dir() + "../";
+-    return exe_path;
++    return RESOURCES_LIB_PATH;
+   }
+-  return resource_path;
++  return resource_path + "/lib/";
+ }
+ 
+ /**
+@@ -1294,16 +1289,11 @@ bool running_under_rr(bool cache) {
+ 
+ string find_helper_library(const char *basepath)
+ {
+-  string lib_path = resource_path() + "lib64/rr/";
++  string lib_path = resource_lib_path() + "rr/";
+   string file_name = lib_path + basepath;
+   if (access(file_name.c_str(), F_OK) == 0) {
+     return lib_path;
+   }
+-  lib_path = resource_path() + "lib/rr/";
+-  file_name = lib_path + basepath;
+-  if (access(file_name.c_str(), F_OK) == 0) {
+-    return lib_path;
+-  }
+   // File does not exist. Assume install put it in LD_LIBRARY_PATH.
+   lib_path = "";
+   return lib_path;
+-- 
+2.31.1
+

@@ -48,6 +48,8 @@ struct pas_fast_megapage_table_impl;
 typedef struct pas_fast_megapage_table pas_fast_megapage_table;
 typedef struct pas_fast_megapage_table_impl pas_fast_megapage_table_impl;
 
+PAS_API extern pas_fast_megapage_table_impl pas_fast_megapage_table_impl_null;
+
 struct pas_fast_megapage_table_impl {
     size_t index_begin; /* inclusive */
     size_t index_end; /* exclusive */
@@ -58,15 +60,29 @@ struct pas_fast_megapage_table_impl {
 struct pas_fast_megapage_table {
     unsigned fast_bits[PAS_BITVECTOR_NUM_WORDS(PAS_NUM_FAST_FAST_MEGAPAGE_BITS)];
     pas_fast_megapage_table_impl* instances[PAS_NUM_FAST_MEGAPAGE_TABLES];
+#ifdef __cplusplus
+    constexpr pas_fast_megapage_table(cpp_initialization_t)
+        : fast_bits { 0 }
+        , instances { }
+    {
+        for (unsigned i = 0; i < PAS_NUM_FAST_MEGAPAGE_TABLES; ++i)
+            instances[i] = &pas_fast_megapage_table_impl_null;
+    }
+#endif
 };
 
-PAS_API extern pas_fast_megapage_table_impl pas_fast_megapage_table_impl_null;
-
+#ifdef __cplusplus
 #define PAS_FAST_MEGAPAGE_TABLE_INITIALIZER \
     { \
-        .fast_bits = {[0 ... PAS_BITVECTOR_NUM_WORDS(PAS_NUM_FAST_FAST_MEGAPAGE_BITS) - 1] = 0}, \
+        cpp_initialization \
+    }
+#else
+#define PAS_FAST_MEGAPAGE_TABLE_INITIALIZER \
+    { \
+        .fast_bits = { 0 }, \
         .instances = {[0 ... PAS_NUM_FAST_MEGAPAGE_TABLES - 1] = &pas_fast_megapage_table_impl_null} \
     }
+#endif
 
 PAS_API void pas_fast_megapage_table_initialize_static_by_index(
     pas_fast_megapage_table* table,
@@ -93,7 +109,7 @@ static inline pas_fast_megapage_kind pas_fast_megapage_table_get_by_index(
     
     if (PAS_LIKELY(index < PAS_NUM_FAST_FAST_MEGAPAGE_BITS)
         && PAS_LIKELY(pas_bitvector_get(table->fast_bits, index)))
-        return pas_small_segregated_fast_megapage_kind;
+        return pas_small_exclusive_segregated_fast_megapage_kind;
     
     for (table_index = 0; table_index < PAS_NUM_FAST_MEGAPAGE_TABLES; ++table_index) {
         instance = table->instances[table_index];

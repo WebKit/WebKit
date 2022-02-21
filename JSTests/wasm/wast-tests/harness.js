@@ -4,6 +4,7 @@ let context = {
 };
 
 globalThis.__linear_memory = new WebAssembly.Memory({ initial: 1 });
+globalThis.callerIsOMGCompiled = callerIsBBQOrOMGCompiled; // Can't change the .wast easily...
 
 async function runWasmFile(filePath) {
     let blob = readFile(filePath, "binary");

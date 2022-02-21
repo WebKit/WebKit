@@ -37,12 +37,12 @@
 #include "TimingFunction.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
+#include <variant>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Seconds.h>
-#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -51,6 +51,7 @@ class AnimationEffect : public RefCounted<AnimationEffect>, public CanMakeWeakPt
 public:
     virtual ~AnimationEffect();
 
+    virtual bool isCustomEffect() const { return false; }
     virtual bool isKeyframeEffect() const { return false; }
 
     EffectTiming getBindingsTiming() const;
@@ -61,17 +62,14 @@ public:
     ExceptionOr<void> bindingsUpdateTiming(std::optional<OptionalEffectTiming>);
     ExceptionOr<void> updateTiming(std::optional<OptionalEffectTiming>);
 
-    virtual void apply(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, std::optional<Seconds> = std::nullopt) = 0;
-    virtual void invalidate() = 0;
-    virtual void animationDidTick() = 0;
-    virtual void animationDidPlay() = 0;
-    virtual void animationDidChangeTimingProperties() = 0;
-    virtual void animationWasCanceled() = 0;
-    virtual void animationSuspensionStateDidChange(bool) = 0;
-    virtual void animationTimelineDidChange(AnimationTimeline*) = 0;
+    virtual void animationDidTick() { };
+    virtual void animationDidChangeTimingProperties() { };
+    virtual void animationWasCanceled() { };
+    virtual void animationSuspensionStateDidChange(bool) { };
+    virtual void animationTimelineDidChange(AnimationTimeline*) { };
 
     WebAnimation* animation() const { return m_animation.get(); }
-    virtual void setAnimation(WebAnimation* animation) { m_animation = makeWeakPtr(animation); }
+    virtual void setAnimation(WebAnimation*);
 
     Seconds delay() const { return m_delay; }
     void setDelay(const Seconds&);
@@ -102,11 +100,12 @@ public:
 
     void updateStaticTimingProperties();
 
-    virtual Seconds timeToNextTick() const { return Seconds::infinity(); }
+    virtual Seconds timeToNextTick(BasicEffectTiming) const;
 
 protected:
     explicit AnimationEffect();
 
+    virtual bool ticksContinouslyWhileActive() const { return false; }
     virtual std::optional<double> progressUntilNextStep(double) const;
 
 private:

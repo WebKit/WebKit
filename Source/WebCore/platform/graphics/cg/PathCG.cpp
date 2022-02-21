@@ -88,7 +88,7 @@ void Path::createCGPath() const
     m_path = adoptCF(CGPathCreateMutable());
 
     WTF::switchOn(m_inlineData,
-        [&](Monostate) { }, // Start with an empty path.
+        [&](std::monostate) { }, // Start with an empty path.
         [&](const MoveData& move) {
             CGPathMoveToPoint(m_path.get(), nullptr, move.location.x(), move.location.y());
         },
@@ -137,7 +137,7 @@ PlatformPathPtr Path::ensurePlatformPath()
             m_path = adoptCF(CGPathCreateMutableCopy(m_path.get()));
         m_copyPathBeforeMutation = false;
     }
-    m_inlineData = Monostate { };
+    m_inlineData = std::monostate { };
     return m_path.get();
 }
 
@@ -158,7 +158,7 @@ Path::Path(const Path& other)
 
 Path::Path(Path&& other)
     : m_path(std::exchange(other.m_path, nullptr))
-    , m_inlineData(std::exchange(other.m_inlineData, Monostate { }))
+    , m_inlineData(std::exchange(other.m_inlineData, std::monostate { }))
     , m_copyPathBeforeMutation(std::exchange(other.m_copyPathBeforeMutation, false))
 {
 }
@@ -272,7 +272,7 @@ void Path::transform(const AffineTransform& transform)
 #endif
     m_path = WTFMove(path);
     m_copyPathBeforeMutation = false;
-    m_inlineData = Monostate { };
+    m_inlineData = std::monostate { };
 }
 
 static inline FloatRect zeroRectIfNull(CGRect rect)
@@ -448,7 +448,7 @@ void Path::clear()
         return;
 
     m_path.clear();
-    m_inlineData = Monostate { };
+    m_inlineData = std::monostate { };
     m_copyPathBeforeMutation = false;
 }
 

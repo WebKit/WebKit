@@ -1,6 +1,6 @@
 
 PASS CSSStyleValue from specified CSSOM serializes correctly
 FAIL CSSStyleValue from computed CSSOM serializes correctly elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
-FAIL Shorthand CSSStyleValue from inline CSSOM serializes correctly null is not an object (evaluating 'result.toString')
+FAIL Shorthand CSSStyleValue from inline CSSOM serializes correctly assert_equals: expected "blue" but got "initial"
 FAIL Shorthand CSSStyleValue from computed CSSOM serializes correctly elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
 

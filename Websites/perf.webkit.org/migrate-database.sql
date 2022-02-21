@@ -1,9 +1,12 @@
+ALTER TABLE triggerable_configurations ADD COLUMN IF NOT EXISTS trigconfig_id serial PRIMARY KEY;
+ALTER TYPE analysis_test_group_repetition_type ADD VALUE IF NOT EXISTS 'paired-parallel';
+
 DO $$
 
 BEGIN
 
 IF NOT EXISTS (SELECT NULL FROM pg_type WHERE typname = 'analysis_test_group_repetition_type') THEN
-    CREATE TYPE analysis_test_group_repetition_type as ENUM ('alternating', 'sequential');
+    CREATE TYPE analysis_test_group_repetition_type as ENUM ('alternating', 'sequential', 'paired-parallel');
 END IF;
 
 ALTER TABLE build_requests ADD COLUMN IF NOT EXISTS request_status_description varchar(1024) DEFAULT NULL;
@@ -21,6 +24,19 @@ CREATE TABLE IF NOT EXISTS platform_groups (
     platformgroup_id serial PRIMARY KEY,
     platformgroup_name varchar(64) NOT NULL,
     CONSTRAINT platform_group_name_must_be_unique UNIQUE (platformgroup_name));
+
+IF NOT EXISTS (SELECT NULL FROM information_schema.tables WHERE TABLE_NAME = 'triggerable_configuration_repetition_types') THEN
+    CREATE TABLE triggerable_configuration_repetition_types (
+        configrepetition_config INTEGER NOT NULL REFERENCES triggerable_configurations ON DELETE CASCADE,
+        configrepetition_type analysis_test_group_repetition_type NOT NULL,
+        PRIMARY KEY (configrepetition_config, configrepetition_type));
+
+    INSERT INTO triggerable_configuration_repetition_types (configrepetition_config, configrepetition_type)
+        SELECT trigconfig_id, 'alternating' FROM triggerable_configurations;
+
+    INSERT INTO triggerable_configuration_repetition_types (configrepetition_config, configrepetition_type)
+        SELECT trigconfig_id, 'sequential' FROM triggerable_configurations;
+END IF;
 
 ALTER TABLE platforms ADD COLUMN IF NOT EXISTS platform_group integer REFERENCES platform_groups DEFAULT NULL;
 

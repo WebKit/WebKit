@@ -3,13 +3,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// RewriteStructSamplers: Extract structs from samplers.
+// RewriteStructSamplers: Extract samplers from structs.
 //
 
 #include "compiler/translator/tree_ops/RewriteStructSamplers.h"
 
 #include "compiler/translator/ImmutableStringBuilder.h"
-#include "compiler/translator/StaticType.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
@@ -18,312 +17,329 @@ namespace sh
 {
 namespace
 {
-// Helper method to get the sampler extracted struct type of a parameter.
-TType *GetStructSamplerParameterType(TSymbolTable *symbolTable, const TVariable &param)
-{
-    const TStructure *structure = param.getType().getStruct();
-    const TSymbol *structSymbol = symbolTable->findUserDefined(structure->name());
-    ASSERT(structSymbol && structSymbol->isStruct());
-    const TStructure *structVar = static_cast<const TStructure *>(structSymbol);
-    TType *structType           = new TType(structVar, false);
 
-    if (param.getType().isArray())
+// Used to map one structure type to another (one where the samplers are removed).
+struct StructureData
+{
+    // The structure this was replaced with.  If nullptr, it means the structure is removed (because
+    // it had all samplers).
+    const TStructure *modified;
+    // Indexed by the field index of original structure, to get the field index of the modified
+    // structure.  For example:
+    //
+    //     struct Original
+    //     {
+    //         sampler2D s1;
+    //         vec4 f1;
+    //         sampler2D s2;
+    //         sampler2D s3;
+    //         vec4 f2;
+    //     };
+    //
+    //     struct Modified
+    //     {
+    //         vec4 f1;
+    //         vec4 f2;
+    //     };
+    //
+    //     fieldMap:
+    //         0 -> Invalid
+    //         1 -> 0
+    //         2 -> Invalid
+    //         3 -> Invalid
+    //         4 -> 1
+    //
+    TVector<int> fieldMap;
+};
+
+using StructureMap        = angle::HashMap<const TStructure *, StructureData>;
+using StructureUniformMap = angle::HashMap<const TVariable *, const TVariable *>;
+using ExtractedSamplerMap = angle::HashMap<std::string, const TVariable *>;
+
+TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+    TCompiler *compiler,
+    TIntermBinary *node,
+    const StructureMap &structureMap,
+    const StructureUniformMap &structureUniformMap,
+    const ExtractedSamplerMap &extractedSamplers);
+
+TIntermTyped *RewriteExpressionVisitBinaryHelper(TCompiler *compiler,
+                                                 TIntermBinary *node,
+                                                 const StructureMap &structureMap,
+                                                 const StructureUniformMap &structureUniformMap,
+                                                 const ExtractedSamplerMap &extractedSamplers)
+{
+    // Only interested in EOpIndexDirectStruct binary nodes.
+    if (node->getOp() != EOpIndexDirectStruct)
     {
-        structType->makeArrays(param.getType().getArraySizes());
+        return nullptr;
     }
 
-    ASSERT(!structType->isStructureContainingSamplers());
+    const TStructure *structure = node->getLeft()->getType().getStruct();
+    ASSERT(structure);
 
-    return structType;
-}
-
-TIntermSymbol *ReplaceTypeOfSymbolNode(TIntermSymbol *symbolNode, TSymbolTable *symbolTable)
-{
-    const TVariable &oldVariable = symbolNode->variable();
-
-    TType *newType = GetStructSamplerParameterType(symbolTable, oldVariable);
-
-    TVariable *newVariable =
-        new TVariable(oldVariable.uniqueId(), oldVariable.name(), oldVariable.symbolType(),
-                      oldVariable.extension(), newType);
-    return new TIntermSymbol(newVariable);
-}
-
-TIntermTyped *ReplaceTypeOfTypedStructNode(TIntermTyped *argument, TSymbolTable *symbolTable)
-{
-    TIntermSymbol *asSymbol = argument->getAsSymbolNode();
-    if (asSymbol)
+    // If the result of the index is not a sampler and the struct is not replaced, there's nothing
+    // to do.
+    if (!node->getType().isSampler() && structureMap.find(structure) == structureMap.end())
     {
-        ASSERT(asSymbol->getType().getStruct());
-        return ReplaceTypeOfSymbolNode(asSymbol, symbolTable);
+        return nullptr;
     }
 
-    TIntermTyped *replacement = argument->deepCopy();
-    TIntermBinary *binary     = replacement->getAsBinaryNode();
-    ASSERT(binary);
+    // Otherwise, replace the whole expression such that:
+    //
+    // - if sampler, it's indexed with whatever indices the parent structs were indexed with,
+    // - otherwise, the chain of field selections is rewritten by modifying the base uniform so all
+    //   the intermediate nodes would have the correct type (and therefore fields).
+    ASSERT(structureMap.find(structure) != structureMap.end());
 
-    while (binary)
+    return RewriteModifiedStructFieldSelectionExpression(compiler, node, structureMap,
+                                                         structureUniformMap, extractedSamplers);
+}
+
+// Given an expression, this traverser calculates a new expression where sampler-in-structs are
+// replaced with their extracted ones, and field indices are adjusted for the rest of the fields.
+// In particular, this is run on the right node of EOpIndexIndirect binary nodes, so that the
+// expression in the index gets a chance to go through this transformation.
+class RewriteExpressionTraverser final : public TIntermTraverser
+{
+  public:
+    explicit RewriteExpressionTraverser(TCompiler *compiler,
+                                        const StructureMap &structureMap,
+                                        const StructureUniformMap &structureUniformMap,
+                                        const ExtractedSamplerMap &extractedSamplers)
+        : TIntermTraverser(true, false, false),
+          mCompiler(compiler),
+          mStructureMap(structureMap),
+          mStructureUniformMap(structureUniformMap),
+          mExtractedSamplers(extractedSamplers)
+    {}
+
+    bool visitBinary(Visit visit, TIntermBinary *node) override
     {
-        ASSERT(binary->getOp() == EOpIndexDirectStruct || binary->getOp() == EOpIndexDirect);
+        TIntermTyped *rewritten = RewriteExpressionVisitBinaryHelper(
+            mCompiler, node, mStructureMap, mStructureUniformMap, mExtractedSamplers);
 
-        asSymbol = binary->getLeft()->getAsSymbolNode();
-
-        if (asSymbol)
+        if (rewritten == nullptr)
         {
-            ASSERT(asSymbol->getType().getStruct());
-            TIntermSymbol *newSymbol = ReplaceTypeOfSymbolNode(asSymbol, symbolTable);
-            binary->replaceChildNode(binary->getLeft(), newSymbol);
-            return replacement;
+            return true;
         }
 
-        binary = binary->getLeft()->getAsBinaryNode();
+        queueReplacement(rewritten, OriginalNode::IS_DROPPED);
+
+        // Don't iterate as the expression is rewritten.
+        return false;
     }
 
-    UNREACHABLE();
-    return nullptr;
-}
-
-void GenerateArrayStrides(const std::vector<size_t> &arraySizes,
-                          std::vector<size_t> *arrayStridesOut)
-{
-    auto &strides = *arrayStridesOut;
-
-    ASSERT(strides.empty());
-    strides.reserve(arraySizes.size() + 1);
-
-    size_t currentStride = 1;
-    strides.push_back(1);
-    for (auto it = arraySizes.rbegin(); it != arraySizes.rend(); ++it)
+    void visitSymbol(TIntermSymbol *node) override
     {
-        currentStride *= *it;
-        strides.push_back(currentStride);
+        // It's impossible to reach here with a symbol that needs replacement.
+        // MonomorphizeUnsupportedFunctions makes sure that whole structs containing
+        // samplers are not passed to functions, so any instance of the struct uniform is
+        // necessarily indexed right away.  visitBinary should have already taken care of it.
+        ASSERT(mStructureUniformMap.find(&node->variable()) == mStructureUniformMap.end());
     }
+
+  private:
+    TCompiler *mCompiler;
+
+    // See RewriteStructSamplersTraverser.
+    const StructureMap &mStructureMap;
+    const StructureUniformMap &mStructureUniformMap;
+    const ExtractedSamplerMap &mExtractedSamplers;
+};
+
+// Rewrite the index of an EOpIndexIndirect expression.  The root can never need replacing, because
+// it cannot be a sampler itself or of a struct type.
+void RewriteIndexExpression(TCompiler *compiler,
+                            TIntermTyped *expression,
+                            const StructureMap &structureMap,
+                            const StructureUniformMap &structureUniformMap,
+                            const ExtractedSamplerMap &extractedSamplers)
+{
+    RewriteExpressionTraverser traverser(compiler, structureMap, structureUniformMap,
+                                         extractedSamplers);
+    expression->traverse(&traverser);
+    bool valid = traverser.updateTree(compiler, expression);
+    ASSERT(valid);
 }
 
-// This returns an expression representing the correct index using the array
-// index operations in node.
-static TIntermTyped *GetIndexExpressionFromTypedNode(TIntermTyped *node,
-                                                     const std::vector<size_t> &strides,
-                                                     TIntermTyped *offset)
+// Given an expression such as the following:
+//
+//                                                    EOpIndexDirectStruct (sampler)
+//                                                    /                  \
+//                                               EOpIndex*           field index
+//                                              /        \
+//                                EOpIndexDirectStruct   index 2
+//                                /                  \
+//                           EOpIndex*           field index
+//                          /        \
+//            EOpIndexDirectStruct   index 1
+//            /                  \
+//     Uniform Struct           field index
+//
+// produces:
+//
+//                                EOpIndex*
+//                                /      \
+//                           EOpIndex*  index 2
+//                          /        \
+//                      sampler    index 1
+//
+// Alternatively, if the expression is as such:
+//
+//                                                    EOpIndexDirectStruct
+//                                                    /                  \
+//                        (modified struct type) EOpIndex*           field index
+//                                              /        \
+//                                EOpIndexDirectStruct   index 2
+//                                /                  \
+//                           EOpIndex*           field index
+//                          /        \
+//            EOpIndexDirectStruct   index 1
+//            /                  \
+//     Uniform Struct           field index
+//
+// produces:
+//
+//                                                    EOpIndexDirectStruct
+//                                                    /                  \
+//                                               EOpIndex*     mapped field index
+//                                              /        \
+//                                EOpIndexDirectStruct   index 2
+//                                /                  \
+//                           EOpIndex*      mapped field index
+//                          /        \
+//            EOpIndexDirectStruct   index 1
+//            /                  \
+//     Uniform Struct     mapped field index
+//
+TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+    TCompiler *compiler,
+    TIntermBinary *node,
+    const StructureMap &structureMap,
+    const StructureUniformMap &structureUniformMap,
+    const ExtractedSamplerMap &extractedSamplers)
 {
-    TIntermTyped *result      = offset;
-    TIntermTyped *currentNode = node;
+    ASSERT(node->getOp() == EOpIndexDirectStruct);
 
-    auto it = strides.end();
-    --it;
-    // If this is being used as an argument, not all indices may be present;
-    // count how many indices are there.
-    while (currentNode->getAsBinaryNode())
+    const bool isSampler = node->getType().isSampler();
+
+    TIntermSymbol *baseUniform = nullptr;
+    std::string samplerName;
+
+    TVector<TIntermBinary *> indexNodeStack;
+
+    // Iterate once and build the name of the sampler.
+    TIntermBinary *iter = node;
+    while (baseUniform == nullptr)
     {
-        TIntermBinary *asBinary = currentNode->getAsBinaryNode();
+        indexNodeStack.push_back(iter);
+        baseUniform = iter->getLeft()->getAsSymbolNode();
 
-        switch (asBinary->getOp())
+        if (isSampler)
+        {
+            if (iter->getOp() == EOpIndexDirectStruct)
+            {
+                // When indexed into a struct, get the field name instead and construct the sampler
+                // name.
+                samplerName.insert(0, iter->getIndexStructFieldName().data());
+                samplerName.insert(0, "_");
+            }
+
+            if (baseUniform)
+            {
+                // If left is a symbol, we have reached the end of the chain.  Use the struct name
+                // to finish building the name of the sampler.
+                samplerName.insert(0, baseUniform->variable().name().data());
+            }
+        }
+
+        iter = iter->getLeft()->getAsBinaryNode();
+    }
+
+    TIntermTyped *rewritten = nullptr;
+
+    if (isSampler)
+    {
+        ASSERT(extractedSamplers.find(samplerName) != extractedSamplers.end());
+        rewritten = new TIntermSymbol(extractedSamplers.at(samplerName));
+    }
+    else
+    {
+        const TVariable *baseUniformVar = &baseUniform->variable();
+        ASSERT(structureUniformMap.find(baseUniformVar) != structureUniformMap.end());
+        rewritten = new TIntermSymbol(structureUniformMap.at(baseUniformVar));
+    }
+
+    // Iterate again and build the expression from bottom up.
+    for (auto it = indexNodeStack.rbegin(); it != indexNodeStack.rend(); ++it)
+    {
+        TIntermBinary *indexNode = *it;
+
+        switch (indexNode->getOp())
         {
             case EOpIndexDirectStruct:
+                if (!isSampler)
+                {
+                    // Remap the field.
+                    const TStructure *structure = indexNode->getLeft()->getType().getStruct();
+                    ASSERT(structureMap.find(structure) != structureMap.end());
+
+                    TIntermConstantUnion *asConstantUnion =
+                        indexNode->getRight()->getAsConstantUnion();
+                    ASSERT(asConstantUnion);
+
+                    const int fieldIndex = asConstantUnion->getIConst(0);
+                    ASSERT(fieldIndex <
+                           static_cast<int>(structureMap.at(structure).fieldMap.size()));
+
+                    const int mappedFieldIndex = structureMap.at(structure).fieldMap[fieldIndex];
+
+                    rewritten = new TIntermBinary(EOpIndexDirectStruct, rewritten,
+                                                  CreateIndexNode(mappedFieldIndex));
+                }
                 break;
 
             case EOpIndexDirect:
-            case EOpIndexIndirect:
-                --it;
+                rewritten = new TIntermBinary(EOpIndexDirect, rewritten, indexNode->getRight());
                 break;
+
+            case EOpIndexIndirect:
+            {
+                // Run RewriteExpressionTraverser on the right node.  It may itself be an expression
+                // with a sampler inside that needs to be rewritten, or simply use a field of a
+                // struct that's remapped.
+                TIntermTyped *indexExpression = indexNode->getRight();
+                RewriteIndexExpression(compiler, indexExpression, structureMap, structureUniformMap,
+                                       extractedSamplers);
+                rewritten = new TIntermBinary(EOpIndexIndirect, rewritten, indexExpression);
+                break;
+            }
 
             default:
                 UNREACHABLE();
                 break;
         }
-
-        currentNode = asBinary->getLeft();
     }
 
-    currentNode = node;
-
-    while (currentNode->getAsBinaryNode())
-    {
-        TIntermBinary *asBinary = currentNode->getAsBinaryNode();
-
-        switch (asBinary->getOp())
-        {
-            case EOpIndexDirectStruct:
-                break;
-
-            case EOpIndexDirect:
-            case EOpIndexIndirect:
-            {
-                TIntermBinary *multiply =
-                    new TIntermBinary(EOpMul, CreateIndexNode(static_cast<int>(*it++)),
-                                      asBinary->getRight()->deepCopy());
-                result = new TIntermBinary(EOpAdd, result, multiply);
-                break;
-            }
-
-            default:
-                UNREACHABLE();
-                break;
-        }
-
-        currentNode = asBinary->getLeft();
-    }
-
-    return result;
+    return rewritten;
 }
 
-// Structures for keeping track of function instantiations.
-
-// An instantiation is keyed by the flattened sizes of the sampler arrays.
-typedef std::vector<size_t> Instantiation;
-
-struct InstantiationHash
-{
-    size_t operator()(const Instantiation &v) const noexcept
-    {
-        std::hash<size_t> hasher;
-        size_t seed = 0;
-        for (size_t x : v)
-        {
-            seed ^= hasher(x) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-        }
-        return seed;
-    }
-};
-
-// Map from each function to a "set" of instantiations.
-// We store a TFunction for each instantiation as its value.
-typedef std::map<ImmutableString, std::unordered_map<Instantiation, TFunction *, InstantiationHash>>
-    FunctionInstantiations;
-
-typedef std::unordered_map<const TFunction *, const TFunction *> FunctionMap;
-
-// Generates a new function from the given function using the given
-// instantiation; generatedInstantiations can be null.
-TFunction *GenerateFunctionFromArguments(const TFunction *function,
-                                         const TIntermSequence *arguments,
-                                         TSymbolTable *symbolTable,
-                                         FunctionInstantiations *functionInstantiations,
-                                         FunctionMap *functionMap,
-                                         const FunctionInstantiations *generatedInstantiations)
-{
-    // Collect sizes of array arguments.
-    Instantiation instantiation;
-    for (TIntermNode *node : *arguments)
-    {
-        const TType &type = node->getAsTyped()->getType();
-        if (type.isArray() && type.isSampler())
-        {
-            ASSERT(type.getNumArraySizes() == 1);
-            instantiation.push_back(type.getArraySizes()[0]);
-        }
-    }
-
-    if (generatedInstantiations)
-    {
-        auto it1 = generatedInstantiations->find(function->name());
-        if (it1 != generatedInstantiations->end())
-        {
-            const auto &map = it1->second;
-            auto it2        = map.find(instantiation);
-            if (it2 != map.end())
-            {
-                return it2->second;
-            }
-        }
-    }
-
-    TFunction **newFunction = &(*functionInstantiations)[function->name()][instantiation];
-
-    if (!*newFunction)
-    {
-        *newFunction =
-            new TFunction(symbolTable, kEmptyImmutableString, SymbolType::AngleInternal,
-                          &function->getReturnType(), function->isKnownToNotHaveSideEffects());
-        (*functionMap)[*newFunction] = function;
-        // Insert parameters from updated function.
-        TFunction *updatedFunction = symbolTable->findUserDefinedFunction(function->name());
-        size_t paramCount          = updatedFunction->getParamCount();
-        auto it                    = instantiation.begin();
-        for (size_t paramIndex = 0; paramIndex < paramCount; ++paramIndex)
-        {
-            const TVariable *param = updatedFunction->getParam(paramIndex);
-            const TType &paramType = param->getType();
-            if (paramType.isArray() && paramType.isSampler())
-            {
-                TType *replacementType = new TType(paramType);
-                size_t arraySize       = *it++;
-                replacementType->setArraySize(0, static_cast<unsigned int>(arraySize));
-                param =
-                    new TVariable(symbolTable, param->name(), replacementType, param->symbolType());
-            }
-            (*newFunction)->addParameter(param);
-        }
-    }
-    return *newFunction;
-}
-
-class ArrayTraverser
+class RewriteStructSamplersTraverser final : public TIntermTraverser
 {
   public:
-    ArrayTraverser() { mCumulativeArraySizeStack.push_back(1); }
-
-    void enterArray(const TType &arrayType)
-    {
-        if (!arrayType.isArray())
-            return;
-        size_t currentArraySize                     = mCumulativeArraySizeStack.back();
-        const TSpan<const unsigned int> &arraySizes = arrayType.getArraySizes();
-        for (auto it = arraySizes.rbegin(); it != arraySizes.rend(); ++it)
-        {
-            unsigned int arraySize = *it;
-            currentArraySize *= arraySize;
-            mArraySizeStack.push_back(arraySize);
-            mCumulativeArraySizeStack.push_back(currentArraySize);
-        }
-    }
-
-    void exitArray(const TType &arrayType)
-    {
-        if (!arrayType.isArray())
-            return;
-        mArraySizeStack.resize(mArraySizeStack.size() - arrayType.getNumArraySizes());
-        mCumulativeArraySizeStack.resize(mCumulativeArraySizeStack.size() -
-                                         arrayType.getNumArraySizes());
-    }
-
-  protected:
-    std::vector<size_t> mArraySizeStack;
-    // The first element is 1; each successive element is the previous
-    // multiplied by the size of the next nested array in the current sampler.
-    // For example, with sampler2D foo[3][6], we would have {1, 3, 18}.
-    std::vector<size_t> mCumulativeArraySizeStack;
-};
-
-struct VariableExtraData
-{
-    // The value consists of strides, starting from the outermost array.
-    // For example, with sampler2D foo[3][6], we would have {1, 6, 18}.
-    std::unordered_map<const TVariable *, std::vector<size_t>> arrayStrideMap;
-    // For each generated array parameter, holds the offset parameter.
-    std::unordered_map<const TVariable *, const TVariable *> paramOffsetMap;
-};
-
-class Traverser final : public TIntermTraverser, public ArrayTraverser
-{
-  public:
-    explicit Traverser(TSymbolTable *symbolTable)
-        : TIntermTraverser(true, false, true, symbolTable), mRemovedUniformsCount(0)
-    {
-        mSymbolTable->push();
-    }
-
-    ~Traverser() override { mSymbolTable->pop(); }
+    explicit RewriteStructSamplersTraverser(TCompiler *compiler, TSymbolTable *symbolTable)
+        : TIntermTraverser(true, false, false, symbolTable),
+          mCompiler(compiler),
+          mRemovedUniformsCount(0)
+    {}
 
     int removedUniformsCount() const { return mRemovedUniformsCount; }
 
     // Each struct sampler declaration is stripped of its samplers. New uniforms are added for each
-    // stripped struct sampler. Flattens all arrays, including default uniforms.
+    // stripped struct sampler.
     bool visitDeclaration(Visit visit, TIntermDeclaration *decl) override
     {
-        if (visit != PreVisit)
-            return true;
-
         if (!mInGlobalScope)
         {
             return true;
@@ -333,225 +349,106 @@ class Traverser final : public TIntermTraverser, public ArrayTraverser
         TIntermTyped *declarator        = sequence.front()->getAsTyped();
         const TType &type               = declarator->getType();
 
-        if (type.isStructureContainingSamplers())
+        if (!type.isStructureContainingSamplers())
         {
-            TIntermSequence *newSequence = new TIntermSequence;
-
-            if (type.isStructSpecifier())
-            {
-                stripStructSpecifierSamplers(type.getStruct(), newSequence);
-            }
-            else
-            {
-                TIntermSymbol *asSymbol = declarator->getAsSymbolNode();
-                ASSERT(asSymbol);
-                const TVariable &variable = asSymbol->variable();
-                ASSERT(variable.symbolType() != SymbolType::Empty);
-                extractStructSamplerUniforms(decl, variable, type.getStruct(), newSequence);
-            }
-
-            mMultiReplacements.emplace_back(getParentNode()->getAsBlock(), decl, *newSequence);
+            return false;
         }
 
-        if ((type.isSampler() || type.isImage()) && type.isArray())
+        TIntermSequence newSequence;
+
+        if (type.isStructSpecifier())
         {
-            TIntermSequence *newSequence = new TIntermSequence;
-            TIntermSymbol *asSymbol      = declarator->getAsSymbolNode();
+            // If this is just a struct definition (not a uniform variable declaration of a
+            // struct type), just remove the samplers.  They are not instantiated yet.
+            const TStructure *structure = type.getStruct();
+            ASSERT(structure && mStructureMap.find(structure) == mStructureMap.end());
+
+            stripStructSpecifierSamplers(structure, &newSequence);
+        }
+        else
+        {
+            const TStructure *structure = type.getStruct();
+
+            // If the structure is defined at the same time, create the mapping to the stripped
+            // version first.
+            if (mStructureMap.find(structure) == mStructureMap.end())
+            {
+                stripStructSpecifierSamplers(structure, &newSequence);
+            }
+
+            // Then, extract the samplers from the struct and create global-scope variables instead.
+            TIntermSymbol *asSymbol = declarator->getAsSymbolNode();
             ASSERT(asSymbol);
             const TVariable &variable = asSymbol->variable();
             ASSERT(variable.symbolType() != SymbolType::Empty);
-            extractSampler(variable.name(), variable.symbolType(), variable.getType(), newSequence,
-                           0);
-            mMultiReplacements.emplace_back(getParentNode()->getAsBlock(), decl, *newSequence);
+
+            extractStructSamplerUniforms(variable, structure, &newSequence);
         }
 
-        return true;
+        mMultiReplacements.emplace_back(getParentNode()->getAsBlock(), decl,
+                                        std::move(newSequence));
+
+        return false;
     }
 
-    // Each struct sampler reference is replaced with a reference to the new extracted sampler.
+    // Same implementation as in RewriteExpressionTraverser.  That traverser cannot replace root.
     bool visitBinary(Visit visit, TIntermBinary *node) override
     {
-        if (visit != PreVisit)
-            return true;
-        // If the node isn't a sampler and it isn't an image or if this isn't the outermost
-        // access, continue.
-        if ((!node->getType().isSampler() && !node->getType().isImage()) ||
-            node->getType().isArray())
+        TIntermTyped *rewritten = RewriteExpressionVisitBinaryHelper(
+            mCompiler, node, mStructureMap, mStructureUniformMap, mExtractedSamplers);
+
+        if (rewritten == nullptr)
         {
             return true;
         }
 
-        if (node->getOp() == EOpIndexDirect || node->getOp() == EOpIndexIndirect ||
-            node->getOp() == EOpIndexDirectStruct)
-        {
-            ImmutableString newName = GetStructSamplerNameFromTypedNode(node);
-            const TVariable *samplerReplacement =
-                static_cast<const TVariable *>(mSymbolTable->findUserDefined(newName));
-            ASSERT(samplerReplacement);
+        queueReplacement(rewritten, OriginalNode::IS_DROPPED);
 
-            TIntermTyped *replacement = new TIntermSymbol(samplerReplacement);
-
-            if (replacement->isArray())
-            {
-                // Add in an indirect index if contained in an array
-                const auto &strides = mVariableExtraData.arrayStrideMap[samplerReplacement];
-                ASSERT(!strides.empty());
-                if (strides.size() > 1)
-                {
-                    auto it = mVariableExtraData.paramOffsetMap.find(samplerReplacement);
-
-                    TIntermTyped *offset =
-                        it == mVariableExtraData.paramOffsetMap.end()
-                            ? static_cast<TIntermTyped *>(CreateIndexNode(0))
-                            : static_cast<TIntermTyped *>(new TIntermSymbol(it->second));
-
-                    TIntermTyped *index = GetIndexExpressionFromTypedNode(node, strides, offset);
-                    replacement         = new TIntermBinary(EOpIndexIndirect, replacement, index);
-                }
-            }
-
-            queueReplacement(replacement, OriginalNode::IS_DROPPED);
-            return true;
-        }
-
-        return true;
+        // Don't iterate as the expression is rewritten.
+        return false;
     }
 
-    // In we are passing references to structs containing samplers we must new additional
-    // arguments. For each extracted struct sampler a new argument is added. This chains to nested
-    // structs.
-    void visitFunctionPrototype(TIntermFunctionPrototype *node) override
+    // Same implementation as in RewriteExpressionTraverser.  That traverser cannot replace root.
+    void visitSymbol(TIntermSymbol *node) override
     {
-        const TFunction *function = node->getFunction();
-
-        if (!function->hasSamplerInStructOrArrayParams())
-        {
-            return;
-        }
-
-        const TSymbol *foundFunction = mSymbolTable->findUserDefined(function->name());
-        if (foundFunction)
-        {
-            ASSERT(foundFunction->isFunction());
-            function = static_cast<const TFunction *>(foundFunction);
-        }
-        else
-        {
-            TFunction *newFunction = createStructSamplerFunction(function);
-            mSymbolTable->declareUserDefinedFunction(newFunction, true);
-            function = newFunction;
-        }
-
-        ASSERT(!function->hasSamplerInStructOrArrayOfArrayParams());
-        TIntermFunctionPrototype *newProto = new TIntermFunctionPrototype(function);
-        queueReplacement(newProto, OriginalNode::IS_DROPPED);
-    }
-
-    // We insert a new scope for each function definition so we can track the new parameters.
-    bool visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node) override
-    {
-        if (visit == PreVisit)
-        {
-            mSymbolTable->push();
-        }
-        else
-        {
-            ASSERT(visit == PostVisit);
-            mSymbolTable->pop();
-        }
-        return true;
-    }
-
-    // For function call nodes we pass references to the extracted struct samplers in that scope.
-    bool visitAggregate(Visit visit, TIntermAggregate *node) override
-    {
-        if (visit != PreVisit)
-            return true;
-
-        if (!node->isFunctionCall())
-            return true;
-
-        const TFunction *function = node->getFunction();
-        if (!function->hasSamplerInStructOrArrayParams())
-            return true;
-
-        ASSERT(node->getOp() == EOpCallFunctionInAST);
-        TIntermSequence *newArguments = getStructSamplerArguments(function, node->getSequence());
-
-        TFunction *newFunction = GenerateFunctionFromArguments(
-            function, newArguments, mSymbolTable, &mFunctionInstantiations, &mFunctionMap, nullptr);
-
-        TIntermAggregate *newCall =
-            TIntermAggregate::CreateFunctionCall(*newFunction, newArguments);
-        queueReplacement(newCall, OriginalNode::IS_DROPPED);
-        return true;
-    }
-
-    FunctionInstantiations *getFunctionInstantiations() { return &mFunctionInstantiations; }
-
-    std::unordered_map<const TFunction *, const TFunction *> *getFunctionMap()
-    {
-        return &mFunctionMap;
+        ASSERT(mStructureUniformMap.find(&node->variable()) == mStructureUniformMap.end());
     }
 
   private:
-    // This returns the name of a struct sampler reference. References are always TIntermBinary.
-    static ImmutableString GetStructSamplerNameFromTypedNode(TIntermTyped *node)
-    {
-        std::string stringBuilder;
-
-        TIntermTyped *currentNode = node;
-        while (currentNode->getAsBinaryNode())
-        {
-            TIntermBinary *asBinary = currentNode->getAsBinaryNode();
-
-            switch (asBinary->getOp())
-            {
-                case EOpIndexDirectStruct:
-                {
-                    stringBuilder.insert(0, asBinary->getIndexStructFieldName().data());
-                    stringBuilder.insert(0, "_");
-                    break;
-                }
-
-                case EOpIndexDirect:
-                case EOpIndexIndirect:
-                    break;
-
-                default:
-                    UNREACHABLE();
-                    break;
-            }
-
-            currentNode = asBinary->getLeft();
-        }
-
-        const ImmutableString &variableName = currentNode->getAsSymbolNode()->variable().name();
-        stringBuilder.insert(0, variableName.data());
-
-        return stringBuilder;
-    }
-
-    // Removes all the struct samplers from a struct specifier.
+    // Removes all samplers from a struct specifier.
     void stripStructSpecifierSamplers(const TStructure *structure, TIntermSequence *newSequence)
     {
         TFieldList *newFieldList = new TFieldList;
         ASSERT(structure->containsSamplers());
 
-        for (const TField *field : structure->fields())
+        // Add this struct to the struct map
+        ASSERT(mStructureMap.find(structure) == mStructureMap.end());
+        StructureData *modifiedData = &mStructureMap[structure];
+
+        modifiedData->modified = nullptr;
+        modifiedData->fieldMap.resize(structure->fields().size(), std::numeric_limits<int>::max());
+
+        for (size_t fieldIndex = 0; fieldIndex < structure->fields().size(); ++fieldIndex)
         {
+            const TField *field    = structure->fields()[fieldIndex];
             const TType &fieldType = *field->type();
+
+            // If the field is a sampler, or a struct that's entirely removed, skip it.
             if (!fieldType.isSampler() && !isRemovedStructType(fieldType))
             {
                 TType *newType = nullptr;
 
+                // Otherwise, if it's a struct that's replaced, create a new field of the replaced
+                // type.
                 if (fieldType.isStructureContainingSamplers())
                 {
-                    const TSymbol *structSymbol =
-                        mSymbolTable->findUserDefined(fieldType.getStruct()->name());
-                    ASSERT(structSymbol && structSymbol->isStruct());
-                    const TStructure *fieldStruct = static_cast<const TStructure *>(structSymbol);
-                    newType                       = new TType(fieldStruct, true);
+                    const TStructure *fieldStruct = fieldType.getStruct();
+                    ASSERT(mStructureMap.find(fieldStruct) != mStructureMap.end());
+
+                    const TStructure *modifiedStruct = mStructureMap[fieldStruct].modified;
+                    ASSERT(modifiedStruct);
+
+                    newType = new TType(modifiedStruct, true);
                     if (fieldType.isArray())
                     {
                         newType->makeArrays(fieldType.getArraySizes());
@@ -559,8 +456,13 @@ class Traverser final : public TIntermTraverser, public ArrayTraverser
                 }
                 else
                 {
+                    // If not, duplicate the field as is.
                     newType = new TType(fieldType);
                 }
+
+                // Record the mapping of the field indices, so future EOpIndexDirectStruct's into
+                // this struct can be fixed up.
+                modifiedData->fieldMap[fieldIndex] = static_cast<int>(newFieldList->size());
 
                 TField *newField =
                     new TField(newType, field->name(), field->line(), field->symbolType());
@@ -571,13 +473,13 @@ class Traverser final : public TIntermTraverser, public ArrayTraverser
         // Prune empty structs.
         if (newFieldList->empty())
         {
-            mRemovedStructs.insert(structure->name());
             return;
         }
 
-        TStructure *newStruct =
+        // Declare a new struct with the same name and the new fields.
+        modifiedData->modified =
             new TStructure(mSymbolTable, structure->name(), newFieldList, structure->symbolType());
-        TType *newStructType = new TType(newStruct, true);
+        TType *newStructType = new TType(modifiedData->modified, true);
         TVariable *newStructVar =
             new TVariable(mSymbolTable, kEmptyImmutableString, newStructType, SymbolType::Empty);
         TIntermSymbol *newStructRef = new TIntermSymbol(newStructVar);
@@ -586,75 +488,83 @@ class Traverser final : public TIntermTraverser, public ArrayTraverser
         structDecl->appendDeclarator(newStructRef);
 
         newSequence->push_back(structDecl);
-
-        mSymbolTable->declare(newStruct);
     }
 
     // Returns true if the type is a struct that was removed because we extracted all the members.
     bool isRemovedStructType(const TType &type) const
     {
         const TStructure *structure = type.getStruct();
-        return (structure && (mRemovedStructs.count(structure->name()) > 0));
+        if (structure == nullptr)
+        {
+            // Not a struct
+            return false;
+        }
+
+        // A struct is removed if it is in the map, but doesn't have a replacement struct.
+        auto iter = mStructureMap.find(structure);
+        return iter != mStructureMap.end() && iter->second.modified == nullptr;
     }
 
     // Removes samplers from struct uniforms. For each sampler removed also adds a new globally
     // defined sampler uniform.
-    void extractStructSamplerUniforms(TIntermDeclaration *oldDeclaration,
-                                      const TVariable &variable,
+    void extractStructSamplerUniforms(const TVariable &variable,
                                       const TStructure *structure,
                                       TIntermSequence *newSequence)
     {
         ASSERT(structure->containsSamplers());
+        ASSERT(mStructureMap.find(structure) != mStructureMap.end());
 
-        size_t nonSamplerCount = 0;
-
-        enterArray(variable.getType());
+        const TType &type = variable.getType();
+        enterArray(type);
 
         for (const TField *field : structure->fields())
         {
-            nonSamplerCount +=
-                extractFieldSamplers(variable.name(), field, variable.getType(), newSequence);
+            extractFieldSamplers(variable.name().data(), field, newSequence);
         }
 
-        if (nonSamplerCount > 0)
+        // If there's a replacement structure (because there are non-sampler fields in the struct),
+        // add a declaration with that type.
+        const TStructure *modified = mStructureMap[structure].modified;
+        if (modified != nullptr)
         {
-            // Keep the old declaration around if it has other members.
-            newSequence->push_back(oldDeclaration);
+            TType *newType = new TType(modified, false);
+            if (type.isArray())
+            {
+                newType->makeArrays(type.getArraySizes());
+            }
+            newType->setQualifier(EvqUniform);
+            const TVariable *newVariable =
+                new TVariable(mSymbolTable, variable.name(), newType, variable.symbolType());
+
+            TIntermDeclaration *newDecl = new TIntermDeclaration();
+            newDecl->appendDeclarator(new TIntermSymbol(newVariable));
+
+            newSequence->push_back(newDecl);
+
+            ASSERT(mStructureUniformMap.find(&variable) == mStructureUniformMap.end());
+            mStructureUniformMap[&variable] = newVariable;
         }
         else
         {
             mRemovedUniformsCount++;
         }
 
-        exitArray(variable.getType());
+        exitArray(type);
     }
 
     // Extracts samplers from a field of a struct. Works with nested structs and arrays.
-    size_t extractFieldSamplers(const ImmutableString &prefix,
-                                const TField *field,
-                                const TType &containingType,
-                                TIntermSequence *newSequence)
+    void extractFieldSamplers(const std::string &prefix,
+                              const TField *field,
+                              TIntermSequence *newSequence)
     {
-        return extractFieldSamplersImpl(prefix, field, newSequence);
-    }
-
-    // Extracts samplers from a field of a struct. Works with nested structs and arrays.
-    size_t extractFieldSamplersImpl(const ImmutableString &prefix,
-                                    const TField *field,
-                                    TIntermSequence *newSequence)
-    {
-        size_t nonSamplerCount = 0;
-
         const TType &fieldType = *field->type();
         if (fieldType.isSampler() || fieldType.isStructureContainingSamplers())
         {
-            ImmutableStringBuilder stringBuilder(prefix.length() + field->name().length() + 1);
-            stringBuilder << prefix << "_" << field->name();
-            ImmutableString newPrefix(stringBuilder);
+            std::string newPrefix = prefix + "_" + field->name().data();
 
             if (fieldType.isSampler())
             {
-                extractSampler(newPrefix, SymbolType::AngleInternal, fieldType, newSequence, 0);
+                extractSampler(newPrefix, fieldType, newSequence);
             }
             else
             {
@@ -662,544 +572,91 @@ class Traverser final : public TIntermTraverser, public ArrayTraverser
                 const TStructure *structure = fieldType.getStruct();
                 for (const TField *nestedField : structure->fields())
                 {
-                    nonSamplerCount +=
-                        extractFieldSamplers(newPrefix, nestedField, fieldType, newSequence);
+                    extractFieldSamplers(newPrefix, nestedField, newSequence);
                 }
                 exitArray(fieldType);
             }
         }
-        else
-        {
-            nonSamplerCount++;
-        }
+    }
 
-        return nonSamplerCount;
+    void GenerateArraySizesFromStack(TVector<unsigned int> *sizesOut)
+    {
+        sizesOut->reserve(mArraySizeStack.size());
+
+        for (auto it = mArraySizeStack.rbegin(); it != mArraySizeStack.rend(); ++it)
+        {
+            sizesOut->push_back(*it);
+        }
     }
 
     // Extracts a sampler from a struct. Declares the new extracted sampler.
-    void extractSampler(const ImmutableString &newName,
-                        SymbolType symbolType,
+    void extractSampler(const std::string &newName,
                         const TType &fieldType,
-                        TIntermSequence *newSequence,
-                        size_t arrayLevel)
+                        TIntermSequence *newSequence)
     {
-        enterArray(fieldType);
+        ASSERT(fieldType.isSampler());
 
         TType *newType = new TType(fieldType);
-        while (newType->isArray())
-        {
-            newType->toArrayElementType();
-        }
-        if (!mArraySizeStack.empty())
-        {
-            newType->makeArray(static_cast<unsigned int>(mCumulativeArraySizeStack.back()));
-        }
+
+        // Add array dimensions accumulated so far due to struct arrays.  Note that to support
+        // nested arrays, mArraySizeStack has the outermost size in the front.  |makeArrays| thus
+        // expects this in reverse order.
+        TVector<unsigned int> parentArraySizes;
+        GenerateArraySizesFromStack(&parentArraySizes);
+        newType->makeArrays(parentArraySizes);
+
+        ImmutableStringBuilder nameBuilder(newName.size() + 1);
+        nameBuilder << newName;
+
         newType->setQualifier(EvqUniform);
-        TVariable *newVariable = new TVariable(mSymbolTable, newName, newType, symbolType);
-        TIntermSymbol *newRef  = new TIntermSymbol(newVariable);
+        TVariable *newVariable =
+            new TVariable(mSymbolTable, nameBuilder, newType, SymbolType::AngleInternal);
+        TIntermSymbol *newSymbol = new TIntermSymbol(newVariable);
 
         TIntermDeclaration *samplerDecl = new TIntermDeclaration;
-        samplerDecl->appendDeclarator(newRef);
+        samplerDecl->appendDeclarator(newSymbol);
 
         newSequence->push_back(samplerDecl);
 
-        // TODO(syoussefi): Use a SymbolType::Empty name instead of generating a name as currently
-        // done.  There is no guarantee that these generated names cannot clash.  Create a mapping
-        // from the previous name to the name assigned to the SymbolType::Empty variable so
-        // ShaderVariable::mappedName can be updated post-transformation.
-        // http://anglebug.com/4301
-        if (symbolType == SymbolType::AngleInternal)
-        {
-            mSymbolTable->declareInternal(newVariable);
-        }
-        else
-        {
-            mSymbolTable->declare(newVariable);
-        }
-
-        GenerateArrayStrides(mArraySizeStack, &mVariableExtraData.arrayStrideMap[newVariable]);
-
-        exitArray(fieldType);
+        // TODO: Use a temp name instead of generating a name as currently done.  There is no
+        // guarantee that these generated names cannot clash.  Create a mapping from the previous
+        // name to the name assigned to the temp variable so ShaderVariable::mappedName can be
+        // updated post-transformation.  http://anglebug.com/4301
+        ASSERT(mExtractedSamplers.find(newName) == mExtractedSamplers.end());
+        mExtractedSamplers[newName] = newVariable;
     }
 
-    // Returns the chained name of a sampler uniform field.
-    static ImmutableString GetFieldName(const ImmutableString &paramName, const TField *field)
+    void enterArray(const TType &arrayType)
     {
-        ImmutableStringBuilder nameBuilder(paramName.length() + 1 + field->name().length());
-        nameBuilder << paramName << "_";
-        nameBuilder << field->name();
-
-        return nameBuilder;
-    }
-
-    // A pattern that visits every parameter of a function call. Uses different handlers for struct
-    // parameters, struct sampler parameters, and non-struct parameters.
-    class StructSamplerFunctionVisitor : angle::NonCopyable, public ArrayTraverser
-    {
-      public:
-        StructSamplerFunctionVisitor()          = default;
-        virtual ~StructSamplerFunctionVisitor() = default;
-
-        virtual void traverse(const TFunction *function)
+        const TSpan<const unsigned int> &arraySizes = arrayType.getArraySizes();
+        for (auto it = arraySizes.rbegin(); it != arraySizes.rend(); ++it)
         {
-            size_t paramCount = function->getParamCount();
-
-            for (size_t paramIndex = 0; paramIndex < paramCount; ++paramIndex)
-            {
-                const TVariable *param = function->getParam(paramIndex);
-                const TType &paramType = param->getType();
-
-                if (paramType.isStructureContainingSamplers())
-                {
-                    const ImmutableString &baseName = getNameFromIndex(function, paramIndex);
-                    if (traverseStructContainingSamplers(baseName, paramType, paramIndex))
-                    {
-                        visitStructParam(function, paramIndex);
-                    }
-                }
-                else if (paramType.isArray() && paramType.isSampler())
-                {
-                    const ImmutableString &paramName = getNameFromIndex(function, paramIndex);
-                    traverseLeafSampler(paramName, paramType, paramIndex);
-                }
-                else
-                {
-                    visitNonStructParam(function, paramIndex);
-                }
-            }
-        }
-
-        virtual ImmutableString getNameFromIndex(const TFunction *function, size_t paramIndex) = 0;
-        // Also includes samplers in arrays of arrays.
-        virtual void visitSamplerInStructParam(const ImmutableString &name,
-                                               const TType *type,
-                                               size_t paramIndex)                      = 0;
-        virtual void visitStructParam(const TFunction *function, size_t paramIndex)    = 0;
-        virtual void visitNonStructParam(const TFunction *function, size_t paramIndex) = 0;
-
-      private:
-        bool traverseStructContainingSamplers(const ImmutableString &baseName,
-                                              const TType &structType,
-                                              size_t paramIndex)
-        {
-            bool hasNonSamplerFields    = false;
-            const TStructure *structure = structType.getStruct();
-            enterArray(structType);
-            for (const TField *field : structure->fields())
-            {
-                if (field->type()->isStructureContainingSamplers() || field->type()->isSampler())
-                {
-                    if (traverseSamplerInStruct(baseName, structType, field, paramIndex))
-                    {
-                        hasNonSamplerFields = true;
-                    }
-                }
-                else
-                {
-                    hasNonSamplerFields = true;
-                }
-            }
-            exitArray(structType);
-            return hasNonSamplerFields;
-        }
-
-        bool traverseSamplerInStruct(const ImmutableString &baseName,
-                                     const TType &baseType,
-                                     const TField *field,
-                                     size_t paramIndex)
-        {
-            bool hasNonSamplerParams = false;
-
-            if (field->type()->isStructureContainingSamplers())
-            {
-                ImmutableString name = GetFieldName(baseName, field);
-                hasNonSamplerParams =
-                    traverseStructContainingSamplers(name, *field->type(), paramIndex);
-            }
-            else
-            {
-                ASSERT(field->type()->isSampler());
-                ImmutableString name = GetFieldName(baseName, field);
-                traverseLeafSampler(name, *field->type(), paramIndex);
-            }
-
-            return hasNonSamplerParams;
-        }
-
-        void traverseLeafSampler(const ImmutableString &samplerName,
-                                 const TType &samplerType,
-                                 size_t paramIndex)
-        {
-            enterArray(samplerType);
-            visitSamplerInStructParam(samplerName, &samplerType, paramIndex);
-            exitArray(samplerType);
-            return;
-        }
-    };
-
-    // A visitor that replaces functions with struct sampler references. The struct sampler
-    // references are expanded to include new fields for the structs.
-    class CreateStructSamplerFunctionVisitor final : public StructSamplerFunctionVisitor
-    {
-      public:
-        CreateStructSamplerFunctionVisitor(TSymbolTable *symbolTable, VariableExtraData *extraData)
-            : mSymbolTable(symbolTable), mNewFunction(nullptr), mExtraData(extraData)
-        {}
-
-        ImmutableString getNameFromIndex(const TFunction *function, size_t paramIndex) override
-        {
-            const TVariable *param = function->getParam(paramIndex);
-            return param->name();
-        }
-
-        void traverse(const TFunction *function) override
-        {
-            mNewFunction =
-                new TFunction(mSymbolTable, function->name(), function->symbolType(),
-                              &function->getReturnType(), function->isKnownToNotHaveSideEffects());
-
-            StructSamplerFunctionVisitor::traverse(function);
-        }
-
-        void visitSamplerInStructParam(const ImmutableString &name,
-                                       const TType *type,
-                                       size_t paramIndex) override
-        {
-            if (mArraySizeStack.size() > 0)
-            {
-                TType *newType = new TType(*type);
-                newType->toArrayBaseType();
-                newType->makeArray(static_cast<unsigned int>(mCumulativeArraySizeStack.back()));
-                type = newType;
-            }
-            TVariable *fieldSampler =
-                new TVariable(mSymbolTable, name, type, SymbolType::AngleInternal);
-            mNewFunction->addParameter(fieldSampler);
-            mSymbolTable->declareInternal(fieldSampler);
-            if (mArraySizeStack.size() > 0)
-            {
-                // Also declare an offset parameter.
-                const TType *intType     = StaticType::GetBasic<EbtInt>();
-                TVariable *samplerOffset = new TVariable(mSymbolTable, kEmptyImmutableString,
-                                                         intType, SymbolType::AngleInternal);
-                mNewFunction->addParameter(samplerOffset);
-                GenerateArrayStrides(mArraySizeStack, &mExtraData->arrayStrideMap[fieldSampler]);
-                mExtraData->paramOffsetMap[fieldSampler] = samplerOffset;
-            }
-        }
-
-        void visitStructParam(const TFunction *function, size_t paramIndex) override
-        {
-            const TVariable *param = function->getParam(paramIndex);
-            TType *structType      = GetStructSamplerParameterType(mSymbolTable, *param);
-            TVariable *newParam =
-                new TVariable(mSymbolTable, param->name(), structType, param->symbolType());
-            mNewFunction->addParameter(newParam);
-        }
-
-        void visitNonStructParam(const TFunction *function, size_t paramIndex) override
-        {
-            const TVariable *param = function->getParam(paramIndex);
-            mNewFunction->addParameter(param);
-        }
-
-        TFunction *getNewFunction() const { return mNewFunction; }
-
-      private:
-        TSymbolTable *mSymbolTable;
-        TFunction *mNewFunction;
-        VariableExtraData *mExtraData;
-    };
-
-    TFunction *createStructSamplerFunction(const TFunction *function)
-    {
-        CreateStructSamplerFunctionVisitor visitor(mSymbolTable, &mVariableExtraData);
-        visitor.traverse(function);
-        return visitor.getNewFunction();
-    }
-
-    // A visitor that replaces function calls with expanded struct sampler parameters.
-    class GetSamplerArgumentsVisitor final : public StructSamplerFunctionVisitor
-    {
-      public:
-        GetSamplerArgumentsVisitor(TSymbolTable *symbolTable,
-                                   const TIntermSequence *arguments,
-                                   VariableExtraData *extraData)
-            : mSymbolTable(symbolTable),
-              mArguments(arguments),
-              mNewArguments(new TIntermSequence),
-              mExtraData(extraData)
-        {}
-
-        ImmutableString getNameFromIndex(const TFunction *function, size_t paramIndex) override
-        {
-            TIntermTyped *argument = (*mArguments)[paramIndex]->getAsTyped();
-            return GetStructSamplerNameFromTypedNode(argument);
-        }
-
-        void visitSamplerInStructParam(const ImmutableString &name,
-                                       const TType *type,
-                                       size_t paramIndex) override
-        {
-            const TVariable *argSampler =
-                static_cast<const TVariable *>(mSymbolTable->findUserDefined(name));
-            ASSERT(argSampler);
-
-            TIntermTyped *argument = (*mArguments)[paramIndex]->getAsTyped();
-
-            auto it = mExtraData->paramOffsetMap.find(argSampler);
-            TIntermTyped *argOffset =
-                it == mExtraData->paramOffsetMap.end()
-                    ? static_cast<TIntermTyped *>(CreateIndexNode(0))
-                    : static_cast<TIntermTyped *>(new TIntermSymbol(it->second));
-
-            TIntermTyped *finalOffset = GetIndexExpressionFromTypedNode(
-                argument, mExtraData->arrayStrideMap[argSampler], argOffset);
-
-            TIntermSymbol *argSymbol = new TIntermSymbol(argSampler);
-
-            // If we have a regular sampler inside a struct (possibly an array
-            // of structs), handle this case separately.
-            if (!type->isArray() && mArraySizeStack.size() == 0)
-            {
-                if (argSampler->getType().isArray())
-                {
-                    TIntermTyped *argIndex =
-                        new TIntermBinary(EOpIndexIndirect, argSymbol, finalOffset);
-                    mNewArguments->push_back(argIndex);
-                }
-                else
-                {
-                    mNewArguments->push_back(argSymbol);
-                }
-                return;
-            }
-
-            mNewArguments->push_back(argSymbol);
-
-            mNewArguments->push_back(finalOffset);
-            // If array, we need to calculate the offset based on what indices
-            // are present in the argument.
-        }
-
-        void visitStructParam(const TFunction *function, size_t paramIndex) override
-        {
-            // The tree structure of the parameter is modified to point to the new type. This leaves
-            // the tree in a consistent state.
-            TIntermTyped *argument    = (*mArguments)[paramIndex]->getAsTyped();
-            TIntermTyped *replacement = ReplaceTypeOfTypedStructNode(argument, mSymbolTable);
-            mNewArguments->push_back(replacement);
-        }
-
-        void visitNonStructParam(const TFunction *function, size_t paramIndex) override
-        {
-            TIntermTyped *argument = (*mArguments)[paramIndex]->getAsTyped();
-            mNewArguments->push_back(argument);
-        }
-
-        TIntermSequence *getNewArguments() const { return mNewArguments; }
-
-      private:
-        TSymbolTable *mSymbolTable;
-        const TIntermSequence *mArguments;
-        TIntermSequence *mNewArguments;
-        VariableExtraData *mExtraData;
-    };
-
-    TIntermSequence *getStructSamplerArguments(const TFunction *function,
-                                               const TIntermSequence *arguments)
-    {
-        GetSamplerArgumentsVisitor visitor(mSymbolTable, arguments, &mVariableExtraData);
-        visitor.traverse(function);
-        return visitor.getNewArguments();
-    }
-
-    int mRemovedUniformsCount;
-    std::set<ImmutableString> mRemovedStructs;
-    FunctionInstantiations mFunctionInstantiations;
-    FunctionMap mFunctionMap;
-    VariableExtraData mVariableExtraData;
-};
-
-class MonomorphizeTraverser final : public TIntermTraverser
-{
-  public:
-    typedef std::unordered_map<const TVariable *, const TVariable *> VariableReplacementMap;
-
-    explicit MonomorphizeTraverser(
-        TCompiler *compiler,
-        TSymbolTable *symbolTable,
-        FunctionInstantiations *functionInstantiations,
-        std::unordered_map<const TFunction *, const TFunction *> *functionMap)
-        : TIntermTraverser(true, false, true, symbolTable),
-          mFunctionInstantiations(*functionInstantiations),
-          mFunctionMap(functionMap),
-          mCompiler(compiler),
-          mSubpassesSucceeded(true)
-    {}
-
-    void switchToPending()
-    {
-        mFunctionInstantiations.clear();
-        mFunctionInstantiations.swap(mPendingInstantiations);
-    }
-
-    bool hasPending()
-    {
-        if (mPendingInstantiations.empty())
-            return false;
-        for (auto &entry : mPendingInstantiations)
-        {
-            if (!entry.second.empty())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool subpassesSucceeded() { return mSubpassesSucceeded; }
-
-    void visitFunctionPrototype(TIntermFunctionPrototype *node) override
-    {
-        mReplacementPrototypes.clear();
-        const TFunction *function = node->getFunction();
-
-        auto &generatedMap = mGeneratedInstantiations[function->name()];
-
-        auto it = mFunctionInstantiations.find(function->name());
-        if (it == mFunctionInstantiations.end())
-            return;
-        for (const auto &instantiation : it->second)
-        {
-            TFunction *replacementFunction = instantiation.second;
-            mReplacementPrototypes.push_back(new TIntermFunctionPrototype(replacementFunction));
-            generatedMap[instantiation.first] = replacementFunction;
-        }
-        if (!mInFunctionDefinition)
-        {
-            insertStatementsInParentBlock(mReplacementPrototypes);
+            unsigned int arraySize = *it;
+            mArraySizeStack.push_back(arraySize);
         }
     }
 
-    bool visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node) override
+    void exitArray(const TType &arrayType)
     {
-        mInFunctionDefinition = visit == PreVisit;
-        if (visit != PostVisit)
-            return true;
-        TIntermSequence replacements;
-        const TFunction *function = node->getFunction();
-        size_t numParameters      = function->getParamCount();
-
-        for (TIntermNode *replacementNode : mReplacementPrototypes)
-        {
-            TIntermFunctionPrototype *replacementPrototype =
-                replacementNode->getAsFunctionPrototypeNode();
-            const TFunction *replacementFunction = replacementPrototype->getFunction();
-
-            // Replace function parameters with correct array sizes.
-            VariableReplacementMap variableReplacementMap;
-            ASSERT(replacementPrototype->getFunction()->getParamCount() == numParameters);
-            for (size_t i = 0; i < numParameters; i++)
-            {
-                const TVariable *origParam = function->getParam(i);
-                const TVariable *newParam  = replacementFunction->getParam(i);
-                if (origParam != newParam)
-                {
-                    variableReplacementMap[origParam] = newParam;
-                }
-            }
-
-            TIntermBlock *body = node->getBody()->deepCopy();
-            ReplaceVariablesTraverser replaceVariables(mSymbolTable, &variableReplacementMap);
-            body->traverse(&replaceVariables);
-            mSubpassesSucceeded &= replaceVariables.updateTree(mCompiler, body);
-            CollectNewInstantiationsTraverser collectNewInstantiations(
-                mSymbolTable, &mPendingInstantiations, &mGeneratedInstantiations, mFunctionMap);
-            body->traverse(&collectNewInstantiations);
-            mSubpassesSucceeded &= collectNewInstantiations.updateTree(mCompiler, body);
-            replacements.push_back(new TIntermFunctionDefinition(replacementPrototype, body));
-        }
-        insertStatementsInParentBlock(replacements);
-        return true;
+        mArraySizeStack.resize(mArraySizeStack.size() - arrayType.getNumArraySizes());
     }
 
-  private:
-    bool mInFunctionDefinition;
-    FunctionInstantiations mFunctionInstantiations;
-    // Set of already-generated instantiations.
-    FunctionInstantiations mGeneratedInstantiations;
-    // New instantiations caused by other instantiations.
-    FunctionInstantiations mPendingInstantiations;
-    std::unordered_map<const TFunction *, const TFunction *> *mFunctionMap;
-    TIntermSequence mReplacementPrototypes;
     TCompiler *mCompiler;
-    bool mSubpassesSucceeded;
+    int mRemovedUniformsCount;
 
-    class ReplaceVariablesTraverser : public TIntermTraverser
-    {
-      public:
-        explicit ReplaceVariablesTraverser(TSymbolTable *symbolTable,
-                                           VariableReplacementMap *variableReplacementMap)
-            : TIntermTraverser(true, false, false, symbolTable),
-              mVariableReplacementMap(variableReplacementMap)
-        {}
+    // Map structures with samplers to ones that have their samplers removed.
+    StructureMap mStructureMap;
 
-        void visitSymbol(TIntermSymbol *node) override
-        {
-            const TVariable *variable = &node->variable();
-            auto it                   = mVariableReplacementMap->find(variable);
-            if (it != mVariableReplacementMap->end())
-            {
-                queueReplacement(new TIntermSymbol(it->second), OriginalNode::IS_DROPPED);
-            }
-        }
+    // Map uniform variables of structure type that are replaced with another variable.
+    StructureUniformMap mStructureUniformMap;
 
-      private:
-        VariableReplacementMap *mVariableReplacementMap;
-    };
+    // Map a constructed sampler name to its variable.  Used to replace an expression that uses this
+    // sampler with the extracted one.
+    ExtractedSamplerMap mExtractedSamplers;
 
-    class CollectNewInstantiationsTraverser : public TIntermTraverser
-    {
-      public:
-        explicit CollectNewInstantiationsTraverser(
-            TSymbolTable *symbolTable,
-            FunctionInstantiations *pendingInstantiations,
-            FunctionInstantiations *generatedInstantiations,
-            std::unordered_map<const TFunction *, const TFunction *> *functionMap)
-            : TIntermTraverser(true, false, false, symbolTable),
-              mPendingInstantiations(pendingInstantiations),
-              mGeneratedInstantiations(generatedInstantiations),
-              mFunctionMap(functionMap)
-        {}
-
-        bool visitAggregate(Visit visit, TIntermAggregate *node) override
-        {
-            if (!node->isFunctionCall())
-                return true;
-            const TFunction *function = node->getFunction();
-            const TFunction *oldFunction;
-            {
-                auto it = mFunctionMap->find(function);
-                if (it == mFunctionMap->end())
-                    return true;
-                oldFunction = it->second;
-            }
-            ASSERT(node->getOp() == EOpCallFunctionInAST);
-            TIntermSequence *arguments = node->getSequence();
-            TFunction *newFunction     = GenerateFunctionFromArguments(
-                oldFunction, arguments, mSymbolTable, mPendingInstantiations, mFunctionMap,
-                mGeneratedInstantiations);
-            queueReplacement(TIntermAggregate::CreateFunctionCall(*newFunction, arguments),
-                             OriginalNode::IS_DROPPED);
-            return true;
-        }
-
-      private:
-        FunctionInstantiations *mPendingInstantiations;
-        FunctionInstantiations *mGeneratedInstantiations;
-        std::unordered_map<const TFunction *, const TFunction *> *mFunctionMap;
-    };
+    // A stack of array sizes.  Used to figure out the array dimensions of the extracted sampler,
+    // for example when it's nested in an array of structs in an array of structs.
+    TVector<unsigned int> mArraySizeStack;
 };
 }  // anonymous namespace
 
@@ -1208,47 +665,9 @@ bool RewriteStructSamplers(TCompiler *compiler,
                            TSymbolTable *symbolTable,
                            int *removedUniformsCountOut)
 {
-    Traverser rewriteStructSamplers(symbolTable);
-    root->traverse(&rewriteStructSamplers);
-    if (!rewriteStructSamplers.updateTree(compiler, root))
-    {
-        return false;
-    }
-    *removedUniformsCountOut = rewriteStructSamplers.removedUniformsCount();
-
-    if (rewriteStructSamplers.getFunctionInstantiations()->empty())
-    {
-        return true;
-    }
-
-    MonomorphizeTraverser monomorphizeFunctions(compiler, symbolTable,
-                                                rewriteStructSamplers.getFunctionInstantiations(),
-                                                rewriteStructSamplers.getFunctionMap());
-    root->traverse(&monomorphizeFunctions);
-    if (!monomorphizeFunctions.subpassesSucceeded())
-    {
-        return false;
-    }
-    if (!monomorphizeFunctions.updateTree(compiler, root))
-    {
-        return false;
-    }
-
-    // Generate instantiations caused by other instantiations.
-    while (monomorphizeFunctions.hasPending())
-    {
-        monomorphizeFunctions.switchToPending();
-        root->traverse(&monomorphizeFunctions);
-        if (!monomorphizeFunctions.subpassesSucceeded())
-        {
-            return false;
-        }
-        if (!monomorphizeFunctions.updateTree(compiler, root))
-        {
-            return false;
-        }
-    }
-
-    return true;
+    RewriteStructSamplersTraverser traverser(compiler, symbolTable);
+    root->traverse(&traverser);
+    *removedUniformsCountOut = traverser.removedUniformsCount();
+    return traverser.updateTree(compiler, root);
 }
 }  // namespace sh

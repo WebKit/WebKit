@@ -26,10 +26,10 @@
 #pragma once
 
 #include "Identifier.h"
+#include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/IteratorRange.h>
-#include <wtf/Variant.h>
 
 namespace JSC {
 
@@ -343,7 +343,7 @@ class CompactTDZEnvironment {
 
     using Compact = Vector<PackedRefPtr<UniquedStringImpl>>;
     using Inflated = TDZEnvironment;
-    using Variables = Variant<Compact, Inflated>;
+    using Variables = std::variant<Compact, Inflated>;
 
 public:
     CompactTDZEnvironment(const TDZEnvironment&);
@@ -355,8 +355,8 @@ public:
 
     TDZEnvironment& toTDZEnvironment() const
     {
-        if (WTF::holds_alternative<Inflated>(m_variables))
-            return const_cast<TDZEnvironment&>(WTF::get<Inflated>(m_variables));
+        if (std::holds_alternative<Inflated>(m_variables))
+            return const_cast<TDZEnvironment&>(std::get<Inflated>(m_variables));
         return toTDZEnvironmentSlow();
     }
 

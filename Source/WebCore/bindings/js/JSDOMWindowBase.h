@@ -56,6 +56,7 @@ public:
     template<typename, JSC::SubspaceAccess>
     static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }
 
+    ~JSDOMWindowBase();
     void updateDocument();
 
     DOMWindow& wrapped() const { return *m_wrapped; }
@@ -80,7 +81,8 @@ public:
     static void queueMicrotaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
     static JSC::JSObject* currentScriptExecutionOwner(JSC::JSGlobalObject*);
     static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
-
+    static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, JSC::JSString*);
+    
     void printErrorMessage(const String&) const;
 
     JSWindowProxy& proxy() const;
@@ -98,7 +100,7 @@ protected:
     RefPtr<JSC::WatchpointSet> m_windowCloseWatchpoints;
 
 private:
-    using ResponseCallback = WTF::Function<void(const char*, size_t)>;
+    using ResponseCallback = Function<void(const char*, size_t)>;
 
     RefPtr<DOMWindow> m_wrapped;
     RefPtr<Event> m_currentEvent;
@@ -126,11 +128,7 @@ DOMWindow& incumbentDOMWindow(JSC::JSGlobalObject&);
 DOMWindow& activeDOMWindow(JSC::JSGlobalObject&);
 DOMWindow& firstDOMWindow(JSC::JSGlobalObject&);
 
-// FIXME: This should probably be removed in favor of one of the other DOMWindow accessors. It is intended
-//        to provide the document specfied as the 'responsible document' in the algorithm for document.open()
-//        (https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#document-open-steps steps 4
-//        and 23 and https://html.spec.whatwg.org/multipage/webappapis.html#responsible-document). It is only
-//        used by JSDocument.
-Document* responsibleDocument(JSC::VM&, JSC::CallFrame&);
+DOMWindow& legacyActiveDOMWindowForAccessor(JSC::JSGlobalObject&, JSC::CallFrame&);
+DOMWindow& legacyActiveDOMWindowForAccessor(JSC::JSGlobalObject&);
 
 } // namespace WebCore

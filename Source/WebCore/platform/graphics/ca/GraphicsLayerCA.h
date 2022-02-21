@@ -150,11 +150,15 @@ public:
     WEBCORE_EXPORT PlatformLayer* contentsLayerForMedia() const override;
 #endif
     WEBCORE_EXPORT void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
+    WEBCORE_EXPORT void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose) override;
+
     WEBCORE_EXPORT void setContentsToSolidColor(const Color&) override;
 #if ENABLE(MODEL_ELEMENT)
     WEBCORE_EXPORT void setContentsToModel(RefPtr<Model>&&) override;
     WEBCORE_EXPORT PlatformLayerID contentsLayerIDForModel() const override;
 #endif
+    WEBCORE_EXPORT void setContentsMinificationFilter(ScalingFilter) override;
+    WEBCORE_EXPORT void setContentsMagnificationFilter(ScalingFilter) override;
 
     bool usesContentsLayer() const override { return m_contentsLayerPurpose != ContentsLayerPurpose::None; }
     
@@ -191,6 +195,8 @@ public:
 
     WEBCORE_EXPORT Vector<std::pair<String, double>> acceleratedAnimationsForTesting() const final;
 
+    constexpr static CompositingCoordinatesOrientation defaultContentsOrientation = CompositingCoordinatesOrientation::TopDown;
+
 private:
     bool isGraphicsLayerCA() const override { return true; }
 
@@ -210,6 +216,8 @@ private:
 
     bool platformCALayerContentsOpaque() const override { return contentsOpaque(); }
     bool platformCALayerDrawsContent() const override { return drawsContent(); }
+    WEBCORE_EXPORT bool platformCALayerDelegatesDisplay(PlatformCALayer*) const override;
+    WEBCORE_EXPORT void platformCALayerLayerDisplay(PlatformCALayer*) override;
     void platformCALayerLayerDidDisplay(PlatformCALayer* layer) override { return layerDidDisplay(layer); }
     WEBCORE_EXPORT void platformCALayerSetNeedsToRevalidateTiles() override;
     WEBCORE_EXPORT float platformCALayerDeviceScaleFactor() const override;
@@ -298,10 +306,7 @@ private:
 
     bool requiresTiledLayer(float pageScaleFactor) const;
     void changeLayerTypeTo(PlatformCALayer::LayerType);
-
-    CompositingCoordinatesOrientation defaultContentsOrientation() const;
-
-    void setupContentsLayer(PlatformCALayer*);
+    void setupContentsLayer(PlatformCALayer*, CompositingCoordinatesOrientation = defaultContentsOrientation);
     PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
 
     void updateClippingStrategy(PlatformCALayer&, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect&);
@@ -463,6 +468,7 @@ private:
     void updateIsDescendentOfSeparatedPortal();
 #endif
 #endif
+    void updateContentsScalingFilters();
 
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
@@ -524,7 +530,7 @@ private:
         moveOrCopyAnimations(Copy, fromLayer, toLayer);
     }
 
-    bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperations*, const Animation*, const String& animationName, const FloatSize& boxSize, int animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool appendToUncommittedAnimations(const KeyframeValueList&, const Vector<TransformOperation::OperationType>& operations, const Animation*, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
     bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation*, const Animation*, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
 
     enum LayerChange : uint64_t {
@@ -578,6 +584,7 @@ private:
         DescendentOfSeparatedPortalChanged      = 1LLU << 43,
 #endif
 #endif
+        ContentsScalingFiltersChanged           = 1LLU << 44,
     };
     typedef uint64_t LayerChangeFlags;
     static const char* layerChangeAsString(LayerChange);
@@ -640,6 +647,7 @@ private:
 #if ENABLE(MODEL_ELEMENT)
     RefPtr<Model> m_contentsModel;
 #endif
+    RefPtr<GraphicsLayerContentsDisplayDelegate> m_contentsDisplayDelegate;
 
     Vector<LayerPropertyAnimation> m_animations;
     Vector<LayerPropertyAnimation> m_baseValueTransformAnimations;

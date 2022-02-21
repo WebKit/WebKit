@@ -8,13 +8,11 @@ function runTest()
 {
   if (window.accessibilityController) {
 
-    document.getElementById("tbutton").focus();
-    tbutton1 = accessibilityController.focusedElement;
+    tbutton1 = accessibilityController.accessibleElementById("tbutton");
     debug("Role: " + tbutton1.role);
     shouldBe("tbutton1.title", "'AXTitle: Toggle button'");
 
-    document.getElementById("button").focus();
-    button = accessibilityController.focusedElement;
+    button = accessibilityController.accessibleElementById("button");
     debug("Role: " + button.role);
     shouldBe("button.title", "'AXTitle: Button title'");
   }

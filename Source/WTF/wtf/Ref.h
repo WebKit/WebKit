@@ -149,7 +149,6 @@ private:
 };
 
 template<typename T, typename U> Ref<T, U> adoptRef(T&);
-template<typename T> Ref<T> makeRef(T&);
 
 template<typename T, typename U>
 inline Ref<T, U>& Ref<T, U>::operator=(T& reference)
@@ -271,12 +270,6 @@ inline Ref<T, U> adoptRef(T& reference)
     return Ref<T, U>(reference, Ref<T, U>::Adopt);
 }
 
-template<typename T>
-inline Ref<T> makeRef(T& reference)
-{
-    return Ref<T>(reference);
-}
-
 template<typename ExpectedType, typename ArgType, typename PtrTraits>
 inline bool is(Ref<ArgType, PtrTraits>& source)
 {
@@ -329,5 +322,4 @@ inline bool operator!=(T& a, const Ref<U, V>& b)
 
 using WTF::Ref;
 using WTF::adoptRef;
-using WTF::makeRef;
 using WTF::static_reference_cast;

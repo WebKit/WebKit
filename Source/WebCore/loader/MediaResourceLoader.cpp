@@ -51,8 +51,8 @@ void MediaResourceLoader::recordResponsesForTesting()
 
 MediaResourceLoader::MediaResourceLoader(Document& document, Element& element, const String& crossOriginMode, FetchOptions::Destination destination)
     : ContextDestructionObserver(&document)
-    , m_document(makeWeakPtr(document))
-    , m_element(makeWeakPtr(element))
+    , m_document(document)
+    , m_element(element)
     , m_crossOriginMode(crossOriginMode)
     , m_destination(destination)
 {
@@ -191,7 +191,7 @@ void MediaResource::responseReceived(CachedResource& resource, const ResourceRes
 
     m_didPassAccessControlCheck = m_resource->options().mode == FetchOptions::Mode::Cors;
     if (m_client)
-        m_client->responseReceived(*this, response, [this, protectedThis = makeRef(*this), completionHandler = completionHandlerCaller.release()] (auto shouldContinue) mutable {
+        m_client->responseReceived(*this, response, [this, protectedThis = Ref { *this }, completionHandler = completionHandlerCaller.release()] (auto shouldContinue) mutable {
             if (completionHandler)
                 completionHandler();
             if (shouldContinue == ShouldContinuePolicyCheck::No)
@@ -231,13 +231,13 @@ void MediaResource::dataSent(CachedResource& resource, unsigned long long bytesS
         m_client->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
-void MediaResource::dataReceived(CachedResource& resource, const uint8_t* data, int dataLength)
+void MediaResource::dataReceived(CachedResource& resource, const SharedBuffer& buffer)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
     if (m_client)
-        m_client->dataReceived(*this, data, dataLength);
+        m_client->dataReceived(*this, buffer);
 }
 
 void MediaResource::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics)

@@ -1,5 +1,5 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
-// Copyright (C) 2018 Apple Inc. All rights reserved.
+// Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -32,7 +32,9 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "FidoTestData.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <WebCore/AuthenticatorAttachment.h>
+#include <WebCore/BufferSource.h>
 #include <WebCore/CBORReader.h>
 #include <WebCore/CBORValue.h>
 #include <WebCore/CBORWriter.h>
@@ -332,12 +334,9 @@ Vector<uint8_t> getTestCorruptedSignResponse(size_t length)
 }
 
 // Return a key handle used for GetAssertion request.
-Vector<uint8_t> getTestCredentialRawIdBytes()
+BufferSource getTestCredentialRawIdBytes()
 {
-    Vector<uint8_t> testCredentialRawIdBytes;
-    testCredentialRawIdBytes.reserveInitialCapacity(sizeof(TestData::kU2fSignKeyHandle));
-    testCredentialRawIdBytes.append(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
-    return testCredentialRawIdBytes;
+    return WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
 }
 
 // Return a malformed U2fRegisterResponse.
@@ -557,7 +556,7 @@ TEST(CTAPResponseTest, TestParseSignResponseData)
 
 TEST(CTAPResponseTest, TestParseU2fSignWithNullKeyHandle)
 {
-    auto response = readU2fSignResponse(TestData::kRelyingPartyId, Vector<uint8_t>(), getTestSignResponse(), AuthenticatorAttachment::CrossPlatform);
+    auto response = readU2fSignResponse(TestData::kRelyingPartyId, BufferSource(), getTestSignResponse(), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 }
 

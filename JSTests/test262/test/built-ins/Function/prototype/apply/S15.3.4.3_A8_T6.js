@@ -9,14 +9,10 @@ description: >
     f(){this.p1=1;};return f").apply())" fails
 ---*/
 
-//CHECK#1
 try {
   var obj = new(Function("function f(){this.p1=1;};return f").apply());
 } catch (e) {
   throw new Test262Error('#1: Function.prototype.apply can\'t be used as [[Construct]] caller');
 }
 
-//CHECK#2
-if (obj.p1 !== 1) {
-  throw new Test262Error('#2: Function.prototype.apply can\'t be used as [[Construct]] caller');
-}
+assert.sameValue(obj.p1, 1, 'The value of obj.p1 is expected to be 1');

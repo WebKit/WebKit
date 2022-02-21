@@ -36,3 +36,7 @@ let testString2 = "\ud800\ud800\udc00Test\udc00123";
 let backtrackGreedyRegExp = /.*[\x20-\udffff].\w*.\d{3}/u;
 
 testRegExpMatch(backtrackGreedyRegExp, testString2);
+
+let nonGreedyRegExp2 = /(.*[^x]+?)[^]*([1])/u;
+
+testRegExpNotMatch(nonGreedyRegExp2, testString);

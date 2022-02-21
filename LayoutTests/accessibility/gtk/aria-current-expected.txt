@@ -5,34 +5,34 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 test1 active: false
-AXPlatformAttributes: html-id:test1, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: tag:div
 
 test2 active: false
-AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:false, html-id:test2, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:listitem, current:false, tag:div, xml-roles:listitem
 
 test3 active: true
-AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:true, html-id:test3, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:listitem, current:true, tag:div, xml-roles:listitem
 
 test4 active: true
-AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:page, html-id:test4, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:listitem, current:page, tag:div, xml-roles:listitem
 
 test5 active: true
-AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:step, html-id:test5, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:listitem, current:step, tag:div, xml-roles:listitem
 
 test6 active: true
-AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:location, html-id:test6, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:listitem, current:location, tag:div, xml-roles:listitem
 
 test7 active: true
-AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:date, html-id:test7, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:listitem, current:date, tag:div, xml-roles:listitem
 
 test8 active: true
-AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:time, html-id:test8, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:listitem, current:time, tag:div, xml-roles:listitem
 
 test9 active: false
-AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:false, html-id:test9, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:listitem, current:false, tag:div, xml-roles:listitem
 
 test10 active: true
-AXPlatformAttributes: computed-role:listitem, xml-roles:listitem, current:true, html-id:test10, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:listitem, current:true, tag:div, xml-roles:listitem
 PASS successfullyParsed is true
 
 TEST COMPLETE

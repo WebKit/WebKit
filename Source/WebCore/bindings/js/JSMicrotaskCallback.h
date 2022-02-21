@@ -40,7 +40,7 @@ public:
 
     void call()
     {
-        auto protectedThis { makeRef(*this) };
+        auto protectedThis { Ref { *this } };
         JSC::VM& vm = m_globalObject->vm();
         JSC::JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);

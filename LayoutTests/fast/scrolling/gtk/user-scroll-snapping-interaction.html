@@ -1,0 +1,120 @@
+<!-- webkit-test-runner [ useThreadedScrolling=false ] -->
+<!DOCTYPE html>
+
+<html>
+<head>
+  <script src="../../../resources/js-test-pre.js"></script>
+  <title>CSS scroll snapping should not conflict with user scrolling</title>
+  <style>
+    html {
+      scroll-snap-type: y mandatory;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    div {
+      width: 100%;
+      height: 250px;
+      scroll-snap-align: start;
+    }
+  </style>
+</head>
+<body>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+</body>
+<script>
+var expectedScrollTop = 0;
+var testsPassed = 0;
+var testDescription;
+
+function startScroll(startx, starty, deltaX, deltaY)
+{
+    eventSender.mouseMoveTo(startx, starty);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "began", "none");
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(-deltaX, -deltaY, "changed", "none");
+}
+
+function continueScroll(deltaX, deltaY)
+{
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(-deltaX, -deltaY, "changed", "none");
+}
+
+function endScroll(deltaX, deltaY)
+{
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(-deltaX, -deltaY, "ended", "none");
+}
+
+function triggerNextTest() {
+    if (testsPassed)
+        debug("PASS " + testDescription);
+
+    switch (testsPassed) {
+    case 0:
+        testDescription = "Scroll downwards by 25 pixels"
+        expectedScrollTop = 25;
+        startScroll(50, 50, 0, 25);
+        return;
+
+    case 1:
+        testDescription = "Scroll downwards by another 25 pixels"
+        expectedScrollTop = 50;
+        continueScroll(0, 25);
+        return;
+
+    case 2:
+        testDescription = "End scroll snaps back to top"
+        expectedScrollTop = 0;
+        endScroll(0, 0);
+        return;
+
+    case 3:
+        testDescription = "Scroll downwards by 200 pixels"
+        expectedScrollTop = 200;
+        startScroll(50, 50, 0, 200);
+        return;
+
+    case 4:
+        testDescription = "End scroll should snap to next element"
+        expectedScrollTop = 250;
+        endScroll(0, 0);
+        return;
+    }
+
+    isSuccessfullyParsed();
+    testRunner.notifyDone();
+
+    return;
+}
+
+function scrollEventCallback() {
+    if (document.scrollingElement.scrollTop == expectedScrollTop) {
+        ++testsPassed;
+        if (window.testRunner)
+            triggerNextTest();
+    }
+}
+
+
+document.addEventListener("scroll", scrollEventCallback, false);
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+
+if (window.eventSender) {
+    eventSender.setWheelHasPreciseDeltas(true);
+    triggerNextTest();
+}
+</script>
+</html>

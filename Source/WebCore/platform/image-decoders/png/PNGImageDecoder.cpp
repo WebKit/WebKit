@@ -47,10 +47,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
 
-#if USE(LCMS)
-#include <lcms2.h>
-#endif
-
 #if defined(PNG_LIBPNG_VER_MAJOR) && defined(PNG_LIBPNG_VER_MINOR) && (PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 4))
 #define JMPBUF(png_ptr) png_jmpbuf(png_ptr)
 #else
@@ -152,7 +148,7 @@ public:
         m_readOffset = 0;
     }
 
-    bool decode(const SharedBuffer::DataSegment& data, bool sizeOnly, unsigned haltAtFrame)
+    bool decode(const SharedBuffer& data, bool sizeOnly, unsigned haltAtFrame)
     {
         m_decodingSizeOnly = sizeOnly;
         PNGImageDecoder* decoder = static_cast<PNGImageDecoder*>(png_get_progressive_ptr(m_png));
@@ -274,14 +270,7 @@ void PNGImageDecoder::clear()
 {
     m_reader = nullptr;
 #if USE(LCMS)
-    if (m_iccTransform) {
-        cmsDeleteTransform(m_iccTransform);
-        m_iccTransform = nullptr;
-    }
-    if (m_iccProfile) {
-        cmsCloseProfile(m_iccProfile);
-        m_iccProfile = nullptr;
-    }
+    m_iccTransform.reset();
 #endif
 }
 
@@ -412,11 +401,11 @@ void PNGImageDecoder::headerAvailable()
         png_uint_32 iccProfileDataSize;
         int compressionType;
         if (png_get_iCCP(png, info, &iccProfileTitle, &compressionType, &iccProfileData, &iccProfileDataSize)) {
-            m_iccProfile = cmsOpenProfileFromMem(iccProfileData, iccProfileDataSize);
-            if (m_iccProfile) {
+            auto iccProfile = LCMSProfilePtr(cmsOpenProfileFromMem(iccProfileData, iccProfileDataSize));
+            if (iccProfile) {
                 auto* displayProfile = PlatformDisplay::sharedDisplay().colorProfile();
-                if (cmsGetColorSpace(m_iccProfile) == cmsSigRgbData && cmsGetColorSpace(displayProfile) == cmsSigRgbData)
-                    m_iccTransform = cmsCreateTransform(m_iccProfile, TYPE_BGRA_8, displayProfile, TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0);
+                if (cmsGetColorSpace(iccProfile.get()) == cmsSigRgbData && cmsGetColorSpace(displayProfile) == cmsSigRgbData)
+                    m_iccTransform = LCMSTransformPtr(cmsCreateTransform(iccProfile.get(), TYPE_BGRA_8, displayProfile, TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0));
             }
         }
     }
@@ -557,7 +546,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
 
 #if USE(LCMS)
     if (m_iccTransform)
-        cmsDoTransform(m_iccTransform, destRow, destRow, width);
+        cmsDoTransform(m_iccTransform.get(), destRow, destRow, width);
 #endif
 
     if (nonTrivialAlphaMask && !buffer.hasAlpha())
@@ -867,7 +856,7 @@ void PNGImageDecoder::frameComplete()
             }
 #if USE(LCMS)
             if (m_iccTransform)
-                cmsDoTransform(m_iccTransform, destRow, destRow, rect.maxX());
+                cmsDoTransform(m_iccTransform.get(), destRow, destRow, rect.maxX());
 #endif
         }
 

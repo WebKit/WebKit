@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,7 +82,7 @@ Vector<String> ClipboardItemBindingsDataSource::types() const
 
 void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPromise>&& promise)
 {
-    auto matchIndex = m_itemPromises.findMatching([&] (auto& item) {
+    auto matchIndex = m_itemPromises.findIf([&] (auto& item) {
         return type == item.key;
     });
 
@@ -92,7 +92,7 @@ void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPr
     }
 
     auto itemPromise = m_itemPromises[matchIndex].value;
-    itemPromise->whenSettled([itemPromise, promise = makeRefPtr(promise.get()), type] () mutable {
+    itemPromise->whenSettled([itemPromise, promise = WTFMove(promise), type] () mutable {
         if (itemPromise->status() != DOMPromise::Status::Fulfilled) {
             promise->reject(AbortError);
             return;
@@ -128,23 +128,27 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
     m_itemTypeLoaders.clear();
     ASSERT(!m_completionHandler);
     m_completionHandler = WTFMove(completion);
-    m_writingDestination = makeWeakPtr(destination);
+    m_writingDestination = destination;
     m_numberOfPendingClipboardTypes = m_itemPromises.size();
     m_itemTypeLoaders = m_itemPromises.map([&] (auto& typeAndItem) {
         auto type = typeAndItem.key;
-        auto itemTypeLoader = ClipboardItemTypeLoader::create(type, [this, protectedItem = makeRef(m_item)] {
+        auto itemTypeLoader = ClipboardItemTypeLoader::create(type, [this, protectedItem = Ref { m_item }] {
             ASSERT(m_numberOfPendingClipboardTypes);
             if (!--m_numberOfPendingClipboardTypes)
                 invokeCompletionHandler();
         });
 
         auto promise = typeAndItem.value;
-        promise->whenSettled([this, protectedItem = makeRefPtr(m_item), destination = m_writingDestination, promise, type, weakItemTypeLoader = makeWeakPtr(itemTypeLoader.ptr())] () mutable {
+        /* hack: gcc 8.4 will segfault if the WeakPtr is instantiated within the lambda captures */
+        auto wl = WeakPtr { itemTypeLoader };
+        promise->whenSettled([this, protectedItem = Ref { m_item }, destination = m_writingDestination, promise, type, weakItemTypeLoader = WTFMove(wl)] () mutable {
             if (!weakItemTypeLoader)
                 return;
 
-            auto itemTypeLoader = makeRef(*weakItemTypeLoader);
-            ASSERT_UNUSED(this, notFound != m_itemTypeLoaders.findMatching([&] (auto& loader) { return loader.ptr() == itemTypeLoader.ptr(); }));
+            Ref itemTypeLoader { *weakItemTypeLoader };
+#if !COMPILER(MSVC)
+            ASSERT_UNUSED(this, notFound != m_itemTypeLoaders.findIf([&] (auto& loader) { return loader.ptr() == itemTypeLoader.ptr(); }));
+#endif
 
             auto result = promise->result();
             if (!result) {
@@ -152,7 +156,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
                 return;
             }
 
-            auto clipboard = makeRefPtr(destination.get());
+            RefPtr clipboard = destination.get();
             if (!clipboard) {
                 itemTypeLoader->didFailToResolve();
                 return;
@@ -175,7 +179,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
                 return;
             }
 
-            if (auto blob = makeRefPtr(JSBlob::toWrapped(result.getObject()->vm(), result.getObject())))
+            if (RefPtr blob = JSBlob::toWrapped(result.getObject()->vm(), result.getObject()))
                 itemTypeLoader->didResolveToBlob(*clipboard->scriptExecutionContext(), blob.releaseNonNull());
             else
                 itemTypeLoader->didFailToResolve();
@@ -197,7 +201,7 @@ void ClipboardItemBindingsDataSource::invokeCompletionHandler()
 
     auto completionHandler = std::exchange(m_completionHandler, { });
     auto itemTypeLoaders = std::exchange(m_itemTypeLoaders, { });
-    auto clipboard = makeRefPtr(m_writingDestination.get());
+    RefPtr clipboard = m_writingDestination.get();
     m_writingDestination = nullptr;
 
     auto document = documentFromClipboard(clipboard.get());
@@ -210,10 +214,10 @@ void ClipboardItemBindingsDataSource::invokeCompletionHandler()
     for (auto& itemTypeLoader : itemTypeLoaders) {
         auto type = itemTypeLoader->type();
         auto& data = itemTypeLoader->data();
-        if (WTF::holds_alternative<String>(data) && !!WTF::get<String>(data))
-            customData.writeString(type, WTF::get<String>(data));
-        else if (WTF::holds_alternative<Ref<SharedBuffer>>(data))
-            customData.writeData(type, WTF::get<Ref<SharedBuffer>>(data).copyRef());
+        if (std::holds_alternative<String>(data) && !!std::get<String>(data))
+            customData.writeString(type, std::get<String>(data));
+        else if (std::holds_alternative<Ref<SharedBuffer>>(data))
+            customData.writeData(type, std::get<Ref<SharedBuffer>>(data).copyRef());
         else {
             completionHandler(std::nullopt);
             return;
@@ -261,11 +265,11 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
 {
     if (m_type == "text/html"_s) {
         String markupToSanitize;
-        if (WTF::holds_alternative<Ref<SharedBuffer>>(m_data)) {
-            auto& buffer = WTF::get<Ref<SharedBuffer>>(m_data);
+        if (std::holds_alternative<Ref<SharedBuffer>>(m_data)) {
+            auto& buffer = std::get<Ref<SharedBuffer>>(m_data);
             markupToSanitize = String::fromUTF8(buffer->data(), buffer->size());
-        } else if (WTF::holds_alternative<String>(m_data))
-            markupToSanitize = WTF::get<String>(m_data);
+        } else if (std::holds_alternative<String>(m_data))
+            markupToSanitize = std::get<String>(m_data);
 
         if (markupToSanitize.isEmpty())
             return;
@@ -275,10 +279,10 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
 
     if (m_type == "image/png"_s) {
         RefPtr<SharedBuffer> bufferToSanitize;
-        if (WTF::holds_alternative<Ref<SharedBuffer>>(m_data))
-            bufferToSanitize = WTF::get<Ref<SharedBuffer>>(m_data).ptr();
-        else if (WTF::holds_alternative<String>(m_data))
-            bufferToSanitize = utf8Buffer(WTF::get<String>(m_data));
+        if (std::holds_alternative<Ref<SharedBuffer>>(m_data))
+            bufferToSanitize = std::get<Ref<SharedBuffer>>(m_data).ptr();
+        else if (std::holds_alternative<String>(m_data))
+            bufferToSanitize = utf8Buffer(std::get<String>(m_data));
 
         if (!bufferToSanitize || bufferToSanitize->isEmpty())
             return;

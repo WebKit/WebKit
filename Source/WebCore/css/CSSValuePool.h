@@ -25,12 +25,8 @@
 
 #pragma once
 
-#include "CSSInheritedValue.h"
-#include "CSSInitialValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
-#include "CSSRevertValue.h"
-#include "CSSUnsetValue.h"
 #include "CSSValueKeywords.h"
 #include "ColorHash.h"
 #include <utility>
@@ -55,11 +51,7 @@ public:
 private:
     StaticCSSValuePool();
 
-    LazyNeverDestroyed<CSSInheritedValue> m_inheritedValue;
-    LazyNeverDestroyed<CSSInitialValue> m_implicitInitialValue;
-    LazyNeverDestroyed<CSSInitialValue> m_explicitInitialValue;
-    LazyNeverDestroyed<CSSUnsetValue> m_unsetValue;
-    LazyNeverDestroyed<CSSRevertValue> m_revertValue;
+    LazyNeverDestroyed<CSSPrimitiveValue> m_implicitInitialValue;
 
     LazyNeverDestroyed<CSSPrimitiveValue> m_transparentColor;
     LazyNeverDestroyed<CSSPrimitiveValue> m_whiteColor;
@@ -85,11 +77,7 @@ public:
 
     RefPtr<CSSValueList> createFontFaceValue(const AtomString&);
     Ref<CSSPrimitiveValue> createFontFamilyValue(const String&, FromSystemFontID = FromSystemFontID::No);
-    Ref<CSSInheritedValue> createInheritedValue() { return staticCSSValuePool->m_inheritedValue.get(); }
-    Ref<CSSInitialValue> createImplicitInitialValue() { return staticCSSValuePool->m_implicitInitialValue.get(); }
-    Ref<CSSInitialValue> createExplicitInitialValue() { return staticCSSValuePool->m_explicitInitialValue.get(); }
-    Ref<CSSUnsetValue> createUnsetValue() { return staticCSSValuePool->m_unsetValue.get(); }
-    Ref<CSSRevertValue> createRevertValue() { return staticCSSValuePool->m_revertValue.get(); }
+    Ref<CSSPrimitiveValue> createImplicitInitialValue() { return staticCSSValuePool->m_implicitInitialValue.get(); }
     Ref<CSSPrimitiveValue> createIdentifierValue(CSSValueID identifier);
     Ref<CSSPrimitiveValue> createIdentifierValue(CSSPropertyID identifier);
     Ref<CSSPrimitiveValue> createColorValue(const Color&);
@@ -99,6 +87,7 @@ public:
     Ref<CSSPrimitiveValue> createValue(const LengthSize& value, const RenderStyle& style) { return CSSPrimitiveValue::create(value, style); }
     Ref<CSSPrimitiveValue> createCustomIdent(const String& value) { return CSSPrimitiveValue::create(value, CSSUnitType::CustomIdent); }
     template<typename T> static Ref<CSSPrimitiveValue> createValue(T&& value) { return CSSPrimitiveValue::create(std::forward<T>(value)); }
+    template<typename T> static Ref<CSSPrimitiveValue> createValue(T&& value, CSSPropertyID identifier) { return CSSPrimitiveValue::create(std::forward<T>(value), identifier); }
 
     void drain();
 

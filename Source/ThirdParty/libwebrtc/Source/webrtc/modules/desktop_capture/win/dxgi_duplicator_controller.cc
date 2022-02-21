@@ -186,12 +186,12 @@ DxgiDuplicatorController::Result DxgiDuplicatorController::DoDuplicate(
     return Result::SUCCEEDED;
   }
   if (monitor_id >= ScreenCountUnlocked()) {
-    // It's a user error to provide a |monitor_id| larger than screen count. We
+    // It's a user error to provide a `monitor_id` larger than screen count. We
     // do not need to deinitialize.
     return Result::INVALID_MONITOR_ID;
   }
 
-  // If the |monitor_id| is valid, but DoDuplicateUnlocked() failed, something
+  // If the `monitor_id` is valid, but DoDuplicateUnlocked() failed, something
   // must be wrong from capturer APIs. We should Deinitialize().
   Deinitialize();
   return Result::DUPLICATION_FAILED;
@@ -440,8 +440,8 @@ bool DxgiDuplicatorController::EnsureFrameCaptured(Context* context,
   SharedDesktopFrame* shared_frame = nullptr;
   if (target->size().width() >= desktop_size().width() &&
       target->size().height() >= desktop_size().height()) {
-    // |target| is large enough to cover entire screen, we do not need to use
-    // |fallback_frame|.
+    // `target` is large enough to cover entire screen, we do not need to use
+    // `fallback_frame`.
     shared_frame = target;
   } else {
     fallback_frame = SharedDesktopFrame::Wrap(
@@ -453,7 +453,7 @@ bool DxgiDuplicatorController::EnsureFrameCaptured(Context* context,
   int64_t last_frame_start_ms = 0;
   while (GetNumFramesCaptured() < frames_to_skip) {
     if (GetNumFramesCaptured() > 0) {
-      // Sleep |ms_per_frame| before capturing next frame to ensure the screen
+      // Sleep `ms_per_frame` before capturing next frame to ensure the screen
       // has been updated by the video adapter.
       webrtc::SleepMs(ms_per_frame - (rtc::TimeMillis() - last_frame_start_ms));
     }

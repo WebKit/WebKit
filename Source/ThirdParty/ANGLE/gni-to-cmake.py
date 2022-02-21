@@ -15,7 +15,8 @@ from argparse import ArgumentParser
 # are added to the ANGLE gn files, hopefully we can just add
 # a few extra regexes here.
 
-parser = ArgumentParser(prog='gni-to-cmake', description='converts a .gni file to .cmake', usage='%(prog)s [options]')
+parser = ArgumentParser(
+    prog='gni-to-cmake', description='converts a .gni file to .cmake', usage='%(prog)s [options]')
 parser.add_argument('gni', help='the .gni file to parse')
 parser.add_argument('cmake', help='the .cmake file to output')
 parser.add_argument('--prepend', default='', help='the path to prepend to each file name')
@@ -29,13 +30,18 @@ with open(args.gni, 'r', encoding="utf-8") as gni:
     file = re.sub(r'"((\\\"|[^"])+)"', '"' + args.prepend + r'\1"', file)
 
     # Remove import, assert, config, and angle_source_set statements.
-    file = re.sub(r'^\s*(import|assert|config|angle_source_set)\([^)]+\)( {.*})?$', r'', file, flags=re.MULTILINE|re.DOTALL)
+    file = re.sub(
+        r'^\s*(import|assert|config|angle_source_set)\([^)]+\)( {.*})?$',
+        r'',
+        file,
+        flags=re.MULTILINE | re.DOTALL)
 
     # Translate gn single line list declaration:
     file = re.sub(r'\[ ((?:"[^"]*",? )*)\]$', r' \1)', file, flags=re.MULTILINE)
 
     # Translate gn single line list append:
-    file = re.sub(r'^(\s*)(\w+) \+= (\w+)$', r'\1 set(\2, "${\2};${\3}")', file, flags=re.MULTILINE)
+    file = re.sub(
+        r'^(\s*)(\w+) \+= (\w+)$', r'\1 set(\2, "${\2};${\3}")', file, flags=re.MULTILINE)
 
     # Translate gn list declaration:
     # variable_name = [

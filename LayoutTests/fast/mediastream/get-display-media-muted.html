@@ -41,7 +41,7 @@
             let stream = await callGetDisplayMedia({ video: true });
             let pageMediaState = internals.pageMediaState();
 
-            assert_false(pageMediaState.includes('HasMutedDisplayCaptureDevice'), 'page state does not include HasMutedDisplayCaptureDevice');
+            assert_false(pageMediaState.includes('HasMutedScreenCaptureDevice'), 'page state does not include HasMutedScreenCaptureDevice');
             assert_false(pageMediaState.includes('HasMutedVideoCaptureDevice'), 'page state does not include HasMutedVideoCaptureDevice');
             assert_false(pageMediaState.includes('HasMutedAudioCaptureDevice'), 'page state does not include HasMutedAudioCaptureDevice');
 
@@ -58,14 +58,14 @@
                         assert_unreached(`Page state did not change from ${pageMediaState}`);
 
                     pageMediaState = internals.pageMediaState();
-                    assert_false(pageMediaState.includes('HasMutedDisplayCaptureDevice'), 'page state does not include HasMutedDisplayCaptureDevice');
-                    assert_true(pageMediaState.includes('HasActiveDisplayCaptureDevice'), 'page state includes HasActiveDisplayCaptureDevice');
+                    assert_false(pageMediaState.includes('HasMutedScreenCaptureDevice'), 'page state does not include HasMutedScreenCaptureDevice');
+                    assert_true(pageMediaState.includes('HasActiveScreenCaptureDevice'), 'page state includes HasActiveScreenCaptureDevice');
                     resolve()
                 }
 
                 pageMediaState = internals.pageMediaState();
-                assert_true(pageMediaState.includes('HasMutedDisplayCaptureDevice'), 'page state includes HasMutedDisplayCaptureDevice');
-                assert_false(pageMediaState.includes('HasActiveDisplayCaptureDevice'), 'page state does not include HasActiveDisplayCaptureDevice');
+                assert_true(pageMediaState.includes('HasMutedScreenCaptureDevice'), 'page state includes HasMutedScreenCaptureDevice');
+                assert_false(pageMediaState.includes('HasActiveScreenCaptureDevice'), 'page state does not include HasActiveScreenCaptureDevice');
                 internals.setMediaStreamTrackMuted(track, false)
             }
 

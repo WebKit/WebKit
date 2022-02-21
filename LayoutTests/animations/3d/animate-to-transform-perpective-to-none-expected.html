@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+      height: 200px;
+      width: 200px;
+      background-color: blue;
+    }
+
+    .test {
+      height: 200px;
+      width: 200px;
+      margin: 50px;
+      border: 1px solid black;
+      transform-style: preserve-3d;
+    }
+
+    @keyframes animate-perspective {
+      0% { transform: perspective(1000px); }
+      100% { transform: perspective(none); }
+    }
+
+    .inner {
+      transform: rotateX(45deg);
+    }
+  </style>
+</head>
+<body>
+
+<div class="test">
+  <div class="inner box">
+  </div>
+</div>
+
+<script>
+    let target = document.querySelector('.test');
+    getComputedStyle(target).getPropertyValue("transform");
+    target.style.animationPlayState = "paused";
+    target.style.animationName = 'animate-perspective';
+    target.style.animationDuration = '100s';
+    target.style.animationDelay = '-90s';
+</script>
+
+</body>
+</html>

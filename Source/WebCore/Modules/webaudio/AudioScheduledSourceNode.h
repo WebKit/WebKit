@@ -52,8 +52,6 @@ public:
         PLAYING_STATE = 2,
         FINISHED_STATE = 3
     };
-    
-    AudioScheduledSourceNode(BaseAudioContext&, NodeType);
 
     ExceptionOr<void> startLater(double when);
     ExceptionOr<void> stopLater(double when);
@@ -63,6 +61,8 @@ public:
     bool hasFinished() const { return m_playbackState == FINISHED_STATE; }
 
 protected:
+    AudioScheduledSourceNode(BaseAudioContext&, NodeType);
+
     // Get frame information for the current time quantum.
     // We handle the transition into PLAYING_STATE and FINISHED_STATE here,
     // zeroing out portions of the outputBus which are outside the range of startFrame and endFrame.

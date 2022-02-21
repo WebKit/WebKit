@@ -96,7 +96,7 @@ static inline void splitOnSpaces(StringParsingBuffer<CharacterType> buffer, Func
     }
 }
 
-static std::optional<Vector<EncodedResourceCryptographicDigest>> parseIntegrityMetadata(const String& integrityMetadata)
+std::optional<Vector<EncodedResourceCryptographicDigest>> parseIntegrityMetadata(const String& integrityMetadata)
 {
     if (integrityMetadata.isEmpty())
         return std::nullopt;

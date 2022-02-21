@@ -28,9 +28,12 @@
 
 #include "CSSCounterStyleRule.h"
 #include "CSSFontFaceRule.h"
+#include "CSSFontPaletteValuesRule.h"
 #include "CSSImportRule.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
+#include "CSSLayerBlockRule.h"
+#include "CSSLayerStatementRule.h"
 #include "CSSMediaRule.h"
 #include "CSSNamespaceRule.h"
 #include "CSSPageRule.h"
@@ -38,9 +41,12 @@
 #include "CSSSupportsRule.h"
 #include "JSCSSCounterStyleRule.h"
 #include "JSCSSFontFaceRule.h"
+#include "JSCSSFontPaletteValuesRule.h"
 #include "JSCSSImportRule.h"
 #include "JSCSSKeyframeRule.h"
 #include "JSCSSKeyframesRule.h"
+#include "JSCSSLayerBlockRule.h"
+#include "JSCSSLayerStatementRule.h"
 #include "JSCSSMediaRule.h"
 #include "JSCSSNamespaceRule.h"
 #include "JSCSSPageRule.h"
@@ -63,30 +69,40 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN(JSCSSRule);
 
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<CSSRule>&& rule)
 {
-    switch (rule->type()) {
-    case CSSRule::STYLE_RULE:
+    switch (rule->styleRuleType()) {
+    case StyleRuleType::Style:
         return createWrapper<CSSStyleRule>(globalObject, WTFMove(rule));
-    case CSSRule::MEDIA_RULE:
+    case StyleRuleType::Media:
         return createWrapper<CSSMediaRule>(globalObject, WTFMove(rule));
-    case CSSRule::FONT_FACE_RULE:
+    case StyleRuleType::FontFace:
         return createWrapper<CSSFontFaceRule>(globalObject, WTFMove(rule));
-    case CSSRule::PAGE_RULE:
+    case StyleRuleType::FontPaletteValues:
+        return createWrapper<CSSFontPaletteValuesRule>(globalObject, WTFMove(rule));
+    case StyleRuleType::Page:
         return createWrapper<CSSPageRule>(globalObject, WTFMove(rule));
-    case CSSRule::IMPORT_RULE:
+    case StyleRuleType::Import:
         return createWrapper<CSSImportRule>(globalObject, WTFMove(rule));
-    case CSSRule::NAMESPACE_RULE:
+    case StyleRuleType::Namespace:
         return createWrapper<CSSNamespaceRule>(globalObject, WTFMove(rule));
-    case CSSRule::KEYFRAME_RULE:
+    case StyleRuleType::Keyframe:
         return createWrapper<CSSKeyframeRule>(globalObject, WTFMove(rule));
-    case CSSRule::KEYFRAMES_RULE:
+    case StyleRuleType::Keyframes:
         return createWrapper<CSSKeyframesRule>(globalObject, WTFMove(rule));
-    case CSSRule::SUPPORTS_RULE:
+    case StyleRuleType::Supports:
         return createWrapper<CSSSupportsRule>(globalObject, WTFMove(rule));
-    case CSSRule::COUNTER_STYLE_RULE:
+    case StyleRuleType::CounterStyle:
         return createWrapper<CSSCounterStyleRule>(globalObject, WTFMove(rule));
-    default:
+    case StyleRuleType::LayerBlock:
+        return createWrapper<CSSLayerBlockRule>(globalObject, WTFMove(rule));
+    case StyleRuleType::LayerStatement:
+        return createWrapper<CSSLayerStatementRule>(globalObject, WTFMove(rule));
+    case StyleRuleType::Container:
+    case StyleRuleType::Unknown:
+    case StyleRuleType::Charset:
+    case StyleRuleType::Margin:
         return createWrapper<CSSRule>(globalObject, WTFMove(rule));
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, CSSRule& object)

@@ -298,7 +298,7 @@ class DriverTest(unittest.TestCase):
         driver = Driver(port, 0, pixel_tests=True)
         driver.start(True, [])
         last_tmpdir = port._filesystem.last_tmpdir
-        self.assertNotEquals(last_tmpdir, None)
+        self.assertNotEqual(last_tmpdir, None)
         driver.stop()
         self.assertFalse(port._filesystem.isdir(last_tmpdir))
 
@@ -401,7 +401,7 @@ class DriverTest(unittest.TestCase):
             driver = Driver(port, None, pixel_tests=False)
             driver.start(True, [])
             environ_driver = driver._setup_environ_for_test()
-            self.assertNotEquals(environ_driver['HOME'], environ_user['HOME'])
+            self.assertNotEqual(environ_driver['HOME'], environ_user['HOME'])
             self.assertIn(str(driver._driver_tempdir), environ_driver['HOME'])
             self.assertNotIn(str(driver._driver_tempdir), environ_user['HOME'])
             self.assertTrue(port._filesystem.isdir(environ_driver['HOME']))

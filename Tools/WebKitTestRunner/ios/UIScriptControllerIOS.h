@@ -146,6 +146,7 @@ private:
     void copyText(JSStringRef) override;
     void installTapGestureOnWindow(JSValueRef) override;
     void setSpellCheckerResults(JSValueRef) override { }
+    void setScrollViewKeyboardAvoidanceEnabled(bool) override;
 
     bool mayContainEditableElementsInRect(unsigned x, unsigned y, unsigned width, unsigned height) override;
 
@@ -168,6 +169,8 @@ private:
     void waitForSingleTapToReset() const;
     WebCore::FloatRect rectForMenuAction(CFStringRef) const;
     void singleTapAtPointWithModifiers(WebCore::FloatPoint location, Vector<String>&& modifierFlags, BlockPtr<void()>&&);
+
+    bool isWebContentFirstResponder() const override;
 };
 
 }

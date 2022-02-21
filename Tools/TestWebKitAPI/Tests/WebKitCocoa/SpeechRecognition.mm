@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -36,11 +37,8 @@
 
 static bool shouldGrantPermissionRequest = true;
 static bool permissionRequested = false;
-static bool receivedScriptMessage;
-static bool didFinishNavigation;
 static bool captureStateDidChange;
 static bool isCapturing;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 static RetainPtr<WKWebView> createdWebView;
 
 @interface SpeechRecognitionUIDelegate : NSObject<WKUIDelegatePrivate>
@@ -106,7 +104,7 @@ static RetainPtr<WKWebView> createdWebView;
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    didFinishNavigation = true;
+    didFinishNavigationBoolean = true;
 }
 @end
 
@@ -164,6 +162,7 @@ TEST(WebKit2, SpeechRecognitionErrorWhenStartingAudioCaptureOnDifferentPage)
     preferences._mockCaptureDevicesEnabled = YES;
     preferences._speechRecognitionEnabled = YES;
     preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._getUserMediaRequiresFocus = NO;
     auto delegate = adoptNS([[SpeechRecognitionUIDelegate alloc] init]);
     auto firstWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
     [firstWebView setUIDelegate:delegate.get()];
@@ -261,9 +260,9 @@ TEST(WebKit2, SpeechRecognitionPageIsDestroyed)
         [webView setUIDelegate:delegate.get()];
         [webView setNavigationDelegate:navigationDelegate.get()];
 
-        didFinishNavigation = false;
+        didFinishNavigationBoolean = false;
         [webView loadHTMLString:@"<script>speechRecognition = new webkitSpeechRecognition(); speechRecognition.start(); speechRecognition = null;</script>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-        TestWebKitAPI::Util::run(&didFinishNavigation);
+        TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
         [configuration.get().processPool _garbageCollectJavaScriptObjectsForTesting];
 
         bool finishedRunningScript = false;

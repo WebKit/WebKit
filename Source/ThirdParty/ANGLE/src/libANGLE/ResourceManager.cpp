@@ -33,7 +33,7 @@ template <typename ResourceType, typename IDType>
 IDType AllocateEmptyObject(HandleAllocator *handleAllocator,
                            ResourceMap<ResourceType, IDType> *objectMap)
 {
-    IDType handle = FromGL<IDType>(handleAllocator->allocate());
+    IDType handle = PackParam<IDType>(handleAllocator->allocate());
     objectMap->assign(handle, nullptr);
     return handle;
 }
@@ -97,8 +97,6 @@ void TypedResourceManager<ResourceType, ImplT, IDType>::deleteObject(const Conte
     }
 }
 
-// Unclear why Clang warns about weak vtables in this case.
-ANGLE_DISABLE_WEAK_TEMPLATE_VTABLES_WARNING
 template class TypedResourceManager<Buffer, BufferManager, BufferID>;
 template class TypedResourceManager<Texture, TextureManager, TextureID>;
 template class TypedResourceManager<Renderbuffer, RenderbufferManager, RenderbufferID>;
@@ -106,7 +104,6 @@ template class TypedResourceManager<Sampler, SamplerManager, SamplerID>;
 template class TypedResourceManager<Sync, SyncManager, GLuint>;
 template class TypedResourceManager<Framebuffer, FramebufferManager, FramebufferID>;
 template class TypedResourceManager<ProgramPipeline, ProgramPipelineManager, ProgramPipelineID>;
-ANGLE_REENABLE_WEAK_TEMPLATE_VTABLES_WARNING
 
 // BufferManager Implementation.
 BufferManager::~BufferManager() = default;
@@ -379,6 +376,11 @@ void FramebufferManager::setDefaultFramebuffer(Framebuffer *framebuffer)
 {
     ASSERT(framebuffer == nullptr || framebuffer->isDefault());
     mObjectMap.assign(Framebuffer::kDefaultDrawFramebufferHandle, framebuffer);
+}
+
+Framebuffer *FramebufferManager::getDefaultFramebuffer() const
+{
+    return getFramebuffer(Framebuffer::kDefaultDrawFramebufferHandle);
 }
 
 void FramebufferManager::invalidateFramebufferCompletenessCache() const

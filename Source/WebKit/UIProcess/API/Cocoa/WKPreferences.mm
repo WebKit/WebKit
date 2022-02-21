@@ -27,7 +27,7 @@
 #import "WKPreferencesInternal.h"
 
 #import "APIArray.h"
-#import "PluginProcessManager.h"
+#import "Logging.h"
 #import "WKNSArray.h"
 #import "WebPreferences.h"
 #import "_WKExperimentalFeatureInternal.h"
@@ -151,6 +151,26 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)setTextInteractionEnabled:(BOOL)textInteractionEnabled
 {
     _preferences->setTextInteractionEnabled(textInteractionEnabled);
+}
+
+- (BOOL)isSiteSpecificQuirksModeEnabled
+{
+    return _preferences->needsSiteSpecificQuirks();
+}
+
+- (void)setSiteSpecificQuirksModeEnabled:(BOOL)enabled
+{
+    _preferences->setNeedsSiteSpecificQuirks(enabled);
+}
+
+- (BOOL)isElementFullscreenEnabled
+{
+    return _preferences->fullScreenEnabled();
+}
+
+- (void)setElementFullscreenEnabled:(BOOL)elementFullscreenEnabled
+{
+    _preferences->setFullScreenEnabled(elementFullscreenEnabled);
 }
 
 #pragma mark OS X-specific methods
@@ -630,6 +650,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setMediaDevicesEnabled(enabled);
 }
 
+- (BOOL)_getUserMediaRequiresFocus
+{
+    return _preferences->getUserMediaRequiresFocus();
+}
+
+- (void)_setGetUserMediaRequiresFocus:(BOOL)enabled
+{
+    _preferences->setGetUserMediaRequiresFocus(enabled);
+}
+
 - (BOOL)_screenCaptureEnabled
 {
     return _preferences->screenCaptureEnabled();
@@ -668,6 +698,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
 - (void)_setMediaCaptureRequiresSecureConnection:(BOOL)requiresSecureConnection
 {
     _preferences->setMediaCaptureRequiresSecureConnection(requiresSecureConnection);
+}
+
+- (BOOL)_useScreenCaptureKit
+{
+    return _preferences->useScreenCaptureKit();
+}
+
+- (void)_setUseScreenCaptureKit:(BOOL)useScreenCaptureKit
+{
+    _preferences->setUseScreenCaptureKit(useScreenCaptureKit);
 }
 
 - (double)_inactiveMediaCaptureSteamRepromptIntervalInMinutes
@@ -903,16 +943,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->acceleratedCompositingEnabled();
 }
 
-- (void)_setRequestAnimationFrameEnabled:(BOOL)enabled
-{
-    _preferences->setRequestAnimationFrameEnabled(enabled);
-}
-
-- (BOOL)_requestAnimationFrameEnabled
-{
-    return _preferences->requestAnimationFrameEnabled();
-}
-
 - (BOOL)_remotePlaybackEnabled
 {
     return _preferences->remotePlaybackEnabled();
@@ -1016,12 +1046,11 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (void)_setPageCacheSupportsPlugins:(BOOL)enabled
 {
-    _preferences->setBackForwardCacheSupportsPlugins(enabled);
 }
 
 - (BOOL)_pageCacheSupportsPlugins
 {
-    return _preferences->backForwardCacheSupportsPlugins();
+    return NO;
 }
 
 - (void)_setShouldPrintBackgrounds:(BOOL)enabled
@@ -1076,35 +1105,29 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (void)_setAsynchronousPluginInitializationEnabled:(BOOL)enabled
 {
-    _preferences->setAsynchronousPluginInitializationEnabled(enabled);
 }
 
 - (BOOL)_asynchronousPluginInitializationEnabled
 {
-    return _preferences->asynchronousPluginInitializationEnabled();
+    return NO;
 }
 
 - (void)_setArtificialPluginInitializationDelayEnabled:(BOOL)enabled
 {
-    _preferences->setArtificialPluginInitializationDelayEnabled(enabled);
 }
 
 - (BOOL)_artificialPluginInitializationDelayEnabled
 {
-    return _preferences->artificialPluginInitializationDelayEnabled();
+    return NO;
 }
 
 - (void)_setExperimentalPlugInSandboxProfilesEnabled:(BOOL)enabled
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    WebKit::PluginProcessManager::singleton().setExperimentalPlugInSandboxProfilesEnabled(enabled);
-#endif
-    _preferences->setExperimentalPlugInSandboxProfilesEnabled(enabled);
 }
 
 - (BOOL)_experimentalPlugInSandboxProfilesEnabled
 {
-    return _preferences->experimentalPlugInSandboxProfilesEnabled();
+    return NO;
 }
 
 - (void)_setCookieEnabled:(BOOL)enabled
@@ -1144,16 +1167,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (NSString *)_standardFontFamily
 {
     return _preferences->standardFontFamily();
-}
-
-- (void)_setNotificationsEnabled:(BOOL)enabled
-{
-    _preferences->setNotificationsEnabled(enabled);
-}
-
-- (BOOL)_notificationsEnabled
-{
-    return _preferences->notificationsEnabled();
 }
 
 - (void)_setBackspaceKeyNavigationEnabled:(BOOL)enabled
@@ -1512,13 +1525,62 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->requiresPageVisibilityToPlayAudio();
 }
 
-- (void)_setRequiresPageVisibilityToPlayAudio:(BOOL)requires
+- (void)_setRequiresPageVisibilityToPlayAudio:(BOOL)requiresVisibility
 {
-    _preferences->setRequiresPageVisibilityToPlayAudio(requires);
+    _preferences->setRequiresPageVisibilityToPlayAudio(requiresVisibility);
+}
+
+- (BOOL)_fileSystemAccessEnabled
+{
+    return _preferences->fileSystemAccessEnabled();
+}
+
+- (void)_setFileSystemAccessEnabled:(BOOL)fileSystemAccessEnabled
+{
+    _preferences->setFileSystemAccessEnabled(fileSystemAccessEnabled);
+}
+
+- (BOOL)_storageAPIEnabled
+{
+    return _preferences->storageAPIEnabled();
+}
+
+- (void)_setStorageAPIEnabled:(BOOL)storageAPIEnabled
+{
+    _preferences->setStorageAPIEnabled(storageAPIEnabled);
+}
+
+- (BOOL)_accessHandleEnabled
+{
+    return _preferences->accessHandleEnabled();
+}
+
+- (void)_setAccessHandleEnabled:(BOOL)accessHandleEnabled
+{
+    _preferences->setAccessHandleEnabled(accessHandleEnabled);
+}
+
+- (void)_setNotificationsEnabled:(BOOL)enabled
+{
+    _preferences->setNotificationsEnabled(enabled);
+}
+
+- (BOOL)_notificationsEnabled
+{
+    return _preferences->notificationsEnabled();
+}
+
+- (void)_setModelDocumentEnabled:(BOOL)enabled
+{
+    _preferences->setModelDocumentEnabled(enabled);
+}
+
+- (BOOL)_modelDocumentEnabled
+{
+    return _preferences->modelDocumentEnabled();
 }
 
 @end
-
 
 @implementation WKPreferences (WKDeprecated)
 
@@ -1560,6 +1622,15 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 @end
 
 @implementation WKPreferences (WKPrivateDeprecated)
+
+- (void)_setRequestAnimationFrameEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)_requestAnimationFrameEnabled
+{
+    return YES;
+}
 
 #if !TARGET_OS_IPHONE
 

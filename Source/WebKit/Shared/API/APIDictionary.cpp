@@ -55,12 +55,9 @@ Ref<Array> Dictionary::keys() const
     if (m_map.isEmpty())
         return API::Array::create();
 
-    Vector<RefPtr<API::Object>> keys;
-    keys.reserveInitialCapacity(m_map.size());
-
-    for (const auto& key : m_map.keys())
-        keys.uncheckedAppend(API::String::create(key));
-
+    auto keys = WTF::map(m_map, [](auto& entry) -> RefPtr<API::Object> {
+        return API::String::create(entry.key);
+    });
     return API::Array::create(WTFMove(keys));
 }
 

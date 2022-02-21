@@ -44,7 +44,7 @@ class Decoder;
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
-struct TrackPrivateRemoteConfiguration;
+struct VideoTrackPrivateRemoteConfiguration;
 
 class RemoteVideoTrackProxy final
     : public ThreadSafeRefCounted<RemoteVideoTrackProxy, WTF::DestructionThread::Main>
@@ -69,6 +69,7 @@ private:
 
     // VideoTrackPrivateClient
     void selectedChanged(bool) final;
+    void configurationChanged(const WebCore::PlatformVideoTrackConfiguration&) final { updateConfiguration(); }
 
     // TrackPrivateBaseClient
     void idChanged(const AtomString&) final;
@@ -76,8 +77,8 @@ private:
     void languageChanged(const AtomString&) final;
     void willRemove() final;
 
-    TrackPrivateRemoteConfiguration& configuration();
-    void configurationChanged();
+    VideoTrackPrivateRemoteConfiguration configuration();
+    void updateConfiguration();
 
     WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     TrackPrivateRemoteIdentifier m_identifier;

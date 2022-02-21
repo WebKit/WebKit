@@ -61,12 +61,17 @@ String CachedXSLStyleSheet::encoding() const
     return m_decoder->encoding().name();
 }
 
-void CachedXSLStyleSheet::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedXSLStyleSheet::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
-    m_data = data;
-    setEncodedSize(data ? data->size() : 0);
-    if (data)
-        m_sheet = m_decoder->decodeAndFlush(data->data(), encodedSize());
+    if (data) {
+        auto contiguousData = data->makeContiguous();
+        setEncodedSize(data->size());
+        m_sheet = m_decoder->decodeAndFlush(contiguousData->data(), encodedSize());
+        m_data = WTFMove(contiguousData);
+    } else {
+        m_data = nullptr;
+        setEncodedSize(0);
+    }
     setLoading(false);
     checkNotify(metrics);
 }

@@ -88,7 +88,7 @@ private:
 
 void ExtendableEvent::addExtendLifetimePromise(Ref<DOMPromise>&& promise)
 {
-    promise->whenSettled([this, protectedThis = makeRefPtr(this), settledPromise = promise.ptr()] () mutable {
+    promise->whenSettled([this, protectedThis = Ref { *this }, settledPromise = promise.ptr()] () mutable {
         auto& globalObject = *settledPromise->globalObject();
         globalObject.queueMicrotask(FunctionMicrotask::create([this, protectedThis = WTFMove(protectedThis), settledPromise = WTFMove(settledPromise)] () mutable {
             --m_pendingPromiseCount;
@@ -115,7 +115,7 @@ void ExtendableEvent::addExtendLifetimePromise(Ref<DOMPromise>&& promise)
     ++m_pendingPromiseCount;
 }
 
-void ExtendableEvent::whenAllExtendLifetimePromisesAreSettled(WTF::Function<void(HashSet<Ref<DOMPromise>>&&)>&& handler)
+void ExtendableEvent::whenAllExtendLifetimePromisesAreSettled(Function<void(HashSet<Ref<DOMPromise>>&&)>&& handler)
 {
     ASSERT_WITH_MESSAGE(target(), "Event has not been dispatched yet");
     ASSERT(!m_whenAllExtendLifetimePromisesAreSettledHandler);

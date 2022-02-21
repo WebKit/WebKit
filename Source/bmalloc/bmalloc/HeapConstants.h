@@ -33,6 +33,8 @@
 #include <array>
 #include <mutex>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 class HeapConstants : public StaticPerProcess<HeapConstants> {
@@ -62,3 +64,5 @@ private:
 DECLARE_STATIC_PER_PROCESS_STORAGE(HeapConstants);
 
 } // namespace bmalloc
+
+#endif

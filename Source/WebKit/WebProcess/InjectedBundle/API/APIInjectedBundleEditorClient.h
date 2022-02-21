@@ -31,9 +31,9 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class SharedBuffer;
 class DocumentFragment;
 class Node;
-class SharedBuffer;
 class StyleProperties;
 struct SimpleRange;
 }

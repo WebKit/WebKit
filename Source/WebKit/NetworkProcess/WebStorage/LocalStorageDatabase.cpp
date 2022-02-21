@@ -34,6 +34,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/SuspendableWorkQueue.h>
 
 namespace WebKit {
@@ -112,7 +113,7 @@ void LocalStorageDatabase::startTransactionIfNecessary()
         return;
 
     m_transaction->begin();
-    m_workQueue->dispatchAfter(transactionDuration, [weakThis = makeWeakPtr(*this)] {
+    m_workQueue->dispatchAfter(transactionDuration, [weakThis = WeakPtr { *this }] {
         if (weakThis)
             weakThis->m_transaction->commit();
     });

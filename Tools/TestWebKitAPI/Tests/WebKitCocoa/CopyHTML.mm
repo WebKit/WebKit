@@ -28,9 +28,10 @@
 
 #if PLATFORM(COCOA)
 
-#import "CocoaColor.h"
+#import "PasteboardUtilities.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebCore/ColorCocoa.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
@@ -76,15 +77,6 @@ NSString *readHTMLStringFromPasteboard()
 }
 
 #endif
-
-static RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled()
-{
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
-    auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
-    WKPreferencesSetDataTransferItemsEnabled(preferences, true);
-    WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
-    return webView;
-}
 
 TEST(CopyHTML, Sanitizes)
 {
@@ -161,7 +153,7 @@ TEST(CopyHTML, SanitizationPreservesCharacterSet)
         EXPECT_WK_STREQ("我叫謝文昇", [attributedString string]);
 
         __block BOOL foundColorAttribute = NO;
-        [attributedString enumerateAttribute:NSForegroundColorAttributeName inRange:NSMakeRange(0, 5) options:0 usingBlock:^(CocoaColor *color, NSRange range, BOOL*) {
+        [attributedString enumerateAttribute:NSForegroundColorAttributeName inRange:NSMakeRange(0, 5) options:0 usingBlock:^(WebCore::CocoaColor *color, NSRange range, BOOL*) {
             CGFloat redComponent = 0;
             CGFloat greenComponent = 0;
             CGFloat blueComponent = 0;

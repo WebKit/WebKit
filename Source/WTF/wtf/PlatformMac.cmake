@@ -1,10 +1,12 @@
 find_library(COCOA_LIBRARY Cocoa)
 find_library(COREFOUNDATION_LIBRARY CoreFoundation)
 find_library(READLINE_LIBRARY Readline)
+find_library(SECURITY_LIBRARY Security)
 list(APPEND WTF_LIBRARIES
     ${COREFOUNDATION_LIBRARY}
     ${COCOA_LIBRARY}
     ${READLINE_LIBRARY}
+    ${SECURITY_LIBRARY}
 )
 
 list(APPEND WTF_PUBLIC_HEADERS
@@ -20,6 +22,8 @@ list(APPEND WTF_PUBLIC_HEADERS
     cocoa/RuntimeApplicationChecksCocoa.h
     cocoa/SoftLinking.h
     cocoa/SpanCocoa.h
+    cocoa/TollFreeBridging.h
+    cocoa/TypeCastsCocoa.h
     cocoa/VectorCocoa.h
 
     darwin/WeakLinking.h
@@ -31,9 +35,11 @@ list(APPEND WTF_PUBLIC_HEADERS
     spi/cocoa/CrashReporterClientSPI.h
     spi/cocoa/MachVMSPI.h
     spi/cocoa/NSLocaleSPI.h
+    spi/cocoa/NSObjCRuntimeSPI.h
     spi/cocoa/SecuritySPI.h
     spi/cocoa/objcSPI.h
 
+    spi/darwin/CodeSignSPI.h
     spi/darwin/DataVaultSPI.h
     spi/darwin/OSVariantSPI.h
     spi/darwin/ProcessMemoryFootprint.h
@@ -49,6 +55,7 @@ list(APPEND WTF_PUBLIC_HEADERS
 
 list(APPEND WTF_SOURCES
     BlockObjCExceptions.mm
+    ProcessPrivilege.cpp
     TranslatedProcess.cpp
 
     cf/CFURLExtras.cpp
@@ -59,7 +66,6 @@ list(APPEND WTF_SOURCES
     cf/URLCF.cpp
 
     cocoa/AutodrainedPool.cpp
-    cocoa/CPUTimeCocoa.cpp
     cocoa/CrashReporter.cpp
     cocoa/Entitlements.mm
     cocoa/FileSystemCocoa.mm
@@ -79,6 +85,7 @@ list(APPEND WTF_SOURCES
     mac/FileSystemMac.mm
     mac/SchedulePairMac.mm
 
+    posix/CPUTimePOSIX.cpp
     posix/FileSystemPOSIX.cpp
     posix/OSAllocatorPOSIX.cpp
     posix/ThreadingPOSIX.cpp

@@ -5,10 +5,10 @@
 //
 
 #include "compiler/translator/TranslatorMetalDirect/IntroduceVertexIndexID.h"
-#include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
-#include "compiler/translator/tree_util/IntermRebuild.h"
 #include "compiler/translator/StaticType.h"
+#include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
+#include "compiler/translator/tree_util/IntermRebuild.h"
 using namespace sh;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -16,12 +16,11 @@ using namespace sh;
 namespace
 {
 
-constexpr const TVariable kgl_VertexIDMetal(
-    BuiltInId::gl_VertexID,
-    ImmutableString("gl_VertexID"),
-    SymbolType::BuiltIn,
-    TExtension::UNDEFINED,
-    StaticType::Get<EbtUInt, EbpHigh, EvqVertexID, 1, 1>());
+constexpr const TVariable kgl_VertexIDMetal(BuiltInId::gl_VertexID,
+                                            ImmutableString("gl_VertexID"),
+                                            SymbolType::BuiltIn,
+                                            TExtension::UNDEFINED,
+                                            StaticType::Get<EbtUInt, EbpHigh, EvqVertexID, 1, 1>());
 
 constexpr const TVariable kgl_instanceIdMetal(
     BuiltInId::gl_VertexID,
@@ -30,30 +29,27 @@ constexpr const TVariable kgl_instanceIdMetal(
     TExtension::UNDEFINED,
     StaticType::Get<EbtUInt, EbpHigh, EvqInstanceID, 1, 1>());
 
-
 class Rewriter : public TIntermRebuild
 {
   public:
-    Rewriter(TCompiler &compiler) : TIntermRebuild(compiler, true, true)
-    {}
-
+    Rewriter(TCompiler &compiler) : TIntermRebuild(compiler, true, true) {}
 
   private:
-
     PreResult visitFunctionDefinitionPre(TIntermFunctionDefinition &node) override
     {
-        if(node.getFunction()->isMain())
+        if (node.getFunction()->isMain())
         {
-            const TFunction * mainFunction = node.getFunction();
-            bool needsVertexId = true;
-            bool needsInstanceId = true;
+            const TFunction *mainFunction = node.getFunction();
+            bool needsVertexId            = true;
+            bool needsInstanceId          = true;
             std::vector<const TVariable *> mVariablesToIntroduce;
-            for(size_t i = 0; i < mainFunction->getParamCount(); ++i)
+            for (size_t i = 0; i < mainFunction->getParamCount(); ++i)
             {
-                const TVariable * param = mainFunction->getParam(i);
-                Name instanceIDName = Pipeline{Pipeline::Type::InstanceId, nullptr}.getStructInstanceName(
-                                    Pipeline::Variant::Modified);
-                if(Name(*param) == instanceIDName)
+                const TVariable *param = mainFunction->getParam(i);
+                Name instanceIDName =
+                    Pipeline{Pipeline::Type::InstanceId, nullptr}.getStructInstanceName(
+                        Pipeline::Variant::Modified);
+                if (Name(*param) == instanceIDName)
                 {
                     needsInstanceId = false;
                 }
@@ -62,16 +58,17 @@ class Rewriter : public TIntermRebuild
                     needsVertexId = false;
                 }
             }
-            if(needsInstanceId)
+            if (needsInstanceId)
             {
                 mVariablesToIntroduce.push_back(&kgl_instanceIdMetal);
             }
-            if(needsVertexId)
+            if (needsVertexId)
             {
                 mVariablesToIntroduce.push_back(&kgl_VertexIDMetal);
             }
-            const TFunction & newFunction = CloneFunctionAndAppendParams(mSymbolTable, nullptr, *node.getFunction(), mVariablesToIntroduce);
-            TIntermFunctionPrototype * newProto = new TIntermFunctionPrototype(&newFunction);
+            const TFunction &newFunction = CloneFunctionAndAppendParams(
+                mSymbolTable, nullptr, *node.getFunction(), mVariablesToIntroduce);
+            TIntermFunctionPrototype *newProto = new TIntermFunctionPrototype(&newFunction);
             return new TIntermFunctionDefinition(newProto, node.getBody());
         }
         return node;

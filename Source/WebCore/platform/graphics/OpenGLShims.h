@@ -78,6 +78,7 @@ typedef void (GLAPIENTRY *glDisableVertexAttribArrayType) (GLuint);
 typedef void (GLAPIENTRY *glDrawArraysInstancedType) (GLenum, GLint, GLsizei, GLsizei);
 typedef void (GLAPIENTRY *glDrawBuffersType) (GLsizei, const GLenum*);
 typedef void (GLAPIENTRY *glDrawElementsInstancedType) (GLenum, GLsizei, GLenum, const GLvoid*, GLsizei);
+typedef void (GLAPIENTRY *glEGLImageTargetTexture2DOESType) (GLenum target, GLeglImageOES);
 typedef void (GLAPIENTRY *glEnableVertexAttribArrayType) (GLuint);
 typedef void (GLAPIENTRY *glFramebufferRenderbufferType) (GLenum, GLenum, GLenum, GLuint);
 typedef void (GLAPIENTRY *glFramebufferTexture2DType) (GLenum, GLenum, GLenum, GLuint, GLint);
@@ -186,6 +187,7 @@ typedef struct _OpenGLFunctionTable {
     FUNCTION_TABLE_ENTRY(glDrawArraysInstanced);
     FUNCTION_TABLE_ENTRY(glDrawBuffers);
     FUNCTION_TABLE_ENTRY(glDrawElementsInstanced);
+    FUNCTION_TABLE_ENTRY(glEGLImageTargetTexture2DOES);
     FUNCTION_TABLE_ENTRY(glEnableVertexAttribArray);
     FUNCTION_TABLE_ENTRY(glFramebufferRenderbuffer);
     FUNCTION_TABLE_ENTRY(glFramebufferTexture2D);
@@ -306,6 +308,7 @@ typedef struct _OpenGLFunctionTable {
 #define glDrawBuffers                          LOOKUP_GL_FUNCTION(glDrawBuffers)
 #define glDrawElementsInstancedEXT             glDrawElementsInstanced
 #define glDrawElementsInstanced                LOOKUP_GL_FUNCTION(glDrawElementsInstanced)
+#define glEGLImageTargetTexture2DOES           LOOKUP_GL_FUNCTION(glEGLImageTargetTexture2DOES)
 #define glEnableVertexAttribArray              LOOKUP_GL_FUNCTION(glEnableVertexAttribArray)
 #define glFramebufferRenderbufferEXT           glFramebufferRenderbuffer
 #define glFramebufferRenderbuffer              LOOKUP_GL_FUNCTION(glFramebufferRenderbuffer)

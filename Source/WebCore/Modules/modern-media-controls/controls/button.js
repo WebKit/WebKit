@@ -229,5 +229,6 @@ Button.Styles = {
     Bar: "bar",
     Corner: "corner",
     Center: "center",
+    Rounded: "rounded",
     SmallCenter: "small-center"
 };

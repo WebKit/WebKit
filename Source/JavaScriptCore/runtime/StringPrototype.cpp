@@ -169,7 +169,7 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 StringPrototype* StringPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    StringPrototype* prototype = new (NotNull, allocateCell<StringPrototype>(vm.heap)) StringPrototype(vm, structure);
+    StringPrototype* prototype = new (NotNull, allocateCell<StringPrototype>(vm)) StringPrototype(vm, structure);
     prototype->finishCreation(vm, globalObject);
     return prototype;
 }
@@ -960,7 +960,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToString, (JSGlobalObject* globalObject,
     // Also used for valueOf.
 
     if (thisValue.isString()) {
-        Integrity::auditStructureID(vm, thisValue.asCell()->structureID());
+        Integrity::auditStructureID(thisValue.asCell()->structureID());
         return JSValue::encode(thisValue);
     }
 
@@ -968,7 +968,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToString, (JSGlobalObject* globalObject,
     if (!stringObject)
         return throwVMTypeError(globalObject, scope);
 
-    Integrity::auditStructureID(vm, stringObject->structureID());
+    Integrity::auditStructureID(stringObject->structureID());
     return JSValue::encode(stringObject->internalValue());
 }
 

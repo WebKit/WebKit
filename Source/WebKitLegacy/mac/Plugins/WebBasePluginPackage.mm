@@ -30,7 +30,6 @@
 
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
-#import "WebNetscapePluginPackage.h"
 #import "WebPluginPackage.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/WebCoreJITOperations.h>
@@ -67,18 +66,7 @@
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath
 {
-    
-    auto pluginPackage = adoptNS([[WebPluginPackage alloc] initWithPath:pluginPath]);
-
-    if (!pluginPackage) {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        pluginPackage = adoptNS([[WebNetscapePluginPackage alloc] initWithPath:pluginPath]);
-#else
-        return nil;
-#endif
-    }
-
-    return pluginPackage.autorelease();
+    return adoptNS([[WebPluginPackage alloc] initWithPath:pluginPath]).autorelease();
 }
 
 - (id)initWithPath:(NSString *)pluginPath
@@ -331,7 +319,9 @@ static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
     if (!archs || !numArchs)
         return NO;
     
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     const NXArchInfo* localArch = NXGetLocalArchInfo();
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (!localArch)
         return NO;
     
@@ -344,7 +334,9 @@ static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
     cputype = CPU_TYPE_X86_64;
 #endif
     
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return NXFindBestFatArch(cputype, cpusubtype, archs, numArchs) != 0;
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (UInt32)versionNumber

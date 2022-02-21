@@ -24,7 +24,7 @@
 
 #include "ElementIterator.h"
 #include "RenderSVGTransformableContainer.h"
-#include "SVGNames.h"
+#include "SVGElementTypeHelpers.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

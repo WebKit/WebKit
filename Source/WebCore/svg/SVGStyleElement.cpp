@@ -25,6 +25,7 @@
 
 #include "CSSStyleSheet.h"
 #include "Document.h"
+#include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
@@ -58,7 +59,7 @@ bool SVGStyleElement::disabled() const
 
 void SVGStyleElement::setDisabled(bool setDisabled)
 {
-    if (auto styleSheet = makeRefPtr(sheet()))
+    if (RefPtr styleSheet = sheet())
         styleSheet->setDisabled(setDisabled);
 }
 

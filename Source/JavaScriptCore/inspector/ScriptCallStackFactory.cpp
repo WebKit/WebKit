@@ -62,7 +62,7 @@ public:
             unsigned line;
             unsigned column;
             visitor->computeLineAndColumn(line, column);
-            m_frames.append(ScriptCallFrame(visitor->functionName(), visitor->sourceURL(), static_cast<SourceID>(visitor->sourceID()), line, column));
+            m_frames.append(ScriptCallFrame(visitor->functionName(), visitor->sourceURL(), visitor->sourceID(), line, column));
 
             m_remainingCapacityForFrameCapture--;
             return StackVisitor::Continue;
@@ -160,7 +160,7 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::JSGlobalObject* glo
         unsigned column;
         stackTrace[i].computeLineAndColumn(line, column);
         String functionName = stackTrace[i].functionName(vm);
-        frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL(), static_cast<SourceID>(stackTrace[i].sourceID()), line, column));
+        frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL(), stackTrace[i].sourceID(), line, column));
     }
 
     // Fallback to getting at least the line and sourceURL from the exception object if it has values and the exceptionStack doesn't.

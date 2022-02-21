@@ -26,7 +26,7 @@
 [
     Conditional=MEDIA_SESSION,
     Exposed=Window,
-    EnabledBySetting=MediaSession,
+    EnabledBySetting=MediaSessionEnabled,
     ImplementedBy=NavigatorMediaSession,
 ] partial interface Navigator {
     [SameObject] readonly attribute MediaSession mediaSession;

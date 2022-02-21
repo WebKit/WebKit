@@ -1,5 +1,5 @@
 
 PASS 'color' animation
-FAIL 'opacity' animation assert_equals: opacity expected "1" but got "0.5"
-FAIL 'color' + 'opacity' animation assert_equals: opacity expected "1" but got "0.5"
+PASS 'opacity' animation
+PASS 'color' + 'opacity' animation
 list item

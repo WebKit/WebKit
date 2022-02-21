@@ -41,12 +41,11 @@
 
 namespace WebCore {
 
-FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
-    : ActiveDOMObject(&context)
+FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
+    : ActiveDOMObject(context)
     , m_body(WTFMove(body))
     , m_headers(WTFMove(headers))
 {
-    suspendIfNeeded();
 }
 
 FetchBodyOwner::~FetchBodyOwner()
@@ -299,11 +298,10 @@ void FetchBodyOwner::blobLoadingFailed()
     finishBlobLoading();
 }
 
-void FetchBodyOwner::blobChunk(const uint8_t* data, size_t size)
+void FetchBodyOwner::blobChunk(const SharedBuffer& buffer)
 {
-    ASSERT(data);
     ASSERT(m_readableStreamSource);
-    if (!m_readableStreamSource->enqueue(ArrayBuffer::tryCreate(data, size)))
+    if (!m_readableStreamSource->enqueue(buffer.tryCreateArrayBuffer()))
         stop();
 }
 
@@ -388,9 +386,9 @@ ResourceError FetchBodyOwner::loadingError() const
 
 std::optional<Exception> FetchBodyOwner::loadingException() const
 {
-    return WTF::switchOn(m_loadingError, [](const ResourceError& error) {
+    return WTF::switchOn(m_loadingError, [](const ResourceError& error) -> std::optional<Exception> {
         return Exception { TypeError, error.sanitizedDescription() };
-    }, [](const Exception& exception) {
+    }, [](const Exception& exception) -> std::optional<Exception> {
         return Exception { exception };
     }, [](auto&&) -> std::optional<Exception> {
         return std::nullopt;

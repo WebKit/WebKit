@@ -220,7 +220,9 @@ void CastStateValues(const Context *context,
         }
     }
     else
-        UNREACHABLE();
+    {
+        WARN() << "Application querying parameter that does not exist.";
+    }
 }
 
 // Explicit template instantiation (how we export template functions in different files)

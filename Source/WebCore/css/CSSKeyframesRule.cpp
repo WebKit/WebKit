@@ -52,11 +52,9 @@ StyleRuleKeyframes::StyleRuleKeyframes(const AtomString& name, std::unique_ptr<D
 
 StyleRuleKeyframes::StyleRuleKeyframes(const StyleRuleKeyframes& o)
     : StyleRuleBase(o)
+    , m_keyframes(o.keyframes())
     , m_name(o.m_name)
 {
-    m_keyframes.reserveInitialCapacity(o.keyframes().size());
-    for (auto& keyframe : o.keyframes())
-        m_keyframes.uncheckedAppend(keyframe.copyRef());
 }
 
 Ref<StyleRuleKeyframes> StyleRuleKeyframes::create(const AtomString& name)

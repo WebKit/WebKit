@@ -7,6 +7,7 @@
 #include "compiler/translator/InfoSink.h"
 
 #include "compiler/translator/ImmutableString.h"
+#include "compiler/translator/Symbol.h"
 #include "compiler/translator/Types.h"
 
 namespace sh
@@ -87,6 +88,23 @@ TInfoSinkBase &TInfoSinkBase::operator<<(const TType &type)
         *this << type.getNominalSize() << "-component vector of ";
 
     sink.append(type.getBasicString());
+
+    if (type.getStruct() != nullptr)
+    {
+        if (type.getStruct()->symbolType() == SymbolType::Empty)
+        {
+            *this << " <anonymous>";
+        }
+        else
+        {
+            *this << " '" << type.getStruct()->name() << "'";
+        }
+        if (type.isStructSpecifier())
+        {
+            *this << " (specifier)";
+        }
+    }
+
     return *this;
 }
 

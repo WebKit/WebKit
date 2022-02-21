@@ -51,10 +51,12 @@
 #import <wtf/DataLog.h>
 #import <wtf/FileSystem.h>
 #import <wtf/RandomNumber.h>
+#import <wtf/SafeStrerror.h>
 #import <wtf/Scope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/WallTime.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringBuilder.h>
@@ -72,6 +74,9 @@ SOFT_LINK_OPTIONAL(libsystem_info, lookup_close_connections, int, (), ());
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_notify)
 SOFT_LINK_OPTIONAL(libsystem_notify, notify_set_options, void, __cdecl, (uint32_t));
 #endif
+
+SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
+SOFT_LINK_OPTIONAL(HIServices, HIS_XPC_ResetMessageConnection, void, (), ())
 
 #if PLATFORM(MAC)
 #define USE_CACHE_COMPILED_SANDBOX 1
@@ -248,7 +253,7 @@ static std::optional<CString> setAndSerializeSandboxParameters(const SandboxInit
         const char* name = initializationParameters.name(i);
         const char* value = initializationParameters.value(i);
         if (sandbox_set_param(sandboxParameters.get(), name, value)) {
-            WTFLogAlways("%s: Could not set sandbox parameter: %s\n", getprogname(), strerror(errno));
+            WTFLogAlways("%s: Could not set sandbox parameter: %s\n", getprogname(), safeStrerror(errno).data());
             CRASH();
         }
         builder.append(name, ':', value, ':');
@@ -268,13 +273,13 @@ static String sandboxDataVaultParentDirectory()
     char temp[PATH_MAX];
     size_t length = confstr(_CS_DARWIN_USER_CACHE_DIR, temp, sizeof(temp));
     if (!length) {
-        WTFLogAlways("%s: Could not retrieve user temporary directory path: %s\n", getprogname(), strerror(errno));
+        WTFLogAlways("%s: Could not retrieve user temporary directory path: %s\n", getprogname(), safeStrerror(errno).data());
         exit(EX_NOPERM);
     }
     RELEASE_ASSERT(length <= sizeof(temp));
     char resolvedPath[PATH_MAX];
     if (!realpath(temp, resolvedPath)) {
-        WTFLogAlways("%s: Could not canonicalize user temporary directory path: %s\n", getprogname(), strerror(errno));
+        WTFLogAlways("%s: Could not canonicalize user temporary directory path: %s\n", getprogname(), safeStrerror(errno).data());
         exit(EX_NOPERM);
     }
     return resolvedPath;
@@ -370,7 +375,7 @@ static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
         if (!makeDataVault())
             return false;
     } else {
-        WTFLogAlways("%s: Sandbox directory couldn't be created: ", getprogname(), strerror(errno));
+        WTFLogAlways("%s: Sandbox directory couldn't be created: ", getprogname(), safeStrerror(errno).data());
         return false;
     }
 #else
@@ -518,7 +523,7 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
     setNotifyOptions();
 
     if (sandbox_apply(&profile)) {
-        WTFLogAlways("%s: Could not apply cached sandbox: %s\n", getprogname(), strerror(errno));
+        WTFLogAlways("%s: Could not apply cached sandbox: %s\n", getprogname(), safeStrerror(errno).data());
         return false;
     }
 
@@ -620,7 +625,7 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
     setNotifyOptions();
     
     if (sandbox_apply(sandboxProfile.get())) {
-        WTFLogAlways("%s: Could not apply compiled sandbox: %s\n", getprogname(), strerror(errno));
+        WTFLogAlways("%s: Could not apply compiled sandbox: %s\n", getprogname(), safeStrerror(errno).data());
         CRASH();
     }
 
@@ -632,24 +637,26 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
 #endif // USE(CACHE_COMPILED_SANDBOX)
 }
 
-static void initializeSandboxParameters(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
+static String getUserDirectorySuffix(const AuxiliaryProcessInitializationParameters& parameters)
 {
-    // Verify user directory suffix.
-    if (sandboxParameters.userDirectorySuffix().isNull()) {
-        auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
-        if (userDirectorySuffix != parameters.extraInitializationData.end()) {
-            String suffix = userDirectorySuffix->value;
-            auto firstPathSeparator = suffix.find("/");
-            if (firstPathSeparator != notFound)
-                suffix.truncate(firstPathSeparator);
-            sandboxParameters.setUserDirectorySuffix(suffix);
-        } else {
-            String clientIdentifier = codeSigningIdentifier(parameters.connectionIdentifier.xpcConnection.get());
-            if (clientIdentifier.isNull())
-                clientIdentifier = parameters.clientIdentifier;
-            sandboxParameters.setUserDirectorySuffix(makeString([[NSBundle mainBundle] bundleIdentifier], '+', clientIdentifier));
-        }
+    auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
+    if (userDirectorySuffix != parameters.extraInitializationData.end()) {
+        String suffix = userDirectorySuffix->value;
+        auto firstPathSeparator = suffix.find("/");
+        if (firstPathSeparator != notFound)
+            suffix.truncate(firstPathSeparator);
+        return suffix;
     }
+
+    String clientIdentifier = codeSigningIdentifier(parameters.connectionIdentifier.xpcConnection.get());
+    if (clientIdentifier.isNull())
+        clientIdentifier = parameters.clientIdentifier;
+    return makeString([[NSBundle mainBundle] bundleIdentifier], '+', clientIdentifier);
+}
+
+static void populateSandboxInitializationParameters(SandboxInitializationParameters& sandboxParameters)
+{
+    RELEASE_ASSERT(!sandboxParameters.userDirectorySuffix().isNull());
 
     String osSystemMarketingVersion = systemMarketingVersion();
     Vector<String> osVersionParts = osSystemMarketingVersion.split('.');
@@ -700,6 +707,8 @@ static void initializeSandboxParameters(const AuxiliaryProcessInitializationPara
         mbr_close_connectionsPtr()();
     if (lookup_close_connectionsPtr())
         lookup_close_connectionsPtr()();
+    if (HIS_XPC_ResetMessageConnectionPtr())
+        HIS_XPC_ResetMessageConnectionPtr()();
 }
 
 void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
@@ -707,14 +716,23 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
     TraceScope traceScope(InitializeSandboxStart, InitializeSandboxEnd);
 
 #if USE(CACHE_COMPILED_SANDBOX)
-    // This must be called before initializeSandboxParameters so that the path does not include the user directory suffix.
+    // This must be called before populateSandboxInitializationParameters so that the path does not include the user directory suffix.
     // We don't want the user directory suffix because we want all processes of the same type to use the same cache directory.
     String dataVaultParentDirectory { sandboxDataVaultParentDirectory() };
 #else
     String dataVaultParentDirectory;
 #endif
 
-    initializeSandboxParameters(parameters, sandboxParameters);
+    bool enableMessageFilter = false;
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
+    enableMessageFilter = WTF::processHasEntitlement("com.apple.private.security.message-filter");
+#endif
+    sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER", enableMessageFilter ? "YES" : "NO");
+
+    if (sandboxParameters.userDirectorySuffix().isNull())
+        sandboxParameters.setUserDirectorySuffix(getUserDirectorySuffix(parameters));
+
+    populateSandboxInitializationParameters(sandboxParameters);
 
     if (!applySandbox(parameters, sandboxParameters, dataVaultParentDirectory)) {
         WTFLogAlways("%s: Unable to apply sandbox\n", getprogname());
@@ -729,6 +747,24 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
             exit(EX_NOPERM);
         }
     }
+}
+
+void AuxiliaryProcess::applySandboxProfileForDaemon(const String& profilePath, const String& userDirectorySuffix)
+{
+    TraceScope traceScope(InitializeSandboxStart, InitializeSandboxEnd);
+
+    SandboxInitializationParameters parameters { };
+    parameters.setOverrideSandboxProfilePath(profilePath);
+    parameters.setUserDirectorySuffix(userDirectorySuffix);
+    populateSandboxInitializationParameters(parameters);
+
+    String profileOrProfilePath;
+    bool isProfilePath;
+    getSandboxProfileOrProfilePath(parameters, profileOrProfilePath, isProfilePath);
+    RELEASE_ASSERT(!profileOrProfilePath.isEmpty());
+
+    bool success = compileAndApplySandboxSlowCase(profileOrProfilePath, isProfilePath, parameters);
+    RELEASE_ASSERT(success);
 }
 
 #if USE(APPKIT)

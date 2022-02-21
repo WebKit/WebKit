@@ -18,7 +18,7 @@ class Base {
     for (var i = 0; i < arguments.length; ++i) {
       args.push(arguments[i]);
     }
-    assert(compareArray(args, a), "`compareArray(args, a)` returns `true`");
+    assert.compareArray(args, a);
   }
 }
 class Child extends Base {
@@ -34,7 +34,7 @@ class Child extends Base {
     for (var i = 0; i < arguments.length; ++i) {
       args.push(arguments[i]);
     }
-    assert(compareArray(args, b), "`compareArray(args, b)` returns `true`");
+    assert.compareArray(args, b);
   }
 }
 
@@ -43,11 +43,11 @@ var c = new Child(1, 2, 3);
 assert.sameValue(c.child.length, 3, "The value of `c.child.length` is `3`");
 assert.sameValue(c.base.length, 3, "The value of `c.base.length` is `3`");
 
-assert(
-  compareArray(c.child, [1, 2, 3]),
-  "`compareArray(c.child, [1, 2, 3])` returns `true`"
+assert.compareArray(
+  c.child,
+  [1, 2, 3]
 );
-assert(
-  compareArray(c.base, [1, 2, 3]),
-  "`compareArray(c.base, [1, 2, 3])` returns `true`"
+assert.compareArray(
+  c.base,
+  [1, 2, 3]
 );

@@ -24,7 +24,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +31,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import java.io.IOException;
 import java.lang.RuntimeException;
 import java.util.ArrayList;
@@ -51,10 +51,10 @@ import org.webrtc.FileVideoCapturer;
 import org.webrtc.IceCandidate;
 import org.webrtc.Logging;
 import org.webrtc.PeerConnectionFactory;
+import org.webrtc.RTCStatsReport;
 import org.webrtc.RendererCommon.ScalingType;
 import org.webrtc.ScreenCapturerAndroid;
 import org.webrtc.SessionDescription;
-import org.webrtc.StatsReport;
 import org.webrtc.SurfaceViewRenderer;
 import org.webrtc.VideoCapturer;
 import org.webrtc.VideoFileRenderer;
@@ -676,7 +676,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     }
   }
 
-  // Log |msg| and Toast about it.
+  // Log `msg` and Toast about it.
   private void logAndToast(String msg) {
     Log.d(TAG, msg);
     if (logToast != null) {
@@ -951,12 +951,12 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
   public void onPeerConnectionClosed() {}
 
   @Override
-  public void onPeerConnectionStatsReady(final StatsReport[] reports) {
+  public void onPeerConnectionStatsReady(final RTCStatsReport report) {
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
         if (!isError && connected) {
-          hudFragment.updateEncoderStatistics(reports);
+          hudFragment.updateEncoderStatistics(report);
         }
       }
     });

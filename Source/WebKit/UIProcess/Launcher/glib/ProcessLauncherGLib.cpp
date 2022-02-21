@@ -37,10 +37,14 @@
 #include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
 #include <wtf/UniStdExtras.h>
-#include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/Sandbox.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+
+#if !USE(SYSTEM_MALLOC) && OS(LINUX)
+#include <bmalloc/valgrind.h>
+#endif
 
 namespace WebKit {
 
@@ -60,41 +64,6 @@ static bool isFlatpakSpawnUsable()
     else
         ret = g_subprocess_wait_check(process.get(), nullptr, nullptr);
 
-    return *ret;
-}
-#endif
-
-#if ENABLE(BUBBLEWRAP_SANDBOX)
-static bool isInsideDocker()
-{
-    static std::optional<bool> ret;
-    if (ret)
-        return *ret;
-
-    ret = g_file_test("/.dockerenv", G_FILE_TEST_EXISTS);
-    return *ret;
-}
-
-static bool isInsideFlatpak()
-{
-    static std::optional<bool> ret;
-    if (ret)
-        return *ret;
-
-    ret = g_file_test("/.flatpak-info", G_FILE_TEST_EXISTS);
-    return *ret;
-}
-
-static bool isInsideSnap()
-{
-    static std::optional<bool> ret;
-    if (ret)
-        return *ret;
-
-    // The "SNAP" environment variable is not unlikely to be set for/by something other
-    // than Snap, so check a couple of additional variables to avoid false positives.
-    // See: https://snapcraft.io/docs/environment-variables
-    ret = g_getenv("SNAP") && g_getenv("SNAP_NAME") && g_getenv("SNAP_REVISION");
     return *ret;
 }
 #endif
@@ -158,6 +127,9 @@ void ProcessLauncher::launchProcess()
 #endif
     argv[i++] = nullptr;
 
+    // Warning: do not set a child setup function, because we want GIO to be able to spawn with
+    // posix_spawn() rather than fork()/exec(), in order to better accomodate applications that use
+    // a huge amount of memory or address space in the UI process, like Eclipse.
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
     g_subprocess_launcher_take_fd(launcher.get(), socketPair.client, socketPair.client);
 
@@ -170,6 +142,11 @@ void ProcessLauncher::launchProcess()
 
     if (sandboxEnv)
         sandboxEnabled = !strcmp(sandboxEnv, "1");
+
+#if !USE(SYSTEM_MALLOC)
+    if (RUNNING_ON_VALGRIND)
+        sandboxEnabled = false;
+#endif
 
     if (sandboxEnabled && isFlatpakSpawnUsable())
         process = flatpakSpawn(launcher.get(), m_launchOptions, argv, socketPair.client, &error.outPtr());
@@ -198,7 +175,7 @@ void ProcessLauncher::launchProcess()
         RELEASE_ASSERT_NOT_REACHED();
 
     // We've finished launching the process, message back to the main run loop.
-    RunLoop::main().dispatch([protectedThis = makeRef(*this), this, serverSocket = socketPair.server] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = socketPair.server] {
         didFinishLaunchingProcess(m_processIdentifier, serverSocket);
     });
 }

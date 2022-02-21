@@ -31,17 +31,13 @@
 namespace WebCore {
 
 DOMRectList::DOMRectList(const Vector<FloatQuad>& quads)
+    : m_items(quads.map([](auto& quad) { return DOMRect::create(quad.boundingBox()); }))
 {
-    m_items.reserveInitialCapacity(quads.size());
-    for (auto& quad : quads)
-        m_items.uncheckedAppend(DOMRect::create(quad.boundingBox()));
 }
 
 DOMRectList::DOMRectList(const Vector<FloatRect>& rects)
+    : m_items(rects.map([](auto& rect) { return DOMRect::create(rect); }))
 {
-    m_items.reserveInitialCapacity(rects.size());
-    for (auto& rect : rects)
-        m_items.uncheckedAppend(DOMRect::create(rect));
 }
 
 DOMRectList::~DOMRectList() = default;

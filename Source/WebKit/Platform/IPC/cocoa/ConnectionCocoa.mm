@@ -227,24 +227,21 @@ bool Connection::open()
     setMachPortQueueLength(m_receivePort, MACH_PORT_QLIMIT_LARGE);
 
     m_receiveSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, m_connectionQueue->dispatchQueue()));
-    dispatch_source_set_event_handler(m_receiveSource.get(), [this, protectedThis = makeRefPtr(this)] {
+    dispatch_source_set_event_handler(m_receiveSource.get(), [this, protectedThis = Ref { *this }] {
         receiveSourceEventHandler();
     });
-    dispatch_source_set_cancel_handler(m_receiveSource.get(), [protectedThis = makeRefPtr(this), receivePort = m_receivePort] {
+    dispatch_source_set_cancel_handler(m_receiveSource.get(), [protectedThis = Ref { *this }, receivePort = m_receivePort] {
 #if !PLATFORM(WATCHOS)
-        mach_port_unguard(mach_task_self(), receivePort, reinterpret_cast<mach_port_context_t>(protectedThis.get()));
+        mach_port_unguard(mach_task_self(), receivePort, reinterpret_cast<mach_port_context_t>(protectedThis.ptr()));
 #endif
         mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
     });
 
-    ref();
-    dispatch_async(m_connectionQueue->dispatchQueue(), ^{
+    m_connectionQueue->dispatch([strongRef = Ref { *this }, this] {
         dispatch_resume(m_receiveSource.get());
 
         if (m_sendSource)
             dispatch_resume(m_sendSource.get());
-
-        deref();
     });
 
     return true;
@@ -370,13 +367,13 @@ void Connection::initializeSendSource()
     m_sendSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_DEAD | DISPATCH_MACH_SEND_POSSIBLE, m_connectionQueue->dispatchQueue()));
     m_isInitializingSendSource = true;
 
-    dispatch_source_set_registration_handler(m_sendSource.get(), [this, protectedThis = makeRefPtr(this)] {
+    dispatch_source_set_registration_handler(m_sendSource.get(), [this, protectedThis = Ref { *this }] {
         if (!m_sendSource)
             return;
         m_isInitializingSendSource = false;
         resumeSendSource();
     });
-    dispatch_source_set_event_handler(m_sendSource.get(), [this, protectedThis = makeRefPtr(this)] {
+    dispatch_source_set_event_handler(m_sendSource.get(), [this, protectedThis = Ref { *this }] {
         if (!m_sendSource)
             return;
 
@@ -411,8 +408,14 @@ void Connection::resumeSendSource()
     sendOutgoingMessages();
 }
 
-static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
+static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, size_t bufferSize)
 {
+    if (UNLIKELY(header->msgh_size > bufferSize)) {
+        RELEASE_LOG_FAULT(IPC, "createMessageDecoder: msgh_size is greater than bufferSize (header->msgh_size: %lu, bufferSize: %lu)", static_cast<unsigned long>(header->msgh_size), bufferSize);
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
     if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX)) {
         // We have a simple message.
         uint8_t* body = reinterpret_cast<uint8_t*>(header + 1);
@@ -423,14 +426,21 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
             return nullptr;
         }
 
-        return Decoder::create(body, bodySize, nullptr, Vector<Attachment> { });
+        return Decoder::create(body, bodySize, { });
     }
 
     mach_msg_body_t* body = reinterpret_cast<mach_msg_body_t*>(header + 1);
     mach_msg_size_t numberOfPortDescriptors = body->msgh_descriptor_count;
     ASSERT(numberOfPortDescriptors);
-    if (!numberOfPortDescriptors)
+    if (UNLIKELY(!numberOfPortDescriptors))
         return nullptr;
+
+    auto sizeWithPortDescriptors = CheckedSize { sizeof(mach_msg_header_t) + sizeof(mach_msg_body_t) } + CheckedSize { numberOfPortDescriptors } * sizeof(mach_msg_port_descriptor_t);
+    if (UNLIKELY(sizeWithPortDescriptors.hasOverflowed() || sizeWithPortDescriptors.value() > bufferSize)) {
+        RELEASE_LOG_FAULT(IPC, "createMessageDecoder: Overflow when computing sizeWithPortDescriptors (numberOfPortDescriptors: %lu)", static_cast<unsigned long>(numberOfPortDescriptors));
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 
     uint8_t* descriptorData = reinterpret_cast<uint8_t*>(body + 1);
 
@@ -448,7 +458,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
         if (descriptor->type.type != MACH_MSG_PORT_DESCRIPTOR)
             return nullptr;
 
-        attachments[numberOfAttachments - i - 1] = Attachment(descriptor->port.name, descriptor->port.disposition);
+        attachments[numberOfAttachments - i - 1] = Attachment { descriptor->port.name, descriptor->port.disposition };
         descriptorData += sizeof(mach_msg_port_descriptor_t);
     }
 
@@ -460,6 +470,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
 
         uint8_t* messageBody = static_cast<uint8_t*>(descriptor->out_of_line.address);
         size_t messageBodySize = descriptor->out_of_line.size;
+        descriptor->out_of_line.deallocate = false; // We are taking ownership of the memory.
 
         return Decoder::create(messageBody, messageBodySize, [](const uint8_t* buffer, size_t length) {
             // FIXME: <rdar://problem/62086358> bufferDeallocator block ignores mach_msg_ool_descriptor_t->deallocate
@@ -468,15 +479,15 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
     }
 
     uint8_t* messageBody = descriptorData;
-    ASSERT(descriptorData >= reinterpret_cast<uint8_t*>(header));
-    auto messageBodySize = CheckedSize { header->msgh_size } - static_cast<size_t>(descriptorData - reinterpret_cast<uint8_t*>(header));
+    ASSERT((reinterpret_cast<uint8_t*>(header) + sizeWithPortDescriptors.value()) == messageBody);
+    auto messageBodySize = header->msgh_size - sizeWithPortDescriptors;
     if (UNLIKELY(messageBodySize.hasOverflowed())) {
-        RELEASE_LOG_FAULT(IPC, "createMessageDecoder: Overflow when computing bodySize (header->msgh_size: %lu, (descriptorData - reinterpret_cast<uint8_t*>(header)): %lu)", static_cast<unsigned long>(header->msgh_size), static_cast<unsigned long>(descriptorData - reinterpret_cast<uint8_t*>(header)));
+        RELEASE_LOG_FAULT(IPC, "createMessageDecoder: Overflow when computing bodySize (header->msgh_size: %lu, sizeWithPortDescriptors: %lu)", static_cast<unsigned long>(header->msgh_size), static_cast<unsigned long>(sizeWithPortDescriptors.value()));
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    return Decoder::create(messageBody, messageBodySize, nullptr, WTFMove(attachments));
+    return Decoder::create(messageBody, messageBodySize, WTFMove(attachments));
 }
 
 // The receive buffer size should always include the maximum trailer size.
@@ -540,12 +551,12 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
-    std::unique_ptr<Decoder> decoder = createMessageDecoder(header);
+    std::unique_ptr<Decoder> decoder = createMessageDecoder(header, buffer.size());
     if (!decoder)
         return;
 
 #if PLATFORM(MAC)
-    decoder->setImportanceAssertion(makeUnique<ImportanceAssertion>(header));
+    decoder->setImportanceAssertion(ImportanceAssertion { header });
 #endif
 
     if (decoder->messageName() == MessageName::InitializeConnection) {

@@ -24,7 +24,7 @@ import logging
 import unittest
 
 from webkitpy.tool.bot.patchanalysistask import *
-from webkitpy.tool.commands.earlywarningsystem import AbstractEarlyWarningSystem
+from webkitpy.tool.bot.earlywarningsystemtask import EarlyWarningSystemTaskDelegate
 from webkitpy.tool.mocktool import MockTool
 
 _log = logging.getLogger(__name__)
@@ -62,11 +62,14 @@ class MockPatchAnalysisTask(PatchAnalysisTask):
 
 
 # This is the delegate to be used with MockPatchAnalysisTask, above.
-class MockJSCEarlyWarningSystem(AbstractEarlyWarningSystem):
+class MockJSCEarlyWarningSystem(EarlyWarningSystemTaskDelegate):
     def __init__(self, first_test_results, second_test_results, clean_test_results):
-        AbstractEarlyWarningSystem.__init__(self)
+        super(MockJSCEarlyWarningSystem, self).__init__()
         self._group = 'jsc'
         self._results_in_order = [clean_test_results, second_test_results, first_test_results]
+
+    def group(self):
+        return self._group
 
     def test_results(self):
         return self._results_in_order.pop()

@@ -1,0 +1,6 @@
+Blocked access to external URL http://www1.localhost:8800/html/syntax/speculative-parsing/resources/stash.py?action=put&uuid=2fba2b96-9659-42c6-8bfa-aac4a30276a1&encodingcheck=%C4%9E
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_not_equals: speculative case did not fetch got disallowed value ""
+
+
+FAIL Speculative parsing, page load: base-href-script-src Unhandled rejection: assert_not_equals: speculative case did not fetch got disallowed value ""
+

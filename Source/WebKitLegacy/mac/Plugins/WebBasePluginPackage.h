@@ -29,11 +29,7 @@
 #import <WebCore/PluginData.h>
 #import <wtf/RetainPtr.h>
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-#import <WebKitLegacy/npfunctions.h>
-#else
 typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/WAKAppKitStubs.h>

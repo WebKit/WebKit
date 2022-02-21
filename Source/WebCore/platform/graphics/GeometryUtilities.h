@@ -33,6 +33,7 @@ namespace WebCore {
 
 class FloatQuad;
 
+float euclidianDistance(const FloatSize&);
 float euclidianDistance(const FloatPoint&, const FloatPoint&);
 
 float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c);
@@ -41,6 +42,7 @@ float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c);
 WEBCORE_EXPORT bool findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2, FloatPoint& intersection);
 
 WEBCORE_EXPORT IntRect unionRect(const Vector<IntRect>&);
+WEBCORE_EXPORT IntRect unionRectIgnoringZeroRects(const Vector<IntRect>&);
 WEBCORE_EXPORT FloatRect unionRect(const Vector<FloatRect>&);
 WEBCORE_EXPORT FloatRect unionRectIgnoringZeroRects(const Vector<FloatRect>&);
 

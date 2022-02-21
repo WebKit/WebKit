@@ -36,11 +36,8 @@ namespace WebCore {
 template<typename Visitor>
 void JSMessageChannel::visitAdditionalChildren(Visitor& visitor)
 {
-    if (MessagePort* port = wrapped().port1())
-        visitor.addOpaqueRoot(port);
-
-    if (MessagePort* port = wrapped().port2())
-        visitor.addOpaqueRoot(port);
+    visitor.addOpaqueRoot(&wrapped().port1());
+    visitor.addOpaqueRoot(&wrapped().port2());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMessageChannel);

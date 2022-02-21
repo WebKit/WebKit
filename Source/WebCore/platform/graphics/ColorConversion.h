@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ColorTypes.h"
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -37,8 +38,8 @@ enum class ColorSpace : uint8_t;
 template<typename Output, typename Input> Output convertColor(const Input& color);
 
 // Conversion functions for raw color components with associated color spaces.
-ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace);
-ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace);
+ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace);
+ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace);
 
 
 // All color types, other than XYZA or those inheriting from RGBType, must implement
@@ -57,7 +58,7 @@ template<typename Output, typename Input, typename = void> struct ColorConversio
 
 template<typename Output, typename Input> inline Output convertColor(const Input& color)
 {
-    return ColorConversion<Output, Input>::convert(color);
+    return ColorConversion<CanonicalColorType<Output>, CanonicalColorType<Input>>::convert(color);
 }
 
 
@@ -114,6 +115,22 @@ template<> struct ColorConversion<Lab<float>, XYZA<float, WhitePoint::D50>> {
     WEBCORE_EXPORT static Lab<float> convert(const XYZA<float, WhitePoint::D50>&);
 };
 
+// MARK: OKLCHA
+template<> struct ColorConversion<OKLab<float>, OKLCHA<float>> {
+    WEBCORE_EXPORT static OKLab<float> convert(const OKLCHA<float>&);
+};
+template<> struct ColorConversion<OKLCHA<float>, OKLab<float>> {
+    WEBCORE_EXPORT static OKLCHA<float> convert(const OKLab<float>&);
+};
+
+// MARK: OKLab
+template<> struct ColorConversion<XYZA<float, WhitePoint::D65>, OKLab<float>> {
+    WEBCORE_EXPORT static XYZA<float, WhitePoint::D65> convert(const OKLab<float>&);
+};
+template<> struct ColorConversion<OKLab<float>, XYZA<float, WhitePoint::D65>> {
+    WEBCORE_EXPORT static OKLab<float> convert(const XYZA<float, WhitePoint::D65>&);
+};
+
 // Identity conversion.
 
 template<typename ColorType> struct ColorConversion<ColorType, ColorType> {
@@ -123,6 +140,89 @@ template<typename ColorType> struct ColorConversion<ColorType, ColorType> {
     }
 };
 
+// MARK: DeltaE color difference algorithms.
+
+template<typename ColorType1, typename ColorType2> inline constexpr float computeDeltaEOK(ColorType1 color1, ColorType2 color2)
+{
+    // https://drafts.csswg.org/css-color/#color-difference-OK
+
+    auto [L1, a1, b1, alpha1] = convertColor<OKLab<float>>(color1).resolved();
+    auto [L2, a2, b2, alpha2] = convertColor<OKLab<float>>(color2).resolved();
+
+    auto deltaL = (L1 / 100.0f) - (L2 / 100.0f);
+    auto deltaA = a1 - a2;
+    auto deltaB = b1 - b2;
+
+    return std::hypot(deltaL, deltaA, deltaB);
+}
+
+// MARK: Gamut mapping algorithms.
+
+struct ClipGamutMapping {
+    template<typename ColorType> static auto mapToBoundedGamut(const ColorType& color) -> typename ColorType::BoundedCounterpart
+    {
+        return clipToGamut<typename ColorType::BoundedCounterpart>(color);
+    }
+};
+
+struct CSSGamutMapping {
+    // This implements the CSS gamut mapping algorithm (https://drafts.csswg.org/css-color/#css-gamut-mapping) for RGB
+    // colors that are out of gamut for a particular RGB color space. It implements a relative colorimetric intent mapping
+    // for colors that are outside the destionation gamut and leaves colors inside the destination gamut unchanged.
+
+    // A simple optimization over the psuedocode in the specification has been made to avoid unnecessary work in the
+    // main bisection loop by checking the gamut using the extended linear color space of the RGB family regardless of
+    // of whether the final type is gamma encoded or not. This avoids unnecessary gamma encoding for non final loops.
+
+    // FIXME: This is a naive iterative solution that works for any bounded RGB color space. This can be optimized by
+    // using an analytical solution that computes the exact intersection.
+
+    static constexpr float JND = 0.02f;
+
+    template<typename ColorType> static auto mapToBoundedGamut(const ColorType& color) -> typename ColorType::BoundedCounterpart
+    {
+        using BoundedColorType = typename ColorType::BoundedCounterpart;
+        using ExtendedLinearColorType = ExtendedLinearEncoded<typename BoundedColorType::ComponentType, typename BoundedColorType::Descriptor>;
+        using BoundedLinearColorType = BoundedLinearEncoded<typename BoundedColorType::ComponentType, typename BoundedColorType::Descriptor>;
+
+        auto resolvedColor = color.resolved();
+
+        if (auto result = colorIfInGamut<BoundedColorType>(resolvedColor))
+            return *result;
+
+        auto colorInOKLCHColorSpace = convertColor<OKLCHA<float>>(resolvedColor).resolved();
+
+        if (WTF::areEssentiallyEqual(colorInOKLCHColorSpace.lightness, 100.0f) || colorInOKLCHColorSpace.lightness > 100.0f)
+            return { 1.0, 1.0, 1.0, resolvedColor.alpha };
+        else if (WTF::areEssentiallyEqual(colorInOKLCHColorSpace.lightness, 0.0f))
+            return { 0.0f, 0.0f, 0.0f, resolvedColor.alpha };
+
+        float min = 0.0f;
+        float max = colorInOKLCHColorSpace.chroma;
+
+        while (true) {
+            auto chroma = (min + max) / 2.0f;
+
+            auto current = colorInOKLCHColorSpace;
+            current.chroma = chroma;
+
+            auto currentInExtendedLinearColorSpace = convertColor<ExtendedLinearColorType>(current).resolved();
+
+            if (inGamut<BoundedLinearColorType>(currentInExtendedLinearColorSpace)) {
+                min = chroma;
+                continue;
+            }
+
+            auto currentClippedToBoundedLinearColorSpace = clipToGamut<BoundedLinearColorType>(currentInExtendedLinearColorSpace);
+
+            auto deltaE = computeDeltaEOK(currentClippedToBoundedLinearColorSpace, current);
+            if (deltaE < JND)
+                return convertColor<BoundedColorType>(currentClippedToBoundedLinearColorSpace);
+
+            max = chroma;
+        }
+    }
+};
 
 // Main conversion.
 
@@ -131,24 +231,28 @@ template<typename ColorType> struct ColorConversion<ColorType, ColorType> {
 //                │                      │ XYZ (D50) │││ XYZ (D65) │                                                                                                                      │
 //                                       └─────▲─────┘│└─────▲─────┘
 //                │                            │      │      │                                                                                                                            │
-//       ┌─────────────────────────┬───────────┘      │      └───────────┬───────────────────────────────┬───────────────────────────────┬───────────────────────────────┐
-//       │        │                │                  │                  │                               │                               │                               │                │
-//       │                         │                  │                  │                               │                               │                               │
-//       │        │                │                  │                  │                               │                               │                               │                │
-//       │          ProPhotoRGB───────────────────┐   │   SRGB──────────────────────────┐ DisplayP3─────────────────────┐ A98RGB────────────────────────┐ Rec2020───────────────────────┐
-//       │        │ │┌────────┐ ┌────────────────┐│   │   │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │
-//       │          ││ Linear │ │ LinearExtended ││   │   ││ Linear │ │ LinearExtended ││ ││ Linear │ │ LinearExtended ││ ││ Linear │ │ LinearExtended ││ ││ Linear │ │ LinearExtended ││
-//       │        │ │└────────┘ └────────────────┘│   │   │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │
-//       │         ─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─ ─│─ ─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─
-// ┌───────────┐    │┌────────┐ ┌────────────────┐│   │   │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│
-// │    Lab    │    ││ Gamma  │ │ GammaExtended  ││   │   ││ Gamma  │ │ GammaExtended  ││ ││ Gamma  │ │ GammaExtended  ││ ││ Gamma  │ │ GammaExtended  ││ ││ Gamma  │ │ GammaExtended  ││
-// └─────▲─────┘    │└────────┘ └────────────────┘│   │   │└────▲───┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│
-//       │          └─────────────────────────────┘   │   └─────┼───────────────────────┘ └─────────────────────────────┘ └─────────────────────────────┘ └─────────────────────────────┘
-//       │                                            │      ┌──┴──────────┐
-//       │                                            │      │             │
-// ┌───────────┐                                      │┌───────────┐ ┌───────────┐
-// │    LCH    │                                      ││    HSL    │ │    HWB    │
-// └───────────┘                                      │└───────────┘ └───────────┘
+//       ┌─────────────────────────┬───────────┘      │      └───────────┬───────────────────────────────┬───────────────────────────────┬───────────────────────────────┬─────────────────────────┐
+//       │        │                │                  │                  │                               │                               │                               │                │        │
+//       │                         │                  │                  │                               │                               │                               │                         │
+//       │        │                │                  │                  │                               │                               │                               │                │        │
+//       │          ProPhotoRGB───────────────────┐   │   SRGB──────────────────────────┐ DisplayP3─────────────────────┐ A98RGB────────────────────────┐ Rec2020───────────────────────┐          │
+//       │        │ │           ┌────────────────┐│   │   │           ┌────────────────┐│ │           ┌────────────────┐│ │           ┌────────────────┐│ │           ┌────────────────┐│ │        │
+//       │          │     ┌─────▶︎ LinearExtended ││   │   │     ┌─────▶︎ LinearExtended ││ │     ┌─────▶︎ LinearExtended ││ │     ┌─────▶︎ LinearExtended ││ │     ┌─────▶︎ LinearExtended ││          │
+//       │        │ │     │     └────────▲───────┘│   │   │     │     └────────▲───────┘│ │     │     └────────▲───────┘│ │     │     └────────▲───────┘│ │     │     └────────▲───────┘│ │        │
+//       │         ─│─ ─ ─│─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─│─ ─│─ ─│─ ─ ─│─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─│─│─ ─ ─│─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─│─│─ ─ ─│─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─│─│─ ─ ─│─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─│─         │
+//       │          │┌────────┐          │        │   │   │┌────────┐          │        │ │┌────────┐          │        │ │┌────────┐          │        │ │┌────────┐          │        │          │
+//       │          ││ Linear │          │        │   │   ││ Linear │          │        │ ││ Linear │          │        │ ││ Linear │          │        │ ││ Linear │          │        │          │
+//       │          │└────▲───┘          │        │   │   │└────▲───┘          │        │ │└────▲───┘          │        │ │└────▲───┘          │        │ │└────▲───┘          │        │          │
+//       │          │     │              │        │   │   │     │              │        │ │     │              │        │ │     │              │        │ │     │              │        │          │
+// ┌───────────┐    │┌────────┐ ┌────────────────┐│   │   │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│    ┌───────────┐
+// │    Lab    │    ││ Gamma  │─│ GammaExtended  ││   │   ││ Gamma  │─│ GammaExtended  ││ ││ Gamma  │─│ GammaExtended  ││ ││ Gamma  │─│ GammaExtended  ││ ││ Gamma  │─│ GammaExtended  ││    │   OKLab   │
+// └─────▲─────┘    │└────────┘ └────────────────┘│   │   │└────▲───┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│    └─────▲─────┘
+//       │          └─────────────────────────────┘   │   └─────┼───────────────────────┘ └─────────────────────────────┘ └─────────────────────────────┘ └─────────────────────────────┘          │
+//       │                                            │      ┌──┴──────────┐                                                                                                                       │
+//       │                                            │      │             │                                                                                                                       │
+// ┌───────────┐                                      │┌───────────┐ ┌───────────┐                                                                                                           ┌───────────┐
+// │    LCH    │                                      ││    HSL    │ │    HWB    │                                                                                                           │   OKLCH   │
+// └───────────┘                                      │└───────────┘ └───────────┘                                                                                                           └───────────┘
 
 template<typename Output, typename Input, typename> struct ColorConversion {
 public:
@@ -179,7 +283,13 @@ public:
         else if constexpr (IsRGBGammaEncodedType<Output>)
             return convertColor<Output>(convertColor<typename Output::LinearCounterpart>(color));
 
-        // 5. At this point, Input and Output are each either Linear-RGB types (of different familes) or XYZA
+        // 5. Handle any bounds conversions for the Input and Output.
+        else if constexpr (IsRGBBoundedType<Input>)
+            return convertColor<Output>(convertColor<typename Input::ExtendedCounterpart>(color));
+        else if constexpr (IsRGBBoundedType<Output>)
+            return convertColor<Output>(convertColor<typename Output::ExtendedCounterpart>(color));
+
+        // 6. At this point, Input and Output are each either ExtendedLinear-RGB types (of different familes) or XYZA
         //    and therefore all additional conversion can happen via matrix transformation.
         else
             return handleMatrixConversion(color);
@@ -192,7 +302,7 @@ private:
 
         using InputWithReplacement = ColorTypeWithReplacementComponent<Input, float>;
         if constexpr (std::is_same_v<InputWithReplacement, Output>)
-            return makeFromComponents<InputWithReplacement>(asColorComponents(color).map([](uint8_t value) -> float { return value / 255.0f; }));
+            return makeFromComponents<InputWithReplacement>(asColorComponents(color.resolved()).map([](uint8_t value) -> float { return value / 255.0f; }));
         else
             return convertColor<Output>(convertColor<InputWithReplacement>(color));
     }
@@ -203,31 +313,31 @@ private:
 
         using OutputWithReplacement = ColorTypeWithReplacementComponent<Output, float>;
         if constexpr (std::is_same_v<OutputWithReplacement, Input>)
-            return makeFromComponents<Output>(asColorComponents(color).map([](float value) -> uint8_t { return std::clamp(std::lround(value * 255.0f), 0l, 255l); }));
+            return makeFromComponents<Output>(asColorComponents(color.resolved()).map([](float value) -> uint8_t { return std::clamp(std::lround(value * 255.0f), 0l, 255l); }));
         else
             return convertColor<Output>(convertColor<OutputWithReplacement>(color));
     }
 
     template<typename ColorType> static inline constexpr auto toLinearEncoded(const ColorType& color) -> typename ColorType::LinearCounterpart
     {
-        auto [c1, c2, c3, alpha] = color;
+        auto [c1, c2, c3, alpha] = color.resolved();
         return { ColorType::TransferFunction::toLinear(c1), ColorType::TransferFunction::toLinear(c2), ColorType::TransferFunction::toLinear(c3), alpha };
     }
 
     template<typename ColorType> static inline constexpr auto toGammaEncoded(const ColorType& color) -> typename ColorType::GammaEncodedCounterpart
     {
-        auto [c1, c2, c3, alpha] = color;
+        auto [c1, c2, c3, alpha] = color.resolved();
         return { ColorType::TransferFunction::toGammaEncoded(c1), ColorType::TransferFunction::toGammaEncoded(c2), ColorType::TransferFunction::toGammaEncoded(c3), alpha };
     }
 
     template<typename ColorType> static inline constexpr auto toExtended(const ColorType& color) -> typename ColorType::ExtendedCounterpart
     {
-        return makeFromComponents<typename ColorType::ExtendedCounterpart>(asColorComponents(color));
+        return makeFromComponents<typename ColorType::ExtendedCounterpart>(asColorComponents(color.resolved()));
     }
 
     template<typename ColorType> static inline constexpr auto toBounded(const ColorType& color) -> typename ColorType::BoundedCounterpart
     {
-        return makeFromComponentsClampingExceptAlpha<typename ColorType::BoundedCounterpart>(asColorComponents(color));
+        return CSSGamutMapping::mapToBoundedGamut(color);
     }
 
     static inline constexpr Output handleRGBFamilyConversion(const Input& color)
@@ -235,11 +345,16 @@ private:
         static_assert(IsSameRGBTypeFamily<Output, Input>);
 
         //  RGB Family────────────────────┐
+        //  │           ┌────────────────┐│
+        //  │     ┌─────▶︎ LinearExtended ││
+        //  │     │     └────────▲───────┘│
+        //  │     │              │        │
+        //  │┌────────┐          │        │
+        //  ││ Linear │          │        │
+        //  │└────▲───┘          │        │
+        //  │     │              │        │
         //  │┌────────┐ ┌────────────────┐│
-        //  ││ Linear │ │ LinearExtended ││
-        //  │└────────┘ └────────────────┘│
-        //  │┌────────┐ ┌────────────────┐│
-        //  ││ Gamma  │ │ GammaExtended  ││
+        //  ││ Gamma  │─│ GammaExtended  ││
         //  │└────────┘ └────────────────┘│
         //  └─────────────────────────────┘
 
@@ -269,8 +384,8 @@ private:
 
     static inline constexpr Output handleMatrixConversion(const Input& color)
     {
-        static_assert(IsRGBLinearEncodedType<Input> || IsXYZA<Input>);
-        static_assert(IsRGBLinearEncodedType<Output> || IsXYZA<Output>);
+        static_assert((IsRGBLinearEncodedType<Input> && IsRGBExtendedType<Input>) || IsXYZA<Input>);
+        static_assert((IsRGBLinearEncodedType<Output> && IsRGBExtendedType<Output>) || IsXYZA<Output>);
 
         //  ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
         //   Matrix Conversions    ┌───────────┐│┌───────────┐
@@ -282,12 +397,12 @@ private:
         //                   │                  │                  │                               │                               │                               │
         //  │                │                  │                  │                               │                               │                               │                │
         //    ProPhotoRGB───────────────────┐   │   SRGB──────────────────────────┐ DisplayP3─────────────────────┐ A98RGB────────────────────────┐ Rec2020───────────────────────┐
-        //  │ │┌────────┐ ┌────────────────┐│   │   │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │┌────────┐ ┌────────────────┐│ │
-        //    ││ Linear │ │ LinearExtended ││   │   ││ Linear │ │ LinearExtended ││ ││ Linear │ │ LinearExtended ││ ││ Linear │ │ LinearExtended ││ ││ Linear │ │ LinearExtended ││
-        //  │ │└────────┘ └────────────────┘│   │   │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │
-        //   ─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─ ─│─ ─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─│─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─
+        //  │ │           ┌────────────────┐│   │   │           ┌────────────────┐│ │           ┌────────────────┐│ │           ┌────────────────┐│ │           ┌────────────────┐│ │
+        //    │     ┌─────▶︎ LinearExtended ││   │   │     ┌─────▶︎ LinearExtended ││ │     ┌─────▶︎ LinearExtended ││ │     ┌─────▶︎ LinearExtended ││ │     ┌─────▶︎ LinearExtended ││
+        //  │ │     │     └────────▲───────┘│   │   │     │     └────────▲───────┘│ │     │     └────────▲───────┘│ │     │     └────────▲───────┘│ │     │     └────────▲───────┘│ │
+        //   ─│─ ─ ─│─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─│─ ─│─ ─│─ ─ ─│─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─│─│─ ─ ─│─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─│─│─ ─ ─│─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─│─│─ ─ ─│─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─│─
 
-        // This handles conversions between linear color types that can be converted using pre-defined
+        // This handles conversions between extended linear color types that can be converted using pre-defined
         // 3x3 matrices.
         
         // FIXME: Pre-compute (using constexpr) the concatenation of the matrices prior to applying them
@@ -296,7 +411,7 @@ private:
         // have sufficient testing coverage to notice any adverse effects.
 
         auto applyMatrices = [](const Input& color, auto... matrices) {
-            return makeFromComponentsClampingExceptAlpha<Output>(applyMatricesToColorComponents(asColorComponents(color), matrices...));
+            return makeFromComponents<Output>(applyMatricesToColorComponents(asColorComponents(color.resolved()), matrices...));
         };
 
         if constexpr (Input::whitePoint == Output::whitePoint) {

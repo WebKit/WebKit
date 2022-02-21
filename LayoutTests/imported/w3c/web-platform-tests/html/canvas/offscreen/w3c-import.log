@@ -14,4 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/2d.conformance.requirements.basics.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/2d.conformance.requirements.basics.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/2d.conformance.requirements.missingargs.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/2d.conformance.requirements.missingargs.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/META.yml

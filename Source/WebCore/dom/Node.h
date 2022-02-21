@@ -27,12 +27,12 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "LayoutRect.h"
-#include "MutationObserver.h"
 #include "RenderStyleConstants.h"
 #include "StyleValidity.h"
 #include "TreeScope.h"
 #include <wtf/CompactPointerTuple.h>
 #include <wtf/CompactUniquePtrTuple.h>
+#include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
@@ -54,6 +54,8 @@ class FloatPoint;
 class HTMLQualifiedName;
 class HTMLSlotElement;
 class MathMLQualifiedName;
+class MutationObserver;
+class MutationObserverRegistration;
 class NamedNodeMap;
 class NodeList;
 class NodeListsNodeData;
@@ -67,7 +69,11 @@ class SVGQualifiedName;
 class ShadowRoot;
 class TouchEvent;
 
-using NodeOrString = Variant<RefPtr<Node>, String>;
+enum class MutationObserverOptionType : uint8_t;
+using MutationObserverOptions = OptionSet<MutationObserverOptionType>;
+using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
+
+using NodeOrString = std::variant<RefPtr<Node>, String>;
 
 class Node : public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(Node);
@@ -113,7 +119,7 @@ public:
 
     bool hasTagName(const HTMLQualifiedName&) const;
     bool hasTagName(const MathMLQualifiedName&) const;
-    bool hasTagName(const SVGQualifiedName&) const;
+    inline bool hasTagName(const SVGQualifiedName&) const;
     virtual String nodeName() const = 0;
     virtual String nodeValue() const;
     virtual ExceptionOr<void> setNodeValue(const String&);
@@ -121,7 +127,7 @@ public:
     virtual size_t approximateMemoryCost() const { return sizeof(*this); }
     ContainerNode* parentNode() const;
     static ptrdiff_t parentNodeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_parentNode); }
-    Element* parentElement() const;
+    inline Element* parentElement() const;
     Node* previousSibling() const { return m_previous; }
     static ptrdiff_t previousSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_previous); }
     Node* nextSibling() const { return m_next; }
@@ -129,8 +135,8 @@ public:
     WEBCORE_EXPORT RefPtr<NodeList> childNodes();
     Node* firstChild() const;
     Node* lastChild() const;
-    bool hasAttributes() const;
-    NamedNodeMap* attributes() const;
+    inline bool hasAttributes() const;
+    inline NamedNodeMap* attributes() const;
     Node* pseudoAwareNextSibling() const;
     Node* pseudoAwarePreviousSibling() const;
     Node* pseudoAwareFirstChild() const;
@@ -179,9 +185,9 @@ public:
     WEBCORE_EXPORT Element* nextElementSibling() const;
 
     // From the ChildNode - https://dom.spec.whatwg.org/#childnode
-    ExceptionOr<void> before(Vector<NodeOrString>&&);
-    ExceptionOr<void> after(Vector<NodeOrString>&&);
-    ExceptionOr<void> replaceWith(Vector<NodeOrString>&&);
+    ExceptionOr<void> before(FixedVector<NodeOrString>&&);
+    ExceptionOr<void> after(FixedVector<NodeOrString>&&);
+    ExceptionOr<void> replaceWith(FixedVector<NodeOrString>&&);
     WEBCORE_EXPORT ExceptionOr<void> remove();
 
     // Other methods (not part of DOM)
@@ -472,8 +478,6 @@ public:
     virtual bool allowsDoubleTapGesture() const { return true; }
 #endif
 
-    bool dispatchBeforeLoadEvent(const String& sourceURL);
-
     WEBCORE_EXPORT void dispatchInputEvent();
 
     // Perform the default action for an event.
@@ -494,7 +498,7 @@ public:
     EventTargetData* eventTargetDataConcurrently() final;
     EventTargetData& ensureEventTargetData() final;
 
-    HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> registeredMutationObservers(MutationObserver::MutationType, const QualifiedName* attributeName);
+    HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> registeredMutationObservers(MutationObserverOptionType, const QualifiedName* attributeName);
     void registerMutationObserver(MutationObserver&, MutationObserverOptions, const HashSet<AtomString>& attributeFilter);
     void unregisterMutationObserver(MutationObserverRegistration&);
     void registerTransientMutationObserver(MutationObserverRegistration&);
@@ -524,12 +528,8 @@ public:
     static int32_t flagIsParsingChildrenFinished() { return static_cast<int32_t>(NodeFlag::IsParsingChildrenFinished); }
 #endif // ENABLE(JIT)
 
-    // Whether the node is inert:
-    // https://html.spec.whatwg.org/multipage/interaction.html#inert
-    // https://github.com/WICG/inert/blob/master/README.md
-    // This can't be in Element because text nodes must be recognized as
-    // inert to prevent text selection.
-    WEBCORE_EXPORT bool isInert() const;
+    // Whether a node is inert, please use RenderStyle::effectiveInert instead!
+    bool deprecatedIsInert() const;
 
 protected:
     enum class NodeFlag : uint32_t {
@@ -690,7 +690,7 @@ protected:
     void invalidateStyle(Style::Validity, Style::InvalidationMode = Style::InvalidationMode::Normal);
     void updateAncestorsForStyleRecalc();
 
-    ExceptionOr<RefPtr<Node>> convertNodesOrStringsIntoNode(Vector<NodeOrString>&&);
+    ExceptionOr<RefPtr<Node>> convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&&);
 
 private:
     virtual PseudoId customPseudoId() const

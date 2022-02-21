@@ -50,8 +50,8 @@ class ScreenDrawer {
   // system coordinate, i.e. the primary monitor always starts from (0, 0).
   virtual DesktopRect DrawableRegion() = 0;
 
-  // Draws a rectangle to cover |rect| with |color|. Note, rect.bottom() and
-  // rect.right() two lines are not included. The part of |rect| which is out of
+  // Draws a rectangle to cover `rect` with `color`. Note, rect.bottom() and
+  // rect.right() two lines are not included. The part of `rect` which is out of
   // DrawableRegion() will be ignored.
   virtual void DrawRectangle(DesktopRect rect, RgbaColor color) = 0;
 

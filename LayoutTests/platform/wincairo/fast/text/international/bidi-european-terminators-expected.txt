@@ -28,7 +28,7 @@ layer at (0,0) size 785x612
       RenderBlock (anonymous) at (0,166) size 769x20
         RenderInline {BDO} at (0,0) size 75x19
           RenderText {#text} at (0,0) size 75x19
-            text run at (0,0) width 75 LTR override: "\x{5D0} ^ @ $% a"
+            text run at (0,0) width 75: "\x{5D0} ^ @ $% a"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,194) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,212) size 769x20
@@ -37,7 +37,7 @@ layer at (0,0) size 785x612
       RenderBlock (anonymous) at (0,248) size 769x20
         RenderInline {BDO} at (0,0) size 75x19
           RenderText {#text} at (0,0) size 75x19
-            text run at (0,0) width 75 LTR override: "\x{5D1} %$ @ ^ \x{5D0}"
+            text run at (0,0) width 75: "\x{5D1} %$ @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,276) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,294) size 769x20
@@ -47,7 +47,7 @@ layer at (0,0) size 785x612
       RenderBlock (anonymous) at (0,330) size 769x20
         RenderInline {BDO} at (0,0) size 72x19
           RenderText {#text} at (0,0) size 72x19
-            text run at (0,0) width 72 LTR override: "$%1 @ ^ \x{5D0}"
+            text run at (0,0) width 72: "$%1 @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,358) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,376) size 769x20
@@ -57,7 +57,7 @@ layer at (0,0) size 785x612
       RenderBlock (anonymous) at (0,412) size 769x20
         RenderInline {BDO} at (0,0) size 75x19
           RenderText {#text} at (0,0) size 75x19
-            text run at (0,0) width 75 LTR override: "a %$ @ ^ \x{5D0}"
+            text run at (0,0) width 75: "a %$ @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,440) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,458) size 769x20
@@ -66,7 +66,7 @@ layer at (0,0) size 785x612
       RenderBlock (anonymous) at (0,494) size 769x20
         RenderInline {BDO} at (0,0) size 75x19
           RenderText {#text} at (0,0) size 75x19
-            text run at (0,0) width 75 LTR override: "\x{5D1} %$ @ ^ \x{5D0}"
+            text run at (0,0) width 75: "\x{5D1} %$ @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,522) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,540) size 769x20
@@ -76,5 +76,5 @@ layer at (0,0) size 785x612
       RenderBlock (anonymous) at (0,576) size 769x20
         RenderInline {BDO} at (0,0) size 72x19
           RenderText {#text} at (0,0) size 72x19
-            text run at (0,0) width 72 LTR override: "$%1 @ ^ \x{5D0}"
+            text run at (0,0) width 72: "$%1 @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0

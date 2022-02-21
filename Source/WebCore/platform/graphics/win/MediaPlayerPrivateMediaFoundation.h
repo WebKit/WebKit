@@ -100,6 +100,8 @@ public:
 
     void paint(GraphicsContext&, const FloatRect&) final;
 
+    DestinationColorSpace colorSpace() final;
+
 private:
     float maxTimeLoaded() const { return m_maxTimeLoaded; }
 
@@ -155,7 +157,7 @@ private:
     void onSessionEnded();
 
     HWND hostWindow();
-    void invalidateFrameView();
+    void invalidateVideoArea();
 
     void addListener(MediaPlayerListener*);
     void removeListener(MediaPlayerListener*);

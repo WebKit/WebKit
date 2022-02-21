@@ -88,7 +88,7 @@ class TestHttpServer(unittest.TestCase):
         server._is_server_running_on_all_ports = lambda: True
 
         server.start()
-        self.assertNotEquals(host.executive.calls, [])
+        self.assertNotEqual(host.executive.calls, [])
 
         def wait_for_action(action):
             if action():

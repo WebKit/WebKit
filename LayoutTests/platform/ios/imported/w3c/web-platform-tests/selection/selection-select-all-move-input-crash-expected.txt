@@ -9,4 +9,4 @@ layer at (0,0) size 800x625
       RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
 layer at (9,605) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
-caret: position 1 of body
+caret: position 0 of child 0 {DIV} of {#document-fragment} of child 2 {INPUT} of child 0 {HTML} of document

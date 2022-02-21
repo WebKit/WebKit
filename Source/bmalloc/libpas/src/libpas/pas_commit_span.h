@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #define PAS_COMMIT_SPAN_H
 
 #include "pas_lock.h"
+#include "pas_mmap_capability.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -43,9 +44,10 @@ struct pas_commit_span {
     uintptr_t index_of_start_of_span;
     bool did_add_first;
     size_t total_bytes;
+    pas_mmap_capability mmap_capability;
 };
 
-PAS_API void pas_commit_span_construct(pas_commit_span* span);
+PAS_API void pas_commit_span_construct(pas_commit_span* span, pas_mmap_capability mmap_capability);
 PAS_API void pas_commit_span_add_to_change(pas_commit_span* span, uintptr_t granule_index);
 PAS_API void pas_commit_span_add_unchanged(pas_commit_span* span,
                                            pas_page_base* page,

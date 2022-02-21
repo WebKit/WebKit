@@ -31,8 +31,8 @@ class StreamGenerator {
   StreamGenerator(uint16_t start_seq_num, int64_t current_time);
   void Init(uint16_t start_seq_num, int64_t current_time);
 
-  // |time_ms| denotes the timestamp you want to put on the frame, and the unit
-  // is millisecond. GenerateFrame will translate |time_ms| into a 90kHz
+  // `time_ms` denotes the timestamp you want to put on the frame, and the unit
+  // is millisecond. GenerateFrame will translate `time_ms` into a 90kHz
   // timestamp and put it on the frame.
   void GenerateFrame(VideoFrameType type,
                      int num_media_packets,

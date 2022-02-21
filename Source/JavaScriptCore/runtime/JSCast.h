@@ -99,6 +99,7 @@ struct JSTypeRange {
     macro(JSSymbolTableObject, JSType::GlobalObjectType, JSType::ModuleEnvironmentType) \
     macro(JSScope, JSType::GlobalObjectType, JSType::WithScopeType) \
     macro(StringObject, JSType::StringObjectType, JSType::DerivedStringObjectType) \
+    macro(ShadowRealmObject, JSType::ShadowRealmType, JSType::ShadowRealmType) \
 
 
 // Forward declare the classes because they may not already exist.

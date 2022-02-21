@@ -261,7 +261,7 @@ protected:
     Ref<DeferredPromise> m_promise;
 };
 
-template<typename IDLType> 
+template<typename IDLType>
 class DOMPromiseDeferred : public DOMPromiseDeferredBase {
 public:
     using DOMPromiseDeferredBase::DOMPromiseDeferredBase;
@@ -270,11 +270,12 @@ public:
     using DOMPromiseDeferredBase::reject;
 
     void resolve(typename IDLType::ParameterType value)
-    { 
+    {
         m_promise->resolve<IDLType>(std::forward<typename IDLType::ParameterType>(value));
     }
 
-    void settle(ExceptionOr<typename IDLType::ParameterType>&& result)
+    template<typename U>
+    void settle(ExceptionOr<U>&& result)
     {
         if (result.hasException()) {
             reject(result.releaseException());

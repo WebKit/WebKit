@@ -27,6 +27,7 @@
 
 #include "PreviewConverterClient.h"
 #include "PreviewConverterProvider.h"
+#include "SharedBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
@@ -37,7 +38,6 @@ namespace WebCore {
 class LegacyPreviewLoaderClient;
 class ResourceLoader;
 class ResourceResponse;
-class SharedBuffer;
 
 class LegacyPreviewLoader final : private PreviewConverterClient, private PreviewConverterProvider {
     WTF_MAKE_FAST_ALLOCATED;
@@ -47,8 +47,7 @@ public:
     ~LegacyPreviewLoader();
 
     bool didReceiveResponse(const ResourceResponse&);
-    bool didReceiveData(const uint8_t* data, unsigned length);
-    bool didReceiveBuffer(const SharedBuffer&);
+    bool didReceiveData(const SharedBuffer&);
     bool didFinishLoading();
     void didFail();
 
@@ -60,17 +59,17 @@ private:
     void previewConverterDidFinishUpdating(PreviewConverter&) final { };
     void previewConverterDidFailUpdating(PreviewConverter&) final;
     void previewConverterDidStartConverting(PreviewConverter&) final;
-    void previewConverterDidReceiveData(PreviewConverter&, const SharedBuffer&) final;
+    void previewConverterDidReceiveData(PreviewConverter&, const FragmentedSharedBuffer&) final;
     void previewConverterDidFinishConverting(PreviewConverter&) final;
     void previewConverterDidFailConverting(PreviewConverter&) final;
 
     // PreviewConverterProvider
-    void provideMainResourceForPreviewConverter(PreviewConverter&, CompletionHandler<void(const SharedBuffer*)>&&) final;
+    void provideMainResourceForPreviewConverter(PreviewConverter&, CompletionHandler<void(Ref<FragmentedSharedBuffer>&&)>&&) final;
     void providePasswordForPreviewConverter(PreviewConverter&, CompletionHandler<void(const String&)>&&) final;
 
     RefPtr<PreviewConverter> m_converter;
     Ref<LegacyPreviewLoaderClient> m_client;
-    Ref<SharedBuffer> m_originalData;
+    SharedBufferBuilder m_originalData;
     WeakPtr<ResourceLoader> m_resourceLoader;
     bool m_finishedLoadingDataIntoConverter { false };
     bool m_hasProcessedResponse { false };

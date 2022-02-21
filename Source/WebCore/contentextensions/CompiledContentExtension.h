@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,27 +29,21 @@
 
 #include "ContentExtensionRule.h"
 #include "DFABytecode.h"
+#include <wtf/Span.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-namespace WebCore {
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 class WEBCORE_EXPORT CompiledContentExtension : public ThreadSafeRefCounted<CompiledContentExtension> {
 public:
     virtual ~CompiledContentExtension();
 
-    virtual const DFABytecode* filtersWithoutConditionsBytecode() const = 0;
-    virtual unsigned filtersWithoutConditionsBytecodeLength() const = 0;
-    virtual const DFABytecode* filtersWithConditionsBytecode() const = 0;
-    virtual unsigned filtersWithConditionsBytecodeLength() const = 0;
-    virtual const DFABytecode* topURLFiltersBytecode() const = 0;
-    virtual unsigned topURLFiltersBytecodeLength() const = 0;
-    virtual const SerializedActionByte* actions() const = 0;
-    virtual unsigned actionsLength() const = 0;
-    virtual bool conditionsApplyOnlyToDomain() const = 0;
+    virtual Span<const uint8_t> urlFiltersBytecode() const = 0;
+    virtual Span<const uint8_t> topURLFiltersBytecode() const = 0;
+    virtual Span<const uint8_t> frameURLFiltersBytecode() const = 0;
+    virtual Span<const uint8_t> serializedActions() const = 0;
 };
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

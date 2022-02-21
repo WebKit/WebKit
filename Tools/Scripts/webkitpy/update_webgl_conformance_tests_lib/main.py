@@ -34,8 +34,8 @@
    cd ~/temp
    git clone git://github.com/KhronosGroup/WebGL.git
    mkdir backup
-   mv ~/WebKit/LayoutTests/webgl/{1.0.x,2.0.y,resources/webgl_test_files} backup
-   generate-webgl-tests ~/temp/WebGL
+   mv ~/WebKit/LayoutTests/{http/,}webgl/{1.0.x,2.0.y,resources/webgl_test_files} backup
+   update-webgl-conformance-tests -c ~/temp/WebGL
    run-webkit-tests --debug --webgl --order=random webgl
    run-webkit-tests --release --webgl --order=random webgl
    check-for-duplicated-platform-test-results -n 2>&1 | grep webgl
@@ -64,6 +64,8 @@ _layout_tests_dir = Path(__file__).parent.parent.parent.parent.parent / "LayoutT
 
 _use_verbose_output = False
 
+_clean_target_dirs = False
+
 _IgnoredFilenameMatcher = Callable[[Path], bool]
 
 
@@ -84,7 +86,7 @@ def _make_ignore_fnmatch_rule_matcher(rules: Iterable[Union[str, Tuple[str]]]) -
     return match_rules
 
 
-_conformance_patterns = _make_ignore_fnmatch_rule_matcher(
+_file_patterns = _make_ignore_fnmatch_rule_matcher(
     [
         ".git",
         "*.pyc",
@@ -104,6 +106,31 @@ _conformance_patterns = _make_ignore_fnmatch_rule_matcher(
         "*/deqp/temp_externs*",
         "*/deqp/test-webgl2.js",
         "*/deqp/test-webgl2.sh",
+        "*/textures/misc/origin-clean-conformance-offscreencanvas.html",
+        "*/textures/misc/origin-clean-conformance.html",
+        "*/more/functions/readPixelsBadArgs.html",
+        "*/more/functions/texImage2DHTML.html",
+        "*/more/functions/texSubImage2DHTML.html",
+    ]
+)
+
+_http_file_patterns = _make_ignore_fnmatch_rule_matcher(
+    [
+        "*",
+        ("*/textures/misc/origin-clean-conformance-offscreencanvas.html", ),
+        ("*/textures/misc/origin-clean-conformance.html", ),
+        ("*/more/functions/readPixelsBadArgs.html", ),
+        ("*/more/functions/texImage2DHTML.html", ),
+        ("*/more/functions/texSubImage2DHTML.html", ),
+        ("*/more/unit.css", ),
+        ("*/more/unit.js", ),
+        ("*/more/util.js", ),
+        ("*/js/js-test-post.js", ),
+        ("*/js/js-test-pre.js", ),
+        ("*/js/webgl-test-utils.js", ),
+        ("*/resources/js-test-style.css", ),
+        ("*/resources/opengl_logo.jpg", ),
+        ("*/resources/thunderbird-logo-64x64.png", ),
     ]
 )
 
@@ -120,7 +147,7 @@ def _copy_tree(src: Path, dst: Path, ignore: Optional[_IgnoredFilenameMatcher] =
         else:
             if ignore is not None and ignore(src_name):
                 if _use_verbose_output:
-                    print("Ignoring: %s" % (src_name))
+                    print("Ignoring: %s, matches ignore filter" % (src_name))
                 continue
             if _use_verbose_output:
                 print("Copying: %s -> %s" % (src_name, dst_name))
@@ -187,6 +214,8 @@ def _copy_webgl_test_files(
     target_dir: Path,
 ):
     target_test_files_dir = target_dir / "resources" / "webgl_test_files"
+    if _clean_target_dirs:
+        shutil.rmtree(target_test_files_dir)
     _copy_tree(source_tests_dir, target_test_files_dir, source_patterns)
 
 
@@ -203,6 +232,9 @@ def _generate_webkit_webgl_tests(
     target_js_test_harness = target_dir / "resources" / "webkit-webgl-test-harness.js"
     target_js_test_harness.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(source_js_test_harness, target_js_test_harness)
+    source_js_test_harness = _tool_dir / "js-test-pre-template.js"
+    target_js_test_harness = target_dir / "resources" / "js-test-pre.js"
+    shutil.copyfile(source_js_test_harness, target_js_test_harness)
 
     test_template = (_tool_dir / "webgl-test-driver-template.html").read_text()
     expectation_template = (_tool_dir / "webgl-expectation-template.txt").read_text()
@@ -210,6 +242,9 @@ def _generate_webkit_webgl_tests(
     tests = _parse_webgl_tests(source_tests_dir, (source_tests_dir / "00_test_list.txt"), suite_version, suite_version)
 
     target_tests_dir = target_dir / target_version_name
+    if _clean_target_dirs:
+        shutil.rmtree(target_tests_dir)
+
     for test_path in _filter_webgl_test_paths_for_suite_version(tests, suite_version):
         target_test = target_tests_dir / test_path
         target_test_impl = target_test_files_dir / test_path
@@ -252,6 +287,7 @@ def _find_expectations_for_removed_tests(layout_tests_dir: Path):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("-v", "--verbose", action="store_true", help="print verbose output.")
+    parser.add_argument("-c", "--clean-target-dirs", action="store_true", help="remove all files from target subdirectories before updating them.")
     parser.add_argument("webgl_repository", help="path to WebGL conformance test repository root.")
     parser.add_argument(
         "-l",
@@ -263,14 +299,23 @@ def main():
     options = parser.parse_args()
     global _use_verbose_output
     _use_verbose_output = options.verbose or False
+    global _clean_target_dirs
+    _clean_target_dirs = options.clean_target_dirs or False
     source_dir = Path(options.webgl_repository)
     target_dir = Path(options.layout_tests_dir) / "webgl"
 
-    _copy_webgl_test_files(source_tests_dir=source_dir / "sdk" / "tests", source_patterns=_conformance_patterns, target_dir=target_dir)
+    _copy_webgl_test_files(source_tests_dir=source_dir / "sdk" / "tests", source_patterns=_file_patterns, target_dir=target_dir)
     _generate_webkit_webgl_tests(source_tests_dir=source_dir / "sdk" / "tests", suite_version=Version("1.0.4"), use_webgl2_context=False, target_dir=target_dir, target_version_name="1.0.x")
     _generate_webkit_webgl_tests(source_tests_dir=source_dir / "sdk" / "tests", suite_version=Version("2.0.1"), use_webgl2_context=True, target_dir=target_dir, target_version_name="2.0.y")
-    layout_tests_dir = Path(options.layout_tests_dir)
 
+    if _use_verbose_output:
+        print("Updating http tests")
+    http_target_dir = Path(options.layout_tests_dir) / "http" / "tests" / "webgl"
+    _copy_webgl_test_files(source_tests_dir=source_dir / "sdk" / "tests", source_patterns=_http_file_patterns, target_dir=http_target_dir)
+    _generate_webkit_webgl_tests(source_tests_dir=source_dir / "sdk" / "tests", suite_version=Version("1.0.4"), use_webgl2_context=False, target_dir=http_target_dir, target_version_name="1.0.x")
+    _generate_webkit_webgl_tests(source_tests_dir=source_dir / "sdk" / "tests", suite_version=Version("2.0.1"), use_webgl2_context=True, target_dir=http_target_dir, target_version_name="2.0.y")
+
+    layout_tests_dir = Path(options.layout_tests_dir)
     old_expectations = _find_expectations_for_removed_tests(layout_tests_dir)
     old_expectations = [e for e in old_expectations if "webgl" in str(e)]
     if old_expectations:

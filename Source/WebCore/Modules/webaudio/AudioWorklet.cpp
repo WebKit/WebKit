@@ -52,7 +52,7 @@ Ref<AudioWorklet> AudioWorklet::create(BaseAudioContext& audioContext)
 
 AudioWorklet::AudioWorklet(BaseAudioContext& audioContext)
     : Worklet(*audioContext.document())
-    , m_audioContext(makeWeakPtr(audioContext))
+    , m_audioContext(audioContext)
 {
 }
 
@@ -82,7 +82,7 @@ void AudioWorklet::createProcessor(const String& name, TransferredMessagePort po
     if (!proxy)
         return;
 
-    proxy->postTaskForModeToWorkletGlobalScope([name = name.isolatedCopy(), port, options = WTFMove(options), node = makeRef(node)](ScriptExecutionContext& context) mutable {
+    proxy->postTaskForModeToWorkletGlobalScope([name = name.isolatedCopy(), port, options = WTFMove(options), node = Ref { node }](ScriptExecutionContext& context) mutable {
         node->setProcessor(downcast<AudioWorkletGlobalScope>(context).createProcessor(name, port, WTFMove(options)));
         callOnMainThread([node = WTFMove(node)] { });
     }, WorkerRunLoop::defaultMode());

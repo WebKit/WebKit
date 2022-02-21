@@ -30,7 +30,7 @@
 #include "SharedBuffer.h"
 
 // This function loads resources from WebKit
-RefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char*);
+RefPtr<WebCore::FragmentedSharedBuffer> loadResourceIntoBuffer(const char*);
 
 namespace WebCore {
 

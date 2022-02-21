@@ -15,7 +15,4 @@ var __replaced = "To sign up click |here|https:www.xxxx.org/subscribe.htm|".repl
 
 var __expected = 'To sign up click <a href="https:www.xxxx.org/subscribe.htm">here</a>';
 
-//CHECK#1
-if (__replaced !== __expected) {
-	throw new Test262Error('#1: __replaced = "To sign up click |here|https:www.xxxx.org/subscribe.htm|".replace(/(\\|)([\\w\\x81-\\xff ]*)(\\|)([\\/a-z][\\w:\\/\\.]*\\.[a-z]{3,4})(\\|)/ig, \'<a href="$4">$2</a>\'); __replaced === ' + __expected + '. Actual: ' + __replaced);
-}
+assert.sameValue(__replaced, __expected, 'The value of __replaced is expected to equal the value of __expected');

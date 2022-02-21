@@ -31,7 +31,7 @@
     SecureContext,
     Exposed=(Window,ServiceWorker),
     Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=ServiceWorker,
+    EnabledAtRuntime=ServiceWorkerEnabled,
     GenerateIsReachable=ReachableFromNavigator
 ] interface ServiceWorkerContainer : EventTarget {
     readonly attribute ServiceWorker? controller;

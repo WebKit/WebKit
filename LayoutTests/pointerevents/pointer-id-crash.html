@@ -14,8 +14,8 @@ test(() => {
     const element = document.body.appendChild(document.createElement("div"));
     for (let value of [0, Number.MAX_VALUE, Number.MIN_VALUE, Number.MAX_VALUE + 1, Number.MIN_VALUE - 1]) {
         element.hasPointerCapture(value);
-        assert_throws("NotFoundError", () => element.setPointerCapture(value))
-        assert_throws("NotFoundError", () => element.releasePointerCapture(value))
+        assert_throws_dom("NotFoundError", () => element.setPointerCapture(value))
+        assert_throws_dom("NotFoundError", () => element.releasePointerCapture(value))
     }
     element.remove();
 }, "Checking 0 can be used as a Pointer ID.");

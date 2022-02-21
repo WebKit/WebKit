@@ -48,7 +48,7 @@ class MouseCursorMonitorX11 : public MouseCursorMonitor,
 
   Display* display() { return x_display_->display(); }
 
-  // Captures current cursor shape and stores it in |cursor_shape_|.
+  // Captures current cursor shape and stores it in `cursor_shape_`.
   void CaptureCursor();
 
   rtc::scoped_refptr<SharedXDisplay> x_display_;

@@ -38,21 +38,20 @@ namespace API {
 class ContentRuleList final : public ObjectImpl<Object::Type::ContentRuleList> {
 public:
 #if ENABLE(CONTENT_EXTENSIONS)
-    static Ref<ContentRuleList> create(const WTF::String& name, Ref<WebKit::WebCompiledContentRuleList>&& contentRuleList, WebKit::NetworkCache::Data&& mappedFile)
+    static Ref<ContentRuleList> create(Ref<WebKit::WebCompiledContentRuleList>&& contentRuleList, WebKit::NetworkCache::Data&& mappedFile)
     {
-        return adoptRef(*new ContentRuleList(name, WTFMove(contentRuleList), WTFMove(mappedFile)));
+        return adoptRef(*new ContentRuleList(WTFMove(contentRuleList), WTFMove(mappedFile)));
     }
 
-    ContentRuleList(const WTF::String& name, Ref<WebKit::WebCompiledContentRuleList>&&, WebKit::NetworkCache::Data&&);
+    ContentRuleList(Ref<WebKit::WebCompiledContentRuleList>&&, WebKit::NetworkCache::Data&&);
     virtual ~ContentRuleList();
 
-    const WTF::String& name() const { return m_name; }
+    const WTF::String& name() const;
     const WebKit::WebCompiledContentRuleList& compiledRuleList() const { return m_compiledRuleList.get(); }
     
     static bool supportsRegularExpression(const WTF::String&);
 
 private:
-    WTF::String m_name;
     Ref<WebKit::WebCompiledContentRuleList> m_compiledRuleList;
     WebKit::NetworkCache::Data m_mappedFile;
 #endif // ENABLE(CONTENT_EXTENSIONS)

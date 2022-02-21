@@ -36,10 +36,7 @@ class ScriptExecutionContext;
 
 class FileSystemDirectoryEntry final : public FileSystemEntry {
 public:
-    static Ref<FileSystemDirectoryEntry> create(ScriptExecutionContext& context, DOMFileSystem& filesystem, const String& virtualPath)
-    {
-        return adoptRef(*new FileSystemDirectoryEntry(context, filesystem, virtualPath));
-    }
+    static Ref<FileSystemDirectoryEntry> create(ScriptExecutionContext&, DOMFileSystem&, const String&);
 
     Ref<FileSystemDirectoryReader> createReader(ScriptExecutionContext&);
 
@@ -53,7 +50,7 @@ public:
 
 private:
     bool isDirectory() const final { return true; }
-    using EntryMatchingFunction = WTF::Function<bool(const FileSystemEntry&)>;
+    using EntryMatchingFunction = Function<bool(const FileSystemEntry&)>;
     void getEntry(ScriptExecutionContext&, const String& path, const Flags& options, EntryMatchingFunction&&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
 
     FileSystemDirectoryEntry(ScriptExecutionContext&, DOMFileSystem&, const String& virtualPath);

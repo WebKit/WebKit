@@ -11,13 +11,11 @@ description: Promise.prototype.then accepts 'undefined' as arg1, arg2
 flags: [async]
 ---*/
 
-var obj = {};
-var p = Promise.reject(obj);
+var arg = {};
+var p = Promise.reject(arg);
 
 p.then(undefined, undefined).then(function() {
   throw new Test262Error("Should not be called -- promise was rejected.");
-}, function(arg) {
-  if (arg !== obj) {
-    throw new Test262Error("Expected resolution object to be passed through, got " + arg);
-  }
+}, function(result) {
+  assert.sameValue(result, arg, 'The value of result is expected to equal the value of arg');
 }).then($DONE, $DONE);

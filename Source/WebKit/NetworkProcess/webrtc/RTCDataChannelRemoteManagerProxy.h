@@ -56,7 +56,7 @@ private:
     // To handler
     void changeReadyState(WebCore::RTCDataChannelIdentifier, WebCore::RTCDataChannelState);
     void receiveData(WebCore::RTCDataChannelIdentifier, bool isRaw, const IPC::DataReference&);
-    void detectError(WebCore::RTCDataChannelIdentifier);
+    void detectError(WebCore::RTCDataChannelIdentifier, WebCore::RTCErrorDetailType, const String&);
     void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, size_t amount);
 
     Ref<WorkQueue> m_queue;

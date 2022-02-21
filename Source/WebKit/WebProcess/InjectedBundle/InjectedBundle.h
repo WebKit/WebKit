@@ -34,6 +34,7 @@
 #include <WebCore/UserScriptTypes.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(GLIB)
@@ -106,10 +107,10 @@ public:
     void setUserStyleSheetLocation(const String&);
     void setWebNotificationPermission(WebPage*, const String& originString, bool allowed);
     void removeAllWebNotificationPermissions(WebPage*);
-    uint64_t webNotificationID(JSContextRef, JSValueRef);
+    std::optional<UUID> webNotificationID(JSContextRef, JSValueRef);
     Ref<API::Data> createWebDataFromUint8Array(JSContextRef, JSValueRef);
     
-    typedef HashMap<uint64_t, String> DocumentIDToURLMap;
+    typedef HashMap<UUID, String> DocumentIDToURLMap;
     DocumentIDToURLMap liveDocumentURLs(bool excludeDocumentsInPageGroupPages);
 
     // Garbage collection API

@@ -578,7 +578,7 @@ class MayBeSlower
 end
 
 def jsonSanitize(value)
-  if value.is_a? Fixnum
+  if value.is_a? Integer
     value
   elsif value.is_a? Float
     if value.nan? or value.infinite?
@@ -1595,7 +1595,7 @@ module Benchmark
   end
   
   def weightString
-    raise unless weight.is_a? Fixnum
+    raise unless weight.is_a? Integer
     raise unless weight >= 1
     if weight == 1
       ""

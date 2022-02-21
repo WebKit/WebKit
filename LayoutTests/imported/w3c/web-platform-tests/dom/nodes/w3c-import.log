@@ -261,6 +261,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/query-target-in-load-event.part.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-and-adopt-thcrash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-from-shadow-host-and-adopt-into-iframe-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-from-shadow-host-and-adopt-into-iframe-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-from-shadow-host-and-adopt-into-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-unscopable.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/rootNode.html

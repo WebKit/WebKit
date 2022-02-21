@@ -17,14 +17,11 @@ struct TPragma
     };
 
     // By default optimization is turned on and debug is turned off.
-    // Precision emulation is turned on by default, but has no effect unless
-    // the extension is enabled.
-    TPragma() : optimize(true), debug(false), debugShaderPrecision(true) {}
-    TPragma(bool o, bool d) : optimize(o), debug(d), debugShaderPrecision(true) {}
+    TPragma() : optimize(true), debug(false) {}
+    TPragma(bool o, bool d) : optimize(o), debug(d) {}
 
     bool optimize;
     bool debug;
-    bool debugShaderPrecision;
     STDGL stdgl;
 };
 

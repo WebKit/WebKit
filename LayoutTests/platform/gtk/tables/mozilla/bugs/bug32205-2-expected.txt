@@ -87,8 +87,8 @@ layer at (0,0) size 785x1299
                 text run at (2,2) width 50: "title line"
           RenderTableRow {TR} at (0,26) size 86x199
             RenderTableCell {TD} at (2,114) size 82x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 78x18
-                text run at (2,3) width 78: "rest of space"
+              RenderText {#text} at (2,1) size 78x19
+                text run at (2,2) width 78: "rest of space"
       RenderBlock {P} at (0,929) size 769x18
         RenderText {#text} at (0,0) size 605x17
           text run at (0,0) width 469: "This appears ok, but close inspection will show that the table is now >200 "

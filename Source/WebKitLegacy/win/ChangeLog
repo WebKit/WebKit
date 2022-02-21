@@ -1,3 +1,533 @@
+2022-02-15  Chris Dumez  <cdumez@apple.com>
+
+        Do preliminary work to pass domain names to CoreLocation
+        https://bugs.webkit.org/show_bug.cgi?id=236566
+        <rdar://88761413>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebGeolocationClient.cpp:
+        (WebGeolocationClient::startUpdating):
+        * WebCoreSupport/WebGeolocationClient.h:
+
+2022-02-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename FontCascade::fontMetrics() and RenderStyle::fontMetrics() to fontMetricsOfPrimaryFont()
+        https://bugs.webkit.org/show_bug.cgi?id=235938
+
+        Unreviewed.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::draw):
+
+2022-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete runtime preference for enabling keygen element
+        https://bugs.webkit.org/show_bug.cgi?id=235867
+
+        Reviewed by Antti Koivisto.
+
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::keygenElementEnabled):
+        (WebPreferences::setKeygenElementEnabled):
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
+2022-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete runtime preference for enabling request animation frame
+        https://bugs.webkit.org/show_bug.cgi?id=235866
+
+        Reviewed by Darin Adler.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::setRequestAnimationFrameEnabled):
+        (WebPreferences::requestAnimationFrameEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
+2022-01-25  Aditya Keerthi  <akeerthi@apple.com>
+
+        Disable input-security CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=235557
+        rdar://87984277
+
+        Reviewed by Dean Jackson.
+
+        Add support for tests enabling the CSSInputSecurityEnabled preference.
+
+        * WebPreferences.cpp:
+        (WebPreferences::cssInputSecurityEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
+2022-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Fix AppleWin build with newer MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=235431
+
+        Reviewed by Alex Christensen.
+
+        * WebDownloadCFNet.cpp:
+        (WebDownload::cancelForResume):
+        * WebKitQuartzCoreAdditions/CAD3DRenderer.cpp:
+        (WKQCA::CAD3DRenderer::resetD3DDevice):
+
+2022-01-15  Sam Weinig  <weinig@apple.com>
+
+        CSS Gradients: interpolation mode should default to OKLab if any non-legacy color syntax colors are used in the stops
+        https://bugs.webkit.org/show_bug.cgi?id=235071
+
+        Reviewed by Darin Adler.
+
+        Add support for tests enabling the CSSGradientInterpolationColorSpacesEnabled preference.
+
+        * WebPreferences.cpp:
+        (WebPreferences::cssGradientInterpolationColorSpacesEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
+2022-01-09  Sam Weinig  <weinig@apple.com>
+
+        Remove support for Direct2D
+        https://bugs.webkit.org/show_bug.cgi?id=234999
+
+        Reviewed by Darin Adler.
+
+        Direct2D and FTW have not been building for over a year. It is
+        time to remove them.
+
+        * WebView.cpp:
+        (WebView::deleteBackingStore):
+        (WebView::ensureBackingStore):
+        (WebView::scrollBackingStore):
+        (WebView::sizeChanged):
+        (WebView::updateBackingStore):
+        (WebView::paint):
+        (WebView::paintIntoBackingStore):
+        (WebView::WebViewWndProc):
+        (WebView::notifyPreferencesChanged):
+        (WebView::paintWithDirect2D): Deleted.
+        * WebView.h:
+
+2022-01-06  Jean-Yves Avenard  <jya@apple.com>
+
+        Have CachedRawResourceClient and related networking actors use SharedBuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=232424
+        rdar://84744687
+
+        Reviewed by Youenn Fablet.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::committedLoad):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
+2021-12-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for a UI delegate method to decide how to handle detected modal containers
+        https://bugs.webkit.org/show_bug.cgi?id=234440
+        rdar://77073735
+
+        Reviewed by Darin Adler.
+
+        See WebKit ChangeLog for more details.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::decidePolicyForModalContainer):
+
+2021-12-21  Sam Weinig  <weinig@apple.com>
+
+        Add support for premultiplied alpha interpolated gradients and defaulted off option to use them for CSS Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=234492
+
+        Reviewed by Simon Fraser.
+
+        Add support for tests enabling the CSSGradientPremultipliedAlphaInterpolationEnabled preference.
+
+        * WebPreferences.cpp:
+        (WebPreferences::cssGradientPremultipliedAlphaInterpolationEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
+2021-12-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] MSVC reports "COMPropertyBag.h(233): error C2385: ambiguous access of 'IUnknown'" with /std:c++20
+        https://bugs.webkit.org/show_bug.cgi?id=234498
+
+        Reviewed by Don Olmstead.
+
+        > Source\WebKitLegacy\win\COMPropertyBag.h(233): error C2385: ambiguous access of 'IUnknown'
+
+        This problem has been reported in the following ticket, and it has a workaround.
+        <https://developercommunity.visualstudio.com/t/error-c2385-ambiguous-access-of-iunknown-referring/230955>
+
+        * COMPropertyBag.h:
+        (HashType>::LoadObject): Added the global namespace prefix '::' to
+        IUnknown for the workaround.
+
+2021-12-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] MSVC reports "COMVariantSetter.h(133): error C2760: syntax error: unexpected token 'identifier', expected ';'" with /std:c++20
+        https://bugs.webkit.org/show_bug.cgi?id=234501
+
+        Reviewed by Don Olmstead.
+
+        > Source\WebKitLegacy\win\COMVariantSetter.h(133): error C2760: syntax error: unexpected token 'identifier', expected ';'
+        > Source\WebKitLegacy\win\COMVariantSetter.h(140): note: see reference to class template instantiation 'COMVariantSetter<WTF::Vector<T,0,WTF::CrashOnOverflow,16,WTF::VectorMalloc>>' being compiled
+
+        COMVariant should be used after defined.
+
+        * COMVariantSetter.h:
+        (COMVariantSetter<Vector<T>>): Moved after the COMVariant
+        definition.
+
+2021-12-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add client layer plumbing for classifying modal container controls
+        https://bugs.webkit.org/show_bug.cgi?id=234320
+
+        Reviewed by Dean Jackson.
+
+        See WebCore/ChangeLog for more details.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::classifyModalContainerControls):
+        * WebCoreSupport/WebChromeClient.h:
+
+2021-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Convert ProtectionSpace enums into enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=234455
+
+        Reviewed by Alex Christensen.
+
+        * WebURLProtectionSpace.cpp:
+        (WebURLProtectionSpace::authenticationMethod):
+        (coreScheme):
+        (WebURLProtectionSpace::initWithHost):
+        (WebURLProtectionSpace::initWithProxyHost):
+
+2021-12-14  Jean-Yves Avenard  <jya@apple.com>
+
+        Rename SharedBuffer classes.
+        https://bugs.webkit.org/show_bug.cgi?id=233677
+        rdar://problem/85963900
+
+        Reviewed by Youenn Fablet.
+
+        SharedBuffer are renamed FragmentedSharedBuffer and
+        ContiguousSharedBuffer to SharedBuffer to better reflect their actual
+        types.
+
+        * MemoryStream.cpp:
+        * MemoryStream.h:
+        * WebArchive.cpp:
+        * WebCoreSupport/WebEditorClient.cpp:
+        * WebCoreSupport/WebEditorClient.h:
+        * WebFrame.cpp:
+        * WebFrame.h:
+        * WebKitDLL.cpp:
+        * WebResource.cpp:
+        * WebResource.h:
+
+2021-12-13  Jean-Yves Avenard  <jya@apple.com>
+
+        Add SharedBufferBuilder class
+        https://bugs.webkit.org/show_bug.cgi?id=233442
+        rdar://85693939
+
+        Reviewed by Youenn Fablet.
+
+        * WebFrame.cpp:
+        (WebFrame::loadData):
+
+2021-12-13  Jean-Yves Avenard  <jya@apple.com>
+
+        Distinguish contiguous SharedBuffer from non-contiguous one and guarantee immutability
+        https://bugs.webkit.org/show_bug.cgi?id=233030
+        rdar://85333814
+
+        Reviewed by Darin Adler.
+
+        * MemoryStream.cpp:
+        (MemoryStream::MemoryStream):
+        (MemoryStream::createInstance):
+        * MemoryStream.h:
+        * WebArchive.cpp:
+        (WebArchive::data):
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorClient::getClientPasteboardData):
+        * WebCoreSupport/WebEditorClient.h:
+        * WebDataSource.cpp:
+        (WebDataSource::data):
+        * WebResource.cpp:
+        (WebResource::createInstance):
+        * WebResource.h:
+
+2021-12-11  Don Olmstead  <don.olmstead@sony.com>
+
+        Add a std::nullptr_t constructor for RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=234192
+
+        Reviewed by Yusuke Suzuki.
+
+        Remove uses of `0` when creating an empty RefPtr.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::draw):
+        * WebArchive.cpp:
+        (WebArchive::createInstance):
+
+2021-12-09  Devin Rousso  <drousso@apple.com>
+
+        Add a `DOMPasteAccessCategory` to control which pasteboard the WebProcess is granted access to when pasting
+        https://bugs.webkit.org/show_bug.cgi?id=233939
+
+        Reviewed by Wenson Hsieh.
+
+        Implementing `-pasteFont:` <https://webkit.org/b/191379> requires that we read from the font
+        pasteboard instead of the general pasteboard. In order to allow web content to trigger this
+        (e.g. `document.execCommand("PasteFont"))`) we must have a way for the WebProcess to signal
+        that it wishes to read from the font pasteboard instead of the general pasteboard. As such,
+        create and pass along a `DOMPasteAccessCategory` to `requestDOMPasteAccess`.
+
+        No change in behavior.
+
+        * WebCoreSupport/WebEditorClient.h:
+        (WebEditorClient::requestDOMPasteAccess):
+
+2021-12-09  Myles C. Maxfield  <mmaxfield@apple.com> and Don Olmstead  <don.olmstead@sony.com>
+
+        Move TextCodec files from WebCore/platform/text to WebCore/PAL/text
+        https://bugs.webkit.org/show_bug.cgi?id=233683
+
+        Reviewed by Yusuke Suzuki.
+
+        Update to use the new PAL files.
+
+        * WebDownloadCurl.cpp:
+        (WebDownload::didReceiveResponse):
+
+2021-12-08  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r286632.
+
+        Broke 3 tests on iOS
+
+        Reverted changeset:
+
+        "Add a `DOMPasteAccessCategory` to control which pasteboard
+        the WebProcess is granted access to when pasting"
+        https://bugs.webkit.org/show_bug.cgi?id=233939
+        https://commits.webkit.org/r286632
+
+2021-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for `navigator.requestCookieConsent()` behind a disabled feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=233890
+        rdar://86117718
+
+        Reviewed by Darin Adler.
+
+        Add an implementation stub for the new chrome client hook, `requestCookieConsent()`.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::requestCookieConsent):
+        * WebCoreSupport/WebChromeClient.h:
+
+2021-12-07  Devin Rousso  <drousso@apple.com>
+
+        Add a `DOMPasteAccessCategory` to control which pasteboard the WebProcess is granted access to when pasting
+        https://bugs.webkit.org/show_bug.cgi?id=233939
+
+        Reviewed by Wenson Hsieh.
+
+        Implementing `-pasteFont:` <https://webkit.org/b/191379> requires that we read from the font
+        pasteboard instead of the general pasteboard. In order to allow web content to trigger this
+        (e.g. `document.execCommand("PasteFont"))`) we must have a way for the WebProcess to signal
+        that it wishes to read from the font pasteboard instead of the general pasteboard. As such,
+        create and pass along a `DOMPasteAccessCategory` to `requestDOMPasteAccess`.
+
+        No change in behavior.
+
+        * WebCoreSupport/WebEditorClient.h:
+        (WebEditorClient::requestDOMPasteAccess):
+
+2021-12-07  Cameron McCormack  <heycam@apple.com>
+
+        Move FontCache singleton and instance on WorkerGlobalScope to ThreadGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=233747
+
+        Reviewed by Darin Adler.
+
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::cachedFontDataCount):
+        (WebCoreStatistics::cachedFontDataInactiveCount):
+        (WebCoreStatistics::purgeInactiveFontData):
+        Update existing main thread callers of FontCache::singleton() to use
+        FontCache::forCurrentThread().
+
+2021-12-02  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Make Web Lock API work across multiple WebProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=233719
+
+        Reviewed by Alex Christensen.
+
+        See WebCore Changelog.
+
+        * WebView.cpp:
+        (getOrCreateWebLockRegistry):
+        (WebView::initWithFrame):
+
+2021-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        AX: Use ObjectIdentifier for AXID
+        https://bugs.webkit.org/show_bug.cgi?id=233248
+        <rdar://problem/85497145>
+
+        Reviewed by Andres Gonzalez.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_uniqueID):
+        (AccessibleBase::getAccessibilityObjectForChild const):
+
+2021-11-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Make scroll granularity an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=232641
+
+        Reviewed by Cameron McCormack.
+
+        * WebView.cpp:
+        (WebView::verticalScroll):
+        (WebView::horizontalScroll):
+        (WebView::keyDown):
+
+2021-11-11  Sam Weinig  <weinig@apple.com>
+
+        Factor platform specific code out of HTMLModelElement
+        https://bugs.webkit.org/show_bug.cgi?id=232848
+
+        Reviewed by Dean Jackson.
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+        Use DummyModelPlayerProvider for the DummyModelPlayerProvider since the feature
+        is not supported for WebKitLegacy at the moment.
+
+2021-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        AX: rename actionVerb() as localizedActionVerb()
+        https://bugs.webkit.org/show_bug.cgi?id=232711
+        <rdar://problem/85015496>
+
+        Reviewed by Andres Gonzalez.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accDefaultAction): Use localizedActionVerb().
+
+2021-10-11  Chris Dumez  <cdumez@apple.com>
+
+        DOMTimeStamp is now EpochTimeStamp
+        https://bugs.webkit.org/show_bug.cgi?id=231496
+
+        Reviewed by Sam Weinig.
+
+        * DOMEventsClasses.cpp:
+        (DOMEvent::timeStamp):
+        * DOMEventsClasses.h:
+        (DOMUIEvent::timeStamp):
+        (DOMKeyboardEvent::timeStamp):
+        (DOMMouseEvent::timeStamp):
+        (DOMMutationEvent::timeStamp):
+        (DOMOverflowEvent::timeStamp):
+        (DOMWheelEvent::timeStamp):
+        * Interfaces/DOMEvents.idl:
+
+2021-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Move Cross-Origin-Opener-Policy handling to the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=230812
+        <rdar://83504842>
+
+        Reviewed by Youenn Fablet.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
+2021-09-24  Devin Rousso  <drousso@apple.com>
+
+        Add typechecking `is` overloads for `std::unique_ptr`, `WTF::UniqueRef`, and `WTF::WeakPtr`
+        https://bugs.webkit.org/show_bug.cgi?id=230734
+
+        Reviewed by Chris Dumez.
+
+        * WebFrame.cpp:
+        (WebFrame::elementWithName):
+
+2021-09-17  Alex Christensen  <achristensen@webkit.org>
+
+        Use ObjectIdentifier for ResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=230278
+
+        Reviewed by Michael Catanzaro.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebFrameLoaderClient::shouldUseCredentialStorage):
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebFrameLoaderClient::shouldCacheResponse):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
+2021-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert usesMockScrollAnimator from a DeprecatedGlobalSettings to a WebPreference
+        https://bugs.webkit.org/show_bug.cgi?id=230371
+
+        Reviewed by Tim Horton.
+
+        Add Windows preferences.
+
+        * WebPreferences.cpp:
+        (WebPreferences::mockScrollAnimatorEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
+2021-09-14  Chris Dumez  <cdumez@apple.com>
+
+        [Hardening] Validate IDBValue's blob paths in WebIDBServer::putOrAdd()
+        https://bugs.webkit.org/show_bug.cgi?id=230233
+        <rdar://79562514>
+
+        Reviewed by Brady Eidson.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+
+2021-09-07  Sihui Liu  <sihui_liu@apple.com>
+
+        Add basic support for Storage API
+        https://bugs.webkit.org/show_bug.cgi?id=229925
+
+        Reviewed by Darin Adler.
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2021-08-31  Chris Dumez  <cdumez@apple.com>
 
         Enable SharedArrayBuffer support when COOP/COEP headers are used

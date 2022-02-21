@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <div id="role-document-container" role="document">
+        <div id="outer-group" role="group" aria-label="Outer group label">
+            <div id="inner-group" role="group" aria-label="Inner group label">
+                Some text
+            </div>
+        </div>
+    </div>
+
+    <div id="role-web-application-container" role="application">
+    </div>
+
+    <div role="application">
+        <div id="application-document-container" role="document">
+        </div>
+    </div>
+
+    <dl>
+        <dd id="description-definition-container"></dd>
+    </dl>
+
+    <dl>
+        <dt id="description-term-container"></dt>
+    </dl>
+
+    <table>
+        <thead>
+            <tr>
+                <th colspan="2">The table header</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="td-table-cell"></td>
+                <span id="span-table-cell" role="cell"></span>
+            </tr>
+        </tbody>
+    </table>
+
+    <div id="role-group-container" role="group">
+    </div>
+</div>
+
+<script>
+    description("This test ensures accessibility elements properly track their ancestor types.");
+    var element;
+
+    async function shouldBeForAllDescendants(startElementId, expectedPropertyValues) {
+        debug(`Verifying ${JSON.stringify(expectedPropertyValues)} for all descendants of ${startElementId}.`);
+
+        let elementsToCheck = [await waitForElementById(startElementId)];
+        while (elementsToCheck.length) {
+            element = elementsToCheck.pop();
+            if (!element)
+                continue;
+
+            let elementChildCount = element.childrenCount;
+            for (let i = 0; i < elementChildCount; i++) {
+                elementsToCheck.push(element.childAtIndex(i));
+            }
+
+            for (const [property, expectedValue] of Object.entries(expectedPropertyValues)) {
+                shouldBe(`element.${property}`, expectedValue);
+            }
+        }
+        debug(`Finished verifying ${JSON.stringify(expectedPropertyValues)} for all descendants of ${startElementId}.`);
+        debug("");
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        const outerGroupId = "outer-group";
+
+        setTimeout(async function() {
+            // The outer-group starts as a child of the document-role container.
+            await shouldBeForAllDescendants(outerGroupId, {
+                "hasWebApplicationAncestor": "false",
+                "hasDocumentRoleAncestor": "true"
+            });
+
+            document.getElementById("role-group-container").appendChild(document.getElementById(outerGroupId));
+            await shouldBeForAllDescendants(outerGroupId, {"hasDocumentRoleAncestor": "false"});
+
+            document.getElementById("role-web-application-container").appendChild(document.getElementById(outerGroupId));
+            await shouldBeForAllDescendants(outerGroupId, {
+                "hasWebApplicationAncestor": "true",
+                "hasDocumentRoleAncestor": "false"
+            });
+
+            document.getElementById("role-group-container").appendChild(document.getElementById(outerGroupId));
+            await shouldBeForAllDescendants(outerGroupId, {
+                "hasWebApplicationAncestor": "false",
+                "hasDocumentRoleAncestor": "false"
+            });
+
+            document.getElementById("application-document-container").appendChild(document.getElementById(outerGroupId));
+            await shouldBeForAllDescendants(outerGroupId, {
+                "hasWebApplicationAncestor": "true",
+                "hasDocumentRoleAncestor": "true"
+            });
+
+            document.getElementById("role-group-container").appendChild(document.getElementById(outerGroupId));
+            await shouldBeForAllDescendants(outerGroupId, {
+                "hasWebApplicationAncestor": "false",
+                "hasDocumentRoleAncestor": "false"
+            });
+
+            document.getElementById("description-definition-container").appendChild(document.getElementById(outerGroupId));
+            await shouldBeForAllDescendants(outerGroupId, {
+                "hasWebApplicationAncestor": "false",
+                "hasDocumentRoleAncestor": "false",
+                "isInDescriptionListDetail": "true"
+            });
+
+            document.getElementById("description-term-container").appendChild(document.getElementById(outerGroupId));
+            await shouldBeForAllDescendants(outerGroupId, {
+                "hasWebApplicationAncestor": "false",
+                "hasDocumentRoleAncestor": "false",
+                "isInDescriptionListDetail": "false",
+                "isInDescriptionListTerm": "true"
+            });
+
+            document.getElementById("role-group-container").appendChild(document.getElementById(outerGroupId));
+            await shouldBeForAllDescendants(outerGroupId, {
+                "isInDescriptionListTerm": "false",
+                "isInCell": "false"
+            });
+
+            document.getElementById("td-table-cell").appendChild(document.getElementById(outerGroupId));
+            await shouldBeForAllDescendants(outerGroupId, {
+                "isInCell": "true"
+            });
+
+            document.getElementById("role-group-container").appendChild(document.getElementById(outerGroupId));
+            await shouldBeForAllDescendants(outerGroupId, {
+                "isInCell": "false"
+            });
+
+            document.getElementById("span-table-cell").appendChild(document.getElementById(outerGroupId));
+            await shouldBeForAllDescendants(outerGroupId, {
+                "isInCell": "true"
+            });
+
+            document.getElementById("role-group-container").appendChild(document.getElementById(outerGroupId));
+            await shouldBeForAllDescendants(outerGroupId, {
+                "hasWebApplicationAncestor": "false",
+                "hasDocumentRoleAncestor": "false",
+                "isInDescriptionListDetail": "false",
+                "isInDescriptionListTerm": "false",
+                "isInCell": "false"
+            });
+
+            document.getElementById("content").style.visibility = "hidden";
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

@@ -51,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/abrupt-completion.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/check-error-arguments.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/empty-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/iframe-sw-shared-name.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/iframe_sw_dataUrl.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/importScripts-1.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/importScripts-2.js
@@ -69,3 +70,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/sync_xhr.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/sync_xhr_target.xml
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/throw-on-message-Worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/window-sw-shared-name.html

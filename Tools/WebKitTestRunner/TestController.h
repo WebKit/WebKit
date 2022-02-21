@@ -47,6 +47,7 @@
 
 OBJC_CLASS NSString;
 OBJC_CLASS UIKeyboardInputMode;
+OBJC_CLASS UIPasteboardConsistencyEnforcer;
 OBJC_CLASS WKWebViewConfiguration;
 
 namespace WTR {
@@ -56,6 +57,7 @@ class OriginSettings;
 class PlatformWebView;
 class TestInvocation;
 class TestOptions;
+struct Options;
 struct TestCommand;
 
 class AsyncTask {
@@ -124,7 +126,8 @@ public:
     bool beforeUnloadReturnValue() const { return m_beforeUnloadReturnValue; }
     void setBeforeUnloadReturnValue(bool value) { m_beforeUnloadReturnValue = value; }
 
-    void simulateWebNotificationClick(uint64_t notificationID);
+    void simulateWebNotificationClick(WKDataRef notificationID);
+    void simulateWebNotificationClickForServiceWorkerNotifications();
 
     // Geolocation.
     void setGeolocationPermission(bool);
@@ -190,6 +193,7 @@ public:
     void setShouldLogHistoryClientCallbacks(bool shouldLog) { m_shouldLogHistoryClientCallbacks = shouldLog; }
     void setShouldLogCanAuthenticateAgainstProtectionSpace(bool shouldLog) { m_shouldLogCanAuthenticateAgainstProtectionSpace = shouldLog; }
     void setShouldLogDownloadCallbacks(bool shouldLog) { m_shouldLogDownloadCallbacks = shouldLog; }
+    void setShouldLogDownloadSize(bool shouldLog) { m_shouldLogDownloadSize = shouldLog; }
 
     bool isCurrentInvocation(TestInvocation* invocation) const { return invocation == m_currentInvocation.get(); }
 
@@ -277,10 +281,12 @@ public:
     void setOpenPanelFileURLsMediaIcon(WKDataRef mediaIcon) { m_openPanelFileURLsMediaIcon = mediaIcon; }
 #endif
 
+    void terminateGPUProcess();
     void terminateNetworkProcess();
     void terminateServiceWorkers();
 
     void resetQuota();
+    void clearStorage();
 
     void removeAllSessionCredentials();
 
@@ -306,6 +312,7 @@ public:
     void resetMockMediaDevices();
     void setMockCameraOrientation(uint64_t);
     bool isMockRealtimeMediaSourceCenterEnabled() const;
+    void setMockCameraIsInterrupted(bool);
     bool hasAppBoundSession();
 
     void injectUserScript(WKStringRef);
@@ -346,12 +353,13 @@ public:
     void setPrivateClickMeasurementOverrideTimerForTesting(bool value);
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
     void setPrivateClickMeasurementEphemeralMeasurementForTesting(bool value);
-    void simulateResourceLoadStatisticsSessionRestart();
+    void simulatePrivateClickMeasurementSessionRestart();
     void setPrivateClickMeasurementTokenPublicKeyURLForTesting(WKURLRef);
     void setPrivateClickMeasurementTokenSignatureURLForTesting(WKURLRef);
     void setPrivateClickMeasurementAttributionReportURLsForTesting(WKURLRef sourceURL, WKURLRef destinationURL);
     void markPrivateClickMeasurementsAsExpiredForTesting();
     void setPCMFraudPreventionValuesForTesting(WKStringRef unlinkableToken, WKStringRef secretToken, WKStringRef signature, WKStringRef keyID);
+    void setPrivateClickMeasurementAppBundleIDForTesting(WKStringRef);
 
     void didSetAppBoundDomains() const;
 
@@ -362,6 +370,12 @@ public:
 
     void completeMediaKeySystemPermissionCheck(WKMediaKeySystemPermissionCallbackRef);
     void setIsMediaKeySystemPermissionGranted(bool);
+    WKRetainPtr<WKStringRef> takeViewPortSnapshot();
+
+    WKPreferencesRef platformPreferences();
+
+    bool grantNotificationPermission(WKStringRef origin);
+    bool denyNotificationPermission(WKStringRef origin);
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
@@ -378,7 +392,7 @@ private:
 
     bool handleControlCommand(const char* command);
 
-    void platformInitialize();
+    void platformInitialize(const Options&);
     void platformInitializeDataStore(WKPageConfigurationRef, const TestOptions&);
     void platformDestroy();
     WKContextRef platformAdjustContext(WKContextRef, WKContextConfigurationRef);
@@ -390,7 +404,7 @@ private:
     bool platformResetStateToConsistentValues(const TestOptions&);
 
 #if PLATFORM(COCOA)
-    void cocoaPlatformInitialize();
+    void cocoaPlatformInitialize(const Options&);
     void cocoaResetStateToConsistentValues(const TestOptions&);
     void setApplicationBundleIdentifier(const std::string&);
     void clearApplicationBundleIdentifierTestingOverride();
@@ -400,7 +414,6 @@ private:
     void platformRunUntil(bool& done, WTF::Seconds timeout);
     void platformDidCommitLoadForFrame(WKPageRef, WKFrameRef);
     WKContextRef platformContext();
-    WKPreferencesRef platformPreferences();
     void initializeInjectedBundlePath();
     void initializeTestPluginDirectory();
 
@@ -423,6 +436,10 @@ private:
     void decidePolicyForGeolocationPermissionRequestIfPossible();
     void decidePolicyForUserMediaPermissionRequestIfPossible();
 
+#if PLATFORM(IOS_FAMILY)
+    UIPasteboardConsistencyEnforcer *pasteboardConsistencyEnforcer();
+#endif
+
     // WKContextInjectedBundleClient
     static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
     static void didReceiveSynchronousMessageFromInjectedBundleWithListener(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef, const void*);
@@ -436,6 +453,8 @@ private:
     WKRetainPtr<WKTypeRef> getInjectedBundleInitializationUserData();
 
     void didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);
+    void didReceiveRawKeyDownMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);
+    void didReceiveRawKeyUpMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);
 
     // WKContextClient
     static void networkProcessDidCrash(WKContextRef, const void*);
@@ -466,7 +485,10 @@ private:
     static bool downloadDidReceiveServerRedirectToURL(WKDownloadRef, WKURLResponseRef, WKURLRequestRef, const void*);
     bool downloadDidReceiveServerRedirectToURL(WKDownloadRef, WKURLRequestRef);
     static void downloadDidReceiveAuthenticationChallenge(WKDownloadRef, WKAuthenticationChallengeRef, const void *clientInfo);
-    
+
+    void downloadDidWriteData(long long totalBytesWritten);
+    static void downloadDidWriteData(WKDownloadRef, long long bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite, const void* clientInfo);
+
     static void webProcessDidTerminate(WKPageRef,  WKProcessTerminationReason, const void* clientInfo);
     void webProcessDidTerminate(WKProcessTerminationReason);
 
@@ -562,6 +584,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_inputModeSwizzlers;
+    RetainPtr<UIPasteboardConsistencyEnforcer> m_pasteboardConsistencyEnforcer;
     RetainPtr<UIKeyboardInputMode> m_overriddenKeyboardInputMode;
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_presentPopoverSwizzlers;
 #endif
@@ -656,6 +679,9 @@ private:
     bool m_isSpeechRecognitionPermissionGranted { false };
 
     bool m_isMediaKeySystemPermissionGranted { true };
+
+    std::optional<long long> m_downloadTotalBytesWritten;
+    bool m_shouldLogDownloadSize { false };
 };
 
 } // namespace WTR

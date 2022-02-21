@@ -46,6 +46,13 @@ public:
 
 private:
     VideoTrackPrivateWebM(webm::TrackEntry&&);
+
+    String codec() const;
+    uint32_t width() const;
+    uint32_t height() const;
+    double framerate() const;
+    void updateConfiguration();
+
     webm::TrackEntry m_track;
     mutable AtomString m_trackID;
     mutable AtomString m_label;

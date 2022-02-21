@@ -13,15 +13,17 @@
 
 #include "common/PoolAlloc.h"
 #include "common/vulkan/vk_headers.h"
+#include "libANGLE/renderer/vulkan/vk_command_buffer_utils.h"
 #include "libANGLE/renderer/vulkan/vk_wrapper.h"
 
 namespace rx
 {
-
-enum DescriptorSetIndex : uint32_t;
+class ContextVk;
 
 namespace vk
 {
+class Context;
+class RenderPassDesc;
 
 namespace priv
 {
@@ -66,7 +68,6 @@ enum class CommandID : uint16_t
     EndDebugUtilsLabel,
     EndQuery,
     EndTransformFeedback,
-    ExecutionBarrier,
     FillBuffer,
     ImageBarrier,
     InsertDebugUtilsLabel,
@@ -79,6 +80,7 @@ enum class CommandID : uint16_t
     ResolveImage,
     SetEvent,
     SetScissor,
+    SetViewport,
     WaitEvents,
     WriteTimestamp,
 };
@@ -261,6 +263,8 @@ struct DrawIndexedIndirectParams
 {
     VkBuffer buffer;
     VkDeviceSize offset;
+    uint32_t drawCount;
+    uint32_t stride;
 };
 VERIFY_4_BYTE_ALIGNMENT(DrawIndexedIndirectParams)
 
@@ -293,6 +297,8 @@ struct DrawIndirectParams
 {
     VkBuffer buffer;
     VkDeviceSize offset;
+    uint32_t drawCount;
+    uint32_t stride;
 };
 VERIFY_4_BYTE_ALIGNMENT(DrawIndirectParams)
 
@@ -329,12 +335,6 @@ struct EndTransformFeedbackParams
     uint32_t bufferCount;
 };
 VERIFY_4_BYTE_ALIGNMENT(EndTransformFeedbackParams)
-
-struct ExecutionBarrierParams
-{
-    VkPipelineStageFlags stageMask;
-};
-VERIFY_4_BYTE_ALIGNMENT(ExecutionBarrierParams)
 
 struct FillBufferParams
 {
@@ -423,6 +423,12 @@ struct SetScissorParams
 };
 VERIFY_4_BYTE_ALIGNMENT(SetScissorParams)
 
+struct SetViewportParams
+{
+    VkViewport viewport;
+};
+VERIFY_4_BYTE_ALIGNMENT(SetViewportParams)
+
 struct WaitEventsParams
 {
     uint32_t eventCount;
@@ -474,12 +480,31 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     // buffer.
     static constexpr bool ExecutesInline() { return true; }
 
+    static angle::Result InitializeCommandPool(Context *context,
+                                               CommandPool *pool,
+                                               uint32_t queueFamilyIndex,
+                                               bool hasProtectedContent)
+    {
+        return angle::Result::Continue;
+    }
+    static angle::Result InitializeRenderPassInheritanceInfo(
+        ContextVk *contextVk,
+        const Framebuffer &framebuffer,
+        const RenderPassDesc &renderPassDesc,
+        VkCommandBufferInheritanceInfo *inheritanceInfoOut)
+    {
+        return angle::Result::Continue;
+    }
+
     // Add commands
     void beginDebugUtilsLabelEXT(const VkDebugUtilsLabelEXT &label);
 
-    void beginQuery(VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags);
+    void beginQuery(const QueryPool &queryPool, uint32_t query, VkQueryControlFlags flags);
 
-    void beginTransformFeedback(uint32_t counterBufferCount, const VkBuffer *pCounterBuffers);
+    void beginTransformFeedback(uint32_t firstCounterBuffer,
+                                uint32_t bufferCount,
+                                const VkBuffer *counterBuffers,
+                                const VkDeviceSize *counterBufferOffsets);
 
     void bindComputePipeline(const Pipeline &pipeline);
 
@@ -495,7 +520,8 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     void bindIndexBuffer(const Buffer &buffer, VkDeviceSize offset, VkIndexType indexType);
 
-    void bindTransformFeedbackBuffers(uint32_t bindingCount,
+    void bindTransformFeedbackBuffers(uint32_t firstBinding,
+                                      uint32_t bindingCount,
                                       const VkBuffer *buffers,
                                       const VkDeviceSize *offsets,
                                       const VkDeviceSize *sizes);
@@ -593,11 +619,12 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     void endDebugUtilsLabelEXT();
 
-    void endQuery(VkQueryPool queryPool, uint32_t query);
+    void endQuery(const QueryPool &queryPool, uint32_t query);
 
-    void endTransformFeedback(uint32_t counterBufferCount, const VkBuffer *pCounterBuffers);
-
-    void executionBarrier(VkPipelineStageFlags stageMask);
+    void endTransformFeedback(uint32_t firstCounterBuffer,
+                              uint32_t counterBufferCount,
+                              const VkBuffer *counterBuffers,
+                              const VkDeviceSize *counterBufferOffsets);
 
     void fillBuffer(const Buffer &dstBuffer,
                     VkDeviceSize dstOffset,
@@ -634,10 +661,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     void resetEvent(VkEvent event, VkPipelineStageFlags stageMask);
 
-    // Store up resetQueryPool command and prepend to commands when executing
-    void queueResetQueryPool(VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount);
-
-    void resetQueryPool(VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount);
+    void resetQueryPool(const QueryPool &queryPool, uint32_t firstQuery, uint32_t queryCount);
 
     void resolveImage(const Image &srcImage,
                       VkImageLayout srcImageLayout,
@@ -649,6 +673,8 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     void setEvent(VkEvent event, VkPipelineStageFlags stageMask);
 
     void setScissor(uint32_t firstScissor, uint32_t scissorCount, const VkRect2D *scissors);
+
+    void setViewport(uint32_t firstViewport, uint32_t viewportCount, const VkViewport *viewports);
 
     void waitEvents(uint32_t eventCount,
                     const VkEvent *events,
@@ -662,17 +688,14 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                     const VkImageMemoryBarrier *imageMemoryBarriers);
 
     void writeTimestamp(VkPipelineStageFlagBits pipelineStage,
-                        VkQueryPool queryPool,
+                        const QueryPool &queryPool,
                         uint32_t query);
 
     // No-op for compatibility
     VkResult end() { return VK_SUCCESS; }
 
     // Parse the cmds in this cmd buffer into given primary cmd buffer for execution
-    void executeCommands(VkCommandBuffer cmdBuffer);
-    // If resetQueryPoolCommands are queued, call this to execute them all
-    //  This should only be called on a cmdBuffer without an active renderPass
-    void executeQueuedResetQueryPoolCommands(VkCommandBuffer cmdBuffer);
+    void executeCommands(PrimaryCommandBuffer *primary);
 
     // Calculate memory usage of this command buffer for diagnostics.
     void getMemoryUsageStats(size_t *usedMemoryOut, size_t *allocatedMemoryOut) const;
@@ -687,7 +710,10 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     static_assert((kBlockSize % 4) == 0, "Check kBlockSize alignment");
 
     // Initialize the SecondaryCommandBuffer by setting the allocator it will use
-    void initialize(angle::PoolAllocator *allocator)
+    angle::Result initialize(vk::Context *context,
+                             vk::CommandPool *pool,
+                             bool isRenderPassCommandBuffer,
+                             angle::PoolAllocator *allocator)
     {
         ASSERT(allocator);
         ASSERT(mCommands.empty());
@@ -695,7 +721,15 @@ class SecondaryCommandBuffer final : angle::NonCopyable
         allocateNewBlock();
         // Set first command to Invalid to start
         reinterpret_cast<CommandHeader *>(mCurrentWritePointer)->id = CommandID::Invalid;
+
+        return angle::Result::Continue;
     }
+
+    angle::Result begin(Context *context, const VkCommandBufferInheritanceInfo &inheritanceInfo)
+    {
+        return angle::Result::Continue;
+    }
+    angle::Result end(Context *context) { return angle::Result::Continue; }
 
     void open() { mIsOpen = true; }
     void close() { mIsOpen = false; }
@@ -703,8 +737,9 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     void reset()
     {
         mCommands.clear();
-        initialize(mAllocator);
-        mResetQueryQueue.clear();
+        mCurrentWritePointer   = nullptr;
+        mCurrentBytesRemaining = 0;
+        mCommandTracker.reset();
     }
 
     // This will cause the SecondaryCommandBuffer to become invalid by clearing its allocator
@@ -712,15 +747,10 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     // The SecondaryCommandBuffer is valid if it's been initialized
     bool valid() const { return mAllocator != nullptr; }
 
-    static bool CanKnowIfEmpty() { return true; }
     bool empty() const { return mCommands.size() == 0 || mCommands[0]->id == CommandID::Invalid; }
-    // The following is used to give the size of the command buffer in bytes
-    uint32_t getCommandSize() const
+    uint32_t getRenderPassWriteCommandCount() const
     {
-        ASSERT(mCommands.size() > 0 || mCurrentBytesRemaining == 0);
-        uint32_t rtn =
-            static_cast<uint32_t>((mCommands.size() * kBlockSize) - mCurrentBytesRemaining);
-        return rtn;
+        return mCommandTracker.getRenderPassWriteCommandCount();
     }
 
   private:
@@ -811,7 +841,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
         return writePointer + sizeInBytes;
     }
 
-    // flag to indicate that commandBuffer is open for new commands
+    // Flag to indicate that commandBuffer is open for new commands. Initially open.
     bool mIsOpen;
 
     std::vector<CommandHeader *> mCommands;
@@ -821,14 +851,14 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     uint8_t *mCurrentWritePointer;
     size_t mCurrentBytesRemaining;
-    // resetQueryPool command must be executed outside RP so we queue them up for
-    //  an inside RenderPass command buffer and pre-prend them to the commands
-    std::vector<ResetQueryPoolParams> mResetQueryQueue;
+
+    CommandBufferCommandTracker mCommandTracker;
 };
 
 ANGLE_INLINE SecondaryCommandBuffer::SecondaryCommandBuffer()
-    : mAllocator(nullptr), mCurrentWritePointer(nullptr), mCurrentBytesRemaining(0)
+    : mIsOpen(true), mAllocator(nullptr), mCurrentWritePointer(nullptr), mCurrentBytesRemaining(0)
 {}
+
 ANGLE_INLINE SecondaryCommandBuffer::~SecondaryCommandBuffer() {}
 
 // begin and insert DebugUtilsLabelEXT funcs share this same function body
@@ -844,7 +874,7 @@ ANGLE_INLINE void SecondaryCommandBuffer::commonDebugUtilsLabel(CommandID cmd,
     paramStruct->color[1] = label.color[1];
     paramStruct->color[2] = label.color[2];
     paramStruct->color[3] = label.color[3];
-    storePointerParameter(writePtr, label.pLabelName, alignedStringSize);
+    storePointerParameter(writePtr, label.pLabelName, stringSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::beginDebugUtilsLabelEXT(const VkDebugUtilsLabelEXT &label)
@@ -852,19 +882,24 @@ ANGLE_INLINE void SecondaryCommandBuffer::beginDebugUtilsLabelEXT(const VkDebugU
     commonDebugUtilsLabel(CommandID::BeginDebugUtilsLabel, label);
 }
 
-ANGLE_INLINE void SecondaryCommandBuffer::beginQuery(VkQueryPool queryPool,
+ANGLE_INLINE void SecondaryCommandBuffer::beginQuery(const QueryPool &queryPool,
                                                      uint32_t query,
                                                      VkQueryControlFlags flags)
 {
     BeginQueryParams *paramStruct = initCommand<BeginQueryParams>(CommandID::BeginQuery);
-    paramStruct->queryPool        = queryPool;
+    paramStruct->queryPool        = queryPool.getHandle();
     paramStruct->query            = query;
     paramStruct->flags            = flags;
 }
 
-ANGLE_INLINE void SecondaryCommandBuffer::beginTransformFeedback(uint32_t bufferCount,
-                                                                 const VkBuffer *counterBuffers)
+ANGLE_INLINE void SecondaryCommandBuffer::beginTransformFeedback(
+    uint32_t firstCounterBuffer,
+    uint32_t bufferCount,
+    const VkBuffer *counterBuffers,
+    const VkDeviceSize *counterBufferOffsets)
 {
+    ASSERT(firstCounterBuffer == 0);
+    ASSERT(counterBufferOffsets == nullptr);
     uint8_t *writePtr;
     size_t bufferSize                         = bufferCount * sizeof(VkBuffer);
     BeginTransformFeedbackParams *paramStruct = initCommand<BeginTransformFeedbackParams>(
@@ -922,11 +957,13 @@ ANGLE_INLINE void SecondaryCommandBuffer::bindIndexBuffer(const Buffer &buffer,
     paramStruct->indexType = indexType;
 }
 
-ANGLE_INLINE void SecondaryCommandBuffer::bindTransformFeedbackBuffers(uint32_t bindingCount,
+ANGLE_INLINE void SecondaryCommandBuffer::bindTransformFeedbackBuffers(uint32_t firstBinding,
+                                                                       uint32_t bindingCount,
                                                                        const VkBuffer *buffers,
                                                                        const VkDeviceSize *offsets,
                                                                        const VkDeviceSize *sizes)
 {
+    ASSERT(firstBinding == 0);
     uint8_t *writePtr;
     size_t buffersSize = bindingCount * sizeof(VkBuffer);
     size_t offsetsSize = bindingCount * sizeof(VkDeviceSize);
@@ -1003,6 +1040,8 @@ ANGLE_INLINE void SecondaryCommandBuffer::clearAttachments(uint32_t attachmentCo
     paramStruct->rect            = rects[0];
     // Copy variable sized data
     storePointerParameter(writePtr, attachments, attachSize);
+
+    mCommandTracker.onClearAttachments();
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::clearColorImage(const Image &image,
@@ -1122,12 +1161,16 @@ ANGLE_INLINE void SecondaryCommandBuffer::draw(uint32_t vertexCount, uint32_t fi
     DrawParams *paramStruct  = initCommand<DrawParams>(CommandID::Draw);
     paramStruct->vertexCount = vertexCount;
     paramStruct->firstVertex = firstVertex;
+
+    mCommandTracker.onDraw();
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::drawIndexed(uint32_t indexCount)
 {
     DrawIndexedParams *paramStruct = initCommand<DrawIndexedParams>(CommandID::DrawIndexed);
     paramStruct->indexCount        = indexCount;
+
+    mCommandTracker.onDraw();
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedBaseVertex(uint32_t indexCount,
@@ -1137,6 +1180,8 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedBaseVertex(uint32_t indexCo
         initCommand<DrawIndexedBaseVertexParams>(CommandID::DrawIndexedBaseVertex);
     paramStruct->indexCount   = indexCount;
     paramStruct->vertexOffset = vertexOffset;
+
+    mCommandTracker.onDraw();
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedIndirect(const Buffer &buffer,
@@ -1146,9 +1191,12 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedIndirect(const Buffer &buff
 {
     DrawIndexedIndirectParams *paramStruct =
         initCommand<DrawIndexedIndirectParams>(CommandID::DrawIndexedIndirect);
-    paramStruct->buffer = buffer.getHandle();
-    paramStruct->offset = offset;
-    ASSERT(drawCount == 1);
+    paramStruct->buffer    = buffer.getHandle();
+    paramStruct->offset    = offset;
+    paramStruct->drawCount = drawCount;
+    paramStruct->stride    = stride;
+
+    mCommandTracker.onDraw();
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstanced(uint32_t indexCount,
@@ -1158,6 +1206,8 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstanced(uint32_t indexCou
         initCommand<DrawIndexedInstancedParams>(CommandID::DrawIndexedInstanced);
     paramStruct->indexCount    = indexCount;
     paramStruct->instanceCount = instanceCount;
+
+    mCommandTracker.onDraw();
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstancedBaseVertex(uint32_t indexCount,
@@ -1170,6 +1220,8 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstancedBaseVertex(uint32_
     paramStruct->indexCount    = indexCount;
     paramStruct->instanceCount = instanceCount;
     paramStruct->vertexOffset  = vertexOffset;
+
+    mCommandTracker.onDraw();
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstancedBaseVertexBaseInstance(
@@ -1187,6 +1239,8 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawIndexedInstancedBaseVertexBaseInst
     paramStruct->firstIndex    = firstIndex;
     paramStruct->vertexOffset  = vertexOffset;
     paramStruct->firstInstance = firstInstance;
+
+    mCommandTracker.onDraw();
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::drawIndirect(const Buffer &buffer,
@@ -1197,10 +1251,10 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawIndirect(const Buffer &buffer,
     DrawIndirectParams *paramStruct = initCommand<DrawIndirectParams>(CommandID::DrawIndirect);
     paramStruct->buffer             = buffer.getHandle();
     paramStruct->offset             = offset;
+    paramStruct->drawCount          = drawCount;
+    paramStruct->stride             = stride;
 
-    // OpenGL ES doesn't have a way to specify a drawCount or stride, throw assert if something
-    // changes.
-    ASSERT(drawCount == 1);
+    mCommandTracker.onDraw();
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::drawInstanced(uint32_t vertexCount,
@@ -1211,6 +1265,8 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawInstanced(uint32_t vertexCount,
     paramStruct->vertexCount         = vertexCount;
     paramStruct->instanceCount       = instanceCount;
     paramStruct->firstVertex         = firstVertex;
+
+    mCommandTracker.onDraw();
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::drawInstancedBaseInstance(uint32_t vertexCount,
@@ -1224,6 +1280,8 @@ ANGLE_INLINE void SecondaryCommandBuffer::drawInstancedBaseInstance(uint32_t ver
     paramStruct->instanceCount = instanceCount;
     paramStruct->firstVertex   = firstVertex;
     paramStruct->firstInstance = firstInstance;
+
+    mCommandTracker.onDraw();
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::endDebugUtilsLabelEXT()
@@ -1231,29 +1289,27 @@ ANGLE_INLINE void SecondaryCommandBuffer::endDebugUtilsLabelEXT()
     initCommand<EmptyParams>(CommandID::EndDebugUtilsLabel);
 }
 
-ANGLE_INLINE void SecondaryCommandBuffer::endQuery(VkQueryPool queryPool, uint32_t query)
+ANGLE_INLINE void SecondaryCommandBuffer::endQuery(const QueryPool &queryPool, uint32_t query)
 {
     EndQueryParams *paramStruct = initCommand<EndQueryParams>(CommandID::EndQuery);
-    paramStruct->queryPool      = queryPool;
+    paramStruct->queryPool      = queryPool.getHandle();
     paramStruct->query          = query;
 }
 
-ANGLE_INLINE void SecondaryCommandBuffer::endTransformFeedback(uint32_t bufferCount,
-                                                               const VkBuffer *counterBuffers)
+ANGLE_INLINE void SecondaryCommandBuffer::endTransformFeedback(
+    uint32_t firstCounterBuffer,
+    uint32_t counterBufferCount,
+    const VkBuffer *counterBuffers,
+    const VkDeviceSize *counterBufferOffsets)
 {
+    ASSERT(firstCounterBuffer == 0);
+    ASSERT(counterBufferOffsets == nullptr);
     uint8_t *writePtr;
-    size_t bufferSize                       = bufferCount * sizeof(VkBuffer);
+    size_t bufferSize                       = counterBufferCount * sizeof(VkBuffer);
     EndTransformFeedbackParams *paramStruct = initCommand<EndTransformFeedbackParams>(
         CommandID::EndTransformFeedback, bufferSize, &writePtr);
-    paramStruct->bufferCount = bufferCount;
+    paramStruct->bufferCount = counterBufferCount;
     storePointerParameter(writePtr, counterBuffers, bufferSize);
-}
-
-ANGLE_INLINE void SecondaryCommandBuffer::executionBarrier(VkPipelineStageFlags stageMask)
-{
-    ExecutionBarrierParams *paramStruct =
-        initCommand<ExecutionBarrierParams>(CommandID::ExecutionBarrier);
-    paramStruct->stageMask = stageMask;
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::fillBuffer(const Buffer &dstBuffer,
@@ -1356,20 +1412,13 @@ ANGLE_INLINE void SecondaryCommandBuffer::resetEvent(VkEvent event, VkPipelineSt
     paramStruct->stageMask        = stageMask;
 }
 
-ANGLE_INLINE void SecondaryCommandBuffer::queueResetQueryPool(VkQueryPool queryPool,
-                                                              uint32_t firstQuery,
-                                                              uint32_t queryCount)
-{
-    mResetQueryQueue.push_back({queryPool, firstQuery, queryCount});
-}
-
-ANGLE_INLINE void SecondaryCommandBuffer::resetQueryPool(VkQueryPool queryPool,
+ANGLE_INLINE void SecondaryCommandBuffer::resetQueryPool(const QueryPool &queryPool,
                                                          uint32_t firstQuery,
                                                          uint32_t queryCount)
 {
     ResetQueryPoolParams *paramStruct =
         initCommand<ResetQueryPoolParams>(CommandID::ResetQueryPool);
-    paramStruct->queryPool  = queryPool;
+    paramStruct->queryPool  = queryPool.getHandle();
     paramStruct->firstQuery = firstQuery;
     paramStruct->queryCount = queryCount;
 }
@@ -1409,6 +1458,17 @@ ANGLE_INLINE void SecondaryCommandBuffer::setScissor(uint32_t firstScissor,
     paramStruct->scissor          = scissors[0];
 }
 
+ANGLE_INLINE void SecondaryCommandBuffer::setViewport(uint32_t firstViewport,
+                                                      uint32_t viewportCount,
+                                                      const VkViewport *viewports)
+{
+    ASSERT(firstViewport == 0);
+    ASSERT(viewportCount == 1);
+    ASSERT(viewports != nullptr);
+    SetViewportParams *paramStruct = initCommand<SetViewportParams>(CommandID::SetViewport);
+    paramStruct->viewport          = viewports[0];
+}
+
 ANGLE_INLINE void SecondaryCommandBuffer::waitEvents(
     uint32_t eventCount,
     const VkEvent *events,
@@ -1443,13 +1503,13 @@ ANGLE_INLINE void SecondaryCommandBuffer::waitEvents(
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::writeTimestamp(VkPipelineStageFlagBits pipelineStage,
-                                                         VkQueryPool queryPool,
+                                                         const QueryPool &queryPool,
                                                          uint32_t query)
 {
     WriteTimestampParams *paramStruct =
         initCommand<WriteTimestampParams>(CommandID::WriteTimestamp);
     paramStruct->pipelineStage = pipelineStage;
-    paramStruct->queryPool     = queryPool;
+    paramStruct->queryPool     = queryPool.getHandle();
     paramStruct->query         = query;
 }
 }  // namespace priv

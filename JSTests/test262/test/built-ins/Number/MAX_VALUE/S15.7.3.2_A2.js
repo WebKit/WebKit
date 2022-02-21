@@ -11,6 +11,6 @@ includes: [propertyHelper.js]
 // CHECK#1
 var x = Number.MAX_VALUE;
 verifyNotWritable(Number, "MAX_VALUE", null, 1);
-if (Number.MAX_VALUE !== x) {
-  throw new Test262Error('#1: x = Number.MAX_VALUE; Number.MAX_VALUE = 1; Number.MAX_VALUE === x');
-}
+assert.sameValue(Number.MAX_VALUE, x, 'The value of Number.MAX_VALUE is expected to equal the value of x');
+
+// TODO: Convert to verifyProperty() format.

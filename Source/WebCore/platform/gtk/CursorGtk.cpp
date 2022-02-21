@@ -39,7 +39,7 @@ namespace WebCore {
 #if USE(GTK4)
 static GRefPtr<GdkCursor> fallbackCursor()
 {
-    static WTF::NeverDestroyed<GRefPtr<GdkCursor>> cursor(adoptGRef(gdk_cursor_new_from_name("default", nullptr)));
+    static NeverDestroyed<GRefPtr<GdkCursor>> cursor(adoptGRef(gdk_cursor_new_from_name("default", nullptr)));
     return cursor;
 }
 #endif // USE(GTK4)

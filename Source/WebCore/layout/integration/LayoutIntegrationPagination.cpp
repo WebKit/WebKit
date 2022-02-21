@@ -127,30 +127,26 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
     auto adjustedLine = [&](const Line& line, float offset)
     {
         return Line {
-            line.firstRunIndex(),
-            line.runCount(),
+            line.firstBoxIndex(),
+            line.boxCount(),
             moveVertically({ FloatPoint { line.lineBoxLeft(), line.lineBoxTop() }, FloatPoint { line.lineBoxRight(), line.lineBoxBottom() } }, offset),
             line.enclosingContentTop() + offset,
             line.enclosingContentBottom() + offset,
             moveVertically(line.scrollableOverflow(), offset),
             moveVertically(line.inkOverflow(), offset),
             line.baseline(),
-            line.contentLeft(),
-            line.contentWidth()
+            line.baselineType(),
+            line.contentLogicalOffset(),
+            line.contentLogicalWidth(),
+            line.isHorizontal()
         };
     };
 
-    auto adjustedRun = [&](const Run& run, float offset)
+    auto adjustedBox = [&](const InlineDisplay::Box& box, float offset)
     {
-        return Run {
-            run.lineIndex(),
-            run.type(),
-            run.layoutBox(),
-            moveVertically(run.logicalRect(), offset),
-            moveVertically(run.inkOverflow(), offset),
-            run.expansion(),
-            run.text()
-        };
+        auto adjustedBox = box;
+        adjustedBox.moveVertically(offset);
+        return adjustedBox;
     };
 
     auto adjustedContent = InlineContent::create(inlineContent.lineLayout());
@@ -158,8 +154,8 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
     for (size_t lineIndex = 0; lineIndex < inlineContent.lines.size(); ++lineIndex)
         adjustedContent->lines.append(adjustedLine(inlineContent.lines[lineIndex], adjustments[lineIndex]));
 
-    for (auto& run : inlineContent.runs)
-        adjustedContent->runs.append(adjustedRun(run, adjustments[run.lineIndex()]));
+    for (auto& box : inlineContent.boxes)
+        adjustedContent->boxes.append(adjustedBox(box, adjustments[box.lineIndex()]));
 
     return adjustedContent;
 }

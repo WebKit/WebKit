@@ -12,4 +12,4 @@ features: [Symbol]
 var target = new Object();
 var result = Object.assign(target, 123, true, Symbol('foo'));
 
-assert.sameValue(result, target, "Numbers, booleans, and symbols cannot have wrappers with own enumerable properties.");
+assert.sameValue(result, target, 'The value of result is expected to equal the value of target');

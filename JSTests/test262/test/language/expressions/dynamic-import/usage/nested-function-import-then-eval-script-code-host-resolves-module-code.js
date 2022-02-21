@@ -2,7 +2,7 @@
 // - src/dynamic-import/eval-script-code-host-resolves-module-code.case
 // - src/dynamic-import/default/nested-function.template
 /*---
-description: import() from a ascript code can load a file with module code (nested function)
+description: import() from a script code can load a file with module code (nested function)
 esid: sec-import-call-runtime-semantics-evaluation
 features: [dynamic-import]
 flags: [generated, async]

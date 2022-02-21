@@ -102,9 +102,9 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     NSArray *_pageRects;
     NSArray *_pageYOrigins;
     CGPDFDocumentRef _document;
-    WebDataSource *_dataSource; // weak to prevent cycles.
+    __weak WebDataSource *_dataSource; // Weak to prevent cycles.
     
-    NSObject<WebPDFViewPlaceholderDelegate> *_delegate;
+    __weak NSObject<WebPDFViewPlaceholderDelegate> *_delegate;
     
     BOOL _didFinishLoad;
     

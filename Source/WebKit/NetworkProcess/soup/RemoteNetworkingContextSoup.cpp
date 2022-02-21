@@ -36,14 +36,14 @@
 namespace WebKit {
 using namespace WebCore;
 
-void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& networkProcess, WebsiteDataStoreParameters&& parameters)
+void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& networkProcess, const WebsiteDataStoreParameters& parameters)
 {
     auto sessionID = parameters.networkSessionParameters.sessionID;
     if (networkProcess.storageSession(sessionID))
         return;
 
     networkProcess.ensureSession(sessionID, parameters.networkSessionParameters.shouldUseTestingNetworkSession, String::number(sessionID.toUInt64()));
-    networkProcess.setSession(sessionID, NetworkSession::create(networkProcess, WTFMove(parameters.networkSessionParameters)));
+    networkProcess.setSession(sessionID, NetworkSession::create(networkProcess, parameters.networkSessionParameters));
 }
 
 }

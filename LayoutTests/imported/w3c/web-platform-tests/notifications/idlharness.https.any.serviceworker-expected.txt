@@ -1,0 +1,52 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface ServiceWorkerRegistration: original interface defined
+PASS Partial interface ServiceWorkerRegistration: member names are unique
+PASS Partial interface ServiceWorkerGlobalScope: original interface defined
+PASS Partial interface ServiceWorkerGlobalScope: member names are unique
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
+FAIL Notification interface: existence and properties of interface object assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface object length assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface object name assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: existence and properties of interface prototype object assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute permission assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: member requestPermission undefined is not an Object. (evaluating 'member.name in this.get_interface_object()')
+FAIL Notification interface: attribute maxActions assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute onclick assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute onshow assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute onerror assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute onclose assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute title assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute dir assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute lang assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute body assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute tag assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute image assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute icon assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute badge assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute vibrate assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute timestamp assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute renotify assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute silent assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute requireInteraction assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute data assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: attribute actions assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+FAIL Notification interface: operation close() assert_own_property: self does not have own property "Notification" expected property "Notification" missing
+PASS NotificationEvent interface: existence and properties of interface object
+PASS NotificationEvent interface object length
+PASS NotificationEvent interface object name
+PASS NotificationEvent interface: existence and properties of interface prototype object
+PASS NotificationEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS NotificationEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS NotificationEvent interface: attribute notification
+PASS NotificationEvent interface: attribute action
+PASS ServiceWorkerRegistration interface: operation showNotification(DOMString, optional NotificationOptions)
+PASS ServiceWorkerRegistration interface: operation getNotifications(optional GetNotificationOptions)
+PASS ServiceWorkerGlobalScope interface: attribute onnotificationclick
+PASS ServiceWorkerGlobalScope interface: attribute onnotificationclose
+PASS ServiceWorkerGlobalScope interface: self must inherit property "onnotificationclick" with the proper type
+PASS ServiceWorkerGlobalScope interface: self must inherit property "onnotificationclose" with the proper type
+

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,12 +23,12 @@
 #include "SVGFEComponentTransferElement.h"
 
 #include "ElementIterator.h"
-#include "FilterEffect.h"
+#include "FEComponentTransfer.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFEFuncAElement.h"
 #include "SVGFEFuncBElement.h"
 #include "SVGFEFuncGElement.h"
 #include "SVGFEFuncRElement.h"
-#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -62,13 +62,8 @@ void SVGFEComponentTransferElement::parseAttribute(const QualifiedName& name, co
     SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
-RefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* filterBuilder, Filter& filter) const
+RefPtr<FilterEffect> SVGFEComponentTransferElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
 {
-    auto input1 = filterBuilder->getEffectById(in1());
-    
-    if (!input1)
-        return nullptr;
-
     ComponentTransferFunction red;
     ComponentTransferFunction green;
     ComponentTransferFunction blue;
@@ -84,10 +79,8 @@ RefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* filt
         else if (is<SVGFEFuncAElement>(child))
             alpha = downcast<SVGFEFuncAElement>(child).transferFunction();
     }
-    
-    auto effect = FEComponentTransfer::create(filter, red, green, blue, alpha);
-    effect->inputEffects() = { input1 };
-    return effect;
+
+    return FEComponentTransfer::create(red, green, blue, alpha);
 }
 
-}
+} // namespace WebCore

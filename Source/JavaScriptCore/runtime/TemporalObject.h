@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 2021 Igalia, S.L. All rights reserved.
  *  Copyright (C) 2021 Sony Interactive Entertainment Inc.
+ *  Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,20 +22,33 @@
 #pragma once
 
 #include "JSObject.h"
+#include <variant>
+#include <wtf/Int128.h>
 
 namespace JSC {
 
-#define JSC_TEMPORAL_UNITS(macro) \
+#define JSC_TEMPORAL_PLAIN_DATE_UNITS(macro) \
     macro(year, Year) \
     macro(month, Month) \
-    macro(week, Week) \
     macro(day, Day) \
+
+
+#define JSC_TEMPORAL_PLAIN_TIME_UNITS(macro) \
     macro(hour, Hour) \
     macro(minute, Minute) \
     macro(second, Second) \
     macro(millisecond, Millisecond) \
     macro(microsecond, Microsecond) \
     macro(nanosecond, Nanosecond) \
+
+
+#define JSC_TEMPORAL_UNITS(macro) \
+    macro(year, Year) \
+    macro(month, Month) \
+    macro(week, Week) \
+    macro(day, Day) \
+    JSC_TEMPORAL_PLAIN_TIME_UNITS(macro) \
+
 
 enum class TemporalUnit : uint8_t {
 #define JSC_DEFINE_TEMPORAL_UNIT_ENUM(name, capitalizedName) capitalizedName,
@@ -43,7 +57,11 @@ enum class TemporalUnit : uint8_t {
 };
 #define JSC_COUNT_TEMPORAL_UNITS(name, capitalizedName) + 1
 static constexpr unsigned numberOfTemporalUnits = 0 JSC_TEMPORAL_UNITS(JSC_COUNT_TEMPORAL_UNITS);
+static constexpr unsigned numberOfTemporalPlainDateUnits = 0 JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_COUNT_TEMPORAL_UNITS);
+static constexpr unsigned numberOfTemporalPlainTimeUnits = 0 JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 #undef JSC_COUNT_TEMPORAL_UNITS
+
+extern const TemporalUnit temporalUnitsInTableOrder[numberOfTemporalUnits];
 
 class TemporalObject final : public JSNonFinalObject {
 public:
@@ -51,10 +69,10 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     template<typename CellType, SubspaceAccess>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(TemporalObject, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static TemporalObject* create(VM&, Structure*);
@@ -70,23 +88,48 @@ private:
 enum class RoundingMode : uint8_t {
     Ceil,
     Floor,
+    Expand,
     Trunc,
-    HalfExpand
+    HalfCeil,
+    HalfFloor,
+    HalfExpand,
+    HalfTrunc,
+    HalfEven
+};
+
+enum class Precision : uint8_t {
+    Minute,
+    Fixed,
+    Auto,
 };
 
 struct PrecisionData {
-    std::optional<unsigned> precision;
+    std::tuple<Precision, unsigned> precision;
     TemporalUnit unit;
-    double increment;
+    unsigned increment;
 };
 
+WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
+PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
+PropertyName temporalUnitSingularPropertyName(VM&, TemporalUnit);
 std::optional<TemporalUnit> temporalUnitType(StringView);
 std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits, TemporalUnit autoValue);
 std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits);
 std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject*, JSObject* options);
 PrecisionData secondsStringPrecision(JSGlobalObject*, JSObject* options);
+RoundingMode temporalRoundingMode(JSGlobalObject*, JSObject*, RoundingMode);
+void formatSecondsStringFraction(StringBuilder&, unsigned fraction, std::tuple<Precision, unsigned>);
+void formatSecondsStringPart(StringBuilder&, unsigned second, unsigned fraction, PrecisionData);
 std::optional<double> maximumRoundingIncrement(TemporalUnit);
 double temporalRoundingIncrement(JSGlobalObject*, JSObject* options, std::optional<double> dividend, bool inclusive);
 double roundNumberToIncrement(double, double increment, RoundingMode);
+Int128 roundNumberToIncrement(Int128, Int128 increment, RoundingMode);
+
+enum class TemporalOverflow : bool {
+    Constrain,
+    Reject,
+};
+
+TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSObject*);
 
 } // namespace JSC

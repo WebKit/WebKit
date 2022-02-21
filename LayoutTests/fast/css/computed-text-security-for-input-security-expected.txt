@@ -1,0 +1,74 @@
+This test verifies that the value of input-security correctly adjusts the value of -webkit-text-security for sensitive text inputs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+"input-security: auto, -webkit-text-security: none" on an <input type=password>
+PASS computedStyle.inputSecurity is "auto"
+PASS computedStyle.webkitTextSecurity is "disc"
+
+"input-security: auto, -webkit-text-security: disc" on an <input type=password>
+PASS computedStyle.inputSecurity is "auto"
+PASS computedStyle.webkitTextSecurity is "disc"
+
+"input-security: auto, -webkit-text-security: circle" on an <input type=password>
+PASS computedStyle.inputSecurity is "auto"
+PASS computedStyle.webkitTextSecurity is "disc"
+
+"input-security: auto, -webkit-text-security: square" on an <input type=password>
+PASS computedStyle.inputSecurity is "auto"
+PASS computedStyle.webkitTextSecurity is "disc"
+
+"input-security: none, -webkit-text-security: none" on an <input type=password>
+PASS computedStyle.inputSecurity is "none"
+PASS computedStyle.webkitTextSecurity is "none"
+
+"input-security: none, -webkit-text-security: disc" on an <input type=password>
+PASS computedStyle.inputSecurity is "none"
+PASS computedStyle.webkitTextSecurity is "none"
+
+"input-security: none, -webkit-text-security: circle" on an <input type=password>
+PASS computedStyle.inputSecurity is "none"
+PASS computedStyle.webkitTextSecurity is "none"
+
+"input-security: none, -webkit-text-security: square" on an <input type=password>
+PASS computedStyle.inputSecurity is "none"
+PASS computedStyle.webkitTextSecurity is "none"
+
+"input-security: auto, -webkit-text-security: none" on an <input type=text>
+PASS computedStyle.inputSecurity is "auto"
+PASS computedStyle.webkitTextSecurity is "none"
+
+"input-security: auto, -webkit-text-security: disc" on an <input type=text>
+PASS computedStyle.inputSecurity is "auto"
+PASS computedStyle.webkitTextSecurity is "disc"
+
+"input-security: auto, -webkit-text-security: circle" on an <input type=text>
+PASS computedStyle.inputSecurity is "auto"
+PASS computedStyle.webkitTextSecurity is "circle"
+
+"input-security: auto, -webkit-text-security: square" on an <input type=text>
+PASS computedStyle.inputSecurity is "auto"
+PASS computedStyle.webkitTextSecurity is "square"
+
+"input-security: none, -webkit-text-security: none" on an <input type=text>
+PASS computedStyle.inputSecurity is "none"
+PASS computedStyle.webkitTextSecurity is "none"
+
+"input-security: none, -webkit-text-security: disc" on an <input type=text>
+PASS computedStyle.inputSecurity is "none"
+PASS computedStyle.webkitTextSecurity is "disc"
+
+"input-security: none, -webkit-text-security: circle" on an <input type=text>
+PASS computedStyle.inputSecurity is "none"
+PASS computedStyle.webkitTextSecurity is "circle"
+
+"input-security: none, -webkit-text-security: square" on an <input type=text>
+PASS computedStyle.inputSecurity is "none"
+PASS computedStyle.webkitTextSecurity is "square"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

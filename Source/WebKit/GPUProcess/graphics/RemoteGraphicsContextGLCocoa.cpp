@@ -29,11 +29,55 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && PLATFORM(COCOA)
 
 #include "GPUConnectionToWebProcess.h"
-#include <WebCore/GraphicsContextGLIOSurfaceSwapChain.h>
+#include "IPCTester.h"
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
 
+
+#if ENABLE(VIDEO)
+#include "RemoteVideoFrameObjectHeap.h"
+#include <WebCore/GraphicsContextGLCV.h>
+#include <WebCore/MediaSampleAVFObjC.h>
+#include <WebCore/VideoFrameCV.h>
+#endif
+
 namespace WebKit {
-using namespace WebCore;
+
+#if ENABLE(VIDEO)
+void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::RemoteVideoFrameReadReference read, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
+{
+    assertIsCurrent(m_streamThread);
+    UNUSED_VARIABLE(premultiplyAlpha);
+    ASSERT_UNUSED(target, target == WebCore::GraphicsContextGL::TEXTURE_2D);
+
+    auto videoFrame = m_videoFrameObjectHeap->retire(WTFMove(read), defaultTimeout);
+    if (!videoFrame) {
+        ASSERT_IS_TESTING_IPC();
+        completionHandler(false);
+        return;
+    }
+    // Note: This extra casting is needed since VideoFrames are still MediaSamples.
+    RefPtr<WebCore::VideoFrameCV> videoFrameCV;
+    if (is<WebCore::VideoFrameCV>(*videoFrame))
+        videoFrameCV = &downcast<WebCore::VideoFrameCV>(*videoFrame);
+    else if (is<WebCore::MediaSampleAVFObjC>(*videoFrame))
+        videoFrameCV = downcast<WebCore::MediaSampleAVFObjC>(*videoFrame).videoFrame();
+    else {
+        ASSERT_NOT_REACHED(); // Programming error, not a IPC attack.
+        completionHandler(false);
+        return;
+    }
+
+    auto contextCV = m_context->asCV();
+    if (!contextCV) {
+        ASSERT_NOT_REACHED();
+        completionHandler(false);
+        return;
+    }
+
+    completionHandler(contextCV->copyVideoSampleToTexture(*videoFrameCV, texture, level, internalFormat, format, type, WebCore::GraphicsContextGL::FlipY(flipY)));
+}
+#endif
 
 namespace {
 
@@ -46,15 +90,12 @@ public:
     void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) final;
     void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
 private:
-    WebCore::GraphicsContextGLIOSurfaceSwapChain m_swapChain WTF_GUARDED_BY_LOCK(m_streamThread);
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-    task_id_token_t m_webProcessIdentityToken;
-#endif
+    const WebCore::ProcessIdentity m_resourceOwner;
 };
 
 }
 
-Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
+Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
 {
     auto instance = adoptRef(*new RemoteGraphicsContextGLCocoa(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream)));
     instance->initialize(WTFMove(attributes));
@@ -63,17 +104,14 @@ Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebP
 
 RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
     : RemoteGraphicsContextGL(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream))
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-    , m_webProcessIdentityToken(gpuConnectionToWebProcess.webProcessIdentityToken())
-#endif
+    , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
 {
-
 }
 
 void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
     assertIsCurrent(m_streamThread);
-    m_context = GraphicsContextGLOpenGL::createForGPUProcess(WTFMove(attributes), &m_swapChain);
+    m_context = WebCore::GraphicsContextGLCocoa::create(WTFMove(attributes), WebCore::ProcessIdentity { m_resourceOwner });
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
@@ -81,12 +119,10 @@ void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF:
     assertIsCurrent(m_streamThread);
     m_context->prepareForDisplay();
     MachSendRight sendRight;
-    if (auto* surface = m_swapChain.displayBuffer().surface.get()) {
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-        // Mark the IOSurface as being owned by the WebProcess even though it was constructed by the GPUProcess so that Jetsam knows which process to kill.
-        surface->setOwnershipIdentity(m_webProcessIdentityToken);
-#endif
-        sendRight = surface->createSendRight();
+    WebCore::IOSurface* displayBuffer = m_context->displayBuffer();
+    if (displayBuffer) {
+        m_context->markDisplayBufferInUse();
+        sendRight = displayBuffer->createSendRight();
     }
     completionHandler(WTFMove(sendRight));
 }

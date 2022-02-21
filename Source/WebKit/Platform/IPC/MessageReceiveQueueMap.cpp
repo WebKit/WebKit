@@ -55,7 +55,7 @@ MessageReceiveQueue* MessageReceiveQueueMap::get(const Decoder& message) const
     }
     if (it == m_queues.end())
         return nullptr;
-    return WTF::visit(
+    return std::visit(
         WTF::makeVisitor(
             [](const std::unique_ptr<MessageReceiveQueue>& queue) { return queue.get(); },
             [](MessageReceiveQueue* queue) { return queue; }

@@ -56,10 +56,28 @@ def main(inputfile, identifier_template):
     if identifier_index and repository.GIT_SVN_REVISION.match(lines[-1]):
         identifier_index -= 1
 
+    # We're trying to cover cases where there is a space between link and git-svn-id:
+    #     <commit message content>
+    #
+    #     Canonical link: ...
+    #     git-svn-id: ...
+    # OR
+    #     <commit message content>
+    #     Canonical link: ...
+    #
+    #     git-svn-id: ...
     if identifier_index and lines[identifier_index - 1].startswith(identifier_template.format('').split(':')[0]):
         lines[identifier_index - 1] = identifier_template.format(commit)
+        identifier_index = identifier_index - 2
+    elif identifier_index and lines[identifier_index - 2].startswith(identifier_template.format('').split(':')[0]):
+        del lines[identifier_index - 2]
+        lines.insert(identifier_index - 1, identifier_template.format(commit))
+        identifier_index = identifier_index - 2
     else:
         lines.insert(identifier_index, identifier_template.format(commit))
+
+    if lines[identifier_index]:
+        lines.insert(identifier_index, '')
 
     for line in lines:
         print(line)

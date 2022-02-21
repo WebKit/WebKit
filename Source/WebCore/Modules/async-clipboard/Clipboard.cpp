@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,7 @@ Ref<Clipboard> Clipboard::create(Navigator& navigator)
 }
 
 Clipboard::Clipboard(Navigator& navigator)
-    : m_navigator(makeWeakPtr(navigator))
+    : m_navigator(navigator)
 {
 }
 
@@ -100,7 +100,7 @@ ScriptExecutionContext* Clipboard::scriptExecutionContext() const
 
 void Clipboard::readText(Ref<DeferredPromise>&& promise)
 {
-    auto frame = makeRefPtr(this->frame());
+    RefPtr frame = this->frame();
     if (!frame) {
         promise->reject(NotAllowedError);
         return;
@@ -137,8 +137,8 @@ void Clipboard::readText(Ref<DeferredPromise>&& promise)
 
 void Clipboard::writeText(const String& data, Ref<DeferredPromise>&& promise)
 {
-    auto frame = makeRefPtr(this->frame());
-    auto document = makeRefPtr(frame ? frame->document() : nullptr);
+    RefPtr frame = this->frame();
+    RefPtr document = frame ? frame->document() : nullptr;
     if (!document || !shouldProceedWithClipboardWrite(*frame)) {
         promise->reject(NotAllowedError);
         return;
@@ -158,7 +158,7 @@ void Clipboard::read(Ref<DeferredPromise>&& promise)
         promise->reject(NotAllowedError);
     };
 
-    auto frame = makeRefPtr(this->frame());
+    RefPtr frame = this->frame();
     if (!frame) {
         rejectPromiseAndClearActiveSession();
         return;
@@ -179,10 +179,9 @@ void Clipboard::read(Ref<DeferredPromise>&& promise)
             return;
         }
 
-        Vector<Ref<ClipboardItem>> clipboardItems;
-        clipboardItems.reserveInitialCapacity(allInfo->size());
-        for (auto& itemInfo : *allInfo)
-            clipboardItems.uncheckedAppend(ClipboardItem::create(*this, itemInfo));
+        auto clipboardItems = allInfo->map([this](auto& itemInfo) {
+            return ClipboardItem::create(*this, itemInfo);
+        });
         m_activeSession = {{ WTFMove(pasteboard), WTFMove(clipboardItems), changeCountAtStart }};
     }
 
@@ -196,14 +195,14 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         return;
     }
 
-    auto frame = makeRefPtr(this->frame());
+    RefPtr frame = this->frame();
     if (!frame) {
         m_activeSession = std::nullopt;
         promise->reject(NotAllowedError);
         return;
     }
 
-    auto itemIndex = m_activeSession->items.findMatching([&] (auto& activeItem) {
+    auto itemIndex = m_activeSession->items.findIf([&] (auto& activeItem) {
         return activeItem.ptr() == &item;
     });
 
@@ -271,7 +270,7 @@ Clipboard::SessionIsValid Clipboard::updateSessionValidity()
 
 void Clipboard::write(const Vector<RefPtr<ClipboardItem>>& items, Ref<DeferredPromise>&& promise)
 {
-    auto frame = makeRefPtr(this->frame());
+    RefPtr frame = this->frame();
     if (!frame || !shouldProceedWithClipboardWrite(*frame)) {
         promise->reject(NotAllowedError);
         return;
@@ -302,7 +301,7 @@ Pasteboard& Clipboard::activePasteboard()
 }
 
 Clipboard::ItemWriter::ItemWriter(Clipboard& clipboard, Ref<DeferredPromise>&& promise)
-    : m_clipboard(makeWeakPtr(clipboard))
+    : m_clipboard(clipboard)
     , m_promise(WTFMove(promise))
     , m_pasteboard(Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(clipboard.frame()->pageID())))
 {
@@ -320,7 +319,7 @@ void Clipboard::ItemWriter::write(const Vector<RefPtr<ClipboardItem>>& items)
     m_dataToWrite.fill(std::nullopt, items.size());
     m_pendingItemCount = items.size();
     for (size_t index = 0; index < items.size(); ++index) {
-        items[index]->collectDataForWriting(*m_clipboard, [this, protectedThis = makeRef(*this), index] (auto data) {
+        items[index]->collectDataForWriting(*m_clipboard, [this, protectedThis = Ref { *this }, index] (auto data) {
             protectedThis->setData(WTFMove(data), index);
             if (!--m_pendingItemCount)
                 didSetAllData();
@@ -368,7 +367,7 @@ void Clipboard::ItemWriter::didSetAllData()
             reject();
             return;
         }
-        customData.append(*data);
+        customData.uncheckedAppend(*data);
     }
 
     m_pasteboard->writeCustomData(WTFMove(customData));

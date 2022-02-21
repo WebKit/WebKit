@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CompositeOperation.h"
 #include <array>
 #include <optional>
 #include <wtf/FastMalloc.h>
@@ -33,11 +34,6 @@
 
 #if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;
-#endif
-
-#if PLATFORM(WIN)
-struct D2D_MATRIX_3X2_F;
-typedef D2D_MATRIX_3X2_F D2D1_MATRIX_3X2_F;
 #endif
 
 namespace WTF {
@@ -64,10 +60,6 @@ public:
 
 #if USE(CG)
     WEBCORE_EXPORT AffineTransform(const CGAffineTransform&);
-#endif
-
-#if PLATFORM(WIN)
-    AffineTransform(const D2D1_MATRIX_3X2_F&);
 #endif
 
     void setMatrix(double a, double b, double c, double d, double e, double f);
@@ -131,10 +123,10 @@ public:
     WEBCORE_EXPORT double xScale() const;
     WEBCORE_EXPORT double yScale() const;
 
-    bool isInvertible() const; // If you call this this, you're probably doing it wrong.
+    bool isInvertible() const; // If you call this, you're probably doing it wrong.
     WEBCORE_EXPORT std::optional<AffineTransform> inverse() const;
 
-    WEBCORE_EXPORT void blend(const AffineTransform& from, double progress);
+    WEBCORE_EXPORT void blend(const AffineTransform& from, double progress, CompositeOperation = CompositeOperation::Replace);
 
     WEBCORE_EXPORT TransformationMatrix toTransformationMatrix() const;
 
@@ -186,10 +178,6 @@ public:
 
 #if USE(CG)
     WEBCORE_EXPORT operator CGAffineTransform() const;
-#endif
-
-#if PLATFORM(WIN)
-    operator D2D1_MATRIX_3X2_F() const;
 #endif
 
     static AffineTransform translation(double x, double y)

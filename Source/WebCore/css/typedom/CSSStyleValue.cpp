@@ -34,6 +34,7 @@
 
 #include "CSSParser.h"
 #include "CSSPropertyParser.h"
+#include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
 #include "CSSValueList.h"
 #include <wtf/IsoMallocInlines.h>
@@ -43,60 +44,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSStyleValue);
 
-ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValue::parseStyleValue(const String& cssProperty, const String& cssText, bool parseMultiple)
-{
-    // https://www.w3.org/TR/css-typed-om-1/#cssstylevalue
-    
-    String property;
-    // 1. If property is not a custom property name string, set property to property ASCII lowercased.
-    if (!isCustomPropertyName(property))
-        property = cssProperty.convertToASCIILowercase();
-    else
-        property = cssProperty;
-    
-    
-    // CSSPropertyID
-    auto propertyID = cssPropertyID(property);
-
-    // 2. If property is not a valid CSS property, throw a TypeError.
-    if (propertyID == CSSPropertyInvalid)
-        return Exception { TypeError, "Property String is not a valid CSS property."_s };
-    
-    auto styleDeclaration = MutableStyleProperties::create();
-    
-    constexpr bool important = true;
-    auto parseResult = CSSParser::parseValue(styleDeclaration, propertyID, cssText, important, HTMLStandardMode);
-    if (parseResult == CSSParser::ParseResult::Error)
-        return Exception { SyntaxError, makeString(cssText, " cannot be parsed as a ", cssProperty)};
-
-    auto cssValue = styleDeclaration->getPropertyCSSValue(propertyID);
-    if (!cssValue)
-        return Exception { SyntaxError, makeString(cssText, " cannot be parsed as a ", cssProperty)};
-
-    Vector<Ref<CSSStyleValue>> results;
-
-    if (is<CSSValueList>(cssValue.get())) {
-        bool parsedFirst = false;
-        for (auto& currentValue : downcast<CSSValueList>(*cssValue.get())) {
-            if (!parseMultiple && parsedFirst)
-                break;
-            if (auto reifiedValue = CSSStyleValue::reifyValue(propertyID, currentValue.copyRef()))
-                results.append(reifiedValue.releaseNonNull());
-            parsedFirst = true;
-        }
-    } else {
-        auto reifiedValue = CSSStyleValue::reifyValue(propertyID, cssValue.copyRef());
-        if (reifiedValue)
-            results.append(reifiedValue.releaseNonNull());
-    }
-    
-    return results;
-}
-
 ExceptionOr<Ref<CSSStyleValue>> CSSStyleValue::parse(const String& property, const String& cssText)
 {
     constexpr bool parseMultiple = false;
-    auto parseResult = parseStyleValue(property, cssText, parseMultiple);
+    auto parseResult = CSSStyleValueFactory::parseStyleValue(property, cssText, parseMultiple);
     if (parseResult.hasException())
         return parseResult.releaseException();
     
@@ -112,7 +63,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValue::parse(const String& property, con
 ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValue::parseAll(const String& property, const String& cssText)
 {
     constexpr bool parseMultiple = true;
-    return parseStyleValue(property, cssText, parseMultiple);
+    return CSSStyleValueFactory::parseStyleValue(property, cssText, parseMultiple);
 }
 
 Ref<CSSStyleValue> CSSStyleValue::create(RefPtr<CSSValue>&& cssValue, String&& property)
@@ -131,12 +82,6 @@ CSSStyleValue::CSSStyleValue(RefPtr<CSSValue>&& cssValue, String&& property)
 {
 }
 
-// Invokes static constructor of subclasses to reifyValues
-RefPtr<CSSStyleValue> CSSStyleValue::reifyValue(CSSPropertyID, RefPtr<CSSValue>&&)
-{
-    // FIXME: Add Reification control flow. Returns nullptr if failed.
-    return nullptr;
-}
 
 String CSSStyleValue::toString() const
 {

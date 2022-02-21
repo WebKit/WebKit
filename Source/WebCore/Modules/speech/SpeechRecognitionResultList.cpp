@@ -50,7 +50,7 @@ SpeechRecognitionResult* SpeechRecognitionResultList::item(uint64_t index) const
 
 void SpeechRecognitionResultList::add(SpeechRecognitionResult& result)
 {
-    m_list.append(makeRef(result));
+    m_list.append(result);
 }
 
 SpeechRecognitionResultList::SpeechRecognitionResultList(Vector<Ref<SpeechRecognitionResult>>&& list)

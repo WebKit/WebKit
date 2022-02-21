@@ -12,12 +12,10 @@ description: R is "d+" and instance is RegExp(R,"i")
 var __re = "d+";
 var __instance = RegExp(__re, "i");
 
-//CHECK#1
-if (__instance.constructor !== RegExp) {
-	throw new Test262Error('#1: __re = "d+"; __instance = RegExp(__re, "i"); __instance.constructor === RegExp. Actual: ' + (__instance.constructor));
-}
+assert.sameValue(
+  __instance.constructor,
+  RegExp,
+  'The value of __instance.constructor is expected to equal the value of RegExp'
+);
 
-//CHECK#2
-if (__instance.source !== __re) {
-	throw new Test262Error('#2: __re = "d+"; __instance = RegExp(__re, "i"); __instance.source === __re. Actual: '+ (__instance.source));
-}
+assert.sameValue(__instance.source, __re, 'The value of __instance.source is expected to equal the value of __re');

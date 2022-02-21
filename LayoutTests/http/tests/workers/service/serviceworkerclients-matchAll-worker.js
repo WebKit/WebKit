@@ -3,6 +3,15 @@ function waitFor(duration)
     return new Promise((resolve) => setTimeout(resolve, duration));
 }
 
+async function serviceWorkerClientIdentifierFromInternalIdentifier(internalIdentifier)
+{
+     const clients = await self.clients.matchAll({ includeUncontrolled : true });
+     for (let client of clients) {
+         if (internals.serviceWorkerClientInternalIdentifier(client) == internalIdentifier)
+            return client.id;
+     }
+}
+
 function checkClientNotInControlledClients(clientIdentifier)
 {
     return self.clients.matchAll().then((clients) => {
@@ -37,7 +46,7 @@ async function doTestAfterMessage(event)
             return;
         }
 
-        const clientIdentifier = event.data.identifier;
+        const clientIdentifier = await serviceWorkerClientIdentifierFromInternalIdentifier(event.data.identifier);
 
         let result = await checkClientNotInControlledClients(clientIdentifier);
         if (result !== "PASS") {

@@ -39,7 +39,7 @@
     DOMString label;
     DOMString amount;
 
-    [Conditional=APPLE_PAY_RECURRING_LINE_ITEM|APPLE_PAY_DEFERRED_LINE_ITEM] ApplePayPaymentTiming paymentTiming = "immediate";
+    ApplePayPaymentTiming paymentTiming = "immediate";
 
     [Conditional=APPLE_PAY_RECURRING_LINE_ITEM] Date recurringPaymentStartDate;
     [Conditional=APPLE_PAY_RECURRING_LINE_ITEM] ApplePayRecurringPaymentDateUnit recurringPaymentIntervalUnit = "month";

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "Page.h"
+#include "ResourceLoaderIdentifier.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -43,21 +45,19 @@ class ProgressTracker {
     WTF_MAKE_NONCOPYABLE(ProgressTracker);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ProgressTracker(UniqueRef<ProgressTrackerClient>&&);
+    explicit ProgressTracker(Page&, UniqueRef<ProgressTrackerClient>&&);
     ~ProgressTracker();
 
     ProgressTrackerClient& client() { return m_client.get(); }
-
-    static unsigned long createUniqueIdentifier();
 
     WEBCORE_EXPORT double estimatedProgress() const;
 
     void progressStarted(Frame&);
     void progressCompleted(Frame&);
 
-    void incrementProgress(unsigned long identifier, const ResourceResponse&);
-    void incrementProgress(unsigned long identifier, unsigned bytesReceived);
-    void completeProgress(unsigned long identifier);
+    void incrementProgress(ResourceLoaderIdentifier, const ResourceResponse&);
+    void incrementProgress(ResourceLoaderIdentifier, unsigned bytesReceived);
+    void completeProgress(ResourceLoaderIdentifier);
 
     long long totalPageAndResourceBytesToLoad() const { return m_totalPageAndResourceBytesToLoad; }
     long long totalBytesReceived() const { return m_totalBytesReceived; }
@@ -67,14 +67,14 @@ public:
 private:
     void reset();
     void finalProgressComplete();
+    void progressEstimateChanged(Frame&);
 
     void progressHeartbeatTimerFired();
 
-    static unsigned long s_uniqueIdentifier;
-
+    Page& m_page;
     UniqueRef<ProgressTrackerClient> m_client;
     RefPtr<Frame> m_originatingProgressFrame;
-    HashMap<unsigned long, std::unique_ptr<ProgressItem>> m_progressItems;
+    HashMap<ResourceLoaderIdentifier, std::unique_ptr<ProgressItem>> m_progressItems;
     Timer m_progressHeartbeatTimer;
 
     long long m_totalPageAndResourceBytesToLoad { 0 };

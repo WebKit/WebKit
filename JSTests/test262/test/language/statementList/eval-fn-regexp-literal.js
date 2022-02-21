@@ -36,7 +36,7 @@ info: |
 ---*/
 
 
-var result = eval('function fn() {}/1/;;');
+var result = eval('function fn() {}/1/;');
 
 assert.sameValue(Object.getPrototypeOf(result), RegExp.prototype);
 assert.sameValue(result.flags, '');

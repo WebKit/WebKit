@@ -226,6 +226,72 @@ function runTestExtension() {
     if (contextVersion >= 2) {
         testDXT5_SRGB_ALPHA_PBO();
     }
+
+    // Test TexImage validation on level dimensions combinations.
+    debug("");
+    debug("When level equals 0, width and height must be a multiple of 4.");
+    debug("When level is larger than 0, this constraint doesn't apply.");
+    ctu.testTexImageLevelDimensions(gl, ext, validFormats, expectedByteLength, getBlockDimensions,
+      [
+        { level: 0, width: 4, height: 3, expectation: gl.INVALID_OPERATION, message: "0: 4x3" },
+        { level: 0, width: 3, height: 4, expectation: gl.INVALID_OPERATION, message: "0: 3x4" },
+        { level: 0, width: 2, height: 2, expectation: gl.INVALID_OPERATION, message: "0: 2x2" },
+        { level: 0, width: 4, height: 4, expectation: gl.NO_ERROR, message: "0: 4x4" },
+        { level: 1, width: 2, height: 2, expectation: gl.NO_ERROR, message: "1: 2x2" },
+        { level: 2, width: 1, height: 1, expectation: gl.NO_ERROR, message: "2: 1x1" },
+    ]);
+
+    ctu.testTexSubImageDimensions(gl, ext, validFormats, expectedByteLength, getBlockDimensions, 16, 16,
+      [
+        { xoffset: 0, yoffset: 0, width: 4, height: 3,
+          expectation: gl.INVALID_OPERATION, message: "height is not a multiple of 4" },
+        { xoffset: 0, yoffset: 0, width: 3, height: 4,
+          expectation: gl.INVALID_OPERATION, message: "width is not a multiple of 4" },
+        { xoffset: 1, yoffset: 0, width: 4, height: 4,
+          expectation: gl.INVALID_OPERATION, message: "xoffset is not a multiple of 4" },
+        { xoffset: 0, yoffset: 1, width: 4, height: 4,
+          expectation: gl.INVALID_OPERATION, message: "yoffset is not a multiple of 4" },
+        { xoffset: 12, yoffset: 12, width: 4, height: 4,
+          expectation: gl.NO_ERROR, message: "is valid" },
+    ]);
+
+    if (contextVersion >= 2) {
+        debug("");
+        debug("Testing NPOT textures");
+        ctu.testTexImageLevelDimensions(gl, ext, validFormats, expectedByteLength, getBlockDimensions,
+          [
+            { level: 0, width: 12, height: 12, expectation: gl.NO_ERROR, message: "0: 12x12 is valid" },
+            { level: 1, width:  6, height:  6, expectation: gl.NO_ERROR, message: "1: 6x6, is valid" },
+            { level: 2, width:  3, height:  3, expectation: gl.NO_ERROR, message: "2: 3x3, is valid" },
+            { level: 3, width:  1, height:  1, expectation: gl.NO_ERROR, message: "3: 1x1, is valid" },
+        ]);
+
+        debug("");
+        debug("Testing partial updates");
+        ctu.testTexSubImageDimensions(gl, ext, validFormats, expectedByteLength, getBlockDimensions, 12, 12,
+        [
+          { xoffset: 0, yoffset: 0, width: 4, height: 3,
+            expectation: gl.INVALID_OPERATION, message: "height is not a multiple of 4" },
+          { xoffset: 0, yoffset: 0, width: 3, height: 4,
+            expectation: gl.INVALID_OPERATION, message: "width is not a multiple of 4" },
+          { xoffset: 1, yoffset: 0, width: 4, height: 4,
+            expectation: gl.INVALID_OPERATION, message: "xoffset is not a multiple of 4" },
+          { xoffset: 0, yoffset: 1, width: 4, height: 4,
+            expectation: gl.INVALID_OPERATION, message: "yoffset is not a multiple of 4" },
+          { xoffset: 8, yoffset: 8, width: 4, height: 4,
+            expectation: gl.NO_ERROR, message: "is valid" },
+        ]);
+
+        debug("");
+        debug("Testing immutable NPOT textures");
+        ctu.testTexStorageLevelDimensions(gl, ext, validFormats, expectedByteLength, getBlockDimensions,
+          [
+            { width: 12, height: 12, expectation: gl.NO_ERROR, message: "0: 12x12 is valid" },
+            { width:  6, height:  6, expectation: gl.NO_ERROR, message: "1: 6x6, is valid" },
+            { width:  3, height:  3, expectation: gl.NO_ERROR, message: "2: 3x3, is valid" },
+            { width:  1, height:  1, expectation: gl.NO_ERROR, message: "3: 1x1, is valid" },
+        ]);
+    }
 }
 
 function testDXT1_SRGB() {
@@ -617,14 +683,16 @@ function testDXTTexture(test, useTexStorage) {
         wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "invalid dimensions");
 
         if (width == 4) {
+            // The width/height of the implied base level must be a multiple of the block size.
             gl.compressedTexImage2D(gl.TEXTURE_2D, 1, format, 1, height, 0, data);
-            wtu.glErrorShouldBe(gl, gl.NO_ERROR, "valid dimensions for level > 0");
+            wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "invalid dimensions for level > 0");
             gl.compressedTexImage2D(gl.TEXTURE_2D, 1, format, 2, height, 0, data);
             wtu.glErrorShouldBe(gl, gl.NO_ERROR, "valid dimensions for level > 0");
         }
         if (height == 4) {
+            // The width/height of the implied base level must be a multiple of the block size.
             gl.compressedTexImage2D(gl.TEXTURE_2D, 1, format, width, 1, 0, data);
-            wtu.glErrorShouldBe(gl, gl.NO_ERROR, "valid dimensions for level > 0");
+            wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "invalid dimensions for level > 0");
             gl.compressedTexImage2D(gl.TEXTURE_2D, 1, format, width, 2, 0, data);
             wtu.glErrorShouldBe(gl, gl.NO_ERROR, "valid dimensions for level > 0");
         }

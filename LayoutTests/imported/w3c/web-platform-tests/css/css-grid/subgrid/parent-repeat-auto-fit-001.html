@@ -435,8 +435,8 @@ html,body {
 
 <script>
   const expectedResults = [
-    "[y] 0px [z] 1px [z] 1px [z] 1px [z] 1px [z]",
-    "[x y] 0px [z] 1px [z] 1px [z] 1px [z]",
+    "[y] 0px [z] 1px [z] 1px [z] 1px [z] 1px [z] 46px",
+    "[x y] 0px [z] 1px [z] 1px [z] 1px [z] 23.5px 23.5px",
     "[x] 1px [x y] 0px [y] 10px [y] 10px [y] 10px [z] 1px [z] 1px [z]",
     "[x] 2px [x] 2px [x y] 10px [y] 10px [y] 10px [y] 10px [z] 1px [z]",
     "[x] 2px [x] 2px [x] 2px [x y] 10px [y] 10px [y] 10px [y] 0px [z]",
@@ -454,15 +454,15 @@ html,body {
     "[x] 2px [x] 2px [x y] 10px [y] 10px [y] 10px [y] 10px [z]",
     "[x] 2px [x] 2px [x] 2px [x y] 10px [y] 10px [y] 10px [y] 0px",
     "[y] 0px [y] 0px [y] 10px [y] 10px [z] 1px [z] 1px [z]",
-    "[x y] 0px [y] 0px [y] 10px [y] 10px [z] 1px [z]",
-    "[x] 2px [x y] 0px [y] 10px [y] 10px [y] 10px [z]",
+    "[x y] 0px [y] 0px [y] 10px [y] 10px [z] 1px [z] 29px",
+    "[x] 2px [x y] 0px [y] 10px [y] 10px [y] 10px [z] 18px",
     "[x] 2px [x] 2px [x y] 10px [y] 10px [y] 10px [y] 10px",
-    "[y] 0px [y] 0px [y] 10px [y] 10px [z] 1px [z]",
-    "[x y] 0px [y] 0px [y] 10px [y] 10px [y] 10px [z]",
-    "[x] 2px [x y] 0px [y] 10px [y] 10px [y] 10px",
-    "[y] 0px [y] 0px [y] 10px [y] 10px [y] 10px [z]",
-    "[x y] 0px [y] 0px [y] 10px [y] 10px [y] 10px",
-    "[y] 0px [y] 0px [y] 10px [y] 10px [y] 10px",
+    "[y] 0px [y] 0px [y] 10px [y] 10px [z] 1px [z] 29px",
+    "[x y] 0px [y] 0px [y] 10px [y] 10px [y] 10px [z] 20px",
+    "[x] 2px [x y] 0px [y] 10px [y] 10px [y] 10px 18px",
+    "[y] 0px [y] 0px [y] 10px [y] 10px [y] 10px [z] 20px",
+    "[x y] 0px [y] 0px [y] 10px [y] 10px [y] 10px 20px",
+    "[y] 0px [y] 0px [y] 10px [y] 10px [y] 10px 20px",
   ];
   [...document.querySelectorAll('.grid')].forEach(function(grid, i) {
     let actual = window.getComputedStyle(grid)['grid-template-columns'];

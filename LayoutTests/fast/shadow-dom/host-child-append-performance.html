@@ -1,0 +1,12 @@
+<div id=host>This test passes if it doesn't time out</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const shadow = host.attachShadow({ mode: "open" });
+shadow.innerHTML = `
+    <slot></slot>
+`;
+for (i = 0; i < 10000; ++i)
+    host.appendChild(document.createElement("div"));
+</script>

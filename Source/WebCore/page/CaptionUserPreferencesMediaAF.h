@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,12 +32,16 @@
 #include "CaptionUserPreferences.h"
 #include "Color.h"
 
+#if PLATFORM(COCOA)
+OBJC_CLASS WebCaptionUserPreferencesMediaAFWeakObserver;
+#endif
+
 namespace WebCore {
 
 class CaptionUserPreferencesMediaAF : public CaptionUserPreferences {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CaptionUserPreferencesMediaAF(PageGroup&);
+    static Ref<CaptionUserPreferencesMediaAF> create(PageGroup&);
     virtual ~CaptionUserPreferencesMediaAF();
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
@@ -75,6 +79,10 @@ public:
     bool shouldFilterTrackMenu() const { return false; }
 #endif
 
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK) && PLATFORM(COCOA)
+    static RefPtr<CaptionUserPreferencesMediaAF> extractCaptionUserPreferencesMediaAF(void* observer);
+#endif
+
     String captionsStyleSheetOverride() const override;
     Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList*) override;
     Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>) override;
@@ -82,6 +90,8 @@ public:
     String displayNameForTrack(TextTrack*) const override;
 
 private:
+    CaptionUserPreferencesMediaAF(PageGroup&);
+
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     void updateTimerFired();
 
@@ -93,9 +103,17 @@ private:
     String windowRoundedCornerRadiusCSS() const;
     String captionsTextEdgeCSS() const;
     String colorPropertyCSS(CSSPropertyID, const Color&, bool) const;
-    Timer m_updateStyleSheetTimer;
+#endif
 
-    bool m_listeningForPreferenceChanges;
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK) && PLATFORM(COCOA)
+    static RetainPtr<WebCaptionUserPreferencesMediaAFWeakObserver> createWeakObserver(CaptionUserPreferencesMediaAF*);
+
+    RetainPtr<WebCaptionUserPreferencesMediaAFWeakObserver> m_weakObserver;
+#endif
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    Timer m_updateStyleSheetTimer;
+    bool m_listeningForPreferenceChanges { false };
     bool m_registeringForNotification { false };
 #endif
 };

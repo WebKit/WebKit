@@ -58,10 +58,10 @@ static const CGFloat WarningViewShadowRadius = 5;
     [self setTitlePosition:NSNoTitle];
 
     _textField = adoptNS([[NSTextField alloc] initWithFrame:NSZeroRect]);
-    [_textField.get() setEditable:NO];
-    [_textField.get() setSelectable:NO];
-    [_textField.get() setBordered:NO];
-    [_textField.get() setDrawsBackground:NO];
+    [_textField setEditable:NO];
+    [_textField setSelectable:NO];
+    [_textField setBordered:NO];
+    [_textField setDrawsBackground:NO];
 
     NSFont* textFont = [NSFont boldSystemFontOfSize:WarningViewTextSize];
     NSColor* textColor = [NSColor colorWithCalibratedWhite:WarningViewTextWhite alpha:WarningViewTextAlpha];
@@ -70,9 +70,9 @@ static const CGFloat WarningViewShadowRadius = 5;
                                                   textColor, NSForegroundColorAttributeName,
                                                   nil]);
     RetainPtr<NSAttributedString> text = adoptNS([[NSAttributedString alloc] initWithString:title attributes:attributes.get()]);
-    [_textField.get() setAttributedStringValue:text.get()];
-    [_textField.get() sizeToFit];
-    NSRect textFieldFrame = [_textField.get() frame];
+    [_textField setAttributedStringValue:text.get()];
+    [_textField sizeToFit];
+    NSRect textFieldFrame = [_textField frame];
     NSSize frameSize = textFieldFrame.size;
     frameSize.width += WarningViewPadding * 2;
     frameSize.height += WarningViewPadding * 2;
@@ -83,9 +83,9 @@ static const CGFloat WarningViewShadowRadius = 5;
         (frameSize.height - textFieldFrame.size.height) / 2);
 
     // Offset the origin by the font's descender, to center the text field about the baseline:
-    textFieldFrame.origin.y += [[_textField.get() font] descender];
+    textFieldFrame.origin.y += [[_textField font] descender];
 
-    [_textField.get() setFrame:NSIntegralRect(textFieldFrame)];
+    [_textField setFrame:NSIntegralRect(textFieldFrame)];
     [self addSubview:_textField.get()];
 
     NSColor* backgroundColor = [NSColor colorWithCalibratedWhite:WarningViewBackgroundWhite alpha:WarningViewBackgroundAlpha];
@@ -97,9 +97,9 @@ static const CGFloat WarningViewShadowRadius = 5;
 
     RetainPtr<NSShadow> shadow = adoptNS([[NSShadow alloc] init]);
     RetainPtr<NSColor> shadowColor = [NSColor colorWithCalibratedWhite:WarningViewShadowWhite alpha:WarningViewShadowAlpha];
-    [shadow.get() setShadowColor:shadowColor.get()];
-    [shadow.get() setShadowOffset:WarningViewShadowOffset];
-    [shadow.get() setShadowBlurRadius:WarningViewShadowRadius];
+    [shadow setShadowColor:shadowColor.get()];
+    [shadow setShadowOffset:WarningViewShadowOffset];
+    [shadow setShadowBlurRadius:WarningViewShadowRadius];
     [self setShadow:shadow.get()];
 
     return self;

@@ -31,9 +31,15 @@ try {
 
 assert.sameValue(dataView.byteOffset, 1, "following shrink (within bounds)");
 
-var expectedError;
 try {
   ab.resize(1);
+} catch (_) {}
+
+assert.sameValue(dataView.byteOffset, 1, "following shrink (on boundary)");
+
+var expectedError;
+try {
+  ab.resize(0);
   expectedError = TypeError;
 } catch (_) {
   expectedError = Test262Error;

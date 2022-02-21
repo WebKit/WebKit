@@ -64,12 +64,13 @@
 #import <WebCore/Quirks.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/VelocityData.h>
-#import <WebCore/VersionChecks.h>
 #import <objc/message.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/TextStream.h>
+#import <wtf/threads/BinarySemaphore.h>
 #import "AppKitSoftLink.h"
 
 
@@ -147,6 +148,9 @@
     RetainPtr<NSUndoManager> _undoManager;
     RetainPtr<WKQuirkyNSUndoManager> _quirkyUndoManager;
 
+#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+    BinarySemaphore _pdfPrintCompletionSemaphore;
+#endif
     uint64_t _pdfPrintCallbackID;
     RetainPtr<CGPDFDocumentRef> _printedDocument;
     Vector<RetainPtr<NSURL>> _temporaryURLsToDeleteWhenDeallocated;
@@ -198,7 +202,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [self addSubview:_fixedClippingView.get()];
     [_fixedClippingView addSubview:_rootContentView.get()];
 
-    if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWithLazyGestureRecognizerInstallation))
+    if (!linkedOnOrAfter(SDKVersion::FirstWithLazyGestureRecognizerInstallation))
         [self setUpInteraction];
     [self setUserInteractionEnabled:YES];
 
@@ -222,7 +226,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_screenCapturedDidChange:) name:UIScreenCapturedDidChangeNotification object:[UIScreen mainScreen]];
 
-    if (WebCore::IOSApplication::isEvernote() && !linkedOnOrAfter(WebCore::SDKVersion::FirstWhereWKContentViewDoesNotOverrideKeyCommands))
+    if (WebCore::IOSApplication::isEvernote() && !linkedOnOrAfter(SDKVersion::FirstWhereWKContentViewDoesNotOverrideKeyCommands))
         class_addMethod(self.class, @selector(keyCommands), reinterpret_cast<IMP>(&keyCommandsPlaceholderHackForEvernote), method_getTypeEncoding(class_getInstanceMethod(self.class, @selector(keyCommands))));
 
     return self;
@@ -412,8 +416,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _inspectorHighlightView = adoptNS([[WKInspectorHighlightView alloc] initWithFrame:CGRectZero]);
         [self insertSubview:_inspectorHighlightView.get() aboveSubview:_rootContentView.get()];
     }
-
-    [_inspectorHighlightView update:highlight scale:[self _contentZoomScale]];
+    [_inspectorHighlightView update:highlight scale:[self _contentZoomScale] frame:_page->unobscuredContentRect()];
 }
 
 - (void)_hideInspectorHighlight
@@ -562,7 +565,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     [self _didEndScrollingOrZooming];
 }
 
-- (NSUndoManager *)undoManager
+- (NSUndoManager *)undoManagerForWebView
 {
     if (self.focusedElementInformation.shouldSynthesizeKeyEventsForEditing && self.hasHiddenContentEditable) {
         if (!_quirkyUndoManager)
@@ -688,6 +691,10 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     [self _removeVisibilityPropagationViewForWebProcess];
 #endif
 
+#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+    if (_pdfPrintCallbackID)
+        _pdfPrintCompletionSemaphore.signal();
+#endif
     _pdfPrintCallbackID = 0;
 }
 
@@ -862,10 +869,22 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 @implementation WKContentView (_WKWebViewPrintFormatter)
 
+#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+
+- (BOOL)_wk_printFormatterRequiresMainThread
+{
+    return NO;
+}
+
+#endif // HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
 {
-    if (_pdfPrintCallbackID)
-        [self _waitForDrawToPDFCallback];
+#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+    ASSERT(!isMainRunLoop());
+#endif
+
+    [self _waitForDrawToPDFCallbackIfNeeded];
 
     WebCore::FrameIdentifier frameID;
     if (_WKFrameHandle *handle = printFormatter.frameToPrint)
@@ -897,35 +916,68 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     printInfo.availablePaperWidth = CGRectGetWidth(printingRect);
     printInfo.availablePaperHeight = CGRectGetHeight(printingRect);
 
-    auto retainedSelf = retainPtr(self);
-    auto pair = _page->computePagesForPrintingAndDrawToPDF(frameID, printInfo, [retainedSelf](const IPC::DataReference& pdfData) {
-        retainedSelf->_pdfPrintCallbackID = 0;
-        if (pdfData.isEmpty())
-            return;
+    size_t pageCount;
+    if (printInfo.snapshotFirstPage)
+        pageCount = 1;
+    else {
+#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+        BinarySemaphore computePagesSemaphore;
+        callOnMainRunLoop([self, frameID, printInfo, &pageCount, &computePagesSemaphore]() mutable {
+            _page->computePagesForPrinting(frameID, printInfo, [&pageCount, &computePagesSemaphore](const Vector<WebCore::IntRect>& pageRects, double /* totalScaleFactorForPrinting */, const WebCore::FloatBoxExtent& /* computedPageMargin */) mutable {
+                ASSERT(pageRects.size() >= 1);
+                pageCount = pageRects.size();
 
-        auto data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));
-        auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
-        retainedSelf->_printedDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
+                computePagesSemaphore.signal();
+            });
+        });
+        computePagesSemaphore.wait();
+#else
+        pageCount = _page->computePagesForPrintingiOS(frameID, printInfo);
+#endif
+    }
+
+    // Begin generating the PDF in expectation of a (eventual) request for the drawn data.
+    _pdfPrintCallbackID = _page->drawToPDFiOS(frameID, printInfo, pageCount, [retainedSelf = retainPtr(self)](const IPC::SharedBufferCopy& pdfData) {
+        if (pdfData.isEmpty())
+            retainedSelf->_printedDocument = nullptr;
+        else {
+            auto data = pdfData.buffer()->createCFData();
+            auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
+            retainedSelf->_printedDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
+        }
+
+#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+        retainedSelf->_pdfPrintCompletionSemaphore.signal();
+#endif
+        retainedSelf->_pdfPrintCallbackID = 0;
     });
-    _pdfPrintCallbackID = pair.second;
-    return pair.first;
+
+    return pageCount;
 }
 
-- (BOOL)_waitForDrawToPDFCallback
+- (BOOL)_waitForDrawToPDFCallbackIfNeeded
 {
-    ASSERT(_pdfPrintCallbackID);
-    if (!_page->process().connection()->waitForAsyncCallbackAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(std::exchange(_pdfPrintCallbackID, 0), Seconds::infinity()))
-        return false;
+    if (auto callbackID = std::exchange(_pdfPrintCallbackID, 0)) {
+#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+        ASSERT(!isMainRunLoop());
+        _pdfPrintCompletionSemaphore.wait();
+#else
+        if (!_page->process().connection()->waitForAsyncCallbackAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(callbackID, Seconds::infinity()))
+            return false;
+#endif
+    }
     ASSERT(!_pdfPrintCallbackID);
     return true;
 }
 
 - (CGPDFDocumentRef)_wk_printedDocument
 {
-    if (_pdfPrintCallbackID) {
-        if (![self _waitForDrawToPDFCallback])
-            return nullptr;
-    }
+#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
+    ASSERT(!isMainRunLoop());
+#endif
+
+    if (![self _waitForDrawToPDFCallbackIfNeeded])
+        return nullptr;
 
     return _printedDocument.get();
 }

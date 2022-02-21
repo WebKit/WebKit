@@ -261,13 +261,10 @@ static String buildPolygonString(const WindRule& windRule, const Vector<String>&
 
 String CSSBasicShapePolygon::cssText() const
 {
-    Vector<String> points;
-    points.reserveInitialCapacity(m_values.size());
-
-    for (auto& shapeValue : m_values)
-        points.uncheckedAppend(shapeValue->cssText());
-
-    return buildPolygonString(m_windRule, points);
+    auto points = m_values.map([](auto& shapeValue) {
+        return shapeValue->cssText();
+    });
+    return buildPolygonString(m_windRule, WTFMove(points));
 }
 
 bool CSSBasicShapePolygon::equals(const CSSBasicShape& shape) const
@@ -397,4 +394,3 @@ bool CSSBasicShapeInset::equals(const CSSBasicShape& shape) const
 }
 
 } // namespace WebCore
-

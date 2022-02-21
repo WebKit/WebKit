@@ -1,7 +1,7 @@
 
-FAIL CSSStyleValue.parse() with a valid property returns a CSSStyleValue 10px cannot be parsed as a width
-FAIL CSSStyleValue.parse() is not case sensitive 10px cannot be parsed as a WiDtH
-FAIL CSSStyleValue.parse() with a valid list-valued property returns a CSSStyleValue 1s, 2s, 3s cannot be parsed as a transition-duration
-FAIL CSSStyleValue.parse() with a valid shorthand property returns a CSSStyleValue 1px 2px 3px 4px cannot be parsed as a margin
-FAIL CSSStyleValue.parse() with a valid custom property returns a CSSStyleValue Property String is not a valid CSS property.
+PASS CSSStyleValue.parse() with a valid property returns a CSSStyleValue
+PASS CSSStyleValue.parse() is not case sensitive
+PASS CSSStyleValue.parse() with a valid list-valued property returns a CSSStyleValue
+PASS CSSStyleValue.parse() with a valid shorthand property returns a CSSStyleValue
+PASS CSSStyleValue.parse() with a valid custom property returns a CSSStyleValue
 

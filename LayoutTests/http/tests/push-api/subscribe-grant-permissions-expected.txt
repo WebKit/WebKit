@@ -1,0 +1,5 @@
+PASS: service worker permissionState was granted
+PASS: document permissionState was granted
+PASS: service worker subscribe was successful
+PASS: document subscribe was successful
+

@@ -11,12 +11,5 @@ description: Checking length property of Function("arg1,arg2,arg3", null)
 
 var f = new Function("arg1,arg2,arg3", null);
 
-//CHECK#1
-if (!(f.hasOwnProperty('length'))) {
-  throw new Test262Error('#1: the function has length property.');
-}
-
-//CHECK#2
-if (f.length !== 3) {
-  throw new Test262Error('#2: The value of the length property is usually an integer that indicates the "typical" number of arguments expected by the function');
-}
+assert(f.hasOwnProperty('length'), 'f.hasOwnProperty(\'length\') must return true');
+assert.sameValue(f.length, 3, 'The value of f.length is expected to be 3');

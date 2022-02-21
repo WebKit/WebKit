@@ -90,7 +90,7 @@ RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Ar
     // Resource data can be empty, but must be represented by an empty CFDataRef
     auto& data = resource->data();
 
-    CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceDataKey, data.createCFData().get());
+    CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceDataKey, data.makeContiguous()->createCFData().get());
 
     // Resource URL cannot be null
     if (auto cfURL = resource->url().string().createCFString())
@@ -117,9 +117,9 @@ RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Ar
     // Don't include the resource response for the main resource
     if (!isMainResource) {
         if (auto resourceResponseData = createPropertyListRepresentation(resource->response()))
-            CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceResponseKey, resourceResponseData.get());    
+            CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceResponseKey, resourceResponseData.get());
     }
-    
+
     return propertyList;
 }
 
@@ -215,13 +215,13 @@ RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef diction
             LOG(Archives, "LegacyWebArchive - Resource response data is not of type CFData, cannot create invalid resource");
             return nullptr;
         }
-        
+
         auto resourceResponseVersion = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceResponseVersionKey));
         if (resourceResponseVersion && CFGetTypeID(resourceResponseVersion) != CFStringGetTypeID()) {
             LOG(Archives, "LegacyWebArchive - Resource response version is not of type CFString, cannot create invalid resource");
             return nullptr;
         }
-        
+
         response = createResourceResponseFromPropertyListData(resourceResponseData, resourceResponseVersion);
     }
 
@@ -248,23 +248,23 @@ Ref<LegacyWebArchive> LegacyWebArchive::create(Ref<ArchiveResource>&& mainResour
     return archive;
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(SharedBuffer& data)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(FragmentedSharedBuffer& data)
 {
     return create(URL(), data);
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, SharedBuffer& data)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, FragmentedSharedBuffer& data)
 {
     LOG(Archives, "LegacyWebArchive - Creating from raw data");
-    
+
     Ref<LegacyWebArchive> archive = create();
-        
-    RetainPtr<CFDataRef> cfData = data.createCFData();
+
+    RetainPtr<CFDataRef> cfData = data.makeContiguous()->createCFData();
     if (!cfData)
         return nullptr;
-        
+
     CFErrorRef error = nullptr;
-    
+
     RetainPtr<CFDictionaryRef> plist = adoptCF(static_cast<CFDictionaryRef>(CFPropertyListCreateWithData(0, cfData.get(), kCFPropertyListImmutable, 0, &error)));
     if (!plist) {
 #ifndef NDEBUG
@@ -276,12 +276,12 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, SharedBuffer& data
             CFRelease(error);
         return nullptr;
     }
-    
+
     if (CFGetTypeID(plist.get()) != CFDictionaryGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - Archive property list is not the expected CFDictionary, aborting invalid WebArchive");
         return nullptr;
     }
-    
+
     if (!archive->extract(plist.get()))
         return nullptr;
 
@@ -295,7 +295,7 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
         LOG(Archives, "LegacyWebArchive - Null root CFDictionary, aborting invalid WebArchive");
         return false;
     }
-    
+
     CFDictionaryRef mainResourceDict = static_cast<CFDictionaryRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveMainResourceKey));
     if (!mainResourceDict) {
         LOG(Archives, "LegacyWebArchive - No main resource in archive, aborting invalid WebArchive");
@@ -333,7 +333,7 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
                 LOG(Archives, "LegacyWebArchive - Subresource is not expected CFDictionary, aborting invalid WebArchive");
                 return false;
             }
-            
+
             if (auto subresource = createResource(subresourceDict))
                 addSubresource(subresource.releaseNonNull());
         }
@@ -353,7 +353,7 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
                 LOG(Archives, "LegacyWebArchive - Subframe array is not expected CFDictionary, aborting invalid WebArchive");
                 return false;
             }
-            
+
             auto subframeArchive = create();
             if (subframeArchive->extract(subframeDict))
                 addSubframeArchive(WTFMove(subframeArchive));
@@ -361,7 +361,7 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
                 LOG(Archives, "LegacyWebArchive - Invalid subframe archive skipped");
         }
     }
-    
+
     return true;
 }
 
@@ -410,7 +410,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, WTF::Function<bool (Frame&)>&& frameFilter)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Frame&)>&& frameFilter)
 {
     Frame* frame = node.document().frame();
     if (!frame)
@@ -502,11 +502,11 @@ static void addSubresourcesForAttachmentElementsIfNecessary(Frame& frame, const 
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame& frame, const Vector<Node*>& nodes, WTF::Function<bool (Frame&)>&& frameFilter)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame& frame, const Vector<Node*>& nodes, Function<bool(Frame&)>&& frameFilter)
 {
     auto& response = frame.loader().documentLoader()->response();
     URL responseURL = response.url();
-    
+
     // it's possible to have a response without a URL here
     // <rdar://problem/5454935>
     if (responseURL.isNull())
@@ -596,8 +596,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
     builder.append(documentTypeString(*document));
 
     Vector<Node*> nodeList;
-    auto serializeComposedTree = frame->settings().selectionAcrossShadowBoundariesEnabled() ? SerializeComposedTree::Yes : SerializeComposedTree::No;
-    builder.append(serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::No, serializeComposedTree, &nodeList));
+    builder.append(serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::No, SerializeComposedTree::Yes, &nodeList));
 
     auto archive = create(builder.toString(), *frame, nodeList, nullptr);
     if (!archive)
@@ -605,17 +604,13 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
 
     if (!document->isFrameSet())
         return archive;
-        
+
     // Wrap the frameset document in an iframe so it can be pasted into
     // another document (which will have a body or frameset of its own). 
     String iframeMarkup = "<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"" + frame->loader().documentLoader()->response().url().string() + "\"></iframe>";
     auto iframeResource = ArchiveResource::create(utf8Buffer(iframeMarkup), aboutBlankURL(), "text/html", "UTF-8", String());
 
-    Vector<Ref<LegacyWebArchive>> subframeArchives;
-    subframeArchives.reserveInitialCapacity(1);
-    subframeArchives.uncheckedAppend(archive.releaseNonNull());
-
-    return create(iframeResource.releaseNonNull(), { }, WTFMove(subframeArchives));
+    return create(iframeResource.releaseNonNull(), { }, { archive.releaseNonNull() });
 }
 
 }

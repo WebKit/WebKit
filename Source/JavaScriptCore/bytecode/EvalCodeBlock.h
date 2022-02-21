@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,14 +39,14 @@ public:
     DECLARE_INFO;
 
     template<typename, SubspaceAccess>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.codeBlockSpace.space;
+        return &vm.codeBlockSpace();
     }
 
     static EvalCodeBlock* create(VM& vm, CopyParsedBlockTag, EvalCodeBlock& other)
     {
-        EvalCodeBlock* instance = new (NotNull, allocateCell<EvalCodeBlock>(vm.heap))
+        EvalCodeBlock* instance = new (NotNull, allocateCell<EvalCodeBlock>(vm))
             EvalCodeBlock(vm, vm.evalCodeBlockStructure.get(), CopyParsedBlock, other);
         instance->finishCreation(vm, CopyParsedBlock, other);
         return instance;
@@ -54,7 +54,7 @@ public:
 
     static EvalCodeBlock* create(VM& vm, EvalExecutable* ownerExecutable, UnlinkedEvalCodeBlock* unlinkedCodeBlock, JSScope* scope)
     {
-        EvalCodeBlock* instance = new (NotNull, allocateCell<EvalCodeBlock>(vm.heap))
+        EvalCodeBlock* instance = new (NotNull, allocateCell<EvalCodeBlock>(vm))
             EvalCodeBlock(vm, vm.evalCodeBlockStructure.get(), ownerExecutable, unlinkedCodeBlock, scope);
         if (!instance->finishCreation(vm, ownerExecutable, unlinkedCodeBlock, scope))
             return nullptr;

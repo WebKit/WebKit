@@ -36,10 +36,10 @@ user_activation_test(async t => {
     request.onmerchantvalidation = event => {
         assert_equals(event.validationURL, "https://webkit.org/");
         event.complete({ });
-        assert_throws("InvalidStateError", () => event.complete({ }));
+        assert_throws_dom("InvalidStateError", () => event.complete({ }));
         request.abort();
     };
-    await promise_rejects(t, "AbortError", request.show());
+    await promise_rejects_dom(t, "AbortError", request.show());
 }, "Calling complete() twice throws an InvalidStateError.");
 
 user_activation_test(async t => {
@@ -50,9 +50,9 @@ user_activation_test(async t => {
     request.onmerchantvalidation = event => {
         assert_equals(event.validationURL, "https://webkit.org/");
         request.abort();
-        assert_throws("InvalidStateError", () => event.complete({ }));
+        assert_throws_dom("InvalidStateError", () => event.complete({ }));
     };
-    await promise_rejects(t, "AbortError", request.show());
+    await promise_rejects_dom(t, "AbortError", request.show());
 }, "Calling complete() after abort() throws an InvalidStateError.");
 
 user_activation_test(async t => {
@@ -64,7 +64,7 @@ user_activation_test(async t => {
         assert_equals(event.validationURL, "https://webkit.org/");
         event.complete(new Promise((resolve, reject) => reject()));
     };
-    await promise_rejects(t, "AbortError", request.show());
+    await promise_rejects_dom(t, "AbortError", request.show());
 }, "Calling complete() with a promise that is rejected aborts the request.");
 
 user_activation_test(async t => {
@@ -76,7 +76,7 @@ user_activation_test(async t => {
         assert_equals(event.validationURL, "https://webkit.org/");
         event.complete(new Promise(resolve => resolve(7)));
     };
-    await promise_rejects(t, new TypeError(), request.show());
+    await promise_rejects_js(t, TypeError, request.show());
 }, "Calling complete() with a number aborts the request with a TypeError.");
 
 user_activation_test(async t => {
@@ -88,7 +88,7 @@ user_activation_test(async t => {
         assert_equals(event.validationURL, "https://webkit.org/");
         event.complete(new Promise(resolve => resolve(undefined)));
     };
-    await promise_rejects(t, new TypeError(), request.show());
+    await promise_rejects_js(t, TypeError, request.show());
 }, "Calling complete() with undefined aborts the request with a TypeError.");
 
 user_activation_test(async t => {
@@ -100,7 +100,7 @@ user_activation_test(async t => {
         assert_equals(event.validationURL, "https://webkit.org/");
         event.complete(new Promise(resolve => resolve(null)));
     };
-    await promise_rejects(t, new TypeError(), request.show());
+    await promise_rejects_js(t, TypeError, request.show());
 }, "Calling complete() with null aborts the request with a TypeError.");
 
 user_activation_test(async t => {
@@ -112,7 +112,7 @@ user_activation_test(async t => {
         assert_equals(event.validationURL, "https://webkit.org/");
         event.complete(new Promise(resolve => resolve("")));
     };
-    await promise_rejects(t, new TypeError(), request.show());
+    await promise_rejects_js(t, TypeError, request.show());
 }, "Calling complete() with a string aborts the request with a TypeError.");
 
 user_activation_test(async t => {

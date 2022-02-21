@@ -23,22 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://immersive-web.github.io/webxr/#dictdef-xrreferencespaceeventinit
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
 ] dictionary XRReferenceSpaceEventInit : EventInit {
     required WebXRReferenceSpace referenceSpace;
-    WebXRRigidTransform transform;
+    WebXRRigidTransform? transform;
 };
 
+// https://immersive-web.github.io/webxr/#xrreferencespaceevent
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window
 ] interface XRReferenceSpaceEvent : Event {
     constructor(DOMString type, XRReferenceSpaceEventInit eventInitDict);
-
     [SameObject] readonly attribute WebXRReferenceSpace referenceSpace;
-    [SameObject] readonly attribute WebXRRigidTransform transform;
+    [SameObject] readonly attribute WebXRRigidTransform? transform;
 };

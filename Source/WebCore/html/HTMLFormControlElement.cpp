@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -40,6 +40,7 @@
 #include "HTMLLegendElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTextAreaElement.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "Quirks.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
@@ -72,7 +73,6 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_willValidate(true)
     , m_isValid(true)
     , m_wasChangedSinceLastFormControlChangeEvent(false)
-    , m_hasAutofocused(false)
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -100,7 +100,8 @@ String HTMLFormControlElement::formMethod() const
     auto& formMethodAttr = attributeWithoutSynchronization(formmethodAttr);
     if (formMethodAttr.isNull())
         return emptyString();
-    return FormSubmission::Attributes::methodString(FormSubmission::Attributes::parseMethodType(formMethodAttr));
+    bool dialogElementEnabled = document().settings().dialogElementEnabled();
+    return FormSubmission::Attributes::methodString(FormSubmission::Attributes::parseMethodType(formMethodAttr, dialogElementEnabled), dialogElementEnabled);
 }
 
 void HTMLFormControlElement::setFormMethod(const String& value)
@@ -143,10 +144,13 @@ bool HTMLFormControlElement::computeIsDisabledByFieldsetAncestor() const
 void HTMLFormControlElement::setAncestorDisabled(bool isDisabled)
 {
     ASSERT(computeIsDisabledByFieldsetAncestor() == isDisabled);
-    bool oldValue = m_disabledByAncestorFieldset;
+    if (m_disabledByAncestorFieldset == isDisabled)
+        return;
+
+    Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClassDisabled, isDisabled }, { CSSSelector::PseudoClassEnabled, !isDisabled } });
+
     m_disabledByAncestorFieldset = isDisabled;
-    if (oldValue != m_disabledByAncestorFieldset)
-        disabledStateChanged();
+    disabledStateChanged();
 }
 
 void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -155,10 +159,12 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
         formAttributeChanged();
     else if (name == disabledAttr) {
         if (canBeActuallyDisabled()) {
-            bool oldDisabled = m_disabled;
-            m_disabled = !value.isNull();
-            if (oldDisabled != m_disabled)
+            bool newDisabled = !value.isNull();
+            if (m_disabled != newDisabled) {
+                Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClassDisabled, newDisabled }, { CSSSelector::PseudoClassEnabled, !newDisabled } });
+                m_disabled = newDisabled;
                 disabledAttributeChanged();
+            }
         }
     } else if (name == readonlyAttr) {
         bool wasReadOnly = m_isReadOnly;
@@ -182,8 +188,7 @@ void HTMLFormControlElement::disabledAttributeChanged()
 void HTMLFormControlElement::disabledStateChanged()
 {
     updateWillValidateAndValidity();
-    invalidateStyleForSubtree();
-    if (renderer() && renderer()->style().hasAppearance())
+    if (renderer() && renderer()->style().hasEffectiveAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
 }
 
@@ -201,45 +206,6 @@ void HTMLFormControlElement::requiredStateChanged()
     invalidateStyleForSubtree();
 }
 
-static bool shouldAutofocus(HTMLFormControlElement* element)
-{
-    if (!element->renderer())
-        return false;
-    if (!element->hasAttributeWithoutSynchronization(autofocusAttr))
-        return false;
-    if (!element->isConnected() || !element->document().renderView())
-        return false;
-    if (element->document().isSandboxed(SandboxAutomaticFeatures)) {
-        // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
-        element->document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control because the form's frame is sandboxed and the 'allow-scripts' permission is not set."_s);
-        return false;
-    }
-
-    auto& document = element->document();
-    if (!document.frame()->isMainFrame() && !document.topDocument().securityOrigin().isSameOriginDomain(document.securityOrigin())) {
-        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked autofocusing on a form control in a cross-origin subframe."_s);
-        return false;
-    }
-
-    if (element->hasAutofocused())
-        return false;
-
-    // FIXME: Should this set of hasTagName checks be replaced by a
-    // virtual member function?
-    if (is<HTMLInputElement>(*element))
-        return !downcast<HTMLInputElement>(*element).isInputTypeHidden();
-    if (element->hasTagName(selectTag))
-        return true;
-    if (element->hasTagName(keygenTag))
-        return true;
-    if (element->hasTagName(buttonTag))
-        return true;
-    if (is<HTMLTextAreaElement>(*element))
-        return true;
-
-    return false;
-}
-
 void HTMLFormControlElement::didAttachRenderers()
 {
     // The call to updateFromElement() needs to go after the call through
@@ -247,22 +213,6 @@ void HTMLFormControlElement::didAttachRenderers()
     // on the renderer.
     if (renderer())
         renderer()->updateFromElement();
-
-    if (shouldAutofocus(this)) {
-        setAutofocused();
-
-        RefPtr<HTMLFormControlElement> element = this;
-        auto frameView = makeRefPtr(document().view());
-        if (frameView && frameView->layoutContext().isInLayout()) {
-            frameView->queuePostLayoutCallback([element] {
-                element->focus({ SelectionRestorationMode::PlaceCaretAtStart });
-            });
-        } else {
-            Style::queuePostResolutionCallback([element] {
-                element->focus({ SelectionRestorationMode::PlaceCaretAtStart });
-            });
-        }
-    }
 }
 
 void HTMLFormControlElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
@@ -301,6 +251,7 @@ Node::InsertedIntoAncestorResult HTMLFormControlElement::insertedIntoAncestor(In
         setAncestorDisabled(computeIsDisabledByFieldsetAncestor());
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     FormAssociatedElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
 
@@ -355,18 +306,13 @@ void HTMLFormControlElement::dispatchFormControlInputEvent()
     dispatchInputEvent();
 }
 
-bool HTMLFormControlElement::isRequired() const
-{
-    return m_isRequired;
-}
-
 void HTMLFormControlElement::didRecalcStyle(Style::Change)
 {
     // updateFromElement() can cause the selection to change, and in turn
     // trigger synchronous layout, so it must not be called during style recalc.
     if (renderer()) {
         RefPtr<HTMLFormControlElement> element = this;
-        Style::queuePostResolutionCallback([element]{
+        Style::deprecatedQueuePostResolutionCallback([element] {
             if (auto* renderer = element->renderer())
                 renderer->updateFromElement();
         });
@@ -394,6 +340,11 @@ bool HTMLFormControlElement::isMouseFocusable() const
         return HTMLElement::isMouseFocusable();
     return false;
 #endif
+}
+
+void HTMLFormControlElement::runFocusingStepsForAutofocus()
+{
+    focus({ SelectionRestorationMode::PlaceCaretAtStart });
 }
 
 bool HTMLFormControlElement::matchesValidPseudoClass() const
@@ -454,7 +405,6 @@ void HTMLFormControlElement::updateWillValidateAndValidity()
     m_willValidate = newWillValidate;
 
     updateValidity();
-    invalidateStyleForSubtree();
 
     if (!m_willValidate && !wasValid) {
         removeInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
@@ -523,6 +473,7 @@ bool HTMLFormControlElement::reportValidity()
     document().updateLayoutIgnorePendingStylesheets();
 
     if (isConnected() && isFocusable()) {
+        Ref protectedThis { *this };
         focusAndShowValidationMessage();
         return false;
     }
@@ -545,16 +496,13 @@ void HTMLFormControlElement::focusAndShowValidationMessage()
     // focus() will scroll the element into view and this scroll may happen asynchronously.
     // Because scrolling the view hides the validation message, we need to show the validation
     // message asynchronously as well.
-    callOnMainThread([this, protectedThis = makeRef(*this)] {
+    callOnMainThread([this, protectedThis = Ref { *this }] {
         updateVisibleValidationMessage();
     });
 }
 
 inline bool HTMLFormControlElement::isValidFormControlElement() const
 {
-    // If the following assertion fails, updateValidity() is not called
-    // correctly when something which changes validity is updated.
-    ASSERT(m_isValid == isValid());
     return m_isValid;
 }
 
@@ -582,28 +530,29 @@ void HTMLFormControlElement::updateValidity()
         return;
 
     bool willValidate = this->willValidate();
-    bool wasValid = m_isValid;
+    bool newIsValid = this->computeValidity();
 
-    m_isValid = isValid();
+    if (newIsValid != m_isValid) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, { { CSSSelector::PseudoClassValid, newIsValid }, { CSSSelector::PseudoClassInvalid, !newIsValid } });
 
-    if (willValidate && m_isValid != wasValid) {
-        // Update style for pseudo classes such as :valid :invalid.
-        invalidateStyleForSubtree();
+        m_isValid = newIsValid;
 
-        if (!m_isValid) {
-            if (isConnected())
-                addInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
-            if (HTMLFormElement* form = this->form())
-                form->registerInvalidAssociatedFormControl(*this);
-        } else {
-            if (isConnected())
-                removeInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
-            if (HTMLFormElement* form = this->form())
-                form->removeInvalidAssociatedFormControlIfNeeded(*this);
+        if (willValidate) {
+            if (!m_isValid) {
+                if (isConnected())
+                    addInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
+                if (HTMLFormElement* form = this->form())
+                    form->registerInvalidAssociatedFormControl(*this);
+            } else {
+                if (isConnected())
+                    removeInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
+                if (HTMLFormElement* form = this->form())
+                    form->removeInvalidAssociatedFormControlIfNeeded(*this);
+            }
         }
     }
 
-    // Updates only if this control already has a validtion message.
+    // Updates only if this control already has a validation message.
     if (m_validationMessage && m_validationMessage->isVisible()) {
         // Calls updateVisibleValidationMessage() even if m_isValid is not
         // changed because a validation message can be chagned.
@@ -680,6 +629,11 @@ AutofillData HTMLFormControlElement::autofillData() const
     // owner's autocomplete attribute changed or the form owner itself changed.
 
     return AutofillData::createFromHTMLFormControlElement(*this);
+}
+
+String HTMLFormControlElement::resultForDialogSubmit() const
+{
+    return attributeWithoutSynchronization(HTMLNames::valueAttr);
 }
 
 // FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.

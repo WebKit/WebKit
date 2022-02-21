@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include "ISO8601.h"
 #include "IntlObject.h"
 #include "JSObject.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace JSC {
 
@@ -36,7 +37,7 @@ public:
     using Base = JSNonFinalObject;
 
     template<typename CellType, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
         return vm.temporalTimeZoneSpace<mode>();
     }
@@ -47,10 +48,9 @@ public:
 
     DECLARE_INFO;
 
-    using TimeZone = Variant<TimeZoneID, int64_t>;
-    TimeZone timeZone() const { return m_timeZone; }
+    using TimeZone = ISO8601::TimeZone;
 
-    static std::optional<TimeZoneID> idForTimeZoneName(StringView);
+    TimeZone timeZone() const { return m_timeZone; }
 
     static JSObject* from(JSGlobalObject*, JSValue);
 

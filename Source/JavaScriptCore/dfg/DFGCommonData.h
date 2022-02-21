@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,8 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "BaselineJITCode.h"
+#include "CallLinkInfo.h"
 #include "CodeBlockJettisoningWatchpoint.h"
 #include "DFGAdaptiveInferredPropertyValueWatchpoint.h"
 #include "DFGAdaptiveStructureWatchpoint.h"
@@ -34,9 +36,13 @@
 #include "DFGJumpReplacement.h"
 #include "DFGOSREntry.h"
 #include "InlineCallFrameSet.h"
+#include "JITMathIC.h"
 #include "JSCast.h"
+#include "PCToCodeOriginMap.h"
 #include "ProfilerCompilation.h"
 #include "RecordedStatuses.h"
+#include "StructureStubInfo.h"
+#include "YarrJIT.h"
 #include <wtf/Bag.h>
 #include <wtf/Noncopyable.h>
 
@@ -70,7 +76,7 @@ struct WeakReferenceTransition {
     WriteBarrier<JSCell> m_to;
 };
         
-class CommonData {
+class CommonData : public MathICHolder {
     WTF_MAKE_NONCOPYABLE(CommonData);
 public:
     CommonData()
@@ -105,6 +111,11 @@ public:
     
     void clearWatchpoints();
 
+    OptimizingCallLinkInfo* addCallLinkInfo(CodeOrigin codeOrigin)
+    {
+        return m_callLinkInfos.add(codeOrigin);
+    }
+
     RefPtr<InlineCallFrameSet> inlineCallFrames;
     Ref<CodeOriginPool> codeOrigins;
     
@@ -116,8 +127,12 @@ public:
     FixedVector<CodeBlockJettisoningWatchpoint> m_watchpoints;
     FixedVector<AdaptiveStructureWatchpoint> m_adaptiveStructureWatchpoints;
     FixedVector<AdaptiveInferredPropertyValueWatchpoint> m_adaptiveInferredPropertyValueWatchpoints;
+    std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
     RecordedStatuses recordedStatuses;
     Vector<JumpReplacement> m_jumpReplacements;
+    Bag<StructureStubInfo> m_stubInfos;
+    Bag<OptimizingCallLinkInfo> m_callLinkInfos;
+    Yarr::YarrBoyerMoyerData m_boyerMooreData;
     
     ScratchBuffer* catchOSREntryBuffer;
     RefPtr<Profiler::Compilation> compilation;
@@ -125,7 +140,7 @@ public:
     bool hasVMTrapsBreakpointsInstalled { false };
     
 #if USE(JSVALUE32_64)
-    std::unique_ptr<Bag<double>> doubleConstants;
+    Bag<double> doubleConstants;
 #endif
     
     unsigned frameRegisterCount { std::numeric_limits<unsigned>::max() };

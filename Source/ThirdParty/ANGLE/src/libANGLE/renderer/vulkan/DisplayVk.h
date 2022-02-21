@@ -12,19 +12,21 @@
 
 #include "common/MemoryBuffer.h"
 #include "libANGLE/renderer/DisplayImpl.h"
+#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
+#include "libANGLE/renderer/vulkan/vk_helpers.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 namespace rx
 {
 class RendererVk;
 
-using ShareContextSet = std::set<ContextVk *>;
+using ContextVkSet = std::set<ContextVk *>;
 
 class ShareGroupVk : public ShareGroupImpl
 {
   public:
-    ShareGroupVk() {}
+    ShareGroupVk();
     void onDestroy(const egl::Display *display) override;
 
     // PipelineLayoutCache and DescriptorSetLayoutCache can be shared between multiple threads
@@ -32,7 +34,20 @@ class ShareGroupVk : public ShareGroupImpl
     // synchronous update to the caches.
     PipelineLayoutCache &getPipelineLayoutCache() { return mPipelineLayoutCache; }
     DescriptorSetLayoutCache &getDescriptorSetLayoutCache() { return mDescriptorSetLayoutCache; }
-    ShareContextSet *getShareContextSet() { return &mShareContextSet; }
+    ContextVkSet *getContexts() { return &mContexts; }
+
+    std::vector<vk::ResourceUseList> &&releaseResourceUseLists()
+    {
+        return std::move(mResourceUseLists);
+    }
+    void acquireResourceUseList(vk::ResourceUseList &&resourceUseList)
+    {
+        mResourceUseLists.emplace_back(std::move(resourceUseList));
+    }
+
+    vk::BufferPool *getDefaultBufferPool(RendererVk *renderer, uint32_t memoryTypeIndex);
+    void pruneDefaultBufferPools(RendererVk *renderer);
+    bool isDueForBufferPoolPrune();
 
   private:
     // ANGLE uses a PipelineLayout cache to store compatible pipeline layouts.
@@ -42,7 +57,16 @@ class ShareGroupVk : public ShareGroupImpl
     DescriptorSetLayoutCache mDescriptorSetLayoutCache;
 
     // The list of contexts within the share group
-    ShareContextSet mShareContextSet;
+    ContextVkSet mContexts;
+
+    // List of resources currently used that need to be freed when any ContextVk in this
+    // ShareGroupVk submits the next command.
+    std::vector<vk::ResourceUseList> mResourceUseLists;
+
+    // The per shared group buffer pools that all buffers should sub-allocate from.
+    vk::BufferPoolPointerArray mDefaultBufferPools;
+    // The system time when last pruneEmptyBuffer gets called.
+    double mLastPruneTime;
 };
 
 class DisplayVk : public DisplayImpl, public vk::Context
@@ -62,7 +86,9 @@ class DisplayVk : public DisplayImpl, public vk::Context
     bool testDeviceLost() override;
     egl::Error restoreLostDevice(const egl::Display *display) override;
 
-    std::string getVendorString() const override;
+    std::string getRendererDescription() override;
+    std::string getVendorString() override;
+    std::string getVersionString() override;
 
     DeviceImpl *createDevice() override;
 
@@ -101,8 +127,17 @@ class DisplayVk : public DisplayImpl, public vk::Context
     gl::Version getMaxSupportedESVersion() const override;
     gl::Version getMaxConformantESVersion() const override;
 
+    egl::Error validateImageClientBuffer(const gl::Context *context,
+                                         EGLenum target,
+                                         EGLClientBuffer clientBuffer,
+                                         const egl::AttributeMap &attribs) const override;
+    ExternalImageSiblingImpl *createExternalImageSibling(const gl::Context *context,
+                                                         EGLenum target,
+                                                         EGLClientBuffer buffer,
+                                                         const egl::AttributeMap &attribs) override;
     virtual const char *getWSIExtension() const = 0;
     virtual const char *getWSILayer() const;
+    virtual bool isUsingSwapchain() const;
 
     // Determine if a config with given formats and sample counts is supported.  This callback may
     // modify the config to add or remove platform specific attributes such as nativeVisualID.  If

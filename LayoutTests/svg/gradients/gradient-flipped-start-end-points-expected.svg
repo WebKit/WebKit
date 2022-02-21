@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="repeat-gradient" x1="0" y1="0" x2="0.5" y2="0" spreadMethod="repeat">
+            <stop offset="0%" stop-color="green"/>
+            <stop offset="50%" stop-color="green"/>
+            <stop offset="50%" stop-color="blue"/>
+            <stop offset="100%" stop-color="blue"/>
+        </linearGradient>
+        <linearGradient id="reflect-gradient" x1="0" y1="0" x2="0.5" y2="0" spreadMethod="reflect">
+            <stop offset="0%" stop-color="blue"/>
+            <stop offset="50%" stop-color="blue"/>
+            <stop offset="50%" stop-color="green"/>
+            <stop offset="100%" stop-color="green"/>
+        </linearGradient>
+    </defs>
+    <rect fill="url(#repeat-gradient)" width="100" height="100"/>
+    <rect fill="url(#reflect-gradient)" x="110" width="100" height="100"/>
+</svg>

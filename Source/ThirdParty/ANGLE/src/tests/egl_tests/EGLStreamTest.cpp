@@ -9,6 +9,7 @@
 
 #include <gtest/gtest.h>
 
+#include <d3d11.h>
 #include <vector>
 
 #include "media/yuvtest.inl"

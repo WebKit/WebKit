@@ -29,10 +29,13 @@
 
 #include "RemoteMediaResourceIdentifier.h"
 #include <WebCore/PlatformMediaResourceLoader.h>
+#include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class NetworkLoadMetrics;
+class FragmentedSharedBuffer;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -55,7 +58,7 @@ public:
     void responseReceived(const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);
     void redirectReceived(WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void dataSent(uint64_t, uint64_t);
-    void dataReceived(const uint8_t*, int64_t);
+    void dataReceived(const WebCore::SharedBuffer&);
     void accessControlCheckFailed(const WebCore::ResourceError&);
     void loadFailed(const WebCore::ResourceError&);
     void loadFinished(const WebCore::NetworkLoadMetrics&);

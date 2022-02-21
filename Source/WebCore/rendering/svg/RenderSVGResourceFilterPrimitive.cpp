@@ -28,9 +28,9 @@
 #include "config.h"
 #include "RenderSVGResourceFilterPrimitive.h"
 
+#include "SVGElementTypeHelpers.h"
 #include "SVGFEDiffuseLightingElement.h"
 #include "SVGFEFloodElement.h"
-#include "SVGFEImage.h"
 #include "SVGFESpecularLightingElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"

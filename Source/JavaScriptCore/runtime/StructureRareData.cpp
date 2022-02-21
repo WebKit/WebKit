@@ -48,7 +48,7 @@ Structure* StructureRareData::createStructure(VM& vm, JSGlobalObject* globalObje
 
 StructureRareData* StructureRareData::create(VM& vm, Structure* previous)
 {
-    StructureRareData* rareData = new (NotNull, allocateCell<StructureRareData>(vm.heap)) StructureRareData(vm, previous);
+    StructureRareData* rareData = new (NotNull, allocateCell<StructureRareData>(vm)) StructureRareData(vm, previous);
     rareData->finishCreation(vm);
     return rareData;
 }
@@ -60,11 +60,10 @@ void StructureRareData::destroy(JSCell* cell)
 
 StructureRareData::StructureRareData(VM& vm, Structure* previous)
     : JSCell(vm, vm.structureRareDataStructure.get())
+    , m_previous(vm, this, previous, WriteBarrierStructureID::MayBeNull)
     , m_maxOffset(invalidOffset)
     , m_transitionOffset(invalidOffset)
 {
-    if (previous)
-        m_previous.set(vm, this, previous);
 }
 
 template<typename Visitor>
@@ -79,7 +78,7 @@ void StructureRareData::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         for (unsigned index = 0; index < numberOfCachedSpecialPropertyKeys; ++index)
             visitor.appendUnbarriered(thisObject->cachedSpecialProperty(static_cast<CachedSpecialPropertyKey>(index)));
     }
-    visitor.append(thisObject->m_cachedPropertyNameEnumerator);
+    visitor.appendUnbarriered(thisObject->cachedPropertyNameEnumerator());
     for (unsigned index = 0; index < numberOfCachedPropertyNames; ++index) {
         auto* cached = thisObject->m_cachedPropertyNames[index].unvalidatedGet();
         if (cached != cachedPropertyNamesSentinel())
@@ -135,6 +134,9 @@ void StructureRareData::cacheSpecialPropertySlow(JSGlobalObject* globalObject, V
         break;
     case CachedSpecialPropertyKey::ToPrimitive:
         uid = vm.propertyNames->toPrimitiveSymbol.impl();
+        break;
+    case CachedSpecialPropertyKey::ToJSON:
+        uid = vm.propertyNames->toJSON.impl();
         break;
     }
 
@@ -268,6 +270,8 @@ void CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::handleFire(VM
         key = CachedSpecialPropertyKey::ToString;
     else if (this->key().uid() == vm.propertyNames->valueOf.impl())
         key = CachedSpecialPropertyKey::ValueOf;
+    else if (this->key().uid() == vm.propertyNames->toJSON.impl())
+        key = CachedSpecialPropertyKey::ToJSON;
     else {
         ASSERT(this->key().uid() == vm.propertyNames->toPrimitiveSymbol.impl());
         key = CachedSpecialPropertyKey::ToPrimitive;

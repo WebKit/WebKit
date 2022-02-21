@@ -42,6 +42,7 @@ class HTMLMapElement;
 
 struct ImageCandidate;
 
+enum class ReferrerPolicy : uint8_t;
 enum class RelevantMutation : bool;
 
 class HTMLImageElement : public HTMLElement, public FormNamedItem {
@@ -115,6 +116,10 @@ public:
 
     const AtomString& imageSourceURL() const override;
     
+#if ENABLE(SERVICE_CONTROLS)
+    bool imageMenuEnabled() const { return m_imageMenuEnabled; }
+#endif
+
     HTMLPictureElement* pictureElement() const;
     void setPictureElement(HTMLPictureElement*);
 
@@ -142,6 +147,10 @@ public:
     ReferrerPolicy referrerPolicy() const;
 
     bool allowsOrientationOverride() const;
+    
+#if ENABLE(SERVICE_CONTROLS)
+    WEBCORE_EXPORT bool hasImageControls() const;
+#endif
 
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = nullptr);
@@ -187,6 +196,13 @@ private:
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
     float effectiveImageDevicePixelRatio() const;
+    
+#if ENABLE(SERVICE_CONTROLS)
+    void updateImageControls();
+    void tryCreateImageControls();
+    void destroyImageControls();
+    bool childShouldCreateRenderer(const Node&) const override;
+#endif
 
     HTMLSourceElement* sourceElement() const;
     void setSourceElement(HTMLSourceElement*);
@@ -200,6 +216,9 @@ private:
     AtomString m_currentSrc;
     AtomString m_parsedUsemap;
     float m_imageDevicePixelRatio;
+#if ENABLE(SERVICE_CONTROLS)
+    bool m_imageMenuEnabled { false };
+#endif
     bool m_hadNameBeforeAttributeChanged { false }; // FIXME: We only need this because parseAttribute() can't see the old value.
     bool m_isDroppedImagePlaceholder { false };
 

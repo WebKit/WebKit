@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include <wtf/ApproximateTime.h>
 #include <wtf/ClockType.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
@@ -46,6 +47,12 @@ std::basic_ostream<char>& operator<<(std::basic_ostream<char>& out, WallTime val
 }
 
 std::basic_ostream<char>& operator<<(std::basic_ostream<char>& out, MonotonicTime value)
+{
+    out << toCString(value).data();
+    return out;
+}
+
+std::basic_ostream<char>& operator<<(std::basic_ostream<char>& out, ApproximateTime value)
 {
     out << toCString(value).data();
     return out;
@@ -76,6 +83,11 @@ WallTime wt(double value)
 MonotonicTime mt(double value)
 {
     return MonotonicTime::fromRawSeconds(value);
+}
+
+ApproximateTime at(double value)
+{
+    return ApproximateTime::fromRawSeconds(value);
 }
 
 TimeWithDynamicClockType dt(double value, ClockType type)
@@ -121,6 +133,10 @@ TEST(WTF_Time, plus)
     EXPECT_EQ(mt(6), s(5) + mt(1));
     EXPECT_EQ(mt(6), mt(1) + s(5));
     EXPECT_EQ(mt(6), mt(5) + s(1));
+    EXPECT_EQ(at(6), s(1) + at(5));
+    EXPECT_EQ(at(6), s(5) + at(1));
+    EXPECT_EQ(at(6), at(1) + s(5));
+    EXPECT_EQ(at(6), at(5) + s(1));
     EXPECT_EQ(dtw(6), s(1) + dtw(5));
     EXPECT_EQ(dtw(6), s(5) + dtw(1));
     EXPECT_EQ(dtw(6), dtw(1) + s(5));
@@ -143,6 +159,10 @@ TEST(WTF_Time, minus)
     EXPECT_EQ(mt(4), s(5) - mt(1));
     EXPECT_EQ(mt(-4), mt(1) - s(5));
     EXPECT_EQ(mt(4), mt(5) - s(1));
+    EXPECT_EQ(at(-4), s(1) - at(5));
+    EXPECT_EQ(at(4), s(5) - at(1));
+    EXPECT_EQ(at(-4), at(1) - s(5));
+    EXPECT_EQ(at(4), at(5) - s(1));
     EXPECT_EQ(dtw(-4), s(1) - dtw(5));
     EXPECT_EQ(dtw(4), s(5) - dtw(1));
     EXPECT_EQ(dtw(-4), dtw(1) - s(5));
@@ -161,6 +181,8 @@ TEST(WTF_Time, negate)
     EXPECT_EQ(wt(7), -wt(-7));
     EXPECT_EQ(mt(-7), -mt(7));
     EXPECT_EQ(mt(7), -mt(-7));
+    EXPECT_EQ(at(-7), -at(7));
+    EXPECT_EQ(at(7), -at(-7));
     EXPECT_EQ(dtw(-7), -dtw(7));
     EXPECT_EQ(dtw(7), -dtw(-7));
     EXPECT_EQ(dtm(-7), -dtm(7));
@@ -188,6 +210,9 @@ TEST(WTF_Time, less)
     EXPECT_FALSE(mt(2) < mt(1));
     EXPECT_FALSE(mt(2) < mt(2));
     EXPECT_TRUE(mt(2) < mt(3));
+    EXPECT_FALSE(at(2) < at(1));
+    EXPECT_FALSE(at(2) < at(2));
+    EXPECT_TRUE(at(2) < at(3));
     EXPECT_FALSE(dtw(2) < dtw(1));
     EXPECT_FALSE(dtw(2) < dtw(2));
     EXPECT_TRUE(dtw(2) < dtw(3));
@@ -207,6 +232,9 @@ TEST(WTF_Time, lessEqual)
     EXPECT_FALSE(mt(2) <= mt(1));
     EXPECT_TRUE(mt(2) <= mt(2));
     EXPECT_TRUE(mt(2) <= mt(3));
+    EXPECT_FALSE(at(2) <= at(1));
+    EXPECT_TRUE(at(2) <= at(2));
+    EXPECT_TRUE(at(2) <= at(3));
     EXPECT_FALSE(dtw(2) <= dtw(1));
     EXPECT_TRUE(dtw(2) <= dtw(2));
     EXPECT_TRUE(dtw(2) <= dtw(3));
@@ -226,6 +254,9 @@ TEST(WTF_Time, greater)
     EXPECT_TRUE(mt(2) > mt(1));
     EXPECT_FALSE(mt(2) > mt(2));
     EXPECT_FALSE(mt(2) > mt(3));
+    EXPECT_TRUE(at(2) > at(1));
+    EXPECT_FALSE(at(2) > at(2));
+    EXPECT_FALSE(at(2) > at(3));
     EXPECT_TRUE(dtw(2) > dtw(1));
     EXPECT_FALSE(dtw(2) > dtw(2));
     EXPECT_FALSE(dtw(2) > dtw(3));
@@ -245,6 +276,9 @@ TEST(WTF_Time, greaterEqual)
     EXPECT_TRUE(mt(2) >= mt(1));
     EXPECT_TRUE(mt(2) >= mt(2));
     EXPECT_FALSE(mt(2) >= mt(3));
+    EXPECT_TRUE(at(2) >= at(1));
+    EXPECT_TRUE(at(2) >= at(2));
+    EXPECT_FALSE(at(2) >= at(3));
     EXPECT_TRUE(dtw(2) >= dtw(1));
     EXPECT_TRUE(dtw(2) >= dtw(2));
     EXPECT_FALSE(dtw(2) >= dtw(3));
@@ -264,6 +298,9 @@ TEST(WTF_Time, equal)
     EXPECT_FALSE(mt(2) == mt(1));
     EXPECT_TRUE(mt(2) == mt(2));
     EXPECT_FALSE(mt(2) == mt(3));
+    EXPECT_FALSE(at(2) == at(1));
+    EXPECT_TRUE(at(2) == at(2));
+    EXPECT_FALSE(at(2) == at(3));
     EXPECT_FALSE(dtw(2) == dtw(1));
     EXPECT_TRUE(dtw(2) == dtw(2));
     EXPECT_FALSE(dtw(2) == dtw(3));
@@ -283,6 +320,9 @@ TEST(WTF_Time, notEqual)
     EXPECT_TRUE(mt(2) != mt(1));
     EXPECT_FALSE(mt(2) != mt(2));
     EXPECT_TRUE(mt(2) != mt(3));
+    EXPECT_TRUE(at(2) != at(1));
+    EXPECT_FALSE(at(2) != at(2));
+    EXPECT_TRUE(at(2) != at(3));
     EXPECT_TRUE(dtw(2) != dtw(1));
     EXPECT_FALSE(dtw(2) != dtw(2));
     EXPECT_TRUE(dtw(2) != dtw(3));

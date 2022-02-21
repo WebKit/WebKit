@@ -30,26 +30,26 @@ promise_test(() => {
 
 promise_test((test) => {
     return closedConnection().then((connection) => {
-        return promise_rejects(test, 'InvalidStateError', connection.createOffer());
+        return promise_rejects_dom(test, 'InvalidStateError', connection.createOffer());
     });
 }, "Ensuring closed connection createOffer does not crash");
 
 promise_test(() => {
     return closedConnection().then((connection) => {
-        assert_throws("InvalidStateError", () => {  connection.createDataChannel("test"); });
+        assert_throws_dom("InvalidStateError", () => {  connection.createDataChannel("test"); });
     });
 }, "Ensuring closed connection createDataChannel does not crash");
 
 promise_test(() => {
     return closedConnection().then((connection) => {
-        assert_throws("InvalidStateError", () => { connection.addTransceiver("video"); });
+        assert_throws_dom("InvalidStateError", () => { connection.addTransceiver("video"); });
     });
 }, "Ensuring closed connection addTransceiver does not crash");
 
 promise_test(() => {
     return closedConnection().then((connection) => {
         return navigator.mediaDevices.getUserMedia({video: true}).then((stream) => {
-            assert_throws("InvalidStateError", () => { connection.addTrack(stream.getVideoTracks()[0], stream); });
+            assert_throws_dom("InvalidStateError", () => { connection.addTrack(stream.getVideoTracks()[0], stream); });
         });
     });
 }, "Ensuring closed connection addTrack does not crash");
@@ -62,7 +62,7 @@ promise_test((test) => {
         pc2.createDataChannel("test");
         return pc2.createOffer();
     }).then((sdp) => {
-        return promise_rejects(test, 'InvalidStateError', connection.setRemoteDescription(sdp));
+        return promise_rejects_dom(test, 'InvalidStateError', connection.setRemoteDescription(sdp));
     });
 }, "Ensuring closed connection setRemoteDescription does not crash");
 
@@ -74,7 +74,7 @@ promise_test((test) => {
             setTimeout(() => resolve(sdp), 100);
         });
     }).then((sdp) => {
-        return promise_rejects(test, 'InvalidStateError', localConnection.setLocalDescription(sdp));
+        return promise_rejects_dom(test, 'InvalidStateError', localConnection.setLocalDescription(sdp));
     });
 }, "Ensuring closed connection setLocalDescription does not crash");
 
@@ -87,7 +87,7 @@ promise_test((test) => {
     }).then(() => {
         localConnection.close();
     }).then(() => {
-        return promise_rejects(test, 'InvalidStateError', localConnection.createAnswer());
+        return promise_rejects_dom(test, 'InvalidStateError', localConnection.createAnswer());
     });
 }, "Ensuring closed connection createAnswer does not crash");
 

@@ -43,37 +43,42 @@ namespace WebCore {
 
 CachedRawResource::CachedRawResource(CachedResourceRequest&& request, Type type, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(WTFMove(request), type, sessionID, cookieJar)
-    , m_identifier(0)
     , m_allowEncodedDataReplacement(true)
 {
     ASSERT(isMainOrMediaOrIconOrRawResource());
 }
 
-std::optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataChunk(const SharedBuffer* data) const
+std::optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataChunk(const FragmentedSharedBuffer& data) const
 {
     size_t previousDataLength = encodedSize();
-    if (!data || data->size() <= previousDataLength)
+    if (data.size() <= previousDataLength)
         return std::nullopt;
-    return data->getSomeData(previousDataLength);
+    return data.getSomeData(previousDataLength);
 }
 
-void CachedRawResource::updateBuffer(SharedBuffer& data)
+void CachedRawResource::updateBuffer(const FragmentedSharedBuffer& data)
 {
     // Skip any updateBuffers triggered from nested runloops. We'll have the complete buffer in finishLoading.
     if (m_inIncrementalDataNotify)
         return;
 
+    // We need to keep a strong reference to both the SharedBuffer and the current CachedRawResource instance
+    // as notifyClientsDataWasReceived call may delete both.
     CachedResourceHandle<CachedRawResource> protectedThis(this);
-    ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
-    m_data = &data;
+    auto protectedData = Ref { data };
 
+    ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
+    // While m_data is immutable, we need to drop the const, this will be removed in bug 236736.
+    m_data = const_cast<FragmentedSharedBuffer*>(&data);
+
+    // Notify clients only of the newly appended content since the last run.
     auto previousDataSize = encodedSize();
     while (data.size() > previousDataSize) {
         auto incrementalData = data.getSomeData(previousDataSize);
         previousDataSize += incrementalData.size();
 
         SetForScope<bool> notifyScope(m_inIncrementalDataNotify, true);
-        notifyClientsDataWasReceived(incrementalData.data(), incrementalData.size());
+        notifyClientsDataWasReceived(incrementalData.createSharedBuffer());
     }
     setEncodedSize(data.size());
 
@@ -82,7 +87,7 @@ void CachedRawResource::updateBuffer(SharedBuffer& data)
             m_loader->setDataBufferingPolicy(DataBufferingPolicy::DoNotBufferData);
         clear();
     } else
-        CachedResource::updateBuffer(data);
+        CachedResource::updateBuffer(*m_data);
 
     if (m_delayedFinishLoading) {
         auto delayedFinishLoading = std::exchange(m_delayedFinishLoading, std::nullopt);
@@ -90,14 +95,14 @@ void CachedRawResource::updateBuffer(SharedBuffer& data)
     }
 }
 
-void CachedRawResource::updateData(const uint8_t* data, unsigned length)
+void CachedRawResource::updateData(const SharedBuffer& buffer)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData);
-    notifyClientsDataWasReceived(data, length);
-    CachedResource::updateData(data, length);
+    notifyClientsDataWasReceived(buffer);
+    CachedResource::updateData(buffer);
 }
 
-void CachedRawResource::finishLoading(SharedBuffer* data, const NetworkLoadMetrics& metrics)
+void CachedRawResource::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (m_inIncrementalDataNotify) {
         // We may get here synchronously from updateBuffer() if the callback there ends up spinning a runloop.
@@ -108,11 +113,12 @@ void CachedRawResource::finishLoading(SharedBuffer* data, const NetworkLoadMetri
     CachedResourceHandle<CachedRawResource> protectedThis(this);
     DataBufferingPolicy dataBufferingPolicy = this->dataBufferingPolicy();
     if (dataBufferingPolicy == DataBufferingPolicy::BufferData) {
-        m_data = data;
-
-        if (auto incrementalData = calculateIncrementalDataChunk(data)) {
-            setEncodedSize(data->size());
-            notifyClientsDataWasReceived(incrementalData->data(), incrementalData->size());
+        m_data = const_cast<FragmentedSharedBuffer*>(data);
+        if (data) {
+            if (auto incrementalData = calculateIncrementalDataChunk(*data)) {
+                setEncodedSize(data->size());
+                notifyClientsDataWasReceived(incrementalData->createSharedBuffer());
+            }
         }
     }
 
@@ -128,15 +134,15 @@ void CachedRawResource::finishLoading(SharedBuffer* data, const NetworkLoadMetri
     }
 }
 
-void CachedRawResource::notifyClientsDataWasReceived(const uint8_t* data, unsigned length)
+void CachedRawResource::notifyClientsDataWasReceived(const SharedBuffer& buffer)
 {
-    if (!length)
+    if (buffer.isEmpty())
         return;
 
     CachedResourceHandle<CachedRawResource> protectedThis(this);
     CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
     while (CachedRawResourceClient* c = w.next())
-        c->dataReceived(*this, data, length);
+        c->dataReceived(*this, buffer);
 }
 
 static void iterateRedirects(CachedResourceHandle<CachedRawResource>&& handle, CachedRawResourceClient& client, Vector<std::pair<ResourceRequest, ResourceResponse>>&& redirectsInReverseOrder, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -167,10 +173,10 @@ void CachedRawResource::didAddClient(CachedResourceClient& c)
         auto responseProcessedHandler = [this, protectedThis = WTFMove(protectedThis), client] {
             if (!hasClient(*client))
                 return;
-            if (auto data = m_data) {
-                data->forEachSegment([&](auto& segment) {
+            if (m_data) {
+                m_data->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
                     if (hasClient(*client))
-                        client->dataReceived(*this, segment.data(), segment.size());
+                        client->dataReceived(*this, buffer);
                 });
             }
             if (!hasClient(*client))

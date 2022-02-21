@@ -162,10 +162,10 @@ bool PositionIterator::isCandidate() const
         return Position(*this).isCandidate();
 
     if (is<RenderText>(*renderer))
-        return !Position::nodeIsInertOrUserSelectNone(m_anchorNode) && downcast<RenderText>(*renderer).containsCaretOffset(m_offsetInAnchor);
+        return !Position::nodeIsUserSelectNone(m_anchorNode) && downcast<RenderText>(*renderer).containsCaretOffset(m_offsetInAnchor);
 
     if (positionBeforeOrAfterNodeIsCandidate(*m_anchorNode))
-        return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsInertOrUserSelectNone(m_anchorNode->parentNode());
+        return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsUserSelectNone(m_anchorNode->parentNode());
 
     if (is<HTMLHtmlElement>(*m_anchorNode))
         return false;
@@ -174,13 +174,13 @@ bool PositionIterator::isCandidate() const
         auto& block = downcast<RenderBlock>(*renderer);
         if (block.logicalHeight() || is<HTMLBodyElement>(*m_anchorNode) || m_anchorNode->isRootEditableElement()) {
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(block))
-                return atStartOfNode() && !Position::nodeIsInertOrUserSelectNone(m_anchorNode);
-            return m_anchorNode->hasEditableStyle() && !Position::nodeIsInertOrUserSelectNone(m_anchorNode) && Position(*this).atEditingBoundary();
+                return atStartOfNode() && !Position::nodeIsUserSelectNone(m_anchorNode);
+            return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(m_anchorNode) && Position(*this).atEditingBoundary();
         }
         return false;
     }
 
-    return m_anchorNode->hasEditableStyle() && !Position::nodeIsInertOrUserSelectNone(m_anchorNode) && Position(*this).atEditingBoundary();
+    return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(m_anchorNode) && Position(*this).atEditingBoundary();
 }
 
 } // namespace WebCore

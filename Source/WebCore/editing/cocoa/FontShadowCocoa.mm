@@ -42,10 +42,19 @@ RetainPtr<NSShadow> FontShadow::createShadow() const
 #elif PLATFORM(IOS_FAMILY)
     auto shadow = adoptNS([PAL::getNSShadowClass() new]);
 #endif
-    [shadow setShadowColor:platformColor(color)];
+    [shadow setShadowColor:cocoaColor(color).get()];
     [shadow setShadowOffset:offset];
     [shadow setShadowBlurRadius:blurRadius];
     return shadow;
+}
+
+FontShadow fontShadowFromNSShadow(NSShadow *shadow)
+{
+    return {
+        colorFromCocoaColor(shadow.shadowColor),
+        FloatSize(shadow.shadowOffset),
+        shadow.shadowBlurRadius,
+    };
 }
 
 }

@@ -13,8 +13,8 @@ package org.appspot.apprtc;
 import android.content.Context;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
-import android.support.annotation.Nullable;
 import android.util.Log;
+import androidx.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -54,6 +54,8 @@ import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnection.IceConnectionState;
 import org.webrtc.PeerConnection.PeerConnectionState;
 import org.webrtc.PeerConnectionFactory;
+import org.webrtc.RTCStatsCollectorCallback;
+import org.webrtc.RTCStatsReport;
 import org.webrtc.RtpParameters;
 import org.webrtc.RtpReceiver;
 import org.webrtc.RtpSender;
@@ -62,8 +64,6 @@ import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;
 import org.webrtc.SoftwareVideoDecoderFactory;
 import org.webrtc.SoftwareVideoEncoderFactory;
-import org.webrtc.StatsObserver;
-import org.webrtc.StatsReport;
 import org.webrtc.SurfaceTextureHelper;
 import org.webrtc.VideoCapturer;
 import org.webrtc.VideoDecoderFactory;
@@ -96,7 +96,6 @@ public class PeerConnectionClient {
   private static final String VIDEO_CODEC_H264_BASELINE = "H264 Baseline";
   private static final String VIDEO_CODEC_H264_HIGH = "H264 High";
   private static final String VIDEO_CODEC_AV1 = "AV1";
-  private static final String VIDEO_CODEC_AV1_SDP_CODEC_NAME = "AV1X";
   private static final String AUDIO_CODEC_OPUS = "opus";
   private static final String AUDIO_CODEC_ISAC = "ISAC";
   private static final String VIDEO_CODEC_PARAM_START_BITRATE = "x-google-start-bitrate";
@@ -312,7 +311,7 @@ public class PeerConnectionClient {
     /**
      * Callback fired once peer connection statistics is ready.
      */
-    void onPeerConnectionStatsReady(final StatsReport[] reports);
+    void onPeerConnectionStatsReady(final RTCStatsReport report);
 
     /**
      * Callback fired once peer connection error happened.
@@ -322,7 +321,7 @@ public class PeerConnectionClient {
 
   /**
    * Create a PeerConnectionClient with the specified parameters. PeerConnectionClient takes
-   * ownership of |eglBase|.
+   * ownership of `eglBase`.
    */
   public PeerConnectionClient(Context appContext, EglBase eglBase,
       PeerConnectionParameters peerConnectionParameters, PeerConnectionEvents events) {
@@ -620,7 +619,7 @@ public class PeerConnectionClient {
     isInitiator = false;
 
     // Set INFO libjingle logging.
-    // NOTE: this _must_ happen while |factory| is alive!
+    // NOTE: this _must_ happen while `factory` is alive!
     Logging.enableLogToDebugOutput(Logging.Severity.LS_INFO);
 
     List<String> mediaStreamLabels = Collections.singletonList("ARDAMS");
@@ -747,20 +746,16 @@ public class PeerConnectionClient {
     return isVideoCallEnabled() && videoWidth * videoHeight >= 1280 * 720;
   }
 
-  @SuppressWarnings("deprecation") // TODO(sakal): getStats is deprecated.
   private void getStats() {
     if (peerConnection == null || isError) {
       return;
     }
-    boolean success = peerConnection.getStats(new StatsObserver() {
+    peerConnection.getStats(new RTCStatsCollectorCallback() {
       @Override
-      public void onComplete(final StatsReport[] reports) {
-        events.onPeerConnectionStatsReady(reports);
+      public void onStatsDelivered(RTCStatsReport report) {
+        events.onPeerConnectionStatsReady(report);
       }
-    }, null);
-    if (!success) {
-      Log.e(TAG, "getStats() returns false!");
-    }
+    });
   }
 
   public void enableStatsEvents(boolean enable, int periodMs) {
@@ -989,7 +984,7 @@ public class PeerConnectionClient {
       case VIDEO_CODEC_VP9:
         return VIDEO_CODEC_VP9;
       case VIDEO_CODEC_AV1:
-        return VIDEO_CODEC_AV1_SDP_CODEC_NAME;
+        return VIDEO_CODEC_AV1;
       case VIDEO_CODEC_H264_HIGH:
       case VIDEO_CODEC_H264_BASELINE:
         return VIDEO_CODEC_H264;
@@ -1115,7 +1110,7 @@ public class PeerConnectionClient {
     final List<String> unpreferredPayloadTypes =
         new ArrayList<>(origLineParts.subList(3, origLineParts.size()));
     unpreferredPayloadTypes.removeAll(preferredPayloadTypes);
-    // Reconstruct the line with |preferredPayloadTypes| moved to the beginning of the payload
+    // Reconstruct the line with `preferredPayloadTypes` moved to the beginning of the payload
     // types.
     final List<String> newLineParts = new ArrayList<>();
     newLineParts.addAll(header);
@@ -1131,7 +1126,7 @@ public class PeerConnectionClient {
       Log.w(TAG, "No mediaDescription line, so can't prefer " + codec);
       return sdp;
     }
-    // A list with all the payload types with name |codec|. The payload types are integers in the
+    // A list with all the payload types with name `codec`. The payload types are integers in the
     // range 96-127, but they are stored as strings here.
     final List<String> codecPayloadTypes = new ArrayList<>();
     // a=rtpmap:<payload type> <encoding name>/<clock rate> [/<encoding parameters>]
@@ -1316,6 +1311,9 @@ public class PeerConnectionClient {
 
     @Override
     public void onAddTrack(final RtpReceiver receiver, final MediaStream[] mediaStreams) {}
+
+    @Override
+    public void onRemoveTrack(final RtpReceiver receiver) {}
   }
 
   // Implementation detail: handle offer creation/signaling and answer setting,

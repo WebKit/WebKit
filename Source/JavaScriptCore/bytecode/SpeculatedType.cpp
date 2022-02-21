@@ -250,6 +250,11 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
             strOut.print("Symbol");
         else
             isTop = false;
+
+        if (value & SpecHeapBigInt)
+            strOut.print("HeapBigInt");
+        else
+            isTop = false;
     }
     
     if (value == SpecInt32Only)
@@ -285,20 +290,11 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
             isTop = false;
     }
 
-    if ((value & SpecBigInt) == SpecBigInt)
-        strOut.print("BigInt");
 #if USE(BIGINT32)
-    else {
-        if (value & SpecBigInt32)
-            strOut.print("BigInt32");
-        else
-            isTop = false;
-
-        if (value & SpecHeapBigInt)
-            strOut.print("HeapBigInt");
-        else
-            isTop = false;
-    }
+    if (value & SpecBigInt32)
+        strOut.print("BigInt32");
+    else
+        isTop = false;
 #endif
 
     if (value & SpecDoubleImpureNaN)
@@ -600,13 +596,7 @@ SpeculatedType speculationFromCell(JSCell* cell)
         }
         return SpecString;
     }
-    // FIXME: rdar://69036888: undo this when no longer needed.
-    auto* structure = cell->vm().tryGetStructure(cell->structureID());
-    if (UNLIKELY(!isSanePointer(structure))) {
-        ASSERT_NOT_REACHED();
-        return SpecNone;
-    }
-    return speculationFromStructure(structure);
+    return speculationFromStructure(cell->structure());
 }
 
 SpeculatedType speculationFromValue(JSValue value)

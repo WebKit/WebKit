@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "Document.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLElementStack.h"
 #include "HTMLFormattingElementList.h"

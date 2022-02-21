@@ -31,10 +31,11 @@
 namespace WebCore {
 
 class Color;
+class SharedBuffer;
 class PasteboardContext;
 class PasteboardCustomData;
 class SelectionData;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 struct PasteboardImage;
 struct PasteboardItemInfo;
 struct PasteboardURL;
@@ -71,7 +72,7 @@ public:
     virtual String urlStringSuitableForLoading(const String& pasteboardName, String& title, const PasteboardContext*) = 0;
 #endif
     virtual String readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
-    virtual RefPtr<SharedBuffer> readBufferFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
+    virtual RefPtr<SharedBuffer> readBufferFromPasteboard(std::optional<size_t> index, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*) = 0;
     virtual URL readURLFromPasteboard(size_t index, const String& pasteboardName, String& title, const PasteboardContext*) = 0;
     virtual std::optional<PasteboardItemInfo> informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount, const PasteboardContext*) = 0;
     virtual std::optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, const PasteboardContext*) = 0;

@@ -26,7 +26,7 @@ from webkitcorepy.string_utils import unicode
 
 
 class Version(object):
-    MATCHES_RE = re.compile(r'(?P<operator>==|!=|>|<|>=|<=)?(?P<version>\d+(\.\d+)?(\.\d+)?(\.\*)?)')
+    MATCHES_RE = re.compile(r'(?P<operator>==|!=|>|<|>=|<=)? *(?P<version>\d+(\.\d+)?(\.\d+)?(\.\*)?)')
 
     @staticmethod
     def from_string(string):

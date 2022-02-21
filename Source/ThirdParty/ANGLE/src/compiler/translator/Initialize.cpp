@@ -45,6 +45,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::EXT_frag_depth] = EBhUndefined;
     }
+    if (resources.EXT_primitive_bounding_box)
+    {
+        extBehavior[TExtension::EXT_primitive_bounding_box] = EBhUndefined;
+    }
     if (resources.EXT_shader_texture_lod)
     {
         extBehavior[TExtension::EXT_shader_texture_lod] = EBhUndefined;
@@ -52,6 +56,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     if (resources.EXT_shader_framebuffer_fetch)
     {
         extBehavior[TExtension::EXT_shader_framebuffer_fetch] = EBhUndefined;
+    }
+    if (resources.EXT_shader_framebuffer_fetch_non_coherent)
+    {
+        extBehavior[TExtension::EXT_shader_framebuffer_fetch_non_coherent] = EBhUndefined;
     }
     if (resources.NV_shader_framebuffer_fetch)
     {
@@ -81,6 +89,18 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::EXT_geometry_shader] = EBhUndefined;
     }
+    if (resources.OES_geometry_shader)
+    {
+        extBehavior[TExtension::OES_geometry_shader] = EBhUndefined;
+    }
+    if (resources.OES_shader_io_blocks)
+    {
+        extBehavior[TExtension::OES_shader_io_blocks] = EBhUndefined;
+    }
+    if (resources.EXT_shader_io_blocks)
+    {
+        extBehavior[TExtension::EXT_shader_io_blocks] = EBhUndefined;
+    }
     if (resources.EXT_gpu_shader5)
     {
         extBehavior[TExtension::EXT_gpu_shader5] = EBhUndefined;
@@ -105,9 +125,9 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::ANGLE_multi_draw] = EBhUndefined;
     }
-    if (resources.ANGLE_base_vertex_base_instance)
+    if (resources.ANGLE_base_vertex_base_instance_shader_builtin)
     {
-        extBehavior[TExtension::ANGLE_base_vertex_base_instance] = EBhUndefined;
+        extBehavior[TExtension::ANGLE_base_vertex_base_instance_shader_builtin] = EBhUndefined;
     }
     if (resources.WEBGL_video_texture)
     {
@@ -137,6 +157,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::OES_shader_image_atomic] = EBhUndefined;
     }
+    if (resources.EXT_tessellation_shader)
+    {
+        extBehavior[TExtension::EXT_tessellation_shader] = EBhUndefined;
+    }
     if (resources.OES_texture_buffer)
     {
         extBehavior[TExtension::OES_texture_buffer] = EBhUndefined;
@@ -144,6 +168,14 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     if (resources.EXT_texture_buffer)
     {
         extBehavior[TExtension::EXT_texture_buffer] = EBhUndefined;
+    }
+    if (resources.OES_sample_variables)
+    {
+        extBehavior[TExtension::OES_sample_variables] = EBhUndefined;
+    }
+    if (resources.EXT_clip_cull_distance)
+    {
+        extBehavior[TExtension::EXT_clip_cull_distance] = EBhUndefined;
     }
 }
 
@@ -157,7 +189,7 @@ void ResetExtensionBehavior(const ShBuiltInResources &resources,
     }
     if (resources.ARB_texture_rectangle)
     {
-        if (compileOptions & SH_DISABLE_ARB_TEXTURE_RECTANGLE)
+        if ((compileOptions & SH_DISABLE_ARB_TEXTURE_RECTANGLE) != 0)
         {
             // Remove ARB_texture_rectangle so it can't be enabled by extension directives.
             extBehavior.erase(TExtension::ARB_texture_rectangle);

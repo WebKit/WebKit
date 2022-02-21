@@ -1,0 +1,5 @@
+
+FAIL setDirection should change transceiver.direction transceiver.setDirection is not a function. (In 'transceiver.setDirection('recvonly')', 'transceiver.setDirection' is undefined)
+FAIL setDirection with same direction should have no effect transceiver.setDirection is not a function. (In 'transceiver.setDirection('sendonly')', 'transceiver.setDirection' is undefined)
+FAIL setDirection should change transceiver.direction independent of transceiver.currentDirection assert_equals: expected "recvonly" but got "inactive"
+

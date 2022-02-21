@@ -34,6 +34,7 @@ from webkitpy.port import Port, Driver, DriverOutput
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
+from webkitpy.port.image_diff import ImageDiffResult
 
 
 # This sets basic expectations for a test. Each individual expectation
@@ -105,8 +106,8 @@ class TestList(object):
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 69
-TOTAL_SKIPS = 9
+TOTAL_TESTS = 75
+TOTAL_SKIPS = 11
 TOTAL_RETRIES = 11
 
 UNEXPECTED_PASSES = 6
@@ -238,6 +239,8 @@ layer at (0,0) size 800x34
     tests.add('websocket/tests/passes/text.html')
 
     # For testing test are properly included from platform directories.
+    tests.add('platform/test-mac-leopard/passes/platform-specific-test.html')
+    tests.add('platform/test-mac-leopard/platform-specific-dir/platform-specific-test.html')
     tests.add('platform/test-mac-leopard/http/test.html')
     tests.add('platform/test-win-7sp0/http/test.html')
 
@@ -256,6 +259,11 @@ layer at (0,0) size 800x34
     tests.add('failures/unexpected/image_not_in_pixeldir.html',
         actual_image='image_not_in_pixeldir-pngtEXtchecksum\x00checksum_fail',
         expected_image='image_not_in_pixeldir-pngtEXtchecksum\x00checksum-png')
+
+    tests.add('corner-cases/ews/directory-skipped/failure.html', expected_text='ok-txt', actual_text='text_fail-txt')
+    tests.add('corner-cases/ews/directory-skipped/timeout.html', timeout=True)
+    tests.add('corner-cases/ews/directory-flaky/failure.html', expected_text='ok-txt', actual_text='text_fail-txt')
+    tests.add('corner-cases/ews/directory-flaky/timeout.html', timeout=True)
 
     return tests
 
@@ -301,6 +309,8 @@ Bug(test) failures/expected/keyboard.html [ WontFix ]
 Bug(test) failures/expected/exception.html [ WontFix ]
 Bug(test) failures/unexpected/pass.html [ Failure ]
 Bug(test) passes/skipped/skip.html [ Skip ]
+Bug(test) corner-cases/ews/directory-skipped [ Skip ]
+Bug(test) corner-cases/ews/directory-flaky [ Pass Timeout Failure ]
 """)
 
     # FIXME: This test was only being ignored because of missing a leading '/'.
@@ -312,7 +322,13 @@ Bug(test) passes/skipped/skip.html [ Skip ]
         dirname = filesystem.join(LAYOUT_TEST_DIR, test.name[0:test.name.rfind('/')])
         base = test.base
         filesystem.maybe_make_directory(dirname)
-        filesystem.write_binary_file(filesystem.join(dirname, base + suffix), contents)
+
+        path = filesystem.join(dirname, base + suffix)
+        if contents is None:
+            if filesystem.exists(path):
+                filesystem.remove(path)
+        else:
+            filesystem.write_binary_file(path, contents)
 
     # Add each test and the expected output, if any.
     test_list = unit_test_list()
@@ -325,9 +341,6 @@ Bug(test) passes/skipped/skip.html [ Skip ]
             continue
         add_file(test, '-expected.txt', test.expected_text)
         add_file(test, '-expected.png', test.expected_image)
-
-    # Clear the list of written files so that we can watch what happens during testing.
-    filesystem.clear_written_files()
 
 
 def add_checkout_information_json_to_mock_filesystem(filesystem):
@@ -407,23 +420,31 @@ class TestPort(Port):
         actual_contents = string_utils.encode(actual_contents)
         diffed = actual_contents != expected_contents
         if not actual_contents and not expected_contents:
-            return (None, 0, None)
+            return ImageDiffResult(passed=True, diff_image=None, difference=0, tolerance=tolerance or 0)
+
         if not actual_contents or not expected_contents:
-            return (True, 0, None)
+            return ImageDiffResult(passed=False, diff_image=b'', difference=0, tolerance=tolerance or 0)
+
         if b'ref' in expected_contents:
             assert tolerance == 0
         if diffed:
-            return ("< {}\n---\n> {}\n".format(
-                string_utils.decode(expected_contents, target_type=str),
-                string_utils.decode(actual_contents, target_type=str),
-            ), 1, None)
-        return (None, 0, None)
+            return ImageDiffResult(
+                passed=False,
+                diff_image="< {}\n---\n> {}\n".format(
+                    string_utils.decode(expected_contents, target_type=str),
+                    string_utils.decode(actual_contents, target_type=str),
+                ),
+                difference=1,
+                tolerance=tolerance or 0,
+                fuzzy_data={'max_difference': 10, 'total_pixels': 20})
+
+        return ImageDiffResult(passed=True, diff_image=None, difference=0, tolerance=tolerance or 0, fuzzy_data={'max_difference': 0, 'total_pixels': 0})
 
     def layout_tests_dir(self):
-        return LAYOUT_TEST_DIR
+        return self._filesystem.abspath(LAYOUT_TEST_DIR)
 
     def perf_tests_dir(self):
-        return PERF_TEST_DIR
+        return self._filesystem.abspath(PERF_TEST_DIR)
 
     def webkit_base(self):
         return '/test.checkout'

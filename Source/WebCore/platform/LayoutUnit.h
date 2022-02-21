@@ -65,6 +65,7 @@ const int intMinForLayoutUnit = INT_MIN / kFixedPointDenominator;
 class LayoutUnit {
 public:
     LayoutUnit() : m_value(0) { }
+    LayoutUnit(const LayoutUnit&) = default;
     LayoutUnit(int value) { setValue(value); }
     LayoutUnit(unsigned short value) { setValue(value); }
     LayoutUnit(unsigned value) { setValue(value); }
@@ -85,7 +86,7 @@ public:
         m_value = clampToInteger(value * kFixedPointDenominator);
     }
 
-    LayoutUnit& operator=(const LayoutUnit& other) = default;
+    LayoutUnit& operator=(const LayoutUnit&) = default;
     LayoutUnit& operator=(const float& other) { return *this = LayoutUnit(other); }
 
     static LayoutUnit fromFloatCeil(float value)
@@ -375,6 +376,11 @@ inline bool operator>(const double a, const LayoutUnit& b)
 inline bool operator!=(const LayoutUnit& a, const LayoutUnit& b)
 {
     return a.rawValue() != b.rawValue();
+}
+
+inline bool operator!=(const float a, const LayoutUnit& b)
+{
+    return LayoutUnit(a) != b;
 }
 
 inline bool operator!=(const LayoutUnit& a, float b)

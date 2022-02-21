@@ -353,4 +353,24 @@ TEST(CopyOnWriteBufferTest, SlicesAreIndependent) {
   EXPECT_EQ(buf.cdata() + 3, slice.cdata());
 }
 
+TEST(CopyOnWriteBufferTest, AcceptsVectorLikeTypes) {
+  std::vector<uint8_t> a = {1, 2};
+  std::vector<int8_t> b = {3, 4};
+  rtc::ArrayView<uint8_t> c(a);
+  rtc::ArrayView<const int8_t> d(b);
+
+  CopyOnWriteBuffer a_buf(a);
+  CopyOnWriteBuffer b_buf(b);
+  CopyOnWriteBuffer c_buf(c);
+  CopyOnWriteBuffer d_buf(d);
+
+  CopyOnWriteBuffer all;
+  all.AppendData(a);
+  all.AppendData(b);
+  all.AppendData(c);
+  all.AppendData(d);
+
+  EXPECT_EQ(all.size(), 8U);
+}
+
 }  // namespace rtc

@@ -27,8 +27,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ScriptExecutionContextIdentifier.h"
 #include "SecurityOriginData.h"
-#include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerJobType.h"
 #include "ServiceWorkerRegistrationKey.h"
@@ -40,12 +40,13 @@ namespace WebCore {
 
 struct ServiceWorkerJobData {
     using Identifier = ServiceWorkerJobDataIdentifier;
-    ServiceWorkerJobData(SWServerConnectionIdentifier, const DocumentOrWorkerIdentifier& sourceContext);
-    ServiceWorkerJobData(Identifier, const DocumentOrWorkerIdentifier& sourceContext);
+    ServiceWorkerJobData(SWServerConnectionIdentifier, const ServiceWorkerOrClientIdentifier& sourceContext);
+    ServiceWorkerJobData(Identifier, const ServiceWorkerOrClientIdentifier& sourceContext);
 
     SWServerConnectionIdentifier connectionIdentifier() const { return m_identifier.connectionIdentifier; }
 
     bool isEquivalent(const ServiceWorkerJobData&) const;
+    std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const;
 
     URL scriptURL;
     URL clientCreationURL;
@@ -54,6 +55,7 @@ struct ServiceWorkerJobData {
     ServiceWorkerOrClientIdentifier sourceContext;
     WorkerType workerType;
     ServiceWorkerJobType type;
+    bool isFromServiceWorkerPage { false };
 
     ServiceWorkerRegistrationOptions registrationOptions;
 
@@ -73,7 +75,7 @@ private:
 template<class Encoder>
 void ServiceWorkerJobData::encode(Encoder& encoder) const
 {
-    encoder << identifier() << scriptURL << clientCreationURL << topOrigin << scopeURL << sourceContext << workerType;
+    encoder << identifier() << scriptURL << clientCreationURL << topOrigin << scopeURL << sourceContext << workerType << isFromServiceWorkerPage;
     encoder << type;
     switch (type) {
     case ServiceWorkerJobType::Register:
@@ -112,6 +114,8 @@ std::optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decode
     if (!decoder.decode(jobData.sourceContext))
         return std::nullopt;
     if (!decoder.decode(jobData.workerType))
+        return std::nullopt;
+    if (!decoder.decode(jobData.isFromServiceWorkerPage))
         return std::nullopt;
     if (!decoder.decode(jobData.type))
         return std::nullopt;

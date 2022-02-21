@@ -12,8 +12,10 @@
 
 namespace sh
 {
-    ANGLE_NO_DISCARD bool FixTypeConstructors(TCompiler &compiler, SymbolEnv &SymbolEnv, TIntermBlock &root);
+ANGLE_NO_DISCARD bool FixTypeConstructors(TCompiler &compiler,
+                                          SymbolEnv &SymbolEnv,
+                                          TIntermBlock &root);
 
-}  //namespace sh
+}  // namespace sh
 
-#endif //COMPILER_TRANSLATOR_TRANSLATORMETALDIRECT_FIXTYPECONSTRUCTORS_H_
+#endif  // COMPILER_TRANSLATOR_TRANSLATORMETALDIRECT_FIXTYPECONSTRUCTORS_H_

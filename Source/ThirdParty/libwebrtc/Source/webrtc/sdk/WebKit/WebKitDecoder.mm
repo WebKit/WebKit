@@ -31,11 +31,13 @@
 #import "WebKitUtilities.h"
 #import "api/video_codecs/video_decoder.h"
 #import "api/video_codecs/video_decoder_factory.h"
+#import "api/video_codecs/video_decoder_software_fallback_wrapper.h"
 #import "modules/video_coding/codecs/h264/include/h264.h"
 #import "modules/video_coding/include/video_error_codes.h"
 #import "sdk/objc/components/video_codec/RTCVideoDecoderH264.h"
 #import "sdk/objc/components/video_codec/RTCVideoDecoderH265.h"
 #import "sdk/objc/components/video_codec/RTCVideoDecoderVTBVP9.h"
+#import "sdk/objc/native/src/objc_frame_buffer.h"
 
 @interface WK_RTCLocalVideoH264H265VP9Decoder : NSObject
 - (instancetype)initH264DecoderWithCallback:(webrtc::LocalDecoderCallback)callback;
@@ -124,17 +126,20 @@ private:
 
 class RemoteVideoDecoder final : public webrtc::VideoDecoder {
 public:
-    explicit RemoteVideoDecoder(WebKitVideoDecoder);
+    RemoteVideoDecoder(WebKitVideoDecoder, bool isVP9);
     ~RemoteVideoDecoder();
 
+    bool isVP9() const { return m_isVP9; }
+
 private:
-    int32_t InitDecode(const VideoCodec*, int32_t number_of_cores) final;
+    bool Configure(const Settings&) final;
     int32_t Decode(const EncodedImage&, bool missing_frames, int64_t render_time_ms) final;
     int32_t RegisterDecodeCompleteCallback(DecodedImageCallback*) final;
     int32_t Release() final;
     const char* ImplementationName() const final { return "RemoteVideoToolBox"; }
 
     WebKitVideoDecoder m_internalDecoder;
+    bool m_isVP9 { false };
 };
 
 struct VideoDecoderCallbacks {
@@ -158,8 +163,9 @@ void setVideoDecoderCallbacks(VideoDecoderCreateCallback createCallback, VideoDe
     callbacks.registerDecodeCompleteCallback = registerDecodeCompleteCallback;
 }
 
-RemoteVideoDecoder::RemoteVideoDecoder(WebKitVideoDecoder internalDecoder)
+RemoteVideoDecoder::RemoteVideoDecoder(WebKitVideoDecoder internalDecoder, bool isVP9)
     : m_internalDecoder(internalDecoder)
+    , m_isVP9(isVP9)
 {
 }
 
@@ -168,7 +174,7 @@ RemoteVideoDecoder::~RemoteVideoDecoder()
     videoDecoderCallbacks().releaseCallback(m_internalDecoder);
 }
 
-void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, CVPixelBufferRef pixelBuffer, uint32_t timeStampRTP)
+void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, uint32_t timeStampRTP, CVPixelBufferRef pixelBuffer)
 {
     auto videoFrame = VideoFrame::Builder().set_video_frame_buffer(pixelBufferToFrame(pixelBuffer))
         .set_timestamp_rtp(timeStampRTP)
@@ -180,9 +186,21 @@ void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, CVPixelBufferR
     static_cast<DecodedImageCallback*>(callback)->Decoded(videoFrame);
 }
 
-int32_t RemoteVideoDecoder::InitDecode(const VideoCodec* codec_settings, int32_t number_of_cores)
+void videoDecoderTaskComplete(void* callback, uint32_t timeStamp, uint32_t timeStampRTP, void* pointer, GetBufferCallback getBufferCallback, ReleaseBufferCallback releaseBufferCallback, int width, int height)
 {
-    return WEBRTC_VIDEO_CODEC_OK;
+    auto videoFrame = VideoFrame::Builder().set_video_frame_buffer(toWebRTCVideoFrameBuffer(pointer, getBufferCallback, releaseBufferCallback, width, height))
+        .set_timestamp_rtp(timeStampRTP)
+        .set_timestamp_ms(0)
+        .set_rotation((VideoRotation)RTCVideoRotation_0)
+        .build();
+    videoFrame.set_timestamp(timeStamp);
+
+    static_cast<DecodedImageCallback*>(callback)->Decoded(videoFrame);
+}
+
+bool RemoteVideoDecoder::Configure(const Settings&)
+{
+    return true;
 }
 
 int32_t RemoteVideoDecoder::Decode(const EncodedImage& input_image, bool missing_frames, int64_t render_time_ms)
@@ -193,6 +211,11 @@ int32_t RemoteVideoDecoder::Decode(const EncodedImage& input_image, bool missing
         encodedWidth = rtc::dchecked_cast<uint16_t>(input_image._encodedWidth);
         encodedHeight = rtc::dchecked_cast<uint16_t>(input_image._encodedHeight);
     }
+
+    // VP9 VTB does not support SVC
+    if (m_isVP9 && input_image._frameType == VideoFrameType::kVideoFrameKey && input_image.SpatialIndex() && *input_image.SpatialIndex() > 0)
+        return WEBRTC_VIDEO_CODEC_FALLBACK_SOFTWARE;
+
     return videoDecoderCallbacks().decodeCallback(m_internalDecoder, input_image.Timestamp(), input_image.data(), input_image.size(), encodedWidth, encodedHeight);
 }
 
@@ -226,7 +249,10 @@ std::unique_ptr<VideoDecoder> RemoteVideoDecoderFactory::CreateVideoDecoder(cons
     if (!identifier)
         return m_internalFactory->CreateVideoDecoder(format);
 
-    return std::make_unique<RemoteVideoDecoder>(identifier);
+    auto decoder = std::make_unique<RemoteVideoDecoder>(identifier, format.name == "VP9");
+    if (!decoder->isVP9())
+        return decoder;
+    return webrtc::CreateVideoDecoderSoftwareFallbackWrapper(m_internalFactory->CreateVideoDecoder(format), std::move(decoder));
 }
 
 std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitH265 supportsH265, WebKitVP9 supportsVP9, WebKitVP9VTB supportsVP9VTB)

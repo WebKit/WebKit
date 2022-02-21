@@ -1,0 +1,6 @@
+test
+One
+
+FAIL Pseudo-elements ::before and ::after respond to container size changes assert_equals: expected "\"before\"" but got "none"
+PASS Pseudo-element ::marker responds to container size changes
+

@@ -27,7 +27,6 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString accept;
     [CEReactions=NotNeeded, Reflect] attribute DOMString alt;
     [CEReactions=NotNeeded] attribute DOMString autocomplete;
-    [CEReactions=NotNeeded, Reflect] attribute boolean autofocus;
     [CEReactions=NotNeeded, Reflect=checked] attribute boolean defaultChecked;
     attribute boolean checked;
     [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
@@ -72,15 +71,15 @@
     readonly attribute ValidityState validity;
     readonly attribute DOMString validationMessage;
     boolean checkValidity();
-    [EnabledBySetting=InteractiveFormValidation] boolean reportValidity();
+    [EnabledBySetting=InteractiveFormValidationEnabled] boolean reportValidity();
     undefined setCustomValidity(DOMString error);
 
     readonly attribute NodeList labels;
 
     undefined select();
-    [ImplementedAs=selectionStartForBindings] attribute long selectionStart;
-    [ImplementedAs=selectionEndForBindings] attribute long selectionEnd;
-    [ImplementedAs=selectionDirectionForBindings] attribute DOMString selectionDirection;
+    [ImplementedAs=selectionStartForBindings] attribute long? selectionStart;
+    [ImplementedAs=selectionEndForBindings] attribute long? selectionEnd;
+    [ImplementedAs=selectionDirectionForBindings] attribute DOMString? selectionDirection;
 
     undefined setRangeText(DOMString replacement);
     undefined setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);

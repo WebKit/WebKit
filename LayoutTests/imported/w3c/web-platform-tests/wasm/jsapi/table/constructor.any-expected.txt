@@ -22,8 +22,12 @@ PASS Out-of-range maximum value in descriptor: 68719476736
 PASS Initial value exceeds maximum
 PASS Basic (zero)
 PASS Basic (non-zero)
-FAIL Stray argument WebAssembly.Table.prototype.constructor expects the second argument to be null or an instance of WebAssembly.Function
+PASS Stray argument
 PASS Proxy descriptor
 PASS Type conversion for descriptor.element
 PASS Order of evaluation for descriptor
+PASS initialize externref table with default value
+PASS initialize table with a wrong element value
+PASS initialize anyfunc table with default value
+PASS initialize anyfunc table with a bad default value
 

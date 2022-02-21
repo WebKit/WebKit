@@ -1,0 +1,4 @@
+
+PASS DedicatedWorker should correctly handle abrupt completion
+FAIL SharedWorker should correctly handle abrupt completion promise_test: Unhandled rejection with value: object "NotSupportedError: Shared workers are not supported"
+

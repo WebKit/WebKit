@@ -8,6 +8,9 @@
     var loader;
     var source;
     var sourceBuffer;
+    var currentTime;
+    var oldCurrentTime;
+    var initialCurrentTime = null;
 
     function runTest() {
         findMediaElement();
@@ -39,13 +42,24 @@
         run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
     }
 
+    function checkStalled() {
+        oldCurrentTime = currentTime;
+        currentTime = video.currentTime;
+        if (initialCurrentTime == null)
+            initialCurrentTime = currentTime;
+        if (currentTime != initialCurrentTime && oldCurrentTime == currentTime)
+            stalled();
+        else
+            setTimeout(checkStalled, 300);
+    }
+
     function sourceUpdated() {
-        run('video.currentTime = video.buffered.end(0) - 0.1');
         run('video.play()');
-        waitForEvent('stalled', stalled);
+        checkStalled();
     }
 
     function stalled() {
+        testExpected('(currentTime != initialCurrentTime && oldCurrentTime == currentTime)', true);
         testExpected('internals.elementIsBlockingDisplaySleep(video)', false);
         endTest();
     }

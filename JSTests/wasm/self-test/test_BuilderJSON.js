@@ -113,23 +113,26 @@ const assertOpThrows = (opFn, message) => {
             .Func([], "f32")
             .Func([], "f64")
             .Func(["i32", "i64", "f32", "f64"])
+            .Func([], ["i32", "i64"])
         .End();
     const j = JSON.parse(b.json());
-    assert.eq(j.section[0].data.length, 7);
+    assert.eq(j.section[0].data.length, 8);
     assert.eq(j.section[0].data[0].params, []);
-    assert.eq(j.section[0].data[0].ret, "void");
+    assert.eq(j.section[0].data[0].ret, []);
     assert.eq(j.section[0].data[1].params, []);
-    assert.eq(j.section[0].data[1].ret, "void");
+    assert.eq(j.section[0].data[1].ret, []);
     assert.eq(j.section[0].data[2].params, []);
-    assert.eq(j.section[0].data[2].ret, "i32");
+    assert.eq(j.section[0].data[2].ret, ["i32"]);
     assert.eq(j.section[0].data[3].params, []);
-    assert.eq(j.section[0].data[3].ret, "i64");
+    assert.eq(j.section[0].data[3].ret, ["i64"]);
     assert.eq(j.section[0].data[4].params, []);
-    assert.eq(j.section[0].data[4].ret, "f32");
+    assert.eq(j.section[0].data[4].ret, ["f32"]);
     assert.eq(j.section[0].data[5].params, []);
-    assert.eq(j.section[0].data[5].ret, "f64");
+    assert.eq(j.section[0].data[5].ret, ["f64"]);
     assert.eq(j.section[0].data[6].params, ["i32", "i64", "f32", "f64"]);
-    assert.eq(j.section[0].data[6].ret, "void");
+    assert.eq(j.section[0].data[6].ret, []);
+    assert.eq(j.section[0].data[7].params, []);
+    assert.eq(j.section[0].data[7].ret, ["i32", "i64"]);
 })();
 
 (function EmptyImportSection() {
@@ -138,11 +141,6 @@ const assertOpThrows = (opFn, message) => {
     assert.eq(j.section.length, 1);
     assert.eq(j.section[0].name, "Import");
     assert.eq(j.section[0].data.length, 0);
-})();
-
-(function ImportBeforeTypeSections() {
-    const b = (new Builder()).Import().End();
-    assert.throws(() => b.Type(), Error, `Expected: "2" > "1": Bad section ordering: "Import" cannot precede "Type"`);
 })();
 
 (function ImportFunctionWithoutTypeSection() {
@@ -200,11 +198,11 @@ const assertOpThrows = (opFn, message) => {
         .End();
     const j = JSON.parse(b.json());
     assert.eq(j.section[0].data.length, 3);
-    assert.eq(j.section[0].data[0].ret, "void");
+    assert.eq(j.section[0].data[0].ret, []);
     assert.eq(j.section[0].data[0].params, []);
-    assert.eq(j.section[0].data[1].ret, "i32");
+    assert.eq(j.section[0].data[1].ret, ["i32"]);
     assert.eq(j.section[0].data[1].params, []);
-    assert.eq(j.section[0].data[2].ret, "void");
+    assert.eq(j.section[0].data[2].ret, []);
     assert.eq(j.section[0].data[2].params, ["i64", "i64"]);
 })();
 
@@ -318,7 +316,7 @@ const assertOpThrows = (opFn, message) => {
     assert.eq(j.section[0].name, "Type");
     assert.eq(j.section[0].data.length, 1);
     assert.eq(j.section[0].data[0].params, []);
-    assert.eq(j.section[0].data[0].ret, "void");
+    assert.eq(j.section[0].data[0].ret, []);
     assert.eq(j.section[1].name, "Code");
     assert.eq(j.section[1].data.length, 1);
     assert.eq(j.section[1].data[0].name, undefined);
@@ -337,7 +335,7 @@ const assertOpThrows = (opFn, message) => {
     assert.eq(j.section.length, 2);
     assert.eq(j.section[0].data.length, 1);
     assert.eq(j.section[0].data[0].params, ["i32", "i64", "f32", "f64"]);
-    assert.eq(j.section[0].data[0].ret, "void");
+    assert.eq(j.section[0].data[0].ret, []);
     assert.eq(j.section[1].data.length, 1);
     assert.eq(j.section[1].data[0].type, 0);
     assert.eq(j.section[1].data[0].parameterCount, 4);
@@ -422,7 +420,7 @@ const assertOpThrows = (opFn, message) => {
         .End();
     const j = JSON.parse(b.json());
     assert.eq(j.section[0].data.length, 1);
-    assert.eq(j.section[0].data[0].ret, "void");
+    assert.eq(j.section[0].data[0].ret, []);
     assert.eq(j.section[0].data[0].params, []);
     assert.eq(j.section[1].data.length, 3);
     assert.eq(j.section[1].data[0].field, "foo");

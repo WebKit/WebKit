@@ -27,7 +27,6 @@
 #include "WebCoreArgumentCoders.h"
 
 #include <WebCore/Font.h>
-#include <WebCore/FontAttributes.h>
 #include <WebCore/FontCache.h>
 #include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/FontDescription.h>
@@ -36,17 +35,6 @@
 namespace IPC {
 
 using namespace WebCore;
-
-void ArgumentCoder<FontAttributes>::encodePlatformData(Encoder&, const FontAttributes&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decodePlatformData(Decoder&, FontAttributes&)
-{
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
 
 template<> struct ArgumentCoder<LOGFONT> {
     static void encode(Encoder& encoder, const LOGFONT& logFont)

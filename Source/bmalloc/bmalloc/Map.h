@@ -23,12 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Map_h
-#define Map_h
+#pragma once
 
 #include "BInline.h"
 #include "Sizes.h"
 #include "Vector.h"
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -131,4 +132,4 @@ template<typename Key, typename Value, typename Hash> const unsigned Map<Key, Va
 
 } // namespace bmalloc
 
-#endif // Map_h
+#endif

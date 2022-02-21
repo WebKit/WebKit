@@ -1,20 +1,14 @@
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/worker.py?redirection=keep-origin&action=purge&key=1fd3e393-4dbc-48d2-84dd-9fdd2e3cc58d&path=/mixed-content
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/worker.py?redirection=no-redirect&action=purge&key=a00ca976-f947-4ff1-9e68-fd4ba9ed7c8d&path=/mixed-content
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/worker.py?redirection=swap-origin&action=purge&key=28a6fdb2-f39b-4a5e-a454-774bf813d2a4&path=/mixed-content
-Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/worker.py?action=purge&key=4113133c-3847-47b7-91bd-8d4f20803414&path=%2Fmixed-content
-
-Harness Error (TIMEOUT), message = null
 
 PASS Content Security Policy: Expects blocked for worker-import-data to cross-http origin and keep-origin redirection from http context.
-FAIL Content Security Policy: Expects blocked for worker-import-data to cross-http origin and keep-origin redirection from http context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
+PASS Content Security Policy: Expects blocked for worker-import-data to cross-http origin and keep-origin redirection from http context.: securitypolicyviolation
 PASS Content Security Policy: Expects blocked for worker-import-data to cross-http origin and no-redirect redirection from http context.
-FAIL Content Security Policy: Expects blocked for worker-import-data to cross-http origin and no-redirect redirection from http context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
+PASS Content Security Policy: Expects blocked for worker-import-data to cross-http origin and no-redirect redirection from http context.: securitypolicyviolation
 PASS Content Security Policy: Expects blocked for worker-import-data to cross-http origin and swap-origin redirection from http context.
-FAIL Content Security Policy: Expects blocked for worker-import-data to cross-http origin and swap-origin redirection from http context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
-FAIL Content Security Policy: Expects blocked for worker-import-data to same-http origin and keep-origin redirection from http context. assert_unreached: main promise resolved unexpectedly Reached unreachable code
-FAIL Content Security Policy: Expects blocked for worker-import-data to same-http origin and keep-origin redirection from http context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
-FAIL Content Security Policy: Expects blocked for worker-import-data to same-http origin and no-redirect redirection from http context. assert_unreached: main promise resolved unexpectedly Reached unreachable code
-FAIL Content Security Policy: Expects blocked for worker-import-data to same-http origin and no-redirect redirection from http context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
-TIMEOUT Content Security Policy: Expects blocked for worker-import-data to same-http origin and swap-origin redirection from http context. Test timed out
-NOTRUN Content Security Policy: Expects blocked for worker-import-data to same-http origin and swap-origin redirection from http context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for worker-import-data to cross-http origin and swap-origin redirection from http context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for worker-import-data to same-http origin and keep-origin redirection from http context.
+PASS Content Security Policy: Expects blocked for worker-import-data to same-http origin and keep-origin redirection from http context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for worker-import-data to same-http origin and no-redirect redirection from http context.
+PASS Content Security Policy: Expects blocked for worker-import-data to same-http origin and no-redirect redirection from http context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for worker-import-data to same-http origin and swap-origin redirection from http context.
+PASS Content Security Policy: Expects blocked for worker-import-data to same-http origin and swap-origin redirection from http context.: securitypolicyviolation
 

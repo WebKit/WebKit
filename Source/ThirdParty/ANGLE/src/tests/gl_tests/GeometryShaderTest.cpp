@@ -17,6 +17,18 @@ namespace
 class GeometryShaderTest : public ANGLETest
 {
   protected:
+    GeometryShaderTest()
+    {
+        setWindowWidth(64);
+        setWindowHeight(32);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+        setConfigDepthBits(24);
+        setConfigStencilBits(8);
+    }
+
     static std::string CreateEmptyGeometryShader(const std::string &inputPrimitive,
                                                  const std::string &outputPrimitive,
                                                  int invocations,
@@ -46,9 +58,43 @@ class GeometryShaderTest : public ANGLETest
                    "}";
         return ostream.str();
     }
+
+    void setupLayeredFramebuffer(GLuint framebuffer,
+                                 GLuint color0,
+                                 GLuint color1,
+                                 GLuint depthStencil,
+                                 GLenum colorTarget,
+                                 const GLColor &color0InitialColor,
+                                 const GLColor &color1InitialColor,
+                                 float depthInitialValue,
+                                 GLint stencilInitialValue);
+    void setupLayeredFramebufferProgram(GLProgram *program);
+    void verifyLayeredFramebufferColor(GLuint colorTexture,
+                                       GLenum colorTarget,
+                                       const GLColor expected[],
+                                       GLsizei layerCount);
+    void verifyLayeredFramebufferDepthStencil(GLuint depthStencilTexture,
+                                              const float expectedDepth[],
+                                              const GLint expectedStencil[],
+                                              GLsizei layerCount);
+
+    void layeredFramebufferClearTest(GLenum colorTarget);
+    void layeredFramebufferPreRenderClearTest(GLenum colorTarget);
+    void layeredFramebufferMidRenderClearTest(GLenum colorTarget);
+
+    static constexpr GLsizei kWidth              = 16;
+    static constexpr GLsizei kHeight             = 16;
+    static constexpr GLsizei kColor0Layers       = 4;
+    static constexpr GLsizei kColor1Layers       = 3;
+    static constexpr GLsizei kDepthStencilLayers = 5;
+    static constexpr GLsizei kFramebufferLayers =
+        std::min({kColor0Layers, kColor1Layers, kDepthStencilLayers});
 };
 
 class GeometryShaderTestES3 : public ANGLETest
+{};
+
+class GeometryShaderTestES32 : public ANGLETest
 {};
 
 // Verify that Geometry Shader cannot be created in an OpenGL ES 3.0 context.
@@ -103,6 +149,9 @@ void main()
 TEST_P(GeometryShaderTest, GeometryShaderImplementationDependentLimits)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    // http://anglebug.com/5510
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsVulkan() && IsLinux());
 
     const std::map<GLenum, int> limits = {{GL_MAX_FRAMEBUFFER_LAYERS_EXT, 256},
                                           {GL_MAX_GEOMETRY_UNIFORM_COMPONENTS_EXT, 1024},
@@ -819,6 +868,994 @@ TEST_P(GeometryShaderTest, NegativeLayeredFramebufferCompletenessWithCubeMapText
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT, status);
 }
 
+// Verify that we can use default interpolation in the GS.
+TEST_P(GeometryShaderTest, FlatQualifierNotRequired)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    constexpr char kGS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+layout(points) in;
+layout(points, max_vertices=1) out;
+
+in highp int target[];
+highp uniform vec4 dummyZero; // Default value is vec4(0.0).
+
+void main()
+{
+    highp vec4 retValue = dummyZero;
+    retValue += vec4(float(target[0]));
+    retValue += gl_in[0].gl_Position;
+    gl_Position = retValue;
+    EmitVertex();
+})";
+
+    GLuint geometryShader = CompileShader(GL_GEOMETRY_SHADER_EXT, kGS);
+
+    EXPECT_NE(0u, geometryShader);
+
+    GLuint programID = glCreateProgram();
+    glAttachShader(programID, geometryShader);
+
+    glDetachShader(programID, geometryShader);
+    glDeleteShader(geometryShader);
+    glDeleteProgram(programID);
+
+    EXPECT_GL_NO_ERROR();
+}
+
+void GeometryShaderTest::setupLayeredFramebuffer(GLuint framebuffer,
+                                                 GLuint color0,
+                                                 GLuint color1,
+                                                 GLuint depthStencil,
+                                                 GLenum colorTarget,
+                                                 const GLColor &color0InitialColor,
+                                                 const GLColor &color1InitialColor,
+                                                 float depthInitialValue,
+                                                 GLint stencilInitialValue)
+{
+    const uint32_t depthInitialValueUnorm   = static_cast<uint32_t>(depthInitialValue * 0xFFFFFF);
+    const uint32_t depthStencilInitialValue = depthInitialValueUnorm << 8 | stencilInitialValue;
+
+    const std::vector<GLColor> kColor0InitData(kWidth * kHeight * kColor0Layers,
+                                               color0InitialColor);
+    const std::vector<GLColor> kColor1InitData(kWidth * kHeight * kColor1Layers,
+                                               color1InitialColor);
+    const std::vector<uint32_t> kDepthStencilInitData(kWidth * kHeight * kDepthStencilLayers,
+                                                      depthStencilInitialValue);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    ASSERT_GL_NO_ERROR();
+
+    glBindTexture(colorTarget, color0);
+    glTexStorage3D(colorTarget, 1, GL_RGBA8, kWidth, kHeight, kColor0Layers);
+    glTexSubImage3D(colorTarget, 0, 0, 0, 0, kWidth, kHeight, kColor0Layers, GL_RGBA,
+                    GL_UNSIGNED_BYTE, kColor0InitData.data());
+    ASSERT_GL_NO_ERROR();
+
+    glBindTexture(colorTarget, color1);
+    glTexStorage3D(colorTarget, 1, GL_RGBA8, kWidth, kHeight, kColor1Layers);
+    glTexSubImage3D(colorTarget, 0, 0, 0, 0, kWidth, kHeight, kColor1Layers, GL_RGBA,
+                    GL_UNSIGNED_BYTE, kColor1InitData.data());
+    ASSERT_GL_NO_ERROR();
+
+    glBindTexture(GL_TEXTURE_2D_ARRAY, depthStencil);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_DEPTH24_STENCIL8, kWidth, kHeight,
+                   kDepthStencilLayers);
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, kWidth, kHeight, kDepthStencilLayers,
+                    GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, kDepthStencilInitData.data());
+    ASSERT_GL_NO_ERROR();
+
+    glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, color0, 0);
+    glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, color1, 0);
+    glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, depthStencil, 0);
+
+    constexpr GLenum kDrawBuffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, kDrawBuffers);
+
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+}
+
+void GeometryShaderTest::setupLayeredFramebufferProgram(GLProgram *program)
+{
+    constexpr char kVS[] = R"(#version 310 es
+
+in highp vec4 position;
+
+void main()
+{
+    gl_Position = position;
+})";
+
+    static_assert(kFramebufferLayers == 3,
+                  "Adjust the invocations parameter in the geometry shader, and color arrays in "
+                  "fragment shader");
+
+    constexpr char kGS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+layout (invocations = 3, triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+
+void main()
+{
+    for (int n = 0; n < gl_in.length(); n++)
+    {
+        gl_Position = gl_in[n].gl_Position;
+        gl_Layer = gl_InvocationID;
+        EmitVertex();
+    }
+    EndPrimitive();
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+precision mediump float;
+
+layout(location = 0) out mediump vec4 color0;
+layout(location = 1) out mediump vec4 color1;
+
+const vec4 color0Layers[3] = vec4[](
+    vec4(1, 0, 0, 1),
+    vec4(0, 1, 0, 1),
+    vec4(0, 0, 1, 1)
+);
+
+const vec4 color1Layers[3] = vec4[](
+    vec4(1, 1, 0, 1),
+    vec4(0, 1, 1, 1),
+    vec4(1, 0, 1, 1)
+);
+
+void main()
+{
+    color0 = color0Layers[gl_Layer];
+    color1 = color1Layers[gl_Layer];
+})";
+
+    program->makeRaster(kVS, kGS, kFS);
+    ASSERT_TRUE(program->valid());
+}
+
+void GeometryShaderTest::verifyLayeredFramebufferColor(GLuint colorTexture,
+                                                       GLenum colorTarget,
+                                                       const GLColor expected[],
+                                                       GLsizei layerCount)
+{
+    // Note: the OpenGL and Vulkan specs are unclear regarding whether clear should affect all
+    // layers of the framebuffer or the attachment.  The GL spec says:
+    //
+    // > When the Clear or ClearBuffer* commands described in section 15.2.3 are
+    // > used to clear a layered framebuffer attachment, all layers of the attachment are
+    // > cleared.
+    //
+    // Which implies that all layers are cleared.  However, it's common among vendors to consider
+    // only the attachments accessible to a draw call to be affected by clear (otherwise
+    // clear-through-draw cannot be done).
+    //
+    // There is inconsistency between implementations in both the OpenGL and Vulkan implementations
+    // in this regard.  In OpenGL, Qualcomm and Intel drivers clear all layers while Nvidia drivers
+    // clear only the framebuffer layers.  In Vulkan, Intel and AMD windows drivers clear all layers
+    // with loadOp=CLEAR, while the other implementations (including Intel mesa) only clear the
+    // framebuffer layers.
+    //
+    // Due to this inconsistency, only the framebuffer layers are verified.  The other layers, if
+    // the texture has them will either contain the initial or the cleared color, but is not
+    // verified by these tests.
+    layerCount = kFramebufferLayers;
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glBindTexture(colorTarget, colorTexture);
+
+    for (GLsizei layer = 0; layer < layerCount; ++layer)
+    {
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colorTexture, 0, layer);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, expected[layer], 1);
+        EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, 0, expected[layer], 1);
+        EXPECT_PIXEL_COLOR_NEAR(0, kHeight - 1, expected[layer], 1);
+        EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, kHeight - 1, expected[layer], 1);
+    }
+}
+
+void GeometryShaderTest::verifyLayeredFramebufferDepthStencil(GLuint depthStencilTexture,
+                                                              const float expectedDepth[],
+                                                              const GLint expectedStencil[],
+                                                              GLsizei layerCount)
+{
+    // See comment in verifyLayeredFramebufferColor
+    layerCount = kFramebufferLayers;
+
+    // Setup program
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColor);
+    GLint colorUniformLocation =
+        glGetUniformLocation(drawColor, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    // Set up state to validate depth and stencil
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    glStencilMask(0xFF);
+    glClearColor(0, 0, 0, 0);
+
+    // Set up framebuffer
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+
+    glBindTexture(GL_TEXTURE_2D_ARRAY, depthStencilTexture);
+
+    for (GLsizei layer = 0; layer < layerCount; ++layer)
+    {
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, depthStencilTexture,
+                                  0, layer);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glStencilFunc(GL_EQUAL, expectedStencil[layer], 0xFF);
+
+        // Pass depth slightly less than expected
+        glDepthFunc(GL_LESS);
+        glUniform4f(colorUniformLocation, 0.1f, 0.2f, 0.3f, 0.4f);
+        drawQuad(drawColor, essl1_shaders::PositionAttrib(), expectedDepth[layer] * 2 - 1 - 0.01f);
+
+        // Fail depth slightly greater than expected
+        glUniform4f(colorUniformLocation, 0.5f, 0.6f, 0.7f, 0.8f);
+        drawQuad(drawColor, essl1_shaders::PositionAttrib(), expectedDepth[layer] * 2 - 1 + 0.01f);
+
+        ASSERT_GL_NO_ERROR();
+
+        // Verify results
+        const GLColor kExpected(25, 51, 76, 102);
+
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, kExpected, 1);
+        EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, 0, kExpected, 1);
+        EXPECT_PIXEL_COLOR_NEAR(0, kHeight - 1, kExpected, 1);
+        EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, kHeight - 1, kExpected, 1);
+    }
+}
+
+void GeometryShaderTest::layeredFramebufferClearTest(GLenum colorTarget)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    const GLColor kColor0InitColor(10, 20, 30, 40);
+    const GLColor kColor1InitColor(200, 210, 220, 230);
+    constexpr float kDepthInitValue   = 0.35f;
+    constexpr GLint kStencilInitValue = 0x33;
+
+    GLFramebuffer framebuffer;
+    GLTexture color0;
+    GLTexture color1;
+    GLTexture depthStencil;
+    GLProgram program;
+
+    setupLayeredFramebuffer(framebuffer, color0, color1, depthStencil, colorTarget,
+                            kColor0InitColor, kColor1InitColor, kDepthInitValue, kStencilInitValue);
+    setupLayeredFramebufferProgram(&program);
+
+    glClearColor(0.5, 0.5, 0.5, 0.5);
+    glClearDepthf(1.0f);
+    glClearStencil(0x55);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    const GLColor kClearColor(127, 127, 127, 127);
+    const GLColor kExpectedColor0[kColor0Layers] = {
+        kClearColor,
+        kClearColor,
+        kClearColor,
+        kColor0InitColor,
+    };
+    const GLColor kExpectedColor1[kColor1Layers] = {
+        kClearColor,
+        kClearColor,
+        kClearColor,
+    };
+    const float kExpectedDepth[kDepthStencilLayers] = {
+        1.0f, 1.0f, 1.0f, kDepthInitValue, kDepthInitValue,
+    };
+    const GLint kExpectedStencil[kDepthStencilLayers] = {
+        0x55, 0x55, 0x55, kStencilInitValue, kStencilInitValue,
+    };
+
+    verifyLayeredFramebufferColor(color0, colorTarget, kExpectedColor0, kColor0Layers);
+    verifyLayeredFramebufferColor(color1, colorTarget, kExpectedColor1, kColor1Layers);
+    verifyLayeredFramebufferDepthStencil(depthStencil, kExpectedDepth, kExpectedStencil,
+                                         kDepthStencilLayers);
+}
+
+// Verify clear of layered attachments.  Uses 3D color textures.
+TEST_P(GeometryShaderTest, LayeredFramebufferClear3DColor)
+{
+    // Mesa considers the framebuffer with mixed 3D and 2D array attachments to be incomplete.
+    // http://anglebug.com/5463
+    ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
+
+    layeredFramebufferClearTest(GL_TEXTURE_3D);
+}
+
+// Verify clear of layered attachments.  Uses 2D array color textures.
+TEST_P(GeometryShaderTest, LayeredFramebufferClear2DArrayColor)
+{
+    layeredFramebufferClearTest(GL_TEXTURE_2D_ARRAY);
+}
+
+void GeometryShaderTest::layeredFramebufferPreRenderClearTest(GLenum colorTarget)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    const GLColor kColor0InitColor(10, 20, 30, 40);
+    const GLColor kColor1InitColor(200, 210, 220, 230);
+    constexpr float kDepthInitValue   = 0.35f;
+    constexpr GLint kStencilInitValue = 0x33;
+
+    GLFramebuffer framebuffer;
+    GLTexture color0;
+    GLTexture color1;
+    GLTexture depthStencil;
+    GLProgram program;
+
+    setupLayeredFramebuffer(framebuffer, color0, color1, depthStencil, colorTarget,
+                            kColor0InitColor, kColor1InitColor, kDepthInitValue, kStencilInitValue);
+    setupLayeredFramebufferProgram(&program);
+
+    glClearColor(0.5, 0.5, 0.5, 0.5);
+    glClearDepthf(1.0f);
+    glClearStencil(0x55);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_EQUAL, 0x5A, 0xF0);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glStencilMask(0xFF);
+
+    drawQuad(program, "position", 0.9f);
+
+    const GLColor kExpectedColor0[kColor0Layers] = {
+        GLColor::red,
+        GLColor::green,
+        GLColor::blue,
+        kColor0InitColor,
+    };
+    const GLColor kExpectedColor1[kColor1Layers] = {
+        GLColor::yellow,
+        GLColor::cyan,
+        GLColor::magenta,
+    };
+    const float kExpectedDepth[kDepthStencilLayers] = {
+        0.95f, 0.95f, 0.95f, kDepthInitValue, kDepthInitValue,
+    };
+    const GLint kExpectedStencil[kDepthStencilLayers] = {
+        0x5A, 0x5A, 0x5A, kStencilInitValue, kStencilInitValue,
+    };
+
+    verifyLayeredFramebufferColor(color0, colorTarget, kExpectedColor0, kColor0Layers);
+    verifyLayeredFramebufferColor(color1, colorTarget, kExpectedColor1, kColor1Layers);
+    verifyLayeredFramebufferDepthStencil(depthStencil, kExpectedDepth, kExpectedStencil,
+                                         kDepthStencilLayers);
+}
+
+// Verify pre-render clear of layered attachments.  Uses 3D color textures.
+TEST_P(GeometryShaderTest, LayeredFramebufferPreRenderClear3DColor)
+{
+    // Mesa considers the framebuffer with mixed 3D and 2D array attachments to be incomplete.
+    // http://anglebug.com/5463
+    ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
+
+    layeredFramebufferPreRenderClearTest(GL_TEXTURE_3D);
+}
+
+// Verify pre-render clear of layered attachments.  Uses 2D array color textures.
+TEST_P(GeometryShaderTest, LayeredFramebufferPreRenderClear2DArrayColor)
+{
+    layeredFramebufferPreRenderClearTest(GL_TEXTURE_2D_ARRAY);
+}
+
+void GeometryShaderTest::layeredFramebufferMidRenderClearTest(GLenum colorTarget)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    // Vulkan's draw path for clear doesn't support layered framebuffers.  http://anglebug.com/5453
+    ANGLE_SKIP_TEST_IF(IsVulkan());
+
+    const GLColor kColor0InitColor(10, 20, 30, 40);
+    const GLColor kColor1InitColor(200, 210, 220, 230);
+    constexpr float kDepthInitValue   = 0.35f;
+    constexpr GLint kStencilInitValue = 0x33;
+
+    GLFramebuffer framebuffer;
+    GLTexture color0;
+    GLTexture color1;
+    GLTexture depthStencil;
+    GLProgram program;
+
+    setupLayeredFramebuffer(framebuffer, color0, color1, depthStencil, colorTarget,
+                            kColor0InitColor, kColor1InitColor, kDepthInitValue, kStencilInitValue);
+    setupLayeredFramebufferProgram(&program);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 0x55, 0xF0);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glStencilMask(0xFF);
+
+    drawQuad(program, "position", 0.3f);
+
+    glColorMask(GL_FALSE, GL_FALSE, GL_TRUE, GL_TRUE);
+    glClearColor(0.5, 0.5, 0.5, 0.5);
+    glClearDepthf(0.8f);
+    glStencilMask(0xF0);
+    glClearStencil(0xAA);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glStencilMask(0xFF);
+
+    const GLColor kExpectedColor0[kColor0Layers] = {
+        GLColor(255, 0, 127, 127),
+        GLColor(0, 255, 127, 127),
+        GLColor(0, 0, 127, 127),
+        kColor0InitColor,
+    };
+    const GLColor kExpectedColor1[kColor1Layers] = {
+        GLColor(255, 255, 127, 127),
+        GLColor(0, 255, 127, 127),
+        GLColor(255, 0, 127, 127),
+    };
+    const float kExpectedDepth[kDepthStencilLayers] = {
+        0.6f, 0.6f, 0.6f, kDepthInitValue, kDepthInitValue,
+    };
+    const GLint kExpectedStencil[kDepthStencilLayers] = {
+        0xA5, 0xA5, 0xA5, kStencilInitValue, kStencilInitValue,
+    };
+
+    verifyLayeredFramebufferColor(color0, colorTarget, kExpectedColor0, kColor0Layers);
+    verifyLayeredFramebufferColor(color1, colorTarget, kExpectedColor1, kColor1Layers);
+    verifyLayeredFramebufferDepthStencil(depthStencil, kExpectedDepth, kExpectedStencil,
+                                         kDepthStencilLayers);
+}
+
+// Verify mid-render clear of layered attachments.  Uses 3D color textures.
+TEST_P(GeometryShaderTest, LayeredFramebufferMidRenderClear3DColor)
+{
+    // Mesa considers the framebuffer with mixed 3D and 2D array attachments to be incomplete.
+    // http://anglebug.com/5463
+    ANGLE_SKIP_TEST_IF((IsAMD() || IsIntel()) && IsOpenGL() && IsLinux());
+
+    layeredFramebufferMidRenderClearTest(GL_TEXTURE_3D);
+}
+
+// Verify mid-render clear of layered attachments.  Uses 2D array color textures.
+TEST_P(GeometryShaderTest, LayeredFramebufferMidRenderClear2DArrayColor)
+{
+    layeredFramebufferMidRenderClearTest(GL_TEXTURE_2D_ARRAY);
+}
+
+// Verify that prerotation applies to the geometry shader stage if present.
+TEST_P(GeometryShaderTest, Prerotation)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    // Geometry shader will output fixed positions, so this is ignored.
+    gl_Position = vec4(0);
+})";
+
+    constexpr char kGS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 4) out;
+
+void main()
+{
+    // Generate two triangles to cover the lower-left quarter of the screen.
+    gl_Position = vec4(0, -1, 0, 1);
+    EmitVertex();
+
+    gl_Position = vec4(0, 0, 0, 1);
+    EmitVertex();
+
+    gl_Position = vec4(-1, -1, 0, 1);
+    EmitVertex();
+
+    gl_Position = vec4(-1, 0, 0, 1);
+    EmitVertex();
+
+    EndPrimitive();
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_io_blocks : require
+precision mediump float;
+
+layout(location = 0) out mediump vec4 color;
+
+void main()
+{
+    // Output solid green
+    color = vec4(0, 1.0, 0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_GS(program, kVS, kGS, kFS);
+    EXPECT_GL_NO_ERROR();
+
+    glClearColor(1.0, 0, 0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(program);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2, h / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(0, h / 2, w, h / 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(w / 2, 0, w / 2, h / 2, GLColor::red);
+}
+
+// Verify that we can have the max amount of uniforms with a geometry shader.
+TEST_P(GeometryShaderTestES32, MaxGeometryImageUniforms)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    GLint maxGeometryImageUnits;
+    glGetIntegerv(GL_MAX_GEOMETRY_IMAGE_UNIFORMS_EXT, &maxGeometryImageUnits);
+
+    const GLchar *vertString = essl31_shaders::vs::Simple();
+    const GLchar *fragString = R"(#version 310 es
+precision highp float;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(1.0);
+})";
+
+    std::stringstream geomStringStream;
+
+    geomStringStream << R"(#version 310 es
+#extension GL_OES_geometry_shader : require
+layout (points)                   in;
+layout (points, max_vertices = 1) out;
+
+precision highp iimage2D;
+
+ivec4 counter = ivec4(0);
+)";
+
+    for (GLint index = 0; index < maxGeometryImageUnits; ++index)
+    {
+        geomStringStream << "layout(binding = " << index << ", r32i) uniform iimage2D img" << index
+                         << ";" << std::endl;
+    }
+
+    geomStringStream << R"(
+void main()
+{
+)";
+
+    for (GLint index = 0; index < maxGeometryImageUnits; ++index)
+    {
+        geomStringStream << "counter += imageLoad(img" << index << ", ivec2(0, 0));" << std::endl;
+    }
+
+    geomStringStream << R"(
+    gl_Position = vec4(float(counter.x), 0.0, 0.0, 1.0);
+    EmitVertex();
+}
+)";
+
+    ANGLE_GL_PROGRAM_WITH_GS(program, vertString, geomStringStream.str().c_str(), fragString);
+    EXPECT_GL_NO_ERROR();
+
+    glClearColor(1.0, 0, 0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(program);
+
+    std::vector<GLTexture> textures(maxGeometryImageUnits);
+    for (GLint index = 0; index < maxGeometryImageUnits; ++index)
+    {
+        GLint value = index + 1;
+
+        glBindTexture(GL_TEXTURE_2D, textures[index]);
+
+        glTexStorage2D(GL_TEXTURE_2D, 1 /*levels*/, GL_R32I, 1 /*width*/, 1 /*height*/);
+
+        glTexSubImage2D(GL_TEXTURE_2D, 0 /*level*/, 0 /*xoffset*/, 0 /*yoffset*/, 1 /*width*/,
+                        1 /*height*/, GL_RED_INTEGER, GL_INT, &value);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        glBindImageTexture(index, textures[index], 0 /*level*/, GL_FALSE /*is layered?*/,
+                           0 /*layer*/, GL_READ_ONLY, GL_R32I);
+    }
+
+    glDrawArrays(GL_POINTS, 0, 3);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Verify that depth viewport transform applies to the geometry shader stage if present.
+TEST_P(GeometryShaderTest, DepthViewportTransform)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    // Geometry shader will output fixed positions, so this is ignored.
+    gl_Position = vec4(0);
+})";
+
+    constexpr char kGS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 4) out;
+
+void main()
+{
+    // Generate two triangles to cover the whole screen, with depth at -0.5.  After viewport
+    // transformation, the depth buffer should contain 0.25.
+    gl_Position = vec4(1, -1, -0.5, 1);
+    EmitVertex();
+
+    gl_Position = vec4(1, 1, -0.5, 1);
+    EmitVertex();
+
+    gl_Position = vec4(-1, -1, -0.5, 1);
+    EmitVertex();
+
+    gl_Position = vec4(-1, 1, -0.5, 1);
+    EmitVertex();
+
+    EndPrimitive();
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_io_blocks : require
+precision mediump float;
+
+layout(location = 0) out mediump vec4 color;
+
+void main()
+{
+    // Output solid green
+    color = vec4(0, 1.0, 0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_GS(program, kVS, kGS, kFS);
+    EXPECT_GL_NO_ERROR();
+
+    glClearColor(1.0, 0, 0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+
+    glUseProgram(program);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::green);
+
+    // Verify depth
+    glDepthFunc(GL_LESS);
+
+    // An epsilon below the depth value should pass the depth test
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), -0.5f - 0.01f);
+
+    // An epsilon above the depth value should fail the depth test
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), -0.5f + 0.01f);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::blue);
+}
+
+// Tests separating the VS from the GS/FS and then modifying the shader.
+TEST_P(GeometryShaderTest, RecompileSeparableVSWithVaryings)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    // Errors in D3D11/GL. No plans to fix this.
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    const char *kVS = R"(#version 310 es
+precision mediump float;
+in vec4 position;
+out vec4 vgVarying;
+uniform vec4 uniVec;
+void main()
+{
+   vgVarying = uniVec;
+   gl_Position = position;
+})";
+
+    const char *kGS = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+
+precision mediump float;
+
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 4) out;
+
+in vec4 vgVarying[];
+layout(location = 5) out vec4 gfVarying;
+
+void main()
+{
+    for (int n = 0; n < gl_in.length(); n++)
+    {
+        gl_Position = gl_in[n].gl_Position;
+        gfVarying = vgVarying[n];
+        EmitVertex();
+    }
+    EndPrimitive();
+})";
+
+    const char *kFS = R"(#version 310 es
+precision mediump float;
+
+layout(location = 5) in vec4 gfVarying;
+out vec4 fOut;
+
+void main()
+{
+    fOut = gfVarying;
+})";
+
+    GLShader vertShader(GL_VERTEX_SHADER);
+    glShaderSource(vertShader, 1, &kVS, nullptr);
+    glCompileShader(vertShader);
+
+    GLProgram vertProg;
+    glProgramParameteri(vertProg, GL_PROGRAM_SEPARABLE, GL_TRUE);
+    glAttachShader(vertProg, vertShader);
+    glLinkProgram(vertProg);
+    ASSERT_GL_NO_ERROR();
+
+    GLShader geomShader(GL_GEOMETRY_SHADER);
+    glShaderSource(geomShader, 1, &kGS, nullptr);
+    glCompileShader(geomShader);
+
+    GLShader fragShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragShader, 1, &kFS, nullptr);
+    glCompileShader(fragShader);
+
+    GLProgram geomFragProg;
+    glProgramParameteri(geomFragProg, GL_PROGRAM_SEPARABLE, GL_TRUE);
+    glAttachShader(geomFragProg, geomShader);
+    glAttachShader(geomFragProg, fragShader);
+    glLinkProgram(geomFragProg);
+    ASSERT_GL_NO_ERROR();
+
+    GLProgramPipeline pipeline;
+    glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, vertProg);
+    glUseProgramStages(pipeline, GL_GEOMETRY_SHADER_BIT, geomFragProg);
+    glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, geomFragProg);
+    glBindProgramPipeline(pipeline);
+
+    glActiveShaderProgram(pipeline, vertProg);
+    GLint uniLoc = glGetUniformLocation(vertProg, "uniVec");
+    ASSERT_NE(-1, uniLoc);
+    glUniform4f(uniLoc, 0, 1, 0, 1);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuadPPO(vertProg, "position", 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Do it again with deleted shaders.
+    vertProg.reset();
+    geomFragProg.reset();
+    pipeline.reset();
+
+    glProgramParameteri(vertProg, GL_PROGRAM_SEPARABLE, GL_TRUE);
+    glAttachShader(vertProg, vertShader);
+    glLinkProgram(vertProg);
+
+    // Mess up the VS.
+    const char *otherVS = essl1_shaders::vs::Texture2D();
+    glShaderSource(vertShader, 1, &otherVS, nullptr);
+    glCompileShader(vertShader);
+
+    ASSERT_GL_NO_ERROR();
+
+    glProgramParameteri(geomFragProg, GL_PROGRAM_SEPARABLE, GL_TRUE);
+    glAttachShader(geomFragProg, geomShader);
+    glAttachShader(geomFragProg, fragShader);
+    glLinkProgram(geomFragProg);
+
+    // Mess up the FS.
+    const char *otherFS = essl1_shaders::fs::Texture2D();
+    glShaderSource(fragShader, 1, &otherFS, nullptr);
+    glCompileShader(fragShader);
+
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, vertProg);
+    glUseProgramStages(pipeline, GL_GEOMETRY_SHADER_BIT, geomFragProg);
+    glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, geomFragProg);
+    glBindProgramPipeline(pipeline);
+
+    glActiveShaderProgram(pipeline, vertProg);
+    uniLoc = glGetUniformLocation(vertProg, "uniVec");
+    ASSERT_NE(-1, uniLoc);
+    glUniform4f(uniLoc, 0, 1, 0, 1);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuadPPO(vertProg, "position", 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Tests that varying limits work as expected with geometry shaders.
+TEST_P(GeometryShaderTest, MaxVaryings)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    // Get appropriate limitations.
+    GLint maxVertexOutputComponents = 0;
+    glGetIntegerv(GL_MAX_VERTEX_OUTPUT_COMPONENTS, &maxVertexOutputComponents);
+    ASSERT_GT(maxVertexOutputComponents, 0);
+
+    GLint maxGeometryInputComponents = 0;
+    glGetIntegerv(GL_MAX_GEOMETRY_INPUT_COMPONENTS, &maxGeometryInputComponents);
+    ASSERT_GT(maxGeometryInputComponents, 0);
+
+    GLint maxGeometryOutputComponents = 0;
+    glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_COMPONENTS, &maxGeometryOutputComponents);
+    ASSERT_GT(maxGeometryOutputComponents, 0);
+
+    GLint maxFragmentInputComponents = 0;
+    glGetIntegerv(GL_MAX_FRAGMENT_INPUT_COMPONENTS, &maxFragmentInputComponents);
+    ASSERT_GT(maxFragmentInputComponents, 0);
+
+    GLint vertexToGeometryVaryings =
+        std::min(maxVertexOutputComponents, maxGeometryInputComponents) / 4;
+    GLint geometryToFragmentVaryings =
+        std::min(maxGeometryOutputComponents, maxFragmentInputComponents) / 4;
+
+    GLint varyingCount = std::min(vertexToGeometryVaryings, geometryToFragmentVaryings);
+
+    // Reserve gl_Position;
+    varyingCount--;
+
+    // Create a vertex shader with "varyingCount" outputs.
+    std::stringstream vsStream;
+    vsStream << R"(#version 310 es
+uniform vec4 uniOne;
+in vec4 position;
+)";
+
+    for (GLint varyingIndex = 0; varyingIndex < varyingCount; ++varyingIndex)
+    {
+        vsStream << "out vec4 v" << varyingIndex << ";\n";
+    }
+
+    vsStream << R"(
+void main()
+{
+    gl_Position = position;
+)";
+
+    for (GLint varyingIndex = 0; varyingIndex < varyingCount; ++varyingIndex)
+    {
+        vsStream << "    v" << varyingIndex << " = uniOne * " << varyingIndex << ".0;\n";
+    }
+
+    vsStream << "}";
+
+    // Create a GS with "varyingCount" inputs and "varyingCount" outputs.
+    std::stringstream gsStream;
+    gsStream << R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 4) out;
+)";
+
+    for (GLint varyingIndex = 0; varyingIndex < varyingCount; ++varyingIndex)
+    {
+        gsStream << "in vec4 v" << varyingIndex << "[];\n";
+    }
+
+    for (GLint varyingIndex = 0; varyingIndex < varyingCount; ++varyingIndex)
+    {
+        gsStream << "out vec4 o" << varyingIndex << ";\n";
+    }
+
+    gsStream << R"(
+void main()
+{
+    for (int n = 0; n < gl_in.length(); n++)
+    {
+        gl_Position = gl_in[n].gl_Position;
+)";
+
+    for (GLint varyingIndex = 0; varyingIndex < varyingCount; ++varyingIndex)
+    {
+        gsStream << "        o" << varyingIndex << " = v" << varyingIndex << "[n];\n";
+    }
+
+    gsStream << R"(
+        EmitVertex();
+    }
+    EndPrimitive();
+}
+)";
+
+    // Create a FS with "varyingCount" inputs.
+    std::stringstream fsStream;
+    fsStream << R"(#version 310 es
+precision mediump float;
+out vec4 color;
+)";
+
+    for (GLint varyingIndex = 0; varyingIndex < varyingCount; ++varyingIndex)
+    {
+        fsStream << "in vec4 o" << varyingIndex << ";\n";
+    }
+
+    fsStream << R"(
+void main()
+{
+    color = vec4(0, 1, 0, 1);
+)";
+
+    for (GLint varyingIndex = 0; varyingIndex < varyingCount; ++varyingIndex)
+    {
+        fsStream << "    if (o" << varyingIndex << " != vec4(" << varyingIndex << ".0))\n"
+                 << "        color = vec4(1, 0, 0, 1);\n";
+    }
+
+    fsStream << "}";
+
+    const std::string vs = vsStream.str();
+    const std::string gs = gsStream.str();
+    const std::string fs = fsStream.str();
+
+    ANGLE_GL_PROGRAM_WITH_GS(program, vs.c_str(), gs.c_str(), fs.c_str());
+    glUseProgram(program);
+
+    GLint uniLoc = glGetUniformLocation(program, "uniOne");
+    ASSERT_NE(-1, uniLoc);
+    glUniform4f(uniLoc, 1.0f, 1.0f, 1.0f, 1.0f);
+
+    drawQuad(program, "position", 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GeometryShaderTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(GeometryShaderTestES3);
-ANGLE_INSTANTIATE_TEST_ES31(GeometryShaderTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GeometryShaderTest);
+ANGLE_INSTANTIATE_TEST_ES31_AND(GeometryShaderTest,
+                                WithEmulatedPrerotation(ES31_VULKAN(), 90),
+                                WithEmulatedPrerotation(ES31_VULKAN(), 180),
+                                WithEmulatedPrerotation(ES31_VULKAN(), 270));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GeometryShaderTestES32);
+ANGLE_INSTANTIATE_TEST_ES32(GeometryShaderTestES32);
 }  // namespace

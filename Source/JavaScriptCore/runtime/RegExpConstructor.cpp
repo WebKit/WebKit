@@ -187,6 +187,13 @@ JSC_DEFINE_CUSTOM_SETTER(setRegExpConstructorMultiline, (JSGlobalObject* globalO
     return true;
 }
 
+static inline bool areLegacyFeaturesEnabled(JSGlobalObject* globalObject, JSValue newTarget)
+{
+    if (!newTarget)
+        return true;
+    return newTarget == globalObject->regExpConstructor();
+}
+
 inline Structure* getRegExpStructure(JSGlobalObject* globalObject, JSValue newTarget)
 {
     if (!newTarget)
@@ -232,7 +239,7 @@ static JSObject* regExpCreate(JSGlobalObject* globalObject, JSValue newTarget, J
 
     Structure* structure = getRegExpStructure(globalObject, newTarget);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return RegExpObject::create(vm, structure, regExp);
+    return RegExpObject::create(vm, structure, regExp, areLegacyFeaturesEnabled(globalObject, newTarget));
 }
 
 JSObject* constructRegExp(JSGlobalObject* globalObject, const ArgList& args,  JSObject* callee, JSValue newTarget)
@@ -271,7 +278,7 @@ JSObject* constructRegExp(JSGlobalObject* globalObject, const ArgList& args,  JS
             }
         }
 
-        return RegExpObject::create(vm, structure, regExp);
+        return RegExpObject::create(vm, structure, regExp, areLegacyFeaturesEnabled(globalObject, newTarget));
     }
 
     if (constructAsRegexp) {

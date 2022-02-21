@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JITCompilation.h"
+#include "WasmBinding.h"
 #include "WasmFormat.h"
 #include <wtf/Expected.h>
 

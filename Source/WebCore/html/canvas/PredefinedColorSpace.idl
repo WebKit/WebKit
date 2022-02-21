@@ -26,7 +26,7 @@
 // https://html.spec.whatwg.org/multipage/canvas.html#predefinedcolorspace
 enum PredefinedColorSpace {
     "srgb"
-#if defined(ENABLE_DESTINATION_COLOR_SPACE_DISPLAY_P3) && ENABLE_DESTINATION_COLOR_SPACE_DISPLAY_P3
+#if defined(ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3) && ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3
     , "display-p3"
 #endif
 };

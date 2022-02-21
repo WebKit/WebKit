@@ -147,8 +147,9 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
     ASSERT(!url.isNull());
 
     String domain = url.host().toString();
-    String baseDomain = topPrivatelyControlledDomain(domain);
     UserAgentQuirks quirks;
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    String baseDomain = topPrivatelyControlledDomain(domain);
 
     if (urlRequiresChromeBrowser(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsChromeBrowser);
@@ -157,6 +158,10 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
 
     if (urlRequiresMacintoshPlatform(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
+#else
+    if (urlRequiresFirefoxBrowser(domain))
+        quirks.add(UserAgentQuirks::NeedsFirefoxBrowser);
+#endif
 
     if (urlRequiresUnbrandedUserAgent(domain))
         quirks.add(UserAgentQuirks::NeedsUnbrandedUserAgent);
@@ -169,9 +174,9 @@ String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
     switch (quirk) {
     case NeedsChromeBrowser:
         // Get versions from https://chromium.googlesource.com/chromium/src.git
-        return "Chrome/90.0.4419.1"_s;
+        return "Chrome/97.0.4669.2"_s;
     case NeedsFirefoxBrowser:
-        return "; rv:87.0) Gecko/20100101 Firefox/87.0"_s;
+        return "; rv:95.0) Gecko/20100101 Firefox/95.0"_s;
     case NeedsMacintoshPlatform:
         return "Macintosh; Intel Mac OS X 10_15"_s;
     case NeedsUnbrandedUserAgent:

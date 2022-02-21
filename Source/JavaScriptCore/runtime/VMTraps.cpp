@@ -263,7 +263,8 @@ private:
 
         auto optionalOwnerThread = vm.ownerThread();
         if (optionalOwnerThread) {
-            sendMessage(*optionalOwnerThread.value().get(), [&] (PlatformRegisters& registers) -> void {
+            ThreadSuspendLocker locker;
+            sendMessage(locker, *optionalOwnerThread.value().get(), [&] (PlatformRegisters& registers) -> void {
                 auto signalContext = SignalContext::tryCreate(registers);
                 if (!signalContext)
                     return;

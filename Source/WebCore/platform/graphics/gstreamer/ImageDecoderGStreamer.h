@@ -41,8 +41,8 @@ class ImageDecoderGStreamer final : public ImageDecoder {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ImageDecoderGStreamer);
 public:
-    static RefPtr<ImageDecoderGStreamer> create(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
-    ImageDecoderGStreamer(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    static RefPtr<ImageDecoderGStreamer> create(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    ImageDecoderGStreamer(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     virtual ~ImageDecoderGStreamer() = default;
 
     static bool supportsMediaType(MediaType type) { return type == MediaType::Video; }
@@ -51,7 +51,7 @@ public:
     size_t bytesDecodedToDetermineProperties() const override { return 0; }
     static bool canDecodeType(const String& mimeType);
 
-    void setEncodedDataStatusChangeCallback(WTF::Function<void(EncodedDataStatus)>&& callback) final { m_encodedDataStatusChangedCallback = WTFMove(callback); }
+    void setEncodedDataStatusChangeCallback(Function<void(EncodedDataStatus)>&& callback) final { m_encodedDataStatusChangedCallback = WTFMove(callback); }
     EncodedDataStatus encodedDataStatus() const final;
     IntSize size() const final;
     size_t frameCount() const final { return m_sampleData.size(); }
@@ -72,7 +72,7 @@ public:
     PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) final;
 
     void setExpectedContentSize(long long) final { }
-    void setData(SharedBuffer&, bool allDataReceived) final;
+    void setData(const FragmentedSharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_eos; }
     void clearFrameBufferCache(size_t) final;
 
@@ -122,11 +122,11 @@ private:
     };
 
     void handleSample(GRefPtr<GstSample>&&);
-    void pushEncodedData(const SharedBuffer&);
+    void pushEncodedData(const FragmentedSharedBuffer&);
 
     const ImageDecoderGStreamerSample* sampleAtIndex(size_t) const;
 
-    WTF::Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;
+    Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;
     SampleMap m_sampleData;
     DecodeOrderSampleMap::iterator m_cursor;
     Lock m_sampleGeneratorLock;

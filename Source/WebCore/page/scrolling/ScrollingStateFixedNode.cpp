@@ -102,7 +102,7 @@ void ScrollingStateFixedNode::reconcileLayerPositionForViewportRect(const Layout
     }
 }
 
-void ScrollingStateFixedNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingStateFixedNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "Fixed node";
     ScrollingStateNode::dumpProperties(ts, behavior);

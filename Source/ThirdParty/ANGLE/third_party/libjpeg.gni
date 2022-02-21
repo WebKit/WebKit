@@ -3,7 +3,7 @@
 # found in the LICENSE file.
 #
 # See:
-# https://chromium.googlesource.com/chromium/src/+/master/third_party/libjpeg.gni
+# https://chromium.googlesource.com/chromium/src/+/main/third_party/libjpeg.gni
 
 declare_args() {
   # Uses system libjpeg. If true, overrides use_libjpeg_turbo.

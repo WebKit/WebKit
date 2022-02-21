@@ -31,10 +31,13 @@
 #include "FontCache.h"
 
 #include "FontCascade.h"
+#include "FontCreationContext.h"
 #include "FontPlatformData.h"
 #include "FontSelector.h"
 #include "Logging.h"
+#include "ThreadGlobalData.h"
 #include "WebKitFontFamilyNames.h"
+#include "WorkerOrWorkletThread.h"
 #include <wtf/HashMap.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
@@ -80,17 +83,18 @@ inline bool operator!=(const FontFamilyName& a, const FontFamilyName& b)
 struct FontPlatformDataCacheKey {
     FontDescriptionKey descriptionKey;
     FontFamilyName family;
-    FontFeatureSettings features;
-    FontSelectionSpecifiedCapabilities capabilities;
+    FontCreationContext fontCreationContext;
 };
 
 static bool operator==(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b)
 {
-    return a.descriptionKey == b.descriptionKey && a.family == b.family && a.features == b.features && a.capabilities == b.capabilities;
+    return a.descriptionKey == b.descriptionKey
+        && a.family == b.family
+        && a.fontCreationContext == b.fontCreationContext;
 }
 
 struct FontPlatformDataCacheKeyHash {
-    static unsigned hash(const FontPlatformDataCacheKey& key) { return computeHash(key.descriptionKey, key.family, key.features, key.capabilities.tied()); }
+    static unsigned hash(const FontPlatformDataCacheKey& key) { return computeHash(key.descriptionKey, key.family, key.fontCreationContext); }
     static bool equal(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
@@ -146,16 +150,14 @@ struct FontCache::FontDataCaches {
 #endif
 };
 
-Ref<FontCache> FontCache::create()
+FontCache& FontCache::forCurrentThread()
 {
-    ASSERT(!isMainThread());
-    return adoptRef(*new FontCache());
+    return threadGlobalData().fontCache();
 }
 
-FontCache& FontCache::singleton()
+FontCache* FontCache::forCurrentThreadIfNotDestroyed()
 {
-    static MainThreadNeverDestroyed<FontCache> globalFontCache;
-    return globalFontCache;
+    return threadGlobalData().fontCacheIfNotDestroyed();
 }
 
 FontCache::FontCache()
@@ -206,8 +208,7 @@ std::optional<ASCIILiteral> FontCache::alternateFamilyName(const String& familyN
     return std::nullopt;
 }
 
-FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontDescription, const String& passedFamilyName,
-    const FontFeatureSettings* features, FontSelectionSpecifiedCapabilities capabilities, bool checkingAlternateName)
+FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontDescription, const String& passedFamilyName, const FontCreationContext& fontCreationContext, bool checkingAlternateName)
 {
 #if PLATFORM(IOS_FAMILY)
     Locker locker { m_fontLock };
@@ -227,17 +228,17 @@ FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontD
         platformInit();
     });
 
-    FontPlatformDataCacheKey key { fontDescription, { familyName }, features ? *features : FontFeatureSettings { }, capabilities };
+    FontPlatformDataCacheKey key { fontDescription, { familyName }, fontCreationContext };
 
     auto addResult = m_fontDataCaches->platformData.add(key, nullptr);
     FontPlatformDataCache::iterator it = addResult.iterator;
     if (addResult.isNewEntry) {
-        it->value = createFontPlatformData(fontDescription, familyName, features, capabilities);
+        it->value = createFontPlatformData(fontDescription, familyName, fontCreationContext);
         if (!it->value && !checkingAlternateName) {
             // We were unable to find a font. We have a small set of fonts that we alias to other names,
             // e.g., Arial/Helvetica, Courier/Courier New, etc. Try looking up the font under the aliased name.
             if (auto alternateName = alternateFamilyName(familyName)) {
-                auto* alternateData = cachedFontPlatformData(fontDescription, *alternateName, features, capabilities, true);
+                auto* alternateData = cachedFontPlatformData(fontDescription, *alternateName, fontCreationContext, true);
                 // Look up the key in the hash table again as the previous iterator may have
                 // been invalidated by the recursive call to cachedFontPlatformData().
                 it = m_fontDataCaches->platformData.find(key);
@@ -262,12 +263,12 @@ const unsigned cTargetInactiveFontData = 200;
 const unsigned cMaxUnderMemoryPressureInactiveFontData = 50;
 const unsigned cTargetUnderMemoryPressureInactiveFontData = 30;
 
-RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const String& family, const FontFeatureSettings* features, FontSelectionSpecifiedCapabilities capabilities, bool checkingAlternateName)
+RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const String& family, const FontCreationContext& fontCreationContext, bool checkingAlternateName)
 {
     if (!m_purgeTimer.isActive())
         m_purgeTimer.startOneShot(0_s);
 
-    if (auto* platformData = cachedFontPlatformData(fontDescription, family, features, capabilities, checkingAlternateName))
+    if (auto* platformData = cachedFontPlatformData(fontDescription, family, fontCreationContext, checkingAlternateName))
         return fontForPlatformData(*platformData);
 
     return nullptr;
@@ -280,7 +281,7 @@ Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
 #endif
 
     auto addResult = m_fontDataCaches->data.ensure(platformData, [&] {
-        return Font::create(platformData, Font::Origin::Local, this);
+        return Font::create(platformData, Font::Origin::Local);
     });
 
     ASSERT(addResult.iterator->value->platformData() == platformData);
@@ -486,6 +487,14 @@ void FontCache::invalidate()
         client->fontCacheInvalidated();
 
     purgeInactiveFontData();
+}
+
+void FontCache::invalidateAllFontCaches()
+{
+    ASSERT(isMainThread());
+
+    // FIXME: Invalidate FontCaches in workers too.
+    FontCache::forCurrentThread().invalidate();
 }
 
 #if !PLATFORM(COCOA)

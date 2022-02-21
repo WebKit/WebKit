@@ -34,6 +34,7 @@
 #import "TestRunnerWKWebView.h"
 #import "TextInputSPI.h"
 #import "UIKitSPI.h"
+#import "UIPasteboardConsistencyEnforcer.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -98,10 +99,10 @@ void TestController::notifyDone()
     [selectionView _removeAllAnimations:YES];
 }
 
-void TestController::platformInitialize()
+void TestController::platformInitialize(const Options& options)
 {
     setUpIOSLayoutTestCommunication();
-    cocoaPlatformInitialize();
+    cocoaPlatformInitialize(options);
 
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     [[UIScreen mainScreen] _setScale:2.0];
@@ -154,7 +155,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     cocoaResetStateToConsistentValues(options);
 
     [UIKeyboardImpl.activeInstance setCorrectionLearningAllowed:NO];
-    [UIPasteboard generalPasteboard].items = @[ ];
+    [pasteboardConsistencyEnforcer() clearPasteboard];
     [[UIApplication sharedApplication] _cancelAllTouches];
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
 
@@ -227,6 +228,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         UIScrollView *scrollView = webView.scrollView;
         [scrollView _removeAllAnimations:YES];
         [scrollView setZoomScale:1 animated:NO];
+        scrollView.firstResponderKeyboardAvoidanceEnabled = YES;
 
         auto currentContentInset = scrollView.contentInset;
         auto contentInsetTop = options.contentInsetTop();
@@ -381,6 +383,13 @@ void TestController::setKeyboardInputModeIdentifier(const String& identifier)
     m_inputModeSwizzlers.uncheckedAppend(makeUnique<InstanceMethodSwizzler>(controllerClass, @selector(currentInputModeInPreference), reinterpret_cast<IMP>(swizzleCurrentInputMode)));
     m_inputModeSwizzlers.uncheckedAppend(makeUnique<InstanceMethodSwizzler>(controllerClass, @selector(activeInputModes), reinterpret_cast<IMP>(swizzleActiveInputModes)));
     [UIKeyboardImpl.sharedInstance prepareKeyboardInputModeFromPreferences:nil];
+}
+
+UIPasteboardConsistencyEnforcer *TestController::pasteboardConsistencyEnforcer()
+{
+    if (!m_pasteboardConsistencyEnforcer)
+        m_pasteboardConsistencyEnforcer = adoptNS([[UIPasteboardConsistencyEnforcer alloc] initWithPasteboardName:UIPasteboardNameGeneral]);
+    return m_pasteboardConsistencyEnforcer.get();
 }
 
 } // namespace WTR

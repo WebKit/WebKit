@@ -25,10 +25,12 @@
 #include "SVGRootInlineBox.h"
 
 #include "GraphicsContext.h"
+#include "InlineIteratorLogicalOrderTraversal.h"
 #include "RenderSVGText.h"
 #include "RenderSVGTextPath.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGInlineFlowBox.h"
-#include "SVGInlineTextBox.h"
+#include "SVGInlineTextBoxInlines.h"
 #include "SVGNames.h"
 #include "SVGRenderingContext.h"
 #include "SVGTextPositioningElement.h"
@@ -84,7 +86,7 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
         return;
 
     if (textRoot.needsReordering())
-        reorderValueLists(layoutAttributes);
+        reorderValueListsToLogicalOrder(layoutAttributes);
 
     // Perform SVG text layout phase two (see SVGTextLayoutEngine for details).
     SVGTextLayoutEngine characterLayout(layoutAttributes);
@@ -269,26 +271,24 @@ static inline void findFirstAndLastAttributesInVector(Vector<SVGTextLayoutAttrib
     ASSERT(last);
 }
 
-static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Vector<LegacyInlineBox*>::iterator first, Vector<LegacyInlineBox*>::iterator last)
+static inline void reverseInlineBoxRangeAndValueListsIfNeeded(Vector<SVGTextLayoutAttributes*>& attributes, Vector<InlineIterator::LeafBoxIterator>::iterator first, Vector<InlineIterator::LeafBoxIterator>::iterator last)
 {
-    ASSERT(userData);
-    Vector<SVGTextLayoutAttributes*>& attributes = *reinterpret_cast<Vector<SVGTextLayoutAttributes*>*>(userData);
-
     // This is a copy of std::reverse(first, last). It additionally assures that the metrics map within the renderers belonging to the InlineBoxes are reordered as well.
     while (true)  {
         if (first == last || first == --last)
             return;
-
-        if (!is<SVGInlineTextBox>(**last) || !is<SVGInlineTextBox>(**first)) {
-            LegacyInlineBox* temp = *first;
+        auto* legacyFirst = (*first)->legacyInlineBox();
+        auto* legacyLast = (*last)->legacyInlineBox();
+        if (!is<SVGInlineTextBox>(legacyFirst) || !is<SVGInlineTextBox>(legacyLast)) {
+            auto temp = *first;
             *first = *last;
             *last = temp;
             ++first;
             continue;
         }
 
-        auto& firstTextBox = downcast<SVGInlineTextBox>(**first);
-        auto& lastTextBox = downcast<SVGInlineTextBox>(**last);
+        auto& firstTextBox = downcast<SVGInlineTextBox>(*legacyFirst);
+        auto& lastTextBox = downcast<SVGInlineTextBox>(*legacyLast);
 
         // Reordering is only necessary for BiDi text that is _absolutely_ positioned.
         if (firstTextBox.len() == 1 && firstTextBox.len() == lastTextBox.len()) {
@@ -301,7 +301,7 @@ static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Ve
             swapItemsInLayoutAttributes(firstAttributes, lastAttributes, firstTextBox.start(), lastTextBox.start());
         }
 
-        LegacyInlineBox* temp = *first;
+        auto temp = *first;
         *first = *last;
         *last = temp;
 
@@ -309,10 +309,14 @@ static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Ve
     }
 }
 
-void SVGRootInlineBox::reorderValueLists(Vector<SVGTextLayoutAttributes*>& attributes)
+void SVGRootInlineBox::reorderValueListsToLogicalOrder(Vector<SVGTextLayoutAttributes*>& attributes)
 {
-    Vector<LegacyInlineBox*> leafBoxesInLogicalOrder;
-    collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder, reverseInlineBoxRangeAndValueListsIfNeeded, &attributes);
+    auto line = InlineIterator::LineIterator(this);
+
+    InlineIterator::leafBoxesInLogicalOrder(line, [&](auto first, auto last) {
+        reverseInlineBoxRangeAndValueListsIfNeeded(attributes, first, last);
+    });
+
 }
 
 } // namespace WebCore

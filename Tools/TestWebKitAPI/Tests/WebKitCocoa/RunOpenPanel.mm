@@ -43,7 +43,7 @@ static NSString * const expectedFileName = @"这是中文";
 
 @implementation RunOpenPanelUIDelegate
 
-- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> * _Nullable))completionHandler
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *))completionHandler
 {
     EXPECT_FALSE(parameters.allowsMultipleSelection);
     EXPECT_FALSE(parameters.allowsDirectories);
@@ -72,7 +72,7 @@ TEST(WebKit, RunOpenPanelNonLatin1)
     Util::run(&fileSelected);
     
     __block bool testFinished = false;
-    [webView evaluateJavaScript:@"document.getElementsByTagName('input')[0].files[0].name" completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    [webView evaluateJavaScript:@"document.getElementsByTagName('input')[0].files[0].name" completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE([result isKindOfClass:[NSString class]]);
         EXPECT_WK_STREQ(expectedFileName, result);
         testFinished = true;

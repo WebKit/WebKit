@@ -712,20 +712,31 @@ void OSXWindow::messageLoop()
     {
         while (true)
         {
-            NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask
-                                                untilDate:[NSDate distantPast]
-                                                   inMode:NSDefaultRunLoopMode
-                                                  dequeue:YES];
-            if (event == nil)
+            // TODO(http://anglebug.com/6570): @try/@catch is a workaround for
+            // exceptions being thrown from Cocoa-internal function
+            // NS_setFlushesWithDisplayLink starting in macOS 11.
+            @try
             {
-                break;
-            }
+                NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask
+                                                    untilDate:[NSDate distantPast]
+                                                       inMode:NSDefaultRunLoopMode
+                                                      dequeue:YES];
+                if (event == nil)
+                {
+                    break;
+                }
 
-            if ([event type] == NSAppKitDefined)
-            {
-                continue;
+                if ([event type] == NSAppKitDefined)
+                {
+                    continue;
+                }
+                [NSApp sendEvent:event];
             }
-            [NSApp sendEvent:event];
+            @catch (NSException *localException)
+            {
+                NSLog(@"*** OSXWindow discarding exception: <%@> %@", [localException name],
+                      [localException reason]);
+            }
         }
     }
 }

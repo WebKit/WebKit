@@ -68,7 +68,7 @@ rasterization feature from
 [Bresenham]: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 [DiamondRule]: img/LineRasterPixelExample.png
 [Holes]: img/LineRasterHoles.jpg
-[TranslatorVulkan.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/compiler/translator/TranslatorVulkan.cpp
+[TranslatorVulkan.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/compiler/translator/TranslatorVulkan.cpp
 [VK_EXT_line_rasterization]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VK_EXT_line_rasterization.html
 [VulkanLineRaster]: https://www.khronos.org/registry/vulkan/specs/1.1/html/chap24.html#primsrast-lines-basic
 [VulkanVsGLLineRaster]: img/LineRasterComparison.gif

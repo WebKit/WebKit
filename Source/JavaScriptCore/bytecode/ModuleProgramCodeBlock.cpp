@@ -30,6 +30,8 @@
 #include "config.h"
 #include "ModuleProgramCodeBlock.h"
 
+#include "JSCellInlines.h"
+
 namespace JSC {
 
 const ClassInfo ModuleProgramCodeBlock::s_info = {

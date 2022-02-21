@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "HTMLElement.h"
 #include "Timer.h"
 
@@ -52,18 +53,13 @@ private:
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
     void stop() final;
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
-    void errorEventTimerFired();
-
-    Timer m_errorEventTimer;
-    bool m_shouldRescheduleErrorEventOnResume { false };
+    TaskCancellationGroup m_errorEventCancellationGroup;
     bool m_shouldCallSourcesChanged { false };
     mutable std::optional<RefPtr<const MediaQuerySet>> m_cachedParsedMediaAttribute;
 };

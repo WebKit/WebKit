@@ -28,9 +28,11 @@
 #if ENABLE(VIDEO)
 
 #include "PolicyChecker.h"
+#include "SharedBuffer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -49,7 +51,7 @@ public:
     virtual void redirectReceived(PlatformMediaResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) { completionHandler(WTFMove(request)); }
     virtual bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) { return true; }
     virtual void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) { }
-    virtual void dataReceived(PlatformMediaResource&, const uint8_t*, int) { }
+    virtual void dataReceived(PlatformMediaResource&, const SharedBuffer&) { RELEASE_ASSERT_NOT_REACHED(); }
     virtual void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) { }
     virtual void loadFailed(PlatformMediaResource&, const ResourceError&) { }
     virtual void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) { }

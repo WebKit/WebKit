@@ -13,7 +13,4 @@ var obj = new Number(1);
 
 Function("this.touched= true;").call(obj);
 
-//CHECK#1
-if (!(obj.touched)) {
-  throw new Test262Error('#1: If thisArg is not null(defined) the called function is passed ToObject(thisArg) as the this value');
-}
+assert(obj.touched, 'The value of obj.touched is expected to be true');

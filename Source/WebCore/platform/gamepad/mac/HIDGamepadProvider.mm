@@ -32,7 +32,6 @@
 #import "GamepadProviderClient.h"
 #import "Logging.h"
 #import "PlatformGamepad.h"
-#import <pal/spi/mac/IOKitSPIMac.h>
 #import <wtf/NeverDestroyed.h>
 
 #if HAVE(GCCONTROLLER_HID_DEVICE_CHECK)

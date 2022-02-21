@@ -136,7 +136,7 @@ void AutoscrollController::updateAutoscrollRenderer()
 
     while (renderer && !(is<RenderBox>(*renderer) && downcast<RenderBox>(*renderer).canAutoscroll()))
         renderer = renderer->parent();
-    m_autoscrollRenderer = is<RenderBox>(renderer) ? downcast<RenderBox>(renderer) : nullptr;
+    m_autoscrollRenderer = dynamicDowncast<RenderBox>(renderer);
 }
 
 void AutoscrollController::updateDragAndDrop(Node* dropTargetNode, const IntPoint& eventPosition, WallTime eventTime)

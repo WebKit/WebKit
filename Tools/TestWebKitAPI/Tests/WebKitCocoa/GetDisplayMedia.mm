@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
@@ -36,11 +37,8 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 
-static bool wasPrompted = false;
 static bool shouldDeny = false;
 static _WKCaptureDevices requestedDevices = 0;
-static bool receivedScriptMessage = false;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @interface GetDisplayMediaMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -106,10 +104,11 @@ public:
         preferences._mockCaptureDevicesEnabled = YES;
         preferences._screenCaptureEnabled = YES;
 
-        m_webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get()]);
+        m_webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get() addToWindow:YES]);
 
         m_uiDelegate = adoptNS([[GetDisplayMediaUIDelegate alloc] init]);
         m_webView.get().UIDelegate = m_uiDelegate.get();
+        [m_webView focus];
 
         [m_webView synchronouslyLoadTestPageNamed:@"getDisplayMedia"];
     }

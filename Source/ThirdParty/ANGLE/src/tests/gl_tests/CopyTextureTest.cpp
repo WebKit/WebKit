@@ -908,6 +908,8 @@ constexpr GLenum kCopyTextureVariationsDstFormats[] = {GL_RGB, GL_RGBA, GL_BGRA_
 
 TEST_P(CopyTextureVariationsTest, CopyTexture)
 {
+    // http://anglebug.com/5723
+    ANGLE_SKIP_TEST_IF(IsOzone());
     // http://anglebug.com/5246
     if (std::get<1>(GetParam()) == GL_ALPHA && std::get<2>(GetParam()) == GL_RGB &&
         std::get<3>(GetParam()) && std::get<5>(GetParam()))
@@ -921,6 +923,8 @@ TEST_P(CopyTextureVariationsTest, CopyTexture)
 
 TEST_P(CopyTextureVariationsTest, CopySubTexture)
 {
+    // http://anglebug.com/5723
+    ANGLE_SKIP_TEST_IF(IsOzone());
     testCopySubTexture(GL_TEXTURE_2D, std::get<1>(GetParam()), std::get<2>(GetParam()),
                        std::get<3>(GetParam()), std::get<4>(GetParam()), std::get<5>(GetParam()));
 }
@@ -2529,8 +2533,6 @@ TEST_P(CopyTextureTestES3, InvalidateBlitThenBlend1000Layers)
 #    undef Bool
 #endif
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTest);
 ANGLE_INSTANTIATE_TEST_COMBINE_5(CopyTextureVariationsTest,
                                  CopyTextureVariationsTestPrint,
@@ -2552,6 +2554,8 @@ ANGLE_INSTANTIATE_TEST(CopyTextureTestDest,
                        ES2_OPENGLES(),
                        ES2_VULKAN(),
                        ES2_METAL());
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTextureTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(CopyTextureTestES3);
 
 }  // namespace angle

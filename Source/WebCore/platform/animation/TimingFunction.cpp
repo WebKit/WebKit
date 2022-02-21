@@ -89,17 +89,17 @@ TextStream& operator<<(TextStream& ts, const TimingFunction& timingFunction)
     return ts;
 }
 
-double TimingFunction::transformTime(double inputTime, double duration, bool before) const
+double TimingFunction::transformProgress(double progress, double duration, bool before) const
 {
     switch (m_type) {
     case TimingFunction::CubicBezierFunction: {
         auto& function = downcast<CubicBezierTimingFunction>(*this);
         if (function.isLinear())
-            return inputTime;
+            return progress;
         // The epsilon value we pass to UnitBezier::solve given that the animation is going to run over |dur| seconds. The longer the
         // animation, the more precision we need in the timing function result to avoid ugly discontinuities.
         auto epsilon = 1.0 / (1000.0 * duration);
-        return UnitBezier(function.x1(), function.y1(), function.x2(), function.y2()).solve(inputTime, epsilon);
+        return UnitBezier(function.x1(), function.y1(), function.x2(), function.y2()).solve(progress, epsilon);
     }
     case TimingFunction::StepsFunction: {
         // https://drafts.csswg.org/css-easing-1/#step-timing-functions
@@ -107,7 +107,7 @@ double TimingFunction::transformTime(double inputTime, double duration, bool bef
         auto steps = function.numberOfSteps();
         auto stepPosition = function.stepPosition();
         // 1. Calculate the current step as floor(input progress value × steps).
-        auto currentStep = std::floor(inputTime * steps);
+        auto currentStep = std::floor(progress * steps);
         // 2. If the step position property is start, increment current step by one.
         if (stepPosition == StepsTimingFunction::StepPosition::JumpStart || stepPosition == StepsTimingFunction::StepPosition::Start || stepPosition == StepsTimingFunction::StepPosition::JumpBoth)
             ++currentStep;
@@ -115,10 +115,10 @@ double TimingFunction::transformTime(double inputTime, double duration, bool bef
         //    - the before flag is set, and
         //    - input progress value × steps mod 1 equals zero (that is, if input progress value × steps is integral), then
         //    decrement current step by one.
-        if (before && !fmod(inputTime * steps, 1))
+        if (before && !fmod(progress * steps, 1))
             currentStep--;
         // 4. If input progress value ≥ 0 and current step < 0, let current step be zero.
-        if (inputTime >= 0 && currentStep < 0)
+        if (progress >= 0 && currentStep < 0)
             currentStep = 0;
         // 5. Calculate jumps based on the step position.
         if (stepPosition == StepsTimingFunction::StepPosition::JumpNone)
@@ -126,17 +126,17 @@ double TimingFunction::transformTime(double inputTime, double duration, bool bef
         else if (stepPosition == StepsTimingFunction::StepPosition::JumpBoth)
             ++steps;
         // 6. If input progress value ≤ 1 and current step > jumps, let current step be jumps.
-        if (inputTime <= 1 && currentStep > steps)
+        if (progress <= 1 && currentStep > steps)
             currentStep = steps;
         // 7. The output progress value is current step / jumps.
         return currentStep / steps;
     }
     case TimingFunction::SpringFunction: {
         auto& function = downcast<SpringTimingFunction>(*this);
-        return SpringSolver(function.mass(), function.stiffness(), function.damping(), function.initialVelocity()).solve(inputTime * duration);
+        return SpringSolver(function.mass(), function.stiffness(), function.damping(), function.initialVelocity()).solve(progress * duration);
     }
     case TimingFunction::LinearFunction:
-        return inputTime;
+        return progress;
     }
 
     ASSERT_NOT_REACHED();

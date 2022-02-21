@@ -383,12 +383,13 @@ class WebPlatformTestExporter(object):
         if git_patch_file:
             self._filesystem.remove(git_patch_file)
 
-        lint_errors = self._linter.lint()
-        if lint_errors:
-            _log.error("The wpt linter detected %s linting error(s). Please address the above errors before attempting to export changes to the web-platform-test repository." % (lint_errors,))
-            self.delete_local_branch()
-            self.clean()
-            return
+        if self._options.use_linter:
+            lint_errors = self._linter.lint()
+            if lint_errors:
+                _log.error("The wpt linter detected %s linting error(s). Please address the above errors before attempting to export changes to the web-platform-test repository." % (lint_errors,))
+                self.delete_local_branch()
+                self.clean()
+                return
 
         try:
             if self.push_to_wpt_fork():
@@ -432,6 +433,7 @@ def parse_args(args):
     parser.add_argument('-d', '--repository', dest='repository_directory', default=None, help='repository directory')
     parser.add_argument('-c', '--create-pr', dest='create_pull_request', action='store_true', default=False, help='create pull request to w3c web-platform-tests')
     parser.add_argument('--non-interactive', action='store_true', dest='non_interactive', default=False, help='Never prompt the user, fail as fast as possible.')
+    parser.add_argument('--no-linter', action='store_false', dest='use_linter', default=True, help='Disable linter.')
 
     options, args = parser.parse_known_args(args)
 

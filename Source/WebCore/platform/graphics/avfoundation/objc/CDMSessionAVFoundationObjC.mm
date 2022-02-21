@@ -44,9 +44,9 @@
 namespace WebCore {
 
 CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient* client)
-    : m_parent(makeWeakPtr(*parent))
+    : m_parent(*parent)
     , m_client(client)
-    , m_sessionId(createCanonicalUUIDString())
+    , m_sessionId(createVersion4UUIDString())
 {
 }
 
@@ -93,7 +93,7 @@ RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& 
     systemCode = 0;
     destinationURL = String();
 
-    auto keyRequestBuffer = ArrayBuffer::create([keyRequest.get() bytes], [keyRequest.get() length]);
+    auto keyRequestBuffer = ArrayBuffer::create([keyRequest bytes], [keyRequest length]);
     unsigned byteLength = keyRequestBuffer->byteLength();
     return Uint8Array::tryCreate(WTFMove(keyRequestBuffer), 0, byteLength);
 }
@@ -112,6 +112,11 @@ bool CDMSessionAVFoundationObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nex
     nextMessage = nullptr;
 
     return true;
+}
+
+RefPtr<ArrayBuffer> CDMSessionAVFoundationObjC::cachedKeyForKeyID(const String&) const
+{
+    return nullptr;
 }
 
 void CDMSessionAVFoundationObjC::playerDidReceiveError(NSError *error)

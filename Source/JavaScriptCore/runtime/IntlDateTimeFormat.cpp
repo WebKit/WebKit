@@ -68,7 +68,7 @@ static constexpr bool verbose = false;
 
 IntlDateTimeFormat* IntlDateTimeFormat::create(VM& vm, Structure* structure)
 {
-    IntlDateTimeFormat* format = new (NotNull, allocateCell<IntlDateTimeFormat>(vm.heap)) IntlDateTimeFormat(vm, structure);
+    IntlDateTimeFormat* format = new (NotNull, allocateCell<IntlDateTimeFormat>(vm)) IntlDateTimeFormat(vm, structure);
     format->finishCreation(vm);
     return format;
 }
@@ -327,7 +327,7 @@ static inline unsigned skipLiteralText(const Container& container, unsigned star
     return length - 1;
 }
 
-void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
+void IntlDateTimeFormat::setFormatsFromPattern(StringView pattern)
 {
     // Get all symbols from the pattern, and set format fields accordingly.
     // http://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
@@ -1230,44 +1230,46 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject) cons
         options->putDirect(vm, vm.propertyNames->hour12, jsBoolean(m_hourCycle == HourCycle::H11 || m_hourCycle == HourCycle::H12));
     }
 
-    if (m_weekday != Weekday::None)
-        options->putDirect(vm, vm.propertyNames->weekday, jsNontrivialString(vm, weekdayString(m_weekday)));
+    if (m_dateStyle == DateTimeStyle::None && m_timeStyle == DateTimeStyle::None) {
+        if (m_weekday != Weekday::None)
+            options->putDirect(vm, vm.propertyNames->weekday, jsNontrivialString(vm, weekdayString(m_weekday)));
 
-    if (m_era != Era::None)
-        options->putDirect(vm, vm.propertyNames->era, jsNontrivialString(vm, eraString(m_era)));
+        if (m_era != Era::None)
+            options->putDirect(vm, vm.propertyNames->era, jsNontrivialString(vm, eraString(m_era)));
 
-    if (m_year != Year::None)
-        options->putDirect(vm, vm.propertyNames->year, jsNontrivialString(vm, yearString(m_year)));
+        if (m_year != Year::None)
+            options->putDirect(vm, vm.propertyNames->year, jsNontrivialString(vm, yearString(m_year)));
 
-    if (m_month != Month::None)
-        options->putDirect(vm, vm.propertyNames->month, jsNontrivialString(vm, monthString(m_month)));
+        if (m_month != Month::None)
+            options->putDirect(vm, vm.propertyNames->month, jsNontrivialString(vm, monthString(m_month)));
 
-    if (m_day != Day::None)
-        options->putDirect(vm, vm.propertyNames->day, jsNontrivialString(vm, dayString(m_day)));
+        if (m_day != Day::None)
+            options->putDirect(vm, vm.propertyNames->day, jsNontrivialString(vm, dayString(m_day)));
 
-    if (m_dayPeriod != DayPeriod::None)
-        options->putDirect(vm, vm.propertyNames->dayPeriod, jsNontrivialString(vm, dayPeriodString(m_dayPeriod)));
+        if (m_dayPeriod != DayPeriod::None)
+            options->putDirect(vm, vm.propertyNames->dayPeriod, jsNontrivialString(vm, dayPeriodString(m_dayPeriod)));
 
-    if (m_hour != Hour::None)
-        options->putDirect(vm, vm.propertyNames->hour, jsNontrivialString(vm, hourString(m_hour)));
+        if (m_hour != Hour::None)
+            options->putDirect(vm, vm.propertyNames->hour, jsNontrivialString(vm, hourString(m_hour)));
 
-    if (m_minute != Minute::None)
-        options->putDirect(vm, vm.propertyNames->minute, jsNontrivialString(vm, minuteString(m_minute)));
+        if (m_minute != Minute::None)
+            options->putDirect(vm, vm.propertyNames->minute, jsNontrivialString(vm, minuteString(m_minute)));
 
-    if (m_second != Second::None)
-        options->putDirect(vm, vm.propertyNames->second, jsNontrivialString(vm, secondString(m_second)));
+        if (m_second != Second::None)
+            options->putDirect(vm, vm.propertyNames->second, jsNontrivialString(vm, secondString(m_second)));
 
-    if (m_fractionalSecondDigits)
-        options->putDirect(vm, vm.propertyNames->fractionalSecondDigits, jsNumber(m_fractionalSecondDigits));
+        if (m_fractionalSecondDigits)
+            options->putDirect(vm, vm.propertyNames->fractionalSecondDigits, jsNumber(m_fractionalSecondDigits));
 
-    if (m_timeZoneName != TimeZoneName::None)
-        options->putDirect(vm, vm.propertyNames->timeZoneName, jsNontrivialString(vm, timeZoneNameString(m_timeZoneName)));
+        if (m_timeZoneName != TimeZoneName::None)
+            options->putDirect(vm, vm.propertyNames->timeZoneName, jsNontrivialString(vm, timeZoneNameString(m_timeZoneName)));
+    } else {
+        if (m_dateStyle != DateTimeStyle::None)
+            options->putDirect(vm, vm.propertyNames->dateStyle, jsNontrivialString(vm, formatStyleString(m_dateStyle)));
 
-    if (m_dateStyle != DateTimeStyle::None)
-        options->putDirect(vm, vm.propertyNames->dateStyle, jsNontrivialString(vm, formatStyleString(m_dateStyle)));
-
-    if (m_timeStyle != DateTimeStyle::None)
-        options->putDirect(vm, vm.propertyNames->timeStyle, jsNontrivialString(vm, formatStyleString(m_timeStyle)));
+        if (m_timeStyle != DateTimeStyle::None)
+            options->putDirect(vm, vm.propertyNames->timeStyle, jsNontrivialString(vm, formatStyleString(m_timeStyle)));
+    }
 
     return options;
 }

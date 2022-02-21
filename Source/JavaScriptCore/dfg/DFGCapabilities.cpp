@@ -240,6 +240,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_get_from_arguments:
     case op_put_to_arguments:
     case op_get_argument:
+    case op_jeq_ptr:
     case op_jneq_ptr:
     case op_typeof:
     case op_to_number:
@@ -314,6 +315,10 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case llint_native_construct_trampoline:
     case llint_internal_function_call_trampoline:
     case llint_internal_function_construct_trampoline:
+    case llint_link_call_trampoline:
+    case llint_virtual_call_trampoline:
+    case llint_virtual_construct_trampoline:
+    case llint_virtual_tail_call_trampoline:
     case llint_get_host_call_return_value:
     case llint_handle_uncaught_exception:
     case checkpoint_osr_exit_from_inlined_call_trampoline:
@@ -324,6 +329,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_iterator_next_return_location:
     case op_call_return_location:
     case op_construct_return_location:
+    case op_call_varargs_return_location:
+    case op_construct_varargs_return_location:
     case op_call_varargs_slow_return_location:
     case op_construct_varargs_slow_return_location:
     case op_get_by_id_return_location:
@@ -334,7 +341,6 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_construct_slow_return_location:
     case op_iterator_open_slow_return_location:
     case op_iterator_next_slow_return_location:
-    case op_tail_call_return_location:
     case op_tail_call_slow_return_location:
     case op_tail_call_forward_arguments_slow_return_location:
     case op_tail_call_varargs_slow_return_location:
@@ -342,8 +348,9 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case wasm_function_prologue:
     case wasm_function_prologue_no_tls:
     case js_trampoline_op_call:
-    case js_trampoline_op_tail_call:
     case js_trampoline_op_construct:
+    case js_trampoline_op_call_varargs:
+    case js_trampoline_op_construct_varargs:
     case js_trampoline_op_iterator_next:
     case js_trampoline_op_iterator_open:
     case js_trampoline_op_call_slow:

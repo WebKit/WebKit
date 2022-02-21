@@ -50,7 +50,7 @@ RenderRubyRun::RenderRubyRun(Document& document, RenderStyle&& style)
     , m_lastCharacter(0)
     , m_secondToLastCharacter(0)
 {
-    setReplaced(true);
+    setReplacedOrInlineBlock(true);
     setInline(true);
 }
 
@@ -165,7 +165,7 @@ void RenderRubyRun::layoutBlock(bool relayoutChildren, LayoutUnit pageHeight)
         // Bopomofo. We need to move the RenderRubyText over to the right side and center it
         // vertically relative to the base.
         const FontCascade& font = style().fontCascade();
-        float distanceBetweenBase = std::max(font.letterSpacing(), 2.0f * rt->style().fontCascade().fontMetrics().height());
+        float distanceBetweenBase = std::max(font.letterSpacing(), 2.0f * rt->style().fontCascade().metricsOfPrimaryFont().height());
         setWidth(width() + distanceBetweenBase - font.letterSpacing());
         if (RenderRubyBase* rb = rubyBase()) {
             LayoutUnit firstLineTop;

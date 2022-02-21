@@ -21,11 +21,10 @@ namespace rtc {
 // socketserver, and call the SocketTest test methods.
 class SocketTest : public ::testing::Test {
  protected:
-  SocketTest()
+  explicit SocketTest(rtc::SocketFactory* socket_factory)
       : kIPv4Loopback(INADDR_LOOPBACK),
         kIPv6Loopback(in6addr_loopback),
-        ss_(nullptr) {}
-  void SetUp() override;
+        socket_factory_(socket_factory) {}
   void TestConnectIPv4();
   void TestConnectIPv6();
   void TestConnectWithDnsLookupIPv4();
@@ -93,7 +92,7 @@ class SocketTest : public ::testing::Test {
   void GetSetOptionsInternal(const IPAddress& loopback);
   void SocketRecvTimestamp(const IPAddress& loopback);
 
-  SocketServer* ss_;
+  SocketFactory* socket_factory_;
 };
 
 // For unbound sockets, GetLocalAddress / GetRemoteAddress return AF_UNSPEC

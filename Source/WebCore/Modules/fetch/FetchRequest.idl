@@ -26,17 +26,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum FetchRequestDestination { "", "audio", "audioworklet", "document", "embed", "font", "image", "manifest", "model", "object", "paintworklet", "report", "script", "serviceworker", "sharedworker", "style", "track", "video", "worker", "xslt" };
+enum FetchRequestDestination { "", "audio", "audioworklet", "document", "embed", "font", "image", "iframe", "manifest", "model", "object", "paintworklet", "report", "script", "serviceworker", "sharedworker", "style", "track", "video", "worker", "xslt" };
 
 typedef (FetchRequest or USVString) RequestInfo;
 
 [
     ActiveDOMObject,
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
     GenerateIsReachable=Impl,
     InterfaceName=Request,
 ] interface FetchRequest {
-    [CallWith=ScriptExecutionContext] constructor(RequestInfo input, optional FetchRequestInit init);
+    [CallWith=CurrentScriptExecutionContext] constructor(RequestInfo input, optional FetchRequestInit init);
 
     readonly attribute ByteString method;
     [ImplementedAs=urlString] readonly attribute USVString url;
@@ -50,14 +51,14 @@ typedef (FetchRequest or USVString) RequestInfo;
     readonly attribute FetchRequestCache cache;
     readonly attribute FetchRequestRedirect redirect;
     readonly attribute DOMString integrity;
-    [EnabledAtRuntime=FetchAPIKeepAlive] readonly attribute boolean keepalive;
+    [EnabledAtRuntime=FetchAPIKeepAliveEnabled] readonly attribute boolean keepalive;
     // FIXME: Implement 'isReloadNavigation'.
     // readonly attribute boolean isReloadNavigation;
     // FIXME: Implement 'isHistoryNavigation'.
     // readonly attribute boolean isHistoryNavigation;
     readonly attribute AbortSignal signal;
 
-    [CallWith=ScriptExecutionContext, NewObject] FetchRequest clone();
+    [NewObject] FetchRequest clone();
 };
 
 FetchRequest includes FetchBody;

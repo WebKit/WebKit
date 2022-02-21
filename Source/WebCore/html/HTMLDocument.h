@@ -29,14 +29,14 @@ namespace WebCore {
 class HTMLDocument : public Document {
     WTF_MAKE_ISO_ALLOCATED(HTMLDocument);
 public:
-    static Ref<HTMLDocument> create(Frame*, const Settings&, const URL&);
+    static Ref<HTMLDocument> create(Frame*, const Settings&, const URL&, ScriptExecutionContextIdentifier = { });
     static Ref<HTMLDocument> createSynthesizedDocument(Frame&, const URL&);
     virtual ~HTMLDocument();
 
     WEBCORE_EXPORT int width();
     WEBCORE_EXPORT int height();
     
-    std::optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>>> namedItem(const AtomString&);
+    std::optional<std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>>> namedItem(const AtomString&);
     Vector<AtomString> supportedPropertyNames() const;
 
     Element* documentNamedItem(const AtomStringImpl& name) const { return m_documentNamedItem.getElementByDocumentNamedItem(name, *this); }
@@ -54,7 +54,7 @@ public:
     static bool isCaseSensitiveAttribute(const QualifiedName&);
 
 protected:
-    HTMLDocument(Frame*, const Settings&, const URL&, DocumentClassFlags = 0, unsigned constructionFlags = 0);
+    HTMLDocument(Frame*, const Settings&, const URL&, ScriptExecutionContextIdentifier, DocumentClasses = { }, unsigned constructionFlags = 0);
 
 private:
     bool isFrameSet() const final;
@@ -65,9 +65,9 @@ private:
     TreeScopeOrderedMap m_windowNamedItem;
 };
 
-inline Ref<HTMLDocument> HTMLDocument::create(Frame* frame, const Settings& settings, const URL& url)
+inline Ref<HTMLDocument> HTMLDocument::create(Frame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier identifier)
 {
-    return adoptRef(*new HTMLDocument(frame, settings, url, HTMLDocumentClass));
+    return adoptRef(*new HTMLDocument(frame, settings, url, identifier, { DocumentClass::HTML }, 0));
 }
 
 } // namespace WebCore

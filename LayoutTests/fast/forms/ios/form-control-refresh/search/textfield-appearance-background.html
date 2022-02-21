@@ -1,0 +1,26 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true IOSFormControlRefreshEnabled=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="../../../../../resources/js-test.js"></script>
+    <style>
+    #search {
+        -webkit-appearance: textfield;
+    }
+    </style>
+</head>
+<body>
+<input type="search" id="search">
+<input type="text" id="text">
+</body>
+<script>
+
+description("Test that setting -webkit-appearance: textfield on a search input sets the background color to match the text input background color.");
+
+searchBackgroundColor = window.getComputedStyle(search).backgroundColor;
+textBackgroundColor = window.getComputedStyle(text).backgroundColor;
+shouldBeEqualToString("textBackgroundColor", "rgb(255, 255, 255)");
+shouldBe("searchBackgroundColor", "textBackgroundColor");
+
+</script>
+</html>

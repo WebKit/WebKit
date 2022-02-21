@@ -6,26 +6,28 @@
 
             .columns {
                 -webkit-column-count:2;
-                -webkit-column-gap:50px;
-                inline-size:250px;
-                block-size:145px;
+                -webkit-column-gap:60px;
+                inline-size:254px;
+                block-size:149px;
                 margin: 20px;
                 border:2px solid black;
                 -webkit-column-rule: 1px solid maroon;
+                padding: 5px;
+                box-sizing: border-box;
             }
 
             #t1, #t6 {
                 -webkit-column-break-after: always;
             }
         
-            .columns div { block-size:50px; background-color:green; margin:5px; -webkit-margin-collapse:separate }
+            .columns div { block-size:50px; background-color:green; }
             
-            .columns div.span { margin:0; block-size:25px; background-color:orange; -webkit-column-span:all; margin-inline-start: 5px; margin-inline-end: 5px }
+            .columns div.span { margin-block: 5px; block-size:25px; background-color:orange; -webkit-column-span:all; }
 
             .fail #pass, .pass #fail { display: none; }
             
-            .vertical { -webkit-writing-mode: vertical-lr }
-            .vertical-flipped {  -webkit-writing-mode: vertical-rl }
+            .vertical { writing-mode: vertical-lr }
+            .vertical-flipped { writing-mode: vertical-rl }
         </style>
     </head>
 
@@ -101,6 +103,7 @@
             testOffsetLeft(122, "t6", "t7", 11);
             testOffsetLeft(92, "t8", "t8", 12);
         
+            // FIXME: <webkit.org/b/234664> Visual offsets are correct, but not JS values, for flipped-writing mode only
             testOffsetTop(470, "t11", "t14", 13);
             testOffsetTop(620, "t12", "t15", 14);
             testOffsetTop(470, "t13", "t13", 15);

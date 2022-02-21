@@ -40,10 +40,10 @@ public:
 
     // Borrowed stack trace.
     StackTrace(void** stack, int size, const char* prefix = "")
-        : m_size(size)
+        : m_prefix(prefix)
+        , m_size(size)
         , m_capacity(0)
         , m_borrowedStack(stack)
-        , m_prefix(prefix)
     { }
 
     int size() const { return m_size; }
@@ -82,6 +82,8 @@ private:
         : m_size(0)
     { }
 
+    const char* m_prefix { nullptr };
+
     // We structure the top fields this way because the underlying stack capture
     // facility will capture from the top of the stack, and we'll need to skip the
     // top 2 frame which is of no interest. Setting up the fields layout this way
@@ -100,8 +102,6 @@ private:
         void** m_borrowedStack;
         void* m_stack[1];
     };
-
-    const char* m_prefix;
 };
 
 } // namespace WTF

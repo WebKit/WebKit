@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ namespace TestWebKitAPI {
 static String parseUserAgent(const Vector<char>& request)
 {
     auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n");
-    auto index = headers.findMatching([] (auto& header) { return header.startsWith("User-Agent:"); });
+    auto index = headers.findIf([] (auto& header) { return header.startsWith("User-Agent:"); });
     if (index != notFound)
         return headers[index];
     return emptyString();
@@ -163,8 +163,8 @@ TEST(MediaLoading, RangeRequestSynthesisWithoutContentLength)
     respondToRequests = [&] (Connection connection) {
         connection.receiveHTTPRequest([&, connection] (Vector<char>&& request) {
             auto sendResponse = [&, connection] (HTTPResponse response, HTTPResponse::IncludeContentLength includeContentLength) {
-                connection.send(response.serialize(includeContentLength), [&, connection] {
-                    respondToRequests(connection);
+                connection.send(response.serialize(includeContentLength), [connection] () mutable {
+                    connection.terminate();
                 });
             };
             totalRequests++;

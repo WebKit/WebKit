@@ -12,7 +12,7 @@ PASS A labelable element which is a descendant of non-labelable element is moved
 PASS A labelable element is moved to iframe.
 FAIL A div element which contains labelable element is removed. assert_equals: The number of labels should be 1 after the labelable element is removed but label element is still in the same tree. expected 1 but got 0
 FAIL A labelable element not in a document can label element in the same tree. assert_equals: The number of labels associated with a form control should be the number of label elements for which it is a labeled control. expected 2 but got 0
-FAIL A labelable element inside the shadow DOM. assert_equals: The form control has an ancestor with no explicit associated label, and it is the first labelable descendant. expected 1 but got 0
+PASS A labelable element inside the shadow DOM.
 PASS A form control has an implicit label.
 PASS A form control has no label 1.
 PASS A form control has no label 2.

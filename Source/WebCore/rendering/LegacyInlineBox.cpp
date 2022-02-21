@@ -136,13 +136,13 @@ float LegacyInlineBox::logicalHeight() const
 
     const RenderStyle& lineStyle = this->lineStyle();
     if (renderer().isTextOrLineBreak())
-        return lineStyle.fontMetrics().height();
+        return lineStyle.metricsOfPrimaryFont().height();
     if (is<RenderBox>(renderer()) && parent())
         return isHorizontal() ? downcast<RenderBox>(renderer()).height() : downcast<RenderBox>(renderer()).width();
 
     ASSERT(isInlineFlowBox());
     RenderBoxModelObject* flowObject = boxModelObject();
-    const FontMetrics& fontMetrics = lineStyle.fontMetrics();
+    const FontMetrics& fontMetrics = lineStyle.metricsOfPrimaryFont();
     float result = fontMetrics.height();
     if (parent())
         result += flowObject->borderAndPaddingLogicalHeight();
@@ -183,7 +183,7 @@ void LegacyInlineBox::adjustPosition(float dx, float dy)
     if (renderer().isOutOfFlowPositioned())
         return;
 
-    if (renderer().isReplaced())
+    if (renderer().isReplacedOrInlineBlock())
         downcast<RenderBox>(renderer()).move(LayoutUnit(dx), LayoutUnit(dy));
 }
 
@@ -245,7 +245,7 @@ LegacyInlineBox* LegacyInlineBox::previousLeafOnLine() const
     return leaf;
 }
 
-RenderObject::HighlightState LegacyInlineBox::selectionState()
+RenderObject::HighlightState LegacyInlineBox::selectionState() const
 {
     return renderer().selectionState();
 }
@@ -253,7 +253,7 @@ RenderObject::HighlightState LegacyInlineBox::selectionState()
 bool LegacyInlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const
 {
     // Non-replaced elements can always accommodate an ellipsis.
-    if (!renderer().isReplaced())
+    if (!renderer().isReplacedOrInlineBlock())
         return true;
     
     IntRect boxRect(left(), 0, m_logicalWidth, 10);

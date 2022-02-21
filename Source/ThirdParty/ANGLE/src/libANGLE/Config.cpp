@@ -372,6 +372,16 @@ std::vector<const Config *> ConfigSet::filter(const AttributeMap &attributeMap) 
                 case EGL_Y_INVERTED_NOK:
                     match = config.yInverted == static_cast<EGLBoolean>(attributeValue);
                     break;
+                case EGL_MATCH_FORMAT_KHR:
+                    if (attributeValue == EGL_NONE)
+                    {
+                        match = (config.surfaceType & EGL_LOCK_SURFACE_BIT_KHR) == 0;
+                    }
+                    else
+                    {
+                        match = config.matchFormat == attributeValue;
+                    }
+                    break;
                 default:
                     UNREACHABLE();
             }

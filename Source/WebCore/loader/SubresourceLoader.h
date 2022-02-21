@@ -52,7 +52,7 @@ public:
     CachedResource* cachedResource() const override { return m_resource; };
     WEBCORE_EXPORT const HTTPHeaderMap* originalHeaders() const;
 
-    SecurityOrigin* origin() { return m_origin.get(); }
+    SecurityOrigin* origin() const { return m_origin.get(); }
 #if PLATFORM(IOS_FAMILY)
     void startLoading() override;
 
@@ -73,8 +73,7 @@ private:
     void willSendRequestInternal(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&) override;
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponse(const ResourceResponse&, CompletionHandler<void()>&& policyCompletionHandler) override;
-    void didReceiveData(const uint8_t*, unsigned, long long encodedDataLength, DataPayloadType) override;
-    void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType) override;
+    void didReceiveBuffer(const FragmentedSharedBuffer&, long long encodedDataLength, DataPayloadType) override;
     void didFinishLoading(const NetworkLoadMetrics&) override;
     void didFail(const ResourceError&) override;
     void willCancel(const ResourceError&) override;
@@ -92,7 +91,7 @@ private:
     Expected<void, String> checkResponseCrossOriginAccessControl(const ResourceResponse&);
     Expected<void, String> checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse&, ResourceRequest& newRequest);
 
-    void didReceiveDataOrBuffer(const uint8_t*, int, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
+    void didReceiveDataOrBuffer(const FragmentedSharedBuffer&, long long encodedDataLength, DataPayloadType);
 
     void notifyDone(LoadCompletionType);
 

@@ -58,10 +58,4 @@
     return WebKit::encodeSessionState(_sessionState).autorelease();
 }
 
-- (WebKit::SessionState)_sessionStateWithAppInitiatedValue
-{
-    _sessionState.isAppInitiated = _isAppInitiated;
-    return _sessionState;
-}
-
 @end

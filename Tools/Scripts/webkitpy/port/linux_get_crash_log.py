@@ -60,7 +60,7 @@ class GDBCrashLogGenerator(object):
         stdout, stderr = proc.communicate()
         errors = [stderr_line.strip().decode('utf8', 'ignore') for stderr_line in stderr.splitlines()]
         if proc.returncode != 0:
-            stdout = ('ERROR: The gdb process exited with non-zero return code %s\n\n' % proc.returncode) + stdout
+            stdout = (b'ERROR: The gdb process exited with non-zero return code %s\n\n' % str(proc.returncode)) + stdout
         return (stdout.decode('utf8', 'ignore'), errors)
 
     def _get_tmp_file_name(self, coredumpctl, filename):

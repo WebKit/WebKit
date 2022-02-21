@@ -26,7 +26,6 @@
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasgradient
 [
     Exposed=(Window,Worker),
-    ImplementationLacksVTable
 ] interface CanvasGradient {
     // opaque object
     undefined addColorStop(double offset, DOMString color);

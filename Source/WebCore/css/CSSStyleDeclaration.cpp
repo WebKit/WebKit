@@ -33,8 +33,8 @@
 #include "HashTools.h"
 #include "Settings.h"
 #include "StyledElement.h"
+#include <variant>
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Variant.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {

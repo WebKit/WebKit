@@ -26,7 +26,7 @@ class DesktopRegion;
 // A texture copied or mapped from a DXGI_OUTDUPL_FRAME_INFO and IDXGIResource.
 class DxgiTexture {
  public:
-  // Creates a DxgiTexture instance, which represents the |desktop_size| area of
+  // Creates a DxgiTexture instance, which represents the `desktop_size` area of
   // entire screen -- usually a monitor on the system.
   DxgiTexture();
 

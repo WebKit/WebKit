@@ -60,30 +60,28 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
 
 std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareableMappedIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
 {
-    if (!WTF::holds_alternative<MachSendRight>(handle)) {
+    if (!std::holds_alternative<MachSendRight>(handle)) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    auto surface = IOSurface::createFromSendRight(WTFMove(WTF::get<MachSendRight>(handle)), parameters.colorSpace);
+    auto surface = IOSurface::createFromSendRight(WTFMove(std::get<MachSendRight>(handle)), parameters.colorSpace);
     if (!surface)
         return nullptr;
 
     return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface));
 }
 
-ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createImageBufferBackendHandle() const
+ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createBackendHandle() const
 {
     return ImageBufferBackendHandle(m_surface->createSendRight());
 }
 
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-void ImageBufferShareableMappedIOSurfaceBackend::setProcessOwnership(task_id_token_t processIdentityToken)
+void ImageBufferShareableMappedIOSurfaceBackend::setOwnershipIdentity(const WebCore::ProcessIdentity& resourceOwner)
 {
     ASSERT(surface());
-    surface()->setOwnershipIdentity(processIdentityToken);
+    surface()->setOwnershipIdentity(resourceOwner);
 }
-#endif
 
 } // namespace WebKit
 

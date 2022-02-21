@@ -45,6 +45,8 @@ ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
+class LibWebRTCAudioModule;
+
 class RealtimeIncomingAudioSource
     : public RealtimeMediaSource
     , private webrtc::AudioTrackSinkInterface
@@ -52,6 +54,9 @@ class RealtimeIncomingAudioSource
 {
 public:
     static Ref<RealtimeIncomingAudioSource> create(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
+
+    void setAudioModule(RefPtr<LibWebRTCAudioModule>&&);
+    LibWebRTCAudioModule* audioModule() { return m_audioModule.get(); }
 
 protected:
     RealtimeIncomingAudioSource(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
@@ -79,6 +84,7 @@ private:
 
     RealtimeMediaSourceSettings m_currentSettings;
     rtc::scoped_refptr<webrtc::AudioTrackInterface> m_audioTrack;
+    RefPtr<LibWebRTCAudioModule> m_audioModule;
 
 #if !RELEASE_LOG_DISABLED
     mutable RefPtr<const Logger> m_logger;

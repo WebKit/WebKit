@@ -71,15 +71,18 @@ void ImageSibling::setTargetImage(const gl::Context *context, egl::Image *imageT
     imageTarget->addTargetSibling(this);
 }
 
-angle::Result ImageSibling::orphanImages(const gl::Context *context)
+angle::Result ImageSibling::orphanImages(const gl::Context *context,
+                                         RefCountObjectReleaser<Image> *outReleaseImage)
 {
+    ASSERT(outReleaseImage != nullptr);
+
     if (mTargetOf.get() != nullptr)
     {
         // Can't be a target and have sources.
         ASSERT(mSourcesOf.empty());
 
         ANGLE_TRY(mTargetOf->orphanSibling(context, this));
-        mTargetOf.set(DisplayFromContext(context), nullptr);
+        *outReleaseImage = mTargetOf.set(DisplayFromContext(context), nullptr);
     }
     else
     {
@@ -128,6 +131,16 @@ bool ImageSibling::isRenderable(const gl::Context *context,
 {
     ASSERT(isEGLImageTarget());
     return mTargetOf->isRenderable(context);
+}
+
+bool ImageSibling::isYUV() const
+{
+    return mTargetOf.get() && mTargetOf->isYUV();
+}
+
+bool ImageSibling::hasProtectedContent() const
+{
+    return mTargetOf.get() && mTargetOf->hasProtectedContent();
 }
 
 void ImageSibling::notifySiblings(angle::SubjectMessage message)
@@ -193,6 +206,16 @@ bool ExternalImageSibling::isTextureable(const gl::Context *context) const
     return mImplementation->isTexturable(context);
 }
 
+bool ExternalImageSibling::isYUV() const
+{
+    return mImplementation->isYUV();
+}
+
+bool ExternalImageSibling::hasProtectedContent() const
+{
+    return mImplementation->hasProtectedContent();
+}
+
 void ExternalImageSibling::onAttach(const gl::Context *context, rx::Serial framebufferSerial) {}
 
 void ExternalImageSibling::onDetach(const gl::Context *context, rx::Serial framebufferSerial) {}
@@ -234,11 +257,13 @@ ImageState::ImageState(EGLenum target, ImageSibling *buffer, const AttributeMap 
       source(buffer),
       targets(),
       format(GL_NONE),
+      yuv(false),
       size(),
       samples(),
       sourceType(target),
       colorspace(
-          static_cast<EGLenum>(attribs.get(EGL_GL_COLORSPACE, EGL_GL_COLORSPACE_DEFAULT_EXT)))
+          static_cast<EGLenum>(attribs.get(EGL_GL_COLORSPACE, EGL_GL_COLORSPACE_DEFAULT_EXT))),
+      hasProtectedContent(static_cast<bool>(attribs.get(EGL_PROTECTED_CONTENT_EXT, EGL_FALSE)))
 {}
 
 ImageState::~ImageState() {}
@@ -378,6 +403,11 @@ bool Image::isTexturable(const gl::Context *context) const
     return false;
 }
 
+bool Image::isYUV() const
+{
+    return mState.yuv;
+}
+
 size_t Image::getWidth() const
 {
     return mState.size.width;
@@ -398,6 +428,11 @@ size_t Image::getSamples() const
     return mState.samples;
 }
 
+bool Image::hasProtectedContent() const
+{
+    return mState.hasProtectedContent;
+}
+
 rx::ImageImpl *Image::getImplementation() const
 {
     return mImplementation;
@@ -407,7 +442,13 @@ Error Image::initialize(const Display *display)
 {
     if (IsExternalImageTarget(mState.sourceType))
     {
-        ANGLE_TRY(rx::GetAs<ExternalImageSibling>(mState.source)->initialize(display));
+        ExternalImageSibling *externalSibling = rx::GetAs<ExternalImageSibling>(mState.source);
+        ANGLE_TRY(externalSibling->initialize(display));
+
+        mState.hasProtectedContent = externalSibling->hasProtectedContent();
+
+        // Only external siblings can be YUV
+        mState.yuv = externalSibling->isYUV();
     }
 
     mState.format = mState.source->getAttachmentFormat(GL_NONE, mState.imageIndex);
@@ -452,6 +493,11 @@ void Image::setInitState(gl::InitState initState)
     }
 
     return mState.source->setInitState(mState.imageIndex, initState);
+}
+
+Error Image::exportVkImage(void *vkImage, void *vkImageCreateInfo)
+{
+    return mImplementation->exportVkImage(vkImage, vkImageCreateInfo);
 }
 
 void Image::notifySiblings(const ImageSibling *notifier, angle::SubjectMessage message)

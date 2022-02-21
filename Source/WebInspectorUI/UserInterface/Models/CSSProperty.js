@@ -34,6 +34,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._overridingProperty = null;
         this._initialState = null;
         this._modified = false;
+        this._isUpdatingText = false;
 
         this.update(text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange, true);
     }
@@ -184,13 +185,6 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._updateStyleText(forceRemove);
     }
 
-    replaceWithText(text)
-    {
-        this._markModified();
-
-        this._updateOwnerStyleText(this._text, text, true);
-    }
-
     commentOut(disabled)
     {
         console.assert(this.editable);
@@ -213,16 +207,22 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     set text(newText)
     {
+        newText = newText.trim();
         if (this._text === newText)
             return;
 
         this._markModified();
-        this._updateOwnerStyleText(this._text, newText);
         this._text = newText;
+        this._isUpdatingText = true;
+        this._updateOwnerStyleText();
+        this._isUpdatingText = false;
     }
 
     get formattedText()
     {
+        if (this._isUpdatingText)
+            return this._text;
+
         if (!this._name)
             return "";
 
@@ -255,6 +255,17 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     {
         if (name === this._name)
             return;
+
+        if (!name) {
+            // Deleting property name causes CSSProperty to be detached from CSSStyleDeclaration.
+            console.assert(!isNaN(this._index), this);
+            this._indexBeforeDetached = this._index;
+        } else if (!isNaN(this._indexBeforeDetached) && isNaN(this._index)) {
+            // Reattach CSSProperty.
+            console.assert(!this._ownerStyle.properties.includes(this), this);
+            this._ownerStyle.insertProperty(this, this._indexBeforeDetached);
+            this._indexBeforeDetached = NaN;
+        }
 
         this._markModified();
         this._name = name;
@@ -430,7 +441,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     get isShorthand()
     {
         if (this._isShorthand === undefined) {
-            this._isShorthand = WI.CSSCompletions.cssNameCompletions.isShorthandPropertyName(this._name);
+            this._isShorthand = WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.has(this._name);
             if (this._isShorthand) {
                 let longhands = WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.get(this._name);
                 if (longhands && longhands.length === 1)
@@ -443,7 +454,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     get shorthandPropertyNames()
     {
         if (!this._shorthandPropertyNames) {
-            this._shorthandPropertyNames = WI.CSSCompletions.cssNameCompletions.shorthandsForLonghand(this._name);
+            this._shorthandPropertyNames = WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty.get(this._name) || [];
             this._shorthandPropertyNames.remove("all");
         }
         return this._shorthandPropertyNames;
@@ -501,72 +512,22 @@ WI.CSSProperty = class CSSProperty extends WI.Object
             text = this._name + ": " + value + ";";
         }
 
-        let oldText = this._text;
         this._text = text;
-        this._updateOwnerStyleText(oldText, this._text, forceRemove);
+
+        if (forceRemove)
+            this._ownerStyle.removeProperty(this);
+
+        this._updateOwnerStyleText();
     }
 
-    _updateOwnerStyleText(oldText, newText, forceRemove = false)
+    _updateOwnerStyleText()
     {
-        if (oldText === newText) {
-            if (forceRemove) {
-                const lineDelta = 0;
-                const columnDelta = 0;
-                this._ownerStyle.shiftPropertiesAfter(this, lineDelta, columnDelta, forceRemove);
-                this._ownerStyle.updatePropertiesModifiedState();
-            }
-            return;
-        }
-
         console.assert(this._ownerStyle);
         if (!this._ownerStyle)
             return;
 
-        this._prependSemicolonIfNeeded();
-
-        let styleText = this._ownerStyle.text || "";
-
-        // _styleSheetTextRange is the position of the property within the stylesheet.
-        // range is the position of the property within the rule.
-        let range = this._styleSheetTextRange.relativeTo(this._ownerStyle.styleSheetTextRange.startLine, this._ownerStyle.styleSheetTextRange.startColumn);
-
-        // Append a line break to count the last line of styleText towards endOffset.
-        range.resolveOffsets(styleText + "\n");
-
-        console.assert(oldText === styleText.slice(range.startOffset, range.endOffset), "_styleSheetTextRange data is invalid.");
-
-        if (WI.settings.debugEnableStyleEditingDebugMode.value) {
-            let prefix = styleText.slice(0, range.startOffset);
-            let postfix = styleText.slice(range.endOffset);
-            console.info(`${prefix}%c${oldText}%c${newText}%c${postfix}`, `background: hsl(356, 100%, 90%); color: black`, `background: hsl(100, 100%, 91%); color: black`, `background: transparent`);
-        }
-
-        let newStyleText = styleText.slice(0, range.startOffset) + newText + styleText.slice(range.endOffset);
-
-        let lineDelta = newText.lineCount - oldText.lineCount;
-        let columnDelta = newText.lastLine.length - oldText.lastLine.length;
-        this._styleSheetTextRange = this._styleSheetTextRange.cloneAndModify(0, 0, lineDelta, columnDelta);
-
-        this._ownerStyle.text = newStyleText;
-
-        let propertyWasRemoved = !newText;
-        this._ownerStyle.shiftPropertiesAfter(this, lineDelta, columnDelta, propertyWasRemoved);
+        this._ownerStyle.text = this._ownerStyle.generateFormattedText({multiline: this._ownerStyle.type === WI.CSSStyleDeclaration.Type.Rule});
         this._ownerStyle.updatePropertiesModifiedState();
-    }
-
-    _prependSemicolonIfNeeded()
-    {
-        for (let i = this.index - 1; i >= 0; --i) {
-            let property = this._ownerStyle.properties[i];
-            if (!property.enabled)
-                continue;
-
-            let match = property.text.match(/[^;\s](\s*)$/);
-            if (match)
-                property.text = property.text.trimRight() + ";" + match[1];
-
-            break;
-        }
     }
 
     _markModified()

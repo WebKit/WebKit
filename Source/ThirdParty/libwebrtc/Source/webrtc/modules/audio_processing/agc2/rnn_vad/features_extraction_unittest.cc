@@ -29,7 +29,7 @@ constexpr int ceil(int n, int m) {
 }
 
 // Number of 10 ms frames required to fill a pitch buffer having size
-// |kBufSize24kHz|.
+// `kBufSize24kHz`.
 constexpr int kNumTestDataFrames = ceil(kBufSize24kHz, kFrameSize10ms24kHz);
 // Number of samples for the test data.
 constexpr int kNumTestDataSize = kNumTestDataFrames * kFrameSize10ms24kHz;
@@ -47,8 +47,8 @@ void CreatePureTone(float amplitude, float freq_hz, rtc::ArrayView<float> dst) {
   }
 }
 
-// Feeds |features_extractor| with |samples| splitting it in 10 ms frames.
-// For every frame, the output is written into |feature_vector|. Returns true
+// Feeds `features_extractor` with `samples` splitting it in 10 ms frames.
+// For every frame, the output is written into `feature_vector`. Returns true
 // if silence is detected in the last frame.
 bool FeedTestData(FeaturesExtractor& features_extractor,
                   rtc::ArrayView<const float> samples,

@@ -29,18 +29,33 @@
 
 #include "LayoutBox.h"
 #include "LayoutUnits.h"
+#include <unicode/ubidi.h>
 
 namespace WebCore {
 namespace Layout {
 
+class InlineItemsBuilder;
+
 class InlineItem {
 public:
-    enum class Type : uint8_t { Text, HardLineBreak, SoftLineBreak, WordBreakOpportunity, Box, Float, InlineBoxStart, InlineBoxEnd };
-    InlineItem(const Box& layoutBox, Type);
+    enum class Type : uint8_t {
+        Text,
+        HardLineBreak,
+        SoftLineBreak,
+        WordBreakOpportunity,
+        Box,
+        InlineBoxStart,
+        InlineBoxEnd,
+        Float
+    };
+    InlineItem(const Box& layoutBox, Type, UBiDiLevel = UBIDI_DEFAULT_LTR);
 
     Type type() const { return m_type; }
+    static constexpr UBiDiLevel opaqueBidiLevel = 0xff;
+    UBiDiLevel bidiLevel() const { return m_bidiLevel; }
     const Box& layoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return layoutBox().style(); }
+    const RenderStyle& firstLineStyle() const { return layoutBox().firstLineStyle(); }
 
     bool isText() const { return type() == Type::Text; }
     bool isBox() const { return type() == Type::Box; }
@@ -53,8 +68,14 @@ public:
     bool isInlineBoxEnd() const { return type() == Type::InlineBoxEnd; }
 
 private:
+    friend class InlineItemsBuilder;
+
+    void setBidiLevel(UBiDiLevel bidiLevel) { m_bidiLevel = bidiLevel; }
+    void setWidth(InlineLayoutUnit);
+
     const Box* m_layoutBox { nullptr };
     Type m_type { };
+    UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
 
 protected:
     // For InlineTextItem
@@ -70,10 +91,17 @@ protected:
     unsigned m_startOrPosition { 0 };
 };
 
-inline InlineItem::InlineItem(const Box& layoutBox, Type type)
+inline InlineItem::InlineItem(const Box& layoutBox, Type type, UBiDiLevel bidiLevel)
     : m_layoutBox(&layoutBox)
     , m_type(type)
+    , m_bidiLevel(bidiLevel)
 {
+}
+
+inline void InlineItem::setWidth(InlineLayoutUnit width)
+{
+    m_width = width;
+    m_hasWidth = true;
 }
 
 #define SPECIALIZE_TYPE_TRAITS_INLINE_ITEM(ToValueTypeName, predicate) \

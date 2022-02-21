@@ -36,9 +36,14 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ContainerBox);
 
-ContainerBox::ContainerBox(std::optional<ElementAttributes> attributes, RenderStyle&& style, OptionSet<BaseTypeFlag> baseTypeFlags)
-    : Box(attributes, WTFMove(style), baseTypeFlags | ContainerBoxFlag)
+ContainerBox::ContainerBox(std::optional<ElementAttributes> attributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
+    : Box(attributes, WTFMove(style), WTFMove(firstLineStyle), baseTypeFlags | ContainerBoxFlag)
 {
+}
+
+ContainerBox::~ContainerBox()
+{
+    destroyChildren();
 }
 
 const Box* ContainerBox::firstInFlowChild() const
@@ -81,27 +86,41 @@ const Box* ContainerBox::lastInFlowOrFloatingChild() const
     return nullptr;
 }
 
-void ContainerBox::setFirstChild(Box& childBox)
+void ContainerBox::appendChild(UniqueRef<Box> childRef)
 {
-    m_firstChild = &childBox;
-}
+    auto childBox = childRef.moveToUniquePtr();
 
-void ContainerBox::setLastChild(Box& childBox)
-{
-    m_lastChild = &childBox;
-}
-
-void ContainerBox::appendChild(Box& childBox)
-{
-    childBox.setParent(*this);
+    childBox->setParent(this);
 
     if (m_lastChild) {
-        m_lastChild->setNextSibling(childBox);
-        childBox.setPreviousSibling(*m_lastChild);
+        m_lastChild->setNextSibling(childBox.get());
+        childBox->setPreviousSibling(m_lastChild.get());
     } else
-        m_firstChild = &childBox;
+        m_firstChild = childBox.get();
 
-    m_lastChild = &childBox;
+    // Ownership has been transferred.
+    m_lastChild = childBox.release();
+}
+
+void ContainerBox::destroyChildren()
+{
+    std::unique_ptr<Box> childToDestroy { m_firstChild.get() };
+    
+    m_firstChild = nullptr;
+    m_lastChild = nullptr;
+
+    while (childToDestroy) {
+        childToDestroy->setParent(nullptr);
+
+        std::unique_ptr<Box> nextSibling { childToDestroy->nextSibling() };
+
+        if (nextSibling) {
+            childToDestroy->setNextSibling(nullptr);
+            nextSibling->setPreviousSibling(nullptr);
+        }
+
+        childToDestroy = WTFMove(nextSibling);
+    }
 }
 
 }

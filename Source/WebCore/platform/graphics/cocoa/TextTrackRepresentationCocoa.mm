@@ -117,40 +117,40 @@ TextTrackRepresentationCocoa::TextTrackRepresentationCocoa(TextTrackRepresentati
     , m_layer(adoptNS([[CALayer alloc] init]))
     , m_delegate(adoptNS([[WebCoreTextTrackRepresentationCocoaHelper alloc] initWithParent:this]))
 {
-    [m_layer.get() setDelegate:m_delegate.get()];
-    [m_layer.get() setContentsGravity:kCAGravityBottom];
+    [m_layer setDelegate:m_delegate.get()];
+    [m_layer setContentsGravity:kCAGravityBottom];
 }
 
 TextTrackRepresentationCocoa::~TextTrackRepresentationCocoa()
 {
-    [m_layer.get() setDelegate:nil];
-    [m_delegate.get() setParent:nullptr];
+    [m_layer setDelegate:nil];
+    [m_delegate setParent:nullptr];
 }
 
 void TextTrackRepresentationCocoa::update()
 {
     if (auto representation = m_client.createTextTrackRepresentationImage())
-        [m_layer.get() setContents:(__bridge id)representation->nativeImage()->platformImage().get()];
+        [m_layer setContents:(__bridge id)representation->nativeImage()->platformImage().get()];
 }
 
 void TextTrackRepresentationCocoa::setContentScale(float scale)
 {
-    [m_layer.get() setContentsScale:scale];
+    [m_layer setContentsScale:scale];
 }
 
 void TextTrackRepresentationCocoa::setHidden(bool hidden) const
 {
-    [m_layer.get() setHidden:hidden];
+    [m_layer setHidden:hidden];
 }
 
 IntRect TextTrackRepresentationCocoa::bounds() const
 {
-    return enclosingIntRect(FloatRect([m_layer.get() bounds]));
+    return enclosingIntRect(FloatRect([m_layer bounds]));
 }
 
 void TextTrackRepresentationCocoa::boundsChanged()
 {
-    callOnMainThread([weakThis = makeWeakPtr(*this)] {
+    callOnMainThread([weakThis = WeakPtr { *this }] {
         if (weakThis)
             weakThis->client().textTrackRepresentationBoundsChanged(weakThis->bounds());
     });

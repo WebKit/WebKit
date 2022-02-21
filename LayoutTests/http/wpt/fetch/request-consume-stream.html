@@ -11,9 +11,25 @@
   </head>
   <body>
     <script>
+async function getStringFromStream(reader, currentValue) {
+    const data = await reader.read();
+    if (!data.done) {
+        let buffer;
+        if (currentValue) {
+            const newBuffer = new ArrayBuffer(data.value.length + currentValue.length);
+            buffer = new Uint8Array(newBuffer);
+            buffer.set(currentValue, 0);
+            buffer.set(data.value, currentValue.length);
+        } else
+            buffer = data.value;
+        return getStringFromStream(reader, buffer);
+    }
+    return (new TextDecoder).decode(currentValue);
+}
+
 function createRequestWithBody(body)
 {
-    return new Request("", {body: "{\"key\": \"value\"}", method: "POST"});
+    return new Request("", {body: body, method: "POST"});
 }
 
 promise_test(function(test) {
@@ -58,10 +74,29 @@ promise_test(function(test) {
     return validateStreamFromString(createRequestWithBody(arrayBuffer).body.getReader(), textData);
 }, "Read array buffer request's body as readableStream");
 
-promise_test(function(test) {
+promise_test(async (test) => {
     var request = createRequestWithBody(formData);
-    return validateStreamFromString(request.body.getReader(), "name=value");
+    const value = await getStringFromStream(request.body.getReader());
+
+    assert_true(value.includes('name="name"'), "name");
+    assert_true(value.includes('value'), "name");
 }, "Read form data request's body as readableStream");
+
+promise_test(async (test) => {
+    const formData = new FormData();
+    const blob = new Blob(["'Hello'"], { "type" : "text/plain" });
+    formData.append("blob", blob, "blob.file");
+    formData.append("name", "value");
+
+    const request = createRequestWithBody(formData);
+    const value = await getStringFromStream(request.body.getReader());
+
+    assert_true(value.includes('name="name"'), "name");
+    assert_true(value.includes('value'), "name");
+
+    assert_true(value.includes('name="blob"'), "blob");
+    assert_true(value.includes('Hello'), "Hello");
+}, "Read form data with blob request's body as readableStream");
     </script>
   </body>
 </html>

@@ -15,7 +15,7 @@ features: [Symbol]
 var gCL = Intl.getCanonicalLocales;
 
 function assertArray(l, r) {
-  assert(compareArray(l, r), r);
+  assert.compareArray(l, r, r);
 }
 
 assertArray(gCL(), []);

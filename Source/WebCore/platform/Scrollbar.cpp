@@ -33,6 +33,7 @@
 #include "ScrollView.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
+#include "ScrollbarsController.h"
 #include <algorithm>
 
 #if PLATFORM(GTK)
@@ -219,7 +220,7 @@ void Scrollbar::stopTimerIfNeeded()
 
 ScrollDirection Scrollbar::pressedPartScrollDirection()
 {
-    if (m_orientation == HorizontalScrollbar) {
+    if (m_orientation == ScrollbarOrientation::Horizontal) {
         if (m_pressedPart == BackButtonStartPart || m_pressedPart == BackButtonEndPart || m_pressedPart == BackTrackPart)
             return ScrollLeft;
         return ScrollRight;
@@ -233,8 +234,8 @@ ScrollDirection Scrollbar::pressedPartScrollDirection()
 ScrollGranularity Scrollbar::pressedPartScrollGranularity()
 {
     if (m_pressedPart == BackButtonStartPart || m_pressedPart == BackButtonEndPart ||  m_pressedPart == ForwardButtonStartPart || m_pressedPart == ForwardButtonEndPart)
-        return ScrollByLine;
-    return ScrollByPage;
+        return ScrollGranularity::Line;
+    return ScrollGranularity::Page;
 }
 
 void Scrollbar::moveThumb(int pos, bool draggingDocument)
@@ -246,7 +247,7 @@ void Scrollbar::moveThumb(int pos, bool draggingDocument)
             delta = pos - m_documentDragPos;
         m_draggingDocument = true;
         FloatPoint currentPosition = m_scrollableArea.scrollAnimator().currentPosition();
-        int destinationPosition = (m_orientation == HorizontalScrollbar ? currentPosition.x() : currentPosition.y()) + delta;
+        int destinationPosition = (m_orientation == ScrollbarOrientation::Horizontal ? currentPosition.x() : currentPosition.y()) + delta;
         if (delta > 0)
             destinationPosition = std::min(destinationPosition + delta, maximum());
         else if (delta < 0)
@@ -309,7 +310,7 @@ bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
         if (theme().shouldSnapBackToDragOrigin(*this, evt))
             m_scrollableArea.scrollToOffsetWithoutAnimation(m_orientation, m_dragOrigin);
         else {
-            moveThumb(m_orientation == HorizontalScrollbar ? 
+            moveThumb(m_orientation == ScrollbarOrientation::Horizontal ?
                       convertFromContainingWindow(evt.position()).x() :
                       convertFromContainingWindow(evt.position()).y(), theme().shouldDragDocumentInsteadOfThumb(*this, evt));
         }
@@ -317,7 +318,7 @@ bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
     }
 
     if (m_pressedPart != NoPart)
-        m_pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.position()).x() : convertFromContainingWindow(evt.position()).y());
+        m_pressedPos = (orientation() == ScrollbarOrientation::Horizontal ? convertFromContainingWindow(evt.position()).x() : convertFromContainingWindow(evt.position()).y());
 
     ScrollbarPart part = theme().hitTest(*this, evt.position());
     if (part != m_hoveredPart) {
@@ -386,7 +387,7 @@ bool Scrollbar::mouseDown(const PlatformMouseEvent& evt)
     m_scrollableArea.mouseIsDownInScrollbar(this, true);
     setPressedPart(pressedPart);
 
-    int pressedPosition = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.position()).x() : convertFromContainingWindow(evt.position()).y());
+    int pressedPosition = (orientation() == ScrollbarOrientation::Horizontal ? convertFromContainingWindow(evt.position()).x() : convertFromContainingWindow(evt.position()).y());
     if (action == ScrollbarButtonPressAction::CenterOnThumb) {
         setHoveredPart(ThumbPart);
         setPressedPart(ThumbPart);
@@ -428,7 +429,7 @@ bool Scrollbar::shouldParticipateInHitTesting()
     // Non-overlay scrollbars should always participate in hit testing.
     if (!isOverlayScrollbar())
         return true;
-    return m_scrollableArea.scrollAnimator().shouldScrollbarParticipateInHitTesting(this);
+    return m_scrollableArea.scrollbarsController().shouldScrollbarParticipateInHitTesting(this);
 }
 
 bool Scrollbar::isWindowActive() const

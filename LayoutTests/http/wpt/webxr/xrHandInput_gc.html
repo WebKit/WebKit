@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/webxr_util.js"></script>
+<script src="resources/webxr_test_constants_single_view.js"></script>
+
+<script>
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+let testName = "Test object lifetime of Hand Input module";
+
+let fakeDeviceInitParams = TRACKED_IMMERSIVE_SINGLE_VIEWDEVICE;
+
+let testFunction = function(session, fakeDeviceController, t, sessionObjects) {
+
+  let input_source = fakeDeviceController.simulateInputSourceConnection({
+    handedness: "none",
+    targetRayMode: "tracked-pointer",
+    pointerOrigin: VALID_POINTER_TRANSFORM,
+    profiles: [],
+    simulateHand: true,
+  });
+
+  return session.requestReferenceSpace('local')
+    .then((referenceSpace) => new Promise((resolve) => {
+
+      function onFrame(time, xrFrame) {
+        if (session.inputSources && session.inputSources.length) {
+
+          session.customProperty = 1;
+          assert_equals(session.customProperty, 1, "session");
+          gc();
+          assert_equals(session.customProperty, 1, "session");
+
+          session.inputSources.customProperty = 1;
+          assert_equals(session.inputSources.customProperty, 1, "session.inputSources");
+          gc();
+          assert_equals(session.inputSources.customProperty, 1, "session.inputSources");
+
+          session.inputSources[0].customProperty = 1;
+          assert_equals(session.inputSources[0].customProperty, 1, "session.inputSources[0]");
+          gc();
+          assert_equals(session.inputSources[0].customProperty, 1, "session.inputSources[0]");
+
+          session.inputSources[0].hand.customProperty = 1;
+          assert_equals(session.inputSources[0].hand.customProperty, 1, "session.inputSources[0].hand");
+          gc();
+          assert_equals(session.inputSources[0].hand.customProperty, 1, "session.inputSources[0].hand");
+        }
+        resolve();
+      }
+      session.requestAnimationFrame(onFrame);
+  }));
+};
+
+xr_session_promise_test(
+  testName, testFunction, fakeDeviceInitParams, 'immersive-vr', { optionalFeatures: ["hand-tracking"] });
+
+</script>

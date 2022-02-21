@@ -2,30 +2,23 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Tests that windows created from a sandboxed context inherit the same sandbox</title>
-    <script src="../resources/js-test-pre.js"></script>
+    <script src="/js-test-resources/js-test.js"></script>
 </head>
 <body>
 <script>
-    if (window.testRunner) {
-        testRunner.waitUntilDone();
-        testRunner.dumpAsText();
-    }
-
-    function wrapUp () {
-        if (window.testRunner) {
-            testRunner.notifyDone();
-        }
-    }
+    description("Tests that windows created from a sandboxed context inherit the same sandbox");
+    jsTestIsAsync = true;
 
     function run() {
-        var iframeContentDocument = document.getElementById("theIframe").contentDocument,
-            theLink = iframeContentDocument.getElementById("theLink"),
-            clickEvent = document.createEvent("HTMLEvents");
-        clickEvent.initEvent("click", true, true);
-        theLink.dispatchEvent(clickEvent);
+        iframeContentWindow = document.getElementById("theIframe").contentWindow;
+        iframeContentWindow.didRunScriptInPopup = false;
+        let iframeContentDocument = document.getElementById("theIframe").contentDocument;
+        iframeContentDocument.getElementById("theLink").click();
 
-        setTimeout(wrapUp, 500);
+        setTimeout(() => {
+            shouldBeFalse("iframeContentWindow.didRunScriptInPopup");
+            finishJSTest();
+        }, 500);
     }
 </script>
 <iframe onload="run()" id="theIframe" sandbox="allow-same-origin allow-popups" src="resources/anchor-tag-with-blank-target.html"></iframe>

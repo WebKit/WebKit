@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ const ClassInfo IntlDisplayNames::s_info = { "Object", &Base::s_info, nullptr, n
 
 IntlDisplayNames* IntlDisplayNames::create(VM& vm, Structure* structure)
 {
-    auto* object = new (NotNull, allocateCell<IntlDisplayNames>(vm.heap)) IntlDisplayNames(vm, structure);
+    auto* object = new (NotNull, allocateCell<IntlDisplayNames>(vm)) IntlDisplayNames(vm, structure);
     object->finishCreation(vm);
     return object;
 }
@@ -110,7 +110,6 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
     m_languageDisplay = intlOption<LanguageDisplay>(globalObject, options, vm.propertyNames->languageDisplay, { { "dialect"_s, LanguageDisplay::Dialect }, { "standard"_s, LanguageDisplay::Standard } }, "languageDisplay must be either \"dialect\" or \"standard\""_s, LanguageDisplay::Dialect);
     RETURN_IF_EXCEPTION(scope, void());
 
-#if HAVE(ICU_U_LOCALE_DISPLAY_NAMES)
     UErrorCode status = U_ZERO_ERROR;
 
     UDisplayContext contexts[] = {
@@ -138,10 +137,6 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
         throwTypeError(globalObject, scope, "failed to initialize DisplayNames"_s);
         return;
     }
-#else
-    throwTypeError(globalObject, scope, "Failed to initialize Intl.DisplayNames since used feature is not supported in the linked ICU version"_s);
-    return;
-#endif
 }
 
 // https://tc39.es/proposal-intl-displaynames/#sec-Intl.DisplayNames.prototype.of
@@ -151,7 +146,6 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-#if HAVE(ICU_U_LOCALE_DISPLAY_NAMES)
     ASSERT(m_displayNames);
     auto code = codeValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
@@ -356,11 +350,6 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
         return throwTypeError(globalObject, scope, "Failed to query a display name."_s);
     }
     return jsString(vm, String(buffer));
-#else
-    UNUSED_PARAM(codeValue);
-    throwTypeError(globalObject, scope, "Failed to initialize Intl.DisplayNames since used feature is not supported in the linked ICU version"_s);
-    return { };
-#endif
 }
 
 // https://tc39.es/proposal-intl-displaynames/#sec-Intl.DisplayNames.prototype.resolvedOptions

@@ -124,7 +124,7 @@ TEST_F(ExpandTest, DelayedPacketOutage) {
     EXPECT_EQ(0, statistics_.last_outage_duration_samples());
   }
   expand_.SetParametersForNormalAfterExpand();
-  // Convert |sum_output_len_samples| to milliseconds.
+  // Convert `sum_output_len_samples` to milliseconds.
   EXPECT_EQ(rtc::checked_cast<int>(sum_output_len_samples),
             statistics_.last_outage_duration_samples());
 }
@@ -164,7 +164,7 @@ TEST_F(ExpandTest, CheckOutageStatsAfterReset) {
     EXPECT_EQ(0, statistics_.last_outage_duration_samples());
   }
   expand_.SetParametersForNormalAfterExpand();
-  // Convert |sum_output_len_samples| to milliseconds.
+  // Convert `sum_output_len_samples` to milliseconds.
   EXPECT_EQ(rtc::checked_cast<int>(sum_output_len_samples),
             statistics_.last_outage_duration_samples());
 }

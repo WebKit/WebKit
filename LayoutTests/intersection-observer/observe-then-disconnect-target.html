@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<div id="testDiv">test</div>
+<script>
+  description("Tests that an observation is received after disconnecting a visible target");
+  jsTestIsAsync = true;
+
+  let receivedInitialObservation = false;
+  onload = () => {
+    let intersectionObserver = new IntersectionObserver((_observations) => {
+      gc();
+      observations = _observations;
+
+      shouldBe("observations.length", "1");
+      shouldBeEqualToString("observations[0].target.tagName", "DIV");
+      shouldBe("observations[0].target.foo", "1");
+
+      if (!receivedInitialObservation) {
+          receivedInitialObservation = true;
+          shouldBeTrue("observations[0].isIntersecting");
+          setTimeout(() => {
+              debug("* Removing target from document");
+              document.getElementById("testDiv").remove();
+              gc();
+              setTimeout(gc, 0);
+          }, 0);
+      } else {
+          shouldBeFalse("observations[0].isIntersecting");
+          setTimeout(finishJSTest, 100);
+      }
+    });
+    let div = document.getElementById("testDiv");
+    div.foo = 1;
+    intersectionObserver.observe(div);
+    div = null;
+    gc();
+    setTimeout(gc, 0);
+  };
+</script>
+</body>
+</html>

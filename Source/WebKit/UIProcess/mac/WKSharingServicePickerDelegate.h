@@ -26,6 +26,7 @@
 #if ENABLE(SERVICE_CONTROLS)
 
 #import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebKit {
 class WebContextMenuProxyMac;
@@ -38,6 +39,8 @@ class WebContextMenuProxyMac;
     RetainPtr<NSSharingServicePicker> _picker;
     BOOL _filterEditingServices;
     BOOL _handleEditingReplacement;
+    NSRect _sourceFrame;
+    String _attachmentID;
 }
 
 + (WKSharingServicePickerDelegate *)sharedSharingServicePickerDelegate;
@@ -46,6 +49,10 @@ class WebContextMenuProxyMac;
 - (void)setPicker:(NSSharingServicePicker *)picker;
 - (void)setFiltersEditingServices:(BOOL)filtersEditingServices;
 - (void)setHandlesEditingReplacement:(BOOL)handlesEditingReplacement;
+- (void)setSourceFrame:(NSRect)sourceFrame;
+- (void)setAttachmentID:(String)attachmentID;
+- (void)markupImage;
+
 @end
 
 #endif // ENABLE(SERVICE_CONTROLS)

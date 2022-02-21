@@ -26,7 +26,7 @@
 [
     ActiveDOMObject,
     Conditional=PAYMENT_REQUEST,
-    EnabledBySetting=PaymentRequest,
+    EnabledBySetting=PaymentRequestEnabled,
     Exposed=Window,
     JSCustomMarkFunction,
     SecureContext,
@@ -42,7 +42,7 @@
     readonly attribute DOMString? payerEmail;
     readonly attribute DOMString? payerPhone;
 
-    [NewObject] Promise<undefined> complete(optional PaymentComplete result = "unknown");
+    [CallWith=CurrentDocument, NewObject] Promise<undefined> complete(optional PaymentComplete result = "unknown", optional PaymentCompleteDetails details);
     [NewObject] Promise<undefined> retry(optional PaymentValidationErrors errorFields);
 
     attribute EventHandler onpayerdetailchange;

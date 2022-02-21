@@ -65,6 +65,15 @@ class ApmDataDumper {
 #endif
   }
 
+  // Returns whether dumping functionality is enabled/available.
+  static bool IsAvailable() {
+#if WEBRTC_APM_DEBUG_DUMP == 1
+    return true;
+#else
+    return false;
+#endif
+  }
+
   // Default dump set.
   static constexpr size_t kDefaultDumpSet = 0;
 

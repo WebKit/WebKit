@@ -27,6 +27,8 @@
 
 #include "IsoDirectoryPageInlines.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config>
@@ -45,3 +47,4 @@ IsoDirectoryPage<Config>* IsoDirectoryPage<Config>::pageFor(IsoDirectory<Config,
 
 } // namespace bmalloc
 
+#endif

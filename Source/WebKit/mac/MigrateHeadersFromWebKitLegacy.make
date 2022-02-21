@@ -1,4 +1,4 @@
-# Copyright (C) 2006, 2007, 2008, 2014, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -195,15 +195,11 @@ WEBKIT_PUBLIC_HEADERS = \
     WebScriptObject.h \
     WebUIDelegate.h \
     WebView.h \
-    npapi.h \
-    npfunctions.h \
-    npruntime.h \
-    nptypes.h \
 #
 
 WEBKIT_LEGACY_PUBLIC_HEADERS = $(addprefix $(PUBLIC_HEADERS_DIR)/, $(filter $(WEBKIT_PUBLIC_HEADERS), $(notdir $(wildcard $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/*.h))) WebKitLegacy.h)
 
-WEBKIT_LEGACY_PRIVATE_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter-out $(WEBKIT_PUBLIC_HEADERS) $(RECENTLY_REMOVED_WEBKIT_LEGACY_PRIVATE_HEADERS) WebKit.h WebKitLegacy_Private.h WebKitLegacy_iOS_Private.h WebKitLegacy_macOS_Private.h, $(notdir $(wildcard $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/*.h))))
+WEBKIT_LEGACY_PRIVATE_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter-out $(WEBKIT_PUBLIC_HEADERS) $(RECENTLY_REMOVED_WEBKIT_LEGACY_PRIVATE_HEADERS) WebKit.h, $(notdir $(wildcard $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/*.h))))
 
 WEBKIT_LEGACY_HEADER_REPLACE_RULES = -e s/\<WebKitLegacy/\<WebKit/
 WEBKIT_LEGACY_HEADER_MIGRATE_CMD = sed $(WEBKIT_LEGACY_HEADER_REPLACE_RULES) $< > $@
@@ -225,7 +221,7 @@ $(PUBLIC_HEADERS_DIR)/WebKitLegacy.h : $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/WebK
 
 else
 
-WEBKIT_LEGACY_PRIVATE_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter-out $(RECENTLY_REMOVED_WEBKIT_LEGACY_PRIVATE_HEADERS) WebKit.h WebKitLegacy_Private.h WebKitLegacy_iOS_Private.h WebKitLegacy_macOS_Private.h, $(notdir $(wildcard $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/*.h))))
+WEBKIT_LEGACY_PRIVATE_HEADERS = $(addprefix $(PRIVATE_HEADERS_DIR)/, $(filter-out $(RECENTLY_REMOVED_WEBKIT_LEGACY_PRIVATE_HEADERS) WebKit.h, $(notdir $(wildcard $(WEBKIT_LEGACY_PRIVATE_HEADERS_DIR)/*.h))))
 
 all : $(WEBKIT_LEGACY_PRIVATE_HEADERS) $(PUBLIC_HEADERS_DIR)/WebKitLegacy.h
 

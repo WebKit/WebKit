@@ -627,7 +627,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         this._implicitSuffix = suffix !== ":" ? ": " : "";
 
         // Complete property names.
-        return WI.CSSCompletions.cssNameCompletions.startsWith(this._prefix);
+        return WI.cssManager.propertyNameCompletions.startsWith(this._prefix);
     }
 
     _generateJavaScriptCompletions(mainToken, base, suffix)

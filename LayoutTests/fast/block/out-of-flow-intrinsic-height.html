@@ -1,0 +1,24 @@
+<style>
+.test {
+  width: 220px;
+  height: min-content;
+  border: 100px solid green;
+  position: absolute;
+  box-sizing: border-box;
+}
+.content {
+  width: 20px;
+  height: 20px;
+  background-color: green;
+}
+
+.fail {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  background-color: red;
+}
+</style>
+<!-- PASS if no red -->
+<div class=fail></div>
+<div class=test><div class=content></div></div>

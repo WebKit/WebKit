@@ -48,8 +48,10 @@ Procedure::Procedure()
     : m_cfg(new CFG(*this))
     , m_lastPhaseName("initial")
     , m_byproducts(makeUnique<OpaqueByproducts>())
-    , m_code(new Air::Code(*this))
 {
+    // Initialize all our fields before constructing Air::Code since
+    // it looks into our fields.
+    m_code = std::unique_ptr<Air::Code>(new Air::Code(*this));
     m_code->setNumEntrypoints(m_numEntrypoints);
 }
 
@@ -228,6 +230,7 @@ void Procedure::invalidateCFG()
 
 void Procedure::dump(PrintStream& out) const
 {
+    out.print("Opt Level: ", optLevel(), "\n");
     IndexSet<Value*> valuesInBlocks;
     for (BasicBlock* block : *this) {
         out.print(deepDump(*this, block));
@@ -477,6 +480,18 @@ void Procedure::freeUnneededB3ValuesAfterLowering()
             m_values.remove(value);
     }
     m_values.packIndices();
+}
+
+void Procedure::setShouldDumpIR()
+{
+    m_shouldDumpIR = true;
+    m_code->forcePreservationOfB3Origins();
+}
+
+void Procedure::setNeedsPCToOriginMap()
+{ 
+    m_needsPCToOriginMap = true;
+    m_code->forcePreservationOfB3Origins();
 }
 
 } } // namespace JSC::B3

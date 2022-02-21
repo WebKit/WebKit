@@ -106,7 +106,9 @@ public:
     static bool isPostScriptMIMEType(const String& mimeType);
     WEBCORE_EXPORT static bool isPDFOrPostScriptMIMEType(const String& mimeType);
 
-    WEBCORE_EXPORT static bool isSystemPreviewMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isUSDMIMEType(const String& mimeType);
+
+    WEBCORE_EXPORT static bool isSupportedModelMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being shown inside a page.
     // Returns true if any of isSupportedImageMIMEType(), isSupportedNonImageMIMEType(),
@@ -133,7 +135,7 @@ public:
     WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& supportedMediaMIMETypes();
     WEBCORE_EXPORT static FixedVector<const char*> pdfMIMETypes();
     WEBCORE_EXPORT static FixedVector<const char*> unsupportedTextMIMETypes();
-    WEBCORE_EXPORT static FixedVector<const char*> systemPreviewMIMETypes();
+    WEBCORE_EXPORT static FixedVector<const char*> usdMIMETypes();
 
     WEBCORE_EXPORT static String appendFileExtensionIfNecessary(const String& filename, const String& mimeType);
 

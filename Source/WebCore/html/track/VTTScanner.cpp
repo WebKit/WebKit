@@ -61,9 +61,9 @@ bool VTTScanner::scan(const LChar* characters, size_t charactersCount)
         return false;
     bool matched;
     if (m_is8Bit)
-        matched = WTF::equal(m_data.characters8, characters, charactersCount);
+        matched = equal(m_data.characters8, characters, charactersCount);
     else
-        matched = WTF::equal(m_data.characters16, characters, charactersCount);
+        matched = equal(m_data.characters16, characters, charactersCount);
     if (matched)
         advance(charactersCount);
     return matched;
@@ -80,9 +80,9 @@ bool VTTScanner::scanRun(const Run& run, const String& toMatch)
         return false;
     bool matched;
     if (m_is8Bit)
-        matched = WTF::equal(toMatch.impl(), m_data.characters8, matchLength);
+        matched = equal(toMatch.impl(), m_data.characters8, matchLength);
     else
-        matched = WTF::equal(toMatch.impl(), m_data.characters16, matchLength);
+        matched = equal(toMatch.impl(), m_data.characters16, matchLength);
     if (matched)
         seekTo(run.end());
     return matched;

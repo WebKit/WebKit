@@ -44,6 +44,7 @@ typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
 namespace WebKit {
 
 class PlatformCALayerRemote;
+class RemoteLayerBackingStoreCollection;
 
 class RemoteLayerBackingStore {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
@@ -63,10 +64,13 @@ public:
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
 
+    void setContents(WTF::MachSendRight&& surfaceHandle);
+    // Returns true if the backing store changed.
     bool display();
 
     WebCore::FloatSize size() const { return m_size; }
     float scale() const { return m_scale; }
+    WebCore::PixelFormat pixelFormat() const;
     Type type() const { return m_type; }
     bool isOpaque() const { return m_isOpaque; }
     unsigned bytesPerPixel() const;
@@ -74,7 +78,7 @@ public:
     PlatformCALayerRemote* layer() const { return m_layer; }
 
     enum class LayerContentsType { IOSurface, CAMachPort };
-    void applyBackingStoreToLayer(CALayer *, LayerContentsType);
+    void applyBackingStoreToLayer(CALayer *, LayerContentsType, bool replayCGDisplayListsIntoBackingStore);
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStore&);
@@ -83,8 +87,12 @@ public:
 
     bool hasFrontBuffer() const
     {
-        return !!m_frontBuffer.imageBuffer;
+        return m_contentsBufferHandle || !!m_frontBuffer.imageBuffer;
     }
+
+    // Just for RemoteBackingStoreCollection.
+    void applySwappedBuffers(RefPtr<WebCore::ImageBuffer>&& front, RefPtr<WebCore::ImageBuffer>&& back, RefPtr<WebCore::ImageBuffer>&& secondaryBack, bool frontBufferNeedsDisplay);
+    void swapToValidFrontBuffer();
 
     Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> takePendingFlushers();
 
@@ -94,33 +102,30 @@ public:
         SecondaryBack
     };
 
+    void willMakeBufferVolatile(BufferType);
+    void didMakeFrontBufferNonVolatile(WebCore::VolatilityState);
+
+    RefPtr<WebCore::ImageBuffer> bufferForType(BufferType) const;
+
     // Returns true if it was able to fulfill the request. This can fail when trying to mark an in-use surface as volatile.
     bool setBufferVolatility(BufferType, bool isVolatile);
 
     MonotonicTime lastDisplayTime() const { return m_lastDisplayTime; }
 
-private:
-    void drawInContext(WebCore::GraphicsContext&);
     void clearBackingStore();
-    void swapToValidFrontBuffer();
 
-    bool supportsPartialRepaint();
+private:
+    RemoteLayerBackingStoreCollection* backingStoreCollection() const;
 
-    WebCore::PixelFormat pixelFormat() const;
-
-    PlatformCALayerRemote* m_layer;
-
-    WebCore::FloatSize m_size;
-    float m_scale;
-    bool m_isOpaque;
-
-    WebCore::Region m_dirtyRegion;
+    void drawInContext(WebCore::GraphicsContext&);
 
     struct Buffer {
         RefPtr<WebCore::ImageBuffer> imageBuffer;
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
         RefPtr<WebCore::ImageBuffer> displayListImageBuffer;
 #endif
+        // FIXME: This flag needs to be part of ImageBuffer[Backend]. Currently it's not correctly maintained
+        // in the GPU Process code path.
         bool isVolatile = false;
 
         explicit operator bool() const
@@ -131,10 +136,32 @@ private:
         void discard();
     };
 
+    bool setBufferVolatile(Buffer&);
+    WebCore::VolatilityState setBufferNonVolatile(Buffer&);
+
+    void swapBuffers();
+
+    bool supportsPartialRepaint() const;
+
+    PlatformCALayerRemote* m_layer;
+
+    WebCore::FloatSize m_size;
+    float m_scale { 1.0f };
+    bool m_isOpaque { false };
+
+    WebCore::Region m_dirtyRegion;
+
+    // Used in the WebContent Process.
     Buffer m_frontBuffer;
     Buffer m_backBuffer;
     Buffer m_secondaryBackBuffer;
+
+    // Used in the UI Process.
     std::optional<ImageBufferBackendHandle> m_bufferHandle;
+    // FIXME: This should be removed and m_bufferHandle should be used to ref the buffer once ShareableBitmap::Handle
+    // can be encoded multiple times. http://webkit.org/b/234169
+    std::optional<MachSendRight> m_contentsBufferHandle;
+
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     std::optional<ImageBufferBackendHandle> m_displayListBufferHandle;
 #endif

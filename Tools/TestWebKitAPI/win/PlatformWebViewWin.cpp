@@ -111,9 +111,9 @@ void PlatformWebView::simulateSpacebarKeyPress()
     HWND window = WKViewGetWindow(m_view);
 
     // These values match what happens when you press the spacebar in Notepad, as observed by Spy++.
-    ::SendMessageW(window, WM_KEYDOWN, VK_SPACE, (1 << repeatCountBitOffset) | (39 << scanCodeBitOffset));
-    ::SendMessageW(window, WM_CHAR, ' ', (1 << repeatCountBitOffset) | (39 << scanCodeBitOffset));
-    ::SendMessageW(window, WM_KEYUP, VK_SPACE, (1 << repeatCountBitOffset) | (39 << scanCodeBitOffset) | (1 << previousStateBitOffset) | (1 << transitionStateBitOffset));
+    ::SendMessageW(window, WM_KEYDOWN, VK_SPACE, (1 << repeatCountBitOffset) | (0x39 << scanCodeBitOffset));
+    ::SendMessageW(window, WM_CHAR, ' ', (1 << repeatCountBitOffset) | (0x39 << scanCodeBitOffset));
+    ::SendMessageW(window, WM_KEYUP, VK_SPACE, (1 << repeatCountBitOffset) | (0x39 << scanCodeBitOffset) | (1 << previousStateBitOffset) | (1 << transitionStateBitOffset));
 }
 
 void PlatformWebView::simulateAltKeyPress()
@@ -121,8 +121,8 @@ void PlatformWebView::simulateAltKeyPress()
     HWND window = WKViewGetWindow(m_view);
 
     // These values match what happens when you press the Alt key in Notepad, as observed by Spy++.
-    ::SendMessageW(window, WM_SYSKEYDOWN, VK_MENU, (1 << repeatCountBitOffset) | (38 << scanCodeBitOffset) | (1 << contextCodeBitOffset));
-    ::SendMessageW(window, WM_SYSKEYUP, VK_MENU, (1 << repeatCountBitOffset) | (38 << scanCodeBitOffset) | (1 << previousStateBitOffset) | (1 << transitionStateBitOffset));
+    ::SendMessageW(window, WM_SYSKEYDOWN, VK_MENU, (1 << repeatCountBitOffset) | (0x38 << scanCodeBitOffset) | (1 << contextCodeBitOffset));
+    ::SendMessageW(window, WM_SYSKEYUP, VK_MENU, (1 << repeatCountBitOffset) | (0x38 << scanCodeBitOffset) | (1 << previousStateBitOffset) | (1 << transitionStateBitOffset));
 }
 
 void PlatformWebView::simulateRightClick(unsigned x, unsigned y)

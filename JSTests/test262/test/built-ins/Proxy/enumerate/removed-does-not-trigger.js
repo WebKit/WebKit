@@ -23,14 +23,14 @@ for (x in p) {
   forInResults.push(x);
 }
 
-assert(compareArray(forInResults, ["0", "1", "2"]));
+assert.compareArray(forInResults, ["0", "1", "2"]);
 
 var forOfResults = [];
 for (x of p) {
   forOfResults.push(x);
 }
 
-assert(compareArray(forOfResults, [1, 2, 3]));
+assert.compareArray(forOfResults, [1, 2, 3]);
 
 var itor = p[Symbol.iterator]();
 var next = itor.next();

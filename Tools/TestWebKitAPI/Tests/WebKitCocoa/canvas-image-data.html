@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+canvas {
+    width: 160px;
+    height: 160px;
+    display: block;
+}
+</style>
+</head>
+<body>
+<strong>Source</strong>
+<canvas id="source" width="320" height="320"></canvas>
+<strong>Destination</strong>
+<canvas id="destination" width="320" height="320"></canvas>
+<script>
+const sourceCanvas = document.getElementById("source");
+const sourceContext = sourceCanvas.getContext("2d");
+sourceContext.save();
+sourceContext.strokeStyle = "red";
+sourceContext.fillStyle = "rgba(200, 100, 100, 0.25)";
+sourceContext.lineWidth = 4;
+sourceContext.rect(40, 40, 240, 240);
+sourceContext.stroke();
+sourceContext.fill();
+sourceContext.restore();
+
+const imageData = sourceContext.getImageData(0, 0, 320, 320);
+const destinationCanvas = document.getElementById("destination");
+const destinationContext = destinationCanvas.getContext("2d");
+destinationContext.putImageData(imageData, 0, 0, 0, 0, 320, 320);
+</script>
+</body>
+</html>

@@ -8,10 +8,13 @@ This tests the attributes of the children of a MathML mmultiscripts element.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
 AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
 AXSize: NSSize: {14, 25}
@@ -38,10 +41,13 @@ AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
 AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
 AXSize: NSSize: {10, 19}
@@ -68,10 +74,13 @@ AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
 AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
 AXSize: NSSize: {9, 18}
@@ -98,10 +107,13 @@ AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
 AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
 AXSize: NSSize: {9, 19}
@@ -128,10 +140,13 @@ AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: AXMathIdentifier
 AXRoleDescription: group
 AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
 AXSize: NSSize: {10, 18}

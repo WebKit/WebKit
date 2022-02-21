@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InsertListCommand.h"
 
+#include "Document.h"
 #include "Editing.h"
 #include "ElementTraversal.h"
 #include "HTMLBRElement.h"
@@ -56,7 +57,7 @@ RefPtr<HTMLElement> InsertListCommand::insertList(Document& document, Type type)
 
 HTMLElement* InsertListCommand::fixOrphanedListChild(Node& node)
 {
-    auto parentNode = makeRefPtr(node.parentNode());
+    RefPtr parentNode { node.parentNode() };
     if (parentNode && !parentNode->hasRichlyEditableStyle())
         return nullptr;
 
@@ -155,7 +156,7 @@ void InsertListCommand::doApply()
                     // infinite loop and because there is no more work to be done.
                     // FIXME(<rdar://problem/5983974>): The endingSelection() may be incorrect here. Compute
                     // the new location of endOfSelection and use it as the end of the new selection.
-                    if (!startOfLastParagraph.deepEquivalent().anchorNode()->isConnected())
+                    if (startOfLastParagraph.isOrphan())
                         return;
                     setEndingSelection(startOfCurrentParagraph);
 
@@ -165,6 +166,8 @@ void InsertListCommand::doApply()
                     // the beginning of the document to the endOfSelection everytime this code is executed.
                     // But not using index is hard because there are so many ways we can lose selection inside doApplyForSingleParagraph.
                     RefPtr<ContainerNode> scope;
+                    if (endOfSelection.isOrphan())
+                        return;
                     int indexForEndOfSelection = indexForVisiblePosition(endOfSelection, scope);
                     doApplyForSingleParagraph(forceCreateList, listTag, currentSelection);
                     if (endOfSelection.isNull() || endOfSelection.isOrphan() || startOfLastParagraph.isNull() || startOfLastParagraph.isOrphan()) {
@@ -329,7 +332,7 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
         // in listNode that comes before listChildNode, as listChildNode could have ancestors
         // between it and listNode. So, we split up to listNode before inserting the placeholder
         // where we're about to move listChildNode to.
-        if (auto listChildNodeParentNode = makeRefPtr(listChildNode->parentNode()); listChildNodeParentNode && listChildNodeParentNode != listNode)
+        if (RefPtr listChildNodeParentNode { listChildNode->parentNode() }; listChildNodeParentNode && listChildNodeParentNode != listNode)
             splitElement(*listNode, *splitTreeToNode(*listChildNode, *listNode).get());
         insertNodeBefore(nodeToInsert.releaseNonNull(), *listNode);
     } else
@@ -364,7 +367,7 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
     VisiblePosition end = endOfParagraph(start, CanSkipOverEditingBoundary);
     
     if (start.isNull() || end.isNull() || !start.deepEquivalent().containerNode()->hasEditableStyle() || !end.deepEquivalent().containerNode()->hasEditableStyle())
-        return 0;
+        return nullptr;
 
     // Check for adjoining lists.
     auto listItemElement = HTMLLIElement::create(document());
@@ -405,7 +408,7 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
             insertionPos = positionInParentBeforeNode(listChild.get());
 
         if (!isEditablePosition(insertionPos))
-            return 0;
+            return nullptr;
 
         insertNodeAt(*listElement, insertionPos);
 

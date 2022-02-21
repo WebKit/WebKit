@@ -7,7 +7,4 @@ es6id: 25.4.4.1_A1.1_T1
 author: Sam Mikes
 description: Promise.all is callable
 ---*/
-
-if ((typeof Promise.all) !== "function") {
-  throw new Test262Error('Expected Promise.all to be a function');
-}
+assert.sameValue(typeof Promise.all, "function", 'The value of `typeof Promise.all` is expected to be "function"');

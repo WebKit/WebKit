@@ -230,7 +230,7 @@ void AudioFileReader::handleMessage(GstMessage* message)
                 gst_element_state_get_name(newState),
                 gst_element_state_get_name(pending));
 
-            WTF::String dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), '_',
+            String dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), '_',
                 gst_element_state_get_name(oldState), '_',
                 gst_element_state_get_name(newState));
 
@@ -258,7 +258,7 @@ void AudioFileReader::handleNewDeinterleavePad(GstPad* pad)
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             return static_cast<AudioFileReader*>(userData)->handleSample(sink);
         },
-#if GST_CHECK_VERSION(1, 19, 1)
+#if GST_CHECK_VERSION(1, 20, 0)
         // new_event
         nullptr,
 #endif
@@ -341,7 +341,7 @@ void AudioFileReader::decodeAudioForBusCreation()
             reader.handleMessage(message);
         else {
             GRefPtr<GstMessage> protectMessage(message);
-            auto weakThis = makeWeakPtr(reader);
+            WeakPtr weakThis { reader };
             reader.m_runLoop.dispatch([weakThis, protectMessage] {
                 if (weakThis)
                     weakThis->handleMessage(protectMessage.get());

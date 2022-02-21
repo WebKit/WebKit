@@ -287,8 +287,8 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
 
     // If this child is a block, and if our previous and next siblings are both anonymous blocks
     // with inline content, then we can fold the inline content back together.
-    auto prev = makeWeakPtr(oldChild.previousSibling());
-    auto next = makeWeakPtr(oldChild.nextSibling());
+    WeakPtr prev = oldChild.previousSibling();
+    WeakPtr next = oldChild.nextSibling();
     bool canMergeAnonymousBlocks = canCollapseAnonymousBlock == CanCollapseAnonymousBlock::Yes && canMergeContiguousAnonymousBlocks(oldChild, prev.get(), next.get());
 
     auto takenChild = m_builder.detachFromRenderElement(parent, oldChild);

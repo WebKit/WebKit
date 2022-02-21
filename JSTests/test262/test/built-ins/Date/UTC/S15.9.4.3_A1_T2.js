@@ -7,11 +7,7 @@ info: The Date property "UTC" has { DontEnum } attributes
 es5id: 15.9.4.3_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
+assert.notSameValue(delete Date.UTC, false, 'The value of delete Date.UTC is not false');
+assert(!Date.hasOwnProperty('UTC'), 'The value of !Date.hasOwnProperty(\'UTC\') is expected to be true');
 
-if (delete Date.UTC === false) {
-  throw new Test262Error('#1: The Date.UTC property has not the attributes DontDelete');
-}
-
-if (Date.hasOwnProperty('UTC')) {
-  throw new Test262Error('#2: The Date.UTC property has not the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

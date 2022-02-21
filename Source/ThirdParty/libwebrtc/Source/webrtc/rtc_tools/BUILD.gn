@@ -243,6 +243,7 @@ if (!is_component_build) {
       "../call:call_interfaces",
       "../common_video",
       "../media:rtc_internal_video_codecs",
+      "../modules/rtp_rtcp:rtp_rtcp_format",
       "../modules/video_coding:video_coding_utility",
       "../rtc_base:checks",
       "../rtc_base:rtc_json",
@@ -397,6 +398,7 @@ if (!build_with_chromium) {
         "../rtc_base:rtc_base_approved",
         "../rtc_base:rtc_numerics",
         "../rtc_base:stringutils",
+        "../system_wrappers",
         "../test:explicit_key_value_config",
       ]
       absl_deps = [

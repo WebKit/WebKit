@@ -24,7 +24,7 @@
  */ 
 
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
     Exposed=Window,
     InterfaceName=XRTest,
@@ -32,19 +32,19 @@
 ] interface WebXRTest {
     // Simulates connecting a device to the system.
     // Used to instantiate a fake device for use in tests.
-    [CallWith=ScriptExecutionContext] Promise<WebFakeXRDevice> simulateDeviceConnection(FakeXRDeviceInit init);
+    [CallWith=CurrentScriptExecutionContext] Promise<WebFakeXRDevice> simulateDeviceConnection(FakeXRDeviceInit init);
 
     // Simulates a user activation (aka user gesture) for the current scope.
     // The activation is only guaranteed to be valid in the provided function and only applies to WebXR
     // Device API methods.
-    [CallWith=Document] undefined simulateUserActivation(XRSimulateUserActivationFunction f);
+    [CallWith=CurrentDocument] undefined simulateUserActivation(XRSimulateUserActivationFunction f);
 
     // Disconnect all fake devices
     Promise<undefined> disconnectAllDevices();
 };
 
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
 ] dictionary FakeXRDeviceInit {
     // Deprecated - use `supportedModes` instead.

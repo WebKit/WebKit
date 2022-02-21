@@ -414,7 +414,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     auto& document = node->document();
     for (auto marker : document.markers().markersFor(*node, DocumentMarker::DictationPhraseWithAlternatives)) {
         if (marker->startOffset() <= offset && marker->endOffset() >= offset) {
-            *alternatives = createNSArray(WTF::get<Vector<String>>(marker->data())).autorelease();
+            *alternatives = createNSArray(std::get<Vector<String>>(marker->data())).autorelease();
             return kit(makeSimpleRange(*node, *marker));
         }
     }

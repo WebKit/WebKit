@@ -23,12 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BumpAllocator_h
-#define BumpAllocator_h
+#pragma once
 
 #include "BAssert.h"
 #include "BumpRange.h"
 #include "ObjectType.h"
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -95,4 +96,4 @@ inline void BumpAllocator::clear()
 
 } // namespace bmalloc
 
-#endif // BumpAllocator_h
+#endif

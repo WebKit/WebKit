@@ -502,7 +502,7 @@ bool ResourceRequestBase::hasUpload() const
 {
     if (auto* body = httpBody()) {
         for (auto& element : body->elements()) {
-            if (WTF::holds_alternative<WebCore::FormDataElement::EncodedFileData>(element.data) || WTF::holds_alternative<WebCore::FormDataElement::EncodedBlobData>(element.data))
+            if (std::holds_alternative<WebCore::FormDataElement::EncodedFileData>(element.data) || std::holds_alternative<WebCore::FormDataElement::EncodedBlobData>(element.data))
                 return true;
         }
     }
@@ -601,6 +601,36 @@ void ResourceRequestBase::setHTTPHeaderFields(HTTPHeaderMap headerFields)
     m_platformRequestUpdated = false;
 }
 
+void ResourceRequestBase::removeHTTPHeaderField(const String& name)
+{
+    updateResourceRequest();
+
+    m_httpHeaderFields.remove(name);
+
+    m_platformRequestUpdated = false;
+}
+
+void ResourceRequestBase::removeHTTPHeaderField(HTTPHeaderName name)
+{
+    updateResourceRequest();
+
+    m_httpHeaderFields.remove(name);
+
+    m_platformRequestUpdated = false;
+}
+
+void ResourceRequestBase::setIsAppInitiated(bool isAppInitiated)
+{
+    updateResourceRequest();
+
+    if (m_isAppInitiated == isAppInitiated)
+        return;
+
+    m_isAppInitiated = isAppInitiated;
+
+    m_platformRequestUpdated = false;
+};
+
 #if USE(SYSTEM_PREVIEW)
 
 bool ResourceRequestBase::isSystemPreview() const
@@ -610,7 +640,7 @@ bool ResourceRequestBase::isSystemPreview() const
 
 SystemPreviewInfo ResourceRequestBase::systemPreviewInfo() const
 {
-    return m_systemPreviewInfo.value_or(SystemPreviewInfo { });
+    return valueOrDefault(m_systemPreviewInfo);
 }
 
 void ResourceRequestBase::setSystemPreviewInfo(const SystemPreviewInfo& info)

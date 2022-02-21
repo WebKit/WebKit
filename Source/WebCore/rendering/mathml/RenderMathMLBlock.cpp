@@ -79,7 +79,7 @@ static LayoutUnit axisHeight(const RenderStyle& style)
 
     // Otherwise, the idea is to try and use the middle of operators as the math axis which we thus approximate by "half of the x-height".
     // Note that Gecko has a slower but more accurate version that measures half of the height of U+2212 MINUS SIGN.
-    return LayoutUnit(style.fontMetrics().xHeight() / 2);
+    return LayoutUnit(style.metricsOfPrimaryFont().xHeight() / 2);
 }
 
 LayoutUnit RenderMathMLBlock::mathAxisHeight() const
@@ -161,7 +161,7 @@ LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& s
     case MathMLElement::LengthType::Em:
         return LayoutUnit(length.value * style.fontCascade().size());
     case MathMLElement::LengthType::Ex:
-        return LayoutUnit(length.value * style.fontMetrics().xHeight());
+        return LayoutUnit(length.value * style.metricsOfPrimaryFont().xHeight());
     case MathMLElement::LengthType::MathUnit:
         return LayoutUnit(length.value * style.fontCascade().size() / 18);
     case MathMLElement::LengthType::Percentage:

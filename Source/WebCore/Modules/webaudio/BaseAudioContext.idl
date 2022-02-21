@@ -27,7 +27,7 @@
     ActiveDOMObject,
     Conditional=WEB_AUDIO,
     CustomToJSObject,
-    EnabledBySetting=WebAudio,
+    EnabledBySetting=WebAudioEnabled,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window
 ] interface BaseAudioContext : EventTarget {
@@ -70,7 +70,7 @@
     PeriodicWave createPeriodicWave(sequence<float> real, sequence<float> imag, optional PeriodicWaveOptions options);
     ConstantSourceNode createConstantSource();
     StereoPannerNode createStereoPanner();
-    [CallWith=ScriptExecutionContext] IIRFilterNode createIIRFilter(sequence<double> feedforward, sequence<double> feedback);
+    [CallWith=CurrentScriptExecutionContext] IIRFilterNode createIIRFilter(sequence<double> feedforward, sequence<double> feedback);
 
     // Channel splitting and merging
     ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs = 6);

@@ -11,22 +11,7 @@ description: Calling Object function with boolean expression as argument value
 
 var obj = Object((1 === 1) && (!false));
 
-//CHECK#1
-if (obj.constructor !== Boolean) {
-  throw new Test262Error('#1: Object(expression) returns ToObject(expression)');
-}
-
-//CHECK#1.1
-if (typeof obj !== "object") {
-  throw new Test262Error('#1.1: Object(expression) returns ToObject(expression)');
-}
-
-//CHECK#2
-if (!(obj)) {
-  throw new Test262Error('#2: Object(expression) returns ToObject(expression)');
-}
-
-//CHECK#3
-if (obj === true) {
-  throw new Test262Error('#3: Object(expression) returns ToObject(expression)');
-}
+assert.sameValue(obj.constructor, Boolean, 'The value of obj.constructor is expected to equal the value of Boolean');
+assert.sameValue(typeof obj, "object", 'The value of `typeof obj` is expected to be "object"');
+assert(!!obj, 'The value of !!obj is expected to be true');
+assert.notSameValue(obj, true, 'The value of obj is not true');

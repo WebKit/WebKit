@@ -88,7 +88,7 @@
                 { "name": "animationId", "$ref": "AnimationId" }
             ],
             "returns": [
-                { "name": "nodeId", "$ref": "DOM.NodeId" }
+                { "name": "effectTarget", "$ref": "DOM.Styleable" }
             ]
         },
         {

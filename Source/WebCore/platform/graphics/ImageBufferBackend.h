@@ -69,6 +69,12 @@ public:
     virtual void flush() = 0;
 };
 
+class ImageBufferBackendSharing {
+public:
+    virtual ~ImageBufferBackendSharing() = default;
+    virtual bool isImageBufferBackendHandleSharing() const { return false; }
+};
+
 class ImageBufferBackend {
 public:
     struct Parameters {
@@ -83,6 +89,7 @@ public:
     WEBCORE_EXPORT static IntSize calculateBackendSize(const Parameters&);
     WEBCORE_EXPORT static size_t calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
     static size_t calculateExternalMemoryCost(const Parameters&) { return 0; }
+    WEBCORE_EXPORT static AffineTransform calculateBaseTransform(const Parameters&, bool originAtBottomLeftCorner);
 
     virtual GraphicsContext& context() const = 0;
     virtual void flushContext() { }
@@ -115,14 +122,25 @@ public:
 
     virtual bool isInUse() const { return false; }
     virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
-    virtual VolatilityState setVolatile(bool) { return VolatilityState::Valid; }
     virtual void releaseBufferToPool() { }
+
+    // Returns true on success.
+    virtual bool setVolatile() { return true; }
+    virtual VolatilityState setNonVolatile() { return VolatilityState::Valid; }
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() { return nullptr; }
 
+    void applyBaseTransformToContext() const;
+
     static constexpr bool isOriginAtBottomLeftCorner = false;
+    virtual bool originAtBottomLeftCorner() const { return isOriginAtBottomLeftCorner; }
+
     static constexpr bool canMapBackingStore = true;
     static constexpr RenderingMode renderingMode = RenderingMode::Unaccelerated;
+
+    virtual void ensureNativeImagesHaveCopiedBackingStore() { }
+
+    virtual ImageBufferBackendSharing* toBackendSharing() { return nullptr; }
 
 protected:
     WEBCORE_EXPORT ImageBufferBackend(const Parameters&);

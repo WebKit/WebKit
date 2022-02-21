@@ -132,6 +132,8 @@ class DoubleToStringConverter {
   // Returns a converter following the EcmaScript specification.
   WTF_EXPORT_PRIVATE static const DoubleToStringConverter& EcmaScriptConverter();
 
+  WTF_EXPORT_PRIVATE static const DoubleToStringConverter& CSSConverter();
+
   // Computes the shortest string of digits that correctly represent the input
   // number. Depending on decimal_in_shortest_low and decimal_in_shortest_high
   // (see constructor) it then either returns a decimal representation, or an
@@ -201,6 +203,11 @@ class DoubleToStringConverter {
   bool ToFixed(double value,
                int requested_digits,
                StringBuilder* result_builder) const;
+  // The same as ToFixed, except without a limit on the maximum number
+  // of digits before the decimal point.
+  bool ToFixedUncapped(double value,
+                       int requested_digits,
+                       StringBuilder* result_builder) const;
 
   // Computes a representation in exponential format with requested_digits
   // after the decimal point. The last emitted digit is rounded.
@@ -370,6 +377,11 @@ class DoubleToStringConverter {
                                    int decimal_point,
                                    int digits_after_point,
                                    StringBuilder* result_builder) const;
+  bool ToFixedInternal(double value,
+                       int requested_digits,
+                       char* buffer,
+                       int buffer_length, 
+                       StringBuilder* result_builder) const;
 
   const int flags_;
   const char* const infinity_symbol_;

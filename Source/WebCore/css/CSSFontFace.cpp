@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "FontFace.h"
+#include "FontPaletteValues.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "StyleBuilderConverter.h"
@@ -53,13 +54,8 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
 
 template<typename T> void iterateClients(HashSet<CSSFontFace::Client*>& clients, T callback)
 {
-    Vector<Ref<CSSFontFace::Client>> clientsCopy;
-    clientsCopy.reserveInitialCapacity(clients.size());
-    for (auto* client : clients)
-        clientsCopy.uncheckedAppend(*client);
-
-    for (auto& client : clientsCopy)
-        callback(client);
+    for (auto& client : copyToVectorOf<RefPtr<CSSFontFace::Client>>(clients))
+        callback(*client);
 }
 
 void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, ScriptExecutionContext* context, bool isInitiatingElementInUserAgentShadowTree)
@@ -101,7 +97,7 @@ Ref<CSSFontFace> CSSFontFace::create(CSSFontSelector& fontSelector, StyleRuleFon
 
 CSSFontFace::CSSFontFace(const Settings::Values* settings, StyleRuleFontFace* cssConnection, FontFace* wrapper, bool isLocalFallback)
     : m_cssConnection(cssConnection)
-    , m_wrapper(makeWeakPtr(wrapper))
+    , m_wrapper(wrapper)
     , m_isLocalFallback(isLocalFallback)
     , m_mayBePurged(!wrapper)
     , m_shouldIgnoreFontLoadCompletions(settings && settings->shouldIgnoreFontLoadCompletions)
@@ -395,13 +391,6 @@ Document* CSSFontFace::document()
     return nullptr;
 }
 
-FontCache& CSSFontFace::fontCacheFallingBackToSingleton()
-{
-    if (m_wrapper && m_wrapper->scriptExecutionContext())
-        return m_wrapper->scriptExecutionContext()->fontCache();
-    return FontCache::singleton();
-}
-
 bool CSSFontFace::computeFailureState() const
 {
     if (status() == Status::Failure)
@@ -456,14 +445,14 @@ Ref<FontFace> CSSFontFace::wrapper(ScriptExecutionContext* context)
     }
 
     auto wrapper = FontFace::create(context, *this);
-    m_wrapper = makeWeakPtr(wrapper.get());
+    m_wrapper = wrapper;
     initializeWrapper();
     return wrapper;
 }
 
 void CSSFontFace::setWrapper(FontFace& newWrapper)
 {
-    m_wrapper = makeWeakPtr(newWrapper);
+    m_wrapper = newWrapper;
     initializeWrapper();
 }
 
@@ -651,7 +640,7 @@ static Font::Visibility visibility(CSSFontFace::Status status, CSSFontFace::Font
     }
 }
 
-RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, ExternalResourceDownloadPolicy policy)
+RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, ExternalResourceDownloadPolicy policy, const FontPaletteValues& fontPaletteValues)
 {
     if (computeFailureState())
         return nullptr;
@@ -675,14 +664,15 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
         switch (source->status()) {
         case CSSFontFaceSource::Status::Pending:
         case CSSFontFaceSource::Status::Loading: {
-            auto& fontCache = fontCacheFallingBackToSingleton();
             Font::Visibility visibility = WebCore::visibility(status(), fontLoadTiming());
-            return Font::create(fontCache.lastResortFallbackFont(fontDescription)->platformData(), Font::Origin::Local, &fontCache, Font::Interstitial::Yes, visibility);
+            return Font::create(FontCache::forCurrentThread().lastResortFallbackFont(fontDescription)->platformData(), Font::Origin::Local, Font::Interstitial::Yes, visibility);
         }
-        case CSSFontFaceSource::Status::Success:
-            if (auto result = source->font(fontDescription, syntheticBold, syntheticItalic, m_featureSettings, m_fontSelectionCapabilities))
+        case CSSFontFaceSource::Status::Success: {
+            FontCreationContext fontCreationContext { m_featureSettings, m_fontSelectionCapabilities, fontPaletteValues };
+            if (auto result = source->font(fontDescription, syntheticBold, syntheticItalic, fontCreationContext))
                 return result;
             break;
+        }
         case CSSFontFaceSource::Status::Failure:
             break;
         }

@@ -25,7 +25,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     ImplementedAs=RTCIceTransportPolicy
 ] enum RTCIceTransportPolicy {
     "relay",
@@ -34,7 +34,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     ImplementedAs=RTCBundlePolicy
 ] enum RTCBundlePolicy {
     "balanced",
@@ -44,7 +44,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     ImplementedAs=RTCPMuxPolicy
 ] enum RTCPMuxPolicy {
     "negotiate",
@@ -53,7 +53,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject
 ] dictionary RTCConfiguration {
     sequence<RTCIceServer> iceServers;

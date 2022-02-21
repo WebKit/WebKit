@@ -57,7 +57,9 @@ void WebPasteboardProxy::readFilePaths(const String& pasteboardName, CompletionH
 
 void WebPasteboardProxy::readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(IPC::SharedBufferCopy&&)>&& completionHandler)
 {
-    Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().data(), WTFMove(completionHandler));
+    Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().data(), [completionHandler = WTFMove(completionHandler)](auto&& buffer) mutable {
+        completionHandler(IPC::SharedBufferCopy(WTFMove(buffer)));
+    });
 }
 
 void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, SelectionData&& selectionData)
@@ -90,14 +92,12 @@ void WebPasteboardProxy::didDestroyFrame(WebFrameProxy* frame)
 void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection&, const String& pasteboardName, const String& origin, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     auto& clipboard = Clipboard::get(pasteboardName);
-    clipboard.readBuffer(PasteboardCustomData::gtkType(), [&clipboard, origin, completionHandler = WTFMove(completionHandler)](IPC::SharedBufferCopy&& buffer) mutable {
+    clipboard.readBuffer(PasteboardCustomData::gtkType(), [&clipboard, origin, completionHandler = WTFMove(completionHandler)](auto&& buffer) mutable {
         ListHashSet<String> domTypes;
-        if (auto dataBuffer = buffer.buffer()) {
-            auto customData = PasteboardCustomData::fromSharedBuffer(*dataBuffer);
-            if (customData.origin() == origin) {
-                for (auto& type : customData.orderedTypes())
-                    domTypes.add(type);
-            }
+        auto customData = PasteboardCustomData::fromSharedBuffer(WTFMove(buffer));
+        if (customData.origin() == origin) {
+            for (auto& type : customData.orderedTypes())
+                domTypes.add(type);
         }
 
         clipboard.formats([domTypes = WTFMove(domTypes), completionHandler = WTFMove(completionHandler)](Vector<String>&& formats) mutable {
@@ -125,13 +125,13 @@ void WebPasteboardProxy::writeCustomData(IPC::Connection&, const Vector<Pasteboa
     SelectionData selectionData;
     const auto& customData = data[0];
     customData.forEachPlatformStringOrBuffer([&selectionData] (auto& type, auto& stringOrBuffer) {
-        if (WTF::holds_alternative<String>(stringOrBuffer)) {
+        if (std::holds_alternative<String>(stringOrBuffer)) {
             if (type == "text/plain"_s)
-                selectionData.setText(WTF::get<String>(stringOrBuffer));
+                selectionData.setText(std::get<String>(stringOrBuffer));
             else if (type == "text/html"_s)
-                selectionData.setMarkup(WTF::get<String>(stringOrBuffer));
+                selectionData.setMarkup(std::get<String>(stringOrBuffer));
             else if (type == "text/uri-list"_s)
-                selectionData.setURIList(WTF::get<String>(stringOrBuffer));
+                selectionData.setURIList(std::get<String>(stringOrBuffer));
         }
     });
 

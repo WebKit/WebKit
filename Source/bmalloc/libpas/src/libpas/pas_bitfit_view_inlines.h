@@ -26,38 +26,10 @@
 #ifndef PAS_BITFIT_VIEW_INLINES_H
 #define PAS_BITFIT_VIEW_INLINES_H
 
-#include "pas_bitfit_biasing_directory.h"
-#include "pas_bitfit_directory_and_index.h"
-#include "pas_bitfit_global_directory.h"
 #include "pas_bitfit_page.h"
 #include "pas_bitfit_view.h"
 
 PAS_BEGIN_EXTERN_C;
-
-static inline pas_bitfit_directory_and_index
-pas_bitfit_view_current_directory_and_index(pas_bitfit_view* view)
-{
-    pas_bitfit_biasing_directory* directory;
-    directory = pas_compact_atomic_bitfit_biasing_directory_ptr_load(&view->biasing_directory);
-    if (directory) {
-        return pas_bitfit_directory_and_index_create(
-            &directory->base, view->index_in_biasing, pas_bitfit_biasing_directory_kind);
-    }
-    return pas_bitfit_directory_and_index_create(
-        &pas_compact_bitfit_global_directory_ptr_load_non_null(&view->global_directory)->base,
-        view->index_in_global, pas_bitfit_global_directory_kind);
-}
-
-static inline pas_bitfit_directory* pas_bitfit_view_current_directory(pas_bitfit_view* view)
-{
-    return pas_bitfit_view_current_directory_and_index(view).directory;
-}
-
-static inline unsigned pas_bitfit_view_index_in_current(pas_bitfit_view* view)
-{
-    return pas_bitfit_view_current_directory_and_index(view).index;
-}
-
 
 static PAS_ALWAYS_INLINE bool pas_bitfit_view_is_empty(pas_bitfit_view* view,
                                                        pas_bitfit_page_config page_config)

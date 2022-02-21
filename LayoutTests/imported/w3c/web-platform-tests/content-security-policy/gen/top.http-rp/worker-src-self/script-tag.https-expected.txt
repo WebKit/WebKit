@@ -1,7 +1,9 @@
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=keep-origin&action=purge&key=0803fd9d-601f-4748-908d-6ec1ae006c20&path=%2Fmixed-content
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=no-redirect&action=purge&key=2a6ddc57-f185-467c-ba36-b4a102e52162&path=%2Fmixed-content
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=swap-origin&action=purge&key=72a1bc79-82cb-4623-a0dd-7bbbdb4d46fe&path=%2Fmixed-content
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?action=purge&key=fa29b6ed-dba1-4198-abc7-039404fbc99f&path=%2Fmixed-content
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=keep-origin&action=purge&key=4ec54617-c322-4d89-8c3a-c5c05ea17a6b&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=no-redirect&action=purge&key=fcc24b7a-dcc1-4792-b6a0-71d184548982&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=swap-origin&action=purge&key=20cbc0a3-d877-4f70-99dd-4782b241b190&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?action=purge&key=8940601c-7fef-45d0-afb8-af85817ad193&path=%2Fmixed-content
 
 FAIL Content Security Policy: Expects allowed for script-tag to cross-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "[object Event]"
 PASS Content Security Policy: Expects allowed for script-tag to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation

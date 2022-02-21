@@ -32,7 +32,7 @@
 
 .call-frame.blackboxed > .title,
 .call-frame.blackboxed:not(:hover, :focus) > .subtitle {
-    opacity: var(--blackboxed-tree-item-opacity);
+    opacity: var(--blackboxed-opacity);
 }
 
 .call-frame .icon {

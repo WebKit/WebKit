@@ -56,6 +56,10 @@ private:
     bool supportsLookUpInImages() final { return true; }
 #endif
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    bool supportsCopyCroppedImage() final { return true; }
+#endif
+
 #if PLATFORM(COCOA)
     void searchWithSpotlight() override;
 #endif

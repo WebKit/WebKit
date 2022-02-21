@@ -31,6 +31,8 @@
 #include "CBORWriter.h"
 #include "WebAuthenticationConstants.h"
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/JSONValues.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -131,6 +133,34 @@ Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& form
     return *attestationObject;
 }
 
+// FIXME(181948): Add token binding ID.
+Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& challenge, const SecurityOrigin& origin, WebAuthn::Scope scope)
+{
+    auto object = JSON::Object::create();
+    switch (type) {
+    case ClientDataType::Create:
+        object->setString("type"_s, "webauthn.create"_s);
+        break;
+    case ClientDataType::Get:
+        object->setString("type"_s, "webauthn.get"_s);
+        break;
+    }
+    object->setString("challenge"_s, base64URLEncodeToString(challenge.data(), challenge.length()));
+    object->setString("origin"_s, origin.toRawString());
+    if (scope != WebAuthn::Scope::SameOrigin)
+        object->setBoolean("crossOrigin"_s, scope != WebAuthn::Scope::SameOrigin);
+
+    auto utf8JSONString = object->toJSONString().utf8();
+
+    return ArrayBuffer::create(utf8JSONString.data(), utf8JSONString.length());
+}
+
+Vector<uint8_t> buildClientDataJsonHash(const ArrayBuffer& clientDataJson)
+{
+    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
+    crypto->addBytes(clientDataJson.data(), clientDataJson.byteLength());
+    return crypto->computeHash();
+}
 
 } // namespace WebCore
 

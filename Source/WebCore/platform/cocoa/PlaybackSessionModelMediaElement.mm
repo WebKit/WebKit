@@ -511,18 +511,13 @@ bool PlaybackSessionModelMediaElement::canPlayFastReverse() const
 
 Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::audioMediaSelectionOptions() const
 {
-    Vector<MediaSelectionOption> audioOptions;
-
     if (!m_mediaElement || !m_mediaElement->document().page())
-        return audioOptions;
+        return { };
 
     auto& captionPreferences = m_mediaElement->document().page()->group().ensureCaptionPreferences();
-
-    audioOptions.reserveInitialCapacity(m_audioTracksForMenu.size());
-    for (auto& audioTrack : m_audioTracksForMenu)
-        audioOptions.uncheckedAppend(captionPreferences.mediaSelectionOptionForTrack(audioTrack.get()));
-
-    return audioOptions;
+    return m_audioTracksForMenu.map([&](auto& audioTrack) {
+        return captionPreferences.mediaSelectionOptionForTrack(audioTrack.get());
+    });
 }
 
 uint64_t PlaybackSessionModelMediaElement::audioMediaSelectedIndex() const

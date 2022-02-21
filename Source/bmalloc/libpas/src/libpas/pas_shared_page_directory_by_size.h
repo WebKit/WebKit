@@ -81,6 +81,10 @@ PAS_API bool pas_shared_page_directory_by_size_for_each_remote(
                      void* arg),
     void* arg);
 
+PAS_API void pas_shared_page_directory_by_size_dump_directory_arg(
+    pas_stream* stream,
+    pas_segregated_shared_page_directory* directory);
+
 PAS_END_EXTERN_C;
 
 #endif /* PAS_SHARED_PAGE_DIRECTORY_BY_SIZE_H */

@@ -147,11 +147,12 @@ std::unique_ptr<ANGLEContext> ANGLEContext::createContext(EGLContext sharingCont
     }
     LOG(WebGL, "Got EGLContext");
 
-    return std::unique_ptr<ANGLEContext>(new ANGLEContext(display, context, EGL_NO_SURFACE));
+    return std::unique_ptr<ANGLEContext>(new ANGLEContext(display,  config, context, EGL_NO_SURFACE));
 }
 
-ANGLEContext::ANGLEContext(EGLDisplay display, EGLContext context, EGLSurface surface)
+ANGLEContext::ANGLEContext(EGLDisplay display, EGLConfig config, EGLContext context, EGLSurface surface)
     : m_display(display)
+    , m_config(config)
     , m_context(context)
     , m_surface(surface)
 {
@@ -160,7 +161,7 @@ ANGLEContext::ANGLEContext(EGLDisplay display, EGLContext context, EGLSurface su
 ANGLEContext::~ANGLEContext()
 {
     if (m_context) {
-        gl::BindFramebuffer(GL_FRAMEBUFFER, 0);
+        GL_BindFramebuffer(GL_FRAMEBUFFER, 0);
         EGL_MakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         EGL_DestroyContext(m_display, m_context);
     }
@@ -181,6 +182,16 @@ bool ANGLEContext::makeContextCurrent()
 EGLContext ANGLEContext::platformContext() const
 {
     return m_context;
+}
+
+EGLDisplay ANGLEContext::platformDisplay() const
+{
+    return m_display;
+}
+
+EGLConfig ANGLEContext::platformConfig() const
+{
+    return m_config;
 }
 
 } // namespace WebCore

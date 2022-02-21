@@ -66,22 +66,8 @@ static inline void freeBuffer(void* addr, size_t size)
 Encoder::Encoder(MessageName messageName, uint64_t destinationID)
     : m_messageName(messageName)
     , m_destinationID(destinationID)
-    , m_buffer(m_inlineBuffer)
-    , m_bufferPointer(m_inlineBuffer)
-    , m_bufferSize(0)
-    , m_bufferCapacity(sizeof(m_inlineBuffer))
 {
     encodeHeader();
-}
-
-Encoder::Encoder(ConstructWithoutHeaderTag)
-    : m_messageName()
-    , m_destinationID(0)
-    , m_buffer(m_inlineBuffer)
-    , m_bufferPointer(m_inlineBuffer)
-    , m_bufferSize(0)
-    , m_bufferCapacity(sizeof(m_inlineBuffer))
-{
 }
 
 Encoder::~Encoder()

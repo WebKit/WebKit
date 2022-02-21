@@ -28,6 +28,7 @@
 
 #import "GraphicsContextCG.h"
 #import "HTMLInputElement.h"
+#import "ImageBuffer.h"
 #import "RenderText.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
@@ -151,10 +152,11 @@ static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
 
 bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& paintRect)
 {
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
+    auto& destinationContext = paintInfo.context();
 
-    paintInfo.context().setShouldSmoothFonts(true);
-    paintInfo.context().scale(FloatSize(1, -1));
+    auto imageBuffer = destinationContext.createCompatibleImageBuffer(paintRect.size());
+    if (!imageBuffer)
+        return false;
 
     auto& style = renderer.style();
     auto largestCornerRadius = std::max<CGFloat>({
@@ -168,7 +170,13 @@ bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const P
         floatValueForLength(style.borderBottomRightRadius().width, paintRect.width())
     });
 
-    PKDrawApplePayButtonWithCornerRadius(paintInfo.context().platformContext(), CGRectMake(paintRect.x(), -paintRect.maxY(), paintRect.width(), paintRect.height()), 1.0, largestCornerRadius, toPKPaymentButtonType(style.applePayButtonType()), toPKPaymentButtonStyle(style.applePayButtonStyle()), style.computedLocale());
+    auto& imageContext = imageBuffer->context();
+    imageContext.setShouldSmoothFonts(true);
+    imageContext.setShouldSubpixelQuantizeFonts(false);
+    imageContext.scale(FloatSize(1, -1));
+    PKDrawApplePayButtonWithCornerRadius(imageContext.platformContext(), CGRectMake(0, -paintRect.height(), paintRect.width(), paintRect.height()), 1.0, largestCornerRadius, toPKPaymentButtonType(style.applePayButtonType()), toPKPaymentButtonStyle(style.applePayButtonStyle()), style.computedLocale());
+
+    destinationContext.drawConsumingImageBuffer(WTFMove(imageBuffer), paintRect);
     return false;
 }
 
@@ -220,7 +228,7 @@ String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double du
         m_durationFormatter.get().formattingContext = NSFormattingContextStandalone;
         m_durationFormatter.get().maximumUnitCount = 2;
     }
-    return [m_durationFormatter.get() stringFromTimeInterval:durationInSeconds];
+    return [m_durationFormatter stringFromTimeInterval:durationInSeconds];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -228,7 +236,7 @@ String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double du
 
 FontCascadeDescription& RenderThemeCocoa::cachedSystemFontDescription(CSSValueID valueID) const
 {
-    static auto fontDescriptions = makeNeverDestroyed<std::array<FontCascadeDescription, 17>>({ });
+    static NeverDestroyed<std::array<FontCascadeDescription, 17>> fontDescriptions;
 
     ASSERT(std::all_of(std::begin(fontDescriptions.get()), std::end(fontDescriptions.get()), [](auto& description) {
         return !description.isAbsoluteSize();
@@ -276,10 +284,14 @@ FontCascadeDescription& RenderThemeCocoa::cachedSystemFontDescription(CSSValueID
 
 static inline FontSelectionValue cssWeightOfSystemFont(CTFontRef font)
 {
-    auto traits = adoptCF(CTFontCopyTraits(font));
-    CFNumberRef resultRef = (CFNumberRef)CFDictionaryGetValue(traits.get(), kCTFontWeightTrait);
+    auto resultRef = adoptCF(static_cast<CFNumberRef>(CTFontCopyAttribute(font, kCTFontCSSWeightAttribute)));
     float result = 0;
-    CFNumberGetValue(resultRef, kCFNumberFloatType, &result);
+    if (resultRef && CFNumberGetValue(resultRef.get(), kCFNumberFloatType, &result))
+        return FontSelectionValue(result);
+
+    auto traits = adoptCF(CTFontCopyTraits(font));
+    resultRef = static_cast<CFNumberRef>(CFDictionaryGetValue(traits.get(), kCTFontWeightTrait));
+    CFNumberGetValue(resultRef.get(), kCFNumberFloatType, &result);
     // These numbers were experimentally gathered from weights of the system font.
     static constexpr float weightThresholds[] = { -0.6, -0.365, -0.115, 0.130, 0.235, 0.350, 0.5, 0.7 };
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(weightThresholds); ++i) {

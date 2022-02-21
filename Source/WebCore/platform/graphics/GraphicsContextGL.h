@@ -28,12 +28,12 @@
 #if ENABLE(WEBGL)
 
 #include "GraphicsContextGLAttributes.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsTypesGL.h"
 #include "Image.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "MediaPlayer.h"
-#include "PlatformLayer.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -45,11 +45,6 @@
 #endif
 #endif
 
-typedef void* PlatformGraphicsContextGL;
-typedef void* PlatformGraphicsContextGLDisplay;
-typedef void* PlatformGraphicsContextGLSurface;
-typedef void* PlatformGraphicsContextGLConfig;
-
 namespace WebCore {
 class ExtensionsGL;
 class HostWindow;
@@ -59,7 +54,9 @@ class PixelBuffer;
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 class GraphicsContextGLCV;
 #endif
-
+#if ENABLE(MEDIA_STREAM)
+class MediaSample;
+#endif
 
 // Base class for graphics context for implementing WebGL rendering model.
 class GraphicsContextGL : public RefCounted<GraphicsContextGL> {
@@ -339,7 +336,6 @@ public:
     static constexpr GCGLenum RGB5_A1 = 0x8057;
     static constexpr GCGLenum RGB565 = 0x8D62;
     static constexpr GCGLenum DEPTH_COMPONENT16 = 0x81A5;
-    static constexpr GCGLenum STENCIL_INDEX = 0x1901;
     static constexpr GCGLenum STENCIL_INDEX8 = 0x8D48;
     static constexpr GCGLenum RENDERBUFFER_WIDTH = 0x8D42;
     static constexpr GCGLenum RENDERBUFFER_HEIGHT = 0x8D43;
@@ -673,6 +669,145 @@ public:
     static constexpr GCGLenum TEXTURE_RECTANGLE_ARB = 0x84F5;
     static constexpr GCGLenum TEXTURE_BINDING_RECTANGLE_ARB = 0x84F6;
 
+    // EXT_sRGB formats
+    static constexpr GCGLenum SRGB_EXT = 0x8C40;
+    static constexpr GCGLenum SRGB_ALPHA_EXT = 0x8C42;
+    static constexpr GCGLenum SRGB8_ALPHA8_EXT = 0x8C43;
+    static constexpr GCGLenum FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT = 0x8210;
+
+    // EXT_blend_minmax enums
+    static constexpr GCGLenum MIN_EXT = 0x8007;
+    static constexpr GCGLenum MAX_EXT = 0x8008;
+
+    // GL_EXT_texture_format_BGRA8888 enums
+    static constexpr GCGLenum BGRA_EXT = 0x80E1;
+
+    // GL_ARB_robustness enums
+    static constexpr GCGLenum GUILTY_CONTEXT_RESET_ARB = 0x8253;
+    static constexpr GCGLenum INNOCENT_CONTEXT_RESET_ARB = 0x8254;
+    static constexpr GCGLenum UNKNOWN_CONTEXT_RESET_ARB = 0x8255;
+    static constexpr GCGLenum CONTEXT_ROBUST_ACCESS = 0x90F3;
+
+    // GL_OES_standard_derivatives names
+    static constexpr GCGLenum FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B;
+
+    // GL_OES_rgb8_rgba8 names
+    static constexpr GCGLenum RGB8_OES = 0x8051;
+    static constexpr GCGLenum RGBA8_OES = 0x8058;
+
+    // GL_ANGLE_translated_shader_source
+    static constexpr GCGLenum TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE = 0x93A0;
+
+    // GL_EXT_texture_compression_dxt1
+    // GL_EXT_texture_compression_s3tc
+    static constexpr GCGLenum COMPRESSED_RGB_S3TC_DXT1_EXT = 0x83F0;
+    static constexpr GCGLenum COMPRESSED_RGBA_S3TC_DXT1_EXT = 0x83F1;
+    static constexpr GCGLenum COMPRESSED_RGBA_S3TC_DXT3_EXT = 0x83F2;
+    static constexpr GCGLenum COMPRESSED_RGBA_S3TC_DXT5_EXT = 0x83F3;
+
+    // GL_EXT_texture_compression_s3tc_srgb
+    static constexpr GCGLenum COMPRESSED_SRGB_S3TC_DXT1_EXT = 0x8C4C;
+    static constexpr GCGLenum COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT = 0x8C4D;
+    static constexpr GCGLenum COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT = 0x8C4E;
+    static constexpr GCGLenum COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT = 0x8C4F;
+
+    // GL_OES_compressed_ETC1_RGB8_texture
+    static constexpr GCGLenum ETC1_RGB8_OES = 0x8D64;
+
+    // GL_IMG_texture_compression_pvrtc
+    static constexpr GCGLenum COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00;
+    static constexpr GCGLenum COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01;
+    static constexpr GCGLenum COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02;
+    static constexpr GCGLenum COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03;
+
+    // GL_AMD_compressed_ATC_texture
+    static constexpr GCGLenum COMPRESSED_ATC_RGB_AMD = 0x8C92;
+    static constexpr GCGLenum COMPRESSED_ATC_RGBA_EXPLICIT_ALPHA_AMD = 0x8C93;
+    static constexpr GCGLenum COMPRESSED_ATC_RGBA_INTERPOLATED_ALPHA_AMD = 0x87EE;
+
+    // GL_KHR_texture_compression_astc_hdr
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_4x4_KHR = 0x93B0;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_5x4_KHR = 0x93B1;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_5x5_KHR = 0x93B2;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_6x5_KHR = 0x93B3;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_6x6_KHR = 0x93B4;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_8x5_KHR = 0x93B5;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_8x6_KHR = 0x93B6;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_8x8_KHR = 0x93B7;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_10x5_KHR = 0x93B8;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_10x6_KHR = 0x93B9;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_10x8_KHR = 0x93BA;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_10x10_KHR = 0x93BB;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_12x10_KHR = 0x93BC;
+    static constexpr GCGLenum COMPRESSED_RGBA_ASTC_12x12_KHR = 0x93BD;
+
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR = 0x93D0;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR = 0x93D1;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR = 0x93D2;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR = 0x93D3;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR = 0x93D4;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR = 0x93D5;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR = 0x93D6;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR = 0x93D7;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR = 0x93D8;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR = 0x93D9;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR = 0x93DA;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR = 0x93DB;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR = 0x93DC;
+    static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR = 0x93DD;
+
+    // GL_EXT_texture_compression_rgtc
+    static constexpr GCGLenum COMPRESSED_RED_RGTC1_EXT = 0x8DBB;
+    static constexpr GCGLenum COMPRESSED_SIGNED_RED_RGTC1_EXT = 0x8DBC;
+    static constexpr GCGLenum COMPRESSED_RED_GREEN_RGTC2_EXT = 0x8DBD;
+    static constexpr GCGLenum COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT = 0x8DBE;
+
+    // GL_EXT_texture_filter_anisotropic
+    static constexpr GCGLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE;
+    static constexpr GCGLenum MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF;
+
+    // GL_ARB_draw_buffers / GL_EXT_draw_buffers
+    static constexpr GCGLenum MAX_DRAW_BUFFERS_EXT = 0x8824;
+    static constexpr GCGLenum DRAW_BUFFER0_EXT = 0x8825;
+    static constexpr GCGLenum DRAW_BUFFER1_EXT = 0x8826;
+    static constexpr GCGLenum DRAW_BUFFER2_EXT = 0x8827;
+    static constexpr GCGLenum DRAW_BUFFER3_EXT = 0x8828;
+    static constexpr GCGLenum DRAW_BUFFER4_EXT = 0x8829;
+    static constexpr GCGLenum DRAW_BUFFER5_EXT = 0x882A;
+    static constexpr GCGLenum DRAW_BUFFER6_EXT = 0x882B;
+    static constexpr GCGLenum DRAW_BUFFER7_EXT = 0x882C;
+    static constexpr GCGLenum DRAW_BUFFER8_EXT = 0x882D;
+    static constexpr GCGLenum DRAW_BUFFER9_EXT = 0x882E;
+    static constexpr GCGLenum DRAW_BUFFER10_EXT = 0x882F;
+    static constexpr GCGLenum DRAW_BUFFER11_EXT = 0x8830;
+    static constexpr GCGLenum DRAW_BUFFER12_EXT = 0x8831;
+    static constexpr GCGLenum DRAW_BUFFER13_EXT = 0x8832;
+    static constexpr GCGLenum DRAW_BUFFER14_EXT = 0x8833;
+    static constexpr GCGLenum DRAW_BUFFER15_EXT = 0x8834;
+    static constexpr GCGLenum MAX_COLOR_ATTACHMENTS_EXT = 0x8CDF;
+    static constexpr GCGLenum COLOR_ATTACHMENT0_EXT = 0x8CE0;
+    static constexpr GCGLenum COLOR_ATTACHMENT1_EXT = 0x8CE1;
+    static constexpr GCGLenum COLOR_ATTACHMENT2_EXT = 0x8CE2;
+    static constexpr GCGLenum COLOR_ATTACHMENT3_EXT = 0x8CE3;
+    static constexpr GCGLenum COLOR_ATTACHMENT4_EXT = 0x8CE4;
+    static constexpr GCGLenum COLOR_ATTACHMENT5_EXT = 0x8CE5;
+    static constexpr GCGLenum COLOR_ATTACHMENT6_EXT = 0x8CE6;
+    static constexpr GCGLenum COLOR_ATTACHMENT7_EXT = 0x8CE7;
+    static constexpr GCGLenum COLOR_ATTACHMENT8_EXT = 0x8CE8;
+    static constexpr GCGLenum COLOR_ATTACHMENT9_EXT = 0x8CE9;
+    static constexpr GCGLenum COLOR_ATTACHMENT10_EXT = 0x8CEA;
+    static constexpr GCGLenum COLOR_ATTACHMENT11_EXT = 0x8CEB;
+    static constexpr GCGLenum COLOR_ATTACHMENT12_EXT = 0x8CEC;
+    static constexpr GCGLenum COLOR_ATTACHMENT13_EXT = 0x8CED;
+    static constexpr GCGLenum COLOR_ATTACHMENT14_EXT = 0x8CEE;
+    static constexpr GCGLenum COLOR_ATTACHMENT15_EXT = 0x8CEF;
+
+    // GL_KHR_parallel_shader_compile
+    static constexpr GCGLenum COMPLETION_STATUS_KHR = 0x91B1;
+
+    // GL_ANGLE_request_extension
+    static constexpr GCGLenum REQUESTABLE_EXTENSIONS_ANGLE = 0x93A8;
+
     // Attempt to enumerate all possible native image formats to
     // reduce the amount of temporary allocations during texture
     // uploading. This enum must be public because it is accessed
@@ -785,7 +920,7 @@ public:
         Yes
     };
 
-    virtual PlatformLayer* platformLayer() const = 0;
+    virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() = 0;
 
     ALWAYS_INLINE static bool hasAlpha(DataFormat format)
     {
@@ -896,7 +1031,8 @@ public:
 
     class Client {
     public:
-        virtual ~Client() { }
+        WEBCORE_EXPORT Client();
+        WEBCORE_EXPORT virtual ~Client();
         virtual void didComposite() = 0;
         virtual void forceContextLost() = 0;
         virtual void recycleContext() = 0;
@@ -909,12 +1045,8 @@ public:
         GCGLint size;
     };
 
-    // Creates a GraphicsContextGL instance to render into offscreen destination in context of HostWindow.
-    // HostWindow might affect the decision which backend is to be used.
-    WEBCORE_EXPORT static RefPtr<GraphicsContextGL> create(const GraphicsContextGLAttributes&, HostWindow*);
-
-    GraphicsContextGL(GraphicsContextGLAttributes, GraphicsContextGL* sharedContext = nullptr);
-    virtual ~GraphicsContextGL() = default;
+    WEBCORE_EXPORT GraphicsContextGL(GraphicsContextGLAttributes);
+    WEBCORE_EXPORT virtual ~GraphicsContextGL();
 
     void addClient(Client& client) { m_clients.add(&client); }
     void removeClient(Client& client) { m_clients.remove(&client); }
@@ -1235,6 +1367,31 @@ public:
     virtual void multiDrawElementsANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLsizei drawcount) = 0;
     virtual void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount) = 0;
 
+    virtual bool supportsExtension(const String&) = 0;
+
+    // This method may only be called with extension names for which supports returns true.
+    virtual void ensureExtensionEnabled(const String&) = 0;
+
+    // Takes full name of extension: for example, "GL_EXT_texture_format_BGRA8888".
+    // Checks to see whether the given extension is actually enabled (see ensureExtensionEnabled).
+    // Has no other side-effects.
+    virtual bool isExtensionEnabled(const String&) = 0;
+
+    // GL_ARB_robustness
+    // Note: This method's behavior differs from the GL_ARB_robustness
+    // specification in the following way:
+    // The implementation must not reset the error state during this call.
+    // If getGraphicsResetStatusARB returns an error, it should continue
+    // returning the same error. Restoring the GraphicsContextGLOpenGL is handled
+    // externally.
+    virtual GCGLint getGraphicsResetStatusARB() = 0;
+
+    // GL_ANGLE_translated_shader_source
+    virtual String getTranslatedShaderSourceANGLE(PlatformGLObject) = 0;
+
+    // GL_ARB_draw_buffers / GL_EXT_draw_buffers
+    virtual void drawBuffersEXT(GCGLSpan<const GCGLenum> bufs) = 0;
+
     // ========== Other functions.
     GCGLfloat getFloat(GCGLenum pname);
     GCGLboolean getBoolean(GCGLenum pname);
@@ -1245,18 +1402,6 @@ public:
     GraphicsContextGLAttributes contextAttributes() const { return m_attrs; }
     void setContextAttributes(const GraphicsContextGLAttributes& attrs) { m_attrs = attrs; }
 
-    // FIXME: The calling site should be fixed, this breaks the WebGL spec
-    // wrt preserveDrawingBuffer == false behavior.
-    // Concession to Canvas captureStream, which needs to dynamically set
-    // preserveDrawingBuffer to true in order to avoid implicit clears.
-    // Implementations generally do not support toggling this bit arbitrarily.
-    virtual void enablePreserveDrawingBuffer();
-
-    // Support for extensions. Returns a non-null object, though not
-    // all methods it contains may necessarily be supported on the
-    // current hardware. Must call ExtensionsGL::supports() to
-    // determine this.
-    virtual ExtensionsGL& getExtensions() = 0;
     virtual void reshape(int width, int height) = 0;
 
     virtual void setContextVisibility(bool) = 0;
@@ -1280,14 +1425,14 @@ public:
     virtual void prepareForDisplay() = 0;
 
     // FIXME: should be removed, caller should keep track of changed state.
-    virtual void markContextChanged() = 0;
+    WEBCORE_EXPORT virtual void markContextChanged();
 
     // FIXME: these should be removed, caller is interested in buffer clear status and
     // should track that in a variable that the caller holds. Caller should receive
     // the value from reshape() and didComposite().
-    virtual bool layerComposited() const = 0;
-    virtual void setBuffersToAutoClear(GCGLbitfield) = 0;
-    virtual GCGLbitfield getBuffersToAutoClear() const = 0;
+    bool layerComposited() const;
+    void setBuffersToAutoClear(GCGLbitfield);
+    GCGLbitfield getBuffersToAutoClear() const;
 
     // FIXME: these should be removed, they're part of drawing buffer and
     // display buffer abstractions that the caller should hold separate to
@@ -1295,11 +1440,14 @@ public:
     virtual void paintRenderingResultsToCanvas(ImageBuffer&) = 0;
     virtual std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() = 0;
     virtual void paintCompositedResultsToCanvas(ImageBuffer&) = 0;
+#if ENABLE(MEDIA_STREAM)
+    virtual RefPtr<MediaSample> paintCompositedResultsToMediaSample() = 0;
+#endif
 
     // FIXME: this should be removed. The layer should be marked composited by
     // preparing for display, so that canvas image buffer and the layer agree
     // on the content.
-    virtual void markLayerComposited() = 0;
+    WEBCORE_EXPORT void markLayerComposited();
 
     enum class SimulatedEventForTesting {
         ContextChange,
@@ -1357,14 +1505,22 @@ public:
     // Returns true upon success.
     static bool packImageData(Image*, const void* pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp, DataFormat sourceFormat, unsigned sourceImageWidth, unsigned sourceImageHeight, const IntRect& sourceImageSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, Vector<uint8_t>& data);
 
+    WEBCORE_EXPORT static void paintToCanvas(const GraphicsContextGLAttributes&, PixelBuffer&&, const IntSize& canvasSize, GraphicsContext&);
 protected:
     int m_currentWidth { 0 };
     int m_currentHeight { 0 };
     HashSet<Client*> m_clients;
+    // A bitmask of GL buffer bits (GL_COLOR_BUFFER_BIT,
+    // GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT) which need to be
+    // auto-cleared.
+    GCGLbitfield m_buffersToAutoClear { 0 };
+    bool m_layerComposited { false };
 
 private:
     GraphicsContextGLAttributes m_attrs;
 };
+
+WEBCORE_EXPORT RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&);
 
 inline GCGLfloat GraphicsContextGL::getFloat(GCGLenum pname)
 {

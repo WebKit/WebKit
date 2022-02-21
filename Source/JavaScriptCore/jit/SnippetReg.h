@@ -27,7 +27,7 @@
 #pragma once
 
 #include "Reg.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 #if ENABLE(JIT)
 
@@ -72,21 +72,21 @@ public:
     GPRReg gpr() const
     {
         ASSERT(isGPR());
-        return WTF::get<GPRReg>(m_variant);
+        return std::get<GPRReg>(m_variant);
     }
     FPRReg fpr() const
     {
         ASSERT(isFPR());
-        return WTF::get<FPRReg>(m_variant);
+        return std::get<FPRReg>(m_variant);
     }
     JSValueRegs jsValueRegs() const
     {
         ASSERT(isJSValueRegs());
-        return WTF::get<JSValueRegs>(m_variant);
+        return std::get<JSValueRegs>(m_variant);
     }
 
 private:
-    Variant<GPRReg, FPRReg, JSValueRegs> m_variant;
+    std::variant<GPRReg, FPRReg, JSValueRegs> m_variant;
 };
 
 }

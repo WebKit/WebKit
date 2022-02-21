@@ -24,17 +24,17 @@
  */
 
 [
-    EnabledAtRuntime=DirectoryUpload,
+    EnabledAtRuntime=DirectoryUploadEnabled,
     Exposed=Window
 ] interface FileSystemDirectoryEntry : FileSystemEntry {
-    [CallWith=ScriptExecutionContext] FileSystemDirectoryReader createReader();
+    [CallWith=CurrentScriptExecutionContext] FileSystemDirectoryReader createReader();
 
-    [CallWith=ScriptExecutionContext] undefined getFile(optional USVString? path,
+    [CallWith=CurrentScriptExecutionContext] undefined getFile(optional USVString? path,
         optional FileSystemFlags options,
         optional FileSystemEntryCallback? successCallback,
         optional ErrorCallback? errorCallback);
 
-    [CallWith=ScriptExecutionContext] undefined getDirectory(optional USVString? path,
+    [CallWith=CurrentScriptExecutionContext] undefined getDirectory(optional USVString? path,
         optional FileSystemFlags options,
         optional FileSystemEntryCallback? successCallback,
         optional ErrorCallback? errorCallback);

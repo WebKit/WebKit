@@ -29,6 +29,7 @@
 #include <array>
 #include <cmath>
 #include <tuple>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -52,6 +53,7 @@ struct ColorComponents {
     constexpr auto map(F&& function) const -> ColorComponents<decltype(function(std::declval<T>())), N>;
 
     constexpr ColorComponents& operator+=(const ColorComponents&);
+    constexpr ColorComponents& operator/=(T);
 
     constexpr ColorComponents operator+(T) const;
     constexpr ColorComponents operator/(T) const;
@@ -67,6 +69,8 @@ struct ColorComponents {
 
     template<size_t Start, size_t End>
     constexpr ColorComponents<T, End - Start> subset() const;
+
+    constexpr size_t size() const { return Size; }
 
     std::array<T, N> components;
 };
@@ -96,6 +100,13 @@ template<typename T, size_t N>
 constexpr ColorComponents<T, N>& ColorComponents<T, N>::operator+=(const ColorComponents& rhs)
 {
     *this = mapColorComponents([](T c1, T c2) { return c1 + c2; }, *this, rhs);
+    return *this;
+}
+
+template<typename T, size_t N>
+constexpr ColorComponents<T, N>& ColorComponents<T, N>::operator/=(T rhs)
+{
+    *this = (*this / rhs);
     return *this;
 }
 
@@ -135,7 +146,7 @@ template<size_t Start, size_t End>
 constexpr ColorComponents<T, End - Start> ColorComponents<T, N>::subset() const
 {
     ColorComponents<T, End - Start> result;
-    for (std::remove_const_t<decltype(T::Size)> i = Start; i < End; ++i)
+    for (size_t i = Start; i < End; ++i)
         result[i - Start] = components[i];
     return result;
 }
@@ -155,7 +166,15 @@ constexpr ColorComponents<T, N> perComponentMin(const ColorComponents<T, N>& a, 
 template<typename T, size_t N>
 constexpr bool operator==(const ColorComponents<T, N>& a, const ColorComponents<T, N>& b)
 {
-    return a.components == b.components;
+    for (size_t i = 0; i < N; ++i) {
+        if (a[i] == b[i])
+            continue;
+        if (isNaNConstExpr(a[i]) && isNaNConstExpr(b[i]))
+            continue;
+        return false;
+    }
+
+    return true;
 }
 
 template<typename T, size_t N>

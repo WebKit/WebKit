@@ -29,6 +29,8 @@
 #if ENABLE(APPLE_PAY)
 
 #import <JavaScriptCore/JSONObject.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
 #import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebCore {

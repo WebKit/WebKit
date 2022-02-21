@@ -16,7 +16,5 @@ function foo() {}
 
 var names = Object.getOwnPropertyNames(foo);
 for (var i = 0, len = names.length; i < len; i++) {
-  if (!foo.hasOwnProperty(names[i])) {
-    throw new Test262Error('Phantom own property: ' + names[i]);
-  }
+  assert(!!foo.hasOwnProperty(names[i]), 'The value of !!foo.hasOwnProperty(names[i]) is expected to be true');
 }

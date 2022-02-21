@@ -36,6 +36,7 @@
 #include "AddEventListenerOptions.h"
 #include "Event.h"
 #include "EventTarget.h"
+#include "JSEventListener.h"
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -96,13 +97,9 @@ void EventListenerMap::clear()
 
 Vector<AtomString> EventListenerMap::eventTypes() const
 {
-    Vector<AtomString> types;
-    types.reserveInitialCapacity(m_entries.size());
-
-    for (auto& entry : m_entries)
-        types.uncheckedAppend(entry.first);
-
-    return types;
+    return m_entries.map([](auto& entry) {
+        return entry.first;
+    });
 }
 
 static inline size_t findListener(const EventListenerVector& listeners, EventListener& listener, bool useCapture)
@@ -191,7 +188,7 @@ EventListenerVector* EventListenerMap::find(const AtomString& eventType) const
 static void removeFirstListenerCreatedFromMarkup(EventListenerVector& listenerVector)
 {
     bool foundListener = listenerVector.removeFirstMatching([] (const auto& registeredListener) {
-        if (registeredListener->callback().wasCreatedFromMarkup()) {
+        if (JSEventListener::wasCreatedFromMarkup(registeredListener->callback())) {
             registeredListener->markAsRemoved();
             return true;
         }
@@ -220,7 +217,7 @@ static void copyListenersNotCreatedFromMarkupToTarget(const AtomString& eventTyp
 {
     for (auto& registeredListener : listenerVector) {
         // Event listeners created from markup have already been transfered to the shadow tree during cloning.
-        if (registeredListener->callback().wasCreatedFromMarkup())
+        if (JSEventListener::wasCreatedFromMarkup(registeredListener->callback()))
             continue;
         target->addEventListener(eventType, registeredListener->callback(), registeredListener->useCapture());
     }

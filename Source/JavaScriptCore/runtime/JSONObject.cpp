@@ -33,7 +33,7 @@
 #include "JSArrayInlines.h"
 #include "JSCInlines.h"
 #include "LiteralParser.h"
-#include "ObjectConstructor.h"
+#include "ObjectConstructorInlines.h"
 #include "PropertyNameArray.h"
 #include "VMInlines.h"
 #include <wtf/text/StringBuilder.h>
@@ -88,21 +88,25 @@ private:
     class Holder {
     public:
         enum RootHolderTag { RootHolder };
-        Holder(JSGlobalObject*, JSObject*);
+        Holder(JSGlobalObject*, JSObject*, Structure*);
         Holder(RootHolderTag, JSObject*);
 
         JSObject* object() const { return m_object; }
         bool isArray() const { return m_isArray; }
+        bool hasFastObjectProperties() const { return m_hasFastObjectProperties; }
 
         bool appendNextProperty(Stringifier&, StringBuilder&);
 
     private:
-        JSObject* m_object;
-        const bool m_isJSArray;
-        const bool m_isArray;
+        JSObject* m_object { nullptr };
+        Structure* m_structure { nullptr };
+        const bool m_isJSArray { false };
+        const bool m_isArray { false };
+        bool m_hasFastObjectProperties { false };
         unsigned m_index { 0 };
         unsigned m_size { 0 };
         RefPtr<PropertyNameArrayData> m_propertyNames;
+        Vector<std::tuple<Identifier, unsigned>, 8> m_propertiesAndOffsets;
     };
 
     friend class Holder;
@@ -125,7 +129,7 @@ private:
     CallData m_replacerCallData;
     String m_gap;
 
-    MarkedArgumentBuffer m_objectStack;
+    MarkedArgumentBufferWithSize<16> m_objectStack;
     Vector<Holder, 16, UnsafeVectorOverflow> m_holderStack;
     String m_repeatedGap;
     String m_indent;
@@ -289,8 +293,20 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameF
     auto scope = DECLARE_THROW_SCOPE(vm);
     scope.assertNoException();
 
-    JSValue toJSONFunction = baseValue.get(m_globalObject, vm.propertyNames->toJSON);
-    RETURN_IF_EXCEPTION(scope, { });
+    JSValue toJSONFunction;
+    if (baseValue.isObject())
+        toJSONFunction = asObject(baseValue)->structure(vm)->cachedSpecialProperty(CachedSpecialPropertyKey::ToJSON);
+
+    if (!toJSONFunction) {
+        PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
+        bool hasProperty = baseValue.getPropertySlot(m_globalObject, vm.propertyNames->toJSON, slot);
+        RETURN_IF_EXCEPTION(scope, { });
+        toJSONFunction = hasProperty ? slot.getValue(m_globalObject, vm.propertyNames->toJSON) : jsUndefined();
+        RETURN_IF_EXCEPTION(scope, { });
+
+        if (baseValue.isObject())
+            asObject(baseValue)->structure(vm)->cacheSpecialProperty(m_globalObject, vm, toJSONFunction, CachedSpecialPropertyKey::ToJSON, slot);
+    }
 
     auto callData = getCallData(vm, toJSONFunction);
     if (callData.type == CallData::Type::None)
@@ -408,8 +424,10 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     }
 
     bool holderStackWasEmpty = m_holderStack.isEmpty();
-    m_holderStack.append(Holder(m_globalObject, object));
+    Structure* structure = object->structure(vm);
+    m_holderStack.append(Holder(m_globalObject, object, structure));
     m_objectStack.appendWithCrashOnOverflow(object);
+    m_objectStack.appendWithCrashOnOverflow(structure);
     RETURN_IF_EXCEPTION(scope, StringifyFailed);
     if (!holderStackWasEmpty)
         return StringifySucceeded;
@@ -421,6 +439,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         if (UNLIKELY(builder.hasOverflowed()))
             return StringifyFailed;
         m_holderStack.removeLast();
+        m_objectStack.removeLast();
         m_objectStack.removeLast();
     } while (!m_holderStack.isEmpty());
     return StringifySucceeded;
@@ -455,8 +474,9 @@ inline void Stringifier::startNewLine(StringBuilder& builder) const
     builder.append(m_indent);
 }
 
-inline Stringifier::Holder::Holder(JSGlobalObject* globalObject, JSObject* object)
+inline Stringifier::Holder::Holder(JSGlobalObject* globalObject, JSObject* object, Structure* structure)
     : m_object(object)
+    , m_structure(structure)
     , m_isJSArray(isJSArray(object))
     , m_isArray(JSC::isArray(globalObject, object))
 {
@@ -464,8 +484,6 @@ inline Stringifier::Holder::Holder(JSGlobalObject* globalObject, JSObject* objec
 
 inline Stringifier::Holder::Holder(RootHolderTag, JSObject* object)
     : m_object(object)
-    , m_isJSArray(false)
-    , m_isArray(false)
 {
 }
 
@@ -490,15 +508,29 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             RETURN_IF_EXCEPTION(scope, false);
             builder.append('[');
         } else {
-            if (stringifier.m_usingArrayReplacer)
+            if (stringifier.m_usingArrayReplacer) {
                 m_propertyNames = stringifier.m_arrayReplacerPropertyNames.data();
-            else {
+                m_size = m_propertyNames->propertyNameVector().size();
+            } else if (m_structure && m_object->structureID() == m_structure->id() && canPerformFastPropertyEnumerationForJSONStringify(m_structure)) {
+                m_structure->forEachProperty(vm, [&](const PropertyMapEntry& entry) -> bool {
+                    if (entry.attributes & PropertyAttribute::DontEnum)
+                        return true;
+
+                    PropertyName propertyName(entry.key);
+                    if (propertyName.isSymbol())
+                        return true;
+                    m_propertiesAndOffsets.constructAndAppend(Identifier::fromUid(vm, entry.key), entry.offset);
+                    return true;
+                });
+                m_hasFastObjectProperties = true;
+                m_size = m_propertiesAndOffsets.size();
+            } else {
                 PropertyNameArray objectPropertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
                 m_object->methodTable(vm)->getOwnPropertyNames(m_object, globalObject, objectPropertyNames, DontEnumPropertiesMode::Exclude);
                 RETURN_IF_EXCEPTION(scope, false);
                 m_propertyNames = objectPropertyNames.releaseData();
+                m_size = m_propertyNames->propertyNameVector().size();
             }
-            m_size = m_propertyNames->propertyNameVector().size();
             builder.append('{');
         }
         stringifier.indent();
@@ -538,10 +570,22 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         stringifyResult = stringifier.appendStringifiedValue(builder, value, *this, index);
         ASSERT(stringifyResult != StringifyFailedDueToUndefinedOrSymbolValue);
     } else {
-        // Get the value.
-        Identifier& propertyName = m_propertyNames->propertyNameVector()[index];
-        JSValue value = m_object->get(globalObject, propertyName);
-        RETURN_IF_EXCEPTION(scope, false);
+        Identifier propertyName;
+        JSValue value;
+        if (m_hasFastObjectProperties) {
+            propertyName = std::get<0>(m_propertiesAndOffsets[index]);
+            if (m_object->structureID() == m_structure->id()) {
+                unsigned offset = std::get<1>(m_propertiesAndOffsets[index]);
+                value = m_object->getDirect(offset);
+            } else {
+                value = m_object->get(globalObject, propertyName);
+                RETURN_IF_EXCEPTION(scope, false);
+            }
+        } else {
+            propertyName = m_propertyNames->propertyNameVector()[index];
+            value = m_object->get(globalObject, propertyName);
+            RETURN_IF_EXCEPTION(scope, false);
+        }
 
         rollBackPoint = builder.length();
 

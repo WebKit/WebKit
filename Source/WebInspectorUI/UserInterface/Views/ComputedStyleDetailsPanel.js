@@ -33,6 +33,30 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         this._computedStylePreferShorthandsSetting = new WI.Setting("computed-style-use-shorthands", false);
 
         this._filterText = null;
+        this._detailsSectionByStyleSectionMap = new Map;
+        this._variablesStyleSectionForGroupTypeMap = new Map;
+    }
+
+    // Static
+
+    static displayNameForVariablesGroupType(variablesGroupType)
+    {
+        switch (variablesGroupType) {
+        case WI.DOMNodeStyles.VariablesGroupType.Colors:
+            return WI.UIString("Colors", "Colors @ Computed Style variables section", "Section header for the group of CSS variables with colors as values");
+
+        case WI.DOMNodeStyles.VariablesGroupType.Dimensions:
+            return WI.UIString("Dimensions", "Dimensions @ Computed style variables section", "Section header for the group of CSS variables with dimensions as values");
+
+        case WI.DOMNodeStyles.VariablesGroupType.Numbers:
+            return WI.UIString("Numbers", "Numbers @ Computed Style variables section", "Section header for the group of CSS variables with numbers as values");
+
+        case WI.DOMNodeStyles.VariablesGroupType.Other:
+            return WI.UIString("Other", "Other @ Computed Style variables section", "Section header for the generic group of CSS variables");
+        }
+
+        console.assert(false, "Unknown group type", variablesGroupType);
+        return "";
     }
 
     // Public
@@ -40,6 +64,12 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
     get minimumWidth()
     {
         return this._boxModelDiagramRow?.minimumWidth ?? 0;
+    }
+
+    get variablesGroupingMode()
+    {
+        console.assert(this._variablesGroupingModeScopeBar.selectedItems[0], "No selected variables grouping mode", this._variablesGroupingModeScopeBar.selectedItems);
+        return this._variablesGroupingModeScopeBar.selectedItems[0].id;
     }
 
     refresh(significantChange)
@@ -54,11 +84,32 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         this._computedStyleSection.styleTraces = this._computePropertyTraces(this.nodeStyles.uniqueOrderedStyles);
         this._computedStyleSection.style = this.nodeStyles.computedStyle;
         this._propertiesSection.element.classList.toggle("hidden", !this._computedStyleSection.propertiesToRender.length);
-
-        this._variablesTextEditor.style = this.nodeStyles.computedStyle;
-        this._variablesSection.element.classList.toggle("hidden", !this._variablesTextEditor.propertiesToRender.length);
-
         this._boxModelDiagramRow.nodeStyles = this.nodeStyles;
+
+        let styleGroups = new Map;
+
+        switch (this.variablesGroupingMode) {
+        case WI.ComputedStyleDetailsPanel.VariablesGroupingMode.Ungrouped:
+            styleGroups.set(this._variablesStyleSectionForGroupTypeMap.get(WI.DOMNodeStyles.VariablesGroupType.Ungrouped), this.nodeStyles.computedStyle);
+            break;
+
+        case WI.ComputedStyleDetailsPanel.VariablesGroupingMode.ByType:
+            styleGroups = this.nodeStyles.variableStylesByType;
+            break;
+        }
+
+        for (let [type, style] of styleGroups) {
+            let variablesStyleSection = this._variablesStyleSectionForGroupTypeMap.get(type);
+            if (!variablesStyleSection) {
+                this.needsLayout();
+                break;
+            }
+
+            variablesStyleSection.style = style;
+
+            let detailsSection = this._detailsSectionByStyleSectionMap.get(variablesStyleSection);
+            detailsSection.element.classList.toggle("hidden", !variablesStyleSection.propertiesToRender.length);
+        }
 
         if (this._filterText)
             this.applyFilter(this._filterText);
@@ -73,8 +124,8 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         if (!this.didInitialLayout)
             return;
 
-        this._computedStyleSection.applyFilter(filterText);
-        this._variablesTextEditor.applyFilter(filterText);
+        for (let styleSection of this._detailsSectionByStyleSectionMap.keys())
+            styleSection.applyFilter(filterText);
     }
 
     // SpreadsheetCSSStyleDeclarationEditor delegate
@@ -96,14 +147,18 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         this.element.appendChild(boxModelSection.element);
 
-        let propertyFiltersElement = WI.ImageUtilities.useSVGSymbol("Images/FilterFieldGlyph.svg", "filter");
+        let propertyFiltersElement = WI.ImageUtilities.useSVGSymbol("Images/Filter.svg", "filter");
         WI.addMouseDownContextMenuHandlers(propertyFiltersElement, (contextMenu) => {
             contextMenu.appendCheckboxItem(WI.UIString("Show All"), () => {
                 this._computedStyleShowAllSetting.value = !this._computedStyleShowAllSetting.value;
+
+                propertyFiltersElement.classList.toggle("active", this._computedStyleShowAllSetting.value || this._computedStylePreferShorthandsSetting.value);
             }, this._computedStyleShowAllSetting.value);
 
             contextMenu.appendCheckboxItem(WI.UIString("Prefer Shorthands"), () => {
                 this._computedStylePreferShorthandsSetting.value = !this._computedStylePreferShorthandsSetting.value;
+
+                propertyFiltersElement.classList.toggle("active", this._computedStyleShowAllSetting.value || this._computedStylePreferShorthandsSetting.value);
             }, this._computedStylePreferShorthandsSetting.value);
         });
 
@@ -118,27 +173,26 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         let propertiesRow = new WI.DetailsSectionRow;
         let propertiesGroup = new WI.DetailsSectionGroup([propertiesRow]);
         this._propertiesSection = new WI.DetailsSection("computed-style-properties", WI.UIString("Properties"), [propertiesGroup], propertyFiltersElement);
-        this._propertiesSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handlePropertiesSectionCollapsedStateChanged, this);
+        this._propertiesSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handleDetailsSectionCollapsedStateChanged, this);
 
         this.addSubview(this._computedStyleSection);
 
         propertiesRow.element.appendChild(this._computedStyleSection.element);
+        this._detailsSectionByStyleSectionMap.set(this._computedStyleSection, this._propertiesSection);
 
-        this._variablesTextEditor = new WI.SpreadsheetCSSStyleDeclarationEditor(this);
-        this._variablesTextEditor.propertyVisibilityMode = WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideNonVariables;
-        this._variablesTextEditor.hideFilterNonMatchingProperties = true;
-        this._variablesTextEditor.sortPropertiesByName = true;
-        this._variablesTextEditor.addEventListener(WI.SpreadsheetCSSStyleDeclarationEditor.Event.FilterApplied, this._handleEditorFilterApplied, this);
-        this._variablesTextEditor.element.dir = "ltr";
+        let variablesGroupingModeScopeBarItems = [
+            new WI.ScopeBarItem(WI.ComputedStyleDetailsPanel.VariablesGroupingMode.Ungrouped, WI.UIString("Ungrouped", "Ungrouped @ Computed Style variables grouping mode", "Label for button to show CSS variables ungrouped")),
+            new WI.ScopeBarItem(WI.ComputedStyleDetailsPanel.VariablesGroupingMode.ByType, WI.UIString("By Type", "By Type @ Computed Style variables grouping mode", "Label for button to show CSS variables grouped by type"))
+        ];
 
-        let variablesRow = new WI.DetailsSectionRow;
-        let variablesGroup = new WI.DetailsSectionGroup([variablesRow]);
-        this._variablesSection = new WI.DetailsSection("computed-style-variables", WI.UIString("Variables"), [variablesGroup]);
-        this._variablesSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handleVariablesSectionCollapsedStateChanged, this);
+        const shouldGroupNonExclusiveItems = true;
+        this._variablesGroupingModeScopeBar = new WI.ScopeBar("computed-style-variables-grouping-mode", variablesGroupingModeScopeBarItems, variablesGroupingModeScopeBarItems[0], shouldGroupNonExclusiveItems);
+        this._variablesGroupingModeScopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._handleVariablesGroupingModeScopeBarSelectionChanged, this);
 
-        this.addSubview(this._variablesTextEditor);
-
-        variablesRow.element.appendChild(this._variablesTextEditor.element);
+        this._variablesRow = new WI.DetailsSectionRow;
+        let variablesGroup = new WI.DetailsSectionGroup([this._variablesRow]);
+        this._variablesSection = new WI.DetailsSection("computed-style-variables", WI.UIString("Variables"), [variablesGroup], this._variablesGroupingModeScopeBar.element);
+        this._variablesSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handleDetailsSectionCollapsedStateChanged, this);
 
         this.element.appendChild(this._propertiesSection.element);
         this.element.appendChild(this._variablesSection.element);
@@ -147,12 +201,81 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         this._computedStylePreferShorthandsSetting.addEventListener(WI.Setting.Event.Changed, this._handleUseShorthandsSettingChanged, this);
     }
 
+    layout()
+    {
+        super.layout();
+
+        for (let [styleSection, detailsSection] of this._detailsSectionByStyleSectionMap) {
+            // The details section for computed properties is updated in-place by WI.ComputedStyleDetailsPanel.refresh().
+            if (styleSection === this._computedStyleSection)
+                continue;
+
+            // WI.ComputedStyleSection is a view but its element is attached to a WI.DetailsSection which isn't. Reparent it before removing.
+            // FIXME: <https://webkit.org/b/152269> - Web Inspector: Convert DetailsSection classes to use View
+            this.element.appendChild(styleSection.element);
+            this.removeSubview(styleSection);
+            styleSection.element.remove();
+
+            // The top-level details section for variables needs to be preserved because it's the host of nested details sections for variables groups.
+            if (detailsSection === this._variablesSection)
+                continue;
+
+            detailsSection.element.remove();
+            this._detailsSectionByStyleSectionMap.delete(styleSection);
+        }
+
+        this._variablesStyleSectionForGroupTypeMap.clear();
+
+        switch (this.variablesGroupingMode) {
+        case WI.ComputedStyleDetailsPanel.VariablesGroupingMode.Ungrouped:
+            this._renderVariablesStyleSectionGroup(this.nodeStyles.computedStyle, WI.DOMNodeStyles.VariablesGroupType.Ungrouped);
+            break;
+
+        case WI.ComputedStyleDetailsPanel.VariablesGroupingMode.ByType:
+            for (let [type, style] of this.nodeStyles.variableStylesByType)
+                this._renderVariablesStyleSectionGroup(style, type, WI.ComputedStyleDetailsPanel.displayNameForVariablesGroupType(type));
+            break;
+        }
+
+        if (this._filterText)
+            this.applyFilter(this._filterText);
+    }
+
     filterDidChange(filterBar)
     {
         this.applyFilter(filterBar.filters.text);
     }
 
     // Private
+
+    _renderVariablesStyleSectionGroup(style, groupType, label)
+    {
+        let variablesStyleSection = new WI.ComputedStyleSection(this);
+        variablesStyleSection.propertyVisibilityMode = WI.ComputedStyleSection.PropertyVisibilityMode.HideNonVariables;
+        variablesStyleSection.hideFilterNonMatchingProperties = true;
+        variablesStyleSection.addEventListener(WI.ComputedStyleSection.Event.FilterApplied, this._handleEditorFilterApplied, this);
+        variablesStyleSection.element.dir = "ltr";
+        variablesStyleSection.style = style;
+
+        this.addSubview(variablesStyleSection);
+
+        let detailsSection;
+        if (!label) {
+            this._variablesRow.element.appendChild(variablesStyleSection.element);
+            detailsSection = this._variablesSection;
+        } else {
+            let detailsSectionRow = new WI.DetailsSectionRow;
+            let detailsSectionGroup = new WI.DetailsSectionGroup([detailsSectionRow]);
+            detailsSection = new WI.DetailsSection(`computed-style-variables-group-${groupType}`, label, [detailsSectionGroup]);
+            detailsSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handleDetailsSectionCollapsedStateChanged, this);
+
+            detailsSectionRow.element.appendChild(variablesStyleSection.element);
+            this._variablesRow.element.appendChild(detailsSection.element);
+        }
+
+        this._detailsSectionByStyleSectionMap.set(variablesStyleSection, detailsSection);
+        this._variablesStyleSectionForGroupTypeMap.set(groupType, variablesStyleSection);
+    }
 
     _computePropertyTraces(orderedDeclarations)
     {
@@ -171,28 +294,23 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         return result;
     }
 
-    _handlePropertiesSectionCollapsedStateChanged(event)
-    {
-        if (event && event.data && !event.data.collapsed)
-            this._computedStyleSection.needsLayout();
-    }
-
-    _handleVariablesSectionCollapsedStateChanged(event)
-    {
-        if (event && event.data && !event.data.collapsed)
-            this._variablesTextEditor.needsLayout();
-    }
-
     _handleEditorFilterApplied(event)
     {
-        let section = null;
-        if (event.target === this._computedStyleSection)
-            section = this._propertiesSection;
-        else if (event.target === this._variablesTextEditor)
-            section = this._variablesSection;
+        let section = this._detailsSectionByStyleSectionMap.get(event.target);
+        section?.element.classList.toggle("hidden", !event.data.matches);
+    }
 
-        if (section)
-            section.element.classList.toggle("hidden", !event.data.matches);
+    _handleDetailsSectionCollapsedStateChanged(event)
+    {
+        if (event.data.collapsed)
+            return;
+
+        for (let [styleSection, detailsSection] of this._detailsSectionByStyleSectionMap) {
+            if (event.target === detailsSection) {
+                styleSection.needsLayout();
+                return;
+            }
+        }
     }
 
     _handleShowAllSettingChanged(event)
@@ -204,6 +322,15 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
     {
         this._computedStyleSection.showsShorthandsInsteadOfLonghands = this._computedStylePreferShorthandsSetting.value;
     }
+
+    _handleVariablesGroupingModeScopeBarSelectionChanged(event)
+    {
+        this.needsLayout();
+    }
 };
 
 WI.ComputedStyleDetailsPanel.StyleClassName = "computed";
+WI.ComputedStyleDetailsPanel.VariablesGroupingMode = {
+    Ungrouped: "ungrouped",
+    ByType: "by-type",
+};

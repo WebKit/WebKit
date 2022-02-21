@@ -48,20 +48,24 @@
 #include <wtf/StdFilesystem.h>
 #endif
 
-namespace WTF {
-
-namespace FileSystemImpl {
+namespace WTF::FileSystemImpl {
 
 #if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
 static std::filesystem::path toStdFileSystemPath(StringView path)
 {
+#if HAVE(MISSING_STD_FILESYSTEM_PATH_CONSTRUCTOR)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return std::filesystem::u8path(path.utf8().data());
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#else
+    return { std::u8string(reinterpret_cast<const char8_t*>(path.utf8().data())) };
+#endif
 }
 
 static String fromStdFileSystemPath(const std::filesystem::path& path)
 {
-    return String::fromUTF8(path.u8string().c_str());
+    return String::fromUTF8(reinterpret_cast<const LChar*>(path.u8string().c_str()));
 }
 
 #endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
@@ -305,16 +309,6 @@ void setMetadataURL(const String&, const String&, const String&)
 {
 }
 
-bool canExcludeFromBackup()
-{
-    return false;
-}
-
-bool excludeFromBackup(const String&)
-{
-    return false;
-}
-
 #endif
 
 MappedFileData::MappedFileData(const String& filePath, MappedFileMode mapMode, bool& success)
@@ -426,10 +420,17 @@ void makeSafeToUseMemoryMapForPath(const String&)
 #endif
 
 #if !PLATFORM(COCOA)
+
 String createTemporaryZipArchive(const String&)
 {
     return { };
 }
+
+bool excludeFromBackup(const String&)
+{
+    return false;
+}
+
 #endif
 
 MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(Span<const uint8_t>)>&)>&& apply, PlatformFileHandle* outputHandle)
@@ -514,6 +515,74 @@ std::optional<Salt> readOrMakeSalt(const String& path)
     return salt;
 }
 
+std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle handle)
+{
+    if (!FileSystem::isHandleValid(handle))
+        return std::nullopt;
+
+    auto size = FileSystem::fileSize(handle).value_or(0);
+    if (!size)
+        return std::nullopt;
+
+    size_t bytesToRead;
+    if (!WTF::convertSafely(size, bytesToRead))
+        return std::nullopt;
+
+    Vector<uint8_t> buffer(bytesToRead);
+    size_t totalBytesRead = 0;
+    int bytesRead;
+
+    while ((bytesRead = FileSystem::readFromFile(handle, buffer.data() + totalBytesRead, bytesToRead - totalBytesRead)) > 0)
+        totalBytesRead += bytesRead;
+
+    if (totalBytesRead != bytesToRead)
+        return std::nullopt;
+
+    return buffer;
+}
+
+std::optional<Vector<uint8_t>> readEntireFile(const String& path)
+{
+    auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
+    auto contents = readEntireFile(handle);
+    FileSystem::closeFile(handle);
+
+    return contents;
+}
+
+void deleteAllFilesModifiedSince(const String& directory, WallTime time)
+{
+    // This function may delete directory folder.
+    if (time == -WallTime::infinity()) {
+        deleteNonEmptyDirectory(directory);
+        return;
+    }
+
+    auto children = listDirectory(directory);
+    for (auto& child : children) {
+        auto childPath = FileSystem::pathByAppendingComponent(directory, child);
+        auto childType = fileType(childPath);
+        if (!childType)
+            continue;
+
+        switch (*childType) {
+        case FileType::Regular: {
+            if (auto modificationTime = FileSystem::fileModificationTime(childPath); modificationTime && *modificationTime >= time)
+                deleteFile(childPath);
+            break;
+        }
+        case FileType::Directory:
+            deleteAllFilesModifiedSince(childPath, time);
+            deleteEmptyDirectory(childPath);
+            break;
+        case FileType::SymbolicLink:
+            break;
+        }
+    }
+
+    FileSystem::deleteEmptyDirectory(directory);
+}
+
 #if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
 bool deleteEmptyDirectory(const String& path)
@@ -544,6 +613,7 @@ bool deleteEmptyDirectory(const String& path)
     return std::filesystem::remove(fsPath, ec);
 }
 
+#if !PLATFORM(PLAYSTATION)
 bool moveFile(const String& oldPath, const String& newPath)
 {
     auto fsOldPath = toStdFileSystemPath(oldPath);
@@ -561,6 +631,7 @@ bool moveFile(const String& oldPath, const String& newPath)
         return false;
     return std::filesystem::remove_all(fsOldPath, ec);
 }
+#endif
 
 std::optional<uint64_t> fileSize(const String& path)
 {
@@ -571,6 +642,7 @@ std::optional<uint64_t> fileSize(const String& path)
     return size;
 }
 
+#if !PLATFORM(PLAYSTATION)
 std::optional<uint64_t> volumeFreeSpace(const String& path)
 {
     std::error_code ec;
@@ -579,6 +651,7 @@ std::optional<uint64_t> volumeFreeSpace(const String& path)
         return std::nullopt;
     return spaceInfo.available;
 }
+#endif
 
 bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)
 {
@@ -615,12 +688,14 @@ std::optional<uint64_t> hardLinkCount(const String& path)
     return ec ? std::nullopt : std::make_optional(linkCount);
 }
 
+#if !PLATFORM(PLAYSTATION)
 bool deleteNonEmptyDirectory(const String& path)
 {
     std::error_code ec;
     std::filesystem::remove_all(toStdFileSystemPath(path), ec);
     return !ec;
 }
+#endif
 
 std::optional<WallTime> fileModificationTime(const String& path)
 {
@@ -688,13 +763,16 @@ String parentPath(const String& path)
     return fromStdFileSystemPath(toStdFileSystemPath(path).parent_path());
 }
 
+#if !PLATFORM(PLAYSTATION)
 String realPath(const String& path)
 {
     std::error_code ec;
     auto canonicalPath = std::filesystem::canonical(toStdFileSystemPath(path), ec);
     return ec ? path : fromStdFileSystemPath(canonicalPath);
 }
+#endif
 
+#if !PLATFORM(PLAYSTATION)
 Vector<String> listDirectory(const String& path)
 {
     Vector<String> fileNames;
@@ -707,6 +785,7 @@ Vector<String> listDirectory(const String& path)
     }
     return fileNames;
 }
+#endif
 
 #if !ENABLE(FILESYSTEM_POSIX_FAST_PATH)
 
@@ -754,5 +833,4 @@ String pathByAppendingComponents(StringView path, const Vector<StringView>& comp
 
 #endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
-} // namespace FileSystemImpl
-} // namespace WTF
+} // namespace WTF::FileSystemImpl

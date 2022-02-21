@@ -1,15 +1,13 @@
-from __future__ import print_function, unicode_literals
-
 import json
 import os
 import sys
-from six import iteritems, itervalues
 
 import wptserve
 from wptserve import sslutils
 
 from . import environment as env
 from . import instruments
+from . import mpcontext
 from . import products
 from . import testloader
 from . import wptcommandline
@@ -18,7 +16,6 @@ from . import wpttest
 from mozlog import capture, handlers
 from .font import FontInstaller
 from .testrunner import ManagerGroup
-from .browsers.base import NullBrowser
 
 here = os.path.dirname(__file__)
 
@@ -65,6 +62,9 @@ def get_loader(test_paths, product, debug=None, run_info_extras=None, chunker_kw
     manifest_filters = []
 
     include = kwargs["include"]
+    if kwargs["include_file"]:
+        include = include or []
+        include.extend(testloader.read_include_from_file(kwargs["include_file"]))
     if test_groups:
         include = testloader.update_include_for_groups(test_groups, include)
 
@@ -96,7 +96,7 @@ def get_loader(test_paths, product, debug=None, run_info_extras=None, chunker_kw
 def list_test_groups(test_paths, product, **kwargs):
     env.do_delayed_imports(logger, test_paths)
 
-    run_info_extras = products.load_product(kwargs["config"], product)[-1](**kwargs)
+    run_info_extras = products.Product(kwargs["config"], product).run_info_extras(**kwargs)
 
     run_info, test_loader = get_loader(test_paths, product,
                                        run_info_extras=run_info_extras, **kwargs)
@@ -110,12 +110,12 @@ def list_disabled(test_paths, product, **kwargs):
 
     rv = []
 
-    run_info_extras = products.load_product(kwargs["config"], product)[-1](**kwargs)
+    run_info_extras = products.Product(kwargs["config"], product).run_info_extras(**kwargs)
 
     run_info, test_loader = get_loader(test_paths, product,
                                        run_info_extras=run_info_extras, **kwargs)
 
-    for test_type, tests in iteritems(test_loader.disabled_tests):
+    for test_type, tests in test_loader.disabled_tests.items():
         for test in tests:
             rv.append({"test": test.id, "reason": test.disabled()})
     print(json.dumps(rv, indent=2))
@@ -124,7 +124,7 @@ def list_disabled(test_paths, product, **kwargs):
 def list_tests(test_paths, product, **kwargs):
     env.do_delayed_imports(logger, test_paths)
 
-    run_info_extras = products.load_product(kwargs["config"], product)[-1](**kwargs)
+    run_info_extras = products.Product(kwargs["config"], product).run_info_extras(**kwargs)
 
     run_info, test_loader = get_loader(test_paths, product,
                                        run_info_extras=run_info_extras, **kwargs)
@@ -139,8 +139,10 @@ def get_pause_after_test(test_loader, **kwargs):
             return False
         if kwargs["headless"]:
             return False
+        if kwargs["debug_test"]:
+            return True
         tests = test_loader.tests
-        is_single_testharness = (sum(len(item) for item in itervalues(tests)) == 1 and
+        is_single_testharness = (sum(len(item) for item in tests.values()) == 1 and
                                  len(tests.get("testharness", [])) == 1)
         if kwargs["repeat"] == 1 and kwargs["rerun"] == 1 and is_single_testharness:
             return True
@@ -151,15 +153,18 @@ def get_pause_after_test(test_loader, **kwargs):
 def run_tests(config, test_paths, product, **kwargs):
     """Set up the test environment, load the list of tests to be executed, and
     invoke the remainder of the code to execute tests"""
+    mp = mpcontext.get_context()
     if kwargs["instrument_to_file"] is None:
         recorder = instruments.NullInstrument()
     else:
         recorder = instruments.Instrument(kwargs["instrument_to_file"])
-    with recorder as recording, capture.CaptureIO(logger, not kwargs["no_capture_stdio"]):
+    with recorder as recording, capture.CaptureIO(logger,
+                                                  not kwargs["no_capture_stdio"],
+                                                  mp_context=mp):
         recording.set(["startup"])
         env.do_delayed_imports(logger, test_paths)
 
-        product = products.load_product(config, product, load_cls=True)
+        product = products.Product(config, product)
 
         env_extras = product.get_env_extras(**kwargs)
 
@@ -194,6 +199,7 @@ def run_tests(config, test_paths, product, **kwargs):
         skipped_tests = 0
         test_total = 0
         unexpected_total = 0
+        unexpected_pass_total = 0
 
         if len(test_loader.test_ids) == 0 and kwargs["test_list"]:
             logger.critical("Unable to find any tests at the path(s):")
@@ -219,6 +225,7 @@ def run_tests(config, test_paths, product, **kwargs):
         with env.TestEnvironment(test_paths,
                                  testharness_timeout_multipler,
                                  kwargs["pause_after_test"],
+                                 kwargs["debug_test"],
                                  kwargs["debug_info"],
                                  product.env_options,
                                  ssl_config,
@@ -229,7 +236,7 @@ def run_tests(config, test_paths, product, **kwargs):
             try:
                 test_environment.ensure_started()
             except env.TestEnvironmentError as e:
-                logger.critical("Error starting test environment: %s" % e.message)
+                logger.critical("Error starting test environment: %s" % e)
                 raise
 
             recording.set(["startup"])
@@ -247,6 +254,7 @@ def run_tests(config, test_paths, product, **kwargs):
 
                 test_count = 0
                 unexpected_count = 0
+                unexpected_pass_count = 0
 
                 tests = []
                 for test_type in test_loader.test_types:
@@ -265,25 +273,19 @@ def run_tests(config, test_paths, product, **kwargs):
                 for test_type in kwargs["test_types"]:
                     logger.info("Running %s tests" % test_type)
 
-                    # WebDriver tests may create and destroy multiple browser
-                    # processes as part of their expected behavior. These
-                    # processes are managed by a WebDriver server binary. This
-                    # obviates the need for wptrunner to provide a browser, so
-                    # the NullBrowser is used in place of the "target" browser
-                    if test_type == "wdspec":
-                        browser_cls = NullBrowser
-                    else:
-                        browser_cls = product.browser_cls
+                    browser_cls = product.get_browser_cls(test_type)
 
-                    browser_kwargs = product.get_browser_kwargs(test_type,
+                    browser_kwargs = product.get_browser_kwargs(logger,
+                                                                test_type,
                                                                 run_info,
                                                                 config=test_environment.config,
+                                                                num_test_groups=len(test_groups),
                                                                 **kwargs)
 
                     executor_cls = product.executor_classes.get(test_type)
-                    executor_kwargs = product.get_executor_kwargs(test_type,
-                                                                  test_environment.config,
-                                                                  test_environment.cache_manager,
+                    executor_kwargs = product.get_executor_kwargs(logger,
+                                                                  test_type,
+                                                                  test_environment,
                                                                   run_info,
                                                                   **kwargs)
 
@@ -334,10 +336,13 @@ def run_tests(config, test_paths, product, **kwargs):
                             raise
                         test_count += manager_group.test_count()
                         unexpected_count += manager_group.unexpected_count()
+                        unexpected_pass_count += manager_group.unexpected_pass_count()
                 recording.set(["after-end"])
                 test_total += test_count
                 unexpected_total += unexpected_count
-                logger.info("Got %i unexpected results" % unexpected_count)
+                unexpected_pass_total += unexpected_pass_count
+                logger.info("Got %i unexpected results, with %i unexpected passes" %
+                            (unexpected_count, unexpected_pass_count))
                 logger.suite_end()
                 if repeat_until_unexpected and unexpected_total > 0:
                     break
@@ -357,6 +362,13 @@ def run_tests(config, test_paths, product, **kwargs):
 
     if unexpected_total and not kwargs["fail_on_unexpected"]:
         logger.info("Tolerating %s unexpected results" % unexpected_total)
+        return True
+
+    all_unexpected_passed = (unexpected_total and
+                             unexpected_total == unexpected_pass_total)
+    if all_unexpected_passed and not kwargs["fail_on_unexpected_pass"]:
+        logger.info("Tolerating %i unexpected results because they all PASS" %
+                    unexpected_pass_total)
         return True
 
     return unexpected_total == 0

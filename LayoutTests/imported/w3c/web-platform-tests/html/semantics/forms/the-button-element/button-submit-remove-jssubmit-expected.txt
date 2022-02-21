@@ -1,0 +1,5 @@
+
+
+
+PASS This test will pass if a form navigation successfully occurs when clicking a <button type=submit> element with a onclick event handler which removes the button and then calls form.submit().
+

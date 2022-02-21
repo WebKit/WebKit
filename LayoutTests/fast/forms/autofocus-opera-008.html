@@ -1,6 +1,6 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-<title>"autofocus" in XHTML and the focus() method</title>
+<title>"autofocus" and the focus() method</title>
 <style>
  input, input#test:focus { background:lime }
  input#test, input:focus { background:red }
@@ -12,7 +12,7 @@
 
     function test() {
         document.getElementsByTagName('input')[0].focus();
-        
+
         if (window.testRunner)
             testRunner.dumpAsText();
 

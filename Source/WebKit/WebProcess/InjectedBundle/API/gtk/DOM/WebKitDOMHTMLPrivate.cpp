@@ -51,7 +51,6 @@
 #include <WebCore/HTMLIFrameElement.h>
 #include <WebCore/HTMLImageElement.h>
 #include <WebCore/HTMLInputElement.h>
-#include <WebCore/HTMLKeygenElement.h>
 #include <WebCore/HTMLLIElement.h>
 #include <WebCore/HTMLLabelElement.h>
 #include <WebCore/HTMLLegendElement.h>

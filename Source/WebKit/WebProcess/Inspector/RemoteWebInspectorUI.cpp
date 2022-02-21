@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -203,6 +203,16 @@ void RemoteWebInspectorUI::resetState()
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::ResetState(), m_page.identifier());
 }
 
+void RemoteWebInspectorUI::showConsole()
+{
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showConsole"_s);
+}
+
+void RemoteWebInspectorUI::showResources()
+{
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showResources"_s);
+}
+
 void RemoteWebInspectorUI::openURLExternally(const String& url)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::OpenURLExternally(url), m_page.identifier());
@@ -280,12 +290,12 @@ bool RemoteWebInspectorUI::supportsWebExtensions()
     return true;
 }
 
-void RemoteWebInspectorUI::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
+void RemoteWebInspectorUI::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, WebCore::FrameIdentifier frameID)
 {
     if (!m_extensionController)
         return;
-    
-    m_extensionController->didShowExtensionTab(extensionID, extensionTabID);
+
+    m_extensionController->didShowExtensionTab(extensionID, extensionTabID, frameID);
 }
 
 void RemoteWebInspectorUI::didHideExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
@@ -294,6 +304,22 @@ void RemoteWebInspectorUI::didHideExtensionTab(const Inspector::ExtensionID& ext
         return;
 
     m_extensionController->didHideExtensionTab(extensionID, extensionTabID);
+}
+
+void RemoteWebInspectorUI::didNavigateExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, const URL& newURL)
+{
+    if (!m_extensionController)
+        return;
+
+    m_extensionController->didNavigateExtensionTab(extensionID, extensionTabID, newURL);
+}
+
+void RemoteWebInspectorUI::inspectedPageDidNavigate(const URL& newURL)
+{
+    if (!m_extensionController)
+        return;
+
+    m_extensionController->inspectedPageDidNavigate(newURL);
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 

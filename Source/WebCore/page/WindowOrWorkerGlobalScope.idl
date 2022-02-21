@@ -47,9 +47,9 @@ interface mixin WindowOrWorkerGlobalScope {
     [Replaceable] readonly attribute USVString origin;
     readonly attribute boolean isSecureContext;
 
-    [EnabledBySetting=CrossOriginOpenerPolicy] readonly attribute boolean crossOriginIsolated;
+    [EnabledBySetting=CrossOriginOpenerPolicyEnabled] readonly attribute boolean crossOriginIsolated;
 
-    [CallWith=GlobalObject] undefined reportError(any error);
+    [CallWith=RelevantGlobalObject] undefined reportError(any error);
 
     // Base64 utility methods.
     DOMString atob(DOMString string);
@@ -57,19 +57,19 @@ interface mixin WindowOrWorkerGlobalScope {
 
     // Timers.
     // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
-    [CallWith=GlobalObject] long setTimeout(ScheduledAction handler, optional long timeout = 0, any... arguments);
+    long setTimeout(ScheduledAction handler, optional long timeout = 0, any... arguments);
     undefined clearTimeout(optional long handle = 0);
     // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
-    [CallWith=GlobalObject] long setInterval(ScheduledAction handler, optional long timeout = 0, any... arguments);
+    long setInterval(ScheduledAction handler, optional long timeout = 0, any... arguments);
     undefined clearInterval(optional long handle = 0);
 
     // microtask queuing.
     [Custom] undefined queueMicrotask(VoidCallback callback);
 
     // ImageBitmap.
-    [EnabledAtRuntime=ImageBitmap] Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, optional ImageBitmapOptions options);
-    [EnabledAtRuntime=ImageBitmap] Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh, optional ImageBitmapOptions options);
+    [EnabledAtRuntime=ImageBitmapEnabled] Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, optional ImageBitmapOptions options);
+    [EnabledAtRuntime=ImageBitmapEnabled] Promise<ImageBitmap> createImageBitmap(ImageBitmapSource image, long sx, long sy, long sw, long sh, optional ImageBitmapOptions options);
 
     // structured cloning
-    [CallWith=GlobalObject] any structuredClone(any value, optional StructuredSerializeOptions options);
+    [CallWith=CurrentGlobalObject&RelevantGlobalObject] any structuredClone(any value, optional StructuredSerializeOptions options);
 };

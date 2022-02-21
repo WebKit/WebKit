@@ -59,8 +59,8 @@ private:
 
     void setClient(WeakPtr<WebCore::CDMInstanceSessionClient>&& client) final { m_client = WTFMove(client); }
     void clearClient() final { m_client = nullptr; }
-    void requestLicense(LicenseType, const AtomString& initDataType, Ref<WebCore::SharedBuffer>&& initData, LicenseCallback&&) final;
-    void updateLicense(const String& sessionId, LicenseType, Ref<WebCore::SharedBuffer>&& response, LicenseUpdateCallback&&) final;
+    void requestLicense(LicenseType, const AtomString& initDataType, Ref<WebCore::FragmentedSharedBuffer>&& initData, LicenseCallback&&) final;
+    void updateLicense(const String& sessionId, LicenseType, Ref<WebCore::FragmentedSharedBuffer>&& response, LicenseUpdateCallback&&) final;
     void loadSession(LicenseType, const String& sessionId, const String& origin, LoadSessionCallback&&) final;
     void closeSession(const String& sessionId, CloseSessionCallback&&) final;
     void removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback&&) final;

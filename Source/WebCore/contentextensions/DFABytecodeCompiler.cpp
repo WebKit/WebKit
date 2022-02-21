@@ -32,18 +32,22 @@
 #include "DFA.h"
 #include "DFANode.h"
 
-namespace WebCore {
-    
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
 
 template <typename IntType>
-inline void append(Vector<DFABytecode>& bytecode, IntType value)
+void append(Vector<DFABytecode>& bytecode, IntType value)
 {
     bytecode.grow(bytecode.size() + sizeof(IntType));
     memcpy(&bytecode[bytecode.size() - sizeof(IntType)], &value, sizeof(IntType));
 }
 
-inline void appendZeroes(Vector<DFABytecode>& bytecode, DFABytecodeJumpSize jumpSize)
+static void append24BitUnsignedInteger(Vector<DFABytecode>& bytecode, uint32_t value)
+{
+    append<uint16_t>(bytecode, value);
+    append<uint8_t>(bytecode, value >> 16);
+}
+
+static void appendZeroes(Vector<DFABytecode>& bytecode, DFABytecodeJumpSize jumpSize)
 {
     switch (jumpSize) {
     case DFABytecodeJumpSize::Int8:
@@ -63,37 +67,101 @@ inline void appendZeroes(Vector<DFABytecode>& bytecode, DFABytecodeJumpSize jump
 }
 
 template <typename IntType>
-inline void setBits(Vector<DFABytecode>& bytecode, uint32_t index, IntType value)
+void setBits(Vector<DFABytecode>& bytecode, uint32_t index, IntType value)
 {
     RELEASE_ASSERT(index + sizeof(IntType) <= bytecode.size());
     ASSERT_WITH_MESSAGE(!*reinterpret_cast<IntType*>(&bytecode[index]), "Right now we should only be using setBits to overwrite values that were zero as a placeholder.");
     *reinterpret_cast<IntType*>(&bytecode[index]) = value;
 }
 
-static unsigned appendActionBytecodeSize(uint64_t action)
+static DFABytecodeFlagsSize bytecodeFlagsSize(ResourceFlags flags)
 {
-    if (action & ActionFlagMask)
-        return sizeof(DFABytecodeInstruction) + sizeof(uint16_t) + sizeof(uint32_t);
-    return sizeof(DFABytecodeInstruction) + sizeof(uint32_t);
+    if (flags <= std::numeric_limits<uint8_t>::max())
+        return DFABytecodeFlagsSize::UInt8;
+    if (flags <= std::numeric_limits<uint16_t>::max())
+        return DFABytecodeFlagsSize::UInt16;
+    RELEASE_ASSERT(flags <= UInt24Max);
+    return DFABytecodeFlagsSize::UInt24;
 }
-    
+
+static DFABytecodeActionSize bytecodeActionSize(uint32_t actionWithoutFlags)
+{
+    if (actionWithoutFlags <= std::numeric_limits<uint8_t>::max())
+        return DFABytecodeActionSize::UInt8;
+    if (actionWithoutFlags <= std::numeric_limits<uint16_t>::max())
+        return DFABytecodeActionSize::UInt16;
+    if (actionWithoutFlags <= UInt24Max)
+        return DFABytecodeActionSize::UInt24;
+    return DFABytecodeActionSize::UInt32;
+}
+
+static size_t toSizeT(DFABytecodeFlagsSize size)
+{
+    switch (size) {
+    case DFABytecodeFlagsSize::UInt8:
+        return sizeof(uint8_t);
+    case DFABytecodeFlagsSize::UInt16:
+        return sizeof(uint16_t);
+    case DFABytecodeFlagsSize::UInt24:
+        return UInt24Size;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static size_t toSizeT(DFABytecodeActionSize size)
+{
+    switch (size) {
+    case DFABytecodeActionSize::UInt8:
+        return sizeof(uint8_t);
+    case DFABytecodeActionSize::UInt16:
+        return sizeof(uint16_t);
+    case DFABytecodeActionSize::UInt24:
+        return UInt24Size;
+    case DFABytecodeActionSize::UInt32:
+        return sizeof(uint32_t);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static size_t appendActionBytecodeSize(uint64_t action)
+{
+    auto flags = static_cast<ResourceFlags>((action & ActionFlagMask) >> 32);
+    return sizeof(DFABytecodeInstruction)
+        + (flags ? toSizeT(bytecodeFlagsSize(flags)) : 0)
+        + toSizeT(bytecodeActionSize(action));
+}
+
+static void appendVariableLengthUnsignedInteger(Vector<DFABytecode>& bytecode, uint32_t integer)
+{
+    if (integer <= std::numeric_limits<uint8_t>::max())
+        return append<uint8_t>(bytecode, integer);
+    if (integer <= std::numeric_limits<uint16_t>::max())
+        return append<uint16_t>(bytecode, integer);
+    if (integer <= UInt24Max)
+        return append24BitUnsignedInteger(bytecode, integer);
+    return append<uint32_t>(bytecode, integer);
+}
+
 void DFABytecodeCompiler::emitAppendAction(uint64_t action)
 {
+    uint32_t actionWithoutFlags = action;
+    auto actionSize = bytecodeActionSize(actionWithoutFlags);
+    
     // High bits are used to store flags. See compileRuleList.
-    if (action & ActionFlagMask) {
-        if (action & IfConditionFlag)
-            append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::TestFlagsAndAppendActionWithIfCondition);
-        else
-            append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::TestFlagsAndAppendAction);
-        append<uint16_t>(m_bytecode, static_cast<uint16_t>(action >> 32));
-        append<uint32_t>(m_bytecode, static_cast<uint32_t>(action));
-    } else {
-        if (action & IfConditionFlag)
-            append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendActionWithIfCondition);
-        else
-            append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendAction);
-        append<uint32_t>(m_bytecode, static_cast<uint32_t>(action));
+    if (ResourceFlags flags = (action & ActionFlagMask) >> 32) {
+        auto flagsSize = bytecodeFlagsSize(flags);
+        auto instruction = DFABytecodeInstruction::TestFlagsAndAppendAction;
+        ASSERT(!(static_cast<uint8_t>(instruction) & static_cast<uint8_t>(flagsSize) & static_cast<uint8_t>(actionSize)));
+        append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | static_cast<uint8_t>(flagsSize) | static_cast<uint8_t>(actionSize));
+        appendVariableLengthUnsignedInteger(m_bytecode, flags);
+        appendVariableLengthUnsignedInteger(m_bytecode, actionWithoutFlags);
+        return;
     }
+
+    auto instruction = DFABytecodeInstruction::AppendAction;
+    ASSERT(!(static_cast<uint8_t>(instruction) & static_cast<uint8_t>(actionSize)));
+    append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | static_cast<uint8_t>(actionSize));
+    appendVariableLengthUnsignedInteger(m_bytecode, actionWithoutFlags);
 }
 
 int32_t DFABytecodeCompiler::longestPossibleJump(uint32_t instructionLocation, uint32_t sourceNodeIndex, uint32_t destinationNodeIndex)
@@ -112,14 +180,25 @@ int32_t DFABytecodeCompiler::longestPossibleJump(uint32_t instructionLocation, u
     ASSERT(m_nodeStartOffsets[destinationNodeIndex] <= instructionLocation);
     return m_nodeStartOffsets[destinationNodeIndex] - instructionLocation;
 }
-    
+
+static DFABytecodeJumpSize smallestPossibleJumpSize(int32_t longestPossibleJump)
+{
+    if (longestPossibleJump <= std::numeric_limits<int8_t>::max() && longestPossibleJump >= std::numeric_limits<int8_t>::min())
+        return DFABytecodeJumpSize::Int8;
+    if (longestPossibleJump <= std::numeric_limits<int16_t>::max() && longestPossibleJump >= std::numeric_limits<int16_t>::min())
+        return DFABytecodeJumpSize::Int16;
+    if (longestPossibleJump <= Int24Max && longestPossibleJump >= Int24Min)
+        return DFABytecodeJumpSize::Int24;
+    return DFABytecodeJumpSize::Int32;
+}
+
 void DFABytecodeCompiler::emitJump(uint32_t sourceNodeIndex, uint32_t destinationNodeIndex)
 {
     uint32_t instructionLocation = m_bytecode.size();
     uint32_t jumpLocation = instructionLocation + sizeof(uint8_t);
     int32_t longestPossibleJumpDistance = longestPossibleJump(instructionLocation, sourceNodeIndex, destinationNodeIndex);
     DFABytecodeJumpSize jumpSize = smallestPossibleJumpSize(longestPossibleJumpDistance);
-    append<uint8_t>(m_bytecode, static_cast<uint8_t>(DFABytecodeInstruction::Jump) | jumpSize);
+    append<uint8_t>(m_bytecode, static_cast<uint8_t>(DFABytecodeInstruction::Jump) | static_cast<uint8_t>(jumpSize));
 
     m_linkRecords.append(LinkRecord({jumpSize, longestPossibleJumpDistance, instructionLocation, jumpLocation, destinationNodeIndex}));
     appendZeroes(m_bytecode, jumpSize);
@@ -132,7 +211,7 @@ void DFABytecodeCompiler::emitCheckValue(uint8_t value, uint32_t sourceNodeIndex
     int32_t longestPossibleJumpDistance = longestPossibleJump(instructionLocation, sourceNodeIndex, destinationNodeIndex);
     DFABytecodeJumpSize jumpSize = smallestPossibleJumpSize(longestPossibleJumpDistance);
     DFABytecodeInstruction instruction = caseSensitive ? DFABytecodeInstruction::CheckValueCaseSensitive : DFABytecodeInstruction::CheckValueCaseInsensitive;
-    append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | jumpSize);
+    append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | static_cast<uint8_t>(jumpSize));
     append<uint8_t>(m_bytecode, value);
     m_linkRecords.append(LinkRecord({jumpSize, longestPossibleJumpDistance, instructionLocation, jumpLocation, destinationNodeIndex}));
     appendZeroes(m_bytecode, jumpSize);
@@ -147,7 +226,7 @@ void DFABytecodeCompiler::emitCheckValueRange(uint8_t lowValue, uint8_t highValu
     int32_t longestPossibleJumpDistance = longestPossibleJump(instructionLocation, sourceNodeIndex, destinationNodeIndex);
     DFABytecodeJumpSize jumpSize = smallestPossibleJumpSize(longestPossibleJumpDistance);
     DFABytecodeInstruction instruction = caseSensitive ? DFABytecodeInstruction::CheckValueRangeCaseSensitive : DFABytecodeInstruction::CheckValueRangeCaseInsensitive;
-    append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | jumpSize);
+    append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | static_cast<uint8_t>(jumpSize));
     append<uint8_t>(m_bytecode, lowValue);
     append<uint8_t>(m_bytecode, highValue);
     m_linkRecords.append(LinkRecord({jumpSize, longestPossibleJumpDistance, instructionLocation, jumpLocation, destinationNodeIndex}));
@@ -226,7 +305,7 @@ DFABytecodeCompiler::JumpTable DFABytecodeCompiler::extractJumpTable(Vector<DFAB
     return jumpTable;
 }
 
-DFABytecodeCompiler::Transitions DFABytecodeCompiler::transitions(const DFANode& node)
+auto DFABytecodeCompiler::transitions(const DFANode& node) -> Transitions
 {
     Transitions transitions;
 
@@ -350,7 +429,7 @@ void DFABytecodeCompiler::compileJumpTable(uint32_t nodeIndex, const JumpTable& 
     ASSERT(jumpTable.min <= jumpTable.max);
 
     uint32_t instructionLocation = m_bytecode.size();
-    DFABytecodeJumpSize jumpSize = Int8;
+    auto jumpSize = DFABytecodeJumpSize::Int8;
     for (uint32_t destinationNodeIndex : jumpTable.destinations) {
         int32_t longestPossibleJumpDistance = longestPossibleJump(instructionLocation, nodeIndex, destinationNodeIndex);
         DFABytecodeJumpSize localJumpSize = smallestPossibleJumpSize(longestPossibleJumpDistance);
@@ -358,7 +437,7 @@ void DFABytecodeCompiler::compileJumpTable(uint32_t nodeIndex, const JumpTable& 
     }
 
     DFABytecodeInstruction instruction = jumpTable.caseSensitive ? DFABytecodeInstruction::JumpTableCaseSensitive : DFABytecodeInstruction::JumpTableCaseInsensitive;
-    append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | jumpSize);
+    append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | static_cast<uint8_t>(jumpSize));
     append<uint8_t>(m_bytecode, jumpTable.min);
     append<uint8_t>(m_bytecode, jumpTable.max);
 
@@ -397,7 +476,7 @@ unsigned DFABytecodeCompiler::nodeTransitionsMaxBytecodeSize(const DFANode& node
     if (nodeTransitions.useFallbackTransition)
         size += sizeof(DFABytecodeInstruction::Jump) + sizeof(uint32_t);
     else
-        size += instructionSizeWithArguments(DFABytecodeInstruction::Terminate);
+        size += sizeof(DFABytecodeInstruction::Terminate);
     return size;
 }
 
@@ -466,20 +545,20 @@ void DFABytecodeCompiler::compile()
         ASSERT(abs(distance) <= abs(linkRecord.longestPossibleJump));
         
         switch (linkRecord.jumpSize) {
-        case Int8:
+        case DFABytecodeJumpSize::Int8:
             RELEASE_ASSERT(distance == static_cast<int8_t>(distance));
             setBits<int8_t>(m_bytecode, linkRecord.jumpLocation, static_cast<int8_t>(distance));
             break;
-        case Int16:
+        case DFABytecodeJumpSize::Int16:
             RELEASE_ASSERT(distance == static_cast<int16_t>(distance));
             setBits<int16_t>(m_bytecode, linkRecord.jumpLocation, static_cast<int16_t>(distance));
             break;
-        case Int24:
+        case DFABytecodeJumpSize::Int24:
             RELEASE_ASSERT(distance >= Int24Min && distance <= Int24Max);
             setBits<uint16_t>(m_bytecode, linkRecord.jumpLocation, static_cast<uint16_t>(distance));
             setBits<int8_t>(m_bytecode, linkRecord.jumpLocation + sizeof(int16_t), static_cast<int8_t>(distance >> 16));
             break;
-        case Int32:
+        case DFABytecodeJumpSize::Int32:
             setBits<int32_t>(m_bytecode, linkRecord.jumpLocation, distance);
             break;
         }
@@ -487,9 +566,7 @@ void DFABytecodeCompiler::compile()
     
     setBits<DFAHeader>(m_bytecode, startLocation, m_bytecode.size() - startLocation);
 }
-    
-} // namespace ContentExtensions
 
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

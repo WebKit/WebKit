@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,10 @@
 #define LocalizedStrings_h
 
 #include <wtf/Forward.h>
+
+#ifdef __OBJC__
+#include <wtf/cocoa/TypeCastsCocoa.h>
+#endif
 
 #if USE(GLIB) && defined(GETTEXT_PACKAGE)
 #include <glib/gi18n-lib.h>
@@ -373,15 +377,25 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTagQuickLookImageForVisualSearch();
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    WEBCORE_EXPORT String contextMenuItemTagCopyCroppedImage();
+    WEBCORE_EXPORT String contextMenuItemTitleMarkupImage();
+#endif
+
 #if HAVE(TRANSLATION_UI_SERVICES)
     String contextMenuItemTagTranslate(const String& selectedString);
 #endif
 
-#if USE(GLIB) && defined(GETTEXT_PACKAGE)
+#if USE(CF) && !PLATFORM(WIN)
+#define WEB_UI_STRING(string, description) WebCore::localizedString(CFSTR(string))
+#define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(CFSTR(key))
+#define WEB_UI_STRING_WITH_MNEMONIC(string, mnemonic, description) WebCore::localizedString(CFSTR(string))
+#elif USE(GLIB) && defined(GETTEXT_PACKAGE)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(_(string))
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(C_(key, string))
 #define WEB_UI_STRING_WITH_MNEMONIC(string, mnemonic, description) WebCore::localizedString(_(mnemonic))
 #else
+// Work around default Mac Roman encoding of CFSTR() for Apple Windows port.
 #define WEB_UI_STRING(string, description) WebCore::localizedString(string)
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(key)
 #define WEB_UI_STRING_WITH_MNEMONIC(string, mnemonic, description) WebCore::localizedString(string)
@@ -389,16 +403,53 @@ namespace WebCore {
 
 #if USE(CF)
 // This is exactly as WEB_UI_STRING, but renamed to ensure the string is not scanned by non-CF ports.
+#if PLATFORM(WIN)
+// Work around default Mac Roman encoding of CFSTR() for Apple Windows port.
 #define WEB_UI_CFSTRING(string, description) WebCore::localizedString(string)
 #define WEB_UI_CFSTRING_KEY(string, key, description) WebCore::localizedString(key)
+#else
+#define WEB_UI_CFSTRING(string, description) WebCore::localizedString(CFSTR(string))
+#define WEB_UI_CFSTRING_KEY(string, key, description) WebCore::localizedString(CFSTR(key))
 #endif
 
+    WEBCORE_EXPORT RetainPtr<CFStringRef> copyLocalizedString(CFStringRef key);
+#endif
+
+#if USE(CF) && !PLATFORM(WIN)
+    WEBCORE_EXPORT String localizedString(CFStringRef key);
+#else
     WEBCORE_EXPORT String localizedString(const char* key);
-    String formatLocalizedString(String format, ...);
+#endif
+
+#if USE(CF)
+#if PLATFORM(WIN)
+// Work around default Mac Roman encoding of CFSTR() for Apple Windows port.
+#define WEB_UI_FORMAT_CFSTRING(string, description, ...) WebCore::formatLocalizedString(string, __VA_ARGS__)
+#define WEB_UI_FORMAT_CFSTRING_KEY(string, key, description, ...) WebCore::formatLocalizedString(key, __VA_ARGS__)
+#define WEB_UI_FORMAT_STRING(string, description, ...) WebCore::formatLocalizedString(string, __VA_ARGS__)
+#else
+#define WEB_UI_FORMAT_CFSTRING(string, description, ...) WebCore::formatLocalizedString(CFSTR(string), __VA_ARGS__)
+#define WEB_UI_FORMAT_CFSTRING_KEY(string, key, description, ...) WebCore::formatLocalizedString(CFSTR(key), __VA_ARGS__)
+#define WEB_UI_FORMAT_STRING(string, description, ...) WebCore::formatLocalizedString(CFSTR(string), __VA_ARGS__)
+#endif // PLATFORM(WIN)
+#elif USE(GLIB) && defined(GETTEXT_PACKAGE)
+#define WEB_UI_FORMAT_STRING(string, description, ...) WebCore::formatLocalizedString(_(string), __VA_ARGS__)
+#else
+#define WEB_UI_FORMAT_STRING(string, description, ...) WebCore::formatLocalizedString(string, __VA_ARGS__)
+#endif
+
+#if USE(CF) && !PLATFORM(WIN)
+    String formatLocalizedString(CFStringRef format, ...) CF_FORMAT_FUNCTION(1, 2);
+#else
+    String formatLocalizedString(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
+#endif
 
 #ifdef __OBJC__
 #define WEB_UI_NSSTRING(string, description) WebCore::localizedNSString(string)
-    WEBCORE_EXPORT NSString *localizedNSString(NSString *key) NS_FORMAT_ARGUMENT(1);
+    inline NS_FORMAT_ARGUMENT(1) NSString *localizedNSString(NSString *key)
+    {
+        return bridge_cast(copyLocalizedString(bridge_cast(key)).autorelease());
+    }
 #endif
 
 } // namespace WebCore

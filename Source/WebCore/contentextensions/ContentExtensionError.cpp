@@ -49,8 +49,6 @@ const std::error_category& contentExtensionErrorCategory()
             switch (static_cast<ContentExtensionError>(errorCode)) {
             case ContentExtensionError::JSONInvalid:
                 return "Failed to parse the JSON String.";
-            case ContentExtensionError::JSONTopLevelStructureNotAnObject:
-                return "Invalid input, the top level structure is not an object.";
             case ContentExtensionError::JSONTopLevelStructureNotAnArray:
                 return "Invalid input, the top level structure is not an array.";
             case ContentExtensionError::JSONInvalidObjectInTopLevelArray:
@@ -65,8 +63,6 @@ const std::error_category& contentExtensionErrorCategory()
                 return "Invalid url-filter object.";
             case ContentExtensionError::JSONInvalidTriggerFlagsArray:
                 return "Invalid trigger flags array.";
-            case ContentExtensionError::JSONInvalidObjectInTriggerFlagsArray:
-                return "Invalid object in the trigger flags array.";
             case ContentExtensionError::JSONInvalidStringInTriggerFlagsArray:
                 return "Invalid string in the trigger flags array.";
             case ContentExtensionError::JSONInvalidAction:
@@ -85,12 +81,50 @@ const std::error_category& contentExtensionErrorCategory()
                 return "Domains must be lower case ASCII. Use punycode to encode non-ASCII characters.";
             case ContentExtensionError::JSONMultipleConditions:
                 return "A trigger cannot have more than one condition (if-domain, unless-domain, if-top-url, or unless-top-url)";
-            case ContentExtensionError::JSONTopURLAndDomainConditions:
-                return "A list cannot have if-domain and unless-domain mixed with if-top-url and unless-top-url";
             case ContentExtensionError::JSONInvalidNotification:
                 return "A notify action must have a string notification";
             case ContentExtensionError::ErrorWritingSerializedNFA:
                 return "Internal I/O error";
+            case ContentExtensionError::JSONRedirectMissing:
+                return "A redirect action must have a redirect member";
+            case ContentExtensionError::JSONRemoveParametersNotStringArray:
+                return "A remove-parameters value must be an array of strings";
+            case ContentExtensionError::JSONAddOrReplaceParametersNotArray:
+                return "An add-or-replace-parameters value must be an array";
+            case ContentExtensionError::JSONAddOrReplaceParametersKeyValueNotADictionary:
+                return "Members of the add-or-replace-parameters array must be a dictionary";
+            case ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString:
+                return "Members of the add-or-replace-parameters array must contain a key that is a string";
+            case ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingValueString:
+                return "Members of the add-or-replace-parameters array must contain a value that is a string";
+            case ContentExtensionError::JSONRedirectExtensionPathDoesNotStartWithSlash:
+                return "A redirect extension path must start with a slash";
+            case ContentExtensionError::JSONRedirectURLSchemeInvalid:
+                return "A redirect url scheme must be a valid scheme";
+            case ContentExtensionError::JSONRedirectToJavaScriptURL:
+                return "A redirect url can't have a scheme of javascript";
+            case ContentExtensionError::JSONRedirectURLInvalid:
+                return "A redirect url must be valid";
+            case ContentExtensionError::JSONRedirectInvalidType:
+                return "A redirect must have a member named \"extension-path\", \"regex-substitution\", \"transform\" or \"url\"";
+            case ContentExtensionError::JSONRedirectInvalidPort:
+                return "A redirect port must be either empty or a number between 0 and 65535, inclusive";
+            case ContentExtensionError::JSONRedirectInvalidQuery:
+                return "A redirect query must either be empty or begin with '?'";
+            case ContentExtensionError::JSONRedirectInvalidFragment:
+                return "A redirect fragment must either be empty or begin with '#'";
+            case ContentExtensionError::JSONModifyHeadersInvalidOperation:
+                return "A modify-headers operation must have an operation that is either \"set\", \"append\", or \"remove\"";
+            case ContentExtensionError::JSONModifyHeadersInfoNotADictionary:
+                return "A modify-headers operation must be a dictionary";
+            case ContentExtensionError::JSONModifyHeadersMissingOperation:
+                return "A modify-headers operation must have an operation";
+            case ContentExtensionError::JSONModifyHeadersMissingHeader:
+                return "A modify-headers operation must have a header";
+            case ContentExtensionError::JSONModifyHeadersMissingValue:
+                return "A modify-headers operation of \"set\" or \"append\" must have a value";
+            case ContentExtensionError::JSONModifyHeadersNotArray:
+                return "A headers member must be an array";
             }
 
             return std::string();

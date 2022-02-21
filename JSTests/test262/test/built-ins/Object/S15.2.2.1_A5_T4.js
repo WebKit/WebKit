@@ -13,22 +13,7 @@ var n_obj = new Object(2 * ([].length + {
   q: 1
 }["q"]));
 
-//CHECK#2
-if (n_obj.constructor !== Number) {
-  throw new Test262Error('#2: When the Object constructor is called with Number argument return ToObject(number)');
-}
-
-//CHECK#3
-if (typeof n_obj !== 'object') {
-  throw new Test262Error('#3: When the Object constructor is called with Number argument return ToObject(number)');
-}
-
-//CHECK#4
-if (n_obj != 2) {
-  throw new Test262Error('#4: When the Object constructor is called with Number argument return ToObject(number)');
-}
-
-//CHECK#5
-if (n_obj === 2) {
-  throw new Test262Error('#5: When the Object constructor is called with Number argument return ToObject(number)');
-}
+assert.sameValue(n_obj.constructor, Number, 'The value of n_obj.constructor is expected to equal the value of Number');
+assert.sameValue(typeof n_obj, 'object', 'The value of `typeof n_obj` is expected to be "object"');
+assert(n_obj == 2, 'The result of evaluating (n_obj == 2) is expected to be true');
+assert.notSameValue(n_obj, 2, 'The value of n_obj is not 2');

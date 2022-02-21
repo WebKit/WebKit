@@ -28,6 +28,7 @@
 
 #include <WebCore/BitmapImage.h>
 #include <WebCore/GraphicsContextCG.h>
+#include <WebCore/IOSurface.h>
 #include <WebCore/ImageBufferUtilitiesCG.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/PlatformScreen.h>
@@ -37,10 +38,26 @@
 
 namespace WebKit {
 using namespace WebCore;
-    
+
+void ShareableBitmap::validateConfiguration(Configuration& configuration)
+{
+    if (!configuration.colorSpace)
+        return;
+
+    configuration.colorSpace = configuration.colorSpace->asRGB();
+
+    if (!configuration.colorSpace) {
+#if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
+        configuration.colorSpace = DestinationColorSpace(extendedSRGBColorSpaceRef());
+#else
+        configuration.colorSpace = DestinationColorSpace::SRGB();
+#endif
+    }
+}
+
 static CGColorSpaceRef colorSpace(const ShareableBitmap::Configuration& configuration)
 {
-    return configuration.colorSpace ? configuration.colorSpace->platformColorSpace() : WebCore::sRGBColorSpaceRef();
+    return configuration.colorSpace ? configuration.colorSpace->platformColorSpace() : sRGBColorSpaceRef();
 }
 
 static bool wantsExtendedRange(const ShareableBitmap::Configuration& configuration)
@@ -76,7 +93,8 @@ CheckedUint32 ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const
 #if HAVE(IOSURFACE)
     if (bytesPerRow.hasOverflowed())
         return bytesPerRow;
-    return IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, bytesPerRow);
+    size_t alignmentMask = WebCore::IOSurface::bytesPerRowAlignment() - 1;
+    return (bytesPerRow + alignmentMask) & ~alignmentMask;
 #else
     return bytesPerRow;
 #endif

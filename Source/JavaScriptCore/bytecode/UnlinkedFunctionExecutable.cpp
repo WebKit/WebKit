@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -251,7 +251,8 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
         m_unlinkedCodeBlockForConstruct.set(vm, this, result);
         break;
     }
-    vm.unlinkedFunctionExecutableSpace.set.add(this);
+    // FIXME GlobalGC: Need syncrhonization here for accessing the Heap server.
+    vm.heap.unlinkedFunctionExecutableSpaceAndSet.set.add(this);
     return result;
 }
 
@@ -265,7 +266,7 @@ void UnlinkedFunctionExecutable::decodeCachedCodeBlocks(VM& vm)
     int32_t cachedCodeBlockForCallOffset = m_cachedCodeBlockForCallOffset;
     int32_t cachedCodeBlockForConstructOffset = m_cachedCodeBlockForConstructOffset;
 
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
 
     // No need to clear m_unlinkedCodeBlockForCall here, since we moved the decoder out of the same slot
     if (cachedCodeBlockForCallOffset)
@@ -277,7 +278,7 @@ void UnlinkedFunctionExecutable::decodeCachedCodeBlocks(VM& vm)
 
     WTF::storeStoreFence();
     m_isCached = false;
-    vm.heap.writeBarrier(this);
+    vm.writeBarrier(this);
 }
 
 UnlinkedFunctionExecutable::RareData& UnlinkedFunctionExecutable::ensureRareDataSlow()
@@ -309,8 +310,10 @@ void UnlinkedFunctionExecutable::finalizeUnconditionally(VM& vm)
         };
         clearIfDead(m_unlinkedCodeBlockForCall);
         clearIfDead(m_unlinkedCodeBlockForConstruct);
-        if (isCleared && !isStillValid)
-            vm.unlinkedFunctionExecutableSpace.set.remove(this);
+        if (isCleared && !isStillValid) {
+            // FIXME GlobalGC: Need syncrhonization here for accessing the Heap server.
+            vm.heap.unlinkedFunctionExecutableSpaceAndSet.set.remove(this);
+        }
     }
 }
 

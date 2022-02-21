@@ -29,13 +29,12 @@
  */
 
 [
-    Exposed=DedicatedWorker,
-    ImplementationLacksVTable,
+    Exposed=(DedicatedWorker,SharedWorker),
 ] interface FileReaderSync {
     constructor();
 
-    [CallWith=ScriptExecutionContext] ArrayBuffer readAsArrayBuffer(Blob blob);
-    [CallWith=ScriptExecutionContext] DOMString readAsBinaryString(Blob blob);
-    [CallWith=ScriptExecutionContext] DOMString readAsText(Blob blob, optional DOMString encoding = "");
-    [CallWith=ScriptExecutionContext] DOMString readAsDataURL(Blob blob);
+    [CallWith=CurrentScriptExecutionContext] ArrayBuffer readAsArrayBuffer(Blob blob);
+    [CallWith=CurrentScriptExecutionContext] DOMString readAsBinaryString(Blob blob);
+    [CallWith=CurrentScriptExecutionContext] DOMString readAsText(Blob blob, optional DOMString encoding = "");
+    [CallWith=CurrentScriptExecutionContext] DOMString readAsDataURL(Blob blob);
 };

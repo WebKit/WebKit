@@ -29,6 +29,7 @@
 
 #include "LayoutBox.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -39,29 +40,29 @@ namespace Layout {
 class ContainerBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(ContainerBox);
 public:
-    ContainerBox(std::optional<ElementAttributes>, RenderStyle&&, OptionSet<BaseTypeFlag> = { ContainerBoxFlag });
+    ContainerBox(std::optional<ElementAttributes>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr, OptionSet<BaseTypeFlag> = { ContainerBoxFlag });
+    ~ContainerBox();
 
-    const Box* firstChild() const { return m_firstChild; }
+    const Box* firstChild() const { return m_firstChild.get(); }
     const Box* firstInFlowChild() const;
     const Box* firstInFlowOrFloatingChild() const;
-    const Box* lastChild() const { return m_lastChild; }
+    const Box* lastChild() const { return m_lastChild.get(); }
     const Box* lastInFlowChild() const;
     const Box* lastInFlowOrFloatingChild() const;
 
     // FIXME: This is currently needed for style updates.
-    Box* firstChild() { return m_firstChild; }
+    Box* firstChild() { return m_firstChild.get(); }
 
     bool hasChild() const { return firstChild(); }
     bool hasInFlowChild() const { return firstInFlowChild(); }
     bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
 
-    void setFirstChild(Box&);
-    void setLastChild(Box&);
-    void appendChild(Box&);
+    void appendChild(UniqueRef<Box>);
+    void destroyChildren();
 
 private:
-    Box* m_firstChild { nullptr };
-    Box* m_lastChild { nullptr };
+    CheckedPtr<Box> m_firstChild;
+    CheckedPtr<Box> m_lastChild;
 };
 
 }

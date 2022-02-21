@@ -28,7 +28,9 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
+#import "APIFrameHandle.h"
 #import "WebInspectorUIProxy.h"
+#import "_WKFrameHandleInternal.h"
 #import "_WKInspectorExtensionDelegate.h"
 #import "_WKInspectorExtensionInternal.h"
 #import <wtf/UniqueRef.h>
@@ -39,8 +41,10 @@ InspectorExtensionDelegate::InspectorExtensionDelegate(_WKInspectorExtension *in
     : m_inspectorExtension(inspectorExtension)
     , m_delegate(delegate)
 {
-    m_delegateMethods.inspectorExtensionDidShowTabWithIdentifier = [delegate respondsToSelector:@selector(inspectorExtension:didShowTabWithIdentifier:)];
+    m_delegateMethods.inspectorExtensionDidShowTabWithIdentifier = [delegate respondsToSelector:@selector(inspectorExtension:didShowTabWithIdentifier:withFrameHandle:)];
     m_delegateMethods.inspectorExtensionDidHideTabWithIdentifier = [delegate respondsToSelector:@selector(inspectorExtension:didHideTabWithIdentifier:)];
+    m_delegateMethods.inspectorExtensionDidNavigateTabWithIdentifier = [delegate respondsToSelector:@selector(inspectorExtension:didNavigateTabWithIdentifier:newURL:)];
+    m_delegateMethods.inspectorExtensionInspectedPageDidNavigate = [delegate respondsToSelector:@selector(inspectorExtension:inspectedPageDidNavigate:)];
 
     inspectorExtension->_extension->setClient(makeUniqueRef<InspectorExtensionClient>(*this));
 }
@@ -61,7 +65,7 @@ InspectorExtensionDelegate::InspectorExtensionClient::~InspectorExtensionClient(
 {
 }
 
-void InspectorExtensionDelegate::InspectorExtensionClient::didShowExtensionTab(const Inspector::ExtensionTabID& extensionTabID)
+void InspectorExtensionDelegate::InspectorExtensionClient::didShowExtensionTab(const Inspector::ExtensionTabID& extensionTabID, WebCore::FrameIdentifier frameID)
 {
     if (!m_inspectorExtensionDelegate.m_delegateMethods.inspectorExtensionDidShowTabWithIdentifier)
         return;
@@ -70,7 +74,7 @@ void InspectorExtensionDelegate::InspectorExtensionClient::didShowExtensionTab(c
     if (!delegate)
         return;
 
-    [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() didShowTabWithIdentifier:extensionTabID];
+    [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() didShowTabWithIdentifier:extensionTabID withFrameHandle:wrapper(API::FrameHandle::create(frameID))];
 }
 
 void InspectorExtensionDelegate::InspectorExtensionClient::didHideExtensionTab(const Inspector::ExtensionTabID& extensionTabID)
@@ -83,6 +87,30 @@ void InspectorExtensionDelegate::InspectorExtensionClient::didHideExtensionTab(c
         return;
 
     [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() didHideTabWithIdentifier:extensionTabID];
+}
+
+void InspectorExtensionDelegate::InspectorExtensionClient::didNavigateExtensionTab(const Inspector::ExtensionTabID& extensionTabID, const WTF::URL& newURL)
+{
+    if (!m_inspectorExtensionDelegate.m_delegateMethods.inspectorExtensionDidNavigateTabWithIdentifier)
+        return;
+
+    auto& delegate = m_inspectorExtensionDelegate.m_delegate;
+    if (!delegate)
+        return;
+
+    [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() didNavigateTabWithIdentifier:extensionTabID newURL:newURL];
+}
+
+void InspectorExtensionDelegate::InspectorExtensionClient::inspectedPageDidNavigate(const WTF::URL& newURL)
+{
+    if (!m_inspectorExtensionDelegate.m_delegateMethods.inspectorExtensionInspectedPageDidNavigate)
+        return;
+
+    auto& delegate = m_inspectorExtensionDelegate.m_delegate;
+    if (!delegate)
+        return;
+
+    [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() inspectedPageDidNavigate:newURL];
 }
 
 } // namespace WebKit

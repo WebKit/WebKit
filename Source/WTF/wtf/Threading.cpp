@@ -40,9 +40,57 @@
 #include <bmalloc/bmalloc.h>
 #endif
 
+#if OS(LINUX)
+#include <wtf/linux/RealTimeThreads.h>
+#endif
+
+#if !USE(SYSTEM_MALLOC)
+#include <bmalloc/BPlatform.h>
+#if BENABLE(LIBPAS)
+#define USE_LIBPAS_THREAD_SUSPEND_LOCK 1
+#include <bmalloc/pas_thread_suspend_lock.h>
+#endif
+#endif
+
 namespace WTF {
 
 Lock Thread::s_allThreadsLock;
+
+
+// During suspend, suspend or resume should not be executed from the other threads.
+// We use global lock instead of per thread lock.
+// Consider the following case, there are threads A and B.
+// And A attempt to suspend B and B attempt to suspend A.
+// A and B send signals. And later, signals are delivered to A and B.
+// In that case, both will be suspended.
+//
+// And it is important to use a global lock to suspend and resume. Let's consider using per-thread lock.
+// Your issuing thread (A) attempts to suspend the target thread (B). Then, you will suspend the thread (C) additionally.
+// This case frequently happens if you stop threads to perform stack scanning. But thread (B) may hold the lock of thread (C).
+// In that case, dead lock happens. Using global lock here avoids this dead lock.
+#if USE(LIBPAS_THREAD_SUSPEND_LOCK)
+ThreadSuspendLocker::ThreadSuspendLocker()
+{
+    pas_thread_suspend_lock_lock();
+}
+
+ThreadSuspendLocker::~ThreadSuspendLocker()
+{
+    pas_thread_suspend_lock_unlock();
+}
+#else
+static Lock globalSuspendLock;
+
+ThreadSuspendLocker::ThreadSuspendLocker()
+{
+    globalSuspendLock.lock();
+}
+
+ThreadSuspendLocker::~ThreadSuspendLocker()
+{
+    globalSuspendLock.unlock();
+}
+#endif
 
 static std::optional<size_t> stackSize(ThreadType threadType)
 {
@@ -330,6 +378,12 @@ void Thread::setCurrentThreadIsUserInteractive(int relativePriority)
     ASSERT(relativePriority <= 0);
     ASSERT(relativePriority >= QOS_MIN_RELATIVE_PRIORITY);
     pthread_set_qos_class_self_np(adjustedQOSClass(QOS_CLASS_USER_INTERACTIVE), relativePriority);
+#elif OS(LINUX)
+    // We don't allow to make the main thread real time. This is used by secondary processes to match the
+    // UI process, but in linux the UI process is not real time.
+    if (!isMainThread())
+        RealTimeThreads::singleton().registerThread(current());
+    UNUSED_PARAM(relativePriority);
 #else
     UNUSED_PARAM(relativePriority);
 #endif

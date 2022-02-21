@@ -39,7 +39,7 @@ public:
     JSFunction* intrinsicFunction() const { return m_intrinsicFunction.get(); }
     Intrinsic intrinsic() const { return m_intrinsicFunction->intrinsic(); }
 
-    static bool canEmitIntrinsicGetter(JSFunction*, Structure*);
+    static bool canEmitIntrinsicGetter(StructureStubInfo&, JSFunction*, Structure*);
     void emitIntrinsicGetter(AccessGenerationState&);
 
     static Ref<AccessCase> create(VM&, JSCell*, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, JSFunction* intrinsicFunction, RefPtr<PolyProtoAccessChain>&&);

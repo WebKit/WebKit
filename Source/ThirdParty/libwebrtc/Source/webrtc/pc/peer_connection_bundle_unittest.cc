@@ -13,7 +13,6 @@
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
-#include "api/peer_connection_proxy.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "p2p/base/fake_port_allocator.h"
@@ -21,6 +20,7 @@
 #include "p2p/client/basic_port_allocator.h"
 #include "pc/media_session.h"
 #include "pc/peer_connection.h"
+#include "pc/peer_connection_proxy.h"
 #include "pc/peer_connection_wrapper.h"
 #include "pc/sdp_utils.h"
 #ifdef WEBRTC_ANDROID
@@ -909,11 +909,11 @@ TEST_F(PeerConnectionBundleTestUnifiedPlan, MultipleBundleGroups) {
 
   EXPECT_TRUE(
       caller->SetLocalDescription(CloneSessionDescription(offer.get())));
-  callee->SetRemoteDescription(std::move(offer));
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
   auto answer = callee->CreateAnswer();
   EXPECT_TRUE(
       callee->SetLocalDescription(CloneSessionDescription(answer.get())));
-  caller->SetRemoteDescription(std::move(answer));
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
 
   // Verify bundling on sender side.
   auto senders = caller->pc()->GetSenders();
@@ -935,6 +935,61 @@ TEST_F(PeerConnectionBundleTestUnifiedPlan, MultipleBundleGroups) {
   auto receiver3_transport = receivers[3]->dtls_transport();
   EXPECT_EQ(receiver0_transport, receiver1_transport);
   EXPECT_EQ(receiver2_transport, receiver3_transport);
+  EXPECT_NE(receiver0_transport, receiver2_transport);
+}
+
+// Test that, with the "max-compat" bundle policy, it's possible to add an m=
+// section that's not part of an existing bundle group.
+TEST_F(PeerConnectionBundleTestUnifiedPlan, AddNonBundledSection) {
+  RTCConfiguration config;
+  config.bundle_policy = PeerConnectionInterface::kBundlePolicyMaxCompat;
+  auto caller = CreatePeerConnection(config);
+  caller->AddAudioTrack("0_audio");
+  caller->AddAudioTrack("1_audio");
+  auto callee = CreatePeerConnection(config);
+
+  // Establish an existing BUNDLE group.
+  auto offer = caller->CreateOffer(RTCOfferAnswerOptions());
+  EXPECT_TRUE(
+      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  auto answer = callee->CreateAnswer();
+  EXPECT_TRUE(
+      callee->SetLocalDescription(CloneSessionDescription(answer.get())));
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+
+  // Add a track but munge SDP so it's not part of the bundle group.
+  caller->AddAudioTrack("3_audio");
+  offer = caller->CreateOffer(RTCOfferAnswerOptions());
+  offer->description()->RemoveGroupByName(cricket::GROUP_TYPE_BUNDLE);
+  cricket::ContentGroup bundle_group(cricket::GROUP_TYPE_BUNDLE);
+  bundle_group.AddContentName("0");
+  bundle_group.AddContentName("1");
+  offer->description()->AddGroup(bundle_group);
+  EXPECT_TRUE(
+      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  answer = callee->CreateAnswer();
+  EXPECT_TRUE(
+      callee->SetLocalDescription(CloneSessionDescription(answer.get())));
+  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+
+  // Verify bundling on the sender side.
+  auto senders = caller->pc()->GetSenders();
+  ASSERT_EQ(senders.size(), 3u);
+  auto sender0_transport = senders[0]->dtls_transport();
+  auto sender1_transport = senders[1]->dtls_transport();
+  auto sender2_transport = senders[2]->dtls_transport();
+  EXPECT_EQ(sender0_transport, sender1_transport);
+  EXPECT_NE(sender0_transport, sender2_transport);
+
+  // Verify bundling on receiver side.
+  auto receivers = callee->pc()->GetReceivers();
+  ASSERT_EQ(receivers.size(), 3u);
+  auto receiver0_transport = receivers[0]->dtls_transport();
+  auto receiver1_transport = receivers[1]->dtls_transport();
+  auto receiver2_transport = receivers[2]->dtls_transport();
+  EXPECT_EQ(receiver0_transport, receiver1_transport);
   EXPECT_NE(receiver0_transport, receiver2_transport);
 }
 

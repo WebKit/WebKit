@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,8 +28,8 @@ namespace WebCore {
 
 class FESpecularLighting : public FELighting {
 public:
-    static Ref<FESpecularLighting> create(Filter&, const Color&, float, float, float, float, float, Ref<LightSource>&&);
-    virtual ~FESpecularLighting();
+    WEBCORE_EXPORT static Ref<FESpecularLighting> create(const Color& lightingColor, float surfaceScale, float, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
+    static Ref<FESpecularLighting> create(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
 
     float specularConstant() const { return m_specularConstant; }
     bool setSpecularConstant(float);
@@ -36,11 +37,20 @@ public:
     float specularExponent() const { return m_specularExponent; }
     bool setSpecularExponent(float);
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
+
+    template<class Decoder> static std::optional<Ref<FESpecularLighting>> decode(Decoder&);
 
 private:
-    FESpecularLighting(Filter&, const Color&, float, float, float, float, float, Ref<LightSource>&&);
+    FESpecularLighting(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
 };
+
+template<class Decoder>
+std::optional<Ref<FESpecularLighting>> FESpecularLighting::decode(Decoder& decoder)
+{
+    return FELighting::decode<Decoder, FESpecularLighting>(decoder);
+}
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FESpecularLighting)

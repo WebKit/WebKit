@@ -22,6 +22,7 @@
 #include "libANGLE/Observer.h"
 #include "libANGLE/RefCountObject.h"
 #include "libANGLE/State.h"
+#include "libANGLE/angletypes.h"
 
 namespace rx
 {
@@ -44,11 +45,19 @@ class Context;
 struct Extensions;
 class Framebuffer;
 class ImageIndex;
-struct Rectangle;
 class Renderbuffer;
-class State;
-class Texture;
 class TextureCapsMap;
+
+struct FramebufferStatus
+{
+    bool isComplete() const;
+
+    static FramebufferStatus Complete();
+    static FramebufferStatus Incomplete(GLenum status, const char *reason);
+
+    GLenum status      = GL_FRAMEBUFFER_COMPLETE;
+    const char *reason = nullptr;
+};
 
 class FramebufferState final : angle::NonCopyable
 {
@@ -81,6 +90,7 @@ class FramebufferState final : angle::NonCopyable
     }
     const DrawBufferMask getColorAttachmentsMask() const { return mColorAttachmentsMask; }
 
+    const Extents getAttachmentExtentsIntersection() const;
     bool attachmentsHaveSameDimensions() const;
     bool hasSeparateDepthAndStencilAttachments() const;
     bool colorAttachmentsAreUniqueImages() const;
@@ -99,6 +109,9 @@ class FramebufferState final : angle::NonCopyable
     bool hasDepth() const;
     bool hasStencil() const;
 
+    bool hasExternalTextureAttachment() const;
+    bool hasYUVAttachment() const;
+
     bool isMultiview() const;
 
     ANGLE_INLINE GLsizei getNumViews() const
@@ -113,13 +126,17 @@ class FramebufferState final : angle::NonCopyable
 
     GLint getBaseViewIndex() const;
 
+    SrgbWriteControlMode getWriteControlMode() const { return mSrgbWriteControlMode; }
+
     FramebufferID id() const { return mId; }
 
     bool isDefault() const;
 
-    const gl::Offset &getSurfaceTextureOffset() const { return mSurfaceTextureOffset; }
+    const Offset &getSurfaceTextureOffset() const { return mSurfaceTextureOffset; }
 
     rx::Serial getFramebufferSerial() const { return mFramebufferSerial; }
+
+    bool isBoundAsDrawFramebuffer(const Context *context) const;
 
   private:
     const FramebufferAttachment *getWebGLDepthStencilAttachment() const;
@@ -139,7 +156,7 @@ class FramebufferState final : angle::NonCopyable
     FramebufferAttachment mStencilAttachment;
 
     // Tracks all the color buffers attached to this FramebufferDesc
-    gl::DrawBufferMask mColorAttachmentsMask;
+    DrawBufferMask mColorAttachmentsMask;
 
     std::vector<GLenum> mDrawBufferStates;
     GLenum mReadBufferState;
@@ -165,7 +182,10 @@ class FramebufferState final : angle::NonCopyable
     bool mDefaultFramebufferReadAttachmentInitialized;
     FramebufferAttachment mDefaultFramebufferReadAttachment;
 
-    gl::Offset mSurfaceTextureOffset;
+    // EXT_sRGB_write_control
+    SrgbWriteControlMode mSrgbWriteControlMode;
+
+    Offset mSurfaceTextureOffset;
 };
 
 class Framebuffer final : public angle::ObserverInterface,
@@ -259,6 +279,9 @@ class Framebuffer final : public angle::ObserverInterface,
     bool hasDepth() const;
     bool hasStencil() const;
 
+    bool hasExternalTextureAttachment() const;
+    bool hasYUVAttachment() const;
+
     bool usingExtendedDrawBuffers() const;
 
     // This method calls checkStatus.
@@ -281,7 +304,7 @@ class Framebuffer final : public angle::ObserverInterface,
     void invalidateCompletenessCache();
     ANGLE_INLINE bool cachedStatusValid() { return mCachedStatus.valid(); }
 
-    ANGLE_INLINE GLenum checkStatus(const Context *context) const
+    ANGLE_INLINE const FramebufferStatus &checkStatus(const Context *context) const
     {
         // The default framebuffer is always complete except when it is surfaceless in which
         // case it is always unsupported.
@@ -297,7 +320,7 @@ class Framebuffer final : public angle::ObserverInterface,
     // Helper for checkStatus == GL_FRAMEBUFFER_COMPLETE.
     ANGLE_INLINE bool isComplete(const Context *context) const
     {
-        return (checkStatus(context) == GL_FRAMEBUFFER_COMPLETE);
+        return checkStatus(context).isComplete();
     }
 
     bool hasValidDepthStencil() const;
@@ -305,7 +328,7 @@ class Framebuffer final : public angle::ObserverInterface,
     // Returns the offset into the texture backing the default framebuffer's surface if any. Returns
     // zero offset otherwise.  The renderer will apply the offset to scissor and viewport rects used
     // for draws, clears, and blits.
-    const gl::Offset &getSurfaceTextureOffset() const;
+    const Offset &getSurfaceTextureOffset() const;
 
     angle::Result discard(const Context *context, size_t count, const GLenum *attachments);
     angle::Result invalidate(const Context *context, size_t count, const GLenum *attachments);
@@ -370,6 +393,7 @@ class Framebuffer final : public angle::ObserverInterface,
         DIRTY_BIT_DEFAULT_SAMPLES,
         DIRTY_BIT_DEFAULT_FIXED_SAMPLE_LOCATIONS,
         DIRTY_BIT_DEFAULT_LAYERS,
+        DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE,
         DIRTY_BIT_UNKNOWN,
         DIRTY_BIT_MAX = DIRTY_BIT_UNKNOWN
     };
@@ -387,6 +411,8 @@ class Framebuffer final : public angle::ObserverInterface,
     angle::Result syncState(const Context *context,
                             GLenum framebufferBinding,
                             Command command) const;
+
+    void setWriteControlMode(SrgbWriteControlMode srgbWriteControlMode);
 
     // Observer implementation
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
@@ -414,8 +440,8 @@ class Framebuffer final : public angle::ObserverInterface,
                                   FramebufferAttachment *attachment,
                                   GLenum matchType,
                                   GLuint matchId);
-    GLenum checkStatusWithGLFrontEnd(const Context *context) const;
-    GLenum checkStatusImpl(const Context *context) const;
+    FramebufferStatus checkStatusWithGLFrontEnd(const Context *context) const;
+    const FramebufferStatus &checkStatusImpl(const Context *context) const;
     void setAttachment(const Context *context,
                        GLenum type,
                        GLenum binding,
@@ -424,7 +450,7 @@ class Framebuffer final : public angle::ObserverInterface,
                        GLsizei numViews,
                        GLuint baseViewIndex,
                        bool isMultiview,
-                       GLsizei samples);
+                       GLsizei samplesIn);
     void commitWebGL1DepthStencilIfConsistent(const Context *context,
                                               GLsizei numViews,
                                               GLuint baseViewIndex,
@@ -467,8 +493,7 @@ class Framebuffer final : public angle::ObserverInterface,
 
     FramebufferAttachment *getAttachmentFromSubjectIndex(angle::SubjectIndex index);
 
-    ANGLE_INLINE void updateFloat32ColorAttachmentBits(size_t index,
-                                                       const gl::InternalFormat *format)
+    ANGLE_INLINE void updateFloat32ColorAttachmentBits(size_t index, const InternalFormat *format)
     {
         mFloat32ColorAttachmentBits.set(index, format->type == GL_FLOAT);
     }
@@ -476,7 +501,7 @@ class Framebuffer final : public angle::ObserverInterface,
     FramebufferState mState;
     rx::FramebufferImpl *mImpl;
 
-    mutable Optional<GLenum> mCachedStatus;
+    mutable Optional<FramebufferStatus> mCachedStatus;
     std::vector<angle::ObserverBinding> mDirtyColorAttachmentBindings;
     angle::ObserverBinding mDirtyDepthAttachmentBinding;
     angle::ObserverBinding mDirtyStencilAttachmentBinding;

@@ -21,7 +21,6 @@
 [
     InterfaceName=Plugin,
     GenerateIsReachable=ReachableFromNavigator,
-    ImplementationLacksVTable,
     LegacyUnenumerableNamedProperties,
     Exposed=Window
 ] interface DOMPlugin {

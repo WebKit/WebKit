@@ -20,5 +20,5 @@ var weirdCases =
   ];
 
 weirdCases.forEach(function (weird) {
-  assert(compareArray(Intl.getCanonicalLocales(weird), [weird]));
+  assert.compareArray(Intl.getCanonicalLocales(weird), [weird]);
 });

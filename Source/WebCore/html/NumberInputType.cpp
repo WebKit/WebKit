@@ -33,6 +33,7 @@
 #include "NumberInputType.h"
 
 #include "Decimal.h"
+#include "ElementInlines.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -146,7 +147,10 @@ StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) cons
     static NeverDestroyed<const StepRange::StepDescription> stepDescription(numberDefaultStep, numberDefaultStepBase, numberStepScaleFactor);
 
     ASSERT(element());
-    const Decimal stepBase = parseToDecimalForNumberType(element()->attributeWithoutSynchronization(minAttr), numberDefaultStepBase);
+    Decimal stepBase = parseToDecimalForNumberType(element()->attributeWithoutSynchronization(minAttr), Decimal::nan());
+    if (stepBase.isNaN())
+        stepBase = parseToDecimalForNumberType(element()->attributeWithoutSynchronization(valueAttr), numberDefaultStepBase);
+
     // FIXME: We should use numeric_limits<double>::max for number input type.
     const Decimal floatMax = Decimal::fromDouble(std::numeric_limits<float>::max());
     const Element& element = *this->element();

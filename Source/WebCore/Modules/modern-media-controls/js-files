@@ -24,6 +24,10 @@ controls/seek-button.js
 controls/rewind-button.js
 controls/forward-button.js
 controls/overflow-button.js
+controls/range-button.js
+controls/volume-button.js
+controls/brightness-button.js
+controls/close-button.js
 controls/buttons-container.js
 controls/status-label.js
 controls/controls-bar.js
@@ -46,8 +50,11 @@ controls/watchos-layout-traits.js
 media/media-controller-support.js
 media/airplay-support.js
 media/audio-support.js
+media/brightness-support.js
+media/close-support.js
 media/controls-visibility-support.js
 media/fullscreen-support.js
+media/mute-and-volume-support.js
 media/mute-support.js
 media/overflow-support.js
 media/pip-support.js

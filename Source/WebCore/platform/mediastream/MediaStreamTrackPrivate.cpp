@@ -48,7 +48,7 @@ namespace WebCore {
 
 Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source)
 {
-    return create(WTFMove(logger), WTFMove(source), createCanonicalUUIDString());
+    return create(WTFMove(logger), WTFMove(source), createVersion4UUIDString());
 }
 
 Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&& logger, Ref<RealtimeMediaSource>&& source, String&& id)
@@ -85,7 +85,7 @@ void MediaStreamTrackPrivate::forEachObserver(const Function<void(Observer&)>& a
 {
     ASSERT(isMainThread());
     ASSERT(!m_observers.hasNullReferences());
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     m_observers.forEach(apply);
 }
 

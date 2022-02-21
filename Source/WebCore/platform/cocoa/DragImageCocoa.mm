@@ -302,7 +302,7 @@ DragImageRef createDragImageForLink(Element& element, URL& url, const String& ti
 
     GraphicsContextCG context([NSGraphicsContext currentContext].CGContext);
 
-    context.fillRoundedRect(FloatRoundedRect(layout.boundingRect, FloatRoundedRect::Radii(linkImageCornerRadius)), colorFromNSColor([NSColor controlBackgroundColor]));
+    context.fillRoundedRect(FloatRoundedRect(layout.boundingRect, FloatRoundedRect::Radii(linkImageCornerRadius)), colorFromCocoaColor([NSColor controlBackgroundColor]));
 
     for (const auto& label : layout.labels) {
         GraphicsContextStateSaver saver(context);
@@ -324,7 +324,7 @@ DragImageRef createDragImageForColor(const Color& color, const FloatRect&, float
     NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:NSMakeRect(0, 0, ColorSwatchWidth, ColorSwatchWidth) xRadius:ColorSwatchCornerRadius yRadius:ColorSwatchCornerRadius];
     [path setLineWidth:ColorSwatchStrokeSize];
 
-    [nsColor(color) setFill];
+    [cocoaColor(color) setFill];
     [path fill];
 
     [[NSColor quaternaryLabelColor] setStroke];

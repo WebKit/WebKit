@@ -115,8 +115,8 @@ class WebKitDriverServer(WebDriverServer):
     default_base_path = '/'
     test_env = None
 
-    def __init__(self, logger, binary=None, port=None, base_path='', args=None):
-        WebDriverServer.__init__(self, logger, binary, port=port, base_path=base_path, args=args, env=self.test_env)
+    def __init__(self, logger, binary=None, port=None, base_path='', env=None, args=None):
+        WebDriverServer.__init__(self, logger, binary, port=port, base_path=base_path, env=self.test_env, args=args)
 
     def make_command(self):
         return [self.binary, '--port=%s' % str(self.port)] + self._args
@@ -135,8 +135,8 @@ class WebDriverW3CExecutor(WdspecExecutor):
         server_config = {'browser_host': server.host(),
                          'domains': {'': {'': server.host()},
                                      'alt':{ '': '127.0.0.1'}},
-                         'ports': {'http': [str(server.http_port())],
-                                   'https': [str(server.https_port())]},
+                         'ports': {'http': [server.http_port()],
+                                   'https': [server.https_port()]},
                          'doc_root': server.document_root()}
         self.runner = TestRunner()
         WdspecExecutor.__init__(self, self.runner.logger, driver.browser_name(), server_config, driver.binary_path(), None, capabilities=driver.capabilities())
@@ -147,13 +147,13 @@ class WebDriverW3CExecutor(WdspecExecutor):
         self._result_queue = Queue()
 
     def setup(self):
-        self.protocol.setup(self.runner)
+        super(WebDriverW3CExecutor, self).setup(self.runner)
         args = (self._test_queue,
                 self._result_queue,
                 self.protocol.session_config['host'],
                 str(self.protocol.session_config['port']),
                 json.dumps(self.protocol.session_config['capabilities']),
-                json.dumps(self.server_config),
+                self.server_config,
                 self._timeout,
                 self._expectations)
         self._process = Process(target=WebDriverW3CExecutor._runner, args=args)
@@ -174,13 +174,18 @@ class WebDriverW3CExecutor(WdspecExecutor):
             if test == 'TEARDOWN':
                 break
 
-            env = {'WD_HOST': host,
-                   'WD_PORT': port,
-                   'WD_CAPABILITIES': capabilities,
-                   'WD_SERVER_CONFIG': server_config}
-            env.update(WebKitDriverServer.test_env)
-            args = ['--strict', '-p', 'no:mozlog']
-            result_queue.put(pytest_runner.run(test, args, timeout, env, expectations))
+            with pytest_runner.TemporaryDirectory() as cache_directory:
+                server_config_path = os.path.join(cache_directory, 'wd_server_config.json')
+                with open(server_config_path, 'w') as f:
+                    json.dump(server_config, f)
+
+                env = {'WD_HOST': host,
+                       'WD_PORT': port,
+                       'WD_CAPABILITIES': capabilities,
+                       'WD_SERVER_CONFIG_FILE': server_config_path}
+                env.update(WebKitDriverServer.test_env)
+                args = ['--strict', '-p', 'no:mozlog']
+                result_queue.put(pytest_runner.run(test, args, timeout, env, expectations))
 
     def run(self, test):
         self._test_queue.put(test)

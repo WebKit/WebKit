@@ -9,11 +9,14 @@ es5id: 15.10.4.1_A9_T1
 description: Pattern is "??"
 ---*/
 
-//CHECK#1
 try {
-	throw new Test262Error('#1.1: new RegExp("??") throw SyntaxError. Actual: ' + (new RegExp("??")));
+    throw new Test262Error('#1.1: new RegExp("??") throw SyntaxError. Actual: ' + (new RegExp("??")));
 } catch (e) {
-	if ((e instanceof SyntaxError) !== true) {
-		throw new Test262Error('#1.2: new RegExp("??") throw SyntaxError. Actual: ' + (e));
-	}
+  assert.sameValue(
+    e instanceof SyntaxError,
+    true,
+    'The result of evaluating (e instanceof SyntaxError) is expected to be true'
+  );
 }
+
+// TODO: Convert to assert.throws() format.

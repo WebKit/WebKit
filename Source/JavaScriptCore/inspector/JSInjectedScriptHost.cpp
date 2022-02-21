@@ -29,7 +29,7 @@
 #include "ArrayPrototype.h"
 #include "Completion.h"
 #include "DateInstance.h"
-#include "DeferGC.h"
+#include "DeferGCInlines.h"
 #include "DirectArguments.h"
 #include "FunctionPrototype.h"
 #include "HeapAnalyzer.h"
@@ -345,6 +345,15 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
             array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "boundArgs", boundFunction->boundArgsCopy(globalObject)));
             return array;
         }
+        return array;
+    }
+    if (JSRemoteFunction* remoteFunction = jsDynamicCast<JSRemoteFunction*>(vm, value)) {
+        unsigned index = 0;
+        JSArray* array = constructEmptyArray(globalObject, nullptr, 1);
+        RETURN_IF_EXCEPTION(scope, JSValue());
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "targetFunction"_s, remoteFunction->targetFunction()));
+        RETURN_IF_EXCEPTION(scope, JSValue());
+
         return array;
     }
 
@@ -854,7 +863,7 @@ JSValue JSInjectedScriptHost::queryHolders(JSGlobalObject* globalObject, CallFra
     RETURN_IF_EXCEPTION(scope, { });
 
     {
-        DeferGC deferGC(vm.heap);
+        DeferGC deferGC(vm);
         PreventCollectionScope preventCollectionScope(vm.heap);
         sanitizeStackForVM(vm);
 

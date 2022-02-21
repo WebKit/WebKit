@@ -29,21 +29,16 @@
 #if PLATFORM(COCOA)
 
 #import "ArgumentCodersCF.h"
-#import "CocoaColor.h"
-#import "CocoaFont.h"
 #import "CoreTextHelpers.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
+#import <WebCore/ColorCocoa.h>
+#import <WebCore/FontCocoa.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashSet.h>
 #import <wtf/cf/CFURLExtras.h>
 #import <wtf/cocoa/NSURLExtras.h>
-
-#if USE(APPKIT)
-#import <WebCore/ColorMac.h>
-#else
-#import <WebCore/ColorIOS.h>
-#endif
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIColor.h>
@@ -65,14 +60,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable id)archiver:(NSKeyedArchiver *)archiver willEncodeObject:(id)object
 {
-#if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
-    if (auto font = dynamic_objc_cast<NSFont>(object)) {
-        // Recreate any serialized fonts after normalizing the
-        // font attributes to work around <rdar://problem/51657880>.
-        return WebKit::fontWithAttributes(font.fontDescriptor.fontAttributes, 0);
-    }
-#endif
-
     if (auto unwrappedURL = dynamic_objc_cast<NSURL>(object))
         return adoptNS([[WKSecureCodingURLWrapper alloc] initWithURL:unwrappedURL]).autorelease();
 
@@ -116,9 +103,8 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
     if (hasBaseURL)
         [coder encodeObject:baseURL forKey:baseURLKey];
 
-    WTF::URLCharBuffer urlBytes;
-    WTF::getURLBytes((__bridge CFURLRef)m_wrappedURL.get(), urlBytes);
-    [coder encodeBytes:urlBytes.data() length:urlBytes.size()];
+    auto bytes = bytesAsVector(bridge_cast(m_wrappedURL.get()));
+    [coder encodeBytes:bytes.data() length:bytes.size()];
 }
 
 - (_Nullable instancetype)initWithCoder:(NSCoder *)coder
@@ -136,7 +122,7 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
 
     NSUInteger length;
     if (auto bytes = (UInt8 *)[coder decodeBytesWithReturnedLength:&length]) {
-        m_wrappedURL = adoptNS((__bridge NSURL*)CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, (__bridge CFURLRef)baseURL.get(), true));
+        m_wrappedURL = bridge_cast(adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, bridge_cast(baseURL.get()), true)));
         if (!m_wrappedURL)
             LOG_ERROR("Failed to decode NSURL due to invalid encoding of length %d. Substituting a blank URL", length);
     }
@@ -185,7 +171,7 @@ static NSType typeFromObject(id object)
     // Specific classes handled.
     if ([object isKindOfClass:[NSArray class]])
         return NSType::Array;
-    if ([object isKindOfClass:[CocoaColor class]])
+    if ([object isKindOfClass:[WebCore::CocoaColor class]])
         return NSType::Color;
     if ([object isKindOfClass:[NSData class]])
         return NSType::Data;
@@ -274,10 +260,9 @@ static std::optional<RetainPtr<id>> decodeArrayInternal(Decoder& decoder, NSArra
 
 #pragma mark - NSColor / UIColor
 
-#if USE(APPKIT)
-static inline void encodeColorInternal(Encoder& encoder, NSColor *color)
+static inline void encodeColorInternal(Encoder& encoder, WebCore::CocoaColor *color)
 {
-    encoder << colorFromNSColor(color);
+    encoder << colorFromCocoaColor(color);
 }
 
 static inline std::optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
@@ -285,28 +270,14 @@ static inline std::optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
     Color color;
     if (!decoder.decode(color))
         return std::nullopt;
-    return { nsColor(color) };
+    return { cocoaColor(color) };
 }
-#else
-static inline void encodeColorInternal(Encoder& encoder, UIColor *color)
-{
-    encoder << colorFromUIColor(color);
-}
-
-static inline std::optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
-{
-    Color color;
-    if (!decoder.decode(color))
-        return std::nullopt;
-    return { adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(color)]) };
-}
-#endif
 
 #pragma mark - NSData
 
 static inline void encodeDataInternal(Encoder& encoder, NSData *data)
 {
-    encoder << (__bridge CFDataRef)data;
+    encoder << bridge_cast(data);
 }
 
 static inline std::optional<RetainPtr<id>> decodeDataInternal(Decoder& decoder)
@@ -314,14 +285,14 @@ static inline std::optional<RetainPtr<id>> decodeDataInternal(Decoder& decoder)
     RetainPtr<CFDataRef> data;
     if (!decoder.decode(data))
         return std::nullopt;
-    return { adoptNS((NSData *)data.leakRef()) };
+    return { bridge_cast(WTFMove(data)) };
 }
 
 #pragma mark - NSDate
 
 static inline void encodeDateInternal(Encoder& encoder, NSDate *date)
 {
-    encoder << (__bridge CFDateRef)date;
+    encoder << bridge_cast(date);
 }
 
 static inline std::optional<RetainPtr<id>> decodeDateInternal(Decoder& decoder)
@@ -329,7 +300,7 @@ static inline std::optional<RetainPtr<id>> decodeDateInternal(Decoder& decoder)
     RetainPtr<CFDateRef> date;
     if (!decoder.decode(date))
         return std::nullopt;
-    return { adoptNS((NSDate *)date.leakRef()) };
+    return { bridge_cast(WTFMove(date)) };
 }
 
 #pragma mark - NSDictionary
@@ -414,7 +385,7 @@ static std::optional<RetainPtr<id>> decodeFontInternal(Decoder& decoder)
 
 static inline void encodeNumberInternal(Encoder& encoder, NSNumber *number)
 {
-    encoder << (__bridge CFNumberRef)number;
+    encoder << bridge_cast(number);
 }
 
 static inline std::optional<RetainPtr<id>> decodeNumberInternal(Decoder& decoder)
@@ -422,7 +393,7 @@ static inline std::optional<RetainPtr<id>> decodeNumberInternal(Decoder& decoder
     RetainPtr<CFNumberRef> number;
     if (!decoder.decode(number))
         return std::nullopt;
-    return { adoptNS((NSNumber *)number.leakRef()) };
+    return { bridge_cast(WTFMove(number)) };
 }
 
 #pragma mark - id <NSSecureCoding>
@@ -451,7 +422,7 @@ static std::optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder,
     if (!decoder.decode(data))
         return std::nullopt;
 
-    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:(__bridge NSData *)data.get() error:nullptr]);
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:bridge_cast(data.get()) error:nullptr]);
     unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
 
     auto delegate = adoptNS([[WKSecureCodingArchivingDelegate alloc] init]);
@@ -477,7 +448,7 @@ static std::optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder,
 
 static inline void encodeStringInternal(Encoder& encoder, NSString *string)
 {
-    encoder << (__bridge CFStringRef)string;
+    encoder << bridge_cast(string);
 }
 
 static inline std::optional<RetainPtr<id>> decodeStringInternal(Decoder& decoder)
@@ -485,14 +456,14 @@ static inline std::optional<RetainPtr<id>> decodeStringInternal(Decoder& decoder
     RetainPtr<CFStringRef> string;
     if (!decoder.decode(string))
         return std::nullopt;
-    return { adoptNS((NSString *)string.leakRef()) };
+    return { bridge_cast(WTFMove(string)) };
 }
 
 #pragma mark - NSURL
 
 static inline void encodeURLInternal(Encoder& encoder, NSURL *URL)
 {
-    encoder << (__bridge CFURLRef)URL;
+    encoder << bridge_cast(URL);
 }
 
 static inline std::optional<RetainPtr<id>> decodeURLInternal(Decoder& decoder)
@@ -500,7 +471,7 @@ static inline std::optional<RetainPtr<id>> decodeURLInternal(Decoder& decoder)
     RetainPtr<CFURLRef> URL;
     if (!decoder.decode(URL))
         return std::nullopt;
-    return { adoptNS((NSURL *)URL.leakRef()) };
+    return { bridge_cast(WTFMove(URL)) };
 }
 
 #pragma mark - Entry Point Encoder / Decoder
@@ -519,7 +490,7 @@ void encodeObject(Encoder& encoder, id object)
         encodeArrayInternal(encoder, static_cast<NSArray *>(object));
         return;
     case NSType::Color:
-        encodeColorInternal(encoder, static_cast<CocoaColor *>(object));
+        encodeColorInternal(encoder, static_cast<WebCore::CocoaColor *>(object));
         return;
     case NSType::Dictionary:
         encodeDictionaryInternal(encoder, static_cast<NSDictionary *>(object));

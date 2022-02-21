@@ -67,7 +67,3 @@ list(APPEND DumpRenderTree_SOURCES
 WEBKIT_EXECUTABLE_DECLARE(DumpRenderTree)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 WEBKIT_EXECUTABLE(DumpRenderTree)
-
-if (ENABLE_NETSCAPE_PLUGIN_API)
-    add_subdirectory(TestNetscapePlugIn)
-endif ()

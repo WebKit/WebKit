@@ -114,21 +114,21 @@ Expected<Ref<JSON::ArrayOf<Protocol::ApplicationCache::FrameWithManifest>>, Prot
         return makeUnexpected("Page domain must be enabled"_s);
 
     auto result = JSON::ArrayOf<Protocol::ApplicationCache::FrameWithManifest>::create();
-    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        auto* documentLoader = frame->loader().documentLoader();
+    m_inspectedPage.forEachFrame([&](Frame& frame) {
+        auto* documentLoader = frame.loader().documentLoader();
         if (!documentLoader)
-            continue;
+            return;
 
         auto& host = documentLoader->applicationCacheHost();
         String manifestURL = host.applicationCacheInfo().manifest.string();
         if (!manifestURL.isEmpty()) {
             result->addItem(Protocol::ApplicationCache::FrameWithManifest::create()
-                .setFrameId(pageAgent->frameId(frame))
+                .setFrameId(pageAgent->frameId(&frame))
                 .setManifestURL(manifestURL)
                 .setStatus(static_cast<int>(host.status()))
                 .release());
         }
-    }
+    });
     return result;
 }
 

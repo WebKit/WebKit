@@ -30,14 +30,17 @@
 
 namespace WebKit {
 
-enum DrawingAreaType {
+enum class DrawingAreaType : uint8_t {
 #if PLATFORM(COCOA)
 #if !PLATFORM(IOS_FAMILY)
-    DrawingAreaTypeTiledCoreAnimation,
+    TiledCoreAnimation,
 #endif
-    DrawingAreaTypeRemoteLayerTree,
+    RemoteLayerTree,
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    DrawingAreaTypeCoordinatedGraphics
+    CoordinatedGraphics,
+#endif
+#if USE(GRAPHICS_LAYER_WC)
+    WC,
 #endif
 };
     
@@ -58,11 +61,14 @@ template<> struct EnumTraits<WebKit::DrawingAreaType> {
         WebKit::DrawingAreaType
 #if PLATFORM(COCOA)
 #if !PLATFORM(IOS_FAMILY)
-        , WebKit::DrawingAreaType::DrawingAreaTypeTiledCoreAnimation
+        , WebKit::DrawingAreaType::TiledCoreAnimation
 #endif
-        , WebKit::DrawingAreaType::DrawingAreaTypeRemoteLayerTree
+        , WebKit::DrawingAreaType::RemoteLayerTree
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-        , WebKit::DrawingAreaType::DrawingAreaTypeCoordinatedGraphics
+        , WebKit::DrawingAreaType::CoordinatedGraphics
+#endif
+#if USE(GRAPHICS_LAYER_WC)
+        , WebKit::DrawingAreaType::WC
 #endif
     >;
 };

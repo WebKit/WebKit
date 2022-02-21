@@ -25,6 +25,7 @@
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "SVGCursorElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGLengthContext.h"
 #include "SVGURIReference.h"
 #include "StyleBuilderState.h"
@@ -39,7 +40,7 @@ CSSCursorImageValue::CSSCursorImageValue(Ref<CSSValue>&& imageValue, const std::
     , m_hotSpot(hotSpot)
     , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
 {
-    if (is<CSSImageValue>(m_imageValue.get()))
+    if (is<CSSImageValue>(m_imageValue))
         m_originalURL = downcast<CSSImageValue>(m_imageValue.get()).imageURL();
 }
 
@@ -100,7 +101,7 @@ void CSSCursorImageValue::cursorElementChanged(SVGCursorElement& cursorElement)
 
 ImageWithScale CSSCursorImageValue::selectBestFitImage(const Document& document)
 {
-    if (is<CSSImageSetValue>(m_imageValue.get()))
+    if (is<CSSImageSetValue>(m_imageValue))
         return downcast<CSSImageSetValue>(m_imageValue.get()).selectBestFitImage(document);
 
     if (auto* cursorElement = updateCursorElement(document)) {

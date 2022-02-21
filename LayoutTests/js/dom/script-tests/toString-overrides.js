@@ -21,11 +21,11 @@ RegExp.prototype.toLocaleString = function() { return "toLocaleString2"; }
 shouldBe("[1].toString()", "'1'");
 shouldBe("[1].toLocaleString()", "'toLocaleString'");
 Number.prototype.toLocaleString = "invalid";
-shouldBe("[1].toLocaleString()", "'1'");
+shouldThrow("[1].toLocaleString()");
 shouldBe("[/r/].toString()", "'toString2'");
 shouldBe("[/r/].toLocaleString()", "'toLocaleString2'");
 RegExp.prototype.toLocaleString = "invalid";
-shouldBe("[/r/].toLocaleString()", "'toString2'");
+shouldThrow("[/r/].toLocaleString()", "'toString2'");
 
 var caught = false;
 try {

@@ -29,6 +29,7 @@
 
 #include "ExecutableAllocator.h"
 #include "JITCompilationEffort.h"
+#include "SecureARM64EHashPinsInlines.h"
 #include "stdint.h"
 #include <string.h>
 #include <wtf/Assertions.h>
@@ -203,40 +204,48 @@ namespace JSC {
     };
 
 #if CPU(ARM64E)
-#if PLATFORM(MAC)
-    class ARM64EHash {
-    public:
-        ARM64EHash(void* initialHash)
-            : m_hash(static_cast<uint32_t>(bitwise_cast<uintptr_t>(initialHash)))
-        {
-        }
-
-        ALWAYS_INLINE uint32_t update(uint32_t value, uint32_t, void*)
-        {
-            uint64_t input = value ^ m_hash;
-            uint64_t a = static_cast<uint32_t>(tagInt(input, static_cast<PtrTag>(0)) >> 39);
-            uint64_t b = tagInt(input, static_cast<PtrTag>(0xb7e151628aed2a6a)) >> 23;
-            m_hash = a ^ b;
-            return m_hash;
-        }
-
-    private:
-        uint32_t m_hash;
+    enum class ShouldSign {
+        Yes,
+        No
     };
-#else
+    template <ShouldSign shouldSign>
     class ARM64EHash {
+        WTF_MAKE_NONCOPYABLE(ARM64EHash);
     public:
-        ARM64EHash(void* diversifier)
+        ARM64EHash()
         {
-            setUpdatedHash(0, 0, diversifier);
+            allocatePinForCurrentThreadAndInitializeHash();
         }
 
-        ALWAYS_INLINE uint32_t update(uint32_t instruction, uint32_t index, void* diversifier)
+        ~ARM64EHash()
         {
-            uint32_t currentHash = this->currentHash(index, diversifier);
+            deallocatePinForCurrentThread();
+        }
+
+        ALWAYS_INLINE void allocatePinForCurrentThreadAndInitializeHash()
+        {
+            if constexpr (shouldSign == ShouldSign::Yes) {
+                m_initializedPin = true;
+                g_jscConfig.arm64eHashPins.allocatePinForCurrentThread();
+                setUpdatedHash(0, 0);
+            } else
+                m_hash = 0;
+        }
+
+        void deallocatePinForCurrentThread()
+        {
+            if (m_initializedPin) {
+                g_jscConfig.arm64eHashPins.deallocatePinForCurrentThread();
+                m_initializedPin = false;
+            }
+        }
+
+        ALWAYS_INLINE uint32_t update(uint32_t instruction, uint32_t index)
+        {
+            uint32_t currentHash = this->currentHash(index);
             uint64_t nextIndex = index + 1;
             uint32_t output = nextValue(instruction, nextIndex, currentHash);
-            setUpdatedHash(output, nextIndex, diversifier);
+            setUpdatedHash(output, nextIndex);
             return output;
         }
 
@@ -256,31 +265,29 @@ namespace JSC {
             return (a >> 39) ^ (b >> 23);
         }
 
-        static ALWAYS_INLINE uint32_t bitsForDiversifier(void* diversifier)
+        static ALWAYS_INLINE uint32_t pin()
         {
-            return bitwise_cast<uintptr_t>(diversifier);
+            return g_jscConfig.arm64eHashPins.pinForCurrentThread();
         }
 
-        ALWAYS_INLINE uint32_t currentHash(uint32_t index, void* diversifier)
+        ALWAYS_INLINE uint32_t currentHash(uint32_t index)
         {
-            bool hashFieldIsTagged = index == 0;
-            if (hashFieldIsTagged)
-                return untagInt(m_hash, makeDiversifier(initializationNamespace, index, bitsForDiversifier(diversifier)));
+            if constexpr (shouldSign == ShouldSign::Yes)
+                return untagInt(m_hash, makeDiversifier(initializationNamespace, index, pin()));
             return m_hash;
         }
 
-        ALWAYS_INLINE void setUpdatedHash(uint32_t value, uint32_t index, void* diversifier)
+        ALWAYS_INLINE void setUpdatedHash(uint32_t value, uint32_t index)
         {
-            bool shouldTagHashField = index == 0;
-            if (shouldTagHashField)
-                m_hash = tagInt(static_cast<uint64_t>(value), makeDiversifier(initializationNamespace, index, bitsForDiversifier(diversifier)));
+            if constexpr (shouldSign == ShouldSign::Yes)
+                m_hash = tagInt(static_cast<uint64_t>(value), makeDiversifier(initializationNamespace, index, pin()));
             else
-                m_hash = value;
+                m_hash = static_cast<uint64_t>(value);
         }
 
         uint64_t m_hash;
+        bool m_initializedPin { false };
     };
-#endif // PLATFORM(MAC)
 #endif // CPU(ARM64E)
 
     class AssemblerBuffer {
@@ -289,7 +296,7 @@ namespace JSC {
             : m_storage()
             , m_index(0)
 #if CPU(ARM64E)
-            , m_hash(this)
+            , m_hash()
             , m_hashes()
 #endif
         {
@@ -431,6 +438,10 @@ namespace JSC {
         void* data() const { return m_storage.buffer(); }
 #endif
 
+#if CPU(ARM64E)
+        ARM64EHash<ShouldSign::Yes>& arm64eHash() { return m_hash; }
+#endif
+
     protected:
         template<typename IntegralType>
         void putIntegral(IntegralType value)
@@ -447,7 +458,7 @@ namespace JSC {
 #if CPU(ARM64)
             static_assert(sizeof(value) == 4, "");
 #if CPU(ARM64E)
-            uint32_t hash = m_hash.update(value, m_index / sizeof(IntegralType), this);
+            uint32_t hash = m_hash.update(value, m_index / sizeof(IntegralType));
             WTF::unalignedStore<uint32_t>(m_hashes.buffer() + m_index, hash);
 #endif
 #endif
@@ -481,7 +492,7 @@ namespace JSC {
         AssemblerData m_storage;
         unsigned m_index;
 #if CPU(ARM64E)
-        ARM64EHash m_hash;
+        ARM64EHash<ShouldSign::Yes> m_hash;
         AssemblerData m_hashes;
 #endif
     };

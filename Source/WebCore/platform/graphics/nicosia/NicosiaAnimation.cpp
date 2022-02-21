@@ -248,7 +248,7 @@ void Animation::apply(ApplicationResult& applicationResults, MonotonicTime time)
     }
     if (m_keyframes.size() == 2) {
         auto& timingFunction = timingFunctionForAnimationValue(m_keyframes.at(0), *this);
-        normalizedValue = timingFunction.transformTime(normalizedValue, m_duration);
+        normalizedValue = timingFunction.transformProgress(normalizedValue, m_duration);
         applyInternal(applicationResults, m_keyframes.at(0), m_keyframes.at(1), normalizedValue);
         return;
     }
@@ -261,7 +261,7 @@ void Animation::apply(ApplicationResult& applicationResults, MonotonicTime time)
 
         normalizedValue = (normalizedValue - from.keyTime()) / (to.keyTime() - from.keyTime());
         auto& timingFunction = timingFunctionForAnimationValue(from, *this);
-        normalizedValue = timingFunction.transformTime(normalizedValue, m_duration);
+        normalizedValue = timingFunction.transformProgress(normalizedValue, m_duration);
         applyInternal(applicationResults, from, to, normalizedValue);
         break;
     }

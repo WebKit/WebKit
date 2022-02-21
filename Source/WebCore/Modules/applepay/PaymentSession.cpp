@@ -31,8 +31,6 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FeaturePolicy.h"
-#include "Page.h"
-#include "PaymentCoordinator.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
@@ -76,15 +74,6 @@ ExceptionOr<void> PaymentSession::canCreateSession(Document& document)
     }
 
     return { };
-}
-
-bool PaymentSession::enabledForContext(ScriptExecutionContext& context)
-{
-    auto& document = downcast<Document>(context);
-    if (auto page = document.page())
-        return page->paymentCoordinator().shouldEnableApplePayAPIs(document);
-
-    return false;
 }
 
 } // namespace WebCore

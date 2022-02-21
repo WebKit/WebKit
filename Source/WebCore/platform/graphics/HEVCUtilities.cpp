@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,98 @@
 #include "config.h"
 #include "HEVCUtilities.h"
 
+#include "FourCC.h"
+#include "SharedBuffer.h"
+#include <JavaScriptCore/DataView.h>
+#include <wtf/HexNumber.h>
+#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
+
+std::optional<AVCParameters> parseAVCCodecParameters(StringView codecString)
+{
+    // The format of the 'avc1' codec string is specified in ISO/IEC 14496-15:2014, Annex E2.
+    StringView codecView(codecString);
+    auto codecSplit = codecView.split('.');
+    auto nextElement = codecSplit.begin();
+    if (nextElement == codecSplit.end())
+        return std::nullopt;
+
+    AVCParameters parameters;
+
+    // Codec identifier: legal values are specified in ISO/IEC 14496-15:2014, section 8:
+    auto codecName = *nextElement;
+    if (codecName != "avc1")
+        return std::nullopt;
+
+    if (++nextElement == codecSplit.end())
+        return std::nullopt;
+
+    // First element: profile_idc
+    auto firstElement = *nextElement;
+    if (!firstElement.length())
+        return std::nullopt;
+
+    auto profileFlagsAndLevel = parseInteger<uint32_t>(*nextElement, 16);
+    if (!profileFlagsAndLevel)
+        return std::nullopt;
+    parameters.profileIDC = (*profileFlagsAndLevel & 0xF00) >> 16;
+    parameters.constraintsFlags = (*profileFlagsAndLevel & 0xF0) >> 8;
+    parameters.levelIDC = *profileFlagsAndLevel & 0xF;
+
+    return parameters;
+}
+
+String createAVCCodecParametersString(const AVCParameters& parameters)
+{
+    // The format of the 'avc1' codec string is specified in ISO/IEC 14496-15:2014, Annex E.2.
+    return makeString("avc1."
+        , hex(parameters.profileIDC, 2)
+        , hex(parameters.constraintsFlags, 2)
+        , hex(parameters.levelIDC, 2));
+}
+
+std::optional<AVCParameters> parseAVCDecoderConfigurationRecord(const SharedBuffer& buffer)
+{
+    // ISO/IEC 14496-10:2014
+    // 7.3.2.1.1 Sequence parameter set data syntax
+
+    // AVCDecoderConfigurationRecord is at a minimum 24 bytes long
+    if (buffer.size() < 24)
+        return std::nullopt;
+
+    // aligned(8) class AVCDecoderConfigurationRecord {
+    //    unsigned int(8) configurationVersion = 1;
+    //    unsigned int(8) AVCProfileIndication;
+    //    unsigned int(8) profile_compatibility;
+    //    unsigned int(8) AVCLevelIndication;
+    //    ...
+    AVCParameters parameters;
+    auto arrayBuffer = buffer.tryCreateArrayBuffer();
+    if (!arrayBuffer)
+        return std::nullopt;
+
+    bool status = true;
+    auto view = JSC::DataView::create(WTFMove(arrayBuffer), 0, buffer.size());
+
+    // Byte 0 is a version flag
+    parameters.profileIDC = view->get<uint8_t>(1, false, &status);
+    if (!status)
+        return std::nullopt;
+
+    parameters.constraintsFlags = view->get<uint8_t>(2, false, &status);
+    if (!status)
+        return std::nullopt;
+
+    parameters.levelIDC = view->get<uint8_t>(3, false, &status);
+    if (!status)
+        return std::nullopt;
+
+    return parameters;
+}
 
 std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
 {
@@ -45,7 +132,11 @@ std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
 
     // Codec identifier: legal values are specified in ISO/IEC 14496-15:2014, section 8:
     auto codecName = *nextElement;
-    if (codecName != "hvc1" && codecName != "hev1")
+    if (codecName == "hvc1")
+        parameters.codec = HEVCParameters::Codec::Hvc1;
+    else if (codecName == "hev1")
+        parameters.codec = HEVCParameters::Codec::Hev1;
+    else
         return std::nullopt;
 
     if (++nextElement == codecSplit.end())
@@ -77,7 +168,7 @@ std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
     auto compatibilityFlags = parseInteger<uint32_t>(*nextElement, 16);
     if (!compatibilityFlags)
         return std::nullopt;
-    parameters.generalProfileCompatibilityFlags = *compatibilityFlags;
+    parameters.generalProfileCompatibilityFlags = reverseBits32(*compatibilityFlags);
 
     if (++nextElement == codecSplit.end())
         return std::nullopt;
@@ -88,6 +179,7 @@ std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
     firstCharacter = generalTier[0];
     if (firstCharacter != 'L' && firstCharacter != 'H')
         return std::nullopt;
+    parameters.generalTierFlag = (firstCharacter == 'L' ? 0 : 1);
 
     auto generalLevelIDC = parseInteger<uint8_t>(generalTier.substring(1));
     if (!generalLevelIDC)
@@ -99,18 +191,108 @@ std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
     for (unsigned i = 0; i < 6; ++i) {
         if (++nextElement == codecSplit.end())
             break;
-        if (!parseInteger<uint8_t>(*nextElement, 16))
+        auto flag = parseInteger<uint8_t>(*nextElement, 16);
+        if (!flag)
             return std::nullopt;
+        parameters.generalConstraintIndicatorFlags[i] = *flag;
     }
 
     return parameters;
 }
 
-template<typename ValueType> static inline std::optional<ValueType> makeOptionalFromPointer(const ValueType* pointer)
+String createHEVCCodecParametersString(const HEVCParameters& parameters)
 {
-    if (!pointer)
+    // The format of the 'hevc' codec string is specified in ISO/IEC 14496-15:2014, Annex E.3.
+    char profileSpaceCharacter = 'A' + parameters.generalProfileSpace - 1;
+
+    String profileSpaceString;
+    if (parameters.generalProfileSpace)
+        profileSpaceString.append(profileSpaceCharacter);
+
+    // For the second parameter, from ISO/IEC 14496-15:2014, Annex E.3.
+    // * the 32 bits of the general_profile_compatibility_flags, but in reverse bit order, i.e. with
+    // general_profile_compatibility_flag[ 31 ] as the most significant bit, followed by, general_profile_compatibility_flag[ 30 ],
+    // and down to general_profile_compatibility_flag[ 0 ] as the least significant bit, where general_profile_compatibility_flag[ i ]
+    // for i in the range of 0 to 31, inclusive, are specified in ISO/IEC 23008‐2, encoded in hexadecimal (leading zeroes may be omitted)
+    auto compatFlagParameter = hex(reverseBits32(parameters.generalProfileCompatibilityFlags));
+
+    // * each of the 6 bytes of the constraint flags, starting from the byte containing the
+    // general_progressive_source_flag, each encoded as a hexadecimal number, and the encoding
+    // of each byte separated by a period; trailing bytes that are zero may be omitted.
+    StringBuilder compatibilityFlags;
+    auto lastFlagByte = parameters.generalConstraintIndicatorFlags.reverseFindIf([] (auto& flag) { return flag; });
+    for (size_t i = 0; lastFlagByte != notFound && i <= lastFlagByte; ++i) {
+        compatibilityFlags.append('.');
+        compatibilityFlags.append(hex(parameters.generalConstraintIndicatorFlags[i], 2));
+    }
+
+    return makeString(parameters.codec == HEVCParameters::Codec::Hev1 ? "hev1" : "hvc1"
+        , '.'
+        , profileSpaceString
+        , parameters.generalProfileIDC
+        , '.'
+        , compatFlagParameter
+        , '.'
+        , parameters.generalTierFlag ? 'H' : 'L'
+        , parameters.generalLevelIDC
+        , compatibilityFlags.toString());
+}
+
+std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(FourCC codecCode, const SharedBuffer& buffer)
+{
+    // ISO/IEC 14496-15:2014
+    // 8.3.3.1 HEVC decoder configuration record
+
+    // HEVCDecoderConfigurationRecord is at a minimum 23 bytes long
+    if (buffer.size() < 23)
         return std::nullopt;
-    return *pointer;
+
+    HEVCParameters parameters;
+    if (codecCode == "hev1")
+        parameters.codec = HEVCParameters::Codec::Hev1;
+    else if (codecCode == "hvc1")
+        parameters.codec = HEVCParameters::Codec::Hvc1;
+    else
+        return std::nullopt;
+
+    // aligned(8) class HEVCDecoderConfigurationRecord {
+    //    unsigned int(8)  configurationVersion = 1;
+    //    unsigned int(2)  general_profile_space;
+    //    unsigned int(1)  general_tier_flag;
+    //    unsigned int(5)  general_profile_idc;
+    //    unsigned int(32) general_profile_compatibility_flags;
+    //    unsigned int(48) general_constraint_indicator_flags;
+    //    unsigned int(8)  general_level_idc;
+    //    ...
+    auto arrayBuffer = buffer.tryCreateArrayBuffer();
+    if (!arrayBuffer)
+        return std::nullopt;
+
+    bool status = true;
+    auto view = JSC::DataView::create(WTFMove(arrayBuffer), 0, buffer.size());
+    uint32_t profileSpaceTierIDC = view->get<uint8_t>(1, false, &status);
+    if (!status)
+        return std::nullopt;
+
+    parameters.generalProfileSpace = (profileSpaceTierIDC & 0b11000000) >> 6;
+    parameters.generalTierFlag = (profileSpaceTierIDC & 0b00100000) >> 5;
+    parameters.generalProfileIDC = profileSpaceTierIDC & 0b00011111;
+
+    parameters.generalProfileCompatibilityFlags = view->get<uint32_t>(2, false, &status);
+    if (!status)
+        return std::nullopt;
+
+    for (unsigned i = 0; i < 6; ++i) {
+        parameters.generalConstraintIndicatorFlags[i] = view->get<uint8_t>(6 + i, false, &status);
+        if (!status)
+            return std::nullopt;
+    }
+
+    parameters.generalLevelIDC = view->get<uint8_t>(12, false, &status);
+    if (!status)
+        return std::nullopt;
+
+    return parameters;
 }
 
 static std::optional<DoViParameters::Codec> parseDoViCodecType(StringView string)
@@ -228,6 +410,57 @@ std::optional<DoViParameters> parseDoViCodecParameters(StringView codecView)
         return std::nullopt;
 
     return parameters;
+}
+
+std::optional<DoViParameters> parseDoViDecoderConfigurationRecord(const SharedBuffer& buffer)
+{
+    // The format of the DoVi Configuration Record is contained in "Dolby Vision Streams Within
+    // the ISO Base Media File Format, Version 2.0"
+
+    // DoViDecoderConfigurationRecord is exacty 24 bytes long
+    if (buffer.size() < 24)
+        return std::nullopt;
+
+    // align (8) class DOVIDecoderConfigurationRecord
+    // {
+    //     unsigned int (8) dv_version_major;
+    //     unsigned int (8) dv_version_minor;
+    //     unsigned int (7) dv_profile;
+    //     unsigned int (6) dv_level;
+    //     bit (1) rpu_present_flag;
+    //     bit (1) el_present_flag;
+    //     bit (1) bl_present_flag;
+    //     ...
+    DoViParameters parameters;
+    auto arrayBuffer = buffer.tryCreateArrayBuffer();
+    if (!arrayBuffer)
+        return std::nullopt;
+
+    bool status = true;
+    auto view = JSC::DataView::create(WTFMove(arrayBuffer), 0, buffer.size());
+
+    auto profileLevelAndFlags = view->get<uint16_t>(2, false, &status);
+    if (!status)
+        return std::nullopt;
+
+    parameters.bitstreamProfileID = (profileLevelAndFlags & 0b1111111000000000) >> 9;
+    parameters.bitstreamLevelID = (profileLevelAndFlags & 0b0000000111111000) >> 3;
+    return parameters;
+}
+
+String createDoViCodecParametersString(const DoViParameters& parameters)
+{
+    // The format of the DoVi codec string is specified in "Dolby Vision Profiles and Levels Version 1.3.2"
+    StringBuilder builder;
+    builder.append("dvh1.");
+    if (parameters.bitstreamProfileID < 10)
+        builder.append('0');
+    builder.append(parameters.bitstreamProfileID);
+    builder.append('.');
+    if (parameters.bitstreamLevelID < 10)
+        builder.append('0');
+    builder.append(parameters.bitstreamLevelID);
+    return builder.toString();
 }
 
 }

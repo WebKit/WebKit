@@ -160,22 +160,16 @@ std::optional<WebContextMenuItemData> WebContextMenuItemData::decode(IPC::Decode
 
 Vector<WebContextMenuItemData> kitItems(const Vector<WebCore::ContextMenuItem>& coreItemVector)
 {
-    Vector<WebContextMenuItemData> result;
-    result.reserveCapacity(coreItemVector.size());
-    for (unsigned i = 0; i < coreItemVector.size(); ++i)
-        result.append(WebContextMenuItemData(coreItemVector[i]));
-    
-    return result;
+    return coreItemVector.map([](auto& item) {
+        return WebContextMenuItemData { item };
+    });
 }
 
 Vector<ContextMenuItem> coreItems(const Vector<WebContextMenuItemData>& kitItemVector)
 {
-    Vector<ContextMenuItem> result;
-    result.reserveCapacity(kitItemVector.size());
-    for (unsigned i = 0; i < kitItemVector.size(); ++i)
-        result.append(kitItemVector[i].core());
-    
-    return result;
+    return kitItemVector.map([](auto& item) {
+        return item.core();
+    });
 }
 
 } // namespace WebKit

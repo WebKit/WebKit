@@ -136,6 +136,9 @@ constexpr inline double grad2rad(double g) { return deg2rad(grad2deg(g)); }
 constexpr inline float rad2grad(float r) { return deg2grad(rad2deg(r)); }
 constexpr inline float grad2rad(float g) { return deg2rad(grad2deg(g)); }
 
+inline double roundTowardsPositiveInfinity(double value) { return std::floor(value + 0.5); }
+inline float roundTowardsPositiveInfinity(float value) { return std::floor(value + 0.5f); }
+
 // std::numeric_limits<T>::min() returns the smallest positive value for floating point types
 template<typename T> constexpr T defaultMinimumForClamp() { return std::numeric_limits<T>::min(); }
 template<> constexpr float defaultMinimumForClamp() { return -std::numeric_limits<float>::max(); }
@@ -750,6 +753,38 @@ inline size_t countTrailingZeros(uint64_t v)
     return Mod67Position[((1 + ~v) & v) % 67];
 }
 
+inline uint32_t reverseBits32(uint32_t value)
+{
+#if COMPILER(GCC_COMPATIBLE) && CPU(ARM64)
+    uint32_t result;
+    asm ("rbit %w0, %w1"
+        : "=r"(result)
+        : "r"(value));
+    return result;
+#else
+    value = ((value & 0xaaaaaaaa) >> 1) | ((value & 0x55555555) << 1);
+    value = ((value & 0xcccccccc) >> 2) | ((value & 0x33333333) << 2);
+    value = ((value & 0xf0f0f0f0) >> 4) | ((value & 0x0f0f0f0f) << 4);
+    value = ((value & 0xff00ff00) >> 8) | ((value & 0x00ff00ff) << 8);
+    return (value >> 16) | (value << 16);
+#endif
+}
+
+// FIXME: Replace with std::isnan() once std::isnan() is constexpr.
+template<typename T> constexpr typename std::enable_if_t<std::is_floating_point_v<T>, bool> isNaNConstExpr(T value)
+{
+#if COMPILER_HAS_CLANG_BUILTIN(__builtin_isnan)
+    return __builtin_isnan(value);
+#else
+    return value != value;
+#endif
+}
+
+template<typename T> constexpr typename std::enable_if_t<std::is_integral_v<T>, bool> isNaNConstExpr(T)
+{
+    return false;
+}
+
 } // namespace WTF
 
 using WTF::shuffleVector;
@@ -757,3 +792,5 @@ using WTF::clz;
 using WTF::ctz;
 using WTF::getLSBSet;
 using WTF::getMSBSet;
+using WTF::isNaNConstExpr;
+using WTF::reverseBits32;

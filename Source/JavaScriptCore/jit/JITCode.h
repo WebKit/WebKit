@@ -30,9 +30,13 @@
 #include "CodeOrigin.h"
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
+#include "RegisterAtOffsetList.h"
 #include "RegisterSet.h"
 
+
 namespace JSC {
+
+class PCToCodeOriginMap;
 
 namespace DFG {
 class CommonData;
@@ -159,10 +163,10 @@ public:
 
     static bool useDataIC(JITType jitType)
     {
-        if (!Options::useDataIC())
-            return false;
         if (JITCode::isBaselineCode(jitType))
             return true;
+        if (!Options::useDataIC())
+            return false;
         return Options::useDataICInOptimizingJIT();
     }
 
@@ -223,9 +227,13 @@ public:
 
     bool isShared() const { return m_shareAttribute == ShareAttribute::Shared; }
 
+    virtual PCToCodeOriginMap* pcToCodeOriginMap() { return nullptr; }
+
+    const RegisterAtOffsetList* calleeSaveRegisters() const;
+
 private:
-    JITType m_jitType;
-    ShareAttribute m_shareAttribute;
+    const JITType m_jitType;
+    const ShareAttribute m_shareAttribute;
 protected:
     Intrinsic m_intrinsic { NoIntrinsic }; // Effective only in NativeExecutable.
 };

@@ -21,12 +21,12 @@
 [
     Exposed=Window
 ] interface HTMLAnchorElement : HTMLElement {
-    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurement, Reflect] attribute unsigned long attributionsourceid;
-    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurement, Reflect] attribute DOMString attributiondestination;
-    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurementFraudPrevention, Reflect] attribute DOMString attributionsourcenonce;
+    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurementEnabled, Reflect] attribute unsigned long attributionSourceId;
+    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurementEnabled, Reflect] attribute DOMString attributionDestination;
+    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurementFraudPreventionEnabled, Reflect] attribute DOMString attributionSourceNonce;
     [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
     [CEReactions=NotNeeded, Reflect] attribute DOMString coords;
-    [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledBySetting=DownloadAttribute, Reflect] attribute DOMString download;
+    [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledBySetting=DownloadAttributeEnabled, Reflect] attribute DOMString download;
     [CEReactions=NotNeeded, Reflect] attribute DOMString hreflang;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute USVString ping;
@@ -40,7 +40,7 @@
 
     [PutForwards=value] readonly attribute DOMTokenList relList;
 
-    [EnabledBySetting=ReferrerPolicyAttribute, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
+    [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
 };
 
 HTMLAnchorElement includes HTMLHyperlinkElementUtils;

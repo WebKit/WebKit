@@ -237,9 +237,9 @@ private:
                 case Array::BigInt64Array:
                 case Array::BigUint64Array: {
                     Edge child1 = m_graph.varArgChild(m_node, 0);
-                    Edge child3 = m_graph.varArgChild(m_node, 2);
                     if (!m_graph.m_slowPutByVal.contains(m_node) && (child1.useKind() == CellUse || child1.useKind() == KnownCellUse))
-                        considerBarrier(child1, child3);
+                        // FIXME: there are some cases where we can avoid a store barrier by considering the value https://bugs.webkit.org/show_bug.cgi?id=230377
+                        considerBarrier(child1);
                     break;
                 }
                 case Array::Contiguous:
@@ -277,7 +277,8 @@ private:
                 
             case PutPrivateName: {
                 if (!m_graph.m_slowPutByVal.contains(m_node) && (m_node->child1().useKind() == CellUse || m_node->child1().useKind() == KnownCellUse))
-                    considerBarrier(m_node->child1(), m_node->child3());
+                    // FIXME: there are some cases where we can avoid a store barrier by considering the value https://bugs.webkit.org/show_bug.cgi?id=230377
+                    considerBarrier(m_node->child1());
                 break;
             }
 
@@ -304,6 +305,11 @@ private:
                 // https://bugs.webkit.org/show_bug.cgi?id=209396
                 if (isCell(m_node->child1().useKind()))
                     considerBarrier(m_node->child1());
+                break;
+            }
+
+            case RegExpTestInline: {
+                considerBarrier(m_node->child1());
                 break;
             }
 

@@ -276,7 +276,7 @@ TEST_P(ProgramBinaryTest, ZeroSizedUnlinkedBinary)
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ProgramBinaryTest);
 
-class ProgramBinaryES3Test : public ANGLETest
+class ProgramBinaryES3Test : public ProgramBinaryTest
 {
   protected:
     ProgramBinaryES3Test()
@@ -515,6 +515,113 @@ TEST_P(ProgramBinaryES3Test, TestArrayOfStructUniform)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
 
+// Verify that saving/loading binary with detached shaders followed by indexed
+// drawing works.
+TEST_P(ProgramBinaryES3Test, SaveAndLoadDetachedShaders)
+{
+    // We use shaders with the "flat" qualifier, to ensure that "flat" behaves
+    // across save/load. This is primarily to catch possible bugs in the Metal
+    // backend, where it needs to detect "flat" at shader link time and
+    // preserve that detection across binary save/load.
+    constexpr char kVS[] = R"(#version 300 es
+precision highp float;
+
+in vec4 a_position;
+flat out vec4 v_color;
+
+const vec4 colors[4] = vec4[](
+    vec4(0.0f, 0.0f, 1.0f, 1.0f),
+    vec4(0.0f, 0.0f, 1.0f, 1.0f),
+    vec4(0.0f, 1.0f, 0.0f, 1.0f),
+    vec4(0.0f, 1.0f, 0.0f, 1.0f)
+);
+
+void main()
+{
+    v_color = colors[gl_VertexID];
+    gl_Position = a_position;
+}
+)";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+
+flat in vec4 v_color;
+out vec4 o_color;
+
+void main()
+{
+    o_color = v_color;
+}
+)";
+
+    const auto &vertices = GetIndexedQuadVertices();
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
+                 GL_STATIC_DRAW);
+
+    GLBuffer indexBuffer;
+    const auto &indices = GetQuadIndices();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
+                 GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    GLuint vertexShader   = CompileShader(GL_VERTEX_SHADER, kVS);
+    GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, kFS);
+    ASSERT_NE(0u, vertexShader);
+    ASSERT_NE(0u, fragmentShader);
+
+    GLuint program = glCreateProgram();
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragmentShader);
+
+    glLinkProgram(program);
+
+    GLint linkStatus;
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+    EXPECT_EQ(GL_TRUE, linkStatus);
+
+    glDetachShader(program, vertexShader);
+    glDetachShader(program, fragmentShader);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    ASSERT_GL_NO_ERROR();
+
+    GLuint loadedProgram = glCreateProgram();
+    saveAndLoadProgram(program, loadedProgram);
+    glDeleteProgram(program);
+
+    ASSERT_EQ(glIsProgram(loadedProgram), GL_TRUE);
+    glUseProgram(loadedProgram);
+    ASSERT_GL_NO_ERROR();
+
+    GLint posLocation = glGetAttribLocation(loadedProgram, "a_position");
+    ASSERT_NE(-1, posLocation);
+
+    GLVertexArray vertexArray;
+    glBindVertexArray(vertexArray);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posLocation);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    glDeleteProgram(loadedProgram);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Tests the difference between uniform static and active use
 TEST_P(ProgramBinaryES3Test, ActiveUniformShader)
 {
@@ -750,6 +857,11 @@ TEST_P(ProgramBinaryES3Test, BinaryWithLargeUniformCount)
 // Test that sampler texelFetch references are saved and loaded correctly
 TEST_P(ProgramBinaryTest, SRGBDecodeWithSamplerAndTexelFetchTest)
 {
+    if (!supported())
+    {
+        return;
+    }
+
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_sRGB_decode") ||
                        getClientMajorVersion() < 3);
 
@@ -758,7 +870,7 @@ TEST_P(ProgramBinaryTest, SRGBDecodeWithSamplerAndTexelFetchTest)
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsWindows());
     ANGLE_SKIP_TEST_IF(IsOpenGL() && (IsNVIDIA() || IsARM64()) && IsOSX());
-    ANGLE_SKIP_TEST_IF(IsOpenGLES() && (IsNexus5X() || IsNexus6P()));
+    ANGLE_SKIP_TEST_IF(IsOpenGLES() && IsNexus5X());
 
     constexpr char kVS[] =
         "#version 300 es\n"
@@ -821,6 +933,7 @@ TEST_P(ProgramBinaryTest, SRGBDecodeWithSamplerAndTexelFetchTest)
     glDeleteProgram(reloadedProgram);
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinaryES3Test);
 ANGLE_INSTANTIATE_TEST_ES3(ProgramBinaryES3Test);
 
 class ProgramBinaryES31Test : public ANGLETest
@@ -887,11 +1000,54 @@ TEST_P(ProgramBinaryES31Test, ProgramBinaryWithComputeShader)
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests saving and loading a separable program that has a computer shader using a uniform and a
+// uniform block.
+TEST_P(ProgramBinaryES31Test, SeparableProgramLinkedUniforms)
+{
+    // We can't run the test if no program binary formats are supported.
+    GLint binaryFormatCount = 0;
+    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
+    ANGLE_SKIP_TEST_IF(binaryFormatCount == 0);
+
+    constexpr char kComputeShader[] = R"(#version 310 es
+layout(local_size_x=4, local_size_y=3, local_size_z=1) in;
+uniform float testUint;
+uniform TestBlock
+{
+    mat4 testMatrix;
+};
+layout(rgba32ui) uniform highp writeonly uimage2D imageOut;
+void main() {
+    imageStore(imageOut, ivec2(gl_LocalInvocationIndex, 0), uvec4(testMatrix[0][0] + testUint, 0, 0, 0));
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShader);
+    glProgramParameteri(program, GL_PROGRAM_SEPARABLE, GL_TRUE);
+
+    // Read back the binary.
+    GLint programLength = 0;
+    glGetProgramiv(program, GL_PROGRAM_BINARY_LENGTH, &programLength);
+    ASSERT_GL_NO_ERROR();
+
+    GLsizei readLength  = 0;
+    GLenum binaryFormat = GL_NONE;
+    std::vector<uint8_t> binary(programLength);
+    glGetProgramBinary(program, programLength, &readLength, &binaryFormat, binary.data());
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_EQ(static_cast<GLsizei>(programLength), readLength);
+
+    // Load a new program with the binary.
+    ANGLE_GL_BINARY_ES3_PROGRAM(binaryProgram, binary, binaryFormat);
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(binaryProgram);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Tests that saving and loading a program attached with computer shader.
 TEST_P(ProgramBinaryES31Test, ProgramBinaryWithAtomicCounterComputeShader)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(IsAndroid() && IsVulkan());
     // We can't run the test if no program binary formats are supported.
     GLint binaryFormatCount = 0;
     glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
@@ -1012,6 +1168,7 @@ TEST_P(ProgramBinaryES31Test, ImageTextureBinding)
     ASSERT_GL_NO_ERROR();
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinaryES31Test);
 ANGLE_INSTANTIATE_TEST_ES31(ProgramBinaryES31Test);
 
 class ProgramBinaryTransformFeedbackTest : public ANGLETest
@@ -1123,8 +1280,7 @@ TEST_P(ProgramBinaryTransformFeedbackTest, GetTransformFeedbackVarying)
     EXPECT_GL_NO_ERROR();
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinaryTransformFeedbackTest);
 ANGLE_INSTANTIATE_TEST_ES3(ProgramBinaryTransformFeedbackTest);
 
 // For the ProgramBinariesAcrossPlatforms tests, we need two sets of params:
@@ -1175,7 +1331,7 @@ class ProgramBinariesAcrossPlatforms : public testing::TestWithParam<PlatformsWi
         }
 
         mEntryPointsLib.reset(
-            angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ApplicationDir));
+            angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ModuleDir));
     }
 
     EGLWindow *createAndInitEGLWindow(angle::PlatformParameters &param)
@@ -1274,7 +1430,6 @@ TEST_P(ProgramBinariesAcrossPlatforms, CreateAndReloadBinary)
     if (eglWindow == nullptr)
     {
         FAIL() << "Failed to create EGL window";
-        return;
     }
 
     // If the test is trying to use both the default GPU and WARP, but the default GPU *IS* WARP,
@@ -1331,7 +1486,6 @@ TEST_P(ProgramBinariesAcrossPlatforms, CreateAndReloadBinary)
     if (eglWindow == nullptr)
     {
         FAIL() << "Failed to create EGL window";
-        return;
     }
 
     program = glCreateProgram();
@@ -1355,6 +1509,7 @@ TEST_P(ProgramBinariesAcrossPlatforms, CreateAndReloadBinary)
 }
 
 // clang-format off
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinariesAcrossPlatforms);
 ANGLE_INSTANTIATE_TEST(ProgramBinariesAcrossPlatforms,
                        //                     | Save the program   | Load the program      | Expected
                        //                     | using these params | using these params    | link result
@@ -1363,5 +1518,6 @@ ANGLE_INSTANTIATE_TEST(ProgramBinariesAcrossPlatforms,
                        PlatformsWithLinkResult(ES2_D3D11(),         ES2_D3D9(),             false        ), // Switching from D3D11 to D3D9 shouldn't work
                        PlatformsWithLinkResult(ES2_D3D9(),          ES2_D3D11(),            false        ), // Switching from D3D9 to D3D11 shouldn't work
                        PlatformsWithLinkResult(ES2_D3D11(),         ES3_D3D11(),            false        ), // Switching to newer client version shouldn't work
+                       PlatformsWithLinkResult(ES3_VULKAN(),        ES31_VULKAN(),          false        ), // Switching to newer client version shouldn't work with Vulkan
                        );
 // clang-format on

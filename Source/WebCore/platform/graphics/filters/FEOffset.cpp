@@ -4,6 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,21 +26,21 @@
 #include "FEOffset.h"
 
 #include "Filter.h"
-#include "GraphicsContext.h"
+#include "FEOffsetSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-FEOffset::FEOffset(Filter& filter, float dx, float dy)
-    : FilterEffect(filter, Type::Offset)
+Ref<FEOffset> FEOffset::create(float dx, float dy)
+{
+    return adoptRef(*new FEOffset(dx, dy));
+}
+
+FEOffset::FEOffset(float dx, float dy)
+    : FilterEffect(FilterEffect::Type::FEOffset)
     , m_dx(dx)
     , m_dy(dy)
 {
-}
-
-Ref<FEOffset> FEOffset::create(Filter& filter, float dx, float dy)
-{
-    return adoptRef(*new FEOffset(filter, dx, dy));
 }
 
 void FEOffset::setDx(float dx)
@@ -52,43 +53,48 @@ void FEOffset::setDy(float dy)
     m_dy = dy;
 }
 
-void FEOffset::determineAbsolutePaintRect()
+FloatRect FEOffset::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
 {
-    FloatRect paintRect = inputEffect(0)->absolutePaintRect();
-    Filter& filter = this->filter();
-    paintRect.move(filter.scaledByFilterResolution({ m_dx, m_dy }));
-    if (clipsToBounds())
-        paintRect.intersect(maxEffectRect());
+    auto imageRect = inputs[0]->imageRect();
+    imageRect.move(filter.resolvedSize({ m_dx, m_dy }));
+    return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
+}
+
+IntOutsets FEOffset::outsets(const Filter& filter) const
+{
+    auto offset = expandedIntSize(filter.resolvedSize({ m_dx, m_dy }));
+
+    IntOutsets outsets;
+    if (offset.height() < 0)
+        outsets.setTop(-offset.height());
     else
-        paintRect.unite(maxEffectRect());
-    setAbsolutePaintRect(enclosingIntRect(paintRect));
+        outsets.setBottom(offset.height());
+    if (offset.width() < 0)
+        outsets.setLeft(-offset.width());
+    else
+        outsets.setRight(offset.width());
+
+    return outsets;
 }
 
-void FEOffset::platformApplySoftware()
+bool FEOffset::resultIsAlphaImage(const FilterImageVector& inputs) const
 {
-    FilterEffect* in = inputEffect(0);
-
-    ImageBuffer* resultImage = createImageBufferResult();
-    ImageBuffer* inBuffer = in->imageBufferResult();
-    if (!resultImage || !inBuffer)
-        return;
-
-    setIsAlphaImage(in->isAlphaImage());
-
-    FloatRect drawingRegion = drawingRegionOfInputImage(in->absolutePaintRect());
-    Filter& filter = this->filter();
-    drawingRegion.move(filter.scaledByFilterResolution({ m_dx, m_dy }));
-    resultImage->context().drawImageBuffer(*inBuffer, drawingRegion);
+    return inputs[0]->isAlphaImage();
 }
 
-TextStream& FEOffset::externalRepresentation(TextStream& ts, RepresentationType representation) const
+std::unique_ptr<FilterEffectApplier> FEOffset::createSoftwareApplier() const
+{
+    return FilterEffectApplier::create<FEOffsetSoftwareApplier>(*this);
+}
+
+TextStream& FEOffset::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     ts << indent << "[feOffset";
     FilterEffect::externalRepresentation(ts, representation);
-    ts << " dx=\"" << dx() << "\" dy=\"" << dy() << "\"]\n";
 
-    TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts, representation);
+    ts << " dx=\"" << dx() << "\" dy=\"" << dy() << "\"";
+
+    ts << "]\n";
     return ts;
 }
 

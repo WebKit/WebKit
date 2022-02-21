@@ -102,24 +102,26 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         console.assert(iconClassName);
         this._element.classList.add("has-icon", iconClassName);
 
-        let groupings = this._style.groupings.filter((grouping) => grouping.text !== "all");
+        let groupings = this._style.groupings.filter((grouping) => !grouping.isMedia || grouping.text !== "all").reverse();
         if (groupings.length) {
             let groupingsElement = this.element.appendChild(document.createElement("div"));
             groupingsElement.classList.add("header-groupings");
 
             let currentGroupingType = null;
+            let currentGroupingHadText = false;
             let groupingTypeElement = null;
             this._groupingElements = groupings.map((grouping) => {
-                if (grouping.type !== currentGroupingType) {
+                if (grouping.type !== currentGroupingType || !grouping.text || !currentGroupingHadText) {
                     groupingTypeElement = groupingsElement.appendChild(document.createElement("div"));
                     groupingTypeElement.classList.add("grouping");
                     groupingTypeElement.textContent = grouping.prefix + " ";
                     currentGroupingType = grouping.type;
                 } else
-                    groupingTypeElement.append(", ");
+                    groupingTypeElement.append(grouping.isLayer && grouping.text ? "." : ", ");
 
+                currentGroupingHadText = !!grouping.text;
                 let span = groupingTypeElement.appendChild(document.createElement("span"));
-                span.textContent = grouping.text;
+                span.textContent = grouping.text ?? "";
                 return span;
             });
         }
@@ -481,7 +483,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     _populateIconElementContextMenu(contextMenu)
     {
         contextMenu.appendItem(WI.UIString("Copy Rule"), () => {
-            InspectorFrontendHost.copyText(this._style.generateCSSRuleString());
+            InspectorFrontendHost.copyText(this._style.generateFormattedText({includeGroupingsAndSelectors: true, multiline: true}));
         });
 
         if (this._style.editable && this._style.properties.length) {

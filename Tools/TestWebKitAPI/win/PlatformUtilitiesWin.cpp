@@ -62,8 +62,7 @@ WKURLRef URLForNonExistentResource()
 
 bool isKeyDown(WKNativeEventPtr event)
 {
-    // FIXME
-    return false;
+    return event->message == WM_KEYDOWN;
 }
 
 } // namespace Util

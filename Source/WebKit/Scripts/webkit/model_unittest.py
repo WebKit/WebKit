@@ -21,9 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Examples of how to run:
-# python Source/WebKit/Scripts/webkit/model_unittest.py
-# cd Source/WebKit/Scripts && python -m webkit.model_unittest
-# cd Source/WebKit/Scripts && python -m unittest discover -p '*_unittest.py'
+# python3 Source/WebKit/Scripts/webkit/model_unittest.py
+# cd Source/WebKit/Scripts && python3 -m webkit.model_unittest
+# cd Source/WebKit/Scripts && python3 -m unittest discover -p '*_unittest.py'
 
 import os
 import sys
@@ -46,8 +46,8 @@ messages -> WebPage {
     LoadURL(String url)
 }"""
         receiver = parser.parse(StringIO(contents))
-        self.assertEquals(receiver.name, 'WebPage')
-        self.assertEquals(receiver.messages[0].name, 'LoadURL')
+        self.assertEqual(receiver.name, 'WebPage')
+        self.assertEqual(receiver.messages[0].name, 'LoadURL')
 
         other_contents = """
     messages -> WebPage {
@@ -56,11 +56,11 @@ messages -> WebPage {
     }"""
 
         other_receiver = parser.parse(StringIO(other_contents))
-        self.assertEquals(other_receiver.name, 'WebPage')
-        self.assertEquals(other_receiver.messages[0].name, 'LoadURL')
-        self.assertEquals(other_receiver.messages[1].name, 'LoadURL2')
+        self.assertEqual(other_receiver.name, 'WebPage')
+        self.assertEqual(other_receiver.messages[0].name, 'LoadURL')
+        self.assertEqual(other_receiver.messages[1].name, 'LoadURL2')
         errors = model.check_global_model_inputs([receiver, other_receiver])
-        self.assertEquals(len(errors), 1)
+        self.assertEqual(len(errors), 1)
         self.assertTrue("Duplicate" in errors[0])
 
     def test_mismatch_message_attribute_sync(self):
@@ -74,10 +74,10 @@ messages -> WebPage {
 #endif
 }"""
         receiver = parser.parse(StringIO(contents))
-        self.assertEquals(receiver.name, 'WebPage')
-        self.assertEquals(receiver.messages[0].name, 'LoadURL')
+        self.assertEqual(receiver.name, 'WebPage')
+        self.assertEqual(receiver.messages[0].name, 'LoadURL')
         errors = model.check_global_model_inputs([receiver])
-        self.assertEquals(len(errors), 1)
+        self.assertEqual(len(errors), 1)
         self.assertTrue("attribute mismatch" in errors[0])
 
 

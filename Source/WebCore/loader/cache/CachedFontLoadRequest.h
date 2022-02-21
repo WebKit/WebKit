@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2021 Metrological Group B.V.
  * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +34,8 @@
 
 namespace WebCore {
 
+class FontCreationContext;
+
 class CachedFontLoadRequest final : public FontLoadRequest, public CachedFontClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -56,9 +59,9 @@ private:
     bool errorOccurred() const final { return m_font->errorOccurred(); }
 
     bool ensureCustomFontData(const AtomString& remoteURI) final { return m_font->ensureCustomFontData(remoteURI); }
-    RefPtr<Font> createFont(const FontDescription& description, const AtomString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& settings, FontSelectionSpecifiedCapabilities capabilities) final
+    RefPtr<Font> createFont(const FontDescription& description, const AtomString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontCreationContext& fontCreationContext) final
     {
-        return m_font->createFont(description, remoteURI, syntheticBold, syntheticItalic, settings, capabilities);
+        return m_font->createFont(description, remoteURI, syntheticBold, syntheticItalic, fontCreationContext);
     }
 
     void setClient(FontLoadRequestClient* client) final

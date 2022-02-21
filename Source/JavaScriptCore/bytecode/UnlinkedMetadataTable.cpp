@@ -55,10 +55,10 @@ void UnlinkedMetadataTable::finalize()
                 buffer[i] = offset;
                 continue;
             }
+            buffer[i] = offset; // We align when we access this.
             unsigned alignment = metadataAlignment(static_cast<OpcodeID>(i));
             offset = roundUpToMultipleOf(alignment, offset);
             ASSERT(alignment <= s_maxMetadataAlignment);
-            buffer[i] = offset;
             offset += numberOfEntries * metadataSize(static_cast<OpcodeID>(i));
         }
         buffer[s_offsetTableEntries - 1] = offset;

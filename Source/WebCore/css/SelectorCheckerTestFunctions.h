@@ -39,6 +39,7 @@
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "SelectorChecker.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include <wtf/Compiler.h>
 
@@ -70,6 +71,11 @@ ALWAYS_INLINE bool isAutofilledStrongPassword(const Element& element)
 ALWAYS_INLINE bool isAutofilledStrongPasswordViewable(const Element& element)
 {
     return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isAutoFilledAndViewable();
+}
+
+ALWAYS_INLINE bool isAutofilledAndObscured(const Element& element)
+{
+    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isAutoFilledAndObscured();
 }
 
 ALWAYS_INLINE bool matchesDefaultPseudoClass(const Element& element)
@@ -109,7 +115,7 @@ ALWAYS_INLINE bool isChecked(const Element& element)
         return inputElement.shouldAppearChecked() && !inputElement.shouldAppearIndeterminate();
     }
     if (is<HTMLOptionElement>(element))
-        return const_cast<HTMLOptionElement&>(downcast<HTMLOptionElement>(element)).selected();
+        return const_cast<HTMLOptionElement&>(downcast<HTMLOptionElement>(element)).selected(AllowStyleInvalidation::No);
 
     return false;
 }
@@ -295,12 +301,12 @@ ALWAYS_INLINE bool scrollbarMatchesActivePseudoClass(const SelectorChecker::Chec
 
 ALWAYS_INLINE bool scrollbarMatchesHorizontalPseudoClass(const SelectorChecker::CheckingContext& context)
 {
-    return context.scrollbarState && context.scrollbarState->orientation == HorizontalScrollbar;
+    return context.scrollbarState && context.scrollbarState->orientation == ScrollbarOrientation::Horizontal;
 }
 
 ALWAYS_INLINE bool scrollbarMatchesVerticalPseudoClass(const SelectorChecker::CheckingContext& context)
 {
-    return context.scrollbarState && context.scrollbarState->orientation == VerticalScrollbar;
+    return context.scrollbarState && context.scrollbarState->orientation == ScrollbarOrientation::Vertical;
 }
 
 ALWAYS_INLINE bool scrollbarMatchesDecrementPseudoClass(const SelectorChecker::CheckingContext& context)
@@ -484,9 +490,7 @@ ALWAYS_INLINE bool isFrameFocused(const Element& element)
     return element.document().frame() && element.document().frame()->selection().isFocusedAndActive();
 }
 
-// This needs to match a subset of elements matchesFocusPseudoClass match since direct focus is treated
-// as a part of focus pseudo class selectors in ElementRuleCollector::collectMatchingRules.
-ALWAYS_INLINE bool matchesDirectFocusPseudoClass(const Element& element)
+ALWAYS_INLINE bool matchesLegacyDirectFocusPseudoClass(const Element& element)
 {
     if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassFocus))
         return true;
@@ -510,6 +514,9 @@ ALWAYS_INLINE bool matchesFocusPseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesFocusVisiblePseudoClass(const Element& element)
 {
+    if (!element.document().settings().focusVisibleEnabled())
+        return matchesLegacyDirectFocusPseudoClass(element);
+
     if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassFocusVisible))
         return true;
 

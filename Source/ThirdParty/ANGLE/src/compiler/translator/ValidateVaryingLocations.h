@@ -18,8 +18,9 @@ namespace sh
 class TIntermBlock;
 class TIntermSymbol;
 class TDiagnostics;
+class TType;
 
-unsigned int CalculateVaryingLocationCount(TIntermSymbol *varying, GLenum shaderType);
+unsigned int CalculateVaryingLocationCount(const TType &varyingType, GLenum shaderType);
 bool ValidateVaryingLocations(TIntermBlock *root, TDiagnostics *diagnostics, GLenum shaderType);
 
 }  // namespace sh

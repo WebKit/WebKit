@@ -29,7 +29,6 @@
 #include "CSSFontSelector.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
-#include "DocumentTimeline.h"
 #include "ElementIterator.h"
 #include "Frame.h"
 #include "HTMLBodyElement.h"
@@ -73,7 +72,7 @@ TreeResolver::~TreeResolver() = default;
 
 TreeResolver::Scope::Scope(Document& document)
     : resolver(document.styleScope().resolver())
-    , sharingResolver(document, resolver->ruleSets(), selectorFilter)
+    , sharingResolver(document, resolver->ruleSets(), selectorMatchingState)
 {
     document.setIsResolvingTreeStyle(true);
 
@@ -84,19 +83,16 @@ TreeResolver::Scope::Scope(Document& document)
 
 TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
     : resolver(shadowRoot.styleScope().resolver())
-    , sharingResolver(shadowRoot.documentScope(), resolver->ruleSets(), selectorFilter)
+    , sharingResolver(shadowRoot.documentScope(), resolver->ruleSets(), selectorMatchingState)
     , shadowRoot(&shadowRoot)
     , enclosingScope(&enclosingScope)
 {
-    resolver->setOverrideDocumentElementStyle(enclosingScope.resolver->overrideDocumentElementStyle());
 }
 
 TreeResolver::Scope::~Scope()
 {
     if (!shadowRoot)
         resolver->document().setIsResolvingTreeStyle(false);
-
-    resolver->setOverrideDocumentElementStyle(nullptr);
 }
 
 TreeResolver::Parent::Parent(Document& document)
@@ -129,13 +125,13 @@ void TreeResolver::popScope()
     return m_scopeStack.removeLast();
 }
 
-std::unique_ptr<RenderStyle> TreeResolver::styleForStyleable(const Styleable& styleable, const RenderStyle& inheritedStyle)
+std::unique_ptr<RenderStyle> TreeResolver::styleForStyleable(const Styleable& styleable, const ResolutionContext& resolutionContext)
 {
     auto& element = styleable.element;
 
     if (element.hasCustomStyleResolveCallbacks()) {
         RenderStyle* shadowHostStyle = scope().shadowRoot ? m_update->elementStyle(*scope().shadowRoot->host()) : nullptr;
-        if (auto customStyle = element.resolveCustomStyle(inheritedStyle, shadowHostStyle)) {
+        if (auto customStyle = element.resolveCustomStyle(resolutionContext, shadowHostStyle)) {
             if (customStyle->relations)
                 commitRelations(WTFMove(customStyle->relations), *m_update);
 
@@ -146,7 +142,7 @@ std::unique_ptr<RenderStyle> TreeResolver::styleForStyleable(const Styleable& st
     if (auto style = scope().sharingResolver.resolve(styleable, *m_update))
         return style;
 
-    auto elementStyle = scope().resolver->styleForElement(element, &inheritedStyle, parentBoxStyle(), RuleMatchingBehavior::MatchAllRules, &scope().selectorFilter);
+    auto elementStyle = scope().resolver->styleForElement(element, resolutionContext);
 
     if (elementStyle.relations)
         commitRelations(WTFMove(elementStyle.relations), *m_update);
@@ -210,8 +206,10 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     if (!element.rendererIsEverNeeded() && !element.hasDisplayContents())
         return { };
 
+    auto resolutionContext = makeResolutionContext();
+
     Styleable styleable { element, PseudoId::None };
-    auto newStyle = styleForStyleable(styleable, parent().style);
+    auto newStyle = styleForStyleable(styleable, resolutionContext);
 
     if (!affectsRenderedSubtree(element, *newStyle))
         return { };
@@ -223,12 +221,11 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         m_document.setHasNodesWithNonFinalStyle();
     }
 
-    auto update = createAnimatedElementUpdate(WTFMove(newStyle), styleable, parent().change, parent().style, parentBoxStyle());
+    auto update = createAnimatedElementUpdate(WTFMove(newStyle), styleable, parent().change, resolutionContext);
     auto descendantsToResolve = computeDescendantsToResolve(update.change, element.styleValidity(), parent().descendantsToResolve);
 
     if (&element == m_document.documentElement()) {
         m_documentElementStyle = RenderStyle::clonePtr(*update.style);
-        scope().resolver->setOverrideDocumentElementStyle(m_documentElementStyle.get());
 
         if (!existingStyle || existingStyle->computedFontPixelSize() != update.style->computedFontPixelSize()) {
             // "rem" units are relative to the document element's font size so we need to recompute everything.
@@ -246,7 +243,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     if (element.hasTagName(HTMLNames::meterTag)
         || is<HTMLProgressElement>(element)
         || (is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isSearchField())) {
-        if (existingStyle && update.style->appearance() != existingStyle->appearance()) {
+        if (existingStyle && update.style->effectiveAppearance() != existingStyle->effectiveAppearance()) {
             update.change = Change::Renderer;
             descendantsToResolve = DescendantsToResolve::All;
         }
@@ -259,6 +256,8 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         pseudoUpdates.set(PseudoId::Before, WTFMove(*beforeElementUpdate));
     if (auto afterElementUpdate = resolvePseudoStyle(element, update, PseudoId::After))
         pseudoUpdates.set(PseudoId::After, WTFMove(*afterElementUpdate));
+    if (auto backdropElementUpdate = resolvePseudoStyle(element, update, PseudoId::Backdrop))
+        pseudoUpdates.set(PseudoId::Backdrop, WTFMove(*backdropElementUpdate));
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     // FIXME: Track this exactly.
@@ -275,8 +274,8 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
 
 std::optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, const ElementUpdate& elementUpdate, PseudoId pseudoId)
 {
-    ASSERT(pseudoId != PseudoId::Backdrop, "This method does not handle ::backdrop currently");
-
+    if (pseudoId == PseudoId::Backdrop && !element.isInTopLayer())
+        return { };
     if (pseudoId == PseudoId::Marker && elementUpdate.style->display() != DisplayType::ListItem)
         return { };
     if (elementUpdate.style->display() == DisplayType::None)
@@ -284,10 +283,9 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, 
     if (!elementUpdate.style->hasPseudoStyle(pseudoId))
         return { };
 
-    auto& parentStyle = *elementUpdate.style;
-    auto* parentBoxStyle = parentBoxStyleForPseudo(elementUpdate);
+    auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate);
 
-    auto pseudoStyle = scope().resolver->pseudoStyleForElement(element, { pseudoId }, parentStyle, parentBoxStyle, &scope().selectorFilter);
+    auto pseudoStyle = scope().resolver->pseudoStyleForElement(element, { pseudoId }, resolutionContext);
     if (!pseudoStyle)
         return { };
 
@@ -295,7 +293,27 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, 
     if (!pseudoElementRendererIsNeeded(pseudoStyle.get()) && !hasAnimations)
         return { };
 
-    return createAnimatedElementUpdate(WTFMove(pseudoStyle), { element, pseudoId }, elementUpdate.change, parentStyle, parentBoxStyle);
+    return createAnimatedElementUpdate(WTFMove(pseudoStyle), { element, pseudoId }, elementUpdate.change, resolutionContext);
+}
+
+ResolutionContext TreeResolver::makeResolutionContext()
+{
+    return {
+        &parent().style,
+        parentBoxStyle(),
+        m_documentElementStyle.get(),
+        &scope().selectorMatchingState
+    };
+}
+
+ResolutionContext TreeResolver::makeResolutionContextForPseudoElement(const ElementUpdate& elementUpdate)
+{
+    return {
+        elementUpdate.style.get(),
+        parentBoxStyleForPseudoElement(elementUpdate),
+        m_documentElementStyle.get(),
+        &scope().selectorMatchingState
+    };
 }
 
 const RenderStyle* TreeResolver::parentBoxStyle() const
@@ -312,7 +330,7 @@ const RenderStyle* TreeResolver::parentBoxStyle() const
     return nullptr;
 }
 
-const RenderStyle* TreeResolver::parentBoxStyleForPseudo(const ElementUpdate& elementUpdate) const
+const RenderStyle* TreeResolver::parentBoxStyleForPseudoElement(const ElementUpdate& elementUpdate) const
 {
     switch (elementUpdate.style->display()) {
     case DisplayType::None:
@@ -324,7 +342,7 @@ const RenderStyle* TreeResolver::parentBoxStyleForPseudo(const ElementUpdate& el
     }
 }
 
-ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, const Styleable& styleable, Change parentChange, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle)
+ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, const Styleable& styleable, Change parentChange, const ResolutionContext& resolutionContext)
 {
     auto& element = styleable.element;
     auto& document = element.document();
@@ -333,8 +351,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     OptionSet<AnimationImpact> animationImpact;
 
     // First, we need to make sure that any new CSS animation occuring on this element has a matching WebAnimation
-    // on the document timeline. Note that we get timeline() on the Document here because we need a timeline created
-    // in case no Web Animations have been created through the JS API.
+    // on the document timeline.
     if (document.backForwardCacheState() == Document::NotInBackForwardCache && !document.renderView()->printing()) {
         if (oldStyle && (oldStyle->hasTransitions() || newStyle->hasTransitions()))
             styleable.updateCSSTransitions(*oldStyle, *newStyle);
@@ -343,7 +360,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         // to use CSS Animations as defined in the previous style change event. As such, we update CSS Animations after CSS Transitions
         // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
         if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations())
-            styleable.updateCSSAnimations(oldStyle, *newStyle, &parentStyle);
+            styleable.updateCSSAnimations(oldStyle, *newStyle, resolutionContext);
     }
 
     // Now we can update all Web animations, which will include CSS Animations as well
@@ -354,10 +371,10 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         styleable.setLastStyleChangeEventStyle(RenderStyle::clonePtr(*newStyle));
         // Apply all keyframe effects to the new style.
         auto animatedStyle = RenderStyle::clonePtr(*newStyle);
-        animationImpact = styleable.applyKeyframeEffects(*animatedStyle, *previousLastStyleChangeEventStyle, &parentStyle);
+        animationImpact = styleable.applyKeyframeEffects(*animatedStyle, *previousLastStyleChangeEventStyle, resolutionContext);
         newStyle = WTFMove(animatedStyle);
 
-        Adjuster adjuster(document, parentStyle, parentBoxStyle, styleable.pseudoId == PseudoId::None ? &element : nullptr);
+        Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, styleable.pseudoId == PseudoId::None ? &element : nullptr);
         adjuster.adjustAnimatedStyle(*newStyle, animationImpact);
     } else
         styleable.setLastStyleChangeEventStyle(nullptr);
@@ -379,7 +396,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
 
 void TreeResolver::pushParent(Element& element, const RenderStyle& style, Change change, DescendantsToResolve descendantsToResolve)
 {
-    scope().selectorFilter.pushParent(&element);
+    scope().selectorMatchingState.selectorFilter.pushParent(&element);
 
     Parent parent(element, style, change, descendantsToResolve);
 
@@ -405,7 +422,11 @@ void TreeResolver::popParent()
     if (parent().didPushScope)
         popScope();
 
-    scope().selectorFilter.popParent();
+    scope().selectorMatchingState.selectorFilter.popParent();
+
+    auto& queryContainers = scope().selectorMatchingState.queryContainers;
+    if (!queryContainers.isEmpty() && queryContainers.last().ptr() == &parentElement)
+        queryContainers.removeLast();
 
     m_parentStack.removeLast();
 }
@@ -575,6 +596,11 @@ void TreeResolver::resolveComposedTree()
 
         bool shouldIterateChildren = style && (element.childNeedsStyleRecalc() || descendantsToResolve != DescendantsToResolve::None);
 
+        if (shouldIterateChildren) {
+            if (updateQueryContainer(element, *style) == QueryContainerAction::Layout)
+                shouldIterateChildren = false;
+        }
+
         if (!m_didSeePendingStylesheet)
             m_didSeePendingStylesheet = hasLoadingStylesheet(m_document.styleScope(), element, !shouldIterateChildren);
 
@@ -593,6 +619,28 @@ void TreeResolver::resolveComposedTree()
     popParentsToDepth(1);
 }
 
+auto TreeResolver::updateQueryContainer(Element& element, const RenderStyle& style) -> QueryContainerAction
+{
+    if (style.containerType() == ContainerType::None)
+        return QueryContainerAction::None;
+
+    scope().selectorMatchingState.queryContainers.append(element);
+
+    if (m_unresolvedQueryContainers.remove(&element)) {
+        m_resolvedQueryContainers.add(&element);
+        return QueryContainerAction::Continue;
+    }
+
+    if (m_update->isEmpty()) {
+        m_resolvedQueryContainers.add(&element);
+        return QueryContainerAction::Continue;
+    }
+
+    m_unresolvedQueryContainers.add(&element);
+
+    return QueryContainerAction::Layout;
+}
+
 std::unique_ptr<Update> TreeResolver::resolve()
 {
     auto& renderView = *m_document.renderView();
@@ -602,6 +650,11 @@ std::unique_ptr<Update> TreeResolver::resolve()
         m_document.styleScope().resolver();
         return nullptr;
     }
+
+    // FIXME: Just need to restore the ancestor marking.
+    for (auto& queryContainer : m_unresolvedQueryContainers)
+        queryContainer->invalidateStyleForSubtreeInternal();
+
     if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
         return WTFMove(m_update);
 
@@ -646,7 +699,7 @@ static Vector<RefPtr<Frame>>& memoryCacheClientCallsResumeQueue()
     return vector;
 }
 
-void queuePostResolutionCallback(Function<void ()>&& callback)
+void deprecatedQueuePostResolutionCallback(Function<void()>&& callback)
 {
     postResolutionCallbackQueue().append(WTFMove(callback));
 }

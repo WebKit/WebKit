@@ -22,7 +22,6 @@
 
 namespace rx
 {
-
 TransformFeedbackVk::TransformFeedbackVk(const gl::TransformFeedbackState &state)
     : TransformFeedbackImpl(state),
       mRebindTransformFeedbackBuffer(false),
@@ -32,17 +31,33 @@ TransformFeedbackVk::TransformFeedbackVk(const gl::TransformFeedbackState &state
       mBufferSizes{},
       mAlignedBufferOffsets{},
       mCounterBufferHandles{}
-{}
+{
+    for (angle::SubjectIndex bufferIndex = 0;
+         bufferIndex < gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS; ++bufferIndex)
+    {
+        mBufferObserverBindings.emplace_back(this, bufferIndex);
+    }
+}
 
 TransformFeedbackVk::~TransformFeedbackVk() {}
 
 void TransformFeedbackVk::onDestroy(const gl::Context *context)
 {
-    RendererVk *rendererVk = vk::GetImpl(context)->getRenderer();
+    ContextVk *contextVk   = vk::GetImpl(context);
+    RendererVk *rendererVk = contextVk->getRenderer();
 
+    releaseCounterBuffers(rendererVk);
+}
+
+void TransformFeedbackVk::releaseCounterBuffers(RendererVk *renderer)
+{
     for (vk::BufferHelper &bufferHelper : mCounterBufferHelpers)
     {
-        bufferHelper.release(rendererVk);
+        bufferHelper.release(renderer);
+    }
+    for (VkBuffer &buffer : mCounterBufferHandles)
+    {
+        buffer = VK_NULL_HANDLE;
     }
 }
 
@@ -59,8 +74,10 @@ void TransformFeedbackVk::initializeXFBBuffersDesc(ContextVk *contextVk, size_t 
         if (bufferVk->isBufferValid())
         {
             mBufferHelpers[bufferIndex] = &bufferVk->getBuffer();
-            mBufferOffsets[bufferIndex] = binding.getOffset();
-            mBufferSizes[bufferIndex]   = gl::GetBoundBufferAvailableSize(binding);
+            mBufferOffsets[bufferIndex] =
+                binding.getOffset() + mBufferHelpers[bufferIndex]->getOffset();
+            mBufferSizes[bufferIndex] = gl::GetBoundBufferAvailableSize(binding);
+            mBufferObserverBindings[bufferIndex].bind(bufferVk);
         }
         else
         {
@@ -69,10 +86,12 @@ void TransformFeedbackVk::initializeXFBBuffersDesc(ContextVk *contextVk, size_t 
             mBufferHelpers[bufferIndex]  = &nullBuffer;
             mBufferOffsets[bufferIndex]  = 0;
             mBufferSizes[bufferIndex]    = nullBuffer.getSize();
+            mBufferObserverBindings[bufferIndex].reset();
         }
 
         mXFBBuffersDesc.updateTransformFeedbackBuffer(
-            bufferIndex, mBufferHelpers[bufferIndex]->getBufferSerial());
+            bufferIndex, mBufferHelpers[bufferIndex]->getBufferSerial(),
+            mBufferOffsets[bufferIndex]);
     }
 }
 
@@ -130,23 +149,33 @@ angle::Result TransformFeedbackVk::begin(const gl::Context *context,
         mRebindTransformFeedbackBuffer = true;
     }
 
-    return contextVk->onBeginTransformFeedback(xfbBufferCount, mBufferHelpers);
+    return contextVk->onBeginTransformFeedback(xfbBufferCount, mBufferHelpers,
+                                               mCounterBufferHelpers);
 }
 
 angle::Result TransformFeedbackVk::end(const gl::Context *context)
 {
+    ContextVk *contextVk = vk::GetImpl(context);
+
     // If there's an active transform feedback query, accumulate the primitives drawn.
     const gl::State &glState = context->getState();
     gl::Query *transformFeedbackQuery =
         glState.getActiveQuery(gl::QueryType::TransformFeedbackPrimitivesWritten);
 
-    if (transformFeedbackQuery)
+    if (transformFeedbackQuery && contextVk->getFeatures().emulateTransformFeedback.enabled)
     {
         vk::GetImpl(transformFeedbackQuery)->onTransformFeedbackEnd(mState.getPrimitivesDrawn());
     }
 
-    ContextVk *contextVk = vk::GetImpl(context);
+    for (angle::ObserverBinding &bufferBinding : mBufferObserverBindings)
+    {
+        bufferBinding.reset();
+    }
+
     contextVk->onEndTransformFeedback();
+
+    releaseCounterBuffers(contextVk->getRenderer());
+
     return angle::Result::Continue;
 }
 
@@ -165,7 +194,8 @@ angle::Result TransformFeedbackVk::pause(const gl::Context *context)
 
         for (size_t xfbIndex = 0; xfbIndex < xfbBufferCount; ++xfbIndex)
         {
-            mXFBBuffersDesc.updateTransformFeedbackBuffer(xfbIndex, emptyBuffer.getBufferSerial());
+            mXFBBuffersDesc.updateTransformFeedbackBuffer(xfbIndex, emptyBuffer.getBufferSerial(),
+                                                          0);
         }
     }
 
@@ -184,7 +214,8 @@ angle::Result TransformFeedbackVk::resume(const gl::Context *context)
         initializeXFBBuffersDesc(contextVk, xfbBufferCount);
     }
 
-    return contextVk->onBeginTransformFeedback(xfbBufferCount, mBufferHelpers);
+    return contextVk->onBeginTransformFeedback(xfbBufferCount, mBufferHelpers,
+                                               mCounterBufferHelpers);
 }
 
 angle::Result TransformFeedbackVk::bindIndexedBuffer(
@@ -202,17 +233,20 @@ angle::Result TransformFeedbackVk::bindIndexedBuffer(
 
 void TransformFeedbackVk::updateDescriptorSetLayout(
     ContextVk *contextVk,
-    ShaderInterfaceVariableInfoMap &vsVariableInfoMap,
+    const ShaderInterfaceVariableInfoMap &variableInfoMap,
     size_t xfbBufferCount,
     vk::DescriptorSetLayoutDesc *descSetLayoutOut) const
 {
     if (!contextVk->getFeatures().emulateTransformFeedback.enabled)
+    {
         return;
+    }
 
     for (uint32_t bufferIndex = 0; bufferIndex < xfbBufferCount; ++bufferIndex)
     {
-        const std::string bufferName            = GetXfbBufferName(bufferIndex);
-        const ShaderInterfaceVariableInfo &info = vsVariableInfoMap[bufferName];
+        const std::string bufferName = GetXfbBufferName(bufferIndex);
+        const ShaderInterfaceVariableInfo &info =
+            variableInfoMap.get(gl::ShaderType::Vertex, bufferName);
 
         descSetLayoutOut->update(info.binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1,
                                  VK_SHADER_STAGE_VERTEX_BIT, nullptr);
@@ -220,33 +254,39 @@ void TransformFeedbackVk::updateDescriptorSetLayout(
 }
 
 void TransformFeedbackVk::initDescriptorSet(ContextVk *contextVk,
+                                            const ShaderInterfaceVariableInfoMap &variableInfoMap,
                                             size_t xfbBufferCount,
                                             VkDescriptorSet descSet) const
 {
     if (!contextVk->getFeatures().emulateTransformFeedback.enabled)
+    {
         return;
+    }
 
     VkDescriptorBufferInfo *descriptorBufferInfo =
         contextVk->allocDescriptorBufferInfos(xfbBufferCount);
-    vk::BufferHelper *emptyBuffer = &contextVk->getEmptyBuffer();
+    const vk::BufferHelper &emptyBuffer = contextVk->getEmptyBuffer();
 
     for (size_t bufferIndex = 0; bufferIndex < xfbBufferCount; ++bufferIndex)
     {
         VkDescriptorBufferInfo &bufferInfo = descriptorBufferInfo[bufferIndex];
-        bufferInfo.buffer                  = emptyBuffer->getBuffer().getHandle();
-        bufferInfo.offset                  = 0;
-        bufferInfo.range                   = VK_WHOLE_SIZE;
+        bufferInfo.buffer                  = emptyBuffer.getBuffer().getHandle();
+        bufferInfo.offset                  = emptyBuffer.getOffset();
+        bufferInfo.range                   = emptyBuffer.getSize();
     }
 
-    writeDescriptorSet(contextVk, xfbBufferCount, descriptorBufferInfo, descSet);
+    writeDescriptorSet(contextVk, variableInfoMap, xfbBufferCount, descriptorBufferInfo, descSet);
 }
 
 void TransformFeedbackVk::updateDescriptorSet(ContextVk *contextVk,
                                               const gl::ProgramState &programState,
+                                              const ShaderInterfaceVariableInfoMap &variableInfoMap,
                                               VkDescriptorSet descSet) const
 {
     if (!contextVk->getFeatures().emulateTransformFeedback.enabled)
+    {
         return;
+    }
 
     const gl::ProgramExecutable *executable = contextVk->getState().getProgramExecutable();
     ASSERT(executable);
@@ -271,7 +311,7 @@ void TransformFeedbackVk::updateDescriptorSet(ContextVk *contextVk,
         ASSERT(bufferInfo.range != 0);
     }
 
-    writeDescriptorSet(contextVk, xfbBufferCount, descriptorBufferInfo, descSet);
+    writeDescriptorSet(contextVk, variableInfoMap, xfbBufferCount, descriptorBufferInfo, descSet);
 }
 
 void TransformFeedbackVk::getBufferOffsets(ContextVk *contextVk,
@@ -280,14 +320,15 @@ void TransformFeedbackVk::getBufferOffsets(ContextVk *contextVk,
                                            size_t offsetsSize) const
 {
     if (!contextVk->getFeatures().emulateTransformFeedback.enabled)
+    {
         return;
+    }
 
-    GLsizeiptr verticesDrawn = mState.getVerticesDrawn();
-    const std::vector<GLsizei> &bufferStrides =
-        mState.getBoundProgram()->getTransformFeedbackStrides();
+    GLsizeiptr verticesDrawn                = mState.getVerticesDrawn();
     const gl::ProgramExecutable *executable = contextVk->getState().getProgramExecutable();
     ASSERT(executable);
-    size_t xfbBufferCount = executable->getTransformFeedbackBufferCount();
+    const std::vector<GLsizei> &bufferStrides = executable->getTransformFeedbackStrides();
+    size_t xfbBufferCount                     = executable->getTransformFeedbackBufferCount();
 
     ASSERT(xfbBufferCount > 0);
 
@@ -312,16 +353,41 @@ void TransformFeedbackVk::getBufferOffsets(ContextVk *contextVk,
     }
 }
 
+void TransformFeedbackVk::onSubjectStateChange(angle::SubjectIndex index,
+                                               angle::SubjectMessage message)
+{
+    if (message == angle::SubjectMessage::BufferVkStorageChanged)
+    {
+        ASSERT(index < mBufferObserverBindings.size());
+        const gl::OffsetBindingPointer<gl::Buffer> &binding = mState.getIndexedBuffer(index);
+        ASSERT(binding.get());
+
+        BufferVk *bufferVk = vk::GetImpl(binding.get());
+
+        ASSERT(bufferVk->isBufferValid());
+        mBufferHelpers[index] = &bufferVk->getBuffer();
+        mBufferOffsets[index] = binding.getOffset() + mBufferHelpers[index]->getOffset();
+        mBufferSizes[index]   = gl::GetBoundBufferAvailableSize(binding);
+        mBufferObserverBindings[index].bind(bufferVk);
+
+        mXFBBuffersDesc.updateTransformFeedbackBuffer(
+            index, mBufferHelpers[index]->getBufferSerial(), mBufferOffsets[index]);
+
+        mBufferHandles[index] = mBufferHelpers[index]->getBuffer().getHandle();
+    }
+}
+
 void TransformFeedbackVk::writeDescriptorSet(ContextVk *contextVk,
+                                             const ShaderInterfaceVariableInfoMap &variableInfoMap,
                                              size_t xfbBufferCount,
-                                             VkDescriptorBufferInfo *pBufferInfo,
+                                             VkDescriptorBufferInfo *bufferInfo,
                                              VkDescriptorSet descSet) const
 {
-    ProgramExecutableVk *executableVk = contextVk->getExecutable();
-    ShaderMapInterfaceVariableInfoMap variableInfoMap =
-        executableVk->getShaderInterfaceVariableInfoMap();
-    const std::string bufferName      = GetXfbBufferName(0);
-    ShaderInterfaceVariableInfo &info = variableInfoMap[gl::ShaderType::Vertex][bufferName];
+    ASSERT(contextVk->getFeatures().emulateTransformFeedback.enabled);
+
+    const std::string bufferName = GetXfbBufferName(0);
+    const ShaderInterfaceVariableInfo &info =
+        variableInfoMap.get(gl::ShaderType::Vertex, bufferName);
 
     VkWriteDescriptorSet &writeDescriptorInfo = contextVk->allocWriteDescriptorSet();
     writeDescriptorInfo.sType                 = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -331,7 +397,7 @@ void TransformFeedbackVk::writeDescriptorSet(ContextVk *contextVk,
     writeDescriptorInfo.descriptorCount       = static_cast<uint32_t>(xfbBufferCount);
     writeDescriptorInfo.descriptorType        = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     writeDescriptorInfo.pImageInfo            = nullptr;
-    writeDescriptorInfo.pBufferInfo           = pBufferInfo;
+    writeDescriptorInfo.pBufferInfo           = bufferInfo;
     writeDescriptorInfo.pTexelBufferView      = nullptr;
 }
 

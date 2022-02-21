@@ -87,7 +87,7 @@ private:
 };
 
 inline SampleBufferDisplayLayer::SampleBufferDisplayLayer(Client& client)
-    : m_client(makeWeakPtr(client))
+    : m_client(client)
 {
 }
 

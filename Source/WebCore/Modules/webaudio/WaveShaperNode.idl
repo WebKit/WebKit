@@ -24,10 +24,11 @@
 
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     Exposed=Window
 ] interface WaveShaperNode : AudioNode {
-    [EnabledBySetting=WebAudio] constructor(BaseAudioContext context, optional WaveShaperOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor(BaseAudioContext context, optional WaveShaperOptions options);
 
     [ImplementedAs=curveForBindings] attribute Float32Array? curve;
     [ImplementedAs=oversampleForBindings] attribute OverSampleType oversample;

@@ -25,8 +25,12 @@
 
 #include "IsoSharedHeap.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 DEFINE_STATIC_PER_PROCESS_STORAGE(IsoSharedHeap);
 
 } // namespace bmalloc
+
+#endif

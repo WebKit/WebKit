@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-// These values are arranged so that they can be used with WTF::OptionSet.
+// These values are arranged so that they can be used with OptionSet.
 // And using it with Markable via EnumMarkableTraits.
 // See WKLinkIconType.
 

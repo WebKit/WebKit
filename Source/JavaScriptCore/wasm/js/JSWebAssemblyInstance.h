@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSDestructibleObject.h"
-#include "JSWebAssemblyCodeBlock.h"
 #include "JSWebAssemblyGlobal.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyTable.h"
@@ -44,17 +43,19 @@ class JSWebAssemblyModule;
 class WebAssemblyModuleRecord;
 
 namespace Wasm {
-class CodeBlock;
+class CalleeGroup;
 }
 
 class JSWebAssemblyInstance final : public JSNonFinalObject {
+    friend class LLIntOffsetsExtractor;
+
 public:
     using Base = JSNonFinalObject;
     static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
 
     template<typename CellType, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
         return vm.webAssemblyInstanceSpace<mode>();
     }
@@ -66,16 +67,16 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    void finalizeCreation(VM&, JSGlobalObject*, Ref<Wasm::CodeBlock>&&, JSObject* importObject, Wasm::CreationMode);
+    void initializeImports(JSGlobalObject*, JSObject* importObject, Wasm::CreationMode);
+    void finalizeCreation(VM&, JSGlobalObject*, Ref<Wasm::CalleeGroup>&&, Wasm::CreationMode);
     
     Wasm::Instance& instance() { return m_instance.get(); }
     WebAssemblyModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
 
     JSWebAssemblyMemory* memory() { return m_memory.get(); }
     void setMemory(VM& vm, JSWebAssemblyMemory* value) {
-        ASSERT(!memory());
         m_memory.set(vm, this, value);
-        instance().setMemory(makeRef(memory()->memory()));
+        instance().setMemory(memory()->memory());
     }
     Wasm::MemoryMode memoryMode() { return memory()->memory().mode(); }
 
@@ -85,14 +86,14 @@ public:
         ASSERT(index < m_tables.size());
         ASSERT(!table(index));
         m_tables[index].set(vm, this, value);
-        instance().setTable(index, makeRef(*table(index)->table()));
+        instance().setTable(index, *table(index)->table());
     }
 
     void linkGlobal(VM& vm, uint32_t index, JSWebAssemblyGlobal* value)
     {
         ASSERT(value == value->global()->owner<JSWebAssemblyGlobal>());
-        instance().linkGlobal(index, makeRef(*value->global()));
-        vm.heap.writeBarrier(this, value);
+        instance().linkGlobal(index, *value->global());
+        vm.writeBarrier(this, value);
     }
 
     JSGlobalObject* globalObject() const { return m_globalObject.get(); }
@@ -113,7 +114,6 @@ private:
 
     WriteBarrier<JSGlobalObject> m_globalObject;
     WriteBarrier<JSWebAssemblyModule> m_module;
-    WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlock;
     WriteBarrier<WebAssemblyModuleRecord> m_moduleRecord;
     WriteBarrier<JSWebAssemblyMemory> m_memory;
     FixedVector<WriteBarrier<JSWebAssemblyTable>> m_tables;

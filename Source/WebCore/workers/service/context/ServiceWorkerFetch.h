@@ -27,6 +27,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "FetchIdentifier.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -35,10 +37,10 @@ class FetchEvent;
 struct FetchOptions;
 class FetchResponse;
 class FormData;
+class NetworkLoadMetrics;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
-struct ServiceWorkerClientIdentifier;
 class ServiceWorkerGlobalScope;
 class ServiceWorkerGlobalScope;
 class SharedBuffer;
@@ -50,16 +52,17 @@ public:
 
     virtual void didReceiveRedirection(const ResourceResponse&) = 0;
     virtual void didReceiveResponse(const ResourceResponse&) = 0;
-    virtual void didReceiveData(Ref<SharedBuffer>&&) = 0;
+    virtual void didReceiveData(const SharedBuffer&) = 0;
     virtual void didReceiveFormDataAndFinish(Ref<FormData>&&) = 0;
     virtual void didFail(const ResourceError&) = 0;
-    virtual void didFinish() = 0;
+    virtual void didFinish(const NetworkLoadMetrics&) = 0;
     virtual void didNotHandle() = 0;
     virtual void cancel() = 0;
     virtual void continueDidReceiveResponse() = 0;
+    virtual void convertFetchToDownload() = 0;
 };
 
-void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, std::optional<ServiceWorkerClientIdentifier>, ResourceRequest&&, String&& referrer, FetchOptions&&);
+void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, ResourceRequest&&, String&& referrer, FetchOptions&&, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
 };
 
 } // namespace WebCore

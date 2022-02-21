@@ -29,7 +29,7 @@
 
 #include "ExceptionOr.h"
 #include "LegacyCDM.h"
-#include <JavaScriptCore/Uint8Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 

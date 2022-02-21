@@ -83,7 +83,7 @@ static COMPtr<IAccessible> findAccessibleObjectById(AccessibilityUIElement paren
         return 0;
 
     _variant_t value;
-    _bstr_t elementIdAttributeKey(L"AXDRTElementIdAttribute");
+    _bstr_t elementIdAttributeKey(L"AXDOMIdentifier");
     if (SUCCEEDED(comparable->get_attribute(elementIdAttributeKey, &value.GetVARIANT()))) {
         ASSERT(V_VT(&value) == VT_BSTR);
         if (VARCMP_EQ == ::VarBstrCmp(value.bstrVal, idAttribute, LOCALE_USER_DEFAULT, 0))

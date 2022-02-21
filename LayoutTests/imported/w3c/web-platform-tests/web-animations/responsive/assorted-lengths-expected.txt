@@ -1,0 +1,12 @@
+
+PASS bottom responsive to style changes
+PASS height responsive to style changes
+PASS letterSpacing responsive to style changes
+PASS letterSpacing can be normal
+PASS marginRight responsive to style changes
+PASS marginRight allows percentages
+PASS outlineOffset responsive to style changes
+PASS perspective responsive to style changes
+PASS perspective can be none
+PASS wordSpacing responsive to style changes
+

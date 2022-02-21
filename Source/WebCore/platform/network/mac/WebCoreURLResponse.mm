@@ -35,6 +35,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 

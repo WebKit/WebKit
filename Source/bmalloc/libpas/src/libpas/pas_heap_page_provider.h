@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,14 +28,22 @@
 
 #include "pas_alignment.h"
 #include "pas_allocation_result.h"
+#include "pas_heap_ref.h"
 #include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
 
+struct pas_physical_memory_transaction;
+typedef struct pas_physical_memory_transaction pas_physical_memory_transaction;
+
+/* Heap and transaction can be NULL, in which case, assume the worst. Most implementations of this
+   function never need the transaction or the heap. */
 typedef pas_allocation_result (*pas_heap_page_provider)(
     size_t size,
     pas_alignment alignment,
     const char* name,
+    pas_heap* heap, /* Can be NULL. */
+    pas_physical_memory_transaction* transaction, /* Can be NULL. */
     void *arg);
 
 PAS_END_EXTERN_C;

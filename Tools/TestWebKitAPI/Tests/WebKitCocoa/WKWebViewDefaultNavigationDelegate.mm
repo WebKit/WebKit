@@ -27,14 +27,13 @@
 
 #if PLATFORM(MAC)
 
+#import "DeprecatedGlobalValues.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKWebView.h>
 
 static NSString *nonHTTPURLString = @"notreal:/hello";
-
-static bool isDone;
 
 static void newOpenURL(id self, SEL _cmd, NSURL* value)
 {

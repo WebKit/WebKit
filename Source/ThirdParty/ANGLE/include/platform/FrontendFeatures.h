@@ -36,19 +36,10 @@ struct FrontendFeatures : angle::FeatureSetBase
         angle::FeatureCategory::FrontendWorkarounds,
         "On some GPUs, program binaries don't contain transform feedback varyings", &members};
 
-    // On Windows Intel OpenGL drivers TexImage sometimes seems to interact with the Framebuffer.
-    // Flaky crashes can occur unless we sync the Framebuffer bindings. The workaround is to add
-    // Framebuffer binding dirty bits to TexImage updates. See http://anglebug.com/2906
-    angle::Feature syncFramebufferBindingsOnTexImage = {
-        "sync_framebuffer_bindings_on_tex_image", angle::FeatureCategory::FrontendWorkarounds,
-        "On some drivers TexImage sometimes seems to interact "
-        "with the Framebuffer",
-        &members};
-
     angle::Feature scalarizeVecAndMatConstructorArgs = {
         "scalarize_vec_and_mat_constructor_args", angle::FeatureCategory::FrontendWorkarounds,
         "Always rewrite vec/mat constructors to be consistent", &members,
-        "http://crbug.com/398694"};
+        "http://crbug.com/1165751"};
 
     // Disable support for GL_OES_get_program_binary
     angle::Feature disableProgramBinary = {
@@ -65,6 +56,33 @@ struct FrontendFeatures : angle::FeatureSetBase
     angle::Feature allowCompressedFormats = {"allow_compressed_formats",
                                              angle::FeatureCategory::FrontendWorkarounds,
                                              "Allow compressed formats", &members};
+
+    angle::Feature captureLimits = {"enable_capture_limits",
+                                    angle::FeatureCategory::FrontendFeatures,
+                                    "Set the context limits like frame capturing was enabled",
+                                    &members, "http://anglebug.com/5750"};
+
+    // Whether we should compress pipeline cache in thread pool before it's stored in blob cache.
+    // http://anglebug.com/4722
+    angle::Feature enableCompressingPipelineCacheInThreadPool = {
+        "enableCompressingPipelineCacheInThreadPool", angle::FeatureCategory::FrontendWorkarounds,
+        "Enable compressing pipeline cache in thread pool.", &members, "http://anglebug.com/4722"};
+
+    // Forces on robust resource init. Useful for some tests to avoid undefined values.
+    angle::Feature forceRobustResourceInit = {
+        "forceRobustResourceInit", angle::FeatureCategory::FrontendFeatures,
+        "Force-enable robust resource init", &members, "http://anglebug.com/6041"};
+
+    // Forces on shader variable init to avoid undefined values in tests. This feature is enabled
+    // for WebGL and frame capture, which both require deterministic results.
+    angle::Feature forceInitShaderVariables = {
+        "forceInitShaderVariables", angle::FeatureCategory::FrontendFeatures,
+        "Force-enable shader variable initialization", &members};
+
+    angle::Feature enableProgramBinaryForCapture = {
+        "enableProgramBinaryForCapture", angle::FeatureCategory::FrontendFeatures,
+        "Even if FrameCapture is enabled, enable GL_OES_get_program_binary", &members,
+        "http://anglebug.com/5658"};
 };
 
 inline FrontendFeatures::FrontendFeatures()  = default;

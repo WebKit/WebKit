@@ -36,6 +36,8 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 
 ALLOW_UNUSED_PARAMETERS_END
 
+#include <wtf/ThreadSafeRefCounted.h>
+
 namespace WebCore {
 
 static inline RTCIceTransportState toRTCIceTransportState(webrtc::IceTransportState state)
@@ -93,26 +95,40 @@ private:
 
 LibWebRTCIceTransportBackendObserver::LibWebRTCIceTransportBackendObserver(RTCIceTransportBackend::Client& client, rtc::scoped_refptr<webrtc::IceTransportInterface>&& backend)
     : m_backend(WTFMove(backend))
-    , m_client(makeWeakPtr(client))
+    , m_client(client)
 {
     ASSERT(m_backend);
 }
 
 void LibWebRTCIceTransportBackendObserver::start()
 {
-    LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = makeRef(*this)]() mutable {
+    LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }]() mutable {
         auto* internal = m_backend->internal();
         if (!internal)
             return;
         internal->SignalIceTransportStateChanged.connect(this, &LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged);
         internal->SignalGatheringState.connect(this, &LibWebRTCIceTransportBackendObserver::onGatheringStateChanged);
+        auto transportState = internal->GetIceTransportState();
+        // We start observing a bit late and might miss the checking state. Synthesize it as needed.
+        if (transportState > webrtc::IceTransportState::kChecking && transportState != webrtc::IceTransportState::kClosed) {
+            callOnMainThread([protectedThis = Ref { *this }] {
+                if (protectedThis->m_client)
+                    protectedThis->m_client->onStateChanged(RTCIceTransportState::Checking);
+            });
+        }
+        callOnMainThread([protectedThis = Ref { *this }, transportState, gatheringState = internal->gathering_state()] {
+            if (!protectedThis->m_client)
+                return;
+            protectedThis->m_client->onStateChanged(toRTCIceTransportState(transportState));
+            protectedThis->m_client->onGatheringStateChanged(toRTCIceGatheringState(gatheringState));
+        });
     });
 }
 
 void LibWebRTCIceTransportBackendObserver::stop()
 {
     m_client = nullptr;
-    LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = makeRef(*this)] {
+    LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }] {
         auto* internal = m_backend->internal();
         if (!internal)
             return;
@@ -123,7 +139,7 @@ void LibWebRTCIceTransportBackendObserver::stop()
 
 void LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged(cricket::IceTransportInternal* internal)
 {
-    callOnMainThread([protectedThis = makeRef(*this), state = internal->GetIceTransportState()] {
+    callOnMainThread([protectedThis = Ref { *this }, state = internal->GetIceTransportState()] {
         if (protectedThis->m_client)
             protectedThis->m_client->onStateChanged(toRTCIceTransportState(state));
     });
@@ -131,7 +147,7 @@ void LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged(cricket::I
 
 void LibWebRTCIceTransportBackendObserver::onGatheringStateChanged(cricket::IceTransportInternal* internal)
 {
-    callOnMainThread([protectedThis = makeRef(*this), state = internal->gathering_state()] {
+    callOnMainThread([protectedThis = Ref { *this }, state = internal->gathering_state()] {
         if (protectedThis->m_client)
             protectedThis->m_client->onGatheringStateChanged(toRTCIceGatheringState(state));
     });

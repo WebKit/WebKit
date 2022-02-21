@@ -24,48 +24,51 @@
  */
 
 #include "config.h"
-
-#if ENABLE(RESIZE_OBSERVER)
 #include "ResizeObservation.h"
 
+#include "ElementInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "RenderBox.h"
 #include "SVGElement.h"
 
 namespace WebCore {
 
-Ref<ResizeObservation> ResizeObservation::create(Element& target)
+Ref<ResizeObservation> ResizeObservation::create(Element& target, ResizeObserverBoxOptions observedBox)
 {
-    return adoptRef(*new ResizeObservation(target));
+    return adoptRef(*new ResizeObservation(target, observedBox));
 }
 
-ResizeObservation::ResizeObservation(Element& element)
-    : m_target { makeWeakPtr(element) }
-{
-}
-
-ResizeObservation::~ResizeObservation()
+ResizeObservation::ResizeObservation(Element& element, ResizeObserverBoxOptions observedBox)
+    : m_target { element }
+    , m_observedBox { observedBox }
 {
 }
 
-void ResizeObservation::updateObservationSize(const LayoutSize& size)
+ResizeObservation::~ResizeObservation() = default;
+
+void ResizeObservation::updateObservationSize(const BoxSizes& boxSizes)
 {
-    m_lastObservationSize = size;
+    m_lastObservationSizes = boxSizes;
 }
 
-LayoutSize ResizeObservation::computeObservedSize() const
+auto ResizeObservation::computeObservedSizes() const -> BoxSizes
 {
     if (m_target->isSVGElement()) {
-        if (auto svgRect = downcast<SVGElement>(*m_target).getBoundingBox())
-            return LayoutSize(svgRect->width(), svgRect->height());
+        if (auto svgRect = downcast<SVGElement>(*m_target).getBoundingBox()) {
+            auto size = LayoutSize(svgRect->width(), svgRect->height());
+            return { size, size, size };
+        }
     }
     auto* box = m_target->renderBox();
     if (box) {
-        auto contentSize = box->contentSize();
-        return LayoutSize(adjustLayoutUnitForAbsoluteZoom(contentSize.width(), *box), adjustLayoutUnitForAbsoluteZoom(contentSize.height(), *box));
+        return {
+            adjustLayoutSizeForAbsoluteZoom(box->contentSize(), *box),
+            adjustLayoutSizeForAbsoluteZoom(box->contentLogicalSize(), *box),
+            adjustLayoutSizeForAbsoluteZoom(box->borderBoxLogicalSize(), *box)
+        };
     }
 
-    return LayoutSize();
+    return { };
 }
 
 LayoutPoint ResizeObservation::computeTargetLocation() const
@@ -80,13 +83,40 @@ LayoutPoint ResizeObservation::computeTargetLocation() const
 
 FloatRect ResizeObservation::computeContentRect() const
 {
-    return FloatRect(FloatPoint(computeTargetLocation()), FloatSize(m_lastObservationSize));
+    return FloatRect(FloatPoint(computeTargetLocation()), FloatSize(m_lastObservationSizes.contentBoxSize));
 }
 
-bool ResizeObservation::elementSizeChanged(LayoutSize& currentSize) const
+FloatSize ResizeObservation::borderBoxSize() const
 {
-    currentSize = computeObservedSize();
-    return m_lastObservationSize != currentSize;
+    return m_lastObservationSizes.borderBoxLogicalSize;
+}
+
+FloatSize ResizeObservation::contentBoxSize() const
+{
+    return m_lastObservationSizes.contentBoxLogicalSize;
+}
+
+FloatSize ResizeObservation::snappedContentBoxSize() const
+{
+    return m_lastObservationSizes.contentBoxLogicalSize; // FIXME: Need to pixel snap.
+}
+
+std::optional<ResizeObservation::BoxSizes> ResizeObservation::elementSizeChanged() const
+{
+    auto currentSizes = computeObservedSizes();
+
+    switch (m_observedBox) {
+    case ResizeObserverBoxOptions::BorderBox:
+        if (m_lastObservationSizes.borderBoxLogicalSize != currentSizes.borderBoxLogicalSize)
+            return currentSizes;
+        break;
+    case ResizeObserverBoxOptions::ContentBox:
+        if (m_lastObservationSizes.contentBoxLogicalSize != currentSizes.contentBoxLogicalSize)
+            return currentSizes;
+        break;
+    }
+
+    return { };
 }
 
 size_t ResizeObservation::targetElementDepth() const
@@ -101,5 +131,3 @@ size_t ResizeObservation::targetElementDepth() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(RESIZE_OBSERVER)

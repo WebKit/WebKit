@@ -41,6 +41,7 @@ class BuilderState;
 struct ResolvedURL {
     String specifiedURLString;
     URL resolvedURL;
+    bool isLocalURL() const;
 };
 
 class CSSImageValue final : public CSSValue {
@@ -54,13 +55,16 @@ public:
     CachedImage* loadImage(CachedResourceLoader&, const ResourceLoaderOptions&);
     CachedImage* cachedImage() const { return m_cachedImage ? m_cachedImage.value().get() : nullptr; }
 
+    // Take care when using this, and read https://drafts.csswg.org/css-values/#relative-urls
     const URL& imageURL() const { return m_location.resolvedURL; }
+
+    URL reresolvedURL(const Document&) const;
 
     String customCSSText() const;
 
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
-    bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
+    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
 
     bool equals(const CSSImageValue&) const;
 
@@ -73,8 +77,6 @@ public:
 private:
     CSSImageValue(ResolvedURL&&, LoadedFromOpaqueSource);
     explicit CSSImageValue(CachedImage&);
-
-    URL reresolvedURL(const Document&) const;
 
     ResolvedURL m_location;
     std::optional<CachedResourceHandle<CachedImage>> m_cachedImage;

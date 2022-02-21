@@ -84,13 +84,13 @@ void NetworkStorageSessionMap::ensureSession(PAL::SessionID sessionID, const Str
     if (!addResult.isNewEntry)
         return;
 
-    auto identifier = makeString(identifierBase, ".PrivateBrowsing.", createCanonicalUUIDString()).createCFString();
+    auto identifier = makeString(identifierBase, ".PrivateBrowsing.", createVersion4UUIDString()).createCFString();
 
     RetainPtr<CFURLStorageSessionRef> storageSession;
     if (sessionID.isEphemeral())
         storageSession = WebCore::createPrivateStorageSession(identifier.get());
     else
-        storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(identifier.get());
+        storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(identifier.get(), WebCore::NetworkStorageSession::ShouldDisableCFURLCache::Yes);
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
     if (WebCore::NetworkStorageSession::processMayUseCookieAPI()) {

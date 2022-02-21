@@ -1,0 +1,6 @@
+
+FAIL @counter-style unlayered overrides layered assert_equals: expected "32px" but got "0px"
+FAIL @counter-style override between layers assert_equals: expected "32px" but got "6px"
+FAIL @counter-style override update with appended sheet 1 assert_equals: expected "32px" but got "6px"
+FAIL @counter-style override update with appended sheet 2 assert_equals: expected "32px" but got "6px"
+

@@ -1,0 +1,4 @@
+
+
+FAIL setValue(sanitizedValue) is reflected in visible text field content assert_equals: value is sanitized expected "foo@bar" but got ""
+

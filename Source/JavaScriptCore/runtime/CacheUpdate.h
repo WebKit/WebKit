@@ -28,7 +28,7 @@
 #include "CachePayload.h"
 #include "CachedTypes.h"
 #include "CodeSpecializationKind.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace JSC {
 
@@ -57,7 +57,7 @@ public:
     const FunctionUpdate& asFunction() const;
 
 private:
-    Variant<GlobalUpdate, FunctionUpdate> m_update;
+    std::variant<GlobalUpdate, FunctionUpdate> m_update;
 };
 
 } // namespace JSC

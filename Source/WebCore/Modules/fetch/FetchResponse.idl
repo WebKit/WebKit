@@ -43,10 +43,10 @@ dictionary FetchResponseInit {
     Exposed=(Window,Worker),
     InterfaceName=Response,
 ] interface FetchResponse {
-    [CallWith=ScriptExecutionContext] constructor(optional BodyInit? body = null, optional FetchResponseInit init);
+    [CallWith=CurrentScriptExecutionContext] constructor(optional BodyInit? body = null, optional FetchResponseInit init);
 
-    [CallWith=ScriptExecutionContext, NewObject] static FetchResponse error();
-    [CallWith=ScriptExecutionContext, NewObject] static FetchResponse redirect(USVString url, optional unsigned short status = 302);
+    [CallWith=CurrentScriptExecutionContext, NewObject] static FetchResponse error();
+    [CallWith=CurrentScriptExecutionContext, NewObject] static FetchResponse redirect(USVString url, optional unsigned short status = 302);
 
     readonly attribute FetchResponseType type;
 
@@ -57,7 +57,7 @@ dictionary FetchResponseInit {
     readonly attribute ByteString statusText;
     [SameObject] readonly attribute FetchHeaders headers;
 
-    [CallWith=ScriptExecutionContext, NewObject] FetchResponse clone();
+    [NewObject] FetchResponse clone();
 };
 
 FetchResponse includes FetchBody;

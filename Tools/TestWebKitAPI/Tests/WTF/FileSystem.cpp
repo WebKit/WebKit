@@ -44,7 +44,7 @@ static void createTestFile(const String& path)
     FileSystem::closeFile(fileHandle);
 };
 
-// FIXME: Refactor FileSystemTest and SharedBufferTest as a single class.
+// FIXME: Refactor FileSystemTest and FragmentedSharedBufferTest as a single class.
 class FileSystemTest : public testing::Test {
 public:
     void SetUp() override
@@ -817,6 +817,19 @@ TEST_F(FileSystemTest, realPath)
     EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponent(subFolderPath, "..")).utf8().data(), resolvedTempEmptyFolderPath.utf8().data()); // Should resolve "..".
     EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponents(subFolderPath, { "..", "subfolder" })).utf8().data(), resolvedSubFolderPath.utf8().data()); // Should resolve "..".
     EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponents(subFolderPath, { "..", ".", ".", "subfolder" })).utf8().data(), resolvedSubFolderPath.utf8().data()); // Should resolve ".." and "."
+}
+
+TEST_F(FileSystemTest, readEntireFile)
+{
+    EXPECT_FALSE(FileSystem::readEntireFile(FileSystem::invalidPlatformFileHandle));
+    EXPECT_FALSE(FileSystem::readEntireFile(emptyString()));
+    EXPECT_FALSE(FileSystem::readEntireFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist")));
+    EXPECT_FALSE(FileSystem::readEntireFile(tempEmptyFilePath()));
+
+    auto buffer = FileSystem::readEntireFile(tempFilePath());
+    EXPECT_TRUE(buffer);
+    auto contents = String::adopt(WTFMove(buffer.value()));
+    EXPECT_STREQ(contents.utf8().data(), FileSystemTestData);
 }
 
 } // namespace TestWebKitAPI

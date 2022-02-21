@@ -135,8 +135,8 @@ public:
     void didExecuteProgram(CallFrame*);
     void didReachDebuggerStatement(CallFrame*);
 
-    void willRunMicrotask();
-    void didRunMicrotask();
+    JS_EXPORT_PRIVATE void willRunMicrotask();
+    JS_EXPORT_PRIVATE void didRunMicrotask();
 
     void registerCodeBlock(CodeBlock*);
 

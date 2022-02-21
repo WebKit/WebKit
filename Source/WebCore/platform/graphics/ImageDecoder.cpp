@@ -30,8 +30,6 @@
 
 #if USE(CG)
 #include "ImageDecoderCG.h"
-#elif USE(DIRECT2D)
-#include "ImageDecoderDirect2D.h"
 #else
 #include "ScalableImageDecoder.h"
 #endif
@@ -56,7 +54,7 @@ static void platformRegisterFactories(FactoryVector& factories)
 
 static FactoryVector& installedFactories()
 {
-    static auto factories = makeNeverDestroyed<FactoryVector>({ });
+    static NeverDestroyed<FactoryVector> factories;
     static std::once_flag registerDefaults;
     std::call_once(registerDefaults, [&] {
         platformRegisterFactories(factories);
@@ -82,7 +80,7 @@ void ImageDecoder::clearFactories()
 }
 #endif
 
-RefPtr<ImageDecoder> ImageDecoder::create(SharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<ImageDecoder> ImageDecoder::create(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     UNUSED_PARAM(mimeType);
 
@@ -107,8 +105,6 @@ RefPtr<ImageDecoder> ImageDecoder::create(SharedBuffer& data, const String& mime
 
 #if USE(CG)
     return ImageDecoderCG::create(data, alphaOption, gammaAndColorProfileOption);
-#elif USE(DIRECT2D)
-    return ImageDecoderDirect2D::create(data, alphaOption, gammaAndColorProfileOption);
 #else
     return ScalableImageDecoder::create(data, alphaOption, gammaAndColorProfileOption);
 #endif
@@ -118,9 +114,6 @@ bool ImageDecoder::supportsMediaType(MediaType type)
 {
 #if USE(CG)
     if (ImageDecoderCG::supportsMediaType(type))
-        return true;
-#elif USE(DIRECT2D)
-    if (ImageDecoderDirect2D::supportsMediaType(type))
         return true;
 #else
     if (ScalableImageDecoder::supportsMediaType(type))

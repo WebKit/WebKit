@@ -40,9 +40,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSStyleImageValue);
 
-CSSStyleImageValue::CSSStyleImageValue(Ref<CSSImageValue>&& cssValue, Document& document)
+CSSStyleImageValue::CSSStyleImageValue(Ref<CSSImageValue>&& cssValue, Document* document)
     : m_cssValue(WTFMove(cssValue))
-    , m_document(makeWeakPtr(document))
+    , m_document(document)
 {
 }
 

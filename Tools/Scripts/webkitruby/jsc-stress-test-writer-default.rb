@@ -220,25 +220,7 @@ def chakraPassFailErrorHandler
     }
 end
 
-class Plan
-    attr_reader :directory, :arguments, :family, :name, :outputHandler, :errorHandler, :additionalEnv
-    attr_accessor :index
-    
-    def initialize(directory, arguments, family, name, outputHandler, errorHandler)
-        @directory = directory
-        @arguments = arguments
-        @family = family
-        @name = name
-        @outputHandler = outputHandler
-        @errorHandler = errorHandler
-        @isSlow = !!$runCommandOptions[:isSlow]
-        @crashOK = !!$runCommandOptions[:crashOK]
-        if @crashOK
-            @outputHandler = noisyOutputHandler
-        end
-        @additionalEnv = []
-    end
-    
+class Plan < BasePlan
     def shellCommand
         # It's important to remember that the test is actually run in a subshell, so if we change directory
         # in the subshell when we return we will be in our original directory. This is nice because we don't
@@ -345,111 +327,137 @@ class Plan
     end
 end
 
-def prepareShellTestRunner
-    FileUtils.cp SCRIPTS_PATH + "jsc-stress-test-helpers" + "shell-runner.sh", $runnerDir + "runscript"
+class TestRunnerShell < TestRunner
+    def initialize(testRunnerType, runnerDir)
+        super(testRunnerType, runnerDir)
+        @testListPath = runnerDir + 'testlist'
+    end
+    def prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
+        FileUtils.cp SCRIPTS_PATH + "jsc-stress-test-helpers" + "shell-runner.sh", @runnerDir + "runscript"
+        File.open(@testListPath, "w") { |f|
+            runlist.each { |plan|
+                if completedPlans.include?(plan)
+                    next
+                end
+                f.puts("test_script_#{plan.index}")
+            }
+        }
+    end
+    def command(remoteIndex=0)
+        "sh runscript #{File.basename(@testListPath)}"
+    end
 end
 
-def output_target(outp, plan, prereqs)
-    index = plan.index
-    target = "test_done_#{index}"
-    outp.puts "#{target}: #{prereqs.join(" ")}"
-    outp.puts "\tsh test_script_#{index}"
-    target
-end
-
-def prepareMakeTestRunner(remoteIndex)
-    # The goals of our parallel test runner are scalability and simplicity. The
-    # simplicity part is particularly important. We don't want to have to have
-    # a full-time contributor just philosophising about parallel testing.
-    #
-    # As such, we just pass off all of the hard work to 'make'. This
-    # creates a dummy directory ("$outputDir/.runner") in which we
-    # create a dummy Makefile. The Makefile has a 'parallel' rule that
-    # depends all tests, other than the ones marked 'serial'. The
-    # serial tests are arranged in a chain; the last target in the
-    # serial chain depends on 'parallel' and 'all' depends on the head
-    # of the chain. Running 'make -j <whatever>' on this Makefile
-    # results in 'make' doing all of the hard work:
-    #
-    # - Load balancing just works. Most systems have a great load balancer in
-    #   'make'. If your system doesn't then just install a real 'make'.
-    #
-    # - Interruptions just work. For example Ctrl-C handling in 'make' is
-    #   exactly right. You don't have to worry about zombie processes.
-    #
-    # We then do some tricks to make failure detection work and to make this
-    # totally sound. If a test fails, we don't want the whole 'make' job to
-    # stop. We also don't have any facility for makefile-escaping of path names.
-    # We do have such a thing for shell-escaping, though. We fix both problems
-    # by having the actual work for each of the test rules be done in a shell
-    # script on the side. There is one such script per test. The script responds
-    # to failure by printing something on the console and then touching a
-    # failure file for that test, but then still returns 0. This makes 'make'
-    # continue past that failure and complete all the tests anyway.
-    #
-    # In the end, this script collects all of the failures by searching for
-    # files in the .runner directory whose name matches /^test_fail_/, where
-    # the thing after the 'fail_' is the test index. Those are the files that
-    # would be created by the test scripts if they detect failure. We're
-    # basically using the filesystem as a concurrent database of test failures.
-    # Even if two tests fail at the same time, since they're touching different
-    # files we won't miss any failures.
-    serialPlans = {}
-    $serialRunlist.each { |p| serialPlans[p] = nil }
-    runPlans = []
-    serialRunPlans = []
-    $runlist.each {
-        | plan |
-        if !$remote or plan.index % $remoteHosts.length == remoteIndex
-            if serialPlans.has_key?(plan)
-                serialRunPlans << plan
-            else
-                runPlans << plan
+class TestRunnerMake < TestRunner
+    def output_target(outp, plan, prereqs)
+        index = plan.index
+        target = "test_done_#{index}"
+        outp.puts "#{target}: #{prereqs.join(" ")}"
+        outp.puts "\tsh test_script_#{index}"
+        target
+    end
+    def prepareRunnerForRemote(runlist, serialPlans, completedPlans, remoteHosts, remoteIndex)
+        # The goals of our parallel test runner are scalability and simplicity. The
+        # simplicity part is particularly important. We don't want to have to have
+        # a full-time contributor just philosophising about parallel testing.
+        #
+        # As such, we just pass off all of the hard work to 'make'. This
+        # creates a dummy directory ("$outputDir/.runner") in which we
+        # create a dummy Makefile. The Makefile has a 'parallel' rule that
+        # depends all tests, other than the ones marked 'serial'. The
+        # serial tests are arranged in a chain; the last target in the
+        # serial chain depends on 'parallel' and 'all' depends on the head
+        # of the chain. Running 'make -j <whatever>' on this Makefile
+        # results in 'make' doing all of the hard work:
+        #
+        # - Load balancing just works. Most systems have a great load balancer in
+        #   'make'. If your system doesn't then just install a real 'make'.
+        #
+        # - Interruptions just work. For example Ctrl-C handling in 'make' is
+        #   exactly right. You don't have to worry about zombie processes.
+        #
+        # We then do some tricks to make failure detection work and to make this
+        # totally sound. If a test fails, we don't want the whole 'make' job to
+        # stop. We also don't have any facility for makefile-escaping of path names.
+        # We do have such a thing for shell-escaping, though. We fix both problems
+        # by having the actual work for each of the test rules be done in a shell
+        # script on the side. There is one such script per test. The script responds
+        # to failure by printing something on the console and then touching a
+        # failure file for that test, but then still returns 0. This makes 'make'
+        # continue past that failure and complete all the tests anyway.
+        #
+        # In the end, this script collects all of the failures by searching for
+        # files in the .runner directory whose name matches /^test_fail_/, where
+        # the thing after the 'fail_' is the test index. Those are the files that
+        # would be created by the test scripts if they detect failure. We're
+        # basically using the filesystem as a concurrent database of test failures.
+        # Even if two tests fail at the same time, since they're touching different
+        # files we won't miss any failures.
+        runPlans = []
+        serialRunPlans = []
+        runlist.each {
+            | plan |
+            if completedPlans.include?(plan)
+                next
             end
-        end
-    }
+            if remoteHosts.nil? or plan.index % remoteHosts.length == remoteIndex
+                if serialPlans.include?(plan)
+                    serialRunPlans << plan
+                else
+                    runPlans << plan
+                end
+            end
+        }
 
-    File.open($runnerDir + "Makefile.#{remoteIndex}", "w") {
-        | outp |
-        if serialRunPlans.empty?
-            outp.puts("all: parallel")
-        else
-            serialPrereq = "test_done_#{serialRunPlans[-1].index}"
-            outp.puts("all: #{serialPrereq}")
-            prev_target = "parallel"
-            serialRunPlans.each {
+        File.open(@runnerDir + "Makefile.#{remoteIndex}", "w") {
+            | outp |
+            if serialRunPlans.empty?
+                outp.puts("all: parallel")
+            else
+                serialPrereq = "test_done_#{serialRunPlans[-1].index}"
+                outp.puts("all: #{serialPrereq}")
+                prev_target = "parallel"
+                serialRunPlans.each {
+                    | plan |
+                    prev_target = output_target(outp, plan, [prev_target])
+                }
+            end
+            parallelTargets = runPlans.collect {
                 | plan |
-                prev_target = output_target(outp, plan, [prev_target])
+                output_target(outp, plan, [])
+            }
+            outp.puts("parallel: " + parallelTargets.join(" "))
+        }
+    end
+    def prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
+        if remoteHosts.nil?
+            prepareRunnerForRemote(runlist, serialPlans, completedPlans, remoteHosts, 0)
+        else
+            remoteHosts.each_index {
+                |remoteIndex|
+                prepareRunnerForRemote(runlist, serialPlans, completedPlans, remoteHosts, remoteIndex)
             }
         end
-        parallelTargets = runPlans.collect {
-            | plan |
-            output_target(outp, plan, [])
-        }
-        outp.puts("parallel: " + parallelTargets.join(" "))
-    }
-end
-
-def prepareRubyTestRunner
-    File.open($runnerDir + "runscript", "w") {
-        | outp |
-        $runlist.each {
-            | plan |
-            outp.puts "print `sh test_script_#{plan.index} 2>&1`"
-        }
-    }
-end
-
-def testRunnerCommand(remoteIndex=0)
-    case $testRunnerType
-    when :shell
-        command = "sh runscript"
-    when :make
-        command = "make -j #{$numChildProcesses} -s -f Makefile.#{remoteIndex}"
-    when :ruby
-        command = "ruby runscript"
-    else
-        raise "Unknown test runner type: #{$testRunnerType.to_s}"
     end
-    return command
+    def command(remoteIndex=0)
+        "make -j #{$numChildProcesses} -s -f Makefile.#{remoteIndex}"
+    end
+end
+
+class TestRunnerRuby < TestRunner
+    def prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
+        File.open(@runnerDir + "runscript", "w") {
+            | outp |
+            runlist.each {
+                | plan |
+                if completedPlans.include?(plan)
+                    next
+                end
+                outp.puts "print `sh test_script_#{plan.index} 2>&1`"
+            }
+        }
+    end
+    def command(remoteIndex=0)
+        "ruby runscript"
+    end
 end

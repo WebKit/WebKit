@@ -7,6 +7,7 @@
 
 
 set(libangle_common_sources
+    "src/common/CircularBuffer.h"
     "src/common/Color.h"
     "src/common/Color.inc"
     "src/common/FastVector.h"
@@ -23,6 +24,8 @@ set(libangle_common_sources
     "src/common/PackedGLEnums_autogen.h"
     "src/common/PoolAlloc.cpp"
     "src/common/PoolAlloc.h"
+    "src/common/Spinlock.h"
+    "src/common/SynchronizedValue.h"
     "src/common/aligned_memory.cpp"
     "src/common/aligned_memory.h"
     "src/common/android_util.cpp"
@@ -45,15 +48,26 @@ set(libangle_common_sources
     "src/common/platform.h"
     "src/common/string_utils.cpp"
     "src/common/string_utils.h"
+    "src/common/system_utils.cpp"
+    "src/common/system_utils.h"
     "src/common/third_party/base/anglebase/base_export.h"
     "src/common/third_party/base/anglebase/containers/mru_cache.h"
     "src/common/third_party/base/anglebase/logging.h"
     "src/common/third_party/base/anglebase/macros.h"
     "src/common/third_party/base/anglebase/no_destructor.h"
+    "src/common/third_party/base/anglebase/numerics/checked_math.h"
+    "src/common/third_party/base/anglebase/numerics/checked_math_impl.h"
+    "src/common/third_party/base/anglebase/numerics/clamped_math.h"
+    "src/common/third_party/base/anglebase/numerics/clamped_math_impl.h"
+    "src/common/third_party/base/anglebase/numerics/math_constants.h"
+    "src/common/third_party/base/anglebase/numerics/ranges.h"
     "src/common/third_party/base/anglebase/numerics/safe_conversions.h"
+    "src/common/third_party/base/anglebase/numerics/safe_conversions_arm_impl.h"
     "src/common/third_party/base/anglebase/numerics/safe_conversions_impl.h"
     "src/common/third_party/base/anglebase/numerics/safe_math.h"
-    "src/common/third_party/base/anglebase/numerics/safe_math_impl.h"
+    "src/common/third_party/base/anglebase/numerics/safe_math_arm_impl.h"
+    "src/common/third_party/base/anglebase/numerics/safe_math_clang_gcc_impl.h"
+    "src/common/third_party/base/anglebase/numerics/safe_math_shared_impl.h"
     "src/common/third_party/base/anglebase/sha1.cc"
     "src/common/third_party/base/anglebase/sha1.h"
     "src/common/third_party/base/anglebase/sys_byteorder.h"
@@ -68,47 +82,50 @@ set(libangle_common_sources
 )
 
 
+set(libangle_common_cl_sources
+    "src/common/PackedCLEnums_autogen.cpp"
+    "src/common/PackedCLEnums_autogen.h"
+)
+
+
 set(xxhash_sources
     "src/common/third_party/xxhash/xxhash.c"
     "src/common/third_party/xxhash/xxhash.h"
 )
 
 
-set(angle_system_utils_sources
-    "src/common/Optional.h"
-    "src/common/angleutils.h"
-    "src/common/debug.h"
-    "src/common/platform.h"
-    "src/common/system_utils.cpp"
-    "src/common/system_utils.h"
-)
-
-
 if(is_linux OR is_chromeos OR is_android OR is_fuchsia)
-    list(APPEND angle_system_utils_sources
+    list(APPEND libangle_common_sources
         "src/common/system_utils_linux.cpp"
         "src/common/system_utils_posix.cpp"
     )
 endif()
 
 
-if(is_mac)
-    list(APPEND angle_system_utils_sources
+if(is_apple)
+    list(APPEND libangle_common_sources
         "src/common/apple/SoftLinking.h"
+        "src/common/apple/apple_platform.h"
         "src/common/gl/cgl/FunctionsCGL.cpp"
         "src/common/gl/cgl/FunctionsCGL.h"
-        "src/common/system_utils_mac.cpp"
+        "src/common/system_utils_apple.cpp"
         "src/common/system_utils_posix.cpp"
     )
+    if(is_mac)
+        list(APPEND libangle_common_sources "src/common/system_utils_mac.cpp" )
+    endif()
+    if(is_ios)
+        list(APPEND libangle_common_sources "src/common/system_utils_ios.cpp" )
+    endif()
 endif()
 
 
 if(is_win)
-    list(APPEND angle_system_utils_sources "src/common/system_utils_win.cpp" )
-    if(current_os STREQUAL "winuwp")
-        list(APPEND angle_system_utils_sources "src/common/system_utils_winuwp.cpp" )
+    list(APPEND libangle_common_sources "src/common/system_utils_win.cpp" )
+    if(target_os STREQUAL "winuwp")
+        list(APPEND libangle_common_sources "src/common/system_utils_winuwp.cpp" )
     else()
-        list(APPEND angle_system_utils_sources "src/common/system_utils_win32.cpp" )
+        list(APPEND libangle_common_sources "src/common/system_utils_win32.cpp" )
     endif()
 endif()
 
@@ -121,6 +138,7 @@ set(libangle_image_util_headers
     "src/image_util/imageformats.h"
     "src/image_util/loadimage.h"
     "src/image_util/loadimage.inc"
+    "src/image_util/loadtextureborder.h"
 )
 
 
@@ -129,6 +147,7 @@ set(libangle_image_util_sources
     "src/image_util/imageformats.cpp"
     "src/image_util/loadimage.cpp"
     "src/image_util/loadimage_etc.cpp"
+    "src/image_util/loadtextureborder.cpp"
 )
 
 
@@ -173,6 +192,12 @@ set(libangle_gpu_info_util_mac_sources
 )
 
 
+set(libangle_gpu_info_util_ios_sources
+    "src/gpu_info_util/SystemInfo_apple.mm"
+    "src/gpu_info_util/SystemInfo_ios.cpp"
+)
+
+
 set(libangle_includes
     "include/angle_gl.h"
     "include/export.h"
@@ -183,20 +208,14 @@ set(libangle_includes
     "include/GLES/gl.h"
     "include/GLES/glplatform.h"
     "include/GLES/glext.h"
-    "include/GLES/glext_angle.h"
-    "include/GLES/glext_explicit_context_autogen.inc"
     "include/GLES2/gl2.h"
     "include/GLES2/gl2ext.h"
     "include/GLES2/gl2ext_angle.h"
-    "include/GLES2/gl2ext_explicit_context_autogen.inc"
     "include/GLES2/gl2platform.h"
     "include/GLES3/gl3.h"
-    "include/GLES3/gl3ext_explicit_context_autogen.inc"
     "include/GLES3/gl3platform.h"
     "include/GLES3/gl31.h"
-    "include/GLES3/gl31ext_explicit_context_autogen.inc"
     "include/GLES3/gl32.h"
-    "include/GLES3/gl32ext_explicit_context_autogen.inc"
     "include/KHR/khrplatform.h"
     "include/WGL/wgl.h"
     "include/platform/Feature.h"
@@ -222,25 +241,10 @@ set(libangle_headers
     "src/libANGLE/Constants.h"
     "src/libANGLE/Context.h"
     "src/libANGLE/Context.inl.h"
-    "src/libANGLE/Context_gl_1_0_autogen.h"
-    "src/libANGLE/Context_gl_1_1_autogen.h"
-    "src/libANGLE/Context_gl_1_2_autogen.h"
-    "src/libANGLE/Context_gl_1_3_autogen.h"
-    "src/libANGLE/Context_gl_1_4_autogen.h"
-    "src/libANGLE/Context_gl_1_5_autogen.h"
-    "src/libANGLE/Context_gl_2_0_autogen.h"
-    "src/libANGLE/Context_gl_2_1_autogen.h"
-    "src/libANGLE/Context_gl_3_0_autogen.h"
-    "src/libANGLE/Context_gl_3_1_autogen.h"
-    "src/libANGLE/Context_gl_3_2_autogen.h"
-    "src/libANGLE/Context_gl_3_3_autogen.h"
-    "src/libANGLE/Context_gl_4_0_autogen.h"
-    "src/libANGLE/Context_gl_4_1_autogen.h"
-    "src/libANGLE/Context_gl_4_2_autogen.h"
-    "src/libANGLE/Context_gl_4_3_autogen.h"
-    "src/libANGLE/Context_gl_4_4_autogen.h"
-    "src/libANGLE/Context_gl_4_5_autogen.h"
-    "src/libANGLE/Context_gl_4_6_autogen.h"
+    "src/libANGLE/Context_gl_1_autogen.h"
+    "src/libANGLE/Context_gl_2_autogen.h"
+    "src/libANGLE/Context_gl_3_autogen.h"
+    "src/libANGLE/Context_gl_4_autogen.h"
     "src/libANGLE/Context_gles_1_0_autogen.h"
     "src/libANGLE/Context_gles_2_0_autogen.h"
     "src/libANGLE/Context_gles_3_0_autogen.h"
@@ -305,6 +309,7 @@ set(libangle_headers
     "src/libANGLE/entry_points_utils.h"
     "src/libANGLE/features.h"
     "src/libANGLE/formatutils.h"
+    "src/libANGLE/gles_extensions_autogen.h"
     "src/libANGLE/histogram_macros.h"
     "src/libANGLE/queryconversions.h"
     "src/libANGLE/queryutils.h"
@@ -324,6 +329,7 @@ set(libangle_headers
     "src/libANGLE/renderer/FramebufferAttachmentObjectImpl.h"
     "src/libANGLE/renderer/FramebufferImpl.h"
     "src/libANGLE/renderer/GLImplFactory.h"
+    "src/libANGLE/renderer/gl/functionsgl_enums.h"
     "src/libANGLE/renderer/ImageImpl.h"
     "src/libANGLE/renderer/MemoryObjectImpl.h"
     "src/libANGLE/renderer/OverlayImpl.h"
@@ -344,9 +350,11 @@ set(libangle_headers
     "src/libANGLE/renderer/copyvertex.h"
     "src/libANGLE/renderer/copyvertex.inc.h"
     "src/libANGLE/renderer/load_functions_table.h"
+    "src/libANGLE/renderer/load_texture_border_functions_table.h"
     "src/libANGLE/renderer/renderer_utils.h"
     "src/libANGLE/renderer/serial_utils.h"
     "src/libANGLE/validationEGL.h"
+    "src/libANGLE/validationEGL_autogen.h"
     "src/libANGLE/validationES.h"
     "src/libANGLE/validationES1.h"
     "src/libANGLE/validationES1_autogen.h"
@@ -360,24 +368,9 @@ set(libangle_headers
     "src/libANGLE/validationES3_autogen.h"
     "src/libANGLE/validationESEXT.h"
     "src/libANGLE/validationESEXT_autogen.h"
-    "src/libANGLE/validationGL11_autogen.h"
-    "src/libANGLE/validationGL12_autogen.h"
-    "src/libANGLE/validationGL13_autogen.h"
-    "src/libANGLE/validationGL14_autogen.h"
-    "src/libANGLE/validationGL15_autogen.h"
     "src/libANGLE/validationGL1_autogen.h"
-    "src/libANGLE/validationGL21_autogen.h"
     "src/libANGLE/validationGL2_autogen.h"
-    "src/libANGLE/validationGL31_autogen.h"
-    "src/libANGLE/validationGL32_autogen.h"
-    "src/libANGLE/validationGL33_autogen.h"
     "src/libANGLE/validationGL3_autogen.h"
-    "src/libANGLE/validationGL41_autogen.h"
-    "src/libANGLE/validationGL42_autogen.h"
-    "src/libANGLE/validationGL43_autogen.h"
-    "src/libANGLE/validationGL44_autogen.h"
-    "src/libANGLE/validationGL45_autogen.h"
-    "src/libANGLE/validationGL46_autogen.h"
     "src/libANGLE/validationGL4_autogen.h"
     "src/third_party/trace_event/trace_event.h"
 )
@@ -442,6 +435,7 @@ set(libangle_sources
     "src/libANGLE/format_map_autogen.cpp"
     "src/libANGLE/format_map_desktop.cpp"
     "src/libANGLE/formatutils.cpp"
+    "src/libANGLE/gles_extensions_autogen.cpp"
     "src/libANGLE/queryconversions.cpp"
     "src/libANGLE/queryutils.cpp"
     "src/libANGLE/renderer/BufferImpl.cpp"
@@ -451,6 +445,7 @@ set(libangle_sources
     "src/libANGLE/renderer/EGLReusableSync.cpp"
     "src/libANGLE/renderer/EGLSyncImpl.cpp"
     "src/libANGLE/renderer/Format_table_autogen.cpp"
+    "src/libANGLE/renderer/ImageImpl.cpp"
     "src/libANGLE/renderer/ProgramPipelineImpl.cpp"
     "src/libANGLE/renderer/QueryImpl.cpp"
     "src/libANGLE/renderer/ShaderImpl.cpp"
@@ -458,6 +453,7 @@ set(libangle_sources
     "src/libANGLE/renderer/TextureImpl.cpp"
     "src/libANGLE/renderer/driver_utils.cpp"
     "src/libANGLE/renderer/load_functions_table_autogen.cpp"
+    "src/libANGLE/renderer/load_texture_border_functions_table_autogen.cpp"
     "src/libANGLE/renderer/renderer_utils.cpp"
     "src/libANGLE/validationEGL.cpp"
     "src/libANGLE/validationES.cpp"
@@ -468,24 +464,93 @@ set(libangle_sources
     "src/libANGLE/validationES32.cpp"
     "src/libANGLE/validationESEXT.cpp"
     "src/libANGLE/validationGL1.cpp"
-    "src/libANGLE/validationGL11.cpp"
-    "src/libANGLE/validationGL12.cpp"
-    "src/libANGLE/validationGL13.cpp"
-    "src/libANGLE/validationGL14.cpp"
-    "src/libANGLE/validationGL15.cpp"
     "src/libANGLE/validationGL2.cpp"
-    "src/libANGLE/validationGL21.cpp"
     "src/libANGLE/validationGL3.cpp"
-    "src/libANGLE/validationGL31.cpp"
-    "src/libANGLE/validationGL32.cpp"
-    "src/libANGLE/validationGL33.cpp"
     "src/libANGLE/validationGL4.cpp"
-    "src/libANGLE/validationGL41.cpp"
-    "src/libANGLE/validationGL42.cpp"
-    "src/libANGLE/validationGL43.cpp"
-    "src/libANGLE/validationGL44.cpp"
-    "src/libANGLE/validationGL45.cpp"
-    "src/libANGLE/validationGL46.cpp"
+)
+
+
+set(cl_includes
+    "include/angle_cl.h"
+    "include/export.h"
+    "include/CL/cl.h"
+    "include/CL/cl_d3d10.h"
+    "include/CL/cl_d3d11.h"
+    "include/CL/cl_dx9_media_sharing.h"
+    "include/CL/cl_dx9_media_sharing_intel.h"
+    "include/CL/cl_egl.h"
+    "include/CL/cl_ext.h"
+    "include/CL/cl_ext_intel.h"
+    "include/CL/cl_gl.h"
+    "include/CL/cl_gl_ext.h"
+    "include/CL/cl_half.h"
+    "include/CL/cl_icd.h"
+    "include/CL/cl_layer.h"
+    "include/CL/cl_platform.h"
+    "include/CL/cl_va_api_media_sharing_intel.h"
+    "include/CL/cl_version.h"
+    "include/CL/opencl.h"
+)
+
+
+set(libangle_cl_headers
+    "src/libANGLE/CLBitField.h"
+    "src/libANGLE/CLBuffer.h"
+    "src/libANGLE/CLCommandQueue.h"
+    "src/libANGLE/CLContext.h"
+    "src/libANGLE/CLDevice.h"
+    "src/libANGLE/CLEvent.h"
+    "src/libANGLE/CLImage.h"
+    "src/libANGLE/CLKernel.h"
+    "src/libANGLE/CLMemory.h"
+    "src/libANGLE/CLObject.h"
+    "src/libANGLE/CLPlatform.h"
+    "src/libANGLE/CLProgram.h"
+    "src/libANGLE/CLRefPointer.h"
+    "src/libANGLE/CLSampler.h"
+    "src/libANGLE/CLtypes.h"
+    "src/libANGLE/cl_utils.h"
+    "src/libANGLE/renderer/CLCommandQueueImpl.h"
+    "src/libANGLE/renderer/CLContextImpl.h"
+    "src/libANGLE/renderer/CLDeviceImpl.h"
+    "src/libANGLE/renderer/CLEventImpl.h"
+    "src/libANGLE/renderer/CLExtensions.h"
+    "src/libANGLE/renderer/CLKernelImpl.h"
+    "src/libANGLE/renderer/CLMemoryImpl.h"
+    "src/libANGLE/renderer/CLPlatformImpl.h"
+    "src/libANGLE/renderer/CLProgramImpl.h"
+    "src/libANGLE/renderer/CLSamplerImpl.h"
+    "src/libANGLE/renderer/CLtypes.h"
+    "src/libANGLE/validationCL.h"
+    "src/libANGLE/validationCL_autogen.h"
+)
+
+
+set(libangle_cl_sources
+    "src/libANGLE/CLBuffer.cpp"
+    "src/libANGLE/CLCommandQueue.cpp"
+    "src/libANGLE/CLContext.cpp"
+    "src/libANGLE/CLDevice.cpp"
+    "src/libANGLE/CLEvent.cpp"
+    "src/libANGLE/CLImage.cpp"
+    "src/libANGLE/CLKernel.cpp"
+    "src/libANGLE/CLMemory.cpp"
+    "src/libANGLE/CLObject.cpp"
+    "src/libANGLE/CLPlatform.cpp"
+    "src/libANGLE/CLProgram.cpp"
+    "src/libANGLE/CLSampler.cpp"
+    "src/libANGLE/cl_utils.cpp"
+    "src/libANGLE/renderer/CLCommandQueueImpl.cpp"
+    "src/libANGLE/renderer/CLContextImpl.cpp"
+    "src/libANGLE/renderer/CLDeviceImpl.cpp"
+    "src/libANGLE/renderer/CLEventImpl.cpp"
+    "src/libANGLE/renderer/CLExtensions.cpp"
+    "src/libANGLE/renderer/CLKernelImpl.cpp"
+    "src/libANGLE/renderer/CLMemoryImpl.cpp"
+    "src/libANGLE/renderer/CLPlatformImpl.cpp"
+    "src/libANGLE/renderer/CLProgramImpl.cpp"
+    "src/libANGLE/renderer/CLSamplerImpl.cpp"
+    "src/libANGLE/validationCL.cpp"
 )
 
 
@@ -497,81 +562,51 @@ set(libangle_mac_sources
 
 # The frame capture headers are always visible to libANGLE.
 list(APPEND libangle_sources
-    "src/libANGLE/FrameCapture.h"
-    "src/libANGLE/capture_gles_1_0_autogen.h"
-    "src/libANGLE/capture_gles_2_0_autogen.h"
-    "src/libANGLE/capture_gles_3_0_autogen.h"
-    "src/libANGLE/capture_gles_3_1_autogen.h"
-    "src/libANGLE/capture_gles_3_2_autogen.h"
-    "src/libANGLE/capture_gles_ext_autogen.h"
-    "src/libANGLE/frame_capture_utils_autogen.h"
-    "src/libANGLE/gl_enum_utils.h"
-    "src/libANGLE/gl_enum_utils_autogen.h"
+    "src/libANGLE/capture/FrameCapture.h"
+    "src/libANGLE/capture/capture_gles_1_0_autogen.h"
+    "src/libANGLE/capture/capture_gles_2_0_autogen.h"
+    "src/libANGLE/capture/capture_gles_3_0_autogen.h"
+    "src/libANGLE/capture/capture_gles_3_1_autogen.h"
+    "src/libANGLE/capture/capture_gles_3_2_autogen.h"
+    "src/libANGLE/capture/capture_gles_ext_autogen.h"
+    "src/libANGLE/capture/frame_capture_utils.h"
+    "src/libANGLE/capture/frame_capture_utils_autogen.h"
+    "src/libANGLE/capture/gl_enum_utils.h"
+    "src/libANGLE/capture/gl_enum_utils_autogen.h"
 )
 
 
 set(libangle_capture_sources
-    "src/libANGLE/FrameCapture.cpp"
-    "src/libANGLE/capture_gles_1_0_autogen.cpp"
-    "src/libANGLE/capture_gles_1_0_params.cpp"
-    "src/libANGLE/capture_gles_2_0_autogen.cpp"
-    "src/libANGLE/capture_gles_2_0_params.cpp"
-    "src/libANGLE/capture_gles_3_0_autogen.cpp"
-    "src/libANGLE/capture_gles_3_0_params.cpp"
-    "src/libANGLE/capture_gles_3_1_autogen.cpp"
-    "src/libANGLE/capture_gles_3_1_params.cpp"
-    "src/libANGLE/capture_gles_3_2_autogen.cpp"
-    "src/libANGLE/capture_gles_3_2_params.cpp"
-    "src/libANGLE/capture_gles_ext_autogen.cpp"
-    "src/libANGLE/capture_gles_ext_params.cpp"
-    "src/libANGLE/frame_capture_replay_autogen.cpp"
-    "src/libANGLE/frame_capture_utils.cpp"
-    "src/libANGLE/frame_capture_utils.h"
-    "src/libANGLE/frame_capture_utils_autogen.cpp"
-    "src/libANGLE/gl_enum_utils.cpp"
-    "src/libANGLE/gl_enum_utils_autogen.cpp"
+    "src/libANGLE/capture/FrameCapture.cpp"
+    "src/libANGLE/capture/capture_gles_1_0_autogen.cpp"
+    "src/libANGLE/capture/capture_gles_1_0_params.cpp"
+    "src/libANGLE/capture/capture_gles_2_0_autogen.cpp"
+    "src/libANGLE/capture/capture_gles_2_0_params.cpp"
+    "src/libANGLE/capture/capture_gles_3_0_autogen.cpp"
+    "src/libANGLE/capture/capture_gles_3_0_params.cpp"
+    "src/libANGLE/capture/capture_gles_3_1_autogen.cpp"
+    "src/libANGLE/capture/capture_gles_3_1_params.cpp"
+    "src/libANGLE/capture/capture_gles_3_2_autogen.cpp"
+    "src/libANGLE/capture/capture_gles_3_2_params.cpp"
+    "src/libANGLE/capture/capture_gles_ext_autogen.cpp"
+    "src/libANGLE/capture/capture_gles_ext_params.cpp"
+    "src/libANGLE/capture/frame_capture_replay_autogen.cpp"
+    "src/libANGLE/capture/frame_capture_utils_autogen.cpp"
+    "src/libANGLE/capture/gl_enum_utils.cpp"
+    "src/libANGLE/capture/gl_enum_utils_autogen.cpp"
+    "src/third_party/ceval/ceval.h"
 )
 
 
 set(libgl_sources
-    "src/libGL/entry_points_gl_1_0_autogen.cpp"
-    "src/libGL/entry_points_gl_1_0_autogen.h"
-    "src/libGL/entry_points_gl_1_1_autogen.cpp"
-    "src/libGL/entry_points_gl_1_1_autogen.h"
-    "src/libGL/entry_points_gl_1_2_autogen.cpp"
-    "src/libGL/entry_points_gl_1_2_autogen.h"
-    "src/libGL/entry_points_gl_1_3_autogen.cpp"
-    "src/libGL/entry_points_gl_1_3_autogen.h"
-    "src/libGL/entry_points_gl_1_4_autogen.cpp"
-    "src/libGL/entry_points_gl_1_4_autogen.h"
-    "src/libGL/entry_points_gl_1_5_autogen.cpp"
-    "src/libGL/entry_points_gl_1_5_autogen.h"
-    "src/libGL/entry_points_gl_2_0_autogen.cpp"
-    "src/libGL/entry_points_gl_2_0_autogen.h"
-    "src/libGL/entry_points_gl_2_1_autogen.cpp"
-    "src/libGL/entry_points_gl_2_1_autogen.h"
-    "src/libGL/entry_points_gl_3_0_autogen.cpp"
-    "src/libGL/entry_points_gl_3_0_autogen.h"
-    "src/libGL/entry_points_gl_3_1_autogen.cpp"
-    "src/libGL/entry_points_gl_3_1_autogen.h"
-    "src/libGL/entry_points_gl_3_2_autogen.cpp"
-    "src/libGL/entry_points_gl_3_2_autogen.h"
-    "src/libGL/entry_points_gl_3_3_autogen.cpp"
-    "src/libGL/entry_points_gl_3_3_autogen.h"
-    "src/libGL/entry_points_gl_4_0_autogen.cpp"
-    "src/libGL/entry_points_gl_4_0_autogen.h"
-    "src/libGL/entry_points_gl_4_1_autogen.cpp"
-    "src/libGL/entry_points_gl_4_1_autogen.h"
-    "src/libGL/entry_points_gl_4_2_autogen.cpp"
-    "src/libGL/entry_points_gl_4_2_autogen.h"
-    "src/libGL/entry_points_gl_4_3_autogen.cpp"
-    "src/libGL/entry_points_gl_4_3_autogen.h"
-    "src/libGL/entry_points_gl_4_4_autogen.cpp"
-    "src/libGL/entry_points_gl_4_4_autogen.h"
-    "src/libGL/entry_points_gl_4_5_autogen.cpp"
-    "src/libGL/entry_points_gl_4_5_autogen.h"
-    "src/libGL/entry_points_gl_4_6_autogen.cpp"
-    "src/libGL/entry_points_gl_4_6_autogen.h"
+    "src/libGL/entry_points_gl_1_autogen.cpp"
+    "src/libGL/entry_points_gl_1_autogen.h"
+    "src/libGL/entry_points_gl_2_autogen.cpp"
+    "src/libGL/entry_points_gl_2_autogen.h"
+    "src/libGL/entry_points_gl_3_autogen.cpp"
+    "src/libGL/entry_points_gl_3_autogen.h"
+    "src/libGL/entry_points_gl_4_autogen.cpp"
+    "src/libGL/entry_points_gl_4_autogen.h"
     "src/libGL/entry_points_wgl.cpp"
     "src/libGL/entry_points_wgl.h"
     "src/libGL/libGL_autogen.cpp"
@@ -592,10 +627,14 @@ endif()
 
 
 set(libglesv2_sources
-    "src/libGLESv2/entry_points_egl.cpp"
-    "src/libGLESv2/entry_points_egl.h"
-    "src/libGLESv2/entry_points_egl_ext.cpp"
-    "src/libGLESv2/entry_points_egl_ext.h"
+    "src/libGLESv2/egl_ext_stubs.cpp"
+    "src/libGLESv2/egl_ext_stubs_autogen.h"
+    "src/libGLESv2/egl_stubs.cpp"
+    "src/libGLESv2/egl_stubs_autogen.h"
+    "src/libGLESv2/entry_points_egl_autogen.cpp"
+    "src/libGLESv2/entry_points_egl_autogen.h"
+    "src/libGLESv2/entry_points_egl_ext_autogen.cpp"
+    "src/libGLESv2/entry_points_egl_ext_autogen.h"
     "src/libGLESv2/entry_points_gles_1_0_autogen.cpp"
     "src/libGLESv2/entry_points_gles_1_0_autogen.h"
     "src/libGLESv2/entry_points_gles_2_0_autogen.cpp"
@@ -617,9 +656,18 @@ set(libglesv2_sources
 )
 
 
-if(is_win)
-    list(APPEND libglesv2_sources "src/libGLESv2/libGLESv2.rc" )
-endif()
+set(libglesv2_cl_sources
+    "src/libGLESv2/cl_dispatch_table.cpp"
+    "src/libGLESv2/cl_dispatch_table.h"
+    "src/libGLESv2/cl_stubs.cpp"
+    "src/libGLESv2/cl_stubs_autogen.h"
+    "src/libGLESv2/entry_points_cl_autogen.cpp"
+    "src/libGLESv2/entry_points_cl_autogen.h"
+    "src/libGLESv2/entry_points_cl_utils.cpp"
+    "src/libGLESv2/entry_points_cl_utils.h"
+    "src/libGLESv2/proc_table_cl.h"
+    "src/libGLESv2/proc_table_cl_autogen.cpp"
+)
 
 
 set(libglesv1_cm_sources
@@ -635,13 +683,8 @@ endif()
 
 set(libegl_sources
     "src/libEGL/egl_loader_autogen.h"
-    "src/libEGL/libEGL.cpp"
+    "src/libEGL/libEGL_autogen.cpp"
     "src/libEGL/resource.h"
-    "src/libGLESv2/entry_points_egl.h"
-    "src/libGLESv2/entry_points_egl_ext.h"
+    "src/libGLESv2/entry_points_egl_autogen.h"
+    "src/libGLESv2/entry_points_egl_ext_autogen.h"
 )
-
-
-if(is_win)
-    list(APPEND libegl_sources "src/libEGL/libEGL.rc" )
-endif()

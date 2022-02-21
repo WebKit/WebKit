@@ -39,8 +39,8 @@ Color blendSourceOver(const Color& backdrop, const Color& source)
     if (!source.isVisible())
         return backdrop;
 
-    auto [backdropR, backdropG, backdropB, backdropA] = backdrop.toSRGBALossy<uint8_t>();
-    auto [sourceR, sourceG, sourceB, sourceA] = source.toSRGBALossy<uint8_t>();
+    auto [backdropR, backdropG, backdropB, backdropA] = backdrop.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+    auto [sourceR, sourceG, sourceB, sourceA] = source.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
 
     int d = 0xFF * (backdropA + sourceA) - backdropA * sourceA;
     int a = d / 0xFF;
@@ -68,7 +68,7 @@ Color blendWithWhite(const Color& color)
     if (!color.isOpaque())
         return color;
 
-    auto [existingR, existingG, existingB, existingAlpha] = color.toSRGBALossy<uint8_t>();
+    auto [existingR, existingG, existingB, existingAlpha] = color.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
 
     SRGBA<uint8_t> result;
     for (int alpha = startAlpha; alpha <= endAlpha; alpha += alphaIncrement) {
@@ -97,8 +97,8 @@ Color blend(const Color& from, const Color& to, const BlendingContext& context)
     if (context.progress == 1 && !to.isValid())
         return { };
 
-    auto premultipliedFrom = premultiplied(from.toColorTypeLossy<SRGBA<float>>());
-    auto premultipliedTo = premultiplied(to.toColorTypeLossy<SRGBA<float>>());
+    auto premultipliedFrom = premultiplied(from.toColorTypeLossy<SRGBA<float>>()).resolved();
+    auto premultipliedTo = premultiplied(to.toColorTypeLossy<SRGBA<float>>()).resolved();
 
     auto premultipliedBlended = makeFromComponentsClamping<SRGBA<float>>(
         WebCore::blend(premultipliedFrom.red, premultipliedTo.red, context),
@@ -117,8 +117,8 @@ Color blendWithoutPremultiply(const Color& from, const Color& to, const Blending
     if (context.progress == 1 && !to.isValid())
         return { };
 
-    auto fromSRGB = from.toColorTypeLossy<SRGBA<float>>();
-    auto toSRGB = to.toColorTypeLossy<SRGBA<float>>();
+    auto fromSRGB = from.toColorTypeLossy<SRGBA<float>>().resolved();
+    auto toSRGB = to.toColorTypeLossy<SRGBA<float>>().resolved();
 
     auto blended = makeFromComponentsClamping<SRGBA<float>>(
         WebCore::blend(fromSRGB.red, toSRGB.red, context),

@@ -68,6 +68,30 @@ bool AccessibilityMenuListPopup::computeAccessibilityIsIgnored() const
     return accessibilityIsIgnoredByDefault();
 }
 
+bool AccessibilityMenuListPopup::canHaveSelectedChildren() const
+{
+#if USE(ATSPI)
+    return true;
+#else
+    return false;
+#endif
+}
+
+void AccessibilityMenuListPopup::selectedChildren(AccessibilityChildrenVector& result)
+{
+    ASSERT(result.isEmpty());
+    if (!canHaveSelectedChildren())
+        return;
+
+    if (!childrenInitialized())
+        addChildren();
+
+    for (const auto& child : m_children) {
+        if (child->isMenuListOption() && child->isSelected())
+            result.append(child.get());
+    }
+}
+
 AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibilityObject(HTMLElement* element) const
 {
     if (!element || !element->inRenderedDocument())
@@ -94,16 +118,17 @@ void AccessibilityMenuListPopup::addChildren()
     if (!selectNode)
         return;
 
-    m_haveChildren = true;
+    m_childrenInitialized = true;
 
     for (const auto& listItem : downcast<HTMLSelectElement>(*selectNode).listItems()) {
-        // FIXME: Why does AccessibilityListBox::addChildren check accessibilityIsIgnored but this does not?
-        if (auto option = menuListOptionAccessibilityObject(listItem))
-            m_children.append(option);
+        if (auto* menuListOptionObject = menuListOptionAccessibilityObject(listItem)) {
+            menuListOptionObject->setParent(this);
+            addChild(menuListOptionObject, DescendIfIgnored::No);
+        }
     }
 }
 
-void AccessibilityMenuListPopup::childrenChanged()
+void AccessibilityMenuListPopup::handleChildrenChanged()
 {
     AXObjectCache* cache = axObjectCache();
     for (size_t i = m_children.size(); i > 0 ; --i) {
@@ -113,9 +138,9 @@ void AccessibilityMenuListPopup::childrenChanged()
             cache->remove(child->objectID());
         }
     }
-    
+
     m_children.clear();
-    m_haveChildren = false;
+    m_childrenInitialized = false;
     addChildren();
 }
 

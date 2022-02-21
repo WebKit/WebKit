@@ -20,7 +20,7 @@ if content_type == 'text/plain':
 else:
     sys.stdout.write('<p>FAIL: Content-type should be text/plain, but was \'{}\'</p>'.format(content_type))
 
-if data == 'f1=This is field #1 &!@$%\r\n=\'<>\r\nf2=This is field #2 ""':
+if data == 'f1=This is field #1 &!@$%\r\n=\'<>\r\nf2=This is field #2 ""\r\n':
     sys.stdout.write('<p>SUCCESS</p>')
 else:
     sys.stdout.write('<p>FAILURE: {}</p>'.format(data))

@@ -32,6 +32,8 @@
 
 #include <stdio.h>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 #if !HAVE_PTHREAD_MACHDEP_H
@@ -174,3 +176,4 @@ void IsoTLS::forEachEntry(const Func& func)
 
 } // namespace bmalloc
 
+#endif

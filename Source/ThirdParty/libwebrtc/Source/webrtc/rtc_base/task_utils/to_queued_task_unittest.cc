@@ -131,7 +131,7 @@ TEST(ToQueuedTaskTest, PendingTaskSafetyFlag) {
       PendingTaskSafetyFlag::Create();
 
   int count = 0;
-  // Create two identical tasks that increment the |count|.
+  // Create two identical tasks that increment the `count`.
   auto task1 = ToQueuedTask(flag, [&count]() { ++count; });
   auto task2 = ToQueuedTask(flag, [&count]() { ++count; });
 

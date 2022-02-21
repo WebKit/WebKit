@@ -40,9 +40,6 @@
 #endif
 
 #if BUSE(LIBPAS)
-#ifndef PAS_BMALLOC
-#define PAS_BMALLOC 1
-#endif
 #include "iso_heap.h"
 #endif
 
@@ -323,7 +320,12 @@ size_t size(Kind kind)
 
 size_t footprint(Kind kind)
 {
+#if BUSE(LIBPAS)
+    BUNUSED(kind);
+    return 0;
+#else
     return PerProcess<PerHeapKind<Heap>>::get()->at(heapKind(kind)).footprint();
+#endif
 }
 
 } // namespace Gigacage

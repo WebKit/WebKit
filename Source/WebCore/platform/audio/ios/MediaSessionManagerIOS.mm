@@ -118,19 +118,6 @@ void MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary()
 #endif
 }
 
-void MediaSessionManageriOS::mediaServerConnectionDied()
-{
-    ALWAYS_LOG(LOGIDENTIFIER, m_havePresentedApplicationPID);
-
-    if (!m_havePresentedApplicationPID)
-        return;
-
-    m_havePresentedApplicationPID = false;
-    callOnMainThread([] () {
-        providePresentingApplicationPID();
-    });
-}
-
 void MediaSessionManageriOS::providePresentingApplicationPID()
 {
     MediaSessionHelper::sharedHelper().providePresentingApplicationPID(presentingApplicationPID());

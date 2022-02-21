@@ -32,6 +32,21 @@
 #include "pas_all_heap_configs.h"
 #include "pas_heap_lock.h"
 
+const char* pas_heap_config_kind_get_string(pas_heap_config_kind kind)
+{
+    switch (kind) {
+#define PAS_DEFINE_HEAP_CONFIG_KIND(name, value) \
+    case pas_heap_config_kind_ ## name: \
+        return #name;
+#include "pas_heap_config_kind.def"
+#undef PAS_DEFINE_HEAP_CONFIG_KIND
+    }
+    PAS_ASSERT(!"Invalid kind");
+    return NULL;
+}
+
+PAS_BEGIN_EXTERN_C;
+
 bool pas_heap_config_kind_for_each(
     pas_heap_config_kind_callback callback,
     void *arg)
@@ -58,12 +73,14 @@ unsigned pas_heap_config_kind_is_active_bitvector[
 
 bool pas_heap_config_kind_set_active(pas_heap_config_kind kind)
 {
-    PAS_TESTING_ASSERT(kind < pas_heap_config_kind_num_kinds);
+    PAS_TESTING_ASSERT((unsigned)kind < (unsigned)pas_heap_config_kind_num_kinds);
     pas_heap_lock_assert_held();
     if (pas_bitvector_get(pas_heap_config_kind_is_active_bitvector, (size_t)kind))
         return false;
     pas_bitvector_set(pas_heap_config_kind_is_active_bitvector, (size_t)kind, true);
     return true;
 }
+
+PAS_END_EXTERN_C;
 
 #endif /* LIBPAS_ENABLED */

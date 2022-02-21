@@ -8,13 +8,14 @@ info: |
 es5id: 15.7.5_A1_T05
 description: Checking property toFixed
 ---*/
+assert.sameValue(
+  (new Number()).hasOwnProperty("toFixed"),
+  false,
+  '(new Number()).hasOwnProperty("toFixed") must return false'
+);
 
-//CHECK#1
-if ((new Number()).hasOwnProperty("toFixed") !== false) {
-  throw new Test262Error('#1: Number instance must have no special property "toFixed"');
-}
-
-//CHECK#2
-if ((new Number()).toFixed !== Number.prototype.toFixed) {
-  throw new Test262Error('#2: Number instance property "toFixed" must be inherited from Number prototype object');
-}
+assert.sameValue(
+  (new Number()).toFixed,
+  Number.prototype.toFixed,
+  'The value of (new Number()).toFixed is expected to equal the value of Number.prototype.toFixed'
+);

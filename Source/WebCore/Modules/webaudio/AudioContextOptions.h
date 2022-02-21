@@ -29,12 +29,12 @@
 
 #include "AudioContextLatencyCategory.h"
 #include <optional>
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebCore {
 
 struct AudioContextOptions {
-    Variant<AudioContextLatencyCategory, double> latencyHint { AudioContextLatencyCategory::Interactive };
+    std::variant<AudioContextLatencyCategory, double> latencyHint { AudioContextLatencyCategory::Interactive };
     std::optional<float> sampleRate;
 };
 

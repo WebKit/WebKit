@@ -14,6 +14,7 @@ PASS The value "13:16" overflows the maximum value "13:15".
 PASS The value "23:59:59.999" overflows the maximum value "13:16".
 PASS The value "13:16" overflows the maximum value "12:00".
 PASS The value "23:59:59.999" doesn't overflow the maximum value "13:16" when disabled.
+PASS The value "13:17:59.999" overflows the maximum value "13:16" when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

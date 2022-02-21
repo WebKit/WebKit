@@ -194,19 +194,32 @@ constexpr const TType *GetArray()
 // Overloads
 //
 
-template <TBasicType basicType, unsigned char primarySize = 1, unsigned char secondarySize = 1>
+template <TBasicType basicType,
+          TPrecision precision,
+          unsigned char primarySize   = 1,
+          unsigned char secondarySize = 1>
 constexpr const TType *GetBasic()
 {
-    return Get<basicType, EbpUndefined, EvqGlobal, primarySize, secondarySize>();
+    return Get<basicType, precision, EvqGlobal, primarySize, secondarySize>();
 }
 
 template <TBasicType basicType,
+          TPrecision precision,
+          unsigned char primarySize   = 1,
+          unsigned char secondarySize = 1>
+constexpr const TType *GetTemporary()
+{
+    return Get<basicType, precision, EvqTemporary, primarySize, secondarySize>();
+}
+
+template <TBasicType basicType,
+          TPrecision precision,
           TQualifier qualifier,
           unsigned char primarySize   = 1,
           unsigned char secondarySize = 1>
 const TType *GetQualified()
 {
-    return Get<basicType, EbpUndefined, qualifier, primarySize, secondarySize>();
+    return Get<basicType, precision, qualifier, primarySize, secondarySize>();
 }
 
 // Dynamic lookup methods (convert runtime values to template args)
@@ -236,15 +249,13 @@ constexpr const TType *GetForVecMatHelper(unsigned char primarySize)
             return Get<basicType, precision, qualifier, 4, secondarySize>();
         default:
             UNREACHABLE();
-            return GetBasic<EbtVoid>();
+            return GetBasic<EbtVoid, EbpUndefined>();
     }
 }
 
 }  // namespace Helpers
 
-template <TBasicType basicType,
-          TPrecision precision = EbpUndefined,
-          TQualifier qualifier = EvqGlobal>
+template <TBasicType basicType, TPrecision precision, TQualifier qualifier = EvqGlobal>
 constexpr const TType *GetForVecMat(unsigned char primarySize, unsigned char secondarySize = 1)
 {
     static_assert(basicType == EbtFloat || basicType == EbtInt || basicType == EbtUInt ||
@@ -262,22 +273,22 @@ constexpr const TType *GetForVecMat(unsigned char primarySize, unsigned char sec
             return Helpers::GetForVecMatHelper<basicType, precision, qualifier, 4>(primarySize);
         default:
             UNREACHABLE();
-            return GetBasic<EbtVoid>();
+            return GetBasic<EbtVoid, EbpUndefined>();
     }
 }
 
-template <TBasicType basicType, TPrecision precision = EbpUndefined>
+template <TBasicType basicType, TPrecision precision>
 constexpr const TType *GetForVec(TQualifier qualifier, unsigned char size)
 {
     switch (qualifier)
     {
         case EvqGlobal:
             return Helpers::GetForVecMatHelper<basicType, precision, EvqGlobal, 1>(size);
-        case EvqOut:
-            return Helpers::GetForVecMatHelper<basicType, precision, EvqOut, 1>(size);
+        case EvqParamOut:
+            return Helpers::GetForVecMatHelper<basicType, precision, EvqParamOut, 1>(size);
         default:
             UNREACHABLE();
-            return GetBasic<EbtVoid>();
+            return GetBasic<EbtVoid, EbpUndefined>();
     }
 }
 

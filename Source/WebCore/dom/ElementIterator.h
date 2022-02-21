@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ElementInlines.h"
 #include "ElementTraversal.h"
 
 #if ASSERT_ENABLED
@@ -34,8 +35,14 @@
 namespace WebCore {
 
 template <typename ElementType>
-class ElementIterator : public std::iterator<std::forward_iterator_tag, ElementType> {
+class ElementIterator {
 public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = ElementType;
+    using difference_type = ptrdiff_t;
+    using pointer = value_type*;
+    using reference = value_type&;
+
     ElementIterator() = default;
 
     ElementType& operator*() const;

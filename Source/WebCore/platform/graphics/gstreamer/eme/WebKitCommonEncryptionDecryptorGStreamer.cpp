@@ -107,7 +107,7 @@ static void constructed(GObject* object)
 
     WebKitMediaCommonEncryptionDecrypt* self = WEBKIT_MEDIA_CENC_DECRYPT(base);
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
-    priv->cdmProxyDecryptionClientImplementation = WTF::makeUnique<CDMProxyDecryptionClientImplementation>(self);
+    priv->cdmProxyDecryptionClientImplementation = makeUnique<CDMProxyDecryptionClientImplementation>(self);
 }
 
 static GstCaps* transformCaps(GstBaseTransform* base, GstPadDirection direction, GstCaps* caps, GstCaps* filter)
@@ -220,6 +220,8 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
         gst_buffer_remove_meta(buffer, reinterpret_cast<GstMeta*>(protectionMeta));
     });
 
+    bool isCbcs = !g_strcmp0(gst_structure_get_string(protectionMeta->info, "cipher-mode"), "cbcs");
+
     unsigned ivSize;
     if (!gst_structure_get_uint(protectionMeta->info, "iv_size", &ivSize)) {
         GST_ERROR_OBJECT(self, "Failed to get iv_size");
@@ -227,6 +229,7 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
     }
     if (!ivSize && !gst_structure_get_uint(protectionMeta->info, "constant_iv_size", &ivSize)) {
         GST_ERROR_OBJECT(self, "No iv_size and failed to get constant_iv_size");
+        ASSERT(isCbcs);
         return GST_FLOW_NOT_SUPPORTED;
     }
 
@@ -245,8 +248,7 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
 
     unsigned subSampleCount = 0;
     // cbcs could not include the subsample_count.
-    if (!gst_structure_get_uint(protectionMeta->info, "subsample_count", &subSampleCount)
-        && !gst_structure_has_name(protectionMeta->info, "application/x-cbcs")) {
+    if (!gst_structure_get_uint(protectionMeta->info, "subsample_count", &subSampleCount) && !isCbcs) {
         GST_ERROR_OBJECT(self, "Failed to get subsample_count");
         return GST_FLOW_NOT_SUPPORTED;
     }
@@ -280,8 +282,10 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
         return GST_FLOW_NOT_SUPPORTED;
     }
 
-    if (gst_structure_has_field(protectionMeta->info, "crypt_byte_block") || gst_structure_has_field(protectionMeta->info, "skip_byte_block"))
+    if (isCbcs && (gst_structure_has_field(protectionMeta->info, "crypt_byte_block") || gst_structure_has_field(protectionMeta->info, "skip_byte_block"))) {
         GST_FIXME_OBJECT(self, "cbcs crypt/skip pattern is still unsupported");
+        return GST_FLOW_NOT_SUPPORTED;
+    }
 
     GstBuffer* ivBuffer = gst_value_get_buffer(value);
     WebKitMediaCommonEncryptionDecryptClass* klass = WEBKIT_MEDIA_CENC_DECRYPT_GET_CLASS(self);
@@ -428,7 +432,7 @@ bool webKitMediaCommonEncryptionDecryptIsFlushing(WebKitMediaCommonEncryptionDec
 WeakPtr<WebCore::CDMProxyDecryptionClient> webKitMediaCommonEncryptionDecryptGetCDMProxyDecryptionClient(WebKitMediaCommonEncryptionDecrypt* self)
 {
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
-    return makeWeakPtr(*priv->cdmProxyDecryptionClientImplementation);
+    return *priv->cdmProxyDecryptionClientImplementation;
 }
 
 static GstStateChangeReturn changeState(GstElement* element, GstStateChange transition)

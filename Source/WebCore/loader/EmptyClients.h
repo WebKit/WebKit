@@ -87,7 +87,7 @@ class EmptyChromeClient : public ChromeClient {
     bool canRunBeforeUnloadConfirmPanel() final { return false; }
     bool runBeforeUnloadConfirmPanel(const String&, Frame&) final { return true; }
 
-    void closeWindowSoon() final { }
+    void closeWindow() final { }
 
     void runJavaScriptAlert(Frame&, const String&) final { }
     bool runJavaScriptConfirm(Frame&, const String&) final { return false; }
@@ -217,15 +217,11 @@ class EmptyChromeClient : public ChromeClient {
     void didAssociateFormControls(const Vector<RefPtr<Element>>&, Frame&) final { }
     bool shouldNotifyOnFormChanges() final { return false; }
 
-#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
-    void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID) const final;
-#endif
-
     RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final { return nullptr; }
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
-    void modelElementDidCreatePreview(WebCore::HTMLModelElement&, const URL&, const String&, const WebCore::FloatSize&) const final;
-#endif
+    void requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&&) final;
+    void classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&&) final;
+    void decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&&) final;
 };
 
 DiagnosticLoggingClient& emptyDiagnosticLoggingClient();

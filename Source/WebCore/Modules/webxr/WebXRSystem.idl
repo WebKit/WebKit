@@ -23,18 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://immersive-web.github.io/webxr/#xrsystem
 [
     ActiveDOMObject,
     Conditional=WEBXR,
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Exposed=Window,
     GenerateIsReachable=ReachableFromNavigator,
     InterfaceName=XRSystem,
     SecureContext
 ] interface WebXRSystem : EventTarget {
     // Methods
+    // FIXME: Spec says this should return Promise<boolean>.
     Promise<undefined> isSessionSupported(XRSessionMode mode);
-    [NewObject, CallWith=Document] Promise<WebXRSession> requestSession(XRSessionMode mode, optional XRSessionInit options);
+    [NewObject, CallWith=CurrentDocument] Promise<WebXRSession> requestSession(XRSessionMode mode, optional XRSessionInit options);
 
     // Events
     attribute EventHandler ondevicechange;

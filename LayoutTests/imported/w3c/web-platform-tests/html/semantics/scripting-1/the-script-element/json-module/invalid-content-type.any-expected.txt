@@ -1,0 +1,8 @@
+
+PASS Try importing JSON module with MIME type application/json+protobuf
+PASS Try importing JSON module with MIME type application/json+blah
+PASS Try importing JSON module with MIME type text/x-json
+PASS Try importing JSON module with MIME type text/json+blah
+PASS Try importing JSON module with MIME type application/blahjson
+PASS Try importing JSON module with MIME type image/json
+

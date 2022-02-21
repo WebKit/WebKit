@@ -29,7 +29,7 @@
             test.style.setProperty("font-weight", "bold", null);
             test.style.removeProperty("FONT-WEIGHT");
             lowerValue = document.defaultView.getComputedStyle(test, "").getPropertyValue("font-weight");
-            log("removeProperty: " + (lowerValue == "normal" ? "PASS" : "FAIL"));
+            log("removeProperty: " + (lowerValue == "400" ? "PASS" : "FAIL"));
         }
     </script>
 </head>

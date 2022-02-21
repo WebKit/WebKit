@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,15 @@
 #include "TestHarness.h"
 
 #include "Verifier.h"
+#include <atomic>
+#include "bmalloc_heap_config.h"
+#include "hotbit_heap_config.h"
 #include "iso_heap_config.h"
 #include "iso_test_heap_config.h"
 #include "jit_heap.h"
 #include "jit_heap_config.h"
 #include "minalign32_heap_config.h"
 #include "pagesize64k_heap_config.h"
-#include "pas_all_magazines.h"
 #include "pas_epoch.h"
 #include "pas_fd_stream.h"
 #include "pas_heap.h"
@@ -86,10 +88,10 @@ struct TestScopeImpl {
 };
 
 #define FOR_EACH_RUNTIME_CONFIG(name, callback) ({ \
-        (callback)(name ## _intrinsic_primitive_runtime_config.base); \
+        (callback)(name ## _intrinsic_runtime_config.base); \
         (callback)(name ## _primitive_runtime_config.base); \
         (callback)(name ## _typed_runtime_config.base); \
-        (callback)(name ## _objc_runtime_config.base); \
+        (callback)(name ## _flex_runtime_config.base); \
     })
 
 RuntimeConfigTestScope::RuntimeConfigTestScope(
@@ -103,6 +105,8 @@ RuntimeConfigTestScope::RuntimeConfigTestScope(
             FOR_EACH_RUNTIME_CONFIG(iso_test, setUp);
             FOR_EACH_RUNTIME_CONFIG(minalign32, setUp);
             FOR_EACH_RUNTIME_CONFIG(pagesize64k, setUp);
+            FOR_EACH_RUNTIME_CONFIG(bmalloc, setUp);
+            FOR_EACH_RUNTIME_CONFIG(hotbit, setUp);
             setUp(pas_utility_heap_runtime_config);
             setUp(jit_heap_runtime_config);
         })
@@ -209,35 +213,6 @@ InstallVerifier::InstallVerifier()
 {
 }
 
-DisableExplosion::DisableExplosion()
-    : TestScope(
-        "disable-explosion",
-        [] () {
-            pas_segregated_global_size_directory_can_explode = false;
-            pas_segregated_global_size_directory_force_explode = false;
-        })
-{
-}
-
-ForceExplosion::ForceExplosion()
-    : TestScope(
-        "force-explosion",
-        [] () {
-            pas_segregated_global_size_directory_can_explode = true;
-            pas_segregated_global_size_directory_force_explode = true;
-        })
-{
-}
-
-ForceOneMagazine::ForceOneMagazine()
-    : TestScope(
-        "force-one-magazine",
-        [] () {
-            pas_all_magazines_forced_cpu_number = 0;
-        })
-{
-}
-
 EpochIsCounter::EpochIsCounter()
     : TestScope(
         "epoch-is-counter",
@@ -256,15 +231,45 @@ BootJITHeap::BootJITHeap()
             constexpr unsigned numRegions = 10;
             
             for (unsigned i = numRegions; i--;) {
-                constexpr size_t size = 5000000;
+                size_t size =
+                    pas_round_up_to_power_of_2(5000000, pas_page_malloc_alignment());
                 
-                void* base = malloc(size);
+                void* base = valloc(size);
                 
                 jit_heap_add_fresh_memory(
                     pas_range_create(reinterpret_cast<uintptr_t>(base),
                                      reinterpret_cast<uintptr_t>(base) + size));
             }
 #endif // PAS_ENABLE_JIT
+        })
+{
+}
+
+EnablePageBalancing::EnablePageBalancing()
+    : TestScope(
+        "enable-page-balancing",
+        [] () {
+            pas_physical_page_sharing_pool_balancing_enabled = true;
+        })
+{
+}
+
+DisablePageBalancing::DisablePageBalancing()
+    : TestScope(
+        "disable-page-balancing",
+        [] () {
+            pas_physical_page_sharing_pool_balancing_enabled = false;
+        })
+{
+}
+
+DecommitZeroFill::DecommitZeroFill()
+    : TestScope(
+        "decommit-zero-fill",
+        [] () {
+#if PAS_OS(DARWIN)
+            pas_page_malloc_decommit_zero_fill = true;
+#endif // PAS_OS(DARWIN)
         })
 {
 }
@@ -346,28 +351,34 @@ int resultPipe[2];
 } // anonymous namespace
 
 void addBitfieldVectorTests();
+void addBitfitTests();
 void addBitvectorTests();
 void addCartesianTreeTests();
 void addCoalignTests();
+void addExpendableMemoryTests();
 void addExtendedGCDTests();
 void addHashtableTests();
+void addHeapRefAllocatorIndexTests();
 void addIsoDynamicPrimitiveHeapTests();
 void addIsoHeapChaosTests();
 void addIsoHeapPageSharingTests();
 void addIsoHeapPartialAndBaselineTests();
 void addIsoHeapReservedMemoryTests();
-void addIsoHeapTablingTests();
 void addJITHeapTests();
 void addLargeFreeHeapTests();
 void addLargeSharingPoolTests();
 void addLockFreeReadPtrPtrHashtableTests();
+void addLotsOfHeapsAndThreadsTests();
+void addMemalignTests();
 void addMinHeapTests();
+void addPGMTests();
 void addRaceTests();
 void addRedBlackTreeTests();
-void addSkipListTests();
+void addTLCDecommitTests();
 void addTSDTests();
 void addThingyAndUtilityHeapAllocationTests();
 void addUtilsTests();
+void addViewCacheTests();
 
 void testSucceeded()
 {
@@ -702,30 +713,39 @@ int main(int argc, char** argv)
 #if SEGHEAP
     pas_segregated_page_config_do_validate = true;
 #endif
-    
+
+    // Run the Thingy tests first because they catch the most bugs.
+    ADD_SUITE(ThingyAndUtilityHeapAllocation);
+
+    // Run the rest of the tests in alphabetical order.
     ADD_SUITE(BitfieldVector);
+    ADD_SUITE(Bitfit);
     ADD_SUITE(Bitvector);
     ADD_SUITE(CartesianTree);
     ADD_SUITE(Coalign);
+    ADD_SUITE(ExpendableMemory);
     ADD_SUITE(ExtendedGCD);
     ADD_SUITE(Hashtable);
+    ADD_SUITE(HeapRefAllocatorIndex);
     ADD_SUITE(IsoDynamicPrimitiveHeap);
     ADD_SUITE(IsoHeapChaos);
     ADD_SUITE(IsoHeapPageSharing);
     ADD_SUITE(IsoHeapPartialAndBaseline);
     ADD_SUITE(IsoHeapReservedMemory);
-    ADD_SUITE(IsoHeapTabling);
     ADD_SUITE(JITHeap);
     ADD_SUITE(LargeFreeHeap);
     ADD_SUITE(LargeSharingPool);
     ADD_SUITE(LockFreeReadPtrPtrHashtable);
+    ADD_SUITE(LotsOfHeapsAndThreads);
+    ADD_SUITE(Memalign);
     ADD_SUITE(MinHeap);
+    ADD_SUITE(PGM);
     ADD_SUITE(Race);
     ADD_SUITE(RedBlackTree);
-    ADD_SUITE(SkipList);
+    ADD_SUITE(TLCDecommit);
     ADD_SUITE(TSD);
-    ADD_SUITE(ThingyAndUtilityHeapAllocation);
     ADD_SUITE(Utils);
+    ADD_SUITE(ViewCache);
     
     string filter;
     

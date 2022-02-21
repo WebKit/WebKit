@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -53,8 +54,6 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/WTFString.h>
-
-static bool done;
 
 @interface SchemeHandler : NSObject <WKURLSchemeHandler>
 @property (readonly) NSMutableArray<NSURL *> *startedURLs;
@@ -307,7 +306,7 @@ static bool responsePolicyDecided;
     ASSERT_TRUE(false);
 }
 
-- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
 {
     ASSERT_FALSE(receivedRedirect);
     receivedRedirect = true;
@@ -500,7 +499,6 @@ static bool receivedStop;
 
 @end
 
-static RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
 static bool receivedMessage;
 
 @interface SyncMessageHandler : NSObject <WKScriptMessageHandler>
@@ -1257,36 +1255,43 @@ TEST(URLSchemeHandler, AllowedNetworkHostsRedirect)
     EXPECT_EQ(server127001.totalRequests(), 2u);
 }
 
-TEST(URLSchemeHandler, LoadsSubresources)
+static void serverLoop(const TestWebKitAPI::Connection& connection, bool& loadedImage, bool& loadedIFrame)
+{
+    using namespace TestWebKitAPI;
+    connection.receiveHTTPRequest([&, connection] (Vector<char>&& request) {
+        auto path = HTTPServer::parsePath(request);
+        auto sendReply = [&, connection] (const HTTPResponse& response) {
+            connection.send(response.serialize(), [&, connection] {
+                serverLoop(connection, loadedImage, loadedIFrame);
+            });
+        };
+        if (path == "/main.html")
+            sendReply({ { { "Content-Type", "text/html" } }, "<img src='/imgsrc'></img><iframe src='/iframesrc'></iframe>" });
+        else if (path == "/imgsrc") {
+            loadedImage = true;
+            sendReply({ "image content" });
+        } else if (path == "/iframesrc") {
+            loadedIFrame = true;
+            sendReply({ "iframe content" });
+        } else
+            ASSERT_NOT_REACHED();
+    });
+}
+
+TEST(WKWebViewConfiguration, LoadsSubresources)
 {
     bool loadedImage = false;
     bool loadedIFrame = false;
 
-    auto handler = adoptNS([TestURLSchemeHandler new]);
-
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
 
-    [handler setStartURLSchemeTaskHandler:[&](WKWebView *, id<WKURLSchemeTask> task) {
-        NSString *response = nil;
-        if ([task.request.URL.path isEqualToString:@"/main.html"])
-            response = @"<img src='/imgsrc'></img><iframe src='/iframesrc'></iframe>";
-        else if ([task.request.URL.path isEqualToString:@"/imgsrc"]) {
-            response = @"image content";
-            loadedImage = true;
-        } else if ([task.request.URL.path isEqualToString:@"/iframesrc"]) {
-            response = @"iframe content";
-            loadedIFrame = true;
-        } else
-            ASSERT_NOT_REACHED();
-        [task didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:response.length textEncodingName:nil]).get()];
-        [task didReceiveData:[response dataUsingEncoding:NSUTF8StringEncoding]];
-        [task didFinish];
-    }];
-    
+    TestWebKitAPI::HTTPServer server([&] (const TestWebKitAPI::Connection& connection) {
+        serverLoop(connection, loadedIFrame, loadedImage);
+    });
+
     {
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://host1/main.html"]]];
+        [webView loadRequest:server.request("/main.html")];
         TestWebKitAPI::Util::run(&loadedImage);
         TestWebKitAPI::Util::run(&loadedIFrame);
     }
@@ -1299,7 +1304,7 @@ TEST(URLSchemeHandler, LoadsSubresources)
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
         auto delegate = adoptNS([TestNavigationDelegate new]);
         webView.get().navigationDelegate = delegate.get();
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://host1/main.html"]]];
+        [webView loadRequest:server.request("/main.html")];
         [delegate waitForDidFinishNavigation];
         TestWebKitAPI::Util::spinRunLoop(100);
         EXPECT_FALSE(loadedIFrame);
@@ -1496,9 +1501,6 @@ TEST(URLSchemeHandler, Origin)
     EXPECT_WK_STREQ([delegate waitForAlert], "registered://host:123, null");
 }
 
-
-static bool receivedScriptMessage = false;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 @interface URLSchemeHandlerMessageHandler : NSObject <WKScriptMessageHandler>
 @end
 
@@ -1604,15 +1606,16 @@ TEST(URLSchemeHandler, Ranges)
         auto rangeBeginString = requestRangeString.substring(begin + rangeBytes.length(), dash - begin - rangeBytes.length());
         auto rangeEndString = requestRangeString.substring(dash + 1, end - dash - 1);
         auto rangeBegin = parseInteger<uint64_t>(rangeBeginString).value_or(0);
-        auto rangeEnd = rangeEndString == "*" ? [videoData length] : parseInteger<uint64_t>(rangeEndString).value_or(0);
+        auto rangeEnd = rangeEndString.isEmpty() ? [videoData length] - 1 : parseInteger<uint64_t>(rangeEndString).value_or(0);
+        auto contentLength = rangeEnd - rangeBegin + 1;
 
         auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://webkit.org/"] statusCode:206 HTTPVersion:@"HTTP/1.1" headerFields:@{
             @"Content-Range" : [NSString stringWithFormat:@"bytes %llu-%llu/%lu", rangeBegin, rangeEnd, (unsigned long)[videoData length]],
-            @"Content-Length" : [NSString stringWithFormat:@"%llu", rangeEnd - rangeBegin + 1]
+            @"Content-Length" : [NSString stringWithFormat:@"%llu", contentLength]
         }]);
 
         [task didReceiveResponse:response.get()];
-        [task didReceiveData:[videoData subdataWithRange:NSMakeRange(rangeBegin, rangeEnd - rangeBegin)]];
+        [task didReceiveData:[videoData subdataWithRange:NSMakeRange(rangeBegin, contentLength)]];
         [task didFinish];
         foundRangeRequest = true;
     }];

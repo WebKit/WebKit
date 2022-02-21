@@ -19,6 +19,7 @@ namespace gl
 namespace
 {
 constexpr angle::SubjectIndex kImplementationSubjectIndex = 0;
+constexpr size_t kInvalidContentsObserverIndex            = std::numeric_limits<size_t>::max();
 }  // anonymous namespace
 
 BufferState::BufferState()
@@ -34,8 +35,9 @@ BufferState::BufferState()
       mBindingCount(0),
       mTransformFeedbackIndexedBindingCount(0),
       mTransformFeedbackGenericBindingCount(0),
-      mImmutable(false),
-      mStorageExtUsageFlags(0)
+      mImmutable(GL_FALSE),
+      mStorageExtUsageFlags(0),
+      mExternal(GL_FALSE)
 {}
 
 BufferState::~BufferState() {}
@@ -68,6 +70,15 @@ void Buffer::setLabel(const Context *context, const std::string &label)
 const std::string &Buffer::getLabel() const
 {
     return mState.mLabel;
+}
+
+angle::Result Buffer::bufferStorageExternal(Context *context,
+                                            BufferBinding target,
+                                            GLsizeiptr size,
+                                            GLeglClientBufferEXT clientBuffer,
+                                            GLbitfield flags)
+{
+    return bufferExternalDataImpl(context, target, clientBuffer, size, flags);
 }
 
 angle::Result Buffer::bufferStorage(Context *context,
@@ -122,7 +133,7 @@ angle::Result Buffer::bufferDataImpl(Context *context,
         dataForImpl = scratchBuffer->data();
     }
 
-    if (mImpl->setDataWithUsageFlags(context, target, dataForImpl, size, usage, flags) ==
+    if (mImpl->setDataWithUsageFlags(context, target, nullptr, dataForImpl, size, usage, flags) ==
         angle::Result::Stop)
     {
         // If setData fails, the buffer contents are undefined. Set a zero size to indicate that.
@@ -135,11 +146,65 @@ angle::Result Buffer::bufferDataImpl(Context *context,
         return angle::Result::Stop;
     }
 
+    bool wholeBuffer = size == mState.mSize;
+
     mIndexRangeCache.clear();
     mState.mUsage                = usage;
     mState.mSize                 = size;
     mState.mImmutable            = (usage == BufferUsage::InvalidEnum);
     mState.mStorageExtUsageFlags = flags;
+
+    // Notify when storage changes.
+    if (wholeBuffer)
+    {
+        onContentsChange();
+    }
+    else
+    {
+        onStateChange(angle::SubjectMessage::SubjectChanged);
+    }
+
+    return angle::Result::Continue;
+}
+
+angle::Result Buffer::bufferExternalDataImpl(Context *context,
+                                             BufferBinding target,
+                                             GLeglClientBufferEXT clientBuffer,
+                                             GLsizeiptr size,
+                                             GLbitfield flags)
+{
+    if (mState.isMapped())
+    {
+        // Per the OpenGL ES 3.0 spec, buffers are implicitly unmapped when a call to
+        // BufferData happens on a mapped buffer:
+        //
+        //     If any portion of the buffer object is mapped in the current context or any context
+        //     current to another thread, it is as though UnmapBuffer (see section 2.10.3) is
+        //     executed in each such context prior to deleting the existing data store.
+        //
+        GLboolean dontCare = GL_FALSE;
+        ANGLE_TRY(unmap(context, &dontCare));
+    }
+
+    if (mImpl->setDataWithUsageFlags(context, target, clientBuffer, nullptr, size,
+                                     BufferUsage::InvalidEnum, flags) == angle::Result::Stop)
+    {
+        // If setData fails, the buffer contents are undefined. Set a zero size to indicate that.
+        mIndexRangeCache.clear();
+        mState.mSize = 0;
+
+        // Notify when storage changes.
+        onStateChange(angle::SubjectMessage::SubjectChanged);
+
+        return angle::Result::Stop;
+    }
+
+    mIndexRangeCache.clear();
+    mState.mUsage                = BufferUsage::InvalidEnum;
+    mState.mSize                 = size;
+    mState.mImmutable            = GL_TRUE;
+    mState.mStorageExtUsageFlags = flags;
+    mState.mExternal             = GL_TRUE;
 
     // Notify when storage changes.
     onStateChange(angle::SubjectMessage::SubjectChanged);
@@ -159,7 +224,7 @@ angle::Result Buffer::bufferSubData(const Context *context,
                                      static_cast<unsigned int>(size));
 
     // Notify when data changes.
-    onStateChange(angle::SubjectMessage::ContentsChanged);
+    onContentsChange();
 
     return angle::Result::Continue;
 }
@@ -177,7 +242,7 @@ angle::Result Buffer::copyBufferSubData(const Context *context,
                                      static_cast<unsigned int>(size));
 
     // Notify when data changes.
-    onStateChange(angle::SubjectMessage::ContentsChanged);
+    onContentsChange();
 
     return angle::Result::Continue;
 }
@@ -263,7 +328,7 @@ void Buffer::onDataChanged()
     mIndexRangeCache.clear();
 
     // Notify when data changes.
-    onStateChange(angle::SubjectMessage::ContentsChanged);
+    onContentsChange();
 
     mImpl->onDataChanged();
 }
@@ -326,9 +391,59 @@ angle::Result Buffer::getSubData(const gl::Context *context,
 
 void Buffer::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message)
 {
+    if (message == angle::SubjectMessage::BufferVkStorageChanged)
+    {
+        return;
+    }
+
     // Pass it along!
     ASSERT(index == kImplementationSubjectIndex);
-    ASSERT(message == angle::SubjectMessage::SubjectChanged);
-    onStateChange(angle::SubjectMessage::SubjectChanged);
+    ASSERT(message == angle::SubjectMessage::SubjectChanged ||
+           message == angle::SubjectMessage::InternalMemoryAllocationChanged);
+    onStateChange(message);
+}
+
+size_t Buffer::getContentsObserverIndex(VertexArray *vertexArray, uint32_t bufferIndex) const
+{
+    for (size_t observerIndex = 0; observerIndex < mContentsObservers.size(); ++observerIndex)
+    {
+        const ContentsObserver &observer = mContentsObservers[observerIndex];
+        if (observer.vertexArray == vertexArray && observer.bufferIndex == bufferIndex)
+        {
+            return observerIndex;
+        }
+    }
+
+    return kInvalidContentsObserverIndex;
+}
+
+void Buffer::addContentsObserver(VertexArray *vertexArray, uint32_t bufferIndex)
+{
+    if (getContentsObserverIndex(vertexArray, bufferIndex) == kInvalidContentsObserverIndex)
+    {
+        mContentsObservers.push_back({vertexArray, bufferIndex});
+    }
+}
+
+void Buffer::removeContentsObserver(VertexArray *vertexArray, uint32_t bufferIndex)
+{
+    size_t foundObserver = getContentsObserverIndex(vertexArray, bufferIndex);
+    if (foundObserver != kInvalidContentsObserverIndex)
+    {
+        size_t lastObserverIndex = mContentsObservers.size() - 1;
+        if (foundObserver != lastObserverIndex)
+        {
+            mContentsObservers[foundObserver] = mContentsObservers[lastObserverIndex];
+        }
+        mContentsObservers.pop_back();
+    }
+}
+
+void Buffer::onContentsChange()
+{
+    for (const ContentsObserver &observer : mContentsObservers)
+    {
+        observer.vertexArray->onBufferContentsChange(observer.bufferIndex);
+    }
 }
 }  // namespace gl

@@ -66,7 +66,7 @@ private:
     unsigned m_identifier;
 
 #if ENABLE(VIDEO)
-    std::unique_ptr<CaptionUserPreferences> m_captionPreferences;
+    RefPtr<CaptionUserPreferences> m_captionPreferences;
 #endif
 };
 

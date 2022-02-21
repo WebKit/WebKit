@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: document.documentElement.requestFullscreen is not a function. (In 'document.documentElement.requestFullscreen()', 'document.documentElement.requestFullscreen' is undefined)
+Lorem ipsum
+
+Harness Error (FAIL), message = Unhandled rejection: document.documentElement.requestFullscreen is not a function. (In 'document.documentElement.requestFullscreen()', 'document.documentElement.requestFullscreen' is undefined)
+
+PASS Should not flush autofocus candidates when render-blocked
+PASS Should not run the resize steps when render-blocked
+PASS Should not run the scroll steps when render-blocked
+PASS Should not run the evaluate media queries and report changes steps when render-blocked
+PASS Should not run the update animations and send events steps when render-blocked
+PASS Should not run the fullscreen steps when render-blocked
+PASS Should not run animation frame callbacks when render-blocked
+PASS Should not run the update intersection observers step when render-blocked
+PASS Render-blocking web font is applied
+
+

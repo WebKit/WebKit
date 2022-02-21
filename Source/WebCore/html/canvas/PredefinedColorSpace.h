@@ -34,7 +34,7 @@ class DestinationColorSpace;
 
 enum class PredefinedColorSpace {
     SRGB
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
     , DisplayP3
 #endif
 };
@@ -50,7 +50,7 @@ template<> struct EnumTraits<WebCore::PredefinedColorSpace> {
     using values = EnumValues<
         WebCore::PredefinedColorSpace,
         WebCore::PredefinedColorSpace::SRGB
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
         , WebCore::PredefinedColorSpace::DisplayP3
 #endif
     >;

@@ -90,7 +90,7 @@ public:
     template<typename U> RetainPtr(const RetainPtr<U>&);
 
     constexpr RetainPtr(RetainPtr&& o) : m_ptr(toStorageType(o.leakRef())) { }
-    template<typename U> constexpr RetainPtr(RetainPtr<U>&& o) : m_ptr(toStorageType(o.leakRef())) { }
+    template<typename U> constexpr RetainPtr(RetainPtr<U>&& o) : m_ptr(toStorageType(checkType(o.leakRef()))) { }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     constexpr RetainPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
@@ -100,7 +100,9 @@ public:
 
     void clear();
     PtrType leakRef() WARN_UNUSED_RETURN;
+#if HAVE(CFAUTORELEASE)
     PtrType autorelease();
+#endif
 
 #ifdef __OBJC__
     id bridgingAutorelease();
@@ -137,6 +139,8 @@ public:
 private:
     enum AdoptTag { Adopt };
     constexpr RetainPtr(PtrType ptr, AdoptTag) : m_ptr(toStorageType(ptr)) { }
+
+    static constexpr PtrType checkType(PtrType ptr) { return ptr; }
 
     static constexpr PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
 
@@ -202,6 +206,7 @@ template<typename T> inline auto RetainPtr<T>::leakRef() -> PtrType
     return fromStorageType(std::exchange(m_ptr, nullptr));
 }
 
+#if HAVE(CFAUTORELEASE)
 template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
 {
 #ifdef __OBJC__
@@ -212,6 +217,7 @@ template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
         CFAutorelease(m_ptr);
     return leakRef();
 }
+#endif // PLATFORM(COCOA)
 
 #ifdef __OBJC__
 
@@ -376,12 +382,13 @@ inline CFHashCode safeCFHash(CFTypeRef a)
 }
 
 #ifdef __OBJC__
+// FIXME: Move to TypeCastsCocoa.h once all clients include that header.
 template<typename T> T* dynamic_objc_cast(id object)
 {
-    if ([object isKindOfClass:[T class]])
-        return (T *)object;
+    if (![object isKindOfClass:[T class]])
+        return nullptr;
 
-    return nil;
+    return reinterpret_cast<T*>(object);
 }
 #endif
 

@@ -369,9 +369,9 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
     // https://pdfs.semanticscholar.org/343f/7182cde7669ca2a7de3dc01127927f384ef7.pdf
     
     StructureID structureID = this->structureID();
-    if (isNuked(structureID))
+    if (structureID.isNuked())
         return nullptr;
-    structure = vm.getStructure(structureID);
+    structure = structureID.decode();
     maxOffset = structure->maxOffset();
     IndexingType indexingMode;
     Dependency indexingModeDependency = structure->fencedIndexingMode(indexingMode);
@@ -987,7 +987,7 @@ bool JSObject::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned p
         butterfly->contiguous().at(thisObject, propertyName).setWithoutWriteBarrier(value);
         if (propertyName >= butterfly->publicLength())
             butterfly->setPublicLength(propertyName + 1);
-        vm.heap.writeBarrier(thisObject, value);
+        vm.writeBarrier(thisObject, value);
         return true;
     }
         
@@ -1098,7 +1098,7 @@ ArrayStorage* JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists
             map->add(this, i).iterator->value.forceSet(vm, map, value, 0);
     }
 
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     Butterfly* newButterfly = storage->butterfly()->resizeArray(vm, this, structure(vm), 0, ArrayStorage::sizeFor(0));
     RELEASE_ASSERT(newButterfly);
     newButterfly->arrayStorage()->m_indexBias = 0;
@@ -1166,10 +1166,10 @@ Butterfly* JSObject::createInitialIndexedStorage(VM& vm, unsigned length)
 
 Butterfly* JSObject::createInitialUndecided(VM& vm, unsigned length)
 {
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length);
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateUndecided);
     nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
@@ -1178,12 +1178,12 @@ Butterfly* JSObject::createInitialUndecided(VM& vm, unsigned length)
 
 ContiguousJSValues JSObject::createInitialInt32(VM& vm, unsigned length)
 {
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length);
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguous().at(this, i).setWithoutWriteBarrier(JSValue());
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateInt32);
     nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
@@ -1192,12 +1192,12 @@ ContiguousJSValues JSObject::createInitialInt32(VM& vm, unsigned length)
 
 ContiguousDoubles JSObject::createInitialDouble(VM& vm, unsigned length)
 {
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length);
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguousDouble().at(this, i) = PNaN;
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateDouble);
     nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
@@ -1206,12 +1206,12 @@ ContiguousDoubles JSObject::createInitialDouble(VM& vm, unsigned length)
 
 ContiguousJSValues JSObject::createInitialContiguous(VM& vm, unsigned length)
 {
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length);
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguous().at(this, i).setWithoutWriteBarrier(JSValue());
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateContiguous);
     nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
@@ -1239,9 +1239,9 @@ Butterfly* JSObject::createArrayStorageButterfly(VM& vm, JSObject* intendedOwner
 
 ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vectorLength)
 {
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     IndexingType oldType = indexingType();
     ASSERT_UNUSED(oldType, !hasIndexedProperties(oldType));
 
@@ -1321,7 +1321,7 @@ ArrayStorage* JSObject::constructConvertedArrayStorageWithoutCopyingElements(VM&
 
 ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm, TransitionKind transition)
 {
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     ASSERT(hasUndecided(indexingType()));
 
     unsigned vectorLength = m_butterfly->vectorLength();
@@ -1331,7 +1331,7 @@ ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm, TransitionKind tr
         storage->m_vector[i].setWithoutWriteBarrier(JSValue());
     
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
     nukeStructureAndSetButterfly(vm, oldStructureID, storage->butterfly());
     setStructure(vm, newStructure);
@@ -1376,7 +1376,7 @@ ContiguousJSValues JSObject::convertInt32ToContiguous(VM& vm)
 
 ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm, TransitionKind transition)
 {
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     ASSERT(hasInt32(indexingType()));
 
     unsigned vectorLength = m_butterfly->vectorLength();
@@ -1390,7 +1390,7 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm, TransitionKind transi
     }
     
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
     nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
     setStructure(vm, newStructure);
@@ -1427,7 +1427,7 @@ ContiguousJSValues JSObject::convertDoubleToContiguous(VM& vm)
 
 ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, TransitionKind transition)
 {
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     ASSERT(hasDouble(indexingType()));
 
     unsigned vectorLength = m_butterfly->vectorLength();
@@ -1444,7 +1444,7 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, TransitionKind trans
     }
     
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
     nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
     setStructure(vm, newStructure);
@@ -1458,7 +1458,7 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm)
 
 ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, TransitionKind transition)
 {
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     ASSERT(hasContiguous(indexingType()));
 
     unsigned vectorLength = m_butterfly->vectorLength();
@@ -1522,7 +1522,7 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, TransitionKind t
 
     ASSERT(newStorage->butterfly() != butterfly);
     StructureID oldStructureID = this->structureID();
-    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* oldStructure = oldStructureID.decode();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
 
     // Ensure new Butterfly initialization is correctly done before exposing it to the concurrent threads.
@@ -2006,7 +2006,7 @@ bool JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValu
         attributes |= PropertyAttribute::CustomValue;
 
     PutPropertySlot slot(this);
-    bool result = putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
+    bool result = putDirectInternal<PutModeDefineOwnPropertyIgnoringExtensibility>(vm, propertyName, value, attributes, slot).isNull();
 
     ASSERT(slot.type() == PutPropertySlot::NewProperty);
 
@@ -2024,7 +2024,7 @@ void JSObject::putDirectCustomGetterSetterWithoutTransition(VM& vm, PropertyName
     ASSERT(attributes & PropertyAttribute::CustomAccessorOrValue);
 
     StructureID structureID = this->structureID();
-    Structure* structure = vm.heap.structureIDTable().get(structureID);
+    Structure* structure = structureID.decode();
     PropertyOffset offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
     putDirect(vm, offset, value);
 
@@ -2037,7 +2037,7 @@ bool JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, Gett
 {
     ASSERT(attributes & PropertyAttribute::Accessor);
     PutPropertySlot slot(this);
-    bool result = putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, accessor, attributes, slot);
+    bool result = putDirectInternal<PutModeDefineOwnPropertyIgnoringExtensibility>(vm, propertyName, accessor, attributes, slot).isNull();
 
     Structure* structure = this->structure(vm);
     if (attributes & PropertyAttribute::ReadOnly)
@@ -2051,7 +2051,7 @@ void JSObject::putDirectNonIndexAccessorWithoutTransition(VM& vm, PropertyName p
 {
     ASSERT(attributes & PropertyAttribute::Accessor);
     StructureID structureID = this->structureID();
-    Structure* structure = vm.heap.structureIDTable().get(structureID);
+    Structure* structure = structureID.decode();
     PropertyOffset offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
     putDirect(vm, offset, accessor);
     if (attributes & PropertyAttribute::ReadOnly)
@@ -3498,7 +3498,7 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
     // Fast case - there is no precapacity. In these cases a realloc makes sense.
     Structure* structure = this->structure(vm);
     if (LIKELY(!indexBias)) {
-        DeferGC deferGC(vm.heap);
+        DeferGC deferGC(vm);
         Butterfly* newButterfly = storage->butterfly()->growArrayRight(
             vm, this, structure, structure->outOfLineCapacity(), true,
             ArrayStorage::sizeFor(vectorLength), ArrayStorage::sizeFor(newVectorLength));
@@ -3512,7 +3512,7 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
     }
     
     // Remove some, but not all of the precapacity. Atomic decay, & capped to not overflow array length.
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     unsigned newIndexBias = std::min(indexBias >> 1, MAX_STORAGE_VECTOR_LENGTH - newVectorLength);
     Butterfly* newButterfly = storage->butterfly()->resizeArray(
         vm, this,
@@ -3548,7 +3548,7 @@ bool JSObject::ensureLengthSlow(VM& vm, unsigned length)
     Structure* structure = this->structure(vm);
     unsigned propertyCapacity = structure->outOfLineCapacity();
     
-    GCDeferralContext deferralContext(vm.heap);
+    GCDeferralContext deferralContext(vm);
     DisallowGC disallowGC;
     unsigned availableOldLength =
         Butterfly::availableContiguousVectorLength(propertyCapacity, oldVectorLength);
@@ -3598,7 +3598,7 @@ void JSObject::reallocateAndShrinkButterfly(VM& vm, unsigned length)
     ASSERT(m_butterfly->publicLength() >= length);
     ASSERT(!m_butterfly->indexingHeader()->preCapacity(structure(vm)));
 
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     Butterfly* newButterfly = butterfly()->resizeArray(vm, this, structure(vm), 0, ArrayStorage::sizeFor(length));
     newButterfly->setVectorLength(length);
     newButterfly->setPublicLength(length);
@@ -3642,7 +3642,7 @@ static JSCustomGetterFunction* createCustomGetterFunction(JSGlobalObject* global
 
     // WeakGCSet::ensureValue's functor must not invoke GC since GC can modify WeakGCSet in the middle of HashSet::ensure.
     // We use DeferGC here (1) not to invoke GC when executing WeakGCSet::ensureValue and (2) to avoid looking up HashSet twice.
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     return globalObject->customGetterFunctionSet().ensureValue<Translator>(std::make_pair(propertyName, getValueFunc), [&] {
         return JSCustomGetterFunction::create(vm, globalObject, propertyName, getValueFunc, domAttribute);
     });
@@ -3654,7 +3654,7 @@ static JSCustomSetterFunction* createCustomSetterFunction(JSGlobalObject* global
 
     // WeakGCSet::ensureValue's functor must not invoke GC since GC can modify WeakGCSet in the middle of HashSet::ensure.
     // We use DeferGC here (1) not to invoke GC when executing WeakGCSet::ensureValue and (2) to avoid looking up HashSet twice.
-    DeferGC deferGC(vm.heap);
+    DeferGC deferGC(vm);
     return globalObject->customSetterFunctionSet().ensureValue<Translator>(std::make_pair(propertyName, putValueFunc), [&] {
         return JSCustomSetterFunction::create(vm, globalObject, propertyName, putValueFunc);
     });

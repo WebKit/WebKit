@@ -89,7 +89,7 @@ public:
     {
     }
     
-    using Node = Variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>;
+    using Node = std::variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>;
 
     Node& addWatchpoint(const ObjectPropertyCondition& key);
     
@@ -110,7 +110,7 @@ private:
     StructureStubInfo* m_stubInfo;
     // FIXME: use less memory for the entries in this Bag:
     // https://bugs.webkit.org/show_bug.cgi?id=202380
-    Bag<WTF::Variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>> m_watchpoints;
+    Bag<std::variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>> m_watchpoints;
 };
 
 } // namespace JSC

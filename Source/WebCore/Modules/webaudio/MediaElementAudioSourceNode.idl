@@ -25,10 +25,11 @@
 
 [
     Conditional=WEB_AUDIO&VIDEO,
+    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     Exposed=Window
 ] interface MediaElementAudioSourceNode : AudioNode {
-    [EnabledBySetting=WebAudio] constructor (AudioContext context, MediaElementAudioSourceOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor (AudioContext context, MediaElementAudioSourceOptions options);
 
     readonly attribute HTMLMediaElement mediaElement;
 };

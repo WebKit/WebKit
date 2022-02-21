@@ -48,6 +48,9 @@
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 
 #if ENABLE(SERVICE_WORKER)
+#include "InspectorClient.h"
+#include "InspectorController.h"
+#include "Page.h"
 #include "ServiceWorkerAgent.h"
 #include "ServiceWorkerGlobalScope.h"
 #endif
@@ -109,6 +112,10 @@ void WorkerInspectorController::connectFrontend()
     m_forwardingChannel = makeUnique<WorkerToPageFrontendChannel>(m_globalScope);
     m_frontendRouter->connectFrontend(*m_forwardingChannel.get());
     m_agents.didCreateFrontendAndBackend(&m_frontendRouter.get(), &m_backendDispatcher.get());
+
+#if ENABLE(SERVICE_WORKER)
+    updateServiceWorkerPageFrontendCount();
+#endif
 }
 
 void WorkerInspectorController::disconnectFrontend(Inspector::DisconnectReason reason)
@@ -125,7 +132,33 @@ void WorkerInspectorController::disconnectFrontend(Inspector::DisconnectReason r
     m_agents.willDestroyFrontendAndBackend(reason);
     m_frontendRouter->disconnectFrontend(*m_forwardingChannel.get());
     m_forwardingChannel = nullptr;
+
+#if ENABLE(SERVICE_WORKER)
+    updateServiceWorkerPageFrontendCount();
+#endif
 }
+
+#if ENABLE(SERVICE_WORKER)
+void WorkerInspectorController::updateServiceWorkerPageFrontendCount()
+{
+    if (!is<ServiceWorkerGlobalScope>(m_globalScope))
+        return;
+
+    auto serviceWorkerPage = downcast<ServiceWorkerGlobalScope>(m_globalScope).serviceWorkerPage();
+    if (!serviceWorkerPage)
+        return;
+
+    ASSERT(isMainThread());
+
+    // When a service worker is loaded in a Page, we need to report its inspector frontend count
+    // up to the page's inspectorController so the client knows about it.
+    auto inspectorClient = serviceWorkerPage->inspectorController().inspectorClient();
+    if (!inspectorClient)
+        return;
+
+    inspectorClient->frontendCountChanged(m_frontendRouter->frontendCount());
+}
+#endif
 
 void WorkerInspectorController::dispatchMessageFromFrontend(const String& message)
 {

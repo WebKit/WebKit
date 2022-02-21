@@ -25,7 +25,9 @@
 #define WebKitURISchemeRequest_h
 
 #include <glib-object.h>
+#include <libsoup/soup.h>
 #include <wpe/WebKitDefines.h>
+#include <wpe/WebKitURISchemeResponse.h>
 
 G_BEGIN_DECLS
 
@@ -72,11 +74,21 @@ webkit_uri_scheme_request_get_path     (WebKitURISchemeRequest *request);
 WEBKIT_API WebKitWebView *
 webkit_uri_scheme_request_get_web_view (WebKitURISchemeRequest *request);
 
+WEBKIT_API const gchar *
+webkit_uri_scheme_request_get_http_method (WebKitURISchemeRequest *request);
+
+WEBKIT_API SoupMessageHeaders *
+webkit_uri_scheme_request_get_http_headers (WebKitURISchemeRequest *request);
+
 WEBKIT_API void
 webkit_uri_scheme_request_finish       (WebKitURISchemeRequest *request,
                                         GInputStream           *stream,
                                         gint64                  stream_length,
                                         const gchar            *content_type);
+
+WEBKIT_API void
+webkit_uri_scheme_request_finish_with_response (WebKitURISchemeRequest  *request,
+                                                WebKitURISchemeResponse *response);
 
 WEBKIT_API void
 webkit_uri_scheme_request_finish_error (WebKitURISchemeRequest *request,

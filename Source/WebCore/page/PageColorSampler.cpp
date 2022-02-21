@@ -124,7 +124,7 @@ static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& loca
     if (!snapshot)
         return std::nullopt;
 
-    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->logicalSize() });
+    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->truncatedLogicalSize() });
     if (!pixelBuffer)
         return std::nullopt;
 
@@ -135,27 +135,25 @@ static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& loca
     return convertColor<Lab<float>>(SRGBA<uint8_t> { snapshotData[2], snapshotData[1], snapshotData[0], snapshotData[3] });
 }
 
-static double colorDifference(Lab<float>& lhs, Lab<float>& rhs)
+static double colorDifference(const Lab<float>& lhs, const Lab<float>& rhs)
 {
-    return sqrt(pow(rhs.lightness - lhs.lightness, 2) + pow(rhs.a - lhs.a, 2) + pow(rhs.b - lhs.b, 2));
+    // FIXME: This should use a formal color difference metric (deltaE2000, deltaEOK) as this current one is not perceptually uniform (see https://en.wikipedia.org/wiki/Color_difference).
+
+    auto resolvedLeftHandSide = lhs.resolved();
+    auto resolvedRightHandSide = rhs.resolved();
+
+    return sqrt(pow(resolvedRightHandSide.lightness - resolvedLeftHandSide.lightness, 2) + pow(resolvedRightHandSide.a - resolvedLeftHandSide.a, 2) + pow(resolvedRightHandSide.b - resolvedLeftHandSide.b, 2));
 }
 
-static Lab<float> averageColor(Lab<float> colors[], size_t count)
+static Lab<float> averageColor(Span<Lab<float>> colors)
 {
-    float totalLightness = 0;
-    float totalA = 0;
-    float totalB = 0;
-    for (size_t i = 0; i < count; ++i) {
-        totalLightness += colors[i].lightness;
-        totalA += colors[i].a;
-        totalB += colors[i].b;
-    }
-    return {
-        totalLightness / count,
-        totalA / count,
-        totalB / count,
-        1,
-    };
+    ColorComponents<float, 3> totals { };
+    for (auto color : colors)
+        totals += asColorComponents(color.resolved()).subset<0, 3>();
+
+    totals /= colors.size();
+
+    return { totals[0], totals[1], totals[2] };
 }
 
 std::optional<Color> PageColorSampler::sampleTop(Page& page)
@@ -169,11 +167,11 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
         return Color();
     }
 
-    auto mainDocument = makeRefPtr(page.mainFrame().document());
+    RefPtr mainDocument = page.mainFrame().document();
     if (!mainDocument)
         return std::nullopt;
 
-    auto frameView = makeRefPtr(page.mainFrame().view());
+    RefPtr frameView = page.mainFrame().view();
     if (!frameView)
         return std::nullopt;
 
@@ -188,11 +186,11 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
     // Decrease the width by one pixel so that the last sample is within bounds and not off-by-one.
     auto frameWidth = frameView->contentsWidth() - 1;
 
-    constexpr auto numSamples = 5;
+    static constexpr auto numSamples = 5;
     size_t nonMatchingColorIndex = numSamples;
 
-    Lab<float> samples[numSamples];
-    double differences[numSamples - 1];
+    std::array<Lab<float>, numSamples> samples;
+    std::array<double, numSamples - 1> differences;
 
     auto shouldStopAfterFindingNonMatchingColor = [&] (size_t i) -> bool {
         // Bail if the non-matching color is not the first or last sample, or there already is an non-matching color.
@@ -266,18 +264,12 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
         }
     }
 
-    auto samplesToAverage = samples;
-    auto validSampleCount = numSamples;
-    if (!nonMatchingColorIndex) {
-        // Skip the first sample by moving the pointer that indicates where the sample array
-        // starts and decreasing the count of samples to average.
-        ++samplesToAverage;
-        --validSampleCount;
-    } else if (nonMatchingColorIndex == numSamples - 1) {
-        // Skip the last sample by decreasing the count of samples to average.
-        --validSampleCount;
-    }
-    return Color(averageColor(samplesToAverage, validSampleCount));
+    if (!nonMatchingColorIndex)
+        return averageColor(Span { samples }.subspan<1, numSamples - 1>());
+    else if (nonMatchingColorIndex == numSamples - 1)
+        return averageColor(Span { samples }.subspan<0, numSamples - 1>());
+    else
+        return averageColor(Span { samples });
 }
 
 } // namespace WebCore

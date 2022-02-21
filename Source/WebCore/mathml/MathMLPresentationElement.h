@@ -60,8 +60,8 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool isPresentationMathML() const final { return true; }
 
-    static Length parseNumberAndUnit(const StringView&);
-    static Length parseNamedSpace(const StringView&);
+    static Length parseNumberAndUnit(StringView);
+    static Length parseNamedSpace(StringView);
     static MathVariant parseMathVariantAttribute(const AtomString& attributeValue);
 };
 

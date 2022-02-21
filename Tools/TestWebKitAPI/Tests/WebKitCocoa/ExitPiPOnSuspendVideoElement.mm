@@ -28,6 +28,7 @@
 // We can enable the test for old iOS versions after <rdar://problem/63572534> is fixed.
 #if ENABLE(VIDEO_PRESENTATION_MODE) && (PLATFORM(MAC) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000))
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
@@ -36,9 +37,6 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
-
-static bool didEnterPiP;
-static bool didExitPiP;
 
 @interface ExitPiPOnSuspendVideoElementUIDelegate : NSObject <WKUIDelegate>
 @end

@@ -8,27 +8,17 @@ info: |
 es5id: 15.2.2.1_A2_T7
 description: The value is a function declaration
 ---*/
-
-//CHECK#0
-if (typeof func !== 'undefined') {
-  throw new Test262Error('#0: function expression can\'t be declarated');
-}
+assert.sameValue(typeof func, 'undefined', 'The value of `typeof func` is expected to be "undefined"');
 
 var n_obj = new Object(function func() {
   return 1;
 });
 
-//CHECK#1
-if (n_obj.constructor !== Function) {
-  throw new Test262Error('#1: When the Object constructor is called and if the value is an Object simply value returns');
-}
+assert.sameValue(
+  n_obj.constructor,
+  Function,
+  'The value of n_obj.constructor is expected to equal the value of Function'
+);
 
-//CHECK#2
-if (n_obj() !== 1) {
-  throw new Test262Error('#2: When the Object constructor is called and if the value is an Object simply value returns');
-}
-
-//CHECK#3
-if (typeof func !== 'undefined') {
-  throw new Test262Error('#3: function expression can\'t be declarated');
-}
+assert.sameValue(n_obj(), 1, 'n_obj() must return 1');
+assert.sameValue(typeof func, 'undefined', 'The value of `typeof func` is expected to be "undefined"');

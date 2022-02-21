@@ -1,0 +1,13 @@
+
+PASS croppedImage is non-null.
+PASS croppedImageBackdrop is non-null.
+PASS croppedImageRect.x is 100
+PASS croppedImageRect.y is 100
+PASS croppedImageRect.width is 200
+PASS croppedImageRect.height is 200
+PASS croppedImage is null
+PASS croppedImageBackdrop is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -57,9 +57,6 @@ public:
     WEBCORE_EXPORT static void setUsesOverlayScrollbars(bool flag);
     static bool usesOverlayScrollbars();
 
-    WEBCORE_EXPORT static void setUsesMockScrollAnimator(bool);
-    static bool usesMockScrollAnimator();
-
     static bool lowPowerVideoAudioBufferSizeEnabled() { return gLowPowerVideoAudioBufferSizeEnabled; }
     WEBCORE_EXPORT static void setLowPowerVideoAudioBufferSizeEnabled(bool);
 
@@ -103,7 +100,6 @@ private:
 
     static bool gMockScrollbarsEnabled;
     static bool gUsesOverlayScrollbars;
-    static bool gMockScrollAnimatorEnabled;
 
 #if PLATFORM(WIN)
     static bool gShouldUseHighResolutionTimers;

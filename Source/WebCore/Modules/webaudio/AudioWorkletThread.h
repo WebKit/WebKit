@@ -57,7 +57,7 @@ private:
     AudioWorkletThread(AudioWorkletMessagingProxy&, const WorkletParameters&);
 
     // WorkerOrWorkletThread.
-    Ref<WTF::Thread> createThread() final;
+    Ref<Thread> createThread() final;
     RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() final;
 
     AudioWorkletMessagingProxy& m_messagingProxy;

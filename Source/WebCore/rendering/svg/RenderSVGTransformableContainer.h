@@ -20,17 +20,16 @@
 
 #pragma once
 
-#include "RenderSVGContainer.h"
-#include "SVGGraphicsElement.h"
+#include "LegacyRenderSVGContainer.h"
 
 namespace WebCore {
     
 class SVGGraphicsElement;
-class RenderSVGTransformableContainer final : public RenderSVGContainer {
+
+class RenderSVGTransformableContainer final : public LegacyRenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGTransformableContainer);
 public:
     RenderSVGTransformableContainer(SVGGraphicsElement&, RenderStyle&&);
-    SVGGraphicsElement& graphicsElement() { return downcast<SVGGraphicsElement>(RenderSVGContainer::element()); }
 
     bool isSVGTransformableContainer() const override { return true; }
     const AffineTransform& localToParentTransform() const override { return m_localTransform; }
@@ -38,6 +37,8 @@ public:
     bool didTransformToRootUpdate() override { return m_didTransformToRootUpdate; }
 
 private:
+    SVGGraphicsElement& graphicsElement();
+
     void element() const = delete;
     bool calculateLocalTransform() override;
     AffineTransform localTransform() const override { return m_localTransform; }

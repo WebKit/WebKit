@@ -255,7 +255,7 @@ void ScreenshareLayers::OnRatesUpdated(
   RTC_DCHECK_GE(bitrates_bps.size(), 1);
   RTC_DCHECK_LE(bitrates_bps.size(), 2);
 
-  // |bitrates_bps| uses individual rates per layer, but we want to use the
+  // `bitrates_bps` uses individual rates per layer, but we want to use the
   // accumulated rate here.
   uint32_t tl0_kbps = bitrates_bps[0] / 1000;
   uint32_t tl1_kbps = tl0_kbps;
@@ -354,7 +354,7 @@ void ScreenshareLayers::OnEncodeDone(size_t stream_index,
     RTC_DCHECK_EQ(vp8_info.referencedBuffersCount, 0u);
     RTC_DCHECK_EQ(vp8_info.updatedBuffersCount, 0u);
 
-    // Note that |frame_config| is not derefernced if |is_keyframe|,
+    // Note that `frame_config` is not derefernced if `is_keyframe`,
     // meaning it's never dereferenced if the optional may be unset.
     for (int i = 0; i < static_cast<int>(Vp8FrameConfig::Buffer::kCount); ++i) {
       bool references = false;

@@ -47,7 +47,7 @@ shouldBeFalse('stepMismatchFor("2010-03", "foo", "2010-02")');
 debug('Special step value');
 shouldBeFalse('stepMismatchFor("2010-03", "any", "2010-02")');
 debug('Disabled');
-shouldBeFalse('stepMismatchFor("2010-03", "2", "2010-02", true)');
+shouldBeTrue('stepMismatchFor("2010-03", "2", "2010-02", true)');
 
 debug('');
 </script>

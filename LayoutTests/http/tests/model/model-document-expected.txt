@@ -1,0 +1,3 @@
+
+PASS Loading a standalone model resource creates a standalone <model> document.
+

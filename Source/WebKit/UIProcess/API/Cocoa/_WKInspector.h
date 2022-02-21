@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 #import <WebKit/_WKInspectorExtensionHost.h>
+#import <WebKit/_WKInspectorIBActions.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -35,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol _WKInspectorDelegate;
 
 WK_CLASS_AVAILABLE(macos(10.14.4), ios(12.2))
-@interface _WKInspector : NSObject <_WKInspectorExtensionHost>
+@interface _WKInspector : NSObject <_WKInspectorExtensionHost, _WKInspectorIBActions>
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -49,11 +50,7 @@ WK_CLASS_AVAILABLE(macos(10.14.4), ios(12.2))
 @property (nonatomic, readonly) BOOL isElementSelectionActive;
 
 - (void)connect;
-- (void)show;
-- (void)close;
 - (void)hide;
-- (void)showConsole;
-- (void)showResources;
 - (void)showMainResourceForFrame:(_WKFrameHandle *)frame;
 - (void)attach;
 - (void)detach;

@@ -223,10 +223,10 @@ private:
 #if ENABLE(WEBM_FORMAT_READER)
     static bool m_webMFormatReaderEnabled;
 #endif
-#if ENABLE(VORBIS) && PLATFORM(MAC)
+#if ENABLE(VORBIS)
     static bool m_vorbisDecoderEnabled;
 #endif
-#if ENABLE(OPUS) && PLATFORM(MAC)
+#if ENABLE(OPUS)
     static bool m_opusDecoderEnabled;
 #endif
 

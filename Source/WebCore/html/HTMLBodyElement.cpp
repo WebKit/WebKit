@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,11 +29,13 @@
 #include "CSSValueKeywords.h"
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
+#include "ElementInlines.h"
 #include "EventNames.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "JSHTMLBodyElement.h"
 #include "StyleProperties.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -95,50 +97,19 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-HTMLElement::EventHandlerNameMap HTMLBodyElement::createWindowEventHandlerNameMap()
-{
-    static const QualifiedName* const table[] = {
-        &onafterprintAttr.get(),
-        &onbeforeprintAttr.get(),
-        &onbeforeunloadAttr.get(),
-        &onblurAttr.get(),
-        &onerrorAttr.get(),
-        &onfocusAttr.get(),
-        &onfocusinAttr.get(),
-        &onfocusoutAttr.get(),
-        &onhashchangeAttr.get(),
-        &onlanguagechangeAttr.get(),
-        &onloadAttr.get(),
-        &onmessageAttr.get(),
-        &onofflineAttr.get(),
-        &ononlineAttr.get(),
-        &onorientationchangeAttr.get(),
-        &onpagehideAttr.get(),
-        &onpageshowAttr.get(),
-        &onpopstateAttr.get(),
-        &onresizeAttr.get(),
-        &onscrollAttr.get(),
-        &onstorageAttr.get(),
-        &onunloadAttr.get(),
-        &onwebkitmouseforcechangedAttr.get(),
-        &onwebkitmouseforcedownAttr.get(),
-        &onwebkitmouseforceupAttr.get(),
-        &onwebkitmouseforcewillbeginAttr.get(),
-        &onwebkitwillrevealbottomAttr.get(),
-        &onwebkitwillrevealleftAttr.get(),
-        &onwebkitwillrevealrightAttr.get(),
-        &onwebkitwillrevealtopAttr.get(),
-    };
-
-    EventHandlerNameMap map;
-    populateEventHandlerNameMap(map, table);
-    return map;
-}
-
 const AtomString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const QualifiedName& attributeName)
 {
-    static NeverDestroyed<EventHandlerNameMap> map = createWindowEventHandlerNameMap();
-    return eventNameForEventHandlerAttribute(attributeName, map.get());
+    static NeverDestroyed map = [] {
+        EventHandlerNameMap map;
+        JSHTMLBodyElement::forEachWindowEventHandlerContentAttribute([&] (const AtomString& attributeName, const AtomString& eventName) {
+            // FIXME: Remove these special cases. These have has an [WindowEventHandler] line in the IDL but were not in this map before, so this preserves behavior.
+            if (attributeName == onrejectionhandledAttr.get().localName() || attributeName == onunhandledrejectionAttr.get().localName())
+                return;
+            map.add(attributeName.impl(), eventName);
+        });
+        return map;
+    }();
+    return eventNameForEventHandlerAttribute(attributeName, map);
 }
 
 void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -152,7 +123,7 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomString
             else
                 document().resetActiveLinkColor();
         } else {
-            Color color = CSSParser::parseColor(value, !document().inQuirksMode());
+            Color color = CSSParser::parseColorWithoutContext(value, !document().inQuirksMode());
             if (color.isValid()) {
                 if (name == linkAttr)
                     document().setLinkColor(color);
@@ -167,6 +138,8 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomString
         return;
     }
 
+    // FIXME: Emit "selectionchange" event at <input> / <textarea> elements and remove this special-case.
+    // https://bugs.webkit.org/show_bug.cgi?id=234348
     if (name == onselectionchangeAttr) {
         document().setAttributeEventListener(eventNames().selectionchangeEvent, name, value, mainThreadNormalWorld());
         return;
@@ -194,7 +167,7 @@ Node::InsertedIntoAncestorResult HTMLBodyElement::insertedIntoAncestor(Insertion
 void HTMLBodyElement::didFinishInsertingNode()
 {
     ASSERT(is<HTMLFrameElementBase>(document().ownerElement()));
-    auto ownerElement = makeRef(*document().ownerElement());
+    Ref ownerElement = *document().ownerElement();
 
     // FIXME: It's surprising this is web compatible since it means marginwidth and marginheight attributes
     // appear or get overwritten on body elements of a document embedded through <iframe> or <frame>.

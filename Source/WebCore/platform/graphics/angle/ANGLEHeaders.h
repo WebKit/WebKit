@@ -41,8 +41,13 @@
 #define GL_GLEXT_PROTOTYPES 0
 #endif
 
-#include <ANGLE/entry_points_egl.h>
-#include <ANGLE/entry_points_egl_ext.h>
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+typedef uint64_t EGLFrameTokenANGLE;
+#endif
+
+#include <ANGLE/entry_points_egl_autogen.h>
+#include <ANGLE/entry_points_egl_ext_autogen.h>
 #include <ANGLE/entry_points_gles_2_0_autogen.h>
 #include <ANGLE/entry_points_gles_3_0_autogen.h>
 #include <ANGLE/entry_points_gles_ext_autogen.h>

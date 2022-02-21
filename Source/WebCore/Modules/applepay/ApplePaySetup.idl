@@ -26,12 +26,12 @@
 [
     ActiveDOMObject,
     Conditional=APPLE_PAY,
-    EnabledBySetting=ApplePay,
+    EnabledBySetting=ApplePayEnabled,
     SecureContext,
     Exposed=Window
 ] interface ApplePaySetup {
-    [CallWith=ScriptExecutionContext] constructor(ApplePaySetupConfiguration configuration);
+    [CallWith=CurrentScriptExecutionContext] constructor(ApplePaySetupConfiguration configuration);
 
-    [CallWith=Document] Promise<sequence<ApplePaySetupFeature>> getSetupFeatures();
-    [CallWith=Document] Promise<boolean> begin(sequence<ApplePaySetupFeature> setupFeatures);
+    [CallWith=CurrentDocument] Promise<sequence<ApplePaySetupFeature>> getSetupFeatures();
+    [CallWith=CurrentDocument] Promise<boolean> begin(sequence<ApplePaySetupFeature> setupFeatures);
 };

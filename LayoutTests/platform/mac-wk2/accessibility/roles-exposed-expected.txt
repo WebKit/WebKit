@@ -240,9 +240,9 @@ input[type='checkbox']
       AXRoleDescription: checkbox
 
 input[type='date']
-      AXRole: AXGroup
+      AXRole: AXTextField
       AXSubrole:
-      AXRoleDescription: group
+      AXRoleDescription: date field
 
 input[type='datetime']
       AXRole: AXTextField
@@ -250,9 +250,9 @@ input[type='datetime']
       AXRoleDescription: text field
 
 input[type='datetime-local']
-      AXRole: AXGroup
+      AXRole: AXTextField
       AXSubrole:
-      AXRoleDescription: group
+      AXRoleDescription: date and time field
 
 input[type='email']
       AXRole: AXTextField
@@ -275,9 +275,9 @@ input[type='image']
       AXRoleDescription: button
 
 input[type='month']
-      AXRole: AXGroup
+      AXRole: AXTextField
       AXSubrole:
-      AXRoleDescription: group
+      AXRoleDescription: month and year field
 
 input[type='number']
       AXRole: AXTextField
@@ -325,9 +325,9 @@ input[type='text']
       AXRoleDescription: text field
 
 input[type='time']
-      AXRole: AXGroup
+      AXRole: AXTextField
       AXSubrole:
-      AXRoleDescription: group
+      AXRoleDescription: time field
 
 input[type='url']
       AXRole: AXTextField
@@ -335,9 +335,9 @@ input[type='url']
       AXRoleDescription: URL field
 
 input[type='week']
-      AXRole: AXGroup
+      AXRole: AXTextField
       AXSubrole:
-      AXRoleDescription: group
+      AXRoleDescription: week and year field
 
 ins:not([datetime])
       AXRole: AXGroup

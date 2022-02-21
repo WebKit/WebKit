@@ -29,16 +29,7 @@
 
 #include "pas_allocation_callbacks.h"
 
-void (*pas_allocation_callback)(
-    void* resulting_base,
-    size_t size,
-    pas_heap_kind heap_kind,
-    const char* name,
-    pas_allocation_kind allocation_kind);
-void (*pas_deallocation_callback)(
-    void* base,
-    size_t size,
-    pas_heap_kind heap_kind,
-    pas_allocation_kind allocation_kind);
+pas_allocation_callback_type pas_allocation_callback = NULL;
+pas_deallocation_callback_type pas_deallocation_callback = NULL;
 
 #endif /* LIBPAS_ENABLED */

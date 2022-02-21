@@ -28,7 +28,7 @@
 #include "config.h"
 #include "AccessibilityController.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include "AccessibilityUIElement.h"
 #include "InjectedBundle.h"
@@ -112,10 +112,13 @@ Ref<AccessibilityUIElement> AccessibilityController::rootElement()
     return AccessibilityUIElement::create(static_cast<AtkObject*>(root));
 }
 
-Ref<AccessibilityUIElement> AccessibilityController::focusedElement()
+RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     void* root = WKAccessibilityFocusedObject(page);
+
+    if (!ATK_IS_OBJECT(root))
+        return nullptr;
 
     return AccessibilityUIElement::create(static_cast<AtkObject*>(root));
 }
@@ -144,4 +147,4 @@ bool AccessibilityController::removeNotificationListener()
 
 } // namespace WTR
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATK)

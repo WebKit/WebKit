@@ -25,7 +25,7 @@
 
 [
     Conditional=VIDEO&WIRELESS_PLAYBACK_TARGET,
-    EnabledBySetting=RemotePlayback,
+    EnabledBySetting=RemotePlaybackEnabled,
     ImplementedBy=HTMLMediaElementRemotePlayback
 ] partial interface HTMLMediaElement {
     readonly attribute RemotePlayback remote;

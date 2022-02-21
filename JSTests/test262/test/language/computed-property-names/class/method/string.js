@@ -22,7 +22,7 @@ assert.sameValue(new C().b(), 'B', "`new C().b()` returns `'B'`. Defined as `['b
 assert.sameValue(new C().c(), 'C', "`new C().c()` returns `'C'`. Defined as `c() { return 'C'; }`");
 assert.sameValue(new C().d(), 'D', "`new C().d()` returns `'D'`. Defined as `[ID('d')]() { return 'D'; }`");
 assert.sameValue(Object.keys(C.prototype).length, 0, "No enum keys from C.prototype");
-assert(
-  compareArray(Object.getOwnPropertyNames(C.prototype), ['constructor', 'a', 'b', 'c', 'd']),
-  "`compareArray(Object.getOwnPropertyNames(C.prototype), ['constructor', 'a', 'b', 'c', 'd'])` returns `true`"
+assert.compareArray(
+  Object.getOwnPropertyNames(C.prototype),
+  ['constructor', 'a', 'b', 'c', 'd']
 );

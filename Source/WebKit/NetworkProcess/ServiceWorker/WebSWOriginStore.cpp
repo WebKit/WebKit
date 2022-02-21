@@ -87,7 +87,7 @@ void WebSWOriginStore::sendStoreHandle(WebSWServerConnection& connection)
     if (!m_store.createSharedMemoryHandle(handle))
         return;
 
-#if OS(DARWIN) || OS(WINDOWS)
+#if (OS(DARWIN) || OS(WINDOWS)) && !USE(UNIX_DOMAIN_SOCKETS)
     uint64_t dataSize = handle.size();
 #else
     uint64_t dataSize = 0;

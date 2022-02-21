@@ -57,39 +57,6 @@ class Clean(AbstractSequencedCommand):
         options.force_clean = True
 
 
-@DeprecatedCommand
-class Update(AbstractSequencedCommand):
-    name = "update"
-    help_text = "Update working copy (used internally)"
-    steps = [
-        steps.DiscardLocalChanges,
-        steps.Update,
-    ]
-
-
-@DeprecatedCommand
-class Build(AbstractSequencedCommand):
-    name = "build"
-    help_text = "Update working copy and build"
-    steps = [
-        steps.DiscardLocalChanges,
-        steps.Update,
-        steps.Build,
-    ]
-
-    def _prepare_state(self, options, args, tool):
-        options.build = True
-
-
-@DeprecatedCommand
-class CheckPatchRelevance(AbstractSequencedCommand):
-    name = "check-patch-relevance"
-    help_text = "Check if this patch needs to be tested"
-    steps = [
-        steps.CheckPatchRelevance,
-    ]
-
-
 class Land(AbstractSequencedCommand):
     name = "land"
     help_text = "Land the current working directory diff and updates the associated bug if any"
@@ -134,15 +101,6 @@ class LandCowhand(AbstractSequencedCommand):
 
     def _prepare_state(self, options, args, tool):
         options.check_style_filter = "-changelog"
-
-
-@DeprecatedCommand
-class LandCowboy(LandCowhand):
-    name = "land-cowboy"
-
-    def _prepare_state(self, options, args, tool):
-        _log.warning("land-cowboy is deprecated, use land-cowhand instead.")
-        LandCowhand._prepare_state(self, options, args, tool)
 
 
 class CheckStyleLocal(AbstractSequencedCommand):
@@ -259,19 +217,6 @@ class CheckStyle(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     ]
 
 
-@DeprecatedCommand
-class BuildAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
-    name = "build-attachment"
-    help_text = "Apply and build patches from bugzilla"
-    argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
-    main_steps = [
-        steps.DiscardLocalChanges,
-        steps.Update,
-        steps.ApplyPatch,
-        steps.Build,
-    ]
-
-
 class AbstractPatchApplyingCommand(AbstractPatchSequencingCommand):
     prepare_steps = [
         steps.EnsureLocalCommitIfNeeded,
@@ -297,21 +242,6 @@ class ApplyFromBug(AbstractPatchApplyingCommand, ProcessBugsMixin):
     help_text = "Apply reviewed patches from provided bugs to the local working directory"
     argument_names = "BUGID [BUGIDS]"
     show_in_main_help = True
-
-
-@DeprecatedCommand
-class ApplyWatchList(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
-    name = "apply-watchlist"
-    help_text = "Applies the watchlist to the specified attachments"
-    argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
-    main_steps = [
-        steps.DiscardLocalChanges,
-        steps.Update,
-        steps.ApplyPatch,
-        steps.ApplyWatchList,
-    ]
-    long_help = """"Applies the watchlist to the specified attachments.
-Downloads the attachment, applies it locally, runs the watchlist against it, and updates the bug with the result."""
 
 
 class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):
@@ -348,13 +278,6 @@ class LandFromBug(AbstractPatchLandingCommand, ProcessBugsMixin):
     help_text = "Land all patches on the given bugs, optionally building and testing them first"
     argument_names = "BUGID [BUGIDS]"
     show_in_main_help = True
-
-
-@DeprecatedCommand
-class LandFromURL(AbstractPatchLandingCommand, ProcessURLsMixin):
-    name = "land-from-url"
-    help_text = "Land all patches on the given URLs, optionally building and testing them first"
-    argument_names = "URL [URLS]"
 
 
 class ValidateChangelog(AbstractSequencedCommand):
@@ -438,15 +361,6 @@ Creates an appropriate revert ChangeLog, including a trac link and bug link.
     ]
 
 
-@DeprecatedCommand
-class PrepareRollout(PrepareRevert):
-    name = "prepare-rollout"
-
-    def _prepare_state(self, options, args, tool):
-        _log.warning("prepare-rollout is deprecated, use prepare-revert instead.")
-        return PrepareRevert._prepare_state(self, options, args, tool)
-
-
 class CreateRevert(AbstractRevertPrepCommand):
     name = "create-revert"
     help_text = "Creates a bug to track the broken SVN revision(s) and uploads a revert patch."
@@ -476,15 +390,6 @@ so that we can track how often these flaky tests fail.
         return state
 
 
-@DeprecatedCommand
-class CreateRollout(CreateRevert):
-    name = "create-rollout"
-
-    def _prepare_state(self, options, args, tool):
-        _log.warning("create-rollout is deprecated, use create-revert instead.")
-        return CreateRevert._prepare_state(self, options, args, tool)
-
-
 class Revert(AbstractRevertPrepCommand):
     name = "revert"
     show_in_main_help = True
@@ -506,13 +411,3 @@ Commits the revert and updates the bug (including re-opening the bug if necessar
         steps.Commit,
         steps.ReopenBugAfterRevert,
     ]
-
-
-@DeprecatedCommand
-class Rollout(Revert):
-    name = "rollout"
-    show_in_main_help = False
-
-    def _prepare_state(self, options, args, tool):
-        _log.warning("rollout is deprecated, use revert instead.")
-        return Revert._prepare_state(self, options, args, tool)

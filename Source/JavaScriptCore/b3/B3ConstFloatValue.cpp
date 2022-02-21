@@ -130,6 +130,20 @@ Value* ConstFloatValue::divConstant(Procedure& proc, const Value* other) const
     return proc.add<ConstFloatValue>(origin(), m_value / other->asFloat());
 }
 
+Value* ConstFloatValue::fMinConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasFloat())
+        return nullptr;
+    return proc.add<ConstFloatValue>(origin(), fMin(m_value, other->asFloat()));
+}
+
+Value* ConstFloatValue::fMaxConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasFloat())
+        return nullptr;
+    return proc.add<ConstFloatValue>(origin(), fMax(m_value, other->asFloat()));
+}
+
 TriState ConstFloatValue::equalConstant(const Value* other) const
 {
     if (!other->hasFloat())

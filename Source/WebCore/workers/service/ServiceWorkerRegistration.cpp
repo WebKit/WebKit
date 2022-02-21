@@ -30,9 +30,14 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSNotification.h"
 #include "Logging.h"
+#include "NavigationPreloadManager.h"
+#include "NotificationClient.h"
+#include "NotificationPermission.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerTypes.h"
@@ -53,7 +58,9 @@ Ref<ServiceWorkerRegistration> ServiceWorkerRegistration::getOrCreate(ScriptExec
         return *registration;
     }
 
-    return adoptRef(*new ServiceWorkerRegistration(context, WTFMove(container), WTFMove(data)));
+    auto registration = adoptRef(*new ServiceWorkerRegistration(context, WTFMove(container), WTFMove(data)));
+    registration->suspendIfNeeded();
+    return registration;
 }
 
 ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, Ref<ServiceWorkerContainer>&& container, ServiceWorkerRegistrationData&& registrationData)
@@ -62,7 +69,6 @@ ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& con
     , m_container(WTFMove(container))
 {
     LOG(ServiceWorker, "Creating registration %p for registration key %s", this, m_registrationData.key.loggingString().utf8().data());
-    suspendIfNeeded();
 
     if (m_registrationData.installingWorker)
         m_installingWorker = ServiceWorker::getOrCreate(context, WTFMove(*m_registrationData.installingWorker));
@@ -161,6 +167,46 @@ void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
     m_container->unregisterRegistration(identifier(), WTFMove(promise));
 }
 
+void ServiceWorkerRegistration::subscribeToPushService(const Vector<uint8_t>& applicationServerKey, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
+{
+    if (isContextStopped()) {
+        promise.reject(Exception(InvalidStateError));
+        return;
+    }
+
+    m_container->subscribeToPushService(*this, applicationServerKey, WTFMove(promise));
+}
+
+void ServiceWorkerRegistration::unsubscribeFromPushService(PushSubscriptionIdentifier subscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    if (isContextStopped()) {
+        promise.reject(Exception(InvalidStateError));
+        return;
+    }
+
+    m_container->unsubscribeFromPushService(identifier(), subscriptionIdentifier, WTFMove(promise));
+}
+
+void ServiceWorkerRegistration::getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
+{
+    if (isContextStopped()) {
+        promise.reject(Exception(InvalidStateError));
+        return;
+    }
+
+    m_container->getPushSubscription(*this, WTFMove(promise));
+}
+
+void ServiceWorkerRegistration::getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
+{
+    if (isContextStopped()) {
+        promise.reject(Exception(InvalidStateError));
+        return;
+    }
+
+    m_container->getPushPermissionState(identifier(), WTFMove(promise));
+}
+
 void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationState state, RefPtr<ServiceWorker>&& serviceWorker)
 {
     switch (state) {
@@ -213,6 +259,86 @@ bool ServiceWorkerRegistration::virtualHasPendingActivity() const
 {
     return getNewestWorker() && hasEventListeners();
 }
+
+NavigationPreloadManager& ServiceWorkerRegistration::navigationPreload()
+{
+    if (!m_navigationPreload)
+        m_navigationPreload = std::unique_ptr<NavigationPreloadManager>(new NavigationPreloadManager(*this));
+    return *m_navigationPreload;
+}
+
+#if ENABLE(NOTIFICATION_EVENT)
+void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context, const String& title, const NotificationOptions& options, DOMPromiseDeferred<void>&& promise)
+{
+    if (!m_activeWorker) {
+        promise.reject(Exception { TypeError, "Registration does not have an active worker"_s });
+        return;
+    }
+
+    auto* client = context.notificationClient();
+    if (!client) {
+        promise.reject(Exception { TypeError, "Registration not active"_s });
+        return;
+    }
+
+    if (client->checkPermission(&context) != NotificationPermission::Granted) {
+        promise.reject(Exception { TypeError, "Registration does not have permission to show notifications"_s });
+        return;
+    }
+
+    // The Notification is kept alive by virtue of being show()'n soon.
+    // FIXME: When implementing getNotifications(), store this Notification in the registration's notification list.
+    auto notification = Notification::create(context, title, options);
+
+    context.eventLoop().queueTask(TaskSource::DOMManipulation, [promise = WTFMove(promise)]() mutable {
+        promise.resolve();
+    });
+}
+
+void ServiceWorkerRegistration::getNotifications(ScriptExecutionContext& context, const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>> promise)
+{
+    auto notifications = filteredNotificationList(filter.tag);
+    context.eventLoop().queueTask(TaskSource::DOMManipulation, [promise = WTFMove(promise), notifications = WTFMove(notifications)]() mutable {
+        promise.resolve(WTFMove(notifications));
+    });
+}
+
+void ServiceWorkerRegistration::addNotificationToList(Notification& notification)
+{
+    // A Notification at this exact address might previously have been in the list but not successfully removed.
+    // The WeakHashSet captures that possibility here to help us maintain consistency.
+    auto iter = m_notificationList.find(&notification);
+    if (iter != m_notificationList.end()) {
+        RELEASE_ASSERT(!m_notificationSet.contains(notification));
+        m_notificationList.remove(iter);
+    }
+
+    m_notificationList.add(&notification);
+    auto result = m_notificationSet.add(notification);
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void ServiceWorkerRegistration::removeNotificationFromList(Notification& notification)
+{
+    // The same notification might try to remove itself from this list more than once, and that's fine.
+    m_notificationList.remove(&notification);
+    m_notificationSet.remove(notification);
+}
+
+Vector<Ref<Notification>> ServiceWorkerRegistration::filteredNotificationList(const String& filteredTag)
+{
+    Vector<Ref<Notification>> results;
+    for (auto* notification : m_notificationList) {
+        if (!m_notificationSet.contains(*notification))
+            continue;
+        if (filteredTag.isEmpty() || notification->tag() == filteredTag)
+            results.append(notification->copyForGetNotifications());
+    }
+
+    return results;
+}
+
+#endif // ENABLE(NOTIFICATION_EVENT)
 
 } // namespace WebCore
 

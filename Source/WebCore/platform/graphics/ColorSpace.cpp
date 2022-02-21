@@ -34,19 +34,49 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
 {
     switch (colorSpace) {
     case ColorSpace::A98RGB:
-        ts << "a98-rgb";
+        ts << "A98-RGB";
         break;
     case ColorSpace::DisplayP3:
         ts << "DisplayP3";
+        break;
+    case ColorSpace::ExtendedA98RGB:
+        ts << "Extended A98-RGB";
+        break;
+    case ColorSpace::ExtendedDisplayP3:
+        ts << "Extended DisplayP3";
+        break;
+    case ColorSpace::ExtendedLinearSRGB:
+        ts << "Extended Linear sRGB";
+        break;
+    case ColorSpace::ExtendedProPhotoRGB:
+        ts << "Extended ProPhotoRGB";
+        break;
+    case ColorSpace::ExtendedRec2020:
+        ts << "Extended Rec2020";
+        break;
+    case ColorSpace::ExtendedSRGB:
+        ts << "Extended sRGB";
+        break;
+    case ColorSpace::HSL:
+        ts << "HSL";
+        break;
+    case ColorSpace::HWB:
+        ts << "HWB";
         break;
     case ColorSpace::LCH:
         ts << "LCH";
         break;
     case ColorSpace::Lab:
-        ts << "L*a*b";
+        ts << "Lab";
         break;
     case ColorSpace::LinearSRGB:
-        ts << "LinearSRGB";
+        ts << "Linear sRGB";
+        break;
+    case ColorSpace::OKLCH:
+        ts << "OKLCH";
+        break;
+    case ColorSpace::OKLab:
+        ts << "OKLab";
         break;
     case ColorSpace::ProPhotoRGB:
         ts << "ProPhotoRGB";
@@ -58,7 +88,10 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
         ts << "sRGB";
         break;
     case ColorSpace::XYZ_D50:
-        ts << "XYZ";
+        ts << "XYZ-D50";
+        break;
+    case ColorSpace::XYZ_D65:
+        ts << "XYZ-D50";
         break;
     }
     return ts;

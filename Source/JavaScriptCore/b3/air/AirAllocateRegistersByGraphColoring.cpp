@@ -912,6 +912,7 @@ protected:
 public:
     IRC(Code& code, const Vector<Reg>& regsInPriorityOrder, IndexType lastPrecoloredRegisterIndex, unsigned tmpArraySize, const BitVector& unspillableTmps, const UseCounts& useCounts)
         : Base(code, regsInPriorityOrder, lastPrecoloredRegisterIndex, tmpArraySize, unspillableTmps, useCounts)
+        , m_movesToEnable(tmpArraySize)
     {
     }
 
@@ -941,6 +942,8 @@ public:
 
             if (!m_simplifyWorklist.isEmpty())
                 simplify();
+            else if (!m_movesToEnable.isEmpty())
+                enableMoves();
             else if (!m_worklistMoves.isEmpty())
                 coalesce();
             else if (!m_freezeWorklist.isEmpty())
@@ -1103,7 +1106,7 @@ protected:
 
         unsigned oldDegree = m_degrees[tmpIndex]--;
         if (oldDegree == registerCount()) {
-            enableMovesOnValueAndAdjacents(tmpIndex);
+            lazyEnableMovesOnValueAndAdjacents(tmpIndex);
             m_spillWorklist.quickClear(tmpIndex);
             if (isMoveRelated(tmpIndex))
                 m_freezeWorklist.add(tmpIndex);
@@ -1146,6 +1149,14 @@ protected:
         }
     }
 
+    void lazyEnableMovesOnValueAndAdjacents(IndexType tmpIndex)
+    {
+        m_movesToEnable.quickSet(tmpIndex);
+        forEachAdjacent(tmpIndex, [this] (IndexType adjacentTmpIndex) {
+            m_movesToEnable.quickSet(adjacentTmpIndex);
+        });
+    }
+
     void enableMovesOnValue(IndexType tmpIndex)
     {
         for (unsigned moveIndex : m_moveList[tmpIndex]) {
@@ -1154,13 +1165,11 @@ protected:
         }
     }
 
-    void enableMovesOnValueAndAdjacents(IndexType tmpIndex)
+    void enableMoves()
     {
-        enableMovesOnValue(tmpIndex);
-
-        forEachAdjacent(tmpIndex, [this] (IndexType adjacentTmpIndex) {
-            enableMovesOnValue(adjacentTmpIndex);
-        });
+        for (IndexType tmpIndex : m_movesToEnable)
+            enableMovesOnValue(tmpIndex);
+        m_movesToEnable.clearAll();
     }
 
     struct OrderedMoveSet {
@@ -1309,6 +1318,8 @@ protected:
     OrderedMoveSet m_worklistMoves;
     // Set of "move" not yet ready for coalescing.
     BitVector m_activeMoves;
+    // Set of Tmps whose moves are now ready for possible coalescing.
+    BitVector m_movesToEnable;
 };
 
 // This perform all the tasks that are specific to certain register type.
@@ -1802,6 +1813,16 @@ private:
 
                 this->addSpillAndFill<bank>(allocator, unspillableTmps);
                 return false;
+            };
+
+            auto useIRC = [&] {
+                if (Options::airForceBriggsAllocator())
+                    return false;
+                if (m_code.forceIRCRegisterAllocation() || Options::airForceIRCAllocator())
+                    return true;
+                if (isARM64())
+                    return false;
+                return true;
             };
 
             if (m_code.numTmps(bank) < WTF::maxSizeForSmallInterferenceGraph) {

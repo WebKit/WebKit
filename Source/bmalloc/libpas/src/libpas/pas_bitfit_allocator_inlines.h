@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,33 +28,18 @@
 
 #include "pas_bitfit_allocation_result.h"
 #include "pas_bitfit_allocator.h"
-#include "pas_bitfit_global_directory.h"
-#include "pas_bitfit_global_size_class.h"
+#include "pas_bitfit_directory.h"
+#include "pas_bitfit_size_class.h"
 #include "pas_bitfit_page_inlines.h"
 #include "pas_bitfit_view.h"
 #include "pas_debug_spectrum.h"
 #include "pas_epoch.h"
 #include "pas_fast_path_allocation_result.h"
-#include "pas_segregated_global_size_directory_inlines.h"
+#include "pas_segregated_size_directory_inlines.h"
 
 PAS_BEGIN_EXTERN_C;
 
-static inline void pas_bitfit_allocator_reset(pas_bitfit_allocator* allocator)
-{
-    allocator->global_size_class = NULL;
-    allocator->size_class = NULL;
-    allocator->view = NULL;
-}
-
-static inline void pas_bitfit_allocator_assert_reset(pas_bitfit_allocator* allocator)
-{
-    PAS_TESTING_ASSERT(!allocator->global_size_class);
-    PAS_TESTING_ASSERT(!allocator->size_class);
-    PAS_TESTING_ASSERT(!allocator->view);
-}
-
 PAS_API bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
-                                              pas_local_allocator* local,
                                               pas_bitfit_page_config* config,
                                               pas_lock_hold_mode commit_lock_hold_mode);
 
@@ -68,7 +53,7 @@ pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* allocator,
 
 static PAS_ALWAYS_INLINE pas_fast_path_allocation_result
 pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
-                                  pas_local_allocator* local,
+                                  pas_local_allocator* local_allocator,
                                   size_t size,
                                   size_t alignment,
                                   pas_bitfit_page_config config)
@@ -95,7 +80,28 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
         pas_bitfit_page* page;
         size_t bytes_committed;
         
-        PAS_TESTING_ASSERT(view);
+        if (PAS_UNLIKELY(!view)) {
+            pas_thread_local_cache* cache;
+            
+            PAS_TESTING_ASSERT(!allocator->view);
+
+            cache = pas_thread_local_cache_try_get();
+            if (cache) {
+                pas_thread_local_cache_stop_local_allocators_if_necessary(
+                    cache, local_allocator, pas_lock_is_not_held);
+            }
+
+            PAS_TESTING_ASSERT(!allocator->view);
+            
+            view = pas_bitfit_size_class_get_first_free_view(
+                allocator->size_class, (pas_bitfit_page_config*)config.base.page_config_ptr);
+            if (!view)
+                return pas_fast_path_allocation_result_create_out_of_memory();
+            allocator->view = view;
+        }
+
+        if (verbose)
+            pas_log("Allocating in view %p\n", view);
 
         bytes_committed = 0;
         bitfit_result = pas_bitfit_allocation_result_create_empty();
@@ -118,12 +124,12 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
                 pas_lock_lock(&view->commit_lock);
             }
 
-            pas_bitfit_view_lock_ownership_lock(view);
+            pas_lock_lock(&view->ownership_lock);
 
             if (PAS_UNLIKELY(!view->is_owned)) {
                 /* Note that this would have flashed the ownership lock possibly. */
                 if (!pas_bitfit_allocator_commit_view(
-                        view, local, (pas_bitfit_page_config*)config.base.page_config_ptr,
+                        view, (pas_bitfit_page_config*)config.base.page_config_ptr,
                         commit_lock_hold_mode)) {
                     if (verbose)
                         pas_log("bitfit is out of memory\n");
@@ -159,25 +165,19 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
         PAS_ASSERT(!bitfit_result.pages_to_commit_on_reloop);
 
         if (!bitfit_result.did_succeed) {
-            pas_bitfit_view* next_view;
-
             PAS_ASSERT(!bytes_committed);
 
             if (verbose)
                 pas_log("bitfit page allocation did not succeed.\n");
             
-            next_view = pas_bitfit_allocator_finish_failing(
+            view = pas_bitfit_allocator_finish_failing(
                 allocator, view, size, alignment, bitfit_result.u.largest_available,
                 (pas_bitfit_page_config*)config.base.page_config_ptr);
             
-            if (next_view) {
+            if (view)
                 PAS_TESTING_ASSERT(alignment > pas_page_base_config_min_align(config.base));
-
-                view = next_view;
-                continue;
-            }
             
-            return pas_fast_path_allocation_result_create_need_slow();
+            continue;
         }
         
         pas_lock_unlock(&view->ownership_lock);
@@ -185,14 +185,16 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
         if (PAS_DEBUG_SPECTRUM_USE_FOR_COMMIT && bytes_committed) {
             pas_heap_lock_lock();
             pas_debug_spectrum_add(
-                pas_compact_bitfit_directory_ptr_load(&allocator->global_size_class->base.directory),
-                pas_bitfit_global_directory_dump_for_spectrum,
+                pas_compact_bitfit_directory_ptr_load(&allocator->size_class->directory),
+                pas_bitfit_directory_dump_for_spectrum,
                 bytes_committed);
             pas_heap_lock_unlock();
         }
 
         if (verbose)
             pas_log("bitfit allocation succeeded with %p\n", (void*)bitfit_result.u.result);
+
+        PAS_TESTING_ASSERT(pas_is_aligned(bitfit_result.u.result, alignment));
         
         return pas_fast_path_allocation_result_create_success(bitfit_result.u.result);
     }

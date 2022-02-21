@@ -25,11 +25,11 @@
 
 #pragma once
 
+#include "SourceID.h"
 #include <stddef.h>
 
 namespace JSC {
 
-using SourceID = size_t;
 constexpr SourceID noSourceID = 0;
 
 using BreakpointID = size_t;

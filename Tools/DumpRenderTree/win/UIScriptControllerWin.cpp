@@ -42,7 +42,7 @@ void UIScriptControllerWin::doAsyncTask(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    callOnMainThread([this, protectedThis = makeRef(*this), callbackID ] {
+    callOnMainThread([this, protectedThis = Ref { *this }, callbackID ] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -68,6 +68,19 @@ double UIScriptControllerWin::zoomScale() const
 {
     // No API to get the page scale factor
     return 1;
+}
+
+void UIScriptControllerWin::setWebViewEditable(bool editable)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewEditing> viewEditing;
+    if (FAILED(webView->QueryInterface(&viewEditing)))
+        return;
+
+    viewEditing->setEditable(editable);
 }
 
 }

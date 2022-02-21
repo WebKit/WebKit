@@ -24,10 +24,10 @@
 
 . common.sh
 
-function build_variant {
+build_variant_xcodebuild() {
     variant=$1
-    extra_xcodebuild_options="$2"
-    target=$3
+    target=$2
+    extra_xcodebuild_options="EXTRA_DEFINES=$3"
     
     build_dir=build-$sdk-$variant
     mkdir -p $build_dir
@@ -43,7 +43,7 @@ function build_variant {
             
     case $target in
         mbmalloc|all)
-            function link_mbmalloc_personality {
+            link_mbmalloc_personality() {
                 personality=$1
                 
                 mkdir -p $build_dir/$configdir/mbmalloc_$personality
@@ -60,17 +60,58 @@ function build_variant {
     esac
 }
 
-function build_variants {
+build_variant_cmake() {
+    variant=$1
+    target=$2
+    extra_options=$3
+
+    case $config in
+        Release)
+            ;;
+        Debug)
+            ;;
+        *)
+            echo "Bad value of config"
+            exit 1
+    esac
+
+    build_dir=build-$sdk-$variant/$configdir
+    mkdir -p $build_dir
+
+    extra_cmake_options=""
+    for option in $extra_options; do
+        extra_cmake_options="${extra_cmake_options} -D${option}"
+    done
+    extra_cmake_options=\"${extra_cmake_options#* }\"
+
+    echo $extra_cmake_options
+
+    cmake -DCMAKE_BUILD_TYPE=$config -DCMAKE_C_FLAGS=$extra_cmake_options -DCMAKE_CXX_FLAGS=$extra_cmake_options -B $build_dir
+    cmake --build $build_dir --parallel
+}
+
+build_variant() {
+    case $sdk in
+        cmake)
+            build_variant_cmake $@
+            ;;
+        *)
+            build_variant_xcodebuild $@
+            ;;
+    esac
+}
+
+build_variants() {
     target=$1
     
     case $variants in
         all|testing)
-            build_variant testing "EXTRA_DEFINES=ENABLE_PAS_TESTING" $target
+            build_variant testing $target "ENABLE_PAS_TESTING"
             ;;
     esac
     case $variants in
         all|default)
-            build_variant default "EXTRA_DEFINES=" $target
+            build_variant default $target ""
             ;;
     esac
 }

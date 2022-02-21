@@ -24,11 +24,9 @@
  */
 
 [
-    EnabledBySetting=MediaCapabilities,
-    ImplementationLacksVTable,
-    JSCustomHeader,
-    Exposed=Window
+    EnabledBySetting=MediaCapabilitiesEnabled,
+    Exposed=(Window,DedicatedWorker)
 ] interface MediaCapabilities {
-    [CustomEnabled, CallWith=Document] Promise<MediaCapabilitiesDecodingInfo> decodingInfo(MediaDecodingConfiguration configuration);
-    [CustomEnabled, CallWith=Document] Promise<MediaCapabilitiesEncodingInfo> encodingInfo(MediaEncodingConfiguration configuration);
+    [CallWith=CurrentScriptExecutionContext] Promise<MediaCapabilitiesDecodingInfo> decodingInfo(MediaDecodingConfiguration configuration);
+    [CallWith=CurrentScriptExecutionContext] Promise<MediaCapabilitiesEncodingInfo> encodingInfo(MediaEncodingConfiguration configuration);
 };

@@ -48,13 +48,18 @@ PAS_API void hotbit_heap_config_activate(void);
     .activate = hotbit_heap_config_activate, \
     .get_type_size = pas_simple_type_as_heap_type_get_type_size, \
     .get_type_alignment = pas_simple_type_as_heap_type_get_type_alignment, \
+    .dump_type = pas_simple_type_as_heap_type_dump, \
     .check_deallocation = false, \
     .small_segregated_min_align_shift = HOTBIT_MINALIGN_SHIFT, \
     .small_segregated_sharing_shift = PAS_SMALL_SHARING_SHIFT, \
     .small_segregated_page_size = PAS_SMALL_PAGE_DEFAULT_SIZE, \
     .small_segregated_wasteage_handicap = PAS_SMALL_PAGE_HANDICAP, \
-    .small_segregated_enable_empty_word_eligibility_optimization = true, \
-    .small_use_reversed_current_word = PAS_ARM64, \
+    .small_exclusive_segregated_logging_mode = pas_segregated_deallocation_size_oblivious_logging_mode, \
+    .small_shared_segregated_logging_mode = pas_segregated_deallocation_size_oblivious_logging_mode, \
+    .small_exclusive_segregated_enable_empty_word_eligibility_optimization = true, \
+    .small_shared_segregated_enable_empty_word_eligibility_optimization = true, \
+    .small_segregated_use_reversed_current_word = PAS_ARM64, \
+    .enable_view_cache = true, \
     .use_small_bitfit = true, \
     .small_bitfit_min_align_shift = HOTBIT_MINALIGN_SHIFT, \
     .small_bitfit_page_size = PAS_SMALL_BITFIT_PAGE_DEFAULT_SIZE, \
@@ -64,6 +69,8 @@ PAS_API void hotbit_heap_config_activate(void);
     .medium_segregated_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
     .medium_segregated_sharing_shift = PAS_MEDIUM_SHARING_SHIFT, \
     .medium_segregated_wasteage_handicap = PAS_MEDIUM_PAGE_HANDICAP, \
+    .medium_exclusive_segregated_logging_mode = pas_segregated_deallocation_size_aware_logging_mode, \
+    .medium_shared_segregated_logging_mode = pas_segregated_deallocation_size_aware_logging_mode, \
     .use_medium_bitfit = true, \
     .medium_bitfit_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
     .use_marge_bitfit = true, \
@@ -72,11 +79,7 @@ PAS_API void hotbit_heap_config_activate(void);
 
 PAS_API extern pas_heap_config hotbit_heap_config;
 
-PAS_BASIC_HEAP_CONFIG_DECLARATIONS(
-    hotbit, HOTBIT,
-    .small_size_aware_logging = PAS_SMALL_SIZE_AWARE_LOGGING,
-    .medium_size_aware_logging = PAS_MEDIUM_SIZE_AWARE_LOGGING,
-    .verify_before_logging = false);
+PAS_BASIC_HEAP_CONFIG_DECLARATIONS(hotbit, HOTBIT);
 
 PAS_END_EXTERN_C;
 

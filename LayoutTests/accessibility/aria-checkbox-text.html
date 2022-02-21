@@ -19,20 +19,13 @@
     description("This tests that ARIA checkboxes use accessible name computation.");
 
     if (window.accessibilityController) {
-
-          var checkbox = document.getElementById("check1");
-          checkbox.focus();
-          checkbox = accessibilityController.focusedElement;
+          var checkbox = accessibilityController.accessibleElementById("check1");
           debug("checkbox.title is " + checkbox.title);
 
-          checkbox = document.getElementById("check2");
-          checkbox.focus();
-          checkbox = accessibilityController.focusedElement;
+          checkbox = accessibilityController.accessibleElementById("check2");
           debug("checkbox.title is " + checkbox.title);
 
-          checkbox = document.getElementById("check3");
-          checkbox.focus();
-          checkbox = accessibilityController.focusedElement;
+          checkbox = accessibilityController.accessibleElementById("check3");
           debug("checkbox.title is " + checkbox.title);
     }
 

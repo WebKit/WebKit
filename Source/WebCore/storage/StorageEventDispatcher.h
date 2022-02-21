@@ -36,15 +36,15 @@ namespace WebCore {
 class Frame;
 class Page;
 class PageGroup;
-struct SecurityOriginData;
+class SecurityOrigin;
 
 class StorageEventDispatcher {
 public:
-    WEBCORE_EXPORT static void dispatchSessionStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOriginData&, Frame* sourceFrame);
-    WEBCORE_EXPORT static void dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOriginData&, Frame* sourceFrame);
+    WEBCORE_EXPORT static void dispatchSessionStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOrigin&, Frame* sourceFrame);
+    WEBCORE_EXPORT static void dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOrigin&, Frame* sourceFrame);
 
-    WEBCORE_EXPORT static void dispatchSessionStorageEventsToFrames(Page&, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOriginData&);
-    WEBCORE_EXPORT static void dispatchLocalStorageEventsToFrames(PageGroup&, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOriginData&);
+    WEBCORE_EXPORT static void dispatchSessionStorageEventsToFrames(Page&, const Vector<Ref<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOrigin&);
+    WEBCORE_EXPORT static void dispatchLocalStorageEventsToFrames(PageGroup&, const Vector<Ref<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOrigin&);
 private:
     // Do not instantiate.
     StorageEventDispatcher();

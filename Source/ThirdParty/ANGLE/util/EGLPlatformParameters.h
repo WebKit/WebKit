@@ -19,7 +19,7 @@ struct PlatformMethods;
 // The GLES driver type determines what shared object we use to load the GLES entry points.
 // AngleEGL loads from ANGLE's version of libEGL, libGLESv2, and libGLESv1_CM.
 // SystemEGL uses the system copies of libEGL, libGLESv2, and libGLESv1_CM.
-// SystemWGL loads Windows GL with the GLES compatiblity extensions. See util/WGLWindow.h.
+// SystemWGL loads Windows GL with the GLES compatibility extensions. See util/WGLWindow.h.
 enum class GLESDriverType
 {
     AngleEGL,
@@ -59,12 +59,16 @@ struct EGLPlatformParameters
     auto tie() const
     {
         return std::tie(renderer, majorVersion, minorVersion, deviceType, presentPath,
-                        debugLayersEnabled, contextVirtualization, transformFeedbackFeature,
-                        allocateNonZeroMemoryFeature, emulateCopyTexImage2DFromRenderbuffers,
-                        shaderStencilOutputFeature, genMultipleMipsPerPassFeature, platformMethods,
-                        robustness, emulatedPrerotation, asyncCommandQueueFeatureVulkan,
+                        debugLayersEnabled, transformFeedbackFeature, allocateNonZeroMemoryFeature,
+                        emulateCopyTexImage2DFromRenderbuffers, shaderStencilOutputFeature,
+                        genMultipleMipsPerPassFeature, platformMethods, robustness,
+                        emulatedPrerotation, asyncCommandQueueFeatureVulkan,
                         hasExplicitMemBarrierFeatureMtl, hasCheapRenderPassFeatureMtl,
-                        forceBufferGPUStorageFeatureMtl);
+                        forceBufferGPUStorageFeatureMtl, supportsVulkanViewportFlip,
+                        supportsVulkanMultiDrawIndirect, WithVulkanPreferCPUForBufferSubData,
+                        emulatedVAOs, generateSPIRVThroughGlslang, captureLimits,
+                        forceRobustResourceInit, directMetalGeneration, forceInitShaderVariables,
+                        forceVulkanFallbackFormat, displayPowerPreference);
     }
 
     EGLint renderer                               = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
@@ -73,7 +77,6 @@ struct EGLPlatformParameters
     EGLint deviceType                             = EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
     EGLint presentPath                            = EGL_DONT_CARE;
     EGLint debugLayersEnabled                     = EGL_DONT_CARE;
-    EGLint contextVirtualization                  = EGL_DONT_CARE;
     EGLint robustness                             = EGL_DONT_CARE;
     EGLint transformFeedbackFeature               = EGL_DONT_CARE;
     EGLint allocateNonZeroMemoryFeature           = EGL_DONT_CARE;
@@ -85,7 +88,19 @@ struct EGLPlatformParameters
     EGLint hasExplicitMemBarrierFeatureMtl        = EGL_DONT_CARE;
     EGLint hasCheapRenderPassFeatureMtl           = EGL_DONT_CARE;
     EGLint forceBufferGPUStorageFeatureMtl        = EGL_DONT_CARE;
-    angle::PlatformMethods *platformMethods       = nullptr;
+    EGLint supportsVulkanViewportFlip             = EGL_DONT_CARE;
+    EGLint supportsVulkanMultiDrawIndirect        = EGL_DONT_CARE;
+    EGLint WithVulkanPreferCPUForBufferSubData    = EGL_DONT_CARE;
+    EGLint emulatedVAOs                           = EGL_DONT_CARE;
+    EGLint generateSPIRVThroughGlslang            = EGL_DONT_CARE;
+    EGLint captureLimits                          = EGL_DONT_CARE;
+    EGLint forceRobustResourceInit                = EGL_DONT_CARE;
+    EGLint directMetalGeneration                  = EGL_DONT_CARE;
+    EGLint forceInitShaderVariables               = EGL_DONT_CARE;
+    EGLint forceVulkanFallbackFormat              = EGL_DONT_CARE;
+    EGLint displayPowerPreference                 = EGL_DONT_CARE;
+
+    angle::PlatformMethods *platformMethods = nullptr;
 };
 
 inline bool operator<(const EGLPlatformParameters &a, const EGLPlatformParameters &b)

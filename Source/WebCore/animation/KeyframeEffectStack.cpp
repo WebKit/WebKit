@@ -31,6 +31,7 @@
 #include "KeyframeEffect.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
+#include <wtf/PointerComparison.h>
 
 namespace WebCore {
 
@@ -49,7 +50,8 @@ bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
     if (!effect.targetStyleable() || !effect.animation() || !effect.animation()->timeline() || !effect.animation()->isRelevant())
         return false;
 
-    m_effects.append(makeWeakPtr(&effect));
+    effect.invalidate();
+    m_effects.append(effect);
     m_isSorted = false;
     return true;
 }
@@ -120,7 +122,7 @@ void KeyframeEffectStack::setCSSAnimationList(RefPtr<const AnimationList>&& cssA
     m_isSorted = false;
 }
 
-OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle, const RenderStyle* parentElementStyle)
+OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext)
 {
     OptionSet<AnimationImpact> impact;
 
@@ -131,9 +133,18 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
             || targetStyle.transform() != previousLastStyleChangeEventStyle.transform();
     }();
 
+    auto propertyAffectingLogicalPropertiesChanged = previousLastStyleChangeEventStyle.direction() != targetStyle.direction()
+        || previousLastStyleChangeEventStyle.writingMode() != targetStyle.writingMode();
+
+    auto unanimatedStyle = RenderStyle::clone(targetStyle);
+
     for (const auto& effect : sortedEffects()) {
         ASSERT(effect->animation());
-        effect->animation()->resolve(targetStyle, parentElementStyle);
+
+        if (propertyAffectingLogicalPropertiesChanged)
+            effect->propertyAffectingLogicalPropertiesDidChange(unanimatedStyle, resolutionContext);
+
+        effect->animation()->resolve(targetStyle, resolutionContext);
 
         if (effect->isRunningAccelerated() || effect->isAboutToRunAccelerated())
             impact.add(AnimationImpact::RequiresRecomposite);
@@ -152,6 +163,40 @@ void KeyframeEffectStack::stopAcceleratingTransformRelatedProperties(UseAccelera
 {
     for (auto& effect : m_effects)
         effect->stopAcceleratingTransformRelatedProperties(useAcceleratedAction);
+}
+
+void KeyframeEffectStack::clearInvalidCSSAnimationNames()
+{
+    m_invalidCSSAnimationNames.clear();
+}
+
+bool KeyframeEffectStack::hasInvalidCSSAnimationNames() const
+{
+    return !m_invalidCSSAnimationNames.isEmpty();
+}
+
+bool KeyframeEffectStack::containsInvalidCSSAnimationName(const String& name) const
+{
+    return m_invalidCSSAnimationNames.contains(name);
+}
+
+void KeyframeEffectStack::addInvalidCSSAnimationName(const String& name)
+{
+    m_invalidCSSAnimationNames.add(name);
+}
+
+bool KeyframeEffectStack::containsEffectThatPreventsAccelerationOfEffect(const KeyframeEffect& potentiallyAcceleratedEffect)
+{
+    ensureEffectsAreSorted();
+
+    for (auto& effect : m_effects) {
+        if (effect.get() == &potentiallyAcceleratedEffect)
+            continue;
+        if (effect->preventsAcceleration())
+            return true;
+    }
+
+    return false;
 }
 
 } // namespace WebCore

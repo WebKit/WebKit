@@ -30,12 +30,13 @@
 
 #import "Logging.h"
 #import "ScrollingStateFixedNode.h"
+#import "ScrollingThread.h"
 #import "ScrollingTree.h"
 #import "ScrollingTreeFrameScrollingNode.h"
 #import "ScrollingTreeOverflowScrollProxyNode.h"
 #import "ScrollingTreeOverflowScrollingNode.h"
 #import "ScrollingTreePositionedNode.h"
-#import "ScrollingTreeStickyNode.h"
+#import "ScrollingTreeStickyNodeCocoa.h"
 #import "WebCoreCALayerExtras.h"
 #import <wtf/text/TextStream.h>
 
@@ -72,7 +73,7 @@ void ScrollingTreeFixedNode::applyLayerPositions()
 {
     auto computeLayerPosition = [&] {
         FloatSize overflowScrollDelta;
-        ScrollingTreeStickyNode* lastStickyNode = nullptr;
+        ScrollingTreeStickyNodeCocoa* lastStickyNode = nullptr;
         for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
             if (is<ScrollingTreeFrameScrollingNode>(*ancestor)) {
                 // Fixed nodes are positioned relative to the containing frame scrolling node.
@@ -107,7 +108,7 @@ void ScrollingTreeFixedNode::applyLayerPositions()
             }
 
             if (is<ScrollingTreeStickyNode>(*ancestor)) {
-                auto& stickyNode = downcast<ScrollingTreeStickyNode>(*ancestor);
+                auto& stickyNode = downcast<ScrollingTreeStickyNodeCocoa>(*ancestor);
                 overflowScrollDelta += stickyNode.scrollDeltaSinceLastCommit();
                 lastStickyNode = &stickyNode;
                 continue;
@@ -126,16 +127,24 @@ void ScrollingTreeFixedNode::applyLayerPositions()
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFixedNode " << scrollingNodeID() << " relatedNodeScrollPositionDidChange: viewportRectAtLastLayout " << m_constraints.viewportRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " layerPosition " << layerPosition);
 
+#if ENABLE(SCROLLING_THREAD)
+    if (ScrollingThread::isCurrentThread()) {
+        // Match the behavior of ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers().
+        if (!scrollingTree().isScrollingSynchronizedWithMainThread())
+            [m_layer _web_setLayerTopLeftPosition:CGPointZero];
+    }
+#endif
+
     [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
 }
 
-void ScrollingTreeFixedNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingTreeFixedNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "fixed node";
     ScrollingTreeNode::dumpProperties(ts, behavior);
     ts.dumpProperty("fixed constraints", m_constraints);
     
-    if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerPositions) {
+    if (behavior & ScrollingStateTreeAsTextBehavior::IncludeLayerPositions) {
         FloatRect layerBounds = [m_layer bounds];
         FloatPoint anchorPoint = [m_layer anchorPoint];
         FloatPoint position = [m_layer position];

@@ -26,6 +26,7 @@ if (rtc_include_tests) {
       "../..:fec_controller_api",
       "../..:mock_video_encoder",
       "../../../api:scoped_refptr",
+      "../../../media:rtc_media_base",
       "../../../modules/video_coding:video_codec_interface",
       "../../../modules/video_coding:video_coding_utility",
       "../../../modules/video_coding:webrtc_vp8",

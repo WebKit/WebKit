@@ -26,6 +26,17 @@ TEST(InfoLogTest, LogLengthCountsTerminator)
     EXPECT_EQ(3u, infoLog.getLength());
 }
 
+// Tests that the log doesn't append newlines to an empty string
+TEST(InfoLogTest, InfoLogEmptyString)
+{
+    InfoLog infoLog;
+    EXPECT_EQ(0u, infoLog.getLength());
+    infoLog << "";
+
+    // "" = 3 characters
+    EXPECT_EQ(0u, infoLog.getLength());
+}
+
 // Tests that newlines get appended to the info log properly.
 TEST(InfoLogTest, AppendingNewline)
 {

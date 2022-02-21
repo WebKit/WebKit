@@ -257,7 +257,7 @@ static bool canCreateRevealItems()
     static bool result;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
-        result = PAL::isRevealFrameworkAvailable() && PAL::isRevealCoreFrameworkAvailable() && PAL::getRVItemClass();
+        result = PAL::isRevealCoreFrameworkAvailable() && PAL::getRVItemClass();
     });
     return result;
 }
@@ -318,7 +318,7 @@ std::optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAt
     if (position.isNull())
         position = firstPositionInOrBeforeNode(node);
 
-    auto selection = frame->page()->focusController().focusedOrMainFrame().selection().selection();
+    auto selection = CheckedRef(frame->page()->focusController())->focusedOrMainFrame().selection().selection();
     NSRange selectionRange;
     NSUInteger hitIndex;
     std::optional<SimpleRange> fullCharacterRange;
@@ -427,7 +427,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
 #if PLATFORM(MAC)
-    if (!canCreateRevealItems() || !PAL::getRVPresenterClass())
+    if (!PAL::isRevealFrameworkAvailable() || !canCreateRevealItems() || !PAL::getRVPresenterClass())
         return nil;
 
     auto mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);

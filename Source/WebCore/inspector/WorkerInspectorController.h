@@ -64,7 +64,7 @@ public:
     Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
     Inspector::InspectorEvaluateHandler evaluateHandler() const override;
     void frontendInitialized() override { }
-    WTF::Stopwatch& executionStopwatch() const final { return m_executionStopwatch; }
+    Stopwatch& executionStopwatch() const final { return m_executionStopwatch; }
     WorkerDebugger& debugger() override { return m_debugger; }
     JSC::VM& vm() override;
 
@@ -74,11 +74,15 @@ private:
     WorkerAgentContext workerAgentContext();
     void createLazyAgents();
 
+#if ENABLE(SERVICE_WORKER)
+    void updateServiceWorkerPageFrontendCount();
+#endif
+
     Ref<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
     Ref<Inspector::FrontendRouter> m_frontendRouter;
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
-    Ref<WTF::Stopwatch> m_executionStopwatch;
+    Ref<Stopwatch> m_executionStopwatch;
     WorkerDebugger m_debugger;
     Inspector::AgentRegistry m_agents;
     WorkerOrWorkletGlobalScope& m_globalScope;

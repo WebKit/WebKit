@@ -23,7 +23,8 @@ class RendererEGL : public RendererGL
                 const egl::AttributeMap &attribMap,
                 DisplayEGL *display,
                 EGLContext context,
-                const native_egl::AttributeVector attribs);
+                const native_egl::AttributeVector attribs,
+                bool isExternalContext);
     ~RendererEGL() override;
 
     EGLContext getContext() const;
@@ -34,6 +35,7 @@ class RendererEGL : public RendererGL
     DisplayEGL *mDisplay;
     EGLContext mContext;
     const native_egl::AttributeVector mAttribs;
+    const bool mIsExternalContext;
 };
 }  // namespace rx
 

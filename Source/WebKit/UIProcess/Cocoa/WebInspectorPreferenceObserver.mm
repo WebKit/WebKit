@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2020 Apple Inc. All rights reserved.
+* Copyright (C) 2020-2021 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -26,9 +26,10 @@
 #import "config.h"
 #import "WebInspectorPreferenceObserver.h"
 
+#import "WebInspectorUtilities.h"
 #import "WebProcessPool.h"
-
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface WKWebInspectorPreferenceObserver ()
 {
@@ -50,9 +51,10 @@
     if (!(self = [super init]))
         return nil;
 
-    m_userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:@"com.apple.Safari.SandboxBroker"]);
+    auto sandboxBrokerBundleIdentifier = WebKit::bundleIdentifierForSandboxBroker();
+    m_userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:bridge_cast(sandboxBrokerBundleIdentifier)]);
     if (!m_userDefaults) {
-        WTFLogAlways("Could not init user defaults instance for domain com.apple.Safari.SandboxBroker.");
+        WTFLogAlways("Could not init user defaults instance for domain %s.", sandboxBrokerBundleIdentifier);
         return self;
     }
     [m_userDefaults.get() addObserver:self forKeyPath:@"ShowDevelopMenu" options:NSKeyValueObservingOptionNew context:nil];

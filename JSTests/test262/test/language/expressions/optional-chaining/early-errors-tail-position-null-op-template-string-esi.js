@@ -13,8 +13,8 @@ info: |
   It is a Syntax Error if any code matches this production.
 features: [optional-chaining]
 negative:
-  type: SyntaxError
   phase: parse
+  type: SyntaxError
 ---*/
 
 $DONOTEVALUATE();

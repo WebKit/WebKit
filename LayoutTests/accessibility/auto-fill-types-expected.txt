@@ -1,4 +1,3 @@
-
 This tests that the auto-filled buttons show up.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

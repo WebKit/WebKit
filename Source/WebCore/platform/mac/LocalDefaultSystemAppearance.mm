@@ -27,11 +27,14 @@
 
 #if USE(APPKIT)
 
+#import "ColorMac.h"
+
 #import <AppKit/NSAppearance.h>
+#import <pal/spi/mac/NSAppearanceSPI.h>
 
 namespace WebCore {
 
-LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useDarkAppearance)
+LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useDarkAppearance, const Color& tintColor)
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -40,10 +43,16 @@ LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useDarkAppearanc
     m_usingDarkAppearance = useDarkAppearance;
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [NSAppearance setCurrentAppearance:[NSAppearance appearanceNamed:m_usingDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua]];
+    NSAppearance *appearance = [NSAppearance appearanceNamed:m_usingDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua];
+
+    if (tintColor.isValid())
+        appearance = [appearance appearanceByApplyingTintColor:cocoaColor(tintColor).get()];
+
+    [NSAppearance setCurrentAppearance:appearance];
     ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     UNUSED_PARAM(useDarkAppearance);
+    UNUSED_PARAM(tintColor);
 #endif
 }
 

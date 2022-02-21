@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RenderTreeBuilderSVG.h"
 
+#include "LegacyRenderSVGContainer.h"
+#include "LegacyRenderSVGRoot.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGRoot.h"
@@ -42,7 +44,23 @@ RenderTreeBuilder::SVG::SVG(RenderTreeBuilder& builder)
 {
 }
 
+void RenderTreeBuilder::SVG::attach(LegacyRenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    auto& childToAdd = *child;
+    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
+    SVGResourcesCache::clientWasAddedToTree(childToAdd);
+}
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 void RenderTreeBuilder::SVG::attach(RenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    auto& childToAdd = *child;
+    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
+    SVGResourcesCache::clientWasAddedToTree(childToAdd);
+}
+#endif
+
+void RenderTreeBuilder::SVG::attach(LegacyRenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
     m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
@@ -59,12 +77,14 @@ void RenderTreeBuilder::SVG::attach(RenderSVGInline& parent, RenderPtr<RenderObj
         textAncestor->subtreeChildWasAdded(&childToAdd);
 }
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 void RenderTreeBuilder::SVG::attach(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
     m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
+#endif
 
 void RenderTreeBuilder::SVG::attach(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
@@ -73,6 +93,12 @@ void RenderTreeBuilder::SVG::attach(RenderSVGText& parent, RenderPtr<RenderObjec
 
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
     parent.subtreeChildWasAdded(&childToAdd);
+}
+
+RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(LegacyRenderSVGRoot& parent, RenderObject& child)
+{
+    SVGResourcesCache::clientWillBeRemovedFromTree(child);
+    return m_builder.detachFromRenderElement(parent, child);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGText& parent, RenderObject& child)
@@ -101,16 +127,26 @@ RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGInline& parent, 
     return takenChild;
 }
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGContainer& parent, RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
     return m_builder.detachFromRenderElement(parent, child);
 }
+#endif
 
+RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(LegacyRenderSVGContainer& parent, RenderObject& child)
+{
+    SVGResourcesCache::clientWillBeRemovedFromTree(child);
+    return m_builder.detachFromRenderElement(parent, child);
+}
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGRoot& parent, RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
     return m_builder.detachFromRenderElement(parent, child);
 }
+#endif
 
 }

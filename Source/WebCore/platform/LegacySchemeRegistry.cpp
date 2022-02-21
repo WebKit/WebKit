@@ -44,21 +44,21 @@ namespace WebCore {
 // FIXME: URLSchemesMap is a peculiar type name given that it is a set.
 
 static const URLSchemesMap& builtinLocalURLSchemes();
-static const Vector<String>& builtinSecureSchemes();
-static const Vector<String>& builtinSchemesWithUniqueOrigins();
-static const Vector<String>& builtinEmptyDocumentSchemes();
-static const Vector<String>& builtinCanDisplayOnlyIfCanRequestSchemes();
-static const Vector<String>& builtinCORSEnabledSchemes();
+static Span<const ASCIILiteral> builtinSecureSchemes();
+static Span<const ASCIILiteral> builtinSchemesWithUniqueOrigins();
+static Span<const ASCIILiteral> builtinEmptyDocumentSchemes();
+static Span<const ASCIILiteral> builtinCanDisplayOnlyIfCanRequestSchemes();
+static Span<const ASCIILiteral> builtinCORSEnabledSchemes();
 
-using StringVectorFunction = const Vector<String>& (*)();
+using ASCIILiteralSpanFunction = Span<const ASCIILiteral> (*)();
 
-static void add(URLSchemesMap& set, StringVectorFunction function)
+static void add(URLSchemesMap& set, ASCIILiteralSpanFunction function)
 {
     for (auto& scheme : function())
         set.add(scheme);
 }
 
-static NeverDestroyed<URLSchemesMap> makeNeverDestroyedSchemeSet(const Vector<String>& (*function)())
+static NeverDestroyed<URLSchemesMap> makeNeverDestroyedSchemeSet(ASCIILiteralSpanFunction function)
 {
     URLSchemesMap set;
     add(set, function);
@@ -69,8 +69,8 @@ static Lock schemeRegistryLock;
 
 static const URLSchemesMap& allBuiltinSchemes()
 {
-    static const auto schemes = makeNeverDestroyed([] {
-        static const StringVectorFunction functions[] {
+    static NeverDestroyed schemes = [] {
+        static constexpr ASCIILiteralSpanFunction functions[] {
             builtinSecureSchemes,
             builtinSchemesWithUniqueOrigins,
             builtinEmptyDocumentSchemes,
@@ -97,26 +97,25 @@ static const URLSchemesMap& allBuiltinSchemes()
             Locker locker { schemeRegistryLock };
             for (auto& scheme : builtinLocalURLSchemes())
                 set.add(scheme);
-
-            for (auto& function : functions)
-                add(set, function);
         }
+        for (auto& function : functions)
+            add(set, function);
         for (auto& scheme : otherSchemes)
             set.add(scheme);
         return set;
-    }());
+    }();
     return schemes;
 }
 
 static const URLSchemesMap& builtinLocalURLSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
 {
     ASSERT(schemeRegistryLock.isHeld());
-    static const auto schemes = makeNeverDestroyed(URLSchemesMap {
+    static NeverDestroyed schemes = URLSchemesMap {
         "file"_s,
 #if PLATFORM(COCOA)
         "applewebdata"_s,
 #endif
-    });
+    };
     return schemes;
 }
 
@@ -134,10 +133,9 @@ static URLSchemesMap& displayIsolatedURLSchemes() WTF_REQUIRES_LOCK(schemeRegist
     return displayIsolatedSchemes;
 }
 
-const Vector<String>& builtinSecureSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
+static Span<const ASCIILiteral> builtinSecureSchemes()
 {
-    ASSERT(schemeRegistryLock.isHeld());
-    static const auto schemes = makeNeverDestroyed(Vector<String> {
+    static constexpr std::array schemes {
         "https"_s,
         "about"_s,
         "data"_s,
@@ -145,7 +143,10 @@ const Vector<String>& builtinSecureSchemes() WTF_REQUIRES_LOCK(schemeRegistryLoc
 #if PLATFORM(GTK) || PLATFORM(WPE)
         "resource"_s,
 #endif
-    });
+#if PLATFORM(COCOA)
+        "webkit-pdfjs-viewer"_s,
+#endif
+    };
     return schemes;
 }
 
@@ -156,16 +157,15 @@ static URLSchemesMap& secureSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
     return secureSchemes;
 }
 
-static const Vector<String>& builtinSchemesWithUniqueOrigins() WTF_REQUIRES_LOCK(schemeRegistryLock)
+static Span<const ASCIILiteral> builtinSchemesWithUniqueOrigins()
 {
-    ASSERT(schemeRegistryLock.isHeld());
-    static const auto schemes = makeNeverDestroyed(Vector<String> {
+    static constexpr std::array schemes {
         "about"_s,
         "javascript"_s,
         // This is an intentional difference from the behavior the HTML specification calls for.
         // See https://bugs.webkit.org/show_bug.cgi?id=11885
         "data"_s,
-    });
+    };
     return schemes;
 }
 
@@ -176,10 +176,9 @@ static URLSchemesMap& schemesWithUniqueOrigins() WTF_REQUIRES_LOCK(schemeRegistr
     return schemesWithUniqueOrigins;
 }
 
-const Vector<String>& builtinEmptyDocumentSchemes()
+static Span<const ASCIILiteral> builtinEmptyDocumentSchemes()
 {
-    ASSERT(isMainThread());
-    static const auto schemes = makeNeverDestroyed(Vector<String> { "about"_s });
+    static constexpr std::array schemes { "about"_s };
     return schemes;
 }
 
@@ -197,10 +196,9 @@ static URLSchemesMap& schemesForbiddenFromDomainRelaxation()
     return schemes;
 }
 
-const Vector<String>& builtinCanDisplayOnlyIfCanRequestSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
+static Span<const ASCIILiteral> builtinCanDisplayOnlyIfCanRequestSchemes()
 {
-    ASSERT(schemeRegistryLock.isHeld());
-    static const auto schemes = makeNeverDestroyed(Vector<String> { "blob"_s });
+    static constexpr std::array schemes { "blob"_s };
     return schemes;
 }
 
@@ -263,10 +261,9 @@ static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
     return schemesAllowingDatabaseAccessInPrivateBrowsing;
 }
 
-const Vector<String>& builtinCORSEnabledSchemes()
+static Span<const ASCIILiteral> builtinCORSEnabledSchemes()
 {
-    ASSERT(isMainThread());
-    static const auto schemes = makeNeverDestroyed(Vector<String> { "http"_s, "https"_s });
+    static constexpr std::array schemes { "http"_s, "https"_s };
     return schemes;
 }
 

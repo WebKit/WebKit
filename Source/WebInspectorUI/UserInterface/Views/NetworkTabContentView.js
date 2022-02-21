@@ -31,9 +31,7 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
 
         this._networkTableContentView = new WI.NetworkTableContentView;
 
-        const disableBackForward = true;
-        const disableFindBanner = true;
-        this._contentBrowser = new WI.ContentBrowser(null, this, disableBackForward, disableFindBanner);
+        this._contentBrowser = new WI.ContentBrowser(null, this, {hideBackForwardButtons: true, disableFindBanner: true});
         this._contentBrowser.showContentView(this._networkTableContentView);
 
         let filterNavigationItems = this._networkTableContentView.filterNavigationItems;

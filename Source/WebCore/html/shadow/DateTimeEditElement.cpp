@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,11 @@
 #include "DateTimeFieldsState.h"
 #include "DateTimeFormat.h"
 #include "DateTimeSymbolicFieldElement.h"
+#include "Document.h"
+#include "Event.h"
 #include "HTMLNames.h"
 #include "PlatformLocale.h"
+#include "ShadowPseudoIds.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
@@ -167,9 +170,9 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
 void DateTimeEditBuilder::visitLiteral(const String& text)
 {
     ASSERT(text.length());
-    static MainThreadNeverDestroyed<const AtomString> textPseudoId("-webkit-datetime-edit-text", AtomString::ConstructFromLiteral);
+
     auto element = HTMLDivElement::create(m_editElement.document());
-    element->setPseudo(textPseudoId);
+    element->setPseudo(ShadowPseudoIds::webkitDatetimeEditText());
 
     // If the literal begins/ends with a space, the gap between two fields will appear
     // exaggerated due to the presence of a 1px padding around each field. This can
@@ -189,7 +192,7 @@ DateTimeEditElement::EditControlOwner::~EditControlOwner() = default;
 
 DateTimeEditElement::DateTimeEditElement(Document& document, EditControlOwner& editControlOwner)
     : HTMLDivElement(divTag, document)
-    , m_editControlOwner(makeWeakPtr(editControlOwner))
+    , m_editControlOwner(editControlOwner)
 {
     m_placeholderDate.setToCurrentLocalTime();
 }
@@ -212,7 +215,7 @@ void DateTimeEditElement::addField(Ref<DateTimeFieldElement> field)
 
 size_t DateTimeEditElement::fieldIndexOf(const DateTimeFieldElement& fieldToFind) const
 {
-    return m_fields.findMatching([&] (auto& field) {
+    return m_fields.findIf([&] (auto& field) {
         return field.ptr() == &fieldToFind;
     });
 }
@@ -220,7 +223,7 @@ size_t DateTimeEditElement::fieldIndexOf(const DateTimeFieldElement& fieldToFind
 DateTimeFieldElement* DateTimeEditElement::focusedFieldElement() const
 {
     auto* focusedElement = document().focusedElement();
-    auto fieldIndex = m_fields.findMatching([&] (auto& field) {
+    auto fieldIndex = m_fields.findIf([&] (auto& field) {
         return field.ptr() == focusedElement;
     });
 
@@ -233,18 +236,15 @@ DateTimeFieldElement* DateTimeEditElement::focusedFieldElement() const
 Ref<DateTimeEditElement> DateTimeEditElement::create(Document& document, EditControlOwner& editControlOwner)
 {
     auto element = adoptRef(*new DateTimeEditElement(document, editControlOwner));
-    static MainThreadNeverDestroyed<const AtomString> dateTimeEditPseudoId("-webkit-datetime-edit", AtomString::ConstructFromLiteral);
-    element->setPseudo(dateTimeEditPseudoId);
+    element->setPseudo(ShadowPseudoIds::webkitDatetimeEdit());
     return element;
 }
 
 void DateTimeEditElement::layout(const LayoutParameters& layoutParameters)
 {
-    static MainThreadNeverDestroyed<const AtomString> fieldsWrapperPseudoId("-webkit-datetime-edit-fields-wrapper", AtomString::ConstructFromLiteral);
-
     if (!firstChild()) {
         auto element = HTMLDivElement::create(document());
-        element->setPseudo(fieldsWrapperPseudoId);
+        element->setPseudo(ShadowPseudoIds::webkitDatetimeEditFieldsWrapper());
         appendChild(element);
     }
 
@@ -289,7 +289,7 @@ void DateTimeEditElement::didBlurFromField(Event& event)
         return;
 
     if (auto* newFocusedElement = event.relatedTarget()) {
-        bool didFocusSiblingField = notFound != m_fields.findMatching([&] (auto& field) {
+        bool didFocusSiblingField = notFound != m_fields.findIf([&] (auto& field) {
             return field.ptr() == newFocusedElement;
         });
 

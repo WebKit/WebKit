@@ -25,17 +25,16 @@
 
 [
     Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=ServiceWorker,
+    EnabledAtRuntime=ServiceWorkerEnabled,
     Exposed=ServiceWorker,
     GenerateIsReachable=Impl,
-    ImplementationLacksVTable,
     InterfaceName=Clients,
 ] interface ServiceWorkerClients {
     // The objects returned will be new instances every time
-    [NewObject, CallWith=ScriptExecutionContext] Promise<any> get(DOMString id);
-    [NewObject, CallWith=ScriptExecutionContext] Promise<sequence<ServiceWorkerClient>> matchAll(optional ClientQueryOptions options);
-    [NewObject, CallWith=ScriptExecutionContext] Promise<ServiceWorkerWindowClient?> openWindow(USVString url);
-    [NewObject, CallWith=ScriptExecutionContext] Promise<undefined> claim();
+    [NewObject, CallWith=CurrentScriptExecutionContext] Promise<any> get(DOMString id);
+    [NewObject, CallWith=CurrentScriptExecutionContext] Promise<sequence<ServiceWorkerClient>> matchAll(optional ClientQueryOptions options);
+    [NewObject, CallWith=CurrentScriptExecutionContext] Promise<ServiceWorkerWindowClient?> openWindow(USVString url);
+    [NewObject, CallWith=CurrentScriptExecutionContext] Promise<undefined> claim();
 };
 
 dictionary ClientQueryOptions {

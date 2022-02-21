@@ -24,10 +24,12 @@ class DebugAnnotator11 : public angle::LoggingAnnotator
     void initialize(ID3D11DeviceContext *context);
     void release();
     void beginEvent(gl::Context *context,
-                    gl::EntryPoint entryPoint,
+                    angle::EntryPoint entryPoint,
                     const char *eventName,
                     const char *eventMessage) override;
-    void endEvent(gl::Context *context, const char *eventName, gl::EntryPoint entryPoint) override;
+    void endEvent(gl::Context *context,
+                  const char *eventName,
+                  angle::EntryPoint entryPoint) override;
     void setMarker(const char *markerName) override;
     bool getStatus() override;
 

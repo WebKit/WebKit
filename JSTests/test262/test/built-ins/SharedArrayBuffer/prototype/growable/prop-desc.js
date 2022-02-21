@@ -11,7 +11,7 @@ info: |
   Section 17: Every accessor property described in clauses 18 through 26 and in
   Annex B.2 has the attributes {[[Enumerable]]: false, [[Configurable]]: true }
 includes: [propertyHelper.js]
-features: [resizable-arraybuffer]
+features: [SharedArrayBuffer, resizable-arraybuffer]
 ---*/
 
 var desc = Object.getOwnPropertyDescriptor(SharedArrayBuffer.prototype, 'growable');

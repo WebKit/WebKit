@@ -1,0 +1,170 @@
+
+FAIL CSS Transitions: property <text-size-adjust> from neutral to [50%] at (-2) should be [80%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from neutral to [50%] at (-0.3) should be [63%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from neutral to [50%] at (0) should be [60%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from neutral to [50%] at (0.3) should be [57%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from neutral to [50%] at (0.6) should be [54%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from neutral to [50%] at (1) should be [50%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from neutral to [50%] at (1.5) should be [45%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from neutral to [50%] at (-2) should be [80%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from neutral to [50%] at (-0.3) should be [63%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from neutral to [50%] at (0) should be [60%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from neutral to [50%] at (0.3) should be [57%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from neutral to [50%] at (0.6) should be [54%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from neutral to [50%] at (1) should be [50%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from neutral to [50%] at (1.5) should be [45%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from neutral to [50%] at (-2) should be [80%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from neutral to [50%] at (-0.3) should be [63%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from neutral to [50%] at (0) should be [60%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from neutral to [50%] at (0.3) should be [57%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from neutral to [50%] at (0.6) should be [54%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from neutral to [50%] at (1) should be [50%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from neutral to [50%] at (1.5) should be [45%] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from neutral to [50%] at (-2) should be [80%] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from neutral to [50%] at (-0.3) should be [63%] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from neutral to [50%] at (0) should be [60%] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from neutral to [50%] at (0.3) should be [57%] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from neutral to [50%] at (0.6) should be [54%] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from neutral to [50%] at (1) should be [50%] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from neutral to [50%] at (1.5) should be [45%] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [initial] to [70%] at (-0.3) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [initial] to [70%] at (0) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [initial] to [70%] at (0.3) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [initial] to [70%] at (0.5) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [initial] to [70%] at (0.6) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [initial] to [70%] at (1) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [initial] to [70%] at (1.5) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [initial] to [70%] at (-0.3) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [initial] to [70%] at (0) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [initial] to [70%] at (0.3) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [initial] to [70%] at (0.5) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [initial] to [70%] at (0.6) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [initial] to [70%] at (1) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [initial] to [70%] at (1.5) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [initial] to [70%] at (-0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [initial] to [70%] at (0) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [initial] to [70%] at (0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [initial] to [70%] at (0.5) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [initial] to [70%] at (0.6) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [initial] to [70%] at (1) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [initial] to [70%] at (1.5) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [initial] to [70%] at (-0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [initial] to [70%] at (0) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [initial] to [70%] at (0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [initial] to [70%] at (0.5) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [initial] to [70%] at (0.6) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [initial] to [70%] at (1) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [initial] to [70%] at (1.5) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [inherit] to [50%] at (-2) should be [110%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [inherit] to [50%] at (-0.3) should be [76%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [inherit] to [50%] at (0) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [inherit] to [50%] at (0.3) should be [64%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [inherit] to [50%] at (0.6) should be [58%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [inherit] to [50%] at (1) should be [50%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [inherit] to [50%] at (1.5) should be [40%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [inherit] to [50%] at (-2) should be [110%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [inherit] to [50%] at (-0.3) should be [76%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [inherit] to [50%] at (0) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [inherit] to [50%] at (0.3) should be [64%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [inherit] to [50%] at (0.6) should be [58%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [inherit] to [50%] at (1) should be [50%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [inherit] to [50%] at (1.5) should be [40%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [inherit] to [50%] at (-2) should be [110%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [inherit] to [50%] at (-0.3) should be [76%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [inherit] to [50%] at (0) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [inherit] to [50%] at (0.3) should be [64%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [inherit] to [50%] at (0.6) should be [58%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [inherit] to [50%] at (1) should be [50%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [inherit] to [50%] at (1.5) should be [40%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [inherit] to [50%] at (-2) should be [110%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [inherit] to [50%] at (-0.3) should be [76%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [inherit] to [50%] at (0) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [inherit] to [50%] at (0.3) should be [64%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [inherit] to [50%] at (0.6) should be [58%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [inherit] to [50%] at (1) should be [50%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [inherit] to [50%] at (1.5) should be [40%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [unset] to [50%] at (-2) should be [110%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [unset] to [50%] at (-0.3) should be [76%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [unset] to [50%] at (0) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [unset] to [50%] at (0.3) should be [64%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [unset] to [50%] at (0.6) should be [58%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [unset] to [50%] at (1) should be [50%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [unset] to [50%] at (1.5) should be [40%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [unset] to [50%] at (-2) should be [110%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [unset] to [50%] at (-0.3) should be [76%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [unset] to [50%] at (0) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [unset] to [50%] at (0.3) should be [64%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [unset] to [50%] at (0.6) should be [58%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [unset] to [50%] at (1) should be [50%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [unset] to [50%] at (1.5) should be [40%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [unset] to [50%] at (-2) should be [110%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [unset] to [50%] at (-0.3) should be [76%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [unset] to [50%] at (0) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [unset] to [50%] at (0.3) should be [64%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [unset] to [50%] at (0.6) should be [58%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [unset] to [50%] at (1) should be [50%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [unset] to [50%] at (1.5) should be [40%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [unset] to [50%] at (-2) should be [110%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [unset] to [50%] at (-0.3) should be [76%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [unset] to [50%] at (0) should be [70%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [unset] to [50%] at (0.3) should be [64%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [unset] to [50%] at (0.6) should be [58%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [unset] to [50%] at (1) should be [50%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [unset] to [50%] at (1.5) should be [40%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [10%] to [0%] at (-2) should be [30%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [10%] to [0%] at (-0.3) should be [13%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [10%] to [0%] at (0) should be [10%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [10%] to [0%] at (0.3) should be [7%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [10%] to [0%] at (0.6) should be [4%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [10%] to [0%] at (1) should be [0%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [10%] to [0%] at (1.5) should be [0%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [10%] to [0%] at (-2) should be [30%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [10%] to [0%] at (-0.3) should be [13%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [10%] to [0%] at (0) should be [10%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [10%] to [0%] at (0.3) should be [7%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [10%] to [0%] at (0.6) should be [4%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [10%] to [0%] at (1) should be [0%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [10%] to [0%] at (1.5) should be [0%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [10%] to [0%] at (-2) should be [30%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [10%] to [0%] at (-0.3) should be [13%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [10%] to [0%] at (0) should be [10%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [10%] to [0%] at (0.3) should be [7%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [10%] to [0%] at (0.6) should be [4%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [10%] to [0%] at (1) should be [0%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [10%] to [0%] at (1.5) should be [0%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [10%] to [0%] at (-2) should be [30%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [10%] to [0%] at (-0.3) should be [13%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [10%] to [0%] at (0) should be [10%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [10%] to [0%] at (0.3) should be [7%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [10%] to [0%] at (0.6) should be [4%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [10%] to [0%] at (1) should be [0%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [10%] to [0%] at (1.5) should be [0%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [none] to [100%] at (-0.3) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [none] to [100%] at (0) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [none] to [100%] at (0.3) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [none] to [100%] at (0.5) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [none] to [100%] at (0.6) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [none] to [100%] at (1) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <text-size-adjust> from [none] to [100%] at (1.5) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [none] to [100%] at (-0.3) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [none] to [100%] at (0) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [none] to [100%] at (0.3) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [none] to [100%] at (0.5) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [none] to [100%] at (0.6) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [none] to [100%] at (1) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <text-size-adjust> from [none] to [100%] at (1.5) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [none] to [100%] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [none] to [100%] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [none] to [100%] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [none] to [100%] at (0.5) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [none] to [100%] at (0.6) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [none] to [100%] at (1) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <text-size-adjust> from [none] to [100%] at (1.5) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [none] to [100%] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [none] to [100%] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [none] to [100%] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [none] to [100%] at (0.5) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [none] to [100%] at (0.6) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [none] to [100%] at (1) should be [100%] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <text-size-adjust> from [none] to [100%] at (1.5) should be [100%] assert_true: 'from' value should be supported expected true got false
+

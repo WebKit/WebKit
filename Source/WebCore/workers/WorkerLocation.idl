@@ -29,7 +29,6 @@
 [
     Exposed=Worker,
     GenerateIsReachable=Impl,
-    ImplementationLacksVTable,
 ] interface WorkerLocation {
     stringifier readonly attribute USVString href;
     readonly attribute USVString protocol;

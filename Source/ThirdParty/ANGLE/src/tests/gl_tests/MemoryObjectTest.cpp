@@ -32,6 +32,9 @@ TEST_P(MemoryObjectTest, MemoryObjectShouldBeMemoryObject)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_memory_object"));
 
+    // http://anglebug.com/5381
+    ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
+
     constexpr GLsizei kMemoryObjectCount = 2;
     GLuint memoryObjects[kMemoryObjectCount];
     glCreateMemoryObjectsEXT(kMemoryObjectCount, memoryObjects);
@@ -53,6 +56,9 @@ TEST_P(MemoryObjectTest, ShouldFailValidationOnImportFdUnsupportedHandleType)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_memory_object_fd"));
 
+    // http://anglebug.com/5381
+    ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
+
     {
         GLMemoryObject memoryObject;
         GLsizei deviceMemorySize = 1;
@@ -68,6 +74,9 @@ TEST_P(MemoryObjectTest, ShouldFailValidationOnImportFdUnsupportedHandleType)
 TEST_P(MemoryObjectTest, MemoryObjectQueries)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_memory_object"));
+
+    // http://anglebug.com/5381
+    ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
 
     GLMemoryObject memoryObject;
 

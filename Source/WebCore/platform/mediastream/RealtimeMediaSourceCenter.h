@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,11 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(COCOA)
+#include <pal/spi/cocoa/TCCSPI.h>
+#include <wtf/OSObjectPtr.h>
+#endif
 
 namespace WebCore {
 
@@ -100,6 +105,16 @@ public:
 
     WEBCORE_EXPORT static bool shouldInterruptAudioOnPageVisibilityChange();
 
+#if ENABLE(APP_PRIVACY_REPORT)
+    void setIdentity(OSObjectPtr<tcc_identity_t>&& identity) { m_identity = WTFMove(identity); }
+    OSObjectPtr<tcc_identity_t> identity() const { return m_identity; }
+#endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    bool useScreenCaptureKit() const;
+    void setUseScreenCaptureKit(bool);
+#endif
+
 private:
     RealtimeMediaSourceCenter();
     friend class NeverDestroyed<RealtimeMediaSourceCenter>;
@@ -113,7 +128,7 @@ private:
         CaptureDevice device;
     };
 
-    void getDisplayMediaDevices(const MediaStreamRequest&, Vector<DeviceInfo>&, String&);
+    void getDisplayMediaDevices(const MediaStreamRequest&, String&&, Vector<DeviceInfo>&, String&);
     void getUserMediaDevices(const MediaStreamRequest&, String&&, Vector<DeviceInfo>& audioDevices, Vector<DeviceInfo>& videoDevices, String&);
     void validateRequestConstraintsAfterEnumeration(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaStreamRequest&, String&&);
     void enumerateDevices(bool shouldEnumerateCamera, bool shouldEnumerateDisplay, bool shouldEnumerateMicrophone, bool shouldEnumerateSpeakers, CompletionHandler<void()>&&);
@@ -130,7 +145,28 @@ private:
     DisplayCaptureFactory* m_displayCaptureFactoryOverride { nullptr };
 
     bool m_shouldInterruptAudioOnPageVisibilityChange { false };
+
+#if ENABLE(APP_PRIVACY_REPORT)
+    OSObjectPtr<tcc_identity_t> m_identity;
+#endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    bool m_useScreenCaptureKit { false };
+#endif
+    bool m_useMockCaptureDevices { false };
 };
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+inline bool RealtimeMediaSourceCenter::useScreenCaptureKit() const
+{
+    return m_useScreenCaptureKit;
+}
+
+inline void RealtimeMediaSourceCenter::setUseScreenCaptureKit(bool useScreenCaptureKit)
+{
+    m_useScreenCaptureKit = useScreenCaptureKit;
+}
+#endif
 
 } // namespace WebCore
 

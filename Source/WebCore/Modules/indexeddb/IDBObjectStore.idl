@@ -40,30 +40,30 @@ typedef (DOMString or sequence<DOMString>) IDBKeyPath;
     [SameObject] readonly attribute IDBTransaction transaction;
     readonly attribute boolean autoIncrement;
 
-    [NewObject, CallWith=GlobalObject] IDBRequest put(any value, optional any key);
-    [NewObject, CallWith=GlobalObject] IDBRequest add(any value, optional any key);
-    [NewObject, CallWith=GlobalObject, ImplementedAs=deleteFunction] IDBRequest delete(IDBKeyRange? keyRange);
-    [NewObject, CallWith=GlobalObject, ImplementedAs=deleteFunction] IDBRequest delete(any key);
-    [NewObject, CallWith=GlobalObject] IDBRequest clear();
-    [NewObject, CallWith=GlobalObject] IDBRequest get(IDBKeyRange? key);
-    [NewObject, CallWith=GlobalObject] IDBRequest get(any key);
-    [NewObject, CallWith=GlobalObject] IDBRequest getKey(IDBKeyRange? key);
-    [NewObject, CallWith=GlobalObject] IDBRequest getKey(any key);
-    [NewObject, CallWith=GlobalObject] IDBRequest getAll(optional IDBKeyRange? range = null, optional [EnforceRange] unsigned long count);
-    [NewObject, CallWith=GlobalObject] IDBRequest getAll(any key, optional [EnforceRange] unsigned long count);
-    [NewObject, CallWith=GlobalObject] IDBRequest getAllKeys(optional IDBKeyRange? range = null, optional [EnforceRange] unsigned long count);
-    [NewObject, CallWith=GlobalObject] IDBRequest getAllKeys(any key, optional [EnforceRange] unsigned long count);
-    [NewObject, CallWith=GlobalObject] IDBRequest count(optional IDBKeyRange? range = null);
-    [NewObject, CallWith=GlobalObject] IDBRequest count(any key);
+    [NewObject, CallWith=CurrentGlobalObject] IDBRequest put(any value, optional any key);
+    [NewObject, CallWith=CurrentGlobalObject] IDBRequest add(any value, optional any key);
+    [NewObject, ImplementedAs=deleteFunction] IDBRequest delete(IDBKeyRange? keyRange);
+    [NewObject, CallWith=CurrentGlobalObject, ImplementedAs=deleteFunction] IDBRequest delete(any key);
+    [NewObject] IDBRequest clear();
+    [NewObject] IDBRequest get(IDBKeyRange? key);
+    [NewObject, CallWith=CurrentGlobalObject] IDBRequest get(any key);
+    [NewObject] IDBRequest getKey(IDBKeyRange? key);
+    [NewObject, CallWith=CurrentGlobalObject] IDBRequest getKey(any key);
+    [NewObject] IDBRequest getAll(optional IDBKeyRange? range = null, optional [EnforceRange] unsigned long count);
+    [NewObject, CallWith=CurrentGlobalObject] IDBRequest getAll(any key, optional [EnforceRange] unsigned long count);
+    [NewObject] IDBRequest getAllKeys(optional IDBKeyRange? range = null, optional [EnforceRange] unsigned long count);
+    [NewObject, CallWith=CurrentGlobalObject] IDBRequest getAllKeys(any key, optional [EnforceRange] unsigned long count);
+    [NewObject] IDBRequest count(optional IDBKeyRange? range = null);
+    [NewObject, CallWith=CurrentGlobalObject] IDBRequest count(any key);
 
-    [NewObject, CallWith=GlobalObject] IDBRequest openCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
-    [NewObject, CallWith=GlobalObject] IDBRequest openCursor(any key, optional IDBCursorDirection direction = "next");
-    [NewObject, CallWith=GlobalObject] IDBRequest openKeyCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
-    [NewObject, CallWith=GlobalObject] IDBRequest openKeyCursor(any key, optional IDBCursorDirection direction = "next");
+    [NewObject] IDBRequest openCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
+    [NewObject, CallWith=CurrentGlobalObject] IDBRequest openCursor(any key, optional IDBCursorDirection direction = "next");
+    [NewObject] IDBRequest openKeyCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
+    [NewObject, CallWith=CurrentGlobalObject] IDBRequest openKeyCursor(any key, optional IDBCursorDirection direction = "next");
 
     IDBIndex index(DOMString name);
 
-    [NewObject, CallWith=GlobalObject] IDBIndex createIndex(DOMString name, (DOMString or sequence<DOMString>) keyPath, optional IDBIndexParameters options);
+    [NewObject] IDBIndex createIndex(DOMString name, (DOMString or sequence<DOMString>) keyPath, optional IDBIndexParameters options);
     undefined deleteIndex(DOMString name);
 };
 

@@ -27,38 +27,40 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "WebCoreArgumentCoders.h"
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
 
 namespace WebKit {
 
 struct GPUProcessConnectionParameters {
-#if HAVE(TASK_IDENTITY_TOKEN)
-    MachSendRight webProcessIdentityToken;
-#endif
+    WebCore::ProcessIdentity webProcessIdentity;
     Vector<String> overrideLanguages;
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting { false };
 #endif
+#if HAVE(AUDIT_TOKEN)
+    std::optional<audit_token_t> presentingApplicationAuditToken;
+#endif
 
     void encode(IPC::Encoder& encoder) const
     {
-#if HAVE(TASK_IDENTITY_TOKEN)
-        encoder << webProcessIdentityToken;
-#endif
+        encoder << webProcessIdentity;
         encoder << overrideLanguages;
 #if ENABLE(IPC_TESTING_API)
         encoder << ignoreInvalidMessageForTesting;
+#endif
+#if HAVE(AUDIT_TOKEN)
+        encoder << presentingApplicationAuditToken;
 #endif
     }
 
     static std::optional<GPUProcessConnectionParameters> decode(IPC::Decoder& decoder)
     {
-#if HAVE(TASK_IDENTITY_TOKEN)
-        std::optional<MachSendRight> webProcessIdentityToken;
-        decoder >> webProcessIdentityToken;
-        if (!webProcessIdentityToken)
+        std::optional<WebCore::ProcessIdentity> webProcessIdentity;
+        decoder >> webProcessIdentity;
+        if (!webProcessIdentity)
             return std::nullopt;
-#endif
 
         std::optional<Vector<String>> overrideLanguages;
         decoder >> overrideLanguages;
@@ -72,13 +74,20 @@ struct GPUProcessConnectionParameters {
             return std::nullopt;
 #endif
 
-        return GPUProcessConnectionParameters {
-#if HAVE(TASK_IDENTITY_TOKEN)
-            WTFMove(*webProcessIdentityToken),
+#if HAVE(AUDIT_TOKEN)
+        std::optional<audit_token_t> presentingApplicationAuditToken;
+        if (!decoder.decode(presentingApplicationAuditToken))
+            return std::nullopt;
 #endif
+
+        return GPUProcessConnectionParameters {
+            WTFMove(*webProcessIdentity),
             WTFMove(*overrideLanguages),
 #if ENABLE(IPC_TESTING_API)
             *ignoreInvalidMessageForTesting,
+#endif
+#if HAVE(AUDIT_TOKEN)
+            WTFMove(presentingApplicationAuditToken),
 #endif
         };
     }

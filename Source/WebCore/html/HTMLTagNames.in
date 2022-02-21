@@ -39,7 +39,7 @@ dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
 details
 dfn interfaceName=HTMLElement
-dialog interfaceName=HTMLDialogElement, runtimeEnabled=dialogElement
+dialog interfaceName=HTMLDialogElement, settingsConditional=dialogElementEnabled
 dir interfaceName=HTMLDirectoryElement
 div
 dl interfaceName=HTMLDListElement
@@ -72,7 +72,7 @@ img interfaceName=HTMLImageElement, constructorNeedsFormElement
 input constructorNeedsFormElement, constructorNeedsCreatedByParser
 ins interfaceName=HTMLModElement
 kbd interfaceName=HTMLElement
-keygen constructorNeedsFormElement, runtimeEnabled=keygenElement
+keygen interfaceName=HTMLUnknownElement
 label
 layer interfaceName=HTMLElement
 legend

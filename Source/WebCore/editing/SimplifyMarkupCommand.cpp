@@ -71,7 +71,7 @@ void SimplifyMarkupCommand::doApply()
                 break;
 
             auto* renderer = currentNode->renderer();
-            if (!is<RenderInline>(renderer) || downcast<RenderInline>(*renderer).alwaysCreateLineBoxes())
+            if (!is<RenderInline>(renderer) || downcast<RenderInline>(*renderer).mayAffectLayout())
                 continue;
             
             if (currentNode->firstChild() != currentNode->lastChild()) {

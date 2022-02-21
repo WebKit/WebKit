@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF::Function<void(FileChangeType)>&& modificationHandler)
+FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, Function<void(FileChangeType)>&& modificationHandler)
     : m_handlerQueue(WTFMove(handlerQueue))
     , m_modificationHandler(WTFMove(modificationHandler))
 {

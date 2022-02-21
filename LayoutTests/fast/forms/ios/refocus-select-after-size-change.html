@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        select {
+            width: 100px;
+            height: 100px;
+        }
+
+        .focused {
+            width: 101px;
+            height: 101px;
+        }
+    </style>
+</head>
+<body>
+    <input type="button" id="showSelectButton" value="Show select">
+    <input type="button" id="finishTestButton" value="Finish test">
+    <br>
+    <select id="select">
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+    </select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that refocusing a select element after changing its size does not present two pickers.");
+
+    finishTestButton.addEventListener("click", () => {
+        testPassed("");
+        finishJSTest();
+    });
+
+    showSelectButton.addEventListener("click", async () => {
+        select.focus();
+        select.classList.add("focused");
+        select.focus();
+
+        await UIHelper.ensurePresentationUpdate();
+        await UIHelper.selectFormAccessoryPickerRow(0);
+        await UIHelper.activateElement(finishTestButton);
+    });
+
+    UIHelper.activateElement(showSelectButton);
+});
+</script>
+</html>

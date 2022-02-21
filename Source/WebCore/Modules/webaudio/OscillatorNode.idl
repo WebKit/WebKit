@@ -25,11 +25,12 @@
  
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     ActiveDOMObject,
     Exposed=Window
 ] interface OscillatorNode : AudioScheduledSourceNode {
-    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional OscillatorOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional OscillatorOptions options);
 
     [ImplementedAs=typeForBindings] attribute OscillatorType type;
 

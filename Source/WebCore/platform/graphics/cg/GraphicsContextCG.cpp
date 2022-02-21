@@ -52,7 +52,7 @@ namespace WebCore {
 
 static void setCGFillColor(CGContextRef context, const Color& color)
 {
-    CGContextSetFillColorWithColor(context, cachedCGColor(color));
+    CGContextSetFillColorWithColor(context, cachedCGColor(color).get());
 }
 
 inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
@@ -191,7 +191,7 @@ GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext)
 
     m_data = new GraphicsContextPlatformPrivate(cgContext);
     // Make sure the context starts in sync with our state.
-    updateState(m_state, { GraphicsContextState::FillColorChange, GraphicsContextState::StrokeColorChange, GraphicsContextState::StrokeThicknessChange });
+    didUpdateState(m_state, { GraphicsContextState::FillColorChange, GraphicsContextState::StrokeColorChange, GraphicsContextState::StrokeThicknessChange });
     m_state.imageInterpolationQuality = coreInterpolationQuality(CGContextGetInterpolationQuality(platformContext()));
 }
 
@@ -384,12 +384,13 @@ static void patternReleaseCallback(void* info)
     callOnMainThread([image = adoptCF(static_cast<CGImageRef>(info))] { });
 }
 
-void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     if (!patternTransform.isInvertible())
         return;
 
     auto image = nativeImage.platformImage();
+    auto imageSize = nativeImage.size();
 
     CGContextRef context = platformContext();
     CGContextStateSaver stateSaver(context);
@@ -811,7 +812,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect)
     if (m_state.fillPattern)
         applyFillPattern();
 
-    bool drawOwnShadow = (renderingMode() == RenderingMode::Unaccelerated) && hasBlurredShadow() && !m_state.shadowsIgnoreTransforms;
+    bool drawOwnShadow = canUseShadowBlur();
     CGContextStateSaver stateSaver(context, drawOwnShadow);
     if (drawOwnShadow) {
         // Turn off CG shadows.
@@ -832,7 +833,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, const Color& color)
     if (oldFillColor != color)
         setCGFillColor(context, color);
 
-    bool drawOwnShadow = (renderingMode() == RenderingMode::Unaccelerated) && hasBlurredShadow() && !m_state.shadowsIgnoreTransforms;
+    bool drawOwnShadow = canUseShadowBlur();
     CGContextStateSaver stateSaver(context, drawOwnShadow);
     if (drawOwnShadow) {
         // Turn off CG shadows.
@@ -859,7 +860,7 @@ void GraphicsContextCG::fillRoundedRectImpl(const FloatRoundedRect& rect, const 
     if (oldFillColor != color)
         setCGFillColor(context, color);
 
-    bool drawOwnShadow = (renderingMode() == RenderingMode::Unaccelerated) && hasBlurredShadow() && !m_state.shadowsIgnoreTransforms;
+    bool drawOwnShadow = canUseShadowBlur();
     CGContextStateSaver stateSaver(context, drawOwnShadow);
     if (drawOwnShadow) {
         // Turn off CG shadows.
@@ -908,7 +909,7 @@ void GraphicsContextCG::fillRectWithRoundedHole(const FloatRect& rect, const Flo
     setFillColor(color);
 
     // fillRectWithRoundedHole() assumes that the edges of rect are clipped out, so we only care about shadows cast around inside the hole.
-    bool drawOwnShadow = (renderingMode() == RenderingMode::Unaccelerated) && hasBlurredShadow() && !m_state.shadowsIgnoreTransforms;
+    bool drawOwnShadow = canUseShadowBlur();
     CGContextStateSaver stateSaver(context, drawOwnShadow);
     if (drawOwnShadow) {
         // Turn off CG shadows.
@@ -1072,10 +1073,10 @@ static void setCGShadow(const GraphicsContext& graphicsContext, const FloatSize&
     if (!color.isValid())
         CGContextSetShadow(context, CGSizeMake(xOffset, yOffset), blurRadius);
     else
-        CGContextSetShadowWithColor(context, CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(color));
+        CGContextSetShadowWithColor(context, CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(color).get());
 }
 
-void GraphicsContextCG::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+void GraphicsContextCG::didUpdateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
     auto context = platformContext();
 
@@ -1083,7 +1084,7 @@ void GraphicsContextCG::updateState(const GraphicsContextState& state, GraphicsC
         CGContextSetLineWidth(context, std::max(state.strokeThickness, 0.f));
 
     if (flags.contains(GraphicsContextState::StrokeColorChange))
-        CGContextSetStrokeColorWithColor(context, cachedCGColor(state.strokeColor));
+        CGContextSetStrokeColorWithColor(context, cachedCGColor(state.strokeColor).get());
 
     if (flags.contains(GraphicsContextState::FillColorChange))
         setCGFillColor(context, state.fillColor);
@@ -1184,13 +1185,13 @@ void GraphicsContextCG::strokeRect(const FloatRect& rect, float lineWidth)
 void GraphicsContextCG::setLineCap(LineCap cap)
 {
     switch (cap) {
-    case ButtCap:
+    case LineCap::Butt:
         CGContextSetLineCap(platformContext(), kCGLineCapButt);
         break;
-    case RoundCap:
+    case LineCap::Round:
         CGContextSetLineCap(platformContext(), kCGLineCapRound);
         break;
-    case SquareCap:
+    case LineCap::Square:
         CGContextSetLineCap(platformContext(), kCGLineCapSquare);
         break;
     }
@@ -1211,13 +1212,13 @@ void GraphicsContextCG::setLineDash(const DashArray& dashes, float dashOffset)
 void GraphicsContextCG::setLineJoin(LineJoin join)
 {
     switch (join) {
-    case MiterJoin:
+    case LineJoin::Miter:
         CGContextSetLineJoin(platformContext(), kCGLineJoinMiter);
         break;
-    case RoundJoin:
+    case LineJoin::Round:
         CGContextSetLineJoin(platformContext(), kCGLineJoinRound);
         break;
-    case BevelJoin:
+    case LineJoin::Bevel:
         CGContextSetLineJoin(platformContext(), kCGLineJoinBevel);
         break;
     }
@@ -1470,6 +1471,11 @@ void GraphicsContextCG::addDestinationAtPoint(const String& name, const FloatPoi
     CGContextRef context = platformContext();
     CGPoint transformedPoint = CGPointApplyAffineTransform(position, CGContextGetCTM(context));
     CGPDFContextAddDestinationAtPoint(context, name.createCFString().get(), transformedPoint);
+}
+
+bool GraphicsContextCG::canUseShadowBlur() const
+{
+    return (renderingMode() == RenderingMode::Unaccelerated) && hasBlurredShadow() && !m_state.shadowsIgnoreTransforms;
 }
 
 }

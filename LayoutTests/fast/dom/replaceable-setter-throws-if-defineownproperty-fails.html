@@ -11,7 +11,7 @@
 for (const key of ["self", "parent", "origin", "innerWidth"]) {
     test(() => {
         Object.defineProperty(window, key, { configurable: false });
-        assert_throws(new TypeError, () => { window[key] = 1; });
+        assert_throws_js(TypeError, () => { window[key] = 1; });
 
         const desc = Object.getOwnPropertyDescriptor(window, key);
         assert_false("value" in desc);
@@ -26,7 +26,7 @@ for (const key of ["screen", "length", "event", "outerHeight"]) {
     test(() => {
         const { set } = Object.getOwnPropertyDescriptor(window, key);
         Object.defineProperty(window, key, { value: 1, writable: false, configurable: false });
-        assert_throws(new TypeError, () => { set.call(window, 2); });
+        assert_throws_js(TypeError, () => { set.call(window, 2); });
 
         const desc = Object.getOwnPropertyDescriptor(window, key);
         assert_equals(desc.value, 1);

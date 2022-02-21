@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,24 +30,53 @@
 namespace WebCore {
 
 struct FourCC {
-    FourCC() = default;
-    FourCC(uint32_t value) : value(value) { }
-
-    template<std::size_t N>
-    constexpr FourCC(const char (&data)[N])
-    {
-        static_assert((N - 1) == 4, "FourCC literals must be exactly 4 characters long");
-        value = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
-    }
-
-    String toString() const;
-    WEBCORE_EXPORT static std::optional<FourCC> fromString(const String&);
-
-    bool operator==(const FourCC& other) const { return value == other.value; }
-    bool operator!=(const FourCC& other) const { return value != other.value; }
+    constexpr FourCC() = default;
+    constexpr FourCC(uint32_t value) : value { value } { }
+    constexpr FourCC(const char (&nullTerminatedString)[5]);
+    constexpr std::array<char, 5> string() const;
+    static std::optional<FourCC> fromString(StringView);
 
     uint32_t value { 0 };
+
+    template<class Encoder>
+    void encode(Encoder& encoder) const
+    {
+        encoder << value;
+    }
+
+    template <class Decoder>
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, FourCC& configuration)
+    {
+        return decoder.decode(configuration.value);
+    }
 };
+
+constexpr bool operator==(FourCC, FourCC);
+constexpr bool operator!=(FourCC, FourCC);
+
+constexpr FourCC::FourCC(const char (&data)[5])
+    : value(data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3])
+{
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(data[0]));
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(data[1]));
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(data[2]));
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(data[3]));
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(data[4] == '\0');
+}
+
+constexpr std::array<char, 5> FourCC::string() const
+{
+    return {
+        static_cast<char>(value >> 24),
+        static_cast<char>(value >> 16),
+        static_cast<char>(value >> 8),
+        static_cast<char>(value),
+        '\0'
+    };
+}
+
+constexpr bool operator==(FourCC a, FourCC b) { return a.value == b.value; }
+constexpr bool operator!=(FourCC a, FourCC b) { return a.value != b.value; }
 
 } // namespace WebCore
 
@@ -56,7 +85,7 @@ namespace WTF {
 template<typename> struct LogArgument;
 
 template<> struct LogArgument<WebCore::FourCC> {
-    static String toString(const WebCore::FourCC& code) { return code.toString(); }
+    static String toString(const WebCore::FourCC& code) { return code.string().data(); }
 };
 
 } // namespace WTF

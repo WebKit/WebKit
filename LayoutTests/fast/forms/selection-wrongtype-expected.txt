@@ -3,60 +3,69 @@ Tests to ensure selectionStart, selectionEnd, and selectionDirection throw excep
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS button - retrieving selectionStart threw an exception
-PASS button - assigning selectionStart threw an exception
-PASS button - retrieving selectionEnd threw an exception
-PASS button - assigning selectionEnd threw an exception
-PASS button - retrieving selectionDirection threw an exception
-PASS button - assigning selectionDirection threw an exception
-PASS checkbox - retrieving selectionStart threw an exception
-PASS checkbox - assigning selectionStart threw an exception
-PASS checkbox - retrieving selectionEnd threw an exception
-PASS checkbox - assigning selectionEnd threw an exception
-PASS checkbox - retrieving selectionDirection threw an exception
-PASS checkbox - assigning selectionDirection threw an exception
-PASS file - retrieving selectionStart threw an exception
-PASS file - assigning selectionStart threw an exception
-PASS file - retrieving selectionEnd threw an exception
-PASS file - assigning selectionEnd threw an exception
-PASS file - retrieving selectionDirection threw an exception
-PASS file - assigning selectionDirection threw an exception
-PASS hidden - retrieving selectionStart threw an exception
-PASS hidden - assigning selectionStart threw an exception
-PASS hidden - retrieving selectionEnd threw an exception
-PASS hidden - assigning selectionEnd threw an exception
-PASS hidden - retrieving selectionDirection threw an exception
-PASS hidden - assigning selectionDirection threw an exception
-PASS image - retrieving selectionStart threw an exception
-PASS image - assigning selectionStart threw an exception
-PASS image - retrieving selectionEnd threw an exception
-PASS image - assigning selectionEnd threw an exception
-PASS image - retrieving selectionDirection threw an exception
-PASS image - assigning selectionDirection threw an exception
-PASS radio - retrieving selectionStart threw an exception
-PASS radio - assigning selectionStart threw an exception
-PASS radio - retrieving selectionEnd threw an exception
-PASS radio - assigning selectionEnd threw an exception
-PASS radio - retrieving selectionDirection threw an exception
-PASS radio - assigning selectionDirection threw an exception
-PASS range - retrieving selectionStart threw an exception
-PASS range - assigning selectionStart threw an exception
-PASS range - retrieving selectionEnd threw an exception
-PASS range - assigning selectionEnd threw an exception
-PASS range - retrieving selectionDirection threw an exception
-PASS range - assigning selectionDirection threw an exception
-PASS reset - retrieving selectionStart threw an exception
-PASS reset - assigning selectionStart threw an exception
-PASS reset - retrieving selectionEnd threw an exception
-PASS reset - assigning selectionEnd threw an exception
-PASS reset - retrieving selectionDirection threw an exception
-PASS reset - assigning selectionDirection threw an exception
-PASS submit - retrieving selectionStart threw an exception
-PASS submit - assigning selectionStart threw an exception
-PASS submit - retrieving selectionEnd threw an exception
-PASS submit - assigning selectionEnd threw an exception
-PASS submit - retrieving selectionDirection threw an exception
-PASS submit - assigning selectionDirection threw an exception
+PASS test.selectionStart is null
+PASS test.selectionStart = 0 threw exception InvalidStateError: The input element's type ('button') does not support selection..
+PASS test.selectionEnd is null
+PASS test.selectionEnd = 0 threw exception InvalidStateError: The input element's type ('button') does not support selection..
+PASS test.selectionDirection is null
+PASS test.selectionDirection = 0 threw exception InvalidStateError: The input element's type ('button') does not support selection..
+PASS test.selectionRange() threw exception TypeError: test.selectionRange is not a function. (In 'test.selectionRange()', 'test.selectionRange' is undefined).
+PASS test.selectionStart is null
+PASS test.selectionStart = 0 threw exception InvalidStateError: The input element's type ('checkbox') does not support selection..
+PASS test.selectionEnd is null
+PASS test.selectionEnd = 0 threw exception InvalidStateError: The input element's type ('checkbox') does not support selection..
+PASS test.selectionDirection is null
+PASS test.selectionDirection = 0 threw exception InvalidStateError: The input element's type ('checkbox') does not support selection..
+PASS test.selectionRange() threw exception TypeError: test.selectionRange is not a function. (In 'test.selectionRange()', 'test.selectionRange' is undefined).
+PASS test.selectionStart is null
+PASS test.selectionStart = 0 threw exception InvalidStateError: The input element's type ('file') does not support selection..
+PASS test.selectionEnd is null
+PASS test.selectionEnd = 0 threw exception InvalidStateError: The input element's type ('file') does not support selection..
+PASS test.selectionDirection is null
+PASS test.selectionDirection = 0 threw exception InvalidStateError: The input element's type ('file') does not support selection..
+PASS test.selectionRange() threw exception TypeError: test.selectionRange is not a function. (In 'test.selectionRange()', 'test.selectionRange' is undefined).
+PASS test.selectionStart is null
+PASS test.selectionStart = 0 threw exception InvalidStateError: The input element's type ('hidden') does not support selection..
+PASS test.selectionEnd is null
+PASS test.selectionEnd = 0 threw exception InvalidStateError: The input element's type ('hidden') does not support selection..
+PASS test.selectionDirection is null
+PASS test.selectionDirection = 0 threw exception InvalidStateError: The input element's type ('hidden') does not support selection..
+PASS test.selectionRange() threw exception TypeError: test.selectionRange is not a function. (In 'test.selectionRange()', 'test.selectionRange' is undefined).
+PASS test.selectionStart is null
+PASS test.selectionStart = 0 threw exception InvalidStateError: The input element's type ('image') does not support selection..
+PASS test.selectionEnd is null
+PASS test.selectionEnd = 0 threw exception InvalidStateError: The input element's type ('image') does not support selection..
+PASS test.selectionDirection is null
+PASS test.selectionDirection = 0 threw exception InvalidStateError: The input element's type ('image') does not support selection..
+PASS test.selectionRange() threw exception TypeError: test.selectionRange is not a function. (In 'test.selectionRange()', 'test.selectionRange' is undefined).
+PASS test.selectionStart is null
+PASS test.selectionStart = 0 threw exception InvalidStateError: The input element's type ('radio') does not support selection..
+PASS test.selectionEnd is null
+PASS test.selectionEnd = 0 threw exception InvalidStateError: The input element's type ('radio') does not support selection..
+PASS test.selectionDirection is null
+PASS test.selectionDirection = 0 threw exception InvalidStateError: The input element's type ('radio') does not support selection..
+PASS test.selectionRange() threw exception TypeError: test.selectionRange is not a function. (In 'test.selectionRange()', 'test.selectionRange' is undefined).
+PASS test.selectionStart is null
+PASS test.selectionStart = 0 threw exception InvalidStateError: The input element's type ('range') does not support selection..
+PASS test.selectionEnd is null
+PASS test.selectionEnd = 0 threw exception InvalidStateError: The input element's type ('range') does not support selection..
+PASS test.selectionDirection is null
+PASS test.selectionDirection = 0 threw exception InvalidStateError: The input element's type ('range') does not support selection..
+PASS test.selectionRange() threw exception TypeError: test.selectionRange is not a function. (In 'test.selectionRange()', 'test.selectionRange' is undefined).
+PASS test.selectionStart is null
+PASS test.selectionStart = 0 threw exception InvalidStateError: The input element's type ('reset') does not support selection..
+PASS test.selectionEnd is null
+PASS test.selectionEnd = 0 threw exception InvalidStateError: The input element's type ('reset') does not support selection..
+PASS test.selectionDirection is null
+PASS test.selectionDirection = 0 threw exception InvalidStateError: The input element's type ('reset') does not support selection..
+PASS test.selectionRange() threw exception TypeError: test.selectionRange is not a function. (In 'test.selectionRange()', 'test.selectionRange' is undefined).
+PASS test.selectionStart is null
+PASS test.selectionStart = 0 threw exception InvalidStateError: The input element's type ('submit') does not support selection..
+PASS test.selectionEnd is null
+PASS test.selectionEnd = 0 threw exception InvalidStateError: The input element's type ('submit') does not support selection..
+PASS test.selectionDirection is null
+PASS test.selectionDirection = 0 threw exception InvalidStateError: The input element's type ('submit') does not support selection..
+PASS test.selectionRange() threw exception TypeError: test.selectionRange is not a function. (In 'test.selectionRange()', 'test.selectionRange' is undefined).
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -13,12 +13,10 @@ description: >
 
 var __instance = RegExp({toString:function(){return "[a-c]*";}}, "gm");
 
-//CHECK#1
-if (__instance.constructor !== RegExp) {
-	throw new Test262Error('#1: __instance = RegExp({toString:function(){return "[a-c]*";}}, "gm"); __instance.constructor === RegExp. Actual: ' + (__instance.constructor));
-}
+assert.sameValue(
+  __instance.constructor,
+  RegExp,
+  'The value of __instance.constructor is expected to equal the value of RegExp'
+);
 
-//CHECK#2
-if (__instance.source !== "[a-c]*") {
-	throw new Test262Error('#2: __instance = RegExp({toString:function(){return "[a-c]*";}}, "gm"); __instance.source === "[a-c]*". Actual: '+ (__instance.source));
-}
+assert.sameValue(__instance.source, "[a-c]*", 'The value of __instance.source is expected to be "[a-c]*"');

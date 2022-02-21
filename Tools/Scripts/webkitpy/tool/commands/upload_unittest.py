@@ -36,30 +36,6 @@ from webkitcorepy import mocks
 
 
 class UploadCommandsTest(CommandsTest):
-    def test_commit_message_for_current_diff(self):
-        tool = MockTool()
-        expected_stdout = "This is a fake commit message that is at least 50 characters.\n"
-        self.assert_execute_outputs(CommitMessageForCurrentDiff(), [], expected_stdout=expected_stdout, tool=tool)
-
-    def test_clean_pending_commit(self):
-        self.assert_execute_outputs(CleanPendingCommit(), [])
-
-    def test_assign_to_committer(self):
-        tool = MockTool()
-        expected_logs = """Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
-MOCK reassign_bug: bug_id=50000, assignee=ap@webkit.org
--- Begin comment --
-Attachment 10001 was posted by a committer and has review+, assigning to Alexey Proskuryakov for commit.
--- End comment --
-Bug 50003 is already assigned to foo@foo.com (None).
-Bug 50002 has no non-obsolete patches, ignoring.
-"""
-        self.assert_execute_outputs(AssignToCommitter(), [], expected_logs=expected_logs, tool=tool)
-
-    def test_obsolete_attachments(self):
-        expected_logs = "Obsoleting 2 old patches on bug 50000\n"
-        self.assert_execute_outputs(ObsoleteAttachments(), [50000], expected_logs=expected_logs)
-
     def test_post(self):
         options = MockOptions()
         options.cc = None
@@ -81,30 +57,23 @@ MOCK: user.open_url: http://example.com/50000
 """
         self.assert_execute_outputs(Post(), [50000], options=options, expected_logs=expected_logs)
 
-    def test_attach_to_bug(self):
-        options = MockOptions()
-        options.comment = "extra comment"
-        options.description = "file description"
-        expected_logs = """MOCK add_attachment_to_bug: bug_id=50000, description=file description filename=None mimetype=None
--- Begin comment --
-extra comment
--- End comment --
-"""
-        self.assert_execute_outputs(AttachToBug(), [50000, "path/to/file.txt", "file description"], options=options, expected_logs=expected_logs)
-
-    def test_attach_to_bug_no_description_or_comment(self):
-        options = MockOptions()
-        options.comment = None
-        options.description = None
-        expected_logs = "MOCK add_attachment_to_bug: bug_id=50000, description=file.txt filename=None mimetype=None\n"
-        self.assert_execute_outputs(AttachToBug(), [50000, "path/to/file.txt"], options=options, expected_logs=expected_logs)
-
     def test_land_safely(self):
+        options = MockOptions()
+        options.fast_cq = False
         expected_logs = """Obsoleting 2 old patches on bug 50000
 MOCK reassign_bug: bug_id=50000, assignee=None
 MOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True
 """
-        self.assert_execute_outputs(LandSafely(), [50000], expected_logs=expected_logs)
+        self.assert_execute_outputs(LandSafely(), [50000], options=options, expected_logs=expected_logs)
+
+    def test_land_safely_with_fast_cq(self):
+        options = MockOptions()
+        options.fast_cq = True
+        expected_logs = """Obsoleting 2 old patches on bug 50000
+MOCK reassign_bug: bug_id=50000, assignee=None
+MOCK add_patch_to_bug: bug_id=50000, description=[fast-cq] Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True
+"""
+        self.assert_execute_outputs(LandSafely(), [50000], options=options, expected_logs=expected_logs)
 
     def test_prepare_diff_with_arg(self):
         options = MockOptions()

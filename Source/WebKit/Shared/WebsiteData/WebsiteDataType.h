@@ -41,9 +41,6 @@ enum class WebsiteDataType : uint32_t {
     MediaKeys = 1 << 8,
     HSTSCache = 1 << 9,
     SearchFieldRecentSearches = 1 << 10,
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    PlugInData = 1 << 11,
-#endif
     ResourceLoadStatistics = 1 << 12,
     Credentials = 1 << 13,
 #if ENABLE(SERVICE_WORKER)
@@ -55,6 +52,7 @@ enum class WebsiteDataType : uint32_t {
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     AlternativeServices = 1 << 18,
 #endif
+    FileSystem = 1 << 19,
 };
 
 } // namespace WebKit
@@ -75,9 +73,6 @@ template<> struct EnumTraits<WebKit::WebsiteDataType> {
         WebKit::WebsiteDataType::MediaKeys,
         WebKit::WebsiteDataType::HSTSCache,
         WebKit::WebsiteDataType::SearchFieldRecentSearches,
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        WebKit::WebsiteDataType::PlugInData,
-#endif
         WebKit::WebsiteDataType::ResourceLoadStatistics,
         WebKit::WebsiteDataType::Credentials,
 #if ENABLE(SERVICE_WORKER)
@@ -85,10 +80,11 @@ template<> struct EnumTraits<WebKit::WebsiteDataType> {
 #endif
         WebKit::WebsiteDataType::DOMCache,
         WebKit::WebsiteDataType::DeviceIdHashSalt,
-        WebKit::WebsiteDataType::PrivateClickMeasurements
+        WebKit::WebsiteDataType::PrivateClickMeasurements,
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
-        , WebKit::WebsiteDataType::AlternativeServices
+        WebKit::WebsiteDataType::AlternativeServices,
 #endif
+        WebKit::WebsiteDataType::FileSystem
     >;
 };
 

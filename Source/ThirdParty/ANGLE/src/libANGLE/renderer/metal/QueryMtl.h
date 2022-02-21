@@ -12,7 +12,6 @@
 
 #include "libANGLE/renderer/QueryImpl.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
-#include "libANGLE/renderer/metal/mtl_constants.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 
 namespace rx
@@ -99,7 +98,7 @@ class QueryMtl : public QueryImpl
     const mtl::BufferRef &getVisibilityResultBuffer() const { return mVisibilityResultBuffer; }
     // Reset the occlusion query result stored in buffer to zero
     void resetVisibilityResult(ContextMtl *contextMtl);
-    void onTransformFeedbackEnd(GLsizeiptr primitivesDrawn);
+    void onTransformFeedbackEnd(const gl::Context *context);
 
   private:
     template <typename T>
@@ -108,13 +107,8 @@ class QueryMtl : public QueryImpl
     // List of offsets in the render pass's occlusion query pool buffer allocated for this query
     VisibilityBufferOffsetsMtl mVisibilityBufferOffsets;
     mtl::BufferRef mVisibilityResultBuffer;
-    // Used with TransformFeedbackPrimitivesWritten when transform feedback is emulated.
-    size_t mTransformFeedbackPrimitivesDrawn;
 
-    // TODO(jcunningham): currently only used for mTransformFeedbackPrimitivesDrawn
-    // but can be used for rest of results
-    uint64_t mCachedResult;
-    bool mCachedResultValid;
+    size_t mTransformFeedbackPrimitivesDrawn;
 };
 
 }  // namespace rx

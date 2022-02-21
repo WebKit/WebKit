@@ -21,7 +21,7 @@ function main() {
     if (!$name)
         exit_with_error('MissingName', array('name' => $name));
 
-    if (!in_array($repetition_type, array('alternating', 'sequential')))
+    if (!in_array($repetition_type, array('alternating', 'sequential', 'paired-parallel')))
         exit_with_error('InvalidRepetitionType', array('repetitionType' => $repetition_type));
 
     $range = validate_arguments($data, array('startRun' => 'int', 'endRun' => 'int'));
@@ -82,11 +82,15 @@ function main() {
             $db->rollback_transaction();
             exit_with_error('TriggerableNotFoundForTask', array('task' => $task_id, 'platform' => $config['config_platform']));
         }
+        $triggerable_id = $triggerable['id'];
         if ($triggerable['platform'] != $config['config_platform']) {
             $db->rollback_transaction();
             exit_with_error('InconsistentPlatform', array('configPlatform' => $config['config_platform'], 'taskPlatform' => $triggerable['platform']));
         }
-        $triggerable_id = $triggerable['id'];
+        if (!in_array($repetition_type, $triggerable['supportedRepetitionTypes'])) {
+            $db->rollback_transaction();
+            exit_with_error('UnsupportedRepetitionTypeForTriggerable', array('repetitionType' => $repetition_type, 'triggerableId' => $triggerable_id));
+        }
         $test_id = $triggerable['test'];
         $commit_sets = commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list);
         create_test_group_and_build_requests($db, $commit_sets, $task_id, $test_group_name, $author, $triggerable_id, $config['config_platform'], $test_id, $repetition_count, $repetition_type, $needs_notification);

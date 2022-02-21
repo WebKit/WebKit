@@ -1,8 +1,11 @@
 ----------------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXStaticText
 AXSubrole: (null)
 AXRoleDescription: text
 AXChildren: <array of size 0>
+AXChildrenInNavigationOrder: <array of size 0>
 AXHelp:
 AXParent: <AXStaticText>
 AXSize: NSSize: {731, 36}
@@ -39,6 +42,7 @@ AXTextMarkerForPosition
 AXBoundsForTextMarkerRange
 AXAttributedStringForTextMarkerRange
 AXAttributedStringForTextMarkerRangeWithOptions
+AXTextMarkerRangeForTextMarkers
 AXTextMarkerRangeForUnorderedTextMarkers
 AXNextTextMarkerForTextMarker
 AXPreviousTextMarkerForTextMarker

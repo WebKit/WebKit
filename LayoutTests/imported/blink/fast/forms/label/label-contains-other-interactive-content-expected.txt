@@ -27,10 +27,6 @@ img
 PASS document.activeElement.id is "control"
 img[usemap]
 PASS document.activeElement.id is not "control"
-object
-PASS document.activeElement.id is "control"
-object[usemap]
-PASS document.activeElement.id is not "control"
 input
 PASS document.activeElement.id is not "control"
 PASS successfullyParsed is true

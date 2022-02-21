@@ -18,7 +18,7 @@ if 'HTTP_COOKIE' in os.environ:
         
 first_party_cookie = cookies.get('firstPartyCookie', None)
 
-sys.stdout.write('Content-Type: text/html\r\n\r\n')
+sys.stdout.write('Content-Type: text/javascript\r\n\r\n')
 
 if first_party_cookie:
     sys.stdout.write('let cookieResult = \'{}Did receive firstPartyCookie == {}\';'.format('PASS ' if should_receive_cookies is not None else 'FAIL ', first_party_cookie))

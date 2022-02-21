@@ -170,7 +170,7 @@ void DirectiveParser::lex(Token *token)
             parseDirective(token);
             mPastFirstStatement = true;
         }
-        else if (!isEOD(token))
+        else if (!isEOD(token) && !skipping())
         {
             mSeenNonPreprocessorToken = true;
         }

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2013 Michael Pruett <michael@68k.org>
  *
@@ -27,24 +27,6 @@
 
 namespace WebCore {
 using namespace JSC;
-    
-void JSDOMBuiltinConstructorBase::callFunctionWithCurrentArguments(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, JSC::JSObject& thisObject, JSC::JSFunction& function)
-{
-    JSC::VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    auto callData = JSC::getCallData(vm, &function);
-    ASSERT(callData.type != CallData::Type::None);
-
-    JSC::MarkedArgumentBuffer arguments;
-    for (unsigned i = 0; i < callFrame.argumentCount(); ++i)
-        arguments.append(callFrame.uncheckedArgument(i));
-    if (UNLIKELY(arguments.hasOverflowed())) {
-        throwOutOfMemoryError(&lexicalGlobalObject, scope);
-        return;
-    }
-    scope.release();
-    JSC::call(&lexicalGlobalObject, &function, callData, &thisObject, arguments);
-}
 
 template<typename Visitor>
 void JSDOMBuiltinConstructorBase::visitChildrenImpl(JSC::JSCell* cell, Visitor& visitor)
@@ -57,7 +39,7 @@ void JSDOMBuiltinConstructorBase::visitChildrenImpl(JSC::JSCell* cell, Visitor& 
 
 DEFINE_VISIT_CHILDREN(JSDOMBuiltinConstructorBase);
 
-JSC::IsoSubspace* JSDOMBuiltinConstructorBase::subspaceForImpl(JSC::VM& vm)
+JSC::GCClient::IsoSubspace* JSDOMBuiltinConstructorBase::subspaceForImpl(JSC::VM& vm)
 {
     return &static_cast<JSVMClientData*>(vm.clientData)->domBuiltinConstructorSpace();
 }

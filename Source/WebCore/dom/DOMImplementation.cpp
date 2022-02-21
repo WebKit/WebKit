@@ -42,9 +42,11 @@
 #include "MediaDocument.h"
 #include "MediaList.h"
 #include "MediaPlayer.h"
+#include "PDFDocument.h"
 #include "Page.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGDocument.h"
 #include "SVGNames.h"
 #include "SecurityOrigin.h"
@@ -56,6 +58,10 @@
 #include "XMLDocument.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+
+#if ENABLE(MODEL_ELEMENT)
+#include "ModelDocument.h"
+#endif
 
 namespace WebCore {
 
@@ -119,7 +125,7 @@ Ref<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const S
 
 Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 {
-    auto document = HTMLDocument::create(nullptr, m_document.settings(), URL());
+    auto document = HTMLDocument::create(nullptr, m_document.settings(), URL(), { });
     document->open();
     document->write(nullptr, { "<!doctype html><html><head></head><body></body></html>"_s });
     if (!title.isNull()) {
@@ -133,7 +139,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
     return document;
 }
 
-Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame* frame, const Settings& settings, const URL& url)
+Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier documentIdentifier)
 {
     // FIXME: Inelegant to have this here just because this is the home of DOM APIs for creating documents.
     // This is internal, not a DOM API. Maybe we should put it in a new class called DocumentFactory,
@@ -141,11 +147,15 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
 
     // Plug-ins cannot take over for HTML, XHTML, plain text, or non-PDF images.
     if (equalLettersIgnoringASCIICase(contentType, "text/html"))
-        return HTMLDocument::create(frame, settings, url);
+        return HTMLDocument::create(frame, settings, url, documentIdentifier);
     if (equalLettersIgnoringASCIICase(contentType, "application/xhtml+xml"))
         return XMLDocument::createXHTML(frame, settings, url);
     if (equalLettersIgnoringASCIICase(contentType, "text/plain"))
-        return TextDocument::create(frame, settings, url);
+        return TextDocument::create(frame, settings, url, documentIdentifier);
+
+    if (frame && settings.pdfJSViewerEnabled() && MIMETypeRegistry::isPDFMIMEType(contentType))
+        return PDFDocument::create(*frame, url);
+
     bool isImage = MIMETypeRegistry::isSupportedImageMIMEType(contentType);
     if (frame && isImage && !MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType))
         return ImageDocument::create(*frame, url);
@@ -160,6 +170,11 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
     parameters.url = url;
     if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported)
         return MediaDocument::create(frame, settings, url);
+#endif
+
+#if ENABLE(MODEL_ELEMENT)
+    if (MIMETypeRegistry::isUSDMIMEType(contentType) && RuntimeEnabledFeatures::sharedFeatures().modelDocumentEnabled())
+        return ModelDocument::create(frame, settings, url);
 #endif
 
 #if ENABLE(FTPDIR)
@@ -183,7 +198,7 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
     if (frame && isImage)
         return ImageDocument::create(*frame, url);
     if (MIMETypeRegistry::isTextMIMEType(contentType))
-        return TextDocument::create(frame, settings, url);
+        return TextDocument::create(frame, settings, url, documentIdentifier);
     if (equalLettersIgnoringASCIICase(contentType, "image/svg+xml"))
         return SVGDocument::create(frame, settings, url);
     if (MIMETypeRegistry::isXMLMIMEType(contentType)) {
@@ -191,7 +206,8 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
         document->overrideMIMEType(contentType);
         return document;
     }
-    return HTMLDocument::create(frame, settings, url);
+
+    return HTMLDocument::create(frame, settings, url, documentIdentifier);
 }
 
 }

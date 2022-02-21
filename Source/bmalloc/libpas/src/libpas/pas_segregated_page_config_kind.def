@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,9 +43,13 @@ PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(
         .base = {
             .is_enabled = false,
             .heap_config_ptr = NULL,
-            .page_config_ptr = NULL
+            .page_config_ptr = NULL,
         },
         .kind = pas_segregated_page_config_kind_null,
+
+        /* We log NULL using kind_and_role = 0, which works out to null/shared. */
+        .shared_logging_mode = pas_segregated_deallocation_size_oblivious_logging_mode,
+        .exclusive_logging_mode = pas_segregated_deallocation_no_logging_mode
     }))
 
 PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(pas_utility_small,
@@ -100,3 +104,7 @@ PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(hotbit_medium_segregated,
                                        HOTBIT_HEAP_CONFIG.medium_segregated_config)
 #endif
 
+#if PAS_ENABLE_JIT
+PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(jit_small_segregated,
+                                       JIT_HEAP_CONFIG.small_segregated_config)
+#endif

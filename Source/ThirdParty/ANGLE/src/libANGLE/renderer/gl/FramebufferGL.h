@@ -79,7 +79,7 @@ class FramebufferGL : public FramebufferImpl
     // The GL back-end requires a full sync state before we call checkStatus.
     bool shouldSyncStateBeforeCheckStatus() const override;
 
-    bool checkStatus(const gl::Context *context) const override;
+    gl::FramebufferStatus checkStatus(const gl::Context *context) const override;
 
     angle::Result syncState(const gl::Context *context,
                             GLenum binding,
@@ -87,6 +87,7 @@ class FramebufferGL : public FramebufferImpl
                             gl::Command command) override;
 
     GLuint getFramebufferID() const;
+    void updateDefaultFramebufferID(GLuint framebufferID);
     bool isDefault() const;
 
     bool hasEmulatedAlphaChannelTextureAttachment() const;

@@ -42,6 +42,7 @@ class CodeOriginPool;
 class AccessCase;
 class CallLinkInfo;
 class JITStubRoutineSet;
+class OptimizingCallLinkInfo;
 
 // Use this stub routine if you know that your code might be on stack when
 // either GC or other kinds of stub deletion happen. Basicaly, if your stub
@@ -124,7 +125,7 @@ public:
     using Base = PolymorphicAccessJITStubRoutine;
 
     MarkingGCAwareJITStubRoutine(
-        const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, const JSCell* owner, const Vector<JSCell*>&, Bag<CallLinkInfo>&&);
+        const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, const JSCell* owner, const Vector<JSCell*>&, Bag<OptimizingCallLinkInfo>&&);
     ~MarkingGCAwareJITStubRoutine() override;
     
 protected:
@@ -134,7 +135,7 @@ protected:
 
 private:
     FixedVector<WriteBarrier<JSCell>> m_cells;
-    Bag<CallLinkInfo> m_callLinkInfos;
+    Bag<OptimizingCallLinkInfo> m_callLinkInfos;
 };
 
 
@@ -145,7 +146,7 @@ class GCAwareJITStubRoutineWithExceptionHandler final : public MarkingGCAwareJIT
 public:
     using Base = MarkingGCAwareJITStubRoutine;
 
-    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, const JSCell* owner, const Vector<JSCell*>&, Bag<CallLinkInfo>&&, CodeBlock*, DisposableCallSiteIndex);
+    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, const JSCell* owner, const Vector<JSCell*>&, Bag<OptimizingCallLinkInfo>&&, CodeBlock*, DisposableCallSiteIndex);
     ~GCAwareJITStubRoutineWithExceptionHandler() final;
 
     void aboutToDie() final;
@@ -181,7 +182,7 @@ private:
 
 Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
     const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, FixedVector<RefPtr<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, VM&, const JSCell* owner, bool makesCalls,
-    const Vector<JSCell*>&, Bag<CallLinkInfo>&& callLinkInfos,
+    const Vector<JSCell*>&, Bag<OptimizingCallLinkInfo>&& callLinkInfos,
     CodeBlock* codeBlockForExceptionHandlers, DisposableCallSiteIndex exceptionHandlingCallSiteIndex);
 
 } // namespace JSC

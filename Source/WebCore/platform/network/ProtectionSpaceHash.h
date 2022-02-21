@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProtectionSpaceHash_h
-#define ProtectionSpaceHash_h
+#pragma once
 
 #include "ProtectionSpace.h"
 #include <wtf/HashTraits.h>
+#include <wtf/Hasher.h>
 
 namespace WebCore {
 
 struct ProtectionSpaceHash {
     static unsigned hash(const ProtectionSpace& protectionSpace)
     { 
-        unsigned hashCodes[5] = {
-            protectionSpace.host().impl() ? protectionSpace.host().impl()->hash() : 0, 
-            static_cast<unsigned>(protectionSpace.port()),
-            static_cast<unsigned>(protectionSpace.serverType()),
-            static_cast<unsigned>(protectionSpace.authenticationScheme()),
-            protectionSpace.realm().impl() ? protectionSpace.realm().impl()->hash() : 0
-        };
-
-        unsigned codeCount = sizeof(hashCodes);
-        // Ignore realm for proxies.
-        if (protectionSpace.isProxy())
-            codeCount -= sizeof(hashCodes[0]);
-        return StringHasher::hashMemory(hashCodes, codeCount);
+        Hasher hasher;
+        add(hasher, protectionSpace.host());
+        add(hasher, protectionSpace.port());
+        add(hasher, protectionSpace.serverType());
+        add(hasher, protectionSpace.authenticationScheme());
+        if (!protectionSpace.isProxy())
+            add(hasher, protectionSpace.realm());
+        return hasher.hash();
     }
     
     static bool equal(const ProtectionSpace& a, const ProtectionSpace& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = false;
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 
 } // namespace WebCore
 
 namespace WTF {
 
-template<> struct HashTraits<WebCore::ProtectionSpace> : SimpleClassHashTraits<WebCore::ProtectionSpace> { };
+template<> struct HashTraits<WebCore::ProtectionSpace> : SimpleClassHashTraits<WebCore::ProtectionSpace> {
+    static constexpr bool emptyValueIsZero = false;
+};
 template<> struct DefaultHash<WebCore::ProtectionSpace> : WebCore::ProtectionSpaceHash { };
 
 } // namespace WTF
-
-
-#endif // ProtectionSpaceHash_h

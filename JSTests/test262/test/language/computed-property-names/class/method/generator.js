@@ -17,7 +17,7 @@ assert.sameValue(
   0,
   "The value of `Object.keys(C.prototype).length` is `0`"
 );
-assert(
-  compareArray(Object.getOwnPropertyNames(C.prototype), ['constructor', 'a']),
-  "`compareArray(Object.getOwnPropertyNames(C.prototype), ['constructor', 'a'])` returns `true`"
+assert.compareArray(
+  Object.getOwnPropertyNames(C.prototype),
+  ['constructor', 'a']
 );

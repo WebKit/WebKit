@@ -39,12 +39,15 @@ bool RotateTransformOperation::operator==(const TransformOperation& other) const
 
 Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
-    if (from && !from->isSameType(*this))
-        return *this;
-    
-    if (blendToIdentity)
+    if (blendToIdentity) {
+        if (context.compositeOperation == CompositeOperation::Accumulate)
+            return RotateTransformOperation::create(m_x, m_y, m_z, m_angle, type());
         return RotateTransformOperation::create(m_x, m_y, m_z, m_angle - m_angle * context.progress, type());
-    
+    }
+    auto outputType = sharedPrimitiveType(from);
+    if (!outputType)
+        return *this;
+
     const RotateTransformOperation* fromOp = downcast<RotateTransformOperation>(from);
     const RotateTransformOperation* toOp = this;
 
@@ -59,9 +62,8 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
     // angle is used or (0, 0, 1) if both angles are zero.
 
     auto normalizedVector = [](const RotateTransformOperation& op) -> FloatPoint3D {
-        FloatPoint3D vector { static_cast<float>(op.m_x), static_cast<float>(op.m_y), static_cast<float>(op.m_z) };
-        vector.normalize();
-        return vector;
+        auto length = std::hypot(op.m_x, op.m_y, op.m_z);
+        return { static_cast<float>(op.m_x / length), static_cast<float>(op.m_y / length), static_cast<float>(op.m_z / length) };
     };
 
     double fromAngle = fromOp ? fromOp->m_angle : 0.0;
@@ -70,7 +72,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
     auto toNormalizedVector = normalizedVector(*toOp);
     if (!fromAngle || !toAngle || fromNormalizedVector == toNormalizedVector) {
         auto vector = (!fromAngle && toAngle) ? toNormalizedVector : fromNormalizedVector;
-        return RotateTransformOperation::create(vector.x(), vector.y(), vector.z(), WebCore::blend(fromAngle, toAngle, context), type());
+        return RotateTransformOperation::create(vector.x(), vector.y(), vector.z(), WebCore::blend(fromAngle, toAngle, context), *outputType);
     }
 
     // Create the 2 rotation matrices
@@ -87,7 +89,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
         (toOp ? toOp->m_angle : 0));
     
     // Blend them
-    toT.blend(fromT, context.progress);
+    toT.blend(fromT, context.progress, context.compositeOperation);
     
     // Extract the result as a quaternion
     TransformationMatrix::Decomposed4Type decomp;

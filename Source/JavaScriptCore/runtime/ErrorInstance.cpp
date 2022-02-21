@@ -40,6 +40,9 @@ ErrorInstance::ErrorInstance(VM& vm, Structure* structure, ErrorType errorType)
     , m_outOfMemoryError(false)
     , m_errorInfoMaterialized(false)
     , m_nativeGetterTypeError(false)
+#if ENABLE(WEBASSEMBLY)
+    , m_catchableFromWasm(true)
+#endif // ENABLE(WEBASSEMBLY)
 {
 }
 
@@ -126,7 +129,7 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
         Locker locker { cellLock() };
         m_stackTrace = WTFMove(stackTrace);
     }
-    vm.heap.writeBarrier(this);
+    vm.writeBarrier(this);
 
     String messageWithSource = message;
     if (m_stackTrace && !m_stackTrace->isEmpty() && hasSourceAppender()) {
@@ -151,7 +154,7 @@ String ErrorInstance::sanitizedMessageString(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Integrity::auditStructureID(vm, structureID());
+    Integrity::auditStructureID(structureID());
 
     JSValue messageValue;
     auto messagePropertName = vm.propertyNames->message;
@@ -160,8 +163,9 @@ String ErrorInstance::sanitizedMessageString(JSGlobalObject* globalObject)
         messageValue = messageSlot.getValue(globalObject, messagePropertName);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (!messageValue)
+    if (!messageValue || !messageValue.isPrimitive())
         return { };
+
     RELEASE_AND_RETURN(scope, messageValue.toWTFString(globalObject));
 }
 
@@ -169,7 +173,7 @@ String ErrorInstance::sanitizedNameString(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Integrity::auditStructureID(vm, structureID());
+    Integrity::auditStructureID(structureID());
 
     JSValue nameValue;
     auto namePropertName = vm.propertyNames->name;
@@ -191,7 +195,7 @@ String ErrorInstance::sanitizedNameString(JSGlobalObject* globalObject)
     }
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (!nameValue)
+    if (!nameValue || !nameValue.isPrimitive())
         return "Error"_s;
     RELEASE_AND_RETURN(scope, nameValue.toWTFString(globalObject));
 }
@@ -200,7 +204,7 @@ String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Integrity::auditStructureID(vm, structureID());
+    Integrity::auditStructureID(structureID());
 
     String nameString = sanitizedNameString(globalObject);
     RETURN_IF_EXCEPTION(scope, String());

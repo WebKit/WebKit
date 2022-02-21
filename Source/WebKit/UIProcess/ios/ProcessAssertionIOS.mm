@@ -110,7 +110,7 @@ static bool processHasActiveRunTimeLimitation()
 
 - (void)addAssertionNeedingBackgroundTask:(ProcessAndUIAssertion&)assertion
 {
-    _assertionsNeedingBackgroundTask.add(&assertion);
+    _assertionsNeedingBackgroundTask.add(assertion);
     [self _updateBackgroundTask];
 }
 
@@ -126,7 +126,7 @@ static bool processHasActiveRunTimeLimitation()
 
     Vector<WeakPtr<ProcessAndUIAssertion>> assertionsNeedingBackgroundTask;
     for (auto& assertion : _assertionsNeedingBackgroundTask)
-        assertionsNeedingBackgroundTask.append(makeWeakPtr(assertion));
+        assertionsNeedingBackgroundTask.append(assertion);
 
     // Note that we don't expect clients to register new assertions when getting notified that the UI assertion will expire imminently.
     // If clients were to do so, then those new assertions would not get notified of the imminent suspension.
@@ -356,7 +356,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
 void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
-    assertionsWorkQueue().dispatch([protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    assertionsWorkQueue().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         protectedThis->acquireSync();
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             if (completionHandler)
@@ -370,7 +370,7 @@ void ProcessAssertion::acquireSync()
     NSError *acquisitionError = nil;
     if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
         RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS assertion '%{public}s' for process with PID=%d, error: %{public}@", this, m_reason.utf8().data(), m_pid, acquisitionError);
-        RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
+        RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
             if (weakThis)
                 weakThis->processAssertionWasInvalidated();
         });
@@ -451,7 +451,7 @@ void ProcessAndUIAssertion::processAssertionWasInvalidated()
 {
     ASSERT(RunLoop::isMain());
 
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     ProcessAssertion::processAssertionWasInvalidated();
 
     // Calling ProcessAssertion::processAssertionWasInvalidated() may have destroyed |this|.

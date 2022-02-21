@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,14 +41,14 @@ public:
     using Base = CustomGetterSetter;
 
     template<typename CellType, SubspaceAccess>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.domAttributeGetterSetterSpace;
+        return &vm.domAttributeGetterSetterSpace();
     }
 
     static DOMAttributeGetterSetter* create(VM& vm, CustomGetter customGetter, CustomSetter customSetter, DOMAttributeAnnotation domAttribute)
     {
-        DOMAttributeGetterSetter* customGetterSetter = new (NotNull, allocateCell<DOMAttributeGetterSetter>(vm.heap)) DOMAttributeGetterSetter(vm, customGetter, customSetter, domAttribute);
+        DOMAttributeGetterSetter* customGetterSetter = new (NotNull, allocateCell<DOMAttributeGetterSetter>(vm)) DOMAttributeGetterSetter(vm, customGetter, customSetter, domAttribute);
         customGetterSetter->finishCreation(vm);
         return customGetterSetter;
     }

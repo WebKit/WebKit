@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Vector_h
-#define Vector_h
+#pragma once
 
 #include "BInline.h"
 #include "VMAllocate.h"
@@ -233,5 +232,3 @@ void Vector<T>::shrinkToFit()
 }
 
 } // namespace bmalloc
-
-#endif // Vector_h

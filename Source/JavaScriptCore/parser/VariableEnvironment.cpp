@@ -218,17 +218,14 @@ void CompactTDZEnvironment::sortCompact(Compact& compact)
 
 CompactTDZEnvironment::CompactTDZEnvironment(const TDZEnvironment& env)
 {
-    Compact compactVariables;
-    compactVariables.reserveCapacity(env.size());
-
     m_hash = 0; // Note: XOR is commutative so order doesn't matter here.
-    for (auto& key : env) {
-        compactVariables.append(key.get());
+    Compact variables = WTF::map(env, [this](auto& key) -> PackedRefPtr<UniquedStringImpl> {
         m_hash ^= key->hash();
-    }
+        return key.get();
+    });
 
-    sortCompact(compactVariables);
-    m_variables = WTFMove(compactVariables);
+    sortCompact(variables);
+    m_variables = WTFMove(variables);
 }
 
 bool CompactTDZEnvironment::operator==(const CompactTDZEnvironment& other) const
@@ -277,14 +274,14 @@ TDZEnvironment& CompactTDZEnvironment::toTDZEnvironmentSlow() const
 {
     Inflated inflated;
     {
-        auto& compact = WTF::get<Compact>(m_variables);
+        auto& compact = std::get<Compact>(m_variables);
         for (size_t i = 0; i < compact.size(); ++i) {
             auto addResult = inflated.add(compact[i]);
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
         }
     }
     m_variables = Variables(WTFMove(inflated));
-    return const_cast<Inflated&>(WTF::get<Inflated>(m_variables));
+    return const_cast<Inflated&>(std::get<Inflated>(m_variables));
 }
 
 CompactTDZEnvironmentMap::Handle CompactTDZEnvironmentMap::get(const TDZEnvironment& env)

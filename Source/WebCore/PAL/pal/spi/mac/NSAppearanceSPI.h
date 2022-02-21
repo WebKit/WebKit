@@ -38,6 +38,8 @@
 - (BOOL)_usesMetricsAppearance;
 #endif
 
+- (NSAppearance *)appearanceByApplyingTintColor:(NSColor *)tintColor;
+
 @end
 
 #endif // USE(APPKIT)

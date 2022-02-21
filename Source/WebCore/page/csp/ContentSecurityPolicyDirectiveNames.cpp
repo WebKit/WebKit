@@ -48,10 +48,15 @@ const char* const pluginTypes = "plugin-types";
 const char* const reportURI = "report-uri";
 const char* const sandbox = "sandbox";
 const char* const scriptSrc = "script-src";
+const char* const scriptSrcAttr = "script-src-attr";
+const char* const scriptSrcElem = "script-src-elem";
 const char* const styleSrc = "style-src";
+const char* const styleSrcAttr = "style-src-attr";
+const char* const styleSrcElem = "style-src-elem";
 const char* const upgradeInsecureRequests = "upgrade-insecure-requests";
 const char* const blockAllMixedContent = "block-all-mixed-content";
-    
+const char* const workerSrc = "worker-src";
+
 } // namespace ContentSecurityPolicyDirectiveNames
 
 } // namespace WebCore

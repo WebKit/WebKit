@@ -40,8 +40,8 @@ from webkitpy.port.test import add_unit_tests_to_mock_filesystem, add_checkout_i
 
 
 class MockHost(MockSystemHost):
-    def __init__(self, log_executive=False, executive_throws_when_run=None, initialize_scm_by_default=True, web=None, create_stub_repository_files=False):
-        MockSystemHost.__init__(self, log_executive, executive_throws_when_run)
+    def __init__(self, log_executive=False, executive_throws_when_run=None, initialize_scm_by_default=True, web=None, create_stub_repository_files=False, **kwargs):
+        MockSystemHost.__init__(self, log_executive, executive_throws_when_run, **kwargs)
         add_unit_tests_to_mock_filesystem(self.filesystem)
         if create_stub_repository_files:
             add_checkout_information_json_to_mock_filesystem(self.filesystem)

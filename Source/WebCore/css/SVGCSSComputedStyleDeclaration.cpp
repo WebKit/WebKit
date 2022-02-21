@@ -108,8 +108,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         return CSSPrimitiveValue::create(svgStyle.fillOpacity(), CSSUnitType::CSS_NUMBER);
     case CSSPropertyFillRule:
         return CSSPrimitiveValue::create(svgStyle.fillRule());
-    case CSSPropertyColorRendering:
-        return CSSPrimitiveValue::create(svgStyle.colorRendering());
     case CSSPropertyShapeRendering:
         return CSSPrimitiveValue::create(svgStyle.shapeRendering());
     case CSSPropertyStrokeOpacity:
@@ -120,10 +118,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         return CSSPrimitiveValue::create(svgStyle.dominantBaseline());
     case CSSPropertyTextAnchor:
         return CSSPrimitiveValue::create(svgStyle.textAnchor());
-    case CSSPropertyMask:
-        if (!svgStyle.maskerResource().isEmpty())
-            return CSSPrimitiveValue::create(makeString('#', svgStyle.maskerResource()), CSSUnitType::CSS_URI);
-        return CSSPrimitiveValue::createIdentifier(CSSValueNone);
     case CSSPropertyFloodColor:
         return currentColorOrValidColor(style, svgStyle.floodColor());
     case CSSPropertyLightingColor:
@@ -182,9 +176,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
     case CSSPropertyMaskType:
         return CSSPrimitiveValue::create(svgStyle.maskType());
     case CSSPropertyMarker:
-    case CSSPropertyEnableBackground:
-    case CSSPropertyColorProfile:
-        // the above properties are not yet implemented in the engine
+        // this property is not yet implemented in the engine
         break;
     default:
         // If you crash here, it's because you added a css property and are not handling it

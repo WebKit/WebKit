@@ -35,7 +35,7 @@ const ClassInfo JSGenerator::s_info = { "Generator", &Base::s_info, nullptr, nul
 
 JSGenerator* JSGenerator::create(VM& vm, Structure* structure)
 {
-    JSGenerator* generator = new (NotNull, allocateCell<JSGenerator>(vm.heap)) JSGenerator(vm, structure);
+    JSGenerator* generator = new (NotNull, allocateCell<JSGenerator>(vm)) JSGenerator(vm, structure);
     generator->finishCreation(vm);
     return generator;
 }

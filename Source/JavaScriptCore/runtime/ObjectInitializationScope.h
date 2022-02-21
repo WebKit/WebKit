@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +63,7 @@ public:
     { }
     ALWAYS_INLINE ~ObjectInitializationScope()
     {
-        m_vm.heap.mutatorFence();
+        m_vm.mutatorFence();
     }
 
     ALWAYS_INLINE VM& vm() const { return m_vm; }

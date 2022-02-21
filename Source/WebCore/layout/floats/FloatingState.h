@@ -31,7 +31,6 @@
 #include "LayoutContainerBox.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -49,7 +48,7 @@ class FloatingState : public RefCounted<FloatingState> {
 public:
     static Ref<FloatingState> create(LayoutState& layoutState, const ContainerBox& formattingContextRoot) { return adoptRef(*new FloatingState(layoutState, formattingContextRoot)); }
 
-    const ContainerBox& root() const { return *m_formattingContextRoot; }
+    const ContainerBox& root() const { return m_formattingContextRoot; }
 
     class FloatItem {
     public:
@@ -70,7 +69,7 @@ public:
         const Box* floatBox() const { return m_layoutBox.get(); }
 #endif
     private:
-        WeakPtr<const Box> m_layoutBox;
+        CheckedPtr<const Box> m_layoutBox;
         Position m_position;
         BoxGeometry m_absoluteBoxGeometry;
     };
@@ -87,7 +86,7 @@ private:
     LayoutState& layoutState() const { return m_layoutState; }
 
     LayoutState& m_layoutState;
-    WeakPtr<const ContainerBox> m_formattingContextRoot;
+    CheckedRef<const ContainerBox> m_formattingContextRoot;
     FloatList m_floats;
 };
 

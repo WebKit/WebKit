@@ -5,7 +5,6 @@
 //
 
 #include "compiler/translator/TranslatorMetalDirect/Pipeline.h"
-#include "compiler/translator/TranslatorMetalDirect/Debug.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
 
 using namespace sh;
@@ -123,7 +122,7 @@ bool Pipeline::uses(const TVariable &var) const
             }
 
         case Type::UniformBuffer:
-            switch(qualifier)
+            switch (qualifier)
             {
                 case TQualifier::EvqBuffer:
                     return true;
@@ -131,7 +130,7 @@ bool Pipeline::uses(const TVariable &var) const
                     return false;
             }
         case Type::AngleUniforms:
-            LOGIC_ERROR();  // globalInstanceVar should be non-null and thus never reach here.
+            UNREACHABLE();  // globalInstanceVar should be non-null and thus never reach here.
             return false;
 
         case Type::Texture:
@@ -313,7 +312,8 @@ static int SaturateVectorOf(const TField &field)
     ASSERT(type.isScalar() || type.isVector());
 
     const bool cond = type.getBasicType() == BT && !type.isArray() &&
-                      CompareBy(Cmp, type.getNominalSize(), MatchDim) && type.getQualifier() != TQualifier::EvqFragDepth;
+                      CompareBy(Cmp, type.getNominalSize(), MatchDim) &&
+                      type.getQualifier() != TQualifier::EvqFragDepth;
 
     if (cond)
     {

@@ -119,7 +119,7 @@ void VisitedLinkStore::sendStoreHandleToProcess(WebProcessProxy& process)
         return;
 
     // FIXME: Get the actual size of data being sent from m_linkHashStore and send it in the SharedMemory::IPCHandle object.
-#if OS(DARWIN) || OS(WINDOWS)
+#if (OS(DARWIN) || OS(WINDOWS)) && !USE(UNIX_DOMAIN_SOCKETS)
     uint64_t dataSize = handle.size();
 #else
     uint64_t dataSize = 0;

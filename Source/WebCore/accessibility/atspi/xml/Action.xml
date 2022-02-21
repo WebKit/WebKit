@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node name="/node">
+<interface name="org.a11y.atspi.Action">
+
+  <property name="NActions" type="i" access="read"/>
+
+  <method name="GetDescription">
+    <arg type="i" name="index" direction="in"/>
+    <arg type="s" direction="out"/>
+  </method>
+
+  <method name="GetName">
+    <arg type="i" name="index" direction="in"/>
+    <arg type="s" direction="out"/>
+  </method>
+
+  <method name="GetLocalizedName">
+    <arg type="i" name="index" direction="in"/>
+    <arg type="s" direction="out"/>
+  </method>
+
+  <method name="GetKeyBinding">
+    <arg type="i" name="index" direction="in"/>
+    <arg type="s" direction="out"/>
+  </method>
+
+  <method name="GetActions">
+    <arg direction="out" type="a(sss)"/>
+    <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QSpiActionArray"/>
+  </method>
+
+  <method name="DoAction">
+    <arg direction="in" name="index" type="i"/>
+    <arg direction="out" type="b"/>
+  </method>
+
+</interface>
+</node>

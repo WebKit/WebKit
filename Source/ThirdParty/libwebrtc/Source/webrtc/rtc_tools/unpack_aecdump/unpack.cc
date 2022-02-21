@@ -147,7 +147,7 @@ class RuntimeSettingWriter {
     return is_exporter_for_(event);
   }
 
-  // Writes to file the payload of |event| using |frame_count| to calculate
+  // Writes to file the payload of `event` using `frame_count` to calculate
   // timestamp.
   void WriteEvent(const Event& event, int frame_count) {
     RTC_DCHECK(is_exporter_for_(event));
@@ -165,7 +165,7 @@ class RuntimeSettingWriter {
   }
 
   // Handles an AEC dump initialization event, occurring at frame
-  // |frame_offset|.
+  // `frame_offset`.
   void HandleInitEvent(int frame_offset) {
     Flush();
     frame_offset_ = frame_offset;

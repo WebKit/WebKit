@@ -25,12 +25,10 @@
 
 #include "config.h"
 #include "WTFStringUtilities.h"
-#include <WebCore/TextEncoding.h>
+#include <pal/text/TextEncoding.h>
 #include <wtf/MainThread.h>
 #include <wtf/URLParser.h>
 #include <wtf/text/StringBuilder.h>
-
-using namespace WebCore;
 
 namespace TestWebKitAPI {
 
@@ -89,7 +87,7 @@ enum class TestTabs { No, Yes };
 // Inserting tabs between surrogate pairs changes the encoded value instead of being skipped by the URLParser.
 const TestTabs testTabsValueForSurrogatePairs = TestTabs::No;
 
-static void checkURL(const String& urlString, const TextEncoding* encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
+static void checkURL(const String& urlString, const PAL::TextEncoding* encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
     auto url = URL({ }, urlString, encoding);
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
@@ -113,7 +111,7 @@ static void checkURL(const String& urlString, const TextEncoding* encoding, cons
     }
 }
 
-static void checkURL(const String& urlString, const String& baseURLString, const TextEncoding* encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
+static void checkURL(const String& urlString, const String& baseURLString, const PAL::TextEncoding* encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
     auto url = URL(URL({ }, baseURLString), urlString, encoding);
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
@@ -141,7 +139,7 @@ TEST_F(URLParserTextEncodingTest, QueryEncoding)
 {
     checkURL(utf16String(u"http://host?ß😍#ß😍"), nullptr, {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", "%C3%9F%F0%9F%98%8D", utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D")}, testTabsValueForSurrogatePairs);
 
-    TextEncoding latin1(String("latin1"));
+    PAL::TextEncoding latin1(String("latin1"));
     checkURL("http://host/?query with%20spaces", &latin1, {"http", "", "", "host", 0, "/", "query%20with%20spaces", "", "http://host/?query%20with%20spaces"});
     checkURL("http://host/?query", &latin1, {"http", "", "", "host", 0, "/", "query", "", "http://host/?query"});
     checkURL("http://host/?\tquery", &latin1, {"http", "", "", "host", 0, "/", "query", "", "http://host/?query"});
@@ -149,11 +147,11 @@ TEST_F(URLParserTextEncodingTest, QueryEncoding)
     checkURL("http://host/?query with SpAcEs#fragment", &latin1, {"http", "", "", "host", 0, "/", "query%20with%20SpAcEs", "fragment", "http://host/?query%20with%20SpAcEs#fragment"});
     checkURL("http://host/?que\rry\t\r\n#fragment", &latin1, {"http", "", "", "host", 0, "/", "query", "fragment", "http://host/?query#fragment"});
 
-    TextEncoding unrecognized(String("unrecognized invalid encoding name"));
+    PAL::TextEncoding unrecognized(String("unrecognized invalid encoding name"));
     checkURL("http://host/?query", &unrecognized, {"http", "", "", "host", 0, "/", "", "", "http://host/?"});
     checkURL("http://host/?", &unrecognized, {"http", "", "", "host", 0, "/", "", "", "http://host/?"});
 
-    TextEncoding iso88591(String("ISO-8859-1"));
+    PAL::TextEncoding iso88591(String("ISO-8859-1"));
     String withUmlauts = utf16String<4>({0xDC, 0x430, 0x451, '\0'});
     checkURL(makeString("ws://host/path?", withUmlauts), &iso88591, {"ws", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "", "ws://host/path?%C3%9C%D0%B0%D1%91"});
     checkURL(makeString("wss://host/path?", withUmlauts), &iso88591, {"wss", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "", "wss://host/path?%C3%9C%D0%B0%D1%91"});

@@ -82,7 +82,7 @@ RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::copyNativeImage(BackingStore
     }
 
     case DontCopyBackingStore:
-        return NativeImage::create(makeRefPtr(m_surface.get()));
+        return NativeImage::create(RefPtr { m_surface.get() });
     }
 
     ASSERT_NOT_REACHED();

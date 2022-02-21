@@ -53,7 +53,7 @@ class WebCoreDecompressionSession;
 
 class ImageDecoderAVFObjC : public ImageDecoder {
 public:
-    WEBCORE_EXPORT static RefPtr<ImageDecoderAVFObjC> create(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    WEBCORE_EXPORT static RefPtr<ImageDecoderAVFObjC> create(const FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     virtual ~ImageDecoderAVFObjC();
 
     WEBCORE_EXPORT static bool supportsMediaType(MediaType);
@@ -64,7 +64,7 @@ public:
 
     const String& mimeType() const { return m_mimeType; }
 
-    WEBCORE_EXPORT void setEncodedDataStatusChangeCallback(WTF::Function<void(EncodedDataStatus)>&&) final;
+    WEBCORE_EXPORT void setEncodedDataStatusChangeCallback(Function<void(EncodedDataStatus)>&&) final;
     EncodedDataStatus encodedDataStatus() const final;
     WEBCORE_EXPORT IntSize size() const final;
     WEBCORE_EXPORT size_t frameCount() const final;
@@ -86,7 +86,7 @@ public:
     WEBCORE_EXPORT PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) final;
 
     WEBCORE_EXPORT void setExpectedContentSize(long long) final;
-    WEBCORE_EXPORT void setData(SharedBuffer&, bool allDataReceived) final;
+    WEBCORE_EXPORT void setData(const FragmentedSharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
     WEBCORE_EXPORT void clearFrameBufferCache(size_t) final;
 
@@ -94,7 +94,7 @@ public:
     WEBCORE_EXPORT Vector<ImageDecoder::FrameInfo> frameInfos() const;
 
 private:
-    ImageDecoderAVFObjC(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
+    ImageDecoderAVFObjC(const FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
 
     AVAssetTrack *firstEnabledTrack();
     void readSamples();
@@ -113,7 +113,7 @@ private:
     RetainPtr<WebCoreSharedBufferResourceLoaderDelegate> m_loader;
     std::unique_ptr<ImageRotationSessionVT> m_imageRotationSession;
     Ref<WebCoreDecompressionSession> m_decompressionSession;
-    WTF::Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;
+    Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;
 
     SampleMap m_sampleData;
     DecodeOrderSampleMap::iterator m_cursor;

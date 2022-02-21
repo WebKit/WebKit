@@ -10,4 +10,4 @@ description: >
 
 assert.throws(TypeError, function() {
   Object.prototype.toLocaleString.call(undefined);
-});
+}, 'Object.prototype.toLocaleString.call(undefined) throws a TypeError exception');

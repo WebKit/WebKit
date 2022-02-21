@@ -29,7 +29,7 @@
 
 namespace TestWebKitAPI {
 
-class SharedBufferTest : public testing::Test {
+class FragmentedSharedBufferTest : public testing::Test {
 public:
     void SetUp() override;
     void TearDown() override;
@@ -42,5 +42,10 @@ private:
     String m_tempFilePath;
     String m_tempEmptyFilePath;
 };
+
+#if ENABLE(MHTML)
+class SharedBufferChunkReaderTest : public testing::Test {
+};
+#endif
 
 } // namespace TestWebKitAPI

@@ -40,23 +40,23 @@ static constexpr double DefaultUserHeightInMeters = 1.65;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRReferenceSpace);
 
-Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, Ref<WebXRSession>&& session, XRReferenceSpaceType type)
+Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, WebXRSession& session, XRReferenceSpaceType type)
 {
     // https://immersive-web.github.io/webxr/#xrspace-native-origin
     // The transform from the effective space to the native origin's space is
     // defined by an origin offset, which is an XRRigidTransform initially set
     // to an identity transform.
-    return adoptRef(*new WebXRReferenceSpace(document, WTFMove(session), WebXRRigidTransform::create(), type));
+    return adoptRef(*new WebXRReferenceSpace(document, session, WebXRRigidTransform::create(), type));
 }
 
-Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, Ref<WebXRSession>&& session, Ref<WebXRRigidTransform>&& offset, XRReferenceSpaceType type)
+Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, WebXRSession& session, Ref<WebXRRigidTransform>&& offset, XRReferenceSpaceType type)
 {
-    return adoptRef(*new WebXRReferenceSpace(document, WTFMove(session), WTFMove(offset), type));
+    return adoptRef(*new WebXRReferenceSpace(document, session, WTFMove(offset), type));
 }
 
-WebXRReferenceSpace::WebXRReferenceSpace(Document& document, Ref<WebXRSession>&& session, Ref<WebXRRigidTransform>&& offset, XRReferenceSpaceType type)
+WebXRReferenceSpace::WebXRReferenceSpace(Document& document, WebXRSession& session, Ref<WebXRRigidTransform>&& offset, XRReferenceSpaceType type)
     : WebXRSpace(document, WTFMove(offset))
-    , m_session(WTFMove(session))
+    , m_session(session)
     , m_type(type)
 {
 }
@@ -64,8 +64,11 @@ WebXRReferenceSpace::WebXRReferenceSpace(Document& document, Ref<WebXRSession>&&
 WebXRReferenceSpace::~WebXRReferenceSpace() = default;
 
 
-TransformationMatrix WebXRReferenceSpace::nativeOrigin() const
+std::optional<TransformationMatrix> WebXRReferenceSpace::nativeOrigin() const
 {
+    if (!m_session)
+        return std::nullopt;
+
     TransformationMatrix identity;
 
     // We assume that poses got from the devices are in local space.
@@ -90,13 +93,15 @@ TransformationMatrix WebXRReferenceSpace::nativeOrigin() const
     default:
         // BoundedFloor is handled by WebXRBoundedReferenceSpace subclass
         RELEASE_ASSERT_NOT_REACHED();
+        return std::nullopt;
     }
-
-    return identity;
 }
 
 ExceptionOr<Ref<WebXRReferenceSpace>> WebXRReferenceSpace::getOffsetReferenceSpace(const WebXRRigidTransform& offsetTransform)
 {
+    if (!m_session)
+        return Exception { InvalidStateError };
+
     auto* document = downcast<Document>(scriptExecutionContext());
     if (!document)
         return Exception { InvalidStateError };
@@ -105,11 +110,14 @@ ExceptionOr<Ref<WebXRReferenceSpace>> WebXRReferenceSpace::getOffsetReferenceSpa
     // Set offsetSpace’s origin offset to the result of multiplying base’s origin offset by originOffset in the relevant realm of base.
     auto offset = WebXRRigidTransform::create(originOffset().rawTransform() * offsetTransform.rawTransform());
 
-    return create(*document, m_session.copyRef(), WTFMove(offset), m_type);
+    return create(*document, *m_session.get(), WTFMove(offset), m_type);
 }
 
-TransformationMatrix WebXRReferenceSpace::floorOriginTransform() const
+std::optional<TransformationMatrix> WebXRReferenceSpace::floorOriginTransform() const
 {
+    if (!m_session)
+        return std::nullopt;
+
     auto& data = m_session->frameData();
     if (!data.floorTransform) {
         TransformationMatrix defautTransform;

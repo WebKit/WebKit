@@ -1,0 +1,8 @@
+Test to ensure correct behaviour of ShadowRealm.prototype.evaluate
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+PASS window.close() affects name targeting immediately
+

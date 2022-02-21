@@ -64,8 +64,10 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
         for (const auto& cookie : *result) {
             if (!cookies.isEmpty())
                 cookies.append("; ");
-            cookies.append(cookie.name);
-            cookies.append("=");
+            if (!cookie.name.isEmpty()) {
+                cookies.append(cookie.name);
+                cookies.append("=");
+            }
             cookies.append(cookie.value);
         }
     }
@@ -97,7 +99,7 @@ CookieJarDB& NetworkStorageSession::cookieDatabase() const
 
 void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier>, std::optional<PageIdentifier> pageID, ShouldAskITP, const String& value, ShouldRelaxThirdPartyCookieBlocking) const
 {
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     std::optional<Seconds> cappedLifetime = clientSideCookieCap(RegistrableDomain { firstParty }, pageID);
 #else
     UNUSED_PARAM(pageID);
@@ -230,9 +232,9 @@ std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(con
     return cookieRequestHeaderFieldValue(headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, headerFieldProxy.includeSecureCookies, ShouldAskITP::Yes, ShouldRelaxThirdPartyCookieBlocking::No);
 }
 
-void NetworkStorageSession::setProxySettings(CurlProxySettings&& proxySettings)
+void NetworkStorageSession::setProxySettings(const CurlProxySettings& proxySettings)
 {
-    CurlContext::singleton().setProxySettings(WTFMove(proxySettings));
+    CurlContext::singleton().setProxySettings(proxySettings);
 }
 
 } // namespace WebCore

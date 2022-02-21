@@ -96,7 +96,7 @@ JSValue JSValue::toBigInt(JSGlobalObject* globalObject) const
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue primitive = toPrimitive(globalObject);
+    JSValue primitive = toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (primitive.isBigInt())
@@ -313,14 +313,14 @@ void JSValue::dumpInContextAssumingStructure(
             out.print("BigInt[heap-allocated]: addr=", RawPointer(asCell()), ", length=", jsCast<JSBigInt*>(asCell())->length(), ", sign=", jsCast<JSBigInt*>(asCell())->sign());
         else if (structure->classInfo()->isSubClassOf(JSObject::info())) {
             out.print("Object: ", RawPointer(asCell()));
-            out.print(" with butterfly ", RawPointer(asObject(asCell())->butterfly()));
+            out.print(" with butterfly ", RawPointer(asObject(asCell())->butterfly()), "(base=", RawPointer(asObject(asCell())->butterfly()->base(structure)), ")");
             out.print(" (Structure ", inContext(*structure, context), ")");
         } else {
             out.print("Cell: ", RawPointer(asCell()));
             out.print(" (", inContext(*structure, context), ")");
         }
 #if USE(JSVALUE64)
-        out.print(", StructureID: ", asCell()->structureID());
+        out.print(", StructureID: ", asCell()->structureID().bits());
 #endif
     } else if (isTrue())
         out.print("True");
@@ -357,15 +357,9 @@ void JSValue::dumpForBacktrace(PrintStream& out) const
                 out.print("(unresolved string)");
         } else if (asCell()->inherits<Structure>(vm)) {
             out.print("Structure[ ", asCell()->structure()->classInfo()->className);
-#if USE(JSVALUE64)
-            out.print(" ID: ", asCell()->structureID());
-#endif
             out.print("]: ", RawPointer(asCell()));
         } else {
             out.print("Cell[", asCell()->structure()->classInfo()->className);
-#if USE(JSVALUE64)
-            out.print(" ID: ", asCell()->structureID());
-#endif
             out.print("]: ", RawPointer(asCell()));
         }
     } else if (isTrue())
@@ -470,5 +464,20 @@ NEVER_INLINE void ensureStillAliveHere(JSValue)
 {
 }
 #endif
+
+WTF::String JSValue::toWTFStringForConsole(JSGlobalObject* globalObject) const
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSString* string = toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    String result = string->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (isString())
+        return tryMakeString("\"", result, "\"");
+    if (jsDynamicCast<JSArray*>(vm, *this))
+        return tryMakeString("[", result, "]");
+    return result;
+}
 
 } // namespace JSC

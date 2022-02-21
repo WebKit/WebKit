@@ -49,10 +49,10 @@ public:
     // The AbstractLocker argument enforces at compile time that the objectGraphLock
     // is held. This isn't necessary for all object types, but enough of them that
     // it's done for all of them.
-    void deleteObject(const WTF::AbstractLocker&, GraphicsContextGL*);
+    void deleteObject(const AbstractLocker&, GraphicsContextGL*);
 
     void onAttached() { ++m_attachmentCount; }
-    void onDetached(const WTF::AbstractLocker&, GraphicsContextGL*);
+    void onDetached(const AbstractLocker&, GraphicsContextGL*);
 
     // This indicates whether the client side issue a delete call already, not
     // whether the OpenGL resource is deleted.
@@ -78,7 +78,7 @@ protected:
     void runDestructor();
 
     // deleteObjectImpl should be only called once to delete the OpenGL resource.
-    virtual void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGL*, PlatformGLObject) = 0;
+    virtual void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) = 0;
 
     virtual bool hasGroupOrContext() const = 0;
 

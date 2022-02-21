@@ -71,7 +71,7 @@ template<typename CharacterType> static std::optional<ResourceCryptographicDiges
 
     StringView hashValue(beginHashValue, buffer.position() - beginHashValue);
 
-    if (auto digest = base64Decode(hashValue, Base64DecodeOptions::ValidatePadding))
+    if (auto digest = base64Decode(hashValue))
         return ResourceCryptographicDigest { *algorithm, WTFMove(*digest) };
 
     if (auto digest = base64URLDecode(hashValue))
@@ -125,7 +125,7 @@ std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDiges
 
 std::optional<ResourceCryptographicDigest> decodeEncodedResourceCryptographicDigest(const EncodedResourceCryptographicDigest& encodedDigest)
 {
-    if (auto digest = base64Decode(encodedDigest.digest, Base64DecodeOptions::ValidatePadding))
+    if (auto digest = base64Decode(encodedDigest.digest))
         return ResourceCryptographicDigest { encodedDigest.algorithm, WTFMove(*digest) };
 
     if (auto digest = base64URLDecode(encodedDigest.digest))
@@ -155,7 +155,7 @@ ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDig
     return { algorithm, cryptoDigest->computeHash() };
 }
 
-ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptographicDigest::Algorithm algorithm, const SharedBuffer* buffer)
+ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptographicDigest::Algorithm algorithm, const FragmentedSharedBuffer* buffer)
 {
     auto cryptoDigest = PAL::CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
     if (buffer) {

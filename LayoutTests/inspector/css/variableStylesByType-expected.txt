@@ -1,0 +1,30 @@
+Test for DOMNodeStyles.variableStylesByType
+
+
+== Running test suite: DOMNodeStyles.variableStylesByType
+-- Running test case: DOMNodeStyles.variableStylesByType.Colors
+PASS: Should have "colors" variables group.
+PASS: Group should include all expected variables.
+
+-- Running test case: DOMNodeStyles.variableStylesByType.Dimensions
+PASS: Should have "dimensions" variables group.
+PASS: Group should include all expected variables.
+
+-- Running test case: DOMNodeStyles.variableStylesByType.Numbers
+PASS: Should have "numbers" variables group.
+PASS: Group should include all expected variables.
+
+-- Running test case: DOMNodeStyles.variableStylesByType.Other
+PASS: Should have "other" variables group.
+PASS: Group should include all expected variables.
+
+-- Running test case: DOMNodeStyles.variableStylesByType.Mixed
+PASS: Should have "colors" variables group.
+PASS: Group should include all expected variables.
+PASS: Should have "dimensions" variables group.
+PASS: Group should include all expected variables.
+PASS: Should have "numbers" variables group.
+PASS: Group should include all expected variables.
+PASS: Should have "other" variables group.
+PASS: Group should include all expected variables.
+

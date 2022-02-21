@@ -93,6 +93,10 @@ class FramebufferAttachment final
     {
         return mType == GL_TEXTURE && id() == textureId.value;
     }
+    bool isExternalTexture() const
+    {
+        return mType == GL_TEXTURE && getTextureImageIndex().getType() == gl::TextureType::External;
+    }
     bool isRenderbufferWithId(GLuint renderbufferId) const
     {
         return mType == GL_RENDERBUFFER && id() == renderbufferId;
@@ -113,7 +117,8 @@ class FramebufferAttachment final
     bool isMultiview() const;
     GLint getBaseViewIndex() const;
 
-    GLsizei getRenderToTextureSamples() const { return mRenderToTextureSamples; }
+    bool isRenderToTexture() const;
+    GLsizei getRenderToTextureSamples() const;
 
     // The size of the underlying resource the attachment points to. The 'depth' value will
     // correspond to a 3D texture depth or the layer count of a 2D array texture. For Surfaces and
@@ -127,6 +132,7 @@ class FramebufferAttachment final
     GLenum type() const { return mType; }
     bool isAttached() const { return mType != GL_NONE; }
     bool isRenderable(const Context *context) const;
+    bool isYUV() const;
 
     Renderbuffer *getRenderbuffer() const;
     Texture *getTexture() const;
@@ -186,6 +192,14 @@ class FramebufferAttachment final
     GLsizei mNumViews;
     bool mIsMultiview;
     GLint mBaseViewIndex;
+    // A single-sampled texture can be attached to a framebuffer either as single-sampled or as
+    // multisampled-render-to-texture.  In the latter case, |mRenderToTextureSamples| will contain
+    // the number of samples.  For renderbuffers, the number of samples is inherited from the
+    // renderbuffer itself.
+    //
+    // Note that textures cannot change storage between single and multisample once attached to a
+    // framebuffer.  Renderbuffers instead can, and caching the number of renderbuffer samples here
+    // can lead to stale data.
     GLsizei mRenderToTextureSamples;
 };
 
@@ -202,6 +216,8 @@ class FramebufferAttachmentObject : public angle::Subject, public angle::Observe
     virtual bool isRenderable(const Context *context,
                               GLenum binding,
                               const ImageIndex &imageIndex) const                          = 0;
+    virtual bool isYUV() const                                                             = 0;
+    virtual bool hasProtectedContent() const                                               = 0;
 
     virtual void onAttach(const Context *context, rx::Serial framebufferSerial) = 0;
     virtual void onDetach(const Context *context, rx::Serial framebufferSerial) = 0;
@@ -243,8 +259,7 @@ inline Format FramebufferAttachment::getFormat() const
 
 inline GLsizei FramebufferAttachment::getSamples() const
 {
-    return (mRenderToTextureSamples != kDefaultRenderToTextureSamples) ? getRenderToTextureSamples()
-                                                                       : getResourceSamples();
+    return isRenderToTexture() ? getRenderToTextureSamples() : getResourceSamples();
 }
 
 inline GLsizei FramebufferAttachment::getResourceSamples() const
@@ -267,6 +282,12 @@ inline bool FramebufferAttachment::isRenderable(const Context *context) const
 {
     ASSERT(mResource);
     return mResource->isRenderable(context, mTarget.binding(), mTarget.textureIndex());
+}
+
+inline bool FramebufferAttachment::isYUV() const
+{
+    ASSERT(mResource);
+    return mResource->isYUV();
 }
 
 }  // namespace gl

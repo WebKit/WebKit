@@ -32,7 +32,7 @@ namespace WebCore {
 
 enum class FocusRemovalEventsMode : bool { Dispatch, DoNotDispatch };
 
-enum class FocusTrigger : bool { Other, Click };
+enum class FocusTrigger : uint8_t { Other, Click, Bindings };
 
 enum class FocusVisibility : bool { Invisible, Visible };
 

@@ -55,6 +55,8 @@ public:
     Value* ceilConstant(Procedure&) const final;
     Value* floorConstant(Procedure&) const final;
     Value* sqrtConstant(Procedure&) const final;
+    Value* fMinConstant(Procedure&, const Value* other) const final;
+    Value* fMaxConstant(Procedure&, const Value* other) const final;
 
     TriState equalConstant(const Value* other) const final;
     TriState notEqualConstant(const Value* other) const final;

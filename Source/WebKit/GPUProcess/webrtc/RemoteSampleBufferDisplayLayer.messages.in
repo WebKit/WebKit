@@ -32,10 +32,13 @@ messages -> RemoteSampleBufferDisplayLayer NotRefCounted {
     UpdateBoundsAndPosition(CGRect bounds, WebCore::MediaSample::VideoRotation rotation)
     Flush()
     FlushAndRemoveImage()
-    EnqueueSample(WebCore::RemoteVideoSample sample)
+    EnqueueSample(WebKit::RemoteVideoFrameReadReference sample)
+    EnqueueSampleCV(WebCore::RemoteVideoSample sample)
     ClearEnqueuedSamples()
     Play()
     Pause()
+    SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
+    SetSharedVideoFrameMemory(WebKit::SharedMemory::IPCHandle storageHandle)
 }
 
 #endif

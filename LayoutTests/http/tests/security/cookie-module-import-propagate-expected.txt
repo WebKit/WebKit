@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin. Status code: 400
 PASS did load script with ./cookie-protected-script.py?testId=0.
 
 PASS did load script with http://127.0.0.1:8000/security/resources/cookie-protected-script.py?testId=1.

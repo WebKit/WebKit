@@ -1,8 +1,6 @@
 PASS: Has Caret Selection
-PASS: Correct Selection
-PASS: Correct Selection
-PASS: Correct Selection
-PASS: Correct Selection
-PASS: Correct Selection
-PASS: Correct Selection
+PASS: Has Selection
+PASS: Selection Changed
+PASS: Selection Changed
+PASS: Selection Changed
 

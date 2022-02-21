@@ -35,6 +35,7 @@
 #include "DateComponents.h"
 #include "DateTimeFieldsState.h"
 #include "Decimal.h"
+#include "ElementInlines.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
@@ -63,15 +64,15 @@ DateComponentsType MonthInputType::dateType() const
     return DateComponentsType::Month;
 }
 
-double MonthInputType::valueAsDate() const
+WallTime MonthInputType::valueAsDate() const
 {
     ASSERT(element());
     auto date = parseToDateComponents(element()->value());
     if (!date)
-        return DateComponents::invalidMilliseconds();
+        return WallTime::nan();
     double msec = date->millisecondsSinceEpoch();
     ASSERT(std::isfinite(msec));
-    return msec;
+    return WallTime::fromRawSeconds(Seconds::fromMilliseconds(msec).value());
 }
 
 String MonthInputType::serializeWithMilliseconds(double value) const
@@ -117,7 +118,7 @@ Decimal MonthInputType::parseToNumber(const String& src, const Decimal& defaultV
     return Decimal::fromDouble(months);
 }
 
-std::optional<DateComponents> MonthInputType::parseToDateComponents(const StringView& source) const
+std::optional<DateComponents> MonthInputType::parseToDateComponents(StringView source) const
 {
     return DateComponents::fromParsingMonth(source);
 }

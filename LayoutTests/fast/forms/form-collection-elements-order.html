@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ KeygenElementEnabled=true ] -->
+<!DOCTYPE html>
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
@@ -49,18 +49,18 @@ var output = document.getElementsByTagName('output')[0];
 var progress = document.getElementsByTagName('progress')[0];
 var select = document.getElementsByTagName('select')[0];
 var textarea = document.getElementsByTagName('textarea')[0];
-shouldBe('checkOrder([button, fieldset, input, keygen, object, output, select, textarea])', '"OK"');
+shouldBe('checkOrder([button, fieldset, input, object, output, select, textarea])', '"OK"');
 
 debug('');
 debug('- Checks the order after some elements removed/inserted.');
 owner.removeChild(object);
-shouldBe('checkOrder([button, fieldset, input, keygen, output, select, textarea])', '"OK"');
+shouldBe('checkOrder([button, fieldset, input, output, select, textarea])', '"OK"');
 owner.removeChild(button);
-shouldBe('checkOrder([fieldset, input, keygen, output, select, textarea])', '"OK"');
+shouldBe('checkOrder([fieldset, input, output, select, textarea])', '"OK"');
 owner.insertBefore(object, fieldset);
-shouldBe('checkOrder([object, fieldset, input, keygen, output, select, textarea])', '"OK"');
+shouldBe('checkOrder([object, fieldset, input, output, select, textarea])', '"OK"');
 owner.appendChild(button);
-shouldBe('checkOrder([object, fieldset, input, keygen, output, select, textarea, button])', '"OK"');
+shouldBe('checkOrder([object, fieldset, input, output, select, textarea, button])', '"OK"');
 
 debug('');
 debug('- Checks the order of form associated elements with form attribute.');
@@ -89,22 +89,22 @@ output = document.getElementsByTagName('output')[0];
 progress = document.getElementsByTagName('progress')[0];
 select = document.getElementsByTagName('select')[0];
 textarea = document.getElementsByTagName('textarea')[0];
-shouldBe('checkOrder([button, fieldset, input, keygen, object, output, select, textarea])', '"OK"');
+shouldBe('checkOrder([button, fieldset, input, object, output, select, textarea])', '"OK"');
 
 debug('');
 debug('- Checks the order after some elements removed/inserted with form attribute.');
 owner.removeChild(object);
-shouldBe('checkOrder([button, fieldset, input, keygen, output, select, textarea])', '"OK"');
+shouldBe('checkOrder([button, fieldset, input, output, select, textarea])', '"OK"');
 container.removeChild(button);
-shouldBe('checkOrder([fieldset, input, keygen, output, select, textarea])', '"OK"');
+shouldBe('checkOrder([fieldset, input, output, select, textarea])', '"OK"');
 container.removeChild(textarea);
-shouldBe('checkOrder([fieldset, input, keygen, output, select])', '"OK"');
+shouldBe('checkOrder([fieldset, input, output, select])', '"OK"');
 owner.appendChild(object);
-shouldBe('checkOrder([fieldset, input, keygen, object, output, select])', '"OK"');
+shouldBe('checkOrder([fieldset, input, object, output, select])', '"OK"');
 container.insertBefore(textarea, fieldset);
-shouldBe('checkOrder([textarea, fieldset, input, keygen, object, output, select])', '"OK"');
+shouldBe('checkOrder([textarea, fieldset, input, object, output, select])', '"OK"');
 container.appendChild(button);
-shouldBe('checkOrder([textarea, fieldset, input, keygen, object, output, select, button])', '"OK"');
+shouldBe('checkOrder([textarea, fieldset, input, object, output, select, button])', '"OK"');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

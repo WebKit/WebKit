@@ -47,13 +47,11 @@ public:
         bool isIdentity() const { return !flipX && !flipY && !angle; }
     };
 
-    enum class IsCGImageCompatible {
-        No,
-        Yes,
-    };
+    enum class IsCGImageCompatible { No, Yes };
+    enum class ShouldUseIOSurface { No, Yes };
 
-    ImageRotationSessionVT(AffineTransform&&, FloatSize, IsCGImageCompatible);
-    ImageRotationSessionVT(const RotationProperties&, FloatSize, IsCGImageCompatible);
+    ImageRotationSessionVT(AffineTransform&&, FloatSize, IsCGImageCompatible, ShouldUseIOSurface = ShouldUseIOSurface::Yes);
+    ImageRotationSessionVT(const RotationProperties&, FloatSize, IsCGImageCompatible, ShouldUseIOSurface = ShouldUseIOSurface::Yes);
     ImageRotationSessionVT() = default;
 
     const std::optional<AffineTransform>& transform() const { return m_transform; }
@@ -75,6 +73,7 @@ private:
     FloatSize m_rotatedSize;
     RetainPtr<VTImageRotationSessionRef> m_rotationSession;
     RetainPtr<CVPixelBufferPoolRef> m_rotationPool;
+    bool m_shouldUseIOSurface { true };
 };
 
 inline bool operator==(const ImageRotationSessionVT::RotationProperties& rotation1, const ImageRotationSessionVT::RotationProperties& rotation2)

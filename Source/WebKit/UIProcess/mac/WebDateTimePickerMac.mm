@@ -228,7 +228,7 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
 - (void)showPicker:(WebKit::WebDateTimePickerMac&)picker
 {
-    _picker = makeWeakPtr(picker);
+    _picker = picker;
 
     [[_enclosingWindow contentView] addSubview:_datePicker.get()];
     [[_presentingView window] addChildWindow:_enclosingWindow.get() ordered:NSWindowAbove];

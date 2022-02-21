@@ -237,7 +237,7 @@ public:
     {
     }
 
-    void setData(WebCore::SharedBuffer::DataSegment& data) { m_data = &data; }
+    void setData(const WebCore::SharedBuffer& data) { m_data = &data; }
     // FIXME: haltAtFrame should be size_t.
     bool decode(WebCore::GIFImageDecoder::GIFQuery, unsigned haltAtFrame);
 
@@ -316,6 +316,6 @@ private:
     Vector<std::unique_ptr<GIFFrameContext> > m_frames;
     size_t m_currentDecodingFrame;
 
-    RefPtr<WebCore::SharedBuffer::DataSegment> m_data;
+    RefPtr<const WebCore::SharedBuffer> m_data;
     bool m_parseCompleted;
 };

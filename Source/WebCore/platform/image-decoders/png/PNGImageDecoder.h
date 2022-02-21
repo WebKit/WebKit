@@ -31,8 +31,7 @@
 #endif
 
 #if USE(LCMS)
-typedef void* cmsHPROFILE;
-typedef void* cmsHTRANSFORM;
+#include "LCMSUniquePtr.h"
 #endif
 
 namespace WebCore {
@@ -139,8 +138,7 @@ namespace WebCore {
         png_byte m_datatRNS[12 + 256];
 #endif
 #if USE(LCMS)
-        cmsHPROFILE m_iccProfile { nullptr };
-        cmsHTRANSFORM m_iccTransform { nullptr };
+    LCMSTransformPtr m_iccTransform;
 #endif
 
     };

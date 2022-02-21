@@ -411,6 +411,11 @@ void PlaybackSessionManagerProxy::clearPlaybackControlsManager()
 void PlaybackSessionManagerProxy::currentTimeChanged(PlaybackSessionContextIdentifier contextId, double currentTime, double hostTime)
 {
     ensureModel(contextId).currentTimeChanged(currentTime);
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (m_page)
+        m_page->didChangeCurrentTime(contextId);
+#endif
 }
 
 void PlaybackSessionManagerProxy::bufferedTimeChanged(PlaybackSessionContextIdentifier contextId, double bufferedTime)
@@ -423,7 +428,6 @@ void PlaybackSessionManagerProxy::seekableRangesVectorChanged(PlaybackSessionCon
     Ref<TimeRanges> timeRanges = TimeRanges::create();
     for (const auto& range : ranges) {
         ASSERT(isfinite(range.first));
-        ASSERT(isfinite(range.second));
         ASSERT(range.second >= range.first);
         timeRanges->add(range.first, range.second);
     }
@@ -492,6 +496,11 @@ void PlaybackSessionManagerProxy::playbackStartedTimeChanged(PlaybackSessionCont
 void PlaybackSessionManagerProxy::rateChanged(PlaybackSessionContextIdentifier contextId, OptionSet<WebCore::PlaybackSessionModel::PlaybackState> playbackState, double rate, double defaultPlaybackRate)
 {
     ensureModel(contextId).rateChanged(playbackState, rate, defaultPlaybackRate);
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (m_page)
+        m_page->didChangePlaybackRate(contextId);
+#endif
 }
 
 void PlaybackSessionManagerProxy::pictureInPictureSupportedChanged(PlaybackSessionContextIdentifier contextId, bool supported)
@@ -637,6 +646,16 @@ PlatformPlaybackSessionInterface* PlaybackSessionManagerProxy::controlsManagerIn
 
     auto& interface = ensureInterface(m_controlsManagerContextId);
     return &interface;
+}
+
+bool PlaybackSessionManagerProxy::isPaused(PlaybackSessionContextIdentifier identifier) const
+{
+    auto iterator = m_contextMap.find(identifier);
+    if (iterator == m_contextMap.end())
+        return false;
+
+    auto& model = *std::get<0>(iterator->value);
+    return !model.isPlaying() && !model.isStalled();
 }
 
 } // namespace WebKit

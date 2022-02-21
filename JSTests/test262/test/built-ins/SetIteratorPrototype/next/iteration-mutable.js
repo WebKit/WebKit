@@ -1,7 +1,7 @@
 // Copyright (C) 2014 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 23.2.3.11
+esid: sec-set.prototype-@@iterator
 description: >
   When an item is added to the set after the iterator is created but before
   the iterator is "done" (as defined by 23.2.5.2.1), the new item should be

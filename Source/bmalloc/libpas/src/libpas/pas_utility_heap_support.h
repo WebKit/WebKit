@@ -38,7 +38,7 @@ typedef struct pas_utility_heap_support pas_utility_heap_support;
 typedef union pas_utility_heap_allocator pas_utility_heap_allocator;
 
 struct pas_utility_heap_support {
-    pas_compact_atomic_segregated_global_size_directory_ptr
+    pas_compact_atomic_segregated_size_directory_ptr
         index_to_size_directory[PAS_NUM_UTILITY_SIZE_CLASSES];
     pas_utility_heap_allocator* allocators;
     uint64_t slow_path_count;

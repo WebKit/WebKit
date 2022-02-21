@@ -54,7 +54,7 @@ private:
 
     ImplementationType implementationType() const final { return ImplementationType::Remote; }
     void initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
-    void setServerCertificate(Ref<WebCore::SharedBuffer>&&, SuccessCallback&&) final;
+    void setServerCertificate(Ref<WebCore::FragmentedSharedBuffer>&&, SuccessCallback&&) final;
     void setStorageDirectory(const String&) final;
     const String& keySystem() const final { return m_configuration.keySystem; }
     RefPtr<WebCore::CDMInstanceSession> createSession() final;

@@ -53,7 +53,7 @@ WebXRInputSpace::WebXRInputSpace(Document& document, WebXRSession& session, cons
 
 WebXRInputSpace::~WebXRInputSpace() = default;
 
-TransformationMatrix WebXRInputSpace::nativeOrigin() const
+std::optional<TransformationMatrix> WebXRInputSpace::nativeOrigin() const
 {
     return WebXRFrame::matrixFromPose(m_pose.pose);
 }

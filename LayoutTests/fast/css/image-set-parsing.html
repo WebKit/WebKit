@@ -70,62 +70,62 @@ function testImageSetRule(description, property, rule, expectedLength, expectedT
 testImageSetRule("Single value for background-image",
                 "background-image",
                 "url('#a') 1x", 2,
-                ["a", "1dppx"]);
+                ["a", "1x"]);
 
 testImageSetRule("Multiple values for background-image",
                 "background-image",
                 "url('#a') 1x, url('#b') 2x", 4,
-                ["a", "1dppx", "b", "2dppx"]);
+                ["a", "1x", "b", "2x"]);
 
 testImageSetRule("Single value for background-image without url() function",
                 "background-image",
                 "'#a' 1x", 2,
-                ["a", "1dppx"], "image-set");
+                ["a", "1x"], "image-set");
 
 testImageSetRule("Multiple values for background-image without url() function",
                 "background-image",
                 "'#a' 1x, '#b' 2x", 4,
-                ["a", "1dppx", "b", "2dppx"], "image-set");
+                ["a", "1x", "b", "2x"], "image-set");
 
 testImageSetRule("Mix values with and without url() function",
                 "background-image",
                 "'#a' 1x, url('#b') 2x", 4,
-                ["a", "1dppx", "b", "2dppx"], "image-set");
+                ["a", "1x", "b", "2x"], "image-set");
 
 testImageSetRule("Multiple values for background-image, out of order",
                 "background-image",
                 "url('#c') 3x, url('#b') 2x, url('#a') 1x", 6,
-                ["c", "3dppx", "b", "2dppx", "a", "1dppx"]);
+                ["c", "3x", "b", "2x", "a", "1x"]);
 
 testImageSetRule("Single value for content",
                 "content",
                 "url('#a') 1x", 2,
-                ["a", "1dppx"]);
+                ["a", "1x"]);
 
 testImageSetRule("Multiple values for content",
                 "content",
                 "url('#a') 1x, url('#b') 2x", 4,
-                ["a", "1dppx", "b", "2dppx"]);
+                ["a", "1x", "b", "2x"]);
 
 testImageSetRule("Single value for border-image",
                 "-webkit-border-image",
                 "url('#a') 1x", 2,
-                ["a", "1dppx"]);
+                ["a", "1x"]);
 
 testImageSetRule("Multiple values for border-image",
                 "-webkit-border-image",
                 "url('#a') 1x, url('#b') 2x", 4,
-                ["a", "1dppx", "b", "2dppx"]);
+                ["a", "1x", "b", "2x"]);
 
 testImageSetRule("Single value for -webkit-mask-box-image",
                 "-webkit-mask-box-image",
                 "url('#a') 1x", 2,
-                ["a", "1dppx"]);
+                ["a", "1x"]);
 
 testImageSetRule("Multiple values for -webkit-mask-box-image",
                 "-webkit-mask-box-image",
                 "url('#a') 1x, url('#b') 2x", 4,
-                ["a", "1dppx", "b", "2dppx"]);
+                ["a", "1x", "b", "2x"]);
 
 testImageSetRule("Single value with dppx",
                 "background-image",
@@ -145,7 +145,7 @@ testImageSetRule("Single value with dpcm",
 testImageSetRule("Multiple values with dpi, dppx and x",
                 "background-image",
                 "url('#a') 1x, url('#b') 2dppx, url('#c') 250dpi", 6,
-                ["a", "1dppx", "b", "2dppx", "c", "250dpi"]);
+                ["a", "1x", "b", "2dppx", "c", "250dpi"]);
 
 successfullyParsed = true;
 </script>

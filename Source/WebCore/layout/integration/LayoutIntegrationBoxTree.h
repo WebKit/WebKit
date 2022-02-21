@@ -29,6 +29,7 @@
 
 #include "LayoutInitialContainingBlock.h"
 #include <wtf/HashMap.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,6 +38,10 @@ class RenderBlockFlow;
 class RenderBoxModelObject;
 
 namespace LayoutIntegration {
+
+#if ENABLE(TREE_DEBUGGING)
+struct InlineContent;
+#endif
 
 class BoxTree {
 public:
@@ -47,8 +52,8 @@ public:
     const RenderBlockFlow& flow() const { return m_flow; }
     RenderBlockFlow& flow() { return m_flow; }
 
-    const Layout::InitialContainingBlock& rootLayoutBox() const { return m_root; }
-    Layout::InitialContainingBlock& rootLayoutBox() { return m_root; }
+    const Layout::ContainerBox& rootLayoutBox() const { return m_root; }
+    Layout::ContainerBox& rootLayoutBox() { return m_root; }
 
     const Layout::Box& layoutBoxForRenderer(const RenderObject&) const;
     Layout::Box& layoutBoxForRenderer(const RenderObject&);
@@ -59,23 +64,26 @@ public:
     size_t boxCount() const { return m_boxes.size(); }
 
     struct BoxAndRenderer {
-        std::unique_ptr<Layout::Box> box;
+        CheckedRef<Layout::Box> box;
         RenderObject* renderer { nullptr };
     };
     const auto& boxAndRendererList() const { return m_boxes; }
 
 private:
     void buildTree();
-    void appendChild(std::unique_ptr<Layout::Box>, RenderObject&);
+    void appendChild(UniqueRef<Layout::Box>, RenderObject&);
 
     RenderBlockFlow& m_flow;
-    Layout::InitialContainingBlock m_root;
+    Layout::ContainerBox m_root;
     Vector<BoxAndRenderer, 1> m_boxes;
 
-    HashMap<const RenderObject*, Layout::Box*> m_rendererToBoxMap;
-    HashMap<const Layout::Box*, RenderObject*> m_boxToRendererMap;
+    HashMap<const RenderObject*, CheckedRef<Layout::Box>> m_rendererToBoxMap;
+    HashMap<CheckedRef<const Layout::Box>, RenderObject*> m_boxToRendererMap;
 };
 
+#if ENABLE(TREE_DEBUGGING)
+void showInlineContent(TextStream&, const InlineContent&, size_t depth);
+#endif
 }
 }
 

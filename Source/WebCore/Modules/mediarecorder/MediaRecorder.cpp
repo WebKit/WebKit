@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaRecorder.h"
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_RECORDER)
 
 #include "Blob.h"
 #include "BlobEvent.h"
@@ -103,7 +103,7 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Opti
     , m_stream(WTFMove(stream))
     , m_timeSliceTimer([this] { requestData(); })
 {
-    MediaRecorderPrivate::updateOptions(m_options);
+    computeInitialBitRates();
 
     m_tracks = WTF::map(m_stream->getTracks(), [] (auto&& track) -> Ref<MediaStreamTrackPrivate> {
         return track->privateTrack();
@@ -154,8 +154,14 @@ ExceptionOr<void> MediaRecorder::startRecording(std::optional<unsigned> timeSlic
     if (state() != RecordingState::Inactive)
         return Exception { InvalidStateError, "The MediaRecorder's state must be inactive in order to start recording"_s };
 
+    updateBitRates();
+
+    Options options;
+    options.audioBitsPerSecond = m_audioBitsPerSecond;
+    options.videoBitsPerSecond = m_videoBitsPerSecond;
+
     ASSERT(!m_private);
-    auto result = createMediaRecorderPrivate(*document(), m_stream->privateStream(), m_options);
+    auto result = createMediaRecorderPrivate(*document(), m_stream->privateStream(), options);
 
     if (result.hasException())
         return result.releaseException();
@@ -196,7 +202,7 @@ ExceptionOr<void> MediaRecorder::startRecording(std::optional<unsigned> timeSlic
     return { };
 }
 
-static inline Ref<BlobEvent> createDataAvailableEvent(ScriptExecutionContext* context, RefPtr<SharedBuffer>&& buffer, const String& mimeType, double timeCode)
+static inline Ref<BlobEvent> createDataAvailableEvent(ScriptExecutionContext* context, RefPtr<FragmentedSharedBuffer>&& buffer, const String& mimeType, double timeCode)
 {
     auto blob = buffer ? Blob::create(context, buffer->extractData(), mimeType) : Blob::create(context);
     return BlobEvent::create(eventNames().dataavailableEvent, BlobEvent::Init { { false, false, false }, WTFMove(blob), timeCode }, BlobEvent::IsTrusted::Yes);
@@ -206,6 +212,8 @@ void MediaRecorder::stopRecording()
 {
     if (state() == RecordingState::Inactive)
         return;
+
+    updateBitRates();
 
     stopRecordingInternal();
     fetchData([this](auto&& buffer, auto& mimeType, auto timeCode) {
@@ -355,7 +363,7 @@ void MediaRecorder::dispatchError(Exception&& exception)
 
 void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)
 {
-    auto position = m_tracks.findMatching([](auto& track) {
+    auto position = m_tracks.findIf([](auto& track) {
         return !track->ended();
     });
     if (position != notFound)
@@ -393,6 +401,13 @@ bool MediaRecorder::virtualHasPendingActivity() const
     return m_state != RecordingState::Inactive;
 }
 
+void MediaRecorder::computeBitRates(const MediaStreamPrivate* stream)
+{
+    auto bitRates = MediaRecorderPrivate::computeBitRates(m_options, stream);
+    m_audioBitsPerSecond = bitRates.audio;
+    m_videoBitsPerSecond = bitRates.video;
+}
+
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_RECORDER)

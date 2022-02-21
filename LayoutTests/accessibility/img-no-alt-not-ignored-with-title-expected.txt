@@ -1,0 +1,11 @@
+This tests that if an image has an empty alt tag, but it has title or aria-label, we will NOT ignore it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS platformValueForW3CName(image1) is 'Image1'
+PASS platformValueForW3CName(image2) is 'Image2'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

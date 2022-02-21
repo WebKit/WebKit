@@ -98,7 +98,7 @@ TEST(WebKit, ViewportSizeForViewportUnits)
         EXPECT_WK_STREQ(NSInvalidArgumentException, exception.name);
         exceptionRaised = true;
     }
-    EXPECT_TRUE(exceptionRaised);
+    EXPECT_FALSE(exceptionRaised);
 
     exceptionRaised = false;
     @try {

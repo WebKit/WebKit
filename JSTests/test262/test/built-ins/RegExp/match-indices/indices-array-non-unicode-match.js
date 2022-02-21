@@ -5,7 +5,7 @@
 description: Basic matching cases with non-unicode matches.
 includes: [compareArray.js, propertyHelper.js, deepEqual.js]
 esid: sec-regexpbuiltinexec
-features: [regexp-match-indices]
+features: [regexp-named-groups, regexp-match-indices]
 info: |
   Runtime Semantics: RegExpBuiltinExec ( R, S )
     ...

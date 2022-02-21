@@ -25,13 +25,14 @@
 
 [
     CustomIsReachable,
-    EnabledAtRuntime=OffscreenCanvas,
+    EnabledAtRuntime=OffscreenCanvasEnabled,
     Conditional=OFFSCREEN_CANVAS,
     ConditionalForWorker=OFFSCREEN_CANVAS_IN_WORKERS,
     EnabledForContext,
     Exposed=(Window,Worker),
     JSGenerateToJSObject,
     JSCustomMarkFunction,
+    TaggedWrapper,
     // CallTracer=InspectorCanvasCallTracer, // FIXME: OffscreenCanvas.
 ] interface OffscreenCanvasRenderingContext2D {
     readonly attribute OffscreenCanvas canvas;
@@ -39,8 +40,8 @@
 
     // Inspector-only.
     // FIXME: OffscreenCanvas.
-    // [EnabledAtRuntime=InspectorAdditions] undefined setPath(Path2D path);
-    // [EnabledAtRuntime=InspectorAdditions, NewObject] Path2D getPath();
+    // [EnabledAtRuntime=InspectorAdditionsEnabled] undefined setPath(Path2D path);
+    // [EnabledAtRuntime=InspectorAdditionsEnabled, NewObject] Path2D getPath();
 };
 
 OffscreenCanvasRenderingContext2D includes CanvasState;

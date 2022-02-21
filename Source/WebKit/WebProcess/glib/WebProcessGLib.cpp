@@ -35,6 +35,7 @@
 #include <WebCore/GStreamerCommon.h>
 #endif
 
+#include <WebCore/ApplicationGLib.h>
 #include <WebCore/MemoryCache.h>
 
 #if PLATFORM(WAYLAND)
@@ -54,6 +55,19 @@
 #include "UserMediaCaptureManager.h"
 #endif
 
+#if OS(LINUX)
+#include <wtf/linux/RealTimeThreads.h>
+#endif
+
+#if USE(ATSPI)
+#include <WebCore/AccessibilityAtspi.h>
+#endif
+
+#if PLATFORM(GTK)
+#include "GtkSettingsManagerProxy.h"
+#include <gtk/gtk.h>
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -61,6 +75,14 @@ using namespace WebCore;
 void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 {
     WebCore::MemoryCache::singleton().setDisabled(cacheModel == CacheModel::DocumentViewer);
+}
+
+void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters&)
+{
+#if OS(LINUX)
+    // Disable RealTimeThreads in WebProcess initially, since it depends on having a visible web page.
+    RealTimeThreads::singleton().setEnabled(false);
+#endif
 }
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
@@ -108,6 +130,21 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     if (parameters.memoryPressureHandlerConfiguration)
         MemoryPressureHandler::singleton().setConfiguration(WTFMove(*parameters.memoryPressureHandlerConfiguration));
+
+    if (!parameters.applicationID.isEmpty())
+        WebCore::setApplicationID(parameters.applicationID);
+
+    if (!parameters.applicationName.isEmpty())
+        WebCore::setApplicationName(parameters.applicationName);
+
+#if USE(ATSPI)
+    AccessibilityAtspi::singleton().connect(parameters.accessibilityBusAddress);
+#endif
+
+#if PLATFORM(GTK)
+    GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
+#endif
+
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)

@@ -47,11 +47,11 @@ public:
     WEBCORE_EXPORT static MockAudioSharedUnit& singleton();
     MockAudioSharedUnit();
 
-    void setDeviceID(const String& deviceID) { m_deviceID = deviceID; }
+    void setDeviceID(const String& deviceID) { setCaptureDevice(String { deviceID }, 0); }
 
 private:
     bool hasAudioUnit() const final;
-    void setCaptureDevice(String&&, uint32_t) final;
+    void captureDeviceChanged() final;
     OSStatus reconfigureAudioUnit() final;
     void resetSampleRate() final;
 
@@ -62,15 +62,16 @@ private:
 
     void delaySamples(Seconds) final;
 
+    void start();
     CapabilityValueOrRange sampleRateCapacities() const final { return CapabilityValueOrRange(44100, 48000); }
 
     void tick();
 
-    void render(Seconds);
+    void render(MonotonicTime);
     void emitSampleBuffers(uint32_t frameCount);
     void reconfigure();
 
-    static Seconds renderInterval() { return 60_ms; }
+    static Seconds renderInterval() { return 20_ms; }
 
     std::unique_ptr<WebAudioBufferList> m_audioBufferList;
 
@@ -83,6 +84,7 @@ private:
 
     Vector<float> m_bipBopBuffer;
     bool m_hasAudioUnit { false };
+    bool m_isProducingData { false };
 
     RunLoop::Timer<MockAudioSharedUnit> m_timer;
     MonotonicTime m_lastRenderTime { MonotonicTime::nan() };
@@ -90,7 +92,6 @@ private:
 
     Ref<WorkQueue> m_workQueue;
     unsigned m_channelCount { 2 };
-    String m_deviceID;
 };
 
 } // namespace WebCore

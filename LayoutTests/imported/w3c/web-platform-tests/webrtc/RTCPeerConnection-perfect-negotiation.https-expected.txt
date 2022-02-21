@@ -1,6 +1,6 @@
 
 PASS Perfect negotiation setup connects
 PASS Perfect negotiation setup connects with roles reversed
-FAIL Perfect negotiation glare Remote description type 0 is incompatible with current signaling state 1
-FAIL Perfect negotiation glare with roles reversed assert_unreached: Error in iframe: InvalidStateError: Remote description type 0 is incompatible with current signaling state 1 Reached unreachable code
+PASS Perfect negotiation glare
+PASS Perfect negotiation glare with roles reversed
 

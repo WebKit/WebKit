@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/.htaccess
 /LayoutTests/imported/w3c/web-platform-tests/resources/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/resources/SVGAnimationTestCase-testharness.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/accesskey.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/check-layout-th.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/idlharness.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/idlharness.js.headers

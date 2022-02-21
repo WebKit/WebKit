@@ -33,6 +33,7 @@
 #include "pas_heap_lock.h"
 #include "pas_immortal_heap.h"
 #include "pas_segregated_page_config.h"
+#include "pas_stream.h"
 
 pas_segregated_shared_page_directory* pas_shared_page_directory_by_size_get(
     pas_shared_page_directory_by_size* by_size,
@@ -85,7 +86,8 @@ pas_segregated_shared_page_directory* pas_shared_page_directory_by_size_get(
 
             for (index = num_directories; index--;) {
                 data->directories[index] = PAS_SEGREGATED_SHARED_PAGE_DIRECTORY_INITIALIZER(
-                    *page_config, by_size->sharing_mode);
+                    *page_config, by_size->sharing_mode,
+                    (void*)(((size_t)1 << ((size_t)index << log_shift)) << page_config->base.min_align_shift));
             }
 
             pas_fence();
@@ -145,6 +147,13 @@ bool pas_shared_page_directory_by_size_for_each_remote(
     }
 
     return true;
+}
+
+void pas_shared_page_directory_by_size_dump_directory_arg(
+    pas_stream* stream,
+    pas_segregated_shared_page_directory* directory)
+{
+    pas_stream_printf(stream, "Size = %zu", (size_t)directory->dump_arg);
 }
 
 #endif /* LIBPAS_ENABLED */

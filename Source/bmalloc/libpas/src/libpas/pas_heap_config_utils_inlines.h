@@ -48,6 +48,7 @@ PAS_API void* pas_heap_config_utils_prepare_to_enumerate(pas_enumerator* enumera
 
 typedef struct {
     bool allocate_page_should_zero;
+    pas_heap_runtime_config_view_cache_capacity_for_object_size_callback intrinsic_view_cache_capacity;
 } pas_basic_heap_config_definitions_arguments;
 
 #define PAS_BASIC_HEAP_CONFIG_DEFINITIONS(name, upcase_name, ...) \
@@ -55,20 +56,24 @@ typedef struct {
         PAS_BASIC_HEAP_PAGE_CACHES_INITIALIZER(PAS_SMALL_SHARED_PAGE_LOG_SHIFT, \
                                                PAS_MEDIUM_SHARED_PAGE_LOG_SHIFT); \
     \
-    pas_basic_heap_runtime_config name ## _intrinsic_primitive_runtime_config = { \
+    pas_basic_heap_runtime_config name ## _intrinsic_runtime_config = { \
         .base = { \
             .lookup_kind = pas_segregated_heap_lookup_primitive, \
             .sharing_mode = pas_share_pages, \
             .statically_allocated = true, \
             .is_part_of_heap = true, \
             .directory_size_bound_for_partial_views = \
-                PAS_INTRINSIC_PRIMITIVE_BOUND_FOR_PARTIAL_VIEWS, \
+                PAS_INTRINSIC_BOUND_FOR_PARTIAL_VIEWS, \
             .directory_size_bound_for_baseline_allocators = \
-                PAS_INTRINSIC_PRIMITIVE_BOUND_FOR_BASELINE_ALLOCATORS, \
+                PAS_INTRINSIC_BOUND_FOR_BASELINE_ALLOCATORS, \
+            .directory_size_bound_for_no_view_cache = \
+                PAS_INTRINSIC_BOUND_FOR_NO_VIEW_CACHE, \
             .max_segregated_object_size = \
-                PAS_INTRINSIC_PRIMITIVE_MAX_SEGREGATED_OBJECT_SIZE, \
+                PAS_INTRINSIC_MAX_SEGREGATED_OBJECT_SIZE, \
             .max_bitfit_object_size = \
-                PAS_INTRINSIC_PRIMITIVE_MAX_BITFIT_OBJECT_SIZE \
+                PAS_INTRINSIC_MAX_BITFIT_OBJECT_SIZE, \
+            .view_cache_capacity_for_object_size = \
+                ((pas_basic_heap_config_definitions_arguments){__VA_ARGS__}).intrinsic_view_cache_capacity, \
         }, \
         .page_caches = &name ## _page_caches \
     }; \
@@ -83,10 +88,13 @@ typedef struct {
                 PAS_PRIMITIVE_BOUND_FOR_PARTIAL_VIEWS, \
             .directory_size_bound_for_baseline_allocators = \
                 PAS_PRIMITIVE_BOUND_FOR_BASELINE_ALLOCATORS, \
+            .directory_size_bound_for_no_view_cache = \
+                PAS_PRIMITIVE_BOUND_FOR_NO_VIEW_CACHE, \
             .max_segregated_object_size = \
                 PAS_PRIMITIVE_MAX_SEGREGATED_OBJECT_SIZE, \
             .max_bitfit_object_size = \
-                PAS_PRIMITIVE_MAX_BITFIT_OBJECT_SIZE \
+                PAS_PRIMITIVE_MAX_BITFIT_OBJECT_SIZE, \
+            .view_cache_capacity_for_object_size = pas_heap_runtime_config_zero_view_cache_capacity, \
         }, \
         .page_caches = &name ## _page_caches \
     }; \
@@ -101,38 +109,48 @@ typedef struct {
                 PAS_TYPED_BOUND_FOR_PARTIAL_VIEWS, \
             .directory_size_bound_for_baseline_allocators = \
                 PAS_TYPED_BOUND_FOR_BASELINE_ALLOCATORS, \
+            .directory_size_bound_for_no_view_cache = \
+                PAS_TYPED_BOUND_FOR_NO_VIEW_CACHE, \
             .max_segregated_object_size = \
                 PAS_TYPED_MAX_SEGREGATED_OBJECT_SIZE, \
             .max_bitfit_object_size = \
-                PAS_TYPED_MAX_BITFIT_OBJECT_SIZE \
+                PAS_TYPED_MAX_BITFIT_OBJECT_SIZE, \
+            .view_cache_capacity_for_object_size = pas_heap_runtime_config_zero_view_cache_capacity, \
         }, \
         .page_caches = &name ## _page_caches \
     }; \
     \
-    pas_basic_heap_runtime_config name ## _objc_runtime_config = { \
+    pas_basic_heap_runtime_config name ## _flex_runtime_config = { \
         .base = { \
             .lookup_kind = pas_segregated_heap_lookup_primitive, \
             .sharing_mode = pas_share_pages, \
             .statically_allocated = false, \
             .is_part_of_heap = true, \
             .directory_size_bound_for_partial_views = \
-                PAS_OBJC_BOUND_FOR_PARTIAL_VIEWS, \
+                PAS_FLEX_BOUND_FOR_PARTIAL_VIEWS, \
             .directory_size_bound_for_baseline_allocators = \
-                PAS_OBJC_BOUND_FOR_BASELINE_ALLOCATORS, \
+                PAS_FLEX_BOUND_FOR_BASELINE_ALLOCATORS, \
+            .directory_size_bound_for_no_view_cache = \
+                PAS_FLEX_BOUND_FOR_NO_VIEW_CACHE, \
             .max_segregated_object_size = \
-                PAS_OBJC_MAX_SEGREGATED_OBJECT_SIZE, \
+                PAS_FLEX_MAX_SEGREGATED_OBJECT_SIZE, \
             .max_bitfit_object_size = \
-                PAS_OBJC_MAX_BITFIT_OBJECT_SIZE \
+                PAS_FLEX_MAX_BITFIT_OBJECT_SIZE, \
+            .view_cache_capacity_for_object_size = pas_heap_runtime_config_zero_view_cache_capacity, \
         }, \
         .page_caches = &name ## _page_caches \
     }; \
     \
-    void* name ## _heap_config_allocate_small_segregated_page(pas_segregated_heap* heap) \
+    void* name ## _heap_config_allocate_small_segregated_page( \
+        pas_segregated_heap* heap, pas_physical_memory_transaction* transaction, \
+        pas_segregated_page_role role) \
     { \
         pas_basic_heap_config_definitions_arguments arguments = {__VA_ARGS__}; \
         \
         pas_segregated_page_config page_config; \
         pas_basic_heap_page_caches* page_caches; \
+        pas_megapage_cache* megapage_cache; \
+        pas_fast_megapage_kind megapage_kind; \
         void* allocation; \
         \
         page_config = upcase_name ## _HEAP_CONFIG.small_segregated_config; \
@@ -141,17 +159,31 @@ typedef struct {
         \
         page_caches = ((pas_basic_heap_runtime_config*)heap->runtime_config)->page_caches; \
         \
+        switch (role) { \
+        case pas_segregated_page_shared_role: \
+            megapage_cache = &page_caches->small_other_megapage_cache; \
+            megapage_kind = pas_small_other_fast_megapage_kind; \
+            break; \
+        case pas_segregated_page_exclusive_role: \
+            megapage_cache = &page_caches->small_exclusive_segregated_megapage_cache; \
+            megapage_kind = pas_small_exclusive_segregated_fast_megapage_kind; \
+            break; \
+        } \
+        \
         allocation = pas_fast_megapage_cache_try_allocate( \
-            &page_caches->small_segregated_megapage_cache, \
+            megapage_cache, \
             &name ## _megapage_table, \
             page_config.base.page_config_ptr, \
-            pas_small_segregated_fast_megapage_kind, \
-            arguments.allocate_page_should_zero); \
+            megapage_kind, \
+            arguments.allocate_page_should_zero, \
+            pas_heap_for_segregated_heap(heap), \
+            transaction); \
         \
         return allocation; \
     } \
     \
-    void* name ## _heap_config_allocate_small_bitfit_page(pas_segregated_heap* heap) \
+    void* name ## _heap_config_allocate_small_bitfit_page( \
+        pas_segregated_heap* heap, pas_physical_memory_transaction* transaction) \
     { \
         pas_basic_heap_config_definitions_arguments arguments = {__VA_ARGS__}; \
         \
@@ -166,22 +198,28 @@ typedef struct {
         page_caches = ((pas_basic_heap_runtime_config*)heap->runtime_config)->page_caches; \
         \
         allocation = pas_fast_megapage_cache_try_allocate( \
-            &page_caches->small_bitfit_megapage_cache, \
+            &page_caches->small_other_megapage_cache, \
             &name ## _megapage_table, \
             page_config.base.page_config_ptr, \
-            pas_small_bitfit_fast_megapage_kind, \
-            arguments.allocate_page_should_zero); \
+            pas_small_other_fast_megapage_kind, \
+            arguments.allocate_page_should_zero, \
+            pas_heap_for_segregated_heap(heap), \
+            transaction); \
         \
         return allocation; \
     } \
     \
-    void* name ## _heap_config_allocate_medium_segregated_page(pas_segregated_heap* heap) \
+    void* name ## _heap_config_allocate_medium_segregated_page( \
+        pas_segregated_heap* heap, pas_physical_memory_transaction* transaction, \
+        pas_segregated_page_role role) \
     { \
         pas_basic_heap_config_definitions_arguments arguments = {__VA_ARGS__}; \
         \
         pas_segregated_page_config page_config; \
         pas_basic_heap_page_caches* page_caches; \
         void* allocation; \
+        \
+        PAS_UNUSED_PARAM(role); \
         \
         page_config = upcase_name ## _HEAP_CONFIG.medium_segregated_config; \
         \
@@ -192,12 +230,15 @@ typedef struct {
         allocation = pas_medium_megapage_cache_try_allocate( \
             &page_caches->medium_megapage_cache, \
             page_config.base.page_config_ptr, \
-            arguments.allocate_page_should_zero); \
+            arguments.allocate_page_should_zero, \
+            pas_heap_for_segregated_heap(heap), \
+            transaction); \
         \
         return allocation; \
     } \
     \
-    void* name ## _heap_config_allocate_medium_bitfit_page(pas_segregated_heap* heap) \
+    void* name ## _heap_config_allocate_medium_bitfit_page( \
+        pas_segregated_heap* heap, pas_physical_memory_transaction* transaction) \
     { \
         pas_basic_heap_config_definitions_arguments arguments = {__VA_ARGS__}; \
         \
@@ -214,12 +255,15 @@ typedef struct {
         allocation = pas_medium_megapage_cache_try_allocate( \
             &page_caches->medium_megapage_cache, \
             page_config.base.page_config_ptr, \
-            arguments.allocate_page_should_zero); \
+            arguments.allocate_page_should_zero, \
+            pas_heap_for_segregated_heap(heap), \
+            transaction); \
         \
         return allocation; \
     } \
     \
-    void* name ## _heap_config_allocate_marge_bitfit_page(pas_segregated_heap* heap) \
+    void* name ## _heap_config_allocate_marge_bitfit_page( \
+        pas_segregated_heap* heap, pas_physical_memory_transaction* transaction) \
     { \
         pas_basic_heap_config_definitions_arguments arguments = {__VA_ARGS__}; \
         \
@@ -236,7 +280,9 @@ typedef struct {
         allocation = pas_medium_megapage_cache_try_allocate( \
             &page_caches->medium_megapage_cache, \
             page_config.base.page_config_ptr, \
-            arguments.allocate_page_should_zero); \
+            arguments.allocate_page_should_zero, \
+            pas_heap_for_segregated_heap(heap), \
+            transaction); \
         \
         return allocation; \
     } \

@@ -33,6 +33,8 @@ struct SupportRequirement
 {
     SupportRequirement();
     SupportRequirement(const SupportRequirement &other);
+    SupportRequirement &operator=(const SupportRequirement &other);
+
     ~SupportRequirement();
 
     // Version that this format became supported without extensions

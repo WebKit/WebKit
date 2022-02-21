@@ -33,8 +33,9 @@ function rewrite_headers ()
         SCRIPT_HEADER_VISIBILITY="${2}" \
         SCRIPT_INPUT_FILE="${HEADER_PATH}" \
         SCRIPT_OUTPUT_FILE_0="${HEADER_PATH}" \
-            "${POSTPROCESS_HEADER_RULE}"
+            "${POSTPROCESS_HEADER_RULE}" &
     done
+    wait
 }
 
 rewrite_headers "${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}" Public

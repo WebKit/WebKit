@@ -1,0 +1,3 @@
+
+PASS window.event is set before 'handleEvent' lookup
+

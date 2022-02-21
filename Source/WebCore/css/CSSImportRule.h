@@ -22,6 +22,7 @@
 #pragma once
 
 #include "CSSRule.h"
+#include "StyleRule.h"
 
 namespace WebCore {
 
@@ -37,11 +38,12 @@ public:
     WEBCORE_EXPORT String href() const;
     WEBCORE_EXPORT MediaList& media() const;
     WEBCORE_EXPORT CSSStyleSheet* styleSheet() const;
+    String layerName() const;
 
 private:
     CSSImportRule(StyleRuleImport&, CSSStyleSheet*);
 
-    CSSRule::Type type() const final { return IMPORT_RULE; }
+    StyleRuleType styleRuleType() const final { return StyleRuleType::Import; }
     String cssText() const final;
     void reattach(StyleRuleBase&) final;
 
@@ -52,4 +54,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSImportRule, CSSRule::IMPORT_RULE)
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSImportRule, StyleRuleType::Import)

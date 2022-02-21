@@ -139,7 +139,7 @@ bool isVP8DecoderAvailable()
     return noErr == VTSelectAndCreateVideoDecoderInstance('vp08', kCFAllocatorDefault, nullptr, nullptr);
 }
 
-static bool vp9HardwareDecoderAvailable()
+bool vp9HardwareDecoderAvailable()
 {
     if (auto disabledForTesting = VP9TestingOverrides::singleton().hardwareDecoderDisabled())
         return !*disabledForTesting;

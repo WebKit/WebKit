@@ -112,6 +112,19 @@ WI.Canvas = class Canvas extends WI.Object
         return null;
     }
 
+    static displayNameForColorSpace(colorSpace)
+    {
+        switch(colorSpace) {
+        case WI.Canvas.ColorSpace.SRGB:
+            return WI.unlocalizedString("sRGB");
+        case WI.Canvas.ColorSpace.DisplayP3:
+            return WI.unlocalizedString("Display P3");
+        }
+
+        console.assert(false, "Unknown canvas color space", colorSpace);
+        return null;
+    }
+
     static resetUniqueDisplayNameNumbers()
     {
         Canvas._nextContextUniqueDisplayNameNumber = 1;
@@ -452,6 +465,11 @@ WI.Canvas.ContextType = {
     WebGL2: "webgl2",
     WebGPU: "webgpu",
     WebMetal: "webmetal",
+};
+
+WI.Canvas.ColorSpace = {
+    SRGB: "srgb",
+    DisplayP3: "display-p3",
 };
 
 WI.Canvas.RecordingState = {

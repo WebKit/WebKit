@@ -25,7 +25,7 @@
 
 [
     Conditional=APPLE_PAY,
-    EnabledBySetting=ApplePay,
+    EnabledBySetting=ApplePayEnabled,
     ExportMacro=WEBCORE_EXPORT,
     SecureContext,
     SkipVTableValidation,

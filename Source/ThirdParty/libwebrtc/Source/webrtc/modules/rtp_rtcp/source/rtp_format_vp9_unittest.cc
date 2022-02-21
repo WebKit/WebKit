@@ -501,7 +501,7 @@ TEST_F(RtpPacketizerVp9Test, TestGeneratesMinimumNumberOfPackets) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 8;
   // Calculated by hand. One packet can contain
-  // |kPacketSize| - |kVp9MinDiscriptorSize| = 6 bytes of the frame payload,
+  // `kPacketSize` - `kVp9MinDiscriptorSize` = 6 bytes of the frame payload,
   // thus to fit 10 bytes two packets are required.
   const size_t kMinNumberOfPackets = 2;
   const uint8_t kFrame[kFrameSize] = {7};
@@ -526,7 +526,7 @@ TEST_F(RtpPacketizerVp9Test, TestRespectsLastPacketReductionLen) {
   limits.last_packet_reduction_len = 5;
   // Calculated by hand. VP9 payload descriptor is 2 bytes. Like in the test
   // above, 1 packet is not enough. 2 packets can contain
-  // 2*(|kPacketSize| - |kVp9MinDiscriptorSize|) - |kLastPacketReductionLen| = 7
+  // 2*(`kPacketSize` - `kVp9MinDiscriptorSize`) - `kLastPacketReductionLen` = 7
   // But three packets are enough, since they have capacity of 3*(8-2)-5=13
   // bytes.
   const size_t kMinNumberOfPackets = 3;

@@ -28,6 +28,7 @@
 #include "FunctionExecutable.h"
 #include "JSBoundFunction.h"
 #include "JSFunction.h"
+#include "JSRemoteFunction.h"
 #include "NativeExecutable.h"
 
 namespace JSC {
@@ -78,6 +79,11 @@ inline bool JSFunction::isClassConstructorFunction() const
     return !isHostFunction() && jsExecutable()->isClassConstructorFunction();
 }
 
+inline bool JSFunction::isRemoteFunction(VM& vm) const
+{
+    return inherits<JSRemoteFunction>(vm);
+}
+
 inline TaggedNativeFunction JSFunction::nativeFunction()
 {
     ASSERT(isHostFunctionNonInline());
@@ -98,6 +104,11 @@ inline bool isHostFunction(JSValue value, TaggedNativeFunction nativeFunction)
     return function->nativeFunction() == nativeFunction;
 }
 
+inline bool isRemoteFunction(VM& vm, JSValue value)
+{
+    return value.inherits<JSRemoteFunction>(vm);
+}
+
 inline bool JSFunction::hasReifiedLength() const
 {
     if (FunctionRareData* rareData = this->rareData())
@@ -114,6 +125,8 @@ inline bool JSFunction::hasReifiedName() const
 
 inline bool JSFunction::canAssumeNameAndLengthAreOriginal(VM&)
 {
+    // JSRemoteFunction never has a 'name' field, return true
+    // to avoid allocating a FunctionRareData.
     if (isHostFunction())
         return false;
     FunctionRareData* rareData = this->rareData();
@@ -159,7 +172,7 @@ inline FunctionRareData* JSFunction::ensureRareDataAndAllocationProfile(JSGlobal
 
 inline JSString* JSFunction::asStringConcurrently(VM& vm) const
 {
-    if (inherits<JSBoundFunction>(vm))
+    if (inherits<JSBoundFunction>(vm) || inherits<JSRemoteFunction>(vm))
         return nullptr;
     if (isHostFunction())
         return static_cast<NativeExecutable*>(executable())->asStringConcurrently();

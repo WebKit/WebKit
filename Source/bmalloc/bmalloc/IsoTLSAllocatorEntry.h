@@ -28,6 +28,8 @@
 #include "IsoAllocator.h"
 #include "IsoTLSEntry.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config> class IsoHeapImpl;
@@ -50,3 +52,4 @@ private:
 
 } // namespace bmalloc
 
+#endif

@@ -48,14 +48,14 @@ using namespace WebCore;
 Ref<RealtimeVideoCaptureSource> RemoteRealtimeVideoSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
 {
     auto source = adoptRef(*new RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
-    manager.addVideoSource(source.copyRef());
+    manager.addSource(source.copyRef());
     manager.remoteCaptureSampleManager().addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }
 
 RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
-    : RealtimeVideoCaptureSource(WTFMove(name), String::number(identifier.toUInt64()), WTFMove(hashSalt))
+    : RealtimeVideoCaptureSource(WTFMove(name), String { device.persistentId() }, WTFMove(hashSalt))
     , m_proxy(identifier, device, shouldCaptureInGPUProcess, constraints)
     , m_manager(manager)
 {
@@ -67,7 +67,7 @@ RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifi
 
 void RemoteRealtimeVideoSource::createRemoteMediaSource()
 {
-    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), [this, protectedThis = makeRef(*this)](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&& presets, auto size, auto frameRate) mutable {
+    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), [this, protectedThis = Ref { *this }](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&& presets, auto size, auto frameRate) mutable {
         if (!succeeded) {
             m_proxy.didFail(WTFMove(errorMessage));
             return;
@@ -84,7 +84,7 @@ void RemoteRealtimeVideoSource::createRemoteMediaSource()
         m_proxy.setAsReady();
         if (m_proxy.shouldCaptureInGPUProcess())
             WebProcess::singleton().ensureGPUProcessConnection().addClient(*this);
-    });
+    }, m_manager.shouldUseGPUProcessRemoteFrames());
 }
 
 RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource()
@@ -112,7 +112,7 @@ void RemoteRealtimeVideoSource::setSettings(RealtimeMediaSourceSettings&& settin
     notifySettingsDidChangeObservers(changed);
 }
 
-void RemoteRealtimeVideoSource::videoSampleAvailable(MediaSample& sample, IntSize sampleSize)
+void RemoteRealtimeVideoSource::videoSampleAvailable(MediaSample& sample, IntSize sampleSize, VideoSampleMetadata metadata)
 {
     ASSERT(type() == Type::Video);
 
@@ -131,7 +131,7 @@ void RemoteRealtimeVideoSource::videoSampleAvailable(MediaSample& sample, IntSiz
             notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
         });
     }
-    dispatchMediaSampleToObservers(sample);
+    dispatchMediaSampleToObservers(sample, metadata);
 }
 
 bool RemoteRealtimeVideoSource::setShouldApplyRotation(bool shouldApplyRotation)
@@ -148,7 +148,7 @@ const RealtimeMediaSourceCapabilities& RemoteRealtimeVideoSource::capabilities()
 void RemoteRealtimeVideoSource::hasEnded()
 {
     m_proxy.hasEnded();
-    m_manager.removeVideoSource(identifier());
+    m_manager.removeSource(identifier());
     m_manager.remoteCaptureSampleManager().removeSource(identifier());
 }
 

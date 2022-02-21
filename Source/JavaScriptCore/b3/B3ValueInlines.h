@@ -89,6 +89,8 @@ namespace JSC { namespace B3 {
     case UDiv: \
     case Mod: \
     case UMod: \
+    case FMax: \
+    case FMin: \
     case BitAnd: \
     case BitOr: \
     case BitXor: \

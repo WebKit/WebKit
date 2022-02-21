@@ -1,0 +1,5 @@
+
+PASS PC should accept initial offer with setup=actpass
+PASS PC should accept initial offer with setup=active
+PASS PC should accept initial offer with setup=passive
+

@@ -95,4 +95,17 @@ MediaSourceLoader.prototype = {
         var media = this._manifest.media[segmentNumber];
         return this._mediaData.slice(media.offset, media.offset + media.size);
     },
+
+    concatenateMediaSegments: function(segmentDataList)
+    {
+        var totalLength = 0;
+        segmentDataList.forEach(segment => totalLength += segment.byteLength);
+        var view = new Uint8Array(totalLength);
+        var offset = 0;
+        segmentDataList.forEach(segment => {
+            view.set(new Uint8Array(segment), offset);
+            offset += segment.byteLength;
+        });
+        return view.buffer;
+    },
 };

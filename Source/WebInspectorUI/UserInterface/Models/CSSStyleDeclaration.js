@@ -301,7 +301,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         return this._node.appropriateSelectorFor(true);
     }
 
-    propertyForName(name, dontCreateIfMissing)
+    propertyForName(name)
     {
         console.assert(name);
         if (!name)
@@ -313,39 +313,16 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         // Editable styles don't use the map since they need to
         // account for overridden properties.
 
-        function findMatch(properties)
-        {
-            for (var i = 0; i < properties.length; ++i) {
-                var property = properties[i];
-                if (property.canonicalName !== name && property.name !== name)
-                    continue;
-                if (bestMatchProperty && !bestMatchProperty.overridden && property.overridden)
-                    continue;
-                bestMatchProperty = property;
-            }
+        let bestMatchProperty = null;
+        for (let property of this.enabledProperties) {
+            if (property.canonicalName !== name && property.name !== name)
+                continue;
+            if (bestMatchProperty && !bestMatchProperty.overridden && property.overridden)
+                continue;
+            bestMatchProperty = property;
         }
 
-        var bestMatchProperty = null;
-
-        findMatch(this.enabledProperties);
-
-        if (bestMatchProperty)
-            return bestMatchProperty;
-
-        if (dontCreateIfMissing || !this.editable)
-            return null;
-
-        findMatch(this._pendingProperties, true);
-
-        if (bestMatchProperty)
-            return bestMatchProperty;
-
-        var newProperty = new WI.CSSProperty(NaN, null, name);
-        newProperty.ownerStyle = this;
-
-        this._pendingProperties.push(newProperty);
-
-        return newProperty;
+        return bestMatchProperty;
     }
 
     resolveVariableValue(text)
@@ -385,7 +362,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
                     if (variableNameIndex === -1)
                         continue;
 
-                    let variableProperty = this.propertyForName(variableTokens[variableNameIndex].value, true);
+                    let variableProperty = this.propertyForName(variableTokens[variableNameIndex].value);
                     if (variableProperty)
                         return variableProperty.value.trim();
 
@@ -413,11 +390,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
         this.markModified();
         let property = new WI.CSSProperty(propertyIndex, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
-
-        this._properties.insertAtIndex(property, propertyIndex);
-        for (let index = propertyIndex + 1; index < this._properties.length; index++)
-            this._properties[index].index = index;
-
+        this.insertProperty(property, propertyIndex);
         this.update(this._text, this._properties, this._styleSheetTextRange, {dontFireEvents: true, forceUpdate: true});
 
         return property;
@@ -445,32 +418,25 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         WI.cssManager.addModifiedStyle(this);
     }
 
-    shiftPropertiesAfter(cssProperty, lineDelta, columnDelta, propertyWasRemoved)
+    insertProperty(cssProperty, propertyIndex)
+    {
+        this._properties.insertAtIndex(cssProperty, propertyIndex);
+        for (let index = propertyIndex + 1; index < this._properties.length; index++)
+            this._properties[index].index = index;
+
+        // Invalidate cached properties.
+        this._enabledProperties = null;
+        this._visibleProperties = null;
+    }
+
+    removeProperty(cssProperty)
     {
         // cssProperty.index could be set to NaN by WI.CSSStyleDeclaration.prototype.update.
         let realIndex = this._properties.indexOf(cssProperty);
         if (realIndex === -1)
             return;
 
-        let endLine = cssProperty.styleSheetTextRange.endLine;
-
-        for (let i = realIndex + 1; i < this._properties.length; i++) {
-            let property = this._properties[i];
-
-            if (property._styleSheetTextRange) {
-                if (property.styleSheetTextRange.startLine === endLine) {
-                    // Only update column data if it's on the same line.
-                    property._styleSheetTextRange = property._styleSheetTextRange.cloneAndModify(lineDelta, columnDelta, lineDelta, columnDelta);
-                } else
-                    property._styleSheetTextRange = property._styleSheetTextRange.cloneAndModify(lineDelta, 0, lineDelta, 0);
-            }
-
-            if (propertyWasRemoved && !isNaN(property._index))
-                property._index--;
-        }
-
-        if (propertyWasRemoved)
-            this._properties.splice(realIndex, 1);
+        this._properties.splice(realIndex, 1);
 
         // Invalidate cached properties.
         this._enabledProperties = null;
@@ -507,24 +473,62 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
             WI.cssManager.removeModifiedStyle(this);
     }
 
-    generateCSSRuleString()
+    generateFormattedText(options = {})
     {
         let indentString = WI.indentString();
         let styleText = "";
-        let groupings = this.groupings.filter((grouping) => grouping.text !== "all");
+        let groupings = this.groupings.filter((grouping) => !grouping.isMedia || grouping.text !== "all");
         let groupingsCount = groupings.length;
-        for (let i = groupingsCount - 1; i >= 0; --i)
-            styleText += indentString.repeat(groupingsCount - i - 1) + groupings[i].prefix + " " + groupings[i].text + " {\n";
 
-        styleText += indentString.repeat(groupingsCount) + this.selectorText + " {\n";
+        if (options.includeGroupingsAndSelectors) {
+            for (let i = groupingsCount - 1; i >= 0; --i) {
+                if (options.multiline)
+                    styleText += indentString.repeat(groupingsCount - i - 1);
 
-        for (let property of (this._styleSheetTextRange ? this.visibleProperties : this._properties))
-            styleText += indentString.repeat(groupingsCount + 1) + property.formattedText + "\n";
+                styleText += groupings[i].prefix;
+                if (groupings[i].text)
+                    styleText += " " + groupings[i].text;
+                styleText += " {";
 
-        for (let i = groupingsCount; i > 0; --i)
-            styleText += indentString.repeat(i) + "}\n";
+                if (options.multiline)
+                    styleText += "\n";
+            }
 
-        styleText += "}";
+            if (options.multiline)
+                styleText += indentString.repeat(groupingsCount);
+
+            styleText += this.selectorText + " {";
+        }
+
+        let properties = this._styleSheetTextRange ? this.visibleProperties : this._properties;
+        if (properties.length) {
+            if (options.multiline) {
+                let propertyIndent = indentString.repeat(groupingsCount + 1);
+                for (let property of properties)
+                    styleText += "\n" + propertyIndent + property.formattedText;
+
+                styleText += "\n";
+                if (!options.includeGroupingsAndSelectors) {
+                    // Indent the closing "}" for nested rules.
+                    styleText += indentString.repeat(groupingsCount);
+                }
+            } else
+                styleText += properties.map((property) => property.formattedText).join(" ");
+        }
+
+        if (options.includeGroupingsAndSelectors) {
+            for (let i = groupingsCount; i > 0; --i) {
+                if (options.multiline)
+                    styleText += indentString.repeat(i);
+
+                styleText += "}";
+
+                if (options.multiline)
+                    styleText += "\n";
+            }
+
+            styleText += "}";
+        }
 
         return styleText;
     }

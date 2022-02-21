@@ -25,15 +25,13 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
-
-static bool didFinishLoad { false };
-static bool didBecomeUnresponsive { false };
 
 @interface ResponsivenessTimerDelegate : NSObject <WKNavigationDelegate>
 @end

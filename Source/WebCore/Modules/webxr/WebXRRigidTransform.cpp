@@ -153,7 +153,7 @@ const WebXRRigidTransform& WebXRRigidTransform::inverse()
 
     m_inverse = WebXRRigidTransform::create(*inverseTransform);
     // The inverse of a inverse object should return the original object.
-    m_inverse->m_parentInverse = makeWeakPtr(this);
+    m_inverse->m_parentInverse = *this;
 
     return *m_inverse;
 }

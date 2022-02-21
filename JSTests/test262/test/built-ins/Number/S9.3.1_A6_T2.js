@@ -16,22 +16,26 @@ function dynaString(s1, s2) {
 }
 
 
-// CHECK#1
-if (Number(dynaString("Infi", "nity")) !== Number.POSITIVE_INFINITY) {
-  throw new Test262Error('#1: Number("Infi"+"nity") === Number.POSITIVE_INFINITY');
-}
+assert.sameValue(
+  Number(dynaString("Infi", "nity")),
+  Number.POSITIVE_INFINITY,
+  'Number(dynaString("Infi", "nity")) returns Number.POSITIVE_INFINITY'
+);
 
-// CHECK#2
-if (Number(dynaString("Infi", "nity")) !== 10e10000) {
-  throw new Test262Error('#2: Number("Infi"+"nity") === 10e10000');
-}
+assert.sameValue(
+  Number(dynaString("Infi", "nity")),
+  10e10000,
+  'Number(dynaString("Infi", "nity")) must return 10e10000'
+);
 
-// CHECK#3
-if (Number(dynaString("Infi", "nity")) !== 10E10000) {
-  throw new Test262Error('#3: Number("Infi"+"nity") === 10E10000');
-}
+assert.sameValue(
+  Number(dynaString("Infi", "nity")),
+  10E10000,
+  'Number(dynaString("Infi", "nity")) must return 10E10000'
+);
 
-// CHECK#4
-if (Number(dynaString("Infi", "nity")) !== Number("10e10000")) {
-  throw new Test262Error('#4: Number("Infi"+"nity") === Number("10e10000")');
-}
+assert.sameValue(
+  Number(dynaString("Infi", "nity")),
+  Number("10e10000"),
+  'Number(dynaString("Infi", "nity")) must return the same value returned by Number("10e10000")'
+);

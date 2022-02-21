@@ -28,6 +28,8 @@
 #include "BMalloced.h"
 #include "IsoDirectory.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config>
@@ -58,3 +60,4 @@ private:
 
 } // namespace bmalloc
 
+#endif

@@ -116,6 +116,8 @@ static constexpr SpeculatedType SpecHeapTop                           = SpecCell
 static constexpr SpeculatedType SpecBytecodeTop                       = SpecHeapTop | SpecEmpty; // It can be any of the above, except for SpecInt52Only and SpecDoubleImpureNaN. Corresponds to what could be found in a bytecode local.
 static constexpr SpeculatedType SpecFullTop                           = SpecBytecodeTop | SpecFullNumber; // It can be anything that bytecode could see plus exotic encodings of numbers.
 
+static constexpr SpeculatedType SpecTypeofMightBeFunction             = SpecFunction | SpecObjectOther | SpecProxyObject; // If you don't see these types, you can't be callable, and you can't have typeof produce "function". Inverse is not true, however. If you only see these types, you may produce more things than "function" in typeof, and you might not be callable.
+
 // SpecCellCheck is the type set representing the values that can flow through a cell check.
 // On 64-bit platforms, the empty value passes a cell check. Also, ~SpecCellCheck is the type
 // set that representing the values that flow through when testing that something is not a cell.
@@ -447,6 +449,11 @@ inline bool isNotDoubleSpeculation(SpeculatedType type)
 inline bool isNeitherDoubleNorHeapBigIntNorStringSpeculation(SpeculatedType type)
 {
     return !(type & (SpecFullDouble | SpecHeapBigInt | SpecString));
+}
+
+inline bool isNeitherDoubleNorHeapBigIntSpeculation(SpeculatedType type)
+{
+    return !(type & (SpecFullDouble | SpecHeapBigInt));
 }
 
 inline bool isOtherSpeculation(SpeculatedType value)

@@ -40,6 +40,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/EnumTraits.h>
+#include <wtf/SafeStrerror.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -116,6 +117,11 @@ bool truncateFile(PlatformFileHandle handle, long long offset)
 {
     // ftruncate returns 0 to indicate the success.
     return !ftruncate(handle, offset);
+}
+
+bool flushFile(PlatformFileHandle handle)
+{
+    return !fsync(handle);
 }
 
 int writeToFile(PlatformFileHandle handle, const void* data, int length)
@@ -256,7 +262,7 @@ bool deleteFile(const String& path)
     // unlink(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
     bool unlinked = !unlink(fileSystemRepresentation(path).data());
     if (!unlinked && errno != ENOENT)
-        LOG_ERROR("File failed to delete. Error message: %s", strerror(errno));
+        LOG_ERROR("File failed to delete. Error message: %s", safeStrerror(errno).data());
 
     return unlinked;
 }

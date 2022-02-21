@@ -87,7 +87,7 @@ private:
     Lock m_observersLock;
     HashMap<IPC::Connection::UniqueID, ConnectionClientInfo> m_observers WTF_GUARDED_BY_LOCK(m_observersLock);
     WebCore::PlatformDisplayID m_displayID;
-    WebCore::FramesPerSecond m_displayNominalFramesPerSecond { 0 };
+    WebCore::FramesPerSecond m_displayNominalFramesPerSecond { WebCore::FullSpeedFramesPerSecond };
     WebCore::DisplayUpdate m_currentUpdate;
     unsigned m_fireCountWithoutObservers { 0 };
     static bool shouldSendIPCOnBackgroundQueue;

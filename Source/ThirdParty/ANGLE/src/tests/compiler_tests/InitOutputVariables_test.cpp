@@ -240,6 +240,26 @@ class InitOutputVariablesWebGL1FragmentShaderTest : public ShaderCompileTreeTest
     }
 };
 
+class InitOutputVariablesVertexShaderClipDistanceTest : public ShaderCompileTreeTest
+{
+  public:
+    InitOutputVariablesVertexShaderClipDistanceTest()
+    {
+        mExtraCompileOptions |= SH_VARIABLES;
+        mExtraCompileOptions |= SH_INIT_OUTPUT_VARIABLES;
+        mExtraCompileOptions |= SH_VALIDATE_AST;
+    }
+
+  protected:
+    ::GLenum getShaderType() const override { return GL_VERTEX_SHADER; }
+    ShShaderSpec getShaderSpec() const override { return SH_GLES2_SPEC; }
+    void initResources(ShBuiltInResources *resources) override
+    {
+        resources->APPLE_clip_distance = 1;
+        resources->MaxClipDistances    = 8;
+    }
+};
+
 // Test the initialization of output variables with various qualifiers in a vertex shader.
 TEST_F(InitOutputVariablesWebGL2VertexShaderTest, OutputAllQualifiers)
 {
@@ -439,4 +459,32 @@ TEST_F(InitOutputVariablesWebGL2VertexShaderTest, InitGLPositionOnceWhenStatical
     EXPECT_EQ(1u, verifier.getCandidates().size());
 }
 
+// Mirrors ClipDistanceTest.ThreeClipDistancesRedeclared
+TEST_F(InitOutputVariablesVertexShaderClipDistanceTest, RedeclareClipDistance)
+{
+    constexpr char shaderString[] = R"(
+#extension GL_APPLE_clip_distance : require
+
+varying highp float gl_ClipDistance[3];
+
+void computeClipDistances(in vec4 position, in vec4 plane[3])
+{
+    gl_ClipDistance[0] = dot(position, plane[0]);
+    gl_ClipDistance[1] = dot(position, plane[1]);
+    gl_ClipDistance[2] = dot(position, plane[2]);
+}
+
+uniform vec4 u_plane[3];
+
+attribute vec2 a_position;
+
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+
+    computeClipDistances(gl_Position, u_plane);
+})";
+
+    compileAssumeSuccess(shaderString);
+}
 }  // namespace sh

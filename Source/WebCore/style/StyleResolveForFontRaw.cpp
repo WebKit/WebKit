@@ -158,7 +158,7 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
     }
 
     if (fontRaw.weight) {
-        auto weight = switchOn(*fontRaw.weight, [&] (CSSValueID ident) {
+        auto weight = WTF::switchOn(*fontRaw.weight, [&] (CSSValueID ident) {
             switch (ident) {
             case CSSValueNormal:
                 return normalWeightValue();
@@ -179,7 +179,7 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
     }
 
     fontDescription.setKeywordSizeFromIdentifier(CSSValueInvalid);
-    float size = switchOn(fontRaw.size, [&] (CSSValueID ident) {
+    float size = WTF::switchOn(fontRaw.size, [&] (CSSValueID ident) {
         switch (ident) {
         case CSSValueXxSmall:
         case CSSValueXSmall:
@@ -199,7 +199,7 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
             return 0.f;
         }
     }, [&] (const CSSPropertyParserHelpers::LengthOrPercentRaw& lengthOrPercent) {
-        return switchOn(lengthOrPercent, [&] (const CSSPropertyParserHelpers::LengthRaw& length) {
+        return WTF::switchOn(lengthOrPercent, [&] (const CSSPropertyParserHelpers::LengthRaw& length) {
             auto fontCascade = FontCascade(FontCascadeDescription(fontDescription));
             fontCascade.update(context.cssFontSelector());
             // FIXME: Passing null for the RenderView parameter means that vw and vh units will evaluate to
@@ -207,9 +207,9 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
             //        It's unclear in the specification if they're expected to work on OffscreenCanvas, given
             //        that it's off-screen and therefore doesn't strictly have an associated viewport.
             //        This needs clarification and possibly fixing.
-            return static_cast<float>(CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(length.type, length.value, CSSPropertyFontSize, &fontCascade.fontMetrics(), &fontCascade.fontDescription(), &fontCascade.fontDescription(), is<Document>(context) ? downcast<Document>(context).renderView() : nullptr));
-        }, [&] (double percentage) {
-            return static_cast<float>((parentSize * percentage) / 100.0);
+            return static_cast<float>(CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(length.type, length.value, CSSPropertyFontSize, &fontCascade.metricsOfPrimaryFont(), &fontCascade.fontDescription(), &fontCascade.fontDescription(), is<Document>(context) ? downcast<Document>(context).renderView() : nullptr));
+        }, [&] (const CSSPropertyParserHelpers::PercentRaw& percentage) {
+            return static_cast<float>((parentSize * percentage.value) / 100.0);
         });
     });
 

@@ -1,3 +1,3 @@
 
-FAIL CSS variable references - shorthand properties - via CSSOM assert_equals: margin property value after calling setProperty expected "var(--prop)" but got ""
+PASS CSS variable references - shorthand properties - via CSSOM
 

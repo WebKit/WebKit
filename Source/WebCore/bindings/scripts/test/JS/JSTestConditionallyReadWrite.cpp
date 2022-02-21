@@ -22,9 +22,10 @@
 #include "JSTestConditionallyReadWrite.h"
 
 #include "ActiveDOMObject.h"
-#include "DOMIsoSubspaces.h"
 #include "DOMPromiseProxy.h"
 #include "Document.h"
+#include "ExtendedDOMClientIsoSubspaces.h"
+#include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -88,17 +89,17 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestConditionallyReadWritePrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestConditionallyReadWritePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestConditionallyReadWritePrototype>(vm.heap)) JSTestConditionallyReadWritePrototype(vm, globalObject, structure);
+        JSTestConditionallyReadWritePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestConditionallyReadWritePrototype>(vm)) JSTestConditionallyReadWritePrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }
 
     DECLARE_INFO;
     template<typename CellType, JSC::SubspaceAccess>
-    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestConditionallyReadWritePrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -148,9 +149,11 @@ template<> JSValue JSTestConditionallyReadWriteDOMConstructor::prototypeForStruc
 
 template<> void JSTestConditionallyReadWriteDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestConditionallyReadWrite::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestConditionallyReadWrite"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    JSString* nameString = jsNontrivialString(vm, "TestConditionallyReadWrite"_s);
+    m_originalName.set(vm, this, nameString);
+    putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestConditionallyReadWrite::prototype(vm, globalObject), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);
 }
 
 /* Hash table for prototype */
@@ -601,27 +604,14 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestConditionallyReadWrite_settingsConditionallyRe
     return IDLAttribute<JSTestConditionallyReadWrite>::set<setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromiseSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
-JSC::IsoSubspace* JSTestConditionallyReadWrite::subspaceForImpl(JSC::VM& vm)
+JSC::GCClient::IsoSubspace* JSTestConditionallyReadWrite::subspaceForImpl(JSC::VM& vm)
 {
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto& spaces = clientData.subspaces();
-    if (auto* space = spaces.m_subspaceForTestConditionallyReadWrite.get())
-        return space;
-    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestConditionallyReadWrite> || !JSTestConditionallyReadWrite::needsDestruction);
-    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestConditionallyReadWrite>)
-        spaces.m_subspaceForTestConditionallyReadWrite = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestConditionallyReadWrite);
-    else
-        spaces.m_subspaceForTestConditionallyReadWrite = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestConditionallyReadWrite);
-    auto* space = spaces.m_subspaceForTestConditionallyReadWrite.get();
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-    void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestConditionallyReadWrite::visitOutputConstraints;
-    void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
-    if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
-        clientData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    return space;
+    return WebCore::subspaceForImpl<JSTestConditionallyReadWrite, UseCustomHeapCellType::No>(vm,
+        [] (auto& spaces) { return spaces.m_clientSubspaceForTestConditionallyReadWrite.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestConditionallyReadWrite = WTFMove(space); },
+        [] (auto& spaces) { return spaces.m_subspaceForTestConditionallyReadWrite.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestConditionallyReadWrite = WTFMove(space); }
+    );
 }
 
 void JSTestConditionallyReadWrite::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
@@ -660,24 +650,22 @@ extern "C" { extern void* _ZTVN7WebCore26TestConditionallyReadWriteE[]; }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestConditionallyReadWrite>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestConditionallyReadWrite>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestConditionallyReadWrite@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestConditionallyReadWrite@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore26TestConditionallyReadWriteE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore26TestConditionallyReadWriteE[2];
 #endif
 
-    // If this fails TestConditionallyReadWrite does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestConditionallyReadWrite>::value, "TestConditionallyReadWrite is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestConditionallyReadWrite has subclasses. If TestConditionallyReadWrite has subclasses that get passed
-    // to toJS() we currently require TestConditionallyReadWrite you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestConditionallyReadWrite has subclasses. If TestConditionallyReadWrite has subclasses that get passed
+        // to toJS() we currently require TestConditionallyReadWrite you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestConditionallyReadWrite>(globalObject, WTFMove(impl));
 }
 

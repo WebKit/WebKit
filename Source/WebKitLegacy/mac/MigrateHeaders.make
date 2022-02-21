@@ -38,7 +38,7 @@ endif
 
 FRAMEWORK_FLAGS := $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) $(SYSTEM_FRAMEWORK_SEARCH_PATHS) | $(PERL) -e 'print "-F " . join(" -F ", split(" ", <>));')
 HEADER_FLAGS := $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTEM_HEADER_SEARCH_PATHS) | $(PERL) -e 'print "-I" . join(" -I", split(" ", <>));')
-FEATURE_AND_PLATFORM_DEFINES := $(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | $(PERL) -ne "print if s/\#define ((HAVE_|USE_|ENABLE_|WTF_PLATFORM_)\w+) 1/\1/")
+FEATURE_AND_PLATFORM_DEFINES := $(shell $(CC) -std=c++2a -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | $(PERL) -ne "print if s/\#define ((HAVE_|USE_|ENABLE_|WTF_PLATFORM_)\w+) 1/\1/")
 
 # --------
 
@@ -50,15 +50,6 @@ HEADERS = \
     $(PRIVATE_HEADERS_DIR)/WebKitAvailability.h \
     $(PRIVATE_HEADERS_DIR)/WebScriptObject.h \
 #
-
-ifeq ($(WK_PLATFORM_NAME), macosx)
-HEADERS += \
-    $(PRIVATE_HEADERS_DIR)/npapi.h \
-    $(PRIVATE_HEADERS_DIR)/npfunctions.h \
-    $(PRIVATE_HEADERS_DIR)/npruntime.h \
-    $(PRIVATE_HEADERS_DIR)/nptypes.h \
-#
-endif
 
 ifneq ($(WK_PLATFORM_NAME), macosx)
 HEADERS += \

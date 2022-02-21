@@ -41,8 +41,8 @@
 #endif
 
 #if USE(CURL)
+#include <variant>
 #include <wtf/Box.h>
-#include <wtf/Variant.h>
 #endif
 
 namespace WebKit {
@@ -68,7 +68,7 @@ public:
 #if USE(GLIB)
     Data(GRefPtr<GBytes>&&, FileSystem::PlatformFileHandle fd = FileSystem::invalidPlatformFileHandle);
 #elif USE(CURL)
-    Data(Variant<Vector<uint8_t>, FileSystem::MappedFileData>&&);
+    Data(std::variant<Vector<uint8_t>, FileSystem::MappedFileData>&&);
 #endif
     bool isNull() const;
     bool isEmpty() const { return !m_size; }
@@ -101,7 +101,7 @@ private:
     FileSystem::PlatformFileHandle m_fileDescriptor { FileSystem::invalidPlatformFileHandle };
 #endif
 #if USE(CURL)
-    Box<Variant<Vector<uint8_t>, FileSystem::MappedFileData>> m_buffer;
+    Box<std::variant<Vector<uint8_t>, FileSystem::MappedFileData>> m_buffer;
 #endif
     mutable const uint8_t* m_data { nullptr };
     size_t m_size { 0 };

@@ -68,15 +68,17 @@ class SimulatorProcess(ServerProcess):
             return getattr(self._file, name)
 
         def close(self):
+            result = -1
             try:
                 result = self._file.close()
-                # Closing the file implicitly closes the socket in Python 3
-                if sys.version_info < (3, 0):
-                    self.socket.close()
-                return result
             except IOError:
                 # If the file descriptor is bad, we don't have to worry about closing it
                 pass
+            try:
+                self.socket.close()
+            except OSError:
+                pass
+            return result
 
     def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False, treat_no_data_as_crash=False, target_host=None, crash_message=None):
         env['PORT'] = str(target_host.listening_port())  # The target_host should be a device.

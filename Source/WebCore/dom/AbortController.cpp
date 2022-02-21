@@ -27,6 +27,8 @@
 #include "AbortController.h"
 
 #include "AbortSignal.h"
+#include "DOMException.h"
+#include "JSDOMException.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -39,7 +41,7 @@ Ref<AbortController> AbortController::create(ScriptExecutionContext& context)
 }
 
 AbortController::AbortController(ScriptExecutionContext& context)
-    : m_signal(AbortSignal::create(context))
+    : m_signal(AbortSignal::create(&context))
 {
 }
 
@@ -50,9 +52,13 @@ AbortSignal& AbortController::signal()
     return m_signal.get();
 }
 
-void AbortController::abort()
+void AbortController::abort(JSDOMGlobalObject& globalObject, JSC::JSValue reason)
 {
-    m_signal->signalAbort();
+    ASSERT(reason);
+    if (reason.isUndefined())
+        reason = toJS(&globalObject, &globalObject, DOMException::create(AbortError));
+
+    m_signal->signalAbort(reason);
 }
 
 }

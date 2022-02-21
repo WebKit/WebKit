@@ -107,7 +107,8 @@ private:
         case TypeKind::I64:
         case TypeKind::Funcref:
         case TypeKind::Externref:
-        case TypeKind::TypeIdx:
+        case TypeKind::Ref:
+        case TypeKind::RefNull:
             return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
         case TypeKind::F32:
         case TypeKind::F64:
@@ -125,7 +126,7 @@ public:
         bool resultsIncludeI64 = false;
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
-        size_t argStackOffset = headerSizeInBytes;
+        size_t argStackOffset = headerSizeInBytes + sizeof(Register);
         if (role == CallRole::Caller)
             argStackOffset -= sizeof(CallerFrameAndPC);
 
@@ -136,7 +137,7 @@ public:
         }
         gpArgumentCount = 0;
         fpArgumentCount = 0;
-        size_t resultStackOffset = headerSizeInBytes;
+        size_t resultStackOffset = headerSizeInBytes + sizeof(Register);
         if (role == CallRole::Caller)
             resultStackOffset -= sizeof(CallerFrameAndPC);
 
@@ -196,7 +197,8 @@ private:
         case TypeKind::I64:
         case TypeKind::Funcref:
         case TypeKind::Externref:
-        case TypeKind::TypeIdx:
+        case TypeKind::Ref:
+        case TypeKind::RefNull:
             return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
         case TypeKind::F32:
         case TypeKind::F64:

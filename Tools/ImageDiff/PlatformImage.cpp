@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2007-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Ben La Monica <ben.lamonica@gmail.com>.  All rights reserved.
  * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
@@ -36,64 +36,84 @@ bool PlatformImage::isCompatible(const PlatformImage& other) const
 {
     return width() == other.width()
         && height() == other.height()
+        && scaleFactor() == other.scaleFactor()
         && rowBytes() == other.rowBytes()
         && hasAlpha() == other.hasAlpha();
 }
 
-std::unique_ptr<PlatformImage> PlatformImage::difference(const PlatformImage& other, float& percentageDifference)
+std::unique_ptr<PlatformImage> PlatformImage::difference(const PlatformImage& other, bool exact, Difference& difference)
 {
     size_t width = this->width();
     size_t height = this->height();
 
     // Compare the content of the 2 bitmaps
-    void* diffBuffer = malloc(width * height);
-    float count = 0.0f;
-    float sum = 0.0f;
-    float maxDistance = 0.0f;
+    unsigned char* diffBuffer = static_cast<unsigned char*>(calloc(width * height, sizeof(unsigned char)));
+    size_t pixelCountWithSignificantDifference = 0;
+    float legacyDistanceSum = 0.0f;
+    float legacyDistanceMax = 0.0f;
+
     unsigned char* basePixel = this->pixels();
     unsigned char* pixel = other.pixels();
-    unsigned char* diffPixel = reinterpret_cast<unsigned char*>(diffBuffer);
+    unsigned char* diffPixel = diffBuffer;
+
     for (size_t y = 0; y < height; ++y) {
         for (size_t x = 0; x < width; ++x) {
-            float red = (pixel[0] - basePixel[0]) / std::max<float>(255 - basePixel[0], basePixel[0]);
+            float red   = (pixel[0] - basePixel[0]) / std::max<float>(255 - basePixel[0], basePixel[0]);
             float green = (pixel[1] - basePixel[1]) / std::max<float>(255 - basePixel[1], basePixel[1]);
-            float blue = (pixel[2] - basePixel[2]) / std::max<float>(255 - basePixel[2], basePixel[2]);
+            float blue  = (pixel[2] - basePixel[2]) / std::max<float>(255 - basePixel[2], basePixel[2]);
             float alpha = (pixel[3] - basePixel[3]) / std::max<float>(255 - basePixel[3], basePixel[3]);
-            float distance = sqrtf(red * red + green * green + blue * blue + alpha * alpha) / 2.0f;
+            float legacyDistance = sqrtf(red * red + green * green + blue * blue + alpha * alpha) / 2.0f;
 
-            *diffPixel++ = static_cast<unsigned char>(distance * 255.0f);
+            // WPT-style difference code.
+            if (legacyDistance) {
+                ++difference.totalPixels;
+                unsigned redDiff    = std::abs(pixel[0] - basePixel[0]);
+                unsigned greenDiff  = std::abs(pixel[1] - basePixel[1]);
+                unsigned blueDiff   = std::abs(pixel[2] - basePixel[2]);
+                unsigned maxDiff = std::max({ redDiff, greenDiff, blueDiff });
+                difference.maxDifference = std::max(difference.maxDifference, maxDiff);
 
-            if (distance >= 1.0f / 255.0f) {
-                count += 1.0f;
-                sum += distance;
-                if (distance > maxDistance)
-                    maxDistance = distance;
+                legacyDistanceMax = std::max(legacyDistanceMax, legacyDistance);
+                *diffPixel = static_cast<unsigned char>(std::ceil(legacyDistance * 255.0f));
+            }
+
+            // Legacy difference code.
+            bool pixelDiffers = exact ? legacyDistance : legacyDistance >= 1.0f / 255.0f;
+            if (pixelDiffers) {
+                ++pixelCountWithSignificantDifference;
+                legacyDistanceSum += legacyDistance;
             }
 
             basePixel += 4;
             pixel += 4;
+            ++diffPixel;
         }
     }
 
-    // Compute the difference as a percentage combining both the number of different pixels and their difference amount i.e. the average distance over the entire image
-    if (count > 0.0f)
-        percentageDifference = 100.0f * sum / (height * width);
+    // Compute the difference as a percentage combining both the number of different pixels and their difference amount i.e. the average distance over the entire image.
+    if (pixelCountWithSignificantDifference)
+        difference.percentageDifference = 100.0f * legacyDistanceSum / (height * width);
     else
-        percentageDifference = 0.0f;
+        difference.percentageDifference = 0.0f;
 
-    if (!percentageDifference) {
-        free(diffBuffer);
-        return nullptr;
+    if (difference.totalPixels) {
+        diffPixel = diffBuffer;
+        for (size_t p = 0; p < height * width; ++p) {
+            float pixel = static_cast<float>(diffPixel[p]);
+            if (!pixel)
+                continue;
+            pixel = std::min(pixel / legacyDistanceMax, 255.0f);
+            diffPixel[p] = static_cast<unsigned char>(pixel);
+        }
+
+        // totalPixels is "CSS pixels" or "points".
+        difference.totalPixels /= (scaleFactor() * scaleFactor());
+
+        return PlatformImage::createFromDiffData(diffBuffer, width, height);
     }
 
-    // Generate a normalized diff image if there is any difference
-    if (maxDistance < 1.0f) {
-        diffPixel = reinterpret_cast<unsigned char*>(diffBuffer);
-        for (size_t p = 0; p < height * width; ++p)
-            diffPixel[p] /= maxDistance;
-    }
-
-    return PlatformImage::createFromDiffData(diffBuffer, width, height);
+    free(diffBuffer);
+    return nullptr;
 }
 
 } // namespace ImageDiff

@@ -10,5 +10,7 @@
 	<true/>
 	<key>com.apple.Pasteboard.paste-unchecked</key>
 	<true/>
+	<key>com.apple.private.webkit.adattributiond.testing</key>
+	<true/>
 </dict>
 </plist>

@@ -30,9 +30,9 @@
     PublicIdentifier,
     Exposed=Window
 ] interface MediaStream : EventTarget {
-    [CallWith=Document] constructor();
-    [CallWith=Document] constructor(MediaStream stream);
-    [CallWith=Document] constructor(sequence<MediaStreamTrack> tracks);
+    [CallWith=CurrentDocument] constructor();
+    [CallWith=CurrentDocument] constructor(MediaStream stream);
+    [CallWith=CurrentDocument] constructor(sequence<MediaStreamTrack> tracks);
 
     readonly attribute DOMString id;
 

@@ -30,10 +30,12 @@
 #include "Connection.h"
 #include "DataReference.h"
 #include "GPUProcessConnection.h"
+#include "IPCSemaphore.h"
 #include "MessageReceiver.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
-#include <WebCore/ImageTransferSessionVT.h>
+#include "RemoteVideoFrameIdentifier.h"
+#include "SharedVideoFrame.h"
 #include <WebCore/PixelBufferConformerCV.h>
 #include <map>
 #include <webrtc/api/video/video_codec_type.h>
@@ -59,13 +61,15 @@ struct WebKitEncodedFrameInfo;
 
 namespace WebKit {
 
+class RemoteVideoFrameObjectHeapProxy;
+
 class LibWebRTCCodecs : public IPC::Connection::ThreadMessageReceiverRefCounted, public GPUProcessConnection::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<LibWebRTCCodecs> create();
     ~LibWebRTCCodecs();
 
-    static void setCallbacks(bool useGPUProcess);
+    static void setCallbacks(bool useGPUProcess, bool useRemoteFrames);
 
     enum class Type { H264, H265, VP9 };
     struct Decoder {
@@ -102,6 +106,7 @@ public:
         void* encodedImageCallback WTF_GUARDED_BY_LOCK(encodedImageCallbackLock) { nullptr };
         Lock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
+        SharedVideoFrameWriter sharedVideoFrameWriter;
     };
 
     Encoder* createEncoder(Type, const std::map<std::string, std::string>&);
@@ -126,7 +131,7 @@ private:
     void gpuProcessConnectionMayNoLongerBeNeeded();
 
     void failedDecoding(RTCDecoderIdentifier);
-    void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&);
+    void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&, std::optional<RemoteVideoFrameIdentifier>);
     void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
     RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 
@@ -140,22 +145,24 @@ private:
     HashMap<RTCDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders;
     HashSet<RTCDecoderIdentifier> m_decodingErrors;
 
+    Lock m_encodersLock;
     HashMap<RTCEncoderIdentifier, std::unique_ptr<Encoder>> m_encoders;
 
     std::atomic<bool> m_needsGPUProcessConnection;
 
     Lock m_connectionLock;
     RefPtr<IPC::Connection> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
+    RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy WTF_GUARDED_BY_LOCK(m_connectionLock);
     Vector<Function<void()>> m_tasksToDispatchAfterEstablishingConnection;
 
     Ref<WorkQueue> m_queue;
-    std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
     std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
     size_t m_pixelBufferPoolWidth { 0 };
     size_t m_pixelBufferPoolHeight { 0 };
     bool m_supportVP9VTB { false };
     std::optional<WTFLogLevel> m_loggingLevel;
+    bool m_useRemoteFrames { false };
 };
 
 } // namespace WebKit

@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <utility>
+#include <wtf/HashTraits.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
@@ -97,5 +98,14 @@ ScopedActiveMessageReceiveQueue(std::unique_ptr<T>&&) -> ScopedActiveMessageRece
 
 template<typename T>
 ScopedActiveMessageReceiveQueue(Ref<T>&&) -> ScopedActiveMessageReceiveQueue<T, RefPtr<T>>;
+
+}
+
+namespace WTF {
+
+template<typename T, typename HolderType> struct HashTraits<IPC::ScopedActiveMessageReceiveQueue<T, HolderType>> : GenericHashTraits<IPC::ScopedActiveMessageReceiveQueue<T, HolderType>> {
+    using PeekType = T*;
+    static T* peek(const IPC::ScopedActiveMessageReceiveQueue<T, HolderType>& value) { return value.get(); }
+};
 
 }

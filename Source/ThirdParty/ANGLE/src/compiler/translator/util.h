@@ -14,7 +14,7 @@
 
 #include "compiler/translator/HashNames.h"
 #include "compiler/translator/ImmutableString.h"
-#include "compiler/translator/Operator.h"
+#include "compiler/translator/Operator_autogen.h"
 #include "compiler/translator/Types.h"
 
 // If overflow happens, clamp the value to UINT_MIN or UINT_MAX.
@@ -54,8 +54,13 @@ GLenum GLVariablePrecision(const TType &type);
 bool IsVaryingIn(TQualifier qualifier);
 bool IsVaryingOut(TQualifier qualifier);
 bool IsVarying(TQualifier qualifier);
+bool IsMatrixGLType(GLenum type);
 bool IsGeometryShaderInput(GLenum shaderType, TQualifier qualifier);
+bool IsTessellationControlShaderInput(GLenum shaderType, TQualifier qualifier);
+bool IsTessellationControlShaderOutput(GLenum shaderType, TQualifier qualifier);
+bool IsTessellationEvaluationShaderInput(GLenum shaderType, TQualifier qualifier);
 InterpolationType GetInterpolationType(TQualifier qualifier);
+InterpolationType GetFieldInterpolationType(TQualifier qualifier);
 
 // Returns array brackets including size with outermost array size first, as specified in GLSL ES
 // 3.10 section 4.1.9.
@@ -89,6 +94,12 @@ bool IsSpecWithFunctionBodyNewScope(ShShaderSpec shaderSpec, int shaderVersion);
 ImplicitTypeConversion GetConversion(TBasicType t1, TBasicType t2);
 
 bool IsValidImplicitConversion(ImplicitTypeConversion conversion, TOperator op);
+
+// Whether the given basic type requires precision.
+bool IsPrecisionApplicableToType(TBasicType type);
+
+// Whether this is the name of a built-in that can be redeclared by the shader.
+bool IsRedeclarableBuiltIn(const ImmutableString &name);
 
 size_t FindFieldIndex(const TFieldList &fieldList, const char *fieldName);
 }  // namespace sh

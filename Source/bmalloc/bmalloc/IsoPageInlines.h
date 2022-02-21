@@ -32,6 +32,8 @@
 #include "StdLibExtras.h"
 #include "VMAllocate.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Config>
@@ -254,3 +256,4 @@ IsoHeapImpl<Config>& IsoPage<Config>::heap()
 
 } // namespace bmalloc
 
+#endif

@@ -48,8 +48,8 @@ RenderPtr<RenderMultiColumnSpannerPlaceholder> RenderMultiColumnSpannerPlacehold
 
 RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlow& fragmentedFlow, RenderBox& spanner, RenderStyle&& style)
     : RenderBox(fragmentedFlow.document(), WTFMove(style), RenderBoxModelObjectFlag)
-    , m_spanner(makeWeakPtr(spanner))
-    , m_fragmentedFlow(makeWeakPtr(fragmentedFlow))
+    , m_spanner(spanner)
+    , m_fragmentedFlow(fragmentedFlow)
 {
 }
 

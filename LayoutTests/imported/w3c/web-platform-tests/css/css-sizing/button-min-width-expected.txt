@@ -9,5 +9,5 @@ Bar
 Foo
 Bar
 
-FAIL min-width should force all buttons to be 200px wide assert_equals: expected 200 but got 36
+PASS min-width should force all buttons to be 200px wide
 

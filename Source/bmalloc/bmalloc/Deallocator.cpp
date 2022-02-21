@@ -35,6 +35,8 @@
 #include <cstdlib>
 #include <sys/mman.h>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 Deallocator::Deallocator(Heap& heap)
@@ -83,3 +85,5 @@ void Deallocator::deallocateSlowCase(void* object)
 }
 
 } // namespace bmalloc
+
+#endif

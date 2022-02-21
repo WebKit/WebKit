@@ -52,7 +52,7 @@ public:
 
         Vector<WebKit::SandboxExtension::Handle> sandboxExtensionHandles;
         for (auto& element : m_data->elements()) {
-            if (auto* fileData = WTF::get_if<WebCore::FormDataElement::EncodedFileData>(element.data)) {
+            if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data)) {
                 const String& path = fileData->filename;
                 if (auto handle = WebKit::SandboxExtension::createHandle(path, WebKit::SandboxExtension::Type::ReadOnly))
                     sandboxExtensionHandles.append(WTFMove(*handle));

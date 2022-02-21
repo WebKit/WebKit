@@ -151,7 +151,7 @@ AudioHardwareListenerMac::AudioHardwareListenerMac(Client& client)
     setHardwareActivity(isAudioHardwareProcessRunning());
     setSupportedBufferSizes(currentDeviceSupportedBufferSizes());
 
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     m_block = Block_copy(^(UInt32 count, const AudioObjectPropertyAddress properties[]) {
         if (weakThis)
             weakThis->propertyChanged(count, properties);

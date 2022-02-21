@@ -35,9 +35,10 @@ assuming there are no subsequent updates to that subresource of the image, and k
 _deferred clears_. The `FramebufferVk` call that immediately follows must handle these clears one
 way or another. In most cases, this implies starting a new render pass and using `loadOp`s to
 perform the clear before the actual operation in that function is performed. This also implies that
-the front-end must always follow a `syncState` call with another call (and for example cannot decide
-to no-op the call in between).
+the front-end must always follow a `syncState` call with a call to the backend (and for example
+cannot decide to no-op the call in between). That way, the backend has a chance to flush any
+deferred clears.
 
-If the subsequent call itself is a clear operation, there could be further optimizations. In
-particular, the previously deferred clears and can be overridden by and/or re-deferred along with
-the new clears.
+If the subsequent call itself is a clear operation, there are further optimizations possible. In
+particular, the previously deferred clears are overridden by and/or re-deferred along with the new
+clears.

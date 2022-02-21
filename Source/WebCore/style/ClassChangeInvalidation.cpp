@@ -34,26 +34,33 @@
 namespace WebCore {
 namespace Style {
 
-using ClassChangeVector = Vector<AtomStringImpl*, 4>;
+enum class ClassChangeType : bool { Add, Remove };
 
-static ClassChangeVector collectClasses(const SpaceSplitString& classes)
+struct ClassChange {
+    AtomStringImpl* className { };
+    ClassChangeType type;
+};
+
+using ClassChangeVector = Vector<ClassChange, 4>;
+
+static ClassChangeVector collectClasses(const SpaceSplitString& classes, ClassChangeType changeType)
 {
     ClassChangeVector result;
-    result.reserveCapacity(classes.size());
+    result.reserveInitialCapacity(classes.size());
     for (unsigned i = 0; i < classes.size(); ++i)
-        result.uncheckedAppend(classes[i].impl());
+        result.uncheckedAppend({ classes[i].impl(), changeType });
     return result;
 }
 
-static ClassChangeVector computeClassChange(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
+static ClassChangeVector computeClassChanges(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
 {
     unsigned oldSize = oldClasses.size();
     unsigned newSize = newClasses.size();
 
     if (!oldSize)
-        return collectClasses(newClasses);
+        return collectClasses(newClasses, ClassChangeType::Add);
     if (!newSize)
-        return collectClasses(oldClasses);
+        return collectClasses(oldClasses, ClassChangeType::Remove);
 
     ClassChangeVector changedClasses;
 
@@ -70,13 +77,13 @@ static ClassChangeVector computeClassChange(const SpaceSplitString& oldClasses, 
         }
         if (foundFromBoth)
             continue;
-        changedClasses.append(newClasses[i].impl());
+        changedClasses.append({ newClasses[i].impl(), ClassChangeType::Add });
     }
     for (unsigned i = 0; i < oldSize; ++i) {
         // If the bit is not set the corresponding class has been removed.
         if (remainingClassBits.quickGet(i))
             continue;
-        changedClasses.append(oldClasses[i].impl());
+        changedClasses.append({ oldClasses[i].impl(), ClassChangeType::Remove });
     }
 
     return changedClasses;
@@ -84,16 +91,16 @@ static ClassChangeVector computeClassChange(const SpaceSplitString& oldClasses, 
 
 void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
 {
-    auto changedClasses = computeClassChange(oldClasses, newClasses);
+    auto classChanges = computeClassChanges(oldClasses, newClasses);
 
     bool shouldInvalidateCurrent = false;
     bool mayAffectStyleInShadowTree = false;
 
     traverseRuleFeatures(m_element, [&] (const RuleFeatureSet& features, bool mayAffectShadowTree) {
-        for (auto* changedClass : changedClasses) {
-            if (mayAffectShadowTree && features.classRules.contains(changedClass))
+        for (auto& classChange : classChanges) {
+            if (mayAffectShadowTree && features.classRules.contains(classChange.className))
                 mayAffectStyleInShadowTree = true;
-            if (features.classesAffectingHost.contains(changedClass))
+            if (features.classesAffectingHost.contains(classChange.className))
                 shouldInvalidateCurrent = true;
         }
     });
@@ -108,17 +115,32 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
 
     auto& ruleSets = m_element.styleResolver().ruleSets();
 
-    for (auto* changedClass : changedClasses) {
-        if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(changedClass)) {
-            for (auto& invalidationRuleSet : *invalidationRuleSets)
-                Invalidator::addToMatchElementRuleSets(m_matchElementRuleSets, invalidationRuleSet);
+    auto invalidateBeforeChange = [](ClassChangeType type, IsNegation isNegation) {
+        if (type == ClassChangeType::Remove)
+            return isNegation == IsNegation::No;
+        return isNegation == IsNegation::Yes;
+    };
+
+    for (auto& classChange : classChanges) {
+        if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(classChange.className)) {
+            for (auto& invalidationRuleSet : *invalidationRuleSets) {
+                if (invalidateBeforeChange(classChange.type, invalidationRuleSet.isNegation))
+                    Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
+                else
+                    Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
+            }
         }
     }
 }
 
-void ClassChangeInvalidation::invalidateStyleWithRuleSets()
+void ClassChangeInvalidation::invalidateBeforeChange()
 {
-    Invalidator::invalidateWithMatchElementRuleSets(m_element, m_matchElementRuleSets);
+    Invalidator::invalidateWithMatchElementRuleSets(m_element, m_beforeChangeRuleSets);
+}
+
+void ClassChangeInvalidation::invalidateAfterChange()
+{
+    Invalidator::invalidateWithMatchElementRuleSets(m_element, m_afterChangeRuleSets);
 }
 
 }

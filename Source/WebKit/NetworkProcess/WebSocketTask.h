@@ -31,6 +31,8 @@
 #include "WebSocketTaskSoup.h"
 #else
 
+#include "DataReference.h"
+
 namespace WebKit {
 
 struct SessionSet;

@@ -95,6 +95,11 @@
     return _nodeHandle->isHTMLInputElementAutoFilledAndViewable();
 }
 
+- (BOOL)HTMLInputElementIsAutoFilledAndObscured
+{
+    return _nodeHandle->isHTMLInputElementAutoFilledAndObscured();
+}
+
 - (void)setHTMLInputElementIsAutoFilled:(BOOL)isAutoFilled
 {
     _nodeHandle->setHTMLInputElementAutoFilled(isAutoFilled);
@@ -103,6 +108,11 @@
 - (void)setHTMLInputElementIsAutoFilledAndViewable:(BOOL)isAutoFilledAndViewable
 {
     _nodeHandle->setHTMLInputElementAutoFilledAndViewable(isAutoFilledAndViewable);
+}
+
+- (void)setHTMLInputElementIsAutoFilledAndObscured:(BOOL)isAutoFilledAndObscured
+{
+    _nodeHandle->setHTMLInputElementAutoFilledAndObscured(isAutoFilledAndObscured);
 }
 
 - (BOOL)isHTMLInputElementAutoFillButtonEnabled

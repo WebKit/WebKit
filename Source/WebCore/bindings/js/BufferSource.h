@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +28,18 @@
 
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
+#include <variant>
 #include <wtf/RefPtr.h>
-#include <wtf/Variant.h>
+
+#if PLATFORM(COCOA) && defined(__OBJC__)
+OBJC_CLASS NSData;
+#endif
 
 namespace WebCore {
 
 class BufferSource {
 public:
-    using VariantType = WTF::Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>>;
+    using VariantType = std::variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>>;
 
     BufferSource() { }
     BufferSource(VariantType&& variant)
@@ -45,20 +50,81 @@ public:
 
     const uint8_t* data() const
     {
-        return WTF::visit([](auto& buffer) -> const uint8_t* {
+        return std::visit([](auto& buffer) -> const uint8_t* {
             return buffer ? static_cast<const uint8_t*>(buffer->data()) : nullptr;
+        }, m_variant);
+    }
+    
+    void* mutableData() const
+    {
+        return std::visit([](auto& buffer) -> void* {
+            return buffer->data();
         }, m_variant);
     }
 
     size_t length() const
     {
-        return WTF::visit([](auto& buffer) -> size_t {
+        return std::visit([](auto& buffer) -> size_t {
             return buffer ? buffer->byteLength() : 0;
         }, m_variant);
     }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<BufferSource> decode(Decoder&);
 
 private:
     VariantType m_variant;
 };
 
+template<class Encoder>
+void BufferSource::encode(Encoder& encoder) const
+{
+    encoder << static_cast<uint64_t>(length());
+    if (!length())
+        return;
+
+    encoder.encodeFixedLengthData(data(), length() * sizeof(uint8_t), alignof(uint8_t));
+}
+
+template<class Decoder>
+std::optional<BufferSource> BufferSource::decode(Decoder& decoder)
+{
+    std::optional<uint64_t> size;
+    decoder >> size;
+    if (!size)
+        return std::nullopt;
+    if (!*size)
+        return BufferSource();
+
+    auto dataSize = CheckedSize { *size };
+    if (UNLIKELY(dataSize.hasOverflowed()))
+        return std::nullopt;
+
+    const uint8_t* data = decoder.decodeFixedLengthReference(dataSize, alignof(uint8_t));
+    if (!data)
+        return std::nullopt;
+    return BufferSource(JSC::ArrayBuffer::tryCreate(static_cast<const void*>(data), dataSize.value()));
+}
+
+inline BufferSource toBufferSource(const uint8_t* data, size_t length)
+{
+    return BufferSource(JSC::ArrayBuffer::tryCreate(data, length));
+}
+
+#if PLATFORM(COCOA) && defined(__OBJC__)
+inline BufferSource toBufferSource(NSData *data)
+{
+    return BufferSource(JSC::ArrayBuffer::tryCreate(static_cast<const uint8_t*>(data.bytes), data.length));
+}
+
+inline RetainPtr<NSData> toNSData(const BufferSource& data)
+{
+    return adoptNS([[NSData alloc] initWithBytes:data.data() length:data.length()]);
+}
+#endif
+
 } // namespace WebCore
+
+#if PLATFORM(COCOA) && defined(__OBJC__)
+using WebCore::toNSData;
+#endif

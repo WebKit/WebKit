@@ -10,17 +10,6 @@ description: As constructor use Function("var x =1; this.y=2;return \"OK\";")
 var FACTORY = Function("var x =1; this.y=2;return \"OK\";");
 var obj = new FACTORY;
 
-//CHECK#1
-if (typeof obj !== "object") {
-  throw new Test262Error('#1: every function instance has a [[Construct]] property');
-}
-
-//CHECK#2
-if (obj.constructor !== FACTORY) {
-  throw new Test262Error('#2: every function instance has a [[Construct]] property');
-}
-
-//CHECK#3
-if (obj.y !== 2) {
-  throw new Test262Error('#3: every function instance has a [[Construct]] property');
-}
+assert.sameValue(typeof obj, "object", 'The value of `typeof obj` is expected to be "object"');
+assert.sameValue(obj.constructor, FACTORY, 'The value of obj.constructor is expected to equal the value of FACTORY');
+assert.sameValue(obj.y, 2, 'The value of obj.y is expected to be 2');

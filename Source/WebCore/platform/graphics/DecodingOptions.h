@@ -27,8 +27,8 @@
 
 #include "IntSize.h"
 #include <optional>
+#include <variant>
 #include <wtf/EnumTraits.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -57,17 +57,17 @@ public:
 
     bool isAuto() const
     {
-        return hasDecodingMode() && WTF::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Auto;
+        return hasDecodingMode() && std::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Auto;
     }
     
     bool isSynchronous() const
     {
-        return hasDecodingMode() && WTF::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Synchronous;
+        return hasDecodingMode() && std::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Synchronous;
     }
 
     bool isAsynchronous() const
     {
-        return hasDecodingMode() && WTF::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Asynchronous;
+        return hasDecodingMode() && std::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Asynchronous;
     }
 
     bool isAsynchronousCompatibleWith(const DecodingOptions& decodingOptions) const
@@ -111,7 +111,7 @@ public:
     std::optional<IntSize> sizeForDrawing() const
     {
         ASSERT(hasSize());
-        return WTF::get<std::optional<IntSize>>(m_decodingModeOrSize);
+        return std::get<std::optional<IntSize>>(m_decodingModeOrSize);
     }
 
     static int maxDimension(const IntSize& size)
@@ -123,7 +123,7 @@ private:
     template<typename T>
     bool has() const
     {
-        return WTF::holds_alternative<T>(m_decodingModeOrSize);
+        return std::holds_alternative<T>(m_decodingModeOrSize);
     }
 
     bool hasDecodingMode() const
@@ -141,7 +141,7 @@ private:
     // - Asynchronous + anySize: DecodingMode::Asynchronous
     // - Asynchronous + intrinsicSize: an empty std::optional<IntSize>>
     // - Asynchronous + sizeForDrawing: a none empty std::optional<IntSize>>
-    using DecodingModeOrSize = Variant<DecodingMode, std::optional<IntSize>>;
+    using DecodingModeOrSize = std::variant<DecodingMode, std::optional<IntSize>>;
     DecodingModeOrSize m_decodingModeOrSize;
 };
 

@@ -26,8 +26,10 @@
 #include "config.h"
 #include "StyleSharingResolver.h"
 
+#include "ElementInlines.h"
 #include "ElementRuleCollector.h"
 #include "FullscreenManager.h"
+#include "HTMLDialogElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "NodeRenderStyle.h"
@@ -55,10 +57,10 @@ struct SharingResolver::Context {
     InsideLink elementLinkState;
 };
 
-SharingResolver::SharingResolver(const Document& document, const ScopeRuleSets& ruleSets, const SelectorFilter& selectorFilter)
+SharingResolver::SharingResolver(const Document& document, const ScopeRuleSets& ruleSets, SelectorMatchingState& selectorMatchingState)
     : m_document(document)
     , m_ruleSets(ruleSets)
-    , m_selectorFilter(selectorFilter)
+    , m_selectorMatchingState(selectorMatchingState)
 {
 }
 
@@ -105,6 +107,9 @@ std::unique_ptr<RenderStyle> SharingResolver::resolve(const Styleable& searchSty
         if (keyframeEffectStack->hasEffectWithImplicitKeyframes())
             return nullptr;
     }
+    // FIXME: Do something smarter here, for example RuleSet based matching like with attribute/sibling selectors.
+    if (Scope::forNode(element).usesHasPseudoClass())
+        return nullptr;
 
     Context context {
         update,
@@ -258,7 +263,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (isControl && !canShareStyleWithControl(downcast<HTMLFormControlElement>(element), downcast<HTMLFormControlElement>(candidateElement)))
         return false;
 
-    if (style->transitions() || style->animations())
+    if (candidateElement.hasKeyframeEffects(PseudoId::None))
         return false;
 
     // Turn off style sharing for elements that can gain layers for reasons outside of the style system.
@@ -277,6 +282,8 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
 
     if (candidateElement.elementData() != element.elementData()) {
         if (candidateElement.attributeWithoutSynchronization(HTMLNames::readonlyAttr) != element.attributeWithoutSynchronization(HTMLNames::readonlyAttr))
+            return false;
+        if (m_document.settings().inertAttributeEnabled() && candidateElement.attributeWithoutSynchronization(HTMLNames::inertAttr) != element.attributeWithoutSynchronization(HTMLNames::inertAttr))
             return false;
         if (candidateElement.isSVGElement()) {
             if (candidateElement.getAttribute(HTMLNames::typeAttr) != element.getAttribute(HTMLNames::typeAttr))
@@ -307,6 +314,9 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
 #endif
 
+    if (&candidateElement == m_document.activeModalDialog() || &element == m_document.activeModalDialog())
+        return false;
+
 #if ENABLE(FULLSCREEN_API)
     if (&candidateElement == m_document.fullscreenManager().currentFullscreenElement() || &element == m_document.fullscreenManager().currentFullscreenElement())
         return false;
@@ -319,8 +329,8 @@ bool SharingResolver::styleSharingCandidateMatchesRuleSet(const StyledElement& e
     if (!ruleSet)
         return false;
 
-    ElementRuleCollector collector(const_cast<StyledElement&>(element), m_ruleSets, &m_selectorFilter);
-    return collector.hasAnyMatchingRules(ruleSet);
+    ElementRuleCollector collector(element, m_ruleSets, &m_selectorMatchingState);
+    return collector.hasAnyMatchingRules(*ruleSet);
 }
 
 bool SharingResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(const Context& context, const StyledElement& sharingCandidate) const

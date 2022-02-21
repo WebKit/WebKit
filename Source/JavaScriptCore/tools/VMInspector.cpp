@@ -402,7 +402,7 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
     --it;
     dataLogF("-----------------------------------------------------------------------------\n");
 
-    size_t numberOfCalleeSaveSlots = codeBlock->calleeSaveSpaceAsVirtualRegisters();
+    size_t numberOfCalleeSaveSlots = CodeBlock::calleeSaveSpaceAsVirtualRegisters(*codeBlock->jitCode()->calleeSaveRegisters());
     const Register* endOfCalleeSaves = it - numberOfCalleeSaveSlots;
 
     end = it - codeBlock->numVars();

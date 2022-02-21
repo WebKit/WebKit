@@ -50,7 +50,7 @@ namespace WebCore {
 
 template<unsigned charactersCount> ALWAYS_INLINE bool equalLiteral(const StringBuilder& s, const char (&characters)[charactersCount])
 {
-    return WTF::equal(s, reinterpret_cast<const LChar*>(characters), charactersCount - 1);
+    return equal(s, reinterpret_cast<const LChar*>(characters), charactersCount - 1);
 }
 
 static void addNewClass(StringBuilder& classes, const StringBuilder& newClass)
@@ -167,7 +167,7 @@ TagState:
         WEBVTT_ADVANCE_TO(StartTagClassState);
     } else if (character == '/') {
         WEBVTT_ADVANCE_TO(EndTagState);
-    } else if (WTF::isASCIIDigit(character)) {
+    } else if (isASCIIDigit(character)) {
         result.append(character);
         WEBVTT_ADVANCE_TO(TimestampTagState);
     } else if (character == '>' || character == kEndOfFileMarker) {

@@ -240,7 +240,7 @@ enum {
 
 + (NSMutableDictionary *)_viewTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
-    static auto viewTypes = makeNeverDestroyed([] {
+    static NeverDestroyed viewTypes = [] {
         auto types = adoptNS([[NSMutableDictionary alloc] init]);
         addTypesFromClass(types.get(), [WebHTMLView class], [WebHTMLView supportedNonImageMIMETypes]);
         addTypesFromClass(types.get(), [WebHTMLView class], [WebHTMLView supportedMediaMIMETypes]);
@@ -257,7 +257,7 @@ enum {
 #endif
         }
         return types;
-    }());
+    }();
     static BOOL addedImageTypes = NO;
     if (!addedImageTypes && !allowImageTypeOmission) {
         addTypesFromClass(viewTypes.get().get(), [WebHTMLView class], [WebHTMLView supportedImageMIMETypes]);
@@ -495,7 +495,7 @@ enum {
             NSRectFill(rect);
 #else
             CGContextRef cgContext = WKGetCurrentGraphicsContext();
-            CGContextSetFillColorWithColor(cgContext, WebCore::cachedCGColor(WebCore::Color::white));
+            CGContextSetFillColorWithColor(cgContext, WebCore::cachedCGColor(WebCore::Color::white).get());
             WKRectFill(cgContext, rect);
 #endif
         }
@@ -507,7 +507,7 @@ enum {
             NSRectFill(rect);
 #else
             CGContextRef cgContext = WKGetCurrentGraphicsContext();
-            CGContextSetFillColorWithColor(cgContext, WebCore::cachedCGColor(WebCore::Color::cyan));
+            CGContextSetFillColorWithColor(cgContext, WebCore::cachedCGColor(WebCore::Color::cyan).get());
             WKRectFill(cgContext, rect);
 #endif
         }
@@ -633,7 +633,7 @@ enum {
 
 - (BOOL)_scrollToBeginningOfDocument
 {
-    if ([self _scrollOverflowInDirection:WebCore::ScrollUp granularity:WebCore::ScrollByDocument])
+    if ([self _scrollOverflowInDirection:WebCore::ScrollUp granularity:WebCore::ScrollGranularity::Document])
         return YES;
     if (![self _isScrollable])
         return NO;
@@ -645,7 +645,7 @@ enum {
 
 - (BOOL)_scrollToEndOfDocument
 {
-    if ([self _scrollOverflowInDirection:WebCore::ScrollDown granularity:WebCore::ScrollByDocument])
+    if ([self _scrollOverflowInDirection:WebCore::ScrollDown granularity:WebCore::ScrollGranularity::Document])
         return YES;
     if (![self _isScrollable])
         return NO;
@@ -742,7 +742,7 @@ enum {
 
 - (BOOL)_pageVertically:(BOOL)up
 {
-    if ([self _scrollOverflowInDirection:up ? WebCore::ScrollUp : WebCore::ScrollDown granularity:WebCore::ScrollByPage])
+    if ([self _scrollOverflowInDirection:up ? WebCore::ScrollUp : WebCore::ScrollDown granularity:WebCore::ScrollGranularity::Page])
         return YES;
     
     if (![self _isScrollable])
@@ -754,7 +754,7 @@ enum {
 
 - (BOOL)_pageHorizontally:(BOOL)left
 {
-    if ([self _scrollOverflowInDirection:left ? WebCore::ScrollLeft : WebCore::ScrollRight granularity:WebCore::ScrollByPage])
+    if ([self _scrollOverflowInDirection:left ? WebCore::ScrollLeft : WebCore::ScrollRight granularity:WebCore::ScrollGranularity::Page])
         return YES;
 
     if (![self _isScrollable])
@@ -776,7 +776,7 @@ enum {
 
 - (BOOL)_scrollLineVertically:(BOOL)up
 {
-    if ([self _scrollOverflowInDirection:up ? WebCore::ScrollUp : WebCore::ScrollDown granularity:WebCore::ScrollByLine])
+    if ([self _scrollOverflowInDirection:up ? WebCore::ScrollUp : WebCore::ScrollDown granularity:WebCore::ScrollGranularity::Line])
         return YES;
 
     if (![self _isScrollable])
@@ -788,7 +788,7 @@ enum {
 
 - (BOOL)_scrollLineHorizontally:(BOOL)left
 {
-    if ([self _scrollOverflowInDirection:left ? WebCore::ScrollLeft : WebCore::ScrollRight granularity:WebCore::ScrollByLine])
+    if ([self _scrollOverflowInDirection:left ? WebCore::ScrollLeft : WebCore::ScrollRight granularity:WebCore::ScrollGranularity::Line])
         return YES;
 
     if (![self _isScrollable])

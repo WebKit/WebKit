@@ -26,8 +26,7 @@
 #pragma once
 
 #include "CascadeLevel.h"
-#include "ElementRuleCollector.h"
-#include "StyleBuilderState.h"
+#include "MatchResult.h"
 #include <bitset>
 
 namespace WebCore {
@@ -46,15 +45,17 @@ public:
         WritingMode writingMode;
     };
 
-    PropertyCascade(const MatchResult&, OptionSet<CascadeLevel>, IncludedProperties, Direction);
-    PropertyCascade(const PropertyCascade&, OptionSet<CascadeLevel>);
+    PropertyCascade(const MatchResult&, CascadeLevel, IncludedProperties, Direction);
+    PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
 
     ~PropertyCascade();
 
     struct Property {
         CSSPropertyID id;
-        CascadeLevel level;
+        CascadeLevel cascadeLevel;
         ScopeOrdinal styleScopeOrdinal;
+        CascadeLayerPriority cascadeLayerPriority;
+        FromStyleAttribute fromStyleAttribute;
         CSSValue* cssValue[3]; // Values for link match states MatchDefault, MatchLink and MatchVisited
     };
 
@@ -69,22 +70,22 @@ public:
 
     Direction direction() const;
 
-    const PropertyCascade* propertyCascadeForRollback(CascadeLevel) const;
-
 private:
-    void buildCascade(OptionSet<CascadeLevel>);
+    void buildCascade();
     bool addNormalMatches(CascadeLevel);
     void addImportantMatches(CascadeLevel);
     bool addMatch(const MatchedProperties&, CascadeLevel, bool important);
 
-    void set(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
-    void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
-    static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
+    void set(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
+    void setDeferred(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
+    static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
 
     Direction resolveDirectionAndWritingMode(Direction inheritedDirection) const;
 
     const MatchResult& m_matchResult;
     const IncludedProperties m_includedProperties;
+    const CascadeLevel m_maximumCascadeLevel;
+    const std::optional<CascadeLayerPriority> m_maximumCascadeLayerPriorityForRollback;
     mutable Direction m_direction;
     mutable bool m_directionIsUnresolved { true };
 
@@ -93,9 +94,6 @@ private:
 
     Vector<Property, 8> m_deferredProperties;
     HashMap<AtomString, Property> m_customProperties;
-
-    mutable std::unique_ptr<const PropertyCascade> m_authorRollbackCascade;
-    mutable std::unique_ptr<const PropertyCascade> m_userRollbackCascade;
 };
 
 inline bool PropertyCascade::hasProperty(CSSPropertyID id) const

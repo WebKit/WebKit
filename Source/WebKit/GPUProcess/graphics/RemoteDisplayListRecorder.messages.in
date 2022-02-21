@@ -1,0 +1,97 @@
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(GPU_PROCESS)
+
+messages -> RemoteDisplayListRecorder NotRefCounted Stream {
+    Save()
+    Restore()
+    Translate(float x, float y)
+    Rotate(float angle)
+    Scale(WebCore::FloatSize scale)
+    SetCTM(WebCore::AffineTransform ctm)
+    ConcatenateCTM(WebCore::AffineTransform ctm)
+    SetInlineFillColor(WebCore::DisplayList::SetInlineFillColor item)
+    SetInlineStrokeColor(WebCore::DisplayList::SetInlineStrokeColor item)
+    SetStrokeThickness(float thickness)
+    SetState(WebCore::DisplayList::SetState item)
+    SetLineCap(enum:uint8_t WebCore::LineCap lineCap)
+    SetLineDash(WebCore::DisplayList::SetLineDash item)
+    SetLineJoin(enum:uint8_t WebCore::LineJoin lineJoin)
+    SetMiterLimit(float limit)
+    ClearShadow()
+    Clip(WebCore::FloatRect rect)
+    ClipOut(WebCore::FloatRect rect)
+    ClipToImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, WebCore::FloatRect destinationRect)
+    ClipOutToPath(WebCore::Path path)
+    ClipPath(WebCore::Path path, enum:uint8_t WebCore::WindRule windRule)
+    DrawGlyphs(WebCore::DisplayList::DrawGlyphs item)
+    DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, IPC::FilterReference filter)
+    DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
+    DrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatSize imageSize, WebCore::FloatRect destRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
+    DrawPattern(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::ImagePaintingOptions options)
+    BeginTransparencyLayer(float opacity)
+    EndTransparencyLayer()
+    DrawRect(WebCore::FloatRect rect, float borderThickness)
+    DrawLine(WebCore::FloatPoint point1, WebCore::FloatPoint point2)
+    DrawLinesForText(WebCore::DisplayList::DrawLinesForText item)
+    DrawDotsForDocumentMarker(WebCore::FloatRect rect, struct WebCore::DocumentMarkerLineStyle style)
+    DrawEllipse(WebCore::FloatRect rect)
+    DrawPath(WebCore::Path path)
+    DrawFocusRingPath(WebCore::Path path, float width, float offset, WebCore::Color color)
+    DrawFocusRingRects(Vector<WebCore::FloatRect> rects, float width, float offset, WebCore::Color color)
+    FillRect(WebCore::FloatRect rect)
+    FillRectWithColor(WebCore::FloatRect rect, WebCore::Color color)
+    FillRectWithGradient(WebCore::DisplayList::FillRectWithGradient item)
+    FillCompositedRect(WebCore::FloatRect rect, WebCore::Color color, enum:uint8_t WebCore::CompositeOperator op, enum:uint8_t WebCore::BlendMode blendMode)
+    FillRoundedRect(WebCore::FloatRoundedRect rect, WebCore::Color color, enum:uint8_t WebCore::BlendMode blendMode)
+    FillRectWithRoundedHole(WebCore::FloatRect rect, WebCore::FloatRoundedRect roundedHoleRect, WebCore::Color color)
+#if ENABLE(INLINE_PATH_DATA)
+    FillLine(struct WebCore::LineData data)
+    FillArc(struct WebCore::ArcData data)
+    FillQuadCurve(struct WebCore::QuadCurveData data)
+    FillBezierCurve(struct WebCore::BezierCurveData data)
+#endif
+    FillPath(WebCore::Path path)
+    FillEllipse(WebCore::FloatRect rect)
+    ConvertToLuminanceMask()
+    TransformToColorSpace(WebCore::DestinationColorSpace colorSpace)
+    PaintFrameForMedia(WebCore::MediaPlayerIdentifier identifier, WebCore::FloatRect destination)
+    StrokeRect(WebCore::FloatRect rect, float lineWidth)
+#if ENABLE(INLINE_PATH_DATA)
+    StrokeLine(struct WebCore::LineData data)
+    StrokeArc(struct WebCore::ArcData data)
+    StrokeQuadCurve(struct WebCore::QuadCurveData data)
+    StrokeBezierCurve(struct WebCore::BezierCurveData data)
+#endif
+    StrokePath(WebCore::Path path)
+    StrokeEllipse(WebCore::FloatRect rect)
+    ClearRect(WebCore::FloatRect rect)
+#if USE(CG)
+    ApplyStrokePattern()
+    ApplyFillPattern()
+#endif
+    ApplyDeviceScaleFactor(float scaleFactor)
+    FlushContext(WebCore::GraphicsContextFlushIdentifier identifier)
+}
+
+#endif // ENABLE(GPU_PROCESS)

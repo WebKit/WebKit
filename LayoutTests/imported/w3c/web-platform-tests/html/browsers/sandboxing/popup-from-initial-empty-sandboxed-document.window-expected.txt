@@ -1,0 +1,3 @@
+
+PASS popup-from-initial-empty-sandboxed-document
+

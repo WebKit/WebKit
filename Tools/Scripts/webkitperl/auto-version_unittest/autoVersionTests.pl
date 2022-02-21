@@ -685,29 +685,40 @@ if ($^O ne 'MSWin32' && $^O ne 'cygwin') {
     exit 0;    
 }
 
+my $toolsPath = $ENV{'WEBKIT_LIBRARIES'};
+my $autoVersionScript = File::Spec->catfile($toolsPath, 'tools', 'scripts', 'auto-version.pl');
+
+# Test can only be run if auto-version.pl exists
+unless (-e $autoVersionScript) {
+    plan skip_all => 'do nothing for Windows builds lacking the auto version script.';
+    exit 0;
+}
+
 my $testCasesCount = scalar(@testCases) * 11; # 11 expected results
 plan(tests => $testCasesCount);
 
 foreach my $testCase (@testCases) {
-    my $toolsPath = $ENV{'WEBKIT_LIBRARIES'};
-    my $autoVersionScript = File::Spec->catfile($toolsPath, 'tools', 'scripts', 'auto-version.pl');
     my $testOutputDir = tempdir(CLEANUP => 1);
-    my $testFlags;
     if ($testCase->{'RC_ProjectSourceVersion'}) {
-        $testFlags = " RC_ProjectSourceVersion=\"$testCase->{'RC_ProjectSourceVersion'}\"";
+        $ENV{RC_ProjectSourceVersion} = $testCase->{'RC_ProjectSourceVersion'};
     } elsif ($testCase->{'RC_PROJECTSOURCEVERSION'}) {
-        $testFlags = " RC_PROJECTSOURCEVERSION=\"$testCase->{'RC_PROJECTSOURCEVERSION'}\"";
+        $ENV{RC_PROJECTSOURCEVERSION} = $testCase->{'RC_PROJECTSOURCEVERSION'};
     } else {
         die ("Missing the RC_ProjectSourceVersion environment variable.\n");
     }
 
     if ($testCase->{'RC_ProjectBuildVersion'}) {
-        $testFlags .= " RC_ProjectBuildVersion=\"$testCase->{'RC_ProjectBuildVersion'}\"";
+        $ENV{RC_ProjectBuildVersion} = $testCase->{'RC_ProjectBuildVersion'};
     } elsif ($testCase->{'RC_PROJECTBUILDVERSION'}) {
-        $testFlags .= " RC_PROJECTBUILDVERSION=\"$testCase->{'RC_PROJECTBUILDVERSION'}\"";
+        $ENV{RC_PROJECTBUILDVERSION} = $testCase->{'RC_PROJECTBUILDVERSION'};
     }
 
-    `$testFlags perl $autoVersionScript $testOutputDir`;
+    `perl $autoVersionScript $testOutputDir`;
+
+    delete $ENV{RC_ProjectSourceVersion};
+    delete $ENV{RC_PROJECTSOURCEVERSION};
+    delete $ENV{RC_ProjectBuildVersion};
+    delete $ENV{RC_PROJECTBUILDVERSION};
 
     my $expectedResults = $testCase->{expectedResults};
 

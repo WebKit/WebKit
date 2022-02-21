@@ -200,3 +200,7 @@ function assert_matrix_approx_equals(actual, expected, epsilon) {
   assert_array_approx_equals(
       actual.toFloat64Array(), expected.toFloat64Array(), epsilon);
 }
+
+function remove_leading_spaces(str) {
+  return str.replace(/^\s+/g, '');
+}

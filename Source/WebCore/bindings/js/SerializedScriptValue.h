@@ -55,7 +55,7 @@ class DetachedOffscreenCanvas;
 class IDBValue;
 class MessagePort;
 class ImageBitmapBacking;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 enum class SerializationReturnCode;
 
 enum class SerializationErrorMode { NonThrowing, Throwing };
@@ -167,7 +167,7 @@ void SerializedScriptValue::encode(Encoder& encoder) const
     if (hasArray) {
         encoder << static_cast<uint64_t>(m_arrayBufferContentsArray->size());
         for (const auto &arrayBufferContents : *m_arrayBufferContentsArray) {
-            encoder << arrayBufferContents.sizeInBytes();
+            encoder << static_cast<uint64_t>(arrayBufferContents.sizeInBytes());
             encoder.encodeFixedLengthData(static_cast<const uint8_t*>(arrayBufferContents.data()), arrayBufferContents.sizeInBytes(), 1);
         }
     }
@@ -199,8 +199,11 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
 
         arrayBufferContentsArray = makeUnique<ArrayBufferContentsArray>();
         while (arrayLength--) {
-            unsigned bufferSize;
+            uint64_t bufferSize;
             if (!decoder.decode(bufferSize))
+                return nullptr;
+            CheckedSize checkedBufferSize = bufferSize;
+            if (checkedBufferSize.hasOverflowed())
                 return nullptr;
             if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
                 return nullptr;
@@ -212,7 +215,7 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
                 Gigacage::free(Gigacage::Primitive, buffer);
                 return nullptr;
             }
-            arrayBufferContentsArray->append({ buffer, bufferSize, ArrayBuffer::primitiveGigacageDestructor() });
+            arrayBufferContentsArray->append({ buffer, checkedBufferSize, ArrayBuffer::primitiveGigacageDestructor() });
         }
     }
 

@@ -1,0 +1,4 @@
+
+FAIL createImageBitmap from a bitmap HTMLImageElement, and drawImage on the created ImageBitmap with colorSpaceConversion: none promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL createImageBitmap from a Blob, and drawImage on the created ImageBitmap with colorSpaceConversion: none promise_test: Unhandled rejection with value: object "InvalidStateError: Cannot decode the data in the argument to createImageBitmap"
+

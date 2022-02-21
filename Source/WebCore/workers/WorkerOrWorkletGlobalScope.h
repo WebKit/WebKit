@@ -45,6 +45,9 @@ class WorkerOrWorkletGlobalScope : public ScriptExecutionContext, public RefCoun
 public:
     virtual ~WorkerOrWorkletGlobalScope();
 
+    using ScriptExecutionContext::weakPtrFactory;
+    using WeakValueType = ScriptExecutionContext::WeakValueType;
+
     bool isClosing() const { return m_isClosing; }
     WorkerOrWorkletThread* workerOrWorkletThread() const { return m_thread; }
 
@@ -54,11 +57,10 @@ public:
     JSC::VM& vm() final;
     WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
 
-    unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
-
     ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }
 
     // ScriptExecutionContext.
+    ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerOrWorkletGlobalScope*>(this); }
     EventLoopTaskGroup& eventLoop() final;
     bool isContextThread() const final;
     void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
@@ -89,9 +91,12 @@ private:
     void derefScriptExecutionContext() final { deref(); }
 
     // EventTarget.
-    ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerOrWorkletGlobalScope*>(this); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+
+#if ENABLE(NOTIFICATIONS)
+    NotificationClient* notificationClient() override { return nullptr; }
+#endif
 
     std::unique_ptr<WorkerOrWorkletScriptController> m_script;
     std::unique_ptr<ScriptModuleLoader> m_moduleLoader;
@@ -99,7 +104,6 @@ private:
     RefPtr<WorkerEventLoop> m_eventLoop;
     std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
     std::unique_ptr<WorkerInspectorController> m_inspectorController;
-    unsigned long m_uniqueIdentifier { 1 };
     bool m_isClosing { false };
 };
 

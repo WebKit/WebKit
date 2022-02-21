@@ -1,0 +1,28 @@
+video::cue(*) {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+video::cue(:future) > * {
+    color: gray;
+}
+
+video::-webkit-media-text-track-display {
+    font: 22px sans-serif; /* Keep in sync with `DEFAULTCAPTIONFONTSIZE`. */
+}
+
+video::-webkit-media-text-track-container b {
+    font-weight: bold;
+}
+
+video::-webkit-media-text-track-container u {
+    text-decoration: underline;
+}
+
+video::-webkit-media-text-track-container i {
+    font-style: italic;
+}
+
+video::-webkit-media-text-track-region {
+    background: rgba(0, 0, 0, 0.8);
+    color: rgba(255, 255, 255, 1);
+}

@@ -249,7 +249,7 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
     result.allowUserInstalledFonts = allowUserInstalledFonts;
 
     auto weight = description.weight();
-    if (FontCache::singleton().shouldMockBoldSystemFontForAccessibility())
+    if (FontCache::forCurrentThread().shouldMockBoldSystemFontForAccessibility())
         weight = weight + FontSelectionValue(200);
 
     result.weight = mapWeight(weight);

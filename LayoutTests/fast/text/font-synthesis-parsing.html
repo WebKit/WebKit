@@ -16,8 +16,8 @@ shouldBeTrue("CSS.supports('font-synthesis', 'small-caps')");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).fontSynthesis", "weight");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).fontSynthesis", "small-caps");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).fontSynthesis", "none");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).fontSynthesis", "style weight small-caps");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).fontSynthesis", "style weight small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).fontSynthesis", "weight style small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).fontSynthesis", "weight style small-caps");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test6')).fontSynthesis", "style small-caps");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test7')).fontSynthesis", "style small-caps");
 </script>

@@ -34,18 +34,11 @@
 #include "ContentExtensionRule.h"
 #include "ContentExtensionsBackend.h"
 #include "ContentExtensionsDebugging.h"
-#include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/JSGlobalObject.h>
-#include <JavaScriptCore/JSONObject.h>
-#include <JavaScriptCore/VM.h>
 #include <wtf/Expected.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
-
-namespace WebCore {
-using namespace JSC;
-
-namespace ContentExtensions {
+namespace WebCore::ContentExtensions {
     
 static bool containsOnlyASCIIWithNoUppercase(const String& domain)
 {
@@ -56,67 +49,64 @@ static bool containsOnlyASCIIWithNoUppercase(const String& domain)
     return true;
 }
     
-static Expected<Vector<String>, std::error_code> getStringList(JSGlobalObject& lexicalGlobalObject, const JSObject* arrayObject)
+static Expected<Vector<String>, std::error_code> getStringList(const JSON::Array& array)
 {
-    static const ContentExtensionError error = ContentExtensionError::JSONInvalidConditionList;
-    VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!arrayObject || !isJSArray(arrayObject))
-        return makeUnexpected(error);
-    const JSArray* array = jsCast<const JSArray*>(arrayObject);
-    
     Vector<String> strings;
-    unsigned length = array->length();
-    for (unsigned i = 0; i < length; ++i) {
-        const JSValue value = array->getIndex(&lexicalGlobalObject, i);
-        if (scope.exception() || !value.isString())
-            return makeUnexpected(error);
-        
-        const String& string = asString(value)->value(&lexicalGlobalObject);
+    strings.reserveInitialCapacity(array.length());
+    for (auto& value : array) {
+        String string = value->asString();
         if (string.isEmpty())
-            return makeUnexpected(error);
-        strings.append(string);
+            return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
+        strings.uncheckedAppend(string);
     }
     return strings;
 }
 
-static Expected<Vector<String>, std::error_code> getDomainList(JSGlobalObject& lexicalGlobalObject, const JSObject* arrayObject)
+static Expected<Vector<String>, std::error_code> getDomainList(const JSON::Array& arrayObject)
 {
-    auto strings = getStringList(lexicalGlobalObject, arrayObject);
-    if (!strings.has_value())
-        return strings;
-    for (auto& domain : strings.value()) {
+    auto domains = getStringList(arrayObject);
+    if (!domains)
+        return domains;
+    
+    Vector<String> regexes;
+    regexes.reserveInitialCapacity(domains->size());
+    for (auto& domain : *domains) {
         // Domains should be punycode encoded lower case.
         if (!containsOnlyASCIIWithNoUppercase(domain))
             return makeUnexpected(ContentExtensionError::JSONDomainNotLowerCaseASCII);
+
+        bool allowSubdomains = false;
+        if (domain.startsWith('*')) {
+            allowSubdomains = true;
+            domain = domain.substring(1);
+        }
+
+        std::array<std::pair<UChar, const char*>, 9> escapeTable { {
+            { '\\', "\\\\" },
+            { '{', "\\{" },
+            { '}', "\\}" },
+            { '[', "\\[" },
+            { '[', "\\[" },
+            { '.', "\\." },
+            { '?', "\\?" },
+            { '*', "\\*" },
+            { '$', "\\$" }
+        } };
+        for (auto& pair : escapeTable)
+            domain = domain.replace(pair.first, pair.second);
+
+        const char* protocolRegex = "[a-z][a-z+.-]*:\\/\\/";
+        const char* allowSubdomainsRegex = "(.*\\.)*";
+        regexes.uncheckedAppend(makeString(protocolRegex, allowSubdomains ? allowSubdomainsRegex : "", domain, "[:/]"));
     }
-    return strings;
+    return regexes;
 }
 
 template<typename T>
-static std::error_code getTypeFlags(JSGlobalObject& lexicalGlobalObject, const JSValue& typeValue, ResourceFlags& flags, std::optional<OptionSet<T>> (*stringToType)(StringView))
+static std::error_code getTypeFlags(const JSON::Array& array, ResourceFlags& flags, std::optional<OptionSet<T>> (*stringToType)(StringView))
 {
-    VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!typeValue.isObject())
-        return { };
-
-    const JSObject* object = typeValue.toObject(&lexicalGlobalObject);
-    scope.assertNoException();
-    if (!isJSArray(object))
-        return ContentExtensionError::JSONInvalidTriggerFlagsArray;
-
-    const JSArray* array = jsCast<const JSArray*>(object);
-    
-    unsigned length = array->length();
-    for (unsigned i = 0; i < length; ++i) {
-        const JSValue value = array->getIndex(&lexicalGlobalObject, i);
-        if (scope.exception() || !value)
-            return ContentExtensionError::JSONInvalidObjectInTriggerFlagsArray;
-        
-        String name = value.toWTFString(&lexicalGlobalObject);
+    for (auto& value : array) {
+        String name = value->asString();
         auto type = stringToType(StringView(name));
         if (!type)
             return ContentExtensionError::JSONInvalidStringInTriggerFlagsArray;
@@ -127,112 +117,84 @@ static std::error_code getTypeFlags(JSGlobalObject& lexicalGlobalObject, const J
     return { };
 }
     
-static Expected<Trigger, std::error_code> loadTrigger(JSGlobalObject& lexicalGlobalObject, const JSObject& ruleObject)
+static Expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleObject)
 {
-    VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const JSValue triggerObject = ruleObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "trigger"));
-    if (!triggerObject || scope.exception() || !triggerObject.isObject())
+    auto triggerObject = ruleObject.getObject("trigger");
+    if (!triggerObject)
         return makeUnexpected(ContentExtensionError::JSONInvalidTrigger);
-    
-    const JSValue urlFilterObject = triggerObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "url-filter"));
-    if (!urlFilterObject || scope.exception() || !urlFilterObject.isString())
-        return makeUnexpected(ContentExtensionError::JSONInvalidURLFilterInTrigger);
 
-    String urlFilter = asString(urlFilterObject)->value(&lexicalGlobalObject);
+    String urlFilter = triggerObject->getString("url-filter");
     if (urlFilter.isEmpty())
         return makeUnexpected(ContentExtensionError::JSONInvalidURLFilterInTrigger);
 
     Trigger trigger;
     trigger.urlFilter = urlFilter;
 
-    const JSValue urlFilterCaseValue = triggerObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "url-filter-is-case-sensitive"));
-    if (urlFilterCaseValue && !scope.exception() && urlFilterCaseValue.isBoolean())
-        trigger.urlFilterIsCaseSensitive = urlFilterCaseValue.toBoolean(&lexicalGlobalObject);
+    if (std::optional<bool> urlFilterCaseSensitiveValue = triggerObject->getBoolean("url-filter-is-case-sensitive"))
+        trigger.urlFilterIsCaseSensitive = *urlFilterCaseSensitiveValue;
 
-    const JSValue topURLFilterCaseValue = triggerObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "top-url-filter-is-case-sensitive"));
-    if (topURLFilterCaseValue && !scope.exception() && topURLFilterCaseValue.isBoolean())
-        trigger.topURLConditionIsCaseSensitive = topURLFilterCaseValue.toBoolean(&lexicalGlobalObject);
+    if (std::optional<bool> topURLFilterCaseSensitiveValue = triggerObject->getBoolean("top-url-filter-is-case-sensitive"))
+        trigger.topURLFilterIsCaseSensitive = *topURLFilterCaseSensitiveValue;
 
-    const JSValue resourceTypeValue = triggerObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "resource-type"));
-    if (!scope.exception() && resourceTypeValue.isObject()) {
-        auto typeFlagsError = getTypeFlags(lexicalGlobalObject, resourceTypeValue, trigger.flags, readResourceType);
-        if (typeFlagsError)
-            return makeUnexpected(typeFlagsError);
-    } else if (!resourceTypeValue.isUndefined())
-        return makeUnexpected(ContentExtensionError::JSONInvalidTriggerFlagsArray);
+    if (std::optional<bool> frameURLFilterCaseSensitiveValue = triggerObject->getBoolean("frame-url-filter-is-case-sensitive"))
+        trigger.frameURLFilterIsCaseSensitive = *frameURLFilterCaseSensitiveValue;
 
-    const JSValue loadTypeValue = triggerObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "load-type"));
-    if (!scope.exception() && loadTypeValue.isObject()) {
-        auto typeFlagsError = getTypeFlags(lexicalGlobalObject, loadTypeValue, trigger.flags, readLoadType);
-        if (typeFlagsError)
-            return makeUnexpected(typeFlagsError);
-    } else if (!loadTypeValue.isUndefined())
-        return makeUnexpected(ContentExtensionError::JSONInvalidTriggerFlagsArray);
+    if (auto resourceTypeValue = triggerObject->getValue("resource-type")) {
+        auto resourceTypeArray = resourceTypeValue->asArray();
+        if (!resourceTypeArray)
+            return makeUnexpected(ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        if (auto error = getTypeFlags(*resourceTypeArray, trigger.flags, readResourceType))
+            return makeUnexpected(error);
+    }
 
-    const JSValue loadContextValue = triggerObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "load-context"));
-    if (!scope.exception() && loadContextValue.isObject()) {
-        auto typeFlagsError = getTypeFlags(lexicalGlobalObject, loadContextValue, trigger.flags, readLoadContext);
-        if (typeFlagsError)
-            return makeUnexpected(typeFlagsError);
-    } else if (!loadContextValue.isUndefined())
-        return makeUnexpected(ContentExtensionError::JSONInvalidTriggerFlagsArray);
+    if (auto loadTypeValue = triggerObject->getValue("load-type")) {
+        auto loadTypeArray = loadTypeValue->asArray();
+        if (!loadTypeArray)
+            return makeUnexpected(ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        if (auto error = getTypeFlags(*loadTypeArray, trigger.flags, readLoadType))
+            return makeUnexpected(error);
+    }
 
-    const JSValue ifDomainValue = triggerObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "if-domain"));
-    if (!scope.exception() && ifDomainValue.isObject()) {
-        auto ifDomain = getDomainList(lexicalGlobalObject, asObject(ifDomainValue));
-        if (!ifDomain.has_value())
-            return makeUnexpected(ifDomain.error());
-        trigger.conditions = WTFMove(ifDomain.value());
-        if (trigger.conditions.isEmpty())
-            return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
-        ASSERT(trigger.conditionType == Trigger::ConditionType::None);
-        trigger.conditionType = Trigger::ConditionType::IfDomain;
-    } else if (!ifDomainValue.isUndefined())
-        return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
+    if (auto loadContextValue = triggerObject->getValue("load-context")) {
+        auto loadContextArray = loadContextValue->asArray();
+        if (!loadContextArray)
+            return makeUnexpected(ContentExtensionError::JSONInvalidTriggerFlagsArray);
+        if (auto error = getTypeFlags(*loadContextArray, trigger.flags, readLoadContext))
+            return makeUnexpected(error);
+    }
 
-    const JSValue unlessDomainValue = triggerObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "unless-domain"));
-    if (!scope.exception() && unlessDomainValue.isObject()) {
-        if (trigger.conditionType != Trigger::ConditionType::None)
-            return makeUnexpected(ContentExtensionError::JSONMultipleConditions);
-        auto unlessDomain = getDomainList(lexicalGlobalObject, asObject(unlessDomainValue));
-        if (!unlessDomain.has_value())
-            return makeUnexpected(unlessDomain.error());
-        trigger.conditions = WTFMove(unlessDomain.value());
-        if (trigger.conditions.isEmpty())
-            return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
-        trigger.conditionType = Trigger::ConditionType::UnlessDomain;
-    } else if (!unlessDomainValue.isUndefined())
-        return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
+    auto checkCondition = [&] (ASCIILiteral key, Expected<Vector<String>, std::error_code> (*listReader)(const JSON::Array&), ActionCondition actionCondition) -> std::error_code {
+        if (auto value = triggerObject->getValue(key)) {
+            if (trigger.flags & ActionConditionMask)
+                return ContentExtensionError::JSONMultipleConditions;
+            auto array = value->asArray();
+            if (!array)
+                return ContentExtensionError::JSONInvalidConditionList;
+            auto list = listReader(*array);
+            if (!list.has_value())
+                return list.error();
+            trigger.conditions = WTFMove(list.value());
+            if (trigger.conditions.isEmpty())
+                return ContentExtensionError::JSONInvalidConditionList;
+            trigger.flags |= static_cast<ResourceFlags>(actionCondition);
+        }
+        return { };
+    };
 
-    const JSValue ifTopURLValue = triggerObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "if-top-url"));
-    if (!scope.exception() && ifTopURLValue.isObject()) {
-        if (trigger.conditionType != Trigger::ConditionType::None)
-            return makeUnexpected(ContentExtensionError::JSONMultipleConditions);
-        auto ifTopURL = getStringList(lexicalGlobalObject, asObject(ifTopURLValue));
-        if (!ifTopURL.has_value())
-            return makeUnexpected(ifTopURL.error());
-        trigger.conditions = WTFMove(ifTopURL.value());
-        if (trigger.conditions.isEmpty())
-            return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
-        trigger.conditionType = Trigger::ConditionType::IfTopURL;
-    } else if (!ifTopURLValue.isUndefined())
-        return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
+    if (auto error = checkCondition("if-domain"_s, getDomainList, ActionCondition::IfTopURL))
+        return makeUnexpected(error);
 
-    const JSValue unlessTopURLValue = triggerObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "unless-top-url"));
-    if (!scope.exception() && unlessTopURLValue.isObject()) {
-        if (trigger.conditionType != Trigger::ConditionType::None)
-            return makeUnexpected(ContentExtensionError::JSONMultipleConditions);
-        auto unlessTopURL = getStringList(lexicalGlobalObject, asObject(unlessTopURLValue));
-        if (!unlessTopURL.has_value())
-            return makeUnexpected(unlessTopURL.error());
-        trigger.conditions = WTFMove(unlessTopURL.value());
-        if (trigger.conditions.isEmpty())
-            return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
-        trigger.conditionType = Trigger::ConditionType::UnlessTopURL;
-    } else if (!unlessTopURLValue.isUndefined())
-        return makeUnexpected(ContentExtensionError::JSONInvalidConditionList);
+    if (auto error = checkCondition("unless-domain"_s, getDomainList, ActionCondition::UnlessTopURL))
+        return makeUnexpected(error);
+
+    if (auto error = checkCondition("if-top-url"_s, getStringList, ActionCondition::IfTopURL))
+        return makeUnexpected(error);
+
+    if (auto error = checkCondition("unless-top-url"_s, getStringList, ActionCondition::UnlessTopURL))
+        return makeUnexpected(error);
+
+    if (auto error = checkCondition("if-frame-url"_s, getStringList, ActionCondition::IfFrameURL))
+        return makeUnexpected(error);
 
     return trigger;
 }
@@ -247,109 +209,94 @@ bool isValidCSSSelector(const String& selector)
     return !!parser.parseSelector(selector);
 }
 
-static Expected<std::optional<Action>, std::error_code> loadAction(JSGlobalObject& lexicalGlobalObject, const JSObject& ruleObject)
+static std::optional<Expected<Action, std::error_code>> loadAction(const JSON::Object& ruleObject)
 {
-    VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    const JSValue actionObject = ruleObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "action"));
-    if (scope.exception() || !actionObject.isObject())
+    auto actionObject = ruleObject.getObject("action");
+    if (!actionObject)
         return makeUnexpected(ContentExtensionError::JSONInvalidAction);
 
-    const JSValue typeObject = actionObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "type"));
-    if (scope.exception() || !typeObject.isString())
-        return makeUnexpected(ContentExtensionError::JSONInvalidActionType);
-
-    String actionType = asString(typeObject)->value(&lexicalGlobalObject);
+    String actionType = actionObject->getString("type");
 
     if (actionType == "block")
-        return { Action(ActionType::BlockLoad) };
+        return Action { BlockLoadAction() };
     if (actionType == "ignore-previous-rules")
-        return { Action(ActionType::IgnorePreviousRules) };
+        return Action { IgnorePreviousRulesAction() };
     if (actionType == "block-cookies")
-        return { Action(ActionType::BlockCookies) };
+        return Action { BlockCookiesAction() };
     if (actionType == "css-display-none") {
-        JSValue selector = actionObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "selector"));
-        if (scope.exception() || !selector.isString())
+        String selectorString = actionObject->getString("selector");
+        if (!selectorString)
             return makeUnexpected(ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
-
-        String selectorString = asString(selector)->value(&lexicalGlobalObject);
-        if (!isValidCSSSelector(selectorString)) {
-            // Skip rules with invalid selectors to be backwards-compatible.
-            return { std::nullopt };
-        }
-        return { Action(ActionType::CSSDisplayNoneSelector, selectorString) };
+        if (!isValidCSSSelector(selectorString))
+            return std::nullopt; // Skip rules with invalid selectors to be backwards-compatible.
+        return Action { CSSDisplayNoneSelectorAction { { WTFMove(selectorString) } } };
     }
     if (actionType == "make-https")
-        return { Action(ActionType::MakeHTTPS) };
+        return Action { MakeHTTPSAction() };
     if (actionType == "notify") {
-        JSValue notification = actionObject.get(&lexicalGlobalObject, Identifier::fromString(vm, "notification"));
-        if (scope.exception() || !notification.isString())
+        String notification = actionObject->getString("notification");
+        if (!notification)
             return makeUnexpected(ContentExtensionError::JSONInvalidNotification);
-        return { Action(ActionType::Notify, asString(notification)->value(&lexicalGlobalObject)) };
+        return Action { NotifyAction { { WTFMove(notification) } } };
+    }
+    if (actionType == "redirect") {
+        auto action = RedirectAction::parse(*actionObject);
+        if (!action)
+            return makeUnexpected(action.error());
+        return Action { RedirectAction { WTFMove(*action) } };
+    }
+    if (actionType == "modify-headers") {
+        auto action = ModifyHeadersAction::parse(*actionObject);
+        if (!action)
+            return makeUnexpected(action.error());
+        return Action { WTFMove(*action) };
     }
     return makeUnexpected(ContentExtensionError::JSONInvalidActionType);
 }
 
-static Expected<std::optional<ContentExtensionRule>, std::error_code> loadRule(JSGlobalObject& lexicalGlobalObject, const JSObject& ruleObject)
+static std::optional<Expected<ContentExtensionRule, std::error_code>> loadRule(const JSON::Object& ruleObject)
 {
-    auto trigger = loadTrigger(lexicalGlobalObject, ruleObject);
+    auto trigger = loadTrigger(ruleObject);
     if (!trigger.has_value())
         return makeUnexpected(trigger.error());
 
-    auto action = loadAction(lexicalGlobalObject, ruleObject);
-    if (!action.has_value())
-        return makeUnexpected(action.error());
+    auto action = loadAction(ruleObject);
+    if (!action)
+        return std::nullopt;
+    if (!action->has_value())
+        return makeUnexpected(action->error());
 
-    if (action.value())
-        return {{{ WTFMove(trigger.value()), WTFMove(action.value().value()) }}};
-
-    return { std::nullopt };
+    return { { { WTFMove(trigger.value()), WTFMove(action->value()) } } };
 }
 
-static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(JSGlobalObject& lexicalGlobalObject, const String& ruleJSON)
+static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(const String& ruleJSON)
 {
-    VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto decodedRules = JSON::Value::parseJSON(ruleJSON);
 
-    // FIXME: JSONParse should require callbacks instead of an ExecState.
-    const JSValue decodedRules = JSONParse(&lexicalGlobalObject, ruleJSON);
-
-    if (scope.exception() || !decodedRules)
+    if (!decodedRules)
         return makeUnexpected(ContentExtensionError::JSONInvalid);
 
-    if (!decodedRules.isObject())
-        return makeUnexpected(ContentExtensionError::JSONTopLevelStructureNotAnObject);
-
-    const JSObject* topLevelObject = decodedRules.toObject(&lexicalGlobalObject);
-    if (!topLevelObject || scope.exception())
-        return makeUnexpected(ContentExtensionError::JSONTopLevelStructureNotAnObject);
-    
-    if (!isJSArray(topLevelObject))
+    auto topLevelArray = decodedRules->asArray();
+    if (!topLevelArray)
         return makeUnexpected(ContentExtensionError::JSONTopLevelStructureNotAnArray);
-
-    const JSArray* topLevelArray = jsCast<const JSArray*>(topLevelObject);
 
     Vector<ContentExtensionRule> ruleList;
 
-    unsigned length = topLevelArray->length();
-    const unsigned maxRuleCount = 150000;
-    if (length > maxRuleCount)
+    constexpr size_t maxRuleCount = 150000;
+    if (topLevelArray->length() > maxRuleCount)
         return makeUnexpected(ContentExtensionError::JSONTooManyRules);
-    for (unsigned i = 0; i < length; ++i) {
-        const JSValue value = topLevelArray->getIndex(&lexicalGlobalObject, i);
-        if (scope.exception() || !value)
-            return makeUnexpected(ContentExtensionError::JSONInvalidObjectInTopLevelArray);
-
-        const JSObject* ruleObject = value.toObject(&lexicalGlobalObject);
-        if (!ruleObject || scope.exception())
+    ruleList.reserveInitialCapacity(topLevelArray->length());
+    for (auto& value : *topLevelArray) {
+        auto ruleObject = value->asObject();
+        if (!ruleObject)
             return makeUnexpected(ContentExtensionError::JSONInvalidRule);
 
-        auto rule = loadRule(lexicalGlobalObject, *ruleObject);
-        if (!rule.has_value())
-            return makeUnexpected(rule.error());
-        if (rule.value())
-            ruleList.append(WTFMove(*rule.value()));
+        auto rule = loadRule(*ruleObject);
+        if (!rule)
+            continue;
+        if (!rule->has_value())
+            return makeUnexpected(rule->error());
+        ruleList.uncheckedAppend(WTFMove(rule->value()));
     }
 
     return ruleList;
@@ -360,15 +307,8 @@ Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const Stri
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime loadExtensionStartTime = MonotonicTime::now();
 #endif
-    RefPtr<VM> vm = VM::create();
 
-    JSLockHolder locker(vm.get());
-    JSGlobalObject* globalObject = JSGlobalObject::create(*vm, JSGlobalObject::createStructure(*vm, jsNull()));
-
-    JSGlobalObject* lexicalGlobalObject = globalObject;
-    auto ruleList = loadEncodedRules(*lexicalGlobalObject, ruleJSON);
-
-    vm = nullptr;
+    auto ruleList = loadEncodedRules(ruleJSON);
 
     if (!ruleList.has_value())
         return makeUnexpected(ruleList.error());
@@ -384,7 +324,6 @@ Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const Stri
     return ruleList;
 }
 
-} // namespace ContentExtensions
-} // namespace WebCore
+} // namespace WebCore::ContentExtensions
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

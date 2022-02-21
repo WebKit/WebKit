@@ -34,10 +34,10 @@ class URL;
 
 namespace WebCore {
 #if USE(SOUP2)
-WTF::URL soupURIToURL(SoupURI*);
-GUniquePtr<SoupURI> urlToSoupURI(const WTF::URL&);
+URL soupURIToURL(SoupURI*);
+GUniquePtr<SoupURI> urlToSoupURI(const URL&);
 #else
-WTF::URL soupURIToURL(GUri*);
-GRefPtr<GUri> urlToSoupURI(const WTF::URL&);
+URL soupURIToURL(GUri*);
+GRefPtr<GUri> urlToSoupURI(const URL&);
 #endif
 } // namespace WebCore

@@ -28,9 +28,13 @@
 #if ENABLE(WEBGL)
 #include "GraphicsContextGLOpenGLManager.h"
 
-#include "GraphicsContextGLOpenGL.h"
 #include "Logging.h"
 
+#if USE(ANGLE)
+#include "GraphicsContextGLANGLE.h"
+#else
+#include "GraphicsContextGLOpenGL.h"
+#endif
 namespace WebCore {
 
 GraphicsContextGLOpenGLManager& GraphicsContextGLOpenGLManager::sharedManager()
@@ -39,24 +43,7 @@ GraphicsContextGLOpenGLManager& GraphicsContextGLOpenGLManager::sharedManager()
     return s_manager;
 }
 
-#if PLATFORM(MAC)
-void GraphicsContextGLOpenGLManager::displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags, void*)
-{
-    LOG(WebGL, "GraphicsContextGLOpenGLManager::displayWasReconfigured");
-    if (flags & kCGDisplaySetModeFlag)
-        GraphicsContextGLOpenGLManager::sharedManager().displayWasReconfigured();
-}
-#endif
-
-#if PLATFORM(COCOA)
-void GraphicsContextGLOpenGLManager::displayWasReconfigured()
-{
-    for (const auto& context : m_contexts)
-        context->displayWasReconfigured();
-}
-#endif
-
-void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLOpenGL* context)
+void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLType* context)
 {
     ASSERT(context);
     if (!context)
@@ -66,7 +53,7 @@ void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLOpenGL* context
     m_contexts.append(context);
 }
 
-void GraphicsContextGLOpenGLManager::removeContext(GraphicsContextGLOpenGL* context)
+void GraphicsContextGLOpenGLManager::removeContext(GraphicsContextGLType* context)
 {
     if (!m_contexts.contains(context))
         return;

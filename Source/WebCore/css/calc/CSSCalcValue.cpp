@@ -66,15 +66,9 @@ static inline RefPtr<CSSCalcOperationNode> createBlendHalf(const Length& length,
 
 static Vector<Ref<CSSCalcExpressionNode>> createCSS(const Vector<std::unique_ptr<CalcExpressionNode>>& nodes, const RenderStyle& style)
 {
-    Vector<Ref<CSSCalcExpressionNode>> values;
-    values.reserveInitialCapacity(nodes.size());
-    for (auto& node : nodes) {
-        auto cssNode = createCSS(*node, style);
-        if (!cssNode)
-            continue;
-        values.uncheckedAppend(cssNode.releaseNonNull());
-    }
-    return values;
+    return WTF::compactMap(nodes, [&](auto& node) -> RefPtr<CSSCalcExpressionNode> {
+        return createCSS(*node, style);
+    });
 }
 
 static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, const RenderStyle& style)
@@ -164,6 +158,14 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
 
             return CSSCalcOperationNode::createProduct(createCSS(operationChildren, style));
         }
+        case CalcOperator::Cos:
+        case CalcOperator::Tan:
+        case CalcOperator::Sin: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 1)
+                return nullptr;
+            return CSSCalcOperationNode::createTrig(op, WTFMove(children));
+        }
         case CalcOperator::Min:
         case CalcOperator::Max:
         case CalcOperator::Clamp: {
@@ -171,6 +173,66 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
             if (children.isEmpty())
                 return nullptr;
             return CSSCalcOperationNode::createMinOrMaxOrClamp(op, WTFMove(children), operationNode.destinationCategory());
+        }
+        case CalcOperator::Log: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 1 && children.size() != 2)
+                return nullptr;
+            return CSSCalcOperationNode::createLog(WTFMove(children));
+        }
+        case CalcOperator::Exp: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 1)
+                return nullptr;
+            return CSSCalcOperationNode::createExp(WTFMove(children));
+        }
+        case CalcOperator::Asin:
+        case CalcOperator::Acos:
+        case CalcOperator::Atan: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 1)
+                return nullptr;
+            return CSSCalcOperationNode::createInverseTrig(op, WTFMove(children));
+        }
+        case CalcOperator::Atan2: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 2)
+                return nullptr;
+            return CSSCalcOperationNode::createAtan2(WTFMove(children));
+        }
+        case CalcOperator::Sign:
+        case CalcOperator::Abs: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 1)
+                return nullptr;
+            return CSSCalcOperationNode::createSign(op, WTFMove(children));
+        }
+        case CalcOperator::Sqrt:
+        case CalcOperator::Pow: {
+            auto children = createCSS(operationChildren, style);
+            if (children.isEmpty())
+                return nullptr;
+            return CSSCalcOperationNode::createPowOrSqrt(op, WTFMove(children));
+        }
+        case CalcOperator::Hypot: {
+            auto children = createCSS(operationChildren, style);
+            if (children.isEmpty())
+                return nullptr;
+            return CSSCalcOperationNode::createHypot(WTFMove(children));
+        }
+        case CalcOperator::Mod:
+        case CalcOperator::Rem:
+        case CalcOperator::Round: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 2)
+                return nullptr;
+            return CSSCalcOperationNode::createStep(op, WTFMove(children));
+        }
+        case CalcOperator::Nearest:
+        case CalcOperator::ToZero:
+        case CalcOperator::Up:
+        case CalcOperator::Down: {
+            return CSSCalcOperationNode::createRoundConstant(op);
         }
         }
         return nullptr;
@@ -196,6 +258,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const Length& length, const Rende
     case LengthType::Calculated:
         return createCSS(length.calculationValue().expression(), style);
     case LengthType::Auto:
+    case LengthType::Content:
     case LengthType::Intrinsic:
     case LengthType::MinIntrinsic:
     case LengthType::MinContent:
@@ -283,6 +346,23 @@ bool CSSCalcValue::isCalcFunction(CSSValueID functionId)
     case CSSValueMin:
     case CSSValueMax:
     case CSSValueClamp:
+    case CSSValuePow:
+    case CSSValueSqrt:
+    case CSSValueHypot:
+    case CSSValueSin:
+    case CSSValueCos:
+    case CSSValueTan:
+    case CSSValueExp:
+    case CSSValueLog:
+    case CSSValueAsin:
+    case CSSValueAcos:
+    case CSSValueAtan:
+    case CSSValueAtan2:
+    case CSSValueAbs:
+    case CSSValueSign:
+    case CSSValueRound:
+    case CSSValueMod:
+    case CSSValueRem:
         return true;
     default:
         return false;
@@ -304,10 +384,10 @@ void CSSCalcValue::dump(TextStream& ts) const
     ts << ")\n";
 }
 
-RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTokenRange& tokens, CalculationCategory destinationCategory, ValueRange range, const CSSCalcSymbolTable& symbolTable)
+RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTokenRange& tokens, CalculationCategory destinationCategory, ValueRange range, const CSSCalcSymbolTable& symbolTable, bool allowsNegativePercentage)
 {
     CSSCalcExpressionNodeParser parser(destinationCategory, symbolTable);
-    auto expression = parser.parseCalc(tokens, function);
+    auto expression = parser.parseCalc(tokens, function, allowsNegativePercentage);
     if (!expression)
         return nullptr;
     auto result = adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != ValueRange::All));

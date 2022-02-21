@@ -1,14 +1,13 @@
-import base64
 import imghdr
 import struct
-
-from six import ensure_binary, text_type
+from base64 import decodebytes
 
 from webdriver import Element, NoSuchAlertException, WebDriverException
 
 
 # WebDriver specification ID: dfn-error-response-data
 errors = {
+    "detached shadow root": 404,
     "element click intercepted": 400,
     "element not selectable": 400,
     "element not interactable": 400,
@@ -25,6 +24,7 @@ errors = {
     "no such cookie": 404,
     "no such element": 404,
     "no such frame": 404,
+    "no such shadow root": 404,
     "no such window": 404,
     "script timeout": 500,
     "session not created": 500,
@@ -52,8 +52,8 @@ def assert_error(response, error_code):
     assert response.status == errors[error_code]
     assert "value" in response.body
     assert response.body["value"]["error"] == error_code
-    assert isinstance(response.body["value"]["message"], text_type)
-    assert isinstance(response.body["value"]["stacktrace"], text_type)
+    assert isinstance(response.body["value"]["message"], str)
+    assert isinstance(response.body["value"]["stacktrace"], str)
     assert_response_headers(response.headers)
 
 
@@ -214,6 +214,6 @@ def assert_move_to_coordinates(point, target, events):
 
 def assert_png(screenshot):
     """Test that screenshot is a Base64 encoded PNG file."""
-    image = base64.decodestring(ensure_binary(screenshot))
+    image = decodebytes(screenshot.encode())
     mime_type = imghdr.what("", image)
     assert mime_type == "png", "Expected image to be PNG, but it was {}".format(mime_type)

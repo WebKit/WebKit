@@ -57,7 +57,7 @@ layout(push_constant) uniform PushConstants {
     bool rotateXY;
 } params;
 
-layout (set = 0, binding = 0) buffer dest
+layout (set = 0, binding = 0) buffer dst
 {
     // Note: every invocation handles 4 stencil value and output one value here.
     uint destData[];

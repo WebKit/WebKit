@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <div id="div-empty" tabindex="0"></div>
+    <div id="div-empty-with-aria-label" tabindex="0" aria-label="div label"></div>
+    <div id="div-content" tabindex="0">Some text</div>
+    <div id="div-content-with-aria-label" tabindex="0" aria-label="div label">Some text</div>
+
+    <div id="group-empty" tabindex="0" role="group"></div>
+    <div id="group-empty-with-aria-label" tabindex="0" role="group" aria-label="group label"></div>
+    <div id="group-content" tabindex="0" role="group">Some text</div>
+
+    <blockquote id="blockquote-empty" tabindex="0"></blockquote>
+    <blockquote id="blockquote-empty-with-aria-label" tabindex="0" aria-label="blockquote label"></blockquote>
+    <blockquote id="blockquote-content" tabindex="0">To be, or not to be</blockquote>
+
+    <footer id="footer-empty" tabindex="0"></footer>
+    <footer id="footer-empty-with-aria-label" tabindex="0" aria-label="footer label"></footer>
+
+    <div id="radiogroup-empty" tabindex="0" role="radiogroup"></div>
+    <div id="radiogroup-empty-with-aria-label" tabindex="0" role="radiogroup" aria-label="radiogroup label"></div>
+
+    <p id="paragraph-empty" tabindex="0"></p>
+    <p id="paragraph-empty-with-aria-label" tabindex="0" aria-label="paragraph label"></p>
+    <p id="paragraph-content" tabindex="0">Hello world</p>
+    <p id="paragraph-content-with-aria-label" tabindex="0" aria-label="paragraph label">Hello world</p>
+</div>
+
+<script>
+    description("This test ensures keyboard-focusable leaf nodes with AXLabels are considered accessibility elements on iOS.");
+
+    var element;
+    const shouldBeIgnored = (id, expectIgnored) => {
+        element = accessibilityController.accessibleElementById(id);
+        debug(`Testing ID ${id}`);
+        shouldBe("element.isIgnored", `${expectIgnored}`);
+    };
+
+    if (window.accessibilityController) {
+        shouldBeTrue("!accessibilityController.accessibleElementById('div-empty')");
+        shouldBeIgnored("div-empty-with-aria-label", false);
+        shouldBeIgnored("div-content", true);
+        shouldBeIgnored("div-content-with-aria-label", true);
+
+        shouldBeIgnored("group-empty", true);
+        shouldBeIgnored("group-empty-with-aria-label", false);
+        shouldBeIgnored("group-content", true);
+
+        shouldBeTrue("!accessibilityController.accessibleElementById('blockquote-empty')");
+        shouldBeIgnored("blockquote-empty-with-aria-label", false);
+        shouldBeIgnored("blockquote-content", true);
+
+        shouldBeIgnored("footer-empty", true);
+        shouldBeIgnored("footer-empty-with-aria-label", false);
+
+        shouldBeIgnored("radiogroup-empty", true);
+        shouldBeIgnored("radiogroup-empty-with-aria-label", false);
+
+        shouldBeTrue("!accessibilityController.accessibleElementById('paragraph-empty')");
+        shouldBeIgnored("paragraph-empty-with-aria-label", false);
+        shouldBeIgnored("paragraph-content", true);
+        shouldBeIgnored("paragraph-content-with-aria-label", true);
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+</body>
+</html>
+

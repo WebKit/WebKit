@@ -6,7 +6,6 @@
 
 #include "compiler/translator/TranslatorMetalDirect/RewriteUnaddressableReferences.h"
 #include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
-#include "compiler/translator/TranslatorMetalDirect/Debug.h"
 #include "compiler/translator/tree_util/AsNode.h"
 #include "compiler/translator/tree_util/IntermRebuild.h"
 
@@ -20,8 +19,8 @@ bool IsOutParam(const TType &paramType)
     const TQualifier qual = paramType.getQualifier();
     switch (qual)
     {
-        case TQualifier::EvqInOut:
-        case TQualifier::EvqOut:
+        case TQualifier::EvqParamInOut:
+        case TQualifier::EvqParamOut:
             return true;
 
         default:
@@ -202,7 +201,7 @@ TIntermTyped &DecomposeCompoundAssignment(TIntermBinary &node)
             op = TOperator::EOpBitwiseOr;
             break;
         default:
-            LOGIC_ERROR();
+            UNREACHABLE();
     }
 
     // This assumes SeparateCompoundExpressions has already been called.

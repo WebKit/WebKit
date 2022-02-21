@@ -70,17 +70,20 @@ WI.mimeTypeForFileExtension = function(extension)
         "scss": "text/x-scss",
 
         // Image types.
+        "avif": "image/avif",
         "bmp": "image/bmp",
         "gif": "image/gif",
+        "ico": "image/x-icon",
+        "jp2": "image/jp2",
         "jpeg": "image/jpeg",
         "jpg": "image/jpeg",
+        "jxl": "image/jxl",
         "pdf": "application/pdf",
         "png": "image/png",
         "tif": "image/tiff",
         "tiff": "image/tiff",
-        "xbm": "image/x-xbitmap",
         "webp": "image/webp",
-        "ico": "image/x-icon",
+        "xbm": "image/x-xbitmap",
 
         "ogx": "application/ogg",
         "ogg": "audio/ogg",
@@ -210,18 +213,20 @@ WI.fileExtensionForMIMEType = function(mimeType)
         "text/x-scss": "scss",
 
         // Image types.
+        "image/avif": "avif",
         "image/bmp": "bmp",
         "image/gif": "gif",
+        "image/vnd.microsoft.icon": "ico",
+        "image/x-icon": "ico",
         "image/jp2": "jp2",
         "image/jpeg": "jpg",
+        "image/jxl": "jxl",
         "application/pdf": "pdf",
         "text/pdf": "pdf",
         "image/png": "png",
         "image/tiff": "tiff",
-        "image/x-xbitmap": "xbm",
         "image/webp": "webp",
-        "image/vnd.microsoft.icon": "ico",
-        "image/x-icon": "ico",
+        "image/x-xbitmap": "xbm",
 
         // Ogg
         "application/ogg": "ogx",

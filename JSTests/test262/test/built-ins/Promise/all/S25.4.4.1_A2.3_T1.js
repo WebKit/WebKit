@@ -12,7 +12,5 @@ flags: [async]
 var arg = [];
 
 Promise.all(arg).then(function(result) {
-  if (!(result instanceof Array)) {
-    throw new Test262Error("expected an array from Promise.all, got " + result);
-  }
+  assert(!!(result instanceof Array), 'The value of !!(result instanceof Array) is expected to be true');
 }).then($DONE, $DONE);

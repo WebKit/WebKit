@@ -45,8 +45,10 @@
 #import "HTMLConverter.h"
 #import "HTMLImageElement.h"
 #import "HTMLSpanElement.h"
+#import "ImageOverlay.h"
 #import "LegacyNSPasteboardTypes.h"
 #import "LegacyWebArchive.h"
+#import "Page.h"
 #import "PagePasteboardContext.h"
 #import "Pasteboard.h"
 #import "PasteboardStrategy.h"
@@ -65,12 +67,6 @@
 
 namespace WebCore {
 
-void Editor::platformFontAttributesAtSelectionStart(FontAttributes& attributes, const RenderStyle& style) const
-{
-    if (auto ctFont = style.fontCascade().primaryFont().getCTFont())
-        attributes.font = (__bridge id)ctFont;
-}
-
 static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *attributedString)
 {
     if (!attributedString.length)
@@ -81,8 +77,9 @@ static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *
 
 String Editor::selectionInHTMLFormat()
 {
-    return serializePreservingVisualAppearance(m_document.selection().selection(), ResolveURLs::YesExcludingLocalFileURLsForPrivacy,
-        m_document.settings().selectionAcrossShadowBoundariesEnabled() ? SerializeComposedTree::Yes : SerializeComposedTree::No);
+    if (ImageOverlay::isInsideOverlay(m_document.selection().selection()))
+        return { };
+    return serializePreservingVisualAppearance(m_document.selection().selection(), ResolveURLs::YesExcludingLocalFileURLsForPrivacy, SerializeComposedTree::Yes);
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -107,9 +104,52 @@ void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<Str
 
 #endif
 
+static RetainPtr<NSAttributedString> selectionInImageOverlayAsAttributedString(const VisibleSelection& selection)
+{
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    auto* page = selection.document()->page();
+    if (!page)
+        return nil;
+
+    RefPtr hostElement = dynamicDowncast<HTMLElement>(selection.start().containerNode()->shadowHost());
+    if (!hostElement) {
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+
+    auto cachedResult = page->cachedTextRecognitionResult(*hostElement);
+    if (!cachedResult)
+        return nil;
+
+    auto characterRange = valueOrDefault(ImageOverlay::characterRange(selection));
+    if (!characterRange.length)
+        return nil;
+
+    auto string = stringForRange(*cachedResult, characterRange);
+    __block bool hasAnyAttributes = false;
+    [string enumerateAttributesInRange:NSMakeRange(0, [string length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange, BOOL *stop) {
+        if (attributes.count) {
+            hasAnyAttributes = true;
+            *stop = YES;
+        }
+    }];
+
+    if (!hasAnyAttributes)
+        return nil;
+
+    return string;
+#else
+    UNUSED_PARAM(selection);
+    return nil;
+#endif
+}
+
 static RetainPtr<NSAttributedString> selectionAsAttributedString(const Document& document)
 {
-    auto range = document.selection().selection().firstRange();
+    auto selection = document.selection().selection();
+    if (ImageOverlay::isInsideOverlay(selection))
+        return selectionInImageOverlayAsAttributedString(selection);
+    auto range = selection.firstRange();
     return range ? attributedString(*range).string : adoptNS([[NSAttributedString alloc] init]);
 }
 
@@ -153,6 +193,8 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
 
 RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
 {
+    if (ImageOverlay::isInsideOverlay(m_document.selection().selection()))
+        return nullptr;
     auto archive = LegacyWebArchive::createFromSelection(m_document.frame());
     if (!archive)
         return nullptr;
@@ -268,6 +310,15 @@ String Editor::platformContentTypeForBlobType(const String& type) const
     if (!utiType.isEmpty())
         return utiType;
     return type;
+}
+
+void Editor::readSelectionFromPasteboard(const String& pasteboardName)
+{
+    Pasteboard pasteboard(PagePasteboardContext::create(m_document.pageID()), pasteboardName);
+    if (m_document.selection().selection().isContentRichlyEditable())
+        pasteWithPasteboard(&pasteboard, { PasteOption::AllowPlainText });
+    else
+        pasteAsPlainTextWithPasteboard(pasteboard);
 }
 
 }

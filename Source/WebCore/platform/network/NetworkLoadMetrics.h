@@ -34,7 +34,6 @@
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSURLConnection;
-OBJC_CLASS NSURLResponse;
 OBJC_CLASS NSURLSessionTaskMetrics;
 #endif
 
@@ -59,9 +58,20 @@ enum class PrivacyStance : uint8_t {
 
 constexpr MonotonicTime reusedTLSConnectionSentinel { MonotonicTime::fromRawSeconds(-1) };
 
-class NetworkLoadMetricsWithoutNonTimingData {
-    WTF_MAKE_FAST_ALLOCATED(NetworkLoadMetricsWithoutNonTimingData);
+struct AdditionalNetworkLoadMetricsForWebInspector;
+
+class NetworkLoadMetrics {
+    WTF_MAKE_FAST_ALLOCATED(NetworkLoadMetrics);
 public:
+    WEBCORE_EXPORT NetworkLoadMetrics();
+
+    static const NetworkLoadMetrics& emptyMetrics();
+
+    WEBCORE_EXPORT NetworkLoadMetrics isolatedCopy() const;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<NetworkLoadMetrics> decode(Decoder&);
+
     bool isComplete() const { return complete; }
     void markComplete() { complete = true; }
 
@@ -82,110 +92,33 @@ public:
 
     uint16_t redirectCount { 0 };
 
-    // FIXME: These could all be made bit fields.
-    bool complete { false };
-    bool cellular { false };
-    bool expensive { false };
-    bool constrained { false };
-    bool multipath { false };
-    bool isReusedConnection { false };
-    bool failsTAOCheck { false };
-    bool hasCrossOriginRedirect { false };
+    bool complete : 1;
+    bool cellular : 1;
+    bool expensive : 1;
+    bool constrained : 1;
+    bool multipath : 1;
+    bool isReusedConnection : 1;
+    bool failsTAOCheck : 1;
+    bool hasCrossOriginRedirect : 1;
+
+    PrivacyStance privacyStance { PrivacyStance::Unknown };
+
+    uint64_t responseBodyBytesReceived { std::numeric_limits<uint64_t>::max() };
+    uint64_t responseBodyDecodedSize { std::numeric_limits<uint64_t>::max() };
+
+    RefPtr<AdditionalNetworkLoadMetricsForWebInspector> additionalNetworkLoadMetricsForWebInspector;
 };
 
-class NetworkLoadMetrics : public NetworkLoadMetricsWithoutNonTimingData {
-public:
-    NetworkLoadMetrics()
-        : NetworkLoadMetricsWithoutNonTimingData()
-    {
-    }
+struct AdditionalNetworkLoadMetricsForWebInspector : public RefCounted<AdditionalNetworkLoadMetricsForWebInspector> {
 
-    NetworkLoadMetrics isolatedCopy() const
-    {
-        NetworkLoadMetrics copy;
-
-        copy.redirectStart = redirectStart;
-        copy.fetchStart = fetchStart;
-
-        copy.domainLookupStart = domainLookupStart;
-        copy.domainLookupEnd = domainLookupEnd;
-        copy.connectStart = connectStart;
-        copy.secureConnectionStart = secureConnectionStart;
-        copy.connectEnd = connectEnd;
-        copy.requestStart = requestStart;
-        copy.responseStart = responseStart;
-        copy.responseEnd = responseEnd;
-        copy.complete = complete;
-        copy.protocol = protocol.isolatedCopy();
-        copy.redirectCount = redirectCount;
-        copy.cellular = cellular;
-        copy.expensive = expensive;
-        copy.constrained = constrained;
-        copy.multipath = multipath;
-        copy.isReusedConnection = isReusedConnection;
-        copy.failsTAOCheck = failsTAOCheck;
-        copy.hasCrossOriginRedirect = hasCrossOriginRedirect;
-
-        copy.remoteAddress = remoteAddress.isolatedCopy();
-        copy.connectionIdentifier = connectionIdentifier.isolatedCopy();
-        copy.tlsProtocol = tlsProtocol.isolatedCopy();
-        copy.tlsCipher = tlsCipher.isolatedCopy();
-        copy.priority = priority;
-        copy.privacyStance = privacyStance;
-        copy.requestHeaders = requestHeaders.isolatedCopy();
-
-        copy.requestHeaderBytesSent = requestHeaderBytesSent;
-        copy.requestBodyBytesSent = requestBodyBytesSent;
-        copy.responseHeaderBytesReceived = responseHeaderBytesReceived;
-        copy.responseBodyBytesReceived = responseBodyBytesReceived;
-        copy.responseBodyDecodedSize = responseBodyDecodedSize;
-
-        return copy;
-    }
-
-    bool operator==(const NetworkLoadMetrics& other) const
-    {
-        return redirectStart == other.redirectStart
-            && fetchStart == other.fetchStart
-            && domainLookupStart == other.domainLookupStart
-            && domainLookupEnd == other.domainLookupEnd
-            && connectStart == other.connectStart
-            && secureConnectionStart == other.secureConnectionStart
-            && connectEnd == other.connectEnd
-            && requestStart == other.requestStart
-            && responseStart == other.responseStart
-            && responseEnd == other.responseEnd
-            && complete == other.complete
-            && cellular == other.cellular
-            && expensive == other.expensive
-            && constrained == other.constrained
-            && multipath == other.multipath
-            && isReusedConnection == other.isReusedConnection
-            && failsTAOCheck == other.failsTAOCheck
-            && hasCrossOriginRedirect == other.hasCrossOriginRedirect
-            && protocol == other.protocol
-            && redirectCount == other.redirectCount
-            && remoteAddress == other.remoteAddress
-            && connectionIdentifier == other.connectionIdentifier
-            && tlsProtocol == other.tlsProtocol
-            && tlsCipher == other.tlsCipher
-            && priority == other.priority
-            && privacyStance == other.privacyStance
-            && requestHeaders == other.requestHeaders
-            && requestHeaderBytesSent == other.requestHeaderBytesSent
-            && requestBodyBytesSent == other.requestBodyBytesSent
-            && responseHeaderBytesReceived == other.responseHeaderBytesReceived
-            && responseBodyBytesReceived == other.responseBodyBytesReceived
-            && responseBodyDecodedSize == other.responseBodyDecodedSize;
-    }
-
-    bool operator!=(const NetworkLoadMetrics& other) const
-    {
-        return !(*this == other);
-    }
+    static Ref<AdditionalNetworkLoadMetricsForWebInspector> create() { return adoptRef(*new AdditionalNetworkLoadMetricsForWebInspector()); }
+    Ref<AdditionalNetworkLoadMetricsForWebInspector> isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, NetworkLoadMetrics&);
+    template<class Decoder> static RefPtr<AdditionalNetworkLoadMetricsForWebInspector> decode(Decoder&);
+    Ref<AdditionalNetworkLoadMetricsForWebInspector> isolatedCopy();
+
+    NetworkLoadPriority priority { NetworkLoadPriority::Unknown };
 
     String remoteAddress;
     String connectionIdentifier;
@@ -193,16 +126,13 @@ public:
     String tlsProtocol;
     String tlsCipher;
 
-    NetworkLoadPriority priority { NetworkLoadPriority::Unknown };
-    PrivacyStance privacyStance { PrivacyStance::Unknown };
-
     HTTPHeaderMap requestHeaders;
 
     uint64_t requestHeaderBytesSent { std::numeric_limits<uint64_t>::max() };
     uint64_t responseHeaderBytesReceived { std::numeric_limits<uint64_t>::max() };
     uint64_t requestBodyBytesSent { std::numeric_limits<uint64_t>::max() };
-    uint64_t responseBodyBytesReceived { std::numeric_limits<uint64_t>::max() };
-    uint64_t responseBodyDecodedSize { std::numeric_limits<uint64_t>::max() };
+private:
+    AdditionalNetworkLoadMetricsForWebInspector() { }
 };
 
 #if PLATFORM(COCOA)
@@ -225,6 +155,11 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
     encoder << requestStart;
     encoder << responseStart;
     encoder << responseEnd;
+
+    encoder << protocol;
+
+    encoder << redirectCount;
+
     encoder << complete;
     encoder << cellular;
     encoder << expensive;
@@ -233,28 +168,26 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
     encoder << isReusedConnection;
     encoder << failsTAOCheck;
     encoder << hasCrossOriginRedirect;
-    encoder << protocol;
-    encoder << redirectCount;
-    encoder << remoteAddress;
-    encoder << connectionIdentifier;
-    encoder << tlsProtocol;
-    encoder << tlsCipher;
-    encoder << priority;
+
     encoder << privacyStance;
-    encoder << requestHeaders;
-    encoder << requestHeaderBytesSent;
-    encoder << requestBodyBytesSent;
-    encoder << responseHeaderBytesReceived;
+
     encoder << responseBodyBytesReceived;
     encoder << responseBodyDecodedSize;
+    
+    if (additionalNetworkLoadMetricsForWebInspector) {
+        encoder << true;
+        encoder << *additionalNetworkLoadMetricsForWebInspector;
+    } else
+        encoder << false;
 }
 
 template<class Decoder>
-bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
+std::optional<NetworkLoadMetrics> NetworkLoadMetrics::decode(Decoder& decoder)
 {
     static_assert(Decoder::isIPCDecoder, "NetworkLoadMetrics should not be stored by the WTF::Persistence::Encoder");
 
-    return decoder.decode(metrics.redirectStart)
+    NetworkLoadMetrics metrics;
+    if (!(decoder.decode(metrics.redirectStart)
         && decoder.decode(metrics.fetchStart)
         && decoder.decode(metrics.domainLookupStart)
         && decoder.decode(metrics.domainLookupEnd)
@@ -264,28 +197,151 @@ bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
         && decoder.decode(metrics.requestStart)
         && decoder.decode(metrics.responseStart)
         && decoder.decode(metrics.responseEnd)
-        && decoder.decode(metrics.complete)
-        && decoder.decode(metrics.cellular)
-        && decoder.decode(metrics.expensive)
-        && decoder.decode(metrics.constrained)
-        && decoder.decode(metrics.multipath)
-        && decoder.decode(metrics.isReusedConnection)
-        && decoder.decode(metrics.failsTAOCheck)
-        && decoder.decode(metrics.hasCrossOriginRedirect)
         && decoder.decode(metrics.protocol)
-        && decoder.decode(metrics.redirectCount)
-        && decoder.decode(metrics.remoteAddress)
-        && decoder.decode(metrics.connectionIdentifier)
-        && decoder.decode(metrics.tlsProtocol)
-        && decoder.decode(metrics.tlsCipher)
-        && decoder.decode(metrics.priority)
-        && decoder.decode(metrics.privacyStance)
-        && decoder.decode(metrics.requestHeaders)
-        && decoder.decode(metrics.requestHeaderBytesSent)
-        && decoder.decode(metrics.requestBodyBytesSent)
-        && decoder.decode(metrics.responseHeaderBytesReceived)
+        && decoder.decode(metrics.redirectCount)))
+        return std::nullopt;
+    
+    std::optional<bool> complete;
+    decoder >> complete;
+    if (!complete)
+        return std::nullopt;
+    metrics.complete = WTFMove(*complete);
+
+    std::optional<bool> cellular;
+    decoder >> cellular;
+    if (!cellular)
+        return std::nullopt;
+    metrics.cellular = WTFMove(*cellular);
+
+    std::optional<bool> expensive;
+    decoder >> expensive;
+    if (!expensive)
+        return std::nullopt;
+    metrics.expensive = WTFMove(*expensive);
+
+    std::optional<bool> constrained;
+    decoder >> constrained;
+    if (!constrained)
+        return std::nullopt;
+    metrics.constrained = WTFMove(*constrained);
+
+    std::optional<bool> multipath;
+    decoder >> multipath;
+    if (!multipath)
+        return std::nullopt;
+    metrics.multipath = WTFMove(*multipath);
+
+    std::optional<bool> isReusedConnection;
+    decoder >> isReusedConnection;
+    if (!isReusedConnection)
+        return std::nullopt;
+    metrics.isReusedConnection = WTFMove(*isReusedConnection);
+
+    std::optional<bool> failsTAOCheck;
+    decoder >> failsTAOCheck;
+    if (!failsTAOCheck)
+        return std::nullopt;
+    metrics.failsTAOCheck = WTFMove(*failsTAOCheck);
+
+    std::optional<bool> hasCrossOriginRedirect;
+    decoder >> hasCrossOriginRedirect;
+    if (!hasCrossOriginRedirect)
+        return std::nullopt;
+    metrics.hasCrossOriginRedirect = WTFMove(*hasCrossOriginRedirect);
+
+    if (!(decoder.decode(metrics.privacyStance)
         && decoder.decode(metrics.responseBodyBytesReceived)
-        && decoder.decode(metrics.responseBodyDecodedSize);
+        && decoder.decode(metrics.responseBodyDecodedSize)))
+        return std::nullopt;
+
+    std::optional<bool> hasAdditionalNetworkLoadMetricsForWebInspector;
+    decoder >> hasAdditionalNetworkLoadMetricsForWebInspector;
+    if (!hasAdditionalNetworkLoadMetricsForWebInspector)
+        return std::nullopt;
+    if (*hasAdditionalNetworkLoadMetricsForWebInspector) {
+        metrics.additionalNetworkLoadMetricsForWebInspector = AdditionalNetworkLoadMetricsForWebInspector::decode(decoder);
+        if (!metrics.additionalNetworkLoadMetricsForWebInspector)
+            return std::nullopt;
+    }
+    return metrics;
+}
+
+template<class Encoder>
+void AdditionalNetworkLoadMetricsForWebInspector::encode(Encoder& encoder) const
+{
+    encoder << priority;
+    encoder << remoteAddress;
+    encoder << connectionIdentifier;
+
+    encoder << tlsProtocol;
+    encoder << tlsCipher;
+
+    encoder << requestHeaders;
+
+    encoder << requestHeaderBytesSent;
+    encoder << responseHeaderBytesReceived;
+    encoder << requestBodyBytesSent;
+}
+
+template<class Decoder>
+RefPtr<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsForWebInspector::decode(Decoder& decoder)
+{
+    std::optional<NetworkLoadPriority> priority;
+    decoder >> priority;
+    if (!priority)
+        return nullptr;
+    
+    std::optional<String> remoteAddress;
+    decoder >> remoteAddress;
+    if (!remoteAddress)
+        return nullptr;
+
+    std::optional<String> connectionIdentifier;
+    decoder >> connectionIdentifier;
+    if (!connectionIdentifier)
+        return nullptr;
+
+    std::optional<String> tlsProtocol;
+    decoder >> tlsProtocol;
+    if (!tlsProtocol)
+        return nullptr;
+
+    std::optional<String> tlsCipher;
+    decoder >> tlsCipher;
+    if (!tlsCipher)
+        return nullptr;
+
+    std::optional<HTTPHeaderMap> requestHeaders;
+    decoder >> requestHeaders;
+    if (!requestHeaders)
+        return nullptr;
+
+    std::optional<uint64_t> requestHeaderBytesSent;
+    decoder >> requestHeaderBytesSent;
+    if (!requestHeaderBytesSent)
+        return nullptr;
+
+    std::optional<uint64_t> responseHeaderBytesReceived;
+    decoder >> responseHeaderBytesReceived;
+    if (!responseHeaderBytesReceived)
+        return nullptr;
+
+    std::optional<uint64_t> requestBodyBytesSent;
+    decoder >> requestBodyBytesSent;
+    if (!requestBodyBytesSent)
+        return nullptr;
+
+    auto decoded = AdditionalNetworkLoadMetricsForWebInspector::create();
+    decoded->priority = WTFMove(*priority);
+    decoded->remoteAddress = WTFMove(*remoteAddress);
+    decoded->connectionIdentifier = WTFMove(*connectionIdentifier);
+    decoded->tlsProtocol = WTFMove(*tlsProtocol);
+    decoded->tlsCipher = WTFMove(*tlsCipher);
+    decoded->requestHeaders = WTFMove(*requestHeaders);
+    decoded->requestHeaderBytesSent = WTFMove(*requestHeaderBytesSent);
+    decoded->responseHeaderBytesReceived = WTFMove(*responseHeaderBytesReceived);
+    decoded->requestBodyBytesSent = WTFMove(*requestBodyBytesSent);
+    return decoded;
 }
 
 } // namespace WebCore
@@ -300,6 +356,16 @@ template<> struct EnumTraits<WebCore::PrivacyStance> {
         WebCore::PrivacyStance::Proxied,
         WebCore::PrivacyStance::Failed,
         WebCore::PrivacyStance::Direct
+    >;
+};
+
+template<> struct EnumTraits<WebCore::NetworkLoadPriority> {
+    using values = EnumValues<
+        WebCore::NetworkLoadPriority,
+        WebCore::NetworkLoadPriority::Low,
+        WebCore::NetworkLoadPriority::Medium,
+        WebCore::NetworkLoadPriority::High,
+        WebCore::NetworkLoadPriority::Unknown
     >;
 };
 

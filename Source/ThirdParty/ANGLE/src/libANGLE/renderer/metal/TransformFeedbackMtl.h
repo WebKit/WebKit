@@ -10,20 +10,12 @@
 #ifndef LIBANGLE_RENDERER_METAL_TRANSFORMFEEDBACKMTL_H_
 #define LIBANGLE_RENDERER_METAL_TRANSFORMFEEDBACKMTL_H_
 
-#include <Metal/Metal.h>
 #include "libANGLE/renderer/TransformFeedbackImpl.h"
-#include "libANGLE/renderer/metal/BufferMtl.h"
-#include "libANGLE/renderer/metal/mtl_resources.h"
-
-typedef uint64_t MtlDeviceSize;
-
-namespace gl
-{
-class ProgramState;
-}  // namespace gl
 
 namespace rx
 {
+
+class ContextMtl;
 
 class TransformFeedbackMtl : public TransformFeedbackImpl
 {
@@ -40,23 +32,17 @@ class TransformFeedbackMtl : public TransformFeedbackImpl
                                     size_t index,
                                     const gl::OffsetBindingPointer<gl::Buffer> &binding) override;
 
-    void getBufferOffsets(ContextMtl *contextMtl,
-                          GLint drawCallFirstVertex,
-                          int32_t *offsetsOut,
-                          size_t offsetsSize) const;
-
-    const gl::TransformFeedbackBuffersArray<BufferMtl *> &getBufferHandles() const
-    {
-        return mBufferHandles;
-    }
+    // Params:
+    // - drawCallFirstVertex is first vertex used by glDrawArrays*. This is important because
+    // gl_VertexIndex is starting from this.
+    // - skippedVertices is number of skipped vertices (useful for multiple metal draws per GL draw
+    // call).
+    angle::Result getBufferOffsets(ContextMtl *contextMtl,
+                                   GLint drawCallFirstVertex,
+                                   uint32_t skippedVertices,
+                                   int32_t *offsetsOut);
 
   private:
-    gl::TransformFeedbackBuffersArray<BufferMtl *> mBufferHandles;
-    gl::TransformFeedbackBuffersArray<MtlDeviceSize> mBufferOffsets;
-    gl::TransformFeedbackBuffersArray<MtlDeviceSize> mBufferSizes;
-
-    // Aligned offset for emulation. Could be smaller than offset.
-    gl::TransformFeedbackBuffersArray<MtlDeviceSize> mAlignedBufferOffsets;
 };
 
 }  // namespace rx

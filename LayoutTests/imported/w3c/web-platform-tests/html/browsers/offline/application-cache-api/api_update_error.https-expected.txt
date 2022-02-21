@@ -1,3 +1,0 @@
-
-PASS INVALID_STATE_ERR error test
-

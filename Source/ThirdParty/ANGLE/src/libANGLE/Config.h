@@ -77,6 +77,7 @@ struct Config
     EGLBoolean yInverted;  // True if the drawable's framebuffer is y-inverted.  This can be used to
                            // determine if y-inverted texture coordinates need to be used when
                            // texturing from this drawable when it is bound to a texture target.
+    EGLint matchFormat;    // LockSurface match format.
 };
 
 class ConfigSet

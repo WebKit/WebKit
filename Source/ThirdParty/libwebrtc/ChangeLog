@@ -1,3 +1,620 @@
+2022-02-18  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r290149.
+
+        Broke Debug Builds.
+
+        Reverted changeset:
+
+        "Generate compile_commands.json on macOS Builds"
+        https://bugs.webkit.org/show_bug.cgi?id=235686
+        https://commits.webkit.org/r290149
+
+2022-02-18  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] "All Modules" workspace builds building out of order
+        https://bugs.webkit.org/show_bug.cgi?id=236813
+
+        Reviewed by Alexey Proskuryakov.
+
+        Nothing particularly interesting here, but should fix build failures on
+        Apple-BigSur-XCBuild-Release-Build <https://build.webkit.org/#/builders/463>.
+
+        * libwebrtc.xcodeproj/project.pbxproj: Ensure yasm is built before using it.
+
+2022-02-18  Brandon Stewart  <brandonstewart@apple.com>
+
+        Generate compile_commands.json on macOS Builds
+        https://bugs.webkit.org/show_bug.cgi?id=235686
+
+        Reviewed by Saam Barati.
+
+        Add support for generating compile_commands.json file to WebKit.
+        
+        compile_commands.json can be used by tools like clangd to provide code complete,
+        refactoring, formatting, and cross references.
+
+        Steps to generate the compile commands file:
+        make r EXPORT_COMPILE_COMMANDS=YES
+        generate-compile-commands WebKitBuild/Release
+
+        * Configurations/DebugRelease.xcconfig:
+
+2022-02-18  Saam Barati  <sbarati@apple.com>
+
+        Add LC_SOURCE_VERSION to compile targets
+        https://bugs.webkit.org/show_bug.cgi?id=236720
+        <rdar://84984140>
+
+        Reviewed by Michael Saboff.
+
+        * Configurations/Version.xcconfig:
+        * Configurations/boringssl.xcconfig:
+        * Configurations/libsrtp.xcconfig:
+        * Configurations/libvpx.xcconfig:
+        * Configurations/libwebm.xcconfig:
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/libyuv.xcconfig:
+        * Configurations/opus.xcconfig:
+        * Configurations/usrsctp.xcconfig:
+        * Configurations/yasm.xcconfig:
+
+2022-02-11  Youenn Fablet  <youenn@apple.com>
+
+        Support remote video frames in WebRTC video pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=236356
+
+        Reviewed by Kimmo Kinnunen.
+
+        Introduce a way for ObjCFrameBuffer to not directly own a CVPixelBufferRef but a pointer
+        that can be used to get a CVPixelBufferRef. This is used to allow remote frames to be sent over to libwebrtc.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.h:
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.mm:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        * Source/webrtc/sdk/objc/native/src/objc_frame_buffer.h:
+        * Source/webrtc/sdk/objc/native/src/objc_frame_buffer.mm:
+
+2022-02-03  Michael Saboff  <msaboff@apple.com>
+
+        WebKit projects have incorrect install name for the frameworks for Catalyst builds with the system content path
+        https://bugs.webkit.org/show_bug.cgi?id=236105
+
+        Reviewed by Saam Barati.
+
+        Updated DYLIB_INSTALL_NAME_BASE for Catalyst builds to not use the system content path prefix.
+
+        * Configurations/libwebrtc.xcconfig:
+
+2022-02-02  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Fix redundant execution of "Check VTables..." script
+        https://bugs.webkit.org/show_bug.cgi?id=236032
+
+        Reviewed by Jonathan Bedard.
+
+        * libwebrtc.xcodeproj/project.pbxproj: Add timestamp file to script phase.
+
+2022-02-02  Youenn Fablet  <youenn@apple.com>
+
+        LibWebRTCCodecs should not need to create IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=235951
+        <rdar://problem/88326654>
+
+        Reviewed by Eric Carlson.
+
+        Introduce helper routines to copy a webrtc VideoFrame into a memory buffer and get a CVPixelBuffer from a webrtc VideoFrame.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+
+2022-01-27  Michael Saboff  <msaboff@apple.com>
+
+        com.apple.WebKit.WebAuthn.xpc fails to build with system content path
+        https://bugs.webkit.org/show_bug.cgi?id=235734
+
+        Reviewed by Filip Pizlo.
+
+        Added explicit  PUBLIC_HEADERS_FOLDER_PATH vavriable.  Otherwise we get the
+        project version with didn't include the "libwebrtc" component.
+
+        * Configurations/libwebrtc.xcconfig:
+
+2022-01-25  Michael Saboff  <msaboff@apple.com>
+
+        Install build failure when using SYSTEM_CONTENT_PATH
+        https://bugs.webkit.org/show_bug.cgi?id=235609
+
+        Reviewed by Filip Pizlo.
+
+        Change the Create Symlinks to Alternate Root script to create the links for the headers
+        for both the install headers and install phases.
+
+        * Scripts/create-symlink-to-altroot.sh:
+
+2022-01-24  Youenn Fablet  <youenn@apple.com>
+
+        Cherry-pick WebRTC 235826 change
+        https://bugs.webkit.org/show_bug.cgi?id=235510
+        <rdar://87884184>
+
+        Reviewed by Eric Carlson.
+
+        Cherry-picking above fixing for compliance.
+
+        * Source/webrtc/media/engine/webrtc_media_engine.cc:
+        * Source/webrtc/media/engine/webrtc_media_engine.h:
+        * Source/webrtc/media/engine/webrtc_media_engine_unittest.cc:
+        * Source/webrtc/media/engine/webrtc_video_engine.cc:
+        * Source/webrtc/media/engine/webrtc_video_engine.h:
+        * Source/webrtc/media/engine/webrtc_voice_engine.cc:
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_header_extension_map.cc:
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_header_extension_map_unittest.cc:
+
+2022-01-24  Youenn Fablet  <youenn@apple.com>
+
+        Reject large number of WebRTC audio channels
+        https://bugs.webkit.org/show_bug.cgi?id=235511
+
+        Reviewed by Eric Carlson.
+
+        Cherry-picking WebRTC upstream fix for compliance.
+
+        * Source/webrtc/pc/webrtc_sdp.cc:
+        * Source/webrtc/pc/webrtc_sdp_unittest.cc:
+
+2022-01-21  Michael Saboff  <msaboff@apple.com>
+
+        WebKit fails to build - error: 'webrtc/rtc_base/network.h' file not found
+        https://bugs.webkit.org/show_bug.cgi?id=235459
+
+        Reviewed by Mark Lam.
+
+        We needed to create symlinks from the standard location to the SYSTEM_CONTENT_PATH location.
+        This is needed for both the include files and archive libraries.
+
+        * Configurations/boringssl.xcconfig:
+        * Configurations/libsrtp.xcconfig:
+        * Configurations/libvpx.xcconfig:
+        * Configurations/libwebm.xcconfig:
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/libyuv.xcconfig:
+        * Configurations/opus.xcconfig:
+        * Configurations/usrsctp.xcconfig:
+        * Scripts: Added.
+        * Scripts/create-symlink-to-altroot.sh: Added.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2022-01-19  Youenn Fablet  <youenn@apple.com>
+
+        libvpx firstpass.c is not needed
+        https://bugs.webkit.org/show_bug.cgi?id=235354
+
+        Reviewed by Alexey Proskuryakov.
+
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2022-01-18  Alex Christensen  <achristensen@webkit.org>
+
+        Use c++2a instead of gnu++2a for Cocoa builds
+        https://bugs.webkit.org/show_bug.cgi?id=234936
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/Base.xcconfig:
+
+2022-01-12  Youenn Fablet  <youenn@apple.com>
+
+        VP9-SVS no video stream from remote peer on some devices
+        https://bugs.webkit.org/show_bug.cgi?id=231074
+        <rdar://problem/84024646>
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.m:
+        (-[RTCDefaultVideoDecoderFactory initWithH265:vp9Profile0:vp9Profile2:vp9VTB:]):
+        Do not use VTIsHardwareDecodeSupported('vp09') to know whether WebProcess can use VTB since sandboxing can control this.
+
+2022-01-10  Alex Christensen  <achristensen@webkit.org>
+
+        Start using C++20
+        https://bugs.webkit.org/show_bug.cgi?id=233963
+
+        Reviewed by Yusuke Suzuki.
+
+        * Configurations/Base.xcconfig:
+        * Source/webrtc/rtc_base/system/no_unique_address.h:
+
+2022-01-07  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r287698.
+
+        Broke an internal build
+
+        Reverted changeset:
+
+        "Start using C++20"
+        https://bugs.webkit.org/show_bug.cgi?id=233963
+        https://commits.webkit.org/r287698
+
+2022-01-06  Alex Christensen  <achristensen@webkit.org>
+
+        Start using C++20
+        https://bugs.webkit.org/show_bug.cgi?id=233963
+
+        Reviewed by Yusuke Suzuki.
+
+        * Configurations/Base.xcconfig:
+        * Source/webrtc/rtc_base/system/no_unique_address.h:
+
+2022-01-05  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r287382): libANGLE is built into a wrong location on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=234857
+
+        Reviewed by Saam Barati.
+
+        Reverted to the prior logic to compute INSTALL_PATH.  Then added an optional prefix
+        for the alternate root framework location.
+
+        * Configurations/libwebrtc.xcconfig:
+
+2021-12-22  Michael Saboff  <msaboff@apple.com>
+
+        Fix WebKit Build issues when using system content path
+        https://bugs.webkit.org/show_bug.cgi?id=234624
+
+        Reviewed by Filip Pizlo.
+
+        Changed INSTALL_PATH on macOS builds to use fully qualified .../WebCore.framework/Versions/A/Frameworks.
+
+        * Configurations/libwebrtc.xcconfig:
+
+2021-12-16  Michael Saboff  <msaboff@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=234173
+        Update Install Paths for build system changes
+
+        Reviewed by Filip Pizlo.
+
+        Added build variables and build step to create symlinks pointing to the alternate
+        build locations from the current framework install location.
+
+        * Configurations/libwebrtc.xcconfig:
+
+2021-12-10  Michael Saboff  <msaboff@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=234173
+        Update Install Paths for build system changes
+
+        Reviewed by Yusuke Suzuki.
+
+        Updated install paths for changes in the build system that use a system path prefix.
+
+        * Configurations/libwebrtc.xcconfig:
+
+2021-12-09  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare for transition to C++20
+        https://bugs.webkit.org/show_bug.cgi?id=234022
+
+        Reviewed by Yusuke Suzuki.
+
+        * Source/webrtc/common_audio/wav_header.cc:
+        * Source/webrtc/modules/audio_processing/include/aec_dump.cc:
+        * Source/webrtc/modules/audio_processing/include/aec_dump.h:
+        * Source/webrtc/modules/audio_processing/utility/delay_estimator_wrapper.cc:
+        * Source/webrtc/modules/audio_processing/vad/vad_audio_proc.h:
+        * Source/webrtc/modules/video_coding/media_opt_util.h:
+        * Source/webrtc/rtc_base/race_checker.h:
+        * Source/webrtc/rtc_base/units/unit_base.h:
+        (webrtc::rtc_units_impl::UnitBase::operator== const):
+        (webrtc::rtc_units_impl::UnitBase::operator!= const):
+        (webrtc::rtc_units_impl::UnitBase::operator<= const):
+        (webrtc::rtc_units_impl::UnitBase::operator>= const):
+        (webrtc::rtc_units_impl::UnitBase::operator> const):
+        (webrtc::rtc_units_impl::UnitBase::operator< const):
+
+2021-12-06  Youenn Fablet  <youenn@apple.com>
+
+        Close WebRTC allocation sequence shared socket in case of sequence network failure
+        https://bugs.webkit.org/show_bug.cgi?id=233808
+
+        Reviewed by Geoffrey Garen.
+
+        * Source/webrtc/p2p/client/basic_port_allocator.cc:
+        * Source/webrtc/p2p/client/basic_port_allocator.h:
+
+2021-11-22  Youenn Fablet  <youenn@apple.com>
+
+        Remove h264_bitstream_parser spurious logging
+        https://bugs.webkit.org/show_bug.cgi?id=233361
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/common_video/h264/h264_bitstream_parser.cc:
+
+2021-11-17  Youenn Fablet  <youenn@apple.com>
+
+        Safari 15.1 H264 FullHD video encode/decode fails
+        https://bugs.webkit.org/show_bug.cgi?id=233036
+        <rdar://80345048>
+
+        Reviewed by Eric Carlson.
+
+        H264 encoder now checks the profile and fails if frame is too big.
+        To get back to the past behavior, we are now using auto level for both ARM64 devices as well as devices with Monterey OS.
+
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+
+2021-11-10  Youenn Fablet  <youenn@apple.com> and Victor M. Jaquez L. <vjaquez@igalia.com>
+
+        Update libwebrtc to M96
+        https://bugs.webkit.org/show_bug.cgi?id=232873
+
+        Reviewed by Alex Christensen.
+
+        Updated libwebrtc code according M96 upstream branch.
+
+        * CMakeLists.txt:
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc: resynced.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2021-10-27  David Kilzer  <ddkilzer@apple.com>
+
+        [WebRTC] Enable -Wformat=2 warnings
+        <https://webkit.org/b/232335>
+        <rdar://problem/84571752>
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS):
+        - Add -Wformat=2 switch, which includes -Wformat-nonliteral.
+        * Source/third_party/libsrtp/crypto/include/err.h:
+        (LIBSRTP_FORMAT_PRINTF): Add.
+        - Define a macro for the printf format attribute.
+        (srtp_err_report):
+        - Apply LIBSRTP_FORMAT_PRINTF() macro to this function to fix
+          -Wformat-nonliteral warnings.
+        * Source/third_party/libvpx/source/libvpx/vpx/internal/vpx_codec_internal.h:
+        (LIBVPX_FORMAT_PRINTF): Add.
+        - Define a macro for the printf format attribute.
+        (vpx_internal_error):
+        - Apply LIBVPX_FORMAT_PRINTF() macro to this function to fix
+          -Wformat-nonliteral warnings.
+        * WebKit/0001-WebKitLegacy-Enable-Wformat-2-warnings.patch: Add.
+
+2021-10-21  David Kilzer  <ddkilzer@apple.com>
+
+        [WebRTC] Simplify libwebtc Xcode project
+        <https://webkit.org/b/232044>
+        <rdar://problem/82743710>
+
+        Reviewed by Youenn Fablet.
+
+        * Configurations/libwebm.xcconfig:
+        (INSTALL_HEADERS_PATH):
+        (LIBWEBM_HEADERS_FOLDER_PATH):
+        (LIBWEBM_HEADERS_FOLDER_PATH_NO):
+        (LIBWEBM_HEADERS_FOLDER_PATH_YES):
+        - Remove variables used by now-removed build phase scripts.
+        (PUBLIC_HEADERS_FOLDER_PATH): Add.
+        - This determines where webm public headers are installed.
+
+        * libwebrtc.xcodeproj/project.pbxproj:
+        (Recovered References): Remove.
+        - The two source files were added back at the correct path
+          elsewhere, so these references can be removed.
+        (webm target):
+        - Remove "Copy webm headers" and "Copy common headers" build
+          phase scripts since headers are installed by Xcode's built-in
+          "Headers" phase.
+        - Remove duplicate C++ source files (noticed after reviewing
+          "Recovered References" files).
+        - Install webm headers as public headers since their is no
+          subdirectory structure, and this fixes the bug in the radar
+          where webm headers were not installed consistently.
+
+2021-10-20  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC p2p call, VP9-SVC only low layer decoded on receiver side
+        https://bugs.webkit.org/show_bug.cgi?id=231071
+        <rdar://problem/83763291>
+
+        Reviewed by Eric Carlson.
+
+        In case VP9 SVC is used, fallback to software decoder for now.
+
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.mm:
+
+2021-10-18  Cameron McCormack  <heycam@apple.com>
+
+        Always set color space for incoming H.264/265 streams
+        https://bugs.webkit.org/show_bug.cgi?id=231881
+        <rdar://problem/84350707>
+
+        Reviewed by Youenn Fablet.
+
+        Followup from https://bugs.webkit.org/show_bug.cgi?id=231353. In some
+        configurations, the "ColorInfoGuessedBy" attachment is not set on the
+        CVPixelBuffers coming out of the VTDecompressionSession, but the
+        guessed, incorrect color space attachments are still there. Since we
+        currently always have an sRGB stream, don't bother looking for
+        "ColorInfoGuessedBy".
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm:
+        (overrideColorSpaceAttachments):
+        (decompressionOutputCallback):
+        (overrideColorSpaceAttachmentsIfNeeded): Deleted.
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm:
+        (overrideColorSpaceAttachments):
+        (h265DecompressionOutputCallback):
+        (overrideColorSpaceAttachmentsIfNeeded): Deleted.
+
+2021-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix up r284190 build fix.
+
+        * Source/third_party/libwebm/webm_parser/src/master_parser.h:
+
+2021-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix with latest SDKs.
+
+        * Source/third_party/libwebm/webm_parser/src/master_parser.h:
+
+2021-10-13  Cameron McCormack  <heycam@apple.com>
+
+        Override guessed color space for incoming H.264/265 streams
+        https://bugs.webkit.org/show_bug.cgi?id=231353
+        <rdar://problem/83969311>
+
+        Reviewed by Youenn Fablet.
+
+        When the VTDecompressionSession decodes incoming H.264/H.265 samples,
+        it puts guessed color space attachments on the CVPixelBuffer, and the
+        guesses are based on video resolution. WebRTC streams however default
+        to being sRGB. So this patch overrides a guess with what we know the
+        stream will be. (Once we support different color spaces in WebRTC
+        video streams we'll need to adjust this.)
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm:
+        (overrideColorSpaceAttachmentsIfNeeded):
+        (decompressionOutputCallback):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm:
+        (overrideColorSpaceAttachmentsIfNeeded):
+        (h265DecompressionOutputCallback):
+
+2021-10-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Invoke ThirdParty build scripts with python3 explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=231605
+
+        Reviewed by Dean Jackson.
+
+        * Source/third_party/googletest/googletest/xcode/gtest.xcodeproj/project.pbxproj:
+
+2021-10-06  Youenn Fablet  <youenn@apple.com>
+
+        ObjectiveC WebRTC frame buffers are autoreleased late, especially on Debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=231162
+
+        Reviewed by David Kilzer.
+
+        Instead of waiting for the autorelease pool to release these objects, we explicitly release them by calling close.
+        This ensures that pixel buffers get released very quickly.
+
+        * Source/webrtc/sdk/WebKit/WebKitEncoder.mm:
+        * Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeI420Buffer+Private.h:
+        * Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeI420Buffer.mm:
+        * Source/webrtc/sdk/objc/base/RTCI420Buffer.h:
+        * Source/webrtc/sdk/objc/base/RTCVideoFrameBuffer.h:
+        * Source/webrtc/sdk/objc/components/video_frame_buffer/RTCCVPixelBuffer.h:
+        * Source/webrtc/sdk/objc/components/video_frame_buffer/RTCCVPixelBuffer.mm:
+        * Source/webrtc/sdk/objc/native/src/objc_frame_buffer.mm:
+
+2021-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for macOS < 10.15
+        https://bugs.webkit.org/show_bug.cgi?id=231085
+
+        Reviewed by Darin Adler.
+
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+
+2021-09-30  Youenn Fablet  <youenn@apple.com>
+
+        Support AES GCM ciphers in WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=214402
+        <rdar://problem/65700381>
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
+2021-09-28  Alex Christensen  <achristensen@webkit.org>
+
+        Mostly fix Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=230868
+
+        Reviewed by Don Olmstead.
+
+        * CMakeLists.txt:
+
+2021-09-21  Youenn Fablet  <youenn@apple.com>
+
+        NetworkRTCUDPSocketCocoaConnections should handle NAT64 IP addresses correctly
+        https://bugs.webkit.org/show_bug.cgi?id=230552
+        <rdar://83297256>
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
+2021-09-15  Youenn Fablet  <youenn@apple.com>
+
+        Migrate to libwebrtc non-racy setRemoteDescription/setLocalDescription variants
+        https://bugs.webkit.org/show_bug.cgi?id=230262
+
+        Reviewed by Darin Adler.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
+2021-09-09  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCSctpTransport
+        https://bugs.webkit.org/show_bug.cgi?id=229292
+        <rdar://problem/82394152>
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
+2021-09-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r282057.
+        https://bugs.webkit.org/show_bug.cgi?id=229977
+
+        made a layout test extremely flaky
+
+        Reverted changeset:
+
+        "Add support for RTCSctpTransport"
+        https://bugs.webkit.org/show_bug.cgi?id=229292
+        https://commits.webkit.org/r282057
+
+2021-09-06  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCSctpTransport
+        https://bugs.webkit.org/show_bug.cgi?id=229292
+        <rdar://problem/82394152>
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
 2021-09-01  David Kilzer  <ddkilzer@apple.com>
 
         [WebRTC] Leak or over-release of CFPixelBufferRef returned from webrtc::createPixelBufferFromFrame()

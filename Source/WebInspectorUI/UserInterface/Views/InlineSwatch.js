@@ -70,6 +70,10 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 // Handled later by _updateSwatch.
                 break;
 
+            case WI.InlineSwatch.Type.Alignment:
+                // Handled later by _updateSwatch.
+                break;
+
             case WI.InlineSwatch.Type.Gradient:
                 this._swatchElement.title = WI.UIString("Edit custom gradient");
                 break;
@@ -151,6 +155,8 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._valueEditor.removeEventListener(WI.GradientEditor.Event.GradientChanged, this._valueEditorValueDidChange, this);
         else if (this._valueEditor instanceof WI.SpringEditor)
             this._valueEditor.removeEventListener(WI.SpringEditor.Event.SpringChanged, this._valueEditorValueDidChange, this);
+        else if (this._valueEditor instanceof WI.AlignmentEditor)
+            this._valueEditor.removeEventListener(WI.AlignmentEditor.Event.ValueChanged, this._valueEditorValueDidChange, this);
 
         this._valueEditor = null;
 
@@ -181,16 +187,26 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
     {
         let value = this.value;
 
-        if (this._type === WI.InlineSwatch.Type.Color || this._type === WI.InlineSwatch.Type.Gradient)
-            this._swatchInnerElement.style.background = value ? value.toString() : null;
-        else if (this._type === WI.InlineSwatch.Type.Image)
-            this._swatchInnerElement.style.setProperty("background-image", `url(${value.src})`);
-
-        if (this._type === WI.InlineSwatch.Type.Color) {
+        switch (this._type) {
+        case WI.InlineSwatch.Type.Color:
             if (this._allowChangingColorFormats())
                 this._swatchElement.title = WI.UIString("Click to select a color\nShift-click to switch color formats");
             else
                 this._swatchElement.title = WI.UIString("Click to select a color");
+            // fallthrough
+
+        case WI.InlineSwatch.Type.Gradient:
+            this._swatchInnerElement.style.background = value ? value.toString() : null;
+            break;
+
+        case WI.InlineSwatch.Type.Image:
+            this._swatchInnerElement.style.setProperty("background-image", `url(${value.src})`);
+            break;
+
+        case WI.InlineSwatch.Type.Alignment:
+            this._swatchInnerElement.style.backgroundImage = `url(${WI.AlignmentEditor.glyphPath(value)})`;
+            this._swatchInnerElement.classList.toggle("rotate-left", WI.AlignmentEditor.shouldRotateGlyph(value.type));
+            break;
         }
 
         if (!dontFireEvents)
@@ -238,12 +254,10 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         if (!value)
             value = this._fallbackValue();
 
-        let bounds = WI.Rect.rectFromClientRect(this._swatchElement.getBoundingClientRect());
         let popover = new WI.Popover(this);
 
         popover.windowResizeHandler = () => {
-            let bounds = WI.Rect.rectFromClientRect(this._swatchElement.getBoundingClientRect());
-            popover.present(bounds.pad(2), [WI.RectEdge.MIN_X]);
+            this._presentPopover(popover);
         };
 
         this._valueEditor = null;
@@ -287,6 +301,13 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._valueEditor.addEventListener(WI.SpringEditor.Event.SpringChanged, this._valueEditorValueDidChange, this);
             break;
 
+        case WI.InlineSwatch.Type.Alignment:
+            // FIXME: <https://webkit.org/b/233055> Web Inspector: Add a swatch for justify-content, justify-items, and justify-self
+            this._valueEditor = new WI.AlignmentEditor;
+            this._valueEditor.alignment = value;
+            this._valueEditor.addEventListener(WI.AlignmentEditor.Event.ValueChanged, this._valueEditorValueDidChange, this);
+            break;
+
         case WI.InlineSwatch.Type.Variable:
             this._valueEditor = {};
 
@@ -307,7 +328,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             return;
 
         popover.content = this._valueEditor.element;
-        popover.present(bounds.pad(2), [WI.RectEdge.MIN_X]);
+        this._presentPopover(popover);
 
         this.dispatchEventToListeners(WI.InlineSwatch.Event.Activated);
 
@@ -378,9 +399,19 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         case WI.InlineSwatch.Type.Spring:
             this._value = event.data.spring;
             break;
+
+        case WI.InlineSwatch.Type.Alignment:
+            this._value = event.data.alignment;
+            break;
         }
 
         this._updateSwatch();
+    }
+
+    _presentPopover(popover)
+    {
+        let bounds = WI.Rect.rectFromClientRect(this._swatchElement.getBoundingClientRect());
+        popover.present(bounds.pad(2), [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MIN_X]);
     }
 
     _handleContextMenuEvent(event)
@@ -521,6 +552,7 @@ WI.InlineSwatch.Type = {
     Spring: "inline-swatch-type-spring",
     Variable: "inline-swatch-type-variable",
     Image: "inline-swatch-type-image",
+    Alignment: "inline-swatch-type-alignment",
 };
 
 WI.InlineSwatch.Event = {

@@ -53,6 +53,22 @@
         }
     },
     {
+        "name": "Broadcast Channel API",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/web-messaging.html#broadcasting-to-other-browsing-contexts",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=230236",
+        "keywords": ["broadcast", "channel"],
+        "category": "html",
+        "description": "The Broadcast Channel API allows basic communication between browsing contexts or workers on the same origin.",
+        "contact": {
+            "name": "Chris Dumez",
+            "email": "cdumez@apple.com",
+            "twitter": "@chris_dumez"
+        }
+    },
+    {
         "name": "CSS Animation Worklet API",
         "status": {
             "status": "Under Consideration"
@@ -72,6 +88,15 @@
         "category": "css"
     },
     {
+        "name": "CSS Cascading and Inheritance Level 5",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://drafts.csswg.org/css-cascade-5/",
+        "keywords": ["css", "css-cascade", "layer"],
+        "category": "css"
+    },
+    {
         "name": "CSS Color Level 4",
         "status": {
             "status": "Supported"
@@ -84,8 +109,7 @@
     {
         "name": "CSS Containment Level 1",
         "status": {
-            "status": "In Development",
-            "enabled-by-default": false
+            "status": "Supported"
         },
         "url": "https://www.w3.org/TR/css-contain-1/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=172026",
@@ -315,6 +339,12 @@
         "description": "Exposes CSS values as typed JavaScript objects to facilitate their performant manipulation."
     },
     {
+        "name": "CSS Values and Units Module Level 4",
+        "url": "https://drafts.csswg.org/css-values-4/",
+        "keywords": ["css", "units", "values"],
+        "category": "css"
+    },
+    {
         "name": "CSS Variables",
         "status": {
             "status": "Supported"
@@ -381,6 +411,38 @@
         "contact": {
             "name": "Daniel Bates",
             "email": "dbates@webkit.org"
+        }
+    },
+    {
+        "name": "Cross-Origin-Embedder-Policy HTTP header",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/origin.html#coep",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=228755",
+        "keywords": ["coep", "isolation"],
+        "category": "html",
+        "description": "The HTTP Cross-Origin-Embedder-Policy (COEP) response header prevents a document from loading any cross-origin resources that don't explicitly grant the document permission (using CORP or CORS).",
+        "contact": {
+            "name": "Chris Dumez",
+            "email": "cdumez@apple.com",
+            "twitter": "@chris_dumez"
+        }
+    },
+    {
+        "name": "Cross-Origin-Opener-Policy HTTP header",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/origin.html#cross-origin-opener-policies",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=228755",
+        "keywords": ["coop", "isolation"],
+        "category": "html",
+        "description": "The HTTP Cross-Origin-Opener-Policy (COOP) response header allows you to ensure a top-level document does not share a browsing context group with cross-origin documents.",
+        "contact": {
+            "name": "Chris Dumez",
+            "email": "cdumez@apple.com",
+            "twitter": "@chris_dumez"
         }
     },
     {
@@ -756,9 +818,9 @@
         "category": "webapps",
         "description": "A JavaScript API for web applications to perform cryptographic operations.",
         "contact": {
-            "name": "Jiewen Tan",
-            "email": "jiewen_tan@apple.com",
-            "twitter": "@alanwaketan"
+            "name": "J Pascoe",
+            "twitter": "@pascoej_",
+            "email": "j_pascoe@apple.com"
         }
     },
     {
@@ -833,6 +895,24 @@
 
     "features": [
     {
+        "name": "CSS Cascade Layers",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://www.w3.org/TR/css-cascade-5/#layering",
+        "specification": "CSS Cascading and Inheritance Level 5",
+        "description": "In the same way that cascade origins provide a balance of power between user and author styles, cascade layers provide a structured way to organize and balance concerns within a single origin. Rules within a single cascade layer cascade together, without interleaving with style rules outside the layer."
+    },
+    {
+        "name": "CSS viewport-relative units",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://drafts.csswg.org/css-values-4/#viewport-relative-lengths",
+        "specification": "CSS Values and Units Module Level 4",
+        "description": "The *vw, *vh, *vi, *vb, *vmin, *vmax units are relative to the size of the initial containing block. When the height or width of the initial containing block is changed, they are scaled accordingly."
+    },
+    {
         "name": "CSS Selector :any-link",
         "status": {
             "status": "Supported"
@@ -850,8 +930,7 @@
     {
         "name": "CSS Selector :focus-visible",
         "status": {
-            "status": "In Development",
-            "enabled-by-default": false
+            "status": "Supported"
         },
         "url": "https://drafts.csswg.org/selectors-4/#the-focus-visible-pseudo",
         "specification": "CSS Selectors Level 4",
@@ -879,6 +958,15 @@
         }
     },
     {
+        "name": "CSS Selector :has()",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "http://dev.w3.org/csswg/selectors-4/#relational",
+        "specification": "CSS Selectors Level 4",
+        "description": "The selector :has() takes a relative selector list as argument and is an element if any of the relative selectors, absolutized, match at least one element (e.g. figure:has(> figcaption)). When used for styling, the specificity of :has() is the higest specificity of all selectors in the selector list."
+    },
+    {
         "name": "CSS Selector :is()",
         "status": {
             "status": "Supported"
@@ -888,7 +976,6 @@
         "description": "The selector :is() takes a selector list as argument and is an element if any of them is (e.g. :is(article > section, #target)). When used for styling, the specificity of :is() is the higest specificity of all selectors in the selector list.",
         "comment": "The pseudo classes <em>:visited</em> and <em>:link</em> are not supported inside :is()."
     },
-    
     {
         "name": "CSS Selector :lang() level 4",
         "status": {
@@ -1009,7 +1096,7 @@
             "twitter": "@jonathandavis",
             "email": "web-evangelist@apple.com"
         }
-    },    
+    },
     {
         "name": "Custom Elements",
         "status": {
@@ -1059,7 +1146,7 @@
     {
         "name": "Dialog Element",
         "status": {
-            "status": "In Development"
+            "status": "Supported"
         },
         "url": "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-dialog-element",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=84635",
@@ -1067,9 +1154,9 @@
         "category": "html",
         "description": "The dialog element represents a part of an application that a user interacts with to perform a task, for example a dialog box, inspector, or window.",
         "contact": {
-            "name": "Jon Davis",
-            "twitter": "@jonathandavis",
-            "email": "web-evangelist@apple.com"
+            "name": "Tim Nguyen",
+            "twitter": "@therealntim",
+            "email": "ntim@apple.com"
         }
     },
     {
@@ -1488,9 +1575,9 @@
         "keywords": ["authentication", "credentials", "webauthn", "security"],
         "description": "An API enabling the creation and use of strong, attested, cryptographic scoped credentials by web applications, for the purpose of strongly authenticating users.",
         "contact": {
-            "name": "Jiewen Tan",
-            "email": "jiewen_tan@apple.com",
-            "twitter": "@alanwaketan"
+            "name": "J Pascoe",
+            "twitter": "@pascoej_",
+            "email": "j_pascoe@apple.com"
         }
     },
     {
@@ -1510,6 +1597,22 @@
         "url": "https://webbluetoothcg.github.io/web-bluetooth/",
         "keywords": ["bluetooth", "privacy"],
         "description": "An API to listen for Bluetooth Low Energy advertising packets."
+    },
+    {
+        "name": "Web Locks",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://w3c.github.io/web-locks/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=232436",
+        "keywords": ["lock", "synchronization"],
+        "category": "webapps",
+        "description": "API to allow browsing contexts (windows, workers) within a web application to coordinate the usage of resources.",
+        "contact": {
+            "name": "Chris Dumez",
+            "email": "cdumez@apple.com",
+            "twitter": "@chris_dumez"
+        }
     },
     {
         "name": "Web MIDI",
@@ -1551,9 +1654,9 @@
         "specification": "DOM",
         "description": "An attribute that flags a node as inert to tell the user-agent to ignore the node for targeting user interaction events such as selecting text in the node, or find-in-page text search.",
         "contact": {
-            "name": "Jonathan Davis",
-            "twitter": "@jonathandavis",
-            "email": "web-evangelist@apple.com"
+            "name": "Tim Nguyen",
+            "twitter": "@therealntim",
+            "email": "ntim@apple.com"
         }
     },
     {
@@ -1565,6 +1668,16 @@
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=164193",
         "keywords": ["requestIdleCallback", "idle callback"],
         "description": "An API that can be used to cooperatively schedule background tasks."
+    },
+    {
+        "name": "requestVideoFrameCallback",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://wicg.github.io/video-rvfc/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=211945",
+        "keywords": ["requestVideoFrameCallback", "rvfc"],
+        "description": "An API that can be used on a HTMLMediaElement to do per video frame processing."
     }
     ]
 }

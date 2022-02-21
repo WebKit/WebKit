@@ -37,8 +37,8 @@ namespace WTF {
 void FileSystem::setMetadataURL(const String& path, const String& metadataURLString, const String& referrer)
 {
     String urlString;
-    if (NSURL *url = URLWithUserTypedString(metadataURLString, nil))
-        urlString = WTF::userVisibleString(WTF::URLByRemovingUserInfo(url));
+    if (NSURL *url = URLWithUserTypedString(metadataURLString))
+        urlString = userVisibleString(URLByRemovingUserInfo(url));
     else
         urlString = metadataURLString;
 
@@ -55,18 +55,6 @@ void FileSystem::setMetadataURL(const String& path, const String& metadataURLStr
         MDItemSetAttribute(item.get(), kMDItemWhereFroms, (__bridge CFArrayRef)whereFromAttribute.get());
         MDItemSetAttribute(item.get(), kMDItemDownloadedDate, (__bridge CFArrayRef)@[ [NSDate date] ]);
     });
-}
-
-bool FileSystem::canExcludeFromBackup()
-{
-    return true;
-}
-
-bool FileSystem::excludeFromBackup(const String& path)
-{
-    // It is critical to pass FALSE for excludeByPath because excluding by path requires root privileges.
-    CSBackupSetItemExcluded(FileSystem::pathAsURL(path).get(), TRUE, FALSE);
-    return true;
 }
 
 } // namespace WTF

@@ -8,20 +8,21 @@
 </head>
 <body>
 <script id="datatransfer-idl" type="text/plain">
-[Constructor, Exposed=(Window)]
+[Exposed=Window]
 interface DataTransfer {
+    constructor();
+
     attribute DOMString dropEffect;
     attribute DOMString effectAllowed;
 
     [SameObject] readonly attribute DataTransferItemList items;
 
-    void setDragImage(Element image, long x, long y);
+    undefined setDragImage(Element image, long x, long y);
 
-    /* old interface */
     readonly attribute FrozenArray<DOMString> types;
     DOMString getData(DOMString format);
-    void setData(DOMString format, DOMString data);
-    void clearData(optional DOMString format);
+    undefined setData(DOMString format, DOMString data);
+    undefined clearData(optional DOMString format);
     [SameObject] readonly attribute FileList files;
 };
 </script>
@@ -36,14 +37,19 @@ interface DataTransferItemList {
 };
 </script>
 <script id="datatransferitem-idl" type="text/plain">
+[Exposed=Window]
 interface DataTransferItem {
     readonly attribute DOMString kind;
     readonly attribute DOMString type;
-    void getAsString(FunctionStringCallback? callback);
-    File? getAsFile();
+
+    undefined getAsString(StringCallback? callback);
+    File getAsFile();
+
+    // https://wicg.github.io/entries-api/#html-data
+    FileSystemEntry? webkitGetAsEntry();
 };
 
-callback FunctionStringCallback = void (DOMString data);
+callback StringCallback = void (DOMString data);
 </script>
 <script>
 var idlsArray = new IdlArray();
@@ -53,6 +59,7 @@ var idl = document.getElementById("datatransfer-idl").textContent
 
 idlsArray.add_idls(idl);
 idlsArray.add_untested_idls("interface Element {};");
+idlsArray.add_untested_idls("interface FileSystemEntry {};");
 idlsArray.test();
 </script>
 </body>

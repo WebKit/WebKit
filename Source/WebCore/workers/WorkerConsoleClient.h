@@ -33,6 +33,8 @@ namespace JSC {
 class CallFrame;
 }
 
+using JSC::MessageType;
+
 namespace WebCore {
 
 class WorkerConsoleClient final : public JSC::ConsoleClient {
@@ -42,7 +44,7 @@ public:
     virtual ~WorkerConsoleClient();
 
 private:
-    void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
+    void messageWithTypeAndLevel(JSC::MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
     void count(JSC::JSGlobalObject*, const String& label) override;
     void countReset(JSC::JSGlobalObject*, const String& label) override;
     void profile(JSC::JSGlobalObject*, const String& title) override;

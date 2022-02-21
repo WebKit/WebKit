@@ -150,7 +150,7 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
     if (m_cachedTextLegibilityScales)
         return m_cachedTextLegibilityScales;
 
-    auto document = makeRefPtr(m_webPage.mainFrame()->document());
+    RefPtr document = m_webPage.mainFrame()->document();
     if (!document)
         return std::nullopt;
 
@@ -181,10 +181,9 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
         totalSampledTextLength += textLength;
     }
 
-    Vector<FontSizeAndCount> sortedFontSizesAndCounts;
-    sortedFontSizesAndCounts.reserveCapacity(fontSizeToCountMap.size());
-    for (auto& entry : fontSizeToCountMap)
-        sortedFontSizesAndCounts.append({ entry.key, entry.value });
+    auto sortedFontSizesAndCounts = WTF::map(fontSizeToCountMap, [](auto& entry) {
+        return FontSizeAndCount { entry.key, entry.value };
+    });
 
     std::sort(sortedFontSizesAndCounts.begin(), sortedFontSizesAndCounts.end(), [] (auto& first, auto& second) {
         return first.fontSize < second.fontSize;

@@ -26,8 +26,8 @@
 #pragma once
 
 #include <optional>
+#include <variant>
 #include <wtf/Forward.h>
-#include <wtf/Variant.h>
 
 #if OS(WINDOWS)
 #include <winsock2.h>
@@ -51,14 +51,14 @@ public:
     {
     }
 
-    bool isIPv4() const { return WTF::holds_alternative<struct in_addr>(m_address); }
-    bool isIPv6() const { return WTF::holds_alternative<struct in6_addr>(m_address); }
+    bool isIPv4() const { return std::holds_alternative<struct in_addr>(m_address); }
+    bool isIPv6() const { return std::holds_alternative<struct in6_addr>(m_address); }
 
-    const struct in_addr& ipv4Address() const { return WTF::get<struct in_addr>(m_address); }
-    const struct in6_addr& ipv6Address() const { return WTF::get<struct in6_addr>(m_address); }
+    const struct in_addr& ipv4Address() const { return std::get<struct in_addr>(m_address); }
+    const struct in6_addr& ipv6Address() const { return std::get<struct in6_addr>(m_address); }
 
 private:
-    Variant<struct in_addr, struct in6_addr> m_address;
+    std::variant<struct in_addr, struct in6_addr> m_address;
 };
 
 enum class DNSError { Unknown, CannotResolve, Cancelled };

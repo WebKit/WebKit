@@ -299,7 +299,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
 
     auto& document = *this->document();
 
-    auto foundElement = makeRefPtr(document.getElementById(String("ftpDirectoryTable"_s)));
+    RefPtr foundElement = document.getElementById(StringView { "ftpDirectoryTable"_s });
     if (!foundElement)
         LOG_ERROR("Unable to find element by id \"ftpDirectoryTable\" in the template document.");
     else if (!is<HTMLTableElement>(foundElement))
@@ -314,7 +314,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
 
     // If we didn't find the table element, lets try to append our own to the body.
     // If that fails for some reason, cram it on the end of the document as a last ditch effort.
-    if (auto body = makeRefPtr(document.bodyOrFrameset()))
+    if (RefPtr body = document.bodyOrFrameset())
         body->appendChild(*m_tableElement);
     else
         document.appendChild(*m_tableElement);
@@ -418,7 +418,7 @@ void FTPDirectoryDocumentParser::finish()
 }
 
 FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame, const Settings& settings, const URL& url)
-    : HTMLDocument(frame, settings, url)
+    : HTMLDocument(frame, settings, url, { })
 {
 #if !LOG_DISABLED
     LogFTP.state = WTFLogChannelState::On;

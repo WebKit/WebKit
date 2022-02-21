@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaSourcePrivate.h"
+#include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 
 namespace WebCore {

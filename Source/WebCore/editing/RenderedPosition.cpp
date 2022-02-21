@@ -69,7 +69,7 @@ RenderedPosition::RenderedPosition()
 {
 }
 
-RenderedPosition::RenderedPosition(const RenderObject* renderer, LayoutIntegration::RunIterator run, unsigned offset)
+RenderedPosition::RenderedPosition(const RenderObject* renderer, InlineIterator::LeafBoxIterator run, unsigned offset)
     : m_renderer(renderer)
     , m_run(run)
     , m_offset(offset)
@@ -95,17 +95,17 @@ RenderedPosition::RenderedPosition(const Position& position, Affinity affinity)
         m_renderer = rendererFromPosition(position);
 }
 
-LayoutIntegration::RunIterator RenderedPosition::previousLeafOnLine() const
+InlineIterator::LeafBoxIterator RenderedPosition::previousLeafOnLine() const
 {
     if (!m_previousLeafOnLine)
-        m_previousLeafOnLine = m_run.previousOnLineIgnoringLineBreak();
+        m_previousLeafOnLine = m_run->previousOnLineIgnoringLineBreak();
     return *m_previousLeafOnLine;
 }
 
-LayoutIntegration::RunIterator RenderedPosition::nextLeafOnLine() const
+InlineIterator::LeafBoxIterator RenderedPosition::nextLeafOnLine() const
 {
     if (!m_nextLeafOnLine)
-        m_nextLeafOnLine = m_run.nextOnLineIgnoringLineBreak();
+        m_nextLeafOnLine = m_run->nextOnLineIgnoringLineBreak();
     return *m_nextLeafOnLine;
 }
 
@@ -135,7 +135,7 @@ RenderedPosition RenderedPosition::leftBoundaryOfBidiRun(unsigned char bidiLevel
 
     auto run = m_run;
     do {
-        auto prev = run.previousOnLineIgnoringLineBreak();
+        auto prev = run->previousOnLineIgnoringLineBreak();
         if (!prev || prev->bidiLevel() < bidiLevelOfRun)
             return RenderedPosition(&run->renderer(), run, run->leftmostCaretOffset());
         run = prev;
@@ -152,7 +152,7 @@ RenderedPosition RenderedPosition::rightBoundaryOfBidiRun(unsigned char bidiLeve
 
     auto run = m_run;
     do {
-        auto next = run.nextOnLineIgnoringLineBreak();
+        auto next = run->nextOnLineIgnoringLineBreak();
         if (!next || next->bidiLevel() < bidiLevelOfRun)
             return RenderedPosition(&run->renderer(), run, run->rightmostCaretOffset());
         run = next;

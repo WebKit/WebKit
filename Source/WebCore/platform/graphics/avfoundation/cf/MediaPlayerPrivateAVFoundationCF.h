@@ -76,6 +76,7 @@ private:
     virtual void setVolume(float);
     void setClosedCaptionsVisible(bool) override;
     virtual void paint(GraphicsContext&, const FloatRect&);
+    DestinationColorSpace colorSpace() override;
     virtual void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
     virtual PlatformLayer* platformLayer() const;
     virtual bool supportsAcceleratedRendering() const { return true; }

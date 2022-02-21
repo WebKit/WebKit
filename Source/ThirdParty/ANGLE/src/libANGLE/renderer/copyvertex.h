@@ -41,8 +41,12 @@ void Copy8SnormTo16SnormVertexData(const uint8_t *input,
 template <size_t inputComponentCount, size_t outputComponentCount>
 void Copy32FixedTo32FVertexData(const uint8_t *input, size_t stride, size_t count, uint8_t *output);
 
-template <typename T, size_t inputComponentCount, size_t outputComponentCount, bool normalized>
-void CopyTo32FVertexData(const uint8_t *input, size_t stride, size_t count, uint8_t *output);
+template <typename T,
+          size_t inputComponentCount,
+          size_t outputComponentCount,
+          bool normalized,
+          bool toHalf>
+void CopyToFloatVertexData(const uint8_t *input, size_t stride, size_t count, uint8_t *output);
 
 template <size_t inputComponentCount, size_t outputComponentCount>
 void Copy32FTo16FVertexData(const uint8_t *input, size_t stride, size_t count, uint8_t *output);
@@ -51,23 +55,23 @@ void CopyXYZ32FToXYZ9E5(const uint8_t *input, size_t stride, size_t count, uint8
 
 void CopyXYZ32FToX11Y11B10F(const uint8_t *input, size_t stride, size_t count, uint8_t *output);
 
-template <bool isSigned, bool normalized, bool toFloat>
-void CopyXYZ10W2ToXYZW32FVertexData(const uint8_t *input,
+template <bool isSigned, bool normalized, bool toFloat, bool toHalf>
+void CopyXYZ10W2ToXYZWFloatVertexData(const uint8_t *input,
+                                      size_t stride,
+                                      size_t count,
+                                      uint8_t *output);
+
+template <bool isSigned, bool normalized, bool toHalf>
+void CopyXYZ10ToXYZWFloatVertexData(const uint8_t *input,
                                     size_t stride,
                                     size_t count,
                                     uint8_t *output);
 
-template <bool isSigned, bool normalized>
-void CopyXYZ10ToXYZW32FVertexData(const uint8_t *input,
-                                  size_t stride,
-                                  size_t count,
-                                  uint8_t *output);
-
-template <bool isSigned, bool normalized>
-void CopyW2XYZ10ToXYZW32FVertexData(const uint8_t *input,
-                                    size_t stride,
-                                    size_t count,
-                                    uint8_t *output);
+template <bool isSigned, bool normalized, bool toHalf>
+void CopyW2XYZ10ToXYZWFloatVertexData(const uint8_t *input,
+                                      size_t stride,
+                                      size_t count,
+                                      uint8_t *output);
 
 }  // namespace rx
 

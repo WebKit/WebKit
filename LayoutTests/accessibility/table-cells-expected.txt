@@ -10,10 +10,13 @@ South	3333	1111	2222
 South	3333	1111	2222
 ------------------------
 [0,0]
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 3>
+AXChildrenInNavigationOrder: <array of size 3>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {145, 66}
@@ -48,10 +51,13 @@ AXRequired: 0
 
 ------------------------
 [3,1]
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {54, 36}
@@ -86,10 +92,13 @@ AXRequired: 0
 
 ------------------------
 [1,1]
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 3>
+AXChildrenInNavigationOrder: <array of size 3>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {145, 66}
@@ -124,10 +133,13 @@ AXRequired: 0
 
 ------------------------
 [2,2]
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {71, 30}
@@ -162,10 +174,13 @@ AXRequired: 0
 
 ------------------------
 [3,5]
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXCell>
 AXSize: NSSize: {54, 30}

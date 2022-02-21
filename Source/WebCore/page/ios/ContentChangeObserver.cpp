@@ -252,7 +252,7 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
     LOG_WITH_STREAM(ContentObservation, stream << "didFinishTransition: transition finished (" << &element << ").");
 
     // isConsideredActionableContent may trigger style update through Node::computeEditability. Let's adjust the state in the next runloop.
-    callOnMainThread([weakThis = makeWeakPtr(*this), targetElement = makeWeakPtr(element)] {
+    callOnMainThread([weakThis = WeakPtr { *this }, targetElement = WeakPtr { element }] {
         if (!weakThis || !targetElement)
             return;
         if (isVisuallyHidden(*targetElement)) {

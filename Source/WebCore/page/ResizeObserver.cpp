@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019 Igalia S.L.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +26,12 @@
 
 #include "config.h"
 
-#if ENABLE(RESIZE_OBSERVER)
 #include "ResizeObserver.h"
 
 #include "Element.h"
 #include "InspectorInstrumentation.h"
 #include "ResizeObserverEntry.h"
+#include "ResizeObserverOptions.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ Ref<ResizeObserver> ResizeObserver::create(Document& document, Ref<ResizeObserve
 }
 
 ResizeObserver::ResizeObserver(Document& document, Ref<ResizeObserverCallback>&& callback)
-    : m_document(makeWeakPtr(document))
+    : m_document(document)
     , m_callback(WTFMove(callback))
 {
 }
@@ -53,22 +54,29 @@ ResizeObserver::~ResizeObserver()
         m_document->removeResizeObserver(*this);
 }
 
-void ResizeObserver::observe(Element& target)
+// https://drafts.csswg.org/resize-observer/#dom-resizeobserver-observe
+void ResizeObserver::observe(Element& target, const ResizeObserverOptions& options)
 {
     if (!m_callback)
         return;
 
-    auto position = m_observations.findMatching([&](auto& observation) {
+    auto position = m_observations.findIf([&](auto& observation) {
         return observation->target() == &target;
     });
 
-    if (position != notFound)
-        return;
+    if (position != notFound) {
+        // The spec suggests unconditionally unobserving here, but that causes a test failure:
+        // https://github.com/web-platform-tests/wpt/issues/30708
+        if (m_observations[position]->observedBox() == options.box)
+            return;
+
+        unobserve(target);
+    }
 
     auto& observerData = target.ensureResizeObserverData();
-    observerData.observers.append(makeWeakPtr(this));
+    observerData.observers.append(*this);
 
-    m_observations.append(ResizeObservation::create(target));
+    m_observations.append(ResizeObservation::create(target, options.box));
 
     if (m_document) {
         m_document->addResizeObserver(*this);
@@ -76,6 +84,7 @@ void ResizeObserver::observe(Element& target)
     }
 }
 
+// https://drafts.csswg.org/resize-observer/#dom-resizeobserver-unobserve
 void ResizeObserver::unobserve(Element& target)
 {
     if (!removeTarget(target))
@@ -84,6 +93,7 @@ void ResizeObserver::unobserve(Element& target)
     removeObservation(target);
 }
 
+// https://drafts.csswg.org/resize-observer/#dom-resizeobserver-disconnect
 void ResizeObserver::disconnect()
 {
     removeAllTargets();
@@ -99,11 +109,10 @@ size_t ResizeObserver::gatherObservations(size_t deeperThan)
     m_hasSkippedObservations = false;
     size_t minObservedDepth = maxElementDepth();
     for (const auto& observation : m_observations) {
-        LayoutSize currentSize;
-        if (observation->elementSizeChanged(currentSize)) {
+        if (auto currentSizes = observation->elementSizeChanged()) {
             size_t depth = observation->targetElementDepth();
             if (depth > deeperThan) {
-                observation->updateObservationSize(currentSize);
+                observation->updateObservationSize(*currentSizes);
                 m_activeObservations.append(observation.get());
                 m_activeObservationTargets.append(*observation->target());
                 minObservedDepth = std::min(depth, minObservedDepth);
@@ -119,7 +128,7 @@ void ResizeObserver::deliverObservations()
     Vector<Ref<ResizeObserverEntry>> entries;
     for (const auto& observation : m_activeObservations) {
         ASSERT(observation->target());
-        entries.append(ResizeObserverEntry::create(observation->target(), observation->computeContentRect()));
+        entries.append(ResizeObserverEntry::create(observation->target(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize()));
     }
     m_activeObservations.clear();
     auto activeObservationTargets = std::exchange(m_activeObservationTargets, { });
@@ -180,5 +189,3 @@ bool ResizeObserver::removeObservation(const Element& target)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(RESIZE_OBSERVER)

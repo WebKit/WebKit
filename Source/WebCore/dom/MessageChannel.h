@@ -39,14 +39,13 @@ public:
     static Ref<MessageChannel> create(ScriptExecutionContext&);
     ~MessageChannel();
 
-    MessagePort* port1() const { return m_port1.get(); }
-    MessagePort* port2() const { return m_port2.get(); }
+    MessagePort& port1() const { return m_ports.first; }
+    MessagePort& port2() const { return m_ports.second; }
 
 private:
     explicit MessageChannel(ScriptExecutionContext&);
 
-    RefPtr<MessagePort> m_port1;
-    RefPtr<MessagePort> m_port2;
+    std::pair<Ref<MessagePort>, Ref<MessagePort>> m_ports;
 };
 
 } // namespace WebCore

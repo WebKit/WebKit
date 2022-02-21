@@ -773,7 +773,7 @@ Object.defineProperty(String.prototype, "isLowerCase",
 {
     value()
     {
-        return String(this) === this.toLowerCase();
+        return /^[a-z]+$/.test(this);
     }
 });
 
@@ -781,7 +781,7 @@ Object.defineProperty(String.prototype, "isUpperCase",
 {
     value()
     {
-        return String(this) === this.toUpperCase();
+        return /^[A-Z]+$/.test(this);
     }
 });
 
@@ -1621,40 +1621,6 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
 
         var index = this.lowerBound(value, comparator);
         return index < this.length && comparator(value, this[index]) === 0 ? index : -1;
-    }
-});
-
-Object.defineProperty(Array.prototype, "groupBy",
-{
-    value(groupFunction, minGroupSize = 1)
-    {
-        let result = [];
-        let startIndex = null;
-
-        let flush = (endIndex) => {
-            if (startIndex === null)
-                return;
-            let group = this.slice(startIndex, endIndex + 1);
-            let adjacentCount = (endIndex + 1) - startIndex;
-            if (adjacentCount >= minGroupSize)
-                result.push(group);
-            else
-                result.pushAll(group);
-        }
-
-        this.forEach((item, i) => {
-            if (groupFunction(item)) {
-                startIndex ??= i;
-                if (i === this.length - 1)
-                    flush(this.length - 1);
-            } else {
-                flush(i - 1);
-                result.push(item);
-                startIndex = null;
-            }
-        });
-
-        return result;
     }
 });
 

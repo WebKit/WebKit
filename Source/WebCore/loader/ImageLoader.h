@@ -70,6 +70,7 @@ public:
 
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
+    // FIXME: Delete this code. beforeload event no longer exists.
     bool hasPendingBeforeLoadEvent() const { return m_hasPendingBeforeLoadEvent; }
     bool hasPendingActivity() const { return m_hasPendingLoadEvent || m_hasPendingErrorEvent; }
 

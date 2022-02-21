@@ -36,8 +36,8 @@ layer at (0,0) size 800x965
               RenderImage {IMG} at (2,2) size 110x39
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TH} at (118,227) size 478x25 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
-              RenderText {#text} at (207,2) size 64x20
-                text run at (207,3) width 64: "text links"
+              RenderText {#text} at (207,1) size 64x21
+                text run at (207,2) width 64: "text links"
       RenderBlock {HR} at (0,273) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,291) size 784x20
         RenderInline {B} at (0,0) size 475x19
@@ -69,8 +69,8 @@ layer at (0,0) size 800x965
                   text run at (0,0) width 70: "etc., etc. ..."
           RenderTableRow {TR} at (0,126) size 588x33
             RenderTableCell {TD} at (2,130) size 585x25 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
-              RenderText {#text} at (2,2) size 129x20
-                text run at (2,3) width 129: "IMG in a colspan=3"
+              RenderText {#text} at (2,1) size 129x21
+                text run at (2,2) width 129: "IMG in a colspan=3"
           RenderTableRow {TR} at (0,161) size 588x24
             RenderTableCell {TD} at (2,161) size 111x24 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 78x19

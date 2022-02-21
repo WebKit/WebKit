@@ -84,6 +84,8 @@ void RenderingUpdateScheduler::scheduleRenderingUpdate()
         LOG_WITH_STREAM(DisplayLink, stream << "RenderingUpdateScheduler::scheduleRenderingUpdate for interval " << m_page.preferredRenderingUpdateInterval() << " falling back to timer");
         startTimer(m_page.preferredRenderingUpdateInterval());
     }
+    
+    m_page.didScheduleRenderingUpdate();
 }
 
 bool RenderingUpdateScheduler::isScheduled() const

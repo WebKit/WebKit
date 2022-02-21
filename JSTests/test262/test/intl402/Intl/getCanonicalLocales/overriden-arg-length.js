@@ -32,8 +32,11 @@ Object.defineProperty(locales, "length", {
   get: function() { return "1" }
 });
 
-assert(compareArray(Intl.getCanonicalLocales(locales), ['en-US']),
-  "should return one element if locales.length is '1'");
+assert.compareArray(
+  Intl.getCanonicalLocales(locales),
+  ['en-US'],
+  "should return one element if locales.length is '1'"
+);
 
 var locales = {
   '0': 'en-US',
@@ -44,8 +47,11 @@ Object.defineProperty(locales, "length", {
   get: function() { return 1.3 }
 });
 
-assert(compareArray(Intl.getCanonicalLocales(locales), ['en-US']),
-  "should return one element if locales.length is 1.3");
+assert.compareArray(
+  Intl.getCanonicalLocales(locales),
+  ['en-US'],
+  "should return one element if locales.length is 1.3"
+);
 
 var locales = {
   '0': 'en-US',
@@ -69,8 +75,11 @@ Object.defineProperty(locales, "length", {
   get: function() { return -Infinity }
 });
 
-assert(compareArray(Intl.getCanonicalLocales(locales), []),
-  "should return empty array if locales.length is -Infinity");
+assert.compareArray(
+  Intl.getCanonicalLocales(locales),
+  [],
+  "should return empty array if locales.length is -Infinity"
+);
 
 var locales = {
   length: -Math.pow(2, 32) + 1
@@ -80,8 +89,11 @@ Object.defineProperty(locales, "0", {
   get: function() { throw new Error("must not be gotten!"); }
 })
 
-assert(compareArray(Intl.getCanonicalLocales(locales), []),
-  "should return empty array if locales.length is a negative value");
+assert.compareArray(
+  Intl.getCanonicalLocales(locales),
+  [],
+  "should return empty array if locales.length is a negative value"
+);
 
 var count = 0;
 var locs = { get length() { if (count++ > 0) throw 42; return 0; } };

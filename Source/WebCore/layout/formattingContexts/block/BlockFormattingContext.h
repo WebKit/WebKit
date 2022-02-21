@@ -51,7 +51,7 @@ class BlockFormattingContext : public FormattingContext {
 public:
     BlockFormattingContext(const ContainerBox& formattingContextRoot, BlockFormattingState&);
 
-    void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
+    void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
 
     const BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }

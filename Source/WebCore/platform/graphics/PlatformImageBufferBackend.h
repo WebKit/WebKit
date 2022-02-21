@@ -27,8 +27,6 @@
 
 #if USE(CG)
 #include "ImageBufferCGBackend.h"
-#elif USE(DIRECT2D)
-#include "ImageBufferDirect2DBackend.h"
 #elif USE(CAIRO)
 #include "ImageBufferCairoBackend.h"
 #endif
@@ -37,8 +35,6 @@ namespace WebCore {
 
 #if USE(CG)
 using PlatformImageBufferBackend = ImageBufferCGBackend;
-#elif USE(DIRECT2D)
-using PlatformImageBufferBackend = ImageBufferDirect2DBackend;
 #elif USE(CAIRO)
 using PlatformImageBufferBackend = ImageBufferCairoBackend;
 #endif

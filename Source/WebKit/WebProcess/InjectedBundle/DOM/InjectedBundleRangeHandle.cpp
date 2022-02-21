@@ -117,9 +117,9 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
 {
     auto range = makeSimpleRange(m_range);
 
-    auto document = makeRef(range.start.document());
+    Ref document = range.start.document();
 
-    auto frame = makeRefPtr(document->frame());
+    RefPtr frame = document->frame();
     if (!frame)
         return nullptr;
 

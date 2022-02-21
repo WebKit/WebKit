@@ -230,7 +230,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         }
 
         if (type == eventNames().pointerenterEvent) {
-            for (auto& element : WTF::makeReversedRange(targetChain))
+            for (auto& element : makeReversedRange(targetChain))
                 dispatchEvent(PointerEvent::create(type, platformTouchEvent, index, isPrimary, view), element.ptr());
         } else {
             for (auto& element : targetChain)
@@ -285,7 +285,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         if (currentTarget)
             dispatchOverOrOutEvent(eventNames().pointeroverEvent, currentTarget.get());
 
-        for (auto& chain : WTF::makeReversedRange(enteredElementsChain)) {
+        for (auto& chain : makeReversedRange(enteredElementsChain)) {
             if (hasCapturingPointerEnterListener || chain->hasEventListeners(eventNames().pointerenterEvent))
                 dispatchEvent(PointerEvent::create(eventNames().pointerenterEvent, platformTouchEvent, index, isPrimary, view), chain.ptr());
         }

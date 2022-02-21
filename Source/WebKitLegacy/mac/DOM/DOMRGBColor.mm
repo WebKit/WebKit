@@ -29,6 +29,7 @@
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/DeprecatedCSSOMPrimitiveValue.h>
 #import <WebCore/DeprecatedCSSOMRGBColor.h>
 #import <WebCore/JSExecState.h>
@@ -85,13 +86,13 @@
 - (NSColor *)color
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::nsColor(IMPL->color());
+    return cocoaColor(IMPL->color()).autorelease();
 }
 #else
 - (CGColorRef)color
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::cachedCGColor(IMPL->color());
+    return WebCore::cachedCGColor(IMPL->color()).autorelease();
 }
 #endif
 

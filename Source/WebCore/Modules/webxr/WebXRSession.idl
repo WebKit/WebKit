@@ -23,17 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://immersive-web.github.io/webxr/#xrsession
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
     ActiveDOMObject,
     SecureContext,
     Exposed=Window,
+    JSCustomMarkFunction,
     InterfaceName=XRSession
 ] interface WebXRSession : EventTarget {
     // Attributes
-    readonly attribute XRInteractionMode interactionMode;
-    readonly attribute XREnvironmentBlendMode environmentBlendMode;
     readonly attribute XRVisibilityState visibilityState;
     [SameObject] readonly attribute WebXRRenderState renderState;
     [SameObject] readonly attribute WebXRInputSourceArray inputSources;

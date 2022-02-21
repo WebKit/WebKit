@@ -35,7 +35,7 @@
 #import <UIKit/UIScrollView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
-#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 #import "WKModelView.h"
 #endif
 
@@ -55,6 +55,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
     case PlatformCALayer::LayerTypeSimpleLayer:
     case PlatformCALayer::LayerTypeTiledBackingLayer:
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
+    case PlatformCALayer::LayerTypeContentsProvidedLayer:
         return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
@@ -74,7 +75,6 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 
     case PlatformCALayer::LayerTypeCustom:
     case PlatformCALayer::LayerTypeAVPlayerLayer:
-    case PlatformCALayer::LayerTypeContentsProvidedLayer:
         if (!m_isDebugLayerTreeHost) {
             auto view = adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero
                 pid:m_drawingArea->page().processIdentifier() contextID:properties.hostingContextID]);
@@ -95,15 +95,17 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
             return makeWithView(adoptNS([[WKChildScrollView alloc] init]));
         // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
         return makeWithView(adoptNS([[UIView alloc] init]));
-            
+
+#if ENABLE(MODEL_ELEMENT)
     case PlatformCALayer::LayerTypeModelLayer:
 #if ENABLE(SEPARATED_MODEL)
         return makeWithView(adoptNS([[WKSeparatedModelView alloc] initWithModel:*properties.model]));
-#elif HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
         return makeWithView(adoptNS([[WKModelView alloc] initWithModel:*properties.model]));
 #else
         return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 #endif
+#endif // ENABLE(MODEL_ELEMENT)
 
     default:
         ASSERT_NOT_REACHED();

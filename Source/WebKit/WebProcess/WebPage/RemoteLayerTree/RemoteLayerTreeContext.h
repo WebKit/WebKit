@@ -52,10 +52,6 @@ public:
     void graphicsLayerDidEnterContext(GraphicsLayerCARemote&);
     void graphicsLayerWillLeaveContext(GraphicsLayerCARemote&);
 
-    void backingStoreWasCreated(RemoteLayerBackingStore&);
-    void backingStoreWillBeDestroyed(RemoteLayerBackingStore&);
-    bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
-
     WebCore::LayerPool& layerPool() { return m_layerPool; }
 
     float deviceScaleFactor() const;
@@ -72,7 +68,7 @@ public:
 
     void willStartAnimationOnLayer(PlatformCALayerRemote&);
 
-    RemoteLayerBackingStoreCollection& backingStoreCollection() { return m_backingStoreCollection; }
+    RemoteLayerBackingStoreCollection& backingStoreCollection() { return *m_backingStoreCollection; }
     
     void setNextRenderingUpdateRequiresSynchronousImageDecoding(bool requireSynchronousDecoding) { m_nextRenderingUpdateRequiresSynchronousImageDecoding = requireSynchronousDecoding; }
     bool nextRenderingUpdateRequiresSynchronousImageDecoding() const { return m_nextRenderingUpdateRequiresSynchronousImageDecoding; }
@@ -102,14 +98,13 @@ private:
 
     HashSet<GraphicsLayerCARemote*> m_liveGraphicsLayers;
 
-    RemoteLayerBackingStoreCollection m_backingStoreCollection;
-    
-    RemoteLayerTreeTransaction* m_currentTransaction;
+    std::unique_ptr<RemoteLayerBackingStoreCollection> m_backingStoreCollection;
 
     WebCore::LayerPool m_layerPool;
-    
-    bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
 
+    RemoteLayerTreeTransaction* m_currentTransaction { nullptr };
+
+    bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
     bool m_useCGDisplayListsForDOMRendering { false };
 };
 

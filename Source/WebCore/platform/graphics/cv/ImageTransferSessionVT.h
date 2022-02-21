@@ -42,14 +42,14 @@ class RemoteVideoSample;
 
 class ImageTransferSessionVT {
 public:
-    static std::unique_ptr<ImageTransferSessionVT> create(uint32_t pixelFormat)
+    static std::unique_ptr<ImageTransferSessionVT> create(uint32_t pixelFormat, bool shouldUseIOSurface = true)
     {
-        return std::unique_ptr<ImageTransferSessionVT>(new ImageTransferSessionVT(pixelFormat));
+        return std::unique_ptr<ImageTransferSessionVT>(new ImageTransferSessionVT(pixelFormat, shouldUseIOSurface));
     }
 
     RefPtr<MediaSample> convertMediaSample(MediaSample&, const IntSize&);
     RefPtr<MediaSample> createMediaSample(CGImageRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
-    RefPtr<MediaSample> createMediaSample(CMSampleBufferRef, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
+    RefPtr<MediaSample> createMediaSample(CMSampleBufferRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
 
 #if !PLATFORM(MACCATALYST)
     WEBCORE_EXPORT RefPtr<MediaSample> createMediaSample(IOSurfaceRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
@@ -58,22 +58,16 @@ public:
 #endif
 #endif
 
-#if !PLATFORM(MACCATALYST)
-    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBuffer(IOSurfaceRef);
-    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBuffer(IOSurfaceRef, const IntSize&);
-#endif
-
     uint32_t pixelFormat() const { return m_pixelFormat; }
 
 private:
-    WEBCORE_EXPORT explicit ImageTransferSessionVT(uint32_t pixelFormat);
+    WEBCORE_EXPORT ImageTransferSessionVT(uint32_t pixelFormat, bool shouldUseIOSurface);
 
 #if !PLATFORM(MACCATALYST)
-    CFDictionaryRef ioSurfacePixelBufferCreationOptions(IOSurfaceRef);
     RetainPtr<CMSampleBufferRef> createCMSampleBuffer(IOSurfaceRef, const MediaTime&, const IntSize&);
 #endif
 
-    RetainPtr<CMSampleBufferRef> convertCMSampleBuffer(CMSampleBufferRef, const IntSize&);
+    RetainPtr<CMSampleBufferRef> convertCMSampleBuffer(CMSampleBufferRef, const IntSize&, const MediaTime* = nullptr);
     RetainPtr<CMSampleBufferRef> createCMSampleBuffer(CVPixelBufferRef, const MediaTime&, const IntSize&);
     RetainPtr<CMSampleBufferRef> createCMSampleBuffer(CGImageRef, const MediaTime&, const IntSize&);
 
@@ -85,7 +79,7 @@ private:
 
     RetainPtr<VTPixelTransferSessionRef> m_transferSession;
     RetainPtr<CVPixelBufferPoolRef> m_outputBufferPool;
-    RetainPtr<CFDictionaryRef> m_ioSurfaceBufferAttributes;
+    bool m_shouldUseIOSurface { true };
     uint32_t m_pixelFormat;
     IntSize m_size;
 };

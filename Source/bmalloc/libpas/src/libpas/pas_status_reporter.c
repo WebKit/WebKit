@@ -32,26 +32,26 @@
 #include "pas_all_heaps.h"
 #include "pas_all_shared_page_directories.h"
 #include "pas_baseline_allocator_table.h"
-#include "pas_biasing_directory_inlines.h"
-#include "pas_bitfit_biasing_directory.h"
-#include "pas_bitfit_global_directory.h"
+#include "pas_bitfit_directory.h"
 #include "pas_bitfit_heap.h"
 #include "pas_bitfit_size_class.h"
 #include "pas_bitfit_view.h"
 #include "pas_compact_bootstrap_free_heap.h"
+#include "pas_compact_expendable_memory.h"
 #include "pas_compact_large_utility_free_heap.h"
 #include "pas_fd_stream.h"
 #include "pas_heap.h"
 #include "pas_heap_lock.h"
 #include "pas_heap_summary.h"
 #include "pas_heap_table.h"
+#include "pas_large_expendable_memory.h"
 #include "pas_large_heap.h"
 #include "pas_large_map.h"
+#include "pas_large_sharing_pool.h"
 #include "pas_large_utility_free_heap.h"
 #include "pas_log.h"
 #include "pas_page_sharing_pool.h"
-#include "pas_segregated_biasing_directory.h"
-#include "pas_segregated_global_size_directory_inlines.h"
+#include "pas_segregated_size_directory_inlines.h"
 #include "pas_segregated_heap.h"
 #include "pas_segregated_shared_page_directory.h"
 #include "pas_segregated_size_directory.h"
@@ -138,24 +138,6 @@ static void report_bitfit_directory_contents(
 
         max_free = pas_bitfit_directory_get_max_free(directory, index);
 
-        switch (directory->directory_kind) {
-        case pas_bitfit_global_directory_kind: {
-            pas_bitfit_view* view;
-            
-            view = pas_bitfit_directory_get_view(directory, index);
-            PAS_ASSERT(view);
-
-            if (!pas_compact_atomic_bitfit_biasing_directory_ptr_is_null(&view->biasing_directory)) {
-                pas_stream_printf(stream, "b");
-                continue;
-            }
-            break;
-        }
-
-        case pas_bitfit_biasing_directory_kind:
-            break;
-        }
-        
         if (max_free == PAS_BITFIT_MAX_FREE_EMPTY)
             pas_stream_printf(stream, "E");
         else
@@ -165,56 +147,16 @@ static void report_bitfit_directory_contents(
     
     pas_stream_printf(stream, "%s  Empty (bit): ", prefix);
     for (index = 0; index < pas_bitfit_directory_size(directory); ++index) {
-        switch (directory->directory_kind) {
-        case pas_bitfit_global_directory_kind: {
-            pas_bitfit_global_directory* global_directory;
-            
-            global_directory = (pas_bitfit_global_directory*)directory;
-                
-            if (pas_bitfit_global_directory_get_empty_bit_at_index(global_directory, index))
-                pas_stream_printf(stream, "x");
-            else
-                pas_stream_printf(stream, " ");
-            break;
-        }
-
-        case pas_bitfit_biasing_directory_kind: {
-            pas_bitfit_view* view;
-            pas_bitfit_global_directory* global_directory;
-            
-            view = pas_bitfit_directory_get_view(directory, index);
-            if (!view) {
-                pas_stream_printf(stream, " ");
-                continue;
-            }
-
-            global_directory =
-                pas_compact_bitfit_global_directory_ptr_load_non_null(&view->global_directory);
-
-            if (pas_bitfit_global_directory_get_empty_bit_at_index(
-                    global_directory, view->index_in_global))
-                pas_stream_printf(stream, "x");
-            else
-                pas_stream_printf(stream, " ");
-            break;
-        } }
+        if (pas_bitfit_directory_get_empty_bit_at_index(directory, index))
+            pas_stream_printf(stream, "x");
+        else
+            pas_stream_printf(stream, " ");
     }
     pas_stream_printf(stream, "\n");
     
-    switch (directory->directory_kind) {
-    case pas_bitfit_global_directory_kind: {
-        pas_bitfit_global_directory* global_directory;
-        
-        global_directory = (pas_bitfit_global_directory*)directory;
-                
-        pas_stream_printf(stream, "%s Last Empty+1: ", prefix);
-        dump_arrow(stream, (uintptr_t)global_directory->last_empty_plus_one.value);
-        pas_stream_printf(stream, "\n");
-        break;
-    }
-    case pas_bitfit_biasing_directory_kind:
-        break;
-    }
+    pas_stream_printf(stream, "%s Last Empty+1: ", prefix);
+    dump_arrow(stream, (uintptr_t)directory->last_empty_plus_one.value);
+    pas_stream_printf(stream, "\n");
 
     pas_stream_printf(stream, "%s    Committed: ", prefix);
     for (index = 0; index < pas_bitfit_directory_size(directory); ++index) {
@@ -254,68 +196,20 @@ static void report_bitfit_directory_contents(
     pas_stream_printf(stream, "\n");
 }
 
-void pas_status_reporter_dump_bitfit_biasing_directory(
-    pas_stream* stream, pas_bitfit_biasing_directory* directory)
+void pas_status_reporter_dump_bitfit_directory(
+    pas_stream* stream, pas_bitfit_directory* directory)
 {
-    pas_stream_printf(stream, "                %s Biasing Dir %p(%u): ",
-                      pas_bitfit_page_config_variant_get_capitalized_string(
-                          pas_bitfit_page_config_kind_get_config(
-                              directory->base.config_kind)->variant),
-                      directory,
-                      pas_biasing_directory_magazine_index(&directory->biasing_base));
-    pas_heap_summary_dump(pas_bitfit_directory_compute_summary(&directory->base), stream);
-    pas_stream_printf(stream, "\n");
-
-    report_bitfit_directory_contents(stream, &directory->base, "                    ");
-
-    pas_stream_printf(stream, "                     Eligible HWM: ");
-    dump_arrow(stream, (uintptr_t)directory->biasing_base.eligible_high_watermark.value);
-    pas_stream_printf(stream, "\n");
-    pas_stream_printf(stream, "                      Current HWM: ");
-    dump_arrow(stream, directory->biasing_base.current_high_watermark);
-    pas_stream_printf(stream, "\n");
-    pas_stream_printf(stream, "                     Previous HWM: ");
-    dump_arrow(stream, directory->biasing_base.previous_high_watermark);
-    pas_stream_printf(stream, "\n");
-}
-
-void pas_status_reporter_dump_bitfit_global_directory(
-    pas_stream* stream, pas_bitfit_global_directory* directory)
-{
-    pas_page_sharing_pool* bias_pool;
+    if (directory->config_kind == pas_bitfit_page_config_kind_null)
+        return;
     
     pas_stream_printf(stream, "            %s Global Dir (%p): ",
                       pas_bitfit_page_config_variant_get_capitalized_string(
-                          pas_bitfit_page_config_kind_get_config(
-                              directory->base.config_kind)->variant),
+                          pas_bitfit_page_config_kind_get_config(directory->config_kind)->variant),
                       directory);
-    pas_heap_summary_dump(pas_bitfit_directory_compute_summary(&directory->base), stream);
+    pas_heap_summary_dump(pas_bitfit_directory_compute_summary(directory), stream);
     pas_stream_printf(stream, "\n");
 
-    report_bitfit_directory_contents(stream, &directory->base, "                ");
-
-    bias_pool = pas_compact_atomic_page_sharing_pool_ptr_load(&directory->bias_sharing_pool);
-    if (bias_pool) {
-        size_t index;
-        
-        for (index = 0; index < pas_page_sharing_pool_num_participants(bias_pool); ++index) {
-            pas_page_sharing_participant participant;
-            
-            pas_fence_after_load(); /* Make sure that the size is what the thing says it is. */
-            
-            participant = pas_page_sharing_pool_get_participant(bias_pool, index);
-            if (!participant)
-                continue;
-            
-            PAS_ASSERT(pas_page_sharing_participant_get_kind(participant)
-                       == pas_page_sharing_participant_biasing_directory);
-            
-            pas_status_reporter_dump_bitfit_biasing_directory(
-                stream,
-                pas_unwrap_bitfit_biasing_directory(
-                    pas_page_sharing_participant_get_ptr(participant)));
-        }
-    }
+    report_bitfit_directory_contents(stream, directory, "                ");
 }
 
 static void report_segregated_directory_contents(
@@ -332,11 +226,8 @@ static void report_segregated_directory_contents(
         
         view = pas_segregated_directory_get(directory, index);
 
-        if (pas_segregated_view_is_biased_exclusive(view)) {
-            pas_stream_printf(stream, "b");
-            continue;
-        }
-        
+        PAS_UNUSED_PARAM(view);
+
         pas_stream_printf(
             stream, "%c",
             pas_segregated_view_kind_get_character_code(
@@ -366,9 +257,10 @@ static void report_segregated_directory_contents(
         page_config = pas_segregated_page_config_kind_get_config(directory->page_config_kind);
 
         payload_begin = pas_round_up_to_power_of_2(
-            page_config->base.page_object_payload_offset,
+            page_config->shared_payload_offset,
             pas_segregated_page_config_min_align(*page_config));
-        payload_end = pas_segregated_page_config_object_payload_end_offset_from_boundary(*page_config);
+        payload_end = pas_segregated_page_config_payload_end_offset_for_role(
+            *page_config, pas_segregated_page_shared_role);
         
         pas_stream_printf(stream, "%s        Bump: ", prefix);
         for (index = 0; index < pas_segregated_directory_size(directory); ++index) {
@@ -403,59 +295,22 @@ static void report_segregated_directory_contents(
     }
     pas_stream_printf(stream, "\n");
 
-    pas_stream_printf(stream, "%s      Tabled: ", prefix);
+    pas_stream_printf(stream, "%s First Elgbl: ", prefix);
+    dump_arrow(stream, (uintptr_t)pas_segregated_directory_get_first_eligible(directory).value);
+    pas_stream_printf(stream, "\n");
+
+    pas_stream_printf(stream, "%s       Empty: ", prefix);
     for (index = 0; index < pas_segregated_directory_size(directory); ++index) {
-        if (pas_segregated_directory_is_tabled(directory, index))
+        if (pas_segregated_directory_is_empty(directory, index))
             pas_stream_printf(stream, "x");
         else
             pas_stream_printf(stream, " ");
     }
     pas_stream_printf(stream, "\n");
 
-    pas_stream_printf(stream, "%s  First E&~T: ", prefix);
-    dump_arrow(stream, (uintptr_t)pas_segregated_directory_get_first_eligible(
-                   directory, pas_segregated_directory_first_eligible_but_not_tabled_kind).value);
+    pas_stream_printf(stream, "%s Last Empt+1: ", prefix);
+    dump_arrow(stream, (uintptr_t)pas_segregated_directory_get_last_empty_plus_one(directory).value);
     pas_stream_printf(stream, "\n");
-
-    pas_stream_printf(stream, "%s   First E&T: ", prefix);
-    dump_arrow(stream, (uintptr_t)pas_segregated_directory_get_first_eligible(
-                   directory, pas_segregated_directory_first_eligible_and_tabled_kind).value);
-    pas_stream_printf(stream, "\n");
-
-    pas_stream_printf(stream, "%s       Empty: ", prefix);
-    for (index = 0; index < pas_segregated_directory_size(directory); ++index) {
-        switch (directory->directory_kind) {
-        case pas_segregated_global_size_directory_kind:
-        case pas_segregated_shared_page_directory_kind:
-            if (pas_segregated_directory_is_empty(directory, index))
-                pas_stream_printf(stream, "x");
-            else
-                pas_stream_printf(stream, " ");
-            break;
-
-        case pas_segregated_biasing_directory_kind: {
-            pas_segregated_view view;
-            view = pas_segregated_directory_get(directory, index);
-            if (pas_segregated_view_is_empty(view))
-                pas_stream_printf(stream, "x");
-            else
-                pas_stream_printf(stream, " ");
-            break;
-        } }
-    }
-    pas_stream_printf(stream, "\n");
-
-    switch (directory->directory_kind) {
-    case pas_segregated_global_size_directory_kind:
-    case pas_segregated_shared_page_directory_kind:
-        pas_stream_printf(stream, "%s    Last E+1: ", prefix);
-        dump_arrow(stream, (uintptr_t)pas_segregated_directory_get_last_empty_plus_one(
-                       directory).value);
-        pas_stream_printf(stream, "\n");
-        break;
-    case pas_segregated_biasing_directory_kind:
-        break;
-    }
 
     pas_stream_printf(stream, "%s   Committed: ", prefix);
     for (index = 0; index < pas_segregated_directory_size(directory); ++index) {
@@ -467,49 +322,13 @@ static void report_segregated_directory_contents(
     pas_stream_printf(stream, "\n");
 }
 
-void pas_status_reporter_dump_segregated_biasing_directory(
-    pas_stream* stream, pas_segregated_biasing_directory* directory)
-{
-    pas_heap_summary summary;
-    
-    pas_stream_printf(
-        stream,
-        "                Biasing Dir %p(%u): Num Views: %zu",
-        directory,
-        pas_segregated_biasing_directory_magazine_index(directory),
-        pas_segregated_directory_size(&directory->base));
-
-    if (pas_segregated_directory_data_ptr_load(&directory->base.data))
-        pas_stream_printf(stream, ", Has Base Data");
-
-    pas_stream_printf(stream, ", ");
-
-    summary = pas_segregated_directory_compute_summary(&directory->base);
-    pas_heap_summary_dump(summary, stream);
-
-    pas_stream_printf(stream, "\n");
-
-    report_segregated_directory_contents(stream, &directory->base, "                    ");
-
-    pas_stream_printf(stream, "                    Eligible HWM: ");
-    dump_arrow(stream, (uintptr_t)directory->biasing_base.eligible_high_watermark.value);
-    pas_stream_printf(stream, "\n");
-    pas_stream_printf(stream, "                     Current HWM: ");
-    dump_arrow(stream, directory->biasing_base.current_high_watermark);
-    pas_stream_printf(stream, "\n");
-    pas_stream_printf(stream, "                    Previous HWM: ");
-    dump_arrow(stream, directory->biasing_base.previous_high_watermark);
-    pas_stream_printf(stream, "\n");
-}
-
-void pas_status_reporter_dump_segregated_global_size_directory(
-    pas_stream* stream, pas_segregated_global_size_directory* directory)
+void pas_status_reporter_dump_segregated_size_directory(
+    pas_stream* stream, pas_segregated_size_directory* directory)
 {
     pas_heap_summary partial_summary;
     pas_heap_summary exclusive_summary;
     size_t index;
-    pas_segregated_global_size_directory_data* data;
-    pas_page_sharing_pool* bias_pool;
+    pas_segregated_size_directory_data* data;
     
     pas_stream_printf(
         stream,
@@ -521,17 +340,12 @@ void pas_status_reporter_dump_segregated_global_size_directory(
 
     if (pas_segregated_directory_data_ptr_load(&directory->base.data))
         pas_stream_printf(stream, ", Has Base Data");
-    data = pas_segregated_global_size_directory_data_ptr_load(&directory->data);
-    if (data) {
+    data = pas_segregated_size_directory_data_ptr_load(&directory->data);
+    if (data)
         pas_stream_printf(stream, ", Has Data");
-        bias_pool = pas_compact_atomic_page_sharing_pool_ptr_load(&data->bias_sharing_pool);
-        if (bias_pool)
-            pas_stream_printf(stream, ", Exploded");
-    } else
-        bias_pool = NULL;
-    if (pas_segregated_global_size_directory_has_tlc_allocator(directory))
+    if (pas_segregated_size_directory_has_tlc_allocator(directory))
         pas_stream_printf(stream, ", Has TLA");
-    if (pas_segregated_global_size_directory_are_exclusive_views_enabled(directory))
+    if (pas_segregated_size_directory_are_exclusive_views_enabled(directory))
         pas_stream_printf(stream, ", Enabled Exclusives");
     pas_stream_printf(stream, "\n");
 
@@ -568,26 +382,6 @@ void pas_status_reporter_dump_segregated_global_size_directory(
     }
     
     report_segregated_directory_contents(stream, &directory->base, "                ");
-
-    if (bias_pool) {
-        for (index = 0; index < pas_page_sharing_pool_num_participants(bias_pool); ++index) {
-            pas_page_sharing_participant participant;
-            
-            pas_fence_after_load(); /* Make sure that the size is what the thing says it is. */
-            
-            participant = pas_page_sharing_pool_get_participant(bias_pool, index);
-            if (!participant)
-                continue;
-            
-            PAS_ASSERT(pas_page_sharing_participant_get_kind(participant)
-                       == pas_page_sharing_participant_biasing_directory);
-            
-            pas_status_reporter_dump_segregated_biasing_directory(
-                stream,
-                pas_unwrap_segregated_biasing_directory(
-                    pas_page_sharing_participant_get_ptr(participant)));
-        }
-    }
 }
 
 void pas_status_reporter_dump_segregated_shared_page_directory(
@@ -597,9 +391,16 @@ void pas_status_reporter_dump_segregated_shared_page_directory(
     
     pas_stream_printf(
         stream,
-        "        Shared Page Dir %p(%s): Num Views: %zu, ",
+        "        Shared Page Dir %p(%s, ",
         directory,
-        pas_segregated_page_config_kind_get_string(directory->base.page_config_kind),
+        pas_segregated_page_config_kind_get_string(directory->base.page_config_kind));
+
+    pas_segregated_page_config_kind_get_config(directory->base.page_config_kind)->base.heap_config_ptr
+        ->dump_shared_page_directory_arg(stream, directory);
+
+    pas_stream_printf(
+        stream,
+        "): Num Views: %zu, ",
         pas_segregated_directory_size(&directory->base));
 
     summary = pas_segregated_directory_compute_summary(&directory->base);
@@ -629,19 +430,19 @@ void pas_status_reporter_dump_large_map(pas_stream* stream)
     pas_stream_printf(stream, "    Large Map:\n");
     pas_stream_printf(
         stream,
-        "        Tiny Map: Num Entries: %zu, Num Deleted: %zu, Table Size: %zu\n",
+        "        Tiny Map: Num Entries: %u, Num Deleted: %u, Table Size: %u\n",
         pas_tiny_large_map_hashtable_instance.key_count,
         pas_tiny_large_map_hashtable_instance.deleted_count,
         pas_tiny_large_map_hashtable_instance.table_size);
     pas_stream_printf(
         stream,
-        "        Small Fallback Map: Num Entries: %zu, Num Deleted: %zu, Table Size: %zu\n",
+        "        Small Fallback Map: Num Entries: %u, Num Deleted: %u, Table Size: %u\n",
         pas_small_large_map_hashtable_instance.key_count,
         pas_small_large_map_hashtable_instance.deleted_count,
         pas_small_large_map_hashtable_instance.table_size);
     pas_stream_printf(
         stream,
-        "        Fallback Map: Num Entries: %zu, Num Deleted: %zu, Table Size: %zu\n",
+        "        Fallback Map: Num Entries: %u, Num Deleted: %u, Table Size: %u\n",
         pas_large_map_hashtable_instance.key_count,
         pas_large_map_hashtable_instance.deleted_count,
         pas_large_map_hashtable_instance.table_size);
@@ -702,7 +503,7 @@ void pas_status_reporter_dump_bootstrap_free_heap(pas_stream* stream)
 
 static bool dump_segregated_heap_directory_callback(
     pas_segregated_heap* heap,
-    pas_segregated_global_size_directory* directory,
+    pas_segregated_size_directory* directory,
     void* arg)
 {
     pas_stream* stream;
@@ -711,7 +512,7 @@ static bool dump_segregated_heap_directory_callback(
 
     stream = arg;
 
-    pas_status_reporter_dump_segregated_global_size_directory(stream, directory);
+    pas_status_reporter_dump_segregated_size_directory(stream, directory);
 
     return true;
 }
@@ -725,7 +526,7 @@ void pas_status_reporter_dump_bitfit_heap(pas_stream* stream, pas_bitfit_heap* h
     if (pas_status_reporter_enabled >= 3) {
         pas_bitfit_page_config_variant variant;
         for (PAS_EACH_BITFIT_PAGE_CONFIG_VARIANT_ASCENDING(variant)) {
-            pas_status_reporter_dump_bitfit_global_directory(
+            pas_status_reporter_dump_bitfit_directory(
                 stream,
                 pas_bitfit_heap_get_directory(heap, variant));
         }
@@ -755,7 +556,7 @@ void pas_status_reporter_dump_segregated_heap(pas_stream* stream, pas_segregated
     pas_stream_printf(stream, "\n");
 
     if (pas_status_reporter_enabled >= 3) {
-        pas_segregated_heap_for_each_global_size_directory(
+        pas_segregated_heap_for_each_size_directory(
             heap, dump_segregated_heap_directory_callback, stream);
     }
     
@@ -772,18 +573,10 @@ void pas_status_reporter_dump_heap(pas_stream* stream, pas_heap* heap)
     config = pas_heap_config_kind_get_config(heap->config_kind);
     
     pas_stream_printf(stream, "    Heap %p:\n", heap);
-    pas_stream_printf(stream, "        Size = %zu, Alignment = %zu\n",
-                      config->get_type_size(heap->type),
-                      config->get_type_alignment(heap->type));
-#if PAS_ENABLE_ISO
-    if (config->kind == pas_heap_config_kind_iso) {
-        pas_simple_type type;
 
-        type = (pas_simple_type)heap->type;
-        if (pas_simple_type_has_key(type))
-            pas_stream_printf(stream, "        Key = %p\n", pas_simple_type_key(type));
-    }
-#endif
+    pas_stream_printf(stream, "        %s, ", pas_heap_config_kind_get_string(heap->config_kind));
+    config->dump_type(heap->type, stream);
+    pas_stream_printf(stream, "\n");
     
     summary = pas_heap_compute_summary(heap, pas_lock_is_held);
     pas_stream_printf(stream, "        Total Summary: ");
@@ -859,6 +652,44 @@ void pas_status_reporter_dump_all_heaps_non_utility_summaries(pas_stream* stream
     pas_stream_printf(stream, "\n");
 }
 
+static bool dump_large_sharing_pool_node_callback(pas_large_sharing_node* node,
+                                                  void* arg)
+{
+    pas_stream* stream;
+
+    stream = arg;
+
+    pas_stream_printf(stream, "        %p...%p: %s, %zu/%zu live (%.0lf%%), %llu",
+                      (void*)node->range.begin,
+                      (void*)node->range.end,
+                      pas_commit_mode_get_string(node->is_committed),
+                      node->num_live_bytes,
+                      pas_range_size(node->range),
+                      100. * (double)node->num_live_bytes / (double)pas_range_size(node->range),
+                      (unsigned long long)node->use_epoch);
+
+    if (node->synchronization_style != pas_physical_memory_is_locked_by_virtual_range_common_lock) {
+        pas_stream_printf(
+            stream, ", %s",
+            pas_physical_memory_synchronization_style_get_string(node->synchronization_style));
+    }
+    if (node->mmap_capability != pas_may_mmap) {
+        pas_stream_printf(
+            stream, ", %s",
+            pas_mmap_capability_get_string(node->mmap_capability));
+    }
+
+    pas_stream_printf(stream, "\n");
+
+    return true;
+}
+
+void pas_status_reporter_dump_large_sharing_pool(pas_stream* stream)
+{
+    pas_stream_printf(stream, "    Large sharing pool contents:\n");
+    pas_large_sharing_pool_for_each(dump_large_sharing_pool_node_callback, stream, pas_lock_is_held);
+}
+
 void pas_status_reporter_dump_utility_heap(pas_stream* stream)
 {
     pas_stream_printf(stream, "    Utility Heap:\n");
@@ -901,9 +732,9 @@ static void dump_histogram(pas_stream* stream, size_t* histogram)
     }
 }
 
-static bool total_fragmentation_global_size_directory_callback(
+static bool total_fragmentation_size_directory_callback(
     pas_segregated_heap* heap,
-    pas_segregated_global_size_directory* directory,
+    pas_segregated_size_directory* directory,
     void* arg)
 {
     total_fragmentation_data* data;
@@ -943,8 +774,8 @@ static bool total_fragmentation_heap_callback(pas_heap* heap, void* arg)
 
     data = arg;
 
-    pas_segregated_heap_for_each_global_size_directory(
-        &heap->segregated_heap, total_fragmentation_global_size_directory_callback, data);
+    pas_segregated_heap_for_each_size_directory(
+        &heap->segregated_heap, total_fragmentation_size_directory_callback, data);
 
     data->large_fragmentation += pas_heap_summary_fragmentation(
         pas_large_heap_compute_summary(&heap->large_heap));
@@ -973,8 +804,8 @@ void pas_status_reporter_dump_total_fragmentation(pas_stream* stream)
     pas_all_heaps_for_each_heap(total_fragmentation_heap_callback, &data);
     pas_all_shared_page_directories_for_each(
         total_fragmentation_shared_page_directory_callback, &data);
-    pas_segregated_heap_for_each_global_size_directory(
-        &pas_utility_segregated_heap, total_fragmentation_global_size_directory_callback, &data);
+    pas_segregated_heap_for_each_size_directory(
+        &pas_utility_segregated_heap, total_fragmentation_size_directory_callback, &data);
     data.large_fragmentation += pas_heap_summary_fragmentation(
         pas_large_utility_free_heap_compute_summary());
     pas_stream_printf(stream, "    Segregated Exclusive Fragmentation Histogram:\n");
@@ -995,6 +826,13 @@ void pas_status_reporter_dump_total_fragmentation(pas_stream* stream)
                       data.large_fragmentation);
 }
 
+void pas_status_reporter_dump_view_stats(pas_stream* stream)
+{
+    pas_stream_printf(stream, "    Number of Partial Views: %zu\n", pas_segregated_partial_view_count);
+    pas_stream_printf(stream, "    Number of Shared Views: %zu\n", pas_segregated_shared_view_count);
+    pas_stream_printf(stream, "    Number of Exclusive Views: %zu\n", pas_segregated_exclusive_view_count);
+}
+
 typedef struct {
     size_t num_directories_with_data;
     size_t num_directories_with_tlas;
@@ -1003,9 +841,9 @@ typedef struct {
     size_t num_heaps;
 } tier_up_rate_data;
 
-static bool tier_up_rate_global_size_directory_callback(
+static bool tier_up_rate_size_directory_callback(
     pas_segregated_heap* heap,
-    pas_segregated_global_size_directory* directory,
+    pas_segregated_size_directory* directory,
     void* arg)
 {
     tier_up_rate_data* data;
@@ -1014,11 +852,11 @@ static bool tier_up_rate_global_size_directory_callback(
 
     data = arg;
 
-    if (pas_segregated_global_size_directory_data_ptr_load(&directory->data))
+    if (pas_segregated_size_directory_data_ptr_load(&directory->data))
         data->num_directories_with_data++;
-    if (pas_segregated_global_size_directory_has_tlc_allocator(directory))
+    if (pas_segregated_size_directory_has_tlc_allocator(directory))
         data->num_directories_with_tlas++;
-    if (pas_segregated_global_size_directory_are_exclusive_views_enabled(directory))
+    if (pas_segregated_size_directory_are_exclusive_views_enabled(directory))
         data->num_directories_with_exclusives++;
     data->num_directories++;
 
@@ -1031,8 +869,8 @@ static bool tier_up_rate_heap_callback(pas_heap* heap, void* arg)
 
     data = arg;
 
-    pas_segregated_heap_for_each_global_size_directory(
-        &heap->segregated_heap, tier_up_rate_global_size_directory_callback, data);
+    pas_segregated_heap_for_each_size_directory(
+        &heap->segregated_heap, tier_up_rate_size_directory_callback, data);
 
     data->num_heaps++;
 
@@ -1068,11 +906,34 @@ void pas_status_reporter_dump_tier_up_rates(pas_stream* stream)
 
 static const char* allocator_state(pas_local_allocator* allocator)
 {
+    
     if (!pas_local_allocator_is_active(allocator))
         return "inactive";
     if (pas_segregated_view_is_partial(allocator->view))
         return "partial";
     return "exclusive";
+}
+
+static void dump_allocator_state(pas_stream* stream, pas_local_allocator* allocator)
+{
+    pas_segregated_view view;
+
+    view = allocator->view;
+    pas_stream_printf(stream, ", %s, view = %p, directory = %p, %s",
+                      pas_local_allocator_config_kind_get_string(allocator->config_kind),
+                      view, view ? pas_segregated_view_get_size_directory(view) : NULL,
+                      allocator_state(allocator));
+}
+
+static void dump_scavenger_data_state(pas_stream* stream, pas_local_allocator_scavenger_data* data)
+{
+    pas_local_allocator_kind kind;
+
+    kind = data->kind;
+    pas_stream_printf(stream, "%s", pas_local_allocator_kind_get_string(kind));
+
+    if (kind == pas_local_allocator_allocator_kind)
+        dump_allocator_state(stream, (pas_local_allocator*)data);
 }
 
 void pas_status_reporter_dump_baseline_allocators(pas_stream* stream)
@@ -1088,16 +949,12 @@ void pas_status_reporter_dump_baseline_allocators(pas_stream* stream)
     
     for (index = 0; index < PAS_NUM_BASELINE_ALLOCATORS; ++index) {
         pas_local_allocator* allocator;
-        pas_segregated_view view;
 
         allocator = &pas_baseline_allocator_table[index].u.allocator;
 
-        view = allocator->view;
-        pas_stream_printf(stream,
-                          "         %zu: directory = %p, %s\n",
-                          index,
-                          view ? pas_segregated_view_get_global_size_directory(view) : NULL,
-                          allocator_state(allocator));
+        pas_stream_printf(stream, "         %zu: ", index);
+        dump_allocator_state(stream, allocator);
+        pas_stream_printf(stream, "\n");
     }
 }
 
@@ -1109,8 +966,10 @@ void pas_status_reporter_dump_thread_local_caches(pas_stream* stream)
 
     pas_stream_printf(stream, "    Thread Local Cache Layout:\n");
     for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
-        pas_stream_printf(stream, "        %u: directory = %p\n",
-                          pas_thread_local_cache_layout_node_get_allocator_index(layout_node),
+        pas_stream_printf(stream, "        %u: %s, directory = %p\n",
+                          pas_thread_local_cache_layout_node_get_allocator_index_generic(layout_node),
+                          pas_thread_local_cache_layout_node_kind_get_string(
+                              pas_thread_local_cache_layout_node_get_kind(layout_node)),
                           pas_thread_local_cache_layout_node_get_directory(layout_node));
     }
 
@@ -1138,19 +997,20 @@ void pas_status_reporter_dump_thread_local_caches(pas_stream* stream)
 
         for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
             pas_allocator_index allocator_index;
-            pas_local_allocator* allocator;
 
-            allocator_index = pas_thread_local_cache_layout_node_get_allocator_index(layout_node);
+            allocator_index =
+                pas_thread_local_cache_layout_node_get_allocator_index_generic(layout_node);
 
             if (allocator_index >= cache->allocator_index_upper_bound)
                 break;
+
+            if (!pas_thread_local_cache_layout_node_is_committed(layout_node, cache))
+                continue;
             
-            allocator = pas_thread_local_cache_get_local_allocator_impl(cache, allocator_index);
-            pas_stream_printf(stream,
-                              "            %u: directory = %p, %s\n",
-                              allocator_index,
-                              pas_segregated_view_get_global_size_directory(allocator->view),
-                              allocator_state(allocator));
+            pas_stream_printf(stream, "            %u: ", allocator_index);
+            dump_scavenger_data_state(
+                stream, pas_thread_local_cache_get_local_allocator_direct(cache, allocator_index));
+            pas_stream_printf(stream, "\n");
         }
     }
 }
@@ -1158,15 +1018,80 @@ void pas_status_reporter_dump_thread_local_caches(pas_stream* stream)
 void pas_status_reporter_dump_configuration(pas_stream* stream)
 {
     pas_stream_printf(stream, "    Mprotect Decommitted: %s\n",
-                      pas_page_malloc_mprotect_decommitted ? "yes" : "no");
+                      PAS_MPROTECT_DECOMMITTED ? "yes" : "no");
+}
+
+void pas_status_reporter_dump_physical_page_sharing_pool(pas_stream* stream)
+{
+    pas_stream_printf(stream, "    Physical Page Sharing Pool Balance: %ld\n",
+                      pas_physical_page_sharing_pool_balance);
+}
+
+static void dump_expendable_memory(pas_stream* stream,
+                                   pas_expendable_memory* header,
+                                   void* payload)
+{
+    size_t index;
+    size_t index_end;
+
+    pas_stream_printf(stream, "Header = %p, Payload = %p...%p, Page States: ",
+                      header, payload, (char*)payload + header->size);
+
+    index_end = pas_expendable_memory_num_pages_in_use(header);
+
+    for (index = 0; index < index_end; ++index) {
+        pas_expendable_memory_state_kind kind;
+
+        kind = pas_expendable_memory_state_get_kind(header->states[index]);
+
+        switch (kind) {
+        case PAS_EXPENDABLE_MEMORY_STATE_KIND_DECOMMITTED:
+            pas_stream_printf(stream, "D");
+            break;
+        case PAS_EXPENDABLE_MEMORY_STATE_KIND_INTERIOR:
+            pas_stream_printf(stream, "I");
+            break;
+        default:
+            PAS_ASSERT(kind >= PAS_EXPENDABLE_MEMORY_STATE_KIND_JUST_USED);
+            PAS_ASSERT(kind <= PAS_EXPENDABLE_MEMORY_STATE_KIND_MAX_JUST_USED);
+            PAS_ASSERT(kind - PAS_EXPENDABLE_MEMORY_STATE_KIND_JUST_USED < 10);
+            pas_stream_printf(stream, "%u", kind - PAS_EXPENDABLE_MEMORY_STATE_KIND_JUST_USED);
+            break;
+        }
+    }
+}
+
+void pas_status_reporter_dump_expendable_memories(pas_stream* stream)
+{
+    pas_large_expendable_memory* large_memory;
+
+    pas_heap_lock_assert_held();
+
+    pas_stream_printf(stream, "    Compact Expendable Memory: ");
+    dump_expendable_memory(
+        stream, &pas_compact_expendable_memory_header.header, pas_compact_expendable_memory_payload);
+    pas_stream_printf(stream, "\n");
+
+    for (large_memory = pas_large_expendable_memory_head; large_memory; large_memory = large_memory->next) {
+        pas_stream_printf(stream, "    Large Expendable Memory: ");
+        dump_expendable_memory(
+            stream, &large_memory->header, pas_large_expendable_memory_payload(large_memory));
+        pas_stream_printf(stream, "\n");
+    }
 }
 
 void pas_status_reporter_dump_everything(pas_stream* stream)
 {
+    pas_heap_lock_assert_held();
+    
     pas_stream_printf(stream, "%d: Heap Status:\n", getpid());
     pas_status_reporter_dump_all_heaps(stream);
     pas_status_reporter_dump_all_shared_page_directories(stream);
     pas_status_reporter_dump_all_heaps_non_utility_summaries(stream);
+    
+    if (pas_status_reporter_enabled >= 3)
+        pas_status_reporter_dump_large_sharing_pool(stream);
+    
     pas_status_reporter_dump_utility_heap(stream);
 
     if (pas_status_reporter_enabled >= 3) {
@@ -1193,6 +1118,7 @@ void pas_status_reporter_dump_everything(pas_stream* stream)
 
     if (pas_status_reporter_enabled >= 3) {
         pas_status_reporter_dump_total_fragmentation(stream);
+        pas_status_reporter_dump_view_stats(stream);
         pas_status_reporter_dump_tier_up_rates(stream);
     }
 
@@ -1205,6 +1131,8 @@ void pas_status_reporter_dump_everything(pas_stream* stream)
     pas_stream_printf(stream, "\n");
 
     pas_status_reporter_dump_configuration(stream);
+    pas_status_reporter_dump_physical_page_sharing_pool(stream);
+    pas_status_reporter_dump_expendable_memories(stream);
 }
 
 static void* status_reporter_thread_main(void* arg)

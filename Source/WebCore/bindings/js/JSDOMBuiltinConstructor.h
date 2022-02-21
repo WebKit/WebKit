@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2015, 2016 Canon Inc. All rights reserved.
- *  Copyright (C) 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -40,16 +40,14 @@ public:
     static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES construct(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 private:
-    JSDOMBuiltinConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
-        : Base(structure, globalObject)
+    JSDOMBuiltinConstructor(JSC::VM& vm, JSC::Structure* structure)
+        : Base(vm, structure, construct)
     {
     }
 
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
-    static JSC::CallData getConstructData(JSC::JSCell*);
 
-    JSC::EncodedJSValue callConstructor(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject&);
-    JSC::EncodedJSValue callConstructor(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject*);
+    JSC::Structure* getDOMStructureForJSObject(JSC::JSGlobalObject*, JSC::JSObject* newTarget);
 
     // Usually defined for each specialization class.
     void initializeProperties(JSC::VM&, JSDOMGlobalObject&) { }
@@ -59,14 +57,14 @@ private:
 
 template<typename JSClass> inline JSDOMBuiltinConstructor<JSClass>* JSDOMBuiltinConstructor<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
-    JSDOMBuiltinConstructor* constructor = new (NotNull, JSC::allocateCell<JSDOMBuiltinConstructor>(vm.heap)) JSDOMBuiltinConstructor(structure, globalObject);
+    JSDOMBuiltinConstructor* constructor = new (NotNull, JSC::allocateCell<JSDOMBuiltinConstructor>(vm)) JSDOMBuiltinConstructor(vm, structure);
     constructor->finishCreation(vm, globalObject);
     return constructor;
 }
 
 template<typename JSClass> inline JSC::Structure* JSDOMBuiltinConstructor<JSClass>::createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
 {
-    return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+    return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::InternalFunctionType, StructureFlags), info());
 }
 
 template<typename JSClass> inline void JSDOMBuiltinConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
@@ -77,54 +75,31 @@ template<typename JSClass> inline void JSDOMBuiltinConstructor<JSClass>::finishC
     initializeProperties(vm, globalObject);
 }
 
-template<typename JSClass> inline JSC::EncodedJSValue JSDOMBuiltinConstructor<JSClass>::callConstructor(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, JSC::JSObject& object)
+template<typename JSClass> inline JSC::Structure* JSDOMBuiltinConstructor<JSClass>::getDOMStructureForJSObject(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSObject* newTarget)
 {
-    Base::callFunctionWithCurrentArguments(lexicalGlobalObject, callFrame, object, *initializeFunction());
-    return JSC::JSValue::encode(&object);
-}
+    auto& vm = JSC::getVM(lexicalGlobalObject);
 
-template<typename JSClass> inline JSC::EncodedJSValue JSDOMBuiltinConstructor<JSClass>::callConstructor(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, JSC::JSObject* object)
-{
-    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
+    if (LIKELY(newTarget == this))
+        return getDOMStructure<JSClass>(vm, *globalObject());
+
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (!object)
-        return throwConstructorScriptExecutionContextUnavailableError(lexicalGlobalObject, scope, info()->className);
-    return callConstructor(lexicalGlobalObject, callFrame, *object);
-}
-
-template<typename JSClass>
-typename std::enable_if<JSDOMObjectInspector<JSClass>::isSimpleWrapper, JSC::JSObject&>::type createJSObject(JSDOMBuiltinConstructor<JSClass>& constructor)
-{
-    return *createWrapper<typename JSClass::DOMWrapped>(constructor.globalObject(), JSClass::DOMWrapped::create());
-}
-
-template<typename JSClass>
-typename std::enable_if<JSDOMObjectInspector<JSClass>::isBuiltin, JSC::JSObject&>::type createJSObject(JSDOMBuiltinConstructor<JSClass>& constructor)
-{
-    auto& globalObject = *constructor.globalObject();
-    return *JSClass::create(getDOMStructure<JSClass>(globalObject.vm(), globalObject), &globalObject);
-}
-
-template<typename JSClass>
-typename std::enable_if<JSDOMObjectInspector<JSClass>::isComplexWrapper, JSC::JSObject*>::type createJSObject(JSDOMBuiltinConstructor<JSClass>& constructor)
-{
-    auto* context = constructor.scriptExecutionContext();
-    return context ? createWrapper<typename JSClass::DOMWrapped>(constructor.globalObject(), JSClass::DOMWrapped::create(*context)) : nullptr;
+    auto* newTargetGlobalObject = JSC::getFunctionRealm(lexicalGlobalObject, newTarget);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    auto* baseStructure = getDOMStructure<JSClass>(vm, *JSC::jsCast<JSDOMGlobalObject*>(newTargetGlobalObject));
+    RELEASE_AND_RETURN(scope, JSC::InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure));
 }
 
 template<typename JSClass> inline JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSDOMBuiltinConstructor<JSClass>::construct(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
 {
     ASSERT(callFrame);
     auto* castedThis = JSC::jsCast<JSDOMBuiltinConstructor*>(callFrame->jsCallee());
-    return castedThis->callConstructor(*lexicalGlobalObject, *callFrame, createJSObject(*castedThis));
-}
+    auto* structure = castedThis->getDOMStructureForJSObject(lexicalGlobalObject, asObject(callFrame->newTarget()));
+    if (UNLIKELY(!structure))
+        return { };
 
-template<typename JSClass> inline JSC::CallData JSDOMBuiltinConstructor<JSClass>::getConstructData(JSC::JSCell*)
-{
-    JSC::CallData constructData;
-    constructData.type = JSC::CallData::Type::Native;
-    constructData.native.function = construct;
-    return constructData;
+    auto* jsObject = JSClass::create(structure, castedThis->globalObject());
+    JSC::call(lexicalGlobalObject, castedThis->initializeFunction(), jsObject, JSC::ArgList(callFrame), "This error should never occur: initialize function is guaranteed to be callable.");
+    return JSC::JSValue::encode(jsObject);
 }
 
 } // namespace WebCore

@@ -18,6 +18,6 @@ PASS parse '9ms'
 PASS parse '1ms'
 PASS parse '0ms'
 PASS parse '-500ms'
-FAIL parse '1s, 0.1s, 10ms' assert_equals: Expected computed value expected "1s, 0.1s, 0.01s" but got "0.01s"
+PASS parse '1s, 0.1s, 10ms'
 PASS parse 'foobar'
 

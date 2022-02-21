@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='resultsdbpy',
-    version='3.1.1',
+    version='3.1.6',
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
     classifiers=[
@@ -45,7 +45,7 @@ setup(
         'Topic :: Software Development :: Testing',
     ],
     keywords='database history results testing webkit',
-    url='https://svn.webkit.org/repository/webkit/trunk/Tools/resultsdbpy',
+    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/resultsdbpy',
     author='Jonathan Bedard',
     author_email='jbedard@apple.com',
     license='Modified BSD',
@@ -61,9 +61,6 @@ setup(
         'boto3',
         'cassandra-driver',
         'fakeredis',
-        'Flask',
-        'Flask-Cors',
-        'gunicorn',
         'lupa',
         'pycryptodome',
         'redis',
@@ -71,6 +68,7 @@ setup(
         'selenium',
         'webkitcorepy',
         'webkitscmpy',
+        'webkitflaskpy',
     ],
     include_package_data=True,
     zip_safe=False,

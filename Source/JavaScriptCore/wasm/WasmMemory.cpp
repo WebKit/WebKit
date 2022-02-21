@@ -37,6 +37,7 @@
 #include <wtf/Platform.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RAMSize.h>
+#include <wtf/SafeStrerror.h>
 #include <wtf/StdSet.h>
 #include <wtf/Vector.h>
 
@@ -301,7 +302,7 @@ MemoryHandle::~MemoryHandle()
         switch (m_mode) {
         case MemoryMode::Signaling:
             if (mprotect(memory, Memory::fastMappedBytes(), PROT_READ | PROT_WRITE)) {
-                dataLog("mprotect failed: ", strerror(errno), "\n");
+                dataLog("mprotect failed: ", safeStrerror(errno).data(), "\n");
                 RELEASE_ASSERT_NOT_REACHED();
             }
             memoryManager().freeFastMemory(memory);
@@ -313,7 +314,7 @@ MemoryHandle::~MemoryHandle()
                 break;
             case MemorySharingMode::Shared: {
                 if (mprotect(memory, m_mappedCapacity, PROT_READ | PROT_WRITE)) {
-                    dataLog("mprotect failed: ", strerror(errno), "\n");
+                    dataLog("mprotect failed: ", safeStrerror(errno).data(), "\n");
                     RELEASE_ASSERT_NOT_REACHED();
                 }
                 memoryManager().freeGrowableBoundsCheckingMemory(memory, m_mappedCapacity);
@@ -406,7 +407,7 @@ RefPtr<Memory> Memory::tryCreate(PageCount initial, PageCount maximum, MemorySha
     
     if (fastMemory) {
         if (mprotect(fastMemory + initialBytes, Memory::fastMappedBytes() - initialBytes, PROT_NONE)) {
-            dataLog("mprotect failed: ", strerror(errno), "\n");
+            dataLog("mprotect failed: ", safeStrerror(errno).data(), "\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
 
@@ -442,7 +443,7 @@ RefPtr<Memory> Memory::tryCreate(PageCount initial, PageCount maximum, MemorySha
         }
 
         if (mprotect(slowMemory + initialBytes, maximumBytes - initialBytes, PROT_NONE)) {
-            dataLog("mprotect failed: ", strerror(errno), "\n");
+            dataLog("mprotect failed: ", safeStrerror(errno).data(), "\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
 
@@ -516,7 +517,7 @@ Expected<PageCount, Memory::GrowFailReason> Memory::growShared(PageCount delta)
 
         dataLogLnIf(verbose, "Marking WebAssembly memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
         if (mprotect(startAddress, extraBytes, PROT_READ | PROT_WRITE)) {
-            dataLog("mprotect failed: ", strerror(errno), "\n");
+            dataLog("mprotect failed: ", safeStrerror(errno).data(), "\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
 
@@ -605,7 +606,7 @@ Expected<PageCount, Memory::GrowFailReason> Memory::grow(PageCount delta)
         
         dataLogLnIf(verbose, "Marking WebAssembly memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
         if (mprotect(startAddress, extraBytes, PROT_READ | PROT_WRITE)) {
-            dataLog("mprotect failed: ", strerror(errno), "\n");
+            dataLog("mprotect failed: ", safeStrerror(errno).data(), "\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
 
@@ -669,11 +670,11 @@ void Memory::registerInstance(Instance* instance)
     size_t count = m_instances.size();
     for (size_t index = 0; index < count; index++) {
         if (m_instances.at(index).get() == nullptr) {
-            m_instances.at(index) = makeWeakPtr(*instance);
+            m_instances.at(index) = *instance;
             return;
         }
     }
-    m_instances.append(makeWeakPtr(*instance));
+    m_instances.append(*instance);
 }
 
 void Memory::dump(PrintStream& out) const

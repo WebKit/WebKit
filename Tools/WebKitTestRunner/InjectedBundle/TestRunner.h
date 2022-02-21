@@ -99,6 +99,7 @@ public:
     // Special options.
     void keepWebHistory();
     void setAcceptsEditing(bool value) { m_shouldAllowEditing = value; }
+    void preventPopupWindows();
 
     void setCustomPolicyDelegate(bool enabled, bool permissive = false);
     void addOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
@@ -214,6 +215,7 @@ public:
     // Downloads
     bool shouldFinishAfterDownload() const { return m_shouldFinishAfterDownload; }
     void setShouldLogDownloadCallbacks(bool);
+    void setShouldLogDownloadSize(bool);
 
     bool shouldAllowEditing() const { return m_shouldAllowEditing; }
 
@@ -292,6 +294,7 @@ public:
     static void denyWebNotificationPermission(JSStringRef origin);
     static void removeAllWebNotificationPermissions();
     static void simulateWebNotificationClick(JSValueRef notification);
+    static void simulateWebNotificationClickForServiceWorkerNotifications();
 
     // Geolocation.
     void setGeolocationPermission(bool);
@@ -337,6 +340,7 @@ public:
     void setIgnoresViewportScaleLimits(bool);
     void setShouldDownloadUndisplayableMIMETypes(bool);
     void setShouldAllowDeviceOrientationAndMotionAccess(bool);
+    void stopLoading();
 
     bool didCancelClientRedirect() const { return m_didCancelClientRedirect; }
     void setDidCancelClientRedirect(bool value) { m_didCancelClientRedirect = value; }
@@ -471,6 +475,7 @@ public:
     void setShouldDismissJavaScriptAlertsAsynchronously(bool);
     void abortModal();
 
+    void terminateGPUProcess();
     void terminateNetworkProcess();
     void terminateServiceWorkers();
     void setUseSeparateServiceWorkerProcess(bool);
@@ -494,6 +499,7 @@ public:
     void resetMockMediaDevices();
     void setMockCameraOrientation(unsigned);
     bool isMockRealtimeMediaSourceCenterEnabled();
+    void setMockCameraIsInterrupted(bool);
 
     bool hasAppBoundSession();
     void clearAppBoundSession();
@@ -529,11 +535,15 @@ public:
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
     void setPrivateClickMeasurementEphemeralMeasurementForTesting(bool value);
     void setPrivateClickMeasurementFraudPreventionValuesForTesting(JSStringRef unlinkableToken, JSStringRef secretToken, JSStringRef signature, JSStringRef keyID);
-    void simulateResourceLoadStatisticsSessionRestart();
+    void setPrivateClickMeasurementAppBundleIDForTesting(JSStringRef);
+    void simulatePrivateClickMeasurementSessionRestart();
 
     void setIsSpeechRecognitionPermissionGranted(bool);
 
     void setIsMediaKeySystemPermissionGranted(bool);
+
+    void takeViewPortSnapshot(JSValueRef callback);
+    void viewPortSnapshotTaken(WKStringRef);
 
 private:
     TestRunner();
@@ -602,6 +612,7 @@ private:
     bool m_hasSetDowngradeReferrerCallback { false };
     bool m_hasSetBlockThirdPartyCookiesCallback { false };
     bool m_hasSetFirstPartyWebsiteDataRemovalModeCallback { false };
+    bool m_takeViewPortSnapshot { false };
 };
 
 } // namespace WTR

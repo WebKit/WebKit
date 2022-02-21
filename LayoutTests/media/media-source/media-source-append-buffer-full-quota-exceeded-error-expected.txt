@@ -30,5 +30,302 @@ EVENT(updateend)
 EXPECTED (exception != 'QuotaExceededError: The quota has been exceeded.') OK
 Appending PTS=13-15
 EXPECTED (exception == 'QuotaExceededError: The quota has been exceeded.') OK
+EVENT(updateend)
+Appending PTS=0
+EVENT(updateend)
+Appending PTS=1
+EVENT(updateend)
+Appending PTS=2
+EVENT(updateend)
+Appending PTS=3
+EVENT(updateend)
+Appending PTS=4
+EVENT(updateend)
+Appending PTS=5
+EVENT(updateend)
+Appending PTS=6
+EVENT(updateend)
+Appending PTS=7
+EVENT(updateend)
+Appending PTS=8
+EVENT(updateend)
+Appending PTS=9
+EVENT(updateend)
+Appending PTS=10
+EVENT(updateend)
+Appending PTS=11
+EVENT(updateend)
+Appending PTS=12
+EVENT(updateend)
+Appending PTS=13
+EVENT(updateend)
+Appending PTS=14
+EVENT(updateend)
+Appending PTS=15
+EVENT(updateend)
+Appending PTS=16
+EVENT(updateend)
+Appending PTS=17
+EVENT(updateend)
+Appending PTS=18
+EVENT(updateend)
+Appending PTS=19
+EVENT(updateend)
+Appending PTS=20
+EVENT(updateend)
+Appending PTS=21
+EVENT(updateend)
+Appending PTS=22
+EVENT(updateend)
+Appending PTS=23
+EVENT(updateend)
+Appending PTS=24
+EVENT(updateend)
+Appending PTS=25
+EVENT(updateend)
+Appending PTS=26
+EVENT(updateend)
+Appending PTS=27
+EVENT(updateend)
+Appending PTS=28
+EVENT(updateend)
+Appending PTS=29
+EVENT(updateend)
+Appending PTS=30
+EVENT(updateend)
+Appending PTS=31
+EVENT(updateend)
+Appending PTS=32
+EVENT(updateend)
+Appending PTS=33
+EVENT(updateend)
+Appending PTS=34
+EVENT(updateend)
+Appending PTS=35
+EVENT(updateend)
+Appending PTS=36
+EVENT(updateend)
+Appending PTS=37
+EVENT(updateend)
+Appending PTS=38
+EVENT(updateend)
+Appending PTS=39
+EVENT(updateend)
+Appending PTS=40
+EVENT(updateend)
+Appending PTS=41
+EVENT(updateend)
+Appending PTS=42
+EXPECTED (exception == 'QuotaExceededError: The quota has been exceeded.') OK
+EXPECTED (1 == '1') OK
+EVENT(updateend)
+Appending PTS=0.002
+EVENT(updateend)
+Appending PTS=1.002
+EVENT(updateend)
+Appending PTS=2.002
+EVENT(updateend)
+Appending PTS=3.002
+EVENT(updateend)
+Appending PTS=4.002
+EVENT(updateend)
+Appending PTS=5.002
+EVENT(updateend)
+Appending PTS=6.002
+EVENT(updateend)
+Appending PTS=7.002
+EVENT(updateend)
+Appending PTS=8.002
+EVENT(updateend)
+Appending PTS=9.002
+EVENT(updateend)
+Appending PTS=10.002
+EVENT(updateend)
+Appending PTS=11.002
+EVENT(updateend)
+Appending PTS=12.002
+EVENT(updateend)
+Appending PTS=13.002
+EVENT(updateend)
+Appending PTS=14.002
+EVENT(updateend)
+Appending PTS=15.002
+EVENT(updateend)
+Appending PTS=16.002
+EVENT(updateend)
+Appending PTS=17.002
+EVENT(updateend)
+Appending PTS=18.002
+EVENT(updateend)
+Appending PTS=19.002
+EVENT(updateend)
+Appending PTS=20.002
+EVENT(updateend)
+Appending PTS=21.002
+EVENT(updateend)
+Appending PTS=22.002
+EVENT(updateend)
+Appending PTS=23.002
+EVENT(updateend)
+Appending PTS=24.002
+EVENT(updateend)
+Appending PTS=25.002
+EVENT(updateend)
+Appending PTS=26.002
+EVENT(updateend)
+Appending PTS=27.002
+EVENT(updateend)
+Appending PTS=28.002
+EVENT(updateend)
+Appending PTS=29.002
+EVENT(updateend)
+Appending PTS=30.002
+EVENT(updateend)
+Appending PTS=31.002
+EVENT(updateend)
+Appending PTS=32.002
+EVENT(updateend)
+Appending PTS=33.002
+EVENT(updateend)
+Appending PTS=34.002
+EVENT(updateend)
+Appending PTS=35.002
+EVENT(updateend)
+Appending PTS=36.002
+EVENT(updateend)
+Appending PTS=37.002
+EVENT(updateend)
+Appending PTS=38.002
+EVENT(updateend)
+Appending PTS=39.002
+EVENT(updateend)
+Appending PTS=40.002
+EVENT(updateend)
+Appending PTS=41.002
+EVENT(updateend)
+Appending PTS=42.002
+EXPECTED (exception == 'QuotaExceededError: The quota has been exceeded.') OK
+EVENT(updateend)
+Appending PTS=0
+EVENT(updateend)
+Appending PTS=1
+EVENT(updateend)
+Appending PTS=2
+EVENT(updateend)
+Appending PTS=3
+EVENT(updateend)
+Appending PTS=4
+EVENT(updateend)
+Appending PTS=5
+EVENT(updateend)
+Appending PTS=6
+EVENT(updateend)
+Appending PTS=7
+EVENT(updateend)
+Appending PTS=8
+EVENT(updateend)
+Appending PTS=9
+EVENT(updateend)
+Appending PTS=10
+EVENT(updateend)
+Appending PTS=11
+EVENT(updateend)
+Appending PTS=12
+EVENT(updateend)
+Appending PTS=13
+EVENT(updateend)
+Appending PTS=14
+EVENT(updateend)
+Appending PTS=15
+EVENT(updateend)
+Appending PTS=16
+EVENT(updateend)
+Appending PTS=17
+EVENT(updateend)
+Appending PTS=18
+EVENT(updateend)
+Appending PTS=19
+EVENT(updateend)
+Appending PTS=20
+EVENT(updateend)
+Appending PTS=21
+EVENT(updateend)
+Appending PTS=22
+EVENT(updateend)
+Appending PTS=23
+EVENT(updateend)
+Appending PTS=24
+EVENT(updateend)
+Appending PTS=25
+EVENT(updateend)
+Appending PTS=26
+EVENT(updateend)
+Appending PTS=27
+EVENT(updateend)
+Appending PTS=28
+EVENT(updateend)
+Appending PTS=29
+EVENT(updateend)
+EXPECTED (exception != 'QuotaExceededError: The quota has been exceeded.') OK
+Appending PTS=30
+EVENT(updateend)
+Appending PTS=30.083333333333332
+EVENT(updateend)
+Appending PTS=30.166666666666668
+EVENT(updateend)
+Appending PTS=30.25
+EVENT(updateend)
+Appending PTS=30.333333333333332
+EVENT(updateend)
+Appending PTS=30.416666666666668
+EVENT(updateend)
+Appending PTS=30.5
+EVENT(updateend)
+Appending PTS=30.583333333333332
+EVENT(updateend)
+Appending PTS=30.666666666666668
+EVENT(updateend)
+Appending PTS=30.75
+EVENT(updateend)
+Appending PTS=30.833333333333332
+EVENT(updateend)
+Appending PTS=30.916666666666668
+EVENT(updateend)
+Appending PTS=31
+EVENT(updateend)
+Appending PTS=31.083333333333332
+EVENT(updateend)
+Appending PTS=31.166666666666668
+EVENT(updateend)
+Appending PTS=31.25
+EVENT(updateend)
+Appending PTS=31.333333333333332
+EVENT(updateend)
+Appending PTS=31.416666666666668
+EVENT(updateend)
+Appending PTS=31.5
+EVENT(updateend)
+Appending PTS=31.583333333333332
+EVENT(updateend)
+Appending PTS=31.666666666666668
+EVENT(updateend)
+Appending PTS=31.75
+EVENT(updateend)
+Appending PTS=31.833333333333332
+EVENT(updateend)
+Appending PTS=31.916666666666668
+EVENT(updateend)
+EXPECTED (exception != 'QuotaExceededError: The quota has been exceeded.') OK
+EXPECTED (1 == '1') OK
+EVENT(updateend)
+EXPECTED (2 == '2') OK
+Appending PTS=32
+EVENT(updateend)
+Appending PTS=33
+EVENT(updateend)
+Appending PTS=34
+EVENT(updateend)
+Appending PTS=35
+EXPECTED (exception == 'QuotaExceededError: The quota has been exceeded.') OK
 END OF TEST
 

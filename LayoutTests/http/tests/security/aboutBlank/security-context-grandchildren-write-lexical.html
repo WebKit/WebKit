@@ -26,7 +26,7 @@ function doTest() {
       "window.mywriteln = function(i, str) { frames[i].document.writeln(str); };" +
       "window.myclose = function(i) { frames[i].document.close(); };" +
       "parent.log('Helpers loaded!\\n');" +
-      "parent.setTimeout('continueTest()', 10);";
+      "parent.setTimeout('continueTest()', 10); undefined;";
 }
 
 function continueTest() {

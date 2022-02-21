@@ -27,11 +27,11 @@ import socket
 
 from email.mime.text import MIMEText
 
-is_test_mode_enabled = os.getenv('BUILDBOT_PRODUCTION') is None
+custom_suffix = '-uat' if os.getenv('BUILDBOT_UAT') else ''
 
 CURRENT_HOSTNAME = socket.gethostname().strip()
 EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
-FROM_EMAIL = 'ews@webkit.org'
+FROM_EMAIL = 'ews@webkit{}.org'.format(custom_suffix)
 IGALIA_JSC_QUEUES_PATTERNS = ['armv7', 'mips', 'i386']
 IGALIA_GTK_WPE_QUEUES_PATTERNS = ['gtk', 'wpe']
 SERVER = 'localhost'
@@ -48,8 +48,6 @@ def get_email_ids(category):
 
 
 def send_email(to_emails, subject, text, reference=''):
-    if is_test_mode_enabled:
-        return
     if CURRENT_HOSTNAME != EWS_BUILD_HOSTNAME:
         # Only allow EWS production instance to send emails.
         return
@@ -78,7 +76,6 @@ def send_email(to_emails, subject, text, reference=''):
 def send_email_to_patch_author(author_email, subject, text, reference=''):
     if not author_email:
         return
-    send_email(['aakash_jain@apple.com'], subject, text, reference)
     if author_email in get_email_ids('EMAIL_IDS_TO_UNSUBSCRIBE'):
         print('email {} is in unsubscribe list, skipping email'.format(author_email))
         return

@@ -1,6 +1,7 @@
 /* A Bison parser, made by GNU Bison 3.3.2.  */
 
-/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
+/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of
+ * the BSD license. */
 
 /* Bison implementation for Yacc-like parsers in C
 

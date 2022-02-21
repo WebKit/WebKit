@@ -30,6 +30,7 @@
 #include "ChromeClient.h"
 #include "Editor.h"
 #include "ElementIterator.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
@@ -60,6 +61,10 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(SERVICE_CONTROLS)
+#include "ImageControlsMac.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLImageElement);
@@ -68,9 +73,9 @@ using namespace HTMLNames;
 
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
-    , m_imageLoader(WTF::makeUnique<HTMLImageLoader>(*this))
+    , m_imageLoader(makeUnique<HTMLImageLoader>(*this))
     , m_form(nullptr)
-    , m_formSetByParser(makeWeakPtr(form))
+    , m_formSetByParser(form)
     , m_compositeOperator(CompositeOperator::SourceOver)
     , m_imageDevicePixelRatio(1.0f)
 {
@@ -182,7 +187,7 @@ void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidat
 
 ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 {
-    auto picture = makeRefPtr(pictureElement());
+    RefPtr picture = pictureElement();
     if (!picture)
         return { };
 
@@ -206,7 +211,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
                 continue;
         }
 
-        auto documentElement = makeRefPtr(document().documentElement());
+        RefPtr documentElement = document().documentElement();
         MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
         auto* queries = source.parsedMediaAttribute(document());
         LOG(MediaQueries, "HTMLImageElement %p bestFitSourceFromPictureElement evaluating media queries", this);
@@ -230,7 +235,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 
 void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
 {
-    auto documentElement = makeRefPtr(document().documentElement());
+    RefPtr documentElement = document().documentElement();
     MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
 
     if (!evaluator.evaluateForChanges(m_mediaQueryDynamicResults))
@@ -308,6 +313,10 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
         BlendMode blendOp = BlendMode::Normal;
         if (!parseCompositeAndBlendOperator(value, m_compositeOperator, blendOp))
             m_compositeOperator = CompositeOperator::SourceOver;
+#if ENABLE(SERVICE_CONTROLS)
+    } else if (m_imageMenuEnabled) {
+        updateImageControls();
+#endif
     } else if (name == loadingAttr) {
         // No action needed for eager to lazy transition.
         if (!hasLazyLoadableAttributeValue(value))
@@ -376,6 +385,10 @@ void HTMLImageElement::didAttachRenderers()
     if (m_imageLoader->hasPendingBeforeLoadEvent())
         return;
 
+#if ENABLE(SERVICE_CONTROLS)
+    updateImageControls();
+#endif
+
     auto& renderImage = downcast<RenderImage>(*renderer());
     RenderImageResource& renderImageResource = renderImage.imageResource();
     if (renderImageResource.cachedImage())
@@ -402,7 +415,7 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
 
     if (!m_form) {
         if (auto* newForm = HTMLFormElement::findClosestFormAncestor(*this)) {
-            m_form = makeWeakPtr(newForm);
+            m_form = newForm;
             newForm->registerImgElement(this);
         }
     }
@@ -455,7 +468,7 @@ HTMLPictureElement* HTMLImageElement::pictureElement() const
     
 void HTMLImageElement::setPictureElement(HTMLPictureElement* pictureElement)
 {
-    m_pictureElement = makeWeakPtr(pictureElement);
+    m_pictureElement = pictureElement;
 }
     
 unsigned HTMLImageElement::width(bool ignorePendingStylesheets)
@@ -681,6 +694,10 @@ void HTMLImageElement::didMoveToNewDocument(Document& oldDocument, Document& new
 
     m_imageLoader->elementDidMoveToNewDocument(oldDocument);
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
+    if (RefPtr element = pictureElement())
+        element->sourcesChanged();
+    else if (hasAttribute(srcAttr) || hasAttribute(srcsetAttr))
+        selectImageSource(RelevantMutation::Yes);
 }
 
 bool HTMLImageElement::isServerMap() const
@@ -726,6 +743,9 @@ void HTMLImageElement::setAttachmentElement(Ref<HTMLAttachmentElement>&& attachm
 
     attachment->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
     ensureUserAgentShadowRoot().appendChild(WTFMove(attachment));
+#if ENABLE(SERVICE_CONTROLS)
+    m_imageMenuEnabled = true;
+#endif
 }
 
 RefPtr<HTMLAttachmentElement> HTMLImageElement::attachmentElement() const
@@ -748,6 +768,56 @@ const String& HTMLImageElement::attachmentIdentifier() const
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
+
+#if ENABLE(SERVICE_CONTROLS)
+void HTMLImageElement::updateImageControls()
+{
+    // If this image element is inside a shadow tree then it is part of an image control.
+    if (isInShadowTree())
+        return;
+    if (!document().settings().imageControlsEnabled())
+        return;
+    document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [this, protectedThis = Ref { *this }] {
+        bool hasControls = hasImageControls();
+        if (!m_imageMenuEnabled && hasControls)
+            destroyImageControls();
+        else if (m_imageMenuEnabled && !hasControls)
+            tryCreateImageControls();
+    });
+}
+
+void HTMLImageElement::tryCreateImageControls()
+{
+    ASSERT(m_imageMenuEnabled);
+    ASSERT(!hasImageControls());
+    ImageControlsMac::createImageControls(*this);
+}
+
+void HTMLImageElement::destroyImageControls()
+{
+    auto shadowRoot = userAgentShadowRoot();
+    if (!shadowRoot)
+        return;
+    if (RefPtr<Node> node = shadowRoot->firstChild()) {
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ImageControlsMac::hasControls(downcast<HTMLElement>(*node)));
+        shadowRoot->removeChild(*node);
+    }
+    auto* renderObject = renderer();
+    if (!renderObject)
+        return;
+    downcast<RenderImage>(*renderObject).setHasShadowControls(false);
+}
+
+bool HTMLImageElement::hasImageControls() const
+{
+    return ImageControlsMac::hasControls(*this);
+}
+
+bool HTMLImageElement::childShouldCreateRenderer(const Node& child) const
+{
+    return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
+}
+#endif // ENABLE(SERVICE_CONTROLS)
 
 #if PLATFORM(IOS_FAMILY)
 // FIXME: We should find a better place for the touch callout logic. See rdar://problem/48937767.
@@ -857,7 +927,7 @@ void HTMLImageElement::setSourceElement(HTMLSourceElement* sourceElement)
 {
     if (m_sourceElement == sourceElement)
         return;
-    m_sourceElement = makeWeakPtr(sourceElement);
+    m_sourceElement = sourceElement;
     invalidateAttributeMapping();
 }
 

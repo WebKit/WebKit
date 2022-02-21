@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ isAppInitiated=true ] -->
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Make sure that windows opened via window.open are attributed correctly");
+
+window.jsTestIsAsync = true;
+
+onload = function() {
+    window.name = "opener";
+    w = open("resources/new-window-isappinitiated-win.html", "");
+}    
+</script>
+</body>
+</html>

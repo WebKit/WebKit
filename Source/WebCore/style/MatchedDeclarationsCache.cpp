@@ -31,6 +31,7 @@
 #include "MatchedDeclarationsCache.h"
 
 #include "CSSFontSelector.h"
+#include "Document.h"
 #include "FontCascade.h"
 #include <wtf/text/StringHash.h>
 
@@ -53,7 +54,7 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
     // content:attr() value depends on the element it is being applied to.
     if (style.hasAttrContent() || (style.styleType() != PseudoId::None && parentStyle.hasAttrContent()))
         return false;
-    if (style.hasAppearance())
+    if (style.hasEffectiveAppearance())
         return false;
     if (style.zoom() != RenderStyle::initialZoom())
         return false;
@@ -87,9 +88,7 @@ unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult)
     if (!matchResult.isCacheable)
         return 0;
 
-    return StringHasher::hashMemory(matchResult.userAgentDeclarations.data(), sizeof(MatchedProperties) * matchResult.userAgentDeclarations.size())
-        ^ StringHasher::hashMemory(matchResult.userDeclarations.data(), sizeof(MatchedProperties) * matchResult.userDeclarations.size())
-        ^ StringHasher::hashMemory(matchResult.authorDeclarations.data(), sizeof(MatchedProperties) * matchResult.authorDeclarations.size());
+    return WTF::computeHash(matchResult);
 }
 
 const MatchedDeclarationsCache::Entry* MatchedDeclarationsCache::find(unsigned hash, const MatchResult& matchResult)

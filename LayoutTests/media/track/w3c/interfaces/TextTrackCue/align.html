@@ -21,7 +21,7 @@ test(function(){
     assert_equals(c1.align, 'start');
     c1.align = 'end';
     assert_equals(c1.align, 'end');
-    assert_throws('SYNTAX_ERR', function() {
+    assert_throws_dom('SYNTAX_ERR', function() {
         c1.align = 'start\u0000';
     });
 }, document.title+', script-created cue');

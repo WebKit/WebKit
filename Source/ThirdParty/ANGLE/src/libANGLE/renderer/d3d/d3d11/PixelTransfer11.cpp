@@ -97,16 +97,16 @@ angle::Result PixelTransfer11::loadResources(const gl::Context *context)
     constantBufferDesc.StructureByteStride = 0;
 
     ANGLE_TRY(mRenderer->allocateResource(context11, constantBufferDesc, &mParamsConstantBuffer));
-    mParamsConstantBuffer.setDebugName("PixelTransfer11 constant buffer");
+    mParamsConstantBuffer.setInternalName("PixelTransfer11ConstantBuffer");
 
     // init shaders
     ANGLE_TRY(mRenderer->allocateResource(context11, ShaderData(g_VS_BufferToTexture),
                                           &mBufferToTextureVS));
-    mBufferToTextureVS.setDebugName("BufferToTexture VS");
+    mBufferToTextureVS.setInternalName("BufferToTextureVS");
 
     ANGLE_TRY(mRenderer->allocateResource(context11, ShaderData(g_GS_BufferToTexture),
                                           &mBufferToTextureGS));
-    mBufferToTextureGS.setDebugName("BufferToTexture GS");
+    mBufferToTextureGS.setInternalName("BufferToTextureGS");
 
     ANGLE_TRY(buildShaderMap(context));
 
@@ -245,9 +245,9 @@ angle::Result PixelTransfer11::buildShaderMap(const gl::Context *context)
     ANGLE_TRY(mRenderer->allocateResource(context11, ShaderData(g_PS_BufferToTexture_4UI),
                                           &bufferToTextureUint));
 
-    bufferToTextureFloat.setDebugName("BufferToTexture RGBA ps");
-    bufferToTextureInt.setDebugName("BufferToTexture RGBA-I ps");
-    bufferToTextureUint.setDebugName("BufferToTexture RGBA-UI ps");
+    bufferToTextureFloat.setInternalName("BufferToTextureRGBA.ps");
+    bufferToTextureInt.setInternalName("BufferToTextureRGBA-I.ps");
+    bufferToTextureUint.setInternalName("BufferToTextureRGBA-UI.ps");
 
     mBufferToTexturePSMap[GL_FLOAT]        = std::move(bufferToTextureFloat);
     mBufferToTexturePSMap[GL_INT]          = std::move(bufferToTextureInt);

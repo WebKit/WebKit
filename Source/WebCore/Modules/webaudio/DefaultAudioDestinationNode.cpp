@@ -139,7 +139,7 @@ void DefaultAudioDestinationNode::enableInput(const String& inputDeviceId)
 Function<void(Function<void()>&&)> DefaultAudioDestinationNode::dispatchToRenderThreadFunction()
 {
     if (auto* workletProxy = context().audioWorklet().proxy()) {
-        return [workletProxy = makeRef(*workletProxy)](Function<void()>&& function) {
+        return [workletProxy = Ref { *workletProxy }](Function<void()>&& function) {
             workletProxy->postTaskForModeToWorkletGlobalScope([function = WTFMove(function)](ScriptExecutionContext&) mutable {
                 function();
             }, WorkerRunLoop::defaultMode());

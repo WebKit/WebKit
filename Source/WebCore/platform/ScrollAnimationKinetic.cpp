@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +28,8 @@
 #include "ScrollAnimationKinetic.h"
 
 #include "PlatformWheelEvent.h"
-
-#if USE(GLIB_EVENT_LOOP)
-#include <wtf/glib/RunLoopSourcePriority.h>
-#endif
+#include "ScrollExtents.h"
+#include <wtf/text/TextStream.h>
 
 /*
  * PerAxisData is a port of GtkKineticScrolling as of GTK+ 3.20,
@@ -66,73 +65,55 @@
  */
 
 static constexpr double decelFriction = 4;
-static constexpr double frameRate = 60;
 static constexpr double velocityAccumulationFloor = 0.33;
 static constexpr double velocityAccumulationCeil = 1.0;
 static constexpr double velocityAccumulationMax = 6.0;
-static constexpr Seconds tickTime = 1_s / frameRate;
-static constexpr Seconds minimumTimerInterval { 1_ms };
 static constexpr Seconds scrollCaptureThreshold { 150_ms };
 
 namespace WebCore {
 
-ScrollAnimationKinetic::PerAxisData::PerAxisData(double lower, double upper, double initialPosition, double initialVelocity)
+ScrollAnimationKinetic::PerAxisData::PerAxisData(double lower, double upper, double initialOffset, double initialVelocity)
     : m_lower(lower)
     , m_upper(upper)
-    , m_coef1(initialVelocity / decelFriction + initialPosition)
+    , m_coef1(initialVelocity / decelFriction + initialOffset)
     , m_coef2(-initialVelocity / decelFriction)
-    , m_position(clampTo(initialPosition, lower, upper))
-    , m_velocity(initialPosition < lower || initialPosition > upper ? 0 : initialVelocity)
+    , m_offset(clampTo(initialOffset, lower, upper))
+    , m_velocity(initialOffset < lower || initialOffset > upper ? 0 : initialVelocity)
 {
 }
 
-bool ScrollAnimationKinetic::PerAxisData::animateScroll(Seconds timeDelta)
+bool ScrollAnimationKinetic::PerAxisData::animateScroll(Seconds elapsedTime)
 {
-    auto lastPosition = m_position;
+    auto lastOffset = m_offset;
     auto lastTime = m_elapsedTime;
-    m_elapsedTime += timeDelta;
+    m_elapsedTime = elapsedTime;
 
     double exponentialPart = exp(-decelFriction * m_elapsedTime.value());
-    m_position = m_coef1 + m_coef2 * exponentialPart;
+    m_offset = m_coef1 + m_coef2 * exponentialPart;
     m_velocity = -decelFriction * m_coef2 * exponentialPart;
 
-    if (m_position < m_lower) {
-        m_velocity = m_lower - m_position;
-        m_position = m_lower;
-    } else if (m_position > m_upper) {
-        m_velocity = m_upper - m_position;
-        m_position = m_upper;
+    if (m_offset < m_lower) {
+        m_velocity = m_lower - m_offset;
+        m_offset = m_lower;
+    } else if (m_offset > m_upper) {
+        m_velocity = m_upper - m_offset;
+        m_offset = m_upper;
     }
 
-    if (fabs(m_velocity) < 1 || (lastTime && fabs(m_position - lastPosition) < 1)) {
-        m_position = round(m_position);
+    if (fabs(m_velocity) < 1 || (lastTime > 0_s && fabs(m_offset - lastOffset) < 1)) {
+        m_offset = round(m_offset);
         m_velocity = 0;
     }
 
     return m_velocity;
 }
 
-ScrollAnimationKinetic::ScrollAnimationKinetic(ScrollExtentsCallback&& scrollExtentsFunction, NotifyPositionChangedCallback&& notifyPositionChangedFunction)
-    : m_scrollExtentsFunction(WTFMove(scrollExtentsFunction))
-    , m_notifyPositionChangedFunction(WTFMove(notifyPositionChangedFunction))
-    , m_animationTimer(RunLoop::current(), this, &ScrollAnimationKinetic::animationTimerFired)
+ScrollAnimationKinetic::ScrollAnimationKinetic(ScrollAnimationClient& client)
+    : ScrollAnimation(Type::Kinetic, client)
 {
-#if USE(GLIB_EVENT_LOOP)
-    m_animationTimer.setPriority(WTF::RunLoopSourcePriority::DisplayRefreshMonitorTimer);
-#endif
 }
 
 ScrollAnimationKinetic::~ScrollAnimationKinetic() = default;
-
-void ScrollAnimationKinetic::stop()
-{
-    m_animationTimer.stop();
-}
-
-bool ScrollAnimationKinetic::isActive() const
-{
-    return m_animationTimer.isActive();
-}
 
 void ScrollAnimationKinetic::appendToScrollHistory(const PlatformWheelEvent& event)
 {
@@ -148,7 +129,7 @@ void ScrollAnimationKinetic::clearScrollHistory()
     m_scrollHistory.clear();
 }
 
-FloatPoint ScrollAnimationKinetic::computeVelocity()
+FloatSize ScrollAnimationKinetic::computeVelocity()
 {
     if (m_scrollHistory.isEmpty())
         return { };
@@ -163,83 +144,110 @@ FloatPoint ScrollAnimationKinetic::computeVelocity()
     for (const auto& scrollEvent : m_scrollHistory)
         accumDelta += FloatPoint(scrollEvent.deltaX(), scrollEvent.deltaY());
 
+    // FIXME: It's odd that computeVelocity() has the side effect of clearing history.
     m_scrollHistory.clear();
 
-    return FloatPoint(accumDelta.x() * -1 / (last - first).value(), accumDelta.y() * -1 / (last - first).value());
+    return FloatSize(accumDelta.x() * -1 / (last - first).value(), accumDelta.y() * -1 / (last - first).value());
 }
 
-void ScrollAnimationKinetic::start(const FloatPoint& initialPosition, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll)
+bool ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& velocity, const FloatSize& previousVelocity, bool mayHScroll, bool mayVScroll)
 {
+    m_initialOffset = initialOffset;
+    m_initialVelocity = velocity;
+
     stop();
 
-    if (!velocity.x() && !velocity.y()) {
-        m_position = initialPosition;
+    if (velocity.isZero()) {
         m_horizontalData = std::nullopt;
         m_verticalData = std::nullopt;
-        return;
+        return false;
     }
 
-    auto delta = deltaToNextFrame();
-    auto extents = m_scrollExtentsFunction();
+    auto extents = m_client.scrollExtentsForAnimation(*this);
 
-    auto accumulateVelocity = [&](double velocity, std::optional<PerAxisData> axisData) -> double {
-        if (axisData && axisData.value().animateScroll(delta)) {
-            double lastVelocity = axisData.value().velocity();
-            if ((std::signbit(lastVelocity) == std::signbit(velocity))
-                && (std::abs(velocity) >= std::abs(lastVelocity * velocityAccumulationFloor))) {
-                double minVelocity = lastVelocity * velocityAccumulationFloor;
-                double maxVelocity = lastVelocity * velocityAccumulationCeil;
-                double accumulationMultiplier = (velocity - minVelocity) / (maxVelocity - minVelocity);
-                velocity += lastVelocity * std::min(accumulationMultiplier, velocityAccumulationMax);
-            }
+    auto accumulateVelocity = [&](double velocity, double previousVelocity) -> double {
+        if ((std::signbit(previousVelocity) == std::signbit(velocity))
+            && (std::abs(velocity) >= std::abs(previousVelocity * velocityAccumulationFloor))) {
+            double minVelocity = previousVelocity * velocityAccumulationFloor;
+            double maxVelocity = previousVelocity * velocityAccumulationCeil;
+            double accumulationMultiplier = (velocity - minVelocity) / (maxVelocity - minVelocity);
+            velocity += previousVelocity * std::min(accumulationMultiplier, velocityAccumulationMax);
         }
 
         return velocity;
     };
 
     if (mayHScroll) {
-        m_horizontalData = PerAxisData(extents.minimumScrollPosition.x(),
-            extents.maximumScrollPosition.x(),
-            initialPosition.x(), accumulateVelocity(velocity.x(), m_horizontalData));
+        m_horizontalData = PerAxisData(extents.minimumScrollOffset().x(),
+            extents.maximumScrollOffset().x(),
+            initialOffset.x(), accumulateVelocity(velocity.width(), previousVelocity.width()));
     } else
         m_horizontalData = std::nullopt;
 
     if (mayVScroll) {
-        m_verticalData = PerAxisData(extents.minimumScrollPosition.y(),
-            extents.maximumScrollPosition.y(),
-            initialPosition.y(), accumulateVelocity(velocity.y(), m_verticalData));
+        m_verticalData = PerAxisData(extents.minimumScrollOffset().y(),
+            extents.maximumScrollOffset().y(),
+            initialOffset.y(), accumulateVelocity(velocity.height(), previousVelocity.height()));
     } else
         m_verticalData = std::nullopt;
 
-    m_position = initialPosition;
-    m_startTime = MonotonicTime::now() - tickTime / 2.;
-    animationTimerFired();
+    m_currentOffset = initialOffset;
+    didStart(MonotonicTime::now());
+    return true;
 }
 
-void ScrollAnimationKinetic::animationTimerFired()
+bool ScrollAnimationKinetic::retargetActiveAnimation(const FloatPoint&)
 {
-    auto delta = deltaToNextFrame();
+    if (!isActive())
+        return false;
+    
+    // FIXME: Implement retargeting.
+    return false;
+}
 
-    if (m_horizontalData && !m_horizontalData.value().animateScroll(delta))
+void ScrollAnimationKinetic::serviceAnimation(MonotonicTime currentTime)
+{
+    auto elapsedTime = timeSinceStart(currentTime);
+
+    if (m_horizontalData && !m_horizontalData.value().animateScroll(elapsedTime))
         m_horizontalData = std::nullopt;
 
-    if (m_verticalData && !m_verticalData.value().animateScroll(delta))
+    if (m_verticalData && !m_verticalData.value().animateScroll(elapsedTime))
         m_verticalData = std::nullopt;
 
-    // If one of the axes didn't finish its animation we must continue it.
-    if (m_horizontalData || m_verticalData)
-        m_animationTimer.startOneShot(std::max(minimumTimerInterval, delta));
+    double x = m_horizontalData ? m_horizontalData.value().offset() : m_currentOffset.x();
+    double y = m_verticalData ? m_verticalData.value().offset() : m_currentOffset.y();
+    m_currentOffset = FloatPoint(x, y);
+    m_client.scrollAnimationDidUpdate(*this, m_currentOffset);
 
-    double x = m_horizontalData ? m_horizontalData.value().position() : m_position.x();
-    double y = m_verticalData ? m_verticalData.value().position() : m_position.y();
-    m_position = FloatPoint(x, y);
-    m_notifyPositionChangedFunction(FloatPoint(m_position));
+    if (!m_horizontalData && !m_verticalData)
+        didEnd();
 }
 
-Seconds ScrollAnimationKinetic::deltaToNextFrame()
+String ScrollAnimationKinetic::debugDescription() const
 {
-    MonotonicTime currentTime = MonotonicTime::now();
-    return 1_s * ceil((currentTime - m_startTime).value() * frameRate) / frameRate - (currentTime - m_startTime);
+    TextStream textStream;
+    textStream << "ScrollAnimationKinetic " << this << " active " << isActive() << " current offset " << currentOffset();
+    return textStream.release();
+}
+
+FloatSize ScrollAnimationKinetic::accumulateVelocityFromPreviousGesture(const MonotonicTime lastStartTime, const FloatPoint& lastInitialOffset, const FloatSize& lastInitialVelocity)
+{
+    auto elapsedTime = MonotonicTime::now() - lastStartTime;
+    auto extents = m_client.scrollExtentsForAnimation(*this);
+
+    auto horizontalData = PerAxisData(extents.minimumScrollOffset().x(),
+        extents.maximumScrollOffset().x(),
+        lastInitialOffset.x(), lastInitialVelocity.width());
+
+    auto verticalData = PerAxisData(extents.minimumScrollOffset().y(),
+        extents.maximumScrollOffset().y(),
+        lastInitialOffset.y(), lastInitialVelocity.height());
+
+    horizontalData.animateScroll(elapsedTime);
+    verticalData.animateScroll(elapsedTime);
+
+    return FloatSize(horizontalData.velocity(), verticalData.velocity());
 }
 
 } // namespace WebCore

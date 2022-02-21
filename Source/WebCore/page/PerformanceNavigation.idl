@@ -30,7 +30,6 @@
 
 // https://w3c.github.io/navigation-timing/#the-performancenavigation-interface
 [
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface PerformanceNavigation {
     const unsigned short TYPE_NAVIGATE = 0;

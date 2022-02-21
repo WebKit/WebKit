@@ -12,18 +12,12 @@
 <div id="console"></div>
 
 <script>
-
     description("This tests that aria-multiline will change the role of a text control from a text field to a text area.");
 
     if (window.accessibilityController) {
-
-        document.getElementById("textfield").focus();
-        shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTextField'");
-
-        document.getElementById("textarea").focus();
-        shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTextArea'");
+        shouldBe("accessibilityController.accessibleElementById('textfield').role", "'AXRole: AXTextField'");
+        shouldBe("accessibilityController.accessibleElementById('textarea').role", "'AXRole: AXTextArea'");
     }
-
 </script>
 
 <script src="../../resources/js-test-post.js"></script>

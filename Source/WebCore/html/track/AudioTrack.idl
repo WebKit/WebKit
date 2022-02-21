@@ -26,14 +26,14 @@
 [
     Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
-    GenerateIsReachable=ImplElementRoot,
-    GenerateAddOpaqueRoot,
+    GenerateIsReachable,
     Exposed=Window
 ] interface AudioTrack {
     readonly attribute DOMString id;
-    [SettingsConditionallyReadWrite=MediaSource] attribute DOMString kind;
+    [SettingsConditionallyReadWrite=MediaSourceEnabled] attribute DOMString kind;
     readonly attribute DOMString label;
-    [SettingsConditionallyReadWrite=MediaSource] attribute DOMString language;
+    [SettingsConditionallyReadWrite=MediaSourceEnabled] attribute DOMString language;
+    [EnabledBySetting=TrackConfigurationEnabled] readonly attribute AudioTrackConfiguration configuration;
 
     attribute boolean enabled;
 };

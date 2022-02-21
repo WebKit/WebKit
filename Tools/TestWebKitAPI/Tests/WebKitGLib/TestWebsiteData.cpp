@@ -166,15 +166,20 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_null(webkit_website_data_manager_get_base_data_directory(test->m_manager));
     g_assert_null(webkit_website_data_manager_get_base_cache_directory(test->m_manager));
 
+    test->loadURI(kServer->getURIForPath("/empty").data());
+    test->waitUntilLoadFinished();
+    test->runJavaScriptAndWaitUntilFinished("window.localStorage.myproperty = 42;", nullptr);
     GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "local-storage", nullptr));
     g_assert_cmpstr(localStorageDirectory.get(), ==, webkit_website_data_manager_get_local_storage_directory(test->m_manager));
+    test->assertFileIsCreated(localStorageDirectory.get());
     g_assert_true(g_file_test(localStorageDirectory.get(), G_FILE_TEST_IS_DIR));
+    test->runJavaScriptAndWaitUntilFinished("window.localStorage.clear();", nullptr);
 
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
     test->runJavaScriptAndWaitUntilFinished("window.indexedDB.open('TestDatabase');", nullptr);
     GUniquePtr<char> indexedDBDirectory(g_build_filename(Test::dataDirectory(), "indexeddb", nullptr));
-    test->waitUntilFileChanged(indexedDBDirectory.get(), G_FILE_MONITOR_EVENT_CREATED);
+    test->assertFileIsCreated(indexedDBDirectory.get());
     g_assert_cmpstr(indexedDBDirectory.get(), ==, webkit_website_data_manager_get_indexeddb_directory(test->m_manager));
     g_assert_true(g_file_test(indexedDBDirectory.get(), G_FILE_TEST_IS_DIR));
 
@@ -183,10 +188,7 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     GUniquePtr<char> applicationCacheDirectory(g_build_filename(Test::dataDirectory(), "appcache", nullptr));
     g_assert_cmpstr(applicationCacheDirectory.get(), ==, webkit_website_data_manager_get_offline_application_cache_directory(test->m_manager));
     GUniquePtr<char> applicationCacheDatabase(g_build_filename(applicationCacheDirectory.get(), "ApplicationCache.db", nullptr));
-    unsigned triesCount = 4;
-    while (!g_file_test(applicationCacheDatabase.get(), G_FILE_TEST_IS_REGULAR) && --triesCount)
-        test->wait(0.25);
-    g_assert_cmpuint(triesCount, >, 0);
+    test->assertFileIsCreated(applicationCacheDatabase.get());
 
     GUniquePtr<char> diskCacheDirectory(g_build_filename(Test::dataDirectory(), "disk-cache", nullptr));
     g_assert_cmpstr(diskCacheDirectory.get(), ==, webkit_website_data_manager_get_disk_cache_directory(test->m_manager));
@@ -201,15 +203,18 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 
     test->runJavaScriptAndWaitUntilFinished("navigator.serviceWorker.register('./some-dummy.js');", nullptr);
     GUniquePtr<char> swRegistrationsDirectory(g_build_filename(Test::dataDirectory(), "serviceworkers", nullptr));
-    test->waitUntilFileChanged(swRegistrationsDirectory.get(), G_FILE_MONITOR_EVENT_CREATED);
+    test->assertFileIsCreated(swRegistrationsDirectory.get());
     g_assert_cmpstr(swRegistrationsDirectory.get(), ==, webkit_website_data_manager_get_service_worker_registrations_directory(test->m_manager));
     g_assert_true(g_file_test(swRegistrationsDirectory.get(), G_FILE_TEST_IS_DIR));
 
-    test->runJavaScriptAndWaitUntilFinished("caches.open('my-cache');", nullptr);
+    test->runJavaScriptAndWaitUntilFinished("let domCacheOpened = false; caches.open('my-cache').then(() => { domCacheOpened = true});", nullptr);
     GUniquePtr<char> domCacheDirectory(g_build_filename(Test::dataDirectory(), "dom-cache", nullptr));
-    test->waitUntilFileChanged(domCacheDirectory.get(), G_FILE_MONITOR_EVENT_CREATED);
+    test->assertFileIsCreated(domCacheDirectory.get());
     g_assert_cmpstr(domCacheDirectory.get(), ==, webkit_website_data_manager_get_dom_cache_directory(test->m_manager));
     g_assert_true(g_file_test(domCacheDirectory.get(), G_FILE_TEST_IS_DIR));
+
+    // Make sure the cache was opened before asking to clear it to avoid it being re-created behind our backs.
+    test->assertJavaScriptBecomesTrue("domCacheOpened");
 
     // Clear all persistent caches, since the data dir is common to all test cases. Note: not cleaning the HSTS cache here as its data
     // is needed for the HSTS tests, where data cleaning will be tested.
@@ -708,8 +713,7 @@ static void testWebsiteDataITP(WebsiteDataTest* test, gconstpointer)
 
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
-
-    test->waitUntilFileChanged(itpDatabaseFile.get(), G_FILE_MONITOR_EVENT_CREATED);
+    test->assertFileIsCreated(itpDatabaseFile.get());
     g_assert_true(g_file_test(itpDirectory, G_FILE_TEST_IS_DIR));
     g_assert_true(g_file_test(itpDatabaseFile.get(), G_FILE_TEST_IS_REGULAR));
 
@@ -734,7 +738,6 @@ static void testWebsiteDataITP(WebsiteDataTest* test, gconstpointer)
     // Clear all.
     static const WebKitWebsiteDataTypes cacheAndITP = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_ITP | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
     test->clear(cacheAndITP, 0);
-    test->waitUntilFileChanged(itpDatabaseFile.get(), G_FILE_MONITOR_EVENT_DELETED);
 
     webkit_website_data_manager_set_itp_enabled(test->m_manager, FALSE);
     g_assert_false(webkit_website_data_manager_get_itp_enabled(test->m_manager));
@@ -779,7 +782,10 @@ static void testWebsiteDataDOMCache(WebsiteDataTest* test, gconstpointer)
 
     test->loadURI(kServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
-    test->runJavaScriptAndWaitUntilFinished("async function openDOMCache() { await window.caches.open('TestDOMCache'); } openDOMCache();", nullptr);
+    test->runJavaScriptAndWaitUntilFinished("let domCacheOpened = false; window.caches.open('TestDOMCache').then(() => { domCacheOpened = true});", nullptr);
+
+    // Make sure the cache was opened before asking for it
+    test->assertJavaScriptBecomesTrue("domCacheOpened");
 
     dataList = test->fetch(WEBKIT_WEBSITE_DATA_DOM_CACHE);
     g_assert_nonnull(dataList);

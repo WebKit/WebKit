@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "pas_aligned_allocation_result.h"
 #include "pas_alignment.h"
+#include "pas_mmap_capability.h"
 #include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
@@ -35,9 +36,11 @@ PAS_BEGIN_EXTERN_C;
 PAS_API extern size_t pas_page_malloc_num_allocated_bytes;
 PAS_API extern size_t pas_page_malloc_cached_alignment;
 PAS_API extern size_t pas_page_malloc_cached_alignment_shift;
-PAS_API extern bool pas_page_malloc_mprotect_decommitted;
+#if PAS_OS(DARWIN)
+PAS_API extern bool pas_page_malloc_decommit_zero_fill;
+#endif /* PAS_OS(DARWIN) */
 
-PAS_API size_t pas_page_malloc_alignment_slow(void);
+PAS_API PAS_NEVER_INLINE size_t pas_page_malloc_alignment_slow(void);
 
 static inline size_t pas_page_malloc_alignment(void)
 {
@@ -46,7 +49,7 @@ static inline size_t pas_page_malloc_alignment(void)
     return pas_page_malloc_cached_alignment;
 }
 
-PAS_API size_t pas_page_malloc_alignment_shift_slow(void);
+PAS_API PAS_NEVER_INLINE size_t pas_page_malloc_alignment_shift_slow(void);
 
 static inline size_t pas_page_malloc_alignment_shift(void)
 {
@@ -61,10 +64,21 @@ pas_page_malloc_try_allocate_without_deallocating_padding(
 
 PAS_API void pas_page_malloc_deallocate(void* base, size_t size);
 
+PAS_API void pas_page_malloc_zero_fill(void* base, size_t size);
+
 /* This even works if size < pas_page_malloc_alignment so long as the range [base, base+size) is
    entirely within a page according to pas_page_malloc_alignment. */
-PAS_API void pas_page_malloc_commit(void* base, size_t size);
-PAS_API void pas_page_malloc_decommit(void* base, size_t size);
+PAS_API void pas_page_malloc_commit(void* base, size_t size, pas_mmap_capability mmap_capability);
+PAS_API void pas_page_malloc_decommit(void* base, size_t size, pas_mmap_capability mmap_capability);
+
+/* In testing mode, we have commit/decommit mprotect the memory as a way of helping us see if we are
+   accidentally reading or writing that memory. But sometimes we use commit/decommit in a way that prevents
+   us from making such assertions, like if we allow some reads and writes to decommitted memory in rare
+   cases. */
+PAS_API void pas_page_malloc_commit_without_mprotect(
+    void* base, size_t size, pas_mmap_capability mmap_capability);
+PAS_API void pas_page_malloc_decommit_without_mprotect(
+    void* base, size_t size, pas_mmap_capability mmap_capability);
 
 PAS_END_EXTERN_C;
 

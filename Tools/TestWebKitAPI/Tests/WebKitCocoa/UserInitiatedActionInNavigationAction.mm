@@ -37,7 +37,7 @@
 static bool finishedNavigation;
 
 @interface UserInitiatedActionInNavigationActionDelegate : NSObject <WKNavigationDelegate>
-@property (nonatomic, copy, nullable) void (^policyForNavigationAction)(WKNavigationAction *, void (^)(WKNavigationActionPolicy));
+@property (nonatomic, copy) void (^policyForNavigationAction)(WKNavigationAction *, void (^)(WKNavigationActionPolicy));
 @end
 
 @implementation UserInitiatedActionInNavigationActionDelegate

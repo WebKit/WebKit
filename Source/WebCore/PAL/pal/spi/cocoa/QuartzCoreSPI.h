@@ -48,12 +48,36 @@
 #import <QuartzCore/CARenderCG.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#import <QuartzCore/CADisplayLinkPrivate.h>
+#endif
+
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+#import <QuartzCore/CAFenceHandle.h>
+#endif
+
 #endif // __OBJC__
 
 #else
 
 #ifdef __OBJC__
 typedef struct _CARenderContext CARenderContext;
+
+#if PLATFORM(IOS_FAMILY)
+@interface CADisplayLink ()
+@property (readonly, nonatomic) CFTimeInterval maximumRefreshRate;
+@end
+#endif
+
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+@interface CAFenceHandle : NSObject
+@end
+
+@interface CAFenceHandle ()
+- (mach_port_t)copyPort;
+- (void)invalidate;
+@end
+#endif
 
 @interface CAContext : NSObject
 @end
@@ -87,6 +111,11 @@ typedef struct _CARenderContext CARenderContext;
 @property (strong) CALayer *layer;
 @property CGColorSpaceRef colorSpace;
 @property (readonly) CARenderContext* renderContext;
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+-(BOOL)addFence:(CAFenceHandle *)handle;
+#endif
+
 @end
 
 @interface CALayer ()

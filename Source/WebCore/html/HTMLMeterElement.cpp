@@ -31,6 +31,7 @@
 #include "Page.h"
 #include "RenderMeter.h"
 #include "RenderTheme.h"
+#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/IsoMallocInlines.h>
@@ -58,7 +59,7 @@ Ref<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Doc
 
 RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    if (!RenderTheme::singleton().supportsMeter(style.appearance(), *this))
+    if (!RenderTheme::singleton().supportsMeter(style.effectiveAppearance(), *this))
         return RenderElement::createFor(*this, WTFMove(style));
 
     return createRenderer<RenderMeter>(*this, WTFMove(style));
@@ -190,15 +191,15 @@ static void setValueClass(HTMLElement& element, HTMLMeterElement::GaugeRegion ga
     switch (gaugeRegion) {
     case HTMLMeterElement::GaugeRegionOptimum:
         element.setAttribute(HTMLNames::classAttr, "optimum");
-        element.setPseudo("-webkit-meter-optimum-value");
+        element.setPseudo(ShadowPseudoIds::webkitMeterOptimumValue());
         return;
     case HTMLMeterElement::GaugeRegionSuboptimal:
         element.setAttribute(HTMLNames::classAttr, "suboptimum");
-        element.setPseudo("-webkit-meter-suboptimum-value");
+        element.setPseudo(ShadowPseudoIds::webkitMeterSuboptimumValue());
         return;
     case HTMLMeterElement::GaugeRegionEvenLessGood:
         element.setAttribute(HTMLNames::classAttr, "even-less-good");
-        element.setPseudo("-webkit-meter-even-less-good-value");
+        element.setPseudo(ShadowPseudoIds::webkitMeterEvenLessGoodValue());
         return;
     default:
         ASSERT_NOT_REACHED();
@@ -234,12 +235,12 @@ void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     // Pseudos are set to allow author styling.
     auto inner = HTMLDivElement::create(document());
     inner->setIdAttribute("inner");
-    inner->setPseudo("-webkit-meter-inner-element");
+    inner->setPseudo(ShadowPseudoIds::webkitMeterInnerElement());
     root.appendChild(inner);
 
     auto bar = HTMLDivElement::create(document());
     bar->setIdAttribute("bar");
-    bar->setPseudo("-webkit-meter-bar");
+    bar->setPseudo(ShadowPseudoIds::webkitMeterBar());
     inner->appendChild(bar);
 
     m_value = HTMLDivElement::create(document());

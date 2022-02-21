@@ -53,7 +53,7 @@ class NameUniformBufferVariablesTraverser : public TIntermTraverser
 
         TIntermDeclaration *newDeclaration = new TIntermDeclaration;
         TVariable *newVariable = new TVariable(mSymbolTable, kEmptyImmutableString, &type,
-                                               SymbolType::AngleInternal, variable->extension());
+                                               SymbolType::AngleInternal, variable->extensions());
         newDeclaration->appendDeclarator(new TIntermSymbol(newVariable));
 
         queueReplacement(newDeclaration, OriginalNode::IS_DROPPED);

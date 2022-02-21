@@ -41,7 +41,7 @@ WK_PRIVATE_FRAMEWORKS_DIR_[sdk=watch*] = $(PROJECT_DIR)/../../WebKitLibraries/We
 
 FRAMEWORK_SEARCH_PATHS = $(WK_PRIVATE_FRAMEWORKS_DIR);
 
-CLANG_CXX_LANGUAGE_STANDARD = gnu++1z;
+CLANG_CXX_LANGUAGE_STANDARD = c++2a;
 CLANG_CXX_LIBRARY = libc++;
 CLANG_ENABLE_OBJC_WEAK = YES;
 CLANG_WARN_CXX0X_EXTENSIONS = NO;
@@ -83,7 +83,7 @@ CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 // FIXME: <http://webkit.org/b/118590> DumpRenderTree should build with -Wshorten-64-to-32
 GCC_WARN_64_TO_32_BIT_CONVERSION[arch=arm64*] = NO;
 GCC_WARN_64_TO_32_BIT_CONVERSION[arch=x86_64] = NO;
-WARNING_CFLAGS = -Wall -W -Wconditional-uninitialized -Wno-unused-parameter -Wundef;
+WARNING_CFLAGS = -Wall -W -Wconditional-uninitialized -Wformat=2 -Wno-unused-parameter -Wundef;
 
 DEBUG_DEFINES = NDEBUG;
 DEBUG_DEFINES[config=Debug] = ;
@@ -115,8 +115,8 @@ WTF_BUILD_SCRIPTS_DIR_engineering = $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/
 WEBCORE_PRIVATE_HEADERS_DIR = $(WEBCORE_PRIVATE_HEADERS_DIR_$(CONFIGURATION));
 WEBCORE_PRIVATE_HEADERS_DIR_Release = $(WEBCORE_PRIVATE_HEADERS_DIR_engineering);
 WEBCORE_PRIVATE_HEADERS_DIR_Debug = $(WEBCORE_PRIVATE_HEADERS_DIR_engineering);
-WEBCORE_PRIVATE_HEADERS_DIR_Production = $(PRODUCTION_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders;
-WEBCORE_PRIVATE_HEADERS_DIR_engineering = $(BUILT_PRODUCTS_DIR)/WebCore.framework/PrivateHeaders;
+WEBCORE_PRIVATE_HEADERS_DIR_Production = $(PRODUCTION_FRAMEWORKS_DIR)/WebCore.framework/$(WK_FRAMEWORK_VERSION_PREFIX)PrivateHeaders;
+WEBCORE_PRIVATE_HEADERS_DIR_engineering = $(BUILT_PRODUCTS_DIR)/WebCore.framework/$(WK_FRAMEWORK_VERSION_PREFIX)PrivateHeaders;
 
 AD_HOC_CODE_SIGNING_ALLOWED = YES;
 CODE_SIGN_IDENTITY = -;
@@ -139,6 +139,12 @@ WK_COCOA_TOUCH_watchsimulator = cocoatouch;
 WK_COCOA_TOUCH_appletvos = cocoatouch;
 WK_COCOA_TOUCH_appletvsimulator = cocoatouch;
 WK_IS_COCOA_TOUCH = $(WK_NOT_$(WK_EMPTY_$(WK_COCOA_TOUCH)));
+
+WK_FRAMEWORK_VERSION_PREFIX =;
+WK_FRAMEWORK_VERSION_PREFIX[sdk=macosx*] = Versions/A/;
+
+WK_WHICH_BUILD_SYSTEM = not_;
+WK_WHICH_BUILD_SYSTEM = $(inherited)legacy;
 
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport ForwardingHeaders $(HEADER_SEARCH_PATHS_$(WK_COCOA_TOUCH));
 HEADER_SEARCH_PATHS_ = mac/InternalHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport;

@@ -20,10 +20,10 @@
 #include "config.h"
 #include "FrameSelection.h"
 
-#if ENABLE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include "AXObjectCache.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Frame.h"
 #include "RenderListItem.h"
 #include "WebKitAccessible.h"
@@ -116,4 +116,4 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATK)

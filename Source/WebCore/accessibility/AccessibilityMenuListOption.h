@@ -34,6 +34,7 @@ class HTMLOptionElement;
 class AccessibilityMenuListOption final : public AccessibilityObject {
 public:
     static Ref<AccessibilityMenuListOption> create(HTMLOptionElement&);
+    void setParent(AccessibilityObject* parent) { m_parent = parent; }
 
 private:
     explicit AccessibilityMenuListOption(HTMLOptionElement&);
@@ -42,6 +43,7 @@ private:
 
     AccessibilityRole roleValue() const final { return AccessibilityRole::MenuListOption; }
     bool canHaveChildren() const final { return false; }
+    AccessibilityObject* parentObject() const final { return m_parent; }
 
     Element* actionElement() const final;
     Node* node() const final;
@@ -57,6 +59,7 @@ private:
     bool computeAccessibilityIsIgnored() const final;
 
     WeakPtr<HTMLOptionElement> m_element;
+    AccessibilityObject* m_parent;
 };
 
 } // namespace WebCore

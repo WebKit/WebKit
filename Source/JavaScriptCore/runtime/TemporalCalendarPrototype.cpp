@@ -60,7 +60,7 @@ const ClassInfo TemporalCalendarPrototype::s_info = { "Temporal.Calendar", &Base
 
 TemporalCalendarPrototype* TemporalCalendarPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    TemporalCalendarPrototype* object = new (NotNull, allocateCell<TemporalCalendarPrototype>(vm.heap)) TemporalCalendarPrototype(vm, structure);
+    TemporalCalendarPrototype* object = new (NotNull, allocateCell<TemporalCalendarPrototype>(vm)) TemporalCalendarPrototype(vm, structure);
     object->finishCreation(vm, globalObject);
     return object;
 }

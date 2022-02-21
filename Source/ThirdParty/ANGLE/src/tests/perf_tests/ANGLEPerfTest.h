@@ -12,6 +12,7 @@
 
 #include <gtest/gtest.h>
 
+#include <mutex>
 #include <string>
 #include <thread>
 #include <unordered_map>
@@ -77,6 +78,9 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
     virtual void finishTest() {}
     virtual void flush() {}
 
+    // Can be overridden in child tests that require a certain number of steps per trial.
+    virtual int getStepAlignment() const;
+
   protected:
     enum class RunLoopPolicy
     {
@@ -96,8 +100,6 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
 
     int getNumStepsPerformed() const { return mTrialNumStepsPerformed; }
 
-    // Defaults to one step per run loop. Can be changed in any test.
-    void setStepsPerRunLoopStep(int stepsPerRunLoop);
     void doRunLoop(double maxRunTime, int maxStepsToRun, RunLoopPolicy runPolicy);
 
     // Overriden in trace perf tests.
@@ -105,7 +107,7 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
     virtual void computeGPUTime() {}
 
     double printResults();
-    void calibrateStepsToRun();
+    void calibrateStepsToRun(RunLoopPolicy policy);
 
     std::string mName;
     std::string mBackend;
@@ -117,7 +119,6 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
     int mStepsToRun;
     int mTrialNumStepsPerformed;
     int mTotalNumStepsPerformed;
-    int mStepsPerRunLoopStep;
     int mIterationsPerStep;
     bool mRunning;
     std::vector<double> mTestTrialResults;
@@ -143,6 +144,7 @@ struct RenderTestParams : public angle::PlatformParameters
     unsigned int iterationsPerStep = 0;
     bool trackGpuTime              = false;
     SurfaceType surfaceType        = SurfaceType::Window;
+    EGLenum colorSpace             = EGL_COLORSPACE_LINEAR;
 };
 
 class ANGLERenderTest : public ANGLEPerfTest
@@ -171,6 +173,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     void onErrorMessage(const char *errorMessage);
 
     uint32_t getCurrentThreadSerial();
+    std::mutex &getTraceEventMutex() { return mTraceEventMutex; }
 
   protected:
     const RenderTestParams &mTestParams;
@@ -224,6 +227,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     std::unique_ptr<angle::Library> mEntryPointsLib;
 
     std::vector<std::thread::id> mThreadIDs;
+    std::mutex mTraceEventMutex;
 };
 
 // Mixins.

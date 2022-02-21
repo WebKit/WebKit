@@ -153,7 +153,7 @@ bool EchoCanceller3Config::Validate(EchoCanceller3Config* config) {
 
   res = res & Limit(&c->filter.config_change_duration_blocks, 0, 100000);
   res = res & Limit(&c->filter.initial_state_seconds, 0.f, 100.f);
-  res = res & Limit(&c->filter.coarse_reset_hangover_blocks, 0, 2500);
+  res = res & Limit(&c->filter.coarse_reset_hangover_blocks, 0, 250000);
 
   res = res & Limit(&c->erle.min, 1.f, 100000.f);
   res = res & Limit(&c->erle.max_l, 1.f, 100000.f);
@@ -166,6 +166,7 @@ bool EchoCanceller3Config::Validate(EchoCanceller3Config* config) {
 
   res = res & Limit(&c->ep_strength.default_gain, 0.f, 1000000.f);
   res = res & Limit(&c->ep_strength.default_len, -1.f, 1.f);
+  res = res & Limit(&c->ep_strength.nearend_len, -1.0f, 1.0f);
 
   res =
       res & Limit(&c->echo_audibility.low_render_limit, 0.f, 32768.f * 32768.f);
@@ -228,6 +229,12 @@ bool EchoCanceller3Config::Validate(EchoCanceller3Config* config) {
   res = res & Limit(&c->suppressor.nearend_tuning.max_inc_factor, 0.f, 100.f);
   res =
       res & Limit(&c->suppressor.nearend_tuning.max_dec_factor_lf, 0.f, 100.f);
+
+  res = res & Limit(&c->suppressor.last_permanent_lf_smoothing_band, 0, 64);
+  res = res & Limit(&c->suppressor.last_lf_smoothing_band, 0, 64);
+  res = res & Limit(&c->suppressor.last_lf_band, 0, 63);
+  res = res &
+        Limit(&c->suppressor.first_hf_band, c->suppressor.last_lf_band + 1, 64);
 
   res = res & Limit(&c->suppressor.dominant_nearend_detection.enr_threshold,
                     0.f, 1000000.f);

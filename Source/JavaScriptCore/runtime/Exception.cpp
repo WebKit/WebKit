@@ -37,7 +37,7 @@ const ClassInfo Exception::s_info = { "Exception", nullptr, nullptr, nullptr, CR
 
 Exception* Exception::create(VM& vm, JSValue thrownValue, StackCaptureAction action)
 {
-    Exception* result = new (NotNull, allocateCell<Exception>(vm.heap)) Exception(vm);
+    Exception* result = new (NotNull, allocateCell<Exception>(vm)) Exception(vm);
     result->finishCreation(vm, thrownValue, action);
     return result;
 }

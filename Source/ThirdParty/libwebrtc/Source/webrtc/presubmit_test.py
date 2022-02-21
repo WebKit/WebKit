@@ -271,5 +271,69 @@ class CheckNoMixingSourcesTest(unittest.TestCase):
             f.write(content)
 
 
+class CheckAssertUsageTest(unittest.TestCase):
+    def setUp(self):
+        self.input_api = MockInputApi()
+        self.output_api = MockOutputApi()
+        self._content_with_assert = [
+            'void Foo() {',
+            '    assert(true);',
+            '}'
+        ]
+        self._content_without_assert = [
+            'void Foo() {',
+            '    RTC_CHECK(true);',
+            '}'
+        ]
+
+    def testDetectsAssertInCcFile(self):
+        self.input_api.files = [
+            MockFile('with_assert.cc', self._content_with_assert),
+            MockFile('without_assert.cc', self._content_without_assert),
+        ]
+        errors = PRESUBMIT.CheckAssertUsage(
+            self.input_api, self.output_api, lambda x: True)
+        self.assertEqual(1, len(errors))
+        self.assertEqual('with_assert.cc', errors[0].items[0])
+
+    def testDetectsAssertInHeaderFile(self):
+        self.input_api.files = [
+            MockFile('with_assert.h', self._content_with_assert),
+            MockFile('without_assert.h', self._content_without_assert),
+        ]
+        errors = PRESUBMIT.CheckAssertUsage(
+            self.input_api, self.output_api, lambda x: True)
+        self.assertEqual(1, len(errors))
+        self.assertEqual('with_assert.h', errors[0].items[0])
+
+    def testDetectsAssertInObjCFile(self):
+        self.input_api.files = [
+            MockFile('with_assert.m', self._content_with_assert),
+            MockFile('without_assert.m', self._content_without_assert),
+        ]
+        errors = PRESUBMIT.CheckAssertUsage(
+            self.input_api, self.output_api, lambda x: True)
+        self.assertEqual(1, len(errors))
+        self.assertEqual('with_assert.m', errors[0].items[0])
+
+    def testDetectsAssertInObjCppFile(self):
+        self.input_api.files = [
+            MockFile('with_assert.mm', self._content_with_assert),
+            MockFile('without_assert.mm', self._content_without_assert),
+        ]
+        errors = PRESUBMIT.CheckAssertUsage(
+            self.input_api, self.output_api, lambda x: True)
+        self.assertEqual(1, len(errors))
+        self.assertEqual('with_assert.mm', errors[0].items[0])
+
+    def testDoesntDetectAssertInOtherFiles(self):
+        self.input_api.files = [
+            MockFile('with_assert.cpp', self._content_with_assert),
+        ]
+        errors = PRESUBMIT.CheckAssertUsage(
+            self.input_api, self.output_api, lambda x: True)
+        self.assertEqual(0, len(errors))
+
+
 if __name__ == '__main__':
     unittest.main()

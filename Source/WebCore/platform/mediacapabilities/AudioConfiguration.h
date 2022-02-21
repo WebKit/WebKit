@@ -36,9 +36,16 @@ struct AudioConfiguration {
     std::optional<uint32_t> samplerate;
     std::optional<bool> spatialRendering;
 
+    AudioConfiguration isolatedCopy() const;
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<AudioConfiguration> decode(Decoder&);
 };
+
+inline AudioConfiguration AudioConfiguration::isolatedCopy() const
+{
+    return { contentType.isolatedCopy(), channels.isolatedCopy(), bitrate, samplerate, spatialRendering };
+}
 
 template<class Encoder>
 void AudioConfiguration::encode(Encoder& encoder) const

@@ -5,29 +5,36 @@
  input, input#test:focus { background:lime }
  input:focus, input#test { background:red }
 </style>
-<script language="JavaScript" type="text/javascript">
+<script>
     function log(message) {
         document.getElementById("console").innerHTML += "<li>"+message+"</li>";
     }
 
     function test() {
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
-        if (document.activeElement == document.getElementById("test"))
-            log("SUCCESS");
-        else
-            log("FAILURE");
+        requestAnimationFrame(() => {
+            if (document.activeElement == document.getElementById("test"))
+                log("SUCCESS");
+            else
+                log("FAILURE");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+
     }
 </script>
 </head>
 <body onload="test()">
 <p>All form controls below should have a green background:</p>
-<p><input autofocus>
+<p><input autofocus id="test">
 <p><input autofocus>
 <p><input autofocus>
 <p><input>
-<p><input autofocus id="test">
+<p><input autofocus>
 <p><input>
 <hr/>
 <ol id="console"></ol>

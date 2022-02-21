@@ -46,6 +46,10 @@
 #define BCOMPILER_HAS_CLANG_DECLSPEC(x) 0
 #endif
 
+#if defined(__clang__)
+#define BCOMPILER_CLANG 1
+#endif
+
 /* BCOMPILER(GCC_COMPATIBLE) - GNU Compiler Collection or compatibles */
 
 #if defined(__GNUC__)

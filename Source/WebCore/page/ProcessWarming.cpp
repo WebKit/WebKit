@@ -43,7 +43,7 @@
 #include "XMLNames.h"
 
 #if ENABLE(GPU_DRIVER_PREWARMING)
-#include "GPUDevice.h"
+#include "GPUPrewarming.h"
 #endif
 
 namespace WebCore {
@@ -73,7 +73,7 @@ void ProcessWarming::prewarmGlobally()
     commonVM();
 
     // Prewarm font cache
-    FontCache::singleton().prewarmGlobally();
+    FontCache::prewarmGlobally();
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     TelephoneNumberDetector::prewarm();
@@ -86,12 +86,12 @@ void ProcessWarming::prewarmGlobally()
 
 WebCore::PrewarmInformation ProcessWarming::collectPrewarmInformation()
 {
-    return { FontCache::singleton().collectPrewarmInformation() };
+    return { FontCache::forCurrentThread().collectPrewarmInformation() };
 }
 
 void ProcessWarming::prewarmWithInformation(const PrewarmInformation& prewarmInfo)
 {
-    FontCache::singleton().prewarm(prewarmInfo.fontCache);
+    FontCache::forCurrentThread().prewarm(prewarmInfo.fontCache);
 }
 
 }

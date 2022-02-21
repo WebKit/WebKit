@@ -23,6 +23,13 @@
 #include "vpx/vpx_codec.h"
 
 namespace webrtc {
+namespace {
+constexpr absl::string_view kSupportedScalabilityModes[] = {
+    "L1T2",     "L1T3",     "L2T1",    "L2T2",  "L2T3",     "L3T1",
+    "L3T2",     "L3T3",     "L1T2h",   "L1T3h", "L2T1h",    "L2T2h",
+    "L2T3h",    "L3T1h",    "L3T2h",   "L3T3h", "L2T2_KEY", "L2T3_KEY",
+    "L3T1_KEY", "L3T2_KEY", "L3T3_KEY"};
+}  // namespace
 
 std::vector<SdpVideoFormat> SupportedVP9Codecs() {
 #ifdef RTC_ENABLE_VP9
@@ -84,6 +91,15 @@ std::unique_ptr<VP9Encoder> VP9Encoder::Create(
   RTC_NOTREACHED();
   return nullptr;
 #endif
+}
+
+bool VP9Encoder::SupportsScalabilityMode(absl::string_view scalability_mode) {
+  for (const auto& entry : kSupportedScalabilityModes) {
+    if (entry == scalability_mode) {
+      return true;
+    }
+  }
+  return false;
 }
 
 std::unique_ptr<VP9Decoder> VP9Decoder::Create() {

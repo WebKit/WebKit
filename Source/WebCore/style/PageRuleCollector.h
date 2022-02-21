@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "StyleResolver.h"
+#include "MatchResult.h"
 #include "StyleScopeRuleSets.h"
 #include <wtf/Forward.h>
 
@@ -33,9 +33,10 @@ namespace Style {
 
 class PageRuleCollector {
 public:
-    PageRuleCollector(Resolver::State& state, ScopeRuleSets& ruleSets)
-        : m_state(state)
-        , m_ruleSets(ruleSets) { }
+    PageRuleCollector(ScopeRuleSets& ruleSets, TextDirection rootDirection)
+        : m_ruleSets(ruleSets)
+        , m_rootDirection(rootDirection)
+    { }
 
     void matchAllPageRules(int pageIndex);
     const MatchResult& matchResult() const { return m_result; }
@@ -49,8 +50,8 @@ private:
     void matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const String& pageName);
 
-    const Resolver::State& m_state;
     ScopeRuleSets& m_ruleSets;
+    TextDirection m_rootDirection;
 
     MatchResult m_result;
 };

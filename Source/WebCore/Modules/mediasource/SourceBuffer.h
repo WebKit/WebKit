@@ -34,15 +34,16 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ActiveDOMObject.h"
-#include "AudioTrack.h"
+#include "AudioTrackClient.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "SourceBufferPrivate.h"
 #include "SourceBufferPrivateClient.h"
-#include "TextTrack.h"
+#include "TextTrackClient.h"
 #include "Timer.h"
-#include "VideoTrack.h"
+#include "VideoTrackClient.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/Observer.h>
 
 namespace WebCore {
 
@@ -69,6 +70,9 @@ class SourceBuffer final
 {
     WTF_MAKE_ISO_ALLOCATED(SourceBuffer);
 public:
+    using WeakValueType = EventTarget::WeakValueType;
+    using EventTarget::weakPtrFactory;
+
     static Ref<SourceBuffer> create(Ref<SourceBufferPrivate>&&, MediaSource*);
     virtual ~SourceBuffer();
 
@@ -135,6 +139,8 @@ public:
     WTFLogChannel& logChannel() const final;
 #endif
 
+    void* opaqueRoot() { return this; }
+
 private:
     SourceBuffer(Ref<SourceBufferPrivate>&&, MediaSource*);
 
@@ -161,15 +167,20 @@ private:
 
     // AudioTrackClient
     void audioTrackEnabledChanged(AudioTrack&) final;
-    // VideoTrackClient
-    void videoTrackSelectedChanged(VideoTrack&) final;
+    void audioTrackKindChanged(AudioTrack&) final;
+    void audioTrackLabelChanged(AudioTrack&) final;
+    void audioTrackLanguageChanged(AudioTrack&) final;
+
     // TextTrackClient
     void textTrackKindChanged(TextTrack&) final;
     void textTrackModeChanged(TextTrack&) final;
-    void textTrackAddCues(TextTrack&, const TextTrackCueList&) final;
-    void textTrackRemoveCues(TextTrack&, const TextTrackCueList&) final;
-    void textTrackAddCue(TextTrack&, TextTrackCue&) final;
-    void textTrackRemoveCue(TextTrack&, TextTrackCue&) final;
+    void textTrackLanguageChanged(TextTrack&) final;
+
+    // VideoTrackClient
+    void videoTrackKindChanged(VideoTrack&) final;
+    void videoTrackLabelChanged(VideoTrack&) final;
+    void videoTrackLanguageChanged(VideoTrack&) final;
+    void videoTrackSelectedChanged(VideoTrack&) final;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return SourceBufferEventTargetInterfaceType; }
@@ -209,7 +220,9 @@ private:
     MediaSource* m_source;
     AppendMode m_mode { AppendMode::Segments };
 
-    Vector<unsigned char> m_pendingAppendData;
+    WTF::Observer<void*()> m_opaqueRootProvider;
+
+    RefPtr<SharedBuffer> m_pendingAppendData;
     Timer m_appendBufferTimer;
 
     RefPtr<VideoTrackList> m_videoTracks;

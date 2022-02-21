@@ -14,6 +14,7 @@ var MockModels = {
             TestGroup.clearStaticMap();
             BuildRequest.clearStaticMap();
             Triggerable.clearStaticMap();
+            TriggerableConfiguration.clearStaticMap();
             UploadedFile.clearStaticMap();
             MeasurementSet._setMap = null;
 
@@ -72,8 +73,9 @@ var MockModels = {
             });
             MockModels.triggerable = new Triggerable(3, {name: 'build-webkit',
                 repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup, MockModels.svnRepositoryWithOwnedRepositoryGroup, MockModels.ownerRepositoryGroup],
-                configurations: [{test: MockModels.iPhonePLT, platform: MockModels.iphone}]});
+                configurations: [{test: MockModels.iPhonePLT, platform: MockModels.iphone, supportedRepetitionTypes: ['alternating', 'sequential']}]});
 
+            MockModels.someTriggableConfiguration = TriggerableConfiguration.findByTestAndPlatform(MockModels.iPhonePLT, MockModels.iphone);
         });
     }
 }

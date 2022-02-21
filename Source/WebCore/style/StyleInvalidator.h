@@ -35,14 +35,15 @@ namespace WebCore {
 class Document;
 class Element;
 class MediaQueryEvaluator;
-class Scope;
-class SelectorFilter;
 class ShadowRoot;
 class StyleSheetContents;
 
 namespace Style {
 
+class Scope;
+
 struct InvalidationRuleSet;
+struct SelectorMatchingState;
 
 class Invalidator {
 public:
@@ -59,7 +60,7 @@ public:
 
     static void invalidateShadowParts(ShadowRoot&);
 
-    using MatchElementRuleSets = HashMap<MatchElement, InvalidationRuleSetVector, WTF::IntHash<MatchElement>, WTF::StrongEnumHashTraits<MatchElement>>;
+    using MatchElementRuleSets = HashMap<MatchElement, InvalidationRuleSetVector, IntHash<MatchElement>, WTF::StrongEnumHashTraits<MatchElement>>;
     static void addToMatchElementRuleSets(Invalidator::MatchElementRuleSets&, const InvalidationRuleSet&);
     static void invalidateWithMatchElementRuleSets(Element&, const MatchElementRuleSets&);
     static void invalidateAllStyle(Scope&);
@@ -67,9 +68,9 @@ public:
 
 private:
     enum class CheckDescendants { Yes, No };
-    CheckDescendants invalidateIfNeeded(Element&, const SelectorFilter*);
-    void invalidateStyleForTree(Element&, SelectorFilter*);
-    void invalidateStyleForDescendants(Element&, SelectorFilter*);
+    CheckDescendants invalidateIfNeeded(Element&, SelectorMatchingState*);
+    void invalidateStyleForTree(Element&, SelectorMatchingState*);
+    void invalidateStyleForDescendants(Element&, SelectorMatchingState*);
     void invalidateInShadowTreeIfNeeded(Element&);
     void invalidateShadowPseudoElements(ShadowRoot&);
     void invalidateStyleWithMatchElement(Element&, MatchElement);
@@ -89,7 +90,6 @@ private:
     RuleInformation m_ruleInformation;
 
     bool m_dirtiesAllStyle { false };
-    bool m_didInvalidateHostChildren { false };
 };
 
 }

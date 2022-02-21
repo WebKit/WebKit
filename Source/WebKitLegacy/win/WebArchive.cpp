@@ -40,7 +40,7 @@ using namespace WebCore;
 WebArchive* WebArchive::createInstance()
 {
 #if USE(CF)
-    WebArchive* instance = new WebArchive(0);
+    WebArchive* instance = new WebArchive(nullptr);
     instance->AddRef();
     return instance;
 #else

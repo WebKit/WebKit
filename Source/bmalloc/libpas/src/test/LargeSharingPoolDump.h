@@ -31,8 +31,10 @@
 
 #include <functional>
 #include "pas_large_sharing_pool.h"
+#include <vector>
 
 void forEachLargeSharingPoolNode(std::function<bool(pas_large_sharing_node*)> visitor);
+std::vector<pas_large_sharing_node*> largeSharingPoolAsVector();
 void dumpLargeSharingPool();
 
 #endif // TLC

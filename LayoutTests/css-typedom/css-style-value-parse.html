@@ -1,0 +1,41 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSTypedOMEnabled=true ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<meta name="author" title="Johnson Zhou" href="mailto:qiaosong_zhou@apple.com">
+<meta name="assert" content="Test unparsing of ">
+<link rel="help" content="https://drafts.css-houdini.org/css-typed-om-1/">
+
+<div id="el" style = "width: 150px; height: 10em; --my-prop: hello;"></div>
+
+<script>
+  test(function() {
+    let unparsedValue = CSSStyleValue.parse("height", "calc(42px + var(--foo, 15em))");
+    assert_true(unparsedValue instanceof CSSUnparsedValue);
+    assert_equals(unparsedValue.length, 3);
+    assert_equals(unparsedValue[0], "calc(42px + ");
+    assert_true(unparsedValue[1] instanceof CSSVariableReferenceValue);
+    assert_equals(unparsedValue[1].fallback.length, 1);
+    assert_equals(unparsedValue[1].fallback[0], " 15em");
+    assert_equals(unparsedValue[1].variable, "--foo");
+    assert_equals(unparsedValue[2], ")");
+  }, 'test that CSSUnparsedValue with fallback is parsed properly');
+
+  test(function() {
+    let unparsedValue = CSSStyleValue.parse("height", "calc(42px + var(--foo, 15em) + var(--bar, var(--far) + 15px))");
+    assert_true(unparsedValue instanceof CSSUnparsedValue);
+    assert_equals(unparsedValue.length, 5);
+    assert_equals(unparsedValue[0], "calc(42px + ");
+    assert_true(unparsedValue[1] instanceof CSSVariableReferenceValue);
+    assert_equals(unparsedValue[1].fallback.length, 1);
+    assert_equals(unparsedValue[1].fallback[0], " 15em");
+    assert_equals(unparsedValue[1].variable, "--foo");
+    assert_equals(unparsedValue[2], " + ");
+    assert_equals(unparsedValue[3].variable, "--bar");
+    assert_equals(unparsedValue[3].fallback.length, 3);
+    assert_equals(unparsedValue[3].fallback[0], " ");
+    assert_equals(unparsedValue[3].fallback[1].variable, "--far");
+    assert_equals(unparsedValue[3].fallback[1].fallback, null);
+    assert_equals(unparsedValue[3].fallback[2], " + 15px");
+    assert_equals(unparsedValue[4], ")");
+  }, 'test that CSSUnparsedValue with nested fallback is parsed properly');
+</script>

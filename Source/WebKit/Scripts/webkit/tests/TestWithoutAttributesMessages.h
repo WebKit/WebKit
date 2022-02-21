@@ -530,7 +530,7 @@ private:
 };
 #endif
 
-#if ENABLE(EXPERIMENTAL_FEATURE)
+#if ENABLE(FEATURE_FOR_TESTING)
 class ExperimentalOperation {
 public:
     using Arguments = std::tuple<const IPC::DummyType&>;

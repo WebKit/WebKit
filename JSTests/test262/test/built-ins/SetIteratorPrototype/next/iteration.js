@@ -1,7 +1,7 @@
 // Copyright (C) 2014 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 23.2.3.11
+esid: sec-set.prototype-@@iterator
 description: >
   The method should return a valid iterator with the context as the
   IteratedObject.

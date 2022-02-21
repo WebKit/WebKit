@@ -351,11 +351,6 @@ TEST_P(WebGLReadOutsideFramebufferTest, ReadPixels)
 TEST_P(WebGLReadOutsideFramebufferTest, CopyTexSubImage2D)
 {
     Main2D(&WebGLReadOutsideFramebufferTest::TestCopyTexSubImage2D, false);
-
-    // TODO(fjhenigman): Figure out this failure.
-    // Cube map skipped on 64-bit Windows with D3D FL 9.3
-    ANGLE_SKIP_TEST_IF(GetParam() == ES2_D3D11_FL9_3());
-
     Main2D(&WebGLReadOutsideFramebufferTest::TestCopyTexSubImageCube, false);
 }
 
@@ -365,11 +360,6 @@ TEST_P(WebGLReadOutsideFramebufferTest, CopyTexImage2D)
     // http://anglebug.com/4092
     ANGLE_SKIP_TEST_IF(IsVulkan() || IsD3D9() || IsD3D11());
     Main2D(&WebGLReadOutsideFramebufferTest::TestCopyTexImage2D, true);
-
-    // TODO(fjhenigman): Figure out this failure.
-    // Cube map skipped on 64-bit Windows with D3D FL 9.3
-    ANGLE_SKIP_TEST_IF(GetParam() == ES2_D3D11_FL9_3());
-
     Main2D(&WebGLReadOutsideFramebufferTest::TestCopyTexImageCube, true);
 }
 
@@ -377,9 +367,6 @@ TEST_P(WebGLReadOutsideFramebufferTest, CopyTexImage2D)
 // the corresponding source pixel is outside the framebuffer.
 TEST_P(WebGL2ReadOutsideFramebufferTest, CopyTexSubImage3D)
 {
-    // TODO(hqle): Metal doesn't implement 3D texture yet.
-    // http://anglebug.com/4136 (ES2 renderer is mistakenly included in this test)
-    ANGLE_SKIP_TEST_IF(IsMetal());
     // http://anglebug.com/4092
     ANGLE_SKIP_TEST_IF(IsVulkan() || IsD3D9() || IsD3D11());
     // Robust CopyTexSubImage3D behaviour is not implemented on OpenGL.

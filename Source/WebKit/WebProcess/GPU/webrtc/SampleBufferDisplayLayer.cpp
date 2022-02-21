@@ -34,6 +34,7 @@
 #include "RemoteSampleBufferDisplayLayerManagerMessages.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessagesReplies.h"
 #include "RemoteSampleBufferDisplayLayerMessages.h"
+#include "RemoteVideoFrameProxy.h"
 #include "SampleBufferDisplayLayerManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
@@ -49,17 +50,18 @@ std::unique_ptr<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(Sampl
 
 SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManager& manager, WebCore::SampleBufferDisplayLayer::Client& client)
     : WebCore::SampleBufferDisplayLayer(client)
-    , m_manager(makeWeakPtr(manager))
-    , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
+    , m_gpuProcessConnection(&WebProcess::singleton().ensureGPUProcessConnection())
+    , m_manager(manager)
+    , m_connection(m_gpuProcessConnection->connection())
     , m_identifier(SampleBufferDisplayLayerIdentifier::generate())
 {
     manager.addLayer(*this);
-    WebProcess::singleton().ensureGPUProcessConnection().addClient(*this);
+    m_gpuProcessConnection->addClient(*this);
 }
 
 void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, CompletionHandler<void(bool)>&& callback)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { m_identifier, hideRootLayer, size }, [this, weakThis = makeWeakPtr(this), callback = WTFMove(callback)](auto contextId) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { m_identifier, hideRootLayer, size }, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
         if (!weakThis)
             return callback(false);
         if (contextId)
@@ -78,7 +80,7 @@ void SampleBufferDisplayLayer::setLogIdentifier(String&& logIdentifier)
 
 SampleBufferDisplayLayer::~SampleBufferDisplayLayer()
 {
-    WebProcess::singleton().ensureGPUProcessConnection().removeClient(*this);
+    disconnectGPUProcessConnectionIfNeeded();
     m_connection->send(Messages::RemoteSampleBufferDisplayLayerManager::ReleaseLayer { m_identifier }, 0);
     if (m_manager)
         m_manager->removeLayer(*this);
@@ -126,12 +128,35 @@ void SampleBufferDisplayLayer::pause()
     m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Pause { }, m_identifier);
 }
 
+bool SampleBufferDisplayLayer::copySharedVideoFrame(CVPixelBufferRef pixelBuffer)
+{
+    if (!pixelBuffer)
+        return false;
+    return m_sharedVideoFrameWriter.write(pixelBuffer,
+        [this](auto& semaphore) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameSemaphore { semaphore }, m_identifier); },
+        [this](auto& handle) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameMemory { handle }, m_identifier); }
+    );
+}
+
 void SampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
 {
     if (m_paused)
         return;
-    if (auto remoteSample = RemoteVideoSample::create(sample))
-        m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueSample { *remoteSample }, m_identifier);
+
+    if (is<RemoteVideoFrameProxy>(sample)) {
+        auto& remoteSample = downcast<RemoteVideoFrameProxy>(sample);
+        m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueSample { remoteSample.read() }, m_identifier);
+        return;
+    }
+
+    auto remoteSample = RemoteVideoSample::create(sample, RemoteVideoSample::ShouldCheckForIOSurface::No);
+    if (!remoteSample->surface()) {
+        // buffer is not IOSurface, we need to copy to shared video frame.
+        if (!copySharedVideoFrame(remoteSample->imageBuffer()))
+            return;
+    }
+
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueSampleCV { *remoteSample }, m_identifier);
 }
 
 void SampleBufferDisplayLayer::clearEnqueuedSamples()
@@ -147,13 +172,23 @@ PlatformLayer* SampleBufferDisplayLayer::rootLayer()
 void SampleBufferDisplayLayer::setDidFail(bool value)
 {
     m_didFail = value;
+    if (m_client && m_didFail)
+        m_client->sampleBufferDisplayLayerStatusDidFail();
 }
 
 void SampleBufferDisplayLayer::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
+    m_sharedVideoFrameWriter.disable();
+    disconnectGPUProcessConnectionIfNeeded();
     m_didFail = true;
     if (m_client)
         m_client->sampleBufferDisplayLayerStatusDidFail();
+}
+
+void SampleBufferDisplayLayer::disconnectGPUProcessConnectionIfNeeded()
+{
+    if (auto* gpuProcessConnection = std::exchange(m_gpuProcessConnection, nullptr))
+        gpuProcessConnection->removeClient(*this);
 }
 
 }

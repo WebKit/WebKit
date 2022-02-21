@@ -14,14 +14,8 @@ var planet = "mars";
 
 var f = Function.call("blablastring", "return this.color;");
 
-//CHECK#1
-if (f() !== "red") {
-  throw new Test262Error('#1: ');
-}
+assert.sameValue(f(), "red", 'f() must return "red"');
 
 var g = Function.call(null, "return this.planet;");
 
-//CHECK#2
-if (g() !== "mars") {
-  throw new Test262Error('#2: ');
-}
+assert.sameValue(g(), "mars", 'g() must return "mars"');

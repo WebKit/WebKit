@@ -498,7 +498,7 @@ static inline bool isCommonlyUsedGenericFamily(const String& familyNameString)
         || equalLettersIgnoringASCIICase(familyNameString, "cursive");
 }
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext)
 {
     // The CSS font matching algorithm (http://www.w3.org/TR/css3-fonts/#font-matching-algorithm)
     // says that we must find an exact match for font family, slant (italic or oblique can be used)
@@ -573,8 +573,8 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool fixedWidth, syntheticBold, syntheticOblique;
     getFontPropertiesFromPattern(resultPattern.get(), fontDescription, fixedWidth, syntheticBold, syntheticOblique);
 
-    if (fontFaceFeatures) {
-        for (auto& fontFaceFeature : *fontFaceFeatures) {
+    if (fontCreationContext.fontFaceFeatures() && !fontCreationContext.fontFaceFeatures()->isEmpty()) {
+        for (auto& fontFaceFeature : *fontCreationContext.fontFaceFeatures()) {
             if (fontFaceFeature.enabled()) {
                 const auto& tag = fontFaceFeature.tag();
                 const char buffer[] = { tag[0], tag[1], tag[2], tag[3], '\0' };

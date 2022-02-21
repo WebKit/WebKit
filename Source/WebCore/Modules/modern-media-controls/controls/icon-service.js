@@ -26,6 +26,8 @@
 const Icons = {
     Airplay         : { name: "Airplay", type: "svg", label: UIString("AirPlay") },
     AirplayPlacard  : { name: "airplay-placard", type: "png", label: UIString("AirPlay") },
+    Brightness      : { name: "Brightness", type: "svg", label: UIString("Adjust Brightness") },
+    Close           : { name: "X", type: "svg", label: UIString("Close") },
     EnterFullscreen : { name: "EnterFullscreen", type: "svg", label: UIString("Enter Full Screen") },
     EnterPiP        : { name: "PipIn", type: "svg", label: UIString("Enter Picture in Picture") },
     ExitFullscreen  : { name: "ExitFullscreen", type: "svg", label: UIString("Exit Full Screen") },
@@ -33,6 +35,7 @@ const Icons = {
     InvalidCircle   : { name: "InvalidCircle", type: "pdf", label: UIString("Invalid") },
     InvalidPlacard  : { name: "invalid-placard", type: "png", label: UIString("Invalid") },
     Overflow        : { name: "Overflow", type: "svg", label: UIString("More\u2026") },
+    OverflowCircle  : { name: "OverflowCircle", type: "svg", label: UIString("More\u2026") },
     Pause           : { name: "Pause", type: "svg", label: UIString("Pause") },
     PiPPlacard      : { name: "pip-placard", type: "png", label: UIString("Picture in Picture") },
     Play            : { name: "Play", type: "svg", label: UIString("Play") },

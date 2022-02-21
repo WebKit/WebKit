@@ -7,7 +7,6 @@
 
 #include "entry_points_wgl.h"
 
-#include "common/angle_version.h"
 #include "common/debug.h"
 #include "common/event_tracer.h"
 #include "common/utilities.h"
@@ -51,6 +50,8 @@ void ClipConfigs(const std::vector<const Config *> &filteredConfigs,
     *num_config = result_size;
 }
 }  // anonymous namespace
+
+#define WGL_EVENT(EP, FMT, ...) EVENT(nullptr, WGL##EP, FMT, __VA_ARGS__)
 
 extern "C" {
 
@@ -222,7 +223,7 @@ wglGetLayerPaletteEntries(HDC hdc, int iLayerPlane, int iStart, int cEntries, CO
 PROC GL_APIENTRY wglGetProcAddress(LPCSTR lpszProc)
 {
     ANGLE_SCOPED_GLOBAL_LOCK();
-    FUNC_EVENT("const char *procname = \"%s\"", lpszProc);
+    WGL_EVENT(GetProcAddress, "const char *procname = \"%s\"", lpszProc);
     egl::Thread *thread = egl::GetCurrentThread();
 
     const ProcEntry *entry =
@@ -245,6 +246,8 @@ BOOL GL_APIENTRY wglMakeCurrent(HDC hDc, HGLRC newContext)
     const gl::Context *context =
         GetContextIfValid(display, reinterpret_cast<gl::Context *>(newContext));
 
+    ScopedSyncCurrentContextFromThread scopedSyncCurrent(thread);
+
     // If display or context are invalid, make thread's current rendering context not current
     if (!context)
     {
@@ -253,8 +256,8 @@ BOOL GL_APIENTRY wglMakeCurrent(HDC hDc, HGLRC newContext)
         {
             ANGLE_EGL_TRY_RETURN(thread, oldContext->unMakeCurrent(display), "wglMakeCurrent",
                                  GetContextIfValid(display, oldContext), EGL_FALSE);
+            thread->setCurrent(nullptr);
         }
-        SetContextCurrent(thread, nullptr);
         return TRUE;
     }
 
@@ -266,11 +269,9 @@ BOOL GL_APIENTRY wglMakeCurrent(HDC hDc, HGLRC newContext)
     if (previousDraw != surface || previousRead != surface || previousContext != context)
     {
         ANGLE_EGL_TRY_RETURN(thread,
-                             display->makeCurrent(previousContext, surface, surface,
+                             display->makeCurrent(thread, previousContext, surface, surface,
                                                   const_cast<gl::Context *>(context)),
                              "wglMakeCurrent", GetContextIfValid(display, context), EGL_FALSE);
-
-        SetContextCurrent(thread, const_cast<gl::Context *>(context));
     }
 
     return TRUE;

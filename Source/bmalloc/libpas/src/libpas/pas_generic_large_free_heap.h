@@ -276,7 +276,7 @@ pas_generic_large_free_heap_try_allocate(
             merged = pas_large_free_create_merged(candidate, new_free, config);
             if (verbose) {
                 pas_log("merged is %p...%p (%s)\n",
-                        (void*)merged.begin, (void*)merged.end,
+                        (void*)((uintptr_t)merged.begin), (void*)((uintptr_t)merged.end),
                         merged.zero_mode ? "zero" : "non-zero");
             }
             if (!pas_large_free_is_empty(merged)) {
@@ -368,7 +368,7 @@ pas_generic_large_free_heap_try_allocate(
                     heap, candidate_result.allocation.end - candidate.end);
                 
                 config->deallocator(
-                    (void*)candidate_result.right_free.begin, 
+                    (void*)((uintptr_t)candidate_result.right_free.begin), 
                     candidate_result.right_free.end - candidate_result.right_free.begin,
                     config->deallocator_arg);
             } else {
@@ -387,7 +387,7 @@ pas_generic_large_free_heap_try_allocate(
             }
         }
     } else {
-        static const size_t max_num_additions = 2;
+        enum { max_num_additions = 2 };
         pas_large_free additions[max_num_additions];
         size_t num_additions = 0;
         

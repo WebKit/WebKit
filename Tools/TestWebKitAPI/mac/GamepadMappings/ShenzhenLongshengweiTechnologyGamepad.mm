@@ -26,7 +26,7 @@
 #import "config.h"
 #import "VirtualGamepad.h"
 
-#if HAVE(HID_FRAMEWORK) && USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK)
 
 #import <HID/HIDUserDevice.h>
 
@@ -154,4 +154,4 @@ GamepadMapping VirtualGamepad::shenzhenLongshengweiTechnologyGamepadMapping()
 
 } // namespace TestWebKitAPI
 
-#endif // HAVE(HID_FRAMEWORK) && USE(APPLE_INTERNAL_SDK)
+#endif // USE(APPLE_INTERNAL_SDK)

@@ -38,14 +38,14 @@ namespace WebCore {
 
 class MHTMLParser;
 class Page;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class MHTMLArchive final : public Archive {
 public:
     static Ref<MHTMLArchive> create();
-    static RefPtr<MHTMLArchive> create(const URL&, SharedBuffer&);
+    static RefPtr<MHTMLArchive> create(const URL&, FragmentedSharedBuffer&);
 
-    static Ref<SharedBuffer> generateMHTMLData(Page*);
+    static Ref<FragmentedSharedBuffer> generateMHTMLData(Page*);
 
     virtual ~MHTMLArchive();
 

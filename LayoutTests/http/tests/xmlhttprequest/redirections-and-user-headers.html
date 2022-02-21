@@ -7,7 +7,7 @@
   </head>
   <body>
     <script type="text/javascript">
-function doTest(testName, testURL, simpleRequest, changeOrigin)
+function doTest(testName, testURL, simpleRequest, crossOriginRedirect)
 {
   promise_test(function(test) {
     var resolvePromise, rejectPromise;
@@ -31,7 +31,10 @@ function doTest(testName, testURL, simpleRequest, changeOrigin)
         if (!simpleRequest) {
             assert_true(xhr.responseText.indexOf("x-webkit header found: funky") !== -1, "xhr final request should have a x-webkit=funky header");
             assert_true(xhr.responseText.indexOf("content-type header found: rocky") !== -1, "xhr final request should have a content-type=groovy header");
-            assert_true(xhr.responseText.indexOf("not found any authorization header") !== -1, "xhr final request should not have an authorization header");
+            if (crossOriginRedirect)
+                assert_true(xhr.responseText.indexOf("not found any authorization header") !== -1, "xhr final request should not have an authorization header");
+            else
+                assert_true(xhr.responseText.indexOf("authorization header found") !== -1, "xhr final request should have an authorization header");
         }
         testPassed = true;
     }
@@ -50,38 +53,39 @@ function doTest(testName, testURL, simpleRequest, changeOrigin)
 }
 
 var simpleRequest = true;
+var crossOriginRedirect = true;
 
 doTest("Check headers after same-origin redirection to same-origin resource (simple request)",
         "resources/access-control-preflight-redirect.py?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.py",
-        simpleRequest);
+        simpleRequest, !crossOriginRedirect);
 
 doTest("Check headers after same-origin redirection to same-origin resource (not simple request)",
         "resources/access-control-preflight-redirect.py?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.py",
-        !simpleRequest);
+        !simpleRequest, !crossOriginRedirect);
 
 doTest("Check headers after same origin redirection to cross-origin resource (simple request)",
         "resources/access-control-preflight-redirect.py?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py",
-        simpleRequest);
+        simpleRequest, crossOriginRedirect);
 
 doTest("Check headers after same origin redirection to cross-origin resource (not simple request)",
         "resources/access-control-preflight-redirect.py?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py",
-        !simpleRequest);
+        !simpleRequest, crossOriginRedirect);
 
 doTest("Check headers after cross-origin redirection to same-origin resource (simple request)",
         "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.py",
-        simpleRequest);
+        simpleRequest, crossOriginRedirect);
 
 doTest("Check headers after cross-origin redirection to same-origin resource (not simple request)",
         "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py?redirect=true&url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-preflight-redirect.py",
-        !simpleRequest);
+        !simpleRequest, crossOriginRedirect);
 
 doTest("Check headers after cross-origin redirection to cross-origin resource (simple request)",
         "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py",
-        simpleRequest);
+        simpleRequest, !crossOriginRedirect);
 
 doTest("Check headers after cross-origin redirection to cross-origin resource (not simple request)",
         "http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py?redirect=true&url=http://localhost:8080/xmlhttprequest/resources/access-control-preflight-redirect.py",
-        !simpleRequest);
+        !simpleRequest, !crossOriginRedirect);
 
     </script>
   </body>

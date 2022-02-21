@@ -27,42 +27,30 @@
 #define PAS_BITFIT_VIEW_H
 
 #include "pas_bitfit_page_config.h"
-#include "pas_compact_atomic_bitfit_biasing_directory_ptr.h"
-#include "pas_compact_bitfit_global_directory_ptr.h"
+#include "pas_compact_bitfit_directory_ptr.h"
 #include "pas_heap_summary.h"
 #include "pas_lock.h"
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_bitfit_global_directory;
+struct pas_bitfit_directory;
 struct pas_bitfit_page;
 struct pas_bitfit_view;
-typedef struct pas_bitfit_global_directory pas_bitfit_global_directory;
+typedef struct pas_bitfit_directory pas_bitfit_directory;
 typedef struct pas_bitfit_page pas_bitfit_page;
 typedef struct pas_bitfit_view pas_bitfit_view;
 
 struct pas_bitfit_view {
     void* page_boundary;
-    pas_compact_atomic_bitfit_biasing_directory_ptr biasing_directory;
-    pas_compact_bitfit_global_directory_ptr global_directory;
+    pas_compact_bitfit_directory_ptr directory;
     bool is_owned;
-    unsigned index_in_global;
-    unsigned index_in_biasing;
+    unsigned index;
     pas_lock ownership_lock;
     pas_lock commit_lock;
 };
 
-PAS_API pas_bitfit_view* pas_bitfit_view_create(pas_bitfit_global_directory* directory,
-                                                unsigned index_in_global);
-
-PAS_API void pas_bitfit_view_lock_ownership_lock_slow(pas_bitfit_view* view);
-
-static inline void pas_bitfit_view_lock_ownership_lock(pas_bitfit_view* view)
-{
-    if (pas_lock_try_lock(&view->ownership_lock))
-        return;
-    pas_bitfit_view_lock_ownership_lock_slow(view);
-}
+PAS_API pas_bitfit_view* pas_bitfit_view_create(pas_bitfit_directory* directory,
+                                                unsigned index);
 
 PAS_API void pas_bitfit_view_note_nonemptiness(pas_bitfit_view* view);
 PAS_API void pas_bitfit_view_note_full_emptiness(pas_bitfit_view* view, pas_bitfit_page* page);

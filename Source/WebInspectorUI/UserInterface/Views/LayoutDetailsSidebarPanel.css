@@ -23,12 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.details-section.layout-css-grid > .content > .group > .row > .css-grid-section {
-    margin-inline: 6px;
-    margin-bottom: 4px;
-}
-
-.details-section.layout-css-grid:not(.collapsed) > .content,
-.details-section.layout-css-grid > .content > .group {
+.details-section:is(.layout-css-flexbox, .layout-css-grid):not(.collapsed) > .content,
+.details-section:is(.layout-css-flexbox, .layout-css-grid) > .content > .group {
     display: block;
 }

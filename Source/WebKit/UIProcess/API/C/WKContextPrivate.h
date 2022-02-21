@@ -83,6 +83,7 @@ WK_EXPORT void WKContextWarmInitialProcess(WKContextRef context);
 // At some point it should be removed.
 WK_EXPORT void WKContextSetUsesNetworkProcess(WKContextRef, bool);
 
+WK_EXPORT void WKContextTerminateGPUProcess(WKContextRef);
 WK_EXPORT void WKContextTerminateServiceWorkers(WKContextRef);
 
 typedef void (*WKContextInvalidMessageFunction)(WKStringRef messageName);

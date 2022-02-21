@@ -71,7 +71,6 @@ public:
 
     bool isPseudoElementCueFunction() const;
 
-    bool hasShadowDescendant() const;
     bool matchesPseudoElement() const;
 
     bool isHostPseudoSelector() const;
@@ -96,11 +95,6 @@ private:
     std::unique_ptr<CSSParserSelector> m_tagHistory;
 };
 
-inline bool CSSParserSelector::hasShadowDescendant() const
-{
-    return m_selector->relation() == CSSSelector::ShadowDescendant;
-}
-
 inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
 {
     return match() == CSSSelector::PseudoElement
@@ -109,6 +103,7 @@ inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
             || pseudoElementType() == CSSSelector::PseudoElementCue
 #endif
             || pseudoElementType() == CSSSelector::PseudoElementPart
+            || pseudoElementType() == CSSSelector::PseudoElementSlotted
             || pseudoElementType() == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed);
 }
 

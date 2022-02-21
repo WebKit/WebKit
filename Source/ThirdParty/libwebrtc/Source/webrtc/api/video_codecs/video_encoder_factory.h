@@ -29,7 +29,7 @@ class VideoEncoderFactory {
  public:
   // TODO(magjed): Try to get rid of this struct.
   struct CodecInfo {
-    // |has_internal_source| is true if encoders created by this factory of the
+    // `has_internal_source` is true if encoders created by this factory of the
     // given codec will use internal camera sources, meaning that they don't
     // require/expect frames to be delivered via webrtc::VideoEncoder::Encode.
     // This flag is used as the internal_source parameter to
@@ -88,7 +88,7 @@ class VideoEncoderFactory {
   // power efficient, which is currently interpreted as if there is support for
   // hardware acceleration.
   // See https://w3c.github.io/webrtc-svc/#scalabilitymodes* for a specification
-  // of valid values for |scalability_mode|.
+  // of valid values for `scalability_mode`.
   // NOTE: QueryCodecSupport is currently an experimental feature that is
   // subject to change without notice.
   virtual CodecSupport QueryCodecSupport(

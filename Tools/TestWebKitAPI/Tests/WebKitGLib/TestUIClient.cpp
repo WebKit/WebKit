@@ -21,7 +21,7 @@
 
 // Include WebKitSettingsPrivate.h for webkitSettingsSetMediaCaptureRequiresSecureConnection().
 #define WEBKIT2_COMPILATION
-#include <WebKit/WebKitSettingsPrivate.h>
+#include <WebKitSettingsPrivate.h>
 #undef WEBKIT2_COMPILATION
 
 #include "WebViewTest.h"
@@ -1002,6 +1002,7 @@ static void testWebViewUserMediaEnumerateDevicesPermissionCheck(UIClientTest* te
     gboolean enabled = webkit_settings_get_enable_media_stream(settings);
     webkit_settings_set_enable_media_stream(settings, TRUE);
     webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, FALSE);
+    webkitSettingsSetGetUserMediaRequiresFocus(settings, FALSE);
     webkit_settings_set_enable_mock_capture_devices(settings, TRUE);
 
     test->showInWindow();
@@ -1037,6 +1038,7 @@ static void testWebViewUserMediaEnumerateDevicesPermissionCheck(UIClientTest* te
     webkit_settings_set_enable_media_stream(settings, enabled);
     webkit_settings_set_enable_mock_capture_devices(settings, FALSE);
     webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, TRUE);
+    webkitSettingsSetGetUserMediaRequiresFocus(settings, TRUE);
 }
 
 static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpointer)
@@ -1046,6 +1048,7 @@ static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpoi
     webkit_settings_set_enable_media_stream(settings, TRUE);
     webkit_settings_set_enable_mock_capture_devices(settings, TRUE);
     webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, FALSE);
+    webkitSettingsSetGetUserMediaRequiresFocus(settings, FALSE);
 
     test->showInWindow();
     static const char* userMediaRequestHTML = "<html>"
@@ -1105,6 +1108,7 @@ static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpoi
     webkit_settings_set_enable_media_stream(settings, enabled);
     webkit_settings_set_enable_mock_capture_devices(settings, FALSE);
     webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, TRUE);
+    webkitSettingsSetGetUserMediaRequiresFocus(settings, TRUE);
 }
 
 static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, gconstpointer)
@@ -1114,6 +1118,7 @@ static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, 
     webkit_settings_set_enable_media_stream(settings, TRUE);
     webkit_settings_set_enable_mock_capture_devices(settings, TRUE);
     webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, FALSE);
+    webkitSettingsSetGetUserMediaRequiresFocus(settings, FALSE);
 
     test->showInWindow();
     static const char* userMediaRequestHTML = "<html>"
@@ -1144,6 +1149,7 @@ static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, 
     webkit_settings_set_enable_media_stream(settings, enabled);
     webkit_settings_set_enable_mock_capture_devices(settings, FALSE);
     webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, TRUE);
+    webkitSettingsSetGetUserMediaRequiresFocus(settings, TRUE);
 }
 
 static void testWebViewDisplayUserMediaPermissionRequests(UIClientTest* test, gconstpointer)

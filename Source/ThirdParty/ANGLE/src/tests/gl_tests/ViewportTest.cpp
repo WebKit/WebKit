@@ -393,4 +393,7 @@ ANGLE_INSTANTIATE_TEST(ViewportTest,
                        ES3_OPENGLES(),
                        ES2_VULKAN());
 
+// This test suite is not instantiated on some OSes.
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ViewportTest);
+
 }  // namespace

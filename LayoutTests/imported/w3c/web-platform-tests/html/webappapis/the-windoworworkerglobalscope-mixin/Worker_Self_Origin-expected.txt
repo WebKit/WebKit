@@ -1,8 +1,8 @@
 
 PASS Same Origin Worker
-FAIL Same Origin SharedWorker Can't find variable: SharedWorker
+PASS Same Origin SharedWorker
 PASS Data Url Worker
-FAIL Data Url SharedWorker Can't find variable: SharedWorker
+PASS Data Url SharedWorker
 PASS Blob Url Worker
-FAIL Blob Url SharedWorker Can't find variable: SharedWorker
+PASS Blob Url SharedWorker
 

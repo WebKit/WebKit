@@ -7,7 +7,6 @@
 #include "compiler/translator/BuiltinsWorkaroundGLSL.h"
 
 #include "angle_gl.h"
-#include "compiler/translator/StaticType.h"
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
@@ -34,7 +33,6 @@ class TBuiltinsWorkaroundGLSL : public TIntermTraverser
     ShCompileOptions mCompileOptions;
 
     bool isBaseInstanceDeclared = false;
-    bool isBaseVertexDeclared   = false;
 };
 
 TBuiltinsWorkaroundGLSL::TBuiltinsWorkaroundGLSL(TSymbolTable *symbolTable,
@@ -81,7 +79,7 @@ bool TBuiltinsWorkaroundGLSL::visitDeclaration(Visit, TIntermDeclaration *node)
     for (TIntermNode *variableNode : sequence)
     {
         TIntermSymbol *variable = variableNode->getAsSymbolNode();
-        if (variable && variable->variable().symbolType() == SymbolType::AngleInternal)
+        if (variable && variable->variable().symbolType() == SymbolType::BuiltIn)
         {
             if (variable->getName() == "angle_BaseInstance")
             {

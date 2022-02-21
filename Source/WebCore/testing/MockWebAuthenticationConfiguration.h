@@ -92,6 +92,7 @@ struct MockWebAuthenticationConfiguration {
         bool canDowngrade { false };
         bool expectCancel { false };
         bool supportClientPin { false };
+        bool supportInternalUV { false };
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static std::optional<HidConfiguration> decode(Decoder&);
@@ -169,7 +170,7 @@ std::optional<MockWebAuthenticationConfiguration::LocalConfiguration> MockWebAut
 template<class Encoder>
 void MockWebAuthenticationConfiguration::HidConfiguration::encode(Encoder& encoder) const
 {
-    encoder << payloadBase64 << stage << subStage << error << isU2f << keepAlive << fastDataArrival << continueAfterErrorData << canDowngrade << expectCancel << supportClientPin;
+    encoder << payloadBase64 << stage << subStage << error << isU2f << keepAlive << fastDataArrival << continueAfterErrorData << canDowngrade << expectCancel << supportClientPin << supportInternalUV;
 }
 
 template<class Decoder>
@@ -197,6 +198,8 @@ std::optional<MockWebAuthenticationConfiguration::HidConfiguration> MockWebAuthe
     if (!decoder.decode(result.expectCancel))
         return std::nullopt;
     if (!decoder.decode(result.supportClientPin))
+        return std::nullopt;
+    if (!decoder.decode(result.supportInternalUV))
         return std::nullopt;
     return result;
 }

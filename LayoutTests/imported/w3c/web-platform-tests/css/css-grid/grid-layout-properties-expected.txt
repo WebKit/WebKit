@@ -62,8 +62,8 @@ PASS grid-auto-flow
 PASS grid-auto-flow.initial
 PASS grid-auto-flow.row
 PASS grid-auto-flow.column
-FAIL grid-auto-flow.dense assert_equals: dense expected "dense" but got "row dense"
-FAIL grid-auto-flow.row dense assert_equals: row dense expected "dense" but got "row dense"
+PASS grid-auto-flow.dense
+PASS grid-auto-flow.row dense
 PASS grid-auto-flow.column dense
 PASS grid-auto-flow.reset
 PASS grid-row-start

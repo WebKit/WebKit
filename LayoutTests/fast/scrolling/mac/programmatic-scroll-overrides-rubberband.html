@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
 <html>
 <head>
     <style>
@@ -21,29 +21,60 @@
         
         async function doMouseWheelScroll()
         {
-            eventSender.mouseMoveTo(100, 100);
+            const events = [
+                {
+                    type : "wheel",
+                    viewX : 100,
+                    viewY : 100,
+                    deltaY : -10,
+                    phase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -100,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -50,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    deltaY : 50,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    deltaY : 100,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    deltaY : 100,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    phase : "ended"
+                },
+                {
+                    type : "wheel",
+                    deltaY : 100,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : 100,
+                    momentumPhase : "changed"
+                },
+                {
+                    type : "wheel",
+                    momentumPhase : "ended"
+                }
+            ];
 
-            // Trigger rubberbanding at the top.
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none', true);
-            await UIHelper.renderingUpdate();
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, 'changed', 'none', true);
-            await UIHelper.renderingUpdate();
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 5, 'changed', 'none', true);
-            await UIHelper.renderingUpdate();
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'changed', 'none', true);
-            await UIHelper.renderingUpdate();
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'changed', 'none', true);
-            await UIHelper.renderingUpdate();
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none', true);
-            await UIHelper.renderingUpdate();
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'none', 'begin', true);
-            await UIHelper.renderingUpdate();
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 10, 'none', 'continue', true);
-            await UIHelper.renderingUpdate();
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end', true);
-
-            await UIHelper.renderingUpdate();
+            await UIHelper.mouseWheelSequence({ events }, { waitForCompletion: false });
         }
         
         async function scrollTest()

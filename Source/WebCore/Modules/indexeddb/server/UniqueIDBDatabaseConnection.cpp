@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "ServerOpenDBRequest.h"
 #include "UniqueIDBDatabase.h"
+#include "UniqueIDBDatabaseManager.h"
 
 namespace WebCore {
 namespace IDBServer {
@@ -41,12 +42,15 @@ Ref<UniqueIDBDatabaseConnection> UniqueIDBDatabaseConnection::create(UniqueIDBDa
 }
 
 UniqueIDBDatabaseConnection::UniqueIDBDatabaseConnection(UniqueIDBDatabase& database, ServerOpenDBRequest& request)
-    : m_database(makeWeakPtr(database))
-    , m_server(database.server())
+    : m_database(database)
+    , m_manager(database.manager())
     , m_connectionToClient(request.connection())
     , m_openRequestIdentifier(request.requestData().requestIdentifier())
 {
-    m_server.registerDatabaseConnection(*this);
+    if (auto* manager = database.manager()) {
+        m_manager = *manager;
+        m_manager->registerConnection(*this);
+    }
     m_connectionToClient->registerDatabaseConnection(*this);
 }
 
@@ -54,8 +58,14 @@ UniqueIDBDatabaseConnection::~UniqueIDBDatabaseConnection()
 {
     ASSERT(m_transactionMap.isEmpty());
 
-    m_server.unregisterDatabaseConnection(*this);
+    if (m_manager)
+        m_manager->unregisterConnection(*this);
     m_connectionToClient->unregisterDatabaseConnection(*this);
+}
+
+UniqueIDBDatabaseManager* UniqueIDBDatabaseConnection::manager()
+{
+    return m_manager.get();
 }
 
 bool UniqueIDBDatabaseConnection::hasNonFinishedTransactions() const

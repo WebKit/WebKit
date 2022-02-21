@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -246,7 +246,7 @@ RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(S
     m_counter = header->counter;
 
     if (header->keyId != m_keyId) {
-        auto position = m_keys.findMatching([keyId = header->keyId](auto& item) { return item.keyId == keyId; });
+        auto position = m_keys.findIf([keyId = header->keyId](auto& item) { return item.keyId == keyId; });
         if (position == notFound)
             return makeUnexpected(ErrorInformation { Error::KeyID,  "Key ID is unknown"_s, header->keyId });
         auto result = updateEncryptionKey(m_keys[position].keyData, header->keyId, ShouldUpdateKeys::No);

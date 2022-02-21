@@ -6,7 +6,8 @@ info: The Date.prototype has the property "getTimezoneOffset"
 esid: sec-properties-of-the-date-prototype-object
 description: The Date.prototype has the property "getTimezoneOffset"
 ---*/
-
-if (Date.prototype.hasOwnProperty("getTimezoneOffset") !== true) {
-  throw new Test262Error('#1: The Date.prototype has the property "getTimezoneOffset"');
-}
+assert.sameValue(
+  Date.prototype.hasOwnProperty("getTimezoneOffset"),
+  true,
+  'Date.prototype.hasOwnProperty("getTimezoneOffset") must return true'
+);

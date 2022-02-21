@@ -30,7 +30,6 @@
 
 #include "PreviewConverterClient.h"
 #include "PreviewConverterProvider.h"
-#include "SharedBuffer.h"
 #include <wtf/RunLoop.h>
 #include <wtf/SetForScope.h>
 
@@ -63,9 +62,9 @@ const ResourceError& PreviewConverter::previewError() const
     return m_previewError;
 }
 
-const SharedBuffer& PreviewConverter::previewData() const
+const FragmentedSharedBuffer& PreviewConverter::previewData() const
 {
-    return m_previewData.get();
+    return *m_previewData.get();
 }
 
 void PreviewConverter::updateMainResource()
@@ -82,15 +81,12 @@ void PreviewConverter::updateMainResource()
         return;
     }
 
-    provider->provideMainResourceForPreviewConverter(*this, [this, protectedThis = makeRef(*this)](auto buffer) {
-        if (buffer)
-            appendFromBuffer(*buffer);
-        else
-            didFailUpdating();
+    provider->provideMainResourceForPreviewConverter(*this, [this, protectedThis = Ref { *this }](auto&& buffer) {
+        appendFromBuffer(WTFMove(buffer));
     });
 }
 
-void PreviewConverter::appendFromBuffer(const SharedBuffer& buffer)
+void PreviewConverter::appendFromBuffer(const FragmentedSharedBuffer& buffer)
 {
     while (buffer.size() > m_lengthAppended) {
         auto newData = buffer.getSomeData(m_lengthAppended);
@@ -134,7 +130,7 @@ bool PreviewConverter::hasClient(PreviewConverterClient& client) const
 void PreviewConverter::addClient(PreviewConverterClient& client)
 {
     ASSERT(!hasClient(client));
-    m_clients.append(makeWeakPtr(client));
+    m_clients.append(client);
     didAddClient(client);
 }
 
@@ -165,7 +161,7 @@ void PreviewConverter::iterateClients(T&& callback)
 {
     SetForScope<bool> isInClientCallback { m_isInClientCallback, true };
     auto clientsCopy { m_clients };
-    auto protectedThis { makeRef(*this) };
+    auto protectedThis { Ref { *this } };
 
     for (auto& client : clientsCopy) {
         if (client && hasClient(*client))
@@ -175,7 +171,7 @@ void PreviewConverter::iterateClients(T&& callback)
 
 void PreviewConverter::didAddClient(PreviewConverterClient& client)
 {
-    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), weakClient = makeWeakPtr(client)]() {
+    RunLoop::current().dispatch([this, protectedThis = Ref { *this }, weakClient = WeakPtr { client }]() {
         if (auto client = weakClient.get())
             replayToClient(*client);
     });
@@ -206,7 +202,7 @@ void PreviewConverter::replayToClient(PreviewConverterClient& client)
         return;
 
     SetForScope<bool> isInClientCallback { m_isInClientCallback, true };
-    auto protectedThis { makeRef(*this) };
+    auto protectedThis { Ref { *this } };
 
     client.previewConverterDidStartUpdating(*this);
 
@@ -221,8 +217,8 @@ void PreviewConverter::replayToClient(PreviewConverterClient& client)
     ASSERT(m_state >= State::Converting);
     client.previewConverterDidStartConverting(*this);
 
-    if (!m_previewData->isEmpty() && hasClient(client))
-        client.previewConverterDidReceiveData(*this, m_previewData.get());
+    if (!m_previewData.isEmpty() && hasClient(client))
+        client.previewConverterDidReceiveData(*this, *m_previewData.get());
 
     if (m_state == State::Converting || !hasClient(client))
         return;
@@ -234,14 +230,14 @@ void PreviewConverter::replayToClient(PreviewConverterClient& client)
     }
 
     ASSERT(m_state == State::FinishedConverting);
-    ASSERT(!m_previewData->isEmpty());
+    ASSERT(!m_previewData.isEmpty());
     ASSERT(m_previewError.isNull());
     client.previewConverterDidFinishConverting(*this);
 }
 
-void PreviewConverter::delegateDidReceiveData(const SharedBuffer& data)
+void PreviewConverter::delegateDidReceiveData(const FragmentedSharedBuffer& data)
 {
-    auto protectedThis { makeRef(*this) };
+    auto protectedThis { Ref { *this } };
 
     if (m_state == State::Updating) {
         m_provider = nullptr;
@@ -256,7 +252,7 @@ void PreviewConverter::delegateDidReceiveData(const SharedBuffer& data)
     if (data.isEmpty())
         return;
 
-    m_previewData->append(data);
+    m_previewData.append(data);
 
     iterateClients([&](auto& client) {
         client.previewConverterDidReceiveData(*this, data);
@@ -287,7 +283,7 @@ void PreviewConverter::delegateDidFailWithError(const ResourceError& error)
         return;
     }
 
-    provider->providePasswordForPreviewConverter(*this, [this, protectedThis = makeRef(*this)](auto& password) mutable {
+    provider->providePasswordForPreviewConverter(*this, [this, protectedThis = Ref { *this }](auto& password) mutable {
         if (m_state != State::Updating)
             return;
 

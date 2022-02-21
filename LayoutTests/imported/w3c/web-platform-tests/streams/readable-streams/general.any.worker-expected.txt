@@ -33,7 +33,7 @@ PASS ReadableStream: enqueue should throw when the stream is closed
 PASS ReadableStream: should call underlying source methods as methods
 PASS ReadableStream: desiredSize when closed
 PASS ReadableStream: desiredSize when errored
-FAIL Subclassing ReadableStream should work assert_true: Subclass object should be an instance of Subclass expected true got false
+PASS Subclassing ReadableStream should work
 PASS ReadableStream strategies: the default strategy should give desiredSize of 1 to start, decreasing by 1 per enqueue
 PASS ReadableStream strategies: the default strategy should continue giving desiredSize of 1 if the chunks are read immediately
 PASS ReadableStream integration test: adapting a random push source

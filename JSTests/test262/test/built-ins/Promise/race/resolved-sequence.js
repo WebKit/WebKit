@@ -44,7 +44,7 @@ Promise.all([
     return checkSequence(sequence, 'Expected to be called second.');
   })
 ]).then(result => {
-  compareArray(result, [true, true, true]);
+  assert.compareArray(result, [true, true, true]);
   assert.sameValue(sequence.length, 5);
   checkSequence(sequence)
 }).then($DONE, $DONE);

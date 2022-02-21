@@ -1,0 +1,9 @@
+
+PASS translate supports calc
+PASS rotate supports calc
+PASS scale supports calc
+PASS perspective supports calc
+PASS perspective-origin supports calc
+PASS transform supports calc
+PASS transform-origin supports calc
+

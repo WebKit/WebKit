@@ -28,6 +28,7 @@
 #include "PrivateClickMeasurementClient.h"
 #include <pal/SessionID.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
@@ -42,10 +43,10 @@ public:
     ClientImpl(NetworkSession&, NetworkProcess&);
 
 private:
-    void loadFromNetwork(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, NetworkLoadCallback&&) final;
     void broadcastConsoleMessage(JSC::MessageLevel, const String&) final;
     bool featureEnabled() const final;
     bool debugModeEnabled() const final;
+    bool runningInDaemon() const final { return false; }
 
     WeakPtr<NetworkSession> m_networkSession;
     Ref<NetworkProcess> m_networkProcess;

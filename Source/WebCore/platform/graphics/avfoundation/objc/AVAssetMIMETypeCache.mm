@@ -151,8 +151,8 @@ void AVAssetMIMETypeCache::initializeCache(HashSet<String, ASCIICaseInsensitiveH
 
 #if ENABLE(WEBM_FORMAT_READER)
     if (SourceBufferParserWebM::isWebMFormatReaderAvailable()) {
-        auto webmTypes = SourceBufferParserWebM::webmMIMETypes();
-        cache.add(webmTypes.begin(), webmTypes.end());
+        auto types = SourceBufferParserWebM::supportedMIMETypes();
+        cache.add(types.begin(), types.end());
     }
 #endif
 

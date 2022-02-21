@@ -69,11 +69,11 @@ Ref<TextIndicator> TextIndicator::create(const TextIndicatorData& data)
 
 RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, OptionSet<TextIndicatorOption> options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)
 {
-    auto frame = makeRefPtr(range.startContainer().document().frame());
+    RefPtr frame = range.startContainer().document().frame();
     if (!frame)
         return nullptr;
 
-    auto document = makeRefPtr(frame->document());
+    RefPtr document = frame->document();
     if (!document)
         return nullptr;
 
@@ -81,8 +81,8 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, O
 
     OptionSet<TemporarySelectionOption> temporarySelectionOptions;
     temporarySelectionOptions.add(TemporarySelectionOption::DoNotSetFocus);
-#if PLATFORM(IOS_FAMILY)
     temporarySelectionOptions.add(TemporarySelectionOption::IgnoreSelectionChanges);
+#if PLATFORM(IOS_FAMILY)
     temporarySelectionOptions.add(TemporarySelectionOption::EnableAppearanceUpdates);
 #endif
     TemporarySelectionChange selectionChange(*document, { range }, temporarySelectionOptions);
@@ -119,7 +119,7 @@ static bool hasNonInlineOrReplacedElements(const SimpleRange& range)
 {
     for (auto& node : intersectingNodes(range)) {
         auto renderer = node.renderer();
-        if (renderer && (!renderer->isInline() || renderer->isReplaced()))
+        if (renderer && (!renderer->isInline() || renderer->isReplacedOrInlineBlock()))
             return true;
     }
     return false;

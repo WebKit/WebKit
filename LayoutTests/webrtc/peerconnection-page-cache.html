@@ -9,10 +9,27 @@
 <script>
 t = async_test();
 
-window.addEventListener("pageshow", function(event) {
+async function waitForConnectionState(pc, state)
+{
+    if (pc.connectionState === state)
+       return;
+    let resolveCallback;
+    const promise = new Promise((resolve, reject) => {
+        resolveCallback = resolve;
+        setTimeout(() => reject('did not go to state ' + state), 15000);
+    });
+    pc.onconnectionstatechange = () => {
+        if (pc.connectionState === state)
+            resolveCallback();
+    };
+    return promise;
+}
+
+window.addEventListener("pageshow", async function(event) {
     if (!event.persisted)
         return;
     assert_equals(t.pc1.connectionState, "connected");
+    await waitForConnectionState(t.pc1, "disconnected");
     t.done();
 });
 

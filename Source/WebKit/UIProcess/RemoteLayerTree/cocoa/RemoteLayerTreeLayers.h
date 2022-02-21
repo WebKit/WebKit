@@ -33,7 +33,7 @@
 @interface WKCompositingLayer : CALayer
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-- (void)_setWKContents:(id)contents withDisplayList:(CFDataRef)data;
+- (void)_setWKContents:(id)contents withDisplayList:(CFDataRef)data replayForTesting:(BOOL)replay;
 #endif
 
 @end

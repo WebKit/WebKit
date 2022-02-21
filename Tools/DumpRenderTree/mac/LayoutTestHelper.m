@@ -110,7 +110,7 @@ static NSArray *displayUUIDStrings()
 {
     NSMutableArray *result = [NSMutableArray array];
 
-    static const uint32_t maxDisplayCount = 10;
+    enum { maxDisplayCount = 10 };
     CGDirectDisplayID displayIDs[maxDisplayCount] = { 0 };
     uint32_t displayCount = 0;
     

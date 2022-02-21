@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,6 +33,7 @@ namespace WebCore {
 class Font;
 class LegacyInlineTextBox;
 struct GlyphOverflow;
+struct WordTrailingSpace;
 
 namespace LayoutIntegration {
 class LineLayout;
@@ -107,6 +108,7 @@ public:
         bool endWS { false };
         bool hasBreakableChar { false };
         bool hasBreak { false };
+        bool endsWithBreak { false };
     };
     Widths trimmedPreferredWidths(float leadWidth, bool& stripFrontSpaces);
 
@@ -117,8 +119,6 @@ public:
     static bool isHangableStopOrComma(UChar);
     
     WEBCORE_EXPORT virtual IntRect linesBoundingBox() const;
-    LayoutRect linesVisualOverflowBoundingBox() const;
-
     WEBCORE_EXPORT IntPoint firstRunLocation() const;
 
     virtual void setText(const String&, bool force = false);
@@ -146,7 +146,8 @@ public:
     int previousOffsetForBackwardDeletion(int current) const final;
     int nextOffset(int current) const final;
 
-    bool containsReversedText() const { return m_containsReversedText; }
+    bool needsVisualReordering() const { return m_needsVisualReordering; }
+    void setNeedsVisualReordering() { m_needsVisualReordering = true; }
 
     void momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter);
 
@@ -181,6 +182,9 @@ public:
     void setInlineWrapperForDisplayContents(RenderInline*);
 
     static RenderText* findByDisplayContentsInlineWrapperCandidate(RenderElement&);
+
+    template <typename MeasureTextCallback>
+    static float measureTextConsideringPossibleTrailingSpace(bool currentCharacterIsSpace, unsigned startIndex, unsigned wordLength, WordTrailingSpace&, HashSet<const Font*>& fallbackFonts, MeasureTextCallback&&);
 
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
@@ -222,6 +226,9 @@ private:
     void container() const = delete; // Use parent() instead.
     void container(const RenderLayerModelObject&, bool&) const = delete; // Use parent() instead.
 
+    float maxWordFragmentWidth(const RenderStyle&, const FontCascade&, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace&, HashSet<const Font*>& fallbackFonts, GlyphOverflow&);
+    float widthFromCacheConsideringPossibleTrailingSpace(const RenderStyle&, const FontCascade&, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace&, HashSet<const Font*>& fallbackFonts, GlyphOverflow&) const;
+
     // We put the bitfield first to minimize padding on 64-bit.
     unsigned m_hasBreakableChar : 1; // Whether or not we can be broken into multiple lines.
     unsigned m_hasBreak : 1; // Whether or not we have a hard break (e.g., <pre> with '\n').
@@ -232,7 +239,7 @@ private:
                            // line boxes, and this hint will enable layoutInlineChildren to avoid
                            // just dirtying everything when character data is modified (e.g., appended/inserted
                            // or removed).
-    unsigned m_containsReversedText : 1;
+    unsigned m_needsVisualReordering : 1;
     unsigned m_isAllASCII : 1;
     unsigned m_canUseSimpleFontCodePath : 1;
     mutable unsigned m_knownToHaveNoOverflowAndNoFallbackFonts : 1;

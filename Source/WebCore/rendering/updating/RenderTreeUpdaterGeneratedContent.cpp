@@ -62,7 +62,7 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderQuote* lastQuot
         auto& quote = *it;
         // Quote character depends on quote depth so we chain the updates.
         quote.updateRenderer(m_updater.m_builder, m_previousUpdatedQuote.get());
-        m_previousUpdatedQuote = makeWeakPtr(quote);
+        m_previousUpdatedQuote = quote;
         if (&quote == lastQuote)
             return;
     }
@@ -121,7 +121,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         return nullptr;
     }();
 
-    if (!needsPseudoElement(update) && (!pseudoElement || !elementIsTargetedByKeyframeEffectRequiringPseudoElement(pseudoElement, pseudoId))) {
+    if (!needsPseudoElement(update) && !elementIsTargetedByKeyframeEffectRequiringPseudoElement(&current, pseudoId)) {
         if (pseudoElement) {
             if (pseudoId == PseudoId::Before)
                 removeBeforePseudoElement(current, m_updater.m_builder);
@@ -185,30 +185,14 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
     }
 
     auto newStyle = RenderStyle::clone(*style);
-    RenderPtr<RenderBlockFlow> newBackdropRenderer;
-    auto backdropRenderer = renderer.backdropRenderer();
-    if (backdropRenderer)
+    if (auto backdropRenderer = renderer.backdropRenderer())
         backdropRenderer->setStyle(WTFMove(newStyle));
     else {
-        newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(renderer.document(), WTFMove(newStyle));
+        auto newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(renderer.document(), WTFMove(newStyle));
         newBackdropRenderer->initializeStyle();
-        backdropRenderer = makeWeakPtr(newBackdropRenderer.get());
-        renderer.setBackdropRenderer(*backdropRenderer);
+        renderer.setBackdropRenderer(*newBackdropRenderer.get());
+        m_updater.m_builder.attach(renderer, WTFMove(newBackdropRenderer), renderer.firstChild());
     }
-
-    // Update or attach to renderer parent
-    auto currentParent = makeWeakPtr(backdropRenderer->parent());
-    auto newParent = makeWeakPtr(renderer.parent());
-
-    ASSERT(newParent, "Should have new parent");
-
-    if (newParent == currentParent)
-        return;
-
-    if (currentParent)
-        m_updater.m_builder.attach(*newParent, m_updater.m_builder.detach(*currentParent, *backdropRenderer, RenderTreeBuilder::CanCollapseAnonymousBlock::No), &renderer);
-    else
-        m_updater.m_builder.attach(*newParent, WTFMove(newBackdropRenderer), &renderer);
 }
 
 bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const Style::ElementUpdate* update)

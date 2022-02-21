@@ -6,13 +6,13 @@ info: The Date.prototype property "toDateString" has { DontEnum } attributes
 esid: sec-date.prototype.todatestring
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.prototype.propertyIsEnumerable('toDateString')) {
-  throw new Test262Error('#1: The Date.prototype.toDateString property has the attribute DontEnum');
-}
+assert(
+  !Date.prototype.propertyIsEnumerable('toDateString'),
+  'The value of !Date.prototype.propertyIsEnumerable(\'toDateString\') is expected to be true'
+);
 
 for (var x in Date.prototype) {
-  if (x === "toDateString") {
-    throw new Test262Error('#2: The Date.prototype.toDateString has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "toDateString", 'The value of x is not "toDateString"');
 }
+
+// TODO: Convert to verifyProperty() format.

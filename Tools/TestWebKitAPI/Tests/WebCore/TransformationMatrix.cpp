@@ -42,10 +42,6 @@
 #include <QuartzCore/QuartzCore.h>
 #endif
 
-#if PLATFORM(WIN)
-#include <d2d1.h>
-#endif
-
 namespace TestWebKitAPI {
 
 static void testIdentity(const WebCore::TransformationMatrix& transform)
@@ -190,19 +186,6 @@ TEST(TransformationMatrix, CGAffineTransformConstruction)
 {
     CGAffineTransform cgTransform = CGAffineTransformMake(6.0, 5.0, 4.0, 3.0, 2.0, 1.0);
     WebCore::TransformationMatrix test(cgTransform);
-
-    testAffineLikeConstruction(test);
-    testGetAndSet(test);
-
-    ASSERT_FALSE(test.isIdentity());
-}
-#endif
-
-#if PLATFORM(WIN)
-TEST(TransformationMatrix, D2D1MatrixConstruction)
-{
-    D2D1_MATRIX_3X2_F d2dTransform = D2D1::Matrix3x2F(6.0, 5.0, 4.0, 3.0, 2.0, 1.0);
-    WebCore::TransformationMatrix test(d2dTransform);
 
     testAffineLikeConstruction(test);
     testGetAndSet(test);
@@ -1266,21 +1249,6 @@ TEST(TransformationMatrix, Casting)
     EXPECT_DOUBLE_EQ(11.0, gdiFromWK.eM22);
     EXPECT_DOUBLE_EQ(4.0, gdiFromWK.eDx);
     EXPECT_DOUBLE_EQ(3.0, gdiFromWK.eDy);
-#endif
-
-#if PLATFORM(WIN)
-    D2D1_MATRIX_3X2_F d2dTransform = D2D1::Matrix3x2F(6.0, 5.0, 4.0, 3.0, 2.0, 1.0);
-    WebCore::TransformationMatrix fromD2DTransform(d2dTransform);
-
-    testAffineLikeConstruction(fromD2DTransform);
-
-    D2D1_MATRIX_3X2_F d2dFromWK = test;
-    EXPECT_DOUBLE_EQ(16.0, d2dFromWK._11);
-    EXPECT_DOUBLE_EQ(15.0, d2dFromWK._12);
-    EXPECT_DOUBLE_EQ(12.0, d2dFromWK._21);
-    EXPECT_DOUBLE_EQ(11.0, d2dFromWK._22);
-    EXPECT_DOUBLE_EQ(4.0, d2dFromWK._31);
-    EXPECT_DOUBLE_EQ(3.0, d2dFromWK._32);
 #endif
 }
 

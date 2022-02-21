@@ -29,15 +29,18 @@
 #include "ClipRect.h"
 #include "ColorSerialization.h"
 #include "Document.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
-#include "InlineIterator.h"
-#include "LayoutIntegrationRunIterator.h"
+#include "InlineIteratorTextBox.h"
 #include "LegacyInlineTextBox.h"
+#include "LegacyRenderSVGContainer.h"
+#include "LegacyRenderSVGRoot.h"
+#include "LegacyRenderSVGShape.h"
 #include "Logging.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
@@ -63,6 +66,7 @@
 #include "RenderSVGPath.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGRoot.h"
+#include "RenderSVGShape.h"
 #include "RenderSVGText.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
@@ -202,7 +206,7 @@ static inline bool hasNonEmptySibling(const RenderInline& inlineRenderer)
         if (!is<RenderInline>(sibling))
             return true;
         auto& siblingRendererInline = downcast<RenderInline>(sibling);
-        if (siblingRendererInline.shouldCreateLineBoxes() || !isRenderInlineEmpty(siblingRendererInline))
+        if (siblingRendererInline.mayAffectLayout() || !isRenderInlineEmpty(siblingRendererInline))
             return true;
     }
     return false;
@@ -241,13 +245,13 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         // many test results.
         const RenderText& text = downcast<RenderText>(o);
         r = IntRect(text.firstRunLocation(), text.linesBoundingBox().size());
-        if (!LayoutIntegration::firstTextRunFor(text))
+        if (!InlineIterator::firstTextBoxFor(text))
             adjustForTableCells = false;
     } else if (o.isBR()) {
         const RenderLineBreak& br = downcast<RenderLineBreak>(o);
         IntRect linesBox = br.linesBoundingBox();
         r = IntRect(linesBox.x(), linesBox.y(), linesBox.width(), linesBox.height());
-        if (!br.inlineBoxWrapper() && !LayoutIntegration::runFor(br))
+        if (!br.inlineBoxWrapper() && !InlineIterator::boxFor(br))
             adjustForTableCells = false;
     } else if (is<RenderInline>(o)) {
         const RenderInline& inlineFlow = downcast<RenderInline>(o);
@@ -469,7 +473,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<RenderAsTextFlag> behavior)
 {
     if (behavior.contains(RenderAsTextFlag::ShowIDAndClass)) {
-        if (Element* element = is<Element>(object.node()) ? downcast<Element>(object.node()) : nullptr) {
+        if (auto* element = dynamicDowncast<Element>(object.node())) {
             if (element->hasID())
                 ts << " id=\"" << element->getIdAttribute() << "\"";
 
@@ -548,11 +552,8 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
             y -= floorToInt(downcast<RenderTableCell>(*o.containingBlock()).intrinsicPaddingBefore());
 
         ts << "text run at (" << x << "," << y << ") width " << logicalWidth;
-        if (!textRun.isLeftToRightDirection() || textRun.dirOverride()) {
-            ts << (!textRun.isLeftToRightDirection() ? " RTL" : " LTR");
-            if (textRun.dirOverride())
-                ts << " override";
-        }
+        if (!textRun.isLeftToRightDirection())
+            ts << " RTL";
         ts << ": "
             << quoteAndEscapeNonPrintables(textRun.text());
         if (textRun.hasHyphen())
@@ -560,8 +561,14 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         ts << "\n";
     };
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (is<RenderSVGShape>(o)) {
         write(ts, downcast<RenderSVGShape>(o), behavior);
+        return;
+    }
+#endif
+    if (is<LegacyRenderSVGShape>(o)) {
+        write(ts, downcast<LegacyRenderSVGShape>(o), behavior);
         return;
     }
     if (is<RenderSVGGradientStop>(o)) {
@@ -572,12 +579,24 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         writeSVGResourceContainer(ts, downcast<RenderSVGResourceContainer>(o), behavior);
         return;
     }
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (is<RenderSVGContainer>(o)) {
         writeSVGContainer(ts, downcast<RenderSVGContainer>(o), behavior);
         return;
     }
+#endif
+    if (is<LegacyRenderSVGContainer>(o)) {
+        writeSVGContainer(ts, downcast<LegacyRenderSVGContainer>(o), behavior);
+        return;
+    }
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (is<RenderSVGRoot>(o)) {
         write(ts, downcast<RenderSVGRoot>(o), behavior);
+        return;
+    }
+#endif
+    if (is<LegacyRenderSVGRoot>(o)) {
+        write(ts, downcast<LegacyRenderSVGRoot>(o), behavior);
         return;
     }
     if (is<RenderSVGText>(o)) {
@@ -602,7 +621,7 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
 
     if (is<RenderText>(o)) {
         auto& text = downcast<RenderText>(o);
-        for (auto& run : LayoutIntegration::textRunsFor(text)) {
+        for (auto& run : InlineIterator::textBoxesFor(text)) {
             ts << indent;
             writeTextRun(text, run);
         }

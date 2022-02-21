@@ -146,6 +146,7 @@ struct HistoricMemoryCategoryInfo {
 };
 
 struct HistoricResourceUsageData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     HistoricResourceUsageData();
 
     RingBuffer<float> cpu;
@@ -184,8 +185,12 @@ HistoricResourceUsageData::HistoricResourceUsageData()
 
 static HistoricResourceUsageData& historicUsageData()
 {
-    static NeverDestroyed<HistoricResourceUsageData> data;
-    return data;
+    static HistoricResourceUsageData* data { nullptr };
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        data = new HistoricResourceUsageData;
+    });
+    return *data;
 }
 
 static void appendDataToHistory(const ResourceUsageData& data)
@@ -217,15 +222,15 @@ void ResourceUsageOverlay::platformInitialize()
     m_layer = adoptNS([[WebResourceUsageOverlayLayer alloc] initWithResourceUsageOverlay:this]);
 
     m_containerLayer = adoptNS([[CALayer alloc] init]);
-    [m_containerLayer.get() addSublayer:m_layer.get()];
+    [m_containerLayer addSublayer:m_layer.get()];
 
-    [m_containerLayer.get() setAnchorPoint:CGPointZero];
-    [m_containerLayer.get() setBounds:CGRectMake(0, 0, normalWidth, normalHeight)];
+    [m_containerLayer setAnchorPoint:CGPointZero];
+    [m_containerLayer setBounds:CGRectMake(0, 0, normalWidth, normalHeight)];
 
-    [m_layer.get() setAnchorPoint:CGPointZero];
-    [m_layer.get() setContentsScale:2.0];
-    [m_layer.get() setBackgroundColor:createColor(0, 0, 0, 0.8).get()];
-    [m_layer.get() setBounds:CGRectMake(0, 0, normalWidth, normalHeight)];
+    [m_layer setAnchorPoint:CGPointZero];
+    [m_layer setContentsScale:2.0];
+    [m_layer setBackgroundColor:createColor(0, 0, 0, 0.8).get()];
+    [m_layer setBounds:CGRectMake(0, 0, normalWidth, normalHeight)];
 
     overlay().layer().setContentsToPlatformLayer(m_layer.get(), GraphicsLayer::ContentsLayerPurpose::None);
 
@@ -445,7 +450,7 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
 {
     auto& data = historicUsageData();
 
-    if (![m_layer.get() contentsAreFlipped]) {
+    if (![m_layer contentsAreFlipped]) {
         CGContextScaleCTM(context, 1, -1);
         CGContextTranslateCTM(context, 0, -normalHeight);
     }

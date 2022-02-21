@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TestRunner.h"
 
+#include "ActivateFonts.h"
 #include "DictionaryFunctions.h"
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
@@ -433,6 +434,11 @@ bool TestRunner::isCommandEnabled(JSStringRef name)
     return WKBundlePageIsEditingCommandEnabled(page(), toWK(name).get());
 }
 
+void TestRunner::preventPopupWindows()
+{
+    postSynchronousMessage("SetCanOpenWindows", false);
+}
+
 void TestRunner::setCustomUserAgent(JSStringRef userAgent)
 {
     postSynchronousMessage("SetCustomUserAgent", toWK(userAgent));
@@ -644,6 +650,7 @@ enum {
     EnterFullscreenForElementCallbackID,
     ExitFullscreenForElementCallbackID,
     AppBoundRequestContextDataForDomainCallbackID,
+    TakeViewPortSnapshotCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -860,11 +867,13 @@ void TestRunner::setAsynchronousSpellCheckingEnabled(bool enabled)
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
     WKBundleSetWebNotificationPermission(InjectedBundle::singleton().bundle(), page(), toWK(origin).get(), true);
+    postSynchronousPageMessageWithReturnValue("GrantNotificationPermission", toWK(origin));
 }
 
 void TestRunner::denyWebNotificationPermission(JSStringRef origin)
 {
     WKBundleSetWebNotificationPermission(InjectedBundle::singleton().bundle(), page(), toWK(origin).get(), false);
+    postSynchronousPageMessageWithReturnValue("DenyNotificationPermission", toWK(origin));
 }
 
 void TestRunner::removeAllWebNotificationPermissions()
@@ -875,7 +884,14 @@ void TestRunner::removeAllWebNotificationPermissions()
 void TestRunner::simulateWebNotificationClick(JSValueRef notification)
 {
     auto& injectedBundle = InjectedBundle::singleton();
-    injectedBundle.postSimulateWebNotificationClick(WKBundleGetWebNotificationID(injectedBundle.bundle(), mainFrameJSContext(), notification));
+
+    auto notificationID = adoptWK(WKBundleCopyWebNotificationID(injectedBundle.bundle(), mainFrameJSContext(), notification));
+    injectedBundle.postSimulateWebNotificationClick(notificationID.get());
+}
+
+void TestRunner::simulateWebNotificationClickForServiceWorkerNotifications()
+{
+    InjectedBundle::singleton().postSimulateWebNotificationClickForServiceWorkerNotifications();
 }
 
 void TestRunner::setGeolocationPermission(bool enabled)
@@ -962,6 +978,11 @@ void TestRunner::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL, J
     InjectedBundle::singleton().queueLoadHTMLString(toWK(content).get(), baseURLWK.get(), unreachableURLWK.get());
 }
 
+void TestRunner::stopLoading()
+{
+    WKBundlePageStopLoading(page());
+}
+
 void TestRunner::queueReload()
 {
     InjectedBundle::singleton().queueReload();
@@ -995,6 +1016,11 @@ void TestRunner::setShouldLogCanAuthenticateAgainstProtectionSpace(bool value)
 void TestRunner::setShouldLogDownloadCallbacks(bool value)
 {
     postPageMessage("SetShouldLogDownloadCallbacks", value);
+}
+
+void TestRunner::setShouldLogDownloadSize(bool value)
+{
+    postPageMessage("SetShouldLogDownloadSize", value);
 }
 
 void TestRunner::setAuthenticationUsername(JSStringRef username)
@@ -1067,6 +1093,11 @@ void TestRunner::setShouldDownloadUndisplayableMIMETypes(bool value)
 void TestRunner::setShouldAllowDeviceOrientationAndMotionAccess(bool value)
 {
     postPageMessage("SetShouldAllowDeviceOrientationAndMotionAccess", value);
+}
+
+void TestRunner::terminateGPUProcess()
+{
+    postSynchronousPageMessage("TerminateGPUProcess");
 }
 
 void TestRunner::terminateNetworkProcess()
@@ -1801,6 +1832,11 @@ bool TestRunner::isMockRealtimeMediaSourceCenterEnabled()
     return postSynchronousMessageReturningBoolean("IsMockRealtimeMediaSourceCenterEnabled");
 }
 
+void TestRunner::setMockCameraIsInterrupted(bool isInterrupted)
+{
+    postSynchronousMessage("SetMockCameraIsInterrupted", isInterrupted);
+}
+
 #if ENABLE(GAMEPAD)
 
 void TestRunner::connectMockGamepad(unsigned index)
@@ -1956,6 +1992,11 @@ void TestRunner::didGetApplicationManifest()
     callTestRunnerCallback(GetApplicationManifestCallbackID);
 }
 
+void TestRunner::installFakeHelvetica(JSStringRef configuration)
+{
+    WTR::installFakeHelvetica(toWK(configuration).get());
+}
+
 void TestRunner::performCustomMenuAction()
 {
     callTestRunnerCallback(CustomMenuActionCallbackID);
@@ -2058,9 +2099,9 @@ void TestRunner::setPrivateClickMeasurementEphemeralMeasurementForTesting(bool v
     postSynchronousPageMessage("SetPrivateClickMeasurementEphemeralMeasurementForTesting", value);
 }
 
-void TestRunner::simulateResourceLoadStatisticsSessionRestart()
+void TestRunner::simulatePrivateClickMeasurementSessionRestart()
 {
-    postSynchronousPageMessage("SimulateResourceLoadStatisticsSessionRestart");
+    postSynchronousPageMessage("SimulatePrivateClickMeasurementSessionRestart");
 }
 
 void TestRunner::setPrivateClickMeasurementTokenPublicKeyURLForTesting(JSStringRef urlString)
@@ -2096,6 +2137,12 @@ void TestRunner::setPrivateClickMeasurementFraudPreventionValuesForTesting(JSStr
         { "Signature", toWK(signature) },
         { "KeyID", toWK(keyID) },
     }));
+}
+
+void TestRunner::setPrivateClickMeasurementAppBundleIDForTesting(JSStringRef appBundleID)
+{
+    postSynchronousPageMessage("SetPrivateClickMeasurementAppBundleIDForTesting",
+        toWK(appBundleID));
 }
 
 bool TestRunner::hasAppBoundSession()
@@ -2159,6 +2206,23 @@ void TestRunner::setIsSpeechRecognitionPermissionGranted(bool granted)
 void TestRunner::setIsMediaKeySystemPermissionGranted(bool granted)
 {
     postSynchronousPageMessage("SetIsMediaKeySystemPermissionGranted", granted);
+}
+
+void TestRunner::takeViewPortSnapshot(JSValueRef callback)
+{
+    if (m_takeViewPortSnapshot)
+        return;
+
+    cacheTestRunnerCallback(TakeViewPortSnapshotCallbackID, callback);
+    postMessage("TakeViewPortSnapshot");
+    m_takeViewPortSnapshot = true;
+}
+
+void TestRunner::viewPortSnapshotTaken(WKStringRef value)
+{
+    auto jsValue = JSValueMakeString(mainFrameJSContext(), toJS(value).get());
+    callTestRunnerCallback(TakeViewPortSnapshotCallbackID, 1, &jsValue);
+    m_takeViewPortSnapshot = false;
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

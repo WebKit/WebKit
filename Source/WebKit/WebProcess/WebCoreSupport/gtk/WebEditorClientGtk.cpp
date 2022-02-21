@@ -31,7 +31,7 @@
 #include <WebCore/TextIterator.h>
 #include <WebCore/markup.h>
 #include <WebPage.h>
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebKit {
@@ -51,7 +51,7 @@ bool WebEditorClient::handleGtkEditorCommand(Frame& frame, const String& command
 
 bool WebEditorClient::executePendingEditorCommands(Frame& frame, const Vector<WTF::String>& pendingEditorCommands, bool allowTextInsertion)
 {
-    Vector<Variant<Editor::Command, String>> commands;
+    Vector<std::variant<Editor::Command, String>> commands;
     for (auto& commandString : pendingEditorCommands) {
         if (commandString.startsWith("Gtk"))
             commands.append(commandString);
@@ -65,11 +65,11 @@ bool WebEditorClient::executePendingEditorCommands(Frame& frame, const Vector<WT
     }
 
     for (auto& commandVariant : commands) {
-        if (WTF::holds_alternative<String>(commandVariant)) {
-            if (!handleGtkEditorCommand(frame, WTF::get<String>(commandVariant), allowTextInsertion))
+        if (std::holds_alternative<String>(commandVariant)) {
+            if (!handleGtkEditorCommand(frame, std::get<String>(commandVariant), allowTextInsertion))
                 return false;
         } else {
-            auto& command = WTF::get<Editor::Command>(commandVariant);
+            auto& command = std::get<Editor::Command>(commandVariant);
             if (!command.execute())
                 return false;
         }

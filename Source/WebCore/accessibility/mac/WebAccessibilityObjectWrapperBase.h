@@ -28,12 +28,13 @@
 
 #import "AccessibilityObjectInterface.h"
 #import <CoreGraphics/CoreGraphics.h>
+#import <variant>
 #import <wtf/RefPtr.h>
-#import <wtf/Variant.h>
 #import <wtf/WeakPtr.h>
 
 namespace WebCore {
 struct AccessibilitySearchCriteria;
+class Document;
 class IntRect;
 class FloatPoint;
 class HTMLTextFormControlElement;
@@ -111,11 +112,15 @@ static NSString * const UIAccessibilityTextualContextSourceCode = @"UIAccessibil
 - (NSArray *)accessibilityMathPostscriptPairs;
 - (NSArray *)accessibilityMathPrescriptPairs;
 
+- (NSRange)accessibilityVisibleCharacterRange;
+
 - (NSDictionary<NSString *, id> *)baseAccessibilityResolvedEditingStyles;
 
 extern WebCore::AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(const NSDictionary *);
 
-extern NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector&);
+extern NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector&);
+extern NSRange makeNSRange(std::optional<WebCore::SimpleRange>);
+extern std::optional<WebCore::SimpleRange> makeDOMRange(WebCore::Document*, NSRange);
 
 #if PLATFORM(IOS_FAMILY)
 - (id)_accessibilityWebDocumentView;

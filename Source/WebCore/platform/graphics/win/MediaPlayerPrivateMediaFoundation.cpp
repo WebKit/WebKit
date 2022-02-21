@@ -57,7 +57,7 @@ static const double tenMegahertz = 10000000;
 namespace WebCore {
 
 MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation(MediaPlayer* player) 
-    : m_weakThis(makeWeakPtr(this))
+    : m_weakThis(this)
     , m_player(player)
     , m_visible(false)
     , m_loadingProgress(false)
@@ -358,6 +358,11 @@ void MediaPlayerPrivateMediaFoundation::paint(GraphicsContext& context, const Fl
         m_presenter->paintCurrentFrame(context, rect);
 }
 
+DestinationColorSpace MediaPlayerPrivateMediaFoundation::colorSpace()
+{
+    return DestinationColorSpace::SRGB();
+}
+
 bool MediaPlayerPrivateMediaFoundation::createSession()
 {
     if (FAILED(MFStartup(MF_VERSION, MFSTARTUP_FULL)))
@@ -630,16 +635,9 @@ HWND MediaPlayerPrivateMediaFoundation::hostWindow()
     return GetDesktopWindow();
 }
 
-void MediaPlayerPrivateMediaFoundation::invalidateFrameView()
+void MediaPlayerPrivateMediaFoundation::invalidateVideoArea()
 {
-    FrameView* view = nullptr;
-    if (!m_player || !m_player->cachedResourceLoader() || !m_player->cachedResourceLoader()->document())
-        return;
-    view = m_player->cachedResourceLoader()->document()->view();
-    if (!view)
-        return;
-
-    view->invalidate();
+    m_player->repaint();
 }
 
 void MediaPlayerPrivateMediaFoundation::addListener(MediaPlayerListener* listener)
@@ -1617,7 +1615,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::processInputNot
     if (m_mediaPlayer) {
         callOnMainThread([weakPtr = m_mediaPlayer->m_weakThis] {
             if (weakPtr)
-                weakPtr->invalidateFrameView();
+                weakPtr->invalidateVideoArea();
         });
     }
 
@@ -2852,15 +2850,11 @@ void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(Web
         ASSERT(cairoFormat != CAIRO_FORMAT_INVALID);
 
         cairo_surface_t* image = nullptr;
-        if (cairoFormat != CAIRO_FORMAT_INVALID)
-            image = cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, width, height, pitch);
-
-        FloatRect srcRect(0, 0, width, height);
-        if (image) {
-            ASSERT(context.hasPlatformContext());
-            auto& state = context.state();
-            Cairo::drawSurface(*context.platformContext(), image, destRect, srcRect, state.imageInterpolationQuality, state.alpha, Cairo::ShadowState(state));
-            cairo_surface_destroy(image);
+        if (cairoFormat != CAIRO_FORMAT_INVALID) {
+            auto surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, width, height, pitch));
+            auto image = NativeImage::create(WTFMove(surface));
+            FloatRect srcRect(0, 0, width, height);
+            context.drawNativeImage(*image, srcRect.size(), destRect, srcRect);
         }
 #else
 #error "Platform needs to implement drawing of Direct3D surface to graphics context!"

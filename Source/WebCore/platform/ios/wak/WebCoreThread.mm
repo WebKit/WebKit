@@ -30,7 +30,7 @@
 
 #import "CommonVM.h"
 #import "FloatingPointEnvironment.h"
-#import "GraphicsContextGLOpenGL.h"
+#import "GraphicsContextGLANGLE.h"
 #import "Logging.h"
 #import "RuntimeApplicationChecks.h"
 #import "ThreadGlobalData.h"
@@ -70,17 +70,20 @@ namespace {
 // as any client thread that calls into WebKit.
 void ReleaseWebThreadGlobalState()
 {
-    // GraphicsContextGLOpenGL current context is owned by the web thread lock. Release the context
+    // ANGLE maintains thread global state for its current context.
+    // This is conceptually owned by the web thread lock. Release the context
     // before the lock is released.
 
     // In single-threaded environments we do not need to unset the context, as there should not be access from
     // multiple threads.
     ASSERT(WebThreadIsEnabled());
-    using ReleaseBehavior = WebCore::GraphicsContextGLOpenGL::ReleaseBehavior;
-    // For non-web threads, we don't know if we ever see another call from the thread.
-    ReleaseBehavior releaseBehavior =
-        WebThreadIsCurrent() ? ReleaseBehavior::PreserveThreadResources : ReleaseBehavior::ReleaseThreadResources;
-    WebCore::GraphicsContextGLOpenGL::releaseCurrentContext(releaseBehavior);
+    using ReleaseThreadResourceBehavior = WebCore::GraphicsContextGLANGLE::ReleaseThreadResourceBehavior;
+    // For web thread, just release the context as we know we will see calls to it again.
+    // For non-web threads, e.g. third-party client threads, we don't know if we ever see another call from the
+    // thread, so we also release the thread resources.
+    ReleaseThreadResourceBehavior releaseBehavior =
+        WebThreadIsCurrent() ? ReleaseThreadResourceBehavior::ReleaseCurrentContext : ReleaseThreadResourceBehavior::ReleaseThreadResources;
+    WebCore::GraphicsContextGLANGLE::releaseThreadResources(releaseBehavior);
 }
 
 }
@@ -241,12 +244,14 @@ static void HandleDelegateSource(void*)
 
 class WebThreadDelegateMessageScope {
 public:
+    IGNORE_CLANG_WARNINGS_BEGIN("deprecated-volatile")
     WebThreadDelegateMessageScope() { ++webThreadDelegateMessageScopeCount; }
     ~WebThreadDelegateMessageScope()
     {
         ASSERT(webThreadDelegateMessageScopeCount);
         --webThreadDelegateMessageScopeCount;
     }
+    IGNORE_CLANG_WARNINGS_END
 };
 
 static void SendDelegateMessage(RetainPtr<NSInvocation>&& invocation)

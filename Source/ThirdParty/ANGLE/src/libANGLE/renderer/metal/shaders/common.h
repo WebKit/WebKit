@@ -10,8 +10,8 @@
 
 // clang-format off
 #ifndef SKIP_STD_HEADERS
-#    include <simd/simd.h>
-#    include <metal_stdlib>
+@@#    include <simd/simd.h>
+@@#    include <metal_stdlib>
 #endif
 
 #include "constants.h"

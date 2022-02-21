@@ -57,11 +57,11 @@ typedef struct {
             pas_heap_config_kind kind; \
             \
             kind = arguments.page_config.heap_config_ptr->kind; \
-            PAS_ASSERT(kind < pas_heap_config_kind_num_kinds); \
-            data = enumerator->heap_config_datas[kind]; \
+            PAS_ASSERT((unsigned)kind < (unsigned)pas_heap_config_kind_num_kinds); \
+            data = (pas_basic_heap_config_enumerator_data*)enumerator->heap_config_datas[kind]; \
             PAS_ASSERT(data); \
             \
-            return pas_ptr_hash_map_get(&data->page_header_table, boundary).value; \
+            return (pas_page_base*)pas_ptr_hash_map_get(&data->page_header_table, boundary).value; \
         } } \
         \
         PAS_ASSERT(!"Should not be reached"); \
@@ -69,7 +69,7 @@ typedef struct {
     } \
     \
     pas_page_base* name ## _create_page_header( \
-        void* boundary, pas_lock_hold_mode heap_lock_hold_mode) \
+        void* boundary, pas_page_kind kind, pas_lock_hold_mode heap_lock_hold_mode) \
     { \
         pas_basic_page_base_config_definitions_arguments arguments = \
             ((pas_basic_page_base_config_definitions_arguments){__VA_ARGS__}); \
@@ -84,10 +84,11 @@ typedef struct {
         case pas_page_header_in_table: { \
             pas_page_base* result; \
             pas_heap_lock_lock_conditionally(heap_lock_hold_mode); \
-            result = pas_page_header_table_add(arguments.header_table, \
-                                               arguments.page_config.page_size, \
-                                               arguments.page_config.page_header_size, \
-                                               boundary); \
+            result = pas_page_header_table_add( \
+                arguments.header_table, \
+                arguments.page_config.page_size, \
+                pas_page_base_header_size(arguments.page_config.page_config_ptr, kind), \
+                boundary); \
             pas_heap_lock_unlock_conditionally(heap_lock_hold_mode); \
             return result; \
         } } \

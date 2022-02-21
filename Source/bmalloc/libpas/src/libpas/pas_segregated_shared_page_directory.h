@@ -37,18 +37,16 @@ typedef struct pas_segregated_shared_page_directory pas_segregated_shared_page_d
 struct pas_segregated_shared_page_directory {
     pas_segregated_directory base;
     pas_segregated_shared_page_directory* next;
+    void* dump_arg;
 };
 
-#define PAS_SEGREGATED_SHARED_PAGE_DIRECTORY_INITIALIZER(page_config, sharing_mode) \
+#define PAS_SEGREGATED_SHARED_PAGE_DIRECTORY_INITIALIZER(page_config, sharing_mode, passed_dump_arg) \
     ((pas_segregated_shared_page_directory){ \
          .base = PAS_SEGREGATED_DIRECTORY_INITIALIZER( \
                      (page_config).kind, (sharing_mode), pas_segregated_shared_page_directory_kind), \
-         .next = NULL \
+         .next = NULL, \
+         .dump_arg = (passed_dump_arg) \
      })
-
-/* NOTE: It doesn't matter which kind of first_eligible we use. We just pick one. */
-#define PAS_SEGREGATED_SHARED_PAGE_DIRECTORY_FIRST_ELIGIBLE_KIND \
-    pas_segregated_directory_first_eligible_but_not_tabled_kind
 
 extern PAS_API unsigned pas_segregated_shared_page_directory_probability_of_ineligibility;
 

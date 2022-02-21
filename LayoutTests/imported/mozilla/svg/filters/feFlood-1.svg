@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-
+<meta name="fuzzy" content="maxDifference=1;totalPixels=6400" />
 <filter id="f1" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" 
          x="0" y="0" width="1" height="1">
   <feFlood x="10%" y="10%" width="80%" height="80%" flood-color="#00ff00" flood-opacity="0.5"/>

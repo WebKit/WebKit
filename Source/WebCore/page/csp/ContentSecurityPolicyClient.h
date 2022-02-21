@@ -36,6 +36,7 @@ class FormData;
 struct CSPInfo {
     String documentURI;
     String sourceFile;
+    String sample;
     int lineNumber { 0 };
     int columnNumber { 0 };
 };
@@ -51,7 +52,7 @@ struct WEBCORE_EXPORT ContentSecurityPolicyClient {
 
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long requestIdentifier = 0) = 0;
     virtual void sendCSPViolationReport(URL&&, Ref<FormData>&&) = 0;
-    virtual void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&&) = 0;
+    virtual void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&&) = 0;
 };
 
 } // namespace WebCore

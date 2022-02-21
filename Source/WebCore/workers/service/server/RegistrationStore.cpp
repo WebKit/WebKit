@@ -101,7 +101,7 @@ void RegistrationStore::updateRegistration(const ServiceWorkerContextData& data)
 {
     ASSERT(isMainThread());
     ASSERT(!data.registration.key.isEmpty());
-    if (data.registration.key.isEmpty())
+    if (data.registration.key.isEmpty() || data.serviceWorkerPageIdentifier)
         return;
 
     m_updatedRegistrations.set(data.registration.key, data);

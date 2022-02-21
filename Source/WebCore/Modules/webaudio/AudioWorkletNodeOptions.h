@@ -42,7 +42,7 @@ struct AudioWorkletNodeOptions : AudioNodeOptions {
     unsigned numberOfInputs = 1;
     unsigned numberOfOutputs = 1;
     std::optional<Vector<unsigned>> outputChannelCount;
-    std::optional<Vector<WTF::KeyValuePair<String, double>>> parameterData;
+    std::optional<Vector<KeyValuePair<String, double>>> parameterData;
     JSC::Strong<JSC::JSObject> processorOptions;
 };
 

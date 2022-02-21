@@ -50,9 +50,6 @@ bool TextPaintStyle::operator==(const TextPaintStyle& other) const
 {
     return fillColor == other.fillColor && strokeColor == other.strokeColor && emphasisMarkColor == other.emphasisMarkColor
         && strokeWidth == other.strokeWidth && paintOrder == other.paintOrder && lineJoin == other.lineJoin
-#if ENABLE(LETTERPRESS)
-        && useLetterpressEffect == other.useLetterpressEffect
-#endif
 #if HAVE(OS_DARK_MODE_SUPPORT)
         && useDarkAppearance == other.useDarkAppearance
 #endif
@@ -80,10 +77,6 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
 {
     TextPaintStyle paintStyle;
 
-#if ENABLE(LETTERPRESS)
-    paintStyle.useLetterpressEffect = lineStyle.textDecorationsInEffect().contains(TextDecoration::Letterpress);
-#endif
-
 #if HAVE(OS_DARK_MODE_SUPPORT)
     paintStyle.useDarkAppearance = frame.document() ? frame.document()->useDarkAppearance(&lineStyle) : false;
 #endif
@@ -105,9 +98,9 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
     if (lineStyle.insideDefaultButton()) {
         Page* page = frame.page();
         if (page && page->focusController().isActive()) {
-            OptionSet<StyleColor::Options> options;
+            OptionSet<StyleColorOptions> options;
             if (page->useSystemAppearance())
-                options.add(StyleColor::Options::UseSystemAppearance);
+                options.add(StyleColorOptions::UseSystemAppearance);
             paintStyle.fillColor = RenderTheme::singleton().defaultButtonTextColor(options);
             return paintStyle;
         }
@@ -133,7 +126,7 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
     if (forceBackgroundToWhite)
         paintStyle.strokeColor = adjustColorForVisibilityOnBackground(paintStyle.strokeColor, Color::white);
 
-    paintStyle.emphasisMarkColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextEmphasisColor);
+    paintStyle.emphasisMarkColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyTextEmphasisColor);
 
     // Make the text stroke color legible against a white background
     if (forceBackgroundToWhite)
@@ -180,12 +173,6 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
 {
     TextDrawingModeFlags mode = context.textDrawingMode();
     TextDrawingModeFlags newMode = mode;
-#if ENABLE(LETTERPRESS)
-    if (paintStyle.useLetterpressEffect)
-        newMode.add(TextDrawingMode::Letterpress);
-    else
-        newMode.remove(TextDrawingMode::Letterpress);
-#endif
     if (paintStyle.strokeWidth > 0 && paintStyle.strokeColor.isVisible())
         newMode.add(TextDrawingMode::Stroke);
     if (mode != newMode) {
@@ -208,7 +195,7 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
             context.setStrokeThickness(paintStyle.strokeWidth);
         context.setLineJoin(paintStyle.lineJoin);
         context.setLineCap(paintStyle.lineCap);
-        if (paintStyle.lineJoin == MiterJoin)
+        if (paintStyle.lineJoin == LineJoin::Miter)
             context.setMiterLimit(paintStyle.miterLimit);
     }
 }

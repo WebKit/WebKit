@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "MockContentFilterSettings.h"
 #import "PlatformUtilities.h"
 #import "TestProtocol.h"
@@ -33,8 +34,6 @@
 
 using Decision = WebCore::MockContentFilterSettings::Decision;
 using DecisionPoint = WebCore::MockContentFilterSettings::DecisionPoint;
-
-static bool isDone;
 
 @interface LoadAlternateFrameLoadDelegate : NSObject <WebFrameLoadDelegate>
 @end

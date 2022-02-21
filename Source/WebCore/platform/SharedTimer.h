@@ -41,7 +41,7 @@ class SharedTimer {
 public:
     SharedTimer() = default;
     virtual ~SharedTimer() = default;
-    virtual void setFiredFunction(WTF::Function<void()>&&) = 0;
+    virtual void setFiredFunction(Function<void()>&&) = 0;
 
     // The fire interval is in seconds relative to the current monotonic clock time.
     virtual void setFireInterval(Seconds) = 0;

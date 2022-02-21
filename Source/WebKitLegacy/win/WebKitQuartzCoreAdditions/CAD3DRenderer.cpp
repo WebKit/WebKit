@@ -592,7 +592,7 @@ bool CAD3DRenderer::resetD3DDevice(CWindow window, const CGSize& size)
     D3DPRESENT_PARAMETERS parameters = initialPresentationParameters(size);
     parameters.hDeviceWindow = window;
     if (m_usingDirect3D9Ex) {
-        CComQIPtr<IDirect3DDevice9Ex> d3d9Ex = m_d3dDevice;
+        CComQIPtr<IDirect3DDevice9Ex> d3d9Ex(m_d3dDevice);
         ASSERT(d3d9Ex);
         hr = d3d9Ex->ResetEx(&parameters, nullptr);
     } else

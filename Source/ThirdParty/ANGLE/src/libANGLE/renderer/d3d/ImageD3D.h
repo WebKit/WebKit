@@ -15,16 +15,13 @@
 
 #include "common/PackedEnums.h"
 #include "libANGLE/Error.h"
+#include "libANGLE/angletypes.h"
 
 namespace gl
 {
 class Context;
 class Framebuffer;
 class ImageIndex;
-struct Box;
-struct Extents;
-struct Offset;
-struct Rectangle;
 struct PixelUnpackState;
 }  // namespace gl
 

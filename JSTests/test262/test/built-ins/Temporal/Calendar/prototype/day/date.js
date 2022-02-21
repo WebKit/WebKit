@@ -3,7 +3,9 @@
 
 /*---
 esid: sec-temporal.calendar.prototype.day
-description: Temporal.Calendar.prototype.day will take PlainDate and return the value of the day.
+description: >
+  Temporal.Calendar.prototype.day will take PlainDate and return
+  the value of the day.
 info: |
   5. Return ! ISODay(temporalDateLike).
 features: [Temporal]

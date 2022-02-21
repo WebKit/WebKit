@@ -15,6 +15,8 @@
 #include <limits>
 #include <map>
 
+#include "GLSLANG/ShaderLang.h"
+#include "common/Color.h"
 #include "common/angleutils.h"
 #include "common/utilities.h"
 #include "libANGLE/angletypes.h"
@@ -59,6 +61,8 @@ enum class SurfaceRotation
     InvalidEnum,
     EnumCount = InvalidEnum,
 };
+
+using SpecConstUsageBits = angle::PackedEnumBitSet<sh::vk::SpecConstUsage, uint32_t>;
 
 void RotateRectangle(const SurfaceRotation rotation,
                      const bool flipY,
@@ -155,10 +159,21 @@ struct LoadImageFunctionInfo
     bool requiresConversion;
 };
 
-using LoadFunctionMap = LoadImageFunctionInfo (*)(GLenum);
+using LoadFunctionMap           = LoadImageFunctionInfo (*)(GLenum);
+using LoadTextureBorderFunction = void (*)(angle::ColorF &mBorderColor);
+struct LoadTextureBorderFunctionInfo
+{
+    LoadTextureBorderFunctionInfo() : loadFunction(nullptr) {}
+    LoadTextureBorderFunctionInfo(LoadTextureBorderFunction loadFunction)
+        : loadFunction(loadFunction)
+    {}
+
+    LoadTextureBorderFunction loadFunction;
+};
+
+using LoadTextureBorderFunctionMap = LoadTextureBorderFunctionInfo (*)();
 
 bool ShouldUseDebugLayers(const egl::AttributeMap &attribs);
-bool ShouldUseVirtualizedContexts(const egl::AttributeMap &attribs, bool defaultValue);
 
 void CopyImageCHROMIUM(const uint8_t *sourceData,
                        size_t sourceRowPitch,
@@ -204,11 +219,15 @@ class IncompleteTextureSet final : angle::NonCopyable
 
     angle::Result getIncompleteTexture(const gl::Context *context,
                                        gl::TextureType type,
+                                       gl::SamplerFormat format,
                                        MultisampleTextureInitializer *multisampleInitializer,
                                        gl::Texture **textureOut);
 
   private:
-    gl::TextureMap mIncompleteTextures;
+    using TextureMapWithSamplerFormat = angle::PackedEnumMap<gl::SamplerFormat, gl::TextureMap>;
+
+    TextureMapWithSamplerFormat mIncompleteTextures;
+    gl::Buffer *mIncompleteTextureBufferAttachment;
 };
 
 // Helpers to set a matrix uniform value based on GLSL or HLSL semantics.
@@ -356,6 +375,12 @@ angle::Result MultiDrawArraysGeneral(ContextImpl *contextImpl,
                                      const GLint *firsts,
                                      const GLsizei *counts,
                                      GLsizei drawcount);
+angle::Result MultiDrawArraysIndirectGeneral(ContextImpl *contextImpl,
+                                             const gl::Context *context,
+                                             gl::PrimitiveMode mode,
+                                             const void *indirect,
+                                             GLsizei drawcount,
+                                             GLsizei stride);
 angle::Result MultiDrawArraysInstancedGeneral(ContextImpl *contextImpl,
                                               const gl::Context *context,
                                               gl::PrimitiveMode mode,
@@ -370,6 +395,13 @@ angle::Result MultiDrawElementsGeneral(ContextImpl *contextImpl,
                                        gl::DrawElementsType type,
                                        const GLvoid *const *indices,
                                        GLsizei drawcount);
+angle::Result MultiDrawElementsIndirectGeneral(ContextImpl *contextImpl,
+                                               const gl::Context *context,
+                                               gl::PrimitiveMode mode,
+                                               gl::DrawElementsType type,
+                                               const void *indirect,
+                                               GLsizei drawcount,
+                                               GLsizei stride);
 angle::Result MultiDrawElementsInstancedGeneral(ContextImpl *contextImpl,
                                                 const gl::Context *context,
                                                 gl::PrimitiveMode mode,
@@ -413,12 +445,15 @@ class ResetBaseVertexBaseInstance : angle::NonCopyable
     bool mResetBaseInstance;
 };
 
+angle::FormatID ConvertToSRGB(angle::FormatID formatID);
+angle::FormatID ConvertToLinear(angle::FormatID formatID);
+bool IsOverridableLinearFormat(angle::FormatID formatID);
 }  // namespace rx
 
 // MultiDraw macro patterns
 // These macros are to avoid too much code duplication as we don't want to have if detect for
-// hasDrawID/BaseVertex/BaseInstance inside for loop in a multiDraw call Part of these are put in
-// the header as we want to share with specialized context impl on some platforms for multidraw
+// hasDrawID/BaseVertex/BaseInstance inside for loop in a multiDrawANGLE call Part of these are put
+// in the header as we want to share with specialized context impl on some platforms for multidraw
 #define ANGLE_SET_DRAW_ID_UNIFORM_0(drawID) \
     {}
 #define ANGLE_SET_DRAW_ID_UNIFORM_1(drawID) programObject->setDrawIDUniform(drawID)

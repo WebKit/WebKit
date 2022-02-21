@@ -118,7 +118,7 @@ void WebCoreAVCFResourceLoader::invalidate()
 
     m_parent = nullptr;
 
-    callOnMainThread([protectedThis = makeRef(*this)] () mutable {
+    callOnMainThread([protectedThis = Ref { *this }] () mutable {
         protectedThis->stopLoading();
     });
 }
@@ -138,7 +138,7 @@ void WebCoreAVCFResourceLoader::responseReceived(CachedResource& resource, const
     notImplemented();
 }
 
-void WebCoreAVCFResourceLoader::dataReceived(CachedResource& resource, const uint8_t*, int)
+void WebCoreAVCFResourceLoader::dataReceived(CachedResource& resource, const SharedBuffer&)
 {
     fulfillRequestWithResource(resource);
 }

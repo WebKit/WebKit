@@ -51,7 +51,7 @@ public:
         m_lastInput.setWithoutWriteBarrier(input);
         m_result = result;
         m_reified = false;
-        vm.heap.writeBarrier(owner);
+        vm.writeBarrier(owner);
     }
 
     JSArray* lastResult(JSGlobalObject*, JSObject* owner);

@@ -260,25 +260,10 @@ def chakraPassFailErrorHandler
    }
 end
 
-class Plan
-    attr_reader :directory, :arguments, :family, :name, :outputHandler, :errorHandler, :additionalEnv
-    attr_accessor :index
-
-    def initialize(directory, arguments, family, name, outputHandler, errorHandler)
-        @directory = directory
-        @arguments = arguments[1..-1]
-        @family = family
-        @name = name
-        @outputHandler = outputHandler
-        @errorHandler = errorHandler
-        @isSlow = !!$runCommandOptions[:isSlow]
-        @crashOK = !!$runCommandOptions[:crashOK]
-        if @crashOK
-            @outputHandler = noisyOutputHandler
-        end
-        @additionalEnv = []
+class Plan < BasePlan
+    def argumentsMapper(arguments)
+        arguments[1..-1]
     end
-
     def shellCommand
         n = @name.gsub(/(\\|\/)/, '_')
         script = "out = nil\n"
@@ -387,35 +372,50 @@ class Plan
     end
 end
 
-def preparePlayStationTestRunner
-    File.open($runnerDir + "runscript", "w") {
+def preparePlayStationTestRunner(runlist, serialPlans, completedPlans)
+    File.open(@runnerDir + "runscript", "w") {
         | outp |
-        $runlist.each {
+        runlist.each {
             | plan |
+            if completedPlans.include?(plan)
+                next
+            end
+
             outp.puts "../.json/test_script_#{plan.index}.json"
         }
     }
 end
 
-def prepareShellTestRunner
-    preparePlayStationTestRunner
+class PlaystationTestRunner < TestRunner
+    def prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
+        File.open(@runnerDir + "runscript", "w") {
+            | outp |
+            runlist.each {
+                | plan |
+                if completedPlans.include?(plan)
+                    next
+                end
+                outp.puts "../.json/test_script_#{plan.index}.json"
+            }
+        }
+    end
+    def command(remoteIndex=0)
+        options = ENV["JSCTEST_options"]
+
+        fsRoot = $jscPath.dirname
+        command = "PlayStationTestRunner #{options} -numProcesses=#{$numChildProcesses.to_s} -exe=#{$jscPath} -fsroot=#{fsRoot} --runUniqueId=#{$runUniqueId} @#{@runnerDir}/runscript"
+
+        print command
+
+        return command
+    end
 end
 
-def prepareMakeTestRunner(remoteIndex)
-    preparePlayStationTestRunner
+class TestRunnerShell < PlaystationTestRunner
 end
 
-def prepareRubyTestRunner
-    preparePlayStationTestRunner
+class TestRunnerMake < PlaystationTestRunner
 end
 
-def testRunnerCommand
-    options = ENV["JSCTEST_options"]
-
-    fsRoot = $jscPath.dirname
-    command = "PlayStationTestRunner #{options} -numProcesses=#{$numChildProcesses.to_s} -exe=#{$jscPath} -fsroot=#{fsRoot} --runUniqueId=#{$runUniqueId} @#{$runnerDir}/runscript"
-
-    print command
-
-    return command
+class TestRunnerRuby < PlaystationTestRunner
 end

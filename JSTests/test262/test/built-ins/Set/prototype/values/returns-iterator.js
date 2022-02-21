@@ -2,10 +2,10 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-  description: >
-      The method should return a valid iterator with the context as the
-      IteratedObject.
-  es6id: 23.2.3.10
+esid: sec-set.prototype.values
+description: >
+    The method should return a valid iterator with the context as the
+    IteratedObject.
 ---*/
 
 var set = new Set();

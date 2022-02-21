@@ -162,12 +162,9 @@ void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const
     if (!m_client.didAssociateFormControls && !m_client.didAssociateFormControlsForFrame)
         return;
 
-    Vector<RefPtr<API::Object>> elementHandles;
-    elementHandles.reserveInitialCapacity(elements.size());
-
-    for (const auto& element : elements)
-        elementHandles.uncheckedAppend(InjectedBundleNodeHandle::getOrCreate(element.get()));
-
+    auto elementHandles = elements.map([](auto& element) -> RefPtr<API::Object> {
+        return InjectedBundleNodeHandle::getOrCreate(element.get());
+    });
     if (!m_client.didAssociateFormControlsForFrame) {
         m_client.didAssociateFormControls(toAPI(page), toAPI(API::Array::create(WTFMove(elementHandles)).ptr()), m_client.base.clientInfo);
         return;

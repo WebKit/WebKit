@@ -37,6 +37,7 @@
 #include "RenderBox.h"
 #include "RenderTheme.h"
 #include "ScrollbarTheme.h"
+#include "ShadowPseudoIds.h"
 #include "WheelEvent.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
@@ -61,8 +62,7 @@ inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner&
 Ref<SpinButtonElement> SpinButtonElement::create(Document& document, SpinButtonOwner& spinButtonOwner)
 {
     auto element = adoptRef(*new SpinButtonElement(document, spinButtonOwner));
-    static MainThreadNeverDestroyed<const AtomString> webkitInnerSpinButtonName("-webkit-inner-spin-button", AtomString::ConstructFromLiteral);
-    element->setPseudo(webkitInnerSpinButtonName);
+    element->setPseudo(ShadowPseudoIds::webkitInnerSpinButton());
     return element;
 }
 
@@ -249,11 +249,11 @@ void SpinButtonElement::repeatingTimerFired()
         step(m_upDownState == Up ? 1 : -1);
 }
 
-void SpinButtonElement::setHovered(bool flag, Style::InvalidationScope invalidationScope)
+void SpinButtonElement::setHovered(bool flag, Style::InvalidationScope invalidationScope, HitTestRequest request)
 {
     if (!flag)
         m_upDownState = Indeterminate;
-    HTMLDivElement::setHovered(flag, invalidationScope);
+    HTMLDivElement::setHovered(flag, invalidationScope, request);
 }
 
 bool SpinButtonElement::shouldRespondToMouseEvents()

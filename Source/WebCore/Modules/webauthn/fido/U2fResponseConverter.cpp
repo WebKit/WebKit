@@ -163,9 +163,9 @@ RefPtr<AuthenticatorAttestationResponse> readU2fRegisterResponse(const String& r
     return AuthenticatorAttestationResponse::create(credentialId, attestationObject, attachment);
 }
 
-RefPtr<AuthenticatorAssertionResponse> readU2fSignResponse(const String& rpId, const Vector<uint8_t>& keyHandle, const Vector<uint8_t>& u2fData, AuthenticatorAttachment attachment)
+RefPtr<AuthenticatorAssertionResponse> readU2fSignResponse(const String& rpId, const WebCore::BufferSource& keyHandle, const Vector<uint8_t>& u2fData, AuthenticatorAttachment attachment)
 {
-    if (keyHandle.isEmpty() || u2fData.size() <= signatureIndex)
+    if (!keyHandle.length() || u2fData.size() <= signatureIndex)
         return nullptr;
 
     // 1 byte flags, 4 bytes counter
@@ -178,7 +178,8 @@ RefPtr<AuthenticatorAssertionResponse> readU2fSignResponse(const String& rpId, c
 
     // FIXME: Find a way to remove the need of constructing a vector here.
     Vector<uint8_t> signature { u2fData.data() + signatureIndex, u2fData.size() - signatureIndex };
-    return AuthenticatorAssertionResponse::create(keyHandle, authData, signature, { }, attachment);
+    Vector<uint8_t> keyHandleVector { keyHandle.data(), keyHandle.length() };
+    return AuthenticatorAssertionResponse::create(keyHandleVector, authData, signature, { }, attachment);
 }
 
 } // namespace fido

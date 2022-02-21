@@ -31,18 +31,9 @@
 
 namespace WebCore {
 
-static Vector<Ref<FileSystemEntry>> copyVector(const Vector<Ref<FileSystemEntry>>& entries)
-{
-    Vector<Ref<FileSystemEntry>> entriesCopy;
-    entriesCopy.reserveInitialCapacity(entries.size());
-    for (auto& entry : entries)
-        entriesCopy.uncheckedAppend(entry.copyRef());
-    return entriesCopy;
-}
-
 void FileSystemEntriesCallback::scheduleCallback(ScriptExecutionContext& context, const Vector<Ref<FileSystemEntry>>& entries)
 {
-    context.postTask([protectedThis = makeRef(*this), entries = copyVector(entries)] (ScriptExecutionContext&) {
+    context.postTask([protectedThis = Ref { *this }, entries] (ScriptExecutionContext&) {
         protectedThis->handleEvent(entries);
     });
 }

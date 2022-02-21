@@ -24,11 +24,11 @@ namespace webrtc {
 
 namespace {
 
-// Sets |updated_region| to |frame|. If |enlarge_updated_region| is
+// Sets `updated_region` to `frame`. If `enlarge_updated_region` is
 // true, this function will randomly enlarge each DesktopRect in
-// |updated_region|. But the enlarged DesktopRegion won't excceed the
-// frame->size(). If |add_random_updated_region| is true, several random
-// rectangles will also be included in |frame|.
+// `updated_region`. But the enlarged DesktopRegion won't excceed the
+// frame->size(). If `add_random_updated_region` is true, several random
+// rectangles will also be included in `frame`.
 void SetUpdatedRegion(DesktopFrame* frame,
                       const DesktopRegion& updated_region,
                       bool enlarge_updated_region,
@@ -61,7 +61,7 @@ void SetUpdatedRegion(DesktopFrame* frame,
   }
 }
 
-// Paints pixels in |rect| of |frame| to |color|.
+// Paints pixels in `rect` of `frame` to `color`.
 void PaintRect(DesktopFrame* frame, DesktopRect rect, RgbaColor rgba_color) {
   static_assert(DesktopFrame::kBytesPerPixel == sizeof(uint32_t),
                 "kBytesPerPixel should be 4.");
@@ -78,7 +78,7 @@ void PaintRect(DesktopFrame* frame, DesktopRect rect, RgbaColor rgba_color) {
   }
 }
 
-// Paints pixels in |region| of |frame| to |color|.
+// Paints pixels in `region` of `frame` to `color`.
 void PaintRegion(DesktopFrame* frame,
                  DesktopRegion* region,
                  RgbaColor rgba_color) {

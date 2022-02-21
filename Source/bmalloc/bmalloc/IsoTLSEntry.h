@@ -30,6 +30,8 @@
 #include "IsoTLSLayout.h"
 #include <climits>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 class IsoTLS;
@@ -109,3 +111,4 @@ protected:
 
 } // namespace bmalloc
 
+#endif

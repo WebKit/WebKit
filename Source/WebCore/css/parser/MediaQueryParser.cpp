@@ -55,8 +55,18 @@ RefPtr<MediaQuerySet> MediaQueryParser::parseMediaCondition(CSSParserTokenRange 
     return MediaQueryParser(MediaConditionParser, context).parseInternal(range);
 }
 
+RefPtr<MediaQuerySet> MediaQueryParser::parseContainerQuery(CSSParserTokenRange range, MediaQueryParserContext context)
+{
+    if (range.atEnd())
+        return nullptr;
+    if (range.peek().type() != LeftParenthesisToken && range.peek().type() != FunctionToken)
+        return nullptr;
+    return MediaQueryParser(ContainerQueryParser, context).parseInternal(range);
+}
+
 const MediaQueryParser::State MediaQueryParser::ReadRestrictor = &MediaQueryParser::readRestrictor;
 const MediaQueryParser::State MediaQueryParser::ReadMediaNot = &MediaQueryParser::readMediaNot;
+const MediaQueryParser::State MediaQueryParser::ReadContainerQuery = &MediaQueryParser::readContainerQuery;
 const MediaQueryParser::State MediaQueryParser::ReadMediaType = &MediaQueryParser::readMediaType;
 const MediaQueryParser::State MediaQueryParser::ReadAnd = &MediaQueryParser::readAnd;
 const MediaQueryParser::State MediaQueryParser::ReadFeatureStart = &MediaQueryParser::readFeatureStart;
@@ -74,10 +84,17 @@ MediaQueryParser::MediaQueryParser(ParserType parserType, MediaQueryParserContex
     , m_querySet(MediaQuerySet::create())
     
 {
-    if (parserType == MediaQuerySetParser)
+    switch (m_parserType) {
+    case MediaQuerySetParser:
         m_state = &MediaQueryParser::readRestrictor;
-    else // MediaConditionParser
+        break;
+    case MediaConditionParser:
         m_state = &MediaQueryParser::readMediaNot;
+        break;
+    case ContainerQueryParser:
+        m_state = &MediaQueryParser::readContainerQuery;
+        break;
+    }
 }
 
 MediaQueryParser::~MediaQueryParser() = default;
@@ -100,6 +117,12 @@ void MediaQueryParser::readMediaNot(CSSParserTokenType type, const CSSParserToke
         setStateAndRestrict(ReadFeatureStart, MediaQuery::Not);
     else
         readFeatureStart(type, token, range);
+}
+
+void MediaQueryParser::readContainerQuery(CSSParserTokenType type, const CSSParserToken&, CSSParserTokenRange&)
+{
+    if (type == FunctionToken || type == LeftParenthesisToken)
+        m_state = ReadFeature;
 }
 
 static bool isRestrictorOrLogicalOperator(const CSSParserToken& token)
@@ -239,29 +262,45 @@ void MediaQueryParser::done(CSSParserTokenType /*type*/, const CSSParserToken& /
 
 void MediaQueryParser::handleBlocks(const CSSParserToken& token)
 {
-    if (token.getBlockType() == CSSParserToken::BlockStart
-        && (token.type() != LeftParenthesisToken || m_blockWatcher.blockLevel()))
-            m_state = SkipUntilBlockEnd;
+    if (token.getBlockType() != CSSParserToken::BlockStart)
+        return;
+    auto shouldSkipBlock = [&] {
+        // FIXME: Nested blocks should be supported.
+        if (m_blockWatcher.blockLevel())
+            return true;
+        if (token.type() == LeftParenthesisToken)
+            return false;
+        if (m_parserType == ContainerQueryParser && token.type() == FunctionToken)
+            return !equalLettersIgnoringASCIICase(token.value(), "size");
+        return true;
+    }();
+    if (shouldSkipBlock)
+        m_state = SkipUntilBlockEnd;
 }
 
 void MediaQueryParser::processToken(const CSSParserToken& token, CSSParserTokenRange& range)
 {
     CSSParserTokenType type = token.type();
 
-    if (m_state != ReadFeatureValue || type == WhitespaceToken) {
+    if (type == WhitespaceToken) {
+        range.consume();
+        return;
+    }
+
+    if (m_state != ReadFeatureValue) {
         handleBlocks(token);
         m_blockWatcher.handleToken(token);
         range.consume();
     }
 
     // Call the function that handles current state
-    if (type != WhitespaceToken)
-        ((this)->*(m_state))(type, token, range);
+    ((this)->*(m_state))(type, token, range);
 }
 
 // The state machine loop
-RefPtr<MediaQuerySet> MediaQueryParser::parseInternal(CSSParserTokenRange range)
+RefPtr<MediaQuerySet> MediaQueryParser::parseInternal(CSSParserTokenRange& range)
 {
+    
     while (!range.atEnd())
         processToken(range.peek(), range);
 

@@ -124,7 +124,7 @@ const _throws = (func, type, message, ...args) => {
     try {
         func(...args);
     } catch (e) {
-        if (e instanceof type && e.message.indexOf(message) >= 0)
+        if (e instanceof type && (typeof(e.message) == "undefined" || e.message.indexOf(message) >= 0))
             return e;
         _fail(`Expected to throw a ${type.name} with message "${message}", got ${e.name} with message "${e.message}"`);
     }
@@ -164,8 +164,14 @@ export {
     _instanceof as instanceof,
 };
 
+function harnessCall(f) {
+    if (typeof $vm !== 'undefined') 
+        return f()
+    print("WARNING: Not running inside JSC test harness")
+}
+
 const asyncTestImpl = (promise, thenFunc, catchFunc) => {
-    asyncTestStart(1);
+    harnessCall(() => asyncTestStart(1));
     promise.then(thenFunc).catch(catchFunc);
 };
 
@@ -174,11 +180,11 @@ const printExn = (e) => {
     print(e.stack);
 };
 
-export const asyncTest = (promise) => asyncTestImpl(promise, asyncTestPassed, printExn);
+export const asyncTest = (promise) => asyncTestImpl(promise, harnessCall(asyncTestPassed), printExn);
 export const asyncTestEq = (promise, expected) => {
     const thenCheck = (value) => {
         if (value === expected)
-            return asyncTestPassed();
+            return harnessCall(asyncTestPassed);
         print("Failed: got ", value, " but expected ", expected);
 
     }

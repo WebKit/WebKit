@@ -14,12 +14,5 @@ var __re = /(?:ab|cd)\d?/g;
 __re.lastIndex=100;
 var __executed = __re.exec("aacd22 ");
 
-//CHECK#1
-if (__executed) {
-	throw new Test262Error('#1: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=100; __executed = __re.exec("aacd22 "); __executed === true');
-}
-
-//CHECK#2
-if (__re.lastIndex !== 0) {
-	throw new Test262Error('#2: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=100; __executed = __re.exec("aacd22 "); __re.lastIndex === 0. Actual: ' + (__re.lastIndex));
-}
+assert(!__executed, 'The value of !__executed is expected to be true');
+assert.sameValue(__re.lastIndex, 0, 'The value of __re.lastIndex is expected to be 0');

@@ -24,6 +24,7 @@
  */
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     ActiveDOMObject,
     Exposed=Window

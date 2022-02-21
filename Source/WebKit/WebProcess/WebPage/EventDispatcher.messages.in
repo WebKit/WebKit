@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> EventDispatcher {
-    WheelEvent(WebCore::PageIdentifier pageID, WebKit::WebWheelEvent event, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)
+    WheelEvent(WebCore::PageIdentifier pageID, WebKit::WebWheelEvent event, WebCore::RectEdges<bool> rubberBandableEdges)
 #if ENABLE(IOS_TOUCH_EVENTS)
     TouchEvent(WebCore::PageIdentifier pageID, WebKit::WebTouchEvent event) -> (bool handled) Async MainThreadCallback
     TouchEventWithoutCallback(WebCore::PageIdentifier pageID, WebKit::WebTouchEvent event)
@@ -32,4 +32,9 @@ messages -> EventDispatcher {
 #if HAVE(CVDISPLAYLINK)
     DisplayWasRefreshed(uint32_t displayID, struct WebCore::DisplayUpdate update, bool sendToMainThread)
 #endif
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    SetScrollingAccelerationCurve(WebCore::PageIdentifier pageID, std::optional<WebKit::ScrollingAccelerationCurve> curve)
+#endif
+    PageScreenDidChange(WebCore::PageIdentifier pageID, uint32_t displayID, std::optional<unsigned> nominalFramesPerSecond)
 }

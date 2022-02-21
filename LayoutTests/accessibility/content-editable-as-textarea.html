@@ -32,9 +32,9 @@ hello<br>
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
-        // In ATK, value-changed notifications are made for widgets which implement
-        // the AtkValue interface (sliders, progress bars, etc.).
-        if (accessibilityController.platformName == "atk")
+        // In ATSPI, value-changed notifications are made for widgets which implement
+        // the Value interface (sliders, progress bars, etc.).
+        if (accessibilityController.platformName == "atspi")
             notificationType = "AXTextChanged";
 
         textArea = accessibilityController.accessibleElementById("content");

@@ -49,7 +49,7 @@ shouldBeFalse('stepMismatchFor("2010-W03", "foo", "2010-W02")');
 debug('Special step value');
 shouldBeFalse('stepMismatchFor("2010-W03", "any", "2010-W02")');
 debug('Disabled');
-shouldBeFalse('stepMismatchFor("2010-W03", "2", "2010-W02", true)');
+shouldBeTrue('stepMismatchFor("2010-W03", "2", "2010-W02", true)');
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

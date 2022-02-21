@@ -44,7 +44,7 @@ void MessageReceiverMap::addMessageReceiver(ReceiverName messageReceiverName, Me
     ASSERT(!m_globalMessageReceivers.contains(messageReceiverName));
 
     messageReceiver.willBeAddedToMessageReceiverMap();
-    m_globalMessageReceivers.set(messageReceiverName, makeWeakPtr(messageReceiver));
+    m_globalMessageReceivers.set(messageReceiverName, messageReceiver);
 }
 
 void MessageReceiverMap::addMessageReceiver(ReceiverName messageReceiverName, uint64_t destinationID, MessageReceiver& messageReceiver)
@@ -54,7 +54,7 @@ void MessageReceiverMap::addMessageReceiver(ReceiverName messageReceiverName, ui
     ASSERT(!m_globalMessageReceivers.contains(messageReceiverName));
 
     messageReceiver.willBeAddedToMessageReceiverMap();
-    m_messageReceivers.set(std::make_pair(messageReceiverName, destinationID), makeWeakPtr(messageReceiver));
+    m_messageReceivers.set(std::make_pair(messageReceiverName, destinationID), messageReceiver);
 }
 
 void MessageReceiverMap::removeMessageReceiver(ReceiverName messageReceiverName)

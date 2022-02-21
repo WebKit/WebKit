@@ -143,6 +143,9 @@ private:
     static void beganEnterFullScreen(WKBundlePageRef, WKRect initialFrame, WKRect finalFrame);
     static void beganExitFullScreen(WKBundlePageRef, WKRect initialFrame, WKRect finalFrame);
     static void closeFullScreen(WKBundlePageRef);
+
+    void enterFullScreenForElement(WKBundleNodeHandleRef element);
+    void exitFullScreenForElement(WKBundleNodeHandleRef element);
 #endif
 
     // Editor client
@@ -181,6 +184,14 @@ private:
     WKBundlePageRef m_page;
     WKRetainPtr<WKBundleScriptWorldRef> m_world;
     bool m_didCommitMainFrameLoad { false };
+
+    enum FullscreenState {
+        NotInFullscreen,
+        EnteringFullscreen,
+        ExitingFullscreen,
+        InFullscreen,
+    };
+    FullscreenState m_fullscreenState { NotInFullscreen };
 };
 
 } // namespace WTR

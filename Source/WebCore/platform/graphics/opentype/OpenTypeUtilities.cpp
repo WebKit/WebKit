@@ -30,11 +30,6 @@
 #include "FontMemoryResource.h"
 #include "SharedBuffer.h"
 
-#if USE(DIRECT2D)
-#include "DirectWriteUtilities.h"
-#include <dwrite_3.h>
-#endif
-
 namespace WebCore {
 
 struct BigEndianUShort { 
@@ -197,155 +192,6 @@ void EOTHeader::appendPaddingShort()
     m_buffer.append(reinterpret_cast<uint8_t*>(&padding), sizeof(padding));
 }
 
-bool getEOTHeader(SharedBuffer* fontData, EOTHeader& eotHeader, size_t& overlayDst, size_t& overlaySrc, size_t& overlayLength)
-{
-    overlayDst = 0;
-    overlaySrc = 0;
-    overlayLength = 0;
-
-    size_t dataLength = fontData->size();
-    auto* data = fontData->data();
-
-    EOTPrefix* prefix = eotHeader.prefix();
-
-    prefix->fontDataSize = dataLength;
-    prefix->version = 0x00020001;
-    prefix->flags = 0;
-
-    if (dataLength < offsetof(sfntHeader, tables))
-        return false;
-
-    const sfntHeader* sfnt = reinterpret_cast<const sfntHeader*>(data);
-
-    if (dataLength < offsetof(sfntHeader, tables) + sfnt->numTables * sizeof(TableDirectoryEntry))
-        return false;
-
-    bool haveOS2 = false;
-    bool haveHead = false;
-    bool haveName = false;
-
-    const BigEndianUShort* familyName = 0;
-    unsigned short familyNameLength = 0;
-    const BigEndianUShort* subfamilyName = 0;
-    unsigned short subfamilyNameLength = 0;
-    const BigEndianUShort* fullName = 0;
-    unsigned short fullNameLength = 0;
-    const BigEndianUShort* versionString = 0;
-    unsigned short versionStringLength = 0;
-
-    for (unsigned i = 0; i < sfnt->numTables; i++) {
-        unsigned tableOffset = sfnt->tables[i].offset;
-        unsigned tableLength = sfnt->tables[i].length;
-
-        if (dataLength < tableOffset || dataLength < tableLength || dataLength < tableOffset + tableLength)
-            return false;
-
-        unsigned tableTag = sfnt->tables[i].tag;
-        switch (tableTag) {
-            case 'OS/2':
-                {
-                    if (dataLength < tableOffset + sizeof(OS2Table))
-                        return false;
-
-                    haveOS2 = true;
-                    const OS2Table* OS2 = reinterpret_cast<const OS2Table*>(data + tableOffset);
-                    for (unsigned j = 0; j < 10; j++)
-                        prefix->fontPANOSE[j] = OS2->panose[j];
-                    prefix->italic = OS2->fsSelection & 0x01;
-                    prefix->weight = OS2->weightClass;
-                    // FIXME: Should use OS2->fsType, but some TrueType fonts set it to an over-restrictive value.
-                    // Since ATS does not enforce this on Mac OS X, we do not enforce it either.
-                    prefix->fsType = 0;            
-                    for (unsigned j = 0; j < 4; j++)
-                        prefix->unicodeRange[j] = OS2->unicodeRange[j];
-                    for (unsigned j = 0; j < 2; j++)
-                        prefix->codePageRange[j] = OS2->codePageRange[j];
-                    break;
-                }
-            case 'head':
-                {
-                    if (dataLength < tableOffset + sizeof(headTable))
-                        return false;
-
-                    haveHead = true;
-                    const headTable* head = reinterpret_cast<const headTable*>(data + tableOffset);
-                    prefix->checkSumAdjustment = head->checkSumAdjustment;
-                    break;
-                }
-            case 'name':
-                {
-                    if (dataLength < tableOffset + offsetof(nameTable, nameRecords))
-                        return false;
-
-                    haveName = true;
-                    const nameTable* name = reinterpret_cast<const nameTable*>(data + tableOffset);
-                    for (int j = 0; j < name->count; j++) {
-                        if (dataLength < tableOffset + offsetof(nameTable, nameRecords) + (j + 1) * sizeof(nameRecord))
-                            return false;
-                        if (name->nameRecords[j].platformID == 3 && name->nameRecords[j].encodingID == 1 && name->nameRecords[j].languageID == 0x0409) {
-                            if (dataLength < tableOffset + name->stringOffset + name->nameRecords[j].offset + name->nameRecords[j].length)
-                                return false;
-
-                            unsigned short nameLength = name->nameRecords[j].length;
-                            const BigEndianUShort* nameString = reinterpret_cast<const BigEndianUShort*>(data + tableOffset + name->stringOffset + name->nameRecords[j].offset);
-                            
-                            switch (name->nameRecords[j].nameID) {
-                                case 1:
-                                    familyNameLength = nameLength;
-                                    familyName = nameString;
-                                    break;
-                                case 2:
-                                    subfamilyNameLength = nameLength;
-                                    subfamilyName = nameString;
-                                    break;
-                                case 4:
-                                    fullNameLength = nameLength;
-                                    fullName = nameString;
-                                    break;
-                                case 5:
-                                    versionStringLength = nameLength;
-                                    versionString = nameString;
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    }
-                    break;
-                }
-            default:
-                break;
-        }
-        if (haveOS2 && haveHead && haveName)
-            break;
-    }
-
-    prefix->charset = DEFAULT_CHARSET;
-    prefix->magicNumber = 0x504c;
-    prefix->reserved[0] = 0;
-    prefix->reserved[1] = 0;
-    prefix->reserved[2] = 0;
-    prefix->reserved[3] = 0;
-    prefix->padding1 = 0;
-
-    eotHeader.appendBigEndianString(familyName, familyNameLength);
-    eotHeader.appendBigEndianString(subfamilyName, subfamilyNameLength);
-    eotHeader.appendBigEndianString(versionString, versionStringLength);
-
-    // If possible, ensure that the family name is a prefix of the full name.
-    if (fullNameLength >= familyNameLength && memcmp(familyName, fullName, familyNameLength)) {
-        overlaySrc = reinterpret_cast<const uint8_t*>(fullName) - data;
-        overlayDst = reinterpret_cast<const uint8_t*>(familyName) - data;
-        overlayLength = familyNameLength;
-    }
-    eotHeader.appendBigEndianString(fullName, fullNameLength);
-
-    eotHeader.appendPaddingShort();
-    eotHeader.updateEOTSize(fontData->size());
-
-    return true;
-}
-
 // adds fontName to the font table in fontData, and writes the new font table to rewrittenFontTable
 // returns the size of the name table (which is used by renameAndActivateFont), or 0 on early abort
 bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<uint8_t>& rewrittenFontData)
@@ -429,11 +275,6 @@ RefPtr<FontMemoryResource> renameAndActivateFont(const SharedBuffer& fontData, c
         RemoveFontMemResourceEx(fontHandle);
         return { };
     }
-
-#if USE(DIRECT2D)
-    HRESULT hr = DirectWrite::addFontFromDataToProcessCollection(rewrittenFontData);
-    ASSERT(SUCCEEDED(hr));
-#endif
 
     return FontMemoryResource::create(fontHandle);
 }

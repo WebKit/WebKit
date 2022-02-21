@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2009 Michelangelo De Simone <micdesim@gmail.com>
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +25,7 @@
 #include "config.h"
 #include "BaseTextInputType.h"
 
+#include "ElementInlines.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include <JavaScriptCore/RegularExpression.h>
@@ -41,11 +42,21 @@ bool BaseTextInputType::patternMismatch(const String& value) const
     const AtomString& rawPattern = element()->attributeWithoutSynchronization(patternAttr);
     if (rawPattern.isNull() || value.isEmpty() || !JSC::Yarr::RegularExpression(rawPattern, JSC::Yarr::TextCaseSensitive, JSC::Yarr::MultilineDisabled, JSC::Yarr::UnicodeAwareMode).isValid())
         return false;
-    String pattern = "^(?:" + rawPattern + ")$";
-    int matchLength = 0;
-    int valueLength = value.length();
-    int matchOffset = JSC::Yarr::RegularExpression(pattern, JSC::Yarr::TextCaseSensitive, JSC::Yarr::MultilineDisabled, JSC::Yarr::UnicodeAwareMode).match(value, 0, &matchLength);
-    return matchOffset || matchLength != valueLength;
+
+    String pattern = makeString("^(?:", rawPattern, ")$");
+    JSC::Yarr::RegularExpression regex(pattern, JSC::Yarr::TextCaseSensitive, JSC::Yarr::MultilineDisabled, JSC::Yarr::UnicodeAwareMode);
+    auto valuePatternMismatch = [&regex](auto& value) {
+        int matchLength = 0;
+        int valueLength = value.length();
+        int matchOffset = regex.match(value, 0, &matchLength);
+        return matchOffset || matchLength != valueLength;
+    };
+
+    if (isEmailField() && element()->multiple()) {
+        auto values = value.split(',');
+        return values.findIf(valuePatternMismatch) != notFound;
+    }
+    return valuePatternMismatch(value);
 }
 
 bool BaseTextInputType::supportsPlaceholder() const

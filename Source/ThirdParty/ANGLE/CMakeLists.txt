@@ -9,9 +9,6 @@ elseif (WIN32)
     set(angle_is_winuwp FALSE)
 elseif (UNIX)
     set(is_linux TRUE)
-    if (ENABLE_X11_TARGET)
-        set(angle_use_x11 TRUE)
-    endif ()
 endif ()
 
 include(Compiler.cmake)
@@ -70,16 +67,22 @@ set(ANGLE_PRIVATE_INCLUDE_DIRECTORIES
 
 set(ANGLE_DEFINITIONS
     ANGLE_ENABLE_ESSL
+    ANGLE_ENABLE_GLSL
 )
 
 set(ANGLE_SOURCES
     ${libangle_common_sources}
     ${angle_preprocessor_sources}
+    ${angle_translator_glsl_base_sources}
     ${angle_translator_essl_sources}
+    ${angle_translator_glsl_and_vulkan_base_sources}
     ${angle_translator_glsl_sources}
+    ${angle_translator_glsl_symbol_table_sources}
     ${angle_translator_sources}
     ${angle_system_utils_sources}
-    "src/libANGLE/FrameCapture_mock.cpp"
+    src/common/angle_version_info.cpp
+    src/libANGLE/capture/FrameCapture_mock.cpp
+    src/libANGLE/capture/frame_capture_utils_mock.cpp
 )
 
 if (WIN32)
@@ -182,7 +185,7 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
         set_target_properties(EGL PROPERTIES LINKER_LANGUAGE CXX)
         if (WIN32)
             # Output library names according to the .def
-            target_sources(EGL PRIVATE src/libEGL/libEGL.def)
+            target_sources(EGL PRIVATE src/libEGL/libEGL_autogen.def)
             set_target_properties(EGL PROPERTIES OUTPUT_NAME libEGL)
         endif ()
 
@@ -205,8 +208,8 @@ endif ()
 
 if (USE_ANGLE_WEBGL)
     set(libglesv2_entry_points_headers
-        src/libGLESv2/entry_points_egl.h
-        src/libGLESv2/entry_points_egl_ext.h
+        src/libGLESv2/entry_points_egl_autogen.h
+        src/libGLESv2/entry_points_egl_ext_autogen.h
         src/libGLESv2/entry_points_gles_2_0_autogen.h
         src/libGLESv2/entry_points_gles_3_0_autogen.h
         src/libGLESv2/entry_points_gles_ext_autogen.h
@@ -237,12 +240,18 @@ if (USE_ANGLE_WEBGL)
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
-    WEBKIT_ADD_TARGET_CXX_FLAGS(ANGLE -Wno-cast-align
-                                      -Wno-extra
-                                      -Wno-suggest-attribute=format
-                                      -Wno-undef
-                                      -Wno-unused-parameter
-                                      -Wno-return-type)
+    foreach (angle_target ANGLE EGL GLESv2)
+        if (TARGET ${angle_target})
+            WEBKIT_ADD_TARGET_CXX_FLAGS(${angle_target}
+                -Wno-cast-align
+                -Wno-extra
+                -Wno-suggest-attribute=format
+                -Wno-undef
+                -Wno-unused-parameter
+                -Wno-return-type
+                -Wno-comment)
+        endif ()
+    endforeach ()
 endif ()
 
 target_link_libraries(ANGLEFramework INTERFACE ANGLE)

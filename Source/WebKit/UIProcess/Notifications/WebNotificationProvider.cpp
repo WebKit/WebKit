@@ -42,12 +42,12 @@ WebNotificationProvider::WebNotificationProvider(const WKNotificationProviderBas
     initialize(provider);
 }
 
-void WebNotificationProvider::show(WebPageProxy& page, WebNotification& notification)
+void WebNotificationProvider::show(WebPageProxy* page, WebNotification& notification)
 {
     if (!m_client.show)
         return;
 
-    m_client.show(toAPI(&page), toAPI(&notification), m_client.base.clientInfo);
+    m_client.show(toAPI(page), toAPI(&notification), m_client.base.clientInfo);
 }
 
 void WebNotificationProvider::cancel(WebNotification& notification)
@@ -71,12 +71,9 @@ void WebNotificationProvider::clearNotifications(const Vector<uint64_t>& notific
     if (!m_client.clearNotifications)
         return;
 
-    Vector<RefPtr<API::Object>> arrayIDs;
-    arrayIDs.reserveInitialCapacity(notificationIDs.size());
-
-    for (const auto& notificationID : notificationIDs)
-        arrayIDs.uncheckedAppend(API::UInt64::create(notificationID));
-
+    auto arrayIDs = notificationIDs.map([](auto& notificationID) -> RefPtr<API::Object> {
+        return API::UInt64::create(notificationID);
+    });
     m_client.clearNotifications(toAPI(API::Array::create(WTFMove(arrayIDs)).ptr()), m_client.base.clientInfo);
 }
 

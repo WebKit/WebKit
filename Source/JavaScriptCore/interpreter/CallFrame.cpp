@@ -130,7 +130,8 @@ unsigned CallFrame::callSiteBitsAsBytecodeOffset() const
 
 BytecodeIndex CallFrame::bytecodeIndex() const
 {
-    ASSERT(!callee().isWasm());
+    if (callee().isWasm())
+        return callSiteIndex().bytecodeIndex();
     if (!codeBlock())
         return BytecodeIndex(0);
 #if ENABLE(DFG_JIT)
@@ -247,6 +248,8 @@ SourceOrigin CallFrame::callerSourceOrigin(VM& vm)
 
 JSGlobalObject* CallFrame::globalObjectOfClosestCodeBlock(VM& vm, CallFrame* callFrame)
 {
+    // FIXME: We need to handle JSONP interpretation case in ProgramExecutable since it does not have vm.topCallFrame.
+    // rdar://83691438
     JSGlobalObject* globalObject = nullptr;
     StackVisitor::visit(callFrame, vm, [&](StackVisitor& visitor) {
         if (visitor->isWasmFrame()) {

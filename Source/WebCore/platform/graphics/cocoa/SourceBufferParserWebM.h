@@ -31,18 +31,12 @@
 #include <CoreAudio/CoreAudioTypes.h>
 #include <CoreMedia/CMTime.h>
 #include <pal/spi/cf/CoreMediaSPI.h>
+#include <variant>
 #include <webm/callback.h>
 #include <webm/status.h>
 #include <webm/vp9_header_parser.h>
-#include <wtf/Box.h>
-#include <wtf/Function.h>
-#include <wtf/MediaTime.h>
-#include <wtf/RobinHoodHashSet.h>
 #include <wtf/UniqueRef.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomString.h>
-#include <wtf/text/WTFString.h>
 
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 typedef struct OpaqueCMBlockBuffer *CMBlockBufferRef;
@@ -53,16 +47,14 @@ class WebmParser;
 
 namespace WebCore {
 
-class MediaSampleAVFObjC;
-
 class SourceBufferParserWebM : public SourceBufferParser, private webm::Callback {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class StreamingVectorReader;
+    class SegmentReader;
 
     static bool isWebMFormatReaderAvailable();
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
-    static const HashSet<String, ASCIICaseInsensitiveHash>& webmMIMETypes();
+    static Span<const ASCIILiteral> supportedMIMETypes();
     WEBCORE_EXPORT static RefPtr<SourceBufferParserWebM> create(const ContentType&);
 
     SourceBufferParserWebM();
@@ -83,10 +75,10 @@ public:
     void flushPendingAudioBuffers();
     void setMinimumAudioSampleDuration(float);
     
-    WEBCORE_EXPORT void setLogger(const WTF::Logger&, const void* identifier) final;
+    WEBCORE_EXPORT void setLogger(const Logger&, const void* identifier) final;
 
     void provideMediaData(RetainPtr<CMSampleBufferRef>, uint64_t, std::optional<size_t> byteRangeOffset);
-    using DidParseTrimmingDataCallback = WTF::Function<void(uint64_t trackID, const MediaTime& discardPadding)>;
+    using DidParseTrimmingDataCallback = Function<void(uint64_t trackID, const MediaTime& discardPadding)>;
     void setDidParseTrimmingDataCallback(DidParseTrimmingDataCallback&& callback)
     {
         m_didParseTrimmingDataCallback = WTFMove(callback);
@@ -101,6 +93,7 @@ public:
         UnsupportedAudioCodec,
         ContentEncrypted,
         VariableFrameDuration,
+        ReaderFailed,
     };
 
     enum class State : uint8_t {
@@ -155,30 +148,42 @@ public:
         void setFormatDescription(RetainPtr<CMFormatDescriptionRef>&& description) { m_formatDescription = WTFMove(description); }
 
         SourceBufferParserWebM& parser() const { return m_parser; }
-        
+
         virtual webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int)
         {
             ASSERT_NOT_REACHED();
             return webm::Status(webm::Status::kInvalidElementId);
         }
 
-        virtual void reset()
+        virtual void resetCompleted()
         {
-            m_currentPacketSize = std::nullopt;
+            m_completeBlockBuffer = nullptr;
+        }
+        void reset()
+        {
+            resetCompleted();
+            m_completePacketSize = std::nullopt;
             m_partialBytesRead = 0;
+            m_currentBlockBuffer = nullptr;
         }
 
     protected:
-        std::optional<size_t> m_currentPacketSize;
-        // Size of the currently parsed packet, possibly incomplete.
-        size_t m_partialBytesRead { 0 };
+        RetainPtr<CMBlockBufferRef> contiguousCompleteBlockBuffer(size_t offset, size_t length) const;
+        webm::Status readFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t* bytesRemaining);
+        RetainPtr<CMBlockBufferRef> m_completeBlockBuffer;
+        std::optional<size_t> m_completePacketSize;
+        // Initial allocation size of empty CMBlockBuffer.
+        size_t mMaxBlockBufferCapacity { 0 };
 
     private:
         CodecType m_codec;
         webm::TrackEntry m_track;
         Type m_trackType;
         RetainPtr<CMFormatDescriptionRef> m_formatDescription;
+        RetainPtr<CMBlockBufferRef> m_currentBlockBuffer;
         SourceBufferParserWebM& m_parser;
+        // Size of the currently incomplete parsed packet.
+        size_t m_partialBytesRead { 0 };
     };
 
     class VideoTrackData : public TrackData {
@@ -193,9 +198,6 @@ public:
         {
         }
 
-#if ENABLE(VP9)
-        void reset() final;
-#endif
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
 
     private:
@@ -204,7 +206,6 @@ public:
 
 #if ENABLE(VP9)
         vp9_parser::Vp9HeaderParser m_headerParser;
-        RetainPtr<CMBlockBufferRef> m_currentBlockBuffer;
 #endif
     };
 
@@ -222,7 +223,7 @@ public:
         }
 
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
-        void reset() final;
+        void resetCompleted() final;
         void createSampleBuffer(std::optional<size_t> latestByteRangeOffset = std::nullopt);
 
     private:
@@ -230,29 +231,26 @@ public:
 
         CMTime m_samplePresentationTime;
         CMTime m_packetDuration;
-        Vector<uint8_t> m_packetsData;
-        std::optional<size_t> m_currentPacketByteOffset;
-        // Size of the complete packets parsed so far.
-        size_t m_packetsBytesRead { 0 };
-        size_t m_byteOffset { 0 };
+        size_t m_currentPacketByteOffset { 0 };
         uint8_t m_framesPerPacket { 0 };
         Seconds m_frameDuration { 0_s };
-        Vector<AudioStreamPacketDescription> m_packetDescriptions;
-
+        Vector<size_t> m_packetSizes;
+        Vector<CMSampleTimingInfo> m_packetTimings;
+        size_t mNumFramesInCompleteBlock { 0 };
         // FIXME: 0.5 - 1.0 seconds is a better duration per sample buffer, but use 2 seconds so at least the first
         // sample buffer will play until we fix MediaSampleCursor::createSampleBuffer to deal with `endCursor`.
         float m_minimumSampleDuration { 2 };
     };
 
-    const WTF::Logger* loggerPtr() const { return m_logger.get(); }
+    const Logger* loggerPtr() const { return m_logger.get(); }
     const void* logIdentifier() const { return m_logIdentifier; }
 
 private:
 
     TrackData* trackDataForTrackNumber(uint64_t);
 
-    static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedVideoCodecs();
-    static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedAudioCodecs();
+    static bool isSupportedVideoCodec(StringView);
+    static bool isSupportedAudioCodec(StringView);
 
     // webm::Callback
     webm::Status OnElementBegin(const webm::ElementMetadata&, webm::Action*) final;
@@ -271,7 +269,7 @@ private:
     webm::Status OnFrame(const webm::FrameMetadata&, webm::Reader*, uint64_t* bytesRemaining) final;
 
     std::unique_ptr<InitializationSegment> m_initializationSegment;
-    Vector<std::pair<uint64_t, Ref<Uint8Array>>> m_keyIds;
+    Vector<std::pair<uint64_t, Ref<SharedBuffer>>> m_keyIds;
     webm::Status m_status;
     std::unique_ptr<webm::WebmParser> m_parser;
     bool m_initializationSegmentEncountered { false };
@@ -281,15 +279,15 @@ private:
 
     State m_state { State::None };
 
-    UniqueRef<StreamingVectorReader> m_reader;
+    UniqueRef<SegmentReader> m_reader;
 
     Vector<UniqueRef<TrackData>> m_tracks;
-    using BlockVariant = Variant<webm::Block, webm::SimpleBlock>;
+    using BlockVariant = std::variant<webm::Block, webm::SimpleBlock>;
     std::optional<BlockVariant> m_currentBlock;
     std::optional<uint64_t> m_rewindToPosition;
     float m_minimumAudioSampleDuration { 2 };
 
-    RefPtr<const WTF::Logger> m_logger;
+    RefPtr<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };
     uint64_t m_nextChildIdentifier { 0 };
     DidParseTrimmingDataCallback m_didParseTrimmingDataCallback;

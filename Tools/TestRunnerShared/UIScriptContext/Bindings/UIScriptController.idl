@@ -285,6 +285,8 @@ interface UIScriptController {
     undefined setMinimumEffectiveWidth(double effectiveWidth);
     undefined setAllowsViewportShrinkToFit(boolean allows);
 
+    undefined setScrollViewKeyboardAvoidanceEnabled(boolean enabled);
+
     undefined becomeFirstResponder();
     undefined resignFirstResponder();
     readonly attribute boolean isPresentingModally;
@@ -359,8 +361,11 @@ interface UIScriptController {
     undefined firstResponderSuppressionForWebView(boolean shouldSuppress);
     undefined makeWindowContentViewFirstResponder();
     readonly attribute boolean isWindowContentViewFirstResponder;
+    readonly attribute boolean isWebContentFirstResponder;
 
     undefined setHardwareKeyboardAttached(boolean attached);
+
+    undefined setWebViewEditable(boolean editable);
 
     object attachmentInfo(DOMString attachmentIdentifier);
     undefined insertAttachmentForFilePath(DOMString filePath, DOMString contentType, object callback);

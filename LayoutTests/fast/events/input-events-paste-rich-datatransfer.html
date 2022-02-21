@@ -10,9 +10,6 @@
         source.focus();
         document.execCommand("selectAll", false, null);
 
-        if (window.internals)
-            internals.settings.setInputEventsEnabled(true);
-
         if (window.testRunner) {
             testRunner.execCommand("Cut");
             testRunner.execCommand("Paste");

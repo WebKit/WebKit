@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,8 +39,8 @@ static PAS_ALWAYS_INLINE bool pas_has_object(void* ptr,
     begin = (uintptr_t)ptr;
     
     switch (config.fast_megapage_kind_func(begin)) {
-    case pas_small_segregated_fast_megapage_kind:
-    case pas_small_bitfit_fast_megapage_kind:
+    case pas_small_exclusive_segregated_fast_megapage_kind:
+    case pas_small_other_fast_megapage_kind:
         return true;
     case pas_not_a_fast_megapage_kind: {
         pas_large_map_entry entry;

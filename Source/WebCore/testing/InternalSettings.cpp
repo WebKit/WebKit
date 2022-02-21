@@ -131,7 +131,8 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #endif
 
     RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
-    FontCache::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
+    // FIXME: Call setShouldMockBoldSystemFontForAccessibility() on all workers.
+    FontCache::forCurrentThread().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
 
 #if ENABLE(WEB_AUDIO)
     AudioContext::setDefaultSampleRateForTesting(std::nullopt);
@@ -191,6 +192,8 @@ void InternalSettings::resetToConsistentState()
 
     m_backup.restoreTo(settings());
     m_backup = Backup { settings() };
+
+    m_page->settings().resetToConsistentState();
 
     InternalSettingsGenerated::resetToConsistentState();
 }
@@ -438,6 +441,15 @@ bool InternalSettings::vp9DecoderEnabled() const
 #endif
 }
 
+bool InternalSettings::mediaSourceInlinePaintingEnabled() const
+{
+#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
+    return RuntimeEnabledFeatures::sharedFeatures().mediaSourceInlinePaintingEnabled();
+#else
+    return false;
+#endif
+}
+
 ExceptionOr<void> InternalSettings::setCustomPasteboardDataEnabled(bool enabled)
 {
     if (!m_page)
@@ -556,12 +568,13 @@ ExceptionOr<void>  InternalSettings::setShouldDeactivateAudioSession(bool should
     return { };
 }
 
-ExceptionOr<void> InternalSettings::setShouldMockBoldSystemFontForAccessibility(bool requires)
+ExceptionOr<void> InternalSettings::setShouldMockBoldSystemFontForAccessibility(bool should)
 {
     if (!m_page)
         return Exception { InvalidAccessError };
-    RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(requires);
-    FontCache::singleton().setShouldMockBoldSystemFontForAccessibility(requires);
+    RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(should);
+    // FIXME: Call setShouldMockBoldSystemFontForAccessibility() on all workers.
+    FontCache::forCurrentThread().setShouldMockBoldSystemFontForAccessibility(should);
     return { };
 }
 
@@ -576,6 +589,48 @@ ExceptionOr<void> InternalSettings::setDefaultAudioContextSampleRate(float sampl
 #endif
     return { };
 }
+
+ExceptionOr<void> InternalSettings::setAllowedMediaContainerTypes(const String& types)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+    m_page->settings().setAllowedMediaContainerTypes(types);
+    return { };
+}
+
+ExceptionOr<void> InternalSettings::setAllowedMediaCodecTypes(const String& types)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+    m_page->settings().setAllowedMediaCodecTypes(types);
+    return { };
+}
+
+ExceptionOr<void> InternalSettings::setAllowedMediaVideoCodecIDs(const String& types)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+    m_page->settings().setAllowedMediaVideoCodecIDs(types);
+    return { };
+}
+
+ExceptionOr<void> InternalSettings::setAllowedMediaAudioCodecIDs(const String& types)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+    m_page->settings().setAllowedMediaAudioCodecIDs(types);
+    return { };
+}
+
+ExceptionOr<void> InternalSettings::setAllowedMediaCaptionFormatTypes(const String& types)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+    m_page->settings().setAllowedMediaCaptionFormatTypes(types);
+    return { };
+}
+
+
 
 // If you add to this class, make sure you are not duplicating functionality in the generated
 // base class InternalSettingsGenerated and that you update the Backup class for test reproducability.

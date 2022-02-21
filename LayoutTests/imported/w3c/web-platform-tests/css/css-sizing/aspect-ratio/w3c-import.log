@@ -191,6 +191,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-029.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-030-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-030.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-031-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-031.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-032-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-032.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-033-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-033.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-002-expected.xht

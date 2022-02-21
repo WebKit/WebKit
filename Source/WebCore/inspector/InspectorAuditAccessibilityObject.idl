@@ -24,11 +24,10 @@
  */
 
 [
-    ImplementationLacksVTable,
     JSGenerateToJSObject,
     LegacyNoInterfaceObject,
 ] interface InspectorAuditAccessibilityObject {
-    [CallWith=Document] sequence<Node> getElementsByComputedRole(DOMString role, optional Node? container);
+    [CallWith=CurrentDocument] sequence<Node> getElementsByComputedRole(DOMString role, optional Node? container);
 
     Node? getActiveDescendant(Node node);
     sequence<Node>? getChildNodes(Node node);

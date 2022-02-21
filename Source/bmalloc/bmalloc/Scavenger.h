@@ -38,6 +38,8 @@
 #include <dispatch/dispatch.h>
 #endif
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 class Scavenger : public StaticPerProcess<Scavenger> {
@@ -125,4 +127,4 @@ DECLARE_STATIC_PER_PROCESS_STORAGE(Scavenger);
 
 } // namespace bmalloc
 
-
+#endif

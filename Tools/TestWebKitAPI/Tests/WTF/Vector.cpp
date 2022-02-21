@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -685,19 +685,59 @@ TEST(WTF_Vector, RemoveAll)
     EXPECT_TRUE(v2 == vExpected);
 }
 
-TEST(WTF_Vector, FindMatching)
+TEST(WTF_Vector, ClearContainsAndFind)
 {
     Vector<int> v;
-    EXPECT_TRUE(v.findMatching([](int) { return false; }) == notFound);
-    EXPECT_TRUE(v.findMatching([](int) { return true; }) == notFound);
+    EXPECT_TRUE(v.isEmpty());
+    v.clear();
+    EXPECT_TRUE(v.isEmpty());
+
+    v = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    EXPECT_EQ(10U, v.size());
+    EXPECT_FALSE(v.contains(1));
+    EXPECT_EQ(notFound, v.find(1));
+    v.clear();
+    EXPECT_TRUE(v.isEmpty());
+    EXPECT_FALSE(v.contains(1));
+    EXPECT_EQ(notFound, v.find(1));
+
+    v = { 3, 1, 2, 1, 1, 4, 2, 2, 1, 1, 3, 5 };
+    EXPECT_EQ(12U, v.size());
+    EXPECT_TRUE(v.contains(3));
+    EXPECT_TRUE(v.contains(4));
+    EXPECT_TRUE(v.contains(5));
+    EXPECT_FALSE(v.contains(6));
+    EXPECT_EQ(0U, v.find(3));
+    EXPECT_EQ(5U, v.find(4));
+    EXPECT_EQ(11U, v.find(5));
+    EXPECT_EQ(notFound, v.find(6));
+    EXPECT_TRUE(v == Vector<int>({ 3, 1, 2, 1, 1, 4, 2, 2, 1, 1, 3, 5 }));
+    v.clear();
+    EXPECT_EQ(0U, v.size());
+    EXPECT_FALSE(v.contains(3));
+    EXPECT_FALSE(v.contains(4));
+    EXPECT_FALSE(v.contains(5));
+    EXPECT_FALSE(v.contains(6));
+    EXPECT_EQ(notFound, v.find(3));
+    EXPECT_EQ(notFound, v.find(4));
+    EXPECT_EQ(notFound, v.find(5));
+    EXPECT_EQ(notFound, v.find(6));
+    EXPECT_TRUE(v == Vector<int>({ }));
+}
+
+TEST(WTF_Vector, FindIf)
+{
+    Vector<int> v;
+    EXPECT_TRUE(v.findIf([](int) { return false; }) == notFound);
+    EXPECT_TRUE(v.findIf([](int) { return true; }) == notFound);
 
     v = {3, 1, 2, 1, 2, 1, 2, 2, 1, 1, 1, 3};
-    EXPECT_TRUE(v.findMatching([](int value) { return value > 3; }) == notFound);
-    EXPECT_TRUE(v.findMatching([](int) { return false; }) == notFound);
-    EXPECT_EQ(0U, v.findMatching([](int) { return true; }));
-    EXPECT_EQ(0U, v.findMatching([](int value) { return value <= 3; }));
-    EXPECT_EQ(1U, v.findMatching([](int value) { return value < 3; }));
-    EXPECT_EQ(2U, v.findMatching([](int value) { return value == 2; }));
+    EXPECT_TRUE(v.findIf([](int value) { return value > 3; }) == notFound);
+    EXPECT_TRUE(v.findIf([](int) { return false; }) == notFound);
+    EXPECT_EQ(0U, v.findIf([](int) { return true; }));
+    EXPECT_EQ(0U, v.findIf([](int value) { return value <= 3; }));
+    EXPECT_EQ(1U, v.findIf([](int value) { return value < 3; }));
+    EXPECT_EQ(2U, v.findIf([](int value) { return value == 2; }));
 }
 
 TEST(WTF_Vector, RemoveFirstMatching)
@@ -1458,5 +1498,17 @@ TEST(WTF_Vector, ConstructorFromRawPointerAndSize)
     EXPECT_EQ(vector[3], 4);
     EXPECT_EQ(vector[4], 5);
 }
-    
+
+TEST(WTF_Vector, MapCustomReturnType)
+{
+    Vector<int> input { 1, 2 };
+    Vector<float, 2> output = input.map<Vector<float, 2>>([] (int value) {
+        return static_cast<float>(value);
+    });
+
+    ASSERT_EQ(output.size(), input.size());
+    EXPECT_FLOAT_EQ(output[0], 1.0f);
+    EXPECT_FLOAT_EQ(output[1], 2.0f);
+}
+
 } // namespace TestWebKitAPI

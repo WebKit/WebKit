@@ -29,8 +29,8 @@
 #include "DocumentMarker.h"
 #include "Position.h"
 #include "Timer.h"
+#include <variant>
 #include <wtf/Noncopyable.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -125,7 +125,7 @@ private:
     bool m_isDismissedByEditing { };
     AlternativeTextType m_type;
     String m_originalText;
-    Variant<AutocorrectionReplacement, DictationContext> m_details;
+    std::variant<AutocorrectionReplacement, DictationContext> m_details;
 
     String m_originalStringForLastDeletedAutocorrection;
     Position m_positionForLastDeletedAutocorrection;

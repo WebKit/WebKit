@@ -29,8 +29,8 @@
 
 #include "SharedMemory.h"
 #include <WebCore/SharedBuffer.h>
+#include <variant>
 #include <wtf/RefPtr.h>
-#include <wtf/Variant.h>
 
 namespace IPC {
 class Decoder;
@@ -41,33 +41,33 @@ namespace WebKit {
 
 class WebCompiledContentRuleListData {
 public:
-    WebCompiledContentRuleListData(RefPtr<SharedMemory>&& data, unsigned conditionsApplyOnlyToDomainOffset, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutConditionsBytecodeOffset, unsigned filtersWithoutConditionsBytecodeSize, unsigned filtersWithConditionsBytecodeOffset, unsigned filtersWithConditionsBytecodeSize, unsigned topURLFiltersBytecodeOffset, unsigned topURLFiltersBytecodeSize)
-        : data(WTFMove(data))
-        , conditionsApplyOnlyToDomainOffset(conditionsApplyOnlyToDomainOffset)
+    WebCompiledContentRuleListData(String&& identifier, Ref<SharedMemory>&& data, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
+        : identifier(WTFMove(identifier))
+        , data(WTFMove(data))
         , actionsOffset(actionsOffset)
         , actionsSize(actionsSize)
-        , filtersWithoutConditionsBytecodeOffset(filtersWithoutConditionsBytecodeOffset)
-        , filtersWithoutConditionsBytecodeSize(filtersWithoutConditionsBytecodeSize)
-        , filtersWithConditionsBytecodeOffset(filtersWithConditionsBytecodeOffset)
-        , filtersWithConditionsBytecodeSize(filtersWithConditionsBytecodeSize)
+        , urlFiltersBytecodeOffset(urlFiltersBytecodeOffset)
+        , urlFiltersBytecodeSize(urlFiltersBytecodeSize)
         , topURLFiltersBytecodeOffset(topURLFiltersBytecodeOffset)
         , topURLFiltersBytecodeSize(topURLFiltersBytecodeSize)
+        , frameURLFiltersBytecodeOffset(frameURLFiltersBytecodeOffset)
+        , frameURLFiltersBytecodeSize(frameURLFiltersBytecodeSize)
     {
     }
 
     void encode(IPC::Encoder&) const;
     static std::optional<WebCompiledContentRuleListData> decode(IPC::Decoder&);
 
-    RefPtr<SharedMemory> data;
-    unsigned conditionsApplyOnlyToDomainOffset { 0 };
-    unsigned actionsOffset { 0 };
-    unsigned actionsSize { 0 };
-    unsigned filtersWithoutConditionsBytecodeOffset { 0 };
-    unsigned filtersWithoutConditionsBytecodeSize { 0 };
-    unsigned filtersWithConditionsBytecodeOffset { 0 };
-    unsigned filtersWithConditionsBytecodeSize { 0 };
-    unsigned topURLFiltersBytecodeOffset { 0 };
-    unsigned topURLFiltersBytecodeSize { 0 };
+    String identifier;
+    Ref<SharedMemory> data;
+    size_t actionsOffset { 0 };
+    size_t actionsSize { 0 };
+    size_t urlFiltersBytecodeOffset { 0 };
+    size_t urlFiltersBytecodeSize { 0 };
+    size_t topURLFiltersBytecodeOffset { 0 };
+    size_t topURLFiltersBytecodeSize { 0 };
+    size_t frameURLFiltersBytecodeOffset { 0 };
+    size_t frameURLFiltersBytecodeSize { 0 };
 };
 
 }

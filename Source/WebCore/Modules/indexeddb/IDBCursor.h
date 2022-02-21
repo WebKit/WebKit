@@ -33,7 +33,7 @@
 #include "IDBValue.h"
 #include "JSValueInWrappedObject.h"
 #include <JavaScriptCore/Strong.h>
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -51,7 +51,7 @@ public:
     
     virtual ~IDBCursor();
 
-    using Source = Variant<RefPtr<IDBObjectStore>, RefPtr<IDBIndex>>;
+    using Source = std::variant<RefPtr<IDBObjectStore>, RefPtr<IDBIndex>>;
 
     const Source& source() const;
     IDBCursorDirection direction() const;
@@ -68,13 +68,13 @@ public:
     ExceptionOr<void> advance(unsigned);
     ExceptionOr<void> continueFunction(JSC::JSGlobalObject&, JSC::JSValue key);
     ExceptionOr<void> continuePrimaryKey(JSC::JSGlobalObject&, JSC::JSValue key, JSC::JSValue primaryKey);
-    ExceptionOr<Ref<IDBRequest>> deleteFunction(JSC::JSGlobalObject&);
+    ExceptionOr<Ref<IDBRequest>> deleteFunction();
 
     ExceptionOr<void> continueFunction(const IDBKeyData&);
 
     const IDBCursorInfo& info() const { return m_info; }
 
-    void setRequest(IDBRequest& request) { m_request = makeWeakPtr(&request); }
+    void setRequest(IDBRequest& request) { m_request = request; }
     void clearRequest() { m_request.clear(); }
     void clearWrappers();
     IDBRequest* request() { return m_request.get(); }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,15 +29,16 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import <WebCore/ApplicationManifest.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKApplicationManifest.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace TestWebKitAPI {
-
-constexpr CGFloat redColorComponents[4] = { 1, 0, 0, 1 };
 
 TEST(ApplicationManifest, Coding)
 {
@@ -276,6 +277,116 @@ TEST(ApplicationManifest, Blocked)
         done = true;
     }];
     Util::run(&done);
+}
+
+TEST(ApplicationManifest, Icons)
+{
+    static bool done = false;
+
+    NSArray *expectedIcons = @[ @{
+        @"src": @"https://example.com/images/touch/homescreen32.png",
+        @"sizes": @"32x32",
+        @"type": @"image/png"
+    }, @{
+        @"src": @"https://example.com/images/touch/homescreen48.png",
+        @"sizes": @"48x48",
+        @"type": @"image/png",
+        @"purpose": @"monochrome maskable"
+    }, @{
+        @"src": @"https://example.com/images/touch/homescreen128.jpg",
+        @"sizes": @"96x96 128x128",
+        @"type": @"image/jpg",
+        @"purpose": @"monochrome"
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect]);
+    NSDictionary *manifestObject = @{
+        @"name": @"A Web Application",
+        @"short_name": @"WebApp",
+        @"description": @"Hello.",
+        @"start_url": @"http://example.com/app/start",
+        @"scope": @"http://example.com/app",
+        @"theme_color": @"red",
+        @"icons": expectedIcons
+    };
+    NSString *htmlString = [NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:text/plain;charset=utf-8;base64,%@\">", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]];
+    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"http://example.com/app/index"]];
+    [webView _test_waitForDidFinishNavigation];
+    [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
+        EXPECT_TRUE([manifest.name isEqualToString:@"A Web Application"]);
+        EXPECT_TRUE([manifest.shortName isEqualToString:@"WebApp"]);
+        EXPECT_TRUE([manifest.applicationDescription isEqualToString:@"Hello."]);
+        EXPECT_TRUE([manifest.startURL isEqual:[NSURL URLWithString:@"http://example.com/app/start"]]);
+        EXPECT_TRUE([manifest.scope isEqual:[NSURL URLWithString:@"http://example.com/app"]]);
+
+        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+        EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, redColor.get()));
+
+        size_t iconIndex = 0;
+        for (_WKApplicationManifestIcon *icon in manifest.icons) {
+            NSDictionary *expectedIcon = expectedIcons[iconIndex];
+            NSString *expectedURLString = [expectedIcon objectForKey:@"src"];
+            EXPECT_TRUE([icon.src isEqual:[NSURL URLWithString:expectedURLString]]);
+            EXPECT_TRUE([icon.type isEqual:[expectedIcon objectForKey:@"type"]]);
+
+            switch (iconIndex) {
+            case 0:
+                EXPECT_EQ(icon.sizes.count, 1ul);
+                EXPECT_TRUE([icon.sizes[0] isEqual:[expectedIcon objectForKey:@"sizes"]]);
+                EXPECT_EQ(icon.purposes.count, 1ul);
+                EXPECT_EQ(icon.purposes[0].unsignedLongValue, 1ul);
+                break;
+
+            case 1:
+                EXPECT_EQ(icon.sizes.count, 1ul);
+                EXPECT_TRUE([icon.sizes[0] isEqual:[expectedIcon objectForKey:@"sizes"]]);
+                EXPECT_EQ(icon.purposes.count, 2ul);
+                EXPECT_EQ(icon.purposes[0].unsignedLongValue, 2ul);
+                EXPECT_EQ(icon.purposes[1].unsignedLongValue, 4ul);
+                break;
+
+            case 2:
+                EXPECT_EQ(icon.sizes.count, 2ul);
+                EXPECT_TRUE([icon.sizes[0] isEqual:@"96x96"]);
+                EXPECT_TRUE([icon.sizes[1] isEqual:@"128x128"]);
+                EXPECT_EQ(icon.purposes.count, 1ul);
+                EXPECT_EQ(icon.purposes[0].unsignedLongValue, 2ul);
+                break;
+            }
+
+            ++iconIndex;
+        }
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(ApplicationManifest, IconCoding)
+{
+    static const char* testURL = "https://example.com/images/touch/homescreen128.jpg";
+
+    WebCore::ApplicationManifest::Icon icon = { URL(URL(), testURL), makeVector<String>(@[@"96x96", @"128x128"]), "image/jpg", { WebCore::ApplicationManifest::Icon::Purpose::Monochrome, WebCore::ApplicationManifest::Icon::Purpose::Maskable } };
+
+    IGNORE_WARNINGS_BEGIN("objc-method-access")
+    auto manifestIcon = adoptNS([[_WKApplicationManifestIcon alloc] initWithCoreIcon:&icon]);
+    IGNORE_WARNINGS_END
+
+    NSError *error = nil;
+    NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:manifestIcon.get() requiringSecureCoding:YES error:&error];
+    EXPECT_NULL(error);
+
+    _WKApplicationManifestIcon *decodedIcon = [NSKeyedUnarchiver unarchivedObjectOfClass:[_WKApplicationManifestIcon class] fromData:archiveData error:&error];
+    EXPECT_NULL(error);
+
+    EXPECT_TRUE([decodedIcon isKindOfClass:[_WKApplicationManifestIcon class]]);
+    EXPECT_STREQ(testURL, decodedIcon.src.absoluteString.UTF8String);
+    EXPECT_TRUE([decodedIcon.sizes[0] isEqual:@"96x96"]);
+    EXPECT_TRUE([decodedIcon.sizes[1] isEqual:@"128x128"]);
+    EXPECT_TRUE([decodedIcon.type isEqual:@"image/jpg"]);
+    EXPECT_EQ(decodedIcon.purposes.count, 2ul);
+    EXPECT_EQ(decodedIcon.purposes[0].unsignedLongValue, 2ul);
+    EXPECT_EQ(decodedIcon.purposes[1].unsignedLongValue, 4ul);
 }
 
 } // namespace TestWebKitAPI

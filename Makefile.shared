@@ -2,6 +2,17 @@ SCRIPTS_PATH ?= ../Tools/Scripts
 
 XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $${COLOR_DIAGNOSTICS_ARG} $(ARGS)
 
+ifeq ($(USE_WORKSPACE),YES)
+SCHEME ?= $(notdir $(CURDIR))
+XCODE_TARGET = -scheme "$(SCHEME)"
+WORKSPACE := $(firstword $(wildcard \
+	$(dir $(lastword $(MAKEFILE_LIST)))../Internal/WebKit/WebKit.xcworkspace \
+	$(dir $(lastword $(MAKEFILE_LIST)))WebKit.xcworkspace \
+	))
+else
+SCHEME =
+endif
+
 ifneq (,$(SDKROOT))
 	ifneq (,$(OVERRIDE_SDKROOT))
 		ifneq (default,$(OVERRIDE_SDKROOT))
@@ -36,15 +47,11 @@ ifeq (, $(findstring WK_USE_CCACHE, $(ARGS)))
 	endif
 endif
 
-ifeq ($(findstring UseNewBuildSystem,$(ARGS)),)
-	CAN_USE_XCBUILD = $(shell perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print canUseXCBuild()')
-	ifeq ($(CAN_USE_XCBUILD),1)
-		# Temporarily disable default use of XCBuild until issues with it are ironed out.
-		#XCODE_OPTIONS += -UseNewBuildSystem=YES
-		XCODE_OPTIONS += -UseNewBuildSystem=NO
-	else
-		XCODE_OPTIONS += -UseNewBuildSystem=NO
-	endif
+ifneq (,$(EXPORT_COMPILE_COMMANDS))
+		XCODE_OPTIONS += OTHER_CFLAGS='$$(inherited) -gen-cdb-fragment-path $$(BUILT_PRODUCTS_DIR)/compile_commands'
+		XCODE_OPTIONS += GCC_PRECOMPILE_PREFIX_HEADER=NO
+		XCODE_OPTIONS += CLANG_ENABLE_MODULE_DEBUGGING=NO
+		XCODE_OPTIONS += COMPILER_INDEX_STORE_ENABLE=NO
 endif
 
 DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
@@ -108,9 +115,9 @@ define invoke_xcode
 	( \
 		[[ -t 1 ]] && COLOR_DIAGNOSTICS_ARG="COLOR_DIAGNOSTICS=YES"; \
 		echo; \
-		echo "===== BUILDING $$(basename "$$(pwd)") ====="; \
+		echo "===== BUILDING $(if $(WORKSPACE),$(SCHEME),$(notdir $(CURDIR))) ====="; \
 		echo; \
-		$1 xcodebuild $2 $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
+		$1 xcodebuild $2 $(WORKSPACE:%=-workspace %) $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
 	)
 endef
 
@@ -138,7 +145,7 @@ testing t: force
 
 analyze:
 	@$(call set_webkit_configuration,--debug)
-	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),analyze,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),build analyze,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 
 clean:
 ifndef XCODE_TARGET

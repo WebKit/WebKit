@@ -27,20 +27,12 @@
     description("This tests that an element will report that it has a popup correctly.");
 
     if (window.accessibilityController) {
-        document.getElementById("link1").focus();
-        shouldBe("accessibilityController.focusedElement.hasPopup", "true");
+        shouldBe("accessibilityController.accessibleElementById('link1').hasPopup", "true");
+        shouldBe("accessibilityController.accessibleElementById('link2').hasPopup", "false");
 
-        document.getElementById("link2").focus();
-        shouldBe("accessibilityController.focusedElement.hasPopup", "false");
-
-        var p1 = accessibilityController.accessibleElementById("paragraph1");
-        shouldBe("p1.hasPopup", "true");
-
-        var p2 = accessibilityController.accessibleElementById("paragraph2");
-        shouldBe("p2.hasPopup", "false");
-
-        var p3 = accessibilityController.accessibleElementById("paragraph3");
-        shouldBe("p3.hasPopup", "false");
+        shouldBe("accessibilityController.accessibleElementById('paragraph1').hasPopup", "true");
+        shouldBe("accessibilityController.accessibleElementById('paragraph2').hasPopup", "false");
+        shouldBe("accessibilityController.accessibleElementById('paragraph3').hasPopup", "false");
     }
 
 </script>

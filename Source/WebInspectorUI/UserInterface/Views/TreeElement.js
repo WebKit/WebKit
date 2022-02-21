@@ -81,6 +81,11 @@ WI.TreeElement = class TreeElement extends WI.Object
         this._selectable = x;
     }
 
+    get expandable()
+    {
+        return this.hasChildren;
+    }
+
     get listItemElement()
     {
         return this._listItemNode;
@@ -308,8 +313,7 @@ WI.TreeElement = class TreeElement extends WI.Object
         if (!treeElement)
             return;
 
-        let toggleOnClick = treeElement.toggleOnClick && !treeElement.selectable;
-        if (toggleOnClick || treeElement.isEventWithinDisclosureTriangle(event)) {
+        if (treeElement.toggleOnClick || treeElement.isEventWithinDisclosureTriangle(event)) {
             if (treeElement.expanded) {
                 if (event.altKey)
                     treeElement.collapseRecursively();

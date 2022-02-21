@@ -705,6 +705,10 @@ sub printTypeHelpersHeaderFile
     print F "#pragma once\n\n";
     print F "#include \"".$parameters{namespace}."Names.h\"\n\n";
 
+    # FIXME: Remove `if` condition below once HTMLElementTypeHeaders.h is made inline.
+    if ($parameters{namespace} eq "SVG") {
+        print F "#include \"".$parameters{namespace}."ElementInlines.h\"\n\n";
+    }
     printTypeHelpers($F, \%allTags);
 
     close F;
@@ -990,31 +994,27 @@ END
 
     printConstructors($F, \%tagConstructorMap);
 
+    my $firstTag;
+    for my $tag (sort keys %tagConstructorMap) {
+        $firstTag = $tag;
+        last;
+    }
+
     print F <<END
 
 struct $parameters{namespace}ConstructorFunctionMapEntry {
-    $parameters{namespace}ConstructorFunctionMapEntry($parameters{namespace}ConstructorFunction function, const QualifiedName& name)
-        : function(function)
-        , qualifiedName(&name)
-    { }
-
-    $parameters{namespace}ConstructorFunctionMapEntry()
-        : function(nullptr)
-        , qualifiedName(nullptr)
-    { }
-
-    $parameters{namespace}ConstructorFunction function;
-    const QualifiedName* qualifiedName; // Use pointer instead of reference so that emptyValue() in HashMap is cheap to create.
+    $parameters{namespace}ConstructorFunction function { nullptr };
+    const QualifiedName* qualifiedName { nullptr }; // Use pointer instead of reference so that emptyValue() in HashMap is cheap to create.
 };
 
 static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, $parameters{namespace}ConstructorFunctionMapEntry> create$parameters{namespace}FactoryMap()
 {
     struct TableEntry {
-        const QualifiedName& name;
+        decltype($parameters{namespace}Names::${firstTag}Tag)& name;
         $parameters{namespace}ConstructorFunction function;
     };
 
-    static const TableEntry table[] = {
+    static constexpr TableEntry table[] = {
 END
     ;
 
@@ -1025,13 +1025,13 @@ END
 
     MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, $parameters{namespace}ConstructorFunctionMapEntry> map;
     for (auto& entry : table)
-        map.add(entry.name.localName(), $parameters{namespace}ConstructorFunctionMapEntry(entry.function, entry.name));
+        map.add(entry.name.get().localName(), $parameters{namespace}ConstructorFunctionMapEntry { entry.function, &entry.name.get() });
     return map;
 }
 
 static $parameters{namespace}ConstructorFunctionMapEntry find$parameters{namespace}ElementConstructorFunction(const AtomString& localName)
 {
-    static const auto map = makeNeverDestroyed(create$parameters{namespace}FactoryMap());
+    static NeverDestroyed map = create$parameters{namespace}FactoryMap();
     return map.get().get(localName);
 }
 
@@ -1257,16 +1257,22 @@ END
 
     printWrapperFunctions($F);
 
+    my $firstTag;
+    for my $tag (sort keys %allTags) {
+        $firstTag = $tag;
+        last;
+    }
+
 print F <<END
 
 static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, Create$parameters{namespace}ElementWrapperFunction> create$parameters{namespace}WrapperMap()
 {
     struct TableEntry {
-        const QualifiedName& name;
+        decltype($parameters{namespace}Names::${firstTag}Tag)& name;
         Create$parameters{namespace}ElementWrapperFunction function;
     };
 
-    static const TableEntry table[] = {
+    static constexpr TableEntry table[] = {
 END
 ;
 
@@ -1299,13 +1305,13 @@ END
 
     MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, Create$parameters{namespace}ElementWrapperFunction> map;
     for (auto& entry : table)
-        map.add(entry.name.localName(), entry.function);
+        map.add(entry.name.get().localName(), entry.function);
     return map;
 }
 
 JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
 {
-    static const auto functions = makeNeverDestroyed(create$parameters{namespace}WrapperMap());
+    static NeverDestroyed functions = create$parameters{namespace}WrapperMap();
     if (auto function = functions.get().get(element->localName()))
         return function(globalObject, WTFMove(element));
 END

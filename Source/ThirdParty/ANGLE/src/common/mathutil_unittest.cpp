@@ -294,9 +294,13 @@ TEST(MathUtilTest, ScanForward)
 // Test ScanReverse, which scans for the most significant 1 bit from a non-zero integer.
 TEST(MathUtilTest, ScanReverse)
 {
-    EXPECT_EQ(0ul, gl::ScanReverse(1ul));
-    EXPECT_EQ(16ul, gl::ScanReverse(0x00010030ul));
-    EXPECT_EQ(31ul, gl::ScanReverse(0x80000000ul));
+    EXPECT_EQ(0ul, gl::ScanReverse(1u));
+    EXPECT_EQ(16ul, gl::ScanReverse(static_cast<uint64_t>(0x00010030ull)));
+    EXPECT_EQ(31ul, gl::ScanReverse(static_cast<uint64_t>(0x80000000ull)));
+
+    EXPECT_EQ(32ul, gl::ScanReverse(static_cast<uint64_t>(0x100000000ull)));
+    EXPECT_EQ(48ul, gl::ScanReverse(static_cast<uint64_t>(0x0001080000000000ull)));
+    EXPECT_EQ(63ul, gl::ScanReverse(static_cast<uint64_t>(0x8000000000000000ull)));
 }
 
 // Test FindLSB, which finds the least significant 1 bit.
@@ -377,6 +381,92 @@ TEST(MathUtilTest, Float32ToFloat16)
     ASSERT_TRUE(nan16 > 0xFC00 || (nan16 < 0x8000 && nan16 > 0x7C00));
 
     ASSERT_EQ(float32ToFloat16(1.0f), 0x3C00);
+}
+
+// Tests the RGB float to 999E5 conversion
+TEST(MathUtilTest, convertRGBFloatsTo999E5)
+{
+    const int numTests                  = 18;
+    const float input[numTests][3]      = {// The basics
+                                      {0.0f, 0.0f, 0.0f},
+                                      {0.0f, 0.0f, 1.0f},
+                                      {0.0f, 1.0f, 0.0f},
+                                      {0.0f, 1.0f, 1.0f},
+                                      {1.0f, 0.0f, 0.0f},
+                                      {1.0f, 0.0f, 1.0f},
+                                      {1.0f, 1.0f, 0.0f},
+                                      {1.0f, 1.0f, 1.0f},
+                                      // Extended range
+                                      {0.0f, 0.0f, 1.5f},
+                                      {0.0f, 2.0f, 0.0f},
+                                      {0.0f, 2.5f, 3.0f},
+                                      {3.5f, 0.0f, 0.0f},
+                                      {4.0f, 0.0f, 4.5f},
+                                      {5.0f, 5.5f, 0.0f},
+                                      {6.0f, 6.5f, 7.0f},
+                                      // Random
+                                      {0.1f, 9.6f, 3.2f},
+                                      {2.0f, 1.7f, 8.6f},
+                                      {0.7f, 4.2f, 9.1f}};
+    const unsigned int result[numTests] = {// The basics
+                                           0x00000000, 0x84000000, 0x80020000, 0x84020000,
+                                           0x80000100, 0x84000100, 0x80020100, 0x84020100,
+                                           // Extended range
+                                           0x86000000, 0x88020000, 0x8E028000, 0x880001C0,
+                                           0x94800100, 0x9002C140, 0x97034180,
+                                           // Random
+                                           0x999A6603, 0x9C4C6C40, 0x9C8D0C16};
+
+    for (int i = 0; i < numTests; i++)
+    {
+        EXPECT_EQ(convertRGBFloatsTo999E5(input[i][0], input[i][1], input[i][2]), result[i]);
+    }
+}
+
+// Tests the 999E5 to RGB float conversion
+TEST(MathUtilTest, convert999E5toRGBFloats)
+{
+    const int numTests                 = 18;
+    const float result[numTests][3]    = {// The basics
+                                       {0.0f, 0.0f, 0.0f},
+                                       {0.0f, 0.0f, 1.0f},
+                                       {0.0f, 1.0f, 0.0f},
+                                       {0.0f, 1.0f, 1.0f},
+                                       {1.0f, 0.0f, 0.0f},
+                                       {1.0f, 0.0f, 1.0f},
+                                       {1.0f, 1.0f, 0.0f},
+                                       {1.0f, 1.0f, 1.0f},
+                                       // Extended range
+                                       {0.0f, 0.0f, 1.5f},
+                                       {0.0f, 2.0f, 0.0f},
+                                       {0.0f, 2.5f, 3.0f},
+                                       {3.5f, 0.0f, 0.0f},
+                                       {4.0f, 0.0f, 4.5f},
+                                       {5.0f, 5.5f, 0.0f},
+                                       {6.0f, 6.5f, 7.0f},
+                                       // Random
+                                       {0.1f, 9.6f, 3.2f},
+                                       {2.0f, 1.7f, 8.6f},
+                                       {0.7f, 4.2f, 9.1f}};
+    const unsigned int input[numTests] = {// The basics
+                                          0x00000000, 0x84000000, 0x80020000, 0x84020000,
+                                          0x80000100, 0x84000100, 0x80020100, 0x84020100,
+                                          // Extended range
+                                          0x86000000, 0x88020000, 0x8E028000, 0x880001C0,
+                                          0x94800100, 0x9002C140, 0x97034180,
+                                          // Random
+                                          0x999A6603, 0x9C4C6C40, 0x9C8D0C16};
+    // Note: quite a low tolerance is required
+    const float floatFaultTolerance = 0.05f;
+    float outR, outG, outB;
+
+    for (int i = 0; i < numTests; i++)
+    {
+        convert999E5toRGBFloats(input[i], &outR, &outG, &outB);
+        EXPECT_NEAR(result[i][0], outR, floatFaultTolerance);
+        EXPECT_NEAR(result[i][1], outG, floatFaultTolerance);
+        EXPECT_NEAR(result[i][2], outB, floatFaultTolerance);
+    }
 }
 
 }  // anonymous namespace

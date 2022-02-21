@@ -34,6 +34,7 @@
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "HTMLElement.h"
+#include "ImageOverlay.h"
 #include "IntRect.h"
 #include "LayoutRect.h"
 #include "Page.h"
@@ -49,7 +50,7 @@ namespace WebCore {
 class FloatQuad;
 
 ImageOverlayController::ImageOverlayController(Page& page)
-    : m_page(makeWeakPtr(page))
+    : m_page(page)
 {
 }
 
@@ -71,11 +72,11 @@ void ImageOverlayController::selectionQuadsDidChange(Frame& frame, const Vector<
         if (!selectedRange)
             return nullptr;
 
-        if (!HTMLElement::isInsideImageOverlay(*selectedRange))
+        if (!ImageOverlay::isInsideOverlay(*selectedRange))
             return nullptr;
 
-        if (auto host = makeRefPtr(selectedRange->startContainer().shadowHost()); is<HTMLElement>(host))
-            return makeRefPtr(downcast<HTMLElement>(*host));
+        if (RefPtr host = selectedRange->startContainer().shadowHost(); is<HTMLElement>(host))
+            return static_pointer_cast<HTMLElement>(host);
 
         return nullptr;
     })();
@@ -96,7 +97,7 @@ void ImageOverlayController::selectionQuadsDidChange(Frame& frame, const Vector<
         return;
     }
 
-    m_hostElementForSelection = makeWeakPtr(*overlayHost);
+    m_hostElementForSelection = *overlayHost;
     m_selectionQuads = quads;
     m_selectionBackgroundColor = overlayHostRenderer->selectionBackgroundColor();
     m_selectionClipRect = overlayHostRenderer->absoluteBoundingBoxRect();
@@ -209,6 +210,19 @@ bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent&)
 void ImageOverlayController::elementUnderMouseDidChange(Frame&, Element*)
 {
 }
+
+#if ENABLE(DATA_DETECTION)
+
+void ImageOverlayController::textRecognitionResultsChanged(HTMLElement&)
+{
+}
+
+bool ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
+{
+    return false;
+}
+
+#endif // ENABLE(DATA_DETECTION)
 
 #endif // !PLATFORM(MAC)
 

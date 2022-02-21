@@ -5,7 +5,7 @@
  input { background:lime }
  input:focus { background:red }
 </style>
-<script language="JavaScript" type="text/javascript">
+<script>
     var gotBlur = false;
 
     function log(message) {
@@ -15,15 +15,21 @@
     function switchBlur() {
         gotBlur = true;
     }
-    
-    function test() {
-        if (window.testRunner)
-            testRunner.dumpAsText();
 
-        if (gotBlur)
-            log("SUCCESS");
-        else
-            log("FAILURE");
+    function test() {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        requestAnimationFrame(() => {
+            if (gotBlur)
+                log("SUCCESS");
+            else
+                log("FAILURE");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
     }
 </script>
 </head>

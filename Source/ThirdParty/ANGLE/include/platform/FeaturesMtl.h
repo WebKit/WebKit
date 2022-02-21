@@ -21,13 +21,8 @@ struct FeaturesMtl : FeatureSetBase
         "has_base_vertex_instanced_draw", FeatureCategory::MetalFeatures,
         "The renderer supports base vertex instanced draw", &members};
 
-    // Support depth texture filtering
-    Feature hasDepthTextureFiltering = {
-        "has_depth_texture_filtering", FeatureCategory::MetalFeatures,
-        "The renderer supports depth texture's filtering other than nearest", &members};
-
     // Support explicit memory barrier
-    Feature hasExplicitMemBarrier = {"has_explicit_mem_barrier", FeatureCategory::MetalFeatures,
+    Feature hasExplicitMemBarrier = {"has_explicit_mem_barrier_mtl", FeatureCategory::MetalFeatures,
                                      "The renderer supports explicit memory barrier", &members};
 
     // Some renderer can break render pass cheaply, i.e. desktop class GPUs.
@@ -40,7 +35,7 @@ struct FeaturesMtl : FeatureSetBase
         "The renderer supports non uniform compute shader dispatch's group size", &members};
 
     // fragment stencil output support
-    Feature hasStencilOutput = {"has_stencil_output", FeatureCategory::MetalFeatures,
+    Feature hasStencilOutput = {"has_shader_stencil_output", FeatureCategory::MetalFeatures,
                                 "The renderer supports stencil output from fragment shader",
                                 &members};
 
@@ -97,14 +92,17 @@ struct FeaturesMtl : FeatureSetBase
     Feature forceD24S8AsUnsupported = {"force_d24s8_as_unsupported", FeatureCategory::MetalFeatures,
                                        "Force Depth24Stencil8 format as unsupported.", &members};
 
-    Feature breakRenderPassIsCheap = {"break_render_pass_is_cheap", FeatureCategory::MetalFeatures,
-                                      "Breaking render pass is a cheap operation", &members};
-
     Feature forceBufferGPUStorage = {
         "force_buffer_gpu_storage", FeatureCategory::MetalFeatures,
         "On systems that support both buffer' memory allocation on GPU and shared memory (such as "
         "macOS), force using GPU memory allocation for buffers everytime or not.",
         &members};
+
+    // Generate Metal directly instead of generating SPIR-V and then using SPIR-V Cross.  Transitory
+    // feature until the work is complete.
+    Feature directMetalGeneration = {"directMetalGeneration", FeatureCategory::MetalFeatures,
+                                     "Direct translation to Metal.", &members,
+                                     "http://anglebug.com/5505"};
 
     Feature forceNonCSBaseMipmapGeneration = {
         "force_non_cs_mipmap_gen", FeatureCategory::MetalFeatures,
@@ -115,25 +113,21 @@ struct FeaturesMtl : FeatureSetBase
     Feature emulateTransformFeedback = {
         "emulate_transform_feedback", FeatureCategory::MetalFeatures,
         "Turn this on to allow transform feedback in Metal using a 2-pass VS for GLES3.", &members};
-    
-    Feature rewriteRowMajorMatrices = {
-            "rewrite_row_major_matrices", FeatureCategory::MetalFeatures,
-            "Rewrite row major matrices in shaders as column major.",
-            &members};
 
-    Feature intelThinMipmapWorkaround = {
-            "intel_thin_mipmap_workaround", FeatureCategory::MetalWorkarounds,
-            "Generate mipmaps for thin (<5 pixel) wide textures on the CPU for Intel",
-            &members};
-    
+    // Rewrite row-major matrices as column-major
+    Feature rewriteRowMajorMatrices = {"rewrite_row_major_matrices", FeatureCategory::MetalFeatures,
+                                       "Rewrite row major matrices in shaders as column major.",
+                                       &members};
+
     Feature intelExplicitBoolCastWorkaround = {
-            "intel_explicit_bool_cast_workaround", FeatureCategory::MetalWorkarounds,
-            "Insert explicit casts for float/double/unsigned/signed int on macOS 10.15 with Intel driver",
-            &members};
+        "intel_explicit_bool_cast_workaround", FeatureCategory::MetalWorkarounds,
+        "Insert explicit casts for float/double/unsigned/signed int on macOS 10.15 with Intel "
+        "driver",
+        &members};
+
     Feature intelDisableFastMath = {
-            "intel_disable_fast_math", FeatureCategory::MetalWorkarounds,
-            "Disable fast math in atan and invariance cases when running below macOS 12.0",
-            &members};
+        "intel_disable_fast_math", FeatureCategory::MetalWorkarounds,
+        "Disable fast math in atan and invariance cases when running below macOS 12.0", &members};
 };
 
 }  // namespace angle

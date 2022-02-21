@@ -39,6 +39,10 @@ bool CheckShaderType(Shader expected, GLenum actual)
             return actual == GL_GEOMETRY_SHADER;
         case Shader::GEOMETRY_EXT:
             return actual == GL_GEOMETRY_SHADER_EXT;
+        case Shader::TESS_CONTROL_EXT:
+            return actual == GL_TESS_CONTROL_SHADER_EXT;
+        case Shader::TESS_EVALUATION_EXT:
+            return actual == GL_TESS_EVALUATION_SHADER_EXT;
         case Shader::NOT_COMPUTE:
             return actual != GL_COMPUTE_SHADER;
         default:
@@ -312,7 +316,10 @@ const TSymbol *TSymbolTable::findBuiltInWithConversion(const std::vector<Immutab
 bool TSymbolTable::declare(TSymbol *symbol)
 {
     ASSERT(!mTable.empty());
-    ASSERT(symbol->symbolType() == SymbolType::UserDefined);
+    // The following built-ins may be redeclared by the shader: gl_ClipDistance, gl_CullDistance and
+    // gl_LastFragData.
+    ASSERT(symbol->symbolType() == SymbolType::UserDefined ||
+           (symbol->symbolType() == SymbolType::BuiltIn && IsRedeclarableBuiltIn(symbol->name())));
     ASSERT(!symbol->isFunction());
     return mTable.back()->insert(symbol);
 }
@@ -411,6 +418,8 @@ void TSymbolTable::initializeBuiltIns(sh::GLenum type,
             case GL_VERTEX_SHADER:
             case GL_COMPUTE_SHADER:
             case GL_GEOMETRY_SHADER_EXT:
+            case GL_TESS_CONTROL_SHADER_EXT:
+            case GL_TESS_EVALUATION_SHADER_EXT:
                 setDefaultPrecision(EbtInt, EbpHigh);
                 setDefaultPrecision(EbtFloat, EbpHigh);
                 break;
@@ -517,10 +526,10 @@ bool UnmangledEntry::matches(const ImmutableString &name,
         if (mGLSLVersion > shaderVersion)
             return false;
 
-        if (static_cast<TExtension>(mGLSLExtension) == TExtension::UNDEFINED)
+        if (mGLSLExtension == TExtension::UNDEFINED)
             return true;
 
-        return IsExtensionEnabled(extensions, static_cast<TExtension>(mGLSLExtension));
+        return IsExtensionEnabled(extensions, mGLSLExtension);
     }
     else
     {
@@ -530,10 +539,21 @@ bool UnmangledEntry::matches(const ImmutableString &name,
         if (mESSLVersion > shaderVersion)
             return false;
 
-        if (static_cast<TExtension>(mESSLExtension) == TExtension::UNDEFINED)
+        bool anyExtension        = false;
+        bool anyExtensionEnabled = false;
+        for (TExtension ext : mESSLExtensions)
+        {
+            if (ext != TExtension::UNDEFINED)
+            {
+                anyExtension        = true;
+                anyExtensionEnabled = anyExtensionEnabled || IsExtensionEnabled(extensions, ext);
+            }
+        }
+
+        if (!anyExtension)
             return true;
 
-        return IsExtensionEnabled(extensions, static_cast<TExtension>(mESSLExtension));
+        return anyExtensionEnabled;
     }
 }
 }  // namespace sh

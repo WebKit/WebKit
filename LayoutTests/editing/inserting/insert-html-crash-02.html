@@ -1,0 +1,23 @@
+<style>
+  iframe, iframe::-webkit-scrollbar {
+    block-size: 0;
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+    document.designMode = 'on';
+    let iframe0 = document.createElement('iframe');
+    document.body.appendChild(iframe0);
+    document.body.appendChild(document.createElement('iframe'));
+    getSelection().collapse(document.body, 0);
+    getSelection().extend(document.body);
+    iframe0.contentDocument.onvisibilitychange = () => {
+      document.execCommand('InsertHTML', false, 'foo');
+    };
+    setTimeout(function() { document.write("PASS. WebKit didn't crash."); testRunner.notifyDone(); }, 1000);
+  };
+</script>

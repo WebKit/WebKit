@@ -1,11 +1,9 @@
-Confirm
-
 
 PASS click the form submission button should close the dialog
 PASS form submission should return correct value
 PASS no returnValue when there's no result.
-FAIL input image button should return the coordinates assert_false: dialog should be closed now expected false got true
-FAIL formmethod attribute should use dialog form submission promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL closing the dialog while submitting should stop the submission promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL calling form.submit() in click handler of submit button should start the submission synchronously promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL input image button should return the coordinates assert_equals: returnValue should be the offsets of the click expected "" but got "sushi"
+PASS formmethod attribute should use dialog form submission
+PASS closing the dialog while submitting should stop the submission
+PASS calling form.submit() in click handler of submit button should start the submission synchronously
 

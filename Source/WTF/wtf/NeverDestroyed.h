@@ -104,8 +104,6 @@ private:
     typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
 };
 
-template<typename T, typename AccessTraits = AnyThreadsAccessTraits> NeverDestroyed<T, AccessTraits> makeNeverDestroyed(T&&);
-
 // FIXME: It's messy to have to repeat the whole class just to make this "lazy" version.
 // Should revisit clients to see if we really need this, and perhaps use templates to
 // share more of the code with the main NeverDestroyed above.
@@ -179,22 +177,16 @@ private:
     typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
 };
 
-template<typename T, typename AccessTraits> inline NeverDestroyed<T, AccessTraits> makeNeverDestroyed(T&& argument)
-{
-    return std::forward<T>(argument);
-}
+template<typename T> NeverDestroyed(T) -> NeverDestroyed<T>;
 
-template<typename T>
-using MainThreadNeverDestroyed = NeverDestroyed<T, MainThreadAccessTraits>;
+template<typename T> using MainThreadNeverDestroyed = NeverDestroyed<T, MainThreadAccessTraits>;
 
-template<typename T>
-using MainThreadLazyNeverDestroyed = LazyNeverDestroyed<T, MainThreadAccessTraits>;
+template<typename T> using MainThreadLazyNeverDestroyed = LazyNeverDestroyed<T, MainThreadAccessTraits>;
 
 } // namespace WTF;
 
 using WTF::LazyNeverDestroyed;
 using WTF::NeverDestroyed;
-using WTF::makeNeverDestroyed;
 using WTF::MainThreadNeverDestroyed;
 using WTF::MainThreadLazyNeverDestroyed;
 using WTF::AnyThreadsAccessTraits;

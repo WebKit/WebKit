@@ -125,6 +125,8 @@ WK_EXPORT bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePag
 // Call the given callback after both a postTask() on the page's document's ScriptExecutionContext, and a zero-delay timer.
 WK_EXPORT void WKBundlePageCallAfterTasksAndTimers(WKBundlePageRef, WKBundlePageTestNotificationCallback, void* context);
 
+WK_EXPORT void WKBundlePageLayoutIfNeeded(WKBundlePageRef page);
+
 WK_EXPORT void WKBundlePagePostMessage(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody);
 
 // Switches a connection into a fully synchronous mode, so all messages become synchronous until we get a response.

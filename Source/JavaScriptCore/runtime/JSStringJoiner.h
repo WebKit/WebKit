@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,8 @@ namespace JSC {
 
 class JSStringJoiner {
 public:
-    JSStringJoiner(JSGlobalObject*, LChar separator, unsigned stringCount);
-    JSStringJoiner(JSGlobalObject*, StringView separator, unsigned stringCount);
+    JSStringJoiner(JSGlobalObject*, LChar separator, size_t stringCount);
+    JSStringJoiner(JSGlobalObject*, StringView separator, size_t stringCount);
     ~JSStringJoiner();
 
     void append(JSGlobalObject*, JSValue);
@@ -57,7 +57,7 @@ private:
     bool m_isAll8Bit { true };
 };
 
-inline JSStringJoiner::JSStringJoiner(JSGlobalObject* globalObject, StringView separator, unsigned stringCount)
+inline JSStringJoiner::JSStringJoiner(JSGlobalObject* globalObject, StringView separator, size_t stringCount)
     : m_separator(separator)
     , m_isAll8Bit(m_separator.is8Bit())
 {
@@ -67,7 +67,7 @@ inline JSStringJoiner::JSStringJoiner(JSGlobalObject* globalObject, StringView s
         throwOutOfMemoryError(globalObject, scope);
 }
 
-inline JSStringJoiner::JSStringJoiner(JSGlobalObject* globalObject, LChar separator, unsigned stringCount)
+inline JSStringJoiner::JSStringJoiner(JSGlobalObject* globalObject, LChar separator, size_t stringCount)
     : m_singleCharacterSeparator(separator)
     , m_separator { &m_singleCharacterSeparator, 1 }
 {
@@ -152,7 +152,6 @@ ALWAYS_INLINE void JSStringJoiner::append(JSGlobalObject* globalObject, JSValue 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     bool success = appendWithoutSideEffects(globalObject, value);
-    RETURN_IF_EXCEPTION(scope, void());
     if (!success) {
         JSString* jsString = value.toString(globalObject);
         RETURN_IF_EXCEPTION(scope, void());

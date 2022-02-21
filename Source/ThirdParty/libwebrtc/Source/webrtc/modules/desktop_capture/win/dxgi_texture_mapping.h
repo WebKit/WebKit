@@ -27,7 +27,7 @@ namespace webrtc {
 class DxgiTextureMapping : public DxgiTexture {
  public:
   // Creates a DxgiTextureMapping instance. Caller must maintain the lifetime
-  // of input |duplication| to make sure it outlives this instance.
+  // of input `duplication` to make sure it outlives this instance.
   explicit DxgiTextureMapping(IDXGIOutputDuplication* duplication);
 
   ~DxgiTextureMapping() override;

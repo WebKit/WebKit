@@ -26,7 +26,7 @@
 [
     Exposed=Window
 ] interface HTMLOutputElement : HTMLElement {
-    [CallWith=Document, HTMLConstructor] constructor();
+    [CallWith=CurrentDocument, HTMLConstructor] constructor();
 
     [SameObject, PutForwards=value] readonly attribute DOMTokenList htmlFor;
     readonly attribute HTMLFormElement? form;
@@ -40,7 +40,7 @@
     readonly attribute ValidityState validity;
     readonly attribute DOMString validationMessage;
     boolean checkValidity();
-    [EnabledBySetting=InteractiveFormValidation] boolean reportValidity();
+    [EnabledBySetting=InteractiveFormValidationEnabled] boolean reportValidity();
     undefined setCustomValidity(DOMString error);
 
     readonly attribute NodeList labels;

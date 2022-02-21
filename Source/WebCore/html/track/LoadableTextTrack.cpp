@@ -29,6 +29,8 @@
 
 #if ENABLE(VIDEO)
 
+#include "Document.h"
+#include "ElementInlines.h"
 #include "HTMLTrackElement.h"
 #include "TextTrackCueList.h"
 #include "VTTCue.h"
@@ -41,7 +43,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LoadableTextTrack);
 
 LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const String& kind, const String& label, const String& language)
-    : TextTrack(&track.document(), &track, kind, emptyString(), label, language, TrackElement)
+    : TextTrack(&track.document(), kind, emptyString(), label, language, TrackElement)
     , m_trackElement(&track)
 {
 }
@@ -96,11 +98,6 @@ void LoadableTextTrack::scheduleLoad(const URL& url)
     });
 }
 
-Element* LoadableTextTrack::element()
-{
-    return m_trackElement;
-}
-
 void LoadableTextTrack::newCuesAvailable(TextTrackLoader& loader)
 {
     ASSERT_UNUSED(loader, m_loader.get() == &loader);
@@ -114,8 +111,7 @@ void LoadableTextTrack::newCuesAvailable(TextTrackLoader& loader)
         m_cues->add(WTFMove(newCue));
     }
 
-    if (client())
-        client()->textTrackAddCues(*this, *m_cues);
+    TextTrack::newCuesAvailable(*m_cues);
 }
 
 void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader& loader, bool loadingFailed)

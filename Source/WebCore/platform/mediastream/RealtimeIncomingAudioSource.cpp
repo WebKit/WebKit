@@ -34,6 +34,7 @@
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCAudioFormat.h"
+#include "LibWebRTCAudioModule.h"
 #include "Logging.h"
 
 namespace WebCore {
@@ -64,7 +65,7 @@ void RealtimeIncomingAudioSource::stopProducingData()
 
 void RealtimeIncomingAudioSource::OnChanged()
 {
-    callOnMainThread([protectedThis = makeRef(*this)] {
+    callOnMainThread([protectedThis = Ref { *this }] {
         if (protectedThis->m_audioTrack->state() == webrtc::MediaStreamTrackInterface::kEnded)
             protectedThis->end();
     });
@@ -78,6 +79,12 @@ const RealtimeMediaSourceCapabilities& RealtimeIncomingAudioSource::capabilities
 const RealtimeMediaSourceSettings& RealtimeIncomingAudioSource::settings()
 {
     return m_currentSettings;
+}
+
+void RealtimeIncomingAudioSource::setAudioModule(RefPtr<LibWebRTCAudioModule>&& audioModule)
+{
+    ASSERT(!m_audioModule);
+    m_audioModule = WTFMove(audioModule);
 }
 
 }

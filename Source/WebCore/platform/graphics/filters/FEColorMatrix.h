@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,8 +23,6 @@
 #pragma once
 
 #include "FilterEffect.h"
-
-#include "Filter.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -38,7 +37,7 @@ enum ColorMatrixType {
 
 class FEColorMatrix : public FilterEffect {
 public:
-    static Ref<FEColorMatrix> create(Filter&, ColorMatrixType, Vector<float>&&);
+    WEBCORE_EXPORT static Ref<FEColorMatrix> create(ColorMatrixType, Vector<float>&&);
 
     ColorMatrixType type() const { return m_type; }
     bool setType(ColorMatrixType);
@@ -46,54 +45,67 @@ public:
     const Vector<float>& values() const { return m_values; }
     bool setValues(const Vector<float>&);
 
-    static inline void calculateSaturateComponents(float* components, float value);
-    static inline void calculateHueRotateComponents(float* components, float value);
+    static void calculateSaturateComponents(float* components, float value);
+    static void calculateHueRotateComponents(float* components, float value);
+    static Vector<float> normalizedFloats(const Vector<float>& values);
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<Ref<FEColorMatrix>> decode(Decoder&);
 
 private:
-    FEColorMatrix(Filter&, ColorMatrixType, Vector<float>&&);
+    FEColorMatrix(ColorMatrixType, Vector<float>&&);
 
-    const char* filterName() const final { return "FEColorMatrix"; }
+    bool resultIsAlphaImage(const FilterImageVector& inputs) const override;
 
-    void platformApplySoftware() override;
+    bool supportsAcceleratedRendering() const override;
+    std::unique_ptr<FilterEffectApplier> createAcceleratedApplier() const override;
+    std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 
     ColorMatrixType m_type;
     Vector<float> m_values;
 };
 
-inline void FEColorMatrix::calculateSaturateComponents(float* components, float value)
+template<class Encoder>
+void FEColorMatrix::encode(Encoder& encoder) const
 {
-    components[0] = (0.213 + 0.787 * value);
-    components[1] = (0.715 - 0.715 * value);
-    components[2] = (0.072 - 0.072 * value);
-    components[3] = (0.213 - 0.213 * value);
-    components[4] = (0.715 + 0.285 * value);
-    components[5] = (0.072 - 0.072 * value);
-    components[6] = (0.213 - 0.213 * value);
-    components[7] = (0.715 - 0.715 * value);
-    components[8] = (0.072 + 0.928 * value);
+    encoder << m_type;
+    encoder << m_values;
 }
 
-inline void FEColorMatrix::calculateHueRotateComponents(float* components, float value)
+template<class Decoder>
+std::optional<Ref<FEColorMatrix>> FEColorMatrix::decode(Decoder& decoder)
 {
-    float cosHue = cos(value * piFloat / 180);
-    float sinHue = sin(value * piFloat / 180);
-    components[0] = 0.213 + cosHue * 0.787 - sinHue * 0.213;
-    components[1] = 0.715 - cosHue * 0.715 - sinHue * 0.715;
-    components[2] = 0.072 - cosHue * 0.072 + sinHue * 0.928;
-    components[3] = 0.213 - cosHue * 0.213 + sinHue * 0.143;
-    components[4] = 0.715 + cosHue * 0.285 + sinHue * 0.140;
-    components[5] = 0.072 - cosHue * 0.072 - sinHue * 0.283;
-    components[6] = 0.213 - cosHue * 0.213 - sinHue * 0.787;
-    components[7] = 0.715 - cosHue * 0.715 + sinHue * 0.715;
-    components[8] = 0.072 + cosHue * 0.928 + sinHue * 0.072;
-}
+    std::optional<ColorMatrixType> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
 
+    std::optional<Vector<float>> values;
+    decoder >> values;
+    if (!values)
+        return std::nullopt;
+
+    return FEColorMatrix::create(*type, WTFMove(*values));
+}
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FEColorMatrix)
-    static bool isType(const WebCore::FilterEffect& effect) { return effect.filterEffectClassType() == WebCore::FilterEffect::Type::ColorMatrix; }
-SPECIALIZE_TYPE_TRAITS_END()
+namespace WTF {
 
+template<> struct EnumTraits<WebCore::ColorMatrixType> {
+    using values = EnumValues<
+        WebCore::ColorMatrixType,
+
+        WebCore::FECOLORMATRIX_TYPE_UNKNOWN,
+        WebCore::FECOLORMATRIX_TYPE_MATRIX,
+        WebCore::FECOLORMATRIX_TYPE_SATURATE,
+        WebCore::FECOLORMATRIX_TYPE_HUEROTATE,
+        WebCore::FECOLORMATRIX_TYPE_LUMINANCETOALPHA
+    >;
+};
+
+} // namespace WTF
+
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEColorMatrix)

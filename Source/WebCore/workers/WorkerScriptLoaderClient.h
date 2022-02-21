@@ -26,13 +26,15 @@
 
 #pragma once
 
+#include "ResourceLoaderIdentifier.h"
+
 namespace WebCore {
 
 class ResourceResponse;
 
 class WorkerScriptLoaderClient {
 public:
-    virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) = 0;
+    virtual void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) = 0;
     virtual void notifyFinished() = 0;
 
 protected:

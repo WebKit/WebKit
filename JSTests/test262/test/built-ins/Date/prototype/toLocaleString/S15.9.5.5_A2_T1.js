@@ -7,10 +7,14 @@ esid: sec-date.prototype.tolocalestring
 description: The "length" property of the "toLocaleString" is 0
 ---*/
 
-if (Date.prototype.toLocaleString.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The toLocaleString has a "length" property');
-}
+assert.sameValue(
+  Date.prototype.toLocaleString.hasOwnProperty("length"),
+  true,
+  'Date.prototype.toLocaleString.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.toLocaleString.length !== 0) {
-  throw new Test262Error('#2: The "length" property of the toLocaleString is 0');
-}
+assert.sameValue(
+  Date.prototype.toLocaleString.length,
+  0,
+  'The value of Date.prototype.toLocaleString.length is expected to be 0'
+);

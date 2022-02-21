@@ -44,7 +44,7 @@ class FrameDropperTest : public ::testing::Test {
   void ValidateNoDropsAtTargetBitrate(int large_frame_size_bytes,
                                       int large_frame_rate,
                                       bool is_large_frame_delta) {
-    // Smaller frame size is computed to meet |kTargetBitRateKbps|.
+    // Smaller frame size is computed to meet `kTargetBitRateKbps`.
     int small_frame_size_bytes =
         kFrameSizeBytes -
         (large_frame_size_bytes * large_frame_rate) / kIncomingFrameRate;

@@ -59,7 +59,7 @@ public:
 
     int size() const;
 
-    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) override;
+    bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) override;
 
     bool scrolledToTop() const final;
     bool scrolledToBottom() const final;
@@ -82,7 +82,7 @@ private:
 
     bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset) override;
 
-    bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr) override;
+    bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr) override;
 
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     void computePreferredLogicalWidths() override;
@@ -111,6 +111,8 @@ private:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     // ScrollableArea interface.
+    bool hasSteppedScrolling() const final { return true; }
+
     void setScrollOffset(const ScrollOffset&) final;
 
     ScrollPosition scrollPosition() const final;
@@ -138,14 +140,15 @@ private:
     bool isScrollableOrRubberbandable() final;
     bool hasScrollableOrRubberbandableAncestor() final;
     IntRect scrollableAreaBoundingBox(bool* = nullptr) const final;
-    bool usesMockScrollAnimator() const final;
-    void logMockScrollAnimatorMessage(const String&) const final;
+    bool mockScrollbarsControllerEnabled() const final;
+    void logMockScrollbarsControllerMessage(const String&) const final;
     String debugDescription() const final;
+    void didStartScrollAnimation() final;
 
     // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
     void scrollTo(int newOffset);
 
-    using PaintFunction = WTF::Function<void(PaintInfo&, const LayoutPoint&, int listItemIndex)>;
+    using PaintFunction = Function<void(PaintInfo&, const LayoutPoint&, int listItemIndex)>;
     void paintItem(PaintInfo&, const LayoutPoint&, const PaintFunction&);
 
     void setHasVerticalScrollbar(bool hasScrollbar);
@@ -173,16 +176,18 @@ private:
 
     bool shouldPlaceVerticalScrollbarOnLeft() const final { return RenderBlockFlow::shouldPlaceVerticalScrollbarOnLeft(); }
 
-    bool m_optionsChanged;
-    bool m_scrollToRevealSelectionAfterLayout;
-    bool m_inAutoscroll;
-    int m_optionsWidth;
-    int m_indexOffset;
+    bool m_optionsChanged { true };
+    bool m_scrollToRevealSelectionAfterLayout { false };
+    bool m_inAutoscroll { false };
+    int m_optionsWidth { 0 };
+
+    RefPtr<Scrollbar> m_vBar;
+
+    int m_indexOffset { 0 };
 
     std::optional<int> m_indexOfFirstVisibleItemInsidePaddingTopArea;
     std::optional<int> m_indexOfFirstVisibleItemInsidePaddingBottomArea;
 
-    RefPtr<Scrollbar> m_vBar;
 };
 
 } // namepace WebCore

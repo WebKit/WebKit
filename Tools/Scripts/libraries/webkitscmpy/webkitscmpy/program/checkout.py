@@ -20,16 +20,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
 import sys
 
 from .command import Command
-from webkitcorepy import arguments
-from webkitscmpy import local
+from webkitscmpy import local, log, remote
 
 
 class Checkout(Command):
     name = 'checkout'
-    help = 'Given an identifier, revision or hash, normalize and checkout that commit'
+    help = "Given an identifier, revision, hash or pull-request, normalize and checkout that commit." \
+           " Pull requests expected in the form 'PR-#'"
+
+    PR_RE = re.compile(r'^\[?[Pp][Rr][ -](?P<number>\d+)]?$')
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -42,11 +45,31 @@ class Checkout(Command):
     @classmethod
     def main(cls, args, repository, **kwargs):
         if not repository.path:
-            sys.stderr.write("Cannot checkout on remote repository")
+            sys.stderr.write('Cannot checkout on remote repository\n')
             return 1
 
+        target = args.argument[0]
+        match = cls.PR_RE.match(target)
+        if match:
+            rmt = repository.remote()
+            if not rmt:
+                sys.stderr.write('Repository does not have associated remote\n')
+                return 1
+            if not rmt.pull_requests:
+                sys.stderr.write('No pull-requests associated with repository\n')
+                return 1
+            pr = rmt.pull_requests.get(number=int(match.group('number')))
+            if not pr:
+                sys.stderr.write("Failed to find 'PR-{}' associated with this repository\n".format(match.group('number')))
+                return 1
+            if isinstance(rmt, remote.GitHub) and pr.author.github:
+                target = '{}:{}'.format(pr.author.github, pr.head)
+            else:
+                target = pr.head
+            log.info("Found associated branch '{}' for '{}'".format(target, pr))
+
         try:
-            commit = repository.checkout(args.argument[0])
+            commit = repository.checkout(target)
         except (local.Scm.Exception, ValueError) as exception:
             # ValueErrors and Scm exceptions usually contain enough information to be displayed
             # to the user as an error
@@ -54,6 +77,6 @@ class Checkout(Command):
             return 1
 
         if not commit:
-            sys.stderr.write("Failed to map '{}'\n".format(args.argument[0]))
+            sys.stderr.write("Failed to checkout '{}'\n".format(args.argument[0]))
             return 1
         return 0

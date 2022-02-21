@@ -205,6 +205,12 @@ class TestSummaryProviders(unittest.TestCase):
         self.assertEqual(provider.get_child_at_index(1).GetName(), 'D')
         self.assertEqual(provider.get_child_at_index(1).GetValue(), '8')
 
+    # MARK: WTFURL_SummaryProvider test cases
+
+    def serial_test_WTFURL_SummaryProvider(self):
+        variable = lldb_webkit.WTFURL_SummaryProvider(self._sbFrame.FindVariable('aURL'), {})
+        self.assertEqual(variable, '{ https://www.example.com/ }')
+
     # MARK: WTFCompactPointerTuple test cases
 
     def serial_test_WTFCompactPointerTuple_SummaryProvider_empty(self):

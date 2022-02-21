@@ -23,6 +23,8 @@ using namespace rx::mtl_shader;
 
 #define TEXEL_LOAD(index) float4(sR[index], sG[index], sB[index], sA[index])
 
+#define TO_LINEAR(texel) (options.sRGB ? sRGBtoLinear(texel) : texel)
+
 #define OUT_OF_BOUND_CHECK(edgeValue, targetValue, condition) \
     (condition) ? (edgeValue) : (targetValue)
 
@@ -30,6 +32,7 @@ struct GenMipParams
 {
     uint srcLevel;
     uint numMipLevelsToGen;
+    bool sRGB;
 };
 
 // NOTE(hqle): For numMipLevelsToGen > 1, this function assumes the texture is power of two. If it
@@ -80,6 +83,10 @@ kernel void generate3DMipmaps(uint lIndex [[thread_index_in_threadgroup]],
     // ---- Second mip level --------
 
     // Write to shared memory
+    if (options.sRGB)
+    {
+        texel1 = linearToSRGB(texel1);
+    }
     TEXEL_STORE(lIndex, texel1);
 
     threadgroup_barrier(mem_flags::mem_threadgroup);
@@ -112,7 +119,7 @@ kernel void generate3DMipmaps(uint lIndex [[thread_index_in_threadgroup]],
 
         texel1 = (texel1 + texel2 + texel3 + texel4 + texel5 + texel6 + texel7 + texel8) / 8.0;
 
-        dstMip2.write(texel1, gIndices >> 1);
+        dstMip2.write(TO_LINEAR(texel1), gIndices >> 1);
 
         // Write to shared memory
         TEXEL_STORE(lIndex, texel1);
@@ -158,7 +165,7 @@ kernel void generate3DMipmaps(uint lIndex [[thread_index_in_threadgroup]],
 
         texel1 = (texel1 + texel2 + texel3 + texel4 + texel5 + texel6 + texel7 + texel8) / 8.0;
 
-        dstMip3.write(texel1, gIndices >> 2);
+        dstMip3.write(TO_LINEAR(texel1), gIndices >> 2);
 
         // Write to shared memory
         TEXEL_STORE(lIndex, texel1);
@@ -204,7 +211,7 @@ kernel void generate3DMipmaps(uint lIndex [[thread_index_in_threadgroup]],
 
         texel1 = (texel1 + texel2 + texel3 + texel4 + texel5 + texel6 + texel7 + texel8) / 8.0;
 
-        dstMip4.write(texel1, gIndices >> 3);
+        dstMip4.write(TO_LINEAR(texel1), gIndices >> 3);
     }
 }
 
@@ -240,7 +247,7 @@ kernel void generate2DMipmaps(uint lIndex [[thread_index_in_threadgroup]],
         texel1           = srcTexture.sample(textureSampler, texCoords, level(options.srcLevel));
 
         // Write to texture
-        dstMip1.write(texel1, gIndices);
+        dstMip1.write(TO_LINEAR(texel1), gIndices);
     }
     else
     {
@@ -276,7 +283,7 @@ kernel void generate2DMipmaps(uint lIndex [[thread_index_in_threadgroup]],
 
         texel1 = (texel1 + texel2 + texel3 + texel4) / 4.0;
 
-        dstMip2.write(texel1, gIndices >> 1);
+        dstMip2.write(TO_LINEAR(texel1), gIndices >> 1);
 
         // Write to shared memory
         TEXEL_STORE(lIndex, texel1);
@@ -308,7 +315,7 @@ kernel void generate2DMipmaps(uint lIndex [[thread_index_in_threadgroup]],
 
         texel1 = (texel1 + texel2 + texel3 + texel4) / 4.0;
 
-        dstMip3.write(texel1, gIndices >> 2);
+        dstMip3.write(TO_LINEAR(texel1), gIndices >> 2);
 
         // Write to shared memory
         TEXEL_STORE(lIndex, texel1);
@@ -340,7 +347,7 @@ kernel void generate2DMipmaps(uint lIndex [[thread_index_in_threadgroup]],
 
         texel1 = (texel1 + texel2 + texel3 + texel4) / 4.0;
 
-        dstMip4.write(texel1, gIndices >> 3);
+        dstMip4.write(TO_LINEAR(texel1), gIndices >> 3);
     }
 }
 
@@ -386,7 +393,7 @@ static __attribute__((always_inline)) void generateCubeOr2DArray2ndAndMoreMipmap
 
         texel1 = (texel1 + texel2 + texel3 + texel4) / 4.0;
 
-        dstMip2.write(texel1, gIndices.xy >> 1, gIndices.z);
+        dstMip2.write(TO_LINEAR(texel1), gIndices.xy >> 1, gIndices.z);
 
         // Write to shared memory
         TEXEL_STORE(lIndex, texel1);
@@ -418,7 +425,7 @@ static __attribute__((always_inline)) void generateCubeOr2DArray2ndAndMoreMipmap
 
         texel1 = (texel1 + texel2 + texel3 + texel4) / 4.0;
 
-        dstMip3.write(texel1, gIndices.xy >> 2, gIndices.z);
+        dstMip3.write(TO_LINEAR(texel1), gIndices.xy >> 2, gIndices.z);
 
         // Write to shared memory
         TEXEL_STORE(lIndex, texel1);
@@ -450,7 +457,7 @@ static __attribute__((always_inline)) void generateCubeOr2DArray2ndAndMoreMipmap
 
         texel1 = (texel1 + texel2 + texel3 + texel4) / 4.0;
 
-        dstMip4.write(texel1, gIndices.xy >> 3, gIndices.z);
+        dstMip4.write(TO_LINEAR(texel1), gIndices.xy >> 3, gIndices.z);
     }
 }
 
@@ -479,7 +486,7 @@ kernel void generateCubeMipmaps(uint lIndex [[thread_index_in_threadgroup]],
                                       level(options.srcLevel));
 
         // Write to texture
-        dstMip1.write(mip1Texel, gIndices.xy, gIndices.z);
+        dstMip1.write(TO_LINEAR(mip1Texel), gIndices.xy, gIndices.z);
     }
     else
     {
@@ -527,7 +534,7 @@ kernel void generate2DArrayMipmaps(uint lIndex [[thread_index_in_threadgroup]],
             srcTexture.sample(textureSampler, texCoords, gIndices.z, level(options.srcLevel));
 
         // Write to texture
-        dstMip1.write(mip1Texel, gIndices.xy, gIndices.z);
+        dstMip1.write(TO_LINEAR(mip1Texel), gIndices.xy, gIndices.z);
     }
     else
     {

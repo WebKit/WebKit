@@ -45,6 +45,10 @@
   cmd: runWebAssembly unless parseRunCommands
 - path: wasm/self-test/
   cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/v8/
+  cmd: runWebAssemblySuite(:no_module, "mjsunit.js") unless parseRunCommands
+- path: wasm/branch-hints
+  cmd: runWebAssemblySuite("--useWebAssemblyBranchHints=true")
 
 - path: wasm/references-spec-tests/elem.wast.js
   cmd: runWebAssemblyReferenceSpecTest :normal
@@ -134,6 +138,13 @@
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/threads-spec-tests/wait-large.wast.js
   cmd: runWebAssemblySpecTest :normal
+
+- path: wasm/function-references-spec-tests/call_ref.wast.js
+  cmd: runWebAssemblyFunctionReferenceSpecTest :normal
+- path: wasm/function-references-spec-tests/ref_null.wast.js
+  cmd: runWebAssemblyFunctionReferenceSpecTest :normal
+- path: wasm/function-references-spec-tests/call-null-ref.wast.js
+  cmd: runWebAssemblyFunctionReferenceSpecTest :normal
 
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal

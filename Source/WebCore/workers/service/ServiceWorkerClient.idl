@@ -26,7 +26,8 @@
 [
     Conditional=SERVICE_WORKER,
     CustomToJSObject,
-    EnabledAtRuntime=ServiceWorker,
+    EnabledAtRuntime=ServiceWorkerEnabled,
+    ExportMacro=WEBCORE_EXPORT,
     Exposed=ServiceWorker,
     InterfaceName=Client,
 ] interface ServiceWorkerClient {
@@ -35,8 +36,8 @@
     readonly attribute ServiceWorkerClientType type;
     readonly attribute DOMString id;
 
-    [CallWith=GlobalObject] undefined postMessage(any message, sequence<object> transfer);
-    [CallWith=GlobalObject] undefined postMessage(any message, optional StructuredSerializeOptions options);
+    [CallWith=CurrentGlobalObject] undefined postMessage(any message, sequence<object> transfer);
+    [CallWith=CurrentGlobalObject] undefined postMessage(any message, optional StructuredSerializeOptions options);
 };
 
 enum FrameType {

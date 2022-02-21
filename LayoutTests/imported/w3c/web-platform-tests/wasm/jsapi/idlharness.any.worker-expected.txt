@@ -60,7 +60,7 @@ PASS Table interface: existence and properties of interface prototype object's "
 PASS Table interface: existence and properties of interface prototype object's @@unscopables property
 PASS Table interface: operation grow(unsigned long, optional any)
 PASS Table interface: operation get(unsigned long)
-FAIL Table interface: operation set(unsigned long, optional any) assert_equals: property has wrong .length expected 1 but got 2
+PASS Table interface: operation set(unsigned long, optional any)
 PASS Table interface: attribute length
 PASS Global interface: existence and properties of interface object
 PASS Global interface object length

@@ -26,6 +26,7 @@
 // FIXME: This is specified as Exposed=(Window,Worker)
 [
     Conditional=WEBGL,
+    EnabledBySetting=WebGLEnabled,
     GenerateIsReachable=Impl,
     Exposed=Window
 ] interface WebGLBuffer {

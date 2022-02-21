@@ -37,6 +37,7 @@ class String { };
 
 template<typename, typename> class RefPtr { };
 template<typename> struct DumbPtrTraits { };
+template<typename> class Optional { };
 
 namespace JSONImpl {
 class Array { };
@@ -57,9 +58,13 @@ void ObjectBase::getObject(String const&, RefPtr<Object, DumbPtrTraits<Object>>&
 namespace Inspector {
 
 class BackendDispatcher {
+    enum CommonErrorCode { NotUsed };
+
     JS_EXPORT_PRIVATE void sendResponse(long, WTF::RefPtr<WTF::JSONImpl::Object, WTF::DumbPtrTraits<WTF::JSONImpl::Object>>&&, bool);
+    JS_EXPORT_PRIVATE void reportProtocolError(WTF::Optional<long>, CommonErrorCode, const WTF::String&);
 };
 void BackendDispatcher::sendResponse(long, WTF::RefPtr<WTF::JSONImpl::Object, WTF::DumbPtrTraits<WTF::JSONImpl::Object>>&&, bool) { }
+void BackendDispatcher::reportProtocolError(WTF::Optional<long>, CommonErrorCode, const WTF::String&) { }
 
 } // namespace Inspector
 

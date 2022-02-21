@@ -6,6 +6,7 @@
     <script src="/js-test-resources/testharness.js"></script>
     <script src="/js-test-resources/testharnessreport.js"></script>
     <script>
+        setup({ single_test: true });
         window.result = false;
         function scriptError() {
             assert_equals(result, false, "Value should not be set");

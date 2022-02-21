@@ -123,7 +123,8 @@ TEST(WTF, Hasher_floatingPoint)
 {
     EXPECT_EQ(zero64BitHash, computeHash(0.0));
     EXPECT_EQ(1264532604U, computeHash(-0.0)); // Note, not same as hash of 0.0.
-    EXPECT_EQ(one64BitHash, computeHash(std::numeric_limits<double>::denorm_min()));
+    if (std::numeric_limits<double>::has_denorm == std::denorm_present)
+        EXPECT_EQ(one64BitHash, computeHash(std::numeric_limits<double>::denorm_min()));
 
     EXPECT_EQ(2278399980U, computeHash(1.0));
     EXPECT_EQ(3870689297U, computeHash(-1.0));
@@ -140,7 +141,8 @@ TEST(WTF, Hasher_floatingPoint)
 
     EXPECT_EQ(zero32BitHash, computeHash(0.0f));
     EXPECT_EQ(2425683428U, computeHash(-0.0f)); // Note, not same as hash of 0.0f.
-    EXPECT_EQ(one32BitHash, computeHash(std::numeric_limits<float>::denorm_min()));
+    if (std::numeric_limits<float>::has_denorm == std::denorm_present)
+        EXPECT_EQ(one32BitHash, computeHash(std::numeric_limits<float>::denorm_min()));
 
     EXPECT_EQ(1081575966U, computeHash(1.0f));
     EXPECT_EQ(3262093188U, computeHash(-1.0f));
@@ -187,6 +189,17 @@ TEST(WTF, Hasher_multiple)
     EXPECT_EQ(1652352321U, computeHash(std::make_pair(std::make_pair(1, 2), std::make_pair(3, 4))));
 }
 
+TEST(WTF, Hasher_pointer)
+{
+    char* nullPtr = nullptr;
+    char* onePtr = nullPtr + 1;
+    char* ffffffPtr = nullPtr + 0xffffff;
+
+    EXPECT_EQ(computeHash(static_cast<uintptr_t>(0)), computeHash(nullPtr));
+    EXPECT_EQ(computeHash(static_cast<uintptr_t>(0x1)), computeHash(onePtr));
+    EXPECT_EQ(computeHash(static_cast<uintptr_t>(0xffffff)), computeHash(ffffffPtr));
+}
+
 struct HasherAddCustom1 { };
 
 void add(Hasher& hasher, const HasherAddCustom1&)
@@ -198,7 +211,7 @@ struct HasherAddCustom2 { };
 
 void add(Hasher& hasher, const HasherAddCustom2&)
 {
-    add(hasher, { 1, 2, 3, 4 });
+    add(hasher, std::initializer_list<int> { 1, 2, 3, 4 });
 }
 
 TEST(WTF, Hasher_custom)

@@ -1,0 +1,3 @@
+
+PASS :focus should be applied to the host when the focus is moved by <tab>
+

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Zoltan Herczeg
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +28,10 @@
 #pragma once
 
 #include "Color.h"
-#include "Filter.h"
+#include "DistantLightSource.h"
 #include "FilterEffect.h"
-#include "LightSource.h"
-#include <JavaScriptCore/Uint8ClampedArray.h>
-
-// Common base class for FEDiffuseLighting and FESpecularLighting
+#include "PointLightSource.h"
+#include "SpotLightSource.h"
 
 namespace WebCore {
 
@@ -40,13 +39,15 @@ struct FELightingPaintingDataForNeon;
 
 class FELighting : public FilterEffect {
 public:
-    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    const Color& lightingColor() const { return m_lightingColor; }
+    bool setLightingColor(const Color&);
 
     float surfaceScale() const { return m_surfaceScale; }
     bool setSurfaceScale(float);
 
-    const Color& lightingColor() const { return m_lightingColor; }
-    bool setLightingColor(const Color&);
+    float diffuseConstant() const { return m_diffuseConstant; }
+    float specularConstant() const { return m_specularConstant; }
+    float specularExponent() const { return m_specularExponent; }
 
     float kernelUnitLengthX() const { return m_kernelUnitLengthX; }
     bool setKernelUnitLengthX(float);
@@ -56,104 +57,20 @@ public:
 
     const LightSource& lightSource() const { return m_lightSource.get(); }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder, class ClassName> static std::optional<Ref<ClassName>> decode(Decoder&);
+
 protected:
-    static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
+    FELighting(Type, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
 
-    enum LightingType {
-        DiffuseLighting,
-        SpecularLighting
-    };
-    
-    struct AlphaWindow {
-        uint8_t alpha[3][3] { };
-        
-        // The implementations are lined up to make comparing indices easier.
-        uint8_t topLeft() const             { return alpha[0][0]; }
-        uint8_t left() const                { return alpha[1][0]; }
-        uint8_t bottomLeft() const          { return alpha[2][0]; }
+    FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
-        uint8_t top() const                 { return alpha[0][1]; }
-        uint8_t center() const              { return alpha[1][1]; }
-        uint8_t bottom() const              { return alpha[2][1]; }
-
-        void setTop(uint8_t value)          { alpha[0][1] = value; }
-        void setCenter(uint8_t value)       { alpha[1][1] = value; }
-        void setBottom(uint8_t value)       { alpha[2][1] = value; }
-
-        void setTopRight(uint8_t value)     { alpha[0][2] = value; }
-        void setRight(uint8_t value)        { alpha[1][2] = value; }
-        void setBottomRight(uint8_t value)  { alpha[2][2] = value; }
-
-        static void shiftRow(uint8_t alpha[3])
-        {
-            alpha[0] = alpha[1];
-            alpha[1] = alpha[2];
-        }
-        
-        void shift()
-        {
-            shiftRow(alpha[0]);
-            shiftRow(alpha[1]);
-            shiftRow(alpha[2]);
-        }
-    };
-
-    struct LightingData {
-        // This structure contains only read-only (SMP safe) data
-        Uint8ClampedArray* pixels;
-        float surfaceScale;
-        int widthMultipliedByPixelSize;
-        int widthDecreasedByOne;
-        int heightDecreasedByOne;
-
-        inline IntSize topLeftNormal(int offset) const;
-        inline IntSize topRowNormal(int offset) const;
-        inline IntSize topRightNormal(int offset) const;
-        inline IntSize leftColumnNormal(int offset) const;
-        inline IntSize interiorNormal(int offset, AlphaWindow&) const;
-        inline IntSize rightColumnNormal(int offset) const;
-        inline IntSize bottomLeftNormal(int offset) const;
-        inline IntSize bottomRowNormal(int offset) const;
-        inline IntSize bottomRightNormal(int offset) const;
-    };
-
-    template<typename Type>
-    friend class ParallelJobs;
-
-    struct PlatformApplyGenericParameters {
-        FELighting* filter;
-        LightingData data;
-        LightSource::PaintingData paintingData;
-        int yStart;
-        int yEnd;
-    };
-
-    static void platformApplyGenericWorker(PlatformApplyGenericParameters*);
-    static void platformApplyNeonWorker(FELightingPaintingDataForNeon*);
-
-    FELighting(Filter&, LightingType, const Color&, float, float, float, float, float, float, Ref<LightSource>&&, Type);
-
-    const char* filterName() const final { return "FELighting"; }
-
-    bool drawLighting(Uint8ClampedArray&, int, int);
-
-    void setPixel(int offset, const LightingData&, const LightSource::PaintingData&, int x, int y, float factorX, float factorY, IntSize normalVector);
-    void setPixelInternal(int offset, const LightingData&, const LightSource::PaintingData&, int x, int y, float factorX, float factorY, IntSize normalVector, float alpha);
-
-    void platformApplySoftware() override;
-
-    void platformApply(const LightingData&, const LightSource::PaintingData&);
-
-    void platformApplyGenericPaint(const LightingData&, const LightSource::PaintingData&, int startX, int startY);
-    void platformApplyGeneric(const LightingData&, const LightSource::PaintingData&);
+    std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 
 #if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_COMPATIBLE)
     static int getPowerCoefficients(float exponent);
     inline void platformApplyNeon(const LightingData&, const LightSource::PaintingData&);
 #endif
-
-    LightingType m_lightingType;
-    Ref<LightSource> m_lightSource;
 
     Color m_lightingColor;
     float m_surfaceScale;
@@ -162,7 +79,94 @@ protected:
     float m_specularExponent;
     float m_kernelUnitLengthX;
     float m_kernelUnitLengthY;
+    Ref<LightSource> m_lightSource;
 };
 
-} // namespace WebCore
+template<class Encoder>
+void FELighting::encode(Encoder& encoder) const
+{
+    encoder << m_lightingColor;
+    encoder << m_surfaceScale;
+    encoder << m_diffuseConstant;
+    encoder << m_specularConstant;
+    encoder << m_specularExponent;
+    encoder << m_kernelUnitLengthX;
+    encoder << m_kernelUnitLengthY;
+    
+    encoder << m_lightSource->type();
+    switch (m_lightSource->type()) {
+    case LS_DISTANT:
+        downcast<DistantLightSource>(m_lightSource.get()).encode(encoder);
+        break;
+    case LS_POINT:
+        downcast<PointLightSource>(m_lightSource.get()).encode(encoder);
+        break;
+    case LS_SPOT:
+        downcast<SpotLightSource>(m_lightSource.get()).encode(encoder);
+        break;
+    }
+}
 
+template<class Decoder, class ClassName>
+std::optional<Ref<ClassName>> FELighting::decode(Decoder& decoder)
+{
+    std::optional<Color> lightingColor;
+    decoder >> lightingColor;
+    if (!lightingColor)
+        return std::nullopt;
+
+    std::optional<float> surfaceScale;
+    decoder >> surfaceScale;
+    if (!surfaceScale)
+        return std::nullopt;
+
+    std::optional<float> diffuseConstant;
+    decoder >> diffuseConstant;
+    if (!diffuseConstant)
+        return std::nullopt;
+
+    std::optional<float> specularConstant;
+    decoder >> specularConstant;
+    if (!specularConstant)
+        return std::nullopt;
+
+    std::optional<float> specularExponent;
+    decoder >> specularExponent;
+    if (!specularExponent)
+        return std::nullopt;
+
+    std::optional<float> kernelUnitLengthX;
+    decoder >> kernelUnitLengthX;
+    if (!kernelUnitLengthX)
+        return std::nullopt;
+
+    std::optional<float> kernelUnitLengthY;
+    decoder >> kernelUnitLengthY;
+    if (!kernelUnitLengthY)
+        return std::nullopt;
+
+    std::optional<LightType> lightSourceType;
+    decoder >> lightSourceType;
+    if (!lightSourceType)
+        return std::nullopt;
+
+    std::optional<Ref<LightSource>> lightSource;
+    switch (*lightSourceType) {
+    case LS_DISTANT:
+        lightSource = DistantLightSource::decode(decoder);
+        break;
+    case LS_POINT:
+        lightSource = PointLightSource::decode(decoder);
+        break;
+    case LS_SPOT:
+        lightSource = SpotLightSource::decode(decoder);
+        break;
+    }
+
+    if (!lightSource)
+        return std::nullopt;
+
+    return ClassName::create(*lightingColor, *surfaceScale, *diffuseConstant, *specularConstant, *specularExponent, *kernelUnitLengthX, *kernelUnitLengthY, WTFMove(*lightSource));
+}
+
+} // namespace WebCore

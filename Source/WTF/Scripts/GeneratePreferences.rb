@@ -106,8 +106,14 @@ class Preference
     @name = name
     @opts = opts
     @type = opts["type"]
-    @humanReadableName = '"' + (opts["humanReadableName"] || "") + '"'
-    @humanReadableDescription = '"' + (opts["humanReadableDescription"] || "") + '"'
+    @humanReadableName = (opts["humanReadableName"] || "")
+    if not humanReadableName.start_with? "WebKitAdditions"
+        @humanReadableName = '"' + humanReadableName + '"'
+    end
+    @humanReadableDescription = (opts["humanReadableDescription"] || "")
+    if not humanReadableDescription.start_with? "WebKitAdditions"
+        @humanReadableDescription = '"' + humanReadableDescription + '"'
+    end
     @getter = opts["getter"]
     @webcoreBinding = opts["webcoreBinding"]
     @webcoreName = opts["webcoreName"]
@@ -226,7 +232,7 @@ class Preferences
     resultFile = File.join(outputDirectory, File.basename(templateFile, ".erb"))
     tempResultFile = resultFile + ".tmp"
 
-    output = ERB.new(File.read(templateFile), 0, "-").result(binding)
+    output = ERB.new(File.read(templateFile), trim_mode:"-").result(binding)
     File.open(tempResultFile, "w+") do |f|
       f.write(output)
     end

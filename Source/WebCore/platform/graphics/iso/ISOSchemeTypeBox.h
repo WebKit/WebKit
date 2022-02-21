@@ -39,7 +39,7 @@ public:
 private:
     bool parse(JSC::DataView&, unsigned& offset) override;
 
-    FourCC m_schemeType { uint32_t { 0 } };
+    FourCC m_schemeType;
     uint32_t m_schemeVersion { 0 };
 };
 

@@ -53,7 +53,7 @@ JSModuleEnvironment* JSModuleEnvironment::create(
     JSModuleEnvironment* result =
         new (
             NotNull,
-            allocateCell<JSModuleEnvironment>(vm.heap, JSModuleEnvironment::allocationSize(symbolTable)))
+            allocateCell<JSModuleEnvironment>(vm, JSModuleEnvironment::allocationSize(symbolTable)))
         JSModuleEnvironment(vm, structure, currentScope, symbolTable);
     result->finishCreation(vm, initialValue, moduleRecord);
     return result;

@@ -76,7 +76,7 @@ void SocketStreamHandle::close()
 
 void SocketStreamHandle::disconnect()
 {
-    auto protect = makeRef(static_cast<SocketStreamHandle&>(*this)); // platformClose calls the client, which may make the handle get deallocated immediately.
+    Ref protect = static_cast<SocketStreamHandle&>(*this); // platformClose calls the client, which may make the handle get deallocated immediately.
 
     platformClose();
     m_state = Closed;

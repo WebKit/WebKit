@@ -33,6 +33,7 @@
 #include "SubmitInputType.h"
 
 #include "DOMFormData.h"
+#include "Document.h"
 #include "Event.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
@@ -46,7 +47,7 @@ const AtomString& SubmitInputType::formControlType() const
     return InputTypeNames::submit();
 }
 
-bool SubmitInputType::appendFormData(DOMFormData& formData, bool) const
+bool SubmitInputType::appendFormData(DOMFormData& formData) const
 {
     ASSERT(element());
     if (!element()->isActivatedSubmit())
@@ -74,7 +75,7 @@ void SubmitInputType::handleDOMActivateEvent(Event& event)
     protectedElement->document().updateLayoutIgnorePendingStylesheets();
 
     protectedElement->setActivatedSubmit(true);
-    if (auto currentForm = makeRefPtr(protectedElement->form()))
+    if (RefPtr currentForm = protectedElement->form())
         currentForm->submitIfPossible(&event, element()); // Event handlers can run.
     protectedElement->setActivatedSubmit(false);
     event.setDefaultHandled();

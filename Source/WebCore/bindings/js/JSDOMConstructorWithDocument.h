@@ -36,8 +36,8 @@ public:
     }
 
 protected:
-    JSDOMConstructorWithDocument(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
-        : JSDOMConstructorBase(structure, globalObject)
+    JSDOMConstructorWithDocument(JSC::VM& vm, JSC::Structure* structure, JSC::NativeFunction functionForConstruct)
+        : Base(vm, structure, functionForConstruct)
     {
     }
 

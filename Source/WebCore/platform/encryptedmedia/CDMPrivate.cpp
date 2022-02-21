@@ -32,7 +32,6 @@
 #include "CDMMediaCapability.h"
 #include "CDMRequirement.h"
 #include "CDMRestrictions.h"
-#include "InitDataRegistry.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "ParsedContentType.h"
@@ -75,7 +74,7 @@ void CDMPrivate::doSupportedConfigurationStep(CDMKeySystemConfiguration&& candid
         return;
     }
 
-    auto consentCallback = [weakThis = makeWeakPtr(*this), callback = WTFMove(callback), access] (ConsentStatus status, CDMKeySystemConfiguration&& configuration, CDMRestrictions&& restrictions) mutable {
+    auto consentCallback = [weakThis = WeakPtr { *this }, callback = WTFMove(callback), access] (ConsentStatus status, CDMKeySystemConfiguration&& configuration, CDMRestrictions&& restrictions) mutable {
         if (!weakThis) {
             callback(std::nullopt);
             return;
@@ -514,11 +513,6 @@ void CDMPrivate::getConsentStatus(CDMKeySystemConfiguration&& accumulatedConfigu
 
     // 6. Return Allowed.
     callback(ConsentStatus::Allowed, WTFMove(accumulatedConfiguration), WTFMove(restrictions));
-}
-
-RefPtr<SharedBuffer> CDMPrivate::sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData) const
-{
-    return InitDataRegistry::shared().sanitizeInitData(initDataType, initData);
 }
 
 

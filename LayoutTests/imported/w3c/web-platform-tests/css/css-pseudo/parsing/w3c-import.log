@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/highlight-pseudos.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/marker-supported-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/parsing/tree-abiding-pseudo-elements.html

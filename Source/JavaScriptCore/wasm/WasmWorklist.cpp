@@ -217,9 +217,9 @@ Worklist::Worklist()
     , m_planEnqueued(AutomaticThreadCondition::create())
 {
     unsigned numberOfCompilationThreads = Options::useConcurrentJIT() ? kernTCSMAwareNumberOfProcessorCores() : 1;
-    m_threads.reserveCapacity(numberOfCompilationThreads);
+    m_threads.reserveInitialCapacity(numberOfCompilationThreads);
     Locker locker { *m_lock };
-    for (unsigned i = 0; i < numberOfCompilationThreads; i++)
+    for (unsigned i = 0; i < numberOfCompilationThreads; ++i)
         m_threads.uncheckedAppend(makeUnique<Worklist::Thread>(locker, *this));
 }
 

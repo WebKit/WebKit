@@ -177,7 +177,7 @@ void NetworkProcess::platformTerminate()
 void NetworkProcess::setNetworkProxySettings(PAL::SessionID sessionID, SoupNetworkProxySettings&& settings)
 {
     if (auto* session = networkSession(sessionID))
-        static_cast<NetworkSessionSoup&>(*session).setProxySettings(WTFMove(settings));
+        static_cast<NetworkSessionSoup&>(*session).setProxySettings(settings);
 }
 
 void NetworkProcess::setPersistentCredentialStorageEnabled(PAL::SessionID sessionID, bool enabled)

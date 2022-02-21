@@ -28,9 +28,7 @@
 typedef double DOMHighResTimeStamp;
 
 [
-    Conditional=INTERSECTION_OBSERVER,
-    ImplementationLacksVTable,
-    EnabledBySetting=IntersectionObserver,
+    EnabledBySetting=IntersectionObserverEnabled,
     JSCustomMarkFunction,
     Exposed=Window
 ] interface IntersectionObserverEntry {
@@ -45,9 +43,7 @@ typedef double DOMHighResTimeStamp;
     readonly attribute Element target;
 };
 
-[
-    Conditional=INTERSECTION_OBSERVER,
-] dictionary IntersectionObserverEntryInit {
+dictionary IntersectionObserverEntryInit {
     required DOMHighResTimeStamp time;
     required DOMRectInit? rootBounds;
     required DOMRectInit boundingClientRect;

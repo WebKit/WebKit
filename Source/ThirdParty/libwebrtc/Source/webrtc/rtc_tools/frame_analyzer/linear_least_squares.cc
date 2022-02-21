@@ -100,16 +100,16 @@ Matrix<T> FromVectorMatrix(const std::vector<std::vector<T>>& mat) {
   return result;
 }
 
-// Returns |matrix_to_invert|^-1 * |right_hand_matrix|. |matrix_to_invert| must
+// Returns `matrix_to_invert`^-1 * `right_hand_matrix`. `matrix_to_invert` must
 // have square size.
 Matrix<double> GaussianElimination(Matrix<double> matrix_to_invert,
                                    Matrix<double> right_hand_matrix) {
-  // |n| is the width/height of |matrix_to_invert|.
+  // `n` is the width/height of `matrix_to_invert`.
   const size_t n = matrix_to_invert.size();
-  // Make sure |matrix_to_invert| has square size.
+  // Make sure `matrix_to_invert` has square size.
   for (const std::valarray<double>& column : matrix_to_invert)
     RTC_CHECK_EQ(n, column.size());
-  // Make sure |right_hand_matrix| has correct size.
+  // Make sure `right_hand_matrix` has correct size.
   for (const std::valarray<double>& column : right_hand_matrix)
     RTC_CHECK_EQ(n, column.size());
 
@@ -119,10 +119,10 @@ Matrix<double> GaussianElimination(Matrix<double> matrix_to_invert,
   matrix_to_invert = Transpose(matrix_to_invert);
   right_hand_matrix = Transpose(right_hand_matrix);
 
-  // Loop over the diagonal of |matrix_to_invert| and perform column reduction.
+  // Loop over the diagonal of `matrix_to_invert` and perform column reduction.
   // Column reduction is a sequence of elementary column operations that is
-  // performed on both |matrix_to_invert| and |right_hand_matrix| until
-  // |matrix_to_invert| has been transformed to the identity matrix.
+  // performed on both `matrix_to_invert` and `right_hand_matrix` until
+  // `matrix_to_invert` has been transformed to the identity matrix.
   for (size_t diagonal_index = 0; diagonal_index < n; ++diagonal_index) {
     // Make sure the diagonal element has the highest absolute value by
     // swapping columns if necessary.
@@ -146,7 +146,7 @@ Matrix<double> GaussianElimination(Matrix<double> matrix_to_invert,
     matrix_to_invert[diagonal_index] /= diagonal_element;
     right_hand_matrix[diagonal_index] /= diagonal_element;
 
-    // Eliminate the other entries in row |diagonal_index| by making them zero.
+    // Eliminate the other entries in row `diagonal_index` by making them zero.
     for (size_t column = 0; column < n; ++column) {
       if (column == diagonal_index)
         continue;

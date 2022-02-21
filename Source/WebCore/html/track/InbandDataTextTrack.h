@@ -37,11 +37,11 @@ class DataCue;
 class InbandDataTextTrack final : public InbandTextTrack {
     WTF_MAKE_ISO_ALLOCATED(InbandDataTextTrack);
 public:
-    static Ref<InbandDataTextTrack> create(Document&, TextTrackClient&, InbandTextTrackPrivate&);
+    static Ref<InbandDataTextTrack> create(Document&, InbandTextTrackPrivate&);
     virtual ~InbandDataTextTrack();
 
 private:
-    InbandDataTextTrack(Document&, TextTrackClient&, InbandTextTrackPrivate&);
+    InbandDataTextTrack(Document&, InbandTextTrackPrivate&);
 
     void addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned) final;
 

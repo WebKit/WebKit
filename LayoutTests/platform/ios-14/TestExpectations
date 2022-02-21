@@ -11,9 +11,6 @@ fast/text/mending-heart.html [ Failure ]
 # rdar://80344138 ([ Monterey iOS15 wk2 ] imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Failure ])
 imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Pass ]
 
-# rdar://80333758 (REGRESSION: [ Monterey ] crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html is a constant timeout)
-crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html [ Pass ]
-
 # rdar://80397467 ([ iOS15 ] imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-hover.html (layout-test) is a constant timeout)
 imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-hover.html [ Pass ]
 
@@ -45,14 +42,8 @@ http/wpt/mediarecorder/pause-recording.html [ Pass ]
 # rdar://80383672 ([ iOS15 ] accessibility/misspelling-range.html is failing)
 accessibility/misspelling-range.html  [ Pass ]
 
-# rdar://80392559 ([ iOS15 ] fast/text/simple-line-layout-do-not-support-unicode-range.html is a constant failure)
-fast/text/simple-line-layout-do-not-support-unicode-range.html [ Pass ]
-
 # rdar://80392665 ([ iOS15 ] fast/text/simple-line-wordspacing.html is a constant failure)
 fast/text/simple-line-wordspacing.html [ Pass ]
-
-# rdar://80395949 ([ iOS15 ] http/tests/websocket/tests/hybi/too-long-payload.html is a constant timeout)
-http/tests/websocket/tests/hybi/too-long-payload.html [ Pass ]
 
 fast/events/touch/ios/long-press-on-link.html [ Pass ]
 
@@ -62,11 +53,36 @@ fast/text/international/system-language/navigator-language/navigator-language-ru
 # rdar://80386075 ([ iOS15 ] fast/css/ios/system-color-for-css-value.html)
 fast/css/ios/system-color-for-css-value.html [ Pass ]
 
-# rdar://77070325 (REGRESSION: [ iOS15 ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html is flaky failling)
-imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html [ Pass ]
-
 # Privacy Transparency tests are iOS15 only.
 http/tests/app-privacy-report/ [ Skip ]
+
+# display-p3 canvas and ImageData are iOS 15+.
+fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
+fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.https.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-Blob.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageBitmap.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageData.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-cloned.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-image.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-image.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-draw-high-bit-depth-images.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.shadow.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.strokeText.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.p3.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.srgb.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.p3.canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.with.putImageData.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.p3.canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.jpeg.p3.canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.with.putImageData.html [ Failure ]
+storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
 
 #webkit.org/b/229573
 imported/w3c/web-platform-tests/service-workers/service-worker/getregistrations.https.html [ Pass Failure ]
@@ -75,6 +91,14 @@ imported/w3c/web-platform-tests/service-workers/service-worker/http-to-https-red
 
 # rdar://79084756 ((r278618) media/modern-media-controls /overflow-support/chapters.html is timing out since introduction (226828))
 media/modern-media-controls/overflow-support/chapters.html [ Pass ]
+
+fast/events/ios/key-events-comprehensive/key-events-control-option.html [ Pass Timeout ]
+[ Debug ] fast/events/ios/key-events-comprehensive/key-events-control-shift.html [ Pass Timeout ]
+
+imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-nowrap-001.html [ Pass Timeout ]
+
+# These tests occasionally crash with debug assertions in iOS 14 simulator
+fast/events/ios/rotation [ Skip ]
 
 # These tests fail or are flaky in non-internal iOS 14 simulator
 fast/forms/ios/accessory-bar-navigation.html [ Pass Failure Timeout ]
@@ -87,20 +111,5 @@ fast/forms/ios/focus-long-textarea.html [ Pass Failure Timeout Crash ]
 fast/forms/ios/inputmode-none-with-hardware-keyboard.html [ Pass Failure ]
 fast/forms/ios/zoom-after-input-tap-wide-input.html [ Pass Failure Timeout Crash ]
 fast/forms/ios/zoom-after-input-tap.html [ Pass Failure Timeout Crash ]
-fast/events/ios/key-events-comprehensive/key-events-control-option.html [ Pass Timeout ]
-[ Debug ] fast/events/ios/key-events-comprehensive/key-events-control-shift.html [ Pass Timeout ]
-fast/events/ios/viewport-shrink-to-fit-allows-double-tap.html [ Pass Timeout ]
-[ Debug ] fast/selectors/is-backtracking.html [ Pass Timeout ]
-[ Debug ] fast/selectors/matches-backtracking.html [ Pass Timeout ]
-
-fast/forms/ios/dismiss-picker-using-keyboard.html [ Pass Timeout ]
-fast/forms/ios/drag-range-thumb.html [ Pass Timeout Crash Timeout ]
-fast/forms/ios/inputmode-change-update-keyboard.html [ Pass Timeout ]
-fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
 
 fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html [ Pass Failure ]
-
-imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-nowrap-001.html [ Pass Timeout ]
-
-# These tests occasionally crash with debug assertions in iOS 14 simulator
-fast/events/ios/rotation [ Skip ]

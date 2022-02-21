@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,12 +36,6 @@ class SVGFilterBuilder;
 class SVGFilterPrimitiveStandardAttributes : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGFilterPrimitiveStandardAttributes);
 public:
-    void setStandardAttributes(FilterEffect*) const;
-
-    virtual RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const = 0;
-    // Returns true, if the new value is different from the old one.
-    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFilterPrimitiveStandardAttributes, SVGElement>;
 
     const SVGLengthValue& x() const { return m_x->currentValue(); }
@@ -55,6 +49,11 @@ public:
     SVGAnimatedLength& widthAnimated() { return m_width; }
     SVGAnimatedLength& heightAnimated() { return m_height; }
     SVGAnimatedString& resultAnimated() { return m_result; }
+
+    // Returns true, if the new value is different from the old one.
+    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
+    virtual Vector<AtomString> filterEffectInputsNames() const { return { }; }
+    virtual RefPtr<FilterEffect> filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const = 0;
 
 protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&);

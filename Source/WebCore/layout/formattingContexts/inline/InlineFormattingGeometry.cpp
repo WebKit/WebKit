@@ -115,6 +115,25 @@ bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox
     return false;
 }
 
+InlineRect InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode writingMode)
+{
+    switch (writingMode) {
+    case WritingMode::TopToBottom:
+        return visualRect;
+    case WritingMode::LeftToRight:
+    case WritingMode::RightToLeft: {
+        // FIXME: While vertical-lr and vertical-rl modes do differ in the ordering direction of line boxes
+        // in a block container (see: https://drafts.csswg.org/css-writing-modes/#block-flow)
+        // we ignore it for now as RenderBlock takes care of it for us.
+        return InlineRect { visualRect.left(), visualRect.top(), visualRect.height(), visualRect.width() };
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return visualRect;
+}
+
 }
 }
 

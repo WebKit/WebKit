@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/common/CustomCorsResponse.py
 /LayoutTests/imported/w3c/web-platform-tests/common/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/common/PrefixedLocalStorage.js
 /LayoutTests/imported/w3c/web-platform-tests/common/PrefixedLocalStorage.js.headers
@@ -24,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/blank-with-cors.html
 /LayoutTests/imported/w3c/web-platform-tests/common/blank-with-cors.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/blank.html
+/LayoutTests/imported/w3c/web-platform-tests/common/custom-cors-response.js
 /LayoutTests/imported/w3c/web-platform-tests/common/domain-setter.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/common/dummy.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/common/dummy.xml

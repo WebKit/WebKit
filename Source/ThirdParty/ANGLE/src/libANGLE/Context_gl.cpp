@@ -35,11 +35,6 @@ void Context::compressedTexSubImage1D(GLenum target,
     UNIMPLEMENTED();
 }
 
-void Context::getCompressedTexImage(GLenum target, GLint level, void *img)
-{
-    UNIMPLEMENTED();
-}
-
 void Context::loadTransposeMatrixd(const GLdouble *m)
 {
     UNIMPLEMENTED();
@@ -2748,23 +2743,6 @@ void Context::invalidateTexSubImage(TextureID texture,
     UNIMPLEMENTED();
 }
 
-void Context::multiDrawArraysIndirect(GLenum mode,
-                                      const void *indirect,
-                                      GLsizei drawcount,
-                                      GLsizei stride)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::multiDrawElementsIndirect(GLenum mode,
-                                        GLenum type,
-                                        const void *indirect,
-                                        GLsizei drawcount,
-                                        GLsizei stride)
-{
-    UNIMPLEMENTED();
-}
-
 void Context::shaderStorageBlockBinding(ShaderProgramID program,
                                         GLuint storageBlockIndex,
                                         GLuint storageBlockBinding)
@@ -2931,11 +2909,6 @@ void Context::clearNamedFramebufferuiv(FramebufferID framebuffer,
                                        GLenum buffer,
                                        GLint drawbuffer,
                                        const GLuint *value)
-{
-    UNIMPLEMENTED();
-}
-
-void Context::clipControl(GLenum origin, GLenum depth)
 {
     UNIMPLEMENTED();
 }

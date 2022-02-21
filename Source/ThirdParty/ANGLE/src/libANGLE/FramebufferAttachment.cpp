@@ -129,7 +129,7 @@ void FramebufferAttachment::attach(const Context *context,
     mNumViews               = numViews;
     mBaseViewIndex          = baseViewIndex;
     mIsMultiview            = isMultiview;
-    mRenderToTextureSamples = samples;
+    mRenderToTextureSamples = type == GL_RENDERBUFFER ? kDefaultRenderToTextureSamples : samples;
     resource->onAttach(context, framebufferSerial);
 
     if (mResource != nullptr)
@@ -220,6 +220,29 @@ bool FramebufferAttachment::isMultiview() const
 GLint FramebufferAttachment::getBaseViewIndex() const
 {
     return mBaseViewIndex;
+}
+
+bool FramebufferAttachment::isRenderToTexture() const
+{
+    ASSERT(mRenderToTextureSamples == kDefaultRenderToTextureSamples || mType == GL_TEXTURE);
+
+    if (mType == GL_RENDERBUFFER)
+    {
+        return getRenderbuffer()->getMultisamplingMode() ==
+               MultisamplingMode::MultisampledRenderToTexture;
+    }
+    return mRenderToTextureSamples != kDefaultRenderToTextureSamples;
+}
+
+GLsizei FramebufferAttachment::getRenderToTextureSamples() const
+{
+    ASSERT(mRenderToTextureSamples == kDefaultRenderToTextureSamples || mType == GL_TEXTURE);
+
+    if (mType == GL_RENDERBUFFER)
+    {
+        return getRenderbuffer()->getState().getSamples();
+    }
+    return mRenderToTextureSamples;
 }
 
 Texture *FramebufferAttachment::getTexture() const

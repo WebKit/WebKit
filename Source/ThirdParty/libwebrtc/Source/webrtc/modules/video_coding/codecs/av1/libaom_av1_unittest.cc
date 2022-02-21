@@ -77,9 +77,7 @@ class TestAv1Decoder {
       ADD_FAILURE() << "Failed to create a decoder#" << decoder_id_;
       return;
     }
-    EXPECT_EQ(decoder_->InitDecode(/*codec_settings=*/nullptr,
-                                   /*number_of_cores=*/1),
-              WEBRTC_VIDEO_CODEC_OK);
+    EXPECT_TRUE(decoder_->Configure({}));
     EXPECT_EQ(decoder_->RegisterDecodeCompleteCallback(&callback_),
               WEBRTC_VIDEO_CODEC_OK);
   }

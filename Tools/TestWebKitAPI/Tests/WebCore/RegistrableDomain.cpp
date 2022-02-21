@@ -58,13 +58,19 @@ TEST(RegistrableDomain, MatchesURLs)
     URL webkitURL { URL(), "https://webkit.org" };
     URL webkitURLWithPath { URL(), "https://webkit.org/road/to/nowhere/" };
     URL webkitSubdomainURL { URL(), "https://sub.domain.webkit.org" };
+    URL webkitOtherSubdomainURL { URL(), "https://sub.other.webkit.org" };
+    URL webkitDuplicateSubdomainURL { URL(), "https://domain.domain.webkit.org" };
     URL webkitSubdomainURLWithPath { URL(), "https://sub.domain.webkit.org/road/to/nowhere/" };
     RegistrableDomain webkitDomain { webkitURL };
+    RegistrableDomain webkitSubdomain { webkitSubdomainURL };
 
     ASSERT_TRUE(webkitDomain.matches(webkitURL));
     ASSERT_TRUE(webkitDomain.matches(webkitURLWithPath));
     ASSERT_TRUE(webkitDomain.matches(webkitSubdomainURL));
+    ASSERT_TRUE(webkitDomain.matches(webkitDuplicateSubdomainURL));
     ASSERT_TRUE(webkitDomain.matches(webkitSubdomainURLWithPath));
+    ASSERT_TRUE(webkitSubdomain.matches(webkitOtherSubdomainURL));
+    ASSERT_TRUE(webkitSubdomain.matches(webkitDuplicateSubdomainURL));
 
     URL localhostURL { URL(), "http://localhost" };
     URL localhostURLWithPath { URL(), "http://localhost/road/to/nowhere/" };

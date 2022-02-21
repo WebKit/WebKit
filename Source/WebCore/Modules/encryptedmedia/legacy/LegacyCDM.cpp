@@ -61,7 +61,7 @@ static void platformRegisterFactories(Vector<LegacyCDMFactory>& factories)
 
 static Vector<LegacyCDMFactory>& installedCDMFactories()
 {
-    static auto cdms = makeNeverDestroyed<Vector<LegacyCDMFactory>>({ });
+    static NeverDestroyed<Vector<LegacyCDMFactory>> cdms;
     static std::once_flag registerDefaults;
     std::call_once(registerDefaults, [&] {
         platformRegisterFactories(cdms);

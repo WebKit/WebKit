@@ -85,7 +85,7 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
         if (!flipped)
             CGContextScaleCTM(cgContext, 1, -1);
 
-        graphicsContext.setFillColor(colorFromNSColor(textColor));
+        graphicsContext.setFillColor(colorFromCocoaColor(textColor));
         webCoreFont.drawText(graphicsContext, run, FloatPoint(point.x, flipped ? point.y : -point.y));
 
         if (!flipped)

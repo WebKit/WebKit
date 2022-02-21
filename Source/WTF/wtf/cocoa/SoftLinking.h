@@ -422,7 +422,14 @@ static void* lib##Library() \
     } \
     }
 
-#define SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(functionNamespace, framework, className, export, isOptional) \
+#define SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY(functionNamespace, className, availability) \
+    @class className; \
+    namespace functionNamespace { \
+    extern Class (*get##className##Class)(); \
+    className *alloc##className##Instance() availability; \
+    }
+
+#define SOFT_LINK_CLASS_FOR_SOURCE_INTERNAL(functionNamespace, framework, className, export, isOptional, availability) \
     @class className; \
     namespace functionNamespace { \
     static Class init##className(); \
@@ -446,10 +453,14 @@ static void* lib##Library() \
         }); \
         return class##className; \
     } \
+    availability \
     }
 
 #define SOFT_LINK_IS_OPTIONAL true
 #define SOFT_LINK_IS_NOT_OPTIONAL false
+
+#define SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(functionNamespace, framework, className, export, isOptional) \
+    SOFT_LINK_CLASS_FOR_SOURCE_INTERNAL(functionNamespace, framework, className, export, isOptional, )
 
 #define SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, className, export) \
     SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(functionNamespace, framework, className, export, SOFT_LINK_IS_NOT_OPTIONAL)
@@ -462,6 +473,16 @@ static void* lib##Library() \
 
 #define SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(functionNamespace, framework, className) \
     SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(functionNamespace, framework, className, , SOFT_LINK_IS_OPTIONAL)
+
+#define SOFT_LINK_CLASS_ALLOC_FUNCTION(className, availability) \
+    className *alloc##className##Instance() availability; \
+    className *alloc##className##Instance() availability \
+    { \
+        return [get##className##Class() alloc]; \
+    } \
+
+#define SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT_AND_AVAILABILITY(functionNamespace, framework, className, export, availability) \
+    SOFT_LINK_CLASS_FOR_SOURCE_INTERNAL(functionNamespace, framework, className, export, SOFT_LINK_IS_OPTIONAL, SOFT_LINK_CLASS_ALLOC_FUNCTION(className, availability))
 
 #define SOFT_LINK_CONSTANT_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
     namespace functionNamespace { \

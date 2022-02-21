@@ -80,7 +80,6 @@ webkit.org/b/140798 accessibility/math-multiscript-attributes.html [ Failure ]
 webkit.org/b/140798 accessibility/poorly-formed-aria-table.html [ Failure ]
 webkit.org/b/140798 accessibility/radio-button-group-members.html [ Failure ]
 webkit.org/b/140798 accessibility/radio-button-title-label.html [ Failure ]
-webkit.org/b/140798 accessibility/range-alter-by-percent.html [ Failure ]
 webkit.org/b/140798 accessibility/secure-textfield-title-ui.html [ Failure ]
 webkit.org/b/140798 accessibility/select-element-at-index.html [ Failure ]
 webkit.org/b/140798 accessibility/svg-bounds.html [ Failure ]
@@ -110,9 +109,7 @@ webkit.org/b/140798 [ Debug ] accessibility/aria-hidden-false-works-in-subtrees.
 webkit.org/b/140832 accessibility/aria-slider-value-change.html [ Failure ]
 webkit.org/b/140832 accessibility/aria-slider-value.html [ Failure ]
 webkit.org/b/140832 accessibility/progressbar.html [ Failure ]
-webkit.org/b/140832 accessibility/range-alter-by-step.html [ Failure ]
 webkit.org/b/140832 accessibility/aria-scrollbar-role.html [ Failure ]
-webkit.org/b/140832 accessibility/notification-listeners.html [ Failure ]
 webkit.org/b/140832 accessibility/spinbutton-value.html [ Failure ]
 webkit.org/b/140832 accessibility/svg-remote-element.html [ Failure ]
 webkit.org/b/140832 accessibility/textarea-line-for-index.html [ Failure ]
@@ -165,9 +162,6 @@ accessibility/scroll-to-make-visible-nested-2.html [ Skip ]
 accessibility/scroll-to-make-visible-nested.html [ Skip ]
 accessibility/scroll-to-make-visible-with-subfocus.html [ Skip ]
 
-# Apparently missing support for roleDescription on Windows.
-accessibility/aria-roledescription.html [ Failure ]
-
 webkit.org/b/140867 accessibility/aria-option-role.html [ Failure ]
 
 # Asserts because it does not have a popup menu:
@@ -209,7 +203,6 @@ accessibility/table-roles-hierarchy.html [ Failure ]
 accessibility/table-sections.html [ Failure ]
 accessibility/table-with-rules.html [ Failure ]
 accessibility/transformed-element.html [ Failure ]
-accessibility/visible-elements.html [ Failure ]
 
 webkit.org/b/146903 accessibility/aria-table-hierarchy.html [ Skip ]
 webkit.org/b/146903 accessibility/roles-table-and-cell.html [ Skip ]
@@ -229,7 +222,6 @@ accessibility/heading-crash-after-hidden.html [ Crash Failure ]
 accessibility/adjacent-continuations-cause-assertion-failure.html [ Failure ]
 accessibility/aria-busy.html [ Failure ]
 accessibility/attachment-element.html [ Failure ]
-accessibility/auto-fill-types.html [ Failure ]
 accessibility/checkbox-mixed-value.html [ Failure ]
 accessibility/div-within-anchors-causes-crash.html [ Failure ]
 accessibility/hidden-th-still-column-header.html [ Failure ]
@@ -265,8 +257,6 @@ accessibility/win/option-element-selection-and-focus-events.html [ Failure ]
 accessibility/win/select-element-role.html [ Failure ]
 accessibility/win/selection-and-focus.html [ Failure ]
 accessibility/win/text-role.html [ Failure ]
-
-accessibility/add-children-pseudo-element.html [ Failure ]
 
 webkit.org/b/181501 accessibility/table-header-calculation-for-header-rows.html [ Failure ]
 
@@ -323,6 +313,8 @@ http/tests/multipart/multipart-wait-before-boundary.html [ Timeout ]
 
 # Skip Service Workers in WK1
 http/tests/workers/service [ Skip ]
+http/wpt/push-api [ Skip ]
+imported/w3c/web-platform-tests/push-api [ Skip ]
 http/wpt/service-workers [ Skip ]
 
 fast/css/aspect-ratio-invalidate-if-disabled.html [ Failure ]
@@ -453,3 +445,19 @@ http/wpt/fetch/dnt-header-after-redirection.html [ Failure ]
 http/wpt/fetch/inspect-preflight.html [ Failure ]
 
 webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]
+
+# No BroadcastChannel support on Windows.
+fast/html/broadcast-channel-between-different-sessions.html [ Skip ]
+http/tests/messaging/broadcastchannel-partitioning.html [ Skip ]
+
+webkit.org/b/230141 [ Debug ] editing/pasteboard/paste-contents-with-side-effects.html [ Pass Crash ]
+
+accessibility/auto-fill-types.html [ Skip ] # Timeout
+accessibility/notification-listeners.html [ Skip ] # Timeout
+accessibility/range-alter-by-percent.html [ Skip ] # Timeout
+accessibility/range-alter-by-step.html [ Skip ] # Timeout
+
+accessibility/aria-roledescription.html [ Timeout ]
+accessibility/visible-elements.html [ Timeout ]
+
+editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ] # This test confuses DRT. See Bug 233463

@@ -122,9 +122,9 @@ TEST_F(SrtpFilterTest, TestGoodSetupMultipleCipherSuites) {
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
   offer.push_back(kTestCryptoParams1);
   offer[1].tag = 2;
-  offer[1].cipher_suite = CS_AES_CM_128_HMAC_SHA1_32;
+  offer[1].cipher_suite = kCsAesCm128HmacSha1_32;
   answer[0].tag = 2;
-  answer[0].cipher_suite = CS_AES_CM_128_HMAC_SHA1_32;
+  answer[0].cipher_suite = kCsAesCm128HmacSha1_32;
   EXPECT_TRUE(f1_.SetOffer(offer, CS_LOCAL));
   EXPECT_FALSE(f1_.IsActive());
   EXPECT_TRUE(f1_.SetAnswer(answer, CS_REMOTE));
@@ -224,7 +224,7 @@ TEST_F(SrtpFilterTest, TestMultipleAnswerCipherSuites) {
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
   answer.push_back(kTestCryptoParams2);
   answer[1].tag = 2;
-  answer[1].cipher_suite = CS_AES_CM_128_HMAC_SHA1_32;
+  answer[1].cipher_suite = kCsAesCm128HmacSha1_32;
   EXPECT_TRUE(f1_.SetOffer(MakeVector(kTestCryptoParams1), CS_LOCAL));
   EXPECT_FALSE(f1_.SetAnswer(answer, CS_REMOTE));
   EXPECT_FALSE(f1_.IsActive());
@@ -318,10 +318,9 @@ TEST_F(SrtpFilterTest, TestProtect_AES_CM_128_HMAC_SHA1_80) {
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
   offer.push_back(kTestCryptoParams1);
   offer[1].tag = 2;
-  offer[1].cipher_suite = CS_AES_CM_128_HMAC_SHA1_32;
+  offer[1].cipher_suite = kCsAesCm128HmacSha1_32;
   TestSetParams(offer, answer);
-  VerifyCryptoParamsMatch(CS_AES_CM_128_HMAC_SHA1_80,
-                          CS_AES_CM_128_HMAC_SHA1_80);
+  VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_80, kCsAesCm128HmacSha1_80);
 }
 
 // Test that we can encrypt/decrypt after negotiating AES_CM_128_HMAC_SHA1_32.
@@ -330,12 +329,11 @@ TEST_F(SrtpFilterTest, TestProtect_AES_CM_128_HMAC_SHA1_32) {
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
   offer.push_back(kTestCryptoParams1);
   offer[1].tag = 2;
-  offer[1].cipher_suite = CS_AES_CM_128_HMAC_SHA1_32;
+  offer[1].cipher_suite = kCsAesCm128HmacSha1_32;
   answer[0].tag = 2;
-  answer[0].cipher_suite = CS_AES_CM_128_HMAC_SHA1_32;
+  answer[0].cipher_suite = kCsAesCm128HmacSha1_32;
   TestSetParams(offer, answer);
-  VerifyCryptoParamsMatch(CS_AES_CM_128_HMAC_SHA1_32,
-                          CS_AES_CM_128_HMAC_SHA1_32);
+  VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_32, kCsAesCm128HmacSha1_32);
 }
 
 // Test that we can change encryption parameters.
@@ -344,14 +342,13 @@ TEST_F(SrtpFilterTest, TestChangeParameters) {
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
 
   TestSetParams(offer, answer);
-  VerifyCryptoParamsMatch(CS_AES_CM_128_HMAC_SHA1_80,
-                          CS_AES_CM_128_HMAC_SHA1_80);
+  VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_80, kCsAesCm128HmacSha1_80);
 
   // Change the key parameters and cipher_suite.
   offer[0].key_params = kTestKeyParams3;
-  offer[0].cipher_suite = CS_AES_CM_128_HMAC_SHA1_32;
+  offer[0].cipher_suite = kCsAesCm128HmacSha1_32;
   answer[0].key_params = kTestKeyParams4;
-  answer[0].cipher_suite = CS_AES_CM_128_HMAC_SHA1_32;
+  answer[0].cipher_suite = kCsAesCm128HmacSha1_32;
 
   EXPECT_TRUE(f1_.SetOffer(offer, CS_LOCAL));
   EXPECT_TRUE(f2_.SetOffer(offer, CS_REMOTE));
@@ -359,15 +356,13 @@ TEST_F(SrtpFilterTest, TestChangeParameters) {
   EXPECT_TRUE(f1_.IsActive());
 
   // Test that the old keys are valid until the negotiation is complete.
-  VerifyCryptoParamsMatch(CS_AES_CM_128_HMAC_SHA1_80,
-                          CS_AES_CM_128_HMAC_SHA1_80);
+  VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_80, kCsAesCm128HmacSha1_80);
 
   // Complete the negotiation and test that we can still understand each other.
   EXPECT_TRUE(f2_.SetAnswer(answer, CS_LOCAL));
   EXPECT_TRUE(f1_.SetAnswer(answer, CS_REMOTE));
 
-  VerifyCryptoParamsMatch(CS_AES_CM_128_HMAC_SHA1_32,
-                          CS_AES_CM_128_HMAC_SHA1_32);
+  VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_32, kCsAesCm128HmacSha1_32);
 }
 
 // Test that we can send and receive provisional answers with crypto enabled.
@@ -376,7 +371,7 @@ TEST_F(SrtpFilterTest, TestProvisionalAnswer) {
   std::vector<CryptoParams> offer(MakeVector(kTestCryptoParams1));
   offer.push_back(kTestCryptoParams1);
   offer[1].tag = 2;
-  offer[1].cipher_suite = CS_AES_CM_128_HMAC_SHA1_32;
+  offer[1].cipher_suite = kCsAesCm128HmacSha1_32;
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
 
   EXPECT_TRUE(f1_.SetOffer(offer, CS_LOCAL));
@@ -387,18 +382,16 @@ TEST_F(SrtpFilterTest, TestProvisionalAnswer) {
   EXPECT_TRUE(f1_.SetProvisionalAnswer(answer, CS_REMOTE));
   EXPECT_TRUE(f1_.IsActive());
   EXPECT_TRUE(f2_.IsActive());
-  VerifyCryptoParamsMatch(CS_AES_CM_128_HMAC_SHA1_80,
-                          CS_AES_CM_128_HMAC_SHA1_80);
+  VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_80, kCsAesCm128HmacSha1_80);
 
   answer[0].key_params = kTestKeyParams4;
   answer[0].tag = 2;
-  answer[0].cipher_suite = CS_AES_CM_128_HMAC_SHA1_32;
+  answer[0].cipher_suite = kCsAesCm128HmacSha1_32;
   EXPECT_TRUE(f2_.SetAnswer(answer, CS_LOCAL));
   EXPECT_TRUE(f1_.SetAnswer(answer, CS_REMOTE));
   EXPECT_TRUE(f1_.IsActive());
   EXPECT_TRUE(f2_.IsActive());
-  VerifyCryptoParamsMatch(CS_AES_CM_128_HMAC_SHA1_32,
-                          CS_AES_CM_128_HMAC_SHA1_32);
+  VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_32, kCsAesCm128HmacSha1_32);
 }
 
 // Test that a provisional answer doesn't need to contain a crypto.
@@ -420,8 +413,7 @@ TEST_F(SrtpFilterTest, TestProvisionalAnswerWithoutCrypto) {
   EXPECT_TRUE(f1_.SetAnswer(answer, CS_REMOTE));
   EXPECT_TRUE(f1_.IsActive());
   EXPECT_TRUE(f2_.IsActive());
-  VerifyCryptoParamsMatch(CS_AES_CM_128_HMAC_SHA1_80,
-                          CS_AES_CM_128_HMAC_SHA1_80);
+  VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_80, kCsAesCm128HmacSha1_80);
 }
 
 // Test that if we get a new local offer after a provisional answer
@@ -448,8 +440,7 @@ TEST_F(SrtpFilterTest, TestLocalOfferAfterProvisionalAnswerWithoutCrypto) {
   EXPECT_TRUE(f1_.SetAnswer(answer, CS_REMOTE));
   EXPECT_TRUE(f1_.IsActive());
   EXPECT_TRUE(f2_.IsActive());
-  VerifyCryptoParamsMatch(CS_AES_CM_128_HMAC_SHA1_80,
-                          CS_AES_CM_128_HMAC_SHA1_80);
+  VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_80, kCsAesCm128HmacSha1_80);
 }
 
 // Test that we can disable encryption.
@@ -458,8 +449,7 @@ TEST_F(SrtpFilterTest, TestDisableEncryption) {
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
 
   TestSetParams(offer, answer);
-  VerifyCryptoParamsMatch(CS_AES_CM_128_HMAC_SHA1_80,
-                          CS_AES_CM_128_HMAC_SHA1_80);
+  VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_80, kCsAesCm128HmacSha1_80);
 
   offer.clear();
   answer.clear();
@@ -469,8 +459,7 @@ TEST_F(SrtpFilterTest, TestDisableEncryption) {
   EXPECT_TRUE(f2_.IsActive());
 
   // Test that the old keys are valid until the negotiation is complete.
-  VerifyCryptoParamsMatch(CS_AES_CM_128_HMAC_SHA1_80,
-                          CS_AES_CM_128_HMAC_SHA1_80);
+  VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_80, kCsAesCm128HmacSha1_80);
 
   // Complete the negotiation.
   EXPECT_TRUE(f2_.SetAnswer(answer, CS_LOCAL));

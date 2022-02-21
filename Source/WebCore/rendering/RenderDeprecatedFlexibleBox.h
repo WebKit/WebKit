@@ -45,7 +45,6 @@ public:
     void layoutVerticalBox(bool relayoutChildren);
 
     bool isStretchingChildren() const { return m_stretchingChildren; }
-    void setIsStretchingChildren(bool isStretching) { m_stretchingChildren = isStretching; }
 
     bool avoidsFloats() const override { return true; }
     bool canDropAnonymousBlockChild() const override { return false; }

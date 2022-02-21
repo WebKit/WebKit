@@ -15,6 +15,11 @@
 #include <vector>
 #include "angle_gl.h"
 
+#if defined(ANGLE_ENABLE_VULKAN)
+// SPIR-V tools include for disassembly.
+#    include <spirv-tools/libspirv.hpp>
+#endif
+
 //
 // Return codes from main.
 //
@@ -43,6 +48,8 @@ static void FreeShaderSource(ShaderSource &source);
 
 static bool ParseGLSLOutputVersion(const std::string &, ShShaderOutput *outResult);
 static bool ParseIntValue(const std::string &, int emptyDefault, int *outValue);
+
+static void PrintSpirv(const sh::BinaryBlob &blob);
 
 //
 // Set up the per compile resources
@@ -81,6 +88,9 @@ int main(int argc, char *argv[])
     ShShaderSpec spec               = SH_GLES2_SPEC;
     ShShaderOutput output           = SH_ESSL_OUTPUT;
 
+#if defined(ANGLE_ENABLE_VULKAN)
+    sh::InitializeGlslang();
+#endif
     sh::Initialize();
 
     ShBuiltInResources resources;
@@ -102,9 +112,6 @@ int main(int argc, char *argv[])
                     break;
                 case 'u':
                     compileOptions |= SH_VARIABLES;
-                    break;
-                case 'p':
-                    resources.WEBGL_debug_shader_precision = 1;
                     break;
                 case 's':
                     if (argv[0][2] == '=')
@@ -183,7 +190,7 @@ int main(int argc, char *argv[])
                                 compileOptions |= SH_INITIALIZE_UNINITIALIZED_LOCALS;
                                 break;
                             case 'v':
-                                output = SH_GLSL_VULKAN_OUTPUT;
+                                output = SH_SPIRV_VULKAN_OUTPUT;
                                 compileOptions |= SH_INITIALIZE_UNINITIALIZED_LOCALS;
                                 break;
                             case 'h':
@@ -248,6 +255,7 @@ int main(int argc, char *argv[])
                           compileOptions |= SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER;
                           break;
                       case 'y': resources.EXT_YUV_target = 1; break;
+                      case 's': resources.OES_sample_variables = 1; break;
                       default: failCode = EFailUsage;
                     }
                         // clang-format on
@@ -331,8 +339,16 @@ int main(int argc, char *argv[])
                 if (compiled && (compileOptions & SH_OBJECT_CODE))
                 {
                     LogMsg("BEGIN", "COMPILER", numCompiles, "OBJ CODE");
-                    std::string code = sh::GetObjectCode(compiler);
-                    puts(code.c_str());
+                    if (output != SH_SPIRV_VULKAN_OUTPUT)
+                    {
+                        const std::string &code = sh::GetObjectCode(compiler);
+                        puts(code.c_str());
+                    }
+                    else
+                    {
+                        const sh::BinaryBlob &blob = sh::GetObjectBinaryBlob(compiler);
+                        PrintSpirv(blob);
+                    }
                     LogMsg("END", "COMPILER", numCompiles, "OBJ CODE");
                     printf("\n\n");
                 }
@@ -370,6 +386,9 @@ int main(int argc, char *argv[])
         sh::Destruct(geometryCompiler);
 
     sh::Finalize();
+#if defined(ANGLE_ENABLE_VULKAN)
+    sh::FinalizeGlslang();
+#endif
 
     return failCode;
 }
@@ -381,12 +400,11 @@ void usage()
 {
     // clang-format off
     printf(
-        "Usage: translate [-i -o -u -l -p -b=e -b=g -b=h9 -x=i -x=d] file1 file2 ...\n"
+        "Usage: translate [-i -o -u -l -b=e -b=g -b=h9 -x=i -x=d] file1 file2 ...\n"
         "Where: filename : filename ending in .frag or .vert\n"
         "       -i       : print intermediate tree\n"
         "       -o       : print translated code\n"
         "       -u       : print active attribs, uniforms, varyings and program outputs\n"
-        "       -p       : use precision emulation\n"
         "       -s=e2    : use GLES2 spec (this is by default)\n"
         "       -s=e3    : use GLES3 spec\n"
         "       -s=e31   : use GLES31 spec (in development)\n"
@@ -399,7 +417,7 @@ void usage()
         "       -b=g     : output GLSL code (compatibility profile)\n"
         "       -b=g[NUM]: output GLSL code (NUM can be 130, 140, 150, 330, 400, 410, 420, 430, "
         "440, 450)\n"
-        "       -b=v     : output Vulkan GLSL code\n"
+        "       -b=v     : output Vulkan SPIR-V code\n"
         "       -b=h9    : output HLSL9 code\n"
         "       -b=h11   : output HLSL11 code\n"
         "       -x=i     : enable GL_OES_EGL_image_external\n"
@@ -413,7 +431,8 @@ void usage()
         "       -x=n     : enable NV_shader_framebuffer_fetch\n"
         "       -x=a     : enable ARM_shader_framebuffer_fetch\n"
         "       -x=m     : enable OVR_multiview\n"
-        "       -x=y     : enable YUV_target\n");
+        "       -x=y     : enable YUV_target\n"
+        "       -x=s     : enable OES_sample_variables\n");
     // clang-format on
 }
 
@@ -671,7 +690,7 @@ void PrintVariable(const std::string &prefix, size_t index, const sh::ShaderVari
         std::string structPrefix;
         for (size_t i = 0; i < prefix.size(); ++i)
             structPrefix += ' ';
-        printf("%s  struct %s\n", structPrefix.c_str(), var.structName.c_str());
+        printf("%s  struct %s\n", structPrefix.c_str(), var.structOrBlockName.c_str());
         structPrefix += "    field";
         for (size_t i = 0; i < var.fields.size(); ++i)
             PrintVariable(structPrefix, i, var.fields[i]);
@@ -845,4 +864,16 @@ static bool ParseIntValue(const std::string &num, int emptyDefault, int *outValu
     }
     *outValue = value;
     return true;
+}
+
+static void PrintSpirv(const sh::BinaryBlob &blob)
+{
+#if defined(ANGLE_ENABLE_VULKAN)
+    spvtools::SpirvTools spirvTools(SPV_ENV_VULKAN_1_1);
+
+    std::string readableSpirv;
+    spirvTools.Disassemble(blob, &readableSpirv, 0);
+
+    puts(readableSpirv.c_str());
+#endif
 }

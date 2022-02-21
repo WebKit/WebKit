@@ -1,4 +1,4 @@
-<!DOCTYPE HTML><!-- webkit-test-runner [ KeygenElementEnabled=true ] -->
+<!DOCTYPE HTML>
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
@@ -65,7 +65,7 @@ shouldBe('button.tabIndex', '0');
 shouldBe('input.tabIndex', '0');
 shouldBe('select.tabIndex', '0');
 shouldBe('textarea.tabIndex', '0');
-shouldBe('keygen.tabIndex', '0');
+shouldBe('keygen.tabIndex', '-1');
 shouldBe('activeSummary.tabIndex', '0');
 shouldBe('editableDiv.tabIndex', '-1');
 shouldBe('normalDiv.tabIndex', '-1');
@@ -86,7 +86,7 @@ shouldBe('button.setAttribute("tabindex", "invalid"); button.tabIndex', '0');
 shouldBe('input.setAttribute("tabindex", "invalid"); input.tabIndex', '0');
 shouldBe('select.setAttribute("tabindex", "invalid"); select.tabIndex', '0');
 shouldBe('textarea.setAttribute("tabindex", "invalid"); textarea.tabIndex', '0');
-shouldBe('keygen.setAttribute("tabindex", "invalid"); keygen.tabIndex', '0');
+shouldBe('keygen.setAttribute("tabindex", "invalid"); keygen.tabIndex', '-1');
 shouldBe('activeSummary.setAttribute("tabindex", "invalid"); activeSummary.tabIndex', '0');
 shouldBe('editableDiv.setAttribute("tabindex", "invalid"); editableDiv.tabIndex', '-1');
 shouldBe('normalDiv.setAttribute("tabindex", "invalid"); normalDiv.tabIndex', '-1');
@@ -107,7 +107,7 @@ shouldBe('button.setAttribute("tabindex", "9999999999"); button.tabIndex', '0');
 shouldBe('input.setAttribute("tabindex", "9999999999"); input.tabIndex', '0');
 shouldBe('select.setAttribute("tabindex", "9999999999"); select.tabIndex', '0');
 shouldBe('textarea.setAttribute("tabindex", "9999999999"); textarea.tabIndex', '0');
-shouldBe('keygen.setAttribute("tabindex", "9999999999"); keygen.tabIndex', '0');
+shouldBe('keygen.setAttribute("tabindex", "9999999999"); keygen.tabIndex', '-1');
 shouldBe('activeSummary.setAttribute("tabindex", "9999999999"); activeSummary.tabIndex', '0');
 shouldBe('editableDiv.setAttribute("tabindex", "9999999999"); editableDiv.tabIndex', '-1');
 shouldBe('normalDiv.setAttribute("tabindex", "9999999999"); normalDiv.tabIndex', '-1');

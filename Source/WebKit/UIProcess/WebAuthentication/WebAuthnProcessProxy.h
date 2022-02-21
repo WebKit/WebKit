@@ -47,6 +47,7 @@ class WebAuthnProcessProxy final : public AuxiliaryProcessProxy, private Process
     friend LazyNeverDestroyed<WebAuthnProcessProxy>;
 public:
     static WebAuthnProcessProxy& singleton();
+    static WebAuthnProcessProxy* singletonIfCreated();
 
     void getWebAuthnProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetWebAuthnProcessConnectionDelayedReply&&);
 

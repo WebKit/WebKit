@@ -35,7 +35,7 @@ class RenderSVGResourceContainer;
 class RenderSVGResourceFilter;
 class RenderSVGResourceMarker;
 class RenderSVGResourceMasker;
-class RenderSVGRoot;
+class LegacyRenderSVGRoot;
 class SVGRenderStyle;
 
 // Holds a set of resources associated with a RenderObject
@@ -45,7 +45,7 @@ public:
     SVGResources();
 
     bool buildCachedResources(const RenderElement&, const RenderStyle&);
-    void layoutDifferentRootIfNeeded(const RenderSVGRoot*);
+    void layoutDifferentRootIfNeeded(const LegacyRenderSVGRoot*);
 
     // Ordinary resources
     RenderSVGResourceClipper* clipper() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->clipper : nullptr; }

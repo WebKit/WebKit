@@ -23,6 +23,12 @@ FAIL sending a Int32Array backed by a SharedArrayBuffer assert_throws_js: functi
 FAIL sending a Uint32Array backed by a SharedArrayBuffer assert_throws_js: function "function () {
             xhr.send(arr)
         }" did not throw
+FAIL sending a BigInt64Array backed by a SharedArrayBuffer assert_throws_js: function "function () {
+            xhr.send(arr)
+        }" did not throw
+FAIL sending a BigUint64Array backed by a SharedArrayBuffer assert_throws_js: function "function () {
+            xhr.send(arr)
+        }" did not throw
 FAIL sending a Float32Array backed by a SharedArrayBuffer assert_throws_js: function "function () {
             xhr.send(arr)
         }" did not throw

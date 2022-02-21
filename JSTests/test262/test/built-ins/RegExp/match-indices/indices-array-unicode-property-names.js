@@ -5,7 +5,7 @@
 description: Basic matching cases with non-unicode matches.
 includes: [compareArray.js]
 esid: sec-makeindicesarray
-features: [regexp-match-indices]
+features: [regexp-named-groups, regexp-match-indices]
 ---*/
 
 assert.compareArray([1, 2], /(?<π>a)/du.exec("bab").indices.groups.π);

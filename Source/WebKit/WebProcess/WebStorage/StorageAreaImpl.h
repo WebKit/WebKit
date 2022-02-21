@@ -61,9 +61,7 @@ private:
     bool contains(const String& key) override;
     WebCore::StorageType storageType() const override;
     size_t memoryBytesUsedByCache() override;
-    void incrementAccessCount() override;
-    void decrementAccessCount() override;
-    void closeDatabaseIfIdle() override;
+    void prewarm() final;
 
     Identifier m_identifier;
     WeakPtr<StorageAreaMap> m_storageAreaMap;

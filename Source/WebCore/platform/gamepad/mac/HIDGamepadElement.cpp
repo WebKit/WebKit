@@ -28,6 +28,8 @@
 
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
+#include <IOKit/hid/IOHIDElement.h>
+
 namespace WebCore {
 
 #pragma mark HIDGamepadElement

@@ -60,6 +60,10 @@ public:
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
 
+protected:
+    void updateConfigurationFromCaps();
+    void updateConfigurationFromTags();
+
 private:
     AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
     AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstStream>&&);

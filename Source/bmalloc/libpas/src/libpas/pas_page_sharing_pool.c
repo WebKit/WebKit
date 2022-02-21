@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,7 +127,7 @@ static void verify_participants(pas_page_sharing_pool* pool)
 
             if (epoch < epoch_for_min_heap) {
                 pas_log("Bad epoch: epoch = %llu, epoch_for_min_heap = %llu\n",
-                        epoch, epoch_for_min_heap);
+                        (unsigned long long)epoch, (unsigned long long)epoch_for_min_heap);
                 PAS_ASSERT(epoch >= epoch_for_min_heap);
             }
             
@@ -192,7 +192,7 @@ static void dump_min_heap(pas_page_sharing_pool* pool)
             &pool->participant_by_epoch, index);
         
         pas_log("    %zu: %p, %llu\n", index, participant,
-                pas_page_sharing_participant_get_payload(participant)->use_epoch_for_min_heap);
+                (unsigned long long)pas_page_sharing_participant_get_payload(participant)->use_epoch_for_min_heap);
     }
 }
 
@@ -233,9 +233,9 @@ void pas_page_sharing_pool_add_at_index(pas_page_sharing_pool* pool,
     if (verbose) {
         pas_log("Adding participant %p to pool %p (%s), index = %zu.\n",
                 participant,
+                pool,
                 pas_page_sharing_participant_kind_get_string(
                     pas_page_sharing_participant_get_kind(participant)),
-                pool,
                 index_in_sharing_pool);
     }
     
@@ -310,8 +310,8 @@ get_current_participant(pas_page_sharing_pool* pool,
                         participant,
                         pas_page_sharing_participant_kind_get_string(
                             pas_page_sharing_participant_get_kind(participant)));
-                pas_log("Use epoch = %llu\n", use_epoch);
-                pas_log("Use epoch for min heap = %llu\n", payload->use_epoch_for_min_heap);
+                pas_log("Use epoch = %llu\n", (unsigned long long)use_epoch);
+                pas_log("Use epoch for min heap = %llu\n", (unsigned long long)payload->use_epoch_for_min_heap);
             }
             if (use_epoch == payload->use_epoch_for_min_heap
                 && pas_page_sharing_participant_is_eligible(participant)) {
@@ -413,7 +413,7 @@ get_current_participant(pas_page_sharing_pool* pool,
             payload->use_epoch_for_min_heap = pas_page_sharing_participant_get_use_epoch(participant);
             if (verbose) {
                 pas_log("for participant %p set use epoch to %llu\n",
-                        participant, payload->use_epoch_for_min_heap);
+                        participant, (unsigned long long)payload->use_epoch_for_min_heap);
             }
             
             /* So: do we just set the delta_has_been_noted to false?
@@ -601,7 +601,7 @@ pas_page_sharing_pool_take_least_recently_used(
                     participant,
                     pas_page_sharing_participant_kind_get_string(
                         pas_page_sharing_participant_get_kind(participant)),
-                    epoch);
+                    (unsigned long long)epoch);
         }
         
         if (!participant) {
@@ -647,7 +647,7 @@ static void atomic_add_balance(size_t addend)
         size_t balance;
         size_t new_balance;
         
-        balance = pas_physical_page_sharing_pool_balance;
+        balance = (size_t)pas_physical_page_sharing_pool_balance;
         new_balance = balance + addend;
         
         if (pas_compare_and_swap_uintptr_weak(
@@ -692,11 +692,12 @@ void pas_physical_page_sharing_pool_take(
             new_balance = 0;
         } else {
             size_remaining = 0;
-            new_balance = (size_t)balance - bytes;
+            new_balance = (intptr_t)((size_t)balance - bytes);
         }
         
         if (pas_compare_and_swap_uintptr_weak(
-                (uintptr_t*)&pas_physical_page_sharing_pool_balance, balance, new_balance))
+                (uintptr_t*)&pas_physical_page_sharing_pool_balance,
+                (uintptr_t)balance, (uintptr_t)new_balance))
             break;
     }
     
@@ -726,7 +727,7 @@ void pas_physical_page_sharing_pool_take(
         && last_take_result != pas_page_sharing_pool_take_locks_unavailable)
         balance_addend = 0;
     else
-        balance_addend = decommit_log.total - size_remaining;
+        balance_addend = (intptr_t)(decommit_log.total - size_remaining);
     
     pas_deferred_decommit_log_decommit_all(&decommit_log);
     pas_deferred_decommit_log_destruct(&decommit_log, heap_lock_hold_mode);
@@ -736,19 +737,22 @@ void pas_physical_page_sharing_pool_take(
                 balance_addend);
     }
 
-    atomic_add_balance(balance_addend);
+    atomic_add_balance((size_t)balance_addend);
 }
 
-pas_page_sharing_pool_take_result
+pas_page_sharing_pool_scavenge_result
 pas_physical_page_sharing_pool_scavenge(uint64_t max_epoch)
 {
     static const bool verbose = false;
-    
+
     pas_page_sharing_pool_take_result take_result;
     pas_physical_memory_transaction transaction;
+    size_t total_bytes;
     
     if (verbose)
-        pas_log("Doing scavenge up to %llu\n", max_epoch);
+        pas_log("Doing scavenge up to %llu\n", (unsigned long long)max_epoch);
+
+    total_bytes = 0;
     
     pas_physical_memory_transaction_construct(&transaction);
     do {
@@ -772,6 +776,8 @@ pas_physical_page_sharing_pool_scavenge(uint64_t max_epoch)
                         pas_page_sharing_pool_take_result_get_string(take_result));
             }
         } while (take_result == pas_page_sharing_pool_take_success);
+
+        total_bytes += decommit_log.total;
         
         for (;;) {
             intptr_t balance;
@@ -787,10 +793,11 @@ pas_physical_page_sharing_pool_scavenge(uint64_t max_epoch)
                memory transactions can cause the target heap size to increase a bit. I think
                that's probably fine since the scavenger thread exerts downward pressure on
                the target heap size. */
-            new_balance = PAS_MIN(0, balance + decommit_log.total);
+            new_balance = PAS_MIN(0, (intptr_t)balance + (intptr_t)decommit_log.total);
             
             if (pas_compare_and_swap_uintptr_weak(
-                    (uintptr_t*)&pas_physical_page_sharing_pool_balance, balance, new_balance))
+                    (uintptr_t*)&pas_physical_page_sharing_pool_balance,
+                    (uintptr_t)balance, (uintptr_t)new_balance))
                 break;
         }
         
@@ -801,7 +808,7 @@ pas_physical_page_sharing_pool_scavenge(uint64_t max_epoch)
     PAS_ASSERT(take_result != pas_page_sharing_pool_take_locks_unavailable);
     PAS_ASSERT(take_result != pas_page_sharing_pool_take_success);
     
-    return take_result;
+    return pas_page_sharing_pool_scavenge_result_create(take_result, total_bytes);
 }
 
 void pas_physical_page_sharing_pool_take_later(size_t bytes)
@@ -837,6 +844,11 @@ void pas_physical_page_sharing_pool_take_for_page_config(
     pas_lock** locks_already_held,
     size_t num_locks_already_held)
 {
+    static const bool verbose = false;
+
+    if (verbose)
+        pas_log("Taking %zu bytes for page_config = %p\n", bytes, page_config);
+    
     if (!pas_physical_page_sharing_pool_balancing_enabled)
         return;
     
@@ -849,19 +861,6 @@ void pas_physical_page_sharing_pool_take_for_page_config(
     
     pas_physical_page_sharing_pool_take(bytes, heap_lock_hold_mode,
                                         locks_already_held, num_locks_already_held);
-}
-
-bool pas_bias_page_sharing_pool_take(pas_page_sharing_pool* pool)
-{
-    switch (pas_page_sharing_pool_take_least_recently_used(pool, NULL, pas_lock_is_not_held, 0)) {
-    case pas_page_sharing_pool_take_none_available:
-        return false;
-    case pas_page_sharing_pool_take_success:
-        return true;
-    default:
-        PAS_ASSERT(!"Should not be reached");
-        return false;
-    }
 }
 
 void pas_page_sharing_pool_did_create_delta(pas_page_sharing_pool* pool,

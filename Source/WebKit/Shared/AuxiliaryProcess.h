@@ -38,6 +38,7 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 OBJC_CLASS NSDictionary;
@@ -46,6 +47,7 @@ namespace WebKit {
 
 class SandboxInitializationParameters;
 struct AuxiliaryProcessInitializationParameters;
+struct AuxiliaryProcessCreationParameters;
 
 class AuxiliaryProcess : public IPC::Connection::Client, public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcess);
@@ -84,6 +86,8 @@ public:
     void launchServicesCheckIn();
     void setQOS(int latencyQOS, int throughputQOS);
 #endif
+
+    static void applySandboxProfileForDaemon(const String& profilePath, const String& userDirectorySuffix);
 
     IPC::Connection* parentProcessConnection() const { return m_connection.get(); }
 
@@ -134,6 +138,17 @@ protected:
 
     static std::optional<std::pair<IPC::Connection::Identifier, IPC::Attachment>> createIPCConnectionPair();
 
+protected:
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    static id decodePreferenceValue(const std::optional<String>& encodedValue);
+    static void setPreferenceValue(const String& domain, const String& key, id value);
+    
+    virtual void preferenceDidUpdate(const String& domain, const String& key, const std::optional<String>& encodedValue);
+    virtual void handlePreferenceChange(const String& domain, const String& key, id value);
+    virtual void dispatchSimulatedNotificationsForPreferenceChange(const String& key) { }
+#endif
+    void applyProcessCreationParameters(const AuxiliaryProcessCreationParameters&);
+
 private:
     virtual bool shouldOverrideQuarantine() { return true; }
 
@@ -183,6 +198,7 @@ struct AuxiliaryProcessInitializationParameters {
     WebCore::AuxiliaryProcessType processType;
 #if PLATFORM(COCOA)
     OSObjectPtr<xpc_object_t> priorityBoostMessage;
+    std::optional<LinkedOnOrAfterOverride> clientLinkedOnOrAfterOverride;
 #endif
 };
 

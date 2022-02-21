@@ -29,7 +29,7 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     SetActive(bool active)
     CanSwitchToType(WebCore::ContentType contentType) -> (bool canSwitch) Synchronous
     SetMode(WebCore::SourceBufferAppendMode appendMode)
-    Append(IPC::DataReference data)
+    Append(WebKit::SharedMemory::IPCHandle data)
     Abort()
     ResetParserState()
     RemovedFromMediaSource()

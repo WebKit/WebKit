@@ -34,7 +34,10 @@
         promise_test((test) => {
             return new Promise((resolve, reject) => {
                 const mediaState = internals.pageMediaState();
+                let trackEndedEventFired = false;
                 track.onended = () => {
+                    assert_equals(track.readyState, "ended");
+                    trackEndedEventFired = true;
                     new Promise((innerResolve, innerReject) => {
                         waitForPageStateChange(10, mediaState, innerResolve, innerReject)
                     }).then((pageMediaState) => {
@@ -59,8 +62,13 @@
                     })
                 }
 
-                if (window.internals)
+                if (window.internals) {
                     internals.simulateMediaStreamTrackCaptureSourceFailure(track);
+                    assert_equals(track.readyState, "live");
+                    setTimeout(() => {
+                        assert_true(trackEndedEventFired, "ended");
+                    }, 0);
+                }
                 setTimeout(() => reject("Device state did not change in 5 second"), 5000);
 
             });

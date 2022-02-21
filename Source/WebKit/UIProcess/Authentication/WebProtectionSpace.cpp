@@ -55,7 +55,7 @@ bool WebProtectionSpace::isProxy() const
     return m_coreProtectionSpace.isProxy();
 }
 
-WebCore::ProtectionSpaceServerType WebProtectionSpace::serverType() const
+WebCore::ProtectionSpace::ServerType WebProtectionSpace::serverType() const
 {
     return m_coreProtectionSpace.serverType();
 }
@@ -65,7 +65,7 @@ bool WebProtectionSpace::receivesCredentialSecurely() const
     return m_coreProtectionSpace.receivesCredentialSecurely();
 }
 
-WebCore::ProtectionSpaceAuthenticationScheme WebProtectionSpace::authenticationScheme() const
+WebCore::ProtectionSpace::AuthenticationScheme WebProtectionSpace::authenticationScheme() const
 {
     return m_coreProtectionSpace.authenticationScheme();
 }

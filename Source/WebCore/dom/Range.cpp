@@ -29,6 +29,7 @@
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DocumentFragment.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -37,6 +38,7 @@
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
+#include "JSNode.h"
 #include "NodeTraversal.h"
 #include "NodeWithIndex.h"
 #include "ProcessingInstruction.h"
@@ -1097,6 +1099,12 @@ RefPtr<Range> createLiveRange(const std::optional<SimpleRange>& range)
     if (!range)
         return nullptr;
     return createLiveRange(*range);
+}
+
+void Range::visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const
+{
+    visitor.addOpaqueRoot(root(&m_start.container()));
+    visitor.addOpaqueRoot(root(&m_end.container()));
 }
 
 } // namespace WebCore

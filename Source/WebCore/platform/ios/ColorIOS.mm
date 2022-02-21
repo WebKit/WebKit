@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "ColorIOS.h"
+#import "ColorCocoa.h"
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-Color colorFromUIColor(UIColor *color)
+Color colorFromCocoaColor(UIColor *color)
 {
     if (!color)
         return { };

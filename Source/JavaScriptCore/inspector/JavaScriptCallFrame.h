@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013-2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ public:
     }
 
     JavaScriptCallFrame* caller();
-    intptr_t sourceID() const { return m_debuggerCallFrame->sourceID(); }
+    JSC::SourceID sourceID() const { return m_debuggerCallFrame->sourceID(); }
     const TextPosition position() const { return m_debuggerCallFrame->position(); }
     int line() const { return m_debuggerCallFrame->line(); }
     int column() const { return m_debuggerCallFrame->column(); }

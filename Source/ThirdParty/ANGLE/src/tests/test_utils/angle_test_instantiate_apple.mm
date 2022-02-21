@@ -38,4 +38,13 @@ bool IsMetalTextureSwizzleAvailable()
     return false;
 }
 
+bool IsMetalCompressedTexture3DAvailable()
+{
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13.0))
+    {
+        return true;
+    }
+    return false;
+}
+
 }  // namespace angle

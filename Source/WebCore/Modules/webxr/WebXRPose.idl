@@ -23,13 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://immersive-web.github.io/webxr/#xrpose
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
     InterfaceName=XRPose
 ] interface WebXRPose {
     [SameObject] readonly attribute WebXRRigidTransform transform;
+    // FIXME: Add support for linearVelocity and angularVelocity.
+    // [SameObject] readonly attribute DOMPointReadOnly? linearVelocity;
+    // [SameObject] readonly attribute DOMPointReadOnly? angularVelocity;
+
     readonly attribute boolean emulatedPosition;
 };

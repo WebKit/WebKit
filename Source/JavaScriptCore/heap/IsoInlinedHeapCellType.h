@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,35 +26,20 @@
 #pragma once
 
 #include "HeapCellType.h"
-#include "MarkedBlockInlines.h"
 
 namespace JSC {
 
 template<typename CellType>
 class IsoInlinedHeapCellType final : public HeapCellType {
 public:
-    IsoInlinedHeapCellType()
-        : HeapCellType(CellAttributes(CellType::needsDestruction ? NeedsDestruction : DoesNotNeedDestruction, HeapCell::JSCell))
-    {
-    }
+    IsoInlinedHeapCellType();
 
     struct DestroyFunc {
-        ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
-        {
-            CellType::destroy(cell);
-        }
+        ALWAYS_INLINE void operator()(VM&, JSCell*) const;
     };
 
-    void finishSweep(MarkedBlock::Handle& handle, FreeList* freeList) final
-    {
-        handle.finishSweepKnowingHeapCellType(freeList, DestroyFunc());
-    }
-
-    void destroy(VM&, JSCell* cell) final
-    {
-        CellType::destroy(cell);
-    }
+    void finishSweep(MarkedBlock::Handle&, FreeList*) const final;
+    void destroy(VM&, JSCell*) const final;
 };
 
 } // namespace JSC
-

@@ -52,7 +52,7 @@ ICOImageDecoder::ICOImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOp
 
 ICOImageDecoder::~ICOImageDecoder() = default;
 
-void ICOImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
+void ICOImageDecoder::setData(const FragmentedSharedBuffer& data, bool allDataReceived)
 {
     if (failed())
         return;

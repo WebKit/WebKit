@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "net/dcsctp/common/handover_testing.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_chunk.h"
 #include "net/dcsctp/packet/chunk/forward_tsn_common.h"
 #include "net/dcsctp/packet/chunk/iforward_tsn_chunk.h"
@@ -31,6 +32,7 @@
 namespace dcsctp {
 namespace {
 using ::testing::ElementsAre;
+using ::testing::SizeIs;
 
 // The default maximum size of the Reassembly Queue.
 static constexpr size_t kBufferSize = 10000;
@@ -294,5 +296,98 @@ TEST_F(ReassemblyQueueTest, ShouldntDeliverBeforeForwardedTsn) {
   EXPECT_FALSE(reasm.HasMessages());
 }
 
+TEST_F(ReassemblyQueueTest, NotReadyForHandoverWhenDeliveredTsnsHaveGap) {
+  ReassemblyQueue reasm("log: ", TSN(10), kBufferSize);
+  reasm.Add(TSN(10), gen_.Unordered({1, 2, 3, 4}, "B"));
+  EXPECT_FALSE(reasm.HasMessages());
+
+  reasm.Add(TSN(12), gen_.Unordered({1, 2, 3, 4}, "BE"));
+  EXPECT_TRUE(reasm.HasMessages());
+  EXPECT_EQ(
+      reasm.GetHandoverReadiness(),
+      HandoverReadinessStatus()
+          .Add(HandoverUnreadinessReason::kReassemblyQueueDeliveredTSNsGap)
+          .Add(
+              HandoverUnreadinessReason::kUnorderedStreamHasUnassembledChunks));
+
+  EXPECT_THAT(reasm.FlushMessages(),
+              ElementsAre(SctpMessageIs(kStreamID, kPPID, kShortPayload)));
+  EXPECT_EQ(
+      reasm.GetHandoverReadiness(),
+      HandoverReadinessStatus()
+          .Add(HandoverUnreadinessReason::kReassemblyQueueDeliveredTSNsGap)
+          .Add(
+              HandoverUnreadinessReason::kUnorderedStreamHasUnassembledChunks));
+
+  reasm.Handle(ForwardTsnChunk(TSN(13), {}));
+  EXPECT_EQ(reasm.GetHandoverReadiness(), HandoverReadinessStatus());
+}
+
+TEST_F(ReassemblyQueueTest, NotReadyForHandoverWhenResetStreamIsDeferred) {
+  ReassemblyQueue reasm("log: ", TSN(10), kBufferSize);
+  DataGeneratorOptions opts;
+  opts.message_id = MID(0);
+  reasm.Add(TSN(10), gen_.Ordered({1, 2, 3, 4}, "BE", opts));
+  opts.message_id = MID(1);
+  reasm.Add(TSN(11), gen_.Ordered({1, 2, 3, 4}, "BE", opts));
+  EXPECT_THAT(reasm.FlushMessages(), SizeIs(2));
+
+  reasm.ResetStreams(
+      OutgoingSSNResetRequestParameter(
+          ReconfigRequestSN(10), ReconfigRequestSN(3), TSN(13), {StreamID(1)}),
+      TSN(11));
+  EXPECT_EQ(reasm.GetHandoverReadiness(),
+            HandoverReadinessStatus().Add(
+                HandoverUnreadinessReason::kStreamResetDeferred));
+
+  opts.message_id = MID(3);
+  opts.ppid = PPID(3);
+  reasm.Add(TSN(13), gen_.Ordered({1, 2, 3, 4}, "BE", opts));
+  reasm.MaybeResetStreamsDeferred(TSN(11));
+
+  opts.message_id = MID(2);
+  opts.ppid = PPID(2);
+  reasm.Add(TSN(13), gen_.Ordered({1, 2, 3, 4}, "BE", opts));
+  reasm.MaybeResetStreamsDeferred(TSN(15));
+  EXPECT_EQ(reasm.GetHandoverReadiness(),
+            HandoverReadinessStatus().Add(
+                HandoverUnreadinessReason::kReassemblyQueueDeliveredTSNsGap));
+
+  EXPECT_THAT(reasm.FlushMessages(), SizeIs(2));
+  EXPECT_EQ(reasm.GetHandoverReadiness(),
+            HandoverReadinessStatus().Add(
+                HandoverUnreadinessReason::kReassemblyQueueDeliveredTSNsGap));
+
+  reasm.Handle(ForwardTsnChunk(TSN(15), {}));
+  EXPECT_EQ(reasm.GetHandoverReadiness(), HandoverReadinessStatus());
+}
+
+TEST_F(ReassemblyQueueTest, HandoverInInitialState) {
+  ReassemblyQueue reasm1("log: ", TSN(10), kBufferSize);
+
+  EXPECT_EQ(reasm1.GetHandoverReadiness(), HandoverReadinessStatus());
+  DcSctpSocketHandoverState state;
+  reasm1.AddHandoverState(state);
+  g_handover_state_transformer_for_test(&state);
+  ReassemblyQueue reasm2("log: ", TSN(100), kBufferSize, &state);
+
+  reasm2.Add(TSN(10), gen_.Ordered({1, 2, 3, 4}, "BE"));
+  EXPECT_THAT(reasm2.FlushMessages(), SizeIs(1));
+}
+
+TEST_F(ReassemblyQueueTest, HandoverAfterHavingAssembedOneMessage) {
+  ReassemblyQueue reasm1("log: ", TSN(10), kBufferSize);
+  reasm1.Add(TSN(10), gen_.Ordered({1, 2, 3, 4}, "BE"));
+  EXPECT_THAT(reasm1.FlushMessages(), SizeIs(1));
+
+  EXPECT_EQ(reasm1.GetHandoverReadiness(), HandoverReadinessStatus());
+  DcSctpSocketHandoverState state;
+  reasm1.AddHandoverState(state);
+  g_handover_state_transformer_for_test(&state);
+  ReassemblyQueue reasm2("log: ", TSN(100), kBufferSize, &state);
+
+  reasm2.Add(TSN(11), gen_.Ordered({1, 2, 3, 4}, "BE"));
+  EXPECT_THAT(reasm2.FlushMessages(), SizeIs(1));
+}
 }  // namespace
 }  // namespace dcsctp

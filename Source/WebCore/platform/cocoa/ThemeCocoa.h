@@ -33,7 +33,7 @@ class ThemeCocoa : public Theme {
 protected:
     ThemeCocoa() = default;
 private:
-    void drawNamedImage(const String&, GraphicsContext&, const FloatRect&) const final;
+    void drawNamedImage(const String&, GraphicsContext&, const FloatSize&) const final;
 };
 
 } // namespace WebCore

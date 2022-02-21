@@ -25,7 +25,6 @@
 #include "libANGLE/ImageIndex.h"
 #include "libANGLE/Version.h"
 #include "libANGLE/angletypes.h"
-#include "libANGLE/renderer/metal/mtl_constants.h"
 
 #if TARGET_OS_IPHONE
 #    if !defined(__IPHONE_11_0)
@@ -96,7 +95,6 @@ class Surface;
 
 namespace gl
 {
-struct Rectangle;
 ANGLE_GL_OBJECTS_X(ANGLE_PRE_DECLARE_OBJECT)
 }  // namespace gl
 
@@ -119,13 +117,79 @@ ANGLE_GL_OBJECTS_X(ANGLE_PRE_DECLARE_MTL_OBJECT)
 
 namespace mtl
 {
+
+// NOTE(hqle): support variable max number of vertex attributes
+constexpr uint32_t kMaxVertexAttribs = gl::MAX_VERTEX_ATTRIBS;
+// NOTE(hqle): support variable max number of render targets
+constexpr uint32_t kMaxRenderTargets = 4;
+
+constexpr uint32_t kMaxShaderUBOs = 12;
+constexpr uint32_t kMaxUBOSize    = 16384;
+
+constexpr uint32_t kMaxShaderXFBs = gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS;
+
+// The max size of a buffer that will be allocated in shared memory.
+// NOTE(hqle): This is just a hint. There is no official document on what is the max allowed size
+// for shared memory.
+constexpr size_t kSharedMemBufferMaxBufSizeHint = 128 * 1024;
+
+constexpr size_t kDefaultAttributeSize = 4 * sizeof(float);
+
+// Metal limits
+constexpr uint32_t kMaxShaderBuffers     = 31;
+constexpr uint32_t kMaxShaderSamplers    = 16;
+constexpr size_t kInlineConstDataMaxSize = 4 * 1024;
+constexpr size_t kDefaultUniformsMaxSize = 4 * 1024;
+constexpr uint32_t kMaxViewports         = 1;
+
+constexpr uint32_t kVertexAttribBufferStrideAlignment = 4;
+// Alignment requirement for offset passed to setVertex|FragmentBuffer
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+constexpr uint32_t kUniformBufferSettingOffsetMinAlignment = 256;
+#else
+constexpr uint32_t kUniformBufferSettingOffsetMinAlignment = 4;
+#endif
+constexpr uint32_t kIndexBufferOffsetAlignment       = 4;
+constexpr uint32_t kArgumentBufferOffsetAlignment    = kUniformBufferSettingOffsetMinAlignment;
+constexpr uint32_t kTextureToBufferBlittingAlignment = 256;
+
+// Front end binding limits
+constexpr uint32_t kMaxGLSamplerBindings = 2 * kMaxShaderSamplers;
+constexpr uint32_t kMaxGLUBOBindings     = 2 * kMaxShaderUBOs;
+
+// Binding index start for vertex data buffers:
+constexpr uint32_t kVboBindingIndexStart = 0;
+
+// Binding index for default attribute buffer:
+constexpr uint32_t kDefaultAttribsBindingIndex = kVboBindingIndexStart + kMaxVertexAttribs;
+// Binding index for driver uniforms:
+constexpr uint32_t kDriverUniformsBindingIndex = kDefaultAttribsBindingIndex + 1;
+// Binding index for default uniforms:
+constexpr uint32_t kDefaultUniformsBindingIndex = kDefaultAttribsBindingIndex + 3;
+// Binding index for Transform Feedback Buffers (4)
+constexpr uint32_t kTransformFeedbackBindingIndex = kDefaultUniformsBindingIndex + 1;
+// Binding index for shadow samplers' compare modes
+constexpr uint32_t kShadowSamplerCompareModesBindingIndex = kTransformFeedbackBindingIndex + 4;
+// Binding index for UBO's argument buffer
+constexpr uint32_t kUBOArgumentBufferBindingIndex = kShadowSamplerCompareModesBindingIndex + 1;
+
+constexpr uint32_t kStencilMaskAll = 0xff;  // Only 8 bits stencil is supported
+
+static const char *kUnassignedAttributeString = " __unassigned_attribute__";
+
 // This special constant is used to indicate that a particular vertex descriptor's buffer layout
 // index is unused.
 constexpr MTLVertexStepFunction kVertexStepFunctionInvalid =
     static_cast<MTLVertexStepFunction>(0xff);
 
+constexpr int kEmulatedAlphaValue = 1;
+
+constexpr size_t kOcclusionQueryResultSize = sizeof(uint64_t);
+
+constexpr gl::Version kMaxSupportedGLVersion = gl::Version(3, 0);
+
 // Work-around the enum is not available on macOS
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+#if (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED < 110000)) || TARGET_OS_MACCATALYST
 constexpr MTLBlitOption kBlitOptionRowLinearPVRTC = MTLBlitOptionNone;
 #else
 constexpr MTLBlitOption kBlitOptionRowLinearPVRTC          = MTLBlitOptionRowLinearPVRTC;
@@ -138,6 +202,7 @@ using RenderStages                             = MTLRenderStages;
 constexpr MTLRenderStages kRenderStageVertex   = MTLRenderStageVertex;
 constexpr MTLRenderStages kRenderStageFragment = MTLRenderStageFragment;
 #else
+#    define ANGLE_MTL_SWIZZLE_AVAILABLE 0
 using TextureSwizzleChannels                               = int;
 using RenderStages                                         = int;
 constexpr RenderStages kRenderStageVertex                  = 1;
@@ -208,6 +273,7 @@ class WrappedObject
 
     void retainAssign(T obj)
     {
+
 #if !__has_feature(objc_arc)
         T retained = obj;
         [retained retain];
@@ -237,17 +303,14 @@ class WrappedObject
 // Because ARC enablement is a compile-time choice, and we compile this header
 // both ways, we need a separate copy of our code when ARC is enabled.
 #if __has_feature(objc_arc)
-#define adoptObjCObj adoptObjCObjArc
+#    define adoptObjCObj adoptObjCObjArc
 #endif
-
 template <typename T>
 class AutoObjCPtr;
-
 template <typename T>
 using AutoObjCObj = AutoObjCPtr<T *>;
-
 template <typename U>
-AutoObjCObj<U> adoptObjCObj(U* NS_RELEASES_ARGUMENT) __attribute__((__warn_unused_result__));
+AutoObjCObj<U> adoptObjCObj(U *NS_RELEASES_ARGUMENT) __attribute__((__warn_unused_result__));
 
 // This class is similar to WrappedObject, however, it allows changing the
 // internal pointer with public methods.
@@ -259,7 +322,7 @@ class AutoObjCPtr : public WrappedObject<T>
 
     AutoObjCPtr() {}
 
-    AutoObjCPtr(std::nullptr_t) {}
+    AutoObjCPtr(const std::nullptr_t &theNull) {}
 
     AutoObjCPtr(const AutoObjCPtr &src) { this->retainAssign(src.get()); }
 
@@ -292,7 +355,7 @@ class AutoObjCPtr : public WrappedObject<T>
         return *this;
     }
 
-    AutoObjCPtr &operator=(std::nullptr_t)
+    AutoObjCPtr &operator=(std::nullptr_t theNull)
     {
         this->set(nil);
         return *this;
@@ -302,7 +365,9 @@ class AutoObjCPtr : public WrappedObject<T>
 
     bool operator==(T rhs) const { return this->get() == rhs; }
 
-    bool operator==(std::nullptr_t) const { return this->get() == nullptr; }
+    bool operator==(std::nullptr_t theNull) const { return this->get() == nullptr; }
+
+    bool operator!=(std::nullptr_t) const { return this->get() != nullptr; }
 
     inline operator bool() { return this->get(); }
 
@@ -310,15 +375,17 @@ class AutoObjCPtr : public WrappedObject<T>
 
     bool operator!=(T rhs) const { return this->get() != rhs; }
 
-    bool operator!=(std::nullptr_t) const { return this->get() != nullptr; }
-
     using ParentType::retainAssign;
 
     template <typename U>
-    friend AutoObjCObj<U> adoptObjCObj(U* NS_RELEASES_ARGUMENT) __attribute__((__warn_unused_result__));
+    friend AutoObjCObj<U> adoptObjCObj(U *NS_RELEASES_ARGUMENT)
+        __attribute__((__warn_unused_result__));
 
   private:
-    enum AdoptTag { Adopt };
+    enum AdoptTag
+    {
+        Adopt
+    };
     AutoObjCPtr(T src, AdoptTag) { this->unretainAssign(src); }
 
     void transfer(AutoObjCPtr &&src)
@@ -329,32 +396,34 @@ class AutoObjCPtr : public WrappedObject<T>
 };
 
 template <typename U>
-inline AutoObjCObj<U> adoptObjCObj(U* NS_RELEASES_ARGUMENT src)
+inline AutoObjCObj<U> adoptObjCObj(U *NS_RELEASES_ARGUMENT src)
 {
 #if __has_feature(objc_arc)
     return src;
 #elif defined(OBJC_NO_GC)
-    return AutoObjCPtr<U*>(src, AutoObjCPtr<U*>::Adopt);
+    return AutoObjCPtr<U *>(src, AutoObjCPtr<U *>::Adopt);
 #else
-#error "ObjC GC not supported."
+#    error "ObjC GC not supported."
 #endif
 }
 
-
 // NOTE: SharedEvent is only declared on iOS 12.0+ or mac 10.14+
 #if defined(__IPHONE_12_0) || defined(__MAC_10_14)
-#define ANGLE_MTL_EVENT_AVAILABLE 1
+#    define ANGLE_MTL_EVENT_AVAILABLE 1
 using SharedEventRef = AutoObjCPtr<id<MTLSharedEvent>>;
 #else
-#define ANGLE_MTL_EVENT_AVAILABLE 0
+#    define ANGLE_MTL_EVENT_AVAILABLE 0
 using SharedEventRef = AutoObjCObj<NSObject>;
 #endif
 
 // The native image index used by Metal back-end,  the image index uses native mipmap level instead
 // of "virtual" level modified by OpenGL's base level.
 using MipmapNativeLevel = gl::LevelIndexWrapper<uint32_t>;
+
 constexpr MipmapNativeLevel kZeroNativeMipLevel(0);
+
 class ImageNativeIndexIterator;
+
 class ImageNativeIndex final
 {
   public:
@@ -364,42 +433,55 @@ class ImageNativeIndex final
         mNativeIndex = gl::ImageIndex::MakeFromType(src.getType(), src.getLevelIndex() - baseLevel,
                                                     src.getLayerIndex(), src.getLayerCount());
     }
+
     static ImageNativeIndex FromBaseZeroGLIndex(const gl::ImageIndex &src)
     {
         return ImageNativeIndex(src, 0);
     }
+
     MipmapNativeLevel getNativeLevel() const
     {
         return MipmapNativeLevel(mNativeIndex.getLevelIndex());
     }
+
     gl::TextureType getType() const { return mNativeIndex.getType(); }
     GLint getLayerIndex() const { return mNativeIndex.getLayerIndex(); }
     GLint getLayerCount() const { return mNativeIndex.getLayerCount(); }
     GLint cubeMapFaceIndex() const { return mNativeIndex.cubeMapFaceIndex(); }
+
     bool isLayered() const { return mNativeIndex.isLayered(); }
     bool hasLayer() const { return mNativeIndex.hasLayer(); }
     bool has3DLayer() const { return mNativeIndex.has3DLayer(); }
     bool usesTex3D() const { return mNativeIndex.usesTex3D(); }
+
     bool valid() const { return mNativeIndex.valid(); }
+
     ImageNativeIndexIterator getLayerIterator(GLint layerCount) const;
+
   private:
     gl::ImageIndex mNativeIndex;
 };
+
 class ImageNativeIndexIterator final
 {
   public:
     ImageNativeIndex next() { return ImageNativeIndex(mNativeIndexIte.next(), 0); }
     ImageNativeIndex current() const { return ImageNativeIndex(mNativeIndexIte.current(), 0); }
     bool hasNext() const { return mNativeIndexIte.hasNext(); }
+
   private:
     // This class is only constructable from ImageNativeIndex
     friend class ImageNativeIndex;
+
     explicit ImageNativeIndexIterator(const gl::ImageIndexIterator &baseZeroSrc)
         : mNativeIndexIte(baseZeroSrc)
     {}
+
     gl::ImageIndexIterator mNativeIndexIte;
 };
+
 using ClearColorValueBytes = std::array<uint8_t, 4 * sizeof(float)>;
+
 class ClearColorValue
 {
   public:
@@ -418,15 +500,22 @@ class ClearColorValue
     constexpr ClearColorValue(const ClearColorValue &src)
         : mType(src.mType), mValueBytes(src.mValueBytes)
     {}
+
     MTLClearColor toMTLClearColor() const;
+
     PixelType getType() const { return mType; }
+
     const ClearColorValueBytes &getValueBytes() const { return mValueBytes; }
+
     ClearColorValue &operator=(const ClearColorValue &src);
+
     void setAsFloat(float r, float g, float b, float a);
     void setAsInt(int32_t r, int32_t g, int32_t b, int32_t a);
     void setAsUInt(uint32_t r, uint32_t g, uint32_t b, uint32_t a);
+
   private:
     PixelType mType;
+
     union
     {
         struct
@@ -441,6 +530,7 @@ class ClearColorValue
         {
             uint32_t mRedU, mGreenU, mBlueU, mAlphaU;
         };
+
         ClearColorValueBytes mValueBytes;
     };
 };
@@ -466,7 +556,6 @@ class Context : public ErrorHandler
 {
   public:
     Context(DisplayMtl *displayMtl);
-    id<MTLDevice> getMetalDevice() const;
     mtl::CommandQueue &cmdQueue();
 
     DisplayMtl *getDisplay() const { return mDisplay; }

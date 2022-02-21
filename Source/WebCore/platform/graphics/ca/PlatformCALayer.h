@@ -39,6 +39,12 @@ OBJC_CLASS AVPlayerLayer;
 typedef struct CGContext *CGContextRef;
 #endif
 
+namespace WTF {
+#if HAVE(IOSURFACE)
+class MachSendRight;
+#endif
+}
+
 namespace WebCore {
 
 class LayerPool;
@@ -47,6 +53,10 @@ class PlatformCAAnimation;
 class PlatformCALayerClient;
 
 typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
+
+#if HAVE(IOSURFACE)
+class IOSurface;
+#endif
 
 class WEBCORE_EXPORT PlatformCALayer : public ThreadSafeRefCounted<PlatformCALayer, WTF::DestructionThread::Main> {
 #if PLATFORM(COCOA)
@@ -189,6 +199,12 @@ public:
     virtual bool hasContents() const = 0;
     virtual CFTypeRef contents() const = 0;
     virtual void setContents(CFTypeRef) = 0;
+    virtual void clearContents();
+
+#if HAVE(IOSURFACE)
+    virtual void setContents(const WebCore::IOSurface&) = 0;
+    virtual void setContents(const WTF::MachSendRight&) = 0;
+#endif
 
     virtual void setContentsRect(const FloatRect&) = 0;
 

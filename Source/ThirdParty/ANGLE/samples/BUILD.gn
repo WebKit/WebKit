@@ -74,6 +74,11 @@ template("angle_sample") {
     if (defined(invoker.suppressed_configs)) {
       suppressed_configs += invoker.suppressed_configs
     }
+
+    if ((is_linux || is_chromeos) && !is_component_build) {
+      # Set rpath to find shared libs in a non-component build.
+      configs += [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
+    }
   }
 }
 
@@ -179,6 +184,31 @@ angle_sample("gles1_draw_texture") {
   sources = [ "gles1/DrawTexture.cpp" ]
 }
 
+angle_sample("gles1_torus_lighting") {
+  sources = [
+    "torus_lighting/TorusLightingES1.cpp",
+    "torus_lighting/torus.h",
+  ]
+}
+
+angle_sample("gles2_torus_lighting") {
+  sources = [
+    "torus_lighting/TorusLightingES2.cpp",
+    "torus_lighting/torus.h",
+  ]
+}
+
+angle_sample("gles3_torus_bufferstorage") {
+  sources = [
+    "torus_lighting/TorusBufferStorage.cpp",
+    "torus_lighting/torus.h",
+  ]
+}
+
+angle_sample("multiple_contexts") {
+  sources = [ "multiple_contexts/MultipleContexts.cpp" ]
+}
+
 if (angle_build_capture_replay_sample) {
   # The capture_replay sample is set up to work with a single Context.
   # To use the capture replay sample first move your capture sources into
@@ -221,29 +251,36 @@ if (angle_build_capture_replay_sample) {
 
 group("angle_samples") {
   testonly = true
-  deps = [
-    ":gles1_draw_texture",
-    ":gles1_flat_shading",
-    ":gles1_hello_triangle",
-    ":gles1_simple_lighting",
-    ":gles1_simple_texture_2d",
-    ":hello_triangle",
-    ":mip_map_2d",
-    ":multi_texture",
-    ":multi_window",
-    ":multiple_draw_buffers",
-    ":multiview",
-    ":particle_system",
-    ":post_sub_buffer",
-    ":sample_util",
-    ":simple_instancing",
-    ":simple_texture_2d",
-    ":simple_texture_cubemap",
-    ":simple_vertex_shader",
-    ":stencil_operations",
-    ":tex_redef_microbench",
-    ":texture_wrap",
-    ":tri_fan_microbench",
-    ":window_test",
-  ]
+  deps = []
+  if (!is_ios) {
+    deps += [
+      ":gles1_draw_texture",
+      ":gles1_flat_shading",
+      ":gles1_hello_triangle",
+      ":gles1_simple_lighting",
+      ":gles1_simple_texture_2d",
+      ":gles1_torus_lighting",
+      ":gles2_torus_lighting",
+      ":gles3_torus_bufferstorage",
+      ":hello_triangle",
+      ":mip_map_2d",
+      ":multi_texture",
+      ":multi_window",
+      ":multiple_contexts",
+      ":multiple_draw_buffers",
+      ":multiview",
+      ":particle_system",
+      ":post_sub_buffer",
+      ":sample_util",
+      ":simple_instancing",
+      ":simple_texture_2d",
+      ":simple_texture_cubemap",
+      ":simple_vertex_shader",
+      ":stencil_operations",
+      ":tex_redef_microbench",
+      ":texture_wrap",
+      ":tri_fan_microbench",
+      ":window_test",
+    ]
+  }
 }

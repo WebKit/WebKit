@@ -46,6 +46,7 @@ public:
     RectEdges() = default;
 
     RectEdges(const RectEdges&) = default;
+    RectEdges& operator=(const RectEdges&) = default;
 
     template<typename U>
     RectEdges(U&& top, U&& right, U&& bottom, U&& left)

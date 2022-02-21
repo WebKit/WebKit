@@ -33,7 +33,7 @@ namespace WebCore {
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 WEBCORE_EXPORT WTF::LogChannels& logChannels();
-String logLevelString();
+WEBCORE_EXPORT String logLevelString();
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 

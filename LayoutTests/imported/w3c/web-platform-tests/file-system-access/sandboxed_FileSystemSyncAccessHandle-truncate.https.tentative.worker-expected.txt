@@ -1,5 +1,5 @@
 
-FAIL test createSyncAccessHandle.truncate with pending operation promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
-FAIL test SyncAccessHandle.truncate with different sizes promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
-FAIL test SyncAccessHandle.truncate after SyncAccessHandle.write promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL test createSyncAccessHandle.truncate with pending operation assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS test SyncAccessHandle.truncate with different sizes
+PASS test SyncAccessHandle.truncate after SyncAccessHandle.write
 

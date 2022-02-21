@@ -1,12 +1,14 @@
 <html>
     <head>
+        <script src="../../../resources/ui-helper.js"></script>
         <script type="text/javascript">
+            window.jsTestIsAsync = true;
             if (window.testRunner && window.internals) {
                 testRunner.waitUntilDone();
                 internals.settings.setFrameFlattening("FullyEnabled")
             }
 
-            function runTest()
+            async function runTest()
             {
                 if (window.eventSender && window.testRunner) {
                     var element = document.getElementById('targetObject');
@@ -14,9 +16,8 @@
                     var startY = element.offsetTop + element.offsetHeight / 2;
                     eventSender.mouseMoveTo(startX, startY);
                     eventSender.mouseScrollBy(0, -4);
-                    setTimeout(function() {
-                        testRunner.notifyDone();
-                    }, 100);
+                    await UIHelper.waitForTargetScrollAnimationToSettle(element);
+                    testRunner.notifyDone();
                 }
             }
         </script>

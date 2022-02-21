@@ -18,6 +18,8 @@
 
 namespace rx
 {
+enum class DescriptorSetIndex : uint32_t;
+
 namespace vk
 {
 // Helper macros that apply to all the wrapped object types.
@@ -32,6 +34,7 @@ namespace vk
     FUNC(Allocation)               \
     FUNC(Allocator)                \
     FUNC(Buffer)                   \
+    FUNC(BufferSubAllocation)      \
     FUNC(BufferView)               \
     FUNC(CommandPool)              \
     FUNC(DescriptorPool)           \
@@ -176,10 +179,6 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
 
     VkResult init(VkDevice device, const VkCommandBufferAllocateInfo &createInfo);
 
-    // There is no way to know if the command buffer contains any commands.
-    static bool CanKnowIfEmpty() { return false; }
-    bool empty() const { return false; }
-
     using WrappedObject::operator=;
 
     static bool SupportsQueries(const VkPhysicalDeviceFeatures &features)
@@ -199,7 +198,7 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
 
     void bindDescriptorSets(const PipelineLayout &layout,
                             VkPipelineBindPoint pipelineBindPoint,
-                            uint32_t firstSet,
+                            DescriptorSetIndex firstSet,
                             uint32_t descriptorSetCount,
                             const VkDescriptorSet *descriptorSets,
                             uint32_t dynamicOffsetCount,
@@ -267,28 +266,11 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
               uint32_t instanceCount,
               uint32_t firstVertex,
               uint32_t firstInstance);
-    void draw(uint32_t vertexCount, uint32_t firstVertex);
-    void drawInstanced(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex);
-    void drawInstancedBaseInstance(uint32_t vertexCount,
-                                   uint32_t instanceCount,
-                                   uint32_t firstVertex,
-                                   uint32_t firstInstance);
     void drawIndexed(uint32_t indexCount,
                      uint32_t instanceCount,
                      uint32_t firstIndex,
                      int32_t vertexOffset,
                      uint32_t firstInstance);
-    void drawIndexed(uint32_t indexCount);
-    void drawIndexedBaseVertex(uint32_t indexCount, uint32_t vertexOffset);
-    void drawIndexedInstanced(uint32_t indexCount, uint32_t instanceCount);
-    void drawIndexedInstancedBaseVertex(uint32_t indexCount,
-                                        uint32_t instanceCount,
-                                        uint32_t vertexOffset);
-    void drawIndexedInstancedBaseVertexBaseInstance(uint32_t indexCount,
-                                                    uint32_t instanceCount,
-                                                    uint32_t firstIndex,
-                                                    int32_t vertexOffset,
-                                                    uint32_t firstInstance);
     void drawIndexedIndirect(const Buffer &buffer,
                              VkDeviceSize offset,
                              uint32_t drawCount,
@@ -305,26 +287,20 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
 
     void getMemoryUsageStats(size_t *usedMemoryOut, size_t *allocatedMemoryOut) const;
 
-    void executionBarrier(VkPipelineStageFlags stageMask);
-
     void fillBuffer(const Buffer &dstBuffer,
                     VkDeviceSize dstOffset,
                     VkDeviceSize size,
                     uint32_t data);
 
-    void bufferBarrier(VkPipelineStageFlags srcStageMask,
-                       VkPipelineStageFlags dstStageMask,
-                       const VkBufferMemoryBarrier *bufferMemoryBarrier);
-
     void imageBarrier(VkPipelineStageFlags srcStageMask,
                       VkPipelineStageFlags dstStageMask,
                       const VkImageMemoryBarrier &imageMemoryBarrier);
 
+    void nextSubpass(VkSubpassContents subpassContents);
+
     void memoryBarrier(VkPipelineStageFlags srcStageMask,
                        VkPipelineStageFlags dstStageMask,
                        const VkMemoryBarrier *memoryBarrier);
-
-    void nextSubpass(VkSubpassContents subpassContents);
 
     void pipelineBarrier(VkPipelineStageFlags srcStageMask,
                          VkPipelineStageFlags dstStageMask,
@@ -343,6 +319,7 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
                        const void *data);
 
     void setEvent(VkEvent event, VkPipelineStageFlags stageMask);
+    void setViewport(uint32_t firstViewport, uint32_t viewportCount, const VkViewport *viewports);
     void setScissor(uint32_t firstScissor, uint32_t scissorCount, const VkRect2D *scissors);
     VkResult reset();
     void resetEvent(VkEvent event, VkPipelineStageFlags stageMask);
@@ -369,19 +346,19 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
                         uint32_t query);
 
     // VK_EXT_transform_feedback
-    void beginTransformFeedbackEXT(uint32_t firstCounterBuffer,
-                                   uint32_t counterBufferCount,
-                                   const VkBuffer *counterBuffers,
-                                   const VkDeviceSize *counterBufferOffsets);
-    void endTransformFeedbackEXT(uint32_t firstCounterBuffer,
-                                 uint32_t counterBufferCount,
-                                 const VkBuffer *counterBuffers,
-                                 const VkDeviceSize *counterBufferOffsets);
-    void bindTransformFeedbackBuffersEXT(uint32_t firstBinding,
-                                         uint32_t bindingCount,
-                                         const VkBuffer *buffers,
-                                         const VkDeviceSize *offsets,
-                                         const VkDeviceSize *sizes);
+    void beginTransformFeedback(uint32_t firstCounterBuffer,
+                                uint32_t counterBufferCount,
+                                const VkBuffer *counterBuffers,
+                                const VkDeviceSize *counterBufferOffsets);
+    void endTransformFeedback(uint32_t firstCounterBuffer,
+                              uint32_t counterBufferCount,
+                              const VkBuffer *counterBuffers,
+                              const VkDeviceSize *counterBufferOffsets);
+    void bindTransformFeedbackBuffers(uint32_t firstBinding,
+                                      uint32_t bindingCount,
+                                      const VkBuffer *buffers,
+                                      const VkDeviceSize *offsets,
+                                      const VkDeviceSize *sizes);
 
     // VK_EXT_debug_utils
     void beginDebugUtilsLabelEXT(const VkDebugUtilsLabelEXT &labelInfo);
@@ -389,6 +366,8 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
     void insertDebugUtilsLabelEXT(const VkDebugUtilsLabelEXT &labelInfo);
 };
 }  // namespace priv
+
+using PrimaryCommandBuffer = priv::CommandBuffer;
 
 class Image final : public WrappedObject<Image, VkImage>
 {
@@ -408,6 +387,7 @@ class Image final : public WrappedObject<Image, VkImage>
 
     void getMemoryRequirements(VkDevice device, VkMemoryRequirements *requirementsOut) const;
     VkResult bindMemory(VkDevice device, const DeviceMemory &deviceMemory);
+    VkResult bindMemory2(VkDevice device, const VkBindImageMemoryInfoKHR &bindInfo);
 
     void getSubresourceLayout(VkDevice device,
                               VkImageAspectFlagBits aspectMask,
@@ -461,6 +441,8 @@ class DeviceMemory final : public WrappedObject<DeviceMemory, VkDeviceMemory>
                  VkMemoryMapFlags flags,
                  uint8_t **mapPointer) const;
     void unmap(VkDevice device) const;
+    void flush(VkDevice device, VkMappedMemoryRange &memRange);
+    void invalidate(VkDevice device, VkMappedMemoryRange &memRange);
 };
 
 class Allocator : public WrappedObject<Allocator, VmaAllocator>
@@ -475,22 +457,6 @@ class Allocator : public WrappedObject<Allocator, VmaAllocator>
                   uint32_t apiVersion,
                   VkDeviceSize preferredLargeHeapBlockSize);
 
-    // Initializes the buffer handle and memory allocation.
-    VkResult createBuffer(const VkBufferCreateInfo &bufferCreateInfo,
-                          VkMemoryPropertyFlags requiredFlags,
-                          VkMemoryPropertyFlags preferredFlags,
-                          bool persistentlyMappedBuffers,
-                          uint32_t *memoryTypeIndexOut,
-                          Buffer *bufferOut,
-                          Allocation *allocationOut) const;
-
-    void getMemoryTypeProperties(uint32_t memoryTypeIndex, VkMemoryPropertyFlags *flagsOut) const;
-    VkResult findMemoryTypeIndexForBufferInfo(const VkBufferCreateInfo &bufferCreateInfo,
-                                              VkMemoryPropertyFlags requiredFlags,
-                                              VkMemoryPropertyFlags preferredFlags,
-                                              bool persistentlyMappedBuffers,
-                                              uint32_t *memoryTypeIndexOut) const;
-
     void buildStatsString(char **statsString, VkBool32 detailedMap);
     void freeStatsString(char *statsString);
 };
@@ -503,11 +469,11 @@ class Allocation final : public WrappedObject<Allocation, VmaAllocation>
 
     VkResult map(const Allocator &allocator, uint8_t **mapPointer) const;
     void unmap(const Allocator &allocator) const;
-    void flush(const Allocator &allocator, VkDeviceSize offset, VkDeviceSize size);
-    void invalidate(const Allocator &allocator, VkDeviceSize offset, VkDeviceSize size);
+    void flush(const Allocator &allocator, VkDeviceSize offset, VkDeviceSize size) const;
+    void invalidate(const Allocator &allocator, VkDeviceSize offset, VkDeviceSize size) const;
 
   private:
-    friend class Allocator;
+    friend class BufferMemoryAllocator;
 };
 
 class RenderPass final : public WrappedObject<RenderPass, VkRenderPass>
@@ -538,7 +504,7 @@ class Buffer final : public WrappedObject<Buffer, VkBuffer>
     void getMemoryRequirements(VkDevice device, VkMemoryRequirements *memoryRequirementsOut);
 
   private:
-    friend class Allocator;
+    friend class BufferMemoryAllocator;
 };
 
 class BufferView final : public WrappedObject<BufferView, VkBufferView>
@@ -668,6 +634,18 @@ class QueryPool final : public WrappedObject<QueryPool, VkQueryPool>
                         VkQueryResultFlags flags) const;
 };
 
+// VirtualBlock
+class VirtualBlock final : public WrappedObject<VirtualBlock, VmaVirtualBlock>
+{
+  public:
+    VirtualBlock() = default;
+    void destroy(VkDevice device);
+    VkResult init(VkDevice device, vma::VirtualBlockCreateFlags flags, VkDeviceSize size);
+
+    VkResult allocate(VkDeviceSize size, VkDeviceSize alignment, VkDeviceSize *offsetOut);
+    void free(VkDeviceSize offset);
+};
+
 // CommandPool implementation.
 ANGLE_INLINE void CommandPool::destroy(VkDevice device)
 {
@@ -732,6 +710,7 @@ ANGLE_INLINE void CommandBuffer::blitImage(const Image &srcImage,
 
 ANGLE_INLINE VkResult CommandBuffer::begin(const VkCommandBufferBeginInfo &info)
 {
+    ANGLE_TRACE_EVENT0("gpu.angle", "CommandBuffer::begin");
     ASSERT(valid());
     return vkBeginCommandBuffer(mHandle, &info);
 }
@@ -745,8 +724,15 @@ ANGLE_INLINE VkResult CommandBuffer::end()
 
 ANGLE_INLINE VkResult CommandBuffer::reset()
 {
+    ANGLE_TRACE_EVENT0("gpu.angle", "CommandBuffer::reset");
     ASSERT(valid());
     return vkResetCommandBuffer(mHandle, 0);
+}
+
+ANGLE_INLINE void CommandBuffer::nextSubpass(VkSubpassContents subpassContents)
+{
+    ASSERT(valid());
+    vkCmdNextSubpass(mHandle, subpassContents);
 }
 
 ANGLE_INLINE void CommandBuffer::memoryBarrier(VkPipelineStageFlags srcStageMask,
@@ -756,12 +742,6 @@ ANGLE_INLINE void CommandBuffer::memoryBarrier(VkPipelineStageFlags srcStageMask
     ASSERT(valid());
     vkCmdPipelineBarrier(mHandle, srcStageMask, dstStageMask, 0, 1, memoryBarrier, 0, nullptr, 0,
                          nullptr);
-}
-
-ANGLE_INLINE void CommandBuffer::nextSubpass(VkSubpassContents subpassContents)
-{
-    ASSERT(valid());
-    vkCmdNextSubpass(mHandle, subpassContents);
 }
 
 ANGLE_INLINE void CommandBuffer::pipelineBarrier(VkPipelineStageFlags srcStageMask,
@@ -778,21 +758,6 @@ ANGLE_INLINE void CommandBuffer::pipelineBarrier(VkPipelineStageFlags srcStageMa
     vkCmdPipelineBarrier(mHandle, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount,
                          memoryBarriers, bufferMemoryBarrierCount, bufferMemoryBarriers,
                          imageMemoryBarrierCount, imageMemoryBarriers);
-}
-
-ANGLE_INLINE void CommandBuffer::executionBarrier(VkPipelineStageFlags stageMask)
-{
-    ASSERT(valid());
-    vkCmdPipelineBarrier(mHandle, stageMask, stageMask, 0, 0, nullptr, 0, nullptr, 0, nullptr);
-}
-
-ANGLE_INLINE void CommandBuffer::bufferBarrier(VkPipelineStageFlags srcStageMask,
-                                               VkPipelineStageFlags dstStageMask,
-                                               const VkBufferMemoryBarrier *bufferMemoryBarrier)
-{
-    ASSERT(valid());
-    vkCmdPipelineBarrier(mHandle, srcStageMask, dstStageMask, 0, 0, nullptr, 1, bufferMemoryBarrier,
-                         0, nullptr);
 }
 
 ANGLE_INLINE void CommandBuffer::imageBarrier(VkPipelineStageFlags srcStageMask,
@@ -920,15 +885,16 @@ ANGLE_INLINE void CommandBuffer::bindIndexBuffer(const Buffer &buffer,
 
 ANGLE_INLINE void CommandBuffer::bindDescriptorSets(const PipelineLayout &layout,
                                                     VkPipelineBindPoint pipelineBindPoint,
-                                                    uint32_t firstSet,
+                                                    DescriptorSetIndex firstSet,
                                                     uint32_t descriptorSetCount,
                                                     const VkDescriptorSet *descriptorSets,
                                                     uint32_t dynamicOffsetCount,
                                                     const uint32_t *dynamicOffsets)
 {
     ASSERT(valid() && layout.valid());
-    vkCmdBindDescriptorSets(mHandle, pipelineBindPoint, layout.getHandle(), firstSet,
-                            descriptorSetCount, descriptorSets, dynamicOffsetCount, dynamicOffsets);
+    vkCmdBindDescriptorSets(this->mHandle, pipelineBindPoint, layout.getHandle(),
+                            ToUnderlying(firstSet), descriptorSetCount, descriptorSets,
+                            dynamicOffsetCount, dynamicOffsets);
 }
 
 ANGLE_INLINE void CommandBuffer::executeCommands(uint32_t commandBufferCount,
@@ -970,6 +936,14 @@ ANGLE_INLINE void CommandBuffer::setEvent(VkEvent event, VkPipelineStageFlags st
 {
     ASSERT(valid() && event != VK_NULL_HANDLE);
     vkCmdSetEvent(mHandle, event, stageMask);
+}
+
+ANGLE_INLINE void CommandBuffer::setViewport(uint32_t firstViewport,
+                                             uint32_t viewportCount,
+                                             const VkViewport *viewports)
+{
+    ASSERT(valid() && viewports != nullptr);
+    vkCmdSetViewport(mHandle, firstViewport, viewportCount, viewports);
 }
 
 ANGLE_INLINE void CommandBuffer::setScissor(uint32_t firstScissor,
@@ -1054,70 +1028,11 @@ ANGLE_INLINE void CommandBuffer::draw(uint32_t vertexCount,
     vkCmdDraw(mHandle, vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
-ANGLE_INLINE void CommandBuffer::draw(uint32_t vertexCount, uint32_t firstVertex)
-{
-    ASSERT(valid());
-    vkCmdDraw(mHandle, vertexCount, 1, firstVertex, 0);
-}
-
-ANGLE_INLINE void CommandBuffer::drawInstanced(uint32_t vertexCount,
-                                               uint32_t instanceCount,
-                                               uint32_t firstVertex)
-{
-    ASSERT(valid());
-    vkCmdDraw(mHandle, vertexCount, instanceCount, firstVertex, 0);
-}
-
-ANGLE_INLINE void CommandBuffer::drawInstancedBaseInstance(uint32_t vertexCount,
-                                                           uint32_t instanceCount,
-                                                           uint32_t firstVertex,
-                                                           uint32_t firstInstance)
-{
-    ASSERT(valid());
-    vkCmdDraw(mHandle, vertexCount, instanceCount, firstVertex, firstInstance);
-}
-
 ANGLE_INLINE void CommandBuffer::drawIndexed(uint32_t indexCount,
                                              uint32_t instanceCount,
                                              uint32_t firstIndex,
                                              int32_t vertexOffset,
                                              uint32_t firstInstance)
-{
-    ASSERT(valid());
-    vkCmdDrawIndexed(mHandle, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
-}
-
-ANGLE_INLINE void CommandBuffer::drawIndexed(uint32_t indexCount)
-{
-    ASSERT(valid());
-    vkCmdDrawIndexed(mHandle, indexCount, 1, 0, 0, 0);
-}
-
-ANGLE_INLINE void CommandBuffer::drawIndexedBaseVertex(uint32_t indexCount, uint32_t vertexOffset)
-{
-    ASSERT(valid());
-    vkCmdDrawIndexed(mHandle, indexCount, 1, 0, vertexOffset, 0);
-}
-
-ANGLE_INLINE void CommandBuffer::drawIndexedInstanced(uint32_t indexCount, uint32_t instanceCount)
-{
-    ASSERT(valid());
-    vkCmdDrawIndexed(mHandle, indexCount, instanceCount, 0, 0, 0);
-}
-
-ANGLE_INLINE void CommandBuffer::drawIndexedInstancedBaseVertex(uint32_t indexCount,
-                                                                uint32_t instanceCount,
-                                                                uint32_t vertexOffset)
-{
-    ASSERT(valid());
-    vkCmdDrawIndexed(mHandle, indexCount, instanceCount, 0, vertexOffset, 0);
-}
-
-ANGLE_INLINE void CommandBuffer::drawIndexedInstancedBaseVertexBaseInstance(uint32_t indexCount,
-                                                                            uint32_t instanceCount,
-                                                                            uint32_t firstIndex,
-                                                                            int32_t vertexOffset,
-                                                                            uint32_t firstInstance)
 {
     ASSERT(valid());
     vkCmdDrawIndexed(mHandle, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
@@ -1183,10 +1098,10 @@ ANGLE_INLINE void CommandBuffer::bindVertexBuffers(uint32_t firstBinding,
     vkCmdBindVertexBuffers(mHandle, firstBinding, bindingCount, buffers, offsets);
 }
 
-ANGLE_INLINE void CommandBuffer::beginTransformFeedbackEXT(uint32_t firstCounterBuffer,
-                                                           uint32_t counterBufferCount,
-                                                           const VkBuffer *counterBuffers,
-                                                           const VkDeviceSize *counterBufferOffsets)
+ANGLE_INLINE void CommandBuffer::beginTransformFeedback(uint32_t firstCounterBuffer,
+                                                        uint32_t counterBufferCount,
+                                                        const VkBuffer *counterBuffers,
+                                                        const VkDeviceSize *counterBufferOffsets)
 {
     ASSERT(valid());
     ASSERT(vkCmdBeginTransformFeedbackEXT);
@@ -1194,10 +1109,10 @@ ANGLE_INLINE void CommandBuffer::beginTransformFeedbackEXT(uint32_t firstCounter
                                    counterBufferOffsets);
 }
 
-ANGLE_INLINE void CommandBuffer::endTransformFeedbackEXT(uint32_t firstCounterBuffer,
-                                                         uint32_t counterBufferCount,
-                                                         const VkBuffer *counterBuffers,
-                                                         const VkDeviceSize *counterBufferOffsets)
+ANGLE_INLINE void CommandBuffer::endTransformFeedback(uint32_t firstCounterBuffer,
+                                                      uint32_t counterBufferCount,
+                                                      const VkBuffer *counterBuffers,
+                                                      const VkDeviceSize *counterBufferOffsets)
 {
     ASSERT(valid());
     ASSERT(vkCmdEndTransformFeedbackEXT);
@@ -1205,11 +1120,11 @@ ANGLE_INLINE void CommandBuffer::endTransformFeedbackEXT(uint32_t firstCounterBu
                                  counterBufferOffsets);
 }
 
-ANGLE_INLINE void CommandBuffer::bindTransformFeedbackBuffersEXT(uint32_t firstBinding,
-                                                                 uint32_t bindingCount,
-                                                                 const VkBuffer *buffers,
-                                                                 const VkDeviceSize *offsets,
-                                                                 const VkDeviceSize *sizes)
+ANGLE_INLINE void CommandBuffer::bindTransformFeedbackBuffers(uint32_t firstBinding,
+                                                              uint32_t bindingCount,
+                                                              const VkBuffer *buffers,
+                                                              const VkDeviceSize *offsets,
+                                                              const VkDeviceSize *sizes)
 {
     ASSERT(valid());
     ASSERT(vkCmdBindTransformFeedbackBuffersEXT);
@@ -1284,6 +1199,12 @@ ANGLE_INLINE VkResult Image::bindMemory(VkDevice device, const vk::DeviceMemory 
 {
     ASSERT(valid() && deviceMemory.valid());
     return vkBindImageMemory(device, mHandle, deviceMemory.getHandle(), 0);
+}
+
+ANGLE_INLINE VkResult Image::bindMemory2(VkDevice device, const VkBindImageMemoryInfoKHR &bindInfo)
+{
+    ASSERT(valid());
+    return vkBindImageMemory2KHR(device, 1, &bindInfo);
 }
 
 ANGLE_INLINE void Image::getSubresourceLayout(VkDevice device,
@@ -1403,6 +1324,16 @@ ANGLE_INLINE void DeviceMemory::unmap(VkDevice device) const
     vkUnmapMemory(device, mHandle);
 }
 
+ANGLE_INLINE void DeviceMemory::flush(VkDevice device, VkMappedMemoryRange &memRange)
+{
+    vkFlushMappedMemoryRanges(device, 1, &memRange);
+}
+
+ANGLE_INLINE void DeviceMemory::invalidate(VkDevice device, VkMappedMemoryRange &memRange)
+{
+    vkInvalidateMappedMemoryRanges(device, 1, &memRange);
+}
+
 // Allocator implementation.
 ANGLE_INLINE void Allocator::destroy()
 {
@@ -1422,42 +1353,6 @@ ANGLE_INLINE VkResult Allocator::init(VkPhysicalDevice physicalDevice,
     ASSERT(!valid());
     return vma::InitAllocator(physicalDevice, device, instance, apiVersion,
                               preferredLargeHeapBlockSize, &mHandle);
-}
-
-ANGLE_INLINE VkResult Allocator::createBuffer(const VkBufferCreateInfo &bufferCreateInfo,
-                                              VkMemoryPropertyFlags requiredFlags,
-                                              VkMemoryPropertyFlags preferredFlags,
-                                              bool persistentlyMappedBuffers,
-                                              uint32_t *memoryTypeIndexOut,
-                                              Buffer *bufferOut,
-                                              Allocation *allocationOut) const
-{
-    ASSERT(valid());
-    ASSERT(bufferOut && !bufferOut->valid());
-    ASSERT(allocationOut && !allocationOut->valid());
-    return vma::CreateBuffer(mHandle, &bufferCreateInfo, requiredFlags, preferredFlags,
-                             persistentlyMappedBuffers, memoryTypeIndexOut, &bufferOut->mHandle,
-                             &allocationOut->mHandle);
-}
-
-ANGLE_INLINE void Allocator::getMemoryTypeProperties(uint32_t memoryTypeIndex,
-                                                     VkMemoryPropertyFlags *flagsOut) const
-{
-    ASSERT(valid());
-    vma::GetMemoryTypeProperties(mHandle, memoryTypeIndex, flagsOut);
-}
-
-ANGLE_INLINE VkResult
-Allocator::findMemoryTypeIndexForBufferInfo(const VkBufferCreateInfo &bufferCreateInfo,
-                                            VkMemoryPropertyFlags requiredFlags,
-                                            VkMemoryPropertyFlags preferredFlags,
-                                            bool persistentlyMappedBuffers,
-                                            uint32_t *memoryTypeIndexOut) const
-{
-    ASSERT(valid());
-    return vma::FindMemoryTypeIndexForBufferInfo(mHandle, &bufferCreateInfo, requiredFlags,
-                                                 preferredFlags, persistentlyMappedBuffers,
-                                                 memoryTypeIndexOut);
 }
 
 ANGLE_INLINE void Allocator::buildStatsString(char **statsString, VkBool32 detailedMap)
@@ -1496,7 +1391,7 @@ ANGLE_INLINE void Allocation::unmap(const Allocator &allocator) const
 
 ANGLE_INLINE void Allocation::flush(const Allocator &allocator,
                                     VkDeviceSize offset,
-                                    VkDeviceSize size)
+                                    VkDeviceSize size) const
 {
     ASSERT(valid());
     vma::FlushAllocation(allocator.getHandle(), mHandle, offset, size);
@@ -1504,7 +1399,7 @@ ANGLE_INLINE void Allocation::flush(const Allocator &allocator,
 
 ANGLE_INLINE void Allocation::invalidate(const Allocator &allocator,
                                          VkDeviceSize offset,
-                                         VkDeviceSize size)
+                                         VkDeviceSize size) const
 {
     ASSERT(valid());
     vma::InvalidateAllocation(allocator.getHandle(), mHandle, offset, size);
@@ -1877,6 +1772,35 @@ ANGLE_INLINE VkResult QueryPool::getResults(VkDevice device,
     ASSERT(valid());
     return vkGetQueryPoolResults(device, mHandle, firstQuery, queryCount, dataSize, data, stride,
                                  flags);
+}
+
+// VirtualBlock implementation.
+ANGLE_INLINE void VirtualBlock::destroy(VkDevice device)
+{
+    if (valid())
+    {
+        vma::DestroyVirtualBlock(mHandle);
+        mHandle = VK_NULL_HANDLE;
+    }
+}
+
+ANGLE_INLINE VkResult VirtualBlock::init(VkDevice device,
+                                         vma::VirtualBlockCreateFlags flags,
+                                         VkDeviceSize size)
+{
+    return vma::CreateVirtualBlock(size, flags, &mHandle);
+}
+
+ANGLE_INLINE VkResult VirtualBlock::allocate(VkDeviceSize size,
+                                             VkDeviceSize alignment,
+                                             VkDeviceSize *offsetOut)
+{
+    return vma::VirtualAllocate(mHandle, size, alignment, offsetOut);
+}
+
+ANGLE_INLINE void VirtualBlock::free(VkDeviceSize offset)
+{
+    vma::VirtualFree(mHandle, offset);
 }
 }  // namespace vk
 }  // namespace rx

@@ -39,14 +39,26 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
+class BaseAudioMediaStreamTrackRendererUnit;
+class IncomingAudioMediaStreamTrackRendererUnit;
 
 // LibWebRTCAudioModule is pulling streamed data to ensure audio data is passed to the audio track.
 class LibWebRTCAudioModule : public webrtc::AudioDeviceModule {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCAudioModule();
+    ~LibWebRTCAudioModule();
 
-    static constexpr unsigned PollSamplesCount = 3;
+    static constexpr unsigned PollSamplesCount = 1;
+    void ref() { AddRef(); }
+    void deref() { Release(); }
+
+#if PLATFORM(COCOA)
+    void startIncomingAudioRendering() { m_isRenderingIncomingAudio = true; }
+    void stopIncomingAudioRendering() { m_isRenderingIncomingAudio = false; }
+    BaseAudioMediaStreamTrackRendererUnit& incomingAudioMediaStreamTrackRendererUnit();
+    uint64_t currentAudioSampleCount() const { return m_currentAudioSampleCount; }
+#endif
 
 private:
     template<typename U> U shouldNotBeCalled(U value) const
@@ -135,6 +147,12 @@ private:
     MonotonicTime m_pollingTime;
     Timer m_logTimer;
     int m_timeSpent { 0 };
+
+#if PLATFORM(COCOA)
+    uint64_t m_currentAudioSampleCount { 0 };
+    bool m_isRenderingIncomingAudio { false };
+    std::unique_ptr<IncomingAudioMediaStreamTrackRendererUnit> m_incomingAudioMediaStreamTrackRendererUnit;
+#endif
 };
 
 } // namespace WebCore

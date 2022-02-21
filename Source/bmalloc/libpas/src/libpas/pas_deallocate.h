@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,13 @@
 
 #include "pas_bitfit_page_inlines.h"
 #include "pas_deallocation_mode.h"
+#include "pas_debug_heap.h"
+#include "pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h"
 #include "pas_heap_config.h"
 #include "pas_heap_lock.h"
 #include "pas_heap_ref.h"
 #include "pas_large_heap.h"
-#include "pas_segregated_page.h"
+#include "pas_segregated_page_inlines.h"
 #include "pas_thread_local_cache.h"
 #include "pas_utils.h"
 
@@ -42,21 +44,14 @@ PAS_API bool pas_try_deallocate_slow(uintptr_t begin,
                                      pas_heap_config* config,
                                      pas_deallocation_mode deallocation_mode);
 
-static PAS_ALWAYS_INLINE void
-pas_deallocate_known_segregated_impl(pas_thread_local_cache* thread_local_cache,
-                                     uintptr_t begin,
-                                     pas_segregated_page_config page_config)
-{
-    page_config.dealloc_func(thread_local_cache, begin);
-}
-
 PAS_API bool pas_try_deallocate_slow_no_cache(void* ptr,
                                               pas_heap_config* config_ptr,
                                               pas_deallocation_mode deallocation_mode);
 
 static PAS_ALWAYS_INLINE void
 pas_deallocate_known_segregated(void* ptr,
-                                pas_segregated_page_config page_config)
+                                pas_segregated_page_config page_config,
+                                pas_segregated_page_role role)
 {
     pas_thread_local_cache* thread_local_cache;
 
@@ -66,7 +61,7 @@ pas_deallocate_known_segregated(void* ptr,
         return;
     }
     
-    pas_deallocate_known_segregated_impl(thread_local_cache, (uintptr_t)ptr, page_config);
+    pas_segregated_page_log_or_deallocate((uintptr_t)ptr, thread_local_cache, page_config, role);
 }
 
 PAS_API bool pas_try_deallocate_known_large(void* ptr,
@@ -76,21 +71,51 @@ PAS_API bool pas_try_deallocate_known_large(void* ptr,
 PAS_API void pas_deallocate_known_large(void* ptr,
                                         pas_heap_config* config);
 
-static PAS_ALWAYS_INLINE bool pas_try_deallocate_not_small(
+static PAS_ALWAYS_INLINE bool pas_try_deallocate_not_small_exclusive_segregated(
     pas_thread_local_cache* thread_local_cache,
     uintptr_t begin,
     pas_heap_config config,
-    pas_deallocation_mode deallocation_mode)
+    pas_deallocation_mode deallocation_mode,
+    pas_fast_megapage_kind megapage_kind)
 {
     pas_page_base* page_base;
+
+    if (PAS_LIKELY(megapage_kind == pas_small_other_fast_megapage_kind)) {
+        pas_page_base_and_kind page_and_kind;
+        page_and_kind = pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, config);
+        switch (page_and_kind.page_kind) {
+        case pas_small_shared_segregated_page_kind:
+            pas_segregated_page_log_or_deallocate(
+                begin, thread_local_cache, config.small_segregated_config, pas_segregated_page_shared_role);
+            return true;
+        case pas_small_bitfit_page_kind:
+            config.small_bitfit_config.specialized_page_deallocate_with_page(
+                pas_page_base_get_bitfit(page_and_kind.page_base),
+                begin);
+            return true;
+        default:
+            PAS_ASSERT(!"Should not be reached");
+            return false;
+        }
+    }
+
+    if (pas_debug_heap_is_enabled(config.kind)) {
+        pas_debug_heap_free((void*)begin);
+        return true;
+    }
 
     page_base = config.page_header_func(begin);
     if (page_base) {
         switch (pas_page_base_get_kind(page_base)) {
-        case pas_small_segregated_page_kind:
+        case pas_small_shared_segregated_page_kind:
             PAS_ASSERT(!config.small_segregated_is_in_megapage);
-            pas_deallocate_known_segregated_impl(
-                thread_local_cache, begin, config.small_segregated_config);
+            pas_segregated_page_log_or_deallocate(
+                begin, thread_local_cache, config.small_segregated_config, pas_segregated_page_shared_role);
+            return true;
+        case pas_small_exclusive_segregated_page_kind:
+            PAS_ASSERT(!config.small_segregated_is_in_megapage);
+            pas_segregated_page_log_or_deallocate(
+                begin, thread_local_cache, config.small_segregated_config, pas_segregated_page_exclusive_role);
             return true;
         case pas_small_bitfit_page_kind:
             PAS_ASSERT(!config.small_bitfit_is_in_megapage);
@@ -98,9 +123,13 @@ static PAS_ALWAYS_INLINE bool pas_try_deallocate_not_small(
                 pas_page_base_get_bitfit(page_base),
                 begin);
             return true;
-        case pas_medium_segregated_page_kind:
-            pas_deallocate_known_segregated_impl(
-                thread_local_cache, begin, config.medium_segregated_config);
+        case pas_medium_shared_segregated_page_kind:
+            pas_segregated_page_log_or_deallocate(
+                begin, thread_local_cache, config.medium_segregated_config, pas_segregated_page_shared_role);
+            return true;
+        case pas_medium_exclusive_segregated_page_kind:
+            pas_segregated_page_log_or_deallocate(
+                begin, thread_local_cache, config.medium_segregated_config, pas_segregated_page_exclusive_role);
             return true;
         case pas_medium_bitfit_page_kind:
             config.medium_bitfit_config.specialized_page_deallocate_with_page(
@@ -131,18 +160,14 @@ static PAS_ALWAYS_INLINE bool pas_try_deallocate_impl(pas_thread_local_cache* th
     begin = (uintptr_t)ptr;
     
     megapage_kind = config.fast_megapage_kind_func(begin);
-    if (PAS_LIKELY(megapage_kind == pas_small_segregated_fast_megapage_kind)) {
-        pas_deallocate_known_segregated_impl(
-            thread_local_cache, begin, config.small_segregated_config);
-        return true;
-    }
-    pas_compiler_fence();
-    if (PAS_LIKELY(megapage_kind == pas_small_bitfit_fast_megapage_kind)) {
-        pas_bitfit_page_deallocate(begin, config.small_bitfit_config);
+    if (PAS_LIKELY(megapage_kind == pas_small_exclusive_segregated_fast_megapage_kind)) {
+        pas_segregated_page_log_or_deallocate(
+            begin, thread_local_cache, config.small_segregated_config, pas_segregated_page_exclusive_role);
         return true;
     }
 
-    return config.specialized_try_deallocate_not_small(thread_local_cache, begin, deallocation_mode);
+    return config.specialized_try_deallocate_not_small_exclusive_segregated(
+        thread_local_cache, begin, deallocation_mode, megapage_kind);
 }
 
 /* This returns true if the object was successfully deallocated.

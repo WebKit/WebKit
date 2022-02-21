@@ -28,6 +28,9 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "JSCSSKeywordValue.h"
+#include "JSCSSMathValue.h"
+#include "JSCSSNumericValue.h"
 #include "JSCSSStyleImageValue.h"
 #include "JSCSSUnitValue.h"
 #include "JSCSSUnparsedValue.h"
@@ -39,16 +42,25 @@ using namespace JSC;
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<CSSStyleValue>&& value)
 {
     switch (value->getType()) {
+    case CSSStyleValueType::CSSStyleImageValue:
+        return createWrapper<CSSStyleImageValue>(globalObject, WTFMove(value));
+    case CSSStyleValueType::CSSNumericValue:
+        return createWrapper<CSSNumericValue>(globalObject, WTFMove(value));
+    case CSSStyleValueType::CSSMathValue:
+        return createWrapper<CSSMathValue>(globalObject, WTFMove(value));
     case CSSStyleValueType::CSSUnitValue:
         return createWrapper<CSSUnitValue>(globalObject, WTFMove(value));
     case CSSStyleValueType::CSSUnparsedValue:
         return createWrapper<CSSUnparsedValue>(globalObject, WTFMove(value));
-    case CSSStyleValueType::CSSStyleImageValue:
-        return createWrapper<CSSStyleImageValue>(globalObject, WTFMove(value));
-    default:
+    case CSSStyleValueType::CSSKeywordValue:
+        return createWrapper<CSSKeywordValue>(globalObject, WTFMove(value));
+    case CSSStyleValueType::CSSTransformValue:
+    case CSSStyleValueType::CSSStyleValue:
         return createWrapper<CSSStyleValue>(globalObject, WTFMove(value));
     }
 
+    ASSERT_NOT_REACHED();
+    return createWrapper<CSSStyleValue>(globalObject, WTFMove(value));
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, CSSStyleValue& object)

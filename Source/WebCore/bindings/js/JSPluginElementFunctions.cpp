@@ -78,12 +78,8 @@ JSObject* pluginScriptObject(JSGlobalObject* lexicalGlobalObject, JSHTMLElement*
 
     // Choke point for script/plugin interaction; notify DOMTimer of the event.
     DOMTimer::scriptDidInteractWithPlugin(pluginElement);
-
-    // First, see if the element has a plug-in replacement with a script.
-    if (auto* scriptObject = pluginElement.scriptObjectForPluginReplacement())
-        return scriptObject;
     
-    // Next, see if we can ask the plug-in view for its script object.
+    // See if we can ask the plug-in view for its script object.
     if (auto* scriptObject = pluginScriptObjectFromPluginViewBase(pluginElement, jsHTMLElement->globalObject()))
         return scriptObject;
 

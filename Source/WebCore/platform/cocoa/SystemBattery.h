@@ -53,7 +53,7 @@ public:
 private:
     std::optional<bool> m_hasBattery;
     std::optional<bool> m_hasAC;
-    WTF::Function<void()> m_configurationChangedCallback;
+    Function<void()> m_configurationChangedCallback;
 };
 
 }

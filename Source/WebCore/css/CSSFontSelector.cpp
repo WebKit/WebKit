@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,10 +62,16 @@ using namespace WebKitFontFamilyNames;
 
 static unsigned fontSelectorId;
 
+Ref<CSSFontSelector> CSSFontSelector::create(ScriptExecutionContext& context)
+{
+    auto fontSelector = adoptRef(*new CSSFontSelector(context));
+    fontSelector->suspendIfNeeded();
+    return fontSelector;
+}
+
 CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
-    , m_context(makeWeakPtr(context))
-    , m_fontCache(makeRef(context.fontCache()))
+    , m_context(context)
     , m_cssFontFaceSet(CSSFontFaceSet::create(this))
     , m_fontModifiedObserver([this] { fontModified(); })
     , m_uniqueId(++fontSelectorId)
@@ -81,11 +87,9 @@ CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
             m_fontFamilyNames.uncheckedAppend(familyName);
     }
 
-    m_fontCache->addClient(*this);
+    FontCache::forCurrentThread().addClient(*this);
     m_cssFontFaceSet->addFontModifiedObserver(m_fontModifiedObserver);
     LOG(Fonts, "CSSFontSelector %p ctor", this);
-
-    suspendIfNeeded();
 }
 
 CSSFontSelector::~CSSFontSelector()
@@ -93,7 +97,9 @@ CSSFontSelector::~CSSFontSelector()
     LOG(Fonts, "CSSFontSelector %p dtor", this);
 
     clearFonts();
-    m_fontCache->removeClient(*this);
+
+    if (auto fontCache = FontCache::forCurrentThreadIfNotDestroyed())
+        fontCache->removeClient(*this);
 }
 
 FontFaceSet* CSSFontSelector::fontFaceSetIfExists()
@@ -135,6 +141,8 @@ void CSSFontSelector::buildStarted()
         if (face.cssConnection())
             m_cssConnectionsPossiblyToRemove.add(&face);
     }
+
+    m_paletteMap.clear();
 }
 
 void CSSFontSelector::buildCompleted()
@@ -229,6 +237,15 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     ++m_version;
 }
 
+void CSSFontSelector::addFontPaletteValuesRule(StyleRuleFontPaletteValues& fontPaletteValuesRule)
+{
+    AtomString fontFamily = fontPaletteValuesRule.fontFamily().isNull() ? emptyAtom() : fontPaletteValuesRule.fontFamily();
+    AtomString name = fontPaletteValuesRule.name().isNull() ? emptyAtom() : fontPaletteValuesRule.name();
+    m_paletteMap.set(std::make_pair(fontFamily, name), fontPaletteValuesRule.fontPaletteValues());
+
+    ++m_version;
+}
+
 void CSSFontSelector::registerForInvalidationCallbacks(FontSelectorClient& client)
 {
     m_clients.add(&client);
@@ -269,7 +286,7 @@ void CSSFontSelector::fontModified()
 
 void CSSFontSelector::updateStyleIfNeeded()
 {
-    if (is<Document>(m_context.get()))
+    if (is<Document>(m_context))
         downcast<Document>(*m_context).updateStyleIfNeeded();
 }
 
@@ -304,6 +321,20 @@ std::optional<AtomString> CSSFontSelector::resolveGenericFamily(const FontDescri
     return std::nullopt;
 }
 
+const FontPaletteValues& CSSFontSelector::lookupFontPaletteValues(const AtomString& familyName, const FontDescription& fontDescription)
+{
+    static NeverDestroyed<FontPaletteValues> emptyFontPaletteValues;
+    if (fontDescription.fontPalette().type != FontPalette::Type::Custom)
+        return emptyFontPaletteValues.get();
+
+    const AtomString paletteName = fontDescription.fontPalette().identifier;
+
+    auto iterator = m_paletteMap.find(std::make_pair(familyName, paletteName));
+    if (iterator == m_paletteMap.end())
+        return emptyFontPaletteValues.get();
+    return iterator->value;
+}
+
 FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescription, const AtomString& familyName)
 {
     // If this ASSERT() fires, it usually means you forgot a document.updateStyleIfNeeded() somewhere.
@@ -320,19 +351,21 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
             familyForLookup = *genericFamilyOptional;
     };
 
+    const auto& fontPaletteValues = lookupFontPaletteValues(familyName, fontDescription);
+
     if (resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
-    Document* document = is<Document>(m_context.get()) ? &downcast<Document>(*m_context) : nullptr;
+    auto* document = dynamicDowncast<Document>(m_context.get());
     auto* face = m_cssFontFaceSet->fontFace(fontDescriptionForLookup->fontSelectionRequest(), familyForLookup);
     if (face) {
         if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
             ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), true);
-        return face->fontRanges(*fontDescriptionForLookup);
+        return face->fontRanges(*fontDescriptionForLookup, fontPaletteValues);
     }
 
     if (!resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
-    auto font = m_fontCache->fontForFamily(*fontDescriptionForLookup, familyForLookup);
+    auto font = FontCache::forCurrentThread().fontForFamily(*fontDescriptionForLookup, familyForLookup, { { }, { }, fontPaletteValues });
     if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), !!font);
     return FontRanges { WTFMove(font) };
@@ -363,8 +396,8 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
     if (!m_context->settingsValues().fontFallbackPrefersPictographs)
         return nullptr;
     auto& pictographFontFamily = m_context->settingsValues().fontGenericFamilies.pictographFontFamily();
-    auto font = m_fontCache->fontForFamily(fontDescription, pictographFontFamily);
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled() && is<Document>(m_context.get()))
+    auto font = FontCache::forCurrentThread().fontForFamily(fontDescription, pictographFontFamily);
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled() && is<Document>(m_context))
         ResourceLoadObserver::shared().logFontLoad(downcast<Document>(*m_context), pictographFontFamily, !!font);
 
     return font;

@@ -149,7 +149,13 @@
         "as seen when one is seen. This could enforce the 'last-one-wins' rule.",
         "",
         "* aliases:",
-        "An array of the alternative names for this property.",
+        "An array of the alternative names for this property. Aliases are folded at",
+        "parse time and don't have their own CSSPropertyID.",
+        "",
+        "* synonym:",
+        "An alternative name for this property that gets its own CSSPropertyID.",
+        "This allows parsing code to handle differences in allowed values.",
+        "Style builder code is shared with the original property.",
         "",
         "* enable-if:",
         "Indicates that code should only be generated for this property/value if the",
@@ -210,6 +216,21 @@
         "to true is chosen for code generation."
     ],
     "properties": {
+        "accent-color": {
+            "inherited": true,
+            "codegen-properties": {
+                "auto-functions": true,
+                "color-property": true,
+                "settings-flag": "accentColorEnabled"
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-ui",
+                "url": "https://www.w3.org/TR/css-ui-4/#widget-accent"
+            }
+        },
         "caret-color": {
             "inherited": true,
             "codegen-properties": {
@@ -256,28 +277,10 @@
             "values": [
                 "inline",
                 "block",
-                {
-                    "value": "flow",
-                    "status": "not implemented",
-                    "url": "https://www.w3.org/TR/css-display-3/#valdef-display-flow"
-                },
-                {
-                    "value": "flow-root",
-                    "status": "not implemented",
-                    "url": "https://www.w3.org/TR/css-display-3/#valdef-display-flow-root"
-                },
+                "flow",
+                "flow-root",
                 "list-item",
-                {
-                    "value": "compact",
-                    "url": "https://www.w3.org/TR/REC-CSS2/visuren.html#compact"
-                },
                 "inline-block",
-                {
-                    "value": "run-in",
-                    "status": "removed",
-                    "url": "https://www.w3.org/TR/css-display-3/#valdef-display-run-in",
-                    "comment": "Removed in https://trac.webkit.org/r163560"
-                },
                 "table",
                 "inline-table",
                 "table-row-group",
@@ -288,36 +291,45 @@
                 "table-column",
                 "table-cell",
                 "table-caption",
+                "flex",
+                "inline-flex",
+                "grid",
+                "inline-grid",
+                {
+                    "value": "ruby",
+                    "status": "not implemented"
+                },
+                "contents",
+                "none",
                 {
                     "value": "-webkit-box",
-                    "url": "https://www.w3.org/TR/2009/WD-css3-flexbox-20090723/"
+                    "status": "obsolete",
+                    "url": "https://compat.spec.whatwg.org/#css-keyword-mappings"
                 },
                 {
                     "value": "-webkit-inline-box",
-                    "url": "https://www.w3.org/TR/2009/WD-css3-flexbox-20090723/"
+                    "status": "obsolete",
+                    "url": "https://compat.spec.whatwg.org/#css-keyword-mappings"
                 },
                 {
-                    "value": "flex",
-                    "url": "https://www.w3.org/TR/css-flexbox-1/#valdef-display-flex"
+                    "value": "-webkit-flex",
+                    "status": "obsolete"
                 },
-                "-webkit-flex",
                 {
-                    "value": "inline-flex",
-                    "url": "https://www.w3.org/TR/css-flexbox-1/#valdef-display-inline-flex"
+                    "value": "-webkit-inline-flex",
+                    "status": "obsolete"
                 },
-                "-webkit-inline-flex",
                 {
-                    "value": "contents",
-                    "url": "https://www.w3.org/TR/css-display-3/#valdef-display-contents"
+                    "value": "compact",
+                    "status": "removed",
+                    "url": "https://www.w3.org/TR/REC-CSS2/visuren.html#compact",
+                    "comment": "Removed in https://commits.webkit.org/r253917"
                 },
-                "none",
                 {
-                    "value": "grid",
-                    "url": "https://www.w3.org/TR/css-grid/#valdef-display-grid"
-                },
-                {  
-                    "value": "inline-grid",
-                    "url": "https://www.w3.org/TR/css-grid/#valdef-display-inline-grid"
+                    "value": "run-in",
+                    "status": "removed",
+                    "url": "https://www.w3.org/TR/css-display-3/#valdef-display-run-in",
+                    "comment": "Removed in https://commits.webkit.org/r163560"
                 }
             ],
             "codegen-properties": {
@@ -452,7 +464,7 @@
                 "url": "https://drafts.csswg.org/css-fonts-4/#font-variation-settings-def"
             }
         },
-        "-webkit-font-kerning": {
+        "font-kerning": {
             "inherited": true,
             "values": [
                 "auto",
@@ -461,7 +473,7 @@
             ],
             "codegen-properties": {
                 "aliases": [
-                    "font-kerning"
+                    "-webkit-font-kerning"
                 ],
                 "name-for-methods": "Kerning",
                 "font-property": true,
@@ -470,6 +482,18 @@
             "specification": {
                 "category": "css-fonts",
                 "url": "https://drafts.csswg.org/css-fonts-3/#font-kerning-prop"
+            }
+        },
+        "font-palette": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "FontPalette",
+                "font-property": true,
+                "high-priority": true
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://drafts.csswg.org/css-fonts/#font-palette-prop"
             }
         },
         "-webkit-font-smoothing": {
@@ -741,16 +765,11 @@
                     "value": "tb",
                     "status": "deprecated"
                 },
+                "horizontal-tb",
+                "vertical-lr",
+                "vertical-rl",
                 {
-                    "value": "horizontal-tb",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "vertical-rl",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "vertical-lr",
+                    "value": "sideways-lr",
                     "status": "unimplemented"
                 },
                 {
@@ -758,8 +777,8 @@
                     "status": "unimplemented"
                 },
                 {
-                    "value": "sideways-lr",
-                    "status": "unimplemented"
+                    "value": "horizontal-bt",
+                    "status": "non-standard"
                 }
             ],
             "codegen-properties": {
@@ -833,7 +852,7 @@
         "additive-symbols": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -880,14 +899,14 @@
                     "-webkit-animation"
                 ],
                 "longhands": [
-                    "animation-name",
                     "animation-duration",
                     "animation-timing-function",
                     "animation-delay",
                     "animation-iteration-count",
                     "animation-direction",
                     "animation-fill-mode",
-                    "animation-play-state"
+                    "animation-play-state",
+                    "animation-name"
                 ]
             },
             "specification": {
@@ -895,6 +914,25 @@
                 "url": "https://www.w3.org/TR/css3-animations/#animation-shorthand-property",
                 "keywords": ["animation"],
                 "description": "Used to animate elements"
+            }
+        },
+        "animation-composition": {
+            "values": [
+                "add",
+                "accumulate",
+                "replace"
+            ],
+            "animatable": true,
+            "codegen-properties": {
+                "name-for-methods": "CompositeOperation",
+                "settings-flag": "webAnimationsCompositeOperationsEnabled"
+            },
+            "specification": {
+                "category": "css-animations",
+                "url": "https://drafts.csswg.org/css-animations-2/#animation-composition"
+            },
+            "status": {
+                "status": "experimental"
             }
         },
         "animation-delay": {
@@ -1587,10 +1625,6 @@
             }
         },
         "border-collapse": {
-            "values": [
-                "collapse",
-                "separate"
-            ],
             "inherited": true,
             "values": [
                 "collapse",
@@ -2399,7 +2433,7 @@
                 "aliases": [
                     "-webkit-clip-path"
                 ],
-                "converter": "ClipPath"
+                "converter": "PathOperation"
             }
         },
         "clip-rule": {
@@ -2444,35 +2478,6 @@
             "specification": {
                 "category": "svg",
                 "url": "https://www.w3.org/TR/SVG11/painting.html#ColorInterpolationFiltersProperty"
-            }
-        },
-        "color-profile": {
-            "codegen-properties": {
-                "skip-builder": true,
-                "svg": true
-            },
-            "status": {
-                "status": "not implemented",
-                "enabled-by-default": true
-            },
-            "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/color.html#ColorProfileProperty"
-            }
-        },
-        "color-rendering": {
-            "inherited": true,
-            "values": [
-                "auto",
-                "optimizespeed",
-                "optimizequality"
-            ],
-            "codegen-properties": {
-                "svg": true
-            },
-            "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/painting.html#ColorRenderingProperty"
             }
         },
         "content": {
@@ -2639,22 +2644,10 @@
                 "url": "https://www.w3.org/TR/CSS2/tables.html#empty-cells"
             }
         },
-        "enable-background": {
-            "codegen-properties": {
-                "skip-builder": true
-            },
-            "status": {
-                "status": "not implemented",
-                "enabled-by-default": true
-            },
-            "specification": {
-                "category": "svg"
-            }
-        },
         "fallback": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -2715,7 +2708,6 @@
         },
         "flood-color": {
             "codegen-properties": {
-                "converter": "SVGColor",
                 "svg": true,
                 "color-property": true
             },
@@ -2850,6 +2842,19 @@
                 "url": "https://www.w3.org/TR/css-logical/#dimension-properties"
             }
         },
+        "input-security": {
+            "codegen-properties": {
+                "settings-flag": "cssInputSecurityEnabled"
+            },
+            "values": [
+                "auto",
+                "none"
+            ],
+            "specification": {
+                "category": "css-ui",
+                "url": "https://drafts.csswg.org/css-ui-4/#input-security"
+            }
+        },
         "inset": {
             "codegen-properties": {
                 "longhands": [
@@ -2981,7 +2986,6 @@
         },
         "lighting-color": {
             "codegen-properties": {
-                "converter": "SVGColor",
                 "svg": true,
                 "color-property": true
             }
@@ -3342,13 +3346,178 @@
         },
         "mask": {
             "codegen-properties": {
-                "name-for-methods": "MaskerResource",
-                "converter": "SVGURIReference",
-                "svg": true
+                "longhands": [
+                    "mask-image",
+                    "-webkit-mask-position-x",
+                    "-webkit-mask-position-y",
+                    "mask-size",
+                    "mask-repeat-x",
+                    "mask-repeat-y",
+                    "mask-origin",
+                    "mask-clip",
+                    "mask-composite",
+                    "mask-mode"
+                ]
             },
             "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG/masking.html#MaskProperty"
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask"
+            }
+        },
+        "mask-clip": {
+            "codegen-properties": {
+                "name-for-methods": "Clip",
+                "fill-layer-property": true
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-clip"
+            }
+        },
+        "mask-composite": {
+            "codegen-properties": {
+                "name-for-methods": "Composite",
+                "fill-layer-property": true
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-composite"
+            }
+        },
+        "mask-image": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-mask-image"
+                ],
+                "name-for-methods": "Image",
+                "fill-layer-property": true
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-image"
+            }
+        },
+        "mask-mode": {
+            "codegen-properties": {
+                "name-for-methods": "MaskMode",
+                "fill-layer-property": true
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-mode"
+            }
+        },
+        "mask-origin": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-mask-origin"
+                ],
+                "name-for-methods": "Origin",
+                "fill-layer-property": true
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-origin"
+            }
+        },
+        "mask-position": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-mask-position-x",
+                    "-webkit-mask-position-y"
+                ]
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
+            }
+        },
+        "-webkit-mask-position": {
+            "codegen-properties": {
+                "longhands": [
+                    "-webkit-mask-position-x",
+                    "-webkit-mask-position-y"
+                ]
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
+            }
+        },
+        "-webkit-mask-position-x": {
+            "codegen-properties": {
+                "name-for-methods": "XPosition",
+                "fill-layer-property": true
+            },
+            "status": {
+                "status": "experimental",
+                "comment": "The unprefixed property should be internal-only"
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
+            }
+        },
+        "-webkit-mask-position-y": {
+            "codegen-properties": {
+                "aliases":[
+                    "-webkit-mask-position-y"
+                ],
+                "name-for-methods": "YPosition",
+                "fill-layer-property": true
+            },
+            "status": {
+                "status": "experimental",
+                "comment": "The unprefixed property should be internal-only"
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
+            }
+        },
+        "mask-repeat": {
+            "codegen-properties": {
+                "aliases":[
+                    "-webkit-mask-repeat"
+                ],
+                "longhands": [
+                    "mask-repeat-x",
+                    "mask-repeat-y"
+                ]
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-repeat"
+            }
+        },
+        "mask-repeat-x": {
+            "codegen-properties": {
+                "name-for-methods": "RepeatX",
+                "fill-layer-property": true,
+                "internal-only": true
+            }
+        },
+        "mask-repeat-y": {
+            "codegen-properties": {
+                "name-for-methods": "RepeatY",
+                "fill-layer-property": true,
+                "internal-only": true
+            }
+        },
+        "mask-size": {
+            "codegen-properties": {
+                "aliases":[
+                    "-webkit-mask-size"
+                ],
+                "name-for-methods": "Size",
+                "fill-layer-property": true
+            },
+            "specification": {
+                "category": "css-masking",
+                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-size"
             }
         },
         "mask-type": {
@@ -3509,11 +3678,76 @@
         },
         "object-position": {
             "codegen-properties": {
-                "converter": "ObjectPosition"
+                "converter": "Position"
             },
             "specification": {
                 "category": "css-images",
                 "url": "https://www.w3.org/TR/css3-images/#object-position"
+            }
+        },
+        "offset-path": {
+            "codegen-properties": {
+                "converter": "PathOperation",
+                "settings-flag": "cssMotionPathEnabled"
+            },
+            "specification": {
+                "category": "css-motion-path",
+                "url": "https://drafts.fxtf.org/motion-1/#offset-path-property"
+            }
+        },
+        "offset-distance": {
+            "codegen-properties": {
+                "converter": "Length",
+                "settings-flag": "cssMotionPathEnabled"
+            },
+            "specification": {
+                "category": "css-motion-path",
+                "url": "https://drafts.fxtf.org/motion-1/#offset-distance-property"
+            }
+        },
+        "offset-position": {
+            "codegen-properties": {
+                "converter": "PositionOrAuto",
+                "settings-flag": "cssMotionPathEnabled"
+            },
+            "specification": {
+                "category": "css-motion-path",
+                "url": "https://drafts.fxtf.org/motion-1/#offset-position-property"
+            }
+        },
+        "offset-anchor": {
+            "codegen-properties": {
+                "converter": "PositionOrAuto",
+                "settings-flag": "cssMotionPathEnabled"
+            },
+            "specification": {
+                "category": "css-motion-path",
+                "url": "https://drafts.fxtf.org/motion-1/#offset-anchor-property"
+            }
+        },
+        "offset-rotate": {
+            "codegen-properties": {
+                "converter": "OffsetRotate",
+                "settings-flag": "cssMotionPathEnabled"
+            },
+            "specification": {
+                "category": "css-motion-path",
+                "url": "https://drafts.fxtf.org/motion-1/#offset-anchor-property"
+            }
+        },
+        "offset": {
+            "codegen-properties": {
+                "longhands": [
+                    "offset-path",
+                    "offset-distance",
+                    "offset-position",
+                    "offset-anchor",
+                    "offset-rotate"
+                ]
+            },
+            "specification": {
+                "category": "css-motion-path",
+                "url": "https://drafts.fxtf.org/motion-1/#offset-shorthand"
             }
         },
         "opacity": {
@@ -3660,7 +3894,7 @@
                     "overscroll-behavior-x",
                     "overscroll-behavior-y"
                 ],
-                "settings-flag": "overscrollBehavior"
+                "settings-flag": "overscrollBehaviorEnabled"
             },
             "status": {
                 "status": "in development"
@@ -3676,7 +3910,7 @@
                 "auto"
             ],
             "codegen-properties": {
-                "settings-flag": "overscrollBehavior"
+                "settings-flag": "overscrollBehaviorEnabled"
             },
             "status": {
                 "status": "in development"
@@ -3692,7 +3926,7 @@
                 "auto"
             ],
             "codegen-properties": {
-                "settings-flag": "overscrollBehavior"
+                "settings-flag": "overscrollBehaviorEnabled"
             },
             "status": {
                 "status": "in development"
@@ -3704,7 +3938,7 @@
         "pad": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -4069,9 +4303,28 @@
                 "url": "https://www.w3.org/TR/css-fonts-3/#src-desc"
             }
         },
+        "base-palette": {
+            "codegen-properties": {
+                "skip-builder": true,
+                "descriptor-only": true
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://drafts.csswg.org/css-fonts-4/#base-palette-desc"
+            }
+        },
+        "override-colors": {
+            "codegen-properties": {
+                "skip-builder": true,
+                "descriptor-only": true
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://drafts.csswg.org/css-fonts-4/#override-color"
+            }
+        },
         "stop-color": {
             "codegen-properties": {
-                "converter": "SVGColor",
                 "svg": true,
                 "color-property": true
             },
@@ -4228,7 +4481,7 @@
         "symbols": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -4267,12 +4520,16 @@
                 "right",
                 "center",
                 "justify",
+                {
+                    "value": "match-parent",
+                    "url": "https://www.w3.org/TR/css-text-3/#text-align"
+                },
                 "-webkit-left",
                 "-webkit-right",
                 "-webkit-center",
                 {
                     "value": "-webkit-match-parent",
-                    "url": "https://www.w3.org/TR/css-text-3/#text-align"
+                    "url": "non-standard"
                 },
                 {
                     "value": "start",
@@ -4875,7 +5132,12 @@
             },
             "status": "non-standard"
         },
-        "-webkit-appearance": {
+        "appearance": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-appearance"
+                ]
+            },
             "values": [
                 "checkbox",
                 "radio",
@@ -4940,6 +5202,7 @@
                 "caps-lock-indicator",
                 "color-well",
                 "list-button",
+                "auto",
                 "none"
             ],
             "status": {
@@ -4953,7 +5216,7 @@
         "aspect-ratio": {
             "codegen-properties": {
                 "custom": "All",
-                "settings-flag": "aspectRatio"
+                "settings-flag": "aspectRatioEnabled"
             },
             "status": {
                 "status": "experimental"
@@ -4966,7 +5229,7 @@
         "contain": {
             "codegen-properties": {
                 "custom": "All",
-                "settings-flag": "cssContainment"
+                "settings-flag": "cssContainmentEnabled"
             },
             "status": {
                 "status": "experimental"
@@ -4974,6 +5237,52 @@
             "specification": {
                 "category": "css-contain",
                 "url": "https://drafts.csswg.org/css-contain-1/"
+            }
+        },
+        "container": {
+            "codegen-properties": {
+                "longhands": [
+                    "container-type",
+                    "container-name"
+                ]
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-contain",
+                "url": "https://drafts.csswg.org/css-contain-3/#container-queries"
+            }
+        },
+        "container-name": {
+            "codegen-properties": {
+                "settings-flag": "cssContainerQueriesEnabled",
+                "converter": "ContainerName",
+                "name-for-methods": "ContainerNames"
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-contain",
+                "url": "https://drafts.csswg.org/css-contain-3/#container-queries"
+            }
+        },
+        "container-type": {
+            "codegen-properties": {
+                "settings-flag": "cssContainerQueriesEnabled"
+            },
+            "values": [
+                "none",
+                "size",
+                "inline-size"
+            ],
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-contain",
+                "url": "https://drafts.csswg.org/css-contain-3/#container-queries"
             }
         },
         "backface-visibility": {
@@ -4997,32 +5306,6 @@
                 "fill-layer-property": true
             }
         },
-        "-webkit-background-composite": {
-            "values": [
-                "clear",
-                "copy",
-                "source-over",
-                "source-in",
-                "source-out",
-                "source-atop",
-                "destination-over",
-                "destination-in",
-                "destination-out",
-                "destination-atop",
-                "xor",
-                "plus-darker",
-                "highlight",
-                "plus-lighter"
-            ],
-            "codegen-properties": {
-                "name-for-methods": "Composite",
-                "fill-layer-property": true
-            },
-            "status": {
-                "status": "experimental",
-                "comment": "Partially subsumed by background-blend-mode."
-            }
-        },
         "-webkit-background-origin": {
             "codegen-properties": {
                 "name-for-methods": "Origin",
@@ -5037,13 +5320,6 @@
             "status": {
                 "comment": "Differs from background-size only in the interpretation of a single value: '-webkit-background-size: l;' is equivalent to 'background-size: l l;' whereas 'background-size: l;' is equivalent to 'background-size: l auto;'"
             }
-        },
-        "-webkit-border-fit": {
-            "values": [
-                "border",
-                "lines"
-            ],
-            "status": "non-standard"
         },
         "-webkit-border-horizontal-spacing": {
             "inherited": true,
@@ -5575,7 +5851,7 @@
                 "aliases": [
                     "-webkit-flex-basis"
                 ],
-                "converter": "LengthOrAuto"
+                "converter": "LengthSizing"
             },
             "specification": {
                 "category": "css-flexbox",
@@ -6096,63 +6372,6 @@
                 "url": "https://www.w3.org/TR/css-line-grid-1/#box-snap"
             }
         },
-        "-webkit-margin-after-collapse": {
-            "values": [
-                "collapse",
-                "separate",
-                "discard"
-            ],
-            "status": {
-                "status": "experimental"
-            }
-        },
-        "-webkit-margin-before-collapse": {
-            "values": [
-                "collapse",
-                "separate",
-                "discard"
-            ],
-            "status": {
-                "status": "experimental"
-            }
-        },
-        "-webkit-margin-bottom-collapse": {
-            "values": [
-                "collapse",
-                "separate",
-                "discard"
-            ],
-            "codegen-properties": {
-                "name-for-methods": "MarginAfterCollapse"
-            },
-            "status": {
-                "status": "experimental"
-            }
-        },
-        "-webkit-margin-top-collapse": {
-            "values": [
-                "collapse",
-                "separate",
-                "discard"
-            ],
-            "codegen-properties": {
-                "name-for-methods": "MarginBeforeCollapse"
-            },
-            "status": {
-                "status": "experimental"
-            }
-        },
-        "-webkit-margin-collapse": {
-            "codegen-properties": {
-                "longhands": [
-                    "-webkit-margin-before-collapse",
-                    "-webkit-margin-after-collapse"
-                ]
-            },
-            "status": {
-                "status": "experimental"
-            }
-        },
         "-webkit-marquee-direction": {
             "codegen-properties": {
                 "internal-only": true
@@ -6208,19 +6427,17 @@
         "-webkit-mask": {
             "codegen-properties": {
                 "longhands": [
-                    "-webkit-mask-image",
+                    "mask-image",
                     "-webkit-mask-source-type",
                     "-webkit-mask-position-x",
                     "-webkit-mask-position-y",
-                    "-webkit-mask-size",
-                    "-webkit-mask-repeat-x",
-                    "-webkit-mask-repeat-y",
-                    "-webkit-mask-origin",
+                    "mask-size",
+                    "mask-repeat-x",
+                    "mask-repeat-y",
+                    "mask-origin",
                     "-webkit-mask-clip"
-                ]
-            },
-            "status": {
-                "status": "experimental"
+                ],
+                "comment": "Differs from the unprefixed property in accepting -webkit-mask-source-type in place of mask-mode"
             },
             "specification": {
                 "category": "css-masking",
@@ -6232,8 +6449,7 @@
                 "initial": "initialNinePieceImage",
                 "converter": "BorderMask<CSSPropertyWebkitMaskBoxImage>"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6242,8 +6458,7 @@
             "codegen-properties": {
                 "custom": "All"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6252,8 +6467,7 @@
             "codegen-properties": {
                 "custom": "All"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6262,8 +6476,7 @@
             "codegen-properties": {
                 "custom": "All"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6272,8 +6485,7 @@
             "codegen-properties": {
                 "converter": "StyleImage<CSSPropertyWebkitMaskBoxImageSource>"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6282,8 +6494,7 @@
             "codegen-properties": {
                 "custom": "All"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6314,122 +6525,12 @@
                 "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-composite"
             }
         },
-        "-webkit-mask-image": {
-            "codegen-properties": {
-                "name-for-methods": "Image",
-                "fill-layer-property": true
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-image"
-            }
-        },
-        "-webkit-mask-origin": {
-            "codegen-properties": {
-                "name-for-methods": "Origin",
-                "fill-layer-property": true
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-origin"
-            }
-        },
-        "-webkit-mask-position": {
-            "codegen-properties": {
-                "longhands": [
-                    "-webkit-mask-position-x",
-                    "-webkit-mask-position-y"
-                ]
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
-            }
-        },
-        "-webkit-mask-position-x": {
-            "codegen-properties": {
-                "name-for-methods": "XPosition",
-                "fill-layer-property": true
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
-            }
-        },
-        "-webkit-mask-position-y": {
-            "codegen-properties": {
-                "name-for-methods": "YPosition",
-                "fill-layer-property": true
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
-            }
-        },
-        "-webkit-mask-repeat": {
-            "codegen-properties": {
-                "longhands": [
-                    "-webkit-mask-repeat-x",
-                    "-webkit-mask-repeat-y"
-                ]
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-repeat"
-            }
-        },
-        "-webkit-mask-repeat-x": {
-            "codegen-properties": {
-                "name-for-methods": "RepeatX",
-                "fill-layer-property": true,
-                "internal-only": true
-            }
-        },
-        "-webkit-mask-repeat-y": {
-            "codegen-properties": {
-                "name-for-methods": "RepeatY",
-                "fill-layer-property": true,
-                "internal-only": true
-            }
-        },
-        "-webkit-mask-size": {
-            "codegen-properties": {
-                "name-for-methods": "Size",
-                "fill-layer-property": true
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-size"
-            }
-        },
         "-webkit-mask-source-type": {
             "codegen-properties": {
-                "name-for-methods": "MaskSourceType",
-                "fill-layer-property": true
+                "synonym": "mask-mode",
+                "comment": "Deprecated alias for mask-mode, supports an 'auto' value, does not support 'match-source'"
             },
-            "status": "non-standard"
-,
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking"
             }
@@ -6449,7 +6550,7 @@
         "negative": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -6475,8 +6576,12 @@
                 "enable-if": "ENABLE_DARK_MODE_CSS",
                 "high-priority": true
             },
+            "specification": {
+                "category": "css-color-adjust",
+                "url": "https://www.w3.org/TR/css-color-adjust/#color-scheme-prop"
+            },
             "status": {
-                "status": "in development",
+                "status": "supported",
                 "enabled-by-default": true
             }
         },
@@ -6545,7 +6650,7 @@
         "prefix": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -6553,18 +6658,27 @@
                 "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-prefix"
             }
         },
-        "-webkit-print-color-adjust": {
+        "print-color-adjust": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-print-color-adjust",
+                    "color-adjust"
+                ]
+            },
             "inherited": true,
             "values": [
                 "exact",
                 "economy"
             ],
-            "status": "non-standard"
+            "specification": {
+                "category": "css-color-adjust",
+                "url": "https://www.w3.org/TR/css-color-adjust/#print-color-adjust"
+            }
         },
         "range": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -6587,19 +6701,13 @@
         "suffix": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
                 "category": "css-counter-styles",
                 "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-suffix"
             }
-        },
-        "-webkit-svg-shadow": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed"
         },
         "-webkit-text-combine": {
             "inherited": true,
@@ -6612,7 +6720,24 @@
                     "-epub-text-combine"
                 ]
             },
-            "status": "non-standard"
+            "status": {
+                "status": "obsolete",
+                "comment": "Use text-combine-upright instead."
+            }
+        },
+        "text-combine-upright": {
+            "inherited": true,
+            "codegen-properties": {
+                "name-for-methods": "TextCombine"
+            },
+            "values": [
+                "none",
+                "all"
+            ],
+            "specification": {
+                "category": "css-writing-modes",
+                "url": "https://www.w3.org/TR/css-writing-modes-3/#propdef-direction"
+            }
         },
         "-webkit-text-align-last": {
             "inherited": true,
@@ -6679,9 +6804,6 @@
                     "-webkit-text-decoration-line"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-line"
@@ -6700,9 +6822,6 @@
                 "dashed",
                 "wavy"
             ],
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-style"
@@ -6717,9 +6836,6 @@
                 "visited-link-color-support": true,
                 "color-property": true
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-color"
@@ -6728,17 +6844,28 @@
         "text-decoration-skip": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "TextDecorationSkip",
                 "aliases": [
                     "-webkit-text-decoration-skip"
+                ],
+                "longhands": [
+                    "text-decoration-skip-ink"
                 ]
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-skip"
+            }
+        },
+        "text-decoration-skip-ink": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "none",
+                "all"
+            ],
+            "specification": {
+                "category": "css-text-decor",
+                "url": "https://drafts.csswg.org/css-text-decor-4/#text-decoration-skip-ink-property"
             }
         },
         "text-underline-position": {
@@ -6748,9 +6875,6 @@
                 ]
             },
             "inherited": true,
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-underline-position-property"
@@ -6761,9 +6885,6 @@
             "codegen-properties": {
                 "converter": "TextUnderlineOffset"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-4/#underline-offset"
@@ -6773,9 +6894,6 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "TextDecorationThickness"
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-text-decor",
@@ -6797,16 +6915,16 @@
             },
             "status": "non-standard"
         },
-        "-webkit-text-emphasis": {
+        "text-emphasis": {
             "inherited": true,
             "codegen-properties": {
                 "aliases": [
                     "-epub-text-emphasis",
-                    "text-emphasis"
+                    "-webkit-text-emphasis"
                 ],
                 "longhands": [
-                    "-webkit-text-emphasis-style",
-                    "-webkit-text-emphasis-color"
+                    "text-emphasis-style",
+                    "text-emphasis-color"
                 ]
             },
             "status": {
@@ -6817,12 +6935,12 @@
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-emphasis"
             }
         },
-        "-webkit-text-emphasis-color": {
+        "text-emphasis-color": {
             "inherited": true,
             "codegen-properties": {
                 "aliases": [
                     "-epub-text-emphasis-color",
-                    "text-emphasis-color"
+                    "-webkit-text-emphasis-color"
                 ],
                 "initial": "currentColor",
                 "visited-link-color-support": true,
@@ -6836,11 +6954,11 @@
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-emphasis-color"
             }
         },
-        "-webkit-text-emphasis-position": {
+        "text-emphasis-position": {
             "inherited": true,
             "codegen-properties": {
                 "aliases": [
-                    "text-emphasis-position"
+                    "-webkit-text-emphasis-position"
                 ],
                 "converter": "TextEmphasisPosition"
             },
@@ -6852,12 +6970,12 @@
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-emphasis-position"
             }
         },
-        "-webkit-text-emphasis-style": {
+        "text-emphasis-style": {
             "inherited": true,
             "codegen-properties": {
                 "aliases": [
                     "-epub-text-emphasis-style",
-                    "text-emphasis-style"
+                    "-webkit-text-emphasis-style"
                 ],
                 "custom": "All"
             },
@@ -7036,7 +7154,7 @@
         },
         "translate": {
             "codegen-properties": {
-                "settings-flag": "cssIndividualTransformProperties",
+                "settings-flag": "cssIndividualTransformPropertiesEnabled",
                 "converter": "Translate"
             },
             "specification": {
@@ -7046,7 +7164,7 @@
         },
         "scale": {
             "codegen-properties": {
-                "settings-flag": "cssIndividualTransformProperties",
+                "settings-flag": "cssIndividualTransformPropertiesEnabled",
                 "converter": "Scale"
             },
             "specification": {
@@ -7057,7 +7175,7 @@
         },
         "rotate": {
             "codegen-properties": {
-                "settings-flag": "cssIndividualTransformProperties",
+                "settings-flag": "cssIndividualTransformPropertiesEnabled",
                 "converter": "Rotate"
             },
             "specification": {
@@ -7101,7 +7219,7 @@
                 "smooth"
             ],
             "codegen-properties": {
-                "settings-flag": "CSSOMViewSmoothScrolling",
+                "settings-flag": "CSSOMViewSmoothScrollingEnabled",
                 "converter": "SmoothScrolling",
                 "name-for-methods": "UseSmoothScrolling"
             },
@@ -7485,7 +7603,7 @@
         "system": {
             "codegen-properties": {
                 "descriptor-only": true,
-                "settings-flag": "cssCounterStyleAtRules",
+                "settings-flag": "cssCounterStyleAtRulesEnabled",
                 "skip-builder": true
             },
             "specification": {
@@ -7545,19 +7663,10 @@
             "status": "non-standard"
         },
         "-apple-trailing-word": {
-            "inherited": true,
-            "values": [
-                "auto",
-                "-webkit-partially-balanced"
-            ],
             "codegen-properties": {
-                "name-for-methods": "TrailingWord",
-                "enable-if": "ENABLE_CSS_TRAILING_WORD"
+                "skip-codegen": true
             },
-            "status": {
-                "status": "non-standard",
-                "comment": "Needed for feature-detecting the Safari browser. Implementation has no effect."
-            }
+            "status": "removed"
         },
         "-apple-pay-button-style": {
             "codegen-properties": {
@@ -7651,7 +7760,12 @@
         "css-color": {
             "shortname": "CSS Color",
             "longname": "CSS Color Module",
-            "url": "https://www.w3.org/TR/css3-color/"
+            "url": "https://www.w3.org/TR/css-color/"
+        },
+        "css-color-adjust": {
+            "shortname": "CSS Color Adjustment",
+            "longname": "CSS Color Adjustment Module",
+            "url": "https://www.w3.org/TR/css-color-adjust/"
         },
         "css-compositing": {
             "shortname": "CSS Compositing and Blending",
@@ -7739,6 +7853,12 @@
             "shortname": "CSS Masking",
             "longname": "CSS Masking Module",
             "url": "https://www.w3.org/TR/css-masking-1/"
+        },
+        "css-motion-path": {
+            "shortname": "CSS Motion Path",
+            "longname": "CSS Motion Path Module",
+            "url": "https://drafts.fxtf.org/motion-1/",
+            "status": "experimental"
         },
         "css-multicol": {
             "shortname": "CSS Multi-column Layout",

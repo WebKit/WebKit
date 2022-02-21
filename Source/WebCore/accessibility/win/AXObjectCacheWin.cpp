@@ -117,10 +117,10 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
     // negate the AXID so we know that the caller is passing the ID of an
     // element, not the index of a child element.
 
-    ASSERT(obj->objectID() >= 1);
-    ASSERT(obj->objectID() <= std::numeric_limits<LONG>::max());
+    ASSERT(obj->objectID().toUInt64() >= 1);
+    ASSERT(obj->objectID().toUInt64() <= std::numeric_limits<LONG>::max());
 
-    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(obj->objectID()));
+    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(obj->objectID().toUInt64()));
 }
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&)
@@ -148,19 +148,19 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* o
 
 AXID AXObjectCache::platformGenerateAXID() const
 {
-    static AXID lastUsedID = 0;
+    static LONG lastUsedID = 0;
 
     // Generate a new ID. Windows accessibility relies on a positive AXID,
     // ranging from 1 to LONG_MAX.
-    AXID objID = lastUsedID;
+    LONG currentID = lastUsedID;
+    AXID objID;
     do {
-        ++objID;
-        objID %= std::numeric_limits<LONG>::max();
-    } while (objID == 0 || HashTraits<AXID>::isDeletedValue(objID) || m_idsInUse.contains(objID));
+        objID = makeObjectIdentifier<AXIDType>(++currentID);
+    } while (!objID.isValid() || m_idsInUse.contains(objID));
 
-    ASSERT(objID >= 1 && objID <= std::numeric_limits<LONG>::max());
+    ASSERT(objID.isValid() && objID.toUInt64() <= std::numeric_limits<LONG>::max());
 
-    lastUsedID = objID;
+    lastUsedID = currentID;
 
     return objID;
 }
@@ -174,7 +174,7 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newFocuse
     if (!page || !page->chrome().platformPageClient())
         return;
 
-    AXCoreObject* focusedObject = focusedUIElementForPage(page);
+    auto* focusedObject = focusedObjectForPage(page);
     if (!focusedObject)
         return;
 

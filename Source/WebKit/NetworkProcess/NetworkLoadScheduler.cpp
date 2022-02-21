@@ -26,12 +26,14 @@
 #include "config.h"
 #include "NetworkLoadScheduler.h"
 
+#include "Logging.h"
 #include "NetworkLoad.h"
-#include <wtf/ListHashSet.h>
+#include <WebCore/ResourceError.h>
 
 namespace WebKit {
 
 static constexpr size_t maximumActiveCountForLowPriority = 2;
+static constexpr size_t maximumTrackedHTTP1XOrigins = 128;
 
 class NetworkLoadScheduler::HostContext {
     WTF_MAKE_FAST_ALLOCATED;
@@ -117,6 +119,24 @@ NetworkLoadScheduler::~NetworkLoadScheduler() = default;
 
 void NetworkLoadScheduler::schedule(NetworkLoad& load)
 {
+    bool isMainFrameMainResource = load.currentRequest().isTopSite();
+    if (isMainFrameMainResource)
+        scheduleMainResourceLoad(load);
+    else
+        scheduleLoad(load);
+}
+
+void NetworkLoadScheduler::unschedule(NetworkLoad& load, const WebCore::NetworkLoadMetrics* metrics)
+{
+    bool isMainFrameMainResource = load.currentRequest().isTopSite();
+    if (isMainFrameMainResource)
+        unscheduleMainResourceLoad(load, metrics);
+    else
+        unscheduleLoad(load);
+}
+
+void NetworkLoadScheduler::scheduleLoad(NetworkLoad& load)
+{
     auto* context = contextForLoad(load);
 
     if (!context) {
@@ -127,10 +147,115 @@ void NetworkLoadScheduler::schedule(NetworkLoad& load)
     context->schedule(load);
 }
 
-void NetworkLoadScheduler::unschedule(NetworkLoad& load)
+void NetworkLoadScheduler::unscheduleLoad(NetworkLoad& load)
 {
     if (auto* context = contextForLoad(load))
         context->unschedule(load);
+}
+
+// We add User-Agent to the preconnect key since it part of the HTTP connection cache key used for
+// coalescing sockets in CFNetwork when using an HTTPS proxy (<rdar://problem/59434166>).
+static std::tuple<String, String> mainResourceLoadKey(const String& protocolHostAndPort, const String& userAgent)
+{
+    return std::make_tuple(protocolHostAndPort.isNull() ? emptyString() : protocolHostAndPort, userAgent.isNull() ? emptyString() : userAgent);
+}
+
+void NetworkLoadScheduler::scheduleMainResourceLoad(NetworkLoad& load)
+{
+    String protocolHostAndPort = load.url().protocolHostAndPort();
+    if (!isOriginHTTP1X(protocolHostAndPort)) {
+        load.start();
+        return;
+    }
+
+    auto iter = m_pendingMainResourcePreconnects.find(mainResourceLoadKey(protocolHostAndPort, load.parameters().request.httpUserAgent()));
+    if (iter == m_pendingMainResourcePreconnects.end()) {
+        load.start();
+        return;
+    }
+
+    PendingMainResourcePreconnectInfo& info = iter->value;
+    if (!info.pendingPreconnects) {
+        load.start();
+        return;
+    }
+
+    --info.pendingPreconnects;
+    info.pendingLoads.add(&load);
+    RELEASE_LOG(Network, "%p - NetworkLoadScheduler::scheduleMainResourceLoad deferring load %p; %u pending preconnects; %u pending loads", this, &load, info.pendingPreconnects, info.pendingLoads.size());
+}
+
+void NetworkLoadScheduler::unscheduleMainResourceLoad(NetworkLoad& load, const WebCore::NetworkLoadMetrics* metrics)
+{
+    String protocolHostAndPort = load.url().protocolHostAndPort();
+
+    if (metrics)
+        updateOriginProtocolInfo(protocolHostAndPort, metrics->protocol);
+
+    auto iter = m_pendingMainResourcePreconnects.find(mainResourceLoadKey(protocolHostAndPort, load.parameters().request.httpUserAgent()));
+    if (iter == m_pendingMainResourcePreconnects.end())
+        return;
+
+    PendingMainResourcePreconnectInfo& info = iter->value;
+    if (info.pendingLoads.remove(&load))
+        maybePrunePreconnectInfo(iter);
+}
+
+void NetworkLoadScheduler::startedPreconnectForMainResource(const URL& url, const String& userAgent)
+{
+    auto key = mainResourceLoadKey(url.protocolHostAndPort(), userAgent);
+    auto iter = m_pendingMainResourcePreconnects.find(key);
+    if (iter != m_pendingMainResourcePreconnects.end()) {
+        PendingMainResourcePreconnectInfo& info = iter->value;
+        info.pendingPreconnects++;
+        return;
+    }
+
+    PendingMainResourcePreconnectInfo info;
+    m_pendingMainResourcePreconnects.add(key, WTFMove(info));
+}
+
+void NetworkLoadScheduler::finishedPreconnectForMainResource(const URL& url, const String& userAgent, const WebCore::ResourceError& error)
+{
+    auto iter = m_pendingMainResourcePreconnects.find(mainResourceLoadKey(url.protocolHostAndPort(), userAgent));
+    if (iter == m_pendingMainResourcePreconnects.end())
+        return;
+
+    PendingMainResourcePreconnectInfo& info = iter->value;
+    if (!info.pendingLoads.isEmpty()) {
+        NetworkLoad* load = info.pendingLoads.takeFirst();
+        RELEASE_LOG(Network, "%p - NetworkLoadScheduler::finishedPreconnectForMainResource (error: %d) starting delayed main resource load %p; %u pending preconnects; %u total pending loads", this, static_cast<int>(error.type()), load, info.pendingPreconnects, info.pendingLoads.size());
+        load->start();
+    } else
+        --info.pendingPreconnects;
+
+    maybePrunePreconnectInfo(iter);
+}
+
+void NetworkLoadScheduler::maybePrunePreconnectInfo(PendingPreconnectMap::iterator& iter)
+{
+    PendingMainResourcePreconnectInfo& info = iter->value;
+    if (!info.pendingPreconnects && info.pendingLoads.isEmpty())
+        m_pendingMainResourcePreconnects.remove(iter);
+}
+
+
+bool NetworkLoadScheduler::isOriginHTTP1X(const String& protocolHostAndPort)
+{
+    return m_http1XOrigins.contains(protocolHostAndPort);
+}
+
+void NetworkLoadScheduler::updateOriginProtocolInfo(const String& protocolHostAndPort, const String& alpnProtocolID)
+{
+    if (alpnProtocolID != "http/1.1"_s) {
+        m_http1XOrigins.remove(protocolHostAndPort);
+        return;
+    }
+
+    if (m_http1XOrigins.size() >= maximumTrackedHTTP1XOrigins)
+        m_http1XOrigins.remove(m_http1XOrigins.random());
+
+    m_http1XOrigins.add(protocolHostAndPort);
 }
 
 void NetworkLoadScheduler::setResourceLoadSchedulingMode(WebCore::PageIdentifier pageIdentifier, WebCore::LoadSchedulingMode mode)

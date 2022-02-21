@@ -56,6 +56,9 @@ OBJC_CLASS NSArray;
 typedef struct HBITMAP__* HBITMAP;
 #endif
 
+typedef const struct OpaqueJSContext* JSContextRef;
+typedef const struct OpaqueJSValue* JSValueRef;
+
 namespace JSC { namespace Yarr {
 class RegularExpression;
 } }
@@ -126,8 +129,8 @@ public:
     WEBCORE_EXPORT void setView(RefPtr<FrameView>&&);
     WEBCORE_EXPORT void createView(const IntSize&, const std::optional<Color>& backgroundColor,
         const IntSize& fixedLayoutSize, const IntRect& fixedVisibleContentRect,
-        bool useFixedLayout = false, ScrollbarMode = ScrollbarAuto, bool horizontalLock = false,
-        ScrollbarMode = ScrollbarAuto, bool verticalLock = false);
+        bool useFixedLayout = false, ScrollbarMode = ScrollbarMode::Auto, bool horizontalLock = false,
+        ScrollbarMode = ScrollbarMode::Auto, bool verticalLock = false);
 
     WEBCORE_EXPORT ~Frame();
 
@@ -174,9 +177,12 @@ public:
     bool hasHadUserInteraction() const { return m_hasHadUserInteraction; }
     void setHasHadUserInteraction() { m_hasHadUserInteraction = true; }
 
-    bool requestDOMPasteAccess();
+    bool requestDOMPasteAccess(DOMPasteAccessCategory = DOMPasteAccessCategory::General);
 
     String debugDescription() const;
+
+    WEBCORE_EXPORT static Frame* fromJSContext(JSContextRef);
+    WEBCORE_EXPORT static Frame* contentFrameFromWindowOrFrameElement(JSContextRef, JSValueRef);
 
 // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
@@ -287,9 +293,6 @@ public:
     void resumeActiveDOMObjectsAndAnimations();
     bool activeDOMObjectsAndAnimationsSuspended() const { return m_activeDOMObjectsAndAnimationsSuspendedCount > 0; }
 
-    void didPrewarmLocalStorage();
-    bool mayPrewarmLocalStorage() const;
-
     enum class InvalidateContentEventRegionsReason { Layout, EventHandlerChange };
     void invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason);
 
@@ -357,7 +360,6 @@ private:
     unsigned m_navigationDisableCount { 0 };
     unsigned m_selfOnlyRefCount { 0 };
     bool m_hasHadUserInteraction { false };
-    unsigned m_localStoragePrewarmingCount { 0 };
 
     FloatSize m_overrideScreenSize;
 

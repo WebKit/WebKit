@@ -5,6 +5,7 @@
  * Copyright (C) 2010 Zoltan Herczeg <zherczeg@webkit.org>
  * Copyright (C) 2011 University of Szeged
  * Copyright (C) 2011 Renata Hodovan <reni@webkit.org>
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,17 +32,31 @@
 #include "config.h"
 #include "PointLightSource.h"
 
-#include "FilterEffect.h"
+#include "Filter.h"
+#include "FilterImage.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-void PointLightSource::initPaintingData(const FilterEffect& filterEffect, PaintingData&)
+Ref<PointLightSource> PointLightSource::create(const FloatPoint3D& position)
 {
-    m_bufferPosition.setXY(filterEffect.mapPointFromUserSpaceToBuffer(m_userSpacePosition.xy()));
+    return adoptRef(*new PointLightSource(position));
+}
+
+PointLightSource::PointLightSource(const FloatPoint3D& position)
+    : LightSource(LS_POINT)
+    , m_userSpacePosition(position)
+{
+}
+
+void PointLightSource::initPaintingData(const Filter& filter, const FilterImage& result, PaintingData&) const
+{
+    auto absolutePosition = filter.scaledByFilterScale(m_userSpacePosition.xy());
+    m_bufferPosition.setXY(result.mappedAbsolutePoint(absolutePosition));
+
     // To scale Z, map a point offset from m_userSpacePosition in the x direction by z.
-    FloatPoint mappedZ = filterEffect.mapPointFromUserSpaceToBuffer({ m_userSpacePosition.x() + m_userSpacePosition.z(), m_userSpacePosition.y() });
-    m_bufferPosition.setZ(mappedZ.x() - m_bufferPosition.x());
+    auto absoluteMappedZ = filter.scaledByFilterScale(FloatPoint { m_userSpacePosition.x() + m_userSpacePosition.z(), m_userSpacePosition.y() });
+    m_bufferPosition.setZ(result.mappedAbsolutePoint(absoluteMappedZ).x() - m_bufferPosition.x());
 }
 
 LightSource::ComputedLightingData PointLightSource::computePixelLightingData(const PaintingData& paintingData, int x, int y, float z) const

@@ -36,9 +36,11 @@ ResourceHandleClient::ResourceHandleClient() = default;
 
 ResourceHandleClient::~ResourceHandleClient() = default;
 
-void ResourceHandleClient::didReceiveBuffer(ResourceHandle* handle, Ref<SharedBuffer>&& buffer, int encodedDataLength)
+void ResourceHandleClient::didReceiveBuffer(ResourceHandle* handle, const FragmentedSharedBuffer& buffer, int encodedDataLength)
 {
-    didReceiveData(handle, buffer->data(), buffer->size(), encodedDataLength);
+    buffer.forEachSegmentAsSharedBuffer([&](auto&& buffer) {
+        didReceiveData(handle, buffer, encodedDataLength);
+    });
 }
 
 }

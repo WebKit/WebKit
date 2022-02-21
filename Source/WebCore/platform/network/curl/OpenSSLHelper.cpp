@@ -67,14 +67,21 @@ private:
 
 class StackOfX509 {
 public:
+    StackOfX509(STACK_OF(X509)* certs)
+        : m_certs { certs }
+        , m_owner { false }
+    {
+    }
+
     StackOfX509(X509_STORE_CTX* ctx)
         : m_certs { X509_STORE_CTX_get1_chain(ctx) }
+        , m_owner { true }
     {
     }
 
     ~StackOfX509()
     {
-        if (m_certs)
+        if (m_certs && m_owner)
             sk_X509_pop_free(m_certs, X509_free);
     }
 
@@ -82,7 +89,8 @@ public:
     X509* item(int i) { return sk_X509_value(m_certs, i); }
 
 private:
-    STACK_OF(X509)* m_certs { nullptr };
+    STACK_OF(X509)* m_certs;
+    bool m_owner;
 };
 
 class BIO {
@@ -141,10 +149,9 @@ private:
 };
 
 
-static Vector<WebCore::CertificateInfo::Certificate> pemDataFromCtx(X509_STORE_CTX* ctx)
+static Vector<WebCore::CertificateInfo::Certificate> pemDataFromCtx(StackOfX509&& certs)
 {
     Vector<WebCore::CertificateInfo::Certificate> result;
-    StackOfX509 certs { ctx };
 
     for (int i = 0; i < certs.count(); i++) {
         BIO bio(certs.item(i));
@@ -158,12 +165,22 @@ static Vector<WebCore::CertificateInfo::Certificate> pemDataFromCtx(X509_STORE_C
     return result;
 }
 
+std::unique_ptr<WebCore::CertificateInfo> createCertificateInfo(SSL* ssl)
+{
+    if (!ssl)
+        return nullptr;
+
+    auto certChain = SSL_get_peer_cert_chain(ssl);
+
+    return makeUnique<WebCore::CertificateInfo>(X509_V_OK, pemDataFromCtx(StackOfX509(certChain)));
+}
+
 std::optional<WebCore::CertificateInfo> createCertificateInfo(X509_STORE_CTX* ctx)
 {
     if (!ctx)
         return std::nullopt;
 
-    return WebCore::CertificateInfo(X509_STORE_CTX_get_error(ctx), pemDataFromCtx(ctx));
+    return WebCore::CertificateInfo(X509_STORE_CTX_get_error(ctx), pemDataFromCtx(StackOfX509(ctx)));
 }
 
 static String toString(const ASN1_STRING* name)
@@ -319,6 +336,16 @@ std::optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_
     getSubjectAltName(x509.get(), summaryInfo.dnsNames, summaryInfo.ipAddresses);
 
     return summaryInfo;
+}
+
+String tlsVersion(const SSL* ssl)
+{
+    return SSL_get_version(ssl);
+}
+
+String tlsCipherName(const SSL* ssl)
+{
+    return SSL_CIPHER_get_name(SSL_get_current_cipher(ssl));
 }
 
 }

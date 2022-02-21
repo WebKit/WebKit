@@ -31,11 +31,12 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "Event.h"
-#include "MediaKeyMessageEventInit.h"
 #include "MediaKeyMessageType.h"
-#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/Forward.h>
 
 namespace WebCore {
+
+struct MediaKeyMessageEventInit;
 
 class MediaKeyMessageEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(MediaKeyMessageEvent);
@@ -51,7 +52,7 @@ public:
     }
 
     Type messageType() const { return m_messageType; }
-    RefPtr<JSC::ArrayBuffer> message() const { return m_message; }
+    RefPtr<JSC::ArrayBuffer> message() const;
 
 private:
     MediaKeyMessageEvent(const AtomString&, const MediaKeyMessageEventInit&, IsTrusted);

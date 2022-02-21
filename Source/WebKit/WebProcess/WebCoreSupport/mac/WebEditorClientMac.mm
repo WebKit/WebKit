@@ -65,14 +65,14 @@ void WebEditorClient::setInsertionPasteboard(const String&)
 
 static void changeWordCase(WebPage* page, NSString *(*changeCase)(NSString *))
 {
-    Frame& frame = page->corePage()->focusController().focusedOrMainFrame();
-    if (!frame.editor().canEdit())
+    Ref frame = CheckedRef(page->corePage()->focusController())->focusedOrMainFrame();
+    if (!frame->editor().canEdit())
         return;
 
-    frame.editor().command("selectWord").execute();
+    frame->editor().command("selectWord").execute();
 
-    NSString *selectedString = frame.displayStringModifiedByEncoding(frame.editor().selectedText());
-    page->replaceSelectionWithText(&frame, changeCase(selectedString));
+    NSString *selectedString = frame->displayStringModifiedByEncoding(frame->editor().selectedText());
+    page->replaceSelectionWithText(frame.ptr(), changeCase(selectedString));
 }
 
 void WebEditorClient::uppercaseWord()

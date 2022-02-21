@@ -242,7 +242,12 @@ macro(_WEBKIT_FRAMEWORK_LINK_FRAMEWORK _target_name)
         list(REMOVE_DUPLICATES _public_frameworks)
     endif ()
     foreach (framework IN LISTS _public_frameworks)
-        list(APPEND ${_target_name}_LIBRARIES WebKit::${framework})
+        # FIXME: https://bugs.webkit.org/show_bug.cgi?id=231774
+        if (APPLE)
+            list(APPEND ${_target_name}_PRIVATE_LIBRARIES WebKit::${framework})
+        else ()
+            list(APPEND ${_target_name}_LIBRARIES WebKit::${framework})
+        endif ()
     endforeach ()
 
     # Add to the ${target_name}_PRIVATE_LIBRARIES

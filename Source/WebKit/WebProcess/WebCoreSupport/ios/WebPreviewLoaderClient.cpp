@@ -32,7 +32,6 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/SharedBuffer.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -45,22 +44,21 @@ WebPreviewLoaderClient::WebPreviewLoaderClient(const String& fileName, const Str
     : m_fileName { fileName }
     , m_uti { uti }
     , m_pageID { pageID }
-    , m_buffer { SharedBuffer::create() }
 {
 }
 
 WebPreviewLoaderClient::~WebPreviewLoaderClient() = default;
 
-void WebPreviewLoaderClient::didReceiveBuffer(const SharedBuffer& buffer)
+void WebPreviewLoaderClient::didReceiveData(const SharedBuffer& buffer)
 {
     auto webPage = WebProcess::singleton().webPage(m_pageID);
     if (!webPage)
         return;
 
-    if (m_buffer->isEmpty())
+    if (m_buffer.isEmpty())
         webPage->didStartLoadForQuickLookDocumentInMainFrame(m_fileName, m_uti);
 
-    m_buffer->append(buffer);
+    m_buffer.append(buffer);
 }
 
 void WebPreviewLoaderClient::didFinishLoading()
@@ -69,13 +67,12 @@ void WebPreviewLoaderClient::didFinishLoading()
     if (!webPage)
         return;
 
-    webPage->didFinishLoadForQuickLookDocumentInMainFrame(m_buffer.get());
-    m_buffer->clear();
+    webPage->didFinishLoadForQuickLookDocumentInMainFrame(m_buffer.take().get());
 }
 
 void WebPreviewLoaderClient::didFail()
 {
-    m_buffer->clear();
+    m_buffer.reset();
 }
 
 void WebPreviewLoaderClient::didRequestPassword(Function<void(const String&)>&& completionHandler)

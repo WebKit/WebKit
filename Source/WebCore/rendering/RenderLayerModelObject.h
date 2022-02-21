@@ -67,6 +67,18 @@ public:
 
     void suspendAnimations(MonotonicTime = MonotonicTime()) override;
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // Provides the SVG implementation for computeVisibleRectInContainer().
+    // This lives in RenderLayerModelObject, which is the common base-class for all SVG renderers.
+    std::optional<LayoutRect> computeVisibleRectInSVGContainer(const LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const;
+
+    // Provides the SVG implementation for mapLocalToContainer().
+    // This lives in RenderLayerModelObject, which is the common base-class for all SVG renderers.
+    void mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const;
+#endif
+
+    virtual void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const = 0;
+
 protected:
     RenderLayerModelObject(Element&, RenderStyle&&, BaseTypeFlags);
     RenderLayerModelObject(Document&, RenderStyle&&, BaseTypeFlags);

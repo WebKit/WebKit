@@ -294,7 +294,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             current = current.traverseNextTreeElement(false, child, true);
         }
 
-        if (child.hasChildren && child.treeOutline._treeElementsExpandedState[child.identifier] !== undefined)
+        if (child.expandable && child.treeOutline._treeElementsExpandedState[child.identifier] !== undefined)
             child.expanded = child.treeOutline._treeElementsExpandedState[child.identifier];
 
         if (this._childrenListNode)
@@ -516,8 +516,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             // FIXME: we could do something faster than findTreeElement since we will know the next
             // ancestor exists in the tree.
             item = this.findTreeElement(ancestors[i], isAncestor, getParent);
-            if (item)
-                item.onpopulate();
+            if (!item)
+                return null;
+
+            item.onpopulate();
         }
 
         return this.getCachedTreeElement(representedObject);
@@ -585,7 +587,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
                 if (!this.selectedTreeElement.revealed()) {
                     this.selectedTreeElement.reveal();
                     handled = true;
-                } else if (this.selectedTreeElement.hasChildren) {
+                } else if (this.selectedTreeElement.expandable) {
                     handled = true;
                     if (this.selectedTreeElement.expanded) {
                         nextSelectedElement = this.selectedTreeElement.children[0];

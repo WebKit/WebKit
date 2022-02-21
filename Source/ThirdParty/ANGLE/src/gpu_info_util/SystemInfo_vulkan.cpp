@@ -7,6 +7,8 @@
 // SystemInfo_vulkan.cpp: Generic vulkan implementation of SystemInfo.h
 // TODO: Use VK_KHR_driver_properties. http://anglebug.com/5103
 
+#include "gpu_info_util/SystemInfo_vulkan.h"
+
 #include <vulkan/vulkan.h>
 #include "gpu_info_util/SystemInfo_internal.h"
 
@@ -16,12 +18,7 @@
 #include "common/angleutils.h"
 #include "common/debug.h"
 #include "common/system_utils.h"
-
-#if defined(ANGLE_PLATFORM_WINDOWS)
-const char *kLibVulkanNames[] = {"vulkan-1.dll"};
-#else
-const char *kLibVulkanNames[] = {"libvulkan.so", "libvulkan.so.1"};
-#endif
+#include "common/vulkan/libvulkan_loader.h"
 
 namespace angle
 {
@@ -40,18 +37,11 @@ class VulkanLibrary final : NonCopyable
                 pfnDestroyInstance(mInstance, nullptr);
             }
         }
-        SafeDelete(mLibVulkan);
     }
 
     VkInstance getVulkanInstance()
     {
-        for (const char *libraryName : kLibVulkanNames)
-        {
-            mLibVulkan = OpenSharedLibraryWithExtension(libraryName);
-            if (mLibVulkan)
-                break;
-        }
-
+        mLibVulkan = vk::OpenLibVulkan();
         if (!mLibVulkan)
         {
             // If Vulkan doesn't exist, bail-out early:
@@ -107,8 +97,8 @@ class VulkanLibrary final : NonCopyable
     }
 
   private:
-    Library *mLibVulkan  = nullptr;
-    VkInstance mInstance = VK_NULL_HANDLE;
+    std::unique_ptr<Library> mLibVulkan = nullptr;
+    VkInstance mInstance                = VK_NULL_HANDLE;
 };
 
 ANGLE_FORMAT_PRINTF(1, 2)
@@ -126,6 +116,14 @@ std::string FormatString(const char *fmt, ...)
 
 bool GetSystemInfoVulkan(SystemInfo *info)
 {
+    return GetSystemInfoVulkanWithICD(info, vk::ICD::Default);
+}
+
+bool GetSystemInfoVulkanWithICD(SystemInfo *info, vk::ICD preferredICD)
+{
+    const bool enableValidationLayers = false;
+    vk::ScopedVkLoaderEnvironment scopedEnvironment(enableValidationLayers, preferredICD);
+
     // This implementation builds on top of the Vulkan API, but cannot assume the existence of the
     // Vulkan library.  ANGLE can be installed on versions of Android as old as Ice Cream Sandwich.
     // Therefore, we need to use dlopen()/dlsym() in order to see if Vulkan is installed on the
@@ -144,7 +142,7 @@ bool GetSystemInfoVulkan(SystemInfo *info)
     auto pfnGetPhysicalDeviceProperties =
         vkLibrary.getProc<PFN_vkGetPhysicalDeviceProperties>("vkGetPhysicalDeviceProperties");
     uint32_t physicalDeviceCount = 0;
-    if (!pfnEnumeratePhysicalDevices ||
+    if (!pfnEnumeratePhysicalDevices || !pfnGetPhysicalDeviceProperties ||
         pfnEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr) != VK_SUCCESS)
     {
         return false;
@@ -185,6 +183,11 @@ bool GetSystemInfoVulkan(SystemInfo *info)
                 break;
             case kVendorID_Broadcom:
                 gpu.driverVendor                = "Broadcom";
+                gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);
+                gpu.detailedDriverVersion.major = properties.driverVersion;
+                break;
+            case kVendorID_GOOGLE:
+                gpu.driverVendor                = "Google";
                 gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);
                 gpu.detailedDriverVersion.major = properties.driverVersion;
                 break;

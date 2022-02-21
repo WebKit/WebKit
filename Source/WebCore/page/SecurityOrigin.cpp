@@ -35,7 +35,7 @@
 #include "PublicSuffix.h"
 #include "RuntimeApplicationChecks.h"
 #include "SecurityPolicy.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
 #include "ThreadableBlobRegistry.h"
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
@@ -45,7 +45,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(COCOA)
-#include "VersionChecks.h"
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 namespace WebCore {
@@ -81,7 +81,7 @@ URL SecurityOrigin::extractInnerURL(const URL& url)
 {
     // FIXME: Update this callsite to use the innerURL member function when
     // we finish implementing it.
-    return { URL(), decodeURLEscapeSequences(url.path()) };
+    return { URL(), PAL::decodeURLEscapeSequences(url.path()) };
 }
 
 static RefPtr<SecurityOrigin> getCachedOrigin(const URL& url)
@@ -98,8 +98,8 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
 
     // FIXME: Do we need to unwrap the URL further?
     URL innerURL = SecurityOrigin::shouldUseInnerURL(url) ? SecurityOrigin::extractInnerURL(url) : url;
-
-    // FIXME: Check whether innerURL is valid.
+    if (!innerURL.isValid())
+        return true;
 
     // For edge case URLs that were probably misparsed, make sure that the origin is unique.
     // This is an additional safety net against bugs in URL parsing, and for network back-ends that parse URLs differently,
@@ -546,6 +546,11 @@ String SecurityOrigin::toRawString() const
     return m_data.toString();
 }
 
+URL SecurityOrigin::toURL() const
+{
+    return m_data.toURL();
+}
+
 static inline bool areOriginsMatching(const SecurityOrigin& origin1, const SecurityOrigin& origin2)
 {
     ASSERT(&origin1 != &origin2);
@@ -590,7 +595,7 @@ Ref<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
 
 Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, std::optional<uint16_t> port)
 {
-    String decodedHost = decodeURLEscapeSequences(host);
+    String decodedHost = PAL::decodeURLEscapeSequences(host);
     auto origin = create(URL(URL(), protocol + "://" + host + "/"));
     if (port && !WTF::isDefaultPortForProtocol(*port, protocol))
         origin->m_data.port = port;

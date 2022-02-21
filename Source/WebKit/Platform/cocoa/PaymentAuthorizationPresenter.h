@@ -43,6 +43,7 @@ class PaymentMerchantSession;
 class PaymentMethod;
 class PaymentSessionError;
 struct ApplePayCouponCodeUpdate;
+struct ApplePayPaymentAuthorizationResult;
 struct ApplePayPaymentMethodUpdate;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethod;
@@ -75,7 +76,7 @@ public:
 
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
     void completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&);
-    void completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
+    void completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&);
     void completeShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&&);
     void completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);
 #if HAVE(PASSKIT_COUPON_CODE)
@@ -85,6 +86,10 @@ public:
     virtual void dismiss() = 0;
 #if PLATFORM(IOS_FAMILY)
     virtual void present(UIViewController *, CompletionHandler<void(bool)>&&) = 0;
+#if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+    virtual void presentInScene(const String&, CompletionHandler<void(bool)>&&) = 0;
+    const String& sceneIdentifier() const { return m_sceneIdentifier; }
+#endif
 #endif
 
 protected:
@@ -94,6 +99,10 @@ protected:
     }
 
     virtual WKPaymentAuthorizationDelegate *platformDelegate() = 0;
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+    String m_sceneIdentifier;
+#endif
 
 private:
     Client& m_client;

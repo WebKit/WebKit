@@ -95,8 +95,8 @@ function valueTypes(object, proeprtyName) {
     descriptor = Object.getOwnPropertyDescriptor(object, proeprtyName);
     return ['value', 'get', 'set'].filter(function (name) { return name in descriptor; });
 }
-shouldBe("class A { get foo() { } foo() { } set foo(x) { } }; valueTypes((new A).__proto__, 'foo')", "['value']");
-shouldBe("class A { set foo(x) { } foo() { } get foo() { } }; valueTypes((new A).__proto__, 'foo')", "['value']");
+shouldBe("class A { get foo() { } foo() { } set foo(x) { } }; valueTypes((new A).__proto__, 'foo')", "['get', 'set']");
+shouldBe("class A { set foo(x) { } foo() { } get foo() { } }; valueTypes((new A).__proto__, 'foo')", "['get', 'set']");
 shouldBe("class A { foo() { } get foo() { } set foo(x) { } }; valueTypes((new A).__proto__, 'foo')", "['get', 'set']");
 shouldBe("class A { foo() { } set foo(x) { } get foo() { } }; valueTypes((new A).__proto__, 'foo')", "['get', 'set']");
 shouldBe("class A { get foo() { } set foo(x) { } foo() { } }; valueTypes((new A).__proto__, 'foo')", "['value']");
@@ -117,8 +117,8 @@ shouldBe("class A { static get a() { return 521 } static a() { return 522 } }; A
 shouldBe("setterValue = undefined; class A { static a() { return 523 } static set a(x) { setterValue = x } }; A.a = 524; setterValue", "524");
 shouldBe("setterValue = undefined; class A { static set a(x) { setterValue = x } static a() { return 525 } }; A.a()", "525");
 shouldBe("setterValue = undefined; class A { static get foo() { return 526 } static set foo(x) { setterValue = x; } }; A.foo = A.foo; setterValue", "526");
-shouldBe("class A { static get foo() { } static foo() { } static set foo(x) { } }; valueTypes(A, 'foo')", "['value']");
-shouldBe("class A { static set foo(x) { } static foo() { } static get foo() { } }; valueTypes(A, 'foo')", "['value']");
+shouldBe("class A { static get foo() { } static foo() { } static set foo(x) { } }; valueTypes(A, 'foo')", "['get', 'set']");
+shouldBe("class A { static set foo(x) { } static foo() { } static get foo() { } }; valueTypes(A, 'foo')", "['get', 'set']");
 shouldBe("class A { static foo() { } static get foo() { } static set foo(x) { } }; valueTypes(A, 'foo')", "['get', 'set']");
 shouldBe("class A { static foo() { } static set foo(x) { } static get foo() { } }; valueTypes(A, 'foo')", "['get', 'set']");
 shouldBe("class A { static get foo() { } static set foo(x) { } static foo() { } }; valueTypes(A, 'foo')", "['value']");

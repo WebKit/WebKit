@@ -20,18 +20,22 @@
 #include "config.h"
 #include "SVGResources.h"
 
-#include "ClipPathOperation.h"
 #include "FilterOperation.h"
-#include "RenderSVGResourceClipper.h"
-#include "RenderSVGResourceFilter.h"
-#include "RenderSVGResourceMarker.h"
-#include "RenderSVGResourceMasker.h"
-#include "RenderSVGRoot.h"
+#include "LegacyRenderSVGRoot.h"
+#include "PathOperation.h"
+#include "RenderSVGResourceClipperInlines.h"
+#include "RenderSVGResourceFilterInlines.h"
+#include "RenderSVGResourceMarkerInlines.h"
+#include "RenderSVGResourceMaskerInlines.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGFilterElement.h"
 #include "SVGGradientElement.h"
+#include "SVGMarkerElement.h"
 #include "SVGNames.h"
 #include "SVGPatternElement.h"
 #include "SVGRenderStyle.h"
 #include "SVGURIReference.h"
+#include "StyleCachedImage.h"
 #include <wtf/RobinHoodHashSet.h>
 
 #if ENABLE(TREE_DEBUGGING)
@@ -44,100 +48,105 @@ SVGResources::SVGResources()
 {
 }
 
+static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> tagSet(Span<decltype(SVGNames::aTag)* const> tags)
+{
+    MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
+    set.reserveInitialCapacity(tags.size());
+    for (auto& tag : tags)
+        set.add(tag->get().localName());
+    return set;
+}
+
 static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& clipperFilterMaskerTags()
 {
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> s_tagList;
-    if (s_tagList.get().isEmpty()) {
+    static constexpr std::array tags {
         // "container elements": http://www.w3.org/TR/SVG11/intro.html#TermContainerElement
         // "graphics elements" : http://www.w3.org/TR/SVG11/intro.html#TermGraphicsElement
-        s_tagList.get().add(SVGNames::aTag->localName());
-        s_tagList.get().add(SVGNames::circleTag->localName());
-        s_tagList.get().add(SVGNames::ellipseTag->localName());
-        s_tagList.get().add(SVGNames::glyphTag->localName());
-        s_tagList.get().add(SVGNames::gTag->localName());
-        s_tagList.get().add(SVGNames::imageTag->localName());
-        s_tagList.get().add(SVGNames::lineTag->localName());
-        s_tagList.get().add(SVGNames::markerTag->localName());
-        s_tagList.get().add(SVGNames::maskTag->localName());
-        s_tagList.get().add(SVGNames::missing_glyphTag->localName());
-        s_tagList.get().add(SVGNames::pathTag->localName());
-        s_tagList.get().add(SVGNames::polygonTag->localName());
-        s_tagList.get().add(SVGNames::polylineTag->localName());
-        s_tagList.get().add(SVGNames::rectTag->localName());
-        s_tagList.get().add(SVGNames::svgTag->localName());
-        s_tagList.get().add(SVGNames::textTag->localName());
-        s_tagList.get().add(SVGNames::useTag->localName());
+        &SVGNames::aTag,
+        &SVGNames::circleTag,
+        &SVGNames::ellipseTag,
+        &SVGNames::glyphTag,
+        &SVGNames::gTag,
+        &SVGNames::imageTag,
+        &SVGNames::lineTag,
+        &SVGNames::markerTag,
+        &SVGNames::maskTag,
+        &SVGNames::missing_glyphTag,
+        &SVGNames::pathTag,
+        &SVGNames::polygonTag,
+        &SVGNames::polylineTag,
+        &SVGNames::rectTag,
+        &SVGNames::svgTag,
+        &SVGNames::textTag,
+        &SVGNames::useTag,
 
         // Not listed in the definitions is the clipPath element, the SVG spec says though:
         // The "clipPath" element or any of its children can specify property "clip-path".
         // So we have to add clipPathTag here, otherwhise clip-path on clipPath will fail.
         // (Already mailed SVG WG, waiting for a solution)
-        s_tagList.get().add(SVGNames::clipPathTag->localName());
+        &SVGNames::clipPathTag,
 
         // Not listed in the definitions are the text content elements, though filter/clipper/masker on tspan/text/.. is allowed.
         // (Already mailed SVG WG, waiting for a solution)
-        s_tagList.get().add(SVGNames::altGlyphTag->localName());
-        s_tagList.get().add(SVGNames::textPathTag->localName());
-        s_tagList.get().add(SVGNames::trefTag->localName());
-        s_tagList.get().add(SVGNames::tspanTag->localName());
+        &SVGNames::altGlyphTag,
+        &SVGNames::textPathTag,
+        &SVGNames::trefTag,
+        &SVGNames::tspanTag,
 
         // Not listed in the definitions is the foreignObject element, but clip-path
         // is a supported attribute.
-        s_tagList.get().add(SVGNames::foreignObjectTag->localName());
+        &SVGNames::foreignObjectTag,
 
         // Elements that we ignore, as it doesn't make any sense.
         // defs, pattern, switch (FIXME: Mail SVG WG about these)
         // symbol (is converted to a svg element, when referenced by use, we can safely ignore it.)
-    }
-
-    return s_tagList;
+    };
+    static NeverDestroyed set = tagSet(tags);
+    return set;
 }
 
 static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& markerTags()
 {
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> s_tagList;
-    if (s_tagList.get().isEmpty()) {
-        s_tagList.get().add(SVGNames::lineTag->localName());
-        s_tagList.get().add(SVGNames::pathTag->localName());
-        s_tagList.get().add(SVGNames::polygonTag->localName());
-        s_tagList.get().add(SVGNames::polylineTag->localName());
-    }
-
-    return s_tagList;
+    static constexpr std::array tags {
+        &SVGNames::lineTag,
+        &SVGNames::pathTag,
+        &SVGNames::polygonTag,
+        &SVGNames::polylineTag,
+    };
+    static NeverDestroyed set = tagSet(tags);
+    return set;
 }
 
 static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& fillAndStrokeTags()
 {
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> s_tagList;
-    if (s_tagList.get().isEmpty()) {
-        s_tagList.get().add(SVGNames::altGlyphTag->localName());
-        s_tagList.get().add(SVGNames::circleTag->localName());
-        s_tagList.get().add(SVGNames::ellipseTag->localName());
-        s_tagList.get().add(SVGNames::lineTag->localName());
-        s_tagList.get().add(SVGNames::pathTag->localName());
-        s_tagList.get().add(SVGNames::polygonTag->localName());
-        s_tagList.get().add(SVGNames::polylineTag->localName());
-        s_tagList.get().add(SVGNames::rectTag->localName());
-        s_tagList.get().add(SVGNames::textTag->localName());
-        s_tagList.get().add(SVGNames::textPathTag->localName());
-        s_tagList.get().add(SVGNames::trefTag->localName());
-        s_tagList.get().add(SVGNames::tspanTag->localName());
-    }
-
-    return s_tagList;
+    static constexpr std::array tags {
+        &SVGNames::altGlyphTag,
+        &SVGNames::circleTag,
+        &SVGNames::ellipseTag,
+        &SVGNames::lineTag,
+        &SVGNames::pathTag,
+        &SVGNames::polygonTag,
+        &SVGNames::polylineTag,
+        &SVGNames::rectTag,
+        &SVGNames::textTag,
+        &SVGNames::textPathTag,
+        &SVGNames::trefTag,
+        &SVGNames::tspanTag,
+    };
+    static NeverDestroyed set = tagSet(tags);
+    return set;
 }
 
 static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& chainableResourceTags()
 {
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> s_tagList;
-    if (s_tagList.get().isEmpty()) {
-        s_tagList.get().add(SVGNames::linearGradientTag->localName());
-        s_tagList.get().add(SVGNames::filterTag->localName());
-        s_tagList.get().add(SVGNames::patternTag->localName());
-        s_tagList.get().add(SVGNames::radialGradientTag->localName());
-    }
-
-    return s_tagList;
+    static constexpr std::array tags {
+        &SVGNames::linearGradientTag,
+        &SVGNames::filterTag,
+        &SVGNames::patternTag,
+        &SVGNames::radialGradientTag,
+    };
+    static NeverDestroyed set = tagSet(tags);
+    return set;
 }
 
 static inline String targetReferenceFromResource(SVGElement& element)
@@ -216,10 +225,10 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
 
     bool foundResources = false;
     if (clipperFilterMaskerTags().contains(tagName)) {
-        if (is<ReferenceClipPathOperation>(style.clipPath())) {
+        if (is<ReferencePathOperation>(style.clipPath())) {
             // FIXME: -webkit-clip-path should support external resources
             // https://bugs.webkit.org/show_bug.cgi?id=127032
-            auto& clipPath = downcast<ReferenceClipPathOperation>(*style.clipPath());
+            auto& clipPath = downcast<ReferencePathOperation>(*style.clipPath());
             AtomString id(clipPath.fragment());
             if (setClipper(getRenderSVGResourceById<RenderSVGResourceClipper>(document, id)))
                 foundResources = true;
@@ -242,12 +251,16 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
             }
         }
 
-        if (svgStyle.hasMasker()) {
-            AtomString id(svgStyle.maskerResource());
-            if (setMasker(getRenderSVGResourceById<RenderSVGResourceMasker>(document, id)))
-                foundResources = true;
-            else
-                registerPendingResource(extensions, id, element);
+        if (style.hasPositionedMask()) {
+            // FIXME: We should support all the values in the CSS mask property, but for now just use the first mask-image if it's a reference.
+            auto* maskImage = style.maskImage();
+            if (is<StyleCachedImage>(maskImage)) {
+                auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(downcast<StyleCachedImage>(*maskImage).reresolvedURL(document).string(), document);
+                if (setMasker(getRenderSVGResourceById<RenderSVGResourceMasker>(document, resourceID)))
+                    foundResources = true;
+                else
+                    registerPendingResource(extensions, resourceID, element);
+            }
         }
     }
 
@@ -305,7 +318,7 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
     return foundResources;
 }
 
-void SVGResources::layoutDifferentRootIfNeeded(const RenderSVGRoot* svgRoot)
+void SVGResources::layoutDifferentRootIfNeeded(const LegacyRenderSVGRoot* svgRoot)
 {
     if (clipper() && svgRoot != SVGRenderSupport::findTreeRootObject(*clipper()))
         clipper()->layoutIfNeeded();

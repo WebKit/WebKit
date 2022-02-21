@@ -12,9 +12,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 304x189 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 300x185
             RenderTableCell {TD} at (308,74) size 472x45 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 461x40
-                text run at (2,3) width 461: "This text is within the THEAD element and should be vertically aligned"
-                text run at (2,23) width 85: "to the middle"
+              RenderText {#text} at (2,1) size 461x41
+                text run at (2,2) width 461: "This text is within the THEAD element and should be vertically aligned"
+                text run at (2,22) width 85: "to the middle"
         RenderTableSection {TFOOT} at (1,220) size 782x26
           RenderTableRow {TR} at (0,0) size 782x24
             RenderTableCell {TD} at (2,0) size 304x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

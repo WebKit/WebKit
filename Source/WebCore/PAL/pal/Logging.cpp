@@ -35,7 +35,7 @@
 
 namespace PAL {
 
-void registerNotifyCallback(const String& notifyID, WTF::Function<void()>&& callback)
+void registerNotifyCallback(const String& notifyID, Function<void()>&& callback)
 {
 #if PLATFORM(COCOA)
     int token;

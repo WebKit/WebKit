@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
 #include <wtf/JSONValues.h>
+#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 
@@ -51,32 +52,33 @@ static const void* nextLogIdentifier()
     return reinterpret_cast<const void*>(++logIdentifier);
 }
 
-static WTFLogChannel& logChannel() { return LogMedia; }
-static const char* logClassName() { return "MediaSession"; }
+#if !RELEASE_LOG_DISABLED
+static WTFLogChannel& logChannel()
+{
+    return LogMedia;
+}
+
+static const char* logClassName()
+{
+    return "MediaSession";
+}
+#endif
 
 static PlatformMediaSession::RemoteControlCommandType platformCommandForMediaSessionAction(MediaSessionAction action)
 {
-    static const auto commandMap = makeNeverDestroyed([] {
-        using ActionToCommandMap = HashMap<MediaSessionAction, PlatformMediaSession::RemoteControlCommandType, WTF::IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>>;
-
-        return ActionToCommandMap {
-            { MediaSessionAction::Play, PlatformMediaSession::PlayCommand },
-            { MediaSessionAction::Pause, PlatformMediaSession::PauseCommand },
-            { MediaSessionAction::Seekforward, PlatformMediaSession::SkipForwardCommand },
-            { MediaSessionAction::Seekbackward, PlatformMediaSession::SkipBackwardCommand },
-            { MediaSessionAction::Previoustrack, PlatformMediaSession::PreviousTrackCommand },
-            { MediaSessionAction::Nexttrack, PlatformMediaSession::NextTrackCommand },
-            { MediaSessionAction::Stop, PlatformMediaSession::StopCommand },
-            { MediaSessionAction::Seekto, PlatformMediaSession::SeekToPlaybackPositionCommand },
-            { MediaSessionAction::Skipad, PlatformMediaSession::NextTrackCommand },
-        };
-    }());
-
-    auto it = commandMap.get().find(action);
-    if (it != commandMap.get().end())
-        return it->value;
-
-    return PlatformMediaSession::NoCommand;
+    static constexpr std::pair<MediaSessionAction, PlatformMediaSession::RemoteControlCommandType> mappings[] {
+        { MediaSessionAction::Play, PlatformMediaSession::PlayCommand },
+        { MediaSessionAction::Pause, PlatformMediaSession::PauseCommand },
+        { MediaSessionAction::Seekbackward, PlatformMediaSession::SkipBackwardCommand },
+        { MediaSessionAction::Seekforward, PlatformMediaSession::SkipForwardCommand },
+        { MediaSessionAction::Previoustrack, PlatformMediaSession::PreviousTrackCommand },
+        { MediaSessionAction::Nexttrack, PlatformMediaSession::NextTrackCommand },
+        { MediaSessionAction::Skipad, PlatformMediaSession::NextTrackCommand },
+        { MediaSessionAction::Stop, PlatformMediaSession::StopCommand },
+        { MediaSessionAction::Seekto, PlatformMediaSession::SeekToPlaybackPositionCommand },
+    };
+    static constexpr SortedArrayMap map { mappings };
+    return map.get(action, PlatformMediaSession::NoCommand);
 }
 
 static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, PlatformMediaSession::RemoteCommandArgument>> platformCommandForMediaSessionAction(const MediaSessionActionDetails& actionDetails)
@@ -135,12 +137,12 @@ Ref<MediaSession> MediaSession::create(Navigator& navigator)
 
 MediaSession::MediaSession(Navigator& navigator)
     : ActiveDOMObject(navigator.scriptExecutionContext())
-    , m_navigator(makeWeakPtr(navigator))
+    , m_navigator(navigator)
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     , m_coordinator(MediaSessionCoordinator::create(navigator.scriptExecutionContext()))
 #endif
 {
-    m_logger = makeRefPtr(Document::sharedLogger());
+    m_logger = &Document::sharedLogger();
     m_logIdentifier = nextLogIdentifier();
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -353,7 +355,7 @@ void MediaSession::removeObserver(Observer& observer)
 void MediaSession::forEachObserver(const Function<void(Observer&)>& apply)
 {
     ASSERT(isMainThread());
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     m_observers.forEach(apply);
 }
 

@@ -49,7 +49,7 @@ enum TestConfidence { "high", "kinda-low" };
     InterfaceName=TestObject,
     Exposed=(Window,Worker)
 ] interface TestObj {
-    [CallWith=Document] constructor(TestCallbackInterface testCallback, TestCallbackFunction testCallbackFunction);
+    [CallWith=CurrentDocument] constructor(TestCallbackInterface testCallback, TestCallbackFunction testCallbackFunction);
 
     // Attributes
     readonly attribute long            readOnlyLongAttr;
@@ -58,7 +58,7 @@ enum TestConfidence { "high", "kinda-low" };
     static readonly attribute long     staticReadOnlyLongAttr;
     static attribute DOMString         staticStringAttr;
     static readonly attribute TestSubObjConstructor TestSubObj;
-    [CallWith=Document] static readonly attribute TestObj testStaticReadonlyObj;
+    [CallWith=CurrentDocument] static readonly attribute TestObj testStaticReadonlyObj;
     attribute TestEnumType enumAttr;
     attribute byte byteAttr;
     attribute octet octetAttr;
@@ -111,20 +111,20 @@ enum TestConfidence { "high", "kinda-low" };
     [Reflect=customContentURLAttr, URL] attribute DOMString reflectedCustomURLAttr;
 
     // [EnabledAtRuntime] attributes and operations.
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature&TestFeature1] attribute DOMString enabledAtRuntimeAttribute;
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] undefined enabledAtRuntimeOperation(DOMString testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] undefined enabledAtRuntimeOperation(long testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] static undefined enabledAtRuntimeOperationStatic(long testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] static attribute DOMString enabledAtRuntimeAttributeStatic;
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled&TestFeature1Enabled] attribute DOMString enabledAtRuntimeAttribute;
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled] undefined enabledAtRuntimeOperation(DOMString testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled] undefined enabledAtRuntimeOperation(long testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled] static undefined enabledAtRuntimeOperationStatic(long testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled] static attribute DOMString enabledAtRuntimeAttributeStatic;
 
-    [EnabledForWorld=someWorld, EnabledAtRuntime=TestFeature] undefined enabledInSpecificWorldWhenRuntimeFeatureEnabled(long testParam);
+    [EnabledForWorld=someWorld, EnabledAtRuntime=TestFeatureEnabled] undefined enabledInSpecificWorldWhenRuntimeFeatureEnabled(long testParam);
     [EnabledForWorld=someWorld] undefined worldSpecificMethod(long testParam);
 
     // [SecureContext] attributes and operations; will not be exposed to a non-secure context.
     // From <https://w3c.github.io/webappsec-secure-contexts/#integration-idl> (Editor's Draft, 17 November 2016)
     [SecureContext] Promise<double> calculateSecretResult();
     [SecureContext] boolean getSecretBoolean();
-    [Conditional=TEST_FEATURE, SecureContext, EnabledAtRuntime=TestFeature] boolean testFeatureGetSecretBoolean();
+    [Conditional=TEST_FEATURE, SecureContext, EnabledAtRuntime=TestFeatureEnabled] boolean testFeatureGetSecretBoolean();
 
     // TypedArray attribute
     attribute Float32Array typedArrayAttr;
@@ -189,17 +189,20 @@ enum TestConfidence { "high", "kinda-low" };
     [ImplementedAs=onfoo] attribute EventHandler onwebkitfoo;
 
     // 'CallWith' extended attribute
-    [CallWith=GlobalObject] undefined withExecStateVoid();
-    [CallWith=GlobalObject] TestObj withExecStateObj();
-    [CallWith=ScriptExecutionContext] undefined withScriptExecutionContext();
-    [CallWith=ScriptExecutionContext&ExecState] undefined withScriptExecutionContextAndExecState();
-    [CallWith=  ScriptExecutionContext  &  ExecState  ] TestObj withScriptExecutionContextAndExecStateWithSpaces();
-    [CallWith=Document] undefined withDocumentArgument();
+    [CallWith=CurrentGlobalObject] undefined withCurrentGlobalObjectVoid();
+    [CallWith=RelevantGlobalObject] undefined withRelevantGlobalObjectVoid();
+    [CallWith=CurrentGlobalObject] TestObj withCurrentGlobalObjectObj();
+    [CallWith=CurrentScriptExecutionContext] undefined withCurrentScriptExecutionContext();
+    [CallWith=RelevantScriptExecutionContext] undefined withRelevantScriptExecutionContext();
+    [CallWith=CurrentScriptExecutionContext&CurrentGlobalObject] undefined withCurrentScriptExecutionContextAndGlobalObject();
+    [CallWith=  CurrentScriptExecutionContext  &  CurrentGlobalObject  ] TestObj withCurrentScriptExecutionContextAndGlobalObjectWithSpaces();
+    [CallWith=CurrentDocument] undefined withCurrentDocumentArgument();
+    [CallWith=RelevantDocument] undefined withRelevantDocumentArgument();
     [CallWith=IncumbentDocument] undefined withCallerDocumentArgument();
     [CallWith=IncumbentWindow] undefined withCallerWindowArgument();
 
-    [CallWith=GlobalObject] attribute long withExecStateAttribute;
-    [CallWith=GlobalObject, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
+    [CallWith=CurrentGlobalObject] attribute long withCurrentGlobalObjectAttribute;
+    [CallWith=CurrentGlobalObject, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
     [SetterCallWith=IncumbentWindow&FirstWindow] attribute DOMString withSetterCallWithAttribute;
 
     // Optional parameters.
@@ -455,6 +458,8 @@ enum TestConfidence { "high", "kinda-low" };
     boolean bigUint64(BigUint64Array destination);
     boolean bigInt64AllowShared([AllowShared] BigInt64Array destination);
     boolean bigUint64AllowShared([AllowShared] BigUint64Array destination);
+
+    [SetterCallWith=LegacyActiveWindowForAccessor&FirstWindow] attribute USVString search;
 };
 
 // The following comments should not generate any code.

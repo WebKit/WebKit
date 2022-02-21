@@ -279,7 +279,7 @@ TEST_F(ProbeControllerTest, PeriodicProbingAfterReset) {
                                           kMaxBitrateBps, NowMs());
   EXPECT_EQ(probes.size(), 2u);
 
-  // Make sure we use |kStartBitrateBps| as the estimated bitrate
+  // Make sure we use `kStartBitrateBps` as the estimated bitrate
   // until SetEstimatedBitrate is called with an updated estimate.
   clock_.AdvanceTimeMilliseconds(10000);
   probes = probe_controller_->Process(NowMs());

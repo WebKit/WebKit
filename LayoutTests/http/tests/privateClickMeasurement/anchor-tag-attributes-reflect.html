@@ -7,11 +7,11 @@
 <body>
 <a id="testTag" href="http://localhost:8000" attributionsourceid=40 attributiondestination="https://destination.example"></a>
 <script>
-    description("Test for the new private click measurement attributes on anchor tags.");
+    description("Test for private click measurement attributes on anchor tags.");
 
     const anchorTag = document.getElementById("testTag");
-    shouldBeEqualToNumber("anchorTag.attributionsourceid", 40);
-    shouldBeEqualToString("anchorTag.attributiondestination", "https://destination.example");
+    shouldBeEqualToNumber("anchorTag.attributionSourceId", 40);
+    shouldBeEqualToString("anchorTag.attributionDestination", "https://destination.example");
 </script>
 </body>
 </html>

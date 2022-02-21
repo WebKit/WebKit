@@ -116,7 +116,7 @@ static FontCascade dragLabelFont(int size, bool bold, FontRenderingMode renderin
     description.setComputedSize((float)size);
     description.setRenderingMode(renderingMode);
     result = FontCascade(WTFMove(description), 0, 0);
-    result.update(0);
+    result.update();
     return result;
 }
 
@@ -153,7 +153,7 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& inLabel, T
     // First step in drawing the link drag image width.
     TextRun labelRun(label);
     TextRun urlRun(urlString);
-    IntSize labelSize(labelFont->width(labelRun), labelFont->fontMetrics().ascent() + labelFont->fontMetrics().descent());
+    IntSize labelSize(labelFont->width(labelRun), labelFont->metricsOfPrimaryFont().ascent() + labelFont->metricsOfPrimaryFont().descent());
 
     if (labelSize.width() > MaxDragLabelStringWidth) {
         labelSize.setWidth(MaxDragLabelStringWidth);
@@ -165,7 +165,7 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& inLabel, T
 
     if (drawURLString) {
         urlStringSize.setWidth(urlFont->width(urlRun));
-        urlStringSize.setHeight(urlFont->fontMetrics().ascent() + urlFont->fontMetrics().descent()); 
+        urlStringSize.setHeight(urlFont->metricsOfPrimaryFont().ascent() + urlFont->metricsOfPrimaryFont().descent()); 
         imageSize.setHeight(imageSize.height() + urlStringSize.height());
         if (urlStringSize.width() > MaxDragLabelStringWidth) {
             imageSize.setWidth(MaxDragLabelWidth);
@@ -201,7 +201,7 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& inLabel, T
     if (drawURLString) {
         if (clipURLString)
             urlString = StringTruncator::rightTruncate(urlString, imageSize.width() - (DragLabelBorderX * 2.0f), *urlFont);
-        IntPoint textPos(DragLabelBorderX, imageSize.height() - (LabelBorderYOffset + urlFont->fontMetrics().descent()));
+        IntPoint textPos(DragLabelBorderX, imageSize.height() - (LabelBorderYOffset + urlFont->metricsOfPrimaryFont().descent()));
         WebCoreDrawDoubledTextAtPoint(context, urlString, textPos, *urlFont, topColor, bottomColor);
     }
     

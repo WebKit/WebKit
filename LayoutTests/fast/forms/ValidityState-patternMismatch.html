@@ -149,7 +149,7 @@ shouldBeFalse('patternMismatchFor("invalid-06")');
 shouldBeFalse('patternMismatchFor("invalid-07")');
 shouldBeFalse('patternMismatchFor("invalid-08")');
 
-shouldBeFalse('patternMismatchFor("disabled")');
+shouldBeTrue('patternMismatchFor("disabled")');
 
 document.body.removeChild(document.getElementById('container'));
 </script>

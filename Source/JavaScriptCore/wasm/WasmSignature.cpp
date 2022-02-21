@@ -31,10 +31,7 @@
 #include "WasmSignatureInlines.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/HashFunctions.h>
-#include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>
-#include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Wasm {
 
@@ -99,7 +96,7 @@ RefPtr<Signature> Signature::tryCreate(SignatureArgCount returnCount, SignatureA
 
 SignatureInformation::SignatureInformation()
 {
-#define MAKE_THUNK_SIGNATURE(type, enc, str, val)                          \
+#define MAKE_THUNK_SIGNATURE(type, enc, str, val, _)                       \
     do {                                                                   \
         if (TypeKind::type != TypeKind::Void) {                            \
             RefPtr<Signature> sig = Signature::tryCreate(1, 0);            \
@@ -168,11 +165,15 @@ struct ParameterTypes {
 
 RefPtr<Signature> SignatureInformation::signatureFor(const Vector<Type, 1>& results, const Vector<Type>& args)
 {
+    if constexpr (ASSERT_ENABLED) {
+        ASSERT(!results.contains(Wasm::Types::Void));
+        ASSERT(!args.contains(Wasm::Types::Void));
+    }
     SignatureInformation& info = singleton();
     Locker locker { info.m_lock };
 
     auto addResult = info.m_signatureSet.template add<ParameterTypes>(ParameterTypes { results, args });
-    return makeRef(*addResult.iterator->key);
+    return addResult.iterator->key;
 }
 
 void SignatureInformation::tryCleanup()

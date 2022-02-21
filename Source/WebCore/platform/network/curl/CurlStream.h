@@ -9,7 +9,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class CurlStreamScheduler;
+class SharedBuffer;
 class SocketStreamError;
 
 using CurlStreamID = uint16_t;
@@ -46,13 +47,13 @@ public:
     public:
         virtual void didOpen(CurlStreamID) = 0;
         virtual void didSendData(CurlStreamID, size_t) = 0;
-        virtual void didReceiveData(CurlStreamID, const uint8_t*, size_t) = 0;
+        virtual void didReceiveData(CurlStreamID, const SharedBuffer&) = 0;
         virtual void didFail(CurlStreamID, CURLcode) = 0;
     };
 
     static std::unique_ptr<CurlStream> create(CurlStreamScheduler& scheduler, CurlStreamID streamID, URL&& url)
     {
-        return WTF::makeUnique<CurlStream>(scheduler, streamID, WTFMove(url));
+        return makeUnique<CurlStream>(scheduler, streamID, WTFMove(url));
     }
 
     CurlStream(CurlStreamScheduler&, CurlStreamID, URL&&);
@@ -78,7 +79,7 @@ private:
 
     std::unique_ptr<CurlHandle> m_curlHandle;
 
-    WTF::Vector<std::pair<UniqueArray<uint8_t>, size_t>> m_sendBuffers;
+    Vector<std::pair<UniqueArray<uint8_t>, size_t>> m_sendBuffers;
     size_t m_sendBufferOffset { 0 };
 };
 

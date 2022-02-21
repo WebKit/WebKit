@@ -90,7 +90,7 @@ void CDM::getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfi
     // W3C Editor's Draft 09 November 2016
     // Implemented in CDMPrivate::getSupportedConfiguration()
 
-    Document* document = downcast<Document>(m_scriptExecutionContext);
+    Document* document = downcast<Document>(scriptExecutionContext());
     if (!document || !m_private) {
         callback(std::nullopt);
         return;
@@ -135,19 +135,17 @@ bool CDM::supportsInitDataType(const AtomString& initDataType) const
     return m_private && m_private->supportedInitDataTypes().contains(initDataType);
 }
 
-RefPtr<SharedBuffer> CDM::sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData)
+RefPtr<FragmentedSharedBuffer> CDM::sanitizeInitData(const AtomString& initDataType, const FragmentedSharedBuffer& initData)
 {
-    if (!m_private)
-        return nullptr;
-    return m_private->sanitizeInitData(initDataType, initData);
+    return InitDataRegistry::shared().sanitizeInitData(initDataType, initData);
 }
 
-bool CDM::supportsInitData(const AtomString& initDataType, const SharedBuffer& initData)
+bool CDM::supportsInitData(const AtomString& initDataType, const FragmentedSharedBuffer& initData)
 {
     return m_private && m_private->supportsInitData(initDataType, initData);
 }
 
-RefPtr<SharedBuffer> CDM::sanitizeResponse(const SharedBuffer& response)
+RefPtr<FragmentedSharedBuffer> CDM::sanitizeResponse(const FragmentedSharedBuffer& response)
 {
     if (!m_private)
         return nullptr;

@@ -25,12 +25,12 @@ var p = {
   }
 };
 
-//CHECK#1
 try {
   var f = new Function(p, body);
   throw new Test262Error('#1: If P is not parsable as a FormalParameterList_opt then throw a SyntaxError exception');
 } catch (e) {
-  if (!(e instanceof SyntaxError)) {
-    throw new Test262Error('#1.1: If P is not parsable as a FormalParameterList_opt then throw a SyntaxError exception');
-  }
+  assert(
+    e instanceof SyntaxError,
+    'The result of evaluating (e instanceof SyntaxError) is expected to be true'
+  );
 }

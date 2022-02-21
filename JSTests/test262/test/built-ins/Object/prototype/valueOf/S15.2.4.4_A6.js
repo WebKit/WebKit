@@ -8,9 +8,8 @@ description: >
     Checking if obtaining the prototype property of
     Object.prototype.valueOf fails
 ---*/
-
-//CHECK#1
-if (Object.prototype.valueOf.prototype !== undefined) {
-  throw new Test262Error('#1: Object.prototype.valueOf has not prototype property' + Object.prototype.valueOf.prototype);
-}
-//
+assert.sameValue(
+  Object.prototype.valueOf.prototype,
+  undefined,
+  'The value of Object.prototype.valueOf.prototype is expected to equal undefined'
+);

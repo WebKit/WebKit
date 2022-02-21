@@ -22,8 +22,8 @@
 
 import sys
 
+from .branch import Branch
 from .command import Command
-from .pull_request import PullRequest
 from webkitscmpy import local
 
 
@@ -39,6 +39,6 @@ class Pull(Command):
             return 1
 
         if isinstance(repository, local.Git):
-            branch_point = PullRequest.branch_point(args, repository, **kwargs)
+            branch_point = Branch.branch_point(repository)
             return repository.pull(rebase=True, branch=branch_point.branch)
         return repository.pull()

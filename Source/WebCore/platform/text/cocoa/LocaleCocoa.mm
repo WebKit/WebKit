@@ -39,6 +39,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/Language.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/AtomStringHash.h>
 #import "LocalizedDateCache.h"
 
@@ -67,10 +68,10 @@ LocaleCocoa::LocaleCocoa(const AtomString& locale)
 {
     NSArray* availableLanguages = [NSLocale ISOLanguageCodes];
     // NSLocale returns a lower case NSLocaleLanguageCode so we don't have care about case.
-    NSString* language = [m_locale.get() objectForKey:NSLocaleLanguageCode];
+    NSString* language = [m_locale objectForKey:NSLocaleLanguageCode];
     if ([availableLanguages indexOfObject:language] == NSNotFound)
         m_locale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:defaultLanguage()]);
-    [m_gregorianCalendar.get() setLocale:m_locale.get()];
+    [m_gregorianCalendar setLocale:m_locale.get()];
 }
 
 LocaleCocoa::~LocaleCocoa()
@@ -106,15 +107,14 @@ const Vector<String>& LocaleCocoa::monthLabels()
 {
     if (!m_monthLabels.isEmpty())
         return m_monthLabels;
-    m_monthLabels.reserveCapacity(12);
     NSArray *array = [shortDateFormatter().get() monthSymbols];
     if ([array count] == 12) {
-        for (unsigned i = 0; i < 12; ++i)
-            m_monthLabels.append(String([array objectAtIndex:i]));
+        m_monthLabels = makeVector<String>(array);
         return m_monthLabels;
     }
+    m_monthLabels.reserveCapacity(12);
     for (auto& name : WTF::monthFullName)
-        m_monthLabels.append(name);
+        m_monthLabels.uncheckedAppend(name);
     return m_monthLabels;
 }
 
@@ -200,15 +200,14 @@ const Vector<String>& LocaleCocoa::shortMonthLabels()
 {
     if (!m_shortMonthLabels.isEmpty())
         return m_shortMonthLabels;
-    m_shortMonthLabels.reserveCapacity(12);
     NSArray *array = [shortDateFormatter().get() shortMonthSymbols];
     if ([array count] == 12) {
-        for (unsigned i = 0; i < 12; ++i)
-            m_shortMonthLabels.append([array objectAtIndex:i]);
+        m_shortMonthLabels = makeVector<String>(array);
         return m_shortMonthLabels;
     }
+    m_shortMonthLabels.reserveCapacity(12);
     for (auto& name : WTF::monthName)
-        m_shortMonthLabels.append(name);
+        m_shortMonthLabels.uncheckedAppend(name);
     return m_shortMonthLabels;
 }
 
@@ -218,9 +217,7 @@ const Vector<String>& LocaleCocoa::standAloneMonthLabels()
         return m_standAloneMonthLabels;
     NSArray *array = [shortDateFormatter().get() standaloneMonthSymbols];
     if ([array count] == 12) {
-        m_standAloneMonthLabels.reserveCapacity(12);
-        for (unsigned i = 0; i < 12; ++i)
-            m_standAloneMonthLabels.append([array objectAtIndex:i]);
+        m_standAloneMonthLabels = makeVector<String>(array);
         return m_standAloneMonthLabels;
     }
     m_standAloneMonthLabels = shortMonthLabels();
@@ -231,11 +228,10 @@ const Vector<String>& LocaleCocoa::shortStandAloneMonthLabels()
 {
     if (!m_shortStandAloneMonthLabels.isEmpty())
         return m_shortStandAloneMonthLabels;
+
     NSArray *array = [shortDateFormatter().get() shortStandaloneMonthSymbols];
     if ([array count] == 12) {
-        m_shortStandAloneMonthLabels.reserveCapacity(12);
-        for (unsigned i = 0; i < 12; ++i)
-            m_shortStandAloneMonthLabels.append([array objectAtIndex:i]);
+        m_shortStandAloneMonthLabels = makeVector<String>(array);
         return m_shortStandAloneMonthLabels;
     }
     m_shortStandAloneMonthLabels = shortMonthLabels();
@@ -248,8 +244,8 @@ const Vector<String>& LocaleCocoa::timeAMPMLabels()
         return m_timeAMPMLabels;
     m_timeAMPMLabels.reserveCapacity(2);
     RetainPtr<NSDateFormatter> formatter = shortTimeFormatter();
-    m_timeAMPMLabels.append([formatter.get() AMSymbol]);
-    m_timeAMPMLabels.append([formatter.get() PMSymbol]);
+    m_timeAMPMLabels.uncheckedAppend([formatter AMSymbol]);
+    m_timeAMPMLabels.uncheckedAppend([formatter PMSymbol]);
     return m_timeAMPMLabels;
 }
 
@@ -284,27 +280,27 @@ void LocaleCocoa::initializeLocaleData()
     m_didInitializeNumberData = true;
 
     RetainPtr<NSNumberFormatter> formatter = adoptNS([[NSNumberFormatter alloc] init]);
-    [formatter.get() setLocale:m_locale.get()];
-    [formatter.get() setNumberStyle:NSNumberFormatterDecimalStyle];
-    [formatter.get() setUsesGroupingSeparator:NO];
+    [formatter setLocale:m_locale.get()];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter setUsesGroupingSeparator:NO];
 
     RetainPtr<NSNumber> sampleNumber = adoptNS([[NSNumber alloc] initWithDouble:9876543210]);
-    String nineToZero([formatter.get() stringFromNumber:sampleNumber.get()]);
+    String nineToZero([formatter stringFromNumber:sampleNumber.get()]);
     if (nineToZero.length() != 10)
         return;
     Vector<String, DecimalSymbolsSize> symbols;
     for (unsigned i = 0; i < 10; ++i)
         symbols.append(nineToZero.substring(9 - i, 1));
     ASSERT(symbols.size() == DecimalSeparatorIndex);
-    symbols.append([formatter.get() decimalSeparator]);
+    symbols.append([formatter decimalSeparator]);
     ASSERT(symbols.size() == GroupSeparatorIndex);
-    symbols.append([formatter.get() groupingSeparator]);
+    symbols.append([formatter groupingSeparator]);
     ASSERT(symbols.size() == DecimalSymbolsSize);
 
-    String positivePrefix([formatter.get() positivePrefix]);
-    String positiveSuffix([formatter.get() positiveSuffix]);
-    String negativePrefix([formatter.get() negativePrefix]);
-    String negativeSuffix([formatter.get() negativeSuffix]);
+    String positivePrefix([formatter positivePrefix]);
+    String positiveSuffix([formatter positiveSuffix]);
+    String negativePrefix([formatter negativePrefix]);
+    String negativeSuffix([formatter negativeSuffix]);
     setLocaleData(symbols, positivePrefix, positiveSuffix, negativePrefix, negativeSuffix);
 }
 

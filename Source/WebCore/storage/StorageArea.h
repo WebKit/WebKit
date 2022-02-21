@@ -58,6 +58,7 @@ public:
     virtual void incrementAccessCount() { }
     virtual void decrementAccessCount() { }
     virtual void closeDatabaseIfIdle() { }
+    virtual void prewarm() { }
 };
 
 } // namespace WebCore

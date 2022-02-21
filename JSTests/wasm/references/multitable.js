@@ -1,4 +1,4 @@
-//@ skip if $memoryLimited
+//@ if $memoryLimited then skip else requireOptions("--verifyGC=0") end
 import * as assert from '../assert.js';
 import Builder from '../Builder.js';
 

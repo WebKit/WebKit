@@ -166,7 +166,7 @@ void InspectorWorkerAgent::connectToWorkerInspectorProxy(WorkerInspectorProxy& p
 {
     proxy.connectToWorkerInspectorController(*this);
 
-    m_connectedProxies.set(proxy.identifier(), makeWeakPtr(proxy));
+    m_connectedProxies.set(proxy.identifier(), proxy);
 
     m_frontendDispatcher->workerCreated(proxy.identifier(), proxy.url().string(), proxy.name());
 }

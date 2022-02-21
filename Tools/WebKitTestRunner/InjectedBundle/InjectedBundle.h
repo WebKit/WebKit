@@ -30,13 +30,14 @@
 #include "TestRunner.h"
 #include "TextInputController.h"
 #include <WebKit/WKBase.h>
+#include <WebKit/WKBundlePage.h>
 #include <WebKit/WKRetainPtr.h>
 #include <sstream>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
 #include "AccessibilityController.h"
 #endif
 
@@ -57,7 +58,7 @@ public:
     GCController* gcController() { return m_gcController.get(); }
     EventSendingController* eventSendingController() { return m_eventSendingController.get(); }
     TextInputController* textInputController() { return m_textInputController.get(); }
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     AccessibilityController* accessibilityController() { return m_accessibilityController.get(); }
 #endif
 
@@ -81,7 +82,8 @@ public:
     bool shouldDumpPixels() const { return m_dumpPixels; }
     bool dumpJSConsoleLogInStdErr() const { return m_dumpJSConsoleLogInStdErr; };
 
-    void outputText(const String&);
+    enum class IsFinalTestOutput : bool { No, Yes };
+    void outputText(const String&, IsFinalTestOutput = IsFinalTestOutput::No);
     void dumpToStdErr(const String&);
     void postNewBeforeUnloadReturnValue(bool);
     void postAddChromeInputField();
@@ -93,7 +95,8 @@ public:
     void postSetBackingScaleFactor(double);
     void postSetWindowIsKey(bool);
     void postSetViewSize(double width, double height);
-    void postSimulateWebNotificationClick(uint64_t notificationID);
+    void postSimulateWebNotificationClick(WKDataRef notificationID);
+    void postSimulateWebNotificationClickForServiceWorkerNotifications();
     void postSetAddsVisitedLinks(bool);
 
     // Geolocation.
@@ -171,7 +174,7 @@ private:
     WKRetainPtr<WKBundleRef> m_bundle;
     Vector<std::unique_ptr<InjectedBundlePage>> m_pages;
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     RefPtr<AccessibilityController> m_accessibilityController;
 #endif
     RefPtr<TestRunner> m_testRunner;
@@ -227,6 +230,7 @@ void postPageMessage(const char* name);
 void postPageMessage(const char* name, bool value);
 void postPageMessage(const char* name, const char* value);
 void postPageMessage(const char* name, WKStringRef value);
+void postPageMessage(const char* name, WKDataRef value);
 void postPageMessage(const char* name, const void* value) = delete;
 
 void postSynchronousPageMessage(const char* name);
@@ -254,8 +258,12 @@ template<typename T> void postPageMessage(const char* name, const WKRetainPtr<T>
 
 template<typename T> void postSynchronousPageMessage(const char* name, const WKRetainPtr<T>& value)
 {
-    if (auto page = InjectedBundle::singleton().pageRef())
+    if (auto page = InjectedBundle::singleton().pageRef()) {
+        // EventSender needs a layout
+        if (!strcmp(name, "EventSender"))
+            WKBundlePageLayoutIfNeeded(page);
         WKBundlePagePostSynchronousMessageForTesting(page, toWK(name).get(), value.get(), nullptr);
+    }
 }
 
 } // namespace WTR

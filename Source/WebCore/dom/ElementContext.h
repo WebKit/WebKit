@@ -25,10 +25,12 @@
 
 #pragma once
 
-#include "DocumentIdentifier.h"
 #include "ElementIdentifier.h"
 #include "FloatRect.h"
 #include "PageIdentifier.h"
+#include "ProcessQualified.h"
+#include "ScriptExecutionContextIdentifier.h"
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
@@ -36,7 +38,7 @@ struct ElementContext {
     FloatRect boundingRect;
 
     PageIdentifier webPageIdentifier;
-    DocumentIdentifier documentIdentifier;
+    ScriptExecutionContextIdentifier documentIdentifier;
     ElementIdentifier elementIdentifier;
 
     ~ElementContext() = default;
@@ -77,7 +79,8 @@ std::optional<ElementContext> ElementContext::decode(Decoder& decoder)
         return std::nullopt;
     context.webPageIdentifier = *pageIdentifier;
 
-    auto documentIdentifier = DocumentIdentifier::decode(decoder);
+    std::optional<ScriptExecutionContextIdentifier> documentIdentifier;
+    decoder >> documentIdentifier;
     if (!documentIdentifier)
         return std::nullopt;
     context.documentIdentifier = *documentIdentifier;

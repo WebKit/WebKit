@@ -54,27 +54,27 @@ class UlpfecReceiverTest : public ::testing::Test {
                                              {})),
         packet_generator_(kMediaSsrc) {}
 
-  // Generates |num_fec_packets| FEC packets, given |media_packets|.
+  // Generates `num_fec_packets` FEC packets, given `media_packets`.
   void EncodeFec(const ForwardErrorCorrection::PacketList& media_packets,
                  size_t num_fec_packets,
                  std::list<ForwardErrorCorrection::Packet*>* fec_packets);
 
-  // Generates |num_media_packets| corresponding to a single frame.
+  // Generates `num_media_packets` corresponding to a single frame.
   void PacketizeFrame(size_t num_media_packets,
                       size_t frame_offset,
                       std::list<AugmentedPacket*>* augmented_packets,
                       ForwardErrorCorrection::PacketList* packets);
 
-  // Build a media packet using |packet_generator_| and add it
+  // Build a media packet using `packet_generator_` and add it
   // to the receiver.
   void BuildAndAddRedMediaPacket(AugmentedPacket* packet,
                                  bool is_recovered = false);
 
-  // Build a FEC packet using |packet_generator_| and add it
+  // Build a FEC packet using `packet_generator_` and add it
   // to the receiver.
   void BuildAndAddRedFecPacket(Packet* packet);
 
-  // Ensure that |recovered_packet_receiver_| will be called correctly
+  // Ensure that `recovered_packet_receiver_` will be called correctly
   // and that the recovered packet will be identical to the lost packet.
   void VerifyReconstructedMediaPacket(const AugmentedPacket& packet,
                                       size_t times);
@@ -139,7 +139,7 @@ void UlpfecReceiverTest::VerifyReconstructedMediaPacket(
     const AugmentedPacket& packet,
     size_t times) {
   // Verify that the content of the reconstructed packet is equal to the
-  // content of |packet|, and that the same content is received |times| number
+  // content of `packet`, and that the same content is received `times` number
   // of times in a row.
   EXPECT_CALL(recovered_packet_receiver_,
               OnRecoveredPacket(_, packet.data.size()))

@@ -130,6 +130,9 @@ double parseToDoubleForNumberType(const String& string, double fallbackValue)
     if (firstCharacter != '-' && firstCharacter != '.' && !isASCIIDigit(firstCharacter))
         return fallbackValue;
 
+    if (string.endsWith('.'))
+        return fallbackValue;
+
     bool valid = false;
     double value = string.toDouble(&valid);
     if (!valid)
@@ -456,7 +459,7 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
     return true;
 }
 
-bool parseMetaHTTPEquivRefresh(const StringView& input, double& delay, String& url)
+bool parseMetaHTTPEquivRefresh(StringView input, double& delay, String& url)
 {
     if (LIKELY(input.is8Bit())) {
         auto* start = input.characters8();

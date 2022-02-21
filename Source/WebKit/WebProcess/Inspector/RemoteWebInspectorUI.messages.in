@@ -29,6 +29,9 @@ messages -> RemoteWebInspectorUI {
     SetDiagnosticLoggingAvailable(bool available)
 #endif
 
+    ShowConsole()
+    ShowResources()
+
     DidSave(String url)
     DidAppend(String url)
 

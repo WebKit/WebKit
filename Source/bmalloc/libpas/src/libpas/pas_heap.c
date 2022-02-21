@@ -38,7 +38,7 @@
 #include "pas_log.h"
 #include "pas_monotonic_time.h"
 #include "pas_primitive_heap_ref.h"
-#include "pas_segregated_global_size_directory.h"
+#include "pas_segregated_size_directory.h"
 
 pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
                           pas_heap_ref_kind heap_ref_kind,
@@ -76,9 +76,22 @@ pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
 
 size_t pas_heap_get_type_size(pas_heap* heap)
 {
+    pas_heap_config_kind kind;
+    pas_heap_config* config;
     if (!heap)
         return 1;
-    return pas_heap_config_kind_get_config(heap->config_kind)->get_type_size(heap->type);
+    kind = heap->config_kind;
+    PAS_ASSERT(kind != pas_heap_config_kind_null);
+    config = pas_heap_config_kind_get_config(kind);
+    PAS_ASSERT(config);
+    return config->get_type_size(heap->type);
+}
+
+size_t pas_heap_get_type_alignment(pas_heap* heap)
+{
+    if (!heap)
+        return 1;
+    return pas_heap_config_kind_get_config(heap->config_kind)->get_type_alignment(heap->type);
 }
 
 size_t pas_heap_get_num_free_bytes(pas_heap* heap)
@@ -167,7 +180,7 @@ void pas_heap_reset_heap_ref(pas_heap* heap)
         return;
     
     heap->heap_ref->heap = NULL;
-    heap->heap_ref->allocator_index = UINT_MAX;
+    heap->heap_ref->allocator_index = 0;
     switch (heap->heap_ref_kind) {
     case pas_normal_heap_ref_kind:
         return;
@@ -182,20 +195,21 @@ void pas_heap_reset_heap_ref(pas_heap* heap)
     PAS_ASSERT(!"Should not be reached");
 }
 
-pas_segregated_global_size_directory*
-pas_heap_ensure_size_directory_for_count_slow(
+pas_segregated_size_directory*
+pas_heap_ensure_size_directory_for_size_slow(
     pas_heap* heap,
-    size_t count,
+    size_t size,
     size_t alignment,
-    pas_count_lookup_mode force_count_lookup,
+    pas_size_lookup_mode force_size_lookup,
     pas_heap_config* config,
     unsigned* cached_index)
 {
-    pas_segregated_global_size_directory* result;
+    pas_segregated_size_directory* result;
     
     pas_heap_lock_lock();
-    result = pas_segregated_heap_ensure_size_directory_for_count(
-        &heap->segregated_heap, count, alignment, force_count_lookup, config, cached_index);
+    result = pas_segregated_heap_ensure_size_directory_for_size(
+        &heap->segregated_heap, size, alignment, force_size_lookup, config, cached_index,
+        pas_segregated_size_directory_full_creation_mode);
     pas_heap_lock_unlock();
     
     return result;

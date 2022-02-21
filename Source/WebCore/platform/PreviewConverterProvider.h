@@ -32,7 +32,7 @@ namespace WebCore {
 struct PreviewConverterProvider : CanMakeWeakPtr<PreviewConverterProvider> {
     virtual ~PreviewConverterProvider() = default;
 
-    virtual void provideMainResourceForPreviewConverter(PreviewConverter&, CompletionHandler<void(const SharedBuffer*)>&&) = 0;
+    virtual void provideMainResourceForPreviewConverter(PreviewConverter&, CompletionHandler<void(Ref<FragmentedSharedBuffer>&&)>&&) = 0;
     virtual void providePasswordForPreviewConverter(PreviewConverter&, CompletionHandler<void(const String&)>&&) = 0;
 };
 

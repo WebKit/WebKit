@@ -30,6 +30,8 @@
 #include "VMAllocate.h"
 #include <unordered_set>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 // This class is useful for debugging bmalloc's footprint.
@@ -72,4 +74,5 @@ private:
 
 } // namespace bmalloc
 
+#endif
 #endif // ENABLE_PHYSICAL_PAGE_MAP 

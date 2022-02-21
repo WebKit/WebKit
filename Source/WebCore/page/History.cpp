@@ -114,7 +114,7 @@ bool History::stateChanged() const
 JSValueInWrappedObject& History::cachedState()
 {
     if (m_cachedState && stateChanged())
-        m_cachedState = { };
+        m_cachedState.clear();
     return m_cachedState;
 }
 
@@ -180,7 +180,7 @@ URL History::urlForState(const String& urlString)
 
 ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, const String& title, const String& urlString, StateObjectType stateObjectType)
 {
-    m_cachedState = { };
+    m_cachedState.clear();
 
     // Each unique main-frame document is only allowed to send 64MB of state object payload to the UI client/process.
     static uint32_t totalStateObjectPayloadLimit = 0x4000000;

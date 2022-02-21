@@ -33,6 +33,7 @@
 #endif
 
 #include "LibWebRTCNetwork.h"
+#include "LibWebRTCNetworkManager.h"
 #include "RTCDataChannelRemoteManager.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -54,35 +55,30 @@ private:
     }
 };
 
-rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::PacketSocketFactory* socketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
+rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(ScriptExecutionContextIdentifier identifier, webrtc::PeerConnectionObserver& observer, rtc::PacketSocketFactory* socketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && !PLATFORM(MACCATALYST)
     if (!m_didInitializeCallback) {
         // We initialize only once since callbacks are used in background threads.
         auto* page = m_webPage.corePage();
-        LibWebRTCCodecs::setCallbacks(page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled());
+        LibWebRTCCodecs::setCallbacks(page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled(), page && page->settings().webRTCRemoteVideoFrameEnabled());
         m_didInitializeCallback = true;
     }
 #endif
 
     auto& networkMonitor = WebProcess::singleton().libWebRTCNetwork().monitor();
     networkMonitor.setEnumeratingAllNetworkInterfacesEnabled(isEnumeratingAllNetworkInterfacesEnabled());
-    return WebCore::LibWebRTCProvider::createPeerConnection(observer, networkMonitor, *socketFactory, WTFMove(configuration), makeUnique<AsyncResolverFactory>());
+
+    auto* networkManager = LibWebRTCNetworkManager::getOrCreate(identifier);
+    if (!networkManager)
+        return nullptr;
+
+    return WebCore::LibWebRTCProvider::createPeerConnection(observer, *networkManager, *socketFactory, WTFMove(configuration), makeUnique<AsyncResolverFactory>());
 }
 
 void LibWebRTCProvider::disableNonLocalhostConnections()
 {
     WebProcess::singleton().libWebRTCNetwork().disableNonLocalhostConnections();
-}
-
-void LibWebRTCProvider::unregisterMDNSNames(DocumentIdentifier documentIdentifier)
-{
-    WebProcess::singleton().libWebRTCNetwork().mdnsRegister().unregisterMDNSNames(documentIdentifier);
-}
-
-void LibWebRTCProvider::registerMDNSName(DocumentIdentifier documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
-{
-    WebProcess::singleton().libWebRTCNetwork().mdnsRegister().registerMDNSName(documentIdentifier, ipAddress, WTFMove(callback));
 }
 
 class RTCSocketFactory final : public LibWebRTCProvider::SuspendableSocketFactory {
@@ -129,7 +125,7 @@ rtc::AsyncPacketSocket* RTCSocketFactory::CreateServerTcpSocket(const rtc::Socke
 
 rtc::AsyncPacketSocket* RTCSocketFactory::CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo&, const std::string&, const rtc::PacketSocketTcpOptions& options)
 {
-    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createClientTcpSocket(this, localAddress, remoteAddress, String { m_userAgent }, options, m_pageIdentifier, m_isRelayDisabled);
+    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createClientTcpSocket(this, localAddress, remoteAddress, String { m_userAgent }, options, m_pageIdentifier, m_isFirstParty, m_isRelayDisabled, m_domain);
 }
 
 rtc::AsyncResolverInterface* RTCSocketFactory::CreateAsyncResolver()

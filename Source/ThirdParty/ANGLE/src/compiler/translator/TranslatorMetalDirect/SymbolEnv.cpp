@@ -9,7 +9,6 @@
 
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
-#include "compiler/translator/TranslatorMetalDirect/Debug.h"
 #include "compiler/translator/TranslatorMetalDirect/SymbolEnv.h"
 #include "compiler/translator/tree_util/IntermRebuild.h"
 
@@ -76,7 +75,7 @@ class StructFinder : TIntermRebuild
         StructFinder finder(compiler);
         if (!finder.rebuildRoot(root))
         {
-            LOGIC_ERROR();
+            UNREACHABLE();
         }
         return std::move(finder.nameToStruct);
     }
@@ -219,12 +218,12 @@ Name SymbolEnv::TemplateName::fullName(std::string &buffer) const
                     break;
 
                 case TemplateArg::Kind::Int:
-                    sprintf(argBuffer, "%i", value.i);
+                    snprintf(argBuffer, sizeof(argBuffer), "%i", value.i);
                     buffer += argBuffer;
                     break;
 
                 case TemplateArg::Kind::UInt:
-                    sprintf(argBuffer, "%u", value.u);
+                    snprintf(argBuffer, sizeof(argBuffer), "%u", value.u);
                     buffer += argBuffer;
                     break;
 
@@ -241,15 +240,15 @@ Name SymbolEnv::TemplateName::fullName(std::string &buffer) const
                         buffer += type.getBasicString();
                         if (type.isVector())
                         {
-                            sprintf(argBuffer, "%i", type.getNominalSize());
+                            snprintf(argBuffer, sizeof(argBuffer), "%i", type.getNominalSize());
                             buffer += argBuffer;
                         }
                         else if (type.isMatrix())
                         {
-                            sprintf(argBuffer, "%i", type.getCols());
+                            snprintf(argBuffer, sizeof(argBuffer), "%i", type.getCols());
                             buffer += argBuffer;
                             buffer += "x";
-                            sprintf(argBuffer, "%i", type.getRows());
+                            snprintf(argBuffer, sizeof(argBuffer), "%i", type.getRows());
                             buffer += argBuffer;
                         }
                     }
@@ -390,13 +389,12 @@ const TStructure &SymbolEnv::getTextureEnv(TBasicType samplerType)
     if (env == nullptr)
     {
         auto *textureType = new TType(samplerType);
-        auto *texture     = new TField(textureType, ImmutableString("texture"), kNoSourceLoc,
-                                   SymbolType::UserDefined);
+        auto *texture =
+            new TField(textureType, ImmutableString("texture"), kNoSourceLoc, SymbolType::BuiltIn);
         markAsPointer(*texture, AddressSpace::Thread);
 
-        auto *sampler =
-            new TField(new TType(&getSamplerStruct(), false), ImmutableString("sampler"),
-                       kNoSourceLoc, SymbolType::UserDefined);
+        auto *sampler = new TField(new TType(&getSamplerStruct(), false),
+                                   ImmutableString("sampler"), kNoSourceLoc, SymbolType::BuiltIn);
         markAsPointer(*sampler, AddressSpace::Thread);
 
         std::string envName;
@@ -415,7 +413,7 @@ const TStructure &SymbolEnv::getSamplerStruct()
     if (!mSampler)
     {
         mSampler = new TStructure(&mSymbolTable, ImmutableString("metal::sampler"),
-                                  new TFieldList(), SymbolType::UserDefined);
+                                  new TFieldList(), SymbolType::BuiltIn);
     }
     return *mSampler;
 }
@@ -432,14 +430,12 @@ void SymbolEnv::markSpace(VarField x,
     map[x] = space;
 }
 
-void SymbolEnv::removeSpace(VarField x,
-                          std::unordered_map<VarField, AddressSpace> &map)
+void SymbolEnv::removeSpace(VarField x, std::unordered_map<VarField, AddressSpace> &map)
 {
     // It is in principle permissible to have references to pointers or multiple pointers, but this
     // is not required for now and would require code changes to get right.
     map.erase(x);
 }
-
 
 const AddressSpace *SymbolEnv::isSpace(VarField x,
                                        const std::unordered_map<VarField, AddressSpace> &map) const
@@ -555,7 +551,7 @@ static TBasicType GetTextureBasicType(TBasicType basicType)
             return TBasicType::EbtUInt;
 
         default:
-            LOGIC_ERROR();
+            UNREACHABLE();
             return TBasicType::EbtVoid;
     }
 }
@@ -582,7 +578,7 @@ Name sh::GetTextureTypeName(TBasicType samplerType)
                 name = "metal::" baseName "<uint>";  \
                 break;                               \
             default:                                 \
-                LOGIC_ERROR();                       \
+                UNREACHABLE();                       \
                 name = nullptr;                      \
                 break;                               \
         }                                            \
@@ -664,7 +660,7 @@ Name sh::GetTextureTypeName(TBasicType samplerType)
         // Shadow
         case EbtSampler1DShadow:
         case EbtSampler1DArrayShadow:
-            TODO();
+            UNIMPLEMENTED();
             HANDLE_TEXTURE_NAME("TODO");
             break;
 
@@ -689,17 +685,17 @@ Name sh::GetTextureTypeName(TBasicType samplerType)
         case EbtSamplerExternalOES:       // Only valid if OES_EGL_image_external exists:
         case EbtSamplerExternal2DY2YEXT:  // Only valid if GL_EXT_YUV_target exists:
         case EbtSamplerVideoWEBGL:
-            TODO();
+            UNIMPLEMENTED();
             HANDLE_TEXTURE_NAME("TODO");
             break;
 
         default:
-            LOGIC_ERROR();
+            UNREACHABLE();
             name = nullptr;
             break;
     }
 
 #undef HANDLE_TEXTURE_NAME
 
-    return Name(name, SymbolType::UserDefined);
+    return Name(name, SymbolType::BuiltIn);
 }

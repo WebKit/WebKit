@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name='viewport' content='initial-scale=1'>
+        <script>
+            function imageOverlaysAsText()
+            {
+                const result = [];
+                for (const image of Array.from(document.images)) {
+                    const root = internals.shadowRoot(image);
+                    if (!root)
+                        continue;
+
+                    const overlay = root.getElementById("image-overlay");
+                    if (!overlay)
+                        continue;
+
+                    result.push(overlay.textContent);
+                }
+                return result;
+            }
+
+            function appendImage(imageSource)
+            {
+                const image = document.createElement("img");
+                image.src = imageSource;
+                document.body.appendChild(image);
+            }
+
+            function hideAllImages()
+            {
+                Array.from(document.images).forEach(image => image.style.setProperty("display", "none"));
+            }
+
+            function showAllImages()
+            {
+                Array.from(document.images).forEach(image => image.style.removeProperty("display"));
+            }
+        </script>
+    </head>
+    <body style='margin: 0px;'>
+        <img src="large-red-square.png">
+        <img src="sunset-in-cupertino-200px.png">
+        <img src="test.jpg">
+        <img src="400x400-green.png">
+        <img src="sunset-in-cupertino-100px.tiff">
+    </body>
+</html>

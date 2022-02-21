@@ -123,9 +123,9 @@ void main()
             EGL_TRUE,
             EGL_NONE,
         };
-        EGLImageKHR image =
-            eglCreateImageKHR(window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
-                              reinterpret_cast<EGLClientBuffer>(mSourceTexture), attribs);
+        EGLImageKHR image = eglCreateImageKHR(
+            window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
+            reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(mSourceTexture)), attribs);
         ASSERT_EGL_SUCCESS();
 
         glBindTexture(GL_TEXTURE_EXTERNAL_OES, mExternalTexture);

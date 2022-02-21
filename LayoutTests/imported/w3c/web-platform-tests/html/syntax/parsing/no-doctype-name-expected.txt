@@ -1,0 +1,4 @@
+
+
+PASS Doctype without root name should have the empty string as the name.
+

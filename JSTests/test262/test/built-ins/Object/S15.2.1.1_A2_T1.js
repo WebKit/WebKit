@@ -11,24 +11,11 @@ description: Calling Object function with boolean argument value
 
 var bool = true;
 
-if (typeof bool !== 'boolean') {
-  throw new Test262Error('#1: bool should be boolean primitive');
-}
+assert.sameValue(typeof bool, 'boolean', 'The value of `typeof bool` is expected to be "boolean"');
 
 var obj = Object(bool);
 
-if (obj.constructor !== Boolean) {
-  throw new Test262Error('#2: Object(true) returns ToObject(true)');
-}
-
-if (typeof obj !== "object") {
-  throw new Test262Error('#3: Object(true) returns ToObject(true)');
-}
-
-if (!obj) {
-  throw new Test262Error('#4: Object(true) returns ToObject(true)');
-}
-
-if (obj === true) {
-  throw new Test262Error('#5: Object(true) returns ToObject(true)');
-}
+assert.sameValue(obj.constructor, Boolean, 'The value of obj.constructor is expected to equal the value of Boolean');
+assert.sameValue(typeof obj, "object", 'The value of `typeof obj` is expected to be "object"');
+assert(!!obj, 'The value of !!obj is expected to be true');
+assert.notSameValue(obj, true, 'The value of obj is not true');

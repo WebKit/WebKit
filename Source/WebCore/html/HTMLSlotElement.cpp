@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLSlotElement.h"
 
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
@@ -93,14 +94,14 @@ void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomStri
     HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 
     if (isInShadowTree() && name == nameAttr) {
-        if (auto shadowRoot = makeRefPtr(containingShadowRoot()))
+        if (RefPtr shadowRoot = containingShadowRoot())
             shadowRoot->renameSlotElement(*this, oldValue, newValue);
     }
 }
 
 const Vector<WeakPtr<Node>>* HTMLSlotElement::assignedNodes() const
 {
-    auto shadowRoot = makeRefPtr(containingShadowRoot());
+    RefPtr shadowRoot = containingShadowRoot();
     if (!shadowRoot)
         return nullptr;
 
@@ -146,7 +147,7 @@ Vector<Ref<Node>> HTMLSlotElement::assignedNodes(const AssignedNodesOptions& opt
     }
 
     if (auto* nodes = assignedNodes(); nodes) {
-        return WTF::compactMap(*nodes, [](auto& nodeWeakPtr) -> RefPtr<Node> {
+        return compactMap(*nodes, [](auto& nodeWeakPtr) -> RefPtr<Node> {
             return nodeWeakPtr.get();
         });
     }
@@ -156,7 +157,7 @@ Vector<Ref<Node>> HTMLSlotElement::assignedNodes(const AssignedNodesOptions& opt
 
 Vector<Ref<Element>> HTMLSlotElement::assignedElements(const AssignedNodesOptions& options) const
 {
-    return WTF::compactMap(assignedNodes(options), [](auto&& node) -> RefPtr<Element> {
+    return compactMap(assignedNodes(options), [](auto&& node) -> RefPtr<Element> {
         if (!is<Element>(node))
             return nullptr;
         return static_reference_cast<Element>(WTFMove(node));

@@ -80,7 +80,7 @@ class PeerChannel {
   // request.  Otherwise the request is not peerconnection related.
   static bool IsPeerConnection(const DataSocket* ds);
 
-  // Finds a connected peer that's associated with the |ds| socket.
+  // Finds a connected peer that's associated with the `ds` socket.
   ChannelMember* Lookup(DataSocket* ds) const;
 
   // Checks if the request has a "peer_id" parameter and if so, looks up the

@@ -22,7 +22,7 @@
            valueChangeCount++;
         }
 
-        if (valueChangeCount == 2) {
+        if (valueChangeCount == 4) {
            range.removeNotificationListener();
            finishJSTest();
         }
@@ -44,12 +44,21 @@
         var valueIndicator = range.childAtIndex(0);
         shouldBe("valueIndicator.intValue", "50");
         
-        // Check that incrementing/decrementing sends AXValueChange.
+        // Check that incrementing/decrementing with keyboard sends AXValueChange.
         eventSender.keyDown("leftArrow");
         shouldBe("range.intValue", "49");
         shouldBe("valueIndicator.intValue", "49");
 
         eventSender.keyDown("rightArrow");
+        shouldBe("range.intValue", "50");
+        shouldBe("valueIndicator.intValue", "50");
+
+        // Check that incrementing/decrementing with accessibility API sends AXValueChange.
+        range.increment();
+        shouldBe("range.intValue", "55");
+        shouldBe("valueIndicator.intValue", "55");
+
+        range.decrement();
         shouldBe("range.intValue", "50");
         shouldBe("valueIndicator.intValue", "50");
 

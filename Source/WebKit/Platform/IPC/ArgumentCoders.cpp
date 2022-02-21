@@ -26,17 +26,25 @@
 #include "config.h"
 #include "ArgumentCoders.h"
 
+#include "DaemonDecoder.h"
+#include "DaemonEncoder.h"
 #include "DataReference.h"
 #include "StreamConnectionEncoder.h"
+#include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
 
+template<typename Encoder>
 void ArgumentCoder<WallTime>::encode(Encoder& encoder, const WallTime& time)
 {
     encoder << time.secondsSinceEpoch().value();
 }
+template
+void ArgumentCoder<WallTime>::encode<Encoder>(Encoder&, const WallTime&);
+template
+void ArgumentCoder<WallTime>::encode<WebKit::Daemon::Encoder>(WebKit::Daemon::Encoder&, const WallTime&);
 
 WARN_UNUSED_RETURN bool ArgumentCoder<WallTime>::decode(Decoder& decoder, WallTime& time)
 {
@@ -48,6 +56,7 @@ WARN_UNUSED_RETURN bool ArgumentCoder<WallTime>::decode(Decoder& decoder, WallTi
     return true;
 }
 
+template<typename Decoder>
 WARN_UNUSED_RETURN std::optional<WallTime> ArgumentCoder<WallTime>::decode(Decoder& decoder)
 {
     std::optional<double> time;
@@ -56,6 +65,10 @@ WARN_UNUSED_RETURN std::optional<WallTime> ArgumentCoder<WallTime>::decode(Decod
         return std::nullopt;
     return WallTime::fromRawSeconds(*time);
 }
+template
+std::optional<WallTime> ArgumentCoder<WallTime>::decode<Decoder>(Decoder&);
+template
+std::optional<WallTime> ArgumentCoder<WallTime>::decode<WebKit::Daemon::Decoder>(WebKit::Daemon::Decoder&);
 
 void ArgumentCoder<AtomString>::encode(Encoder& encoder, const AtomString& atomString)
 {
@@ -72,6 +85,7 @@ WARN_UNUSED_RETURN bool ArgumentCoder<AtomString>::decode(Decoder& decoder, Atom
     return true;
 }
 
+template<typename Encoder>
 void ArgumentCoder<CString>::encode(Encoder& encoder, const CString& string)
 {
     // Special case the null string.
@@ -84,31 +98,37 @@ void ArgumentCoder<CString>::encode(Encoder& encoder, const CString& string)
     encoder << length;
     encoder.encodeFixedLengthData(string.dataAsUInt8Ptr(), length, 1);
 }
+template void ArgumentCoder<CString>::encode<Encoder>(Encoder&, const CString&);
+template void ArgumentCoder<CString>::encode<WebKit::Daemon::Encoder>(WebKit::Daemon::Encoder&, const CString&);
 
-WARN_UNUSED_RETURN bool ArgumentCoder<CString>::decode(Decoder& decoder, CString& result)
+template<typename Decoder>
+std::optional<CString> ArgumentCoder<CString>::decode(Decoder& decoder)
 {
-    uint32_t length;
-    if (!decoder.decode(length))
-        return false;
+    std::optional<uint32_t> length;
+    decoder >> length;
+    if (!length)
+        return std::nullopt;
 
-    if (length == std::numeric_limits<uint32_t>::max()) {
+    if (*length == std::numeric_limits<uint32_t>::max()) {
         // This is the null string.
-        result = CString();
-        return true;
+        return CString();
     }
 
     // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder.bufferIsLargeEnoughToContain<char>(length))
-        return false;
+    if (!decoder.template bufferIsLargeEnoughToContain<char>(*length))
+        return std::nullopt;
 
     char* buffer;
-    CString string = CString::newUninitialized(length, buffer);
-    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length, 1))
-        return false;
+    CString string = CString::newUninitialized(*length, buffer);
+    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), *length, 1))
+        return std::nullopt;
 
-    result = string;
-    return true;
+    return string;
 }
+template
+std::optional<CString> ArgumentCoder<CString>::decode<Decoder>(Decoder&);
+template
+std::optional<CString> ArgumentCoder<CString>::decode<WebKit::Daemon::Decoder>(WebKit::Daemon::Decoder&);
 
 template<typename Encoder>
 void ArgumentCoder<String>::encode(Encoder& encoder, const String& string)
@@ -133,12 +153,14 @@ template
 void ArgumentCoder<String>::encode<Encoder>(Encoder&, const String&);
 template
 void ArgumentCoder<String>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const String&);
+template
+void ArgumentCoder<String>::encode<WebKit::Daemon::Encoder>(WebKit::Daemon::Encoder&, const String&);
 
-template <typename CharacterType>
+template<typename CharacterType, typename Decoder>
 static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t length)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length))
+    if (!decoder.template bufferIsLargeEnoughToContain<CharacterType>(length))
         return std::nullopt;
     
     CharacterType* buffer;
@@ -149,25 +171,32 @@ static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t 
     return string;
 }
 
+template<typename Decoder>
 WARN_UNUSED_RETURN std::optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
 {
-    uint32_t length;
-    if (!decoder.decode(length))
+    std::optional<uint32_t> length;
+    decoder >> length;
+    if (!length)
         return std::nullopt;
     
-    if (length == std::numeric_limits<uint32_t>::max()) {
+    if (*length == std::numeric_limits<uint32_t>::max()) {
         // This is the null string.
         return String();
     }
     
-    bool is8Bit;
-    if (!decoder.decode(is8Bit))
+    std::optional<bool> is8Bit;
+    decoder >> is8Bit;
+    if (!is8Bit)
         return std::nullopt;
     
-    if (is8Bit)
-        return decodeStringText<LChar>(decoder, length);
-    return decodeStringText<UChar>(decoder, length);
+    if (*is8Bit)
+        return decodeStringText<LChar>(decoder, *length);
+    return decodeStringText<UChar>(decoder, *length);
 }
+template
+std::optional<String> ArgumentCoder<String>::decode<Decoder>(Decoder&);
+template
+std::optional<String> ArgumentCoder<String>::decode<WebKit::Daemon::Decoder>(WebKit::Daemon::Decoder&);
 
 WARN_UNUSED_RETURN bool ArgumentCoder<String>::decode(Decoder& decoder, String& result)
 {
@@ -190,6 +219,7 @@ WARN_UNUSED_RETURN bool ArgumentCoder<SHA1::Digest>::decode(Decoder& decoder, SH
 }
 
 #if HAVE(AUDIT_TOKEN)
+
 void ArgumentCoder<audit_token_t>::encode(Encoder& encoder, const audit_token_t& auditToken)
 {
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(auditToken.val); i++)
@@ -204,15 +234,7 @@ WARN_UNUSED_RETURN bool ArgumentCoder<audit_token_t>::decode(Decoder& decoder, a
     }
     return true;
 }
-#endif
 
-void ArgumentCoder<Monostate>::encode(Encoder&, const Monostate&)
-{
-}
-
-WARN_UNUSED_RETURN std::optional<Monostate> ArgumentCoder<Monostate>::decode(Decoder&)
-{
-    return Monostate { };
-}
+#endif // HAVE(AUDIT_TOKEN)
 
 } // namespace IPC

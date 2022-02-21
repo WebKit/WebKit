@@ -61,16 +61,17 @@ public:
     CALayer *layerWithIDForTesting(uint64_t) const;
 
 private:
-    void sizeDidChange() override;
-    void deviceScaleFactorDidChange() override;
-    void didUpdateGeometry() override;
+    void sizeDidChange() final;
+    void deviceScaleFactorDidChange() final;
+    void windowKindDidChange() final;
+    void didUpdateGeometry() final;
     
     // For now, all callbacks are called before committing changes, because that's what the only client requires.
     // Once we have other callbacks, it may make sense to have a before-commit/after-commit option.
-    void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) override;
+    void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) final;
 
 #if PLATFORM(MAC)
-    void didChangeViewExposedRect() override;
+    void didChangeViewExposedRect() final;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -78,22 +79,22 @@ private:
 #endif
 
     float indicatorScale(WebCore::IntSize contentsSize) const;
-    void updateDebugIndicator() override;
+    void updateDebugIndicator() final;
     void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale, const WebCore::IntPoint& scrollPosition);
     void updateDebugIndicatorPosition();
     void initializeDebugIndicator();
 
-    void waitForDidUpdateActivityState(ActivityStateChangeID) override;
-    void hideContentUntilPendingUpdate() override;
-    void hideContentUntilAnyUpdate() override;
-    bool hasVisibleContent() const override;
+    void waitForDidUpdateActivityState(ActivityStateChangeID) final;
+    void hideContentUntilPendingUpdate() final;
+    void hideContentUntilAnyUpdate() final;
+    bool hasVisibleContent() const final;
 
     void prepareForAppSuspension() final;
     
     WebCore::FloatPoint indicatorLocation() const;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Message handlers
     void setPreferredFramesPerSecond(WebCore::FramesPerSecond);
@@ -126,4 +127,4 @@ private:
 
 } // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(RemoteLayerTreeDrawingAreaProxy, DrawingAreaTypeRemoteLayerTree)
+SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(RemoteLayerTreeDrawingAreaProxy, DrawingAreaType::RemoteLayerTree)

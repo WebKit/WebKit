@@ -1,12 +1,12 @@
 
-FAIL 0041 set in src="" assert_equals: expected "UTF-8" but got "windows-1252"
+PASS 0041 set in src=""
 FAIL 0041 set in href="" targeting a frame and clicked assert_equals: expected "A" but got ""
-FAIL 0080 00FF set in src="" assert_equals: expected "UTF-8" but got "windows-1252"
+PASS 0080 00FF set in src=""
 FAIL 0080 00FF set in href="" targeting a frame and clicked assert_equals: expected "ÿ" but got ""
-FAIL 0080 00FF 0100 set in src="" assert_equals: expected "UTF-8" but got "windows-1252"
+PASS 0080 00FF 0100 set in src=""
 FAIL 0080 00FF 0100 set in href="" targeting a frame and clicked assert_equals: expected "ÿĀ" but got ""
-FAIL D83D DE0D set in src="" assert_equals: expected "UTF-8" but got "windows-1252"
+PASS D83D DE0D set in src=""
 FAIL D83D DE0D set in href="" targeting a frame and clicked assert_equals: expected "😍" but got ""
-FAIL DE0D 0041 set in src="" assert_equals: expected "\ufffdA" but got "U+de0dA"
+PASS DE0D 0041 set in src=""
 FAIL DE0D 0041 set in href="" targeting a frame and clicked assert_equals: expected "\ufffdA" but got ""
 

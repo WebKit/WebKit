@@ -28,9 +28,11 @@
 
 #if ENABLE(SANDBOX_EXTENSIONS)
 
+#import "ArgumentCodersCocoa.h"
 #import "DataReference.h"
 #import "Decoder.h"
 #import "Encoder.h"
+#import "WebCoreArgumentCoders.h"
 #import <string.h>
 #import <wtf/FileSystem.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
@@ -115,6 +117,9 @@ private:
         case SandboxExtension::Type::ReadByProcess:
             if (!auditToken)
                 return nullptr;
+#if PLATFORM(MAC)
+            extensionFlags |= SANDBOX_EXTENSION_USER_INTENT;
+#endif
             return sandbox_extension_issue_file_to_process(APP_SANDBOX_READ, path, extensionFlags, *auditToken);
         }
     }
@@ -164,7 +169,7 @@ auto SandboxExtension::Handle::decode(IPC::Decoder& decoder) -> std::optional<Ha
     if (!decoder.decode(dataReference))
         return std::nullopt;
 
-    if (dataReference.isEmpty())
+    if (dataReference.empty())
         return {{ }};
 
     Handle handle;
@@ -216,7 +221,7 @@ auto SandboxExtension::createHandleWithoutResolvingPath(const String& path, Type
     Handle handle;
     ASSERT(!handle.m_sandboxExtension);
 
-    handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), type, std::nullopt, SandboxExtension::Flags::DoNotCanonicalize);
+    handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), type, std::nullopt, Flags::DoNotCanonicalize);
     if (!handle.m_sandboxExtension) {
         LOG_ERROR("Could not create a sandbox extension for '%s'", path.utf8().data());
         return std::nullopt;
@@ -229,21 +234,21 @@ auto SandboxExtension::createHandle(const String& path, Type type) -> std::optio
     return createHandleWithoutResolvingPath(resolvePathForSandboxExtension(path), type);
 }
 
-template <typename T>
-static Vector<SandboxExtension::Handle> createHandlesForResources(const Vector<T>& resources, Function<std::optional<SandboxExtension::Handle>(const T&)>&& createFunction)
+template<typename Collection, typename Function> static Vector<SandboxExtension::Handle> createHandlesForResources(const Collection& resources, const Function& createFunction)
 {
     Vector<SandboxExtension::Handle> handleArray;
+    handleArray.reserveInitialCapacity(std::size(resources));
     for (const auto& resource : resources) {
         if (auto handle = createFunction(resource))
-            handleArray.append(WTFMove(*handle));
+            handleArray.uncheckedAppend(WTFMove(*handle));
     }
     return handleArray;
 }
 
 auto SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral logLabel, const Vector<String>& paths) -> Vector<Handle>
 {
-    return createHandlesForResources<String>(paths, [&logLabel] (const String& path) {
-        auto handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly);
+    return createHandlesForResources(paths, [&logLabel] (const String& path) {
+        auto handle = createHandle(path, Type::ReadOnly);
         if (!handle) {
             // This can legitimately fail if a directory containing the file is deleted after the file was chosen.
             // We also have reports of cases where this likely fails for some unknown reason, <rdar://problem/10156710>.
@@ -259,7 +264,7 @@ auto SandboxExtension::createHandleForReadWriteDirectory(const String& path) -> 
     String resolvedPath = resolveAndCreateReadWriteDirectoryForSandboxExtension(path);
     if (resolvedPath.isNull())
         return std::nullopt;
-    return SandboxExtension::createHandleWithoutResolvingPath(resolvedPath, SandboxExtension::Type::ReadWrite);
+    return createHandleWithoutResolvingPath(resolvedPath, Type::ReadWrite);
 }
 
 auto SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type type) -> std::optional<std::pair<Handle, String>>
@@ -320,13 +325,18 @@ auto SandboxExtension::createHandleForMachLookup(ASCIILiteral service, std::opti
     return WTFMove(handle);
 }
 
-auto SandboxExtension::createHandlesForMachLookup(const Vector<ASCIILiteral>& services, std::optional<audit_token_t> auditToken, OptionSet<Flags> flags) -> Vector<Handle>
+auto SandboxExtension::createHandlesForMachLookup(Span<const ASCIILiteral> services, std::optional<audit_token_t> auditToken, OptionSet<Flags> flags) -> Vector<Handle>
 {
-    return createHandlesForResources<ASCIILiteral>(services, [auditToken, flags] (const ASCIILiteral& service) -> std::optional<Handle> {
-        auto handle = SandboxExtension::createHandleForMachLookup(service, auditToken, flags);
+    return createHandlesForResources(services, [auditToken, flags] (ASCIILiteral service) -> std::optional<Handle> {
+        auto handle = createHandleForMachLookup(service, auditToken, flags);
         ASSERT(handle);
         return handle;
     });
+}
+
+auto SandboxExtension::createHandlesForMachLookup(std::initializer_list<const ASCIILiteral> services, std::optional<audit_token_t> auditToken, OptionSet<Flags> flags) -> Vector<Handle>
+{
+    return createHandlesForMachLookup(Span { services.begin(), services.size() }, auditToken, flags);
 }
 
 auto SandboxExtension::createHandleForReadByAuditToken(const String& path, audit_token_t auditToken) -> std::optional<Handle>
@@ -357,10 +367,10 @@ auto SandboxExtension::createHandleForIOKitClassExtension(ASCIILiteral ioKitClas
     return WTFMove(handle);
 }
 
-auto SandboxExtension::createHandlesForIOKitClassExtensions(const Vector<ASCIILiteral>& iokitClasses, std::optional<audit_token_t> auditToken, OptionSet<Flags> flags) -> Vector<Handle>
+auto SandboxExtension::createHandlesForIOKitClassExtensions(Span<const ASCIILiteral> iokitClasses, std::optional<audit_token_t> auditToken, OptionSet<Flags> flags) -> Vector<Handle>
 {
-    return createHandlesForResources<ASCIILiteral>(iokitClasses, [auditToken, flags] (const ASCIILiteral& iokitClass) {
-        auto handle = SandboxExtension::createHandleForIOKitClassExtension(iokitClass, auditToken, flags);
+    return createHandlesForResources(iokitClasses, [auditToken, flags] (ASCIILiteral iokitClass) {
+        auto handle = createHandleForIOKitClassExtension(iokitClass, auditToken, flags);
         ASSERT(handle);
         return handle;
     });
@@ -432,7 +442,7 @@ bool SandboxExtension::consumePermanently(const Vector<Handle>& handleArray)
         if (!handle.m_sandboxExtension)
             continue;
 
-        bool ok = SandboxExtension::consumePermanently(handle);
+        bool ok = consumePermanently(handle);
         ASSERT(ok);
         allSucceeded &= ok;
     }

@@ -7,8 +7,6 @@
     <div id="editable" contenteditable onbeforeinput=handleInput(event) oninput=handleInput(event)></div>
     <script type="text/javascript">
         description("To manually test this, change the foreground color and check the resulting debug messages.");
-        if (window.internals)
-            internals.settings.setInputEventsEnabled(true);
 
         document.getElementById("editable").focus();
 

@@ -50,7 +50,7 @@ public:
     bool hasPlatformContext() const final;
     GraphicsContextCairo* platformContext() const final;
 
-    void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
+    void didUpdateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
 
     void setLineCap(LineCap) final;
     void setLineDash(const DashArray&, float) final;
@@ -72,7 +72,7 @@ public:
     void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint&, FontSmoothingMode) final;
 
     void drawNativeImage(NativeImage&, const FloatSize&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&) final;
-    void drawPattern(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) final;
+    void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) final;
 
     void drawRect(const FloatRect&, float) final;
     void drawLine(const FloatPoint&, const FloatPoint&) final;
@@ -117,7 +117,7 @@ private:
 
     class CairoState;
     CairoState* m_cairoState;
-    WTF::Vector<CairoState> m_cairoStateStack;
+    Vector<CairoState> m_cairoStateStack;
 
     // Transparency layers.
     Vector<float> m_layers;

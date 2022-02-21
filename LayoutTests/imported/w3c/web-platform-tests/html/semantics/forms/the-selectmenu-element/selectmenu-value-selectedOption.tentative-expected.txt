@@ -1,0 +1,20 @@
+I'm a div with no part attr
+one
+two
+I'm a div with no part attr
+three
+four
+I'm a div with no part attr
+Default custom selected-value text
+Default custom selected-value text
+
+FAIL Test that HTMLSelectMenu with no options has empty string for value and null for selectedOption assert_equals: expected (string) "" but got (undefined) undefined
+FAIL Test value and selectedOption with HTMLOptionElement element option parts assert_equals: value should start with the text of the first option part expected (string) "one" but got (undefined) undefined
+FAIL Test value with non-HTMLOptionElement elements labeled as parts assert_equals: Non-HTMLOptionElements shouldn't be treated as option parts expected (string) "" but got (undefined) undefined
+FAIL Test that value and selectedOption are updated when options are removed assert_equals: value should start with the text of the first option part expected (string) "one" but got (undefined) undefined
+FAIL Test that slotted-in selected-value part is updated to value of selectmenu assert_equals: value should start with the text of the first option part expected (string) "one" but got (undefined) undefined
+FAIL Test that option parts in a slotted-in listbox are reflected in the value property assert_equals: value should start with the text of the first option part expected (string) "one" but got (undefined) undefined
+FAIL Test that value and selectedOption are correctly updated assert_equals: expected (string) "" but got (undefined) undefined
+FAIL Test that HTMLOption.selected updates selectmenu.value and selectmenu.selectedOption assert_equals: expected (string) "two" but got (undefined) undefined
+FAIL Test that HTMLOption.value updates selectmenu.value assert_equals: expected (string) "test" but got (undefined) undefined
+

@@ -92,11 +92,10 @@ function test() {
         name: "OverriddenProperty.OverriddenByShorthand",
         test(resolve, reject) {
             getStyleDeclaration(".longhand-overridden-by-shorthand", (style) => {
-                const dontCreateIfMissing = true;
-                let borderTopColorProperty = style.propertyForName("border-top-color", dontCreateIfMissing);
+                let borderTopColorProperty = style.propertyForName("border-top-color");
                 InspectorTest.expectTrue(borderTopColorProperty.overridden, "border-top-color is overridden.");
 
-                let borderColorProperty = style.propertyForName("border-color", dontCreateIfMissing);
+                let borderColorProperty = style.propertyForName("border-color");
                 InspectorTest.expectFalse(borderColorProperty.overridden, "border-color is NOT overridden.");
 
                 resolve();
@@ -108,11 +107,10 @@ function test() {
         name: "OverriddenProperty.OverriddenByImportantShorthand",
         test(resolve, reject) {
             getStyleDeclaration(".longhand-overridden-by-important-shorthand", (style) => {
-                const dontCreateIfMissing = true;
-                let borderColorProperty = style.propertyForName("border-color", dontCreateIfMissing);
+                let borderColorProperty = style.propertyForName("border-color");
                 InspectorTest.expectFalse(borderColorProperty.overridden, "border-color is NOT overridden.");
 
-                let borderTopColorProperty = style.propertyForName("border-top-color", dontCreateIfMissing);
+                let borderTopColorProperty = style.propertyForName("border-top-color");
                 InspectorTest.expectTrue(borderTopColorProperty.overridden, "border-top-color is overridden.");
 
                 resolve();
@@ -124,11 +122,10 @@ function test() {
         name: "OverriddenProperty.NotOverriddenByImportantLonghand",
         test(resolve, reject) {
             getStyleDeclaration(".shorthand-overridden-by-important-longhand", (style) => {
-                const dontCreateIfMissing = true;
-                let borderTopColorProperty = style.propertyForName("border-top-color", dontCreateIfMissing);
+                let borderTopColorProperty = style.propertyForName("border-top-color");
                 InspectorTest.expectFalse(borderTopColorProperty.overridden, "border-top-color is NOT overridden.");
 
-                let borderColorProperty = style.propertyForName("border-color", dontCreateIfMissing);
+                let borderColorProperty = style.propertyForName("border-color");
                 InspectorTest.expectFalse(borderColorProperty.overridden, "border-color is NOT overridden.");
 
                 resolve();
@@ -140,11 +137,10 @@ function test() {
         name: "OverriddenProperty.NotOverriddenByLonghand",
         test(resolve, reject) {
             getStyleDeclaration(".shorthand-not-overridden-by-longhand", (style) => {
-                const dontCreateIfMissing = true;
-                let borderColorProperty = style.propertyForName("border-color", dontCreateIfMissing);
+                let borderColorProperty = style.propertyForName("border-color");
                 InspectorTest.expectFalse(borderColorProperty.overridden, "border-color is NOT overridden.");
 
-                let borderTopColorProperty = style.propertyForName("border-top-color", dontCreateIfMissing);
+                let borderTopColorProperty = style.propertyForName("border-top-color");
                 InspectorTest.expectFalse(borderTopColorProperty.overridden, "border-top-color is NOT overridden.");
 
                 resolve();
@@ -156,11 +152,10 @@ function test() {
         name: "OverriddenProperty.MixedCaseVariablesNotOverridden",
         test(resolve, reject) {
             getStyleDeclaration(".mixed-case-variables-not-overridden", (style) => {
-                const dontCreateIfMissing = true;
-                let lowercaseVariableProperty = style.propertyForName("--foo", dontCreateIfMissing);
+                let lowercaseVariableProperty = style.propertyForName("--foo");
                 InspectorTest.expectFalse(lowercaseVariableProperty.overridden, "`--foo` is NOT overridden.");
 
-                let uppercaseVariableProperty = style.propertyForName("--FOO", dontCreateIfMissing);
+                let uppercaseVariableProperty = style.propertyForName("--FOO");
                 InspectorTest.expectFalse(uppercaseVariableProperty.overridden, "`--FOO` is NOT overridden.");
 
                 resolve();

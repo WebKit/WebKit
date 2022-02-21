@@ -13,52 +13,44 @@ function dynaString(s1, s2) {
   return String(s1) + String(s2);
 }
 
-// CHECK#1
-if (Number(dynaString("-", "0")) !== -Number("0")) {
-  throw new Test262Error('#1: Number("-"+"0") === -Number("0")');
-} else {
-  // CHECK#2
-  if (1 / Number(dynaString("-", "0")) !== -1 / Number("0")) {
-    throw new Test262Error('#2: 1/Number("-"+"0") === -1/Number("0")');
-  }
-}
+assert.sameValue(Number(dynaString("-", "0")), -0, 'Number(dynaString("-", "0")) must return -Number("0")');
 
-// CHECK#3
-if (Number(dynaString("-Infi", "nity")) !== -Number("Infinity")) {
-  throw new Test262Error('#3: Number("-Infi"+"nity") === -Number("Infinity")');
-}
+assert.sameValue(
+  Number(dynaString("-Infi", "nity")),
+  -Infinity
+);
 
-// CHECK#4
-if (Number(dynaString("-12345", "67890")) !== -Number("1234567890")) {
-  throw new Test262Error('#4: Number("-12345"+"67890") === -Number("1234567890")');
-}
+assert.sameValue(
+  Number(dynaString("-12345", "67890")),
+  -1234567890
+);
 
-// CHECK#5
-if (Number(dynaString("-1234.", "5678")) !== -Number("1234.5678")) {
-  throw new Test262Error('#5: Number("-1234."+"5678") === -Number("1234.5678")');
-}
+assert.sameValue(
+  Number(dynaString("-1234.", "5678")),
+  -1234.5678
+);
 
-// CHECK#6
-if (Number(dynaString("-1234.", "5678e90")) !== -Number("1234.5678e90")) {
-  throw new Test262Error('#6: Number("-1234."+"5678e90") === -Number("1234.5678e90")');
-}
+assert.sameValue(
+  Number(dynaString("-1234.", "5678e90")),
+  -1234.5678e90
+);
 
-// CHECK#7
-if (Number(dynaString("-1234.", "5678E90")) !== -Number("1234.5678E90")) {
-  throw new Test262Error('#6: Number("-1234."+"5678E90") === -Number("1234.5678E90")');
-}
+assert.sameValue(
+  Number(dynaString("-1234.", "5678E90")),
+  -1234.5678E90
+);
 
-// CHECK#8
-if (Number(dynaString("-1234.", "5678e-90")) !== -Number("1234.5678e-90")) {
-  throw new Test262Error('#6: Number("-1234."+"5678e-90") === -Number("1234.5678e-90")');
-}
+assert.sameValue(
+  Number(dynaString("-1234.", "5678e-90")),
+  -1234.5678e-90
+);
 
-// CHECK#9
-if (Number(dynaString("-1234.", "5678E-90")) !== -Number("1234.5678E-90")) {
-  throw new Test262Error('#6: Number("-1234."+"5678E-90") === -Number("1234.5678E-90")');
-}
+assert.sameValue(
+  Number(dynaString("-1234.", "5678E-90")),
+  -1234.5678E-90
+);
 
-// CHECK#10
-if (Number(dynaString("-Infi", "nity")) !== Number.NEGATIVE_INFINITY) {
-  throw new Test262Error('#3: Number("-Infi"+"nity") === Number.NEGATIVE_INFINITY');
-}
+assert.sameValue(
+  Number(dynaString("-Infi", "nity")),
+  Number.NEGATIVE_INFINITY
+);

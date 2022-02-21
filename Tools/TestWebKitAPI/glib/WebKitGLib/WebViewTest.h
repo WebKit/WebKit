@@ -52,8 +52,9 @@ public:
     void waitUntilLoadFinished();
     void waitUntilTitleChangedTo(const char* expectedTitle);
     void waitUntilTitleChanged();
-    void waitUntilFileChanged(const char*, GFileMonitorEvent);
     void waitUntilIsWebProcessResponsiveChanged();
+    void assertFileIsCreated(const char*);
+    void assertJavaScriptBecomesTrue(const char*);
     void resizeView(int width, int height);
     void hideView();
     void selectAll();
@@ -109,8 +110,6 @@ public:
     size_t m_resourceDataSize { 0 };
     cairo_surface_t* m_surface { nullptr };
     bool m_expectedWebProcessCrash { false };
-    GRefPtr<GFile> m_monitoredFile;
-    GFileMonitorEvent m_expectedFileChangeEvent;
 
 #if PLATFORM(GTK)
     GtkWidget* m_parentWindow { nullptr };

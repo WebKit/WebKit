@@ -1,0 +1,40 @@
+
+PASS pow(1,1) should be used-value-equivalent to 1
+PASS sqrt(1) should be used-value-equivalent to 1
+PASS hypot(1) should be used-value-equivalent to 1
+PASS sqrt(pow(1,1)) should be used-value-equivalent to 1
+PASS hypot(pow(1, sqrt(1))) should be used-value-equivalent to 1
+PASS calc(hypot(pow((1 + sqrt(1)) / 2, sqrt(1)))) should be used-value-equivalent to 1
+PASS calc(100px * pow(2, pow(2, 2))) should be used-value-equivalent to 1600px
+PASS calc(1px * pow(2, 3)) should be used-value-equivalent to 8px
+PASS calc(100px * sqrt(100)) should be used-value-equivalent to 1000px
+PASS calc(1px * pow(2, sqrt(100)) should be used-value-equivalent to 1024px
+PASS hypot(3px, 4px) should be used-value-equivalent to 5px
+PASS calc(100px * hypot(3, 4)) should be used-value-equivalent to 500px
+PASS hypot(-5px) should be used-value-equivalent to 5px
+PASS calc(1px * hypot(-5)) should be used-value-equivalent to 5px
+PASS calc(1px * hypot(10000)) should be used-value-equivalent to 10000px
+PASS calc(2px * sqrt(100000000)) should be used-value-equivalent to 20000px
+PASS calc(3px * pow(200, 4)) should be used-value-equivalent to 33554428px
+PASS hypot(1px) should be used-value-equivalent to 1px
+PASS hypot(1cm) should be used-value-equivalent to 1cm
+PASS hypot(1mm) should be used-value-equivalent to 1mm
+PASS hypot(1Q) should be used-value-equivalent to 1Q
+PASS hypot(1in) should be used-value-equivalent to 1in
+PASS hypot(1pc) should be used-value-equivalent to 1pc
+PASS hypot(1pt) should be used-value-equivalent to 1pt
+PASS hypot(1em) should be used-value-equivalent to 1em
+PASS hypot(1ex) should be used-value-equivalent to 1ex
+PASS hypot(1ch) should be used-value-equivalent to 1ch
+PASS hypot(1rem) should be used-value-equivalent to 1rem
+PASS hypot(1vh) should be used-value-equivalent to 1vh
+PASS hypot(1vw) should be used-value-equivalent to 1vw
+PASS hypot(1vmin) should be used-value-equivalent to 1vmin
+PASS hypot(1vmax) should be used-value-equivalent to 1vmax
+PASS hypot(1s) should be used-value-equivalent to 1s
+PASS hypot(1ms) should be used-value-equivalent to 1ms
+PASS hypot(1deg) should be used-value-equivalent to 1deg
+PASS hypot(1grad) should be used-value-equivalent to 1grad
+PASS hypot(1rad) should be used-value-equivalent to 1rad
+PASS hypot(1turn) should be used-value-equivalent to 1turn
+

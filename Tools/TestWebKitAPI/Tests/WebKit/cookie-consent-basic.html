@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script>
+addEventListener("DOMContentLoaded", async () => {
+    const output = document.getElementById("output");
+    if (!navigator.requestCookieConsent) {
+        output.textContent = "not enabled";
+        return;
+    }
+
+    try {
+        let consent = await navigator.requestCookieConsent();
+        output.textContent = `returned: ${consent}`;
+    } catch (e) {
+        output.textContent = `threw exception: ${e}`;
+    }
+});
+</script>
+</head>
+<body>
+<pre>navigator.requestCookieConsent()</pre>
+<pre>↪&nbsp;<code id="output"></code></pre>
+</body>
+</html>

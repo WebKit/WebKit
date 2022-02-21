@@ -24,10 +24,11 @@
 
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     Exposed=Window
 ] interface AnalyserNode : AudioNode {
-    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional AnalyserOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional AnalyserOptions options);
 
     attribute unsigned long fftSize;
     readonly attribute unsigned long frequencyBinCount;

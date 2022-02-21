@@ -41,6 +41,8 @@
 #import <wtf/MonotonicTime.h>
 #import <wtf/cf/TypeCastsCF.h>
 
+#import <pal/spi/cocoa/AVFoundationSPI.h>
+
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 using namespace WebCore;
@@ -62,7 +64,7 @@ using namespace WebCore;
     if (!(self = [super init]))
         return nil;
 
-    _parent = makeWeakPtr(parent);
+    _parent = parent;
 
     return self;
 }
@@ -161,7 +163,7 @@ LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleB
 
 void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, CompletionHandler<void(bool didSucceed)>&& callback)
 {
-    m_sampleBufferDisplayLayer.get().backgroundColor = cachedCGColor(Color::black);
+    m_sampleBufferDisplayLayer.get().backgroundColor = cachedCGColor(Color::black).get();
     m_sampleBufferDisplayLayer.get().anchorPoint = { .5, .5 };
     m_sampleBufferDisplayLayer.get().needsDisplayOnBoundsChange = YES;
     m_sampleBufferDisplayLayer.get().videoGravity = AVLayerVideoGravityResizeAspectFill;
@@ -169,7 +171,7 @@ void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size,
     m_rootLayer = adoptNS([[CALayer alloc] init]);
     m_rootLayer.get().hidden = hideRootLayer;
 
-    m_rootLayer.get().backgroundColor = cachedCGColor(Color::black);
+    m_rootLayer.get().backgroundColor = cachedCGColor(Color::black).get();
     m_rootLayer.get().needsDisplayOnBoundsChange = YES;
 
     m_rootLayer.get().bounds = CGRectMake(0, 0, size.width(), size.height());
@@ -267,18 +269,26 @@ void LocalSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, Media
     updateRootLayerBoundsAndPosition(bounds, rotation, ShouldUpdateRootLayer::No);
 }
 
+void LocalSampleBufferDisplayLayer::setRootLayerBoundsAndPositions(CGRect bounds, MediaSample::VideoRotation rotation)
+{
+    CGPoint position = { bounds.size.width / 2, bounds.size.height / 2};
+    if (rotation == MediaSample::VideoRotation::Right || rotation == MediaSample::VideoRotation::Left)
+        std::swap(bounds.size.width, bounds.size.height);
+
+    m_rootLayer.get().position = position;
+    m_rootLayer.get().bounds = bounds;
+}
+
 void LocalSampleBufferDisplayLayer::updateRootLayerBoundsAndPosition(CGRect bounds, MediaSample::VideoRotation rotation, ShouldUpdateRootLayer shouldUpdateRootLayer)
 {
     runWithoutAnimations([&] {
-        CGPoint position = { bounds.size.width / 2, bounds.size.height / 2};
-
-        if (shouldUpdateRootLayer == ShouldUpdateRootLayer::Yes) {
-            m_rootLayer.get().position = position;
-            m_rootLayer.get().bounds = bounds;
-        }
+        if (shouldUpdateRootLayer == ShouldUpdateRootLayer::Yes)
+            setRootLayerBoundsAndPositions(bounds, rotation);
 
         if (rotation == MediaSample::VideoRotation::Right || rotation == MediaSample::VideoRotation::Left)
             std::swap(bounds.size.width, bounds.size.height);
+
+        CGPoint position = { bounds.size.width / 2, bounds.size.height / 2};
 
         m_sampleBufferDisplayLayer.get().position = position;
         m_sampleBufferDisplayLayer.get().bounds = bounds;
@@ -310,7 +320,7 @@ void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
         return;
     }
 
-    m_processingQueue->dispatch([this, sample = makeRef(sample)] {
+    m_processingQueue->dispatch([this, sample = Ref { sample }] {
         if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
             RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer::enqueueSample (%{public}s) not ready for more media data", m_logIdentifier.utf8().data());
             addSampleToPendingQueue(sample);
@@ -324,6 +334,9 @@ void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
 void LocalSampleBufferDisplayLayer::enqueueSampleBuffer(MediaSample& sample)
 {
     ASSERT(!isMainThread());
+    // FIXME: Local playback of RemoteVideoFrameProxy is not implemented.
+    if (!is<MediaSampleAVFObjC>(sample))
+        return;
 
     auto sampleToEnqueue = sample.platformSample().sample.cmSampleBuffer;
     auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value() + rendererLatency);
@@ -339,6 +352,11 @@ void LocalSampleBufferDisplayLayer::enqueueSampleBuffer(MediaSample& sample)
     [m_sampleBufferDisplayLayer enqueueSampleBuffer:sampleToEnqueue];
 
 #if !RELEASE_LOG_DISABLED
+    constexpr size_t frameCountPerLog = 1800; // log every minute at 30 fps
+    if (!(m_frameRateMonitor.frameCount() % frameCountPerLog)) {
+        if (auto* metrics = [m_sampleBufferDisplayLayer videoPerformanceMetrics])
+            RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer (%{public}s) metrics, total=%lu, dropped=%lu, corrupted=%lu, display-composited=%lu, non-display-composited=%lu (pending=%lu)", m_logIdentifier.utf8().data(), metrics.totalNumberOfVideoFrames, metrics.numberOfDroppedVideoFrames, metrics.numberOfCorruptedVideoFrames, metrics.numberOfDisplayCompositedVideoFrames, metrics.numberOfNonDisplayCompositedVideoFrames, m_pendingVideoSampleQueue.size());
+    }
     m_frameRateMonitor.update();
 #endif
 }
@@ -346,7 +364,7 @@ void LocalSampleBufferDisplayLayer::enqueueSampleBuffer(MediaSample& sample)
 #if !RELEASE_LOG_DISABLED
 void LocalSampleBufferDisplayLayer::onIrregularFrameRateNotification(MonotonicTime frameTime, MonotonicTime lastFrameTime)
 {
-    callOnMainThread([frameTime = frameTime.secondsSinceEpoch().value(), lastFrameTime = lastFrameTime.secondsSinceEpoch().value(), observedFrameRate = m_frameRateMonitor.observedFrameRate(), frameCount = m_frameRateMonitor.frameCount(), weakThis = makeWeakPtr(this)] {
+    callOnMainThread([frameTime = frameTime.secondsSinceEpoch().value(), lastFrameTime = lastFrameTime.secondsSinceEpoch().value(), observedFrameRate = m_frameRateMonitor.observedFrameRate(), frameCount = m_frameRateMonitor.frameCount(), weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer::enqueueSampleBuffer (%{public}s) at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", weakThis->m_logIdentifier.utf8().data(), frameTime, lastFrameTime, observedFrameRate, (frameTime - lastFrameTime) * 1000, frameCount);
@@ -392,7 +410,7 @@ void LocalSampleBufferDisplayLayer::clearEnqueuedSamples()
 
 void LocalSampleBufferDisplayLayer::requestNotificationWhenReadyForVideoData()
 {
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     [m_sampleBufferDisplayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
         if (!weakThis)
             return;

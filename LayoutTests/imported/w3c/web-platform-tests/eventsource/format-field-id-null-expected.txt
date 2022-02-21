@@ -1,3 +1,0 @@
-
-PASS EventSource: U+0000 in id field
-

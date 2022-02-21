@@ -38,8 +38,8 @@ struct MediaCapabilitiesEncodingInfo;
 struct MediaDecodingConfiguration;
 struct MediaEncodingConfiguration;
 
-extern void createMediaPlayerDecodingConfigurationGStreamer(MediaDecodingConfiguration&&, WTF::Function<void(MediaCapabilitiesDecodingInfo&&)>&&);
-extern void createMediaPlayerEncodingConfigurationGStreamer(MediaEncodingConfiguration&&, WTF::Function<void(MediaCapabilitiesEncodingInfo&&)>&&);
+extern void createMediaPlayerDecodingConfigurationGStreamer(MediaDecodingConfiguration&&, Function<void(MediaCapabilitiesDecodingInfo&&)>&&);
+extern void createMediaPlayerEncodingConfigurationGStreamer(MediaEncodingConfiguration&&, Function<void(MediaCapabilitiesEncodingInfo&&)>&&);
 }
 
 #endif

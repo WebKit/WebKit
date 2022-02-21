@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
                   RenderText at (0,0) size 62x17
                     text run at (0,0) width 62: "Reply All"
             RenderTableCell {TD} at (222,7) size 561x21 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x18
-                text run at (1,2) width 4: " "
+              RenderText {#text} at (1,0) size 4x19
+                text run at (1,1) width 4: " "
       RenderBlock (anonymous) at (0,53) size 784x36
         RenderBR {BR} at (0,0) size 0x17
         RenderBR {BR} at (0,18) size 0x17
@@ -49,5 +49,5 @@ layer at (0,0) size 800x600
                   RenderText at (0,0) size 62x17
                     text run at (0,0) width 62: "Reply All"
             RenderTableCell {TD} at (222,7) size 561x21 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x18
-                text run at (1,2) width 4: " "
+              RenderText {#text} at (1,0) size 4x19
+                text run at (1,1) width 4: " "

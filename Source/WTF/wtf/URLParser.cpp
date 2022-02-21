@@ -27,6 +27,7 @@
 #include <wtf/URLParser.h>
 
 #include <array>
+#include <functional>
 #include <mutex>
 #include <wtf/text/CodePointIterator.h>
 
@@ -62,37 +63,37 @@ enum URLCharacterClass {
 
 static const uint8_t characterClassTable[256] = {
     UserInfo | Default | QueryPercent | ForbiddenHost, // 0x0
-    UserInfo | Default | QueryPercent, // 0x1
-    UserInfo | Default | QueryPercent, // 0x2
-    UserInfo | Default | QueryPercent, // 0x3
-    UserInfo | Default | QueryPercent, // 0x4
-    UserInfo | Default | QueryPercent, // 0x5
-    UserInfo | Default | QueryPercent, // 0x6
-    UserInfo | Default | QueryPercent, // 0x7
-    UserInfo | Default | QueryPercent, // 0x8
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x2
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x3
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x4
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x5
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x6
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x7
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x8
     UserInfo | Default | QueryPercent | ForbiddenHost, // 0x9
     UserInfo | Default | QueryPercent | ForbiddenHost, // 0xA
-    UserInfo | Default | QueryPercent, // 0xB
-    UserInfo | Default | QueryPercent, // 0xC
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0xB
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0xC
     UserInfo | Default | QueryPercent | ForbiddenHost, // 0xD
-    UserInfo | Default | QueryPercent, // 0xE
-    UserInfo | Default | QueryPercent, // 0xF
-    UserInfo | Default | QueryPercent, // 0x10
-    UserInfo | Default | QueryPercent, // 0x11
-    UserInfo | Default | QueryPercent, // 0x12
-    UserInfo | Default | QueryPercent, // 0x13
-    UserInfo | Default | QueryPercent, // 0x14
-    UserInfo | Default | QueryPercent, // 0x15
-    UserInfo | Default | QueryPercent, // 0x16
-    UserInfo | Default | QueryPercent, // 0x17
-    UserInfo | Default | QueryPercent, // 0x18
-    UserInfo | Default | QueryPercent, // 0x19
-    UserInfo | Default | QueryPercent, // 0x1A
-    UserInfo | Default | QueryPercent, // 0x1B
-    UserInfo | Default | QueryPercent, // 0x1C
-    UserInfo | Default | QueryPercent, // 0x1D
-    UserInfo | Default | QueryPercent, // 0x1E
-    UserInfo | Default | QueryPercent, // 0x1F
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0xE
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0xF
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x10
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x11
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x12
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x13
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x14
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x15
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x16
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x17
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x18
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x19
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1A
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1B
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1C
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1D
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1E
+    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1F
     UserInfo | Default | QueryPercent | ForbiddenHost, // ' '
     0, // '!'
     UserInfo | Default | QueryPercent, // '"'
@@ -188,7 +189,7 @@ static const uint8_t characterClassTable[256] = {
     UserInfo | ForbiddenHost, // '|'
     UserInfo | Default, // '}'
     0, // '~'
-    QueryPercent, // 0x7F
+    QueryPercent | ForbiddenHost, // 0x7F
     QueryPercent, // 0x80
     QueryPercent, // 0x81
     QueryPercent, // 0x82
@@ -329,7 +330,7 @@ template<typename CharacterType> ALWAYS_INLINE static bool isInUserInfoEncodeSet
 template<typename CharacterType> ALWAYS_INLINE static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
 template<typename CharacterType> ALWAYS_INLINE static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
 template<typename CharacterType> ALWAYS_INLINE static bool isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & ValidScheme; }
-template<typename CharacterType> ALWAYS_INLINE static bool isForbiddenHostCodePoint(CharacterType character) { return character <= '|' && characterClassTable[character] & ForbiddenHost; }
+template<typename CharacterType> ALWAYS_INLINE static bool isForbiddenHostCodePoint(CharacterType character) { return character <= 0x7F && characterClassTable[character] & ForbiddenHost; }
 ALWAYS_INLINE static bool shouldPercentEncodeQueryByte(uint8_t byte, const bool& urlIsSpecial)
 {
     if (characterClassTable[byte] & QueryPercent)
@@ -2696,25 +2697,18 @@ static bool dnsNameEndsInNumber(StringView name)
 {
     // https://url.spec.whatwg.org/#ends-in-a-number-checker
     auto containsOctalDecimalOrHexNumber = [] (StringView segment) {
-        auto isNonDigit = [](UChar c) {
-            return !isASCIIDigit(c);
-        };
         const auto segmentLength = segment.length();
         if (!UNLIKELY(segmentLength))
             return false;
         auto firstCodeUnit = segment[0];
-        if (LIKELY(isNonDigit(firstCodeUnit)))
+        if (LIKELY(!isASCIIDigit(firstCodeUnit)))
             return false;
         if (segmentLength == 1)
             return true;
         auto secondCodeUnit = segment[1];
-        if ((secondCodeUnit == 'x' || secondCodeUnit == 'X') && firstCodeUnit == '0') {
-            auto isNonHexDigit = [](UChar c) {
-                return !isASCIIHexDigit(c);
-            };
-            return segment.find(isNonHexDigit, 2) == notFound;
-        }
-        return segment.find(isNonDigit) == notFound;
+        if ((secondCodeUnit == 'x' || secondCodeUnit == 'X') && firstCodeUnit == '0')
+            return segment.find(std::not_fn(isASCIIHexDigit<UChar>), 2) == notFound;
+        return !segment.contains(std::not_fn(isASCIIDigit<UChar>));
     };
 
     size_t lastDotLocation = name.reverseFind('.');

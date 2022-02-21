@@ -15,7 +15,7 @@ PASS The value "2010-W01" overflows the maximum value "1582-W01".
 PASS The value "2010-W01" overflows the maximum value "2009-W12".
 PASS The value "9999-W01" overflows the maximum value "2010-W12".
 PASS The value "2010-W01" overflows the maximum value "2009-W50".
-PASS The value "9999-W01" doesn't overflow the maximum value "2010-W12" when disabled.
+PASS The value "9999-W01" overflows the maximum value "2010-W12" when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

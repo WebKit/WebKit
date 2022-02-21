@@ -1,3 +1,63 @@
+2022-02-18  Brady Eidson  <beidson@apple.com>
+
+        Add an InstallCoordination webpushd backend
+        https://bugs.webkit.org/show_bug.cgi?id=233714
+
+        Reviewed by Alex Christensen.
+
+        * WebKitPrivateFrameworkStubs/iOS/15/InstallCoordination.framework/InstallCoordination.tbd: Added.
+
+2022-02-03  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r288902.
+
+        Broke compile-webkit for iOS-15-Simulator
+
+        Reverted changeset:
+
+        "Import APSConnection-related SPI"
+        https://bugs.webkit.org/show_bug.cgi?id=235856
+        https://commits.webkit.org/r288902
+
+2022-02-01  Ben Nham  <nham@apple.com>
+
+        Import APSConnection-related SPI
+        https://bugs.webkit.org/show_bug.cgi?id=235856
+
+        Reviewed Youenn Fablet.
+
+        Add an ApplePushService stub so we can build against it with public SDKs.
+
+        * WebKitPrivateFrameworkStubs/iOS/15/ApplePushService.framework/ApplePushService.tbd: Added.
+
+2022-01-01  Jeff Miller  <jeffm@apple.com>
+
+        Update user-visible copyright strings to include 2022
+        https://bugs.webkit.org/show_bug.cgi?id=234263
+
+        Reviewed by Anders Carlsson.
+
+        * win/tools/scripts/COPYRIGHT-END-YEAR:
+
+2021-11-14  Brady Eidson  <beidson@apple.com>
+
+        Get daemon API ready to work in the iOS simulator (starting with WebPushD)
+        https://bugs.webkit.org/show_bug.cgi?id=232982
+
+        Reviewed by Geoff Garen.
+
+        * WebKitPrivateFrameworkStubs/iOS/15/AppServerSupport.framework/AppServerSupport.tbd: Added.
+
+2021-09-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 15] Support building WebKit (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=227002
+        <rdar://problem/79316598>
+
+        Reviewed by Ryan Haddad.
+
+        * WebKitPrivateFrameworkStubs/iOS/15/VisionKitCore.framework/VisionKitCore.tbd: Added.
+
 2021-07-07  Tim Horton  <timothy_horton@apple.com>
 
         Add WKHoverPlatter and some knobs to tweak its appearance

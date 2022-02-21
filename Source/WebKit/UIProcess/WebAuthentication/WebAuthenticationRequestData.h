@@ -30,11 +30,12 @@
 #include "APIWebAuthenticationPanel.h"
 #include "FrameInfoData.h"
 #include "WebAuthenticationFlags.h"
+#include <WebCore/CredentialRequestOptions.h>
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
 #include <WebCore/WebAuthenticationConstants.h>
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -44,7 +45,7 @@ class WebPageProxy;
 
 struct WebAuthenticationRequestData {
     Vector<uint8_t> hash;
-    Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions> options;
+    std::variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions> options;
 
     // FIXME<rdar://problem/71509848>: Remove the following deprecated fields.
     WeakPtr<WebPageProxy> page;
@@ -56,10 +57,11 @@ struct WebAuthenticationRequestData {
     bool processingUserGesture;
     String cachedPin; // Only used to improve NFC Client PIN experience.
     WeakPtr<API::WebAuthenticationPanel> weakPanel;
+    std::optional<WebCore::MediationRequirement> mediation;
 };
 
-WebCore::ClientDataType getClientDataType(const Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);
-WebCore::UserVerificationRequirement getUserVerificationRequirement(const Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);
+WebCore::ClientDataType getClientDataType(const std::variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);
+WebCore::UserVerificationRequirement getUserVerificationRequirement(const std::variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);
 
 } // namespace WebKit
 

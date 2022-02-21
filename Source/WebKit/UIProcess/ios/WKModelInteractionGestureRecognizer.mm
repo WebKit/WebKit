@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKModelInteractionGestureRecognizer.h"
 
-#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 
 #import "RemoteLayerTreeViews.h"
 #import "WKModelView.h"

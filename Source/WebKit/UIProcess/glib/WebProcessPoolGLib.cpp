@@ -29,6 +29,7 @@
 #include "WebProcessPool.h"
 
 #include "LegacyGlobalSettings.h"
+#include "MemoryPressureMonitor.h"
 #include "WebMemoryPressureHandler.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/PlatformDisplay.h>
@@ -50,13 +51,11 @@
 #include <wpe/wpe.h>
 #endif
 
-namespace WebKit {
+#if PLATFORM(GTK)
+#include "GtkSettingsManager.h"
+#endif
 
-static bool memoryPressureMonitorDisabled()
-{
-    static const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
-    return disableMemoryPressureMonitor && !strcmp(disableMemoryPressureMonitor, "1");
-}
+namespace WebKit {
 
 void WebProcessPool::platformInitialize()
 {
@@ -66,8 +65,10 @@ void WebProcessPool::platformInitialize()
     if (const char* forceComplexText = getenv("WEBKIT_FORCE_COMPLEX_TEXT"))
         m_alwaysUsesComplexTextCodePath = !strcmp(forceComplexText, "1");
 
-    if (!memoryPressureMonitorDisabled())
+#if OS(LINUX)
+    if (!MemoryPressureMonitor::disabled())
         installMemoryPressureHandler();
+#endif
 }
 
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
@@ -97,8 +98,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || LegacyGlobalSettings::singleton().cacheModel() == CacheModel::DocumentViewer;
 
-    if (memoryPressureMonitorDisabled())
+#if OS(LINUX)
+    if (MemoryPressureMonitor::disabled())
         parameters.shouldSuppressMemoryPressureHandler = true;
+#endif
 
 #if USE(GSTREAMER)
     parameters.gstreamerOptions = WebCore::extractGStreamerOptionsFromCommandLine();
@@ -109,6 +112,20 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 
     parameters.memoryPressureHandlerConfiguration = m_configuration->memoryPressureHandlerConfiguration();
+
+    GApplication* app = g_application_get_default();
+    if (app)
+        parameters.applicationID = g_application_get_application_id(app);
+    parameters.applicationName = g_get_application_name();
+
+#if USE(ATSPI)
+    static const char* accessibilityBusAddress = getenv("WEBKIT_A11Y_BUS_ADDRESS");
+    parameters.accessibilityBusAddress = accessibilityBusAddress ? String::fromUTF8(accessibilityBusAddress) : WebCore::PlatformDisplay::sharedDisplay().accessibilityBusAddress();
+#endif
+
+#if PLATFORM(GTK)
+    parameters.gtkSettings = GtkSettingsManager::singleton().settingsState();
+#endif
 }
 
 void WebProcessPool::platformInvalidateContext()

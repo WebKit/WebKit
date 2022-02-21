@@ -22,6 +22,7 @@
 
 #include "CachedScriptFetcher.h"
 #include "ContentSecurityPolicy.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "Frame.h"
 #include "JSNode.h"
@@ -67,7 +68,7 @@ static TextPosition convertZeroToOne(const TextPosition& position)
 }
 
 JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const URL& sourceURL, const TextPosition& sourcePosition)
-    : JSEventListener(nullptr, arguments.wrapper, true, mainThreadNormalWorld())
+    : JSEventListener(nullptr, arguments.wrapper, true, CreatedFromMarkup::Yes, mainThreadNormalWorld())
     , m_functionName(arguments.attributeName.localName().string())
     , m_eventParameterName(eventParameterName(arguments.shouldUseSVGEventName))
     , m_code(arguments.attributeValue)
@@ -83,19 +84,12 @@ JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const UR
 #if ASSERT_ENABLED
 static inline bool isCloneInShadowTreeOfSVGUseElement(Node& originalNode, EventTarget& eventTarget)
 {
-    if (!eventTarget.isNode())
+    auto* element = dynamicDowncast<SVGElement>(eventTarget);
+    if (!element || !element->correspondingElement())
         return false;
 
-    auto& node = downcast<Node>(eventTarget);
-    if (!is<SVGElement>(node))
-        return false;
-
-    auto& element = downcast<SVGElement>(node);
-    if (!element.correspondingElement())
-        return false;
-
-    ASSERT(element.isInShadowTree());
-    return &originalNode == element.correspondingElement();
+    ASSERT(element->isInShadowTree());
+    return &originalNode == element->correspondingElement();
 }
 
 // This is to help find the underlying cause of <rdar://problem/24314027>.
@@ -130,11 +124,16 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     if (!document.frame())
         return nullptr;
 
-    if (!document.contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL.string(), m_sourcePosition.m_line))
+    auto* element =  dynamicDowncast<Element>(m_originalNode.get());
+    if (!document.contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL.string(), m_sourcePosition.m_line, m_code, element))
         return nullptr;
 
     auto& script = document.frame()->script();
     if (!script.canExecuteScripts(AboutToCreateEventListener) || script.isPaused())
+        return nullptr;
+
+    ASSERT_WITH_MESSAGE(document.settings().scriptMarkupEnabled(), "Scripting element attributes should have been stripped during parsing");
+    if (UNLIKELY(!document.settings().scriptMarkupEnabled()))
         return nullptr;
 
     if (!executionContextDocument.frame())
@@ -204,14 +203,14 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(CreationArguments&& argu
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(Element& element, const QualifiedName& attributeName, const AtomString& attributeValue)
 {
-    return create({ attributeName, attributeValue, element.document(), makeWeakPtr(element), nullptr, element.isSVGElement() });
+    return create({ attributeName, attributeValue, element.document(), element, nullptr, element.isSVGElement() });
 }
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(Document& document, const QualifiedName& attributeName, const AtomString& attributeValue)
 {
     // FIXME: This always passes false for "shouldUseSVGEventName". Is that correct for events dispatched to SVG documents?
     // This has been this way for a long time, but became more obvious when refactoring to separate the Element and Document code paths.
-    return create({ attributeName, attributeValue, document, makeWeakPtr(document), nullptr, false });
+    return create({ attributeName, attributeValue, document, document, nullptr, false });
 }
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(DOMWindow& window, const QualifiedName& attributeName, const AtomString& attributeValue)

@@ -66,9 +66,7 @@ public:
         Error,
         FrameHandle,
         Image,
-        PageGroupData,
         PageHandle,
-        PageGroupHandle,
         ProtectionSpace,
         RenderLayer,
         RenderObject,
@@ -189,6 +187,7 @@ public:
 #endif
 
         MediaKeySystemPermissionCallback,
+        QueryPermissionResultCallback,
 
         // Bundle types
         Bundle,
@@ -203,7 +202,6 @@ public:
         BundleNodeHandle,
         BundlePage,
         BundlePageBanner,
-        BundlePageGroup,
         BundlePageOverlay,
         BundleRangeHandle,
         BundleScriptWorld,
@@ -318,9 +316,7 @@ template<> struct EnumTraits<API::Object::Type> {
         API::Object::Type::Error,
         API::Object::Type::FrameHandle,
         API::Object::Type::Image,
-        API::Object::Type::PageGroupData,
         API::Object::Type::PageHandle,
-        API::Object::Type::PageGroupHandle,
         API::Object::Type::ProtectionSpace,
         API::Object::Type::ResourceLoadInfo,
         API::Object::Type::SecurityOrigin,
@@ -453,7 +449,6 @@ template<> struct EnumTraits<API::Object::Type> {
         API::Object::Type::BundleNodeHandle,
         API::Object::Type::BundlePage,
         API::Object::Type::BundlePageBanner,
-        API::Object::Type::BundlePageGroup,
         API::Object::Type::BundlePageOverlay,
         API::Object::Type::BundleRangeHandle,
         API::Object::Type::BundleScriptWorld,

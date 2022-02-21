@@ -23,12 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ObjectType_h
-#define ObjectType_h
+#pragma once
 
 #include "BAssert.h"
 #include "HeapKind.h"
 #include "Sizes.h"
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -45,4 +46,4 @@ inline bool mightBeLarge(void* object)
 
 } // namespace bmalloc
 
-#endif // ObjectType_h
+#endif

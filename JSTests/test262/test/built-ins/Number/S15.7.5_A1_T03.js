@@ -8,13 +8,14 @@ info: |
 es5id: 15.7.5_A1_T03
 description: Checking property toLocaleString
 ---*/
+assert.sameValue(
+  (new Number()).hasOwnProperty("toLocaleString"),
+  false,
+  '(new Number()).hasOwnProperty("toLocaleString") must return false'
+);
 
-//CHECK#1
-if ((new Number()).hasOwnProperty("toLocaleString") !== false) {
-  throw new Test262Error('#1: Number instance must have no special property "toLocaleString"');
-}
-
-//CHECK#2
-if ((new Number()).toLocaleString !== Number.prototype.toLocaleString) {
-  throw new Test262Error('#2: Number instance property "toLocaleString" must be inherited from Number prototype object');
-}
+assert.sameValue(
+  (new Number()).toLocaleString,
+  Number.prototype.toLocaleString,
+  'The value of (new Number()).toLocaleString is expected to equal the value of Number.prototype.toLocaleString'
+);

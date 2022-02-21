@@ -29,7 +29,6 @@
 #include "LegacyGlobalSettings.h"
 #include "Logging.h"
 #include "WebProcessPool.h"
-#include "WebProcessProxy.h"
 #include <wtf/RAMSize.h>
 #include <wtf/StdLibExtras.h>
 
@@ -97,7 +96,7 @@ bool WebProcessCache::addProcessIfPossible(Ref<WebProcessProxy>&& process)
         return false;
 
     // CachedProcess can destroy the process pool (which owns the WebProcessCache), by making its reference weak in WebProcessProxy::setIsInProcessCache.
-    auto protectedProcessPool = makeRef(process->processPool());
+    Ref protectedProcessPool = process->processPool();
     uint64_t requestIdentifier = generateAddRequestIdentifier();
     m_pendingAddRequests.add(requestIdentifier, makeUnique<CachedProcess>(process.copyRef()));
 
@@ -148,13 +147,16 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
     return true;
 }
 
-RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore)
+RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::CaptivePortalMode captivePortalMode)
 {
     auto it = m_processesPerRegistrableDomain.find(registrableDomain);
     if (it == m_processesPerRegistrableDomain.end())
         return nullptr;
 
     if (&it->value->process().websiteDataStore() != &dataStore)
+        return nullptr;
+
+    if (it->value->process().captivePortalMode() != captivePortalMode)
         return nullptr;
 
     auto process = it->value->takeProcess();
@@ -292,7 +294,7 @@ WebProcessCache::CachedProcess::~CachedProcess()
     if (isSuspended())
         m_process->platformResumeProcess();
 #endif
-    m_process->setIsInProcessCache(false);
+    m_process->setIsInProcessCache(false, WebProcessProxy::WillShutDown::Yes);
     m_process->shutDown();
 }
 

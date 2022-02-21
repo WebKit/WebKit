@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,11 +38,19 @@
 #import "WebPageProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKTextInputContextInternal.h"
-#import <WebCore/ColorIOS.h>
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/ElementContext.h>
 #import <wtf/SortedArrayMap.h>
 #import <wtf/text/TextStream.h>
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/SeparatedLayerAdditions.h>
+#else
+static void dumpSeparatedLayerProperties(TextStream&, CALayer *) { }
+#endif
+#endif
 
 @implementation WKWebView (WKTestingIOS)
 
@@ -234,7 +242,7 @@ static String allowListedClassToString(UIView *view)
         "WKModelView",
         "WKRemoteView",
         "WKScrollView",
-        "WKSeparatedModelView"
+        "WKSeparatedModelView",
         "WKShapeView",
         "WKSimpleBackdropView",
         "WKTransformView",
@@ -247,8 +255,7 @@ static String allowListedClassToString(UIView *view)
     String classString { NSStringFromClass(view.class) };
     if (allowedClasses.contains(classString))
         return classString;
-    
-    ASSERT(classString != "WKCompositingView");
+
     return makeString("<class not in allowed list of classes>");
 }
 
@@ -278,6 +285,14 @@ static void dumpUIView(TextStream& ts, UIView *view)
     
     if (view.layer.anchorPointZ != 0)
         ts.dumpProperty("layer anchorPointZ", makeString(view.layer.anchorPointZ));
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    if (view.layer.separated) {
+        TextStream::GroupScope scope(ts);
+        ts << "separated";
+        dumpSeparatedLayerProperties(ts, view.layer);
+    }
+#endif
 
     if (view.subviews.count > 0) {
         TextStream::GroupScope scope(ts);
@@ -433,7 +448,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
     [_contentView _simulateTextEntered:text];
 }
 
-- (void)_triggerSystemPreviewActionOnElement:(uint64_t)elementID document:(uint64_t)documentID page:(uint64_t)pageID
+- (void)_triggerSystemPreviewActionOnElement:(uint64_t)elementID document:(NSString*)documentID page:(uint64_t)pageID
 {
 #if USE(SYSTEM_PREVIEW)
     if (_page) {
@@ -463,7 +478,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
     if (!backgroundColor)
         return nil;
 
-    return WebCore::serializationForCSS(WebCore::colorFromUIColor(backgroundColor));
+    return serializationForCSS(WebCore::colorFromCocoaColor(backgroundColor));
 }
 
 @end

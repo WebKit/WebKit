@@ -28,5 +28,5 @@
     SecureContext,
     Exposed=Window
 ] interface TestEnabledForContext {
-    [EnabledBySetting=TestSetting, EnabledForContext] attribute TestSubObjConstructor TestSubObjEnabledForContext;
+    [EnabledBySetting=TestSettingEnabled, EnabledForContext] attribute TestSubObjConstructor TestSubObjEnabledForContext;
 };

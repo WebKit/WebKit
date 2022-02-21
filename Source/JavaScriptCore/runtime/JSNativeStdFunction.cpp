@@ -68,7 +68,7 @@ JSNativeStdFunction* JSNativeStdFunction::create(VM& vm, JSGlobalObject* globalO
 {
     NativeExecutable* executable = vm.getHostFunction(runStdFunction, intrinsic, nativeConstructor, nullptr, name);
     Structure* structure = globalObject->nativeStdFunctionStructure();
-    JSNativeStdFunction* function = new (NotNull, allocateCell<JSNativeStdFunction>(vm.heap)) JSNativeStdFunction(vm, executable, globalObject, structure, WTFMove(nativeStdFunction));
+    JSNativeStdFunction* function = new (NotNull, allocateCell<JSNativeStdFunction>(vm)) JSNativeStdFunction(vm, executable, globalObject, structure, WTFMove(nativeStdFunction));
     function->finishCreation(vm, executable, length, name);
     return function;
 }

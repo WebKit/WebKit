@@ -27,6 +27,7 @@
 
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteTransaction.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -38,6 +39,8 @@ class SQLiteStatementAutoResetScope;
 namespace WebKit {
 
 enum class PrivateClickMeasurementAttributionType : bool;
+
+using TableAndIndexPair = std::pair<String, std::optional<String>>;
 
 class DatabaseUtilities {
 protected:
@@ -52,10 +55,17 @@ protected:
     void close();
     void interrupt();
     virtual bool createSchema() = 0;
+    virtual bool createUniqueIndices() = 0;
     virtual void destroyStatements() = 0;
     virtual String getDomainStringFromDomainID(unsigned) const = 0;
+    virtual bool needsUpdatedSchema() = 0;
+    virtual const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() = 0;
+    virtual Span<const ASCIILiteral> sortedTables() = 0;
+    TableAndIndexPair currentTableAndIndexQueries(const String&);
+    String stripIndexQueryToMatchStoredValue(const char* originalQuery);
+    void migrateDataToNewTablesIfNecessary();
 
-    WebCore::PrivateClickMeasurement buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement&, PrivateClickMeasurementAttributionType);
+    WebCore::PrivateClickMeasurement buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement&, PrivateClickMeasurementAttributionType) const;
 
     const String m_storageFilePath;
     mutable WebCore::SQLiteDatabase m_database;

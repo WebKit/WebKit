@@ -172,7 +172,7 @@ bool AccessibilityTableColumn::computeAccessibilityIsIgnored() const
     if (!m_parent)
         return true;
     
-#if PLATFORM(IOS_FAMILY) || USE(ATK)
+#if PLATFORM(IOS_FAMILY) || USE(ATK) || USE(ATSPI)
     return true;
 #endif
     
@@ -181,9 +181,9 @@ bool AccessibilityTableColumn::computeAccessibilityIsIgnored() const
     
 void AccessibilityTableColumn::addChildren()
 {
-    ASSERT(!m_haveChildren); 
+    ASSERT(!m_childrenInitialized); 
     
-    m_haveChildren = true;
+    m_childrenInitialized = true;
     if (!is<AccessibilityTable>(m_parent))
         return;
 
@@ -202,7 +202,7 @@ void AccessibilityTableColumn::addChildren()
         if (m_children.size() > 0 && m_children.last() == cell)
             continue;
             
-        m_children.append(cell);
+        addChild(cell);
     }
 }
     

@@ -1,0 +1,4 @@
+
+FAIL slow cross-document traversal and then fast cross-document navigation: traversal wins and nav is ignored assert_equals: first load after the nav expected "http://localhost:8800/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/resources/slow.py" but got "http://localhost:8800/common/blank.html?3"
+FAIL fast cross-document traversal and then slow cross-document navigation: traversal wins and nav is ignored assert_equals: first load after the nav expected "?1" but got ""
+

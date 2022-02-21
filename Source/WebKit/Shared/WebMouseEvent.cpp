@@ -35,6 +35,8 @@ WebMouseEvent::WebMouseEvent() = default;
 
 #if PLATFORM(MAC)
 WebMouseEvent::WebMouseEvent(Type type, Button button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier> modifiers, WallTime timestamp, double force, SyntheticClickType syntheticClickType, int eventNumber, int menuType, GestureWasCancelled gestureWasCancelled)
+#elif PLATFORM(GTK)
+WebMouseEvent::WebMouseEvent(Type type, Button button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier> modifiers, WallTime timestamp, double force, SyntheticClickType syntheticClickType, PlatformMouseEvent::IsTouch isTouchEvent, WebCore::PointerID pointerId, const String& pointerType, GestureWasCancelled gestureWasCancelled)
 #else
 WebMouseEvent::WebMouseEvent(Type type, Button button, unsigned short buttons, const IntPoint& positionInView, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier> modifiers, WallTime timestamp, double force, SyntheticClickType syntheticClickType, WebCore::PointerID pointerId, const String& pointerType, GestureWasCancelled gestureWasCancelled)
 #endif
@@ -50,6 +52,8 @@ WebMouseEvent::WebMouseEvent(Type type, Button button, unsigned short buttons, c
 #if PLATFORM(MAC)
     , m_eventNumber(eventNumber)
     , m_menuTypeForEvent(menuType)
+#elif PLATFORM(GTK)
+    , m_isTouchEvent(isTouchEvent)
 #endif
     , m_force(force)
     , m_syntheticClickType(syntheticClickType)
@@ -77,6 +81,8 @@ void WebMouseEvent::encode(IPC::Encoder& encoder) const
 #if PLATFORM(MAC)
     encoder << m_eventNumber;
     encoder << m_menuTypeForEvent;
+#elif PLATFORM(GTK)
+    encoder << m_isTouchEvent;
 #endif
     encoder << m_force;
     encoder << m_syntheticClickType;
@@ -110,6 +116,9 @@ bool WebMouseEvent::decode(IPC::Decoder& decoder, WebMouseEvent& result)
     if (!decoder.decode(result.m_eventNumber))
         return false;
     if (!decoder.decode(result.m_menuTypeForEvent))
+        return false;
+#elif PLATFORM(GTK)
+    if (!decoder.decode(result.m_isTouchEvent))
         return false;
 #endif
     if (!decoder.decode(result.m_force))

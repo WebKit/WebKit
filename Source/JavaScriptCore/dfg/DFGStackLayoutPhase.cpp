@@ -119,7 +119,7 @@ public:
         }
         
         Vector<unsigned> allocation(usedOperands.size());
-        m_graph.m_nextMachineLocal = codeBlock()->calleeSaveSpaceAsVirtualRegisters();
+        m_graph.m_nextMachineLocal = CodeBlock::calleeSaveSpaceAsVirtualRegisters(RegisterAtOffsetList::dfgCalleeSaveRegisters());
         for (unsigned i = 0; i < usedOperands.size(); ++i) {
             if (!usedOperands.getForOperandIndex(i)) {
                 allocation[i] = UINT_MAX;

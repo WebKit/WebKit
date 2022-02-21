@@ -52,8 +52,8 @@ std::optional<ItemHandle> WARN_UNUSED_RETURN InMemoryDisplayList::ReadingClient:
 }
 
 InMemoryDisplayList::InMemoryDisplayList()
-    : m_writingClient(WTF::makeUnique<WritingClient>())
-    , m_readingClient(WTF::makeUnique<ReadingClient>())
+    : m_writingClient(makeUnique<WritingClient>())
+    , m_readingClient(makeUnique<ReadingClient>())
 {
     setItemBufferWritingClient(m_writingClient.get());
     setItemBufferReadingClient(m_readingClient.get());
@@ -63,6 +63,8 @@ InMemoryDisplayList::~InMemoryDisplayList()
 {
     auto end = this->end();
     for (auto displayListItem : *this) {
+        if (!displayListItem)
+            break;
         auto item = displayListItem->item;
         ASSERT(item);
         if (!item)

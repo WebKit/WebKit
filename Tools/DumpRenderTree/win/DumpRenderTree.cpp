@@ -594,32 +594,34 @@ static void dumpHistoryItem(IWebHistoryItem* item, int indent, bool current)
     fputc('\n', testResult);
 
     unsigned kidsCount;
-    SAFEARRAY* arrPtr;
-    if (FAILED(itemPrivate->children(&kidsCount, &arrPtr)) || !kidsCount)
+    SAFEARRAY* arrayPtr;
+    if (FAILED(itemPrivate->children(&kidsCount, &arrayPtr)) || !kidsCount)
         return;
+
+    std::unique_ptr<SAFEARRAY, decltype(&::SafeArrayDestroy)> array(arrayPtr, ::SafeArrayDestroy);
 
     Vector<COMPtr<IUnknown> > kidsVector;
 
     LONG lowerBound;
-    if (FAILED(::SafeArrayGetLBound(arrPtr, 1, &lowerBound)))
-        goto exit;
+    if (FAILED(::SafeArrayGetLBound(array.get(), 1, &lowerBound)))
+        return;
 
     LONG upperBound;
-    if (FAILED(::SafeArrayGetUBound(arrPtr, 1, &upperBound)))
-        goto exit;
+    if (FAILED(::SafeArrayGetUBound(array.get(), 1, &upperBound)))
+        return;
 
     LONG length = upperBound - lowerBound + 1;
     if (!length)
-        goto exit;
+        return;
     ASSERT(length == kidsCount);
 
     IUnknown** safeArrayData;
-    if (FAILED(::SafeArrayAccessData(arrPtr, (void**)&safeArrayData)))
-        goto exit;
+    if (FAILED(::SafeArrayAccessData(array.get(), (void**)&safeArrayData)))
+        return;
 
     for (int i = 0; i < length; ++i)
         kidsVector.append(safeArrayData[i]);
-    ::SafeArrayUnaccessData(arrPtr);
+    ::SafeArrayUnaccessData(array.get());
 
     // must sort to eliminate arbitrary result ordering which defeats reproducible testing
     qsort(kidsVector.data(), kidsCount, sizeof(kidsVector[0]), compareHistoryItems);
@@ -629,10 +631,6 @@ static void dumpHistoryItem(IWebHistoryItem* item, int indent, bool current)
         kidsVector[i]->QueryInterface(&item);
         dumpHistoryItem(item.get(), indent + 4, false);
     }
-
-exit:
-    if (arrPtr && SUCCEEDED(::SafeArrayUnlock(arrPtr)))
-        ::SafeArrayDestroy(arrPtr);
 }
 
 static void dumpBackForwardList(IWebView* webView)
@@ -1328,7 +1326,7 @@ static void runTest(const string& inputLine)
     ::gTestRunner->closeWebInspector();
 
 
-    for (HWND window : openWindows()) {
+    for (HWND window : Vector(openWindows())) {
         // Don't try to close the main window
         if (window == hostWindow)
             continue;

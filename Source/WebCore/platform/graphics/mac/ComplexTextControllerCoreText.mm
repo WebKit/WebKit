@@ -27,6 +27,7 @@
 
 #import "FontCache.h"
 #import "FontCascade.h"
+#import "Logging.h"
 #import <CoreText/CoreText.h>
 #import <pal/spi/cf/CoreTextSPI.h>
 #import <wtf/SoftLinking.h>
@@ -89,6 +90,31 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
         for (unsigned i = 0; i < m_glyphCount; ++i)
             m_baseAdvances.uncheckedAppend(baseAdvances[i]);
     }
+
+    LOG_WITH_STREAM(TextShaping,
+        stream << "Shaping result: " << m_glyphCount << " glyphs.\n";
+        stream << "Glyphs:";
+        for (unsigned i = 0; i < m_glyphCount; ++i)
+            stream << " " << m_glyphs[i];
+        stream << "\n";
+        stream << "Advances:";
+        for (unsigned i = 0; i < m_glyphCount; ++i)
+            stream << " " << m_baseAdvances[i];
+        stream << "\n";
+        stream << "Origins:";
+        if (m_glyphOrigins.isEmpty())
+            stream << " empty";
+        else {
+            for (unsigned i = 0; i < m_glyphCount; ++i)
+                stream << " " << m_glyphs[i];
+        }
+        stream << "\n";
+        stream << "Offsets:";
+        for (unsigned i = 0; i < m_glyphCount; ++i)
+            stream << " " << m_coreTextIndices[i];
+        stream << "\n";
+        stream << "Initial advance: " << FloatSize(m_initialAdvance);
+    );
 }
 
 struct ProviderInfo {
@@ -136,6 +162,14 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
 
     RetainPtr<CTLineRef> line;
 
+    LOG_WITH_STREAM(TextShaping,
+        stream << "Complex shaping " << length << " code units with info " << String(adoptCF(CFCopyDescription(stringAttributes.get())).get()) << ".\n";
+        stream << "Code Units:";
+        for (unsigned i = 0; i < length; ++i)
+            stream << " " << cp[i];
+        stream << "\n";
+    );
+
     if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride()) {
         const short ltrForcedEmbeddingLevelValue = 0;
         const short rtlForcedEmbeddingLevelValue = 1;
@@ -154,8 +188,12 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         if (!typesetter)
             return;
 
+        LOG_WITH_STREAM(TextShaping, stream << "Forcing " << (m_run.ltr() ? "ltr" : "rtl"));
+
         line = adoptCF(CTTypesetterCreateLine(typesetter.get(), CFRangeMake(0, 0)));
     } else {
+        LOG_WITH_STREAM(TextShaping, stream << "Not forcing direction");
+
         ProviderInfo info = { cp, length, stringAttributes.get() };
 
         line = adoptCF(CTLineCreateWithUniCharProvider(&provideStringAndAttributes, nullptr, &info));
@@ -172,6 +210,8 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         return;
 
     CFIndex runCount = CFArrayGetCount(runArray);
+
+    LOG_WITH_STREAM(TextShaping, stream << "Result: " << runCount << " runs.");
 
     for (CFIndex r = 0; r < runCount; r++) {
         CTRunRef ctRun = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runArray, m_run.ltr() ? r : runCount - 1 - r));
@@ -202,7 +242,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
                         continue;
                     }
                     FontPlatformData runFontPlatformData(runCTFont, CTFontGetSize(runCTFont));
-                    runFont = FontCache::singleton().fontForPlatformData(runFontPlatformData).ptr();
+                    runFont = FontCache::forCurrentThread().fontForPlatformData(runFontPlatformData).ptr();
                 }
                 if (m_fallbackFonts && runFont != &m_font.primaryFont())
                     m_fallbackFonts->add(runFont);
@@ -210,6 +250,8 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         }
         if (m_fallbackFonts && runFont != &m_font.primaryFont())
             m_fallbackFonts->add(font);
+
+        LOG_WITH_STREAM(TextShaping, stream << "Run " << r << ":");
 
         m_complexTextRuns.append(ComplexTextRun::create(ctRun, *runFont, cp, stringLocation, length, runRange.location, runRange.location + runRange.length));
     }

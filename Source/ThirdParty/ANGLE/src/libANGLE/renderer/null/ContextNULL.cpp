@@ -66,41 +66,44 @@ ContextNULL::ContextNULL(const gl::State &state,
 {
     ASSERT(mAllocationTracker != nullptr);
 
-    mExtensions                        = gl::Extensions();
-    mExtensions.fenceNV                = true;
-    mExtensions.framebufferBlit        = true;
-    mExtensions.instancedArraysANGLE   = true;
-    mExtensions.instancedArraysEXT     = true;
-    mExtensions.pixelBufferObjectNV    = true;
-    mExtensions.mapBufferOES           = true;
-    mExtensions.mapBufferRange         = true;
-    mExtensions.copyTexture            = true;
-    mExtensions.copyCompressedTexture  = true;
-    mExtensions.textureRectangle       = true;
-    mExtensions.textureUsage           = true;
-    mExtensions.vertexArrayObjectOES   = true;
-    mExtensions.debugMarker            = true;
-    mExtensions.translatedShaderSource = true;
+    mExtensions                               = gl::Extensions();
+    mExtensions.fenceNV                       = true;
+    mExtensions.framebufferBlitANGLE          = true;
+    mExtensions.framebufferBlitNV             = true;
+    mExtensions.instancedArraysANGLE          = true;
+    mExtensions.instancedArraysEXT            = true;
+    mExtensions.pixelBufferObjectNV           = true;
+    mExtensions.mapbufferOES                  = true;
+    mExtensions.mapBufferRangeEXT             = true;
+    mExtensions.copyTextureCHROMIUM           = true;
+    mExtensions.copyCompressedTextureCHROMIUM = true;
+    mExtensions.textureRectangleANGLE         = true;
+    mExtensions.textureUsageANGLE             = true;
+    mExtensions.vertexArrayObjectOES          = true;
+    mExtensions.debugMarkerEXT                = true;
+    mExtensions.translatedShaderSourceANGLE   = true;
 
-    mExtensions.textureStorage               = true;
-    mExtensions.rgb8rgba8OES                 = true;
-    mExtensions.textureCompressionDXT1       = true;
-    mExtensions.textureCompressionDXT3       = true;
-    mExtensions.textureCompressionDXT5       = true;
-    mExtensions.textureCompressionS3TCsRGB   = true;
-    mExtensions.textureCompressionASTCHDRKHR = true;
-    mExtensions.textureCompressionASTCLDRKHR = true;
-    mExtensions.textureCompressionASTCOES    = true;
-    mExtensions.compressedETC1RGB8TextureOES = true;
-    mExtensions.compressedETC1RGB8SubTexture = true;
-    mExtensions.lossyETCDecode               = true;
-    mExtensions.geometryShader               = true;
+    mExtensions.textureStorageEXT               = true;
+    mExtensions.rgb8Rgba8OES                    = true;
+    mExtensions.textureCompressionDxt1EXT       = true;
+    mExtensions.textureCompressionDxt3ANGLE     = true;
+    mExtensions.textureCompressionDxt5ANGLE     = true;
+    mExtensions.textureCompressionS3tcSrgbEXT   = true;
+    mExtensions.textureCompressionAstcHdrKHR    = true;
+    mExtensions.textureCompressionAstcLdrKHR    = true;
+    mExtensions.textureCompressionAstcOES       = true;
+    mExtensions.compressedETC1RGB8TextureOES    = true;
+    mExtensions.compressedETC1RGB8SubTextureEXT = true;
+    mExtensions.lossyEtcDecodeANGLE             = true;
+    mExtensions.geometryShaderEXT               = true;
+    mExtensions.geometryShaderOES               = true;
+    mExtensions.multiDrawIndirectEXT            = true;
 
-    mExtensions.eglImageOES                 = true;
-    mExtensions.eglImageExternalOES         = true;
-    mExtensions.eglImageExternalEssl3OES    = true;
-    mExtensions.eglImageArray               = true;
-    mExtensions.eglStreamConsumerExternalNV = true;
+    mExtensions.EGLImageOES                 = true;
+    mExtensions.EGLImageExternalOES         = true;
+    mExtensions.EGLImageExternalEssl3OES    = true;
+    mExtensions.EGLImageArrayEXT            = true;
+    mExtensions.EGLStreamConsumerExternalNV = true;
 
     const gl::Version maxClientVersion(3, 1);
     mCaps = GenerateMinimumCaps(maxClientVersion, mExtensions);
@@ -261,6 +264,15 @@ angle::Result ContextNULL::multiDrawArraysInstanced(const gl::Context *context,
     return angle::Result::Continue;
 }
 
+angle::Result ContextNULL::multiDrawArraysIndirect(const gl::Context *context,
+                                                   gl::PrimitiveMode mode,
+                                                   const void *indirect,
+                                                   GLsizei drawcount,
+                                                   GLsizei stride)
+{
+    return angle::Result::Continue;
+}
+
 angle::Result ContextNULL::multiDrawElements(const gl::Context *context,
                                              gl::PrimitiveMode mode,
                                              const GLsizei *counts,
@@ -278,6 +290,16 @@ angle::Result ContextNULL::multiDrawElementsInstanced(const gl::Context *context
                                                       const GLvoid *const *indices,
                                                       const GLsizei *instanceCounts,
                                                       GLsizei drawcount)
+{
+    return angle::Result::Continue;
+}
+
+angle::Result ContextNULL::multiDrawElementsIndirect(const gl::Context *context,
+                                                     gl::PrimitiveMode mode,
+                                                     gl::DrawElementsType type,
+                                                     const void *indirect,
+                                                     GLsizei drawcount,
+                                                     GLsizei stride)
 {
     return angle::Result::Continue;
 }
@@ -312,16 +334,6 @@ gl::GraphicsResetStatus ContextNULL::getResetStatus()
     return gl::GraphicsResetStatus::NoError;
 }
 
-std::string ContextNULL::getVendorString() const
-{
-    return "NULL";
-}
-
-std::string ContextNULL::getRendererDescription() const
-{
-    return "NULL";
-}
-
 angle::Result ContextNULL::insertEventMarker(GLsizei length, const char *marker)
 {
     return angle::Result::Continue;
@@ -352,7 +364,8 @@ angle::Result ContextNULL::popDebugGroup(const gl::Context *context)
 
 angle::Result ContextNULL::syncState(const gl::Context *context,
                                      const gl::State::DirtyBits &dirtyBits,
-                                     const gl::State::DirtyBits &bitMask)
+                                     const gl::State::DirtyBits &bitMask,
+                                     gl::Command command)
 {
     return angle::Result::Continue;
 }

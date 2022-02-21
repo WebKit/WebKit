@@ -159,11 +159,12 @@ void PlatformCALayer::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y
         kCTStrokeWidthAttributeName,
         kCTStrokeColorAttributeName,
     };
+    auto strokeCGColor = cachedCGColor(strokeColor);
     CFTypeRef values[] = {
         font.get(),
         kCFBooleanTrue,
         strokeWidthNumber.get(),
-        cachedCGColor(strokeColor),
+        strokeCGColor.get(),
     };
 
     auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
@@ -196,6 +197,11 @@ LayerPool& PlatformCALayer::layerPool()
 {
     static LayerPool* sharedPool = new LayerPool;
     return *sharedPool;
+}
+
+void PlatformCALayer::clearContents()
+{
+    setContents(nullptr);
 }
 
 void PlatformCALayer::dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>)

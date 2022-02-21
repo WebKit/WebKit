@@ -715,10 +715,10 @@
         </command>
        <command>
        <proto>void <name>glGetTexLevelParameterivANGLE</name></proto>
-            <param><ptype>GLenum</ptype> <name>target</name></param>
-            <param><ptype>GLint</ptype> <name>level</name></param>
-            <param><ptype>GLenum</ptype> <name>pname</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
+            <param group="CheckedInt32"><ptype>GLint</ptype> <name>level</name></param>
+            <param group="GetTextureParameter"><ptype>GLenum</ptype> <name>pname</name></param>
+            <param len="COMPSIZE(pname)"><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetTexLevelParameterfvANGLE</name></proto>
@@ -841,6 +841,12 @@
             <param len="COMPSIZE(target,level,format,type)">void *<name>pixels</name></param>
         </command>
         <command>
+            <proto>void <name>glGetCompressedTexImageANGLE</name></proto>
+            <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
+            <param group="CheckedInt32"><ptype>GLint</ptype> <name>level</name></param>
+            <param len="COMPSIZE(target,level)">void *<name>pixels</name></param>
+        </command>
+        <command>
             <proto>void <name>glGetRenderbufferImageANGLE</name></proto>
             <param group="RenderbufferTarget"><ptype>GLenum</ptype> <name>target</name></param>
             <param group="PixelFormat"><ptype>GLenum</ptype> <name>format</name></param>
@@ -858,6 +864,7 @@
             <param><ptype>GLuint64</ptype> <name>offset</name></param>
             <param><ptype>GLbitfield</ptype> <name>createFlags</name></param>
             <param><ptype>GLbitfield</ptype> <name>usageFlags</name></param>
+            <param><ptype>const void *</ptype> <name>imageCreateInfoPNext</name></param>
         </command>
         <command>
             <proto>void <name>glTexStorageMemFlags2DMultisampleANGLE</name></proto>
@@ -871,6 +878,7 @@
             <param><ptype>GLuint64</ptype> <name>offset</name></param>
             <param><ptype>GLbitfield</ptype> <name>createFlags</name></param>
             <param><ptype>GLbitfield</ptype> <name>usageFlags</name></param>
+            <param><ptype>const void *</ptype> <name>imageCreateInfoPNext</name></param>
         </command>
         <command>
             <proto>void <name>glTexStorageMemFlags3DANGLE</name></proto>
@@ -884,6 +892,7 @@
             <param><ptype>GLuint64</ptype> <name>offset</name></param>
             <param><ptype>GLbitfield</ptype> <name>createFlags</name></param>
             <param><ptype>GLbitfield</ptype> <name>usageFlags</name></param>
+            <param><ptype>const void *</ptype> <name>imageCreateInfoPNext</name></param>
         </command>
         <command>
             <proto>void <name>glTexStorageMemFlags3DMultisampleANGLE</name></proto>
@@ -898,6 +907,7 @@
             <param><ptype>GLuint64</ptype> <name>offset</name></param>
             <param><ptype>GLbitfield</ptype> <name>createFlags</name></param>
             <param><ptype>GLbitfield</ptype> <name>usageFlags</name></param>
+            <param><ptype>const void *</ptype> <name>imageCreateInfoPNext</name></param>
         </command>
         <command>
             <proto>void <name>glImportMemoryZirconHandleANGLE</name></proto>
@@ -911,6 +921,18 @@
             <param><ptype>GLuint</ptype> <name>semaphore</name></param>
             <param group="ExternalHandleType"><ptype>GLenum</ptype> <name>handleType</name></param>
             <param><ptype>GLuint</ptype> <name>handle</name></param>
+        </command>
+        <command>
+            <proto>void <name>glAcquireTexturesANGLE</name></proto>
+            <param><ptype>GLuint</ptype> <name>numTextures</name></param>
+            <param len="COMPSIZE(numTextures)">const <ptype>GLuint</ptype> *<name>textures</name></param>
+            <param group="TextureLayout" len="COMPSIZE(numTextures)">const <ptype>GLenum</ptype> *<name>layouts</name></param>
+        </command>
+        <command>
+            <proto>void <name>glReleaseTexturesANGLE</name></proto>
+            <param><ptype>GLuint</ptype> <name>numTextures</name></param>
+            <param len="COMPSIZE(numTextures)">const <ptype>GLuint</ptype> *<name>textures</name></param>
+            <param group="TextureLayout" len="COMPSIZE(numTextures)"><ptype>GLenum</ptype> *<name>layouts</name></param>
         </command>
     </commands>
 
@@ -941,6 +963,12 @@
             <require>
                 <command name="glRequestExtensionANGLE"/>
                 <command name="glDisableExtensionANGLE"/>
+            </require>
+        </extension>
+        <extension name="GL_ANGLE_vulkan_image" supported='gles2'>
+            <require>
+                <command name="glAcquireTexturesANGLE"/>
+                <command name="glReleaseTexturesANGLE"/>
             </require>
         </extension>
         <extension name="GL_ANGLE_robust_client_memory" supported='gles2'>
@@ -1067,6 +1095,7 @@
         <extension name ="GL_ANGLE_get_image" supported='gles2'>
             <require>
                 <command name="glGetTexImageANGLE"/>
+                <command name="glGetCompressedTexImageANGLE"/>
                 <command name="glGetRenderbufferImageANGLE"/>
             </require>
         </extension>

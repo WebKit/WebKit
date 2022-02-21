@@ -22,7 +22,7 @@
 #include "WebViewTest.h"
 
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <WebKit/WebKitWebViewInternal.h>
+#include <WebKitWebViewInternal.h>
 
 bool WebViewTest::shouldInitializeWebViewInConstructor = true;
 bool WebViewTest::shouldCreateEphemeralWebView = false;
@@ -253,22 +253,30 @@ void WebViewTest::setEditable(bool editable)
     webkit_web_view_set_editable(m_webView, editable);
 }
 
-static void directoryChangedCallback(GFileMonitor*, GFile* file, GFile*, GFileMonitorEvent event, WebViewTest* test)
+void WebViewTest::assertFileIsCreated(const char *filename)
 {
-    if (event == test->m_expectedFileChangeEvent && g_file_equal(file, test->m_monitoredFile.get()))
-        test->quitMainLoop();
+    constexpr double intervalInSeconds = 0.25;
+    unsigned tries = 4;
+    while (!g_file_test(filename, G_FILE_TEST_EXISTS) && --tries)
+        wait(intervalInSeconds);
+    g_assert_true(g_file_test(filename, G_FILE_TEST_EXISTS));
 }
 
-void WebViewTest::waitUntilFileChanged(const char* filename, GFileMonitorEvent event)
+void WebViewTest::assertJavaScriptBecomesTrue(const char* javascript)
 {
-    m_monitoredFile = adoptGRef(g_file_new_for_path(filename));
-    m_expectedFileChangeEvent = event;
-    GRefPtr<GFile> directory = adoptGRef(g_file_get_parent(m_monitoredFile.get()));
-    GRefPtr<GFileMonitor> monitor = adoptGRef(g_file_monitor_directory(directory.get(), G_FILE_MONITOR_NONE, nullptr, nullptr));
-    g_assert(monitor.get());
-    g_signal_connect(monitor.get(), "changed", G_CALLBACK(directoryChangedCallback), this);
-    if (!g_file_query_exists(m_monitoredFile.get(), nullptr))
-        g_main_loop_run(m_mainLoop);
+    unsigned triesCount = 4;
+    bool becameTrue = false;
+    while (!becameTrue && triesCount--) {
+        auto jsResult = runJavaScriptAndWaitUntilFinished(javascript, nullptr);
+        auto jsValue = webkit_javascript_result_get_js_value(jsResult);
+        if (jsc_value_is_boolean(jsValue) && jsc_value_to_boolean(jsValue)) {
+            becameTrue = true;
+            break;
+        }
+
+        wait(0.25);
+    }
+    g_assert_true(becameTrue);
 }
 
 static void resourceGetDataCallback(GObject* object, GAsyncResult* result, gpointer userData)

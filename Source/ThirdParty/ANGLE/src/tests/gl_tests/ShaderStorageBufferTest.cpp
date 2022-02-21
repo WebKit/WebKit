@@ -312,12 +312,133 @@ TEST_P(ShaderStorageBufferTest31, ShaderStorageBufferReadWrite)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test shader storage buffer write followed by glTexSUbData and followed by shader storage write
+// again.
+TEST_P(ShaderStorageBufferTest31, ShaderStorageBufferReadWriteAndBufferSubData)
+{
+    constexpr char kCS[] =
+        "#version 310 es\n"
+        "layout(local_size_x=1, local_size_y=1, local_size_z=1) in;\n"
+        "layout(std140, binding = 1) buffer blockName {\n"
+        "    uint data[2];\n"
+        "} instanceName;\n"
+        "void main()\n"
+        "{\n"
+        "    instanceName.data[0] = 3u;\n"
+        "    instanceName.data[1] = 4u;\n"
+        "}\n";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+
+    glUseProgram(program.get());
+
+    int bufferAlignOffset;
+    glGetIntegerv(GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT, &bufferAlignOffset);
+
+    constexpr unsigned int kElementCount = 2;
+    // The array stride are rounded up to the base alignment of a vec4 for std140 layout.
+    constexpr unsigned int kArrayStride       = 16;
+    constexpr unsigned int kMiddlePaddingSize = 1024;
+    unsigned int kShaderUsedSize              = kElementCount * kArrayStride;
+    unsigned int kOffset1    = (kShaderUsedSize + bufferAlignOffset - 1) & ~(bufferAlignOffset - 1);
+    unsigned int kOffset2    = kOffset1 + kMiddlePaddingSize;
+    unsigned int kBufferSize = kOffset2 + kShaderUsedSize;
+
+    for (int loop = 0; loop < 2; loop++)
+    {
+        // Create shader storage buffer
+        GLBuffer shaderStorageBuffer;
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, nullptr, GL_DYNAMIC_DRAW);
+
+        // Bind shader storage buffer and dispath compute
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shaderStorageBuffer);
+        glDispatchCompute(1, 1, 1);
+        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+        glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, shaderStorageBuffer, kOffset2,
+                          kShaderUsedSize);
+        glDispatchCompute(1, 1, 1);
+        EXPECT_GL_NO_ERROR();
+
+        if (loop == 1)
+        {
+            // Make write operation finished but read operation pending. We don't care actual
+            // rendering result but just to have a unflushed rendering using the buffer so that it
+            // will appears as pending.
+            glFinish();
+            constexpr char kVS[] = R"(attribute vec4 in_attrib;
+                                    varying vec4 v_attrib;
+                                    void main()
+                                    {
+                                        v_attrib = in_attrib;
+                                        gl_Position = vec4(0.0, 0.0, 0.5, 1.0);
+                                        gl_PointSize = 100.0;
+                                    })";
+            constexpr char kFS[] = R"(precision mediump float;
+                                    varying vec4 v_attrib;
+                                    void main()
+                                    {
+                                        gl_FragColor = v_attrib;
+                                    })";
+            GLuint readProgram   = CompileProgram(kVS, kFS);
+            ASSERT_NE(readProgram, 0U);
+            GLint attribLocation = glGetAttribLocation(readProgram, "in_attrib");
+            ASSERT_NE(attribLocation, -1);
+            glUseProgram(readProgram);
+            ASSERT_GL_NO_ERROR();
+            glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT | GL_ELEMENT_ARRAY_BARRIER_BIT);
+            glBindBuffer(GL_ARRAY_BUFFER, shaderStorageBuffer);
+            glVertexAttribPointer(attribLocation, 4, GL_UNSIGNED_BYTE, GL_TRUE, 4, nullptr);
+            glEnableVertexAttribArray(attribLocation);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, shaderStorageBuffer);
+            glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+            glDrawElements(GL_POINTS, 1, GL_UNSIGNED_INT, nullptr);
+            ASSERT_GL_NO_ERROR();
+        }
+
+        // Use subData to update middle portion of data to trigger acquireAndUpdate code path in
+        // ANGLE
+        glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer);
+        constexpr unsigned int kMiddlePaddingValue = 0x55555555u;
+        std::vector<unsigned int> kMiddlePaddingValues(kMiddlePaddingSize / sizeof(unsigned int),
+                                                       kMiddlePaddingValue);
+        glBufferSubData(GL_SHADER_STORAGE_BUFFER, kOffset1, kMiddlePaddingSize,
+                        kMiddlePaddingValues.data());
+
+        // Read back shader storage buffer
+        constexpr unsigned int kExpectedValues[2] = {3u, 4u};
+        const GLbyte *ptr0                        = reinterpret_cast<const GLbyte *>(
+            glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT));
+        for (unsigned int idx = 0; idx < kElementCount; idx++)
+        {
+            EXPECT_EQ(kExpectedValues[idx],
+                      *(reinterpret_cast<const GLuint *>(ptr0 + idx * kArrayStride)));
+        }
+
+        const GLbyte *ptr1 = reinterpret_cast<const GLbyte *>(ptr0 + kOffset1);
+        for (unsigned int idx = 0; idx < kMiddlePaddingSize / sizeof(unsigned int); idx++)
+        {
+            EXPECT_EQ(kMiddlePaddingValue, reinterpret_cast<const GLuint *>(ptr1)[idx]);
+        }
+
+        const GLbyte *ptr2 = ptr1 + kMiddlePaddingSize;
+        for (unsigned int idx = 0; idx < kElementCount; idx++)
+        {
+            EXPECT_EQ(kExpectedValues[idx],
+                      *(reinterpret_cast<const GLuint *>(ptr2 + idx * kArrayStride)));
+        }
+
+        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+        EXPECT_GL_NO_ERROR();
+    }
+}
+
 // Tests modifying an existing shader storage buffer
 TEST_P(ShaderStorageBufferTest31, ShaderStorageBufferReadWriteSame)
 {
-    // Missing PBO support in Vulkan.  http://anglebug.com/3210
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     constexpr char kComputeShaderSource[] =
         R"(#version 310 es
 layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
@@ -2121,6 +2242,64 @@ void main()
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that BufferData change propagate to context state.
+TEST_P(ShaderStorageBufferTest31, DependentBufferChange)
+{
+    // Test fail on Nexus devices. http://anglebug.com/6251
+    ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
+
+    constexpr char kComputeShaderSource[] =
+        R"(#version 310 es
+layout (local_size_x=1) in;
+layout(binding=0, std140) buffer Storage0
+{
+    uint b;
+} sb_load;
+layout(binding=1, std140) buffer Storage1
+{
+    uint b;
+} sb_store;
+void main()
+{
+    sb_store.b += sb_load.b;
+}
+)";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShaderSource);
+    glUseProgram(program);
+
+    constexpr unsigned int kBufferSize                        = 4096;
+    constexpr unsigned int kBufferElementCount                = kBufferSize / sizeof(unsigned int);
+    std::array<unsigned int, kBufferElementCount> kBufferData = {};
+    GLBuffer shaderStorageBuffer[2];
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[0]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, kBufferData.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
+    kBufferData[0] = 5;  // initial value
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, kBufferData.data(), GL_STATIC_DRAW);
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, shaderStorageBuffer[0]);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shaderStorageBuffer[1]);
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, shaderStorageBuffer[0]);
+    kBufferData[0] = 7;
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, kBufferData.data(), GL_STATIC_DRAW);
+    glDispatchCompute(1, 1, 1);
+    kBufferData[0] = 11;
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, kBufferData.data(), GL_STATIC_DRAW);
+    glDispatchCompute(1, 1, 1);
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    const GLuint *ptr = reinterpret_cast<const GLuint *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT));
+    constexpr unsigned int kExpectedValue = 5 + 7 + 11;
+    EXPECT_EQ(kExpectedValue, *ptr);
+
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test that readonly binary operator for buffer variable is correctly handled.
 TEST_P(ShaderStorageBufferTest31, ReadonlyBinaryOperator)
 {
@@ -2456,6 +2635,213 @@ void main()
     EXPECT_GE(queryData, 20);
 }
 
+// Tests that shader write before pixel pack/unpack works
+TEST_P(ShaderStorageBufferTest31, ShaderStorageBufferWriteThenPixelPackUnpack)
+{
+    // Create two textures and framebuffers and make sure they are initialized.
+    GLTexture color1;
+    glBindTexture(GL_TEXTURE_2D, color1);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+
+    GLFramebuffer framebuffer1;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color1, 0);
+
+    glClearColor(255, 0, 255, 255);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+
+    GLTexture color2;
+    glBindTexture(GL_TEXTURE_2D, color2);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+
+    GLFramebuffer framebuffer2;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer2);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color2, 0);
+
+    glClearColor(0, 0, 255, 255);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    constexpr char kComputeShaderSource[] =
+        R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+layout(std430, binding = 0) buffer block {
+    uint data[2];
+} outBlock;
+void main()
+{
+    // Output red to index 0, and green to index 1.
+    outBlock.data[0] = 0xFF0000FFu;
+    outBlock.data[1] = 0xFF00FF00u;
+}
+)";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShaderSource);
+
+    glUseProgram(program);
+
+    constexpr GLsizei kBufferSize                   = sizeof(GLuint) * 2;
+    constexpr std::array<GLuint, 2> kBufferInitData = {0x01234567u, 0x89ABCDEFu};
+
+    // Create a shader storage buffer
+    GLBuffer buffer;
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, kBufferInitData.data(), GL_STATIC_DRAW);
+
+    // Bind shader storage buffer and write to it.
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    // Issue a memory barrier for pixel pack/unpack operations.
+    glMemoryBarrier(GL_PIXEL_BUFFER_BARRIER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    // Use a pixel pack operation to overwrite the output of the compute shader at index 0.  Uses
+    // the second framebuffer which is blue.
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, buffer);
+    glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    EXPECT_GL_NO_ERROR();
+
+    // Use a pixel unpack operation to re-initialize the other framebuffer with the results from the
+    // compute shader.
+    glBindTexture(GL_TEXTURE_2D, color1);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+                    reinterpret_cast<void *>(sizeof(GLuint)));
+    EXPECT_GL_NO_ERROR();
+
+    // Verify that the first framebuffer is now green
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer1);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Verify the contents of the buffer.  It should have blue as the first index and green as the
+    // second.
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    GLColor *bufferContents = static_cast<GLColor *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT));
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_EQ(GLColor::blue, bufferContents[0]);
+    EXPECT_EQ(GLColor::green, bufferContents[1]);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Tests that shader write after pixel pack/unpack works
+TEST_P(ShaderStorageBufferTest31, PixelPackUnpackThenShaderStorageBufferWrite)
+{
+    swapBuffers();
+    // Create two textures and framebuffers and make sure they are initialized.
+    GLTexture color1;
+    glBindTexture(GL_TEXTURE_2D, color1);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+
+    GLFramebuffer framebuffer1;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color1, 0);
+
+    glClearColor(255, 0, 255, 255);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+
+    GLTexture color2;
+    glBindTexture(GL_TEXTURE_2D, color2);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+
+    GLFramebuffer framebuffer2;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer2);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color2, 0);
+
+    glClearColor(0, 0, 255, 255);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    constexpr GLsizei kBufferSize                   = sizeof(GLuint) * 2;
+    constexpr std::array<GLuint, 2> kBufferInitData = {0x01234567u, 0xFF00FF00u};
+
+    // Create a shader storage buffer
+    GLBuffer buffer;
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kBufferSize, kBufferInitData.data(), GL_STATIC_DRAW);
+
+    // Use a pixel pack operation to overwrite the buffer at index 0.  Uses the second framebuffer
+    // which is blue.
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, buffer);
+    glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    EXPECT_GL_NO_ERROR();
+
+    // Use a pixel unpack operation to re-initialize the other framebuffer with the contents of the
+    // buffer, which is green.
+    glBindTexture(GL_TEXTURE_2D, color1);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+                    reinterpret_cast<void *>(sizeof(GLuint)));
+    EXPECT_GL_NO_ERROR();
+
+    // Issue a memory barrier for pixel pack/unpack operations.
+    glMemoryBarrier(GL_PIXEL_BUFFER_BARRIER_BIT);
+
+    // Issue a dispatch call that overwrites the buffer, also verifying that the results of the pack
+    // operation is correct.
+    constexpr char kComputeShaderSource[] =
+        R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+layout(std430, binding = 0) buffer block {
+    uint data[2];
+} outBlock;
+void main()
+{
+    if (outBlock.data[0] == 0xFFFF0000u)
+    {
+        outBlock.data[0] = 0x11223344u;
+    }
+    else
+    {
+        outBlock.data[0] = 0xABCDABCDu;
+    }
+    outBlock.data[1] = 0x55667788u;
+}
+)";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kComputeShaderSource);
+
+    glUseProgram(program);
+
+    // Bind shader storage buffer and write to it.
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+
+    glDispatchCompute(1, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify that the first framebuffer is now green
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer1);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Verify that the second framebuffer is still blue
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer2);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    // Verify the contents of the buffer.
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    uint32_t *bufferContents = static_cast<uint32_t *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize, GL_MAP_READ_BIT));
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_EQ(bufferContents[0], 0x11223344u);
+    EXPECT_EQ(bufferContents[1], 0x55667788u);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    EXPECT_GL_NO_ERROR();
+}
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ShaderStorageBufferTest31);
 ANGLE_INSTANTIATE_TEST_ES31(ShaderStorageBufferTest31);
 
 }  // namespace

@@ -28,7 +28,6 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "LegacyCDMSession.h"
-#include <JavaScriptCore/Uint8Array.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/text/WTFString.h>
@@ -39,9 +38,9 @@ class LegacyCDM;
 class CDMPrivateInterface;
 class MediaPlayer;
 
-using CreateCDM = WTF::Function<std::unique_ptr<CDMPrivateInterface>(LegacyCDM*)>;
-using CDMSupportsKeySystem = WTF::Function<bool(const String&)>;
-using CDMSupportsKeySystemAndMimeType = WTF::Function<bool(const String&, const String&)>;
+using CreateCDM = Function<std::unique_ptr<CDMPrivateInterface>(LegacyCDM*)>;
+using CDMSupportsKeySystem = Function<bool(const String&)>;
+using CDMSupportsKeySystemAndMimeType = Function<bool(const String&, const String&)>;
 
 class LegacyCDMClient {
 public:

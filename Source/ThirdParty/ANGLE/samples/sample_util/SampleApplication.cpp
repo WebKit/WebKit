@@ -66,13 +66,13 @@ EGLint GetDeviceTypeFromArg(const char *displayTypeArg)
         return EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
     }
 }
+}  // anonymous namespace
 
-ANGLE_MAYBE_UNUSED bool IsGLExtensionEnabled(const std::string &extName)
+bool IsGLExtensionEnabled(const std::string &extName)
 {
     return angle::CheckExtensionExists(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)),
                                        extName);
 }
-}  // anonymous namespace
 
 SampleApplication::SampleApplication(std::string name,
                                      int argc,
@@ -120,8 +120,8 @@ SampleApplication::SampleApplication(std::string name,
         mDriverType = angle::GLESDriverType::SystemWGL;
 #else
         mGLWindow = EGLWindow::New(glesMajorVersion, glesMinorVersion);
-        mEntryPointsLib.reset(
-            angle::OpenSharedLibraryWithExtension(angle::GetNativeEGLLibraryNameWithExtension()));
+        mEntryPointsLib.reset(angle::OpenSharedLibraryWithExtension(
+            angle::GetNativeEGLLibraryNameWithExtension(), angle::SearchType::SystemDir));
         mDriverType = angle::GLESDriverType::SystemEGL;
 #endif  // defined(ANGLE_PLATFORM_WINDOWS)
     }
@@ -129,7 +129,7 @@ SampleApplication::SampleApplication(std::string name,
     {
         mGLWindow = mEGLWindow = EGLWindow::New(glesMajorVersion, glesMinorVersion);
         mEntryPointsLib.reset(
-            angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ApplicationDir));
+            angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ModuleDir));
     }
 }
 
@@ -219,7 +219,7 @@ int SampleApplication::run()
 #if defined(ANGLE_ENABLE_ASSERTS)
     if (IsGLExtensionEnabled("GL_KHR_debug"))
     {
-        EnableDebugCallback(this);
+        EnableDebugCallback(nullptr, nullptr);
     }
 #endif
 
@@ -234,7 +234,7 @@ int SampleApplication::run()
 
     while (mRunning)
     {
-        double elapsedTime = mTimer.getElapsedTime();
+        double elapsedTime = mTimer.getElapsedWallClockTime();
         double deltaTime   = elapsedTime - prevTime;
 
         step(static_cast<float>(deltaTime), elapsedTime);
@@ -277,7 +277,7 @@ int SampleApplication::run()
         if (mFrameCount % 100 == 0)
         {
             printf("Rate: %0.2lf frames / second\n",
-                   static_cast<double>(mFrameCount) / mTimer.getElapsedTime());
+                   static_cast<double>(mFrameCount) / mTimer.getElapsedWallClockTime());
         }
     }
 

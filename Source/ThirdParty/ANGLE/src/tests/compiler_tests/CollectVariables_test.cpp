@@ -634,6 +634,32 @@ TEST_F(CollectFragmentVariablesTest, OutputVarESSL1FragData)
     EXPECT_GLENUM_EQ(GL_MEDIUM_FLOAT, outputVariable->precision);
 }
 
+// Test that gl_FragData built-in usage in ESSL1 fragment shader is reflected in the output
+// variables list, even if the EXT_draw_buffers extension isn't exposed. This covers the
+// usage in the dEQP test dEQP-GLES3.functional.shaders.fragdata.draw_buffers.
+TEST_F(CollectFragmentVariablesTest, OutputVarESSL1FragDataUniform)
+{
+    const std::string &fragDataShader =
+        "precision mediump float;\n"
+        "uniform int uniIndex;"
+        "void main() {\n"
+        "   gl_FragData[uniIndex] = vec4(1.0);\n"
+        "}\n";
+
+    ShBuiltInResources resources       = mTranslator->getResources();
+    const unsigned int kMaxDrawBuffers = 3u;
+    resources.MaxDrawBuffers           = kMaxDrawBuffers;
+    initTranslator(resources);
+
+    const ShaderVariable *outputVariable = nullptr;
+    validateOutputVariableForShader(fragDataShader, 0u, "gl_FragData", &outputVariable);
+    ASSERT_NE(outputVariable, nullptr);
+    ASSERT_EQ(1u, outputVariable->arraySizes.size());
+    EXPECT_EQ(kMaxDrawBuffers, outputVariable->arraySizes.back());
+    EXPECT_GLENUM_EQ(GL_FLOAT_VEC4, outputVariable->type);
+    EXPECT_GLENUM_EQ(GL_MEDIUM_FLOAT, outputVariable->precision);
+}
+
 // Test that gl_FragDataEXT built-in usage in ESSL1 fragment shader is reflected in the output
 // variables list. Also test that the precision is mediump.
 TEST_F(CollectFragmentVariablesTest, OutputVarESSL1FragDepthMediump)
@@ -863,7 +889,7 @@ TEST_F(CollectHashedVertexVariablesTest, StructUniform)
     EXPECT_FALSE(uniform.isArray());
     EXPECT_EQ("u", uniform.name);
     EXPECT_EQ("webgl_1", uniform.mappedName);
-    EXPECT_EQ("sType", uniform.structName);
+    EXPECT_EQ("sType", uniform.structOrBlockName);
     EXPECT_TRUE(uniform.staticUse);
     EXPECT_TRUE(uniform.active);
 
@@ -907,7 +933,7 @@ TEST_F(CollectHashedVertexVariablesTest, NamelessStructUniform)
     EXPECT_FALSE(uniform.isArray());
     EXPECT_EQ("u", uniform.name);
     EXPECT_EQ("webgl_1", uniform.mappedName);
-    EXPECT_EQ("", uniform.structName);
+    EXPECT_EQ("", uniform.structOrBlockName);
     EXPECT_TRUE(uniform.staticUse);
     EXPECT_TRUE(uniform.active);
 
@@ -1038,26 +1064,26 @@ TEST_F(CollectGeometryVariablesTest, CollectGLInFields)
     compile(shaderString);
 
     EXPECT_EQ(1u, mTranslator->getOutputVaryings().size());
-    EXPECT_TRUE(mTranslator->getInputVaryings().empty());
 
-    const auto &inBlocks = mTranslator->getInBlocks();
-    ASSERT_EQ(1u, inBlocks.size());
+    const std::vector<ShaderVariable> &inVaryings = mTranslator->getInputVaryings();
+    ASSERT_EQ(1u, inVaryings.size());
 
-    const InterfaceBlock *inBlock = &inBlocks[0];
-    EXPECT_EQ("gl_PerVertex", inBlock->name);
-    EXPECT_EQ("gl_in", inBlock->instanceName);
-    EXPECT_TRUE(inBlock->staticUse);
-    EXPECT_TRUE(inBlock->active);
-    EXPECT_TRUE(inBlock->isBuiltIn());
+    const ShaderVariable &glIn = inVaryings[0];
+    EXPECT_EQ("gl_in", glIn.name);
+    EXPECT_EQ("gl_PerVertex", glIn.structOrBlockName);
+    EXPECT_TRUE(glIn.staticUse);
+    EXPECT_TRUE(glIn.active);
+    EXPECT_TRUE(glIn.isBuiltIn());
 
-    ASSERT_EQ(1u, inBlock->fields.size());
+    ASSERT_EQ(1u, glIn.fields.size());
 
-    const ShaderVariable &glPositionField = inBlock->fields[0];
+    const ShaderVariable &glPositionField = glIn.fields[0];
     EXPECT_EQ("gl_Position", glPositionField.name);
     EXPECT_FALSE(glPositionField.isArray());
     EXPECT_FALSE(glPositionField.isStruct());
     EXPECT_TRUE(glPositionField.staticUse);
-    EXPECT_TRUE(glPositionField.active);
+    // Tracking for "active" not set up currently.
+    // EXPECT_TRUE(glPositionField.active);
     EXPECT_TRUE(glPositionField.isBuiltIn());
     EXPECT_GLENUM_EQ(GL_HIGH_FLOAT, glPositionField.precision);
     EXPECT_GLENUM_EQ(GL_FLOAT_VEC4, glPositionField.type);
@@ -1081,12 +1107,12 @@ TEST_F(CollectGeometryVariablesTest, GLInArraySize)
     {
         compileGeometryShaderWithInputPrimitive(kInputPrimitives[i], "", functionBody);
 
-        const auto &inBlocks = mTranslator->getInBlocks();
-        ASSERT_EQ(1u, inBlocks.size());
+        const std::vector<ShaderVariable> &inVaryings = mTranslator->getInputVaryings();
+        ASSERT_EQ(1u, inVaryings.size());
 
-        const InterfaceBlock *inBlock = &inBlocks[0];
-        ASSERT_EQ("gl_in", inBlock->instanceName);
-        EXPECT_EQ(kArraySizeForInputPrimitives[i], inBlock->arraySize);
+        const ShaderVariable &glIn = inVaryings[0];
+        ASSERT_EQ("gl_in", glIn.name);
+        EXPECT_EQ(kArraySizeForInputPrimitives[i], glIn.arraySizes[0]);
     }
 }
 
@@ -1107,20 +1133,19 @@ TEST_F(CollectGeometryVariablesTest, CollectPrimitiveIDIn)
     compile(shaderString);
 
     EXPECT_EQ(1u, mTranslator->getOutputVaryings().size());
-    ASSERT_TRUE(mTranslator->getInBlocks().empty());
 
-    const auto &inputVaryings = mTranslator->getInputVaryings();
+    const std::vector<ShaderVariable> &inputVaryings = mTranslator->getInputVaryings();
     ASSERT_EQ(1u, inputVaryings.size());
 
-    const ShaderVariable *varying = &inputVaryings[0];
-    EXPECT_EQ("gl_PrimitiveIDIn", varying->name);
-    EXPECT_FALSE(varying->isArray());
-    EXPECT_FALSE(varying->isStruct());
-    EXPECT_TRUE(varying->staticUse);
-    EXPECT_TRUE(varying->active);
-    EXPECT_TRUE(varying->isBuiltIn());
-    EXPECT_GLENUM_EQ(GL_HIGH_INT, varying->precision);
-    EXPECT_GLENUM_EQ(GL_INT, varying->type);
+    const ShaderVariable &varying = inputVaryings[0];
+    EXPECT_EQ("gl_PrimitiveIDIn", varying.name);
+    EXPECT_FALSE(varying.isArray());
+    EXPECT_FALSE(varying.isStruct());
+    EXPECT_TRUE(varying.staticUse);
+    EXPECT_TRUE(varying.active);
+    EXPECT_TRUE(varying.isBuiltIn());
+    EXPECT_GLENUM_EQ(GL_HIGH_INT, varying.precision);
+    EXPECT_GLENUM_EQ(GL_INT, varying.type);
 }
 
 // Test collecting gl_InvocationID in a geometry shader.
@@ -1140,20 +1165,19 @@ TEST_F(CollectGeometryVariablesTest, CollectInvocationID)
     compile(shaderString);
 
     EXPECT_EQ(1u, mTranslator->getOutputVaryings().size());
-    ASSERT_TRUE(mTranslator->getInBlocks().empty());
 
-    const auto &inputVaryings = mTranslator->getInputVaryings();
+    const std::vector<ShaderVariable> &inputVaryings = mTranslator->getInputVaryings();
     ASSERT_EQ(1u, inputVaryings.size());
 
-    const ShaderVariable *varying = &inputVaryings[0];
-    EXPECT_EQ("gl_InvocationID", varying->name);
-    EXPECT_FALSE(varying->isArray());
-    EXPECT_FALSE(varying->isStruct());
-    EXPECT_TRUE(varying->staticUse);
-    EXPECT_TRUE(varying->active);
-    EXPECT_TRUE(varying->isBuiltIn());
-    EXPECT_GLENUM_EQ(GL_HIGH_INT, varying->precision);
-    EXPECT_GLENUM_EQ(GL_INT, varying->type);
+    const ShaderVariable &varying = inputVaryings[0];
+    EXPECT_EQ("gl_InvocationID", varying.name);
+    EXPECT_FALSE(varying.isArray());
+    EXPECT_FALSE(varying.isStruct());
+    EXPECT_TRUE(varying.staticUse);
+    EXPECT_TRUE(varying.active);
+    EXPECT_TRUE(varying.isBuiltIn());
+    EXPECT_GLENUM_EQ(GL_HIGH_INT, varying.precision);
+    EXPECT_GLENUM_EQ(GL_INT, varying.type);
 }
 
 // Test collecting gl_in in a geometry shader when gl_in is indexed by an expression.
@@ -1174,16 +1198,28 @@ TEST_F(CollectGeometryVariablesTest, CollectGLInIndexedByExpression)
 
     EXPECT_EQ(1u, mTranslator->getOutputVaryings().size());
 
-    const auto &inBlocks = mTranslator->getInBlocks();
-    ASSERT_EQ(1u, inBlocks.size());
-    const InterfaceBlock *inBlock = &inBlocks[0];
-    EXPECT_EQ("gl_PerVertex", inBlock->name);
-    EXPECT_EQ("gl_in", inBlock->instanceName);
+    const std::vector<ShaderVariable> &inVaryings = mTranslator->getInputVaryings();
+    ASSERT_EQ(2u, inVaryings.size());
 
-    const auto &inputVaryings = mTranslator->getInputVaryings();
-    ASSERT_EQ(1u, inputVaryings.size());
-    const ShaderVariable *glInvocationID = &inputVaryings[0];
-    EXPECT_EQ("gl_InvocationID", glInvocationID->name);
+    bool foundGLIn         = false;
+    bool foundInvocationID = false;
+
+    for (const ShaderVariable &varying : inVaryings)
+    {
+        if (varying.name == "gl_in")
+        {
+            foundGLIn = true;
+            EXPECT_TRUE(varying.isShaderIOBlock);
+            EXPECT_EQ("gl_PerVertex", varying.structOrBlockName);
+        }
+        else if (varying.name == "gl_InvocationID")
+        {
+            foundInvocationID = true;
+        }
+    }
+
+    EXPECT_TRUE(foundGLIn);
+    EXPECT_TRUE(foundInvocationID);
 }
 
 // Test collecting gl_Position in a geometry shader.
@@ -1202,20 +1238,19 @@ TEST_F(CollectGeometryVariablesTest, CollectPosition)
     compile(shaderString);
 
     ASSERT_TRUE(mTranslator->getInputVaryings().empty());
-    ASSERT_TRUE(mTranslator->getInBlocks().empty());
 
-    const auto &outputVaryings = mTranslator->getOutputVaryings();
+    const std::vector<ShaderVariable> &outputVaryings = mTranslator->getOutputVaryings();
     ASSERT_EQ(1u, outputVaryings.size());
 
-    const ShaderVariable *varying = &outputVaryings[0];
-    EXPECT_EQ("gl_Position", varying->name);
-    EXPECT_FALSE(varying->isArray());
-    EXPECT_FALSE(varying->isStruct());
-    EXPECT_TRUE(varying->staticUse);
-    EXPECT_TRUE(varying->active);
-    EXPECT_TRUE(varying->isBuiltIn());
-    EXPECT_GLENUM_EQ(GL_HIGH_FLOAT, varying->precision);
-    EXPECT_GLENUM_EQ(GL_FLOAT_VEC4, varying->type);
+    const ShaderVariable &varying = outputVaryings[0];
+    EXPECT_EQ("gl_Position", varying.name);
+    EXPECT_FALSE(varying.isArray());
+    EXPECT_FALSE(varying.isStruct());
+    EXPECT_TRUE(varying.staticUse);
+    EXPECT_TRUE(varying.active);
+    EXPECT_TRUE(varying.isBuiltIn());
+    EXPECT_GLENUM_EQ(GL_HIGH_FLOAT, varying.precision);
+    EXPECT_GLENUM_EQ(GL_FLOAT_VEC4, varying.type);
 }
 
 // Test collecting gl_PrimitiveID in a geometry shader.
@@ -1234,20 +1269,19 @@ TEST_F(CollectGeometryVariablesTest, CollectPrimitiveID)
     compile(shaderString);
 
     ASSERT_TRUE(mTranslator->getInputVaryings().empty());
-    ASSERT_TRUE(mTranslator->getInBlocks().empty());
 
-    const auto &OutputVaryings = mTranslator->getOutputVaryings();
-    ASSERT_EQ(1u, OutputVaryings.size());
+    const std::vector<ShaderVariable> &outputVaryings = mTranslator->getOutputVaryings();
+    ASSERT_EQ(1u, outputVaryings.size());
 
-    const ShaderVariable *varying = &OutputVaryings[0];
-    EXPECT_EQ("gl_PrimitiveID", varying->name);
-    EXPECT_FALSE(varying->isArray());
-    EXPECT_FALSE(varying->isStruct());
-    EXPECT_TRUE(varying->staticUse);
-    EXPECT_TRUE(varying->active);
-    EXPECT_TRUE(varying->isBuiltIn());
-    EXPECT_GLENUM_EQ(GL_HIGH_INT, varying->precision);
-    EXPECT_GLENUM_EQ(GL_INT, varying->type);
+    const ShaderVariable &varying = outputVaryings[0];
+    EXPECT_EQ("gl_PrimitiveID", varying.name);
+    EXPECT_FALSE(varying.isArray());
+    EXPECT_FALSE(varying.isStruct());
+    EXPECT_TRUE(varying.staticUse);
+    EXPECT_TRUE(varying.active);
+    EXPECT_TRUE(varying.isBuiltIn());
+    EXPECT_GLENUM_EQ(GL_HIGH_INT, varying.precision);
+    EXPECT_GLENUM_EQ(GL_INT, varying.type);
 }
 
 // Test collecting gl_Layer in a geometry shader.
@@ -1266,20 +1300,19 @@ TEST_F(CollectGeometryVariablesTest, CollectLayer)
     compile(shaderString);
 
     ASSERT_TRUE(mTranslator->getInputVaryings().empty());
-    ASSERT_TRUE(mTranslator->getInBlocks().empty());
 
-    const auto &OutputVaryings = mTranslator->getOutputVaryings();
-    ASSERT_EQ(1u, OutputVaryings.size());
+    const auto &outputVaryings = mTranslator->getOutputVaryings();
+    ASSERT_EQ(1u, outputVaryings.size());
 
-    const ShaderVariable *varying = &OutputVaryings[0];
-    EXPECT_EQ("gl_Layer", varying->name);
-    EXPECT_FALSE(varying->isArray());
-    EXPECT_FALSE(varying->isStruct());
-    EXPECT_TRUE(varying->staticUse);
-    EXPECT_TRUE(varying->active);
-    EXPECT_TRUE(varying->isBuiltIn());
-    EXPECT_GLENUM_EQ(GL_HIGH_INT, varying->precision);
-    EXPECT_GLENUM_EQ(GL_INT, varying->type);
+    const ShaderVariable &varying = outputVaryings[0];
+    EXPECT_EQ("gl_Layer", varying.name);
+    EXPECT_FALSE(varying.isArray());
+    EXPECT_FALSE(varying.isStruct());
+    EXPECT_TRUE(varying.staticUse);
+    EXPECT_TRUE(varying.active);
+    EXPECT_TRUE(varying.isBuiltIn());
+    EXPECT_GLENUM_EQ(GL_HIGH_INT, varying.precision);
+    EXPECT_GLENUM_EQ(GL_INT, varying.type);
 }
 
 // Test collecting gl_PrimitiveID in a fragment shader.

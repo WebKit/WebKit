@@ -9,17 +9,17 @@
 // be a pain to implement without the use of macros.
 //
 
-#include <metal_pack>
+@@#include <metal_pack>
 
 #include "common.h"
 #include "format_autogen.h"
 
 using namespace rx::mtl_shader;
 
-constant int kCopyFormatType [[function_constant(1)]];
+constant int kCopyFormatType [[function_constant(10)]];
 
 /* -------- copy pixel data between buffer and texture ---------*/
-constant int kCopyTextureType [[function_constant(2)]];
+constant int kCopyTextureType [[function_constant(20)]];
 constant bool kCopyTextureType2D      = kCopyTextureType == kTextureType2D;
 constant bool kCopyTextureType2DArray = kCopyTextureType == kTextureType2DArray;
 constant bool kCopyTextureType2DMS    = kCopyTextureType == kTextureType2DMultisample;

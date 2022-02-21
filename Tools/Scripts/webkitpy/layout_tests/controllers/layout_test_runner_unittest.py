@@ -126,7 +126,8 @@ class LayoutTestRunnerTests(unittest.TestCase):
         runner._options.world_leaks = False
         test = 'failures/expected/reftest.html'
         leak_test = 'failures/expected/leak.html'
-        expectations = TestExpectations(runner._port, tests=[test, leak_test])
+        timeout_test = 'failures/expected/timeout.html'
+        expectations = TestExpectations(runner._port, tests=[test, leak_test, timeout_test])
         expectations.parse_all_expectations()
         runner._expectations = expectations
 
@@ -147,6 +148,24 @@ class LayoutTestRunnerTests(unittest.TestCase):
         runner.update_summary_with_result(result)
         self.assertEqual(1, runner._current_run_results.expected)
         self.assertEqual(0, runner._current_run_results.unexpected)
+
+        runner._current_run_results = TestRunResults(expectations, 3)
+        result = TestResult(timeout_test, failures=[])
+        runner.update_summary_with_result(result)
+        self.assertEqual(0, runner._current_run_results.expected)
+        self.assertEqual(1, runner._current_run_results.unexpected)
+        result = TestResult(timeout_test, failures=[test_failures.FailureTextMismatch()])
+        runner.update_summary_with_result(result)
+        self.assertEqual(0, runner._current_run_results.expected)
+        self.assertEqual(2, runner._current_run_results.unexpected)
+        result = TestResult(timeout_test, failures=[])
+        runner.update_summary_with_result(result)
+        self.assertEqual(0, runner._current_run_results.expected)
+        self.assertEqual(3, runner._current_run_results.unexpected)
+        result = TestResult(timeout_test, failures=[])
+        runner.update_summary_with_result(result)
+        self.assertEqual(0, runner._current_run_results.expected)
+        self.assertEqual(4, runner._current_run_results.unexpected)
 
     def test_servers_started(self):
 

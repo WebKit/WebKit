@@ -29,6 +29,7 @@
 #import "WebKit2Initialize.h"
 #import <JavaScriptCore/ExecutableAllocator.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
 // FIXME: This should be moved to an SPI header.
@@ -40,7 +41,6 @@ extern "C" OS_NOTHROW void voucher_replace_default_voucher(void);
 
 #define WEBCONTENT_SERVICE_INITIALIZER WebContentServiceInitializer
 #define NETWORK_SERVICE_INITIALIZER NetworkServiceInitializer
-#define PLUGIN_SERVICE_INITIALIZER PluginServiceInitializer
 #define GPU_SERVICE_INITIALIZER GPUServiceInitializer
 #define WEBAUTHN_SERVICE_INITIALIZER WebAuthnServiceInitializer
 
@@ -64,6 +64,7 @@ public:
     virtual bool getClientBundleIdentifier(String& clientBundleIdentifier);
     virtual bool getClientSDKVersion(uint32_t& clientSDKVersion);
     virtual bool getClientProcessName(String& clientProcessName);
+    virtual bool getLinkedOnOrAfterOverride(std::optional<LinkedOnOrAfterOverride>&);
     virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData);
 
 protected:
@@ -90,6 +91,13 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     if (initializerMessage) {
         if (xpc_dictionary_get_bool(initializerMessage, "configure-jsc-for-testing"))
             JSC::Config::configureForTesting();
+        if (xpc_dictionary_get_bool(initializerMessage, "enable-captive-portal-mode")) {
+            JSC::ExecutableAllocator::setJITEnabled(false);
+            JSC::Options::initialize();
+            JSC::Options::AllowUnfinalizedAccessScope scope;
+            JSC::Options::useGenerationalGC() = false;
+            JSC::Options::useConcurrentGC() = false;
+        }
         if (xpc_dictionary_get_bool(initializerMessage, "disable-jit"))
             JSC::ExecutableAllocator::setJITEnabled(false);
         if (xpc_dictionary_get_bool(initializerMessage, "enable-shared-array-buffer")) {
@@ -125,6 +133,8 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
 
     // The host process may not have a bundle identifier (e.g. a command line app), so don't require one.
     delegate.getClientBundleIdentifier(parameters.clientBundleIdentifier);
+    
+    delegate.getLinkedOnOrAfterOverride(parameters.clientLinkedOnOrAfterOverride);
 
     if (!delegate.getClientSDKVersion(parameters.clientSDKVersion))
         exit(EXIT_FAILURE);

@@ -85,7 +85,7 @@ TEST(AnaBitrateControllerTest, ChangeBitrateOnTargetBitrateChanged) {
                                                       1000 /
                                                       kInitialFrameLengthMs;
   // Frame length unchanged, bitrate changes in accordance with
-  // |metrics.target_audio_bitrate_bps| and |metrics.overhead_bytes_per_packet|.
+  // `metrics.target_audio_bitrate_bps` and `metrics.overhead_bytes_per_packet`.
   UpdateNetworkMetrics(&controller, kTargetBitrateBps, kOverheadBytesPerPacket);
   CheckDecision(&controller, kInitialFrameLengthMs, kBitrateBps);
 }

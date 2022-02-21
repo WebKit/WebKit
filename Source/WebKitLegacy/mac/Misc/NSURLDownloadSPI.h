@@ -23,7 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+#import <WebKitLegacy/WebKitAvailability.h>
+
+#if defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST
+#import <CFNetwork/CFNSURLConnection.h>
+#elif !TARGET_OS_IPHONE || (defined(USE_APPLE_INTERNAL_SDK) && USE_APPLE_INTERNAL_SDK)
+#import <Foundation/NSURLDownload.h>
+#else
+
 @interface NSURLDownload : NSObject
 @end
 
 @protocol NSURLDownloadDelegate;
+
+#endif

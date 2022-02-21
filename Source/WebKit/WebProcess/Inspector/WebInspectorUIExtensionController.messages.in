@@ -23,12 +23,16 @@
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
 messages -> WebInspectorUIExtensionController NotRefCounted {
-    RegisterExtension(String extensionID, String displayName) -> (Expected<bool, Inspector::ExtensionError> result) Async
-    UnregisterExtension(String extensionID) -> (Expected<bool, Inspector::ExtensionError> result) Async
+    RegisterExtension(String extensionID, String extensionBundleIdentifier, String displayName) -> (Expected<void, Inspector::ExtensionError> result) Async
+    UnregisterExtension(String extensionID) -> (Expected<void, Inspector::ExtensionError> result) Async
 
     CreateTabForExtension(String extensionID, String tabName, URL tabIconURL, URL sourceURL) -> (Expected<String, Inspector::ExtensionError> result) Async
     EvaluateScriptForExtension(String extensionID, String scriptSource, std::optional<URL> frameURL, std::optional<URL> contextSecurityOrigin, std::optional<bool> useContentScriptContext) -> (IPC::DataReference resultData, std::optional<WebCore::ExceptionDetails> details, std::optional<Inspector::ExtensionError> error) Async
     ReloadForExtension(String extensionID, std::optional<bool> ignoreCache, std::optional<String> userAgent, std::optional<String> injectedScript) -> (std::optional<Inspector::ExtensionError> error) Async
+    ShowExtensionTab(String extensionTabIdentifier) -> (Expected<void, Inspector::ExtensionError> result) Async
+    
+    // For testing.
+    EvaluateScriptInExtensionTab(String extensionTabID, String scriptSource) -> (IPC::DataReference resultData, std::optional<WebCore::ExceptionDetails> details, std::optional<Inspector::ExtensionError> error) Async
 }
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

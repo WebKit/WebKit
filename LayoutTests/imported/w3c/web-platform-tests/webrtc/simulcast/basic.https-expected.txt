@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Basic simulcast setup with three spatial layers Test timed out
+PASS Basic simulcast setup with two spatial layers
 

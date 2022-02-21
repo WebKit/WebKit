@@ -1,0 +1,6 @@
+2d.path.roundrect.3.radii.2.dompointinit
+Verify that when three radii are given to roundRect(), the second radius, specified as a DOMPoint, applies to the top-right and bottom-left corners.
+Actual output:
+
+FAIL Verify that when three radii are given to roundRect(), the second radius, specified as a DOMPoint, applies to the top-right and bottom-left corners. ctx.roundRect is not a function. (In 'ctx.roundRect(0, 0, 100, 50, [0, {x: 40, y: 20}, 0])', 'ctx.roundRect' is undefined)
+

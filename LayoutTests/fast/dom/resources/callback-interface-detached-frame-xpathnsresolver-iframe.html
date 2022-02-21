@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<script>
+const ns = "http://www.w3.org/2000/foo";
+
+function createThunkWithCallableResolver(key, FunctionConstructor = Function) {
+    const resolver = new FunctionConstructor(`
+        top["${key}"]++;
+        return "${ns}";
+    `);
+
+    return (parentDocument, contextNode) => parentDocument.evaluate("/foo:bar", contextNode, resolver);
+}
+
+function createThunkWithNonCallableResolver0(key) {
+    const resolver = {
+        lookupNamespaceURI: new parent.Function(`
+            top["${key}"]++;
+            return "${ns}";
+        `),
+    };
+
+    return (parentDocument, contextNode) => parentDocument.evaluate("/foo:bar", contextNode, resolver);
+}
+
+function createThunkWithNonCallableResolver1(key, iframe) {
+    const resolver = {
+        get lookupNamespaceURI() {
+            iframe.remove();
+
+            return () => {
+                top[key]++;
+                return ns;
+            };
+        },
+    };
+
+    return (parentDocument, contextNode) => parentDocument.evaluate("/foo:bar", contextNode, resolver);
+}
+
+function createThunkWithNonCallableResolver2() {
+    const resolver = new parent.Object;
+    resolver.lookupNamespaceURI = function() {
+        thunk.callbackInvocations++;
+        return ns;
+    };
+
+    const thunk = (parentDocument, contextNode) => parentDocument.evaluate("/foo:bar", contextNode, resolver);
+    thunk.callbackInvocations = 0;
+
+    return thunk;
+}
+</script>

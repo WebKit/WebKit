@@ -65,7 +65,7 @@ FillLayer::FillLayer(FillLayerType type)
     , m_composite(static_cast<unsigned>(FillLayer::initialFillComposite(type)))
     , m_sizeType(static_cast<unsigned>(FillSizeType::None))
     , m_blendMode(static_cast<unsigned>(FillLayer::initialFillBlendMode(type)))
-    , m_maskSourceType(static_cast<unsigned>(FillLayer::initialFillMaskSourceType(type)))
+    , m_maskMode(static_cast<unsigned>(FillLayer::initialFillMaskMode(type)))
     , m_imageSet(false)
     , m_attachmentSet(false)
     , m_clipSet(false)
@@ -80,7 +80,7 @@ FillLayer::FillLayer(FillLayerType type)
     , m_backgroundYOrigin(static_cast<unsigned>(Edge::Top))
     , m_compositeSet(type == FillLayerType::Mask)
     , m_blendModeSet(false)
-    , m_maskSourceTypeSet(false)
+    , m_maskModeSet(false)
     , m_type(static_cast<unsigned>(type))
 {
 }
@@ -98,7 +98,7 @@ FillLayer::FillLayer(const FillLayer& o)
     , m_composite(o.m_composite)
     , m_sizeType(o.m_sizeType)
     , m_blendMode(o.m_blendMode)
-    , m_maskSourceType(o.m_maskSourceType)
+    , m_maskMode(o.m_maskMode)
     , m_imageSet(o.m_imageSet)
     , m_attachmentSet(o.m_attachmentSet)
     , m_clipSet(o.m_clipSet)
@@ -113,7 +113,7 @@ FillLayer::FillLayer(const FillLayer& o)
     , m_backgroundYOrigin(o.m_backgroundYOrigin)
     , m_compositeSet(o.m_compositeSet)
     , m_blendModeSet(o.m_blendModeSet)
-    , m_maskSourceTypeSet(o.m_maskSourceTypeSet)
+    , m_maskModeSet(o.m_maskModeSet)
     , m_type(o.m_type)
 {
     if (o.m_next)
@@ -148,7 +148,7 @@ FillLayer& FillLayer::operator=(const FillLayer& o)
     m_repeatX = o.m_repeatX;
     m_repeatY = o.m_repeatY;
     m_sizeType = o.m_sizeType;
-    m_maskSourceType = o.m_maskSourceType;
+    m_maskMode = o.m_maskMode;
 
     m_imageSet = o.m_imageSet;
     m_attachmentSet = o.m_attachmentSet;
@@ -160,7 +160,7 @@ FillLayer& FillLayer::operator=(const FillLayer& o)
     m_repeatYSet = o.m_repeatYSet;
     m_xPosSet = o.m_xPosSet;
     m_yPosSet = o.m_yPosSet;
-    m_maskSourceTypeSet = o.m_maskSourceTypeSet;
+    m_maskModeSet = o.m_maskModeSet;
 
     m_type = o.m_type;
 
@@ -175,7 +175,7 @@ bool FillLayer::operator==(const FillLayer& o) const
         && m_backgroundXOrigin == o.m_backgroundXOrigin && m_backgroundYOrigin == o.m_backgroundYOrigin
         && m_attachment == o.m_attachment && m_clip == o.m_clip && m_composite == o.m_composite
         && m_blendMode == o.m_blendMode && m_origin == o.m_origin && m_repeatX == o.m_repeatX
-        && m_repeatY == o.m_repeatY && m_sizeType == o.m_sizeType && m_maskSourceType == o.m_maskSourceType
+        && m_repeatY == o.m_repeatY && m_sizeType == o.m_sizeType && m_maskMode == o.m_maskMode
         && m_sizeLength == o.m_sizeLength && m_type == o.m_type
         && ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
 }
@@ -321,7 +321,7 @@ static inline FillBox clipMax(FillBox clipA, FillBox clipB)
         return FillBox::Padding;
     if (clipA == FillBox::Content || clipB == FillBox::Content)
         return FillBox::Content;
-    return FillBox::Text;
+    return FillBox::NoClip;
 }
 
 void FillLayer::computeClipMax() const
@@ -329,7 +329,7 @@ void FillLayer::computeClipMax() const
     Vector<const FillLayer*, 4> layers;
     for (auto* layer = this; layer; layer = layer->m_next.get())
         layers.append(layer);
-    FillBox computedClipMax = FillBox::Text;
+    FillBox computedClipMax = FillBox::NoClip;
     for (unsigned i = layers.size(); i; --i) {
         auto& layer = *layers[i - 1];
         computedClipMax = clipMax(computedClipMax, layer.clip());
@@ -425,7 +425,7 @@ TextStream& operator<<(TextStream& ts, const FillLayer& layer)
 
     ts.dumpProperty("composite", layer.composite());
     ts.dumpProperty("blend-mode", layer.blendMode());
-    ts.dumpProperty("mask-type", layer.maskSourceType());
+    ts.dumpProperty("mask-mode", layer.maskMode());
 
     if (layer.next())
         ts << *layer.next();

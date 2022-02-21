@@ -30,7 +30,7 @@ void VideoBroadcaster::AddOrUpdateSink(
   RTC_DCHECK(sink != nullptr);
   webrtc::MutexLock lock(&sinks_and_wants_lock_);
   if (!FindSinkPair(sink)) {
-    // |Sink| is a new sink, which didn't receive previous frame.
+    // `Sink` is a new sink, which didn't receive previous frame.
     previous_frame_sent_to_all_sinks_ = false;
   }
   VideoSourceBase::AddOrUpdateSink(sink, wants);

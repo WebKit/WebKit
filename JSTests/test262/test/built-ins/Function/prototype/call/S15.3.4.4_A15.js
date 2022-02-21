@@ -8,4 +8,4 @@ description: If IsCallable(func) is false, then throw a TypeError exception.
 
 assert.throws(TypeError, function() {
   Function.prototype.call.call({}, {});
-});
+}, 'Function.prototype.call.call({}, {}) throws a TypeError exception');

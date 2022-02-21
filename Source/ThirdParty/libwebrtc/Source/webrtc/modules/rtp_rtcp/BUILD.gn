@@ -52,6 +52,7 @@ rtc_library("rtp_rtcp_format") {
     "source/rtp_packet.h",
     "source/rtp_packet_received.h",
     "source/rtp_packet_to_send.h",
+    "source/rtp_util.h",
     "source/rtp_video_layers_allocation_extension.h",
   ]
   sources = [
@@ -96,6 +97,7 @@ rtc_library("rtp_rtcp_format") {
     "source/rtp_packet.cc",
     "source/rtp_packet_received.cc",
     "source/rtp_packet_to_send.cc",
+    "source/rtp_util.cc",
     "source/rtp_video_layers_allocation_extension.cc",
   ]
 
@@ -116,6 +118,7 @@ rtc_library("rtp_rtcp_format") {
     "../../api/video:video_layers_allocation",
     "../../api/video:video_rtp_headers",
     "../../common_video",
+    "../../rtc_base:bitstream_reader",
     "../../rtc_base:checks",
     "../../rtc_base:divide_round",
     "../../rtc_base:rtc_base_approved",
@@ -138,12 +141,14 @@ rtc_library("rtp_rtcp") {
     "include/receive_statistics.h",
     "include/remote_ntp_time_estimator.h",
     "include/ulpfec_receiver.h",
-    "source/absolute_capture_time_receiver.cc",
-    "source/absolute_capture_time_receiver.h",
+    "source/absolute_capture_time_interpolator.cc",
+    "source/absolute_capture_time_interpolator.h",
     "source/absolute_capture_time_sender.cc",
     "source/absolute_capture_time_sender.h",
     "source/active_decode_targets_helper.cc",
     "source/active_decode_targets_helper.h",
+    "source/capture_clock_offset_updater.cc",
+    "source/capture_clock_offset_updater.h",
     "source/create_video_rtp_depacketizer.cc",
     "source/create_video_rtp_depacketizer.h",
     "source/dtmf_queue.cc",
@@ -207,8 +212,6 @@ rtc_library("rtp_rtcp") {
     "source/rtp_sender_video_frame_transformer_delegate.h",
     "source/rtp_sequence_number_map.cc",
     "source/rtp_sequence_number_map.h",
-    "source/rtp_utility.cc",
-    "source/rtp_utility.h",
     "source/source_tracker.cc",
     "source/source_tracker.h",
     "source/time_util.cc",
@@ -285,6 +288,7 @@ rtc_library("rtp_rtcp") {
     "../../logging:rtc_event_audio",
     "../../logging:rtc_event_rtp_rtcp",
     "../../modules/audio_coding:audio_coding_module_typedefs",
+    "../../rtc_base:bitstream_reader",
     "../../rtc_base:checks",
     "../../rtc_base:divide_round",
     "../../rtc_base:gtest_prod",
@@ -292,6 +296,7 @@ rtc_library("rtp_rtcp") {
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_numerics",
     "../../rtc_base:safe_minmax",
+    "../../rtc_base/containers:flat_map",
     "../../rtc_base/experiments:field_trial_parser",
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/system:no_unique_address",
@@ -367,9 +372,13 @@ rtc_library("rtcp_transceiver") {
     "../../api:rtp_headers",
     "../../api:transport_api",
     "../../api/task_queue",
+    "../../api/units:data_rate",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
     "../../api/video:video_bitrate_allocation",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
+    "../../rtc_base/containers:flat_map",
     "../../rtc_base/task_utils:repeating_task",
     "../../rtc_base/task_utils:to_queued_task",
     "../../system_wrappers",
@@ -436,6 +445,14 @@ rtc_library("mock_rtp_rtcp") {
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
+rtc_library("rtp_packetizer_av1_test_helper") {
+  testonly = true
+  sources = [
+    "source/rtp_packetizer_av1_test_helper.cc",
+    "source/rtp_packetizer_av1_test_helper.h",
+  ]
+}
+
 if (rtc_include_tests) {
   if (!build_with_chromium) {
     rtc_executable("test_packet_masks_metrics") {
@@ -473,16 +490,18 @@ if (rtc_include_tests) {
     testonly = true
 
     sources = [
-      "source/absolute_capture_time_receiver_unittest.cc",
+      "source/absolute_capture_time_interpolator_unittest.cc",
       "source/absolute_capture_time_sender_unittest.cc",
       "source/active_decode_targets_helper_unittest.cc",
       "source/byte_io_unittest.cc",
+      "source/capture_clock_offset_updater_unittest.cc",
       "source/fec_private_tables_bursty_unittest.cc",
       "source/flexfec_header_reader_writer_unittest.cc",
       "source/flexfec_receiver_unittest.cc",
       "source/flexfec_sender_unittest.cc",
       "source/nack_rtx_unittest.cc",
       "source/packet_loss_stats_unittest.cc",
+      "source/packet_sequencer_unittest.cc",
       "source/receive_statistics_unittest.cc",
       "source/remote_ntp_time_estimator_unittest.cc",
       "source/rtcp_nack_stats_unittest.cc",
@@ -536,7 +555,7 @@ if (rtc_include_tests) {
       "source/rtp_sender_unittest.cc",
       "source/rtp_sender_video_unittest.cc",
       "source/rtp_sequence_number_map_unittest.cc",
-      "source/rtp_utility_unittest.cc",
+      "source/rtp_util_unittest.cc",
       "source/rtp_video_layers_allocation_extension_unittest.cc",
       "source/source_tracker_unittest.cc",
       "source/time_util_unittest.cc",
@@ -554,6 +573,7 @@ if (rtc_include_tests) {
       ":fec_test_helper",
       ":mock_rtp_rtcp",
       ":rtcp_transceiver",
+      ":rtp_packetizer_av1_test_helper",
       ":rtp_rtcp",
       ":rtp_rtcp_format",
       ":rtp_rtcp_legacy",
@@ -568,7 +588,9 @@ if (rtc_include_tests) {
       "../../api/rtc_event_log",
       "../../api/transport:field_trial_based_config",
       "../../api/transport/rtp:dependency_descriptor",
+      "../../api/units:data_rate",
       "../../api/units:data_size",
+      "../../api/units:time_delta",
       "../../api/units:timestamp",
       "../../api/video:encoded_image",
       "../../api/video:video_bitrate_allocation",

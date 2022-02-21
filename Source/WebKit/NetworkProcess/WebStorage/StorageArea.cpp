@@ -37,7 +37,7 @@ namespace WebKit {
 using namespace WebCore;
 
 StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const SecurityOriginData& securityOrigin, unsigned quotaInBytes, Ref<SuspendableWorkQueue>&& queue)
-    : m_localStorageNamespace(makeWeakPtr(localStorageNamespace))
+    : m_localStorageNamespace(localStorageNamespace)
     , m_securityOrigin(securityOrigin)
     , m_quotaInBytes(quotaInBytes)
     , m_identifier(Identifier::generate())
@@ -165,7 +165,7 @@ void StorageArea::clear()
     }
 
     for (auto& listenerUniqueID : m_eventListeners)
-        IPC::Connection::send(listenerUniqueID, Messages::StorageAreaMap::ClearCache(), m_identifier.toUInt64());
+        IPC::Connection::send(listenerUniqueID, Messages::StorageAreaMap::ClearCache(0), m_identifier.toUInt64());
 }
 
 LocalStorageDatabase& StorageArea::ensureDatabase() const
@@ -188,7 +188,7 @@ void StorageArea::dispatchEvents(IPC::Connection::UniqueID sourceConnection, Sto
     ASSERT(storageAreaImplID);
     for (auto& listenerUniqueID : m_eventListeners) {
         auto optionalStorageAreaImplID = listenerUniqueID == sourceConnection ? std::make_optional(storageAreaImplID) : std::nullopt;
-        IPC::Connection::send(listenerUniqueID, Messages::StorageAreaMap::DispatchStorageEvent(optionalStorageAreaImplID, key, oldValue, newValue, urlString), m_identifier.toUInt64());
+        IPC::Connection::send(listenerUniqueID, Messages::StorageAreaMap::DispatchStorageEvent(optionalStorageAreaImplID, key, oldValue, newValue, urlString, 0), m_identifier.toUInt64());
     }
 }
 

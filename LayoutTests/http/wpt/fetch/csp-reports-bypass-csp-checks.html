@@ -19,7 +19,7 @@ document.addEventListener("securitypolicyviolation", async () => {
     let results = JSON.parse(text);
     const report = results["csp-report"];
     if (report["effective-directive"] === "connect-src") {
-        assert_equals(report["blocked-uri"], "http://localhost:8888");
+        assert_equals(report["blocked-uri"], "http://localhost:8888/test");
         done();
     }
 });

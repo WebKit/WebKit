@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2015, 2016 Canon Inc. All rights reserved.
- *  Copyright (C) 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,7 @@
 
 namespace WebCore {
 
-// FIMXE: Why can't LegacyFactoryFunctions be used with workers?
+// All legacy factory functions are exposed on Window only, while authors are advised against adding new ones.
 template<typename JSClass> class JSDOMLegacyFactoryFunction final : public JSDOMConstructorWithDocument {
 public:
     using Base = JSDOMConstructorWithDocument;
@@ -40,13 +40,12 @@ public:
     static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES construct(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 private:
-    JSDOMLegacyFactoryFunction(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
-        : Base(structure, globalObject)
+    JSDOMLegacyFactoryFunction(JSC::VM& vm, JSC::Structure* structure)
+        : Base(vm, structure, construct)
     { 
     }
 
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
-    static JSC::CallData getConstructData(JSC::JSCell*);
 
     // Usually defined for each specialization class.
     void initializeProperties(JSC::VM&, JSDOMGlobalObject&) { }
@@ -54,14 +53,14 @@ private:
 
 template<typename JSClass> inline JSDOMLegacyFactoryFunction<JSClass>* JSDOMLegacyFactoryFunction<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
-    JSDOMLegacyFactoryFunction* constructor = new (NotNull, JSC::allocateCell<JSDOMLegacyFactoryFunction>(vm.heap)) JSDOMLegacyFactoryFunction(structure, globalObject);
+    JSDOMLegacyFactoryFunction* constructor = new (NotNull, JSC::allocateCell<JSDOMLegacyFactoryFunction>(vm)) JSDOMLegacyFactoryFunction(vm, structure);
     constructor->finishCreation(vm, globalObject);
     return constructor;
 }
 
 template<typename JSClass> inline JSC::Structure* JSDOMLegacyFactoryFunction<JSClass>::createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
 {
-    return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+    return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::InternalFunctionType, StructureFlags), info());
 }
 
 template<typename JSClass> inline void JSDOMLegacyFactoryFunction<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
@@ -69,14 +68,6 @@ template<typename JSClass> inline void JSDOMLegacyFactoryFunction<JSClass>::fini
     Base::finishCreation(globalObject);
     ASSERT(inherits(vm, info()));
     initializeProperties(vm, globalObject);
-}
-
-template<typename JSClass> inline JSC::CallData JSDOMLegacyFactoryFunction<JSClass>::getConstructData(JSC::JSCell*)
-{
-    JSC::CallData constructData;
-    constructData.type = JSC::CallData::Type::Native;
-    constructData.native.function = construct;
-    return constructData;
 }
 
 } // namespace WebCore

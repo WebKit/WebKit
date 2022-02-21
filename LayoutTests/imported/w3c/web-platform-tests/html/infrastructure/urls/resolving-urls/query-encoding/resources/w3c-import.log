@@ -16,8 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/resources/blank.py
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/resources/css-tmpl.py
-/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/resources/manifest.py
-/LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/resources/page-using-manifest.py
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/resources/resolve-url.js
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/resources/resource.py
 /LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py

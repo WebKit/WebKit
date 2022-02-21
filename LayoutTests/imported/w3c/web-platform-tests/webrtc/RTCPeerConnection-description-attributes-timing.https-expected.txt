@@ -1,6 +1,6 @@
 
-FAIL pendingLocalDescription is surfaced at the right time assert_equals: pendingLocalDescription is still null while promise pending expected null but got object "[object RTCSessionDescription]"
-FAIL pendingRemoteDescription is surfaced at the right time assert_equals: pendingRemoteDescription is still null while promise pending expected null but got object "[object RTCSessionDescription]"
-FAIL currentLocalDescription is surfaced at the right time assert_equals: currentLocalDescription is still null while promise pending expected null but got object "[object RTCSessionDescription]"
-FAIL currentRemoteDescription is surfaced at the right time assert_equals: currentRemoteDescription is still null while promise pending expected null but got object "[object RTCSessionDescription]"
+PASS pendingLocalDescription is surfaced at the right time
+PASS pendingRemoteDescription is surfaced at the right time
+PASS currentLocalDescription is surfaced at the right time
+PASS currentRemoteDescription is surfaced at the right time
 

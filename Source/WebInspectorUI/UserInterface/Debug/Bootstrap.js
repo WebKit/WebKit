@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 University of Washington.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -138,6 +139,39 @@ WI.runBootstrapOperations = function() {
         groupNavigationItem.hidden = !WI.showDebugUISetting.value;
         WI.tabBar.needsLayout();
     }
+
+    function updateMockWebExtensionTab() {
+        let mockData = {
+            extensionID: "1234567890ABCDEF",
+            extensionBundleIdentifier: "org.webkit.WebInspector.MockExtension",
+            displayName: WI.unlocalizedString("Mock Extension"),
+            tabName: WI.unlocalizedString("Mock"),
+            tabIconURL: "Images/Info.svg",
+            sourceURL: "Debug/MockWebExtensionTab.html",
+        };
+
+        // Simulates the steps taken by WebInspectorUIExtensionController to create an extension tab in WebInspectorUI.
+        if (!WI.settings.engineeringShowMockWebExtensionTab.value) {
+            if (WI.sharedApp.extensionController.registeredExtensionIDs.has(mockData.extensionID))
+                InspectorFrontendAPI.unregisterExtension(mockData.extensionID);
+
+            return;
+        }
+
+        let error = InspectorFrontendAPI.registerExtension(mockData.extensionID, mockData.extensionBundleIdentifier, mockData.displayName);
+        if (error) {
+            WI.reportInternalError("Problem creating mock web extension: " + error);
+            return;
+        }
+
+        let result = InspectorFrontendAPI.createTabForExtension(mockData.extensionID, mockData.tabName, mockData.tabIconURL, mockData.sourceURL);
+        if (!result?.extensionTabID) {
+            WI.reportInternalError("Problem creating mock web extension tab: " + result);
+            return;
+        }
+    }
+    WI.settings.engineeringShowMockWebExtensionTab.addEventListener(WI.Setting.Event.Changed, updateMockWebExtensionTab, WI.settings.engineeringShowMockWebExtensionTab);
+    updateMockWebExtensionTab();
 
     WI.showDebugUISetting.addEventListener(WI.Setting.Event.Changed, function(event) {
         updateDebugUI();

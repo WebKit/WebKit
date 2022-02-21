@@ -1,10 +1,10 @@
 
-FAIL target1 margin assert_equals: expected "" but got "10px"
+PASS target1 margin
 PASS target1 margin-left
 PASS target1 margin-top
 PASS target1 margin-right
 PASS target1 margin-bottom
-FAIL target2 margin assert_equals: expected "var(--prop)" but got ""
+PASS target2 margin
 PASS target2 margin-left
 PASS target2 margin-top
 PASS target2 margin-right
@@ -14,5 +14,5 @@ PASS target3 margin-left
 PASS target3 margin-top
 PASS target3 margin-right
 PASS target3 margin-bottom
-FAIL target4 background assert_equals: expected "var(--prop)" but got ""
+PASS target4 background
 

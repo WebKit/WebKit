@@ -423,7 +423,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-4-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-4-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-4.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-5-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-5-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-5-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-5.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-6-expected.html

@@ -82,7 +82,7 @@ public:
         LayoutUnit m_usedLogicalWidth;
         LayoutUnit m_usedLogicalLeft;
         Length m_computedLogicalWidth;
-        WeakPtr<const ContainerBox> m_layoutBox;
+        CheckedPtr<const ContainerBox> m_layoutBox;
 
 #if ASSERT_ENABLED
         bool m_hasUsedWidth { false };
@@ -120,13 +120,13 @@ public:
         void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
         InlineLayoutUnit baseline() const { return m_baseline; }
 
-        const ContainerBox& box() const { return *m_layoutBox.get(); }
+        const ContainerBox& box() const { return m_layoutBox; }
 
     private:
         LayoutUnit m_logicalTop;
         LayoutUnit m_logicalHeight;
         InlineLayoutUnit m_baseline { 0 };
-        WeakPtr<const ContainerBox> m_layoutBox;
+        CheckedRef<const ContainerBox> m_layoutBox;
     };
 
     class Rows {
@@ -167,7 +167,7 @@ public:
         const ContainerBox& box() const { return *m_layoutBox.get(); }
 
     private:
-        WeakPtr<const ContainerBox> m_layoutBox;
+        CheckedPtr<const ContainerBox> m_layoutBox;
         SlotPosition m_position;
         CellSpan m_span;
         InlineLayoutUnit m_baseline { 0 };
@@ -209,7 +209,7 @@ public:
     const Rows& rows() const { return m_rows; }
     Rows& rows() { return m_rows; }
 
-    using Cells = WTF::ListHashSet<std::unique_ptr<Cell>>;
+    using Cells = ListHashSet<std::unique_ptr<Cell>>;
     Cells& cells() { return m_cells; }
 
     Slot* slot(SlotPosition);
@@ -217,7 +217,7 @@ public:
     bool isSpanned(SlotPosition);
 
 private:
-    using SlotMap = WTF::HashMap<SlotPosition, std::unique_ptr<Slot>>;
+    using SlotMap = HashMap<SlotPosition, std::unique_ptr<Slot>>;
 
     Columns m_columns;
     Rows m_rows;

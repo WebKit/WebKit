@@ -46,8 +46,6 @@ shouldBeValid('23:59:59');
 shouldBeValid('23:59:59.1');
 shouldBeValid('23:59:59.12');
 shouldBeValid('23:59:59.123');
-shouldBeValid('23:59:59.1234567890');
-shouldBeValid('00:00:00.0000000000');
 
 // Invalid values
 shouldBeInvalid(' 00:00 ');
@@ -71,6 +69,8 @@ shouldBeInvalid('23:45:zz');
 shouldBeInvalid('23:45:06.');
 shouldBeInvalid('23:45:06.abc');
 shouldBeInvalid('23:45:06.789abc');
+shouldBeInvalid('23:59:59.1234567890');
+shouldBeInvalid('00:00:00.0000000000');
 
 // Disabled
 shouldBeInvalid('invalid', true);

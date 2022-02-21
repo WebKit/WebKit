@@ -21,7 +21,7 @@
 #include "config.h"
 #include "RenderDetailsMarker.h"
 
-#include "Element.h"
+#include "ElementInlines.h"
 #include "GraphicsContext.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLInputElement.h"

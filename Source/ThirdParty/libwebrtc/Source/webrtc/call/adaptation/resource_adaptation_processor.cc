@@ -200,7 +200,7 @@ void ResourceAdaptationProcessor::OnResourceUsageStateMeasured(
     ResourceUsageState usage_state) {
   RTC_DCHECK_RUN_ON(task_queue_);
   RTC_DCHECK(resource);
-  // |resource| could have been removed after signalling.
+  // `resource` could have been removed after signalling.
   {
     MutexLock crit(&resources_lock_);
     if (absl::c_find(resources_, resource) == resources_.end()) {
@@ -261,7 +261,7 @@ ResourceAdaptationProcessor::OnResourceUnderuse(
   if (!most_limited_resources.empty() &&
       most_limited_restrictions.counters.Total() >=
           stream_adapter_->adaptation_counters().Total()) {
-    // If |reason_resource| is not one of the most limiting resources then abort
+    // If `reason_resource` is not one of the most limiting resources then abort
     // adaptation.
     if (absl::c_find(most_limited_resources, reason_resource) ==
         most_limited_resources.end()) {

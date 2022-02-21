@@ -39,20 +39,20 @@ namespace WebKit {
 void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnectionBase& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageName() == Messages::TestWithStream::SendString::name())
-        return IPC::handleMessage<Messages::TestWithStream::SendString>(decoder, this, &TestWithStream::sendString);
+        return IPC::handleMessage<Messages::TestWithStream::SendString>(connection.connection(), decoder, this, &TestWithStream::sendString);
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithStream::SendMachSendRight::name())
-        return IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(decoder, this, &TestWithStream::sendMachSendRight);
+        return IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(connection.connection(), decoder, this, &TestWithStream::sendMachSendRight);
 #endif
     if (decoder.messageName() == Messages::TestWithStream::SendStringSynchronized::name())
-        return IPC::handleMessage<Messages::TestWithStream::SendStringSynchronized>(decoder, this, &TestWithStream::sendStringSynchronized);
+        return IPC::handleMessage<Messages::TestWithStream::SendStringSynchronized>(connection, decoder, this, &TestWithStream::sendStringSynchronized);
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithStream::ReceiveMachSendRight::name())
-        return IPC::handleMessage<Messages::TestWithStream::ReceiveMachSendRight>(decoder, this, &TestWithStream::receiveMachSendRight);
+        return IPC::handleMessage<Messages::TestWithStream::ReceiveMachSendRight>(connection, decoder, this, &TestWithStream::receiveMachSendRight);
 #endif
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithStream::SendAndReceiveMachSendRight::name())
-        return IPC::handleMessage<Messages::TestWithStream::SendAndReceiveMachSendRight>(decoder, this, &TestWithStream::sendAndReceiveMachSendRight);
+        return IPC::handleMessage<Messages::TestWithStream::SendAndReceiveMachSendRight>(connection, decoder, this, &TestWithStream::sendAndReceiveMachSendRight);
 #endif
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(connection);
@@ -60,7 +60,7 @@ void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnectionBase& co
     if (connection.connection().ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
 }
 
 } // namespace WebKit

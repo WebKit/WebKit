@@ -54,6 +54,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-gap-normal-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-gap-smaller-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-gap-smaller-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-subgridded-axis-auto-repeater-crash-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-subgridded-axis-auto-repeater-crash-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-template-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-template-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-template-computed-nogrid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/item-percentage-height-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/item-percentage-height-001.html

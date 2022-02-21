@@ -31,6 +31,7 @@
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteMediaResourceManager.h"
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
 
@@ -42,8 +43,8 @@ Ref<RemoteMediaResource> RemoteMediaResource::create(RemoteMediaResourceManager&
 }
 
 RemoteMediaResource::RemoteMediaResource(RemoteMediaResourceManager& remoteMediaResourceManager, RemoteMediaPlayerProxy& remoteMediaPlayerProxy, RemoteMediaResourceIdentifier identifier)
-    : m_remoteMediaResourceManager(makeWeakPtr(remoteMediaResourceManager))
-    , m_remoteMediaPlayerProxy(makeWeakPtr(remoteMediaPlayerProxy))
+    : m_remoteMediaResourceManager(remoteMediaResourceManager)
+    , m_remoteMediaPlayerProxy(remoteMediaPlayerProxy)
     , m_id(identifier)
 {
 }
@@ -75,7 +76,7 @@ void RemoteMediaResource::responseReceived(const ResourceResponse& response, boo
         return;
 
     m_didPassAccessControlCheck = didPassAccessControlCheck;
-    m_client->responseReceived(*this, response, [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](auto shouldContinue) mutable {
+    m_client->responseReceived(*this, response, [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto shouldContinue) mutable {
         ASSERT(isMainRunLoop());
         if (shouldContinue == ShouldContinuePolicyCheck::No)
             protectedThis->stop();
@@ -96,10 +97,10 @@ void RemoteMediaResource::dataSent(uint64_t bytesSent, uint64_t totalBytesToBeSe
         m_client->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
-void RemoteMediaResource::dataReceived(const uint8_t* data, int64_t length)
+void RemoteMediaResource::dataReceived(const SharedBuffer& data)
 {
     if (m_client)
-        m_client->dataReceived(*this, data, length);
+        m_client->dataReceived(*this, data);
 }
 
 void RemoteMediaResource::accessControlCheckFailed(const ResourceError& error)

@@ -11,22 +11,21 @@ description: >
 
 var __re = RegExp.prototype;
 
-//CHECK#0
-if (__re.hasOwnProperty('ignoreCase') !== true) {
-  throw new Test262Error('#0: __re = RegExp.prototype; __re.hasOwnProperty(\'ignoreCase\') === true');
-}
+assert.sameValue(__re.hasOwnProperty('ignoreCase'), true, '__re.hasOwnProperty(\'ignoreCase\') must return true');
 
- //CHECK#1
-if (__re.propertyIsEnumerable('ignoreCase') !== false) {
-  throw new Test262Error('#1: __re = RegExp.prototype; __re.propertyIsEnumerable(\'ignoreCase\') === false');
-}
+assert.sameValue(
+  __re.propertyIsEnumerable('ignoreCase'),
+  false,
+  '__re.propertyIsEnumerable(\'ignoreCase\') must return false'
+);
 
- //CHECK#2
 var count = 0
 for (var p in __re){
-  if (p==="ignoreCase") count++   
+  if (p==="ignoreCase") {
+    count++
+  }   
 }
 
-if (count !== 0) {
-  throw new Test262Error('#2: count = 0; __re = RegExp.prototype; for (p in __re){ if (p==="ignoreCase") count++; } count === 0. Actual: ' + (count));
-}
+assert.sameValue(count, 0, 'The value of count is expected to be 0');
+
+// TODO: Convert to verifyProperty() format.

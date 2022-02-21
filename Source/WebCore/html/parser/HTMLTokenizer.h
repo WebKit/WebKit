@@ -42,9 +42,6 @@ public:
     class TokenPtr;
     TokenPtr nextToken(SegmentedString&);
 
-    // Used by HTMLSourceTracker.
-    void setTokenAttributeBaseOffset(unsigned);
-
     // Returns a copy of any characters buffered internally by the tokenizer.
     // The tokenizer buffers characters when searching for the </script> token that terminates a script element.
     String bufferedCharacters() const;
@@ -282,11 +279,6 @@ inline HTMLToken* HTMLTokenizer::TokenPtr::operator->() const
 inline HTMLTokenizer::TokenPtr HTMLTokenizer::nextToken(SegmentedString& source)
 {
     return TokenPtr(processToken(source) ? &m_token : nullptr);
-}
-
-inline void HTMLTokenizer::setTokenAttributeBaseOffset(unsigned offset)
-{
-    m_token.setAttributeBaseOffset(offset);
 }
 
 inline size_t HTMLTokenizer::numberOfBufferedCharacters() const

@@ -27,7 +27,7 @@
 #include "AudioDSPKernel.h"
 #include "AudioDSPKernelProcessor.h"
 #include "AudioNode.h"
-#include <JavaScriptCore/Float32Array.h>
+#include <JavaScriptCore/Forward.h>
 #include <memory>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>

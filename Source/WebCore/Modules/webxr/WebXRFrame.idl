@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://immersive-web.github.io/webxr/#xrframe
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
-    ImplementationLacksVTable,
     InterfaceName=XRFrame
 ] interface WebXRFrame {
     [SameObject] readonly attribute WebXRSession session;
 
-    [CallWith=Document] WebXRViewerPose? getViewerPose(WebXRReferenceSpace referenceSpace);
-    [CallWith=Document] WebXRPose? getPose(WebXRSpace space, WebXRSpace baseSpace);
+    [CallWith=CurrentDocument] WebXRViewerPose? getViewerPose(WebXRReferenceSpace referenceSpace);
+    [CallWith=CurrentDocument] WebXRPose? getPose(WebXRSpace space, WebXRSpace baseSpace);
 };

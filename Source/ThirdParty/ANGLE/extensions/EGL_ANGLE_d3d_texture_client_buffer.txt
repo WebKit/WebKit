@@ -83,6 +83,13 @@ Additions to Chapter 2 of the EGL 1.2 Specification (EGL Operation)
     <buffer> according to the provided internal format. See table
     egl.restrictions for acceptable texture object types and formats.
 
+    If EGL_D3D11_TEXTURE_PLANE_ANGLE is specified, it is used to access the
+    specified plane of <buffer>. See table egl.restrictions for acceptable
+    values.
+
+    If EGL_D3D11_TEXTURE_ARRAY_SLICE_ANGLE is specified, it is used to access
+    the specified array slice of the texture array <buffer>.
+
     If EGL_TEXTURE_OFFSET_X_ANGLE or EGL_TEXTURE_OFFSET_Y_ANGLE are specified,
     they must be non-negative and are used to offset all rendering into the
     surface including blits, clears and draws.
@@ -140,17 +147,38 @@ Additions to Chapter 3 of the EGL 1.2 Specification (EGL Functions and Errors)
                        DXGI_FORMAT_R8G8B8A8_TYPELESS (support is optional),
                        DXGI_FORMAT_B8G8R8A8_TYPELESS (support is optional),
                        DXGI_FORMAT_R16G16B16A16_FLOAT,
-                       DXGI_FORMAT_R32G32B32A32_FLOAT, or
-                       DXGI_FORMAT_R10G10B10A2_UNORM.
+                       DXGI_FORMAT_R32G32B32A32_FLOAT,
+                       DXGI_FORMAT_R10G10B10A2_UNORM,
+                       DXGI_FORMAT_R8_UNORM,
+                       DXGI_FORMAT_R16_UNORM,
+                       DXGI_FORMAT_R8G8_UNORM,
+                       DXGI_FORMAT_R16G16_UNORM,
+                       DXGI_FORMAT_NV12,
+                       DXGI_FORMAT_P010, or
+                       DXGI_FORMAT_P016.
 
-                       EGL_TEXTURE_INTERNAL_FORMAT_ANGLE (if supported) must be
-                       GL_RGBA (supported for all formats),
-                       GL_RGB (supported except for DXGI_FORMAT_R10G10B10A2_UNORM), or
+                       EGL_D3D11_TEXTURE_PLANE_ANGLE must be specified for YUV
+                       formats DXGI_FORMAT_NV12, DXGI_FORMAT_P010, or
+                       DXGI_FORMAT_P016, and must be 0 or 1. It is ignored for
+                       all non-YUV formats.
+
+                       EGL_TEXTURE_INTERNAL_FORMAT_ANGLE (if specified) must be
+                       GL_RGBA (supported for all RGBA and BGRA formats),
+                       GL_RGB (supported for all RGBA and BGRA formats except
+                               DXGI_FORMAT_R10G10B10A2_UNORM),
                        GL_BGRA_EXT (supported only for
                                     DXGI_FORMAT_B8G8R8A8_UNORM,
-                                    DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, or
-                                    DXGI_FORMAT_B8G8R8A8_TYPELESS).
-
+                                    DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, and
+                                    DXGI_FORMAT_B8G8R8A8_TYPELESS),
+                       GL_RGB10_A2_EXT (supported for
+                                        DXGI_FORMAT_R10G10B10A2_UNORM),
+                       GL_RED_EXT (supported for DXGI_FORMAT_R8_UNORM
+                                   and DXGI_FORMAT_R16_UNORM),
+                       GL_RG_EXT (supported for DXGI_FORMAT_R8G8_UNORM
+                                  and DXGI_FORMAT_R16G16_UNORM),
+                       GL_R16_EXT (supported for DXGI_FORMAT_R16_UNORM), or
+                       GL_RG16_EXT (supported for DXGI_FORMAT_R16G16_UNORM).
+                       It is ignored for all YUV formats.
     --------------------------------------------------------------------------
     Table egl.restrictions - Restrictions on D3D resources that can be used
     as a <buffer>.
@@ -179,7 +207,7 @@ Issues
 
     1. What renderers allow the use of a multi-sampled texture?
 
-    PROPOSED: Mutli-sampled texture support is currently limited to D3D11.
+    PROPOSED: Multi-sampled texture support is currently limited to D3D11.
     Additionally, the client is responsible for resolving the texture.
 
     2. How does this extension interact with EXT_sRGB_write_control?
@@ -209,6 +237,12 @@ Issues
     correct rendering in that case.
 
 Revision History
+
+    Version 9, 2021/09/07 - added support for R/RG formats and GL_RGB10_A2_EXT.
+
+    Version 8, 2021/01/13 - added support for texture array.
+
+    Version 7, 2021/01/12 - added support for NV12/P010/P016 planar formats.
 
     Version 6, 2020/05/12 - added support for specifying texture offsets.
 

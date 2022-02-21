@@ -262,11 +262,11 @@ angle::Result Clear11::ensureResourcesInitialized(const gl::Context *context)
     Context11 *context11 = GetImplAs<Context11>(context);
 
     ANGLE_TRY(mRenderer->allocateResource(context11, rsDesc, &mScissorDisabledRasterizerState));
-    mScissorDisabledRasterizerState.setDebugName("Clear11 Rasterizer State with scissor disabled");
+    mScissorDisabledRasterizerState.setInternalName("Clear11RasterizerStateWithScissorDisabled");
 
     rsDesc.ScissorEnable = TRUE;
     ANGLE_TRY(mRenderer->allocateResource(context11, rsDesc, &mScissorEnabledRasterizerState));
-    mScissorEnabledRasterizerState.setDebugName("Clear11 Rasterizer State with scissor enabled");
+    mScissorEnabledRasterizerState.setInternalName("Clear11RasterizerStateWithScissorEnabled");
 
     // Initialize Depthstencil state with defaults
     mDepthStencilStateKey.depthTest                = false;
@@ -322,7 +322,7 @@ angle::Result Clear11::ensureConstantBufferCreated(const gl::Context *context)
 
     ANGLE_TRY(mRenderer->allocateResource(GetImplAs<Context11>(context), bufferDesc, &initialData,
                                           &mConstantBuffer));
-    mConstantBuffer.setDebugName("Clear11 Constant Buffer");
+    mConstantBuffer.setInternalName("Clear11ConstantBuffer");
     return angle::Result::Continue;
 }
 
@@ -360,7 +360,7 @@ angle::Result Clear11::ensureVertexBufferCreated(const gl::Context *context)
 
     ANGLE_TRY(mRenderer->allocateResource(GetImplAs<Context11>(context), bufferDesc, &initialData,
                                           &mVertexBuffer));
-    mVertexBuffer.setDebugName("Clear11 Vertex Buffer");
+    mVertexBuffer.setInternalName("Clear11VertexBuffer");
     return angle::Result::Continue;
 }
 

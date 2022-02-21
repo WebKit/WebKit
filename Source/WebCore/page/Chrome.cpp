@@ -286,9 +286,9 @@ bool Chrome::runBeforeUnloadConfirmPanel(const String& message, Frame& frame)
     return m_client.runBeforeUnloadConfirmPanel(message, frame);
 }
 
-void Chrome::closeWindowSoon()
+void Chrome::closeWindow()
 {
-    m_client.closeWindowSoon();
+    m_client.closeWindow();
 }
 
 void Chrome::runJavaScriptAlert(Frame& frame, const String& message)
@@ -545,6 +545,11 @@ RefPtr<GraphicsContextGL> Chrome::createGraphicsContextGL(const GraphicsContextG
     return m_client.createGraphicsContextGL(attributes, displayID());
 }
 #endif
+
+RefPtr<PAL::WebGPU::GPU> Chrome::createGPUForWebGPU() const
+{
+    return m_client.createGPUForWebGPU();
+}
 
 PlatformDisplayID Chrome::displayID() const
 {

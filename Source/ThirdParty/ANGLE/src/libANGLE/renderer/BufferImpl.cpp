@@ -22,6 +22,7 @@ angle::Result BufferImpl::getSubData(const gl::Context *context,
 
 angle::Result BufferImpl::setDataWithUsageFlags(const gl::Context *context,
                                                 gl::BufferBinding target,
+                                                GLeglClientBufferEXT clientBuffer,
                                                 const void *data,
                                                 size_t size,
                                                 gl::BufferUsage usage,

@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html class="reftest-wait">
+    <head>
+        <style>
+            html, body {
+                margin: 0px;
+            }
+            ::-webkit-scrollbar {
+                display: none;
+            }
+            .sticky {
+                position: sticky;
+                top: 0px;
+            }
+            .parent {
+                height: 150vh;
+            }
+            .child {
+                background: green;
+                height: 4vh;
+                width: 4vh;
+            }
+        </style>
+        <script src="../../resources/ui-helper.js"></script>
+        <script>
+            async function runTest() {
+                if (!window.testRunner) {
+                    return;
+                }
+
+                try {
+                    await UIHelper.delayFor(0);
+
+                    eventSender.monitorWheelEvents();
+                    eventSender.mouseMoveTo(10, 10);
+
+                    // `direction` is a two-element array with a one in the appropriate direction.
+                    let scrollMotions = [
+                        [0, -1, 'began', 'none'],
+                        [0, -1, 'changed', 'none'],
+                        [0, -1, 'changed', 'none'],
+                        [0, -1, 'changed', 'none'],
+                        [0, 0, 'ended', 'none'],
+                        [0, -1, 'none', 'begin'],
+                        [0, -1, 'none', 'continue'],
+                        [0, 0, 'none', 'end'],
+                    ];
+                    scrollMotions.forEach((callArguments) => {
+                        eventSender.mouseScrollByWithWheelAndMomentumPhases(...callArguments);
+                    });
+
+                    await UIHelper.waitForScrollCompletion();
+                } catch (e) {
+                    console.log(e);
+                } finally {
+                    document.documentElement.classList.remove("reftest-wait");$
+                }
+            }
+        </script>
+    </head>
+    <body onload="runTest();">
+    <div class="sticky parent">
+        <div class="sticky child"></div>
+    </div>
+    <div id="console"></div>
+    </body>
+</html>

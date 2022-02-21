@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2021, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,8 @@
 
 #include "CSSImportRule.h"
 #include "CSSKeyframesRule.h"
+#include "CSSLayerBlockRule.h"
+#include "CSSLayerStatementRule.h"
 #include "CSSMediaRule.h"
 #include "CSSParser.h"
 #include "CSSParserObserver.h"
@@ -51,7 +54,7 @@
 #include "InspectorPageAgent.h"
 #include "MediaList.h"
 #include "Node.h"
-#include "SVGElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGStyleElement.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -105,9 +108,7 @@ static void flattenSourceData(RuleSourceDataList& dataList, RuleSourceDataList& 
     for (auto& data : dataList) {
         if (data->type == WebCore::StyleRuleType::Style)
             target.append(data.copyRef());
-        else if (data->type == WebCore::StyleRuleType::Media)
-            flattenSourceData(data->childRules, target);
-        else if (data->type == WebCore::StyleRuleType::Supports)
+        else if (data->type == WebCore::StyleRuleType::Media || data->type == WebCore::StyleRuleType::Supports || data->type == WebCore::StyleRuleType::LayerBlock)
             flattenSourceData(data->childRules, target);
     }
 }
@@ -426,6 +427,9 @@ static RefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
     if (is<CSSSupportsRule>(*rule))
         return &downcast<CSSSupportsRule>(*rule).cssRules();
 
+    if (is<CSSLayerBlockRule>(*rule))
+        return &downcast<CSSLayerBlockRule>(*rule).cssRules();
+
     return nullptr;
 }
 
@@ -435,32 +439,52 @@ static Ref<JSON::ArrayOf<Protocol::CSS::Grouping>> buildArrayForGroupings(CSSRul
 
     auto* parentRule = &rule;
     while (parentRule) {
-        RefPtr<Protocol::CSS::Grouping> ruleGroupingPayload;
+        Vector<Ref<Protocol::CSS::Grouping>> ruleGroupingPayloads;
 
         if (is<CSSMediaRule>(parentRule)) {
             auto* media = downcast<CSSMediaRule>(parentRule)->media();
             if (media && media->length() && media->mediaText() != "all") {
-                ruleGroupingPayload = Protocol::CSS::Grouping::create()
-                    .setText(media->mediaText())
+                auto mediaRulePayload = Protocol::CSS::Grouping::create()
                     .setType(Protocol::CSS::Grouping::Type::MediaRule)
                     .release();
+                mediaRulePayload->setText(media->mediaText());
+                ruleGroupingPayloads.append(WTFMove(mediaRulePayload));
             }
         } else if (is<CSSImportRule>(parentRule)) {
+            auto layerName = downcast<CSSImportRule>(parentRule)->layerName();
+            if (!layerName.isNull()) {
+                auto layerRulePayload = Protocol::CSS::Grouping::create()
+                    .setType(Protocol::CSS::Grouping::Type::LayerImportRule)
+                    .release();
+                layerRulePayload->setText(layerName);
+                ruleGroupingPayloads.append(WTFMove(layerRulePayload));
+            }
+
             auto& media = downcast<CSSImportRule>(parentRule)->media();
             if (media.length() && media.mediaText() != "all") {
-                ruleGroupingPayload = Protocol::CSS::Grouping::create()
-                    .setText(media.mediaText())
+                auto mediaRulePayload = Protocol::CSS::Grouping::create()
                     .setType(Protocol::CSS::Grouping::Type::MediaImportRule)
                     .release();
+                mediaRulePayload->setText(media.mediaText());
+                ruleGroupingPayloads.append(WTFMove(mediaRulePayload));
             }
         } else if (is<CSSSupportsRule>(parentRule)) {
-            ruleGroupingPayload = Protocol::CSS::Grouping::create()
-                .setText(downcast<CSSSupportsRule>(parentRule)->conditionText())
+            auto supportsRulePayload = Protocol::CSS::Grouping::create()
                 .setType(Protocol::CSS::Grouping::Type::SupportsRule)
                 .release();
+            supportsRulePayload->setText(downcast<CSSSupportsRule>(parentRule)->conditionText());
+            ruleGroupingPayloads.append(WTFMove(supportsRulePayload));
+        } else if (is<CSSLayerBlockRule>(parentRule)) {
+            auto layerRulePayload = Protocol::CSS::Grouping::create()
+                .setType(Protocol::CSS::Grouping::Type::LayerRule)
+                .release();
+            auto layerName = downcast<CSSLayerBlockRule>(parentRule)->name();
+            if (!layerName.isEmpty())
+                layerRulePayload->setText(layerName);
+            ruleGroupingPayloads.append(WTFMove(layerRulePayload));
         }
 
-        if (ruleGroupingPayload) {
+        for (auto&& ruleGroupingPayload : WTFMove(ruleGroupingPayloads)) {
             if (auto* parentStyleSheet = parentRule->parentStyleSheet()) {
                 String sourceURL = parentStyleSheet->contents().baseURL().string();
                 if (sourceURL.isEmpty()) {
@@ -471,7 +495,7 @@ static Ref<JSON::ArrayOf<Protocol::CSS::Grouping>> buildArrayForGroupings(CSSRul
                     ruleGroupingPayload->setSourceURL(sourceURL);
             }
 
-            groupingsPayload->addItem(ruleGroupingPayload.releaseNonNull());
+            groupingsPayload->addItem(WTFMove(ruleGroupingPayload));
         }
 
         if (parentRule->parentRule()) {
@@ -484,9 +508,9 @@ static Ref<JSON::ArrayOf<Protocol::CSS::Grouping>> buildArrayForGroupings(CSSRul
             auto* media = styleSheet->media();
             if (media && media->length() && media->mediaText() != "all") {
                 auto sheetGroupingPayload = Protocol::CSS::Grouping::create()
-                    .setText(media->mediaText())
                     .setType(is<HTMLStyleElement>(styleSheet->ownerNode()) ? Protocol::CSS::Grouping::Type::MediaStyleNode: Protocol::CSS::Grouping::Type::MediaLinkNode)
                     .release();
+                sheetGroupingPayload->setText(media->mediaText());
 
                 String sourceURL;
                 if (auto* ownerDocument = styleSheet->ownerDocument())

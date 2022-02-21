@@ -8,6 +8,7 @@ initialState:
     width: 2
     height: 2
   parameters:
+    0: {"alpha":true}
   content: <filtered>
 frames:
   0: (duration) (incomplete)

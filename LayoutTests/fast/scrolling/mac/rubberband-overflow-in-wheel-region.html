@@ -46,13 +46,48 @@
         async function doMouseWheelScroll()
         {
             eventSender.mouseMoveTo(100, 100);
+
             // Scroll down to latch, then up to rubberband.
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 12, "changed", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 12, "changed", "none");
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            const wheelEventSquence = {
+                "events" : [
+                    {
+                        type : "wheel",
+                        viewX : 100,
+                        viewY : 100,
+                        deltaX : -10,
+                        phase : "began"
+                    },
+                    {
+                        type : "wheel",
+                        deltaX : -100,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        viewX : 101, // defeat coalescing
+                        deltaX : -100,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        viewX : 100, // defeat coalescing
+                        deltaY : 120,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        viewX : 101, // defeat coalescing
+                        deltaY : 120,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        phase : "ended"
+                    }
+                ]
+            };
+
+            await UIHelper.sendEventStream(wheelEventSquence);
             await UIHelper.renderingUpdate();
         }
         
@@ -61,6 +96,7 @@
             debug('');
             debug('Test rubberband of overflow:scroll inside the non-fast scrollable region');
             await resetScrollPositions();
+
             await doMouseWheelScroll();
 
             shouldBecomeEqual('sawOverflowScrollWithNegativeOffset', 'true', finishJSTest);

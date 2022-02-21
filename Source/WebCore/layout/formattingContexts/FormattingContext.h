@@ -32,7 +32,6 @@
 #include "LayoutUnit.h"
 #include "LayoutUnits.h"
 #include <wtf/IsoMalloc.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -50,7 +49,6 @@ class FormattingGeometry;
 class FormattingState;
 class FormattingQuirks;
 struct IntrinsicWidthConstraints;
-class InvalidationState;
 class LayoutState;
 
 class FormattingContext {
@@ -58,12 +56,12 @@ class FormattingContext {
 public:
     virtual ~FormattingContext();
 
-    virtual void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) = 0;
-    void layoutOutOfFlowContent(InvalidationState&, const ConstraintsForOutOfFlowContent&);
+    virtual void layoutInFlowContent(const ConstraintsForInFlowContent&) = 0;
+    void layoutOutOfFlowContent(const ConstraintsForOutOfFlowContent&);
     virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() = 0;
     virtual LayoutUnit usedContentHeight() const = 0;
 
-    const ContainerBox& root() const { return *m_root; }
+    const ContainerBox& root() const { return m_root; }
     LayoutState& layoutState() const;
     const FormattingState& formattingState() const { return m_formattingState; }
     virtual const FormattingGeometry& formattingGeometry() const = 0;
@@ -102,7 +100,7 @@ private:
     void computeOutOfFlowVerticalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
     void computeOutOfFlowHorizontalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
 
-    WeakPtr<const ContainerBox> m_root;
+    CheckedRef<const ContainerBox> m_root;
     FormattingState& m_formattingState;
 };
 

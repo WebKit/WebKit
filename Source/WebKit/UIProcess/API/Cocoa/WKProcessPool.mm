@@ -31,7 +31,6 @@
 #import "DownloadManager.h"
 #import "LegacyDownloadClient.h"
 #import "Logging.h"
-#import "PluginProcessManager.h"
 #import "SandboxUtilities.h"
 #import "UIGamepadProvider.h"
 #import "WKDownloadInternal.h"
@@ -456,11 +455,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 - (size_t)_pluginProcessCount
 {
-#if !PLATFORM(IOS_FAMILY)
-    return WebKit::PluginProcessManager::singleton().pluginProcesses().size();
-#else
     return 0;
-#endif
 }
 
 - (NSUInteger)_maximumSuspendedPageCount
@@ -497,11 +492,28 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 + (void)_setLinkedOnOrBeforeEverythingForTesting
 {
     setApplicationSDKVersion(0);
+    setLinkedOnOrAfterOverride(LinkedOnOrAfterOverride::BeforeEverything);
 }
 
 + (void)_setLinkedOnOrAfterEverythingForTesting
 {
+    [self _setLinkedOnOrAfterEverything];
+}
+
++ (void)_setLinkedOnOrAfterEverything
+{
     setApplicationSDKVersion(std::numeric_limits<uint32_t>::max());
+    setLinkedOnOrAfterOverride(LinkedOnOrAfterOverride::AfterEverything);
+}
+
++ (void)_setCaptivePortalModeEnabledGloballyForTesting:(BOOL)isEnabled
+{
+    WebKit::setCaptivePortalModeEnabledGloballyForTesting(!!isEnabled);
+}
+
++ (void)_clearCaptivePortalModeEnabledGloballyForTesting
+{
+    WebKit::setCaptivePortalModeEnabledGloballyForTesting(std::nullopt);
 }
 
 - (BOOL)_isCookieStoragePartitioningEnabled
@@ -553,7 +565,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 - (void)_seedResourceLoadStatisticsForTestingWithFirstParty:(NSURL *)firstPartyURL thirdParty:(NSURL *)thirdPartyURL shouldScheduleNotification:(BOOL)shouldScheduleNotification completionHandler:(void(^)(void))completionHandler
 {
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     _processPool->seedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain { firstPartyURL }, WebCore::RegistrableDomain { thirdPartyURL }, shouldScheduleNotification, [completionHandler = makeBlockPtr(completionHandler)] () {
         completionHandler();
     });
@@ -563,6 +575,11 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
     UNUSED_PARAM(shouldScheduleNotification);
     UNUSED_PARAM(completionHandler);
 #endif
+}
+
++ (void)_setWebProcessCountLimit:(unsigned)limit
+{
+    WebKit::WebProcessProxy::setProcessCountLimit(limit);
 }
 
 - (void)_garbageCollectJavaScriptObjectsForTesting
@@ -588,6 +605,11 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 - (void)_setUsesOnlyHIDGamepadProviderForTesting:(BOOL)usesHIDProvider
 {
     _processPool->setUsesOnlyHIDGamepadProviderForTesting(usesHIDProvider);
+}
+
+- (void)_terminateAllWebContentProcesses
+{
+    _processPool->terminateAllWebContentProcesses();
 }
 
 @end

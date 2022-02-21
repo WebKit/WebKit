@@ -60,7 +60,7 @@ public:
     void forceSlowPathConcurrently(); // If you use this, checkIfThresholdCrossedAndSet() may still return false.
     bool checkIfThresholdCrossedAndSet(CodeBlock*);
     bool hasCrossedThreshold() const { return m_counter >= 0; }
-    void setNewThreshold(int32_t threshold, CodeBlock*);
+    void setNewThreshold(int32_t threshold, CodeBlock* = nullptr);
     void deferIndefinitely();
     double count() const { return static_cast<double>(m_totalCount) + m_counter; }
     void dump(PrintStream&) const;
@@ -86,13 +86,9 @@ public:
     }
     
     template<typename T>
-    static T clippedThreshold(JSGlobalObject* globalObject, T threshold)
+    static T clippedThreshold(T threshold)
     {
-        int32_t maxThreshold;
-        if (Options::randomizeExecutionCountsBetweenCheckpoints() && globalObject)
-            maxThreshold = globalObject->weakRandomInteger() % maximumExecutionCountsBetweenCheckpoints();
-        else
-            maxThreshold = maximumExecutionCountsBetweenCheckpoints();
+        int32_t maxThreshold = maximumExecutionCountsBetweenCheckpoints();
         if (threshold > maxThreshold)
             threshold = maxThreshold;
         return threshold;

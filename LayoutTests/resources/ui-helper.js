@@ -94,6 +94,18 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async statelessMouseWheelScrollAt(x, y, deltaX, deltaY)
+    {
+        eventSender.monitorWheelEvents();
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseScrollBy(deltaX, deltaY);
+        return new Promise(resolve => {
+            eventSender.callAfterScrollingCompletes(() => {
+                requestAnimationFrame(resolve);
+            });
+        });
+    }
+
     static async mouseWheelMayBeginAt(x, y)
     {
         eventSender.mouseMoveTo(x, y);
@@ -106,6 +118,25 @@ window.UIHelper = class UIHelper {
         eventSender.mouseMoveTo(x, y);
         eventSender.mouseScrollByWithWheelAndMomentumPhases(x, y, "cancelled", "none");
         await UIHelper.animationFrame();
+    }
+
+    static async mouseWheelSequence(eventStream, { waitForCompletion = true } = {})
+    {
+        if (waitForCompletion)
+            eventSender.monitorWheelEvents();
+        const eventStreamAsString = JSON.stringify(eventStream);
+        await new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    uiController.sendEventStream(\`${eventStreamAsString}\`, () => {
+                        uiController.uiScriptComplete();
+                    });
+                })();
+            `, resolve);
+        });
+
+        if (waitForCompletion)
+            await UIHelper.waitForScrollCompletion();
     }
 
     static async waitForScrollCompletion()
@@ -342,6 +373,30 @@ window.UIHelper = class UIHelper {
         } else {
             await UIHelper.doubleClickAt(x, y);
         }
+    }
+
+    static rawKeyDown(key, modifiers=[])
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily()) {
+            eventSender.rawKeyDown(key, modifiers);
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`uiController.rawKeyDown("${key}", ${JSON.stringify(modifiers)});`, resolve);
+        });
+    }
+
+    static rawKeyUp(key, modifiers=[])
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily()) {
+            eventSender.rawKeyUp(key, modifiers);
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`uiController.rawKeyUp("${key}", ${JSON.stringify(modifiers)});`, resolve);
+        });
     }
 
     static keyDown(key, modifiers=[])
@@ -819,6 +874,10 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static midPointOfRect(rect) {
+        return { x: rect.left + (rect.width / 2), y: rect.top + (rect.height / 2) };
+    }
+
     static selectionCaretBackgroundColor()
     {
         return new Promise(resolve => {
@@ -1095,6 +1154,14 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(`uiController.setViewScale(${scale})`, resolve));
     }
 
+    static setScrollViewKeyboardAvoidanceEnabled(enabled)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setScrollViewKeyboardAvoidanceEnabled(${enabled})`, resolve));
+    }
+
     static resignFirstResponder()
     {
         if (!this.isWebKit2())
@@ -1275,6 +1342,11 @@ window.UIHelper = class UIHelper {
     static setHardwareKeyboardAttached(attached)
     {
         return new Promise(resolve => testRunner.runUIScript(`uiController.setHardwareKeyboardAttached(${attached ? "true" : "false"})`, resolve));
+    }
+
+    static setWebViewEditable(editable)
+    {
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setWebViewEditable(${editable ? "true" : "false"})`, resolve));
     }
 
     static rectForMenuAction(action)

@@ -29,6 +29,7 @@
 #include "NativeWebMouseEvent.h"
 #include "WebPageProxy.h"
 #include <WebCore/PlatformDisplay.h>
+#include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PointerEvent.h>
 #include <WebCore/PointerID.h>
 #include <gtk/gtk.h>
@@ -93,7 +94,7 @@ bool PointerLockManager::unlock()
 
 void PointerLockManager::handleMotion(FloatSize&& delta)
 {
-    m_webPage.handleMouseEvent(NativeWebMouseEvent(WebEvent::MouseMove, m_button, m_buttons, IntPoint(m_position), IntPoint(m_initialPoint), 0, m_modifiers, delta, mousePointerID, mousePointerEventType()));
+    m_webPage.handleMouseEvent(NativeWebMouseEvent(WebEvent::MouseMove, m_button, m_buttons, IntPoint(m_position), IntPoint(m_initialPoint), 0, m_modifiers, delta, mousePointerID, mousePointerEventType(), PlatformMouseEvent::IsTouch::No));
 }
 
 } // namespace WebKit

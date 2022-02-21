@@ -42,7 +42,7 @@ class BMPImageReader {
 public:
     // Read a value from |data[offset]|, converting from little to native
     // endianness.
-    static inline uint16_t readUint16(const SharedBuffer::DataSegment& data, int offset)
+    static inline uint16_t readUint16(const SharedBuffer& data, int offset)
     {
         uint16_t result;
         memcpy(&result, &data.data()[offset], 2);
@@ -52,7 +52,7 @@ public:
         return result;
     }
 
-    static inline uint32_t readUint32(const SharedBuffer::DataSegment& data, int offset)
+    static inline uint32_t readUint32(const SharedBuffer& data, int offset)
     {
         uint32_t result;
         memcpy(&result, &data.data()[offset], 4);
@@ -69,7 +69,7 @@ public:
     BMPImageReader(ScalableImageDecoder* parent, size_t decodedAndHeaderOffset, size_t imgDataOffset, bool usesAndMask);
 
     void setBuffer(ScalableImageDecoderFrame* buffer) { m_buffer = buffer; }
-    void setData(SharedBuffer::DataSegment& data) { m_data = &data; }
+    void setData(const SharedBuffer& data) { m_data = &data; }
 
     // Does the actual decoding. If |onlySize| is true, decoding only
     // progresses as far as necessary to get the image size. Returns
@@ -272,7 +272,7 @@ private:
     ScalableImageDecoderFrame* m_buffer;
 
     // The file to decode.
-    RefPtr<SharedBuffer::DataSegment> m_data;
+    RefPtr<const SharedBuffer> m_data;
 
     // An index into |m_data| representing how much we've already decoded.
     size_t m_decodedOffset;

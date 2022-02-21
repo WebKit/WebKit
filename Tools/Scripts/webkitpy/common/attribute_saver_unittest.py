@@ -38,90 +38,90 @@ class AttributeSaverTest(unittest.TestCase):
 
     def test_class(self):
         obj = self.SimpleTestClass()
-        self.assertEquals(obj.value, 0)
+        self.assertEqual(obj.value, 0)
 
     def test_normal_default(self):
         obj = self.SimpleTestClass()
-        self.assertEquals(obj.value, 0)
+        self.assertEqual(obj.value, 0)
         with AttributeSaver(obj, "value"):
-            self.assertEquals(obj.value, None)
-        self.assertEquals(obj.value, 0)
+            self.assertEqual(obj.value, None)
+        self.assertEqual(obj.value, 0)
 
     def test_normal_value(self):
         obj = self.SimpleTestClass()
-        self.assertEquals(obj.value, 0)
+        self.assertEqual(obj.value, 0)
         with AttributeSaver(obj, "value", 1):
-            self.assertEquals(obj.value, 1)
-        self.assertEquals(obj.value, 0)
+            self.assertEqual(obj.value, 1)
+        self.assertEqual(obj.value, 0)
 
     def test_normal_value_on_exception(self):
         with self.assertRaises(RuntimeError):
             obj = self.SimpleTestClass()
-            self.assertEquals(obj.value, 0)
+            self.assertEqual(obj.value, 0)
             try:
                 with AttributeSaver(obj, "value", 1):
-                    self.assertEquals(obj.value, 1)
+                    self.assertEqual(obj.value, 1)
                     raise RuntimeError()
             except:
-                self.assertEquals(obj.value, 0)
+                self.assertEqual(obj.value, 0)
                 raise
-            self.assertEquals(obj.value, 0)
+            self.assertEqual(obj.value, 0)
 
     def test_normal_value_on_normal_exit(self):
         obj = self.SimpleTestClass()
-        self.assertEquals(obj.value, 0)
+        self.assertEqual(obj.value, 0)
         try:
             with AttributeSaver(obj, "value", 1):
-                self.assertEquals(obj.value, 1)
+                self.assertEqual(obj.value, 1)
         except:
-            self.assertEquals(obj.value, 0)
+            self.assertEqual(obj.value, 0)
             raise
-        self.assertEquals(obj.value, 0)
+        self.assertEqual(obj.value, 0)
 
     def test_normal_value_with_finally_on_exception(self):
         with self.assertRaises(RuntimeError):
             obj = self.SimpleTestClass()
-            self.assertEquals(obj.value, 0)
+            self.assertEqual(obj.value, 0)
             try:
                 with AttributeSaver(obj, "value", 1):
-                    self.assertEquals(obj.value, 1)
+                    self.assertEqual(obj.value, 1)
                     raise RuntimeError()
             finally:
-                self.assertEquals(obj.value, 0)
-            self.assertEquals(obj.value, 0)
+                self.assertEqual(obj.value, 0)
+            self.assertEqual(obj.value, 0)
 
     def test_normal_value_with_finally_on_normal_exit(self):
         obj = self.SimpleTestClass()
-        self.assertEquals(obj.value, 0)
+        self.assertEqual(obj.value, 0)
         try:
             with AttributeSaver(obj, "value", 1):
-                self.assertEquals(obj.value, 1)
+                self.assertEqual(obj.value, 1)
         finally:
-            self.assertEquals(obj.value, 0)
-        self.assertEquals(obj.value, 0)
+            self.assertEqual(obj.value, 0)
+        self.assertEqual(obj.value, 0)
 
     def test_normal_value_with_else_on_exception(self):
         with self.assertRaises(RuntimeError):
             obj = self.SimpleTestClass()
-            self.assertEquals(obj.value, 0)
+            self.assertEqual(obj.value, 0)
             try:
                 with AttributeSaver(obj, "value", 1):
-                    self.assertEquals(obj.value, 1)
+                    self.assertEqual(obj.value, 1)
                     raise RuntimeError()
             except IOError:
                 self.assertFalse(True)
             else:
-                self.assertEquals(obj.value, 0)
-            self.assertEquals(obj.value, 0)
+                self.assertEqual(obj.value, 0)
+            self.assertEqual(obj.value, 0)
 
     def test_normal_value_with_else_on_normal_exit(self):
         obj = self.SimpleTestClass()
-        self.assertEquals(obj.value, 0)
+        self.assertEqual(obj.value, 0)
         try:
             with AttributeSaver(obj, "value", 1):
-                self.assertEquals(obj.value, 1)
+                self.assertEqual(obj.value, 1)
         except IOError:
             self.assertFalse(True)
         else:
-            self.assertEquals(obj.value, 0)
-        self.assertEquals(obj.value, 0)
+            self.assertEqual(obj.value, 0)
+        self.assertEqual(obj.value, 0)

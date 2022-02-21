@@ -61,6 +61,7 @@ TEST(WebKit, MediaStreamTrackDetached)
     preferences._mediaCaptureRequiresSecureConnection = NO;
     configuration.get()._mediaCaptureEnabled = YES;
     preferences._mockCaptureDevicesEnabled = YES;
+    preferences._getUserMediaRequiresFocus = NO;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[MediaStreamTrackDetachedUIDelegate alloc] init]);
     webView.get().UIDelegate = delegate.get();

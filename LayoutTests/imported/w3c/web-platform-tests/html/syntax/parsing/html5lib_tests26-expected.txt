@@ -17,4 +17,100 @@ PASS html5lib_tests26.html 6c95a99290e309b638b958272686a21486fa561e
 PASS html5lib_tests26.html 37d360649a2b092ad05e1be1c9ea65bfec83ca6d
 PASS html5lib_tests26.html 8919621ebbd1f4df0fdaacee3e53dc959a2d9235
 PASS html5lib_tests26.html 3723d028349cbbc1a5c3f014987bb11c8ba804d0
+FAIL html5lib_tests26.html e370b3102af9ba28e24f5c41a08443cdd9dd6d25 assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|     <p>\n|     <foo>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       <p>\n|       <svg foo>"
+FAIL html5lib_tests26.html d89064b85cdb1cf0d9e01b0d4618f6f5901533e1 assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|     <br>\n|     <foo>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       <br>\n|       <svg foo>"
+FAIL html5lib_tests26.html d22b654495ccbf7ca93f5356e93c828ba65b00dd assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <math math>\n|     <p>\n|     <foo>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <math math>\n|       <p>\n|       <math foo>"
+FAIL html5lib_tests26.html ce65a73998345e8be4da9bccfe2cec9fab57c3be assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <math math>\n|     <br>\n|     <foo>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <math math>\n|       <br>\n|       <math foo>"
+e370b3102af9ba28e24f5c41a08443cdd9dd6d25
+
+Input
+
+<svg></p><foo>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|     <p>
+|     <foo>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <p>
+|       <svg foo>
+d89064b85cdb1cf0d9e01b0d4618f6f5901533e1
+
+Input
+
+<svg></br><foo>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|     <br>
+|     <foo>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <br>
+|       <svg foo>
+d22b654495ccbf7ca93f5356e93c828ba65b00dd
+
+Input
+
+<math></p><foo>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|     <p>
+|     <foo>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <p>
+|       <math foo>
+ce65a73998345e8be4da9bccfe2cec9fab57c3be
+
+Input
+
+<math></br><foo>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|     <br>
+|     <foo>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <br>
+|       <math foo>
 

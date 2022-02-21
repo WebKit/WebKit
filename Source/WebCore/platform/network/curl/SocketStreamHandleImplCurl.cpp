@@ -37,6 +37,7 @@
 
 #include "CurlStreamScheduler.h"
 #include "DeprecatedGlobalSettings.h"
+#include "SharedBuffer.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
 #include "StorageSessionProvider.h"
@@ -104,12 +105,12 @@ void SocketStreamHandleImpl::didSendData(CurlStreamID, size_t length)
     sendPendingData();
 }
 
-void SocketStreamHandleImpl::didReceiveData(CurlStreamID, const uint8_t* data, size_t length)
+void SocketStreamHandleImpl::didReceiveData(CurlStreamID, const SharedBuffer& data)
 {
     if (m_state != Open)
         return;
 
-    m_client.didReceiveSocketStreamData(*this, data, length);
+    m_client.didReceiveSocketStreamData(*this, data.data(), data.size());
 }
 
 void SocketStreamHandleImpl::didFail(CurlStreamID, CURLcode errorCode)

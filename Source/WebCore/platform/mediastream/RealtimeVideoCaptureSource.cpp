@@ -97,54 +97,47 @@ void RealtimeVideoCaptureSource::setSupportedPresets(const Vector<Ref<VideoPrese
     }
 }
 
-const Vector<IntSize>& RealtimeVideoCaptureSource::standardVideoSizes()
+Span<const IntSize> RealtimeVideoCaptureSource::standardVideoSizes()
 {
-    static const auto sizes = makeNeverDestroyed([] {
-        static IntSize videoSizes[] = {
-            { 112, 112 },
-            { 160, 160 },
-            { 160, 120 }, // 4:3, QQVGA
-            { 176, 144 }, // 4:3, QCIF
-            { 192, 192 },
-            { 192, 112 }, // 16:9
-            { 192, 144 }, // 3:4
-            { 240, 240 },
-            { 240, 160 }, // 3:2, HQVGA
-            { 320, 320 },
-            { 320, 180 }, // 16:9
-            { 320, 240 }, // 4:3, QVGA
-            { 352, 288 }, // CIF
-            { 480, 272 }, // 16:9
-            { 480, 360 }, // 4:3
-            { 480, 480 },
-            { 640, 640 },
-            { 640, 360 }, // 16:9, 360p nHD
-            { 640, 480 }, // 4:3
-            { 720, 720 },
-            { 800, 600 }, // 4:3, SVGA
-            { 960, 540 }, // 16:9, qHD
-            { 1024, 600 }, // 16:9, WSVGA
-            { 1024, 768 }, // 4:3, XGA
-            { 1280, 960 }, // 4:3
-            { 1280, 1024 }, // 5:4, SXGA
-            { 1280, 720 }, // 16:9, WXGA
-            { 1366, 768 }, // 16:9, HD
-            { 1600, 1200}, // 4:3, UXGA
-            { 1920, 1080 }, // 16:9, 1080p FHD
-            { 2560, 1440 }, // 16:9, QHD
-            { 2592, 1936 },
-            { 3264, 2448 }, // 3:4
-            { 3840, 2160 }, // 16:9, 4K UHD
-        };
-        Vector<IntSize> sizes;
-        for (auto& size : videoSizes)
-            sizes.append(size);
-
-        return sizes;
-    }());
-
-    return sizes.get();
+    static constexpr IntSize sizes[] = {
+        { 112, 112 },
+        { 160, 160 },
+        { 160, 120 }, // 4:3, QQVGA
+        { 176, 144 }, // 4:3, QCIF
+        { 192, 192 },
+        { 192, 112 }, // 16:9
+        { 192, 144 }, // 3:4
+        { 240, 240 },
+        { 240, 160 }, // 3:2, HQVGA
+        { 320, 320 },
+        { 320, 180 }, // 16:9
+        { 320, 240 }, // 4:3, QVGA
+        { 352, 288 }, // CIF
+        { 480, 272 }, // 16:9
+        { 480, 360 }, // 4:3
+        { 480, 480 },
+        { 640, 640 },
+        { 640, 360 }, // 16:9, 360p nHD
+        { 640, 480 }, // 4:3
+        { 720, 720 },
+        { 800, 600 }, // 4:3, SVGA
+        { 960, 540 }, // 16:9, qHD
+        { 1024, 600 }, // 16:9, WSVGA
+        { 1024, 768 }, // 4:3, XGA
+        { 1280, 960 }, // 4:3
+        { 1280, 1024 }, // 5:4, SXGA
+        { 1280, 720 }, // 16:9, WXGA
+        { 1366, 768 }, // 16:9, HD
+        { 1600, 1200 }, // 4:3, UXGA
+        { 1920, 1080 }, // 16:9, 1080p FHD
+        { 2560, 1440 }, // 16:9, QHD
+        { 2592, 1936 },
+        { 3264, 2448 }, // 3:4
+        { 3840, 2160 }, // 16:9, 4K UHD
+    };
+    return sizes;
 }
+
 template <typename ValueType>
 static void updateMinMax(ValueType& min, ValueType& max, ValueType value)
 {
@@ -386,7 +379,7 @@ void RealtimeVideoCaptureSource::setSizeAndFrameRate(std::optional<int> width, s
     setFrameRate(match->requestedFrameRate);
 }
 
-void RealtimeVideoCaptureSource::dispatchMediaSampleToObservers(MediaSample& sample)
+void RealtimeVideoCaptureSource::dispatchMediaSampleToObservers(MediaSample& sample, WebCore::VideoSampleMetadata metadata)
 {
     MediaTime sampleTime = sample.presentationTime();
 
@@ -400,7 +393,7 @@ void RealtimeVideoCaptureSource::dispatchMediaSampleToObservers(MediaSample& sam
     if (interval > 1)
         m_observedFrameRate = (m_observedFrameTimeStamps.size() / interval);
 
-    videoSampleAvailable(sample);
+    videoSampleAvailable(sample, metadata);
 }
 
 void RealtimeVideoCaptureSource::clientUpdatedSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)

@@ -76,6 +76,10 @@ void main()
 }
 )";
 
+    // iOS chokes on the "smooth" qualifier.
+    // TODO(anglebug.com/5491): Add shader compiler workaround that omits "smooth".
+    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
+
     ANGLE_GL_PROGRAM(program, vertSrc, fragSrc);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -97,9 +101,6 @@ TEST_P(ShaderInterpTest, Flat)
     // ratified by Khronos, the vulkan validation layers do not recognize the create info struct,
     // causing it to be stripped and thus causing the extension to behave as if it is disabled.
     ANGLE_SKIP_TEST_IF(IsVulkan());
-
-    // http://anglebug.com/5232. Metal doesn't support last provoking vertex yet.
-    ANGLE_SKIP_TEST_IF(IsMetal());
 
     const char *vertSrc = R"(#version 300 es
 precision highp float;
@@ -212,4 +213,5 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(64, 64, smooth_reference);
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ShaderInterpTest);
 ANGLE_INSTANTIATE_TEST_ES3(ShaderInterpTest);

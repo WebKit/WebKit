@@ -8,10 +8,16 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.prototype.valueOf;
-if (x === 1)
+if (x === 1) {
   Date.prototype.valueOf = 2;
-else
+} else {
   Date.prototype.valueOf = 1;
-if (Date.prototype.valueOf === x) {
-  throw new Test262Error('#1: The Date.prototype.valueOf has not the attribute ReadOnly');
 }
+
+assert.notSameValue(
+  Date.prototype.valueOf,
+  x,
+  'The value of Date.prototype.valueOf is expected to not equal the value of `x`'
+);
+
+// TODO: Convert to verifyProperty() format.

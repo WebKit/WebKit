@@ -14,5 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/scope2/import-scripts-echo.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/scope2/imported-module-script.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/scope2/simple.txt
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/scope2/worker_interception_redirect_webworker.py

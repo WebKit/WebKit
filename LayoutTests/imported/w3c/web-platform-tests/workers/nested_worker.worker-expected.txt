@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
 FAIL Nested worker Can't find variable: Worker
 

@@ -1,0 +1,10 @@
+Test that setting -webkit-appearance: textfield on a search input does not adjust the background color if the specified color differs from the UA default.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS searchBackgroundColor is "rgb(255, 0, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

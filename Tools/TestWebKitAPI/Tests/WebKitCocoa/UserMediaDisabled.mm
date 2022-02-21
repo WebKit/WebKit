@@ -25,10 +25,10 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
-
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -36,11 +36,6 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
-
-static bool wasPrompted = false;
-
-static bool receivedScriptMessage = false;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @interface UserMediaMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -87,6 +82,7 @@ public:
         auto preferences = [m_webView configuration].preferences;
         preferences._mockCaptureDevicesEnabled = YES;
         preferences._mediaCaptureRequiresSecureConnection = NO;
+        preferences._getUserMediaRequiresFocus = NO;
 
         m_uiDelegate = adoptNS([[UserMediaUIDelegate alloc] init]);
         [m_webView setUIDelegate:m_uiDelegate.get()];

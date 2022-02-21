@@ -17,7 +17,7 @@ info: |
   1. If Type(options) is not Object, return empty.
   2. Let maxByteLength be ? Get(options, "maxByteLength").
   3. If maxByteLength is undefined, return empty.
-features: [resizable-arraybuffer]
+features: [SharedArrayBuffer, resizable-arraybuffer]
 ---*/
 
 assert.sameValue(new SharedArrayBuffer(0, {}).growable, false);

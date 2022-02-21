@@ -26,14 +26,12 @@
 // https://wicg.github.io/IntersectionObserver/
 
 [
-    Conditional=INTERSECTION_OBSERVER,
-    EnabledBySetting=IntersectionObserver,
+    EnabledBySetting=IntersectionObserverEnabled,
     Exposed=Window,
     JSCustomMarkFunction,
     CustomIsReachable,
-    ImplementationLacksVTable
 ] interface IntersectionObserver {
-    [CallWith=Document] constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options);
+    [CallWith=CurrentDocument] constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options);
 
     readonly attribute Node? root;
     readonly attribute DOMString rootMargin;
@@ -46,8 +44,7 @@
 };
 
 [
-    Conditional=INTERSECTION_OBSERVER,
-    EnabledBySetting=IntersectionObserver
+    EnabledBySetting=IntersectionObserverEnabled
 ]
 dictionary IntersectionObserverInit {
     (Element or Document)? root = null;

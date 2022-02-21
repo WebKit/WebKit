@@ -152,7 +152,7 @@ if (!gl) {
               gl, size < info.minSize ? gl.INVALID_OPERATION : gl.NO_ERROR, "at stride limit",
               size, info.type, false, stride, offset);
           checkVertexAttribPointer(
-              gl, size < info.minSize ? gl.INVALID_OPERATION : gl.INVALID_VALUE, "over stride limit",
+              gl, size < info.minSize ? [gl.INVALID_OPERATION, gl.INVALID_VALUE] : gl.INVALID_VALUE, "over stride limit",
               size, info.type, false,
               stride + info.bytesPerComponent, offset);
         }

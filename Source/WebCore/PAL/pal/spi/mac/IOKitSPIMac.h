@@ -26,8 +26,15 @@
 #pragma once
 
 #if PLATFORM(MAC)
+
+#import <IOKit/hid/IOHIDDevice.h>
+#import <IOKit/hid/IOHIDManager.h>
+#import <IOKit/hid/IOHIDUsageTables.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <IOKit/hid/IOHIDEvent.h>
+#import <IOKit/hid/IOHIDEventData.h>
 #import <IOKit/hid/IOHIDEventSystemClient.h>
 
 #else
@@ -36,6 +43,8 @@
 #define kIOHIDProductIDKey "ProductID"
 
 WTF_EXTERN_C_BEGIN
+
+typedef struct __IOHIDEvent * IOHIDEventRef;
 typedef struct CF_BRIDGED_TYPE(id) __IOHIDServiceClient * IOHIDServiceClientRef;
 typedef struct CF_BRIDGED_TYPE(id) __IOHIDEventSystemClient * IOHIDEventSystemClientRef;
 typedef void (^IOHIDServiceClientBlock)(void *, void *, IOHIDServiceClientRef);
@@ -57,8 +66,49 @@ IOHIDServiceClientRef IOHIDEventSystemClientCopyServiceForRegistryID(IOHIDEventS
 void IOHIDEventSystemClientRegisterDeviceMatchingBlock(IOHIDEventSystemClientRef, IOHIDServiceClientBlock, void *, void *);
 void IOHIDEventSystemClientUnregisterDeviceMatchingBlock(IOHIDEventSystemClientRef);
 void IOHIDEventSystemClientScheduleWithDispatchQueue(IOHIDEventSystemClientRef, dispatch_queue_t);
+void IOHIDEventSystemClientSetDispatchQueue(IOHIDEventSystemClientRef, dispatch_queue_t);
+void IOHIDEventSystemClientActivate(IOHIDEventSystemClientRef);
 
 CFTypeRef IOHIDServiceClientCopyProperty(IOHIDServiceClientRef service, CFStringRef key);
+
+enum {
+    kIOHIDEventTypeNULL,
+    kIOHIDEventTypeVendorDefined,
+    kIOHIDEventTypeKeyboard = 3,
+    kIOHIDEventTypeRotation = 5,
+    kIOHIDEventTypeScroll = 6,
+    kIOHIDEventTypeZoom = 8,
+    kIOHIDEventTypeDigitizer = 11,
+    kIOHIDEventTypeNavigationSwipe = 16,
+    kIOHIDEventTypeForce = 32,
+};
+typedef uint32_t IOHIDEventType;
+
+typedef uint32_t IOHIDEventField;
+typedef uint64_t IOHIDEventSenderID;
+
+
+enum {
+    kIOHIDEventScrollMomentumInterrupted = (1 << 4),
+};
+typedef uint8_t IOHIDEventScrollMomentumBits;
+
+#ifdef __LP64__
+typedef double IOHIDFloat;
+#else
+typedef float IOHIDFloat;
+#endif
+
+#define IOHIDEventFieldBase(type) (type << 16)
+
+#define kIOHIDEventFieldScrollBase IOHIDEventFieldBase(kIOHIDEventTypeScroll)
+static const IOHIDEventField kIOHIDEventFieldScrollX = (kIOHIDEventFieldScrollBase | 0);
+static const IOHIDEventField kIOHIDEventFieldScrollY = (kIOHIDEventFieldScrollBase | 1);
+
+uint64_t IOHIDEventGetTimeStamp(IOHIDEventRef);
+IOHIDFloat IOHIDEventGetFloatValue(IOHIDEventRef, IOHIDEventField);
+IOHIDEventSenderID IOHIDEventGetSenderID(IOHIDEventRef);
+IOHIDEventScrollMomentumBits IOHIDEventGetScrollMomentum(IOHIDEventRef);
 
 WTF_EXTERN_C_END
 

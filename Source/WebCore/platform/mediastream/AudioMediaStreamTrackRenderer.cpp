@@ -34,37 +34,39 @@
 #include "AudioMediaStreamTrackRendererCocoa.h"
 #endif
 
+#if USE(LIBWEBRTC)
+#include "LibWebRTCAudioModule.h"
+#endif
+
 namespace WTF {
 class MediaTime;
 }
 
 namespace WebCore {
 
-AudioMediaStreamTrackRenderer::RendererCreator AudioMediaStreamTrackRenderer::m_rendererCreator = nullptr;
-void AudioMediaStreamTrackRenderer::setCreator(RendererCreator creator)
+std::unique_ptr<AudioMediaStreamTrackRenderer> AudioMediaStreamTrackRenderer::create(Init&& init)
 {
-    m_rendererCreator = creator;
-}
-
-std::unique_ptr<AudioMediaStreamTrackRenderer> AudioMediaStreamTrackRenderer::create()
-{
-    if (m_rendererCreator)
-        return m_rendererCreator();
-
 #if PLATFORM(COCOA)
-    return makeUnique<AudioMediaStreamTrackRendererCocoa>();
+    return makeUnique<AudioMediaStreamTrackRendererCocoa>(WTFMove(init));
 #else
+    UNUSED_PARAM(init);
     return nullptr;
 #endif
 }
 
+AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer(Init&& init)
+    : m_crashCallback(WTFMove(init.crashCallback))
+#if USE(LIBWEBRTC)
+    , m_audioModule(WTFMove(init.audioModule))
+#endif
 #if !RELEASE_LOG_DISABLED
-void AudioMediaStreamTrackRenderer::setLogger(const Logger& logger, const void* identifier)
+    , m_logger(init.logger)
+    , m_logIdentifier(init.logIdentifier)
+#endif
 {
-    m_logger = &logger;
-    m_logIdentifier = identifier;
 }
 
+#if !RELEASE_LOG_DISABLED
 WTFLogChannel& AudioMediaStreamTrackRenderer::logChannel() const
 {
     return LogMedia;

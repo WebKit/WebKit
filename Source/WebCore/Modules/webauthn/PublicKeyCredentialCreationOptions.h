@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,8 +51,7 @@ struct PublicKeyCredentialCreationOptions {
     };
 
     struct UserEntity : public Entity {
-        BufferSource id; // id becomes idVector once it is passed to UIProcess.
-        Vector<uint8_t> idVector;
+        BufferSource id;
         String displayName;
     };
 
@@ -141,9 +140,10 @@ template<class Encoder>
 void PublicKeyCredentialCreationOptions::encode(Encoder& encoder) const
 {
     encoder << rp.id << rp.name << rp.icon;
-    encoder << static_cast<uint64_t>(user.id.length());
-    encoder.encodeFixedLengthData(user.id.data(), user.id.length(), 1);
+    encoder << user.id;
     encoder << user.displayName << user.name << user.icon << pubKeyCredParams << timeout << excludeCredentials << authenticatorSelection << attestation << extensions;
+    encoder << static_cast<uint64_t>(challenge.length());
+    encoder.encodeFixedLengthData(challenge.data(), challenge.length(), 1);
 }
 
 template<class Decoder>
@@ -156,7 +156,7 @@ std::optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOpt
         return std::nullopt;
     if (!decoder.decode(result.rp.icon))
         return std::nullopt;
-    if (!decoder.decode(result.user.idVector))
+    if (!decoder.decode(result.user.id))
         return std::nullopt;
     if (!decoder.decode(result.user.displayName))
         return std::nullopt;
@@ -193,6 +193,9 @@ std::optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOpt
     if (!extensions)
         return std::nullopt;
     result.extensions = WTFMove(*extensions);
+
+    if (!decoder.decode(result.challenge))
+        return std::nullopt;
 
     return result;
 }

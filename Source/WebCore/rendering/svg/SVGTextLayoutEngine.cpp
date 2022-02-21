@@ -24,7 +24,7 @@
 #include "RenderSVGTextPath.h"
 #include "SVGElement.h"
 #include "SVGGeometryElement.h"
-#include "SVGInlineTextBox.h"
+#include "SVGInlineTextBoxInlines.h"
 #include "SVGLengthContext.h"
 #include "SVGTextContentElement.h"
 #include "SVGTextLayoutEngineBaseline.h"

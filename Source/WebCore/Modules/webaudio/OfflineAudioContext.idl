@@ -24,12 +24,12 @@
 
 [
     Conditional=WEB_AUDIO,
-    EnabledBySetting=WebAudio,
+    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     Exposed=Window
 ] interface OfflineAudioContext : BaseAudioContext {
-    [CallWith=ScriptExecutionContext] constructor(OfflineAudioContextOptions contextOptions);
-    [CallWith=ScriptExecutionContext] constructor(unsigned long numberOfChannels, unsigned long length, float sampleRate);
+    [CallWith=CurrentScriptExecutionContext] constructor(OfflineAudioContextOptions contextOptions);
+    [CallWith=CurrentScriptExecutionContext] constructor(unsigned long numberOfChannels, unsigned long length, float sampleRate);
     
     Promise<AudioBuffer> startRendering();
 

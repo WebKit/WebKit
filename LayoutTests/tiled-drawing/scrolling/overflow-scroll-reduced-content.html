@@ -26,6 +26,7 @@
 </style>
 
 <script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <script>
 
 function decreaseContentSize()
@@ -44,27 +45,57 @@ function decreaseContentSize()
     testRunner.notifyDone();
 }
 
-function scrollTest()
+async function scrollTest()
 {
-    var startPosX = 150;
-    var startPosY = 150;
-    eventSender.mouseMoveTo(startPosX, startPosY);
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
-    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+    const startPosX = 150;
+    const startPosY = 150;
 
-    setTimeout(decreaseContentSize, 100);
+    const events = [
+        {
+            type : "wheel",
+            viewX : startPosX,
+            viewY : startPosY,
+            deltaY : -10,
+            phase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            phase : "ended"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            momentumPhase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            momentumPhase : "changed"
+        },
+        {
+            type : "wheel",
+            momentumPhase : "ended"
+        }
+    ];
+
+    await UIHelper.mouseWheelSequence({ events: events });
+    decreaseContentSize();
 }
 
 function setUp() {
     if (window.eventSender) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
-
         setTimeout(scrollTest, 0);
     }
 }

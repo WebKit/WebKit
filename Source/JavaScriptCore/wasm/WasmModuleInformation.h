@@ -27,13 +27,18 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmBranchHints.h"
 #include "WasmFormat.h"
 
 #include <wtf/BitVector.h>
+#include <wtf/HashMap.h>
 
 namespace JSC { namespace Wasm {
 
 struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
+
+    using BranchHints = HashMap<uint32_t, BranchHintMap, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+
     ModuleInformation();
     ModuleInformation(const ModuleInformation&) = delete;
     ModuleInformation(ModuleInformation&&) = delete;
@@ -58,8 +63,23 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
             : internalFunctionSignatureIndices[functionIndex - importFunctionSignatureIndices.size()];
     }
 
+    size_t exceptionIndexSpaceSize() const { return importExceptionSignatureIndices.size() + internalExceptionSignatureIndices.size(); }
+    bool isImportedExceptionFromExceptionIndexSpace(size_t exceptionIndex) const
+    {
+        ASSERT(exceptionIndex < exceptionIndexSpaceSize());
+        return exceptionIndex < importExceptionSignatureIndices.size();
+    }
+    SignatureIndex signatureIndexFromExceptionIndexSpace(size_t exceptionIndex) const
+    {
+        return isImportedExceptionFromExceptionIndexSpace(exceptionIndex)
+            ? importExceptionSignatureIndices[exceptionIndex]
+            : internalExceptionSignatureIndices[exceptionIndex - importExceptionSignatureIndices.size()];
+    }
+
     uint32_t importFunctionCount() const { return importFunctionSignatureIndices.size(); }
     uint32_t internalFunctionCount() const { return internalFunctionSignatureIndices.size(); }
+    uint32_t importExceptionCount() const { return importExceptionSignatureIndices.size(); }
+    uint32_t internalExceptionCount() const { return internalExceptionSignatureIndices.size(); }
 
     // Currently, our wasm implementation allows only one memory and table.
     // If we need to remove this limitation, we would have MemoryInformation and TableInformation in the Vectors.
@@ -76,9 +96,24 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     bool isDeclaredFunction(uint32_t index) const { return m_declaredFunctions.contains(index); }
     void addDeclaredFunction(uint32_t index) { m_declaredFunctions.set(index); }
 
+    bool isDeclaredException(uint32_t index) const { return m_declaredExceptions.contains(index); }
+    void addDeclaredException(uint32_t index) { m_declaredExceptions.set(index); }
+
+    bool hasMemoryImport() const { return memory.isImport(); }
+
+    BranchHint getBranchHint(uint32_t functionOffset, uint32_t branchOffset) const
+    {
+        auto it = branchHints.find(functionOffset);
+        return it == branchHints.end()
+            ? BranchHint::Invalid
+            : it->value.getBranchHint(branchOffset);
+    }
+
     Vector<Import> imports;
     Vector<SignatureIndex> importFunctionSignatureIndices;
     Vector<SignatureIndex> internalFunctionSignatureIndices;
+    Vector<SignatureIndex> importExceptionSignatureIndices;
+    Vector<SignatureIndex> internalExceptionSignatureIndices;
     Vector<Ref<Signature>> usedSignatures;
 
     MemoryInformation memory;
@@ -95,9 +130,11 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     uint32_t codeSectionSize { 0 };
     Vector<CustomSection> customSections;
     Ref<NameSection> nameSection;
+    BranchHints branchHints;
     uint32_t numberOfDataSegments { 0 };
 
     BitVector m_declaredFunctions;
+    BitVector m_declaredExceptions;
     mutable BitVector m_referencedFunctions;
 };
 

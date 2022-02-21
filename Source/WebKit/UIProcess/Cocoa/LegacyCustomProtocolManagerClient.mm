@@ -52,7 +52,7 @@
         return nil;
 
     ASSERT(request);
-    _customProtocolManagerProxy = makeWeakPtr(customProtocolManagerProxy);
+    _customProtocolManagerProxy = customProtocolManagerProxy;
     _customProtocolID = customProtocolID;
     _storagePolicy = NSURLCacheStorageNotAllowed;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN

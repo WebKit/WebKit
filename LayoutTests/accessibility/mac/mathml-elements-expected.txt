@@ -54,11 +54,13 @@ PASS fractionNumerator.childAtIndex(0).stringValue is 'AXValue: a'
 PASS fractionNumerator.isEqual(accessibilityController.accessibleElementById('fractionNumerator')) is true
 PASS sqrt.role is 'AXRole: AXGroup'
 PASS sqrt.subrole is 'AXSubrole: AXMathSquareRoot'
+PASS sqrt.mathRootRadicand.length is 1
 PASS sqrtRadicand.subrole is 'AXSubrole: AXMathIdentifier'
 PASS sqrtRadicand.childAtIndex(0).stringValue is 'AXValue: a'
 PASS sqrtRadicand.isEqual(accessibilityController.accessibleElementById('sqrtRadicand')) is true
 PASS root.role is 'AXRole: AXGroup'
 PASS root.subrole is 'AXSubrole: AXMathRoot'
+PASS root.mathRootRadicand.length is 1
 PASS rootIndex.isEqual(accessibilityController.accessibleElementById('rootIndex')) is true
 PASS rootRadicand.isEqual(accessibilityController.accessibleElementById('rootRadicand')) is true
 PASS fenced.role is 'AXRole: AXGroup'

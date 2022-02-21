@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/architecture.svg
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/commands.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/design.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/expectation.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/docs/internals.rst

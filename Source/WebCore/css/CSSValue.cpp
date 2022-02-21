@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Andreas Kling (kling@webkit.org)
  * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +40,7 @@
 #include "CSSFilterImageValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
+#include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSFontStyleRangeValue.h"
 #include "CSSFontStyleValue.h"
 #include "CSSFontValue.h"
@@ -47,19 +49,18 @@
 #include "CSSGradientValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
-#include "CSSInheritedValue.h"
-#include "CSSInitialValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSNamedImageValue.h"
+#include "CSSOffsetRotateValue.h"
 #include "CSSPaintImageValue.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
+#include "CSSRayValue.h"
 #include "CSSReflectValue.h"
 #include "CSSShadowValue.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSUnicodeRangeValue.h"
-#include "CSSUnsetValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "CSSVariableReferenceValue.h"
@@ -68,6 +69,7 @@
 #include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
+#include "CSSSubgridValue.h"
 
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
@@ -81,16 +83,11 @@ struct SameSizeAsCSSValue {
 
 COMPILE_ASSERT(sizeof(CSSValue) == sizeof(SameSizeAsCSSValue), CSS_value_should_stay_small);
 
-bool CSSValue::isImplicitInitialValue() const
-{
-    return m_classType == InitialClass && downcast<CSSInitialValue>(*this).isImplicit();
-}
-
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
 
 CSSValue::Type CSSValue::cssValueType() const
 {
-    if (isInheritedValue())
+    if (isInheritValue())
         return CSS_INHERIT;
     if (isPrimitiveValue())
         return CSS_PRIMITIVE_VALUE;
@@ -105,7 +102,7 @@ CSSValue::Type CSSValue::cssValueType() const
     return CSS_CUSTOM;
 }
 
-bool CSSValue::traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const
+bool CSSValue::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
 {
     if (is<CSSValueList>(*this))
         return downcast<CSSValueList>(*this).traverseSubresources(handler);
@@ -164,6 +161,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSFontValue>(*this, other);
         case FontFaceSrcClass:
             return compareCSSValues<CSSFontFaceSrcValue>(*this, other);
+        case FontPaletteValuesOverrideColorsClass:
+            return compareCSSValues<CSSFontPaletteValuesOverrideColorsValue>(*this, other);
         case FontFeatureClass:
             return compareCSSValues<CSSFontFeatureValue>(*this, other);
         case FontVariationClass:
@@ -180,20 +179,14 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSCrossfadeValue>(*this, other);
         case ImageClass:
             return compareCSSValues<CSSImageValue>(*this, other);
-        case InheritedClass:
-            return compareCSSValues<CSSInheritedValue>(*this, other);
-        case InitialClass:
-            return compareCSSValues<CSSInitialValue>(*this, other);
-        case UnsetClass:
-            return compareCSSValues<CSSUnsetValue>(*this, other);
-        case RevertClass:
-            return compareCSSValues<CSSRevertValue>(*this, other);
         case GridAutoRepeatClass:
             return compareCSSValues<CSSGridAutoRepeatValue>(*this, other);
         case GridIntegerRepeatClass:
             return compareCSSValues<CSSGridIntegerRepeatValue>(*this, other);
         case GridLineNamesClass:
             return compareCSSValues<CSSGridLineNamesValue>(*this, other);
+        case SubgridClass:
+            return compareCSSValues<CSSSubgridValue>(*this, other);
         case GridTemplateAreasClass:
             return compareCSSValues<CSSGridTemplateAreasValue>(*this, other);
         case PrimitiveClass:
@@ -226,6 +219,10 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSVariableReferenceValue>(*this, other);
         case PendingSubstitutionValueClass:
             return compareCSSValues<CSSPendingSubstitutionValue>(*this, other);
+        case OffsetRotateClass:
+            return compareCSSValues<CSSOffsetRotateValue>(*this, other);
+        case RayClass:
+            return compareCSSValues<CSSRayValue>(*this, other);
         case FontStyleClass:
             return compareCSSValues<CSSFontStyleValue>(*this, other);
         case FontStyleRangeClass:
@@ -239,6 +236,11 @@ bool CSSValue::equals(const CSSValue& other) const
     else if (!is<CSSValueList>(*this) && is<CSSValueList>(other))
         return static_cast<const CSSValueList&>(other).equals(*this);
     return false;
+}
+
+bool CSSValue::isCSSLocalURL(StringView relativeURL)
+{
+    return relativeURL.isEmpty() || relativeURL.startsWith('#');
 }
 
 String CSSValue::cssText() const
@@ -264,6 +266,8 @@ String CSSValue::cssText() const
         return downcast<CSSFontValue>(*this).customCSSText();
     case FontFaceSrcClass:
         return downcast<CSSFontFaceSrcValue>(*this).customCSSText();
+    case FontPaletteValuesOverrideColorsClass:
+        return downcast<CSSFontPaletteValuesOverrideColorsValue>(*this).customCSSText();
     case FontFeatureClass:
         return downcast<CSSFontFeatureValue>(*this).customCSSText();
     case FontVariationClass:
@@ -280,20 +284,14 @@ String CSSValue::cssText() const
         return downcast<CSSCrossfadeValue>(*this).customCSSText();
     case ImageClass:
         return downcast<CSSImageValue>(*this).customCSSText();
-    case InheritedClass:
-        return downcast<CSSInheritedValue>(*this).customCSSText();
-    case InitialClass:
-        return downcast<CSSInitialValue>(*this).customCSSText();
-    case UnsetClass:
-        return downcast<CSSUnsetValue>(*this).customCSSText();
-    case RevertClass:
-        return downcast<CSSRevertValue>(*this).customCSSText();
     case GridAutoRepeatClass:
         return downcast<CSSGridAutoRepeatValue>(*this).customCSSText();
     case GridIntegerRepeatClass:
         return downcast<CSSGridIntegerRepeatValue>(*this).customCSSText();
     case GridLineNamesClass:
         return downcast<CSSGridLineNamesValue>(*this).customCSSText();
+    case SubgridClass:
+        return downcast<CSSSubgridValue>(*this).customCSSText();
     case GridTemplateAreasClass:
         return downcast<CSSGridTemplateAreasValue>(*this).customCSSText();
     case PrimitiveClass:
@@ -328,6 +326,10 @@ String CSSValue::cssText() const
         return downcast<CSSVariableReferenceValue>(*this).customCSSText();
     case PendingSubstitutionValueClass:
         return downcast<CSSPendingSubstitutionValue>(*this).customCSSText();
+    case OffsetRotateClass:
+        return downcast<CSSOffsetRotateValue>(*this).customCSSText();
+    case RayClass:
+        return downcast<CSSRayValue>(*this).customCSSText();
     case FontStyleClass:
         return downcast<CSSFontStyleValue>(*this).customCSSText();
     case FontStyleRangeClass:
@@ -377,6 +379,9 @@ void CSSValue::destroy()
     case FontFaceSrcClass:
         delete downcast<CSSFontFaceSrcValue>(this);
         return;
+    case FontPaletteValuesOverrideColorsClass:
+        delete downcast<CSSFontPaletteValuesOverrideColorsValue>(this);
+        return;
     case FontFeatureClass:
         delete downcast<CSSFontFeatureValue>(this);
         return;
@@ -401,18 +406,6 @@ void CSSValue::destroy()
     case ImageClass:
         delete downcast<CSSImageValue>(this);
         return;
-    case InheritedClass:
-        delete downcast<CSSInheritedValue>(this);
-        return;
-    case InitialClass:
-        delete downcast<CSSInitialValue>(this);
-        return;
-    case UnsetClass:
-        delete downcast<CSSUnsetValue>(this);
-        return;
-    case RevertClass:
-        delete downcast<CSSRevertValue>(this);
-        return;
     case GridAutoRepeatClass:
         delete downcast<CSSGridAutoRepeatValue>(this);
         return;
@@ -421,6 +414,9 @@ void CSSValue::destroy()
         return;
     case GridLineNamesClass:
         delete downcast<CSSGridLineNamesValue>(this);
+        return;
+    case SubgridClass:
+        delete downcast<CSSSubgridValue>(this);
         return;
     case GridTemplateAreasClass:
         delete downcast<CSSGridTemplateAreasValue>(this);
@@ -481,6 +477,12 @@ void CSSValue::destroy()
     case PendingSubstitutionValueClass:
         delete downcast<CSSPendingSubstitutionValue>(this);
         return;
+    case OffsetRotateClass:
+        delete downcast<CSSOffsetRotateValue>(this);
+        return;
+    case RayClass:
+        delete downcast<CSSRayValue>(this);
+        return;
     case FontStyleClass:
         delete downcast<CSSFontStyleValue>(this);
         return;
@@ -504,12 +506,48 @@ Ref<DeprecatedCSSOMValue> CSSValue::createDeprecatedCSSOMWrapper(CSSStyleDeclara
 
 bool CSSValue::treatAsInheritedValue(CSSPropertyID propertyID) const
 {
-    return classType() == InheritedClass || (classType() == UnsetClass && CSSProperty::isInheritedProperty(propertyID));
+    return isInheritValue() || (isUnsetValue() && CSSProperty::isInheritedProperty(propertyID));
 }
 
 bool CSSValue::treatAsInitialValue(CSSPropertyID propertyID) const
 {
-    return classType() == InitialClass || (classType() == UnsetClass && !CSSProperty::isInheritedProperty(propertyID));
+    return isInitialValue() || (isUnsetValue() && !CSSProperty::isInheritedProperty(propertyID));
 }
+
+bool CSSValue::isInitialValue() const
+{
+    return is<CSSPrimitiveValue>(*this) && downcast<CSSPrimitiveValue>(*this).isInitialValue();
+}
+
+bool CSSValue::isImplicitInitialValue() const
+{
+    return is<CSSPrimitiveValue>(*this) && downcast<CSSPrimitiveValue>(*this).isImplicitInitialValue();
+}
+
+bool CSSValue::isInheritValue() const
+{
+    return is<CSSPrimitiveValue>(*this) && downcast<CSSPrimitiveValue>(*this).isInheritValue();
+}
+
+bool CSSValue::isUnsetValue() const
+{
+    return is<CSSPrimitiveValue>(*this) && downcast<CSSPrimitiveValue>(*this).isUnsetValue();
+}
+
+bool CSSValue::isRevertValue() const
+{
+    return is<CSSPrimitiveValue>(*this) && downcast<CSSPrimitiveValue>(*this).isRevertValue();
+}
+
+bool CSSValue::isRevertLayerValue() const
+{
+    return is<CSSPrimitiveValue>(*this) && downcast<CSSPrimitiveValue>(*this).isRevertLayerValue();
+}
+
+bool CSSValue::isCSSWideKeyword() const
+{
+    return is<CSSPrimitiveValue>(*this) && downcast<CSSPrimitiveValue>(*this).isCSSWideKeyword();
+}
+
 
 }

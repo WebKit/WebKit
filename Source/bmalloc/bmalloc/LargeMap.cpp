@@ -26,6 +26,8 @@
 #include "LargeMap.h"
 #include <utility>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 LargeRange LargeMap::remove(size_t alignment, size_t size)
@@ -87,3 +89,5 @@ void LargeMap::markAllAsEligibile()
 }
 
 } // namespace bmalloc
+
+#endif

@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "RemoteObjectRegistry.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
@@ -37,7 +38,6 @@
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <wtf/RetainPtr.h>
 
-static bool done = false;
 static bool didCrash = false;
 static RetainPtr<NSString> alertMessage;
 static RetainPtr<NSString> promptDefault;
@@ -58,7 +58,7 @@ static RetainPtr<NSString> promptResult;
     completionHandler();
 }
 
-- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString * _Nullable))completionHandler
+- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString *))completionHandler
 {
     promptDefault = defaultText;
     done = true;
@@ -228,6 +228,7 @@ TEST(IPCTestingAPI, CanSendInvalidSyncMessageToUIProcessWithoutTermination)
 }
 
 #if ENABLE(GPU_PROCESS)
+
 TEST(IPCTestingAPI, CanSendSyncMessageToGPUProcess)
 {
     auto webView = createWebViewWithIPCTestingAPI();
@@ -291,14 +292,18 @@ TEST(IPCTestingAPI, CanReceiveIPCSemaphore)
     [webView setUIDelegate:delegate.get()];
 
     done = false;
-    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
-        "const semaphore = IPC.createSemaphore();"
-        "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,"
-        "    [{type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, semaphore, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID}]);"
-        "const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_SemaphoreForGetPixelBuffer.name, 100, []);"
-        "semaphore.signal();"
-        "alert(result.arguments.length + ':' + result.arguments[0].type + ':' + result.arguments[0].value.waitFor(100));"
-        "</script>"];
+    auto html = @"<!DOCTYPE html>"
+        "<script>"
+        "const bufferSize = 1 << 16;"
+        "const streamConnection = IPC.createStreamClientConnection('GPU', bufferSize);"
+        "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name, ["
+        "    { type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID },"
+        "    { type: 'StreamConnectionBuffer', value: streamConnection.streamBuffer() },"
+        "]);"
+        "const arguments = IPC.waitForMessage('GPU', 123, IPC.messages.RemoteRenderingBackendProxy_DidCreateWakeUpSemaphoreForDisplayListStream.name, 100);"
+        "alert(arguments.length + ':' + arguments[0].type + ':' + arguments[0].value.waitFor(100));"
+        "</script>";
+    [webView synchronouslyLoadHTMLString:html];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([alertMessage UTF8String], "1:Semaphore:false");
@@ -311,13 +316,19 @@ TEST(IPCTestingAPI, CanReceiveSharedMemory)
     auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
-    auto* html = @R"HTML(<!DOCTYPE html>
-<script>
-IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
-    [{type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, semaphore: IPC.createSemaphore(), 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID}]);
-const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_UpdateSharedMemoryForGetPixelBuffer.name, 100, [{type: 'uint32_t', value: 8}]);
-alert(result.arguments.length);
-</script>)HTML";
+    auto html = @"<!DOCTYPE html>"
+        "<script>"
+        "const bufferSize = 1 << 16;"
+        "const streamConnection = IPC.createStreamClientConnection('GPU', bufferSize);"
+        "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name, ["
+        "    { type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID },"
+        "    { type: 'StreamConnectionBuffer', value: streamConnection.streamBuffer() },"
+        "]);"
+        "const arguments = IPC.waitForMessage('GPU', 123, IPC.messages.RemoteRenderingBackendProxy_DidCreateWakeUpSemaphoreForDisplayListStream.name, 100);"
+        "streamConnection.setWakeUpSemaphore(arguments[0].value);"
+        "const result = streamConnection.sendSyncMessage(123, IPC.messages.RemoteRenderingBackend_UpdateSharedMemoryForGetPixelBuffer.name, 100, [{type: 'uint32_t', value: 8}]);"
+        "alert(result.arguments.length);"
+        "</script>";
 
     done = false;
     [webView synchronouslyLoadHTMLString:html];
@@ -327,9 +338,9 @@ alert(result.arguments.length);
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstReply = result.arguments[0]; firstReply.type"].UTF8String, "SharedMemory");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstReply.protection"].UTF8String, "ReadOnly");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"Array.from(new Uint8Array(firstReply.value.readBytes(0, 8))).toString()"].UTF8String, "0,0,0,0,0,0,0,0");
-
 }
-#endif
+
+#endif // ENABLE(GPU_PROCESS)
 
 TEST(IPCTestingAPI, CanCreateIPCSemaphore)
 {
@@ -439,7 +450,7 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForPrompt)
     EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"JSON.stringify(result.arguments)"] UTF8String], "[{\"type\":\"String\",\"value\":\"foo\"}]");
 }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
 {
     auto webView = createWebViewWithIPCTestingAPI();
@@ -501,7 +512,7 @@ TEST(IPCTestingAPI, CanInterceptAlert)
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 TEST(IPCTestingAPI, CanInterceptHasStorageAccess)
 {
     auto webView = createWebViewWithIPCTestingAPI();

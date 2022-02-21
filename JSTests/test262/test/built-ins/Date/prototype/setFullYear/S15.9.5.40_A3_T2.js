@@ -8,11 +8,15 @@ info: |
 esid: sec-date.prototype.setfullyear
 description: Checking DontDelete attribute
 ---*/
+assert.sameValue(
+  delete Date.prototype.setFullYear.length,
+  true,
+  'The value of `delete Date.prototype.setFullYear.length` is expected to be true'
+);
 
-if (delete Date.prototype.setFullYear.length !== true) {
-  throw new Test262Error('#1: The Date.prototype.setFullYear.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.prototype.setFullYear.hasOwnProperty('length'),
+  'The value of !Date.prototype.setFullYear.hasOwnProperty(\'length\') is expected to be true'
+);
 
-if (Date.prototype.setFullYear.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.prototype.setFullYear.length property does not have the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

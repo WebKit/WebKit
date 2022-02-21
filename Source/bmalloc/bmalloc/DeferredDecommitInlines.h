@@ -27,6 +27,8 @@
 
 #include "DeferredDecommit.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 inline DeferredDecommit::DeferredDecommit()
@@ -42,3 +44,4 @@ inline DeferredDecommit::DeferredDecommit(IsoDirectoryBaseBase* directory, IsoPa
 
 } // namespace bmalloc
 
+#endif

@@ -57,6 +57,8 @@ protected:
 private:
     DedicatedWorkerThread(const WorkerParameters&, const ScriptBuffer& sourceCode, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags);
 
+    ASCIILiteral threadName() const final { return "WebCore: Worker"_s; }
+
     WorkerObjectProxy& m_workerObjectProxy;
 };
 

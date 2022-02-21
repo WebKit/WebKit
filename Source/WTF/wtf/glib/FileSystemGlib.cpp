@@ -30,13 +30,19 @@
 #include <sys/file.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/UUID.h>
-#include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
+
+#if OS(WINDOWS)
+#include <windows.h>
+#else
+#include <limits.h>
+#include <unistd.h>
+#endif
 
 namespace WTF {
 
@@ -139,7 +145,7 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& handle, const
     // FIXME: Suffix is not supported, but OK for now since the code using it is macOS-port-only.
     ASSERT_UNUSED(suffix, suffix.isEmpty());
 
-    GUniquePtr<gchar> filename(g_strdup_printf("%s%s", prefix.utf8().data(), createCanonicalUUIDString().utf8().data()));
+    GUniquePtr<gchar> filename(g_strdup_printf("%s%s", prefix.utf8().data(), createVersion4UUIDString().utf8().data()));
     GUniquePtr<gchar> tempPath(g_build_filename(g_get_tmp_dir(), filename.get(), nullptr));
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(tempPath.get()));
 
@@ -213,6 +219,11 @@ bool truncateFile(PlatformFileHandle handle, long long offset)
     return g_seekable_truncate(G_SEEKABLE(g_io_stream_get_output_stream(G_IO_STREAM(handle))), offset, nullptr, nullptr);
 }
 
+bool flushFile(PlatformFileHandle handle)
+{
+    return g_output_stream_flush(g_io_stream_get_output_stream(G_IO_STREAM(handle)), nullptr, nullptr);
+}
+
 int writeToFile(PlatformFileHandle handle, const void* data, int length)
 {
     if (!length)
@@ -269,6 +280,53 @@ bool unlockFile(PlatformFileHandle handle)
     return result != -1;
 }
 #endif // USE(FILE_LOCK)
+
+#if OS(LINUX)
+CString currentExecutablePath()
+{
+    static char readLinkBuffer[PATH_MAX];
+    ssize_t result = readlink("/proc/self/exe", readLinkBuffer, PATH_MAX);
+    if (result == -1)
+        return { };
+    return CString(readLinkBuffer, result);
+}
+#elif OS(HURD)
+CString currentExecutablePath()
+{
+    return { };
+}
+#elif OS(UNIX)
+CString currentExecutablePath()
+{
+    static char readLinkBuffer[PATH_MAX];
+    ssize_t result = readlink("/proc/curproc/file", readLinkBuffer, PATH_MAX);
+    if (result == -1)
+        return { };
+    return CString(readLinkBuffer, result);
+}
+#elif OS(WINDOWS)
+CString currentExecutablePath()
+{
+    static WCHAR buffer[MAX_PATH];
+    DWORD length = GetModuleFileNameW(0, buffer, MAX_PATH);
+    if (!length || (length == MAX_PATH && GetLastError() == ERROR_INSUFFICIENT_BUFFER))
+        return { };
+
+    String path(buffer, length);
+    return path.utf8();
+}
+#endif
+
+CString currentExecutableName()
+{
+    auto executablePath = currentExecutablePath();
+    if (!executablePath.isNull()) {
+        GUniquePtr<char> basename(g_path_get_basename(executablePath.data()));
+        return basename.get();
+    }
+
+    return g_get_prgname();
+}
 
 } // namespace FileSystemImpl
 } // namespace WTF

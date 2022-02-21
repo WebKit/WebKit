@@ -497,8 +497,9 @@ bool SimplePeerConnection::CreateDataChannel() {
   struct webrtc::DataChannelInit init;
   init.ordered = true;
   init.reliable = true;
-  data_channel_ = peer_connection_->CreateDataChannel("Hello", &init);
-  if (data_channel_.get()) {
+  auto result = peer_connection_->CreateDataChannelOrError("Hello", &init);
+  if (result.ok()) {
+    data_channel_ = result.MoveValue();
     data_channel_->RegisterObserver(this);
     RTC_LOG(LS_INFO) << "Succeeds to create data channel";
     return true;

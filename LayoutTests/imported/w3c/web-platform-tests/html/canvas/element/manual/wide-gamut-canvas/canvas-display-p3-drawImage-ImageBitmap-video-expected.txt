@@ -1,0 +1,34 @@
+
+PASS sRGB-FF0100, Context srgb, ImageData srgb, cropSource=false
+PASS sRGB-FF0100, Context srgb, ImageData srgb, cropSource=true
+PASS sRGB-FF0100, Context srgb, ImageData display-p3, cropSource=false
+PASS sRGB-FF0100, Context srgb, ImageData display-p3, cropSource=true
+PASS sRGB-FF0100, Context display-p3, ImageData srgb, cropSource=false
+PASS sRGB-FF0100, Context display-p3, ImageData srgb, cropSource=true
+PASS sRGB-FF0100, Context display-p3, ImageData display-p3, cropSource=false
+PASS sRGB-FF0100, Context display-p3, ImageData display-p3, cropSource=true
+PASS sRGB-BB0000, Context srgb, ImageData srgb, cropSource=false
+PASS sRGB-BB0000, Context srgb, ImageData srgb, cropSource=true
+PASS sRGB-BB0000, Context srgb, ImageData display-p3, cropSource=false
+PASS sRGB-BB0000, Context srgb, ImageData display-p3, cropSource=true
+PASS sRGB-BB0000, Context display-p3, ImageData srgb, cropSource=false
+PASS sRGB-BB0000, Context display-p3, ImageData srgb, cropSource=true
+PASS sRGB-BB0000, Context display-p3, ImageData display-p3, cropSource=false
+PASS sRGB-BB0000, Context display-p3, ImageData display-p3, cropSource=true
+PASS Rec2020-3FF000000, Context srgb, ImageData srgb, cropSource=false
+PASS Rec2020-3FF000000, Context srgb, ImageData srgb, cropSource=true
+PASS Rec2020-3FF000000, Context srgb, ImageData display-p3, cropSource=false
+PASS Rec2020-3FF000000, Context srgb, ImageData display-p3, cropSource=true
+PASS Rec2020-3FF000000, Context display-p3, ImageData srgb, cropSource=false
+PASS Rec2020-3FF000000, Context display-p3, ImageData srgb, cropSource=true
+PASS Rec2020-3FF000000, Context display-p3, ImageData display-p3, cropSource=false
+PASS Rec2020-3FF000000, Context display-p3, ImageData display-p3, cropSource=true
+PASS Rec2020-222000000, Context srgb, ImageData srgb, cropSource=false
+PASS Rec2020-222000000, Context srgb, ImageData srgb, cropSource=true
+PASS Rec2020-222000000, Context srgb, ImageData display-p3, cropSource=false
+PASS Rec2020-222000000, Context srgb, ImageData display-p3, cropSource=true
+PASS Rec2020-222000000, Context display-p3, ImageData srgb, cropSource=false
+PASS Rec2020-222000000, Context display-p3, ImageData srgb, cropSource=true
+PASS Rec2020-222000000, Context display-p3, ImageData display-p3, cropSource=false
+PASS Rec2020-222000000, Context display-p3, ImageData display-p3, cropSource=true
+

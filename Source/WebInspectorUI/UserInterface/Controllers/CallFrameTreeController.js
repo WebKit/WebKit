@@ -39,6 +39,75 @@ WI.CallFrameTreeController = class CallFrameTreeController extends WI.Object
             this._treeOutline.addEventListener(WI.TreeOutline.Event.ElementClicked, this._treeElementClicked, this);
     }
 
+    // Static
+
+    static groupBlackboxedCallFrames(parent, callFrames, {rememberBlackboxedCallFrameGroupToAutoExpand} = {})
+    {
+        let parentIsNode = parent instanceof Node;
+        console.assert(parentIsNode || parent instanceof WI.TreeOutline || parent instanceof WI.TreeElement, parent);
+        console.assert(Array.isArray(callFrames) && callFrames.length && callFrames.every((callFrame) => callFrame instanceof WI.CallFrame), callFrames);
+
+        let BlackboxedGroupUIClass = parentIsNode ? WI.BlackboxedGroupView : WI.BlackboxedGroupTreeElement;
+        let blackboxedGroupUIOptions = {rememberBlackboxedCallFrameGroupToAutoExpand};
+
+        let CallFrameUIClass = parentIsNode ? WI.CallFrameView : WI.CallFrameTreeElement;
+        let callFrameUIOptions = {showFunctionName: true, indicateIfBlackboxed: true};
+
+        let activeCallFrame = WI.debuggerManager.activeCallFrame;
+        let activeCallFrameTreeElement = null;
+
+        let blackboxedCallFrameGroupStartIndex = undefined;
+
+        function displayable(callFrame) {
+            if (parentIsNode) {
+                if (!callFrame.sourceCodeLocation && callFrame.functionName === null)
+                    return false;
+
+                if (callFrame.isConsoleEvaluation && !WI.settings.debugShowConsoleEvaluations.value)
+                    return false;
+            }
+
+            return true;
+        }
+
+        // Add one extra iteration to handle call stacks that start blackboxed.
+        for (let i = 0; i < callFrames.length + 1; ++i) {
+            let callFrame = callFrames[i];
+
+            if (callFrame) {
+                if (!displayable(callFrame))
+                    continue;
+
+                if (callFrame.blackboxed) {
+                    blackboxedCallFrameGroupStartIndex ??= i;
+                    continue;
+                }
+            }
+
+            if (blackboxedCallFrameGroupStartIndex !== undefined) {
+                let blackboxedCallFrameGroup = callFrames.slice(blackboxedCallFrameGroupStartIndex, i).filter(displayable);
+                blackboxedCallFrameGroupStartIndex = undefined;
+
+                if (!rememberBlackboxedCallFrameGroupToAutoExpand || !WI.debuggerManager.shouldAutoExpandBlackboxedCallFrameGroup(blackboxedCallFrameGroup))
+                    parent.appendChild(new BlackboxedGroupUIClass(blackboxedCallFrameGroup, blackboxedGroupUIOptions));
+                else {
+                    for (let blackboxedCallFrame of blackboxedCallFrameGroup)
+                        parent.appendChild(new CallFrameUIClass(blackboxedCallFrame, callFrameUIOptions));
+                }
+            }
+
+            if (!callFrame)
+                continue;
+
+            let callFrameTreeElement = new CallFrameUIClass(callFrame, callFrameUIOptions);
+            if (callFrame === activeCallFrame && !parentIsNode)
+                activeCallFrameTreeElement = callFrameTreeElement;
+            parent.appendChild(callFrameTreeElement);
+        }
+
+        return activeCallFrameTreeElement;
+    }
+
     // Public
 
     get treeOutline() { return this._treeOutline; }
@@ -58,8 +127,7 @@ WI.CallFrameTreeController = class CallFrameTreeController extends WI.Object
 
         this._treeOutline.removeChildren();
 
-        for (let callFrame of this._callFrames)
-            this._treeOutline.appendChild(new WI.CallFrameTreeElement(callFrame));
+        WI.CallFrameTreeController.groupBlackboxedCallFrames(this._treeOutline, this._callFrames);
     }
 
     disconnect()

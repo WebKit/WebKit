@@ -1,4 +1,0 @@
-
-PASS window.open() with noopener should have equal viewport width and height
-PASS window.open() with noreferrer should have equal viewport width and height
-

@@ -23,21 +23,18 @@
         }, `with font-size: 10px, #target.style['line-height'] = ${line_height_percent} should result in a used line-height of ${expected_line_height}`)
     }
     
-    // Per spec, CSS numbers shouldn't serialize with exponents.  When the following bug is fixed, this expectation will
-    // need to be updated. https://bugs.webkit.org/show_bug.cgi?id=218880
-    test_line_height(1e+26, '9.999999146971785e+26px')
+    test_line_height(1e+26, '999999914697178458896728064px')
     
-    // Per spec, CSS numbers shouldn't serialize with more than 6 digits.  When the following bug is fixed, the
-    // offending expectations below will need to be updated. https://bugs.webkit.org/show_bug.cgi?id=218880
-    test_line_height(2.53821, '25.382099151611328px')
-    test_line_height(2.6666667, '26.666664123535156px')
+    // Per spec, CSS numbers shouldn't serialize with more than 6 decimal places.
+    test_line_height(2.53821, '25.382099px')
+    test_line_height(2.6666667, '26.666664px')
     // 20 decimals.
-    test_line_height(2.12345678912345678912, '21.234567642211914px')
+    test_line_height(2.12345678912345678912, '21.234568px')
     test_line_height(2.5, '25px')
     test_line_height(2, '20px')
     test_line_height(1.05, '10.5px')
-    test_line_height(1.049, '10.489999771118164px')
-    test_line_height(1.0491, '10.49100112915039px')
+    test_line_height(1.049, '10.49px')
+    test_line_height(1.0491, '10.491001px')
     test_line_height(0, '0px')
     test_line_height(1, '10px')
     

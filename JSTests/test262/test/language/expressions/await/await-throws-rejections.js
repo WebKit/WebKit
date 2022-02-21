@@ -6,6 +6,7 @@ author: Brian Terlson <brian.terlson@microsoft.com>
 esid: pending
 description: >
   Await throws errors from rejected promises
+flags: [async]
 ---*/
 
 async function foo() {
@@ -21,3 +22,4 @@ async function foo() {
   assert(caught);
 }
 
+foo().then($DONE, $DONE);

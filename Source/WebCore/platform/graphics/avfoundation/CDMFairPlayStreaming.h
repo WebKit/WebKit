@@ -56,7 +56,7 @@ public:
     virtual ~CDMPrivateFairPlayStreaming();
 
 #if !RELEASE_LOG_DISABLED
-    void setLogger(WTF::Logger&, const void* logIdentifier) final;
+    void setLogger(Logger&, const void* logIdentifier) final;
 #endif
 
     Vector<AtomString> supportedInitDataTypes() const override;
@@ -71,27 +71,27 @@ public:
     void loadAndInitialize() override;
     bool supportsServerCertificates() const override;
     bool supportsSessions() const override;
-    bool supportsInitData(const AtomString&, const SharedBuffer&) const override;
-    RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const override;
+    bool supportsInitData(const AtomString&, const FragmentedSharedBuffer&) const override;
+    RefPtr<FragmentedSharedBuffer> sanitizeResponse(const FragmentedSharedBuffer&) const override;
     std::optional<String> sanitizeSessionId(const String&) const override;
 
     static const AtomString& sinfName();
-    static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSinf(const SharedBuffer&);
-    static RefPtr<SharedBuffer> sanitizeSinf(const SharedBuffer&);
+    static std::optional<Vector<Ref<FragmentedSharedBuffer>>> extractKeyIDsSinf(const FragmentedSharedBuffer&);
+    static RefPtr<FragmentedSharedBuffer> sanitizeSinf(const FragmentedSharedBuffer&);
 
     static const AtomString& skdName();
-    static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSkd(const SharedBuffer&);
-    static RefPtr<SharedBuffer> sanitizeSkd(const SharedBuffer&);
+    static std::optional<Vector<Ref<FragmentedSharedBuffer>>> extractKeyIDsSkd(const FragmentedSharedBuffer&);
+    static RefPtr<FragmentedSharedBuffer> sanitizeSkd(const FragmentedSharedBuffer&);
 
     static const Vector<FourCC>& validFairPlayStreamingSchemes();
 
 private:
 #if !RELEASE_LOG_DISABLED
-    WTF::Logger* loggerPtr() const { return m_logger.get(); };
+    Logger* loggerPtr() const { return m_logger.get(); };
     const void* logIdentifier() const { return m_logIdentifier; }
     const char* logClassName() const { return "CDMPrivateFairPlayStreaming"; }
 
-    RefPtr<WTF::Logger> m_logger;
+    RefPtr<Logger> m_logger;
     const void* m_logIdentifier;
 #endif
 };

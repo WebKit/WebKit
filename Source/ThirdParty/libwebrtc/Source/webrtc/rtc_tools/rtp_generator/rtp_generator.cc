@@ -136,10 +136,15 @@ absl::optional<RtpGeneratorOptions> ParseRtpGeneratorOptionsFromFile(
   }
 
   // Parse the file as JSON
-  Json::Reader json_reader;
+  Json::CharReaderBuilder builder;
   Json::Value json;
-  if (!json_reader.parse(raw_json_buffer.data(), json)) {
-    RTC_LOG(LS_ERROR) << "Unable to parse the corpus config json file";
+  std::string error_message;
+  std::unique_ptr<Json::CharReader> json_reader(builder.newCharReader());
+  if (!json_reader->parse(raw_json_buffer.data(),
+                          raw_json_buffer.data() + raw_json_buffer.size(),
+                          &json, &error_message)) {
+    RTC_LOG(LS_ERROR) << "Unable to parse the corpus config json file. Error:"
+                      << error_message;
     return absl::nullopt;
   }
 

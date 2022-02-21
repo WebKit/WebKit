@@ -52,7 +52,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebPage::platformInitialize()
+void WebPage::platformInitialize(const WebPageCreationParameters&)
 {
 }
 
@@ -75,28 +75,28 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
 
     switch (keyboardEvent.windowsVirtualKeyCode()) {
     case VK_LEFT:
-        scroll(m_page.get(), ScrollLeft, ScrollByLine);
+        scroll(m_page.get(), ScrollLeft, ScrollGranularity::Line);
         break;
     case VK_RIGHT:
-        scroll(m_page.get(), ScrollRight, ScrollByLine);
+        scroll(m_page.get(), ScrollRight, ScrollGranularity::Line);
         break;
     case VK_UP:
-        scroll(m_page.get(), ScrollUp, ScrollByLine);
+        scroll(m_page.get(), ScrollUp, ScrollGranularity::Line);
         break;
     case VK_DOWN:
-        scroll(m_page.get(), ScrollDown, ScrollByLine);
+        scroll(m_page.get(), ScrollDown, ScrollGranularity::Line);
         break;
     case VK_HOME:
-        scroll(m_page.get(), ScrollUp, ScrollByDocument);
+        scroll(m_page.get(), ScrollUp, ScrollGranularity::Document);
         break;
     case VK_END:
-        scroll(m_page.get(), ScrollDown, ScrollByDocument);
+        scroll(m_page.get(), ScrollDown, ScrollGranularity::Document);
         break;
     case VK_PRIOR:
-        scroll(m_page.get(), ScrollUp, ScrollByPage);
+        scroll(m_page.get(), ScrollUp, ScrollGranularity::Page);
         break;
     case VK_NEXT:
-        scroll(m_page.get(), ScrollDown, ScrollByPage);
+        scroll(m_page.get(), ScrollDown, ScrollGranularity::Page);
         break;
     default:
         return false;

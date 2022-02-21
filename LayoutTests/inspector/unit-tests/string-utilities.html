@@ -125,6 +125,36 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "String.prototype.isLowerCase",
+        test() {
+            InspectorTest.expectTrue("a".isLowerCase(), "String with single lowercase character should be lowercase.");
+            InspectorTest.expectTrue("abc".isLowerCase(), "String with multiple lowercase characters should be lowercase.");
+            InspectorTest.expectFalse("A".isLowerCase(), "String with single uppercase character should not be lowercase.");
+            InspectorTest.expectFalse("aBc".isLowerCase(), "String with mixed case characters should not be lowercase.");
+            InspectorTest.expectFalse("".isLowerCase(), "Empty string should not be lowercase.");
+            InspectorTest.expectFalse(".".isLowerCase(), "String with non-alpha character should not be lowercase.");
+            InspectorTest.expectFalse("1".isLowerCase(), "String with numeric character should not be lowercase.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "String.prototype.isUpperCase",
+        test() {
+            InspectorTest.expectTrue("A".isUpperCase(), "String with single uppercase character should be uppercase.");
+            InspectorTest.expectTrue("ABC".isUpperCase(), "String with multiple uppercase characters should be uppercase.");
+            InspectorTest.expectFalse("a".isUpperCase(), "String with single lowercase character should not be uppercase.");
+            InspectorTest.expectFalse("AbC".isUpperCase(), "String with mixed case characters should not be uppercase.");
+            InspectorTest.expectFalse("".isUpperCase(), "Empty string should not be uppercase.");
+            InspectorTest.expectFalse(".".isUpperCase(), "String with non-alpha character should not be uppercase.");
+            InspectorTest.expectFalse("1".isUpperCase(), "String with numeric character should not be uppercase.");
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

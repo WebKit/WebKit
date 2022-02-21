@@ -27,6 +27,7 @@
 #include "PlatformDisplayX11.h"
 
 #include "GLContext.h"
+#include "XErrorTrapper.h"
 
 #if PLATFORM(X11)
 #include <X11/Xatom.h>
@@ -44,10 +45,6 @@
 
 #if USE(GLX)
 #include <GL/glx.h>
-#endif
-
-#if USE(LCMS)
-#include <lcms2.h>
 #endif
 
 namespace WebCore {
@@ -184,7 +181,7 @@ void* PlatformDisplayX11::visual() const
 cmsHPROFILE PlatformDisplayX11::colorProfile() const
 {
     if (m_iccProfile)
-        return m_iccProfile;
+        return m_iccProfile.get();
 
     Atom iccAtom = XInternAtom(m_display, "_ICC_PROFILE", False);
     Atom type;
@@ -210,13 +207,32 @@ cmsHPROFILE PlatformDisplayX11::colorProfile() const
         }
 
         if (dataSize)
-            m_iccProfile = cmsOpenProfileFromMem(data, dataSize);
+            m_iccProfile = LCMSProfilePtr(cmsOpenProfileFromMem(data, dataSize));
     }
 
     if (data)
         XFree(data);
 
-    return m_iccProfile ? m_iccProfile : PlatformDisplay::colorProfile();
+    return m_iccProfile ? m_iccProfile.get() : PlatformDisplay::colorProfile();
+}
+#endif
+
+#if USE(ATSPI) || USE(ATK)
+String PlatformDisplayX11::plartformAccessibilityBusAddress() const
+{
+    Atom atspiBusAtom = XInternAtom(m_display, "AT_SPI_BUS", False);
+    Atom type;
+    int format;
+    unsigned long itemCount, bytesAfter;
+    unsigned char* data = nullptr;
+    XErrorTrapper trapper(m_display, XErrorTrapper::Policy::Ignore);
+    XGetWindowProperty(m_display, RootWindowOfScreen(DefaultScreenOfDisplay(m_display)), atspiBusAtom, 0L, 8192, False, XA_STRING, &type, &format, &itemCount, &bytesAfter, &data);
+
+    String atspiBusAddress = String::fromUTF8(reinterpret_cast<char*>(data));
+    if (data)
+        XFree(data);
+
+    return atspiBusAddress;
 }
 #endif
 

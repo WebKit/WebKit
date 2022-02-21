@@ -48,7 +48,7 @@ static constexpr bool verbose = false;
 
 IntlLocale* IntlLocale::create(VM& vm, Structure* structure)
 {
-    auto* object = new (NotNull, allocateCell<IntlLocale>(vm.heap)) IntlLocale(vm, structure);
+    auto* object = new (NotNull, allocateCell<IntlLocale>(vm)) IntlLocale(vm, structure);
     object->finishCreation(vm);
     return object;
 }
@@ -792,40 +792,19 @@ JSObject* IntlLocale::weekInfo(JSGlobalObject* globalObject)
         }
     };
 
-    static_assert(UCAL_SUNDAY == 1);
-    static_assert(UCAL_SATURDAY == 7);
-    UCalendarWeekdayType previous = canonicalizeDayOfWeekType(ucal_getDayOfWeekType(calendar.get(), UCAL_SATURDAY, &status));
-    if (!U_SUCCESS(status)) {
-        throwTypeError(globalObject, scope, "invalid locale"_s);
-        return nullptr;
-    }
-
-    int32_t weekendStart = 0;
-    int32_t weekendEnd = 0;
-    for (int32_t day = UCAL_SUNDAY; day <= UCAL_SATURDAY; ++day) {
-        UCalendarWeekdayType type = canonicalizeDayOfWeekType(ucal_getDayOfWeekType(calendar.get(), static_cast<UCalendarDaysOfWeek>(day), &status));
-        if (!U_SUCCESS(status)) {
-            throwTypeError(globalObject, scope, "invalid locale"_s);
-            return nullptr;
-        }
-        if (previous != type) {
-            switch (type) {
-            case UCAL_WEEKDAY: // WeekEnd => WeekDay
-                if (day == UCAL_SUNDAY)
-                    weekendEnd = UCAL_SATURDAY;
-                else
-                    weekendEnd = day - 1;
-                break;
-            case UCAL_WEEKEND: // WeekDay => WeekEnd
-                weekendStart = day;
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-        }
-        previous = type;
-    }
+    auto convertMondayBasedDayToUCalendarDaysOfWeek = [](int32_t day) -> UCalendarDaysOfWeek {
+        // Convert from
+        //     Monday => 1
+        //     Sunday => 7
+        // to
+        //     Sunday => 1
+        //     Saturday => 7
+        static_assert(UCAL_SUNDAY == 1);
+        static_assert(UCAL_SATURDAY == 7);
+        if (day == 7)
+            return UCAL_SUNDAY;
+        return static_cast<UCalendarDaysOfWeek>(day + 1);
+    };
 
     auto convertUCalendarDaysOfWeekToMondayBasedDay = [](int32_t day) -> int32_t {
         // Convert from
@@ -839,10 +818,31 @@ JSObject* IntlLocale::weekInfo(JSGlobalObject* globalObject)
         return day - 1;
     };
 
+    Vector<int32_t, 7> weekend;
+    for (int32_t day = 1; day <= 7; ++day) {
+        UCalendarWeekdayType type = canonicalizeDayOfWeekType(ucal_getDayOfWeekType(calendar.get(), convertMondayBasedDayToUCalendarDaysOfWeek(day), &status));
+        if (!U_SUCCESS(status)) {
+            throwTypeError(globalObject, scope, "invalid locale"_s);
+            return nullptr;
+        }
+        switch (type) {
+        case UCAL_WEEKDAY:
+            break;
+        case UCAL_WEEKEND:
+            weekend.append(day);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    auto* weekendArray = createArrayFromIntVector(globalObject, WTFMove(weekend));
+    RETURN_IF_EXCEPTION(scope, { });
+
     JSObject* result = constructEmptyObject(globalObject);
     result->putDirect(vm, Identifier::fromString(vm, "firstDay"), jsNumber(convertUCalendarDaysOfWeekToMondayBasedDay(firstDayOfWeek)));
-    result->putDirect(vm, Identifier::fromString(vm, "weekendStart"), jsNumber(convertUCalendarDaysOfWeekToMondayBasedDay(weekendStart)));
-    result->putDirect(vm, Identifier::fromString(vm, "weekendEnd"), jsNumber(convertUCalendarDaysOfWeekToMondayBasedDay(weekendEnd)));
+    result->putDirect(vm, Identifier::fromString(vm, "weekend"), weekendArray);
     result->putDirect(vm, Identifier::fromString(vm, "minimalDays"), jsNumber(minimalDays));
     return result;
 }

@@ -2,4 +2,6 @@
 *.xcodeproj/xcuserdata
 *.pyc
 build
+build-*
 *~
+.vscode

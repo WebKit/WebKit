@@ -1,3 +1,0 @@
-
-PASS This browser doesn't implement SharedWorker, and so passes this test automatically
-

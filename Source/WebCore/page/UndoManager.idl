@@ -24,8 +24,7 @@
  */
 
 [
-    EnabledBySetting=UndoManagerAPI,
-    ImplementationLacksVTable,
+    EnabledBySetting=UndoManagerAPIEnabled,
     GenerateIsReachable=ImplDocument,
     Exposed=Window
 ] interface UndoManager {

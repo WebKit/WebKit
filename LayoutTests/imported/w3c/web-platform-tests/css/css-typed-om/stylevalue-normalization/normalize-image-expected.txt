@@ -1,5 +1,5 @@
 
-FAIL Normalizing a valid <url> returns a CSSImageValue url("/media/1x1-green.png") cannot be parsed as a background-image
-FAIL Normalizing a bad <url> returns a CSSImageValue url("http://localhost:8800/css/css-typed-om/stylevalue-normalization/normalize-image.html") cannot be parsed as a background-image
-FAIL Normalizing a <gradient> returns a CSSImageValue linear-gradient(red, orange) cannot be parsed as a background-image
+PASS Normalizing a valid <url> returns a CSSImageValue
+PASS Normalizing a bad <url> returns a CSSImageValue
+FAIL Normalizing a <gradient> returns a CSSImageValue assert_equals: expected "CSSImageValue" but got "CSSStyleValue"
 

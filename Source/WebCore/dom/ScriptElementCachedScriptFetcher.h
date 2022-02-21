@@ -41,14 +41,14 @@ public:
     const String& crossOriginMode() const { return m_crossOriginMode; }
 
 protected:
-    ScriptElementCachedScriptFetcher(const String& nonce, ReferrerPolicy policy, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
+    ScriptElementCachedScriptFetcher(const AtomString& nonce, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree)
         : CachedScriptFetcher(nonce, policy, charset, initiatorName, isInUserAgentShadowTree)
         , m_crossOriginMode(crossOriginMode)
     {
     }
 
 private:
-    String m_crossOriginMode;
+    const AtomString m_crossOriginMode;
 };
 
 } // namespace WebCore

@@ -48,6 +48,7 @@
             #itemH4, #itemV4 { background-color: yellow; }
             #itemH5, #itemV5 { background-color: fuchsia; }
         </style>
+        <script src="../../resources/ui-helper.js"></script>
         <script>
         function locationInWindowCoordinates(element)
         {
@@ -69,30 +70,62 @@
 
         let swipeWithMomentum = (element) => swipeInElement(element, true);
         let swipeWithoutMomentum = (element) => swipeInElement(element, false);
-        function swipeInElement(element, momentum)
+        
+        async function swipeInElement(element, momentum)
         {
-            return new Promise(resolve => {
-                write(`* Swiping ${momentum ? "with" : "without"} momentum in ${element.id} with scroll offset ${element.scrollLeft}`);
-                let location = locationInWindowCoordinates(element);
-                internals.setPlatformMomentumScrollingPredictionEnabled(false);
-                eventSender.monitorWheelEvents();
-                eventSender.mouseMoveTo(location.x, location.y);
-                eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "began", "none");
-                eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "changed", "none");
-                eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "changed", "none");
-                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
-                if (momentum) {
-                    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "none", "begin");
-                    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "none", "continue");
-                    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+            write(`* Swiping ${momentum ? "with" : "without"} momentum in ${element.id} with scroll offset ${element.scrollLeft}`);
+
+            internals.setPlatformMomentumScrollingPredictionEnabled(false);
+            const location = locationInWindowCoordinates(element);
+
+            let events = [
+                {
+                    type : "wheel",
+                    viewX : location.x,
+                    viewY : location.y,
+                    deltaX : -10,
+                    phase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaX : -10,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    deltaX : -10,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    phase : "ended"
                 }
-                eventSender.callAfterScrollingCompletes(() => {
-                    write(`  topTarget now has scroll offset ${topTarget.scrollLeft}`);
-                    write(`  bottomTarget now has scroll offset ${bottomTarget.scrollLeft}`);
-                    write("");
-                    resolve();
-                });
-            });
+            ];
+            const momentumEvents = [
+                {
+                    type : "wheel",
+                    deltaX : -10,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaX : -10,
+                    momentumPhase : "changed"
+                },
+                {
+                    type : "wheel",
+                    momentumPhase : "ended"
+                }
+            ];
+            
+            if (momentum) 
+                events.push(...momentumEvents);
+
+            await UIHelper.mouseWheelSequence({ events: events });
+
+            write(`  topTarget now has scroll offset ${topTarget.scrollLeft}`);
+            write(`  bottomTarget now has scroll offset ${bottomTarget.scrollLeft}`);
+            write("");
         }
 
         function run()

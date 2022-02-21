@@ -47,7 +47,7 @@
         // Mark this attribution as past-due for reporting, and simulate a session restart to
         // make sure the attribution gets sent immediately.
         window.testRunner.markAttributedPrivateClickMeasurementsAsExpiredForTesting();
-        testRunner.simulateResourceLoadStatisticsSessionRestart();
+        testRunner.simulatePrivateClickMeasurementSessionRestart();
         testRunner.dumpPrivateClickMeasurement();
         document.body.removeChild(document.getElementById("targetLink"));
         document.body.removeChild(document.getElementById("pixel"));

@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -259,9 +259,11 @@ class BaseIndex
         case type
         when :int8;       int8MemRef
         when :int32;      int32MemRef
+        when :int16;      int16MemRef
         when :int64;      int64MemRef
         when :intptr;     intptrMemRef
         when :uint8;      uint8MemRef
+        when :uint16;     uint16MemRef
         when :uint32;     uint32MemRef
         when :uint64;     uint64MemRef
         when :uintptr;    uintptrMemRef
@@ -568,6 +570,22 @@ end
 def cloopEmitCallSlowPathVoid(operands)
     $asm.putc "cloopStack.setCurrentStackPointer(sp.vp());"
     $asm.putc "#{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump});"
+end
+
+def cloopEmitCallSlowPath3(operands)
+    $asm.putc "{"
+    $asm.putc "    cloopStack.setCurrentStackPointer(sp.vp());"
+    $asm.putc "    SlowPathReturnType result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump}, #{operands[3].clDump});"
+    $asm.putc "    decodeResult(result, t0, t1);"
+    $asm.putc "}"
+end
+
+def cloopEmitCallSlowPath4(operands)
+    $asm.putc "{"
+    $asm.putc "    cloopStack.setCurrentStackPointer(sp.vp());"
+    $asm.putc "    SlowPathReturnType result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump}, #{operands[3].clDump}, #{operands[4].clDump});"
+    $asm.putc "    decodeResult(result, t0, t1);"
+    $asm.putc "}"
 end
 
 class Instruction
@@ -1173,6 +1191,12 @@ class Instruction
         when "cloopCallSlowPathVoid"
             cloopEmitCallSlowPathVoid(operands)
 
+        when "cloopCallSlowPath3"
+            cloopEmitCallSlowPath3(operands)
+
+        when "cloopCallSlowPath4"
+            cloopEmitCallSlowPath4(operands)
+
         # For debugging only. This is used to insert instrumentation into the
         # generated LLIntAssembly.h during llint development only. Do not use
         # for production code.
@@ -1191,6 +1215,5 @@ class Instruction
     def recordMetaDataC_LOOP
         $asm.codeOrigin codeOriginString if $enableCodeOriginComments
         $asm.annotation annotation if $enableInstrAnnotations && (opcode != "cloopDo")
-        $asm.debugAnnotation codeOrigin.debugDirective if $enableDebugAnnotations
     end
 end

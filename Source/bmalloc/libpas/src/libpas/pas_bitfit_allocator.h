@@ -31,22 +31,25 @@
 PAS_BEGIN_EXTERN_C;
 
 struct pas_bitfit_allocator;
-struct pas_bitfit_global_size_class;
+struct pas_bitfit_size_class;
 struct pas_bitfit_page;
 struct pas_bitfit_size_class;
 struct pas_bitfit_view;
 typedef struct pas_bitfit_allocator pas_bitfit_allocator;
-typedef struct pas_bitfit_global_size_class pas_bitfit_global_size_class;
+typedef struct pas_bitfit_size_class pas_bitfit_size_class;
 typedef struct pas_bitfit_page pas_bitfit_page;
 typedef struct pas_bitfit_size_class pas_bitfit_size_class;
 typedef struct pas_bitfit_view pas_bitfit_view;
 
 struct pas_bitfit_allocator {
-    pas_bitfit_global_size_class* global_size_class;
     pas_bitfit_size_class* size_class;
     pas_bitfit_view* view;
-    unsigned countdown;
 };
+
+PAS_API void pas_bitfit_allocator_construct(pas_bitfit_allocator* allocator,
+                                            pas_bitfit_size_class* size_class);
+
+PAS_API void pas_bitfit_allocator_stop(pas_bitfit_allocator* allocator);
 
 PAS_END_EXTERN_C;
 

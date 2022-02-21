@@ -198,7 +198,7 @@ public:
             cache->invalidateCacheForDocument(oldDocument);
 
         for (auto& list : m_tagCollectionNSCache.values()) {
-            ASSERT(!list->isRootedAtDocument());
+            ASSERT(!list->isRootedAtTreeScope());
             list->invalidateCacheForDocument(oldDocument);
         }
 
@@ -263,6 +263,7 @@ public:
         StyleMap = 1 << 15,
         PartList = 1 << 16,
         PartNames = 1 << 17,
+        Nonce = 1 << 18,
     };
 #endif
 

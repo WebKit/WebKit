@@ -25,6 +25,7 @@
 
 #include "FilterEffect.h"
 #include "RenderSVGResourceFilterPrimitive.h"
+#include "SVGElementInlines.h"
 #include "SVGFilterBuilder.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -93,22 +94,6 @@ void SVGFilterPrimitiveStandardAttributes::childrenChanged(const ChildChange& ch
     invalidate();
 }
 
-void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(FilterEffect* filterEffect) const
-{
-    ASSERT(filterEffect);
-    if (!filterEffect)
-        return;
-
-    if (hasAttribute(SVGNames::xAttr))
-        filterEffect->setHasX(true);
-    if (hasAttribute(SVGNames::yAttr))
-        filterEffect->setHasY(true);
-    if (hasAttribute(SVGNames::widthAttr))
-        filterEffect->setHasWidth(true);
-    if (hasAttribute(SVGNames::heightAttr))
-        filterEffect->setHasHeight(true);
-}
-
 RenderPtr<RenderElement> SVGFilterPrimitiveStandardAttributes::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSVGResourceFilterPrimitive>(*this, WTFMove(style));
@@ -127,8 +112,7 @@ void invalidateFilterPrimitiveParent(SVGElement* element)
     if (!element)
         return;
 
-    auto parent = makeRefPtr(element->parentNode());
-
+    RefPtr parent = element->parentNode();
     if (!parent)
         return;
 

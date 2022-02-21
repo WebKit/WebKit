@@ -31,7 +31,7 @@
 #include "HIDGamepad.h"
 #include "Timer.h"
 #include <IOKit/hid/IOHIDManager.h>
-#include <pal/spi/mac/IOKitSPIMac.h>
+#include <pal/spi/cocoa/IOKitSPI.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>

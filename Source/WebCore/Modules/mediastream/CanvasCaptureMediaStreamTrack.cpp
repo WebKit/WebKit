@@ -89,6 +89,7 @@ void CanvasCaptureMediaStreamTrack::Source::startProducingData()
     if (!m_canvas)
         return;
     m_canvas->addObserver(*this);
+    m_canvas->addDisplayBufferObserver(*this);
 
     if (!m_frameRequestRate)
         return;
@@ -104,6 +105,7 @@ void CanvasCaptureMediaStreamTrack::Source::stopProducingData()
     if (!m_canvas)
         return;
     m_canvas->removeObserver(*this);
+    m_canvas->removeDisplayBufferObserver(*this);
 }
 
 void CanvasCaptureMediaStreamTrack::Source::requestFrameTimerFired()
@@ -152,24 +154,26 @@ void CanvasCaptureMediaStreamTrack::Source::canvasResized(CanvasBase& canvas)
 void CanvasCaptureMediaStreamTrack::Source::canvasChanged(CanvasBase& canvas, const std::optional<FloatRect>&)
 {
     ASSERT_UNUSED(canvas, m_canvas == &canvas);
+    if (m_canvas->renderingContext() && m_canvas->renderingContext()->needsPreparationForDisplay())
+        return;
+    scheduleCaptureCanvas();
+}
 
-#if ENABLE(WEBGL)
-    // FIXME: We need to preserve drawing buffer as we are currently grabbing frames asynchronously.
-    // We should instead add an anchor point for both 2d and 3d contexts where canvas will actually paint.
-    // And call canvas observers from that point.
-    if (is<WebGLRenderingContextBase>(canvas.renderingContext())) {
-        auto& context = downcast<WebGLRenderingContextBase>(*canvas.renderingContext());
-        if (!context.isPreservingDrawingBuffer()) {
-            canvas.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Turning drawing buffer preservation for the WebGL canvas being captured"_s);
-            context.enablePreserveDrawingBuffer();
-        }
-    }
-#endif
-
+void CanvasCaptureMediaStreamTrack::Source::scheduleCaptureCanvas()
+{
     // FIXME: We should try to generate the frame at the time the screen is being updated.
     if (m_captureCanvasTimer.isActive())
         return;
     m_captureCanvasTimer.startOneShot(0_s);
+}
+
+void CanvasCaptureMediaStreamTrack::Source::canvasDisplayBufferPrepared(CanvasBase& canvas)
+{
+    ASSERT_UNUSED(canvas, m_canvas == &canvas);
+    // FIXME: Here we should capture the image instead.
+    // However, submitting the sample to the receiver might cause layout,
+    // and currently the display preparation is done after layout.
+    scheduleCaptureCanvas();
 }
 
 void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
@@ -192,7 +196,9 @@ void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
     if (!sample)
         return;
 
-    videoSampleAvailable(*sample);
+    VideoSampleMetadata metadata;
+    metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
+    videoSampleAvailable(*sample, metadata);
 }
 
 RefPtr<MediaStreamTrack> CanvasCaptureMediaStreamTrack::clone()

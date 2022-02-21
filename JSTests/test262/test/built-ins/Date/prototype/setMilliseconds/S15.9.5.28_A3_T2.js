@@ -8,11 +8,15 @@ info: |
 esid: sec-date.prototype.setmilliseconds
 description: Checking DontDelete attribute
 ---*/
+assert.sameValue(
+  delete Date.prototype.setMilliseconds.length,
+  true,
+  'The value of `delete Date.prototype.setMilliseconds.length` is expected to be true'
+);
 
-if (delete Date.prototype.setMilliseconds.length !== true) {
-  throw new Test262Error('#1: The Date.prototype.setMilliseconds.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.prototype.setMilliseconds.hasOwnProperty('length'),
+  'The value of !Date.prototype.setMilliseconds.hasOwnProperty(\'length\') is expected to be true'
+);
 
-if (Date.prototype.setMilliseconds.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.prototype.setMilliseconds.length property does not have the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

@@ -16,8 +16,6 @@
         });
     }
 
-    // Append a vorbis webm with a single incomplete cluster. Ensure that content that is less
-    // than 2s in duration is properly demuxed.
     window.addEventListener('load', async event => {
         try {
             findMediaElement();
@@ -29,15 +27,26 @@
             await waitFor(source, 'sourceopen');
             waitFor(video, 'error').then(failTest);
 
-            run('source.duration = loader.duration()');
             run('sourceBuffer = source.addSourceBuffer(loader.type())');
             run('sourceBuffer.appendBuffer(loader.initSegment())');
             await waitFor(sourceBuffer, 'update');
 
-            consoleWrite('Append a media segment.')
-            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            consoleWrite('Divide the first media segment in two.');
+            run('partial1 = loader.mediaSegment(0).slice(0, loader.mediaSegment(0).byteLength / 2)');
+            run('partial2 = loader.mediaSegment(0).slice(loader.mediaSegment(0).byteLength / 2)');
+
+            consoleWrite('Append a partial media segment.')
+            run('sourceBuffer.appendBuffer(partial1)');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.end(0).toFixed(2)', '0.64', '==');
+
+            consoleWrite('Complete the partial media segment.')
+            run('sourceBuffer.appendBuffer(partial2)');
             await waitFor(sourceBuffer, 'update');
 
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.end(0).toFixed(2)', '1.34', '==');
             testExpected('sourceBuffer.buffered.end(0) == source.duration', true);
 
             endTest();

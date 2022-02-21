@@ -125,11 +125,11 @@ TEST_P(ProvokingVertexTest, FlatTriangle)
 
     drawQuad(mProgram, "position", 0.5f);
 
-    GLint pixelValue = 0;
-    glReadPixels(0, 0, 1, 1, GL_RED_INTEGER, GL_INT, &pixelValue);
+    GLint pixelValue[4] = {0};
+    glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, &pixelValue);
 
     ASSERT_GL_NO_ERROR();
-    EXPECT_EQ(vertexData[2], pixelValue);
+    EXPECT_EQ(vertexData[2], pixelValue[0]);
 }
 
 // Ensure that any provoking vertex shenanigans still gives correct vertex streams.
@@ -159,11 +159,11 @@ TEST_P(ProvokingVertexTest, FlatTriWithTransformFeedback)
     glEndTransformFeedback();
     glUseProgram(0);
 
-    GLint pixelValue = 0;
-    glReadPixels(0, 0, 1, 1, GL_RED_INTEGER, GL_INT, &pixelValue);
+    GLint pixelValue[4] = {0};
+    glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, &pixelValue);
 
     ASSERT_GL_NO_ERROR();
-    EXPECT_EQ(vertexData[2], pixelValue);
+    EXPECT_EQ(vertexData[2], pixelValue[0]);
 
     void *mapPointer =
         glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(int) * 6, GL_MAP_READ_BIT);
@@ -195,11 +195,11 @@ TEST_P(ProvokingVertexTest, FlatLine)
     glUseProgram(mProgram);
     glDrawArrays(GL_LINES, 0, 2);
 
-    GLint pixelValue = 0;
-    glReadPixels(0, 0, 1, 1, GL_RED_INTEGER, GL_INT, &pixelValue);
+    GLint pixelValue[4] = {0};
+    glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, &pixelValue);
 
     ASSERT_GL_NO_ERROR();
-    EXPECT_EQ(vertexData[1], pixelValue);
+    EXPECT_EQ(vertexData[1], pixelValue[0]);
 }
 
 // Test drawing a simple triangle strip with flat shading, and different valued vertices.
@@ -218,8 +218,8 @@ TEST_P(ProvokingVertexTest, FlatTriStrip)
     glUseProgram(mProgram);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 
-    std::vector<GLint> pixelBuffer(getWindowWidth() * getWindowHeight(), 0);
-    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RED_INTEGER, GL_INT,
+    std::vector<GLint> pixelBuffer(getWindowWidth() * getWindowHeight() * 4, 0);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA_INTEGER, GL_INT,
                  &pixelBuffer[0]);
 
     ASSERT_GL_NO_ERROR();
@@ -241,7 +241,7 @@ TEST_P(ProvokingVertexTest, FlatTriStrip)
 
         unsigned int provokingVertexIndex = triIndex + 2;
 
-        EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex]);
+        EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]);
     }
 }
 
@@ -267,8 +267,8 @@ TEST_P(ProvokingVertexTest, FlatTriStripPrimitiveRestart)
     glUseProgram(mProgram);
     glDrawElements(GL_TRIANGLE_STRIP, 12, GL_UNSIGNED_INT, indexData);
 
-    std::vector<GLint> pixelBuffer(getWindowWidth() * getWindowHeight(), 0);
-    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RED_INTEGER, GL_INT,
+    std::vector<GLint> pixelBuffer(getWindowWidth() * getWindowHeight() * 4, 0);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA_INTEGER, GL_INT,
                  &pixelBuffer[0]);
 
     ASSERT_GL_NO_ERROR();
@@ -297,7 +297,7 @@ TEST_P(ProvokingVertexTest, FlatTriStripPrimitiveRestart)
 
         unsigned int provokingVertexIndex = triIndex + 2;
 
-        EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex]);
+        EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]);
     }
 }
 
@@ -322,11 +322,11 @@ TEST_P(ProvokingVertexTest, ANGLEProvokingVertex)
         glClearBufferiv(GL_COLOR, 0, zero);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        int32_t pixelValue = 0;
-        glReadPixels(0, 0, 1, 1, GL_RED_INTEGER, GL_INT, &pixelValue);
+        int32_t pixelValue[4] = {0};
+        glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, &pixelValue);
 
         ASSERT_GL_NO_ERROR();
-        EXPECT_EQ(vertexData[id], pixelValue);
+        EXPECT_EQ(vertexData[id], pixelValue[0]);
     };
 
     fnExpectId(2);
@@ -343,6 +343,7 @@ TEST_P(ProvokingVertexTest, ANGLEProvokingVertex)
     }
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProvokingVertexTest);
 ANGLE_INSTANTIATE_TEST(ProvokingVertexTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES());
 
 }  // anonymous namespace

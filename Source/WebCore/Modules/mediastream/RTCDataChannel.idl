@@ -26,7 +26,7 @@
 [
     ActiveDOMObject,
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     Exposed=(Window,Worker),
 ] interface RTCDataChannel : EventTarget {
     // FIXME: Add support for priority attribute.
@@ -55,13 +55,14 @@
     attribute EventHandler onopen;
     attribute EventHandler onerror;
     attribute EventHandler onclose;
+    attribute EventHandler onclosing;
     attribute EventHandler onmessage;
     attribute EventHandler onbufferedamountlow;
 };
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
+    EnabledBySetting=PeerConnectionEnabled,
     ImplementedAs=RTCDataChannelState
 ] enum RTCDataChannelState {
     "connecting",

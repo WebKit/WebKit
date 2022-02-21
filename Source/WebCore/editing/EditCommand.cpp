@@ -28,7 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "CompositeEditCommand.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "Element.h"
@@ -157,7 +157,7 @@ bool EditCommand::isEditingTextAreaOrTextInput() const
 
 void EditCommand::setStartingSelection(const VisibleSelection& selection)
 {
-    for (auto command = makeRefPtr(this); ; command = command->m_parent.get()) {
+    for (RefPtr command = this; ; command = command->m_parent.get()) {
         if (auto composition = compositionIfPossible(*command))
             composition->setStartingSelection(selection);
         command->m_startingSelection = selection;
@@ -168,7 +168,7 @@ void EditCommand::setStartingSelection(const VisibleSelection& selection)
 
 void EditCommand::setEndingSelection(const VisibleSelection& selection)
 {
-    for (auto command = makeRefPtr(this); command; command = command->m_parent.get()) {
+    for (RefPtr command = this; command; command = command->m_parent.get()) {
         if (auto composition = compositionIfPossible(*command))
             composition->setEndingSelection(selection);
         command->m_endingSelection = selection;
@@ -178,7 +178,7 @@ void EditCommand::setEndingSelection(const VisibleSelection& selection)
 void EditCommand::setParent(CompositeEditCommand* parent)
 {
     ASSERT((parent && !m_parent) || (!parent && m_parent));
-    m_parent = makeWeakPtr(parent);
+    m_parent = parent;
     if (parent) {
         m_startingSelection = parent->m_endingSelection;
         m_endingSelection = parent->m_endingSelection;
@@ -201,7 +201,7 @@ void EditCommand::postTextStateChangeNotification(AXTextEditType type, const Str
     auto* cache = document().existingAXObjectCache();
     if (!cache)
         return;
-    auto node = makeRefPtr(highestEditableRoot(position.deepEquivalent(), HasEditableAXRole));
+    RefPtr node { highestEditableRoot(position.deepEquivalent(), HasEditableAXRole) };
     cache->postTextStateChangeNotification(node.get(), type, text, position);
 }
 

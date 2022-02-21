@@ -38,9 +38,9 @@ typedef struct pas_basic_heap_page_caches pas_basic_heap_page_caches;
 
 struct pas_basic_heap_page_caches {
     pas_large_heap_physical_page_sharing_cache large_heap_cache;
-    pas_megapage_cache small_segregated_megapage_cache;
+    pas_megapage_cache small_exclusive_segregated_megapage_cache;
     pas_shared_page_directory_by_size small_shared_page_directories;
-    pas_megapage_cache small_bitfit_megapage_cache;
+    pas_megapage_cache small_other_megapage_cache;
     pas_megapage_cache medium_megapage_cache; /* The purpose of this is not for the fast megapage
                                                  table, but to make sure that medium pages are not
                                                  allocated one-at-a-time from bootstrap, since that
@@ -52,10 +52,10 @@ struct pas_basic_heap_page_caches {
 #define PAS_BASIC_HEAP_PAGE_CACHES_INITIALIZER(small_log_shift, medium_log_shift) \
     ((pas_basic_heap_page_caches){ \
         .large_heap_cache = PAS_LARGE_FREE_HEAP_PHYSICAL_PAGE_SHARING_CACHE_INITIALIZER, \
-        .small_segregated_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER, \
+        .small_exclusive_segregated_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER, \
         .small_shared_page_directories = PAS_SHARED_PAGE_DIRECTORY_BY_SIZE_INITIALIZER( \
             (small_log_shift), pas_share_pages), \
-        .small_bitfit_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER, \
+        .small_other_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER, \
         .medium_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER, \
         .medium_shared_page_directories = PAS_SHARED_PAGE_DIRECTORY_BY_SIZE_INITIALIZER( \
             (medium_log_shift), pas_share_pages) \

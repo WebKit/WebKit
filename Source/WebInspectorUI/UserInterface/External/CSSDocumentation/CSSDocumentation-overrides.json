@@ -1,0 +1,5 @@
+{
+    "shape-outside": {
+        "description": "Defines a shape around which adjacent inline content should wrap."
+    }
+}

@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT HTMLImageElement.prototype.decode(), image document tests. Decode from iframe with image document, succeeds (img not loaded) Test timed out
+PASS HTMLImageElement.prototype.decode(), image document tests. Decode from iframe with image document, succeeds (img not loaded)
 

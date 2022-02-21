@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "api/proxy.h"
+#include "pc/proxy.h"
 
 #include <memory>
 #include <string>
@@ -71,7 +71,7 @@ PROXY_CONSTMETHOD0(std::string, ConstMethod0)
 PROXY_SECONDARY_METHOD1(std::string, Method1, std::string)
 PROXY_CONSTMETHOD1(std::string, ConstMethod1, std::string)
 PROXY_SECONDARY_METHOD2(std::string, Method2, std::string, std::string)
-END_PROXY_MAP()
+END_PROXY_MAP(Fake)
 
 // Preprocessor hack to get a proxy class a name different than FakeProxy.
 #define FakeProxy FakeSignalingProxy
@@ -84,7 +84,7 @@ PROXY_CONSTMETHOD0(std::string, ConstMethod0)
 PROXY_METHOD1(std::string, Method1, std::string)
 PROXY_CONSTMETHOD1(std::string, ConstMethod1, std::string)
 PROXY_METHOD2(std::string, Method2, std::string, std::string)
-END_PROXY_MAP()
+END_PROXY_MAP(Fake)
 #undef FakeProxy
 
 class SignalingProxyTest : public ::testing::Test {
@@ -272,7 +272,7 @@ class Foo : public FooInterface {
 BEGIN_OWNED_PROXY_MAP(Foo)
 PROXY_PRIMARY_THREAD_DESTRUCTOR()
 PROXY_METHOD0(void, Bar)
-END_PROXY_MAP()
+END_PROXY_MAP(Foo)
 
 class OwnedProxyTest : public ::testing::Test {
  public:

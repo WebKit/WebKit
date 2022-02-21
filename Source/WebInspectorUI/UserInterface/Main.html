@@ -27,13 +27,14 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <!--
-        Note that some WebKit ports may set custom 'frame-src' and 'connect-src' directives via HTTP response header.
+        Note that some WebKit ports may set custom 'frame-src', 'img-src', and 'connect-src' directives via HTTP response header.
         The combined CSP policy requires a request to be allowed by both directive lists, so 'default-src' is omitted.
     -->
-    <meta http-equiv="Content-Security-Policy" content="img-src * file: blob: resource:; media-src * blob:; font-src * blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' data:; object-src 'none'">
+    <meta http-equiv="Content-Security-Policy" content="media-src * blob:; font-src * blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' data:; object-src 'none'">
 
     <link rel="stylesheet" href="External/CodeMirror/codemirror.css">
 
+    <link rel="stylesheet" href="Views/AlignmentEditor.css">
     <link rel="stylesheet" href="Views/AnimationCollectionContentView.css">
     <link rel="stylesheet" href="Views/AnimationContentView.css">
     <link rel="stylesheet" href="Views/AnimationDetailsSidebarPanel.css">
@@ -46,6 +47,7 @@
     <link rel="stylesheet" href="Views/BannerView.css">
     <link rel="stylesheet" href="Views/BezierEditor.css">
     <link rel="stylesheet" href="Views/BlackboxedGroupTreeElement.css">
+    <link rel="stylesheet" href="Views/BlackboxedGroupView.css">
     <link rel="stylesheet" href="Views/BlackboxSettingsView.css">
     <link rel="stylesheet" href="Views/BootstrapScriptTreeElement.css">
     <link rel="stylesheet" href="Views/BoxModelDetailsSectionRow.css">
@@ -90,7 +92,6 @@
     <link rel="stylesheet" href="Views/CookiePopover.css">
     <link rel="stylesheet" href="Views/CookieStorageContentView.css">
     <link rel="stylesheet" href="Views/CreateAuditPopover.css">
-    <link rel="stylesheet" href="Views/CSSGridSection.css">
     <link rel="stylesheet" href="Views/DOMBreakpointTreeElement.css">
     <link rel="stylesheet" href="Views/DOMEventsBreakdownView.css">
     <link rel="stylesheet" href="Views/DOMNodeDetailsSidebarPanel.css">
@@ -169,6 +170,7 @@
     <link rel="stylesheet" href="Views/NetworkTableContentView.css">
     <link rel="stylesheet" href="Views/NetworkTimelineOverviewGraph.css">
     <link rel="stylesheet" href="Views/NetworkTimelineView.css">
+    <link rel="stylesheet" href="Views/NodeOverlayListSection.css">
     <link rel="stylesheet" href="Views/ObjectPreviewView.css">
     <link rel="stylesheet" href="Views/ObjectTreeArrayIndexTreeElement.css">
     <link rel="stylesheet" href="Views/ObjectTreeMapEntryTreeElement.css">
@@ -382,6 +384,7 @@
     <script src="Models/Script.js"></script>
     <script src="Models/LocalScript.js"></script>
 
+    <script src="Models/AlignmentData.js"></script>
     <script src="Models/Animation.js"></script>
     <script src="Models/AnimationCollection.js"></script>
     <script src="Models/ApplicationCacheFrame.js"></script>
@@ -395,6 +398,7 @@
     <script src="Models/CSSGrouping.js"></script>
     <script src="Models/CSSKeywordCompletions.js"></script>
     <script src="Models/CSSProperty.js"></script>
+    <script src="Models/CSSPropertyNameCompletions.js"></script>
     <script src="Models/CSSRule.js"></script>
     <script src="Models/CSSSelector.js"></script>
     <script src="Models/CSSStyleDeclaration.js"></script>
@@ -415,6 +419,7 @@
     <script src="Models/DOMNodeStyles.js"></script>
     <script src="Models/DOMSearchMatchObject.js"></script>
     <script src="Models/DOMStorageObject.js"></script>
+    <script src="Models/DOMStyleable.js"></script>
     <script src="Models/DOMTree.js"></script>
     <script src="Models/DatabaseObject.js"></script>
     <script src="Models/DatabaseTableObject.js"></script>
@@ -468,6 +473,8 @@
     <script src="Models/PropertyDescriptor.js"></script>
     <script src="Models/PropertyPath.js"></script>
     <script src="Models/PropertyPreview.js"></script>
+    <script src="Models/QueryMatch.js"></script>
+    <script src="Models/QueryResult.js"></script>
     <script src="Models/Recording.js"></script>
     <script src="Models/RecordingAction.js"></script>
     <script src="Models/RecordingFrame.js"></script>
@@ -476,7 +483,6 @@
     <script src="Models/Redirect.js"></script>
     <script src="Models/RenderingFrameTimelineRecord.js"></script>
     <script src="Models/ResourceCollection.js"></script>
-    <script src="Models/ResourceQueryMatch.js"></script>
     <script src="Models/ResourceQueryResult.js"></script>
     <script src="Models/ResourceTimelineRecord.js"></script>
     <script src="Models/ResourceTimingData.js"></script>
@@ -608,6 +614,8 @@
     <script src="Views/DetailsSectionSimpleRow.js"></script>
     <script src="Views/DetailsSectionTextRow.js"></script>
 
+    <script src="Views/NodeOverlayListSection.js"></script>
+
     <script src="Views/SettingEditor.js"></script>
     <script src="Views/SettingsGroup.js"></script>
     <script src="Views/SettingsView.js"></script>
@@ -617,6 +625,7 @@
     <script src="Views/LocalRemoteObjectContentView.js"></script>
 
     <script src="Views/ActivateButtonNavigationItem.js"></script>
+    <script src="Views/AlignmentEditor.js"></script>
     <script src="Views/AnimationCollectionContentView.js"></script>
     <script src="Views/AnimationContentView.js"></script>
     <script src="Views/AnimationDetailsSidebarPanel.js"></script>
@@ -633,6 +642,7 @@
     <script src="Views/BezierEditor.js"></script>
     <script src="Views/BlackboxSettingsView.js"></script>
     <script src="Views/BlackboxedGroupTreeElement.js"></script>
+    <script src="Views/BlackboxedGroupView.js"></script>
     <script src="Views/BootstrapScriptTreeElement.js"></script>
     <script src="Views/BoxModelDetailsSectionRow.js"></script>
     <script src="Views/BoxShadowEditor.js"></script>
@@ -643,8 +653,9 @@
     <script src="Views/CPUTimelineView.js"></script>
     <script src="Views/CPUUsageCombinedView.js"></script>
     <script src="Views/CPUUsageView.js"></script>
+    <script src="Views/CSSFlexNodeOverlayListSection.js"></script>
+    <script src="Views/CSSGridNodeOverlayListSection.js"></script>
     <script src="Views/CSSStyleSheetTreeElement.js"></script>
-    <script src="Views/CSSGridSection.js"></script>
     <script src="Views/CallFrameTreeElement.js"></script>
     <script src="Views/CallFrameView.js"></script>
     <script src="Views/CanvasContentView.js"></script>
@@ -887,6 +898,7 @@
 
     <script src="Controllers/Annotator.js"></script>
     <script src="Controllers/CodeMirrorEditingController.js"></script>
+    <script src="Controllers/QueryController.js"></script>
 
     <script src="Controllers/AnimationManager.js"></script>
     <script src="Controllers/AuditManager.js"></script>
@@ -923,6 +935,7 @@
     <script src="Controllers/MemoryManager.js"></script>
     <script src="Controllers/NetworkManager.js"></script>
     <script src="Controllers/OverlayManager.js"></script>
+    <script src="Controllers/CSSQueryController.js"></script>
     <script src="Controllers/ResourceQueryController.js"></script>
     <script src="Controllers/RuntimeManager.js"></script>
     <script src="Controllers/TargetManager.js"></script>
@@ -933,6 +946,7 @@
 
     <script src="Controllers/DiagnosticController.js"></script>
     <script src="Controllers/DiagnosticEventRecorder.js"></script>
+    <script src="Controllers/ExtensionTabActivationDiagnosticEventRecorder.js"></script>
     <script src="Controllers/GridOverlayConfigurationDiagnosticEventRecorder.js"></script>
     <script src="Controllers/GridOverlayDiagnosticEventRecorder.js"></script>
     <script src="Controllers/InspectedTargetTypesDiagnosticEventRecorder.js"></script>

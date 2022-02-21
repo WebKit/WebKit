@@ -134,8 +134,8 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> hfont, CTFontRef ctFont, CGF
 unsigned FontPlatformData::hash() const
 {
     unsigned fontHash = m_font ? m_font->hash() : 0;
-    CFHashCode cgFontHash = WTF::safeCFHash(m_cgFont.get());
-    CFHashCode ctFontHash = WTF::safeCFHash(m_ctFont.get());
+    CFHashCode cgFontHash = safeCFHash(m_cgFont.get());
+    CFHashCode ctFontHash = safeCFHash(m_ctFont.get());
     uintptr_t hashCodes[] = { fontHash, cgFontHash, ctFontHash, m_useGDI };
     return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 }
@@ -143,8 +143,8 @@ unsigned FontPlatformData::hash() const
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 {
     return m_font == other.m_font
-        && WTF::safeCFEqual(m_cgFont.get(), other.m_cgFont.get())
-        && WTF::safeCFEqual(m_ctFont.get(), other.m_ctFont.get())
+        && safeCFEqual(m_cgFont.get(), other.m_cgFont.get())
+        && safeCFEqual(m_ctFont.get(), other.m_ctFont.get())
         && m_useGDI == other.m_useGDI;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,12 @@
 
 #include "pas_page_sharing_participant.h"
 
-#include "pas_biasing_directory.h"
-#include "pas_bitfit_global_directory.h"
+#include "pas_bitfit_directory.h"
 #include "pas_epoch.h"
 #include "pas_heap_lock.h"
 #include "pas_large_sharing_pool.h"
 #include "pas_page_sharing_pool.h"
-#include "pas_segregated_global_size_directory.h"
+#include "pas_segregated_size_directory.h"
 #include "pas_segregated_shared_page_directory.h"
 #include "pas_segregated_size_directory.h"
 
@@ -56,19 +55,26 @@ pas_page_sharing_participant_create(void* ptr,
 pas_page_sharing_participant_payload*
 pas_page_sharing_participant_get_payload(pas_page_sharing_participant participant)
 {
+    static const bool verbose = false;
+    
     void* ptr = pas_page_sharing_participant_get_ptr(participant);
     switch (pas_page_sharing_participant_get_kind(participant)) {
     case pas_page_sharing_participant_null:
         PAS_ASSERT(!"Null participant has no payload.");
         return NULL;
     case pas_page_sharing_participant_segregated_shared_page_directory:
-    case pas_page_sharing_participant_segregated_size_directory:
-        return pas_segregated_directory_data_try_get_sharing_payload(
+    case pas_page_sharing_participant_segregated_size_directory: {
+        pas_page_sharing_participant_payload* result;
+        if (verbose)
+            pas_log("Getting the payload for directory.\n");
+        result = pas_segregated_directory_data_try_get_sharing_payload(
             pas_segregated_directory_data_ptr_load(&((pas_segregated_directory*)ptr)->data));
+        if (verbose)
+            pas_log("Payload = %p\n", result);
+        return result;
+    }
     case pas_page_sharing_participant_bitfit_directory:
-        return &((pas_bitfit_global_directory*)ptr)->physical_sharing_payload;
-    case pas_page_sharing_participant_biasing_directory:
-        return &((pas_biasing_directory*)ptr)->bias_sharing_payload.base;
+        return &((pas_bitfit_directory*)ptr)->physical_sharing_payload;
     case pas_page_sharing_participant_large_sharing_pool:
         return &pas_large_sharing_participant_payload.base;
     }
@@ -98,9 +104,7 @@ uint64_t pas_page_sharing_participant_get_use_epoch(pas_page_sharing_participant
     case pas_page_sharing_participant_segregated_size_directory:
         return pas_segregated_directory_get_use_epoch(ptr);
     case pas_page_sharing_participant_bitfit_directory:
-        return pas_bitfit_global_directory_get_use_epoch(ptr);
-    case pas_page_sharing_participant_biasing_directory:
-        return ((pas_biasing_directory*)ptr)->bias_sharing_payload.use_epoch;
+        return pas_bitfit_directory_get_use_epoch(ptr);
     case pas_page_sharing_participant_large_sharing_pool:
         return pas_large_sharing_participant_payload.use_epoch;
     }
@@ -121,6 +125,8 @@ pas_page_sharing_participant_get_parent_pool(pas_page_sharing_participant partic
 
     ptr = pas_page_sharing_participant_get_ptr(participant);
 
+    PAS_UNUSED_PARAM(ptr);
+
     switch (pas_page_sharing_participant_get_kind(participant)) {
     case pas_page_sharing_participant_null:
         PAS_ASSERT(!"Cannot get null participant's parent.");
@@ -129,8 +135,6 @@ pas_page_sharing_participant_get_parent_pool(pas_page_sharing_participant partic
     case pas_page_sharing_participant_segregated_size_directory:
     case pas_page_sharing_participant_bitfit_directory:
         return &pas_physical_page_sharing_pool;
-    case pas_page_sharing_participant_biasing_directory:
-        return pas_biasing_directory_get_sharing_pool(ptr);
     case pas_page_sharing_participant_large_sharing_pool:
         return &pas_physical_page_sharing_pool;
     }
@@ -152,9 +156,7 @@ bool pas_page_sharing_participant_is_eligible(pas_page_sharing_participant parti
     case pas_page_sharing_participant_segregated_size_directory:
         return !!pas_segregated_directory_get_last_empty_plus_one(ptr).value;
     case pas_page_sharing_participant_bitfit_directory:
-        return !!((pas_bitfit_global_directory*)ptr)->last_empty_plus_one.value;
-    case pas_page_sharing_participant_biasing_directory:
-        return !!pas_biasing_directory_unused_span_size(ptr);
+        return !!((pas_bitfit_directory*)ptr)->last_empty_plus_one.value;
     case pas_page_sharing_participant_large_sharing_pool:
         return !!pas_large_sharing_min_heap_instance.size;
     }
@@ -179,7 +181,7 @@ pas_page_sharing_participant_take_least_recently_used(
         return false;
         
     case pas_page_sharing_participant_segregated_size_directory:
-        return pas_segregated_global_size_directory_take_last_empty(
+        return pas_segregated_size_directory_take_last_empty(
             ptr, decommit_log, heap_lock_hold_mode);
 
     case pas_page_sharing_participant_segregated_shared_page_directory:
@@ -189,12 +191,7 @@ pas_page_sharing_participant_take_least_recently_used(
 
     case pas_page_sharing_participant_bitfit_directory:
         PAS_ASSERT(decommit_log);
-        return pas_bitfit_global_directory_take_last_empty(ptr, decommit_log, heap_lock_hold_mode);
-        
-    case pas_page_sharing_participant_biasing_directory:
-        PAS_ASSERT(!decommit_log);
-        PAS_ASSERT(heap_lock_hold_mode == pas_lock_is_not_held);
-        return pas_biasing_directory_take_last_unused(ptr);
+        return pas_bitfit_directory_take_last_empty(ptr, decommit_log, heap_lock_hold_mode);
         
     case pas_page_sharing_participant_large_sharing_pool:
         PAS_ASSERT(decommit_log);

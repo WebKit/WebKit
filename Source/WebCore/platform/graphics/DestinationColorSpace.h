@@ -44,6 +44,8 @@ public:
     WEBCORE_EXPORT explicit DestinationColorSpace(PlatformColorSpace);
     PlatformColorSpaceValue platformColorSpace() const { return m_platformColorSpace.get(); }
 
+    WEBCORE_EXPORT std::optional<DestinationColorSpace> asRGB() const;
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<DestinationColorSpace> decode(Decoder&);
 

@@ -29,7 +29,7 @@ public:
     enum class MessageSource { JavaScript, Network, ConsoleAPI, Security, Other };
     enum class MessageLevel { Info, Log, Warning, Error, Debug };
     struct ConsoleMessage {
-        bool operator==(const ConsoleMessage& other)
+        bool operator==(const ConsoleMessage& other) const
         {
             return source == other.source
                 && level == other.level

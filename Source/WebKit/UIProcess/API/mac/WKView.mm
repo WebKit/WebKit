@@ -205,6 +205,7 @@ WEBCORE_COMMAND(alignJustified)
 WEBCORE_COMMAND(alignLeft)
 WEBCORE_COMMAND(alignRight)
 WEBCORE_COMMAND(copy)
+WEBCORE_COMMAND(copyFont)
 WEBCORE_COMMAND(cut)
 WEBCORE_COMMAND(delete)
 WEBCORE_COMMAND(deleteBackward)
@@ -278,6 +279,7 @@ WEBCORE_COMMAND(pageUp)
 WEBCORE_COMMAND(pageUpAndModifySelection)
 WEBCORE_COMMAND(paste)
 WEBCORE_COMMAND(pasteAsPlainText)
+WEBCORE_COMMAND(pasteFont)
 WEBCORE_COMMAND(scrollPageDown)
 WEBCORE_COMMAND(scrollPageUp)
 WEBCORE_COMMAND(scrollLineDown)
@@ -339,11 +341,9 @@ individual methods here with Mac-specific code.
 Editing-related methods still unimplemented that are implemented in WebKit1:
 
 - (void)complete:(id)sender;
-- (void)copyFont:(id)sender;
 - (void)makeBaseWritingDirectionLeftToRight:(id)sender;
 - (void)makeBaseWritingDirectionNatural:(id)sender;
 - (void)makeBaseWritingDirectionRightToLeft:(id)sender;
-- (void)pasteFont:(id)sender;
 - (void)scrollLineDown:(id)sender;
 - (void)scrollLineUp:(id)sender;
 - (void)showGuessPanel:(id)sender;
@@ -912,11 +912,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _data->_impl->namesOfPromisedFilesDroppedAtDestination(dropDestination);
 }
 
-- (void)_web_grantDOMPasteAccess
-{
-    _data->_impl->handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse::GrantedForGesture);
-}
-
 - (void)maybeInstallIconLoadingClient
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -1328,7 +1323,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 
 - (NSColor *)underlayColor
 {
-    return _data->_impl->underlayColor();
+    return _data->_impl->underlayColor().autorelease();
 }
 
 - (void)setUnderlayColor:(NSColor *)underlayColor
@@ -1344,16 +1339,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 - (void)_setInspectorAttachmentView:(NSView *)newView
 {
     _data->_impl->setInspectorAttachmentView(newView);
-}
-
-- (BOOL)_requiresUserActionForEditingControlsManager
-{
-    return _data->_impl->requiresUserActionForEditingControlsManager();
-}
-
-- (void)_setRequiresUserActionForEditingControlsManager:(BOOL)requiresUserAction
-{
-    _data->_impl->setRequiresUserActionForEditingControlsManager(requiresUserAction);
 }
 
 - (NSView *)fullScreenPlaceholderView
@@ -1526,7 +1511,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 
 - (NSColor *)_pageExtendedBackgroundColor
 {
-    return _data->_impl->pageExtendedBackgroundColor();
+    return _data->_impl->pageExtendedBackgroundColor().autorelease();
 }
 
 - (BOOL)isUsingUISideCompositing

@@ -64,6 +64,46 @@ class LineLoopTest : public ANGLETest
         }
     }
 
+    void preTestUpdateBuffer(GLuint framebuffer, GLuint texture, GLuint buffer, GLsizei size)
+    {
+        GLsizei uboSize = std::max(size, 16);
+        const std::vector<uint32_t> initialData((uboSize + 3) / 4, 0x1234567u);
+
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture,
+                               0);
+
+        glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+        glBufferData(GL_UNIFORM_BUFFER, uboSize, initialData.data(), GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, buffer);
+
+        constexpr char kVerifyUBO[] = R"(#version 300 es
+precision mediump float;
+uniform block {
+    uint data;
+} ubo;
+out vec4 colorOut;
+void main()
+{
+    if (ubo.data == 0x1234567u)
+        colorOut = vec4(0, 1.0, 0, 1.0);
+    else
+        colorOut = vec4(1.0, 0, 0, 1.0);
+})";
+
+        ANGLE_GL_PROGRAM(verifyUbo, essl3_shaders::vs::Simple(), kVerifyUBO);
+
+        glDisable(GL_BLEND);
+        drawQuad(verifyUbo, essl3_shaders::PositionAttrib(), 0.5);
+
+        EXPECT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
     void runTest(GLenum indexType, GLuint indexBuffer, const void *indexPtr)
     {
         glClear(GL_COLOR_BUFFER_BIT);
@@ -75,6 +115,8 @@ class LineLoopTest : public ANGLETest
         static const GLfloat stripPositions[] = {-0.5f, -0.5f, -0.5f, 0.5f,
                                                  0.5f,  0.5f,  0.5f,  -0.5f};
         static const GLubyte stripIndices[]   = {1, 0, 3, 2, 1};
+
+        glEnable(GL_BLEND);
 
         glUseProgram(mProgram);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -137,14 +179,11 @@ TEST_P(LineLoopTest, LineLoopUByteIndexBuffer)
 
     static const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
 
-    GLuint buf;
-    glGenBuffers(1, &buf);
+    GLBuffer buf;
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     runTest(GL_UNSIGNED_BYTE, buf, reinterpret_cast<const void *>(sizeof(GLubyte)));
-
-    glDeleteBuffers(1, &buf);
 }
 
 TEST_P(LineLoopTest, LineLoopUShortIndexBuffer)
@@ -154,14 +193,11 @@ TEST_P(LineLoopTest, LineLoopUShortIndexBuffer)
 
     static const GLushort indices[] = {0, 7, 6, 9, 8, 0};
 
-    GLuint buf;
-    glGenBuffers(1, &buf);
+    GLBuffer buf;
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     runTest(GL_UNSIGNED_SHORT, buf, reinterpret_cast<const void *>(sizeof(GLushort)));
-
-    glDeleteBuffers(1, &buf);
 }
 
 TEST_P(LineLoopTest, LineLoopUIntIndexBuffer)
@@ -176,14 +212,97 @@ TEST_P(LineLoopTest, LineLoopUIntIndexBuffer)
 
     static const GLuint indices[] = {0, 7, 6, 9, 8, 0};
 
-    GLuint buf;
-    glGenBuffers(1, &buf);
+    GLBuffer buf;
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     runTest(GL_UNSIGNED_INT, buf, reinterpret_cast<const void *>(sizeof(GLuint)));
+}
 
-    glDeleteBuffers(1, &buf);
+class LineLoopTestES3 : public LineLoopTest
+{};
+
+// Test that uploading data to buffer that's in use then using it for line loop elements works.
+TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUByteIndexBuffer)
+{
+    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    ignoreD3D11SDKLayersWarnings();
+
+    static const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+
+    GLBuffer buf;
+
+    preTestUpdateBuffer(framebuffer, texture, buf, sizeof(indices));
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indices), indices);
+
+    runTest(GL_UNSIGNED_BYTE, buf, reinterpret_cast<const void *>(sizeof(GLubyte)));
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that uploading data to buffer that's in use then using it for line loop elements works.
+TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUShortIndexBuffer)
+{
+    // http://anglebug.com/5833
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
+
+    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    ignoreD3D11SDKLayersWarnings();
+
+    static const GLushort indices[] = {0, 7, 6, 9, 8, 0};
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+
+    GLBuffer buf;
+
+    preTestUpdateBuffer(framebuffer, texture, buf, sizeof(indices));
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indices), indices);
+
+    runTest(GL_UNSIGNED_SHORT, buf, reinterpret_cast<const void *>(sizeof(GLushort)));
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that uploading data to buffer that's in use then using it for line loop elements works.
+TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUIntIndexBuffer)
+{
+    if (!IsGLExtensionEnabled("GL_OES_element_index_uint"))
+    {
+        return;
+    }
+
+    // http://anglebug.com/5833
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
+
+    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    ignoreD3D11SDKLayersWarnings();
+
+    static const GLuint indices[] = {0, 7, 6, 9, 8, 0};
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+
+    GLBuffer buf;
+
+    preTestUpdateBuffer(framebuffer, texture, buf, sizeof(indices));
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indices), indices);
+
+    runTest(GL_UNSIGNED_INT, buf, reinterpret_cast<const void *>(sizeof(GLuint)));
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 // Tests an edge case with a very large line loop element count.
@@ -365,7 +484,11 @@ void main()
 class LineLoopIndirectTest : public LineLoopTest
 {
   protected:
-    void runTest(GLenum indexType, const void *indices, GLuint indicesSize, GLuint firstIndex)
+    void runTest(GLenum indexType,
+                 const void *indices,
+                 GLuint indicesSize,
+                 GLuint firstIndex,
+                 bool useBuffersAsUboFirst)
     {
         struct DrawCommand
         {
@@ -388,52 +511,63 @@ class LineLoopIndirectTest : public LineLoopTest
 
         glUseProgram(mProgram);
 
-        GLuint vertexArray = 0;
-        glGenVertexArrays(1, &vertexArray);
-        glBindVertexArray(vertexArray);
+        GLVertexArray vertexArray;
 
         ASSERT_GL_NO_ERROR();
 
-        GLuint vertBuffer = 0;
-        glGenBuffers(1, &vertBuffer);
+        GLFramebuffer arrayUpdateFbo, elementUpdateFbo;
+        GLTexture arrayUpdateTex, elementUpdateTex;
+
+        GLBuffer vertBuffer;
+        GLBuffer buf;
+
+        if (useBuffersAsUboFirst)
+        {
+            preTestUpdateBuffer(arrayUpdateFbo, arrayUpdateTex, vertBuffer, sizeof(loopPositions));
+            preTestUpdateBuffer(elementUpdateFbo, elementUpdateTex, buf, indicesSize);
+        }
+
+        glBindVertexArray(vertexArray);
         glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(loopPositions), loopPositions, GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf);
+
+        if (useBuffersAsUboFirst)
+        {
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(loopPositions), loopPositions);
+            glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indicesSize, indices);
+        }
+        else
+        {
+            glBufferData(GL_ARRAY_BUFFER, sizeof(loopPositions), loopPositions, GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
+        }
         glEnableVertexAttribArray(mPositionLocation);
         glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
         glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
 
         ASSERT_GL_NO_ERROR();
 
-        GLuint buf;
-        glGenBuffers(1, &buf);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
-
         DrawCommand cmdBuffer = {};
         cmdBuffer.count       = 4;
         cmdBuffer.firstIndex  = firstIndex;
         cmdBuffer.primCount   = 1;
-        GLuint indirectBuf    = 0;
-        glGenBuffers(1, &indirectBuf);
+        GLBuffer indirectBuf;
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuf);
         glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(DrawCommand), &cmdBuffer, GL_STATIC_DRAW);
 
         ASSERT_GL_NO_ERROR();
 
+        glEnable(GL_BLEND);
         glDrawElementsIndirect(GL_LINE_LOOP, indexType, nullptr);
         ASSERT_GL_NO_ERROR();
 
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
-        glDeleteBuffers(1, &indirectBuf);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glDeleteBuffers(1, &buf);
 
         glBindVertexArray(0);
-        glDeleteVertexArrays(1, &vertexArray);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glDeleteBuffers(1, &vertBuffer);
 
         glEnableVertexAttribArray(mPositionLocation);
         glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, stripPositions);
@@ -441,6 +575,15 @@ class LineLoopIndirectTest : public LineLoopTest
         glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_BYTE, stripIndices);
 
         checkPixels();
+
+        if (useBuffersAsUboFirst)
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, arrayUpdateFbo);
+            EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+            glBindFramebuffer(GL_FRAMEBUFFER, elementUpdateFbo);
+            EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+        }
     }
 };
 
@@ -456,7 +599,7 @@ TEST_P(LineLoopIndirectTest, UByteIndexIndirectBuffer)
     static const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
 
     // Start at index 1.
-    runTest(GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(indices), sizeof(indices), 1);
+    runTest(GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(indices), sizeof(indices), 1, false);
 }
 
 TEST_P(LineLoopIndirectTest, UShortIndexIndirectBuffer)
@@ -471,13 +614,51 @@ TEST_P(LineLoopIndirectTest, UShortIndexIndirectBuffer)
     static const GLushort indices[] = {0, 7, 6, 9, 8, 0};
 
     // Start at index 1.
-    runTest(GL_UNSIGNED_SHORT, reinterpret_cast<const void *>(indices), sizeof(indices), 1);
+    runTest(GL_UNSIGNED_SHORT, reinterpret_cast<const void *>(indices), sizeof(indices), 1, false);
 }
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
-ANGLE_INSTANTIATE_TEST_ES2(LineLoopTest);
+// Test that uploading data to buffer that's in use then using it for line loop elements works.
+TEST_P(LineLoopIndirectTest, UseAsUBOThenUpdateThenUByteIndexIndirectBuffer)
+{
+    // http://anglebug.com/5833
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
 
+    // Old drivers buggy with optimized ConvertIndexIndirectLineLoop shader.
+    // http://anglebug.com/4720
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
+
+    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    ignoreD3D11SDKLayersWarnings();
+
+    static const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
+
+    // Start at index 1.
+    runTest(GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(indices), sizeof(indices), 1, true);
+}
+
+// Test that uploading data to buffer that's in use then using it for line loop elements works.
+TEST_P(LineLoopIndirectTest, UseAsUBOThenUpdateThenUShortIndexIndirectBuffer)
+{
+    // http://anglebug.com/5833
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
+
+    // Old drivers buggy with optimized ConvertIndexIndirectLineLoop shader.
+    // http://anglebug.com/4720
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
+
+    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    ignoreD3D11SDKLayersWarnings();
+
+    static const GLushort indices[] = {0, 7, 6, 9, 8, 0};
+
+    // Start at index 1.
+    runTest(GL_UNSIGNED_SHORT, reinterpret_cast<const void *>(indices), sizeof(indices), 1, true);
+}
+
+ANGLE_INSTANTIATE_TEST_ES2(LineLoopTest);
+ANGLE_INSTANTIATE_TEST_ES3(LineLoopTestES3);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(LineLoopPrimitiveRestartTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(
     LineLoopPrimitiveRestartTest,
     WithMetalForcedBufferGPUStorage(ES3_METAL()),
@@ -485,4 +666,5 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
                                              /* hasBarrier */ false,
                                              /* cheapRenderPass */ false));
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(LineLoopIndirectTest);
 ANGLE_INSTANTIATE_TEST_ES31(LineLoopIndirectTest);

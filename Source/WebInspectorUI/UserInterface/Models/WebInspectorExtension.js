@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,21 @@
 
 WI.WebInspectorExtension = class WebInspectorExtension
 {
-    constructor(extensionID, displayName)
+    constructor(extensionID, extensionBundleIdentifier, displayName)
     {
         console.assert(typeof extensionID === "string", extensionID);
+        console.assert(typeof extensionBundleIdentifier === "string", extensionBundleIdentifier);
         console.assert(typeof displayName === "string", displayName);
 
         this._extensionID = extensionID;
+        this._extensionBundleIdentifier = extensionBundleIdentifier;
         this._displayName = displayName;
     }
 
     // Public
 
     get extensionID() { return this._extensionID; }
+    get extensionBundleIdentifier() { return this._extensionBundleIdentifier; }
     get displayName() { return this._displayName; }
 };
 

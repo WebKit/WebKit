@@ -31,10 +31,11 @@ enum DeviceType {
 
 [
     Conditional=MEDIA_CONTROLS_SCRIPT,
-    ImplementationLacksVTable,
     LegacyNoInterfaceObject,
 ] interface MediaControlsHost {
     readonly attribute DOMString layoutTraitsClassName;
+    readonly attribute DOMString mediaControlsContainerClassName;
+    attribute double brightness;
 
     sequence<TextTrack> sortedTrackListForMenu(TextTrackList trackList);
     sequence<AudioTrack> sortedTrackListForMenu(AudioTrackList trackList);
@@ -55,7 +56,7 @@ enum DeviceType {
     readonly attribute DeviceType externalDeviceType;
 
     attribute boolean controlsDependOnPageScaleFactor;
-    
+
     undefined updateTextTrackContainer();
     undefined enteredFullscreen();
     undefined exitedFullscreen();
@@ -65,5 +66,5 @@ enum DeviceType {
     [Conditional=MODERN_MEDIA_CONTROLS] readonly attribute DOMString shadowRootCSSText;
     [Conditional=MODERN_MEDIA_CONTROLS] DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);
     [Conditional=MODERN_MEDIA_CONTROLS] DOMString formattedStringForDuration(unrestricted double durationInSeconds);
-    [Conditional=MODERN_MEDIA_CONTROLS&MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenus] boolean showMediaControlsContextMenu(HTMLElement target, JSON options, VoidCallback callback);
+    [Conditional=MODERN_MEDIA_CONTROLS&MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled] boolean showMediaControlsContextMenu(HTMLElement target, JSON options, VoidCallback callback);
 };

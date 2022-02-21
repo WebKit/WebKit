@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-FullscreenClient::FullscreenClient(WKFullscreenClientView *webView)
+FullscreenClient::FullscreenClient(WKWebView *webView)
     : m_webView(webView)
 {
 }
@@ -59,6 +59,8 @@ void FullscreenClient::setDelegate(id <_WKFullscreenDelegate> delegate)
 
 void FullscreenClient::willEnterFullscreen(WebPageProxy*)
 {
+    [m_webView willChangeValueForKey:@"fullscreenState"];
+    [m_webView didChangeValueForKey:@"fullscreenState"];
 #if PLATFORM(MAC)
     if (m_delegateMethods.webViewWillEnterFullscreen)
         [m_delegate.get() _webViewWillEnterFullscreen:m_webView];
@@ -70,6 +72,8 @@ void FullscreenClient::willEnterFullscreen(WebPageProxy*)
 
 void FullscreenClient::didEnterFullscreen(WebPageProxy*)
 {
+    [m_webView willChangeValueForKey:@"fullscreenState"];
+    [m_webView didChangeValueForKey:@"fullscreenState"];
 #if PLATFORM(MAC)
     if (m_delegateMethods.webViewDidEnterFullscreen)
         [m_delegate.get() _webViewDidEnterFullscreen:m_webView];
@@ -81,6 +85,8 @@ void FullscreenClient::didEnterFullscreen(WebPageProxy*)
 
 void FullscreenClient::willExitFullscreen(WebPageProxy*)
 {
+    [m_webView willChangeValueForKey:@"fullscreenState"];
+    [m_webView didChangeValueForKey:@"fullscreenState"];
 #if PLATFORM(MAC)
     if (m_delegateMethods.webViewWillExitFullscreen)
         [m_delegate.get() _webViewWillExitFullscreen:m_webView];
@@ -92,6 +98,8 @@ void FullscreenClient::willExitFullscreen(WebPageProxy*)
 
 void FullscreenClient::didExitFullscreen(WebPageProxy*)
 {
+    [m_webView willChangeValueForKey:@"fullscreenState"];
+    [m_webView didChangeValueForKey:@"fullscreenState"];
 #if PLATFORM(MAC)
     if (m_delegateMethods.webViewDidExitFullscreen)
         [m_delegate.get() _webViewDidExitFullscreen:m_webView];

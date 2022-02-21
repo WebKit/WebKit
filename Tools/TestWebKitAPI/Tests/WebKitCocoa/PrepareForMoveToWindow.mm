@@ -28,14 +28,13 @@
 
 #if PLATFORM(MAC)
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
-
-static bool isDone;
 
 TEST(WKWebView, PrepareForMoveToWindow)
 {

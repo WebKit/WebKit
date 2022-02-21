@@ -17,6 +17,9 @@
       location = "group:Source/ThirdParty/libwebrtc/libwebrtc.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Source/WebGPU/WebGPU.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Source/WebCore/WebCore.xcodeproj">
    </FileRef>
    <FileRef

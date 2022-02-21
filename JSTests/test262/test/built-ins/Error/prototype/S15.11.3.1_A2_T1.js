@@ -6,21 +6,13 @@ info: Error.prototype property has the attributes {DontEnum}
 es5id: 15.11.3.1_A2_T1
 description: Checking if enumerating the Error.prototype property fails
 ---*/
+assert(Error.hasOwnProperty('prototype'), 'Error.hasOwnProperty(\'prototype\') must return true');
 
-//////////////////////////////////////////////////////////////////////////////
-//CHECK#0
-if (!(Error.hasOwnProperty('prototype'))) {
-  throw new Test262Error('#0: Error.hasOwnProperty(\'prototype\') return true. Actual: ' + Error.hasOwnProperty('prototype'));
-}
-//
-//////////////////////////////////////////////////////////////////////////////
+assert(
+  !Error.propertyIsEnumerable('prototype'),
+  'The value of !Error.propertyIsEnumerable(\'prototype\') is expected to be true'
+);
 
-
-//////////////////////////////////////////////////////////////////////////////
-// CHECK#1
-if (Error.propertyIsEnumerable('prototype')) {
-  throw new Test262Error('#1: Error.propertyIsEnumerable(\'prototype\') return false. Actual: ' + Error.propertyIsEnumerable('prototype'));
-}
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -30,11 +22,11 @@ if (Error.propertyIsEnumerable('prototype')) {
 var cout = 0;
 
 for (var p in Error) {
-  if (p === "prototype") cout++;
+  if (p === "prototype") {
+    cout++;
+  }
 }
 
-if (cout !== 0) {
-  throw new Test262Error('#2: cout === 0. Actual: ' + cout);
-}
-//
-//////////////////////////////////////////////////////////////////////////////
+assert.sameValue(cout, 0, 'The value of cout is expected to be 0');
+
+// TODO: Convert to verifyProperty() format.

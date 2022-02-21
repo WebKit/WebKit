@@ -185,6 +185,7 @@ bool doesGC(Graph& graph, Node* node)
     case NotifyWrite:
     case AssertInBounds:
     case CheckInBounds:
+    case CheckInBoundsInt52:
     case ConstantStoragePointer:
     case Check:
     case CheckVarargs:
@@ -197,10 +198,12 @@ bool doesGC(Graph& graph, Node* node)
     case GetGetter:
     case GetSetter:
     case GetArrayLength:
+    case GetTypedArrayLengthAsInt52:
     case GetVectorLength:
     case StringCharCodeAt:
     case StringCodePointAt:
     case GetTypedArrayByteOffset:
+    case GetTypedArrayByteOffsetAsInt52:
     case GetPrototypeOf:
     case PutStructure:
     case GetByOffset:
@@ -335,6 +338,7 @@ bool doesGC(Graph& graph, Node* node)
     case RegExpMatchFast:
     case RegExpMatchFastGlobal:
     case RegExpTest:
+    case RegExpTestInline:
     case ResolveScope:
     case ResolveScopeForHoistingFuncDeclInEval:
     case Return:
@@ -492,7 +496,7 @@ bool doesGC(Graph& graph, Node* node)
             || node->isBinaryUseKind(ObjectUse)
             || node->isBinaryUseKind(MiscUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, MiscUse)
             || node->isBinaryUseKind(StringIdentUse, NotStringVarUse) || node->isBinaryUseKind(NotStringVarUse, StringIdentUse)
-            || node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse) || node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse))
+            || node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse) || node->isBinaryUseKind(NeitherDoubleNorHeapBigIntNorStringUse, NotDoubleUse))
             return false;
         return true;
 

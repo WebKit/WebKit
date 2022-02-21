@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test that selection gets cleared properly with line-height set.</title>
+<style>
+::selection {
+    background: rgba(255, 0, 0, 0.9);
+}
+
+div {
+    font-size: 20px;
+    font-family: 'Ahem';
+    line-height: 100px;
+}
+</style>
+</head>
+<body>
+<div id="container">A<br><span>A</span></div>
+<pre id="result"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function test() {
+    await new Promise(requestAnimationFrame);
+
+    if (window.internals)
+        internals.startTrackingRepaints();
+
+    const range = document.createRange();
+    range.selectNode(document.querySelector("#container > span"));
+    window.getSelection().addRange(range);
+
+    await new Promise(requestAnimationFrame);
+
+    window.getSelection().removeAllRanges();
+
+    if (window.internals) {
+        let repaintRects = internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+        result.textContent = repaintRects;
+    }
+
+    await new Promise(requestAnimationFrame);
+    
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+test();
+</script>
+</body>
+</html>

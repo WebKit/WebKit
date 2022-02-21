@@ -111,6 +111,7 @@
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/markup.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/text/TextEncoding.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -440,7 +441,7 @@ static NSURL *createUniqueWebDataURL();
             view->setTransparent(!drawsBackground);
 #if !PLATFORM(IOS_FAMILY)
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            WebCore::Color color = WebCore::colorFromNSColor([backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
+            auto color = WebCore::colorFromCocoaColor([backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
             ALLOW_DEPRECATED_DECLARATIONS_END
 #else
             WebCore::Color color(WebCore::roundAndClampToSRGBALossy(backgroundColor));
@@ -584,7 +585,7 @@ static NSURL *createUniqueWebDataURL();
         return OptionSet<WebCore::PaintBehavior>(WebCore::PaintBehavior::FlattenCompositingLayers) | WebCore::PaintBehavior::Snapshotting;
 #endif
 
-    if (CGContextGetType(context) != kCGContextTypeBitmap)
+    if (CGContextGetType(context) != kCGContextTypeBitmap && CGContextGetType(context) != kCGContextTypeDisplayList)
         return WebCore::PaintBehavior::Normal;
 
     // If we're drawing into a bitmap, we could be snapshotting or drawing into a layer-backed view.
@@ -731,10 +732,7 @@ static NSURL *createUniqueWebDataURL();
 #else
         auto* layer = startNode->renderer()->enclosingLayer();
         if (layer) {
-            auto* scrollableArea = layer->ensureLayerScrollableArea();
-            scrollableArea->setAdjustForIOSCaretWhenScrolling(true);
             startNode->renderer()->scrollRectToVisible(WebCore::enclosingIntRect(rangeRect), insideFixed, { WebCore::SelectionRevealMode::Reveal, WebCore::ScrollAlignment::alignToEdgeIfNeeded, WebCore::ScrollAlignment::alignToEdgeIfNeeded, WebCore::ShouldAllowCrossOriginScrolling::Yes });
-            scrollableArea->setAdjustForIOSCaretWhenScrolling(false);
             _private->coreFrame->selection().setCaretRectNeedsUpdate();
             _private->coreFrame->selection().updateAppearance();
         }
@@ -752,10 +750,7 @@ static NSURL *createUniqueWebDataURL();
     if (startNode && startNode->renderer()) {
         auto* layer = startNode->renderer()->enclosingLayer();
         if (layer) {
-            auto* scrollableArea = layer->ensureLayerScrollableArea();
-            scrollableArea->setAdjustForIOSCaretWhenScrolling(true);
             startNode->renderer()->scrollRectToVisible(WebCore::enclosingIntRect(rangeRect), insideFixed, { WebCore::SelectionRevealMode::Reveal, WebCore::ScrollAlignment::alignToEdgeIfNeeded, WebCore::ScrollAlignment::alignToEdgeIfNeeded, WebCore::ShouldAllowCrossOriginScrolling::Yes});
-            scrollableArea->setAdjustForIOSCaretWhenScrolling(false);
 
             auto coreFrame = core(self);
             if (coreFrame) {
@@ -982,7 +977,7 @@ static NSURL *createUniqueWebDataURL();
     auto* document = _private->coreFrame->document();
     document->setShouldCreateRenderers(_private->shouldCreateRenderers);
 
-    _private->coreFrame->loader().documentLoader()->commitData((const uint8_t*)[data bytes], [data length]);
+    _private->coreFrame->loader().documentLoader()->commitData(WebCore::SharedBuffer::create(data));
 }
 
 @end
@@ -1020,9 +1015,9 @@ static NSURL *createUniqueWebDataURL();
     if (!color.isValid())
         return nil;
 #if !PLATFORM(IOS_FAMILY)
-    return nsColor(color);
+    return cocoaColor(color).autorelease();
 #else
-    return cachedCGColor(color);
+    return cachedCGColor(color).autorelease();
 #endif
 }
 
@@ -1138,28 +1133,6 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 {
     return _private->coreFrame->document()->domWindow()->pendingUnloadEventListeners();
 }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-- (void)_recursive_resumeNullEventsForAllNetscapePlugins
-{
-    auto coreFrame = core(self);
-    for (auto* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
-        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
-        if ([documentView isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
-    }
-}
-
-- (void)_recursive_pauseNullEventsForAllNetscapePlugins
-{
-    auto coreFrame = core(self);
-    for (auto* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
-        NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
-        if ([documentView isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
-    }
-}
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -1408,7 +1381,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!renderer)
         return nil;
     auto color = WebCore::CaretBase::computeCaretColor(renderer->style(), renderer->element());
-    return color.isValid() ? cachedCGColor(color) : nil;
+    return color.isValid() ? cachedCGColor(color).autorelease() : nil;
 }
 
 - (NSView *)documentView
@@ -1724,7 +1697,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
             if (marker->type() != WebCore::DocumentMarker::DictationResult)
                 continue;
 
-            id metadata = WTF::get<RetainPtr<id>>(marker->data()).get();
+            id metadata = std::get<RetainPtr<id>>(marker->data()).get();
 
             // All result markers should have metadata.
             ASSERT(metadata);
@@ -1769,7 +1742,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (markers.size() == 0)
         return nil;
 
-    return WTF::get<RetainPtr<id>>(markers[0]->data()).get();
+    return std::get<RetainPtr<id>>(markers[0]->data()).get();
 }
 
 - (void)recursiveSetUpdateAppearanceEnabled:(BOOL)enabled
@@ -1784,9 +1757,9 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
-    WebCore::TextEncoding encoding(textEncodingName);
+    PAL::TextEncoding encoding(textEncodingName);
     if (!encoding.isValid())
-        encoding = WebCore::WindowsLatin1Encoding();
+        encoding = PAL::WindowsLatin1Encoding();
     return encoding.decode(reinterpret_cast<const char*>([data bytes]), [data length]);
 }
 

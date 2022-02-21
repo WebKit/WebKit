@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
@@ -268,6 +268,6 @@ if __name__ == '__main__':
         generate_from_specification(**options)
     except (ParseException, TypecheckException) as e:
         if arg_options.test:
-            log.error(e.message)
+            log.error(str(e))
         else:
             raise  # Force the build to fail.

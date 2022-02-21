@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,9 +95,9 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         else if (valueString == "f64"_s)
             type = Wasm::Types::F64;
         else if (valueString == "anyfunc"_s || valueString == "funcref"_s)
-            type = Wasm::Types::Funcref;
+            type = Wasm::funcrefType();
         else if (valueString == "externref"_s)
-            type = Wasm::Types::Externref;
+            type = Wasm::externrefType();
         else
             return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global expects its 'value' field to be the string 'i32', 'i64', 'f32', 'f64', 'anyfunc', 'funcref', or 'externref'"_s)));
     }
@@ -137,24 +137,22 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         }
         break;
     }
-    case Wasm::TypeKind::Funcref: {
-        if (argument.isUndefined())
-            argument = defaultValueForReferenceType(type);
-        if (!isWebAssemblyHostFunction(vm, argument) && !argument.isNull()) {
-            throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"));
-            return { };
-        }
-        initialValue = JSValue::encode(argument);
-        break;
+    default: {
+        if (Wasm::isFuncref(type)) {
+            if (argument.isUndefined())
+                argument = defaultValueForReferenceType(type);
+            if (!isWebAssemblyHostFunction(vm, argument) && !argument.isNull()) {
+                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"));
+                return { };
+            }
+            initialValue = JSValue::encode(argument);
+        } else if (Wasm::isExternref(type)) {
+            if (argument.isUndefined())
+                argument = defaultValueForReferenceType(type);
+            initialValue = JSValue::encode(argument);
+        } else
+            RELEASE_ASSERT_NOT_REACHED();
     }
-    case Wasm::TypeKind::Externref: {
-        if (argument.isUndefined())
-            argument = defaultValueForReferenceType(type);
-        initialValue = JSValue::encode(argument);
-        break;
-    }
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
     }
 
     Ref<Wasm::Global> wasmGlobal = Wasm::Global::create(type, mutability, initialValue);
@@ -173,7 +171,7 @@ JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyGlobal, (JSGlobalObject* globalObject,
 
 WebAssemblyGlobalConstructor* WebAssemblyGlobalConstructor::create(VM& vm, Structure* structure, WebAssemblyGlobalPrototype* thisPrototype)
 {
-    auto* constructor = new (NotNull, allocateCell<WebAssemblyGlobalConstructor>(vm.heap)) WebAssemblyGlobalConstructor(vm, structure);
+    auto* constructor = new (NotNull, allocateCell<WebAssemblyGlobalConstructor>(vm)) WebAssemblyGlobalConstructor(vm, structure);
     constructor->finishCreation(vm, thisPrototype);
     return constructor;
 }

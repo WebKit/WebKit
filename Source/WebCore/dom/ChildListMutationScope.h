@@ -31,7 +31,7 @@
 #pragma once
 
 #include "ContainerNode.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "MutationObserver.h"
 #include <memory>
 #include <wtf/Noncopyable.h>
@@ -76,7 +76,7 @@ class ChildListMutationScope {
 public:
     explicit ChildListMutationScope(ContainerNode& target)
     {
-        if (target.document().hasMutationObserversOfType(MutationObserver::ChildList))
+        if (target.document().hasMutationObserversOfType(MutationObserverOptionType::ChildList))
             m_accumulator = ChildListMutationAccumulator::getOrCreate(target);
     }
 

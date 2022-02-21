@@ -40,6 +40,10 @@ messages -> DrawingArea NotRefCounted {
     AddTransactionCallbackID(WebKit::CallbackID callbackID)
 #endif
 
+#if USE(GRAPHICS_LAYER_WC)
+    UpdateGeometry(uint64_t backingStoreStateID, WebCore::IntSize viewSize)
+#endif
+
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     AdjustTransientZoom(double scale, WebCore::FloatPoint origin)
     CommitTransientZoom(double scale, WebCore::FloatPoint origin)

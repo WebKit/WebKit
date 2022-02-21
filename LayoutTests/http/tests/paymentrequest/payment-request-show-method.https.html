@@ -46,9 +46,9 @@ test(() => {
 user_activation_test(async t => {
   const request = new PaymentRequest(defaultMethods, defaultDetails);
   const acceptPromise = request.show(); // Sets state to "interactive"
-  await promise_rejects(t, "SecurityError", request.show());
+  await promise_rejects_dom(t, "SecurityError", request.show());
   await request.abort();
-  await promise_rejects(t, "AbortError", acceptPromise);
+  await promise_rejects_dom(t, "AbortError", acceptPromise);
 }, `Throws if the promise [[state]] is not "created"`);
 
 user_activation_test(async t => {
@@ -56,9 +56,9 @@ user_activation_test(async t => {
   const request2 = new PaymentRequest(defaultMethods, defaultDetails);
   const acceptPromise1 = request1.show();
   const acceptPromise2 = request2.show();
-  await promise_rejects(t, "SecurityError", acceptPromise2);
+  await promise_rejects_dom(t, "SecurityError", acceptPromise2);
   await request1.abort();
-  await promise_rejects(t, "AbortError", acceptPromise1);
+  await promise_rejects_dom(t, "AbortError", acceptPromise1);
 }, `If the user agent's "payment request is showing" boolean is true, then return a promise rejected with an "AbortError" DOMException.`);
 
 user_activation_test(async t => {
@@ -66,7 +66,7 @@ user_activation_test(async t => {
     [{ supportedMethods: "this-is-not-supported" }],
     defaultDetails);
   const acceptPromise = request.show();
-  await promise_rejects(t, "NotSupportedError", acceptPromise);
+  await promise_rejects_dom(t, "NotSupportedError", acceptPromise);
 }, `If payment method consultation produces no supported method of payment, then return a promise rejected with a "NotSupportedError" DOMException.`);
 
 user_activation_test(async t => {
@@ -74,14 +74,14 @@ user_activation_test(async t => {
     [{ supportedMethods: "https://apple.com/apple-pay" }],
     defaultDetails);
   const acceptPromise = request.show();
-  await promise_rejects(t, new TypeError, acceptPromise);
+  await promise_rejects_js(t, TypeError, acceptPromise);
 }, `If data conversion results in an error, then return a promise rejected with a "TypeError" DOMException.`);
 
 user_activation_test(async t => {
   const request = new PaymentRequest(defaultMethods, defaultDetails);
   const acceptPromise = request.show(); // Sets state to "interactive"
   internals.mockPaymentCoordinator.cancelPayment();
-  await promise_rejects(t, "AbortError", acceptPromise);
+  await promise_rejects_dom(t, "AbortError", acceptPromise);
 }, `If the user aborts the payment request algorithm, then return a promise rejected with an "AbortError" DOMException.`);
 
 user_activation_test(async t => {
@@ -92,7 +92,7 @@ user_activation_test(async t => {
       window.setTimeout(() => resolve(defaultDetails));
     });
   })); // Sets state to "interactive"
-  await promise_rejects(t, "AbortError", acceptPromise);
+  await promise_rejects_dom(t, "AbortError", acceptPromise);
 }, `If the user aborts the payment request algorithm while details are updating, then reject the accept promise with an "AbortError" when the details settle.`);
 
 user_activation_test(async t => {

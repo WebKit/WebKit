@@ -41,8 +41,6 @@
 #import "WebCoreFrameView.h"
 #import <wtf/BlockObjCExceptions.h>
 
-using namespace std;
-
 namespace WebCore {
 
 inline NSScrollView<WebCoreFrameScrollView> *ScrollView::scrollView() const
@@ -206,7 +204,7 @@ void ScrollView::platformSetContentsSize()
 #else
     LOG(Frames, "%p %@ at w %d h %d\n", documentView(), NSStringFromClass([documentView() class]), w, h);
 #endif
-    NSSize tempSize = { static_cast<CGFloat>(max(0, w)), static_cast<CGFloat>(max(0, h)) }; // workaround for 4213314
+    NSSize tempSize = { static_cast<CGFloat>(std::max(0, w)), static_cast<CGFloat>(std::max(0, h)) }; // workaround for 4213314
     [documentView() setBoundsSize:tempSize];
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -223,7 +221,7 @@ void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSPoint floatPoint = scrollPoint;
-    NSPoint tempPoint = { max(-[scrollView() scrollOrigin].x, floatPoint.x), max(-[scrollView() scrollOrigin].y, floatPoint.y) };  // Don't use NSMakePoint to work around 4213314.
+    NSPoint tempPoint = { std::max(-[scrollView() scrollOrigin].x, floatPoint.x), std::max(-[scrollView() scrollOrigin].y, floatPoint.y) }; // Don't use NSMakePoint to work around 4213314.
     [documentView() scrollPoint:tempPoint];
     END_BLOCK_OBJC_EXCEPTIONS
 }

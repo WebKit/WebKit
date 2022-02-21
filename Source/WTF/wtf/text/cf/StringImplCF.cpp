@@ -106,10 +106,10 @@ namespace StringWrapperCFAllocator {
 
     static CFAllocatorRef allocator()
     {
-        static auto allocator = makeNeverDestroyed([] {
+        static NeverDestroyed allocator = [] {
             CFAllocatorContext context = { 0, nullptr, retain, release, copyDescription, allocate, reallocate, deallocate, preferredSize };
             return adoptCF(CFAllocatorCreate(nullptr, &context));
-        }());
+        }();
         return allocator.get().get();
     }
 

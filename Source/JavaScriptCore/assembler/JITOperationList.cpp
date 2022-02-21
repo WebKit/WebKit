@@ -146,6 +146,10 @@ void JITOperationList::populatePointersInJavaScriptCoreForLLInt()
             LLINT_ROUTINE(fuzzer_return_early_from_loop_hint)
 
             LLINT_OP(op_catch)
+            LLINT_OP(wasm_catch)
+            LLINT_OP(wasm_catch_no_tls)
+            LLINT_OP(wasm_catch_all)
+            LLINT_OP(wasm_catch_all_no_tls)
             LLINT_OP(llint_generic_return_point)
 
             LLINT_RETURN_LOCATION(op_get_by_id)

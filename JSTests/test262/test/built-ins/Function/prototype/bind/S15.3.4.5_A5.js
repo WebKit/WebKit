@@ -13,6 +13,9 @@ function construct(f, args) {
   return new bound();
 }
 var d = construct(Date, [1957, 4, 27]);
-if (Object.prototype.toString.call(d) !== '[object Date]') {
-  throw new Test262Error('Using the Date constructor via .bind did not create a Date.');
-}
+
+assert.sameValue(
+  Object.prototype.toString.call(d),
+  '[object Date]',
+  'Object.prototype.toString.call(construct(Date, [1957, 4, 27])) must return "[object Date]"'
+);

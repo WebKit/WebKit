@@ -29,15 +29,15 @@ typedef USVString CSSOMString;
     Exposed=Window,
     JSGenerateToNativeObject,
 ] interface KeyframeEffect : AnimationEffect {
-    [CallWith=GlobalObject] constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options);
-    [CallWith=GlobalObject] constructor(KeyframeEffect source);
+    [CallWith=CurrentGlobalObject&CurrentDocument] constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options);
+    constructor(KeyframeEffect source);
 
     attribute Element? target;
     attribute CSSOMString? pseudoElement;
-    [EnabledBySetting=WebAnimationsCompositeOperations] attribute IterationCompositeOperation iterationComposite;
-    [EnabledBySetting=WebAnimationsCompositeOperations] attribute CompositeOperation composite;
-    [CallWith=GlobalObject, ImplementedAs=getBindingsKeyframes] sequence<object> getKeyframes();
-    [CallWith=GlobalObject, ImplementedAs=setBindingsKeyframes] undefined setKeyframes(object? keyframes);
+    [EnabledBySetting=WebAnimationsCompositeOperationsEnabled] attribute IterationCompositeOperation iterationComposite;
+    [EnabledBySetting=WebAnimationsCompositeOperationsEnabled, ImplementedAs=bindingsComposite] attribute CompositeOperation composite;
+    [Custom] sequence<object> getKeyframes();
+    [CallWith=CurrentGlobalObject&CurrentDocument, ImplementedAs=setBindingsKeyframes] undefined setKeyframes(object? keyframes);
 };
 
 dictionary BasePropertyIndexedKeyframe {

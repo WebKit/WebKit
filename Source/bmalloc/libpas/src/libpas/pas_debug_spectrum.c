@@ -85,7 +85,7 @@ void pas_debug_spectrum_dump(pas_stream* stream)
             continue;
 
         entry->dump(stream, hash_entry.key);
-        pas_stream_printf(stream, ": %llu\n", entry->count);
+        pas_stream_printf(stream, ": %llu\n", (unsigned long long)entry->count);
     }
 }
 

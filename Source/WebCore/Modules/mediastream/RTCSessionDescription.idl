@@ -31,8 +31,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=PeerConnection,
-    ImplementationLacksVTable,
+    EnabledBySetting=PeerConnectionEnabled,
     PrivateIdentifier,
     PublicIdentifier,
     Exposed=Window

@@ -55,15 +55,19 @@ static void patternReleaseCallback(void* info)
 
 RetainPtr<CGPatternRef> Pattern::createPlatformPattern(const AffineTransform& userSpaceTransform) const
 {
-    FloatRect tileRect = { { }, tileImage().size() };
+    auto nativeImage = tileNativeImage();
+    if (!nativeImage)
+        return nullptr;
 
-    AffineTransform patternTransform = userSpaceTransform * patternSpaceTransform();
-    patternTransform.scaleNonUniform(1, -1);
-    patternTransform.translate(0, -tileRect.height());
-
-    PlatformImagePtr platformImage = tileImage().platformImage();
+    auto platformImage = nativeImage->platformImage();
     if (!platformImage)
         return nullptr;
+
+    FloatRect tileRect = { { }, nativeImage->size() };
+
+    auto patternTransform = userSpaceTransform * patternSpaceTransform();
+    patternTransform.scaleNonUniform(1, -1);
+    patternTransform.translate(0, -tileRect.height());
 
     // If we're repeating in both directions, we can use image-backed patterns
     // instead of custom patterns, and avoid tiling-edge pixel cracks.

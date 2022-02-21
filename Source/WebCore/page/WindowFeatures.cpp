@@ -81,7 +81,7 @@ WindowFeatures parseWindowFeatures(StringView featuresString)
 // Window: https://html.spec.whatwg.org/#concept-window-open-features-tokenize
 // Viewport: https://developer.apple.com/library/content/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html#//apple_ref/doc/uid/TP40008193-SW6
 // FIXME: We should considering aligning Viewport feature parsing with Window features parsing.
-void processFeaturesString(StringView features, FeatureMode mode, const WTF::Function<void(StringView type, StringView value)>& callback)
+void processFeaturesString(StringView features, FeatureMode mode, const Function<void(StringView type, StringView value)>& callback)
 {
     unsigned length = features.length();
     for (unsigned i = 0; i < length; ) {

@@ -28,6 +28,6 @@
     Conditional=GAMEPAD,
     ImplementedBy=NavigatorGamepad
 ] partial interface Navigator {
-    [EnabledBySetting=Gamepads] sequence<Gamepad> getGamepads();
+    [EnabledBySetting=GamepadsEnabled] sequence<Gamepad> getGamepads();
 };
 

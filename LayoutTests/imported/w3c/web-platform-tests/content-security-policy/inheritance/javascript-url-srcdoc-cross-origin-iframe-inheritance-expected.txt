@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Nested cross-origin iframe should be blocked by frame-src 'self'. Test timed out
+PASS Nested cross-origin iframe should be blocked by frame-src 'self'.
 

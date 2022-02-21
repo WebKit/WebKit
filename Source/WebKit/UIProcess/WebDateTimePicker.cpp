@@ -33,7 +33,7 @@
 namespace WebKit {
 
 WebDateTimePicker::WebDateTimePicker(WebPageProxy& page)
-    : m_page(makeWeakPtr(page))
+    : m_page(page)
 {
 }
 

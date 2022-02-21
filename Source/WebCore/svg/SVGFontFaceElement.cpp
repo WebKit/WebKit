@@ -34,6 +34,7 @@
 #include "FontCascade.h"
 #include "Logging.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceSrcElement.h"
 #include "SVGGlyphElement.h"
@@ -83,7 +84,7 @@ void SVGFontFaceElement::parseAttribute(const QualifiedName& name, const AtomStr
             // Rather than invasively modifying the parser for the properties to have a special mode, we can simply detect the error condition after-the-fact and
             // avoid it explicitly.
             if (auto parsedValue = properties.getPropertyCSSValue(propertyId)) {
-                if (parsedValue->isGlobalKeyword())
+                if (parsedValue->isCSSWideKeyword())
                     properties.removeProperty(propertyId);
             }
         }
@@ -288,7 +289,7 @@ void SVGFontFaceElement::rebuildFontFace()
 
         unsigned srcLength = srcList ? srcList->length() : 0;
         for (unsigned i = 0; i < srcLength; ++i) {
-            if (auto item = makeRefPtr(downcast<CSSFontFaceSrcValue>(srcList->itemWithoutBoundsCheck(i))))
+            if (RefPtr item = downcast<CSSFontFaceSrcValue>(srcList->itemWithoutBoundsCheck(i)))
                 item->setSVGFontFaceElement(this);
         }
     }

@@ -33,8 +33,8 @@
 PAS_BEGIN_EXTERN_C;
 
 #define PAS_MIN_HEAP_INITIALIZER(name) ((name){ \
-        .outline_array = NULL, \
         .size = 0, \
+        .outline_array = NULL, \
         .outline_capacity = 0 \
     })
 

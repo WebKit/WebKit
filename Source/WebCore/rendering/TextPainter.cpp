@@ -27,6 +27,7 @@
 #include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "HTMLParserIdioms.h"
+#include "LayoutIntegrationInlineContent.h"
 #include "LegacyInlineTextBox.h"
 #include "RenderCombineText.h"
 #include "RenderLayer.h"
@@ -49,10 +50,10 @@ ShadowApplier::ShadowApplier(GraphicsContext& context, const ShadowData* shadow,
         return;
     }
 
-    int shadowX = orientation == FontOrientation::Horizontal ? shadow->x() : shadow->y();
-    int shadowY = orientation == FontOrientation::Horizontal ? shadow->y() : -shadow->x();
+    float shadowX = orientation == FontOrientation::Horizontal ? shadow->x().value() : shadow->y().value();
+    float shadowY = orientation == FontOrientation::Horizontal ? shadow->y().value() : -shadow->x().value();
     FloatSize shadowOffset(shadowX, shadowY);
-    int shadowRadius = shadow->radius();
+    auto shadowRadius = shadow->radius();
     Color shadowColor = shadow->color();
     if (colorFilter)
         colorFilter->transformColor(shadowColor);
@@ -68,12 +69,12 @@ ShadowApplier::ShadowApplier(GraphicsContext& context, const ShadowData* shadow,
         context.clip(shadowRect);
 
         m_didSaveContext = true;
-        m_extraOffset = FloatSize(0, 2 * shadowRect.height() + std::max(0.0f, shadowOffset.height()) + shadowRadius);
+        m_extraOffset = FloatSize(0, 2 * shadowRect.height() + std::max(0.0f, shadowOffset.height()) + shadowRadius.value());
         shadowOffset -= m_extraOffset;
     }
 
     if (!m_avoidDrawingShadow)
-        context.setShadow(shadowOffset, shadowRadius, shadowColor);
+        context.setShadow(shadowOffset, shadowRadius.value(), shadowColor);
 }
 
 inline bool ShadowApplier::isLastShadowIteration()
@@ -83,7 +84,7 @@ inline bool ShadowApplier::isLastShadowIteration()
 
 inline bool ShadowApplier::shadowIsCompletelyCoveredByText(bool textIsOpaque)
 {
-    return textIsOpaque && m_shadow && m_shadow->location().isZero() && !m_shadow->radius();
+    return textIsOpaque && m_shadow && m_shadow->location().isZero() && m_shadow->radius().isZero();
 }
 
 ShadowApplier::~ShadowApplier()
@@ -197,7 +198,7 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
     updateGraphicsContext(m_context, paintStyle, UseEmphasisMarkColor);
     static NeverDestroyed<TextRun> objectReplacementCharacterTextRun(StringView(&objectReplacementCharacter, 1));
     const TextRun& emphasisMarkTextRun = m_combinedText ? objectReplacementCharacterTextRun.get() : textRun;
-    FloatPoint emphasisMarkTextOrigin = m_combinedText ? FloatPoint(boxOrigin.x() + boxRect.width() / 2, boxOrigin.y() + m_font->fontMetrics().ascent()) : textOrigin;
+    FloatPoint emphasisMarkTextOrigin = m_combinedText ? FloatPoint(boxOrigin.x() + boxRect.width() / 2, boxOrigin.y() + m_font->metricsOfPrimaryFont().ascent()) : textOrigin;
     if (m_combinedText)
         m_context.concatCTM(rotation(boxRect, Clockwise));
 
@@ -229,7 +230,7 @@ void TextPainter::clearGlyphDisplayLists()
     GlyphDisplayListCache<LegacyInlineTextBox>::singleton().clear();
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
-        GlyphDisplayListCache<LayoutIntegration::Run>::singleton().clear();
+        GlyphDisplayListCache<InlineDisplay::Box>::singleton().clear();
 #endif
 }
 

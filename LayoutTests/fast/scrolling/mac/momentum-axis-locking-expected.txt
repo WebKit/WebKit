@@ -1,0 +1,6 @@
+
+Tests axis locking in the momentum wheel gesture phase
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

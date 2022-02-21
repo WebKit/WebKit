@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018, 2019 Igalia S.L
+ * Copyright (C) 2018, 2019, 2021 Igalia S.L
  * Copyright (C) 2018, 2019 Zodiac Inflight Innovations
  *
  * This library is free software; you can redistribute it and/or
@@ -20,19 +20,16 @@
 
 #pragma once
 
-#include "config.h"
-
 #include <QQmlEngine>
 #include <QQuickItem>
 #include <QUrl>
 #include <memory>
 #include <wpe/webkit.h>
-#include <wtf/glib/GRefPtr.h>
 
 class WPEQtViewBackend;
 class WPEQtViewLoadRequest;
 
-class WPEQtView : public QQuickItem {
+class Q_DECL_EXPORT WPEQtView : public QQuickItem {
     Q_OBJECT
     Q_DISABLE_COPY(WPEQtView)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
@@ -110,7 +107,7 @@ private:
     static void notifyLoadChangedCallback(WebKitWebView*, WebKitLoadEvent, WPEQtView*);
     static void notifyLoadFailedCallback(WebKitWebView*, WebKitLoadEvent, const gchar* failingURI, GError*, WPEQtView*);
 
-    GRefPtr<WebKitWebView> m_webView;
+    WebKitWebView* m_webView { nullptr };
     QUrl m_url;
     QString m_html;
     QUrl m_baseUrl;

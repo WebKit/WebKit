@@ -29,7 +29,7 @@ namespace WebCore {
 
 enum class MediaEncodingType : bool {
     Record,
-    Transmission,
+    WebRTC,
 };
 
 }
@@ -40,7 +40,7 @@ template<> struct EnumTraits<WebCore::MediaEncodingType> {
     using values = EnumValues<
         WebCore::MediaEncodingType,
         WebCore::MediaEncodingType::Record,
-        WebCore::MediaEncodingType::Transmission
+        WebCore::MediaEncodingType::WebRTC
     >;
 };
 

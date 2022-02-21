@@ -1,0 +1,8 @@
+Both should be Blue to the left of Orange.
+Both should be Orange to the left of Blue.
+
+PASS .flexitem 1
+PASS .flexitem 2
+PASS .flexitem 3
+PASS .flexitem 4
+

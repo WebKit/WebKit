@@ -129,7 +129,7 @@ ShaderD3D::ShaderD3D(const gl::ShaderState &state,
     {
         mAdditionalOptions |= SH_ALLOW_TRANSLATE_UNIFORM_BLOCK_TO_STRUCTUREDBUFFER;
     }
-    if (extensions.multiview || extensions.multiview2)
+    if (extensions.multiviewOVR || extensions.multiview2OVR)
     {
         mAdditionalOptions |= SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW;
     }
@@ -240,11 +240,23 @@ bool ShaderD3D::useImage2DFunction(const std::string &functionName) const
     return mUsedImage2DFunctionNames.find(functionName) != mUsedImage2DFunctionNames.end();
 }
 
+const std::set<std::string> &ShaderD3D::getSlowCompilingUniformBlockSet() const
+{
+    return mSlowCompilingUniformBlockSet;
+}
+
 const std::map<std::string, unsigned int> &GetUniformRegisterMap(
     const std::map<std::string, unsigned int> *uniformRegisterMap)
 {
     ASSERT(uniformRegisterMap);
     return *uniformRegisterMap;
+}
+
+const std::set<std::string> &GetSlowCompilingUniformBlockSet(
+    const std::set<std::string> *slowCompilingUniformBlockSet)
+{
+    ASSERT(slowCompilingUniformBlockSet);
+    return *slowCompilingUniformBlockSet;
 }
 
 const std::set<std::string> &GetUsedImage2DFunctionNames(
@@ -329,6 +341,9 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
                 mUniformBlockUseStructuredBufferMap[interfaceBlock.name] = useStructuredBuffer;
             }
         }
+
+        mSlowCompilingUniformBlockSet =
+            GetSlowCompilingUniformBlockSet(sh::GetSlowCompilingUniformBlockSet(compilerHandle));
 
         for (const sh::InterfaceBlock &interfaceBlock : mState.getShaderStorageBlocks())
         {

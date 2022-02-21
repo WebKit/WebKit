@@ -17,7 +17,7 @@
 <div id="target"></div>
 <script>
 
-async_test(async t => {
+promise_test(async t => {
     // Start an animation with an implicit from keyframe.
     const animation = document.getElementById("target").animate({ transform: "translateX(600px)" }, { duration: 1000 * 1000 });
 
@@ -27,7 +27,6 @@ async_test(async t => {
     await new Promise(requestAnimationFrame);
 
     assert_equals(internals.acceleratedAnimationsForElement(target).length, 1, "There should be an accelerated animation.");
-    t.done();
 }, "A transform animation with a single keyframe should be able to run accelerated.");
 
 </script>

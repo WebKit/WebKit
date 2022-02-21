@@ -49,7 +49,6 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
-#include "modules/rtp_rtcp/source/rtp_utility.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/format_macros.h"
 #include "rtc_base/logging.h"
@@ -88,10 +87,10 @@ double AbsSendTimeToMicroseconds(int64_t abs_send_time) {
   return abs_send_time * kTimestampToMicroSec;
 }
 
-// Computes the difference |later| - |earlier| where |later| and |earlier|
-// are counters that wrap at |modulus|. The difference is chosen to have the
-// least absolute value. For example if |modulus| is 8, then the difference will
-// be chosen in the range [-3, 4]. If |modulus| is 9, then the difference will
+// Computes the difference `later` - `earlier` where `later` and `earlier`
+// are counters that wrap at `modulus`. The difference is chosen to have the
+// least absolute value. For example if `modulus` is 8, then the difference will
+// be chosen in the range [-3, 4]. If `modulus` is 9, then the difference will
 // be in [-4, 4].
 int64_t WrappingDifference(uint32_t later, uint32_t earlier, int64_t modulus) {
   RTC_DCHECK_LE(1, modulus);
@@ -1267,7 +1266,7 @@ void EventLogAnalyzer::CreateSendSideBweSimulationGraph(Plot* plot) {
       const RtpPacketType& rtp_packet = *rtp_iterator->second;
       if (rtp_packet.rtp.header.extension.hasTransportSequenceNumber) {
         RtpPacketSendInfo packet_info;
-        packet_info.ssrc = rtp_packet.rtp.header.ssrc;
+        packet_info.media_ssrc = rtp_packet.rtp.header.ssrc;
         packet_info.transport_sequence_number =
             rtp_packet.rtp.header.extension.transportSequenceNumber;
         packet_info.rtp_sequence_number = rtp_packet.rtp.header.sequenceNumber;

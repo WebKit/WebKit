@@ -30,8 +30,12 @@ class MockRTCRtpTransformer {
                 if (chunk.value instanceof RTCEncodedVideoFrame)
                     this.context.options.port.postMessage("video frame " + chunk.value.type);
 
-                if (this.askKeyFrame)
-                    this.context.requestKeyFrame();
+                if (this.askKeyFrame) {
+                    if (this.context.options.side === "sender")
+                         this.context.generateKeyFrame();
+                    else
+                         this.context.sendKeyFrameRequest();
+                }
             }
 
             this.process();

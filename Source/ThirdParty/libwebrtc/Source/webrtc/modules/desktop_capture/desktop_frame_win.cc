@@ -50,6 +50,10 @@ std::unique_ptr<DesktopFrameWin> DesktopFrameWin::Create(
   HANDLE section_handle = nullptr;
   if (shared_memory_factory) {
     shared_memory = shared_memory_factory->CreateSharedMemory(buffer_size);
+    if (!shared_memory) {
+      RTC_LOG(LS_WARNING) << "Failed to allocate shared memory";
+      return nullptr;
+    }
     section_handle = shared_memory->handle();
   }
   void* data = nullptr;

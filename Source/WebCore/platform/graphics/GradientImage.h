@@ -44,7 +44,7 @@ public:
     const Gradient& gradient() const { return m_gradient.get(); }
 
 private:
-    GradientImage(Gradient&, const FloatSize&);
+    WEBCORE_EXPORT GradientImage(Gradient&, const FloatSize&);
 
     ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) final;
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;

@@ -26,12 +26,14 @@
 #import <WebKit/WKWebProcessPlugInFrame.h>
 
 @class JSContext;
+@class JSValue;
 @class WKWebProcessPlugInBrowserContextController;
 
 @interface WKWebProcessPlugInFrame (WKPrivate)
 
 + (instancetype)lookUpFrameFromHandle:(_WKFrameHandle *)handle;
 + (instancetype)lookUpFrameFromJSContext:(JSContext *)context;
++ (instancetype)lookUpContentFrameFromWindowOrFrameElement:(JSValue *)value;
 
 @property (nonatomic, readonly) WKWebProcessPlugInBrowserContextController *_browserContextController;
 

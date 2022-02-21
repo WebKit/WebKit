@@ -39,6 +39,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/CString.h>
 
 static const char* const classNameKey = "$class";
@@ -332,7 +333,7 @@ static RetainPtr<NSArray<NSData *>> transformCertificatesToData(NSArray *input)
     return dataArray;
 }
 
-static RetainPtr<NSData> transformTrustToData(SecTrustRef trust)
+static RetainPtr<CFDataRef> transformTrustToData(SecTrustRef trust)
 {
     if (CFGetTypeID(trust) != SecTrustGetTypeID())
         [NSException raise:NSInvalidArgumentException format:@"Error encoding invalid SecTrustRef"];
@@ -363,7 +364,7 @@ static void encodeError(WKRemoteObjectEncoder *encoder, NSError *error)
     if (id trust = error.userInfo[peerTrustKey]) {
         if (!copy)
             copy = adoptNS([error.userInfo mutableCopy]);
-        copy.get()[peerTrustKey] = transformTrustToData((SecTrustRef)trust).get();
+        copy.get()[peerTrustKey] = bridge_cast(transformTrustToData((SecTrustRef)trust).get());
     }
     if (!copy)
         [error encodeWithCoder:encoder];
@@ -385,7 +386,7 @@ static RetainPtr<NSArray> transformDataToCertificates(NSArray *input)
     return array;
 }
 
-static RetainPtr<id> transformDataToTrust(NSData *data)
+static RetainPtr<SecTrustRef> transformDataToTrust(NSData *data)
 {
     if (CFGetTypeID(data) != CFDataGetTypeID())
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Invalid SecTrustRef data %@", NSStringFromClass([data class])];
@@ -407,7 +408,7 @@ static RetainPtr<NSError> decodeError(WKRemoteObjectDecoder *decoder)
     if (NSData *trust = error.get().userInfo[peerTrustKey]) {
         if (!copy)
             copy = adoptNS([error.get().userInfo mutableCopy]);
-        copy.get()[peerTrustKey] = transformDataToTrust(trust).get();
+        copy.get()[peerTrustKey] = bridge_id_cast(transformDataToTrust(trust).get());
     }
     if (!copy)
         return error;

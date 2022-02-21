@@ -1,3 +1,3 @@
 
-FAIL Test that script executes if allowed by proper hash values assert_true: expected true got false
+PASS Test that script executes if allowed by proper hash values
 

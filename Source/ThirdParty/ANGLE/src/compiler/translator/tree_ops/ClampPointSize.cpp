@@ -23,12 +23,13 @@ bool ClampPointSize(TCompiler *compiler,
                     TSymbolTable *symbolTable)
 {
     // Only clamp gl_PointSize if it's used in the shader.
-    if (!FindSymbolNode(root, ImmutableString("gl_PointSize")))
+    const TIntermSymbol *glPointSize = FindSymbolNode(root, ImmutableString("gl_PointSize"));
+    if (glPointSize == nullptr)
     {
         return true;
     }
 
-    TIntermSymbol *pointSizeNode = new TIntermSymbol(BuiltInVariable::gl_PointSize());
+    TIntermTyped *pointSizeNode = glPointSize->deepCopy();
 
     TConstantUnion *maxPointSizeConstant = new TConstantUnion();
     maxPointSizeConstant->setFConst(maxPointSize);
@@ -36,11 +37,11 @@ bool ClampPointSize(TCompiler *compiler,
         new TIntermConstantUnion(maxPointSizeConstant, TType(EbtFloat, EbpHigh, EvqConst));
 
     // min(gl_PointSize, maxPointSize)
-    TIntermSequence *minArguments = new TIntermSequence();
-    minArguments->push_back(pointSizeNode->deepCopy());
-    minArguments->push_back(maxPointSizeNode);
+    TIntermSequence minArguments;
+    minArguments.push_back(pointSizeNode->deepCopy());
+    minArguments.push_back(maxPointSizeNode);
     TIntermTyped *clampedPointSize =
-        CreateBuiltInFunctionCallNode("min", minArguments, *symbolTable, 100);
+        CreateBuiltInFunctionCallNode("min", &minArguments, *symbolTable, 100);
 
     // gl_PointSize = min(gl_PointSize, maxPointSize)
     TIntermBinary *assignPointSize = new TIntermBinary(EOpAssign, pointSizeNode, clampedPointSize);

@@ -25,15 +25,14 @@
 
 #import "config.h"
 
-#import "TCPServer.h"
+#import "DeprecatedGlobalValues.h"
+#import "HTTPServer.h"
 #import "Test.h"
 #import "Utilities.h"
 #import <WebKit/WKNavigationResponsePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
-
-static bool isDone;
 
 @interface WKNavigationResponseTestNavigationDelegate : NSObject <WKNavigationDelegate>
 @property (nonatomic) BOOL expectation;
@@ -181,7 +180,7 @@ TEST(WebKit, WKNavigationResponsePDFType)
     decisionHandler(WKNavigationActionPolicyAllow);
 }
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     _hasReceivedNavigationFinishedCallback = true;
 }
@@ -199,24 +198,26 @@ TEST(WebKit, WKNavigationResponseDownloadAttribute)
 {
     auto getDownloadResponse = [] (RetainPtr<NSString> body) -> RetainPtr<WKNavigationResponse> {
         using namespace TestWebKitAPI;
-        TCPServer server([body](int socket) {
-            unsigned bodyLength = [body length];
-            NSString *firstResponse = [NSString stringWithFormat:
-                @"HTTP/1.1 200 OK\r\n"
-                "Content-Length: %d\r\n\r\n"
-                "%@",
-                bodyLength,
-                body.get()
-            ];
-            NSString *secondResponse = @"HTTP/1.1 200 OK\r\n"
-                "Content-Length: 6\r\n"
-                "Content-Disposition: attachment; filename=fromHeader.txt;\r\n\r\n"
-                "Hello!";
-
-            TCPServer::read(socket);
-            TCPServer::write(socket, firstResponse.UTF8String, firstResponse.length);
-            TCPServer::read(socket);
-            TCPServer::write(socket, secondResponse.UTF8String, secondResponse.length);
+        HTTPServer server([body](Connection connection) {
+            connection.receiveHTTPRequest([=](Vector<char>&&) {
+                unsigned bodyLength = [body length];
+                NSString *firstResponse = [NSString stringWithFormat:
+                    @"HTTP/1.1 200 OK\r\n"
+                    "Content-Length: %d\r\n\r\n"
+                    "%@",
+                    bodyLength,
+                    body.get()
+                ];
+                connection.send(firstResponse, [=] {
+                    connection.receiveHTTPRequest([=](Vector<char>&&) {
+                        NSString *secondResponse = @"HTTP/1.1 200 OK\r\n"
+                            "Content-Length: 6\r\n"
+                            "Content-Disposition: attachment; filename=fromHeader.txt;\r\n\r\n"
+                            "Hello!";
+                        connection.send(secondResponse);
+                    });
+                });
+            });
         });
         auto delegate = adoptNS([NavigationResponseTestDelegate new]);
         auto webView = adoptNS([WKWebView new]);

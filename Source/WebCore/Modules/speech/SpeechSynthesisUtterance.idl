@@ -28,7 +28,7 @@
     Conditional=SPEECH_SYNTHESIS,
     Exposed=Window
 ] interface SpeechSynthesisUtterance : EventTarget {
-    [CallWith=ScriptExecutionContext] constructor(optional DOMString text);
+    [CallWith=CurrentScriptExecutionContext] constructor(optional DOMString text);
 
     attribute DOMString text;
     attribute DOMString lang;

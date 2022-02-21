@@ -28,12 +28,12 @@
 namespace WebCore {
 
 class CurlResponse;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class CurlMultipartHandleClient {
 public:
     virtual void didReceiveHeaderFromMultipart(const Vector<String>&) = 0;
-    virtual void didReceiveDataFromMultipart(Ref<SharedBuffer>&&) = 0;
+    virtual void didReceiveDataFromMultipart(const SharedBuffer&) = 0;
 
 protected:
     ~CurlMultipartHandleClient() { }

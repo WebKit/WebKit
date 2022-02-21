@@ -123,35 +123,35 @@ class RTC_EXPORT DesktopRect {
            right_ == other.right_ && bottom_ == other.bottom_;
   }
 
-  // Returns true if |point| lies within the rectangle boundaries.
+  // Returns true if `point` lies within the rectangle boundaries.
   bool Contains(const DesktopVector& point) const;
 
-  // Returns true if |rect| lies within the boundaries of this rectangle.
+  // Returns true if `rect` lies within the boundaries of this rectangle.
   bool ContainsRect(const DesktopRect& rect) const;
 
-  // Finds intersection with |rect|.
+  // Finds intersection with `rect`.
   void IntersectWith(const DesktopRect& rect);
 
-  // Extends the rectangle to cover |rect|. If |this| is empty, replaces |this|
-  // with |rect|; if |rect| is empty, this function takes no effect.
+  // Extends the rectangle to cover `rect`. If `this` is empty, replaces `this`
+  // with `rect`; if `rect` is empty, this function takes no effect.
   void UnionWith(const DesktopRect& rect);
 
   // Adds (dx, dy) to the position of the rectangle.
   void Translate(int32_t dx, int32_t dy);
   void Translate(DesktopVector d) { Translate(d.x(), d.y()); }
 
-  // Enlarges current DesktopRect by subtracting |left_offset| and |top_offset|
-  // from |left_| and |top_|, and adding |right_offset| and |bottom_offset| to
-  // |right_| and |bottom_|. This function does not normalize the result, so
-  // |left_| and |top_| may be less than zero or larger than |right_| and
-  // |bottom_|.
+  // Enlarges current DesktopRect by subtracting `left_offset` and `top_offset`
+  // from `left_` and `top_`, and adding `right_offset` and `bottom_offset` to
+  // `right_` and `bottom_`. This function does not normalize the result, so
+  // `left_` and `top_` may be less than zero or larger than `right_` and
+  // `bottom_`.
   void Extend(int32_t left_offset,
               int32_t top_offset,
               int32_t right_offset,
               int32_t bottom_offset);
 
-  // Scales current DesktopRect. This function does not impact the |top_| and
-  // |left_|.
+  // Scales current DesktopRect. This function does not impact the `top_` and
+  // `left_`.
   void Scale(double horizontal, double vertical);
 
  private:

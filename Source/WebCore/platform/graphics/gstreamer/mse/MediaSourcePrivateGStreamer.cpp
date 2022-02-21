@@ -106,7 +106,7 @@ void MediaSourcePrivateGStreamer::durationChanged(const MediaTime&)
 
     MediaTime duration = m_mediaSource->duration();
     GST_TRACE("duration: %f", duration.toFloat());
-    if (!duration.isValid() || duration.isPositiveInfinite() || duration.isNegativeInfinite())
+    if (!duration.isValid() || duration.isNegativeInfinite())
         return;
 
     m_playerPrivate.durationChanged();

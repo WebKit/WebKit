@@ -105,13 +105,13 @@ static const String v1RecordsTableSchema(const String& tableName)
 
 static const String& v1RecordsTableSchema()
 {
-    static NeverDestroyed<WTF::String> v1RecordsTableSchemaString(v1RecordsTableSchema("Records"));
+    static NeverDestroyed<String> v1RecordsTableSchemaString(v1RecordsTableSchema("Records"));
     return v1RecordsTableSchemaString;
 }
 
 static const String& v1RecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<WTF::String> v1RecordsTableSchemaString(v1RecordsTableSchema("\"Records\""));
+    static NeverDestroyed<String> v1RecordsTableSchemaString(v1RecordsTableSchema("\"Records\""));
     return v1RecordsTableSchemaString;
 }
 
@@ -122,13 +122,13 @@ static const String v2RecordsTableSchema(const String& tableName)
 
 static const String& v2RecordsTableSchema()
 {
-    static NeverDestroyed<WTF::String> v2RecordsTableSchemaString(v2RecordsTableSchema("Records"));
+    static NeverDestroyed<String> v2RecordsTableSchemaString(v2RecordsTableSchema("Records"));
     return v2RecordsTableSchemaString;
 }
 
 static const String& v2RecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<WTF::String> v2RecordsTableSchemaString(v2RecordsTableSchema("\"Records\""));
+    static NeverDestroyed<String> v2RecordsTableSchemaString(v2RecordsTableSchema("\"Records\""));
     return v2RecordsTableSchemaString;
 }
 
@@ -154,13 +154,13 @@ static const String v1IndexRecordsTableSchema(const String& tableName)
 
 static const String& v1IndexRecordsTableSchema()
 {
-    static NeverDestroyed<WTF::String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("IndexRecords"));
+    static NeverDestroyed<String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("IndexRecords"));
     return v1IndexRecordsTableSchemaString;
 }
 
 static const String& v1IndexRecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<WTF::String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("\"IndexRecords\""));
+    static NeverDestroyed<String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("\"IndexRecords\""));
     return v1IndexRecordsTableSchemaString;
 }
 
@@ -171,13 +171,13 @@ static const String v2IndexRecordsTableSchema(const String& tableName)
 
 static const String& v2IndexRecordsTableSchema()
 {
-    static NeverDestroyed<WTF::String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("IndexRecords"));
+    static NeverDestroyed<String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("IndexRecords"));
     return v2IndexRecordsTableSchemaString;
 }
 
 static const String& v2IndexRecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<WTF::String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("\"IndexRecords\""));
+    static NeverDestroyed<String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("\"IndexRecords\""));
     return v2IndexRecordsTableSchemaString;
 }
 
@@ -236,12 +236,10 @@ static ASCIILiteral indexInfoTableSchemaTemp()
     return TABLE_SCHEMA_PREFIX "_Temp_IndexInfo" INDEX_INFO_TABLE_SCHEMA_SUFFIX;
 }
 
-SQLiteIDBBackingStore::SQLiteIDBBackingStore(PAL::SessionID sessionID, const IDBDatabaseIdentifier& identifier, const String& databaseRootDirectory)
-    : m_sessionID(sessionID)
-    , m_identifier(identifier)
-    , m_databaseRootDirectory(databaseRootDirectory)
+SQLiteIDBBackingStore::SQLiteIDBBackingStore(const IDBDatabaseIdentifier& identifier, const String& databaseDirectory)
+    : m_identifier(identifier)
+    , m_databaseDirectory(databaseDirectory)
 {
-    m_databaseDirectory = fullDatabaseDirectoryWithUpgrade();
 }
 
 SQLiteIDBBackingStore::~SQLiteIDBBackingStore()
@@ -686,7 +684,7 @@ bool SQLiteIDBBackingStore::addExistingIndex(IDBObjectStoreInfo& objectStoreInfo
     SQLiteTransaction transaction(*m_sqliteDB);
     transaction.begin();
 
-    RefPtr<SharedBuffer> keyPathBlob = serializeIDBKeyPath(info.keyPath());
+    auto keyPathBlob = serializeIDBKeyPath(info.keyPath());
     if (!keyPathBlob) {
         LOG_ERROR("Unable to serialize IDBKeyPath to save in database");
         return false;
@@ -912,17 +910,27 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     return databaseInfo;
 }
 
-String SQLiteIDBBackingStore::filenameForDatabaseName() const
+String SQLiteIDBBackingStore::encodeDatabaseName(const String& databaseName)
 {
-    ASSERT(!m_identifier.databaseName().isNull());
-
-    if (m_identifier.databaseName().isEmpty())
+    ASSERT(!databaseName.isEmpty());
+    if (databaseName.isEmpty())
         return "%00";
 
-    String filename = FileSystem::encodeForFileName(m_identifier.databaseName());
-    filename.replace('.', "%2E");
+    String filename = FileSystem::encodeForFileName(databaseName);
+    filename.replaceWithLiteral('.', "%2E");
 
     return filename;
+}
+
+String SQLiteIDBBackingStore::decodeDatabaseName(const String& encodedName)
+{
+    if (encodedName == "%00"_s)
+        return emptyString();
+
+    String name = encodedName;
+    name.replace("%2E"_s, "."_s);
+
+    return FileSystem::decodeFromFilename(name);
 }
 
 String SQLiteIDBBackingStore::fullDatabasePathForDirectory(const String& fullDatabaseDirectory)
@@ -965,23 +973,6 @@ std::optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndV
     return IDBDatabaseNameAndVersion { databaseName, *databaseVersion };
 }
 
-String SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade()
-{
-    String oldOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory, "v0");
-    String oldDatabaseDirectory = FileSystem::pathByAppendingComponent(oldOriginDirectory, filenameForDatabaseName());
-    String newOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory, "v1");
-    String fileNameHash = SQLiteFileSystem::computeHashForFileName(m_identifier.databaseName());
-    String newDatabaseDirectory = FileSystem::pathByAppendingComponent(newOriginDirectory, fileNameHash);
-    FileSystem::makeAllDirectories(newDatabaseDirectory);
-
-    if (FileSystem::fileExists(oldDatabaseDirectory)) {
-        FileSystem::moveFile(oldDatabaseDirectory, newDatabaseDirectory);
-        FileSystem::deleteEmptyDirectory(oldOriginDirectory);
-    }
-
-    return newDatabaseDirectory;
-}
-
 IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::getOrEstablishDatabaseInfo - database %s", m_identifier.databaseName().utf8().data());
@@ -991,11 +982,11 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
         return IDBError { };
     }
 
-    String dbFilename = fullDatabasePath();
-
+    String databasePath = fullDatabasePath();
+    FileSystem::makeAllDirectories(FileSystem::parentPath(databasePath));
     m_sqliteDB = makeUnique<SQLiteDatabase>();
-    if (!m_sqliteDB->open(dbFilename)) {
-        LOG_ERROR("Failed to open SQLite database at path '%s'", dbFilename.utf8().data());
+    if (!m_sqliteDB->open(databasePath)) {
+        LOG_ERROR("Failed to open SQLite database at path '%s'", databasePath.utf8().data());
         closeSQLiteDB();
     }
 
@@ -1044,7 +1035,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
         databaseInfo = createAndPopulateInitialDatabaseInfo();
 
     if (!databaseInfo) {
-        LOG_ERROR("Unable to establish IDB database at path '%s'", dbFilename.utf8().data());
+        LOG_ERROR("Unable to establish IDB database at path '%s'", databasePath.utf8().data());
         closeSQLiteDB();
         return IDBError { UnknownError, "Unable to establish IDB database file"_s };
     }
@@ -1174,7 +1165,7 @@ IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
         return IDBError { UnknownError, "Attempt to create an object store in a non-version-change transaction"_s };
     }
 
-    RefPtr<SharedBuffer> keyPathBlob = serializeIDBKeyPath(info.keyPath());
+    auto keyPathBlob = serializeIDBKeyPath(info.keyPath());
     if (!keyPathBlob) {
         LOG_ERROR("Unable to serialize IDBKeyPath to save in database for new object store");
         return IDBError { UnknownError, "Unable to serialize IDBKeyPath to save in database for new object store"_s };
@@ -1387,7 +1378,7 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
         return IDBError { UnknownError, "Attempt to create an index in a non-version-change transaction"_s };
     }
 
-    RefPtr<SharedBuffer> keyPathBlob = serializeIDBKeyPath(info.keyPath());
+    auto keyPathBlob = serializeIDBKeyPath(info.keyPath());
     if (!keyPathBlob) {
         LOG_ERROR("Unable to serialize IDBKeyPath to save in database");
         return IDBError { UnknownError, "Unable to serialize IDBKeyPath to create index in database"_s };
@@ -1464,7 +1455,7 @@ IDBError SQLiteIDBBackingStore::uncheckedHasIndexRecord(const IDBIndexInfo& info
 {
     hasRecord = false;
 
-    RefPtr<SharedBuffer> indexKeyBuffer = serializeIDBKeyData(indexKey);
+    auto indexKeyBuffer = serializeIDBKeyData(indexKey);
     if (!indexKeyBuffer) {
         LOG_ERROR("Unable to serialize index key to be stored in the database");
         return IDBError { UnknownError, "Unable to serialize IDBKey to check for index record in database"_s };
@@ -1533,13 +1524,13 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexRecord(int64_t objectStoreID, i
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::uncheckedPutIndexRecord - %s, %s", keyValue.loggingString().utf8().data(), indexKey.loggingString().utf8().data());
 
-    RefPtr<SharedBuffer> indexKeyBuffer = serializeIDBKeyData(indexKey);
+    auto indexKeyBuffer = serializeIDBKeyData(indexKey);
     if (!indexKeyBuffer) {
         LOG_ERROR("Unable to serialize index key to be stored in the database");
         return IDBError { UnknownError, "Unable to serialize index key to be stored in the database"_s };
     }
 
-    RefPtr<SharedBuffer> valueBuffer = serializeIDBKeyData(keyValue);
+    auto valueBuffer = serializeIDBKeyData(keyValue);
     if (!valueBuffer) {
         LOG_ERROR("Unable to serialize the value to be stored in the database");
         return IDBError { UnknownError, "Unable to serialize value to be stored in the database"_s };
@@ -1661,7 +1652,7 @@ IDBError SQLiteIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifi
     if (!transaction || !transaction->inProgress())
         return IDBError { UnknownError, "Attempt to see if key exists in objectstore without an in-progress transaction"_s };
 
-    RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
+    auto keyBuffer = serializeIDBKeyData(keyData);
     if (!keyBuffer) {
         LOG_ERROR("Unable to serialize IDBKey to check for existence in object store");
         return IDBError { UnknownError, "Unable to serialize IDBKey to check for existence in object store"_s };
@@ -1741,7 +1732,7 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
     ASSERT(transaction.mode() != IDBTransactionMode::Readonly);
     UNUSED_PARAM(transaction);
 
-    RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
+    auto keyBuffer = serializeIDBKeyData(keyData);
     if (!keyBuffer) {
         LOG_ERROR("Unable to serialize IDBKeyData to be removed from the database");
         return IDBError { UnknownError, "Unable to serialize IDBKeyData to be removed from the database"_s };
@@ -1913,8 +1904,8 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
     const auto& indexMap = info.indexMap();
     bool anyRecordsSucceeded = false;
 
-    for (const auto& entry : indexKeys) {
-        auto indexIterator = indexMap.find(entry.key);
+    for (const auto& [indexID, indexKey] : indexKeys) {
+        auto indexIterator = indexMap.find(indexID);
         ASSERT(indexIterator != indexMap.end());
 
         if (indexIterator == indexMap.end()) {
@@ -1922,7 +1913,7 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
             break;
         }
 
-        error = uncheckedPutIndexKey(indexIterator->value, key, entry.value, recordID);
+        error = uncheckedPutIndexKey(indexIterator->value, key, indexKey, recordID);
         if (!error.isNull())
             break;
 
@@ -1962,7 +1953,7 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         return IDBError { UnknownError, "Attempt to store a record in an object store in a read-only transaction"_s };
     }
 
-    RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
+    auto keyBuffer = serializeIDBKeyData(keyData);
     if (!keyBuffer) {
         LOG_ERROR("Unable to serialize IDBKey to be stored in an object store");
         return IDBError { UnknownError, "Unable to serialize IDBKey to be stored in an object store"_s };
@@ -2124,7 +2115,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     auto key = keyRange.lowerKey;
     if (key.isNull())
         key = IDBKeyData::minimum();
-    RefPtr<SharedBuffer> lowerBuffer = serializeIDBKeyData(key);
+    auto lowerBuffer = serializeIDBKeyData(key);
     if (!lowerBuffer) {
         LOG_ERROR("Unable to serialize lower IDBKey in lookup range");
         return IDBError { UnknownError, "Unable to serialize lower IDBKey in lookup range"_s };
@@ -2133,7 +2124,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     key = keyRange.upperKey;
     if (key.isNull())
         key = IDBKeyData::maximum();
-    RefPtr<SharedBuffer> upperBuffer = serializeIDBKeyData(key);
+    auto upperBuffer = serializeIDBKeyData(key);
     if (!upperBuffer) {
         LOG_ERROR("Unable to serialize upper IDBKey in lookup range");
         return IDBError { UnknownError, "Unable to serialize upper IDBKey in lookup range"_s };
@@ -2443,7 +2434,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
 
     ASSERT(key.isValid() && key.type() != IndexedDB::KeyType::Max && key.type() != IndexedDB::KeyType::Min);
 
-    RefPtr<SharedBuffer> buffer = serializeIDBKeyData(key);
+    auto buffer = serializeIDBKeyData(key);
     if (!buffer) {
         LOG_ERROR("Unable to serialize IDBKey to look up one index record");
         return IDBError { UnknownError, "Unable to serialize IDBKey to look up one index record"_s };
@@ -2508,14 +2499,14 @@ IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier& transactio
     outCount = 0;
 
     auto lowerKey = range.lowerKey.isNull() ? IDBKeyData::minimum() : range.lowerKey;
-    RefPtr<SharedBuffer> lowerBuffer = serializeIDBKeyData(lowerKey);
+    auto lowerBuffer = serializeIDBKeyData(lowerKey);
     if (!lowerBuffer) {
         LOG_ERROR("Unable to serialize lower IDBKey in lookup range");
         return IDBError { UnknownError, "Unable to serialize lower IDBKey in lookup range for count operation"_s };
     }
 
     auto upperKey = range.upperKey.isNull() ? IDBKeyData::maximum() : range.upperKey;
-    RefPtr<SharedBuffer> upperBuffer = serializeIDBKeyData(upperKey);
+    auto upperBuffer = serializeIDBKeyData(upperKey);
     if (!upperBuffer) {
         LOG_ERROR("Unable to serialize upper IDBKey in lookup range");
         return IDBError { UnknownError, "Unable to serialize upper IDBKey in lookup range for count operation"_s };
@@ -2798,7 +2789,6 @@ void SQLiteIDBBackingStore::deleteBackingStore()
 
     SQLiteFileSystem::deleteDatabaseFile(databasePath);
     SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_databaseDirectory);
-    SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory));
 }
 
 void SQLiteIDBBackingStore::unregisterCursor(SQLiteIDBCursor& cursor)

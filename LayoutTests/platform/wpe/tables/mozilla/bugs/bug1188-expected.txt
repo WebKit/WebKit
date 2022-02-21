@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,48) size 600x55
               RenderTableCell {TD} at (2,49) size 595x53 [bgcolor=#99CCCC] [r=1 c=0 rs=1 cs=3]
-                RenderInline {FONT} at (0,0) size 128x15
-                  RenderInline {B} at (0,0) size 128x15
+                RenderInline {FONT} at (0,0) size 128x16
+                  RenderInline {B} at (0,0) size 128x16
                     RenderText {#text} at (24,10) size 128x17
                       text run at (24,11) width 128: "Search the Web with"
                 RenderText {#text} at (151,8) size 5x19
@@ -31,40 +31,40 @@ layer at (0,0) size 800x600
                     RenderText at (0,0) size 43x17
                       text run at (0,0) width 43: "Search"
                 RenderBR {BR} at (569,8) size 1x19
-                RenderInline {SMALL} at (0,0) size 561x15
-                  RenderInline {A} at (0,0) size 99x15 [color=#0000EE]
+                RenderInline {SMALL} at (0,0) size 561x16
+                  RenderInline {A} at (0,0) size 99x16 [color=#0000EE]
                     RenderText {#text} at (17,34) size 99x17
                       text run at (17,35) width 99: "Classifieds< /A>   "
-                  RenderInline {A} at (0,0) size 59x15 [color=#0000EE]
+                  RenderInline {A} at (0,0) size 59x16 [color=#0000EE]
                     RenderText {#text} at (115,34) size 59x17
                       text run at (115,35) width 23: "Net "
                       text run at (137,35) width 37: "Search"
                   RenderText {#text} at (173,34) size 10x17
                     text run at (173,35) width 10: "   "
-                  RenderInline {A} at (0,0) size 83x15 [color=#0000EE]
+                  RenderInline {A} at (0,0) size 83x16 [color=#0000EE]
                     RenderText {#text} at (182,34) size 83x17
                       text run at (182,35) width 57: "Find Web "
                       text run at (238,35) width 27: "Sites"
                   RenderText {#text} at (264,34) size 10x17
                     text run at (264,35) width 4: " "
                     text run at (267,35) width 7: "  "
-                  RenderInline {A} at (0,0) size 67x15 [color=#0000EE]
+                  RenderInline {A} at (0,0) size 67x16 [color=#0000EE]
                     RenderText {#text} at (273,34) size 67x17
                       text run at (273,35) width 40: "What's "
                       text run at (312,35) width 28: "Cool"
                   RenderText {#text} at (339,34) size 10x17
                     text run at (339,35) width 10: "   "
-                  RenderInline {A} at (0,0) size 64x15 [color=#0000EE]
+                  RenderInline {A} at (0,0) size 64x16 [color=#0000EE]
                     RenderText {#text} at (348,34) size 64x17
                       text run at (348,35) width 64: "What's New"
                   RenderText {#text} at (411,34) size 10x17
                     text run at (411,35) width 10: "   "
-                  RenderInline {A} at (0,0) size 76x15 [color=#0000EE]
+                  RenderInline {A} at (0,0) size 76x16 [color=#0000EE]
                     RenderText {#text} at (420,34) size 76x17
                       text run at (420,35) width 76: "People Finder"
                   RenderText {#text} at (495,34) size 10x17
                     text run at (495,35) width 10: "   "
-                  RenderInline {A} at (0,0) size 74x15 [color=#0000EE]
+                  RenderInline {A} at (0,0) size 74x16 [color=#0000EE]
                     RenderText {#text} at (504,34) size 74x17
                       text run at (504,35) width 74: "Yellow Pages"
                   RenderText {#text} at (0,0) size 0x0

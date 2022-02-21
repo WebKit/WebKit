@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsInline></video>
+        <script src="routines.js"></script>
+        <script>
+function waitForMessage(port, data)
+{
+    let gotMessage;
+    const promise = new Promise((resolve, reject) => {
+        gotMessage = resolve;
+        setTimeout(() => { reject("did not get '" + data + "' last message data is '" + promise.lastData + "'") }, 5000);
+    });
+    port.onmessage = event => {
+       promise.lastData = event.data;
+       if (event.data === data)
+           gotMessage();
+    };
+    return promise;
+}
+
+function createTransforms(worker, mediaType)
+{
+    const senderChannel = new MessageChannel;
+    const receiverChannel = new MessageChannel;
+    senderTransform = new RTCRtpScriptTransform(worker, {mediaType: mediaType, side: 'sender', port: senderChannel.port2}, [senderChannel.port2]);
+    receiverTransform = new RTCRtpScriptTransform(worker, {mediaType: mediaType, side: 'receiver', port: receiverChannel.port2}, [receiverChannel.port2]);
+    senderTransform.port = senderChannel.port1;
+    receiverTransform.port = receiverChannel.port1;
+    return [senderTransform, receiverTransform];
+}
+
+let videoSenderTransform, videoReceiverTransform, audioSenderTransform, audioReceiverTransform;
+promise_test(async (test) => {
+    worker = new Worker('audio-video-transform.js');
+    const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    assert_equals(data, "registered");
+
+    const localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+
+    [audioSenderTransform, audioReceiverTransform] = createTransforms(worker, 'audio');
+    [videoSenderTransform, videoReceiverTransform] = createTransforms(worker, 'video');
+
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            const audioSender = firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
+            audioSender.transform = audioSenderTransform;
+            const videoSender = firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            videoSender.transform = videoSenderTransform;
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                receiver = trackEvent.receiver;
+                receiver.transform = trackEvent.track.kind === "audio" ? audioReceiverTransform : videoReceiverTransform;
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        test.step_timeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = stream;
+    return video.play();
+}, "setup");
+
+promise_test((test) => {
+    audioSenderTransform.port.postMessage("tryGenerateKeyFrame");
+    return waitForMessage(audioSenderTransform.port, "FAIL: InvalidStateError");
+}, "key frame on audio sender");
+
+promise_test((test) => {
+    audioReceiverTransform.port.postMessage("trySendKeyFrameRequest");
+    return waitForMessage(audioReceiverTransform.port, "FAIL: InvalidStateError");
+}, "key frame on audio receiver");
+
+promise_test((test) => {
+    videoReceiverTransform.port.postMessage("tryGenerateKeyFrame");
+    return waitForMessage(videoReceiverTransform.port, "FAIL: InvalidStateError");
+}, "generate key frame on video receiver");
+
+promise_test((test) => {
+    videoSenderTransform.port.postMessage("trySendKeyFrameRequest");
+    return waitForMessage(videoSenderTransform.port, "FAIL: InvalidStateError");
+}, "send request key frame on video sender");
+
+promise_test((test) => {
+    videoSenderTransform.port.postMessage("tryGenerateKeyFramePromiseHandling");
+    return waitForMessage(videoSenderTransform.port, "PASS");
+}, "generate key frame promise handling on video sender");
+        </script>
+    </body>
+</html>

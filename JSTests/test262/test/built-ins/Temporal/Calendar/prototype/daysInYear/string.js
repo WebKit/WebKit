@@ -2,7 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-temporal.calendar.prototype.daysinyear
-description: Temporal.Calendar.prototype.daysInYear will take PlainDate and return the number of days in a year.
+description: >
+  Temporal.Calendar.prototype.daysInYear will take PlainDate and return
+  the number of days in a year.
 info: |
   4. If Type(temporalDateLike) is not Object or temporalDateLike does not have an [[InitializedTemporalDate]] or [[InitializedTemporalYearMonth]] internal slot, then
     a. Set temporalDateLike to ? ToTemporalDate(temporalDateLike).

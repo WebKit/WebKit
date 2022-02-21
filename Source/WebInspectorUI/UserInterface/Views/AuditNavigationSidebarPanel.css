@@ -76,6 +76,6 @@
 
 .content-view.tab.audit .content-view .reference-page-link-container {
     position: absolute;
-    bottom: 4px;
-    inset-inline-end: 4px;
+    bottom: 6px;
+    inset-inline-end: 6px;
 }

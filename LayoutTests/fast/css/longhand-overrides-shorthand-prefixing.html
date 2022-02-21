@@ -63,7 +63,7 @@ function testProperty(shorthandProperty, unprefixedShorthandProperty, longhandPr
     debug("");
 }
 
-testPropertyVariants("animation", "animation-duration", "move 2s", "move 10s", "10s");
+testPropertyVariants("animation", "animation-duration", "2s move", "10s ease 0s 1 normal none running move", "10s");
 
 successfullyParsed = true;
 

@@ -32,6 +32,7 @@
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/WindowsKeyboardCodes.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/ASCIICType.h>
 
@@ -353,7 +354,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
     float deltaZ = [event deltaZ];
     int clickCount = clickCountForEvent(event);
     auto modifiers = modifiersForEvent(event);
-    auto timestamp = WebCore::eventTimeStampSince1970(event);
+    auto timestamp = WebCore::eventTimeStampSince1970(event.timestamp);
     int eventNumber = [event eventNumber];
     int menuTypeForEvent = typeForEvent(event);
 
@@ -408,9 +409,45 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     }
 
     auto modifiers = modifiersForEvent(event);
-    auto timestamp = WebCore::eventTimeStampSince1970(event);
+    auto timestamp = WebCore::eventTimeStampSince1970(event.timestamp);
+    
+    auto ioHIDEventWallTime = timestamp;
+    std::optional<WebCore::FloatSize> rawPlatformDelta;
+    auto momentumEndType = WebWheelEvent::MomentumEndType::Unknown;
+    
+    ([&] {
+        auto cgEvent = event.CGEvent;
+        if (!cgEvent)
+            return;
 
-    return WebWheelEvent(WebEvent::Wheel, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY), granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas, scrollCount, unacceleratedScrollingDelta, modifiers, timestamp);
+        auto ioHIDEvent = adoptCF(CGEventCopyIOHIDEvent(cgEvent));
+        if (!ioHIDEvent)
+            return;
+
+        auto ioHIDEventTimestamp = IOHIDEventGetTimeStamp(ioHIDEvent.get()); // IOEventRef timestamp is mach_absolute_time units.
+        auto monotonicIOHIDEventTimestamp = MonotonicTime::fromMachAbsoluteTime(ioHIDEventTimestamp).secondsSinceEpoch().seconds();
+        ioHIDEventWallTime = WebCore::eventTimeStampSince1970(monotonicIOHIDEventTimestamp);
+        
+        rawPlatformDelta = { WebCore::FloatSize(-IOHIDEventGetFloatValue(ioHIDEvent.get(), kIOHIDEventFieldScrollX), -IOHIDEventGetFloatValue(ioHIDEvent.get(), kIOHIDEventFieldScrollY)) };
+
+#if HAVE(PLATFORM_SCROLL_MOMENTUM_INTERRUPTION_REASON)
+        bool momentumWasInterrupted = IOHIDEventGetScrollMomentum(ioHIDEvent.get()) & kIOHIDEventScrollMomentumInterrupted;
+        momentumEndType = momentumWasInterrupted ? WebWheelEvent::MomentumEndType::Interrupted : WebWheelEvent::MomentumEndType::Natural;
+#endif
+    })();
+
+    if (phase == WebWheelEvent::PhaseCancelled) {
+        deltaX = 0;
+        deltaY = 0;
+        wheelTicksX = 0;
+        wheelTicksY = 0;
+        unacceleratedScrollingDelta = { };
+        rawPlatformDelta = std::nullopt;
+    }
+
+    return WebWheelEvent(WebEvent::Wheel, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
+        granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas,
+        scrollCount, unacceleratedScrollingDelta, modifiers, timestamp, ioHIDEventWallTime, rawPlatformDelta, momentumEndType);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>& commands)
@@ -428,7 +465,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool ha
     bool isKeypad                   = isKeypadEvent(event);
     bool isSystemKey                = false; // SystemKey is always false on the Mac.
     auto modifiers = modifiersForEvent(event);
-    auto timestamp                  = WebCore::eventTimeStampSince1970(event);
+    auto timestamp                  = WebCore::eventTimeStampSince1970(event.timestamp);
 
     // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
     if (windowsVirtualKeyCode == VK_RETURN) {

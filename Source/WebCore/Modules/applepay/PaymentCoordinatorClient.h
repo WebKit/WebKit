@@ -38,11 +38,11 @@ namespace WebCore {
 class Document;
 class PaymentMerchantSession;
 struct ApplePayCouponCodeUpdate;
+struct ApplePayPaymentAuthorizationResult;
 struct ApplePayPaymentMethodUpdate;
 struct ApplePaySetupConfiguration;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethodUpdate;
-struct PaymentAuthorizationResult;
 
 class PaymentCoordinatorClient {
 public:
@@ -61,13 +61,10 @@ public:
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     virtual void completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&&) = 0;
 #endif
-    virtual void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) = 0;
+    virtual void completePaymentSession(ApplePayPaymentAuthorizationResult&&) = 0;
     virtual void abortPaymentSession() = 0;
     virtual void cancelPaymentSession() = 0;
     virtual void paymentCoordinatorDestroyed() = 0;
-    virtual bool supportsUnrestrictedApplePay() const = 0;
-
-    virtual String userAgentScriptsBlockedErrorMessage() const { return { }; }
 
     virtual bool isMockPaymentCoordinator() const { return false; }
     virtual bool isWebPaymentCoordinator() const { return false; }

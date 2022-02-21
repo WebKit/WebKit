@@ -29,10 +29,10 @@
     if (window.accessibilityController) {
     
         // aria-label on the <label> element return a title for the input, instead of a title ui element.
-        // For ATK, it should return both, with the title ui element being the label element.
+        // For ATSPI, it should return both, with the title ui element being the label element.
         var input1 = accessibilityController.accessibleElementById("input");
         var titleUIElement1 = input1.titleUIElement();
-        if (accessibilityController.platformName != "atk")
+        if (accessibilityController.platformName != "atspi")
             shouldBeTrue("!titleUIElement1");
         else
             shouldBeTrue("titleUIElement1.isEqual(accessibilityController.accessibleElementById('label1'))");

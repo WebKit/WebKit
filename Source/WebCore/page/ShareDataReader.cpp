@@ -35,7 +35,7 @@ namespace WebCore {
 ShareDataReader::ShareDataReader(CompletionHandler<void(ExceptionOr<ShareDataWithParsedURL&>)>&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))
 {
-    
+
 }
 
 ShareDataReader::~ShareDataReader()
@@ -71,15 +71,15 @@ void ShareDataReader::didFinishLoading(int loadIndex, const String& fileName)
         cancel();
         return;
     }
-    
+
     auto arrayBuffer = m_pendingFileLoads[loadIndex]->arrayBufferResult();
-    
+
     RawFile file;
     file.fileName = fileName;
     file.fileData = SharedBuffer::create(static_cast<const unsigned char*>(arrayBuffer->data()), arrayBuffer->byteLength());
     m_shareData.files.append(WTFMove(file));
     m_filesReadSoFar++;
-    
+
     if (m_filesReadSoFar == static_cast<int>(m_pendingFileLoads.size())) {
         m_pendingFileLoads.clear();
         if (auto completionHandler = std::exchange(m_completionHandler, { }))

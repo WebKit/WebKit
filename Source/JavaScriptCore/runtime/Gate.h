@@ -33,6 +33,7 @@ namespace JSC {
     v(jitCagePtr, NoPtrTag) \
     v(tailCallJSEntryPtrTag, NoPtrTag) \
     v(tailCallJSEntrySlowPathPtrTag, NoPtrTag) \
+    v(tailCallWithoutUntagJSEntryPtrTag, NoPtrTag) \
     v(loopOSREntry, NoPtrTag) \
     v(entryOSREntry, NoPtrTag) \
     v(wasmOSREntry, NoPtrTag) \
@@ -46,20 +47,21 @@ namespace JSC {
 
 #define JSC_JS_GATE_OPCODES(v) \
     v(op_call, JSEntryPtrTag) \
-    v(op_tail_call, JSEntryPtrTag) \
     v(op_construct, JSEntryPtrTag) \
     v(op_iterator_next, JSEntryPtrTag) \
     v(op_iterator_open, JSEntryPtrTag) \
-    v(op_call_slow, JSEntrySlowPathPtrTag) \
-    v(op_tail_call_slow, JSEntrySlowPathPtrTag) \
-    v(op_construct_slow, JSEntrySlowPathPtrTag) \
-    v(op_call_varargs_slow, JSEntrySlowPathPtrTag) \
-    v(op_tail_call_varargs_slow, JSEntrySlowPathPtrTag) \
-    v(op_tail_call_forward_arguments_slow, JSEntrySlowPathPtrTag) \
-    v(op_construct_varargs_slow, JSEntrySlowPathPtrTag) \
+    v(op_call_varargs, JSEntryPtrTag) \
+    v(op_construct_varargs, JSEntryPtrTag) \
+    v(op_call_slow, JSEntryPtrTag) \
+    v(op_tail_call_slow, JSEntryPtrTag) \
+    v(op_construct_slow, JSEntryPtrTag) \
+    v(op_iterator_next_slow, JSEntryPtrTag) \
+    v(op_iterator_open_slow, JSEntryPtrTag) \
+    v(op_call_varargs_slow, JSEntryPtrTag) \
+    v(op_tail_call_varargs_slow, JSEntryPtrTag) \
+    v(op_tail_call_forward_arguments_slow, JSEntryPtrTag) \
+    v(op_construct_varargs_slow, JSEntryPtrTag) \
     v(op_call_eval_slow, JSEntrySlowPathPtrTag) \
-    v(op_iterator_next_slow, JSEntrySlowPathPtrTag) \
-    v(op_iterator_open_slow, JSEntrySlowPathPtrTag) \
 
 #if ENABLE(WEBASSEMBLY)
 

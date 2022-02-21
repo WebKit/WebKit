@@ -21,19 +21,12 @@
 
 #pragma once
 
+#include "PropertyAllowlist.h"
 #include "SelectorFilter.h"
 #include "StyleRule.h"
 
 namespace WebCore {
 namespace Style {
-
-enum PropertyAllowlistType {
-    PropertyAllowlistNone   = 0,
-    PropertyAllowlistMarker,
-#if ENABLE(VIDEO)
-    PropertyAllowlistCue
-#endif
-};
 
 enum class MatchBasedOnRuleHash : unsigned {
     None,
@@ -65,7 +58,7 @@ public:
     MatchBasedOnRuleHash matchBasedOnRuleHash() const { return static_cast<MatchBasedOnRuleHash>(m_matchBasedOnRuleHash); }
     bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
     unsigned linkMatchType() const { return m_linkMatchType; }
-    PropertyAllowlistType propertyAllowlistType() const { return static_cast<PropertyAllowlistType>(m_propertyAllowlistType); }
+    PropertyAllowlist propertyAllowlist() const { return static_cast<PropertyAllowlist>(m_propertyAllowlist); }
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool value) { m_isEnabled = value; }
 
@@ -84,7 +77,7 @@ private:
     unsigned m_canMatchPseudoElement : 1;
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
-    unsigned m_propertyAllowlistType : 2;
+    unsigned m_propertyAllowlist : 2;
     unsigned m_isEnabled : 1;
     SelectorFilter::Hashes m_descendantSelectorIdentifierHashes;
 };

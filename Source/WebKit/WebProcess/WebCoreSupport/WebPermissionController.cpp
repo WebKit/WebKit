@@ -39,22 +39,14 @@ Ref<WebPermissionController> WebPermissionController::create(WebPage& page)
 }
 
 WebPermissionController::WebPermissionController(WebPage& page)
-    : m_page(makeWeakPtr(page))
+    : m_page(page)
 {
 }
 
-WebCore::PermissionState WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor&& descriptor)
+void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor&& descriptor, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
     if (!m_page)
-        return WebCore::PermissionState::Denied;
-
-    return queryCache(WTFMove(origin), WTFMove(descriptor));
-}
-
-void WebPermissionController::request(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor&& descriptor, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
-{
-    if (!m_page)
-        return completionHandler(WebCore::PermissionState::Denied);
+        return completionHandler({ });
 
     auto cachedResult = queryCache(origin, descriptor);
     if (cachedResult != WebCore::PermissionState::Prompt)
@@ -112,13 +104,14 @@ void WebPermissionController::tryProcessingRequests()
         }
 
         currentRequest.isWaitingForReply = true;
-        m_page->sendWithAsyncReply(Messages::WebPageProxy::requestPermission(currentRequest.origin, currentRequest.descriptor), [this, weakThis = makeWeakPtr(*this)](auto state) {
+        m_page->sendWithAsyncReply(Messages::WebPageProxy::QueryPermission(currentRequest.origin, currentRequest.descriptor), [this, weakThis = WeakPtr { *this }](auto state, bool shouldCache) {
             if (!weakThis)
                 return;
 
             auto takenRequest = m_requests.takeFirst();
             takenRequest.completionHandler(state);
-            updateCache(takenRequest.origin, takenRequest.descriptor, state);
+            if (shouldCache && state)
+                updateCache(takenRequest.origin, takenRequest.descriptor, *state);
 
             tryProcessingRequests();
         });

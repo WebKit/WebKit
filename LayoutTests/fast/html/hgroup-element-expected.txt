@@ -10,8 +10,8 @@ PASS p1.parentNode.nodeName is "HGROUP"
 <hgroup> can be nested inside <hgroup>:
 PASS hgroup3.parentNode.id is "hgroup2"
 Residual style:
-PASS getWeight("hgroup4") is "bold"
-PASS getWeight("span1") is "bold"
+PASS getWeight("hgroup4") is "700"
+PASS getWeight("span1") is "700"
 FormatBlock:
 PASS document.getElementById("span2").parentNode.nodeName is "HGROUP"
 PASS successfullyParsed is true

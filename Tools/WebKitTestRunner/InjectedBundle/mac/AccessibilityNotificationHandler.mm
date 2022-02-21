@@ -127,7 +127,8 @@
     } else {
         // A global listener gets the element, notification name and userInfo.
         JSValueRef arguments[3];
-        arguments[0] = toJS(context, WTR::AccessibilityUIElement::create([notification object]).ptr());
+        id notificationObject = [notification object];
+        arguments[0] = toJS(context, notificationObject ? WTR::AccessibilityUIElement::create(notificationObject).ptr() : nullptr);
         arguments[1] = notificationNameArgument;
         arguments[2] = userInfoArgument;
         JSObjectCallAsFunction(context, const_cast<JSObjectRef>(m_notificationFunctionCallback), 0, 3, arguments, 0);

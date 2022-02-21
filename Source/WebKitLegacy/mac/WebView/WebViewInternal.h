@@ -42,6 +42,7 @@
 #import <WebCore/HTMLMediaElementEnums.h>
 #import <WebCore/LayoutMilestone.h>
 #import <WebCore/PlaybackTargetClientContextIdentifier.h>
+#import <WebCore/ResourceLoaderIdentifier.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
@@ -250,9 +251,11 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 - (void)removePluginInstanceViewsFor:(WebFrame*)webFrame;
 #endif
 
-- (void)_addObject:(id)object forIdentifier:(unsigned long)identifier;
-- (id)_objectForIdentifier:(unsigned long)identifier;
-- (void)_removeObjectForIdentifier:(unsigned long)identifier;
+#ifdef __cplusplus
+- (void)_addObject:(id)object forIdentifier:(WebCore::ResourceLoaderIdentifier)identifier;
+- (id)_objectForIdentifier:(WebCore::ResourceLoaderIdentifier)identifier;
+- (void)_removeObjectForIdentifier:(WebCore::ResourceLoaderIdentifier)identifier;
+#endif
 
 - (void)_setZoomMultiplier:(float)multiplier isTextOnly:(BOOL)isTextOnly;
 - (float)_zoomMultiplier:(BOOL)isTextOnly;
@@ -333,7 +336,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 - (void)_addPlaybackTargetPickerClient:(WebCore::PlaybackTargetClientContextIdentifier)contextId;
 - (void)_removePlaybackTargetPickerClient:(WebCore::PlaybackTargetClientContextIdentifier)contextId;
 - (void)_showPlaybackTargetPicker:(WebCore::PlaybackTargetClientContextIdentifier)contextId location:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo;
-- (void)_playbackTargetPickerClientStateDidChange:(WebCore::PlaybackTargetClientContextIdentifier)contextId state:(WebCore::MediaProducer::MediaStateFlags)state;
+- (void)_playbackTargetPickerClientStateDidChange:(WebCore::PlaybackTargetClientContextIdentifier)contextId state:(WebCore::MediaProducerMediaStateFlags)state;
 - (void)_setMockMediaPlaybackTargetPickerEnabled:(bool)enabled;
 - (void)_setMockMediaPlaybackTargetPickerName:(NSString *)name state:(WebCore::MediaPlaybackTargetContext::MockState)state;
 - (void)_mockMediaPlaybackTargetPickerDismissPopup;

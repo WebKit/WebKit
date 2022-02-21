@@ -8,8 +8,4 @@ info: |
 esid: sec-date-constructor
 description: Checking Function.prototype.isPrototypeOf(Date)
 ---*/
-
-//CHECK#1
-if (!(Function.prototype.isPrototypeOf(Date))) {
-  throw new Test262Error('#1: the value of the internal [[Prototype]] property of the Date constructor is the Function prototype object.');
-}
+assert(Function.prototype.isPrototypeOf(Date), 'Function.prototype.isPrototypeOf(Date) must return true');

@@ -39,6 +39,9 @@ void printInternal(PrintStream& out, ClockType type)
     case ClockType::Monotonic:
         out.print("Monotonic");
         return;
+    case ClockType::Approximate:
+        out.print("Approximate");
+        return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -8,11 +8,15 @@ info: |
 esid: sec-date.prototype.getutcmonth
 description: Checking DontDelete attribute
 ---*/
+assert.sameValue(
+  delete Date.prototype.getUTCMonth.length,
+  true,
+  'The value of `delete Date.prototype.getUTCMonth.length` is expected to be true'
+);
 
-if (delete Date.prototype.getUTCMonth.length !== true) {
-  throw new Test262Error('#1: The Date.prototype.getUTCMonth.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.prototype.getUTCMonth.hasOwnProperty('length'),
+  'The value of !Date.prototype.getUTCMonth.hasOwnProperty(\'length\') is expected to be true'
+);
 
-if (Date.prototype.getUTCMonth.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.prototype.getUTCMonth.length property does not have the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

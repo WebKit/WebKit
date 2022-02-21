@@ -62,7 +62,7 @@ TString Define(const TStructure &structure,
             if (padHelper)
             {
                 string += padHelper->postPaddingString(fieldType, useHLSLRowMajorPacking,
-                                                       memberSize == 0 && forcePadding);
+                                                       memberSize == 0, forcePadding);
             }
         }
     }
@@ -90,6 +90,12 @@ TString WriteParameterList(const std::vector<TType> &parameters)
         }
     }
     return parameterList;
+}
+
+int GetElementPadding(int elementIndex, int alignment)
+{
+    const int paddingOffset = elementIndex % alignment;
+    return paddingOffset != 0 ? (alignment - paddingOffset) : 0;
 }
 
 }  // anonymous namespace
@@ -123,9 +129,19 @@ int Std140PaddingHelper::prePadding(const TType &type, bool forcePadding)
 {
     if (type.getBasicType() == EbtStruct || type.isMatrix() || type.isArray())
     {
-        // no padding needed, HLSL will align the field to a new register
-        mElementIndex = 0;
-        return 0;
+        if (forcePadding)
+        {
+            // Add padding between the structure's members to follow the std140 rules manually.
+            const int forcePaddingCount = GetElementPadding(mElementIndex, 4);
+            mElementIndex               = 0;
+            return forcePaddingCount;
+        }
+        else
+        {
+            // no padding needed, HLSL will align the field to a new register
+            mElementIndex = 0;
+            return 0;
+        }
     }
 
     const GLenum glType     = GLVariableType(type);
@@ -133,18 +149,27 @@ int Std140PaddingHelper::prePadding(const TType &type, bool forcePadding)
 
     if (numComponents >= 4)
     {
-        // no padding needed, HLSL will align the field to a new register
-        mElementIndex = 0;
-        return 0;
+        if (forcePadding)
+        {
+            // Add padding between the structure's members to follow the std140 rules manually.
+            const int forcePaddingCount = GetElementPadding(mElementIndex, 4);
+            mElementIndex               = numComponents % 4;
+            return forcePaddingCount;
+        }
+        else
+        {
+            // no padding needed, HLSL will align the field to a new register
+            mElementIndex = 0;
+            return 0;
+        }
     }
 
     if (mElementIndex + numComponents > 4)
     {
         if (forcePadding)
         {
-            // If this structure will be used as HLSL StructuredBuffer member's type, we should add
-            // padding between the structure's members to follow the std140 rules manually.
-            const int forcePaddingCount = 4 - mElementIndex;
+            // Add padding between the structure's members to follow the std140 rules manually.
+            const int forcePaddingCount = GetElementPadding(mElementIndex, 4);
             mElementIndex               = numComponents;
             return forcePaddingCount;
         }
@@ -156,9 +181,8 @@ int Std140PaddingHelper::prePadding(const TType &type, bool forcePadding)
         }
     }
 
-    const int alignment     = numComponents == 3 ? 4 : numComponents;
-    const int paddingOffset = (mElementIndex % alignment);
-    const int paddingCount  = (paddingOffset != 0 ? (alignment - paddingOffset) : 0);
+    const int alignment    = numComponents == 3 ? 4 : numComponents;
+    const int paddingCount = GetElementPadding(mElementIndex, alignment);
 
     mElementIndex += paddingCount;
     mElementIndex += numComponents;
@@ -183,23 +207,33 @@ TString Std140PaddingHelper::prePaddingString(const TType &type, bool forcePaddi
 
 TString Std140PaddingHelper::postPaddingString(const TType &type,
                                                bool useHLSLRowMajorPacking,
+                                               bool isLastElement,
                                                bool forcePadding)
 {
     if (!type.isMatrix() && !type.isArray() && type.getBasicType() != EbtStruct)
     {
         if (forcePadding)
         {
-            // If this structure will be used as HLSL StructuredBuffer member's type, we
-            // should force to pad the end of the structure to follow the std140 rules.
-            TString forcePaddingStr;
-            const int paddingOffset = mElementIndex % 4;
-            const int paddingCount  = paddingOffset != 0 ? (4 - paddingOffset) : 0;
-            for (int paddingIndex = 0; paddingIndex < paddingCount; paddingIndex++)
+            const GLenum glType     = GLVariableType(type);
+            const int numComponents = gl::VariableComponentCount(glType);
+            if (isLastElement || (numComponents >= 4))
             {
-                forcePaddingStr += "    float pad_" + next() + ";\n";
+                // If this structure will be used as HLSL StructuredBuffer member's type, in
+                // order to follow the std140 rules, add padding at the end of the structure
+                // if necessary. Or if the current element straddles a vec4 boundary, add
+                // padding to round up the base offset of the next element to the base
+                // alignment of a vec4.
+                TString forcePaddingStr;
+                const int paddingCount = GetElementPadding(mElementIndex, 4);
+                for (int paddingIndex = 0; paddingIndex < paddingCount; paddingIndex++)
+                {
+                    forcePaddingStr += "    float pad_" + next() + ";\n";
+                }
+                mElementIndex = 0;
+                return forcePaddingStr;
             }
-            return forcePaddingStr;
         }
+
         return "";
     }
 

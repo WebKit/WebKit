@@ -24,6 +24,7 @@
  */
 
 #include "TestHarness.h"
+#include <condition_variable>
 #include <functional>
 #include "iso_heap.h"
 #include "iso_heap_config.h"
@@ -141,7 +142,7 @@ void testLocalAllocatorStopRace(pas_race_test_hook_kind kindToStopOn)
             if (kind != kindToStopOn)
                 return;
 
-            CHECK_EQUAL(locksHeldForThread[this_thread::get_id()].size(), 2);
+            CHECK_EQUAL(locksHeldForThread[this_thread::get_id()].size(), 3);
             CHECK(okToGetToHook);
 
             unique_lock<mutex> locker(globalLock);
@@ -202,7 +203,7 @@ void testLocalAllocatorStopRaceAgainstScavenge(pas_race_test_hook_kind kindToSto
             if (kind != kindToStopOn)
                 return;
 
-            CHECK_EQUAL(locksHeldForThread[this_thread::get_id()].size(), 2);
+            CHECK_EQUAL(locksHeldForThread[this_thread::get_id()].size(), 3);
             CHECK(okToGetToHook);
 
             unique_lock<mutex> locker(globalLock);

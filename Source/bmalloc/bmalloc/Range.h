@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Range_h
-#define Range_h
+#pragma once
 
 #include <algorithm>
 #include <cstddef>
+
+#if !BUSE(LIBPAS)
 
 namespace bmalloc {
 
@@ -70,4 +71,4 @@ inline Range merge(const Range& a, const Range& b)
 
 } // namespace bmalloc
 
-#endif // Range_h
+#endif

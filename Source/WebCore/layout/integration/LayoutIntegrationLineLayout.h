@@ -27,13 +27,15 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FloatRect.h"
+#include "InlineIteratorInlineBox.h"
+#include "InlineIteratorLine.h"
+#include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationBoxTree.h"
-#include "LayoutIntegrationLineIterator.h"
-#include "LayoutIntegrationRunIterator.h"
 #include "LayoutPoint.h"
 #include "LayoutState.h"
 #include "RenderObjectEnums.h"
-#include <wtf/WeakPtr.h>
+#include <wtf/CheckedPtr.h>
 
 namespace WebCore {
 
@@ -48,11 +50,15 @@ class RenderInline;
 class RenderLineBreak;
 struct PaintInfo;
 
+namespace Layout {
+class InlineDamage;
+}
+
 namespace LayoutIntegration {
 
 struct InlineContent;
 
-class LineLayout : public CanMakeWeakPtr<LineLayout> {
+class LineLayout : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LineLayout(RenderBlockFlow&);
@@ -65,6 +71,7 @@ public:
     static bool isEnabled();
     static bool canUseFor(const RenderBlockFlow&);
     static bool canUseForAfterStyleChange(const RenderBlockFlow&, StyleDifference);
+    static bool canUseForAfterInlineBoxStyleChange(const RenderInline&, StyleDifference);
 
     bool shouldSwitchToLegacyOnInvalidation() const;
 
@@ -72,31 +79,38 @@ public:
     void updateInlineBlockDimensions(const RenderBlock&);
     void updateLineBreakBoxDimensions(const RenderLineBreak&);
     void updateInlineBoxDimensions(const RenderInline&);
-    void updateStyle(const RenderBoxModelObject&);
+    void updateStyle(const RenderBoxModelObject&, const RenderStyle& oldStyle);
+
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
+
     void layout();
 
     LayoutUnit contentLogicalHeight() const;
     size_t lineCount() const;
 
-    LayoutUnit firstLineBaseline() const;
-    LayoutUnit lastLineBaseline() const;
+    LayoutUnit firstLinePhysicalBaseline() const;
+    LayoutUnit lastLineLogicalBaseline() const;
 
     void adjustForPagination();
     void collectOverflow();
 
     const InlineContent* inlineContent() const { return m_inlineContent.get(); }
-    bool isPaginated() const { return !!m_paginatedHeight; }
+    bool isPaginated() const { return m_isPaginatedContent; }
 
     void paint(PaintInfo&, const LayoutPoint& paintOffset);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    TextRunIterator textRunsFor(const RenderText&) const;
-    RunIterator runFor(const RenderElement&) const;
-    LineIterator firstLine() const;
-    LineIterator lastLine() const;
+    InlineIterator::TextBoxIterator textBoxesFor(const RenderText&) const;
+    InlineIterator::LeafBoxIterator boxFor(const RenderElement&) const;
+    InlineIterator::InlineBoxIterator firstInlineBoxFor(const RenderInline&) const;
+    InlineIterator::InlineBoxIterator firstRootInlineBox() const;
+    InlineIterator::LineIterator firstLine() const;
+    InlineIterator::LineIterator lastLine() const;
 
+    LayoutRect firstInlineBoxRect(const RenderInline&) const;
     LayoutRect enclosingBorderBoxRectFor(const RenderInline&) const;
     LayoutRect visualOverflowBoundingBoxRectFor(const RenderInline&) const;
+    Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
 
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& flow() const { return m_boxTree.flow(); }
@@ -110,22 +124,26 @@ public:
 
 private:
     void prepareLayoutState();
+    void updateFormattingRootGeometryAndInvalidate();
     void prepareFloatingState();
     void constructContent();
     InlineContent& ensureInlineContent();
     void updateLayoutBoxDimensions(const RenderBox&);
 
-    void paintTextRunUsingPhysicalCoordinates(PaintInfo&, const LayoutPoint& paintOffset, const Line&, const Run&);
+    Layout::InlineDamage& ensureLineDamage();
 
     const Layout::ContainerBox& rootLayoutBox() const;
     Layout::ContainerBox& rootLayoutBox();
-    void releaseInlineItemCache();
+    void clearInlineContent();
+    void releaseCaches();
 
     BoxTree m_boxTree;
     Layout::LayoutState m_layoutState;
     Layout::InlineFormattingState& m_inlineFormattingState;
+    // FIXME: This should be part of LayoutState.
+    std::unique_ptr<Layout::InlineDamage> m_lineDamage;
     RefPtr<InlineContent> m_inlineContent;
-    std::optional<LayoutUnit> m_paginatedHeight;
+    bool m_isPaginatedContent { false };
 };
 
 }

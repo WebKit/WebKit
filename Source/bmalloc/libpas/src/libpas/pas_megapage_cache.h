@@ -68,7 +68,9 @@ PAS_API void pas_megapage_cache_construct(pas_megapage_cache* cache,
                                           void* provider_arg);
 
 PAS_API void* pas_megapage_cache_try_allocate(pas_megapage_cache* cache,
-                                              pas_megapage_cache_config* cache_config);
+                                              pas_megapage_cache_config* cache_config,
+                                              pas_heap* heap,
+                                              pas_physical_memory_transaction* transaction);
 
 PAS_END_EXTERN_C;
 

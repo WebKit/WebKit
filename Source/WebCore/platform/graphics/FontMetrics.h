@@ -42,7 +42,7 @@ public:
     void setAscent(float ascent)
     {
         m_floatAscent = ascent;
-        m_intAscent = lroundf(ascent);
+        m_intAscent = std::max(static_cast<int>(lroundf(ascent)), 0);
     }
 
     float floatDescent(FontBaseline baselineType = AlphabeticBaseline) const
@@ -119,8 +119,11 @@ public:
         return ascent() == other.ascent() && descent() == other.descent() && lineGap() == other.lineGap();
     }
 
-    float zeroWidth() const { return m_zeroWidth; }
+    std::optional<float> zeroWidth() const { return m_zeroWidth; }
     void setZeroWidth(float zeroWidth) { m_zeroWidth = zeroWidth; }
+
+    float ideogramWidth() const { return m_ideogramWidth; }
+    void setIdeogramWidth(float ideogramWidth) { m_ideogramWidth = ideogramWidth; }
 
     float underlinePosition() const { return m_underlinePosition; }
     void setUnderlinePosition(float underlinePosition) { m_underlinePosition = underlinePosition; }
@@ -145,7 +148,8 @@ private:
         m_intLineSpacing = 0;
         m_intCapHeight = 0;
         m_xHeight = 0;
-        m_zeroWidth = 0;
+        m_zeroWidth = std::nullopt;
+        m_ideogramWidth = 0;
         m_underlinePosition = 0;
         m_underlineThickness = 0;
     }
@@ -165,7 +169,8 @@ private:
     int m_intLineSpacing { 0 };
     int m_intCapHeight { 0 };
 
-    float m_zeroWidth { 0 };
+    std::optional<float> m_zeroWidth;
+    float m_ideogramWidth { 0 };
     float m_xHeight { 0 };
     float m_underlinePosition { 0 };
     float m_underlineThickness { 0 };

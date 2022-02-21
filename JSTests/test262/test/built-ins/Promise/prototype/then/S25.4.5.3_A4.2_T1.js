@@ -11,12 +11,10 @@ description: Promise.prototype.then treats non-callable arg1, arg2 as undefined
 flags: [async]
 ---*/
 
-var obj = {};
-var p = Promise.resolve(obj);
+var arg = {};
+var p = Promise.resolve(arg);
 
 p.then(3, 5)
-  .then(function(arg) {
-    if (arg !== obj) {
-      throw new Test262Error("Expected resolution object to be passed through, got " + arg);
-    }
-  }).then($DONE, $DONE);
+  .then(function(result) {
+  assert.sameValue(result, arg, 'The value of result is expected to equal the value of arg');
+}).then($DONE, $DONE);

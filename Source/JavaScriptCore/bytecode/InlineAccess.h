@@ -54,6 +54,8 @@ public:
         return 48;
 #elif CPU(MIPS)
         return 72;
+#elif CPU(RISCV64)
+        return 44;
 #else
 #error "unsupported platform"
 #endif
@@ -72,6 +74,8 @@ public:
         return 48;
 #elif CPU(MIPS)
         return 72;
+#elif CPU(RISCV64)
+        return 52;
 #else
 #error "unsupported platform"
 #endif
@@ -93,20 +97,22 @@ public:
         size_t size = 30;
 #elif CPU(MIPS)
         size_t size = 56;
+#elif CPU(RISCV64)
+        size_t size = 60;
 #else
 #error "unsupported platform"
 #endif
         return std::max(size, sizeForPropertyAccess());
     }
 
-    static bool generateSelfPropertyAccess(StructureStubInfo&, Structure*, PropertyOffset);
-    static bool canGenerateSelfPropertyReplace(StructureStubInfo&, PropertyOffset);
-    static bool generateSelfPropertyReplace(StructureStubInfo&, Structure*, PropertyOffset);
-    static bool isCacheableArrayLength(StructureStubInfo&, JSArray*);
-    static bool isCacheableStringLength(StructureStubInfo&);
-    static bool generateArrayLength(StructureStubInfo&, JSArray*);
-    static bool generateSelfInAccess(StructureStubInfo&, Structure*);
-    static bool generateStringLength(StructureStubInfo&);
+    static bool generateSelfPropertyAccess(CodeBlock*, StructureStubInfo&, Structure*, PropertyOffset);
+    static bool canGenerateSelfPropertyReplace(CodeBlock*, StructureStubInfo&, PropertyOffset);
+    static bool generateSelfPropertyReplace(CodeBlock*, StructureStubInfo&, Structure*, PropertyOffset);
+    static bool isCacheableArrayLength(CodeBlock*, StructureStubInfo&, JSArray*);
+    static bool isCacheableStringLength(CodeBlock*, StructureStubInfo&);
+    static bool generateArrayLength(CodeBlock*, StructureStubInfo&, JSArray*);
+    static bool generateSelfInAccess(CodeBlock*, StructureStubInfo&, Structure*);
+    static bool generateStringLength(CodeBlock*, StructureStubInfo&);
 
     static void rewireStubAsJumpInAccessNotUsingInlineAccess(CodeBlock*, StructureStubInfo&, CodeLocationLabel<JITStubRoutinePtrTag>);
     static void rewireStubAsJumpInAccess(CodeBlock*, StructureStubInfo&, CodeLocationLabel<JITStubRoutinePtrTag>);

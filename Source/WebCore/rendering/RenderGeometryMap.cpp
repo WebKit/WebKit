@@ -150,13 +150,13 @@ static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObject& render
         if (current->isFixedPositioned() || style.isFlippedBlocksWritingMode())
             return false;
 
-        if (current->hasTransformRelatedProperty() && !current->style().preserves3D())
+        if (current->hasTransformRelatedProperty() && (style.hasTransform() || style.translate() || style.scale() || style.rotate() || style.hasPerspective()))
             return false;
         
         if (current->isRenderFragmentedFlow())
             return false;
 
-        if (current->isSVGRoot())
+        if (current->isLegacySVGRoot())
             return false;
 
         if (current == &ancestor)

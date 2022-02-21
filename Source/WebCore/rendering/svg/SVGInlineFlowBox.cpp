@@ -24,6 +24,7 @@
 #include "SVGInlineFlowBox.h"
 
 #include "GraphicsContext.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRenderingContext.h"
 #include "SVGTextFragment.h"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,15 +34,15 @@ public:
     using Base = JSNonFinalObject;
 
     template<typename CellType, SubspaceAccess>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ConsoleObject, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static ConsoleObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        ConsoleObject* object = new (NotNull, allocateCell<ConsoleObject>(vm.heap)) ConsoleObject(vm, structure);
+        ConsoleObject* object = new (NotNull, allocateCell<ConsoleObject>(vm)) ConsoleObject(vm, structure);
         object->finishCreation(vm, globalObject);
         return object;
     }

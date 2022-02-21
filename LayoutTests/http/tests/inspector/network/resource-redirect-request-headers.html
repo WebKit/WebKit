@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+
+function createRedirectRequest() {
+    fetch("resources/delay.py", {
+        method: "POST",
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.Redirect.RequestHeaders");
+
+    suite.addTestCase({
+        name: "Resource.Redirect.RequestHeadersPostToGet",
+        description: "Check if a POST request redirected to a GET has correct method and location information.",
+        async test() {
+            let [event] = await Promise.all([
+                WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                InspectorTest.evaluateInPage(`createRedirectRequest()`),
+            ]);
+
+            let resource = event.target;
+            InspectorTest.expectEqual(resource.requestMethod, "GET", "Resource final request method should be `GET`.");
+            InspectorTest.expectEqual(resource.statusCode, 200, "Resource final status code should be `200`.");
+            InspectorTest.expectEqual(resource.statusText, "OK", "Resource final status text should be `OK`.");
+            InspectorTest.expectEqual(resource.redirects.length, 1, "Resource should have one redirect.");
+
+            let redirect = resource.redirects[0]
+            InspectorTest.expectEqual(redirect.requestMethod, "POST", "Redirected request method should be `POST`");
+            InspectorTest.expectEqual(redirect.responseStatusCode, 302, "Redirected request status code should be `302`.");
+            InspectorTest.expectEqual(redirect.responseStatusText, "Found", "Redirected request status text should be `Found`.");
+            InspectorTest.expectEqual(redirect.responseHeaders["Location"], "redirect.py", "Redirected request response should have a location header of `redirect.py`");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that a resource request's headers have correct information after a redirect.</p>
+</body>
+</html>

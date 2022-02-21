@@ -27,7 +27,9 @@
 #include "config.h"
 #include "RenderSVGEllipse.h"
 
+#include "LegacyRenderSVGShapeInlines.h"
 #include "SVGCircleElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -36,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGEllipse);
 
 RenderSVGEllipse::RenderSVGEllipse(SVGGraphicsElement& element, RenderStyle&& style)
-    : RenderSVGShape(element, WTFMove(style))
+    : LegacyRenderSVGShape(element, WTFMove(style))
     , m_usePathFallback(false)
 {
 }
@@ -59,8 +61,8 @@ void RenderSVGEllipse::updateShapeFromElement()
         return;
 
     if (hasNonScalingStroke()) {
-        // Fallback to RenderSVGShape if shape has a non-scaling stroke.
-        RenderSVGShape::updateShapeFromElement();
+        // Fallback to LegacyRenderSVGShape if shape has a non-scaling stroke.
+        LegacyRenderSVGShape::updateShapeFromElement();
         m_usePathFallback = true;
         return;
     }
@@ -97,7 +99,7 @@ void RenderSVGEllipse::calculateRadiiAndCenter()
 void RenderSVGEllipse::fillShape(GraphicsContext& context) const
 {
     if (m_usePathFallback) {
-        RenderSVGShape::fillShape(context);
+        LegacyRenderSVGShape::fillShape(context);
         return;
     }
     context.fillEllipse(m_fillBoundingBox);
@@ -108,7 +110,7 @@ void RenderSVGEllipse::strokeShape(GraphicsContext& context) const
     if (!style().hasVisibleStroke())
         return;
     if (m_usePathFallback) {
-        RenderSVGShape::strokeShape(context);
+        LegacyRenderSVGShape::strokeShape(context);
         return;
     }
     context.strokeEllipse(m_fillBoundingBox);
@@ -117,11 +119,11 @@ void RenderSVGEllipse::strokeShape(GraphicsContext& context) const
 bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
     // The optimized contains code below does not support non-smooth strokes so we need
-    // to fall back to RenderSVGShape::shapeDependentStrokeContains in these cases.
+    // to fall back to LegacyRenderSVGShape::shapeDependentStrokeContains in these cases.
     if (m_usePathFallback || !hasSmoothStroke()) {
         if (!hasPath())
-            RenderSVGShape::updateShapeFromElement();
-        return RenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);
+            LegacyRenderSVGShape::updateShapeFromElement();
+        return LegacyRenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);
     }
 
     float halfStrokeWidth = strokeWidth() / 2;
@@ -142,7 +144,7 @@ bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point, Poi
 bool RenderSVGEllipse::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
     if (m_usePathFallback)
-        return RenderSVGShape::shapeDependentFillContains(point, fillRule);
+        return LegacyRenderSVGShape::shapeDependentFillContains(point, fillRule);
 
     FloatPoint center = FloatPoint(m_center.x() - point.x(), m_center.y() - point.y());
 

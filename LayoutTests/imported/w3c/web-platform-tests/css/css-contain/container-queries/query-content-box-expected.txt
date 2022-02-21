@@ -1,0 +1,6 @@
+
+PASS Size queries with content-box sizing
+PASS Size queries with border-box sizing
+FAIL Size queries with content-box sizing and overflow:scroll assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+FAIL Size queries with border-box sizing and overflow:scroll assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+

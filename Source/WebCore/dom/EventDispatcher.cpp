@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010, 2011, 2012, 2013 Google Inc. All rights reserved.
@@ -60,7 +60,8 @@ static void callDefaultEventHandlersInBubblingOrder(Event& event, const EventPat
         return;
 
     // Non-bubbling events call only one default event handler, the one for the target.
-    path.contextAt(0).node()->defaultEventHandler(event);
+    Ref rootNode { *path.contextAt(0).node() };
+    rootNode->defaultEventHandler(event);
     ASSERT(!event.defaultPrevented());
 
     if (event.defaultHandled() || !event.bubbles())
@@ -68,7 +69,8 @@ static void callDefaultEventHandlersInBubblingOrder(Event& event, const EventPat
 
     size_t size = path.size();
     for (size_t i = 1; i < size; ++i) {
-        path.contextAt(i).node()->defaultEventHandler(event);
+        Ref currentNode { *path.contextAt(i).node() };
+        currentNode->defaultEventHandler(event);
         ASSERT(!event.defaultPrevented());
         if (event.defaultHandled())
             return;
@@ -147,8 +149,8 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     
     LOG_WITH_STREAM(Events, stream << "EventDispatcher::dispatchEvent " << event << " on node " << node);
 
-    auto protectedNode = makeRef(node);
-    auto protectedView = makeRefPtr(node.document().view());
+    Ref protectedNode { node };
+    RefPtr protectedView { node.document().view() };
 
     EventPath eventPath { node, event };
 
@@ -174,7 +176,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     InputElementClickState clickHandlingState;
 
     bool isActivationEvent = event.type() == eventNames().clickEvent;
-    RefPtr<HTMLInputElement> inputForLegacyPreActivationBehavior = is<HTMLInputElement>(node) ? &downcast<HTMLInputElement>(node) : nullptr;
+    RefPtr inputForLegacyPreActivationBehavior = dynamicDowncast<HTMLInputElement>(node);
     if (!inputForLegacyPreActivationBehavior && isActivationEvent && event.bubbles())
         inputForLegacyPreActivationBehavior = findInputElementInEventPath(eventPath);
     if (inputForLegacyPreActivationBehavior)

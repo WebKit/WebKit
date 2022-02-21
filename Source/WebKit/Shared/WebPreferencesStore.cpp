@@ -80,17 +80,17 @@ template<typename MappedType>
 static MappedType valueForKey(const WebPreferencesStore::ValueMap& values, const WebPreferencesStore::ValueMap& overriddenDefaults, const String& key)
 {
     auto valuesIt = values.find(key);
-    if (valuesIt != values.end() && WTF::holds_alternative<MappedType>(valuesIt->value))
-        return WTF::get<MappedType>(valuesIt->value);
+    if (valuesIt != values.end() && std::holds_alternative<MappedType>(valuesIt->value))
+        return std::get<MappedType>(valuesIt->value);
 
     auto overriddenDefaultsIt = overriddenDefaults.find(key);
-    if (overriddenDefaultsIt != overriddenDefaults.end() && WTF::holds_alternative<MappedType>(overriddenDefaultsIt->value))
-        return WTF::get<MappedType>(overriddenDefaultsIt->value);
+    if (overriddenDefaultsIt != overriddenDefaults.end() && std::holds_alternative<MappedType>(overriddenDefaultsIt->value))
+        return std::get<MappedType>(overriddenDefaultsIt->value);
 
     auto& defaultsMap = WebPreferencesStore::defaults();
     auto defaultsIt = defaultsMap.find(key);
-    if (defaultsIt != defaultsMap.end() && WTF::holds_alternative<MappedType>(defaultsIt->value))
-        return WTF::get<MappedType>(defaultsIt->value);
+    if (defaultsIt != defaultsMap.end() && std::holds_alternative<MappedType>(defaultsIt->value))
+        return std::get<MappedType>(defaultsIt->value);
 
     return MappedType();
 }

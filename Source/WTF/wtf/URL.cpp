@@ -30,6 +30,7 @@
 #include "URLParser.h"
 #include <stdio.h>
 #include <unicode/uidna.h>
+#include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -246,7 +247,7 @@ String URL::fileSystemPath() const
 
     auto result = decodeEscapeSequencesFromParsedURL(path());
 #if PLATFORM(WIN)
-    result = fileSystemRepresentation(result);
+    result = FileSystem::fileSystemRepresentation(result);
 #endif
     return result;
 }
@@ -327,6 +328,11 @@ bool isDefaultPortForProtocol(uint16_t port, StringView protocol)
 bool URL::protocolIsJavaScript() const
 {
     return WTF::protocolIsJavaScript(string());
+}
+
+bool URL::protocolIsInFTPFamily() const
+{
+    return WTF::protocolIsInFTPFamily(string());
 }
 
 bool URL::protocolIs(const char* protocol) const
@@ -732,13 +738,13 @@ bool protocolHostAndPortAreEqual(const URL& a, const URL& b)
 
     // Check the scheme
     for (unsigned i = 0; i < a.m_schemeEnd; ++i) {
-        if (a.string()[i] != b.string()[i])
+        if (toASCIILower(a.string()[i]) != toASCIILower(b.string()[i]))
             return false;
     }
 
     // And the host
     for (unsigned i = 0; i < hostLengthA; ++i) {
-        if (a.string()[hostStartA + i] != b.string()[hostStartB + i])
+        if (toASCIILower(a.string()[hostStartA + i]) != toASCIILower(b.string()[hostStartB + i]))
             return false;
     }
 
@@ -854,6 +860,17 @@ bool URL::isLocalFile() const
 bool protocolIsJavaScript(StringView string)
 {
     return protocolIsInternal(string, "javascript");
+}
+
+bool protocolIsInFTPFamily(StringView url)
+{
+    auto length = url.length();
+    // Do the comparison without making a new string object.
+    return length >= 4
+        && isASCIIAlphaCaselessEqual(url[0], 'f')
+        && isASCIIAlphaCaselessEqual(url[1], 't')
+        && isASCIIAlphaCaselessEqual(url[2], 'p')
+        && (url[3] == ':' || (isASCIIAlphaCaselessEqual(url[3], 's') && length >= 5 && url[4] == ':'));
 }
 
 bool protocolIsInHTTPFamily(StringView url)
@@ -1037,7 +1054,7 @@ String URL::stringCenterEllipsizedToLength(unsigned length) const
 
 URL URL::fakeURLWithRelativePart(StringView relativePart)
 {
-    return URL(URL(), makeString("webkit-fake-url://", createCanonicalUUIDString(), '/', relativePart));
+    return URL(URL(), makeString("webkit-fake-url://", createVersion4UUIDString(), '/', relativePart));
 }
 
 URL URL::fileURLWithFileSystemPath(StringView path)
@@ -1173,6 +1190,11 @@ bool URL::hostIsIPAddress(StringView host)
 }
 
 #endif
+
+Vector<KeyValuePair<String, String>> queryParameters(const URL& url)
+{
+    return URLParser::parseURLEncodedForm(url.query());
+}
 
 Vector<KeyValuePair<String, String>> differingQueryParameters(const URL& firstURL, const URL& secondURL)
 {

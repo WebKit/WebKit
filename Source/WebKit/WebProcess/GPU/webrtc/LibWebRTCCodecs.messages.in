@@ -24,7 +24,7 @@
 
 messages -> LibWebRTCCodecs NotRefCounted {
     FailedDecoding(WebKit::RTCDecoderIdentifier identifier)
-    CompletedDecoding(WebKit::RTCDecoderIdentifier identifier, uint32_t timeStamp, WebCore::RemoteVideoSample sample)
+    CompletedDecoding(WebKit::RTCDecoderIdentifier identifier, uint32_t timeStamp, WebCore::RemoteVideoSample sample, std::optional<WebKit::RemoteVideoFrameIdentifier> remoteFrameIdentifier)
 
     CompletedEncoding(WebKit::RTCEncoderIdentifier identifier, IPC::DataReference data, struct webrtc::WebKitEncodedFrameInfo info);
 }

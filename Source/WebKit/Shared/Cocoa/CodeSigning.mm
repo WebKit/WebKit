@@ -57,14 +57,26 @@ bool currentProcessIsPlatformBinary()
     return SecTaskGetCodeSignStatus(task.get()) & CS_PLATFORM_BINARY;
 }
 
-std::pair<String, bool> codeSigningIdentifierAndPlatformBinaryStatus(xpc_connection_t connection)
+static std::pair<String, bool> codeSigningIdentifierAndPlatformBinaryStatus(audit_token_t auditToken)
 {
-    audit_token_t auditToken;
-    xpc_connection_get_audit_token(connection, &auditToken);
     auto task = adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, auditToken));
     bool isPlatformBinary = SecTaskGetCodeSignStatus(task.get()) & CS_PLATFORM_BINARY;
     auto signingIdentifier = codeSigningIdentifier(task.get());
     return std::make_pair(signingIdentifier, isPlatformBinary);
+}
+
+std::pair<String, bool> codeSigningIdentifierAndPlatformBinaryStatus(xpc_connection_t connection)
+{
+    audit_token_t auditToken;
+    xpc_connection_get_audit_token(connection, &auditToken);
+
+    return codeSigningIdentifierAndPlatformBinaryStatus(auditToken);
+}
+
+String codeSigningIdentifier(audit_token_t token)
+{
+    auto pair = codeSigningIdentifierAndPlatformBinaryStatus(token);
+    return pair.first;
 }
 
 } // namespace WebKit

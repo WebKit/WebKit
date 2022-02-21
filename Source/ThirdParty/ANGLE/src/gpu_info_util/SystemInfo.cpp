@@ -17,8 +17,6 @@
 
 namespace angle
 {
-namespace
-{
 std::string VendorName(VendorID vendor)
 {
     switch (vendor)
@@ -53,7 +51,7 @@ std::string VendorName(VendorID vendor)
             return "Unknown (" + std::to_string(vendor) + ")";
     }
 }
-}  // anonymous namespace
+
 GPUDeviceInfo::GPUDeviceInfo() = default;
 
 GPUDeviceInfo::~GPUDeviceInfo() = default;
@@ -266,6 +264,11 @@ void GetDualGPUInfo(SystemInfo *info)
     ASSERT(!info->gpus.empty());
 
     // On dual-GPU systems we assume the non-Intel GPU is the graphics one.
+    // TODO: this is incorrect and problematic.  activeGPUIndex must be removed if it cannot be
+    // determined correctly.  A potential solution is to create an OpenGL context and parse
+    // GL_VENDOR.  Currently, our test infrastructure is relying on this information and incorrectly
+    // applies test expectations on dual-GPU systems when the Intel GPU is active.
+    // http://anglebug.com/6174.
     int active    = 0;
     bool hasIntel = false;
     for (size_t i = 0; i < info->gpus.size(); ++i)

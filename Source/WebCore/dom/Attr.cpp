@@ -24,7 +24,10 @@
 #include "Attr.h"
 
 #include "AttributeChangeInvalidation.h"
+#include "Document.h"
+#include "ElementInlines.h"
 #include "Event.h"
+#include "HTMLNames.h"
 #include "ScopedEventQueue.h"
 #include "StyleProperties.h"
 #include "StyledElement.h"
@@ -109,10 +112,11 @@ CSSStyleDeclaration* Attr::style()
 {
     // This is not part of the DOM API, and therefore not available to webpages. However, WebKit SPI
     // lets clients use this via the Objective-C and JavaScript bindings.
-    if (!is<StyledElement>(m_element))
+    auto styledElement = dynamicDowncast<StyledElement>(m_element);
+    if (!styledElement)
         return nullptr;
     m_style = MutableStyleProperties::create();
-    downcast<StyledElement>(*m_element).collectPresentationalHintsForAttribute(qualifiedName(), value(), *m_style);
+    styledElement->collectPresentationalHintsForAttribute(qualifiedName(), value(), *m_style);
     return &m_style->ensureCSSStyleDeclaration();
 }
 

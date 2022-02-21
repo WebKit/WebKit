@@ -75,7 +75,7 @@ PASS document.defaultView.getComputedStyle(element, null).getPropertyValue('back
 PASS document.defaultView.getComputedStyle(element, null).getPropertyValue('background-color') is 'rgba(0, 0, 0, 0)'
 
 s
-PASS document.defaultView.getComputedStyle(element, null).getPropertyValue('background-color') is 'rgba(0, 0, 0, 0)'
+PASS document.defaultView.getComputedStyle(element, null).getPropertyValue('background-color') is 'rgb(0, 0, 255)'
 
 div span
 PASS document.defaultView.getComputedStyle(element, null).getPropertyValue('background-color') is 'rgb(0, 0, 255)'

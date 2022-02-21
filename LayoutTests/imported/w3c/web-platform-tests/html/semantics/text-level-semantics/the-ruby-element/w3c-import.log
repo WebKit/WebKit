@@ -15,6 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-element/rt-without-ruby-crash.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-element/ruby-usage-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-element/ruby-usage-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-element/ruby-usage-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-element/ruby-usage.html

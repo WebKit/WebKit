@@ -1,14 +1,14 @@
 
 PASS Logical longhands with variables - margin-inline-start
 PASS Logical longhands with variables - margin-inline-end
-FAIL Logical longhands with variables - margin-inline assert_equals: Specified value expected "" but got "var(--one) var(--two)"
+PASS Logical longhands with variables - margin-inline
 PASS Logical shorthand with 1 variable - margin-inline-start
 PASS Logical shorthand with 1 variable - margin-inline-end
-FAIL Logical shorthand with 1 variable - margin-inline assert_equals: Specified value expected "var(--one)" but got ""
+PASS Logical shorthand with 1 variable - margin-inline
 PASS Logical shorthand with 2 variables - margin-inline-start
 PASS Logical shorthand with 2 variables - margin-inline-end
-FAIL Logical shorthand with 2 variables - margin-inline assert_equals: Specified value expected "var(--one) var(--two)" but got ""
+PASS Logical shorthand with 2 variables - margin-inline
 PASS Logical shorthand with 1 variable and 1 length - margin-inline-start
 PASS Logical shorthand with 1 variable and 1 length - margin-inline-end
-FAIL Logical shorthand with 1 variable and 1 length - margin-inline assert_equals: Specified value expected "var(--one) 2px" but got ""
+PASS Logical shorthand with 1 variable and 1 length - margin-inline
 

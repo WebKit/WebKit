@@ -619,7 +619,7 @@ bool Win32Window::takeScreenshot(uint8_t *pixelData)
     // for a while before issuing screenshot if window was just made visible.
     {
         static const double WAIT_WINDOW_VISIBLE_MS = 0.5;  // Half a second for the animation
-        double timeSinceVisible                    = mSetVisibleTimer.getElapsedTime();
+        double timeSinceVisible                    = mSetVisibleTimer.getElapsedWallClockTime();
 
         if (timeSinceVisible < WAIT_WINDOW_VISIBLE_MS)
         {

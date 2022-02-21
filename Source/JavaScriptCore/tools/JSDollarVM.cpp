@@ -54,6 +54,7 @@
 #include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"
 #include <unicode/uversion.h>
+#include <wtf/ApproximateTime.h>
 #include <wtf/Atomics.h>
 #include <wtf/CPUTime.h>
 #include <wtf/DataLog.h>
@@ -65,9 +66,6 @@
 #if !USE(SYSTEM_MALLOC)
 #include <bmalloc/BPlatform.h>
 #if BUSE(LIBPAS)
-#ifndef PAS_BMALLOC
-#define PAS_BMALLOC 1
-#endif
 #include <bmalloc/pas_debug_spectrum.h>
 #include <bmalloc/pas_fd_stream.h>
 #include <bmalloc/pas_heap_lock.h>
@@ -132,7 +130,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
 
     JSDollarVMCallFrame(VM& vm, Structure* structure)
@@ -152,7 +150,7 @@ public:
         DollarVMAssertScope assertScope;
         VM& vm = globalObject->vm();
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        JSDollarVMCallFrame* frame = new (NotNull, allocateCell<JSDollarVMCallFrame>(vm.heap)) JSDollarVMCallFrame(vm, structure);
+        JSDollarVMCallFrame* frame = new (NotNull, allocateCell<JSDollarVMCallFrame>(vm)) JSDollarVMCallFrame(vm, structure);
         frame->finishCreation(vm, callFrame, requestedFrameIndex);
         return frame;
     }
@@ -222,7 +220,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
 
     Root* root() const { return m_root.get(); }
@@ -232,7 +230,7 @@ public:
     {
         DollarVMAssertScope assertScope;
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        Element* element = new (NotNull, allocateCell<Element>(vm.heap)) Element(vm, structure);
+        Element* element = new (NotNull, allocateCell<Element>(vm)) Element(vm, structure);
         element->finishCreation(vm, root);
         return element;
     }
@@ -286,7 +284,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.destructibleObjectSpace;
+        return &vm.destructibleObjectSpace();
     }
 
     Root(VM& vm, Structure* structure)
@@ -311,7 +309,7 @@ public:
     {
         DollarVMAssertScope assertScope;
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        Root* root = new (NotNull, allocateCell<Root>(vm.heap)) Root(vm, structure);
+        Root* root = new (NotNull, allocateCell<Root>(vm)) Root(vm, structure);
         root->finishCreation(vm);
         return root;
     }
@@ -353,14 +351,14 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
 
     static SimpleObject* create(VM& vm, JSGlobalObject* globalObject)
     {
         DollarVMAssertScope assertScope;
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        SimpleObject* simpleObject = new (NotNull, allocateCell<SimpleObject>(vm.heap)) SimpleObject(vm, structure);
+        SimpleObject* simpleObject = new (NotNull, allocateCell<SimpleObject>(vm)) SimpleObject(vm, structure);
         simpleObject->finishCreation(vm);
         return simpleObject;
     }
@@ -425,7 +423,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -437,7 +435,7 @@ public:
     static ImpureGetter* create(VM& vm, Structure* structure, JSObject* delegate)
     {
         DollarVMAssertScope assertScope;
-        ImpureGetter* getter = new (NotNull, allocateCell<ImpureGetter>(vm.heap)) ImpureGetter(vm, structure);
+        ImpureGetter* getter = new (NotNull, allocateCell<ImpureGetter>(vm)) ImpureGetter(vm, structure);
         getter->finishCreation(vm, delegate);
         return getter;
     }
@@ -507,7 +505,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -519,7 +517,7 @@ public:
     static CustomGetter* create(VM& vm, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        CustomGetter* getter = new (NotNull, allocateCell<CustomGetter>(vm.heap)) CustomGetter(vm, structure);
+        CustomGetter* getter = new (NotNull, allocateCell<CustomGetter>(vm)) CustomGetter(vm, structure);
         getter->finishCreation(vm);
         return getter;
     }
@@ -589,7 +587,7 @@ IGNORE_WARNINGS_END
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
 
     static RuntimeArray* create(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -597,7 +595,7 @@ IGNORE_WARNINGS_END
         DollarVMAssertScope assertScope;
         VM& vm = globalObject->vm();
         Structure* structure = createStructure(vm, globalObject, createPrototype(vm, globalObject));
-        RuntimeArray* runtimeArray = new (NotNull, allocateCell<RuntimeArray>(vm.heap)) RuntimeArray(globalObject, structure);
+        RuntimeArray* runtimeArray = new (NotNull, allocateCell<RuntimeArray>(vm)) RuntimeArray(globalObject, structure);
         runtimeArray->finishCreation(globalObject, callFrame);
         vm.heap.addFinalizer(runtimeArray, destroy);
         return runtimeArray;
@@ -771,7 +769,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -783,7 +781,7 @@ public:
     static StaticCustomAccessor* create(VM& vm, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        StaticCustomAccessor* accessor = new (NotNull, allocateCell<StaticCustomAccessor>(vm.heap)) StaticCustomAccessor(vm, structure);
+        StaticCustomAccessor* accessor = new (NotNull, allocateCell<StaticCustomAccessor>(vm)) StaticCustomAccessor(vm, structure);
         accessor->finishCreation(vm);
         return accessor;
     }
@@ -871,7 +869,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -883,7 +881,7 @@ public:
     static StaticCustomValue* create(VM& vm, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        StaticCustomValue* accessor = new (NotNull, allocateCell<StaticCustomValue>(vm.heap)) StaticCustomValue(vm, structure);
+        StaticCustomValue* accessor = new (NotNull, allocateCell<StaticCustomValue>(vm)) StaticCustomValue(vm, structure);
         accessor->finishCreation(vm);
         return accessor;
     }
@@ -896,7 +894,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
 
     ObjectDoingSideEffectPutWithoutCorrectSlotStatus(VM& vm, Structure* structure)
@@ -916,7 +914,7 @@ public:
     static ObjectDoingSideEffectPutWithoutCorrectSlotStatus* create(VM& vm, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        ObjectDoingSideEffectPutWithoutCorrectSlotStatus* accessor = new (NotNull, allocateCell<ObjectDoingSideEffectPutWithoutCorrectSlotStatus>(vm.heap)) ObjectDoingSideEffectPutWithoutCorrectSlotStatus(vm, structure);
+        ObjectDoingSideEffectPutWithoutCorrectSlotStatus* accessor = new (NotNull, allocateCell<ObjectDoingSideEffectPutWithoutCorrectSlotStatus>(vm)) ObjectDoingSideEffectPutWithoutCorrectSlotStatus(vm, structure);
         accessor->finishCreation(vm);
         return accessor;
     }
@@ -947,7 +945,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -974,7 +972,7 @@ public:
     static DOMJITNode* create(VM& vm, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        DOMJITNode* getter = new (NotNull, allocateCell<DOMJITNode>(vm.heap)) DOMJITNode(vm, structure);
+        DOMJITNode* getter = new (NotNull, allocateCell<DOMJITNode>(vm)) DOMJITNode(vm, structure);
         getter->finishCreation(vm);
         return getter;
     }
@@ -1015,7 +1013,7 @@ public:
     static DOMJITGetter* create(VM& vm, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        DOMJITGetter* getter = new (NotNull, allocateCell<DOMJITGetter>(vm.heap)) DOMJITGetter(vm, structure);
+        DOMJITGetter* getter = new (NotNull, allocateCell<DOMJITGetter>(vm)) DOMJITGetter(vm, structure);
         getter->finishCreation(vm);
         return getter;
     }
@@ -1120,7 +1118,7 @@ public:
     static DOMJITGetterNoEffects* create(VM& vm, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        DOMJITGetterNoEffects* getter = new (NotNull, allocateCell<DOMJITGetterNoEffects>(vm.heap)) DOMJITGetterNoEffects(vm, structure);
+        DOMJITGetterNoEffects* getter = new (NotNull, allocateCell<DOMJITGetterNoEffects>(vm)) DOMJITGetterNoEffects(vm, structure);
         getter->finishCreation(vm);
         return getter;
     }
@@ -1219,7 +1217,7 @@ public:
     static DOMJITGetterComplex* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        DOMJITGetterComplex* getter = new (NotNull, allocateCell<DOMJITGetterComplex>(vm.heap)) DOMJITGetterComplex(vm, structure);
+        DOMJITGetterComplex* getter = new (NotNull, allocateCell<DOMJITGetterComplex>(vm)) DOMJITGetterComplex(vm, structure);
         getter->finishCreation(vm, globalObject);
         return getter;
     }
@@ -1344,7 +1342,7 @@ public:
     static DOMJITFunctionObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        DOMJITFunctionObject* object = new (NotNull, allocateCell<DOMJITFunctionObject>(vm.heap)) DOMJITFunctionObject(vm, structure);
+        DOMJITFunctionObject* object = new (NotNull, allocateCell<DOMJITFunctionObject>(vm)) DOMJITFunctionObject(vm, structure);
         object->finishCreation(vm, globalObject);
         return object;
     }
@@ -1425,7 +1423,7 @@ public:
     static DOMJITCheckJSCastObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        DOMJITCheckJSCastObject* object = new (NotNull, allocateCell<DOMJITCheckJSCastObject>(vm.heap)) DOMJITCheckJSCastObject(vm, structure);
+        DOMJITCheckJSCastObject* object = new (NotNull, allocateCell<DOMJITCheckJSCastObject>(vm)) DOMJITCheckJSCastObject(vm, structure);
         object->finishCreation(vm, globalObject);
         return object;
     }
@@ -1488,7 +1486,7 @@ public:
     static DOMJITGetterBaseJSObject* create(VM& vm, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        DOMJITGetterBaseJSObject* getter = new (NotNull, allocateCell<DOMJITGetterBaseJSObject>(vm.heap)) DOMJITGetterBaseJSObject(vm, structure);
+        DOMJITGetterBaseJSObject* getter = new (NotNull, allocateCell<DOMJITGetterBaseJSObject>(vm)) DOMJITGetterBaseJSObject(vm, structure);
         getter->finishCreation(vm);
         return getter;
     }
@@ -1584,7 +1582,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.cellSpace;
+        return &vm.cellSpace();
     }
 
     JSTestCustomGetterSetter(VM& vm, Structure* structure)
@@ -1596,7 +1594,7 @@ public:
     static JSTestCustomGetterSetter* create(VM& vm, JSGlobalObject*, Structure* structure)
     {
         DollarVMAssertScope assertScope;
-        JSTestCustomGetterSetter* result = new (NotNull, allocateCell<JSTestCustomGetterSetter>(vm.heap)) JSTestCustomGetterSetter(vm, structure);
+        JSTestCustomGetterSetter* result = new (NotNull, allocateCell<JSTestCustomGetterSetter>(vm)) JSTestCustomGetterSetter(vm, structure);
         result->finishCreation(vm);
         return result;
     }
@@ -1837,7 +1835,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.destructibleObjectSpace;
+        return &vm.destructibleObjectSpace();
     }
 
     class Client final : public Wasm::StreamingParserClient {
@@ -1867,7 +1865,7 @@ public:
     {
         DollarVMAssertScope assertScope;
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        WasmStreamingParser* result = new (NotNull, allocateCell<WasmStreamingParser>(vm.heap)) WasmStreamingParser(vm, structure);
+        WasmStreamingParser* result = new (NotNull, allocateCell<WasmStreamingParser>(vm)) WasmStreamingParser(vm, structure);
         result->finishCreation(vm);
         return result;
     }
@@ -1932,7 +1930,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        return &vm.destructibleObjectSpace;
+        return &vm.destructibleObjectSpace();
     }
 
     WasmStreamingCompiler(VM& vm, Structure* structure, Wasm::CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject)
@@ -1948,7 +1946,7 @@ public:
         DollarVMAssertScope assertScope;
         JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        WasmStreamingCompiler* result = new (NotNull, allocateCell<WasmStreamingCompiler>(vm.heap)) WasmStreamingCompiler(vm, structure, compilerMode, globalObject, promise, importObject);
+        WasmStreamingCompiler* result = new (NotNull, allocateCell<WasmStreamingCompiler>(vm)) WasmStreamingCompiler(vm, structure, compilerMode, globalObject, promise, importObject);
         result->finishCreation(vm);
         return result;
     }
@@ -2122,11 +2120,16 @@ static JSC_DECLARE_HOST_FUNCTION(functionToCacheableDictionary);
 static JSC_DECLARE_HOST_FUNCTION(functionToUncacheableDictionary);
 static JSC_DECLARE_HOST_FUNCTION(functionIsPrivateSymbol);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpAndResetPasDebugSpectrum);
+static JSC_DECLARE_HOST_FUNCTION(functionMonotonicTimeNow);
+static JSC_DECLARE_HOST_FUNCTION(functionWallTimeNow);
+static JSC_DECLARE_HOST_FUNCTION(functionApproximateTimeNow);
 #if ENABLE(JIT)
 static JSC_DECLARE_HOST_FUNCTION(functionJITSizeStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpJITSizeStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionResetJITSizeStatistics);
 #endif
+
+static JSC_DECLARE_HOST_FUNCTION(functionEnsureArrayStorage);
 
 const ClassInfo JSDollarVM::s_info = { "DollarVM", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
@@ -3579,7 +3582,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGetStructureTransitionList, (JSGlobalObject* gl
 
     for (size_t i = 0; i < structures.size(); ++i) {
         auto* structure = structures[structures.size() - i - 1];
-        result->push(globalObject, JSValue(structure->id()));
+        result->push(globalObject, JSValue(structure->id().bits()));
         RETURN_IF_EXCEPTION(scope, { });
         result->push(globalObject, JSValue(structure->transitionOffset()));
         RETURN_IF_EXCEPTION(scope, { });
@@ -3765,6 +3768,21 @@ JSC_DEFINE_HOST_FUNCTION(functionDumpAndResetPasDebugSpectrum, (JSGlobalObject*,
     return JSValue::encode(jsUndefined());
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionMonotonicTimeNow, (JSGlobalObject*, CallFrame*))
+{
+    return JSValue::encode(jsNumber(MonotonicTime::now().secondsSinceEpoch().milliseconds()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionWallTimeNow, (JSGlobalObject*, CallFrame*))
+{
+    return JSValue::encode(jsNumber(WallTime::now().secondsSinceEpoch().milliseconds()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionApproximateTimeNow, (JSGlobalObject*, CallFrame*))
+{
+    return JSValue::encode(jsNumber(ApproximateTime::now().secondsSinceEpoch().milliseconds()));
+}
+
 #if ENABLE(JIT)
 JSC_DEFINE_HOST_FUNCTION(functionJITSizeStatistics, (JSGlobalObject* globalObject, CallFrame*))
 {
@@ -3806,6 +3824,18 @@ JSC_DEFINE_HOST_FUNCTION(functionResetJITSizeStatistics, (JSGlobalObject* global
     return JSValue::encode(jsUndefined());
 }
 #endif
+
+JSC_DEFINE_HOST_FUNCTION(functionEnsureArrayStorage, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+
+    VM& vm = globalObject->vm();
+
+    JSValue arg = callFrame->argument(0);
+    if (arg.isObject())
+        asObject(arg)->ensureArrayStorage(vm);
+    return JSValue::encode(jsUndefined());
+}
 
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
@@ -3967,13 +3997,19 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "isPrivateSymbol", functionIsPrivateSymbol, 1);
     addFunction(vm, "dumpAndResetPasDebugSpectrum", functionDumpAndResetPasDebugSpectrum, 0);
 
+    addFunction(vm, "monotonicTimeNow", functionMonotonicTimeNow, 0);
+    addFunction(vm, "wallTimeNow", functionWallTimeNow, 0);
+    addFunction(vm, "approximateTimeNow", functionApproximateTimeNow, 0);
+
 #if ENABLE(JIT)
     addFunction(vm, "jitSizeStatistics", functionJITSizeStatistics, 0);
     addFunction(vm, "dumpJITSizeStatistics", functionDumpJITSizeStatistics, 0);
     addFunction(vm, "resetJITSizeStatistics", functionResetJITSizeStatistics, 0);
 #endif
 
-    m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
+    addFunction(vm, "ensureArrayStorage", functionEnsureArrayStorage, 1);
+
+    m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }
 
 void JSDollarVM::addFunction(VM& vm, JSGlobalObject* globalObject, const char* name, NativeFunction function, unsigned arguments)
@@ -3995,7 +4031,7 @@ void JSDollarVM::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     JSDollarVM* thisObject = jsCast<JSDollarVM*>(cell);
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure);
+    visitor.append(thisObject->m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID);
 }
 
 DEFINE_VISIT_CHILDREN(JSDollarVM);

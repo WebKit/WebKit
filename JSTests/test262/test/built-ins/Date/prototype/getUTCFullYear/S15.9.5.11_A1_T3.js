@@ -6,13 +6,13 @@ info: The Date.prototype property "getUTCFullYear" has { DontEnum } attributes
 esid: sec-date.prototype.getutcfullyear
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.prototype.propertyIsEnumerable('getUTCFullYear')) {
-  throw new Test262Error('#1: The Date.prototype.getUTCFullYear property has the attribute DontEnum');
-}
+assert(
+  !Date.prototype.propertyIsEnumerable('getUTCFullYear'),
+  'The value of !Date.prototype.propertyIsEnumerable(\'getUTCFullYear\') is expected to be true'
+);
 
 for (var x in Date.prototype) {
-  if (x === "getUTCFullYear") {
-    throw new Test262Error('#2: The Date.prototype.getUTCFullYear has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "getUTCFullYear", 'The value of x is not "getUTCFullYear"');
 }
+
+// TODO: Convert to verifyProperty() format.

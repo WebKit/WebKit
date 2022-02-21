@@ -85,7 +85,7 @@ private:
 template<typename StringType1, typename StringType2>
 class StringTypeAdapter<StringAppend<StringType1, StringType2>> {
 public:
-    StringTypeAdapter<StringAppend<StringType1, StringType2>>(StringAppend<StringType1, StringType2>& buffer)
+    StringTypeAdapter(StringAppend<StringType1, StringType2>& buffer)
         : m_buffer { buffer }
     {
     }

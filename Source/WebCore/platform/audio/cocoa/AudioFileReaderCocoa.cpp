@@ -40,6 +40,7 @@
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
+#include "SharedBuffer.h"
 #include "VideoTrackPrivate.h"
 #include "WebMAudioUtilitiesCocoa.h"
 #include <AudioToolbox/AudioConverter.h>
@@ -129,6 +130,7 @@ class AudioFileReaderWebMData {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
+    Ref<SharedBuffer> m_buffer;
 #if ENABLE(MEDIA_SOURCE)
     Ref<AudioTrackPrivateWebM> m_track;
 #endif
@@ -180,6 +182,7 @@ bool AudioFileReader::isMaybeWebM(const uint8_t* data, size_t dataSize) const
 
 std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const uint8_t* data, size_t dataSize) const
 {
+    auto buffer = SharedBuffer::create(data, dataSize);
     auto parser = adoptRef(new SourceBufferParserWebM());
     bool error = false;
     std::optional<uint64_t> audioTrackId;
@@ -199,10 +202,10 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
             }
         }
     });
-    parser->setDidProvideMediaDataCallback([&](Ref<MediaSample>&& sample, uint64_t trackID, const String&) {
+    parser->setDidProvideMediaDataCallback([&](Ref<MediaSampleAVFObjC>&& sample, uint64_t trackID, const String&) {
         if (!audioTrackId || trackID != *audioTrackId)
             return;
-        samples.append(static_reference_cast<MediaSampleAVFObjC>(WTFMove(sample)));
+        samples.append(WTFMove(sample));
     });
     parser->setCallOnClientThreadCallback([](auto&& function) {
         function();
@@ -212,12 +215,12 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
             return;
         track->setDiscardPadding(discardPadding);
     });
-    SourceBufferParser::Segment segment({ data, dataSize });
+    SourceBufferParser::Segment segment(Ref { buffer.get() });
     parser->appendData(WTFMove(segment));
     if (!track)
         return nullptr;
     parser->flushPendingAudioBuffers();
-    return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { track.releaseNonNull(), WTFMove(duration), WTFMove(samples) });
+    return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { WTFMove(buffer), track.releaseNonNull(), WTFMove(duration), WTFMove(samples) });
 }
 
 struct PassthroughUserData {
@@ -318,33 +321,45 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
     if (magicCookie && magicCookieSize)
         PAL::AudioConverterSetProperty(converter, kAudioConverterDecompressionMagicCookie, magicCookieSize, magicCookie);
 
-    AudioConverterPrimeInfo primeInfo = { UInt32(m_webmData->m_track->codecDelay().value_or(MediaTime()).toDouble() * outFormat.mSampleRate), 0 };
-    INFO_LOG(LOGIDENTIFIER, "Will drop %u leading frames out of %llu", primeInfo.leadingFrames, numberOfFrames);
-    PAL::AudioConverterSetProperty(converter, kAudioConverterPrimeInfo, sizeof(primeInfo), &primeInfo);
-    UInt32 primeMethod = kConverterPrimeMethod_None;
-    PAL::AudioConverterSetProperty(converter, kAudioConverterPrimeMethod, sizeof(primeMethod), &primeMethod);
-
     AudioBufferListHolder decodedBufferList(inFormat.mChannelsPerFrame);
     if (!decodedBufferList) {
         RELEASE_LOG_FAULT(WebAudio, "Unable to create decoder");
         return { };
     }
 
+    // Instruct the decoder to not drop any frames
+    // (by default the Opus decoder assumes that SampleRate / 400 frames are to be dropped.
+    AudioConverterPrimeInfo primeInfo = { 0, 0 };
+    PAL::AudioConverterSetProperty(converter, kAudioConverterPrimeInfo, sizeof(primeInfo), &primeInfo);
+    UInt32 primeMethod = kConverterPrimeMethod_None;
+    PAL::AudioConverterSetProperty(converter, kAudioConverterPrimeMethod, sizeof(primeMethod), &primeMethod);
+
+    uint32_t leadingTrim = m_webmData->m_track->codecDelay().value_or(MediaTime::zeroTime()).toDouble() * outFormat.mSampleRate;
+    // Calculate the number of trailing frames to be trimmed by rounding to nearest integer while minimizing cummulative rounding errors.
+    uint32_t trailingTrim = (m_webmData->m_track->codecDelay().value_or(MediaTime::zeroTime()) + m_webmData->m_track->discardPadding().value_or(MediaTime::zeroTime())).toDouble() * outFormat.mSampleRate - leadingTrim + 0.5;
+    INFO_LOG(LOGIDENTIFIER, "Will drop ", leadingTrim, " leading and ", trailingTrim, " trailing frames out of ", numberOfFrames);
+
     size_t decodedFrames = 0;
+    size_t totalDecodedFrames = 0;
     OSStatus status;
     for (size_t i = 0; i < m_webmData->m_samples.size(); i++) {
         auto& sample = m_webmData->m_samples[i];
         CMSampleBufferRef sampleBuffer = sample->sampleBuffer();
-        auto buffer = PAL::CMSampleBufferGetDataBuffer(sampleBuffer);
-        ASSERT(PAL::CMBlockBufferIsRangeContiguous(buffer, 0, 0));
-        if (!PAL::CMBlockBufferIsRangeContiguous(buffer, 0, 0)) {
-            RELEASE_LOG_FAULT(WebAudio, "Unable to read sample content (not contiguous)");
-            return { };
+        auto rawBuffer = PAL::CMSampleBufferGetDataBuffer(sampleBuffer);
+        RetainPtr<CMBlockBufferRef> buffer = rawBuffer;
+        // Make sure block buffer is contiguous.
+        if (!PAL::CMBlockBufferIsRangeContiguous(rawBuffer, 0, 0)) {
+            CMBlockBufferRef contiguousBuffer = nullptr;
+            if (PAL::CMBlockBufferCreateContiguous(nullptr, rawBuffer, nullptr, nullptr, 0, 0, 0, &contiguousBuffer) != kCMBlockBufferNoErr) {
+                RELEASE_LOG_FAULT(WebAudio, "failed to create contiguous block buffer");
+                return { };
+            }
+            buffer = adoptCF(contiguousBuffer);
         }
 
-        size_t srcSize = PAL::CMBlockBufferGetDataLength(buffer);
+        size_t srcSize = PAL::CMBlockBufferGetDataLength(buffer.get());
         char* srcData = nullptr;
-        if (PAL::CMBlockBufferGetDataPointer(buffer, 0, nullptr, nullptr, &srcData) != noErr) {
+        if (PAL::CMBlockBufferGetDataPointer(buffer.get(), 0, nullptr, nullptr, &srcData) != noErr) {
             RELEASE_LOG_FAULT(WebAudio, "Unable to retrieve data");
             return { };
         }
@@ -357,12 +372,14 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
 
         do {
             if (numberOfFrames < decodedFrames) {
-                RELEASE_LOG_FAULT(WebAudio, "Decoded more frames than first calculated");
+                RELEASE_LOG_FAULT(WebAudio, "Decoded more frames than first calculated, no available space left");
                 return { };
             }
             // in: the max number of packets we can handle from the decoder.
             // out: the number of packets the decoder is actually returning.
-            UInt32 numFrames = std::min<uint32_t>(std::numeric_limits<int32_t>::max() / sizeof(float), numberOfFrames - decodedFrames);
+            // The AudioConverter will sometimes pad with trailing silence if we set the free space to what it actually is (numberOfFrames - decodedFrames).
+            // So we set it to what there is left to decode instead.
+            UInt32 numFrames = std::min<uint32_t>(std::numeric_limits<int32_t>::max() / sizeof(float), numberOfFrames - totalDecodedFrames);
 
             for (UInt32 i = 0; i < inFormat.mChannelsPerFrame; i++) {
                 decodedBufferList->mBuffers[i].mNumberChannels = 1;
@@ -374,12 +391,19 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
                 RELEASE_LOG_FAULT(WebAudio, "Error decoding data");
                 return { };
             }
+            totalDecodedFrames += numFrames;
+            if (leadingTrim > 0) {
+                UInt32 toTrim = std::min(leadingTrim, numFrames);
+                for (UInt32 i = 0; i < outFormat.mChannelsPerFrame; i++)
+                    memmove(decodedBufferList->mBuffers[i].mData, static_cast<float*>(decodedBufferList->mBuffers[i].mData) + toTrim, (numFrames - toTrim) * sizeof(float));
+                leadingTrim -= toTrim;
+                numFrames -= toTrim;
+            }
             decodedFrames += numFrames;
         } while (status != kNoMoreDataErr && status != noErr);
     }
-    size_t paddingFrames = m_webmData->m_track->discardPadding().value_or(MediaTime()).toDouble() * outFormat.mSampleRate;
-    if (decodedFrames > paddingFrames)
-        return decodedFrames - paddingFrames;
+    if (decodedFrames > trailingTrim)
+        return decodedFrames - trailingTrim;
     return 0;
 }
 #endif
@@ -497,7 +521,7 @@ AudioStreamBasicDescription AudioFileReader::clientDataFormat(const AudioStreamB
     const int bytesPerFloat = sizeof(Float32);
     const int bitsPerByte = 8;
     outFormat.mFormatID = kAudioFormatLinearPCM;
-    outFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked | kAudioFormatFlagIsNonInterleaved;
+    outFormat.mFormatFlags = static_cast<AudioFormatFlags>(kAudioFormatFlagsNativeFloatPacked) | static_cast<AudioFormatFlags>(kAudioFormatFlagIsNonInterleaved);
     outFormat.mBytesPerPacket = outFormat.mBytesPerFrame = bytesPerFloat;
     outFormat.mFramesPerPacket = 1;
     outFormat.mBitsPerChannel = bitsPerByte * bytesPerFloat;

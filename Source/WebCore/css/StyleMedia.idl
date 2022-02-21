@@ -28,7 +28,6 @@
 [
     LegacyNoInterfaceObject,
     GenerateIsReachable=ReachableFromDOMWindow,
-    ImplementationLacksVTable,
 ] interface StyleMedia {
     readonly attribute DOMString type;
 

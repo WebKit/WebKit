@@ -64,7 +64,7 @@ class TextureStorage9 : public TextureStorage
 
     Renderer9 *mRenderer;
 
-    TextureStorage9(Renderer9 *renderer, DWORD usage);
+    TextureStorage9(Renderer9 *renderer, DWORD usage, const std::string &label);
 
   private:
     const DWORD mD3DUsage;
@@ -74,13 +74,14 @@ class TextureStorage9 : public TextureStorage
 class TextureStorage9_2D : public TextureStorage9
 {
   public:
-    TextureStorage9_2D(Renderer9 *renderer, SwapChain9 *swapchain);
+    TextureStorage9_2D(Renderer9 *renderer, SwapChain9 *swapchain, const std::string &label);
     TextureStorage9_2D(Renderer9 *renderer,
                        GLenum internalformat,
                        bool renderTarget,
                        GLsizei width,
                        GLsizei height,
-                       int levels);
+                       int levels,
+                       const std::string &label);
     ~TextureStorage9_2D() override;
 
     angle::Result getSurfaceLevel(const gl::Context *context,
@@ -111,7 +112,10 @@ class TextureStorage9_2D : public TextureStorage9
 class TextureStorage9_EGLImage final : public TextureStorage9
 {
   public:
-    TextureStorage9_EGLImage(Renderer9 *renderer, EGLImageD3D *image, RenderTarget9 *renderTarget9);
+    TextureStorage9_EGLImage(Renderer9 *renderer,
+                             EGLImageD3D *image,
+                             RenderTarget9 *renderTarget9,
+                             const std::string &label);
     ~TextureStorage9_EGLImage() override;
 
     angle::Result getSurfaceLevel(const gl::Context *context,
@@ -146,7 +150,9 @@ class TextureStorage9_Cube : public TextureStorage9
                          bool renderTarget,
                          int size,
                          int levels,
-                         bool hintLevelZeroOnly);
+                         bool hintLevelZeroOnly,
+                         const std::string &label);
+
     ~TextureStorage9_Cube() override;
 
     angle::Result getSurfaceLevel(const gl::Context *context,

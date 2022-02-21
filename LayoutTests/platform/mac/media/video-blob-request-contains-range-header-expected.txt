@@ -1,0 +1,10 @@
+
+
+== Running test suite: Media.BlobRequest
+-- Running test case: Media.BlobRequest.RangeHeader
+Running setup...
+Triggering load...
+Load finished...
+PASS: Range request header should not be undefined.
+PASS: Range request header should not be null.
+

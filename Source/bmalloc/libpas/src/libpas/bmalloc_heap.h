@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,10 +52,51 @@ PAS_API void* bmalloc_try_reallocate(void* old_ptr, size_t new_size,
 PAS_API void* bmalloc_reallocate(void* old_ptr, size_t new_size,
                                  pas_reallocate_free_mode free_mode);
 
-PAS_API void* bmalloc_try_iso_allocate(pas_heap_ref* heap_ref);
-PAS_API void* bmalloc_iso_allocate(pas_heap_ref* heap_ref);
+PAS_BAPI void* bmalloc_try_iso_allocate(pas_heap_ref* heap_ref);
+PAS_BAPI void* bmalloc_iso_allocate(pas_heap_ref* heap_ref);
+
+PAS_BAPI void* bmalloc_try_iso_allocate_array_by_size(pas_heap_ref* heap_ref, size_t size);
+PAS_BAPI void* bmalloc_iso_allocate_array_by_size(pas_heap_ref* heap_ref, size_t size);
+
+PAS_BAPI void* bmalloc_try_iso_allocate_zeroed_array_by_size(pas_heap_ref* heap_ref, size_t size);
+PAS_BAPI void* bmalloc_iso_allocate_zeroed_array_by_size(pas_heap_ref* heap_ref, size_t size);
+
+PAS_BAPI void* bmalloc_try_iso_allocate_array_by_size_with_alignment(
+    pas_heap_ref* heap_ref, size_t size, size_t alignment);
+PAS_BAPI void* bmalloc_iso_allocate_array_by_size_with_alignment(
+    pas_heap_ref* heap_ref, size_t size, size_t alignment);
+
+PAS_BAPI void* bmalloc_try_iso_reallocate_array_by_size(pas_heap_ref* heap_ref, void* ptr, size_t size);
+PAS_BAPI void* bmalloc_iso_reallocate_array_by_size(pas_heap_ref* heap_ref, void* ptr, size_t size);
+
+PAS_API void* bmalloc_try_iso_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count);
+PAS_API void* bmalloc_iso_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count);
+
+PAS_API void* bmalloc_try_iso_allocate_array_by_count_with_alignment(
+    pas_heap_ref* heap_ref, size_t count, size_t alignment);
+PAS_API void* bmalloc_iso_allocate_array_by_count_with_alignment(
+    pas_heap_ref* heap_ref, size_t count, size_t alignment);
+
+PAS_API void* bmalloc_try_iso_reallocate_array_by_count(pas_heap_ref* heap_ref, void* ptr, size_t count);
+PAS_API void* bmalloc_iso_reallocate_array_by_count(pas_heap_ref* heap_ref, void* ptr, size_t count);
 
 PAS_API pas_heap* bmalloc_heap_ref_get_heap(pas_heap_ref* heap_ref);
+
+PAS_BAPI void* bmalloc_try_allocate_flex(pas_primitive_heap_ref* heap_ref, size_t size);
+PAS_BAPI void* bmalloc_allocate_flex(pas_primitive_heap_ref* heap_ref, size_t size);
+
+PAS_BAPI void* bmalloc_try_allocate_zeroed_flex(pas_primitive_heap_ref* heap_ref, size_t size);
+PAS_BAPI void* bmalloc_allocate_zeroed_flex(pas_primitive_heap_ref* heap_ref, size_t size);
+
+PAS_API void* bmalloc_try_allocate_flex_with_alignment(
+    pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment);
+PAS_API void* bmalloc_allocate_flex_with_alignment(
+    pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment);
+
+PAS_BAPI void* bmalloc_try_reallocate_flex(pas_primitive_heap_ref* heap_ref, void* old_ptr, size_t new_size);
+PAS_BAPI void* bmalloc_reallocate_flex(pas_primitive_heap_ref* heap_ref, void* old_ptr, size_t new_size);
+
+PAS_API pas_heap* bmalloc_flex_heap_ref_get_heap(pas_primitive_heap_ref* heap_ref);
 
 PAS_API void* bmalloc_try_allocate_auxiliary(pas_primitive_heap_ref* heap_ref,
                                              size_t size);
@@ -83,11 +124,17 @@ PAS_API void* bmalloc_reallocate_auxiliary(void* old_ptr,
                                            size_t new_size,
                                            pas_reallocate_free_mode free_mode);
 
+PAS_API pas_heap* bmalloc_auxiliary_heap_ref_get_heap(pas_primitive_heap_ref* heap_ref);
+
 PAS_API void bmalloc_deallocate(void*);
 
 PAS_API pas_heap* bmalloc_force_auxiliary_heap_into_reserved_memory(pas_primitive_heap_ref* heap_ref,
                                                                     uintptr_t begin,
                                                                     uintptr_t end);
+
+PAS_BAPI size_t bmalloc_heap_ref_get_type_size(pas_heap_ref* heap_ref);
+PAS_API pas_heap* bmalloc_get_heap(void* ptr);
+PAS_BAPI size_t bmalloc_get_allocation_size(void* ptr);
 
 PAS_END_EXTERN_C;
 

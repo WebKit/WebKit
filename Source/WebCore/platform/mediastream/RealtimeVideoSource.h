@@ -38,12 +38,12 @@ class RealtimeVideoSource final
     , public RealtimeMediaSource::Observer
     , public RealtimeMediaSource::VideoSampleObserver {
 public:
-    static Ref<RealtimeVideoSource> create(Ref<RealtimeVideoCaptureSource>&& source) { return adoptRef(*new RealtimeVideoSource(WTFMove(source))); }
+    static Ref<RealtimeVideoSource> create(Ref<RealtimeVideoCaptureSource>&& source, bool shouldUseIOSurface = true) { return adoptRef(*new RealtimeVideoSource(WTFMove(source), shouldUseIOSurface)); }
 
     Vector<VideoPresetData> presetsData() { return m_source->presetsData(); }
 
 private:
-    WEBCORE_EXPORT explicit RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&&);
+    WEBCORE_EXPORT RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&&, bool shouldUseIOSurface);
     ~RealtimeVideoSource();
 
     // RealtimeMediaSource
@@ -72,7 +72,7 @@ private:
     bool preventSourceFromStopping() final;
 
     // RealtimeMediaSource::VideoSampleObserver
-    void videoSampleAvailable(MediaSample&) final;
+    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
 
 #if PLATFORM(COCOA)
     RefPtr<MediaSample> adaptVideoSample(MediaSample&);
@@ -86,6 +86,7 @@ private:
     RealtimeMediaSourceSettings m_currentSettings;
 #if PLATFORM(COCOA)
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
+    bool m_shouldUseIOSurface { true };
 #endif
     size_t m_frameDecimation { 1 };
     size_t m_frameDecimationCounter { 0 };

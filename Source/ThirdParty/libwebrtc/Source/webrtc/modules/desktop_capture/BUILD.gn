@@ -11,11 +11,6 @@ import("//build/config/ui.gni")
 import("//tools/generate_stubs/rules.gni")
 import("../../webrtc.gni")
 
-if (rtc_use_pipewire) {
-  assert(rtc_pipewire_version == "0.2" || rtc_pipewire_version == "0.3",
-         "Unsupported PipeWire version")
-}
-
 use_desktop_capture_differ_sse2 = current_cpu == "x86" || current_cpu == "x64"
 
 config("x11_config") {
@@ -82,9 +77,6 @@ if (rtc_include_tests) {
         "window_finder_unittest.cc",
       ]
       public_configs = [ ":x11_config" ]
-      if (is_win) {
-        deps += [ "../../rtc_base:win32" ]
-      }
     }
   }
 
@@ -223,19 +215,27 @@ if (is_linux || is_chromeos) {
       ]
     }
 
-    if (rtc_pipewire_version == "0.3") {
-      pkg_config("pipewire") {
-        packages = [ "libpipewire-0.3" ]
-        if (!rtc_link_pipewire) {
-          ignore_libs = true
-        }
+    pkg_config("pipewire") {
+      packages = [ "libpipewire-0.3" ]
+      if (!rtc_link_pipewire) {
+        ignore_libs = true
       }
-    } else {
-      pkg_config("pipewire") {
-        packages = [ "libpipewire-0.2" ]
-        if (!rtc_link_pipewire) {
-          ignore_libs = true
-        }
+    }
+
+    pkg_config("gbm") {
+      packages = [ "gbm" ]
+    }
+    pkg_config("egl") {
+      packages = [ "egl" ]
+    }
+    pkg_config("epoxy") {
+      packages = [ "epoxy" ]
+      ignore_libs = true
+    }
+    pkg_config("libdrm") {
+      packages = [ "libdrm" ]
+      if (!rtc_link_pipewire) {
+        ignore_libs = true
       }
     }
 
@@ -246,6 +246,7 @@ if (is_linux || is_chromeos) {
         configs = [
           "../../:common_config",
           ":pipewire",
+          ":libdrm",
         ]
         deps = [ "../../rtc_base" ]
         extra_header = "linux/pipewire_stub_header.fragment"
@@ -253,11 +254,10 @@ if (is_linux || is_chromeos) {
         logging_include = "rtc_base/logging.h"
         output_name = "linux/pipewire_stubs"
         path_from_source = "modules/desktop_capture/linux"
-        if (rtc_pipewire_version == "0.3") {
-          sigs = [ "linux/pipewire03.sigs" ]
-        } else {
-          sigs = [ "linux/pipewire02.sigs" ]
-        }
+        sigs = [
+          "linux/pipewire.sigs",
+          "linux/drm.sigs",
+        ]
       }
     }
 
@@ -533,7 +533,10 @@ rtc_library("desktop_capture_generic") {
       "d3d11.lib",
       "dxgi.lib",
     ]
-    deps += [ "../../rtc_base:win32" ]
+    deps += [
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:win32",
+    ]
   }
 
   absl_deps = [
@@ -560,17 +563,25 @@ rtc_library("desktop_capture_generic") {
     sources += [
       "linux/base_capturer_pipewire.cc",
       "linux/base_capturer_pipewire.h",
+      "linux/egl_dmabuf.cc",
+      "linux/egl_dmabuf.h",
     ]
 
     configs += [
       ":pipewire_config",
       ":gio",
       ":pipewire",
+      ":gbm",
+      ":egl",
+      ":epoxy",
+      ":libdrm",
     ]
 
     if (!rtc_link_pipewire) {
       deps += [ ":pipewire_stubs" ]
     }
+
+    deps += [ "../../rtc_base:sanitizer" ]
   }
 
   if (rtc_enable_win_wgc) {

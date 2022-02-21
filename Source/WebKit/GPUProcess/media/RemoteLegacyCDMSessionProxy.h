@@ -37,7 +37,7 @@
 namespace WebCore {
 class LegacyCDM;
 class LegacyCDMSession;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 }
 
 namespace IPC {

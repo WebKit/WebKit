@@ -32,6 +32,7 @@
 #include "FloatRect.h"
 #include "HTMLMediaElementEnums.h"
 #include "MediaPlayerEnums.h"
+#include "MediaPlayerIdentifier.h"
 #include "PlatformLayer.h"
 #include "VideoFullscreenModel.h"
 #include <wtf/Function.h>
@@ -56,12 +57,12 @@ public:
     WEBCORE_EXPORT void setVideoElement(HTMLVideoElement*);
     HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
     WEBCORE_EXPORT RetainPtr<PlatformLayer> createVideoFullscreenLayer();
-    WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler = [] { });
+    WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler = [] { });
     WEBCORE_EXPORT void willExitFullscreen();
-    WEBCORE_EXPORT void waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler = [] { });
+    WEBCORE_EXPORT void waitForPreparedForInlineThen(Function<void()>&& completionHandler = [] { });
     
     WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) override;
-    void updateForEventName(const WTF::AtomString&);
+    void updateForEventName(const AtomString&);
     bool operator==(const EventListener& rhs) const override { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
 
     WEBCORE_EXPORT void addClient(VideoFullscreenModelClient&) override;
@@ -81,6 +82,7 @@ protected:
 private:
     void setHasVideo(bool);
     void setVideoDimensions(const FloatSize&);
+    void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
 
     void willEnterPictureInPicture() override;
     void didEnterPictureInPicture() override;
@@ -88,8 +90,8 @@ private:
     void willExitPictureInPicture() override;
     void didExitPictureInPicture() override;
 
-    static const Vector<WTF::AtomString>& observedEventNames();
-    const WTF::AtomString& eventNameAll();
+    static Span<const AtomString> observedEventNames();
+    const AtomString& eventNameAll();
 
     RefPtr<HTMLVideoElement> m_videoElement;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
@@ -100,6 +102,7 @@ private:
     FloatRect m_videoFrame;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
+    std::optional<MediaPlayerIdentifier> m_playerIdentifier;
 };
 
 }

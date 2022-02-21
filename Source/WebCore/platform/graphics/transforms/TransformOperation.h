@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CompositeOperation.h"
 #include "FloatSize.h"
 #include "TransformationMatrix.h"
 #include <wtf/Forward.h>
@@ -71,6 +72,10 @@ public:
 
     OperationType type() const { return m_type; }
     bool isSameType(const TransformOperation& other) const { return type() == other.type(); }
+
+    virtual OperationType primitiveType() const { return m_type; }
+    std::optional<OperationType> sharedPrimitiveType(OperationType other) const;
+    std::optional<OperationType> sharedPrimitiveType(const TransformOperation* other) const;
 
     virtual bool isAffectedByTransformOrigin() const { return false; }
     

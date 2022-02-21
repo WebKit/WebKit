@@ -24,9 +24,10 @@
 #include "DOMObjectCache.h"
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
-#include "GObjectEventListener.h"
+#include <WebCore/ElementInlines.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/JSExecState.h>
+#include "GObjectEventListener.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMEventPrivate.h"
 #include "WebKitDOMEventTarget.h"
@@ -688,23 +689,15 @@ void webkit_dom_html_object_element_set_type_attr(WebKitDOMHTMLObjectElement* se
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, convertedValue);
 }
 
-gchar* webkit_dom_html_object_element_get_use_map(WebKitDOMHTMLObjectElement* self)
+gchar* webkit_dom_html_object_element_get_use_map(WebKitDOMHTMLObjectElement*)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_OBJECT_ELEMENT(self), 0);
-    WebCore::HTMLObjectElement* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->attributeWithoutSynchronization(WebCore::HTMLNames::usemapAttr));
-    return result;
+    g_warning("%s: <object usemap> has been removed from HTML spec, this function does nothing.", __func__);
+    return nullptr;
 }
 
-void webkit_dom_html_object_element_set_use_map(WebKitDOMHTMLObjectElement* self, const gchar* value)
+void webkit_dom_html_object_element_set_use_map(WebKitDOMHTMLObjectElement*, const gchar*)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_HTML_OBJECT_ELEMENT(self));
-    g_return_if_fail(value);
-    WebCore::HTMLObjectElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::usemapAttr, convertedValue);
+    g_warning("%s: <object usemap> has been removed from HTML spec, this function does nothing.", __func__);
 }
 
 glong webkit_dom_html_object_element_get_vspace(WebKitDOMHTMLObjectElement* self)

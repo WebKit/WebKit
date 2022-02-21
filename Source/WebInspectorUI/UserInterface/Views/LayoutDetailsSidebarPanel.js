@@ -29,6 +29,7 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     {
         super("layout-details", WI.UIString("Layout", "Layout @ Styles Sidebar", "Title of the CSS style panel."));
 
+        this._flexNodeSet = new Set;
         this._gridNodeSet = new Set;
         this._nodeStyles = null;
         this.element.classList.add("layout-panel");
@@ -82,7 +83,7 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
 
         WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
 
-        this._refreshGridNodeSet();
+        this._refreshNodeSets();
     }
 
     detached()
@@ -97,32 +98,52 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
 
     initialLayout()
     {
-        this._gridDetailsSectionRow = new WI.DetailsSectionRow(WI.UIString("No CSS Grid Contexts", "No CSS Grid Contexts @ Layout Details Sidebar Panel", "Message shown when there are no CSS Grid contexts on the inspected page."));
+        this._gridDetailsSectionRow = new WI.DetailsSectionRow(WI.UIString("No CSS Grid Containers", "No CSS Grid Containers @ Layout Details Sidebar Panel", "Message shown when there are no CSS Grid containers on the inspected page."));
         let gridGroup = new WI.DetailsSectionGroup([this._gridDetailsSectionRow]);
         let gridDetailsSection = new WI.DetailsSection("layout-css-grid", WI.UIString("Grid", "Grid @ Elements details sidebar", "CSS Grid layout section name"), [gridGroup]);
         this.contentView.element.appendChild(gridDetailsSection.element);
 
-        this._gridSection = new WI.CSSGridSection;
+        this._gridSection = new WI.CSSGridNodeOverlayListSection;
+
+        this._flexDetailsSectionRow = new WI.DetailsSectionRow(WI.UIString("No CSS Flex Containers", "No CSS Flex Containers @ Layout Details Sidebar Panel", "Message shown when there are no CSS Flex containers on the inspected page."));
+        let flexDetailsSection = new WI.DetailsSection("layout-css-flexbox", WI.UIString("Flexbox", "Flexbox @ Elements details sidebar", "Flexbox layout section name"), [new WI.DetailsSectionGroup([this._flexDetailsSectionRow])]);
+        this.contentView.element.appendChild(flexDetailsSection.element);
+
+        this._flexSection = new WI.CSSFlexNodeOverlayListSection;
     }
 
     layout()
     {
         super.layout();
 
-        if (!this._gridNodeSet.size) {
-            this._gridDetailsSectionRow.showEmptyMessage();
-
-            if (this._gridSection.isAttached)
-                this.removeSubview(this._gridSection);
-
-        } else {
+        if (this._gridNodeSet.size) {
             this._gridDetailsSectionRow.hideEmptyMessage();
             this._gridDetailsSectionRow.element.appendChild(this._gridSection.element);
 
             if (!this._gridSection.isAttached)
                 this.addSubview(this._gridSection);
 
-            this._gridSection.gridNodeSet = this._gridNodeSet;
+            this._gridSection.nodeSet = this._gridNodeSet;
+        } else {
+            this._gridDetailsSectionRow.showEmptyMessage();
+
+            if (this._gridSection.isAttached)
+                this.removeSubview(this._gridSection);
+        }
+
+        if (this._flexNodeSet.size) {
+            this._flexDetailsSectionRow.hideEmptyMessage();
+            this._flexDetailsSectionRow.element.appendChild(this._flexSection.element);
+
+            if (!this._flexSection.isAttached)
+                this.addSubview(this._flexSection);
+
+            this._flexSection.nodeSet = this._flexNodeSet;
+        } else {
+            this._flexDetailsSectionRow.showEmptyMessage();
+
+            if (this._flexSection.isAttached)
+                this.removeSubview(this._flexSection);
         }
     }
 
@@ -131,10 +152,22 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     _handleLayoutContextTypeChanged(event)
     {
         let domNode = event.target;
-        if (domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid)
+
+        // A node may switch layout context type between grid and flex.
+        // Remove it from both node sets in case it was previously added.
+        // It is also the default case when the layout context type switches to something unknown.
+        this._flexNodeSet.delete(domNode);
+        this._gridNodeSet.delete(domNode);
+
+        switch (domNode.layoutContextType) {
+        case WI.DOMNode.LayoutContextType.Grid:
             this._gridNodeSet.add(domNode);
-        else
-            this._gridNodeSet.delete(domNode);
+            break;
+
+        case WI.DOMNode.LayoutContextType.Flex:
+            this._flexNodeSet.add(domNode);
+            break;
+        }
 
         this.needsLayout();
     }
@@ -159,8 +192,9 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
             this._nodeStyles?.refresh();
     }
 
-    _refreshGridNodeSet()
+    _refreshNodeSets()
     {
         this._gridNodeSet = new Set(WI.domManager.nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid));
+        this._flexNodeSet = new Set(WI.domManager.nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Flex));
     }
 };

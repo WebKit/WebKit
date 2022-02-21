@@ -31,8 +31,8 @@ function runTest(button, expected = {}) {
       addr.addressLine instanceof Array,
       "Expected addressLine to be an array"
     );
-    assert_throws(
-      new TypeError(),
+    assert_throws_js(
+      TypeError,
       () => {
         addr.addressLine.push("this must throw");
       },
@@ -59,8 +59,8 @@ function runTest(button, expected = {}) {
     }
     assert_equals(jsonAddressEntries.length, expectedEntries.length);
     // Check that .toJSON() created a frozen array
-    assert_throws(
-      new TypeError(),
+    assert_throws_js(
+      TypeError,
       () => {
         jsonAddress.addressLine.push("this must throw");
       },

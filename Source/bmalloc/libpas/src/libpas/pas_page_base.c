@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,23 @@
 
 #include "pas_bitfit_page.h"
 #include "pas_segregated_page.h"
+
+size_t pas_page_base_header_size(pas_page_base_config* config,
+                                 pas_page_kind page_kind)
+{
+    switch (config->page_config_kind) {
+    case pas_page_config_kind_segregated:
+        PAS_ASSERT(pas_page_kind_get_config_kind(page_kind) == pas_page_config_kind_segregated);
+        return pas_segregated_page_header_size(
+            *pas_page_base_config_get_segregated(config),
+            pas_page_kind_get_segregated_role(page_kind));
+    case pas_page_config_kind_bitfit:
+        PAS_ASSERT(pas_page_kind_get_config_kind(page_kind) == pas_page_config_kind_bitfit);
+        return pas_bitfit_page_header_size(*pas_page_base_config_get_bitfit(config));
+    }
+    PAS_ASSERT(!"Should not be reached");
+    return 0;
+}
 
 pas_page_base_config* pas_page_base_get_config(pas_page_base* page)
 {

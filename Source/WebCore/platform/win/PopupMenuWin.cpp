@@ -97,7 +97,7 @@ static void translatePoint(LPARAM& lParam, HWND from, HWND to)
     lParam = MAKELPARAM(pt.x, pt.y);
 }
 
-static FloatRect monitorFromHwnd(HWND hwnd)
+static IntRect monitorFromHwnd(HWND hwnd)
 {
     HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
     MONITORINFOEX monitorInfo;
@@ -142,7 +142,7 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
 
     if (!m_scrollbar && visibleItems() < client()->listSize()) {
         // We need a scroll bar
-        m_scrollbar = client()->createScrollbar(*this, VerticalScrollbar, ScrollbarControlSize::Small);
+        m_scrollbar = client()->createScrollbar(*this, ScrollbarOrientation::Vertical, ScrollbarControlSize::Small);
         m_scrollbar->styleChanged();
     }
 
@@ -305,7 +305,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
     } else
         ::MoveWindow(m_popup, absoluteScreenCoords.x(), absoluteScreenCoords.y(), absoluteScreenCoords.width(), absoluteScreenCoords.height(), false);
 
-    FloatRect screen = monitorFromHwnd(m_popup);
+    IntRect screen = monitorFromHwnd(m_popup);
     
     // Now we determine the actual location and measurements of the popup itself.
     // r is in absolute document coordinates, but we want to be in screen coordinates.
@@ -330,7 +330,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
 
     // First, determine the popup's height
     int itemCount = client()->listSize();
-    m_itemHeight = m_font.fontMetrics().height() + optionSpacingMiddle;
+    m_itemHeight = m_font.metricsOfPrimaryFont().height() + optionSpacingMiddle;
 
     int naturalHeight = m_itemHeight * itemCount;
     int popupHeight = std::min(maxPopupHeight, naturalHeight);
@@ -555,12 +555,12 @@ bool PopupMenuWin::scrollToRevealSelection()
     int index = focusedIndex();
 
     if (index < m_scrollOffset) {
-        ScrollableArea::scrollToOffsetWithoutAnimation(VerticalScrollbar, index);
+        ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation::Vertical, index);
         return true;
     }
 
     if (index >= m_scrollOffset + visibleItems()) {
-        ScrollableArea::scrollToOffsetWithoutAnimation(VerticalScrollbar, index - visibleItems() + 1);
+        ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation::Vertical, index - visibleItems() + 1);
         return true;
     }
 
@@ -668,7 +668,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
                 if (RenderTheme::singleton().popupOptionSupportsTextIndent())
                     textX -= minimumIntValueForLength(itemStyle.textIndent(), itemRect.width());
             }
-            int textY = itemRect.y() + itemFont.fontMetrics().ascent() + (itemRect.height() - itemFont.fontMetrics().height()) / 2;
+            int textY = itemRect.y() + itemFont.metricsOfPrimaryFont().ascent() + (itemRect.height() - itemFont.metricsOfPrimaryFont().height()) / 2;
             context.drawBidiText(itemFont, textRun, IntPoint(textX, textY));
         }
     }
@@ -1060,7 +1060,7 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                     --i;
             }
 
-            ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollByLine, abs(i));
+            ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollGranularity::Line, abs(i));
             break;
         }
 

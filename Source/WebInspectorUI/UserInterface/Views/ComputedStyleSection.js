@@ -34,7 +34,7 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
 
         this._delegate = delegate;
         this._style = null;
-        this._styleTraces = [];
+        this._styleTraces = null;
         this._propertyViews = [];
 
         this._showsImplicitProperties = false;

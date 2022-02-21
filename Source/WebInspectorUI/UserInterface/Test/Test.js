@@ -125,7 +125,7 @@ WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
     // FIXME: This slows down test debug logging considerably.
     if (!WI.__didPerformCSSInitialization && target.hasDomain("CSS")) {
         WI.__didPerformCSSInitialization = true;
-        WI.CSSCompletions.initializeCSSCompletions(target);
+        WI.cssManager.initializeCSSPropertyNameCompletions(target);
     }
 };
 

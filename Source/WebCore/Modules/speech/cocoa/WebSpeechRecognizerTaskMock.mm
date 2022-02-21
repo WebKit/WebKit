@@ -36,6 +36,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithIdentifier:(SpeechRecognitionConnectionClientIdentifier)identifier locale:(NSString*)localeIdentifier doMultipleRecognitions:(BOOL)continuous reportInterimResults:(BOOL)interimResults maxAlternatives:(unsigned long)alternatives delegateCallback:(void(^)(const SpeechRecognitionUpdate&))callback
 {
+    UNUSED_PARAM(localeIdentifier);
+    UNUSED_PARAM(interimResults);
+    UNUSED_PARAM(alternatives);
+
     if (!(self = [super init]))
         return nil;
 
@@ -51,6 +55,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)audioSamplesAvailable:(CMSampleBufferRef)sampleBuffer
 {
+    UNUSED_PARAM(sampleBuffer);
+    
     if (!_hasSentSpeechStart) {
         _hasSentSpeechStart = true;
         _delegateCallback(SpeechRecognitionUpdate::create(_identifier, SpeechRecognitionUpdateType::SpeechStart));

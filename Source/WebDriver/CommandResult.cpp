@@ -145,7 +145,9 @@ unsigned CommandResult::httpStatusCode() const
     case ErrorCode::NoSuchElement:
     case ErrorCode::NoSuchFrame:
     case ErrorCode::NoSuchWindow:
+    case ErrorCode::NoSuchShadowRoot:
     case ErrorCode::StaleElementReference:
+    case ErrorCode::DetachedShadowRoot:
     case ErrorCode::InvalidSessionID:
     case ErrorCode::UnknownCommand:
         return 404;
@@ -176,6 +178,8 @@ String CommandResult::errorString() const
         return "element not selectable"_s;
     case ErrorCode::ElementNotInteractable:
         return "element not interactable"_s;
+    case ErrorCode::DetachedShadowRoot:
+        return "detached shadow root"_s;
     case ErrorCode::InvalidArgument:
         return "invalid argument"_s;
     case ErrorCode::InvalidElementState:
@@ -194,6 +198,8 @@ String CommandResult::errorString() const
         return "no such element"_s;
     case ErrorCode::NoSuchFrame:
         return "no such frame"_s;
+    case ErrorCode::NoSuchShadowRoot:
+        return "no such shadow root"_s;
     case ErrorCode::NoSuchWindow:
         return "no such window"_s;
     case ErrorCode::ScriptTimeout:

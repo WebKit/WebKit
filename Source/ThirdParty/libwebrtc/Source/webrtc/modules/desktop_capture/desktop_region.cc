@@ -10,10 +10,10 @@
 
 #include "modules/desktop_capture/desktop_region.h"
 
-#include <assert.h>
-
 #include <algorithm>
 #include <utility>
+
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -90,26 +90,26 @@ void DesktopRegion::AddRect(const DesktopRect& rect) {
   if (rect.is_empty())
     return;
 
-  // Top of the part of the |rect| that hasn't been inserted yet. Increased as
-  // we iterate over the rows until it reaches |rect.bottom()|.
+  // Top of the part of the `rect` that hasn't been inserted yet. Increased as
+  // we iterate over the rows until it reaches `rect.bottom()`.
   int top = rect.top();
 
-  // Iterate over all rows that may intersect with |rect| and add new rows when
+  // Iterate over all rows that may intersect with `rect` and add new rows when
   // necessary.
   Rows::iterator row = rows_.upper_bound(top);
   while (top < rect.bottom()) {
     if (row == rows_.end() || top < row->second->top) {
-      // If |top| is above the top of the current |row| then add a new row above
+      // If `top` is above the top of the current `row` then add a new row above
       // the current one.
       int32_t bottom = rect.bottom();
       if (row != rows_.end() && row->second->top < bottom)
         bottom = row->second->top;
       row = rows_.insert(row, Rows::value_type(bottom, new Row(top, bottom)));
     } else if (top > row->second->top) {
-      // If the |top| falls in the middle of the |row| then split |row| into
-      // two, at |top|, and leave |row| referring to the lower of the two,
+      // If the `top` falls in the middle of the `row` then split `row` into
+      // two, at `top`, and leave `row` referring to the lower of the two,
       // ready to insert a new span into.
-      assert(top <= row->second->bottom);
+      RTC_DCHECK_LE(top, row->second->bottom);
       Rows::iterator new_row = rows_.insert(
           row, Rows::value_type(top, new Row(row->second->top, top)));
       row->second->top = top;
@@ -117,8 +117,8 @@ void DesktopRegion::AddRect(const DesktopRect& rect) {
     }
 
     if (rect.bottom() < row->second->bottom) {
-      // If the bottom of the |rect| falls in the middle of the |row| split
-      // |row| into two, at |top|, and leave |row| referring to the upper of
+      // If the bottom of the `rect` falls in the middle of the `row` split
+      // `row` into two, at `top`, and leave `row` referring to the upper of
       // the two, ready to insert a new span into.
       Rows::iterator new_row = rows_.insert(
           row, Rows::value_type(rect.bottom(), new Row(top, rect.bottom())));
@@ -148,13 +148,13 @@ void DesktopRegion::AddRects(const DesktopRect* rects, int count) {
 }
 
 void DesktopRegion::MergeWithPrecedingRow(Rows::iterator row) {
-  assert(row != rows_.end());
+  RTC_DCHECK(row != rows_.end());
 
   if (row != rows_.begin()) {
     Rows::iterator previous_row = row;
     previous_row--;
 
-    // If |row| and |previous_row| are next to each other and contain the same
+    // If `row` and `previous_row` are next to each other and contain the same
     // set of spans then they can be merged.
     if (previous_row->second->bottom == row->second->top &&
         previous_row->second->spans == row->second->spans) {
@@ -185,20 +185,20 @@ void DesktopRegion::Intersect(const DesktopRegion& region1,
     return;
 
   while (it1 != end1 && it2 != end2) {
-    // Arrange for |it1| to always be the top-most of the rows.
+    // Arrange for `it1` to always be the top-most of the rows.
     if (it2->second->top < it1->second->top) {
       std::swap(it1, it2);
       std::swap(end1, end2);
     }
 
-    // Skip |it1| if it doesn't intersect |it2| at all.
+    // Skip `it1` if it doesn't intersect `it2` at all.
     if (it1->second->bottom <= it2->second->top) {
       ++it1;
       continue;
     }
 
-    // Top of the |it1| row is above the top of |it2|, so top of the
-    // intersection is always the top of |it2|.
+    // Top of the `it1` row is above the top of `it2`, so top of the
+    // intersection is always the top of `it2`.
     int32_t top = it2->second->top;
     int32_t bottom = std::min(it1->second->bottom, it2->second->bottom);
 
@@ -213,10 +213,10 @@ void DesktopRegion::Intersect(const DesktopRegion& region1,
       MergeWithPrecedingRow(new_row);
     }
 
-    // If |it1| was completely consumed, move to the next one.
+    // If `it1` was completely consumed, move to the next one.
     if (it1->second->bottom == bottom)
       ++it1;
-    // If |it2| was completely consumed, move to the next one.
+    // If `it2` was completely consumed, move to the next one.
     if (it2->second->bottom == bottom)
       ++it2;
   }
@@ -230,16 +230,16 @@ void DesktopRegion::IntersectRows(const RowSpanSet& set1,
   RowSpanSet::const_iterator end1 = set1.end();
   RowSpanSet::const_iterator it2 = set2.begin();
   RowSpanSet::const_iterator end2 = set2.end();
-  assert(it1 != end1 && it2 != end2);
+  RTC_DCHECK(it1 != end1 && it2 != end2);
 
   do {
-    // Arrange for |it1| to always be the left-most of the spans.
+    // Arrange for `it1` to always be the left-most of the spans.
     if (it2->left < it1->left) {
       std::swap(it1, it2);
       std::swap(end1, end2);
     }
 
-    // Skip |it1| if it doesn't intersect |it2| at all.
+    // Skip `it1` if it doesn't intersect `it2` at all.
     if (it1->right <= it2->left) {
       ++it1;
       continue;
@@ -247,14 +247,14 @@ void DesktopRegion::IntersectRows(const RowSpanSet& set1,
 
     int32_t left = it2->left;
     int32_t right = std::min(it1->right, it2->right);
-    assert(left < right);
+    RTC_DCHECK_LT(left, right);
 
     output->push_back(RowSpan(left, right));
 
-    // If |it1| was completely consumed, move to the next one.
+    // If `it1` was completely consumed, move to the next one.
     if (it1->right == right)
       ++it1;
-    // If |it2| was completely consumed, move to the next one.
+    // If `it2` was completely consumed, move to the next one.
     if (it2->right == right)
       ++it2;
   } while (it1 != end1 && it2 != end2);
@@ -276,20 +276,20 @@ void DesktopRegion::Subtract(const DesktopRegion& region) {
   if (region.rows_.empty())
     return;
 
-  // |row_b| refers to the current row being subtracted.
+  // `row_b` refers to the current row being subtracted.
   Rows::const_iterator row_b = region.rows_.begin();
 
   // Current vertical position at which subtraction is happening.
   int top = row_b->second->top;
 
-  // |row_a| refers to the current row we are subtracting from. Skip all rows
-  // above |top|.
+  // `row_a` refers to the current row we are subtracting from. Skip all rows
+  // above `top`.
   Rows::iterator row_a = rows_.upper_bound(top);
 
-  // Step through rows of the both regions subtracting content of |row_b| from
-  // |row_a|.
+  // Step through rows of the both regions subtracting content of `row_b` from
+  // `row_a`.
   while (row_a != rows_.end() && row_b != region.rows_.end()) {
-    // Skip |row_a| if it doesn't intersect with the |row_b|.
+    // Skip `row_a` if it doesn't intersect with the `row_b`.
     if (row_a->second->bottom <= top) {
       // Each output row is merged with previously-processed rows before further
       // rows are processed.
@@ -299,17 +299,17 @@ void DesktopRegion::Subtract(const DesktopRegion& region) {
     }
 
     if (top > row_a->second->top) {
-      // If |top| falls in the middle of |row_a| then split |row_a| into two, at
-      // |top|, and leave |row_a| referring to the lower of the two, ready to
+      // If `top` falls in the middle of `row_a` then split `row_a` into two, at
+      // `top`, and leave `row_a` referring to the lower of the two, ready to
       // subtract spans from.
-      assert(top <= row_a->second->bottom);
+      RTC_DCHECK_LE(top, row_a->second->bottom);
       Rows::iterator new_row = rows_.insert(
           row_a, Rows::value_type(top, new Row(row_a->second->top, top)));
       row_a->second->top = top;
       new_row->second->spans = row_a->second->spans;
     } else if (top < row_a->second->top) {
-      // If the |top| is above |row_a| then skip the range between |top| and
-      // top of |row_a| because it's empty.
+      // If the `top` is above `row_a` then skip the range between `top` and
+      // top of `row_a` because it's empty.
       top = row_a->second->top;
       if (top >= row_b->second->bottom) {
         ++row_b;
@@ -320,8 +320,8 @@ void DesktopRegion::Subtract(const DesktopRegion& region) {
     }
 
     if (row_b->second->bottom < row_a->second->bottom) {
-      // If the bottom of |row_b| falls in the middle of the |row_a| split
-      // |row_a| into two, at |top|, and leave |row_a| referring to the upper of
+      // If the bottom of `row_b` falls in the middle of the `row_a` split
+      // `row_a` into two, at `top`, and leave `row_a` referring to the upper of
       // the two, ready to subtract spans from.
       int bottom = row_b->second->bottom;
       Rows::iterator new_row =
@@ -331,8 +331,8 @@ void DesktopRegion::Subtract(const DesktopRegion& region) {
       row_a = new_row;
     }
 
-    // At this point the vertical range covered by |row_a| lays within the
-    // range covered by |row_b|. Subtract |row_b| spans from |row_a|.
+    // At this point the vertical range covered by `row_a` lays within the
+    // range covered by `row_b`. Subtract `row_b` spans from `row_a`.
     RowSpanSet new_spans;
     SubtractRows(row_a->second->spans, row_b->second->spans, &new_spans);
     new_spans.swap(row_a->second->spans);
@@ -417,12 +417,12 @@ void DesktopRegion::AddSpanToRow(Row* row, int left, int right) {
     return;
   }
 
-  // Find the first span that ends at or after |left|.
+  // Find the first span that ends at or after `left`.
   RowSpanSet::iterator start = std::lower_bound(
       row->spans.begin(), row->spans.end(), left, CompareSpanRight);
-  assert(start < row->spans.end());
+  RTC_DCHECK(start < row->spans.end());
 
-  // Find the first span that starts after |right|.
+  // Find the first span that starts after `right`.
   RowSpanSet::iterator end =
       std::lower_bound(start, row->spans.end(), right + 1, CompareSpanLeft);
   if (end == row->spans.begin()) {
@@ -432,7 +432,7 @@ void DesktopRegion::AddSpanToRow(Row* row, int left, int right) {
   }
 
   // Move end to the left, so that it points the last span that ends at or
-  // before |right|.
+  // before `right`.
   end--;
 
   // At this point [start, end] is the range of spans that intersect with the
@@ -456,7 +456,7 @@ void DesktopRegion::AddSpanToRow(Row* row, int left, int right) {
 
 // static
 bool DesktopRegion::IsSpanInRow(const Row& row, const RowSpan& span) {
-  // Find the first span that starts at or after |span.left| and then check if
+  // Find the first span that starts at or after `span.left` and then check if
   // it's the same span.
   RowSpanSet::const_iterator it = std::lower_bound(
       row.spans.begin(), row.spans.end(), span.left, CompareSpanLeft);
@@ -467,12 +467,12 @@ bool DesktopRegion::IsSpanInRow(const Row& row, const RowSpan& span) {
 void DesktopRegion::SubtractRows(const RowSpanSet& set_a,
                                  const RowSpanSet& set_b,
                                  RowSpanSet* output) {
-  assert(!set_a.empty() && !set_b.empty());
+  RTC_DCHECK(!set_a.empty() && !set_b.empty());
 
   RowSpanSet::const_iterator it_b = set_b.begin();
 
-  // Iterate over all spans in |set_a| adding parts of it that do not intersect
-  // with |set_b| to the |output|.
+  // Iterate over all spans in `set_a` adding parts of it that do not intersect
+  // with `set_b` to the `output`.
   for (RowSpanSet::const_iterator it_a = set_a.begin(); it_a != set_a.end();
        ++it_a) {
     // If there is no intersection then append the current span and continue.
@@ -481,7 +481,7 @@ void DesktopRegion::SubtractRows(const RowSpanSet& set_a,
       continue;
     }
 
-    // Iterate over |set_b| spans that may intersect with |it_a|.
+    // Iterate over `set_b` spans that may intersect with `it_a`.
     int pos = it_a->left;
     while (it_b != set_b.end() && it_b->left < it_a->right) {
       if (it_b->left > pos)
@@ -503,7 +503,7 @@ DesktopRegion::Iterator::Iterator(const DesktopRegion& region)
       row_(region.rows_.begin()),
       previous_row_(region.rows_.end()) {
   if (!IsAtEnd()) {
-    assert(row_->second->spans.size() > 0);
+    RTC_DCHECK_GT(row_->second->spans.size(), 0);
     row_span_ = row_->second->spans.begin();
     UpdateCurrentRect();
   }
@@ -516,7 +516,7 @@ bool DesktopRegion::Iterator::IsAtEnd() const {
 }
 
 void DesktopRegion::Iterator::Advance() {
-  assert(!IsAtEnd());
+  RTC_DCHECK(!IsAtEnd());
 
   while (true) {
     ++row_span_;
@@ -524,7 +524,7 @@ void DesktopRegion::Iterator::Advance() {
       previous_row_ = row_;
       ++row_;
       if (row_ != region_.rows_.end()) {
-        assert(row_->second->spans.size() > 0);
+        RTC_DCHECK_GT(row_->second->spans.size(), 0);
         row_span_ = row_->second->spans.begin();
       }
     }
@@ -544,7 +544,7 @@ void DesktopRegion::Iterator::Advance() {
     break;
   }
 
-  assert(!IsAtEnd());
+  RTC_DCHECK(!IsAtEnd());
   UpdateCurrentRect();
 }
 

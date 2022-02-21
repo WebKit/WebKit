@@ -32,16 +32,26 @@
 #include <pal/spi/cocoa/IOSurfaceSPI.h>
 #endif
 
+#if PLATFORM(MAC)
+#include <pal/spi/cocoa/IOKitSPI.h>
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
+
+#if HAVE(CPP20_INCOMPATIBLE_INTERNAL_HEADERS)
+#define CGCOLORTAGGEDPOINTER_H_
+#endif
 
 #include <CoreGraphics/CGContextDelegatePrivate.h>
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CGPathPrivate.h>
-#include <CoreGraphics/CoreGraphicsPrivate.h>
+#include <CoreGraphics/CGShadingPrivate.h>
 #include <CoreGraphics/CGStylePrivate.h>
+#include <CoreGraphics/CoreGraphicsPrivate.h>
 
 #if PLATFORM(MAC)
 #include <CoreGraphics/CGAccessibility.h>
+#include <CoreGraphics/CGEventPrivate.h>
 #endif
 
 #else
@@ -270,6 +280,7 @@ void* CGContextDelegateGetInfo(CGContextDelegateRef);
 void CGContextDelegateRelease(CGContextDelegateRef);
 CGFloat CGGStateGetAlpha(CGGStateRef);
 CGFontRef CGGStateGetFont(CGGStateRef);
+CGFloat CGGStateGetFontSize(CGGStateRef);
 const CGAffineTransform *CGGStateGetCTM(CGGStateRef);
 CGColorRef CGGStateGetFillColor(CGGStateRef);
 CGColorRef CGGStateGetStrokeColor(CGGStateRef);
@@ -317,6 +328,16 @@ void CGContextSetStyle(CGContextRef, CGStyleRef);
 void CGContextDrawConicGradient(CGContextRef, CGGradientRef, CGPoint center, CGFloat angle);
 void CGPathAddUnevenCornersRoundedRect(CGMutablePathRef, const CGAffineTransform *, CGRect, const CGSize corners[4]);
 bool CGFontRenderingGetFontSmoothingDisabled(void);
+CGShadingRef CGShadingCreateConic(CGColorSpaceRef, CGPoint center, CGFloat angle, CGFunctionRef);
+
+#if HAVE(CORE_GRAPHICS_GRADIENT_CREATE_WITH_OPTIONS)
+CGGradientRef CGGradientCreateWithColorComponentsAndOptions(CGColorSpaceRef, const CGFloat*, const CGFloat*, size_t, CFDictionaryRef);
+CGGradientRef CGGradientCreateWithColorsAndOptions(CGColorSpaceRef, CFArrayRef, const CGFloat*, CFDictionaryRef);
+#endif
+
+#if HAVE(CORE_GRAPHICS_PREMULTIPLIED_INTERPOLATION_GRADIENT)
+extern const CFStringRef kCGGradientInterpolatesPremultiplied;
+#endif
 
 #endif // PLATFORM(COCOA)
 
@@ -335,8 +356,6 @@ void CGContextSetFocusRingWithColor(CGContextRef, CGFloat blur, CGColorRef, cons
 
 bool CGDisplayUsesForceToGray(void);
 
-void CGSShutdownServerConnections(void);
-
 CGSConnectionID CGSMainConnectionID(void);
 CFArrayRef CGSHWCaptureWindowList(CGSConnectionID, CGSWindowIDList windowList, CGSWindowCount, CGSWindowCaptureOptions);
 CGError CGSSetConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFStringRef key, CFTypeRef value);
@@ -352,6 +371,7 @@ CGError CGSSetDenyWindowServerConnections(bool);
 typedef int32_t CGSDisplayID;
 CGSDisplayID CGSMainDisplayID(void);
 
+IOHIDEventRef CGEventCopyIOHIDEvent(CGEventRef);
 #endif // PLATFORM(MAC)
 
 #if ENABLE(PDFKIT_PLUGIN) && !USE(APPLE_INTERNAL_SDK)

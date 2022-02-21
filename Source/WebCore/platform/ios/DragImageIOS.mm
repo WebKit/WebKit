@@ -69,7 +69,7 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
     CGRect imageRect = { CGPointZero, imageSize };
 
     RetainPtr<UIGraphicsImageRenderer> render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageSize]);
-    UIImage *imageCopy = [render.get() imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
+    UIImage *imageCopy = [render imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
         CGContextRef context = rendererContext.CGContext;
         CGContextTranslateCTM(context, 0, imageSize.height);
         CGContextScaleCTM(context, 1, -1);
@@ -94,7 +94,7 @@ DragImageRef createDragImageFromImage(Image* image, ImageOrientation orientation
     }
 
     RetainPtr<UIGraphicsImageRenderer> render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageSize]);
-    UIImage *imageCopy = [render.get() imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
+    UIImage *imageCopy = [render imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContextCG context(rendererContext.CGContext);
         context.translate(0, imageSize.height);
         context.scale({ adjustedImageScale, -adjustedImageScale });
@@ -116,9 +116,9 @@ static FontCascade cascadeForSystemFont(CGFloat size)
 DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String& title, TextIndicatorData& indicatorData, FontRenderingMode, float)
 {
     // FIXME: Most of this can go away once we can use UIURLDragPreviewView unconditionally.
-    static const CGFloat dragImagePadding = 10;
-    static const auto titleFontCascade = makeNeverDestroyed(cascadeForSystemFont(16));
-    static const auto urlFontCascade = makeNeverDestroyed(cascadeForSystemFont(14));
+    constexpr CGFloat dragImagePadding = 10;
+    static const NeverDestroyed titleFontCascade = cascadeForSystemFont(16);
+    static const NeverDestroyed urlFontCascade = cascadeForSystemFont(14);
 
     String topString(title.stripWhiteSpace());
     String bottomString([(NSURL *)url absoluteString]);
@@ -238,7 +238,7 @@ DragImageRef createDragImageForRange(Frame& frame, const SimpleRange& range, boo
 
     auto& image = *textIndicator->contentImage();
     auto render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image.size()]);
-    UIImage *finalImage = [render.get() imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
+    UIImage *finalImage = [render imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContextCG context(rendererContext.CGContext);
         context.drawImage(image, FloatPoint());
     }];

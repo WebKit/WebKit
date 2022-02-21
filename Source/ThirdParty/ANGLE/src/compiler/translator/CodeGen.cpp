@@ -27,6 +27,10 @@
 #    include "compiler/translator/TranslatorMetal.h"
 #endif  // ANGLE_ENABLE_METAL_SPIRV
 
+#ifdef ANGLE_ENABLE_METAL_SPIRV
+#    include "compiler/translator/TranslatorMetal.h"
+#endif  // ANGLE_ENABLE_METAL_SPIRV
+
 #include "compiler/translator/util.h"
 
 namespace sh

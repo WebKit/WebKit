@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/bindings/the-button-element/button-type-menu-historical-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/bindings/the-button-element/button-type-menu-historical-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/bindings/the-button-element/button-type-menu-historical.html

@@ -26,78 +26,30 @@
 
 namespace WebCore {
 
-static const char kWarningLevel[] = "WarningLevel";
 
 LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&& callback)
-    : m_cancellable(adoptGRef(g_cancellable_new()))
-    , m_callback(WTFMove(callback))
+#if GLIB_CHECK_VERSION(2, 69, 1)
+    : m_callback(WTFMove(callback))
+    , m_powerProfileMonitor(adoptGRef(g_power_profile_monitor_dup_default()))
+    , m_lowPowerModeEnabled(g_power_profile_monitor_get_power_saver_enabled(m_powerProfileMonitor.get()))
+#endif
 {
-    g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM, static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS | G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES),
-        nullptr, "org.freedesktop.UPower", "/org/freedesktop/UPower/devices/DisplayDevice", "org.freedesktop.UPower.Device", m_cancellable.get(),
-        [](GObject*, GAsyncResult* result, gpointer userData) {
-            GUniqueOutPtr<GError> error;
-            GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, &error.outPtr()));
-            if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                return;
-
-            auto* self = static_cast<LowPowerModeNotifier*>(userData);
-            if (proxy) {
-                GUniquePtr<char> nameOwner(g_dbus_proxy_get_name_owner(proxy.get()));
-                if (nameOwner) {
-                    self->m_displayDeviceProxy = WTFMove(proxy);
-                    self->updateWarningLevel();
-                    g_signal_connect_swapped(self->m_displayDeviceProxy.get(), "g-properties-changed", G_CALLBACK(gPropertiesChangedCallback), self);
-                    return;
-                }
-            }
-
-            // Now, if there is no name owner, it would be good to try to
-            // connect to a Flatpak battery status portal instead.
-            // Unfortunately, no such portal currently exists.
-            self->m_cancellable = nullptr;
-    }, this);
-}
-
-void LowPowerModeNotifier::updateWarningLevel()
-{
-    GRefPtr<GVariant> variant = adoptGRef(g_dbus_proxy_get_cached_property(m_displayDeviceProxy.get(), kWarningLevel));
-    if (!variant) {
-        m_lowPowerModeEnabled = false;
-        return;
-    }
-
-    // 0: Unknown
-    // 1: None
-    // 2: Discharging (only for universal power supplies)
-    // 3: Low
-    // 4: Critical
-    // 5: Action
-    m_lowPowerModeEnabled = g_variant_get_uint32(variant.get()) > 1;
-}
-
-void LowPowerModeNotifier::warningLevelChanged()
-{
-    updateWarningLevel();
-    m_callback(m_lowPowerModeEnabled);
-}
-
-void LowPowerModeNotifier::gPropertiesChangedCallback(LowPowerModeNotifier* self, GVariant* changedProperties)
-{
-    GUniqueOutPtr<GVariantIter> iter;
-    g_variant_get(changedProperties, "a{sv}", &iter.outPtr());
-
-    const char* propertyName;
-    while (g_variant_iter_next(iter.get(), "{&sv}", &propertyName, nullptr)) {
-        if (!strcmp(propertyName, kWarningLevel)) {
-            self->warningLevelChanged();
-            break;
+#if GLIB_CHECK_VERSION(2, 69, 1)
+    g_signal_connect_swapped(m_powerProfileMonitor.get(), "notify::power-saver-enabled", G_CALLBACK(+[] (LowPowerModeNotifier* self, GParamSpec*, GPowerProfileMonitor* monitor) {
+        bool powerSaverEnabled = g_power_profile_monitor_get_power_saver_enabled(monitor);
+        if (self->m_lowPowerModeEnabled != powerSaverEnabled) {
+            self->m_lowPowerModeEnabled = powerSaverEnabled;
+            self->m_callback(self->m_lowPowerModeEnabled);
         }
-    }
+    }), this);
+#endif
 }
 
 LowPowerModeNotifier::~LowPowerModeNotifier()
 {
-    g_cancellable_cancel(m_cancellable.get());
+#if GLIB_CHECK_VERSION(2, 69, 1)
+    g_signal_handlers_disconnect_by_data(m_powerProfileMonitor.get(), this);
+#endif
 }
 
 bool LowPowerModeNotifier::isLowPowerModeEnabled() const

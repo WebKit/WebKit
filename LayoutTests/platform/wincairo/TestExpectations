@@ -241,7 +241,6 @@ media/track/in-band/track-in-band-srt-mkv-kind.html [ Skip ]
 media/track/in-band/track-in-band-srt-mkv-language.html [ Skip ]
 media/track/in-band/track-in-band-srt-mkv-track-order.html [ Skip ]
 media/invalid-media-url-crash.html [ Skip ]
-media/media-extension-with-fragment.html [ Skip ]
 
 # VIDEO_PRESENTATION_MODE is disabled
 media/media-fullscreen-not-in-document.html [ Skip ]
@@ -272,7 +271,11 @@ media/airplay-autoplay.html [ Skip ]
 # PLATFORM(MAC), internals.rangeForDictionaryLookupAtLocation()
 fast/layers/prevent-hit-test-during-layout.html [ Skip ]
 
-
+# JPEG-XL Tests
+fast/images/jpegxl-as-image.html [ Pass ]
+fast/images/jpegxl-image-decoding.html [ Pass ]
+fast/images/jpegxl-with-color-profile.html [ Pass ]
+fast/images/animated-jpegxl-loop-count.html [ Pass ]
 
 # DataTransferItems is not yet implemented
 fast/events/clipboard-dataTransferItemList.html [ Skip ]
@@ -324,16 +327,6 @@ fast/forms/validation-message-on-menulist.html [ Skip ]
 fast/forms/validation-message-on-radio.html [ Skip ]
 fast/forms/validation-message-on-range.html [ Skip ]
 fast/forms/validation-message-on-textarea.html [ Skip ]
-
-# No support for QuickTime/YouTube plugin replacement.
-security/contentSecurityPolicy/object-src-none-blocks-quicktime-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-without-mime-type.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera [ Skip ]
@@ -841,6 +834,8 @@ http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
 
 http/tests/misc/acid3.html [ Failure ]
 
+http/tests/model [ Skip ]
+
 http/tests/navigation [ Skip ]
 http/tests/navigation/post-301-response.html [ Pass ]
 http/tests/navigation/post-302-response.html [ Pass ]
@@ -878,7 +873,6 @@ http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-uni
 http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html [ Skip ]
 http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Skip ]
 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html [ Skip ]
-http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Skip ]
 http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral.html [ Skip ]
 http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
@@ -900,6 +894,7 @@ http/tests/ssl/media-stream [ Skip ]
 http/tests/subresource-integrity [ Skip ]
 http/tests/webarchive [ Skip ]
 http/tests/webrtc [ Skip ]
+http/tests/webshare [ Skip ]
 
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
 
@@ -928,7 +923,6 @@ http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html [ Failur
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Pass Failure ]
 http/tests/xmlhttprequest/range-test.html [ Pass Failure ]
-http/tests/xmlhttprequest/redirections-and-user-headers.html [ Failure ]
 http/tests/xmlhttprequest/reentrant-cancel.html [ Timeout Pass ]
 http/tests/xmlhttprequest/referer.html [ Pass Failure Timeout ]
 http/tests/xmlhttprequest/reopen-encoding.html [ Timeout Pass ]
@@ -1072,14 +1066,9 @@ css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Pass ]
 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Pass ]
 
-imported/w3c/web-platform-tests/css/css-flexbox/flex-item-contains-strict.html [ Failure ]
-
 fast/css/apple-system-colors.html [ Failure ]
 fast/css/image-rendering-parsing.html [ Failure Pass ]
 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
-fast/css/getComputedStyle/computed-style.html [ Failure ]
-fast/css/getComputedStyle/computed-style-font-family.html [ Failure ]
-fast/css/getComputedStyle/computed-style-without-renderer.html [ Failure ]
 fast/css-generated-content/initial-letter-pagination-raised-rl.html [ ImageOnlyFailure ]
 fast/css-generated-content/initial-letter-pagination-raised.html [ ImageOnlyFailure ]
 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ ImageOnlyFailure ]
@@ -1096,6 +1085,8 @@ webkit.org/b/185076 css3/color-filters [ Skip ]
 # IntersectionObserver is off by default
 webkit.org/b/188613 intersection-observer [ Skip ]
 webkit.org/b/188613 http/tests/intersection-observer [ Skip ]
+webkit.org/b/188613 fast/dom/callback-function-detached-frame-intersection-observer.html [ Skip ]
+fast/dom/callback-function-detached-frame-resize-observer.html [ Skip ]
 
 [ Debug ] css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
 
@@ -1106,7 +1097,13 @@ fast/css-custom-paint/ [ Skip ]
 css-typedom [ Skip ]
 
 # Dark mode not supported on Windows
-css-dark-mode [ Skip ]
+css-dark-mode [ Pass ]
+css-dark-mode/color-scheme-css.html [ Failure ]
+css-dark-mode/color-scheme-meta.html [ Failure ]
+css-dark-mode/color-scheme-priority.html [ Failure ]
+css-dark-mode/default-colors.html [ Failure ]
+css-dark-mode/older-syntax/supported-color-schemes-css.html [ Failure ]
+css-dark-mode/older-syntax/supported-color-schemes-meta.html [ Failure ]
 
 webkit.org/b/142260 fast/css/has-attachment.html [ Skip ]
 
@@ -1429,6 +1426,35 @@ storage/indexeddb/modern/objectstore-rename-1.html [ Timeout Pass ]
 storage/indexeddb/modern/aborted-put.html [ Timeout Pass ]
 [ Debug ] storage/indexeddb/modern/index-rename-1.html [ Skip ]
 
+# Flaky values in WPT cookie expectations
+imported/w3c/web-platform-tests/cookies/prefix/__secure.header.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite-none-secure/cookies-without-samesite-must-be-secure.https.tentative.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite/iframe.document.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite/multiple-samesite-attributes.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-nested.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-subresource.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite/setcookie-lax.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/samesite/setcookie-navigation.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-iframe-subresource.tentative.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-navigation.tentative.html [ Pass Failure ]
+imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-subresource.tentative.html [ Pass Failure ]
+
+# WPT diff failures that need more investigation
+imported/w3c/web-platform-tests/cookies/domain/domain-attribute-host-with-leading-period.sub.https.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/name/name-ctl.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/secure/set-from-dom.sub.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/secure/set-from-http.sub.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/secure/set-from-ws.sub.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/value/value.html [ Failure ]
+
+# Skip WPT tests that timeout
+imported/w3c/web-platform-tests/cookies/samesite/form-get-blank-reload.https.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/samesite/form-get-blank.https.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/samesite/form-post-blank-reload.https.html [ Skip ]
+imported/w3c/web-platform-tests/cookies/samesite/form-post-blank.https.html [ Skip ]
+
 ################################################################################
 ############################   End Storage Issues   ############################
 ################################################################################
@@ -1447,7 +1473,11 @@ webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 webkit.org/b/209455 http/wpt/misc/last-modified-parsing.html [ Failure ]
 webkit.org/b/209455 http/wpt/misc/no-last-modified.html [ Failure ]
 
+webkit.org/b/225258 js/dom/Promise-reject-large-string.html [ Pass Failure ]
+
 webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ] # Require expect file for dumped render tree.
+
+webkit.org/b/215271 storage/indexeddb/modern/new-database-after-user-delete.html [ Pass Failure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
@@ -1546,7 +1576,6 @@ imported/w3c/web-platform-tests/common [ Skip ]
 imported/w3c/web-platform-tests/compat [ Skip ]
 imported/w3c/web-platform-tests/console [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy [ Skip ]
-imported/w3c/web-platform-tests/cookies [ Skip ]
 imported/w3c/web-platform-tests/cors [ Skip ]
 imported/w3c/web-platform-tests/credential-management [ Skip ]
 imported/w3c/web-platform-tests/css [ Skip ]
@@ -1560,6 +1589,7 @@ imported/w3c/web-platform-tests/entries-api [ Skip ]
 imported/w3c/web-platform-tests/eventsource [ Skip ]
 imported/w3c/web-platform-tests/feature-policy [ Skip ]
 imported/w3c/web-platform-tests/fetch [ Skip ]
+imported/w3c/web-platform-tests/file-system-access [ Skip ]
 imported/w3c/web-platform-tests/fonts [ Skip ]
 imported/w3c/web-platform-tests/geolocation-API [ Skip ]
 imported/w3c/web-platform-tests/hr-time [ Skip ]
@@ -1573,6 +1603,7 @@ imported/w3c/web-platform-tests/interfaces [ Skip ]
 imported/w3c/web-platform-tests/intersection-observer [ Skip ]
 imported/w3c/web-platform-tests/mathml [ Skip ]
 imported/w3c/web-platform-tests/media [ Skip ]
+imported/w3c/web-platform-tests/media-capabilities [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-fromelement [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 imported/w3c/web-platform-tests/mediasession [ Skip ]
@@ -1599,6 +1630,7 @@ imported/w3c/web-platform-tests/server-timing [ Skip ]
 imported/w3c/web-platform-tests/service-workers [ Skip ]
 imported/w3c/web-platform-tests/shadow-dom [ Skip ]
 imported/w3c/web-platform-tests/speech-api [ Skip ]
+imported/w3c/web-platform-tests/storage [ Skip ]
 imported/w3c/web-platform-tests/streams [ Skip ]
 imported/w3c/web-platform-tests/subresource-integrity [ Skip ]
 imported/w3c/web-platform-tests/svg [ Skip ]
@@ -1608,6 +1640,7 @@ imported/w3c/web-platform-tests/user-timing [ Skip ]
 imported/w3c/web-platform-tests/visual-viewport [ Skip ]
 imported/w3c/web-platform-tests/wasm [ Skip ]
 imported/w3c/web-platform-tests/web-animations [ Skip ]
+imported/w3c/web-platform-tests/web-locks [ Skip ]
 imported/w3c/web-platform-tests/web-share [ Skip ]
 imported/w3c/web-platform-tests/webaudio [ Skip ]
 imported/w3c/web-platform-tests/webmessaging [ Skip ]
@@ -1636,6 +1669,7 @@ media/track [ Skip ]
 pageoverlay [ Skip ]
 perf [ Skip ]
 plugins [ Skip ]
+pointerevents [ Skip ]
 printing [ Skip ]
 scrollbars [ Skip ]
 scrollingcoordinator [ Skip ]
@@ -1848,7 +1882,6 @@ fast/events/wheel/wheelevent-basic.html [ Failure ]
 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 fast/harness/render-tree-as-text-options.html [ Failure ]
-fast/html/broadcast-channel-between-different-sessions.html [ Failure ]
 fast/html/details-comment-crash.html [ ImageOnlyFailure ]
 fast/html/details-marker-style-mixed.html [ Missing ]
 fast/html/details-writing-mode-mixed.html [ Missing ]
@@ -1947,7 +1980,6 @@ fast/text/soft-hyphen-as-first-breaking-opportunity.html [ ImageOnlyFailure ]
 fast/text/space-width.html [ ImageOnlyFailure ]
 fast/text/svg-font-face-with-kerning.html [ Failure ]
 fast/text/synthetic-bold-transformed.html [ ImageOnlyFailure ]
-fast/text/synthetic-oblique.html [ ImageOnlyFailure ]
 fast/text/system-font-fallback-emoji.html [ Failure ]
 fast/text/system-font-japanese-synthetic-italic.html [ ImageOnlyFailure ]
 fast/text/system-font-weight-italic.html [ Failure ]
@@ -2008,8 +2040,6 @@ http/tests/misc/large-js-program.py [ Skip ] # Timeout
 http/tests/misc/webtiming-one-redirect.py [ Failure ]
 http/tests/misc/webtiming-two-redirects.py [ Failure ]
 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Timeout ]
-http/tests/webgl/1.0.2/origin-clean-conformance.html [ Failure ]
-http/tests/webgl/1.0.2/readPixelsBadArgs.html [ Failure ]
 http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ] # Crash by assertion failure
 http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers.html [ Failure ]
 http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure Timeout ]
@@ -2044,12 +2074,10 @@ storage/indexeddb/shared-memory-structured-clone.html [ Timeout ]
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
 storage/indexeddb/value-cursor-cycle.html [ Failure Pass ]
 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
-webgl/1.0.3/conformance/extensions/oes-element-index-uint.html [ Failure ]
 webgl/1.0.3/conformance/glsl/bugs/array-of-struct-with-int-first-position.html [ Skip ] # This test makes DumpRenderTree process unable to exit
 webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure ]
 webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
 webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
-webgl/1.0.3/conformance/textures/default-texture.html [ Failure ]
 webgl/1.0.3/conformance/textures/texture-mips.html [ Pass Failure ]
 webgl/1.0.3/conformance/textures/texture-upload-size.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
@@ -2063,7 +2091,6 @@ webgl/2.0.0/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky ti
 webgl/2.0.0/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.0/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.0/conformance/glsl/bugs/sketchfab-lighting-shader-crash.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.0/conformance/textures/misc/default-texture.html [ Failure ]
 webgl/2.0.0/conformance/textures/misc/texture-mips.html [ Failure Pass ]
 webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Skip ] # Timeout
 webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
@@ -2074,10 +2101,36 @@ webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions.html [ Failure ]
 webgl/2.0.0/conformance2/query/occlusion-query.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Pass Failure ]
 webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only.html [ Pass Failure ]
-webgl/2.0.0/conformance2/rendering/element-index-uint.html [ Failure ]
 webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Failure ]
 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow Failure ]
 webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Skip ] # Timeout and flaky
 webgl/webgl-oom-paint-document-no-crash.html [ Skip ]
 workers/bomb.html [ Skip ] # Timeout
+
+fast/masking/clip-path-selection.html [ Failure ]
+animations/remove-syncing-animation.html [ Pass Failure ]
+
+editing/execCommand/indent-input-in-image-crash.html [ Failure ]
+
+fast/box-shadow/hidpi-box-shadow-inset-on-subpixel-position.html [ ImageOnlyFailure ]
+fast/text/whitespace-with-zero-width-space-in-between.html [ ImageOnlyFailure ]
+webgl/gl-clear-preserve-drawing-buffer-bug.html [ ImageOnlyFailure ]
+
+fast/text/preserved-white-space-with-word-spacing.html [ ImageOnlyFailure ]
+
+fast/css/contain-invalidate-if-disabled.html [ Failure ]
+
+fast/filter-image/filter-image-blur.html [ ImageOnlyFailure ]
+fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
+
+fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ ImageOnlyFailure ]
+fast/gradients/alpha-premultiplied.html [ ImageOnlyFailure ]
+fast/gradients/conic-gradient-alpha-unpremultiplied.html [ ImageOnlyFailure ]
+fast/text/hanging-punctuation-last-rtl.html [ ImageOnlyFailure ]
+fast/text/simple-bidi-word-spacing.html [ ImageOnlyFailure ]
+fast/text/word-spacing-rtl.html [ ImageOnlyFailure ]
+
+fast/text/kerning-with-TextLayout.html [ ImageOnlyFailure ]
+http/tests/lists/list-new-parent-no-sibling-append.html [ Failure ]
+fast/js-promise/js-promise-invalid-context-access.html [ Failure ]

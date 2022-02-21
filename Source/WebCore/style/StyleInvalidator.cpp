@@ -31,9 +31,9 @@
 #include "ElementIterator.h"
 #include "ElementRuleCollector.h"
 #include "HTMLSlotElement.h"
-#include "RuleSet.h"
+#include "RuleSetBuilder.h"
 #include "RuntimeEnabledFeatures.h"
-#include "SelectorFilter.h"
+#include "SelectorMatchingState.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"
@@ -91,9 +91,10 @@ Invalidator::Invalidator(const Vector<StyleSheetContents*>& sheets, const MediaQ
     if (m_dirtiesAllStyle)
         return;
 
-    m_ownedRuleSet->disableAutoShrinkToFit();
+    RuleSetBuilder ruleSetBuilder(*m_ownedRuleSet, mediaQueryEvaluator, nullptr, RuleSetBuilder::ShrinkToFit::Disable);
+
     for (auto& sheet : sheets)
-        m_ownedRuleSet->addRulesFromSheet(*sheet, mediaQueryEvaluator);
+        ruleSetBuilder.addRulesFromSheet(*sheet);
 
     m_ruleInformation = collectRuleInformation();
 }
@@ -127,25 +128,33 @@ Invalidator::RuleInformation Invalidator::collectRuleInformation()
     return information;
 }
 
-Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, const SelectorFilter* filter)
+static void invalidateAssignedElements(HTMLSlotElement& slot)
+{
+    auto* assignedNodes = slot.assignedNodes();
+    if (!assignedNodes)
+        return;
+    for (auto& node : *assignedNodes) {
+        if (!is<Element>(node.get()))
+            continue;
+        if (is<HTMLSlotElement>(*node) && node->containingShadowRoot()) {
+            invalidateAssignedElements(downcast<HTMLSlotElement>(*node));
+            continue;
+        }
+        downcast<Element>(*node).invalidateStyleInternal();
+    }
+}
+
+Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, SelectorMatchingState* selectorMatchingState)
 {
     invalidateInShadowTreeIfNeeded(element);
 
-    bool shouldCheckForSlots = m_ruleInformation.hasSlottedPseudoElementRules && !m_didInvalidateHostChildren;
-    if (shouldCheckForSlots && is<HTMLSlotElement>(element)) {
-        auto* containingShadowRoot = element.containingShadowRoot();
-        if (containingShadowRoot && containingShadowRoot->host()) {
-            for (auto& possiblySlotted : childrenOfType<Element>(*containingShadowRoot->host()))
-                possiblySlotted.invalidateStyleInternal();
-        }
-        // No need to do this again.
-        m_didInvalidateHostChildren = true;
-    }
+    if (m_ruleInformation.hasSlottedPseudoElementRules && is<HTMLSlotElement>(element))
+        invalidateAssignedElements(downcast<HTMLSlotElement>(element));
 
     switch (element.styleValidity()) {
     case Style::Validity::Valid: {
         for (auto& ruleSet : m_ruleSets) {
-            ElementRuleCollector ruleCollector(element, *ruleSet, filter);
+            ElementRuleCollector ruleCollector(element, *ruleSet, selectorMatchingState);
             ruleCollector.setMode(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
 
             if (ruleCollector.matchesAnyAuthorRules()) {
@@ -160,22 +169,20 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
         return CheckDescendants::Yes;
     case Style::Validity::SubtreeInvalid:
     case Style::Validity::SubtreeAndRenderersInvalid:
-        if (shouldCheckForSlots)
-            return CheckDescendants::Yes;
         return CheckDescendants::No;
     }
     ASSERT_NOT_REACHED();
     return CheckDescendants::Yes;
 }
 
-void Invalidator::invalidateStyleForTree(Element& root, SelectorFilter* filter)
+void Invalidator::invalidateStyleForTree(Element& root, SelectorMatchingState* selectorMatchingState)
 {
-    if (invalidateIfNeeded(root, filter) == CheckDescendants::No)
+    if (invalidateIfNeeded(root, selectorMatchingState) == CheckDescendants::No)
         return;
-    invalidateStyleForDescendants(root, filter);
+    invalidateStyleForDescendants(root, selectorMatchingState);
 }
 
-void Invalidator::invalidateStyleForDescendants(Element& root, SelectorFilter* filter)
+void Invalidator::invalidateStyleForDescendants(Element& root, SelectorMatchingState* selectorMatchingState)
 {
     Vector<Element*, 20> parentStack;
     Element* previousElement = &root;
@@ -185,19 +192,19 @@ void Invalidator::invalidateStyleForDescendants(Element& root, SelectorFilter* f
         if (parentStack.isEmpty() || parentStack.last() != parent) {
             if (parent == previousElement) {
                 parentStack.append(parent);
-                if (filter)
-                    filter->pushParentInitializingIfNeeded(*parent);
+                if (selectorMatchingState)
+                    selectorMatchingState->selectorFilter.pushParentInitializingIfNeeded(*parent);
             } else {
                 while (parentStack.last() != parent) {
                     parentStack.removeLast();
-                    if (filter)
-                        filter->popParent();
+                    if (selectorMatchingState)
+                        selectorMatchingState->selectorFilter.popParent();
                 }
             }
         }
         previousElement = &descendant;
 
-        if (invalidateIfNeeded(descendant, filter) == CheckDescendants::Yes)
+        if (invalidateIfNeeded(descendant, selectorMatchingState) == CheckDescendants::Yes)
             it.traverseNext();
         else
             it.traverseNextSkippingChildren();
@@ -212,8 +219,8 @@ void Invalidator::invalidateStyle(Document& document)
     if (!documentElement)
         return;
 
-    SelectorFilter filter;
-    invalidateStyleForTree(*documentElement, &filter);
+    SelectorMatchingState selectorMatchingState;
+    invalidateStyleForTree(*documentElement, &selectorMatchingState);
 }
 
 void Invalidator::invalidateStyle(Scope& scope)
@@ -239,8 +246,8 @@ void Invalidator::invalidateStyle(ShadowRoot& shadowRoot)
         shadowRoot.host()->invalidateStyleInternal();
 
     for (auto& child : childrenOfType<Element>(shadowRoot)) {
-        SelectorFilter filter;
-        invalidateStyleForTree(child, &filter);
+        SelectorMatchingState selectorMatchingState;
+        invalidateStyleForTree(child, &selectorMatchingState);
     }
 }
 
@@ -266,8 +273,8 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         break;
     }
     case MatchElement::Ancestor: {
-        SelectorFilter filter;
-        invalidateStyleForDescendants(element, &filter);
+        SelectorMatchingState selectorMatchingState;
+        invalidateStyleForDescendants(element, &selectorMatchingState);
         break;
     }
     case MatchElement::DirectSibling:
@@ -290,11 +297,58 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         }
         break;
     case MatchElement::AncestorSibling: {
-        SelectorFilter filter;
+        SelectorMatchingState selectorMatchingState;
         for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
-            filter.popParentsUntil(element.parentElement());
-            invalidateStyleForDescendants(*sibling, &filter);
+            selectorMatchingState.selectorFilter.popParentsUntil(element.parentElement());
+            invalidateStyleForDescendants(*sibling, &selectorMatchingState);
         }
+        break;
+    }
+    case MatchElement::HasChild: {
+        if (auto* parent = element.parentElement())
+            invalidateIfNeeded(*parent, nullptr);
+        break;
+    }
+    case MatchElement::HasDescendant: {
+        Vector<Element*, 16> ancestors;
+        for (auto* parent = element.parentElement(); parent; parent = parent->parentElement())
+            ancestors.append(parent);
+
+        SelectorMatchingState selectorMatchingState;
+        for (auto* ancestor : makeReversedRange(ancestors)) {
+            invalidateIfNeeded(*ancestor, &selectorMatchingState);
+            selectorMatchingState.selectorFilter.pushParent(ancestor);
+        }
+        break;
+    }
+    case MatchElement::HasSibling: {
+        if (auto* sibling = element.previousElementSibling()) {
+            SelectorMatchingState selectorMatchingState;
+            selectorMatchingState.selectorFilter.pushParentInitializingIfNeeded(*element.parentElement());
+
+            for (; sibling; sibling = sibling->previousElementSibling())
+                invalidateIfNeeded(*sibling, &selectorMatchingState);
+        }
+        break;
+    }
+    case MatchElement::HasSiblingDescendant: {
+        Vector<Element*, 16> elementAndAncestors;
+        elementAndAncestors.append(&element);
+        for (auto* parent = element.parentElement(); parent; parent = parent->parentElement())
+            elementAndAncestors.append(parent);
+
+        SelectorMatchingState selectorMatchingState;
+        for (auto* elementOrAncestor : makeReversedRange(elementAndAncestors)) {
+            for (auto* sibling = elementOrAncestor->previousElementSibling(); sibling; sibling = sibling->previousElementSibling())
+                invalidateIfNeeded(*sibling, &selectorMatchingState);
+
+            selectorMatchingState.selectorFilter.pushParent(elementOrAncestor);
+        }
+        break;
+    }
+    case MatchElement::HasNonSubject: {
+        SelectorMatchingState selectorMatchingState;
+        invalidateStyleForDescendants(*element.document().documentElement(), &selectorMatchingState);
         break;
     }
     case MatchElement::Host:

@@ -41,9 +41,6 @@
 #include "JPEGImageDecoder.h"
 
 #include "PlatformDisplay.h"
-#if USE(LCMS)
-#include <lcms2.h>
-#endif
 
 extern "C" {
 #include <setjmp.h>
@@ -222,7 +219,7 @@ static bool isICCMarker(jpeg_saved_marker_ptr marker)
 
 static RefPtr<SharedBuffer> readICCProfile(jpeg_decompress_struct* info)
 {
-    auto buffer = SharedBuffer::create();
+    SharedBufferBuilder buffer;
     for (jpeg_saved_marker_ptr marker = info->marker_list; marker; marker = marker->next) {
         if (!isICCMarker(marker))
             continue;
@@ -236,13 +233,13 @@ static RefPtr<SharedBuffer> readICCProfile(jpeg_decompress_struct* info)
             return nullptr;
 
         unsigned markerSize = marker->data_length - iccHeaderSize;
-        buffer->append(reinterpret_cast<const uint8_t*>(marker->data + iccHeaderSize), markerSize);
+        buffer.append(reinterpret_cast<const uint8_t*>(marker->data + iccHeaderSize), markerSize);
     }
 
-    if (buffer->isEmpty())
+    if (buffer.isEmpty())
         return nullptr;
 
-    return buffer;
+    return buffer.takeAsContiguous();
 }
 #endif
 
@@ -320,7 +317,7 @@ public:
         m_bytesToSkip = std::max(numBytes - bytesToSkip, static_cast<long>(0));
     }
 
-    bool decode(const SharedBuffer::DataSegment& data, bool onlySize)
+    bool decode(const SharedBuffer& data, bool onlySize)
     {
         m_decodingSizeOnly = onlySize;
 
@@ -571,14 +568,7 @@ void JPEGImageDecoder::clear()
 {
     m_reader = nullptr;
 #if USE(LCMS)
-    if (m_iccTransform) {
-        cmsDeleteTransform(m_iccTransform);
-        m_iccTransform = nullptr;
-    }
-    if (m_iccProfile) {
-        cmsCloseProfile(m_iccProfile);
-        m_iccProfile = nullptr;
-    }
+    m_iccTransform.reset();
 #endif
 }
 
@@ -637,7 +627,7 @@ bool JPEGImageDecoder::outputScanlines(ScalableImageDecoderFrame& buffer)
 
 #if USE(LCMS)
         if (m_iccTransform)
-            cmsDoTransform(m_iccTransform, row, row, info->output_width);
+            cmsDoTransform(m_iccTransform.get(), row, row, info->output_width);
 #endif
     }
     return true;
@@ -670,7 +660,7 @@ bool JPEGImageDecoder::outputScanlines()
 
 #if USE(LCMS)
             if (m_iccTransform)
-                cmsDoTransform(m_iccTransform, row, row, info->output_width);
+                cmsDoTransform(m_iccTransform.get(), row, row, info->output_width);
 #endif
          }
          return true;
@@ -731,15 +721,15 @@ void JPEGImageDecoder::setICCProfile(RefPtr<SharedBuffer>&& buffer)
     if (!buffer)
         return;
 
-    m_iccProfile = cmsOpenProfileFromMem(buffer->data(), buffer->size());
-    if (!m_iccProfile)
+    auto iccProfile = LCMSProfilePtr(cmsOpenProfileFromMem(buffer->data(), buffer->size()));
+    if (!iccProfile)
         return;
 
     auto* displayProfile = PlatformDisplay::sharedDisplay().colorProfile();
-    if (cmsGetColorSpace(m_iccProfile) != cmsSigRgbData || cmsGetColorSpace(displayProfile) != cmsSigRgbData)
+    if (cmsGetColorSpace(iccProfile.get()) != cmsSigRgbData || cmsGetColorSpace(displayProfile) != cmsSigRgbData)
         return;
 
-    m_iccTransform = cmsCreateTransform(m_iccProfile, TYPE_BGRA_8, displayProfile, TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0);
+    m_iccTransform = LCMSTransformPtr(cmsCreateTransform(iccProfile.get(), TYPE_BGRA_8, displayProfile, TYPE_BGRA_8, INTENT_RELATIVE_COLORIMETRIC, 0));
 }
 #endif
 

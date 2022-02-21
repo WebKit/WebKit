@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "Gate.h"
 #include "Opcode.h"
 #include "OptionsList.h"
+#include "SecureARM64EHashPins.h"
 #include <wtf/WTFConfig.h>
 
 namespace JSC {
@@ -38,6 +39,14 @@ class VM;
 
 #if ENABLE(SEPARATED_WX_HEAP)
 using JITWriteSeparateHeapsFunction = void (*)(off_t, const void*, size_t);
+#endif
+
+#if defined(STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB) && STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB > 0
+constexpr uintptr_t structureHeapAddressSize = STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB * MB;
+#elif PLATFORM(IOS_FAMILY) && CPU(ARM64) && !CPU(ARM64E)
+constexpr uintptr_t structureHeapAddressSize = 512 * MB;
+#else
+constexpr uintptr_t structureHeapAddressSize = 1 * GB;
 #endif
 
 struct Config {
@@ -81,6 +90,7 @@ struct Config {
     void* startExecutableMemory;
     void* endExecutableMemory;
     uintptr_t startOfFixedWritableMemoryPool;
+    uintptr_t startOfStructureHeap;
 
 #if ENABLE(SEPARATED_WX_HEAP)
     JITWriteSeparateHeapsFunction jitWriteSeparateHeaps;
@@ -98,6 +108,10 @@ struct Config {
 
 #if CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING)
     WTF::PtrTagLookup ptrTagLookupRecord;
+#endif
+
+#if CPU(ARM64E) && ENABLE(JIT)
+    SecureARM64EHashPins arm64eHashPins;
 #endif
 };
 
@@ -118,6 +132,7 @@ extern "C" JS_EXPORT_PRIVATE Config g_jscConfig;
 
 constexpr size_t offsetOfJSCConfigInitializeHasBeenCalled = offsetof(JSC::Config, initializeHasBeenCalled);
 constexpr size_t offsetOfJSCConfigGateMap = offsetof(JSC::Config, llint.gateMap);
+constexpr size_t offsetOfJSCConfigStartOfStructureHeap = offsetof(JSC::Config, startOfStructureHeap);
 
 } // namespace JSC
 

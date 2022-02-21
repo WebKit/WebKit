@@ -40,10 +40,10 @@
 #include "JITScannable.h"
 #include "MethodOfGettingAValueProfile.h"
 #include <wtf/BitVector.h>
+#include <wtf/GenericHashKey.h>
 #include <wtf/HashMap.h>
 #include <wtf/StackCheck.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/StdUnorderedMap.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -1176,11 +1176,11 @@ public:
     Vector<CatchEntrypointData> m_catchEntrypoints;
 
     HashSet<String> m_localStrings;
-    HashMap<const StringImpl*, String> m_copiedStrings;
+    HashSet<String> m_copiedStrings;
 
 #if USE(JSVALUE32_64)
-    StdUnorderedMap<int64_t, double*> m_doubleConstantsMap;
-    std::unique_ptr<Bag<double>> m_doubleConstants;
+    HashMap<GenericHashKey<int64_t>, double*> m_doubleConstantsMap;
+    Bag<double> m_doubleConstants;
 #endif
     
     OptimizationFixpointState m_fixpointState;

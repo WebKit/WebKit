@@ -56,11 +56,9 @@ void Attachment::encode(Encoder& encoder) const
     encoder.addAttachment(WTFMove(*const_cast<Attachment*>(this)));
 }
 
-bool Attachment::decode(Decoder& decoder, Attachment& attachment)
+std::optional<Attachment> Attachment::decode(Decoder& decoder)
 {
-    if (!decoder.removeAttachment(attachment))
-        return false;
-    return true;
+    return decoder.takeLastAttachment();
 }
 #endif
 

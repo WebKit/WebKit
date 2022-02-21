@@ -66,7 +66,7 @@ void RemoteAudioSession::gpuProcessConnectionDidClose(GPUProcessConnection& conn
 IPC::Connection& RemoteAudioSession::ensureConnection()
 {
     if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = makeWeakPtr(m_process.ensureGPUProcessConnection());
+        m_gpuProcessConnection = m_process.ensureGPUProcessConnection();
         m_gpuProcessConnection->addClient(*this);
         m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteAudioSession::messageReceiverName(), *this);
 
@@ -141,11 +141,7 @@ void RemoteAudioSession::setIsPlayingToBluetoothOverride(std::optional<bool> val
 
 AudioSession::CategoryType RemoteAudioSession::category() const
 {
-#if PLATFORM(COCOA)
     return m_category;
-#else
-    return AudioSession::CategoryType::None;
-#endif
 }
 
 void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& configuration)

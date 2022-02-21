@@ -37,6 +37,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "DocumentFragment.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "HTMLDivElement.h"
 #include "HTMLSpanElement.h"
@@ -45,6 +46,7 @@
 #include "NodeTraversal.h"
 #include "RenderVTTCue.h"
 #include "ScriptDisallowedScope.h"
+#include "ShadowPseudoIds.h"
 #include "Text.h"
 #include "TextTrack.h"
 #include "TextTrackCueGeneric.h"
@@ -162,7 +164,7 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     if (!is<VTTCue>(textTrackCue))
         return;
 
-    auto cue = makeRef(downcast<VTTCue>(*textTrackCue));
+    Ref cue = downcast<VTTCue>(*textTrackCue);
 
     // FIXME: Apply all the initial CSS positioning properties. http://wkb.ug/79916
     if (!cue->regionId().isEmpty()) {
@@ -184,14 +186,15 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     // the 'writing-mode' property must be set to writing-mode
     setInlineStyleProperty(CSSPropertyWritingMode, cue->getCSSWritingMode(), false);
 
-    auto position = cue->getCSSPosition();
+    auto& position = cue->getCSSPosition();
 
     // the 'top' property must be set to top,
-    setInlineStyleProperty(CSSPropertyTop, position.second, CSSUnitType::CSS_PERCENTAGE);
+    if (position.second)
+        setInlineStyleProperty(CSSPropertyTop, *position.second, CSSUnitType::CSS_PERCENTAGE);
 
     // the 'left' property must be set to left
-    if (cue->vertical() == horizontalKeyword())
-        setInlineStyleProperty(CSSPropertyLeft, position.first, CSSUnitType::CSS_PERCENTAGE);
+    if (cue->vertical() == horizontalKeyword() && position.first)
+        setInlineStyleProperty(CSSPropertyLeft, *position.first, CSSUnitType::CSS_PERCENTAGE);
     else if (cue->vertical() == verticalGrowingRightKeyword()) {
         // FIXME: Why use calc to do the math instead of doing the subtraction here?
         setInlineStyleProperty(CSSPropertyLeft, makeString("calc(-", videoSize.width(), "px - ", cue->getCSSSize(), "px)"));
@@ -217,15 +220,15 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
         setInlineStyleProperty(CSSPropertyMinWidth, "min-content");
         setInlineStyleProperty(CSSPropertyMaxWidth, maxSize, CSSUnitType::CSS_PERCENTAGE);
-        if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
-            setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(position.first - (newCueSize - cue->getCSSSize()) / 2), CSSUnitType::CSS_PERCENTAGE);
+        if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0 && position.first)
+            setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(*position.first - (newCueSize - cue->getCSSSize()) / 2), CSSUnitType::CSS_PERCENTAGE);
     } else {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
         setInlineStyleProperty(CSSPropertyHeight, newCueSize, CSSUnitType::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyMinHeight, "min-content");
         setInlineStyleProperty(CSSPropertyMaxHeight, maxSize, CSSUnitType::CSS_PERCENTAGE);
-        if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
-            setInlineStyleProperty(CSSPropertyTop, static_cast<double>(position.second - (newCueSize - cue->getCSSSize()) / 2), CSSUnitType::CSS_PERCENTAGE);
+        if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0 && position.second)
+            setInlineStyleProperty(CSSPropertyTop, static_cast<double>(*position.second - (newCueSize - cue->getCSSSize()) / 2), CSSUnitType::CSS_PERCENTAGE);
     }
 
     // The 'text-align' property on the (root) List of WebVTT Node Objects must
@@ -234,21 +237,8 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     // alignment:
     setInlineStyleProperty(CSSPropertyTextAlign, cue->getCSSAlignment());
     
-    if (!cue->snapToLines()) {
-        // 10.13.1 Set up x and y:
-        // Note: x and y are set through the CSS left and top above.
-
-        // 10.13.2 Position the boxes in boxes such that the point x% along the
-        // width of the bounding box of the boxes in boxes is x% of the way
-        // across the width of the video's rendering area, and the point y%
-        // along the height of the bounding box of the boxes in boxes is y%
-        // of the way across the height of the video's rendering area, while
-        // maintaining the relative positions of the boxes in boxes to each
-        // other.
-        setInlineStyleProperty(CSSPropertyTransform, makeString("translate(", -position.first, "%, ", -position.second, "%)"));
-
+    if (!cue->snapToLines())
         setInlineStyleProperty(CSSPropertyWhiteSpace, CSSValuePre);
-    }
 
     // Make sure shadow or stroke is not clipped.
     setInlineStyleProperty(CSSPropertyOverflow, CSSValueVisible);
@@ -382,26 +372,21 @@ void VTTCue::setSnapToLines(bool value)
 
 VTTCue::LineAndPositionSetting VTTCue::line() const
 {
-    if (std::isnan(m_linePosition))
+    if (!m_linePosition)
         return Auto;
 
-    return m_linePosition;
+    return *m_linePosition;
 }
 
 ExceptionOr<void> VTTCue::setLine(const LineAndPositionSetting& position)
 {
-    double linePosition = 0;
+    std::optional<double> linePosition;
 
-    if (WTF::holds_alternative<AutoKeyword>(position)) {
-        if (std::isnan(m_linePosition))
-            return { };
-        linePosition = std::numeric_limits<double>::quiet_NaN();
-    } else {
-        linePosition = WTF::get<double>(position);
+    if (!std::holds_alternative<AutoKeyword>(position))
+        linePosition = std::get<double>(position);
 
-        if (m_linePosition == linePosition)
-            return { };
-    }
+    if (m_linePosition == linePosition)
+        return { };
 
     willChange();
     m_linePosition = linePosition;
@@ -451,9 +436,9 @@ ExceptionOr<void> VTTCue::setLineAlign(const String& value)
 
 VTTCue::LineAndPositionSetting VTTCue::position() const
 {
-    if (textPositionIsAuto())
-        return Auto;
-    return m_textPosition;
+    if (m_textPosition)
+        return *m_textPosition;
+    return Auto;
 }
 
 ExceptionOr<void> VTTCue::setPosition(const LineAndPositionSetting& position)
@@ -463,23 +448,20 @@ ExceptionOr<void> VTTCue::setPosition(const LineAndPositionSetting& position)
     // IndexSizeError exception must be thrown. Otherwise, the WebVTT cue
     // position must be set to the new value; if the new value is the string
     // "auto", then it must be interpreted as the special value auto.
-    double textPosition = 0;
-    if (WTF::holds_alternative<AutoKeyword>(position)) {
-        if (textPositionIsAuto())
-            return { };
-        textPosition = std::numeric_limits<double>::quiet_NaN();
-    } else {
-        textPosition = WTF::get<double>(position);
+    std::optional<double> textPosition;
+
+    // Otherwise, set the text track cue line position to the new value.
+    if (!std::holds_alternative<AutoKeyword>(position)) {
+        textPosition = std::get<double>(position);
         if (!(textPosition >= 0 && textPosition <= 100))
             return Exception { IndexSizeError };
-
-        // Otherwise, set the text track cue line position to the new value.
-        if (m_textPosition == textPosition)
-            return { };
     }
 
+    if (m_textPosition == textPosition)
+        return { };
+
     willChange();
-    m_textPosition = textPosition;
+    m_textPosition = WTFMove(textPosition);
     didChange();
 
     return { };
@@ -712,14 +694,14 @@ const String& VTTCue::regionId()
     return m_region->id();
 }
 
-int VTTCue::calculateComputedLinePosition()
+int VTTCue::calculateComputedLinePosition() const
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#text-track-cue-computed-line-position
 
     // If the text track cue line position is numeric, then that is the text
     // track cue computed line position.
-    if (!std::isnan(m_linePosition))
-        return m_linePosition;
+    if (m_linePosition)
+        return *m_linePosition;
 
     // If the text track cue snap-to-lines flag of the text track cue is not
     // set, the text track cue computed line position is the value 100;
@@ -752,11 +734,6 @@ static bool isCueParagraphSeparator(UChar character)
     // Within a cue, paragraph boundaries are only denoted by Type B characters,
     // such as U+000A LINE FEED (LF), U+0085 NEXT LINE (NEL), and U+2029 PARAGRAPH SEPARATOR.
     return u_charType(character) == U_PARAGRAPH_SEPARATOR;
-}
-
-bool VTTCue::textPositionIsAuto() const
-{
-    return std::isnan(m_textPosition);
 }
 
 void VTTCue::determineTextDirection()
@@ -808,8 +785,8 @@ double VTTCue::calculateComputedTextPosition() const
     
     // 1. If the position is numeric, then return the value of the position and
     // abort these steps. (Otherwise, the position is the special value auto.)
-    if (!textPositionIsAuto())
-        return m_textPosition;
+    if (m_textPosition)
+        return *m_textPosition;
     
     switch (m_cueAlignment) {
     case Start:
@@ -919,18 +896,18 @@ void VTTCue::calculateDisplayParameters()
     // 10.9 Determine the value of whichever of x-position or y-position is not
     // yet calculated for cue as per the appropriate rules from the following
     // list:
-    if (m_snapToLines && m_displayPosition.second == undefinedPosition && m_writingDirection == Horizontal)
+    if (m_snapToLines && !m_displayPosition.second && m_writingDirection == Horizontal)
         m_displayPosition.second = 0;
 
-    if (!m_snapToLines && m_displayPosition.second == undefinedPosition && m_writingDirection == Horizontal)
-        m_displayPosition.second = m_computedLinePosition;
+    if (!m_snapToLines && !m_displayPosition.second && m_writingDirection == Horizontal)
+        m_displayPosition.second = *m_computedLinePosition;
 
-    if (m_snapToLines && m_displayPosition.first == undefinedPosition
+    if (m_snapToLines && !m_displayPosition.first
         && (m_writingDirection == VerticalGrowingLeft || m_writingDirection == VerticalGrowingRight))
         m_displayPosition.first = 0;
 
     if (!m_snapToLines && (m_writingDirection == VerticalGrowingLeft || m_writingDirection == VerticalGrowingRight))
-        m_displayPosition.first = m_computedLinePosition;
+        m_displayPosition.first = *m_computedLinePosition;
 }
     
 void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previousTimestamp, const MediaTime& movieTime)
@@ -1008,9 +985,9 @@ RefPtr<TextTrackCueBox> VTTCue::getDisplayTree(const IntSize& videoSize, int fon
     // background box.
 
     // Note: This is contained by default in m_cueHighlightBox.
-    m_cueHighlightBox->setPseudo(cueShadowPseudoId());
+    m_cueHighlightBox->setPseudo(ShadowPseudoIds::cue());
 
-    m_cueBackdropBox->setPseudo(cueBackdropShadowPseudoId());
+    m_cueBackdropBox->setPseudo(ShadowPseudoIds::webkitMediaTextTrackDisplayBackdrop());
     m_cueBackdropBox->appendChild(*m_cueHighlightBox);
     displayTree->appendChild(*m_cueBackdropBox);
 
@@ -1074,30 +1051,31 @@ std::pair<double, double> VTTCue::getPositionCoordinates() const
     std::pair<double, double> coordinates;
 
     auto textPosition = calculateComputedTextPosition();
+    auto computedLinePosition = m_computedLinePosition ? *m_computedLinePosition : calculateComputedLinePosition();
     
     if (m_writingDirection == Horizontal && m_displayDirection == CSSValueLtr) {
         coordinates.first = textPosition;
-        coordinates.second = m_computedLinePosition;
+        coordinates.second = computedLinePosition;
 
         return coordinates;
     }
 
     if (m_writingDirection == Horizontal && m_displayDirection == CSSValueRtl) {
         coordinates.first = 100 - textPosition;
-        coordinates.second = m_computedLinePosition;
+        coordinates.second = computedLinePosition;
 
         return coordinates;
     }
 
     if (m_writingDirection == VerticalGrowingLeft) {
-        coordinates.first = 100 - m_computedLinePosition;
+        coordinates.first = 100 - *m_computedLinePosition;
         coordinates.second = textPosition;
 
         return coordinates;
     }
 
     if (m_writingDirection == VerticalGrowingRight) {
-        coordinates.first = m_computedLinePosition;
+        coordinates.first = computedLinePosition;
         coordinates.second = textPosition;
 
         return coordinates;
@@ -1317,14 +1295,6 @@ int VTTCue::getCSSSize() const
     return m_displaySize;
 }
 
-std::pair<double, double> VTTCue::getCSSPosition() const
-{
-    if (!m_snapToLines)
-        return getPositionCoordinates();
-
-    return m_displayPosition;
-}
-
 bool VTTCue::cueContentsMatch(const TextTrackCue& otherTextTrackCue) const
 {
     auto& other = downcast<VTTCue>(otherTextTrackCue);
@@ -1358,11 +1328,14 @@ void VTTCue::toJSON(JSON::Object& object) const
 
     object.setString("vertical"_s, vertical());
     object.setBoolean("snapToLines"_s, snapToLines());
-    object.setDouble("line"_s, m_linePosition);
-    if (textPositionIsAuto())
-        object.setString("position"_s, "auto"_s);
+    if (m_linePosition)
+        object.setString("line"_s, "auto"_s);
     else
-        object.setDouble("position"_s, m_textPosition);
+        object.setDouble("line"_s, *m_linePosition);
+    if (m_textPosition)
+        object.setDouble("position"_s, *m_textPosition);
+    else
+        object.setString("position"_s, "auto"_s);
     object.setInteger("size"_s, m_cueSize);
     object.setString("align"_s, align());
 }

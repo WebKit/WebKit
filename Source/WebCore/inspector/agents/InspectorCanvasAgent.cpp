@@ -50,7 +50,6 @@
 #include "JSExecState.h"
 #include "OffscreenCanvas.h"
 #include "Path2D.h"
-#include "ScriptState.h"
 #include "StringAdaptors.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLBuffer.h"
@@ -75,11 +74,11 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrays.h>
+#include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -594,7 +593,7 @@ void InspectorCanvasAgent::recordAction(CanvasRenderingContext& canvasRenderingC
     // Only enqueue one microtask for all actively recording canvases.
     if (m_recordingCanvasIdentifiers.isEmpty()) {
         if (auto* scriptExecutionContext = inspectorCanvas->scriptExecutionContext()) {
-            scriptExecutionContext->eventLoop().queueMicrotask([weakThis = makeWeakPtr(*this)] {
+            scriptExecutionContext->eventLoop().queueMicrotask([weakThis = WeakPtr { *this }] {
                 if (!weakThis)
                     return;
 

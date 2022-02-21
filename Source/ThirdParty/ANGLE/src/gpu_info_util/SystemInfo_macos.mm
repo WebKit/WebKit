@@ -17,11 +17,11 @@
 
 #    include "common/gl/cgl/FunctionsCGL.h"
 
-#if !defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-#define HAVE_MAIN_PORT_DEFAULT 1
-#else
-#define HAVE_MAIN_PORT_DEFAULT 0
-#endif
+#    if !defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+#        define HAVE_MAIN_PORT_DEFAULT 1
+#    else
+#        define HAVE_MAIN_PORT_DEFAULT 0
+#    endif
 
 namespace angle
 {
@@ -34,16 +34,16 @@ constexpr CGLRendererProperty kCGLRPRegistryIDHigh = static_cast<CGLRendererProp
 
 std::string GetMachineModel()
 {
-#if HAVE_MAIN_PORT_DEFAULT
+#    if HAVE_MAIN_PORT_DEFAULT
     const mach_port_t mainPort = kIOMainPortDefault;
-#else
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#    else
+#        pragma clang diagnostic push
+#        pragma clang diagnostic ignored "-Wdeprecated-declarations"
     const mach_port_t mainPort = kIOMasterPortDefault;
-#pragma clang diagnostic pop
-#endif
-    io_service_t platformExpert = IOServiceGetMatchingService(
-        mainPort, IOServiceMatching("IOPlatformExpertDevice"));
+#        pragma clang diagnostic pop
+#    endif
+    io_service_t platformExpert =
+        IOServiceGetMatchingService(mainPort, IOServiceMatching("IOPlatformExpertDevice"));
 
     if (platformExpert == IO_OBJECT_NULL)
     {
@@ -105,14 +105,14 @@ void GetIORegistryDevices(std::vector<GPUDeviceInfo> *devices)
         CFMutableDictionaryRef matchDictionary = IOServiceMatching(kServiceNames[i]);
 
         io_iterator_t entryIterator;
-#if HAVE_MAIN_PORT_DEFAULT
+#    if HAVE_MAIN_PORT_DEFAULT
         const mach_port_t mainPort = kIOMainPortDefault;
-#else
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    const mach_port_t mainPort = kIOMasterPortDefault;
-#pragma clang diagnostic pop
-#endif
+#    else
+#        pragma clang diagnostic push
+#        pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        const mach_port_t mainPort = kIOMasterPortDefault;
+#        pragma clang diagnostic pop
+#    endif
         if (IOServiceGetMatchingServices(mainPort, matchDictionary, &entryIterator) !=
             kIOReturnSuccess)
         {
@@ -172,14 +172,14 @@ void SetActiveGPUIndex(SystemInfo *info)
         return;
 
     CFMutableDictionaryRef matchDictionary = IORegistryEntryIDMatching(gpuID);
-#if HAVE_MAIN_PORT_DEFAULT
+#    if HAVE_MAIN_PORT_DEFAULT
     const mach_port_t mainPort = kIOMainPortDefault;
-#else
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#    else
+#        pragma clang diagnostic push
+#        pragma clang diagnostic ignored "-Wdeprecated-declarations"
     const mach_port_t mainPort = kIOMasterPortDefault;
-#pragma clang diagnostic pop
-#endif
+#        pragma clang diagnostic pop
+#    endif
     io_service_t gpuEntry = IOServiceGetMatchingService(mainPort, matchDictionary);
 
     if (gpuEntry == IO_OBJECT_NULL)
@@ -281,16 +281,15 @@ VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID)
 
         // IOServiceGetMatchingService will consume the reference on the matching dictionary,
         // so we don't need to release the dictionary.
-#if HAVE_MAIN_PORT_DEFAULT
+#    if HAVE_MAIN_PORT_DEFAULT
         const mach_port_t mainPort = kIOMainPortDefault;
-#else
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    const mach_port_t mainPort = kIOMasterPortDefault;
-#pragma clang diagnostic pop
-#endif
-        io_registry_entry_t acceleratorEntry =
-            IOServiceGetMatchingService(mainPort, matchingDict);
+#    else
+#        pragma clang diagnostic push
+#        pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        const mach_port_t mainPort = kIOMasterPortDefault;
+#        pragma clang diagnostic pop
+#    endif
+        io_registry_entry_t acceleratorEntry = IOServiceGetMatchingService(mainPort, matchingDict);
         if (acceleratorEntry == IO_OBJECT_NULL)
         {
             return 0;
@@ -359,10 +358,10 @@ bool GetSystemInfo_mac(SystemInfo *info)
     {
         info->isMacSwitchable = true;
     }
-    
-#if defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64)
+
+#    if defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64)
     info->needsEAGLOnMac = true;
-#endif
+#    endif
 
     return true;
 }

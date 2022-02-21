@@ -184,7 +184,7 @@ class TestResultWriter(object):
     def write_image_files(self, actual_image, expected_image):
         self.write_output_files('.png', actual_image, expected_image)
 
-    def write_image_diff_files(self, image_diff):
+    def write_image_diff_files(self, image_diff, diff_percent_text=None, fuzzy_data_text=None):
         diff_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFF)
         self._write_binary_file(diff_filename, image_diff)
 
@@ -198,6 +198,18 @@ class TestResultWriter(object):
         html = image_diff_file.replace('__TITLE__', self._test_name)
         html = html.replace('__PREFIX__', self._output_testname(''))
 
+        if not diff_percent_text:
+            html = html.replace('__HIDE_DIFF_CLASS__', 'hidden')
+        else:
+            html = html.replace('__HIDE_DIFF_CLASS__', '')
+            html = html.replace('__PIXEL_DIFF__', diff_percent_text)
+
+        if not fuzzy_data_text:
+            html = html.replace('__HIDE_FUZZY_CLASS__', 'hidden')
+        else:
+            html = html.replace('__HIDE_FUZZY_CLASS__', '')
+            html = html.replace('__FUZZY_DATA__', fuzzy_data_text)
+
         diffs_html_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFFS_HTML)
         self._filesystem.write_text_file(diffs_html_filename, html)
 
@@ -205,4 +217,5 @@ class TestResultWriter(object):
         fs = self._filesystem
         dst_dir = fs.dirname(fs.join(self._root_output_dir, self._test_name))
         dst_filepath = fs.join(dst_dir, fs.basename(src_filepath))
-        self._write_text_file(dst_filepath, fs.read_text_file(src_filepath))
+        self._make_output_directory()
+        fs.copyfile(src_filepath, dst_filepath)

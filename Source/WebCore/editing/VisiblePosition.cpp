@@ -35,9 +35,9 @@
 #include "HTMLElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
+#include "InlineIteratorBox.h"
+#include "InlineIteratorLine.h"
 #include "InlineRunAndOffset.h"
-#include "LayoutIntegrationLineIterator.h"
-#include "LayoutIntegrationRunIterator.h"
 #include "Logging.h"
 #include "Range.h"
 #include "RenderBlockFlow.h"
@@ -122,6 +122,8 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
     Position downstreamStart = p.downstream();
     TextDirection primaryDirection = p.primaryDirection();
 
+    InlineIterator::LineLogicalOrderCache orderCache;
+
     while (true) {
         auto [run, offset] = p.inlineRunAndOffset(m_affinity, primaryDirection);
         if (!run)
@@ -130,7 +132,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
         auto* renderer = &run->renderer();
 
         while (true) {
-            if ((renderer->isReplaced() || renderer->isBR()) && offset == run->rightmostCaretOffset())
+            if ((renderer->isReplacedOrInlineBlock() || renderer->isBR()) && offset == run->rightmostCaretOffset())
                 return run->isLeftToRightDirection() ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
 
             if (!renderer->node()) {
@@ -153,11 +155,11 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
 
             if (offset != run->leftmostCaretOffset()) {
                 // Overshot to the left.
-                auto previousRun = run.previousOnLineIgnoringLineBreak();
+                auto previousRun = run->previousOnLineIgnoringLineBreak();
                 if (!previousRun) {
                     Position positionOnLeft = primaryDirection == TextDirection::LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
                     auto runOnLeft = positionOnLeft.inlineRunAndOffset(m_affinity, primaryDirection).run;
-                    if (runOnLeft && runOnLeft.line() == run.line())
+                    if (runOnLeft && runOnLeft->line() == run->line())
                         return Position();
                     return positionOnLeft;
                 }
@@ -170,11 +172,13 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             }
 
             unsigned char level = run->bidiLevel();
-            auto previousRun = run.previousOnLine();
+            auto previousRun = run->previousOnLine();
 
             if (run->direction() == primaryDirection) {
                 if (!previousRun) {
-                    auto logicalStart = (primaryDirection == TextDirection::LTR) ? run.line().logicalStartRunWithNode() : run.line().logicalEndRunWithNode();
+                    auto logicalStart = primaryDirection == TextDirection::LTR
+                        ? InlineIterator::firstLeafOnLineInLogicalOrderWithNode(run->line(), orderCache)
+                        : InlineIterator::lastLeafOnLineInLogicalOrderWithNode(run->line(), orderCache);
                     if (logicalStart) {
                         run = logicalStart;
                         renderer = &run->renderer();
@@ -221,7 +225,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             } else {
                 // Trailing edge of a secondary run. Set to the leading edge of the entire run.
                 while (true) {
-                    while (auto nextRun = run.nextOnLine()) {
+                    while (auto nextRun = run->nextOnLine()) {
                         if (nextRun->bidiLevel() < level)
                             break;
                         run = nextRun;
@@ -229,7 +233,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
                     if (run->bidiLevel() == level)
                         break;
                     level = run->bidiLevel();
-                    while (auto previousRun = run.previousOnLine()) {
+                    while (auto previousRun = run->previousOnLine()) {
                         if (previousRun->bidiLevel() < level)
                             break;
                         run = previousRun;
@@ -284,6 +288,8 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
     Position downstreamStart = p.downstream();
     TextDirection primaryDirection = p.primaryDirection();
 
+    InlineIterator::LineLogicalOrderCache orderCache;
+
     while (true) {
         auto [run, offset] = p.inlineRunAndOffset(m_affinity, primaryDirection);
         if (!run)
@@ -292,7 +298,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
         auto* renderer = &run->renderer();
 
         while (true) {
-            if ((renderer->isReplaced() || renderer->isBR()) && offset == run->leftmostCaretOffset())
+            if ((renderer->isReplacedOrInlineBlock() || renderer->isBR()) && offset == run->leftmostCaretOffset())
                 return run->isLeftToRightDirection() ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
 
             if (!renderer->node()) {
@@ -315,11 +321,11 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
 
             if (offset != run->rightmostCaretOffset()) {
                 // Overshot to the right.
-                auto nextRun = run.nextOnLineIgnoringLineBreak();
+                auto nextRun = run->nextOnLineIgnoringLineBreak();
                 if (!nextRun) {
                     Position positionOnRight = primaryDirection == TextDirection::LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
                     auto runOnRight = positionOnRight.inlineRunAndOffset(m_affinity, primaryDirection).run;
-                    if (runOnRight && runOnRight.line() == run.line())
+                    if (runOnRight && runOnRight->line() == run->line())
                         return Position();
                     return positionOnRight;
                 }
@@ -332,11 +338,14 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
             }
 
             unsigned char level = run->bidiLevel();
-            auto nextRun = run.nextOnLine();
+            auto nextRun = run->nextOnLine();
 
             if (run->direction() == primaryDirection) {
                 if (!nextRun) {
-                    auto logicalEnd = primaryDirection == TextDirection::LTR ? run.line().logicalEndRunWithNode() : run.line().logicalStartRunWithNode();
+                    auto logicalEnd = primaryDirection == TextDirection::LTR
+                        ? InlineIterator::lastLeafOnLineInLogicalOrderWithNode(run->line(), orderCache)
+                        : InlineIterator::firstLeafOnLineInLogicalOrderWithNode(run->line(), orderCache);
+
                     if (logicalEnd) {
                         run = logicalEnd;
                         renderer = &run->renderer();
@@ -386,7 +395,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
             } else {
                 // Trailing edge of a secondary run. Set to the leading edge of the entire run.
                 while (true) {
-                    while (auto previousRun = run.previousOnLine()) {
+                    while (auto previousRun = run->previousOnLine()) {
                         if (previousRun->bidiLevel() < level)
                             break;
                         run = previousRun;
@@ -394,7 +403,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
                     if (run->bidiLevel() == level)
                         break;
                     level = run->bidiLevel();
-                    while (auto nextRun = run.nextOnLine()) {
+                    while (auto nextRun = run->nextOnLine()) {
                         if (nextRun->bidiLevel() < level)
                             break;
                         run = nextRun;
@@ -659,7 +668,7 @@ FloatRect VisiblePosition::absoluteSelectionBoundsForLine() const
     if (!run)
         return { };
 
-    auto line = run.line();
+    auto line = run->line();
     auto localRect = FloatRect { FloatPoint { line->contentLogicalLeft(), line->selectionTop() }, FloatPoint { line->contentLogicalRight(), line->selectionBottom() } };
     if (!line->isHorizontal())
         localRect = localRect.transposedRect();

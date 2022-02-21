@@ -7,13 +7,13 @@ es5id: 15.7.3.2_A4
 description: Checking if enumerating Number.MAX_VALUE fails
 ---*/
 
-//CHECK#1
 for (var x in Number) {
-  if (x === "MAX_VALUE") {
-    throw new Test262Error('#1: Number.MAX_VALUE has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "MAX_VALUE", 'The value of x is not "MAX_VALUE"');
 }
 
-if (Number.propertyIsEnumerable('MAX_VALUE')) {
-  throw new Test262Error('#2: Number.MAX_VALUE has the attribute DontEnum');
-}
+assert(
+  !Number.propertyIsEnumerable('MAX_VALUE'),
+  'The value of !Number.propertyIsEnumerable(\'MAX_VALUE\') is expected to be true'
+);
+
+// TODO: Convert to verifyProperty() format.

@@ -56,7 +56,7 @@ Ref<ScrollingStateNode> ScrollingStateFrameHostingNode::clone(ScrollingStateTree
     return adoptRef(*new ScrollingStateFrameHostingNode(*this, adoptiveTree));
 }
 
-void ScrollingStateFrameHostingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+void ScrollingStateFrameHostingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "Frame hosting node";
     ScrollingStateNode::dumpProperties(ts, behavior);

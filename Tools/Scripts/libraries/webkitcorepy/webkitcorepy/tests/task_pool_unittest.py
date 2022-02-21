@@ -110,7 +110,7 @@ class TaskPoolUnittest(unittest.TestCase):
                     pool.wait()
 
             lines = captured.stdout.getvalue().splitlines()
-            self.assertEquals(sorted(lines), ['action({})'.format(character) for character in self.alphabet])
+            self.assertEqual(sorted(lines), ['action({})'.format(character) for character in self.alphabet])
             self.assertEqual(
                 sorted(captured.webkitcorepy.log.getvalue().splitlines()),
                 sorted(['worker/{} starting'.format(number) for number in range(4)] + ['worker/{} stopping'.format(number) for number in range(4)]),

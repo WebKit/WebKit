@@ -27,7 +27,6 @@
 #define PAS_THREAD_LOCAL_CACHE_NODE_H
 
 #include "pas_config.h"
-#include "pas_magazine.h"
 #include "pas_lock.h"
 #include "pas_utils.h"
 
@@ -51,7 +50,7 @@ struct pas_thread_local_cache_node {
     
     pas_lock page_lock;
     
-    pas_lock log_flush_lock;
+    pas_lock scavenger_lock;
     
     pas_thread_local_cache* cache;
 };

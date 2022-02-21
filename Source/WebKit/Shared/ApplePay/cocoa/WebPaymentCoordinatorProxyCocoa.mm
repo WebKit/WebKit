@@ -41,7 +41,6 @@
 #import <WebCore/ApplePayShippingContactUpdate.h>
 #import <WebCore/ApplePayShippingMethod.h>
 #import <WebCore/ApplePayShippingMethodUpdate.h>
-#import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/PaymentHeaders.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
@@ -201,6 +200,22 @@ PKShippingMethod *toPKShippingMethod(const WebCore::ApplePayShippingMethod& ship
     return result;
 }
 
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+
+PKShippingMethods *toPKShippingMethods(const Vector<WebCore::ApplePayShippingMethod>& webShippingMethods)
+{
+    RetainPtr<PKShippingMethod> defaultMethod;
+    auto methods = createNSArray(webShippingMethods, [&defaultMethod] (const auto& webShippingMethod) {
+        auto pkShippingMethod = toPKShippingMethod(webShippingMethod);
+        if (webShippingMethod.selected)
+            defaultMethod = pkShippingMethod;
+        return pkShippingMethod;
+    });
+    return [PAL::allocPKShippingMethodsInstance() initWithMethods:methods.get() defaultMethod:defaultMethod.get()];
+}
+
+#endif // HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+
 #if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
 
 static PKShippingContactEditingMode toPKShippingContactEditingMode(WebCore::ApplePayShippingContactEditingMode shippingContactEditingMode)
@@ -241,6 +256,10 @@ static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest:
     }
 }
 
+#if !USE(APPLE_INTERNAL_SDK)
+static void merge(PKPaymentRequest *, const WebCore::ApplePaySessionPaymentRequest&) { }
+#endif
+
 RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
     auto result = adoptNS([PAL::allocPKPaymentRequestInstance() init]);
@@ -263,9 +282,13 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
     [result setShippingType:toPKShippingType(paymentRequest.shippingType())];
 
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+    [result setAvailableShippingMethods:toPKShippingMethods(paymentRequest.shippingMethods())];
+#else
     [result setShippingMethods:createNSArray(paymentRequest.shippingMethods(), [] (auto& method) {
         return toPKShippingMethod(method);
     }).get()];
+#endif
 
     [result setPaymentSummaryItems:WebCore::platformSummaryItems(paymentRequest.total(), paymentRequest.lineItems())];
 
@@ -280,11 +303,9 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
     [result setSupportedCountries:toNSSet(paymentRequest.supportedCountries()).get()];
 
-#if HAVE(PASSKIT_BOUND_INTERFACE_IDENTIFIER)
     auto& boundInterfaceIdentifier = m_client.paymentCoordinatorBoundInterfaceIdentifier(*this);
     if (!boundInterfaceIdentifier.isEmpty())
         [result setBoundInterfaceIdentifier:boundInterfaceIdentifier];
-#endif
 
     // FIXME: Instead of using respondsToSelector, this should use a proper #if version check.
     auto& bundleIdentifier = m_client.paymentCoordinatorSourceApplicationBundleIdentifier(*this);
@@ -321,16 +342,14 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
         [result setShippingContactEditingMode:toPKShippingContactEditingMode(*shippingContactEditingMode)];
 #endif
 
-#if defined(WebPaymentCoordinatorProxyCocoaAdditions_platformPaymentRequest)
-    WebPaymentCoordinatorProxyCocoaAdditions_platformPaymentRequest
-#endif
+    merge(result.get(), paymentRequest);
 
     return result;
 }
 
-void WebPaymentCoordinatorProxy::platformCompletePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>& result)
+void WebPaymentCoordinatorProxy::platformCompletePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&& result)
 {
-    m_authorizationPresenter->completePaymentSession(result);
+    m_authorizationPresenter->completePaymentSession(WTFMove(result));
 }
 
 void WebPaymentCoordinatorProxy::platformCompleteMerchantValidation(const WebCore::PaymentMerchantSession& paymentMerchantSession)

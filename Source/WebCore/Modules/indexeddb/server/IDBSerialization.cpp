@@ -53,7 +53,7 @@ RefPtr<SharedBuffer> serializeIDBKeyPath(const std::optional<IDBKeyPath>& keyPat
                 encoder.encodeString("string", string);
             });
         });
-        WTF::visit(visitor, keyPath.value());
+        std::visit(visitor, keyPath.value());
     } else
         encoder->encodeEnum("type", KeyPathType::Null);
 

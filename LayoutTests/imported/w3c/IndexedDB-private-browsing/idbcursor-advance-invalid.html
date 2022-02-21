@@ -46,10 +46,10 @@
                 cursor.advance(1);
 
                 // Second try
-                assert_throws('InvalidStateError',
+                assert_throws_dom('InvalidStateError',
                     function() { cursor.advance(1); }, 'second advance');
 
-                assert_throws('InvalidStateError',
+                assert_throws_dom('InvalidStateError',
                     function() { cursor.advance(3); }, 'third advance');
 
                 count++;
@@ -64,19 +64,19 @@
             rq.onsuccess = this.step_func(function(e) {
                 var cursor = e.target.result;
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(document); });
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance({}); });
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance([]); });
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(""); });
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance("1 2"); });
 
                 this.done();
@@ -91,14 +91,14 @@
             rq.onsuccess = this.step_func(function(e) {
                 var cursor = e.target.result;
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(null); });
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(undefined); });
 
                 var myvar = null;
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(myvar); });
 
                 this.done();
@@ -113,7 +113,7 @@
             rq.onsuccess = this.step_func(function(e) {
                 var cursor = e.target.result;
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(); });
 
                 this.done();
@@ -128,26 +128,26 @@
             rq.onsuccess = this.step_func(function(e) {
                 var cursor = e.target.result;
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(-1); });
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(NaN); });
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(0); });
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(-0); });
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(Infinity); });
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(-Infinity); });
 
                 var myvar = -999999;
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(myvar); });
 
                 this.done();
@@ -169,7 +169,7 @@
                     return;
                 }
 
-                assert_throws({ name: "TypeError" },
+                assert_throws_js(TypeError,
                     function() { cursor.advance(0); });
 
                 cursor.advance(1);

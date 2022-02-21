@@ -14,7 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/conformance-requirements/2d.coordinatespace.png
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/conformance-requirements/2d.missingargs.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/conformance-requirements/2d.type.delete.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/conformance-requirements/2d.voidreturn.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/conformance-requirements/2d.conformance.requirements.basics.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/conformance-requirements/2d.conformance.requirements.delete.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/conformance-requirements/2d.conformance.requirements.drawings.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/conformance-requirements/2d.conformance.requirements.missingargs.html

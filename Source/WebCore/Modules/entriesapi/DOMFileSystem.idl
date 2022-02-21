@@ -24,11 +24,10 @@
  */
 
 [
-    EnabledAtRuntime=DirectoryUpload,
-    ImplementationLacksVTable,
+    EnabledAtRuntime=DirectoryUploadEnabled,
     InterfaceName=FileSystem,
     Exposed=Window
 ] interface DOMFileSystem {
     readonly attribute USVString name;
-    [CachedAttribute, CallWith=ScriptExecutionContext] readonly attribute FileSystemDirectoryEntry root;
+    [CachedAttribute, CallWith=CurrentScriptExecutionContext] readonly attribute FileSystemDirectoryEntry root;
 };

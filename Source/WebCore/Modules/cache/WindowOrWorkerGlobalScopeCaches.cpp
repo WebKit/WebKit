@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "Page.h"
 #include "Supplementable.h"
+#include "WorkerCacheStorageConnection.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {

@@ -38,7 +38,7 @@ public:
     using SVGElement::deref;
 
     const SVGSVGElement* targetElement() const { return m_targetElement.get(); }
-    void setTargetElement(const SVGSVGElement& targetElement) { m_targetElement = makeWeakPtr(targetElement); }
+    void setTargetElement(const SVGSVGElement& targetElement) { m_targetElement = targetElement; }
     void resetTargetElement() { m_targetElement = nullptr; }
 
 private:

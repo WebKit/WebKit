@@ -281,8 +281,7 @@ public:
     
     size_t arrayLength() const { return fastBitVectorArrayLength(numBits()); }
     
-    template<typename Other>
-    bool operator==(const Other& other) const
+    bool operator==(const FastBitVectorImpl& other) const
     {
         if (numBits() != other.numBits())
             return false;
@@ -293,8 +292,7 @@ public:
         return true;
     }
     
-    template<typename Other>
-    bool operator!=(const Other& other) const
+    bool operator!=(const FastBitVectorImpl& other) const
     {
         return !(*this == other);
     }

@@ -30,8 +30,8 @@
 
 #include "ExceptionOr.h"
 #include "HTTPHeaderMap.h"
+#include <variant>
 #include <wtf/HashTraits.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -46,7 +46,7 @@ public:
         Response
     };
 
-    using Init = Variant<Vector<Vector<String>>, Vector<WTF::KeyValuePair<String, String>>>;
+    using Init = std::variant<Vector<Vector<String>>, Vector<KeyValuePair<String, String>>>;
     static ExceptionOr<Ref<FetchHeaders>> create(std::optional<Init>&&);
 
     static Ref<FetchHeaders> create(Guard guard = Guard::None, HTTPHeaderMap&& headers = { }) { return adoptRef(*new FetchHeaders { guard, WTFMove(headers) }); }
@@ -69,7 +69,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(FetchHeaders&);
-        std::optional<WTF::KeyValuePair<String, String>> next();
+        std::optional<KeyValuePair<String, String>> next();
 
     private:
         Ref<FetchHeaders> m_headers;

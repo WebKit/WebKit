@@ -51,7 +51,6 @@ AudioScheduledSourceNode::AudioScheduledSourceNode(BaseAudioContext& context, No
     : AudioNode(context, type)
     , ActiveDOMObject(context.scriptExecutionContext())
 {
-    suspendIfNeeded();
 }
 
 void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, AudioBus& outputBus, size_t& quantumFrameOffset, size_t& nonSilentFramesToProcess, double& startFrameOffset)
@@ -200,7 +199,7 @@ void AudioScheduledSourceNode::finish()
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-    callOnMainThread([this, protectedThis = makeRef(*this), pendingActivity = makePendingActivity(*this)] {
+    callOnMainThread([this, protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)] {
         if (context().isStopped())
             return;
         this->dispatchEvent(Event::create(eventNames().endedEvent, Event::CanBubble::No, Event::IsCancelable::No));

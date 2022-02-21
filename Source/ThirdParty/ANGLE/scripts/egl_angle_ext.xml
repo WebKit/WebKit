@@ -14,7 +14,7 @@
             <proto><ptype>EGLDeviceEXT</ptype> <name>eglCreateDeviceANGLE</name></proto>
             <param><ptype>EGLint</ptype> <name>device_type</name></param>
             <param>void *<name>native_device</name></param>
-            <param>const <ptype>EGLattrib</ptype> *<name>attrib_list</name></param>
+            <param>const <ptype>EGLAttrib</ptype> *<name>attrib_list</name></param>
         </command>
         <command>
             <proto><ptype>EGLBoolean</ptype> <name>eglReleaseDeviceANGLE</name></proto>
@@ -108,6 +108,19 @@
             <proto><pytpe>void</pytpe> <name>eglHandleGPUSwitchANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
         </command>
+        <command>
+            <proto><ptype>EGLBoolean</ptype> <name>eglQueryDisplayAttribANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+            <param><ptype>EGLint</ptype> <name>attribute</name></param>
+            <param><ptype>EGLAttrib *</ptype> <name>value</name></param>
+        </command>
+        <command>
+            <proto><ptype>EGLBoolean</ptype> <name>eglExportVkImageANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+            <param><ptype>EGLImage</ptype> <name>image</name></param>
+            <param><ptype>void *</ptype> <name>vk_image</name></param>
+            <param><ptype>void *</ptype> <name>vk_image_create_info</name></param>
+        </command>
     </commands>
     <!-- SECTION: ANGLE extension interface definitions -->
     <extensions>
@@ -157,6 +170,26 @@
                 <command name="eglReleaseHighPowerGPUANGLE"/>
                 <command name="eglReacquireHighPowerGPUANGLE"/>
                 <command name="eglHandleGPUSwitchANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_display_semaphore_share_group" supported="egl">
+            <require>
+                <enum name="EGL_DISPLAY_SEMAPHORE_SHARE_GROUP_ANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_display_texture_share_group" supported="egl">
+            <require>
+                <enum name="EGL_DISPLAY_TEXTURE_SHARE_GROUP_ANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_vulkan_image" supported="egl">
+            <require>
+                <command name="eglExportVkImageANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_metal_create_context_ownership_identity" supported="egl">
+            <require>
+                <enum name="EGL_CONTEXT_METAL_OWNERSHIP_IDENTITY_ANGLE"/>
             </require>
         </extension>
     </extensions>

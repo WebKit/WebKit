@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineFormattingContext.h"
 #include "InlineFormattingGeometry.h"
 
 namespace WebCore {
@@ -35,20 +36,27 @@ namespace Layout {
 class LineBoxVerticalAligner {
 public:
     LineBoxVerticalAligner(const InlineFormattingContext&);
-    InlineLayoutUnit computeLogicalHeightAndAlign(LineBox&, bool useSimplifiedAlignment) const;
-
-    static bool canUseSimplifiedAlignmentForInlineLevelBox(const InlineLevelBox& rootInlineBox, const InlineLevelBox&, std::optional<const BoxGeometry> nlineLevelBoxGeometry);
+    InlineLayoutUnit computeLogicalHeightAndAlign(LineBox&) const;
 
 private:
     InlineLayoutUnit simplifiedVerticalAlignment(LineBox&) const;
 
-    InlineLayoutUnit computeLineBoxLogicalHeight(LineBox&) const;
-    void computeRootInlineBoxVerticalPosition(LineBox&) const;
+    struct LineBoxHeight {
+        InlineLayoutUnit value() const { return std::max(nonBottomAlignedBoxesMaximumHeight, bottomAlignedBoxesMaximumHeight.value_or(0.f)); }
+
+        InlineLayoutUnit nonBottomAlignedBoxesMaximumHeight { 0 };
+        std::optional<InlineLayoutUnit> bottomAlignedBoxesMaximumHeight { };
+    };
+    LineBoxHeight computeLineBoxLogicalHeight(LineBox&) const;
+    void computeRootInlineBoxVerticalPosition(LineBox&, const LineBoxHeight&) const;
     void alignInlineLevelBoxes(LineBox&, InlineLayoutUnit lineBoxLogicalHeight) const;
 
     const InlineFormattingGeometry& formattingGeometry() const { return m_inlineFormattingGeometry; }
+    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    const LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:
+    const InlineFormattingContext& m_inlineFormattingContext;
     const InlineFormattingGeometry m_inlineFormattingGeometry;
 };
 

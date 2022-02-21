@@ -51,7 +51,7 @@ const ClassInfo TemporalCalendarConstructor::s_info = { "Function", &InternalFun
 
 TemporalCalendarConstructor* TemporalCalendarConstructor::create(VM& vm, Structure* structure, TemporalCalendarPrototype* temporalCalendarPrototype)
 {
-    TemporalCalendarConstructor* constructor = new (NotNull, allocateCell<TemporalCalendarConstructor>(vm.heap)) TemporalCalendarConstructor(vm, structure);
+    TemporalCalendarConstructor* constructor = new (NotNull, allocateCell<TemporalCalendarConstructor>(vm)) TemporalCalendarConstructor(vm, structure);
     constructor->finishCreation(vm, temporalCalendarPrototype);
     return constructor;
 }
@@ -73,6 +73,7 @@ void TemporalCalendarConstructor::finishCreation(VM& vm, TemporalCalendarPrototy
 {
     Base::finishCreation(vm, 0, "Calendar"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, temporalCalendarPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    temporalCalendarPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 JSC_DEFINE_HOST_FUNCTION(constructTemporalCalendar, (JSGlobalObject* globalObject, CallFrame* callFrame))

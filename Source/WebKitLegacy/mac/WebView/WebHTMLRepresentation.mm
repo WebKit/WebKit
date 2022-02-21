@@ -45,6 +45,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Editor.h>
+#import <WebCore/ElementInlines.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
@@ -229,7 +230,7 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
 - (NSString *)documentSource
 {
     if ([self _isDisplayingWebArchive]) {            
-        SharedBuffer *parsedArchiveData = [_private->dataSource _documentLoader]->parsedArchiveData();
+        auto *parsedArchiveData = [_private->dataSource _documentLoader]->parsedArchiveData();
         return adoptNS([[NSString alloc] initWithData:parsedArchiveData ? parsedArchiveData->createNSData().get() : nil encoding:NSUTF8StringEncoding]).autorelease();
     }
 
@@ -290,8 +291,8 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     AtomString targetName = name;
     for (auto& weakElement : formElement->unsafeAssociatedElements()) {
-        auto element = makeRefPtr(weakElement.get());
-        if (element->asFormAssociatedElement()->name() == targetName)
+        RefPtr element { weakElement.get() };
+        if (element && element->asFormAssociatedElement()->name() == targetName)
             return kit(element.get());
     }
     return nil;
@@ -300,7 +301,7 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
 static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 {
     Element* node = core(element);
-    return is<HTMLInputElement>(node) ? downcast<HTMLInputElement>(node) : nullptr;
+    return dynamicDowncast<HTMLInputElement>(node);
 }
 
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element
@@ -337,8 +338,8 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     auto result = createNSArray(formElement->unsafeAssociatedElements(), [] (auto& weakElement) -> DOMElement * {
-        auto coreElement = makeRefPtr(weakElement.get());
-        if (!coreElement->asFormAssociatedElement()->isEnumeratable()) // Skip option elements, other duds
+        RefPtr coreElement { weakElement.get() };
+        if (!coreElement || !coreElement->asFormAssociatedElement()->isEnumeratable()) // Skip option elements, other duds
             return nil;
         return kit(coreElement.get());
     });

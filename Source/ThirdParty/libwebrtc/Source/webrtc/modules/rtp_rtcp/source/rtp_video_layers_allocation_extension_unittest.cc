@@ -249,5 +249,39 @@ TEST(RtpVideoLayersAllocationExtension,
       RtpVideoLayersAllocationExtension::Write(buffer, written_allocation));
 }
 
+TEST(RtpVideoLayersAllocationExtension, DiscardsOverLargeDataRate) {
+  constexpr uint8_t buffer[] = {0x4b, 0xf6, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                0xff, 0xcb, 0x78, 0xeb, 0x8d, 0xb5, 0x31};
+  VideoLayersAllocation allocation;
+  EXPECT_FALSE(RtpVideoLayersAllocationExtension::Parse(buffer, &allocation));
+}
+
+TEST(RtpVideoLayersAllocationExtension, DiscardsInvalidHeight) {
+  VideoLayersAllocation written_allocation;
+  written_allocation.rtp_stream_index = 0;
+  written_allocation.resolution_and_frame_rate_is_valid = true;
+  written_allocation.active_spatial_layers = {
+      {
+          /*rtp_stream_index*/ 0,
+          /*spatial_id*/ 0,
+          /*target_bitrate_per_temporal_layer*/
+          {DataRate::KilobitsPerSec(25), DataRate::KilobitsPerSec(50)},
+          /*width*/ 320,
+          /*height*/ 240,
+          /*frame_rate_fps*/ 8,
+      },
+  };
+  rtc::Buffer buffer(
+      RtpVideoLayersAllocationExtension::ValueSize(written_allocation));
+  ASSERT_TRUE(
+      RtpVideoLayersAllocationExtension::Write(buffer, written_allocation));
+
+  // Modify the height to be invalid.
+  buffer[buffer.size() - 3] = 0xff;
+  buffer[buffer.size() - 2] = 0xff;
+  VideoLayersAllocation allocation;
+  EXPECT_FALSE(RtpVideoLayersAllocationExtension::Parse(buffer, &allocation));
+}
+
 }  // namespace
 }  // namespace webrtc

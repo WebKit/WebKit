@@ -32,10 +32,11 @@ namespace JSC {
 
 class CodeBlock;
 class LLIntOffsetsExtractor;
+class UnlinkedArrayProfile;
 
 // This is a bitfield where each bit represents an type of array access that we have seen.
 // There are 19 indexing types that use the lower bits.
-// There are 9 typed array types taking the bits 16 to 25.
+// There are 11 typed array types taking the bits 16-20 and 26-31.
 typedef unsigned ArrayModes;
 
 // The possible IndexingTypes are limited within (0 - 16, 21, 23, 25).
@@ -195,6 +196,7 @@ inline bool hasSeenCopyOnWriteArray(ArrayModes arrayModes)
 
 class ArrayProfile {
     friend class CodeBlock;
+    friend class UnlinkedArrayProfile;
 
 public:
     explicit ArrayProfile()
@@ -203,7 +205,15 @@ public:
         , m_didPerformFirstRunPruning(false)
     {
     }
-    
+
+#if USE(LARGE_TYPED_ARRAYS)
+    static constexpr uint64_t s_smallTypedArrayMaxLength = std::numeric_limits<int32_t>::max();
+    void setMayBeLargeTypedArray() { m_mayBeLargeTypedArray = true; }
+    bool mayBeLargeTypedArray(const ConcurrentJSLocker&) const { return m_mayBeLargeTypedArray; }
+#else
+    bool mayBeLargeTypedArray(const ConcurrentJSLocker&) const { return false; }
+#endif
+
     StructureID* addressOfLastSeenStructureID() { return &m_lastSeenStructureID; }
     ArrayModes* addressOfArrayModes() { return &m_observedArrayModes; }
     bool* addressOfMayStoreToHole() { return &m_mayStoreToHole; }
@@ -239,14 +249,76 @@ private:
     
     static Structure* polymorphicStructure() { return static_cast<Structure*>(reinterpret_cast<void*>(1)); }
     
-    StructureID m_lastSeenStructureID { 0 };
+    StructureID m_lastSeenStructureID;
     bool m_mayStoreToHole { false }; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
     bool m_outOfBounds { false };
+#if USE(LARGE_TYPED_ARRAYS)
+    bool m_mayBeLargeTypedArray { false };
+#endif
     bool m_mayInterceptIndexedAccesses : 1;
     bool m_usesOriginalArrayStructures : 1;
     bool m_didPerformFirstRunPruning : 1;
     ArrayModes m_observedArrayModes { 0 };
 };
 static_assert(sizeof(ArrayProfile) == 12);
+
+class UnlinkedArrayProfile {
+public:
+    explicit UnlinkedArrayProfile()
+        : m_usesOriginalArrayStructures(true)
+#if USE(LARGE_TYPED_ARRAYS)
+        , m_mayBeLargeTypedArray(false)
+#endif
+    {
+    }
+
+    void update(ArrayProfile& arrayProfile)
+    {
+        ArrayModes newModes = arrayProfile.m_observedArrayModes | m_observedArrayModes;
+        m_observedArrayModes = newModes;
+        arrayProfile.m_observedArrayModes = newModes;
+
+        if (m_mayStoreToHole)
+            arrayProfile.m_mayStoreToHole = true;
+        else
+            m_mayStoreToHole = arrayProfile.m_mayStoreToHole;
+
+        if (m_outOfBounds)
+            arrayProfile.m_outOfBounds = true;
+        else
+            m_outOfBounds = arrayProfile.m_outOfBounds;
+
+        if (m_mayInterceptIndexedAccesses)
+            arrayProfile.m_mayInterceptIndexedAccesses = true;
+        else
+            m_mayInterceptIndexedAccesses = arrayProfile.m_mayInterceptIndexedAccesses;
+
+        if (!m_usesOriginalArrayStructures)
+            arrayProfile.m_usesOriginalArrayStructures = false;
+        else
+            m_usesOriginalArrayStructures = arrayProfile.m_usesOriginalArrayStructures;
+
+#if USE(LARGE_TYPED_ARRAYS)
+        if (m_mayBeLargeTypedArray)
+            arrayProfile.m_mayBeLargeTypedArray = true;
+        else
+            m_mayBeLargeTypedArray = arrayProfile.m_mayBeLargeTypedArray;
+#endif
+    }
+
+private:
+    ArrayModes m_observedArrayModes { 0 };
+    // We keep these as full byte-sized booleans just for speed, because the
+    // alignment of this struct will already make us 8 bytes large. But if we
+    // ever need to add more stuff, these fields can become bitfields.
+    bool m_mayStoreToHole { false };
+    bool m_outOfBounds { false };
+    bool m_mayInterceptIndexedAccesses { false };
+    bool m_usesOriginalArrayStructures : 1;
+#if USE(LARGE_TYPED_ARRAYS)
+    bool m_mayBeLargeTypedArray : 1;
+#endif
+};
+static_assert(sizeof(UnlinkedArrayProfile) <= 8);
 
 } // namespace JSC

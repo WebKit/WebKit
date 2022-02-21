@@ -46,7 +46,6 @@
 #    endif
 
 #    include <intrin.h>
-#    include <windows.h>
 
 #    if defined(WINAPI_FAMILY) && (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
 #        define ANGLE_ENABLE_WINDOWS_UWP 1
@@ -82,8 +81,16 @@
 #        endif
 #    endif
 
+// Macros 'near', 'far', 'NEAR' and 'FAR' are defined by 'shared/minwindef.h' in the Windows SDK.
+// Macros 'near' and 'far' are empty. They are not used by other Windows headers and are undefined
+// here to avoid identifier conflicts. Macros 'NEAR' and 'FAR' contain 'near' and 'far'. They are
+// used by other Windows headers and are cleared here to avoid compilation errors.
 #    undef near
 #    undef far
+#    undef NEAR
+#    undef FAR
+#    define NEAR
+#    define FAR
 #endif
 
 #if defined(_MSC_VER) && !defined(_M_ARM) && !defined(_M_ARM64)
@@ -126,6 +133,16 @@
 #        if TARGET_OS_MACCATALYST
 #            define ANGLE_PLATFORM_MACCATALYST 1
 #        endif
+#    elif TARGET_OS_WATCH
+#        define ANGLE_PLATFORM_WATCHOS 1
+#        if TARGET_OS_SIMULATOR
+#            define ANGLE_PLATFORM_IOS_SIMULATOR 1
+#        endif
+#    elif TARGET_OS_TV
+#        define ANGLE_PLATFORM_APPLETV 1
+#        if TARGET_OS_SIMULATOR
+#            define ANGLE_PLATFORM_IOS_SIMULATOR 1
+#        endif
 #    endif
 #    // This might be useful globally. At the moment it is used
 #    // to differentiate MacCatalyst on Intel and Apple Silicon.
@@ -149,6 +166,31 @@
 #    if __has_feature(address_sanitizer)
 #        define ANGLE_WITH_ASAN 1
 #    endif
+#endif
+
+// Define ANGLE_WITH_TSAN macro.
+#if defined(__has_feature)
+#    if __has_feature(thread_sanitizer)
+#        define ANGLE_WITH_TSAN 1
+#    endif
+#endif
+
+// Define ANGLE_WITH_UBSAN macro.
+#if defined(__has_feature)
+#    if __has_feature(undefined_behavior_sanitizer)
+#        define ANGLE_WITH_UBSAN 1
+#    endif
+#endif
+
+#if defined(ANGLE_WITH_ASAN) || defined(ANGLE_WITH_TSAN) || defined(ANGLE_WITH_UBSAN)
+#    define ANGLE_WITH_SANITIZER 1
+#endif  // defined(ANGLE_WITH_ASAN) || defined(ANGLE_WITH_TSAN) || defined(ANGLE_WITH_UBSAN)
+
+#include <cstdint>
+#if INTPTR_MAX == INT64_MAX
+#    define ANGLE_IS_64_BIT_CPU 1
+#else
+#    define ANGLE_IS_32_BIT_CPU 1
 #endif
 
 #endif  // COMMON_PLATFORM_H_

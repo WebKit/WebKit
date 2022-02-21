@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer(GraphicsContextGLOpenGL& context)
+TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer(GraphicsContextGLANGLE& context)
     : m_context(context)
 {
     auto sharingContext = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->platformContext();
@@ -44,7 +44,7 @@ TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer(GraphicsContextGL
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
-    m_platformLayerProxy = adoptRef(new TextureMapperPlatformLayerProxy());
+    m_platformLayerProxy = adoptRef(new TextureMapperPlatformLayerProxyGL);
 #endif
 }
 
@@ -62,10 +62,22 @@ bool TextureMapperGCGLPlatformLayer::makeContextCurrent()
     return m_glContext->makeContextCurrent();
 }
 
-PlatformGraphicsContextGL TextureMapperGCGLPlatformLayer::platformContext() const
+GCGLContext TextureMapperGCGLPlatformLayer::platformContext() const
 {
     ASSERT(m_glContext);
     return m_glContext->platformContext();
+}
+
+GCGLDisplay TextureMapperGCGLPlatformLayer::platformDisplay() const
+{
+    ASSERT(m_glContext);
+    return m_glContext->platformDisplay();
+}
+
+GCGLConfig TextureMapperGCGLPlatformLayer::platformConfig() const
+{
+    ASSERT(m_glContext);
+    return m_glContext->platformConfig();
 }
 
 #if USE(COORDINATED_GRAPHICS)
@@ -85,7 +97,7 @@ void TextureMapperGCGLPlatformLayer::swapBuffersIfNeeded()
 
     {
         Locker locker { m_platformLayerProxy->lock() };
-        m_platformLayerProxy->pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
+        downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayerProxy).pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
     }
 
     m_context.markLayerComposited();
@@ -105,7 +117,7 @@ void TextureMapperGCGLPlatformLayer::paintToTextureMapper(TextureMapper& texture
         m_context.makeContextCurrent();
 
         m_context.resolveMultisamplingIfNecessary();
-        gl::BindFramebuffer(GL_FRAMEBUFFER, m_context.m_state.boundDrawFBO);
+        GL_BindFramebuffer(GL_FRAMEBUFFER, m_context.m_state.boundDrawFBO);
 
         if (previousActiveContext)
             previousActiveContext->makeContextCurrent();

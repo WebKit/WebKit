@@ -27,8 +27,8 @@
 #include "CaretRectComputation.h"
 
 #include "Editing.h"
-#include "LayoutIntegrationLineIterator.h"
-#include "LayoutIntegrationRunIterator.h"
+#include "InlineIteratorLine.h"
+#include "InlineIteratorTextBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
@@ -98,7 +98,7 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
     x = std::min(x, std::max<LayoutUnit>(maxX - caretWidth, 0));
 
     auto lineHeight = renderer.lineHeight(true, currentStyle.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-    auto height = std::min(lineHeight, LayoutUnit { currentStyle.fontMetrics().height() });
+    auto height = std::min(lineHeight, LayoutUnit { currentStyle.metricsOfPrimaryFont().height() });
     auto y = renderer.paddingTop() + renderer.borderTop() + (lineHeight > height ? (lineHeight - height) / 2 : LayoutUnit { });
 
     auto rect = LayoutRect(x, y, caretWidth, height);
@@ -109,7 +109,7 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
     return currentStyle.isHorizontalWritingMode() ? rect : rect.transposedRect();
 }
 
-static LayoutRect computeCaretRectForLinePosition(const LayoutIntegration::LineIterator& line, float logicalLeftPosition, CaretRectMode caretRectMode)
+static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineIterator& line, float logicalLeftPosition, CaretRectMode caretRectMode)
 {
     auto& containingBlock = line->containingBlock();
     auto lineSelectionRect = line->selectionRect();
@@ -171,8 +171,8 @@ static LayoutRect computeCaretRectForText(const InlineRunAndOffset& runAndOffset
     if (!runAndOffset.run)
         return { };
 
-    auto& textRun = downcast<LayoutIntegration::TextRunIterator>(runAndOffset.run);
-    auto line = textRun.line();
+    auto& textRun = downcast<InlineIterator::TextBoxIterator>(runAndOffset.run);
+    auto line = textRun->line();
 
     float position = textRun->positionForOffset(runAndOffset.offset);
     return computeCaretRectForLinePosition(line, position, caretRectMode);
@@ -185,7 +185,7 @@ static LayoutRect computeCaretRectForLineBreak(const InlineRunAndOffset& runAndO
     if (!runAndOffset.run)
         return { };
 
-    auto line = runAndOffset.run.line();
+    auto line = runAndOffset.run->line();
     return computeCaretRectForLinePosition(line, line->contentLogicalLeft(), caretRectMode);
 }
 
@@ -227,7 +227,7 @@ static LayoutRect computeCaretRectForBox(const RenderBox& renderer, const Inline
         rect.move(LayoutSize(renderer.width() - caretWidth, 0_lu));
 
     if (runAndOffset.run) {
-        auto line = runAndOffset.run.line();
+        auto line = runAndOffset.run->line();
         LayoutUnit top = line->top();
         rect.setY(top);
         rect.setHeight(line->bottom() - top);
@@ -241,8 +241,8 @@ static LayoutRect computeCaretRectForBox(const RenderBox& renderer, const Inline
     // <rdar://problem/3777804> Deleting all content in a document can result in giant tall-as-window insertion point
     //
     // FIXME: ignoring :first-line, missing good reason to take care of
-    LayoutUnit fontHeight = renderer.style().fontMetrics().height();
-    if (fontHeight > rect.height() || (!renderer.isReplaced() && !renderer.isTable()))
+    LayoutUnit fontHeight = renderer.style().metricsOfPrimaryFont().height();
+    if (fontHeight > rect.height() || (!renderer.isReplacedOrInlineBlock() && !renderer.isTable()))
         rect.setHeight(fontHeight);
 
     // Move to local coords

@@ -25,7 +25,7 @@
 
 // https://wicg.github.io/aom/spec/aria-reflection.html#AriaAttributes
 [
-    EnabledAtRuntime=AriaReflection,
+    EnabledAtRuntime=AriaReflectionEnabled,
 ] interface mixin AriaAttributes {
     [Reflect=aria_atomic]           attribute DOMString? ariaAtomic;
     [Reflect=aria_autocomplete]     attribute DOMString? ariaAutoComplete;

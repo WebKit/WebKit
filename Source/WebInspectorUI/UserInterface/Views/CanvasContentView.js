@@ -105,6 +105,12 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             subtitle.className = "subtitle";
             subtitle.textContent = WI.Canvas.displayNameForContextType(this.representedObject.contextType);
 
+            if (this.representedObject.contextAttributes.colorSpace) {
+                let subtitle = titles.appendChild(document.createElement("span"));
+                subtitle.className = "color-space";
+                subtitle.textContent = "(" + WI.Canvas.displayNameForColorSpace(this.representedObject.contextAttributes.colorSpace) + ")";
+            }
+
             let navigationBar = new WI.NavigationBar;
 
             if (this.representedObject.contextType === WI.Canvas.ContextType.Canvas2D || this.representedObject.contextType === WI.Canvas.ContextType.BitmapRenderer || this.representedObject.contextType === WI.Canvas.ContextType.WebGL || this.representedObject.contextType === WI.Canvas.ContextType.WebGL2) {

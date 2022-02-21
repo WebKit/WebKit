@@ -62,4 +62,36 @@ TextStream& operator<<(TextStream& ts, ScrollBehaviorForFixedElements behavior)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, ScrollElasticity behavior)
+{
+    switch (behavior) {
+    case ScrollElasticity::Automatic:
+        ts << 0;
+        break;
+    case ScrollElasticity::None:
+        ts << 1;
+        break;
+    case ScrollElasticity::Allowed:
+        ts << 2;
+        break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ScrollbarMode behavior)
+{
+    switch (behavior) {
+    case ScrollbarMode::Auto:
+        ts << 0;
+        break;
+    case ScrollbarMode::AlwaysOff:
+        ts << 1;
+        break;
+    case ScrollbarMode::AlwaysOn:
+        ts << 2;
+        break;
+    }
+    return ts;
+}
+
 } // namespace WebCore

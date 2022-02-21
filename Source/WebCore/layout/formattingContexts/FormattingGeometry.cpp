@@ -149,7 +149,7 @@ std::optional<LayoutUnit> FormattingGeometry::computedWidthValue(const Box& layo
             ASSERT(containerBox.establishesFormattingContext());
             auto& layoutState = this->layoutState();
             if (layoutState.hasFormattingState(containerBox)) {
-                if (auto intrinsicWidthConstraints = layoutState.establishedFormattingState(containerBox).intrinsicWidthConstraints())
+                if (auto intrinsicWidthConstraints = layoutState.formattingStateForFormattingContext(containerBox).intrinsicWidthConstraints())
                     return *intrinsicWidthConstraints;
             }
             return LayoutContext::createFormattingContext(containerBox, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
@@ -313,7 +313,7 @@ LayoutUnit FormattingGeometry::shrinkToFitWidth(const Box& formattingContextRoot
         auto& layoutState = this->layoutState();
         auto& root = downcast<ContainerBox>(formattingContextRoot);
         if (layoutState.hasFormattingState(root)) {
-            if (auto intrinsicWidthConstraints = layoutState.establishedFormattingState(root).intrinsicWidthConstraints())
+            if (auto intrinsicWidthConstraints = layoutState.formattingStateForFormattingContext(root).intrinsicWidthConstraints())
                 return *intrinsicWidthConstraints;
         }
         return LayoutContext::createFormattingContext(root, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
@@ -360,10 +360,10 @@ VerticalGeometry FormattingGeometry::outOfFlowNonReplacedVerticalGeometry(const 
     auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(layoutBox, containingBlockHeight);
     auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(layoutBox, horizontalConstraints);
     UsedVerticalMargin::NonCollapsedValues usedVerticalMargin; 
-    auto paddingTop = boxGeometry.paddingTop().value_or(0);
-    auto paddingBottom = boxGeometry.paddingBottom().value_or(0);
-    auto borderTop = boxGeometry.borderTop();
-    auto borderBottom = boxGeometry.borderBottom();
+    auto paddingTop = boxGeometry.paddingBefore().value_or(0);
+    auto paddingBottom = boxGeometry.paddingAfter().value_or(0);
+    auto borderTop = boxGeometry.borderBefore();
+    auto borderBottom = boxGeometry.borderAfter();
 
     if (!top && !height && !bottom)
         top = staticVerticalPositionForOutOfFlowPositioned(layoutBox, verticalConstraints);
@@ -480,10 +480,10 @@ HorizontalGeometry FormattingGeometry::outOfFlowNonReplacedHorizontalGeometry(co
     auto width = overriddenHorizontalValues.width ? overriddenHorizontalValues.width : computedWidth(layoutBox, containingBlockWidth);
     auto computedHorizontalMargin = FormattingGeometry::computedHorizontalMargin(layoutBox, horizontalConstraints);
     UsedHorizontalMargin usedHorizontalMargin;
-    auto paddingLeft = boxGeometry.paddingLeft().value_or(0);
-    auto paddingRight = boxGeometry.paddingRight().value_or(0);
-    auto borderLeft = boxGeometry.borderLeft();
-    auto borderRight = boxGeometry.borderRight();
+    auto paddingLeft = boxGeometry.paddingStart().value_or(0);
+    auto paddingRight = boxGeometry.paddingEnd().value_or(0);
+    auto borderLeft = boxGeometry.borderStart();
+    auto borderRight = boxGeometry.borderEnd();
     if (!left && !width && !right) {
         // If all three of 'left', 'width', and 'right' are 'auto': First set any 'auto' values for 'margin-left' and 'margin-right' to 0.
         // Then, if the 'direction' property of the element establishing the static-position containing block is 'ltr' set 'left' to the static
@@ -608,10 +608,10 @@ VerticalGeometry FormattingGeometry::outOfFlowReplacedVerticalGeometry(const Rep
     auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(replacedBox, horizontalConstraints);
     std::optional<LayoutUnit> usedMarginBefore = computedVerticalMargin.before;
     std::optional<LayoutUnit> usedMarginAfter = computedVerticalMargin.after;
-    auto paddingTop = boxGeometry.paddingTop().value_or(0);
-    auto paddingBottom = boxGeometry.paddingBottom().value_or(0);
-    auto borderTop = boxGeometry.borderTop();
-    auto borderBottom = boxGeometry.borderBottom();
+    auto paddingTop = boxGeometry.paddingBefore().value_or(0);
+    auto paddingBottom = boxGeometry.paddingAfter().value_or(0);
+    auto borderTop = boxGeometry.borderBefore();
+    auto borderBottom = boxGeometry.borderAfter();
 
     if (!top && !bottom) {
         // #1
@@ -693,10 +693,10 @@ HorizontalGeometry FormattingGeometry::outOfFlowReplacedHorizontalGeometry(const
     std::optional<LayoutUnit> usedMarginStart = computedHorizontalMargin.start;
     std::optional<LayoutUnit> usedMarginEnd = computedHorizontalMargin.end;
     auto width = inlineReplacedContentWidthAndMargin(replacedBox, horizontalConstraints, verticalConstraints, overriddenHorizontalValues).contentWidth;
-    auto paddingLeft = boxGeometry.paddingLeft().value_or(0);
-    auto paddingRight = boxGeometry.paddingRight().value_or(0);
-    auto borderLeft = boxGeometry.borderLeft();
-    auto borderRight = boxGeometry.borderRight();
+    auto paddingLeft = boxGeometry.paddingStart().value_or(0);
+    auto paddingRight = boxGeometry.paddingEnd().value_or(0);
+    auto borderLeft = boxGeometry.borderStart();
+    auto borderRight = boxGeometry.borderEnd();
 
     if (!left && !right) {
         // #1
@@ -798,7 +798,7 @@ ContentHeightAndMargin FormattingGeometry::complicatedCases(const Box& layoutBox
             // This is a special (quirk?) behavior since the document box is not a formatting context root and
             // all the float boxes end up at the ICB level.
             auto& initialContainingBlock = documentBox.formattingContextRoot();
-            auto floatingContext = FloatingContext { formattingContext(), layoutState().establishedFormattingState(initialContainingBlock).floatingState() };
+            auto floatingContext = FloatingContext { formattingContext(), layoutState().formattingStateForFormattingContext(initialContainingBlock).floatingState() };
             if (auto floatBottom = floatingContext.bottom()) {
                 bottom = std::max<LayoutUnit>(*floatBottom, bottom);
                 auto floatTop = floatingContext.top();
@@ -1109,8 +1109,8 @@ std::optional<Edges> FormattingGeometry::computedPadding(const Box& layoutBox, c
     auto& style = layoutBox.style();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Padding] -> layoutBox: " << &layoutBox);
     return Edges {
-        { valueForLength(style.paddingLeft(), containingBlockWidth), valueForLength(style.paddingRight(), containingBlockWidth) },
-        { valueForLength(style.paddingTop(), containingBlockWidth), valueForLength(style.paddingBottom(), containingBlockWidth) }
+        { valueForLength(style.paddingStart(), containingBlockWidth), valueForLength(style.paddingEnd(), containingBlockWidth) },
+        { valueForLength(style.paddingBefore(), containingBlockWidth), valueForLength(style.paddingAfter(), containingBlockWidth) }
     };
 }
 

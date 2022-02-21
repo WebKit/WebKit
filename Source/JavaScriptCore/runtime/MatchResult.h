@@ -25,49 +25,27 @@
 
 #pragma once
 
+#include "SlowPathReturnType.h"
 #include <wtf/NotFound.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {
 
-struct MatchResult;
-#if CPU(ADDRESS32)
-using EncodedMatchResult = uint64_t;
-#else
-struct EncodedMatchResult {
-    size_t start;
-    size_t end;
-};
-#endif
-
 struct MatchResult {
-    MatchResult()
-        : start(WTF::notFound)
-        , end(0)
-    {
-    }
-    
+    constexpr MatchResult() = default;
+
     ALWAYS_INLINE MatchResult(size_t start, size_t end)
         : start(start)
         , end(end)
     {
     }
 
-#if CPU(ADDRESS32)
-    ALWAYS_INLINE MatchResult(EncodedMatchResult match)
-        : start(bitwise_cast<MatchResult>(match).start)
-        , end(bitwise_cast<MatchResult>(match).end)
+    ALWAYS_INLINE MatchResult(SlowPathReturnType match)
     {
+        decodeResult(match, start, end);
     }
-#else
-    ALWAYS_INLINE MatchResult(EncodedMatchResult match)
-        : start(match.start)
-        , end(match.end)
-    {
-    }
-#endif
 
-    ALWAYS_INLINE static MatchResult failed()
+    ALWAYS_INLINE static constexpr MatchResult failed()
     {
         return MatchResult();
     }
@@ -84,11 +62,13 @@ struct MatchResult {
     
     void dump(PrintStream&) const;
 
-    size_t start;
-    size_t end;
+    size_t start { WTF::notFound };
+    size_t end { 0 };
 };
 
-static_assert(sizeof(EncodedMatchResult) == 2 * sizeof(size_t), "https://bugs.webkit.org/show_bug.cgi?id=198518#c11");
-static_assert(sizeof(MatchResult) == sizeof(EncodedMatchResult), "Match result and EncodedMatchResult should be the same size");
+#if ENABLE(JIT)
+static_assert(sizeof(SlowPathReturnType) == 2 * sizeof(size_t), "https://bugs.webkit.org/show_bug.cgi?id=198518#c11");
+static_assert(sizeof(MatchResult) == sizeof(SlowPathReturnType), "Match result and SlowPathReturnType should be the same size");
+#endif
 
 } // namespace JSC

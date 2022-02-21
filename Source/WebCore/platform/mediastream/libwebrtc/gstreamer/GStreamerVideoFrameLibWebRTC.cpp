@@ -27,13 +27,9 @@
 
 namespace WebCore {
 
-GRefPtr<GstSample> GStreamerSampleFromLibWebRTCVideoFrame(const webrtc::VideoFrame& frame)
+GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::VideoFrame& frame)
 {
-    if (frame.video_frame_buffer()->type() == webrtc::VideoFrameBuffer::Type::kNative) {
-        auto* framebuffer = static_cast<GStreamerVideoFrameLibWebRTC*>(frame.video_frame_buffer().get());
-        return framebuffer->takeSample();
-    }
-
+    RELEASE_ASSERT(frame.video_frame_buffer()->type() != webrtc::VideoFrameBuffer::Type::kNative);
     auto* i420Buffer = frame.video_frame_buffer()->ToI420().release();
     int height = i420Buffer->height();
     int strides[3] = {
@@ -60,21 +56,20 @@ GRefPtr<GstSample> GStreamerSampleFromLibWebRTCVideoFrame(const webrtc::VideoFra
     return sample;
 }
 
-rtc::scoped_refptr<webrtc::VideoFrameBuffer> GStreamerVideoFrameLibWebRTC::create(GRefPtr<GstSample>&& sample)
+std::unique_ptr<webrtc::VideoFrame> convertGStreamerSampleToLibWebRTCVideoFrame(GRefPtr<GstSample>& sample, webrtc::VideoRotation rotation, int64_t timestamp, int64_t renderTimeMs)
+{
+    auto frameBuffer(GStreamerVideoFrameLibWebRTC::create(sample));
+    return std::unique_ptr<webrtc::VideoFrame>(new webrtc::VideoFrame(frameBuffer, timestamp, renderTimeMs, rotation));
+}
+
+rtc::scoped_refptr<webrtc::VideoFrameBuffer> GStreamerVideoFrameLibWebRTC::create(const GRefPtr<GstSample>& sample)
 {
     GstVideoInfo info;
 
     if (!gst_video_info_from_caps(&info, gst_sample_get_caps(sample.get())))
         ASSERT_NOT_REACHED();
 
-    return rtc::scoped_refptr<webrtc::VideoFrameBuffer>(new GStreamerVideoFrameLibWebRTC(WTFMove(sample), info));
-}
-
-std::unique_ptr<webrtc::VideoFrame> LibWebRTCVideoFrameFromGStreamerSample(GRefPtr<GstSample>&& sample, webrtc::VideoRotation rotation,
-    int64_t timestamp, int64_t renderTimeMs)
-{
-    auto frameBuffer(GStreamerVideoFrameLibWebRTC::create(WTFMove(sample)));
-    return std::unique_ptr<webrtc::VideoFrame>(new webrtc::VideoFrame(frameBuffer, timestamp, renderTimeMs, rotation));
+    return rtc::scoped_refptr<webrtc::VideoFrameBuffer>(new GStreamerVideoFrameLibWebRTC(sample, info));
 }
 
 rtc::scoped_refptr<webrtc::I420BufferInterface> GStreamerVideoFrameLibWebRTC::ToI420()

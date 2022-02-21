@@ -1,10 +1,11 @@
 /*
  * Copyright (c) 2009, Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2020, 2021, 2022 Igalia S.L.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +15,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -31,11 +32,19 @@
 #include "config.h"
 #include "RenderSVGModelObject.h"
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+#include "RenderGeometryMap.h"
+#include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
 #include "RenderSVGResource.h"
+#include "RenderView.h"
+#include "SVGElementInlines.h"
+#include "SVGGraphicsElement.h"
+#include "SVGLocatable.h"
 #include "SVGNames.h"
+#include "SVGPathData.h"
 #include "SVGResourcesCache.h"
-#include "ShadowRoot.h"
+#include "TransformState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -43,97 +52,184 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGModelObject);
 
 RenderSVGModelObject::RenderSVGModelObject(SVGElement& element, RenderStyle&& style)
-    : RenderElement(element, WTFMove(style), 0)
+    : RenderLayerModelObject(element, WTFMove(style), 0)
 {
 }
 
-LayoutRect RenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const
+void RenderSVGModelObject::updateFromStyle()
 {
-    return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
+    RenderLayerModelObject::updateFromStyle();
+    setHasTransformRelatedProperty(style().hasTransformRelatedProperty());
+
+    AffineTransform transform;
+    if (is<SVGGraphicsElement>(nodeForNonAnonymous()))
+        transform = downcast<SVGGraphicsElement>(nodeForNonAnonymous()).animatedLocalTransform();
+
+    // FIXME: [LBSE] Upstream RenderObject changes
+    // if (!transform.isIdentity())
+    //     setHasSVGTransform();
 }
 
-std::optional<FloatRect> RenderSVGModelObject::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+FloatRect RenderSVGModelObject::borderBoxRectInFragmentEquivalent(RenderFragmentContainer*, RenderBox::RenderBoxFragmentInfoFlags) const
 {
-    return SVGRenderSupport::computeFloatVisibleRectInContainer(*this, rect, container, context);
+    return borderBoxRectEquivalent();
 }
 
-void RenderSVGModelObject::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode>, bool* wasFixed) const
+LayoutRect RenderSVGModelObject::overflowClipRect(const LayoutPoint&, RenderFragmentContainer*, OverlayScrollbarSizeRelevancy, PaintPhase) const
 {
-    SVGRenderSupport::mapLocalToContainer(*this, ancestorContainer, transformState, wasFixed);
+    ASSERT_NOT_REACHED();
+    return LayoutRect();
+}
+
+LayoutRect RenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+{
+    if (isInsideEntirelyHiddenLayer())
+        return { };
+
+    ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
+    return computeRect(visualOverflowRectEquivalent(), repaintContainer, context);
+}
+
+std::optional<LayoutRect> RenderSVGModelObject::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+{
+    return computeVisibleRectInSVGContainer(rect, container, context);
 }
 
 const RenderObject* RenderSVGModelObject::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
-    return SVGRenderSupport::pushMappingToContainer(*this, ancestorToStopAt, geometryMap);
+    ASSERT(ancestorToStopAt != this);
+    ASSERT(style().position() == PositionType::Static);
+
+    bool ancestorSkipped;
+    RenderElement* container = this->container(ancestorToStopAt, ancestorSkipped);
+    if (!container)
+        return nullptr;
+
+    ASSERT_UNUSED(ancestorSkipped, !ancestorSkipped);
+
+    bool offsetDependsOnPoint = false;
+    LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(), &offsetDependsOnPoint);
+
+    bool preserve3D = container->style().preserves3D() || style().preserves3D();
+    if (shouldUseTransformFromContainer(container) && (geometryMap.mapCoordinatesFlags() & UseTransforms)) {
+        TransformationMatrix t;
+        getTransformFromContainer(container, containerOffset, t);
+        geometryMap.push(this, t, preserve3D, offsetDependsOnPoint, false /* isFixedPos */, hasTransform());
+    } else
+        geometryMap.push(this, containerOffset, preserve3D, offsetDependsOnPoint, false /* isFixedPos */, hasTransform());
+
+    return container;
 }
 
-// Copied from RenderBox, this method likely requires further refactoring to work easily for both SVG and CSS Box Model content.
-// FIXME: This may also need to move into SVGRenderSupport as the RenderBox version depends
-// on borderBoundingBox() which SVG RenderBox subclases (like SVGRenderBlock) do not implement.
-LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap*) const
+LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* geometryMap) const
 {
-    LayoutRect box = enclosingLayoutRect(repaintRectInLocalCoordinates());
-    adjustRectForOutlineAndShadow(box);
+    ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
 
-    FloatQuad containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
-    return LayoutRect(snapRectToDevicePixels(LayoutRect(containerRelativeQuad.boundingBox()), document().deviceScaleFactor()));
+    auto outlineBounds = visualOverflowRectEquivalent();
+
+    if (repaintContainer != this) {
+        FloatQuad containerRelativeQuad;
+        if (geometryMap)
+            containerRelativeQuad = geometryMap->mapToContainer(outlineBounds, repaintContainer);
+        else
+            containerRelativeQuad = localToContainerQuad(FloatRect(outlineBounds), repaintContainer);
+
+        outlineBounds = LayoutRect(containerRelativeQuad.boundingBox());
+    }
+
+    return outlineBounds;
 }
 
 void RenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    IntRect rect = enclosingIntRect(strokeBoundingBox());
-    rect.moveBy(roundedIntPoint(accumulatedOffset));
-    rects.append(rect);
+    rects.append(snappedIntRect(LayoutRect(accumulatedOffset + layoutLocation(), layoutSize())));
 }
 
 void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    quads.append(localToAbsoluteQuad(strokeBoundingBox(), UseTransforms, wasFixed));
+    quads.append(localToAbsoluteQuad(objectBoundingBox(), UseTransforms, wasFixed));
 }
 
 void RenderSVGModelObject::willBeDestroyed()
 {
     SVGResourcesCache::clientDestroyed(*this);
-    RenderElement::willBeDestroyed();
+    RenderLayerModelObject::willBeDestroyed();
 }
 
 void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    if (diff == StyleDifference::Layout) {
-        setNeedsBoundariesUpdate();
-        if (style().hasTransform() || (oldStyle && oldStyle->hasTransform()))
-            setNeedsTransformUpdate();
-    }
-    RenderElement::styleDidChange(diff, oldStyle);
+    RenderLayerModelObject::styleDidChange(diff, oldStyle);
+
+    // SVG masks are painted independent of the target renderers visibility.
+    // FIXME: [LBSE] Upstream RenderElement changes
+    // bool hasSVGMask = hasSVGMask();
+    bool hasSVGMask = false;
+    if (hasSVGMask && hasLayer() && style().visibility() != Visibility::Visible)
+        layer()->setHasVisibleContent();
+
     SVGResourcesCache::clientStyleChanged(*this, diff, style());
 }
 
-bool RenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction)
+void RenderSVGModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, TransformState& transformState) const
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    ASSERT(style().position() == PositionType::Static);
+
+    if (hasTransform())
+        mode.remove(IsFixed);
+
+    auto* container = parent();
+    if (!container)
+        return;
+
+    container->mapAbsoluteToLocalPoint(mode, transformState);
+
+    LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint());
+
+    bool preserve3D = mode & UseTransforms && (container->style().preserves3D() || style().preserves3D());
+    if (mode & UseTransforms && shouldUseTransformFromContainer(container)) {
+        TransformationMatrix t;
+        getTransformFromContainer(container, containerOffset, t);
+        transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
+    } else
+        transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
 }
 
-static void getElementCTM(SVGElement* element, AffineTransform& transform)
+void RenderSVGModelObject::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
-    ASSERT(element);
+    mapLocalToSVGContainer(ancestorContainer, transformState, mode, wasFixed);
+}
 
-    SVGElement* stopAtElement = SVGLocatable::nearestViewportElement(element);
-    ASSERT(stopAtElement);
+LayoutSize RenderSVGModelObject::offsetFromContainer(RenderElement& container, const LayoutPoint&, bool*) const
+{
+    ASSERT_UNUSED(container, &container == this->container());
+    ASSERT(!isInFlowPositioned());
+    ASSERT(!isAbsolutelyPositioned());
+    ASSERT(isInline());
+    return LayoutSize();
+}
 
-    AffineTransform localTransform;
-    Node* current = element;
+void RenderSVGModelObject::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*)
+{
+    auto repaintBoundingBox = enclosingLayoutRect(repaintRectInLocalCoordinates());
+    if (repaintBoundingBox.size().isEmpty())
+        return;
+    rects.append(LayoutRect(additionalOffset, repaintBoundingBox.size()));
+}
 
-    while (current && current->isSVGElement()) {
-        SVGElement& currentElement = downcast<SVGElement>(*current);
-        localTransform = currentElement.renderer()->localToParentTransform();
-        transform = localTransform.multiply(transform);
-        // For getCTM() computation, stop at the nearest viewport element
-        if (&currentElement == stopAtElement)
-            break;
+bool RenderSVGModelObject::shouldPaintSVGRenderer(const PaintInfo& paintInfo) const
+{
+    ASSERT(!paintInfo.context().paintingDisabled());
 
-        current = current->parentOrShadowHostNode();
-    }
+    if ((paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::ClippingMask && paintInfo.phase != PaintPhase::Mask && paintInfo.phase != PaintPhase::Outline && paintInfo.phase != PaintPhase::SelfOutline))
+        return false;
+
+    if (!paintInfo.shouldPaintWithinRoot(*this))
+        return false;
+
+    if (style().visibility() == Visibility::Hidden || style().display() == DisplayType::None)
+        return false;
+
+    return true;
 }
 
 // FloatRect::intersects does not consider horizontal or vertical lines (because of isEmpty()).
@@ -142,11 +238,9 @@ static bool intersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)
 {
     if (r.isEmpty() && other.isEmpty())
         return false;
-    if (r.isEmpty() && !other.isEmpty()) {
-        return (other.contains(r.x(), r.y()) && !other.contains(r.maxX(), r.maxY()))
-               || (!other.contains(r.x(), r.y()) && other.contains(r.maxX(), r.maxY()));
-    }
-    if (other.isEmpty() && !r.isEmpty())
+    if (r.isEmpty() && !other.isEmpty())
+        return (other.contains(r.x(), r.y()) && !other.contains(r.maxX(), r.maxY())) || (!other.contains(r.x(), r.y()) && other.contains(r.maxX(), r.maxY()));
+    if (other.isEmpty())
         return intersectsAllowingEmpty(other, r);
     return r.intersects(other);
 }
@@ -158,24 +252,16 @@ static bool isGraphicsElement(const RenderElement& renderer)
     return renderer.isSVGShape() || renderer.isSVGText() || renderer.isSVGImage() || renderer.element()->hasTagName(SVGNames::useTag);
 }
 
-// The SVG addFocusRingRects() method adds rects in local coordinates so the default absoluteFocusRingQuads
-// returns incorrect values for SVG objects. Overriding this method provides access to the absolute bounds.
-void RenderSVGModelObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
-{
-    quads.append(localToAbsoluteQuad(FloatQuad(repaintRectInLocalCoordinates())));
-}
-    
 bool RenderSVGModelObject::checkIntersection(RenderElement* renderer, const FloatRect& rect)
 {
     if (!renderer || renderer->style().pointerEvents() == PointerEvents::None)
         return false;
     if (!isGraphicsElement(*renderer))
         return false;
-    AffineTransform ctm;
     SVGElement* svgElement = downcast<SVGElement>(renderer->element());
-    getElementCTM(svgElement, ctm);
-    ASSERT(svgElement->renderer());
-    return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates()));
+    ASSERT(is<SVGGraphicsElement>(svgElement));
+    auto ctm = downcast<SVGGraphicsElement>(*svgElement).getCTM(SVGLocatable::DisallowStyleUpdate);
+    return intersectsAllowingEmpty(rect, ctm.mapRect(renderer->repaintRectInLocalCoordinates()));
 }
 
 bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRect& rect)
@@ -184,11 +270,21 @@ bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRe
         return false;
     if (!isGraphicsElement(*renderer))
         return false;
-    AffineTransform ctm;
     SVGElement* svgElement = downcast<SVGElement>(renderer->element());
-    getElementCTM(svgElement, ctm);
-    ASSERT(svgElement->renderer());
-    return rect.contains(ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates()));
+    ASSERT(is<SVGGraphicsElement>(svgElement));
+    auto ctm = downcast<SVGGraphicsElement>(*svgElement).getCTM(SVGLocatable::DisallowStyleUpdate);
+    return rect.contains(ctm.mapRect(renderer->repaintRectInLocalCoordinates()));
+}
+
+void RenderSVGModelObject::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+{
+    UNUSED_PARAM(transform);
+    UNUSED_PARAM(boundingBox);
+    UNUSED_PARAM(options);
+    // FIXME: [LBSE] Upstream SVGRenderSupport changes
+    // SVGRenderSupport::applyTransform(*this, transform, style, boundingBox, std::nullopt, std::nullopt, options);
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

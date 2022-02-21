@@ -89,7 +89,7 @@ static bool shouldAutomaticDashSubstitutionBeEnabled()
 
 static TextCheckerState& mutableState()
 {
-    static NeverDestroyed<TextCheckerState> state = makeNeverDestroyed([] {
+    static NeverDestroyed state = [] {
         TextCheckerState initialState;
         initialState.isContinuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled] && TextChecker::isContinuousSpellCheckingAllowed();
         initialState.isGrammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
@@ -99,7 +99,7 @@ static TextCheckerState& mutableState()
         initialState.isAutomaticDashSubstitutionEnabled = shouldAutomaticDashSubstitutionBeEnabled();
         initialState.isAutomaticLinkDetectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled];
         return initialState;
-    }());
+    }();
     return state;
 }
 

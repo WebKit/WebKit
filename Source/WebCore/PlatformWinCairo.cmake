@@ -12,6 +12,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_LIBRARIES_DIR}/include"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/platform/cf"
+    "${WEBCORE_DIR}/platform/graphics/wc"
 )
 
 list(APPEND WebCore_SOURCES
@@ -22,7 +23,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/GLContext.cpp
     platform/graphics/PlatformDisplay.cpp
 
-    platform/graphics/displaylists/DisplayListDrawGlyphsRecorderHarfBuzz.cpp
+    platform/graphics/harfbuzz/DrawGlyphsRecorderHarfBuzz.cpp
 
     platform/graphics/win/FontCustomPlatformDataCairo.cpp
     platform/graphics/win/FontPlatformDataCairoWin.cpp
@@ -42,6 +43,10 @@ list(APPEND WebCore_SOURCES
     platform/win/ImportedFunctionsEnumerator.cpp
     platform/win/ImportedModulesEnumerator.cpp
     platform/win/PEImage.cpp
+)
+
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/graphics/wc/WCPlatformLayer.h
 )
 
 list(APPEND WebCore_LIBRARIES

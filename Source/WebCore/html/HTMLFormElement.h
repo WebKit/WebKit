@@ -53,7 +53,7 @@ public:
 
     WEBCORE_EXPORT unsigned length() const;
     HTMLElement* item(unsigned index);
-    std::optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> namedItem(const AtomString&);
+    std::optional<std::variant<RefPtr<RadioNodeList>, RefPtr<Element>>> namedItem(const AtomString&);
     Vector<AtomString> supportedPropertyNames() const;
 
     String enctype() const { return m_attributes.encodingType(); }
@@ -102,6 +102,8 @@ public:
     WEBCORE_EXPORT String method() const;
     WEBCORE_EXPORT void setMethod(const String&);
 
+    DOMTokenList& relList();
+
     String target() const final;
     String effectiveTarget(const Event*, HTMLFormControlElement* submitter) const;
 
@@ -125,9 +127,7 @@ public:
 
     static HTMLFormElement* findClosestFormAncestor(const Element&);
     
-    enum class IsMultipartForm : bool { No, Yes };
-    
-    RefPtr<DOMFormData> constructEntryList(Ref<DOMFormData>&&, StringPairVector*, IsMultipartForm);
+    RefPtr<DOMFormData> constructEntryList(Ref<DOMFormData>&&, StringPairVector*);
     
 private:
     HTMLFormElement(const QualifiedName&, Document&);
@@ -186,6 +186,7 @@ private:
     Vector<WeakPtr<HTMLImageElement>> m_imageElements;
     WeakHashSet<HTMLFormControlElement> m_invalidAssociatedFormControls;
     WeakPtr<FormSubmission> m_plannedFormSubmission;
+    std::unique_ptr<DOMTokenList> m_relList;
 
     bool m_wasUserSubmitted { false };
     bool m_isSubmittingOrPreparingForSubmission { false };

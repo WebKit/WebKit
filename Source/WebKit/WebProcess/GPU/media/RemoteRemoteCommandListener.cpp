@@ -62,7 +62,7 @@ RemoteRemoteCommandListener::~RemoteRemoteCommandListener()
 GPUProcessConnection& RemoteRemoteCommandListener::ensureGPUProcessConnection()
 {
     if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = makeWeakPtr(m_process.ensureGPUProcessConnection());
+        m_gpuProcessConnection = m_process.ensureGPUProcessConnection();
         m_gpuProcessConnection->addClient(*this);
         m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteRemoteCommandListener::messageReceiverName(), m_identifier.toUInt64(), *this);
         m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRemoteCommandListener(m_identifier), { });
@@ -94,12 +94,7 @@ void RemoteRemoteCommandListener::updateSupportedCommands()
     m_currentCommands = supportedCommands;
     m_currentSupportSeeking = supportsSeeking();
 
-    Vector<PlatformMediaSession::RemoteControlCommandType> commands;
-    commands.reserveInitialCapacity(supportedCommands.size());
-    for (auto command : supportedCommands)
-        commands.uncheckedAppend(command);
-
-    ensureGPUProcessConnection().connection().send(Messages::RemoteRemoteCommandListenerProxy::UpdateSupportedCommands { WTFMove(commands), m_currentSupportSeeking }, m_identifier);
+    ensureGPUProcessConnection().connection().send(Messages::RemoteRemoteCommandListenerProxy::UpdateSupportedCommands { copyToVector(supportedCommands), m_currentSupportSeeking }, m_identifier);
 }
 
 }

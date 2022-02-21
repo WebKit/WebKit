@@ -226,6 +226,16 @@ o = {
 n = BigInt(o);
 assert(n.toString() === "3256");
 
+o = {
+    [Symbol.toPrimitive](hint) {
+        this.toPrimitiveHint = hint;
+        return 42;
+    }
+}
+
+n = BigInt(o);
+assert(o.toPrimitiveHint === "number");
+
 // Assertion thows
 
 assertThrowSyntaxError("aba");

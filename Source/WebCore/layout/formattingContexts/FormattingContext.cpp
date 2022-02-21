@@ -31,7 +31,6 @@
 #include "FormattingGeometry.h"
 #include "FormattingQuirks.h"
 #include "FormattingState.h"
-#include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
@@ -50,7 +49,7 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
 
 FormattingContext::FormattingContext(const ContainerBox& formattingContextRoot, FormattingState& formattingState)
-    : m_root(makeWeakPtr(formattingContextRoot))
+    : m_root(formattingContextRoot)
     , m_formattingState(formattingState)
 {
     ASSERT(formattingContextRoot.hasChild());
@@ -135,37 +134,34 @@ void FormattingContext::computeBorderAndPadding(const Box& layoutBox, const Hori
     boxGeometry.setPadding(formattingGeometry().computedPadding(layoutBox, horizontalConstraint.logicalWidth));
 }
 
-void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationState, const ConstraintsForOutOfFlowContent& constraints)
+void FormattingContext::layoutOutOfFlowContent(const ConstraintsForOutOfFlowContent& constraints)
 {
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 
     collectOutOfFlowDescendantsIfNeeded();
 
     auto constraintsForLayoutBox = [&] (const auto& outOfFlowBox) {
-        auto& containingBlock = outOfFlowBox.containingBlock();
+        auto& containingBlock = outOfFlowBox->containingBlock();
         return &containingBlock == &root() ? constraints : formattingGeometry().constraintsForOutOfFlowContent(containingBlock);
     };
 
     for (auto& outOfFlowBox : formattingState().outOfFlowBoxes()) {
         ASSERT(outOfFlowBox->establishesFormattingContext());
-        if (!invalidationState.needsLayout(*outOfFlowBox))
-            continue;
-
-        auto containingBlockConstraints = constraintsForLayoutBox(*outOfFlowBox);
+        auto containingBlockConstraints = constraintsForLayoutBox(outOfFlowBox);
         auto horizontalConstraintsForBorderAndPadding = HorizontalConstraints { containingBlockConstraints.horizontal.logicalLeft, containingBlockConstraints.borderAndPaddingConstraints };
-        computeBorderAndPadding(*outOfFlowBox, horizontalConstraintsForBorderAndPadding);
+        computeBorderAndPadding(outOfFlowBox, horizontalConstraintsForBorderAndPadding);
 
-        computeOutOfFlowHorizontalGeometry(*outOfFlowBox, containingBlockConstraints);
-        auto outOfFlowBoxHasContent = is<ContainerBox>(*outOfFlowBox) && downcast<ContainerBox>(*outOfFlowBox).hasChild();
+        computeOutOfFlowHorizontalGeometry(outOfFlowBox, containingBlockConstraints);
+        auto outOfFlowBoxHasContent = is<ContainerBox>(outOfFlowBox.get()) && downcast<ContainerBox>(outOfFlowBox.get()).hasChild();
         if (outOfFlowBoxHasContent) {
-            auto& containerBox = downcast<ContainerBox>(*outOfFlowBox);
+            auto& containerBox = downcast<ContainerBox>(outOfFlowBox.get());
             auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
             if (containerBox.hasInFlowOrFloatingChild())
-                formattingContext->layoutInFlowContent(invalidationState, formattingGeometry().constraintsForInFlowContent(containerBox));
+                formattingContext->layoutInFlowContent(formattingGeometry().constraintsForInFlowContent(containerBox));
             computeOutOfFlowVerticalGeometry(containerBox, containingBlockConstraints);
-            formattingContext->layoutOutOfFlowContent(invalidationState, formattingGeometry().constraintsForOutOfFlowContent(containerBox));
+            formattingContext->layoutOutOfFlowContent(formattingGeometry().constraintsForOutOfFlowContent(containerBox));
         } else
-            computeOutOfFlowVerticalGeometry(*outOfFlowBox, containingBlockConstraints);
+            computeOutOfFlowVerticalGeometry(outOfFlowBox, containingBlockConstraints);
     }
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 }
@@ -295,8 +291,8 @@ void FormattingContext::validateGeometryConstraintsAfterLayout() const
         if (layoutBox.isOutOfFlowPositioned() && !layoutBox.isReplacedBox()) {
             // top + margin-top + border-top-width + padding-top + height + padding-bottom + border-bottom-width + margin-bottom + bottom = height of containing block
             auto containingBlockHeight = containingBlockGeometry.contentBoxHeight();
-            ASSERT(BoxGeometry::borderBoxTop(boxGeometry) + boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().value_or(0) + boxGeometry.contentBoxHeight()
-                + boxGeometry.paddingBottom().value_or(0) + boxGeometry.borderBottom() + boxGeometry.marginAfter() == containingBlockHeight);
+            ASSERT(BoxGeometry::borderBoxTop(boxGeometry) + boxGeometry.marginBefore() + boxGeometry.borderBefore() + boxGeometry.paddingBefore().value_or(0) + boxGeometry.contentBoxHeight()
+                + boxGeometry.paddingAfter().value_or(0) + boxGeometry.borderAfter() + boxGeometry.marginAfter() == containingBlockHeight);
         }
     }
 }

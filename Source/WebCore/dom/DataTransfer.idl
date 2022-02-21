@@ -35,13 +35,13 @@
     attribute DOMString dropEffect;
     attribute DOMString effectAllowed;
 
-    [SameObject, EnabledBySetting=DataTransferItems, CallWith=Document] readonly attribute DataTransferItemList items;
+    [SameObject, EnabledBySetting=DataTransferItemsEnabled, CallWith=CurrentDocument] readonly attribute DataTransferItemList items;
 
     undefined setDragImage(Element image, long x, long y);
 
     readonly attribute FrozenArray<DOMString> types;
-    [CallWith=Document] DOMString getData(DOMString format);
+    [CallWith=CurrentDocument] DOMString getData(DOMString format);
     undefined setData(DOMString format, DOMString data);
     undefined clearData(optional DOMString format);
-    [SameObject, CallWith=Document] readonly attribute FileList files;
+    [SameObject, CallWith=CurrentDocument] readonly attribute FileList files;
 };

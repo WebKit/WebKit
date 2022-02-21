@@ -25,7 +25,7 @@
 messages -> GPUProcess LegacyReceiver {
     InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters)
 
-    CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, struct WebKit::GPUProcessConnectionParameters parameters) -> (std::optional<IPC::Attachment> connectionIdentifier) Async
+    CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, struct WebKit::GPUProcessConnectionParameters parameters) -> (std::optional<IPC::Attachment> connectionIdentifier, struct WebKit::GPUProcessConnectionInitializationParameters parameters) Async
 
     PrepareToSuspend(bool isSuspensionImminent) -> () Async
     ProcessDidResume()
@@ -43,9 +43,18 @@ messages -> GPUProcess LegacyReceiver {
     ClearMockMediaDevices();
     RemoveMockMediaDevice(String persistentId);
     ResetMockMediaDevices();
+    SetMockCameraIsInterrupted(bool isInterrupted);
 #endif
 #if PLATFORM(MAC)
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
+    SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
+#endif
+
+#endif
+
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+    ShowWindowPicker() -> (std::optional<WebCore::CaptureDevice> device) Async
+    ShowScreenPicker() -> (std::optional<WebCore::CaptureDevice> device) Async
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
@@ -63,6 +72,22 @@ messages -> GPUProcess LegacyReceiver {
 #if ENABLE(VORBIS)
     SetVorbisDecoderEnabled(bool enabled);
 #endif
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    SetMediaSourceInlinePaintingEnabled(bool enabled);
+#endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    SetUseScreenCaptureKit(bool use);
+#endif
+
+    RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (WebKit::ShareableBitmap::Handle handle) Async
+
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)
+#endif
+
+    WebProcessConnectionCountForTesting() -> (uint64_t count) Async
 }
 
 #endif // ENABLE(GPU_PROCESS)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,21 +40,20 @@ public:
     static constexpr TypedArrayContentType contentType = TypedArrayContentType::None;
 
     template<typename CellType, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
         return vm.dataViewSpace<mode>();
     }
 
     JS_EXPORT_PRIVATE static JSDataView* create(
-        JSGlobalObject*, Structure*, RefPtr<ArrayBuffer>&&, unsigned byteOffset,
-        unsigned byteLength);
+        JSGlobalObject*, Structure*, RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t byteLength);
     
     // Dummy methods, which don't actually work; these are just in place to
     // placate some template specialization we do elsewhere.
-    static JSDataView* createUninitialized(JSGlobalObject*, Structure*, unsigned length);
-    static JSDataView* create(JSGlobalObject*, Structure*, unsigned length);
-    bool set(JSGlobalObject*, unsigned, JSObject*, unsigned, unsigned length);
-    bool setIndex(JSGlobalObject*, unsigned, JSValue);
+    static JSDataView* createUninitialized(JSGlobalObject*, Structure*, size_t length);
+    static JSDataView* create(JSGlobalObject*, Structure*, size_t length);
+    bool set(JSGlobalObject*, size_t, JSObject*, size_t, size_t length);
+    bool setIndex(JSGlobalObject*, size_t, JSValue);
     
     ArrayBuffer* possiblySharedBuffer() const { return m_buffer; }
     ArrayBuffer* unsharedBuffer() const

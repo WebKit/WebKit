@@ -66,12 +66,12 @@ struct LocalTimeOffset {
     {
     }
 
-    bool operator==(const LocalTimeOffset& other)
+    bool operator==(const LocalTimeOffset& other) const
     {
         return isDST == other.isDST && offset == other.offset;
     }
 
-    bool operator!=(const LocalTimeOffset& other)
+    bool operator!=(const LocalTimeOffset& other) const
     {
         return isDST != other.isDST || offset != other.offset;
     }
@@ -388,6 +388,11 @@ inline int dayInMonthFromDayInYear(int dayInYear, bool leapYear)
     return d - step;
 }
 
+inline double timeToMS(double hour, double min, double sec, double ms)
+{
+    return (((hour * WTF::minutesPerHour + min) * WTF::secondsPerMinute + sec) * WTF::msPerSecond + ms);
+}
+
 // Returns combined offset in millisecond (UTC + DST).
 WTF_EXPORT_PRIVATE LocalTimeOffset calculateLocalTimeOffset(double utcInMilliseconds, TimeType = UTCTime);
 
@@ -410,6 +415,7 @@ using WTF::msToHours;
 using WTF::secondsPerDay;
 using WTF::secondsPerMinute;
 using WTF::parseDateFromNullTerminatedCharacters;
+using WTF::timeToMS;
 using WTF::makeRFC2822DateString;
 using WTF::LocalTimeOffset;
 using WTF::calculateLocalTimeOffset;

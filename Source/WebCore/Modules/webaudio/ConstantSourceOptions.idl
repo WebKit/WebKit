@@ -25,7 +25,7 @@
 
 [
     Conditional=WEB_AUDIO,
-    EnabledBySetting=WebAudio
+    EnabledBySetting=WebAudioEnabled
 ] dictionary ConstantSourceOptions {
     float offset = 1;
 };

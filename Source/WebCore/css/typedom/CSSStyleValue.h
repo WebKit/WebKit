@@ -36,6 +36,8 @@
 namespace WebCore {
 
 template<typename T> class ExceptionOr;
+struct CSSParserContext;
+class Document;
 
 enum class CSSStyleValueType : uint8_t {
     CSSStyleValue,
@@ -51,18 +53,14 @@ enum class CSSStyleValueType : uint8_t {
 class CSSStyleValue : public RefCounted<CSSStyleValue>, public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(CSSStyleValue);
 public:
-
     virtual String toString() const;
     virtual ~CSSStyleValue() = default;
-    
+
     virtual CSSStyleValueType getType() const { return CSSStyleValueType::CSSStyleValue; }
-        
-    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValue(const String&, const String&, bool);
+
     static ExceptionOr<Ref<CSSStyleValue>> parse(const String&, const String&);
     static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseAll(const String&, const String&);
-    
-    static RefPtr<CSSStyleValue> reifyValue(CSSPropertyID, RefPtr<CSSValue>&&);
-    
+
     static Ref<CSSStyleValue> create(RefPtr<CSSValue>&&, String&& = String());
     static Ref<CSSStyleValue> create();
 

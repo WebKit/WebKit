@@ -1,0 +1,16 @@
+This tests that a treeitem with a group that uses aria-owns does not cause problems when poorly formed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS tree.childrenCount is 7
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Jungle Animals
+Cats
+Lions
+Domestic Animals
+Arctic Animals
+Sea Animals
+Orca

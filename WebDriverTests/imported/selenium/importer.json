@@ -1,6 +1,6 @@
 {
     "repository": "https://github.com/SeleniumHQ/selenium.git",
-    "revision": "d4f9fe213dd6e5b10b89be360be635747ed3e138",
+    "revision": "e3fcf791239c0e9ba5c04686025f578b561ecd6f",
     "paths_to_import": [
         "common",
         "py/conftest.py",

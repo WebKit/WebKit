@@ -89,7 +89,7 @@ bool FrameLoader::SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerEleme
     CompletionHandlerCallingScope stopDelayingLoadEvent;
     if (!scriptURL.isEmpty()) {
         ownerElement.document().incrementLoadEventDelayCount();
-        stopDelayingLoadEvent = CompletionHandlerCallingScope([ownerDocument = makeRef(ownerElement.document())] {
+        stopDelayingLoadEvent = CompletionHandlerCallingScope([ownerDocument = Ref { ownerElement.document() }] {
             ownerDocument->decrementLoadEventDelayCount();
         });
     }
@@ -223,6 +223,10 @@ bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInImageElement& ownerEle
 
     document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(completedURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
+    // Historically, we haven't run javascript URLs in <embed> / <object> elements.
+    if (completedURL.protocolIsJavaScript())
+        return false;
+
     bool hasFallbackContent = is<HTMLObjectElement>(ownerElement) && downcast<HTMLObjectElement>(ownerElement).hasFallbackContent();
 
     bool useFallback;
@@ -245,7 +249,7 @@ Frame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement
     URL upgradedRequestURL = requestURL;
     initiatingDocument.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(upgradedRequestURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    RefPtr<Frame> frame = makeRefPtr(ownerElement.contentFrame());
+    RefPtr frame = ownerElement.contentFrame();
     if (frame)
         frame->navigationScheduler().scheduleLocationChange(initiatingDocument, initiatingDocument.securityOrigin(), upgradedRequestURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList);
     else
@@ -260,8 +264,8 @@ Frame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement
 
 RefPtr<Frame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const String& name, const String& referrer)
 {
-    Ref<Frame> protect(m_frame);
-    auto document = makeRef(ownerElement.document());
+    Ref protectedFrame { m_frame };
+    Ref document = ownerElement.document();
 
     if (!document->securityOrigin().canDisplay(url)) {
         FrameLoader::reportLocalLoadFailed(&m_frame, url.string());
@@ -372,7 +376,7 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginEleme
         loadManually = false;
 #endif
 
-    auto weakRenderer = makeWeakPtr(*renderer);
+    WeakPtr weakRenderer { *renderer };
 
     auto widget = m_frame.loader().client().createPlugin(contentSize, pluginElement, url, paramNames, paramValues, mimeType, loadManually);
 

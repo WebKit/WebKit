@@ -361,7 +361,7 @@ void webkit_dom_html_select_element_add(WebKitDOMHTMLSelectElement* self, WebKit
     WebCore::HTMLSelectElement* item = WebKit::core(self);
     WebCore::HTMLElement* convertedElement = WebKit::core(element);
     WebCore::HTMLElement* convertedBefore = WebKit::core(before);
-    Variant<RefPtr<WebCore::HTMLOptionElement>, RefPtr<WebCore::HTMLOptGroupElement>> variantElement;
+    std::variant<RefPtr<WebCore::HTMLOptionElement>, RefPtr<WebCore::HTMLOptGroupElement>> variantElement;
     if (is<WebCore::HTMLOptionElement>(convertedElement))
         variantElement = &downcast<WebCore::HTMLOptionElement>(*convertedElement);
     else if (is<WebCore::HTMLOptGroupElement>(convertedElement))

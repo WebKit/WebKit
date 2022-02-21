@@ -7,10 +7,10 @@ esid: sec-date.prototype.valueof
 description: The "length" property of the "valueOf" is 0
 ---*/
 
-if (Date.prototype.valueOf.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The valueOf has a "length" property');
-}
+assert.sameValue(
+  Date.prototype.valueOf.hasOwnProperty("length"),
+  true,
+  'Date.prototype.valueOf.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.valueOf.length !== 0) {
-  throw new Test262Error('#2: The "length" property of the valueOf is 0');
-}
+assert.sameValue(Date.prototype.valueOf.length, 0, 'The value of Date.prototype.valueOf.length is expected to be 0');

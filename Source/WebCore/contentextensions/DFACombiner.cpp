@@ -184,7 +184,7 @@ private:
     Vector<uint64_t, 0, ContentExtensionsOverflowHandler> m_unprocessedNodes;
 };
 
-void DFACombiner::combineDFAs(unsigned minimumSize, const WTF::Function<void(DFA&&)>& handler)
+void DFACombiner::combineDFAs(unsigned minimumSize, const Function<void(DFA&&)>& handler)
 {
     if (m_dfas.isEmpty())
         return;

@@ -6,11 +6,14 @@ info: The "length" property of the "setMilliseconds" is 1
 esid: sec-date.prototype.setmilliseconds
 description: The "length" property of the "setMilliseconds" is 1
 ---*/
+assert.sameValue(
+  Date.prototype.setMilliseconds.hasOwnProperty("length"),
+  true,
+  'Date.prototype.setMilliseconds.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.setMilliseconds.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The setMilliseconds has a "length" property');
-}
-
-if (Date.prototype.setMilliseconds.length !== 1) {
-  throw new Test262Error('#2: The "length" property of the setMilliseconds is 1');
-}
+assert.sameValue(
+  Date.prototype.setMilliseconds.length,
+  1,
+  'The value of Date.prototype.setMilliseconds.length is expected to be 1'
+);

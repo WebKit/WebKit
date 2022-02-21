@@ -75,11 +75,15 @@ public:
 
     CALayer *layerWithIDForTesting(uint64_t) const;
 
+    bool replayCGDisplayListsIntoBackingStore() const;
+
 private:
     void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
     std::unique_ptr<RemoteLayerTreeNode> makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties&);
 
     void layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID);
+
+    RemoteLayerBackingStore::LayerContentsType layerContentsType() const;
 
     RemoteLayerTreeDrawingAreaProxy* m_drawingArea { nullptr };
     RemoteLayerTreeNode* m_rootNode { nullptr };

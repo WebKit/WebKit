@@ -30,6 +30,7 @@
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "TransformationMatrix.h"
+#include "WebXRSession.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -37,20 +38,22 @@ namespace WebCore {
 class Document;
 class ScriptExecutionContext;
 class WebXRRigidTransform;
-class WebXRSession;
 
 class WebXRSpace : public EventTargetWithInlineData, public ContextDestructionObserver {
     WTF_MAKE_ISO_ALLOCATED(WebXRSpace);
 public:
     virtual ~WebXRSpace();
 
-    virtual WebXRSession& session() const = 0;
-    virtual TransformationMatrix nativeOrigin() const = 0;
-    TransformationMatrix effectiveOrigin() const;
-    virtual bool isPositionEmulated() const;
+    virtual WebXRSession* session() const = 0;
+    virtual std::optional<TransformationMatrix> nativeOrigin() const = 0;
+    std::optional<TransformationMatrix> effectiveOrigin() const;
+    virtual std::optional<bool> isPositionEmulated() const;
 
     virtual bool isReferenceSpace() const { return false; }
     virtual bool isBoundedReferenceSpace() const { return false; }
+#if ENABLE(WEBXR_HANDS)
+    virtual bool isJointSpace() const { return false; }
+#endif
 
 protected:
     WebXRSpace(Document&, Ref<WebXRRigidTransform>&&);
@@ -77,13 +80,13 @@ public:
     virtual ~WebXRViewerSpace();
 
 private:
-    WebXRSession& session() const final { return m_session; }
-    TransformationMatrix nativeOrigin() const final;
+    WebXRSession* session() const final { return m_session.get(); }
+    std::optional<TransformationMatrix> nativeOrigin() const final;
 
     void refEventTarget() final { RELEASE_ASSERT_NOT_REACHED(); }
     void derefEventTarget() final { RELEASE_ASSERT_NOT_REACHED(); }
 
-    WebXRSession& m_session;
+    WeakPtr<WebXRSession> m_session;
 };
 
 } // namespace WebCore

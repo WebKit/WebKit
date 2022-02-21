@@ -30,7 +30,6 @@ typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) Heade
 
 [
     Exposed=(Window,Worker),
-    ImplementationLacksVTable,
     InterfaceName=Headers,
 ] interface FetchHeaders {
     constructor(optional HeadersInit init);

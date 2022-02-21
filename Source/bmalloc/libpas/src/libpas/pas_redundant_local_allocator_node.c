@@ -32,7 +32,7 @@
 #include "pas_immortal_heap.h"
 
 pas_redundant_local_allocator_node*
-pas_redundant_local_allocator_node_create(pas_segregated_global_size_directory* directory)
+pas_redundant_local_allocator_node_create(pas_segregated_size_directory* directory)
 {
     pas_redundant_local_allocator_node* result;
 
@@ -41,9 +41,8 @@ pas_redundant_local_allocator_node_create(pas_segregated_global_size_directory* 
         "pas_redundant_local_allocator_node",
         pas_object_allocation);
 
-    pas_compact_atomic_thread_local_cache_layout_node_store(&result->next, NULL);
-    pas_compact_segregated_global_size_directory_ptr_store(&result->directory, directory);
-    result->allocator_index = (pas_allocator_index)UINT_MAX;
+    pas_compact_segregated_size_directory_ptr_store(&result->directory, directory);
+    result->allocator_index = 0;
 
     return result;
 }

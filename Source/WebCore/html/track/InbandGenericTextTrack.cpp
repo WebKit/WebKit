@@ -28,9 +28,11 @@
 
 #if ENABLE(VIDEO)
 
+#include "Document.h"
 #include "HTMLMediaElement.h"
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
+#include "TextTrackList.h"
 #include "VTTRegionList.h"
 #include <math.h>
 #include <wtf/IsoMallocInlines.h>
@@ -63,14 +65,14 @@ void GenericTextTrackCueMap::remove(TextTrackCue& publicCue)
         m_dataToCueMap.remove(cueIdentifier);
 }
 
-inline InbandGenericTextTrack::InbandGenericTextTrack(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
-    : InbandTextTrack(document, client, trackPrivate)
+inline InbandGenericTextTrack::InbandGenericTextTrack(Document& document, InbandTextTrackPrivate& trackPrivate)
+    : InbandTextTrack(document, trackPrivate)
 {
 }
 
-Ref<InbandGenericTextTrack> InbandGenericTextTrack::create(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
+Ref<InbandGenericTextTrack> InbandGenericTextTrack::create(Document& document, InbandTextTrackPrivate& trackPrivate)
 {
-    auto textTrack = adoptRef(*new InbandGenericTextTrack(document, client, trackPrivate));
+    auto textTrack = adoptRef(*new InbandGenericTextTrack(document, trackPrivate));
     textTrack->suspendIfNeeded();
     return textTrack;
 }
@@ -83,8 +85,8 @@ void InbandGenericTextTrack::updateCueFromCueData(TextTrackCueGeneric& cue, Inba
 
     cue.setStartTime(inbandCue.startTime());
     MediaTime endTime = inbandCue.endTime();
-    if (endTime.isPositiveInfinite() && mediaElement())
-        endTime = mediaElement()->durationMediaTime();
+    if (endTime.isPositiveInfinite() && textTrackList() && textTrackList()->duration().isValid())
+        endTime = textTrackList()->duration();
     cue.setEndTime(endTime);
     cue.setText(inbandCue.content());
     cue.setId(inbandCue.id());
@@ -138,7 +140,7 @@ void InbandGenericTextTrack::addGenericCue(InbandGenericCue& inbandCue)
 
 void InbandGenericTextTrack::updateGenericCue(InbandGenericCue& inbandCue)
 {
-    auto cue = makeRefPtr(m_cueMap.find(inbandCue.uniqueId()));
+    RefPtr cue = m_cueMap.find(inbandCue.uniqueId());
     if (!cue)
         return;
 
@@ -150,7 +152,7 @@ void InbandGenericTextTrack::updateGenericCue(InbandGenericCue& inbandCue)
 
 void InbandGenericTextTrack::removeGenericCue(InbandGenericCue& inbandCue)
 {
-    auto cue = makeRefPtr(m_cueMap.find(inbandCue.uniqueId()));
+    RefPtr cue = m_cueMap.find(inbandCue.uniqueId());
     if (cue) {
         INFO_LOG(LOGIDENTIFIER, *cue);
         removeCue(*cue);

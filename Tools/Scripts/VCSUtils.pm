@@ -2148,7 +2148,8 @@ sub mergeChangeLogs($$$)
         rename($fileMine, "$fileMine.save");
         rename($fileOlder, "$fileOlder.save");
     } else {
-        open(DIFF, "diff -u -a --binary \"$fileOlder\" \"$fileMine\" |") or die $!;
+        my $binarySwitch = isWindows() ? "--binary" : "";
+        open(DIFF, "diff -u -a $binarySwitch \"$fileOlder\" \"$fileMine\" |") or die $!;
         $patch = <DIFF>;
         close(DIFF);
     }

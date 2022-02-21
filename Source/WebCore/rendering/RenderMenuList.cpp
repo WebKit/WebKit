@@ -30,6 +30,8 @@
 #include "CSSFontSelector.h"
 #include "Chrome.h"
 #include "ColorBlending.h"
+#include "DocumentInlines.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
@@ -104,7 +106,7 @@ void RenderMenuList::willBeDestroyed()
 void RenderMenuList::setInnerRenderer(RenderBlock& innerRenderer)
 {
     ASSERT(!m_innerBlock.get());
-    m_innerBlock = makeWeakPtr(innerRenderer);
+    m_innerBlock = innerRenderer;
     adjustInnerStyle();
 }
 
@@ -136,10 +138,10 @@ void RenderMenuList::adjustInnerStyle()
     } else if (document().page()->chrome().selectItemAlignmentFollowsMenuWritingDirection()) {
         innerStyle.setTextAlign(style().direction() == TextDirection::LTR ? TextAlignMode::Left : TextAlignMode::Right);
         TextDirection direction;
-        EUnicodeBidi unicodeBidi;
+        UnicodeBidi unicodeBidi;
         if (multiple() && selectedOptionCount(*this) != 1) {
             direction = (m_buttonText && m_buttonText->text().defaultWritingDirection() == U_RIGHT_TO_LEFT) ? TextDirection::RTL : TextDirection::LTR;
-            unicodeBidi = UBNormal;
+            unicodeBidi = UnicodeBidi::Normal;
         } else if (m_optionStyle) {
             direction = m_optionStyle->direction();
             unicodeBidi = m_optionStyle->unicodeBidi();
@@ -279,7 +281,7 @@ void RenderMenuList::setText(const String& s)
         m_buttonText->dirtyLineBoxes(false);
     } else {
         auto newButtonText = createRenderer<RenderText>(document(), textToUse);
-        m_buttonText = makeWeakPtr(*newButtonText);
+        m_buttonText = *newButtonText;
         // FIXME: This mutation should go through the normal RenderTreeBuilder path.
         if (RenderTreeBuilder::current())
             RenderTreeBuilder::current()->attach(*this, WTFMove(newButtonText));
@@ -540,14 +542,14 @@ PopupMenuStyle RenderMenuList::menuStyle() const
     IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
     return PopupMenuStyle(styleToUse.visitedDependentColorWithColorFilter(CSSPropertyColor), styleToUse.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor),
         styleToUse.fontCascade(), styleToUse.visibility() == Visibility::Visible, styleToUse.display() == DisplayType::None,
-        style().hasAppearance() && style().appearance() == MenulistPart, styleToUse.textIndent(),
+        style().hasEffectiveAppearance() && style().effectiveAppearance() == MenulistPart, styleToUse.textIndent(),
         style().direction(), isOverride(style().unicodeBidi()), PopupMenuStyle::DefaultBackgroundColor,
         PopupMenuStyle::SelectPopup, theme().popupMenuSize(styleToUse, absBounds));
 }
 
 HostWindow* RenderMenuList::hostWindow() const
 {
-    return view().frameView().hostWindow();
+    return RenderFlexibleBox::hostWindow();
 }
 
 Ref<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
@@ -572,7 +574,7 @@ const int endOfLinePadding = 2;
 
 LayoutUnit RenderMenuList::clientPaddingLeft() const
 {
-    if ((style().appearance() == MenulistPart || style().appearance() == MenulistButtonPart) && style().direction() == TextDirection::RTL) {
+    if ((style().effectiveAppearance() == MenulistPart || style().effectiveAppearance() == MenulistButtonPart) && style().direction() == TextDirection::RTL) {
         // For these appearance values, the theme applies padding to leave room for the
         // drop-down button. But leaving room for the button inside the popup menu itself
         // looks strange, so we return a small default padding to avoid having a large empty
@@ -586,7 +588,7 @@ LayoutUnit RenderMenuList::clientPaddingLeft() const
 
 LayoutUnit RenderMenuList::clientPaddingRight() const
 {
-    if ((style().appearance() == MenulistPart || style().appearance() == MenulistButtonPart) && style().direction() == TextDirection::LTR)
+    if ((style().effectiveAppearance() == MenulistPart || style().effectiveAppearance() == MenulistButtonPart) && style().direction() == TextDirection::LTR)
         return endOfLinePadding;
 
     return paddingRight() + m_innerBlock->paddingRight();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2014-2022 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,12 +34,21 @@
 #import "ResourceRequestCFNet.h"
 #import "RuntimeApplicationChecks.h"
 #import <Foundation/Foundation.h>
+#import <Foundation/NSURLRequest.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/FileSystem.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
 namespace WebCore {
+
+ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
+    : m_nsRequest(nsRequest)
+{
+#if ENABLE(APP_PRIVACY_REPORT)
+    setIsAppInitiated(nsRequest.attribution == NSURLRequestAttributionDeveloper);
+#endif
+}
 
 NSURLRequest *ResourceRequest::nsURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
@@ -83,21 +92,21 @@ static inline NSURLRequestCachePolicy toPlatformRequestCachePolicy(ResourceReque
 
 void ResourceRequest::doUpdateResourceRequest()
 {
-    m_url = [m_nsRequest.get() URL];
+    m_url = [m_nsRequest URL];
 
     if (m_cachePolicy == ResourceRequestCachePolicy::UseProtocolCachePolicy)
-        m_cachePolicy = fromPlatformRequestCachePolicy([m_nsRequest.get() cachePolicy]);
-    m_timeoutInterval = [m_nsRequest.get() timeoutInterval];
-    m_firstPartyForCookies = [m_nsRequest.get() mainDocumentURL];
+        m_cachePolicy = fromPlatformRequestCachePolicy([m_nsRequest cachePolicy]);
+    m_timeoutInterval = [m_nsRequest timeoutInterval];
+    m_firstPartyForCookies = [m_nsRequest mainDocumentURL];
 
-    URL siteForCookies { [m_nsRequest.get() _propertyForKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"] };
+    URL siteForCookies { [m_nsRequest _propertyForKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"] };
     m_sameSiteDisposition = siteForCookies.isNull() ? SameSiteDisposition::Unspecified : (areRegistrableDomainsEqual(siteForCookies, m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
 
-    m_isTopSite = static_cast<NSNumber*>([m_nsRequest.get() _propertyForKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"]).boolValue;
+    m_isTopSite = static_cast<NSNumber*>([m_nsRequest _propertyForKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"]).boolValue;
 
-    if (NSString* method = [m_nsRequest.get() HTTPMethod])
+    if (NSString* method = [m_nsRequest HTTPMethod])
         m_httpMethod = method;
-    m_allowCookies = [m_nsRequest.get() HTTPShouldHandleCookies];
+    m_allowCookies = [m_nsRequest HTTPShouldHandleCookies];
 
     if (resourcePrioritiesEnabled())
         m_priority = toResourceLoadPriority(m_nsRequest ? CFURLRequestGetRequestPriority([m_nsRequest _CFURLRequest]) : 0);
@@ -108,7 +117,7 @@ void ResourceRequest::doUpdateResourceRequest()
     }];
 
     m_responseContentDispositionEncodingFallbackArray.clear();
-    NSArray *encodingFallbacks = [m_nsRequest.get() contentDispositionEncodingFallbackArray];
+    NSArray *encodingFallbacks = [m_nsRequest contentDispositionEncodingFallbackArray];
     m_responseContentDispositionEncodingFallbackArray.reserveCapacity([encodingFallbacks count]);
     for (NSNumber *encodingFallback in [m_nsRequest contentDispositionEncodingFallbackArray]) {
         CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding([encodingFallback unsignedLongValue]);
@@ -125,9 +134,9 @@ void ResourceRequest::doUpdateResourceRequest()
 
 void ResourceRequest::doUpdateResourceHTTPBody()
 {
-    if (NSData* bodyData = [m_nsRequest.get() HTTPBody])
+    if (NSData* bodyData = [m_nsRequest HTTPBody])
         m_httpBody = FormData::create([bodyData bytes], [bodyData length]);
-    else if (NSInputStream* bodyStream = [m_nsRequest.get() HTTPBodyStream]) {
+    else if (NSInputStream* bodyStream = [m_nsRequest HTTPBodyStream]) {
         FormData* formData = httpBodyFromStream(bodyStream);
         // There is no FormData object if a client provided a custom data stream.
         // We shouldn't be looking at http body after client callbacks.
@@ -165,12 +174,16 @@ void ResourceRequest::doUpdatePlatformRequest()
         return;
     }
 
-    auto nsRequest = adoptNS([m_nsRequest.get() mutableCopy]);
+    auto nsRequest = adoptNS<NSMutableURLRequest *>([m_nsRequest mutableCopy]);
 
     if (nsRequest)
         [nsRequest setURL:url()];
     else
         nsRequest = adoptNS([[NSMutableURLRequest alloc] initWithURL:url()]);
+
+#if ENABLE(APP_PRIVACY_REPORT)
+    nsRequest.get().attribution = m_isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+#endif
 
     if (ResourceRequest::httpPipeliningEnabled())
         CFURLRequestSetShouldPipelineHTTP([nsRequest _CFURLRequest], true, true);
@@ -241,12 +254,16 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
         return;
     }
 
-    auto nsRequest = adoptNS([m_nsRequest.get() mutableCopy]);
+    auto nsRequest = adoptNS<NSMutableURLRequest *>([m_nsRequest mutableCopy]);
 
     if (nsRequest)
         [nsRequest setURL:url()];
     else
         nsRequest = adoptNS([[NSMutableURLRequest alloc] initWithURL:url()]);
+
+#if ENABLE(APP_PRIVACY_REPORT)
+    nsRequest.get().attribution = m_isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+#endif
 
     FormData* formData = httpBody();
     if (formData && !formData->isEmpty())
@@ -279,7 +296,11 @@ RetainPtr<NSURLRequest> copyRequestWithStorageSession(CFURLStorageSessionRef sto
 
     auto cfRequest = adoptCF(CFURLRequestCreateMutableCopy(kCFAllocatorDefault, [request _CFURLRequest]));
     _CFURLRequestSetStorageSession(cfRequest.get(), storageSession);
-    return adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:cfRequest.get()]);
+    auto nsRequest = adoptNS([[NSMutableURLRequest alloc] _initWithCFURLRequest:cfRequest.get()]);
+#if ENABLE(APP_PRIVACY_REPORT)
+    nsRequest.get().attribution = request.attribution;
+#endif
+    return nsRequest;
 }
 
 NSCachedURLResponse *cachedResponseForRequest(CFURLStorageSessionRef storageSession, NSURLRequest *request)

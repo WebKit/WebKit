@@ -181,6 +181,8 @@ private:
 
     void didReadDataURL(std::optional<WebCore::DataURLDecoder::Result>&&);
 
+    WebCore::AdditionalNetworkLoadMetricsForWebInspector& additionalNetworkLoadMetricsForWebInspector();
+
     WebCore::FrameIdentifier m_frameID;
     WebCore::PageIdentifier m_pageID;
     State m_state { State::Suspended };

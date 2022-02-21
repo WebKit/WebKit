@@ -4,6 +4,7 @@
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2010 Zoltan Herczeg <zherczeg@webkit.org>
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,7 +39,8 @@ enum LightType {
     LS_SPOT
 };
 
-class FilterEffect;
+class Filter;
+class FilterImage;
 
 class LightSource : public RefCounted<LightSource> {
 public:
@@ -65,7 +67,7 @@ public:
     LightType type() const { return m_type; }
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&) const = 0;
 
-    virtual void initPaintingData(const FilterEffect&, PaintingData&) = 0;
+    virtual void initPaintingData(const Filter&, const FilterImage& result, PaintingData&) const = 0;
     // z is a float number, since it is the alpha value scaled by a user
     // specified "surfaceScale" constant, which type is <number> in the SVG standard.
     // x and y are in the coordinates of the FilterEffect's buffer.
@@ -90,6 +92,20 @@ private:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::LightType> {
+    using values = EnumValues<
+        WebCore::LightType,
+
+        WebCore::LS_DISTANT,
+        WebCore::LS_POINT,
+        WebCore::LS_SPOT
+    >;
+};
+
+} // namespace WTF
 
 #define SPECIALIZE_TYPE_TRAITS_LIGHTSOURCE(ClassName, Type) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \

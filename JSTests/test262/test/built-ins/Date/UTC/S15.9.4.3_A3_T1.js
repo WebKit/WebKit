@@ -13,6 +13,6 @@ includes: [propertyHelper.js]
 
 var x = Date.UTC.length;
 verifyNotWritable(Date.UTC, "length", null, 1);
-if (Date.UTC.length !== x) {
-  throw new Test262Error('#1: The Date.UTC.length has the attribute ReadOnly');
-}
+assert.sameValue(Date.UTC.length, x, 'The value of Date.UTC.length is expected to equal the value of x');
+
+// TODO: Convert to verifyProperty() format.

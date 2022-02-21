@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    .container {
+        position: absolute;
+        top: 20px;
+        border: 2px solid black;
+        width: 300px;
+        height: 300px;
+        overflow: hidden;
+    }
+
+    .clipped {
+        margin-left: 50px;
+        width: 200px;
+        height: 200px;
+        clip-path: url(#rect-clip);
+        background-color: green;
+    }
+    </style>
+</head>
+<body>
+    <svg width="0" height="0">
+        <defs>
+            <clippath id="rect-clip">
+                <rect x="10" y="10" width="150" height="150"/>
+            </clippath>
+        </defs>
+    </svg>
+    <div class="container">
+        <div class="clipped"></div> 
+    </div>
+</body>
+</html>

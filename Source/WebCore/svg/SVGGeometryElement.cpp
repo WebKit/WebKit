@@ -24,6 +24,7 @@
 #include "SVGGeometryElement.h"
 
 #include "DOMPoint.h"
+#include "LegacyRenderSVGShape.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGShape.h"
 #include "SVGDocumentExtensions.h"
@@ -48,52 +49,88 @@ float SVGGeometryElement::getTotalLength() const
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    auto* renderer = downcast<RenderSVGShape>(this->renderer());
+    auto* renderer = this->renderer();
     if (!renderer)
         return 0;
 
-    return renderer->getTotalLength();
+    if (is<LegacyRenderSVGShape>(renderer))
+        return downcast<LegacyRenderSVGShape>(renderer)->getTotalLength();
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGShape>(renderer))
+        return downcast<RenderSVGShape>(renderer)->getTotalLength();
+#endif
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) const
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    auto* renderer = downcast<RenderSVGShape>(this->renderer());
-    
+    auto* renderer = this->renderer();
+
     // Spec: If current element is a non-rendered element, throw an InvalidStateError.
     if (!renderer)
         return Exception { InvalidStateError };
-    
+
     // Spec: Clamp distance to [0, length].
     distance = clampTo<float>(distance, 0, getTotalLength());
 
     // Spec: Return a newly created, detached SVGPoint object.
-    return SVGPoint::create(renderer->getPointAtLength(distance));
+    if (is<LegacyRenderSVGShape>(renderer))
+        return SVGPoint::create(downcast<LegacyRenderSVGShape>(renderer)->getPointAtLength(distance));
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGShape>(renderer))
+        return SVGPoint::create(downcast<RenderSVGShape>(renderer)->getPointAtLength(distance));
+#endif
+
+    ASSERT_NOT_REACHED();
+    return Exception { InvalidStateError };
 }
 
 bool SVGGeometryElement::isPointInFill(DOMPointInit&& pointInit)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    auto* renderer = downcast<RenderSVGShape>(this->renderer());
+    auto* renderer = this->renderer();
     if (!renderer)
         return false;
 
     FloatPoint point {static_cast<float>(pointInit.x), static_cast<float>(pointInit.y)};
-    return renderer->isPointInFill(point);
+    if (is<LegacyRenderSVGShape>(renderer))
+        return downcast<LegacyRenderSVGShape>(renderer)->isPointInFill(point);
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGShape>(renderer))
+        return downcast<RenderSVGShape>(renderer)->isPointInFill(point);
+#endif
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool SVGGeometryElement::isPointInStroke(DOMPointInit&& pointInit)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    auto* renderer = downcast<RenderSVGShape>(this->renderer());
+    auto* renderer = this->renderer();
     if (!renderer)
         return false;
 
     FloatPoint point {static_cast<float>(pointInit.x), static_cast<float>(pointInit.y)};
-    return renderer->isPointInStroke(point);
+    if (is<LegacyRenderSVGShape>(renderer))
+        return downcast<LegacyRenderSVGShape>(renderer)->isPointInStroke(point);
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGShape>(renderer))
+        return downcast<RenderSVGShape>(renderer)->isPointInStroke(point);
+#endif
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void SVGGeometryElement::parseAttribute(const QualifiedName& name, const AtomString& value)

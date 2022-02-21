@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class FloatSize;
 class RenderStyle;
 class RenderView;
 
@@ -74,10 +75,10 @@ public:
     CSSPropertyID propertyToCompute() const { return m_propertyToCompute.value_or(CSSPropertyInvalid); }
     const RenderView* renderView() const { return m_renderView; }
 
-    double viewportWidthFactor() const;
-    double viewportHeightFactor() const;
-    double viewportMinFactor() const;
-    double viewportMaxFactor() const;
+    FloatSize defaultViewportFactor() const;
+    FloatSize smallViewportFactor() const;
+    FloatSize largeViewportFactor() const;
+    FloatSize dynamicViewportFactor() const;
 
     CSSToLengthConversionData copyWithAdjustedZoom(float newZoom) const
     {

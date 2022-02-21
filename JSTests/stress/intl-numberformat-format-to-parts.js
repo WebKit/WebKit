@@ -57,3 +57,35 @@ shouldBe(+Intl.NumberFormat('en-US', { useGrouping: false }).formatToParts(Numbe
 shouldBe(Intl.NumberFormat('en-US', { useGrouping: false }).formatToParts(Number.MAX_VALUE).length, 1);
 shouldBe(Intl.NumberFormat('en-US', { useGrouping: false }).formatToParts(Number.MAX_VALUE)[0].value.length, 309);
 shouldBe(Intl.NumberFormat('en-US').formatToParts(Number.MAX_VALUE).length, 205);
+
+shouldBe(
+    JSON.stringify(
+        Intl.NumberFormat('en-US').formatToParts(4000n)
+    ),
+    JSON.stringify([
+        {"type":"integer","value":"4"},
+        {"type":"group","value":","},
+        {"type":"integer","value":"000"}
+    ]));
+
+shouldBe(
+    JSON.stringify(
+        Intl.NumberFormat('en-US').formatToParts(-4000n)
+    ),
+    JSON.stringify([
+        {"type":"minusSign","value":"-"},
+        {"type":"integer","value":"4"},
+        {"type":"group","value":","},
+        {"type":"integer","value":"000"}
+    ]));
+
+shouldBe(
+    JSON.stringify(
+        Intl.NumberFormat('en-US').formatToParts("-4000")
+    ),
+    JSON.stringify([
+        {"type":"minusSign","value":"-"},
+        {"type":"integer","value":"4"},
+        {"type":"group","value":","},
+        {"type":"integer","value":"000"}
+    ]));

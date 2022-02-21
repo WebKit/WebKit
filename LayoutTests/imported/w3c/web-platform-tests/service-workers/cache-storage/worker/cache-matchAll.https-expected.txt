@@ -11,6 +11,8 @@ PASS Cache.matchAll supports ignoreVary
 PASS Cache.matchAll with URL containing fragment
 PASS Cache.matchAll with string fragment "http" as query
 PASS Cache.matchAll without parameters
+PASS Cache.matchAll with explicitly undefined request
+PASS Cache.matchAll with explicitly undefined request and empty options
 PASS Cache.matchAll with responses containing "Vary" header
 PASS Cache.matchAll with multiple vary pairs
 

@@ -32,12 +32,12 @@
 #include "MediaPlayer.h"
 #include "NowPlayingInfo.h"
 #include "PlatformMediaSessionManager.h"
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
 static constexpr Seconds clientDataBufferingTimerThrottleDelay { 100_ms };
 
-#if !RELEASE_LOG_DISABLED
 String convertEnumerationToString(PlatformMediaSession::State state)
 {
     static const NeverDestroyed<String> values[] = {
@@ -120,8 +120,6 @@ String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType
     ASSERT(static_cast<size_t>(command) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(command)];
 }
-
-#endif
 
 std::unique_ptr<PlatformMediaSession> PlatformMediaSession::create(PlatformMediaSessionManager& manager, PlatformMediaSessionClient& client)
 {
@@ -237,6 +235,8 @@ bool PlatformMediaSession::clientWillBeginPlayback()
         return true;
 
     ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state);
+
+    SetForScope<bool> preparingToPlay(m_preparingToPlay, true);
 
     if (!PlatformMediaSessionManager::sharedManager().sessionWillBeginPlayback(*this)) {
         if (state() == Interrupted)

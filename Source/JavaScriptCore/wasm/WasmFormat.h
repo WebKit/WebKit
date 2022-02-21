@@ -29,11 +29,13 @@
 
 #include "CodeLocation.h"
 #include "Identifier.h"
+#include "JSString.h"
 #include "MacroAssemblerCodeRef.h"
 #include "RegisterAtOffsetList.h"
 #include "WasmMemoryInformation.h"
 #include "WasmName.h"
 #include "WasmNameSection.h"
+#include "WasmOSREntryData.h"
 #include "WasmOps.h"
 #include "WasmPageCount.h"
 #include "WasmSignature.h"
@@ -50,6 +52,7 @@ namespace Wasm {
 
 struct CompilationContext;
 struct ModuleInformation;
+struct UnlinkedHandlerInfo;
 
 using BlockSignature = const Signature*;
 
@@ -68,7 +71,8 @@ inline bool isValueType(Type type)
     case TypeKind::Externref:
     case TypeKind::Funcref:
         return true;
-    case TypeKind::TypeIdx:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
         return Options::useWebAssemblyTypedFunctionReferences();
     default:
         break;
@@ -76,20 +80,84 @@ inline bool isValueType(Type type)
     return false;
 }
 
+inline JSString* typeToString(VM& vm, TypeKind type)
+{
+#define TYPE_CASE(macroName, value, b3, inc, wasmName) \
+    case TypeKind::macroName: \
+        return jsNontrivialString(vm, #wasmName); \
+
+    switch (type) {
+        FOR_EACH_WASM_TYPE(TYPE_CASE)
+    }
+
+#undef TYPE_CASE
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline bool isRefType(Type type)
+{
+    if (Options::useWebAssemblyTypedFunctionReferences())
+        return type.isRef() || type.isRefNull();
+    return type.isFuncref() || type.isExternref();
+}
+
+inline bool isExternref(Type type)
+{
+    if (Options::useWebAssemblyTypedFunctionReferences())
+        return isRefType(type) && type.index == static_cast<SignatureIndex>(TypeKind::Externref);
+    return type.kind == TypeKind::Externref;
+}
+
+inline bool isFuncref(Type type)
+{
+    if (Options::useWebAssemblyTypedFunctionReferences())
+        return isRefType(type) && type.index == static_cast<SignatureIndex>(TypeKind::Funcref);
+    return type.kind == TypeKind::Funcref;
+}
+
+inline Type funcrefType()
+{
+    if (Options::useWebAssemblyTypedFunctionReferences())
+        return Wasm::Type { Wasm::TypeKind::RefNull, Wasm::Nullable::Yes, static_cast<Wasm::SignatureIndex>(Wasm::TypeKind::Funcref) };
+    return Types::Funcref;
+}
+
+inline Type externrefType()
+{
+    if (Options::useWebAssemblyTypedFunctionReferences())
+        return Wasm::Type { Wasm::TypeKind::RefNull, Wasm::Nullable::Yes, static_cast<Wasm::SignatureIndex>(Wasm::TypeKind::Externref) };
+    return Types::Externref;
+}
+
+inline bool isRefWithTypeIndex(Type type)
+{
+    if (!Options::useWebAssemblyTypedFunctionReferences())
+        return false;
+
+    return isRefType(type) && !isExternref(type) && !isFuncref(type);
+}
+
+inline bool isTypeIndexHeapType(int32_t heapType)
+{
+    if (!Options::useWebAssemblyTypedFunctionReferences())
+        return false;
+
+    return heapType >= 0;
+}
+
 inline bool isSubtype(Type sub, Type parent)
 {
     if (sub.isNullable() && !parent.isNullable())
         return false;
 
-    if (sub.isTypeIdx() && parent.isFuncref())
+    if ((sub.isRef() || sub.isRefNull()) && isFuncref(parent))
+        return true;
+
+    if (sub.isRef() && parent.isRefNull() && sub.index == parent.index)
         return true;
 
     return sub == parent;
-}
-
-inline bool isRefType(Type type)
-{
-    return type.isFuncref() || type.isExternref() || type.isTypeIdx();
 }
 
 inline bool isValidHeapTypeKind(TypeKind kind)
@@ -106,7 +174,7 @@ inline bool isValidHeapTypeKind(TypeKind kind)
 
 inline bool isDefaultableType(Type type)
 {
-    return !isRefType(type) || type.isNullable();
+    return !type.isRef();
 }
 
 enum class ExternalKind : uint8_t {
@@ -115,6 +183,7 @@ enum class ExternalKind : uint8_t {
     Table = 1,
     Memory = 2,
     Global = 3,
+    Exception = 4,
 };
 
 template<typename Int>
@@ -125,6 +194,7 @@ inline bool isValidExternalKind(Int val)
     case static_cast<Int>(ExternalKind::Table):
     case static_cast<Int>(ExternalKind::Memory):
     case static_cast<Int>(ExternalKind::Global):
+    case static_cast<Int>(ExternalKind::Exception):
         return true;
     }
     return false;
@@ -134,6 +204,7 @@ static_assert(static_cast<int>(ExternalKind::Function) == 0, "Wasm needs Functio
 static_assert(static_cast<int>(ExternalKind::Table)    == 1, "Wasm needs Table to have the value 1");
 static_assert(static_cast<int>(ExternalKind::Memory)   == 2, "Wasm needs Memory to have the value 2");
 static_assert(static_cast<int>(ExternalKind::Global)   == 3, "Wasm needs Global to have the value 3");
+static_assert(static_cast<int>(ExternalKind::Exception)   == 4, "Wasm needs Exception to have the value 4");
 
 inline const char* makeString(ExternalKind kind)
 {
@@ -142,6 +213,7 @@ inline const char* makeString(ExternalKind kind)
     case ExternalKind::Table: return "table";
     case ExternalKind::Memory: return "memory";
     case ExternalKind::Global: return "global";
+    case ExternalKind::Exception: return "tag";
     }
     RELEASE_ASSERT_NOT_REACHED();
     return "?";
@@ -323,7 +395,7 @@ public:
     uint32_t initial() const { return m_initial; }
     std::optional<uint32_t> maximum() const { return m_maximum; }
     TableElementType type() const { return m_type; }
-    Type wasmType() const { return m_type == TableElementType::Funcref ? Types::Funcref : Types::Externref; }
+    Type wasmType() const { return m_type == TableElementType::Funcref ? funcrefType() : externrefType(); }
 
 private:
     uint32_t m_initial;
@@ -371,8 +443,11 @@ struct Entrypoint {
 
 struct InternalFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    CodeLocationDataLabelPtr<WasmEntryPtrTag> calleeMoveLocation;
+    Vector<CodeLocationDataLabelPtr<WasmEntryPtrTag>> calleeMoveLocations;
+    StackMaps stackmaps;
+    Vector<UnlinkedHandlerInfo> exceptionHandlers;
     Entrypoint entrypoint;
+    unsigned osrEntryScratchBufferSize { 0 };
 };
 
 // WebAssembly direct calls and call_indirect use indices into "function index space". This space starts

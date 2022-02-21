@@ -42,6 +42,8 @@ public:
     
     const String& value() const { return m_value; }
     ExceptionOr<void> setValue(const String&);
+    
+    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSKeywordValue; }
 private:
     explicit CSSKeywordValue(const String& value)
         : m_value(value) { }
@@ -51,7 +53,7 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSKeywordValue)
-    static bool isType(const WebCore::CSSKeywordValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSKeywordValue; }
+    static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSKeywordValue; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

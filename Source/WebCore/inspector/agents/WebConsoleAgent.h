@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "InspectorWebAgentBase.h"
+#include "ResourceLoaderIdentifier.h"
 #include <JavaScriptCore/InspectorConsoleAgent.h>
 
 namespace WebCore {
@@ -34,17 +34,17 @@ class DOMWindow;
 class ResourceError;
 class ResourceResponse;
 
-class WebConsoleAgent : public Inspector::InspectorConsoleAgent {
-    WTF_MAKE_NONCOPYABLE(WebConsoleAgent);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WebConsoleAgent(WebAgentContext&);
-    ~WebConsoleAgent() override;
+struct WebAgentContext;
 
+class WebConsoleAgent : public Inspector::InspectorConsoleAgent {
+protected:
+    explicit WebConsoleAgent(WebAgentContext&);
+
+public:
     // InspectorInstrumentation
-    void frameWindowDiscarded(DOMWindow*);
-    void didReceiveResponse(unsigned long requestIdentifier, const ResourceResponse&);
-    void didFailLoading(unsigned long requestIdentifier, const ResourceError&);
+    void frameWindowDiscarded(DOMWindow&);
+    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&);
+    void didFailLoading(ResourceLoaderIdentifier, const ResourceError&);
 };
 
 } // namespace WebCore

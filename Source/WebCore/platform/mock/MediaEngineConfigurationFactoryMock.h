@@ -37,8 +37,8 @@ struct MediaDecodingConfiguration;
 struct MediaEncodingConfiguration;
 
 struct MediaEngineConfigurationFactoryMock {
-    using DecodingConfigurationCallback = WTF::Function<void(MediaCapabilitiesDecodingInfo&&)>;
-    using EncodingConfigurationCallback = WTF::Function<void(MediaCapabilitiesEncodingInfo&&)>;
+    using DecodingConfigurationCallback = Function<void(MediaCapabilitiesDecodingInfo&&)>;
+    using EncodingConfigurationCallback = Function<void(MediaCapabilitiesEncodingInfo&&)>;
 
     static void createDecodingConfiguration(MediaDecodingConfiguration&&, DecodingConfigurationCallback&&);
     static void createEncodingConfiguration(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&);

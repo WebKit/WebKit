@@ -22,6 +22,7 @@
 #include "SVGAltGlyphItemElement.h"
 
 #include "ElementIterator.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGGlyphRefElement.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>

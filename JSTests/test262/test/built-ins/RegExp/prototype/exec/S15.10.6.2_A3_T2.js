@@ -134,21 +134,18 @@ var __the__raven = "	Once upon a midnight dreary, while I pondered weak and wear
         "And my soul from out that shadow that lies floating on the floor" +
         "Shall be lifted - nevermore!"
 
-var NEVERMORE=11;       
-       
+var NEVERMORE=11;
+
 var __re = /[Nn]evermore/g;
 var __matched=0;
 
 do{
     var __executed = __re.exec(__the__raven);
     if (__executed !== null) {
-    	__matched++;
+        __matched++;
     } else {
-    	break;
+        break;
     }
 }while(1);
 
-//CHECK#1
-if (__matched !== NEVERMORE) {
-	throw new Test262Error('#1: __re = /[Nn]evermore/g; __executed = __re.exec(__the__raven)'+__matched);
-}
+assert.sameValue(__matched, NEVERMORE, 'The value of __matched is expected to equal the value of NEVERMORE');

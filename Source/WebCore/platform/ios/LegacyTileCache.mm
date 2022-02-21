@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "Color.h"
 #import "FontAntialiasingStateSaver.h"
 #import "LegacyTileGrid.h"
 #import "LegacyTileGridTile.h"
@@ -75,7 +76,7 @@ LegacyTileCache::LegacyTileCache(WAKWindow* window)
 
 LegacyTileCache::~LegacyTileCache()
 {
-    [m_tombstone.get() setDead:true];
+    [m_tombstone setDead:true];
 }
 
 CGFloat LegacyTileCache::screenScale() const
@@ -568,7 +569,7 @@ void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context, Dr
         CGContextSaveGState(context);
 
         CGContextTranslateCTM(context, frame.origin.x, frame.origin.y);
-        CGContextSetFillColorWithColor(context, cachedCGColor(colorForGridTileBorder([layer tileGrid])));
+        CGContextSetFillColorWithColor(context, cachedCGColor(colorForGridTileBorder([layer tileGrid])).get());
         
         CGRect labelBounds = [layer bounds];
         labelBounds.size.width = 10 + 12 * strlen(text);

@@ -12,7 +12,7 @@ sys.stdout.write(
     'Expires: Thu, 01 Dec 2003 16:00:00 GMT\r\n'
     'Cache-Control: no-cache, must-revalidate\r\n'
     'Pragma: no-cache\r\n'
-    'Content-Type: text/html\r\n'
+    'Content-Type: text/javascript\r\n'
 )
 
 if csp is not None:

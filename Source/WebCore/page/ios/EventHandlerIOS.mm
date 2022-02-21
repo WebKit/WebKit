@@ -188,7 +188,7 @@ void EventHandler::focusDocumentView()
     if (!page)
         return;
 
-    if (auto frameView = makeRefPtr(m_frame.view())) {
+    if (RefPtr frameView = m_frame.view()) {
         if (NSView *documentView = frameView->documentView()) {
             page->chrome().focusNSView(documentView);
             // Check page() again because focusNSView can cause reentrancy.
@@ -198,7 +198,7 @@ void EventHandler::focusDocumentView()
     }
 
     RELEASE_ASSERT(page == m_frame.page());
-    page->focusController().setFocusedFrame(&m_frame);
+    CheckedRef(page->focusController())->setFocusedFrame(&m_frame);
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
@@ -520,7 +520,7 @@ void EventHandler::mouseMoved(WebEvent *event)
         // Run style recalc to be able to capture content changes as the result of the mouse move event.
         document.updateStyleIfNeeded();
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
-        callOnMainThread([protectedFrame = makeRef(m_frame)] {
+        callOnMainThread([protectedFrame = Ref { m_frame }] {
             // This is called by WebKitLegacy only.
             if (auto* document = protectedFrame->document())
                 document->contentChangeObserver().willNotProceedWithFixedObservationTimeWindow();

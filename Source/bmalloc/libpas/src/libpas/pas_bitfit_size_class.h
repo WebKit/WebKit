@@ -33,11 +33,11 @@
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_bitfit_global_size_class;
+struct pas_bitfit_size_class;
 struct pas_bitfit_page_config;
 struct pas_bitfit_size_class;
 struct pas_bitfit_view;
-typedef struct pas_bitfit_global_size_class pas_bitfit_global_size_class;
+typedef struct pas_bitfit_size_class pas_bitfit_size_class;
 typedef struct pas_bitfit_page_config pas_bitfit_page_config;
 typedef struct pas_bitfit_size_class pas_bitfit_size_class;
 typedef struct pas_bitfit_view pas_bitfit_view;
@@ -59,12 +59,8 @@ PAS_API void pas_bitfit_size_class_construct(
     pas_bitfit_directory* directory,
     pas_compact_atomic_bitfit_size_class_ptr* insertion_point);
 
-PAS_API pas_bitfit_size_class* pas_bitfit_size_class_create(unsigned size,
-                                                            pas_bitfit_directory* directory);
-
 PAS_API pas_bitfit_view*
 pas_bitfit_size_class_get_first_free_view(pas_bitfit_size_class* size_class,
-                                          pas_bitfit_global_size_class* global_size_class,
                                           pas_bitfit_page_config* page_config);
 
 PAS_END_EXTERN_C;

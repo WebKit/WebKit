@@ -23,7 +23,6 @@
 #pragma once
 
 #include "ExecutableInfo.h"
-#include "IterationStatus.h"
 #include "Lexer.h"
 #include "ModuleScopeData.h"
 #include "Nodes.h"
@@ -38,6 +37,7 @@
 #include "VariableEnvironment.h"
 #include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
@@ -950,13 +950,13 @@ struct ScopeRef {
         return ScopeRef(m_scopeStack, m_index - 1);
     }
 
-    bool operator==(const ScopeRef& other)
+    bool operator==(const ScopeRef& other) const
     {
         ASSERT(other.m_scopeStack == m_scopeStack);
         return m_index == other.m_index;
     }
 
-    bool operator!=(const ScopeRef& other)
+    bool operator!=(const ScopeRef& other) const
     {
         return !(*this == other);
     }
@@ -1784,6 +1784,7 @@ private:
     enum class ImportSpecifierType { NamespaceImport, NamedImport, DefaultImport };
     template <class TreeBuilder> typename TreeBuilder::ImportSpecifier parseImportClauseItem(TreeBuilder&, ImportSpecifierType);
     template <class TreeBuilder> typename TreeBuilder::ModuleName parseModuleName(TreeBuilder&);
+    template <class TreeBuilder> typename TreeBuilder::ImportAssertionList parseImportAssertions(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseImportDeclaration(TreeBuilder&);
     template <class TreeBuilder> typename TreeBuilder::ExportSpecifier parseExportSpecifier(TreeBuilder& context, Vector<std::pair<const Identifier*, const Identifier*>>& maybeExportedLocalNames, bool& hasKeywordForLocalBindings, bool& hasReferencedModuleExportNames);
     template <class TreeBuilder> TreeStatement parseExportDeclaration(TreeBuilder&);

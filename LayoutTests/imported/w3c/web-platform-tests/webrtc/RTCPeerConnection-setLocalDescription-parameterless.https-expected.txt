@@ -5,8 +5,8 @@ PASS Parameterless SLD() in 'stable' assigns transceiver.mid
 PASS Parameterless SLD() in 'have-remote-offer' goes to 'stable'
 PASS Parameterless SLD() in 'have-remote-offer' sets currentLocalDescription
 PASS Parameterless SLD() in 'have-remote-offer' sets transceiver.currentDirection
-FAIL Parameterless SLD() uses [[LastCreatedOffer]] if it is still valid assert_true: offerer.pendingLocalDescription.sdp == offer.sdp expected true got false
-FAIL Parameterless SLD() uses [[LastCreatedAnswer]] if it is still valid assert_true: answerer.currentLocalDescription.sdp == answer.sdp expected true got false
+PASS Parameterless SLD() uses [[LastCreatedOffer]] if it is still valid
+PASS Parameterless SLD() uses [[LastCreatedAnswer]] if it is still valid
 PASS Parameterless SLD() rejects with InvalidStateError if already closed
 PASS Parameterless SLD() never settles if closed while pending
 PASS Parameterless SLD() in a full O/A exchange succeeds

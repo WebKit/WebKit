@@ -31,7 +31,7 @@
 #if PLATFORM(GTK)
 #include <webkit2/webkit2.h>
 #elif PLATFORM(WPE)
-#include "HeadlessViewBackend.h"
+#include <WPEToolingBackends/HeadlessViewBackend.h>
 #include <wpe/webkit.h>
 #endif
 

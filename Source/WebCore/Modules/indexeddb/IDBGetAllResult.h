@@ -30,8 +30,8 @@
 #include "IDBValue.h"
 #include "IndexedDB.h"
 
+#include <variant>
 #include <wtf/IsoMalloc.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

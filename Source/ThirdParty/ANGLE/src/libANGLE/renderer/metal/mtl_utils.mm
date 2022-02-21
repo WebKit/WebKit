@@ -21,12 +21,182 @@
 #include "libANGLE/renderer/metal/RenderTargetMtl.h"
 #include "libANGLE/renderer/metal/mtl_render_utils.h"
 
+// Compiler can turn on programmatical frame capture in release build by defining
+// ANGLE_METAL_FRAME_CAPTURE flag.
+#if defined(NDEBUG) && !defined(ANGLE_METAL_FRAME_CAPTURE)
+#    define ANGLE_METAL_FRAME_CAPTURE_ENABLED 0
+#else
+#    define ANGLE_METAL_FRAME_CAPTURE_ENABLED ANGLE_WITH_MODERN_METAL_API
+#endif
+
 namespace rx
 {
+
+ANGLE_MTL_UNUSED
+bool IsFrameCaptureEnabled()
+{
+#if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
+    return false;
+#else
+    // We only support frame capture programmatically if the ANGLE_METAL_FRAME_CAPTURE
+    // environment flag is set. Otherwise, it will slow down the rendering. This allows user to
+    // finely control whether they want to capture the frame for particular application or not.
+    auto var                  = std::getenv("ANGLE_METAL_FRAME_CAPTURE");
+    static const bool enabled = var ? (strcmp(var, "1") == 0) : false;
+
+    return enabled;
+#endif
+}
+
+ANGLE_MTL_UNUSED
+std::string GetMetalCaptureFile()
+{
+#if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
+    return "";
+#else
+    auto var                   = std::getenv("ANGLE_METAL_FRAME_CAPTURE_FILE");
+    const std::string filePath = var ? var : "";
+
+    return filePath;
+#endif
+}
+
+ANGLE_MTL_UNUSED
+size_t MaxAllowedFrameCapture()
+{
+#if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
+    return 0;
+#else
+    auto var                      = std::getenv("ANGLE_METAL_FRAME_CAPTURE_MAX");
+    static const size_t maxFrames = var ? std::atoi(var) : 100;
+
+    return maxFrames;
+#endif
+}
+
+ANGLE_MTL_UNUSED
+size_t MinAllowedFrameCapture()
+{
+#if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
+    return 0;
+#else
+    auto var                     = std::getenv("ANGLE_METAL_FRAME_CAPTURE_MIN");
+    static const size_t minFrame = var ? std::atoi(var) : 0;
+
+    return minFrame;
+#endif
+}
+
+ANGLE_MTL_UNUSED
+bool FrameCaptureDeviceScope()
+{
+#if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
+    return false;
+#else
+    auto var                      = std::getenv("ANGLE_METAL_FRAME_CAPTURE_SCOPE");
+    static const bool scopeDevice = var ? (strcmp(var, "device") == 0) : false;
+
+    return scopeDevice;
+#endif
+}
+
+ANGLE_MTL_UNUSED
+std::atomic<size_t> gFrameCaptured(0);
+
+ANGLE_MTL_UNUSED
+void StartFrameCapture(id<MTLDevice> metalDevice, id<MTLCommandQueue> metalCmdQueue)
+{
+#if ANGLE_METAL_FRAME_CAPTURE_ENABLED
+    if (!IsFrameCaptureEnabled())
+    {
+        return;
+    }
+
+    if (gFrameCaptured >= MaxAllowedFrameCapture())
+    {
+        return;
+    }
+
+    MTLCaptureManager *captureManager = [MTLCaptureManager sharedCaptureManager];
+    if (captureManager.isCapturing)
+    {
+        return;
+    }
+
+    gFrameCaptured++;
+
+    if (gFrameCaptured < MinAllowedFrameCapture())
+    {
+        return;
+    }
+
+#    ifdef __MAC_10_15
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13))
+    {
+        auto captureDescriptor = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
+        captureDescriptor.get().captureObject = metalDevice;
+        const std::string filePath            = GetMetalCaptureFile();
+        if (filePath != "")
+        {
+            const std::string numberedPath =
+                filePath + std::to_string(gFrameCaptured - 1) + ".gputrace";
+            captureDescriptor.get().destination = MTLCaptureDestinationGPUTraceDocument;
+            captureDescriptor.get().outputURL =
+                [NSURL fileURLWithPath:[NSString stringWithUTF8String:numberedPath.c_str()]
+                           isDirectory:false];
+        }
+        else
+        {
+            // This will pause execution only if application is being debugged inside Xcode
+            captureDescriptor.get().destination = MTLCaptureDestinationDeveloperTools;
+        }
+
+        NSError *error;
+        if (![captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
+        {
+            NSLog(@"Failed to start capture, error %@", error);
+        }
+    }
+    else
+#    endif  // __MAC_10_15
+        if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13))
+    {
+        auto captureDescriptor = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
+        captureDescriptor.get().captureObject = metalDevice;
+
+        NSError *error;
+        if (![captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
+        {
+            NSLog(@"Failed to start capture, error %@", error);
+        }
+    }
+#endif  // ANGLE_METAL_FRAME_CAPTURE_ENABLED
+}
+
+void StartFrameCapture(ContextMtl *context)
+{
+    StartFrameCapture(context->getMetalDevice(), context->cmdQueue().get());
+}
+
+void StopFrameCapture()
+{
+#if ANGLE_METAL_FRAME_CAPTURE_ENABLED
+    if (!IsFrameCaptureEnabled())
+    {
+        return;
+    }
+    MTLCaptureManager *captureManager = [MTLCaptureManager sharedCaptureManager];
+    if (captureManager.isCapturing)
+    {
+        [captureManager stopCapture];
+    }
+#endif
+}
+
 namespace mtl
 {
 
-constexpr char kANGLEPrintMSLEnv[] = "ANGLE_METAL_PRINT_MSL_ENABLE";
+constexpr char kANGLEPrintMSLEnv[]        = "ANGLE_METAL_PRINT_MSL_ENABLE";
 constexpr char kANGLEMSLVersionMajorEnv[] = "ANGLE_MSL_VERSION_MAJOR";
 constexpr char kANGLEMSLVersionMinorEnv[] = "ANGLE_MSL_VERSION_MINOR";
 
@@ -41,11 +211,10 @@ uint32_t GetDeviceVendorIdFromName(id<MTLDevice> metalDevice)
         uint32_t vendorId;
     };
 
-    constexpr Vendor kVendors[] = {{@"AMD", angle::kVendorID_AMD},
-                                   {@"Radeon", angle::kVendorID_AMD},
-                                   {@"Intel", angle::kVendorID_Intel},
-                                   {@"Geforce", angle::kVendorID_NVIDIA},
-                                   {@"Quadro", angle::kVendorID_NVIDIA}};
+    constexpr Vendor kVendors[] = {
+        {@"AMD", angle::kVendorID_AMD},        {@"Apple", angle::kVendorID_Apple},
+        {@"Radeon", angle::kVendorID_AMD},     {@"Intel", angle::kVendorID_Intel},
+        {@"Geforce", angle::kVendorID_NVIDIA}, {@"Quadro", angle::kVendorID_NVIDIA}};
     ANGLE_MTL_OBJC_SCOPE
     {
         if (metalDevice)
@@ -101,6 +270,79 @@ GLint GetSliceOrDepth(const ImageNativeIndex &index)
     return std::max(layer, startDepth);
 }
 
+bool GetCompressedBufferSizeAndRowLengthForTextureWithFormat(const TextureRef &texture,
+                                                             const Format &textureObjFormat,
+                                                             const ImageNativeIndex &index,
+                                                             size_t *bytesPerRowOut,
+                                                             size_t *bytesPerImageOut)
+{
+    gl::Extents size = texture->size(index);
+    GLuint bufferSizeInBytes;
+    uint32_t bufferRowLength;
+    if (!textureObjFormat.intendedInternalFormat().computeCompressedImageSize(size,
+                                                                              &bufferSizeInBytes))
+    {
+        return false;
+    }
+    if (!textureObjFormat.intendedInternalFormat().computeBufferRowLength(size.width,
+                                                                          &bufferRowLength))
+    {
+        return false;
+    }
+    *bytesPerImageOut = bufferSizeInBytes;
+    *bytesPerRowOut   = bufferRowLength;
+    return true;
+}
+static angle::Result InitializeCompressedTextureContents(const gl::Context *context,
+                                                         const TextureRef &texture,
+                                                         const Format &textureObjFormat,
+                                                         const ImageNativeIndex &index,
+                                                         const uint layer,
+                                                         const uint startDepth)
+{
+    assert(textureObjFormat.actualAngleFormat().isBlock);
+    size_t bytesPerRow   = 0;
+    size_t bytesPerImage = 0;
+    if (!GetCompressedBufferSizeAndRowLengthForTextureWithFormat(texture, textureObjFormat, index,
+                                                                 &bytesPerRow, &bytesPerImage))
+    {
+        return angle::Result::Stop;
+    }
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    gl::Extents extents    = texture->size(index);
+    if (texture->isCPUAccessible())
+    {
+        angle::MemoryBuffer buffer;
+        if (!buffer.resize(bytesPerImage))
+        {
+            return angle::Result::Stop;
+        }
+        buffer.fill(0);
+        for (NSUInteger d = 0; d < static_cast<NSUInteger>(extents.depth); ++d)
+        {
+            auto mtlTextureRegion     = MTLRegionMake2D(0, 0, extents.width, extents.height);
+            mtlTextureRegion.origin.z = d + startDepth;
+            texture->replaceRegion(contextMtl, mtlTextureRegion, index.getNativeLevel(), layer,
+                                   buffer.data(), bytesPerRow, 0);
+        }
+    }
+    else
+    {
+        mtl::BufferRef zeroBuffer;
+        ANGLE_TRY(mtl::Buffer::MakeBuffer(contextMtl, bytesPerImage, nullptr, &zeroBuffer));
+        mtl::BlitCommandEncoder *blitEncoder = contextMtl->getBlitCommandEncoder();
+        for (NSUInteger d = 0; d < static_cast<NSUInteger>(extents.depth); ++d)
+        {
+            auto blitOrigin = MTLOriginMake(0, 0, d + startDepth);
+            blitEncoder->copyBufferToTexture(zeroBuffer, 0, bytesPerRow, 0,
+                                             MTLSizeMake(extents.width, extents.height, 1), texture,
+                                             layer, index.getNativeLevel(), blitOrigin, 0);
+        }
+        blitEncoder->endEncoding();
+    }
+    return angle::Result::Continue;
+}
+
 }
 
 angle::Result InitializeTextureContents(const gl::Context *context,
@@ -109,51 +351,37 @@ angle::Result InitializeTextureContents(const gl::Context *context,
                                         const ImageNativeIndex &index)
 {
     ASSERT(texture && texture->valid());
+    // Only one slice can be initialized at a time.
+    ASSERT(!index.isLayered() || index.getType() == gl::TextureType::_3D);
     ContextMtl *contextMtl = mtl::GetImpl(context);
 
-    const angle::Format &actualAngleFormat           = textureObjFormat.actualAngleFormat();
     const gl::InternalFormat &intendedInternalFormat = textureObjFormat.intendedInternalFormat();
 
     bool forceGPUInitialization = false;
 #if TARGET_OS_SIMULATOR
     forceGPUInitialization = true;
-#endif // TARGET_OS_SIMULATOR
-    
+#endif  // TARGET_OS_SIMULATOR
+
     // This function is called in many places to initialize the content of a texture.
-    // So it's better we do the sanity check here instead of let the callers do it themselves:
-    if (!textureObjFormat.valid() || actualAngleFormat.isBlock || actualAngleFormat.depthBits > 0 ||
-        actualAngleFormat.stencilBits > 0)
+    // So it's better we do the initial check here instead of let the callers do it themselves:
+    if (!textureObjFormat.valid())
     {
-        // If dst format is compressed, ignore.
         return angle::Result::Continue;
     }
 
     gl::Extents size = texture->size(index);
 
-    // Intialize the content to black
-    GLint layer      = 0;
-    GLint startDepth = 0;
-    if (index.hasLayer())
-    {
-        switch (index.getType())
-        {
-            case gl::TextureType::CubeMap:
-                layer = index.cubeMapFaceIndex();
-                break;
-            case gl::TextureType::_2DArray:
-                layer = index.getLayerIndex();
-                break;
-            case gl::TextureType::_3D:
-                startDepth = index.getLayerIndex();
-                break;
-            default:
-                UNREACHABLE();
-                break;
-        }
-    }
+    // Intiialize the content to black
+    GLint layer, startDepth;
+    GetSliceAndDepth(index, &layer, &startDepth);
 
-    if (texture->isCPUAccessible() && index.getType() != gl::TextureType::_2DMultisample &&
-        index.getType() != gl::TextureType::_2DMultisampleArray && !forceGPUInitialization)
+    if (intendedInternalFormat.compressed)
+    {
+        return InitializeCompressedTextureContents(context, texture, textureObjFormat, index, layer,
+                                                   startDepth);
+    }
+    else if (texture->isCPUAccessible() && index.getType() != gl::TextureType::_2DMultisample &&
+             index.getType() != gl::TextureType::_2DMultisampleArray && !forceGPUInitialization)
     {
         const angle::Format &dstFormat = angle::Format::Get(textureObjFormat.actualFormatId);
         const size_t dstRowPitch       = dstFormat.pixelBytes * size.width;
@@ -166,13 +394,6 @@ angle::Result InitializeTextureContents(const gl::Context *context,
         }
         else
         {
-            if (!textureObjFormat.valid() || intendedInternalFormat.compressed ||
-                intendedInternalFormat.depthBits > 0 || intendedInternalFormat.stencilBits > 0)
-            {
-                // If source format is compressed, ignore.
-                return angle::Result::Continue;
-            }
-
             const angle::Format &srcFormat = angle::Format::Get(
                 intendedInternalFormat.alphaBits > 0 ? angle::FormatID::R8G8B8A8_UNORM
                                                      : angle::FormatID::R8G8B8_UNORM);
@@ -199,10 +420,10 @@ angle::Result InitializeTextureContents(const gl::Context *context,
 
                 // Upload to texture
                 texture->replace2DRegion(contextMtl, mtlRowRegion, index.getNativeLevel(), layer,
-                                       conversionRow.data(), dstRowPitch);
+                                         conversionRow.data(), dstRowPitch);
             }
         }
-    }  // if (texture->isCPUAccessible())
+    }
     else
     {
         ANGLE_TRY(InitializeTextureContentsGPU(context, texture, textureObjFormat, index,
@@ -247,7 +468,7 @@ angle::Result InitializeTextureContentsGPU(const gl::Context *context,
     RenderTargetMtl tempRtt;
     tempRtt.set(texture, index.getNativeLevel(), sliceOrDepth, textureObjFormat);
 
-    float clearAlpha = 0;
+    int clearAlpha = 0;
     if (!textureObjFormat.intendedAngleFormat().alphaBits)
     {
         // if intended format doesn't have alpha, set it to 1.0.
@@ -277,11 +498,11 @@ angle::Result InitializeTextureContentsGPU(const gl::Context *context,
         ClearColorValue clearColor;
         if (angleFormat.isSint())
         {
-            clearColor.setAsInt(0, 0, 0, (int)clearAlpha);
+            clearColor.setAsInt(0, 0, 0, clearAlpha);
         }
         else if (angleFormat.isUint())
         {
-            clearColor.setAsUInt(0, 0, 0, (int)clearAlpha);
+            clearColor.setAsUInt(0, 0, 0, clearAlpha);
         }
         else
         {
@@ -317,25 +538,18 @@ angle::Result InitializeDepthStencilTextureContentsGPU(const gl::Context *contex
     uint32_t layer = index.hasLayer() ? index.getLayerIndex() : 0;
     rtMTL.set(texture, level, layer, textureObjFormat);
     mtl::RenderPassDesc rpDesc;
-    // For formats such as MTLPixelFormatStencil8/GL_STENCIL_INDEX8 we only want to set the stencil attachment.
-    if (angleFormat.stencilBits && !angleFormat.depthBits)
-    {
-        rtMTL.toRenderPassAttachmentDesc(&rpDesc.stencilAttachment);
-    }
-    else
-    {
-        rtMTL.toRenderPassAttachmentDesc(&rpDesc.depthAttachment);
-    }
-    rpDesc.sampleCount = texture->samples();
     if (angleFormat.depthBits)
     {
-        rpDesc.depthAttachment.loadAction   = MTLLoadActionClear;
-        rpDesc.depthAttachment.clearDepth   = 1.0;
+        rtMTL.toRenderPassAttachmentDesc(&rpDesc.depthAttachment);
+        rpDesc.depthAttachment.loadAction = MTLLoadActionClear;
+        rpDesc.depthAttachment.clearDepth = 1.0;
     }
     if (angleFormat.stencilBits)
     {
-        rpDesc.stencilAttachment.loadAction   = MTLLoadActionClear;
+        rtMTL.toRenderPassAttachmentDesc(&rpDesc.stencilAttachment);
+        rpDesc.stencilAttachment.loadAction = MTLLoadActionClear;
     }
+    rpDesc.sampleCount = texture->samples();
 
     // End current render pass
     contextMtl->endEncoding(true);
@@ -505,19 +719,22 @@ static MTLLanguageVersion GetUserSetOrHighestMSLVersion(const MTLLanguageVersion
             case 1:
                 switch (minor)
                 {
-#if (defined(__IPHONE_9_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0) &&\
+#if (defined(__IPHONE_9_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0) && \
     (TARGET_OS_IOS || TARGET_OS_TV) && !TARGET_OS_MACCATALYST
-                    case 0: return MTLLanguageVersion1_0;
+                    case 0:
+                        return MTLLanguageVersion1_0;
 #endif
-#if (defined(__MAC_10_11) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_11) ||\
-    (defined(__IPHONE_9_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0) ||\
+#if (defined(__MAC_10_11) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_11) ||    \
+    (defined(__IPHONE_9_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0) || \
     (defined(__TVOS_9_0) && __TV_OS_VERSION_MIN_REQUIRED >= __TVOS_9_0)
-                    case 1: return MTLLanguageVersion1_1;
+                    case 1:
+                        return MTLLanguageVersion1_1;
 #endif
-#if (defined(__MAC_10_12) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_12) ||\
-    (defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_10_0) ||\
+#if (defined(__MAC_10_12) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_12) ||      \
+    (defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_10_0) || \
     (defined(__TVOS_10_0) && __TV_OS_VERSION_MIN_REQUIRED >= __TVOS_10_0)
-                    case 2: return MTLLanguageVersion1_2;
+                    case 2:
+                        return MTLLanguageVersion1_2;
 #endif
                     default:
                         assert(0 && "Unsupported MSL Minor Language Version.");
@@ -526,25 +743,29 @@ static MTLLanguageVersion GetUserSetOrHighestMSLVersion(const MTLLanguageVersion
             case 2:
                 switch (minor)
                 {
-#if (defined(__MAC_10_13) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_13) ||\
-    (defined(__IPHONE_11_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_11_0) ||\
+#if (defined(__MAC_10_13) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_13) ||      \
+    (defined(__IPHONE_11_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_11_0) || \
     (defined(__TVOS_11_0) && __TV_OS_VERSION_MIN_REQUIRED >= __TVOS_11_0)
-                    case 0: return MTLLanguageVersion2_0;
+                    case 0:
+                        return MTLLanguageVersion2_0;
 #endif
-#if (defined(__MAC_10_14) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_14) ||\
-    (defined(__IPHONE_12_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_12_0) ||\
+#if (defined(__MAC_10_14) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_14) ||      \
+    (defined(__IPHONE_12_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_12_0) || \
     (defined(__TVOS_12_0) && __TV_OS_VERSION_MIN_REQUIRED >= __TVOS_12_0)
-                    case 1: return MTLLanguageVersion2_1;
+                    case 1:
+                        return MTLLanguageVersion2_1;
 #endif
-#if (defined(__MAC_10_15) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_15) ||\
-    (defined(__IPHONE_13_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_13_0) ||\
+#if (defined(__MAC_10_15) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_15) ||      \
+    (defined(__IPHONE_13_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_13_0) || \
     (defined(__TVOS_13_0) && __TV_OS_VERSION_MIN_REQUIRED >= __TVOS_13_0)
-                    case 2: return MTLLanguageVersion2_2;
+                    case 2:
+                        return MTLLanguageVersion2_2;
 #endif
-#if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||\
-    (defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_14_0) ||\
+#if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
+    (defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_14_0) || \
     (defined(__TVOS_14_0) && __TV_OS_VERSION_MIN_REQUIRED >= __TVOS_14_0)
-                    case 3: return MTLLanguageVersion2_3;
+                    case 3:
+                        return MTLLanguageVersion2_3;
 #endif
                     default:
                         assert(0 && "Unsupported MSL Minor Language Version.");
@@ -557,28 +778,31 @@ static MTLLanguageVersion GetUserSetOrHighestMSLVersion(const MTLLanguageVersion
     return currentVersion;
 }
 
-AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
-                                                const std::string &source,
-                                                NSDictionary<NSString *, NSObject *> * substitutionMacros,
-                                                bool enableFastMath,
-                                                AutoObjCPtr<NSError *> *error)
+AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
+    const mtl::ContextDevice &metalDevice,
+    const std::string &source,
+    NSDictionary<NSString *, NSObject *> *substitutionMacros,
+    bool enableFastMath,
+    AutoObjCPtr<NSError *> *error)
 {
-    return CreateShaderLibrary(metalDevice, source.c_str(), source.size(), substitutionMacros, enableFastMath, error);
+    return CreateShaderLibrary(metalDevice, source.c_str(), source.size(), substitutionMacros,
+                               enableFastMath, error);
 }
 
-AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
+AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(const mtl::ContextDevice &metalDevice,
                                                 const std::string &source,
                                                 AutoObjCPtr<NSError *> *error)
 {
-    return CreateShaderLibrary(metalDevice, source.c_str(), source.size(),@{}, true, error);
+    return CreateShaderLibrary(metalDevice, source.c_str(), source.size(), @{}, true, error);
 }
 
-AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
-                                                const char *source,
-                                                size_t sourceLen,
-                                                NSDictionary<NSString *, NSObject *> * substitutionMacros,
-                                                bool enableFastMath,
-                                                AutoObjCPtr<NSError *> *errorOut)
+AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
+    const mtl::ContextDevice &metalDevice,
+    const char *source,
+    size_t sourceLen,
+    NSDictionary<NSString *, NSObject *> *substitutionMacros,
+    bool enableFastMath,
+    AutoObjCPtr<NSError *> *errorOut)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -589,28 +813,26 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
                                                  freeWhenDone:NO];
         auto options     = [[[MTLCompileOptions alloc] init] ANGLE_MTL_AUTORELEASE];
         // Mark all positions in VS with attribute invariant as non-optimizable
-#if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||\
-    (defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_14_0) ||\
+#if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
+    (defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_14_0) || \
     (defined(__TVOS_14_0) && __TV_OS_VERSION_MIN_REQUIRED >= __TVOS_14_0)
         options.preserveInvariance = true;
 #else
         // No preserveInvariance available compiling from source, so just disable fastmath.
         options.fastMathEnabled = false;
 #endif
-        options.languageVersion = GetUserSetOrHighestMSLVersion(options.languageVersion);
-        // TODO(jcunningham): workaround for intel driver not preserving invariance on all shaders
         options.fastMathEnabled &= enableFastMath;
+        options.languageVersion    = GetUserSetOrHighestMSLVersion(options.languageVersion);
         options.preprocessorMacros = substitutionMacros;
-        auto library = [metalDevice newLibraryWithSource:nsSource options:options error:&nsError];
+        auto library               = metalDevice.newLibraryWithSource(nsSource, options, &nsError);
         if (angle::GetEnvironmentVar(kANGLEPrintMSLEnv)[0] == '1')
         {
             NSLog(@"%@\n", nsSource);
         }
         [nsSource ANGLE_MTL_AUTORELEASE];
-
         *errorOut = std::move(nsError);
 
-        return [library ANGLE_MTL_AUTORELEASE];
+        return library;
     }
 }
 
@@ -907,15 +1129,15 @@ MTLTextureSwizzle GetTextureSwizzle(GLenum swizzle)
 }
 #endif
 
-MTLColorWriteMask GetEmulatedColorWriteMask(const mtl::Format &mtlFormat, bool *emulatedChannelsOut)
+MTLColorWriteMask GetEmulatedColorWriteMask(const mtl::Format &mtlFormat, bool *isEmulatedOut)
 {
     const angle::Format &intendedFormat = mtlFormat.intendedAngleFormat();
     const angle::Format &actualFormat   = mtlFormat.actualAngleFormat();
-    bool emulatedChannels               = false;
+    bool isFormatEmulated               = false;
     MTLColorWriteMask colorWritableMask = MTLColorWriteMaskAll;
     if (intendedFormat.alphaBits == 0 && actualFormat.alphaBits)
     {
-        emulatedChannels = true;
+        isFormatEmulated = true;
         // Disable alpha write to this texture
         colorWritableMask = colorWritableMask & (~MTLColorWriteMaskAlpha);
     }
@@ -923,41 +1145,41 @@ MTLColorWriteMask GetEmulatedColorWriteMask(const mtl::Format &mtlFormat, bool *
     {
         if (intendedFormat.redBits == 0 && actualFormat.redBits)
         {
-            emulatedChannels = true;
+            isFormatEmulated = true;
             // Disable red write to this texture
             colorWritableMask = colorWritableMask & (~MTLColorWriteMaskRed);
         }
         if (intendedFormat.greenBits == 0 && actualFormat.greenBits)
         {
-            emulatedChannels = true;
+            isFormatEmulated = true;
             // Disable green write to this texture
             colorWritableMask = colorWritableMask & (~MTLColorWriteMaskGreen);
         }
         if (intendedFormat.blueBits == 0 && actualFormat.blueBits)
         {
-            emulatedChannels = true;
+            isFormatEmulated = true;
             // Disable blue write to this texture
             colorWritableMask = colorWritableMask & (~MTLColorWriteMaskBlue);
         }
     }
 
-    *emulatedChannelsOut = emulatedChannels;
+    *isEmulatedOut = isFormatEmulated;
 
     return colorWritableMask;
 }
 
 MTLColorWriteMask GetEmulatedColorWriteMask(const mtl::Format &mtlFormat)
 {
-    // Ignore emulatedChannels boolean value
-    bool emulatedChannels;
-    return GetEmulatedColorWriteMask(mtlFormat, &emulatedChannels);
+    // Ignore isFormatEmulated boolean value
+    bool isFormatEmulated;
+    return GetEmulatedColorWriteMask(mtlFormat, &isFormatEmulated);
 }
 
 bool IsFormatEmulated(const mtl::Format &mtlFormat)
 {
-    bool emulatedChannels;
-    (void)GetEmulatedColorWriteMask(mtlFormat, &emulatedChannels);
-    return emulatedChannels;
+    bool isFormatEmulated;
+    (void)GetEmulatedColorWriteMask(mtlFormat, &isFormatEmulated);
+    return isFormatEmulated;
 }
 
 MTLClearColor EmulatedAlphaClearColor(MTLClearColor color, MTLColorWriteMask colorMask)
@@ -972,13 +1194,13 @@ MTLClearColor EmulatedAlphaClearColor(MTLClearColor color, MTLColorWriteMask col
     return re;
 }
 
-NSUInteger GetMaxRenderTargetSizeForDeviceInBytes(id<MTLDevice> device)
+NSUInteger GetMaxRenderTargetSizeForDeviceInBytes(const mtl::ContextDevice &device)
 {
-    if (SupportsIOSGPUFamily(device, 4))
+    if (SupportsAppleGPUFamily(device, 4))
     {
         return 64;
     }
-    else if (SupportsIOSGPUFamily(device, 2))
+    else if (SupportsAppleGPUFamily(device, 2))
     {
         return 32;
     }
@@ -988,9 +1210,9 @@ NSUInteger GetMaxRenderTargetSizeForDeviceInBytes(id<MTLDevice> device)
     }
 }
 
-NSUInteger GetMaxNumberOfRenderTargetsForDevice(id<MTLDevice> device)
+NSUInteger GetMaxNumberOfRenderTargetsForDevice(const mtl::ContextDevice &device)
 {
-    if (SupportsIOSGPUFamily(device, 2)||SupportsMacGPUFamily(device, 1))
+    if (SupportsAppleGPUFamily(device, 2) || SupportsMacGPUFamily(device, 1))
     {
         return 8;
     }
@@ -1002,20 +1224,18 @@ NSUInteger GetMaxNumberOfRenderTargetsForDevice(id<MTLDevice> device)
 
 bool DeviceHasMaximumRenderTargetSize(id<MTLDevice> device)
 {
-        return SupportsIOSGPUFamily(device, 1);
+    return SupportsAppleGPUFamily(device, 1);
 }
 
-bool SupportsIOSGPUFamily(id<MTLDevice> device, uint8_t iOSFamily)
+bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
 {
-#if (!TARGET_OS_IOS && !TARGET_OS_TV) || TARGET_OS_MACCATALYST
-    return false;
-#else
-#    if (__IPHONE_OS_VERSION_MAX_ALLOWED >= 130000) || (__TV_OS_VERSION_MAX_ALLOWED >= 130000)
+#if (__MAC_OS_X_VERSION_MAX_ALLOWED >= 101500 || __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000) || \
+    (__TV_OS_VERSION_MAX_ALLOWED >= 130000)
     // If device supports [MTLDevice supportsFamily:], then use it.
-    if (ANGLE_APPLE_AVAILABLE_I(13.0))
+    if (ANGLE_APPLE_AVAILABLE_XC(10.15, 13.0))
     {
         MTLGPUFamily family;
-        switch (iOSFamily)
+        switch (appleFamily)
         {
             case 1:
                 family = MTLGPUFamilyApple1;
@@ -1032,22 +1252,25 @@ bool SupportsIOSGPUFamily(id<MTLDevice> device, uint8_t iOSFamily)
             case 5:
                 family = MTLGPUFamilyApple5;
                 break;
-#        if TARGET_OS_IOS
+#    if TARGET_OS_IOS || (TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 110000)
             case 6:
                 family = MTLGPUFamilyApple6;
                 break;
-#        endif
+#    endif
             default:
                 return false;
         }
         return [device supportsFamily:family];
-    }  // Metal 2.2
-#    endif  // __IPHONE_OS_VERSION_MAX_ALLOWED
+    }   // Metal 2.2
+#endif  // __IPHONE_OS_VERSION_MAX_ALLOWED
 
+#if (!TARGET_OS_IOS && !TARGET_OS_TV) || TARGET_OS_MACCATALYST
+    return false;
+#else
     // If device doesn't support [MTLDevice supportsFamily:], then use
     // [MTLDevice supportsFeatureSet:].
     MTLFeatureSet featureSet;
-    switch (iOSFamily)
+    switch (appleFamily)
     {
 #    if TARGET_OS_IOS
         case 1:
@@ -1161,7 +1384,7 @@ static NSUInteger getNextLocationForFormat(const FormatCaps &caps,
 
 NSUInteger ComputeTotalSizeUsedForMTLRenderPassDescriptor(const MTLRenderPassDescriptor *descriptor,
                                                           const Context *context,
-                                                          id<MTLDevice> device)
+                                                          const mtl::ContextDevice &device)
 {
     NSUInteger currentRenderTargetSize = 0;
 
@@ -1212,7 +1435,7 @@ NSUInteger ComputeTotalSizeUsedForMTLRenderPassDescriptor(const MTLRenderPassDes
 NSUInteger ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(
     const MTLRenderPipelineDescriptor *descriptor,
     const Context *context,
-    id<MTLDevice> device)
+    const mtl::ContextDevice &device)
 {
     NSUInteger currentRenderTargetSize = 0;
     bool isMsaa                        = descriptor.sampleCount > 1;
@@ -1303,7 +1526,7 @@ angle::Result GetTriangleFanIndicesCount(ContextMtl *context,
 
 angle::Result CreateMslShader(mtl::Context *context,
                               id<MTLLibrary> shaderLib,
-                              NSString * shaderName,
+                              NSString *shaderName,
                               MTLFunctionConstantValues *funcConstants,
                               id<MTLFunction> *shaderOut)
 {
@@ -1338,7 +1561,7 @@ angle::Result CreateMslShader(mtl::Context *context,
 
 angle::Result CreateMslShader(Context *context,
                               id<MTLLibrary> shaderLib,
-                              NSString * shaderName,
+                              NSString *shaderName,
                               MTLFunctionConstantValues *funcConstants,
                               AutoObjCPtr<id<MTLFunction>> *shaderOut)
 {
@@ -1346,7 +1569,6 @@ angle::Result CreateMslShader(Context *context,
     ANGLE_TRY(CreateMslShader(context, shaderLib, shaderName, funcConstants, &outFunction));
     shaderOut->retainAssign(outFunction);
     return angle::Result::Continue;
-    
 }
 }  // namespace mtl
 }  // namespace rx

@@ -65,6 +65,8 @@ StackBounds StackBounds::currentThreadStackBoundsInternal()
         rlimit limit;
         getrlimit(RLIMIT_STACK, &limit);
         rlim_t size = limit.rlim_cur;
+        if (size == RLIM_INFINITY)
+            size = 8 * MB;
         void* bound = static_cast<char*>(origin) - size;
         return StackBounds { origin, bound };
     }
@@ -125,6 +127,8 @@ StackBounds StackBounds::currentThreadStackBoundsInternal()
         rlimit limit;
         getrlimit(RLIMIT_STACK, &limit);
         rlim_t size = limit.rlim_cur;
+        if (size == RLIM_INFINITY)
+            size = 8 * MB;
         // account for a guard page
         size -= static_cast<rlim_t>(sysconf(_SC_PAGESIZE));
         void* bound = static_cast<char*>(origin) - size;

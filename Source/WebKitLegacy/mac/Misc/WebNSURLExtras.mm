@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,77 +34,45 @@
 #import "WebNSDataExtras.h"
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/LoaderNSURLExtras.h>
-#import <WebCore/TextEncoding.h>
 #import <WebCore/WebCoreNSURLExtras.h>
+#import <pal/text/TextEncoding.h>
 #import <unicode/uchar.h>
 #import <unicode/uscript.h>
 #import <wtf/Assertions.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/NSURLExtras.h>
-
-using namespace WebCore;
-using namespace WTF;
-
-#define URL_BYTES_BUFFER_LENGTH 2048
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation NSURL (WebNSURLExtras)
 
-+ (NSURL *)_web_URLWithUserTypedString:(NSString *)string relativeToURL:(NSURL *)URL
-{
-    return URLWithUserTypedStringDeprecated(string, URL);
-}
-
 + (NSURL *)_web_URLWithUserTypedString:(NSString *)string
 {
-    return URLWithUserTypedStringDeprecated(string, nil);
-}
-
-+ (NSURL *)_webkit_URLWithUserTypedString:(NSString *)string relativeToURL:(NSURL *)URL
-{
-    return URLWithUserTypedString(string, URL);
+    return WTF::URLWithUserTypedStringDeprecated(string);
 }
 
 + (NSURL *)_webkit_URLWithUserTypedString:(NSString *)string
 {
-    return URLWithUserTypedString(string, nil);
+    return WTF::URLWithUserTypedString(string);
 }
 
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string
 {
-    if (string == nil) {
-        return nil;
-    }
     return [self _web_URLWithDataAsString:string relativeToURL:nil];
 }
 
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string relativeToURL:(NSURL *)baseURL
 {
-    if (string == nil) {
-        return nil;
-    }
-    string = [string _webkit_stringByTrimmingWhitespace];
-    NSData *data = [string dataUsingEncoding:NSISOLatin1StringEncoding];
-    return URLWithData(data, baseURL);
-}
-
-+ (NSURL *)_web_URLWithData:(NSData *)data
-{
-    return URLWithData(data, nil);
-}      
-
-+ (NSURL *)_web_URLWithData:(NSData *)data relativeToURL:(NSURL *)baseURL
-{
-    return URLWithData(data, baseURL);
+    return WTF::URLWithData([[string _webkit_stringByTrimmingWhitespace] dataUsingEncoding:NSISOLatin1StringEncoding], baseURL);
 }
 
 - (NSData *)_web_originalData
 {
-    return originalURLData(self);
+    return WTF::originalURLData(self);
 }
 
 - (NSString *)_web_originalDataAsString
 {
-    return adoptNS([[NSString alloc] initWithData:originalURLData(self) encoding:NSISOLatin1StringEncoding]).autorelease();
+    return adoptNS([[NSString alloc] initWithData:WTF::originalURLData(self) encoding:NSISOLatin1StringEncoding]).autorelease();
 }
 
 - (NSString *)_web_userVisibleString
@@ -114,22 +82,22 @@ using namespace WTF;
 
 - (BOOL)_web_isEmpty
 {
-    if (!CFURLGetBaseURL((CFURLRef)self))
-        return CFURLGetBytes((CFURLRef)self, NULL, 0) == 0;
-    return [originalURLData(self) length] == 0;
+    if (!CFURLGetBaseURL(bridge_cast(self)))
+        return !CFURLGetBytes(bridge_cast(self), nullptr, 0);
+    return ![WTF::originalURLData(self) length];
 }
 
-- (const char *)_web_URLCString
+- (const char*)_web_URLCString
 {
     NSMutableData *data = [NSMutableData data];
-    [data appendData:originalURLData(self)];
+    [data appendData:WTF::originalURLData(self)];
     [data appendBytes:"\0" length:1];
-    return (const char *)[data bytes];
+    return (const char*)[data bytes];
  }
 
 - (NSURL *)_webkit_canonicalize
 {
-    return URLByCanonicalizingURL(self);
+    return WebCore::URLByCanonicalizingURL(self);
 }
 
 - (NSURL *)_webkit_canonicalize_with_wtf
@@ -140,7 +108,7 @@ using namespace WTF;
 
 - (NSURL *)_webkit_URLByRemovingFragment 
 {
-    return URLByTruncatingOneCharacterBeforeComponent(self, kCFURLComponentFragment);
+    return WTF::URLByTruncatingOneCharacterBeforeComponent(self, kCFURLComponentFragment);
 }
 
 - (NSURL *)_web_URLByRemovingUserInfo
@@ -163,27 +131,6 @@ using namespace WTF;
     return [[self _web_originalDataAsString] _webkit_isFileURL];
 }
 
--(NSData *)_web_schemeSeparatorWithoutColon
-{
-    NSData *result = nil;
-    CFRange rangeWithSeparators;
-    CFRange range = CFURLGetByteRangeForComponent((CFURLRef)self, kCFURLComponentScheme, &rangeWithSeparators);
-    if (rangeWithSeparators.location != kCFNotFound) {
-        NSString *absoluteString = [self absoluteString];
-        NSRange separatorsRange = NSMakeRange(range.location + range.length + 1, rangeWithSeparators.length - range.length - 1);
-        if (separatorsRange.location + separatorsRange.length <= [absoluteString length]) {
-            NSString *slashes = [absoluteString substringWithRange:separatorsRange];
-            result = [slashes dataUsingEncoding:NSISOLatin1StringEncoding];
-        }
-    }
-    return result;
-}
-
--(NSData *)_web_dataForURLComponentType:(CFURLComponentType)componentType
-{
-    return WTF::dataForURLComponentType(self, componentType);
-}
-
 -(NSData *)_web_schemeData
 {
     return WTF::dataForURLComponentType(self, kCFURLComponentScheme);
@@ -192,11 +139,11 @@ using namespace WTF;
 -(NSData *)_web_hostData
 {
     NSData *result = WTF::dataForURLComponentType(self, kCFURLComponentHost);
-    NSData *scheme = [self _web_schemeData];
-    // Take off localhost for file
-    if ([scheme _web_isCaseInsensitiveEqualToCString:"file"]) {
-        return ([result _web_isCaseInsensitiveEqualToCString:"localhost"]) ? nil : result;
-    }
+
+    // Take off localhost for file.
+    if ([result _web_isCaseInsensitiveEqualToCString:"localhost"] && [[self _web_schemeData] _web_isCaseInsensitiveEqualToCString:"file"])
+        return nil;
+
     return result;
 }
 
@@ -223,7 +170,7 @@ using namespace WTF;
 
 - (BOOL)_web_isUserVisibleURL
 {
-    return isUserVisibleURL(self);
+    return WTF::isUserVisibleURL(self);
 }
 
 - (BOOL)_webkit_isJavaScriptURL
@@ -238,7 +185,7 @@ using namespace WTF;
 
 - (NSString *)_webkit_stringByReplacingValidPercentEscapes
 {
-    return decodeURLEscapeSequences(String(self));
+    return PAL::decodeURLEscapeSequences(String(self));
 }
 
 - (NSString *)_webkit_scriptIfJavaScriptURL
@@ -251,24 +198,24 @@ using namespace WTF;
 
 - (NSString *)_web_decodeHostName
 {
-    NSString *name = decodeHostName(self);
+    NSString *name = WTF::decodeHostName(self);
     return !name ? self : name;
 }
 
 - (NSString *)_web_encodeHostName
 {
-    NSString *name = encodeHostName(self);
+    NSString *name = WTF::encodeHostName(self);
     return !name ? self : name;
 }
 
 - (NSString *)_webkit_decodeHostName
 {
-    return decodeHostName(self);
+    return WTF::decodeHostName(self);
 }
 
 - (NSString *)_webkit_encodeHostName
 {
-    return encodeHostName(self);
+    return WTF::encodeHostName(self);
 }
 
 -(NSRange)_webkit_rangeOfURLScheme
@@ -276,15 +223,15 @@ using namespace WTF;
     NSRange colon = [self rangeOfString:@":"];
     if (colon.location != NSNotFound && colon.location > 0) {
         NSRange scheme = {0, colon.location};
-        static auto inverseSchemeCharacterSet = makeNeverDestroyed([] {
+        static NeverDestroyed inverseSchemeCharacterSet = [] {
             /*
              This stuff is very expensive.  10-15 msec on a 2x1.2GHz.  If not cached it swamps
              everything else when adding items to the autocomplete DB.  Makes me wonder if we
              even need to enforce the character set here.
             */
             NSString *acceptableCharacters = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+.-";
-            return retainPtr([[NSCharacterSet characterSetWithCharactersInString:acceptableCharacters] invertedSet]);
-        }());
+            return RetainPtr { [[NSCharacterSet characterSetWithCharactersInString:acceptableCharacters] invertedSet] };
+        }();
         NSRange illegals = [self rangeOfCharacterFromSet:inverseSchemeCharacterSet.get().get() options:0 range:scheme];
         if (illegals.location == NSNotFound)
             return scheme;

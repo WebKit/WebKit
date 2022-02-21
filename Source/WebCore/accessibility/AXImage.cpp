@@ -32,6 +32,7 @@
 #include "AXLogger.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DocumentInlines.h"
 
 namespace WebCore {
 
@@ -71,7 +72,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AXImage::imageOverlayEl
     if (!element)
         return std::nullopt;
 
-    page->chrome().client().requestTextRecognition(*element, [] (RefPtr<Element>&& imageOverlayHost) {
+    page->chrome().client().requestTextRecognition(*element, { }, [] (RefPtr<Element>&& imageOverlayHost) {
         if (!imageOverlayHost)
             return;
 

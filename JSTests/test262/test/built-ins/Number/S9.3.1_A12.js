@@ -10,13 +10,5 @@ description: >
     Compare Number('12345e6') with +('12345')*1e1,  and
     Number('12345e-6') !== Number('12345')*1e-6
 ---*/
-
-// CHECK#1
-if (Number("12345e6") !== +("12345") * 1e6) {
-  throw new Test262Error('#1: Number("12345e6") === +("12345")*1e6');
-}
-
-// CHECK#2
-if (Number("12345e-6") !== Number("12345") * 1e-6) {
-  throw new Test262Error('#2: Number("12345e-6") === Number("12345")*1e-6');
-}
+assert.sameValue(Number("12345e6"), 12345000000, 'Number("12345e6") must return 12345000000');
+assert.sameValue(Number("12345e-6"), 0.012345, 'Number("12345e-6") must return 0.012345');

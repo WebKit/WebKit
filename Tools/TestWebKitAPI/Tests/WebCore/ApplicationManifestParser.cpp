@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,6 +74,18 @@ public:
         return parseString(manifestContent);
     }
 
+    ApplicationManifest parseIconFirstTopLevelProperty(const String& key, const String& value)
+    {
+        String manifestContent = "{ \"icons\": [{\"" + key + "\": " + value + ", \"src\": \"icon/example.png\" }]}";
+        return parseString(manifestContent);
+    }
+
+    ApplicationManifest parseIconFirstTopLevelPropertyForSrc(const String& key, const String& value)
+    {
+        String manifestContent = "{ \"icons\": [{\"" + key + "\": " + value + " }]}";
+        return parseString(manifestContent);
+    }
+
     void testStartURL(const String& rawJSON, const String& expectedValue)
     {
         testStartURL(rawJSON, { { }, expectedValue });
@@ -132,6 +144,36 @@ public:
         auto manifest = parseTopLevelProperty("theme_color", rawJSON);
         auto value = manifest.themeColor;
         EXPECT_EQ(expectedValue, value);
+    }
+
+    void testIconsSrc(const String& rawJSON, const URL& expectedValue)
+    {
+        auto manifest = parseIconFirstTopLevelPropertyForSrc("src", rawJSON);
+        auto value = manifest.icons[0].src;
+        EXPECT_STREQ(expectedValue.string().utf8().data(), value.string().utf8().data());
+    }
+
+    void testIconsType(const String &rawJSON, const String& expectedValue)
+    {
+        auto manifest = parseIconFirstTopLevelProperty("type", rawJSON);
+        auto value = manifest.icons[0].type;
+        EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
+    }
+
+    void testIconsSizes(const String &rawJSON, size_t expectedCount, size_t testIndex, const String& expectedValue)
+    {
+        auto manifest = parseIconFirstTopLevelProperty("sizes", rawJSON);
+        auto value = manifest.icons[0].sizes;
+        EXPECT_EQ(expectedCount, value.size());
+        EXPECT_TRUE(testIndex < value.size());
+        EXPECT_STREQ(expectedValue.utf8().data(), value[testIndex].utf8().data());
+    }
+
+    void testIconsPurposes(const String &rawJSON, OptionSet<ApplicationManifest::Icon::Purpose> expectedValues)
+    {
+        auto manifest = parseIconFirstTopLevelProperty("purpose", rawJSON);
+        auto value = manifest.icons[0].purposes;
+        EXPECT_EQ(expectedValues, value);
     }
 
 };
@@ -321,6 +363,36 @@ TEST_F(ApplicationManifestParserTest, Whitespace)
     auto manifest = parseString("  { \"name\": \"PASS\" }\n"_s);
 
     EXPECT_STREQ("PASS", manifest.name.utf8().data());
+}
+
+TEST_F(ApplicationManifestParserTest, Icons)
+{
+    URL srcURL = { { }, "https://example.com/icon.jpg" };
+    testIconsSrc("\"icon.jpg\"", srcURL);
+    testIconsType("\"image/webp\"", "image/webp");
+    testIconsSizes("\"256x256\"", 1, 0, "256x256");
+    testIconsSizes("\"72x72 96x96\"", 2, 0, "72x72");
+    testIconsSizes("\"72x72 96x96\"", 2, 1, "96x96");
+
+    OptionSet<ApplicationManifest::Icon::Purpose> purposeAny { ApplicationManifest::Icon::Purpose::Any };
+    OptionSet<ApplicationManifest::Icon::Purpose> purposeMonochrome { ApplicationManifest::Icon::Purpose::Monochrome };
+    OptionSet<ApplicationManifest::Icon::Purpose> purposeMaskable { ApplicationManifest::Icon::Purpose::Maskable };
+
+    testIconsPurposes("\"monochrome\"", purposeMonochrome);
+    testIconsPurposes("\"maskable\"", purposeMaskable);
+    testIconsPurposes("\"any\"", purposeAny);
+    testIconsPurposes("\"\tMONOCHROME\"", purposeMonochrome);
+
+    testIconsPurposes("123", purposeAny);
+    testIconsPurposes("null", purposeAny);
+    testIconsPurposes("true", purposeAny);
+    testIconsPurposes("{ }", purposeAny);
+    testIconsPurposes("[ ]", purposeAny);
+
+    OptionSet<ApplicationManifest::Icon::Purpose> purposeMonochromeAny { ApplicationManifest::Icon::Purpose::Monochrome, ApplicationManifest::Icon::Purpose::Any };
+
+    testIconsPurposes("\"monochrome any\"", purposeMonochromeAny);
+
 }
 
 #endif

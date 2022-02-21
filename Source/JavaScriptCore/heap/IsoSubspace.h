@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,27 +26,25 @@
 #pragma once
 
 #include "BlockDirectory.h"
+#include "IsoMemoryAllocatorBase.h"
 #include "Subspace.h"
 #include "SubspaceAccess.h"
 #include <wtf/SinglyLinkedListWithTail.h>
 
 namespace JSC {
 
-class IsoAlignedMemoryAllocator;
 class IsoCellSet;
+
+namespace GCClient {
+class IsoSubspace;
+}
 
 class IsoSubspace : public Subspace {
 public:
-    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, HeapCellType*, size_t size, uint8_t numberOfLowerTierCells);
+    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, const HeapCellType&, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& = nullptr);
     JS_EXPORT_PRIVATE ~IsoSubspace() override;
 
     size_t cellSize() { return m_directory.cellSize(); }
-
-    Allocator allocatorFor(size_t, AllocatorForMode) override;
-    Allocator allocatorForNonVirtual(size_t, AllocatorForMode);
-
-    void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) override;
-    void* allocateNonVirtual(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
 
     void sweepLowerTierCell(PreciseAllocation*);
     void clearIsoCellSetBit(PreciseAllocation*);
@@ -60,29 +58,51 @@ public:
 
 private:
     friend class IsoCellSet;
+    friend class GCClient::IsoSubspace;
     
     void didResizeBits(unsigned newSize) override;
     void didRemoveBlock(unsigned blockIndex) override;
     void didBeginSweepingToFreeList(MarkedBlock::Handle*) override;
-    
+
     BlockDirectory m_directory;
-    LocalAllocator m_localAllocator;
-    std::unique_ptr<IsoAlignedMemoryAllocator> m_isoAlignedMemoryAllocator;
+    std::unique_ptr<IsoMemoryAllocatorBase> m_isoAlignedMemoryAllocator;
     SentinelLinkedList<PreciseAllocation, PackedRawSentinelNode<PreciseAllocation>> m_lowerTierFreeList;
     SentinelLinkedList<IsoCellSet, PackedRawSentinelNode<IsoCellSet>> m_cellSets;
 };
 
-ALWAYS_INLINE Allocator IsoSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode)
+
+namespace GCClient {
+
+class IsoSubspace {
+    WTF_MAKE_NONCOPYABLE(IsoSubspace);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    JS_EXPORT_PRIVATE IsoSubspace(JSC::IsoSubspace&);
+    JS_EXPORT_PRIVATE ~IsoSubspace() = default;
+
+    size_t cellSize() { return m_localAllocator.cellSize(); }
+
+    Allocator allocatorFor(size_t, AllocatorForMode);
+
+    void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
+
+private:
+    LocalAllocator m_localAllocator;
+};
+
+ALWAYS_INLINE Allocator IsoSubspace::allocatorFor(size_t size, AllocatorForMode)
 {
     RELEASE_ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
     return Allocator(&m_localAllocator);
 }
 
+} // namespace GCClient
+
 #define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("Isolated " #type " Space", (heap), (heapCellType), sizeof(type), type::numberOfLowerTierCells)
 
 template<typename T>
 struct isAllocatedFromIsoSubspace {
-    static constexpr bool value = std::is_same<std::result_of_t<decltype(T::template subspaceFor<T, SubspaceAccess::OnMainThread>)&(VM&)>, IsoSubspace*>::value;
+    static constexpr bool value = std::is_same<std::invoke_result_t<decltype(T::template subspaceFor<T, SubspaceAccess::OnMainThread>)&, VM&>, IsoSubspace*>::value;
 };
 
 } // namespace JSC

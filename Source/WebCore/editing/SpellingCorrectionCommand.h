@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class DocumentFragment;
+
 class SpellingCorrectionCommand : public CompositeEditCommand {
 public:
     static Ref<SpellingCorrectionCommand> create(const SimpleRange& rangeToBeCorrected, const String& correction);

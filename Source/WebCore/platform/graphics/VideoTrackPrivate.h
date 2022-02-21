@@ -27,20 +27,18 @@
 
 #if ENABLE(VIDEO)
 
+#include "PlatformVideoTrackConfiguration.h"
 #include "TrackPrivateBase.h"
+#include "VideoTrackPrivateClient.h"
 #include <wtf/Function.h>
 
 namespace WebCore {
 
-class VideoTrackPrivateClient : public TrackPrivateBaseClient {
-public:
-    virtual void selectedChanged(bool) = 0;
-};
-
 class VideoTrackPrivate : public TrackPrivateBase {
 public:
-    void setClient(VideoTrackPrivateClient* client) { m_client = client; }
-    VideoTrackPrivateClient* client() const override { return m_client; }
+    void setClient(VideoTrackPrivateClient& client) { m_client = client; }
+    void clearClient() { m_client = nullptr; }
+    VideoTrackPrivateClient* client() const override { return m_client.get(); }
 
     virtual void setSelected(bool selected)
     {
@@ -64,12 +62,24 @@ public:
     using SelectedChangedCallback = Function<void(VideoTrackPrivate&, bool selected)>;
     void setSelectedChangedCallback(SelectedChangedCallback&& callback) { m_selectedChangedCallback = WTFMove(callback); }
 
+    const PlatformVideoTrackConfiguration& configuration() const { return m_configuration; }
+    void setConfiguration(PlatformVideoTrackConfiguration&& configuration)
+    {
+        if (configuration == m_configuration)
+            return;
+        m_configuration = WTFMove(configuration);
+        if (m_client)
+            m_client->configurationChanged(m_configuration);
+    }
+
 protected:
     VideoTrackPrivate() = default;
 
 private:
-    VideoTrackPrivateClient* m_client { nullptr };
+    WeakPtr<VideoTrackPrivateClient> m_client { nullptr };
     bool m_selected { false };
+    PlatformVideoTrackConfiguration m_configuration;
+
     SelectedChangedCallback m_selectedChangedCallback;
 };
 

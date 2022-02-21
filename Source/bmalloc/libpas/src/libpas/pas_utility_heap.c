@@ -42,14 +42,12 @@ pas_heap_runtime_config pas_utility_heap_runtime_config = {
     .sharing_mode = pas_share_pages,
     .statically_allocated = true,
     .is_part_of_heap = false,
-    .directory_size_bound_for_partial_views =
-        PAS_UTILITY_BOUND_FOR_PARTIAL_VIEWS,
-    .directory_size_bound_for_baseline_allocators =
-        PAS_UTILITY_BOUND_FOR_BASELINE_ALLOCATORS,
-    .max_segregated_object_size =
-        PAS_UTILITY_MAX_SEGREGATED_OBJECT_SIZE,
-    .max_bitfit_object_size =
-        PAS_UTILITY_MAX_BITFIT_OBJECT_SIZE
+    .directory_size_bound_for_partial_views = PAS_UTILITY_BOUND_FOR_PARTIAL_VIEWS,
+    .directory_size_bound_for_baseline_allocators = PAS_UTILITY_BOUND_FOR_BASELINE_ALLOCATORS,
+    .directory_size_bound_for_no_view_cache = PAS_UTILITY_BOUND_FOR_NO_VIEW_CACHE,
+    .max_segregated_object_size = PAS_UTILITY_MAX_SEGREGATED_OBJECT_SIZE,
+    .max_bitfit_object_size = PAS_UTILITY_MAX_BITFIT_OBJECT_SIZE,
+    .view_cache_capacity_for_object_size = pas_heap_runtime_config_zero_view_cache_capacity
 };
 
 pas_segregated_heap pas_utility_segregated_heap = {
@@ -78,7 +76,7 @@ void* pas_utility_heap_try_allocate_with_alignment(
 
     aligned_size = pas_round_up_to_power_of_2(size, alignment);
 
-    index = pas_segregated_heap_index_for_primitive_count(aligned_size, PAS_UTILITY_HEAP_CONFIG);
+    index = pas_segregated_heap_index_for_size(aligned_size, PAS_UTILITY_HEAP_CONFIG);
 
     if (index >= PAS_NUM_UTILITY_SIZE_CLASSES) {
         pas_log("Cannot allocate size = %zu (alignment = %zu, aligned_size = %zu, index = %zu) "
@@ -105,13 +103,14 @@ void* pas_utility_heap_try_allocate_with_alignment(
 
     if (pas_local_allocator_is_null(allocator)
         || alignment > pas_local_allocator_alignment(allocator)) {
-        pas_segregated_global_size_directory* directory;
+        pas_segregated_size_directory* directory;
         
         pas_utility_heap_support_instance.slow_path_count++;
 
-        directory = pas_segregated_heap_ensure_size_directory_for_count(
+        directory = pas_segregated_heap_ensure_size_directory_for_size(
             &pas_utility_segregated_heap, aligned_size, alignment,
-            pas_force_count_lookup, &pas_utility_heap_config, NULL);
+            pas_force_size_lookup, &pas_utility_heap_config, NULL,
+            pas_segregated_size_directory_full_creation_mode);
 
         PAS_ASSERT(directory);
 
@@ -120,11 +119,11 @@ void* pas_utility_heap_try_allocate_with_alignment(
 
     result = (void*)pas_local_allocator_try_allocate(
         allocator,
-        pas_trivial_size_thunk,
-        (void*)aligned_size,
+        aligned_size,
         alignment,
         PAS_UTILITY_HEAP_CONFIG,
-        &pas_utility_allocator_counts).begin;
+        &pas_utility_allocator_counts,
+        pas_allocation_result_identity).begin;
 
     pas_did_allocate(result, size, pas_utility_heap_kind, name, pas_object_allocation);
 
@@ -166,7 +165,9 @@ void pas_utility_heap_deallocate(void* ptr)
 
     begin = (uintptr_t)ptr;
 
-    pas_segregated_page_deallocate(begin, NULL, PAS_UTILITY_HEAP_CONFIG.small_segregated_config);
+    pas_segregated_page_deallocate(
+        begin, NULL, pas_segregated_deallocation_direct_mode, NULL,
+        PAS_UTILITY_HEAP_CONFIG.small_segregated_config, pas_segregated_page_exclusive_role);
 }
 
 size_t pas_utility_heap_get_num_free_bytes(void)

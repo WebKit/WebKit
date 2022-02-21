@@ -25,20 +25,15 @@
 
 #pragma once
 
-#include "MessagePortIdentifier.h"
 #include "SerializedScriptValue.h"
+#include "TransferredMessagePort.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-// When a message port is transferred, it is represented by a pair of identifiers.
-// The first identifier is the port being transferred and the second is its remote port.
-using TransferredMessagePort = std::pair<WebCore::MessagePortIdentifier, WebCore::MessagePortIdentifier>;
-using TransferredMessagePortArray = Vector<TransferredMessagePort>;
-
 struct MessageWithMessagePorts {
     RefPtr<SerializedScriptValue> message;
-    TransferredMessagePortArray transferredPorts;
+    Vector<TransferredMessagePort> transferredPorts;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<MessageWithMessagePorts> decode(Decoder&);

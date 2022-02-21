@@ -10,7 +10,9 @@ function cssPrimitiveValTest() {
     if (window.testRunner)
         testRunner.dumpAsText();
 
-    document.getSelection().extend(x); 
+    document.getSelection().collapse(x, 0);
+    document.getSelection().extend(x);
+
     document.execCommand("insertHTML", false, "The test passes if there is no crash.");
 }
 </script>

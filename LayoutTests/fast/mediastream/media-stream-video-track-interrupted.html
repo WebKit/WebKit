@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Capture source interruption.</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+ </head>
+<body>
+    <script>
+    promise_test(async (test) => {
+        const stream = await navigator.mediaDevices.getUserMedia({video: true});
+        const track = stream.getVideoTracks()[0];
+        if (!window.testRunner)
+            return;
+
+        let promise = new Promise((resolve, reject) => { track.onmute = resolve; setTimeout(() => reject("no mute"), 5000) });
+        testRunner.setMockCameraIsInterrupted(true);
+        await promise;
+
+        assert_true(track.muted, "track is muted");
+
+        promise = new Promise((resolve, reject) => { track.onunmute = resolve; setTimeout(() => reject("no unmute"), 5000) });
+        testRunner.setMockCameraIsInterrupted(false);
+        await promise;
+
+        assert_false(track.muted, "track is not muted");
+
+        track.stop();
+    }, "Interrupt/resume video track");
+
+    promise_test(async (test) => {
+        const stream = await navigator.mediaDevices.getUserMedia({video: true});
+        const track = stream.getVideoTracks()[0];
+        if (!window.testRunner || !window.internals)
+            return;
+        internals.observeMediaStreamTrack(track);
+
+        // video frames should flow.
+        let current = internals.trackVideoSampleCount;
+        let counter = 0;
+        while (internals.trackVideoSampleCount === current && ++counter < 50)
+            await new Promise(resolve => setTimeout(resolve, 50));
+        assert_less_than(counter, 50, "first live check");
+
+        // getting an interruption, track should be muted.
+        let promise = new Promise((resolve, reject) => { track.onmute = resolve; setTimeout(() => reject("no mute"), 5000) });
+        testRunner.setMockCameraIsInterrupted(true);
+        await promise;
+
+        assert_true(track.muted, "track is muted");
+
+        // video frames should not flow.
+        counter = 0;
+        while (internals.trackVideoSampleCount !== current && ++counter < 50) {
+            current = internals.trackVideoSampleCount;
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+        assert_less_than(counter, 50, "first muted check");
+
+        // Unmuting page should restart capture.
+        promise = new Promise((resolve, reject) => { track.onunmute = resolve; setTimeout(() => reject("no unmute"), 5000) });
+        internals.setPageMuted('');
+        await promise;
+
+        assert_false(track.muted, "track is not muted");
+
+        current = internals.trackVideoSampleCount;
+        counter = 0;
+        while (internals.trackVideoSampleCount === current && ++counter < 50)
+            await new Promise(resolve => setTimeout(resolve, 50));
+        assert_less_than(counter, 50, "second live check");
+
+        track.stop();
+    }, "Interrupt video track then uninterrupt it using page unmuting");
+    </script>
+</body>
+</html>

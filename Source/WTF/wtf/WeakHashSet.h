@@ -31,14 +31,21 @@
 
 namespace WTF {
 
-template<typename T, typename Counter = EmptyCounter>
+template<typename T, typename Counter = EmptyCounter, EnableWeakPtrThreadingAssertions assertionsPolicy = EnableWeakPtrThreadingAssertions::Yes>
 class WeakHashSet final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef HashSet<Ref<WeakPtrImpl<Counter>>> WeakPtrImplSet;
     typedef typename WeakPtrImplSet::AddResult AddResult;
 
-    class WeakHashSetConstIterator : public std::iterator<std::forward_iterator_tag, T, std::ptrdiff_t, const T*, const T&> {
+    class WeakHashSetConstIterator {
+    public:
+        using iterator_category = std::forward_iterator_tag;
+        using value_type = T;
+        using difference_type = ptrdiff_t;
+        using pointer = const value_type*;
+        using reference = const value_type&;
+
     private:
         WeakHashSetConstIterator(const WeakPtrImplSet& set, typename WeakPtrImplSet::const_iterator position)
             : m_position(position), m_endPosition(set.end())
@@ -76,7 +83,7 @@ public:
         }
 
     private:
-        template <typename, typename> friend class WeakHashSet;
+        template <typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
 
         typename WeakPtrImplSet::const_iterator m_position;
         typename WeakPtrImplSet::const_iterator m_endPosition;
@@ -91,7 +98,7 @@ public:
     template <typename U>
     AddResult add(const U& value)
     {
-        return m_set.add(*makeWeakPtr<T>(const_cast<U&>(value)).m_impl);
+        return m_set.add(*static_cast<const T&>(value).weakPtrFactory().template createWeakPtr<T>(const_cast<U&>(value), assertionsPolicy).m_impl);
     }
 
     template <typename U>
@@ -133,7 +140,7 @@ public:
     {
         auto items = map(m_set, [](const Ref<WeakPtrImpl<Counter>>& item) {
             auto* pointer = static_cast<T*>(item->template get<T>());
-            return makeWeakPtr(pointer);
+            return WeakPtr { pointer };
         });
         for (auto& item : items) {
             if (item && m_set.contains(*item.m_impl))
@@ -154,7 +161,7 @@ private:
 template<typename MapFunction, typename T>
 struct Mapper<MapFunction, const WeakHashSet<T> &, void> {
     using SourceItemType = T&;
-    using DestinationItemType = typename std::result_of<MapFunction(SourceItemType&)>::type;
+    using DestinationItemType = typename std::invoke_result<MapFunction, SourceItemType&>::type;
 
     static Vector<DestinationItemType> map(const WeakHashSet<T>& source, const MapFunction& mapFunction)
     {
@@ -169,7 +176,7 @@ struct Mapper<MapFunction, const WeakHashSet<T> &, void> {
 template<typename T>
 inline auto copyToVector(const WeakHashSet<T>& collection) -> Vector<WeakPtr<T>>
 {
-    return WTF::map(collection, [] (auto& v) -> WeakPtr<T> { return makeWeakPtr<T>(v); });
+    return WTF::map(collection, [] (auto& v) -> WeakPtr<T> { return WeakPtr<T> { v }; });
 }
 
 

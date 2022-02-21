@@ -7,21 +7,19 @@
 #include <cctype>
 #include <map>
 
+#include "common/system_utils.h"
+#include "compiler/translator/BaseTypes.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/TranslatorMetalDirect.h"
 #include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
-#include "compiler/translator/TranslatorMetalDirect/ConstantNames.h"
-#include "compiler/translator/TranslatorMetalDirect/Debug.h"
 #include "compiler/translator/TranslatorMetalDirect/DebugSink.h"
 #include "compiler/translator/TranslatorMetalDirect/EmitMetal.h"
-#include "compiler/translator/TranslatorMetalDirect/EnvironmentVariable.h"
 #include "compiler/translator/TranslatorMetalDirect/Layout.h"
 #include "compiler/translator/TranslatorMetalDirect/Name.h"
 #include "compiler/translator/TranslatorMetalDirect/ProgramPrelude.h"
 #include "compiler/translator/TranslatorMetalDirect/RewritePipelines.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
-#include "libANGLE/renderer/metal/mtl_constants.h"
 
 using namespace sh;
 
@@ -84,7 +82,8 @@ class GenMetalTraverser : public TIntermTraverser
                       Sink &out,
                       IdGen &idGen,
                       const PipelineStructs &pipelineStructs,
-                      SymbolEnv &symbolEnv);
+                      SymbolEnv &symbolEnv,
+                      TSymbolTable *symbolTable);
 
     void visitSymbol(TIntermSymbol *) override;
     void visitConstantUnion(TIntermConstantUnion *) override;
@@ -155,7 +154,8 @@ class GenMetalTraverser : public TIntermTraverser
                               const TStructure &parent,
                               FieldAnnotationIndices &annotationIndices);
     void emitAttributeDeclaration(const TField &field, FieldAnnotationIndices &annotationIndices);
-    void emitUniformBufferDeclaration(const TField &field, FieldAnnotationIndices &annotationIndices);
+    void emitUniformBufferDeclaration(const TField &field,
+                                      FieldAnnotationIndices &annotationIndices);
     void emitStructDeclaration(const TType &type);
     void emitOrdinaryVariableDeclaration(const VarDecl &decl,
                                          const EmitVariableDeclarationConfig &evdConfig);
@@ -184,19 +184,20 @@ class GenMetalTraverser : public TIntermTraverser
     const PipelineStructs &mPipelineStructs;
     SymbolEnv &mSymbolEnv;
     IdGen &mIdGen;
-    int mIndentLevel           = -1;
-    int mLastIndentationPos    = -1;
-    int mOpenPointerParenCount = 0;
-    bool mParentIsSwitch    = false;
-    bool isTraversingVertexMain  = false;
+    int mIndentLevel                  = -1;
+    int mLastIndentationPos           = -1;
+    int mOpenPointerParenCount        = 0;
+    bool mParentIsSwitch              = false;
+    bool isTraversingVertexMain       = false;
     bool mTemporarilyDisableSemicolon = false;
     std::unordered_map<const TSymbol *, Name> mRenamedSymbols;
-    const FuncToName mFuncToName   = BuildFuncToName();
-    size_t mMainTextureIndex       = 0;
-    size_t mMainSamplerIndex       = 0;
-    size_t mMainUniformBufferIndex = rx::mtl::kDefaultUniformsBindingIndex;
+    const FuncToName mFuncToName          = BuildFuncToName();
+    size_t mMainTextureIndex              = 0;
+    size_t mMainSamplerIndex              = 0;
+    size_t mMainUniformBufferIndex        = 0;
+    size_t mDriverUniformsBindingIndex    = 0;
+    size_t mUBOArgumentBufferBindingIndex = 0;
 };
-
 }  // anonymous namespace
 
 GenMetalTraverser::~GenMetalTraverser()
@@ -210,13 +211,17 @@ GenMetalTraverser::GenMetalTraverser(const TCompiler &compiler,
                                      Sink &out,
                                      IdGen &idGen,
                                      const PipelineStructs &pipelineStructs,
-                                     SymbolEnv &symbolEnv)
+                                     SymbolEnv &symbolEnv,
+                                     TSymbolTable *symbolTable)
     : TIntermTraverser(true, false, false),
       mOut(out),
       mCompiler(compiler),
       mPipelineStructs(pipelineStructs),
       mSymbolEnv(symbolEnv),
-      mIdGen(idGen)
+      mIdGen(idGen),
+      mMainUniformBufferIndex(symbolTable->getDefaultUniformsBindingIndex()),
+      mDriverUniformsBindingIndex(symbolTable->getDriverUniformsBindingIndex()),
+      mUBOArgumentBufferBindingIndex(symbolTable->getUBOArgumentBufferBindingIndex())
 {}
 
 void GenMetalTraverser::emitIndentation()
@@ -254,8 +259,8 @@ void GenMetalTraverser::emitClosingPointerParen()
 static const char *GetOperatorString(TOperator op,
                                      const TType &resultType,
                                      const TType *argType0,
-                                     const TType *argType1 = nullptr,
-                                     const TType *argType2 = nullptr)
+                                     const TType *argType1,
+                                     const TType *argType2)
 {
     switch (op)
     {
@@ -338,7 +343,7 @@ static const char *GetOperatorString(TOperator op,
             return "+";
         case TOperator::EOpLogicalNot:
             return "!";
-        case TOperator::EOpLogicalNotComponentWise:
+        case TOperator::EOpNotComponentWise:
             return "!";
         case TOperator::EOpBitwiseNot:
             return "~";
@@ -374,12 +379,12 @@ static const char *GetOperatorString(TOperator op,
             return "!=";
 
         case TOperator::EOpEqual:
-            if((argType0->getStruct() && argType1->getStruct()) &&
-               (argType0->isArray() && argType1->isArray()))
+            if ((argType0->getStruct() && argType1->getStruct()) &&
+                (argType0->isArray() && argType1->isArray()))
             {
                 return "ANGLE_equalStructArray";
             }
-           
+
             if ((argType0->isVector() && argType1->isVector()) ||
                 (argType0->getStruct() && argType1->getStruct()) ||
                 (argType0->isArray() && argType1->isArray()) ||
@@ -392,12 +397,12 @@ static const char *GetOperatorString(TOperator op,
             return "==";
 
         case TOperator::EOpNotEqual:
-            if((argType0->getStruct() && argType1->getStruct()) &&
-               (argType0->isArray() && argType1->isArray()))
+            if ((argType0->getStruct() && argType1->getStruct()) &&
+                (argType0->isArray() && argType1->isArray()))
             {
                 return "ANGLE_notEqualStructArray";
             }
-           
+
             if ((argType0->isVector() && argType1->isVector()) ||
                 (argType0->isArray() && argType1->isArray()) ||
                 (argType0->isMatrix() && argType1->isMatrix()))
@@ -411,7 +416,7 @@ static const char *GetOperatorString(TOperator op,
             return "!=";
 
         case TOperator::EOpKill:
-            TODO();
+            UNIMPLEMENTED();
             return "kill";
         case TOperator::EOpReturn:
             return "return";
@@ -442,7 +447,7 @@ static const char *GetOperatorString(TOperator op,
             return "ANGLE_faceforward";
         case TOperator::EOpReflect:
             return "ANGLE_reflect";
-        case TOperator::EOpMulMatrixComponentWise:
+        case TOperator::EOpMatrixCompMult:
             return "ANGLE_componentWiseMultiply";
         case TOperator::EOpOuterProduct:
             return "ANGLE_outerProduct";
@@ -510,7 +515,7 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpClamp:
             return "metal::clamp";  // TODO fast vs precise namespace
         case TOperator::EOpMix:
-            if(argType2 && argType2->getBasicType() == EbtBool)
+            if (argType2 && argType2->getBasicType() == EbtBool)
                 return "ANGLE_mix_bool";
             return "metal::mix";
         case TOperator::EOpStep:
@@ -561,7 +566,7 @@ static const char *GetOperatorString(TOperator op,
             case TBasicType::EbtFloat:           \
                 return "as_type<float" post ">"; \
             default:                             \
-                TODO();                          \
+                UNIMPLEMENTED();                 \
                 return "TOperator_TODO";         \
         }                                        \
     while (false)
@@ -581,13 +586,13 @@ static const char *GetOperatorString(TOperator op,
                     case 4:
                         RETURN_AS_TYPE("4");
                     default:
-                        LOGIC_ERROR();
+                        UNREACHABLE();
                         return nullptr;
                 }
             }
             else
             {
-                TODO();
+                UNIMPLEMENTED();
                 return "TOperator_TODO";
             }
 
@@ -646,204 +651,40 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpAtomicCompSwap:
         case TOperator::EOpEmitVertex:
         case TOperator::EOpEndPrimitive:
-        case TOperator::EOpFTransform:
+        case TOperator::EOpFtransform:
         case TOperator::EOpPackDouble2x32:
         case TOperator::EOpUnpackDouble2x32:
         case TOperator::EOpArrayLength:
-            TODO();
+            UNIMPLEMENTED();
             return "TOperator_TODO";
 
         case TOperator::EOpNull:
         case TOperator::EOpConstruct:
         case TOperator::EOpCallFunctionInAST:
         case TOperator::EOpCallInternalRawFunction:
-        case TOperator::EOpCallBuiltInFunction:
         case TOperator::EOpIndexDirect:
         case TOperator::EOpIndexIndirect:
         case TOperator::EOpIndexDirectStruct:
         case TOperator::EOpIndexDirectInterfaceBlock:
-            LOGIC_ERROR();
+            UNREACHABLE();
+            return nullptr;
+        default:
+            // Any other built-in function.
             return nullptr;
     }
 }
 
-#if 0
-static int GetOperatorPrecedence(TOperator op)
-{
-    switch (op)
-    {
-        case TOperator::EOpComma: {
-            return 17;
-        } break;
-
-        case TOperator::EOpAssign:
-        case TOperator::EOpInitialize:
-        case TOperator::EOpAddAssign:
-        case TOperator::EOpSubAssign:
-        case TOperator::EOpMulAssign:
-        case TOperator::EOpDivAssign:
-        case TOperator::EOpIModAssign:
-        case TOperator::EOpBitShiftLeftAssign:
-        case TOperator::EOpBitShiftRightAssign:
-        case TOperator::EOpBitwiseAndAssign:
-        case TOperator::EOpBitwiseXorAssign:
-        case TOperator::EOpBitwiseOrAssign: {
-            return 16;
-        } break;
-
-        case TOperator::EOpLogicalOr: {
-            return 15;
-        } break;
-
-        case TOperator::EOpLogicalAnd: {
-            return 14;
-        } break;
-
-        case TOperator::EOpBitwiseOr: {
-            return 13;
-        } break;
-
-        case TOperator::EOpBitwiseXor: {
-            return 12;
-        } break;
-
-        case TOperator::EOpBitwiseAnd: {
-            return 11;
-        } break;
-
-        case TOperator::EOpLogicalXor:
-        case TOperator::EOpEqual:
-        case TOperator::EOpNotEqual: {
-            return 10;
-        } break;
-
-        case TOperator::EOpLessThan:
-        case TOperator::EOpGreaterThan:
-        case TOperator::EOpLessThanEqual:
-        case TOperator::EOpGreaterThanEqual: {
-            return 9;
-        } break;
-
-        case TOperator::EOpBitShiftLeft:
-        case TOperator::EOpBitShiftRight: {
-            return 7;
-        } break;
-
-        case TOperator::EOpAdd:
-        case TOperator::EOpSub: {
-            return 6;
-        } break;
-
-        case TOperator::EOpMul:
-        case TOperator::EOpDiv:
-        case TOperator::EOpIMod: {
-            return 5;
-        } break;
-
-        case TOperator::EOpNegative:
-        case TOperator::EOpPositive:
-        case TOperator::EOpLogicalNot:
-        case TOperator::EOpBitwiseNot:
-        case TOperator::EOpPreIncrement:
-        case TOperator::EOpPreDecrement: {
-            return 3;
-        } break;
-
-        case TOperator::EOpPostIncrement:
-        case TOperator::EOpPostDecrement: {
-            return 2;
-        } break;
-
-        default: {
-            TODO();
-            return -1;
-        }
-    }
-}
-
-namespace
-{
-
-enum class Associativity
-{
-    None,
-    Left,
-    Right,
-};
-
-} // anonymous namespace
-
-static Associativity GetAssociativity(TOperator op)
-{
-    switch (op)
-    {
-        case TOperator::EOpAdd:
-        case TOperator::EOpSub:
-        case TOperator::EOpMul:
-        case TOperator::EOpDiv:
-        case TOperator::EOpIMod:
-        case TOperator::EOpBitShiftLeft:
-        case TOperator::EOpBitShiftRight:
-        case TOperator::EOpBitwiseAnd:
-        case TOperator::EOpBitwiseXor:
-        case TOperator::EOpBitwiseOr:
-        case TOperator::EOpEqual:
-        case TOperator::EOpNotEqual:
-        case TOperator::EOpLessThan:
-        case TOperator::EOpGreaterThan:
-        case TOperator::EOpLessThanEqual:
-        case TOperator::EOpGreaterThanEqual:
-        case TOperator::EOpLogicalOr:
-        case TOperator::EOpLogicalXor:
-        case TOperator::EOpLogicalAnd:
-        case TOperator::EOpComma: {
-            return Associativity::Left;
-        } break;
-
-        case TOperator::EOpAssign:
-        case TOperator::EOpInitialize:
-        case TOperator::EOpAddAssign:
-        case TOperator::EOpSubAssign:
-        case TOperator::EOpMulAssign:
-        case TOperator::EOpDivAssign:
-        case TOperator::EOpIModAssign:
-        case TOperator::EOpBitShiftLeftAssign:
-        case TOperator::EOpBitShiftRightAssign:
-        case TOperator::EOpBitwiseAndAssign:
-        case TOperator::EOpBitwiseXorAssign:
-        case TOperator::EOpBitwiseOrAssign: {
-            return Associativity::Right;
-        } break;
-
-        case TOperator::EOpNegative:
-        case TOperator::EOpPositive:
-        case TOperator::EOpLogicalNot:
-        case TOperator::EOpBitwiseNot:
-        case TOperator::EOpPostIncrement:
-        case TOperator::EOpPostDecrement:
-        case TOperator::EOpPreIncrement:
-        case TOperator::EOpPreDecrement: {
-            return Associativity::None;
-        } break;
-
-        default: {
-            TODO();
-            return Associativity::None;
-        }
-    }
-}
-#endif
-
 static bool IsSymbolicOperator(TOperator op,
                                const TType &resultType,
                                const TType *argType0,
-                               const TType *argType1 = nullptr)
+                               const TType *argType1)
 {
-    if (op == TOperator::EOpCallBuiltInFunction)
+    const char *operatorString = GetOperatorString(op, resultType, argType0, argType1, nullptr);
+    if (operatorString == nullptr)
     {
         return false;
     }
-    return !std::isalnum(GetOperatorString(op, resultType, argType0, argType1)[0]);
+    return !std::isalnum(operatorString[0]);
 }
 
 static TIntermBinary *AsSpecificBinaryNode(TIntermNode &node, TOperator op)
@@ -880,7 +721,7 @@ static bool Parenthesize(TIntermNode &node)
         // TODO: Use a precedence and associativity rules instead of this ad-hoc impl.
         const TType &resultType = unaryNode->getType();
         const TType &argType    = unaryNode->getOperand()->getType();
-        return IsSymbolicOperator(unaryNode->getOp(), resultType, &argType);
+        return IsSymbolicOperator(unaryNode->getOp(), resultType, &argType, nullptr);
     }
 
     if (TIntermBinary *binaryNode = node.getAsBinaryNode())
@@ -938,7 +779,7 @@ void GenMetalTraverser::emitPostQualifier(const EmitVariableDeclarationConfig &e
     {
         case TQualifier::EvqPosition:
             isInvariant = decl.type().isInvariant();
-            // Fallthrough.
+            ANGLE_FALLTHROUGH;
         case TQualifier::EvqFragCoord:
             mOut << " [[position]]";
             break;
@@ -975,9 +816,9 @@ void GenMetalTraverser::emitPostQualifier(const EmitVariableDeclarationConfig &e
     if (isInvariant)
     {
         mOut << " [[invariant]]";
-        TranslatorMetalReflection *reflection =
-            ((sh::TranslatorMetalDirect *)&mCompiler)->getTranslatorMetalReflection();
-        reflection->hasInvariance = true;
+
+        TranslatorMetalReflection *reflection = mtl::getTranslatorMetalReflection(&mCompiler);
+        reflection->hasInvariance             = true;
     }
 }
 
@@ -1067,7 +908,7 @@ void GenMetalTraverser::emitBareTypeName(const TType &type, const EmitTypeConfig
             }
             else
             {
-                TODO();
+                UNIMPLEMENTED();
             }
         }
     }
@@ -1188,7 +1029,7 @@ void GenMetalTraverser::emitFieldDeclaration(const TField &field,
             {
                 mOut << " [[flat]]";
                 TranslatorMetalReflection *reflection =
-                    ((sh::TranslatorMetalDirect *)&mCompiler)->getTranslatorMetalReflection();
+                    mtl::getTranslatorMetalReflection(&mCompiler);
                 reflection->hasFlatInput = true;
             }
             break;
@@ -1202,12 +1043,14 @@ void GenMetalTraverser::emitFieldDeclaration(const TField &field,
                       basic == TBasicType::EbtFloat)) ||
                     type.getQualifier() == EvqFragData)
                 {
-                    // TODO:
-                    // This is not correct in general and needs a reimplementation.
-                    // In GLSL 3.0, We can't always assume this is going to be a safe index.
-                    // See 4.3.8.2
-                    // https://www.khronos.org/registry/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf
-                    size_t index = annotationIndices.color++;
+                    // The OpenGL ES 3.0 spec says locations must be specified
+                    // unless there is only a single output, in which case the
+                    // location is 0. So, when we get to this point the shader
+                    // will have been rejected if locations are not specified
+                    // and there is more than one output.
+                    const TLayoutQualifier &layoutQualifier = type.getLayoutQualifier();
+                    size_t index = layoutQualifier.locationsSpecified ? layoutQualifier.location
+                                                                      : annotationIndices.color++;
                     mOut << " [[color(" << index << ")]]";
                 }
             }
@@ -1218,7 +1061,8 @@ void GenMetalTraverser::emitFieldDeclaration(const TField &field,
             break;
 
         case TQualifier::EvqSampleMask:
-            mOut << " [[sample_mask, function_constant(" << sh::TranslatorMetalDirect::GetCoverageMaskEnabledConstName() << ")]]";
+            mOut << " [[sample_mask, function_constant(" << sh::mtl::kCoverageMaskEnabledConstName
+                 << ")]]";
             break;
 
         default:
@@ -1304,7 +1148,7 @@ void GenMetalTraverser::emitAttributeDeclaration(const TField &field,
 }
 
 void GenMetalTraverser::emitUniformBufferDeclaration(const TField &field,
-                                                 FieldAnnotationIndices &annotationIndices)
+                                                     FieldAnnotationIndices &annotationIndices)
 {
     EmitVariableDeclarationConfig evdConfig;
     evdConfig.disableStructSpecifier = true;
@@ -1313,16 +1157,16 @@ void GenMetalTraverser::emitUniformBufferDeclaration(const TField &field,
     emitVariableDeclaration(VarDecl(field), evdConfig);
     mOut << "[[id(" << annotationIndices.attribute << ")]]";
 
-    const TType &type = *field.type();
+    const TType &type   = *field.type();
     const int arraySize = type.isArray() ? type.getArraySizeProduct() : 1;
 
-    TranslatorMetalReflection *reflection =
-        ((sh::TranslatorMetalDirect *)&mCompiler)->getTranslatorMetalReflection();
+    TranslatorMetalReflection *reflection = mtl::getTranslatorMetalReflection(&mCompiler);
     ASSERT(type.getBasicType() == TBasicType::EbtStruct);
-    const TStructure *structure = type.getStruct();
-    const std::string originalName =
-        reflection->getOriginalName(structure->uniqueId().get());
-    reflection->addUniformBufferBinding(originalName, {.bindIndex = annotationIndices.attribute, .arraySize = static_cast<size_t>(arraySize)});
+    const TStructure *structure    = type.getStruct();
+    const std::string originalName = reflection->getOriginalName(structure->uniqueId().get());
+    reflection->addUniformBufferBinding(
+        originalName,
+        {.bindIndex = annotationIndices.attribute, .arraySize = static_cast<size_t>(arraySize)});
 
     annotationIndices.attribute += arraySize;
 }
@@ -1340,8 +1184,8 @@ void GenMetalTraverser::emitStructDeclaration(const TType &type)
 
     const TStructure &structure = *type.getStruct();
     std::map<Name, size_t> fieldToAttributeIndex;
-    const bool hasAttributeIndices           = mPipelineStructs.vertexIn.external == &structure;
-    const bool hasUniformBufferIndicies      = mPipelineStructs.uniformBuffers.external == &structure;
+    const bool hasAttributeIndices      = mPipelineStructs.vertexIn.external == &structure;
+    const bool hasUniformBufferIndicies = mPipelineStructs.uniformBuffers.external == &structure;
     const bool reclaimUnusedAttributeIndices = mCompiler.getShaderVersion() < 300;
 
     if (hasAttributeIndices)
@@ -1377,7 +1221,7 @@ void GenMetalTraverser::emitStructDeclaration(const TType &type)
                 emitAttributeDeclaration(*field, annotationIndices);
             }
         }
-        else if(hasUniformBufferIndicies)
+        else if (hasUniformBufferIndicies)
         {
             emitUniformBufferDeclaration(*field, annotationIndices);
         }
@@ -1393,7 +1237,7 @@ void GenMetalTraverser::emitStructDeclaration(const TType &type)
         MetalLayoutOfConfig layoutConfig;
         layoutConfig.treatSamplersAsTextureEnv = true;
         Layout layout                          = MetalLayoutOf(type, layoutConfig);
-        size_t pad                             = (kDefaultStructAlignmentSize - layout.sizeOf) % kDefaultStructAlignmentSize;
+        size_t pad = (kDefaultStructAlignmentSize - layout.sizeOf) % kDefaultStructAlignmentSize;
         if (pad != 0)
         {
             emitIndentation();
@@ -1493,24 +1337,22 @@ void GenMetalTraverser::emitSingleConstant(const TConstantUnion *const constUnio
 
         case TBasicType::EbtFloat:
         {
-            if (ANGLE_UNLIKELY(isnan(constUnion->getFConst())))
+            float value = constUnion->getFConst();
+            if (std::isnan(value))
             {
                 mOut << "NAN";
             }
-            else if (ANGLE_UNLIKELY(isinf(constUnion->getFConst())))
+            else if (std::isinf(value))
             {
-                if(constUnion->getFConst() < 0)
+                if (value < 0)
                 {
-                    mOut << "-INFINITY";
+                    mOut << "-";
                 }
-                else
-                {
-                    mOut << "INFINITY";
-                }
+                mOut << "INFINITY";
             }
             else
             {
-                mOut << constUnion->getFConst() << "f";
+                mOut << value << "f";
             }
         }
         break;
@@ -1529,7 +1371,7 @@ void GenMetalTraverser::emitSingleConstant(const TConstantUnion *const constUnio
 
         default:
         {
-            TODO();
+            UNIMPLEMENTED();
         }
     }
 }
@@ -1658,7 +1500,8 @@ bool GenMetalTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
         case TOperator::EOpIndexDirectInterfaceBlock:
         {
             const TField &field = getDirectField(leftNode, rightNode);
-            if (mSymbolEnv.isPointer(field) && mSymbolEnv.isUBO(field)) {
+            if (mSymbolEnv.isPointer(field) && mSymbolEnv.isUBO(field))
+            {
                 emitOpeningPointerParen();
             }
             groupedTraverse(leftNode);
@@ -1681,7 +1524,7 @@ bool GenMetalTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
                 mOut << "ANGLE_int_clamp(";
                 groupedTraverse(rightNode);
                 mOut << ", 0, ";
-                if(leftType.isUnsizedArray())
+                if (leftType.isUnsizedArray())
                 {
                     groupedTraverse(leftNode);
                     mOut << ".size()";
@@ -1722,13 +1565,13 @@ bool GenMetalTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
                 {
                     emitClosingPointerParen();
                 }
-                mOut << GetOperatorString(op, resultType, &leftType, &rightType) << " ";
+                mOut << GetOperatorString(op, resultType, &leftType, &rightType, nullptr) << " ";
                 groupedTraverse(rightNode);
             }
             else
             {
                 emitClosingPointerParen();
-                mOut << GetOperatorString(op, resultType, &leftType, &rightType) << "(";
+                mOut << GetOperatorString(op, resultType, &leftType, &rightType, nullptr) << "(";
                 leftNode.traverse(this);
                 mOut << ", ";
                 rightNode.traverse(this);
@@ -1761,9 +1604,9 @@ bool GenMetalTraverser::visitUnary(Visit, TIntermUnary *unaryNode)
     TIntermTyped &arg    = *unaryNode->getOperand();
     const TType &argType = arg.getType();
 
-    const char *name = GetOperatorString(op, resultType, &argType);
+    const char *name = GetOperatorString(op, resultType, &argType, nullptr, nullptr);
 
-    if (IsSymbolicOperator(op, resultType, &argType))
+    if (IsSymbolicOperator(op, resultType, &argType, nullptr))
     {
         const bool postfix = IsPostfix(op);
         if (!postfix)
@@ -1895,7 +1738,7 @@ void GenMetalTraverser::emitFunctionSignature(const TFunction &func)
         const TVariable &param = *func.getParam(i);
         emitFunctionParameter(func, param);
     }
-    if(isTraversingVertexMain)
+    if (isTraversingVertexMain)
     {
         mOut << " @@XFB-Bindings@@ ";
     }
@@ -1905,8 +1748,8 @@ void GenMetalTraverser::emitFunctionSignature(const TFunction &func)
 
 void GenMetalTraverser::emitFunctionReturn(const TFunction &func)
 {
-    const bool isMain = func.isMain();
-    bool isVertexMain = false;
+    const bool isMain       = func.isMain();
+    bool isVertexMain       = false;
     const TType &returnType = func.getReturnType();
     if (isMain)
     {
@@ -1923,11 +1766,11 @@ void GenMetalTraverser::emitFunctionReturn(const TFunction &func)
         }
         else
         {
-            TODO();
+            UNIMPLEMENTED();
         }
     }
     emitType(returnType, EmitTypeConfig());
-    if(isVertexMain)
+    if (isVertexMain)
         mOut << ") ";
 }
 
@@ -1949,8 +1792,7 @@ void GenMetalTraverser::emitFunctionParameter(const TFunction &func, const TVari
 
     if (isMain)
     {
-        TranslatorMetalReflection *reflection =
-            ((sh::TranslatorMetalDirect *)&mCompiler)->getTranslatorMetalReflection();
+        TranslatorMetalReflection *reflection = mtl::getTranslatorMetalReflection(&mCompiler);
         if (structure)
         {
             if (mPipelineStructs.fragmentIn.matches(*structure) ||
@@ -1960,17 +1802,18 @@ void GenMetalTraverser::emitFunctionParameter(const TFunction &func, const TVari
             }
             else if (mPipelineStructs.angleUniforms.matches(*structure))
             {
-                mOut << " [[buffer(" << rx::mtl::kDriverUniformsBindingIndex << ")]]";
+                mOut << " [[buffer(" << mDriverUniformsBindingIndex << ")]]";
             }
             else if (mPipelineStructs.uniformBuffers.matches(*structure))
             {
-                mOut << " [[buffer(" << rx::mtl::kUBOArgumentBufferBindingIndex << ")]]";
+                mOut << " [[buffer(" << mUBOArgumentBufferBindingIndex << ")]]";
                 reflection->hasUBOs = true;
             }
             else if (mPipelineStructs.userUniforms.matches(*structure))
             {
                 mOut << " [[buffer(" << mMainUniformBufferIndex << ")]]";
-                reflection->addUserUniformBufferBinding(param.name().data(), mMainUniformBufferIndex);
+                reflection->addUserUniformBufferBinding(param.name().data(),
+                                                        mMainUniformBufferIndex);
                 mMainUniformBufferIndex += type.getArraySizeProduct();
             }
             else if (structure->name() == "metal::sampler")
@@ -2009,17 +1852,17 @@ bool GenMetalTraverser::visitFunctionDefinition(Visit, TIntermFunctionDefinition
 {
     const TFunction &func = *funcDefNode->getFunction();
     TIntermBlock &body    = *funcDefNode->getBody();
-    if(func.isMain())
+    if (func.isMain())
     {
-        const TType &returnType = func.getReturnType();
+        const TType &returnType     = func.getReturnType();
         const TStructure *structure = returnType.getStruct();
-        isTraversingVertexMain = (mPipelineStructs.vertexOut.matches(*structure));
+        isTraversingVertexMain      = (mPipelineStructs.vertexOut.matches(*structure));
     }
     emitIndentation();
     emitFunctionSignature(func);
     mOut << "\n";
     body.traverse(this);
-    if(isTraversingVertexMain)
+    if (isTraversingVertexMain)
     {
         isTraversingVertexMain = false;
     }
@@ -2135,11 +1978,10 @@ bool GenMetalTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
     else
     {
         const TOperator op = aggregateNode->getOp();
-        if(op == EOpAtan)
+        if (op == EOpAtan)
         {
-            TranslatorMetalReflection *reflection =
-                ((sh::TranslatorMetalDirect *)&mCompiler)->getTranslatorMetalReflection();
-            reflection->hasAtan = true;
+            TranslatorMetalReflection *reflection = mtl::getTranslatorMetalReflection(&mCompiler);
+            reflection->hasAtan                   = true;
         }
         switch (op)
         {
@@ -2149,24 +1991,15 @@ bool GenMetalTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
                 const TFunction &func = *aggregateNode->getFunction();
                 emitNameOf(func);
                 //'@' symbol in name specifices a macro substitution marker.
-                if(!func.name().contains("@"))
+                if (!func.name().contains("@"))
                 {
                     emitArgList("(", ")");
                 }
                 else
                 {
-                    mTemporarilyDisableSemicolon = true; //Disable semicolon for macro substitution.
+                    mTemporarilyDisableSemicolon =
+                        true;  // Disable semicolon for macro substitution.
                 }
-                return false;
-            }
-
-            case TOperator::EOpCallBuiltInFunction:
-            {
-                const TFunction &func = *aggregateNode->getFunction();
-                auto it               = mFuncToName.find(func.name());
-                ASSERT(it != mFuncToName.end());
-                EmitName(mOut, it->second);
-                emitArgList("(", ")");
                 return false;
             }
 
@@ -2201,16 +2034,14 @@ bool GenMetalTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
                             {
                                 mOut << opName;
                                 groupedTraverse(operandNode);
-                                return false;
                             }
                             else
                             {
                                 groupedTraverse(operandNode);
                                 mOut << opName;
-                                return false;
                             }
+                            return false;
                         }
-                        break;
 
                         case 2:
                         {
@@ -2221,12 +2052,20 @@ bool GenMetalTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
                             groupedTraverse(rightNode);
                             return false;
                         }
-                        break;
 
                         default:
-                            LOGIC_ERROR();
+                            UNREACHABLE();
                             return false;
                     }
+                }
+                else if (opName == nullptr)
+                {
+                    const TFunction &func = *aggregateNode->getFunction();
+                    auto it               = mFuncToName.find(func.name());
+                    ASSERT(it != mFuncToName.end());
+                    EmitName(mOut, it->second);
+                    emitArgList("(", ")");
+                    return false;
                 }
                 else
                 {
@@ -2392,9 +2231,9 @@ bool GenMetalTraverser::visitDeclaration(Visit, TIntermDeclaration *declNode)
     else if (TIntermBinary *initNode = node.getAsBinaryNode())
     {
         ASSERT(initNode->getOp() == TOperator::EOpInitialize);
-        TIntermSymbol *symbolNode = initNode->getLeft()->getAsSymbolNode();
-        TIntermTyped *valueNode   = initNode->getRight()->getAsTyped();
-        ASSERT(symbolNode && valueNode);
+        TIntermSymbol *leftSymbolNode = initNode->getLeft()->getAsSymbolNode();
+        TIntermTyped *valueNode       = initNode->getRight()->getAsTyped();
+        ASSERT(leftSymbolNode && valueNode);
 
         if (getRootNode() == getParentBlock())
         {
@@ -2406,7 +2245,7 @@ bool GenMetalTraverser::visitDeclaration(Visit, TIntermDeclaration *declNode)
             mOut << "constant ";
         }
 
-        const TVariable &var = symbolNode->variable();
+        const TVariable &var = leftSymbolNode->variable();
         const Name varName(var);
 
         if (ExpressionContainsName(varName, *valueNode))
@@ -2420,7 +2259,7 @@ bool GenMetalTraverser::visitDeclaration(Visit, TIntermDeclaration *declNode)
     }
     else
     {
-        LOGIC_ERROR();
+        UNREACHABLE();
     }
 
     return false;
@@ -2544,7 +2383,7 @@ bool GenMetalTraverser::visitBranch(Visit, TIntermBranch *branchNode)
 
         case TOperator::EOpReturn:
         {
-            if(isTraversingVertexMain)
+            if (isTraversingVertexMain)
             {
                 mOut << "#if TRANSFORM_FEEDBACK_ENABLED\n";
                 emitIndentation();
@@ -2560,7 +2399,7 @@ bool GenMetalTraverser::visitBranch(Visit, TIntermBranch *branchNode)
                 exprNode->traverse(this);
                 mOut << ";";
             }
-            if(isTraversingVertexMain)
+            if (isTraversingVertexMain)
             {
                 mOut << "\n";
                 emitIndentation();
@@ -2586,7 +2425,7 @@ bool GenMetalTraverser::visitBranch(Visit, TIntermBranch *branchNode)
 
         default:
         {
-            LOGIC_ERROR();
+            UNREACHABLE();
         }
     }
 
@@ -2600,13 +2439,14 @@ bool sh::EmitMetal(TCompiler &compiler,
                    IdGen &idGen,
                    const PipelineStructs &pipelineStructs,
                    SymbolEnv &symbolEnv,
-                   const ProgramPreludeConfig &ppc)
+                   const ProgramPreludeConfig &ppc,
+                   TSymbolTable *symbolTable)
 {
     TInfoSinkBase &out = compiler.getInfoSink().obj;
 
     {
         ++emitMetalCallCount;
-        auto filenameProto = readStringEnvVar("GMD_FIXED_EMIT");
+        std::string filenameProto = angle::GetEnvironmentVar("GMD_FIXED_EMIT");
         if (!filenameProto.empty())
         {
             if (filenameProto != "/dev/null")
@@ -2652,12 +2492,12 @@ bool sh::EmitMetal(TCompiler &compiler,
 
     {
 #if defined(ANGLE_ENABLE_ASSERTS)
-        DebugSink outWrapper(out, readBoolEnvVar("GMD_STDOUT"));
-        outWrapper.watch(readStringEnvVar("GMD_WATCH_STRING"));
+        DebugSink outWrapper(out, angle::GetBoolEnvironmentVar("GMD_STDOUT"));
+        outWrapper.watch(angle::GetEnvironmentVar("GMD_WATCH_STRING"));
 #else
         TInfoSinkBase &outWrapper = out;
 #endif
-        GenMetalTraverser gen(compiler, outWrapper, idGen, pipelineStructs, symbolEnv);
+        GenMetalTraverser gen(compiler, outWrapper, idGen, pipelineStructs, symbolEnv, symbolTable);
         root.traverse(&gen);
     }
 

@@ -37,7 +37,7 @@ namespace WebCore {
 
 static Seconds timestampResolution { 5_s };
 
-typedef WTF::HashMap<RegistrableDomain, unsigned, RegistrableDomain::RegistrableDomainHash, HashTraits<RegistrableDomain>, HashTraits<unsigned>>::KeyValuePairType ResourceLoadStatisticsValue;
+typedef HashMap<RegistrableDomain, unsigned, RegistrableDomain::RegistrableDomainHash, HashTraits<RegistrableDomain>, HashTraits<unsigned>>::KeyValuePairType ResourceLoadStatisticsValue;
 
 static void encodeHashSet(KeyedEncoder& encoder, const String& label,  const String& key, const HashSet<RegistrableDomain>& hashSet)
 {
@@ -439,7 +439,7 @@ static void appendScreenAPIOptionSet(StringBuilder& builder, const OptionSet<Res
 }
 #endif
 
-static bool hasHadRecentUserInteraction(WTF::Seconds interactionTimeSeconds)
+static bool hasHadRecentUserInteraction(Seconds interactionTimeSeconds)
 {
     return interactionTimeSeconds > Seconds(0) && WallTime::now().secondsSinceEpoch() - interactionTimeSeconds < 24_h;
 }

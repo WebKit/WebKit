@@ -236,18 +236,18 @@ bool AccessibilityMathMLElement::isMathMultiscriptObject(AccessibilityMathMultis
     return false;
 }
 
-AXCoreObject* AccessibilityMathMLElement::mathRadicandObject()
+std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityMathMLElement::mathRadicand() 
 {
     if (!isMathRoot())
-        return nullptr;
+        return std::nullopt;
 
-    // For MathSquareRoot, we actually return the first child of the base.
-    // See also https://webkit.org/b/146452
     const auto& children = this->children();
-    if (children.size() < 1)
-        return nullptr;
+    if (!children.size())
+        return std::nullopt;
 
-    return children[0].get();
+    if (isMathSquareRoot())
+        return children;
+    return { { children[0] } };
 }
 
 AXCoreObject* AccessibilityMathMLElement::mathRootIndexObject()
@@ -307,12 +307,11 @@ AXCoreObject* AccessibilityMathMLElement::mathOverObject()
         return nullptr;
 
     const auto& children = this->children();
-    if (children.size() < 2)
-        return nullptr;
 
-    if (node()->hasTagName(MathMLNames::moverTag))
+    if (children.size() >= 2 && node()->hasTagName(MathMLNames::moverTag))
         return children[1].get();
-    if (node()->hasTagName(MathMLNames::munderoverTag))
+
+    if (children.size() >= 3 && node()->hasTagName(MathMLNames::munderoverTag))
         return children[2].get();
 
     return nullptr;

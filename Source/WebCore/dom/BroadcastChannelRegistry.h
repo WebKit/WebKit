@@ -32,14 +32,14 @@
 namespace WebCore {
 
 class SerializedScriptValue;
-struct SecurityOriginData;
+struct ClientOrigin;
 
 class BroadcastChannelRegistry : public RefCounted<BroadcastChannelRegistry> {
 public:
     virtual ~BroadcastChannelRegistry() { }
-    virtual void registerChannel(const SecurityOriginData&, const String& name, BroadcastChannelIdentifier) = 0;
-    virtual void unregisterChannel(const SecurityOriginData&, const String& name, BroadcastChannelIdentifier) = 0;
-    virtual void postMessage(const SecurityOriginData&, const String& name, BroadcastChannelIdentifier source, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) = 0;
+    virtual void registerChannel(const ClientOrigin&, const String& name, BroadcastChannelIdentifier) = 0;
+    virtual void unregisterChannel(const ClientOrigin&, const String& name, BroadcastChannelIdentifier) = 0;
+    virtual void postMessage(const ClientOrigin&, const String& name, BroadcastChannelIdentifier source, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) = 0;
 };
 
 } // namespace WebCore

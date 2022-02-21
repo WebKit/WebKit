@@ -68,8 +68,13 @@ struct WebsiteDataStoreParameters {
     String cacheStorageDirectory;
     SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
 
-    uint64_t perOriginStorageQuota { WebCore::StorageQuotaManager::defaultQuota() };
-    uint64_t perThirdPartyOriginStorageQuota { WebCore::StorageQuotaManager::defaultThirdPartyQuota() };
+    String generalStorageDirectory;
+    SandboxExtension::Handle generalStorageDirectoryHandle;
+
+    uint64_t perOriginStorageQuota;
+    uint64_t perThirdPartyOriginStorageQuota;
+
+    bool shouldUseCustomStoragePaths { false };
 };
 
 } // namespace WebKit

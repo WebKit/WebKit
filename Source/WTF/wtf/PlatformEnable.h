@@ -160,7 +160,6 @@
 #define ENABLE_META_VIEWPORT 0
 #endif
 
-
 #if !defined(ENABLE_FILE_REPLACEMENT)
 #define ENABLE_FILE_REPLACEMENT 0
 #endif
@@ -344,12 +343,12 @@
 #define ENABLE_INSPECTOR_TELEMETRY 0
 #endif
 
-#if !defined(ENABLE_LAYOUT_FORMATTING_CONTEXT)
-#define ENABLE_LAYOUT_FORMATTING_CONTEXT 0
+#if !defined(ENABLE_LAYER_BASED_SVG_ENGINE)
+#define ENABLE_LAYER_BASED_SVG_ENGINE 0
 #endif
 
-#if !defined(ENABLE_LETTERPRESS)
-#define ENABLE_LETTERPRESS 0
+#if !defined(ENABLE_LAYOUT_FORMATTING_CONTEXT)
+#define ENABLE_LAYOUT_FORMATTING_CONTEXT 0
 #endif
 
 #if !defined(ENABLE_MATHML)
@@ -362,6 +361,10 @@
 
 #if !defined(ENABLE_MEDIA_CONTROLS_SCRIPT)
 #define ENABLE_MEDIA_CONTROLS_SCRIPT 0
+#endif
+
+#if !defined(ENABLE_MEDIA_RECORDER)
+#define ENABLE_MEDIA_RECORDER 0
 #endif
 
 #if !defined(ENABLE_MEDIA_SOURCE)
@@ -390,10 +393,6 @@
 
 #if !defined(ENABLE_MOUSE_FORCE_EVENTS)
 #define ENABLE_MOUSE_FORCE_EVENTS 1
-#endif
-
-#if !defined(ENABLE_NETSCAPE_PLUGIN_API)
-#define ENABLE_NETSCAPE_PLUGIN_API 1
 #endif
 
 #if !defined(ENABLE_NETSCAPE_PLUGIN_METADATA_CACHE)
@@ -455,10 +454,6 @@
 
 #if !defined(ENABLE_SEPARATED_WX_HEAP)
 #define ENABLE_SEPARATED_WX_HEAP 0
-#endif
-
-#if !defined(ENABLE_SMOOTH_SCROLLING)
-#define ENABLE_SMOOTH_SCROLLING 0
 #endif
 
 #if !defined(ENABLE_SPEECH_SYNTHESIS)
@@ -553,6 +548,14 @@
 #define ENABLE_FILE_SHARE 1
 #endif
 
+#if !defined(ENABLE_WEBXR)
+#define ENABLE_WEBXR 0
+#endif
+
+#if !defined(ENABLE_WEBXR_HANDS)
+#define ENABLE_WEBXR_HANDS 0
+#endif
+
 /*
  * Enable this to put each IsoHeap and other allocation categories into their own malloc heaps, so that tools like vmmap can show how big each heap is.
  * Turn BENABLE_MALLOC_HEAP_BREAKDOWN on in bmalloc together when using this.
@@ -577,7 +580,7 @@
 #endif
 
 /* The JIT is enabled by default on all x86-64 & ARM64 platforms. */
-#if !defined(ENABLE_JIT) && (CPU(X86_64) || CPU(ARM64)) && !CPU(APPLE_ARMV7K)
+#if !defined(ENABLE_JIT) && (CPU(X86_64) || (CPU(ARM64) && CPU(ADDRESS64)))
 #define ENABLE_JIT 1
 #endif
 
@@ -601,7 +604,7 @@
 #endif
 
 #if !defined(ENABLE_C_LOOP)
-#if ENABLE(JIT) || CPU(X86_64) || (CPU(ARM64) && !defined(__ILP32__))
+#if ENABLE(JIT) || CPU(X86_64) || CPU(ARM64)
 #define ENABLE_C_LOOP 0
 #else
 #define ENABLE_C_LOOP 1
@@ -622,15 +625,19 @@
 /* If possible, try to enable a disassembler. This is optional. We proceed in two
    steps: first we try to find some disassembler that we can use, and then we
    decide if the high-level disassembler API can be enabled. */
-#if !defined(ENABLE_UDIS86) && ENABLE(JIT) && CPU(X86_64) && !USE(CAPSTONE)
-#define ENABLE_UDIS86 1
+#if !defined(ENABLE_ZYDIS) && ENABLE(JIT) && CPU(X86_64) && !USE(CAPSTONE)
+#define ENABLE_ZYDIS 1
 #endif
 
 #if !defined(ENABLE_ARM64_DISASSEMBLER) && ENABLE(JIT) && CPU(ARM64) && !USE(CAPSTONE)
 #define ENABLE_ARM64_DISASSEMBLER 1
 #endif
 
-#if !defined(ENABLE_DISASSEMBLER) && (ENABLE(UDIS86) || ENABLE(ARM64_DISASSEMBLER) || (ENABLE(JIT) && USE(CAPSTONE)))
+#if !defined(ENABLE_RISCV64_DISASSEMBLER) && ENABLE(JIT) && CPU(RISCV64) && !USE(CAPSTONE)
+#define ENABLE_RISCV64_DISASSEMBLER 1
+#endif
+
+#if !defined(ENABLE_DISASSEMBLER) && (ENABLE(ZYDIS) || ENABLE(ARM64_DISASSEMBLER) || ENABLE(RISCV64_DISASSEMBLER) || (ENABLE(JIT) && USE(CAPSTONE)))
 #define ENABLE_DISASSEMBLER 1
 #endif
 
@@ -746,16 +753,17 @@
 #endif
 
 /* Enable JIT'ing Regular Expressions that have nested parenthesis . */
-#if ENABLE(YARR_JIT) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
+#if ENABLE(YARR_JIT) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)) || CPU(RISCV64))
 #define ENABLE_YARR_JIT_ALL_PARENS_EXPRESSIONS 1
+#define ENABLE_YARR_JIT_REGEXP_TEST_INLINE 1
 #endif
 
 /* Enable JIT'ing Regular Expressions that have nested back references. */
-#if ENABLE(YARR_JIT) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
+#if ENABLE(YARR_JIT) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)) || CPU(RISCV64))
 #define ENABLE_YARR_JIT_BACKREFERENCES 1
 #endif
 
-#if CPU(ARM64) || CPU(X86_64)
+#if ENABLE(YARR_JIT) && (CPU(ARM64) || CPU(X86_64) || CPU(RISCV64))
 #define ENABLE_YARR_JIT_UNICODE_EXPRESSIONS 1
 #endif
 
@@ -784,7 +792,7 @@
 #define ENABLE_EXCEPTION_SCOPE_VERIFICATION ASSERT_ENABLED
 #endif
 
-#if ENABLE(DFG_JIT) && HAVE(MACHINE_CONTEXT) && (CPU(X86_64) || CPU(ARM64))
+#if ENABLE(DFG_JIT) && HAVE(MACHINE_CONTEXT) && (CPU(X86_64) || CPU(ARM64) || CPU(RISCV64))
 #define ENABLE_SIGNAL_BASED_VM_TRAPS 1
 #endif
 
@@ -872,6 +880,10 @@
 #define ENABLE_WHEEL_EVENT_LATCHING 1
 #endif
 
+#if PLATFORM(MAC)
+#define ENABLE_MOMENTUM_EVENT_DISPATCHER 1
+#endif
+
 #if !defined(ENABLE_SCROLLING_THREAD)
 #if USE(NICOSIA)
 #define ENABLE_SCROLLING_THREAD 1
@@ -886,6 +898,10 @@
 */
 #if !defined(ENABLE_LLINT_EMBEDDED_OPCODE_ID) && !ENABLE(C_LOOP) && !COMPILER(MSVC) && (CPU(X86) || CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && OS(DARWIN)) || CPU(RISCV64))
 #define ENABLE_LLINT_EMBEDDED_OPCODE_ID 1
+#endif
+
+#if !defined(ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+#define ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3 0
 #endif
 
 
@@ -914,6 +930,10 @@
 #error "ENABLE(OFFSCREEN_CANVAS_IN_WORKERS) requires ENABLE(OFFSCREEN_CANVAS)"
 #endif
 
+#if ENABLE(MEDIA_RECORDER) && !ENABLE(MEDIA_STREAM)
+#error "ENABLE(MEDIA_RECORDER) requires ENABLE(MEDIA_STREAM)"
+#endif
+
 #if USE(CG)
 
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3) && !HAVE(CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE)
@@ -924,4 +944,18 @@
 #error "ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB) requires HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE) on platforms using CoreGraphics"
 #endif
 
+#endif
+
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3) && !ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+#error "ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3) requires ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)"
+#endif
+
+#if ENABLE(WEBXR_HANDS) && !ENABLE(WEBXR)
+#error "ENABLE(WEBXR_HANDS) requires ENABLE(WEBXR)"
+#endif
+
+#if ENABLE(SERVICE_WORKER) && ENABLE(NOTIFICATIONS)
+#if !defined(ENABLE_NOTIFICATION_EVENT)
+#define ENABLE_NOTIFICATION_EVENT 1
+#endif
 #endif

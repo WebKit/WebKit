@@ -29,6 +29,8 @@
 #include "IsoSharedPage.h"
 #include "StaticPerProcess.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 class AllIsoHeaps;
@@ -71,4 +73,4 @@ DECLARE_STATIC_PER_PROCESS_STORAGE(IsoSharedHeap);
 
 } // namespace bmalloc
 
-
+#endif

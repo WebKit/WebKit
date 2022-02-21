@@ -54,22 +54,22 @@ Ref<HTMLFormControlsCollection> HTMLFormControlsCollection::create(ContainerNode
 
 HTMLFormControlsCollection::~HTMLFormControlsCollection() = default;
 
-std::optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormControlsCollection::namedItemOrItems(const String& name) const
+std::optional<std::variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormControlsCollection::namedItemOrItems(const String& name) const
 {
     auto namedItems = this->namedItems(name);
 
     if (namedItems.isEmpty())
         return std::nullopt;
     if (namedItems.size() == 1)
-        return Variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<Element> { WTFMove(namedItems[0]) } };
+        return std::variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<Element> { WTFMove(namedItems[0]) } };
 
-    return Variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<RadioNodeList> { ownerNode().radioNodeList(name) } };
+    return std::variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<RadioNodeList> { ownerNode().radioNodeList(name) } };
 }
 
 static unsigned findFormAssociatedElement(const Vector<WeakPtr<HTMLElement>>& elements, const Element& element)
 {
     for (unsigned i = 0; i < elements.size(); ++i) {
-        auto currentElement = makeRefPtr(elements[i].get());
+        RefPtr currentElement = elements[i].get();
         ASSERT(currentElement);
         auto* associatedElement = currentElement->asFormAssociatedElement();
         ASSERT(associatedElement);
@@ -92,7 +92,7 @@ HTMLElement* HTMLFormControlsCollection::customElementAfter(Element* current) co
         start = findFormAssociatedElement(elements, *current) + 1;
 
     for (unsigned i = start; i < elements.size(); ++i) {
-        auto element = makeRefPtr(elements[i].get());
+        RefPtr element = elements[i].get();
         ASSERT(element);
         ASSERT(element->asFormAssociatedElement());
         if (element->asFormAssociatedElement()->isEnumeratable()) {
@@ -120,7 +120,7 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     for (auto& weakElement : ownerNode().unsafeAssociatedElements()) {
-        auto element = makeRefPtr(weakElement.get());
+        RefPtr element { weakElement.get() };
         ASSERT(element);
         auto* associatedElement = element->asFormAssociatedElement();
         ASSERT(associatedElement);

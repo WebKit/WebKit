@@ -102,7 +102,9 @@ Ref<DatabaseContext> DatabaseManager::databaseContext(Document& document)
 {
     if (auto databaseContext = document.databaseContext())
         return *databaseContext;
-    return adoptRef(*new DatabaseContext(document));
+    auto context = adoptRef(*new DatabaseContext(document));
+    context->suspendIfNeeded();
+    return context;
 }
 
 #if LOG_DISABLED

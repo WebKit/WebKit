@@ -34,7 +34,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-#define PAS_BASIC_PAGE_BASE_CONFIG_FORWARD_DECLARATIONS(name)     \
+#define PAS_BASIC_PAGE_BASE_CONFIG_FORWARD_DECLARATIONS(name) \
     static PAS_ALWAYS_INLINE pas_page_base* \
     name ## _page_header_for_boundary(void* boundary); \
     static PAS_ALWAYS_INLINE void* \
@@ -43,7 +43,7 @@ PAS_BEGIN_EXTERN_C;
     name ## _page_header_for_boundary_remote(pas_enumerator* enumerator, void* boundary); \
     \
     PAS_API pas_page_base* name ## _create_page_header( \
-        void* boundary, pas_lock_hold_mode heap_lock_hold_mode); \
+        void* boundary, pas_page_kind kind, pas_lock_hold_mode heap_lock_hold_mode); \
     PAS_API void name ## _destroy_page_header( \
         pas_page_base* page, pas_lock_hold_mode heap_lock_hold_mode)
 

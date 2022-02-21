@@ -32,7 +32,7 @@
 #import "Logging.h"
 #import "ObjCObjectGraph.h"
 #import "SandboxUtilities.h"
-#import "SharedBufferDataReference.h"
+#import "SharedBufferCopy.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKTypeRefWrapper.h"
@@ -44,6 +44,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
@@ -52,6 +53,7 @@
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
+#import "WebInspectorUtilities.h"
 #import <JavaScriptCore/RemoteInspectorConstants.h>
 #endif
 
@@ -206,10 +208,7 @@ bool WebProcessProxy::shouldEnableRemoteInspector()
 #if PLATFORM(IOS_FAMILY)
     return CFPreferencesGetAppIntegerValue(WIRRemoteInspectorEnabledKey, WIRRemoteInspectorDomainName, nullptr);
 #else
-    auto sandboxBrokerBundleIdentifier = CFSTR("com.apple.Safari.SandboxBroker");
-    if (WebCore::applicationBundleIdentifier() == "com.apple.SafariTechnologyPreview"_s)
-        sandboxBrokerBundleIdentifier = CFSTR("com.apple.SafariTechnologyPreview.SandboxBroker");
-    return CFPreferencesGetAppIntegerValue(CFSTR("ShowDevelopMenu"), sandboxBrokerBundleIdentifier, nullptr);
+    return CFPreferencesGetAppIntegerValue(CFSTR("ShowDevelopMenu"), bundleIdentifierForSandboxBroker(), nullptr);
 #endif
 }
 
@@ -295,7 +294,7 @@ void WebProcessProxy::sendAudioComponentRegistrations()
     if (!PAL::isAudioToolboxCoreFrameworkAvailable() || !PAL::canLoad_AudioToolboxCore_AudioComponentFetchServerRegistrations())
         return;
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [protectedThis = makeRef(*this)] () mutable {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [weakThis = WeakPtr { *this }] () mutable {
         CFDataRef registrations { nullptr };
 
         WebCore::registerOpusDecoderIfNeeded();
@@ -303,9 +302,12 @@ void WebProcessProxy::sendAudioComponentRegistrations()
         if (noErr != AudioComponentFetchServerRegistrations(&registrations) || !registrations)
             return;
 
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), registrations = adoptCF(registrations)] () mutable {
+        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), registrations = adoptCF(registrations)] () {
+            if (!weakThis)
+                return;
+
             auto registrationData = WebCore::SharedBuffer::create(registrations.get());
-            protectedThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations({ registrationData }), 0);
+            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferCopy(WTFMove(registrationData))), 0);
         });
     });
 }

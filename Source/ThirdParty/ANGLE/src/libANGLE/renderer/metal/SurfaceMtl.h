@@ -76,11 +76,11 @@ class SurfaceMtl : public SurfaceImpl
     angle::Result initializeContents(const gl::Context *context,
                                      const gl::ImageIndex &imageIndex) override;
 
-    const mtl::TextureRef &getColorTexture()  { return mColorTexture; }
+    const mtl::TextureRef &getColorTexture() { return mColorTexture; }
     const mtl::Format &getColorFormat() const { return mColorFormat; }
-    int getSamples() const  { return mSamples; }
+    int getSamples() const { return mSamples; }
 
-    bool hasRobustResourceInit() const  { return mRobustResourceInit; }
+    bool hasRobustResourceInit() const { return mRobustResourceInit; }
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
@@ -161,6 +161,7 @@ class WindowSurfaceMtl : public SurfaceMtl
     // implicitly calls ensureCurrentDrawableObtained().
     angle::Result ensureColorTextureReadyForReadPixels(const gl::Context *context);
     bool preserveBuffer() const { return mRetainBuffer; }
+
   private:
     angle::Result swapImpl(const gl::Context *context);
     angle::Result obtainNextDrawable(const gl::Context *context);

@@ -24,9 +24,11 @@
 
 #ifndef EGL_ANGLE_d3d_texture_client_buffer
 #define EGL_ANGLE_d3d_texture_client_buffer 1
-#define EGL_D3D_TEXTURE_ANGLE             0x33A3
-#define EGL_TEXTURE_OFFSET_X_ANGLE        0x3490
-#define EGL_TEXTURE_OFFSET_Y_ANGLE        0x3491
+#define EGL_D3D_TEXTURE_ANGLE 0x33A3
+#define EGL_TEXTURE_OFFSET_X_ANGLE 0x3490
+#define EGL_TEXTURE_OFFSET_Y_ANGLE 0x3491
+#define EGL_D3D11_TEXTURE_PLANE_ANGLE 0x3492
+#define EGL_D3D11_TEXTURE_ARRAY_SLICE_ANGLE 0x3493
 #endif /* EGL_ANGLE_d3d_texture_client_buffer */
 
 #ifndef EGL_ANGLE_software_display
@@ -113,10 +115,10 @@
 #define EGL_PLATFORM_ANGLE_DEVICE_TYPE_EGL_ANGLE 0x348E
 #endif /* EGL_ANGLE_platform_angle_device_type_egl_angle */
 
-#ifndef EGL_ANGLE_platform_angle_context_virtualization
-#define EGL_ANGLE_platform_angle_context_virtualization 1
-#define EGL_PLATFORM_ANGLE_CONTEXT_VIRTUALIZATION_ANGLE 0x3481
-#endif /* EGL_ANGLE_platform_angle_context_virtualization */
+#ifndef EGL_ANGLE_context_virtualization
+#define EGL_ANGLE_context_virtualization 1
+#define EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE 0x3481
+#endif /* EGL_ANGLE_context_virtualization */
 
 #ifndef EGL_ANGLE_platform_angle_device_context_volatile_eagl
 #define EGL_ANGLE_platform_angle_device_context_volatile_eagl 1
@@ -132,11 +134,6 @@
 #define EGL_ANGLE_x11_visual
 #define EGL_X11_VISUAL_ID_ANGLE 0x33A3
 #endif /* EGL_ANGLE_x11_visual */
-
-#ifndef EGL_ANGLE_flexible_surface_compatibility
-#define EGL_ANGLE_flexible_surface_compatibility 1
-#define EGL_FLEXIBLE_SURFACE_COMPATIBILITY_SUPPORTED_ANGLE 0x33A6
-#endif /* EGL_ANGLE_flexible_surface_compatibility */
 
 #ifndef EGL_ANGLE_surface_orientation
 #define EGL_ANGLE_surface_orientation
@@ -179,6 +176,11 @@ EGLAPI EGLBoolean EGLAPIENTRY eglStreamPostD3DTextureANGLE(EGLDisplay dpy, EGLSt
 #define EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM 0x33AD
 #endif /* EGL_CHROMIUM_create_context_bind_generates_resource */
 
+#ifndef EGL_ANGLE_metal_create_context_ownership_identity
+#define EGL_ANGLE_metal_create_context_ownership_identity 1
+#define EGL_CONTEXT_METAL_OWNERSHIP_IDENTITY_ANGLE 0x34D2
+#endif /* EGL_ANGLE_metal_create_context_ownership_identity */
+
 #ifndef EGL_ANGLE_create_context_client_arrays
 #define EGL_ANGLE_create_context_client_arrays 1
 #define EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE 0x3452
@@ -204,12 +206,12 @@ EGLAPI EGLBoolean EGLAPIENTRY eglReleaseDeviceANGLE(EGLDeviceEXT device);
 typedef EGLint (EGLAPIENTRYP PFNEGLPROGRAMCACHEGETATTRIBANGLEPROC) (EGLDisplay dpy, EGLenum attrib);
 typedef void (EGLAPIENTRYP PFNEGLPROGRAMCACHEQUERYANGLEPROC) (EGLDisplay dpy, EGLint index, void *key, EGLint *keysize, void *binary, EGLint *binarysize);
 typedef void (EGLAPIENTRYP PFNEGLPROGRAMCACHEPOPULATEANGLEPROC) (EGLDisplay dpy, const void *key, EGLint keysize, const void *binary, EGLint binarysize);
-typedef EGLint (EGLAPIENTRYP PFNEGLPROGRAMCACHERESIZEANGLEPROC) (EGLDisplay dpy, EGLint limit, EGLenum mode);
+typedef EGLint (EGLAPIENTRYP PFNEGLPROGRAMCACHERESIZEANGLEPROC) (EGLDisplay dpy, EGLint limit, EGLint mode);
 #ifdef EGL_EGLEXT_PROTOTYPES
 EGLAPI EGLint EGLAPIENTRY eglProgramCacheGetAttribANGLE(EGLDisplay dpy, EGLenum attrib);
 EGLAPI void EGLAPIENTRY eglProgramCacheQueryANGLE(EGLDisplay dpy, EGLint index, void *key, EGLint *keysize, void *binary, EGLint *binarysize);
 EGLAPI void EGLAPIENTRY eglProgramCachePopulateANGLE(EGLDisplay dpy, const void *key, EGLint keysize, const void *binary, EGLint binarysize);
-EGLAPI EGLint EGLAPIENTRY eglProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limit, EGLenum mode);
+EGLAPI EGLint EGLAPIENTRY eglProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limit, EGLint mode);
 #endif
 #endif /* EGL_ANGLE_program_cache_control */
 
@@ -336,10 +338,49 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffersWithFrameTokenANGLE(EGLDisplay dpy, 
 #define EGL_EAGL_CONTEXT_ANGLE 0x348C
 #endif
 
+#ifndef EGL_ANGLE_device_metal
+#define EGL_ANGLE_device_metal 1
+#define EGL_METAL_DEVICE_ANGLE 0x34A6
+#endif /* EGL_ANGLE_device_metal */
+
 #ifndef EGL_ANGLE_display_semaphore_share_group
 #define EGL_ANGLE_display_semaphore_share_group 1
 #define EGL_DISPLAY_SEMAPHORE_SHARE_GROUP_ANGLE 0x348D
 #endif /* EGL_ANGLE_display_semaphore_share_group */
+
+#ifndef EGL_ANGLE_external_context_and_surface
+#define EGL_ANGLE_external_context_and_surface 1
+#define EGL_EXTERNAL_CONTEXT_ANGLE 0x348E
+#define EGL_EXTERNAL_SURFACE_ANGLE 0x348F
+#define EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE 0x3490
+#endif /* EGL_ANGLE_external_context_and_surface */
+
+#ifndef EGL_ANGLE_create_surface_swap_interval
+#define EGL_ANGLE_create_surface_swap_interval 1
+#define EGL_SWAP_INTERVAL_ANGLE 0x322F
+#endif /* EGL_ANGLE_create_surface_swap_interval */
+
+#ifndef EGL_ANGLE_device_vulkan
+#define EGL_ANGLE_device_vulkan 1
+#define EGL_VULKAN_VERSION_ANGLE 0x34A8
+#define EGL_VULKAN_INSTANCE_ANGLE 0x34A9
+#define EGL_VULKAN_INSTANCE_EXTENSIONS_ANGLE 0x34AA
+#define EGL_VULKAN_PHYSICAL_DEVICE_ANGLE 0x34AB
+#define EGL_VULKAN_DEVICE_ANGLE 0x34AC
+#define EGL_VULKAN_DEVICE_EXTENSIONS_ANGLE 0x34AD
+#define EGL_VULKAN_FEATURES_ANGLE 0x34AE
+#define EGL_VULKAN_QUEUE_ANGLE 0x34AF
+#define EGL_VULKAN_QUEUE_FAMILIY_INDEX_ANGLE 0x34D0
+#define EGL_VULKAN_GET_INSTANCE_PROC_ADDR 0x34D1
+#endif /* EGL_ANGLE_device_vulkan */
+
+#ifndef EGL_ANGLE_vulkan_image
+#define EGL_ANGLE_vulkan_image
+#define EGL_VULKAN_IMAGE_ANGLE 0x34D3
+#define EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE 0x34D4
+#define EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE 0x34D5
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLEXPORTVKIMAGEANGLEPROC)(EGLDisplay dpy, EGLImage image, void* vk_image, void* vk_image_create_info);
+#endif /* EGL_ANGLE_vulkan_image */
 
 // clang-format on
 

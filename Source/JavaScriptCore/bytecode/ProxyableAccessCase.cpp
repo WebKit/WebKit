@@ -55,9 +55,9 @@ Ref<AccessCase> ProxyableAccessCase::clone() const
     return result;
 }
 
-void ProxyableAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma) const
+void ProxyableAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Indenter& indent) const
 {
-    Base::dumpImpl(out, comma);
+    Base::dumpImpl(out, comma, indent);
     out.print(comma, "viaProxy = ", viaProxy());
     out.print(comma, "additionalSet = ", RawPointer(additionalSet()));
 }

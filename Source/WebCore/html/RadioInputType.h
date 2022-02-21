@@ -40,6 +40,8 @@ class RadioInputType final : public BaseCheckableInputType {
 public:
     explicit RadioInputType(HTMLInputElement& element) : BaseCheckableInputType(Type::Radio, element) { }
 
+    static void forEachButtonInDetachedGroup(ContainerNode& rootName, const String& groupName, const Function<bool(HTMLInputElement&)>&);
+
 private:
     const AtomString& formControlType() const final;
     bool valueMissing(const String&) const final;
@@ -52,6 +54,7 @@ private:
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;
     bool matchesIndeterminatePseudoClass() const final;
+    void willUpdateCheckedness(bool nowChecked) final;
 };
 
 } // namespace WebCore

@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: The X-Frame-Option 'deny' supplied in a <meta> element was ignored. X-Frame-Options may only be provided by an HTTP header sent with the document.
-

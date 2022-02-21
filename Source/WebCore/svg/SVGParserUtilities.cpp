@@ -149,7 +149,7 @@ std::optional<float> parseNumber(StringParsingBuffer<UChar>& buffer, SuffixSkipp
     return genericParseNumber(buffer, skip);
 }
 
-std::optional<float> parseNumber(const StringView& string, SuffixSkippingPolicy skip)
+std::optional<float> parseNumber(StringView string, SuffixSkippingPolicy skip)
 {
     return readCharactersForParsing(string, [skip](auto buffer) -> std::optional<float> {
         auto result = genericParseNumber(buffer, skip);
@@ -192,7 +192,7 @@ std::optional<bool> parseArcFlag(StringParsingBuffer<UChar>& buffer)
     return genericParseArcFlag(buffer);
 }
 
-std::optional<std::pair<float, float>> parseNumberOptionalNumber(const StringView& string)
+std::optional<std::pair<float, float>> parseNumberOptionalNumber(StringView string)
 {
     if (string.isEmpty())
         return std::nullopt;
@@ -216,7 +216,7 @@ std::optional<std::pair<float, float>> parseNumberOptionalNumber(const StringVie
     });
 }
 
-std::optional<FloatPoint> parsePoint(const StringView& string)
+std::optional<FloatPoint> parsePoint(StringView string)
 {
     if (string.isEmpty())
         return std::nullopt;
@@ -236,7 +236,7 @@ std::optional<FloatPoint> parsePoint(const StringView& string)
     });
 }
 
-std::optional<FloatRect> parseRect(const StringView& string)
+std::optional<FloatRect> parseRect(StringView string)
 {
     return readCharactersForParsing(string, [](auto buffer) -> std::optional<FloatRect> {
         skipOptionalSVGSpaces(buffer);
@@ -258,7 +258,7 @@ std::optional<FloatRect> parseRect(const StringView& string)
     });
 }
 
-std::optional<HashSet<String>> parseGlyphName(const StringView& string)
+std::optional<HashSet<String>> parseGlyphName(StringView string)
 {
     // FIXME: Parsing error detection is missing.
 
@@ -361,7 +361,7 @@ template<typename CharacterType> static std::optional<UnicodeRange> parseUnicode
     return range;
 }
 
-std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(const StringView& string)
+std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(StringView string)
 {
     // FIXME: Parsing error detection is missing.
 

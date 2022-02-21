@@ -21,7 +21,7 @@ TranslatorESSL::TranslatorESSL(sh::GLenum type, ShShaderSpec spec)
 void TranslatorESSL::initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
                                                  ShCompileOptions compileOptions)
 {
-    if (compileOptions & SH_EMULATE_ATAN2_FLOAT_FUNCTION)
+    if ((compileOptions & SH_EMULATE_ATAN2_FLOAT_FUNCTION) != 0)
     {
         InitBuiltInAtanFunctionEmulatorForGLSLWorkarounds(emu);
     }
@@ -44,11 +44,7 @@ bool TranslatorESSL::translate(TIntermBlock *root,
 
     // Write pragmas after extensions because some drivers consider pragmas
     // like non-preprocessor tokens.
-    writePragma(compileOptions);
-
-    bool precisionEmulation = false;
-    if (!emulatePrecisionIfNeeded(root, sink, &precisionEmulation, SH_ESSL_OUTPUT))
-        return false;
+    WritePragma(sink, compileOptions, getPragma());
 
     if (!RecordConstantPrecision(this, root, &getSymbolTable()))
     {
@@ -76,9 +72,6 @@ bool TranslatorESSL::translate(TIntermBlock *root,
         sink << "// END: Generated code for built-in function emulation\n\n";
     }
 
-    // Write array bounds clamping emulation if needed.
-    getArrayBoundsClamper().OutputClampingFunctionDefinition(sink);
-
     if (getShaderType() == GL_FRAGMENT_SHADER)
     {
         EmitEarlyFragmentTestsGLSL(*this, sink);
@@ -97,9 +90,7 @@ bool TranslatorESSL::translate(TIntermBlock *root,
     }
 
     // Write translated shader.
-    TOutputESSL outputESSL(sink, getArrayIndexClampingStrategy(), getHashFunction(), getNameMap(),
-                           &getSymbolTable(), getShaderType(), shaderVer, precisionEmulation,
-                           compileOptions);
+    TOutputESSL outputESSL(this, sink, compileOptions);
 
     root->traverse(&outputESSL);
 
@@ -151,7 +142,8 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
                     EmitMultiviewGLSL(*this, compileOptions, iter->first, iter->second, sink);
                 }
             }
-            else if (iter->first == TExtension::EXT_geometry_shader)
+            else if (iter->first == TExtension::EXT_geometry_shader ||
+                     iter->first == TExtension::OES_geometry_shader)
             {
                 sink << "#ifdef GL_EXT_geometry_shader\n"
                      << "#extension GL_EXT_geometry_shader : " << GetBehaviorString(iter->second)
@@ -173,7 +165,7 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
                 ASSERT((compileOptions & SH_EMULATE_GL_DRAW_ID) != 0);
                 continue;
             }
-            else if (iter->first == TExtension::ANGLE_base_vertex_base_instance)
+            else if (iter->first == TExtension::ANGLE_base_vertex_base_instance_shader_builtin)
             {
                 // Don't emit anything. This extension is emulated
                 ASSERT((compileOptions & SH_EMULATE_GL_BASE_VERTEX_BASE_INSTANCE) != 0);

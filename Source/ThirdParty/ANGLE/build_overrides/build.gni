@@ -5,7 +5,6 @@
 declare_args() {
   build_with_chromium = false
   ignore_elf32_limitations = true
-  linux_use_bundled_binutils_override = false
 
   use_system_xcode = ""
 
@@ -29,5 +28,7 @@ if (host_os == "mac" && use_system_xcode == "") {
   use_system_xcode = _result != 1
 }
 
-# ANGLE standalone builds don't currently support java templates or APK generation
-enable_java_templates = build_with_chromium
+enable_java_templates = true
+
+# Build with fewer Android dependencies
+limit_android_deps = true

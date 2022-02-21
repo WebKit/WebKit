@@ -128,7 +128,7 @@ pas_segregated_shared_view* pas_segregated_shared_page_directory_find_first_elig
     page_config = *page_config_ptr;
 
     if (verbose)
-        pas_log("trying to allocate size = %zu, alignment = %zu.\n", size, alignment);
+        pas_log("trying to allocate size = %u, alignment = %u.\n", size, alignment);
 
     data.size = size;
     data.alignment = alignment;
@@ -144,8 +144,7 @@ pas_segregated_shared_view* pas_segregated_shared_page_directory_find_first_elig
         config.arg = &data;
         data.view = NULL;
 
-        did_find_something = pas_segregated_directory_iterate_forward_to_take_first_eligible(
-            &config, PAS_SEGREGATED_SHARED_PAGE_DIRECTORY_FIRST_ELIGIBLE_KIND);
+        did_find_something = pas_segregated_directory_iterate_forward_to_take_first_eligible(&config);
 
         if (did_find_something) {
             if (!data.view) {
@@ -223,7 +222,6 @@ take_last_empty_consider_view(
     /* We put our take_last_empty logic in consider_view because should_consider_view_parallel
        cannot really tell if a page can be taken. */
 
-    pas_segregated_shared_page_directory* shared_page_directory;
     pas_segregated_directory* directory;
     pas_segregated_directory_bit_reference bit_reference;
     size_t shared_view_index;
@@ -242,9 +240,9 @@ take_last_empty_consider_view(
     bool did_add_to_log;
     bool result;
     bool decommit_result;
+    unsigned is_in_use_for_allocation_count;
 
     directory = config->directory;
-    shared_page_directory = (pas_segregated_shared_page_directory*)directory;
     bit_reference = config->bit_reference;
     shared_view_index = config->index;
 
@@ -333,6 +331,16 @@ take_last_empty_consider_view(
 
         goto unlock_this_view_and_return_result;
     }
+
+    /* It's possible that this view is being used for allocation. Note that looping over all partial views
+       won't necessarily discover this fact, since there could be a primordial allocation, and that one won't
+       be registered as a partial view in the handle. */
+    if (shared_view->is_in_use_for_allocation_count) {
+        if (verbose)
+            pas_log("It's in use for allocation.\n");
+
+        goto unlock_this_view_and_return_result;
+    }
     
     shared_handle_or_page_boundary = shared_view->shared_handle_or_page_boundary;
     shared_handle = pas_unwrap_shared_handle(shared_handle_or_page_boundary, page_config);
@@ -350,7 +358,7 @@ take_last_empty_consider_view(
 
     for (partial_index = pas_segregated_shared_handle_num_views(page_config); partial_index--;) {
         pas_segregated_partial_view* partial_view;
-        pas_segregated_global_size_directory* size_directory_of_partial;
+        pas_segregated_size_directory* size_directory_of_partial;
         pas_segregated_directory* directory_of_partial;
 
         partial_view = pas_compact_atomic_segregated_partial_view_ptr_load(
@@ -359,7 +367,7 @@ take_last_empty_consider_view(
             continue;
 
         size_directory_of_partial =
-            pas_compact_segregated_global_size_directory_ptr_load(&partial_view->directory);
+            pas_compact_segregated_size_directory_ptr_load(&partial_view->directory);
         directory_of_partial = &size_directory_of_partial->base;
         
         if (!PAS_SEGREGATED_DIRECTORY_SET_BIT(
@@ -374,6 +382,7 @@ take_last_empty_consider_view(
             pas_log("Made partial %p ineligible to take shared %p.\n", partial_view, shared_view);
 
         PAS_ASSERT(partial_view->eligibility_has_been_noted);
+        PAS_ASSERT(!partial_view->is_in_use_for_allocation);
 
         partial_view->noted_in_scan = true;
     }
@@ -393,14 +402,32 @@ take_last_empty_consider_view(
     
     PAS_ASSERT(!PAS_SEGREGATED_DIRECTORY_BIT_REFERENCE_GET(directory, bit_reference, empty));
     PAS_ASSERT(shared_view->is_owned);
-    PAS_ASSERT(!shared_view->is_in_use_for_allocation_count);
+    is_in_use_for_allocation_count = shared_view->is_in_use_for_allocation_count;
+    if (is_in_use_for_allocation_count) {
+        pas_log("Error: shared view %p (%s) has is_in_use_for_allocation_count = %u\n",
+                shared_view, pas_segregated_page_config_kind_get_string(page_config.kind),
+                is_in_use_for_allocation_count);
+        for (partial_index = 0;
+             partial_index < pas_segregated_shared_handle_num_views(page_config);
+             partial_index++) {
+            pas_segregated_partial_view* partial_view;
+            partial_view = pas_compact_atomic_segregated_partial_view_ptr_load(
+                shared_handle->partial_views + partial_index);
+            if (!partial_view)
+                continue;
+            pas_log("partial_index = %zu, partial_view = %p, is_in_use_for_allocation = %s\n",
+                    partial_index, partial_view, partial_view->is_in_use_for_allocation ? "yes" : "no");
+        }
+        PAS_ASSERT(!is_in_use_for_allocation_count);
+    }
 
     if (pas_segregated_page_config_is_utility(page_config)) {
         PAS_ASSERT(page_config.base.page_size == page_config.base.granule_size);
         shared_view->is_owned = false;
         pas_page_malloc_decommit(
             pas_segregated_page_boundary(page, page_config),
-            page_config.base.page_size);
+            page_config.base.page_size,
+            page_config.base.heap_config_ptr->mmap_capability);
         page_config.base.destroy_page_header(&page->base, pas_lock_is_held);
         decommit_log->total += page_config.base.page_size;
         goto return_taken_partial_views_after_decommit;
@@ -451,7 +478,7 @@ return_taken_partial_views_after_decommit:
     switch_to_ownership(shared_view, &held_lock, page_config);
     for (partial_index = pas_segregated_shared_handle_num_views(page_config); partial_index--;) {
         pas_segregated_partial_view* partial_view;
-        pas_segregated_global_size_directory* size_directory_of_partial;
+        pas_segregated_size_directory* size_directory_of_partial;
         pas_segregated_directory* directory_of_partial;
         bool set_result;
 
@@ -463,7 +490,7 @@ return_taken_partial_views_after_decommit:
         partial_view->noted_in_scan = false;
 
         size_directory_of_partial =
-            pas_compact_segregated_global_size_directory_ptr_load(&partial_view->directory);
+            pas_compact_segregated_size_directory_ptr_load(&partial_view->directory);
         directory_of_partial = &size_directory_of_partial->base;
 
         PAS_ASSERT(partial_view->is_attached_to_shared_handle);
@@ -492,7 +519,7 @@ return_taken_partial_views_unlock_this_view_and_return_result:
     switch_to_ownership(shared_view, &held_lock, page_config);
     for (partial_index = pas_segregated_shared_handle_num_views(page_config); partial_index--;) {
         pas_segregated_partial_view* partial_view;
-        pas_segregated_global_size_directory* size_directory_of_partial;
+        pas_segregated_size_directory* size_directory_of_partial;
         pas_segregated_directory* directory_of_partial;
         bool set_result;
 
@@ -502,7 +529,7 @@ return_taken_partial_views_unlock_this_view_and_return_result:
             continue;
         
         size_directory_of_partial =
-            pas_compact_segregated_global_size_directory_ptr_load(&partial_view->directory);
+            pas_compact_segregated_size_directory_ptr_load(&partial_view->directory);
         directory_of_partial = &size_directory_of_partial->base;
 
         set_result = pas_segregated_directory_view_did_become_eligible_at_index(

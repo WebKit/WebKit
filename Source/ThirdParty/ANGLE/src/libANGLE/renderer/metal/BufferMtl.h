@@ -12,7 +12,6 @@
 
 #import <Metal/Metal.h>
 
-#include <optional>
 #include <utility>
 
 #include "libANGLE/Buffer.h"
@@ -78,7 +77,6 @@ struct IndexConversionBufferMtl : public ConversionBufferMtl
     const size_t offset;
     bool primitiveRestartEnabled;
     IndexRange getRangeForConvertedBuffer(size_t count);
-
 };
 
 struct UniformConversionBufferMtl : public ConversionBufferMtl
@@ -166,14 +164,16 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
 
     ConversionBufferMtl *getUniformConversionBuffer(ContextMtl *context, size_t offset);
 
-    // NOTE(hqle): If the buffer is modifed by GPU, this function must be explicitly
-    // called.
-    void markConversionBuffersDirty();
-
     size_t size() const { return static_cast<size_t>(mState.getSize()); }
-    
-    const std::vector<IndexRange> & getRestartIndices(ContextMtl * ctx, gl::DrawElementsType indexType);
-    
+
+    const std::vector<IndexRange> &getRestartIndices(ContextMtl *ctx,
+                                                     gl::DrawElementsType indexType);
+
+    static const std::vector<IndexRange> getRestartIndicesFromClientData(
+        ContextMtl *ctx,
+        gl::DrawElementsType indexType,
+        const mtl::BufferRef clientBuffer);
+
   private:
     angle::Result setDataImpl(const gl::Context *context,
                               gl::BufferBinding target,
@@ -188,6 +188,7 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
     angle::Result commitShadowCopy(const gl::Context *context);
     angle::Result commitShadowCopy(const gl::Context *context, size_t size);
 
+    void markConversionBuffersDirty();
     void clearConversionBuffers();
 
     bool clientShadowCopyDataNeedSync(ContextMtl *contextMtl);
@@ -209,18 +210,23 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
     std::vector<VertexConversionBufferMtl> mVertexConversionBuffers;
 
     std::vector<IndexConversionBufferMtl> mIndexConversionBuffers;
-    
+
     std::vector<UniformConversionBufferMtl> mUniformConversionBuffers;
 
     struct RestartRangeCache
     {
-        RestartRangeCache(std::vector<IndexRange>&& ranges_,  gl::DrawElementsType indexType_)
-            : ranges(ranges_), indexType(indexType_)
+        RestartRangeCache() : indexType(gl::DrawElementsType::InvalidEnum) { isDirty = true; }
+        RestartRangeCache(std::vector<IndexRange> &&ranges_, gl::DrawElementsType indexType_)
+            : ranges(ranges_), indexType(indexType_), isDirty(false)
         {}
-        const std::vector<IndexRange> ranges;
-        const gl::DrawElementsType indexType;
+        void markDirty() { isDirty = true; }
+        operator bool() const { return isDirty; }
+        std::vector<IndexRange> ranges;
+        gl::DrawElementsType indexType;
+        bool isDirty;
     };
-    std::optional<RestartRangeCache> mRestartRangeCache;
+    RestartRangeCache mRestartRangeCache;
+    std::vector<IndexRange> mRestartIndices;
 };
 
 class SimpleWeakBufferHolderMtl : public BufferHolderMtl

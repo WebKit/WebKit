@@ -11,8 +11,8 @@ PASS p1.parentNode.nodeName is "FOOTER"
 PASS footer3.parentNode.id is "footer2"
 PASS footer5.parentNode.id is "header1"
 Residual style:
-PASS getWeight("footer4") is "bold"
-PASS getWeight("span1") is "bold"
+PASS getWeight("footer4") is "700"
+PASS getWeight("span1") is "700"
 FormatBlock:
 PASS document.getElementById("span2").parentNode.nodeName is "FOOTER"
 PASS successfullyParsed is true

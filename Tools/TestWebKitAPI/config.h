@@ -91,6 +91,7 @@
 #ifdef __cplusplus
 // The TestJSC executable doesn't use gtest it uses glib's testing
 #if !defined(BUILDING_TestJSC) && !defined(NO_GTEST_USAGE)
+#undef UniversalPrint
 #include <gtest/gtest.h>
 #endif
 #include <wtf/Assertions.h>
@@ -123,11 +124,6 @@
 // FIXME: Move this to PlatformHave.h.
 #if PLATFORM(IOS_FAMILY) && !(PLATFORM(MACCATALYST) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000)
 #define HAVE_UIWEBVIEW 1
-#endif
-
-// FIXME: Move this to PlatformHave.h.
-#if PLATFORM(COCOA) && !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500)
-#define HAVE_TLS_PROTOCOL_VERSION_T 1
 #endif
 
 // FIXME: Move this to PlatformHave.h.

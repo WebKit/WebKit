@@ -21,7 +21,7 @@ if (is_android) {
       "//sdk/android:surfaceviewrenderer_java",
       "//sdk/android:video_api_java",
       "//sdk/android:video_java",
-      "//third_party/android_deps:com_android_support_support_annotations_java",
+      "//third_party/androidx:androidx_annotation_annotation_java",
     ]
 
     shared_libraries = [ ":examples_androidnativeapi_jni" ]

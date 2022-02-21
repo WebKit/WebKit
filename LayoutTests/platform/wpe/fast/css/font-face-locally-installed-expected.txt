@@ -28,6 +28,6 @@ layer at (0,0) size 800x600
           RenderText {#text} at (140,0) size 229x17
             text run at (140,0) width 229: "and this should be Helvetica Bold."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,120) size 784x18
-        RenderText {#text} at (0,0) size 479x17
-          text run at (0,0) width 479: "UPPERCASE SHOULD BE MONACO and lowercase should be times."
+      RenderBlock {P} at (0,120) size 784x19
+        RenderText {#text} at (0,1) size 479x17
+          text run at (0,1) width 479: "UPPERCASE SHOULD BE MONACO and lowercase should be times."

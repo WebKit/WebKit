@@ -43,7 +43,7 @@ static inline bool isAlignedForPreciseAllocation(void* memory)
 PreciseAllocation* PreciseAllocation::tryCreate(Heap& heap, size_t size, Subspace* subspace, unsigned indexInSpace)
 {
     if constexpr (validateDFGDoesGC)
-        heap.verifyCanGC();
+        heap.vm().verifyCanGC();
 
     size_t adjustedAlignmentAllocationSize = headerSize() + size + halfAlignment;
     static_assert(halfAlignment == 8, "We assume that memory returned by malloc has alignment >= 8.");
@@ -120,10 +120,10 @@ PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subsp
 }
 
 
-PreciseAllocation* PreciseAllocation::createForLowerTier(Heap& heap, size_t size, Subspace* subspace, uint8_t lowerTierIndex)
+PreciseAllocation* PreciseAllocation::tryCreateForLowerTier(Heap& heap, size_t size, Subspace* subspace, uint8_t lowerTierIndex)
 {
     if constexpr (validateDFGDoesGC)
-        heap.verifyCanGC();
+        heap.vm().verifyCanGC();
 
     size_t adjustedAlignmentAllocationSize = headerSize() + size + halfAlignment;
     static_assert(halfAlignment == 8, "We assume that memory returned by malloc has alignment >= 8.");

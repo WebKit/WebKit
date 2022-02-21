@@ -28,6 +28,7 @@
 #include "ActiveDOMObject.h"
 
 #include "Document.h"
+#include "Event.h"
 #include "EventLoop.h"
 #include "ScriptExecutionContext.h"
 
@@ -75,12 +76,13 @@ ActiveDOMObject::~ActiveDOMObject()
     // ContextDestructionObserver::contextDestroyed() (which we implement /
     // inherit). Hence, we should ensure that this is not 0 before use it
     // here.
-    if (!m_scriptExecutionContext)
+    auto* context = scriptExecutionContext();
+    if (!context)
         return;
 
     ASSERT(m_suspendIfNeededWasCalled);
-    ASSERT(m_scriptExecutionContext->isContextThread());
-    m_scriptExecutionContext->willDestroyActiveDOMObject(*this);
+    ASSERT(context->isContextThread());
+    context->willDestroyActiveDOMObject(*this);
 }
 
 void ActiveDOMObject::suspendIfNeeded()
@@ -89,10 +91,8 @@ void ActiveDOMObject::suspendIfNeeded()
     ASSERT(!m_suspendIfNeededWasCalled);
     m_suspendIfNeededWasCalled = true;
 #endif
-    if (!m_scriptExecutionContext)
-        return;
-
-    m_scriptExecutionContext->suspendActiveDOMObjectIfNeeded(*this);
+    if (auto* context = scriptExecutionContext())
+        context->suspendActiveDOMObjectIfNeeded(*this);
 }
 
 #if ASSERT_ENABLED
@@ -172,7 +172,7 @@ void ActiveDOMObject::queueTaskToDispatchEventInternal(EventTarget& target, Task
     if (!context)
         return;
     auto& eventLoopTaskGroup = context->eventLoop();
-    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, [target = makeRef(target), event = WTFMove(event)] {
+    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, [target = Ref { target }, event = WTFMove(event)] {
         target->dispatchEvent(event);
     });
     eventLoopTaskGroup.queueTask(WTFMove(task));
@@ -185,7 +185,7 @@ void ActiveDOMObject::queueCancellableTaskToDispatchEventInternal(EventTarget& t
     if (!context)
         return;
     auto& eventLoopTaskGroup = context->eventLoop();
-    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, CancellableTask(cancellationGroup, [target = makeRef(target), event = WTFMove(event)] {
+    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, CancellableTask(cancellationGroup, [target = Ref { target }, event = WTFMove(event)] {
         target->dispatchEvent(event);
     }));
     eventLoopTaskGroup.queueTask(WTFMove(task));

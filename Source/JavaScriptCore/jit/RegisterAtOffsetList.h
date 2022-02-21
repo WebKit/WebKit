@@ -66,6 +66,7 @@ public:
     FixedVector<RegisterAtOffset>::const_iterator end() const { return m_registers.end(); }
 
     static const RegisterAtOffsetList& llintBaselineCalleeSaveRegisters(); // Registers and Offsets saved and used by the LLInt.
+    static const RegisterAtOffsetList& dfgCalleeSaveRegisters(); // Registers and Offsets saved and used by DFG.
 
 private:
     FixedVector<RegisterAtOffset> m_registers;

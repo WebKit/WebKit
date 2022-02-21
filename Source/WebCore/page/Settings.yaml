@@ -29,12 +29,6 @@ AcceleratedCompositedAnimationsEnabled:
     WebCore:
       default: true
 
-AcceleratedFiltersEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
 AnimatedImageDebugCanvasDrawingEnabled:
   type: bool
   defaultValue:
@@ -269,6 +263,7 @@ IsAccessibilityIsolatedTreeEnabled:
   type: bool
   defaultValue:
     WebCore:
+      USE(ATSPI): true
       default: false
 
 IsPerActivityStateCPUUsageMeasurementEnabled:
@@ -314,14 +309,6 @@ JavaScriptRuntimeFlags:
       default: '{ }'
 
 LangAttributeAwareFormControlUIEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
-LegacyBeforeLoadEventEnabled:
-  comment: >-
-    FIMXE: This does not appear to ever be set to true. Remove once verified.
   type: bool
   defaultValue:
     WebCore:
@@ -442,12 +429,6 @@ PrivateClickMeasurementFraudPreventionEnabled:
   defaultValue:
     WebCore:
       "HAVE(RSA_BSSA)": true
-      default: false
-
-QuickTimePluginReplacementEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
       default: false
 
 RepaintOutsideLayoutEnabled:
@@ -633,12 +614,6 @@ WebRTCEncryptionEnabled:
       default: true
 
 WebkitImageReadyEventEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      default: false
-
-YouTubeFlashPluginReplacementEnabled:
   type: bool
   defaultValue:
     WebCore:

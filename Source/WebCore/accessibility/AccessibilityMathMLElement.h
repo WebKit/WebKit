@@ -80,7 +80,7 @@ private:
     AXCoreObject* mathBaseObject() override;
 
     // Root components.
-    AXCoreObject* mathRadicandObject() override;
+    std::optional<AccessibilityChildrenVector> mathRadicand() override;
     AXCoreObject* mathRootIndexObject() override;
 
     // Fraction components.

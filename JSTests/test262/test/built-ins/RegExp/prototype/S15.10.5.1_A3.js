@@ -7,25 +7,22 @@ es5id: 15.10.5.1_A3
 description: Checking if deleting the RegExp.prototype property fails
 includes: [propertyHelper.js]
 ---*/
-
-//CHECK#0
-if (RegExp.hasOwnProperty('prototype') !== true) {
-	throw new Test262Error('#0: RegExp.hasOwnProperty(\'prototype\') === true');
-}
+assert.sameValue(RegExp.hasOwnProperty('prototype'), true);
 
 verifyNotConfigurable(RegExp, "prototype");
 
-//CHECK#1
 try {
-  if (delete RegExp.prototype !== false) {
-    throw new Test262Error('#1: delete RegExp.prototype === false');
-  }
+  assert.sameValue(delete RegExp.prototype, false);
 } catch (e) {
-  if (e instanceof Test262Error) throw e;
+  if (e instanceof Test262Error) {
+    throw e;
+  }
   assert(e instanceof TypeError);
 }
 
-//CHECK#2
 if (RegExp.hasOwnProperty('prototype') !== true) {
-	throw new Test262Error('#2: delete RegExp.prototype; RegExp.hasOwnProperty(\'prototype\') === true');
+    throw new Test262Error('#2: delete RegExp.prototype; RegExp.hasOwnProperty(\'prototype\') === true');
 }
+
+// TODO: Convert to verifyProperty() format.
+// TODO: Convert to assert.throws() format.

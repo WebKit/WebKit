@@ -67,7 +67,7 @@ input.min = '2010-01-28T12:00';  // value < min && value > max
 checkOverflow('2010-01-27T12:34', '2010-01-26T12:34');
 
 // Disabled
-checkNotOverflow('9999-01-01T23:59', '2010-12-31T00:00', true);
+checkOverflow('9999-01-01T23:59', '2010-12-31T00:00', true);
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

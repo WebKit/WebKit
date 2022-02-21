@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2009, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,30 +28,23 @@
 
 #import <Foundation/Foundation.h>
 
-// FIXME: Change method names back to _web_ from _webkit_ when identically-named
-// methods are no longer present in Foundation.
+// FIXME: Consider renaming to _web_ from _webkit_ once identically-named methods are no longer present in Foundation.
 
 @interface NSURL (WebNSURLExtras)
 
-// Deprecated as it ignores URL parsing error.
-// Please use the _webkit_ counterparts.
+// Deprecated, as it ignores URL parsing errors.
+// Please use the _webkit_URLWithUserTypedString instead.
 + (NSURL *)_web_URLWithUserTypedString:(NSString *)string;
-+ (NSURL *)_web_URLWithUserTypedString:(NSString *)string relativeToURL:(NSURL *)URL;
 
-// New SPI.
 // Return value of nil means error in URL parsing.
 + (NSURL *)_webkit_URLWithUserTypedString:(NSString *)string;
-+ (NSURL *)_webkit_URLWithUserTypedString:(NSString *)string relativeToURL:(NSURL *)URL;
 
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string;
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string relativeToURL:(NSURL *)baseURL;
 
-+ (NSURL *)_web_URLWithData:(NSData *)data;
-+ (NSURL *)_web_URLWithData:(NSData *)data relativeToURL:(NSURL *)baseURL;
-
 - (NSData *)_web_originalData;
 - (NSString *)_web_originalDataAsString;
-- (const char *)_web_URLCString;
+- (const char*)_web_URLCString;
 
 - (NSString *)_web_hostString;
 
@@ -78,14 +71,16 @@
 
 - (BOOL)_web_isUserVisibleURL;
 
-// Deprecated as it ignores URL parsing error.
-// Please use the _webkit_ counterparts.
-// turns funny-looking ASCII form into Unicode, returns self if no decoding needed, convenient cover
+// Deprecated as it ignores URL parsing errors.
+// Please use _webkit_decodeHostName instead.
+// Turns funny-looking ASCII form into Unicode, returns self if no decoding needed.
 - (NSString *)_web_decodeHostName;
-// turns Unicode into funny-looking ASCII form, returns self if no decoding needed, convenient cover
+
+// Deprecated as it ignores URL parsing errors.
+// Please use the _webkit_encodeHostName instead.
+// Turns Unicode into funny-looking ASCII form, returns self if no encoding needed.
 - (NSString *)_web_encodeHostName;
 
-// New SPI.
 // Return value of nil means error in URL parsing.
 - (NSString *)_webkit_decodeHostName;
 - (NSString *)_webkit_encodeHostName;

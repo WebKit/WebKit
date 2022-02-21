@@ -94,7 +94,7 @@ bool IDBKey::isValid() const
         return false;
 
     if (m_type == IndexedDB::KeyType::Array) {
-        for (auto& key : WTF::get<IDBKeyVector>(m_value)) {
+        for (auto& key : std::get<IDBKeyVector>(m_value)) {
             if (!key->isValid())
                 return false;
         }
@@ -110,8 +110,8 @@ int IDBKey::compare(const IDBKey& other) const
 
     switch (m_type) {
     case IndexedDB::KeyType::Array: {
-        auto& array = WTF::get<IDBKeyVector>(m_value);
-        auto& otherArray = WTF::get<IDBKeyVector>(other.m_value);
+        auto& array = std::get<IDBKeyVector>(m_value);
+        auto& otherArray = std::get<IDBKeyVector>(other.m_value);
         for (size_t i = 0; i < array.size() && i < otherArray.size(); ++i) {
             if (int result = array[i]->compare(*otherArray[i]))
                 return result;
@@ -123,13 +123,13 @@ int IDBKey::compare(const IDBKey& other) const
         return 0;
     }
     case IndexedDB::KeyType::Binary:
-        return compareBinaryKeyData(WTF::get<ThreadSafeDataBuffer>(m_value), WTF::get<ThreadSafeDataBuffer>(other.m_value));
+        return compareBinaryKeyData(std::get<ThreadSafeDataBuffer>(m_value), std::get<ThreadSafeDataBuffer>(other.m_value));
     case IndexedDB::KeyType::String:
-        return -codePointCompare(WTF::get<String>(other.m_value), WTF::get<String>(m_value));
+        return -codePointCompare(std::get<String>(other.m_value), std::get<String>(m_value));
     case IndexedDB::KeyType::Date:
     case IndexedDB::KeyType::Number: {
-        auto number = WTF::get<double>(m_value);
-        auto otherNumber = WTF::get<double>(other.m_value);
+        auto number = std::get<double>(m_value);
+        auto otherNumber = std::get<double>(other.m_value);
         return (number < otherNumber) ? -1 : ((number > otherNumber) ? 1 : 0);
     }
     case IndexedDB::KeyType::Invalid:

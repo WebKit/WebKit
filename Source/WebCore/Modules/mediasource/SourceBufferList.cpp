@@ -42,10 +42,16 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SourceBufferList);
 
+Ref<SourceBufferList> SourceBufferList::create(ScriptExecutionContext* context)
+{
+    auto result = adoptRef(*new SourceBufferList(context));
+    result->suspendIfNeeded();
+    return result;
+}
+
 SourceBufferList::SourceBufferList(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
 {
-    suspendIfNeeded();
 }
 
 SourceBufferList::~SourceBufferList()

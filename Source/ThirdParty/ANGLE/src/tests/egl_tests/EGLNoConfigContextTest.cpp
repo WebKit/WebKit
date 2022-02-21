@@ -98,12 +98,22 @@ TEST_P(EGLNoConfigContextTest, RenderCheck)
 
         EGLint configId;
         EXPECT_EGL_TRUE(eglGetConfigAttrib(mDisplay, config, EGL_CONFIG_ID, &configId));
+
+        EGLint surfaceType;
+        EXPECT_EGL_TRUE(eglGetConfigAttrib(mDisplay, config, EGL_SURFACE_TYPE, &surfaceType));
+        EGLint bufferSize;
+        EXPECT_EGL_TRUE(eglGetConfigAttrib(mDisplay, config, EGL_BUFFER_SIZE, &bufferSize));
+        constexpr int kRGB8BitSize = 24;  // RGB8 is 24 bits
+        if (isVulkanRenderer() && bufferSize == kRGB8BitSize &&
+            (surfaceType & EGL_PBUFFER_BIT) != EGL_PBUFFER_BIT)
+        {
+            // Skip this config, since the Vulkan backend doesn't support RGB8 pbuffer surfaces.
+            continue;
+        }
+
         EGLint surfattrs[] = {EGL_WIDTH, kWidth, EGL_HEIGHT, kHeight, EGL_NONE};
         surface            = eglCreatePbufferSurface(mDisplay, config, surfattrs);
         EXPECT_TRUE(surface != EGL_NO_SURFACE);
-
-        EGLint bufferSize = 0;
-        EXPECT_EGL_TRUE(eglGetConfigAttrib(mDisplay, config, EGL_BUFFER_SIZE, &bufferSize));
 
         EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, mContext));
         ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed with Config: " << configId << '\n';
@@ -127,6 +137,7 @@ TEST_P(EGLNoConfigContextTest, RenderCheck)
     }
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLNoConfigContextTest);
 ANGLE_INSTANTIATE_TEST(EGLNoConfigContextTest,
                        WithNoFixture(ES2_OPENGL()),
                        WithNoFixture(ES2_VULKAN()),

@@ -40,7 +40,6 @@ class RenderView;
 namespace Layout {
 
 class ContainerBox;
-class InvalidationState;
 class LayoutState;
 class FormattingContext;
 
@@ -54,8 +53,7 @@ class LayoutContext {
 public:
     LayoutContext(LayoutState&);
 
-    void layout(const LayoutSize& rootContentBoxSize, InvalidationState&);
-    void layoutWithPreparedRootGeometry(InvalidationState&);
+    void layout(const LayoutSize& rootContentBoxSize);
 
     static std::unique_ptr<FormattingContext> createFormattingContext(const ContainerBox& formattingContextRoot, LayoutState&);
 
@@ -65,7 +63,7 @@ public:
 #endif
 
 private:
-    void layoutFormattingContextSubtree(const ContainerBox&, InvalidationState&);
+    void layoutFormattingContextSubtree(const ContainerBox&);
     LayoutState& layoutState() { return m_layoutState; }
 
     LayoutState& m_layoutState;

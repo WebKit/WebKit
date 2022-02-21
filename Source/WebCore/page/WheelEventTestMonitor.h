@@ -44,7 +44,7 @@ class WheelEventTestMonitor : public ThreadSafeRefCounted<WheelEventTestMonitor>
 public:
     WheelEventTestMonitor(Page&);
 
-    WEBCORE_EXPORT void setTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, WTF::Function<void()>&&);
+    WEBCORE_EXPORT void setTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, Function<void()>&&);
     WEBCORE_EXPORT void clearAllTestDeferrals();
     
     enum DeferReason {
@@ -53,9 +53,10 @@ public:
         PostMainThreadWheelEventHandling    = 1 << 2,
         RubberbandInProgress                = 1 << 3,
         ScrollSnapInProgress                = 1 << 4,
-        ScrollingThreadSyncNeeded           = 1 << 5,
-        ContentScrollInProgress             = 1 << 6,
-        RequestedScrollPosition             = 1 << 7,
+        ScrollAnimationInProgress           = 1 << 5,
+        ScrollingThreadSyncNeeded           = 1 << 6,
+        ContentScrollInProgress             = 1 << 7,
+        RequestedScrollPosition             = 1 << 8,
     };
     typedef const void* ScrollableAreaIdentifier;
 
@@ -65,12 +66,12 @@ public:
     
     void checkShouldFireCallbacks();
 
-    using ScrollableAreaReasonMap = WTF::HashMap<ScrollableAreaIdentifier, OptionSet<DeferReason>>;
+    using ScrollableAreaReasonMap = HashMap<ScrollableAreaIdentifier, OptionSet<DeferReason>>;
 
 private:
     void scheduleCallbackCheck();
 
-    WTF::Function<void()> m_completionCallback;
+    Function<void()> m_completionCallback;
     Page& m_page;
 
     Lock m_lock;

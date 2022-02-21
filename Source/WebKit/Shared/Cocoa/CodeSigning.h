@@ -33,6 +33,7 @@ namespace WebKit {
 // These functions return a null string if the process is unsigned.
 String codeSigningIdentifierForCurrentProcess();
 String codeSigningIdentifier(xpc_connection_t);
+String codeSigningIdentifier(audit_token_t);
 bool currentProcessIsPlatformBinary();
 std::pair<String, bool> codeSigningIdentifierAndPlatformBinaryStatus(xpc_connection_t);
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,6 +96,8 @@ public:
     RealtimeMediaSource& source() { return m_source.get(); }
     const RealtimeMediaSource& source() const { return m_source.get(); }
     WEBCORE_EXPORT RealtimeMediaSource::Type type() const;
+    bool hasVideo() const { return m_source->hasVideo(); }
+    bool hasAudio() const { return m_source->hasAudio(); }
 
     void endTrack();
 

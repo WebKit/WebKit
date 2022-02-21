@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 University of Szeged
  * Copyright (C) 2011 Renata Hodovan <reni@webkit.org>
+ * Copyright (C) 2020, 2021, 2022 Igalia S.L.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +29,10 @@
 #include "config.h"
 #include "RenderSVGRect.h"
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+#include "RenderSVGShapeInlines.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGRectElement.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -158,3 +163,5 @@ bool RenderSVGRect::isRenderingDisabled() const
 }
 
 }
+
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

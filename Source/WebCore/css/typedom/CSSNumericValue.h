@@ -28,17 +28,51 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "CSSStyleValue.h"
+#include <variant>
+#include <wtf/FixedVector.h>
 
 namespace WebCore {
 
+class CSSNumericValue;
+class CSSUnitValue;
+class CSSMathSum;
+struct CSSNumericType;
+
+template<typename> class ExceptionOr;
+
 class CSSNumericValue : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSNumericValue);
+public:
+    using CSSNumberish = std::variant<double, RefPtr<CSSNumericValue>>;
+
+    Ref<CSSNumericValue> add(FixedVector<CSSNumberish>&&);
+    Ref<CSSNumericValue> sub(FixedVector<CSSNumberish>&&);
+    Ref<CSSNumericValue> mul(FixedVector<CSSNumberish>&&);
+    Ref<CSSNumericValue> div(FixedVector<CSSNumberish>&&);
+    Ref<CSSNumericValue> min(FixedVector<CSSNumberish>&&);
+    Ref<CSSNumericValue> max(FixedVector<CSSNumberish>&&);
+    
+    bool equals(FixedVector<CSSNumberish>&&);
+    
+    Ref<CSSUnitValue> to(String&&);
+    Ref<CSSMathSum> toSum(FixedVector<String>&&);
+    CSSNumericType type();
+    
+    static ExceptionOr<Ref<CSSNumericValue>> parse(String&&);
+    static Ref<CSSNumericValue> rectifyNumberish(CSSNumberish&&);
     
     CSSStyleValueType getType() const override { return CSSStyleValueType::CSSNumericValue; }
 
 protected:
     CSSNumericValue() = default;
 };
+
+using CSSNumberish = CSSNumericValue::CSSNumberish;
+
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSNumericValue)
+    static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSNumericValue; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

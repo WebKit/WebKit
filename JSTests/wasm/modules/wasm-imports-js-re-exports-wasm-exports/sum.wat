@@ -6,4 +6,6 @@
         i32.add)
     (global (export "answer") i32 i32.const 42)
     (table $table (export "table") 4 funcref)
+    (memory $memory (export "memory") 1 1)
+    (data (i32.const 4) "\10\00\10\00")
     (elem (i32.const 0) $sum))

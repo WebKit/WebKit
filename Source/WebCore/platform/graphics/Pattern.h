@@ -28,7 +28,7 @@
 #pragma once
 
 #include "AffineTransform.h"
-#include "Image.h"
+#include "SourceImage.h"
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -36,13 +36,6 @@
 #if USE(CG)
 typedef struct CGPattern* CGPatternRef;
 typedef RetainPtr<CGPatternRef> PlatformPatternPtr;
-#elif USE(DIRECT2D)
-interface ID2D1BitmapBrush;
-typedef ID2D1BitmapBrush* PlatformPatternPtr;
-namespace WebCore {
-class PlatformContextDirect2D;
-}
-typedef WebCore::PlatformContextDirect2D PlatformGraphicsContext;
 #elif USE(CAIRO)
 typedef struct _cairo_pattern cairo_pattern_t;
 typedef cairo_pattern_t* PlatformPatternPtr;
@@ -52,7 +45,6 @@ namespace WebCore {
 
 class AffineTransform;
 class GraphicsContext;
-class Image;
 
 class Pattern final : public RefCounted<Pattern> {
 public:
@@ -70,27 +62,31 @@ public:
         bool repeatY;
     };
 
-    WEBCORE_EXPORT static Ref<Pattern> create(Ref<NativeImage>&& tileImage, const Parameters& = { });
+    WEBCORE_EXPORT static Ref<Pattern> create(SourceImage&& tileImage, const Parameters& = { });
     WEBCORE_EXPORT ~Pattern();
 
-    NativeImage& tileImage() const { return m_tileImage.get(); }
+    const SourceImage& tileImage() const { return m_tileImage; }
+    RefPtr<NativeImage> tileNativeImage() const { return m_tileImage.nativeImage(); }
+    RefPtr<ImageBuffer> tileImageBuffer() const { return m_tileImage.imageBuffer(); }
     const Parameters& parameters() const { return m_parameters; }
 
     // Pattern space is an abstract space that maps to the default user space by the transformation 'userSpaceTransform'
-#if !USE(DIRECT2D)
     PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransform) const;
-#else
-    PlatformPatternPtr createPlatformPattern(const GraphicsContext&, float alpha, const AffineTransform& userSpaceTransform) const;
-#endif
+
+    void setTileImage(SourceImage&& tileImage) { m_tileImage = WTFMove(tileImage); }
     void setPatternSpaceTransform(const AffineTransform&);
+
     const AffineTransform& patternSpaceTransform() const { return m_parameters.patternSpaceTransform; };
     bool repeatX() const { return m_parameters.repeatX; }
     bool repeatY() const { return m_parameters.repeatY; }
 
-private:
-    Pattern(Ref<NativeImage>&&, const Parameters&);
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<Ref<Pattern>> decode(Decoder&);
 
-    Ref<NativeImage> m_tileImage;
+private:
+    Pattern(SourceImage&&, const Parameters&);
+
+    SourceImage m_tileImage;
     Parameters m_parameters;
 };
 
@@ -121,6 +117,29 @@ std::optional<Pattern::Parameters> Pattern::Parameters::decode(Decoder& decoder)
         return std::nullopt;
 
     return {{ *repeatX, *repeatY, *patternSpaceTransform }};
+}
+
+template<class Encoder>
+void Pattern::encode(Encoder& encoder) const
+{
+    encoder << m_tileImage;
+    encoder << m_parameters;
+}
+
+template<class Decoder>
+std::optional<Ref<Pattern>> Pattern::decode(Decoder& decoder)
+{
+    std::optional<SourceImage> tileImage;
+    decoder >> tileImage;
+    if (!tileImage)
+        return std::nullopt;
+
+    std::optional<Parameters> parameters;
+    decoder >> parameters;
+    if (!parameters)
+        return std::nullopt;
+
+    return Pattern::create(WTFMove(*tileImage), *parameters);
 }
 
 } //namespace

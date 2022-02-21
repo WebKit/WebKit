@@ -27,9 +27,9 @@
 #include "StorageNamespaceImpl.h"
 
 #include "NetworkProcessConnection.h"
+#include "NetworkStorageManagerMessages.h"
 #include "StorageAreaImpl.h"
 #include "StorageAreaMap.h"
-#include "StorageManagerSetMessages.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
 #include "WebProcess.h"
@@ -100,10 +100,10 @@ void StorageNamespaceImpl::destroyStorageAreaMap(StorageAreaMap& map)
     m_storageAreaMaps.remove(map.securityOrigin().data());
 }
 
-Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& securityOriginData)
+Ref<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOrigin& securityOrigin)
 {
-    auto& map = m_storageAreaMaps.ensure(securityOriginData, [&] {
-        return makeUnique<StorageAreaMap>(*this, securityOriginData.securityOrigin());
+    auto& map = m_storageAreaMaps.ensure(securityOrigin.data(), [&] {
+        return makeUnique<StorageAreaMap>(*this, securityOrigin);
     }).iterator->value;
     return StorageAreaImpl::create(*map);
 }
@@ -114,7 +114,7 @@ Ref<StorageNamespace> StorageNamespaceImpl::copy(Page& newPage)
     ASSERT(m_storageType == StorageType::Session);
 
     if (auto networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
-        networkProcessConnection->connection().send(Messages::StorageManagerSet::CloneSessionStorageNamespace(sessionID(), m_storageNamespaceID, WebPage::fromCorePage(newPage).sessionStorageNamespaceIdentifier()), 0);
+        networkProcessConnection->connection().send(Messages::NetworkStorageManager::CloneSessionStorageNamespace(m_storageNamespaceID, WebPage::fromCorePage(newPage).sessionStorageNamespaceIdentifier()), 0);
 
     return adoptRef(*new StorageNamespaceImpl(m_storageType, WebPage::fromCorePage(newPage).sessionStorageNamespaceIdentifier(), WebPage::fromCorePage(newPage).identifier(), m_topLevelOrigin.get(), m_quotaInBytes));
 }

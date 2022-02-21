@@ -27,6 +27,8 @@
 
 #include "IsoPage.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 enum class EligibilityKind {
@@ -48,3 +50,4 @@ struct EligibilityResult {
 
 } // namespace bmalloc
 
+#endif

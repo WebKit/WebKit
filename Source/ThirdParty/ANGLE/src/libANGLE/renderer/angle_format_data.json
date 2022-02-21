@@ -10,6 +10,10 @@
     "glInternalFormat": "GL_BGRA8_EXT",
     "channelStruct": "B8G8R8X8"
   },
+  "R8G8B8X8_UNORM": {
+    "glInternalFormat": "GL_RGBA8",
+    "channelStruct": "R8G8B8X8"
+  },
   "R9G9B9E5_SHAREDEXP": {
     "componentType":  "float",
     "channelStruct":  "R9G9B9E5"
@@ -213,16 +217,16 @@
   "BC5_RG_SNORM_BLOCK": {
     "blockPixelBytes": "16"
   },
-  "BPTC_SRGB_ALPHA_UNORM_BLOCK": {
+  "BC6H_RGB_UFLOAT_BLOCK": {
     "blockPixelBytes": "16"
   },
-  "BPTC_RGB_SIGNED_FLOAT_BLOCK": {
+  "BC6H_RGB_SFLOAT_BLOCK": {
     "blockPixelBytes": "16"
   },
-  "BPTC_RGB_UNSIGNED_FLOAT_BLOCK": {
+  "BC7_RGBA_UNORM_BLOCK": {
     "blockPixelBytes": "16"
   },
-  "BPTC_RGBA_UNORM_BLOCK": {
+  "BC7_RGBA_UNORM_SRGB_BLOCK": {
     "blockPixelBytes": "16"
   },
   "EAC_R11_SNORM_BLOCK": {
@@ -284,5 +288,11 @@
   },
   "PVRTC1_RGBA_4BPP_UNORM_SRGB_BLOCK": {
     "blockPixelBytes": "8"
+  },
+  "G8_B8_R8_3PLANE_420_UNORM": {
+    "channelStruct": "R8G8B8"
+  },
+  "G8_B8R8_2PLANE_420_UNORM": {
+    "channelStruct": "R8G8B8"
   }
 }

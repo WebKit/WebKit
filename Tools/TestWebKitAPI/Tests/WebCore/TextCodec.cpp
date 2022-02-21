@@ -25,9 +25,9 @@
 
 #include "config.h"
 
-#include <WebCore/TextCodec.h>
-#include <WebCore/TextEncoding.h>
-#include <WebCore/TextEncodingRegistry.h>
+#include <pal/text/TextCodec.h>
+#include <pal/text/TextEncoding.h>
+#include <pal/text/TextEncodingRegistry.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace TestWebKitAPI {
@@ -88,7 +88,7 @@ static const char* escapeNonASCIIPrintableCharacters(StringView string)
 static const char* testDecode(const char* encodingName, std::initializer_list<const char*> inputs)
 {
     StringBuilder resultBuilder;
-    auto codec = newTextCodec(WebCore::TextEncoding { encodingName });
+    auto codec = newTextCodec(PAL::TextEncoding { encodingName });
     size_t size = inputs.size();
     for (size_t i = 0; i < size; ++i) {
         auto vector = decodeHexTestBytes(inputs.begin()[i]);

@@ -26,13 +26,12 @@
 [
     Conditional=MEDIA_SESSION,
     Exposed=Window,
-    ImplementationLacksVTable,
 ] interface MediaMetadata {
-    [CallWith=ScriptExecutionContext] constructor(optional MediaMetadataInit init);
+    [CallWith=CurrentScriptExecutionContext] constructor(optional MediaMetadataInit init);
     attribute DOMString title;
     attribute DOMString artist;
     attribute DOMString album;
-    [SetterCallWith=ScriptExecutionContext] attribute FrozenArray<MediaImage> artwork;
+    [SetterCallWith=CurrentScriptExecutionContext] attribute FrozenArray<MediaImage> artwork;
 };
 
 MediaMetadata includes MediaMetadataPlaylistMixin;

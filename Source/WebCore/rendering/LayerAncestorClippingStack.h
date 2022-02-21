@@ -41,7 +41,7 @@ class ScrollingCoordinator;
 
 struct CompositedClipData {
     CompositedClipData(RenderLayer* layer, LayoutRect rect, bool isOverflowScrollEntry)
-        : clippingLayer(makeWeakPtr(layer))
+        : clippingLayer(layer)
         , clipRect(rect)
         , isOverflowScroll(isOverflowScrollEntry)
     {

@@ -58,10 +58,10 @@ private:
     MediaTime decodeTime() const override { return m_box.decodeTimestamp(); }
     MediaTime duration() const override { return m_box.duration(); }
     AtomString trackID() const override { return m_id; }
-    void setTrackID(const String& id) override { m_id = id; }
     size_t sizeInBytes() const override { return sizeof(m_box); }
     SampleFlags flags() const override;
-    PlatformSample platformSample() override;
+    PlatformSample platformSample() const override;
+    PlatformSample::Type platformSampleType() const override { return PlatformSample::MockSampleBoxType; }
     std::optional<ByteRange> byteRange() const override { return std::nullopt; }
     FloatSize presentationSize() const override { return FloatSize(); }
     void dump(PrintStream&) const override;
@@ -87,7 +87,7 @@ MediaSample::SampleFlags MockMediaSample::flags() const
     return SampleFlags(flags);
 }
 
-PlatformSample MockMediaSample::platformSample()
+PlatformSample MockMediaSample::platformSample() const
 {
     PlatformSample sample = { PlatformSample::MockSampleBoxType, { &m_box } };
     return sample;

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-allowed-containers</title>
+    <script src="../video-test.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        if (!window.internals) {
+            failTest('Requires window.internals');
+            return;
+        }
+
+        video = document.createElement('video');
+
+        run('internals.settings.setAllowedMediaVideoCodecIDs(null)');
+        testExpected('MediaSource.isTypeSupported("video/mp4; codecs=avc1")', true);
+        testExpected('MediaSource.isTypeSupported("video/mp4; codecs=mp4v")', true);
+
+        run('internals.settings.setAllowedMediaVideoCodecIDs("avc1")');
+        run('internals.settings.setAllowedMediaAudioCodecIDs("aac ")');
+        run('internals.settings.setAllowedMediaCodecTypes("avc1,mp4a.40")');
+
+        testExpected('MediaSource.isTypeSupported("video/mp4; codecs=avc1")', true);
+        testExpected('MediaSource.isTypeSupported("video/mp4; codecs=mp4v")', false);
+
+        mediaSource = new MediaSource();
+        video.srcObject = mediaSource;
+        await waitFor(mediaSource, 'sourceopen');
+
+        run('sourceBuffer = mediaSource.addSourceBuffer("video/mp4; codecs=avc1")');
+        testException('sourceBuffer.changeType("video/mp4; codecs=mp4v")', '"NotSupportedError: The operation is not supported."');
+
+        run('internals.settings.setAllowedMediaVideoCodecIDs("vp09")');
+        run('internals.settings.setAllowedMediaAudioCodecIDs("opus")');
+        run('internals.settings.setAllowedMediaCodecTypes("vp09,opus")');
+
+        testExpected('MediaSource.isTypeSupported("video/mp4; codecs=avc1")', false);
+
+        testException('mediaSource.addSourceBuffer("video/mp4; codecs=avc1")', '"NotSupportedError: The operation is not supported."');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+</body>
+</html>

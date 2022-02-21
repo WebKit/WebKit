@@ -31,7 +31,7 @@ using ::testing::Return;
 TEST(PendingTaskSafetyFlagTest, Basic) {
   rtc::scoped_refptr<PendingTaskSafetyFlag> safety_flag;
   {
-    // Scope for the |owner| instance.
+    // Scope for the `owner` instance.
     class Owner {
      public:
       Owner() = default;
@@ -44,7 +44,7 @@ TEST(PendingTaskSafetyFlagTest, Basic) {
     safety_flag = owner.flag_;
     EXPECT_TRUE(safety_flag->alive());
   }
-  // |owner| now out of scope.
+  // `owner` now out of scope.
   EXPECT_FALSE(safety_flag->alive());
 }
 
@@ -57,7 +57,7 @@ TEST(PendingTaskSafetyFlagTest, BasicScoped) {
     safety_flag = owner.safety.flag();
     EXPECT_TRUE(safety_flag->alive());
   }
-  // |owner| now out of scope.
+  // `owner` now out of scope.
   EXPECT_FALSE(safety_flag->alive());
 }
 
@@ -142,7 +142,7 @@ TEST(PendingTaskSafetyFlagTest, PendingTaskDropped) {
                RTC_FROM_HERE);
   ASSERT_TRUE(owner);
   // Queue up a task on tq1 that will execute before the 'DoStuff' task
-  // can, and delete the |owner| before the 'stuff' task can execute.
+  // can, and delete the `owner` before the 'stuff' task can execute.
   rtc::Event blocker;
   tq1.PostTask([&blocker, &owner]() {
     blocker.Wait(rtc::Event::kForever);

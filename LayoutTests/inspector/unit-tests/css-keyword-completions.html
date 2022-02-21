@@ -7,7 +7,7 @@ function test()
 {
     let suite = InspectorTest.createSyncSuite("WI.CSSKeywordCompletions");
 
-    function addTestForPartialPropertyName({name, description, text, allowEmptyPrefix, expectedCompletions, expectedCompletionCount}) {
+    function addTestForPartialPropertyName({name, description, text, caretPosition, allowEmptyPrefix, expectedCompletions, expectedCompletionCount}) {
         suite.addTestCase({
             name,
             description,
@@ -17,7 +17,7 @@ function test()
                 expectedCompletionCount ??= -1;
 
                 // FIXME: <webkit.org/b/227157> Styles: Support completions mid-token.
-                let caretPosition = text.length;
+                caretPosition ??= text.length;
                 let completionResults = WI.CSSKeywordCompletions.forPartialPropertyName(text, {caretPosition, allowEmptyPrefix});
 
                 if (expectedCompletionCount >= 0)
@@ -66,7 +66,16 @@ function test()
         expectedCompletions: ["range"],
     });
 
-    function addTestForPartialPropertyValue({name, description, propertyName, text, caretPosition, expectedPrefix, expectedCompletions, additionalFunctionValueCompletionsProvider}) {
+    // FIXME: This test will fail after addressing <webkit.org/b/227157> Styles: Support completions mid-token.
+    addTestForPartialPropertyName({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyName.midTokenNoCompletions",
+        description: "Test that completions are not provided when the caret is positioned within the token.",
+        text: "margin",
+        caretPosition: 1,
+        expectedCompletionCount: 0,
+    });
+
+    function addTestForPartialPropertyValue({name, description, propertyName, text, caretPosition, expectedPrefix, expectedCompletions, expectedCompletionCount, additionalFunctionValueCompletionsProvider}) {
         suite.addTestCase({
             name,
             description,
@@ -74,10 +83,14 @@ function test()
                 caretPosition ??= text.length;
                 expectedPrefix ??= text;
                 expectedCompletions ??= [];
+                expectedCompletionCount ??= -1;
                 additionalFunctionValueCompletionsProvider ??= () => {};
 
                 let completionResults = WI.CSSKeywordCompletions.forPartialPropertyValue(text, propertyName, {caretPosition, additionalFunctionValueCompletionsProvider});
                 InspectorTest.expectEqual(completionResults.prefix, expectedPrefix, `Expected result prefix to be "${expectedPrefix}"`);
+
+                if (expectedCompletionCount >= 0)
+                    InspectorTest.expectEqual(completionResults.completions.length, expectedCompletionCount, `Expected exactly ${expectedCompletionCount} completion results.`);
 
                 // Because expected completions could be added at any time, just make sure the list contains our expected completions, instead of enforcing an exact match between expectations and reality.
                 let expectedCompletionsPresent = expectedCompletions.every((expectedCompletion) => {
@@ -227,6 +240,28 @@ function test()
         expectedPrefix: "",
         expectedCompletions: ["--one", "--two"],
         additionalFunctionValueCompletionsProvider: () => ["--one", "--two"],
+    });
+
+    // `hsl()a|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.NoWhitespaceAfterFunction",
+        description: "Test that color completions are not offered immediately after a closing parenthesis",
+        propertyName: "background",
+        text: "hsl()a",
+        caretPosition: 6,
+        expectedPrefix: "",
+        expectedCompletionCount: 0
+    });
+
+    // `hsl() a|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.WhitespaceAfterFunction",
+        description: "Test that color completions are offered when a closing parenthesis is followed by whitespace",
+        propertyName: "background",
+        text: "hsl() a",
+        caretPosition: 7,
+        expectedPrefix: "a",
+        expectedCompletions: ["aliceblue", "antiquewhite"],
     });
 
     suite.runTestCasesAndFinish();

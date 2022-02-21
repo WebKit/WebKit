@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: TypeError: foo
+
+
+PASS self.reportError() dispatches an "error" event for this's relevant global object
+

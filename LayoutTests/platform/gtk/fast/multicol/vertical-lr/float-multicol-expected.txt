@@ -146,7 +146,7 @@ layer at (8,8) size 1020x479 backgroundClip at (0,0) size 785x1508 clip at (0,0)
             text run at (286,290) width 126: "downloaded a build"
             text run at (304,290) width 33: "with "
             text run at (304,322) width 66: "Talkback, "
-          RenderInline {EM} at (0,0) size 35x139
+          RenderInline {EM} at (0,0) size 36x139
             RenderText {#text} at (304,388) size 36x139
               text run at (304,388) width 41: "please"
               text run at (322,290) width 59: "turn it on"
@@ -163,13 +163,13 @@ layer at (8,8) size 1020x479 backgroundClip at (0,0) size 785x1508 clip at (0,0)
             text run at (412,0) width 212: "all you have to do is click \"OK\". "
             text run at (412,211) width 226: "If you find something you think is a"
             text run at (430,0) width 222: "bug, check to see if it's not already "
-          RenderInline {A} at (0,0) size 17x83 [color=#0000EE]
+          RenderInline {A} at (0,0) size 18x83 [color=#0000EE]
             RenderText {#text} at (430,221) size 18x83
               text run at (430,221) width 84: "known about"
           RenderText {#text} at (430,304) size 36x409
             text run at (430,304) width 106: ", and then please"
             text run at (448,0) width 69: "follow the "
-          RenderInline {A} at (0,0) size 17x165 [color=#0000EE]
+          RenderInline {A} at (0,0) size 18x165 [color=#0000EE]
             RenderText {#text} at (448,68) size 18x165
               text run at (448,68) width 166: "bug submission procedure"
           RenderText {#text} at (448,233) size 18x4
@@ -234,7 +234,7 @@ layer at (8,8) size 1020x479 backgroundClip at (0,0) size 785x1508 clip at (0,0)
             text run at (72,42) width 382: "Mozilla, and there's a strong community. A particularly good"
             text run at (90,42) width 130: "way to get involved "
             text run at (90,171) width 82: "is to join the "
-          RenderInline {A} at (0,0) size 17x72 [color=#0000EE]
+          RenderInline {A} at (0,0) size 18x72 [color=#0000EE]
             RenderText {#text} at (90,252) size 18x72
               text run at (90,252) width 72: "BugAThon"
           RenderText {#text} at (90,323) size 18x5

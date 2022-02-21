@@ -108,11 +108,25 @@ rtc_library("metrics") {
   ]
 }
 
+rtc_library("denormal_disabler") {
+  visibility = [ "*" ]
+  public = [ "include/denormal_disabler.h" ]
+  sources = [ "source/denormal_disabler.cc" ]
+  deps = [
+    "../rtc_base:checks",
+    "../rtc_base/system:arch",
+  ]
+  if (is_clang) {
+    cflags_cc = [ "-Wno-unused-private-field" ]
+  }
+}
+
 if (rtc_include_tests && !build_with_chromium) {
   rtc_test("system_wrappers_unittests") {
     testonly = true
     sources = [
       "source/clock_unittest.cc",
+      "source/denormal_disabler_unittest.cc",
       "source/field_trial_unittest.cc",
       "source/metrics_default_unittest.cc",
       "source/metrics_unittest.cc",
@@ -121,6 +135,7 @@ if (rtc_include_tests && !build_with_chromium) {
     ]
 
     deps = [
+      ":denormal_disabler",
       ":field_trial",
       ":metrics",
       ":system_wrappers",

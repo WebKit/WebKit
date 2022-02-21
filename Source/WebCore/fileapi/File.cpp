@@ -115,7 +115,7 @@ int64_t File::lastModified() const
     else
         result = WallTime::now().secondsSinceEpoch().millisecondsAs<int64_t>();
 
-    return WTF::timeClip(result);
+    return timeClip(result);
 }
 
 void File::computeNameAndContentType(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType)

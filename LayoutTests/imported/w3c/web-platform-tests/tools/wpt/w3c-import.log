@@ -20,7 +20,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/commands.json
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/create.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/install.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/mach-emulator.manifest
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/markdown.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/paths
 /LayoutTests/imported/w3c/web-platform-tests/tools/wpt/requirements.txt

@@ -3,8 +3,6 @@
 <script src="apple-pay.js"></script>
 <script>
     window.addEventListener('load', async () => {
-        internals.mockPaymentCoordinator.supportsUnrestrictedApplePay = window.location.search === "?unrestricted" ? true : false;
-
         const applePaySessionAvailable = !!window.ApplePaySession;
         const paymentRequestAvailable = !!window.PaymentRequest;
         if (!applePaySessionAvailable || !paymentRequestAvailable) {

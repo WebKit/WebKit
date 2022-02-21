@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google, Inc. All Rights Reserved.
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,10 +56,6 @@ public:
     struct Attribute {
         Vector<UChar, 32> name;
         Vector<UChar, 64> value;
-
-        // Used by HTMLSourceTracker.
-        unsigned startOffset;
-        unsigned endOffset;
     };
 
     typedef Vector<Attribute, 10> AttributeList;
@@ -101,25 +97,18 @@ public:
     bool selfClosing() const;
     const AttributeList& attributes() const;
 
-    void beginStartTag(UChar);
+    void beginStartTag(LChar);
 
     void beginEndTag(LChar);
     void beginEndTag(const Vector<LChar, 32>&);
 
-    void beginAttribute(unsigned offset);
+    void beginAttribute();
     void appendToAttributeName(UChar);
     void appendToAttributeValue(UChar);
-    void endAttribute(unsigned offset);
+    void appendToAttributeValue(unsigned index, StringView value);
+    void endAttribute();
 
     void setSelfClosing();
-
-    // Used by HTMLTokenizer on behalf of HTMLSourceTracker.
-    void setAttributeBaseOffset(unsigned attributeBaseOffset) { m_attributeBaseOffset = attributeBaseOffset; }
-
-public:
-    // Used by the XSSAuditor to nuke XSS-laden attributes.
-    void eraseValueOfAttribute(unsigned index);
-    void appendToAttributeValue(unsigned index, StringView value);
 
     // Character.
 
@@ -155,8 +144,6 @@ private:
 
     // For DOCTYPE
     std::unique_ptr<DoctypeData> m_doctypeData;
-
-    unsigned m_attributeBaseOffset { 0 }; // Changes across document.write() boundaries.
 };
 
 const HTMLToken::Attribute* findAttribute(const Vector<HTMLToken::Attribute>&, StringView name);
@@ -267,7 +254,7 @@ inline void HTMLToken::setSelfClosing()
     m_selfClosing = true;
 }
 
-inline void HTMLToken::beginStartTag(UChar character)
+inline void HTMLToken::beginStartTag(LChar character)
 {
     ASSERT(character);
     ASSERT(m_type == Uninitialized);
@@ -280,7 +267,6 @@ inline void HTMLToken::beginStartTag(UChar character)
 #endif
 
     m_data.append(character);
-    m_data8BitCheck = character;
 }
 
 inline void HTMLToken::beginEndTag(LChar character)
@@ -311,22 +297,16 @@ inline void HTMLToken::beginEndTag(const Vector<LChar, 32>& characters)
     m_data.appendVector(characters);
 }
 
-inline void HTMLToken::beginAttribute(unsigned offset)
+inline void HTMLToken::beginAttribute()
 {
     ASSERT(m_type == StartTag || m_type == EndTag);
-    ASSERT(offset);
-
     m_attributes.grow(m_attributes.size() + 1);
     m_currentAttribute = &m_attributes.last();
-
-    m_currentAttribute->startOffset = offset - m_attributeBaseOffset;
 }
 
-inline void HTMLToken::endAttribute(unsigned offset)
+inline void HTMLToken::endAttribute()
 {
-    ASSERT(offset);
     ASSERT(m_currentAttribute);
-    m_currentAttribute->endOffset = offset - m_attributeBaseOffset;
 #if ASSERT_ENABLED
     m_currentAttribute = nullptr;
 #endif
@@ -359,14 +339,6 @@ inline const HTMLToken::AttributeList& HTMLToken::attributes() const
 {
     ASSERT(m_type == StartTag || m_type == EndTag);
     return m_attributes;
-}
-
-// Used by the XSSAuditor to nuke XSS-laden attributes.
-inline void HTMLToken::eraseValueOfAttribute(unsigned i)
-{
-    ASSERT(m_type == StartTag || m_type == EndTag);
-    ASSERT(i < m_attributes.size());
-    m_attributes[i].value.clear();
 }
 
 inline const HTMLToken::DataVector& HTMLToken::characters() const

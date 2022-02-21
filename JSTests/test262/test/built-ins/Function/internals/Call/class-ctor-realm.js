@@ -10,7 +10,7 @@ features: [cross-realm, class]
 
 const realm = $262.createRealm();
 const C = realm.global.eval('(class {})');
-const TE = realm.global.eval('TypeError');
+const TE = realm.global.TypeError;
 
 assert.throws(TE, function() {
   C();

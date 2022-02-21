@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +23,6 @@
 #pragma once
 
 #include "FilterEffect.h"
-#include "Filter.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -37,7 +37,7 @@ enum ChannelSelectorType {
 
 class FEDisplacementMap : public FilterEffect {
 public:
-    static Ref<FEDisplacementMap> create(Filter&, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale);
+    WEBCORE_EXPORT static Ref<FEDisplacementMap> create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale);
 
     ChannelSelectorType xChannelSelector() const { return m_xChannelSelector; }
     bool setXChannelSelector(const ChannelSelectorType);
@@ -48,27 +48,73 @@ public:
     float scale() const { return m_scale; }
     bool setScale(float);
 
-    void setResultColorSpace(const DestinationColorSpace&) override;
-    void transformResultColorSpace(FilterEffect*, const int) override;
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<Ref<FEDisplacementMap>> decode(Decoder&);
 
 private:
-    FEDisplacementMap(Filter&, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
+    FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
-    const char* filterName() const final { return "FEDisplacementMap"; }
+    unsigned numberOfEffectInputs() const override { return 2; }
 
-    void platformApplySoftware() override;
+    FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
-    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    const DestinationColorSpace& resultColorSpace(const FilterImageVector&) const override;
+    void transformInputsColorSpace(const FilterImageVector& inputs) const override;
 
-    int xChannelIndex() const { return m_xChannelSelector - 1; }
-    int yChannelIndex() const { return m_yChannelSelector - 1; }
+    std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 
     ChannelSelectorType m_xChannelSelector;
     ChannelSelectorType m_yChannelSelector;
     float m_scale;
 };
 
+template<class Encoder>
+void FEDisplacementMap::encode(Encoder& encoder) const
+{
+    encoder << m_xChannelSelector;
+    encoder << m_yChannelSelector;
+    encoder << m_scale;
+}
+
+template<class Decoder>
+std::optional<Ref<FEDisplacementMap>> FEDisplacementMap::decode(Decoder& decoder)
+{
+    std::optional<ChannelSelectorType> xChannelSelector;
+    decoder >> xChannelSelector;
+    if (!xChannelSelector)
+        return std::nullopt;
+
+    std::optional<ChannelSelectorType> yChannelSelector;
+    decoder >> yChannelSelector;
+    if (!yChannelSelector)
+        return std::nullopt;
+
+    std::optional<float> scale;
+    decoder >> scale;
+    if (!scale)
+        return std::nullopt;
+
+    return FEDisplacementMap::create(*xChannelSelector, *yChannelSelector, *scale);
+}
+
 } // namespace WebCore
 
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ChannelSelectorType> {
+    using values = EnumValues<
+        WebCore::ChannelSelectorType,
+
+        WebCore::CHANNEL_UNKNOWN,
+        WebCore::CHANNEL_R,
+        WebCore::CHANNEL_G,
+        WebCore::CHANNEL_B,
+        WebCore::CHANNEL_A
+    >;
+};
+
+} // namespace WTF
+
+SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEDisplacementMap)

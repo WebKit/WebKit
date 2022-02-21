@@ -66,6 +66,9 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
     Node* nodeToSplitTo = enclosingBlockToSplitTreeTo(start.deprecatedNode());
     ASSERT(nodeToSplitTo);
     RefPtr<Node> outerBlock = (start.deprecatedNode() == nodeToSplitTo) ? start.deprecatedNode() : splitTreeToNode(*start.deprecatedNode(), *nodeToSplitTo);
+    if (!outerBlock)
+        return;
+
     RefPtr<Node> nodeAfterInsertionPosition = outerBlock;
 
     auto range = makeSimpleRange(start, endOfSelection);
@@ -120,7 +123,7 @@ Element* FormatBlockCommand::elementForFormatBlockCommand(const std::optional<Si
 
 bool isElementForFormatBlock(const QualifiedName& tagName)
 {
-    static const auto blockTags = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> {
+    static NeverDestroyed blockTags = MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> {
         addressTag,
         articleTag,
         asideTag,
@@ -143,7 +146,7 @@ bool isElementForFormatBlock(const QualifiedName& tagName)
         pTag,
         preTag,
         sectionTag,
-    });
+    };
     return blockTags.get().contains(tagName);
 }
 

@@ -32,7 +32,7 @@
     readonly attribute RotationRate? rotationRate;
     readonly attribute unrestricted double? interval;
 
-    [CallWith=Document, EnabledBySetting=DeviceOrientationPermissionAPI] static Promise<DeviceOrientationOrMotionPermissionState> requestPermission();
+    [CallWith=CurrentDocument, EnabledBySetting=DeviceOrientationPermissionAPIEnabled] static Promise<DeviceOrientationOrMotionPermissionState> requestPermission();
 
     undefined initDeviceMotionEvent(optional DOMString type = "",
                                optional boolean bubbles = false,

@@ -4,6 +4,9 @@
 
 config("libpng_config") {
   include_dirs = [ "src" ]
+  if (is_clang) {
+    cflags = [ "-Wno-tautological-constant-out-of-range-compare" ]
+  }
 }
 
 static_library("libpng") {
@@ -29,6 +32,7 @@ static_library("libpng") {
       "src/arm/arm_init.c",
       "src/arm/filter_neon.S",
       "src/arm/filter_neon_intrinsics.c",
+      "src/arm/palette_neon_intrinsics.c",
     ]
   }
   if (is_win) {

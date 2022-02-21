@@ -1,9 +1,9 @@
 import os
 import subprocess
 import sys
-from six.moves.urllib.parse import urljoin
 from collections import defaultdict
-from six import iteritems, string_types
+from typing import Any, ClassVar, Dict, Type
+from urllib.parse import urljoin
 
 from .wptmanifest.parser import atoms
 
@@ -83,7 +83,7 @@ def get_run_info(metadata_root, product, **kwargs):
     return RunInfo(metadata_root, product, **kwargs)
 
 
-class RunInfo(dict):
+class RunInfo(Dict[str, Any]):
     def __init__(self, metadata_root, product, debug,
                  browser_version=None,
                  browser_channel=None,
@@ -150,22 +150,28 @@ def server_protocol(manifest_item):
 
 class Test(object):
 
-    result_cls = None
-    subtest_result_cls = None
-    test_type = None
+    result_cls = None  # type: ClassVar[Type[Result]]
+    subtest_result_cls = None  # type: ClassVar[Type[SubtestResult]]
+    test_type = None  # type: ClassVar[str]
 
     default_timeout = 10  # seconds
     long_timeout = 60  # seconds
 
-    def __init__(self, tests_root, url, inherit_metadata, test_metadata,
-                 timeout=None, path=None, protocol="http", quic=False):
+    def __init__(self, url_base, tests_root, url, inherit_metadata, test_metadata,
+                 timeout=None, path=None, protocol="http", subdomain=False,
+                 quic=False):
+        self.url_base = url_base
         self.tests_root = tests_root
         self.url = url
         self._inherit_metadata = inherit_metadata
         self._test_metadata = test_metadata
         self.timeout = timeout if timeout is not None else self.default_timeout
         self.path = path
-        self.environment = {"protocol": protocol, "prefs": self.prefs, "quic": quic}
+        self.subdomain = subdomain
+        self.environment = {"url_base": url_base,
+                            "protocol": protocol,
+                            "prefs": self.prefs,
+                            "quic": quic}
 
     def __eq__(self, other):
         if not isinstance(other, Test):
@@ -184,13 +190,15 @@ class Test(object):
     @classmethod
     def from_manifest(cls, manifest_file, manifest_item, inherit_metadata, test_metadata):
         timeout = cls.long_timeout if manifest_item.timeout == "long" else cls.default_timeout
-        return cls(manifest_file.tests_root,
+        return cls(manifest_file.url_base,
+                   manifest_file.tests_root,
                    manifest_item.url,
                    inherit_metadata,
                    test_metadata,
                    timeout=timeout,
                    path=os.path.join(manifest_file.tests_root, manifest_item.path),
-                   protocol=server_protocol(manifest_item))
+                   protocol=server_protocol(manifest_item),
+                   subdomain=manifest_item.subdomain)
 
     @property
     def id(self):
@@ -299,7 +307,7 @@ class Test(object):
         rv = {}
         for meta in self.itermeta(None):
             threshold = meta.leak_threshold
-            for key, value in iteritems(threshold):
+            for key, value in threshold.items():
                 if key not in rv:
                     rv[key] = value
         return rv
@@ -341,7 +349,7 @@ class Test(object):
 
         try:
             expected = metadata.get("expected")
-            if isinstance(expected, string_types):
+            if isinstance(expected, str):
                 return expected
             elif isinstance(expected, list):
                 return expected[0]
@@ -393,11 +401,11 @@ class TestharnessTest(Test):
     subtest_result_cls = TestharnessSubtestResult
     test_type = "testharness"
 
-    def __init__(self, tests_root, url, inherit_metadata, test_metadata,
+    def __init__(self, url_base, tests_root, url, inherit_metadata, test_metadata,
                  timeout=None, path=None, protocol="http", testdriver=False,
-                 jsshell=False, scripts=None, quic=False):
-        Test.__init__(self, tests_root, url, inherit_metadata, test_metadata, timeout,
-                      path, protocol, quic)
+                 jsshell=False, scripts=None, subdomain=False, quic=False):
+        Test.__init__(self, url_base, tests_root, url, inherit_metadata, test_metadata, timeout,
+                      path, protocol, subdomain, quic)
 
         self.testdriver = testdriver
         self.jsshell = jsshell
@@ -412,7 +420,8 @@ class TestharnessTest(Test):
         script_metadata = manifest_item.script_metadata or []
         scripts = [v for (k, v) in script_metadata
                    if k == "script"]
-        return cls(manifest_file.tests_root,
+        return cls(manifest_file.url_base,
+                   manifest_file.tests_root,
                    manifest_item.url,
                    inherit_metadata,
                    test_metadata,
@@ -422,6 +431,7 @@ class TestharnessTest(Test):
                    testdriver=testdriver,
                    jsshell=jsshell,
                    scripts=scripts,
+                   subdomain=manifest_item.subdomain,
                    quic=quic)
 
     @property
@@ -452,11 +462,11 @@ class ReftestTest(Test):
     result_cls = ReftestResult
     test_type = "reftest"
 
-    def __init__(self, tests_root, url, inherit_metadata, test_metadata, references,
-                 timeout=None, path=None, viewport_size=None, dpi=None, fuzzy=None, protocol="http",
-                 quic=False):
-        Test.__init__(self, tests_root, url, inherit_metadata, test_metadata, timeout,
-                      path, protocol, quic)
+    def __init__(self, url_base, tests_root, url, inherit_metadata, test_metadata, references,
+                 timeout=None, path=None, viewport_size=None, dpi=None, fuzzy=None,
+                 protocol="http", subdomain=False, quic=False):
+        Test.__init__(self, url_base, tests_root, url, inherit_metadata, test_metadata, timeout,
+                      path, protocol, subdomain, quic)
 
         for _, ref_type in references:
             if ref_type not in ("==", "!="):
@@ -486,13 +496,15 @@ class ReftestTest(Test):
 
         url = manifest_test.url
 
-        node = cls(manifest_file.tests_root,
+        node = cls(manifest_file.url_base,
+                   manifest_file.tests_root,
                    manifest_test.url,
                    inherit_metadata,
                    test_metadata,
                    [],
                    timeout=timeout,
                    path=manifest_test.path,
+                   subdomain=manifest_test.subdomain,
                    quic=quic,
                    **cls.cls_kwargs(manifest_test))
 
@@ -507,20 +519,23 @@ class ReftestTest(Test):
         # Per the logic documented above, this means that none of the mismatches provided match,
         mismatch_walk = None
         if refs_by_type["!="]:
-            mismatch_walk = ReftestTest(manifest_file.tests_root,
+            mismatch_walk = ReftestTest(manifest_file.url_base,
+                                        manifest_file.tests_root,
                                         refs_by_type["!="][0],
                                         [],
                                         None,
                                         [])
             cmp_ref = mismatch_walk
             for ref_url in refs_by_type["!="][1:]:
-                cmp_self = ReftestTest(manifest_file.tests_root,
+                cmp_self = ReftestTest(manifest_file.url_base,
+                                       manifest_file.tests_root,
                                        url,
                                        [],
                                        None,
                                        [])
                 cmp_ref.references.append((cmp_self, "!="))
-                cmp_ref = ReftestTest(manifest_file.tests_root,
+                cmp_ref = ReftestTest(manifest_file.url_base,
+                                      manifest_file.tests_root,
                                       ref_url,
                                       [],
                                       None,
@@ -536,7 +551,8 @@ class ReftestTest(Test):
             # For each == ref, add a reference to this node whose tail is the mismatch list.
             # Per the logic documented above, this means any one of the matches must pass plus all the mismatches.
             for ref_url in refs_by_type["=="]:
-                ref = ReftestTest(manifest_file.tests_root,
+                ref = ReftestTest(manifest_file.url_base,
+                                  manifest_file.tests_root,
                                   ref_url,
                                   [],
                                   None,
@@ -605,12 +621,12 @@ class ReftestTest(Test):
 class PrintReftestTest(ReftestTest):
     test_type = "print-reftest"
 
-    def __init__(self, tests_root, url, inherit_metadata, test_metadata, references,
+    def __init__(self, url_base, tests_root, url, inherit_metadata, test_metadata, references,
                  timeout=None, path=None, viewport_size=None, dpi=None, fuzzy=None,
-                 page_ranges=None, protocol="http", quic=False):
-        super(PrintReftestTest, self).__init__(tests_root, url, inherit_metadata, test_metadata,
+                 page_ranges=None, protocol="http", subdomain=False, quic=False):
+        super(PrintReftestTest, self).__init__(url_base, tests_root, url, inherit_metadata, test_metadata,
                                                references, timeout, path, viewport_size, dpi,
-                                               fuzzy, protocol, quic=quic)
+                                               fuzzy, protocol, subdomain=subdomain, quic=quic)
         self._page_ranges = page_ranges
 
     @classmethod

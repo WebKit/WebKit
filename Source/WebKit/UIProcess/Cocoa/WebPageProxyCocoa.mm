@@ -29,19 +29,22 @@
 #import "APIAttachment.h"
 #import "APIPageConfiguration.h"
 #import "APIUIClient.h"
+#import "AppleMediaServicesUISPI.h"
 #import "CocoaImage.h"
 #import "Connection.h"
 #import "DataDetectionResult.h"
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
+#import "ModalContainerControlClassifier.h"
 #import "PageClient.h"
+#import "PlaybackSessionManagerProxy.h"
 #import "QuarantineSPI.h"
 #import "QuickLookThumbnailLoader.h"
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferCopy.h"
-#import "SharedBufferDataReference.h"
 #import "SynapseSPI.h"
+#import "VideoFullscreenManagerProxy.h"
 #import "WebContextMenuProxy.h"
 #import "WebPage.h"
 #import "WebPageMessages.h"
@@ -51,6 +54,7 @@
 #import "WebsiteDataStore.h"
 #import "WKErrorInternal.h"
 #import <Foundation/NSURLRequest.h>
+#import <WebCore/ApplePayAMSUIRequest.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HighlightVisibility.h>
@@ -81,11 +85,29 @@ SOFT_LINK_CLASS_OPTIONAL(Synapse, SYNotesActivationObserver)
 #import <UIKit/UIImage.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#import <WebCore/RenderThemeIOS.h>
+#else
+#import <WebCore/RenderThemeMac.h>
+#endif
+
 #if PLATFORM(IOS)
 #import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
+#endif
+
+#if HAVE(SC_CONTENT_SHARING_SESSION)
+#import <WebCore/ScreenCaptureKitSharingSessionManager.h>
+#endif
+
+#if ENABLE(APPLE_PAY_AMS_UI)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(AppleMediaServices)
+SOFT_LINK_CLASS_OPTIONAL(AppleMediaServices, AMSEngagementRequest)
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(AppleMediaServicesUI)
+SOFT_LINK_CLASS_OPTIONAL(AppleMediaServicesUI, AMSUIEngagementTask)
 #endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
@@ -138,7 +160,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, bool forMainFrameNavig
     SSBLookupContext *context = [SSBLookupContext sharedLookupContext];
     if (!context)
         return listener.didReceiveSafeBrowsingResults({ });
-    [context lookUpURL:url completionHandler:makeBlockPtr([listener = makeRef(listener), forMainFrameNavigation, url = url] (SSBLookupResult *result, NSError *error) mutable {
+    [context lookUpURL:url completionHandler:makeBlockPtr([listener = Ref { listener }, forMainFrameNavigation, url = url] (SSBLookupResult *result, NSError *error) mutable {
         RunLoop::main().dispatch([listener = WTFMove(listener), result = retainPtr(result), error = retainPtr(error), forMainFrameNavigation, url = WTFMove(url)] {
             if (error) {
                 listener->didReceiveSafeBrowsingResults({ });
@@ -275,6 +297,43 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
 void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&& fromAttachment, Ref<API::Attachment>&& toAttachment)
 {
     toAttachment->setFileWrapper(fromAttachment->fileWrapper());
+}
+
+static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::FloatSize& fittingSize)
+{
+    FloatSize originalThumbnailSize([image size]);
+    auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
+    resultRect.setLocation({ });
+
+    WebKit::ShareableBitmap::Configuration bitmapConfiguration;
+    auto bitmap = WebKit::ShareableBitmap::createShareable(resultRect.size(), bitmapConfiguration);
+    if (!bitmap)
+        return nullptr;
+
+    auto graphicsContext = bitmap->createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
+    LocalCurrentGraphicsContext savedContext(*graphicsContext);
+#if PLATFORM(IOS_FAMILY)
+    [image drawInRect:resultRect];
+#elif USE(APPKIT)
+    [image drawInRect:resultRect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
+#endif
+
+    return bitmap;
+}
+
+RefPtr<WebKit::ShareableBitmap> WebPageProxy::iconForAttachment(const String& fileName, const String& contentType, const String& title, FloatSize& size)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto imageAndSize = RenderThemeIOS::iconForAttachment(fileName, contentType, title);
+    auto image = imageAndSize.icon;
+    size = imageAndSize.size;
+#else
+    auto image = RenderThemeMac::iconForAttachment(fileName, contentType, title);
+#endif
+    return convertPlatformImageToBitmap(image.get(), size);
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
@@ -451,32 +510,66 @@ void WebPageProxy::removeMediaUsageManagerSession(WebCore::MediaSessionIdentifie
 }
 #endif
 
-#if HAVE(QUICKLOOK_THUMBNAILING)
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 
-static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::IntSize& fittingSize)
+void WebPageProxy::didChangePlaybackRate(PlaybackSessionContextIdentifier identifier)
 {
-    FloatSize originalThumbnailSize([image size]);
-    auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
-    resultRect.setLocation({ });
-
-    WebKit::ShareableBitmap::Configuration bitmapConfiguration;
-    auto bitmap = WebKit::ShareableBitmap::createShareable(resultRect.size(), bitmapConfiguration);
-    if (!bitmap)
-        return nullptr;
-
-    auto graphicsContext = bitmap->createGraphicsContext();
-    if (!graphicsContext)
-        return nullptr;
-
-    LocalCurrentGraphicsContext savedContext(*graphicsContext);
-#if PLATFORM(IOS_FAMILY)
-    [image drawInRect:resultRect];
-#elif USE(APPKIT)
-    [image drawInRect:resultRect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
-#endif
-
-    return bitmap;
+    if (m_currentFullscreenVideoSessionIdentifier == identifier)
+        updateFullscreenVideoExtraction();
 }
+
+void WebPageProxy::didChangeCurrentTime(PlaybackSessionContextIdentifier identifier)
+{
+    if (m_currentFullscreenVideoSessionIdentifier == identifier)
+        updateFullscreenVideoExtraction();
+}
+
+void WebPageProxy::updateFullscreenVideoExtraction()
+{
+    if (!pageClient().isFullscreenVideoExtractionEnabled())
+        return;
+
+    if (m_currentFullscreenVideoSessionIdentifier && m_playbackSessionManager && m_playbackSessionManager->isPaused(*m_currentFullscreenVideoSessionIdentifier)) {
+        m_fullscreenVideoExtractionTimer.startOneShot(250_ms);
+        return;
+    }
+
+    m_fullscreenVideoExtractionTimer.stop();
+
+    if (!m_currentFullscreenVideoSessionIdentifier)
+        return;
+
+#if PLATFORM(IOS_FAMILY)
+    if (RetainPtr controller = m_videoFullscreenManager->playerViewController(*m_currentFullscreenVideoSessionIdentifier))
+        pageClient().cancelFullscreenVideoExtraction(controller.get());
+#endif
+}
+
+void WebPageProxy::fullscreenVideoExtractionTimerFired()
+{
+    if (!m_currentFullscreenVideoSessionIdentifier || !m_videoFullscreenManager)
+        return;
+
+    auto identifier = *m_currentFullscreenVideoSessionIdentifier;
+    m_videoFullscreenManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](auto& imageHandle) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || protectedThis->m_currentFullscreenVideoSessionIdentifier != identifier)
+            return;
+
+        auto fullscreenManager = protectedThis->m_videoFullscreenManager;
+        if (!fullscreenManager)
+            return;
+
+#if PLATFORM(IOS_FAMILY)
+        if (RetainPtr controller = fullscreenManager->playerViewController(identifier))
+            protectedThis->pageClient().beginFullscreenVideoExtraction(imageHandle, controller.get());
+#endif
+    });
+}
+
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
+
+#if HAVE(QUICKLOOK_THUMBNAILING)
 
 void WebPageProxy::requestThumbnailWithOperation(WKQLThumbnailLoadOperation *operation)
 {
@@ -486,7 +579,7 @@ void WebPageProxy::requestThumbnailWithOperation(WKQLThumbnailLoadOperation *ope
             auto convertedImage = convertPlatformImageToBitmap([operation thumbnail], WebCore::IntSize(400, 400));
             if (!convertedImage)
                 return;
-            this->updateAttachmentIcon(identifier, convertedImage);
+            this->updateAttachmentThumbnail(identifier, convertedImage);
         });
     }];
         
@@ -529,12 +622,12 @@ void WebPageProxy::scheduleActivityStateUpdate()
     // If there is no active transaction, likely there is no root layer change or change is committed,
     // then schedule dispatch on runloop observer to collect changes in the same runloop cycle before dispatching.
     if (hasActiveCATransaction) {
-        [CATransaction addCommitHandler:[weakThis = makeWeakPtr(*this)] {
+        [CATransaction addCommitHandler:[weakThis = WeakPtr { *this }] {
             // We can't call dispatchActivityStateChange directly underneath this commit handler, because it has side-effects
             // that may result in other frameworks trying to install commit handlers for the same phase, which is not allowed.
             // So, dispatch_async here; we only care that the activity state change doesn't apply until after the active commit is complete.
             WorkQueue::main().dispatch([weakThis] {
-                auto protectedThis = makeRefPtr(weakThis.get());
+                RefPtr protectedThis { weakThis.get() };
                 if (!protectedThis)
                     return;
 
@@ -614,7 +707,7 @@ void WebPageProxy::setUpHighlightsObserver()
     if (m_appHighlightsObserver)
         return;
 
-    auto weakThis = makeWeakPtr(*this);
+    WeakPtr weakThis { *this };
     auto updateAppHighlightsVisibility = ^(BOOL isVisible) {
         ensureOnMainRunLoop([weakThis, isVisible] {
             if (!weakThis)
@@ -628,17 +721,54 @@ void WebPageProxy::setUpHighlightsObserver()
 
 #endif
 
+#if ENABLE(APPLE_PAY_AMS_UI)
+
+void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUIRequest&& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
+{
+    if (!AppleMediaServicesUILibrary()) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    PlatformViewController *presentingViewController = uiClient().presentingViewController();
+    if (!presentingViewController) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    auto amsRequest = adoptNS([allocAMSEngagementRequestInstance() initWithRequestDictionary:dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[WTFMove(request.engagementRequest) dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil])]);
+    [amsRequest setOriginatingURL:WTFMove(originatingURL)];
+
+    auto amsBag = retainPtr([getAMSUIEngagementTaskClass() createBagForSubProfile]);
+
+    m_applePayAMSUISession = adoptNS([allocAMSUIEngagementTaskInstance() initWithRequest:amsRequest.get() bag:amsBag.get() presentingViewController:presentingViewController]);
+    [m_applePayAMSUISession setRemotePresentation:YES];
+
+    auto amsResult = retainPtr([m_applePayAMSUISession presentEngagement]);
+    [amsResult addFinishBlock:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (AMSEngagementResult *result, NSError *error) mutable {
+        if (error) {
+            completionHandler(std::nullopt);
+            return;
+        }
+
+        completionHandler(result);
+    }).get()];
+}
+
+void WebPageProxy::abortApplePayAMSUISession()
+{
+    [std::exchange(m_applePayAMSUISession, nullptr) cancel];
+}
+
+#endif // ENABLE(APPLE_PAY_AMS_UI)
+
 Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
 {
 #if ENABLE(CONTENT_FILTERING)
     if (!process.hasNetworkExtensionSandboxAccess() && NetworkExtensionContentFilter::isRequired()) {
         process.markHasNetworkExtensionSandboxAccess();
         constexpr ASCIILiteral neHelperService { "com.apple.nehelper"_s };
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
-        constexpr ASCIILiteral neSessionManagerService { "com.apple.nesessionmanager"_s };
-#else
         constexpr ASCIILiteral neSessionManagerService { "com.apple.nesessionmanager.content-filter"_s };
-#endif
         return SandboxExtension::createHandlesForMachLookup({ neHelperService, neSessionManagerService }, std::nullopt);
     }
 #endif
@@ -749,6 +879,21 @@ bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
     return true;
 }
 #endif
+
+void WebPageProxy::classifyModalContainerControls(Vector<String>&& texts, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
+{
+    ModalContainerControlClassifier::sharedClassifier().classify(WTFMove(texts), WTFMove(completion));
+}
+
+void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
+{
+    send(Messages::WebPage::ReplaceSelectionWithPasteboardData(types, data));
+}
+
+void WebPageProxy::replaceWithPasteboardData(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
+{
+    send(Messages::WebPage::ReplaceWithPasteboardData(elementContext, types, data));
+}
 
 } // namespace WebKit
 

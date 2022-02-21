@@ -32,14 +32,17 @@
 #include "EventTarget.h"
 #include "JSValueInWrappedObject.h"
 #include "PaymentAddress.h"
-#include "PaymentComplete.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Document;
 class PaymentRequest;
+
+struct PaymentCompleteDetails;
 struct PaymentValidationErrors;
+
+enum class PaymentComplete;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
@@ -83,7 +86,7 @@ public:
     const String& payerPhone() const { return m_payerPhone; }
     void setPayerPhone(const String& payerPhone) { m_payerPhone = payerPhone; }
 
-    void complete(std::optional<PaymentComplete>&&, DOMPromiseDeferred<void>&&);
+    void complete(Document&, std::optional<PaymentComplete>&&, std::optional<PaymentCompleteDetails>&&, DOMPromiseDeferred<void>&&);
     void retry(PaymentValidationErrors&&, DOMPromiseDeferred<void>&&);
     void abortWithException(Exception&&);
     bool hasRetryPromise() const { return !!m_retryPromise; }

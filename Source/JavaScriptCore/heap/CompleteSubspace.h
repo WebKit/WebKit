@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@ namespace JSC {
 
 class CompleteSubspace final : public Subspace {
 public:
-    JS_EXPORT_PRIVATE CompleteSubspace(CString name, Heap&, HeapCellType*, AlignedMemoryAllocator*);
+    JS_EXPORT_PRIVATE CompleteSubspace(CString name, Heap&, const HeapCellType&, AlignedMemoryAllocator*);
     JS_EXPORT_PRIVATE ~CompleteSubspace() final;
 
     // In some code paths, we need it to be a compile error to call the virtual version of one of
@@ -39,11 +39,10 @@ public:
     
     // FIXME: Currently subspaces speak of BlockDirectories as "allocators", but that's temporary.
     // https://bugs.webkit.org/show_bug.cgi?id=181559
-    Allocator allocatorFor(size_t, AllocatorForMode) final;
-    Allocator allocatorForNonVirtual(size_t, AllocatorForMode);
-    
-    void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) final;
-    void* allocateNonVirtual(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
+    Allocator allocatorFor(size_t, AllocatorForMode);
+    Allocator allocatorForNonInline(size_t, AllocatorForMode);
+
+    void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
     void* reallocatePreciseAllocationNonVirtual(VM&, HeapCell*, size_t, GCDeferralContext*, AllocationFailureMode);
     
     static ptrdiff_t offsetOfAllocatorForSizeStep() { return OBJECT_OFFSETOF(CompleteSubspace, m_allocatorForSizeStep); }
@@ -62,7 +61,7 @@ private:
     Vector<std::unique_ptr<LocalAllocator>> m_localAllocators;
 };
 
-ALWAYS_INLINE Allocator CompleteSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode mode)
+ALWAYS_INLINE Allocator CompleteSubspace::allocatorFor(size_t size, AllocatorForMode mode)
 {
     if (size <= MarkedSpace::largeCutoff) {
         Allocator result = m_allocatorForSizeStep[MarkedSpace::sizeClassToIndex(size)];

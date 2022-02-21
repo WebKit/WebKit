@@ -22,7 +22,6 @@ try {
     ({}) instanceof fn;
 } catch (e) {
     exception = e;
+    if (exception != "RangeError: Maximum call stack size exceeded.")
+        throw "FAILED";
 }
-
-if (exception != "RangeError: Maximum call stack size exceeded.")
-    throw "FAILED";

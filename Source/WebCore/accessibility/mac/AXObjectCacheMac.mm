@@ -32,9 +32,16 @@
 #import "AccessibilityObject.h"
 #import "AccessibilityTable.h"
 #import "RenderObject.h"
+#import "RuntimeEnabledFeatures.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+#import <pal/spi/cocoa/AccessibilitySupportSPI.h>
+#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
+#endif
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <ApplicationServices/ApplicationServicesPriv.h>
@@ -288,9 +295,29 @@ static void AXPostNotificationWithUserInfo(AccessibilityObjectWrapper *object, N
     NSAccessibilityPostNotificationWithUserInfo(object, notification, userInfo);
 }
 
-void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification notification)
+#ifndef NDEBUG
+// This function exercises, for debugging and testing purposes, the AXObject methods called in [WebAccessibilityObjectWrapper accessibilityIsIgnored].
+// It is useful in cases like AXObjectCache::postPlatformNotification which calls NSAccessibilityPostNotification, which in turn calls accessibilityIsIgnored, except when it is running layout tests.
+// Thus, calling exerciseIsIgnored during AXObjectCache::postPlatformNotification helps detect issues during layout tests.
+// Example of such issues is the crash described in: https://bugs.webkit.org/show_bug.cgi?id=46662.
+static void exerciseIsIgnored(AccessibilityObject& object)
 {
-    if (!obj)
+    object.updateBackingStore();
+    if (object.isAttachment()) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [[object.wrapper() attachmentView] accessibilityIsIgnored];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+
+        return;
+    }
+    object.accessibilityIsIgnored();
+}
+#endif
+
+void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotification notification)
+{
+    ASSERT(is<AccessibilityObject>(object));
+    if (!is<AccessibilityObject>(object))
         return;
 
     bool skipSystemNotification = false;
@@ -299,13 +326,13 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
     switch (notification) {
     case AXActiveDescendantChanged:
         // An active descendant change for trees means a selected rows change.
-        if (obj->isTree() || obj->isTable())
+        if (object->isTree() || object->isTable())
             macNotification = NSAccessibilitySelectedRowsChangedNotification;
 
         // When a combobox uses active descendant, it means the selected item in its associated
         // list has changed. In these cases we should use selected children changed, because
         // we don't want the focus to change away from the combobox where the user is typing.
-        else if (obj->isComboBox() || obj->isList() || obj->isListBox())
+        else if (object->isComboBox() || object->isList() || object->isListBox())
             macNotification = NSAccessibilitySelectedChildrenChangedNotification;
         else
             macNotification = NSAccessibilityFocusedUIElementChangedNotification;
@@ -338,7 +365,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
         macNotification = @"AXInvalidStatusChanged";
         break;
     case AXSelectedChildrenChanged:
-        if (obj->isTable() && obj->isExposable())
+        if (object->isTable() && object->isExposable())
             macNotification = NSAccessibilitySelectedRowsChangedNotification;
         else
             macNotification = NSAccessibilitySelectedChildrenChangedNotification;
@@ -412,13 +439,11 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
         return;
     }
 
-    // NSAccessibilityPostNotification will call this method, (but not when running DRT), so ASSERT here to make sure it does not crash.
-    // https://bugs.webkit.org/show_bug.cgi?id=46662
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    ASSERT([obj->wrapper() accessibilityIsIgnored] || true);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+#ifndef NDEBUG
+    exerciseIsIgnored(downcast<AccessibilityObject>(*object));
+#endif
 
-    AXPostNotificationWithUserInfo(obj->wrapper(), macNotification, nil, skipSystemNotification);
+    AXPostNotificationWithUserInfo(object->wrapper(), macNotification, nil, skipSystemNotification);
 }
 
 void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
@@ -485,7 +510,7 @@ static void addTextMarkerFor(NSMutableDictionary* change, AXCoreObject& object, 
 static void addTextMarkerFor(NSMutableDictionary* change, AXCoreObject& object, HTMLTextFormControlElement& textControl)
 {
     if (auto textMarker = [object.wrapper() textMarkerForFirstPositionInTextControl:textControl])
-        [change setObject:textMarker.bridgingAutorelease() forKey:NSAccessibilityTextChangeValueStartMarker];
+        [change setObject:bridge_id_cast(textMarker.get()) forKey:NSAccessibilityTextChangeValueStartMarker];
 }
 
 template <typename TextMarkerTargetType>
@@ -600,6 +625,49 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+bool AXObjectCache::clientSupportsIsolatedTree()
+{
+    auto client = _AXGetClientForCurrentRequestUntrusted();
+    return client == kAXClientTypeVoiceOver
+        || UNLIKELY(client == kAXClientTypeWebKitTesting);
+}
+
+bool AXObjectCache::isIsolatedTreeEnabled()
+{
+    static std::atomic<bool> enabled { false };
+    if (enabled)
+        return true;
+
+    if (!isMainThread()) {
+        ASSERT(_AXUIElementRequestServicedBySecondaryAXThread());
+        enabled = true;
+    } else {
+        enabled = RuntimeEnabledFeatures::sharedFeatures().isAccessibilityIsolatedTreeEnabled() // Used to turn off in apps other than Safari, e.g., Mail.
+            && _AXSIsolatedTreeModeFunctionIsAvailable()
+            && _AXSIsolatedTreeMode_Soft() != AXSIsolatedTreeModeOff // Used to switch via system defaults.
+            && clientSupportsIsolatedTree();
+    }
+
+    return enabled;
+}
+
+void AXObjectCache::initializeSecondaryAXThread()
+{
+    // Now that we have created our tree, initialize the secondary thread,
+    // so future requests come in on the other thread.
+    if (_AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread)
+        _AXUIElementUseSecondaryAXThread(true);
+}
+
+bool AXObjectCache::usedOnAXThread()
+{
+    ASSERT(isIsolatedTreeEnabled());
+    return _AXSIsolatedTreeModeFunctionIsAvailable()
+        && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread;
+}
+#endif
+
 // TextMarker and TextMarkerRange funcstions.
 // FIXME: TextMarker and TextMarkerRange should become classes wrapping the system objects.
 
@@ -612,7 +680,7 @@ static RetainPtr<AXTextMarkerRangeRef> AXTextMarkerRange(AXTextMarkerRef startMa
     return adoptCF(AXTextMarkerRangeCreate(kCFAllocatorDefault, startMarker, endMarker));
 }
 
-static RetainPtr<AXTextMarkerRangeRef> textMarkerRangeFromMarkers(AXTextMarkerRef textMarker1, AXTextMarkerRef textMarker2)
+RetainPtr<AXTextMarkerRangeRef> textMarkerRangeFromMarkers(AXTextMarkerRef textMarker1, AXTextMarkerRef textMarker2)
 {
     if (!textMarker1 || !textMarker2)
         return nil;

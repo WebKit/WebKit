@@ -62,6 +62,7 @@ extern const enum sandbox_filter_type SANDBOX_CHECK_NO_REPORT;
 
 extern const uint32_t SANDBOX_EXTENSION_NO_REPORT;
 extern const uint32_t SANDBOX_EXTENSION_CANONICAL;
+extern const uint32_t SANDBOX_EXTENSION_USER_INTENT;
 
 char *sandbox_extension_issue_file(const char *extension_class, const char *path, uint32_t flags);
 char *sandbox_extension_issue_generic(const char *extension_class, uint32_t flags);

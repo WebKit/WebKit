@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,10 +37,6 @@
 #include "StyleProperties.h"
 #include <wtf/Ref.h>
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-#include "LayoutIntegrationLineLayout.h"
-#endif
-
 namespace WebCore {
 
 Highlight::Highlight(Ref<StaticRange>&& range)
@@ -67,13 +63,8 @@ static void repaintRange(const SimpleRange& range)
     if (is_gt(treeOrder<ComposedTree>(range.start, range.end)))
         std::swap(sortedRange.start, sortedRange.end);
     for (auto& node : intersectingNodes(sortedRange)) {
-        if (auto renderer = node.renderer()) {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-            if (auto lineLayout = LayoutIntegration::LineLayout::containing(*renderer))
-                lineLayout->flow().ensureLineBoxes();
-#endif
+        if (auto renderer = node.renderer())
             renderer->repaint();
-        }
     }
 }
 
@@ -94,7 +85,7 @@ void Highlight::clearFromSetLike()
 
 bool Highlight::addToSetLike(StaticRange& range)
 {
-    if (notFound != m_rangesData.findMatching([&range](const Ref<HighlightRangeData>& current) { return current.get().range.get() == range; }))
+    if (notFound != m_rangesData.findIf([&range](const Ref<HighlightRangeData>& current) { return current.get().range.get() == range; }))
         return false;
     repaintRange(range);
     m_rangesData.append(HighlightRangeData::create(range));

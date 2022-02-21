@@ -20,20 +20,19 @@ rtc_source_set("send_queue") {
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
-rtc_library("fcfs_send_queue") {
+rtc_library("rr_send_queue") {
   deps = [
     ":send_queue",
     "../../../api:array_view",
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
-    "../common:pair_hash",
     "../packet:data",
     "../public:socket",
     "../public:types",
   ]
   sources = [
-    "fcfs_send_queue.cc",
-    "fcfs_send_queue.h",
+    "rr_send_queue.cc",
+    "rr_send_queue.h",
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
@@ -76,11 +75,11 @@ rtc_library("retransmission_queue") {
     "../../../rtc_base:checks",
     "../../../rtc_base:rtc_base_approved",
     "../common:math",
-    "../common:pair_hash",
     "../common:sequence_numbers",
     "../common:str_join",
     "../packet:chunk",
     "../packet:data",
+    "../public:socket",
     "../public:types",
     "../timer",
   ]
@@ -111,30 +110,33 @@ if (rtc_include_tests) {
     testonly = true
 
     deps = [
-      ":fcfs_send_queue",
       ":mock_send_queue",
       ":retransmission_error_counter",
       ":retransmission_queue",
       ":retransmission_timeout",
+      ":rr_send_queue",
       ":send_queue",
       "../../../api:array_view",
       "../../../rtc_base:checks",
       "../../../rtc_base:gunit_helpers",
       "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
+      "../common:handover_testing",
+      "../common:math",
       "../packet:chunk",
       "../packet:data",
       "../public:socket",
       "../public:types",
       "../testing:data_generator",
+      "../testing:testing_macros",
       "../timer",
     ]
     absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
     sources = [
-      "fcfs_send_queue_test.cc",
       "retransmission_error_counter_test.cc",
       "retransmission_queue_test.cc",
       "retransmission_timeout_test.cc",
+      "rr_send_queue_test.cc",
     ]
   }
 }

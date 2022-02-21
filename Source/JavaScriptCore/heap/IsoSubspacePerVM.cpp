@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,25 +31,7 @@
 
 namespace JSC {
 
-class IsoSubspacePerVM::AutoremovingIsoSubspace final : public IsoSubspace {
-public:
-    AutoremovingIsoSubspace(IsoSubspacePerVM& perVM, CString name, Heap& heap, HeapCellType* heapCellType, size_t size)
-        : IsoSubspace(name, heap, heapCellType, size, /* numberOfLowerTierCells */ 0)
-        , m_perVM(perVM)
-    {
-    }
-    
-    ~AutoremovingIsoSubspace() final
-    {
-        Locker locker { m_perVM.m_lock };
-        m_perVM.m_subspacePerVM.remove(&space().heap().vm());
-    }
-
-private:
-    IsoSubspacePerVM& m_perVM;
-};
-
-IsoSubspacePerVM::IsoSubspacePerVM(Function<SubspaceParameters(VM&)> subspaceParameters)
+IsoSubspacePerVM::IsoSubspacePerVM(Function<SubspaceParameters(Heap&)> subspaceParameters)
     : m_subspaceParameters(WTFMove(subspaceParameters))
 {
 }
@@ -59,15 +41,51 @@ IsoSubspacePerVM::~IsoSubspacePerVM()
     UNREACHABLE_FOR_PLATFORM();
 }
 
-IsoSubspace& IsoSubspacePerVM::forVM(VM& vm)
+IsoSubspace& IsoSubspacePerVM::isoSubspaceforHeap(LockHolder&, Heap& heap)
 {
-    Locker locker { m_lock };
-    auto result = m_subspacePerVM.add(&vm, nullptr);
+    auto result = m_subspacePerHeap.add(&heap, nullptr);
     if (result.isNewEntry) {
-        SubspaceParameters params = m_subspaceParameters(vm);
-        result.iterator->value = new AutoremovingIsoSubspace(*this, params.name, vm.heap, params.heapCellType, params.size);
+        SubspaceParameters params = m_subspaceParameters(heap);
+        result.iterator->value = new IsoSubspace(params.name, heap, *params.heapCellType, params.size, 0);
+
+        Locker locker { heap.lock() };
+        heap.perVMIsoSubspaces.append(this);
     }
     return *result.iterator->value;
+}
+
+GCClient::IsoSubspace& IsoSubspacePerVM::clientIsoSubspaceforVM(VM& vm)
+{
+    Locker locker { m_lock };
+    auto result = m_clientSubspacePerVM.add(&vm, nullptr);
+    if (!result.isNewEntry && result.iterator->value)
+        return *result.iterator->value;
+
+    IsoSubspace& subspace = isoSubspaceforHeap(locker, vm.heap);
+
+    result.iterator->value = new GCClient::IsoSubspace(subspace);
+    vm.clientHeap.perVMIsoSubspaces.append(this);
+    return *result.iterator->value;
+}
+
+void IsoSubspacePerVM::releaseIsoSubspace(Heap& heap)
+{
+    IsoSubspace* subspace;
+    {
+        Locker locker { m_lock };
+        subspace = m_subspacePerHeap.take(&heap);
+    }
+    delete subspace;
+}
+
+void IsoSubspacePerVM::releaseClientIsoSubspace(VM& vm)
+{
+    GCClient::IsoSubspace* clientSubspace;
+    {
+        Locker locker { m_lock };
+        clientSubspace = m_clientSubspacePerVM.take(&vm);
+    }
+    delete clientSubspace;
 }
 
 } // namespace JSC

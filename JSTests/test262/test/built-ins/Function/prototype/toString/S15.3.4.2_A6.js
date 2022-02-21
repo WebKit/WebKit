@@ -8,8 +8,8 @@ description: >
     Checking if obtaining the prototype property of
     Function.prototype.toString fails
 ---*/
-
-//CHECK#1
-if (Function.prototype.toString.prototype !== undefined) {
-  throw new Test262Error('#1: Function.prototype.toString has not prototype property'+Function.prototype.toString.prototype);
-}
+assert.sameValue(
+  Function.prototype.toString.prototype,
+  undefined,
+  'The value of Function.prototype.toString.prototype is expected to equal undefined'
+);

@@ -1,4 +1,0 @@
-
-PASS Get basics
-PASS More get() basics
-

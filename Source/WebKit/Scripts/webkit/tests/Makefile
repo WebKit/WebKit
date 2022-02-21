@@ -12,4 +12,4 @@ TESTS = \
 #
 
 all:
-	python ../../generate-message-receiver.py . $(TESTS)
+	python3 ../../generate-message-receiver.py . $(TESTS)

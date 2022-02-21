@@ -31,7 +31,7 @@ async function test() {
     await turnEventLoop();
     gc();
 
-    if (!weakRefs.find((weak) => weak.deref() === null))
+    if (!weakRefs.find((weak) => weak.deref() === undefined))
         throw new Error("no weak ref was collected");
     asyncTestPassed();
 }

@@ -43,6 +43,10 @@
 #include <WebCore/StringUtilities.h>
 #endif
 
+#if ENABLE(PDFKIT_PLUGIN)
+#include "PDFPlugin.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -63,27 +67,19 @@ WebPluginInfoProvider::~WebPluginInfoProvider()
 
 void WebPluginInfoProvider::refreshPlugins()
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    m_cachedPlugins.clear();
-    m_pluginCacheIsPopulated = false;
-    m_shouldRefreshPlugins = true;
-#endif
 }
 
 Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, std::optional<Vector<SupportedPluginIdentifier>>& supportedPluginIdentifiers)
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    populatePluginCache(page);
-
-    if (m_cachedSupportedPluginIdentifiers)
-        supportedPluginIdentifiers = *m_cachedSupportedPluginIdentifiers;
-
-    return page.mainFrame().arePluginsEnabled() ? m_cachedPlugins : m_cachedApplicationPlugins;
+#if ENABLE(PDFKIT_PLUGIN)
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(supportedPluginIdentifiers);
+    return { PDFPlugin::pluginInfo() };
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(supportedPluginIdentifiers);
     return { };
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
+#endif // ENABLE(PDFKIT_PLUGIN)
 }
 
 Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(Page& page, const URL& url)
@@ -112,28 +108,5 @@ Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(Page& pa
 #endif
     return plugins;
 }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPluginInfoProvider::populatePluginCache(const WebCore::Page&)
-{
-    if (!m_pluginCacheIsPopulated) {
-#if PLATFORM(COCOA)
-        // Application plugins are not affected by enablePlugins setting, so we always need to scan plugins to get them.
-        bool shouldScanPlugins = true;
-#else
-        bool shouldScanPlugins = page.mainFrame().arePluginsEnabled();
-#endif
-        if (shouldScanPlugins) {
-            HangDetectionDisabler hangDetectionDisabler;
-            if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins),
-                Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins, m_cachedSupportedPluginIdentifiers), 0))
-                return;
-        }
-
-        m_shouldRefreshPlugins = false;
-        m_pluginCacheIsPopulated = true;
-    }
-}
-#endif
 
 }

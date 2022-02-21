@@ -52,7 +52,7 @@ class CDMInstance;
 class CDMPrivate;
 class Document;
 class ScriptExecutionContext;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class CDM : public RefCounted<CDM>, public CanMakeWeakPtr<CDM>, private ContextDestructionObserver {
 public:
@@ -62,7 +62,7 @@ public:
     static Ref<CDM> create(Document&, const String& keySystem);
     ~CDM();
 
-    using SupportedConfigurationCallback = WTF::Function<void(std::optional<MediaKeySystemConfiguration>)>;
+    using SupportedConfigurationCallback = Function<void(std::optional<MediaKeySystemConfiguration>)>;
     void getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfiguration, SupportedConfigurationCallback&&);
 
     const String& keySystem() const { return m_keySystem; }
@@ -73,10 +73,10 @@ public:
     bool supportsSessions() const;
     bool supportsInitDataType(const AtomString&) const;
 
-    RefPtr<SharedBuffer> sanitizeInitData(const AtomString& initDataType, const SharedBuffer&);
-    bool supportsInitData(const AtomString& initDataType, const SharedBuffer&);
+    RefPtr<FragmentedSharedBuffer> sanitizeInitData(const AtomString& initDataType, const FragmentedSharedBuffer&);
+    bool supportsInitData(const AtomString& initDataType, const FragmentedSharedBuffer&);
 
-    RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&);
+    RefPtr<FragmentedSharedBuffer> sanitizeResponse(const FragmentedSharedBuffer&);
 
     std::optional<String> sanitizeSessionId(const String& sessionId);
 
@@ -86,7 +86,7 @@ private:
     CDM(Document&, const String& keySystem);
 
 #if !RELEASE_LOG_DISABLED
-    Ref<WTF::Logger> m_logger;
+    Ref<Logger> m_logger;
     const void* m_logIdentifier;
 #endif
     String m_keySystem;

@@ -40,7 +40,7 @@ SystemPreviewController::SystemPreviewController(WebPageProxy& webPageProxy)
 
 bool SystemPreviewController::canPreview(const String& mimeType) const
 {
-    return WebCore::MIMETypeRegistry::isSystemPreviewMIMEType(mimeType);
+    return WebCore::MIMETypeRegistry::isUSDMIMEType(mimeType);
 }
 
 }

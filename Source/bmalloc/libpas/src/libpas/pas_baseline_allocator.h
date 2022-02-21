@@ -55,7 +55,7 @@ struct pas_baseline_allocator {
     })
 
 PAS_API void pas_baseline_allocator_attach_directory(pas_baseline_allocator* allocator,
-                                                     pas_segregated_global_size_directory* directory);
+                                                     pas_segregated_size_directory* directory);
 
 PAS_API void pas_baseline_allocator_detach_directory(pas_baseline_allocator* allocator);
 

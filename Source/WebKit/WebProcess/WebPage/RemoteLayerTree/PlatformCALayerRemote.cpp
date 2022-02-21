@@ -173,11 +173,11 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
     ASSERT(!m_properties.backingStore || owner());
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&context == m_context);
     
-    if (m_properties.backingStore && (!owner() || !owner()->platformCALayerDrawsContent())) {
+    bool usesBackingStore = owner() && (owner()->platformCALayerDrawsContent() || owner()->platformCALayerDelegatesDisplay(this));
+    if (m_properties.backingStore && !usesBackingStore) {
         m_properties.backingStore = nullptr;
         m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
     }
-
     if (m_properties.backingStore && m_properties.backingStoreAttached && m_properties.backingStore->display())
         m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
 
@@ -683,7 +683,27 @@ CFTypeRef PlatformCALayerRemote::contents() const
 
 void PlatformCALayerRemote::setContents(CFTypeRef value)
 {
+    if (!m_properties.backingStore)
+        return;
+    if (!value)
+        m_properties.backingStore->clearBackingStore();
 }
+
+#if HAVE(IOSURFACE)
+void PlatformCALayerRemote::setContents(const WebCore::IOSurface& surface)
+{
+    ASSERT(m_acceleratesDrawing);
+    ensureBackingStore();
+    m_properties.backingStore->setContents(surface.createSendRight());
+}
+
+void PlatformCALayerRemote::setContents(const WTF::MachSendRight& surfaceHandle)
+{
+    ASSERT(m_acceleratesDrawing);
+    ensureBackingStore();
+    m_properties.backingStore->setContents(surfaceHandle.copySendRight());
+}
+#endif
 
 void PlatformCALayerRemote::setContentsRect(const FloatRect& value)
 {

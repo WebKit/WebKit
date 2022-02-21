@@ -24,8 +24,9 @@
 
 messages -> RemoteRenderingBackendProxy NotRefCounted {
     DidCreateImageBufferBackend(WebKit::ImageBufferBackendHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
-    DidFlush(WebCore::DisplayList::FlushIdentifier flushIdentifier, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    DidFlush(WebCore::GraphicsContextFlushIdentifier flushIdentifier, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     DidFinalizeRenderingUpdate(WebKit::RenderingUpdateID didRenderingUpdateID)
+    DidCreateWakeUpSemaphoreForDisplayListStream(IPC::Semaphore wakeUpSemaphore)
 }
 
 #endif // ENABLE(GPU_PROCESS)

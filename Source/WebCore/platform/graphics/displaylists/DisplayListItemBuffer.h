@@ -102,7 +102,7 @@ public:
         return std::nullopt;
     }
 
-    virtual RefPtr<SharedBuffer> encodeItemOutOfLine(const DisplayListItem&) const
+    virtual RefPtr<FragmentedSharedBuffer> encodeItemOutOfLine(const DisplayListItem&) const
     {
         return nullptr;
     }
@@ -168,7 +168,7 @@ public:
     // with padding between each item to ensure that all items are aligned to 8 bytes.
     //
     // If a writing client is present and requires custom encoding for the given item type T, the
-    // item buffer will ask the client for an opaque SharedBuffer containing encoded data for the
+    // item buffer will ask the client for an opaque FragmentedSharedBuffer containing encoded data for the
     // item. This encoded data is then appended to the item buffer, with padding to ensure that
     // the start and end of this data are aligned to 8 bytes, if necessary. When consuming encoded
     // item data, a corresponding ItemBufferReadingClient will be required to convert this encoded

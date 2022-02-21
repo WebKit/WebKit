@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+
 extern NSString *WebDatabaseDirectoryDefaultsKey;
 
 extern NSString *WebDatabaseDisplayNameKey;

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var canplaythrough1 = false;
+            var canplaythrough2 = false;
+            var start1 = 0;
+            var start2 = 0;
+            var delta1 = 0;
+            var delta2 = 0;
+
+            function checkElementState() {
+                if (canplaythrough1 && canplaythrough2) {
+                    if (delta1 * 5 > delta2)
+                        endTest();
+                    else
+                        failTest("Loading a data URL takes too long time. delta1 = " + delta1 + ", delta2 = " + delta2 + ".");
+                }
+            }
+
+            function runTest() {
+                const videos = document.querySelectorAll('video');
+                const video1 = videos[0];
+                const video2 = videos[1];
+
+                const url = findMediaFile("video", "content/long-test");
+
+                video1.oncanplaythrough = () => {
+                    canplaythrough1 = true;
+                    delta1 = Date.now() - start1;
+                    checkElementState();
+                }
+
+                video2.oncanplaythrough = () => {
+                    canplaythrough2 = true;
+                    delta2 = Date.now() - start2;
+                    checkElementState();
+                }
+
+                const request = new XMLHttpRequest();
+                request.open('GET', url, true);
+                request.responseType = 'blob';
+
+                request.onload = () => {
+                    const reader = new FileReader();
+                    reader.onload = event => {
+                        const createdDataUrl = event.target.result;
+                        video2.src = createdDataUrl;
+                        video1.src = url;
+
+                        const now = Date.now();
+                        start1 = now;
+                        start2 = now;
+                    };
+                    reader.readAsDataURL(request.response);
+                };
+                request.send();
+
+                setTimeout(() => failTest("Cannot complete the test in 10 seconds."), 10000);
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <div>
+            This tests that a video element loads a blob URL in a reasonable amount of time (should be shorter than 5x of the time to load the binary form of the media file).
+        </div>
+        <video controls></video>
+        <video controls></video>
+    </body>
+</html>

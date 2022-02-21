@@ -23,4 +23,4 @@ class Sub extends Array {
 
 var sub = new Sub(42, 'foo');
 
-assert(compareArray(sub, [42, 'foo']));
+assert.compareArray(sub, [42, 'foo']);

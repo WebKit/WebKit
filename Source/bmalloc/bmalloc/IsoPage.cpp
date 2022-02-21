@@ -28,6 +28,8 @@
 #include "PerProcess.h"
 #include "VMAllocate.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 void* IsoPageBase::allocatePageMemory()
@@ -36,3 +38,5 @@ void* IsoPageBase::allocatePageMemory()
 }
 
 } // namespace bmalloc
+
+#endif

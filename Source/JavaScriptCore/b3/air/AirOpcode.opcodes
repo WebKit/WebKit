@@ -1012,6 +1012,18 @@ arm64: OrRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
 arm64: OrUnsignedRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Imm, Tmp
 
+arm64: FloatMax U:F:32, U:F:32, D:F:32
+    Tmp, Tmp, Tmp
+
+arm64: FloatMin U:F:32, U:F:32, D:F:32
+    Tmp, Tmp, Tmp
+
+arm64: DoubleMax U:F:64, U:F:64, D:F:64
+    Tmp, Tmp, Tmp
+
+arm64: DoubleMin U:F:64, U:F:64, D:F:64
+    Tmp, Tmp, Tmp
+
 # The first operand is rax.
 # FIXME: This formulation means that the boolean result cannot be put in eax, even though all users
 # of this would be OK with that.

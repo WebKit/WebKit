@@ -28,7 +28,7 @@
 
 #include "DoubleRange.h"
 #include "LongRange.h"
-#include <wtf/Variant.h>
+#include <variant>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,8 +42,8 @@ struct ConstrainBooleanParameters {
 };
 
 struct ConstrainDOMStringParameters {
-    std::optional<Variant<String, Vector<String>>> exact;
-    std::optional<Variant<String, Vector<String>>> ideal;
+    std::optional<std::variant<String, Vector<String>>> exact;
+    std::optional<std::variant<String, Vector<String>>> ideal;
 };
 
 struct ConstrainDoubleRange : DoubleRange {
@@ -56,10 +56,10 @@ struct ConstrainLongRange : LongRange {
     std::optional<int> ideal;
 };
 
-using ConstrainBoolean = Variant<bool, ConstrainBooleanParameters>;
-using ConstrainDOMString = Variant<String, Vector<String>, ConstrainDOMStringParameters>;
-using ConstrainDouble = Variant<double, ConstrainDoubleRange>;
-using ConstrainLong = Variant<int, ConstrainLongRange>;
+using ConstrainBoolean = std::variant<bool, ConstrainBooleanParameters>;
+using ConstrainDOMString = std::variant<String, Vector<String>, ConstrainDOMStringParameters>;
+using ConstrainDouble = std::variant<double, ConstrainDoubleRange>;
+using ConstrainLong = std::variant<int, ConstrainLongRange>;
 
 struct MediaTrackConstraintSet {
     std::optional<ConstrainLong> width;

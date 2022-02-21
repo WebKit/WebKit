@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "DumpRenderTree.h"
+#import "EventSendingController.h"
 #import "LayoutTestSpellChecker.h"
 #import "UIScriptContext.h"
 #import <JavaScriptCore/JSContext.h>
@@ -37,6 +38,7 @@
 #import <JavaScriptCore/OpaqueJSString.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebViewPrivate.h>
+#import <mach/mach_time.h>
 #import <pal/spi/mac/NSTextInputContextSPI.h>
 #import <wtf/WorkQueue.h>
 
@@ -51,7 +53,7 @@ void UIScriptControllerMac::doAsyncTask(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    WorkQueue::main().dispatch([this, protectedThis = makeRef(*this), callbackID] {
+    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -107,7 +109,7 @@ void UIScriptControllerMac::activateDataListSuggestion(unsigned index, JSValueRe
     UNUSED_PARAM(index);
 
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    WorkQueue::main().dispatch([this, protectedThis = makeRef(*this), callbackID] {
+    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -130,7 +132,7 @@ void UIScriptControllerMac::removeViewFromWindow(JSValueRef callback)
     WebView *webView = [mainFrame webView];
     [webView removeFromSuperview];
 
-    WorkQueue::main().dispatch([this, protectedThis = makeRef(*this), callbackID] {
+    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -144,7 +146,7 @@ void UIScriptControllerMac::addViewToWindow(JSValueRef callback)
     WebView *webView = [mainFrame webView];
     [[mainWindow contentView] addSubview:webView];
 
-    WorkQueue::main().dispatch([this, protectedThis = makeRef(*this), callbackID] {
+    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -154,6 +156,11 @@ void UIScriptControllerMac::addViewToWindow(JSValueRef callback)
 void UIScriptControllerMac::toggleCapsLock(JSValueRef callback)
 {
     doAsyncTask(callback);
+}
+
+void UIScriptControllerMac::setWebViewEditable(bool editable)
+{
+    [mainFrame webView].editable = editable;
 }
 
 NSUndoManager *UIScriptControllerMac::platformUndoManager() const
@@ -173,6 +180,139 @@ void UIScriptControllerMac::setSpellCheckerResults(JSValueRef results)
     [[LayoutTestSpellChecker checker] setResultsFromJSValue:results inContext:m_context->jsContext()];
 }
 
+static NSString *const TopLevelEventInfoKey = @"events";
+static NSString *const EventTypeKey = @"type";
+static NSString *const ViewRelativeXPositionKey = @"viewX";
+static NSString *const ViewRelativeYPositionKey = @"viewY";
+static NSString *const DeltaXKey = @"deltaX";
+static NSString *const DeltaYKey = @"deltaY";
+static NSString *const PhaseKey = @"phase";
+static NSString *const MomentumPhaseKey = @"momentumPhase";
+
+static CGGesturePhase gesturePhaseFromString(NSString *phaseStr)
+{
+    if ([phaseStr isEqualToString:@"began"])
+        return kCGGesturePhaseBegan;
+
+    if ([phaseStr isEqualToString:@"changed"])
+        return kCGGesturePhaseChanged;
+
+    if ([phaseStr isEqualToString:@"ended"])
+        return kCGGesturePhaseEnded;
+
+    if ([phaseStr isEqualToString:@"cancelled"])
+        return kCGGesturePhaseCancelled;
+
+    if ([phaseStr isEqualToString:@"maybegin"])
+        return kCGGesturePhaseMayBegin;
+
+    return kCGGesturePhaseNone;
 }
+
+static CGMomentumScrollPhase momentumPhaseFromString(NSString *phaseStr)
+{
+    if ([phaseStr isEqualToString:@"began"])
+        return kCGMomentumScrollPhaseBegin;
+
+    if ([phaseStr isEqualToString:@"changed"] || [phaseStr isEqualToString:@"continue"]) // Allow "continue" for ease of conversion from mouseScrollByWithWheelAndMomentumPhases values.
+        return kCGMomentumScrollPhaseContinue;
+
+    if ([phaseStr isEqualToString:@"ended"])
+        return kCGMomentumScrollPhaseEnd;
+
+    return kCGMomentumScrollPhaseNone;
+}
+
+static EventSendingController *eventSenderFromView(WebView *webView)
+{
+    auto frame = [webView mainFrame];
+    auto windowObject = [frame windowObject];
+    return [windowObject valueForKey:@"eventSender"];
+}
+
+void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef callback)
+{
+    WebView *webView = [mainFrame webView];
+
+    // didClearWindowObjectInStandardWorldForFrame stashed EventSendingController on this window property.
+    EventSendingController* eventSender = eventSenderFromView(webView);
+    if (!eventSender) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    auto jsonString = eventsJSON->string();
+    auto eventInfo = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[(NSString *)jsonString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:nil]);
+    if (!eventInfo || ![eventInfo isKindOfClass:[NSDictionary class]]) {
+        WTFLogAlways("JSON is not convertible to a dictionary");
+        return;
+    }
+
+    double currentViewRelativeX = 0;
+    double currentViewRelativeY = 0;
+
+    constexpr uint64_t nanosecondsPerSecond = 1e9;
+    constexpr uint64_t nanosecondsEventInterval = nanosecondsPerSecond / 60;
+
+    auto currentTime = mach_absolute_time();
+
+    for (NSMutableDictionary *event in eventInfo[TopLevelEventInfoKey]) {
+
+        id eventType = event[EventTypeKey];
+        if (!event[EventTypeKey]) {
+            WTFLogAlways("Missing event type");
+            break;
+        }
+        
+        if ([eventType isEqualToString:@"wheel"]) {
+            auto phase = kCGGesturePhaseNone;
+            auto momentumPhase = kCGMomentumScrollPhaseNone;
+
+            if (!event[PhaseKey] && !event[MomentumPhaseKey]) {
+                WTFLogAlways("Event must specify phase or momentumPhase");
+                break;
+            }
+
+            if (id phaseString = event[PhaseKey])
+                phase = gesturePhaseFromString(phaseString);
+
+            if (id phaseString = event[MomentumPhaseKey])
+                momentumPhase = momentumPhaseFromString(phaseString);
+
+            ASSERT_IMPLIES(phase == kCGGesturePhaseNone, momentumPhase != kCGMomentumScrollPhaseNone);
+            ASSERT_IMPLIES(momentumPhase == kCGMomentumScrollPhaseNone, phase != kCGGesturePhaseNone);
+
+            if (event[ViewRelativeXPositionKey])
+                currentViewRelativeX = [event[ViewRelativeXPositionKey] floatValue];
+
+            if (event[ViewRelativeYPositionKey])
+                currentViewRelativeY = [event[ViewRelativeYPositionKey] floatValue];
+
+            double deltaX = 0;
+            double deltaY = 0;
+
+            if (event[DeltaXKey])
+                deltaX = [event[DeltaXKey] floatValue];
+
+            if (event[DeltaYKey])
+                deltaY = [event[DeltaYKey] floatValue];
+
+            auto windowPoint = [webView convertPoint:CGPointMake(currentViewRelativeX, [webView frame].size.height - currentViewRelativeY) toView:nil];
+            [eventSender sendScrollEventAt:windowPoint deltaX:deltaX deltaY:deltaY units:kCGScrollEventUnitPixel wheelPhase:phase momentumPhase:momentumPhase timestamp:currentTime];
+        }
+
+        currentTime += nanosecondsEventInterval;
+    }
+
+    WorkQueue::main().dispatch([this, strongThis = Ref { *this }, callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    });
+}
+
+} // namespace WTR
 
 #endif // PLATFORM(MAC)

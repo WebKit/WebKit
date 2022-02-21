@@ -1,3 +1,256 @@
+2022-02-18  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r290149.
+
+        Broke Debug Builds.
+
+        Reverted changeset:
+
+        "Generate compile_commands.json on macOS Builds"
+        https://bugs.webkit.org/show_bug.cgi?id=235686
+        https://commits.webkit.org/r290149
+
+2022-02-18  Brandon Stewart  <brandonstewart@apple.com>
+
+        Generate compile_commands.json on macOS Builds
+        https://bugs.webkit.org/show_bug.cgi?id=235686
+
+        Reviewed by Saam Barati.
+
+        Add support for generating compile_commands.json file to WebKit.
+        
+        compile_commands.json can be used by tools like clangd to provide code complete,
+        refactoring, formatting, and cross references.
+
+        Steps to generate the compile commands file:
+        make r EXPORT_COMPILE_COMMANDS=YES
+        generate-compile-commands WebKitBuild/Release
+
+        * DecoderTest/Configurations/DebugRelease.xcconfig:
+        * MediaTime/Configurations/DebugRelease.xcconfig:
+
+2022-01-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed performance test gardening.
+
+        * Skipped:
+        Skip various IndexedDB timeouts.
+
+2022-01-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Speedometer should be locally runnable on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=235334
+
+        Reviewed by Don Olmstead.
+
+        It's currently not possible to run Speedometer locally on Windows (even using Chrome or Firefox):
+        the EmberJS-TodoMVC test fails its subresource integrity checks due to line endings.
+
+        * .gitattributes:
+        Ensure two JS files never include CRLFs.
+
+2021-12-17  Rob Buis  <rbuis@igalia.com>
+
+        [css-contain][Performance test] Add test contain-paint-text-nowrap.html
+        https://bugs.webkit.org/show_bug.cgi?id=234001
+
+        Reviewed by Simon Fraser.
+
+        Add test contain-paint-text-nowrap.html to verify that paint containment
+        improves the case where many contained children have inline text that is
+        wider than the container width. The improvement is because paint
+        containment clips the child content.
+
+        This patch also introduces the Containment directory to separate the
+        containment tests.
+
+        * Containment/contain-paint-nowrap.html:
+        * Containment/css-contain-change-size.html: Renamed from PerformanceTests/Layout/css-contain-change-size.html.
+        * Containment/css-contain-layout-size-inside-complex-document.html: Renamed from PerformanceTests/Layout/css-contain-layout-size-inside-complex-document.html.
+        * Containment/large-grid.html: Renamed from PerformanceTests/Layout/large-grid.html.
+        * Paint/lots-of-self-painting-layers.html: use let instead of var
+
+2021-12-14  Jean-Yves Avenard  <jya@apple.com>
+
+        Distinguish contiguous SharedBuffer from non-contiguous one and guarantee immutability: part 3
+        https://bugs.webkit.org/show_bug.cgi?id=233677
+
+        Reviewed by Youenn Fablet.
+
+        * DecoderTest/DecoderTest/main.mm:
+        (main):
+
+2021-12-13  Cathie Chen  <cathiechen@igalia.com>
+
+        [Performance test] Add test lots-of-self-painting-layers.html
+        https://bugs.webkit.org/show_bug.cgi?id=233684
+
+        Reviewed by Rob Buis.
+
+        This test is a transform of the test [1] in blink. It uses position: relative to create
+        lots of self-painting layers. By changing the first layer's height, it tracks the repaint
+        performance of these self-painting layers.
+
+        [1] third_party/blink/perf_tests/layout/contain-content-style-change.html
+
+        * Paint/lots-of-self-painting-layers.html: Added.
+
+2021-12-08  Alan Bujtas  <zalan@apple.com>
+
+        Add layout performance test for simple bidi content with inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=234062
+
+        Unreviewed.
+
+        This is in preparation for enabling IFC bidi handling.
+
+        * Layout/line-layout-simple-bidi-with-inline-boxes.html: Added.
+
+2021-12-08  Alan Bujtas  <zalan@apple.com>
+
+        Add layout performance test for bidi content with direction override inside inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=234064
+
+        Unreviewed.
+
+        This is in preparation for enabling IFC bidi handling.
+
+        * Layout/line-layout-simple-bidi-with-direction-overrides-in-inline-boxes.html: Added.
+
+2021-12-07  Cathie Chen  <cathiechen@igalia.com>
+
+        [Performance test][css-contain] Add test large-grid.html
+        https://bugs.webkit.org/show_bug.cgi?id=233628
+
+        Reviewed by Rob Buis.
+
+        This test large-grid.html is imported from Chromium, and we change it a little bit.
+        This case tests the performance of getting gridContainer.offsetHeight which is the parent of
+        a large grid with `contain: strict`. The performance is improved when enable CSS contain,
+        because offsetHeight returns the value directly if the element doesn't need relayout, see
+        `Document::updateLayoutIfDimensionsOutOfDate`. `contain: strict` sets a relayout boundary to
+        the large grid, so when its subtree changes, the container of the large grid doesn't need
+        relayout.
+
+        * Layout/large-grid.html: Added.
+
+2021-12-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RAMification] Add support for dumping smaps rollups on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=233867
+
+        Reviewed by Yusuke Suzuki.
+
+        Add the option to dump smaps rollup after the end of each RAMification
+        test case. This mirrors the vmmap functionality and is implemented
+        alongside that option.
+
+        Once the jsc binary is left idle after the test case run, the
+        smaps_rollup output for the given jsc process is collected from the
+        proc filesystem. This material is then printed out after the test
+        is done, following the memory footprint dump.
+
+        For now this prefers the smaps_rollup instead of the complete smaps.
+        In this form, it already gives a good insight into the balance between
+        the proportional and residential set size amounts. Complete smaps could
+        be beneficial later, especially if we can implement differentiation
+        between allocations of different types and/or purposes.
+
+        * JetStream2/RAMification.py:
+        (parseArgs):
+        (BaseRunner.__init__):
+        (BaseRunner.getResults):
+        (LocalRunner.runOneTest):
+        (main):
+        (main.runTestList):
+
+2021-11-21  Cathie Chen  <cathiechen@igalia.com>
+
+        [Performance test][css-contain] Add case to test contain: layout inside a complex document
+        https://bugs.webkit.org/show_bug.cgi?id=232883
+
+        Reviewed by Rob Buis.
+
+        This case test the performance of changing the content of a layout containment which is
+        inside a complex document.
+
+        * Layout/css-contain-layout-size-inside-complex-document.html: Added.
+
+2021-11-19  Alan Bujtas  <zalan@apple.com>
+
+        Add layout performance test for simple bidi content
+        (this is not about inline axis direction, just mixed, bidirectional content)
+
+        Unreviewed.
+
+        * Layout/line-layout-simple-bidi.html: Added.
+
+2021-11-19  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Workaround for failing mips tests
+        https://bugs.webkit.org/show_bug.cgi?id=233359
+
+        Reviewed by Adrian Perez de Castro.
+
+        Re-enable tests skipped on mips after adding workaround.
+
+        * ARES-6/Basic/basic-tests.yaml:
+
+2021-11-15  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Skip tests newly-failing on mips
+        https://bugs.webkit.org/show_bug.cgi?id=233124
+
+        Unreviewed gardening.
+
+        After 3f59d2aa489ec843e055fc3104c275851d7fbd35, these tests started
+        failing with a SIGBUS on MIPS (on fuloong hardware, they pass on the
+        ci20 boards). Temporarily skip them on this arch until we can track
+        down the issue.
+
+        * ARES-6/Basic/basic-tests.yaml:
+
+2021-11-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Improve & simplify the flex-basis computation
+        https://bugs.webkit.org/show_bug.cgi?id=230755
+
+        Reviewed by Alan Bujtas.
+
+        New test case to catch performance regressions with lots of nested (specially column) flexboxes.
+
+        * Layout/nested-flexbox.html: Added.
+
+2021-11-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix broken test
+        https://bugs.webkit.org/show_bug.cgi?id=232949
+
+        useGrouping: 'false' is no longer allowed according to the spec.
+
+        * Intl/numberformat-format-all-options.html:
+
+2021-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        All the SDKVariant.xcconfig files should match
+        https://bugs.webkit.org/show_bug.cgi?id=231663
+
+        Reviewed by Youenn Fablet.
+
+        * MediaTime/Configurations/SDKVariant.xcconfig:
+
+2021-09-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add a PerformanceTest for some common FontFaceSet style update operations
+        https://bugs.webkit.org/show_bug.cgi?id=229913
+
+        Reviewed by Stephanie Lewis.
+
+        This is similar to some of the operations we've seen in the wild.
+        We want to make sure we can do these fast.
+
+        * CSS/FontFaceSetUpdateStyle.html: Added.
+
 2021-08-06  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         MallocBench: fix ODR violation

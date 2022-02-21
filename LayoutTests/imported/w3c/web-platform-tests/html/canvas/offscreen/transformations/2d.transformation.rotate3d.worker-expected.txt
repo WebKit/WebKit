@@ -1,3 +1,0 @@
-
-FAIL rotate3d() results in the correct transformation matrix ctx.rotate3d is not a function. (In 'ctx.rotate3d(angleX, angleY, angleZ)', 'ctx.rotate3d' is undefined)
-

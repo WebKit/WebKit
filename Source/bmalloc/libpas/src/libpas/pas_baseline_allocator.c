@@ -29,16 +29,16 @@
 
 #include "pas_baseline_allocator.h"
 
-#include "pas_segregated_global_size_directory.h"
+#include "pas_segregated_size_directory.h"
 
 void pas_baseline_allocator_attach_directory(pas_baseline_allocator* allocator,
-                                             pas_segregated_global_size_directory* directory)
+                                             pas_segregated_size_directory* directory)
 {
     PAS_ASSERT(!allocator->u.allocator.view);
     
     PAS_ASSERT(
         PAS_BASELINE_LOCAL_ALLOCATOR_SIZE
-        >= pas_segregated_global_size_directory_local_allocator_size(directory));
+        >= pas_segregated_size_directory_local_allocator_size(directory));
     
     pas_local_allocator_construct(&allocator->u.allocator, directory);
 }
@@ -50,7 +50,6 @@ void pas_baseline_allocator_detach_directory(pas_baseline_allocator* allocator)
         &allocator->u.allocator,
         pas_lock_lock_mode_lock,
         pas_lock_is_not_held);
-    pas_local_allocator_destruct(&allocator->u.allocator);
     pas_zero_memory(&allocator->u.allocator, sizeof(pas_local_allocator)); /* Does not zero the bits,
                                                                               which is OK. */
 }

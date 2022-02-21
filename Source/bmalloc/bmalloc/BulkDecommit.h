@@ -28,6 +28,8 @@
 #include "VMAllocate.h"
 #include <vector>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 class BulkDecommit {
@@ -93,3 +95,5 @@ private:
 };
 
 } // namespace bmalloc
+
+#endif

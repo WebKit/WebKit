@@ -68,8 +68,10 @@ public:
     void setHTMLInputElementSpellcheckEnabled(bool);
     bool isHTMLInputElementAutoFilled() const;
     bool isHTMLInputElementAutoFilledAndViewable() const;
+    bool isHTMLInputElementAutoFilledAndObscured() const;
     void setHTMLInputElementAutoFilled(bool);
     void setHTMLInputElementAutoFilledAndViewable(bool);
+    void setHTMLInputElementAutoFilledAndObscured(bool);
     bool isHTMLInputElementAutoFillButtonEnabled() const;
     void setHTMLInputElementAutoFillButtonEnabled(WebCore::AutoFillButtonType);
     WebCore::AutoFillButtonType htmlInputElementAutoFillButtonType() const;

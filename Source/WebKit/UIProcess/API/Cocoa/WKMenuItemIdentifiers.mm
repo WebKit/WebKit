@@ -39,9 +39,6 @@ NSString * const _WKMenuItemIdentifierInspectElement = @"WKMenuItemIdentifierIns
 NSString * const _WKMenuItemIdentifierLookUp = @"WKMenuItemIdentifierLookUp";
 NSString * const _WKMenuItemIdentifierAddHighlightToCurrentQuickNote = @"WKMenuItemIdentifierAddHighlightToCurrentQuickNote";
 NSString * const _WKMenuItemIdentifierAddHighlightToNewQuickNote = @"WKMenuItemIdentifierAddHighlightToNewQuickNote";
-// FIXME: Remove below after staging complete
-NSString * const _WKMenuItemIdentifierAddHighlightToCurrentGroup = @"WKMenuItemIdentifierAddHighlightToCurrentGroup";
-NSString * const _WKMenuItemIdentifierAddHighlightToNewGroup = @"WKMenuItemIdentifierAddHighlightToNewGroup";
 
 NSString * const _WKMenuItemIdentifierOpenFrameInNewWindow = @"WKMenuItemIdentifierOpenFrameInNewWindow";
 NSString * const _WKMenuItemIdentifierOpenImageInNewWindow = @"WKMenuItemIdentifierOpenImageInNewWindow";
@@ -60,3 +57,4 @@ NSString * const _WKMenuItemIdentifierShareMenu = @"WKMenuItemIdentifierShareMen
 NSString * const _WKMenuItemIdentifierSpeechMenu = @"WKMenuItemIdentifierSpeechMenu";
 
 NSString * const _WKMenuItemIdentifierTranslate = @"WKMenuItemIdentifierTranslate";
+NSString * const _WKMenuItemIdentifierCopyCroppedImage = @"WKMenuItemIdentifierCopyCroppedImage";

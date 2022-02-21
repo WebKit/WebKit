@@ -29,7 +29,7 @@
 
 #include "pas_enumerate_bitfit_heaps.h"
 
-#include "pas_bitfit_global_directory.h"
+#include "pas_bitfit_directory.h"
 #include "pas_bitfit_heap.h"
 #include "pas_bitfit_page.h"
 #include "pas_bitfit_view.h"
@@ -43,7 +43,7 @@ static bool view_callback(pas_enumerator* enumerator,
     static const bool verbose = false;
     
     pas_bitfit_view* view;
-    pas_bitfit_global_directory* directory;
+    pas_bitfit_directory* directory;
     pas_bitfit_page_config* page_config;
     uintptr_t page_boundary;
     pas_bitfit_page* page;
@@ -64,7 +64,7 @@ static bool view_callback(pas_enumerator* enumerator,
         return true;
 
     page_boundary = (uintptr_t)view->page_boundary;
-    page_config = pas_bitfit_page_config_kind_get_config(directory->base.config_kind);
+    page_config = pas_bitfit_page_config_kind_get_config(directory->config_kind);
     
     if (page_boundary) {
         pas_enumerator_exclude_accounted_pages(
@@ -146,10 +146,10 @@ static bool view_callback(pas_enumerator* enumerator,
 }
 
 static bool enumerate_bitfit_directory(pas_enumerator* enumerator,
-                                       pas_bitfit_global_directory* directory)
+                                       pas_bitfit_directory* directory)
 {
     return pas_bitfit_directory_view_vector_iterate_remote(
-        &directory->base.views, enumerator, 0, view_callback, directory);
+        &directory->views, enumerator, 0, view_callback, directory);
 }
 
 static bool enumerate_bitfit_heap_callback(pas_enumerator* enumerator,

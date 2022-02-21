@@ -36,6 +36,9 @@ class TextureImageSiblingMtl : public ExternalImageSiblingImpl
     gl::Extents getSize() const override;
     size_t getSamples() const override;
 
+    bool isYUV() const override;
+    bool hasProtectedContent() const override;
+
     const mtl::TextureRef &getTexture() const { return mNativeTexture; }
     const mtl::Format &getFormatMtl() const { return mFormat; }
 

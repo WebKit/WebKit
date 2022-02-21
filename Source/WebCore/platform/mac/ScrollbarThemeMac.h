@@ -71,7 +71,7 @@ public:
     void didCreateScrollerImp(Scrollbar&);
     bool isLayoutDirectionRTL(Scrollbar&);
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     WEBCORE_EXPORT static void setUpOverhangAreaBackground(CALayer *, const Color& customBackgroundColor = Color());
     WEBCORE_EXPORT static void removeOverhangAreaBackground(CALayer *);
 
@@ -95,7 +95,7 @@ protected:
     bool shouldDragDocumentInsteadOfThumb(Scrollbar&, const PlatformMouseEvent&) override;
     int scrollbarPartToHIPressedState(ScrollbarPart);
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     void setUpOverhangAreasLayerContents(GraphicsLayer*, const Color&) override;
     void setUpContentShadowLayer(GraphicsLayer*) override;
 #endif

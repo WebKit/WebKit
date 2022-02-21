@@ -37,8 +37,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
-using namespace WebCore::XPath;
-
 extern int xpathyyparse(WebCore::XPath::Parser&);
 
 #include "XPathGrammar.h"
@@ -106,7 +104,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, Step::Axis> createAxisNam
 
 static bool parseAxisName(const String& name, Step::Axis& type)
 {
-    static const auto axisNames = makeNeverDestroyed(createAxisNamesMap());
+    static NeverDestroyed axisNames = createAxisNamesMap();
     auto it = axisNames.get().find(name);
     if (it == axisNames.get().end())
         return false;

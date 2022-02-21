@@ -39,7 +39,7 @@ Overlay::~Overlay() = default;
 angle::Result Overlay::init(const Context *context)
 {
     initOverlayWidgets();
-    mLastPerSecondUpdate = angle::GetCurrentTime();
+    mLastPerSecondUpdate = angle::GetCurrentSystemTime();
 
     ASSERT(std::all_of(
         mState.mOverlayWidgets.begin(), mState.mOverlayWidgets.end(),
@@ -47,7 +47,13 @@ angle::Result Overlay::init(const Context *context)
 
     enableOverlayWidgetsFromEnvironment();
 
-    return mImplementation->init(context);
+    bool success = false;
+    ANGLE_TRY(mImplementation->init(context, &success));
+    if (!success)
+    {
+        mState.mEnabledWidgetCount = 0;
+    }
+    return angle::Result::Continue;
 }
 
 void Overlay::destroy(const gl::Context *context)
@@ -78,7 +84,7 @@ void Overlay::onSwap() const
     getPerSecondWidget(WidgetId::FPS)->add(1);
 
     // Update per second values every second.
-    double currentTime = angle::GetCurrentTime();
+    double currentTime = angle::GetCurrentSystemTime();
     double timeDiff    = currentTime - mLastPerSecondUpdate;
     if (timeDiff >= 1.0)
     {

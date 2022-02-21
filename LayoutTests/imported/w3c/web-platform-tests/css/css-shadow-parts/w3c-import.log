@@ -26,6 +26,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/host-stylesheet.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/inner-host.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-nested-pseudo-class-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-nested-pseudo-class.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-placeholder-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-placeholder.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-pseudo-elements.html
@@ -36,8 +38,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-change-part-name.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-complex-selector-forward.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-complex-selector.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-part-pseudo-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-part-pseudo.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/multiple-parts.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/part-name-idl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/part-nested-pseudo-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/part-nested-pseudo.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/precedence-part-vs-part.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/simple-forward-shorthand.html

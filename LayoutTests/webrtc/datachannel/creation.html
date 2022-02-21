@@ -14,20 +14,20 @@ for (var cptr = 0; cptr < 16; ++cptr)
 
 test(() => {
     var pc = new RTCPeerConnection();
-    assert_throws(new TypeError, () => { pc.createDataChannel(longString); });
+    assert_throws_js(TypeError, () => { pc.createDataChannel(longString); });
 }, "Creating data channel with very long label");
 
 test(() => {
     var pc = new RTCPeerConnection();
     pc.close();
-    assert_throws("InvalidStateError", () => { pc.createDataChannel('sendDataChannel'); });
+    assert_throws_dom("InvalidStateError", () => { pc.createDataChannel('sendDataChannel'); });
 }, "Creating data channel after closing the connection");
 
 function testWrongDataChannelInit(init, title)
 {
     return test(() => {
         var pc = new RTCPeerConnection();
-        assert_throws(new TypeError, () => { pc.createDataChannel('sendDataChannel', init); });
+        assert_throws_js(TypeError, () => { pc.createDataChannel('sendDataChannel', init); });
     }, "Wrong data channel init: " + title);
 }
 

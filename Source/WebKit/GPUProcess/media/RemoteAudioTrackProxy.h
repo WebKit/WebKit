@@ -44,7 +44,7 @@ class Decoder;
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
-struct TrackPrivateRemoteConfiguration;
+struct AudioTrackPrivateRemoteConfiguration;
 
 class RemoteAudioTrackProxy final
     : public ThreadSafeRefCounted<RemoteAudioTrackProxy, WTF::DestructionThread::Main>
@@ -69,6 +69,7 @@ private:
 
     // AudioTrackPrivateClient
     void enabledChanged(bool) final;
+    void configurationChanged(const WebCore::PlatformAudioTrackConfiguration&) final;
 
     // TrackPrivateBaseClient
     void idChanged(const AtomString&) final;
@@ -76,7 +77,7 @@ private:
     void languageChanged(const AtomString&) final;
     void willRemove() final;
 
-    TrackPrivateRemoteConfiguration& configuration();
+    AudioTrackPrivateRemoteConfiguration configuration();
     void configurationChanged();
 
     WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;

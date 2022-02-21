@@ -20,9 +20,12 @@
 #pragma once
 
 #include "Color.h"
+#include "FloatRect.h"
 #include "RenderSVGResource.h"
 
 namespace WebCore {
+
+class RenderObject;
 
 class RenderSVGResourceSolidColor final : public RenderSVGResource {
     WTF_MAKE_FAST_ALLOCATED;
@@ -34,7 +37,7 @@ public:
     void removeClientFromCache(RenderElement&, bool = true) override { }
 
     bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
-    void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderSVGShape*) override;
+    void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) override;
     FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
 
     RenderSVGResourceType resourceType() const override { return SolidColorResourceType; }

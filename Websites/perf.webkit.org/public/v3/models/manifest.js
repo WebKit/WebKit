@@ -16,6 +16,7 @@ class Manifest {
         Test.clearStaticMap();
         TestGroup.clearStaticMap();
         Triggerable.clearStaticMap();
+        TriggerableConfiguration.clearStaticMap();
         TriggerableRepositoryGroup.clearStaticMap();
         UploadedFile.clearStaticMap();
         BugTracker.clearStaticMap();
@@ -87,8 +88,8 @@ class Manifest {
                 return TriggerableRepositoryGroup.ensureSingleton(group.id, group);
             });
             raw.configurations = raw.configurations.map((configuration) => {
-                const [testId, platformId] = configuration;
-                return {test: Test.findById(testId), platform: Platform.findById(platformId)};
+                const [testId, platformId, supportedRepetitionTypes] = configuration;
+                return {test: Test.findById(testId), platform: Platform.findById(platformId), supportedRepetitionTypes};
             });
         });
 

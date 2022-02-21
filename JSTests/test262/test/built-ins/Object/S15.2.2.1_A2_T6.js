@@ -11,16 +11,9 @@ description: The value is a declared function
 
 var n_obj = new Object(func);
 
-//CHECK#1
-if (n_obj !== func) {
-  throw new Test262Error('#1: When the Object constructor is called and if the value is an Object simply value returns');
-}
-
-//CHECK#2
-if (n_obj() !== 1) {
-  throw new Test262Error('When the Object constructor is called and if the value is an Object simply value returns');
-}
+assert.sameValue(n_obj, func, 'The value of n_obj is expected to equal the value of func');
+assert.sameValue(n_obj(), 1, 'n_obj() must return 1');
 
 function func() {
   return 1;
-};
+}

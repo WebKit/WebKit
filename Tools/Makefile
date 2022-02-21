@@ -1,3 +1,10 @@
+ifeq ($(USE_WORKSPACE),YES)
+
+include ../Makefile.shared
+SCHEME = All Tools
+
+else
+
 MODULES = DumpRenderTree WebKitTestRunner MiniBrowser ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 
 TO_LOWER = $(shell echo $(1) | tr [:upper:] [:lower:])
@@ -53,3 +60,5 @@ clean:
 
 installsrc:
 	@true
+
+endif # USE_WORKSPACE

@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: this uncaught rejection is expected
+
+PASS callback's result is promisified if not async
+PASS lock is held until callback's returned promise resolves
+PASS lock is held until callback's returned promise rejects
+PASS held lock prevents the same client from acquiring it
+

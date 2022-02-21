@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,7 +78,7 @@ static inline void pas_lock_construct_disabled(pas_lock* lock)
                           code path. */
 }
 
-PAS_API void pas_lock_lock_slow(pas_lock* lock);
+PAS_API PAS_NEVER_INLINE void pas_lock_lock_slow(pas_lock* lock);
 
 static inline void pas_lock_lock(pas_lock* lock)
 {
@@ -100,7 +100,7 @@ static inline bool pas_lock_try_lock(pas_lock* lock)
 static inline void pas_lock_unlock(pas_lock* lock)
 {
     pas_race_test_will_unlock(lock);
-    __c11_atomic_store((_Atomic bool*)&lock->lock, false, __ATOMIC_SEQ_CST);
+    pas_atomic_store_bool((bool*)&lock->lock, false);
 }
 
 static inline void pas_lock_assert_held(pas_lock* lock)
@@ -207,6 +207,11 @@ PAS_BEGIN_EXTERN_C;
     PAS_UNUSED static inline bool name##_lock_try_lock(void) \
     { \
         return pas_lock_try_lock(&name##_lock); \
+    } \
+    \
+    PAS_UNUSED static inline bool name##_lock_lock_with_mode(pas_lock_lock_mode mode) \
+    { \
+        return pas_lock_lock_with_mode(&name##_lock, mode); \
     } \
     \
     PAS_UNUSED static inline void name##_lock_unlock(void) \

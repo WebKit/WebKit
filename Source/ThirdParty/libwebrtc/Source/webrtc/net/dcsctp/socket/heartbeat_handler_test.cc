@@ -30,17 +30,19 @@ using ::testing::NiceMock;
 using ::testing::Return;
 using ::testing::SizeIs;
 
-DcSctpOptions MakeOptions() {
+constexpr DurationMs kHeartbeatInterval = DurationMs(30'000);
+
+DcSctpOptions MakeOptions(DurationMs heartbeat_interval) {
   DcSctpOptions options;
   options.heartbeat_interval_include_rtt = false;
-  options.heartbeat_interval = DurationMs(30'000);
+  options.heartbeat_interval = heartbeat_interval;
   return options;
 }
 
-class HeartbeatHandlerTest : public testing::Test {
+class HeartbeatHandlerTestBase : public testing::Test {
  protected:
-  HeartbeatHandlerTest()
-      : options_(MakeOptions()),
+  explicit HeartbeatHandlerTestBase(DurationMs heartbeat_interval)
+      : options_(MakeOptions(heartbeat_interval)),
         context_(&callbacks_),
         timer_manager_([this]() { return callbacks_.CreateTimeout(); }),
         handler_("log: ", options_, &context_, &timer_manager_) {}
@@ -62,6 +64,31 @@ class HeartbeatHandlerTest : public testing::Test {
   TimerManager timer_manager_;
   HeartbeatHandler handler_;
 };
+
+class HeartbeatHandlerTest : public HeartbeatHandlerTestBase {
+ protected:
+  HeartbeatHandlerTest() : HeartbeatHandlerTestBase(kHeartbeatInterval) {}
+};
+
+class DisabledHeartbeatHandlerTest : public HeartbeatHandlerTestBase {
+ protected:
+  DisabledHeartbeatHandlerTest() : HeartbeatHandlerTestBase(DurationMs(0)) {}
+};
+
+TEST_F(HeartbeatHandlerTest, HasRunningHeartbeatIntervalTimer) {
+  AdvanceTime(options_.heartbeat_interval);
+
+  // Validate that a heartbeat request was sent.
+  std::vector<uint8_t> payload = callbacks_.ConsumeSentPacket();
+  ASSERT_HAS_VALUE_AND_ASSIGN(SctpPacket packet, SctpPacket::Parse(payload));
+  ASSERT_THAT(packet.descriptors(), SizeIs(1));
+
+  ASSERT_HAS_VALUE_AND_ASSIGN(
+      HeartbeatRequestChunk request,
+      HeartbeatRequestChunk::Parse(packet.descriptors()[0].data));
+
+  EXPECT_TRUE(request.info().has_value());
+}
 
 TEST_F(HeartbeatHandlerTest, RepliesToHeartbeatRequests) {
   uint8_t info_data[] = {1, 2, 3, 4, 5};
@@ -108,6 +135,29 @@ TEST_F(HeartbeatHandlerTest, SendsHeartbeatRequestsOnIdleChannel) {
   handler_.HandleHeartbeatAck(std::move(ack));
 }
 
+TEST_F(HeartbeatHandlerTest, DoesntObserveInvalidHeartbeats) {
+  AdvanceTime(options_.heartbeat_interval);
+
+  // Grab the request, and make a response.
+  std::vector<uint8_t> payload = callbacks_.ConsumeSentPacket();
+  ASSERT_HAS_VALUE_AND_ASSIGN(SctpPacket packet, SctpPacket::Parse(payload));
+  ASSERT_THAT(packet.descriptors(), SizeIs(1));
+
+  ASSERT_HAS_VALUE_AND_ASSIGN(
+      HeartbeatRequestChunk req,
+      HeartbeatRequestChunk::Parse(packet.descriptors()[0].data));
+
+  HeartbeatAckChunk ack(std::move(req).extract_parameters());
+
+  EXPECT_CALL(context_, ObserveRTT).Times(0);
+
+  // Go backwards in time - which make the HEARTBEAT-ACK have an invalid
+  // timestamp in it, as it will be in the future.
+  callbacks_.AdvanceTime(DurationMs(-100));
+
+  handler_.HandleHeartbeatAck(std::move(ack));
+}
+
 TEST_F(HeartbeatHandlerTest, IncreasesErrorIfNotAckedInTime) {
   DurationMs rto(105);
   EXPECT_CALL(context_, current_rto).WillOnce(Return(rto));
@@ -118,6 +168,13 @@ TEST_F(HeartbeatHandlerTest, IncreasesErrorIfNotAckedInTime) {
 
   EXPECT_CALL(context_, IncrementTxErrorCounter).Times(1);
   AdvanceTime(rto);
+}
+
+TEST_F(DisabledHeartbeatHandlerTest, IsReallyDisabled) {
+  AdvanceTime(options_.heartbeat_interval);
+
+  // Validate that a request was NOT sent.
+  EXPECT_THAT(callbacks_.ConsumeSentPacket(), IsEmpty());
 }
 
 }  // namespace

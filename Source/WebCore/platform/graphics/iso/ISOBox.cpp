@@ -32,13 +32,17 @@ using JSC::DataView;
 
 namespace WebCore {
 
+ISOBox::ISOBox() = default;
+ISOBox::~ISOBox() = default;
+ISOBox::ISOBox(const ISOBox&) = default;
+
 ISOBox::PeekResult ISOBox::peekBox(DataView& view, unsigned offset)
 {
     uint64_t size = 0;
     if (!checkedRead<uint32_t>(size, view, offset, BigEndian))
         return std::nullopt;
 
-    FourCC type = { uint32_t { 0 } };
+    FourCC type;
     if (!checkedRead<uint32_t>(type, view, offset, BigEndian))
         return std::nullopt;
 
@@ -95,6 +99,9 @@ bool ISOBox::parse(DataView& view, unsigned& offset)
 
     return true;
 }
+
+ISOFullBox::ISOFullBox() = default;
+ISOFullBox::ISOFullBox(const ISOFullBox&) = default;
 
 bool ISOFullBox::parse(DataView& view, unsigned& offset)
 {

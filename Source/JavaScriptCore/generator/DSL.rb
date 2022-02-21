@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -146,6 +146,8 @@ module DSL
 #include "ToThisStatus.h"
 
 namespace JSC {
+
+class BasicBlockLocation;
 
 void dumpBytecode(BytecodeDumperBase* dumper, InstructionStream::Offset, const Instruction*);
 

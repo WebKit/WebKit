@@ -28,6 +28,8 @@
 #include "AllIsoHeaps.h"
 #include "IsoHeapImpl.h"
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 template<typename Func>
@@ -39,3 +41,4 @@ void AllIsoHeaps::forEach(const Func& func)
 
 } // namespace bmalloc
 
+#endif

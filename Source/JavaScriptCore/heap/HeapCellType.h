@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,14 +36,14 @@ public:
     JS_EXPORT_PRIVATE HeapCellType(CellAttributes);
     JS_EXPORT_PRIVATE virtual ~HeapCellType();
 
-    const CellAttributes& attributes() const { return m_attributes; }
+    CellAttributes attributes() const { return m_attributes; }
 
     // The purpose of overriding this is to specialize the sweep for your destructors. This won't
     // be called for no-destructor blocks. This must call MarkedBlock::finishSweepKnowingSubspace.
-    virtual void finishSweep(MarkedBlock::Handle&, FreeList*);
+    virtual void finishSweep(MarkedBlock::Handle&, FreeList*) const;
 
     // These get called for large objects.
-    virtual void destroy(VM&, JSCell*);
+    virtual void destroy(VM&, JSCell*) const;
 
 private:
     CellAttributes m_attributes;

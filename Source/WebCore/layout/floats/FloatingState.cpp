@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 
 FloatingState::FloatItem::FloatItem(const Box& layoutBox, BoxGeometry absoluteBoxGeometry)
-    : m_layoutBox(makeWeakPtr(layoutBox))
+    : m_layoutBox(layoutBox)
     , m_position(layoutBox.isLeftFloatingPositioned() ? Position::Left : Position::Right)
     , m_absoluteBoxGeometry(absoluteBoxGeometry)
 {
@@ -55,7 +55,7 @@ FloatingState::FloatItem::FloatItem(Position position, BoxGeometry absoluteBoxGe
 
 FloatingState::FloatingState(LayoutState& layoutState, const ContainerBox& formattingContextRoot)
     : m_layoutState(layoutState)
-    , m_formattingContextRoot(makeWeakPtr(formattingContextRoot))
+    , m_formattingContextRoot(formattingContextRoot)
 {
 }
 
@@ -65,7 +65,7 @@ void FloatingState::append(FloatItem floatItem)
         return m_floats.append(floatItem);
 
     // The integration codepath does not construct a layout box for the float item.
-    ASSERT_IMPLIES(floatItem.floatBox(), m_floats.findMatching([&] (auto& entry) {
+    ASSERT_IMPLIES(floatItem.floatBox(), m_floats.findIf([&] (auto& entry) {
         return entry.floatBox() == floatItem.floatBox();
     }) == notFound);
 

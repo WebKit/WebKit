@@ -4,16 +4,7 @@ var assert = function (result, expected, message = "") {
   }
 };
 
-function checkSyntax(src) {
-    try {
-        eval(src);
-    } catch (error) {
-        if (error instanceof SyntaxError)
-            throw new Error("Syntax Error: " + String(error) + "\n script: `" + src + "`");
-    }
-}
-
-function checkSyntaxError(src, message) {
+function evalForSyntaxError(src, message) {
     var bError = false;
     try {
         eval(src);
@@ -26,44 +17,44 @@ function checkSyntaxError(src, message) {
 }
 
 (function checkSimpleAsyncGeneratorSloppyMode() {
-    checkSyntax('var a1 = async function*asyncGenWithName1(){}');
-    checkSyntax('var a2 = async function *asyncGenWithName2(){ yield 11; }');
-    checkSyntax('var a3 = async function * asyncGenWithName2(){ await p; yield 11; }');
-    checkSyntax('var d1 = async function*(){}');
-    checkSyntax('var d2 = async function* (){ yield 11; }');
-    checkSyntax('var d3 = async function * (){ await p; yield 11; }');
-    checkSyntax('async function* withName1(){  }');
-    checkSyntax('async function *withName2(){ yield 11; }');
-    checkSyntax('async function * withName3(){ await p; yield 11; }');
-    checkSyntax('class A { async * method() { } }');
-    checkSyntax('class B { async * method() {yield 11;} }');
-    checkSyntax('class C { async * method() {yield 11; await p;} }');
-    checkSyntax('class D { async * "method"() {yield 11; await p;} }');
-    checkSyntax('class F { async * 0() {yield 11; await p;} }');
-    checkSyntax('var obj = { async * method() {yield 11; await p;} }');
-    checkSyntax('({ async foo() {} })');
-    checkSyntax('({ async : 1 })');
+    checkScriptSyntax('var a1 = async function*asyncGenWithName1(){}');
+    checkScriptSyntax('var a2 = async function *asyncGenWithName2(){ yield 11; }');
+    checkScriptSyntax('var a3 = async function * asyncGenWithName2(){ await p; yield 11; }');
+    checkScriptSyntax('var d1 = async function*(){}');
+    checkScriptSyntax('var d2 = async function* (){ yield 11; }');
+    checkScriptSyntax('var d3 = async function * (){ await p; yield 11; }');
+    checkScriptSyntax('async function* withName1(){  }');
+    checkScriptSyntax('async function *withName2(){ yield 11; }');
+    checkScriptSyntax('async function * withName3(){ await p; yield 11; }');
+    checkScriptSyntax('class A { async * method() { } }');
+    checkScriptSyntax('class B { async * method() {yield 11;} }');
+    checkScriptSyntax('class C { async * method() {yield 11; await p;} }');
+    checkScriptSyntax('class D { async * "method"() {yield 11; await p;} }');
+    checkScriptSyntax('class F { async * 0() {yield 11; await p;} }');
+    checkScriptSyntax('var obj = { async * method() {yield 11; await p;} }');
+    checkScriptSyntax('({ async foo() {} })');
+    checkScriptSyntax('({ async : 1 })');
 })();
 
 (function checkSimpleAsyncGeneratorStrictMode() {
-    checkSyntax('"use strict"; var a1 = async function*asyncGenWithName1(){}');
-    checkSyntax('"use strict"; var a2 = async function *asyncGenWithName2(){ yield 11; }');
-    checkSyntax('"use strict"; var a3 = async function * asyncGenWithName2(){ await p; yield 11; }');
-    checkSyntax('"use strict"; var d1 = async function*(){}');
-    checkSyntax('"use strict"; var d2 = async function* (){ yield 11; }');
-    checkSyntax('"use strict"; var d3 = async function * (){ await p; yield 11; }');
-    checkSyntax('"use strict"; async function* withName1(){  }');
-    checkSyntax('"use strict"; async function *withName2(){ yield 11; }');
-    checkSyntax('"use strict"; async function * withName3(){ await p; yield 11; }');
-    checkSyntax('"use strict"; class A { async * method() { } }');
-    checkSyntax('"use strict"; class B { async * method() {yield 11;} }');
-    checkSyntax('"use strict"; class C { async * method() {yield 11; await p;} }');
-    checkSyntax('"use strict"; class D { async * "method"() {yield 11; await p;} }');
-    checkSyntax('"use strict"; class E { async * ["calc" + "ulate"]() {yield 11; await p;} }');
-    checkSyntax('"use strict"; class F { async * 0() {yield 11; await p;} }');
-    checkSyntax('"use strict"; var obj = { async * method() {yield 11; await p;} }');
-    checkSyntax('"use strict"; ({ async foo() {} })');
-    checkSyntax('"use strict"; ({ async : 1 })');
+    checkScriptSyntax('"use strict"; var a1 = async function*asyncGenWithName1(){}');
+    checkScriptSyntax('"use strict"; var a2 = async function *asyncGenWithName2(){ yield 11; }');
+    checkScriptSyntax('"use strict"; var a3 = async function * asyncGenWithName2(){ await p; yield 11; }');
+    checkScriptSyntax('"use strict"; var d1 = async function*(){}');
+    checkScriptSyntax('"use strict"; var d2 = async function* (){ yield 11; }');
+    checkScriptSyntax('"use strict"; var d3 = async function * (){ await p; yield 11; }');
+    checkScriptSyntax('"use strict"; async function* withName1(){  }');
+    checkScriptSyntax('"use strict"; async function *withName2(){ yield 11; }');
+    checkScriptSyntax('"use strict"; async function * withName3(){ await p; yield 11; }');
+    checkScriptSyntax('"use strict"; class A { async * method() { } }');
+    checkScriptSyntax('"use strict"; class B { async * method() {yield 11;} }');
+    checkScriptSyntax('"use strict"; class C { async * method() {yield 11; await p;} }');
+    checkScriptSyntax('"use strict"; class D { async * "method"() {yield 11; await p;} }');
+    checkScriptSyntax('"use strict"; class E { async * ["calc" + "ulate"]() {yield 11; await p;} }');
+    checkScriptSyntax('"use strict"; class F { async * 0() {yield 11; await p;} }');
+    checkScriptSyntax('"use strict"; var obj = { async * method() {yield 11; await p;} }');
+    checkScriptSyntax('"use strict"; ({ async foo() {} })');
+    checkScriptSyntax('"use strict"; ({ async : 1 })');
 })();
 
 
@@ -85,38 +76,38 @@ function checkSyntaxError(src, message) {
 
     wrappers.forEach(wrapper => {
         expressions.forEach(exp => {
-            checkSyntax(wrapper.start + exp + wrapper.finish);
+            checkScriptSyntax(wrapper.start + exp + wrapper.finish);
         });
     })
 })();
 
 
 (function checkSimpleAsyncGeneratorSyntaxErrorInSloppyMode() {
-    checkSyntaxError("var asyncGenFn = async function *await() {}");
-    checkSyntaxError("var asyncGenFn = async function*(await) {}");
-    checkSyntaxError("var asyncGenFn = async function *withName(await) {}");
-    checkSyntaxError("async function *asyncGeneratorFunctionDeclaration(await) {}");
-    checkSyntaxError("var asyncGenFn = *async function () {}");
-    checkSyntaxError("var asyncGenFn = *async function withName() {}");
-    checkSyntaxError("*async function asyncGeneratorFunctionDeclaration(await) {}");
-    checkSyntaxError("var obj = { *async asyncGeneratorMethod() {} };");
-    checkSyntaxError("var obj = { async asyncGeneratorMethod*() {} };");
-    checkSyntaxError("class A { get async* ttt() {} }");
-    checkSyntaxError("class B { get *async ttt() {} }");
-    checkSyntaxError('({ async = 1 })');
+    evalForSyntaxError("var asyncGenFn = async function *await() {}");
+    evalForSyntaxError("var asyncGenFn = async function*(await) {}");
+    evalForSyntaxError("var asyncGenFn = async function *withName(await) {}");
+    evalForSyntaxError("async function *asyncGeneratorFunctionDeclaration(await) {}");
+    evalForSyntaxError("var asyncGenFn = *async function () {}");
+    evalForSyntaxError("var asyncGenFn = *async function withName() {}");
+    evalForSyntaxError("*async function asyncGeneratorFunctionDeclaration(await) {}");
+    evalForSyntaxError("var obj = { *async asyncGeneratorMethod() {} };");
+    evalForSyntaxError("var obj = { async asyncGeneratorMethod*() {} };");
+    evalForSyntaxError("class A { get async* ttt() {} }");
+    evalForSyntaxError("class B { get *async ttt() {} }");
+    evalForSyntaxError('({ async = 1 })');
 })();
 
 (function checkSimpleAsyncGeneratorSyntaxErrorInStrictMode() {
-    checkSyntaxError("'use strict'; var asyncGenFn = async function *await() {}");
-    checkSyntaxError("'use strict'; var asyncGenFn = async function*(await) {}");
-    checkSyntaxError("'use strict'; var asyncGenFn = async function *withName(await) {}");
-    checkSyntaxError("'use strict'; async function *asyncGeneratorFunctionDeclaration(await) {}");
-    checkSyntaxError("'use strict'; var asyncGenFn = *async function () {}");
-    checkSyntaxError("'use strict'; var asyncGenFn = *async function withName() {}");
-    checkSyntaxError("'use strict'; *async function asyncGeneratorFunctionDeclaration(await) {}");
-    checkSyntaxError("'use strict'; var obj = { *async asyncGeneratorMethod() {} };");
-    checkSyntaxError("'use strict'; var obj = { async asyncGeneratorMethod*() {} };");
-    checkSyntaxError("'use strict'; class A { get async* ttt() {} }");
-    checkSyntaxError("'use strict'; class B { get *async ttt() {} }");
-    checkSyntaxError("'use strict'; ({ async = 1 })");
+    evalForSyntaxError("'use strict'; var asyncGenFn = async function *await() {}");
+    evalForSyntaxError("'use strict'; var asyncGenFn = async function*(await) {}");
+    evalForSyntaxError("'use strict'; var asyncGenFn = async function *withName(await) {}");
+    evalForSyntaxError("'use strict'; async function *asyncGeneratorFunctionDeclaration(await) {}");
+    evalForSyntaxError("'use strict'; var asyncGenFn = *async function () {}");
+    evalForSyntaxError("'use strict'; var asyncGenFn = *async function withName() {}");
+    evalForSyntaxError("'use strict'; *async function asyncGeneratorFunctionDeclaration(await) {}");
+    evalForSyntaxError("'use strict'; var obj = { *async asyncGeneratorMethod() {} };");
+    evalForSyntaxError("'use strict'; var obj = { async asyncGeneratorMethod*() {} };");
+    evalForSyntaxError("'use strict'; class A { get async* ttt() {} }");
+    evalForSyntaxError("'use strict'; class B { get *async ttt() {} }");
+    evalForSyntaxError("'use strict'; ({ async = 1 })");
 })();

@@ -907,7 +907,7 @@ static bool SdpDeserializeCandidate(const std::string& message,
   return webrtc::SdpDeserializeCandidate(message, candidate, NULL);
 }
 
-// Add some extra |newlines| to the |message| after |line|.
+// Add some extra `newlines` to the `message` after `line`.
 static void InjectAfter(const std::string& line,
                         const std::string& newlines,
                         std::string* message) {
@@ -920,8 +920,8 @@ static void Replace(const std::string& line,
   absl::StrReplaceAll({{line, newlines}}, message);
 }
 
-// Expect a parse failure on the line containing |bad_part| when attempting to
-// parse |bad_sdp|.
+// Expect a parse failure on the line containing `bad_part` when attempting to
+// parse `bad_sdp`.
 static void ExpectParseFailure(const std::string& bad_sdp,
                                const std::string& bad_part) {
   JsepSessionDescription desc(kDummyType);
@@ -932,14 +932,14 @@ static void ExpectParseFailure(const std::string& bad_sdp,
       << "Did not find " << bad_part << " in " << error.line;
 }
 
-// Expect fail to parse kSdpFullString if replace |good_part| with |bad_part|.
+// Expect fail to parse kSdpFullString if replace `good_part` with `bad_part`.
 static void ExpectParseFailure(const char* good_part, const char* bad_part) {
   std::string bad_sdp = kSdpFullString;
   Replace(good_part, bad_part, &bad_sdp);
   ExpectParseFailure(bad_sdp, bad_part);
 }
 
-// Expect fail to parse kSdpFullString if add |newlines| after |injectpoint|.
+// Expect fail to parse kSdpFullString if add `newlines` after `injectpoint`.
 static void ExpectParseFailureWithNewLines(const std::string& injectpoint,
                                            const std::string& newlines,
                                            const std::string& bad_part) {
@@ -1583,7 +1583,7 @@ class WebRtcSdpTest : public ::testing::Test {
     return true;
   }
 
-  // Disable the ice-ufrag and ice-pwd in given |sdp| message by replacing
+  // Disable the ice-ufrag and ice-pwd in given `sdp` message by replacing
   // them with invalid keywords so that the parser will just ignore them.
   bool RemoveCandidateUfragPwd(std::string* sdp) {
     absl::StrReplaceAll(
@@ -1591,7 +1591,7 @@ class WebRtcSdpTest : public ::testing::Test {
     return true;
   }
 
-  // Update the candidates in |jdesc| to use the given |ufrag| and |pwd|.
+  // Update the candidates in `jdesc` to use the given `ufrag` and `pwd`.
   bool UpdateCandidateUfragPwd(JsepSessionDescription* jdesc,
                                int mline_index,
                                const std::string& ufrag,
@@ -2396,7 +2396,7 @@ TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithH264) {
   ASSERT_NE(before_pt, std::string::npos);
   before_pt += strlen("a=rtpmap:");
   std::string pt = message.substr(before_pt, after_pt - before_pt);
-  // TODO(hta): Check if payload type |pt| occurs in the m=video line.
+  // TODO(hta): Check if payload type `pt` occurs in the m=video line.
   std::string to_find = "a=fmtp:" + pt + " ";
   size_t fmtp_pos = message.find(to_find);
   ASSERT_NE(std::string::npos, fmtp_pos) << "Failed to find " << to_find;
@@ -3670,12 +3670,12 @@ TEST_F(WebRtcSdpTest, SerializeDtlsSetupAttribute) {
   // Fingerprint attribute is necessary to add DTLS setup attribute.
   InjectAfter(kAttributeIcePwdVoice, kFingerprint, &sdp_with_dtlssetup);
   InjectAfter(kAttributeIcePwdVideo, kFingerprint, &sdp_with_dtlssetup);
-  // Now adding |setup| attribute.
+  // Now adding `setup` attribute.
   InjectAfter(kFingerprint, "a=setup:active\r\n", &sdp_with_dtlssetup);
   EXPECT_EQ(sdp_with_dtlssetup, message);
 }
 
-TEST_F(WebRtcSdpTest, DeserializeDtlsSetupAttribute) {
+TEST_F(WebRtcSdpTest, DeserializeDtlsSetupAttributeActpass) {
   JsepSessionDescription jdesc_with_dtlssetup(kDummyType);
   std::string sdp_with_dtlssetup = kSdpFullString;
   InjectAfter(kSessionTime, "a=setup:actpass\r\n", &sdp_with_dtlssetup);
@@ -3688,6 +3688,37 @@ TEST_F(WebRtcSdpTest, DeserializeDtlsSetupAttribute) {
   const cricket::TransportInfo* vtinfo =
       desc->GetTransportInfoByName("video_content_name");
   EXPECT_EQ(cricket::CONNECTIONROLE_ACTPASS,
+            vtinfo->description.connection_role);
+}
+
+TEST_F(WebRtcSdpTest, DeserializeDtlsSetupAttributeActive) {
+  JsepSessionDescription jdesc_with_dtlssetup(kDummyType);
+  std::string sdp_with_dtlssetup = kSdpFullString;
+  InjectAfter(kSessionTime, "a=setup:active\r\n", &sdp_with_dtlssetup);
+  EXPECT_TRUE(SdpDeserialize(sdp_with_dtlssetup, &jdesc_with_dtlssetup));
+  cricket::SessionDescription* desc = jdesc_with_dtlssetup.description();
+  const cricket::TransportInfo* atinfo =
+      desc->GetTransportInfoByName("audio_content_name");
+  EXPECT_EQ(cricket::CONNECTIONROLE_ACTIVE,
+            atinfo->description.connection_role);
+  const cricket::TransportInfo* vtinfo =
+      desc->GetTransportInfoByName("video_content_name");
+  EXPECT_EQ(cricket::CONNECTIONROLE_ACTIVE,
+            vtinfo->description.connection_role);
+}
+TEST_F(WebRtcSdpTest, DeserializeDtlsSetupAttributePassive) {
+  JsepSessionDescription jdesc_with_dtlssetup(kDummyType);
+  std::string sdp_with_dtlssetup = kSdpFullString;
+  InjectAfter(kSessionTime, "a=setup:passive\r\n", &sdp_with_dtlssetup);
+  EXPECT_TRUE(SdpDeserialize(sdp_with_dtlssetup, &jdesc_with_dtlssetup));
+  cricket::SessionDescription* desc = jdesc_with_dtlssetup.description();
+  const cricket::TransportInfo* atinfo =
+      desc->GetTransportInfoByName("audio_content_name");
+  EXPECT_EQ(cricket::CONNECTIONROLE_PASSIVE,
+            atinfo->description.connection_role);
+  const cricket::TransportInfo* vtinfo =
+      desc->GetTransportInfoByName("video_content_name");
+  EXPECT_EQ(cricket::CONNECTIONROLE_PASSIVE,
             vtinfo->description.connection_role);
 }
 
@@ -4662,4 +4693,16 @@ TEST_F(WebRtcSdpTest, IllegalMidCharacterValue) {
   // [ is an illegal token value.
   Replace("a=mid:", "a=mid:[]", &sdp);
   ExpectParseFailure(std::string(sdp), "a=mid:[]");
+}
+
+TEST_F(WebRtcSdpTest, MaxChannels) {
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 11 22 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "m=audio 49232 RTP/AVP 108\r\n"
+      "a=rtpmap:108 ISAC/16000/512\r\n";
+
+  ExpectParseFailure(sdp, "a=rtpmap:108 ISAC/16000/512");
 }

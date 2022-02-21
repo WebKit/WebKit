@@ -48,13 +48,12 @@ TEST_P(EGLRecordableTest, CheckAllContexts)
     {
         EGLint isRecordable;
         eglGetConfigAttrib(display, config, EGL_RECORDABLE_ANDROID, &isRecordable);
-        ASSERT_EGL_FALSE(isRecordable);
     }
 
     const EGLint configAttributes[] = {
         EGL_RED_SIZE,     EGL_DONT_CARE,  EGL_GREEN_SIZE,         EGL_DONT_CARE,  EGL_BLUE_SIZE,
         EGL_DONT_CARE,    EGL_ALPHA_SIZE, EGL_DONT_CARE,          EGL_DEPTH_SIZE, EGL_DONT_CARE,
-        EGL_STENCIL_SIZE, EGL_DONT_CARE,  EGL_RECORDABLE_ANDROID, EGL_FALSE,      EGL_NONE};
+        EGL_STENCIL_SIZE, EGL_DONT_CARE,  EGL_RECORDABLE_ANDROID, EGL_TRUE,       EGL_NONE};
     EGLint configCount;
     ASSERT_EGL_TRUE(
         eglChooseConfig(display, configAttributes, configs.data(), configs.size(), &configCount));

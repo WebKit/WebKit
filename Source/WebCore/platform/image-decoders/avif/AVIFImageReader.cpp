@@ -41,7 +41,7 @@ AVIFImageReader::AVIFImageReader(RefPtr<AVIFImageDecoder>&& decoder)
 
 AVIFImageReader::~AVIFImageReader() = default;
 
-bool AVIFImageReader::parseHeader(const SharedBuffer::DataSegment& data, bool allDataReceived)
+bool AVIFImageReader::parseHeader(const SharedBuffer& data, bool allDataReceived)
 {
     if (avifDecoderSetIOMemory(m_avifDecoder.get(), data.data(), data.size()) != AVIF_RESULT_OK)
         return allDataReceived ? m_decoder->setFailed() : false;
@@ -58,7 +58,7 @@ bool AVIFImageReader::parseHeader(const SharedBuffer::DataSegment& data, bool al
     return true;
 }
 
-void AVIFImageReader::decodeFrame(size_t frameIndex, ScalableImageDecoderFrame& buffer, const SharedBuffer::DataSegment& data)
+void AVIFImageReader::decodeFrame(size_t frameIndex, ScalableImageDecoderFrame& buffer, const SharedBuffer& data)
 {
     if (m_decoder->failed())
         return;

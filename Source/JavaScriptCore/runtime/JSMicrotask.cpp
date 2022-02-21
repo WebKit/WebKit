@@ -47,22 +47,12 @@ public:
         m_arguments[3].set(vm, argument3);
     }
 
-    JSMicrotask(VM& vm, JSValue job)
-    {
-        m_job.set(vm, job);
-    }
-
 private:
     void run(JSGlobalObject*) final;
 
     Strong<Unknown> m_job;
     Strong<Unknown> m_arguments[maxArguments];
 };
-
-Ref<Microtask> createJSMicrotask(VM& vm, JSValue job)
-{
-    return adoptRef(*new JSMicrotask(vm, job));
-}
 
 Ref<Microtask> createJSMicrotask(VM& vm, JSValue job, JSValue argument0, JSValue argument1, JSValue argument2, JSValue argument3)
 {

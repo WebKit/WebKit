@@ -35,7 +35,7 @@ const ClassInfo JSAsyncGenerator::s_info = { "AsyncGenerator", &Base::s_info, nu
 
 JSAsyncGenerator* JSAsyncGenerator::create(VM& vm, Structure* structure)
 {
-    JSAsyncGenerator* generator = new (NotNull, allocateCell<JSAsyncGenerator>(vm.heap)) JSAsyncGenerator(vm, structure);
+    JSAsyncGenerator* generator = new (NotNull, allocateCell<JSAsyncGenerator>(vm)) JSAsyncGenerator(vm, structure);
     generator->finishCreation(vm);
     return generator;
 }

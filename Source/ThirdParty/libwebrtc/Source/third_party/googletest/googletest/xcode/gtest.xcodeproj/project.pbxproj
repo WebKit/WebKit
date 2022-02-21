@@ -697,7 +697,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Remember, this \"Run Script\" build phase will be executed from $SRCROOT\n/usr/bin/python Scripts/versiongenerate.py ../ $PROJECT_TEMP_DIR";
+			shellScript = "# Remember, this \"Run Script\" build phase will be executed from $SRCROOT\n/usr/bin/python3 Scripts/versiongenerate.py ../ $PROJECT_TEMP_DIR";
 		};
 /* End PBXShellScriptBuildPhase section */
 

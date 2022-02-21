@@ -41,6 +41,8 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "ProcessingInstruction.h"
+#include "RenderView.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGStyleElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -84,6 +86,9 @@ Resolver& Scope::resolver()
             createOrFindSharedShadowTreeResolver();
         else
             createDocumentResolver();
+        
+        if (m_resolver->ruleSets().features().usesHasPseudoClass())
+            m_usesHasPseudoClass = true;
     }
     return *m_resolver;
 }
@@ -121,7 +126,7 @@ void Scope::createOrFindSharedShadowTreeResolver()
         m_resolver->ruleSets().setUsesSharedUserStyle(!isForUserAgentShadowTree());
         m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
 
-        return makeRef(*m_resolver);
+        return Ref { *m_resolver };
     });
 
     if (!result.isNewEntry) {
@@ -141,7 +146,7 @@ auto Scope::makeResolverSharingKey() -> ResolverSharingKey
 {
     constexpr bool isNonEmptyHashTableValue = true;
     return {
-        m_activeStyleSheets.map([&](auto& sheet) { return makeRefPtr(sheet->contents()); }),
+        m_activeStyleSheets.map([&](auto& sheet) { return RefPtr { &sheet->contents() }; }),
         isForUserAgentShadowTree(),
         isNonEmptyHashTableValue
     };
@@ -184,31 +189,18 @@ Scope& Scope::forNode(Node& node)
 
 Scope* Scope::forOrdinal(Element& element, ScopeOrdinal ordinal)
 {
-    switch (ordinal) {
-    case ScopeOrdinal::Element:
+    if (ordinal == ScopeOrdinal::Element)
         return &forNode(element);
-    case ScopeOrdinal::ContainingHost: {
-        auto* containingShadowRoot = element.containingShadowRoot();
-        if (!containingShadowRoot)
-            return nullptr;
-        return &forNode(*containingShadowRoot->host());
-    }
-    case ScopeOrdinal::Shadow: {
+    if (ordinal == ScopeOrdinal::Shadow) {
         auto* shadowRoot = element.shadowRoot();
-        if (!shadowRoot)
-            return nullptr;
-        return &shadowRoot->styleScope();
+        return shadowRoot ? &shadowRoot->styleScope() : nullptr;
     }
-    default: {
-        ASSERT(ordinal >= ScopeOrdinal::FirstSlot);
-        auto slotIndex = ScopeOrdinal::FirstSlot;
-        for (auto* slot = element.assignedSlot(); slot; slot = slot->assignedSlot(), ++slotIndex) {
-            if (slotIndex == ordinal)
-                return &forNode(*slot);
-        }
-        return nullptr;
+    if (ordinal <= ScopeOrdinal::ContainingHost) {
+        auto* host = hostForScopeOrdinal(element, ordinal);
+        return host ? &forNode(*host) : nullptr;
     }
-    }
+    auto* slot = assignedSlotForScopeOrdinal(element, ordinal);
+    return slot ? &forNode(*slot) : nullptr;
 }
 
 void Scope::setPreferredStylesheetSetName(const String& name)
@@ -518,6 +510,9 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
             m_usesStyleBasedEditability = true;
     }
 
+    if (m_resolver && m_resolver->ruleSets().features().usesHasPseudoClass())
+        m_usesHasPseudoClass = true;
+
     invalidateStyleAfterStyleSheetChange(styleSheetChange);
 }
 
@@ -654,6 +649,13 @@ void Scope::scheduleUpdate(UpdateType update)
 
 void Scope::evaluateMediaQueriesForViewportChange()
 {
+    auto viewportState = mediaQueryViewportStateForDocument(m_document);
+
+    if (m_viewportStateOnPreviousMediaQueryEvaluation && *m_viewportStateOnPreviousMediaQueryEvaluation == viewportState)
+        return;
+    // This doesn't need to be invalidated as any changes to the rules will compute their media queries to correct values.
+    m_viewportStateOnPreviousMediaQueryEvaluation = viewportState;
+
     evaluateMediaQueries([] (Resolver& resolver) {
         return resolver.evaluateDynamicMediaQueries();
     });
@@ -682,14 +684,14 @@ auto Scope::collectResolverScopes() -> ResolverScopes
 
     ResolverScopes resolverScopes;
 
-    resolverScopes.add(makeRef(*resolverIfExists()), Vector<CheckedPtr<Scope>> { this });
+    resolverScopes.add(*resolverIfExists(), Vector<CheckedPtr<Scope>> { this });
 
     for (auto* shadowRoot : m_document.inDocumentShadowRoots()) {
         auto& scope = shadowRoot->styleScope();
         auto* resolver = scope.resolverIfExists();
         if (!resolver)
             continue;
-        resolverScopes.add(makeRef(*resolver), Vector<CheckedPtr<Scope>> { }).iterator->value.append(&scope);
+        resolverScopes.add(*resolver, Vector<CheckedPtr<Scope>> { }).iterator->value.append(&scope);
     }
     return resolverScopes;
 }
@@ -779,6 +781,66 @@ Scope& Scope::documentScope()
 bool Scope::isForUserAgentShadowTree() const
 {
     return m_shadowRoot && m_shadowRoot->mode() == ShadowRootMode::UserAgent;
+}
+
+bool Scope::updateQueryContainerState()
+{
+    ASSERT(!m_shadowRoot);
+    ASSERT(m_document.renderView());
+
+    auto previousStates = WTFMove(m_queryContainerStates);
+    m_queryContainerStates.clear();
+
+    Vector<Element*> changedContainers;
+
+    for (auto& containerRenderer : m_document.renderView()->containerQueryBoxes()) {
+        auto* containerElement = containerRenderer.element();
+        if (!containerElement)
+            continue;
+        
+        auto size = containerRenderer.logicalSize();
+
+        auto sizeChanged = [&](LayoutSize oldSize) {
+            switch (containerRenderer.style().containerType()) {
+            case ContainerType::InlineSize:
+                return size.width() != oldSize.width();
+            case ContainerType::Size:
+                return size != oldSize;
+            case ContainerType::None:
+                ASSERT_NOT_REACHED();
+                return false;
+            }
+        };
+
+        auto it = previousStates.find(*containerElement);
+        bool changed = it == previousStates.end() || sizeChanged(it->value);
+        if (changed)
+            changedContainers.append(containerElement);
+        m_queryContainerStates.add(*containerElement, size);
+    }
+
+    for (auto* toInvalidate : changedContainers)
+        toInvalidate->invalidateForQueryContainerChange();
+
+    return !changedContainers.isEmpty();
+}
+
+HTMLSlotElement* assignedSlotForScopeOrdinal(const Element& element, ScopeOrdinal scopeOrdinal)
+{
+    ASSERT(scopeOrdinal >= ScopeOrdinal::FirstSlot);
+    auto* slot = element.assignedSlot();
+    for (auto scopeDepth = ScopeOrdinal::FirstSlot; slot && scopeDepth != scopeOrdinal; ++scopeDepth)
+        slot = slot->assignedSlot();
+    return slot;
+}
+
+Element* hostForScopeOrdinal(const Element& element, ScopeOrdinal scopeOrdinal)
+{
+    ASSERT(scopeOrdinal <= ScopeOrdinal::ContainingHost);
+    auto* host = element.shadowHost();
+    for (auto scopeDepth = ScopeOrdinal::ContainingHost; host && scopeDepth != scopeOrdinal; --scopeDepth)
+        host = host->shadowHost();
+    return host;
 }
 
 }

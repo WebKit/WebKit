@@ -85,6 +85,8 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatPoint_SummaryProvider WebCore::FloatPoint')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatRect_SummaryProvider WebCore::FloatRect')
 
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLength_SummaryProvider WebCore::Length')
+
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreSecurityOrigin_SummaryProvider WebCore::SecurityOrigin')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFrame_SummaryProvider WebCore::Frame')
 
@@ -249,6 +251,28 @@ def WebCoreFloatRect_SummaryProvider(valobj, dict):
     return "{ x = %s, y = %s, width = %s, height = %s }" % (provider.get_x(), provider.get_y(), provider.get_width(), provider.get_height())
 
 
+def WebCoreLength_SummaryProvider(valobj, dict):
+    provider = WebCoreLengthProvider(valobj, dict)
+    quirky = ' (quirky)' if provider.has_quirk() else ""
+
+    if (provider.is_auto()):
+        return "{ auto%s }" % (quirky)
+
+    if (provider.is_undefined()):
+        return "{ undefined%s }" % (quirky)
+
+    if (provider.is_calculated()):
+        return "{ calc%s }" % (quirky)
+
+    if (provider.is_fixed()):
+        return "{ %spx%s }" % (provider.get_numeric_value(), quirky)
+
+    if (provider.is_percent()):
+        return "{ %s%%%s }" % (provider.get_numeric_value(), quirky)
+
+    return "{ %s %s%s }" % (provider.get_type_string(), provider.get_numeric_value(), quirky)
+
+
 def WebCoreSecurityOrigin_SummaryProvider(valobj, dict):
     provider = WebCoreSecurityOriginProvider(valobj, dict)
     return '{ %s, domain = %s, hasUniversalAccess = %d }' % (provider.to_string(), provider.domain(), provider.has_universal_access())
@@ -378,6 +402,8 @@ def lstring_to_string(valobj, error, length=None):
 
     pointer = valobj.GetValueAsUnsigned()
     contents = valobj.GetProcess().ReadMemory(pointer, length, lldb.SBError())
+    if not contents:
+        return ""
 
     # lldb does not (currently) support returning unicode from python summary providers,
     # so potentially convert this to ascii by escaping
@@ -468,62 +494,94 @@ class WTFStringProvider:
 
 
 class WebCoreColorProvider:
+    SEMANTIC_FLAG                           = 1 << 0
+    USE_COLOR_FUNCTION_SERIALIZATION_FLAG   = 1 << 1
+    VALID_FLAG                              = 1 << 2
+    OUT_OF_LINE_FLAG                        = 1 << 3
+
+    COLOR_VALUE_MASK                        = (1 << 48) - 1 # only correct for 64-bit
+    FLAGS_SHIFT                             = 48
+    FLAGS_SIZE                              = 8
+    COLOR_SPACE_SHIFT                       = FLAGS_SHIFT + FLAGS_SIZE
+
     "Print a WebCore::Color"
     def __init__(self, valobj, dict):
         self.valobj = valobj
 
-    def _is_extended(self, rgba_and_flags):
-        return not bool(rgba_and_flags & 0x1)
+    def _is_out_of_line(self, rgba_and_flags):
+        flags = self._flags(rgba_and_flags)
+        return bool(flags & self.OUT_OF_LINE_FLAG)
 
     def _is_valid(self, rgba_and_flags):
-        # Assumes not extended.
-        return bool(rgba_and_flags & 0x2)
+        flags = self._flags(rgba_and_flags)
+        return bool(flags & self.VALID_FLAG)
 
     def _is_semantic(self, rgba_and_flags):
-        # Assumes not extended.
-        return bool(rgba_and_flags & 0x4)
+        flags = self._flags(rgba_and_flags)
+        return bool(flags & self.SEMANTIC_FLAG)
 
-    def _to_string_extended(self):
-        extended_color = self.valobj.GetChildMemberWithName('m_colorData').GetChildMemberWithName('extendedColor').Dereference()
-        profile = extended_color.GetChildMemberWithName('m_colorSpace').GetValue()
-        if profile == 'A98RGB':
-            profile = 'a98-rgb'
-        elif profile == 'DisplayP3':
-            profile = 'display-p3'
-        elif profile == 'Lab':
-            profile = 'lab'
-        elif profile == 'LinearSRGB':
-            profile = 'linear-srgb'
-        elif profile == 'ProPhotoRGB':
-            profile = 'prophoto-rgb'
-        elif profile == 'Rec2020':
-            profile = 'rec2020'
-        elif profile == 'SRGB':
-            profile = 'srgb'
-        elif profile == 'XYZ_D50':
-            profile = 'xyz-d50'
-        else:
-            profile = 'unknown'
+    def _color_space(self, rgba_and_flags):
+        return rgba_and_flags >> self.COLOR_SPACE_SHIFT
 
-        color_components = extended_color.GetChildMemberWithName('m_components')
+    def _flags(self, rgba_and_flags):
+        return rgba_and_flags >> self.FLAGS_SHIFT
+
+    def _to_string_out_of_line(self):
+        rgba_and_flags = self.valobj.GetChildMemberWithName('m_colorAndFlags').GetValueAsUnsigned(0)
+
+        out_of_line_components_type = self.valobj.GetTarget().FindFirstType('WebCore::Color::OutOfLineComponents')
+        out_of_line_components = self.valobj.CreateValueFromAddress('out_of_line_components', rgba_and_flags & self.COLOR_VALUE_MASK, out_of_line_components_type)
+
+        color_space = self._color_space(rgba_and_flags)
+
+        # From ColorSpace.h.
+        color_spaces = [
+            'A98RGB',
+            'DisplayP3',
+            'ExtendedA98RGB',
+            'ExtendedDisplayP3',
+            'ExtendedLinearSRGB',
+            'ExtendedProPhotoRGB',
+            'ExtendedRec2020',
+            'ExtendedSRGB',
+            'HSL',
+            'HWB',
+            'LCH',
+            'Lab',
+            'LinearSRGB',
+            'OKLCH',
+            'OKLab',
+            'ProPhotoRGB',
+            'Rec2020',
+            'SRGB',
+            'XYZ_D50',
+            'XYZ_D65',
+        ]
+
+        profile = color_spaces[color_space] if color_space < len(color_spaces) else 'unknown'
+
+        color_components = out_of_line_components.GetChildMemberWithName('m_components')
         std_array_elems = color_components.GetChildMemberWithName('components').GetChildMemberWithName('__elems_')
 
         red = float(std_array_elems.GetChildAtIndex(0).GetValue())
         green = float(std_array_elems.GetChildAtIndex(1).GetValue())
         blue = float(std_array_elems.GetChildAtIndex(2).GetValue())
         alpha = float(std_array_elems.GetChildAtIndex(3).GetValue())
-        return "color(%s %1.2f %1.2f %1.2f / %1.2f)" % (profile, red, green, blue, alpha)
+
+        semantic = ' semantic' if self._is_semantic(rgba_and_flags) else ""
+
+        return "color(%s %1.2f %1.2f %1.2f / %1.2f)%s" % (profile, red, green, blue, alpha, semantic)
 
     def to_string(self):
-        rgba_and_flags = self.valobj.GetChildMemberWithName('m_colorData').GetChildMemberWithName('inlineColorAndFlags').GetValueAsUnsigned(0)
+        rgba_and_flags = self.valobj.GetChildMemberWithName('m_colorAndFlags').GetValueAsUnsigned(0)
 
-        if self._is_extended(rgba_and_flags):
-            return self._to_string_extended()
+        if self._is_out_of_line(rgba_and_flags):
+            return self._to_string_out_of_line()
 
         if not self._is_valid(rgba_and_flags):
             return 'invalid'
 
-        color = rgba_and_flags >> 32
+        color = rgba_and_flags & self.COLOR_VALUE_MASK
         red = (color >> 24) & 0xFF
         green = (color >> 16) & 0xFF
         blue = (color >> 8) & 0xFF
@@ -669,6 +727,84 @@ class WebCoreFloatRectProvider:
 
     def get_height(self):
         return WebCoreFloatSizeProvider(self.valobj.GetChildMemberWithName('m_size'), dict).get_height()
+
+
+class WebCoreLengthProvider:
+    "Print a WebCore::Length"
+
+    AUTO_TYPE           = 0
+    RELATIVE_TYPE       = 1
+    PERCENT_TYPE        = 2
+    FIXED_TYPE          = 3
+    INTRINSIC_TYPE      = 4
+    MIN_INTRINSIC_TYPE  = 5
+    MIN_CONTENT_TYPE    = 6
+    MAX_CONTENT_TYPE    = 7
+    FILL_AVAILABLE_TYPE = 8
+    FIT_CONTENT_TYPE    = 9
+    CALCULATED_TYPE     = 10
+    UNDEFINED_TYPE      = 11
+
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def get_type(self):
+        return self.valobj.GetChildMemberWithName('m_type').GetValueAsUnsigned(0)
+
+    def get_type_string(self):
+        length_type = self.get_type()
+
+        type_names = [
+            "Auto",
+            "Relative",
+            "Percent",
+            "Fixed",
+            "Intrinsic",
+            "MinIntrinsic",
+            "MinContent",
+            "MaxContent",
+            "FillAvailable",
+            "FitContent",
+            "Calculated",
+            "Undefined",
+        ]
+
+        if (length_type <= self.UNDEFINED_TYPE):
+            return type_names[length_type]
+
+        return "Unknown"
+
+    def is_auto(self):
+        return self.get_type() == self.AUTO_TYPE
+
+    def is_undefined(self):
+        return self.get_type() == self.UNDEFINED_TYPE
+
+    def is_calculated(self):
+        return self.get_type() == self.CALCULATED_TYPE
+
+    def is_fixed(self):
+        return self.get_type() == self.FIXED_TYPE
+
+    def is_percent(self):
+        return self.get_type() == self.PERCENT_TYPE
+
+    def has_quirk(self):
+        return bool(self.valobj.GetChildMemberWithName('m_hasQuirk').GetValueAsUnsigned(0))
+
+    def is_float(self):
+        return bool(self.valobj.GetChildMemberWithName('m_isFloat').GetValueAsUnsigned(0))
+
+    def get_numeric_value(self):
+        length_type = self.get_type()
+        if (length_type == self.CALCULATED_TYPE):
+            return 0
+
+        if (self.is_float()):
+            return self.valobj.GetChildMemberWithName('m_floatValue').GetValue()
+
+        return self.valobj.GetChildMemberWithName('m_intValue').GetValueAsSigned()
+
 
 
 class WTFURLProvider:

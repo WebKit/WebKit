@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,13 +36,14 @@
 #include "pas_epoch.h"
 #include "pas_free_granules.h"
 #include "pas_full_alloc_bits_inlines.h"
+#include "pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h"
 #include "pas_heap_lock.h"
 #include "pas_log.h"
 #include "pas_page_malloc.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_range.h"
 #include "pas_segregated_page_inlines.h"
-#include "pas_segregated_global_size_directory.h"
+#include "pas_segregated_size_directory.h"
 #include "pas_utility_heap_config.h"
 
 double pas_segregated_page_extra_wasteage_handicap_for_config_variant[
@@ -55,15 +56,13 @@ PAS_API bool pas_segregated_page_lock_with_unbias_impl(
     pas_lock** held_lock,
     pas_lock* lock_ptr)
 {
-    static const bool verbose = false;
-    
     pas_lock_lock(lock_ptr);
     
     if (lock_ptr == page->lock_ptr) {
         pas_segregated_view owner;
 
         owner = page->owner;
-        if (pas_segregated_view_is_exclusive_ish(owner)) {
+        if (pas_segregated_view_is_some_exclusive(owner)) {
             pas_segregated_exclusive_view* exclusive;
             pas_lock* fallback_lock;
             
@@ -74,13 +73,6 @@ PAS_API bool pas_segregated_page_lock_with_unbias_impl(
             fallback_lock = &exclusive->ownership_lock;
             
             if (lock_ptr != fallback_lock) {
-                if (verbose)
-                    pas_log("Triggering explosion.\n");
-                
-                pas_segregated_global_size_directory_set_contention_did_trigger_explosion(
-                    pas_compact_segregated_global_size_directory_ptr_load(&exclusive->directory),
-                    true);
-                
                 pas_lock_lock(fallback_lock);
                 page->lock_ptr = fallback_lock;
                 pas_lock_unlock(lock_ptr);
@@ -120,10 +112,10 @@ pas_lock* pas_segregated_page_switch_lock_slow(
     PAS_ASSERT(!"Should not be reached");
 }
 
-void pas_segregated_page_switch_lock_and_rebias_to_magazine_while_ineligible_impl(
+void pas_segregated_page_switch_lock_and_rebias_while_ineligible_impl(
     pas_segregated_page* page,
     pas_lock** held_lock,
-    pas_magazine* magazine)
+    pas_thread_local_cache_node* cache_node)
 {
     for (;;) {
         pas_segregated_view owner;
@@ -133,15 +125,16 @@ void pas_segregated_page_switch_lock_and_rebias_to_magazine_while_ineligible_imp
         bool got_right_lock;
     
         page_lock = page->lock_ptr;
+        PAS_TESTING_ASSERT(page_lock);
 
-        if (*held_lock == page_lock && *held_lock == &magazine->lock) {
+        if (*held_lock == page_lock && *held_lock == &cache_node->page_lock) {
             pas_compiler_fence();
             return;
         }
 
         owner = page->owner;
 
-        if (!pas_segregated_view_is_exclusive_ish(owner) || !magazine) {
+        if (!pas_segregated_view_is_some_exclusive(owner) || !cache_node) {
             pas_lock_switch(held_lock, page_lock);
             if (page->lock_ptr != page_lock)
                 continue;
@@ -149,14 +142,14 @@ void pas_segregated_page_switch_lock_and_rebias_to_magazine_while_ineligible_imp
         }
 
         did_lock_quickly =
-            (*held_lock == &magazine->lock && pas_lock_try_lock(page_lock)) ||
-            (*held_lock == page_lock && pas_lock_try_lock(&magazine->lock));
+            (*held_lock == &cache_node->page_lock && pas_lock_try_lock(page_lock)) ||
+            (*held_lock == page_lock && pas_lock_try_lock(&cache_node->page_lock));
 
         if (!did_lock_quickly) {
             if (*held_lock)
                 pas_lock_unlock(*held_lock);
 
-            if (&magazine->lock == page_lock) {
+            if (&cache_node->page_lock == page_lock) {
                 pas_lock_lock(page_lock);
                 *held_lock = page_lock;
                 if (page->lock_ptr != page_lock)
@@ -168,26 +161,27 @@ void pas_segregated_page_switch_lock_and_rebias_to_magazine_while_ineligible_imp
 
             /* This enforces that:
                
-               - Magazine locks must be acquired before page locks.
+               - Cache node page locks must be acquired before page locks.
                
-               - Magazine locks are acquired in pointer-as-integer order relative to one another. */
-            if (&exclusive->ownership_lock == page_lock || &magazine->lock < page_lock) {
-                pas_lock_lock(&magazine->lock);
+               - Cache node page locks are acquired in pointer-as-integer order relative to one
+                 another. */
+            if (&exclusive->ownership_lock == page_lock || &cache_node->page_lock < page_lock) {
+                pas_lock_lock(&cache_node->page_lock);
                 pas_lock_lock(page_lock);
             } else {
                 pas_lock_lock(page_lock);
-                pas_lock_lock(&magazine->lock);
+                pas_lock_lock(&cache_node->page_lock);
             }
         }
 
-        PAS_ASSERT(page_lock != &magazine->lock);
+        PAS_ASSERT(page_lock != &cache_node->page_lock);
 
         got_right_lock = (page->lock_ptr == page_lock);
         if (got_right_lock)
-            page->lock_ptr = &magazine->lock;
+            page->lock_ptr = &cache_node->page_lock;
         
         pas_lock_unlock(page_lock);
-        *held_lock = &magazine->lock;
+        *held_lock = &cache_node->page_lock;
 
         if (got_right_lock)
             return;
@@ -202,20 +196,24 @@ void pas_segregated_page_construct(pas_segregated_page* page,
     static const bool verbose = false;
     
     pas_segregated_page_config page_config;
+    pas_segregated_page_role role;
 
     page_config = *page_config_ptr;
 
-    PAS_ASSERT(pas_page_kind_get_config_kind(page_config.base.page_kind)
-               == pas_page_config_kind_segregated);
+    PAS_ASSERT(page_config.base.page_config_kind == pas_page_config_kind_segregated);
+
+    role = pas_segregated_view_get_page_role_for_owner(owner);
 
     /* This is essential for medium deallocation. */
-    pas_page_base_construct(&page->base, page_config.base.page_kind);
+    pas_page_base_construct(
+        &page->base, pas_page_kind_for_segregated_variant_and_role(page_config.variant, role));
 
     page->use_epoch = PAS_EPOCH_INVALID;
 
     if (verbose) {
-        pas_log("Constructing page %p for view %p and config %s.\n",
-                page, owner, pas_segregated_page_config_kind_get_string(page_config.kind));
+        pas_log("Constructing page %p with boundary %p for view %p and config %s.\n",
+                page, pas_segregated_page_boundary(page, page_config),
+                owner, pas_segregated_page_config_kind_get_string(page_config.kind));
     }
 
     if (pas_segregated_page_config_is_utility(page_config))
@@ -228,22 +226,36 @@ void pas_segregated_page_construct(pas_segregated_page* page,
 
     page->num_non_empty_words = 0;
     
-    if (pas_segregated_view_is_exclusive_ish(owner)) {
-        pas_segregated_global_size_directory* directory;
-        pas_segregated_global_size_directory_data* data;
+    page->view_cache_index = (pas_allocator_index)UINT_MAX;
 
-        directory = pas_segregated_view_get_global_size_directory(owner);
-        data = pas_segregated_global_size_directory_data_ptr_load_non_null(&directory->data);
+    switch (role) {
+    case pas_segregated_page_exclusive_role:{
+        pas_segregated_size_directory* directory;
+        pas_segregated_size_directory_data* data;
+
+        directory = pas_segregated_view_get_size_directory(owner);
+        data = pas_segregated_size_directory_data_ptr_load_non_null(&directory->data);
+        PAS_UNUSED_PARAM(data);
 
         PAS_ASSERT(directory->object_size);
         page->object_size = directory->object_size;
         PAS_ASSERT(page->object_size == directory->object_size); /* Check for overflows. */
-    } else
+
+        if (pas_segregated_size_directory_view_cache_capacity(directory)) {
+            PAS_ASSERT(directory->view_cache_index);
+            page->view_cache_index = directory->view_cache_index;
+        } else
+            PAS_ASSERT(directory->view_cache_index == (pas_allocator_index)UINT_MAX);
+        break;
+    }
+        
+    case pas_segregated_page_shared_role:
         page->object_size = 0;
+        break;
+    }
 
     page->is_in_use_for_allocation = false;
     page->is_committing_fully = false;
-    page->avoid_line_allocator = false;
 
     if (page_config.base.page_size != page_config.base.granule_size) {
         pas_page_granule_use_count* use_counts;
@@ -266,9 +278,8 @@ void pas_segregated_page_construct(pas_segregated_page* page,
         
         /* If there are any bytes in the page not made available for allocation then make sure
            that the use counts know about it. */
-        start_of_payload = page_config.base.page_object_payload_offset;
-        end_of_payload =
-            page_config.base.page_object_payload_offset + page_config.base.page_object_payload_size;
+        start_of_payload = pas_segregated_page_config_payload_offset_for_role(page_config, role);
+        end_of_payload = pas_segregated_page_config_payload_end_offset_for_role(page_config, role);
 
         pas_page_granule_increment_uses_for_range(
             use_counts, 0, start_of_payload,
@@ -341,6 +352,7 @@ bool pas_segregated_page_take_empty_granules(
     PAS_ASSERT(free_granules.num_free_granules);
 
     boundary = pas_segregated_page_boundary(page, page_config);
+    PAS_UNUSED_PARAM(boundary);
     
     if (verbose)
         pas_log("Taking %zu empty granules from %p.\n", free_granules.num_free_granules, page);
@@ -396,7 +408,8 @@ bool pas_segregated_page_take_physically(
     range = pas_virtual_range_create(
         base,
         base + page_config.base.page_size,
-        commit_lock_for(page));
+        commit_lock_for(page),
+        page_config.base.heap_config_ptr->mmap_capability);
     
     return pas_deferred_decommit_log_add_maybe_locked(
         decommit_log, range, range_locked_mode, heap_lock_hold_mode);
@@ -476,7 +489,7 @@ void pas_segregated_page_commit_fully(
             pas_lock_lock(commit_lock);
         pas_compiler_fence();
 
-        pas_commit_span_construct(&commit_span);
+        pas_commit_span_construct(&commit_span, page_config.base.heap_config_ptr->mmap_capability);
 
         for (granule_index = 0; granule_index < num_granules; ++granule_index) {
             if (use_counts[granule_index] != PAS_PAGE_GRANULE_DECOMMITTED) {
@@ -506,8 +519,8 @@ void pas_segregated_page_commit_fully(
                     commit_span.total_bytes);
             } else {
                 pas_debug_spectrum_add(
-                    pas_segregated_view_get_global_size_directory(owner),
-                    pas_segregated_global_size_directory_dump_for_spectrum,
+                    pas_segregated_view_get_size_directory(owner),
+                    pas_segregated_size_directory_dump_for_spectrum,
                     commit_span.total_bytes);
             }
             pas_heap_lock_unlock();
@@ -571,6 +584,7 @@ void pas_segregated_page_verify_granules(pas_segregated_page* page)
     static const bool verbose = false;
     
     pas_segregated_page_config page_config;
+    pas_segregated_page_role role;
     pas_page_granule_use_count correct_use_counts[PAS_MAX_GRANULES];
     pas_page_granule_use_count* use_counts;
     uintptr_t num_granules;
@@ -580,6 +594,7 @@ void pas_segregated_page_verify_granules(pas_segregated_page* page)
     verify_granules_data data;
 
     page_config = *pas_segregated_view_get_page_config(page->owner);
+    role = pas_page_kind_get_segregated_role(pas_page_base_get_kind(&page->base));
 
     if (verbose)
         pas_log("Verifying granules in page %p.\n", page);
@@ -591,10 +606,8 @@ void pas_segregated_page_verify_granules(pas_segregated_page* page)
     
     /* If there are any bytes in the page not made available for allocation then make sure
        that the use counts know about it. */
-    start_of_payload =
-        page_config.base.page_object_payload_offset;
-    end_of_payload =
-        page_config.base.page_object_payload_offset + page_config.base.page_object_payload_size;
+    start_of_payload = pas_segregated_page_config_payload_offset_for_role(page_config, role);
+    end_of_payload = pas_segregated_page_config_payload_end_offset_for_role(page_config, role);
     
     pas_page_granule_increment_uses_for_range(
         correct_use_counts, 0, start_of_payload,
@@ -752,23 +765,38 @@ pas_segregated_page_and_config_for_address_and_heap_config(uintptr_t begin,
                                                            pas_heap_config* config)
 {
     switch (config->fast_megapage_kind_func(begin)) {
-    case pas_small_segregated_fast_megapage_kind:
+    case pas_small_exclusive_segregated_fast_megapage_kind:
         return pas_segregated_page_and_config_create(
             pas_segregated_page_for_address_and_page_config(
                 begin, config->small_segregated_config),
             &config->small_segregated_config);
-    case pas_small_bitfit_fast_megapage_kind:
-        return pas_segregated_page_and_config_create_empty();
+    case pas_small_other_fast_megapage_kind: {
+        pas_page_base_and_kind page_and_kind;
+        page_and_kind = pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, *config);
+        switch (page_and_kind.page_kind) {
+        case pas_small_shared_segregated_page_kind:
+            return pas_segregated_page_and_config_create(
+                pas_page_base_get_segregated(page_and_kind.page_base),
+                &config->small_segregated_config);
+        case pas_small_bitfit_page_kind:
+            return pas_segregated_page_and_config_create_empty();
+        default:
+            PAS_ASSERT(!"Should not be reached");
+            return pas_segregated_page_and_config_create_empty();
+        }
+    }
     case pas_not_a_fast_megapage_kind: {
         pas_page_base* page_base;
         page_base = config->page_header_func(begin);
         if (page_base) {
             switch (pas_page_base_get_kind(page_base)) {
-            case pas_small_segregated_page_kind:
+            case pas_small_exclusive_segregated_page_kind:
+            case pas_small_shared_segregated_page_kind:
                 return pas_segregated_page_and_config_create(
                     pas_page_base_get_segregated(page_base),
                     &config->small_segregated_config);
-            case pas_medium_segregated_page_kind:
+            case pas_medium_exclusive_segregated_page_kind:
+            case pas_medium_shared_segregated_page_kind:
                 return pas_segregated_page_and_config_create(
                     pas_page_base_get_segregated(page_base),
                     &config->medium_segregated_config);
@@ -780,22 +808,6 @@ pas_segregated_page_and_config_for_address_and_heap_config(uintptr_t begin,
     } }
     PAS_ASSERT(!"Should not be reached");
     return pas_segregated_page_and_config_create_empty();
-}
-
-void pas_segregated_page_verify_num_non_empty_words(pas_segregated_page* page,
-                                                    pas_segregated_page_config* page_config)
-{
-    size_t my_num_non_empty_words;
-    size_t index;
-
-    my_num_non_empty_words = 0;
-
-    for (index = pas_segregated_page_config_num_alloc_words(*page_config); index--;) {
-        if (page->alloc_bits[index])
-            my_num_non_empty_words++;
-    }
-
-    PAS_ASSERT(page->num_non_empty_words == my_num_non_empty_words);
 }
 
 #endif /* LIBPAS_ENABLED */

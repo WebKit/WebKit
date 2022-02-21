@@ -44,7 +44,7 @@ StorageAreaImpl::~StorageAreaImpl()
     ASSERT(isMainThread());
 }
 
-inline StorageAreaImpl::StorageAreaImpl(StorageType storageType, const SecurityOriginData& origin, RefPtr<StorageSyncManager>&& syncManager, unsigned quota)
+inline StorageAreaImpl::StorageAreaImpl(StorageType storageType, const SecurityOrigin& origin, RefPtr<StorageSyncManager>&& syncManager, unsigned quota)
     : m_storageType(storageType)
     , m_securityOrigin(origin)
     , m_storageMap(quota)
@@ -53,19 +53,19 @@ inline StorageAreaImpl::StorageAreaImpl(StorageType storageType, const SecurityO
     , m_closeDatabaseTimer(*this, &StorageAreaImpl::closeDatabaseTimerFired)
 {
     ASSERT(isMainThread());
-    
-    // Accessing the shared global StorageTracker when a StorageArea is created 
+
+    // Accessing the shared global StorageTracker when a StorageArea is created
     // ensures that the tracker is properly initialized before anyone actually needs to use it.
     StorageTracker::tracker();
 }
 
-Ref<StorageAreaImpl> StorageAreaImpl::create(StorageType storageType, const SecurityOriginData& origin, RefPtr<StorageSyncManager>&& syncManager, unsigned quota)
+Ref<StorageAreaImpl> StorageAreaImpl::create(StorageType storageType, const SecurityOrigin& origin, RefPtr<StorageSyncManager>&& syncManager, unsigned quota)
 {
     Ref<StorageAreaImpl> area = adoptRef(*new StorageAreaImpl(storageType, origin, WTFMove(syncManager), quota));
     // FIXME: If there's no backing storage for LocalStorage, the default WebKit behavior should be that of private browsing,
     // not silently ignoring it. https://bugs.webkit.org/show_bug.cgi?id=25894
     if (area->m_storageSyncManager) {
-        area->m_storageAreaSync = StorageAreaSync::create(area->m_storageSyncManager.get(), area.copyRef(), area->m_securityOrigin.databaseIdentifier());
+        area->m_storageAreaSync = StorageAreaSync::create(area->m_storageSyncManager.get(), area.copyRef(), area->m_securityOrigin->data().databaseIdentifier());
         ASSERT(area->m_storageAreaSync);
     }
     return area;
@@ -203,7 +203,7 @@ void StorageAreaImpl::clearForOriginDeletion()
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
-    
+
     m_storageMap.clear();
 
     if (m_storageAreaSync) {
@@ -211,12 +211,12 @@ void StorageAreaImpl::clearForOriginDeletion()
         m_storageAreaSync->scheduleCloseDatabase();
     }
 }
-    
+
 void StorageAreaImpl::sync()
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
-    
+
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleSync();
 }
@@ -287,7 +287,7 @@ void StorageAreaImpl::sessionChanged(bool isNewSessionPersistent)
     m_storageMap.clear();
 
     if (isNewSessionPersistent && !m_storageAreaSync && m_storageSyncManager) {
-        m_storageAreaSync = StorageAreaSync::create(m_storageSyncManager.get(), *this, m_securityOrigin.databaseIdentifier());
+        m_storageAreaSync = StorageAreaSync::create(m_storageSyncManager.get(), *this, m_securityOrigin->data().databaseIdentifier());
         return;
     }
 

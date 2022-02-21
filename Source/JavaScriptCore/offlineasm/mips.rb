@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2021 Apple Inc. All rights reserved.
 # Copyright (C) 2012 MIPS Technologies, Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -62,12 +62,6 @@ require 'risc'
 # $f14 =>        fa1
 # $f16 =>            (scratch)
 # $f18 =>            (scratch)
-
-class Assembler
-    def putStr(str)
-        @outp.puts str
-    end
-end
 
 class Node
     def mipsSingleHi

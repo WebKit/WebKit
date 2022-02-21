@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +48,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRSession);
 
 Ref<WebXRSession> WebXRSession::create(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device, FeatureList&& requestedFeatures)
 {
-    return adoptRef(*new WebXRSession(document, system, mode, device, WTFMove(requestedFeatures)));
+    auto session = adoptRef(*new WebXRSession(document, system, mode, device, WTFMove(requestedFeatures)));
+    session->suspendIfNeeded();
+    return session;
 }
 
 WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device, FeatureList&& requestedFeatures)
@@ -55,21 +58,19 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_inputSources(WebXRInputSourceArray::create(*this))
     , m_xrSystem(system)
     , m_mode(mode)
-    , m_device(makeWeakPtr(device))
+    , m_device(device)
     , m_requestedFeatures(WTFMove(requestedFeatures))
     , m_activeRenderState(WebXRRenderState::create(mode))
     , m_viewerReferenceSpace(makeUnique<WebXRViewerSpace>(document, *this))
     , m_timeOrigin(MonotonicTime::now())
     , m_views(device.views(mode))
 {
-    m_device->setTrackingAndRenderingClient(makeWeakPtr(*this));
+    m_device->setTrackingAndRenderingClient(*this);
     m_device->initializeTrackingAndRendering(mode);
 
     // https://immersive-web.github.io/webxr/#ref-for-dom-xrreferencespacetype-viewer%E2%91%A2
     // Every session MUST support viewer XRReferenceSpaces.
     m_device->initializeReferenceSpace(XRReferenceSpaceType::Viewer);
-
-    suspendIfNeeded();
 }
 
 WebXRSession::~WebXRSession()
@@ -210,7 +211,7 @@ void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestRefer
 
     // 1. Let promise be a new Promise.
     // 2. Run the following steps in parallel:
-    scriptExecutionContext()->postTask([this, weakThis = makeWeakPtr(*this), promise = WTFMove(promise), type](auto&) mutable {
+    scriptExecutionContext()->postTask([this, weakThis = WeakPtr { *this }, promise = WTFMove(promise), type](auto&) mutable {
         if (!weakThis)
             return;
         // 2.1. If the result of running reference space is supported for type and session is false, queue a task to reject promise
@@ -235,9 +236,9 @@ void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestRefer
             // https://immersive-web.github.io/webxr/#create-a-reference-space
             RefPtr<WebXRReferenceSpace> referenceSpace;
             if (type == XRReferenceSpaceType::BoundedFloor)
-                referenceSpace = WebXRBoundedReferenceSpace::create(document, makeRef(*this), type);
+                referenceSpace = WebXRBoundedReferenceSpace::create(document, Ref { *this }, type);
             else
-                referenceSpace = WebXRReferenceSpace::create(document, makeRef(*this), type);
+                referenceSpace = WebXRReferenceSpace::create(document, Ref { *this }, type);
 
             // 2.5. Resolve promise with referenceSpace.
             promise.resolve(referenceSpace.releaseNonNull());
@@ -264,8 +265,7 @@ unsigned WebXRSession::requestAnimationFrame(Ref<XRFrameRequestCallback>&& callb
     // Script can add multiple requestAnimationFrame callbacks but we should only request a device frame once.
     // When requestAnimationFrame is called during processing RAF callbacks the next requestFrame is scheduled
     // at the end of WebXRSession::onFrame() to prevent requesting a new frame before the current one has ended.
-    if (m_callbacks.size() == 1)
-        requestFrame();
+    requestFrameIfNeeded();
 
     // 4. Return session's animation frame callback identifier's current value.
     return newId;
@@ -279,7 +279,7 @@ void WebXRSession::cancelAnimationFrame(unsigned callbackId)
     //    currently running animation frame callbacks that is associated with the value handle.
     // 3. If there is such an entry, set its cancelled boolean to true and remove it from
     //    session's list of animation frame callbacks.
-    size_t position = m_callbacks.findMatching([callbackId] (auto& item) {
+    size_t position = m_callbacks.findIf([callbackId] (auto& item) {
         return item->callbackId() == callbackId;
     });
 
@@ -323,7 +323,7 @@ bool WebXRSession::isPositionEmulated() const
 // https://immersive-web.github.io/webxr/#shut-down-the-session
 void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     if (m_ended) {
         // This method was called earlier with initiatedBySystem=No when the
@@ -381,7 +381,7 @@ void WebXRSession::didCompleteShutdown()
 
     // From https://immersive-web.github.io/webxr/#shut-down-the-session
     // 7. Queue a task that fires an XRSessionEvent named end on session.
-    auto event = XRSessionEvent::create(eventNames().endEvent, { makeRefPtr(*this) });
+    auto event = XRSessionEvent::create(eventNames().endEvent, { RefPtr { this } });
     queueTaskToDispatchEvent(*this, TaskSource::WebXR, WTFMove(event));
 }
 
@@ -390,7 +390,7 @@ ExceptionOr<void> WebXRSession::end(EndPromise&& promise)
 {
     // The shutdown() call below might remove the sole reference to session
     // that could exist (the XRSystem owns the sessions) so let's protect this.
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     if (m_ended)
         return Exception { InvalidStateError, "Cannot end a session more than once"_s };
@@ -443,6 +443,22 @@ void WebXRSession::sessionDidEnd()
     // This can be called as a result of finishing the shutdown initiated
     // from XRSession::end(), or session termination triggered by the system.
     shutdown(InitiatedBySystem::Yes);
+}
+
+void WebXRSession::updateSessionVisibilityState(PlatformXR::VisibilityState visibilityState)
+{
+    if (m_visibilityState == visibilityState)
+        return;
+
+    m_visibilityState = visibilityState;
+
+    requestFrameIfNeeded();
+
+    // From https://immersive-web.github.io/webxr/#event-types
+    // A user agent MUST dispatch a visibilitychange event on an XRSession each time the
+    // visibility state of the XRSession has changed. The event MUST be of type XRSessionEvent.
+    auto event = XRSessionEvent::create(eventNames().visibilitychangeEvent, { RefPtr { this } });
+    queueTaskToDispatchEvent(*this, TaskSource::WebXR, WTFMove(event));
 }
 
 void WebXRSession::applyPendingRenderState()
@@ -503,9 +519,22 @@ bool WebXRSession::frameShouldBeRendered() const
     return true;
 }
 
-void WebXRSession::requestFrame()
+void WebXRSession::requestFrameIfNeeded()
 {
-    m_device->requestFrame([this, protectedThis = makeRef(*this)](auto&& frameData) {
+    ASSERT(isMainThread());
+
+    if (m_ended)
+        return;
+
+    if (m_visibilityState == XRVisibilityState::Hidden)
+        return;
+
+    if (m_callbacks.isEmpty() || m_isDeviceFrameRequestPending)
+        return;
+
+    m_isDeviceFrameRequestPending = true;
+    m_device->requestFrame([this, protectedThis = Ref { *this }](auto&& frameData) {
+        m_isDeviceFrameRequestPending = false;
         onFrame(WTFMove(frameData));
     });
 }
@@ -517,9 +546,16 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
     if (m_ended)
         return;
 
+    // From https://immersive-web.github.io/webxr/#xrsession-visibility-state
+    // A state of hidden indicates that imagery rendered by the XRSession cannot be seen by the user.
+    // requestAnimationFrame() callbacks will not be processed until the visibility state changes.
+    // Input is not processed by the XRSession.
+    if (m_visibilityState == XRVisibilityState::Hidden)
+        return;
+
     // Queue a task to perform the following steps.
     queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, frameData = WTFMove(frameData)]() mutable {
-        if (m_ended)
+        if (m_ended || m_visibilityState == XRVisibilityState::Hidden)
             return;
 
         m_frameData = WTFMove(frameData);
@@ -586,9 +622,7 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
             m_device->submitFrame(WTFMove(frameLayers));
         }
 
-        if (!m_callbacks.isEmpty())
-            requestFrame();
-
+        requestFrameIfNeeded();
     });
 }
 

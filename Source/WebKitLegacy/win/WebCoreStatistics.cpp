@@ -210,7 +210,7 @@ HRESULT WebCoreStatistics::cachedFontDataCount(_Out_ UINT *count)
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) FontCache::singleton().fontCount();
+    *count = (UINT) FontCache::forCurrentThread().fontCount();
     return S_OK;
 }
 
@@ -218,13 +218,13 @@ HRESULT WebCoreStatistics::cachedFontDataInactiveCount(_Out_ UINT *count)
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) FontCache::singleton().inactiveFontCount();
+    *count = (UINT) FontCache::forCurrentThread().inactiveFontCount();
     return S_OK;
 }
 
 HRESULT WebCoreStatistics::purgeInactiveFontData(void)
 {
-    FontCache::singleton().purgeInactiveFontData();
+    FontCache::forCurrentThread().purgeInactiveFontData();
     return S_OK;
 }
 

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-SharedBuffer::SharedBuffer(CFDataRef data)
+FragmentedSharedBuffer::FragmentedSharedBuffer(CFDataRef data)
 {
     append(data);
 }
@@ -43,36 +43,32 @@ SharedBuffer::SharedBuffer(CFDataRef data)
 #if !USE(FOUNDATION)
 RetainPtr<CFDataRef> SharedBuffer::createCFData() const
 {
-    if (m_segments.size() == 1) {
-        if (auto data = WTF::get_if<RetainPtr<CFDataRef>>(m_segments[0].segment->m_immutableData))
+    if (hasOneSegment()) {
+        if (auto* data = std::get_if<RetainPtr<CFDataRef>>(&m_segments[0].segment->m_immutableData))
             return *data;
     }
-    auto cfData = adoptCF(CFDataCreateMutable(nullptr, size()));
-    forEachSegment([&](auto& segment) {
-        CFDataAppendBytes(cfData.get(), segment.data(), segment.size());
-    });
-    return cfData;
+    return adoptCF(CFDataCreate(nullptr, data(), size()));
 }
 #endif
 
-Ref<SharedBuffer> SharedBuffer::create(CFDataRef data)
+Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(CFDataRef data)
 {
-    return adoptRef(*new SharedBuffer(data));
+    return adoptRef(*new FragmentedSharedBuffer(data));
 }
 
-void SharedBuffer::hintMemoryNotNeededSoon() const
+void FragmentedSharedBuffer::hintMemoryNotNeededSoon() const
 {
     for (const auto& entry : m_segments) {
         if (entry.segment->hasOneRef()) {
-            if (auto data = WTF::get_if<RetainPtr<CFDataRef>>(entry.segment->m_immutableData))
+            if (auto* data = std::get_if<RetainPtr<CFDataRef>>(&entry.segment->m_immutableData))
                 OSAllocator::hintMemoryNotNeededSoon(const_cast<UInt8*>(CFDataGetBytePtr(data->get())), CFDataGetLength(data->get()));
         }
     }
 }
 
-void SharedBuffer::append(CFDataRef data)
+void FragmentedSharedBuffer::append(CFDataRef data)
 {
-    ASSERT(!m_hasBeenCombinedIntoOneSegment);
+    ASSERT(!m_contiguous);
     if (data) {
         m_segments.append({m_size, DataSegment::create(data)});
         m_size += CFDataGetLength(data);

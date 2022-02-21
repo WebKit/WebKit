@@ -56,7 +56,7 @@ static inline unsigned pas_page_header_table_hash(const void* key, void* arg)
 
     page_size = (size_t)arg;
 
-    return (unsigned)((uintptr_t)key / page_size);
+    return pas_hash32((unsigned)((uintptr_t)key / page_size));
 }
 
 PAS_API pas_page_base* pas_page_header_table_add(pas_page_header_table* table,

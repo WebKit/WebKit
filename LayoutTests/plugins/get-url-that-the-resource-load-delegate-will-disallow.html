@@ -4,6 +4,7 @@
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.preventPopupWindows();
     testRunner.addDisallowedURL('http://www.apple.com');
     
     plg.getURL("http://www.apple.com", "callback");

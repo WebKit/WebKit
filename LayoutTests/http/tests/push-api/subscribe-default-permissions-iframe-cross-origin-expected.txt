@@ -1,0 +1,6 @@
+
+PASS: service worker permissionState was prompt
+PASS: document permissionState was prompt
+PASS: service worker subscribe was error: NotAllowedError
+PASS: document subscribe was error: NotAllowedError
+

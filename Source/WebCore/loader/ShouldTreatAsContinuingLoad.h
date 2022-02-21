@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum class ShouldTreatAsContinuingLoad : uint8_t { No, YesAfterNavigationPolicyDecision, YesAfterResponsePolicyDecision };
+enum class ShouldTreatAsContinuingLoad : uint8_t { No, YesAfterNavigationPolicyDecision, YesAfterProvisionalLoadStarted };
 
 } // namespace WebCore
 
@@ -40,7 +40,7 @@ template<> struct EnumTraits<WebCore::ShouldTreatAsContinuingLoad> {
         WebCore::ShouldTreatAsContinuingLoad,
         WebCore::ShouldTreatAsContinuingLoad::No,
         WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision,
-        WebCore::ShouldTreatAsContinuingLoad::YesAfterResponsePolicyDecision
+        WebCore::ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted
     >;
 };
 

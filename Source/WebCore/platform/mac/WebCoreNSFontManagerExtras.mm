@@ -30,6 +30,7 @@
 
 #import "ColorMac.h"
 #import "FontAttributeChanges.h"
+#import "LayoutUnit.h"
 #import <AppKit/NSFontManager.h>
 
 namespace WebCore {
@@ -126,18 +127,18 @@ FontAttributeChanges computedFontAttributeChanges(NSFontManager *fontManager, id
 
     NSColor *convertedBackgroundColorA = [convertedAttributesA objectForKey:NSBackgroundColorAttributeName];
     if (convertedBackgroundColorA == [convertedAttributesB objectForKey:NSBackgroundColorAttributeName])
-        changes.setBackgroundColor(colorFromNSColor(convertedBackgroundColorA ?: NSColor.clearColor));
+        changes.setBackgroundColor(colorFromCocoaColor(convertedBackgroundColorA ?: NSColor.clearColor));
 
     changes.setFontChanges(computedFontChanges(fontManager, originalFontA, [convertedAttributesA objectForKey:NSFontAttributeName], [convertedAttributesB objectForKey:NSFontAttributeName]));
 
     NSColor *convertedForegroundColorA = [convertedAttributesA objectForKey:NSForegroundColorAttributeName];
     if (convertedForegroundColorA == [convertedAttributesB objectForKey:NSForegroundColorAttributeName])
-        changes.setForegroundColor(colorFromNSColor(convertedForegroundColorA ?: NSColor.blackColor));
+        changes.setForegroundColor(colorFromCocoaColor(convertedForegroundColorA ?: NSColor.blackColor));
 
     NSShadow *convertedShadow = [convertedAttributesA objectForKey:NSShadowAttributeName];
     if (convertedShadow) {
-        FloatSize offset { static_cast<float>(convertedShadow.shadowOffset.width), static_cast<float>(convertedShadow.shadowOffset.height) };
-        changes.setShadow({ colorFromNSColor(convertedShadow.shadowColor ?: NSColor.blackColor), offset, convertedShadow.shadowBlurRadius });
+        FloatSize offset { LayoutUnit::fromFloatRound(static_cast<float>(convertedShadow.shadowOffset.width)).toFloat(), LayoutUnit::fromFloatRound(static_cast<float>(convertedShadow.shadowOffset.height)).toFloat() };
+        changes.setShadow({ colorFromCocoaColor(convertedShadow.shadowColor ?: NSColor.blackColor), offset, convertedShadow.shadowBlurRadius });
     } else if (![convertedAttributesB objectForKey:NSShadowAttributeName])
         changes.setShadow({ });
 

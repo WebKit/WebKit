@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,9 +109,9 @@ inline void Heap::writeBarrier(const JSCell* from, JSCell* to)
 #endif
     if (!from)
         return;
-    if (!isWithinThreshold(from->cellState(), barrierThreshold()))
-        return;
     if (LIKELY(!to))
+        return;
+    if (!isWithinThreshold(from->cellState(), barrierThreshold()))
         return;
     writeBarrierSlowPath(from);
 }
@@ -123,15 +123,6 @@ inline void Heap::writeBarrier(const JSCell* from)
         return;
     if (UNLIKELY(isWithinThreshold(from->cellState(), barrierThreshold())))
         writeBarrierSlowPath(from);
-}
-
-inline void Heap::writeBarrierWithoutFence(const JSCell* from)
-{
-    ASSERT_GC_OBJECT_LOOKS_VALID(const_cast<JSCell*>(from));
-    if (!from)
-        return;
-    if (UNLIKELY(isWithinThreshold(from->cellState(), blackThreshold)))
-        addToRememberedSet(from);
 }
 
 inline void Heap::mutatorFence()
@@ -215,10 +206,10 @@ inline void Heap::decrementDeferralDepthAndGCIfNeeded()
     }
 }
 
-inline HashSet<MarkedArgumentBuffer*>& Heap::markListSet()
+inline HashSet<MarkedArgumentBufferBase*>& Heap::markListSet()
 {
     if (!m_markListSet)
-        m_markListSet = makeUnique<HashSet<MarkedArgumentBuffer*>>();
+        m_markListSet = makeUnique<HashSet<MarkedArgumentBufferBase*>>();
     return *m_markListSet;
 }
 
@@ -237,7 +228,7 @@ inline void Heap::deprecatedReportExtraMemory(size_t size)
 inline void Heap::acquireAccess()
 {
     if constexpr (validateDFGDoesGC)
-        verifyCanGC();
+        vm().verifyCanGC();
 
     if (m_worldState.compareExchangeWeak(0, hasAccessBit))
         return;
@@ -264,7 +255,7 @@ inline bool Heap::mayNeedToStop()
 inline void Heap::stopIfNecessary()
 {
     if constexpr (validateDFGDoesGC)
-        verifyCanGC();
+        vm().verifyCanGC();
 
     if (mayNeedToStop())
         stopIfNecessarySlow();
@@ -278,5 +269,14 @@ void Heap::forEachSlotVisitor(const Func& func)
     for (auto& visitor : m_parallelSlotVisitors)
         func(*visitor);
 }
+
+namespace GCClient {
+
+ALWAYS_INLINE VM& Heap::vm() const
+{
+    return *bitwise_cast<VM*>(bitwise_cast<uintptr_t>(this) - OBJECT_OFFSETOF(VM, clientHeap));
+}
+
+} // namespace GCClient
 
 } // namespace JSC

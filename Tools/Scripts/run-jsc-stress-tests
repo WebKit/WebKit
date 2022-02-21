@@ -25,17 +25,27 @@
 
 require 'fileutils'
 require 'getoptlong'
+require 'ostruct'
 require 'pathname'
 require 'rbconfig'
+require 'set'
 require 'tempfile'
 require 'uri'
 require 'yaml'
+
+require_relative "webkitruby/jsc-stress-test/test-result-evaluator"
+require_relative "webkitruby/jsc-stress-test/executor"
 
 module URI
     class SSH < Generic
         DEFAULT_PORT = 22
     end
-    @@schemes['SSH'] = SSH
+    unless defined?(self.register_scheme)
+      def self.register_scheme(scheme, klass)
+        @@schemes[scheme] = klass
+      end
+    end
+    register_scheme 'SSH', SSH
 end
 
 class String
@@ -44,7 +54,14 @@ class String
     end
 end
 
-RemoteHost = Struct.new(:name, :user, :host, :port, :remoteDirectory)
+Signal.trap("TERM") {
+    # Occasionally, the jscore-test step fails to produce any output for 10' at
+    # which point it gets killed by the buildbot code. Try to diagnose.
+    puts("Received SIGTERM")
+    puts(Thread.current.backtrace)
+}
+
+RemoteHost = Struct.new(:name, :user, :host, :port, :remoteDirectory, :identity_file_path)
 
 THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
 SCRIPTS_PATH = THIS_SCRIPT_PATH.dirname
@@ -66,7 +83,10 @@ STATUS_FILE_FAIL = "F"
 PARALLEL_REMOTE_WRAPPER_MARK_BEGIN = "5d65329bd1a3"
 PARALLEL_REMOTE_WRAPPER_MARK_END = "a9aea5c3b843"
 PARALLEL_REMOTE_STATE_LOST_MARKER = "709fb7a77c45231918eb118a"
+ITERATION_LIMITS = OpenStruct.new(:infraIterationsFloor => 3,
+                                  :iterationsCeiling => 10)
 
+REMOTE_TIMEOUT = 120
 begin
     require 'shellwords'
 rescue Exception => e
@@ -117,7 +137,6 @@ def escapeAll(array)
     }.join(' ')
 end
 
-
 $jscPath = nil
 $doNotMessWithVMPath = false
 $jitTests = true
@@ -145,6 +164,11 @@ $ldd = nil
 $artifact_exec_wrapper = nil
 $numChildProcessesSetByUser = false
 $runUniqueId = Random.new.bytes(16).unpack("H*")[0]
+$testsDebugStream = nil # set to $stderr for debugging
+
+def putd(s)
+    $testsDebugStream.puts(s) unless $testsDebugStream.nil?
+end
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -215,6 +239,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--ruby-runner', GetoptLong::NO_ARGUMENT],
                ['--gnu-parallel-runner', GetoptLong::NO_ARGUMENT],
                ['--test-writer', GetoptLong::REQUIRED_ARGUMENT],
+               ['--treat-failing-as-flaky', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote-config-file', GetoptLong::REQUIRED_ARGUMENT],
                ['--report-execution-time', GetoptLong::NO_ARGUMENT],
@@ -263,6 +288,30 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $testRunnerType = :gnuparallel
     when '--test-writer'
         $testWriter = arg
+    when '--treat-failing-as-flaky'
+        md = /^([^,]+),(\d+),(\d+)$/.match(arg)
+        if md.nil?
+            $stderr.puts("Could not parse argument to `--treat-failing-as-flaky`; expected `passPercentage,maxTries,maxFailing`")
+            exit(1)
+        end
+        passPercentage = md[1].to_f
+        if passPercentage.zero?
+            $stderr.puts("Invalid passPercentage `#{md[1]}`")
+            exit(1)
+        end
+        maxTries = md[2].to_i
+        if maxTries == 0
+            $stderr.puts("Invalid maxTries `#{md[2]}`")
+            exit(1)
+        end
+        maxFailing = md[3].to_i
+        if maxFailing == 0
+            $stderr.puts("Invalid maxFailing `#{md[3]}`")
+            exit(1)
+        end
+        $treatFailingAsFlaky = OpenStruct.new(:passPercentage => passPercentage,
+                                              :maxTries => maxTries,
+                                              :maxFailing => maxFailing)
     when '--remote'
         $copyVM = true
         $tarball = true
@@ -318,6 +367,9 @@ if $remoteConfigFile
         if config['remoteDirectory']
             $remoteHosts[0].remoteDirectory = config['remoteDirectory']
         end
+        if config['idFilePath']
+            $remoteHosts[0].identity_file_path = config['idFilePath']
+        end
     end
 
     # we can combine --remote and a new style config
@@ -332,6 +384,10 @@ if $remoteConfigFile
             host = RemoteHost.new(remote['name'], uri.user, uri.host, uri.port)
             if remote['remoteDirectory']
                 host.remoteDirectory = remote['remoteDirectory']
+            end
+            if remote['idFilePath']
+                host.identity_file_path = remote['idFilePath']
+                print('Using identity file: ' + host.identity_file_path + "\r")
             end
             host
         }
@@ -562,6 +618,96 @@ FTL_OPTIONS = ["--useFTLJIT=true"]
 FORCE_LLINT_EXIT_OPTIONS = ["--forceOSRExitToLLInt=true"]
 EXECUTABLE_FUZZER_OPTIONS = ["--useExecutableAllocationFuzz=true", "--fireExecutableAllocationFuzzRandomly=true"]
 
+class BasePlan
+    attr_reader :directory, :arguments, :family, :name, :outputHandler, :errorHandler, :additionalEnv, :index
+    attr_accessor :retryParameters
+
+    @@index = 0
+    def initialize(directory, arguments, family, name, outputHandler, errorHandler, retryParameters)
+        @directory = directory
+        @arguments = argumentsMapper(arguments)
+        @family = family
+        @name = name
+        @outputHandler = outputHandler
+        @errorHandler = errorHandler
+        # A plan for which @retryParameters is not nil is being
+        # treated as potentially flaky.
+        @retryParameters = retryParameters
+        @additionalEnv = []
+        @index = @@index
+        @@index += 1
+    end
+    def self.mock(family, name, retryParameters=nil)
+        self.new("/none", [], family, name, nil, nil, retryParameters)
+    end
+    def self.create(directory, arguments, family, name, outputHandler, errorHandler)
+        if $runCommandOptions[:crashOK]
+            outputHandler = noisyOutputHandler
+        end
+        self.new(directory, arguments, family, name, outputHandler, errorHandler, $runCommandOptions[:flaky])
+    end
+    def argumentsMapper(args)
+        args
+    end
+    # We regularly place Plans in containers, but may modify @retryParameters
+    # after the fact; only hash on @index instead.
+    def hash
+        @index
+    end
+    def to_s
+        "#{@index}"
+    end
+end
+
+class TestRunner
+    def initialize(testRunnerType, runnerDir)
+        @testRunnerType = testRunnerType
+        @runnerDir = runnerDir
+    end
+    def prepare(runlist, serialPlans, completedPlans, remoteHosts)
+        prepareScripts(runlist)
+        prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
+    end
+    def prepareScripts(runlist)
+        Dir.mkdir(@runnerDir) unless @runnerDir.directory?
+        toDelete = []
+        Dir.foreach(@runnerDir) {
+            | filename |
+            if filename =~ /^test_/
+                toDelete << filename
+            end
+        }
+
+        toDelete.each {
+            | filename |
+            File.unlink(@runnerDir + filename)
+        }
+
+        # Write test scripts in parallel as this is both an expensive and a
+        # highly IO intensive operation, but each script is independent and
+        # the operation is pure other than writing the unique run script.
+        parallelEach(runlist) do | plan |
+            plan.writeRunScript(@runnerDir + "test_script_#{plan.index}")
+        end
+    end
+    def self.create(testRunnerType, runnerDir)
+        cls = nil
+        case testRunnerType
+        when :shell
+            cls = TestRunnerShell
+        when :make
+            cls = TestRunnerMake
+        when :ruby
+            cls = TestRunnerRuby
+        when :gnuparallel
+            cls = TestRunnerGnuParallel
+        else
+            raise "Unknown test runner type: #{testRunnerType.to_s}"
+        end
+        return cls.new(testRunnerType, runnerDir)
+    end
+end
+
 require_relative "webkitruby/jsc-stress-test-writer-#{$testWriter}"
 
 def shouldCollectContinuously?
@@ -570,7 +716,7 @@ end
 
 COLLECT_CONTINUOUSLY_OPTIONS = shouldCollectContinuously? ? ["--collectContinuously=true", "--useGenerationalGC=false", "--verifyGC=true"] : []
 
-$serialRunlist = []
+$serialPlans = Set.new
 $runlist = []
 
 def frameworkFromJSCPath(jscPath)
@@ -587,13 +733,19 @@ def frameworkFromJSCPath(jscPath)
     end
 end
 
-def pathToBundleResourceFromBenchmarkDirectory(resourcePath)
-    dir = Pathname.new(".")
-    $benchmarkDirectory.each_filename {
+
+# Frequently repeated path computations. Cache results for speed.
+$bundleResourcePathCache = Hash.new do |h, key|
+    resourcePath, benchmarkDirectory, dir = key
+    benchmarkDirectory.each_filename {
         | pathComponent |
-        dir += ".."
+        dir = dir.parent
     }
-    dir + resourcePath
+    h[key] = dir + resourcePath
+end
+
+def pathToBundleResourceFromBenchmarkDirectory(resourcePath)
+    $bundleResourcePathCache[[resourcePath, $benchmarkDirectory, Pathname.new(".")]]
 end
 
 def pathToVM
@@ -631,22 +783,29 @@ def baseOutputName(kind)
     "#{$collectionName}/#{$benchmark}.#{kind}"
 end
 
-def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
+def addRunCommandCfg(cfg, *additionalEnv)
+    [:kind, :command, :outputHandler, :errorHandler].each { |key|
+        if not cfg.has_key?(key)
+            raise "Missing #{key} in #{cfg}"
+        end
+    }
     $didAddRunCommand = true
-    name = baseOutputName(kind)
+    name = baseOutputName(cfg[:kind])
     if $filter and name !~ $filter
         return
     end
-    plan = Plan.new(
-        $benchmarkDirectory, command, "#{$collectionName}/#{$benchmark}", name, outputHandler,
-        errorHandler)
-    plan.additionalEnv.push(*additionalEnv)
+    plan = Plan.create(
+        $benchmarkDirectory, cfg[:command], "#{$collectionName}/#{$benchmark}", name, cfg[:outputHandler],
+        cfg[:errorHandler])
+    if cfg.has_key?(:additionalEnv)
+        plan.additionalEnv.push(*(cfg[:additionalEnv]))
+    end
     if $runCommandOptions[:serial]
         # Add this to the list of tests to be run on their own, so
         # that we can treat them specially when scheduling, but keep
         # it in the $runlist for code that dosn't care about
         # scheduling.
-        $serialRunlist << plan
+        $serialPlans.add(plan)
     end
 
     if $numChildProcesses > 1 and $runCommandOptions[:isSlow]
@@ -654,6 +813,17 @@ def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
     else
         $runlist << plan
     end
+end
+
+def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
+    cfg = {
+        :kind => kind,
+        :command => command,
+        :outputHandler => outputHandler,
+        :errorHandler => errorHandler,
+        :additionalEnv => additionalEnv,
+    }
+    addRunCommandCfg(cfg)
 end
 
 # Returns true if there were run commands found in the file ($benchmarkDirectory +
@@ -704,32 +874,111 @@ def serial!
     $runCommandOptions[:serial] = true
 end
 
+
+# Retry parameters for tests that we treat as flaky, either because
+# they've been explicitly marked so (via flaky!) or because we were
+# asked to --treat-failing-as-flaky.
+class RetryParameters
+    attr_reader :passPercentage, :maxTries
+    def initialize(passPercentage, maxTries)
+        @passPercentage = passPercentage
+        @maxTries = maxTries
+    end
+    def to_s
+        "RetryParameters(#{@passPercentage}, #{@maxTries})"
+    end
+    def result(statuses)
+        if statuses.length > @maxTries
+            # This could happen if (because of remotes disappearing
+            # and reappearing) there are multiple runs for the last
+            # try for a flaky test. Just ignore any extra statuses.
+            statuses = statuses.take(@maxTries)
+        end
+        successes = successfulStatuses(statuses)
+        remaining = @maxTries - statuses.length
+        requiredSuccesses = (@passPercentage * @maxTries).ceil
+        ret = nil # "has not completed yet"
+        if successes >= requiredSuccesses
+            ret = true
+        elsif (successes + remaining) < requiredSuccesses
+            ret = false
+        end
+        putd("#{self}.result(#{statuses}) => #{ret}")
+        ret
+    end
+    private
+    def successfulStatuses(statuses)
+        statuses.count {
+            |status|
+            status == STATUS_FILE_PASS
+        }
+    end
+end
+
+def flaky!(passPercentage, maxTries)
+    $runCommandOptions[:flaky] = RetryParameters.new(passPercentage, maxTries)
+end
+
 def requireOptions(*options)
     $testSpecificRequiredOptions += options
 end
 
+def runWithOptions(cfg, *options)
+    baseOptions = BASE_OPTIONS
+    if cfg.has_key?(:no_base_options)
+        baseOptions = []
+    end
+    commandPrefix = cfg.fetch(:command_prefix, [])
+    if cfg.has_key?(:place_benchmark_early)
+        cfg[:command] = commandPrefix + vmCommand + [$benchmark.to_s] + baseOptions + options + $testSpecificRequiredOptions
+    else
+        cfg[:command] = commandPrefix + vmCommand + baseOptions + options + $testSpecificRequiredOptions + [$benchmark.to_s]
+    end
+    addRunCommandCfg(cfg)
+end
+
 def runWithOutputHandler(kind, outputHandler, *options)
-    addRunCommand(kind, vmCommand + BASE_OPTIONS + options + $testSpecificRequiredOptions + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+    cfg = {
+        :kind => kind,
+        :outputHandler => outputHandler,
+        :errorHandler => simpleErrorHandler,
+    }
+    runWithOptions(cfg, *options)
 end
 
 def runWithOutputHandlerWithoutBaseOption(kind, outputHandler, *options)
-    addRunCommand(kind, vmCommand + options + $testSpecificRequiredOptions + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+    cfg = {
+        :kind => kind,
+        :outputHandler => outputHandler,
+        :errorHandler => simpleErrorHandler,
+        :no_base_options => true,
+    }
+    runWithOptions(cfg, *options)
 end
 
 def run(kind, *options)
     runWithOutputHandler(kind, silentOutputHandler, *options)
 end
 
+def runInner(cfg, *options)
+    cfg = cfg.dup
+    if not cfg.has_key?(:outputHandler)
+        cfg[:outputHandler] = silentOutputHandler
+    end
+    if not cfg.has_key?(:errorHandler)
+        cfg[:errorHandler] = simpleErrorHandler
+    end
+    runWithOptions(cfg, *options)
+end
+
+def runWithoutBaseOptionCfg(cfg, *options)
+    cfg = cfg.dup
+    cfg[:no_base_options] = true
+    runWithOptions(cfg, *options)
+end
+
 def runWithoutBaseOption(kind, *options)
     runWithOutputHandlerWithoutBaseOption(kind, silentOutputHandler, *options)
-end
-
-def runNoFTL(*optionalTestSpecificOptions)
-    run("no-ftl", *optionalTestSpecificOptions)
-end
-
-def runWithRAMSize(size, *optionalTestSpecificOptions)
-    run("ram-size-#{size}", "--forceRAMSize=#{size}", *optionalTestSpecificOptions)
 end
 
 def runOneLargeHeap(*optionalTestSpecificOptions)
@@ -741,221 +990,547 @@ def runOneLargeHeap(*optionalTestSpecificOptions)
     end
 end
 
-def runNoJIT(*optionalTestSpecificOptions)
-    run("no-jit", "--useJIT=false", *optionalTestSpecificOptions)
-end
-
-def runNoLLInt(*optionalTestSpecificOptions)
-    if $jitTests
-        run("no-llint", "--useLLInt=false", *optionalTestSpecificOptions)
-    end
-end
-
-# NOTE: Tests rely on this using scribbleFreeCells.
-def runNoCJITValidate(*optionalTestSpecificOptions)
-    run("no-cjit", "--validateBytecode=true", "--validateGraph=true", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runNoCJITValidatePhases(*optionalTestSpecificOptions)
-    run("no-cjit-validate-phases", "--validateBytecode=true", "--validateGraphAtEachPhase=true", "--useSourceProviderCache=false", "--useRandomizingExecutableIslandAllocation=true", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runNoCJITCollectContinuously(*optionalTestSpecificOptions)
-    run("no-cjit-collect-continuously", *(NO_CJIT_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runDefault(*optionalTestSpecificOptions)
-    run("default", *(FTL_OPTIONS + optionalTestSpecificOptions))
-end
-
-# FIXME: need to fix https://bugs.webkit.org/show_bug.cgi?id=218703 to enable this on Linux/MIPS.
-def runBytecodeCacheImpl(optionalTestSpecificOptions, *additionalEnv)
+def bytecodeCacheTemplate
     if ($hostOS == "darwin")
-        fileTemplate = "bytecode-cache"
+        return "bytecode-cache"
     elsif ($hostOS == "linux" && $architecture != "mips")
-        fileTemplate = "bytecode-cacheXXXXXX"
-    else
-        skip
-        return
+        # FIXME: need to fix https://bugs.webkit.org/show_bug.cgi?id=218703 to enable this on Linux/MIPS.
+        return "bytecode-cacheXXXXXX"
     end
-
-    options = BASE_OPTIONS + FTL_OPTIONS + optionalTestSpecificOptions + $testSpecificRequiredOptions
-    addRunCommand("bytecode-cache", ["sh", (pathToHelpers + "bytecode-cache-test-helper.sh").to_s, fileTemplate.to_s, *vmCommand, $benchmark.to_s] + options, silentOutputHandler, simpleErrorHandler, *additionalEnv)
+    nil
 end
 
-def runBytecodeCache(*optionalTestSpecificOptions)
-    runBytecodeCacheImpl(optionalTestSpecificOptions)
+def runBytecodeCacheImpl(optionalTestSpecificOptions, *additionalEnv)
+    fileTemplate = bytecodeCacheTemplate
+    if fileTemplate.nil?
+        return nil
+    end
+    {
+        :cfg => {
+            :command_prefix => [
+                "sh",
+                (pathToHelpers + "bytecode-cache-test-helper.sh").to_s,
+                fileTemplate.to_s,
+            ],
+            :place_benchmark_early => true,
+            :additionalEnv => additionalEnv,
+        },
+        :testSpecificOptions => FTL_OPTIONS + optionalTestSpecificOptions,
+    }
 end
 
-def runBytecodeCacheNoAssertion(*optionalTestSpecificOptions)
-    runBytecodeCacheImpl(optionalTestSpecificOptions, "JSC_forceDiskCache=false")
+
+def cfgInitializerPlain
+    Proc.new { |cfg, kind|
+        { :kind => kind}
+    }
 end
 
-def runFTLNoCJIT(*optionalTestSpecificOptions)
-    run("misc-ftl-no-cjit", "--useDataIC=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+def cfgInitializerCfg
+    Proc.new { |cfg, kind|
+        cfg = cfg.dup
+        cfg[:kind] = kind
+        cfg
+    }
 end
 
-def runFTLNoCJITB3O0(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-b3o0", "--useArrayAllocationProfiling=false", "--forcePolyProto=true", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O0_OPTIONS + FORCE_LLINT_EXIT_OPTIONS + optionalTestSpecificOptions))
-end
+# For each base mode (defined below) we generate two kinds of functions:
+#
+# - a version which takes a cfg argument and passes it along, only
+#   setting the kind field
+# - a "plain" version which starts out with an empty cfg
+#
+# The plain  version is intended  for use in the  testcase definitions
+# (in `//@` comments and the like).
+#
+# The former version is used for plumbing. The caller may set various
+# fields in the cfg which will be respected.
+#
+# This way, we can
+# - define a set of test modes in defaultRunCfg
+# - have defaultRunCfg propagate the cfg argument to the run*Cfg
+#   functions it calls
+# - call defaultRunCfg from e.g. defaultRunNoisyTest with the output
+#   handlers appropriately set, in order to make sure we're running
+#   the exact same of tests.
+CfgKind = Struct.new(:extension, :expectCfg, :initializer)
+cfgKinds = [
+    CfgKind.new("", false, cfgInitializerPlain),
+    CfgKind.new("Cfg", true, cfgInitializerCfg),
+]
 
-def runFTLNoCJITValidate(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--validateBCE=true", "--useSamplingProfiler=true", "--airForceIRCAllocator=true", "--useDataIC=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
+# Define base test modes. Each mode is an array of [name, kind,
+# options]. The name is used to derive the ruby method names, the kind
+# is used for reporting (i.e. what you'd see in this script's
+# output). In the common case, options is a static array; if not, it's
+# a Proc that returns a dict that needs to be unpacked (see its use
+# site for a more detailed description).
+BASE_MODES = [
+    [
+        "NoCJIT",
+        "ftl-no-cjit",
+        [
+            "--validateBytecode=true", "--validateGraphAtEachPhase=true"
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS
+    ],
+    [
+        "FTLNoCJIT",
+        "misc-ftl-no-cjit",
+        [
+            "--useDataIC=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITB3O0",
+        "ftl-no-cjit-b3o0",
+        [
+            "--useArrayAllocationProfiling=false",
+            "--forcePolyProto=true",
+            "--useRandomizingExecutableIslandAllocation=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS +
+        B3O0_OPTIONS +
+        FORCE_LLINT_EXIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITValidate",
+        "ftl-no-cjit-validate-sampling-profiler",
+        [
+            "--validateGraph=true",
+            "--validateBCE=true",
+            "--useSamplingProfiler=true",
+            "--airForceIRCAllocator=true",
+            "--useDataIC=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITNoPutStackValidate",
+        "ftl-no-cjit-no-put-stack-validate",
+        [
+            "--validateGraph=true",
+            "--usePutStackSinking=false",
+            "--airForceIRCAllocator=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITNoInlineValidate",
+        "ftl-no-cjit-no-inline-validate",
+        [
+            "--validateGraph=true",
+            "--maximumInliningDepth=1",
+            "--airForceBriggsAllocator=true",
+            "--useB3HoistLoopInvariantValues=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITOSRValidation",
+        "ftl-no-cjit-osr-validation",
+        [
+            "--validateFTLOSRExitLiveness=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "DFGEager",
+        "dfg-eager",
+        EAGER_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS +
+        FORCE_LLINT_EXIT_OPTIONS
+    ],
+    [
+        "DFGEagerNoCJITValidate",
+        "dfg-eager-no-cjit-validate",
+        [
+            "--validateGraph=true",
+        ] +
+        NO_CJIT_OPTIONS +
+        EAGER_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS
+    ],
+    [
+        "FTLEager",
+        "ftl-eager",
+        [
+            "--airForceBriggsAllocator=true",
+            "--useRandomizingExecutableIslandAllocation=true",
+            "--forcePolyProto=true",
+            "--useDataIC=true",
+        ] +
+        FTL_OPTIONS +
+        EAGER_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS
+    ],
+    [
+        "FTLEagerNoCJITValidate",
+        "ftl-eager-no-cjit",
+        [
+            "--validateGraph=true",
+            "--validateBCE=true",
+            "--airForceIRCAllocator=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS +
+        EAGER_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS +
+        FORCE_LLINT_EXIT_OPTIONS +
+        EXECUTABLE_FUZZER_OPTIONS
+    ],
+    [
+        "FTLEagerNoCJITB3O1",
+        "ftl-eager-no-cjit-b3o1",
+        [
+            "--validateGraph=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS +
+        EAGER_OPTIONS +
+        B3O1_OPTIONS
+    ],
+    [
+        "FTLEagerNoCJITOSRValidation",
+        "ftl-eager-no-cjit-osr-validation",
+        [
+            "--validateFTLOSRExitLiveness=true",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS +
+        EAGER_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS
+    ],
+    [
+        "NoCJITNoASO",
+        "no-cjit-no-aso",
+        [
+            "--useArchitectureSpecificOptimizations=false",
+        ] +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "NoCJITNoAccessInlining",
+        "no-cjit-no-access-inlining",
+        [
+            "--useAccessInlining=false",
+        ] +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITNoAccessInlining",
+        "ftl-no-cjit-no-access-inlining",
+        [
+            "--useAccessInlining=false",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "FTLNoCJITSmallPool",
+        "ftl-no-cjit-small-pool",
+        [
+            "--jitMemoryReservationSize=202400",
+        ] +
+        FTL_OPTIONS +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "NoCJIT",
+        "no-cjit",
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "EagerJettisonNoCJIT",
+        "eager-jettison-no-cjit",
+        [
+            "--useRandomizingExecutableIslandAllocation=true",
+            "--forceCodeBlockToJettisonDueToOldAge=true",
+            "--verifyGC=true",
+        ] +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "ShadowChicken",
+        "shadow-chicken",
+        [
+            "--useDFGJIT=false",
+            "--alwaysUseShadowChicken=true",
+        ]
+    ],
+    [
+        "MiniMode",
+        "mini-mode",
+        [
+            "--forceMiniVMMode=true",
+        ]
+    ],
+    [
+        "LogicalAssignmentOperatorsEnabled",
+        "logical-assignment-operators-enabled",
+        [
+            "--useLogicalAssignmentOperators=true",
+        ] +
+        FTL_OPTIONS
+    ],
+    [
+        "NoJIT",
+        "no-jit",
+        [
+            "--useJIT=false",
+        ]
+    ],
+    [
+        # NOTE: Tests rely on this using scribbleFreeCells.
+        "NoCJITValidate",
+        "no-cjit",
+        [
+            "--validateBytecode=true",
+            "--validateGraph=true",
+        ] +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "NoCJITValidatePhases",
+        "no-cjit-validate-phases",
+        [
+            "--validateBytecode=true",
+            "--validateGraphAtEachPhase=true",
+            "--useSourceProviderCache=false",
+            "--useRandomizingExecutableIslandAllocation=true",
+        ] +
+        NO_CJIT_OPTIONS
+    ],
+    [
+        "NoCJITCollectContinuously",
+        "no-cjit-collect-continuously",
+        NO_CJIT_OPTIONS +
+        COLLECT_CONTINUOUSLY_OPTIONS
+    ],
+    [
+        "Default",
+        "default",
+        FTL_OPTIONS
+    ],
+    [
+        "NoFTL",
+        "no-ftl",
+        []
+    ],
+    [
+        "WithRAMSize",
+        nil, # Not used
+        Proc.new { |size, *optionalTestSpecificOptions|
+            {
+                :cfg => {
+                    :kind => "ram-size-#{size}",
+                },
+                :testSpecificOptions => [
+                    "--forceRAMSize=#{size}",
+                ] + optionalTestSpecificOptions
+            }
+        }
+    ],
+    [
+        "BytecodeCache",
+        "bytecode-cache",
+        Proc.new { |*optionalTestSpecificOptions|
+            runBytecodeCacheImpl(optionalTestSpecificOptions)
+        }
+    ],
+    [
+        "BytecodeCacheNoAssertion",
+        "bytecode-cache",
+        Proc.new { |*optionalTestSpecificOptions|
+            runBytecodeCacheImpl(optionalTestSpecificOptions, "JSC_forceDiskCache=false")
+        }
+    ],
+    [
+        "FTLEagerWatchdog",
+        nil,
+        Proc.new { |*optionalTestSpecificOptions|
+            timeout = rand(100)
+            {
+                :cfg => {
+                    :kind => "ftl-eager-watchdog-#{timeout}",
+                },
+                :testSpecificOptions => [
+                    "--watchdog=#{timeout}",
+                    "--watchdog-exception-ok",
+                ] +
+                FTL_OPTIONS +
+                EAGER_OPTIONS +
+                COLLECT_CONTINUOUSLY_OPTIONS +
+                optionalTestSpecificOptions
+            }
+        }
+    ],
+    [
+        "NoLLInt",
+        "no-llint",
+        Proc.new { |*optionalTestSpecificOptions|
+            if $jitTests
+                {
+                    :cfg => {
+                    },
+                    :testSpecificOptions => [
+                        "--useLLInt=false",
+                    ] + optionalTestSpecificOptions
+                }
+            else
+                nil
+            end
+        }
+    ],
+    [
+        "OneLangeHeap",
+        "default",
+        Proc.new { |*optionalTestSpecificOptions|
+            if $memoryLimited
+                nil
+            else
+                {
+                    :testSpecificOptions => optionalTestSpecificOptions
+                }
+            end
+        }
+    ]
+]
 
-def runFTLNoCJITNoPutStackValidate(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-no-put-stack-validate", "--validateGraph=true", "--usePutStackSinking=false", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
+BASE_MODES.each { |mode|
+    name = "run#{mode[0]}"
+    kind = mode[1]
+    options = mode[2]
 
-def runFTLNoCJITNoInlineValidate(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-no-inline-validate", "--validateGraph=true", "--maximumInliningDepth=1", "--airForceBriggsAllocator=true", "--useB3HoistLoopInvariantValues=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
+    # We need to define two variants, one expecting a cfg as the first
+    # argument, one not.
+    cfgKinds.each { |cfgKind|
+        methodName = "#{name}#{cfgKind.extension}".to_sym
+        define_method(methodName) { |*args|
+            cfg = nil
+            if cfgKind.expectCfg
+                # If we're defining a method that expects a cfg
+                # argument, pick it out of the args to pass to the
+                # initializer.
+                cfg = args.shift
+            end
+            # The cfg is initialized differently depending on whether
+            # we're in a run*Cfg method or not.
+            cfg = cfgKind.initializer.call(cfg, kind)
+            finalOptions = nil
+            if options.respond_to?(:call)
+                dynamicOptions = options.call(*args)
+                if dynamicOptions.nil?
+                    skip
+                    return
+                end
+                # The Proc object may override any cfg option passed
+                # in. This is used e.g. for dynamic test names as used
+                # by WithRAMSize and FTLEagerWatchdog.
+                cfg.merge!(dynamicOptions[:cfg])
+                # As the Proc may consume arguments, it's responsible
+                # for returning the final option list. Needed e.g. by
+                # WithRAMSize.
+                finalOptions = dynamicOptions[:testSpecificOptions]
+            else
+                finalOptions = options + args
+            end
+            runInner(cfg, *finalOptions)
+        }
+    }
+}
 
-def runFTLNoCJITOSRValidation(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
+CFG_NOISY = {
+            :outputHandler => noisyOutputHandler,
+            :errorHandler => noisyErrorHandler,
+}.freeze
 
-def runDFGEager(*optionalTestSpecificOptions)
-    run("dfg-eager", *(EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + FORCE_LLINT_EXIT_OPTIONS + optionalTestSpecificOptions))
-end
+BASE_MODES.each { |mode|
+    name = "runNoisyTest#{mode[0]}".to_sym
+    define_method(name) { |*args|
+        # For each base mode, define the "noisy" variant which simply
+        # calls the respective run#{name}Cfg, passing in the "noisy"
+        # cfg.
+        send("run#{mode[0]}Cfg", CFG_NOISY, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *args)
+    }
+}
 
-def runDFGEagerNoCJITValidate(*optionalTestSpecificOptions)
-    run("dfg-eager-no-cjit-validate", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
-end
+# Default set of tests to run; propagates the cfg to every callee.
+def defaultRunCfg(cfg, subsetOptions, *optionalTestSpecificOptions)
+    cfg.freeze
+    if not subsetOptions.has_key?(:ignoreQuickMode) and $mode == "quick"
+        defaultQuickRunCfg(cfg, *optionalTestSpecificOptions)
+    else
+        runDefaultCfg(cfg, *optionalTestSpecificOptions)
+        runBytecodeCacheCfg(cfg, *optionalTestSpecificOptions)
+        runMiniModeCfg(cfg, *optionalTestSpecificOptions)
+        if $jitTests
+            if not subsetOptions.has_key?(:skipNoLLInt)
+                runNoLLIntCfg(cfg, *optionalTestSpecificOptions)
+            end
+            runNoCJITValidatePhasesCfg(cfg, *optionalTestSpecificOptions)
+            runNoCJITCollectContinuouslyCfg(cfg, *optionalTestSpecificOptions) if shouldCollectContinuously?
+            if not subsetOptions.has_key?(:skipEager)
+                runDFGEagerCfg(cfg)
+                if $mode != "basic"
+                    runDFGEagerNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
+                    runEagerJettisonNoCJITCfg(cfg, *optionalTestSpecificOptions)
+                end
+            end
 
-def runFTLEager(*optionalTestSpecificOptions)
-    run("ftl-eager", "--airForceBriggsAllocator=true", "--useRandomizingExecutableIslandAllocation=true", "--forcePolyProto=true", "--useDataIC=true", *(FTL_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
-end
+            return if !$isFTLPlatform
 
-def runFTLEagerWatchdog(*optionalTestSpecificOptions)
-    timeout = rand(100)
-    run("ftl-eager-watchdog-#{timeout}", "--watchdog=#{timeout}", "--watchdog-exception-ok", *(FTL_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
-end
+            runNoFTLCfg(cfg, *optionalTestSpecificOptions)
+            if not subsetOptions.has_key?(:skipEager)
+                runFTLEagerCfg(cfg, *optionalTestSpecificOptions)
+                runFTLEagerNoCJITValidateCfg(cfg, *optionalTestSpecificOptions) if $buildType == "release"
+            end
+            runFTLNoCJITSmallPoolCfg(cfg, *optionalTestSpecificOptions)
 
-def runFTLEagerNoCJITValidate(*optionalTestSpecificOptions)
-    run("ftl-eager-no-cjit", "--validateGraph=true", "--validateBCE=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + FORCE_LLINT_EXIT_OPTIONS + EXECUTABLE_FUZZER_OPTIONS + optionalTestSpecificOptions))
-end
+            return if $mode == "basic"
 
-def runFTLEagerNoCJITB3O1(*optionalTestSpecificOptions)
-    run("ftl-eager-no-cjit-b3o1", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + B3O1_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runFTLEagerNoCJITOSRValidation(*optionalTestSpecificOptions)
-    run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runNoCJITNoASO(*optionalTestSpecificOptions)
-    run("no-cjit-no-aso", "--useArchitectureSpecificOptimizations=false", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runNoCJITNoAccessInlining(*optionalTestSpecificOptions)
-    run("no-cjit-no-access-inlining", "--useAccessInlining=false", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runFTLNoCJITNoAccessInlining(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-no-access-inlining", "--useAccessInlining=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runFTLNoCJITSmallPool(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-small-pool", "--jitMemoryReservationSize=102400", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runNoCJIT(*optionalTestSpecificOptions)
-    run("no-cjit", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runEagerJettisonNoCJIT(*optionalTestSpecificOptions)
-    run("eager-jettison-no-cjit", "--useRandomizingExecutableIslandAllocation=true", "--forceCodeBlockToJettisonDueToOldAge=true", "--verifyGC=true", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-end
-
-def runShadowChicken(*optionalTestSpecificOptions)
-    run("shadow-chicken", "--useDFGJIT=false", "--alwaysUseShadowChicken=true", *optionalTestSpecificOptions)
-end
-
-def runMiniMode(*optionalTestSpecificOptions)
-    run("mini-mode", "--forceMiniVMMode=true", *optionalTestSpecificOptions)
-end
-
-def runLogicalAssignmentOperatorsEnabled(*optionalTestSpecificOptions)
-    run("logical-assignment-operators-enabled", "--useLogicalAssignmentOperators=true" , *(FTL_OPTIONS + optionalTestSpecificOptions))
+            runFTLNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
+            runFTLNoCJITB3O0Cfg(cfg, *optionalTestSpecificOptions)
+            runFTLNoCJITNoPutStackValidateCfg(cfg, *optionalTestSpecificOptions)
+            runFTLNoCJITNoInlineValidateCfg(cfg, *optionalTestSpecificOptions)
+            if not subsetOptions.has_key?(:skipEager)
+                runFTLEagerNoCJITB3O1Cfg(cfg, *optionalTestSpecificOptions)
+            end
+        end
+    end
 end
 
 def defaultRun
-    if $mode == "quick"
-        defaultQuickRun
-    else
-        runDefault
-        runBytecodeCache
-        runMiniMode
-        if $jitTests
-            runNoLLInt
-            runNoCJITValidatePhases
-            runNoCJITCollectContinuously if shouldCollectContinuously?
-            runDFGEager
-            if $mode != "basic"
-                runDFGEagerNoCJITValidate
-                runEagerJettisonNoCJIT
-            end
-
-            return if !$isFTLPlatform
-
-            runNoFTL
-            runFTLEager
-            runFTLEagerNoCJITValidate if $buildType == "release"
-            runFTLNoCJITSmallPool
-
-            return if $mode == "basic"
-
-            runFTLNoCJITValidate
-            runFTLNoCJITB3O0
-            runFTLNoCJITNoPutStackValidate
-            runFTLNoCJITNoInlineValidate
-            runFTLEagerNoCJITB3O1
-        end
-    end
+    defaultRunCfg({}, {})
 end
 
 def defaultNoNoLLIntRun
-    if $mode == "quick"
-        defaultQuickRun
-    else
-        runDefault
-        if $jitTests
-            runNoCJITValidatePhases
-            runNoCJITCollectContinuously if shouldCollectContinuously?
-            runDFGEager
-            if $mode != "basic"
-                runDFGEagerNoCJITValidate
-                runEagerJettisonNoCJIT
-            end
+    defaultRunCfg({}, {:skipNoLLInt => true})
+end
 
-            return if !$isFTLPlatform
+def defaultQuickRunCfg(cfg, *optionalTestSpecificOptions)
+    runDefaultCfg(cfg, *optionalTestSpecificOptions)
+    if $jitTests
+        runNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
 
-            runNoFTL
-            runFTLNoCJITValidate
-            runFTLNoCJITSmallPool
+        return if !$isFTLPlatform
 
-            return if $mode == "basic"
-
-            runFTLNoCJITB3O0
-            runFTLNoCJITNoPutStackValidate
-            runFTLNoCJITNoInlineValidate
-            runFTLEager
-            runFTLEagerNoCJITValidate if $buildType == "release"
-        end
+        runNoFTLCfg(cfg, *optionalTestSpecificOptions)
+        runFTLNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
     end
 end
 
 def defaultQuickRun
-    runDefault
-    if $jitTests
-        runNoCJITValidate
-
-        return if !$isFTLPlatform
-
-        runNoFTL
-        runFTLNoCJITValidate
-    end
+    defaultQuickRunCfg({})
 end
 
 def defaultSpotCheckNoMaximalFlush
@@ -978,43 +1553,11 @@ end
 # for reasons that don't arise in the real world. It's used for tests that assert convergence
 # by counting recompilations.
 def defaultNoEagerRun(*optionalTestSpecificOptions)
-    runDefault(*optionalTestSpecificOptions)
-    if $jitTests
-        runNoLLInt(*optionalTestSpecificOptions)
-        runNoCJITValidatePhases(*optionalTestSpecificOptions)
-        runNoCJITCollectContinuously(*optionalTestSpecificOptions) if shouldCollectContinuously?
-
-        return if !$isFTLPlatform
-
-        runNoFTL(*optionalTestSpecificOptions)
-        runFTLNoCJITValidate(*optionalTestSpecificOptions)
-
-        return if $mode == "basic"
-
-        runFTLNoCJITNoInlineValidate(*optionalTestSpecificOptions)
-        runFTLNoCJITB3O0(*optionalTestSpecificOptions)
-    end
+    defaultRunCfg({}, { :skipEager => true }, *optionalTestSpecificOptions)
 end
 
 def defaultNoSamplingProfilerRun
-    runDefault
-    if $jitTests
-        runNoLLInt
-        runNoCJITValidatePhases
-        runNoCJITCollectContinuously if shouldCollectContinuously?
-        runDFGEager
-        runDFGEagerNoCJITValidate
-        runEagerJettisonNoCJIT
-
-        return if !$isFTLPlatform
-
-        runNoFTL
-        runFTLNoCJITNoPutStackValidate
-        runFTLNoCJITNoInlineValidate
-        runFTLEager
-        runFTLEagerNoCJITValidate if $buildType == "release"
-        runFTLNoCJITSmallPool
-    end
+    defaultRunCfg({}, { :ignoreQuickMode => true })
 end
 
 def runProfiler
@@ -1165,7 +1708,7 @@ def defaultRunModules(noLLInt: true)
     run("ftl-no-cjit-no-inline-validate-modules", "-m", "--validateGraph=true", "--maximumInliningDepth=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
     run("ftl-eager-modules", "-m", *(FTL_OPTIONS + EAGER_OPTIONS))
     run("ftl-eager-no-cjit-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
-    run("ftl-no-cjit-small-pool-modules", "-m", "--jitMemoryReservationSize=102400", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    run("ftl-no-cjit-small-pool-modules", "-m", "--jitMemoryReservationSize=202400", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def noNoLLIntRunModules
@@ -1221,16 +1764,21 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
-    run("default-wasm", "-m", *(FTL_OPTIONS + optionalTestSpecificOptions))
+    if optionalTestSpecificOptions[0] == :no_module
+      optionalTestSpecificOptions.shift
+    else
+      optionalTestSpecificOptions.unshift "-m"
+    end
+    run("default-wasm", *(FTL_OPTIONS + optionalTestSpecificOptions))
     if $mode != "quick"
-        run("wasm-no-cjit-yes-tls-context", "-m", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-        run("wasm-eager", "-m", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
-        run("wasm-eager-jettison", "-m", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        run("wasm-no-tls-context", "-m", "--useFastTLSForWasmContext=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        run("wasm-slow-memory", "-m", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        run("wasm-b3", "-m", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        run("wasm-air", "-m", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        run("wasm-collect-continuously", "-m", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
+        run("wasm-no-cjit-yes-tls-context", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-no-tls-context", "--useFastTLSForWasmContext=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-air", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
     end
 end
 
@@ -1317,6 +1865,10 @@ end
 
 def runWebAssemblyReferenceSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "ref-spec-harness")
+end
+
+def runWebAssemblyFunctionReferenceSpecTest(mode)
+    runWebAssemblySpecTestBase(mode, "spec-harness", "--useWebAssemblyTypedFunctionReferences=true")
 end
 
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
@@ -1599,46 +2151,19 @@ def defaultRunMozillaTest(mode, *extraFiles)
     end
 end
 
-def runNoisyTestImpl(kind, options, additionalEnv)
-    addRunCommand(kind, vmCommand + BASE_OPTIONS + options + $testSpecificRequiredOptions + [$benchmark.to_s], noisyOutputHandler, noisyErrorHandler, *additionalEnv)
-end
-
-def runNoisyTest(kind, *options)
-    runNoisyTestImpl(kind, options, [])
-end
-
 def runNoisyTestWithEnv(kind, *additionalEnv)
-    runNoisyTestImpl(kind, [], additionalEnv)
-end
-
-def runNoisyTestDefault
-    runNoisyTest("default", *FTL_OPTIONS)
-end
-
-def runNoisyTestNoFTL
-    runNoisyTest("no-ftl")
-end
-
-def runNoisyTestNoCJIT
-    runNoisyTest("ftl-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS))
-end
-
-def runNoisyTestNoCJITB3O1
-    runNoisyTest("ftl-no-cjit-b3o1", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O1_OPTIONS))
-end
-
-def runNoisyTestEagerNoCJIT
-    runNoisyTest("ftl-eager-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS))
+    cfg = CFG_NOISY.dup
+    cfg[:kind] = kind
+    cfg[:additionalEnv] = additionalEnv
+    runDefaultCfg(cfg)
 end
 
 def defaultRunNoisyTest
-    runNoisyTestDefault
-    if $jitTests and $isFTLPlatform
-        runNoisyTestNoFTL
-        runNoisyTestNoCJIT
-        runNoisyTestNoCJITB3O1
-        runNoisyTestEagerNoCJIT
-    end
+    cfg = {
+        :outputHandler => noisyOutputHandler,
+        :errorHandler => noisyErrorHandler,
+    }
+    defaultRunCfg(cfg, {})
 end
 
 def skip
@@ -1830,34 +2355,6 @@ def handleCollection(collection)
     end
 end
 
-def appendFailure(plan)
-    File.open($outputDir + "failed", "a") {
-        | outp |
-        outp.puts plan.name
-    }
-end
-
-def appendPass(plan)
-    File.open($outputDir + "passed", "a") {
-        | outp |
-        outp.puts plan.name
-    }
-end
-
-def appendNoResult(plan)
-    File.open($outputDir + "noresult", "a") {
-        | outp |
-        outp.puts plan.name
-    }
-end
-
-def appendResult(plan, didPass)
-    File.open($outputDir + "results", "a") {
-        | outp |
-        outp.puts "#{plan.name}: #{didPass ? 'PASS' : 'FAIL'}"
-    }
-end
-
 def prepareBundle
     raise if $bundle
 
@@ -1991,44 +2488,52 @@ def eachResultFile(startingDir, &block)
     end
 end
 
-def prepareTestRunner(remoteIndex=0)
-    raise if $bundle
+def parallelEach(array, &block)
+    # Short of using 'require "parallel"' we use a simple statically
+    # partitioned multiprocess dispatch for processing fixed chunks of the
+    # given  array in parallel. We use Process rather than Thread to
+    # parallelise CPU load as well as IO (due to the GIL).
 
-    $runlist.each_with_index {
-        | plan, index |
-        plan.index = index
-    }
+    # Some platforms (notably Windows) do not support Process.fork, so work
+    # serially on these.
+    nWorkers = Process.respond_to?(:fork) ? $numChildProcesses : 1
 
-    Dir.mkdir($runnerDir) unless $runnerDir.directory?
-    toDelete = []
-    Dir.foreach($runnerDir) {
-        | filename |
-        if filename =~ /^test_/
-            toDelete << filename
-        end
-    }
-    
-    toDelete.each {
-        | filename |
-        File.unlink($runnerDir + filename)
-    }
+    # Chunk size is rounded up
+    chunkSize = (array.size + (nWorkers - 1)) / nWorkers
 
-    $runlist.each {
-        | plan |
-        plan.writeRunScript($runnerDir + "test_script_#{plan.index}")
-    }
+    # If chunk size is too small, work serially
+    if chunkSize <= 1
+      nWorkers = 1
+      chunkSize = array.size
+    end
 
-    case $testRunnerType
-    when :make
-        prepareMakeTestRunner(remoteIndex)
-    when :shell
-        prepareShellTestRunner
-    when :ruby
-        prepareRubyTestRunner
-    when :gnuparallel
-        prepareGnuParallelTestRunner
-    else
-        raise "Unknown test runner type: #{$testRunnerType.to_s}"
+    childPIDs = []
+
+    # Chunks 1 to nWorkers-1 run in the worker processes
+    for i in 1...nWorkers do
+      chunkStart = i*chunkSize
+      break if chunkStart >= array.size
+      pid = Process.fork
+      if pid.nil?
+        # Worker process. Process chunk i.
+        array.slice(chunkStart, chunkSize).each(&block)
+        Process.exit!(true)
+      else
+        childPIDs << pid
+      end
+    end
+
+    # Main process. Process chunk 0.
+    array.slice(0, chunkSize).each(&block)
+
+    # Wait for workers
+    for pid in childPIDs do
+      _, status = Process.waitpid2(pid)
+      raise "Child process still running" unless status.exited?
+      if status.exitstatus != 0
+        STDERR.puts "Child process failed with status: #{status.exitstatus}"
+        exit(status.exitstatus)
+      end
     end
 end
 
@@ -2036,7 +2541,7 @@ def cleanRunnerDirectory
     raise unless $bundle
     Dir.foreach($runnerDir) {
         | filename |
-        next unless filename =~ /^test_fail/
+        next unless filename =~ /^#{STATUS_FILE_PREFIX}/
         FileUtils.rm_f $runnerDir + filename
     }
 end
@@ -2045,7 +2550,7 @@ def sshRead(cmd, remoteHost, options={})
     raise unless $remote
 
     result = ""
-    IO.popen("ssh -o NoHostAuthenticationForLocalhost=yes -p #{remoteHost.port} #{remoteHost.user}@#{remoteHost.host} '#{cmd}'", "r") {
+    IO.popen("ssh -o NoHostAuthenticationForLocalhost=yes -p #{remoteHost.port}" + (remoteHost.identity_file_path ? " -i #{remoteHost.identity_file_path}" : "") + " #{remoteHost.user}@#{remoteHost.host} '#{cmd}'", "r") {
       | inp |
       inp.each_line {
         | line |
@@ -2183,8 +2688,8 @@ def getRemoteDirectoryIfNeeded(remoteHost)
 end
 
 def copyBundleToRemote(remoteHost)
-    mysys(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}"])
-    mysys(["scp", "-o", "NoHostAuthenticationForLocalhost=yes", "-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}"])
+    mysys(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"] + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}"])
+    mysys(["scp", "-o", "NoHostAuthenticationForLocalhost=yes"] + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}"])
 end
 
 def exportBaseEnvironmentVariables(escape)
@@ -2205,9 +2710,9 @@ def exportBaseEnvironmentVariables(escape)
     ].join("")
 end
 
-def runTestRunner(remoteIndex=0)
-    if $remote
-        remoteHost = $remoteHosts[remoteIndex]
+def runTestRunner(testRunner, remoteHosts, remoteIndex=0)
+    if not remoteHosts.nil?
+        remoteHost = remoteHosts[remoteIndex]
         getRemoteDirectoryIfNeeded(remoteHost)
         copyBundleToRemote(remoteHost)
         remoteScript = "\""
@@ -2217,11 +2722,11 @@ def runTestRunner(remoteIndex=0)
         remoteScript += "cd #{$outputDir.basename}/.runner && "
         remoteScript += exportBaseEnvironmentVariables(true)
         $envVars.each { |var| remoteScript += "export " << var << "\n" }
-        remoteScript += "#{testRunnerCommand(remoteIndex)}\""
-        runAndMonitorTestRunnerCommand(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript])
+        remoteScript += "#{testRunner.command(remoteIndex)}\""
+        runAndMonitorTestRunnerCommand(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"] + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript])
     else
         Dir.chdir($runnerDir) {
-            runAndMonitorTestRunnerCommand(Shellwords.shellsplit(testRunnerCommand))
+            runAndMonitorTestRunnerCommand(Shellwords.shellsplit(testRunner.command))
         }
     end
 end
@@ -2238,38 +2743,21 @@ def processStatusLine(map, line)
     runId = md[:runId]
     result = md[:result]
     if runId != $runUniqueId
-        # This may conceivably happen if a remote goes
-        # away in the middle of a run and comes back
-        # online in the middle of a different run.
-        $stderr.puts("Ignoring stale status file for #{index} (ID #{runId} but current ID is #{$runUniqueId})")
-        return
+        if $bundle
+            # The scripts in the bundle have their own runId embedded,
+            # just ignore the value.
+        else
+            # This may conceivably happen if a remote goes
+            # away in the middle of a run and comes back
+            # online in the middle of a different run.
+            $stderr.puts("Ignoring stale status file for #{index} (ID #{runId} but current ID is #{$runUniqueId})")
+            return
+        end
     end
     if map.has_key?(index)
-        # One scenario in which this could happen:
-        # Test T runs on remote host A and
-        #   1. the status file reaches A's disk
-        #   2. somehow the gnu parallel runner is not made aware of the test's completion (packet loss?)
-        #   3. machine A crashes
-        #   4. gnu parallel re-schedules the test to run on remote host B, where it runs to completion
-        #   5. B comes back online before the end of the run
-        #   6. we collect the status files from all remotes and end up with two status files for T.
-        prev = map[index]
-        # map[index] holds
-        # - a number, if all results codes we've observed for a test are the same
-        # - an array, if they diverge.
-        if prev.is_a?(Array)
-            prev.push(result)
-        elsif prev != result
-            # If the two results differ, keep them
-            # both. This is simply a way to make note of
-            # the divergence (for later reporting).
-            map[index] = [prev, result]
-        else
-            # Got the same result, no need to do anything.
-        end
-        $stderr.puts("Duplicate state file for #{index}: #{map[index]}")
+        map[index].push(result)
     else
-        map[index] = result
+        map[index] = [result]
     end
 end
 
@@ -2281,8 +2769,7 @@ def getStatusMap(map={})
         # well be test results on a remoteHost that got rebooted
         # (note, the test results are tagged with a run ID, so we'll
         # ignore any stale results from a previous run).
-        $remoteHosts.each_with_index {
-            | host, remoteIndex |
+        forEachRemote($remoteHosts, :dropOnFailure => true, :timeout => 8 * REMOTE_TIMEOUT) { |_, host|
             runnerDir = "#{host.remoteDirectory}/#{$outputDir.basename}/.runner"
             output = sshRead("if test -d #{runnerDir}; then cd #{runnerDir}; else false; fi && " + find_cmd, host, :ignoreFailure => true)
             output.split(/\n/).each {
@@ -2292,66 +2779,35 @@ def getStatusMap(map={})
         }
     else
         Dir.chdir($runnerDir) {
-            IO.popen(find_cmd).each_line {
-                | line |
-                processStatusLine(map, line)
-            }
+            Dir.glob("#{STATUS_FILE_PREFIX}*").each do |name|
+                if File.size(name) > 0
+                    File.open(name, 'r') { |f|
+                        line = f.first
+                        processStatusLine(map, "./#{name} #{line}")
+                    }
+                end
+            end
         }
     end
     map
 end
 
-def getCompletedTestsFromStatusMap(statusMap)
-    completedTests = {}
-    $runlist.each_with_index {
-        | plan, index |
-        if statusMap.has_key?(index)
-            completedTests[plan] = nil
-        end
-    }
-    completedTests
-end
-
 def detectFailures(statusMap={})
     raise if $bundle
-    noresult = 0
     if statusMap.size == 0
         statusMap = getStatusMap
     end
-    familyMap = {}
 
-    $runlist.each_with_index {
-        | plan, index |
-        unless familyMap[plan.family]
-            familyMap[plan.family] = []
-        end
-        if not statusMap.has_key?(index)
-            appendNoResult(plan)
-            noresult += 1
-            next
-        end
-        result = nil
-        # If any of the results we got was a pass, consider the test
-        # successful. The assumption here is that failures are because
-        # of infrastructure issues (which is why the test was run
-        # multiple times in the first place).
-        testWasSuccessful = statusMap[index].include?(STATUS_FILE_PASS)
-        if testWasSuccessful
-            appendPass(plan)
-            result = "PASS"
-        else
-            appendFailure(plan)
-            result = "FAIL"
-        end
-        appendResult(plan, testWasSuccessful)
-        familyMap[plan.family] << { :result => result, :plan => plan }
-    }
+    evaluator = TestResultEvaluatorFinal.new($runlist, statusMap)
+    evaluator.visit!
 
-    if noresult > 0
-        $stderr.puts("Could not get the exit status for #{noresult} tests")
+    if evaluator.noresult > 0
+        $stderr.puts("Could not get the exit status for #{evaluator.noresult} tests")
         # We can't change our exit code, as run-javascriptcore-tests
         # expects 0 even when there are failures.
     end
+
+    familyMap = evaluator.familyMap
 
     File.open($outputDir + "resultsByFamily", "w") {
         | outp |
@@ -2402,6 +2858,7 @@ end
 clean($outputDir + "failed")
 clean($outputDir + "passed")
 clean($outputDir + "noresult")
+clean($outputDir + "flaky")
 clean($outputDir + "results")
 clean($outputDir + "resultsByFamily")
 clean($outputDir + ".vm")
@@ -2444,27 +2901,17 @@ ENV["TZ"] = "US/Pacific";
 def runBundle
     raise unless $bundle
 
-    cleanRunnerDirectory
-    cleanOldResults
-    runTestRunner
-    cleanEmptyResultFiles
-end
-
-def runNormal
-    raise if $bundle or $tarball
-
-    prepareBundle
-    prepareTestRunner
-    runTestRunner
-    cleanEmptyResultFiles
-    detectFailures
+    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    evaluator = BundleTestsExecutor.new($runlist, $serialPlans, ITERATION_LIMITS, $treatFailingAsFlaky, testRunner)
+    evaluator.loop
 end
 
 def runTarball
     raise unless $tarball
 
-    prepareBundle 
-    prepareTestRunner
+    prepareBundle
+    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    testRunner.prepare($runlist, $serialPlans, Set.new, nil)
     compressBundle
 end
 
@@ -2478,12 +2925,40 @@ def forEachRemote(remoteHosts, options={}, &blk)
         }
     }
 
+    etime = nil
+    if options.has_key?(:timeout)
+        etime = Time.now + options[:timeout]
+    end
     liveRemotes = []
     threads.each_index {
         | index |
         thread = threads[index]
         begin
-            thread.join
+            if options.has_key?(:timeout)
+                if etime.nil?
+                    # If a timeout has been requested and etime is nil,
+                    # that means the timeout has expired and we shouldn't
+                    # wait at all.
+                    timeout = 0
+                else
+                    timeout = etime - Time.now
+                    if timeout < 0
+                        timeout = 0
+                    end
+                end
+                if thread.join(timeout).nil?
+                    if $verbosity > 0
+                        $stderr.puts("Timeout joining thread for remote #{remoteHosts[index]}")
+                    end
+                    # Timeout expired, so we can't block waiting for
+                    # any other threads. Either they're done or
+                    # they've also timed out.
+                    etime = nil
+                    raise CommandExecutionFailed
+                end
+            else
+                thread.join # No timeout requested, just block.
+            end
             liveRemotes << remoteHosts[index]
         rescue CommandExecutionFailed
             if options[:dropOnFailure]
@@ -2498,44 +2973,28 @@ def forEachRemote(remoteHosts, options={}, &blk)
     liveRemotes
 end
 
-def runRemote
-    raise unless $remote
+class TestRunnerGnuParallel < TestRunner
+    def prepareGnuParallelRunnerJobs(name, runlist, completedPlans)
+        path = @runnerDir + name
+        FileUtils.mkdir_p(@runnerDir)
 
-    prepareBundle
-    $remoteHosts.each_index {
-        | index |
-        prepareTestRunner(index)
-    }
-    compressBundle
-    forEachRemote($remoteHosts) {
-        | index |
-        runTestRunner(index)
-    }
-    detectFailures
-end
-
-def prepareGnuParallelRunnerJobs(name, runlist, exclude)
-    path = $runnerDir + name
-    FileUtils.mkdir_p($runnerDir)
-
-    File.open(path, "w") {
-        | outp |
-        runlist.each {
-            | plan |
-            if exclude.has_key?(plan)
-                next
-            end
-            outp.puts("./test_script_#{plan.index}")
+        File.open(path, "w") {
+            | outp |
+            runlist.each {
+                | plan |
+                if completedPlans.include?(plan)
+                    next
+                end
+                outp.puts("./test_script_#{plan.index}")
+            }
         }
-    }
+    end
+    def prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
+        prepareGnuParallelRunnerJobs("parallel-tests", runlist, completedPlans | serialPlans)
+        prepareGnuParallelRunnerJobs("serial-tests", serialPlans, completedPlans)
+    end
 end
 
-def prepareGnuParallelTestRunner(exclude={})
-    serialTests = {}
-    $serialRunlist.each { |p| serialTests[p] = nil }
-    prepareGnuParallelRunnerJobs("parallel-tests", $runlist, exclude.merge(serialTests))
-    prepareGnuParallelRunnerJobs("serial-tests", $serialRunlist, exclude)
-end
 
 def withGnuParallelSshWrapper(&blk)
     Tempfile.open('ssh-wrapper', $runnerDir) {
@@ -2587,10 +3046,11 @@ def withGnuParallelSshLoginFile(remoteHosts, &blk)
 end
 
 def unpackBundleGnuParallel(remoteHosts)
-    forEachRemote(remoteHosts, :dropOnFailure => true) {
+    forEachRemote(remoteHosts, :dropOnFailure => true, :timeout => REMOTE_TIMEOUT) {
         | _, remoteHost |
-        mysys(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes",
-               "-p", remoteHost.port.to_s,
+        mysys(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"] + 
+               (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + 
+               ["-p", remoteHost.port.to_s,
                "#{remoteHost.user}@#{remoteHost.host}",
                "cd #{Shellwords.shellescape(remoteHost.remoteDirectory)} && rm -rf #{$outputDir.basename} && tar xzf #{$tarFileName}"])
     }
@@ -2653,61 +3113,150 @@ def runGnuParallelRunner(remoteHosts, inputs, options={})
     }
 end
 
-def runGnuParallel
-    raise unless $remote
-    prepareBundle
-    prepareTestRunner
-    compressBundle
-    statusMap = {}
-    # This is a high-level retry loop. If a remote host goes away in
-    # the middle of a run and either doesn't come back online or comes
-    # back having removed the remote directory (*), getStatusMap will be
-    # missing results for these tests, allowing us to retry them in
-    # the next iteration.
-    #
-    # (*) This may well happen when running the tests on embedded
-    # boards that regularly corrupt their SD card. Definitely an issue
-    # for the ci20 boards used to test MIPS.
-    #
-    # The number of tries scales with the number of remotes in use,
-    # with a reasonable floor.
-    tries = [3, $remoteHosts.size / 2].max
-    tries.times {
-        | iteration |
-        remoteHosts = $remoteHosts
+# Unconditionally run the selftests on every execution, they're pretty cheap.
+ExecutorSelfTests.run
+TestResultEvaluatorSelfTests.run
+
+class NonRemoteTestsExecutor < BaseTestsExecutor
+    def initialize(runlist, serialPlans, maxIterationsBounds, treatFailingAsFlaky, testRunner)
+        super(runlist, serialPlans,
+              nil,
+              maxIterationsBounds,
+              treatFailingAsFlaky
+             )
+        @testRunner = testRunner
+    end
+    def prepareExecution(remoteHosts)
+        remoteHosts
+    end
+    def refreshExecution(runlist, serialPlans, completedTests)
+        if not @remoteHosts.nil?
+            raise "remoteHosts #{@remoteHosts}, expected nil"
+        end
+        @testRunner.prepare(runlist, serialPlans, completedTests, @remoteHosts)
+    end
+end
+
+class NormalTestsExecutor < NonRemoteTestsExecutor
+    def prepareArtifacts(remoteHosts)
+        raise "remoteHosts not nil" unless remoteHosts.nil?
+        prepareBundle
+        @testRunner.prepare(@runlist, @serialPlans, Set.new, nil)
+    end
+    def executeTests(remoteHosts)
+        runTestRunner(@testRunner, nil, nil)
+        cleanEmptyResultFiles
+    end
+    def updateStatusMap(iteration, statusMap)
+        return getStatusMap(statusMap)
+    end
+end
+
+class BundleTestsExecutor < NonRemoteTestsExecutor
+    def prepareArtifacts(remoteHosts)
+        raise "remoteHosts not nil" unless remoteHosts.nil?
+        cleanRunnerDirectory
+        cleanOldResults
+    end
+    def executeTests(remoteHosts)
+        runTestRunner(@testRunner, nil, nil)
+        cleanEmptyResultFiles
+    end
+    def updateStatusMap(iteration, statusMap)
+        return getStatusMap(statusMap)
+    end
+end
+
+class BaseRemoteTestsExecutor < BaseTestsExecutor
+    def initialize(runlist, serialPlans, remoteHosts, iterationLimits,
+                   treatFailingAsFlaky, testRunner)
+        super(runlist, serialPlans, remoteHosts, iterationLimits, treatFailingAsFlaky)
+        @testRunner = testRunner
+    end
+    def updateStatusMap(iteration, statusMap)
+        return getStatusMap(statusMap)
+    end
+    def refreshExecution(runlist, serialPlans, completedTests)
+        # Note, when running tests remotely, we always prepare tests
+        # for all the hosts when refreshing execution, as even hosts
+        # that went away during testing may have come back online in
+        # the meantime -- so we don't expect a list of live remote
+        # hosts to be passed in.
+        @testRunner.prepare(runlist, serialPlans, completedTests, @remoteHosts)
+    end
+end
+
+class RemoteTestsExecutor < BaseRemoteTestsExecutor
+    def prepareArtifacts(remoteHosts)
+        raise "remoteHosts nil" if remoteHosts.nil?
+        prepareBundle
+        @testRunner.prepare(@runlist, @serialPlans, Set.new, remoteHosts)
+        compressBundle
+    end
+    def prepareExecution(remoteHosts)
+        remoteHosts
+    end
+    def executeTests(remoteHosts)
+        forEachRemote(remoteHosts) {
+            | index |
+            runTestRunner(@testRunner, remoteHosts, index)
+        }
+    end
+end
+
+class GnuParallelTestsExecutor < BaseRemoteTestsExecutor
+    def prepareArtifacts(remoteHosts)
+        prepareBundle
+        @testRunner.prepare(@runlist, @serialPlans, Set.new, remoteHosts)
+        compressBundle
+    end
+    def prepareExecution(remoteHosts)
         # If the preparatory steps fail, drop the remote host from our
         # list. Otherwise, if it comes back online in the middle of an
         # iteration, we'll try to run test jobs on it, possibly using
         # an unrelated bundle from a previous run.
-        remoteHosts = forEachRemote(remoteHosts, {:dropOnFailure => true}) {
+        remoteHosts = forEachRemote(remoteHosts, {:dropOnFailure => true, :timeout => REMOTE_TIMEOUT}) {
             | _, remoteHost |
             getRemoteDirectoryIfNeeded(remoteHost)
             copyBundleToRemote(remoteHost)
         }
-        remoteHosts = unpackBundleGnuParallel(remoteHosts)
-        if remoteHosts.size == 0
-            # Either everything is down, or everything got
-            # rebooted. In the latter case, allow enough time for the
-            # remote boards to boot up, then retry.
-            waitInterval = 60
-            $stderr.puts("All remote hosts failed, retrying after #{waitInterval}s")
-            sleep(waitInterval)
-            next
-        end
-
+        return unpackBundleGnuParallel(remoteHosts)
+    end
+    def executeTests(remoteHosts)
         runGnuParallelRunner(remoteHosts, $runnerDir + "serial-tests",
                              { :parallelJobsOnEachHost => 1})
         runGnuParallelRunner(remoteHosts, $runnerDir + "parallel-tests")
-        statusMap = getStatusMap(statusMap)
-        completedTests = getCompletedTestsFromStatusMap(statusMap)
-        break unless completedTests.size != $runlist.size
-        if completedTests.size > $runlist.size
-            raise "Test count mismatch: #{completedTests.size} > #{$runlist.size}"
-        end
-        # Regenerate the lists of tests to run
-        prepareGnuParallelTestRunner(completedTests)
-        $stderr.puts("After try #{iteration + 1}/#{tries}: got results for #{completedTests.size}/#{$runlist.size} tests, #{remoteHosts.size}/#{$remoteHosts.size} hosts live")
-    }
+    end
+end
+
+def runNormal
+    raise if $bundle or $tarball
+
+    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    evaluator = NormalTestsExecutor.new($runlist, $serialPlans, ITERATION_LIMITS,
+                                        $treatFailingAsFlaky, testRunner)
+    statusMap = evaluator.loop
+    detectFailures(statusMap)
+
+end
+
+def runRemote
+    raise unless $remote
+
+    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    executor = RemoteTestsExecutor.new($runlist, $serialPlans, $remoteHosts, ITERATION_LIMITS, $treatFailingAsFlaky, testRunner)
+    statusMap = executor.loop
+    detectFailures(statusMap)
+end
+
+def runGnuParallel
+    raise "Can only use --gnu-parallel-runner with --remote*" unless $remote
+    raise "Can only use --gnu-parallel-runner with the default writer" unless $testWriter == "default"
+    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    executor = GnuParallelTestsExecutor.new($runlist, $serialPlans,
+                                            $remoteHosts, ITERATION_LIMITS,
+                                            $treatFailingAsFlaky, testRunner)
+    statusMap = executor.loop
     detectFailures(statusMap)
 end
 

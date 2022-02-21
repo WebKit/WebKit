@@ -56,7 +56,7 @@
 #include <wtf/text/cf/StringConcatenateCF.h>
 #endif
 
-#if USE(CF) && !PLATFORM(WIN_CAIRO) && !USE(DIRECT2D)
+#if USE(CF) && !PLATFORM(WIN_CAIRO)
 #include "WebArchiveDumpSupport.h"
 #endif
 
@@ -230,10 +230,19 @@ static inline void dumpResourceURL(uint64_t identifier, StringBuilder& stringBui
         stringBuilder.append("<unknown>");
 }
 
+static HashMap<WKBundlePageRef, InjectedBundlePage*>& bundlePageMap()
+{
+    static NeverDestroyed<HashMap<WKBundlePageRef, InjectedBundlePage*>> map;
+    return map.get();
+}
+
 InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     : m_page(page)
     , m_world(adoptWK(WKBundleScriptWorldCreateWorld()))
 {
+    ASSERT(!bundlePageMap().contains(page));
+    bundlePageMap().set(page, this);
+
     WKBundlePageLoaderClientV9 loaderClient = {
         { 9, this },
         didStartProvisionalLoadForFrame,
@@ -361,6 +370,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 InjectedBundlePage::~InjectedBundlePage()
 {
+    ASSERT(bundlePageMap().contains(m_page));
+    bundlePageMap().remove(m_page);
 }
 
 void InjectedBundlePage::stopLoading()
@@ -769,7 +780,7 @@ void InjectedBundlePage::dumpAllFramesText(StringBuilder& stringBuilder)
 
 void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuilder& stringBuilder)
 {
-#if USE(CF) && !PLATFORM(WIN_CAIRO) && !USE(DIRECT2D)
+#if USE(CF) && !PLATFORM(WIN_CAIRO)
     auto wkData = adoptWK(WKBundleFrameCopyWebArchive(frame));
     auto cfData = adoptCF(CFDataCreate(0, WKDataGetBytes(wkData.get()), WKDataGetSize(wkData.get())));
     stringBuilder.append(WebCoreTestSupport::createXMLStringFromWebArchiveData(cfData.get()).get());
@@ -846,7 +857,7 @@ void InjectedBundlePage::dump()
             injectedBundle.setRepaintRects(adoptWK(WKBundlePageCopyTrackedRepaintRects(m_page)).get());
     }
 
-    injectedBundle.outputText(stringBuilder.toString());
+    injectedBundle.outputText(stringBuilder.toString(), InjectedBundle::IsFinalTestOutput::Yes);
     injectedBundle.done();
 }
 
@@ -905,7 +916,7 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, WKBundle
     injectedBundle.gcController()->makeWindowObject(context);
     injectedBundle.eventSendingController()->makeWindowObject(context);
     injectedBundle.textInputController()->makeWindowObject(context);
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     injectedBundle.accessibilityController()->makeWindowObject(context);
 #endif
 
@@ -1056,10 +1067,11 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
             auto mainFrameURL = adoptWK(WKBundleFrameCopyURL(mainFrame));
             if (!mainFrameURL || WKStringIsEqualToUTF8CString(adoptWK(WKURLCopyString(mainFrameURL.get())).get(), "about:blank"))
                 mainFrameURL = adoptWK(WKBundleFrameCopyProvisionalURL(mainFrame));
-
-            auto mainFrameHost = adoptWK(WKURLCopyHostName(mainFrameURL.get()));
-            auto mainFrameScheme = adoptWK(WKURLCopyScheme(mainFrameURL.get()));
-            mainFrameIsExternal = isHTTPOrHTTPSScheme(mainFrameScheme.get()) && !isLocalHost(mainFrameHost.get());
+            if (mainFrameURL) {
+                auto mainFrameHost = adoptWK(WKURLCopyHostName(mainFrameURL.get()));
+                auto mainFrameScheme = adoptWK(WKURLCopyScheme(mainFrameURL.get()));
+                mainFrameIsExternal = isHTTPOrHTTPSScheme(mainFrameScheme.get()) && !isLocalHost(mainFrameHost.get());
+            }
         }
         if (!mainFrameIsExternal && !isAllowedHost(host.get())) {
             injectedBundle.outputText(makeString("Blocked access to external URL ", urlString.get(), '\n'));
@@ -1642,28 +1654,65 @@ bool InjectedBundlePage::supportsFullScreen(WKBundlePageRef pageRef, WKFullScree
 
 void InjectedBundlePage::enterFullScreenForElement(WKBundlePageRef pageRef, WKBundleNodeHandleRef elementRef)
 {
+    ASSERT(bundlePageMap().contains(pageRef));
+    if (auto* injectedBundlePage = bundlePageMap().get(pageRef))
+        injectedBundlePage->enterFullScreenForElement(elementRef);
+}
+
+void InjectedBundlePage::enterFullScreenForElement(WKBundleNodeHandleRef elementRef)
+{
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFullScreenCallbacks())
         injectedBundle.outputText("enterFullScreenForElement()\n");
 
+    if (m_fullscreenState == EnteringFullscreen)
+        return;
+    m_fullscreenState = EnteringFullscreen;
+
     if (!injectedBundle.testRunner()->hasCustomFullScreenBehavior()) {
-        WKBundlePageWillEnterFullScreen(pageRef);
-        WKBundlePageDidEnterFullScreen(pageRef);
+        WKBundlePageWillEnterFullScreen(m_page);
+        if (m_fullscreenState != EnteringFullscreen)
+            return;
+
+        WKBundlePageDidEnterFullScreen(m_page);
+        if (m_fullscreenState != EnteringFullscreen)
+            return;
+
     } else
         injectedBundle.testRunner()->callEnterFullscreenForElementCallback();
+
+    m_fullscreenState = InFullscreen;
 }
 
 void InjectedBundlePage::exitFullScreenForElement(WKBundlePageRef pageRef, WKBundleNodeHandleRef elementRef)
+{
+    ASSERT(bundlePageMap().contains(pageRef));
+    if (auto* injectedBundlePage = bundlePageMap().get(pageRef))
+        injectedBundlePage->exitFullScreenForElement(elementRef);
+}
+
+void InjectedBundlePage::exitFullScreenForElement(WKBundleNodeHandleRef elementRef)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (injectedBundle.testRunner()->shouldDumpFullScreenCallbacks())
         injectedBundle.outputText("exitFullScreenForElement()\n");
 
+    if (m_fullscreenState == ExitingFullscreen)
+        return;
+    m_fullscreenState = ExitingFullscreen;
+
     if (!injectedBundle.testRunner()->hasCustomFullScreenBehavior()) {
-        WKBundlePageWillExitFullScreen(pageRef);
-        WKBundlePageDidExitFullScreen(pageRef);
+        WKBundlePageWillExitFullScreen(m_page);
+        if (m_fullscreenState != ExitingFullscreen)
+            return;
+
+        WKBundlePageDidExitFullScreen(m_page);
+        if (m_fullscreenState != ExitingFullscreen)
+            return;
     } else
         injectedBundle.testRunner()->callExitFullscreenForElementCallback();
+
+    m_fullscreenState = NotInFullscreen;
 }
 
 void InjectedBundlePage::beganEnterFullScreen(WKBundlePageRef, WKRect, WKRect)

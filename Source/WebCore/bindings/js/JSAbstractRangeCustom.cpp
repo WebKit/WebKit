@@ -39,7 +39,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<AbstractRange>&& range)
 {
-    if (is<StaticRange>(range.get()))
+    if (is<StaticRange>(range))
         return createWrapper<StaticRange>(globalObject, WTFMove(range));
     return createWrapper<Range>(globalObject, WTFMove(range));
 }

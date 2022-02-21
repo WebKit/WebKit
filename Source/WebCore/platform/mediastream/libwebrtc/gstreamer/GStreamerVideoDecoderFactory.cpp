@@ -88,7 +88,7 @@ public:
         m_needsKeyframe = true;
     }
 
-    int32_t InitDecode(const webrtc::VideoCodec* codecSettings, int32_t) override
+    bool Configure(const webrtc::VideoDecoder::Settings& codecSettings) override
     {
         m_src = makeElement("appsrc");
 
@@ -96,10 +96,8 @@ public:
         auto capsfilter = CreateFilter();
         auto decoder = makeElement("decodebin");
 
-        if (codecSettings) {
-            m_width = codecSettings->width;
-            m_height = codecSettings->height;
-        }
+        m_width = codecSettings.max_render_resolution().Width();
+        m_height = codecSettings.max_render_resolution().Height();
 
         m_pipeline = makeElement("pipeline");
         connectSimpleBusMessageCallback(m_pipeline.get());
@@ -152,7 +150,7 @@ public:
             return WEBRTC_VIDEO_CODEC_ERROR;
         }
 
-        return WEBRTC_VIDEO_CODEC_OK;
+        return true;
     }
 
     int32_t RegisterDecodeCompleteCallback(webrtc::DecodedImageCallback* callback) override
@@ -242,7 +240,7 @@ public:
         auto timestamps = m_dtsPtsMap[GST_BUFFER_PTS(buffer)];
         m_dtsPtsMap.erase(GST_BUFFER_PTS(buffer));
 
-        auto frame(LibWebRTCVideoFrameFromGStreamerSample(WTFMove(sample), webrtc::kVideoRotation_0,
+        auto frame(convertGStreamerSampleToLibWebRTCVideoFrame(sample, webrtc::kVideoRotation_0,
             timestamps.timestamp, timestamps.renderTimeMs));
 
         GST_BUFFER_DTS(buffer) = GST_CLOCK_TIME_NONE;
@@ -330,12 +328,12 @@ class H264Decoder : public GStreamerVideoDecoder {
 public:
     H264Decoder() { m_requireParse = true; }
 
-    int32_t InitDecode(const webrtc::VideoCodec* codecInfo, int32_t nCores) final
+    bool Configure(const webrtc::VideoDecoder::Settings& codecSettings) final
     {
-        if (codecInfo && codecInfo->codecType != webrtc::kVideoCodecH264)
+        if (codecSettings.codec_type() != webrtc::kVideoCodecH264)
             return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
 
-        return GStreamerVideoDecoder::InitDecode(codecInfo, nCores);
+        return GStreamerVideoDecoder::Configure(codecSettings);
     }
 
     GstCaps* GetCapsForFrame(const webrtc::EncodedImage& image) final
@@ -369,11 +367,12 @@ public:
     static std::unique_ptr<webrtc::VideoDecoder> Create()
     {
         auto factory = GstDecoderFactory("video/x-vp8");
-
-        if (factory && !g_strcmp0(GST_OBJECT_NAME(GST_OBJECT(factory.get())), "vp8dec")) {
-            GST_INFO("Our best GStreamer VP8 decoder is vp8dec, better use the one from LibWebRTC");
-
-            return std::unique_ptr<webrtc::VideoDecoder>(new webrtc::LibvpxVp8Decoder());
+        if (!factory) {
+            const auto* factoryName = GST_OBJECT_NAME(GST_OBJECT(factory.get()));
+            if (!g_strcmp0(factoryName, "vp8dec") || !g_strcmp0(factoryName, "vp8alphadecodebin")) {
+                GST_INFO("Our best GStreamer VP8 decoder is vp8dec, better use the one from LibWebRTC");
+                return std::unique_ptr<webrtc::VideoDecoder>(new webrtc::LibvpxVp8Decoder());
+            }
         }
 
         return std::unique_ptr<webrtc::VideoDecoder>(new VP8Decoder());

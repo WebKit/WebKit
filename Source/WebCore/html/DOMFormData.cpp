@@ -31,12 +31,13 @@
 #include "config.h"
 #include "DOMFormData.h"
 
+#include "Document.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 
 namespace WebCore {
 
-DOMFormData::DOMFormData(const TextEncoding& encoding)
+DOMFormData::DOMFormData(const PAL::TextEncoding& encoding)
     : m_encoding(encoding)
 {
 }
@@ -47,7 +48,7 @@ ExceptionOr<Ref<DOMFormData>> DOMFormData::create(HTMLFormElement* form)
     if (!form)
         return formData;
     
-    auto result = form->constructEntryList(WTFMove(formData), nullptr, HTMLFormElement::IsMultipartForm::Yes);
+    auto result = form->constructEntryList(WTFMove(formData), nullptr);
     
     if (!result)
         return Exception { InvalidStateError, "Already constructing Form entry list."_s };
@@ -55,7 +56,7 @@ ExceptionOr<Ref<DOMFormData>> DOMFormData::create(HTMLFormElement* form)
     return result.releaseNonNull();
 }
 
-Ref<DOMFormData> DOMFormData::create(const TextEncoding& encoding)
+Ref<DOMFormData> DOMFormData::create(const PAL::TextEncoding& encoding)
 {
     return adoptRef(*new DOMFormData(encoding));
 }
@@ -68,21 +69,32 @@ Ref<DOMFormData> DOMFormData::clone() const
     return newFormData;
 }
 
-// https://xhr.spec.whatwg.org/#create-an-entry
-auto DOMFormData::createFileEntry(const String& name, Blob& blob, const String& filename) -> Item
+// https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#create-an-entry
+static auto createStringEntry(const String& name, const String& value) -> DOMFormData::Item
 {
-    if (!blob.isFile())
-        return { name, File::create(blob.scriptExecutionContext(), blob, filename.isNull() ? "blob"_s : filename) };
-    
-    if (!filename.isNull())
-        return { name, File::create(blob.scriptExecutionContext(), downcast<File>(blob), filename) };
+    return {
+        replaceUnpairedSurrogatesWithReplacementCharacter(String(name)),
+        replaceUnpairedSurrogatesWithReplacementCharacter(String(value)),
+    };
+}
 
-    return { name, RefPtr<File> { &downcast<File>(blob) } };
+// https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#create-an-entry
+static auto createFileEntry(const String& name, Blob& blob, const String& filename) -> DOMFormData::Item
+{
+    auto usvName = replaceUnpairedSurrogatesWithReplacementCharacter(String(name));
+
+    if (!blob.isFile())
+        return { usvName, File::create(blob.scriptExecutionContext(), blob, filename.isNull() ? "blob"_s : filename) };
+
+    if (!filename.isNull())
+        return { usvName, File::create(blob.scriptExecutionContext(), downcast<File>(blob), filename) };
+
+    return { usvName, RefPtr<File> { &downcast<File>(blob) } };
 }
 
 void DOMFormData::append(const String& name, const String& value)
 {
-    m_items.append({ name, value });
+    m_items.append(createStringEntry(name, value));
 }
 
 void DOMFormData::append(const String& name, Blob& blob, const String& filename)

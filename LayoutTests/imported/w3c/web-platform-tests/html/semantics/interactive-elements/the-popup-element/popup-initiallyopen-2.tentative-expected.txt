@@ -1,0 +1,4 @@
+Outer popup Inner popup
+
+FAIL The initiallyopen attribute should cause only the first popup to open assert_true: The first (outermost) popup should be the one that opens in this case expected true got undefined
+

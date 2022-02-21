@@ -31,8 +31,8 @@
 #include <JavaScriptCore/ScriptCallFrame.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <initializer_list>
+#include <variant>
 #include <wtf/HashSet.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -106,7 +106,7 @@ private:
 
     void appendActionSnapshotIfNeeded();
 
-    using DuplicateDataVariant = Variant<
+    using DuplicateDataVariant = std::variant<
         RefPtr<CanvasGradient>,
         RefPtr<CanvasPattern>,
         RefPtr<HTMLCanvasElement>,
@@ -138,9 +138,9 @@ private:
 
     String m_identifier;
 
-    Variant<
+    std::variant<
         std::reference_wrapper<CanvasRenderingContext>,
-        Monostate
+        std::monostate
     > m_context;
 
     RefPtr<Inspector::Protocol::Recording::InitialState> m_initialState;

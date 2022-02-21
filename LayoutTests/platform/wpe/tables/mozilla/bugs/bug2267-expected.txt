@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 112x17
                 text run at (2,2) width 112: "Click name to see"
             RenderTableCell {TD} at (126,18) size 92x23 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 88x18
-                text run at (2,3) width 88: "Mac Clbr Opt"
+              RenderText {#text} at (2,1) size 88x19
+                text run at (2,2) width 88: "Mac Clbr Opt"
           RenderTableRow {TR} at (0,32) size 223x22
             RenderTableCell {TD} at (5,32) size 116x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 40x17
@@ -49,8 +49,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 112x17
                   text run at (2,2) width 112: "Click name to see"
               RenderTableCell {TD} at (126,45) size 92x23 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 88x18
-                  text run at (2,3) width 88: "Mac Clbr Opt"
+                RenderText {#text} at (2,1) size 88x19
+                  text run at (2,2) width 88: "Mac Clbr Opt"
             RenderTableRow {TR} at (0,59) size 223x22
               RenderTableCell {TD} at (5,59) size 116x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 40x17

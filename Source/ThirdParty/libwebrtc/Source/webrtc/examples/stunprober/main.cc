@@ -21,6 +21,7 @@
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/network.h"
+#include "rtc_base/physical_socket_server.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/ssl_adapter.h"
 #include "rtc_base/thread.h"
@@ -122,23 +123,23 @@ int main(int argc, char* argv[]) {
 
   rtc::InitializeSSL();
   rtc::InitRandom(rtc::Time32());
-  rtc::Thread* thread = rtc::ThreadManager::Instance()->WrapCurrentThread();
-  std::unique_ptr<rtc::BasicPacketSocketFactory> socket_factory(
-      new rtc::BasicPacketSocketFactory());
+  rtc::PhysicalSocketServer socket_server;
+  rtc::AutoSocketServerThread thread(&socket_server);
+  auto socket_factory =
+      std::make_unique<rtc::BasicPacketSocketFactory>(&socket_server);
   std::unique_ptr<rtc::BasicNetworkManager> network_manager(
       new rtc::BasicNetworkManager());
   rtc::NetworkManager::NetworkList networks;
   network_manager->GetNetworks(&networks);
-  StunProber* prober =
-      new StunProber(socket_factory.get(), rtc::Thread::Current(), networks);
-  auto finish_callback = [thread](StunProber* prober, int result) {
-    StopTrial(thread, prober, result);
+  auto prober = std::make_unique<StunProber>(socket_factory.get(),
+                                             rtc::Thread::Current(), networks);
+  auto finish_callback = [&thread](StunProber* prober, int result) {
+    StopTrial(&thread, prober, result);
   };
   prober->Start(server_addresses, absl::GetFlag(FLAGS_shared_socket),
                 absl::GetFlag(FLAGS_interval),
                 absl::GetFlag(FLAGS_pings_per_ip), absl::GetFlag(FLAGS_timeout),
                 AsyncCallback(finish_callback));
-  thread->Run();
-  delete prober;
+  thread.Run();
   return 0;
 }

@@ -349,7 +349,7 @@ Region AffineTransform::mapRegion(const Region& region) const
     return mappedRegion;
 }
 
-void AffineTransform::blend(const AffineTransform& from, double progress)
+void AffineTransform::blend(const AffineTransform& from, double progress, CompositeOperation compositeOperation)
 {
     DecomposedType srA, srB;
 
@@ -383,6 +383,18 @@ void AffineTransform::blend(const AffineTransform& from, double progress)
     srA.remainderD += progress * (srB.remainderD - srA.remainderD);
     srA.translateX += progress * (srB.translateX - srA.translateX);
     srA.translateY += progress * (srB.translateY - srA.translateY);
+
+    if (compositeOperation != CompositeOperation::Replace) {
+        srA.scaleX += srA.scaleX;
+        srA.scaleY += srA.scaleY;
+        srA.angle += srA.angle;
+        srA.remainderA += srA.remainderA;
+        srA.remainderB += srA.remainderB;
+        srA.remainderC += srA.remainderC;
+        srA.remainderD += srA.remainderD;
+        srA.translateX += srA.translateX;
+        srA.translateY += srA.translateY;
+    }
 
     this->recompose(srA);
 }

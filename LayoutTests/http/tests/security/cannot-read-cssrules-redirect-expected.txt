@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Cross-origin redirection to http://127.0.0.1:8000/security/resources/xorigincss1.css denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Cross-origin redirection to http://127.0.0.1:8000/security/resources/xorigincss1.css denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin. Status code: 302
 This test whether a script can read the rules from a cross-origin style sheet in the presence of redirects. For more information on why we block this, please see https://bugs.webkit.org/show_bug.cgi?id=20527.
 
 Test begins.

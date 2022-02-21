@@ -34,6 +34,21 @@
 #import <mach/task.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/SoftLinking.h>
+
+#if ENABLE(CFPREFS_DIRECT_MODE)
+#import "AccessibilitySupportSPI.h"
+#import <pal/spi/cocoa/AccessibilitySupportSPI.h>
+#endif
+
+#if PLATFORM(MAC)
+#import <pal/spi/mac/HIServicesSPI.h>
+#endif
+
+#if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE)
+SOFT_LINK_LIBRARY(libAccessibility)
+SOFT_LINK_OPTIONAL(libAccessibility, _AXSUpdateWebAccessibilitySettings, void, (), ());
+#endif
 
 namespace WebKit {
 
@@ -63,6 +78,7 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
 
     WebCore::setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
     setApplicationSDKVersion(parameters.clientSDKVersion);
+    setLinkedOnOrAfterOverride(parameters.clientLinkedOnOrAfterOverride);
 }
 
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)
@@ -129,5 +145,88 @@ void AuxiliaryProcess::registerWithStateDumper(ASCIILiteral title)
 }
 
 #endif // USE(OS_STATE)
+
+#if ENABLE(CFPREFS_DIRECT_MODE)
+id AuxiliaryProcess::decodePreferenceValue(const std::optional<String>& encodedValue)
+{
+    if (!encodedValue)
+        return nil;
+    
+    auto encodedData = adoptNS([[NSData alloc] initWithBase64EncodedString:*encodedValue options:0]);
+    if (!encodedData)
+        return nil;
+    NSError *err = nil;
+    auto classes = [NSSet setWithArray:@[[NSString class], [NSNumber class], [NSDate class], [NSDictionary class], [NSArray class], [NSData class]]];
+    id value = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:encodedData.get() error:&err];
+    ASSERT(!err);
+    if (err)
+        return nil;
+
+    return value;
+}
+
+void AuxiliaryProcess::setPreferenceValue(const String& domain, const String& key, id value)
+{
+    if (domain.isEmpty()) {
+        CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+#if ASSERT_ENABLED
+        id valueAfterSetting = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+        ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value] || key == "AppleLanguages");
+#endif
+    } else
+        CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+}
+
+void AuxiliaryProcess::preferenceDidUpdate(const String& domain, const String& key, const std::optional<String>& encodedValue)
+{
+    id value = nil;
+    if (encodedValue) {
+        value = decodePreferenceValue(encodedValue);
+        if (!value)
+            return;
+    }
+    setPreferenceValue(domain, key, value);
+    handlePreferenceChange(domain, key, value);
+}
+
+#if !HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && PLATFORM(IOS_FAMILY)
+static const WTF::String& increaseContrastPreferenceKey()
+{
+    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("DarkenSystemColors"));
+    return key;
+}
+#endif
+
+void AuxiliaryProcess::handlePreferenceChange(const String& domain, const String& key, id value)
+{
+    if (domain == String(kAXSAccessibilityPreferenceDomain)) {
+#if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS)
+        if (_AXSUpdateWebAccessibilitySettingsPtr())
+            _AXSUpdateWebAccessibilitySettingsPtr()();
+#elif PLATFORM(IOS_FAMILY)
+        // If the update method is not available, to update the cache inside AccessibilitySupport,
+        // these methods need to be called directly.
+        if (CFEqual(key.createCFString().get(), kAXSReduceMotionPreference) && [value isKindOfClass:[NSNumber class]])
+            _AXSSetReduceMotionEnabled([(NSNumber *)value boolValue]);
+        else if (CFEqual(key.createCFString().get(), increaseContrastPreferenceKey()) && [value isKindOfClass:[NSNumber class]])
+            _AXSSetDarkenSystemColors([(NSNumber *)value boolValue]);
+#endif
+    }
+
+    dispatchSimulatedNotificationsForPreferenceChange(key);
+}
+
+#endif // ENABLE(CFPREFS_DIRECT_MODE)
+
+void AuxiliaryProcess::setApplicationIsDaemon()
+{
+#if PLATFORM(MAC)
+    // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
+    OSStatus error = SetApplicationIsDaemon(true);
+    ASSERT_UNUSED(error, error == noErr);
+#elif PLATFORM(MACCATALYST)
+    CGSSetDenyWindowServerConnections(true);
+#endif
+}
 
 } // namespace WebKit

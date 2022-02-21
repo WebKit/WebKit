@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2015, 2016 Canon Inc. All rights reserved.
- *  Copyright (C) 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,13 +39,12 @@ public:
     static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES construct(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 private:
-    JSDOMConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
-        : Base(structure, globalObject)
+    JSDOMConstructor(JSC::VM& vm, JSC::Structure* structure)
+        : Base(vm, structure, construct)
     {
     }
 
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
-    static JSC::CallData getConstructData(JSC::JSCell*);
 
     // Usually defined for each specialization class.
     void initializeProperties(JSC::VM&, JSDOMGlobalObject&) { }
@@ -53,14 +52,14 @@ private:
 
 template<typename JSClass> inline JSDOMConstructor<JSClass>* JSDOMConstructor<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
-    JSDOMConstructor* constructor = new (NotNull, JSC::allocateCell<JSDOMConstructor>(vm.heap)) JSDOMConstructor(structure, globalObject);
+    JSDOMConstructor* constructor = new (NotNull, JSC::allocateCell<JSDOMConstructor>(vm)) JSDOMConstructor(vm, structure);
     constructor->finishCreation(vm, globalObject);
     return constructor;
 }
 
 template<typename JSClass> inline JSC::Structure* JSDOMConstructor<JSClass>::createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
 {
-    return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+    return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::InternalFunctionType, StructureFlags), info());
 }
 
 template<typename JSClass> inline void JSDOMConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
@@ -69,14 +68,5 @@ template<typename JSClass> inline void JSDOMConstructor<JSClass>::finishCreation
     ASSERT(inherits(vm, info()));
     initializeProperties(vm, globalObject);
 }
-
-template<typename JSClass> inline JSC::CallData JSDOMConstructor<JSClass>::getConstructData(JSC::JSCell*)
-{
-    JSC::CallData constructData;
-    constructData.type = JSC::CallData::Type::Native;
-    constructData.native.function = construct;
-    return constructData;
-}
-
 
 } // namespace WebCore

@@ -35,6 +35,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -53,12 +54,16 @@ struct CrossThreadCopierBaseHelper {
         typedef T Type;
     };
 
+    template<typename T> struct RemovePointer<Ref<T>> {
+        typedef T Type;
+    };
+
     template<typename T> struct IsEnumOrConvertibleToInteger {
         static constexpr bool value = std::is_integral<T>::value || std::is_enum<T>::value || std::is_convertible<T, long double>::value;
     };
 
     template<typename T> struct IsThreadSafeRefCountedPointer {
-        static constexpr bool value = std::is_convertible<typename RemovePointer<T>::Type*, ThreadSafeRefCounted<typename RemovePointer<T>::Type>*>::value;
+        static constexpr bool value = std::is_convertible<typename RemovePointer<T>::Type*, ThreadSafeRefCountedBase*>::value;
     };
 };
 
@@ -87,7 +92,7 @@ template<class T> struct CrossThreadCopierBase<false, false, T> {
 // Custom copy methods.
 template<typename T> struct CrossThreadCopierBase<false, true, T> {
     typedef typename CrossThreadCopierBaseHelper::RemovePointer<T>::Type RefCountedType;
-    static_assert(std::is_convertible<RefCountedType*, ThreadSafeRefCounted<RefCountedType>*>::value, "T is not convertible to ThreadSafeRefCounted!");
+    static_assert(std::is_convertible<RefCountedType*, ThreadSafeRefCountedBase*>::value, "T is not convertible to ThreadSafeRefCounted!");
 
     typedef RefPtr<RefCountedType> Type;
     static Type copy(const T& refPtr)
@@ -96,8 +101,26 @@ template<typename T> struct CrossThreadCopierBase<false, true, T> {
     }
 };
 
+template<typename T> struct CrossThreadCopierBase<false, true, Ref<T>> {
+    static_assert(std::is_convertible<T*, ThreadSafeRefCountedBase*>::value, "T is not convertible to ThreadSafeRefCounted!");
+
+    typedef Ref<T> Type;
+    static Type copy(const Type& ref)
+    {
+        return ref;
+    }
+};
+
 template<> struct CrossThreadCopierBase<false, false, WTF::ASCIILiteral> {
     typedef WTF::ASCIILiteral Type;
+    static Type copy(const Type& source)
+    {
+        return source;
+    }
+};
+
+template<typename T> struct CrossThreadCopierBase<false, false, ObjectIdentifier<T>> {
+    typedef ObjectIdentifier<T> Type;
     static Type copy(const Type& source)
     {
         return source;
@@ -154,13 +177,23 @@ template<typename F, typename S> struct CrossThreadCopierBase<false, false, std:
     }
 };
 
-// Default specialization for Optional of CrossThreadCopyable class.
+// Default specialization for std::optional of CrossThreadCopyable class.
 template<typename T> struct CrossThreadCopierBase<false, false, std::optional<T>> {
     template<typename U> static std::optional<T> copy(U&& source)
     {
         if (!source)
             return std::nullopt;
         return CrossThreadCopier<T>::copy(std::forward<U>(source).value());
+    }
+};
+
+// Default specialization for std::variant of CrossThreadCopyable classes.
+template<typename... Types> struct CrossThreadCopierBase<false, false, std::variant<Types...>> {
+    template<typename U> static std::variant<Types...> copy(U&& source)
+    {
+        return std::visit([] (auto& type) -> std::variant<Types...> {
+            return CrossThreadCopier<std::remove_const_t<std::remove_reference_t<decltype(type)>>>::copy(type);
+        }, std::forward<U>(source));
     }
 };
 

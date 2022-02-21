@@ -23,7 +23,7 @@ namespace webrtc {
 class IceServerParsingTest : public ::testing::Test {
  public:
   // Convenience functions for parsing a single URL. Result is stored in
-  // |stun_servers_| and |turn_servers_|.
+  // `stun_servers_` and `turn_servers_`.
   bool ParseUrl(const std::string& url) {
     return ParseUrl(url, std::string(), std::string());
   }

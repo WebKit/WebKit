@@ -32,8 +32,8 @@
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
-#import <WebCore/TextEncoding.h>
 #import <pal/spi/cocoa/NSURLConnectionSPI.h>
+#import <pal/text/TextEncoding.h>
 #import <wtf/URL.h>
 
 using namespace WebKit;

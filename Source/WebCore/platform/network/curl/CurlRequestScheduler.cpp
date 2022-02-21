@@ -64,7 +64,7 @@ void CurlRequestScheduler::cancel(CurlRequestSchedulerClient* client)
     cancelTransfer(client);
 }
 
-void CurlRequestScheduler::callOnWorkerThread(WTF::Function<void()>&& task)
+void CurlRequestScheduler::callOnWorkerThread(Function<void()>&& task)
 {
     {
         Locker locker { m_mutex };
@@ -137,7 +137,7 @@ void CurlRequestScheduler::executeTasks()
 {
     ASSERT(!isMainThread());
 
-    Vector<WTF::Function<void()>> taskQueue;
+    Vector<Function<void()>> taskQueue;
 
     {
         Locker locker { m_mutex };

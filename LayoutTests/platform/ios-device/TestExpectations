@@ -99,8 +99,6 @@ js/stringimpl-to-jsstring-on-large-strings-3.html [ Crash ]
 
 loader/go-back-to-different-window-size.html [ Crash ]
 
-media/video-canvas-createPattern.html [ Failure ]
-media/video-canvas-drawing-output.html [ Failure ]
 media/video-load-preload-metadata.html [ Failure ]
 media/video-played-collapse.html [ Failure ]
 media/video-played-reset.html [ Failure ]

@@ -4,7 +4,7 @@ layer at (0,0) size 128x128
   RenderSVGRoot {svg} at (0,0) size 106x106
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="dropShadow"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-        [feDropShadow stdDeviation="2.00, 2.00" dx="3.00" dy="3.00" flood-color="#000000" flood-opacity="1.00]
+        [feDropShadow stdDeviation="2.00, 2.00" dx="3.00" dy="3.00" flood-color="#000000" flood-opacity="1.00"]
           [SourceGraphic]
     RenderSVGContainer {g} at (0,0) size 106x106
       [filter="dropShadow"] RenderSVGResourceFilter {filter} at (-9.60,-9.60) size 115.20x115.20

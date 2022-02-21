@@ -25,13 +25,14 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
+#include "CompositeOperation.h"
 #include <wtf/Vector.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
-class Element;
+class KeyframeEffect;
 class RenderStyle;
 class TimingFunction;
 
@@ -60,11 +61,15 @@ public:
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     void setTimingFunction(const RefPtr<TimingFunction>& timingFunction) { m_timingFunction = timingFunction; }
 
+    std::optional<CompositeOperation> compositeOperation() const { return m_compositeOperation; }
+    void setCompositeOperation(std::optional<CompositeOperation> op) { m_compositeOperation = op; }
+
 private:
     double m_key;
     HashSet<CSSPropertyID> m_properties; // The properties specified in this keyframe.
     std::unique_ptr<RenderStyle> m_style;
     RefPtr<TimingFunction> m_timingFunction;
+    std::optional<CompositeOperation> m_compositeOperation;
 };
 
 class KeyframeList {
@@ -86,16 +91,19 @@ public:
     void addProperty(CSSPropertyID prop) { m_properties.add(prop); }
     bool containsProperty(CSSPropertyID prop) const { return m_properties.contains(prop); }
     const HashSet<CSSPropertyID>& properties() const { return m_properties; }
-    
+    bool containsAnimatableProperty() const;
+
     void clear();
     bool isEmpty() const { return m_keyframes.isEmpty(); }
     size_t size() const { return m_keyframes.size(); }
     const KeyframeValue& operator[](size_t index) const { return m_keyframes[index]; }
-    const Vector<KeyframeValue>& keyframes() const { return m_keyframes; }
 
     void copyKeyframes(KeyframeList&);
     bool hasImplicitKeyframes() const;
-    void fillImplicitKeyframes(const Element&, Style::Resolver&, const RenderStyle* elementStyle, const RenderStyle* parentElementStyle);
+    void fillImplicitKeyframes(const KeyframeEffect&, const RenderStyle& elementStyle);
+
+    auto begin() const { return m_keyframes.begin(); }
+    auto end() const { return m_keyframes.end(); }
 
 private:
     AtomString m_animationName;

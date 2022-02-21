@@ -15,37 +15,37 @@ function func() {}
 
 assert.throws(TypeError, function() {
   return func.caller;
-});
+}, 'return func.caller throws a TypeError exception');
 
 assert.throws(TypeError, function() {
   func.caller = {};
-});
+}, 'func.caller = {} throws a TypeError exception');
 
 assert.throws(TypeError, function() {
   return func.arguments;
-});
+}, 'return func.arguments throws a TypeError exception');
 
 assert.throws(TypeError, function() {
   func.arguments = {};
-});
+}, 'func.arguments = {} throws a TypeError exception');
 
 var newfunc = new Function('"use strict"');
 
-assert.sameValue(newfunc.hasOwnProperty('caller'), false, 'strict Functions created using Function constructor do not have own property "caller"');
-assert.sameValue(newfunc.hasOwnProperty('arguments'), false, 'strict Functions created using Function constructor do not have own property "arguments"');
+assert.sameValue(newfunc.hasOwnProperty('caller'), false, 'newfunc.hasOwnProperty(\'caller\') must return false');
+assert.sameValue(newfunc.hasOwnProperty('arguments'), false, 'newfunc.hasOwnProperty(\'arguments\') must return false');
 
 assert.throws(TypeError, function() {
   return newfunc.caller;
-});
+}, 'return newfunc.caller throws a TypeError exception');
 
 assert.throws(TypeError, function() {
   newfunc.caller = {};
-});
+}, 'newfunc.caller = {} throws a TypeError exception');
 
 assert.throws(TypeError, function() {
   return newfunc.arguments;
-});
+}, 'return newfunc.arguments throws a TypeError exception');
 
 assert.throws(TypeError, function() {
   newfunc.arguments = {};
-});
+}, 'newfunc.arguments = {} throws a TypeError exception');

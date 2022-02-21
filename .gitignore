@@ -9,6 +9,7 @@
 autoinstall.cache.d
 project.xcworkspace
 xcuserdata
+DerivedData
 .mailmap
 
 # Ignore Buildstream local files
@@ -34,6 +35,7 @@ tags
 .cache
 .clangd
 compile_commands.json
+__pycache__
 
 # Ignore CMake caches outside of the build directory.
 __cmake_systeminformation/

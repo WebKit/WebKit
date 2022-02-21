@@ -71,7 +71,7 @@ struct RTC_EXPORT MacDesktopConfiguration {
   // Returns true if the given desktop configuration equals this one.
   bool Equals(const MacDesktopConfiguration& other);
 
-  // If |id| corresponds to the built-in display, return its configuration,
+  // If `id` corresponds to the built-in display, return its configuration,
   // otherwise return the configuration for the display with the specified id,
   // or nullptr if no such display exists.
   const MacDisplayConfiguration* FindDisplayConfigurationById(

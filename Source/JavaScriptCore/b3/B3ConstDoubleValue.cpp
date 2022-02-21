@@ -138,6 +138,20 @@ Value* ConstDoubleValue::modConstant(Procedure& proc, const Value* other) const
     return proc.add<ConstDoubleValue>(origin(), fmod(m_value, other->asDouble()));
 }
 
+Value* ConstDoubleValue::fMinConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasDouble())
+        return nullptr;
+    return proc.add<ConstDoubleValue>(origin(), fMin(m_value, other->asDouble()));
+}
+
+Value* ConstDoubleValue::fMaxConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasDouble())
+        return nullptr;
+    return proc.add<ConstDoubleValue>(origin(), fMax(m_value, other->asDouble()));
+}
+
 TriState ConstDoubleValue::equalConstant(const Value* other) const
 {
     if (!other->hasDouble())

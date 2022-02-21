@@ -40,7 +40,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 
     encoder << canBeValid;
     encoder << nodeAtPositionHasDoubleClickHandler;
-    encoder << isSelectable;
+    encoder << selectability;
     encoder << isSelected;
     encoder << prefersDraggingOverTextSelection;
     encoder << isNearMarkedText;
@@ -49,12 +49,14 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << isImage;
     encoder << isAttachment;
     encoder << isAnimatedImage;
+    encoder << isPausedVideo;
     encoder << isElement;
     encoder << isContentEditable;
     encoder << containerScrollingNodeID;
     encoder << adjustedPointForNodeRespondingToClickEvents;
     encoder << url;
     encoder << imageURL;
+    encoder << imageMIMEType;
     encoder << title;
     encoder << idAttribute;
     encoder << bounds;
@@ -81,11 +83,12 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 #if ENABLE(DATALIST_ELEMENT)
     encoder << preventTextInteraction;
 #endif
+    encoder << elementContainsImageOverlay;
     encoder << shouldNotUseIBeamInEditableContent;
     encoder << isImageOverlayText;
     encoder << isVerticalWritingMode;
     encoder << elementContext;
-    encoder << imageElementContext;
+    encoder << hostImageOrVideoElementContext;
 }
 
 bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, InteractionInformationAtPosition& result)
@@ -99,7 +102,7 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.nodeAtPositionHasDoubleClickHandler))
         return false;
 
-    if (!decoder.decode(result.isSelectable))
+    if (!decoder.decode(result.selectability))
         return false;
 
     if (!decoder.decode(result.isSelected))
@@ -125,6 +128,9 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     
     if (!decoder.decode(result.isAnimatedImage))
         return false;
+
+    if (!decoder.decode(result.isPausedVideo))
+        return false;
     
     if (!decoder.decode(result.isElement))
         return false;
@@ -142,6 +148,9 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         return false;
 
     if (!decoder.decode(result.imageURL))
+        return false;
+
+    if (!decoder.decode(result.imageMIMEType))
         return false;
 
     if (!decoder.decode(result.title))
@@ -208,6 +217,9 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         return false;
 #endif
 
+    if (!decoder.decode(result.elementContainsImageOverlay))
+        return false;
+
     if (!decoder.decode(result.shouldNotUseIBeamInEditableContent))
         return false;
 
@@ -220,7 +232,7 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.elementContext))
         return false;
 
-    if (!decoder.decode(result.imageElementContext))
+    if (!decoder.decode(result.hostImageOrVideoElementContext))
         return false;
 
     return true;

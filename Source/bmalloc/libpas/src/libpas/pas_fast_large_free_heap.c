@@ -51,7 +51,7 @@ static PAS_ALWAYS_INLINE int key_compare_callback(void* raw_left,
 
 static PAS_ALWAYS_INLINE void* get_x_key_callback(pas_cartesian_tree_node* node)
 {
-    return (void*)((pas_fast_large_free_heap_node*)node)->free.begin;
+    return (void*)((uintptr_t)((pas_fast_large_free_heap_node*)node)->free.begin);
 }
 
 static PAS_ALWAYS_INLINE void* get_y_key_callback(pas_cartesian_tree_node* node)
@@ -90,7 +90,7 @@ static void insert_node(pas_fast_large_free_heap* heap,
     initialize_cartesian_config(&cartesian_config);
     pas_cartesian_tree_insert(
         &heap->tree,
-        (void*)new_free.begin,
+        (void*)((uintptr_t)new_free.begin),
         (void*)pas_large_free_size(new_free),
         &node->tree_node,
         &cartesian_config);
@@ -118,7 +118,7 @@ static void dump_heap(pas_fast_large_free_heap* heap)
         
         node = (pas_fast_large_free_heap_node*)tree_node;
         
-        printf(" [%p, %p)", (void*)node->free.begin, (void*)node->free.end);
+        printf(" [%p, %p)", (void*)((uintptr_t)node->free.begin), (void*)((uintptr_t)node->free.end));
     }
     
     printf("\n");
@@ -242,7 +242,7 @@ static void fast_write_cursor(
     if (need_to_readd_to_tree) {
         pas_cartesian_tree_insert(
             &heap->tree,
-            (void*)value.begin,
+            (void*)((uintptr_t)value.begin),
             (void*)pas_large_free_size(value),
             &node->tree_node,
             &cartesian_config);
@@ -266,7 +266,7 @@ static void fast_merge(
     
     left_node = (pas_fast_large_free_heap_node*)
         pas_cartesian_tree_find_greatest_less_than(
-            &heap->tree, (void*)new_free.begin, &cartesian_config);
+            &heap->tree, (void*)((uintptr_t)new_free.begin), &cartesian_config);
     if (left_node && (
             left_node->free.end != new_free.begin
             || !pas_large_free_can_merge(left_node->free, new_free, config)))
@@ -274,7 +274,7 @@ static void fast_merge(
     
     right_node = (pas_fast_large_free_heap_node*)
         pas_cartesian_tree_find_exact(
-            &heap->tree, (void*)new_free.end, &cartesian_config);
+            &heap->tree, (void*)((uintptr_t)new_free.end), &cartesian_config);
     if (right_node && !pas_large_free_can_merge(right_node->free, new_free, config))
         right_node = NULL;
     
@@ -314,7 +314,7 @@ static void fast_merge(
         if (need_to_readd_to_tree) {
             pas_cartesian_tree_insert(
                 &heap->tree,
-                (void*)merger.begin,
+                (void*)((uintptr_t)merger.begin),
                 (void*)pas_large_free_size(merger),
                 &left_node->tree_node,
                 &cartesian_config);
@@ -330,7 +330,7 @@ static void fast_merge(
         
         pas_cartesian_tree_insert(
             &heap->tree,
-            (void*)merger.begin,
+            (void*)((uintptr_t)merger.begin),
             (void*)pas_large_free_size(merger),
             &right_node->tree_node,
             &cartesian_config);
@@ -414,7 +414,10 @@ pas_allocation_result pas_fast_large_free_heap_try_allocate(pas_fast_large_free_
                                                             pas_alignment alignment,
                                                             pas_large_free_heap_config* config)
 {
+    static const bool verbose = false;
     pas_generic_large_free_heap_config generic_heap_config;
+    if (verbose)
+        pas_log("heap %p allocating %zu, alignment %zu\n", heap, size, alignment.alignment);
     initialize_generic_heap_config(&generic_heap_config);
     return pas_generic_large_free_heap_try_allocate(
         (pas_generic_large_free_heap*)heap,
@@ -428,7 +431,10 @@ void pas_fast_large_free_heap_deallocate(pas_fast_large_free_heap* heap,
                                          pas_zero_mode zero_mode,
                                          pas_large_free_heap_config* config)
 {
+    static const bool verbose = false;
     pas_generic_large_free_heap_config generic_heap_config;
+    if (verbose)
+        pas_log("heap %p deallocating %p of size %zu\n", heap, (void*)begin, end - begin);
     initialize_generic_heap_config(&generic_heap_config);
     pas_generic_large_free_heap_merge_physical(
         (pas_generic_large_free_heap*)heap,

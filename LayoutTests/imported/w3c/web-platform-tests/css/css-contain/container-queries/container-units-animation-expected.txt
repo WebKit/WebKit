@@ -1,0 +1,14 @@
+
+FAIL Animation using qw unit assert_equals: expected "60px" but got "auto"
+FAIL Animation using qw unit responds to changing container size assert_equals: expected "60px" but got "auto"
+FAIL Animation using qh unit assert_equals: expected "60px" but got "auto"
+FAIL Animation using qh unit responds to changing container size assert_equals: expected "60px" but got "auto"
+FAIL Animation using qi unit assert_equals: expected "60px" but got "auto"
+FAIL Animation using qi unit responds to changing container size assert_equals: expected "60px" but got "auto"
+FAIL Animation using qb unit assert_equals: expected "60px" but got "auto"
+FAIL Animation using qb unit responds to changing container size assert_equals: expected "60px" but got "auto"
+FAIL Animation using qmin unit assert_equals: expected "60px" but got "auto"
+FAIL Animation using qmin unit responds to changing container size assert_equals: expected "60px" but got "auto"
+FAIL Animation using qmax unit assert_equals: expected "60px" but got "auto"
+FAIL Animation using qmax unit responds to changing container size assert_equals: expected "60px" but got "auto"
+

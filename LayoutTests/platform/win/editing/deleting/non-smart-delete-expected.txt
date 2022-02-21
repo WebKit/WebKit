@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x56
           RenderText {#text} at (0,0) size 67x28
             text run at (0,0) width 67: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (67,0) size 0x28
           RenderText {#text} at (0,28) size 642x28
             text run at (0,28) width 642: "Non-smart delete when deleting a word selected via the keyboard."
         RenderBlock {DIV} at (14,86) size 756x112

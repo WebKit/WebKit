@@ -81,7 +81,7 @@
           return [request2.show()]
         }
       );
-      await promise_rejects(
+      await promise_rejects_dom(
         t,
         'AbortError',
         showPromise2,
@@ -89,7 +89,7 @@
       );
 
       await request1.abort();
-      await promise_rejects(
+      await promise_rejects_dom(
         t,
         'AbortError',
         showPromise1,
@@ -100,7 +100,7 @@
       // it will again result in promise rejected with an InvalidStateError.
       // See: https://github.com/w3c/payment-request/pull/821
       const [rejectedPromise] = await activateThen(async () => { return [request2.show()] });
-      await promise_rejects(
+      await promise_rejects_dom(
         t,
         'InvalidStateError',
         rejectedPromise,
@@ -137,7 +137,7 @@
         }
       );
 
-      await promise_rejects(
+      await promise_rejects_dom(
         t,
         'AbortError',
         windowShowPromise,
@@ -146,9 +146,10 @@
 
       // Cleanup
       await iframeRequest.abort();
-      await promise_rejects(
+      await promise_rejects_dom(
         t,
         'AbortError',
+        iframeWindow.DOMException,
         iframeShowPromise,
         'abort() was called');
       iframe.remove();
@@ -177,16 +178,17 @@
         }
       );
 
-      await promise_rejects(
+      await promise_rejects_dom(
         t,
         'AbortError',
+        iframeWindow.DOMException,
         iframeShowPromise,
         'The top window is already showing a payment request.',
       );
 
       // Cleanup
       await windowRequest.abort();
-      await promise_rejects(
+      await promise_rejects_dom(
         t,
         'AbortError',
         windowShowPromise,
@@ -217,15 +219,16 @@
         }
       );
 
-      await promise_rejects(
+      await promise_rejects_dom(
         t,
         'AbortError',
+        iframeWindow.DOMException,
         iframeShowPromise,
         'Expected iframeShowPromise to reject, request is already showing.',
       );
 
       await windowRequest.abort();
-      await promise_rejects(
+      await promise_rejects_dom(
         t,
         'AbortError',
         windowShowPromise,
@@ -256,7 +259,7 @@
       );
 
       // windowShowPromise and iframeRequest will both reject
-      await promise_rejects(
+      await promise_rejects_dom(
         t,
         'AbortError',
         windowShowPromise,
@@ -264,9 +267,10 @@
       );
 
       await iframeRequest.abort();
-      await promise_rejects(
+      await promise_rejects_dom(
         t,
         'AbortError',
+        iframeWindow.DOMException,
         iframeShowPromise,
         'abort() was called');
       iframe.remove();
@@ -284,19 +288,14 @@
       // and the request is showing boolean to become false.
       iframe.src = 'resources/blank.html?abc=123';
       await new Promise(resolve => (iframe.onload = resolve));
-      await promise_rejects(
-        t,
-        'AbortError',
-        iframeShowPromise,
-        'Navigating iframe away must cause the iframeShowPromise to reject.',
-      );
+
       iframe.remove();
 
       // Now we should be ok to spin up a new payment request
       const request = new window.PaymentRequest(methods, details);
       const [showPromise] = await activateThen(async () => { return [request.show()] });
       await request.abort();
-      await promise_rejects(
+      await promise_rejects_dom(
         t,
         'AbortError',
         showPromise,

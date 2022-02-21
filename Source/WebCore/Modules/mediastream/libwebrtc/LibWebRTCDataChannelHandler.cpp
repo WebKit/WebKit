@@ -30,7 +30,7 @@
 #include "EventNames.h"
 #include "LibWebRTCUtils.h"
 #include "RTCDataChannel.h"
-#include "RTCDataChannelEvent.h"
+#include "RTCError.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -53,30 +53,11 @@ webrtc::DataChannelInit LibWebRTCDataChannelHandler::fromRTCDataChannelInit(cons
     return init;
 }
 
-Ref<RTCDataChannelEvent> LibWebRTCDataChannelHandler::channelEvent(Document& document, rtc::scoped_refptr<webrtc::DataChannelInterface>&& dataChannel)
-{
-    auto protocol = dataChannel->protocol();
-    auto label = dataChannel->label();
-
-    RTCDataChannelInit init;
-    init.ordered = dataChannel->ordered();
-    init.maxPacketLifeTime = dataChannel->maxRetransmitTime();
-    init.maxRetransmits = dataChannel->maxRetransmits();
-    init.protocol = fromStdString(protocol);
-    init.negotiated = dataChannel->negotiated();
-    init.id = dataChannel->id();
-    init.priority = toRTCPriorityType(dataChannel->priority());
-
-    auto handler =  makeUnique<LibWebRTCDataChannelHandler>(WTFMove(dataChannel));
-    auto channel = RTCDataChannel::create(document, WTFMove(handler), fromStdString(label), WTFMove(init));
-
-    return RTCDataChannelEvent::create(eventNames().datachannelEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(channel));
-}
-
 LibWebRTCDataChannelHandler::LibWebRTCDataChannelHandler(rtc::scoped_refptr<webrtc::DataChannelInterface>&& channel)
     : m_channel(WTFMove(channel))
 {
     ASSERT(m_channel);
+    checkState();
     m_channel->RegisterObserver(this);
 }
 
@@ -85,26 +66,50 @@ LibWebRTCDataChannelHandler::~LibWebRTCDataChannelHandler()
     m_channel->UnregisterObserver();
 }
 
+RTCDataChannelInit LibWebRTCDataChannelHandler::dataChannelInit() const
+{
+    auto protocol = m_channel->protocol();
+    auto label = m_channel->label();
+
+    RTCDataChannelInit init;
+    init.ordered = m_channel->ordered();
+    init.maxPacketLifeTime = m_channel->maxRetransmitTime();
+    init.maxRetransmits = m_channel->maxRetransmits();
+    init.protocol = fromStdString(protocol);
+    init.negotiated = m_channel->negotiated();
+    init.id = m_channel->id();
+    init.priority = toRTCPriorityType(m_channel->priority());
+    return init;
+}
+
+String LibWebRTCDataChannelHandler::label() const
+{
+    return fromStdString(m_channel->label());
+}
+
 void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client, ScriptExecutionContextIdentifier contextIdentifier)
 {
-    {
-        Locker locker { m_clientLock };
-        ASSERT(!m_client);
-        m_client = &client;
-        m_contextIdentifier = contextIdentifier;
+    Locker locker { m_clientLock };
+    ASSERT(!m_client);
+    ASSERT(!m_hasClient);
+    m_hasClient = true;
+    m_client = client;
+    m_contextIdentifier = contextIdentifier;
 
-        for (auto& message : m_bufferedMessages) {
-            switchOn(message, [&](Ref<SharedBuffer>& data) {
-                client.didReceiveRawData(data->data(), data->size());
-            }, [&](String& text) {
-                client.didReceiveStringData(text);
-            }, [&](RTCDataChannelState state) {
-                client.didChangeReadyState(state);
-            });
-        }
-        m_bufferedMessages.clear();
+    for (auto& message : m_bufferedMessages) {
+        switchOn(message, [&](Ref<FragmentedSharedBuffer>& data) {
+            client.didReceiveRawData(data->makeContiguous()->data(), data->size());
+        }, [&](String& text) {
+            client.didReceiveStringData(text);
+        }, [&](StateChange stateChange) {
+            if (stateChange.error) {
+                if (auto rtcError = toRTCError(*stateChange.error))
+                    client.didDetectError(rtcError.releaseNonNull());
+            }
+            client.didChangeReadyState(stateChange.state);
+        });
     }
-    checkState();
+    m_bufferedMessages.clear();
 }
 
 bool LibWebRTCDataChannelHandler::sendStringData(const CString& utf8Text)
@@ -129,6 +134,7 @@ void LibWebRTCDataChannelHandler::OnStateChange()
 
 void LibWebRTCDataChannelHandler::checkState()
 {
+    std::optional<webrtc::RTCError> error;
     RTCDataChannelState state;
     switch (m_channel->state()) {
     case webrtc::DataChannelInterface::kConnecting:
@@ -141,24 +147,33 @@ void LibWebRTCDataChannelHandler::checkState()
         state = RTCDataChannelState::Closing;
         break;
     case webrtc::DataChannelInterface::kClosed:
+        error = m_channel->error();
         state = RTCDataChannelState::Closed;
         break;
     }
 
     Locker locker { m_clientLock };
-    if (!m_client) {
-        m_bufferedMessages.append(state);
+    if (!m_hasClient) {
+        m_bufferedMessages.append(StateChange { state, WTFMove(error) });
         return;
     }
-    postTask([protectedClient = makeRef(*m_client), state] {
-        protectedClient->didChangeReadyState(state);
+    postTask([client = m_client, state, error = WTFMove(error)] {
+        if (!client)
+            return;
+        if (error && !error->ok()) {
+            auto rtcError = toRTCError(*error);
+            if (!rtcError)
+                rtcError = RTCError::create(RTCError::Init { RTCErrorDetailType::DataChannelFailure, { }, { }, { }, { } }, String { });
+            client->didDetectError(rtcError.releaseNonNull());
+        }
+        client->didChangeReadyState(state);
     });
 }
 
 void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
 {
     Locker locker { m_clientLock };
-    if (!m_client) {
+    if (!m_hasClient) {
         auto* data = buffer.data.data<uint8_t>();
         if (buffer.binary)
             m_bufferedMessages.append(SharedBuffer::create(data, buffer.size()));
@@ -168,23 +183,27 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
     }
 
     std::unique_ptr<webrtc::DataBuffer> protectedBuffer(new webrtc::DataBuffer(buffer));
-    postTask([protectedClient = makeRef(*m_client), buffer = WTFMove(protectedBuffer)] {
+    postTask([client = m_client, buffer = WTFMove(protectedBuffer)] {
+        if (!client)
+            return;
+
         auto* data = buffer->data.data<uint8_t>();
         if (buffer->binary)
-            protectedClient->didReceiveRawData(data, buffer->size());
+            client->didReceiveRawData(data, buffer->size());
         else
-            protectedClient->didReceiveStringData(String::fromUTF8(data, buffer->size()));
+            client->didReceiveStringData(String::fromUTF8(data, buffer->size()));
     });
 }
 
 void LibWebRTCDataChannelHandler::OnBufferedAmountChange(uint64_t amount)
 {
     Locker locker { m_clientLock };
-    if (!m_client)
+    if (!m_hasClient)
         return;
 
-    postTask([protectedClient = makeRef(*m_client), amount] {
-        protectedClient->bufferedAmountIsDecreasing(static_cast<size_t>(amount));
+    postTask([client = m_client, amount] {
+        if (client)
+            client->bufferedAmountIsDecreasing(static_cast<size_t>(amount));
     });
 }
 

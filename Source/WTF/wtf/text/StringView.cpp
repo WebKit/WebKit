@@ -38,22 +38,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace WTF {
 
-bool StringView::containsIgnoringASCIICase(const StringView& matchString) const
+bool StringView::containsIgnoringASCIICase(StringView matchString) const
 {
     return findIgnoringASCIICase(matchString) != notFound;
 }
 
-bool StringView::containsIgnoringASCIICase(const StringView& matchString, unsigned startOffset) const
+bool StringView::containsIgnoringASCIICase(StringView matchString, unsigned startOffset) const
 {
     return findIgnoringASCIICase(matchString, startOffset) != notFound;
 }
 
-size_t StringView::findIgnoringASCIICase(const StringView& matchString) const
+size_t StringView::findIgnoringASCIICase(StringView matchString) const
 {
     return ::WTF::findIgnoringASCIICase(*this, matchString, 0);
 }
 
-size_t StringView::findIgnoringASCIICase(const StringView& matchString, unsigned startOffset) const
+size_t StringView::findIgnoringASCIICase(StringView matchString, unsigned startOffset) const
 {
     return ::WTF::findIgnoringASCIICase(*this, matchString, startOffset);
 }
@@ -63,12 +63,12 @@ bool StringView::startsWith(UChar character) const
     return m_length && (*this)[0] == character;
 }
 
-bool StringView::startsWith(const StringView& prefix) const
+bool StringView::startsWith(StringView prefix) const
 {
     return ::WTF::startsWith(*this, prefix);
 }
 
-bool StringView::startsWithIgnoringASCIICase(const StringView& prefix) const
+bool StringView::startsWithIgnoringASCIICase(StringView prefix) const
 {
     return ::WTF::startsWithIgnoringASCIICase(*this, prefix);
 }
@@ -78,12 +78,12 @@ bool StringView::endsWith(UChar character) const
     return m_length && (*this)[m_length - 1] == character;
 }
 
-bool StringView::endsWith(const StringView& suffix) const
+bool StringView::endsWith(StringView suffix) const
 {
     return ::WTF::endsWith(*this, suffix);
 }
 
-bool StringView::endsWithIgnoringASCIICase(const StringView& suffix) const
+bool StringView::endsWithIgnoringASCIICase(StringView suffix) const
 {
     return ::WTF::endsWithIgnoringASCIICase(*this, suffix);
 }
@@ -124,7 +124,8 @@ void StringView::SplitResult::Iterator::findNextSubstring()
 
 auto StringView::SplitResult::Iterator::operator++() -> Iterator&
 {
-    ASSERT(m_position <= m_result.m_string.length() && !m_isDone);
+    ASSERT(m_position <= m_result.m_string.length());
+    ASSERT(!m_isDone);
     m_position += m_length;
     if (m_position < m_result.m_string.length()) {
         ++m_position;
@@ -137,7 +138,7 @@ auto StringView::SplitResult::Iterator::operator++() -> Iterator&
 class StringView::GraphemeClusters::Iterator::Impl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Impl(const StringView& stringView, std::optional<NonSharedCharacterBreakIterator>&& iterator, unsigned index)
+    Impl(StringView stringView, std::optional<NonSharedCharacterBreakIterator>&& iterator, unsigned index)
         : m_stringView(stringView)
         , m_iterator(WTFMove(iterator))
         , m_index(index)
@@ -161,7 +162,8 @@ public:
 
     bool operator==(const Impl& other) const
     {
-        ASSERT(&m_stringView == &other.m_stringView);
+        ASSERT(m_stringView.m_characters == other.m_stringView.m_characters);
+        ASSERT(m_stringView.m_length == other.m_stringView.m_length);
         auto result = m_index == other.m_index;
         ASSERT(!result || m_indexEnd == other.m_indexEnd);
         return result;
@@ -177,13 +179,13 @@ public:
     }
 
 private:
-    const StringView& m_stringView;
+    StringView m_stringView;
     std::optional<NonSharedCharacterBreakIterator> m_iterator;
     unsigned m_index;
     unsigned m_indexEnd;
 };
 
-StringView::GraphemeClusters::Iterator::Iterator(const StringView& stringView, unsigned index)
+StringView::GraphemeClusters::Iterator::Iterator(StringView stringView, unsigned index)
     : m_impl(makeUnique<Impl>(stringView, stringView.isNull() ? std::nullopt : std::optional<NonSharedCharacterBreakIterator>(NonSharedCharacterBreakIterator(stringView)), index))
 {
 }

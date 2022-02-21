@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Copyright 2016 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -53,7 +53,7 @@ def load_with_override(override_path):
     results = load_without_override()
     overrides = load_json(override_path)
 
-    for k, v in overrides.iteritems():
+    for k, v in sorted(overrides.items()):
         results[k] = v
 
     return results
@@ -95,7 +95,7 @@ def get_component_type(format_id):
 
 def get_channel_tokens(format_id):
     r = re.compile(r'([' + kChannels + '][\d]+)')
-    return filter(r.match, r.split(format_id))
+    return list(filter(r.match, r.split(format_id)))
 
 
 def get_channels(format_id):
@@ -242,8 +242,9 @@ def get_vertex_copy_function(src_format, dst_format):
     if dst_format == "NONE":
         return "nullptr"
 
-    num_channel = len(get_channel_tokens(src_format))
-    if num_channel < 1 or num_channel > 4:
+    src_num_channel = len(get_channel_tokens(src_format))
+    dst_num_channel = len(get_channel_tokens(dst_format))
+    if src_num_channel < 1 or src_num_channel > 4:
         return "nullptr"
 
     if src_format.endswith('_VERTEX'):
@@ -252,14 +253,14 @@ def get_vertex_copy_function(src_format, dst_format):
         is_signed = 'true' if 'SINT' in src_format or 'SNORM' in src_format or 'SSCALED' in src_format else 'false'
         is_normal = 'true' if 'NORM' in src_format else 'false'
         if 'A2' in src_format:
-            return 'CopyW2XYZ10ToXYZW32FVertexData<%s, %s>' % (is_signed, is_normal)
+            return 'CopyW2XYZ10ToXYZWFloatVertexData<%s, %s, true>' % (is_signed, is_normal)
         else:
-            return 'CopyXYZ10ToXYZW32FVertexData<%s, %s>' % (is_signed, is_normal)
+            return 'CopyXYZ10ToXYZWFloatVertexData<%s, %s, true>' % (is_signed, is_normal)
 
     if 'FIXED' in src_format:
         assert 'FLOAT' in dst_format, (
             'get_vertex_copy_function: can only convert fixed to float,' + ' not to ' + dst_format)
-        return 'Copy32FixedTo32FVertexData<%d, %d>' % (num_channel, num_channel)
+        return 'Copy32FixedTo32FVertexData<%d, %d>' % (src_num_channel, dst_num_channel)
 
     src_gl_type = get_format_gl_type(src_format)
     dst_gl_type = get_format_gl_type(dst_format)
@@ -268,12 +269,24 @@ def get_vertex_copy_function(src_format, dst_format):
         return "nullptr"
 
     if src_gl_type == dst_gl_type:
-        dst_num_channel = len(get_channel_tokens(dst_format))
-        return 'CopyNativeVertexData<%s, %d, %d, 0>' % (src_gl_type, num_channel, dst_num_channel)
+        default_alpha = '1'
+
+        if src_num_channel == dst_num_channel or dst_num_channel < 4:
+            default_alpha = '0'
+        elif 'A16_FLOAT' in dst_format:
+            default_alpha = 'gl::Float16One'
+        elif 'A32_FLOAT' in dst_format:
+            default_alpha = 'gl::Float32One'
+        elif 'NORM' in dst_format:
+            default_alpha = 'std::numeric_limits<%s>::max()' % (src_gl_type)
+
+        return 'CopyNativeVertexData<%s, %d, %d, %s>' % (src_gl_type, src_num_channel,
+                                                         dst_num_channel, default_alpha)
 
     assert 'FLOAT' in dst_format, (
         'get_vertex_copy_function: can only convert to float,' + ' not to ' + dst_format)
     normalized = 'true' if 'NORM' in src_format else 'false'
 
-    return "CopyTo32FVertexData<%s, %d, %d, %s>" % (src_gl_type, num_channel, num_channel,
-                                                    normalized)
+    dst_is_half = 'true' if dst_gl_type == 'GLhalf' else 'false'
+    return "CopyToFloatVertexData<%s, %d, %d, %s, %s>" % (src_gl_type, src_num_channel,
+                                                          dst_num_channel, normalized, dst_is_half)

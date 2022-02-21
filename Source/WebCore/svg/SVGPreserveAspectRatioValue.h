@@ -51,8 +51,9 @@ public:
         SVG_MEETORSLICE_SLICE = 2
     };
 
-    SVGPreserveAspectRatioValue();
+    SVGPreserveAspectRatioValue() = default;
     SVGPreserveAspectRatioValue(StringView);
+    WEBCORE_EXPORT SVGPreserveAspectRatioValue(SVGPreserveAspectRatioType, SVGMeetOrSliceType);
 
     ExceptionOr<void> setAlign(unsigned short);
     unsigned short align() const { return m_align; }
@@ -70,9 +71,12 @@ public:
 
     String valueAsString() const;
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<SVGPreserveAspectRatioValue> decode(Decoder&);
+
 private:
-    SVGPreserveAspectRatioType m_align;
-    SVGMeetOrSliceType m_meetOrSlice;
+    SVGPreserveAspectRatioType m_align { SVG_PRESERVEASPECTRATIO_XMIDYMID };
+    SVGMeetOrSliceType m_meetOrSlice { SVG_MEETORSLICE_MEET };
 
     template<typename CharacterType> bool parseInternal(StringParsingBuffer<CharacterType>&, bool validate);
 };
@@ -84,4 +88,59 @@ template<> struct SVGPropertyTraits<SVGPreserveAspectRatioValue> {
     static String toString(const SVGPreserveAspectRatioValue& type) { return type.valueAsString(); }
 };
 
+template<class Encoder>
+void SVGPreserveAspectRatioValue::encode(Encoder& encoder) const
+{
+    encoder << m_align;
+    encoder << m_meetOrSlice;
+}
+
+template<class Decoder>
+std::optional<SVGPreserveAspectRatioValue> SVGPreserveAspectRatioValue::decode(Decoder& decoder)
+{
+    std::optional<SVGPreserveAspectRatioType> align;
+    decoder >> align;
+    if (!align)
+        return std::nullopt;
+
+    std::optional<SVGMeetOrSliceType> meetOrSlice;
+    decoder >> meetOrSlice;
+    if (!meetOrSlice)
+        return std::nullopt;
+
+    return SVGPreserveAspectRatioValue(*align, *meetOrSlice);
+}
+
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::SVGPreserveAspectRatioValue::SVGPreserveAspectRatioType> {
+    using values = EnumValues<
+        WebCore::SVGPreserveAspectRatioValue::SVGPreserveAspectRatioType,
+
+        WebCore::SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_UNKNOWN,
+        WebCore::SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE,
+        WebCore::SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_XMINYMIN,
+        WebCore::SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_XMIDYMIN,
+        WebCore::SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_XMAXYMIN,
+        WebCore::SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_XMINYMID,
+        WebCore::SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_XMIDYMID,
+        WebCore::SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_XMAXYMID,
+        WebCore::SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_XMINYMAX,
+        WebCore::SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_XMIDYMAX,
+        WebCore::SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_XMAXYMAX
+    >;
+};
+
+template<> struct EnumTraits<WebCore::SVGPreserveAspectRatioValue::SVGMeetOrSliceType> {
+    using values = EnumValues<
+        WebCore::SVGPreserveAspectRatioValue::SVGMeetOrSliceType,
+
+        WebCore::SVGPreserveAspectRatioValue::SVG_MEETORSLICE_UNKNOWN,
+        WebCore::SVGPreserveAspectRatioValue::SVG_MEETORSLICE_MEET,
+        WebCore::SVGPreserveAspectRatioValue::SVG_MEETORSLICE_SLICE
+    >;
+};
+
+} // namespace WTF

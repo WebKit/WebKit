@@ -80,8 +80,7 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
 
     _getPropertyValue(style, propertyName)
     {
-        const dontCreateIfMissing = true;
-        let property = style.propertyForName(propertyName, dontCreateIfMissing);
+        let property = style.propertyForName(propertyName);
         if (!property)
             return null;
         return property.value;

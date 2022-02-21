@@ -36,8 +36,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ReplacedBox);
 
-ReplacedBox::ReplacedBox(std::optional<ElementAttributes> elementAttributes, RenderStyle&& style)
-    : Box(elementAttributes, WTFMove(style), Box::ReplacedBoxFlag)
+ReplacedBox::ReplacedBox(std::optional<ElementAttributes> elementAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+    : Box(elementAttributes, WTFMove(style), WTFMove(firstLineStyle), Box::ReplacedBoxFlag)
 {
 }
 

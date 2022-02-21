@@ -7,11 +7,11 @@ info: The Date.prototype property "getHours" has { DontEnum } attributes
 es5id: 15.9.5.18_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
+assert.notSameValue(delete Date.prototype.getHours, false, 'The value of delete Date.prototype.getHours is not false');
 
-if (delete Date.prototype.getHours === false) {
-  throw new Test262Error('#1: The Date.prototype.getHours property has not the attributes DontDelete');
-}
+assert(
+  !Date.prototype.hasOwnProperty('getHours'),
+  'The value of !Date.prototype.hasOwnProperty(\'getHours\') is expected to be true'
+);
 
-if (Date.prototype.hasOwnProperty('getHours')) {
-  throw new Test262Error('#2: The Date.prototype.getHours property has not the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

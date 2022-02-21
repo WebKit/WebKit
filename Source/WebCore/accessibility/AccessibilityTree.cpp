@@ -77,7 +77,7 @@ bool AccessibilityTree::nodeHasTreeItemChild(Node& node) const
 bool AccessibilityTree::isTreeValid() const
 {
     // A valid tree can only have treeitem or group of treeitems as a child
-    // http://www.w3.org/TR/wai-aria/roles#tree
+    // https://www.w3.org/TR/wai-aria/#tree
 
     Node* node = this->node();
     if (!node)

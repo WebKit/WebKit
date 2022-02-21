@@ -164,14 +164,14 @@ class SVNCleanup(shell.ShellCommand):
 class InstallWin32Dependencies(shell.Compile):
     description = ["installing dependencies"]
     descriptionDone = ["installed dependencies"]
-    command = ["perl", "./Tools/Scripts/update-webkit-auxiliary-libs"]
+    command = ["perl", "Tools/Scripts/update-webkit-auxiliary-libs"]
 
 
 class KillOldProcesses(shell.Compile):
     name = "kill-old-processes"
     description = ["killing old processes"]
     descriptionDone = ["killed old processes"]
-    command = ["python3", "./Tools/CISupport/kill-old-processes", "buildbot"]
+    command = ["python3", "Tools/CISupport/kill-old-processes", "buildbot"]
 
 
 class TriggerCrashLogSubmission(shell.Compile):
@@ -226,7 +226,7 @@ class InstallGtkDependencies(shell.ShellCommand):
     name = "jhbuild"
     description = ["updating gtk dependencies"]
     descriptionDone = ["updated gtk dependencies"]
-    command = ["perl", "./Tools/Scripts/update-webkitgtk-libs", WithProperties("--%(configuration)s")]
+    command = ["perl", "Tools/Scripts/update-webkitgtk-libs", WithProperties("--%(configuration)s")]
     haltOnFailure = True
 
 
@@ -234,7 +234,7 @@ class InstallWpeDependencies(shell.ShellCommand):
     name = "jhbuild"
     description = ["updating wpe dependencies"]
     descriptionDone = ["updated wpe dependencies"]
-    command = ["perl", "./Tools/Scripts/update-webkitwpe-libs", WithProperties("--%(configuration)s")]
+    command = ["perl", "Tools/Scripts/update-webkitwpe-libs", WithProperties("--%(configuration)s")]
     haltOnFailure = True
 
 
@@ -261,7 +261,7 @@ def appendCustomTestingFlags(step, platform, device_model):
 
 
 class CompileWebKit(shell.Compile):
-    command = ["perl", "./Tools/Scripts/build-webkit", WithProperties("--%(configuration)s")]
+    command = ["perl", "Tools/Scripts/build-webkit", WithProperties("--%(configuration)s")]
     env = {'MFLAGS': ''}
     name = "compile-webkit"
     description = ["compiling"]
@@ -312,15 +312,15 @@ class CompileWebKit(shell.Compile):
 
 
 class CompileLLINTCLoop(CompileWebKit):
-    command = ["perl", "./Tools/Scripts/build-jsc", "--cloop", WithProperties("--%(configuration)s")]
+    command = ["perl", "Tools/Scripts/build-jsc", "--cloop", WithProperties("--%(configuration)s")]
 
 
 class Compile32bitJSC(CompileWebKit):
-    command = ["perl", "./Tools/Scripts/build-jsc", "--32-bit", WithProperties("--%(configuration)s")]
+    command = ["perl", "Tools/Scripts/build-jsc", "--32-bit", WithProperties("--%(configuration)s")]
 
 
 class CompileJSCOnly(CompileWebKit):
-    command = ["perl", "./Tools/Scripts/build-jsc", WithProperties("--%(configuration)s")]
+    command = ["perl", "Tools/Scripts/build-jsc", WithProperties("--%(configuration)s")]
 
 
 class InstallBuiltProduct(shell.ShellCommand):
@@ -346,7 +346,7 @@ class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
 
 
 class GenerateJSCBundle(shell.ShellCommand):
-    command = ["./Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
+    command = ["Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
                "--bundle=jsc", "--syslibs=bundle-all", WithProperties("--platform=%(fullPlatform)s"),
                WithProperties("--%(configuration)s"), WithProperties("--revision=%(got_revision)s"),
                "--remote-config-file", "../../remote-jsc-bundle-upload-config.json"]
@@ -357,7 +357,7 @@ class GenerateJSCBundle(shell.ShellCommand):
 
 
 class GenerateMiniBrowserBundle(shell.ShellCommand):
-    command = ["./Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
+    command = ["Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
                "--bundle=MiniBrowser", WithProperties("--platform=%(fullPlatform)s"),
                WithProperties("--%(configuration)s"), WithProperties("--revision=%(got_revision)s"),
                "--remote-config-file", "../../remote-minibrowser-bundle-upload-config.json"]
@@ -395,7 +395,7 @@ class UploadMinifiedBuiltProduct(UploadBuiltProduct):
 
 
 class DownloadBuiltProduct(shell.ShellCommand):
-    command = ["python3", "./Tools/CISupport/download-built-product",
+    command = ["python3", "Tools/CISupport/download-built-product",
         WithProperties("--platform=%(platform)s"), WithProperties("--%(configuration)s"),
         WithProperties(S3URL + "archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(got_revision)s.zip")]
     name = "download-built-product"
@@ -405,7 +405,12 @@ class DownloadBuiltProduct(shell.ShellCommand):
     flunkOnFailure = False
 
     def start(self):
-        return shell.ShellCommand.start(self)
+        # Only try to download from S3 on the official deployment <https://webkit.org/b/230006>
+        if CURRENT_HOSTNAME == BUILD_WEBKIT_HOSTNAME:
+            return shell.ShellCommand.start(self)
+        self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
+        self.finished(SKIPPED)
+        return defer.succeed(None)
 
     def evaluateCommand(self, cmd):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)
@@ -444,7 +449,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
     descriptionDone = ["jscore-tests"]
     jsonFileName = "jsc_results.json"
     command = [
-        "perl", "./Tools/Scripts/run-javascriptcore-tests",
+        "perl", "Tools/Scripts/run-javascriptcore-tests",
         "--no-build", "--no-fail-fast",
         "--json-output={0}".format(jsonFileName),
         WithProperties("--%(configuration)s"),
@@ -459,6 +464,8 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
+        if 'sigtermTime' not in kwargs:
+            kwargs['sigtermTime'] = 10
         TestWithFailureCount.__init__(self, *args, **kwargs)
 
     def start(self):
@@ -507,7 +514,7 @@ class RunTest262Tests(TestWithFailureCount):
     description = ["test262-tests running"]
     descriptionDone = ["test262-tests"]
     failedTestsFormatString = "%d Test262 test%s failed"
-    command = ["perl", "./Tools/Scripts/test262-runner", "--verbose", WithProperties("--%(configuration)s")]
+    command = ["perl", "Tools/Scripts/test262-runner", "--verbose", WithProperties("--%(configuration)s")]
     test_summary_re = re.compile(r'^\! NEW FAIL')
 
     def start(self):
@@ -531,7 +538,7 @@ class RunWebKitTests(shell.Test):
     description = ["layout-tests running"]
     descriptionDone = ["layout-tests"]
     resultDirectory = "layout-test-results"
-    command = ["python3", "./Tools/Scripts/run-webkit-tests",
+    command = ["python", "Tools/Scripts/run-webkit-tests",
                "--no-build",
                "--no-show-results",
                "--no-new-test-results",
@@ -641,7 +648,7 @@ class RunDashboardTests(RunWebKitTests):
     resultDirectory = os.path.join(RunWebKitTests.resultDirectory, "dashboard-layout-test-results")
 
     def start(self):
-        self.setCommand(self.command + ["--layout-tests-directory", "./Tools/CISupport/build-webkit-org/public_html/dashboard/Scripts/tests"])
+        self.setCommand(self.command + ["--layout-tests-directory", "Tools/CISupport/build-webkit-org/public_html/dashboard/Scripts/tests"])
         return RunWebKitTests.start(self)
 
 
@@ -653,7 +660,7 @@ class RunAPITests(TestWithFailureCount):
     logfiles = {"json": jsonFileName}
     command = [
         "python3",
-        "./Tools/Scripts/run-api-tests",
+        "Tools/Scripts/run-api-tests",
         "--no-build",
         "--json-output={0}".format(jsonFileName),
         WithProperties("--%(configuration)s"),
@@ -721,7 +728,7 @@ class RunWebKitPyTests(RunPythonTests):
     descriptionDone = ["python-tests"]
     command = [
         "python3",
-        "./Tools/Scripts/test-webkitpy",
+        "Tools/Scripts/test-webkitpy",
         "--verbose",
         "--buildbot-master", CURRENT_HOSTNAME,
         "--builder-name", WithProperties("%(buildername)s"),
@@ -746,7 +753,7 @@ class RunLLDBWebKitTests(RunPythonTests):
     descriptionDone = ["lldb-webkit-tests"]
     command = [
         "python3",
-        "./Tools/Scripts/test-lldb-webkit",
+        "Tools/Scripts/test-lldb-webkit",
         "--verbose",
         "--no-build",
         WithProperties("--%(configuration)s"),
@@ -758,7 +765,7 @@ class RunPerlTests(TestWithFailureCount):
     name = "webkitperl-test"
     description = ["perl-tests running"]
     descriptionDone = ["perl-tests"]
-    command = ["perl", "./Tools/Scripts/test-webkitperl"]
+    command = ["perl", "Tools/Scripts/test-webkitperl"]
     failedTestsFormatString = "%d perl test%s failed"
     test_summary_re = re.compile(r'^Failed \d+/\d+ test programs\. (?P<count>\d+)/\d+ subtests failed\.')  # e.g.: Failed 2/19 test programs. 5/363 subtests failed.
 
@@ -783,7 +790,7 @@ class RunLLINTCLoopTests(TestWithFailureCount):
     descriptionDone = ["cloop-tests"]
     jsonFileName = "jsc_cloop.json"
     command = [
-        "perl", "./Tools/Scripts/run-javascriptcore-tests",
+        "perl", "Tools/Scripts/run-javascriptcore-tests",
         "--no-build",
         "--no-jsc-stress", "--no-fail-fast",
         "--json-output={0}".format(jsonFileName),
@@ -824,7 +831,7 @@ class Run32bitJSCTests(TestWithFailureCount):
     descriptionDone = ["32bit-jsc-tests"]
     jsonFileName = "jsc_32bit.json"
     command = [
-        "perl", "./Tools/Scripts/run-javascriptcore-tests",
+        "perl", "Tools/Scripts/run-javascriptcore-tests",
         "--32-bit", "--no-build",
         "--no-fail-fast", "--no-jit", "--no-testair", "--no-testb3", "--no-testmasm",
         "--json-output={0}".format(jsonFileName),
@@ -863,14 +870,14 @@ class RunBindingsTests(shell.Test):
     name = "bindings-generation-tests"
     description = ["bindings-tests running"]
     descriptionDone = ["bindings-tests"]
-    command = ["python3", "./Tools/Scripts/run-bindings-tests"]
+    command = ["python3", "Tools/Scripts/run-bindings-tests"]
 
 
 class RunBuiltinsTests(shell.Test):
     name = "builtins-generator-tests"
     description = ["builtins-generator-tests running"]
     descriptionDone = ["builtins-generator-tests"]
-    command = ["python", "./Tools/Scripts/run-builtins-generator-tests"]
+    command = ["python3", "Tools/Scripts/run-builtins-generator-tests"]
 
 
 class RunGLibAPITests(shell.Test):
@@ -940,11 +947,11 @@ class RunGLibAPITests(shell.Test):
 
 
 class RunGtkAPITests(RunGLibAPITests):
-    command = ["python3", "./Tools/Scripts/run-gtk-tests", WithProperties("--%(configuration)s")]
+    command = ["python3", "Tools/Scripts/run-gtk-tests", WithProperties("--%(configuration)s")]
 
 
 class RunWPEAPITests(RunGLibAPITests):
-    command = ["python3", "./Tools/Scripts/run-wpe-tests", WithProperties("--%(configuration)s")]
+    command = ["python3", "Tools/Scripts/run-wpe-tests", WithProperties("--%(configuration)s")]
 
 
 class RunWebDriverTests(shell.Test):
@@ -952,7 +959,7 @@ class RunWebDriverTests(shell.Test):
     description = ["webdriver-tests running"]
     descriptionDone = ["webdriver-tests"]
     jsonFileName = "webdriver_tests.json"
-    command = ["python", "./Tools/Scripts/run-webdriver-tests", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
+    command = ["python3", "Tools/Scripts/run-webdriver-tests", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
     logfiles = {"json": jsonFileName}
 
     def start(self):
@@ -1024,7 +1031,7 @@ class RunAndUploadPerfTests(shell.Test):
     name = "perf-test"
     description = ["perf-tests running"]
     descriptionDone = ["perf-tests"]
-    command = ["python3", "./Tools/Scripts/run-perf-tests",
+    command = ["python3", "Tools/Scripts/run-perf-tests",
                "--output-json-path", "perf-test-results.json",
                "--worker-config-json-path", "../../perf-test-config.json",
                "--no-show-results",
@@ -1070,7 +1077,7 @@ class RunBenchmarkTests(shell.Test):
     name = "benchmark-test"
     description = ["benchmark tests running"]
     descriptionDone = ["benchmark tests"]
-    command = ["python", "./Tools/Scripts/browserperfdash-benchmark", "--allplans",
+    command = ["python", "Tools/Scripts/browserperfdash-benchmark", "--allplans",
                "--config-file", "../../browserperfdash-benchmark-config.txt",
                "--browser-version", WithProperties("r%(got_revision)s")]
 
@@ -1091,7 +1098,7 @@ class RunBenchmarkTests(shell.Test):
 
 
 class ArchiveTestResults(shell.ShellCommand):
-    command = ["python3", "./Tools/CISupport/test-result-archive",
+    command = ["python3", "Tools/CISupport/test-result-archive",
                WithProperties("--platform=%(platform)s"), WithProperties("--%(configuration)s"), "archive"]
     name = "archive-test-results"
     description = ["archiving test results"]
@@ -1171,7 +1178,7 @@ class PrintConfiguration(steps.ShellSequence):
     warnOnFailure = False
     logEnviron = False
     command_list_generic = [['hostname']]
-    command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['xcodebuild', '-sdk', '-version'], ['uptime']]
+    command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], ['xcodebuild', '-sdk', '-version']]
     command_list_linux = [['df', '-hl'], ['date'], ['uname', '-a'], ['uptime']]
     command_list_win = [['df', '-hl']]
 
@@ -1202,18 +1209,9 @@ class PrintConfiguration(steps.ShellSequence):
             return 'Unknown'
 
         build_to_name_mapping = {
+            '12': 'Monterey',
             '11': 'Big Sur',
             '10.15': 'Catalina',
-            '10.14': 'Mojave',
-            '10.13': 'High Sierra',
-            '10.12': 'Sierra',
-            '10.11': 'El Capitan',
-            '10.10': 'Yosemite',
-            '10.9': 'Maverick',
-            '10.8': 'Mountain Lion',
-            '10.7': 'Lion',
-            '10.6': 'Snow Leopard',
-            '10.5': 'Leopard',
         }
 
         for key, value in build_to_name_mapping.items():

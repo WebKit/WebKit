@@ -8,47 +8,19 @@ info: |
 es5id: 15.7.2.1_A1
 description: Checking type of the newly created object and it value
 ---*/
+assert.sameValue(typeof new Number(), "object", 'The value of `typeof new Number()` is expected to be "object"');
+assert.notSameValue(new Number(), undefined, 'new Number() is expected to not equal ``undefined``');
 
-//CHECK#1
-if (typeof new Number() !== "object") {
-  throw new Test262Error("#1: typeof new Number() === 'object'");
-}
-
-//CHECK#2
-if (new Number() === undefined) {
-  throw new Test262Error("#2: new Number() should not be undefined");
-}
-
-//CHECK#3
 var x3 = new Number();
-if (typeof x3 !== "object") {
-  throw new Test262Error("#3: typeof new Number() === 'object'");
-}
+assert.sameValue(typeof x3, "object", 'The value of `typeof x3` is expected to be "object"');
 
-//CHECK#4
 var x4 = new Number();
-if (x4 === undefined) {
-  throw new Test262Error("#4: new Number() should not be undefined");
-}
+assert.notSameValue(x4, undefined, 'The value of x4 is expected to not equal ``undefined``');
+assert.sameValue(typeof new Number(10), "object", 'The value of `typeof new Number(10)` is expected to be "object"');
+assert.notSameValue(new Number(10), undefined, 'new Number(10) is expected to not equal ``undefined``');
 
-//CHECK#5
-if (typeof new Number(10) !== "object") {
-  throw new Test262Error("#5: typeof new Number(10) === 'object'");
-}
-
-//CHECK#6
-if (new Number(10) === undefined) {
-  throw new Test262Error("#6: new Number(10) should not be undefined");
-}
-
-//CHECK#7
 var x7 = new Number(10);
-if (typeof x7 !== "object") {
-  throw new Test262Error("#7: typeof new Number(10) === 'object'");
-}
+assert.sameValue(typeof x7, "object", 'The value of `typeof x7` is expected to be "object"');
 
-//CHECK#8
 var x8 = new Number(10);
-if (x8 === undefined) {
-  throw new Test262Error("#8: new Number(10) should not be undefined");
-}
+assert.notSameValue(x8, undefined, 'The value of x8 is expected to not equal ``undefined``');

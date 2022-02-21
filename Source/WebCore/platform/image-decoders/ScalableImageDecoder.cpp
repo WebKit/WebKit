@@ -39,6 +39,9 @@
 #if USE(WEBP)
 #include "WEBPImageDecoder.h"
 #endif
+#if USE(JPEGXL)
+#include "JPEGXLImageDecoder.h"
+#endif
 
 #include <algorithm>
 #include <cmath>
@@ -48,7 +51,7 @@ namespace WebCore {
 
 namespace {
 
-static unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const SharedBuffer& sharedBuffer)
+static unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const FragmentedSharedBuffer& sharedBuffer)
 {
     unsigned bytesExtracted = 0;
     for (const auto& element : sharedBuffer) {
@@ -107,6 +110,14 @@ bool matchesWebPSignature(char* contents)
 }
 #endif
 
+#if USE(JPEGXL)
+bool matchesJPEGXLSignature(const uint8_t* contents, size_t length)
+{
+    JxlSignature signature = JxlSignatureCheck(contents, length);
+    return signature != JXL_SIG_NOT_ENOUGH_BYTES && signature != JXL_SIG_INVALID;
+}
+#endif
+
 bool matchesBMPSignature(char* contents)
 {
     return !memcmp(contents, "BM", 2);
@@ -124,7 +135,7 @@ bool matchesCURSignature(char* contents)
 
 }
 
-RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(SharedBuffer& data, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(FragmentedSharedBuffer& data, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     static const unsigned lengthOfLongestSignature = 14; // To wit: "RIFF????WEBPVP"
     char contents[lengthOfLongestSignature];
@@ -160,6 +171,11 @@ RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(SharedBuffer& data, Al
 #if USE(WEBP)
     if (matchesWebPSignature(contents))
         return WEBPImageDecoder::create(alphaOption, gammaAndColorProfileOption);
+#endif
+
+#if USE(JPEGXL)
+    if (matchesJPEGXLSignature(reinterpret_cast<const uint8_t*>(contents), length))
+        return JPEGXLImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 #endif
 
     if (matchesBMPSignature(contents))
@@ -234,12 +250,5 @@ PlatformImagePtr ScalableImageDecoder::createFrameImageAtIndex(size_t index, Sub
     // is already in a native container, and this just increments its refcount.
     return buffer->backingStore()->image();
 }
-
-#if USE(DIRECT2D)
-void ScalableImageDecoder::setTargetContext(ID2D1RenderTarget*)
-{
-    notImplemented();
-}
-#endif
 
 }

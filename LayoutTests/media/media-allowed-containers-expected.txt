@@ -1,0 +1,17 @@
+RUN(internals.settings.setAllowedMediaContainerTypes(null))
+EXPECTED (video.canPlayType("audio/mp3") == 'maybe') OK
+EXPECTED (video.canPlayType("video/mp4") == 'maybe') OK
+RUN(video.src = "content/test.mp4")
+EVENT(canplay) OK
+RUN(internals.settings.setAllowedMediaContainerTypes("audio/mp3"))
+EXPECTED (video.canPlayType("audio/mp3") == 'maybe') OK
+EXPECTED (video.canPlayType("video/mp4") == '') OK
+RUN(video.src = "content/test.mp4")
+EVENT(error) OK
+RUN(internals.settings.setAllowedMediaContainerTypes("video/mp4"))
+EXPECTED (video.canPlayType("audio/mp3") == '') OK
+EXPECTED (video.canPlayType("video/mp4") == 'maybe') OK
+RUN(video.src = "content/test.mp4")
+EVENT(canplay) OK
+END OF TEST
+

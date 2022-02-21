@@ -6,12 +6,4 @@ info: Number.NEGATIVE_INFINITY is -Infinity
 es5id: 15.7.3.5_A1
 description: Checking sign and finiteness of Number.NEGATIVE_INFINITY
 ---*/
-
-// CHECK#1
-if (isFinite(Number.NEGATIVE_INFINITY) !== false) {
-  throw new Test262Error('#1: Number.NEGATIVE_INFINITY === Not-a-Finite');
-} else {
-  if ((Number.NEGATIVE_INFINITY < 0) !== true) {
-    throw new Test262Error('#1: Number.NEGATIVE_INFINITY === -Infinity');
-  }
-}
+assert.sameValue(isFinite(Number.NEGATIVE_INFINITY), false, 'isFinite(Number.NEGATIVE_INFINITY) must return false');

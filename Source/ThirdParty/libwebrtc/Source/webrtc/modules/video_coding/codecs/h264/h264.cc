@@ -17,6 +17,7 @@
 #include "absl/types/optional.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "media/base/media_constants.h"
+#include "rtc_base/trace_event.h"
 
 #if defined(WEBRTC_USE_H264)
 #if !defined(WEBRTC_WEBKIT_BUILD)
@@ -45,6 +46,8 @@ bool IsH264CodecSupported() {
 #endif
 }
 
+constexpr absl::string_view kSupportedScalabilityModes[] = {"L1T2", "L1T3"};
+
 }  // namespace
 
 SdpVideoFormat CreateH264Format(H264Profile profile,
@@ -67,6 +70,7 @@ void DisableRtcUseH264() {
 }
 
 std::vector<SdpVideoFormat> SupportedH264Codecs() {
+  TRACE_EVENT0("webrtc", __func__);
   if (!IsH264CodecSupported())
     return std::vector<SdpVideoFormat>();
   // We only support encoding Constrained Baseline Profile (CBP), but the
@@ -103,6 +107,15 @@ std::unique_ptr<H264Encoder> H264Encoder::Create(
 
 bool H264Encoder::IsSupported() {
   return IsH264CodecSupported();
+}
+
+bool H264Encoder::SupportsScalabilityMode(absl::string_view scalability_mode) {
+  for (const auto& entry : kSupportedScalabilityModes) {
+    if (entry == scalability_mode) {
+      return true;
+    }
+  }
+  return false;
 }
 
 std::unique_ptr<H264Decoder> H264Decoder::Create() {

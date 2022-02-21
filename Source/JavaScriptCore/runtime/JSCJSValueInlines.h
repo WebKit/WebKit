@@ -69,14 +69,47 @@ inline uint32_t JSValue::toIndex(JSGlobalObject* globalObject, const char* error
         throwException(globalObject, scope, createRangeError(globalObject, makeString(errorName, " cannot be negative")));
         return 0;
     }
-    if (d > std::numeric_limits<unsigned>::max()) {
+
+    if (isInt32())
+        return asInt32();
+
+    if (d > static_cast<double>(std::numeric_limits<unsigned>::max())) {
         throwException(globalObject, scope, createRangeError(globalObject, makeString(errorName, " too large")));
+        return 0;
+    }
+
+    RELEASE_AND_RETURN(scope, JSC::toInt32(d));
+}
+
+inline size_t JSValue::toTypedArrayIndex(JSGlobalObject* globalObject, const char* errorName) const
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    double d = toNumber(globalObject);
+    RETURN_IF_EXCEPTION(scope, 0);
+    if (d <= -1) {
+        throwException(globalObject, scope, createRangeError(globalObject, makeString(errorName, " cannot be negative")));
         return 0;
     }
 
     if (isInt32())
         return asInt32();
-    RELEASE_AND_RETURN(scope, JSC::toInt32(d));
+
+    if (d > static_cast<double>(MAX_ARRAY_BUFFER_SIZE)) {
+        throwException(globalObject, scope, createRangeError(globalObject, makeString(errorName, " too large")));
+        return 0;
+    }
+
+    // All of this monstrosity is just to give the correct result on 1<<32.
+    size_t outputOffset = 0;
+    double inputOffset = 0;
+    size_t int32Max = std::numeric_limits<int32_t>::max();
+    if (d > static_cast<double>(int32Max)) {
+        outputOffset = int32Max;
+        inputOffset = int32Max;
+    }
+    RELEASE_AND_RETURN(scope, outputOffset + static_cast<size_t>(static_cast<uint32_t>(JSC::toInt32(d - inputOffset))));
 }
 
 // https://tc39.es/ecma262/#sec-tointegerorinfinity
@@ -881,6 +914,44 @@ ALWAYS_INLINE JSValue JSValue::toBigIntOrInt32(JSGlobalObject* globalObject) con
     return jsNumber(value);
 }
 
+inline bool JSValue::toBoolean(JSGlobalObject* globalObject) const
+{
+    if (isInt32())
+        return asInt32();
+    if (isDouble())
+        return asDouble() > 0.0 || asDouble() < 0.0; // false for NaN
+    if (isCell())
+        return asCell()->toBoolean(globalObject);
+#if USE(BIGINT32)
+    if (isBigInt32())
+        return !!bigInt32AsInt32();
+#endif
+    return isTrue(); // false, null, and undefined all convert to false.
+}
+
+inline JSString* JSValue::toString(JSGlobalObject* globalObject) const
+{
+    if (isString())
+        return asString(asCell());
+    bool returnEmptyStringOnError = true;
+    return toStringSlowCase(globalObject, returnEmptyStringOnError);
+}
+
+inline JSString* JSValue::toStringOrNull(JSGlobalObject* globalObject) const
+{
+    if (isString())
+        return asString(asCell());
+    bool returnEmptyStringOnError = false;
+    return toStringSlowCase(globalObject, returnEmptyStringOnError);
+}
+
+inline String JSValue::toWTFString(JSGlobalObject* globalObject) const
+{
+    if (isString())
+        return static_cast<JSString*>(asCell())->value(globalObject);
+    return toWTFStringSlowCase(globalObject);
+}
+
 inline JSObject* JSValue::toObject(JSGlobalObject* globalObject) const
 {
     return isCell() ? asCell()->toObject(globalObject) : toObjectSlowCase(globalObject);
@@ -951,14 +1022,14 @@ ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, PropertyName pr
 }
 
 template<typename CallbackWhenNoException>
-ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSValue::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, CallbackWhenNoException callback) const
+ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type JSValue::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, CallbackWhenNoException callback) const
 {
     PropertySlot slot(asValue(), PropertySlot::InternalMethodType::Get);
     return getPropertySlot(globalObject, propertyName, slot, callback);
 }
 
 template<typename CallbackWhenNoException>
-ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSValue::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot, CallbackWhenNoException callback) const
+ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type JSValue::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot, CallbackWhenNoException callback) const
 {
     auto scope = DECLARE_THROW_SCOPE(getVM(globalObject));
     bool found = getPropertySlot(globalObject, propertyName, slot);

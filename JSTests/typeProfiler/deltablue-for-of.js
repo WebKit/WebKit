@@ -1,4 +1,9 @@
-//@ if $buildType == "debug" or $architecture =~ /(^arm$)|mips/ then skip else runTypeProfiler end
+//@ if $buildType == "debug" then skip else runTypeProfiler end
+//@ requireOptions("-e", "let iterations=15") if $architecture =~ /(^arm$)|mips/
+//@ requireOptions("-e", "let numConstraints=30") if $architecture =~ /(^arm$)|mips/
+
+iterations = typeof(iterations) === 'undefined' ? 30 : iterations;
+numConstraints = typeof(numConstraints) === 'undefined' ? 50 : numConstraints;
 
 // Copyright 2008 the V8 project authors. All rights reserved.
 // Copyright 1996 John Maloney and Mario Wolczko.
@@ -864,9 +869,9 @@ function change(v, newValue) {
 var planner = null;
 
 function deltaBlue() {
-  chainTest(50);
-  projectionTest(50);
+  chainTest(numConstraints);
+  projectionTest(numConstraints);
 }
 
-for (var i = 0; i < 30; ++i)
+for (var i = 0; i < iterations; ++i)
     deltaBlue();

@@ -353,7 +353,7 @@ String InspectorLayerTreeAgent::bindPseudoElement(PseudoElement* pseudoElement)
         return emptyString();
     return m_pseudoElementToIdMap.ensure(*pseudoElement, [this, pseudoElement] {
         auto identifier = IdentifiersFactory::createIdentifier();
-        m_idToPseudoElement.set(identifier, makeWeakPtr(pseudoElement));
+        m_idToPseudoElement.set(identifier, pseudoElement);
         return identifier;
     }).iterator->value;
 }

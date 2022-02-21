@@ -25,7 +25,6 @@
 
 [
     SuppressToJSObject,
-    ImplementationLacksVTable,
     Exposed=Window
 ] interface SVGRenderingIntent {
     // Rendering Intent Types

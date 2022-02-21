@@ -12,17 +12,6 @@ description: >
 var FACTORY = new Function("arg1,arg2", "var x =1; this.y=arg1+arg2;return \"OK\";");
 var obj = new FACTORY("1", 2);
 
-//CHECK#1
-if (typeof obj !== "object") {
-  throw new Test262Error('#1: every function instance has a [[Construct]] property');
-}
-
-//CHECK#2
-if (obj.constructor !== FACTORY) {
-  throw new Test262Error('#2: every function instance has a [[Construct]] property');
-}
-
-//CHECK#3
-if (obj.y !== "12") {
-  throw new Test262Error('#3: every function instance has a [[Construct]] property');
-}
+assert.sameValue(typeof obj, "object", 'The value of `typeof obj` is expected to be "object"');
+assert.sameValue(obj.constructor, FACTORY, 'The value of obj.constructor is expected to equal the value of FACTORY');
+assert.sameValue(obj.y, "12", 'The value of obj.y is expected to be "12"');

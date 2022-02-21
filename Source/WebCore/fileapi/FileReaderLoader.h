@@ -32,10 +32,10 @@
 
 #include "BlobResourceHandle.h"
 #include "ExceptionCode.h"
-#include <wtf/URL.h>
-#include "TextEncoding.h"
 #include "ThreadableLoaderClient.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/Forward.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -58,7 +58,8 @@ public:
         ReadAsBinaryString,
         ReadAsBlob,
         ReadAsText,
-        ReadAsDataURL
+        ReadAsDataURL,
+        ReadAsBinaryChunks
     };
 
     // If client is given, do the loading asynchronously. Otherwise, load synchronously.
@@ -66,12 +67,13 @@ public:
     ~FileReaderLoader();
 
     WEBCORE_EXPORT void start(ScriptExecutionContext*, Blob&);
+    void start(ScriptExecutionContext*, const URL&);
     WEBCORE_EXPORT void cancel();
 
     // ThreadableLoaderClient
-    void didReceiveResponse(unsigned long, const ResourceResponse&) override;
-    void didReceiveData(const uint8_t*, int) override;
-    void didFinishLoading(unsigned long) override;
+    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) override;
+    void didReceiveData(const SharedBuffer&) override;
+    void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) override;
     void didFail(const ResourceError&) override;
 
     String stringResult();
@@ -99,7 +101,7 @@ private:
 
     ReadType m_readType;
     WeakPtr<FileReaderLoaderClient> m_client;
-    TextEncoding m_encoding;
+    PAL::TextEncoding m_encoding;
     String m_dataType;
 
     URL m_urlForReading;

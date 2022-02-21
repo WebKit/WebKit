@@ -96,8 +96,8 @@ async function addTriggerableAndCreateTask(name, webkitRevisions)
         'workerPassword': 'anotherPassword',
         'triggerable': 'build-webkit',
         'configurations': [
-            {test: MockData.someTestId(), platform: MockData.somePlatformId()},
-            {test: MockData.someTestId(), platform: MockData.otherPlatformId()},
+            {test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
+            {test: MockData.someTestId(), platform: MockData.otherPlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
         ],
         'repositoryGroups': [
             {name: 'os-only', acceptsRoot: true, repositories: [
@@ -190,7 +190,7 @@ describe('/privileged-api/add-build-requests', function() {
         await assertThrows('CannotAddToHiddenTestGroup', async () => await PrivilegedAPI.sendRequest('add-build-requests', {group: insertedGroupId, addCount: 2}))
     });
 
-    it('should reject with "CommitSetNotSupportedForAlternatingRepetitionType" when adding build requests for one commit set in an alternating test group', async () => {
+    it('should reject with "CommitSetNotSupportedRepetitionType" when adding build requests for one commit set in an alternating test group', async () => {
         await addTriggerableAndCreateTask('some task');
         const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
         const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
@@ -218,7 +218,7 @@ describe('/privileged-api/add-build-requests', function() {
         const secondCommitSet = group.requestedCommitSets()[1];
         assertOrderOfRequests(group.requestsForCommitSet(secondCommitSet), [1, 3]);
 
-        await assertThrows('CommitSetNotSupportedForAlternatingRepetitionType', () => {
+        await assertThrows('CommitSetNotSupportedRepetitionType', () => {
             return PrivilegedAPI.sendRequest('add-build-requests',
                 {group: insertedGroupId, addCount: 2, commitSet: secondCommitSet.id()})
         });

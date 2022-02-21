@@ -27,7 +27,7 @@ typedef (RTCRtpSFrameTransform or RTCRtpScriptTransform) RTCRtpTransform;
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=WebRTCInsertableStreams,
+    EnabledBySetting=WebRTCEncodedTransformEnabled,
     Exposed=Window,
     ImplementedBy=RTCRtpReceiverWithTransform,
 ] partial interface RTCRtpReceiver {

@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (20,20) size 744x72
           RenderText {#text} at (0,0) size 66x28
             text run at (0,0) width 66: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (65,0) size 1x28
           RenderText {#text} at (0,28) size 655x22
             text run at (0,28) width 655: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well. "
           RenderBR {BR} at (654,28) size 1x22
@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (20,114) size 744x116
           RenderText {#text} at (0,0) size 190x28
             text run at (0,0) width 190: "Expected Results: "
-          RenderBR {BR} at (189,5) size 1x22
+          RenderBR {BR} at (189,0) size 1x28
           RenderText {#text} at (0,28) size 700x44
             text run at (0,28) width 700: "The content in the red box must exactly match the content in the green box (except for the border"
             text run at (0,50) width 52: "color). "

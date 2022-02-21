@@ -10,9 +10,10 @@ Module is not executed yet.
 0
 1
 2
-PASS scripts.has(document.getElementById("s0")) is true
-PASS scripts.has(document.getElementById("s1")) is true
-PASS scripts.has(document.getElementById("s2")) is true
+PASS errors.some(e => e.match(/incorrect/)) is true
+PASS errors.some(e => e.match(/hello/)) is true
+PASS errors.some(e => e.match(/test/)) is true
+PASS Got expected error: 'TypeError'
 PASS successfullyParsed is true
 
 TEST COMPLETE

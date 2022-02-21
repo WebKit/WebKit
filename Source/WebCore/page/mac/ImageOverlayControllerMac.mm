@@ -31,9 +31,11 @@
 #import "DataDetection.h"
 #import "DataDetectionResultsStorage.h"
 #import "DataDetectorElementInfo.h"
+#import "ElementInlines.h"
 #import "FrameView.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
+#import "ImageOverlay.h"
 #import "ImageOverlayDataDetectionResultIdentifier.h"
 #import "IntRect.h"
 #import "Page.h"
@@ -49,7 +51,7 @@ namespace WebCore {
 
 void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& overlayHost)
 {
-    if (!overlayHost.hasImageOverlay()) {
+    if (!ImageOverlay::hasOverlay(overlayHost)) {
         ASSERT_NOT_REACHED();
         clearDataDetectorHighlights();
         return;
@@ -57,8 +59,8 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
 
     Vector<Ref<HTMLElement>> dataDetectorResultElements;
     for (auto& child : descendantsOfType<HTMLElement>(*overlayHost.userAgentShadowRoot())) {
-        if (child.isImageOverlayDataDetectorResult() && child.renderer())
-            dataDetectorResultElements.append(makeRef(child));
+        if (ImageOverlay::isDataDetectorResult(child) && child.renderer())
+            dataDetectorResultElements.append(child);
     }
 
     HashSet<Ref<HTMLElement>> dataDetectorResultElementsWithHighlights;
@@ -70,11 +72,11 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
     if (dataDetectorResultElementsWithHighlights == dataDetectorResultElements)
         return;
 
-    auto mainFrameView = makeRefPtr(m_page->mainFrame().view());
+    RefPtr mainFrameView = m_page->mainFrame().view();
     if (!mainFrameView)
         return;
 
-    auto frameView = makeRefPtr(overlayHost.document().view());
+    RefPtr frameView = overlayHost.document().view();
     if (!frameView)
         return;
 
@@ -88,17 +90,17 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
 
         // FIXME: We should teach DataDetectorHighlight to render quads instead of always falling back to axis-aligned bounding rects.
 #if HAVE(DD_HIGHLIGHT_CREATE_WITH_SCALE)
-        auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES, 0));
+        auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES, 0));
 #else
-        auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES));
+        auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES));
 #endif
-        m_dataDetectorContainersAndHighlights.append({ makeWeakPtr(element.get()), DataDetectorHighlight::createForImageOverlay(*m_page, *this, WTFMove(highlight), *makeRangeSelectingNode(element.get())) });
+        m_dataDetectorContainersAndHighlights.uncheckedAppend({ element, DataDetectorHighlight::createForImageOverlay(*m_page, *this, WTFMove(highlight), *makeRangeSelectingNode(element.get())) });
     }
 }
 
 bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent& event)
 {
-    auto mainFrameView = makeRefPtr(m_page->mainFrame().view());
+    RefPtr mainFrameView = m_page->mainFrame().view();
     if (!mainFrameView)
         return false;
 
@@ -117,7 +119,7 @@ bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent& 
 
         mouseIsOverActiveDataDetectorHighlightButton = isOverButton;
         m_activeDataDetectorHighlight = highlight.copyRef();
-        activeDataDetectorElement = makeRefPtr(*element);
+        activeDataDetectorElement = element.get();
         break;
     }
 
@@ -142,11 +144,11 @@ bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element
     if (!m_page)
         return false;
 
-    auto frame = makeRefPtr(element.document().frame());
+    RefPtr frame = element.document().frame();
     if (!frame)
         return false;
 
-    auto frameView = makeRefPtr(element.document().view());
+    RefPtr frameView = element.document().view();
     if (!frameView)
         return false;
 
@@ -181,6 +183,20 @@ void ImageOverlayController::clearDataDetectorHighlights()
     m_activeDataDetectorHighlight = nullptr;
 }
 
+void ImageOverlayController::textRecognitionResultsChanged(HTMLElement& element)
+{
+    if (m_hostElementForDataDetectors != &element)
+        return;
+
+    clearDataDetectorHighlights();
+    uninstallPageOverlayIfNeeded();
+}
+
+bool ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
+{
+    return !!m_activeDataDetectorHighlight;
+}
+
 void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* elementUnderMouse)
 {
     if (m_activeDataDetectorHighlight)
@@ -189,7 +205,7 @@ void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* e
     if (!elementUnderMouse && m_hostElementForDataDetectors && frame.document() != &m_hostElementForDataDetectors->document())
         return;
 
-    if (!elementUnderMouse || !HTMLElement::isInsideImageOverlay(*elementUnderMouse)) {
+    if (!elementUnderMouse || !ImageOverlay::isInsideOverlay(*elementUnderMouse)) {
         m_hostElementForDataDetectors = nullptr;
         uninstallPageOverlayIfNeeded();
         return;
@@ -203,8 +219,8 @@ void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* e
         return;
     }
 
-    auto imageOverlayHost = makeRef(downcast<HTMLElement>(*shadowHost));
-    if (!imageOverlayHost->hasImageOverlay()) {
+    Ref imageOverlayHost = downcast<HTMLElement>(*shadowHost);
+    if (!ImageOverlay::hasOverlay(imageOverlayHost.get())) {
         ASSERT_NOT_REACHED();
         m_hostElementForDataDetectors = nullptr;
         uninstallPageOverlayIfNeeded();
@@ -222,7 +238,7 @@ void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* e
         return;
     }
 
-    m_hostElementForDataDetectors = makeWeakPtr(imageOverlayHost.get());
+    m_hostElementForDataDetectors = imageOverlayHost;
     installPageOverlayIfNeeded();
 }
 

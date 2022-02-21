@@ -70,24 +70,24 @@ static bool areEssentiallyEqual(LayoutRect a, LayoutRect b)
         && areEssentiallyEqual(a.height(), b.height());
 }
 
-static bool checkForMatchingNonTextRuns(const Run& run, const WebCore::LegacyInlineBox& inlineBox)
+static bool checkForMatchingNonTextRuns(const InlineDisplay::Box& box, const WebCore::LegacyInlineBox& inlineBox)
 {
-    return areEssentiallyEqual(inlineBox.left(), run.logicalLeft())
-        && areEssentiallyEqual(inlineBox.right(), run.logicalRight())
-        && areEssentiallyEqual(inlineBox.top(), run.logicalTop())
-        && areEssentiallyEqual(inlineBox.bottom(), run.logicalBottom());
+    return areEssentiallyEqual(inlineBox.left(), box.left())
+        && areEssentiallyEqual(inlineBox.right(), box.right())
+        && areEssentiallyEqual(inlineBox.top(), box.top())
+        && areEssentiallyEqual(inlineBox.bottom(), box.bottom());
 }
 
 
-static bool checkForMatchingTextRuns(const Run& run, const WebCore::LegacyInlineTextBox& inlineTextBox)
+static bool checkForMatchingTextRuns(InlineDisplay::Box& box, const WebCore::LegacyInlineTextBox& inlineTextBox)
 {
-    if (!run.text())
+    if (!box.text())
         return false;
-    return areEssentiallyEqual(inlineTextBox.left(), run.logicalLeft())
-        && areEssentiallyEqual(inlineTextBox.right(), run.logicalRight())
-        && areEssentiallyEqual(inlineTextBox.top(), run.logicalTop())
-        && areEssentiallyEqual(inlineTextBox.bottom(), run.logicalBottom())
-        && (inlineTextBox.isLineBreak() || (inlineTextBox.start() == run.text()->start() && inlineTextBox.end() == run.text()->end()));
+    return areEssentiallyEqual(inlineTextBox.left(), box.left())
+        && areEssentiallyEqual(inlineTextBox.right(), box.right())
+        && areEssentiallyEqual(inlineTextBox.top(), box.top())
+        && areEssentiallyEqual(inlineTextBox.bottom(), box.bottom())
+        && (inlineTextBox.isLineBreak() || (inlineTextBox.start() == box.text()->start() && inlineTextBox.end() == box.text()->end()));
 }
 
 static void collectFlowBoxSubtree(const LegacyInlineFlowBox& flowbox, Vector<WebCore::LegacyInlineBox*>& inlineBoxes)
@@ -117,49 +117,49 @@ static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::Lega
 
 static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const ContainerBox& inlineFormattingRoot)
 {
-    auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
-    auto& runs = downcast<InlineFormattingState>(inlineFormattingState).runs();
+    auto& inlineFormattingState = layoutState.formattingStateForFormattingContext(inlineFormattingRoot);
+    auto& boxes = downcast<InlineFormattingState>(inlineFormattingState).boxes();
     // Collect inlineboxes.
     Vector<WebCore::LegacyInlineBox*> inlineBoxes;
     collectInlineBoxes(blockFlow, inlineBoxes);
 
     auto mismatched = false;
-    unsigned runIndex = 0;
+    unsigned boxIndex = 0;
 
-    if (inlineBoxes.size() != runs.size()) {
-        stream << "Warning: mismatching number of runs: inlineboxes(" << inlineBoxes.size() << ") vs. inline runs(" << runs.size() << ")";
+    if (inlineBoxes.size() != boxes.size()) {
+        stream << "Warning: mismatching number of boxes: inlineboxes(" << inlineBoxes.size() << ") vs. inline boxes(" << boxes.size() << ")";
         stream.nextLine();
     }
 
-    for (unsigned inlineBoxIndex = 0; inlineBoxIndex < inlineBoxes.size() && runIndex < runs.size(); ++inlineBoxIndex) {
-        auto& run = runs[runIndex];
+    for (unsigned inlineBoxIndex = 0; inlineBoxIndex < inlineBoxes.size() && boxIndex < boxes.size(); ++inlineBoxIndex) {
+        auto& box = boxes[boxIndex];
         auto* inlineBox = inlineBoxes[inlineBoxIndex];
-        auto* inlineTextBox = is<WebCore::LegacyInlineTextBox>(inlineBox) ? downcast<WebCore::LegacyInlineTextBox>(inlineBox) : nullptr;
-        bool matchingRuns = inlineTextBox ? checkForMatchingTextRuns(run, *inlineTextBox) : checkForMatchingNonTextRuns(run, *inlineBox);
+        auto* inlineTextBox = dynamicDowncast<WebCore::LegacyInlineTextBox>(inlineBox);
+        bool matchingRuns = inlineTextBox ? checkForMatchingTextRuns(box, *inlineTextBox) : checkForMatchingNonTextRuns(box, *inlineBox);
 
         if (!matchingRuns) {
             
             if (is<RenderLineBreak>(inlineBox->renderer())) {
                 // <br> positioning is weird at this point. It needs proper baseline.
                 matchingRuns = true;
-                ++runIndex;
+                ++boxIndex;
                 continue;
             }
 
-            stream << "Mismatching: run";
+            stream << "Mismatching: box";
 
             if (inlineTextBox)
                 stream << " (" << inlineTextBox->start() << ", " << inlineTextBox->end() << ")";
             stream << " (" << inlineBox->logicalLeft() << ", " << inlineBox->logicalTop() << ") (" << inlineBox->logicalWidth() << "x" << inlineBox->logicalHeight() << ")";
 
-            stream << " inline run";
-            if (run.text())
-                stream << " (" << run.text()->start() << ", " << run.text()->end() << ")";
-            stream << " (" << run.logicalLeft() << ", " << run.logicalTop() << ") (" << run.logicalWidth() << "x" << run.logicalHeight() << ")";
+            stream << " inline box";
+            if (box.text())
+                stream << " (" << box.text()->start() << ", " << box.text()->end() << ")";
+            stream << " (" << box.left() << ", " << box.top() << ") (" << box.width() << "x" << box.height() << ")";
             stream.nextLine();
             mismatched = true;
         }
-        ++runIndex;
+        ++boxIndex;
     }
     return mismatched;
 }

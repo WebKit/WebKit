@@ -51,6 +51,7 @@
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HitTestResult.h"
+#include "ImageOverlay.h"
 #include "InspectorController.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
@@ -71,6 +72,10 @@
 #include <wtf/SetForScope.h>
 #include <wtf/WallTime.h>
 #include <wtf/unicode/CharacterNames.h>
+
+#if ENABLE(SERVICE_CONTROLS)
+#include "ImageControlsMac.h"
+#endif
 
 
 namespace WebCore {
@@ -160,7 +165,7 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
         return nullptr;
 
     m_context = ContextMenuContext(contextType, result);
-
+    
     return makeUnique<ContextMenu>();
 }
 
@@ -521,13 +526,14 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagDictationAlternative:
         frame->editor().applyDictationAlternative(title);
         break;
+    case ContextMenuItemTagCopyCroppedImage:
     case ContextMenuItemTagQuickLookImage:
-        // This should be handled at the client layer.
+        // These should be handled at the client layer.
         ASSERT_NOT_REACHED();
         break;
     case ContextMenuItemTagTranslate:
 #if HAVE(TRANSLATION_UI_SERVICES)
-        if (auto view = makeRefPtr(frame->view())) {
+        if (RefPtr view = frame->view()) {
             m_client.handleTranslation({
                 m_context.hitTestResult().selectedText(),
                 view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds())),
@@ -834,7 +840,11 @@ void ContextMenuController::populate()
 #if PLATFORM(GTK) || PLATFORM(WIN)
     ContextMenuItem ShareMenuItem;
 #else
-    ContextMenuItem ShareMenuItem(SubmenuType, ContextMenuItemTagShareMenu, emptyString());
+    ContextMenuItem ShareMenuItem(ActionType, ContextMenuItemTagShareMenu, emptyString());
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    ContextMenuItem copyCroppedImageItem { ActionType, ContextMenuItemTagCopyCroppedImage, contextMenuItemTagCopyCroppedImage() };
 #endif
 
     Node* node = m_context.hitTestResult().innerNonSharedNode();
@@ -844,7 +854,7 @@ void ContextMenuController::populate()
     if (!m_context.hitTestResult().isContentEditable() && is<HTMLFormControlElement>(*node))
         return;
 #endif
-    auto frame = makeRefPtr(node->document().frame());
+    RefPtr frame = node->document().frame();
     if (!frame)
         return;
 
@@ -907,10 +917,15 @@ void ContextMenuController::populate()
             if (imageURL.isLocalFile() || image) {
                 appendItem(CopyImageItem, m_contextMenu.get());
 
-#if ENABLE(IMAGE_ANALYSIS)
-                if (m_client.supportsLookUpInImages() && image && !image->isAnimated())
-                    shouldAppendQuickLookImageItem = true;
+                if (image && !image->isAnimated()) {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+                    if (m_client.supportsCopyCroppedImage())
+                        appendItem(copyCroppedImageItem, m_contextMenu.get());
 #endif
+#if ENABLE(IMAGE_ANALYSIS)
+                    shouldAppendQuickLookImageItem = m_client.supportsLookUpInImages();
+#endif
+                }
             }
 #if PLATFORM(GTK)
             appendItem(CopyImageUrlItem, m_contextMenu.get());
@@ -943,7 +958,7 @@ void ContextMenuController::populate()
         }
 
         auto selectedRange = frame->selection().selection().range();
-        bool selectionIsInsideImageOverlay = selectedRange && HTMLElement::isInsideImageOverlay(*selectedRange);
+        bool selectionIsInsideImageOverlay = selectedRange && ImageOverlay::isInsideOverlay(*selectedRange);
         bool shouldShowItemsForNonEditableText = ([&] {
             if (!linkURL.isEmpty())
                 return false;
@@ -1412,6 +1427,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagCopyLinkToClipboard:
         case ContextMenuItemTagOpenImageInNewWindow:
         case ContextMenuItemTagCopyImageToClipboard:
+        case ContextMenuItemTagCopyCroppedImage:
 #if PLATFORM(GTK)
         case ContextMenuItemTagCopyImageUrlToClipboard:
 #endif
@@ -1531,6 +1547,17 @@ void ContextMenuController::showContextMenuAt(Frame& frame, const IntPoint& clic
     bool handled = frame.eventHandler().sendContextMenuEvent(mouseEvent);
     if (handled)
         m_client.showContextMenu();
+}
+
+#endif
+
+#if ENABLE(SERVICE_CONTROLS)
+
+void ContextMenuController::showImageControlsMenu(Event& event)
+{
+    clearContextMenu();
+    handleContextMenuEvent(event);
+    m_client.showContextMenu();
 }
 
 #endif

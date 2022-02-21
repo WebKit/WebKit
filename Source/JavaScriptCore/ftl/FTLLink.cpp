@@ -52,14 +52,6 @@ void link(State& state)
 
     graph.registerFrozenValues();
 
-#if ASSERT_ENABLED
-    {
-        ConcurrentJSLocker locker(codeBlock->m_lock);
-        ASSERT(codeBlock->ensureJITData(locker).m_stringSwitchJumpTables.isEmpty());
-        ASSERT(codeBlock->ensureJITData(locker).m_switchJumpTables.isEmpty());
-    }
-#endif
-
     // Create the entrypoint. Note that we use this entrypoint totally differently
     // depending on whether we're doing OSR entry or not.
     CCallHelpers jit(codeBlock);

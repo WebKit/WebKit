@@ -224,11 +224,6 @@ media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Timeou
 # webkit.org/b/221693
 media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Failure Crash ]
 
-# webkit.org/b/220805
-webaudio/Panner/hrtf-database.html [ Timeout ]
-webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Timeout ]
-webaudio/codec-tests/mp3/128kbps-44khz.html [ Timeout ]
-
 # webkit.org/b/221791
 # fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
 # fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]
@@ -251,8 +246,6 @@ webaudio/codec-tests/mp3/128kbps-44khz.html [ Timeout ]
 # webgl/2.0.0/conformance/textures/video/tex-2d-rgb-rgb-unsigned_byte.html [ Failure ]
 
 webkit.org/b/221816 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
-
-webkit.org/b/221819 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure ]
 
 webkit.org/b/222569 fast/mediastream/media-stream-track-interrupted.html [ Crash Pass ]
 
@@ -418,7 +411,6 @@ http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-op
 http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
 http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
 http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
 http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html
@@ -451,10 +443,6 @@ transitions/font-family-during-transition.html
 # [WK2] http/tests/navigation/anchor-frames-cross-origin.html fails.
 # https://bugs.webkit.org/show_bug.cgi?id=83581
 http/tests/navigation/anchor-frames-cross-origin.html
-
-# [WK2] http/tests/navigation/anchor-frames-same-origin.html fails.
-# https://bugs.webkit.org/show_bug.cgi?id=84227
-http/tests/navigation/anchor-frames-same-origin.html
 
 # Unexplained plugin failures
 platform/mac/plugins/testplugin-onnew-onpaint.html
@@ -849,6 +837,10 @@ webkit.org/b/187766 http/wpt/service-workers/update-service-worker.https.html [ 
 # Newly imported test that is flaky on WebKit2 only.
 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/no_window_open_when_term_nesting_level_nonzero.window.html [ Pass Failure ]
 
+webkit.org/b/231348 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-windows.https.window.html [ Pass Failure ]
+webkit.org/b/231349 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-windows.https.window.html [ Pass Failure ]
+webkit.org/b/231350 [ Release ] imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-create-sync-access-handle-dedicated-worker.https.tentative.window.html [ Pass Failure ]
+
 # Closed port web socket delays are only supported on wk2.
 http/tests/websocket/tests/hybi/closed-port-delay.html [ Pass ]
 
@@ -856,9 +848,14 @@ http/tests/websocket/tests/hybi/closed-port-delay.html [ Pass ]
 js/throw-large-string-oom.html [ Pass ]
 fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Pass ]
 fast/scrolling/keyboard-scrolling-distance-pageDown.html [ Pass ]
+fast/scrolling/keyboard-scrolling-last-timestamp.html [ Pass ]
 fast/speechrecognition/permission-error.html [ Pass ]
 fast/speechrecognition/start-recognition-then-stop.html [ Pass ]
 fast/speechrecognition/start-second-recognition.html [ Pass ]
 fullscreen/full-screen-enter-while-exiting.html [ Pass ]
 imported/w3c/web-platform-tests/permissions/ [ Pass ]
+imported/w3c/web-platform-tests/storage/ [ Pass ]
+imported/w3c/web-platform-tests/file-system-access/ [ Pass ]
+storage/filesystemaccess/ [ Pass ]
 
+fast/canvas/large-getImageData.html [ Pass ]

@@ -53,8 +53,9 @@ private:
 
     FloatPoint computeLayerPosition(const LayoutRect& viewportRect) const;
     void reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction) final;
+    FloatSize scrollDeltaSinceLastCommit(const LayoutRect& viewportRect) const;
 
-    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const final;
+    void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const final;
     OptionSet<ScrollingStateNode::Property> applicableProperties() const final;
 
     StickyPositionViewportConstraints m_constraints;

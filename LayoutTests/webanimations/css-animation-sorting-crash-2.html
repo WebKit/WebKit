@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<style></style>
+<script>
+
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+onload = async () => {
+    document.body.append(document.createElement('input'));
+    document.body.append(document.createElement('slot'));
+    let n3 = document.createElement('br');
+    document.body.append(n3);
+    let n7 = document.createElement('div');
+    n3.append(n7);
+    document.body.append(document.createElement('input'));
+    document.body.offsetTop;
+    n7.append(document.createElement('div'));
+    document.execCommand('SelectAll');
+    await caches.has('a');
+    document.designMode = 'on';
+    document.styleSheets[0].insertRule(`@keyframes a1 { }`);
+    document.styleSheets[0].insertRule(`slot { animation-delay: 25ms; }`);
+    onbeforeunload = () => document.execCommand('Bold');
+};
+
+</script>
+<p>PASS if this test doesn't crash</p>

@@ -26,18 +26,29 @@
 #ifndef BMALLOC_HEAP_REF_H
 #define BMALLOC_HEAP_REF_H
 
-#include "iso_heap_ref.h"
+#include "bmalloc_type.h"
+#include "pas_heap_ref.h"
 
 PAS_BEGIN_EXTERN_C;
 
-#define BMALLOC_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(type_size, alignment) \
-    ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT((type_size), (alignment))
+#define BMALLOC_HEAP_REF_INITIALIZER(passed_type) \
+    ((pas_heap_ref){ \
+         .type = (const pas_heap_type*)(passed_type), \
+         .heap = NULL, \
+         .allocator_index = 0 \
+     })
 
-#define BMALLOC_HEAP_REF_INITIALIZER(type_size) \
-    ISO_HEAP_REF_INITIALIZER(type_size)
+#define BMALLOC_PRIMITIVE_HEAP_REF_INITIALIZER_IMPL(passed_type) \
+    ((pas_primitive_heap_ref){ \
+         .base = BMALLOC_HEAP_REF_INITIALIZER(passed_type), \
+         .cached_index = UINT_MAX \
+     })
 
-#define BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER \
-    ISO_PRIMITIVE_HEAP_REF_INITIALIZER
+#define BMALLOC_FLEX_HEAP_REF_INITIALIZER(passed_type) \
+    BMALLOC_PRIMITIVE_HEAP_REF_INITIALIZER_IMPL(passed_type)
+
+#define BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(passed_type) \
+    BMALLOC_PRIMITIVE_HEAP_REF_INITIALIZER_IMPL(passed_type)
 
 PAS_END_EXTERN_C;
 

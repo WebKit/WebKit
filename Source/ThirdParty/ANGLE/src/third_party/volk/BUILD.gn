@@ -15,5 +15,5 @@ source_set("volk") {
   ]
   public_configs = [ ":volk_config" ]
   configs += [ "$angle_root:angle_no_cfi_icall" ]
-  public_deps = [ "../../../third_party/vulkan-headers/src:vulkan_headers" ]
+  public_deps = [ "$angle_vulkan_headers_dir:vulkan_headers" ]
 }

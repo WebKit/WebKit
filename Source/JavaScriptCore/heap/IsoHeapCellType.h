@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,26 +26,34 @@
 #pragma once
 
 #include "HeapCellType.h"
-#include "MarkedBlockInlines.h"
+#include <wtf/PtrTag.h>
 
 namespace JSC {
 
-class IsoHeapCellType final : public HeapCellType {
+class JS_EXPORT_PRIVATE IsoHeapCellType final : public HeapCellType {
 public:
     using DestroyFunctionPtr = void (*)(JSCell*);
 
-    JS_EXPORT_PRIVATE ~IsoHeapCellType();
-
-    JS_EXPORT_PRIVATE IsoHeapCellType(DestructionMode, DestroyFunctionPtr);
+    ~IsoHeapCellType();
 
     template<typename CellType>
-    static std::unique_ptr<IsoHeapCellType> create()
-    {
-        return makeUnique<IsoHeapCellType>(CellType::needsDestruction ? NeedsDestruction : DoesNotNeedDestruction, &CellType::destroy);
-    }
+    struct Args {
+        Args()
+            : mode(CellType::needsDestruction ? NeedsDestruction : DoesNotNeedDestruction)
+            , functionPtr(&CellType::destroy)
+        { }
 
-    JS_EXPORT_PRIVATE void finishSweep(MarkedBlock::Handle&, FreeList*) final;
-    JS_EXPORT_PRIVATE void destroy(VM&, JSCell*) final;
+        DestructionMode mode;
+        DestroyFunctionPtr functionPtr;
+    };
+
+    template<typename CellType>
+    IsoHeapCellType(Args<CellType>&& args)
+        : IsoHeapCellType(args.mode, args.functionPtr)
+    { }
+
+    void finishSweep(MarkedBlock::Handle&, FreeList*) const final;
+    void destroy(VM&, JSCell*) const final;
 
     ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
     {
@@ -53,6 +61,8 @@ public:
     }
 
 private:
+    IsoHeapCellType(DestructionMode, DestroyFunctionPtr);
+
     DestroyFunctionPtr WTF_VTBL_FUNCPTR_PTRAUTH_STR("IsoHeapCellType.destroy") m_destroy;
 };
 

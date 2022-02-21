@@ -160,7 +160,7 @@
     AccessibilityUIElement disclosedByRow();
     AccessibilityUIElement disclosedRowAtIndex(unsigned long index);
     AccessibilityUIElement rowAtIndex(unsigned long index);
-    boolean isInTableCell();
+    readonly attribute boolean isInCell;
     readonly attribute boolean isInTable;
     readonly attribute boolean isInLandmark;
     readonly attribute boolean isInList;
@@ -266,6 +266,7 @@
     readonly attribute DOMString supportedActions;
     readonly attribute DOMString mathPostscriptsDescription;
     readonly attribute DOMString mathPrescriptsDescription;
+    readonly attribute object mathRootRadicand;
 
     readonly attribute DOMString pathDescription;
 
@@ -284,10 +285,12 @@
     undefined assistiveTechnologySimulatedFocus();
     readonly attribute boolean isSearchField;
     readonly attribute boolean isTextArea;
-    readonly attribute boolean isInDefinitionListDefinition;
-    readonly attribute boolean isInDefinitionListTerm;
 
-    // Fieldset
+    readonly attribute boolean hasDocumentRoleAncestor;
+    readonly attribute boolean hasWebApplicationAncestor;
+    readonly attribute boolean isInDescriptionListDetail;
+    readonly attribute boolean isInDescriptionListTerm;
+
     readonly attribute boolean hasContainedByFieldsetTrait;
     AccessibilityUIElement fieldsetAncestorElement();
 

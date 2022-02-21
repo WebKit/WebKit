@@ -5,6 +5,7 @@
 angle_unittests_sources = [
   "../../util/test_utils_unittest.cpp",
   "../../util/test_utils_unittest_helper.h",
+  "../common/CircularBuffer_unittest.cpp",
   "../common/FastVector_unittest.cpp",
   "../common/FixedVector_unittest.cpp",
   "../common/Optional_unittest.cpp",
@@ -49,67 +50,6 @@ angle_unittests_sources = [
   "../libANGLE/renderer/TransformFeedbackImpl_mock.h",
   "../libANGLE/renderer/serial_utils_unittest.cpp",
   "angle_unittests_utils.h",
-  "compiler_tests/API_test.cpp",
-  "compiler_tests/APPLE_clip_distance_test.cpp",
-  "compiler_tests/ARB_texture_rectangle_test.cpp",
-  "compiler_tests/AppendixALimitations_test.cpp",
-  "compiler_tests/AtomicCounter_test.cpp",
-  "compiler_tests/BufferVariables_test.cpp",
-  "compiler_tests/CollectVariables_test.cpp",
-  "compiler_tests/ConstantFoldingNaN_test.cpp",
-  "compiler_tests/ConstantFoldingOverflow_test.cpp",
-  "compiler_tests/ConstantFolding_test.cpp",
-  "compiler_tests/ConstructCompiler_test.cpp",
-  "compiler_tests/DebugShaderPrecision_test.cpp",
-  "compiler_tests/EXT_YUV_target_test.cpp",
-  "compiler_tests/EXT_blend_func_extended_test.cpp",
-  "compiler_tests/EXT_frag_depth_test.cpp",
-  "compiler_tests/EXT_shader_texture_lod_test.cpp",
-  "compiler_tests/EXT_shadow_samplers_test.cpp",
-  "compiler_tests/EmulateGLBaseVertexBaseInstance_test.cpp",
-  "compiler_tests/EmulateGLDrawID_test.cpp",
-  "compiler_tests/EmulateGLFragColorBroadcast_test.cpp",
-  "compiler_tests/ExpressionLimit_test.cpp",
-  "compiler_tests/ExtensionDirective_test.cpp",
-  "compiler_tests/FloatLex_test.cpp",
-  "compiler_tests/FragDepth_test.cpp",
-  "compiler_tests/GLSLCompatibilityOutput_test.cpp",
-  "compiler_tests/GeometryShader_test.cpp",
-  "compiler_tests/GlFragDataNotModified_test.cpp",
-  "compiler_tests/ImmutableString_test.cpp",
-  "compiler_tests/InitOutputVariables_test.cpp",
-  "compiler_tests/IntermNode_test.cpp",
-  "compiler_tests/NV_draw_buffers_test.cpp",
-  "compiler_tests/OES_standard_derivatives_test.cpp",
-  "compiler_tests/OES_texture_cube_map_array_test.cpp",
-  "compiler_tests/OVR_multiview2_test.cpp",
-  "compiler_tests/OVR_multiview_test.cpp",
-  "compiler_tests/Pack_Unpack_test.cpp",
-  "compiler_tests/PruneEmptyCases_test.cpp",
-  "compiler_tests/PruneEmptyDeclarations_test.cpp",
-  "compiler_tests/PrunePureLiteralStatements_test.cpp",
-  "compiler_tests/PruneUnusedFunctions_test.cpp",
-  "compiler_tests/QualificationOrderESSL31_test.cpp",
-  "compiler_tests/QualificationOrder_test.cpp",
-  "compiler_tests/RecordConstantPrecision_test.cpp",
-  "compiler_tests/RegenerateStructNames_test.cpp",
-  "compiler_tests/RemovePow_test.cpp",
-  "compiler_tests/RemoveUnreferencedVariables_test.cpp",
-  "compiler_tests/RewriteDoWhile_test.cpp",
-  "compiler_tests/SamplerMultisample_test.cpp",
-  "compiler_tests/SamplerVideoWEBGL_test.cpp",
-  "compiler_tests/ScalarizeVecAndMatConstructorArgs_test.cpp",
-  "compiler_tests/ShCompile_test.cpp",
-  "compiler_tests/ShaderImage_test.cpp",
-  "compiler_tests/ShaderValidation_test.cpp",
-  "compiler_tests/ShaderVariable_test.cpp",
-  "compiler_tests/TextureFunction_test.cpp",
-  "compiler_tests/TypeTracking_test.cpp",
-  "compiler_tests/Type_test.cpp",
-  "compiler_tests/UnfoldShortCircuitAST_test.cpp",
-  "compiler_tests/VariablePacker_test.cpp",
-  "compiler_tests/VectorizeVectorScalarArithmetic_test.cpp",
-  "compiler_tests/WorkGroupSize_test.cpp",
   "preprocessor_tests/MockDiagnostics.h",
   "preprocessor_tests/MockDirectiveHandler.h",
   "preprocessor_tests/PreprocessorTest.cpp",
@@ -130,33 +70,104 @@ angle_unittests_sources = [
   "preprocessor_tests/token_test.cpp",
   "preprocessor_tests/version_test.cpp",
   "test_expectations/GPUTestExpectationsParser_unittest.cpp",
-  "test_utils/ConstantFoldingTest.cpp",
-  "test_utils/ConstantFoldingTest.h",
-  "test_utils/ShaderCompileTreeTest.cpp",
-  "test_utils/ShaderCompileTreeTest.h",
   "test_utils/ShaderExtensionTest.h",
   "test_utils/angle_test_instantiate.h",
   "test_utils/compiler_test.cpp",
   "test_utils/compiler_test.h",
 ]
 
+angle_unittests_compiler_tests_sources = [
+  "compiler_tests/API_test.cpp",
+  "compiler_tests/APPLE_clip_distance_test.cpp",
+  "compiler_tests/ARB_texture_rectangle_test.cpp",
+  "compiler_tests/AppendixALimitations_test.cpp",
+  "compiler_tests/AtomicCounter_test.cpp",
+  "compiler_tests/BufferVariables_test.cpp",
+  "compiler_tests/CollectVariables_test.cpp",
+  "compiler_tests/ConstantFoldingNaN_test.cpp",
+  "compiler_tests/ConstantFoldingOverflow_test.cpp",
+  "compiler_tests/ConstantFolding_test.cpp",
+  "compiler_tests/ConstructCompiler_test.cpp",
+  "compiler_tests/EXT_YUV_target_test.cpp",
+  "compiler_tests/EXT_blend_func_extended_test.cpp",
+  "compiler_tests/EXT_clip_cull_distance_test.cpp",
+  "compiler_tests/EXT_frag_depth_test.cpp",
+  "compiler_tests/EXT_shader_framebuffer_fetch_test.cpp",
+  "compiler_tests/EXT_shader_texture_lod_test.cpp",
+  "compiler_tests/EXT_shadow_samplers_test.cpp",
+  "compiler_tests/EmulateGLBaseVertexBaseInstance_test.cpp",
+  "compiler_tests/EmulateGLDrawID_test.cpp",
+  "compiler_tests/EmulateGLFragColorBroadcast_test.cpp",
+  "compiler_tests/ExpressionLimit_test.cpp",
+  "compiler_tests/ExtensionDirective_test.cpp",
+  "compiler_tests/FloatLex_test.cpp",
+  "compiler_tests/FragDepth_test.cpp",
+  "compiler_tests/GLSLCompatibilityOutput_test.cpp",
+  "compiler_tests/GeometryShader_test.cpp",
+  "compiler_tests/GlFragDataNotModified_test.cpp",
+  "compiler_tests/ImmutableString_test.cpp",
+  "compiler_tests/InitOutputVariables_test.cpp",
+  "compiler_tests/IntermNode_test.cpp",
+  "compiler_tests/NV_draw_buffers_test.cpp",
+  "compiler_tests/OES_sample_variables_test.cpp",
+  "compiler_tests/OES_standard_derivatives_test.cpp",
+  "compiler_tests/OES_texture_cube_map_array_test.cpp",
+  "compiler_tests/OVR_multiview2_test.cpp",
+  "compiler_tests/OVR_multiview_test.cpp",
+  "compiler_tests/Pack_Unpack_test.cpp",
+  "compiler_tests/PruneEmptyCases_test.cpp",
+  "compiler_tests/PruneEmptyDeclarations_test.cpp",
+  "compiler_tests/PrunePureLiteralStatements_test.cpp",
+  "compiler_tests/PruneUnusedFunctions_test.cpp",
+  "compiler_tests/QualificationOrderESSL31_test.cpp",
+  "compiler_tests/QualificationOrder_test.cpp",
+  "compiler_tests/RecordConstantPrecision_test.cpp",
+  "compiler_tests/RegenerateStructNames_test.cpp",
+  "compiler_tests/RemoveUnreferencedVariables_test.cpp",
+  "compiler_tests/SamplerMultisample_test.cpp",
+  "compiler_tests/SamplerVideoWEBGL_test.cpp",
+  "compiler_tests/ScalarizeVecAndMatConstructorArgs_test.cpp",
+  "compiler_tests/ShCompile_test.cpp",
+  "compiler_tests/ShaderImage_test.cpp",
+  "compiler_tests/ShaderValidation_test.cpp",
+  "compiler_tests/ShaderVariable_test.cpp",
+  "compiler_tests/TextureFunction_test.cpp",
+  "compiler_tests/TypeTracking_test.cpp",
+  "compiler_tests/Type_test.cpp",
+  "compiler_tests/VariablePacker_test.cpp",
+  "compiler_tests/WorkGroupSize_test.cpp",
+  "test_utils/ConstantFoldingTest.cpp",
+  "test_utils/ConstantFoldingTest.h",
+  "test_utils/ShaderCompileTreeTest.cpp",
+  "test_utils/ShaderCompileTreeTest.h",
+]
+
+angle_unittests_glsl_mac_sources = [
+  "compiler_tests/RewriteDoWhile_test.cpp",
+  "compiler_tests/UnfoldShortCircuitAST_test.cpp",
+]
+
 # TODO(jmadill): should probably call this windows sources
 angle_unittests_hlsl_sources = [
-  "../tests/compiler_tests/HLSLOutput_test.cpp",
-  "../tests/compiler_tests/UnrollFlatten_test.cpp",
+  "compiler_tests/HLSLOutput_test.cpp",
+  "compiler_tests/UnrollFlatten_test.cpp",
 ]
+
+angle_unittests_gl_sources =
+    [ "../libANGLE/renderer/gl/DisplayGL_unittest.cpp" ]
+
+angle_unittests_msl_sources = [ "../tests/compiler_tests/MSLOutput_test.cpp" ]
 
 if (is_android) {
   angle_unittests_sources +=
-      [ "../tests/compiler_tests/ImmutableString_test_ESSL_autogen.cpp" ]
+      [ "compiler_tests/ImmutableString_test_ESSL_autogen.cpp" ]
 } else {
   angle_unittests_sources +=
-      [ "../tests/compiler_tests/ImmutableString_test_autogen.cpp" ]
+      [ "compiler_tests/ImmutableString_test_autogen.cpp" ]
 }
 
 angle_unittests_msl_sources = [ "../tests/compiler_tests/MSLOutput_test.cpp" ]
 
 if (!is_android && !is_fuchsia) {
-  angle_unittests_sources +=
-      [ "../tests/test_utils/runner/TestSuite_unittest.cpp" ]
+  angle_unittests_sources += [ "test_utils/runner/TestSuite_unittest.cpp" ]
 }

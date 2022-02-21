@@ -36,6 +36,7 @@
 
 #include "AudioTrackList.h"
 #include "ContentType.h"
+#include "ContentTypeUtilities.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
@@ -50,6 +51,7 @@
 #include "SourceBufferPrivate.h"
 #include "TextTrackList.h"
 #include "TimeRanges.h"
+#include "VideoTrack.h"
 #include "VideoTrackList.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -322,8 +324,8 @@ ExceptionOr<void> MediaSource::clearLiveSeekableRange()
 
 const MediaTime& MediaSource::currentTimeFudgeFactor()
 {
-    // Allow hasCurrentTime() to be off by as much as the length of two 24fps video frames
-    static NeverDestroyed<MediaTime> fudgeFactor(2002, 24000);
+    // Allow hasCurrentTime() to be off by as much as 100ms.
+    static NeverDestroyed<MediaTime> fudgeFactor(1, 10);
     return fudgeFactor;
 }
 
@@ -908,6 +910,17 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
     parameters.isMediaSource = true;
     parameters.contentTypesRequiringHardwareSupport = WTFMove(contentTypesRequiringHardwareSupport);
 
+    if (context.isDocument()) {
+        auto& settings = downcast<Document>(context).settings();
+        if (!contentTypeMeetsContainerAndCodecTypeRequirements(contentType, settings.allowedMediaContainerTypes(), settings.allowedMediaCodecTypes()))
+            return false;
+
+        parameters.allowedMediaContainerTypes = settings.allowedMediaContainerTypes();
+        parameters.allowedMediaVideoCodecIDs = settings.allowedMediaVideoCodecIDs();
+        parameters.allowedMediaAudioCodecIDs = settings.allowedMediaAudioCodecIDs();
+        parameters.allowedMediaCaptionFormatTypes = settings.allowedMediaCaptionFormatTypes();
+    }
+
     MediaPlayer::SupportsType supported = MediaPlayer::supportsType(parameters);
 
     if (codecs.isEmpty())
@@ -978,7 +991,7 @@ bool MediaSource::attachToElement(HTMLMediaElement& element)
 
     ASSERT(isClosed());
 
-    m_mediaElement = makeWeakPtr(&element);
+    m_mediaElement = element;
     return true;
 }
 

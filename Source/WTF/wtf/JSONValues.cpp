@@ -61,7 +61,8 @@ const char* const nullToken = "null";
 const char* const trueToken = "true";
 const char* const falseToken = "false";
 
-bool parseConstToken(const UChar* start, const UChar* end, const UChar** tokenEnd, const char* token)
+template<typename CodeUnit>
+bool parseConstToken(const CodeUnit* start, const CodeUnit* end, const CodeUnit** tokenEnd, const char* token)
 {
     while (start < end && *token != '\0' && *start++ == *token++) { }
 
@@ -72,7 +73,8 @@ bool parseConstToken(const UChar* start, const UChar* end, const UChar** tokenEn
     return true;
 }
 
-bool readInt(const UChar* start, const UChar* end, const UChar** tokenEnd, bool canHaveLeadingZeros)
+template<typename CodeUnit>
+bool readInt(const CodeUnit* start, const CodeUnit* end, const CodeUnit** tokenEnd, bool canHaveLeadingZeros)
 {
     if (start == end)
         return false;
@@ -94,14 +96,15 @@ bool readInt(const UChar* start, const UChar* end, const UChar** tokenEnd, bool 
     return true;
 }
 
-bool parseNumberToken(const UChar* start, const UChar* end, const UChar** tokenEnd)
+template<typename CodeUnit>
+bool parseNumberToken(const CodeUnit* start, const CodeUnit* end, const CodeUnit** tokenEnd)
 {
     // We just grab the number here. We validate the size in DecodeNumber.
     // According to RFC 4627, a valid number is: [minus] int [frac] [exp]
     if (start == end)
         return false;
 
-    UChar c = *start;
+    CodeUnit c = *start;
     if ('-' == c)
         ++start;
 
@@ -145,7 +148,8 @@ bool parseNumberToken(const UChar* start, const UChar* end, const UChar** tokenE
     return true;
 }
 
-bool readHexDigits(const UChar* start, const UChar* end, const UChar** tokenEnd, int digits)
+template<typename CodeUnit>
+bool readHexDigits(const CodeUnit* start, const CodeUnit* end, const CodeUnit** tokenEnd, int digits)
 {
     if (end - start < digits)
         return false;
@@ -159,10 +163,11 @@ bool readHexDigits(const UChar* start, const UChar* end, const UChar** tokenEnd,
     return true;
 }
 
-bool parseStringToken(const UChar* start, const UChar* end, const UChar** tokenEnd)
+template<typename CodeUnit>
+bool parseStringToken(const CodeUnit* start, const CodeUnit* end, const CodeUnit** tokenEnd)
 {
     while (start < end) {
-        UChar c = *start++;
+        CodeUnit c = *start++;
         if ('\\' == c && start < end) {
             c = *start++;
             // Make sure the escaped char is valid.
@@ -197,7 +202,8 @@ bool parseStringToken(const UChar* start, const UChar* end, const UChar** tokenE
     return false;
 }
 
-Token parseToken(const UChar* start, const UChar* end, const UChar** tokenStart, const UChar** tokenEnd)
+template<typename CodeUnit>
+Token parseToken(const CodeUnit* start, const CodeUnit* end, const CodeUnit** tokenStart, const CodeUnit** tokenEnd)
 {
     while (start < end && isSpaceOrNewline(*start))
         ++start;
@@ -261,7 +267,8 @@ Token parseToken(const UChar* start, const UChar* end, const UChar** tokenStart,
     return Token::Invalid;
 }
 
-bool decodeString(const UChar* start, const UChar* end, StringBuilder& output)
+template<typename CodeUnit>
+bool decodeString(const CodeUnit* start, const CodeUnit* end, StringBuilder& output)
 {
     while (start < end) {
         UChar c = *start++;
@@ -316,7 +323,8 @@ bool decodeString(const UChar* start, const UChar* end, StringBuilder& output)
     return true;
 }
 
-bool decodeString(const UChar* start, const UChar* end, String& output)
+template<typename CodeUnit>
+bool decodeString(const CodeUnit* start, const CodeUnit* end, String& output)
 {
     if (start == end) {
         output = emptyString();
@@ -335,14 +343,15 @@ bool decodeString(const UChar* start, const UChar* end, String& output)
     return true;
 }
 
-RefPtr<JSON::Value> buildValue(const UChar* start, const UChar* end, const UChar** valueTokenEnd, int depth)
+template<typename CodeUnit>
+RefPtr<JSON::Value> buildValue(const CodeUnit* start, const CodeUnit* end, const CodeUnit** valueTokenEnd, int depth)
 {
     if (depth > stackLimit)
         return nullptr;
 
     RefPtr<JSON::Value> result;
-    const UChar* tokenStart;
-    const UChar* tokenEnd;
+    const CodeUnit* tokenStart;
+    const CodeUnit* tokenEnd;
     Token token = parseToken(start, end, &tokenStart, &tokenEnd);
     switch (token) {
     case Token::Invalid:
@@ -494,6 +503,11 @@ RefPtr<Object> Value::asObject()
     return nullptr;
 }
 
+RefPtr<const Object> Value::asObject() const
+{
+    return nullptr;
+}
+
 RefPtr<Array> Value::asArray()
 {
     return nullptr;
@@ -501,20 +515,32 @@ RefPtr<Array> Value::asArray()
 
 RefPtr<Value> Value::parseJSON(const String& json)
 {
-    // FIXME: This whole file should just use StringView instead of UChar/length and avoid upconverting.
-    auto characters = StringView(json).upconvertedCharacters();
-    const UChar* start = characters;
-    const UChar* end = start + json.length();
-    const UChar* tokenEnd;
-    auto result = buildValue(start, end, &tokenEnd, 0);
-    if (!result)
-        return nullptr;
+    auto containsNonSpace = [] (const auto* begin, const auto* end) {
+        if (!begin)
+            return false;
+        for (const auto* it = begin; it < end; it++) {
+            if (!isSpaceOrNewline(*it))
+                return true;
+        }
+        return false;
+    };
 
-    for (const UChar* valueEnd = tokenEnd; valueEnd < end; ++valueEnd) {
-        if (!isSpaceOrNewline(*valueEnd))
+    RefPtr<Value> result;
+    if (json.is8Bit()) {
+        const LChar* start = json.characters8();
+        const LChar* end = start + json.length();
+        const LChar* tokenEnd { nullptr };
+        result = buildValue(start, end, &tokenEnd, 0);
+        if (containsNonSpace(tokenEnd, end))
+            return nullptr;
+    } else {
+        const UChar* start = json.characters16();
+        const UChar* end = start + json.length();
+        const UChar* tokenEnd { nullptr };
+        result = buildValue(start, end, &tokenEnd, 0);
+        if (containsNonSpace(tokenEnd, end))
             return nullptr;
     }
-
     return result;
 }
 
@@ -638,6 +664,12 @@ RefPtr<Object> ObjectBase::asObject()
 {
     COMPILE_ASSERT(sizeof(Object) == sizeof(ObjectBase), cannot_cast);
     return static_cast<Object*>(this);
+}
+
+RefPtr<const Object> ObjectBase::asObject() const
+{
+    COMPILE_ASSERT(sizeof(Object) == sizeof(ObjectBase), cannot_cast);
+    return static_cast<const Object*>(this);
 }
 
 size_t ObjectBase::memoryCost() const

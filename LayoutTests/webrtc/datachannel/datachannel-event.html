@@ -12,11 +12,11 @@ test(() => {
     var pc = new RTCPeerConnection();
     var channel = pc.createDataChannel("test");
 
-    assert_throws(new TypeError, () => new RTCDataChannelEvent());
-    assert_throws(new TypeError, () => new RTCDataChannelEvent("test"));
-    assert_throws(new TypeError, () => new RTCDataChannelEvent("test", undefined));
-    assert_throws(new TypeError, () => new RTCDataChannelEvent("test", { channel: 1 }));
-    assert_throws(new TypeError, () => new RTCDataChannelEvent(undefined, { channel: 1 }));
+    assert_throws_js(TypeError, () => new RTCDataChannelEvent());
+    assert_throws_js(TypeError, () => new RTCDataChannelEvent("test"));
+    assert_throws_js(TypeError, () => new RTCDataChannelEvent("test", undefined));
+    assert_throws_js(TypeError, () => new RTCDataChannelEvent("test", { channel: 1 }));
+    assert_throws_js(TypeError, () => new RTCDataChannelEvent(undefined, { channel: 1 }));
 
     var event = new RTCDataChannelEvent("test", { channel: channel });
     assert_equals(event.channel, channel, "channel passed in constructor should be used");

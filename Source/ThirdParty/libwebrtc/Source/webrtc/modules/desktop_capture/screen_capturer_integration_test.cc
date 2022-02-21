@@ -33,7 +33,7 @@
 
 #if defined(WEBRTC_WIN)
 #include "modules/desktop_capture/win/screen_capturer_win_directx.h"
-#include "rtc_base/win32.h"
+#include "rtc_base/win/windows_version.h"
 #endif  // defined(WEBRTC_WIN)
 
 using ::testing::_;
@@ -47,7 +47,7 @@ ACTION_P2(SaveCaptureResult, result, dest) {
   *dest = std::move(*arg1);
 }
 
-// Returns true if color in |rect| of |frame| is |color|.
+// Returns true if color in `rect` of `frame` is `color`.
 bool ArePixelsColoredBy(const DesktopFrame& frame,
                         DesktopRect rect,
                         RgbaColor color,
@@ -61,7 +61,7 @@ bool ArePixelsColoredBy(const DesktopFrame& frame,
     }
   }
 
-  // Color in the |rect| should be |color|.
+  // Color in the `rect` should be `color`.
   uint8_t* row = frame.GetFrameDataAtPos(rect.top_left());
   for (int i = 0; i < rect.height(); i++) {
     uint8_t* column = row;
@@ -118,9 +118,9 @@ class ScreenCapturerIntegrationTest : public ::testing::Test {
       capturer->Start(&callback_);
     }
 
-    // Draw a set of |kRectSize| by |kRectSize| rectangles at (|i|, |i|), or
-    // |i| by |i| rectangles at (|kRectSize|, |kRectSize|). One of (controlled
-    // by |c|) its primary colors is |i|, and the other two are 0x7f. So we
+    // Draw a set of `kRectSize` by `kRectSize` rectangles at (`i`, `i`), or
+    // `i` by `i` rectangles at (`kRectSize`, `kRectSize`). One of (controlled
+    // by `c`) its primary colors is `i`, and the other two are 0x7f. So we
     // won't draw a black or white rectangle.
     for (int c = 0; c < 3; c++) {
       // A fixed size rectangle.
@@ -184,9 +184,9 @@ class ScreenCapturerIntegrationTest : public ::testing::Test {
   MockDesktopCapturerCallback callback_;
 
  private:
-  // Repeats capturing the frame by using |capturers| one-by-one for 600 times,
-  // typically 30 seconds, until they succeeded captured a |color| rectangle at
-  // |rect|. This function uses |drawer|->WaitForPendingDraws() between two
+  // Repeats capturing the frame by using `capturers` one-by-one for 600 times,
+  // typically 30 seconds, until they succeeded captured a `color` rectangle at
+  // `rect`. This function uses `drawer`->WaitForPendingDraws() between two
   // attempts to wait for the screen to update.
   void TestCaptureOneFrame(std::vector<DesktopCapturer*> capturers,
                            ScreenDrawer* drawer,
@@ -262,7 +262,7 @@ class ScreenCapturerIntegrationTest : public ::testing::Test {
     ASSERT_EQ(succeeded_capturers, capturers.size());
   }
 
-  // Expects |capturer| to successfully capture a frame, and returns it.
+  // Expects `capturer` to successfully capture a frame, and returns it.
   std::unique_ptr<DesktopFrame> CaptureFrame(DesktopCapturer* capturer) {
     for (int i = 0; i < 10; i++) {
       std::unique_ptr<DesktopFrame> frame;
@@ -338,7 +338,7 @@ TEST_F(ScreenCapturerIntegrationTest,
   // Bug https://bugs.chromium.org/p/webrtc/issues/detail?id=6844
   // TODO(zijiehe): Find the root cause of the border and failure, which cannot
   // reproduce on my dev machine.
-  if (rtc::IsWindows8OrLater()) {
+  if (rtc::rtc_win::GetVersion() >= rtc::rtc_win::Version::VERSION_WIN8) {
     return;
   }
   CreateMagnifierCapturer();
@@ -351,7 +351,7 @@ TEST_F(ScreenCapturerIntegrationTest, DISABLED_TwoMagnifierCapturers) {
   // Bug https://bugs.chromium.org/p/webrtc/issues/detail?id=6844
   // TODO(zijiehe): Find the root cause of the border and failure, which cannot
   // reproduce on my dev machine.
-  if (rtc::IsWindows8OrLater()) {
+  if (rtc::rtc_win::GetVersion() >= rtc::rtc_win::Version::VERSION_WIN8) {
     return;
   }
   CreateMagnifierCapturer();
@@ -362,7 +362,7 @@ TEST_F(ScreenCapturerIntegrationTest, DISABLED_TwoMagnifierCapturers) {
 
 TEST_F(ScreenCapturerIntegrationTest,
        DISABLED_MaybeCaptureUpdatedRegionWithDirectxCapturer) {
-  if (!rtc::IsWindows8OrLater()) {
+  if (rtc::rtc_win::GetVersion() < rtc::rtc_win::Version::VERSION_WIN8) {
     // ScreenCapturerWinGdi randomly returns blank screen, the root cause is
     // still unknown. Bug,
     // https://bugs.chromium.org/p/webrtc/issues/detail?id=6843.

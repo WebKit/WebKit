@@ -18,6 +18,7 @@
 
 #if Is32Bits
 #define BITSMASK 0xffffffff
+#define IDXSHIFT 0
 #elif Is16Bits
 #define BITSMASK 0xffff
 #define IDXSHIFT 1                            // 16bits index division shift
@@ -64,6 +65,8 @@ layout (push_constant) uniform PushConstants
     uint cmdOffsetDiv4;
     // Dst command offset in bytes into the cmdData array, divided by four.
     uint dstCmdOffsetDiv4;
+    // Read offset in bytes into the srcData array, divided by four.
+    uint srcOffset;
     // Write offset in bytes into the dstData array, divided by four.
     uint dstOffsetDiv4;
     // Maximum size of the read buffer. The highest index value we will convert.
@@ -81,6 +84,9 @@ layout (push_constant) uniform PushConstants
 
 uint GetIndexValue(uint index)
 {
+    // Add buffer byte offset (converted to index offset).
+    index += srcOffset >> (2 - IDXSHIFT);
+
 #if Is32Bits
     return srcData[index];
 #elif Is16Bits || Is8Bits
@@ -103,7 +109,7 @@ void PutIndexValue(uint index, uint value)
 #elif Is16Bits || Is8Bits
     // Compute index into dstData for our index value
     uint dstIndex = dstOffsetDiv4 + (index >> IDXSHIFT);
-    // Get dest index value
+    // Get dst index value
     uint srcBlock = dstData[dstIndex];
     // Compute the shift for our index value
     uint srcShift = SRCSHIFT(index);

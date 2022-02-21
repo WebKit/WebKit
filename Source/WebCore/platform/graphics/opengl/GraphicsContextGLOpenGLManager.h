@@ -28,38 +28,37 @@
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
-#include <CoreGraphics/CGDisplayConfiguration.h>
-#endif
-
 namespace WebCore {
 
 const unsigned MaxContexts = 16;
 
+#if USE(ANGLE)
+class GraphicsContextGLANGLE;
+#else
 class GraphicsContextGLOpenGL;
+#endif
 
 class GraphicsContextGLOpenGLManager {
     friend NeverDestroyed<GraphicsContextGLOpenGLManager>;
 public:
+#if USE(ANGLE)
+    using GraphicsContextGLType = GraphicsContextGLANGLE;
+#else
+    using GraphicsContextGLType = GraphicsContextGLOpenGL;
+#endif
+
     static GraphicsContextGLOpenGLManager& sharedManager();
     
-    void addContext(GraphicsContextGLOpenGL*);
-    void removeContext(GraphicsContextGLOpenGL*);
+    void addContext(GraphicsContextGLType*);
+    void removeContext(GraphicsContextGLType*);
     
     void recycleContextIfNecessary();
     bool hasTooManyContexts() const { return m_contexts.size() >= MaxContexts; }
     
-#if PLATFORM(MAC)
-    WEBCORE_EXPORT static void displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags, void*);
-#endif
-#if PLATFORM(COCOA)
-    void displayWasReconfigured();
-#endif
-    
 private:
     GraphicsContextGLOpenGLManager() = default;
 
-    Vector<GraphicsContextGLOpenGL*> m_contexts;
+    Vector<GraphicsContextGLType*> m_contexts;
 };
 
 }

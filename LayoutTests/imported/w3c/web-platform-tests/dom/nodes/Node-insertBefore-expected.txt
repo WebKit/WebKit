@@ -14,6 +14,7 @@ PASS If node is an Element and parent is a document with another element, then t
 PASS If node is a doctype and parent is a document with another doctype, then throw a HierarchyRequestError DOMException.
 PASS If node is a doctype and parent is a document with an element, then throw a HierarchyRequestError DOMException.
 PASS Calling insertBefore with a non-Node first argument must throw TypeError.
+PASS Calling insertBefore with second argument missing, or other than Node, null, or undefined, must throw TypeError.
 PASS Calling insertBefore with a non-Node first argument on a leaf node DocumentType must throw TypeError.
 PASS Calling insertBefore an a leaf node DocumentType must throw HIERARCHY_REQUEST_ERR.
 PASS Calling insertBefore with a non-Node first argument on a leaf node Text must throw TypeError.

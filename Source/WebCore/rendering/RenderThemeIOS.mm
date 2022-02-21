@@ -34,9 +34,11 @@
 #import "CSSValueKey.h"
 #import "CSSValueKeywords.h"
 #import "ColorBlending.h"
-#import "ColorIOS.h"
+#import "ColorCocoa.h"
+#import "ColorTypes.h"
 #import "DateComponents.h"
 #import "Document.h"
+#import "DrawGlyphsRecorder.h"
 #import "File.h"
 #import "FloatRoundedRect.h"
 #import "FontCache.h"
@@ -49,10 +51,12 @@
 #import "GraphicsContext.h"
 #import "GraphicsContextCG.h"
 #import "HTMLAttachmentElement.h"
+#import "HTMLButtonElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLMeterElement.h"
 #import "HTMLNames.h"
 #import "HTMLSelectElement.h"
+#import "HTMLTextAreaElement.h"
 #import "IOSurface.h"
 #import "Icon.h"
 #import "LocalCurrentTraitCollection.h"
@@ -83,8 +87,8 @@
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
-#import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if ENABLE(DATALIST_ELEMENT)
 #include "HTMLDataListElement.h"
@@ -334,8 +338,26 @@ FloatRect RenderThemeIOS::addRoundedBorderClip(const RenderObject& box, Graphics
     return border.rect();
 }
 
-void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element*) const
+void RenderThemeIOS::adjustStyleForAlternateFormControlDesignTransition(RenderStyle& style, const Element* element) const
 {
+    if (!element)
+        return;
+
+    if (!element->document().settings().alternateFormControlDesignEnabled())
+        return;
+
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+    // FIXME: We need to find a way to not do this for any running transition, only the UA-owned transition.
+    style.setTransformStyle3D(element->hasRunningTransitionForProperty(PseudoId::None, CSSPropertyID::CSSPropertyTranslate) || element->hovered() ? TransformStyle3D::Optimized3D : TransformStyle3D::Flat);
+#else
+    UNUSED_PARAM(style);
+#endif
+}
+
+void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element* element) const
+{
+    adjustStyleForAlternateFormControlDesignTransition(style, element);
+
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
@@ -355,7 +377,7 @@ static CGPoint shortened(CGPoint start, CGPoint end, float width)
 static void drawJoinedLines(CGContextRef context, const Vector<CGPoint>& points, CGLineCap lineCap, float lineWidth, Color strokeColor)
 {
     CGContextSetLineWidth(context, lineWidth);
-    CGContextSetStrokeColorWithColor(context, cachedCGColor(strokeColor));
+    CGContextSetStrokeColorWithColor(context, cachedCGColor(strokeColor).get());
     CGContextSetShouldAntialias(context, true);
     CGContextBeginPath(context);
     CGContextSetLineCap(context, lineCap);
@@ -446,7 +468,7 @@ void RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
 LayoutRect RenderThemeIOS::adjustedPaintRect(const RenderBox& box, const LayoutRect& paintRect) const
 {
     // Workaround for <rdar://problem/6209763>. Force the painting bounds of checkboxes and radio controls to be square.
-    if (box.style().appearance() == CheckboxPart || box.style().appearance() == RadioPart) {
+    if (box.style().effectiveAppearance() == CheckboxPart || box.style().effectiveAppearance() == RadioPart) {
         float width = std::min(paintRect.width(), paintRect.height());
         float height = width;
         return enclosingLayoutRect(FloatRect(paintRect.x(), paintRect.y() + (box.height() - height) / 2, width, height)); // Vertically center the checkbox, like on desktop
@@ -457,9 +479,9 @@ LayoutRect RenderThemeIOS::adjustedPaintRect(const RenderBox& box, const LayoutR
 
 int RenderThemeIOS::baselinePosition(const RenderBox& box) const
 {
-    if (box.style().appearance() == CheckboxPart || box.style().appearance() == RadioPart)
+    if (box.style().effectiveAppearance() == CheckboxPart || box.style().effectiveAppearance() == RadioPart)
         return box.marginTop() + box.height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
-    if (box.style().appearance() == MenulistPart)
+    if (box.style().effectiveAppearance() == MenulistPart)
         return box.marginTop() + box.height() - 5; // This is to match AppKit. There might be a better way to calculate this though.
     return RenderTheme::baselinePosition(box);
 }
@@ -467,17 +489,24 @@ int RenderThemeIOS::baselinePosition(const RenderBox& box) const
 bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
     // Buttons and MenulistButtons are styled if they contain a background image.
-    if (style.appearance() == PushButtonPart || style.appearance() == MenulistButtonPart)
+    if (style.effectiveAppearance() == PushButtonPart || style.effectiveAppearance() == MenulistButtonPart)
         return !style.visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || style.backgroundLayers().hasImage();
 
-    if (style.appearance() == TextFieldPart || style.appearance() == TextAreaPart)
+    if (style.effectiveAppearance() == TextFieldPart || style.effectiveAppearance() == TextAreaPart)
         return style.backgroundLayers() != userAgentStyle.backgroundLayers();
+
+#if ENABLE(DATALIST_ELEMENT)
+    if (style.effectiveAppearance() == ListButtonPart)
+        return style.hasContent() || style.hasEffectiveContentNone();
+#endif
 
     return RenderTheme::isControlStyled(style, userAgentStyle);
 }
 
-void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element*) const
+void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element) const
 {
+    adjustStyleForAlternateFormControlDesignTransition(style, element);
+
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
@@ -530,28 +559,127 @@ void RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintI
     }
 }
 
-void RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderThemeIOS::adjustTextFieldStyle(RenderStyle& style, const Element* element) const
 {
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (box.settings().iOSFormControlRefreshEnabled())
+    if (!element)
         return;
-#endif
+
+    bool hasTextfieldAppearance = false;
+    // Do not force a background color for elements that have a textfield
+    // appearance by default, so that their background color can be styled.
+    if (is<HTMLInputElement>(*element)) {
+        auto& input = downcast<HTMLInputElement>(*element);
+        // <input type=search> is the only TextFieldInputType that has a
+        // non-textfield appearance value.
+        hasTextfieldAppearance = input.isTextField() && !input.isSearchField();
+    }
+
+    auto adjustBackgroundColor = [&] {
+        auto styleColorOptions = element->document().styleColorOptions(&style);
+        if (!style.backgroundColorEqualsToColorIgnoringVisited(systemColor(CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions)))
+            return;
+
+        style.setBackgroundColor(systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+    };
+
+    bool useAlternateDesign = element->document().settings().alternateFormControlDesignEnabled();
+    if (useAlternateDesign) {
+        if (hasTextfieldAppearance)
+            style.setBackgroundColor(Color::transparentBlack);
+        else
+            adjustBackgroundColor();
+        style.resetBorderExceptRadius();
+        return;
+    }
+
+    if (hasTextfieldAppearance)
+        return;
+
+    adjustBackgroundColor();
+}
+
+void RenderThemeIOS::paintTextFieldInnerShadow(const PaintInfo& paintInfo, const FloatRoundedRect& roundedRect)
+{
+    auto& context = paintInfo.context();
+
+    const FloatSize innerShadowOffset { 0, 5 };
+    constexpr auto innerShadowBlur = 10.0f;
+    auto innerShadowColor = DisplayP3<float> { 0, 0, 0, 0.04f };
+    context.setShadow(innerShadowOffset, innerShadowBlur, innerShadowColor);
+    context.setFillColor(Color::black);
+
+    Path innerShadowPath;
+    FloatRect innerShadowRect = roundedRect.rect();
+    innerShadowRect.inflate(std::max<float>(innerShadowOffset.width(), innerShadowOffset.height()) + innerShadowBlur);
+    innerShadowPath.addRect(innerShadowRect);
+
+    FloatRoundedRect innerShadowHoleRect = roundedRect;
+    // FIXME: This is not from the spec; but without it we get antialiasing fringe from the fill; we need a better solution.
+    innerShadowHoleRect.inflate(0.5);
+    innerShadowPath.addRoundedRect(innerShadowHoleRect);
+
+    context.setFillRule(WindRule::EvenOdd);
+    context.fillPath(innerShadowPath);
+}
+
+void RenderThemeIOS::paintTextFieldDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
 
     auto& style = box.style();
-    FloatPoint point(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth());
+    auto roundedRect = style.getRoundedBorderFor(LayoutRect(rect)).pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor());
 
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    if (box.settings().iOSFormControlRefreshEnabled()) {
+        bool shouldPaintFillAndInnerShadow = false;
+        auto element = box.element();
+        if (is<HTMLInputElement>(*element)) {
+            auto& input = downcast<HTMLInputElement>(*element);
+            if (input.isTextField() && !input.isSearchField())
+                shouldPaintFillAndInnerShadow = true;
+        } else if (is<HTMLTextAreaElement>(*element))
+            shouldPaintFillAndInnerShadow = true;
 
-    paintInfo.context().clipRoundedRect(style.getRoundedBorderFor(LayoutRect(rect)).pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor()));
+        bool useAlternateDesign = box.settings().alternateFormControlDesignEnabled();
+        if (useAlternateDesign && shouldPaintFillAndInnerShadow) {
+            Path path;
+            path.addRoundedRect(roundedRect);
+
+            context.setFillColor(Color::black.colorWithAlphaByte(10));
+            context.drawPath(path);
+            context.clipPath(path);
+            paintTextFieldInnerShadow(paintInfo, roundedRect);
+        }
+
+        return;
+    }
+#endif
+
+    context.clipRoundedRect(roundedRect);
 
     // This gradient gets drawn black when printing.
     // Do not draw the gradient if there is no visible top border.
     bool topBorderIsInvisible = !style.hasBorder() || !style.borderTopWidth() || style.borderTopIsTransparent();
-    if (!box.view().printing() && !topBorderIsInvisible)
-        drawAxialGradient(paintInfo.context().platformContext(), gradientWithName(InsetGradient), point, FloatPoint(CGPointMake(point.x(), point.y() + 3.0f)), LinearInterpolation);
+    if (!box.view().printing() && !topBorderIsInvisible) {
+        FloatPoint point(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth());
+        drawAxialGradient(context.platformContext(), gradientWithName(InsetGradient), point, FloatPoint(CGPointMake(point.x(), point.y() + 3.0f)), LinearInterpolation);
+    }
 }
 
-void RenderThemeIOS::paintTextAreaDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderThemeIOS::adjustTextAreaStyle(RenderStyle& style, const Element* element) const
+{
+    if (!element)
+        return;
+
+    if (!element->document().settings().alternateFormControlDesignEnabled())
+        return;
+
+    style.setBackgroundColor(Color::transparentBlack);
+    style.resetBorderExceptRadius();
+}
+
+void RenderThemeIOS::paintTextAreaDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     paintTextFieldDecorations(box, paintInfo, rect);
 }
@@ -577,7 +705,7 @@ LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style, cons
         padding = emSize->computeLength<float>(CSSToLengthConversionData(&style, nullptr, nullptr, nullptr, 1.0, std::nullopt));
     }
 
-    if (style.appearance() == MenulistButtonPart) {
+    if (style.effectiveAppearance() == MenulistButtonPart) {
         if (style.direction() == TextDirection::RTL)
             return { 0, 0, 0, static_cast<int>(padding + style.borderTopWidth()) };
         return { 0, static_cast<int>(padding + style.borderTopWidth()), 0, 0 };
@@ -606,7 +734,7 @@ static inline bool canAdjustBorderRadiusForAppearance(ControlPart appearance, co
 
 void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
 {
-    if (!canAdjustBorderRadiusForAppearance(style.appearance(), box) || style.backgroundLayers().hasImage())
+    if (!canAdjustBorderRadiusForAppearance(style.effectiveAppearance(), box) || style.backgroundLayers().hasImage())
         return;
 
     if ((is<RenderButton>(box) || is<RenderMenuList>(box)) && box.height() >= largeButtonSize) {
@@ -688,6 +816,8 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
 
 void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element* element) const
 {
+    adjustStyleForAlternateFormControlDesignTransition(style, element);
+
     // Set the min-height to be at least MenuListMinHeight.
     if (style.height().isAuto())
         style.setMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize())), LengthType::Fixed));
@@ -697,7 +827,7 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
     if (!element)
         return;
 
-    adjustPressedStyle(style, *element);
+    adjustButtonLikeControlStyle(style, *element);
 
     // Enforce some default styles in the case that this is a non-multiple <select> element,
     // or a date input. We don't force these if this is just an element with
@@ -858,7 +988,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
     auto& style = box.style();
 
     bool isHorizontal = true;
-    switch (style.appearance()) {
+    switch (style.effectiveAppearance()) {
     case SliderHorizontalPart:
         isHorizontal = true;
         // Inset slightly so the thumb covers the edge.
@@ -932,7 +1062,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
 
 void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
-    if (style.appearance() != SliderThumbHorizontalPart && style.appearance() != SliderThumbVerticalPart)
+    if (style.effectiveAppearance() != SliderThumbHorizontalPart && style.effectiveAppearance() != SliderThumbVerticalPart)
         return;
 
     // Enforce "border-radius: 50%".
@@ -992,7 +1122,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
     context.setStrokeStyle(SolidStroke);
 
     const float verticalRenderingPosition = rect.y() + verticalOffset;
-    auto strokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
+    auto strokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
     strokeGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 141, 141, 141 } });
     strokeGradient->addColorStop({ 0.45f, SRGBA<uint8_t> { 238, 238, 238 } });
     strokeGradient->addColorStop({ 0.55f, SRGBA<uint8_t> { 238, 238, 238 } });
@@ -1012,7 +1142,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
     paintInfo.context().clipRoundedRect(FloatRoundedRect(border, roundedCornerRadius, roundedCornerRadius, roundedCornerRadius, roundedCornerRadius));
 
     float upperGradientHeight = progressBarHeight / 2.;
-    auto upperGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + upperGradientHeight - 1.5) });
+    auto upperGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + upperGradientHeight - 1.5) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
     upperGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 133, 133, 133, 188 } });
     upperGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 18, 18, 18, 51 } });
     context.setFillGradient(WTFMove(upperGradient));
@@ -1024,7 +1154,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
         // 2) Draw the progress bar.
         double position = clampTo(renderProgress.position(), 0.0, 1.0);
         float barWidth = position * rect.width();
-        auto barGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
+        auto barGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
         barGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 195, 217, 247 } });
         barGradient->addColorStop({ 0.45f, SRGBA<uint8_t> { 118, 164, 228 } });
         barGradient->addColorStop({ 0.49f, SRGBA<uint8_t> { 118, 164, 228 } });
@@ -1033,7 +1163,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
         barGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 57, 142, 244 } });
         context.setFillGradient(WTFMove(barGradient));
 
-        auto barStrokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) });
+        auto barStrokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
         barStrokeGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 95, 107, 183 } });
         barStrokeGradient->addColorStop({ 0.5f, SRGBA<uint8_t> { 66, 106, 174, 240 } });
         barStrokeGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 38, 104, 166 } });
@@ -1082,7 +1212,7 @@ void RenderThemeIOS::adjustSearchFieldStyle(RenderStyle& style, const Element* e
     adjustRoundBorderRadius(style, *box);
 }
 
-void RenderThemeIOS::paintSearchFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+void RenderThemeIOS::paintSearchFieldDecorations(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     paintTextFieldDecorations(box, paintInfo, rect);
 }
@@ -1090,23 +1220,55 @@ void RenderThemeIOS::paintSearchFieldDecorations(const RenderObject& box, const 
 // This value matches the opacity applied to UIKit controls.
 constexpr auto pressedStateOpacity = 0.75f;
 
-void RenderThemeIOS::adjustPressedStyle(RenderStyle& style, const Element& element) const
+bool RenderThemeIOS::isSubmitStyleButton(const Element& element) const
+{
+    if (is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isSubmitButton())
+        return true;
+
+    if (is<HTMLButtonElement>(element) && downcast<HTMLButtonElement>(element).isExplicitlySetSubmitButton())
+        return true;
+
+    return false;
+}
+
+void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Element& element) const
 {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (element.document().settings().iOSFormControlRefreshEnabled() && element.active() && !element.isDisabledFormControl()) {
-        auto textColor = style.color();
-        if (textColor.isValid())
-            style.setColor(textColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
+    if (!element.document().settings().iOSFormControlRefreshEnabled())
+        return;
 
-        auto backgroundColor = style.backgroundColor();
-        if (backgroundColor.isValid())
-            style.setBackgroundColor(backgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
+    // FIXME: Implement button-like control adjustments for the alternate design.
+    if (element.document().settings().alternateFormControlDesignEnabled())
+        return;
+
+    if (element.isDisabledFormControl())
+        return;
+
+    auto tintColor = style.effectiveAccentColor();
+    if (tintColor.isValid()) {
+        if (isSubmitStyleButton(element))
+            style.setBackgroundColor(tintColor);
+        else
+            style.setColor(tintColor);
     }
+
+    if (!element.active())
+        return;
+
+    auto textColor = style.color();
+    if (textColor.isValid())
+        style.setColor(textColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
+
+    auto backgroundColor = style.backgroundColor();
+    if (backgroundColor.isValid())
+        style.setBackgroundColor(backgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
 #endif
 }
 
 void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* element) const
 {
+    adjustStyleForAlternateFormControlDesignTransition(style, element);
+
     // If no size is specified, ensure the height of the button matches ControlBaseHeight scaled
     // with the font size. min-height is used rather than height to avoid clipping the contents of
     // the button in cases where the button contains more than one line of text.
@@ -1114,7 +1276,7 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
         style.setMinHeight(Length(ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize(), LengthType::Fixed));
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    if (style.appearance() == ColorWellPart)
+    if (style.effectiveAppearance() == ColorWellPart)
         return;
 #endif
 
@@ -1129,7 +1291,7 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     if (!element)
         return;
 
-    adjustPressedStyle(style, *element);
+    adjustButtonLikeControlStyle(style, *element);
 
     RenderBox* box = element->renderBox();
     if (!box)
@@ -1146,7 +1308,7 @@ void RenderThemeIOS::paintButtonDecorations(const RenderObject& box, const Paint
 static bool shouldUseConvexGradient(const Color& backgroundColor)
 {
     // FIXME: This should probably be using luminance.
-    auto [r, g, b, a] = backgroundColor.toSRGBALossy<float>();
+    auto [r, g, b, a] = backgroundColor.toColorTypeLossy<SRGBA<float>>().resolved();
     float largestNonAlphaChannel = std::max({ r, g, b });
     return a > 0.5 && largestNonAlphaChannel < 0.5;
 }
@@ -1219,12 +1381,12 @@ void RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const R
     icon->paint(paintInfo.context(), thumbnailRect);
 }
 
-Color RenderThemeIOS::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeIOS::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return Color::transparentBlack;
 }
 
-Color RenderThemeIOS::platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeIOS::platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
     return Color::transparentBlack;
 }
@@ -1239,23 +1401,21 @@ Color RenderThemeIOS::systemFocusRingColor()
 {
     if (!cachedFocusRingColor().has_value()) {
         // FIXME: Should be using -keyboardFocusIndicatorColor. For now, work around <rdar://problem/50838886>.
-        cachedFocusRingColor() = colorFromUIColor([PAL::getUIColorClass() systemBlueColor]);
+        cachedFocusRingColor() = colorFromCocoaColor([PAL::getUIColorClass() systemBlueColor]);
     }
     return *cachedFocusRingColor();
 }
 
-Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColorOptions>) const
 {
     return systemFocusRingColor();
 }
 
-#if ENABLE(APP_HIGHLIGHTS)
-Color RenderThemeIOS::platformAppHighlightColor(OptionSet<StyleColor::Options>) const
+Color RenderThemeIOS::platformAnnotationHighlightColor(OptionSet<StyleColorOptions>) const
 {
     // FIXME: expose the real value from UIKit.
     return SRGBA<uint8_t> { 255, 238, 190 };
 }
-#endif
 
 bool RenderThemeIOS::shouldHaveSpinButton(const HTMLInputElement&) const
 {
@@ -1270,7 +1430,7 @@ bool RenderThemeIOS::supportsFocusRing(const RenderStyle&) const
 bool RenderThemeIOS::supportsBoxShadow(const RenderStyle& style) const
 {
     // FIXME: See if additional native controls can support box shadows.
-    switch (style.appearance()) {
+    switch (style.effectiveAppearance()) {
     case SliderThumbHorizontalPart:
     case SliderThumbVerticalPart:
         return true;
@@ -1405,9 +1565,9 @@ void RenderThemeIOS::setFocusRingColor(const Color& color)
     cachedFocusRingColor() = color;
 }
 
-Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
+Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOptions> options) const
 {
-    const bool forVisitedLink = options.contains(StyleColor::Options::ForVisitedLink);
+    const bool forVisitedLink = options.contains(StyleColorOptions::ForVisitedLink);
 
     // The system color cache below can't handle visited links. The only color value
     // that cares about visited links is CSSValueWebkitLink, so handle it here by
@@ -1419,8 +1579,8 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
     auto& cache = colorCache(options);
     return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options] () -> Color {
-        const bool useDarkAppearance = options.contains(StyleColor::Options::UseDarkAppearance);
-        const bool useElevatedUserInterfaceLevel = options.contains(StyleColor::Options::UseElevatedUserInterfaceLevel);
+        const bool useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance);
+        const bool useElevatedUserInterfaceLevel = options.contains(StyleColorOptions::UseElevatedUserInterfaceLevel);
         if (!globalCSSValueToSystemColorMap().isEmpty()) {
             auto it = globalCSSValueToSystemColorMap().find(CSSValueKey { cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel });
             if (it == globalCSSValueToSystemColorMap().end())
@@ -1432,6 +1592,15 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
             return *color;
         return RenderTheme::systemColor(cssValueID, options);
     }).iterator->value;
+}
+
+Color RenderThemeIOS::controlTintColor(const RenderStyle& style, OptionSet<StyleColorOptions> options) const
+{
+    Color tintColor = style.effectiveAccentColor();
+    if (tintColor.isValid())
+        return tintColor;
+
+    return systemColor(CSSValueAppleSystemBlue, options);
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -1468,9 +1637,9 @@ static RetainPtr<CTFontRef> attachmentActionFont()
     return adoptCF(CTFontCreateWithFontDescriptor(emphasizedFontDescriptor.get(), 0, nullptr));
 }
 
-static UIColor *attachmentActionColor(const RenderAttachment& attachment)
+static RetainPtr<UIColor> attachmentActionColor(const RenderAttachment& attachment)
 {
-    return [PAL::getUIColorClass() colorWithCGColor:cachedCGColor(attachment.style().visitedDependentColor(CSSPropertyColor))];
+    return cocoaColor(attachment.style().visitedDependentColor(CSSPropertyColor));
 }
 
 static RetainPtr<CTFontRef> attachmentTitleFont()
@@ -1510,7 +1679,7 @@ struct RenderAttachmentInfo {
     BOOL hasProgress { NO };
     float progress;
 
-    RetainPtr<UIImage> icon;
+    RefPtr<Image> icon;
     RefPtr<Image> thumbnailIcon;
 
     int baseline { 0 };
@@ -1518,6 +1687,7 @@ struct RenderAttachmentInfo {
     struct LabelLine {
         FloatRect rect;
         RetainPtr<CTLineRef> line;
+        RetainPtr<CTFontRef> font;
     };
     Vector<LabelLine> lines;
 
@@ -1527,10 +1697,10 @@ private:
     void buildWrappedLines(const String&, CTFontRef, UIColor *, unsigned maximumLineCount);
     void buildSingleLine(const String&, CTFontRef, UIColor *);
 
-    void addLine(CTLineRef);
+    void addLine(CTFontRef, CTLineRef);
 };
 
-void RenderAttachmentInfo::addLine(CTLineRef line)
+void RenderAttachmentInfo::addLine(CTFontRef font, CTLineRef line)
 {
     CGRect lineBounds = CTLineGetBoundsWithOptions(line, kCTLineBoundsExcludeTypographicLeading);
     CGFloat trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(line);
@@ -1539,6 +1709,7 @@ void RenderAttachmentInfo::addLine(CTLineRef line)
 
     CGFloat xOffset = (attachmentRect.width() / 2) - (lineWidthIgnoringTrailingWhitespace / 2);
     LabelLine labelLine;
+    labelLine.font = font;
     labelLine.line = line;
     labelLine.rect = FloatRect(xOffset, 0, lineWidthIgnoringTrailingWhitespace, lineHeight);
 
@@ -1573,7 +1744,7 @@ void RenderAttachmentInfo::buildWrappedLines(const String& text, CTFontRef font,
     CFIndex lineIndex = 0;
     CFIndex nonTruncatedLineCount = std::min<CFIndex>(maximumLineCount - 1, lineCount);
     for (; lineIndex < nonTruncatedLineCount; ++lineIndex)
-        addLine((CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex));
+        addLine(font, (CTLineRef)CFArrayGetValueAtIndex(ctLines, lineIndex));
 
     if (lineIndex == lineCount)
         return;
@@ -1593,7 +1764,7 @@ void RenderAttachmentInfo::buildWrappedLines(const String& text, CTFontRef font,
     if (!truncatedLine)
         truncatedLine = remainingLine;
 
-    addLine(truncatedLine.get());
+    addLine(font, truncatedLine.get());
 }
 
 void RenderAttachmentInfo::buildSingleLine(const String& text, CTFontRef font, UIColor *color)
@@ -1607,7 +1778,7 @@ void RenderAttachmentInfo::buildSingleLine(const String& text, CTFontRef font, U
     };
     RetainPtr<NSAttributedString> attributedText = adoptNS([[NSAttributedString alloc] initWithString:text attributes:textAttributes]);
 
-    addLine(adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)attributedText.get())).get());
+    addLine(font, adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)attributedText.get())).get());
 }
 
 static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& progress)
@@ -1620,21 +1791,14 @@ static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& pro
     return validProgress;
 }
 
-static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, FloatSize& size)
+RenderThemeIOS::IconAndSize RenderThemeIOS::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto documentInteractionController = adoptNS([PAL::allocUIDocumentInteractionControllerInstance() init]);
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    String fileName;
-    if (File* file = attachment.attachmentElement().file())
-        fileName = file->name();
+    [documentInteractionController setName:fileName.isEmpty() ? title : fileName];
 
-    if (fileName.isEmpty())
-        fileName = attachment.attachmentElement().attachmentTitle();
-    [documentInteractionController setName:fileName];
-
-    String attachmentType = attachment.attachmentElement().attachmentType();
     if (!attachmentType.isEmpty()) {
         String UTI;
         if (isDeclaredUTI(attachmentType))
@@ -1651,7 +1815,7 @@ static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, 
 #if PLATFORM(IOS)
     NSArray *icons = [documentInteractionController icons];
     if (!icons.count)
-        return nil;
+        return IconAndSize { nil, FloatSize() };
 
     result = icons.lastObject;
 
@@ -1672,9 +1836,9 @@ static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, 
     }
 #endif
     CGFloat iconAspect = [result size].width / [result size].height;
-    size = largestRectWithAspectRatioInsideRect(iconAspect, FloatRect(0, 0, attachmentIconSize, attachmentIconSize)).size();
+    auto size = largestRectWithAspectRatioInsideRect(iconAspect, FloatRect(0, 0, attachmentIconSize, attachmentIconSize)).size();
 
-    return result;
+    return IconAndSize { result, size };
 }
 
 RenderAttachmentInfo::RenderAttachmentInfo(const RenderAttachment& attachment)
@@ -1695,8 +1859,10 @@ RenderAttachmentInfo::RenderAttachmentInfo(const RenderAttachment& attachment)
     }
 
     if (action.isEmpty() && !hasProgress) {
-        FloatSize iconSize;
-        icon = iconForAttachment(attachment, iconSize);
+        FloatSize iconSize = attachment.attachmentElement().iconSize();
+        icon = attachment.attachmentElement().icon();
+        if (!icon)
+            attachment.attachmentElement().requestIconWithSize(FloatSize());
         thumbnailIcon = attachment.attachmentElement().thumbnail();
         if (thumbnailIcon)
             iconSize = largestRectWithAspectRatioInsideRect(thumbnailIcon->size().aspectRatio(), FloatRect(0, 0, attachmentIconSize, attachmentIconSize)).size();
@@ -1706,7 +1872,7 @@ RenderAttachmentInfo::RenderAttachmentInfo(const RenderAttachment& attachment)
             yOffset += iconRect.height() + attachmentItemMargin;
         }
     } else
-        buildWrappedLines(action, attachmentActionFont().get(), attachmentActionColor(attachment), attachmentWrappingTextMaximumLineCount);
+        buildWrappedLines(action, attachmentActionFont().get(), attachmentActionColor(attachment).get(), attachmentWrappingTextMaximumLineCount);
 
     bool forceSingleLineTitle = !action.isEmpty() || !subtitle.isEmpty() || hasProgress;
     buildWrappedLines(title, attachmentTitleFont().get(), attachmentTitleColor(), forceSingleLineTitle ? 1 : attachmentWrappingTextMaximumLineCount);
@@ -1741,22 +1907,17 @@ static void paintAttachmentIcon(GraphicsContext& context, RenderAttachmentInfo& 
     if (info.thumbnailIcon)
         iconImage = info.thumbnailIcon;
     else if (info.icon)
-        iconImage = BitmapImage::create([info.icon CGImage]);
+        iconImage = info.icon;
     
     context.drawImage(*iconImage, info.iconRect);
 }
 
 static void paintAttachmentText(GraphicsContext& context, RenderAttachmentInfo& info)
 {
-    for (const auto& line : info.lines) {
-        GraphicsContextStateSaver saver(context);
+    DrawGlyphsRecorder recorder(context, DrawGlyphsRecorder::DeconstructDrawGlyphs::Yes, DrawGlyphsRecorder::DeriveFontFromContext::Yes);
 
-        context.translate(toFloatSize(line.rect.minXMaxYCorner()));
-        context.scale(FloatSize(1, -1));
-
-        CGContextSetTextPosition(context.platformContext(), 0, 0);
-        CTLineDraw(line.line.get(), context.platformContext());
-    }
+    for (const auto& line : info.lines)
+        recorder.drawNativeText(line.font.get(), CTFontGetSize(line.font.get()), line.line.get(), line.rect);
 }
 
 static void paintAttachmentProgress(GraphicsContext& context, RenderAttachmentInfo& info)
@@ -1991,10 +2152,10 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
             m_largeBadgeSurface = IOSurface::create({ largeBadgeDimension, largeBadgeDimension }, DestinationColorSpace::SRGB());
         surface = m_largeBadgeSurface->surface();
     }
-    [m_ciContext.get() render:translatedImage toIOSurface:surface bounds:badgeRect colorSpace:sRGBColorSpaceRef()];
+    [m_ciContext render:translatedImage toIOSurface:surface bounds:badgeRect colorSpace:sRGBColorSpaceRef()];
     cgImage = useSmallBadge ? m_smallBadgeSurface->createImage() : m_largeBadgeSurface->createImage();
 #else
-    cgImage = adoptCF([m_ciContext.get() createCGImage:sourceOverFilter.outputImage fromRect:flippedInsetBadgeRect]);
+    cgImage = adoptCF([m_ciContext createCGImage:sourceOverFilter.outputImage fromRect:flippedInsetBadgeRect]);
 #endif
 
     // Before we render the result, we should clip to a circle around the badge rectangle.
@@ -2029,7 +2190,7 @@ constexpr auto nativeControlBorderWidth = 1.0f;
 constexpr auto checkboxRadioBorderWidth = 1.5f;
 constexpr auto checkboxRadioBorderDisabledOpacity = 0.3f;
 
-Color RenderThemeIOS::checkboxRadioBorderColor(OptionSet<ControlStates::States> states, OptionSet<StyleColor::Options> styleColorOptions)
+Color RenderThemeIOS::checkboxRadioBorderColor(OptionSet<ControlStates::States> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
     auto defaultBorderColor = systemColor(CSSValueAppleSystemSecondaryLabel, styleColorOptions);
 
@@ -2042,36 +2203,104 @@ Color RenderThemeIOS::checkboxRadioBorderColor(OptionSet<ControlStates::States> 
     return defaultBorderColor;
 }
 
-Color RenderThemeIOS::checkboxRadioBackgroundColor(OptionSet<ControlStates::States> states, OptionSet<StyleColor::Options> styleColorOptions)
+Color RenderThemeIOS::checkboxRadioBackgroundColor(bool useAlternateDesign, const RenderStyle& style, OptionSet<ControlStates::States> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
-    bool empty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
+    bool isEmpty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
+    bool isEnabled = states.contains(ControlStates::States::Enabled);
+    bool isPressed = states.contains(ControlStates::States::Pressed);
 
-    if (!states.contains(ControlStates::States::Enabled))
-        return systemColor(empty ? CSSValueWebkitControlBackground : CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions);
+    if (useAlternateDesign) {
+        // FIXME (rdar://problem/83895064): The disabled state for the alternate appearance is currently unspecified; this is just a guess.
+        if (!isEnabled)
+            return systemColor(isEmpty ? CSSValueWebkitControlBackground : CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions);
 
-    auto enabledBackgroundColor = systemColor(empty ? CSSValueWebkitControlBackground : CSSValueAppleSystemBlue, styleColorOptions);
-    if (states.contains(ControlStates::States::Pressed))
+        if (isPressed)
+            return isEmpty ? Color(DisplayP3<float> { 0.773, 0.773, 0.773 }) : Color(DisplayP3<float> { 0.067, 0.38, 0.953 });
+
+        return isEmpty ? Color(DisplayP3<float> { 0.835, 0.835, 0.835 }) : Color(DisplayP3<float> { 0.203, 0.47, 0.964 });
+    }
+
+    if (!isEnabled)
+        return systemColor(isEmpty ? CSSValueWebkitControlBackground : CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions);
+
+    auto enabledBackgroundColor = isEmpty ? systemColor(CSSValueWebkitControlBackground, styleColorOptions) : controlTintColor(style, styleColorOptions);
+    if (isPressed)
         return enabledBackgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
 
     return enabledBackgroundColor;
 }
 
-Color RenderThemeIOS::checkboxRadioIndicatorColor(OptionSet<ControlStates::States> states, OptionSet<StyleColor::Options> styleColorOptions)
+RefPtr<Gradient> RenderThemeIOS::checkboxRadioBackgroundGradient(const FloatRect& rect, OptionSet<ControlStates::States> states)
+{
+    bool isPressed = states.contains(ControlStates::States::Pressed);
+    if (isPressed)
+        return nullptr;
+
+    bool isEmpty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
+    auto gradient = Gradient::create(Gradient::LinearData { rect.minXMinYCorner(), rect.maxXMaxYCorner() }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+    gradient->addColorStop({ 0.0f, DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.125f }});
+    gradient->addColorStop({ 1.0f, DisplayP3<float> { 0, 0, 0, 0 }});
+    return gradient;
+}
+
+Color RenderThemeIOS::checkboxRadioIndicatorColor(OptionSet<ControlStates::States> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
     if (!states.contains(ControlStates::States::Enabled))
         return systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions);
 
-    Color enabledIndicatorColor = systemColor(CSSValueAppleSystemLabel, styleColorOptions | StyleColor::Options::UseDarkAppearance);
+    Color enabledIndicatorColor = systemColor(CSSValueAppleSystemLabel, styleColorOptions | StyleColorOptions::UseDarkAppearance);
     if (states.contains(ControlStates::States::Pressed))
         return enabledIndicatorColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
 
     return enabledIndicatorColor;
 }
 
+void RenderThemeIOS::paintCheckboxRadioInnerShadow(const PaintInfo& paintInfo, const FloatRoundedRect& roundedRect, OptionSet<ControlStates::States> states)
+{
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver { context };
+
+    if (auto gradient = checkboxRadioBackgroundGradient(roundedRect.rect(), states)) {
+        context.setFillGradient(*gradient);
+
+        Path path;
+        path.addRoundedRect(roundedRect);
+        context.fillPath(path);
+    }
+
+    const FloatSize innerShadowOffset { 2, 2 };
+    constexpr auto innerShadowBlur = 3.0f;
+
+    bool isEmpty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
+    auto firstShadowColor = DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.1f };
+    context.setShadow(innerShadowOffset, innerShadowBlur, firstShadowColor);
+    context.setFillColor(Color::black);
+
+    Path innerShadowPath;
+    FloatRect innerShadowRect = roundedRect.rect();
+    innerShadowRect.inflate(std::max<float>(innerShadowOffset.width(), innerShadowOffset.height()) + innerShadowBlur);
+    innerShadowPath.addRect(innerShadowRect);
+
+    FloatRoundedRect innerShadowHoleRect = roundedRect;
+    // FIXME: This is not from the spec; but without it we get antialiasing fringe from the fill; we need a better solution.
+    innerShadowHoleRect.inflate(0.5);
+    innerShadowPath.addRoundedRect(innerShadowHoleRect);
+
+    context.setFillRule(WindRule::EvenOdd);
+    context.fillPath(innerShadowPath);
+
+    constexpr auto secondShadowColor = DisplayP3<float> { 1, 1, 1, 0.5f };
+    context.setShadow(FloatSize { 0, 0 }, 1, secondShadowColor);
+
+    context.fillPath(innerShadowPath);
+}
+
 bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!box.settings().iOSFormControlRefreshEnabled())
         return true;
+
+    bool useAlternateDesign = box.settings().alternateFormControlDesignEnabled();
 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver { context };
@@ -2084,7 +2313,7 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
     auto controlStates = extractControlStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
 
-    auto backgroundColor = checkboxRadioBackgroundColor(controlStates, styleColorOptions);
+    auto backgroundColor = checkboxRadioBackgroundColor(useAlternateDesign, box.style(), controlStates, styleColorOptions);
 
     bool checked = controlStates.contains(ControlStates::States::Checked);
     bool indeterminate = controlStates.contains(ControlStates::States::Indeterminate);
@@ -2093,16 +2322,28 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
     if (empty) {
         Path path;
         path.addRoundedRect(checkboxRect);
-        context.setStrokeColor(checkboxRadioBorderColor(controlStates, styleColorOptions));
-        context.setStrokeThickness(checkboxRadioBorderWidth * 2);
-        context.setStrokeStyle(SolidStroke);
+        if (!useAlternateDesign) {
+            context.setStrokeColor(checkboxRadioBorderColor(controlStates, styleColorOptions));
+            context.setStrokeThickness(checkboxRadioBorderWidth * 2);
+            context.setStrokeStyle(SolidStroke);
+        }
+            
         context.setFillColor(backgroundColor);
         context.clipPath(path);
         context.drawPath(path);
+
+        if (useAlternateDesign)
+            paintCheckboxRadioInnerShadow(paintInfo, checkboxRect, controlStates);
+
         return false;
     }
 
     context.fillRoundedRect(checkboxRect, backgroundColor);
+
+    if (useAlternateDesign) {
+        context.clipRoundedRect(checkboxRect);
+        paintCheckboxRadioInnerShadow(paintInfo, checkboxRect, controlStates);
+    }
 
     Path path;
     if (checked) {
@@ -2147,17 +2388,26 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     if (!box.settings().iOSFormControlRefreshEnabled())
         return true;
 
+    bool useAlternateDesign = box.settings().alternateFormControlDesignEnabled();
+
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
     auto controlStates = extractControlStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
 
-    auto backgroundColor = checkboxRadioBackgroundColor(controlStates, styleColorOptions);
+    auto backgroundColor = checkboxRadioBackgroundColor(useAlternateDesign, box.style(), controlStates, styleColorOptions);
+
+    FloatRoundedRect radioRect { rect, FloatRoundedRect::Radii(rect.width() / 2, rect.height() / 2) };
 
     if (controlStates.contains(ControlStates::States::Checked)) {
         context.setFillColor(backgroundColor);
         context.fillEllipse(rect);
+
+        if (useAlternateDesign) {
+            context.clipRoundedRect(radioRect);
+            paintCheckboxRadioInnerShadow(paintInfo, radioRect, controlStates);
+        }
 
         // The inner circle is 6 / 14 the size of the surrounding circle,
         // leaving 8 / 14 around it. (8 / 14) / 2 = 2 / 7.
@@ -2172,12 +2422,17 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     } else {
         Path path;
         path.addEllipse(rect);
-        context.setStrokeColor(checkboxRadioBorderColor(controlStates, styleColorOptions));
-        context.setStrokeThickness(checkboxRadioBorderWidth * 2);
-        context.setStrokeStyle(SolidStroke);
+        if (!useAlternateDesign) {
+            context.setStrokeColor(checkboxRadioBorderColor(controlStates, styleColorOptions));
+            context.setStrokeThickness(checkboxRadioBorderWidth * 2);
+            context.setStrokeStyle(SolidStroke);
+        }
         context.setFillColor(backgroundColor);
         context.clipPath(path);
         context.drawPath(path);
+
+        if (useAlternateDesign)
+            paintCheckboxRadioInnerShadow(paintInfo, radioRect, controlStates);
     }
 
     return false;
@@ -2263,7 +2518,7 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
     }
 
     FloatRect barRect(barLeft, barTop, barWidth, barHeight);
-    context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), systemColor(CSSValueAppleSystemBlue, styleColorOptions).colorWithAlphaMultipliedBy(alpha));
+    context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), controlTintColor(renderer.style(), styleColorOptions).colorWithAlphaMultipliedBy(alpha));
 
     return false;
 }
@@ -2282,7 +2537,7 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
         return true;
 
     auto& renderMeter = downcast<RenderMeter>(renderer);
-    auto element = makeRefPtr(renderMeter.meterElement());
+    RefPtr element = renderMeter.meterElement();
 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
@@ -2322,6 +2577,51 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
 
 #if ENABLE(DATALIST_ELEMENT)
 
+bool RenderThemeIOS::paintListButton(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    auto& style = box.style();
+
+    float paddingTop = floatValueForLength(style.paddingTop(), rect.height());
+    float paddingRight = floatValueForLength(style.paddingRight(), rect.width());
+    float paddingBottom = floatValueForLength(style.paddingBottom(), rect.height());
+    float paddingLeft = floatValueForLength(style.paddingLeft(), rect.width());
+
+    FloatRect indicatorRect = rect;
+    indicatorRect.move(paddingLeft, paddingTop);
+    indicatorRect.contract(paddingLeft + paddingRight, paddingTop + paddingBottom);
+
+    Path path;
+    path.moveTo({ 35.48, 38.029 });
+    path.addBezierCurveTo({ 36.904, 38.029 }, { 38.125, 37.5 }, { 39.223, 36.361 });
+    path.addLineTo({ 63.352, 11.987 });
+    path.addBezierCurveTo({ 64.206, 11.092 }, { 64.695, 9.993 }, { 64.695, 8.691 });
+    path.addBezierCurveTo({ 64.695, 6.046 }, { 62.579, 3.971 }, { 59.975, 3.971 });
+    path.addBezierCurveTo({ 58.714, 3.971 }, { 57.493, 4.5 }, { 56.557, 5.436 });
+    path.addLineTo({ 35.52, 26.839 });
+    path.addLineTo({ 14.443, 5.436 });
+    path.addBezierCurveTo({ 13.507, 4.5 }, { 12.327, 3.971 }, { 10.984, 3.971 });
+    path.addBezierCurveTo({ 8.38, 3.971 }, { 6.305, 6.046 }, { 6.305, 8.691 });
+    path.addBezierCurveTo({ 6.305, 9.993 }, { 6.753, 11.092 }, { 7.648, 11.987 });
+    path.addLineTo({ 31.777, 36.36 });
+    path.addBezierCurveTo({ 32.916, 37.499 }, { 34.096, 38.028 }, { 35.48, 38.028 });
+
+    const FloatSize indicatorSize(71.0f, 42.0f);
+    float scale = indicatorRect.width() / indicatorSize.width();
+
+    AffineTransform transform;
+    transform.translate(rect.center() - (indicatorSize * scale * 0.5f));
+    transform.scale(scale);
+    path.transform(transform);
+
+    context.setFillColor(controlTintColor(style, box.styleColorOptions()));
+    context.fillPath(path);
+
+    return false;
+}
+
 void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!box.settings().iOSFormControlRefreshEnabled()) {
@@ -2352,7 +2652,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
     FloatRect tickRect;
     FloatRoundedRect::Radii tickCornerRadii(tickCornerRadius);
 
-    bool isHorizontal = box.style().appearance() == SliderHorizontalPart;
+    bool isHorizontal = box.style().effectiveAppearance() == SliderHorizontalPart;
     if (isHorizontal) {
         tickRect.setWidth(tickWidth);
         tickRect.setHeight(tickHeight);
@@ -2380,7 +2680,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
                 tickRect.setY(rect.y() + tickRatio * (rect.height() - tickRect.height()));
 
             FloatRoundedRect roundedTickRect(snapRectToDevicePixels(LayoutRect(tickRect), deviceScaleFactor), tickCornerRadii);
-            context.fillRoundedRect(roundedTickRect, systemColor((value >= *optionValue) ? CSSValueAppleSystemBlue : CSSValueAppleSystemOpaqueSeparator, styleColorOptions));
+            context.fillRoundedRect(roundedTickRect, (value >= *optionValue) ? controlTintColor(box.style(), styleColorOptions) : systemColor(CSSValueAppleSystemOpaqueSeparator, styleColorOptions));
         }
     }
 }
@@ -2399,7 +2699,7 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
     bool isHorizontal = true;
     FloatRect trackClip = rect;
 
-    switch (box.style().appearance()) {
+    switch (box.style().effectiveAppearance()) {
     case SliderHorizontalPart:
         // Inset slightly so the thumb covers the edge.
         if (trackClip.width() > 2) {
@@ -2456,7 +2756,7 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
     }
 
     FloatRoundedRect fillRect(trackClip, cornerRadii);
-    context.fillRoundedRect(fillRect, systemColor(CSSValueAppleSystemBlue, styleColorOptions));
+    context.fillRoundedRect(fillRect, controlTintColor(box.style(), styleColorOptions));
 
     return false;
 }
@@ -2473,6 +2773,8 @@ String RenderThemeIOS::colorInputStyleSheet(const Settings& settings) const
 
 void RenderThemeIOS::adjustColorWellStyle(RenderStyle& style, const Element* element) const
 {
+    adjustStyleForAlternateFormControlDesignTransition(style, element);
+
     if (!element || element->document().settings().iOSFormControlRefreshEnabled())
         return;
 
@@ -2508,7 +2810,7 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const Pa
     };
     constexpr int numColorStops = std::size(colorStops);
 
-    auto gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 });
+    auto gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
     for (int i = 0; i < numColorStops; ++i)
         gradient->addColorStop({ i * 1.0f / (numColorStops - 1), colorStops[i] });
 

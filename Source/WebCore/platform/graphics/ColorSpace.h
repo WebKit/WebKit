@@ -32,16 +32,28 @@
 
 namespace WebCore {
 
+// Tools/lldb/lldb_webkit.py has a copy of this list, which should be kept in sync.
 enum class ColorSpace : uint8_t {
     A98RGB,
     DisplayP3,
+    ExtendedA98RGB,
+    ExtendedDisplayP3,
+    ExtendedLinearSRGB,
+    ExtendedProPhotoRGB,
+    ExtendedRec2020,
+    ExtendedSRGB,
+    HSL,
+    HWB,
     LCH,
     Lab,
     LinearSRGB,
+    OKLCH,
+    OKLab,
     ProPhotoRGB,
     Rec2020,
     SRGB,
     XYZ_D50,
+    XYZ_D65,
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, ColorSpace);
@@ -50,15 +62,26 @@ WEBCORE_EXPORT TextStream& operator<<(TextStream&, ColorSpace);
 template<typename> struct ColorSpaceMapping;
 template<typename T> struct ColorSpaceMapping<A98RGB<T>> { static constexpr auto colorSpace { ColorSpace::A98RGB }; };
 template<typename T> struct ColorSpaceMapping<DisplayP3<T>> { static constexpr auto colorSpace { ColorSpace::DisplayP3 }; };
+template<typename T> struct ColorSpaceMapping<ExtendedA98RGB<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedA98RGB }; };
+template<typename T> struct ColorSpaceMapping<ExtendedDisplayP3<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedDisplayP3 }; };
+template<typename T> struct ColorSpaceMapping<ExtendedLinearSRGBA<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedLinearSRGB }; };
+template<typename T> struct ColorSpaceMapping<ExtendedProPhotoRGB<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedProPhotoRGB }; };
+template<typename T> struct ColorSpaceMapping<ExtendedRec2020<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedRec2020 }; };
+template<typename T> struct ColorSpaceMapping<ExtendedSRGBA<T>> { static constexpr auto colorSpace { ColorSpace::ExtendedSRGB }; };
+template<typename T> struct ColorSpaceMapping<HSLA<T>> { static constexpr auto colorSpace { ColorSpace::HSL }; };
+template<typename T> struct ColorSpaceMapping<HWBA<T>> { static constexpr auto colorSpace { ColorSpace::HWB }; };
 template<typename T> struct ColorSpaceMapping<LCHA<T>> { static constexpr auto colorSpace { ColorSpace::LCH }; };
 template<typename T> struct ColorSpaceMapping<Lab<T>> { static constexpr auto colorSpace { ColorSpace::Lab }; };
 template<typename T> struct ColorSpaceMapping<LinearSRGBA<T>> { static constexpr auto colorSpace { ColorSpace::LinearSRGB }; };
+template<typename T> struct ColorSpaceMapping<OKLab<T>> { static constexpr auto colorSpace { ColorSpace::OKLab }; };
+template<typename T> struct ColorSpaceMapping<OKLCHA<T>> { static constexpr auto colorSpace { ColorSpace::OKLCH }; };
 template<typename T> struct ColorSpaceMapping<ProPhotoRGB<T>> { static constexpr auto colorSpace { ColorSpace::ProPhotoRGB }; };
 template<typename T> struct ColorSpaceMapping<Rec2020<T>> { static constexpr auto colorSpace { ColorSpace::Rec2020 }; };
 template<typename T> struct ColorSpaceMapping<SRGBA<T>> { static constexpr auto colorSpace { ColorSpace::SRGB }; };
 template<typename T> struct ColorSpaceMapping<XYZA<T, WhitePoint::D50>> { static constexpr auto colorSpace { ColorSpace::XYZ_D50 }; };
+template<typename T> struct ColorSpaceMapping<XYZA<T, WhitePoint::D65>> { static constexpr auto colorSpace { ColorSpace::XYZ_D65 }; };
 
-template<typename ColorType> constexpr ColorSpace ColorSpaceFor = ColorSpaceMapping<ColorType>::colorSpace;
+template<typename ColorType> constexpr ColorSpace ColorSpaceFor = ColorSpaceMapping<CanonicalColorType<ColorType>>::colorSpace;
 
 
 template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T, 4>& components, ColorSpace colorSpace, Functor&& functor)
@@ -68,12 +91,32 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<A98RGB<T>>(components));
     case ColorSpace::DisplayP3:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<DisplayP3<T>>(components));
+    case ColorSpace::ExtendedA98RGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedA98RGB<T>>(components));
+    case ColorSpace::ExtendedDisplayP3:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedDisplayP3<T>>(components));
+    case ColorSpace::ExtendedLinearSRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedLinearSRGBA<T>>(components));
+    case ColorSpace::ExtendedProPhotoRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedProPhotoRGB<T>>(components));
+    case ColorSpace::ExtendedRec2020:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedRec2020<T>>(components));
+    case ColorSpace::ExtendedSRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ExtendedSRGBA<T>>(components));
+    case ColorSpace::HSL:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<HSLA<T>>(components));
+    case ColorSpace::HWB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<HWBA<T>>(components));
     case ColorSpace::LCH:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<LCHA<T>>(components));
     case ColorSpace::Lab:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<Lab<T>>(components));
     case ColorSpace::LinearSRGB:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<LinearSRGBA<T>>(components));
+    case ColorSpace::OKLCH:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<OKLCHA<T>>(components));
+    case ColorSpace::OKLab:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<OKLab<T>>(components));
     case ColorSpace::ProPhotoRGB:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<ProPhotoRGB<T>>(components));
     case ColorSpace::Rec2020:
@@ -82,6 +125,8 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
     case ColorSpace::XYZ_D50:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<XYZA<T, WhitePoint::D50>>(components));
+    case ColorSpace::XYZ_D65:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<XYZA<T, WhitePoint::D65>>(components));
     }
 
     ASSERT_NOT_REACHED();
@@ -98,13 +143,24 @@ template<> struct EnumTraits<WebCore::ColorSpace> {
         WebCore::ColorSpace,
         WebCore::ColorSpace::A98RGB,
         WebCore::ColorSpace::DisplayP3,
+        WebCore::ColorSpace::ExtendedA98RGB,
+        WebCore::ColorSpace::ExtendedDisplayP3,
+        WebCore::ColorSpace::ExtendedLinearSRGB,
+        WebCore::ColorSpace::ExtendedProPhotoRGB,
+        WebCore::ColorSpace::ExtendedRec2020,
+        WebCore::ColorSpace::ExtendedSRGB,
+        WebCore::ColorSpace::HSL,
+        WebCore::ColorSpace::HWB,
         WebCore::ColorSpace::LCH,
         WebCore::ColorSpace::Lab,
         WebCore::ColorSpace::LinearSRGB,
+        WebCore::ColorSpace::OKLCH,
+        WebCore::ColorSpace::OKLab,
         WebCore::ColorSpace::ProPhotoRGB,
         WebCore::ColorSpace::Rec2020,
         WebCore::ColorSpace::SRGB,
-        WebCore::ColorSpace::XYZ_D50
+        WebCore::ColorSpace::XYZ_D50,
+        WebCore::ColorSpace::XYZ_D65
     >;
 };
 

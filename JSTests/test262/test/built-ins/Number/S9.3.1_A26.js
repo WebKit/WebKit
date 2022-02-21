@@ -8,23 +8,7 @@ description: >
     Compare Number('0xA'), Number('0XA'), Number('0xa') and
     Number('0Xa') with 10
 ---*/
-
-// CHECK#1
-if (Number("0xa") !== 10) {
-  throw new Test262Error('#1: Number("0xa") === 10. Actual: ' + (Number("0xa")));
-}
-
-// CHECK#2
-if (Number("0xA") !== 10) {
-  throw new Test262Error('#2: Number("0xA") === 10. Actual: ' + (Number("0xA")));
-}
-
-// CHECK#3
-if (Number("0Xa") !== 10) {
-  throw new Test262Error('#3: Number("0Xa") === 10. Actual: ' + (Number("0Xa")));
-}
-
-// CHECK#4
-if (+("0XA") !== 10) {
-  throw new Test262Error('#4: +("0XA") === 10. Actual: ' + (+("0XA")));
-}
+assert.sameValue(Number("0xa"), 10, 'Number("0xa") must return 10');
+assert.sameValue(Number("0xA"), 10, 'Number("0xA") must return 10');
+assert.sameValue(Number("0Xa"), 10, 'Number("0Xa") must return 10');
+assert.sameValue(+("0XA"), 10, 'The value of `+("0XA")` is expected to be 10');

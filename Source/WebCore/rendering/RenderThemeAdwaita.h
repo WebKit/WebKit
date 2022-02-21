@@ -33,6 +33,8 @@ class RenderThemeAdwaita : public RenderTheme {
 public:
     virtual ~RenderThemeAdwaita() = default;
 
+    void setAccentColor(const Color&);
+
 private:
     String extraDefaultStyleSheet() final;
 #if ENABLE(VIDEO)
@@ -46,15 +48,15 @@ private:
 
     void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override { };
 
-    Color platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
-    Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
-    Color platformActiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
-    Color platformInactiveSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
-    Color platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
-    Color platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
-    Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColor::Options>) const final;
-    Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColor::Options>) const final;
-    Color platformFocusRingColor(OptionSet<StyleColor::Options>) const final;
+    Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const final;
+    Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const final;
+    Color platformActiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const final;
+    Color platformInactiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const final;
+    Color platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const final;
+    Color platformActiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const final;
+    Color platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions>) const final;
+    Color platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions>) const final;
+    Color platformFocusRingColor(OptionSet<StyleColorOptions>) const final;
     void platformColorsDidChange() final;
 
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) final;
@@ -87,7 +89,7 @@ private:
     bool paintMediaVolumeSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) final;
 #endif
 
-    Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const final;
+    Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
 
 #if ENABLE(DATALIST_ELEMENT)
     IntSize sliderTickSize() const final;

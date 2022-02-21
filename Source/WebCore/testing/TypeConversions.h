@@ -26,9 +26,9 @@
 #pragma once
 
 #include "Node.h"
+#include <variant>
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,7 +48,7 @@ public:
         String stringValue;
         String treatNullAsEmptyStringValue;
         Vector<String> sequenceValue;
-        Variant<RefPtr<Node>, Vector<String>, OtherDictionary> unionValue;
+        std::variant<RefPtr<Node>, Vector<String>, OtherDictionary> unionValue;
         int clampLongValue;
         int enforceRangeLongValue;
     };
@@ -119,14 +119,14 @@ public:
     const String& testTreatNullAsEmptyString() const { return m_treatNullAsEmptyString; }
     void setTestTreatNullAsEmptyString(const String& string) { m_treatNullAsEmptyString = string; }
 
-    const Vector<WTF::KeyValuePair<String, int>>& testLongRecord() const { return m_longRecord; }
-    void setTestLongRecord(const Vector<WTF::KeyValuePair<String, int>>& value) { m_longRecord = value; }
-    const Vector<WTF::KeyValuePair<String, RefPtr<Node>>>& testNodeRecord() const { return m_nodeRecord; }
-    void setTestNodeRecord(const Vector<WTF::KeyValuePair<String, RefPtr<Node>>>& value) { m_nodeRecord = value; }
-    const Vector<WTF::KeyValuePair<String, Vector<String>>>& testSequenceRecord() const { return m_sequenceRecord; }
-    void setTestSequenceRecord(const Vector<WTF::KeyValuePair<String, Vector<String>>>& value) { m_sequenceRecord = value; }
+    const Vector<KeyValuePair<String, int>>& testLongRecord() const { return m_longRecord; }
+    void setTestLongRecord(const Vector<KeyValuePair<String, int>>& value) { m_longRecord = value; }
+    const Vector<KeyValuePair<String, RefPtr<Node>>>& testNodeRecord() const { return m_nodeRecord; }
+    void setTestNodeRecord(const Vector<KeyValuePair<String, RefPtr<Node>>>& value) { m_nodeRecord = value; }
+    const Vector<KeyValuePair<String, Vector<String>>>& testSequenceRecord() const { return m_sequenceRecord; }
+    void setTestSequenceRecord(const Vector<KeyValuePair<String, Vector<String>>>& value) { m_sequenceRecord = value; }
 
-    using TestUnion = Variant<String, int, bool, RefPtr<Node>, Vector<int>>;
+    using TestUnion = std::variant<String, int, bool, RefPtr<Node>, Vector<int>>;
     const TestUnion& testUnion() const { return m_union; }
     void setTestUnion(TestUnion&& value) { m_union = value; }
 
@@ -134,15 +134,15 @@ public:
     void setTestDictionary(Dictionary&& dictionary) { m_testDictionary = dictionary; }
     
 
-    using TestClampUnion = Variant<String, int, Vector<int>>;
+    using TestClampUnion = std::variant<String, int, Vector<int>>;
     const TestClampUnion& testClampUnion() const { return m_clampUnion; }
     void setTestClampUnion(const TestClampUnion& value) { m_clampUnion = value; }
 
-    using TestEnforceRangeUnion = Variant<String, int, Vector<int>>;
+    using TestEnforceRangeUnion = std::variant<String, int, Vector<int>>;
     const TestEnforceRangeUnion& testEnforceRangeUnion() const { return m_enforceRangeUnion; }
     void setTestEnforceRangeUnion(const TestEnforceRangeUnion& value) { m_enforceRangeUnion = value; }
 
-    using TestTreatNullAsEmptyStringUnion = Variant<String, int, Vector<String>>;
+    using TestTreatNullAsEmptyStringUnion = std::variant<String, int, Vector<String>>;
     const TestTreatNullAsEmptyStringUnion& testTreatNullAsEmptyStringUnion() const { return m_treatNullAsEmptyStringUnion; }
     void setTestTreatNullAsEmptyStringUnion(const TestTreatNullAsEmptyStringUnion& value) { m_treatNullAsEmptyStringUnion = value; }
 
@@ -168,9 +168,9 @@ private:
     String m_usvstring;
     String m_byteString;
     String m_treatNullAsEmptyString;
-    Vector<WTF::KeyValuePair<String, int>> m_longRecord;
-    Vector<WTF::KeyValuePair<String, RefPtr<Node>>> m_nodeRecord;
-    Vector<WTF::KeyValuePair<String, Vector<String>>> m_sequenceRecord;
+    Vector<KeyValuePair<String, int>> m_longRecord;
+    Vector<KeyValuePair<String, RefPtr<Node>>> m_nodeRecord;
+    Vector<KeyValuePair<String, Vector<String>>> m_sequenceRecord;
 
     Dictionary m_testDictionary;
 

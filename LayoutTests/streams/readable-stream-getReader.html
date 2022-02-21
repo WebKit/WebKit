@@ -12,12 +12,12 @@ test(function() {
 
 test(function() {
     const rs = new ReadableStream();
-    assert_throws(new TypeError(), function() { rs.getReader({mode: 'byob'}) });
+    assert_throws_js(TypeError, function() { rs.getReader({mode: 'byob'}) });
 }, "getReader({mode: 'byob'}) should return a TypeError as BYOB reader is not yet implemented");
 
 test(function() {
     const rs = new ReadableStream();
     // Any value different from undefined and 'byob' should throw a TypeError.
-    assert_throws(new TypeError(), function() { rs.getReader({mode : 'aMode'}) });
+    assert_throws_js(TypeError, function() { rs.getReader({mode : 'aMode'}) });
 }, "getReader({mode: 'aMode'}) should return a TypeError as 'aMode' is different from undefined and 'byob'");
 </script>

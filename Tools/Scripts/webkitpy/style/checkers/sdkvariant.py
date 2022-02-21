@@ -50,6 +50,7 @@ SDK_VARIANT_FILES = [
     "Source/ThirdParty/ANGLE/Configurations/SDKVariant.xcconfig",
     "Source/ThirdParty/gtest/xcode/Config/SDKVariant.xcconfig",
     "Source/ThirdParty/libwebrtc/Configurations/SDKVariant.xcconfig",
+    "Source/WebGPU/Configurations/SDKVariant.xcconfig",
 ]
 
 

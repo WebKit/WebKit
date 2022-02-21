@@ -540,7 +540,7 @@ static RefPtr<CSSFontFeatureValue> consumeFontFeatureTag(CSSParserTokenRange& ra
     int tagValue = 1;
     if (!range.atEnd() && range.peek().type() != CommaToken) {
         // Feature tag values could follow: <integer> | on | off
-        if (auto integer = CSSPropertyParserHelpers::consumeIntegerRaw(range, 0))
+        if (auto integer = CSSPropertyParserHelpers::consumeIntegerZeroAndGreaterRaw(range))
             tagValue = *integer;
         else if (range.peek().id() == CSSValueOn || range.peek().id() == CSSValueOff)
             tagValue = range.consumeIncludingWhitespace().id() == CSSValueOn;

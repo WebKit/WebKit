@@ -54,7 +54,7 @@ private:
         void clear() { m_impl = nullptr; }
     private:
         friend class TaskCancellationGroup;
-        explicit Handle(Impl& impl) : m_impl(makeWeakPtr(impl)) { }
+        explicit Handle(Impl& impl) : m_impl(impl) { }
         WeakPtr<Impl> m_impl;
     };
     Handle createHandle() { return Handle { m_impl }; }

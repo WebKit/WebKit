@@ -16,7 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/DocumentOrShadowRoot-activeElement.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/ShadowRoot-delegatesFocus.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-click-method.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/blur-on-shadow-host-delegatesFocus.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-click.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-varies.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-zero.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-method-delegatesFocus.html
@@ -28,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-3-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-3.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-selector-delegatesFocus.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tab-on-shadow-host.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-negative-delegatesFocus.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-negative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-slot-one.html

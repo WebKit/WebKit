@@ -24,8 +24,9 @@
 
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     Exposed=Window
 ] interface ChannelSplitterNode : AudioNode {
-    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional ChannelSplitterOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional ChannelSplitterOptions options);
 };

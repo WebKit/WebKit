@@ -61,8 +61,19 @@ static constexpr int maxExpressionDepth = 100;
 // <calc-sum> = <calc-product> [ [ '+' | '-' ] <calc-product> ]*
 // <calc-product> = <calc-value> [ [ '*' | '/' ] <calc-value> ]*
 // <calc-value> = <number> | <dimension> | <percentage> | ( <calc-sum> )
-RefPtr<CSSCalcExpressionNode> CSSCalcExpressionNodeParser::parseCalc(CSSParserTokenRange tokens, CSSValueID function)
+RefPtr<CSSCalcExpressionNode> CSSCalcExpressionNodeParser::parseCalc(CSSParserTokenRange tokens, CSSValueID function, bool allowsNegativePercentage)
 {
+    std::function<void(CSSCalcExpressionNode&)> setAllowsNegativePercentageReferenceIfNeeded = [&](CSSCalcExpressionNode& expression) {
+        if (is<CSSCalcOperationNode>(expression)) {
+            auto& operationNode = downcast<CSSCalcOperationNode>(expression);
+            if (operationNode.isMinOrMaxNode())
+                operationNode.setAllowsNegativePercentageReference();
+
+            for (auto& child : operationNode.children())
+                setAllowsNegativePercentageReferenceIfNeeded(child);
+        }
+    };
+
     tokens.consumeWhitespace();
 
     RefPtr<CSSCalcExpressionNode> result;
@@ -74,6 +85,9 @@ RefPtr<CSSCalcExpressionNode> CSSCalcExpressionNodeParser::parseCalc(CSSParserTo
         return nullptr;
 
     LOG_WITH_STREAM(Calc, stream << "CSSCalcExpressionNodeParser::parseCalc " << prettyPrintNode(*result));
+
+    if (allowsNegativePercentage)
+        setAllowsNegativePercentageReferenceIfNeeded(*result);
 
     result = CSSCalcOperationNode::simplify(result.releaseNonNull());
 
@@ -94,6 +108,16 @@ enum ParseState {
     TooDeep,
     NoMoreTokens
 };
+
+static const CSSCalcSymbolTable getConstantTable()
+{
+    return {
+        { CSSValuePi, CSSUnitType::CSS_NUMBER, piDouble }, { CSSValueE, CSSUnitType::CSS_NUMBER, std::exp(1.0) },
+        { CSSValueNegativeInfinity, CSSUnitType::CSS_NUMBER, -1 * std::numeric_limits<double>::infinity() },
+        { CSSValueInfinity, CSSUnitType::CSS_NUMBER, std::numeric_limits<double>::infinity() },
+        { CSSValueNaN, CSSUnitType::CSS_NUMBER, std::numeric_limits<double>::quiet_NaN() },
+    };
+}
 
 static ParseState checkDepthAndIndex(int depth, CSSParserTokenRange tokens)
 {
@@ -118,16 +142,47 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
     switch (functionID) {
     case CSSValueMin:
     case CSSValueMax:
+    case CSSValueHypot:
         maxArgumentCount = std::nullopt;
         break;
     case CSSValueClamp:
         minArgumentCount = 3;
         maxArgumentCount = 3;
         break;
+    case CSSValueLog:
+        maxArgumentCount = 2;
+        break;
+    case CSSValueRound:
+        minArgumentCount = 2;
+        maxArgumentCount = 3;
+        break;
+    case CSSValueMod:
+    case CSSValueRem:
+        minArgumentCount = 2;
+        maxArgumentCount = 2;
+        break;
+    case CSSValueExp:
+    case CSSValueSin:
+    case CSSValueCos:
+    case CSSValueTan:
+    case CSSValueAcos:
+    case CSSValueAsin:
+    case CSSValueAtan:
+    case CSSValueSign:
+    case CSSValueAbs:
     case CSSValueCalc:
         maxArgumentCount = 1;
         break;
-    // TODO: clamp, sin, cos, tan, asin, acos, atan, atan2, pow, sqrt, hypot.
+    case CSSValueAtan2:
+        maxArgumentCount = 2;
+        break;
+    case CSSValuePow:
+        minArgumentCount = 2;
+        maxArgumentCount = 2;
+        break;
+    case CSSValueSqrt:
+        maxArgumentCount = 1;
+        break;
     default:
         break;
     }
@@ -142,7 +197,7 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
             return false;
 
         RefPtr<CSSCalcExpressionNode> node;
-        if (!parseCalcSum(tokens, depth, node))
+        if (!parseCalcSum(tokens, functionID, depth, node))
             return false;
 
         ++argumentCount;
@@ -166,11 +221,61 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
     case CSSValueClamp:
         result = CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOperator::Clamp, WTFMove(nodes), m_destinationCategory);
         break;
+    case CSSValueSin:
+        result = CSSCalcOperationNode::createTrig(CalcOperator::Sin, WTFMove(nodes));
+        break;
+    case CSSValueCos:
+        result = CSSCalcOperationNode::createTrig(CalcOperator::Cos, WTFMove(nodes));
+        break;
+    case CSSValueTan:
+        result = CSSCalcOperationNode::createTrig(CalcOperator::Tan, WTFMove(nodes));
+        break;
+    case CSSValueRound:
+        result = CSSCalcOperationNode::createRound(WTFMove(nodes));
+        break;
+    case CSSValueMod:
+        result = CSSCalcOperationNode::createStep(CalcOperator::Mod, WTFMove(nodes));
+        break;
+    case CSSValueRem:
+        result = CSSCalcOperationNode::createStep(CalcOperator::Rem, WTFMove(nodes));
+        break;
     case CSSValueWebkitCalc:
     case CSSValueCalc:
         result = CSSCalcOperationNode::createSum(WTFMove(nodes));
         break;
-    // TODO: clamp, sin, cos, tan, asin, acos, atan, atan2, pow, sqrt, hypot
+    case CSSValueLog:
+        result = CSSCalcOperationNode::createLog(WTFMove(nodes));
+        break;
+    case CSSValueExp:
+        result = CSSCalcOperationNode::createExp(WTFMove(nodes));
+        break;
+    case CSSValueAcos:
+        result = CSSCalcOperationNode::createInverseTrig(CalcOperator::Acos, WTFMove(nodes));
+        break;
+    case CSSValueAsin:
+        result = CSSCalcOperationNode::createInverseTrig(CalcOperator::Asin, WTFMove(nodes));
+        break;
+    case CSSValueAtan:
+        result = CSSCalcOperationNode::createInverseTrig(CalcOperator::Atan, WTFMove(nodes));
+        break;
+    case CSSValueAtan2:
+        result = CSSCalcOperationNode::createAtan2(WTFMove(nodes));
+        break;
+    case CSSValueAbs:
+        result = CSSCalcOperationNode::createSign(CalcOperator::Abs, WTFMove(nodes));
+        break;
+    case CSSValueSign:
+        result = CSSCalcOperationNode::createSign(CalcOperator::Sign, WTFMove(nodes));
+        break;
+    case CSSValuePow:
+        result = CSSCalcOperationNode::createPowOrSqrt(CalcOperator::Pow, WTFMove(nodes));
+        break;
+    case CSSValueSqrt:
+        result = CSSCalcOperationNode::createPowOrSqrt(CalcOperator::Sqrt, WTFMove(nodes));
+        break;
+    case CSSValueHypot:
+        result = CSSCalcOperationNode::createHypot(WTFMove(nodes));
+        break;
     default:
         break;
     }
@@ -178,7 +283,29 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
     return !!result;
 }
 
-bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, RefPtr<CSSCalcExpressionNode>& result)
+static bool checkRoundKeyword(CSSValueID functionID, RefPtr<CSSCalcExpressionNode>& result, CSSValueID constantID)
+{
+    if (functionID != CSSValueRound)
+        return false;
+    switch (constantID) {
+    case CSSValueNearest:
+        result = CSSCalcOperationNode::createRoundConstant(CalcOperator::Nearest);
+        return true;
+    case CSSValueToZero:
+        result = CSSCalcOperationNode::createRoundConstant(CalcOperator::ToZero);
+        return true;
+    case CSSValueUp:
+        result = CSSCalcOperationNode::createRoundConstant(CalcOperator::Up);
+        return true;
+    case CSSValueDown:
+        result = CSSCalcOperationNode::createRoundConstant(CalcOperator::Down);
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, CSSValueID functionID, RefPtr<CSSCalcExpressionNode>& result)
 {
     auto makeCSSCalcPrimitiveValueNode = [&] (CSSUnitType type, double value) -> bool {
         if (calcUnitCategory(type) == CalculationCategory::Other)
@@ -192,7 +319,10 @@ bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, RefPtr
 
     switch (token.type()) {
     case IdentToken: {
+        if (checkRoundKeyword(functionID, result, token.id()))
+            return true;
         auto value = m_symbolTable.get(token.id());
+        value = value ? value : getConstantTable().get(token.id());
         if (!value)
             return false;
         return makeCSSCalcPrimitiveValueNode(value->type, value->value);
@@ -211,7 +341,7 @@ bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, RefPtr
     return false;
 }
 
-bool CSSCalcExpressionNodeParser::parseCalcValue(CSSParserTokenRange& tokens, int depth, RefPtr<CSSCalcExpressionNode>& result)
+bool CSSCalcExpressionNodeParser::parseCalcValue(CSSParserTokenRange& tokens, CSSValueID functionID, int depth, RefPtr<CSSCalcExpressionNode>& result)
 {
     if (checkDepthAndIndex(depth, tokens) != OK)
         return false;
@@ -234,16 +364,16 @@ bool CSSCalcExpressionNodeParser::parseCalcValue(CSSParserTokenRange& tokens, in
         return parseCalcFunction(innerRange, functionId, depth + 1, result);
     }
 
-    return parseValue(tokens, result);
+    return parseValue(tokens, functionID, result);
 }
 
-bool CSSCalcExpressionNodeParser::parseCalcProduct(CSSParserTokenRange& tokens, int depth, RefPtr<CSSCalcExpressionNode>& result)
+bool CSSCalcExpressionNodeParser::parseCalcProduct(CSSParserTokenRange& tokens, CSSValueID functionID, int depth, RefPtr<CSSCalcExpressionNode>& result)
 {
     if (checkDepthAndIndex(depth, tokens) != OK)
         return false;
 
     RefPtr<CSSCalcExpressionNode> firstValue;
-    if (!parseCalcValue(tokens, depth, firstValue))
+    if (!parseCalcValue(tokens, functionID, depth, firstValue))
         return false;
 
     Vector<Ref<CSSCalcExpressionNode>> nodes;
@@ -255,7 +385,7 @@ bool CSSCalcExpressionNodeParser::parseCalcProduct(CSSParserTokenRange& tokens, 
         tokens.consumeIncludingWhitespace();
         
         RefPtr<CSSCalcExpressionNode> nextValue;
-        if (!parseCalcValue(tokens, depth, nextValue) || !nextValue)
+        if (!parseCalcValue(tokens, functionID, depth, nextValue) || !nextValue)
             return false;
 
         if (operatorCharacter == static_cast<char>(CalcOperator::Divide))
@@ -276,13 +406,13 @@ bool CSSCalcExpressionNodeParser::parseCalcProduct(CSSParserTokenRange& tokens, 
     return !!result;
 }
 
-bool CSSCalcExpressionNodeParser::parseCalcSum(CSSParserTokenRange& tokens, int depth, RefPtr<CSSCalcExpressionNode>& result)
+bool CSSCalcExpressionNodeParser::parseCalcSum(CSSParserTokenRange& tokens, CSSValueID functionID, int depth, RefPtr<CSSCalcExpressionNode>& result)
 {
     if (checkDepthAndIndex(depth, tokens) != OK)
         return false;
 
     RefPtr<CSSCalcExpressionNode> firstValue;
-    if (!parseCalcProduct(tokens, depth, firstValue))
+    if (!parseCalcProduct(tokens, functionID, depth, firstValue))
         return false;
 
     Vector<Ref<CSSCalcExpressionNode>> nodes;
@@ -302,7 +432,7 @@ bool CSSCalcExpressionNodeParser::parseCalcSum(CSSParserTokenRange& tokens, int 
         tokens.consumeIncludingWhitespace();
 
         RefPtr<CSSCalcExpressionNode> nextValue;
-        if (!parseCalcProduct(tokens, depth, nextValue) || !nextValue)
+        if (!parseCalcProduct(tokens, functionID, depth, nextValue) || !nextValue)
             return false;
 
         if (operatorCharacter == static_cast<char>(CalcOperator::Subtract))

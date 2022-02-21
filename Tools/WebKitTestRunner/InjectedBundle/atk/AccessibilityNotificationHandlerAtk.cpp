@@ -20,7 +20,7 @@
 #include "config.h"
 #include "AccessibilityNotificationHandlerAtk.h"
 
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include "AccessibilityUIElement.h"
 #include "InjectedBundle.h"
@@ -278,4 +278,4 @@ bool AccessibilityNotificationHandler::disconnectAccessibilityCallbacks()
 
 } // namespace WTR
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATK)

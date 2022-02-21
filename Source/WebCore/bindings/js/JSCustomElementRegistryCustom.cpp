@@ -156,6 +156,15 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
         }
     }
 
+    auto disabledFeaturesValue = constructor->get(&lexicalGlobalObject, Identifier::fromString(vm, "disabledFeatures"));
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!disabledFeaturesValue.isUndefined()) {
+        auto disabledFeatures = convert<IDLSequence<IDLDOMString>>(lexicalGlobalObject, disabledFeaturesValue);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (disabledFeatures.contains("shadow"_s))
+            elementInterface->disableShadow();
+    }
+
     auto addToGlobalObjectWithPrivateName = [&] (JSObject* objectToAdd) {
         if (objectToAdd) {
             PrivateName uniquePrivateName;

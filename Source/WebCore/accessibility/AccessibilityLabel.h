@@ -48,7 +48,7 @@ private:
     String stringValue() const final;
     void updateChildrenIfNecessary() final;
     void clearChildren() final;
-    void insertChild(AXCoreObject*, unsigned) final;
+    void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes) final;
     bool m_containsOnlyStaticTextDirty : 1;
     bool m_containsOnlyStaticText : 1;
 };

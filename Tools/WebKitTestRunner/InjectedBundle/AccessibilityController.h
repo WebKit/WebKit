@@ -34,8 +34,8 @@
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #endif
+#include <wtf/RunLoop.h>
 #include <wtf/Threading.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 #if USE(ATK)
 #include "AccessibilityNotificationHandlerAtk.h"
@@ -44,6 +44,9 @@
 namespace WTR {
 
 class AccessibilityUIElement;
+#if USE(ATSPI)
+class AccessibilityNotificationHandler;
+#endif
 
 class AccessibilityController : public JSWrappable {
 public:
@@ -62,9 +65,9 @@ public:
     JSRetainPtr<JSStringRef> platformName();
 
     // Controller Methods - platform-independent implementations.
-#if HAVE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY)
     Ref<AccessibilityUIElement> rootElement();
-    Ref<AccessibilityUIElement> focusedElement();
+    RefPtr<AccessibilityUIElement> focusedElement();
 #endif
     RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
     RefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);
@@ -87,7 +90,7 @@ public:
 
     void resetToConsistentState();
 
-#if !HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(WPE))
+#if !ENABLE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(WPE))
     RefPtr<AccessibilityUIElement> rootElement() { return nullptr; }
     RefPtr<AccessibilityUIElement> focusedElement() { return nullptr; }
 #endif
@@ -99,18 +102,22 @@ private:
     RetainPtr<id> m_globalNotificationHandler;
 #elif USE(ATK)
     RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
+#elif USE(ATSPI)
+    std::unique_ptr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void updateIsolatedTreeMode();
-    
+
+#if PLATFORM(COCOA)
+    void spinMainRunLoop() const;
     // _AXUIElementUseSecondaryAXThread and _AXUIElementRequestServicedBySecondaryAXThread
     // do not work for WebKitTestRunner since this is calling directly into
     // WebCore/accessibility via JavaScript without going through HIServices.
     // Thus to simulate the behavior of HIServices, AccessibilityController is spawning a secondary thread to service the JavaScript requests.
     bool m_useMockAXThread { false };
+#endif
     bool m_accessibilityIsolatedTreeMode { false };
-    BinarySemaphore m_semaphore;
 #endif
 };
 

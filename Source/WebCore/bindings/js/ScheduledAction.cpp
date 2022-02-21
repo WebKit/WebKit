@@ -70,7 +70,7 @@ ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, String&& code)
 
 ScheduledAction::~ScheduledAction() = default;
 
-void ScheduledAction::addArguments(Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+void ScheduledAction::addArguments(FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     m_arguments = WTFMove(arguments);
 }

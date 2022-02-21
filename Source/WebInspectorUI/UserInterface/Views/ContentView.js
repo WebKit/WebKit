@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,9 +37,18 @@ WI.ContentView = class ContentView extends WI.View
         this.element.classList.add("content-view");
 
         this._parentContainer = null;
+        this._isClosed = false;
+        this._visible = false;
     }
 
     // Static
+
+    static shouldNotRemoveFromDOMWhenHidden()
+    {
+        // Implemented by subclasses.
+        // Returns true if the content view should *not* be detached from the DOM when hidden.
+        return false;
+    }
 
     static createFromRepresentedObject(representedObject, extraArguments)
     {
@@ -338,6 +347,19 @@ WI.ContentView = class ContentView extends WI.View
 
     // Public
 
+    get isClosed() { return this._isClosed; }
+
+    get visible()
+    {
+        return !this.isClosed && this._visible;
+    }
+
+    set visible(value)
+    {
+        this._visible = !!value;
+        this.element.classList.toggle("not-visible", !this._visible);
+    }
+
     get representedObject()
     {
         return this._representedObject;
@@ -393,6 +415,7 @@ WI.ContentView = class ContentView extends WI.View
     closed()
     {
         // Implemented by subclasses.
+        this._isClosed = true;
     }
 
     saveToCookie(cookie)

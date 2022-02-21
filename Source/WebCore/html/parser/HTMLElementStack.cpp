@@ -49,7 +49,7 @@ inline bool isScopeMarker(HTMLStackItem& item)
         || item.hasTagName(captionTag)
         || item.hasTagName(marqueeTag)
         || item.hasTagName(objectTag)
-        || is<HTMLTableElement>(item.node())
+        || item.hasTagName(tableTag)
         || item.hasTagName(tdTag)
         || item.hasTagName(thTag)
         || item.hasTagName(MathMLNames::miTag)
@@ -74,7 +74,7 @@ inline bool isListItemScopeMarker(HTMLStackItem& item)
 
 inline bool isTableScopeMarker(HTMLStackItem& item)
 {
-    return is<HTMLTableElement>(item.node())
+    return item.hasTagName(tableTag)
         || item.hasTagName(templateTag)
         || isRootNode(item);
 }
@@ -110,7 +110,7 @@ inline bool isButtonScopeMarker(HTMLStackItem& item)
 
 inline bool isSelectScopeMarker(HTMLStackItem& item)
 {
-    return !is<HTMLOptGroupElement>(item.node()) && !is<HTMLOptionElement>(item.node());
+    return !item.hasTagName(optgroupTag) && !item.hasTagName(optionTag);
 }
 
 }

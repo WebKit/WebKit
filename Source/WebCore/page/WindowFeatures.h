@@ -64,6 +64,6 @@ WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const Flo
 OptionSet<DisabledAdaptations> parseDisabledAdaptations(const String&);
 
 enum class FeatureMode { Window, Viewport };
-void processFeaturesString(StringView features, FeatureMode, const WTF::Function<void(StringView type, StringView value)>& callback);
+void processFeaturesString(StringView features, FeatureMode, const Function<void(StringView type, StringView value)>& callback);
 
 } // namespace WebCore

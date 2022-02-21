@@ -47,7 +47,7 @@ typedef float GCGLfloat;
 typedef unsigned short GCGLhalffloat;
 typedef float GCGLclampf;
 typedef char GCGLchar;
-typedef struct __GLsync* GCGLsync;
+typedef void* GCGLsync;
 typedef void GCGLvoid;
 
 // These GCGL types do not strictly match the GL types as defined in OpenGL ES 2.0
@@ -59,10 +59,17 @@ typedef int64_t GCGLint64;
 typedef uint64_t GCGLuint64;
 
 typedef GCGLuint PlatformGLObject;
+using GCGLDisplay = void*;
+using GCGLConfig = void*;
+using GCGLContext = void*;
 
 #if !PLATFORM(COCOA)
 typedef unsigned GLuint;
 #endif
+
+using GCGLNativeDisplayType = int;
+
+inline constexpr GCGLNativeDisplayType gcGLDefaultDisplay = 0;
 
 inline constexpr size_t gcGLSpanDynamicExtent = std::numeric_limits<size_t>::max();
 
@@ -111,7 +118,7 @@ struct GCGLSpan<T, gcGLSpanDynamicExtent> {
         , bufSize(other.bufSize)
     { }
     template<typename U, size_t inlineCapacity>
-    GCGLSpan(WTF::Vector<U, inlineCapacity>& array, std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>, std::nullptr_t> = nullptr)
+    GCGLSpan(Vector<U, inlineCapacity>& array, std::enable_if_t<std::is_convertible_v<U(*)[], T(*)[]>, std::nullptr_t> = nullptr)
         : data(array.data())
         , bufSize(array.size())
     { }
@@ -138,7 +145,7 @@ struct GCGLSpan<GCGLvoid> {
         , bufSize(other.bufSize * sizeof(U))
     { }
     template<typename U, size_t inlineCapacity>
-    GCGLSpan(WTF::Vector<U, inlineCapacity>& array)
+    GCGLSpan(Vector<U, inlineCapacity>& array)
         : data(array.data())
         , bufSize(array.size() * sizeof(U))
     { }
@@ -177,7 +184,7 @@ template<typename T, size_t N>
 GCGLSpan(std::array<T, N>&) -> GCGLSpan<T, N>;
 
 template<typename T, size_t inlineCapacity>
-GCGLSpan(WTF::Vector<T, inlineCapacity>&) -> GCGLSpan<T>;
+GCGLSpan(Vector<T, inlineCapacity>&) -> GCGLSpan<T>;
 
 template<typename T>
 GCGLSpan<T> makeGCGLSpan(T* data, size_t count)

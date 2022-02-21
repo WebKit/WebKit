@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,9 @@
 
 #include "HTMLInputStream.h"
 #include "HTMLScriptRunnerHost.h"
-#include "HTMLSourceTracker.h"
 #include "HTMLTokenizer.h"
 #include "PendingScriptClient.h"
 #include "ScriptableDocumentParser.h"
-#include "XSSAuditor.h"
-#include "XSSAuditorDelegate.h"
 
 namespace WebCore {
 
@@ -68,6 +65,7 @@ protected:
 
     void insert(SegmentedString&&) final;
     void append(RefPtr<StringImpl>&&) override;
+    void appendSynchronously(RefPtr<StringImpl>&&) override;
     void finish() override;
 
     HTMLTreeBuilder& treeBuilder();
@@ -104,6 +102,8 @@ private:
     Document* contextForParsingSession();
 
     enum SynchronousMode { AllowYield, ForceSynchronous };
+    void append(RefPtr<StringImpl>&&, SynchronousMode);
+
     void pumpTokenizer(SynchronousMode);
     bool pumpTokenizerLoop(SynchronousMode, bool parsingFragment, PumpSession&);
     void pumpTokenizerIfPossible(SynchronousMode);
@@ -134,10 +134,7 @@ private:
     std::unique_ptr<HTMLPreloadScanner> m_preloadScanner;
     std::unique_ptr<HTMLPreloadScanner> m_insertionPreloadScanner;
     std::unique_ptr<HTMLParserScheduler> m_parserScheduler;
-    HTMLSourceTracker m_sourceTracker;
     TextPosition m_textPosition;
-    XSSAuditor m_xssAuditor;
-    XSSAuditorDelegate m_xssAuditorDelegate;
 
     std::unique_ptr<HTMLResourcePreloader> m_preloader;
 

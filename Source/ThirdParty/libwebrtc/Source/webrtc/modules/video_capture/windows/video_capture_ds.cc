@@ -57,7 +57,7 @@ VideoCaptureDS::~VideoCaptureDS() {
 
 int32_t VideoCaptureDS::Init(const char* deviceUniqueIdUTF8) {
   const int32_t nameLength = (int32_t)strlen((char*)deviceUniqueIdUTF8);
-  if (nameLength > kVideoCaptureUniqueNameLength)
+  if (nameLength >= kVideoCaptureUniqueNameLength)
     return -1;
 
   // Store the device name

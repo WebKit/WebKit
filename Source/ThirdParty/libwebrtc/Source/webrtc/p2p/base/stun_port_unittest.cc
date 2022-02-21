@@ -48,7 +48,7 @@ class StunPortTestBase : public ::testing::Test, public sigslot::has_slots<> {
       : ss_(new rtc::VirtualSocketServer()),
         thread_(ss_.get()),
         network_("unittest", "unittest", kLocalAddr.ipaddr(), 32),
-        socket_factory_(rtc::Thread::Current()),
+        socket_factory_(ss_.get()),
         stun_server_1_(cricket::TestStunServer::Create(ss_.get(), kStunAddr1)),
         stun_server_2_(cricket::TestStunServer::Create(ss_.get(), kStunAddr2)),
         done_(false),
@@ -79,7 +79,7 @@ class StunPortTestBase : public ::testing::Test, public sigslot::has_slots<> {
         rtc::CreateRandomString(16), rtc::CreateRandomString(22), stun_servers,
         std::string(), absl::nullopt);
     stun_port_->set_stun_keepalive_delay(stun_keepalive_delay_);
-    // If |stun_keepalive_lifetime_| is negative, let the stun port
+    // If `stun_keepalive_lifetime_` is negative, let the stun port
     // choose its lifetime from the network type.
     if (stun_keepalive_lifetime_ >= 0) {
       stun_port_->set_stun_keepalive_lifetime(stun_keepalive_lifetime_);
@@ -350,15 +350,15 @@ TEST_F(StunPortTest, TestTwoCandidatesWithTwoStunServersAcrossNat) {
 // type on a STUN port. Also test that it will be updated if the network type
 // changes.
 TEST_F(StunPortTest, TestStunPortGetStunKeepaliveLifetime) {
-  // Lifetime for the default (unknown) network type is |kInfiniteLifetime|.
+  // Lifetime for the default (unknown) network type is `kInfiniteLifetime`.
   CreateStunPort(kStunAddr1);
   EXPECT_EQ(kInfiniteLifetime, port()->stun_keepalive_lifetime());
-  // Lifetime for the cellular network is |kHighCostPortKeepaliveLifetimeMs|
+  // Lifetime for the cellular network is `kHighCostPortKeepaliveLifetimeMs`
   SetNetworkType(rtc::ADAPTER_TYPE_CELLULAR);
   EXPECT_EQ(kHighCostPortKeepaliveLifetimeMs,
             port()->stun_keepalive_lifetime());
 
-  // Lifetime for the wifi network is |kInfiniteLifetime|.
+  // Lifetime for the wifi network is `kInfiniteLifetime`.
   SetNetworkType(rtc::ADAPTER_TYPE_WIFI);
   CreateStunPort(kStunAddr2);
   EXPECT_EQ(kInfiniteLifetime, port()->stun_keepalive_lifetime());
@@ -368,15 +368,15 @@ TEST_F(StunPortTest, TestStunPortGetStunKeepaliveLifetime) {
 // type on a shared STUN port (UDPPort). Also test that it will be updated
 // if the network type changes.
 TEST_F(StunPortTest, TestUdpPortGetStunKeepaliveLifetime) {
-  // Lifetime for the default (unknown) network type is |kInfiniteLifetime|.
+  // Lifetime for the default (unknown) network type is `kInfiniteLifetime`.
   CreateSharedUdpPort(kStunAddr1, nullptr);
   EXPECT_EQ(kInfiniteLifetime, port()->stun_keepalive_lifetime());
-  // Lifetime for the cellular network is |kHighCostPortKeepaliveLifetimeMs|.
+  // Lifetime for the cellular network is `kHighCostPortKeepaliveLifetimeMs`.
   SetNetworkType(rtc::ADAPTER_TYPE_CELLULAR);
   EXPECT_EQ(kHighCostPortKeepaliveLifetimeMs,
             port()->stun_keepalive_lifetime());
 
-  // Lifetime for the wifi network type is |kInfiniteLifetime|.
+  // Lifetime for the wifi network type is `kInfiniteLifetime`.
   SetNetworkType(rtc::ADAPTER_TYPE_WIFI);
   CreateSharedUdpPort(kStunAddr2, nullptr);
   EXPECT_EQ(kInfiniteLifetime, port()->stun_keepalive_lifetime());

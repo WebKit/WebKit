@@ -24,6 +24,7 @@
 #include "SVGLocatable.h"
 
 #include "RenderElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGGraphicsElement.h"
 #include "SVGImageElement.h"
 #include "SVGMatrix.h"

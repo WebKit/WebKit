@@ -18,6 +18,13 @@ function shouldThrow(func, errorType, message) {
         shouldBe(String(error), message);
 }
 
+shouldBe(Temporal.Calendar instanceof Function, true);
+shouldBe(Temporal.Calendar.length, 0);
+shouldBe(Object.getOwnPropertyDescriptor(Temporal.Calendar, 'prototype').writable, false);
+shouldBe(Object.getOwnPropertyDescriptor(Temporal.Calendar, 'prototype').enumerable, false);
+shouldBe(Object.getOwnPropertyDescriptor(Temporal.Calendar, 'prototype').configurable, false);
+shouldBe(Temporal.Calendar.prototype.constructor, Temporal.Calendar);
+
 {
     let calendar = new Temporal.Calendar("iso8601");
     shouldBe(calendar.id, `iso8601`);

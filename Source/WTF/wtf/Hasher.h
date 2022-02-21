@@ -21,6 +21,7 @@
 #pragma once
 
 #include <optional>
+#include <variant>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/text/AtomString.h>
@@ -30,7 +31,7 @@ namespace WTF {
 
 template<typename... Types> uint32_t computeHash(const Types&...);
 template<typename T, typename... OtherTypes> uint32_t computeHash(std::initializer_list<T>, std::initializer_list<OtherTypes>...);
-template<typename UnsignedInteger> std::enable_if_t<std::is_unsigned<UnsignedInteger>::value && sizeof(UnsignedInteger) <= sizeof(uint32_t), void> add(Hasher&, UnsignedInteger);
+template<typename UnsignedInteger> std::enable_if_t<std::is_unsigned_v<UnsignedInteger> && sizeof(UnsignedInteger) <= sizeof(uint32_t) && !std::is_enum_v<UnsignedInteger>, void> add(Hasher&, UnsignedInteger);
 
 class Hasher {
     WTF_MAKE_FAST_ALLOCATED;
@@ -50,7 +51,7 @@ public:
         return hasher.m_underlyingHasher.hash();
     }
 
-    template<typename UnsignedInteger> friend std::enable_if_t<std::is_unsigned<UnsignedInteger>::value && sizeof(UnsignedInteger) <= sizeof(uint32_t), void> add(Hasher& hasher, UnsignedInteger integer)
+    template<typename UnsignedInteger> friend std::enable_if_t<std::is_unsigned_v<UnsignedInteger> && sizeof(UnsignedInteger) <= sizeof(uint32_t) && !std::is_enum_v<UnsignedInteger>, void> add(Hasher& hasher, UnsignedInteger integer)
     {
         // We can consider adding a more efficient code path for hashing booleans or individual bytes if needed.
         // We can consider adding a more efficient code path for hashing 16-bit values if needed, perhaps using addCharacter,
@@ -95,6 +96,11 @@ inline void add(Hasher& hasher, float number)
     add(hasher, bitwise_cast<uint32_t>(number));
 }
 
+template<typename T> inline void add(Hasher& hasher, T* ptr)
+{
+    add(hasher, bitwise_cast<uintptr_t>(ptr));
+}
+
 inline void add(Hasher& hasher, const String& string)
 {
     // Chose to hash the characters here. Assuming this is better than hashing the possibly-already-computed hash of the characters.
@@ -117,7 +123,7 @@ inline void add(Hasher& hasher, const URL& url)
     add(hasher, url.string());
 }
 
-template<typename Enumeration> std::enable_if_t<std::is_enum<Enumeration>::value, void> add(Hasher& hasher, Enumeration value)
+template<typename Enumeration> std::enable_if_t<std::is_enum_v<Enumeration>, void> add(Hasher& hasher, Enumeration value)
 {
     add(hasher, static_cast<std::underlying_type_t<Enumeration>>(value));
 }
@@ -166,10 +172,10 @@ template<typename T> void add(Hasher& hasher, const std::optional<T>& optional)
         add(hasher, optional.value());
 }
 
-template<typename... Types> void add(Hasher& hasher, const Variant<Types...>& variant)
+template<typename... Types> void add(Hasher& hasher, const std::variant<Types...>& variant)
 {
     add(hasher, variant.index());
-    visit([&hasher] (auto& value) {
+    std::visit([&hasher] (auto& value) {
         add(hasher, value);
     }, variant);
 }

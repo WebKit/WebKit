@@ -56,7 +56,6 @@ private:
 
     AtomString id() const final;
     bool isDefault() const final;
-    Element* element() final;
 
     void loadTimerFired();
 

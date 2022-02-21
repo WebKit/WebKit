@@ -52,7 +52,7 @@ class MockFramebufferImpl : public rx::FramebufferImpl
                                GLbitfield,
                                GLenum));
 
-    MOCK_CONST_METHOD1(checkStatus, bool(const gl::Context *));
+    MOCK_CONST_METHOD1(checkStatus, gl::FramebufferStatus(const gl::Context *));
 
     MOCK_METHOD4(syncState,
                  angle::Result(const gl::Context *,
@@ -68,7 +68,8 @@ inline ::testing::NiceMock<MockFramebufferImpl> *MakeFramebufferMock()
     ::testing::NiceMock<MockFramebufferImpl> *framebufferImpl =
         new ::testing::NiceMock<MockFramebufferImpl>();
     // TODO(jmadill): add ON_CALLS for other returning methods
-    ON_CALL(*framebufferImpl, checkStatus(testing::_)).WillByDefault(::testing::Return(true));
+    ON_CALL(*framebufferImpl, checkStatus(testing::_))
+        .WillByDefault(::testing::Return(gl::FramebufferStatus::Complete()));
 
     // We must mock the destructor since NiceMock doesn't work for destructors.
     EXPECT_CALL(*framebufferImpl, destructor()).Times(1).RetiresOnSaturation();

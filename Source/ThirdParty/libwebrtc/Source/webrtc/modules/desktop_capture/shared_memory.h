@@ -14,7 +14,9 @@
 #include <stddef.h>
 
 #if defined(WEBRTC_WIN)
-#include <windows.h>
+// Forward declare HANDLE in a windows.h compatible way so that we can avoid
+// including windows.h.
+typedef void* HANDLE;
 #endif
 
 #include <memory>

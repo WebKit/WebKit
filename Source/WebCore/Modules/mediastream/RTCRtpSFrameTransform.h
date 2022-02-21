@@ -56,7 +56,7 @@ public:
         CompatibilityMode compatibilityMode { CompatibilityMode::None };
     };
 
-    static Ref<RTCRtpSFrameTransform> create(ScriptExecutionContext& context, Options options) { return adoptRef(*new RTCRtpSFrameTransform(context, options)); }
+    static Ref<RTCRtpSFrameTransform> create(ScriptExecutionContext&, Options);
     ~RTCRtpSFrameTransform();
 
     void setEncryptionKey(CryptoKey&, std::optional<uint64_t>, DOMPromiseDeferred<void>&&);
@@ -93,7 +93,7 @@ private:
 
     enum class Side { Sender, Receiver };
     void initializeTransformer(RTCRtpTransformBackend&, Side);
-    void createStreams(JSC::JSGlobalObject&);
+    ExceptionOr<void> createStreams();
 
     bool m_isAttached { false };
     bool m_hasWritable { false };

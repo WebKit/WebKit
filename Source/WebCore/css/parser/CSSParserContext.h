@@ -28,7 +28,7 @@
 #include "CSSParserMode.h"
 #include "CSSPropertyNames.h"
 #include "StyleRuleType.h"
-#include "TextEncoding.h"
+#include <pal/text/TextEncoding.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
 #include <wtf/URL.h>
@@ -55,6 +55,7 @@ struct CSSParserContext {
     bool useSystemAppearance { false };
 
     // Settings.
+    bool accentColorEnabled { false };
     bool aspectRatioEnabled { false };
     bool colorContrastEnabled { false };
     bool colorFilterEnabled { false };
@@ -83,13 +84,17 @@ struct CSSParserContext {
     bool focusVisibleEnabled { false };
     bool hasPseudoClassEnabled { false };
     bool cascadeLayersEnabled { false };
+    bool containerQueriesEnabled { false };
+    bool overflowClipEnabled { false };
+    bool gradientPremultipliedAlphaInterpolationEnabled { false };
+    bool gradientInterpolationColorSpacesEnabled { false };
+    bool inputSecurityEnabled { false };
+    bool subgridEnabled { false };
 
     // RuntimeEnabledFeatures.
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool attachmentEnabled { false };
 #endif
-
-    bool overflowClipEnabled { false };
 
     CSSParserContext(CSSParserMode, const URL& baseURL = URL());
     WEBCORE_EXPORT CSSParserContext(const Document&, const URL& baseURL = URL(), const String& charset = emptyString());

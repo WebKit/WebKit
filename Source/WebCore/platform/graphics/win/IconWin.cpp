@@ -46,7 +46,7 @@ Icon::~Icon()
 RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 {
     if (filenames.isEmpty())
-        return 0;
+        return nullptr;
 
     if (filenames.size() == 1) {
         SHFILEINFO sfi;
@@ -54,7 +54,7 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 
         String tmpFilename = filenames[0];
         if (!SHGetFileInfo(tmpFilename.wideCharacters().data(), 0, &sfi, sizeof(sfi), SHGFI_ICON | SHGFI_SHELLICONSIZE | SHGFI_SMALLICON))
-            return 0;
+            return nullptr;
 
         return adoptRef(new Icon(sfi.hIcon));
     }
@@ -62,14 +62,14 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
     WCHAR buffer[MAX_PATH];
     UINT length = ::GetSystemDirectoryW(buffer, WTF_ARRAY_LENGTH(buffer));
     if (!length)
-        return 0;
+        return nullptr;
 
     if (wcscat_s(buffer, L"\\shell32.dll"))
-        return 0;
+        return nullptr;
 
     HICON hIcon;
     if (!::ExtractIconExW(buffer, shell32MultipleFileIconIndex, 0, &hIcon, 1))
-        return 0;
+        return nullptr;
     return adoptRef(new Icon(hIcon));
 }
 

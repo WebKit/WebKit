@@ -34,6 +34,8 @@
 #include "MediaPlayerPrivateAVFoundationCF.h"
 #include "NotImplemented.h"
 #include <AVFoundationCF/AVFoundationCF.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/Uint8Array.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/UUID.h>
 #include <wtf/text/CString.h>
@@ -45,20 +47,12 @@ namespace WebCore {
 
 CDMSessionAVFoundationCF::CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF& parent, LegacyCDMSessionClient*)
     : m_parent(parent)
-    , m_sessionId(createCanonicalUUIDString())
+    , m_sessionId(createVersion4UUIDString())
 {
 }
 
 RefPtr<Uint8Array> CDMSessionAVFoundationCF::generateKeyRequest(const String&, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
 {
-#if USE(DIRECT2D)
-    UNUSED_PARAM(initData);
-    UNUSED_PARAM(destinationURL);
-    UNUSED_PARAM(errorCode);
-    UNUSED_PARAM(systemCode);
-    notImplemented();
-    return nullptr;
-#else
     String keyURI;
     String keyID;
     RefPtr<Uint8Array> certificate;
@@ -100,7 +94,6 @@ RefPtr<Uint8Array> CDMSessionAVFoundationCF::generateKeyRequest(const String&, U
 
     auto keyRequestBuffer = ArrayBuffer::create(CFDataGetBytePtr(keyRequest.get()), CFDataGetLength(keyRequest.get()));
     return Uint8Array::tryCreate(WTFMove(keyRequestBuffer), 0, keyRequestBuffer->byteLength());
-#endif
 }
 
 void CDMSessionAVFoundationCF::releaseKeys()
@@ -118,6 +111,11 @@ bool CDMSessionAVFoundationCF::update(Uint8Array* key, RefPtr<Uint8Array>& nextM
     systemCode = 0;
     nextMessage = nullptr;
     return true;
+}
+
+RefPtr<ArrayBuffer> CDMSessionAVFoundationCF::cachedKeyForKeyID(const String&) const
+{
+    return nullptr;
 }
 
 }

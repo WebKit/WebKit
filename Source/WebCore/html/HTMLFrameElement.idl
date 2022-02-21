@@ -39,5 +39,5 @@
     [CEReactions=NotNeeded] readonly attribute long height;
 
     // FIXME: No other browser has this attribute.
-    [SetterCallWith=GlobalObject] attribute DOMString? location;
+    [SetterCallWith=CurrentGlobalObject] attribute DOMString? location;
 };

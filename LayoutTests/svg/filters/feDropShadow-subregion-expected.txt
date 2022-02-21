@@ -5,7 +5,7 @@ layer at (0,0) size 100x100
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="DropShadow"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
         [feComposite operation="OVER"]
-          [feDropShadow stdDeviation="10.00, 10.00" dx="10.00" dy="10.00" flood-color="#FF0000" flood-opacity="1.00]
+          [feDropShadow stdDeviation="10.00, 10.00" dx="10.00" dy="10.00" flood-color="#FF0000" flood-opacity="1.00"]
             [SourceGraphic]
           [feOffset dx="10.00" dy="10.00"]
             [SourceGraphic]

@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var driverName = {type: "String", value: "default"};
+
+function stop() {
+    if (window.IPC) {
+        IPC.sendSyncMessage("GPU", 0, IPC.messages.IPCTester_StopMessageTesting.name, []);
+        IPC.sendSyncMessage("Networking", 0, IPC.messages.IPCTester_StopMessageTesting.name, []);
+        IPC.sendSyncMessage("UI", 0, IPC.messages.IPCTester_StopMessageTesting.name, []);
+        console.log("stopped");
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.IPC) {
+    IPC.sendMessage("GPU", 0, IPC.messages.IPCTester_StartMessageTesting.name, [driverName]);
+    IPC.sendMessage("Networking", 0, IPC.messages.IPCTester_StartMessageTesting.name, [driverName]);
+    IPC.sendMessage("UI", 0, IPC.messages.IPCTester_StartMessageTesting.name, [driverName]);
+    console.log("started");
+}
+setTimeout(stop, 3000);
+
+</script>
+<p>Test passes if it does not crash.</p>
+</body>
+</html>

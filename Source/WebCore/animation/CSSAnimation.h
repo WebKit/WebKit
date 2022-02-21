@@ -38,7 +38,7 @@ class RenderStyle;
 class CSSAnimation final : public DeclarativeAnimation {
     WTF_MAKE_ISO_ALLOCATED(CSSAnimation);
 public:
-    static Ref<CSSAnimation> create(const Styleable&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle, const RenderStyle* parentElementStyle);
+    static Ref<CSSAnimation> create(const Styleable&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     ~CSSAnimation() = default;
 
     bool isCSSAnimation() const override { return true; }
@@ -46,6 +46,9 @@ public:
 
     void effectTimingWasUpdatedUsingBindings(OptionalEffectTiming);
     void effectKeyframesWereSetUsingBindings();
+    void effectCompositeOperationWasSetUsingBindings();
+    void keyframesRuleDidChange();
+    void updateKeyframesIfNeeded(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
 
 private:
     CSSAnimation(const Styleable&, const Animation&);
@@ -59,7 +62,7 @@ private:
     void setBindingsStartTime(std::optional<double>) final;
     ExceptionOr<void> bindingsReverse() final;
 
-    enum class Property : uint8_t {
+    enum class Property : uint16_t {
         Name = 1 << 0,
         Duration = 1 << 1,
         TimingFunction = 1 << 2,
@@ -67,7 +70,9 @@ private:
         Direction = 1 << 4,
         PlayState = 1 << 5,
         Delay = 1 << 6,
-        FillMode = 1 << 7
+        FillMode = 1 << 7,
+        Keyframes = 1 << 8,
+        CompositeOperation = 1 << 9
     };
 
     String m_animationName;

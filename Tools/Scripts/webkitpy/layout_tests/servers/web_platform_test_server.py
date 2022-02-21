@@ -157,6 +157,9 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
             self._wsout.close()
             self._wsout = None
 
+        if self._process is not None:
+            self._process.poll()
+
         if self._pid:
             # kill_process will not kill the subprocesses, interrupt does the job.
             self._executive.interrupt(self._pid)

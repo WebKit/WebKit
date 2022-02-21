@@ -111,12 +111,12 @@ static void swizzledCancelTracking(NSMenu *menu, SEL)
     });
 }
 
-void TestController::platformInitialize()
+void TestController::platformInitialize(const Options& options)
 {
     poseAsClass("WebKitTestRunnerPasteboard", "NSPasteboard");
     poseAsClass("WebKitTestRunnerEvent", "NSEvent");
     
-    cocoaPlatformInitialize();
+    cocoaPlatformInitialize(options);
 
     [NSSound _setAlertType:0];
 
@@ -175,6 +175,7 @@ TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCo
     return features;
 }
 
+#if ENABLE(CONTENT_EXTENSIONS)
 void TestController::configureContentExtensionForTest(const TestInvocation& test)
 {
     if (!test.urlContains("contentextensions/"))
@@ -216,6 +217,7 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
     }];
     platformRunUntil(doneCompiling, noTimeout);
 }
+#endif
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)
 {
@@ -331,6 +333,8 @@ static NSSet *allowedFontFamilySet()
         @"Songti TC",
         @"STFangsong",
         @"STHeiti",
+        @"STIX Two Math",
+        @"STIX Two Text",
         @"STIXGeneral",
         @"STIXSizeOneSym",
         @"STKaiti",

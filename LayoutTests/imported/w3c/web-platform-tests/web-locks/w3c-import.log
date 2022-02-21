@@ -1,0 +1,38 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/README.md
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/acquire.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/clientids.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/frames.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/held.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/idlharness.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/ifAvailable.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/lock-attributes.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/mode-exclusive.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/mode-mixed.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/mode-shared.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/non-secure-context.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/opaque-origin.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/query-empty.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/query-ordering.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/query.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/resource-names.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/secure-context.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/signal.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/steal.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/workers.tentative.https.html

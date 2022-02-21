@@ -49,7 +49,7 @@ void DumpPerfStats(int num_samples,
 // constant below to true in order to write new expected output binary files.
 constexpr bool kWriteComputedOutputToFile = false;
 
-// Avoids that one forgets to set |kWriteComputedOutputToFile| back to false
+// Avoids that one forgets to set `kWriteComputedOutputToFile` back to false
 // when the expected output files are re-exported.
 TEST(RnnVadTest, CheckWriteComputedOutputIsFalse) {
   ASSERT_FALSE(kWriteComputedOutputToFile)

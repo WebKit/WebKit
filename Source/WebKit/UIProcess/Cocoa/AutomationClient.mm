@@ -78,6 +78,8 @@ bool AutomationClient::remoteAutomationAllowed() const
 void AutomationClient::requestAutomationSession(const String& sessionIdentifier, const RemoteInspector::Client::SessionCapabilities& sessionCapabilities)
 {
     auto configuration = adoptNS([[_WKAutomationSessionConfiguration alloc] init]);
+    [configuration setAcceptInsecureCertificates:sessionCapabilities.acceptInsecureCertificates];
+    
     if (sessionCapabilities.allowInsecureMediaCapture)
         [configuration setAllowsInsecureMediaCapture:sessionCapabilities.allowInsecureMediaCapture.value()];
     if (sessionCapabilities.suppressICECandidateFiltering)

@@ -289,7 +289,7 @@ ImageDecoderAVFObjCSample* toSample(Iterator iter)
 
 #pragma mark - ImageDecoderAVFObjC
 
-RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(SharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     // AVFoundation may not be available at runtime.
     if (!AVAssetMIMETypeCache::singleton().isAvailable())
@@ -301,7 +301,7 @@ RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(SharedBuffer& data, cons
     return adoptRef(*new ImageDecoderAVFObjC(data, mimeType, alphaOption, gammaAndColorProfileOption));
 }
 
-ImageDecoderAVFObjC::ImageDecoderAVFObjC(SharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
+ImageDecoderAVFObjC::ImageDecoderAVFObjC(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
     : ImageDecoder()
     , m_mimeType(mimeType)
     , m_uti(WebCore::UTIFromMIMEType(mimeType))
@@ -309,10 +309,10 @@ ImageDecoderAVFObjC::ImageDecoderAVFObjC(SharedBuffer& data, const String& mimeT
     , m_loader(adoptNS([[WebCoreSharedBufferResourceLoaderDelegate alloc] initWithParent:this]))
     , m_decompressionSession(WebCoreDecompressionSession::createRGB())
 {
-    [m_loader updateData:data.createNSData().get() complete:NO];
+    [m_loader updateData:data.makeContiguous()->createNSData().get() complete:NO];
 
     [m_asset.get().resourceLoader setDelegate:m_loader.get() queue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
-    [m_asset loadValuesAsynchronouslyForKeys:@[@"tracks"] completionHandler:[protectedThis = makeRefPtr(this)] () mutable {
+    [m_asset loadValuesAsynchronouslyForKeys:@[@"tracks"] completionHandler:[protectedThis = Ref { *this }] () mutable {
         callOnMainThread([protectedThis = WTFMove(protectedThis)] {
             protectedThis->setTrack(protectedThis->firstEnabledTrack());
         });
@@ -442,7 +442,7 @@ void ImageDecoderAVFObjC::setTrack(AVAssetTrack *track)
     m_cursor = m_sampleData.decodeOrder().end();
     m_imageRotationSession = nullptr;
 
-    [track loadValuesAsynchronouslyForKeys:@[@"naturalSize", @"preferredTransform"] completionHandler:[protectedThis = makeRefPtr(this)] () mutable {
+    [track loadValuesAsynchronouslyForKeys:@[@"naturalSize", @"preferredTransform"] completionHandler:[protectedThis = Ref { *this }] () mutable {
         callOnMainThread([protectedThis = WTFMove(protectedThis)] {
             protectedThis->readTrackMetadata();
             protectedThis->readSamples();
@@ -641,9 +641,9 @@ void ImageDecoderAVFObjC::setExpectedContentSize(long long expectedContentSize)
     m_loader.get().expectedContentSize = expectedContentSize;
 }
 
-void ImageDecoderAVFObjC::setData(SharedBuffer& data, bool allDataReceived)
+void ImageDecoderAVFObjC::setData(const FragmentedSharedBuffer& data, bool allDataReceived)
 {
-    [m_loader updateData:data.createNSData().get() complete:allDataReceived];
+    [m_loader updateData:data.makeContiguous()->createNSData().get() complete:allDataReceived];
 
     if (allDataReceived) {
         m_isAllDataReceived = true;

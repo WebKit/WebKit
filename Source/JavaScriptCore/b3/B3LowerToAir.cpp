@@ -2911,6 +2911,18 @@ private:
             return;
         }
 
+        case FMin: {
+            RELEASE_ASSERT(isARM64());
+            append(m_value->type() == Float ? FloatMin : DoubleMin, tmp(m_value->child(0)), tmp(m_value->child(1)), tmp(m_value));
+            return;
+        }
+
+        case FMax: {
+            RELEASE_ASSERT(isARM64());
+            append(m_value->type() == Float ? FloatMax : DoubleMax, tmp(m_value->child(0)), tmp(m_value->child(1)), tmp(m_value));
+            return;
+        }
+
         case BitAnd: {
             Value* left = m_value->child(0);
             Value* right = m_value->child(1);

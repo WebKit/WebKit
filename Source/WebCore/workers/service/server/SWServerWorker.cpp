@@ -51,9 +51,9 @@ SWServerWorker* SWServerWorker::existingWorkerForIdentifier(ServiceWorkerIdentif
 
 // FIXME: Use r-value references for script and contentSecurityPolicy
 SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registration, const URL& scriptURL, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, String&& referrerPolicy, WorkerType type, ServiceWorkerIdentifier identifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
-    : m_server(makeWeakPtr(server))
+    : m_server(server)
     , m_registrationKey(registration.key())
-    , m_registration(makeWeakPtr(registration))
+    , m_registration(registration)
     , m_data { identifier, scriptURL, ServiceWorkerState::Parsed, type, registration.identifier() }
     , m_script(script)
     , m_certificateInfo(certificateInfo)
@@ -88,7 +88,7 @@ ServiceWorkerContextData SWServerWorker::contextData() const
 {
     ASSERT(m_registration);
 
-    return { std::nullopt, m_registration->data(), m_data.identifier, m_script, m_certificateInfo, m_contentSecurityPolicy, m_crossOriginEmbedderPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_lastNavigationWasAppInitiated, m_scriptResourceMap };
+    return { std::nullopt, m_registration->data(), m_data.identifier, m_script, m_certificateInfo, m_contentSecurityPolicy, m_crossOriginEmbedderPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_lastNavigationWasAppInitiated, m_scriptResourceMap, m_registration->serviceWorkerPageIdentifier(), m_registration->navigationPreloadState() };
 }
 
 void SWServerWorker::updateAppInitiatedValue(LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
@@ -223,12 +223,28 @@ void SWServerWorker::contextTerminated()
         m_server->workerContextTerminated(*this);
 }
 
-std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(const ServiceWorkerClientIdentifier& clientId) const
+std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(const ScriptExecutionContextIdentifier& clientId) const
 {
     ASSERT(m_server);
     if (!m_server)
         return { };
     return m_server->serviceWorkerClientWithOriginByID(origin(), clientId);
+}
+
+void SWServerWorker::findClientByVisibleIdentifier(const String& clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
+{
+    if (!m_server) {
+        callback({ });
+        return;
+    }
+
+    auto internalIdentifier = m_server->clientIdFromVisibleClientId(clientIdentifier);
+    if (!internalIdentifier) {
+        callback({ });
+        return;
+    }
+
+    callback(findClientByIdentifier(internalIdentifier));
 }
 
 void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, ServiceWorkerClientsMatchAllCallback&& callback)
@@ -365,6 +381,20 @@ SWServerRegistration* SWServerWorker::registration() const
 void SWServerWorker::didFailHeartBeatCheck()
 {
     terminate();
+}
+
+WorkerThreadMode SWServerWorker::workerThreadMode() const
+{
+    if ((m_server && m_server->shouldRunServiceWorkersOnMainThreadForTesting()) || serviceWorkerPageIdentifier())
+        return WorkerThreadMode::UseMainThread;
+    return WorkerThreadMode::CreateNewThread;
+}
+
+std::optional<ScriptExecutionContextIdentifier> SWServerWorker::serviceWorkerPageIdentifier() const
+{
+    if (!m_registration)
+        return std::nullopt;
+    return m_registration->serviceWorkerPageIdentifier();
 }
 
 } // namespace WebCore

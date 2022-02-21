@@ -51,7 +51,10 @@ GtkWidget* WebPageProxy::viewWidget()
 
 void WebPageProxy::bindAccessibilityTree(const String& plugID)
 {
-#if !USE(GTK4)
+#if USE(GTK4)
+    // FIXME: We need a way to override accessible interface of WebView and send the atspi reference to the web process.
+    ASSERT_NOT_IMPLEMENTED_YET();
+#else
     auto* accessible = gtk_widget_get_accessible(viewWidget());
     atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().data()));
     atk_object_notify_state_change(accessible, ATK_STATE_TRANSIENT, FALSE);
@@ -82,6 +85,12 @@ void WebPageProxy::showEmojiPicker(const WebCore::IntRect& caretRect, Completion
     webkitWebViewBaseShowEmojiChooser(WEBKIT_WEB_VIEW_BASE(viewWidget()), caretRect, WTFMove(completionHandler));
 }
 
+void WebPageProxy::showValidationMessage(const WebCore::IntRect& anchorClientRect, const String& message)
+{
+    m_validationBubble = pageClient().createValidationBubble(message, { m_preferences->minimumFontSize() });
+    m_validationBubble->showRelativeTo(anchorClientRect);
+}
+
 void WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
     if (!WEBKIT_IS_WEB_VIEW(viewWidget())) {
@@ -95,6 +104,16 @@ void WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, Completi
 void WebPageProxy::sendMessageToWebView(UserMessage&& message)
 {
     sendMessageToWebViewWithReply(WTFMove(message), [](UserMessage&&) { });
+}
+
+void WebPageProxy::accentColorDidChange()
+{
+    if (!hasRunningProcess())
+        return;
+
+    WebCore::Color accentColor = pageClient().accentColor();
+
+    send(Messages::WebPage::SetAccentColor(accentColor));
 }
 
 } // namespace WebKit

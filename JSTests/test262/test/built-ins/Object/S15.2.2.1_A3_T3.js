@@ -11,22 +11,7 @@ description: Argument value is sum of empty string and number
 
 var n_obj = new Object("" + 1);
 
-//CHECK#2
-if (n_obj.constructor !== String) {
-  throw new Test262Error('#2: When the Object constructor is called with String argument return ToObject(string)');
-}
-
-//CHECK#3
-if (typeof n_obj !== 'object') {
-  throw new Test262Error('#3: When the Object constructor is called with String argument return ToObject(string)');
-}
-
-//CHECK#4
-if (n_obj != "1") {
-  throw new Test262Error('#4: When the Object constructor is called with String argument return ToObject(string)');
-}
-
-//CHECK#5
-if (n_obj === "1") {
-  throw new Test262Error('#5: When the Object constructor is called with String argument return ToObject(string)');
-}
+assert.sameValue(n_obj.constructor, String, 'The value of n_obj.constructor is expected to equal the value of String');
+assert.sameValue(typeof n_obj, 'object', 'The value of `typeof n_obj` is expected to be "object"');
+assert(n_obj == "1", 'The result of evaluating (n_obj == "1") is expected to be true');
+assert.notSameValue(n_obj, "1", 'The value of n_obj is not "1"');

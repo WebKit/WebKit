@@ -26,26 +26,10 @@
 #ifndef PAS_BITFIT_DIRECTORY_INLINES_H
 #define PAS_BITFIT_DIRECTORY_INLINES_H
 
-#include "pas_bitfit_biasing_directory.h"
 #include "pas_bitfit_directory.h"
-#include "pas_bitfit_global_directory.h"
 #include "pas_bitfit_page_config.h"
 
 PAS_BEGIN_EXTERN_C;
-
-static inline pas_bitfit_global_directory*
-pas_bitfit_directory_get_global(pas_bitfit_directory* directory)
-{
-    switch (directory->directory_kind) {
-    case pas_bitfit_global_directory_kind:
-        return (pas_bitfit_global_directory*)directory;
-    case pas_bitfit_biasing_directory_kind:
-        return pas_compact_bitfit_global_directory_ptr_load_non_null(
-            &((pas_bitfit_biasing_directory*)directory)->parent_global);
-    }
-    PAS_ASSERT(!"Should not be reached");
-    return NULL;
-}
 
 typedef struct {
     unsigned num_bits;

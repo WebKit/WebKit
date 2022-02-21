@@ -28,8 +28,14 @@
 #if ENABLE(WEBXR)
 
 #include "MessageReceiver.h"
+#include "PlatformXRCoordinator.h"
+#include "ProcessThrottler.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/PlatformXR.h>
+
+namespace WebCore {
+struct SecurityOriginData;
+}
 
 namespace WebKit {
 
@@ -38,11 +44,14 @@ class WebPageProxy;
 
 struct XRDeviceInfo;
 
-class PlatformXRSystem : public IPC::MessageReceiver {
+class PlatformXRSystem : public IPC::MessageReceiver, public PlatformXRCoordinator::SessionEventClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PlatformXRSystem(WebPageProxy&);
     virtual ~PlatformXRSystem();
+
+    using PlatformXRCoordinator::SessionEventClient::weakPtrFactory;
+    using WeakValueType = PlatformXRCoordinator::SessionEventClient::WeakValueType;
 
     void invalidate();
 
@@ -54,12 +63,18 @@ private:
 
     // Message handlers
     void enumerateImmersiveXRDevices(CompletionHandler<void(Vector<XRDeviceInfo>&&)>&&);
+    void requestPermissionOnSessionFeatures(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const Vector<PlatformXR::ReferenceSpaceType>&, const Vector<PlatformXR::ReferenceSpaceType>&, const Vector<PlatformXR::ReferenceSpaceType>&,  CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&);
     void initializeTrackingAndRendering();
     void shutDownTrackingAndRendering();
     void requestFrame(CompletionHandler<void(PlatformXR::Device::FrameData&&)>&&);
     void submitFrame();
 
+    // PlatformXRCoordinator::SessionEventClient
+    void sessionDidEnd(XRDeviceIdentifier) final;
+    void sessionDidUpdateVisibilityState(XRDeviceIdentifier, PlatformXR::VisibilityState) final;
+
     WebPageProxy& m_page;
+    std::unique_ptr<ProcessThrottler::ForegroundActivity> m_immersiveSessionActivity;
 };
 
 } // namespace WebKit

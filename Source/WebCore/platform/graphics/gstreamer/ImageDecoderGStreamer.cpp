@@ -81,12 +81,12 @@ ImageDecoderGStreamerSample* toSample(Iterator iter)
     return (ImageDecoderGStreamerSample*)iter->second.get();
 }
 
-RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(SharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     return adoptRef(*new ImageDecoderGStreamer(data, mimeType, alphaOption, gammaAndColorProfileOption));
 }
 
-ImageDecoderGStreamer::ImageDecoderGStreamer(SharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
+ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
     : m_mimeType(mimeType)
 {
     static std::once_flag onceFlag;
@@ -199,7 +199,7 @@ PlatformImagePtr ImageDecoderGStreamer::createFrameImageAtIndex(size_t index, Su
     return nullptr;
 }
 
-void ImageDecoderGStreamer::setData(SharedBuffer& data, bool)
+void ImageDecoderGStreamer::setData(const FragmentedSharedBuffer& data, bool)
 {
     pushEncodedData(data);
 }
@@ -261,7 +261,7 @@ void ImageDecoderGStreamer::InnerDecoder::connectDecoderPad(GstPad* pad)
             static_cast<ImageDecoderGStreamer*>(userData)->notifySample(WTFMove(sample));
             return GST_FLOW_OK;
         },
-#if GST_CHECK_VERSION(1, 19, 1)
+#if GST_CHECK_VERSION(1, 20, 0)
         // new_event
         nullptr,
 #endif
@@ -313,7 +313,7 @@ void ImageDecoderGStreamer::InnerDecoder::handleMessage(GstMessage* message)
 {
     ASSERT(&m_runLoop == &RunLoop::current());
 
-    auto scopeExit = makeScopeExit([protectedThis = makeWeakPtr(this)] {
+    auto scopeExit = makeScopeExit([protectedThis = WeakPtr { *this }] {
         if (!protectedThis)
             return;
         Locker locker { protectedThis->m_messageLock };
@@ -382,7 +382,7 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
             decoder.handleMessage(message);
         else {
             GRefPtr<GstMessage> protectedMessage(message);
-            auto weakThis = makeWeakPtr(decoder);
+            WeakPtr weakThis { decoder };
             decoder.m_runLoop.dispatch([weakThis, protectedMessage] {
                 if (weakThis)
                     weakThis->handleMessage(protectedMessage.get());
@@ -426,10 +426,11 @@ EncodedDataStatus ImageDecoderGStreamer::InnerDecoder::encodedDataStatus() const
     return EncodedDataStatus::Unknown;
 }
 
-void ImageDecoderGStreamer::pushEncodedData(const SharedBuffer& buffer)
+void ImageDecoderGStreamer::pushEncodedData(const FragmentedSharedBuffer& buffer)
 {
+    auto contiguousBuffer = buffer.makeContiguous();
     m_eos = false;
-    auto thread = Thread::create("ImageDecoderGStreamer", [this, data = buffer.data(), size = buffer.size()] {
+    auto thread = Thread::create("ImageDecoderGStreamer", [this, data = contiguousBuffer->data(), size = buffer.size()] {
         m_innerDecoder = ImageDecoderGStreamer::InnerDecoder::create(*this, data, size);
         m_innerDecoder->run();
     }, ThreadType::Graphics);

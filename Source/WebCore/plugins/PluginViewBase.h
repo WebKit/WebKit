@@ -58,8 +58,6 @@ public:
 
     virtual JSC::JSObject* scriptObject(JSC::JSGlobalObject*) { return 0; }
     virtual void storageBlockingStateChanged() { }
-    virtual void privateBrowsingStateChanged(bool) { }
-    virtual bool getFormValue(String&) { return false; }
     virtual bool scroll(ScrollDirection, ScrollGranularity) { return false; }
 
     // A plug-in can ask WebKit to handle scrollbars for it.
@@ -73,7 +71,6 @@ public:
     virtual bool shouldAllowNavigationFromDrags() const { return false; }
 
     bool isPluginViewBase() const override { return true; }
-    virtual bool shouldNotAddLayer() const { return false; }
 
     virtual AudioHardwareActivityType audioHardwareActivity() const { return AudioHardwareActivityType::Unknown; }
 

@@ -14,11 +14,11 @@ if [ -z "${BUILD_SCRIPTS_DIR}" ]; then
     fi
 fi
 
-UnifiedSourceCppFileCount=100
+UnifiedSourceCppFileCount=120
 UnifiedSourceMmFileCount=80
 
 if [ $# -eq 0 ]; then
     echo "Using unified source list files: Sources.txt, SourcesCocoa.txt"
 fi
 
-/usr/bin/env ruby "${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb" --derived-sources-path "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2" --source-tree-path "${SRCROOT}" --max-cpp-bundle-count ${UnifiedSourceCppFileCount} --max-obj-c-bundle-count ${UnifiedSourceMmFileCount} Sources.txt SourcesCocoa.txt "${ARGS[@]}" > /dev/null
+/usr/bin/env ruby "${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb" --derived-sources-path "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit" --source-tree-path "${SRCROOT}" --max-cpp-bundle-count ${UnifiedSourceCppFileCount} --max-obj-c-bundle-count ${UnifiedSourceMmFileCount} Sources.txt SourcesCocoa.txt "${ARGS[@]}" > /dev/null

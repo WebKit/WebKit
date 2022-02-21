@@ -71,8 +71,8 @@ public:
     const String& trackId() const { return m_trackId; }
     const String& trackKind() const { return m_trackKind; }
 
-    ExceptionOr<void> setMediaStreamIds(const Vector<String>&);
-    ExceptionOr<void> setStreams(const Vector<std::reference_wrapper<MediaStream>>&);
+    ExceptionOr<void> setMediaStreamIds(const FixedVector<String>&);
+    ExceptionOr<void> setStreams(const FixedVector<std::reference_wrapper<MediaStream>>&);
 
     bool isStopped() const { return !m_backend; }
     void stop();

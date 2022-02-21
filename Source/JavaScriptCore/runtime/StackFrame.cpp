@@ -51,7 +51,7 @@ StackFrame::StackFrame(Wasm::IndexOrName indexOrName)
 {
 }
 
-intptr_t StackFrame::sourceID() const
+SourceID StackFrame::sourceID() const
 {
     if (!m_codeBlock)
         return noSourceID;

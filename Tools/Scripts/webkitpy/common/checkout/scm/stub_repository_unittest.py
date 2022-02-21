@@ -67,7 +67,7 @@ class StubRepositoryTest(unittest.TestCase):
     def test_find_checkout_root(self):
         host = StubRepositoryTest.mock_host_for_stub_repository()
         repository = StubRepository(cwd=host.filesystem.getcwd(), filesystem=host.filesystem, executive=host.executive)
-        self.assertEquals(repository.find_checkout_root(path=host.filesystem.join('TestDirectory', 'TestDirectory2', 'TestDirectory3')), host.filesystem.join(host.filesystem.getcwd(), 'TestDirectory', 'TestDirectory2'))
+        self.assertEqual(repository.find_checkout_root(path=host.filesystem.join('TestDirectory', 'TestDirectory2', 'TestDirectory3')), host.filesystem.join(host.filesystem.getcwd(), 'TestDirectory', 'TestDirectory2'))
 
     def test_find_checkout_root_failure(self):
         host = StubRepositoryTest.mock_host_for_stub_repository()

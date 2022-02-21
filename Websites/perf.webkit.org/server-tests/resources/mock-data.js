@@ -339,12 +339,16 @@ MockData = {
                 'some-test': {'test': ['some test']}
             },
             'builders': {
-                'builder-1': {'builder': 'some-builder-1',
-                     properties: {forcescheduler: 'force-some-builder-1'}}
+                'builder-1': {
+                    'builder': 'some-builder-1',
+                     properties: {forcescheduler: 'force-some-builder-1'},
+                    'supportedRepetitionTypes': ['alternating', 'sequential']
+                }
             },
             'testConfigurations': [
                 {
                     'platforms': ['some platform'],
+                    'supportedRepetitionTypes': ['alternating', 'sequential'],
                     'types': ['some-test'],
                     'builders': ['builder-1'],
                 }
@@ -377,21 +381,23 @@ MockData = {
                 'some-test': {'test': ['some test']}
             },
             'builders': {
-                'tester': {'builder': 'some tester', properties: {forcescheduler: 'force-some-tester'}},
-                'builder-1': {'builder': 'some-builder-1', properties: {forcescheduler: 'force-some-builder-1'}},
-                'builder-2': {'builder': 'some builder 2', properties: {forcescheduler: 'force-some-builder-2'}},
+                'tester': {'builder': 'some tester', properties: {forcescheduler: 'force-some-tester'}, 'supportedRepetitionTypes': ['alternating', 'sequential'],},
+                'builder-1': {'builder': 'some-builder-1', properties: {forcescheduler: 'force-some-builder-1'}, 'supportedRepetitionTypes': ['alternating', 'sequential', 'paired-parallel']},
+                'builder-2': {'builder': 'some builder 2', properties: {forcescheduler: 'force-some-builder-2'}, 'supportedRepetitionTypes': ['alternating', 'sequential', 'paired-parallel']},
             },
             'testConfigurations': [
                 {
                     'platforms': ['some platform'],
                     'types': ['some-test'],
                     'builders': ['tester'],
+                    'supportedRepetitionTypes': ['alternating', 'sequential'],
                 }
             ],
             'buildConfigurations': [
                 {
                     'platforms': ['some platform'],
                     'builders': ['builder-1', 'builder-2'],
+                    'supportedRepetitionTypes': ['alternating', 'sequential', 'paired-parallel'],
                 }
             ]
         }
@@ -415,14 +421,15 @@ MockData = {
                 'some-test': {'test': ['some test']},
             },
             'builders': {
-                'builder-1': {'builder': 'some-builder-1', properties: {forcescheduler: 'force-some-builder-1'}},
-                'builder-2': {'builder': 'some builder 2', properties: {forcescheduler: 'force-some-builder-2'}},
+                'builder-1': {'builder': 'some-builder-1', properties: {forcescheduler: 'force-some-builder-1'}, supportedRepetitionTypes: ['alternating', 'sequential'],},
+                'builder-2': {'builder': 'some builder 2', properties: {forcescheduler: 'force-some-builder-2'}, supportedRepetitionTypes: ['alternating', 'sequential'],},
             },
             'testConfigurations': [
                 {
                     'platforms': ['some platform'],
                     'types': ['some-test'],
                     'builders': ['builder-1', 'builder-2'],
+                    'supportedRepetitionTypes': ['alternating', 'sequential'],
                 }
             ]
         }

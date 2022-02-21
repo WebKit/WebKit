@@ -132,11 +132,11 @@ layer at (0,0) size 800x4659
                     text run at (7,0) width 55: "Don Coon"
                 RenderText {#text} at (0,0) size 0x0
               RenderTableCell {TD} at (268,110) size 100x21 [border: (0.50px none #808080) none (0.50px none #808080)] [r=4 c=2 rs=1 cs=1]
-                RenderText {#text} at (7,1) size 5x19
-                  text run at (7,1) width 5: " "
+                RenderText {#text} at (7,0) size 5x20
+                  text run at (7,0) width 5: " "
               RenderTableCell {TD} at (367,110) size 106x21 [border: (0.50px none #808080) none (0.50px none #808080)] [r=4 c=3 rs=1 cs=1]
-                RenderText {#text} at (7,1) size 5x19
-                  text run at (7,1) width 5: " "
+                RenderText {#text} at (7,0) size 5x20
+                  text run at (7,0) width 5: " "
             RenderTableRow {TR} at (0,130) size 473x33
               RenderTableCell {TD} at (0,130) size 99x17 [border: (0.50px none #808080) none] [r=5 c=0 rs=1 cs=1]
                 RenderInline {FONT} at (0,0) size 14x16

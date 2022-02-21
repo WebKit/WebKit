@@ -110,8 +110,10 @@
     "ShaderType":
     {
         "Vertex": "GL_VERTEX_SHADER",
-        "Fragment": "GL_FRAGMENT_SHADER",
+        "TessControl": "GL_TESS_CONTROL_SHADER_EXT",
+        "TessEvaluation": "GL_TESS_EVALUATION_SHADER_EXT",
         "Geometry": "GL_GEOMETRY_SHADER_EXT",
+        "Fragment": "GL_FRAGMENT_SHADER",
         "Compute": "GL_COMPUTE_SHADER"
     },
     "ShadingModel":

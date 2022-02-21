@@ -27,10 +27,11 @@
 #include "CSSHelper.h"
 #include "FontMetrics.h"
 #include "Frame.h"
+#include "LegacyRenderSVGRoot.h"
 #include "LengthFunctions.h"
-#include "RenderSVGRoot.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderView.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include <wtf/MathExtras.h>
 
@@ -231,7 +232,7 @@ static inline const RenderStyle* renderStyleForLengthResolving(const SVGElement*
         currentContext = currentContext->parentNode();
     } while (currentContext);
 
-    // There must be at least a RenderSVGRoot renderer, carrying a style.
+    // There must be at least a LegacyRenderSVGRoot renderer, carrying a style.
     ASSERT_NOT_REACHED();
     return nullptr;
 }
@@ -266,7 +267,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value)
 
     // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
     // if this causes problems in real world cases maybe it would be best to remove this
-    float xHeight = std::ceil(style->fontMetrics().xHeight());
+    float xHeight = std::ceil(style->metricsOfPrimaryFont().xHeight());
     if (!xHeight)
         return Exception { NotSupportedError };
 
@@ -281,7 +282,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromEXSToUserUnits(float value)
 
     // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
     // if this causes problems in real world cases maybe it would be best to remove this
-    return value * std::ceil(style->fontMetrics().xHeight());
+    return value * std::ceil(style->metricsOfPrimaryFont().xHeight());
 }
 
 bool SVGLengthContext::determineViewport(FloatSize& viewportSize) const
@@ -302,7 +303,7 @@ bool SVGLengthContext::determineViewport(FloatSize& viewportSize) const
     }
 
     // Take size from nearest viewport element.
-    auto viewportElement = makeRefPtr(m_context->viewportElement());
+    RefPtr viewportElement = m_context->viewportElement();
     if (!is<SVGSVGElement>(viewportElement))
         return false;
 

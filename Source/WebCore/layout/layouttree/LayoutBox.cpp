@@ -42,13 +42,15 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
 
-Box::Box(std::optional<ElementAttributes> attributes, RenderStyle&& style, OptionSet<BaseTypeFlag> baseTypeFlags)
+Box::Box(std::optional<ElementAttributes> attributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
     : m_style(WTFMove(style))
     , m_elementAttributes(attributes)
     , m_baseTypeFlags(baseTypeFlags.toRaw())
     , m_hasRareData(false)
     , m_isAnonymous(false)
 {
+    if (firstLineStyle)
+        ensureRareData().firstLineStyle = WTFMove(firstLineStyle);
 }
 
 Box::~Box()
@@ -57,9 +59,26 @@ Box::~Box()
         removeRareData();
 }
 
-void Box::updateStyle(const RenderStyle& newStyle)
+void Box::setParent(ContainerBox* parent)
+{
+    m_parent = parent;
+}
+
+void Box::setNextSibling(Box* nextSibling)
+{
+    m_nextSibling = nextSibling;
+}
+
+void Box::setPreviousSibling(Box* previousSibling)
+{
+    m_previousSibling = previousSibling;
+}
+
+void Box::updateStyle(const RenderStyle& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle)
 {
     m_style = RenderStyle::clone(newStyle);
+    if (newFirstLineStyle)
+        ensureRareData().firstLineStyle = WTFMove(newFirstLineStyle);
 }
 
 bool Box::establishesFormattingContext() const
@@ -75,6 +94,9 @@ bool Box::establishesFormattingContext() const
 
 bool Box::establishesBlockFormattingContext() const
 {
+    if (isIntegrationRoot())
+        return true;
+
     // ICB always creates a new (inital) block formatting context.
     if (is<InitialContainingBlock>(*this))
         return true;
@@ -366,7 +388,7 @@ bool Box::isLayoutContainmentBox() const
             return isAtomicInlineLevelBox();
         return true;
     };
-    return m_style.contain().contains(Containment::Layout) && supportsLayoutContainment();
+    return m_style.effectiveContainment().contains(Containment::Layout) && supportsLayoutContainment();
 }
 
 bool Box::isSizeContainmentBox() const
@@ -383,7 +405,7 @@ bool Box::isSizeContainmentBox() const
             return isAtomicInlineLevelBox();
         return true;
     };
-    return m_style.contain().contains(Containment::Size) && supportsSizeContainment();
+    return m_style.effectiveContainment().contains(Containment::Size) && supportsSizeContainment();
 }
 
 bool Box::isInternalTableBox() const
@@ -524,7 +546,7 @@ std::optional<LayoutUnit> Box::columnWidth() const
 void Box::setCachedGeometryForLayoutState(LayoutState& layoutState, std::unique_ptr<BoxGeometry> geometry) const
 {
     ASSERT(!m_cachedLayoutState);
-    m_cachedLayoutState = makeWeakPtr(layoutState);
+    m_cachedLayoutState = layoutState;
     m_cachedGeometryForLayoutState = WTFMove(geometry);
 }
 

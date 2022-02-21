@@ -125,10 +125,6 @@ static inline bool pas_segregated_directory_bit_reference_is_out_of_line(
         _value = (value); \
         \
         PAS_TESTING_ASSERT(!pas_segregated_directory_bit_reference_is_null(_reference)); \
-        PAS_TESTING_ASSERT( \
-            !_value \
-            || _directory->directory_kind != pas_segregated_biasing_directory_kind \
-            || PAS_SEGREGATED_DIRECTORY_BITS_##bit_name##_AVAILABLE_IN_BIASING); \
         \
         if (pas_segregated_directory_bit_reference_is_inline(_reference)) { \
             for (;;) { \

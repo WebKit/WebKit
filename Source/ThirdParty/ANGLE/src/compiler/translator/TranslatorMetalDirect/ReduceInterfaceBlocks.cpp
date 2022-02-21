@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <unordered_map>
 
+#include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/TranslatorMetalDirect.h"
 #include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
 #include "compiler/translator/TranslatorMetalDirect/ReduceInterfaceBlocks.h"
@@ -20,19 +21,16 @@ using namespace sh;
 namespace
 {
 
-
 class Reducer : public TIntermRebuild
 {
-    std::unordered_map<const TInterfaceBlock *,  const TVariable *>
-        mLiftedMap;
+    std::unordered_map<const TInterfaceBlock *, const TVariable *> mLiftedMap;
     std::unordered_map<const TVariable *, const TVariable *> mInstanceMap;
-    IdGen & mIdGen;
-  public:
-    Reducer(TCompiler &compiler, IdGen & idGen) : TIntermRebuild(compiler, true, false),
-        mIdGen(idGen)
-    {
+    IdGen &mIdGen;
 
-    }
+  public:
+    Reducer(TCompiler &compiler, IdGen &idGen)
+        : TIntermRebuild(compiler, true, false), mIdGen(idGen)
+    {}
 
     PreResult visitDeclarationPre(TIntermDeclaration &declNode) override
     {
@@ -48,15 +46,15 @@ class Reducer : public TIntermRebuild
             {
                 if (symbolType == SymbolType::Empty)
                 {
-                    //Create instance variable
+                    // Create instance variable
                     auto &structure =
                         *new TStructure(&mSymbolTable, interfaceBlock->name(),
                                         &interfaceBlock->fields(), interfaceBlock->symbolType());
                     auto &structVar = CreateStructTypeVariable(mSymbolTable, structure);
 
-                    auto &instanceVar =
-                        CreateInstanceVariable(mSymbolTable, structure, mIdGen.createNewName(interfaceBlock->name()),
-                                               TQualifier::EvqBuffer, &type.getArraySizes());
+                    auto &instanceVar = CreateInstanceVariable(
+                        mSymbolTable, structure, mIdGen.createNewName(interfaceBlock->name()),
+                        TQualifier::EvqBuffer, &type.getArraySizes());
                     mLiftedMap[interfaceBlock] = &instanceVar;
 
                     TIntermNode *replacements[] = {
@@ -115,7 +113,10 @@ class Reducer : public TIntermRebuild
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool sh::ReduceInterfaceBlocks(TCompiler &compiler, TIntermBlock &root, IdGen & idGen)
+bool sh::ReduceInterfaceBlocks(TCompiler &compiler,
+                               TIntermBlock &root,
+                               IdGen &idGen,
+                               TSymbolTable *symbolTable)
 {
     Reducer reducer(compiler, idGen);
     if (!reducer.rebuildRoot(root))
@@ -123,7 +124,7 @@ bool sh::ReduceInterfaceBlocks(TCompiler &compiler, TIntermBlock &root, IdGen & 
         return false;
     }
 
-    if (!SeparateDeclarations(&compiler, &root))
+    if (!SeparateDeclarations(&compiler, &root, symbolTable))
     {
         return false;
     }

@@ -34,7 +34,7 @@ class Clean(Command):
     @classmethod
     def main(cls, args, repository, **kwargs):
         if not repository.path:
-            sys.stderr.write('Cannot clean on remote repository')
+            sys.stderr.write('Cannot clean on remote repository\n')
             return 1
 
         return repository.clean()

@@ -397,13 +397,8 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             let stylesGroup = experimentalSettingsView.addGroup(WI.UIString("Styles:"));
             stylesGroup.addSetting(WI.settings.experimentalEnableStylesJumpToEffective, WI.UIString("Show jump to effective property button"));
             stylesGroup.addSetting(WI.settings.experimentalEnableStylesJumpToVariableDeclaration, WI.UIString("Show jump to variable declaration button"));
+            stylesGroup.addSetting(WI.settings.experimentalCSSCompletionFuzzyMatching, WI.UIString("Use fuzzy matching for completion suggestions"));
 
-            experimentalSettingsView.addSeparator();
-        }
-
-        let supportsBlackboxingScripts = WI.DebuggerManager.supportsBlackboxingScripts();
-        if (supportsBlackboxingScripts) {
-            experimentalSettingsView.addSetting(WI.UIString("Debugging:", "Debugging: @ Experimental Settings", "Category label for experimental settings related to debugging."), WI.settings.experimentalCollapseBlackboxedCallFrames, WI.UIString("Collapse blackboxed call frames", "Collapse blackboxed call frames @ Experimental Settings", "Setting to collapse blackboxed call frames in the debugger."));
             experimentalSettingsView.addSeparator();
         }
 
@@ -435,9 +430,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             listenForChange(WI.settings.experimentalEnableStylesJumpToVariableDeclaration);
         }
 
-        if (supportsBlackboxingScripts)
-            listenForChange(WI.settings.experimentalCollapseBlackboxedCallFrames);
-
         this._createReferenceLink(experimentalSettingsView);
 
         this.addSettingsView(experimentalSettingsView);
@@ -464,6 +456,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let heapSnapshotGroup = engineeringSettingsView.addGroup(WI.unlocalizedString("Heap Snapshot:"));
         heapSnapshotGroup.addSetting(WI.settings.engineeringShowInternalObjectsInHeapSnapshot, WI.unlocalizedString("Show Internal Objects"));
         heapSnapshotGroup.addSetting(WI.settings.engineeringShowPrivateSymbolsInHeapSnapshot, WI.unlocalizedString("Show Private Symbols"));
+
+        let extensionsGroup = engineeringSettingsView.addGroup(WI.unlocalizedString("Web Extensions:"));
+        extensionsGroup.addSetting(WI.settings.engineeringShowMockWebExtensionTab, WI.unlocalizedString("Show Mock Web Extension tab"));
 
         this.addSettingsView(engineeringSettingsView);
     }

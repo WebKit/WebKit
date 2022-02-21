@@ -112,7 +112,7 @@ void MediaDocumentParser::createDocumentStructure()
     videoElement->setAttributeWithoutSynchronization(controlsAttr, emptyAtom());
     videoElement->setAttributeWithoutSynchronization(autoplayAttr, emptyAtom());
     videoElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());
-    if (auto loader = makeRefPtr(document.loader()))
+    if (RefPtr loader = document.loader())
         videoElement->setAttributeWithoutSynchronization(typeAttr, loader->responseMIMEType());
 
 #if !ENABLE(MODERN_MEDIA_CONTROLS)
@@ -140,7 +140,7 @@ void MediaDocumentParser::appendBytes(DocumentWriter&, const uint8_t*, size_t)
 }
     
 MediaDocument::MediaDocument(Frame* frame, const Settings& settings, const URL& url)
-    : HTMLDocument(frame, settings, url, MediaDocumentClass)
+    : HTMLDocument(frame, settings, url, { }, { DocumentClass::Media })
 {
     setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();
@@ -182,7 +182,7 @@ void MediaDocument::defaultEventHandler(Event& event)
         return;
     auto& targetNode = downcast<Node>(*event.target());
 
-    if (auto video = makeRefPtr(ancestorVideoElement(&targetNode))) {
+    if (RefPtr video = ancestorVideoElement(&targetNode)) {
         if (event.type() == eventNames().clickEvent) {
             if (!video->canPlay()) {
                 video->pause();
@@ -201,7 +201,7 @@ void MediaDocument::defaultEventHandler(Event& event)
     auto& targetContainer = downcast<ContainerNode>(targetNode);
 
     if (event.type() == eventNames().keydownEvent && is<KeyboardEvent>(event)) {
-        auto video = makeRefPtr(descendantVideoElement(targetContainer));
+        RefPtr video = descendantVideoElement(targetContainer);
         if (!video)
             return;
 
@@ -222,7 +222,7 @@ void MediaDocument::defaultEventHandler(Event& event)
 
 void MediaDocument::replaceMediaElementTimerFired()
 {
-    auto htmlBody = makeRefPtr(bodyOrFrameset());
+    RefPtr htmlBody = bodyOrFrameset();
     if (!htmlBody)
         return;
 
@@ -230,7 +230,7 @@ void MediaDocument::replaceMediaElementTimerFired()
     htmlBody->setAttributeWithoutSynchronization(marginwidthAttr, AtomString("0", AtomString::ConstructFromLiteral));
     htmlBody->setAttributeWithoutSynchronization(marginheightAttr, AtomString("0", AtomString::ConstructFromLiteral));
 
-    if (auto videoElement = makeRefPtr(descendantVideoElement(*htmlBody))) {
+    if (RefPtr videoElement = descendantVideoElement(*htmlBody)) {
         auto embedElement = HTMLEmbedElement::create(*this);
 
         embedElement->setAttributeWithoutSynchronization(widthAttr, AtomString("100%", AtomString::ConstructFromLiteral));
@@ -239,7 +239,7 @@ void MediaDocument::replaceMediaElementTimerFired()
         embedElement->setAttributeWithoutSynchronization(srcAttr, url().string());
 
         ASSERT(loader());
-        if (auto loader = makeRefPtr(this->loader()))
+        if (RefPtr loader = this->loader())
             embedElement->setAttributeWithoutSynchronization(typeAttr, loader->writer().mimeType());
 
         videoElement->parentNode()->replaceChild(embedElement, *videoElement);

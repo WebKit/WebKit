@@ -25,12 +25,15 @@
 
 #pragma once
 
+#include "AnimationFrameRate.h"
+#include "AnimationFrameRatePreset.h"
 #include "KeyframeEffectOptions.h"
 
 namespace WebCore {
 
 struct KeyframeAnimationOptions : KeyframeEffectOptions {
     String id;
+    std::variant<FramesPerSecond, AnimationFrameRatePreset> frameRate;
 };
 
 } // namespace WebCore

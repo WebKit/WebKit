@@ -17,6 +17,34 @@ namespace angle
 // dirtyPointer is a special value that will make the comparison with any valid pointer fail and
 // force the renderer to re-apply the state.
 const uintptr_t DirtyPointer = std::numeric_limits<uintptr_t>::max();
+
+SaveFileHelper::SaveFileHelper(const std::string &filePathIn)
+    : mOfs(filePathIn, std::ios::binary | std::ios::out), mFilePath(filePathIn)
+{
+    if (!mOfs.is_open())
+    {
+        FATAL() << "Could not open " << filePathIn;
+    }
+}
+
+SaveFileHelper::~SaveFileHelper()
+{
+    printf("Saved '%s'.\n", mFilePath.c_str());
+}
+
+void SaveFileHelper::checkError()
+{
+    if (mOfs.bad())
+    {
+        FATAL() << "Error writing to " << mFilePath;
+    }
+}
+
+void SaveFileHelper::write(const uint8_t *data, size_t size)
+{
+    mOfs.write(reinterpret_cast<const char *>(data), size);
+}
+
 }  // namespace angle
 
 std::string ArrayString(unsigned int i)

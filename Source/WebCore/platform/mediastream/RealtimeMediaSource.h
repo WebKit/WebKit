@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
+#include "VideoSampleMetadata.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
@@ -102,7 +103,7 @@ public:
         virtual ~VideoSampleObserver() = default;
 
         // May be called on a background thread.
-        virtual void videoSampleAvailable(MediaSample&) = 0;
+        virtual void videoSampleAvailable(MediaSample&, VideoSampleMetadata) = 0;
     };
 
     virtual ~RealtimeMediaSource() = default;
@@ -114,19 +115,21 @@ public:
 
     const String& persistentID() const { return m_persistentID; }
 
-    enum class Type { None, Audio, Video };
+    enum class Type { None, Audio, Video, Screen, Window, SystemAudio };
     Type type() const { return m_type; }
+    bool hasVideo() const { return m_type == Type::Video || m_type == Type::Window || m_type == Type::Screen; }
+    bool hasAudio() const { return m_type == Type::Audio || m_type == Type::SystemAudio; }
 
     virtual void whenReady(CompletionHandler<void(String)>&&);
 
-    bool isProducingData() const { return m_isProducingData; }
+    virtual bool isProducingData() const;
     void start();
     void stop();
     virtual void requestToEnd(Observer& callingObserver);
     bool isEnded() const { return m_isEnded; }
 
     bool muted() const { return m_muted; }
-    void setMuted(bool);
+    virtual void setMuted(bool);
 
     bool captureDidFail() const { return m_captureDidFailed; }
 
@@ -222,7 +225,7 @@ public:
 protected:
     RealtimeMediaSource(Type, String&& name, String&& deviceID = { }, String&& hashSalt = { });
 
-    void scheduleDeferredTask(WTF::Function<void()>&&);
+    void scheduleDeferredTask(Function<void()>&&);
 
     virtual void beginConfiguration() { }
     virtual void commitConfiguration() { }
@@ -244,12 +247,14 @@ protected:
     void initializeSampleRate(int sampleRate) { m_sampleRate = sampleRate; }
     void initializeEchoCancellation(bool echoCancellation) { m_echoCancellation = echoCancellation; }
 
-    void videoSampleAvailable(MediaSample&);
+    void videoSampleAvailable(MediaSample&, VideoSampleMetadata);
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
     void forEachObserver(const Function<void(Observer&)>&);
 
     void end(Observer* = nullptr);
+
+    void setType(Type);
 
 private:
     virtual void startProducingData() { }
@@ -325,6 +330,11 @@ inline void RealtimeMediaSource::whenReady(CompletionHandler<void(String)>&& cal
 inline bool RealtimeMediaSource::isVideoSource() const
 {
     return false;
+}
+
+inline bool RealtimeMediaSource::isProducingData() const
+{
+    return m_isProducingData;
 }
 
 } // namespace WebCore

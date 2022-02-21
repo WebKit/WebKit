@@ -30,7 +30,7 @@
 #include "CanvasPattern.h"
 #include "Color.h"
 #include "ColorSerialization.h"
-#include <wtf/Variant.h>
+#include <variant>
 
 namespace WebCore {
 
@@ -49,9 +49,9 @@ public:
     static CanvasStyle createFromString(const String& color, CanvasBase&);
     static CanvasStyle createFromStringWithOverrideAlpha(const String& color, float alpha, CanvasBase&);
 
-    bool isValid() const { return !WTF::holds_alternative<Invalid>(m_style); }
-    bool isCurrentColor() const { return WTF::holds_alternative<CurrentColor>(m_style); }
-    std::optional<float> overrideAlpha() const { return WTF::get<CurrentColor>(m_style).overrideAlpha; }
+    bool isValid() const { return !std::holds_alternative<Invalid>(m_style); }
+    bool isCurrentColor() const { return std::holds_alternative<CurrentColor>(m_style); }
+    std::optional<float> overrideAlpha() const { return std::get<CurrentColor>(m_style).overrideAlpha; }
 
     String color() const;
     RefPtr<CanvasGradient> canvasGradient() const;
@@ -72,7 +72,7 @@ private:
 
     CanvasStyle(CurrentColor);
 
-    Variant<Invalid, Color, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>, CurrentColor> m_style;
+    std::variant<Invalid, Color, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>, CurrentColor> m_style;
 };
 
 bool isCurrentColorString(const String& colorString);
@@ -88,21 +88,21 @@ inline CanvasStyle::CanvasStyle()
 
 inline RefPtr<CanvasGradient> CanvasStyle::canvasGradient() const
 {
-    if (!WTF::holds_alternative<RefPtr<CanvasGradient>>(m_style))
+    if (!std::holds_alternative<RefPtr<CanvasGradient>>(m_style))
         return nullptr;
-    return WTF::get<RefPtr<CanvasGradient>>(m_style);
+    return std::get<RefPtr<CanvasGradient>>(m_style);
 }
 
 inline RefPtr<CanvasPattern> CanvasStyle::canvasPattern() const
 {
-    if (!WTF::holds_alternative<RefPtr<CanvasPattern>>(m_style))
+    if (!std::holds_alternative<RefPtr<CanvasPattern>>(m_style))
         return nullptr;
-    return WTF::get<RefPtr<CanvasPattern>>(m_style);
+    return std::get<RefPtr<CanvasPattern>>(m_style);
 }
 
 inline String CanvasStyle::color() const
 {
-    return serializationForHTML(WTF::get<Color>(m_style));
+    return serializationForHTML(std::get<Color>(m_style));
 }
 
 } // namespace WebCore

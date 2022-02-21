@@ -670,13 +670,15 @@ WI.Resource = class Resource extends WI.SourceCode
 
         let oldURL = this._url;
         let oldHeaders = this._requestHeaders;
+        let oldMethod = this._requestMethod;
 
         if (request.url)
             this._url = request.url;
 
         this._requestHeaders = request.headers || {};
         this._requestCookies = null;
-        this._redirects.push(new WI.Redirect(oldURL, request.method, oldHeaders, response.status, response.statusText, response.headers, elapsedTime));
+        this._requestMethod = request.method || null;
+        this._redirects.push(new WI.Redirect(oldURL, oldMethod, oldHeaders, response.status, response.statusText, response.headers, elapsedTime));
 
         if (oldURL !== request.url) {
             // Delete the URL components so the URL is re-parsed the next time it is requested.

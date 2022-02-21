@@ -46,10 +46,6 @@
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 
-#if USE(DIRECT2D)
-#include <dwrite_3.h>
-#endif
-
 using std::min;
 
 namespace WebCore
@@ -146,7 +142,7 @@ static const Vector<String>* getLinkedFonts(String& family)
     return result;
 }
 
-static const Vector<DWORD, 4>& getCJKCodePageMasks()
+static const Vector<DWORD, 4>& getCJKCodePageMasks(FontCache& fontCache)
 {
     // The default order in which we look for a font for a CJK character. If the user's default code page is
     // one of these, we will use it first.
@@ -161,7 +157,7 @@ static const Vector<DWORD, 4>& getCJKCodePageMasks()
     static bool initialized;
     if (!initialized) {
         initialized = true;
-        IMLangFontLinkType* langFontLink = FontCache::singleton().getFontLinkInterface();
+        IMLangFontLinkType* langFontLink = fontCache.getFontLinkInterface();
         if (!langFontLink)
             return codePageMasks;
 
@@ -257,7 +253,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
                 // The CJK character may belong to multiple code pages. We want to
                 // do font linking against a single one of them, preferring the default
                 // code page for the user's locale.
-                const Vector<DWORD, 4>& CJKCodePageMasks = getCJKCodePageMasks();
+                const Vector<DWORD, 4>& CJKCodePageMasks = getCJKCodePageMasks(*this);
                 unsigned numCodePages = CJKCodePageMasks.size();
                 for (unsigned i = 0; i < numCodePages && !hfont; ++i) {
                     hfont = createMLangFont(langFontLink, hdc, CJKCodePageMasks[i]);
@@ -539,7 +535,7 @@ static GDIObject<HFONT> createGDIFont(const AtomString& family, LONG desiredWeig
     matchData.m_chosen.lfUnderline = false;
     matchData.m_chosen.lfStrikeOut = false;
     matchData.m_chosen.lfCharSet = DEFAULT_CHARSET;
-#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
+#if USE(CG) || USE(CAIRO)
     matchData.m_chosen.lfOutPrecision = OUT_TT_ONLY_PRECIS;
 #else
     matchData.m_chosen.lfOutPrecision = OUT_TT_PRECIS;
@@ -649,7 +645,7 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
     return result;
 }
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontFeatureSettings*, FontSelectionSpecifiedCapabilities)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext&)
 {
     bool isLucidaGrande = equalLettersIgnoringASCIICase(family, "lucida grande");
 
@@ -679,8 +675,6 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
 #if USE(CG)
     bool fontCreationFailed = !result->cgFont();
-#elif USE(DIRECT2D)
-    bool fontCreationFailed = !result->dwFont();
 #elif USE(CAIRO)
     bool fontCreationFailed = !result->scaledFont();
 #endif

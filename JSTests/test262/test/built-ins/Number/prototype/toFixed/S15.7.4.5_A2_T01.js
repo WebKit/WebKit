@@ -6,13 +6,14 @@ info: The length property of the toFixed method is 1
 es5id: 15.7.4.5_A2_T01
 description: Checking Number prototype itself
 ---*/
+assert.sameValue(
+  Number.prototype.toFixed.hasOwnProperty("length"),
+  true,
+  'Number.prototype.toFixed.hasOwnProperty("length") must return true'
+);
 
-//CHECK#1
-if (Number.prototype.toFixed.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The length property of the toFixed method is 1');
-}
-
-//CHECK#2
-if (Number.prototype.toFixed.length !== 1) {
-  throw new Test262Error('#2: The length property of the toFixed method is 1');
-}
+assert.sameValue(
+  Number.prototype.toFixed.length,
+  1,
+  'The value of Number.prototype.toFixed.length is expected to be 1'
+);

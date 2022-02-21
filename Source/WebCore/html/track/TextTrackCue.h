@@ -33,6 +33,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "ActiveDOMObject.h"
 #include "DocumentFragment.h"
 #include "HTMLElement.h"
 #include <wtf/JSONValues.h>
@@ -65,10 +66,6 @@ private:
 class TextTrackCue : public RefCounted<TextTrackCue>, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(TextTrackCue);
 public:
-    static const AtomString& cueShadowPseudoId();
-    static const AtomString& cueBackdropShadowPseudoId();
-    static const AtomString& cueBoxShadowPseudoId();
-
     static ExceptionOr<Ref<TextTrackCue>> create(Document&, double start, double end, DocumentFragment&);
 
     TextTrack* track() const;

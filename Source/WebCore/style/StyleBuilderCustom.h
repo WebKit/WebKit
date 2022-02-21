@@ -99,6 +99,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(OutlineStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Size);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Stroke);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(TextEmphasisStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextIndent);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitBoxShadow);
@@ -112,7 +113,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageRepeat);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageSlice);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageWidth);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitTextEmphasisStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Zoom);
 
     // Custom handling of initial + inherit value setting only.
@@ -945,10 +945,10 @@ inline void BuilderCustom::applyTextOrBoxShadowValue(BuilderState& builderState,
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& shadowValue = downcast<CSSShadowValue>(item.get());
         auto conversionData = builderState.cssToLengthConversionData();
-        auto x = shadowValue.x->computeLength<LayoutUnit>(conversionData);
-        auto y = shadowValue.y->computeLength<LayoutUnit>(conversionData);
-        int blur = shadowValue.blur ? shadowValue.blur->computeLength<int>(conversionData) : 0;
-        auto spread = shadowValue.spread ? shadowValue.spread->computeLength<LayoutUnit>(conversionData) : LayoutUnit(0);
+        auto x = shadowValue.x->computeLength<Length>(conversionData);
+        auto y = shadowValue.y->computeLength<Length>(conversionData);
+        auto blur = shadowValue.blur ? shadowValue.blur->computeLength<Length>(conversionData) : Length(0, LengthType::Fixed);
+        auto spread = shadowValue.spread ? shadowValue.spread->computeLength<Length>(conversionData) : Length(0, LengthType::Fixed);
         ShadowStyle shadowStyle = shadowValue.style && shadowValue.style->valueID() == CSSValueInset ? ShadowStyle::Inset : ShadowStyle::Normal;
         Color color;
         if (shadowValue.color)
@@ -956,7 +956,7 @@ inline void BuilderCustom::applyTextOrBoxShadowValue(BuilderState& builderState,
         else
             color = builderState.style().color();
 
-        auto shadowData = makeUnique<ShadowData>(LayoutPoint(x, y), blur, spread, shadowStyle, property == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparentBlack);
+        auto shadowData = makeUnique<ShadowData>(LengthPoint(x, y), blur, spread, shadowStyle, property == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparentBlack);
         if (property == CSSPropertyTextShadow)
             builderState.style().setTextShadow(WTFMove(shadowData), !isFirstEntry); // add to the list if this is not the first entry
         else
@@ -1187,14 +1187,14 @@ inline void BuilderCustom::applyValueBaselineShift(BuilderState& builderState, C
     }
 }
 
-inline void BuilderCustom::applyInitialWebkitTextEmphasisStyle(BuilderState& builderState)
+inline void BuilderCustom::applyInitialTextEmphasisStyle(BuilderState& builderState)
 {
     builderState.style().setTextEmphasisFill(RenderStyle::initialTextEmphasisFill());
     builderState.style().setTextEmphasisMark(RenderStyle::initialTextEmphasisMark());
     builderState.style().setTextEmphasisCustomMark(RenderStyle::initialTextEmphasisCustomMark());
 }
 
-inline void BuilderCustom::applyInheritWebkitTextEmphasisStyle(BuilderState& builderState)
+inline void BuilderCustom::applyInheritTextEmphasisStyle(BuilderState& builderState)
 {
     builderState.style().setTextEmphasisFill(builderState.parentStyle().textEmphasisFill());
     builderState.style().setTextEmphasisMark(builderState.parentStyle().textEmphasisMark());
@@ -1277,6 +1277,9 @@ inline void BuilderCustom::applyValueContain(BuilderState& builderState, CSSValu
         case CSSValuePaint:
             containment.add(Containment::Paint);
             break;
+        case CSSValueStyle:
+            containment.add(Containment::Style);
+            break;
         default:
             break;
         };
@@ -1284,7 +1287,7 @@ inline void BuilderCustom::applyValueContain(BuilderState& builderState, CSSValu
     return builderState.style().setContain(containment);
 }
 
-inline void BuilderCustom::applyValueWebkitTextEmphasisStyle(BuilderState& builderState, CSSValue& value)
+inline void BuilderCustom::applyValueTextEmphasisStyle(BuilderState& builderState, CSSValue& value)
 {
     if (is<CSSValueList>(value)) {
         auto& list = downcast<CSSValueList>(value);
@@ -1517,12 +1520,11 @@ inline void BuilderCustom::applyValueStroke(BuilderState& builderState, CSSValue
 inline void BuilderCustom::applyInitialContent(BuilderState& builderState)
 {
     builderState.style().clearContent();
+    builderState.style().setHasContentNone(false);
 }
 
 inline void BuilderCustom::applyInheritContent(BuilderState&)
 {
-    // FIXME: In CSS3, it will be possible to inherit content. In CSS2 it is not. This
-    // note is a reminder that eventually "inherit" needs to be supported.
 }
 
 inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValue& value)
@@ -1531,6 +1533,7 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
         const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
         ASSERT_UNUSED(primitiveValue, primitiveValue.valueID() == CSSValueNormal || primitiveValue.valueID() == CSSValueNone);
         builderState.style().clearContent();
+        builderState.style().setHasContentNone(primitiveValue.valueID() == CSSValueNone);
         return;
     }
 
@@ -1902,7 +1905,8 @@ inline void BuilderCustom::applyValueGridTemplateAreas(BuilderState& builderStat
     style.setGridAutoRepeat##TrackType##sInsertionPoint(tracksData ? tracksData->m_autoRepeatInsertionPoint : parentStyle->gridAutoRepeat##TrackType##sInsertionPoint()); \
     style.setAutoRepeatNamedGrid##TrackType##Lines(tracksData ? tracksData->m_autoRepeatNamedGridLines : parentStyle->autoRepeatNamedGrid##TrackType##Lines()); \
     style.setAutoRepeatOrderedNamedGrid##TrackType##Lines(tracksData ? tracksData->m_autoRepeatOrderedNamedGridLines : parentStyle->autoRepeatOrderedNamedGrid##TrackType##Lines()); \
-    style.setGridAutoRepeat##TrackType##sType(tracksData ? tracksData->m_autoRepeatType : parentStyle->gridAutoRepeat##TrackType##sType());
+    style.setGridAutoRepeat##TrackType##sType(tracksData ? tracksData->m_autoRepeatType : parentStyle->gridAutoRepeat##TrackType##sType()); \
+    style.setGridSubgrid##TrackType##s(tracksData ? tracksData->isSubgrid : parentStyle->gridSubgrid##TrackType##s());
 
 #define SET_INHERIT_TRACKS_DATA(style, parentStyle, TrackType) \
     BuilderConverter::TracksData* tracksData = nullptr; \
@@ -1930,10 +1934,6 @@ inline void BuilderCustom::applyValueGridTemplateColumns(BuilderState& builderSt
     BuilderConverter::TracksData tracksData;
     if (!BuilderConverter::createGridTrackList(value, tracksData, builderState))
         return;
-    const NamedGridAreaMap& namedGridAreas = builderState.style().namedGridArea();
-    if (!namedGridAreas.isEmpty())
-        BuilderConverter::createImplicitNamedGridLinesFromGridArea(namedGridAreas, tracksData.m_namedGridLines, ForColumns);
-
     SET_TRACKS_DATA(tracksData, builderState.style(), Column);
 }
 
@@ -1953,9 +1953,6 @@ inline void BuilderCustom::applyValueGridTemplateRows(BuilderState& builderState
     BuilderConverter::TracksData tracksData;
     if (!BuilderConverter::createGridTrackList(value, tracksData, builderState))
         return;
-    const NamedGridAreaMap& namedGridAreas = builderState.style().namedGridArea();
-    if (!namedGridAreas.isEmpty())
-        BuilderConverter::createImplicitNamedGridLinesFromGridArea(namedGridAreas, tracksData.m_namedGridLines, ForRows);
 
     SET_TRACKS_DATA(tracksData, builderState.style(), Row);
 }
@@ -2057,9 +2054,9 @@ inline void BuilderCustom::applyValueCustomProperty(BuilderState& builderState, 
     const auto& name = value.name();
 
     if (!registered || registered->inherits)
-        builderState.style().setInheritedCustomPropertyValue(name, makeRef(value));
+        builderState.style().setInheritedCustomPropertyValue(name, value);
     else
-        builderState.style().setNonInheritedCustomPropertyValue(name, makeRef(value));
+        builderState.style().setNonInheritedCustomPropertyValue(name, value);
 }
 
 }

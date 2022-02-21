@@ -40,7 +40,7 @@ public:
 private:
     CSSMediaRule(StyleRuleMedia&, CSSStyleSheet*);
 
-    CSSRule::Type type() const final { return MEDIA_RULE; }
+    StyleRuleType styleRuleType() const final { return StyleRuleType::Media; }
     void reattach(StyleRuleBase&) final;
     String cssText() const final;
     String conditionText() const final;
@@ -53,4 +53,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSMediaRule, CSSRule::MEDIA_RULE)
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSMediaRule, StyleRuleType::Media)

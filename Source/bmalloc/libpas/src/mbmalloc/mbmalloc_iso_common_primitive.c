@@ -30,7 +30,6 @@
 #include "Verifier.h"
 #include "iso_heap_config.h"
 #include "iso_heap_innards.h"
-#include <malloc/malloc.h>
 #include "pas_bootstrap_free_heap.h"
 #include "pas_fd_stream.h"
 #include "pas_heap.h"
@@ -44,6 +43,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#if PAS_OS(DARWIN)
+#include <malloc/malloc.h>
+#endif
 
 static const bool verbose = false;
 #ifdef PAS_VERIFIED
@@ -138,7 +141,9 @@ void mbscavenge(void)
     
     if (really_scavenge_at_end) {
         pas_scavenger_run_synchronously_now();
+#if PAS_OS(DARWIN)
         malloc_zone_pressure_relief(NULL, 0);
+#endif
     }
     
     if (verbose_scavenge) {

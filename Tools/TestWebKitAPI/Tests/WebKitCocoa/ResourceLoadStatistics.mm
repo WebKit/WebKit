@@ -25,8 +25,8 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "TCPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKFoundation.h>
@@ -37,6 +37,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
@@ -80,9 +81,11 @@ static void ensureITPFileIsCreated()
     [dataStore _setResourceLoadStatisticsEnabled:NO];
 }
 
-TEST(ResourceLoadStatistics, GrandfatherCallbackDatabase)
+TEST(ResourceLoadStatistics, GrandfatherCallback)
 {
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().pcmMachServiceName = nil;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
 
     NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *fileURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"observations.db"];
@@ -136,7 +139,7 @@ TEST(ResourceLoadStatistics, GrandfatherCallbackDatabase)
     TestWebKitAPI::Util::run(&doneFlag);
 }
 
-TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartupDatabase)
+TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartup)
 {
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
 
@@ -157,7 +160,7 @@ TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartupDatabase)
     TestWebKitAPI::Util::run(&callbackFlag);
 }
 
-TEST(ResourceLoadStatistics, ChildProcessesNotLaunchedDatabase)
+TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
 {
     // Ensure the shared process pool exists so the data store operations we're about to do work with it.
     WKProcessPool *sharedProcessPool = [WKProcessPool _sharedProcessPool];
@@ -481,25 +484,24 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
 }
 
 @interface DataTaskIdentifierCollisionDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
-- (NSArray<NSString *> *)waitForMessages:(size_t)count;
+- (Vector<String>)waitForMessages:(size_t)count;
 @end
 
 @implementation DataTaskIdentifierCollisionDelegate {
-    RetainPtr<NSMutableArray<NSString *>> _messages;
+    Vector<String> _messages;
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
-    [_messages addObject:message];
+    _messages.append(message);
     completionHandler();
 }
 
-- (NSArray<NSString *> *)waitForMessages:(size_t)messageCount
+- (Vector<String>)waitForMessages:(size_t)messageCount
 {
-    _messages = adoptNS([NSMutableArray arrayWithCapacity:messageCount]);
-    while ([_messages count] < messageCount)
+    while (_messages.size() < messageCount)
         TestWebKitAPI::Util::spinRunLoop();
-    return _messages.autorelease();
+    return std::exchange(_messages, { });
 }
 
 - (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * credential))completionHandler
@@ -509,32 +511,40 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
 
 @end
 
-#if HAVE(SSL)
+void waitUntilTwoServersConnected(const unsigned& serversConnected, CompletionHandler<void()>&& completionHandler)
+{
+    if (serversConnected >= 2) {
+        completionHandler();
+        return;
+    }
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([&serversConnected, completionHandler = WTFMove(completionHandler)] () mutable {
+        waitUntilTwoServersConnected(serversConnected, WTFMove(completionHandler));
+    }).get());
+}
+
 TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
 {
     using namespace TestWebKitAPI;
 
-    std::atomic<unsigned> serversConnected { 0 };
+    unsigned serversConnected { 0 };
     const char* header = "HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n";
 
-    TCPServer httpsServer(TCPServer::Protocol::HTTPSProxy, [&] (SSL* ssl) {
+    HTTPServer httpsServer([&] (const Connection& connection) {
         serversConnected++;
-        while (serversConnected < 2)
-            usleep(100000);
-        TCPServer::read(ssl);
-        TCPServer::write(ssl, header, strlen(header));
-        const char* body = "<script>alert('1')</script>";
-        TCPServer::write(ssl, body, strlen(body));
-    });
+        waitUntilTwoServersConnected(serversConnected, [=] {
+            connection.receiveHTTPRequest([=](Vector<char>&&) {
+                connection.send(makeString(header, "<script>alert('1')</script>"));
+            });
+        });
+    }, HTTPServer::Protocol::HttpsProxy);
 
-    TCPServer httpServer([&] (int socket) {
+    HTTPServer httpServer([&] (const Connection& connection) {
         serversConnected++;
-        while (serversConnected < 2)
-            usleep(100000);
-        TCPServer::read(socket);
-        TCPServer::write(socket, header, strlen(header));
-        const char* body = "<script>alert('2')</script>";
-        TCPServer::write(socket, body, strlen(body));
+        waitUntilTwoServersConnected(serversConnected, [=] {
+            connection.receiveHTTPRequest([=](Vector<char>&&) {
+                connection.send(makeString(header, "<script>alert('2')</script>"));
+            });
+        });
     });
 
     auto storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
@@ -544,10 +554,10 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
     auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
     [viewConfiguration setWebsiteDataStore:dataStore.get()];
 
-    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get() addToWindow:NO]);
     [webView1 synchronouslyLoadHTMLString:@"start network process and initialize data store"];
     auto delegate = adoptNS([DataTaskIdentifierCollisionDelegate new]);
-    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get() addToWindow:NO]);
     [webView1 setUIDelegate:delegate.get()];
     [webView1 setNavigationDelegate:delegate.get()];
     [webView2 setUIDelegate:delegate.get()];
@@ -569,18 +579,17 @@ TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
     [webView1 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", httpServer.port()]]]];
     [webView2 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://prevalent-example.com/"]]];
 
-    NSArray<NSString *> *messages = [delegate waitForMessages:2];
-    auto contains = [] (NSArray<NSString *> *array, NSString *expected) {
-        for (NSString *s in array) {
-            if ([s isEqualToString:expected])
+    auto messages = [delegate waitForMessages:2];
+    auto contains = [] (const Vector<String>& array, const char* expected) {
+        for (auto& s : array) {
+            if (s == expected)
                 return true;
         }
         return false;
     };
-    EXPECT_TRUE(contains(messages, @"1"));
-    EXPECT_TRUE(contains(messages, @"2"));
+    EXPECT_TRUE(contains(messages, "1"));
+    EXPECT_TRUE(contains(messages, "2"));
 }
-#endif // HAVE(SSL)
 
 TEST(ResourceLoadStatistics, NoMessagesWhenNotTesting)
 {
@@ -657,209 +666,6 @@ TEST(ResourceLoadStatistics, FlushObserverWhenWebPageIsClosedByJavaScript)
 }
 
 TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
-{
-    auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setProcessPool: sharedProcessPool];
-    configuration.get().websiteDataStore = dataStore;
-
-    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    auto webView3 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    [webView1 loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-    [webView1 _test_waitForDidFinishNavigation];
-    [webView2 loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit2.org"]];
-    [webView2 _test_waitForDidFinishNavigation];
-    [webView3 loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit3.org"]];
-    [webView3 _test_waitForDidFinishNavigation];
-
-    [dataStore _setResourceLoadStatisticsEnabled:YES];
-
-    __block bool doneFlag = false;
-    [dataStore _clearResourceLoadStatistics:^(void) {
-        doneFlag = true;
-    }];
-
-    static bool statisticsUpdated = false;
-    [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-        if (![message isEqualToString:@"Statistics Updated"])
-            return;
-        statisticsUpdated = true;
-    }];
-
-    TestWebKitAPI::Util::run(&doneFlag);
-    
-    doneFlag = false;
-    [dataStore _setThirdPartyCookieBlockingMode:true onlyOnSitesWithoutUserInteraction:false completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-
-    TestWebKitAPI::Util::run(&doneFlag);
-
-    // Set two third parties to be prevalent, leave evil1.com as non-prevalent to ensure
-    // this call returns all third parties.
-    doneFlag = false;
-    [dataStore _setPrevalentDomain:[NSURL URLWithString:@"http://evil2.com"] completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-    doneFlag = false;
-    [dataStore _setPrevalentDomain:[NSURL URLWithString:@"http://evil3.com"] completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-
-    // Seed test data in the web process' observer.
-
-    // evil1
-    doneFlag = false;
-    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil1.com"] shouldScheduleNotification:NO completionHandler: ^() {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-    doneFlag = false;
-    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit2.org"] thirdParty:[NSURL URLWithString:@"http://evil1.com"] shouldScheduleNotification:NO completionHandler: ^() {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-
-    // evil2
-    doneFlag = false;
-    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil2.com"] shouldScheduleNotification:NO completionHandler: ^() {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-
-    // evil3
-    doneFlag = false;
-    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil3.com"] shouldScheduleNotification:NO completionHandler: ^() {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-    doneFlag = false;
-    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit2.org"] thirdParty:[NSURL URLWithString:@"http://evil3.com"] shouldScheduleNotification:NO completionHandler: ^() {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-    doneFlag = false;
-    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit3.org"] thirdParty:[NSURL URLWithString:@"http://evil3.com"] shouldScheduleNotification:NO completionHandler: ^() {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-    statisticsUpdated = false;
-    [webView1 loadHTMLString:@"<body><script>close();</script></body>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-    [webView2 loadHTMLString:@"<body><script>close();</script></body>" baseURL:[NSURL URLWithString:@"http://webkit2.org"]];
-    [webView3 loadHTMLString:@"<body><script>close();</script></body>" baseURL:[NSURL URLWithString:@"http://webkit3.org"]];
-
-    // Wait for the statistics to be updated in the network process.
-    TestWebKitAPI::Util::run(&statisticsUpdated);
-
-    // Check that the third-party evil1 is now registered as subresource.
-    doneFlag = false;
-    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil1.com"] completionHandler: ^(BOOL isRegistered) {
-        EXPECT_TRUE(isRegistered);
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-    doneFlag = false;
-    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit2.org"] thirdParty:[NSURL URLWithString:@"http://evil1.com"] completionHandler: ^(BOOL isRegistered) {
-        EXPECT_TRUE(isRegistered);
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-
-    // Check that the third-party evil2 is now registered as subresource.
-    doneFlag = false;
-    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil2.com"] completionHandler: ^(BOOL isRegistered) {
-        EXPECT_TRUE(isRegistered);
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-
-    // Check that the third-party evil3 is now registered as subresource.
-    doneFlag = false;
-    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil3.com"] completionHandler: ^(BOOL isRegistered) {
-        EXPECT_TRUE(isRegistered);
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-    doneFlag = false;
-    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit2.org"] thirdParty:[NSURL URLWithString:@"http://evil3.com"] completionHandler: ^(BOOL isRegistered) {
-        EXPECT_TRUE(isRegistered);
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-    doneFlag = false;
-    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit3.org"] thirdParty:[NSURL URLWithString:@"http://evil3.com"] completionHandler: ^(BOOL isRegistered) {
-        EXPECT_TRUE(isRegistered);
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-
-    // Collect the ITP data summary which should include all third parties in the
-    // order: [evil3.com, evil1.com, evil2.com] sorted by number of first parties
-    // it appears under or redirects to
-    doneFlag = false;
-    [dataStore _getResourceLoadStatisticsDataSummary:^void(NSArray<_WKResourceLoadStatisticsThirdParty *> *thirdPartyData)
-    {
-        EXPECT_EQ(static_cast<int>([thirdPartyData count]), 3);
-        NSEnumerator *thirdPartyDomains = [thirdPartyData objectEnumerator];
-
-        // evil3
-        _WKResourceLoadStatisticsThirdParty *evil3ThirdParty = [thirdPartyDomains nextObject];
-        EXPECT_WK_STREQ(evil3ThirdParty.thirdPartyDomain, @"evil3.com");
-
-        NSEnumerator *evil3Enumerator = [evil3ThirdParty.underFirstParties objectEnumerator];
-        _WKResourceLoadStatisticsFirstParty *evil3FirstParty1 = [evil3Enumerator nextObject];
-        _WKResourceLoadStatisticsFirstParty *evil3FirstParty2 = [evil3Enumerator nextObject];
-        _WKResourceLoadStatisticsFirstParty *evil3FirstParty3 = [evil3Enumerator nextObject];
-
-        EXPECT_WK_STREQ(evil3FirstParty1.firstPartyDomain, @"webkit2.org");
-        EXPECT_WK_STREQ(evil3FirstParty2.firstPartyDomain, @"webkit3.org");
-        EXPECT_WK_STREQ(evil3FirstParty3.firstPartyDomain, @"webkit.org");
-
-        EXPECT_FALSE(evil3FirstParty1.thirdPartyStorageAccessGranted);
-        EXPECT_FALSE(evil3FirstParty2.thirdPartyStorageAccessGranted);
-        EXPECT_FALSE(evil3FirstParty3.thirdPartyStorageAccessGranted);
-
-        // evil1
-        _WKResourceLoadStatisticsThirdParty *evil1ThirdParty = [thirdPartyDomains nextObject];
-        EXPECT_WK_STREQ(evil1ThirdParty.thirdPartyDomain, @"evil1.com");
-
-        NSEnumerator *evil1Enumerator = [evil1ThirdParty.underFirstParties objectEnumerator];
-        _WKResourceLoadStatisticsFirstParty *evil1FirstParty1= [evil1Enumerator nextObject];
-        _WKResourceLoadStatisticsFirstParty *evil1FirstParty2 = [evil1Enumerator nextObject];
-
-        EXPECT_WK_STREQ(evil1FirstParty1.firstPartyDomain, @"webkit2.org");
-        EXPECT_WK_STREQ(evil1FirstParty2.firstPartyDomain, @"webkit.org");
-
-        EXPECT_FALSE(evil1FirstParty1.thirdPartyStorageAccessGranted);
-        EXPECT_FALSE(evil1FirstParty2.thirdPartyStorageAccessGranted);
-
-        // evil2
-        _WKResourceLoadStatisticsThirdParty *evil2ThirdParty = [thirdPartyDomains nextObject];
-        EXPECT_WK_STREQ(evil2ThirdParty.thirdPartyDomain, @"evil2.com");
-
-        NSEnumerator *evil2Enumerator = [evil2ThirdParty.underFirstParties objectEnumerator];
-        _WKResourceLoadStatisticsFirstParty *evil2FirstParty1 = [evil2Enumerator nextObject];
-
-        EXPECT_WK_STREQ(evil2FirstParty1.firstPartyDomain, @"webkit.org");
-        EXPECT_FALSE(evil2FirstParty1.thirdPartyStorageAccessGranted);
-        doneFlag = true;
-    }];
-
-    TestWebKitAPI::Util::run(&doneFlag);
-}
-
-TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummaryDatabase)
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];

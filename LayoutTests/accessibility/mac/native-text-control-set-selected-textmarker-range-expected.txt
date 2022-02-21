@@ -4,12 +4,17 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 selected text "This is a textarea."
+selected text "T"
 selected text "This is a "
 selected text " is a "
+PASS p.textMarkerRangeLength(selectedRange) is 0
 selected text "This is a text field."
+selected text "T"
 selected text "This is a "
 selected text " is a text"
+PASS p.textMarkerRangeLength(selectedRange) is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE
+
 

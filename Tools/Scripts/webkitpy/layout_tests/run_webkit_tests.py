@@ -343,7 +343,8 @@ def parse_args(args):
         optparse.make_option(
             "--prefer-integrated-gpu", action="store_true", default=False,
             help=("Prefer using the lower-power integrated GPU on a dual-GPU system. Note that other running applications and the tests themselves can override this request.")),
-        optparse.make_option('--show-window', action="store_true", default=False, help="Make the test runner window visible during testing."),
+        optparse.make_option("--show-window", action="store_true", default=False, help="Make the test runner window visible during testing."),
+        optparse.make_option("--self-compare-with-header", help="Run all tests as A/B tests between the default configuration and the given test features header (ignoring expected results)."),
     ]))
 
     option_group_definitions.append(("Web Platform Test Server Options", [
@@ -373,14 +374,14 @@ def parse_args(args):
         options.additional_expectations.insert(0, host.filesystem.join(host.scm().checkout_root, 'LayoutTests/gpu-process/TestExpectations'))
         if not options.internal_feature:
             options.internal_feature = []
-        options.internal_feature.append('UseGPUProcessForMediaEnabled')
         options.internal_feature.append('CaptureAudioInGPUProcessEnabled')
         options.internal_feature.append('CaptureVideoInGPUProcessEnabled')
         options.internal_feature.append('UseGPUProcessForCanvasRenderingEnabled')
-        options.internal_feature.append('UseGPUProcessForDOMRenderingEnabled')
+        options.internal_feature.append('UseGPUProcessForMediaEnabled')
+        options.internal_feature.append('WebRTCPlatformCodecsInGPUProcessEnabled')
         if not options.experimental_feature:
             options.experimental_feature = []
-        options.experimental_feature.append('WebRTCPlatformCodecsInGPUProcessEnabled')
+        options.experimental_feature.append('UseGPUProcessForDOMRenderingEnabled')
         options.experimental_feature.append('UseGPUProcessForWebGLEnabled')
         if options.result_report_flavor:
             raise RuntimeError('--use-gpu-process implicitly sets the result flavor, this should not be overridden')

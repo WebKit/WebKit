@@ -1,10 +1,15 @@
+CONSOLE MESSAGE: MainFrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderLayer: mouseEnteredContentArea
 CONSOLE MESSAGE: RenderLayer: mouseEnteredVerticalScrollbar
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderLayer: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderLayer: mouseIsDownInVerticalScrollbar
 CONSOLE MESSAGE: RenderLayer: mouseIsUpInVerticalScrollbar
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderLayer: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderLayer: mouseExitedVerticalScrollbar
+CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
 CONSOLE MESSAGE: RenderLayer: mouseExitedContentArea
 This is a scrollable div.
 

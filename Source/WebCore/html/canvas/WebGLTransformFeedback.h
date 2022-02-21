@@ -58,7 +58,7 @@ public:
     // These are the indexed bind points for transform feedback buffers.
     // Returns false if index is out of range and the caller should
     // synthesize a GL error.
-    void setBoundIndexedTransformFeedbackBuffer(const WTF::AbstractLocker&, GCGLuint index, WebGLBuffer*);
+    void setBoundIndexedTransformFeedbackBuffer(const AbstractLocker&, GCGLuint index, WebGLBuffer*);
     bool getBoundIndexedTransformFeedbackBuffer(GCGLuint index, WebGLBuffer** outBuffer);
     
     bool validateProgramForResume(WebGLProgram*) const;
@@ -67,7 +67,7 @@ public:
     void setHasEverBeenBound() { m_hasEverBeenBound = true; }
     
     WebGLProgram* program() const { return m_program.get(); }
-    void setProgram(const WTF::AbstractLocker&, WebGLProgram&);
+    void setProgram(const AbstractLocker&, WebGLProgram&);
     
     void unbindBuffer(const AbstractLocker&, WebGLBuffer&);
     
@@ -78,7 +78,7 @@ public:
 private:
     WebGLTransformFeedback(WebGL2RenderingContext&);
 
-    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
+    void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
     
     bool m_active { false };
     bool m_paused { false };

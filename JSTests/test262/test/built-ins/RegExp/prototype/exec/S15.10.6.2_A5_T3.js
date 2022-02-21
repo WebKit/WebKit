@@ -14,25 +14,11 @@ var __re = /(?:ab|cd)\d?/g;
 __re.lastIndex=-1;
 var __executed = __re.exec("aacd22 ");
 
-//CHECK#1
-if (__executed[0] !== "cd2") {
-	throw new Test262Error('#1: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=-1; __executed = __re.exec("aacd22 "); __executed[0] === "cd2"');
-}
-
-//CHECK#2
-if (__re.lastIndex !== 5) {
-	throw new Test262Error('#2: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=-1; __executed = __re.exec("aacd22 "); __re.lastIndex === 5. Actual: ' + (__re.lastIndex));
-}
+assert.sameValue(__executed[0], "cd2", 'The value of __executed[0] is expected to be "cd2"');
+assert.sameValue(__re.lastIndex, 5, 'The value of __re.lastIndex is expected to be 5');
 
 __re.lastIndex=-100;
 __executed = __re.exec("aacd22 ");
 
-//CHECK#3
-if (__executed[0] !== "cd2") {
-	throw new Test262Error('#3: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=-1; __executed = __re.exec("aacd22 "); __re.lastIndex=-100; __executed = __re.exec("aacd22 "); __executed[0] === "cd2"');
-}
-
-//CHECK#4
-if (__re.lastIndex !== 5) {
-	throw new Test262Error('#4: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=-1; __executed = __re.exec("aacd22 "); __re.lastIndex=-100; __executed = __re.exec("aacd22 "); __re.lastIndex === 5. Actual: ' + (__re.lastIndex));
-}
+assert.sameValue(__executed[0], "cd2", 'The value of __executed[0] is expected to be "cd2"');
+assert.sameValue(__re.lastIndex, 5, 'The value of __re.lastIndex is expected to be 5');

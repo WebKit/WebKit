@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import time
 
 from datetime import datetime
 from webkitcorepy import run, testing, LoggerCapture, OutputCapture
@@ -295,7 +296,6 @@ class TestGit(testing.PathTestCase):
                     git.commit(hash='bae5d1e9'),
                     git.commit(hash='1abe25b4'),
                     git.commit(hash='fff83bb2'),
-                    git.commit(hash='9b8311f2'),
                 ]), Commit.Encoder().default(list(git.commits(begin=dict(hash='9b8311f2'), end=dict(hash='bae5d1e9')))))
 
     def test_commits_branch(self):
@@ -306,7 +306,6 @@ class TestGit(testing.PathTestCase):
                     git.commit(hash='621652ad'),
                     git.commit(hash='a30ce849'),
                     git.commit(hash='fff83bb2'),
-                    git.commit(hash='9b8311f2'),
                 ]), Commit.Encoder().default(list(git.commits(begin=dict(argument='9b8311f2'), end=dict(argument='621652ad')))))
 
     def test_log(self):
@@ -317,32 +316,25 @@ class TestGit(testing.PathTestCase):
                 ], cwd=self.path, capture_output=True, encoding='utf-8').stdout,
                 '''commit d8bce26fa65c6fc8f39c17927abb77f69fab82fc
 Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: Sat Oct 03 03:46:40 2020 +0000
+AuthorDate: {time_a}
 Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: Sat Oct 03 03:46:40 2020 +0000
+CommitDate: {time_a}
 
     Patch Series
     git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
 commit bae5d1e90999d4f916a8a15810ccfa43f37a2fd6
 Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: Sat Oct 03 03:46:40 2020 +0000
+AuthorDate: {time_a}
 Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: Sat Oct 03 03:46:40 2020 +0000
+CommitDate: {time_a}
 
     8th commit
     git-svn-id: https://svn.example.org/repository/repository/trunk@8 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-commit 1abe25b443e985f93b90d830e4a7e3731336af4d
-Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: Sat Oct 03 02:23:20 2020 +0000
-Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: Sat Oct 03 02:23:20 2020 +0000
-
-    4th commit
-    git-svn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-'''
-            )
+'''.format(
+                time_a=datetime.utcfromtimestamp(1601668000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                time_b=datetime.utcfromtimestamp(1601663000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+            ))
 
     def test_branch_log(self):
         with mocks.local.Git(self.path, git_svn=True):
@@ -352,34 +344,28 @@ CommitDate: Sat Oct 03 02:23:20 2020 +0000
                 ], cwd=self.path, capture_output=True, encoding='utf-8').stdout,
                 '''commit 790725a6d79e28db2ecdde29548d2262c0bd059d
 Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: Sat Oct 03 03:30:00 2020 +0000
+AuthorDate: {time_a}
 Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: Sat Oct 03 03:30:00 2020 +0000
+CommitDate: {time_a}
 
     7th commit
     git-svn-id: https://svn.example.org/repository/repository/trunk@7 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
 commit 3cd32e352410565bb543821fbf856a6d3caad1c4
 Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: Sat Oct 03 02:40:00 2020 +0000
+AuthorDate: {time_b}
 Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: Sat Oct 03 02:40:00 2020 +0000
+CommitDate: {time_b}
 
     5th commit
         Cherry pick
         git-svn-id: https://svn.webkit.org/repository/webkit/trunk@6 268f45cc-cd09-0410-ab3c-d52691b4dbfc
     git-svn-id: https://svn.example.org/repository/repository/trunk@5 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-commit a30ce8494bf1ac2807a69844f726be4a9843ca55
-Author:     Jonathan Bedard <jbedard@apple.com>
-AuthorDate: Sat Oct 03 02:06:40 2020 +0000
-Commit:     Jonathan Bedard <jbedard@apple.com>
-CommitDate: Sat Oct 03 02:06:40 2020 +0000
-
-    3rd commit
-    git-svn-id: https://svn.example.org/repository/repository/trunk@3 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-'''
-            )
+'''.format(
+                time_a=datetime.utcfromtimestamp(1601667000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                time_b=datetime.utcfromtimestamp(1601664000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                time_c=datetime.utcfromtimestamp(1601662000 + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+            ))
 
     def test_cache(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
@@ -416,11 +402,25 @@ CommitDate: Sat Oct 03 02:06:40 2020 +0000
             self.assertEqual(repo.config()['remote.origin.url'], 'git@example.org:/mock/repository')
             self.assertEqual(repo.config()['svn-remote.svn.url'], 'https://svn.example.org/repository/webkit')
             self.assertEqual(repo.config()['svn-remote.svn.fetch'], 'trunk:refs/remotes/origin/main')
+            self.assertEqual(repo.config()['webkitscmpy.history'], 'when-user-owned')
 
     def test_global_config(self):
         with mocks.local.Git(self.path, git_svn=True), OutputCapture():
             self.assertEqual(local.Git.config()['user.name'], 'Tim Apple')
             self.assertEqual(local.Git.config()['sendemail.transferencoding'], 'base64')
+
+    def test_project_config(self):
+        with mocks.local.Git(self.path, git_svn=True):
+            project_config = os.path.join(self.path, local.Git.PROJECT_CONFIG_PATH)
+            os.mkdir(os.path.dirname(project_config))
+            with open(project_config, 'w') as f:
+                f.write('[webkitscmpy]\n')
+                f.write('    history = never\n')
+                f.write('    test = example\n')
+
+            repo = local.Git(self.path)
+            self.assertEqual(repo.config()['webkitscmpy.history'], 'never')
+            self.assertEqual(repo.config()['webkitscmpy.test'], 'example')
 
     def test_modified(self):
         with mocks.local.Git(self.path) as mrepo, OutputCapture():
@@ -469,6 +469,39 @@ CommitDate: Sat Oct 03 02:06:40 2020 +0000
 
             mrepo.staged['modified.txt'] = 'diff'
             self.assertEqual(repo.modified(staged=True), ['added.txt', 'modified.txt'])
+
+    def test_rebase(self):
+        with mocks.local.Git(self.path), OutputCapture():
+            repo = local.Git(self.path)
+            self.assertEqual(str(repo.commit(branch='branch-a')), '2.2@branch-a')
+            self.assertEqual(repo.rebase(target='main', base='main', head='branch-a', recommit=False), 0)
+            self.assertEqual(str(repo.commit(branch='branch-a')), '5.2@branch-a')
+
+    def test_diff_lines(self):
+        with mocks.local.Git(self.path), OutputCapture():
+            repo = local.Git(self.path)
+            self.assertEqual(
+                ['--- a/ChangeLog', '+++ b/ChangeLog', '@@ -1,0 +1,0 @@', '+ Patch Series'],
+                list(repo.diff_lines(base='bae5d1e90999d4f916a8a15810ccfa43f37a2fd6'))
+            )
+
+    def test_diff_lines_identifier(self):
+        with mocks.local.Git(self.path), OutputCapture():
+            repo = local.Git(self.path)
+            self.assertEqual(
+                ['--- a/ChangeLog', '+++ b/ChangeLog', '@@ -1,0 +1,0 @@', '+ 8th commit'],
+                list(repo.diff_lines(base='3@main', head='4@main'))
+            )
+
+    def test_pull(self):
+        with mocks.local.Git(self.path) as mocked, OutputCapture():
+            mocked.staged['added.txt'] = 'added'
+            self.assertEqual(local.Git(self.path).pull(rebase=True), 0)
+
+    def test_pull_no_stash(self):
+        with mocks.local.Git(self.path) as mocked, OutputCapture():
+            mocked.staged['added.txt'] = 'added'
+            self.assertEqual(local.Git(self.path).pull(), 128)
 
 
 class TestGitHub(testing.TestCase):
@@ -621,6 +654,15 @@ class TestGitHub(testing.TestCase):
                 git.commit(hash='fff83bb2'),
                 git.commit(hash='9b8311f2'),
             ]), Commit.Encoder().default(list(git.commits(begin=dict(argument='9b8311f2'), end=dict(argument='621652ad')))))
+
+    def test_commits_branch_ref(self):
+        self.maxDiff = None
+        with mocks.remote.GitHub():
+            git = remote.GitHub(self.remote)
+            self.assertEqual(
+                ['2.3@branch-b', '2.2@branch-b', '2.1@branch-b'],
+                [str(commit) for commit in git.commits(begin=dict(argument='a30ce849'), end=dict(argument='branch-b'))],
+            )
 
 
 class TestBitBucket(testing.TestCase):

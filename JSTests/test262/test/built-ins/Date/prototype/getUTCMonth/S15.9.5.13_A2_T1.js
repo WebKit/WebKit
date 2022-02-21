@@ -6,11 +6,14 @@ info: The "length" property of the "getUTCMonth" is 0
 esid: sec-date.prototype.getutcmonth
 description: The "length" property of the "getUTCMonth" is 0
 ---*/
+assert.sameValue(
+  Date.prototype.getUTCMonth.hasOwnProperty("length"),
+  true,
+  'Date.prototype.getUTCMonth.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.getUTCMonth.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The getUTCMonth has a "length" property');
-}
-
-if (Date.prototype.getUTCMonth.length !== 0) {
-  throw new Test262Error('#2: The "length" property of the getUTCMonth is 0');
-}
+assert.sameValue(
+  Date.prototype.getUTCMonth.length,
+  0,
+  'The value of Date.prototype.getUTCMonth.length is expected to be 0'
+);

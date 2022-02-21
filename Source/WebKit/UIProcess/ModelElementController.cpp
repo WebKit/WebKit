@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ModelElementController.h"
 
-#if HAVE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
 
 #include "WebPageProxy.h"
 

@@ -35,7 +35,7 @@ info: |
 ---*/
 
 
-var result = eval('class C {}/1/;;');
+var result = eval('class C {}/1/;');
 
 assert.sameValue(Object.getPrototypeOf(result), RegExp.prototype);
 assert.sameValue(result.flags, '');

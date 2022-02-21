@@ -80,7 +80,6 @@ void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instru
     // No uses.
     case op_new_regexp:
     case op_debug:
-    case op_jneq_ptr:
     case op_loop_hint:
     case op_jmp:
     case op_new_object:
@@ -135,6 +134,9 @@ void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instru
     USES(OpJnstricteq, lhs, rhs)
     USES(OpJbelow, lhs, rhs)
     USES(OpJbeloweq, lhs, rhs)
+    USES(OpJeqPtr, value, specialPointer)
+    USES(OpJneqPtr, value, specialPointer)
+
     USES(OpSetFunctionName, function, name)
     USES(OpLogShadowChickenTail, thisValue, scope)
 
@@ -365,6 +367,7 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const Instruction* instru
     case op_jneq_null:
     case op_jundefined_or_null:
     case op_jnundefined_or_null:
+    case op_jeq_ptr:
     case op_jneq_ptr:
     case op_jless:
     case op_jlesseq:

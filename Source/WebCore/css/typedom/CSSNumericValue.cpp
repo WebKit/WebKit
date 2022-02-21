@@ -30,6 +30,12 @@
 #include "config.h"
 #include "CSSNumericValue.h"
 
+#include "CSSMathSum.h"
+#include "CSSNumericFactory.h"
+#include "CSSNumericType.h"
+#include "CSSUnitValue.h"
+#include "ExceptionOr.h"
+
 #if ENABLE(CSS_TYPED_OM)
 
 #include <wtf/IsoMallocInlines.h>
@@ -37,6 +43,101 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSNumericValue);
+
+Ref<CSSNumericValue> CSSNumericValue::add(FixedVector<CSSNumberish>&& values)
+{
+    UNUSED_PARAM(values);
+    // FIXME: add impl.
+
+    return *this;
+}
+
+Ref<CSSNumericValue> CSSNumericValue::sub(FixedVector<CSSNumberish>&& values)
+{
+    UNUSED_PARAM(values);
+    // FIXME: add impl.
+
+    return *this;
+}
+
+Ref<CSSNumericValue> CSSNumericValue::mul(FixedVector<CSSNumberish>&& values)
+{
+    UNUSED_PARAM(values);
+    // FIXME: add impl.
+
+    return *this;
+}
+
+Ref<CSSNumericValue> CSSNumericValue::div(FixedVector<CSSNumberish>&& values)
+{
+    UNUSED_PARAM(values);
+    // FIXME: add impl.
+
+    return *this;
+}
+Ref<CSSNumericValue> CSSNumericValue::min(FixedVector<CSSNumberish>&& values)
+{
+    UNUSED_PARAM(values);
+    // FIXME: add impl.
+
+    return *this;
+}
+Ref<CSSNumericValue> CSSNumericValue::max(FixedVector<CSSNumberish>&& values)
+{
+    UNUSED_PARAM(values);
+    // FIXME: add impl.
+
+    return *this;
+}
+
+Ref<CSSNumericValue> CSSNumericValue::rectifyNumberish(CSSNumberish&& numberish)
+{
+    return WTF::switchOn(numberish, [](RefPtr<CSSNumericValue>& value) {
+        RELEASE_ASSERT(!!value);
+        return Ref<CSSNumericValue> { *value };
+    }, [](double value) {
+        return Ref<CSSNumericValue> { CSSNumericFactory::number(value) };
+    });
+}
+
+bool CSSNumericValue::equals(FixedVector<CSSNumberish>&& value)
+{
+    UNUSED_PARAM(value);
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-equals
+    // FIXME: add impl.
+    return false;
+}
+
+Ref<CSSUnitValue> CSSNumericValue::to(String&& unit)
+{
+    UNUSED_PARAM(unit);
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-to
+    // FIXME: add impl.
+    return CSSUnitValue::create(1.0, "number");
+}
+
+Ref<CSSMathSum> CSSNumericValue::toSum(FixedVector<String>&& units)
+{
+    UNUSED_PARAM(units);
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-tosum
+    // FIXME: add impl.
+    return CSSMathSum::create({ 1.0 });
+}
+
+CSSNumericType CSSNumericValue::type()
+{
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-type
+    // FIXME: add impl.
+    return CSSNumericType { };
+}
+
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
+{
+    UNUSED_PARAM(cssText);
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-parse
+    // FIXME: add impl.
+    return Exception { NotSupportedError, "Not implemented Error" };
+}
 
 } // namespace WebCore
 

@@ -25,12 +25,16 @@
 
 #pragma once
 
+#include "FetchOptions.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class Frame;
 class ResourceResponse;
 class ScriptExecutionContext;
+
+struct SecurityOriginData;
 
 // https://html.spec.whatwg.org/multipage/origin.html#embedder-policy-value
 enum class CrossOriginEmbedderPolicyValue : bool {
@@ -92,6 +96,8 @@ std::optional<CrossOriginEmbedderPolicy> CrossOriginEmbedderPolicy::decode(Decod
         WTFMove(*reportOnlyReportingEndpoint)
     }};
 }
+
+enum class COEPDisposition : bool { Reporting , Enforce };
 
 WEBCORE_EXPORT CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse&, const ScriptExecutionContext*);
 WEBCORE_EXPORT void addCrossOriginEmbedderPolicyHeaders(ResourceResponse&, const CrossOriginEmbedderPolicy&);

@@ -52,6 +52,7 @@ RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPri
     , m_logIdentifier(m_videoSource->logIdentifier())
 #endif
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
 }
 
 RealtimeOutgoingVideoSource::~RealtimeOutgoingVideoSource()
@@ -83,6 +84,8 @@ void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
     ASSERT(!m_videoSource->hasObserver(*this));
     m_videoSource = WTFMove(newSource);
 
+    ALWAYS_LOG(LOGIDENTIFIER, "track ", m_videoSource->logIdentifier());
+
     if (!m_areSinksAskingToApplyRotation)
         return;
     if (!m_videoSource->source().setShouldApplyRotation(true))
@@ -91,7 +94,7 @@ void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
 
 void RealtimeOutgoingVideoSource::applyRotation()
 {
-    ensureOnMainThread([this, protectedThis = makeRef(*this)] {
+    ensureOnMainThread([this, protectedThis = Ref { *this }] {
         if (m_areSinksAskingToApplyRotation)
             return;
 

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2021 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2022 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -33,38 +33,42 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames | OverridesPut;
 
     template<typename CellType, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
         static_assert(!CellType::needsDestruction, "");
-        return &vm.regExpObjectSpace;
+        return &vm.regExpObjectSpace();
     }
 
-    static constexpr uintptr_t lastIndexIsNotWritableFlag = 1;
+    static constexpr uintptr_t lastIndexIsNotWritableFlag = 0b01;
+    static constexpr uintptr_t legacyFeaturesDisabledFlag = 0b10;
+    static constexpr uintptr_t flagsMask = lastIndexIsNotWritableFlag | legacyFeaturesDisabledFlag;
+    static constexpr uintptr_t regExpMask = ~flagsMask;
 
-    static RegExpObject* create(VM& vm, Structure* structure, RegExp* regExp)
+    static RegExpObject* create(VM& vm, Structure* structure, RegExp* regExp, bool areLegacyFeaturesEnabled = true)
     {
-        RegExpObject* object = new (NotNull, allocateCell<RegExpObject>(vm.heap)) RegExpObject(vm, structure, regExp);
+        RegExpObject* object = new (NotNull, allocateCell<RegExpObject>(vm)) RegExpObject(vm, structure, regExp, areLegacyFeaturesEnabled);
         object->finishCreation(vm);
         return object;
     }
 
     static RegExpObject* create(VM& vm, Structure* structure, RegExp* regExp, JSValue lastIndex)
     {
-        auto* object = create(vm, structure, regExp);
+        static constexpr bool areLegacyFeaturesEnabled = true;
+        auto* object = create(vm, structure, regExp, areLegacyFeaturesEnabled);
         object->m_lastIndex.set(vm, object, lastIndex);
         return object;
     }
 
     void setRegExp(VM& vm, RegExp* regExp)
     {
-        uintptr_t result = (m_regExpAndLastIndexIsNotWritableFlag & lastIndexIsNotWritableFlag) | bitwise_cast<uintptr_t>(regExp);
-        m_regExpAndLastIndexIsNotWritableFlag = result;
-        vm.heap.writeBarrier(this, regExp);
+        uintptr_t result = (m_regExpAndFlags & flagsMask) | bitwise_cast<uintptr_t>(regExp);
+        m_regExpAndFlags = result;
+        vm.writeBarrier(this, regExp);
     }
 
     RegExp* regExp() const
     {
-        return bitwise_cast<RegExp*>(m_regExpAndLastIndexIsNotWritableFlag & (~lastIndexIsNotWritableFlag));
+        return bitwise_cast<RegExp*>(m_regExpAndFlags & regExpMask);
     }
 
     bool setLastIndex(JSGlobalObject* globalObject, size_t lastIndex)
@@ -112,9 +116,9 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(RegExpObjectType, StructureFlags), info());
     }
 
-    static ptrdiff_t offsetOfRegExpAndLastIndexIsNotWritableFlag()
+    static ptrdiff_t offsetOfRegExpAndFlags()
     {
-        return OBJECT_OFFSETOF(RegExpObject, m_regExpAndLastIndexIsNotWritableFlag);
+        return OBJECT_OFFSETOF(RegExpObject, m_regExpAndFlags);
     }
 
     static ptrdiff_t offsetOfLastIndex()
@@ -128,20 +132,22 @@ public:
         return sizeof(RegExpObject);
     }
 
+    bool areLegacyFeaturesEnabled() const { return !(m_regExpAndFlags & legacyFeaturesDisabledFlag); }
+
 private:
-    JS_EXPORT_PRIVATE RegExpObject(VM&, Structure*, RegExp*);
+    JS_EXPORT_PRIVATE RegExpObject(VM&, Structure*, RegExp*, bool areLegacyFeaturesEnabled);
     JS_EXPORT_PRIVATE void finishCreation(VM&);
 
     DECLARE_VISIT_CHILDREN;
 
     bool lastIndexIsWritable() const
     {
-        return !(m_regExpAndLastIndexIsNotWritableFlag & lastIndexIsNotWritableFlag);
+        return !(m_regExpAndFlags & lastIndexIsNotWritableFlag);
     }
 
     void setLastIndexIsNotWritable()
     {
-        m_regExpAndLastIndexIsNotWritableFlag = (m_regExpAndLastIndexIsNotWritableFlag | lastIndexIsNotWritableFlag);
+        m_regExpAndFlags = (m_regExpAndFlags | lastIndexIsNotWritableFlag);
     }
 
     JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
@@ -150,7 +156,7 @@ private:
 
     MatchResult matchInline(JSGlobalObject*, JSString*);
 
-    uintptr_t m_regExpAndLastIndexIsNotWritableFlag { 0 };
+    uintptr_t m_regExpAndFlags { 0 };
     WriteBarrier<Unknown> m_lastIndex;
 };
 

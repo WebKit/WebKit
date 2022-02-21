@@ -51,6 +51,9 @@ private:
     void scheduleTreeStateCommit() override;
 
     void willStartRenderingUpdate() final;
+    void didCompleteRenderingUpdate() final;
+
+    void hasNodeWithAnimatedScrollChanged(bool) final;
 };
 
 } // namespace WebCore

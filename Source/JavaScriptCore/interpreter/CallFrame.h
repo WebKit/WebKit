@@ -38,12 +38,18 @@ namespace JSC  {
     class JSCallee;
     class JSScope;
     class SourceOrigin;
+    class VirtualRegister;
 
     struct Instruction;
 
     class CallSiteIndex {
     public:
         CallSiteIndex() = default;
+
+        CallSiteIndex(WTF::HashTableDeletedValueType)
+            : m_bits(deletedValue().bits())
+        {
+        }
         
         explicit CallSiteIndex(BytecodeIndex bytecodeIndex)
             : m_bits(bytecodeIndex.offset())
@@ -57,13 +63,25 @@ namespace JSC  {
         explicit operator bool() const { return !!m_bits; }
         bool operator==(const CallSiteIndex& other) const { return m_bits == other.m_bits; }
 
+        unsigned hash() const { return intHash(m_bits); }
+        static CallSiteIndex deletedValue() { return fromBits(s_invalidIndex - 1); }
+        bool isHashTableDeletedValue() const { return *this == deletedValue(); }
+
         uint32_t bits() const { return m_bits; }
         static CallSiteIndex fromBits(uint32_t bits) { return CallSiteIndex(bits); }
 
         BytecodeIndex bytecodeIndex() const { return BytecodeIndex(bits()); }
 
     private:
-        uint32_t m_bits { BytecodeIndex().offset() };
+        static constexpr uint32_t s_invalidIndex = std::numeric_limits<uint32_t>::max();
+
+        uint32_t m_bits { s_invalidIndex };
+    };
+
+    struct CallSiteIndexHash {
+        static unsigned hash(const CallSiteIndex& key) { return key.hash(); }
+        static bool equal(const CallSiteIndex& a, const CallSiteIndex& b) { return a == b; }
+        static constexpr bool safeToCompareToEmptyOrDeleted = true;
     };
 
     class DisposableCallSiteIndex : public CallSiteIndex {
@@ -332,3 +350,15 @@ JS_EXPORT_PRIVATE bool isFromJSCode(void* returnAddress);
 
 
 } // namespace JSC
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<JSC::CallSiteIndex> : JSC::CallSiteIndexHash { };
+
+template<typename T> struct HashTraits;
+template<> struct HashTraits<JSC::CallSiteIndex> : SimpleClassHashTraits<JSC::CallSiteIndex> {
+    static constexpr bool emptyValueIsZero = false;
+};
+
+} // namespace WTF

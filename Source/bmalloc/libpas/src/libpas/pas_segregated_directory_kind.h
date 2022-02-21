@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,16 +34,13 @@ PAS_BEGIN_EXTERN_C;
    
        - directory
            - size directory
-               - global size directory
-               - biasing directory
            - shared page directory
    
    Only the types at the leaves are instantiable. The pas_segregated_directory_kind enum is for
    describing the instantiable leaves. */
 
 enum pas_segregated_directory_kind {
-    pas_segregated_global_size_directory_kind,
-    pas_segregated_biasing_directory_kind,
+    pas_segregated_size_directory_kind,
     pas_segregated_shared_page_directory_kind
 };
 
@@ -53,10 +50,8 @@ static inline const char* pas_segregated_directory_kind_get_string(
     pas_segregated_directory_kind kind)
 {
     switch (kind) {
-    case pas_segregated_global_size_directory_kind:
-        return "segregated_global_size_directory";
-    case pas_segregated_biasing_directory_kind:
-        return "segregated_biasing_directory";
+    case pas_segregated_size_directory_kind:
+        return "segregated_size_directory";
     case pas_segregated_shared_page_directory_kind:
         return "segregated_shared_page_directory";
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,12 @@
 #pragma once
 
 #include "FloatSize.h"
+#include "ScrollTypes.h"
 #include <wtf/Deque.h>
 
 namespace WebCore {
+
+class PlatformWheelEvent;
 
 class WheelEventDeltaFilter {
 public:
@@ -36,35 +39,34 @@ public:
     virtual ~WheelEventDeltaFilter();
 
     WEBCORE_EXPORT static std::unique_ptr<WheelEventDeltaFilter> create();
-    WEBCORE_EXPORT virtual void updateFromDelta(const FloatSize&) = 0;
-    WEBCORE_EXPORT virtual void beginFilteringDeltas() = 0;
-    WEBCORE_EXPORT virtual void endFilteringDeltas() = 0;
+
+    WEBCORE_EXPORT virtual void updateFromEvent(const PlatformWheelEvent&) = 0;
+
+    WEBCORE_EXPORT PlatformWheelEvent eventCopyWithFilteredDeltas(const PlatformWheelEvent&) const;
+    WEBCORE_EXPORT PlatformWheelEvent eventCopyWithVelocity(const PlatformWheelEvent&) const;
+
     WEBCORE_EXPORT FloatSize filteredVelocity() const;
-    WEBCORE_EXPORT bool isFilteringDeltas() const;
     WEBCORE_EXPORT FloatSize filteredDelta() const;
+
+    WEBCORE_EXPORT static bool shouldApplyFilteringForEvent(const PlatformWheelEvent&);
+    WEBCORE_EXPORT static bool shouldIncludeVelocityForEvent(const PlatformWheelEvent&);
 
 protected:
     FloatSize m_currentFilteredDelta;
     FloatSize m_currentFilteredVelocity;
-    bool m_isFilteringDeltas { false };
-};
-
-enum class DominantScrollGestureDirection {
-    None,
-    Vertical,
-    Horizontal
 };
 
 class BasicWheelEventDeltaFilter final : public WheelEventDeltaFilter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     BasicWheelEventDeltaFilter();
-    void updateFromDelta(const FloatSize&) override;
-    void beginFilteringDeltas() override;
-    void endFilteringDeltas() override;
+    void updateFromEvent(const PlatformWheelEvent&) final;
 
 private:
-    DominantScrollGestureDirection dominantScrollGestureDirection() const;
+    std::optional<ScrollEventAxis> dominantAxis() const;
+
+    void reset();
+    void updateWithDelta(FloatSize);
 
     Deque<FloatSize> m_recentWheelEventDeltas;
 };

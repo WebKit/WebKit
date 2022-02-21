@@ -47,10 +47,14 @@ static void runThreadMessageTest(unsigned numSenders, unsigned numMessages)
     for (unsigned senderID = 0; senderID < numSenders; ++senderID) {
         senderThreads[senderID] = Thread::create("ThreadMessage sender", [senderID, numMessages, receiverThread, &messagesRun, &handlersRun] () {
             for (unsigned i = 0; i < numMessages; ++i) {
-                auto result = sendMessage(*receiverThread.get(), [senderID, &handlersRun] (PlatformRegisters&) {
-                    handlersRun[senderID]++;
-                });
-                EXPECT_TRUE(result == WTF::MessageStatus::MessageRan);
+                WTF::MessageStatus status;
+                {
+                    ThreadSuspendLocker locker;
+                    status = sendMessage(locker, *receiverThread.get(), [senderID, &handlersRun] (PlatformRegisters&) {
+                        handlersRun[senderID]++;
+                    });
+                }
+                EXPECT_TRUE(status == WTF::MessageStatus::MessageRan);
                 messagesRun[senderID]++;
             }
         });

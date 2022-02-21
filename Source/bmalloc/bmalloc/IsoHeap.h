@@ -29,9 +29,6 @@
 #include "Mutex.h"
 
 #if BUSE(LIBPAS)
-#ifndef PAS_BMALLOC
-#define PAS_BMALLOC 1
-#endif
 #include "bmalloc_heap_ref.h"
 #endif
 
@@ -56,18 +53,19 @@ BEXPORT void* isoAllocate(pas_heap_ref& heapRef);
 BEXPORT void* isoTryAllocate(pas_heap_ref& heapRef);
 BEXPORT void isoDeallocate(void* ptr);
 
-template<typename Type>
+// The name "LibPasBmallocHeapType" is important for the pas_status_reporter to work right.
+template<typename LibPasBmallocHeapType>
 struct IsoHeap {
     constexpr IsoHeap(const char* = nullptr) { }
     
     void* allocate()
     {
-        return isoAllocate(heap);
+        return isoAllocate(provideHeap());
     }
     
     void* tryAllocate()
     {
-        return isoTryAllocate(heap);
+        return isoTryAllocate(provideHeap());
     }
     
     void deallocate(void* p)
@@ -87,8 +85,13 @@ struct IsoHeap {
     {
         return true;
     }
-    
-    pas_heap_ref heap { BMALLOC_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(sizeof(Type), alignof(Type)) };
+
+    static pas_heap_ref& provideHeap()
+    {
+        static const bmalloc_type type = BMALLOC_TYPE_INITIALIZER(sizeof(LibPasBmallocHeapType), alignof(LibPasBmallocHeapType), __PRETTY_FUNCTION__);
+        static pas_heap_ref heap = BMALLOC_HEAP_REF_INITIALIZER(&type);
+        return heap;
+    }
 };
 #else // BUSE(LIBPAS) -> so !BUSE(LIBPAS)
 template<typename Type>

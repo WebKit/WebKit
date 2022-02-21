@@ -25,12 +25,14 @@
 
 #pragma once
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 #include "DataReference.h"
 #include "MediaRecorderIdentifier.h"
 #include "MessageReceiver.h"
+#include "RemoteVideoFrameIdentifier.h"
 #include "SharedMemory.h"
+#include "SharedVideoFrame.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/MediaRecorderPrivateWriterCocoa.h>
 #include <wtf/MediaTime.h>
@@ -51,6 +53,7 @@ struct MediaRecorderPrivateOptions;
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
+class RemoteVideoFrameObjectHeap;
 class SharedRingBufferStorage;
 
 class RemoteMediaRecorder : private IPC::MessageReceiver {
@@ -71,11 +74,13 @@ private:
     // IPC::MessageReceiver
     void audioSamplesStorageChanged(const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
     void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
-    void videoSampleAvailable(WebCore::RemoteVideoSample&&);
+    void videoSampleAvailable(WebCore::RemoteVideoSample&&, std::optional<RemoteVideoFrameReadReference>);
     void fetchData(CompletionHandler<void(IPC::DataReference&&, double)>&&);
     void stopRecording(CompletionHandler<void()>&&);
     void pause(CompletionHandler<void()>&&);
     void resume(CompletionHandler<void()>&&);
+    void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
+    void setSharedVideoFrameMemory(const SharedMemory::IPCHandle&);
 
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
     MediaRecorderIdentifier m_identifier;
@@ -85,8 +90,11 @@ private:
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
     std::unique_ptr<WebCore::WebAudioBufferList> m_audioBufferList;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
+
+    SharedVideoFrameReader m_sharedVideoFrameReader;
+    Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
 };
 
 }
 
-#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)

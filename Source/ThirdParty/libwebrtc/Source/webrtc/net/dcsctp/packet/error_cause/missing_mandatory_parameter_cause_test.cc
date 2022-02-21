@@ -22,6 +22,7 @@
 namespace dcsctp {
 namespace {
 using ::testing::ElementsAre;
+using ::testing::IsEmpty;
 
 TEST(MissingMandatoryParameterCauseTest, SerializeAndDeserialize) {
   uint16_t parameter_types[] = {1, 2, 3};
@@ -35,6 +36,23 @@ TEST(MissingMandatoryParameterCauseTest, SerializeAndDeserialize) {
       MissingMandatoryParameterCause::Parse(serialized));
 
   EXPECT_THAT(deserialized.missing_parameter_types(), ElementsAre(1, 2, 3));
+}
+
+TEST(MissingMandatoryParameterCauseTest, HandlesDeserializeZeroParameters) {
+  uint8_t serialized[] = {0, 2, 0, 8, 0, 0, 0, 0};
+
+  ASSERT_HAS_VALUE_AND_ASSIGN(
+      MissingMandatoryParameterCause deserialized,
+      MissingMandatoryParameterCause::Parse(serialized));
+
+  EXPECT_THAT(deserialized.missing_parameter_types(), IsEmpty());
+}
+
+TEST(MissingMandatoryParameterCauseTest, HandlesOverflowParameterCount) {
+  // 0x80000004 * 2 = 2**32 + 8 -> if overflow, would validate correctly.
+  uint8_t serialized[] = {0, 2, 0, 8, 0x80, 0x00, 0x00, 0x04};
+
+  EXPECT_FALSE(MissingMandatoryParameterCause::Parse(serialized).has_value());
 }
 
 }  // namespace

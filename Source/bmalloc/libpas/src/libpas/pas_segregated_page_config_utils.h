@@ -39,24 +39,28 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_BASIC_SEGREGATED_NUM_ALLOC_BITS(min_align_shift, page_size) \
     ((page_size) >> (min_align_shift))
 
-#define PAS_BASIC_SEGREGATED_PAGE_HEADER_SIZE(min_align_shift, page_size, granule_size) \
+#define PAS_BASIC_SEGREGATED_PAGE_HEADER_SIZE_EXCLUSIVE(min_align_shift, page_size, granule_size) \
     PAS_SEGREGATED_PAGE_HEADER_SIZE( \
         PAS_BASIC_SEGREGATED_NUM_ALLOC_BITS((min_align_shift), (page_size)), \
         (page_size) / (granule_size))
 
-#define PAS_BASIC_SEGREGATED_PAYLOAD_OFFSET(min_align_shift, page_size, granule_size) \
-    PAS_BASIC_SEGREGATED_PAGE_HEADER_SIZE((min_align_shift), (page_size), (granule_size))
+#define PAS_BASIC_SEGREGATED_PAYLOAD_OFFSET_EXCLUSIVE(min_align_shift, page_size, granule_size) \
+    PAS_BASIC_SEGREGATED_PAGE_HEADER_SIZE_EXCLUSIVE((min_align_shift), (page_size), (granule_size))
 
-#define PAS_BASIC_SEGREGATED_PAYLOAD_SIZE(min_align_shift, page_size, granule_size) \
-    ((page_size) - PAS_BASIC_SEGREGATED_PAYLOAD_OFFSET((min_align_shift), (page_size), (granule_size)))
+#define PAS_BASIC_SEGREGATED_PAYLOAD_SIZE_EXCLUSIVE(min_align_shift, page_size, granule_size) \
+    ((page_size) - PAS_BASIC_SEGREGATED_PAYLOAD_OFFSET_EXCLUSIVE( \
+         (min_align_shift), (page_size), (granule_size)))
 
-static PAS_ALWAYS_INLINE void
-pas_segregated_page_config_verify_dealloc(uintptr_t begin,
-                                          pas_segregated_page_config config)
-{
-    if (PAS_UNLIKELY(!pas_segregated_page_is_allocated(begin, config)))
-        pas_deallocation_did_fail("Page bit not set", begin);
-}
+#define PAS_BASIC_SEGREGATED_PAGE_HEADER_SIZE_SHARED(min_align_shift, page_size, granule_size) \
+    PAS_SEGREGATED_PAGE_HEADER_SIZE( \
+        PAS_BASIC_SEGREGATED_NUM_ALLOC_BITS((min_align_shift), (page_size)), \
+        (page_size) / (granule_size))
+
+#define PAS_BASIC_SEGREGATED_PAYLOAD_OFFSET_SHARED(min_align_shift, page_size, granule_size) \
+    PAS_BASIC_SEGREGATED_PAGE_HEADER_SIZE_SHARED((min_align_shift), (page_size), (granule_size))
+
+#define PAS_BASIC_SEGREGATED_PAYLOAD_SIZE_SHARED(min_align_shift, page_size, granule_size) \
+    ((page_size) - PAS_BASIC_SEGREGATED_PAYLOAD_OFFSET_SHARED((min_align_shift), (page_size), (granule_size)))
 
 #define PAS_BASIC_SEGREGATED_PAGE_CONFIG_FORWARD_DECLARATIONS(name) \
     PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATION_DECLARATIONS(name ## _page_config); \
@@ -64,15 +68,10 @@ pas_segregated_page_config_verify_dealloc(uintptr_t begin,
     \
     PAS_API pas_segregated_shared_page_directory* \
     name ## _page_config_select_shared_page_directory( \
-        pas_segregated_heap* heap, pas_segregated_global_size_directory* directory); \
-    \
-    static PAS_ALWAYS_INLINE void \
-    name ## _dealloc_func(pas_thread_local_cache* cache, uintptr_t begin)
+        pas_segregated_heap* heap, pas_segregated_size_directory* directory); \
 
 typedef struct {
     pas_page_header_placement_mode header_placement_mode;
-    bool size_aware_logging;
-    bool verify_before_logging;
     pas_page_header_table* header_table; /* Even if we have multiple tables, this will have one,
                                             since we use this when we know which page config we
                                             are dealing with. */
@@ -87,32 +86,6 @@ typedef struct {
         .header_table = \
             ((pas_basic_segregated_page_config_declarations_arguments){__VA_ARGS__}) \
             .header_table); \
-    \
-    static PAS_ALWAYS_INLINE void \
-    name ## _dealloc_func(pas_thread_local_cache* cache, uintptr_t begin) \
-    { \
-        pas_segregated_page_config config = (config_value); \
-        pas_basic_segregated_page_config_declarations_arguments arguments = \
-            ((pas_basic_segregated_page_config_declarations_arguments){__VA_ARGS__}); \
-        \
-        PAS_ASSERT(config.base.is_enabled); \
-        \
-        if (arguments.verify_before_logging) { \
-            if (PAS_UNLIKELY(!pas_segregated_page_is_allocated(begin, config))) \
-                pas_deallocation_did_fail("Page bit not set", begin); \
-        } \
-        \
-        if (arguments.size_aware_logging) { \
-            pas_thread_local_cache_append_deallocation_with_size( \
-                cache, \
-                begin, \
-                pas_segregated_page_get_object_size_for_address_and_page_config(begin, config), \
-                config.kind); \
-            return; \
-        } \
-        \
-        pas_thread_local_cache_append_deallocation(cache, begin, config.kind); \
-    } \
     \
     struct pas_dummy
 

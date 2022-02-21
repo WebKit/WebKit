@@ -28,6 +28,7 @@
 
 #include "FloatSize.h"
 #include "IntPoint.h"
+#include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
 
 #if USE(CG)
@@ -42,11 +43,6 @@ typedef struct _NSPoint NSPoint;
 #endif
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(WIN)
-struct D2D_POINT_2F;
-typedef D2D_POINT_2F D2D1_POINT_2F;
-#endif
-
 namespace WTF {
 class TextStream;
 }
@@ -55,8 +51,8 @@ namespace WebCore {
 
 class AffineTransform;
 class TransformationMatrix;
-class IntPoint;
 class IntSize;
+class FloatRect;
 
 class FloatPoint {
     WTF_MAKE_FAST_ALLOCATED;
@@ -166,6 +162,8 @@ public:
     }
 
     WEBCORE_EXPORT FloatPoint constrainedBetween(const FloatPoint& min, const FloatPoint& max) const;
+    
+    WEBCORE_EXPORT FloatPoint constrainedWithin(const FloatRect&) const;
 
     FloatPoint shrunkTo(const FloatPoint& other) const
     {
@@ -190,11 +188,6 @@ public:
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     WEBCORE_EXPORT FloatPoint(const NSPoint&);
     WEBCORE_EXPORT operator NSPoint() const;
-#endif
-
-#if PLATFORM(WIN)
-    WEBCORE_EXPORT FloatPoint(const D2D1_POINT_2F&);
-    WEBCORE_EXPORT operator D2D1_POINT_2F() const;
 #endif
 
     WEBCORE_EXPORT FloatPoint matrixTransform(const TransformationMatrix&) const;
@@ -308,6 +301,11 @@ inline FloatPoint toFloatPoint(const FloatSize& a)
 inline bool areEssentiallyEqual(const FloatPoint& a, const FloatPoint& b)
 {
     return WTF::areEssentiallyEqual(a.x(), b.x()) && WTF::areEssentiallyEqual(a.y(), b.y());
+}
+
+inline void add(Hasher& hasher, const FloatPoint& point)
+{
+    add(hasher, point.x(), point.y());
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatPoint&);

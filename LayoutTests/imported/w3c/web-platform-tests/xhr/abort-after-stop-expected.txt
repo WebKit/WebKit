@@ -1,3 +1,0 @@
-
-FAIL XMLHttpRequest: abort event should fire when stop() method is used assert_equals: expected true but got false
-

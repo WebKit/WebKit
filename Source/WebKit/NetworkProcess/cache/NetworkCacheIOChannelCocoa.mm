@@ -96,7 +96,7 @@ IOChannel::~IOChannel()
     RELEASE_ASSERT(!m_wasDeleted.exchange(true));
 }
 
-void IOChannel::read(size_t offset, size_t size, WorkQueue& queue, Function<void (Data&, int error)>&& completionHandler)
+void IOChannel::read(size_t offset, size_t size, WTF::WorkQueueBase& queue, Function<void(Data&, int error)>&& completionHandler)
 {
     RefPtr<IOChannel> channel(this);
     bool didCallCompletionHandler = false;
@@ -111,7 +111,7 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue& queue, Function<void
     }).get());
 }
 
-void IOChannel::write(size_t offset, const Data& data, WorkQueue& queue, Function<void (int error)>&& completionHandler)
+void IOChannel::write(size_t offset, const Data& data, WTF::WorkQueueBase& queue, Function<void(int error)>&& completionHandler)
 {
     RefPtr<IOChannel> channel(this);
     auto dispatchData = data.dispatchData();

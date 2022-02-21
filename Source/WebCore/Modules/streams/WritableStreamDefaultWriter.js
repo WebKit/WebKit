@@ -27,6 +27,12 @@ function initializeWritableStreamDefaultWriter(stream)
 {
     "use strict";
 
+    // stream can be a WritableStream if WritableStreamDefaultWriter constructor is called directly from JS
+    // or an InternalWritableStream in other code paths.
+    const internalStream = @getInternalWritableStream(stream);
+    if (internalStream)
+        stream = internalStream;
+
     if (!@isWritableStream(stream))
         @throwTypeError("WritableStreamDefaultWriter constructor takes a WritableStream");
 

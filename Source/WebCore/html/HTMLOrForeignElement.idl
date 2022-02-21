@@ -28,13 +28,11 @@
 // https://github.com/whatwg/html/issues/4702
 interface mixin HTMLOrForeignElement {
     [SameObject] readonly attribute DOMStringMap dataset;
-    // FIXME: Implement 'nonce'.
-    // attribute DOMString nonce; // intentionally no [CEReactions]
+    attribute DOMString nonce; // intentionally no [CEReactions]
 
-    // FIXME: Implement 'autofocus'.
-    // [CEReactions] attribute boolean autofocus;
+    [CEReactions=NotNeeded, Reflect] attribute boolean autofocus;
     [CEReactions, ImplementedAs=tabIndexForBindings] attribute long tabIndex;
-    undefined focus(optional FocusOptions options);
+    [ImplementedAs=focusForBindings] undefined focus(optional FocusOptions options);
     undefined blur();
 };
 

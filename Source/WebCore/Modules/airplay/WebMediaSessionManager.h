@@ -58,7 +58,7 @@ public:
     WEBCORE_EXPORT void removePlaybackTargetPickerClient(WebMediaSessionManagerClient&, PlaybackTargetClientContextIdentifier);
     WEBCORE_EXPORT void removeAllPlaybackTargetPickerClients(WebMediaSessionManagerClient&);
     WEBCORE_EXPORT void showPlaybackTargetPicker(WebMediaSessionManagerClient&, PlaybackTargetClientContextIdentifier, const IntRect&, bool, bool);
-    WEBCORE_EXPORT void clientStateDidChange(WebMediaSessionManagerClient&, PlaybackTargetClientContextIdentifier, WebCore::MediaProducer::MediaStateFlags);
+    WEBCORE_EXPORT void clientStateDidChange(WebMediaSessionManagerClient&, PlaybackTargetClientContextIdentifier, WebCore::MediaProducerMediaStateFlags);
 
     bool alwaysOnLoggingAllowed() const;
 
@@ -75,9 +75,9 @@ private:
     WebCore::MediaPlaybackTargetPickerMock& mockPicker();
 
     // MediaPlaybackTargetPicker::Client
-    void setPlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&&) override;
-    void externalOutputDeviceAvailableDidChange(bool) override;
-    void playbackTargetPickerWasDismissed() override;
+    void setPlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&&) final;
+    void externalOutputDeviceAvailableDidChange(bool) final;
+    void playbackTargetPickerWasDismissed() final;
 
     size_t find(WebMediaSessionManagerClient*, PlaybackTargetClientContextIdentifier);
 
@@ -118,7 +118,7 @@ private:
     bool m_mockPickerEnabled { false };
 };
 
-String mediaProducerStateString(WebCore::MediaProducer::MediaStateFlags);
+String mediaProducerStateString(WebCore::MediaProducerMediaStateFlags);
 
 } // namespace WebCore
 
@@ -126,8 +126,8 @@ namespace WTF {
 
 template<typename> struct LogArgument;
 
-template<> struct LogArgument<WebCore::MediaProducer::MediaStateFlags> {
-    static String toString(WebCore::MediaProducer::MediaStateFlags flags) { return WebCore::mediaProducerStateString(flags); }
+template<> struct LogArgument<WebCore::MediaProducerMediaStateFlags> {
+    static String toString(WebCore::MediaProducerMediaStateFlags flags) { return WebCore::mediaProducerStateString(flags); }
 };
 
 } // namespace WTF

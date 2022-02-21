@@ -30,7 +30,7 @@
 #include <atomic>
 #include <wtf/Deque.h>
 #include <wtf/FunctionDispatcher.h>
-#include <wtf/HashSet.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
 
@@ -38,31 +38,35 @@ namespace IPC {
 
 class StreamConnectionWorkQueue final : public FunctionDispatcher {
 public:
+    static Ref<StreamConnectionWorkQueue> create(const char* name)
+    {
+        return adoptRef(*new StreamConnectionWorkQueue(name));
+    }
+
     StreamConnectionWorkQueue(const char*);
-    ~StreamConnectionWorkQueue() = default;
+    ~StreamConnectionWorkQueue();
     void addStreamConnection(StreamServerConnectionBase&);
     void removeStreamConnection(StreamServerConnectionBase&);
 
     void dispatch(WTF::Function<void()>&&) final;
-    void stop();
+    void stopAndWaitForCompletion();
 
     void wakeUp();
 
     Semaphore& wakeUpSemaphore();
 private:
-    void wakeUpProcessingThread();
+    void startProcessingThread() WTF_REQUIRES_LOCK(m_lock);
     void processStreams();
 
     const char* const m_name;
 
     Semaphore m_wakeUpSemaphore;
-    RefPtr<Thread> m_processingThread;
-
     std::atomic<bool> m_shouldQuit { false };
 
     Lock m_lock;
+    RefPtr<Thread> m_processingThread WTF_GUARDED_BY_LOCK(m_lock);
     Deque<Function<void()>> m_functions WTF_GUARDED_BY_LOCK(m_lock);
-    HashSet<Ref<StreamServerConnectionBase>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
+    HashCountedSet<Ref<StreamServerConnectionBase>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 }

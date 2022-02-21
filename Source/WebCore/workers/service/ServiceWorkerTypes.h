@@ -27,17 +27,17 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "DocumentIdentifier.h"
 #include "ProcessIdentifier.h"
+#include "ProcessQualified.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerIdentifier.h"
+#include <variant>
 #include <wtf/ObjectIdentifier.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 
 struct ServiceWorkerData;
 struct ServiceWorkerClientData;
-struct ServiceWorkerClientIdentifier;
 
 enum class ServiceWorkerRegistrationState : uint8_t {
     Installing = 0,
@@ -75,10 +75,10 @@ using SWServerToContextConnectionIdentifier = ObjectIdentifier<SWServerToContext
 using SWServerConnectionIdentifierType = ProcessIdentifierType;
 using SWServerConnectionIdentifier = ObjectIdentifier<SWServerConnectionIdentifierType>;
 
-using DocumentOrWorkerIdentifier = Variant<DocumentIdentifier, ServiceWorkerIdentifier>;
+using ServiceWorkerOrClientData = std::variant<ServiceWorkerData, ServiceWorkerClientData>;
 
-using ServiceWorkerOrClientData = Variant<ServiceWorkerData, ServiceWorkerClientData>;
-using ServiceWorkerOrClientIdentifier = Variant<ServiceWorkerIdentifier, ServiceWorkerClientIdentifier>;
+// FIXME: It should be possible to replace ServiceWorkerOrClientIdentifier with ScriptExecutionContextIdentifier entirely.
+using ServiceWorkerOrClientIdentifier = std::variant<ServiceWorkerIdentifier, ScriptExecutionContextIdentifier>;
 
 } // namespace WebCore
 

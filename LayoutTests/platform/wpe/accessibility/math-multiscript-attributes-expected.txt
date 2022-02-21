@@ -25,7 +25,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:mi, toolkit:WPEWebKit
+AXPlatformAttributes: tag:mi
 ------------
 AXRole: AXSubscript
 AXParent: AXSection
@@ -44,7 +44,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: multiscript-type:post, tag:mi, toolkit:WPEWebKit
+AXPlatformAttributes: multiscript-type:post, tag:mi
 ------------
 AXRole: AXSuperscript
 AXParent: AXSection
@@ -63,7 +63,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: multiscript-type:post, tag:mi, toolkit:WPEWebKit
+AXPlatformAttributes: multiscript-type:post, tag:mi
 ------------
 AXRole: AXSubscript
 AXParent: AXSection
@@ -82,7 +82,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: multiscript-type:pre, tag:mi, toolkit:WPEWebKit
+AXPlatformAttributes: multiscript-type:pre, tag:mi
 ------------
 AXRole: AXSuperscript
 AXParent: AXSection
@@ -101,7 +101,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: multiscript-type:pre, tag:mi, toolkit:WPEWebKit
+AXPlatformAttributes: multiscript-type:pre, tag:mi
 ------------
 
 PASS successfullyParsed is true

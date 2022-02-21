@@ -4,8 +4,8 @@
 #
 # Please think twice before you add or remove these rules.
 
-# This is a stripped down copy of Chromium's blacklist.txt, to enable
-# adding WebRTC-specific blacklist entries.
+# This is a stripped down copy of Chromium's ignorelist.txt, to enable
+# adding WebRTC-specific ignorelist entries.
 
 # Uninit in zlib. http://crbug.com/116277
 fun:*MOZ_Z_deflate*

@@ -25,7 +25,7 @@
 #import "config.h"
 #import "VideoSampleBufferCompressor.h"
 
-#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#if ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)
 
 #import "ContentType.h"
 #import "Logging.h"

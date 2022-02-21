@@ -59,6 +59,8 @@ public:
     void setY(Length y) { m_y = WTFMove(y); }
     const Length& y() const { return m_y; }
 
+    bool isZero() const { return m_x.isZero() && m_y.isZero(); }
+
 private:
     // FIXME: it would be nice to pack the two Lengths together better somehow (to avoid padding between them).
     Length m_x;

@@ -169,7 +169,7 @@ void RenderView::layout()
                 || box.style().logicalHeight().isPercentOrCalculated()
                 || box.style().logicalMinHeight().isPercentOrCalculated()
                 || box.style().logicalMaxHeight().isPercentOrCalculated()
-                || box.isSVGRoot()
+                || box.isSVGRootOrLegacySVGRoot()
                 )
                 box.setChildNeedsLayout(MarkOnlyThis);
         }
@@ -179,7 +179,7 @@ void RenderView::layout()
     if (!needsLayout())
         return;
 
-    LayoutStateMaintainer statePusher(*this, { }, false, m_pageLogicalSize.value_or(LayoutSize()).height(), m_pageLogicalHeightChanged);
+    LayoutStateMaintainer statePusher(*this, { }, false, valueOrDefault(m_pageLogicalSize).height(), m_pageLogicalHeightChanged);
 
     m_pageLogicalHeightChanged = false;
 
@@ -329,9 +329,14 @@ RenderElement* RenderView::rendererForRootBackground() const
     if (!is<HTMLHtmlElement>(documentRenderer.element()))
         return &documentRenderer;
 
+    if (shouldApplyAnyContainment(documentRenderer))
+        return nullptr;
+
     if (auto* body = document().body()) {
-        if (auto* renderer = body->renderer())
-            return renderer;
+        if (auto* renderer = body->renderer()) {
+            if (!shouldApplyAnyContainment(*renderer))
+                return renderer;
+        }
     }
     return &documentRenderer;
 }
@@ -394,7 +399,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     Element* documentElement = document().documentElement();
     if (RenderElement* rootRenderer = documentElement ? documentElement->renderer() : nullptr) {
         // The document element's renderer is currently forced to be a block, but may not always be.
-        RenderBox* rootBox = is<RenderBox>(*rootRenderer) ? downcast<RenderBox>(rootRenderer) : nullptr;
+        auto* rootBox = dynamicDowncast<RenderBox>(*rootRenderer);
         rootFillsViewport = rootBox && !rootBox->x() && !rootBox->y() && rootBox->width() >= width() && rootBox->height() >= height();
         rootObscuresBackground = rendererObscuresBackground(*rootRenderer);
     }
@@ -605,7 +610,7 @@ bool RenderView::shouldPaintBaseBackground() const
     if (!ownerElement)
         return !frameView.isTransparent();
 
-    if (ownerElement->hasTagName(frameTag))
+    if (ownerElement->hasTagName(HTMLNames::frameTag))
         return true;
 
     // Locate the <body> element using the DOM. This is easier than trying
@@ -697,9 +702,24 @@ float RenderView::zoomFactor() const
     return frameView().frame().pageZoomFactor();
 }
 
-IntSize RenderView::viewportSizeForCSSViewportUnits() const
+FloatSize RenderView::sizeForCSSSmallViewportUnits() const
 {
-    return frameView().viewportSizeForCSSViewportUnits();
+    return frameView().sizeForCSSSmallViewportUnits();
+}
+
+FloatSize RenderView::sizeForCSSLargeViewportUnits() const
+{
+    return frameView().sizeForCSSLargeViewportUnits();
+}
+
+FloatSize RenderView::sizeForCSSDynamicViewportUnits() const
+{
+    return frameView().sizeForCSSDynamicViewportUnits();
+}
+
+FloatSize RenderView::sizeForCSSDefaultViewportUnits() const
+{
+    return frameView().sizeForCSSDefaultViewportUnits();
 }
 
 Node* RenderView::nodeForHitTest() const
@@ -864,7 +884,7 @@ RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
     m_wasAccumulatingRepaintRegion = !!rootRenderView->m_accumulatedRepaintRegion;
     if (!m_wasAccumulatingRepaintRegion)
         rootRenderView->m_accumulatedRepaintRegion = makeUnique<Region>();
-    m_rootView = makeWeakPtr(*rootRenderView);
+    m_rootView = *rootRenderView;
 }
 
 RenderView::RepaintRegionAccumulator::~RepaintRegionAccumulator()
@@ -917,12 +937,12 @@ unsigned RenderView::pageCount() const
 void RenderView::layerChildrenChangedDuringStyleChange(RenderLayer& layer)
 {
     if (!m_styleChangeLayerMutationRoot) {
-        m_styleChangeLayerMutationRoot = makeWeakPtr(layer);
+        m_styleChangeLayerMutationRoot = layer;
         return;
     }
 
     RenderLayer* commonAncestor = m_styleChangeLayerMutationRoot->commonAncestorWithLayer(layer);
-    m_styleChangeLayerMutationRoot = makeWeakPtr(commonAncestor);
+    m_styleChangeLayerMutationRoot = commonAncestor;
 }
 
 RenderLayer* RenderView::takeStyleChangeLayerTreeMutationRoot()
@@ -940,6 +960,16 @@ void RenderView::registerBoxWithScrollSnapPositions(const RenderBox& box)
 void RenderView::unregisterBoxWithScrollSnapPositions(const RenderBox& box)
 {
     m_boxesWithScrollSnapPositions.remove(&box);
+}
+
+void RenderView::registerContainerQueryBox(const RenderBox& box)
+{
+    m_containerQueryBoxes.add(box);
+}
+
+void RenderView::unregisterContainerQueryBox(const RenderBox& box)
+{
+    m_containerQueryBoxes.remove(box);
 }
 
 } // namespace WebCore

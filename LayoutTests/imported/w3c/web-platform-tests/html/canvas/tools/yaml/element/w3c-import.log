@@ -14,9 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/color_space.yaml
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/compositing.yaml
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/conformance-requirements.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/drawing-images-to-the-canvas.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/drawing-rectangles-to-the-canvas.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/element/drawing-text-to-the-canvas.yaml

@@ -310,8 +310,8 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
     if (!container.parent() || (is<RenderBlockFlow>(container) && container.selfNeedsLayout()))
         return;
 
-    RenderInline* inlineContainer = is<RenderInline>(container) ? &downcast<RenderInline>(container) : nullptr;
-    LegacyInlineBox* firstBox = inlineContainer ? inlineContainer->firstLineBoxIncludingCulling() : firstLineBox();
+    auto* inlineContainer = dynamicDowncast<RenderInline>(container);
+    LegacyInlineBox* firstBox = inlineContainer ? inlineContainer->firstLineBox() : firstLineBox();
 
     // If we have no first line box, then just bail early.
     if (!firstBox) {
@@ -332,7 +332,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
         if (current->isFloatingOrOutOfFlowPositioned())
             continue;
 
-        if (current->isReplaced()) {
+        if (current->isReplacedOrInlineBlock()) {
             if (auto wrapper = downcast<RenderBox>(*current).inlineBoxWrapper())
                 box = &wrapper->root();
         } if (is<RenderLineBreak>(*current)) {
@@ -342,7 +342,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
             if (LegacyInlineTextBox* textBox = downcast<RenderText>(*current).lastTextBox())
                 box = &textBox->root();
         } else if (is<RenderInline>(*current)) {
-            LegacyInlineBox* lastSiblingBox = downcast<RenderInline>(*current).lastLineBoxIncludingCulling();
+            LegacyInlineBox* lastSiblingBox = downcast<RenderInline>(*current).lastLineBox();
             if (lastSiblingBox)
                 box = &lastSiblingBox->root();
         }
@@ -350,21 +350,8 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
         if (box)
             break;
     }
-    if (!box) {
-        if (inlineContainer && !inlineContainer->alwaysCreateLineBoxes()) {
-            // https://bugs.webkit.org/show_bug.cgi?id=60778
-            // We may have just removed a <br> with no line box that was our first child. In this case
-            // we won't find a previous sibling, but firstBox can be pointing to a following sibling.
-            // This isn't good enough, since we won't locate the root line box that encloses the removed
-            // <br>. We have to just over-invalidate a bit and go up to our parent.
-            if (!inlineContainer->ancestorLineBoxDirty()) {
-                inlineContainer->parent()->dirtyLinesFromChangedChild(*inlineContainer);
-                inlineContainer->setAncestorLineBoxDirty(); // Mark the container to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.
-            }
-            return;
-        }
+    if (!box)
         box = &firstBox->root();
-    }
 
     // If we found a line box, then dirty it.
     if (box) {
@@ -387,7 +374,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
             // Dedicated linebox for floats may be added as the last rootbox. If this occurs with BRs inside inlines that propagte their lineboxes to
             // the parent flow, we need to invalidate it explicitly.
             // FIXME: We should be able to figure out the actual "changed child" even when we are calling through empty inlines recursively.
-            if (is<RenderInline>(child) && !downcast<RenderInline>(child).firstLineBoxIncludingCulling()) {
+            if (is<RenderInline>(child) && !downcast<RenderInline>(child).firstLineBox()) {
                 auto* lastRootBox = nextBox->blockFlow().lastRootBox();
                 if (lastRootBox->isForTrailingFloats() && !lastRootBox->isDirty())
                     lastRootBox->markDirty();

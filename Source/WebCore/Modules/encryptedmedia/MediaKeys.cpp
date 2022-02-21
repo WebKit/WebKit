@@ -66,7 +66,7 @@ MediaKeys::MediaKeys(Document& document, bool useDistinctiveIdentifier, bool per
 #else
     UNUSED_PARAM(document);
 #endif
-    m_instance->setClient(makeWeakPtr(this));
+    m_instance->setClient(*this);
 }
 
 MediaKeys::~MediaKeys() = default;
@@ -100,7 +100,7 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(Document& document, M
     // 3. Let session be a new MediaKeySession object, and initialize it as follows:
     // NOTE: Continued in MediaKeySession.
     // 4. Return session.
-    auto session = MediaKeySession::create(document, makeWeakPtr(*this), sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), instanceSession.releaseNonNull());
+    auto session = MediaKeySession::create(document, *this, sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), instanceSession.releaseNonNull());
     INFO_LOG(identifier, "Created session");
     m_sessions.append(session.copyRef());
     return session;
@@ -135,7 +135,7 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
     // 5. Run the following steps in parallel:
 
     // 5.1. Use this object's cdm instance to process certificate.
-    m_instance->setServerCertificate(WTFMove(certificate), [this, protectedThis = makeRef(*this), promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto success) {
+    m_instance->setServerCertificate(WTFMove(certificate), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto success) {
         // 5.2. If the preceding step failed, resolve promise with a new DOMException whose name is the appropriate error name.
         // 5.1. [Else,] Resolve promise with true.
         if (success == CDMInstance::Failed) {
@@ -177,7 +177,7 @@ bool MediaKeys::hasOpenSessions() const
         });
 }
 
-void MediaKeys::unrequestedInitializationDataReceived(const String& initDataType, Ref<SharedBuffer>&& initData)
+void MediaKeys::unrequestedInitializationDataReceived(const String& initDataType, Ref<FragmentedSharedBuffer>&& initData)
 {
     for (auto& cdmClient : m_cdmClients)
         cdmClient.cdmClientUnrequestedInitializationDataReceived(initDataType, initData.copyRef());

@@ -44,11 +44,27 @@ DEFINE_STATIC_PER_PROCESS_STORAGE(DebugHeap);
 
 #if BOS(DARWIN)
 
+static bool shouldUseDefaultMallocZone()
+{
+    if (getenv("DEBUG_HEAP_USE_DEFAULT_ZONE"))
+        return true;
+
+    // The lite logging mode only intercepts allocations from the default zone.
+    const char* mallocStackLogging = getenv("MallocStackLogging");
+    if (mallocStackLogging && !strcmp(mallocStackLogging, "lite"))
+        return true;
+
+    return false;
+}
+
 DebugHeap::DebugHeap(const LockHolder&)
-    : m_zone(malloc_create_zone(0, 0))
+    : m_zone(malloc_default_zone())
     , m_pageSize(vmPageSize())
 {
-    malloc_set_zone_name(m_zone, "WebKit Using System Malloc");
+    if (!shouldUseDefaultMallocZone()) {
+        m_zone = malloc_create_zone(0, 0);
+        malloc_set_zone_name(m_zone, "WebKit Using System Malloc");
+    }
 }
 
 void* DebugHeap::malloc(size_t size, FailureAction action)
@@ -185,12 +201,49 @@ DebugHeap* DebugHeap::tryGetSlow()
 
 #if BENABLE(LIBPAS)
 
-// FIXME: Currently, we only use libpas for executable allocator. Thus libpas allocator is always enabled even when Malloc=1 is specified.
-// To make it work, we disable debug heap for libpas completely. We need additional code to enable libpas only for executable allocator when
-// Malloc=1 is specified when bmalloc is replaced with libpas.
+#if BUSE(LIBPAS)
 
-bool pas_debug_heap_is_enabled(void)
+using namespace bmalloc;
+
+bool pas_debug_heap_is_enabled(pas_heap_config_kind kind)
 {
+    switch (kind) {
+    case pas_heap_config_kind_bmalloc:
+        return !!DebugHeap::tryGet();
+    case pas_heap_config_kind_jit:
+    case pas_heap_config_kind_pas_utility:
+        return false;
+    default:
+        BCRASH();
+        return false;
+    }
+}
+
+void* pas_debug_heap_malloc(size_t size)
+{
+    return DebugHeap::getExisting()->malloc(size, FailureAction::ReturnNull);
+}
+
+void* pas_debug_heap_memalign(size_t alignment, size_t size)
+{
+    return DebugHeap::getExisting()->memalign(alignment, size, FailureAction::ReturnNull);
+}
+
+void* pas_debug_heap_realloc(void* ptr, size_t size)
+{
+    return DebugHeap::getExisting()->realloc(ptr, size, FailureAction::ReturnNull);
+}
+
+void pas_debug_heap_free(void* ptr)
+{
+    DebugHeap::getExisting()->free(ptr);
+}
+
+#else // BUSE(LIBPAS) -> so !BUSE(LIBPAS)
+
+bool pas_debug_heap_is_enabled(pas_heap_config_kind kind)
+{
+    BUNUSED_PARAM(kind);
     return false;
 }
 
@@ -225,6 +278,8 @@ void pas_debug_heap_free(void* ptr)
     RELEASE_BASSERT_NOT_REACHED();
 }
 #pragma clang diagnostic pop
+
+#endif // BUSE(LIBPAS) -> so end of !BUSE(LIBPAS)
 
 #endif // BENABLE(LIBPAS)
 

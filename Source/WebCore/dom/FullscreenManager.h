@@ -69,7 +69,7 @@ public:
         EnforceIFrameAllowFullscreenRequirement,
         ExemptIFrameAllowFullscreenRequirement,
     };
-    WEBCORE_EXPORT void requestFullscreenForElement(Element*, FullscreenCheckType);
+    WEBCORE_EXPORT void requestFullscreenForElement(Ref<Element>&&, FullscreenCheckType);
 
     WEBCORE_EXPORT bool willEnterFullscreen(Element&);
     WEBCORE_EXPORT bool didEnterFullscreen();
@@ -104,7 +104,7 @@ protected:
 
 private:
 #if !RELEASE_LOG_DISABLED
-    const WTF::Logger& logger() const { return m_document.logger(); }
+    const Logger& logger() const { return m_document.logger(); }
     const void* logIdentifier() const { return m_logIdentifier; }
     const char* logClassName() const { return "FullscreenManager"; }
     WTFLogChannel& logChannel() const;

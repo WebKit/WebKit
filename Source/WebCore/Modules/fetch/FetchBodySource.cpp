@@ -32,7 +32,7 @@
 namespace WebCore {
 
 FetchBodySource::FetchBodySource(FetchBodyOwner& bodyOwner)
-    : m_bodyOwner(makeWeakPtr(bodyOwner))
+    : m_bodyOwner(bodyOwner)
 {
 }
 

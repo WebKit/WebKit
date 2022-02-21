@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(RESIZE_OBSERVER)
-
 #include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
 #include <wtf/RefCounted.h>
@@ -46,5 +44,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(RESIZE_OBSERVER)

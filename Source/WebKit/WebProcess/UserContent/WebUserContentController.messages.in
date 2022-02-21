@@ -41,7 +41,7 @@ messages -> WebUserContentController {
     RemoveAllUserScriptMessageHandlers();
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    AddContentRuleLists(Vector<std::pair<String, WebKit::WebCompiledContentRuleListData>> contentFilters);
+    AddContentRuleLists(Vector<std::pair<WebKit::WebCompiledContentRuleListData, URL>> contentFilters);
     RemoveContentRuleList(String name);
     RemoveAllContentRuleLists();
 #endif

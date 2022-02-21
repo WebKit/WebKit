@@ -28,12 +28,6 @@
 
 #import <WebKitLegacy/WebHTMLView.h>
 
-#if !TARGET_OS_IPHONE
-#if !defined(ENABLE_NETSCAPE_PLUGIN_API)
-#define ENABLE_NETSCAPE_PLUGIN_API 1
-#endif
-#endif
-
 @class DOMDocumentFragment;
 @class DOMNode;
 @class DOMRange;
@@ -111,11 +105,6 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (void)_decreaseSelectionListLevel;
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard forType:(NSString *)pboardType inContext:(DOMRange *)context subresources:(NSArray **)subresources;
 
-#endif
-
-#if defined(ENABLE_NETSCAPE_PLUGIN_API) && ENABLE_NETSCAPE_PLUGIN_API
-- (void)_resumeNullEventsForAllNetscapePlugins;
-- (void)_pauseNullEventsForAllNetscapePlugins;
 #endif
 
 - (BOOL)_isUsingAcceleratedCompositing;

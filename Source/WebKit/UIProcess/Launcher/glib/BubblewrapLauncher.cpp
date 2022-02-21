@@ -20,35 +20,30 @@
 
 #if ENABLE(BUBBLEWRAP_SANDBOX)
 
+#include "XDGDBusProxy.h"
 #include <WebCore/PlatformDisplay.h>
 #include <fcntl.h>
 #include <glib.h>
 #include <seccomp.h>
 #include <sys/ioctl.h>
+#include <sys/mman.h>
 #include <unistd.h>
 #include <wtf/FileSystem.h>
 #include <wtf/UniStdExtras.h>
-#include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+
+#if !defined(MFD_ALLOW_SEALING) && HAVE(LINUX_MEMFD_H)
+#include <linux/memfd.h>
+#endif
+
+#include "Syscalls.h"
 
 #if PLATFORM(GTK)
 #include "WaylandCompositor.h"
 #endif
 
-#if PLATFORM(GTK)
-#define BASE_DIRECTORY "webkitgtk"
-#elif PLATFORM(WPE)
-#define BASE_DIRECTORY "wpe"
-#endif
-
-#include <sys/mman.h>
-
-#ifndef MFD_ALLOW_SEALING
-
-#if HAVE(LINUX_MEMFD_H)
-
-#include <linux/memfd.h>
+#if !defined(MFD_ALLOW_SEALING) && HAVE(LINUX_MEMFD_H)
 
 // These defines were added in glibc 2.27, the same release that added memfd_create.
 // But the kernel added all of this in Linux 3.17. So it's totally safe for us to
@@ -67,9 +62,7 @@ static int memfd_create(const char* name, unsigned flags)
 {
     return syscall(__NR_memfd_create, name, flags);
 }
-#endif // #if HAVE(LINUX_MEMFD_H)
-
-#endif // #ifndef MFD_ALLOW_SEALING
+#endif // #if !defined(MFD_ALLOW_SEALING) && HAVE(LINUX_MEMFD_H)
 
 namespace WebKit {
 using namespace WebCore;
@@ -110,8 +103,7 @@ static int createSealedMemFdWithData(const char* name, gconstpointer data, size_
     return fd;
 }
 
-static int
-argsToFd(const Vector<CString>& args, const char *name)
+int argumentsToFileDescriptor(const Vector<CString>& args, const char* name)
 {
     GString* buffer = g_string_new(nullptr);
 
@@ -130,6 +122,22 @@ argsToFd(const Vector<CString>& args, const char *name)
     return memfd;
 }
 
+static const char* applicationId(GError** error)
+{
+    GApplication* app = g_application_get_default();
+    if (!app) {
+        g_set_error_literal(error, G_IO_ERROR, G_IO_ERROR_INVALID_DATA, "GApplication is required.");
+        return nullptr;
+    }
+
+    const char* appID = g_application_get_application_id(app);
+    if (!appID) {
+        g_set_error_literal(error, G_IO_ERROR, G_IO_ERROR_INVALID_DATA, "GApplication must have a valid ID.");
+        return nullptr;
+    }
+    return appID;
+}
+
 static int createFlatpakInfo()
 {
     static NeverDestroyed<GUniquePtr<char>> data;
@@ -138,13 +146,10 @@ static int createFlatpakInfo()
     if (!data.get()) {
         // xdg-desktop-portal relates your name to certain permissions so we want
         // them to be application unique which is best done via GApplication.
-        GApplication* app = g_application_get_default();
-        if (!app)
-            g_error("GApplication is required for xdg-desktop-portal access in the WebKit sandbox.");
-
-        const char* appID = g_application_get_application_id(app);
+        GUniqueOutPtr<GError> error;
+        const char* appID = applicationId(&error.outPtr());
         if (!appID)
-            g_error("GApplication must have a valid ID for xdg-desktop-portal access in the WebKit sandbox.");
+            g_error("Unable to configure xdg-desktop-portal access in the WebKit sandbox: %s", error->message);
 
         GUniquePtr<GKeyFile> keyFile(g_key_file_new());
         g_key_file_set_string(keyFile.get(), "Application", "name", appID);
@@ -153,148 +158,6 @@ static int createFlatpakInfo()
 
     return createSealedMemFdWithData("flatpak-info", data->get(), size);
 }
-
-enum class DBusAddressType {
-    Normal,
-    Abstract,
-};
-
-class XDGDBusProxyLauncher {
-public:
-    void setAddress(const char* dbusAddress, DBusAddressType addressType)
-    {
-        CString dbusPath = dbusAddressToPath(dbusAddress, addressType);
-        if (dbusPath.isNull())
-            return;
-
-        GUniquePtr<char> appRunDir(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, nullptr));
-        m_proxyPath = makeProxyPath(appRunDir.get());
-
-        m_socket = dbusAddress;
-        m_path = WTFMove(dbusPath);
-    }
-
-    bool isRunning() const { return m_isRunning; };
-    const CString& path() const { return m_path; };
-    const CString& proxyPath() const { return m_proxyPath; };
-
-    void setPermissions(Vector<CString>&& permissions)
-    {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isRunning());
-        m_permissions = WTFMove(permissions);
-    };
-
-    void launch(bool enableLogging)
-    {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isRunning());
-
-        if (m_socket.isNull() || m_path.isNull() || m_proxyPath.isNull())
-            return;
-
-        int syncFds[2];
-        if (pipe(syncFds) == -1)
-            g_error("Failed to make syncfds for dbus-proxy: %s", g_strerror(errno));
-        setCloseOnExec(syncFds[0]);
-
-        GUniquePtr<char> syncFdStr(g_strdup_printf("--fd=%d", syncFds[1]));
-
-        Vector<CString> proxyArgs = {
-            m_socket, m_proxyPath,
-            "--filter",
-            syncFdStr.get(),
-        };
-
-        if (enableLogging)
-            proxyArgs.append("--log");
-
-        proxyArgs.appendVector(m_permissions);
-
-        int proxyFd = argsToFd(proxyArgs, "dbus-proxy");
-        GUniquePtr<char> proxyArgsStr(g_strdup_printf("--args=%d", proxyFd));
-
-        // We have to run xdg-dbus-proxy under bubblewrap because we need /.flatpak-info to exist in
-        // xdg-dbus-proxy's mount namespace. Portals may use this as a trusted way to get the
-        // sandboxed process's application ID, and will break if it's missing.
-        Vector<CString> args = {
-            DBUS_PROXY_EXECUTABLE,
-            proxyArgsStr.get(),
-        };
-
-        int nargs = args.size() + 1;
-        int i = 0;
-        char** argv = g_newa(char*, nargs);
-        for (const auto& arg : args)
-            argv[i++] = const_cast<char*>(arg.data());
-        argv[i] = nullptr;
-
-        GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
-        g_subprocess_launcher_take_fd(launcher.get(), proxyFd, proxyFd);
-        g_subprocess_launcher_take_fd(launcher.get(), syncFds[1], syncFds[1]);
-
-        // We are purposefully leaving syncFds[0] open here.
-        // xdg-dbus-proxy will exit() itself once that is closed on our exit
-
-        ProcessLauncher::LaunchOptions launchOptions;
-        launchOptions.processType = ProcessLauncher::ProcessType::DBusProxy;
-        GUniqueOutPtr<GError> error;
-        GRefPtr<GSubprocess> process = bubblewrapSpawn(launcher.get(), launchOptions, argv, &error.outPtr());
-        if (!process.get())
-            g_error("Failed to start dbus proxy: %s", error->message);
-
-        char out;
-        // We need to ensure the proxy has created the socket.
-        // FIXME: This is more blocking IO.
-        if (read(syncFds[0], &out, 1) != 1)
-            g_error("Failed to fully launch dbus-proxy %s", g_strerror(errno));
-
-        m_isRunning = true;
-    };
-
-private:
-    static CString makeProxyPath(const char* appRunDir)
-    {
-        if (g_mkdir_with_parents(appRunDir, 0700) == -1) {
-            g_warning("Failed to mkdir for dbus proxy (%s): %s", appRunDir, g_strerror(errno));
-            return { };
-        }
-
-        GUniquePtr<char> proxySocketTemplate(g_build_filename(appRunDir, "dbus-proxy-XXXXXX", nullptr));
-        int fd;
-        if ((fd = g_mkstemp(proxySocketTemplate.get())) == -1) {
-            g_warning("Failed to make socket file for dbus proxy: %s", g_strerror(errno));
-            return { };
-        }
-
-        close(fd);
-        return CString(proxySocketTemplate.get());
-    };
-
-    static CString dbusAddressToPath(const char* address, DBusAddressType addressType = DBusAddressType::Normal)
-    {
-        if (!address)
-            return { };
-
-        if (!g_str_has_prefix(address, "unix:"))
-            return { };
-
-        const char* path = strstr(address, addressType == DBusAddressType::Abstract ? "abstract=" : "path=");
-        if (!path)
-            return { };
-
-        path += strlen(addressType == DBusAddressType::Abstract ? "abstract=" : "path=");
-        const char* pathEnd = path;
-        while (*pathEnd && *pathEnd != ',')
-            pathEnd++;
-
-        return CString(path, pathEnd - path);
-}
-
-    CString m_socket;
-    CString m_path;
-    CString m_proxyPath;
-    bool m_isRunning;
-    Vector<CString> m_permissions;
-};
 
 enum class BindFlags {
     ReadOnly,
@@ -317,14 +180,13 @@ static void bindIfExists(Vector<CString>& args, const char* path, BindFlags bind
     args.appendVector(Vector<CString>({ bindType, path, path }));
 }
 
-static void bindDBusSession(Vector<CString>& args, XDGDBusProxyLauncher& proxy)
+static void bindDBusSession(Vector<CString>& args, bool allowPortals)
 {
-    if (!proxy.isRunning())
-        proxy.setAddress(g_getenv("DBUS_SESSION_BUS_ADDRESS"), DBusAddressType::Normal);
+    static std::unique_ptr<XDGDBusProxy> proxy = makeUnique<XDGDBusProxy>(XDGDBusProxy::Type::SessionBus, allowPortals);
 
-    if (proxy.proxyPath().data()) {
+    if (!proxy->proxyPath().isNull() && !proxy->path().isNull()) {
         args.appendVector(Vector<CString>({
-            "--bind", proxy.proxyPath(), proxy.path(),
+            "--bind", proxy->proxyPath(), proxy->path(),
         }));
     }
 }
@@ -461,60 +323,19 @@ static void bindGtkData(Vector<CString>& args)
     bindIfExists(args, themeHomeData.get());
     bindIfExists(args, iconHomeData.get());
 }
+#endif
 
+#if ENABLE(ACCESSIBILITY)
 static void bindA11y(Vector<CString>& args)
 {
-    static XDGDBusProxyLauncher proxy;
+    static std::unique_ptr<XDGDBusProxy> proxy = makeUnique<XDGDBusProxy>(XDGDBusProxy::Type::AccessibilityBus);
 
-    if (!proxy.isRunning()) {
-        // FIXME: Avoid blocking IO... (It is at least a one-time cost)
-        GRefPtr<GDBusConnection> sessionBus = adoptGRef(g_bus_get_sync(G_BUS_TYPE_SESSION, nullptr, nullptr));
-        if (!sessionBus.get())
-            return;
-
-        GRefPtr<GDBusMessage> msg = adoptGRef(g_dbus_message_new_method_call(
-            "org.a11y.Bus", "/org/a11y/bus", "org.a11y.Bus", "GetAddress"));
-        g_dbus_message_set_body(msg.get(), g_variant_new("()"));
-        GRefPtr<GDBusMessage> reply = adoptGRef(g_dbus_connection_send_message_with_reply_sync(
-            sessionBus.get(), msg.get(),
-            G_DBUS_SEND_MESSAGE_FLAGS_NONE,
-            30000,
-            nullptr,
-            nullptr,
-            nullptr));
-
-        if (reply.get()) {
-            GUniqueOutPtr<GError> error;
-            if (g_dbus_message_to_gerror(reply.get(), &error.outPtr())) {
-                if (!g_error_matches(error.get(), G_DBUS_ERROR, G_DBUS_ERROR_SERVICE_UNKNOWN))
-                    g_warning("Can't find a11y bus: %s", error->message);
-            } else {
-                GUniqueOutPtr<char> a11yAddress;
-                g_variant_get(g_dbus_message_get_body(reply.get()), "(s)", &a11yAddress.outPtr());
-                proxy.setAddress(a11yAddress.get(), DBusAddressType::Abstract);
-            }
-        }
-
-        proxy.setPermissions({
-            "--sloppy-names",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Embed@/org/a11y/atspi/accessible/root",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Unembed@/org/a11y/atspi/accessible/root",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.Registry.GetRegisteredEvents@/org/a11y/atspi/registry",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.GetKeystrokeListeners@/org/a11y/atspi/registry/deviceeventcontroller",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.GetDeviceEventListeners@/org/a11y/atspi/registry/deviceeventcontroller",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersSync@/org/a11y/atspi/registry/deviceeventcontroller",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersAsync@/org/a11y/atspi/registry/deviceeventcontroller",
-        });
-
-        proxy.launch(!g_strcmp0(g_getenv("WEBKIT_ENABLE_A11Y_DBUS_PROXY_LOGGING"), "1"));
-    }
-
-    if (proxy.proxyPath().data()) {
-        GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", proxy.proxyPath().data()));
-        args.appendVector(Vector<CString>({
-            "--ro-bind", proxy.proxyPath(), proxy.proxyPath(),
+    if (!proxy->proxyPath().isNull()) {
+        GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", proxy->proxyPath().data()));
+        args.appendVector(Vector<CString> {
+            "--ro-bind", proxy->proxyPath(), proxy->proxyPath(),
             "--setenv", "AT_SPI_BUS_ADDRESS", proxyAddress.get(),
-        }));
+        });
     }
 }
 #endif
@@ -600,6 +421,28 @@ static void bindSymlinksRealPath(Vector<CString>& args, const char* path)
     }
 }
 
+// Translate a libseccomp error code into an error message. libseccomp
+// mostly returns negative errno values such as -ENOMEM, but some
+// standard errno values are used for non-standard purposes where their
+// strerror() would be misleading.
+static const char* seccompStrerror(int negativeErrno)
+{
+    RELEASE_ASSERT_WITH_MESSAGE(negativeErrno < 0, "Non-negative error value from libseccomp?");
+    RELEASE_ASSERT_WITH_MESSAGE(negativeErrno > INT_MIN, "Out of range error value from libseccomp?");
+
+    switch (negativeErrno) {
+    case -EDOM:
+        return "Architecture-specific failure";
+    case -EFAULT:
+        return "Internal libseccomp failure (unknown syscall?)";
+    case -ECANCELED:
+        return "System failure beyond the control of libseccomp";
+    }
+
+    // e.g. -ENOMEM: the result of strerror() is good enough
+    return g_strerror(-negativeErrno);
+}
+
 static int setupSeccomp()
 {
     // NOTE: This is shared code (flatpak-run.c - LGPLv2.1+)
@@ -627,6 +470,10 @@ static int setupSeccomp()
     //    in common/flatpak-run.c
     //  https://git.gnome.org/browse/linux-user-chroot
     //    in src/setup-seccomp.c
+    //
+    // Other useful resources:
+    // https://github.com/systemd/systemd/blob/HEAD/src/shared/seccomp-util.c
+    // https://github.com/moby/moby/blob/HEAD/profiles/seccomp/default.json
 
 #if defined(__s390__) || defined(__s390x__) || defined(__CRIS__)
     // Architectures with CONFIG_CLONE_BACKWARDS2: the child stack
@@ -640,47 +487,70 @@ static int setupSeccomp()
     struct scmp_arg_cmp ttyArg = SCMP_A1(SCMP_CMP_MASKED_EQ, 0xFFFFFFFFu, TIOCSTI);
     struct {
         int scall;
+        int errnum;
         struct scmp_arg_cmp* arg;
     } syscallBlockList[] = {
         // Block dmesg
-        { SCMP_SYS(syslog), nullptr },
+        { SCMP_SYS(syslog), EPERM, nullptr },
         // Useless old syscall.
-        { SCMP_SYS(uselib), nullptr },
+        { SCMP_SYS(uselib), EPERM, nullptr },
         // Don't allow disabling accounting.
-        { SCMP_SYS(acct), nullptr },
+        { SCMP_SYS(acct), EPERM, nullptr },
         // 16-bit code is unnecessary in the sandbox, and modify_ldt is a
         // historic source of interesting information leaks.
-        { SCMP_SYS(modify_ldt), nullptr },
+        { SCMP_SYS(modify_ldt), EPERM, nullptr },
         // Don't allow reading current quota use.
-        { SCMP_SYS(quotactl), nullptr },
+        { SCMP_SYS(quotactl), EPERM, nullptr },
 
         // Don't allow access to the kernel keyring.
-        { SCMP_SYS(add_key), nullptr },
-        { SCMP_SYS(keyctl), nullptr },
-        { SCMP_SYS(request_key), nullptr },
+        { SCMP_SYS(add_key), EPERM, nullptr },
+        { SCMP_SYS(keyctl), EPERM, nullptr },
+        { SCMP_SYS(request_key), EPERM, nullptr },
 
         // Scary VM/NUMA ops 
-        { SCMP_SYS(move_pages), nullptr },
-        { SCMP_SYS(mbind), nullptr },
-        { SCMP_SYS(get_mempolicy), nullptr },
-        { SCMP_SYS(set_mempolicy), nullptr },
-        { SCMP_SYS(migrate_pages), nullptr },
+        { SCMP_SYS(move_pages), EPERM, nullptr },
+        { SCMP_SYS(mbind), EPERM, nullptr },
+        { SCMP_SYS(get_mempolicy), EPERM, nullptr },
+        { SCMP_SYS(set_mempolicy), EPERM, nullptr },
+        { SCMP_SYS(migrate_pages), EPERM, nullptr },
 
         // Don't allow subnamespace setups:
-        { SCMP_SYS(unshare), nullptr },
-        { SCMP_SYS(mount), nullptr },
-        { SCMP_SYS(pivot_root), nullptr },
-        { SCMP_SYS(clone), &cloneArg },
+        { SCMP_SYS(unshare), EPERM, nullptr },
+        { SCMP_SYS(setns), EPERM, nullptr },
+        { SCMP_SYS(mount), EPERM, nullptr },
+        { SCMP_SYS(umount), EPERM, nullptr },
+        { SCMP_SYS(umount2), EPERM, nullptr },
+        { SCMP_SYS(pivot_root), EPERM, nullptr },
+        { SCMP_SYS(chroot), EPERM, nullptr },
+        { SCMP_SYS(clone), EPERM, &cloneArg },
 
         // Don't allow faking input to the controlling tty (CVE-2017-5226)
-        { SCMP_SYS(ioctl), &ttyArg },
+        { SCMP_SYS(ioctl), EPERM, &ttyArg },
+
+        // seccomp can't look into clone3()'s struct clone_args to check whether
+        // the flags are OK, so we have no choice but to block clone3().
+        // Return ENOSYS so user-space will fall back to clone().
+        // (GHSA-67h7-w3jq-vh4q; see also https://github.com/moby/moby/commit/9f6b562d)
+        { SCMP_SYS(clone3), ENOSYS, nullptr },
+
+        // New mount manipulation APIs can also change our VFS. There's no
+        // legitimate reason to do these in the sandbox, so block all of them
+        // rather than thinking about which ones might be dangerous.
+        // (GHSA-67h7-w3jq-vh4q)
+        { SCMP_SYS(open_tree), ENOSYS, nullptr },
+        { SCMP_SYS(move_mount), ENOSYS, nullptr },
+        { SCMP_SYS(fsopen), ENOSYS, nullptr },
+        { SCMP_SYS(fsconfig), ENOSYS, nullptr },
+        { SCMP_SYS(fsmount), ENOSYS, nullptr },
+        { SCMP_SYS(fspick), ENOSYS, nullptr },
+        { SCMP_SYS(mount_setattr), ENOSYS, nullptr },
 
         // Profiling operations; we expect these to be done by tools from outside
         // the sandbox. In particular perf has been the source of many CVEs.
-        { SCMP_SYS(perf_event_open), nullptr },
+        { SCMP_SYS(perf_event_open), EPERM, nullptr },
         // Don't allow you to switch to bsd emulation or whatnot.
-        { SCMP_SYS(personality), nullptr },
-        { SCMP_SYS(ptrace), nullptr }
+        { SCMP_SYS(personality), EPERM, nullptr },
+        { SCMP_SYS(ptrace), EPERM, nullptr }
     };
 
     scmp_filter_ctx seccomp = seccomp_init(SCMP_ACT_ALLOW);
@@ -688,29 +558,28 @@ static int setupSeccomp()
         g_error("Failed to init seccomp");
 
     for (auto& rule : syscallBlockList) {
-        int scall = rule.scall;
         int r;
         if (rule.arg)
-            r = seccomp_rule_add(seccomp, SCMP_ACT_ERRNO(EPERM), scall, 1, *rule.arg);
+            r = seccomp_rule_add(seccomp, SCMP_ACT_ERRNO(rule.errnum), rule.scall, 1, *rule.arg);
         else
-            r = seccomp_rule_add(seccomp, SCMP_ACT_ERRNO(EPERM), scall, 0);
-        if (r == -EFAULT) {
-            seccomp_release(seccomp);
-            g_error("Failed to add seccomp rule");
-        }
+            r = seccomp_rule_add(seccomp, SCMP_ACT_ERRNO(rule.errnum), rule.scall, 0);
+        // EFAULT means "internal libseccomp error", but in practice we get
+        // this for syscall numbers added via Syscalls.h (flatpak-syscalls-private.h)
+        // when trying to filter them on a non-native architecture, because
+        // libseccomp cannot map the syscall number to a name and back to a
+        // number for the non-native architecture.
+        if (r == -EFAULT)
+            g_info("Unable to block syscall %d: syscall not known to libseccomp?", rule.scall);
+        else if (r < 0)
+            g_error("Failed to block syscall %d: %s", rule.scall, seccompStrerror(r));
     }
 
     int tmpfd = memfd_create("seccomp-bpf", 0);
-    if (tmpfd == -1) {
-        seccomp_release(seccomp);
+    if (tmpfd == -1)
         g_error("Failed to create memfd: %s", g_strerror(errno));
-    }
 
-    if (seccomp_export_bpf(seccomp, tmpfd)) {
-        seccomp_release(seccomp);
-        close(tmpfd);
-        g_error("Failed to export seccomp bpf");
-    }
+    if (int r = seccomp_export_bpf(seccomp, tmpfd))
+        g_error("Failed to export seccomp bpf: %s", seccompStrerror(r));
 
     if (lseek(tmpfd, 0, SEEK_SET) < 0)
         g_error("lseek failed: %s", g_strerror(errno));
@@ -740,6 +609,16 @@ static bool shouldUnshareNetwork(ProcessLauncher::ProcessType processType)
     // Otherwise, only the network process should have network access. If we are the network
     // process, then we are not sandboxed and have already bailed out before this point.
     return true;
+}
+
+static void addExtraPaths(const HashMap<CString, SandboxPermission>& paths, Vector<CString>& args)
+{
+    for (const auto& pathAndPermission : paths) {
+        args.appendVector(Vector<CString>({
+            pathAndPermission.value == SandboxPermission::ReadOnly ? "--ro-bind-try": "--bind-try",
+            pathAndPermission.key, pathAndPermission.key
+        }));
+    }
 }
 
 GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const ProcessLauncher::LaunchOptions& launchOptions, char** argv, GError **error)
@@ -806,6 +685,8 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
             // is where we mount our proxy socket.
             "--bind", runDir, runDir,
         }));
+
+        addExtraPaths(launchOptions.extraSandboxPaths, sandboxArgs);
     }
 
     if (shouldUnshareNetwork(launchOptions.processType))
@@ -841,8 +722,6 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     }
 
     if (launchOptions.processType == ProcessLauncher::ProcessType::Web) {
-        static XDGDBusProxyLauncher proxy;
-
 #if PLATFORM(WAYLAND) && USE(EGL)
         if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
             bindWayland(sandboxArgs);
@@ -854,12 +733,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
             bindX11(sandboxArgs);
 #endif
 
-        for (const auto& pathAndPermission : launchOptions.extraWebProcessSandboxPaths) {
-            sandboxArgs.appendVector(Vector<CString>({
-                pathAndPermission.value == SandboxPermission::ReadOnly ? "--ro-bind-try": "--bind-try",
-                pathAndPermission.key, pathAndPermission.key
-            }));
-        }
+        addExtraPaths(launchOptions.extraSandboxPaths, sandboxArgs);
 
         Vector<String> extraPaths = { "applicationCacheDirectory", "mediaKeysDirectory", "waylandSocket", "webSQLDatabaseDirectory" };
         for (const auto& path : extraPaths) {
@@ -868,7 +742,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
                 sandboxArgs.appendVector(Vector<CString>({ "--bind-try", extraPath.utf8(), extraPath.utf8() }));
         }
 
-        bindDBusSession(sandboxArgs, proxy);
+        bindDBusSession(sandboxArgs, flatpakInfoFd != -1);
         // FIXME: We should move to Pipewire as soon as viable, Pulse doesn't restrict clients atm.
         bindPulse(sandboxArgs);
         bindSndio(sandboxArgs);
@@ -877,23 +751,12 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         bindOpenGL(sandboxArgs);
         // FIXME: This is also fixed by Pipewire once in use.
         bindV4l(sandboxArgs);
-#if PLATFORM(GTK)
+#if ENABLE(ACCESSIBILITY)
         bindA11y(sandboxArgs);
+#endif
+#if PLATFORM(GTK)
         bindGtkData(sandboxArgs);
 #endif
-
-        if (!proxy.isRunning()) {
-            Vector<CString> permissions = {
-                // GStreamers plugin install helper.
-                "--call=org.freedesktop.PackageKit=org.freedesktop.PackageKit.Modify2.InstallGStreamerResources@/org/freedesktop/PackageKit"
-            };
-            if (flatpakInfoFd != -1) {
-                // xdg-desktop-portal used by GTK and us.
-                permissions.append("--talk=org.freedesktop.portal.Desktop");
-            }
-            proxy.setPermissions(WTFMove(permissions));
-            proxy.launch(!g_strcmp0(g_getenv("WEBKIT_ENABLE_DBUS_PROXY_LOGGING"), "1"));
-        }
     } else {
         // Only X11 users need this for XShm which is only the Web process.
         sandboxArgs.append("--unshare-ipc");
@@ -906,7 +769,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         bindIfExists(sandboxArgs, parentDir.utf8().data());
     }
 
-    CString executablePath = getCurrentExecutablePath();
+    CString executablePath = FileSystem::currentExecutablePath();
     if (!executablePath.isNull()) {
         // Our executable is `/foo/bar/bin/Process`, we want `/foo/bar` as a usable prefix
         String parentDir = FileSystem::parentPath(FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(executablePath.data())));
@@ -919,7 +782,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     g_subprocess_launcher_take_fd(launcher, seccompFd, seccompFd);
     sandboxArgs.appendVector(Vector<CString>({ "--seccomp", fdStr.get() }));
 
-    int bwrapFd = argsToFd(sandboxArgs, "bwrap");
+    int bwrapFd = argumentsToFileDescriptor(sandboxArgs, "bwrap");
     GUniquePtr<char> bwrapFdStr(g_strdup_printf("%d", bwrapFd));
     g_subprocess_launcher_take_fd(launcher, bwrapFd, bwrapFd);
 

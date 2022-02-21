@@ -1,24 +1,24 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x115
-  RenderBlock {HTML} at (0,0) size 800x115
-    RenderBody {BODY} at (8,8) size 784x99
-      RenderBlock {DIV} at (0,0) size 784x18
-        RenderInline {A} at (0,0) size 63x17 [color=#0000EE]
+  RenderBlock {html} at (0,0) size 800x115
+    RenderBody {body} at (8,8) size 784x99
+      RenderBlock {div} at (0,0) size 784x18
+        RenderInline {a} at (0,0) size 63x17 [color=#0000EE]
           RenderText {#text} at (0,0) size 63x17
             text run at (0,0) width 63: "Bug 6584"
         RenderText {#text} at (63,0) size 374x17
           text run at (63,0) width 374: " REGRESSION: button after unclosed button gives trouble"
-      RenderBlock {P} at (0,34) size 784x31
-        RenderButton {BUTTON} at (2,2) size 41x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 25x18
-            RenderText {#text} at (0,0) size 25x17
-              text run at (0,0) width 25: "test"
-        RenderButton {BUTTON} at (47,2) size 50x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderBlock {p} at (0,34) size 784x31
+        RenderButton {button} at (2,16) size 16x9 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderText {#text} at (20,6) size 29x17
+          text run at (20,6) width 4: " "
+          text run at (24,6) width 25: "test "
+        RenderButton {button} at (51,2) size 50x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 34x18
             RenderText {#text} at (0,0) size 34x17
               text run at (0,0) width 34: "test2"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,81) size 784x18
+      RenderBlock {div} at (0,81) size 784x18
         RenderText {#text} at (0,0) size 602x17
           text run at (0,0) width 602: "There should be two separate buttons instead of button \"test2\" being nested inside button \"test\"."

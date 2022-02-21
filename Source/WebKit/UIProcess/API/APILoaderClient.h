@@ -26,7 +26,6 @@
 #pragma once
 
 #include "APIData.h"
-#include "PluginModuleInfo.h"
 #include "SameDocumentNavigationType.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/LayoutMilestone.h>

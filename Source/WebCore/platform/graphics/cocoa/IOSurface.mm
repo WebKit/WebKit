@@ -34,8 +34,8 @@
 #import "ImageBuffer.h"
 #import "Logging.h"
 #import "PlatformScreen.h"
+#import "ProcessIdentity.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
-#import <pal/spi/cocoa/IOSurfaceSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/MathExtras.h>
@@ -228,22 +228,30 @@ IOSurface::IOSurface(IOSurfaceRef surface, const DestinationColorSpace& colorSpa
 
 IOSurface::~IOSurface() = default;
 
+static constexpr IntSize maxSurfaceDimensionCA()
+{
+    // Match limits imposed by Core Animation. FIXME: should have API for this <rdar://problem/25454148>
+#if PLATFORM(IOS_FAMILY)
+    constexpr int maxSurfaceDimension = 8 * 1024;
+#else
+    // IOSurface::maximumSize() can return { INT_MAX, INT_MAX } when hardware acceleration is unavailable.
+    constexpr int maxSurfaceDimension = 32 * 1024;
+#endif
+    return { maxSurfaceDimension, maxSurfaceDimension };
+}
+
 static IntSize computeMaximumSurfaceSize()
 {
+#if PLATFORM(IOS)
+    return maxSurfaceDimensionCA();
+#else
     IntSize maxSize(clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth)), clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceHeight)));
 
     // Protect against maxSize being { 0, 0 }.
-    const int maxSurfaceDimensionLowerBound = 1024;
+    constexpr int maxSurfaceDimensionLowerBound = 1024;
 
-#if PLATFORM(IOS_FAMILY)
-    // Match limits imposed by Core Animation. FIXME: should have API for this <rdar://problem/25454148>
-    const int maxSurfaceDimension = 8 * 1024;
-#else
-    // IOSurface::maximumSize() can return { INT_MAX, INT_MAX } when hardware acceleration is unavailable.
-    const int maxSurfaceDimension = 32 * 1024;
+    return maxSize.constrainedBetween({ maxSurfaceDimensionLowerBound, maxSurfaceDimensionLowerBound }, maxSurfaceDimensionCA() );
 #endif
-
-    return maxSize.constrainedBetween({ maxSurfaceDimensionLowerBound, maxSurfaceDimensionLowerBound }, { maxSurfaceDimension, maxSurfaceDimension });
 }
 
 static WTF::Atomic<IntSize>& surfaceMaximumSize()
@@ -267,6 +275,32 @@ IntSize IOSurface::maximumSize()
         return computedSize;
     }
     return size;
+}
+
+static WTF::Atomic<size_t>& surfaceBytesPerRowAlignment()
+{
+    static WTF::Atomic<size_t> alignment = 0;
+    return alignment;
+}
+
+size_t IOSurface::bytesPerRowAlignment()
+{
+    auto alignment = surfaceBytesPerRowAlignment().load();
+    if (!alignment) {
+        surfaceBytesPerRowAlignment().store(IOSurfaceGetPropertyAlignment(kIOSurfaceBytesPerRow));
+        alignment = surfaceBytesPerRowAlignment().load();
+        // A return value for IOSurfaceGetPropertyAlignment(kIOSurfaceBytesPerRow) of 1 is invalid.
+        // See https://developer.apple.com/documentation/iosurface/1419453-iosurfacegetpropertyalignment?language=objc
+        // This likely means that the sandbox is blocking access to the IOSurface IOKit class,
+        // and that IOSurface::bytesPerRowAlignment() has been called before IOSurface::setBytesPerRowAlignment.
+        RELEASE_ASSERT(alignment > 1);
+    }
+    return alignment;
+}
+
+void IOSurface::setBytesPerRowAlignment(size_t bytesPerRowAlignment)
+{
+    surfaceBytesPerRowAlignment().store(bytesPerRowAlignment);
 }
 
 MachSendRight IOSurface::createSendRight() const
@@ -300,7 +334,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
     if (m_cgContext)
         return m_cgContext.get();
 
-    CGBitmapInfo bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
+    CGBitmapInfo bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
 
     size_t bitsPerComponent = 8;
     size_t bitsPerPixel = 32;
@@ -315,7 +349,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
         // but for an IOSurface-to-IOSurface copy, there should be no conversion.
         bitsPerComponent = 16;
         bitsPerPixel = 64;
-        bitmapInfo = kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder16Host | kCGBitmapFloatComponents;
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
         break;
 #endif
     case Format::YUV422:
@@ -485,14 +519,25 @@ void IOSurface::convertToFormat(std::unique_ptr<IOSurface>&& inSurface, Format f
 
 #endif // HAVE(IOSURFACE_ACCELERATOR)
 
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
-void IOSurface::setOwnershipIdentity(task_id_token_t newOwner)
+void IOSurface::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
 {
-    auto result = IOSurfaceSetOwnershipIdentity(m_surface.get(), newOwner, kIOSurfaceMemoryLedgerTagGraphics, 0);
-    if (result != kIOReturnSuccess)
-        RELEASE_LOG_ERROR(IOSurface, "IOSurface::setOwnershipIdentity: Failed to claim ownership of IOSurface %p, newOwner: %d, error: %d", m_surface.get(), (int)newOwner, result);
+    setOwnershipIdentity(m_surface.get(), resourceOwner);
 }
+
+void IOSurface::setOwnershipIdentity(IOSurfaceRef surface, const ProcessIdentity& resourceOwner)
+{
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
+    ASSERT(resourceOwner);
+    ASSERT(surface);
+    task_id_token_t ownerTaskIdToken = resourceOwner.taskIdToken();
+    auto result = IOSurfaceSetOwnershipIdentity(surface, ownerTaskIdToken, kIOSurfaceMemoryLedgerTagGraphics, 0);
+    if (result != kIOReturnSuccess)
+        RELEASE_LOG_ERROR(IOSurface, "IOSurface::setOwnershipIdentity: Failed to claim ownership of IOSurface %p, task id token: %d, error: %d", surface, (int)ownerTaskIdToken, result);
+#else
+    UNUSED_PARAM(surface);
+    UNUSED_PARAM(resourceOwner);
 #endif
+}
 
 void IOSurface::migrateColorSpaceToProperties()
 {
@@ -525,7 +570,7 @@ IOSurface::Format IOSurface::formatForPixelFormat(PixelFormat format)
     return IOSurface::Format::BGRA;
 }
 
-static TextStream& operator<<(TextStream& ts, IOSurface::Format format)
+TextStream& operator<<(TextStream& ts, IOSurface::Format format)
 {
     switch (format) {
     case IOSurface::Format::BGRA:

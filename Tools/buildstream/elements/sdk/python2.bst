@@ -5,11 +5,12 @@ build-depends:
 
 depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
+- freedesktop-sdk.bst:components/openssl.bst
 
 sources:
 - kind: tar
-  url: https://www.python.org/ftp/python/2.7.16/Python-2.7.16.tar.xz
-  ref: f222ef602647eecb6853681156d32de4450a2c39f4de93bd5b20235f2e660ed7
+  url: https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tar.xz
+  ref: b62c0e7937551d0cc02b8fd5cb0f544f9405bafc9a54d3808ed4594812edef43
 variables:
   conf-local: >-
     --with-system-ffi

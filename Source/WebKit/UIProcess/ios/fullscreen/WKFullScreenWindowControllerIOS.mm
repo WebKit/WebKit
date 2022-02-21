@@ -671,7 +671,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
             page->setSuppressVisibilityUpdates(false);
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-            configureViewForFullscreen(_fullscreenViewController.get().view);
+            configureViewForEnteringFullscreen(_fullscreenViewController.get().view, kAnimationDuration, _finalFrame.size);
 #endif
 
             if (auto* videoFullscreenManager = self._videoFullscreenManager) {
@@ -775,15 +775,22 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     if (auto page = [self._webView _page])
         page->setSuppressVisibilityUpdates(true);
 
-    [_fullscreenViewController setPrefersStatusBarHidden:NO];
+    CompletionHandler<void()> completionHandler = [strongSelf = retainPtr(self), self] () mutable {
+        [_fullscreenViewController setPrefersStatusBarHidden:NO];
 
-    if (_interactiveDismissTransitionCoordinator) {
-        [_interactiveDismissTransitionCoordinator finishInteractiveTransition];
-        _interactiveDismissTransitionCoordinator = nil;
-        return;
-    }
+        if (_interactiveDismissTransitionCoordinator) {
+            [_interactiveDismissTransitionCoordinator finishInteractiveTransition];
+            _interactiveDismissTransitionCoordinator = nil;
+            return;
+        }
 
-    [self _dismissFullscreenViewController];
+        [self _dismissFullscreenViewController];
+    };
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    configureViewForExitingFullscreen(_fullscreenViewController.get().view, kAnimationDuration, [[_fullscreenViewController view] frame].size, WTFMove(completionHandler));
+#else
+    completionHandler();
+#endif
 }
 
 - (void)_completedExitFullScreen

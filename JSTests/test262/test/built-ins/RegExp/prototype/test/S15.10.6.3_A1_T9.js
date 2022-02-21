@@ -10,9 +10,10 @@ description: RegExp is /1|12/ and tested string is function object
 var __string;
 var __re = /1|12/;
 
-//CHECK#0
-if (__re.test(__string) !== (__re.exec(__string) !== null)) {
-	throw new Test262Error('#0: var __string;__re = /1|12/; __re.test(__string) === (__re.exec(__string) !== null); function __string(){};');
-}
+assert.sameValue(
+  __re.test(__string),
+  __re.exec(__string) !== null,
+  '__re.test() must return __re.exec(__string) !== null'
+);
 
-function __string(){};
+function __string(){}

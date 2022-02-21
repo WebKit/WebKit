@@ -42,6 +42,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <UIKit/UIScreenEdgePanGestureRecognizer.h>
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/IOSurface.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/WeakObjCPtr.h>
@@ -183,7 +184,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     m_webPageProxyForBackForwardListForCurrentSwipe = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage.get() : &m_webPageProxy;
 
     auto& backForwardList = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList();
-    auto targetItem = makeRefPtr(direction == SwipeDirection::Back ? backForwardList.backItem() : backForwardList.forwardItem());
+    RefPtr targetItem = direction == SwipeDirection::Back ? backForwardList.backItem() : backForwardList.forwardItem();
     if (!targetItem) {
         RELEASE_LOG_ERROR(ViewGestures, "Failed to find %s item when beginning swipe.", direction == SwipeDirection::Back ? "back" : "forward");
         didEndGesture();
@@ -225,7 +226,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
             [m_snapshotView layer].contents = snapshot->asLayerContents();
         WebCore::Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())
-            backgroundColor = adoptNS([[UIColor alloc] initWithCGColor:WebCore::cachedCGColor(coreColor)]);
+            backgroundColor = cocoaColor(coreColor);
     }
 
     [m_snapshotView setBackgroundColor:backgroundColor.get()];

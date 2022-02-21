@@ -29,6 +29,7 @@
 #import "DOMObject.h"
 #import "DOMXPathNSResolver.h"
 #import <wtf/Forward.h>
+#import <wtf/WallTime.h>
 
 namespace JSC {
     class JSObject;
@@ -77,12 +78,12 @@ WebCore::NodeFilter* core(DOMNodeFilter *);
 DOMNativeXPathNSResolver *kit(WebCore::XPathNSResolver*);
 WebCore::XPathNSResolver* core(DOMNativeXPathNSResolver *);
 
-inline NSTimeInterval kit(double msSinceEpoch)
+inline NSTimeInterval kit(WallTime time)
 {
-    return msSinceEpoch / 1000.0 - NSTimeIntervalSince1970;
+    return time.secondsSinceEpoch().value() - NSTimeIntervalSince1970;
 }
 
-inline double core(NSTimeInterval sec)
+inline WallTime core(NSTimeInterval sec)
 {
-    return sec * 1000.0 + NSTimeIntervalSince1970;
+    return WallTime::fromRawSeconds(sec + NSTimeIntervalSince1970);
 }

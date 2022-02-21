@@ -51,11 +51,9 @@ bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage&
     if (!m_client.getContextMenuFromDefaultMenu)
         return false;
 
-    Vector<WebContextMenuItemData> defaultMenu = kitItems(proposedMenu);
-    Vector<RefPtr<API::Object>> defaultMenuItems;
-    defaultMenuItems.reserveInitialCapacity(defaultMenu.size());
-    for (const auto& item : defaultMenu)
-        defaultMenuItems.uncheckedAppend(WebContextMenuItem::create(item));
+    auto defaultMenuItems = kitItems(proposedMenu).map([](auto& item) -> RefPtr<API::Object> {
+        return WebContextMenuItem::create(item);
+    });
 
     WKArrayRef newMenuWK = nullptr;
     WKTypeRef userDataToPass = nullptr;

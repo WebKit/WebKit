@@ -24,6 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@getter
+function highWaterMark()
+{
+    "use strict";
+
+    const highWaterMark = @getByIdDirectPrivate(this, "highWaterMark");
+    if (highWaterMark === @undefined)
+        @throwTypeError("ByteLengthQueuingStrategy.highWaterMark getter called on incompatible |this| value.");
+
+    return highWaterMark;
+}
+
 function size(chunk)
 {
     "use strict";
@@ -35,10 +47,5 @@ function initializeByteLengthQueuingStrategy(parameters)
 {
     "use strict";
 
-    @Object.@defineProperty(this, "highWaterMark", {
-        value: parameters.highWaterMark,
-        configurable: true,
-        enumerable: true,
-        writable: true
-    });
+    @putByIdDirectPrivate(this, "highWaterMark", @extractHighWaterMarkFromQueuingStrategyInit(parameters));
 }

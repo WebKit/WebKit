@@ -91,11 +91,11 @@ public:
         CharacterType first() const { return range.first; }
         CharacterType last() const { return range.last; }
         uint32_t data() const { return targetId; }
-        bool operator==(const FakeRangeIterator& other)
+        bool operator==(const FakeRangeIterator& other) const
         {
             return this->isEnd == other.isEnd;
         }
-        bool operator!=(const FakeRangeIterator& other) { return !(*this == other); }
+        bool operator!=(const FakeRangeIterator& other) const { return !(*this == other); }
         FakeRangeIterator operator++()
         {
             isEnd = true;
@@ -218,7 +218,7 @@ private:
     TypedImmutableNFA* m_immutableNFA { nullptr };
     MutableRangeList<CharacterType, TargetSet> m_ranges;
     TargetSet m_epsilonTransitionTargets;
-    HashSet<ActionType, WTF::IntHash<ActionType>, WTF::UnsignedWithZeroKeyHashTraits<ActionType>> m_actions;
+    HashSet<ActionType, IntHash<ActionType>, WTF::UnsignedWithZeroKeyHashTraits<ActionType>> m_actions;
     uint32_t m_nodeId;
     bool m_finalized { true };
 };

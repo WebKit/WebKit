@@ -60,7 +60,6 @@ private:
 
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     RetainPtr<PlatformLayer> m_platformLayer;
-    bool m_providesContents;
 };
 
 } // namespace WebKit

@@ -16,5 +16,5 @@ PASS Property transition-timing-function value 'steps(2, jump-start)'
 PASS Property transition-timing-function value 'steps(2, jump-end)'
 PASS Property transition-timing-function value 'steps(2, jump-both)'
 PASS Property transition-timing-function value 'steps(2, jump-none)'
-FAIL Property transition-timing-function value 'linear, ease, linear' assert_equals: expected "linear, ease, linear" but got "linear"
+PASS Property transition-timing-function value 'linear, ease, linear'
 

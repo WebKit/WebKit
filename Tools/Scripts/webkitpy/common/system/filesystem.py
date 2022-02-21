@@ -80,7 +80,10 @@ class FileSystem(object):
         return os.chdir(path)
 
     def copyfile(self, source, destination):
-        shutil.copyfile(source, destination)
+        return shutil.copyfile(source, destination)
+
+    def copymode(self, source, destination):
+        return shutil.copymode(source, destination)
 
     def dirname(self, path):
         return os.path.dirname(path)

@@ -30,16 +30,16 @@ layer at (0,0) size 800x600 layerType: foreground only
     RenderBody {BODY} at (8,8) size 784x584
 layer at (10,10) size 620x309
   RenderBlock (positioned) {DIV} at (10,10) size 620x309
-    RenderBlock {DIV} at (10,10) size 600x153
-      RenderText {#text} at (0,15) size 594x137
+    RenderBlock {DIV} at (10,10) size 600x154
+      RenderText {#text} at (0,15) size 594x138
         text run at (0,15) width 594: "This header should be centered"
         text run at (0,99) width 310: "in the grid lines."
-    RenderBlock {DIV} at (10,162) size 600x137
-      RenderText {#text} at (0,37) size 101x14
-        text run at (0,37) width 101: "This text should snap"
-      RenderBR {BR} at (100,37) size 1x14
-      RenderText {#text} at (0,79) size 113x14
-        text run at (0,79) width 113: "to a 36px font-size grid."
-      RenderBR {BR} at (113,79) size 0x14
-      RenderText {#text} at (0,121) size 245x14
-        text run at (0,121) width 245: "There should be lots of spacing between these lines."
+    RenderBlock {DIV} at (10,163) size 600x136
+      RenderText {#text} at (0,36) size 101x14
+        text run at (0,36) width 101: "This text should snap"
+      RenderBR {BR} at (100,36) size 1x14
+      RenderText {#text} at (0,78) size 113x14
+        text run at (0,78) width 113: "to a 36px font-size grid."
+      RenderBR {BR} at (113,78) size 0x14
+      RenderText {#text} at (0,120) size 245x14
+        text run at (0,120) width 245: "There should be lots of spacing between these lines."

@@ -62,8 +62,8 @@ Ref<DataDetectorHighlight> DataDetectorHighlight::createForImageOverlay(Page& pa
 }
 
 DataDetectorHighlight::DataDetectorHighlight(Page& page, DataDetectorHighlightClient& client, Type type, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
-    : m_client(makeWeakPtr(client))
-    , m_page(makeWeakPtr(page))
+    : m_client(client)
+    , m_page(page)
     , m_range(WTFMove(range))
     , m_graphicsLayer(GraphicsLayer::create(page.chrome().client().graphicsLayerFactory(), *this))
     , m_type(type)
@@ -165,7 +165,7 @@ void DataDetectorHighlight::fadeOut()
     [animation setToValue:@0];
 
     [CATransaction begin];
-    [CATransaction setCompletionBlock:[protectedSelf = makeRef(*this)]() mutable {
+    [CATransaction setCompletionBlock:[protectedSelf = Ref { *this }]() mutable {
         protectedSelf->didFinishFadeOutAnimation();
     }];
 

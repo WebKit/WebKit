@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ const ClassInfo IntlDisplayNamesConstructor::s_info = { "Function", &Base::s_inf
 
 IntlDisplayNamesConstructor* IntlDisplayNamesConstructor::create(VM& vm, Structure* structure, IntlDisplayNamesPrototype* displayNamesPrototype)
 {
-    auto* constructor = new (NotNull, allocateCell<IntlDisplayNamesConstructor>(vm.heap)) IntlDisplayNamesConstructor(vm, structure);
+    auto* constructor = new (NotNull, allocateCell<IntlDisplayNamesConstructor>(vm)) IntlDisplayNamesConstructor(vm, structure);
     constructor->finishCreation(vm, displayNamesPrototype);
     return constructor;
 }

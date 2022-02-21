@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class SWServerWorker;
+struct WorkerFetchResult;
 
 class SWServerJobQueue {
     WTF_MAKE_FAST_ALLOCATED;
@@ -50,7 +51,7 @@ public:
 
     void runNextJob();
 
-    void scriptFetchFinished(const ServiceWorkerFetchResult&);
+    void scriptFetchFinished(const ServiceWorkerJobDataIdentifier&, const WorkerFetchResult&);
     void scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, const String& message);
     void scriptContextStarted(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier);
     void didFinishInstall(const ServiceWorkerJobDataIdentifier&, SWServerWorker&, bool wasSuccessful);
@@ -72,7 +73,7 @@ private:
 
     void install(SWServerRegistration&, ServiceWorkerIdentifier);
 
-    void removeAllJobsMatching(const WTF::Function<bool(ServiceWorkerJobData&)>&);
+    void removeAllJobsMatching(const Function<bool(ServiceWorkerJobData&)>&);
 
     Deque<ServiceWorkerJobData> m_jobQueue;
 

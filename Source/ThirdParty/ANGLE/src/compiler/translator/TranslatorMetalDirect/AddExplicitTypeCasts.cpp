@@ -6,7 +6,7 @@
 
 #include "compiler/translator/TranslatorMetalDirect/AddExplicitTypeCasts.h"
 #include "compiler/translator/TranslatorMetalDirect/AstHelpers.h"
-#include "compiler/translator/tree_util/IntermRebuild.h"
+#include "compiler/translator/TranslatorMetalDirect/IntermRebuild.h"
 
 using namespace sh;
 
@@ -20,7 +20,9 @@ class Rewriter : public TIntermRebuild
 
   public:
     Rewriter(TCompiler &compiler, SymbolEnv &symbolEnv, bool needsExplicitBoolCasts)
-        : TIntermRebuild(compiler, false, true), mSymbolEnv(symbolEnv), mNeedsExplicitBoolCasts(needsExplicitBoolCasts)
+        : TIntermRebuild(compiler, false, true),
+          mSymbolEnv(symbolEnv),
+          mNeedsExplicitBoolCasts(needsExplicitBoolCasts)
     {}
 
     PostResult visitAggregatePost(TIntermAggregate &callNode) override
@@ -44,20 +46,22 @@ class Rewriter : public TIntermRebuild
             }
             else if (retType.isVector())
             {
-                //1 element arrays need to be accounted for.
+                // 1 element arrays need to be accounted for.
                 if (argCount == 1 && !retType.isArray())
                 {
                     TIntermTyped &arg   = GetArg(callNode, 0);
                     const TType argType = arg.getType();
                     if (argType.isVector())
                     {
-                        return CoerceSimple(retType, SubVector(arg, 0, retType.getNominalSize()), mNeedsExplicitBoolCasts);
+                        return CoerceSimple(retType, SubVector(arg, 0, retType.getNominalSize()),
+                                            mNeedsExplicitBoolCasts);
                     }
                 }
                 for (size_t i = 0; i < argCount; ++i)
                 {
                     TIntermTyped &arg = GetArg(callNode, i);
-                    SetArg(callNode, i, CoerceSimple(retType.getBasicType(), arg, mNeedsExplicitBoolCasts));
+                    SetArg(callNode, i,
+                           CoerceSimple(retType.getBasicType(), arg, mNeedsExplicitBoolCasts));
                 }
             }
             else if (retType.isMatrix())
@@ -86,7 +90,10 @@ class Rewriter : public TIntermRebuild
 
 }  // anonymous namespace
 
-bool sh::AddExplicitTypeCasts(TCompiler &compiler, TIntermBlock &root, SymbolEnv &symbolEnv, bool needsExplicitBoolCasts)
+bool sh::AddExplicitTypeCasts(TCompiler &compiler,
+                              TIntermBlock &root,
+                              SymbolEnv &symbolEnv,
+                              bool needsExplicitBoolCasts)
 {
     Rewriter rewriter(compiler, symbolEnv, needsExplicitBoolCasts);
     if (!rewriter.rebuildRoot(root))

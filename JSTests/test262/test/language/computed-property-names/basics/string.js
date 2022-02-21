@@ -20,7 +20,7 @@ assert.sameValue(object.a, 'A', "The value of `object.a` is `'A'`. Defined in `o
 assert.sameValue(object.b, 'B', "The value of `object.b` is `'B'`. Defined in `object` as `['b']: 'B'`");
 assert.sameValue(object.c, 'C', "The value of `object.c` is `'C'`. Defined in `object` as `c: 'C'`");
 assert.sameValue(object.d, 'D', "The value of `object.d` is `'D'`. Defined in `object` as `[ID('d')]: 'D'`");
-assert(
-  compareArray(Object.getOwnPropertyNames(object), ['a', 'b', 'c', 'd']),
-  "`compareArray(Object.getOwnPropertyNames(object), ['a', 'b', 'c', 'd'])` returns `true`"
+assert.compareArray(
+  Object.getOwnPropertyNames(object),
+  ['a', 'b', 'c', 'd']
 );

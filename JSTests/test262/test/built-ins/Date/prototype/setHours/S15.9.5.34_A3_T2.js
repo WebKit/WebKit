@@ -8,11 +8,15 @@ info: |
 esid: sec-date.prototype.sethours
 description: Checking DontDelete attribute
 ---*/
+assert.sameValue(
+  delete Date.prototype.setHours.length,
+  true,
+  'The value of `delete Date.prototype.setHours.length` is expected to be true'
+);
 
-if (delete Date.prototype.setHours.length !== true) {
-  throw new Test262Error('#1: The Date.prototype.setHours.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.prototype.setHours.hasOwnProperty('length'),
+  'The value of !Date.prototype.setHours.hasOwnProperty(\'length\') is expected to be true'
+);
 
-if (Date.prototype.setHours.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.prototype.setHours.length property does not have the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

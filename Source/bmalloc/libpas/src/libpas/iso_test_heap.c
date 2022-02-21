@@ -37,25 +37,25 @@
 #include "pas_deallocate.h"
 #include "pas_try_allocate.h"
 #include "pas_try_allocate_array.h"
-#include "pas_try_allocate_intrinsic_primitive.h"
+#include "pas_try_allocate_intrinsic.h"
 
 pas_intrinsic_heap_support iso_test_common_primitive_heap_support =
     PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER;
 
 pas_heap iso_test_common_primitive_heap =
-    PAS_INTRINSIC_PRIMITIVE_HEAP_INITIALIZER(
+    PAS_INTRINSIC_HEAP_INITIALIZER(
         &iso_test_common_primitive_heap,
         PAS_SIMPLE_TYPE_CREATE(1, 1),
         iso_test_common_primitive_heap_support,
         ISO_TEST_HEAP_CONFIG,
-        &iso_test_intrinsic_primitive_runtime_config.base);
+        &iso_test_intrinsic_runtime_config.base);
 
-PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
+PAS_CREATE_TRY_ALLOCATE_INTRINSIC(
     test_allocate_common_primitive,
     ISO_TEST_HEAP_CONFIG,
-    &iso_test_intrinsic_primitive_runtime_config.base,
+    &iso_test_intrinsic_runtime_config.base,
     &iso_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error,
+    pas_allocation_result_crash_on_error,
     &iso_test_common_primitive_heap,
     &iso_test_common_primitive_heap_support,
     pas_intrinsic_heap_is_not_designated);
@@ -65,28 +65,28 @@ PAS_CREATE_TRY_ALLOCATE(
     ISO_TEST_HEAP_CONFIG,
     &iso_test_typed_runtime_config.base,
     &iso_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error);
+    pas_allocation_result_crash_on_error);
 
 PAS_CREATE_TRY_ALLOCATE_ARRAY(
     test_allocate_array_impl,
     ISO_TEST_HEAP_CONFIG,
     &iso_test_typed_runtime_config.base,
     &iso_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error);
+    pas_allocation_result_crash_on_error);
 
 void* iso_test_allocate_common_primitive(size_t size)
 {
-    return test_allocate_common_primitive(size, 1).ptr;
+    return (void*)test_allocate_common_primitive(size, 1).begin;
 }
 
 void* iso_test_allocate(pas_heap_ref* heap_ref)
 {
-    return test_allocate_impl(heap_ref).ptr;
+    return (void*)test_allocate_impl(heap_ref).begin;
 }
 
-void* iso_test_allocate_array(pas_heap_ref* heap_ref, size_t count, size_t alignment)
+void* iso_test_allocate_array_by_count(pas_heap_ref* heap_ref, size_t count, size_t alignment)
 {
-    return test_allocate_array_impl(heap_ref, count, alignment).ptr;
+    return (void*)test_allocate_array_impl_by_count(heap_ref, count, alignment).begin;
 }
 
 void iso_test_deallocate(void* ptr)

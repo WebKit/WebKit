@@ -25,8 +25,6 @@
 #include "config.h"
 #include "ComplexTextController.h"
 
-#if !USE(DIRECT2D)
-
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "HWndDC.h"
@@ -275,5 +273,3 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
 }
 
 }
-
-#endif // !USE(DIRECT2D)

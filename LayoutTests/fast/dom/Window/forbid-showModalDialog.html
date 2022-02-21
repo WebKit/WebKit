@@ -8,15 +8,18 @@ description("Tests that Window.showModalDialog is undefined if the client does n
 debug("Make sure window.showModalDialog is undefined when modal dialogs are not allowed.");
 evalAndLog("internals.setCanShowModalDialogOverride(false)");
 shouldBe("window.showModalDialog", "undefined");
-shouldBeFalse("window.hasOwnProperty('showModalDialog')");
+shouldBeTrue("window.hasOwnProperty('showModalDialog')");
+shouldBeTrue("Object.getOwnPropertyNames(window).includes('showModalDialog')");
 
+if (showModalDialog !== undefined)
+    testFailed("showModalDialog !== undefined");
 
 debug("");
 debug("Tests having a named property with name 'showModalDialog'.");
 var testFrame = document.createElement("iframe");
 testFrame.name = "showModalDialog";
 evalAndLog("document.body.append(testFrame)");
-shouldBe("window.showModalDialog", "testFrame.contentWindow");
+shouldBe("window.showModalDialog", "undefined");
 evalAndLog("testFrame.remove()");
 shouldBe("window.showModalDialog", "undefined");
 
@@ -26,6 +29,7 @@ evalAndLog("internals.setCanShowModalDialogOverride(true)");
 shouldNotBe("window.showModalDialog", "undefined");
 shouldBeTrue("window.hasOwnProperty('showModalDialog')");
 shouldBeType("window.showModalDialog", "Function");
+shouldBe("window.showModalDialog.name", "'showModalDialog'");
 
 debug("");
 debug("Make sure window.showModalDialog can be shadowed.");

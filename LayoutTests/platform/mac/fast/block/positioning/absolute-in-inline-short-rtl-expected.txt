@@ -18,15 +18,15 @@ layer at (0,0) size 800x600
           text run at (519,0) width 50: " border."
       RenderBlock {DIV} at (0,34) size 600x36
         RenderText {#text} at (408,0) size 192x18
-          text run at (408,0) width 192 RTL override: "ILorem ipsum dolor sit amet, "
+          text run at (408,0) width 192 RTL: "ILorem ipsum dolor sit amet, "
         RenderText {#text} at (88,0) size 512x36
-          text run at (88,0) width 85 RTL override: "irure dolor in"
-          text run at (510,18) width 90 RTL override: "reprehenderit."
+          text run at (88,0) width 85 RTL: "irure dolor in"
+          text run at (510,18) width 90 RTL: "reprehenderit."
 layer at (8,42) size 217x20
   RenderInline (relative positioned) {SPAN} at (0,0) size 217x20 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #0000FF) (1px solid #808080) (20px solid #FFA500)]
     RenderText {#text} at (273,0) size 96x18
-      text run at (273,0) width 96 RTL override: "con a pariatur. "
+      text run at (273,0) width 96 RTL: "con a pariatur. "
     RenderText {#text} at (212,0) size 62x18
-      text run at (212,0) width 62 RTL override: "duis aute "
+      text run at (212,0) width 62 RTL: "duis aute "
 layer at (211,42) size 176x18
   RenderBlock (positioned) {DIV} at (20,1) size 177x18

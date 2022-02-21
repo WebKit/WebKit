@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,9 +88,9 @@
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <JavaScriptCore/TypedArrays.h>
+#include <variant>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -111,7 +111,7 @@ InspectorCanvas::InspectorCanvas(CanvasRenderingContext& context)
 
 CanvasRenderingContext* InspectorCanvas::canvasContext() const
 {
-    if (auto* contextWrapper = WTF::get_if<std::reference_wrapper<CanvasRenderingContext>>(m_context))
+    if (auto* contextWrapper = std::get_if<std::reference_wrapper<CanvasRenderingContext>>(&m_context))
         return &contextWrapper->get();
     return nullptr;
 }
@@ -124,8 +124,7 @@ HTMLCanvasElement* InspectorCanvas::canvasElement() const
             if (is<HTMLCanvasElement>(context.canvasBase()))
                 return &downcast<HTMLCanvasElement>(context.canvasBase());
             return nullptr;
-        },
-        [] (Monostate) {
+        }, [] (std::monostate) -> HTMLCanvasElement* {
             ASSERT_NOT_REACHED();
             return nullptr;
         }
@@ -139,8 +138,7 @@ ScriptExecutionContext* InspectorCanvas::scriptExecutionContext() const
         [] (std::reference_wrapper<CanvasRenderingContext> contextWrapper) {
             auto& context = contextWrapper.get();
             return context.canvasBase().scriptExecutionContext();
-        },
-        [] (Monostate) {
+        }, [] (std::monostate) -> ScriptExecutionContext* {
             ASSERT_NOT_REACHED();
             return nullptr;
         }
@@ -170,7 +168,7 @@ JSC::JSValue InspectorCanvas::resolveContext(JSC::JSGlobalObject* exec) const
 #endif
             return JSC::JSValue();
         },
-        [] (Monostate) {
+        [] (std::monostate) {
             ASSERT_NOT_REACHED();
             return JSC::JSValue();
         }
@@ -184,7 +182,7 @@ HashSet<Element*> InspectorCanvas::clientNodes() const
             auto& context = contextWrapper.get();
             return context.canvasBase().cssCanvasClients();
         },
-        [] (Monostate) {
+        [] (std::monostate) {
             ASSERT_NOT_REACHED();
             return HashSet<Element*>();
         }
@@ -813,6 +811,67 @@ bool InspectorCanvas::overFrameCount() const
     return m_frameCount && m_framesCaptured >= m_frameCount.value();
 }
 
+static RefPtr<Inspector::Protocol::Canvas::ContextAttributes> buildObjectForCanvasContextAttributes(CanvasRenderingContext& context)
+{
+    if (is<CanvasRenderingContext2D>(context)) {
+        auto attributes = downcast<CanvasRenderingContext2D>(context).getContextAttributes();
+        auto contextAttributesPayload = Inspector::Protocol::Canvas::ContextAttributes::create()
+            .release();
+        switch (attributes.colorSpace) {
+        case PredefinedColorSpace::SRGB:
+            contextAttributesPayload->setColorSpace(Protocol::Canvas::ColorSpace::SRGB);
+            break;
+
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+        case PredefinedColorSpace::DisplayP3:
+            contextAttributesPayload->setColorSpace(Protocol::Canvas::ColorSpace::DisplayP3);
+            break;
+#endif
+        }
+        contextAttributesPayload->setDesynchronized(attributes.desynchronized);
+        return contextAttributesPayload;
+    }
+
+    if (is<ImageBitmapRenderingContext>(context)) {
+        auto contextAttributesPayload = Inspector::Protocol::Canvas::ContextAttributes::create()
+            .release();
+        contextAttributesPayload->setAlpha(downcast<ImageBitmapRenderingContext>(context).hasAlpha());
+        return contextAttributesPayload;
+    }
+
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContextBase>(context)) {
+        const auto& attributes = downcast<WebGLRenderingContextBase>(context).getContextAttributes();
+        if (!attributes)
+            return nullptr;
+
+        auto contextAttributesPayload = Inspector::Protocol::Canvas::ContextAttributes::create()
+            .release();
+        contextAttributesPayload->setAlpha(attributes->alpha);
+        contextAttributesPayload->setDepth(attributes->depth);
+        contextAttributesPayload->setStencil(attributes->stencil);
+        contextAttributesPayload->setAntialias(attributes->antialias);
+        contextAttributesPayload->setPremultipliedAlpha(attributes->premultipliedAlpha);
+        contextAttributesPayload->setPreserveDrawingBuffer(attributes->preserveDrawingBuffer);
+        switch (attributes->powerPreference) {
+        case WebGLPowerPreference::Default:
+            contextAttributesPayload->setPowerPreference("default"_s);
+            break;
+        case WebGLPowerPreference::LowPower:
+            contextAttributesPayload->setPowerPreference("low-power"_s);
+            break;
+        case WebGLPowerPreference::HighPerformance:
+            contextAttributesPayload->setPowerPreference("high-performance"_s);
+            break;
+        }
+        contextAttributesPayload->setFailIfMajorPerformanceCaveat(attributes->failIfMajorPerformanceCaveat);
+        return contextAttributesPayload;
+    }
+#endif // ENABLE(WEBGL)
+
+    return nullptr;
+}
+
 Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool captureBacktrace)
 {
     using ContextTypeType = std::optional<Protocol::Canvas::ContextType>;
@@ -832,8 +891,7 @@ Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool capture
                 return Protocol::Canvas::ContextType::WebGL2;
 #endif
             return std::nullopt;
-        },
-        [] (Monostate) {
+        }, [] (std::monostate) -> ContextTypeType {
             ASSERT_NOT_REACHED();
             return std::nullopt;
         }
@@ -856,47 +914,10 @@ Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool capture
         // FIXME: <https://webkit.org/b/178282> Web Inspector: send a DOM node with each Canvas payload and eliminate Canvas.requestNode
     }
 
-    using ContextAttributesType = RefPtr<Protocol::Canvas::ContextAttributes>;
     auto contextAttributes = WTF::switchOn(m_context,
-        [] (std::reference_wrapper<CanvasRenderingContext> contextWrapper) -> ContextAttributesType {
-            auto& context = contextWrapper.get();
-            if (is<ImageBitmapRenderingContext>(context)) {
-                auto contextAttributesPayload = Protocol::Canvas::ContextAttributes::create()
-                    .release();
-                contextAttributesPayload->setAlpha(downcast<ImageBitmapRenderingContext>(context).hasAlpha());
-                return contextAttributesPayload;
-            }
-
-#if ENABLE(WEBGL)
-            if (is<WebGLRenderingContextBase>(context)) {
-                if (const auto& attributes = downcast<WebGLRenderingContextBase>(context).getContextAttributes()) {
-                    auto contextAttributesPayload = Protocol::Canvas::ContextAttributes::create()
-                        .release();
-                    contextAttributesPayload->setAlpha(attributes->alpha);
-                    contextAttributesPayload->setDepth(attributes->depth);
-                    contextAttributesPayload->setStencil(attributes->stencil);
-                    contextAttributesPayload->setAntialias(attributes->antialias);
-                    contextAttributesPayload->setPremultipliedAlpha(attributes->premultipliedAlpha);
-                    contextAttributesPayload->setPreserveDrawingBuffer(attributes->preserveDrawingBuffer);
-                    switch (attributes->powerPreference) {
-                    case WebGLPowerPreference::Default:
-                        contextAttributesPayload->setPowerPreference("default");
-                        break;
-                    case WebGLPowerPreference::LowPower:
-                        contextAttributesPayload->setPowerPreference("low-power");
-                        break;
-                    case WebGLPowerPreference::HighPerformance:
-                        contextAttributesPayload->setPowerPreference("high-performance");
-                        break;
-                    }
-                    contextAttributesPayload->setFailIfMajorPerformanceCaveat(attributes->failIfMajorPerformanceCaveat);
-                    return contextAttributesPayload;
-                }
-            }
-#endif
-            return nullptr;
-        },
-        [] (Monostate) {
+        [] (std::reference_wrapper<CanvasRenderingContext> contextWrapper) {
+            return buildObjectForCanvasContextAttributes(contextWrapper);
+        }, [] (std::monostate) -> RefPtr<Inspector::Protocol::Canvas::ContextAttributes> {
             ASSERT_NOT_REACHED();
             return nullptr;
         }
@@ -1011,12 +1032,12 @@ void InspectorCanvas::appendActionSnapshotIfNeeded()
 
 int InspectorCanvas::indexForData(DuplicateDataVariant data)
 {
-    size_t index = m_indexedDuplicateData.findMatching([&] (auto item) {
+    size_t index = m_indexedDuplicateData.findIf([&] (auto item) {
         if (data == item)
             return true;
 
-        auto traceA = WTF::get_if<RefPtr<ScriptCallStack>>(data);
-        auto traceB = WTF::get_if<RefPtr<ScriptCallStack>>(item);
+        auto traceA = std::get_if<RefPtr<ScriptCallStack>>(&data);
+        auto traceB = std::get_if<RefPtr<ScriptCallStack>>(&item);
         if (traceA && *traceA && traceB && *traceB)
             return (*traceA)->isEqual((*traceB).get());
 
@@ -1229,22 +1250,9 @@ Ref<Protocol::Recording::InitialState> InspectorCanvas::buildInitialState()
             statesPayload->addItem(WTFMove(statePayload));
         }
     }
-#if ENABLE(WEBGL)
-    else if (is<WebGLRenderingContextBase>(context)) {
-        auto& contextWebGLBase = downcast<WebGLRenderingContextBase>(*context);
-        if (std::optional<WebGLContextAttributes> webGLContextAttributes = contextWebGLBase.getContextAttributes()) {
-            auto webGLContextAttributesPayload = JSON::Object::create();
-            webGLContextAttributesPayload->setBoolean("alpha"_s, webGLContextAttributes->alpha);
-            webGLContextAttributesPayload->setBoolean("depth"_s, webGLContextAttributes->depth);
-            webGLContextAttributesPayload->setBoolean("stencil"_s, webGLContextAttributes->stencil);
-            webGLContextAttributesPayload->setBoolean("antialias"_s, webGLContextAttributes->antialias);
-            webGLContextAttributesPayload->setBoolean("premultipliedAlpha"_s, webGLContextAttributes->premultipliedAlpha);
-            webGLContextAttributesPayload->setBoolean("preserveDrawingBuffer"_s, webGLContextAttributes->preserveDrawingBuffer);
-            webGLContextAttributesPayload->setBoolean("failIfMajorPerformanceCaveat"_s, webGLContextAttributes->failIfMajorPerformanceCaveat);
-            parametersPayload->addItem(WTFMove(webGLContextAttributesPayload));
-        }
-    }
-#endif
+
+    if (auto contextAttributes = buildObjectForCanvasContextAttributes(*context))
+        parametersPayload->addItem(contextAttributes.releaseNonNull());
 
     initialStatePayload->setAttributes(WTFMove(attributesPayload));
 
@@ -1328,10 +1336,7 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasGradient(con
 
 Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasPattern(const CanvasPattern& canvasPattern)
 {
-    auto& tileImage = canvasPattern.pattern().tileImage();
-    FloatRect rect = { { }, tileImage.size() };
-    auto imageBuffer = ImageBuffer::create(tileImage.size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    imageBuffer->context().drawNativeImage(tileImage, tileImage.size(), rect, rect);
+    auto imageBuffer = canvasPattern.pattern().tileImageBuffer();
 
     String repeat;
     bool repeatX = canvasPattern.pattern().repeatX();

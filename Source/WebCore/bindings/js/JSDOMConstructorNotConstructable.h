@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2015, 2016 Canon Inc. All rights reserved.
- *  Copyright (C) 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -36,8 +36,8 @@ public:
     static JSC::JSValue prototypeForStructure(JSC::VM&, const JSDOMGlobalObject&);
 
 private:
-    JSDOMConstructorNotConstructable(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
-        : Base(structure, globalObject)
+    JSDOMConstructorNotConstructable(JSC::VM& vm, JSC::Structure* structure)
+        : Base(vm, structure, nullptr)
     {
     }
 
@@ -45,34 +45,18 @@ private:
 
     // Usually defined for each specialization class.
     void initializeProperties(JSC::VM&, JSDOMGlobalObject&) { }
-
-    static JSC::CallData getCallData(JSC::JSCell*)
-    {
-        JSC::CallData callData;
-        callData.type = JSC::CallData::Type::Native;
-        callData.native.function = callThrowTypeErrorForJSDOMConstructorNotConstructable;
-        return callData;
-    }
-
-    static JSC::CallData getConstructData(JSC::JSCell*)
-    {
-        JSC::CallData callData;
-        callData.type = JSC::CallData::Type::Native;
-        callData.native.function = callThrowTypeErrorForJSDOMConstructorNotConstructable;
-        return callData;
-    }
 };
 
 template<typename JSClass> inline JSDOMConstructorNotConstructable<JSClass>* JSDOMConstructorNotConstructable<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
-    JSDOMConstructorNotConstructable* constructor = new (NotNull, JSC::allocateCell<JSDOMConstructorNotConstructable>(vm.heap)) JSDOMConstructorNotConstructable(structure, globalObject);
+    JSDOMConstructorNotConstructable* constructor = new (NotNull, JSC::allocateCell<JSDOMConstructorNotConstructable>(vm)) JSDOMConstructorNotConstructable(vm, structure);
     constructor->finishCreation(vm, globalObject);
     return constructor;
 }
 
 template<typename JSClass> inline JSC::Structure* JSDOMConstructorNotConstructable<JSClass>::createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
 {
-    return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+    return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::InternalFunctionType, StructureFlags), info());
 }
 
 template<typename JSClass> inline void JSDOMConstructorNotConstructable<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)

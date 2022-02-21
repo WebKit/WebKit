@@ -31,7 +31,7 @@
 
 #include "pas_log.h"
 
-static void fd_stream_vprintf(pas_stream* stream, const char* format, va_list arg_list)
+static PAS_FORMAT_PRINTF(2, 0) void fd_stream_vprintf(pas_stream* stream, const char* format, va_list arg_list)
 {
     pas_fd_stream_vprintf((pas_fd_stream*)stream, format, arg_list);
 }

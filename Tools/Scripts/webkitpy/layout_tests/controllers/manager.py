@@ -50,7 +50,7 @@ from collections import defaultdict, OrderedDict
 from webkitcorepy.string_utils import pluralize
 
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
-from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
+from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
@@ -692,7 +692,7 @@ class Manager(object):
         self._filesystem.write_text_file(stats_path, json.dumps(stats_trie))
 
         full_results_path = self._filesystem.join(self._results_directory, "full_results.json")
-        # We write full_results.json out as jsonp because we need to load it from a file url and Chromium doesn't allow that.
+        # We write full_results.json out as jsonp because we need to load it from a file url and WebKit doesn't allow that.
         json_results_generator.write_json(self._filesystem, summarized_results, full_results_path, callback="ADD_RESULTS")
 
         generator = json_layout_results_generator.JSONLayoutResultsGenerator(
@@ -756,7 +756,7 @@ class Manager(object):
             self._print_expectation_line_for_test(format_string, test, device_type=device_type)
 
     def print_expectations(self, args):
-        device_type_list = self._port.DEFAULT_DEVICE_TYPES or [self._port.DEVICE_TYPE]
+        device_type_list = self._port.supported_device_types()
 
         try:
             tests_to_run_by_device, aggregate_tests_to_skip = self._collect_tests(args, device_type_list)
@@ -780,7 +780,7 @@ class Manager(object):
         return 0
 
     def print_summary(self, args):
-        device_type_list = self._port.DEFAULT_DEVICE_TYPES or [self._port.DEVICE_TYPE]
+        device_type_list = self._port.supported_device_types()
         test_stats = {}
 
         try:
@@ -860,7 +860,7 @@ class Manager(object):
                 if not _should_include_dir_in_report(dirname):
                     continue
 
-                truncated_dirname = re.sub(r'^.*(.{47})$', '...\g<1>', dirname if device_test_stats[dirname]['has_tests'] else '{}*'.format(dirname))
+                truncated_dirname = re.sub(r'^.*(.{47})$', '...\\g<1>', dirname if device_test_stats[dirname]['has_tests'] else '{}*'.format(dirname))
                 count = device_test_stats[dirname]['count']
                 passing = device_test_stats[dirname]['pass']
                 skip = device_test_stats[dirname]['skip']

@@ -38,9 +38,7 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_media_common_encryption_decrypt_debug_category)
 namespace WebCore {
 class InitData {
 public:
-    InitData()
-        : m_payload(SharedBuffer::create()) { }
-
+    InitData() = default;
     // FIXME: We should have an enum for system uuids for better type safety.
     InitData(const String& systemId, GstBuffer* initData)
         : m_systemId(systemId)
@@ -53,10 +51,11 @@ public:
         m_payload = extractCencIfNeeded(mappedInitData->createSharedBuffer());
     }
 
-    InitData(const String& systemId, RefPtr<SharedBuffer>&& payload)
+    InitData(const String& systemId, RefPtr<FragmentedSharedBuffer>&& payload)
         : m_systemId(systemId)
-        , m_payload(extractCencIfNeeded(WTFMove(payload)))
     {
+        if (payload)
+            m_payload = extractCencIfNeeded(payload->makeContiguous());
     }
 
     void append(InitData&& initData)
@@ -72,10 +71,10 @@ public:
         // it's not very robust, so be careful here!
         m_systemId = initData.m_systemId;
 
-        m_payload->append(*initData.payload());
+        m_payload.append(*initData.payload());
     }
 
-    const RefPtr<SharedBuffer>& payload() const { return m_payload; }
+    RefPtr<FragmentedSharedBuffer> payload() const { return m_payload.get(); }
     const String& systemId() const { return m_systemId; }
     String payloadContainerType() const
     {
@@ -86,11 +85,10 @@ public:
         return "cenc"_s;
     }
 
-    static RefPtr<SharedBuffer> extractCencIfNeeded(RefPtr<SharedBuffer>&&);
-
 private:
+    static RefPtr<SharedBuffer> extractCencIfNeeded(RefPtr<SharedBuffer>&&);
     String m_systemId;
-    RefPtr<SharedBuffer> m_payload;
+    SharedBufferBuilder m_payload;
 };
 
 class ProtectionSystemEvents {

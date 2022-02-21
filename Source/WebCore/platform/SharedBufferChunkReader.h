@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,17 +33,16 @@
 
 #if ENABLE(MHTML)
 
+#include "SharedBuffer.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class SharedBuffer;
-
-class SharedBufferChunkReader {
+class WEBCORE_EXPORT SharedBufferChunkReader {
 public:
-    SharedBufferChunkReader(SharedBuffer*, const Vector<char>& separator);
-    SharedBufferChunkReader(SharedBuffer*, const char* separator);
+    SharedBufferChunkReader(FragmentedSharedBuffer*, const Vector<char>& separator);
+    SharedBufferChunkReader(FragmentedSharedBuffer*, const char* separator);
 
     void setSeparator(const Vector<char>&);
     void setSeparator(const char*);
@@ -58,12 +58,10 @@ public:
     size_t peek(Vector<uint8_t>&, size_t);
 
 private:
-    SharedBuffer* m_buffer;
-    size_t m_bufferPosition { 0 };
+    FragmentedSharedBuffer::DataSegmentVector::const_iterator m_iteratorCurrent;
+    const FragmentedSharedBuffer::DataSegmentVector::const_iterator m_iteratorEnd;
     const uint8_t* m_segment { nullptr };
-    size_t m_segmentLength { 0 };
     size_t m_segmentIndex { 0 };
-    bool m_reachedEndOfFile;
     Vector<char> m_separator { false };
     size_t m_separatorIndex { 0 };
 };

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,10 +73,10 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     template<typename CellType, SubspaceAccess>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(IntlObject, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
 
     static IntlObject* create(VM&, JSGlobalObject*, Structure*);
@@ -116,6 +116,10 @@ inline CalendarID iso8601CalendarID()
 
 using TimeZoneID = unsigned;
 const Vector<String>& intlAvailableTimeZones();
+
+extern TimeZoneID utcTimeZoneIDStorage;
+TimeZoneID utcTimeZoneIDSlow();
+CalendarID utcTimeZoneID();
 
 TriState intlBooleanOption(JSGlobalObject*, JSObject* options, PropertyName);
 String intlStringOption(JSGlobalObject*, JSObject* options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
@@ -163,5 +167,14 @@ struct UFieldPositionIteratorDeleter {
 std::optional<String> mapICUCollationKeywordToBCP47(const String&);
 std::optional<String> mapICUCalendarKeywordToBCP47(const String&);
 std::optional<String> mapBCP47ToICUCalendarKeyword(const String&);
+
+
+inline CalendarID utcTimeZoneID()
+{
+    unsigned value = utcTimeZoneIDStorage;
+    if (value == std::numeric_limits<TimeZoneID>::max())
+        return utcTimeZoneIDSlow();
+    return value;
+}
 
 } // namespace JSC

@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "PCToCodeOriginMap.h"
+#include <wtf/Box.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 
@@ -53,6 +55,7 @@ public:
     {
         Locker locker { m_lock };
         m_calleeSet.remove(callee);
+        m_pcToCodeOriginMaps.remove(callee);
     }
 
     const HashSet<Callee*>& allCallees() WTF_REQUIRES_LOCK(m_lock)
@@ -67,11 +70,29 @@ public:
         return m_calleeSet.contains(callee);
     }
 
+    void addPCToCodeOriginMap(Callee* callee, Box<PCToCodeOriginMap> originMap)
+    {
+        Locker locker { m_lock };
+        ASSERT(isValidCallee(callee));
+        auto addResult = m_pcToCodeOriginMaps.add(callee, WTFMove(originMap));
+        RELEASE_ASSERT(addResult.isNewEntry);
+    }
+
+    Box<PCToCodeOriginMap> codeOriginMap(Callee* callee)  WTF_REQUIRES_LOCK(m_lock)
+    {
+        ASSERT(isValidCallee(callee));
+        auto iter = m_pcToCodeOriginMaps.find(callee);
+        if (iter != m_pcToCodeOriginMaps.end())
+            return iter->value;
+        return nullptr;
+    }
+
     CalleeRegistry() = default;
 
 private:
     Lock m_lock;
     HashSet<Callee*> m_calleeSet WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<Callee*, Box<PCToCodeOriginMap>> m_pcToCodeOriginMaps WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } } // namespace JSC::Wasm

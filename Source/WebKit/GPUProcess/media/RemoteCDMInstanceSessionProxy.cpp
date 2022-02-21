@@ -41,7 +41,7 @@ using namespace WebCore;
 std::unique_ptr<RemoteCDMInstanceSessionProxy> RemoteCDMInstanceSessionProxy::create(WeakPtr<RemoteCDMProxy>&& proxy, Ref<WebCore::CDMInstanceSession>&& session, RemoteCDMInstanceSessionIdentifier identifier)
 {
     auto sessionProxy = std::unique_ptr<RemoteCDMInstanceSessionProxy>(new RemoteCDMInstanceSessionProxy(WTFMove(proxy), WTFMove(session), identifier));
-    auto client = makeWeakPtr<WebCore::CDMInstanceSessionClient>(sessionProxy.get());
+    WeakPtr<WebCore::CDMInstanceSessionClient> client = sessionProxy.get();
     sessionProxy->m_session->setClient(WTFMove(client));
     return sessionProxy;
 }
@@ -70,8 +70,8 @@ void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, AtomString 
         return;
     }
 
-    m_session->requestLicense(type, initDataType, initData.buffer().releaseNonNull(), [completion = WTFMove(completion)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
-        completion(WTFMove(message), sessionId, needsIndividualization, succeeded == CDMInstanceSession::Succeeded);
+    m_session->requestLicense(type, initDataType, initData.buffer().releaseNonNull(), [completion = WTFMove(completion)] (Ref<FragmentedSharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
+        completion(IPC::SharedBufferCopy(WTFMove(message)), sessionId, needsIndividualization, succeeded == CDMInstanceSession::Succeeded);
     });
 }
 
@@ -115,7 +115,7 @@ void RemoteCDMInstanceSessionProxy::closeSession(const String& sessionId, CloseS
 
 void RemoteCDMInstanceSessionProxy::removeSessionData(const String& sessionId, LicenseType type, RemoveSessionDataCallback&& completion)
 {
-    m_session->removeSessionData(sessionId, type, [completion = WTFMove(completion)] (CDMInstanceSession::KeyStatusVector&& keyStatuses, std::optional<Ref<SharedBuffer>>&& expiredSessionsData, CDMInstanceSession::SuccessValue succeeded) mutable {
+    m_session->removeSessionData(sessionId, type, [completion = WTFMove(completion)] (CDMInstanceSession::KeyStatusVector&& keyStatuses, std::optional<Ref<FragmentedSharedBuffer>>&& expiredSessionsData, CDMInstanceSession::SuccessValue succeeded) mutable {
         std::optional<IPC::SharedBufferCopy> expiredSessionDataReference;
         if (expiredSessionsData)
             expiredSessionDataReference = IPC::SharedBufferCopy(WTFMove(*expiredSessionsData));
@@ -149,7 +149,7 @@ void RemoteCDMInstanceSessionProxy::updateKeyStatuses(KeyStatusVector&& keyStatu
     gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstanceSession::UpdateKeyStatuses(WTFMove(keyStatuses)), m_identifier);
 }
 
-void RemoteCDMInstanceSessionProxy::sendMessage(CDMMessageType type, Ref<SharedBuffer>&& message)
+void RemoteCDMInstanceSessionProxy::sendMessage(CDMMessageType type, Ref<FragmentedSharedBuffer>&& message)
 {
     if (!m_cdm)
         return;
@@ -161,7 +161,7 @@ void RemoteCDMInstanceSessionProxy::sendMessage(CDMMessageType type, Ref<SharedB
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstanceSession::SendMessage(type, WTFMove(message)), m_identifier);
+    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstanceSession::SendMessage(type, IPC::SharedBufferCopy(WTFMove(message))), m_identifier);
 }
 
 void RemoteCDMInstanceSessionProxy::sessionIdChanged(const String& sessionId)

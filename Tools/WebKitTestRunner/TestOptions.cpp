@@ -45,6 +45,12 @@ static constexpr bool mediaSourceEnabledValue = false;
 static constexpr bool mediaSourceEnabledValue = true;
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+static constexpr bool fullGPUProcessEnabledValue = true;
+#else
+static constexpr bool fullGPUProcessEnabledValue = false;
+#endif
+
 const TestFeatures& TestOptions::defaults()
 {
     static TestFeatures features;
@@ -57,13 +63,17 @@ const TestFeatures& TestOptions::defaults()
             // an experimental feature which gets enabled by default automatically)
             // as it adds a small amount of unnecessary work per-test.
 
+#if !PLATFORM(IOS_SIMULATOR)
             { "AcceleratedDrawingEnabled", false },
+#endif
             { "AllowFileAccessFromFileURLs", true },
             { "AllowTopNavigationToDataURLs", true },
             { "AllowUniversalAccessFromFileURLs", true },
             { "AllowsInlineMediaPlayback", true },
             { "AsyncFrameScrollingEnabled", false },
             { "AsyncOverflowScrollingEnabled", false },
+            { "BroadcastChannelOriginPartitioningEnabled", false },
+            { "BuiltInNotificationsEnabled", false },
             { "CSSOMViewScrollingAPIEnabled", true },
             { "CaptureAudioInGPUProcessEnabled", captureAudioInGPUProcessEnabledValue },
             { "CaptureAudioInUIProcessEnabled", false },
@@ -87,12 +97,16 @@ const TestFeatures& TestOptions::defaults()
             { "InputTypeMonthEnabled", true },
             { "InputTypeTimeEnabled", true },
             { "InputTypeWeekEnabled", true },
+#if USE(ATSPI)
+            { "IsAccessibilityIsolatedTreeEnabled", true },
+#endif
             { "JavaScriptCanAccessClipboard", true },
             { "JavaScriptCanOpenWindowsAutomatically", true },
             { "LargeImageAsyncDecodingEnabled", false },
             { "MediaDevicesEnabled", true },
             { "MediaPreloadingEnabled", true },
             { "MediaSourceEnabled", mediaSourceEnabledValue },
+            { "MockScrollbarsControllerEnabled", false },
             { "MockCaptureDevicesEnabled", true },
             { "MockScrollbarsEnabled", true },
             { "ModernMediaControlsEnabled", true },
@@ -113,13 +127,17 @@ const TestFeatures& TestOptions::defaults()
             { "TextAutosizingUsesIdempotentMode", false },
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
+            { "WebRTCRemoteVideoFrameEnabled", false },
             { "WebRTCMDNSICECandidatesEnabled", false },
             { "XSSAuditorEnabled", false },
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
             { "VP9DecoderEnabled", false },
 #endif
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-            { "UseGPUProcessForWebGLEnabled", false },
+#if ENABLE(GPU_PROCESS)
+            { "UseGPUProcessForDOMRenderingEnabled", false },
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && !PLATFORM(WIN)
+            { "UseGPUProcessForWebGLEnabled", fullGPUProcessEnabledValue },
 #endif
         };
         features.stringWebPreferenceFeatures = {
@@ -175,7 +193,7 @@ const TestFeatures& TestOptions::defaults()
             { "standaloneWebApplicationURL", { } },
         };
         features.stringVectorTestRunnerFeatures = {
-            { "language", { } },
+            { "language", { "en-US" } },
         };
     }
     

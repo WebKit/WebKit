@@ -32,15 +32,14 @@
 
 [
     LegacyNoInterfaceObject,
-    ImplementationLacksVTable
 ] interface CommandLineAPIHost {
     undefined clearConsoleMessages();
     undefined copyText(DOMString text);
 
-    [CallWith=GlobalObject] undefined inspect(any objectToInspect, any hints);
-    [CallWith=GlobalObject] any inspectedObject();
+    [CallWith=CurrentGlobalObject] undefined inspect(any objectToInspect, any hints);
+    [CallWith=CurrentGlobalObject] any inspectedObject();
 
-    [CallWith=GlobalObject] record<DOMString, sequence<ListenerEntry>> getEventListeners(EventTarget target);
+    [CallWith=CurrentGlobalObject] record<DOMString, sequence<ListenerEntry>> getEventListeners(EventTarget target);
 
     DOMString databaseId(Database database);
     DOMString storageId(Storage storage);

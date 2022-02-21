@@ -77,7 +77,7 @@ ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<
         return Exception { NotSupportedError, "A processor was already registered with this name"_s };
 
     JSC::JSObject* jsConstructor = processorContructor->callbackData()->callback();
-    auto* globalObject = jsConstructor->globalObject();
+    auto* globalObject = scriptExecutionContext()->globalObject();
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -133,7 +133,7 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
         return nullptr;
 
     JSC::JSObject* jsConstructor = constructor->callbackData()->callback();
-    auto* globalObject = constructor->callbackData()->globalObject();
+    auto* globalObject = scriptExecutionContext()->globalObject();
     JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSC::JSLockHolder lock { globalObject };
@@ -154,7 +154,10 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
     if (!jsProcessor)
         return nullptr;
 
-    jsProcessor->wrapped().setProcessCallback(makeUnique<JSCallbackDataStrong>(jsProcessor, globalObject));
+    {
+        Locker locker { m_processorsLock };
+        m_processors.add(jsProcessor->wrapped());
+    }
 
     return &jsProcessor->wrapped();
 }
@@ -197,6 +200,20 @@ void AudioWorkletGlobalScope::handlePostRenderTasks(size_t currentFrame)
         // This takes care of processing the MicroTask queue after rendering.
         m_lockDuringRendering = std::nullopt;
     }
+}
+
+void AudioWorkletGlobalScope::processorIsNoLongerNeeded(AudioWorkletProcessor& processor)
+{
+    Locker locker { m_processorsLock };
+    m_processors.remove(processor);
+}
+
+void AudioWorkletGlobalScope::visitProcessors(JSC::AbstractSlotVisitor& visitor)
+{
+    Locker locker { m_processorsLock };
+    m_processors.forEach([&](auto& processor) {
+        visitor.addOpaqueRoot(&processor);
+    });
 }
 
 } // namespace WebCore

@@ -21,18 +21,20 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import json
+import time
 
+import json as jsonlib
+from webkitbugspy import mocks as bmocks
 from webkitcorepy import mocks
 from webkitscmpy import Commit, remote as scmremote
 
 
-class GitHub(mocks.Requests):
+class GitHub(bmocks.GitHub):
     top = None
 
     def __init__(
         self, remote='github.example.com/WebKit/WebKit', datafile=None,
-        default_branch='main', git_svn=False,
+        default_branch='main', git_svn=False, environment=None,
     ):
         if not scmremote.GitHub.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid GitHub remote'.format(remote))
@@ -40,16 +42,11 @@ class GitHub(mocks.Requests):
         self.default_branch = default_branch
         self.remote = remote
         self.forks = []
-        hostname = self.remote.split('/')[0]
-        self.api_remote = 'api.{hostname}/repos/{repo}'.format(
-            hostname=hostname,
-            repo='/'.join(self.remote.split('/')[1:]),
-        )
 
-        super(GitHub, self).__init__(hostname, 'api.{}'.format(hostname))
+        super(GitHub, self).__init__(remote, environment=environment)
 
         with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'git-repo.json')) as file:
-            self.commits = json.load(file)
+            self.commits = jsonlib.load(file)
         for key, commits in self.commits.items():
             self.commits[key] = [Commit(**kwargs) for kwargs in commits]
             if not git_svn:
@@ -59,29 +56,6 @@ class GitHub(mocks.Requests):
         self.head = self.commits[self.default_branch][-1]
         self.tags = {}
         self.pull_requests = []
-        self._environment = None
-
-    def __enter__(self):
-        prefix = self.remote.split('/')[0].replace('.', '_').upper()
-        username_key = '{}_USERNAME'.format(prefix)
-        token_key = '{}_TOKEN'.format(prefix)
-        self._environment = {
-            username_key: os.environ.get(username_key),
-            token_key: os.environ.get(token_key),
-        }
-        os.environ[username_key] = 'username'
-        os.environ[token_key] = 'token'
-
-        return super(GitHub, self).__enter__()
-
-    def __exit__(self, *args, **kwargs):
-        result = super(GitHub, self).__exit__(*args, **kwargs)
-        for key in self._environment.keys():
-            if self._environment[key]:
-                os.environ[key] = self._environment[key]
-            else:
-                del os.environ[key]
-        return result
 
     def commit(self, ref):
         if ref in self.commits:
@@ -142,7 +116,7 @@ class GitHub(mocks.Requests):
             return mocks.Response(
                 status_code=404,
                 url=url,
-                text=json.dumps(dict(message='No commit found for SHA: {}'.format(ref))),
+                text=jsonlib.dumps(dict(message='No commit found for SHA: {}'.format(ref))),
             )
 
         response = []
@@ -188,7 +162,7 @@ class GitHub(mocks.Requests):
             return mocks.Response(
                 status_code=404,
                 url=url,
-                text=json.dumps(dict(message='No commit found for SHA: {}'.format(ref))),
+                text=jsonlib.dumps(dict(message='No commit found for SHA: {}'.format(ref))),
             )
         return mocks.Response.fromJson({
             'sha': commit.hash,
@@ -216,7 +190,7 @@ class GitHub(mocks.Requests):
             return mocks.Response(
                 status_code=404,
                 url=url,
-                text=json.dumps(dict(message='Not found')),
+                text=jsonlib.dumps(dict(message='Not found')),
             )
 
         if commit_a.branch != self.default_branch or commit_b.branch == self.default_branch:
@@ -282,6 +256,8 @@ class GitHub(mocks.Requests):
         )
 
     def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
+        from datetime import datetime, timedelta
+
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 
@@ -317,7 +293,7 @@ class GitHub(mocks.Requests):
         if stripped_url.startswith('{}/tree/'.format(self.remote)):
             return self._parents_of_request(url=url, ref=stripped_url.split('/')[-1])
 
-        # Check for existance of forked repo
+        # Check for existence of forked repo
         if stripped_url.startswith('{}/repos'.format(self.api_remote.split('/')[0])) and stripped_url.split('/')[-1] == self.remote.split('/')[-1]:
             username = stripped_url.split('/')[-2]
             if username in self.forks or username == self.remote.split('/')[-2]:
@@ -335,7 +311,7 @@ class GitHub(mocks.Requests):
             username = (json or {}).get('owner', None)
             if username:
                 self.forks.append(username)
-            return mocks.Response.fromJson({}) if username else mocks.Response.create404(url)
+            return mocks.Response.fromJson({}, url=url) if username else mocks.Response.create404(url)
 
         # All pull-requests
         pr_base = '{}/pulls'.format(self.api_remote)
@@ -352,7 +328,26 @@ class GitHub(mocks.Requests):
                 if head and head not in [candidate.get('head', {}).get('ref'), candidate.get('head', {}).get('label')]:
                     continue
                 prs.append(candidate)
-            return mocks.Response.fromJson(prs)
+            return mocks.Response.fromJson(prs, url=url)
+
+        # Pull-request by number
+        if method == 'GET' and stripped_url.startswith(pr_base):
+            for candidate in self.pull_requests:
+                if stripped_url.split('/')[5] == str(candidate['number']):
+                    if len(stripped_url.split('/')) == 7:
+                        if stripped_url.split('/')[6] == 'requested_reviewers':
+                            return mocks.Response.fromJson(dict(users=candidate.get('requested_reviews', [])))
+                        if stripped_url.split('/')[6] == 'reviews':
+                            return mocks.Response.fromJson(candidate.get('reviews', []))
+                        return mocks.Response.create404(url)
+                    return mocks.Response.fromJson({
+                        key: value for key, value in candidate.items() if key not in ('requested_reviews', 'reviews')
+                    }, url=url)
+            return mocks.Response(
+                status_code=404,
+                text=jsonlib.dumps(dict(message='Not found')),
+                url=url,
+            )
 
         # Create/update pull-request
         pr = dict()
@@ -373,13 +368,32 @@ class GitHub(mocks.Requests):
                     ref=json['base'],
                     user=dict(login=self.remote.split('/')[-2]),
                 )
+            if json.get('state'):
+                pr['state'] = json.get('state')
+            if json.get('draft'):
+                pr['draft'] = json.get('draft')
 
         # Create specifically
         if method == 'POST' and auth and stripped_url == pr_base:
             pr['number'] = 1 + max([0] + [pr.get('number', 0) for pr in self.pull_requests])
+            pr['state'] = 'open'
             pr['user'] = dict(login=auth.username)
+            pr['_links'] = dict(issue=dict(href='https://{}/issues/{}'.format(self.api_remote, pr['number'])))
+            pr['draft'] = pr.get('draft', False)
             self.pull_requests.append(pr)
-            return mocks.Response.fromJson(pr)
+            if pr['number'] not in self.issues:
+                self.issues[pr['number']] = dict(
+                    creator=self.users.create(username=pr['user']['login']),
+                    timestamp=time.time(),
+                    assignee=None,
+                    comments=[],
+                )
+            self.issues[pr['number']].update(dict(
+                title=pr['title'],
+                opened=pr['state'] == 'open',
+                description=pr['body'],
+            ))
+            return mocks.Response.fromJson(pr, url=url)
 
         # Update specifically
         if method == 'POST' and auth and stripped_url.startswith(pr_base):
@@ -391,6 +405,11 @@ class GitHub(mocks.Requests):
             if existing is None:
                 return mocks.Response.create404(url)
             self.pull_requests[existing].update(pr)
-            return mocks.Response.fromJson(self.pull_requests[i])
+            self.issues[number].update(dict(
+                title=self.pull_requests[existing]['title'],
+                opened=self.pull_requests[existing]['state'] == 'open',
+                description=self.pull_requests[existing]['body'],
+            ))
+            return mocks.Response.fromJson(self.pull_requests[existing], url=url)
 
-        return mocks.Response.create404(url)
+        return super(GitHub, self).request(method, url, data=data, params=params, auth=auth, json=json, **kwargs)

@@ -3334,6 +3334,25 @@ TEST_F(FragmentShaderValidationTest, FloatDeclarationNoQualifiersNoPrecision)
     }
 }
 
+// Precision must be specified for floats. Test this with a function argument no qualifiers.
+TEST_F(FragmentShaderValidationTest, FloatDeclarationNoQualifiersNoPrecisionFunctionArg)
+{
+    const std::string &shaderString = R"(
+int c(float x)
+{
+    return int(x);
+}
+void main()
+{
+    c(5.0);
+})";
+
+    if (compile(shaderString))
+    {
+        FAIL() << "Shader compilation succeeded, expecting failure:\n" << mInfoLog;
+    }
+}
+
 // Check compiler doesn't crash on incorrect unsized array declarations.
 TEST_F(FragmentShaderValidationTest, IncorrectUnsizedArray)
 {

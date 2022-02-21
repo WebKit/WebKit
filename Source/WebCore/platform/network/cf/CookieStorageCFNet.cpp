@@ -37,9 +37,9 @@
 
 namespace WebCore {
 
-static HashMap<CFHTTPCookieStorageRef, WTF::Function<void ()>>& cookieChangeCallbackMap()
+static HashMap<CFHTTPCookieStorageRef, Function<void()>>& cookieChangeCallbackMap()
 {
-    static NeverDestroyed<HashMap<CFHTTPCookieStorageRef, WTF::Function<void ()>>> map;
+    static NeverDestroyed<HashMap<CFHTTPCookieStorageRef, Function<void()>>> map;
     return map;
 }
 
@@ -63,7 +63,7 @@ static inline CFRunLoopRef cookieStorageObserverRunLoop()
     return loaderRunLoop();
 }
 
-void startObservingCookieChanges(NetworkStorageSession& storageSession, WTF::Function<void()>&& callback)
+void startObservingCookieChanges(NetworkStorageSession& storageSession, Function<void()>&& callback)
 {
     ASSERT(isMainThread());
 

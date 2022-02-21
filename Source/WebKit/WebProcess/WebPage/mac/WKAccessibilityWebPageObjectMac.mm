@@ -82,7 +82,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         m_attributeNames = adoptNS([[NSArray alloc] initWithObjects:
                             NSAccessibilityRoleAttribute, NSAccessibilityRoleDescriptionAttribute, NSAccessibilityFocusedAttribute,
                             NSAccessibilityParentAttribute, NSAccessibilityWindowAttribute, NSAccessibilityTopLevelUIElementAttribute,
-                            NSAccessibilityPositionAttribute, NSAccessibilitySizeAttribute, NSAccessibilityChildrenAttribute, NSAccessibilityPrimaryScreenHeightAttribute, nil]);
+                            NSAccessibilityPositionAttribute, NSAccessibilitySizeAttribute, NSAccessibilityChildrenAttribute, NSAccessibilityChildrenInNavigationOrderAttribute, NSAccessibilityPrimaryScreenHeightAttribute, nil]);
     
     return m_attributeNames.get();
 }
@@ -153,6 +153,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return @[wrapper];
 }
 
+- (NSArray *)accessibilityChildrenInNavigationOrder
+{
+    return [self accessibilityChildren];
+}
+
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString *)attribute
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
@@ -193,6 +198,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute])
         return [self accessibilityChildren];
     
+    // [self accessibilityChildren] is just the root object, so it's already in navigation order.
+    if ([attribute isEqualToString:NSAccessibilityChildrenInNavigationOrderAttribute])
+        return [self accessibilityChildren];
+
     return nil;
 }
 
@@ -267,10 +276,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         // Some plugins may be able to figure out the scroll position and inset on their own.
         bool applyContentOffset = true;
 
-        // Isolated tree frames have the offset encoded into them so we don't need to undo here.
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        applyContentOffset = !WebCore::AXObjectCache::isIsolatedTreeEnabled();
-#endif
         if (auto pluginView = WebKit::WebPage::pluginViewForFrame(protectedSelf->m_page->mainFrame()))
             applyContentOffset = !pluginView->plugin()->pluginHandlesContentOffsetForAccessibilityHitTest();
         

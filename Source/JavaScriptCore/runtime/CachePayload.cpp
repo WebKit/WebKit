@@ -49,7 +49,7 @@ CachePayload::CachePayload(CachePayload&& other)
     other.m_data = std::pair { nullptr, 0 };
 }
 
-CachePayload::CachePayload(Variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>>&& data)
+CachePayload::CachePayload(std::variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>>&& data)
     : m_data(WTFMove(data))
 {
 }
@@ -61,21 +61,21 @@ const uint8_t* CachePayload::data() const
     return WTF::switchOn(m_data,
         [](const FileSystem::MappedFileData& data) {
             return static_cast<const uint8_t*>(data.data());
-        },
-        [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) {
+        }, [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) -> const uint8_t* {
             return data.first.get();
-        });
+        }
+    );
 }
 
 size_t CachePayload::size() const
 {
     return WTF::switchOn(m_data,
-        [](const FileSystem::MappedFileData& data) {
+        [](const FileSystem::MappedFileData& data) -> size_t {
             return data.size();
-        },
-        [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) {
+        }, [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) -> size_t {
             return data.second;
-        });
+        }
+    );
 }
 
 } // namespace JSC

@@ -47,8 +47,6 @@ description('Test the style invalidation of elements affected by an indirect adj
 
 function shouldNeedStyleRecalc(expected) {
     var testFunction = expected ? shouldBeTrue : shouldBeFalse;
-    testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\".activator\")[0])");
-    testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\".activator\")[1])");
     testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\"target\")[0])");
     testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\"target\")[1])");
 }

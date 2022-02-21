@@ -43,18 +43,6 @@ private:
     Vector<WebCore::PluginInfo> pluginInfo(WebCore::Page&, std::optional<Vector<WebCore::SupportedPluginIdentifier>>&) final;
     Vector<WebCore::PluginInfo> webVisiblePluginInfo(WebCore::Page&, const URL&) final;
     void refreshPlugins() override;
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    void populatePluginCache(const WebCore::Page&);
-#endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    bool m_pluginCacheIsPopulated { false };
-    bool m_shouldRefreshPlugins { false };
-    Vector<WebCore::PluginInfo> m_cachedPlugins;
-    Vector<WebCore::PluginInfo> m_cachedApplicationPlugins;
-    std::optional<Vector<WebCore::SupportedPluginIdentifier>> m_cachedSupportedPluginIdentifiers;
-#endif
 };
 
 }

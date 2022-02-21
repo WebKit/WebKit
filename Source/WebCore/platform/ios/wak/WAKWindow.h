@@ -25,13 +25,14 @@
 
 #pragma once
 
+#import <Foundation/Foundation.h>
+
 #if TARGET_OS_IPHONE
 
-#import "WAKAppKitStubs.h"
-#import "WAKView.h"
-#import "WKContentObservation.h"
 #import <CoreGraphics/CoreGraphics.h>
-#import <Foundation/Foundation.h>
+#import <WebCore/WAKAppKitStubs.h>
+#import <WebCore/WAKView.h>
+#import <WebCore/WKContentObservation.h>
 
 @class CALayer;
 @class WebEvent;

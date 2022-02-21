@@ -525,7 +525,7 @@ void FullscreenVideoController::draw()
 
     desc.setComputedSize(textSize);
     FontCascade font = FontCascade(WTFMove(desc), 0, 0);
-    font.update(0);
+    font.update();
 
     String s;
 
@@ -535,7 +535,7 @@ void FullscreenVideoController::draw()
     // the text at the center of the slider.
     // Left string
     s = timeToString(currentTime());
-    int fontHeight = font.fontMetrics().height();
+    int fontHeight = font.metricsOfPrimaryFont().height();
     TextRun leftText(s);
     context.setFillColor(Color(textColor));
     context.drawText(font, leftText, IntPoint(windowWidth / 2 - timeSliderWidth / 2 - margin - font.width(leftText), windowHeight - margin - sliderHeight / 2 + fontHeight / 4));

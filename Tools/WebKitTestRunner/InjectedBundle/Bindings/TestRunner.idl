@@ -39,6 +39,7 @@ interface TestRunner {
     // Downloads.
     undefined waitUntilDownloadFinished();
     undefined setShouldLogDownloadCallbacks(boolean value);
+    undefined setShouldLogDownloadSize(boolean value);
 
     const unsigned short RENDER_TREE_SHOW_ALL_LAYERS            = 1;
     const unsigned short RENDER_TREE_SHOW_LAYER_NESTING         = 2;
@@ -77,6 +78,7 @@ interface TestRunner {
     // Special options.
     undefined keepWebHistory();
     undefined setAcceptsEditing(boolean value);
+    undefined preventPopupWindows();
     undefined setCustomPolicyDelegate(boolean enabled, boolean permissive);
     undefined addOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
     undefined removeOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
@@ -93,6 +95,7 @@ interface TestRunner {
     undefined setNavigationGesturesEnabled(boolean value);
     undefined setIgnoresViewportScaleLimits(boolean value);
     undefined setShouldDownloadUndisplayableMIMETypes(boolean value);
+    undefined stopLoading();
 
     // Special DOM functions.
     undefined clearBackForwardList();
@@ -205,6 +208,7 @@ interface TestRunner {
     undefined denyWebNotificationPermission(DOMString origin);
     undefined removeAllWebNotificationPermissions();
     undefined simulateWebNotificationClick(object notification);
+    undefined simulateWebNotificationClickForServiceWorkerNotifications();
 
     // Geolocation
     undefined setGeolocationPermission(boolean value);
@@ -360,6 +364,7 @@ interface TestRunner {
 
     undefined setCustomUserAgent(DOMString userAgent);
 
+    undefined terminateGPUProcess();
     undefined terminateNetworkProcess();
     undefined terminateServiceWorkers();
     undefined setUseSeparateServiceWorkerProcess(boolean value);
@@ -382,6 +387,7 @@ interface TestRunner {
     undefined resetMockMediaDevices();
     undefined setMockCameraOrientation(unsigned long orientation);
     boolean isMockRealtimeMediaSourceCenterEnabled();
+    undefined setMockCameraIsInterrupted(boolean isInterrupted);
 
     boolean hasAppBoundSession();
     undefined clearAppBoundSession();
@@ -407,16 +413,19 @@ interface TestRunner {
     undefined setPrivateClickMeasurementOverrideTimerForTesting(boolean value);
     undefined markAttributedPrivateClickMeasurementsAsExpiredForTesting();
     undefined setPrivateClickMeasurementEphemeralMeasurementForTesting(boolean value);
-    undefined simulateResourceLoadStatisticsSessionRestart();
+    undefined simulatePrivateClickMeasurementSessionRestart();
     undefined setPrivateClickMeasurementTokenPublicKeyURLForTesting(DOMString url);
     undefined setPrivateClickMeasurementTokenSignatureURLForTesting(DOMString url);
     undefined setPrivateClickMeasurementAttributionReportURLsForTesting(DOMString sourceURLString, DOMString destinationURLString);
     undefined markPrivateClickMeasurementsAsExpiredForTesting();
     undefined setPrivateClickMeasurementFraudPreventionValuesForTesting(DOMString unlinkableToken, DOMString secretToken, DOMString signature, DOMString keyID);
+    undefined setPrivateClickMeasurementAppBundleIDForTesting(DOMString appBundleID);
 
     // SpeechRecognition
     undefined setIsSpeechRecognitionPermissionGranted(boolean value);
 
     // MediaKeySystem
     undefined setIsMediaKeySystemPermissionGranted(boolean value);
+
+    undefined takeViewPortSnapshot(object callback);
 };

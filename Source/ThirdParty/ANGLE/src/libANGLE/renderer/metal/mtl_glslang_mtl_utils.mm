@@ -1,28 +1,30 @@
 //
-//  mgl_glslang_mtl_utils.m
-//  ANGLE (static)
+// Copyright 2019 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 //
-//  Created by Kyle Piddington on 11/10/20.
+// mtl_glslang_mtl_utils.mm: Wrapper for Khronos's glslang compiler for MSL.
 //
 
 #import <Foundation/Foundation.h>
 
+#include "common/utilities.h"
 #include "compiler/translator/TranslatorMetalDirect.h"
 #include "libANGLE/renderer/metal/ShaderMtl.h"
 #include "libANGLE/renderer/metal/mtl_glslang_mtl_utils.h"
-#include "common/utilities.h"
 namespace rx
 {
 namespace
 {
-    constexpr char kXfbBindingsMarker[]    = "@@XFB-Bindings@@";
-    constexpr char kXfbOutMarker[]     = "ANGLE_@@XFB-OUT@@";
+constexpr char kXfbBindingsMarker[]     = "@@XFB-Bindings@@";
+constexpr char kXfbOutMarker[]          = "ANGLE_@@XFB-OUT@@";
+constexpr char kUserDefinedNamePrefix[] = "_u";  // Defined in GLSLANG/ShaderLang.h
 
 template <size_t N>
 constexpr size_t ConstStrLen(const char (&)[N])
 {
     static_assert(N > 0, "C++ shouldn't allow N to be zero");
-
+    
     // The length of a string defined as a char array is the size of the array minus 1 (the
     // terminating '\0').
     return N - 1;
@@ -33,7 +35,7 @@ std::string GetXfbBufferNameMtl(const uint32_t bufferIndex)
     return "xfbBuffer" + Str(bufferIndex);
 }
 
-}   //
+}  //
 
 namespace mtl
 {
@@ -107,7 +109,7 @@ static std::string MSLGetMappedSamplerName(const std::string &originalName)
 void MSLGetShaderSource(const gl::ProgramState &programState,
                         const gl::ProgramLinkedResources &resources,
                         gl::ShaderMap<std::string> *shaderSourcesOut,
-                        ShaderMapInterfaceVariableInfoMap *variableInfoMapOut)
+                        ShaderInterfaceVariableInfoMap *variableInfoMapOut)
 {
     for (const gl::ShaderType shaderType : gl::AllShaderTypes())
     {
@@ -160,38 +162,43 @@ sh::TranslatorMetalReflection *getReflectionFromShader(gl::Shader *shader)
 std::string updateShaderAttributes(std::string shaderSourceIn, const gl::ProgramState &programState)
 {
     // Build string to attrib map.
-    const auto & programAttributes = programState.getProgramInputs();
+    const auto &programAttributes = programState.getProgramInputs();
     std::ostringstream stream;
     std::unordered_map<std::string, uint32_t> attributeBindings;
-    for(auto & attribute : programAttributes)
+    for (auto &attribute : programAttributes)
     {
         const int regs = gl::VariableRegisterCount(attribute.type);
-        if(regs > 1)
+        if (regs > 1)
         {
-            for(int i = 0; i < regs; i++)
+            for (int i = 0; i < regs; i++)
             {
                 stream.str("");
-                stream << attribute.name << "_" << std::to_string(i) << sh::kUnassignedAttributeString;
-                attributeBindings.insert({std::string(stream.str()), i+attribute.location});
+                stream << " " << kUserDefinedNamePrefix << attribute.name << "_"
+                       << std::to_string(i) << sh::kUnassignedAttributeString;
+                attributeBindings.insert({std::string(stream.str()), i + attribute.location});
             }
         }
         else
         {
             stream.str("");
-            stream << attribute.name << sh::kUnassignedAttributeString;
-            attributeBindings.insert({std::string(stream.str()),attribute.location});
+            stream << " " << kUserDefinedNamePrefix << attribute.name
+                   << sh::kUnassignedAttributeString;
+            attributeBindings.insert({std::string(stream.str()), attribute.location});
+            stream.str("");
         }
     }
-    //Rewrite attributes
+    // Rewrite attributes
     std::string outputSource = shaderSourceIn;
-    for(auto it = attributeBindings.begin(); it!=attributeBindings.end(); ++it)
+    for (auto it = attributeBindings.begin(); it != attributeBindings.end(); ++it)
     {
-        std::size_t attribFound= outputSource.find(it->first);
-        if(attribFound != std::string::npos)
+        std::size_t attribFound = outputSource.find(it->first);
+        if (attribFound != std::string::npos)
         {
             stream.str("");
             stream << "[[attribute(" << it->second << ")]]";
-            outputSource = outputSource.replace(attribFound+it->first.length()-strlen(sh::kUnassignedAttributeString), strlen(sh::kUnassignedAttributeString), stream.str());
+            outputSource = outputSource.replace(
+                attribFound + it->first.length() - strlen(sh::kUnassignedAttributeString),
+                strlen(sh::kUnassignedAttributeString), stream.str());
         }
     }
     return outputSource;
@@ -202,12 +209,12 @@ std::string SubstituteTransformFeedbackMarkers(const std::string &originalSource
                                                const std::string &xfbOut)
 {
     const size_t xfbBindingsMarkerStart = originalSource.find(kXfbBindingsMarker);
-    bool hasBindingsMarker = xfbBindingsMarkerStart != std::string::npos;
-    const size_t xfbBindingsMarkerEnd = xfbBindingsMarkerStart + ConstStrLen(kXfbBindingsMarker);
+    bool hasBindingsMarker              = xfbBindingsMarkerStart != std::string::npos;
+    const size_t xfbBindingsMarkerEnd   = xfbBindingsMarkerStart + ConstStrLen(kXfbBindingsMarker);
 
     const size_t xfbOutMarkerStart = originalSource.find(kXfbOutMarker, xfbBindingsMarkerStart);
-    bool hasOutMarker = xfbOutMarkerStart != std::string::npos;
-    const size_t xfbOutMarkerEnd = xfbOutMarkerStart + ConstStrLen(kXfbOutMarker);
+    bool hasOutMarker              = xfbOutMarkerStart != std::string::npos;
+    const size_t xfbOutMarkerEnd   = xfbOutMarkerStart + ConstStrLen(kXfbOutMarker);
 
     // The shader is the following form:
     //
@@ -220,7 +227,7 @@ std::string SubstituteTransformFeedbackMarkers(const std::string &originalSource
     // Construct the string by concatenating these five pieces, replacing the markers with the given
     // values.
     std::string result;
-    if(hasBindingsMarker && hasOutMarker)
+    if (hasBindingsMarker && hasOutMarker)
     {
         result.append(&originalSource[0], &originalSource[xfbBindingsMarkerStart]);
         result.append(xfbBindings);
@@ -253,12 +260,20 @@ std::string GenerateTransformFeedbackVaryingOutput(const gl::TransformFeedbackVa
             for (int row = 0; row < info.rowCount; ++row)
             {
                 result << "        ";
-                result << "ANGLE_" << "xfbBuffer" << bufferIndex << "["
-                       << "ANGLE_" << std::string(sh::kUniformsVar)<< ".ANGLE_xfbBufferOffsets[" << bufferIndex
-                       << "] + (gl_VertexID + ANGLE_instanceIdMod * "
-                       << "ANGLE_" << std::string(sh::kUniformsVar) << ".ANGLE_xfbVerticesPerDraw) * " << stride
-                       << " + " << offset << "] = " << "as_type<float>" << "("
-                       << "ANGLE_vertexOut." << varying.name;
+                result << "ANGLE_"
+                       << "xfbBuffer" << bufferIndex << "["
+                       << "ANGLE_" << std::string(sh::kUniformsVar) << ".ANGLE_xfbBufferOffsets["
+                       << bufferIndex << "] + (gl_VertexID + ANGLE_instanceIdMod * "
+                       << "ANGLE_" << std::string(sh::kUniformsVar)
+                       << ".ANGLE_xfbVerticesPerInstance) * " << stride << " + " << offset << "] = "
+                       << "as_type<float>"
+                       << "("
+                       << "ANGLE_vertexOut.";
+                if (!varying.isBuiltIn())
+                {
+                    result << kUserDefinedNamePrefix;
+                }
+                result << varying.name;
 
                 if (varying.isArray())
                 {
@@ -284,11 +299,11 @@ std::string GenerateTransformFeedbackVaryingOutput(const gl::TransformFeedbackVa
     return result.str();
 }
 
-void GenerateTransformFeedbackEmulationOutputs(const GlslangSourceOptions &options,
-                                               const gl::ProgramState &programState,
-                                               std::string *vertexShader,
-                                               bool earlyReturn,
-                                               std::array<uint32_t, kMaxShaderXFBs> *xfbBindingRemapOut)
+void GenerateTransformFeedbackEmulationOutputs(
+    const GlslangSourceOptions &options,
+    const gl::ProgramState &programState,
+    std::string *vertexShader,
+    std::array<uint32_t, kMaxShaderXFBs> *xfbBindingRemapOut)
 {
     const std::vector<gl::TransformFeedbackVarying> &varyings =
         programState.getLinkedTransformFeedbackVaryings();
@@ -311,12 +326,13 @@ void GenerateTransformFeedbackEmulationOutputs(const GlslangSourceOptions &optio
         xfbBindings += ", ";
         // TODO: offset from last used buffer binding from front end
         // XFB buffer is allocated slot starting from last discrete Metal buffer slot.
-        uint32_t bindingPoint = kMaxShaderBuffers - 1 - bufferIndex;
+        uint32_t bindingPoint               = kMaxShaderBuffers - 1 - bufferIndex;
         xfbBindingRemapOut->at(bufferIndex) = bindingPoint;
-        xfbBindings += "device float* ANGLE_" + bufferName + " [[buffer(" + Str(bindingPoint) + ")]]";
+        xfbBindings +=
+            "device float* ANGLE_" + bufferName + " [[buffer(" + Str(bindingPoint) + ")]]";
     }
 
-    std::string xfbOut = "#if TRANSFORM_FEEDBACK_ENABLED\n    if (ANGLE_" + std::string(sh::kUniformsVar) + ".ANGLE_xfbActiveUnpaused != 0)\n    {\n";
+    std::string xfbOut  = "#if TRANSFORM_FEEDBACK_ENABLED\n    {\n";
     size_t outputOffset = 0;
     for (size_t varyingIndex = 0; varyingIndex < varyings.size(); ++varyingIndex)
     {
@@ -334,31 +350,16 @@ void GenerateTransformFeedbackEmulationOutputs(const GlslangSourceOptions &optio
             outputOffset += info.columnCount * info.rowCount * varying.size();
         }
     }
-    if (earlyReturn)
-    {
-        xfbOut += "return;";
-    }
     xfbOut += "    }\n#endif\n";
 
     *vertexShader = SubstituteTransformFeedbackMarkers(*vertexShader, xfbBindings, xfbOut);
-}
-
-
-sh::TranslatorMetalReflection *getReflectionFromCompiler(gl::Compiler *compiler,
-                                                         gl::ShaderType type)
-{
-    auto compilerInstance      = compiler->getInstance(type);
-    sh::TShHandleBase *base    = static_cast<sh::TShHandleBase *>(compilerInstance.getHandle());
-    auto translatorMetalDirect = base->getAsTranslatorMetalDirect();
-    compiler->putInstance(std::move(compilerInstance));
-    return translatorMetalDirect->getTranslatorMetalReflection();
 }
 
 angle::Result GlslangGetMSL(const gl::Context *glContext,
                             const gl::ProgramState &programState,
                             const gl::Caps &glCaps,
                             const gl::ShaderMap<std::string> &shaderSources,
-                            const ShaderMapInterfaceVariableInfoMap &variableInfoMap,
+                            const ShaderInterfaceVariableInfoMap &variableInfoMap,
                             gl::ShaderMap<TranslatedShaderInfo> *mslShaderInfoOut,
                             gl::ShaderMap<std::string> *mslCodeOut,
                             size_t xfbBufferCount)
@@ -400,7 +401,7 @@ angle::Result GlslangGetMSL(const gl::Context *glContext,
     for (gl::ShaderType type : {gl::ShaderType::Vertex, gl::ShaderType::Fragment})
     {
         std::string source;
-        if(type == gl::ShaderType::Vertex)
+        if (type == gl::ShaderType::Vertex)
         {
             source = updateShaderAttributes(shaderSources[type], programState);
             // Write transform feedback output code.
@@ -414,22 +415,19 @@ angle::Result GlslangGetMSL(const gl::Context *glContext,
                 {
                     GenerateTransformFeedbackEmulationOutputs(
                         options, programState, &source,
-                        options.transformFeedbackEarlyReturn,
                         &(*mslShaderInfoOut)[type].actualXFBBindings);
                 }
             }
-
-
         }
         else
         {
             source = shaderSources[type];
         }
-        (*mslCodeOut)[type]                         = source;
-        (*mslShaderInfoOut)[type].metalShaderSource = source;
-        gl::Shader *shader                        = programState.getAttachedShader(type);
+        (*mslCodeOut)[type]                             = source;
+        (*mslShaderInfoOut)[type].metalShaderSource     = source;
+        gl::Shader *shader                              = programState.getAttachedShader(type);
         const sh::TranslatorMetalReflection *reflection = getReflectionFromShader(shader);
-        if(reflection->hasUBOs)
+        if (reflection->hasUBOs)
         {
             (*mslShaderInfoOut)[type].hasUBOArgumentBuffer = true;
 
@@ -440,11 +438,12 @@ angle::Result GlslangGetMSL(const gl::Context *glContext,
                 const uint32_t uboBindIndex        = static_cast<uint32_t>(bindInfo.bindIndex);
                 const uint32_t uboArraySize        = static_cast<uint32_t>(bindInfo.arraySize);
                 const uint32_t originalBinding     = uboOriginalBindings.at(uboName);
-                uint32_t currentSlot = static_cast<uint>(uboBindIndex);
+                uint32_t currentSlot               = static_cast<uint>(uboBindIndex);
                 for (uint32_t i = 0; i < uboArraySize; ++i)
                 {
                     // Use consecutive slot for member in array
-                    (*mslShaderInfoOut)[type].actualUBOBindings[originalBinding + i] = currentSlot + i;
+                    (*mslShaderInfoOut)[type].actualUBOBindings[originalBinding + i] =
+                        currentSlot + i;
                 }
             }
         }
@@ -454,7 +453,8 @@ angle::Result GlslangGetMSL(const gl::Context *glContext,
             GetAssignedSamplerBindings(reflection, originalSamplerBindings, structSamplers,
                                        &mslShaderInfoOut->at(type).actualSamplerBindings);
         }
-        (*mslShaderInfoOut)[type].hasInvariantOrAtan = reflection->hasAtan || reflection->hasInvariance;
+        (*mslShaderInfoOut)[type].hasInvariantOrAtan =
+            reflection->hasAtan || reflection->hasInvariance;
     }
     return angle::Result::Continue;
 }

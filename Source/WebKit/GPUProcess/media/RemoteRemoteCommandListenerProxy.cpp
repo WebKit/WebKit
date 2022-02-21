@@ -37,7 +37,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteRemoteCommandListenerProxy::RemoteRemoteCommandListenerProxy(GPUConnectionToWebProcess& gpuConnection, RemoteRemoteCommandListenerIdentifier&& identifier)
-    : m_gpuConnection(makeWeakPtr(gpuConnection))
+    : m_gpuConnection(gpuConnection)
     , m_identifier(WTFMove(identifier))
 {
 }

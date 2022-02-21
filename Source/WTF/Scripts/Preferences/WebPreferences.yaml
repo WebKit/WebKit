@@ -232,6 +232,17 @@ AllowsPictureInPictureMediaPlayback:
     WebCore:
       default: true
 
+AlternateFormControlDesignEnabled:
+  type: bool
+  condition: PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AlwaysUseAcceleratedOverflowScroll:
   type: bool
   defaultValue:
@@ -301,30 +312,6 @@ ApplePayEnabled:
       "ENABLE(APPLE_PAY_REMOTE_UI)": true
       default: false
 
-ArtificialPluginInitializationDelayEnabled:
-  type: bool
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: false
-
-AsynchronousPluginInitializationEnabled:
-  type: bool
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: false
-
-AsynchronousPluginInitializationEnabledForAllPlugins:
-  type: bool
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: false
-
 AsynchronousSpellCheckingEnabled:
   type: bool
   defaultValue:
@@ -357,17 +344,6 @@ AuthorAndUserStylesEnabled:
       default: true
     WebCore:
       default: true
-
-BackForwardCacheSupportsPlugins:
-  type: bool
-  webKitLegacyPreferenceKey: WebKitPageCacheSupportsPluginsPreferenceKey
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: false
 
 BackspaceKeyNavigationEnabled:
   type: bool
@@ -620,7 +596,7 @@ DefaultTextEncodingName:
     WebKitLegacy:
       default: '"ISO-8859-1"'
     WebKit:
-      default: WebCore::defaultTextEncodingNameForSystemLanguage()
+      default: PAL::defaultTextEncodingNameForSystemLanguage()
     WebCore:
       default: '{ }'
 
@@ -923,6 +899,17 @@ HyperlinkAuditingEnabled:
     WebCore:
       default: false
 
+ImageControlsEnabled:
+  type: bool
+  condition: ENABLE(SERVICE_CONTROLS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 InactiveMediaCaptureSteamRepromptIntervalInMinutes:
   type: double
   webcoreBinding: none
@@ -966,18 +953,6 @@ InlineMediaPlaybackRequiresPlaysInlineAttribute:
     WebCore:
       "PLATFORM(IOS_FAMILY)": true
       default: false
-
-InputEventsEnabled:
-  type: bool
-  humanReadableName: "Input Events"
-  humanReadableDescription: "Enable InputEvents support"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 InspectorAdditionsEnabled:
   type: bool
@@ -1078,6 +1053,7 @@ IsAccessibilityIsolatedTreeEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "USE(ATSPI)": true
       default: false
     WebCore:
       default: false
@@ -1328,6 +1304,17 @@ MainContentUserGestureOverrideEnabled:
     WebCore:
       default: false
 
+MathMLEnabled:
+  type: bool
+  condition: ENABLE(MATHML)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 MaxParseDuration:
   type: double
   webKitLegacyPreferenceKey: WebKitMaxParseDurationPreferenceKey
@@ -1339,6 +1326,14 @@ MaxParseDuration:
     WebCore:
       default: -1
 
+MediaAudioCodecIDsAllowedInCaptivePortalMode:
+  type: String
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: '"aac ,zaac,qaac,caac,.mp3"'
+
 MediaCapabilitiesEnabled:
   type: bool
   defaultValue:
@@ -1348,6 +1343,30 @@ MediaCapabilitiesEnabled:
       default: true
     WebCore:
       default: false
+
+MediaCaptionFormatTypesAllowedInCaptivePortalMode:
+  type: String
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: '"c608,wvtt"'
+
+MediaCodecTypesAllowedInCaptivePortalMode:
+  type: String
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: '"mp4a.40,avc1"'
+
+MediaContainerTypesAllowedInCaptivePortalMode:
+  type: String
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: '"video/mp4,audio/mp4,video/x-m4v,audio/x-m4a,audio/mp3,application/x-mpegURL,vnd.apple.mpegURL"'
 
 MediaContentTypesRequiringHardwareSupport:
   type: String
@@ -1434,15 +1453,16 @@ MediaSourceEnabled:
   type: bool
   defaultValue:
     WebKitLegacy:
-      default: true
+      "ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)": WebKit::defaultMediaSourceEnabled()
+      "ENABLE(MEDIA_SOURCE) && !PLATFORM(IOS_FAMILY)": true
+      default: false
     WebKit:
-      "PLATFORM(COCOA) && PLATFORM(MAC)": true
-      "PLATFORM(COCOA) && !PLATFORM(MAC)": false
-      default: true
+      "ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)": WebKit::defaultMediaSourceEnabled()
+      "ENABLE(MEDIA_SOURCE) && !PLATFORM(IOS_FAMILY)": true
+      default: false
     WebCore:
-      "PLATFORM(COCOA) && PLATFORM(MAC)": true
-      "PLATFORM(COCOA) && !PLATFORM(MAC)": false
-      default: true
+      "ENABLE(MEDIA_SOURCE)": true
+      default: false
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 # FIXME: Seems to be unused. Remove once verified.
@@ -1466,6 +1486,14 @@ MediaUserGestureInheritsFromDocument:
       default: false
     WebCore:
       default: false
+
+MediaVideoCodecIDsAllowedInCaptivePortalMode:
+  type: String
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: '"avc1,zavc,qavc,cavc"'
 
 MenuItemElementEnabled:
   type: bool
@@ -1519,6 +1547,16 @@ MockCaptureDevicesPromptEnabled:
   defaultValue:
     WebKit:
       default: true
+
+MockScrollbarsControllerEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 MockScrollbarsEnabled:
   type: bool
@@ -1760,16 +1798,6 @@ PunchOutWhiteBackgroundsInDarkMode:
     WebCore:
       default: false
 
-RequestAnimationFrameEnabled:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 RequiresPageVisibilityToPlayAudio:
   type: bool
   defaultValue:
@@ -1826,7 +1854,7 @@ RequiresUserGestureToLoadVideo:
 
 RubberBandingForSubScrollableRegionsEnabled:
   type: bool
-  condition: ENABLE(RUBBER_BANDING)
+  condition: HAVE(RUBBER_BANDING)
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1877,14 +1905,17 @@ SansSerifFontFamily:
 
 ScrollAnimatorEnabled:
   type: bool
-  condition: ENABLE(SMOOTH_SCROLLING)
   defaultValue:
     WebKitLegacy:
-      default: true
+      "PLATFORM(MAC)": WebKit::defaultScrollAnimatorEnabled()
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
+      default: false
     WebKit:
-      default: true
+      "PLATFORM(MAC)": WebKit::defaultScrollAnimatorEnabled()
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
+      default: false
     WebCore:
-      default: true
+      default: false
 
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 SelectTrailingWhitespaceEnabled:
@@ -2203,16 +2234,6 @@ StorageBlockingPolicy:
     WebKit:
       default: WebCore::StorageBlockingPolicy::BlockThirdParty
 
-SubresourceIntegrityEnabled:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 SuppressesIncrementalRendering:
   type: bool
   defaultValue:
@@ -2309,13 +2330,13 @@ TextInteractionEnabled:
   type: bool
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(WATCH_OS)": false
+      "PLATFORM(WATCHOS)": false
       default: true
     WebKit:
-      "PLATFORM(WATCH_OS)": false
+      "PLATFORM(WATCHOS)": false
       default: true
     WebCore:
-      "PLATFORM(WATCH_OS)": false
+      "PLATFORM(WATCHOS)": false
       default: true
 
 ThreadedScrollingEnabled:
@@ -2511,6 +2532,16 @@ WebGLEnabled:
     WebCore:
       default: false
 
+WebGPU:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebSecurityEnabled:
   type: bool
   inspectorOverride: true
@@ -2553,8 +2584,8 @@ XSSAuditorEnabled:
   type: bool
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
       default: false

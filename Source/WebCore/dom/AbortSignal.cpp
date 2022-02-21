@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,34 +27,66 @@
 #include "AbortSignal.h"
 
 #include "AbortAlgorithm.h"
+#include "DOMException.h"
+#include "DOMTimer.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "JSDOMException.h"
 #include "ScriptExecutionContext.h"
+#include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/JSCast.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AbortSignal);
 
-Ref<AbortSignal> AbortSignal::create(ScriptExecutionContext& context)
+Ref<AbortSignal> AbortSignal::create(ScriptExecutionContext* context)
 {
     return adoptRef(*new AbortSignal(context));
 }
 
 // https://dom.spec.whatwg.org/#dom-abortsignal-abort
-Ref<AbortSignal> AbortSignal::abort(ScriptExecutionContext& context)
+Ref<AbortSignal> AbortSignal::abort(JSDOMGlobalObject& globalObject, ScriptExecutionContext& context, JSC::JSValue reason)
 {
-    return adoptRef(*new AbortSignal(context, Aborted::Yes));
+    ASSERT(reason);
+    if (reason.isUndefined())
+        reason = toJS(&globalObject, &globalObject, DOMException::create(AbortError));
+    return adoptRef(*new AbortSignal(&context, Aborted::Yes, reason));
 }
 
-AbortSignal::AbortSignal(ScriptExecutionContext& context, Aborted aborted)
-    : ContextDestructionObserver(&context)
-    , m_aborted(aborted == Aborted::Yes)
+// https://dom.spec.whatwg.org/#dom-abortsignal-timeout
+Ref<AbortSignal> AbortSignal::timeout(ScriptExecutionContext& context, uint64_t milliseconds)
 {
+    auto signal = adoptRef(*new AbortSignal(&context));
+    signal->setHasActiveTimeoutTimer(true);
+    auto action = [signal](ScriptExecutionContext& context) mutable {
+        signal->setHasActiveTimeoutTimer(false);
+
+        auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
+        if (!globalObject)
+            return;
+
+        auto& vm = globalObject->vm();
+        Locker locker { vm.apiLock() };
+        signal->signalAbort(toJS(globalObject, globalObject, DOMException::create(TimeoutError)));
+    };
+    DOMTimer::install(context, WTFMove(action), Seconds::fromMilliseconds(milliseconds), true);
+    return signal;
 }
+
+AbortSignal::AbortSignal(ScriptExecutionContext* context, Aborted aborted, JSC::JSValue reason)
+    : ContextDestructionObserver(context)
+    , m_aborted(aborted == Aborted::Yes)
+    , m_reason(reason)
+{
+    ASSERT(reason);
+}
+
+AbortSignal::~AbortSignal() = default;
 
 // https://dom.spec.whatwg.org/#abortsignal-signal-abort
-void AbortSignal::signalAbort()
+void AbortSignal::signalAbort(JSC::JSValue reason)
 {
     // 1. If signal's aborted flag is set, then return.
     if (m_aborted)
@@ -63,7 +95,12 @@ void AbortSignal::signalAbort()
     // 2. Set signal’s aborted flag.
     m_aborted = true;
 
-    auto protectedThis = makeRef(*this);
+    // FIXME: This code is wrong: we should emit a write-barrier. Otherwise, GC can collect it.
+    // https://bugs.webkit.org/show_bug.cgi?id=236353
+    ASSERT(reason);
+    m_reason.setWeakly(reason);
+
+    Ref protectedThis { *this };
     auto algorithms = std::exchange(m_algorithms, { });
     for (auto& algorithm : algorithms)
         algorithm();
@@ -79,16 +116,21 @@ void AbortSignal::signalFollow(AbortSignal& signal)
         return;
 
     if (signal.aborted()) {
-        signalAbort();
+        signalAbort(signal.reason().getValue());
         return;
     }
 
     ASSERT(!m_followingSignal);
-    m_followingSignal = makeWeakPtr(signal);
-    signal.addAlgorithm([weakThis = makeWeakPtr(this)] {
+    m_followingSignal = signal;
+    signal.addAlgorithm([weakThis = WeakPtr { this }] {
         if (weakThis)
-            weakThis->signalAbort();
+            weakThis->signalAbort(weakThis->m_followingSignal ? weakThis->m_followingSignal->reason().getValue() : JSC::jsUndefined());
     });
+}
+
+void AbortSignal::eventListenersDidChange()
+{
+    m_hasAbortEventListener = hasEventListeners(eventNames().abortEvent);
 }
 
 bool AbortSignal::whenSignalAborted(AbortSignal& signal, Ref<AbortAlgorithm>&& algorithm)
@@ -103,4 +145,14 @@ bool AbortSignal::whenSignalAborted(AbortSignal& signal, Ref<AbortAlgorithm>&& a
     return false;
 }
 
+void AbortSignal::throwIfAborted(JSC::JSGlobalObject& lexicalGlobalObject)
+{
+    if (!aborted())
+        return;
+
+    auto& vm = lexicalGlobalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    throwException(&lexicalGlobalObject, scope, m_reason.getValue());
 }
+
+} // namespace WebCore

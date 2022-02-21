@@ -48,11 +48,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_back-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_back.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_back_1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_back_cross_realm_method.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_entry.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_forward-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_forward-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_forward.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_forward_1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_forward_cross_realm_method.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_cross_realm_method.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_minus.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html
@@ -68,6 +71,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_err.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_nooptionalparam.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_url_rewriting.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate_err.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate_nooptionalparam.html

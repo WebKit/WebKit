@@ -31,12 +31,10 @@ const mtl::AutoObjCPtr<id<MTLSamplerState>> &SamplerMtl::getSampler(ContextMtl *
 {
     if (!mSamplerState)
     {
-        DisplayMtl *displayMtl = contextMtl->getDisplay();
-
         mtl::SamplerDesc samplerDesc(mState);
 
-        mSamplerState =
-            displayMtl->getStateCache().getSamplerState(displayMtl->getMetalDevice(), samplerDesc);
+        mSamplerState = contextMtl->getDisplay()->getStateCache().getSamplerState(
+            contextMtl->getMetalDevice(), samplerDesc);
     }
 
     return mSamplerState;

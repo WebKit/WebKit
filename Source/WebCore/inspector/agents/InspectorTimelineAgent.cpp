@@ -44,10 +44,10 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindow.h"
+#include "JSExecState.h"
 #include "PageDebugger.h"
 #include "PageHeapAgent.h"
 #include "RenderView.h"
-#include "ScriptState.h"
 #include "TimelineRecordFactory.h"
 #include "WebConsoleAgent.h"
 #include "WebDebuggerAgent.h"
@@ -65,7 +65,6 @@
 #if PLATFORM(COCOA)
 #include "RunLoopObserver.h"
 #endif
-
 
 namespace WebCore {
 
@@ -290,7 +289,13 @@ double InspectorTimelineAgent::timestamp()
     return m_environment.executionStopwatch().elapsedTime().seconds();
 }
 
-void InspectorTimelineAgent::startFromConsole(JSC::JSGlobalObject* exec, const String& title)
+static Frame* frame(JSC::JSGlobalObject* globalObject)
+{
+    auto context = executionContext(globalObject);
+    return is<Document>(context) ? downcast<Document>(*context).frame() : nullptr;
+}
+
+void InspectorTimelineAgent::startFromConsole(JSC::JSGlobalObject* globalObject, const String& title)
 {
     // Allow duplicate unnamed profiles. Disallow duplicate named profiles.
     if (!title.isEmpty()) {
@@ -310,7 +315,7 @@ void InspectorTimelineAgent::startFromConsole(JSC::JSGlobalObject* exec, const S
     if (!m_tracking && m_pendingConsoleProfileRecords.isEmpty())
         startProgrammaticCapture();
 
-    m_pendingConsoleProfileRecords.append(createRecordEntry(TimelineRecordFactory::createConsoleProfileData(title), TimelineRecordType::ConsoleProfile, true, frameFromExecState(exec)));
+    m_pendingConsoleProfileRecords.append(createRecordEntry(TimelineRecordFactory::createConsoleProfileData(title), TimelineRecordType::ConsoleProfile, true, frame(globalObject)));
 }
 
 void InspectorTimelineAgent::stopFromConsole(JSC::JSGlobalObject*, const String& title)
@@ -676,7 +681,7 @@ void InspectorTimelineAgent::didFireObserverCallback()
 
 void InspectorTimelineAgent::breakpointActionProbe(JSC::JSGlobalObject* lexicalGlobalObject, JSC::BreakpointActionID actionID, unsigned /*batchId*/, unsigned sampleId, JSC::JSValue)
 {
-    appendRecord(TimelineRecordFactory::createProbeSampleData(actionID, sampleId), TimelineRecordType::ProbeSample, false, frameFromExecState(lexicalGlobalObject));
+    appendRecord(TimelineRecordFactory::createProbeSampleData(actionID, sampleId), TimelineRecordType::ProbeSample, false, frame(lexicalGlobalObject));
 }
 
 static Protocol::Timeline::EventType toProtocol(TimelineRecordType type)

@@ -152,7 +152,7 @@ ExceptionOr<Ref<WebXRWebGLLayer>> WebXRWebGLLayer::create(Ref<WebXRSession>&& se
             // 10. Return layer.
             return adoptRef(*new WebXRWebGLLayer(WTFMove(session), WTFMove(context), WTFMove(framebuffer), antialias, ignoreDepthValues, isCompositionEnabled));
         },
-        [](WTF::Monostate) {
+        [](std::monostate) {
             ASSERT_NOT_REACHED();
             return Exception { InvalidStateError };
         }
@@ -273,7 +273,7 @@ HTMLCanvasElement* WebXRWebGLLayer::canvas() const
         auto canvas = baseContext->canvas();
         return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& canvas) {
             return canvas.get();
-        }, [](const RefPtr<OffscreenCanvas>) {
+        }, [](const RefPtr<OffscreenCanvas>) -> HTMLCanvasElement* {
             ASSERT_NOT_REACHED("baseLayer of a WebXRWebGLLayer must be an HTMLCanvasElement");
             return nullptr;
         });

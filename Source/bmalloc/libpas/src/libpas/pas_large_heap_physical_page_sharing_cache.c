@@ -30,6 +30,7 @@
 #include "pas_large_heap_physical_page_sharing_cache.h"
 
 #include "pas_bootstrap_free_heap.h"
+#include "pas_heap_config.h"
 #include "pas_heap_lock.h"
 #include "pas_large_sharing_pool.h"
 #include "pas_page_malloc.h"
@@ -40,6 +41,7 @@ pas_enumerable_range_list pas_large_heap_physical_page_sharing_cache_page_list;
 
 typedef struct {
     pas_large_heap_physical_page_sharing_cache* cache;
+    pas_heap_config* config;
     bool should_zero;
 } aligned_allocator_data;
 
@@ -95,6 +97,7 @@ static pas_aligned_allocation_result large_aligned_allocator(size_t size,
     allocation_result = data->cache->provider(
         aligned_size, aligned_alignment,
         "pas_large_heap_physical_page_sharing_cache/chunk",
+        NULL, NULL,
         data->cache->provider_arg);
 
     if (!allocation_result.did_succeed) {
@@ -109,7 +112,7 @@ static pas_aligned_allocation_result large_aligned_allocator(size_t size,
                     (char*)allocation_result.begin + aligned_size);
         }
         
-        pas_allocation_result_zero(&allocation_result, aligned_size);
+        allocation_result = pas_allocation_result_zero(allocation_result, aligned_size);
     }
 
     pas_enumerable_range_list_append(
@@ -129,7 +132,8 @@ static pas_aligned_allocation_result large_aligned_allocator(size_t size,
        So we use boot_free, which frees while bumping the epoch. */
     pas_large_sharing_pool_boot_free(
         pas_range_create(allocation_result.begin, allocation_result.begin + aligned_size),
-        pas_physical_memory_is_locked_by_virtual_range_common_lock);
+        pas_physical_memory_is_locked_by_virtual_range_common_lock,
+        data->config->mmap_capability);
     
     result.result = (void*)allocation_result.begin;
     result.result_size = size;
@@ -157,6 +161,7 @@ pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment(
     pas_large_heap_physical_page_sharing_cache* cache,
     size_t size,
     pas_alignment alignment,
+    pas_heap_config* heap_config,
     bool should_zero)
 {
     static const bool verbose = false;
@@ -165,6 +170,7 @@ pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment(
     pas_large_free_heap_config config;
     
     data.cache = cache;
+    data.config = heap_config;
     data.should_zero = should_zero;
     
     config.type_size = 1;

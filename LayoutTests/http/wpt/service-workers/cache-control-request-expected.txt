@@ -1,0 +1,4 @@
+
+PASS Setup worker
+PASS Ensure cache-control does not break service worker fetch handling
+

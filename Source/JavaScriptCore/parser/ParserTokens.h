@@ -36,7 +36,10 @@ namespace JSC {
 
 class Identifier;
 
-enum {
+#define BINARY_OP_PRECEDENCE(prec) (((prec) << BinaryOpTokenPrecedenceShift) | ((prec) << (BinaryOpTokenPrecedenceShift + BinaryOpTokenAllowsInPrecedenceAdditionalShift)))
+#define IN_OP_PRECEDENCE(prec) ((prec) << (BinaryOpTokenPrecedenceShift + BinaryOpTokenAllowsInPrecedenceAdditionalShift))
+
+enum JSTokenType {
     // Token Bitfield: 0b000000000RTE00IIIIPPPPKUXXXXXXXX
     // R = right-associative bit
     // T = unterminated error flag
@@ -54,13 +57,9 @@ enum {
     BinaryOpTokenPrecedenceMask = 15 << BinaryOpTokenPrecedenceShift,
     CanBeErrorTokenFlag = 1 << (BinaryOpTokenAllowsInPrecedenceAdditionalShift + BinaryOpTokenPrecedenceShift + 6),
     UnterminatedCanBeErrorTokenFlag = CanBeErrorTokenFlag << 1,
-    RightAssociativeBinaryOpTokenFlag = UnterminatedCanBeErrorTokenFlag << 1
-};
+    RightAssociativeBinaryOpTokenFlag = UnterminatedCanBeErrorTokenFlag << 1,
 
-#define BINARY_OP_PRECEDENCE(prec) (((prec) << BinaryOpTokenPrecedenceShift) | ((prec) << (BinaryOpTokenPrecedenceShift + BinaryOpTokenAllowsInPrecedenceAdditionalShift)))
-#define IN_OP_PRECEDENCE(prec) ((prec) << (BinaryOpTokenPrecedenceShift + BinaryOpTokenAllowsInPrecedenceAdditionalShift))
 
-enum JSTokenType {
     NULLTOKEN = KeywordTokenFlag,
     TRUETOKEN,
     FALSETOKEN,

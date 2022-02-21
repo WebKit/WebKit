@@ -87,11 +87,6 @@ class VertexArrayVk : public VertexArrayImpl
         return mCurrentElementArrayBufferOffset;
     }
 
-    void updateCurrentElementArrayBufferOffset(const GLvoid *offset)
-    {
-        mCurrentElementArrayBufferOffset = reinterpret_cast<VkDeviceSize>(offset);
-    }
-
     vk::BufferHelper *getCurrentElementArrayBuffer() const { return mCurrentElementArrayBuffer; }
 
     angle::Result convertIndexBufferGPU(ContextVk *contextVk,

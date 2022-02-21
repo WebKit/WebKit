@@ -28,11 +28,10 @@
 
 namespace WebKit {
 
-static const Seconds responsivenessTimeout { 3_s };
-
-ResponsivenessTimer::ResponsivenessTimer(ResponsivenessTimer::Client& client)
+ResponsivenessTimer::ResponsivenessTimer(ResponsivenessTimer::Client& client, Seconds responsivenessTimeout)
     : m_client(client)
     , m_timer(RunLoop::main(), this, &ResponsivenessTimer::timerFired)
+    , m_responsivenessTimeout(responsivenessTimeout)
 {
 }
 
@@ -68,11 +67,11 @@ void ResponsivenessTimer::timerFired()
     if (!m_isResponsive)
         return;
 
-    auto protectedClient = makeRef(m_client);
+    Ref protectedClient { m_client };
 
     if (!mayBecomeUnresponsive()) {
         m_waitingForTimer = true;
-        m_timer.startOneShot(responsivenessTimeout);
+        m_timer.startOneShot(m_responsivenessTimeout);
         return;
     }
 
@@ -97,10 +96,10 @@ void ResponsivenessTimer::start()
         //
         // In most cases, stop is called before we get to schedule the second timer, saving us
         // the scheduling of the timer entirely.
-        m_restartFireTime = MonotonicTime::now() + responsivenessTimeout;
+        m_restartFireTime = MonotonicTime::now() + m_responsivenessTimeout;
     } else {
         m_restartFireTime = MonotonicTime();
-        m_timer.startOneShot(responsivenessTimeout);
+        m_timer.startOneShot(m_responsivenessTimeout);
     }
 }
 
@@ -135,7 +134,7 @@ void ResponsivenessTimer::startWithLazyStop()
 void ResponsivenessTimer::stop()
 {
     if (!m_isResponsive) {
-        auto protectedClient = makeRef(m_client);
+        Ref protectedClient { m_client };
 
         // We got a life sign from the web process.
         m_client.willChangeIsResponsive();

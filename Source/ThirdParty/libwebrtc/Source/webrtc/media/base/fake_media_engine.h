@@ -11,6 +11,7 @@
 #ifndef MEDIA_BASE_FAKE_MEDIA_ENGINE_H_
 #define MEDIA_BASE_FAKE_MEDIA_ENGINE_H_
 
+#include <atomic>
 #include <list>
 #include <map>
 #include <memory>
@@ -284,7 +285,10 @@ class RtpHelper : public Base {
   bool fail_set_recv_codecs() const { return fail_set_recv_codecs_; }
 
  private:
-  bool sending_;
+  // TODO(bugs.webrtc.org/12783): This flag is used from more than one thread.
+  // As a workaround for tsan, it's currently std::atomic but that might not
+  // be the appropriate fix.
+  std::atomic<bool> sending_;
   bool playout_;
   std::vector<RtpExtension> recv_extensions_;
   std::vector<RtpExtension> send_extensions_;

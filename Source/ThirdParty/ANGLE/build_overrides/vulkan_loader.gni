@@ -2,9 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import("//gni/angle.gni")
+import("//build_overrides/vulkan_common.gni")
 
-vulkan_headers_dir = "//third_party/vulkan-headers/src"
-
-vulkan_gen_subdir = "angle/vulkan"
 vulkan_loader_shared = angle_shared_libvulkan

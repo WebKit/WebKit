@@ -161,7 +161,7 @@ WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *eve
     WebCore::FloatSize delta(deltaVector.dx, deltaVector.dy);
     WebCore::FloatSize wheelTicks = delta;
     wheelTicks.scale(1. / static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep()));
-
+    auto timestamp = MonotonicTime::fromRawSeconds(event.timestamp).approximateWallTime();
     return {
         WebKit::WebEvent::Wheel,
         scrollLocation,
@@ -176,7 +176,10 @@ WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *eve
         1,
         delta,
         { },
-        MonotonicTime::fromRawSeconds(event.timestamp).approximateWallTime()
+        timestamp,
+        timestamp,
+        { },
+        WebKit::WebWheelEvent::MomentumEndType::Unknown
     };
 }
 #endif

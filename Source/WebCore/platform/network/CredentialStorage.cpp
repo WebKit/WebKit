@@ -60,16 +60,16 @@ static String protectionSpaceMapKeyFromURL(const URL& url)
 
 void CredentialStorage::set(const String& partitionName, const Credential& credential, const ProtectionSpace& protectionSpace, const URL& url)
 {
-    ASSERT(protectionSpace.isProxy() || protectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeClientCertificateRequested || url.protocolIsInHTTPFamily());
-    ASSERT(protectionSpace.isProxy() || protectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeClientCertificateRequested || url.isValid());
+    ASSERT(protectionSpace.isProxy() || protectionSpace.authenticationScheme() == ProtectionSpace::AuthenticationScheme::ClientCertificateRequested || url.protocolIsInHTTPFamily());
+    ASSERT(protectionSpace.isProxy() || protectionSpace.authenticationScheme() == ProtectionSpace::AuthenticationScheme::ClientCertificateRequested || url.isValid());
 
     m_protectionSpaceToCredentialMap.set(std::make_pair(partitionName, protectionSpace), credential);
 
-    if (!protectionSpace.isProxy() && protectionSpace.authenticationScheme() != ProtectionSpaceAuthenticationSchemeClientCertificateRequested) {
+    if (!protectionSpace.isProxy() && protectionSpace.authenticationScheme() != ProtectionSpace::AuthenticationScheme::ClientCertificateRequested) {
         m_originsWithCredentials.add(originStringFromURL(url));
 
-        ProtectionSpaceAuthenticationScheme scheme = protectionSpace.authenticationScheme();
-        if (scheme == ProtectionSpaceAuthenticationSchemeHTTPBasic || scheme == ProtectionSpaceAuthenticationSchemeDefault) {
+        auto scheme = protectionSpace.authenticationScheme();
+        if (scheme == ProtectionSpace::AuthenticationScheme::HTTPBasic || scheme == ProtectionSpace::AuthenticationScheme::Default) {
             // The map can contain both a path and its subpath - while redundant, this makes lookups faster.
             m_pathToDefaultProtectionSpaceMap.set(protectionSpaceMapKeyFromURL(url), protectionSpace);
         }
@@ -94,8 +94,8 @@ void CredentialStorage::removeCredentialsWithOrigin(const SecurityOriginData& or
         if (protectionSpace.host() == origin.host
             && ((origin.port && protectionSpace.port() == *origin.port)
                 || (!origin.port && protectionSpace.port() == 80))
-            && ((protectionSpace.serverType() == ProtectionSpaceServerHTTP && origin.protocol == "http"_s)
-                || (protectionSpace.serverType() == ProtectionSpaceServerHTTPS && origin.protocol == "https"_s)))
+            && ((protectionSpace.serverType() == ProtectionSpace::ServerType::HTTP && origin.protocol == "http"_s)
+                || (protectionSpace.serverType() == ProtectionSpace::ServerType::HTTPS && origin.protocol == "https"_s)))
             keysToRemove.append(keyValuePair.key);
     }
     for (auto& key : keysToRemove)
@@ -111,16 +111,16 @@ HashSet<SecurityOriginData> CredentialStorage::originsWithCredentials() const
             continue;
         String protocol;
         switch (protectionSpace.serverType()) {
-        case ProtectionSpaceServerHTTP:
+        case ProtectionSpace::ServerType::HTTP:
             protocol = "http"_s;
             break;
-        case ProtectionSpaceServerHTTPS:
+        case ProtectionSpace::ServerType::HTTPS:
             protocol = "https"_s;
             break;
-        case ProtectionSpaceServerFTP:
+        case ProtectionSpace::ServerType::FTP:
             protocol = "ftp"_s;
             break;
-        case ProtectionSpaceServerFTPS:
+        case ProtectionSpace::ServerType::FTPS:
             protocol = "ftps"_s;
             break;
         default:

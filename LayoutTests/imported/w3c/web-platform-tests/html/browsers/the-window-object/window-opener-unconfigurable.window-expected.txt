@@ -1,0 +1,3 @@
+
+PASS Corner case: self.opener is set while it's not configurable
+

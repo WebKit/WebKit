@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class ScrollingCoordinatorMac : public AsyncScrollingCoordinator {
+class WEBCORE_EXPORT ScrollingCoordinatorMac : public AsyncScrollingCoordinator {
 public:
     explicit ScrollingCoordinatorMac(Page*);
     virtual ~ScrollingCoordinatorMac();
@@ -44,11 +44,18 @@ public:
     bool handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, std::optional<WheelScrollGestureState>) final;
     void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>) final;
 
+protected:
+    void hasNodeWithAnimatedScrollChanged(bool) override;
+
 private:
     void scheduleTreeStateCommit() final;
 
+    void didScheduleRenderingUpdate() final;
     void willStartRenderingUpdate() final;
     void didCompleteRenderingUpdate() final;
+
+    void willStartPlatformRenderingUpdate() final;
+    void didCompletePlatformRenderingUpdate() final;
 
     void updateTiledScrollingIndicator();
 

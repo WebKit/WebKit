@@ -15,3 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/support/empty-urls.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/support/fragment-only-urls.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/support/relative-urls.css

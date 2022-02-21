@@ -44,15 +44,16 @@ namespace WebCore {
 
 constexpr uint64_t highlightFileSignature = 0x4141504832303231; // File Signature  (A)pple(AP)plication(H)ighlights(2021)
 
-std::optional<AppHighlightRangeData> AppHighlightRangeData::create(const SharedBuffer& buffer)
+std::optional<AppHighlightRangeData> AppHighlightRangeData::create(const FragmentedSharedBuffer& buffer)
 {
-    auto decoder = buffer.decoder();
+    auto contiguousBuffer = buffer.makeContiguous();
+    auto decoder = contiguousBuffer->decoder();
     std::optional<AppHighlightRangeData> data;
     decoder >> data;
     return data;
 }
 
-Ref<SharedBuffer> AppHighlightRangeData::toSharedBuffer() const
+Ref<FragmentedSharedBuffer> AppHighlightRangeData::toSharedBuffer() const
 {
     WTF::Persistence::Encoder encoder;
     encoder << *this;

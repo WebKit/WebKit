@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,12 +24,9 @@
  */
 
 #include "config.h"
+#include "CaptionUserPreferencesMediaAF.h"
 
 #if ENABLE(VIDEO)
-
-#if !USE(DIRECT2D)
-
-#include "CaptionUserPreferencesMediaAF.h"
 
 #include "AudioTrackList.h"
 #include "ColorSerialization.h"
@@ -37,6 +34,7 @@
 #include "HTMLMediaElement.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
+#include "ShadowPseudoIds.h"
 #include "TextTrackList.h"
 #include "UserStyleSheetTypes.h"
 #include <algorithm>
@@ -51,8 +49,12 @@
 #include <wtf/text/cf/StringConcatenateCF.h>
 #include <wtf/unicode/Collator.h>
 
+#if PLATFORM(COCOA)
+#include <pal/spi/cf/CFNotificationCenterSPI.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
-#import "WebCoreThreadRun.h"
+#include "WebCoreThreadRun.h"
 #endif
 
 #if PLATFORM(WIN)
@@ -118,24 +120,35 @@ static std::optional<Vector<String>>& cachedPreferredLanguages()
     return preferredLanguages;
 }
 
-static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
+static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
-#if !PLATFORM(IOS_FAMILY)
-    static_cast<CaptionUserPreferencesMediaAF*>(observer)->captionPreferencesChanged();
-#else
-    WebThreadRun(^{
-        static_cast<CaptionUserPreferencesMediaAF*>(observer)->captionPreferencesChanged();
-    });
+#if PLATFORM(COCOA)
+    RefPtr userPreferences = CaptionUserPreferencesMediaAF::extractCaptionUserPreferencesMediaAF(observer);
+#elif PLATFORM(WIN)
+    auto* userPreferences = static_cast<CaptionUserPreferencesMediaAF*>(observer);
 #endif
+    if (userPreferences) {
+#if !PLATFORM(IOS_FAMILY)
+        userPreferences->captionPreferencesChanged();
+#else
+        WebThreadRun(^{
+            userPreferences->captionPreferencesChanged();
+        });
+#endif
+    }
 }
 
-#endif
+#endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+
+Ref<CaptionUserPreferencesMediaAF> CaptionUserPreferencesMediaAF::create(PageGroup& group)
+{
+    return adoptRef(*new CaptionUserPreferencesMediaAF(group));
+}
 
 CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
     : CaptionUserPreferences(group)
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     , m_updateStyleSheetTimer(*this, &CaptionUserPreferencesMediaAF::updateTimerFired)
-    , m_listeningForPreferenceChanges(false)
 #endif
 {
     static bool initialized;
@@ -163,11 +176,19 @@ CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
 CaptionUserPreferencesMediaAF::~CaptionUserPreferencesMediaAF()
 {
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    if (kMAXCaptionAppearanceSettingsChangedNotification)
-        CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kMAXCaptionAppearanceSettingsChangedNotification, 0);
-    if (kMAAudibleMediaSettingsChangedNotification)
-        CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kMAAudibleMediaSettingsChangedNotification, 0);
+#if PLATFORM(COCOA)
+    auto* observer = m_weakObserver.get();
+#elif PLATFORM(WIN)
+    auto* observer = this;
 #endif
+    if (observer) {
+        auto center = CFNotificationCenterGetLocalCenter();
+        if (kMAXCaptionAppearanceSettingsChangedNotification)
+            CFNotificationCenterRemoveObserver(center, observer, kMAXCaptionAppearanceSettingsChangedNotification, 0);
+        if (kMAAudibleMediaSettingsChangedNotification)
+            CFNotificationCenterRemoveObserver(center, observer, kMAAudibleMediaSettingsChangedNotification, 0);
+    }
+#endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 }
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
@@ -285,10 +306,21 @@ void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
     m_listeningForPreferenceChanges = true;
     m_registeringForNotification = true;
 
+#if PLATFORM(COCOA)
+    if (!m_weakObserver)
+        m_weakObserver = createWeakObserver(this);
+    auto* observer = m_weakObserver.get();
+    auto suspensionBehavior = static_cast<CFNotificationSuspensionBehavior>(CFNotificationSuspensionBehaviorCoalesce | _CFNotificationObserverIsObjC);
+#elif PLATFORM(WIN)
+    auto* observer = this;
+    auto suspensionBehavior = CFNotificationSuspensionBehaviorCoalesce;
+#endif
+    auto center = CFNotificationCenterGetLocalCenter();
     if (kMAXCaptionAppearanceSettingsChangedNotification)
-        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
+        CFNotificationCenterAddObserver(center, observer, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, suspensionBehavior);
+
     if (canLoad_MediaAccessibility_kMAAudibleMediaSettingsChangedNotification())
-        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAAudibleMediaSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
+        CFNotificationCenterAddObserver(center, observer, userCaptionPreferencesChangedNotificationCallback, kMAAudibleMediaSettingsChangedNotification, 0, suspensionBehavior);
     m_registeringForNotification = false;
 
     // Generating and registering the caption stylesheet can be expensive and this method is called indirectly when the parser creates an audio or
@@ -584,9 +616,9 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredAudioCharacteristics() co
         return CaptionUserPreferences::preferredAudioCharacteristics();
 
     Vector<String> userPreferredAudioCharacteristics;
-    userPreferredAudioCharacteristics.reserveCapacity(characteristicCount);
+    userPreferredAudioCharacteristics.reserveInitialCapacity(characteristicCount);
     for (CFIndex i = 0; i < characteristicCount; i++)
-        userPreferredAudioCharacteristics.append(static_cast<CFStringRef>(CFArrayGetValueAtIndex(characteristics.get(), i)));
+        userPreferredAudioCharacteristics.uncheckedAppend(static_cast<CFStringRef>(CFArrayGetValueAtIndex(characteristics.get(), i)));
 
     return userPreferredAudioCharacteristics;
 }
@@ -608,12 +640,12 @@ String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
     String fontName = captionsDefaultFontCSS();
     String background = captionsBackgroundCSS();
     if (!background.isEmpty() || !captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty())
-        captionsOverrideStyleSheet.append(" ::", TextTrackCue::cueShadowPseudoId(), '{', background, captionsColor, edgeStyle, fontName, '}');
+        captionsOverrideStyleSheet.append(" ::", ShadowPseudoIds::cue(), '{', background, captionsColor, edgeStyle, fontName, '}');
 
     String windowColor = captionsWindowCSS();
     String windowCornerRadius = windowRoundedCornerRadiusCSS();
     if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty())
-        captionsOverrideStyleSheet.append(" ::", TextTrackCue::cueBackdropShadowPseudoId(), '{', windowColor, windowCornerRadius, '}');
+        captionsOverrideStyleSheet.append(" ::", ShadowPseudoIds::webkitMediaTextTrackDisplayBackdrop(), '{', windowColor, windowCornerRadius, '}');
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
     LOG(Media, "CaptionUserPreferencesMediaAF::captionsStyleSheetOverrideSetting style to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());
@@ -735,7 +767,7 @@ static String trackDisplayName(const TrackBase& track)
     String trackLanguageIdentifier = track.validBCP47Language();
 
     auto preferredLanguages = userPreferredLanguages(ShouldMinimizeLanguages::No);
-    auto defaultLanguage = !preferredLanguages.isEmpty() ? preferredLanguages[0] : emptyString(); // This matches `WTF::defaultLanguage`.
+    auto defaultLanguage = !preferredLanguages.isEmpty() ? preferredLanguages[0] : emptyString(); // This matches `defaultLanguage`.
     auto currentLocale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage.createCFString().get()));
     auto localeIdentifier = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromString(kCFAllocatorDefault, trackLanguageIdentifier.createCFString().get()));
     String languageDisplayName = adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleLanguageCode, localeIdentifier.get())).get();
@@ -962,7 +994,5 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
 }
     
 }
-
-#endif
 
 #endif // ENABLE(VIDEO)

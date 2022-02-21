@@ -26,7 +26,7 @@ constexpr float kInitialFilterStateLevel = 0.f;
 constexpr float kAttackFilterConstant = 0.f;
 // This is computed from kDecayMs by
 // 10 ** (-1/20 * subframe_duration / kDecayMs).
-// |subframe_duration| is |kFrameDurationMs / kSubFramesInFrame|.
+// `subframe_duration` is |kFrameDurationMs / kSubFramesInFrame|.
 // kDecayMs is defined in agc2_testing_common.h
 constexpr float kDecayFilterConstant = 0.9998848773724686f;
 
@@ -57,7 +57,7 @@ std::array<float, kSubFramesInFrame> FixedDigitalLevelEstimator::ComputeLevel(
 
   // Compute max envelope without smoothing.
   std::array<float, kSubFramesInFrame> envelope{};
-  for (size_t channel_idx = 0; channel_idx < float_frame.num_channels();
+  for (int channel_idx = 0; channel_idx < float_frame.num_channels();
        ++channel_idx) {
     const auto channel = float_frame.channel(channel_idx);
     for (int sub_frame = 0; sub_frame < kSubFramesInFrame; ++sub_frame) {

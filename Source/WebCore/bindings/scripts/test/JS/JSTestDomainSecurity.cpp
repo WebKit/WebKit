@@ -23,7 +23,8 @@
 
 #include "ActiveDOMObject.h"
 #include "CustomElementReactionQueue.h"
-#include "DOMIsoSubspaces.h"
+#include "ExtendedDOMClientIsoSubspaces.h"
+#include "ExtendedDOMIsoSubspaces.h"
 #include "IDLTypes.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -70,17 +71,17 @@ public:
     using Base = JSC::JSNonFinalObject;
     static JSTestDomainSecurityPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestDomainSecurityPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDomainSecurityPrototype>(vm.heap)) JSTestDomainSecurityPrototype(vm, globalObject, structure);
+        JSTestDomainSecurityPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestDomainSecurityPrototype>(vm)) JSTestDomainSecurityPrototype(vm, globalObject, structure);
         ptr->finishCreation(vm);
         return ptr;
     }
 
     DECLARE_INFO;
     template<typename CellType, JSC::SubspaceAccess>
-    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDomainSecurityPrototype, Base);
-        return &vm.plainObjectSpace;
+        return &vm.plainObjectSpace();
     }
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
@@ -123,9 +124,11 @@ template<> JSValue JSTestDomainSecurityDOMConstructor::prototypeForStructure(JSC
 
 template<> void JSTestDomainSecurityDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSTestDomainSecurity::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestDomainSecurity"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    JSString* nameString = jsNontrivialString(vm, "TestDomainSecurity"_s);
+    m_originalName.set(vm, this, nameString);
+    putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestDomainSecurity::prototype(vm, globalObject), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);
 }
 
 /* Hash table for prototype */
@@ -310,27 +313,14 @@ JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_overloadedMethod,
     return IDLOperation<JSTestDomainSecurity>::call<jsTestDomainSecurityPrototypeFunction_overloadedMethodOverloadDispatcher>(*lexicalGlobalObject, *callFrame, "overloadedMethod");
 }
 
-JSC::IsoSubspace* JSTestDomainSecurity::subspaceForImpl(JSC::VM& vm)
+JSC::GCClient::IsoSubspace* JSTestDomainSecurity::subspaceForImpl(JSC::VM& vm)
 {
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto& spaces = clientData.subspaces();
-    if (auto* space = spaces.m_subspaceForTestDomainSecurity.get())
-        return space;
-    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestDomainSecurity> || !JSTestDomainSecurity::needsDestruction);
-    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestDomainSecurity>)
-        spaces.m_subspaceForTestDomainSecurity = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), JSTestDomainSecurity);
-    else
-        spaces.m_subspaceForTestDomainSecurity = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType.get(), JSTestDomainSecurity);
-    auto* space = spaces.m_subspaceForTestDomainSecurity.get();
-IGNORE_WARNINGS_BEGIN("unreachable-code")
-IGNORE_WARNINGS_BEGIN("tautological-compare")
-    void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestDomainSecurity::visitOutputConstraints;
-    void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
-    if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
-        clientData.outputConstraintSpaces().append(space);
-IGNORE_WARNINGS_END
-IGNORE_WARNINGS_END
-    return space;
+    return WebCore::subspaceForImpl<JSTestDomainSecurity, UseCustomHeapCellType::No>(vm,
+        [] (auto& spaces) { return spaces.m_clientSubspaceForTestDomainSecurity.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestDomainSecurity = WTFMove(space); },
+        [] (auto& spaces) { return spaces.m_subspaceForTestDomainSecurity.get(); },
+        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestDomainSecurity = WTFMove(space); }
+    );
 }
 
 void JSTestDomainSecurity::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
@@ -369,24 +359,22 @@ extern "C" { extern void* _ZTVN7WebCore18TestDomainSecurityE[]; }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestDomainSecurity>&& impl)
 {
 
+    if constexpr (std::is_polymorphic_v<TestDomainSecurity>) {
 #if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
+        const void* actualVTablePointer = getVTablePointer(impl.ptr());
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7TestDomainSecurity@WebCore@@6B@");
+        void* expectedVTablePointer = __identifier("??_7TestDomainSecurity@WebCore@@6B@");
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore18TestDomainSecurityE[2];
+        void* expectedVTablePointer = &_ZTVN7WebCore18TestDomainSecurityE[2];
 #endif
 
-    // If this fails TestDomainSecurity does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<TestDomainSecurity>::value, "TestDomainSecurity is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // TestDomainSecurity has subclasses. If TestDomainSecurity has subclasses that get passed
-    // to toJS() we currently require TestDomainSecurity you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
+        // If you hit this assertion you either have a use after free bug, or
+        // TestDomainSecurity has subclasses. If TestDomainSecurity has subclasses that get passed
+        // to toJS() we currently require TestDomainSecurity you to opt out of binding hardening
+        // by adding the SkipVTableValidation attribute to the interface IDL definition
+        RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
+    }
     return createWrapper<TestDomainSecurity>(globalObject, WTFMove(impl));
 }
 

@@ -45,10 +45,9 @@ Object.defineProperty(o1, 'p', {
 
 var result = Reflect.getOwnPropertyDescriptor(o1, 'p');
 
-assert(
-  compareArray(
-    Object.getOwnPropertyNames(result), ['get', 'set', 'enumerable', 'configurable']
-  )
+assert.compareArray(
+  Object.getOwnPropertyNames(result),
+  ['get', 'set', 'enumerable', 'configurable']
 );
 assert.sameValue(result.enumerable, false);
 assert.sameValue(result.configurable, true);

@@ -77,6 +77,8 @@ class AnalysisTaskResultsPane extends ComponentBase {
     setTestGroups(testGroups, currentGroup)
     {
         this.part('results-viewer').setTestGroups(testGroups, currentGroup);
+        if (currentGroup)
+            this.part('form').updateWithTestGroup(currentGroup);
         this.enqueueToRender();
     }
 
@@ -367,9 +369,9 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
             selected.classList.remove('selected');
 
         if (currentGroup) {
+            this.part('retry-form').updateWithTestGroup(currentGroup);
+            this.part('bisect-form').updateWithTestGroup(currentGroup);
             this._testGroupMap.get(currentGroup).listItem.classList.add('selected');
-            this.part('retry-form').setRepetitionCount(currentGroup.initialRepetitionCount());
-            this.part('bisect-form').setRepetitionCount(currentGroup.initialRepetitionCount());
 
             if (currentGroup.hasRetries())
                 this.renderReplace(this.content('retry-summary'), this._retrySummary(currentGroup));

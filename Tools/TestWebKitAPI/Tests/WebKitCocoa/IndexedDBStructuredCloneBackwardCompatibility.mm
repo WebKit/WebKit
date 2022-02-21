@@ -25,9 +25,9 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
-
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -39,9 +39,6 @@
 
 // FIXME: Re-enable this test once rdar://57029120 is resolved.
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 140000)
-
-static bool receivedScriptMessage;
-static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 
 @interface IndexedDBStructuredCloneBackwardCompatibilityMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -67,16 +64,6 @@ static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 }
 
 @end
-
-static WKScriptMessage *getNextMessage()
-{
-    if (scriptMessages.isEmpty()) {
-        receivedScriptMessage = false;
-        TestWebKitAPI::Util::run(&receivedScriptMessage);
-    }
-
-    return scriptMessages.takeFirst().autorelease();
-}
 
 TEST(IndexedDB, StructuredCloneBackwardCompatibility)
 {

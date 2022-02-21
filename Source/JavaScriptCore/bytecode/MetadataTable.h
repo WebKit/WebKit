@@ -46,18 +46,22 @@ class MetadataTable {
 public:
     ~MetadataTable();
 
-    ALWAYS_INLINE Instruction::Metadata* get(OpcodeID opcodeID)
+    template<typename Metadata>
+    ALWAYS_INLINE Metadata* get()
     {
+        auto opcodeID = Metadata::opcodeID;
         ASSERT(opcodeID < NUMBER_OF_BYTECODE_WITH_METADATA);
-        return reinterpret_cast<Instruction::Metadata*>(getImpl(opcodeID));
+        uintptr_t ptr = bitwise_cast<uintptr_t>(getWithoutAligning(opcodeID));
+        ptr = roundUpToMultipleOf(alignof(Metadata), ptr);
+        return bitwise_cast<Metadata*>(ptr);
     }
 
     template<typename Op, typename Functor>
     ALWAYS_INLINE void forEach(const Functor& func)
     {
-        auto* metadata = bitwise_cast<typename Op::Metadata*>(get(Op::opcodeID));
-        auto* end = bitwise_cast<typename Op::Metadata*>(getImpl(Op::opcodeID + 1));
-        for (; metadata + 1 <= end; ++metadata)
+        auto* metadata = get<typename Op::Metadata>();
+        auto* end = bitwise_cast<typename Op::Metadata*>(getWithoutAligning(Op::opcodeID + 1));
+        for (; metadata < end; ++metadata)
             func(*metadata);
     }
 
@@ -88,6 +92,14 @@ public:
         return refCount() == 1;
     }
 
+    template <typename Opcode>
+    uintptr_t offsetInMetadataTable(const Opcode& opcode)
+    {
+        uintptr_t baseTypeOffset = is32Bit() ? offsetTable32()[Opcode::opcodeID] : offsetTable16()[Opcode::opcodeID];
+        baseTypeOffset = roundUpToMultipleOf(alignof(typename Opcode::Metadata), baseTypeOffset);
+        return baseTypeOffset + sizeof(typename Opcode::Metadata) * opcode.m_metadataID;
+    }
+
 private:
     MetadataTable(UnlinkedMetadataTable&);
 
@@ -116,7 +128,7 @@ private:
         return offsetTable32()[i];
     }
 
-    ALWAYS_INLINE uint8_t* getImpl(unsigned i)
+    ALWAYS_INLINE uint8_t* getWithoutAligning(unsigned i)
     {
         return bitwise_cast<uint8_t*>(this) + getOffset(i);
     }

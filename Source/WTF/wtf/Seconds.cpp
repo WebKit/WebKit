@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/Seconds.h>
 
+#include <wtf/ApproximateTime.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
@@ -46,6 +47,11 @@ MonotonicTime Seconds::operator+(MonotonicTime other) const
     return other + *this;
 }
 
+ApproximateTime Seconds::operator+(ApproximateTime other) const
+{
+    return other + *this;
+}
+
 TimeWithDynamicClockType Seconds::operator+(const TimeWithDynamicClockType& other) const
 {
     return other + *this;
@@ -59,6 +65,11 @@ WallTime Seconds::operator-(WallTime other) const
 MonotonicTime Seconds::operator-(MonotonicTime other) const
 {
     return MonotonicTime::fromRawSeconds(value() - other.secondsSinceEpoch().value());
+}
+
+ApproximateTime Seconds::operator-(ApproximateTime other) const
+{
+    return ApproximateTime::fromRawSeconds(value() - other.secondsSinceEpoch().value());
 }
 
 TimeWithDynamicClockType Seconds::operator-(const TimeWithDynamicClockType& other) const

@@ -41,6 +41,11 @@ ShareableBitmap::Handle::Handle()
 {
 }
 
+void ShareableBitmap::Handle::takeOwnershipOfMemory(MemoryLedger ledger) const
+{
+    m_handle.takeOwnershipOfMemory(ledger);
+}
+
 void ShareableBitmap::Handle::encode(IPC::Encoder& encoder) const
 {
     SharedMemory::IPCHandle ipcHandle(WTFMove(m_handle), numBytesForSize(m_size, m_configuration));
@@ -75,14 +80,6 @@ void ShareableBitmap::Handle::clear()
 void ShareableBitmap::Configuration::encode(IPC::Encoder& encoder) const
 {
     encoder << colorSpace << isOpaque;
-#if USE(DIRECT2D)
-    SharedMemory::Handle::encodeHandle(encoder, sharedResourceHandle);
-
-    // Hand off ownership of our HANDLE to the receiving process. It will close it for us.
-    // FIXME: If the receiving process crashes before it receives the memory, the memory will be
-    // leaked. See <http://webkit.org/b/47502>.
-    sharedResourceHandle = nullptr;
-#endif
 }
 
 bool ShareableBitmap::Configuration::decode(IPC::Decoder& decoder, Configuration& result)
@@ -98,20 +95,12 @@ bool ShareableBitmap::Configuration::decode(IPC::Decoder& decoder, Configuration
         return false;
 
     result = Configuration { WTFMove(*colorSpace), *isOpaque };
-
-#if USE(DIRECT2D)
-    auto processSpecificHandle = SharedMemory::Handle::decodeHandle(decoder);
-    if (!processSpecificHandle)
-        return false;
-
-    result.sharedResourceHandle = processSpecificHandle.value();
-#endif
-
     return true;
 }
 
 RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configuration configuration)
 {
+    validateConfiguration(configuration);
     auto numBytes = numBytesForSize(size, configuration);
     if (numBytes.hasOverflowed())
         return nullptr;
@@ -125,6 +114,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configurati
 
 RefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size, Configuration configuration)
 {
+    validateConfiguration(configuration);
     auto numBytes = numBytesForSize(size, configuration);
     if (numBytes.hasOverflowed())
         return nullptr;
@@ -140,6 +130,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configurati
 {
     ASSERT(sharedMemory);
 
+    validateConfiguration(configuration);
     auto numBytes = numBytesForSize(size, configuration);
     if (numBytes.hasOverflowed())
         return nullptr;
@@ -184,18 +175,12 @@ ShareableBitmap::ShareableBitmap(const IntSize& size, Configuration configuratio
     , m_sharedMemory(sharedMemory)
     , m_data(nullptr)
 {
-#if USE(DIRECT2D)
-    createSharedResource();
-#endif
 }
 
 ShareableBitmap::~ShareableBitmap()
 {
     if (!isBackedBySharedMemory())
         ShareableBitmapMalloc::free(m_data);
-#if USE(DIRECT2D)
-    disposeSharedResource();
-#endif
 }
 
 void* ShareableBitmap::data() const
@@ -209,12 +194,7 @@ void* ShareableBitmap::data() const
 
 CheckedUint32 ShareableBitmap::numBytesForSize(WebCore::IntSize size, const ShareableBitmap::Configuration& configuration)
 {
-#if USE(DIRECT2D)
-    // We pass references to GPU textures, so no need to allocate frame buffers here. Just send a small bit of data.
-    return sizeof(void*);
-#else
     return calculateBytesPerRow(size, configuration) * size.height();
-#endif
 }
 
 } // namespace WebKit

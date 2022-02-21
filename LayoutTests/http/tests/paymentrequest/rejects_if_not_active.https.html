@@ -62,6 +62,7 @@ promise_test(async t => {
     iframe,
     "resources/page1.html"
   );
+  const firstCtor = iframe.contentWindow.DOMException;
 
   // We navigate the iframe again, putting request1's document into an inactive state.
   const request2 = await getLoadedPaymentRequest(
@@ -71,9 +72,10 @@ promise_test(async t => {
 
   // Now, request1's relevant global object's document is no longer active.
   // So, call .show(), and make sure it rejects appropriately.
-  await promise_rejects(
+  await promise_rejects_dom(
     t,
     "AbortError",
+    firstCtor,
     request1.show(),
     "Inactive document, so must throw AbortError"
   );
@@ -83,11 +85,13 @@ promise_test(async t => {
       request2.show().catch((error) => {});
     await request2.abort();
   });
+  const secondCtor = iframe.contentWindow.DOMException;
 
   await activateThen(async () => {
-    await promise_rejects(
+    await promise_rejects_dom(
       t,
       "InvalidStateError",
+      secondCtor,
       request2.show(),
       "Abort already called, so InvalidStateError"
     );
@@ -123,6 +127,7 @@ promise_test(async t => {
     innerIframe,
     "resources/page2.html"
   );
+  const requestWindow = innerIframe.contentWindow;
 
   // Navigate the outer iframe to a new location.
   // Wait for the load event to fire.
@@ -134,9 +139,10 @@ promise_test(async t => {
   // (it is the active document of the inner iframe), but is not fully active
   // (since the parent of the inner iframe is itself no longer active).
   // So, call request.show() and make sure it rejects appropriately.
-  await promise_rejects(
+  await promise_rejects_dom(
     t,
     "AbortError",
+    requestWindow.DOMException,
     request.show(),
     "Active, but not fully active, so must throw AbortError"
   );
@@ -156,6 +162,7 @@ promise_test(async t => {
     iframe,
     "resources/page1.html"
   );
+  const iframeDOMException = iframe.contentWindow.DOMException;
   // Present the payment sheet.
   await activateThen(async () => {
     const showPromise = request.show();
@@ -164,9 +171,10 @@ promise_test(async t => {
       iframe.addEventListener("load", resolve);
       iframe.src = "resources/page2.html";
     });
-    await promise_rejects(
+    await promise_rejects_dom(
       t,
       "AbortError",
+      iframeDOMException,
       showPromise,
       "The iframe was navigated away, so showPromise must reject with AbortError"
     );

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #import "HitTestResult.h"
 #import "MediaPlayerPrivate.h"
 #import "Range.h"
+#import "SharedBuffer.h"
 #import "SimpleRange.h"
 #import "UTIUtilities.h"
 #import <AVFoundation/AVPlayer.h>
@@ -42,6 +43,7 @@
 #import <Metal/Metal.h>
 #endif
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
@@ -49,7 +51,9 @@
 #import <pal/ios/UIKitSoftLink.h>
 #endif
 
-
+#if ENABLE(DATA_DETECTION)
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
+#endif
 
 namespace WebCore {
 
@@ -154,7 +158,7 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
 #if ENABLE(WEBGL) && PLATFORM(COCOA)
 bool Internals::platformSupportsMetal(bool isWebGL2)
 {
-    auto device = MTLCreateSystemDefaultDevice();
+    auto device = adoptNS(MTLCreateSystemDefaultDevice());
 
     if (device) {
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
@@ -172,4 +176,32 @@ bool Internals::platformSupportsMetal(bool isWebGL2)
 }
 #endif
 
+#if ENABLE(DATA_DETECTION)
+
+DDScannerResult *Internals::fakeDataDetectorResultForTesting()
+{
+    static NeverDestroyed result = []() -> RetainPtr<DDScannerResult> {
+        auto scanner = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
+        auto stringToScan = CFSTR("webkit.org");
+        auto query = adoptCF(PAL::softLink_DataDetectorsCore_DDScanQueryCreateFromString(kCFAllocatorDefault, stringToScan, CFRangeMake(0, CFStringGetLength(stringToScan))));
+        if (!PAL::softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), query.get()))
+            return nil;
+
+        auto results = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCopyResultsWithOptions(scanner.get(), DDScannerCopyResultsOptionsNoOverlap));
+        if (!CFArrayGetCount(results.get()))
+            return nil;
+
+        return { [[PAL::getDDScannerResultClass() resultsFromCoreResults:results.get()] firstObject] };
+    }();
+    return result->get();
 }
+
+#endif // ENABLE(DATA_DETECTION)
+
+RefPtr<SharedBuffer> Internals::pngDataForTesting()
+{
+    NSBundle *webCoreBundle = [NSBundle bundleForClass:NSClassFromString(@"WebCoreBundleFinder")];
+    return SharedBuffer::createWithContentsOfFile([webCoreBundle pathForResource:@"missingImage" ofType:@"png"]);
+}
+
+} // namespace WebCore

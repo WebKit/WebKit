@@ -23,7 +23,9 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <wtf/Compiler.h>
+#import <CoreGraphics/CoreGraphics.h>
+#import <wtf/Compiler.h>
+#import <wtf/RetainPtr.h>
 
 #if USE(APPKIT)
 OBJC_CLASS NSImage;
@@ -32,3 +34,12 @@ using CocoaImage = NSImage;
 OBJC_CLASS UIImage;
 using CocoaImage = UIImage;
 #endif
+
+OBJC_CLASS NSData;
+
+namespace WebKit {
+
+RetainPtr<NSData> transcode(CGImageRef, CFStringRef typeIdentifier);
+std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> transcodeWithPreferredMIMEType(CGImageRef, CFStringRef preferredMIMEType, CFStringRef fallbackTypeIdentifier);
+
+} // namespace WebKit

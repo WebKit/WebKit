@@ -26,6 +26,7 @@
 #include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentLoader.h"
+#include "ElementInlines.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
@@ -73,7 +74,7 @@ HTMLPlugInImageElement::~HTMLPlugInImageElement()
 RenderEmbeddedObject* HTMLPlugInImageElement::renderEmbeddedObject() const
 {
     // HTMLObjectElement and HTMLEmbedElement may return arbitrary renderers when using fallback content.
-    return is<RenderEmbeddedObject>(renderer()) ? downcast<RenderEmbeddedObject>(renderer()) : nullptr;
+    return dynamicDowncast<RenderEmbeddedObject>(renderer());
 }
 
 bool HTMLPlugInImageElement::isImageType()
@@ -81,7 +82,7 @@ bool HTMLPlugInImageElement::isImageType()
     if (m_serviceType.isEmpty() && protocolIs(m_url, "data"))
         m_serviceType = mimeTypeFromDataURL(m_url);
 
-    if (auto frame = makeRefPtr(document().frame()))
+    if (RefPtr frame = document().frame())
         return frame->loader().client().objectContentType(document().completeURL(m_url), m_serviceType) == ObjectContentType::Image;
 
     return Image::supportsType(m_serviceType);
@@ -179,7 +180,7 @@ void HTMLPlugInImageElement::didAttachRenderers()
 
 void HTMLPlugInImageElement::willDetachRenderers()
 {
-    auto widget = makeRefPtr(pluginWidget(PluginLoadingPolicy::DoNotLoad));
+    RefPtr widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
     if (is<PluginViewBase>(widget))
         downcast<PluginViewBase>(*widget).willDetachRenderer();
 
@@ -195,7 +196,7 @@ void HTMLPlugInImageElement::scheduleUpdateForAfterStyleResolution()
 
     m_hasUpdateScheduledForAfterStyleResolution = true;
 
-    Style::queuePostResolutionCallback([protectedThis = makeRef(*this)] {
+    Style::deprecatedQueuePostResolutionCallback([protectedThis = Ref { *this }] {
         protectedThis->updateAfterStyleResolution();
     });
 }

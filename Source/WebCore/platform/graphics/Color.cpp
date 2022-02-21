@@ -28,6 +28,7 @@
 
 #include "ColorLuminance.h"
 #include "ColorSerialization.h"
+#include <cmath>
 #include <wtf/Assertions.h>
 #include <wtf/text/TextStream.h>
 
@@ -84,7 +85,7 @@ Color Color::lightened() const
     if (isInline() && asInline() == black)
         return lightenedBlack;
 
-    auto [r, g, b, a] = toSRGBALossy<float>();
+    auto [r, g, b, a] = toColorTypeLossy<SRGBA<float>>().resolved();
     float v = std::max({ r, g, b });
 
     if (v == 0.0f)
@@ -101,7 +102,7 @@ Color Color::darkened() const
     if (isInline() && asInline() == white)
         return darkenedWhite;
     
-    auto [r, g, b, a] = toSRGBALossy<float>();
+    auto [r, g, b, a] = toColorTypeLossy<SRGBA<float>>().resolved();
 
     float v = std::max({ r, g, b });
     float multiplier = std::max(0.0f, (v - 0.33f) / v);
@@ -112,7 +113,7 @@ Color Color::darkened() const
 double Color::lightness() const
 {
     // FIXME: Replace remaining uses with luminance.
-    auto [r, g, b, a] = toSRGBALossy<float>();
+    auto [r, g, b, a] = toColorTypeLossy<SRGBA<float>>().resolved();
     auto [min, max] = std::minmax({ r, g, b });
     return 0.5 * (max + min);
 }
@@ -121,6 +122,20 @@ double Color::luminance() const
 {
     return callOnUnderlyingType([&] (const auto& underlyingColor) {
         return WebCore::relativeLuminance(underlyingColor);
+    });
+}
+
+bool Color::anyComponentIsNone() const
+{
+    return callOnUnderlyingType([&] (const auto& underlyingColor) {
+        using ColorType = std::decay_t<decltype(underlyingColor)>;
+
+        if constexpr (std::is_same_v<ColorType, SRGBA<uint8_t>>) {
+            return false;
+        } else {
+            auto [c1, c2, c3, alpha] = underlyingColor.unresolved();
+            return std::isnan(c1) || std::isnan(c2) || std::isnan(c3) || std::isnan(alpha);
+        }
     });
 }
 
@@ -162,23 +177,23 @@ Color Color::semanticColor() const
     return { asInline(), Flags::Semantic };
 }
 
-ColorComponents<float, 4> Color::toColorComponentsInColorSpace(ColorSpace outputColorSpace) const
+ColorComponents<float, 4> Color::toResolvedColorComponentsInColorSpace(ColorSpace outputColorSpace) const
 {
-    auto [inputColorSpace, components] = colorSpaceAndComponents();
-    return converColorComponents(inputColorSpace, components, outputColorSpace);
+    auto [inputColorSpace, components] = colorSpaceAndResolvedColorComponents();
+    return convertAndResolveColorComponents(inputColorSpace, components, outputColorSpace);
 }
 
-ColorComponents<float, 4> Color::toColorComponentsInColorSpace(const DestinationColorSpace& outputColorSpace) const
+ColorComponents<float, 4> Color::toResolvedColorComponentsInColorSpace(const DestinationColorSpace& outputColorSpace) const
 {
-    auto [inputColorSpace, components] = colorSpaceAndComponents();
-    return converColorComponents(inputColorSpace, components, outputColorSpace);
+    auto [inputColorSpace, components] = colorSpaceAndResolvedColorComponents();
+    return convertAndResolveColorComponents(inputColorSpace, components, outputColorSpace);
 }
 
-std::pair<ColorSpace, ColorComponents<float, 4>> Color::colorSpaceAndComponents() const
+std::pair<ColorSpace, ColorComponents<float, 4>> Color::colorSpaceAndResolvedColorComponents() const
 {
     if (isOutOfLine())
-        return { colorSpace(), asOutOfLine().components() };
-    return { ColorSpace::SRGB, asColorComponents(convertColor<SRGBA<float>>(asInline())) };
+        return { colorSpace(), resolveColorComponents(asOutOfLine().resolvedComponents()) };
+    return { ColorSpace::SRGB, asColorComponents(convertColor<SRGBA<float>>(asInline()).resolved()) };
 }
 
 bool Color::isBlackColor(const Color& color)
@@ -193,6 +208,17 @@ bool Color::isWhiteColor(const Color& color)
     return color.callOnUnderlyingType([] (const auto& underlyingColor) {
         return WebCore::isWhite(underlyingColor);
     });
+}
+
+Color::DebugRGBA Color::debugRGBA() const
+{
+    auto [r, g, b, a] = toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+    return { r, g, b, a };
+}
+
+String Color::debugDescription() const
+{
+    return serializationForRenderTreeAsText(*this);
 }
 
 TextStream& operator<<(TextStream& ts, const Color& color)

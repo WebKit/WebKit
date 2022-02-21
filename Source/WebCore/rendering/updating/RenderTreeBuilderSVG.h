@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class LegacyRenderSVGContainer;
+class LegacyRenderSVGRoot;
 class RenderSVGContainer;
 class RenderSVGInline;
 class RenderSVGRoot;
@@ -39,15 +41,25 @@ class RenderTreeBuilder::SVG {
 public:
     SVG(RenderTreeBuilder&);
 
-    void attach(RenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
-    void attach(RenderSVGInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
     void attach(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void attach(RenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+#endif
+    void attach(LegacyRenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void attach(LegacyRenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void attach(RenderSVGInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+
     void attach(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
-    RenderPtr<RenderObject> detach(RenderSVGText& parent, RenderObject& child) WARN_UNUSED_RETURN;
-    RenderPtr<RenderObject> detach(RenderSVGInline& parent, RenderObject& child) WARN_UNUSED_RETURN;
-    RenderPtr<RenderObject> detach(RenderSVGContainer& parent, RenderObject& child) WARN_UNUSED_RETURN;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
     RenderPtr<RenderObject> detach(RenderSVGRoot& parent, RenderObject& child) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detach(RenderSVGContainer& parent, RenderObject& child) WARN_UNUSED_RETURN;
+#endif
+    RenderPtr<RenderObject> detach(LegacyRenderSVGRoot& parent, RenderObject& child) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detach(LegacyRenderSVGContainer& parent, RenderObject& child) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detach(RenderSVGInline& parent, RenderObject& child) WARN_UNUSED_RETURN;
+
+    RenderPtr<RenderObject> detach(RenderSVGText& parent, RenderObject& child) WARN_UNUSED_RETURN;
 
 private:
     RenderTreeBuilder& m_builder;

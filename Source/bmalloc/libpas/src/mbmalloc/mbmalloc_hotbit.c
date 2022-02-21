@@ -27,8 +27,11 @@
 
 #if PAS_ENABLE_HOTBIT
 
-#include <malloc/malloc.h>
 #include "pas_scavenger.h"
+
+#if PAS_OS(DARWIN)
+#include <malloc/malloc.h>
+#endif
 
 void* mbmalloc(size_t size)
 {
@@ -53,7 +56,9 @@ void mbfree(void* p, size_t ignored_size)
 void mbscavenge(void)
 {
     pas_scavenger_run_synchronously_now();
+#if PAS_OS(DARWIN)
     malloc_zone_pressure_relief(NULL, 0);
+#endif
 }
 
 #endif /* PAS_ENABLE_HOTBIT */

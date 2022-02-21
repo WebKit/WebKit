@@ -125,9 +125,9 @@ void AccessibilityLabel::clearChildren()
     m_containsOnlyStaticTextDirty = false;
 }
 
-void AccessibilityLabel::insertChild(AXCoreObject* object, unsigned index)
+void AccessibilityLabel::insertChild(AXCoreObject* object, unsigned index, DescendIfIgnored descendIfIgnored)
 {
-    AccessibilityRenderObject::insertChild(object, index);
+    AccessibilityObject::insertChild(object, index, descendIfIgnored);
     m_containsOnlyStaticTextDirty = true;
 }
 

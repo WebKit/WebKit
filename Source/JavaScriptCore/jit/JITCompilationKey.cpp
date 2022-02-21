@@ -38,7 +38,7 @@ void JITCompilationKey::dump(PrintStream& out) const
         out.print("<empty>");
         return;
     }
-    out.print("(Compile of ", *m_profiledBlock, " with ", m_mode, ")");
+    out.print("(Compile of ", RawPointer(m_codeBlock), " with ", m_mode, ")");
 }
 
 } // namespace JSC

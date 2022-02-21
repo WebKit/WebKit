@@ -11,11 +11,10 @@ description: >
     and RegExp is /[a-z]/
 ---*/
 
-//CHECK#1
 try {
   throw new Test262Error('#1.1: /[a-z]/.exec({toString:void 0, valueOf:function(){throw "invalof"}}) throw "invalof". Actual: ' + (/[a-z]/.exec({toString:void 0, valueOf:function(){throw "invalof"}})));
 } catch (e) {
-  if (e !== "invalof") {
-    throw new Test262Error('#1.2: /[a-z]/.exec({toString:void 0, valueOf:function(){throw "invalof"}}) throw "invalof". Actual: ' + (e));
-  }
+  assert.sameValue(e, "invalof", 'The value of e is expected to be "invalof"');
 }
+
+// TODO: Convert to assert.throws() format.

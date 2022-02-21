@@ -29,6 +29,8 @@
 #if ENABLE(WEBXR)
 
 #include "WebXRBoundedReferenceSpace.h"
+#include "WebXRJointPose.h"
+#include "WebXRJointSpace.h"
 #include "WebXRReferenceSpace.h"
 #include "WebXRSession.h"
 #include "WebXRViewerPose.h"
@@ -104,11 +106,11 @@ ExceptionOr<std::optional<WebXRFrame::PopulatedPose>> WebXRFrame::populatePose(c
 
     // 2. Let session be frame’s session object.
     // 3. If space’s session does not equal session, throw an InvalidStateError and abort these steps.
-    if (&space.session() != m_session.ptr())
+    if (space.session() != m_session.ptr())
         return Exception { InvalidStateError };
 
     // 4. If baseSpace’s session does not equal session, throw an InvalidStateError and abort these steps.
-    if (&baseSpace.session() != m_session.ptr())
+    if (baseSpace.session() != m_session.ptr())
         return Exception { InvalidStateError };
 
     // 5. Check if poses may be reported and, if not, throw a SecurityError and abort these steps.
@@ -127,11 +129,27 @@ ExceptionOr<std::optional<WebXRFrame::PopulatedPose>> WebXRFrame::populatePose(c
     }
 
     auto baseTransform = baseSpace.effectiveOrigin();
-    if (!baseTransform.isInvertible())
+    if (!baseTransform)
+        return Exception { InvalidStateError };
+
+    if (!baseTransform.value().isInvertible())
         return { std::nullopt };
 
-    auto transform =  *baseTransform.inverse() * space.effectiveOrigin();
-    bool emulatedPosition = space.isPositionEmulated() || baseSpace.isPositionEmulated();
+    auto effectiveOrigin = space.effectiveOrigin();
+    if (!effectiveOrigin)
+        return Exception { InvalidStateError };
+
+    auto transform =  *baseTransform.value().inverse() * effectiveOrigin.value();
+
+    auto isPositionEmulated = space.isPositionEmulated();
+    if (!isPositionEmulated)
+        return Exception { InvalidStateError };
+
+    auto baseSpaceIsPositionEmulated = baseSpace.isPositionEmulated();
+    if (!baseSpaceIsPositionEmulated)
+        return Exception { InvalidStateError };
+
+    bool emulatedPosition = isPositionEmulated.value() || baseSpaceIsPositionEmulated.value();
 
     bool limit = mustPosesBeLimited(space, baseSpace);
     if (limit) {
@@ -184,7 +202,7 @@ ExceptionOr<RefPtr<WebXRViewerPose>> WebXRFrame::getViewerPose(const Document& d
         auto transform = WebXRRigidTransform::create(pose->transform().rawTransform() * offset);
 
         // Set projection matrix for each view
-        std::array<float, 16> projection = switchOn(frameData.views[index].projection, [&](const PlatformXR::Device::FrameData::Fov& fov) {
+        std::array<float, 16> projection = WTF::switchOn(frameData.views[index].projection, [&](const PlatformXR::Device::FrameData::Fov& fov) {
             double near = m_session->renderState().depthNear();
             double far = m_session->renderState().depthFar();
             return TransformationMatrix::fromProjection(fov.up, fov.down, fov.left, fov.right, near, far).toColumnMajorFloatArray();
@@ -202,7 +220,7 @@ ExceptionOr<RefPtr<WebXRViewerPose>> WebXRFrame::getViewerPose(const Document& d
             return TransformationMatrix::fromProjection(fov, aspect, near, far).toColumnMajorFloatArray();
         });
 
-        auto xrView = WebXRView::create(makeRef(*this), view.eye, WTFMove(transform), Float32Array::create(projection.data(), projection.size()));
+        auto xrView = WebXRView::create(Ref { *this }, view.eye, WTFMove(transform), Float32Array::create(projection.data(), projection.size()));
         xrView->setViewportModifiable(m_session->supportsViewportScaling());
 
         //  8.8. Append xrview to xrviews
@@ -241,6 +259,30 @@ TransformationMatrix WebXRFrame::matrixFromPose(const PlatformXR::Device::FrameD
     matrix.multiply(TransformationMatrix::fromQuaternion(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w));
     return matrix;
 }
+
+#if ENABLE(WEBXR_HANDS)
+
+// https://immersive-web.github.io/webxr-hand-input/#dom-xrframe-getjointpose
+ExceptionOr<RefPtr<WebXRJointPose>> WebXRFrame::getJointPose(const WebXRJointSpace& joint, const WebXRSpace& baseSpace)
+{
+    UNUSED_PARAM(joint);
+    UNUSED_PARAM(baseSpace);
+    return nullptr;
+}
+
+// https://immersive-web.github.io/webxr-hand-input/#dom-xrframe-filljointradii
+ExceptionOr<bool> WebXRFrame::fillJointRadii(const Vector<RefPtr<WebXRJointSpace>>, const Float32Array&)
+{
+    return true;
+}
+
+// https://immersive-web.github.io/webxr-hand-input/#dom-xrframe-fillposes
+ExceptionOr<bool> WebXRFrame::fillPoses(const Vector<RefPtr<WebXRSpace>>, const WebXRSpace&, const Float32Array&)
+{
+    return true;
+}
+
+#endif
 
 } // namespace WebCore
 

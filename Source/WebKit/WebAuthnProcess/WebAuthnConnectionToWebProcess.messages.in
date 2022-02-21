@@ -22,7 +22,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-messages -> WebAuthnConnectionToWebProcess {
+messages -> WebAuthnConnectionToWebProcess WantsDispatchMessage {
 
     MakeCredential(Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialCreationOptions options, bool processingUserGesture) -> (struct WebCore::AuthenticatorResponseData data, enum:int WebCore::AuthenticatorAttachment attachment, struct WebCore::ExceptionData exception) Async
     GetAssertion(Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialRequestOptions options, bool processingUserGesture) -> (struct WebCore::AuthenticatorResponseData data, enum:int WebCore::AuthenticatorAttachment attachment, struct WebCore::ExceptionData exception) Async

@@ -34,12 +34,32 @@ def read_content_from_webkit_additions(built_products_directory, sdk_root_direct
     try:
         file_in_build_directory = open(os.path.join(built_products_directory, additions_path), "r")
         return file_in_build_directory.read()
-    except:
+    except Exception as ex:
         try:
             file_in_sdk_root = open(os.path.join(sdk_root_directory, additions_path), "r")
             return file_in_sdk_root.read()
-        except:
+        except Exception as ex:
             return ""
+
+
+def is_supported_os():
+    os_version_string = os.environ.get("MACOSX_DEPLOYMENT_TARGET")
+    if os_version_string is not None:
+        os_version = float('.'.join(os_version_string.split('.')[:2]))
+        return os_version >= 13.0
+    os_version_string = os.environ.get("IPHONEOS_DEPLOYMENT_TARGET")
+    if os_version_string is not None:
+        os_version = float('.'.join(os_version_string.split('.')[:2]))
+        return os_version >= 16.0
+    os_version_string = os.environ.get("WATCHOS_DEPLOYMENT_TARGET")
+    if os_version_string is not None:
+        os_version = float('.'.join(os_version_string.split('.')[:2]))
+        return os_version >= 9.0
+    os_version_string = os.environ.get("TVOS_DEPLOYMENT_TARGET")
+    if os_version_string is not None:
+        os_version = float('.'.join(os_version_string.split('.')[:2]))
+        return os_version >= 16.0
+    return True
 
 
 def main(argv=None):
@@ -65,24 +85,31 @@ def main(argv=None):
         print("(%s): SDK root directory unspecified" % argv[0])
         return 1
 
-    additions_import_pattern = re.compile(r"\#if USE\(APPLE_INTERNAL_SDK\)\n#import <WebKitAdditions/(.*)>\n#endif")
+    # We currently only support WebKitAdditions in Framework headers on macOS 13+ and iOS 16+.
+    should_do_replacement = is_supported_os()
+
+    additions_import_pattern = re.compile(r"\#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT\n#import <WebKitAdditions/(.*)>\n#endif")
     try:
         with open(header_path, "r") as header:
             header_contents = header.read()
             match = additions_import_pattern.search(header_contents)
             while match:
-                header_contents = header_contents[:match.start()] + read_content_from_webkit_additions(built_products_directory, sdk_root_directory, match.groups()[0]) + header_contents[match.end():]
+                if should_do_replacement:
+                    header_contents = header_contents[:match.start()] + read_content_from_webkit_additions(built_products_directory, sdk_root_directory, match.groups()[0]) + header_contents[match.end():]
+                else:
+                    header_contents = header_contents[:match.start()] + header_contents[match.end():]
                 match = additions_import_pattern.search(header_contents)
             try:
                 with open(header_path, "w") as header:
                     header.write(header_contents)
-            except:
+            except Exception as ex:
                 print("(%s): failed to write to file: %s" % (argv[0], header_path))
                 return 1
         return 0
-    except:
+    except Exception as ex:
         print("(%s): failed to read file: %s" % (argv[0], header_path))
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))

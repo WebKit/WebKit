@@ -8,11 +8,15 @@ info: |
 esid: sec-date.prototype.getseconds
 description: Checking DontDelete attribute
 ---*/
+assert.sameValue(
+  delete Date.prototype.getTime.length,
+  true,
+  'The value of `delete Date.prototype.getTime.length` is expected to be true'
+);
 
-if (delete Date.prototype.getTime.length !== true) {
-  throw new Test262Error('#1: The Date.prototype.getTime.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.prototype.getTime.hasOwnProperty('length'),
+  'The value of !Date.prototype.getTime.hasOwnProperty(\'length\') is expected to be true'
+);
 
-if (Date.prototype.getTime.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.prototype.getTime.length property does not have the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

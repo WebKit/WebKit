@@ -53,7 +53,7 @@ import subprocess
 import sys
 from typing import * # mypy annotations
 
-REPO_DIR = pathlib.Path.cwd()
+SCRIPT_DIR = os.path.dirname(__file__)
 
 GN_ENV = dict(os.environ)
 # We need to set DEPOT_TOOLS_WIN_TOOLCHAIN to 0 for non-Googlers, but otherwise
@@ -61,12 +61,8 @@ GN_ENV = dict(os.environ)
 # the Visual Studio files in depot_tools if DEPOT_TOOLS_WIN_TOOLCHAIN is not
 # explicitly set to 0.
 vs_found = False
-for directory in os.environ['PATH'].split(os.pathsep):
-    vs_dir = os.path.join(directory, 'win_toolchain', 'vs_files')
-    if os.path.exists(vs_dir):
-        vs_found = True
-        break
-if not vs_found:
+vs_dir = os.path.join(SCRIPT_DIR, '..', 'third_party', 'depot_tools', 'win_toolchain', 'vs_files')
+if not os.path.isdir(vs_dir):
     GN_ENV['DEPOT_TOOLS_WIN_TOOLCHAIN'] = '0'
 
 if len(sys.argv) < 3:
@@ -181,10 +177,12 @@ assert INCLUDE_REGEX.match(b'\n#include "foo"')
 # included, but not part of the source list.
 IGNORED_INCLUDES = {
     b'absl/container/flat_hash_map.h',
+    b'absl/container/flat_hash_set.h',
     b'compiler/translator/TranslatorESSL.h',
     b'compiler/translator/TranslatorGLSL.h',
     b'compiler/translator/TranslatorHLSL.h',
     b'compiler/translator/TranslatorMetal.h',
+    b'compiler/translator/TranslatorMetalDirect.h',
     b'compiler/translator/TranslatorVulkan.h',
     b'contrib/optimizations/slide_hash_neon.h',
     b'dirent_on_windows.h',
@@ -204,13 +202,17 @@ IGNORED_INCLUDES = {
     b'libANGLE/renderer/gl/wgl/DisplayWGL.h',
     b'libANGLE/renderer/metal/DisplayMtl_api.h',
     b'libANGLE/renderer/null/DisplayNULL.h',
+    b'libANGLE/renderer/vulkan/android/AHBFunctions.h',
     b'libANGLE/renderer/vulkan/android/DisplayVkAndroid.h',
+    b'libANGLE/renderer/vulkan/DisplayVk_api.h',
     b'libANGLE/renderer/vulkan/fuchsia/DisplayVkFuchsia.h',
     b'libANGLE/renderer/vulkan/ggp/DisplayVkGGP.h',
     b'libANGLE/renderer/vulkan/mac/DisplayVkMac.h',
     b'libANGLE/renderer/vulkan/win32/DisplayVkWin32.h',
     b'libANGLE/renderer/vulkan/xcb/DisplayVkXcb.h',
     b'loader_cmake_config.h',
+    b'loader_windows.h',
+    b'optick.h',
     b'spirv-tools/libspirv.h',
     b'third_party/volk/volk.h',
     b'vk_loader_extensions.c',
@@ -229,6 +231,15 @@ IGNORED_INCLUDES = {
     b'vulkan_xcb.h',
     b'vulkan_xlib.h',
     b'vulkan_xlib_xrandr.h',
+# rapidjson adds these include stubs into their documentation
+# comments. Since the script doesn't skip comments they are
+# erroneously marked as valid includes
+    b'rapidjson/...',
+    # Validation layers support building with robin hood hashing, but we are not enabling that
+    # See http://anglebug.com/5791
+    b'robin_hood.h',
+    # From the Vulkan-Loader
+    b'winres.h',
 }
 
 IGNORED_INCLUDE_PREFIXES = {
@@ -287,7 +298,7 @@ def has_all_includes(target_name: str, descs: dict) -> bool:
                 #print('  acceptable_sources:')
                 #for x in sorted(acceptable_sources):
                 #    print('   ', x)
-                print('Warning in {}: {}: Invalid include: {}'.format(target_name, cur_file, include), file=sys.stderr)
+                print('Warning in {}: {}: Included file must be listed in the GN target or its public dependency: {}'.format(target_name, cur_file, include), file=sys.stderr)
                 ret = False
             #print('Looks valid:', m.group())
             continue
@@ -330,8 +341,8 @@ for (k,desc) in out.items():
     for dep_name in set(desc['deps']):
         dep = descs[dep_name]
         if dep['type'] in LIBRARY_TYPES:
-            dep_libs.add(dep_name[3:])
-    desc['deps'] = sortedi(dep_libs)
+            dep_libs.add(dep_name)
+    desc['dep_libs'] = sortedi(dep_libs)
 
 json.dump(out, sys.stdout, indent='  ')
 exit(0)

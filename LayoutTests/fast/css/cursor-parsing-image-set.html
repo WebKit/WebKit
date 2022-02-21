@@ -21,7 +21,7 @@ function testCursorRule(rule)
 {
     var cssText = makeCursorRule(rule);
     style = roundtripCssRule(cssText);
-    shouldBeEqualToString('style.cssText', cssText.replace(/x(?=[,)])/g, 'dppx'));
+    shouldBeEqualToString('style.cssText', cssText);
 }
 
 function roundtripCssRule(cssText)

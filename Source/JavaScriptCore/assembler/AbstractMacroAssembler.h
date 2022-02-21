@@ -179,39 +179,6 @@ public:
         intptr_t offset;
     };
 
-    // ImplicitAddress:
-    //
-    // This class is used for explicit 'load' and 'store' operations
-    // (as opposed to situations in which a memory operand is provided
-    // to a generic operation, such as an integer arithmetic instruction).
-    //
-    // In the case of a load (or store) operation we want to permit
-    // addresses to be implicitly constructed, e.g. the two calls:
-    //
-    //     load32(Address(addrReg), destReg);
-    //     load32(addrReg, destReg);
-    //
-    // Are equivalent, and the explicit wrapping of the Address in the former
-    // is unnecessary.
-    struct ImplicitAddress {
-        ImplicitAddress(RegisterID base)
-            : base(base)
-            , offset(0)
-        {
-            ASSERT(base != RegisterID::InvalidGPRReg);
-        }
-
-        ImplicitAddress(Address address)
-            : base(address.base)
-            , offset(address.offset)
-        {
-            ASSERT(base != RegisterID::InvalidGPRReg);
-        }
-
-        RegisterID base;
-        int32_t offset;
-    };
-
     // BaseIndex:
     //
     // Describes a complex addressing mode.
@@ -298,9 +265,9 @@ public:
     // in a class requiring explicit construction in order to differentiate
     // from pointers used as absolute addresses to memory operations
     struct TrustedImmPtr : public TrustedImm {
-        TrustedImmPtr() { }
+        constexpr TrustedImmPtr() { }
         
-        explicit TrustedImmPtr(const void* value)
+        explicit constexpr TrustedImmPtr(const void* value)
             : m_value(value)
         {
         }
@@ -311,21 +278,21 @@ public:
         {
         }
 
-        explicit TrustedImmPtr(std::nullptr_t)
+        explicit constexpr TrustedImmPtr(std::nullptr_t)
         {
         }
 
-        explicit TrustedImmPtr(size_t value)
+        explicit constexpr TrustedImmPtr(size_t value)
             : m_value(reinterpret_cast<void*>(value))
         {
         }
 
-        intptr_t asIntptr()
+        constexpr intptr_t asIntptr()
         {
             return reinterpret_cast<intptr_t>(m_value);
         }
 
-        void* asPtr()
+        constexpr void* asPtr()
         {
             return const_cast<void*>(m_value);
         }
@@ -335,12 +302,12 @@ public:
 
     struct ImmPtr : private TrustedImmPtr
     {
-        explicit ImmPtr(const void* value)
+        explicit constexpr ImmPtr(const void* value)
             : TrustedImmPtr(value)
         {
         }
 
-        TrustedImmPtr asTrustedImmPtr() { return *this; }
+        constexpr TrustedImmPtr asTrustedImmPtr() { return *this; }
     };
 
     // TrustedImm32:
@@ -358,7 +325,7 @@ public:
         }
 
 #if !CPU(X86_64)
-        explicit TrustedImm32(TrustedImmPtr ptr)
+        explicit constexpr TrustedImm32(TrustedImmPtr ptr)
             : m_value(ptr.asIntptr())
         {
         }
@@ -369,17 +336,17 @@ public:
 
 
     struct Imm32 : private TrustedImm32 {
-        explicit Imm32(int32_t value)
+        explicit constexpr Imm32(int32_t value)
             : TrustedImm32(value)
         {
         }
 #if !CPU(X86_64)
-        explicit Imm32(TrustedImmPtr ptr)
+        explicit constexpr Imm32(TrustedImmPtr ptr)
             : TrustedImm32(ptr)
         {
         }
 #endif
-        const TrustedImm32& asTrustedImm32() const { return *this; }
+        constexpr const TrustedImm32& asTrustedImm32() const { return *this; }
 
     };
     
@@ -390,15 +357,15 @@ public:
     // (which are implemented as an enum) from accidentally being passed as
     // immediate values.
     struct TrustedImm64 : TrustedImm {
-        TrustedImm64() { }
+        constexpr TrustedImm64() { }
         
-        explicit TrustedImm64(int64_t value)
+        explicit constexpr TrustedImm64(int64_t value)
             : m_value(value)
         {
         }
 
 #if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
-        explicit TrustedImm64(TrustedImmPtr ptr)
+        explicit constexpr TrustedImm64(TrustedImmPtr ptr)
             : m_value(ptr.asIntptr())
         {
         }
@@ -409,17 +376,17 @@ public:
 
     struct Imm64 : private TrustedImm64
     {
-        explicit Imm64(int64_t value)
+        explicit constexpr Imm64(int64_t value)
             : TrustedImm64(value)
         {
         }
 #if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
-        explicit Imm64(TrustedImmPtr ptr)
+        explicit constexpr Imm64(TrustedImmPtr ptr)
             : TrustedImm64(ptr)
         {
         }
 #endif
-        const TrustedImm64& asTrustedImm64() const { return *this; }
+        constexpr const TrustedImm64& asTrustedImm64() const { return *this; }
     };
     
     // Section 2: MacroAssembler code buffer handles
@@ -932,12 +899,6 @@ public:
         AssemblerType::relinkJump(jump.dataLocation(), destination.dataLocation());
     }
     
-    template<PtrTag jumpTag>
-    static void repatchJumpToNop(CodeLocationJump<jumpTag> jump)
-    {
-        AssemblerType::relinkJumpToNop(jump.dataLocation());
-    }
-
     template<PtrTag callTag, PtrTag destTag>
     static void repatchNearCall(CodeLocationNearCall<callTag> nearCall, CodeLocationLabel<destTag> destination)
     {
@@ -1086,9 +1047,9 @@ protected:
         UNREACHABLE_FOR_PLATFORM();
         return firstRegister();
     }
-    static bool canBlind() { return false; }
-    static bool shouldBlindForSpecificArch(uint32_t) { return false; }
-    static bool shouldBlindForSpecificArch(uint64_t) { return false; }
+    static constexpr bool canBlind() { return false; }
+    static constexpr bool shouldBlindForSpecificArch(uint32_t) { return false; }
+    static constexpr bool shouldBlindForSpecificArch(uint64_t) { return false; }
 
     class CachedTempRegister {
         friend class DataLabelPtr;

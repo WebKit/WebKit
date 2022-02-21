@@ -47,13 +47,13 @@ namespace WTF {
 //
 //    std::optional<VectorElementType> makeVectorElement(const VectorElementType*, id arrayElement);
 
-template<typename CollectionType> RetainPtr<NSArray> createNSArray(CollectionType&&);
+template<typename CollectionType> RetainPtr<NSMutableArray> createNSArray(CollectionType&&);
 template<typename VectorElementType> Vector<VectorElementType> makeVector(NSArray *);
 
 // This overload of createNSArray takes a function to map each vector element to an Objective-C object.
 // The map function has the same interface as the makeNSArrayElement function above, but can be any
 // function including a lambda, a function-like object, or Function<>.
-template<typename CollectionType, typename MapFunctionType> RetainPtr<NSArray> createNSArray(CollectionType&&, MapFunctionType&&);
+template<typename CollectionType, typename MapFunctionType> RetainPtr<NSMutableArray> createNSArray(CollectionType&&, MapFunctionType&&);
 
 // This overload of makeVector takes a function to map each Objective-C object to a vector element.
 // Currently, the map function needs to return an Optional.
@@ -67,7 +67,7 @@ inline void addUnlessNil(NSMutableArray *array, id value)
         [array addObject:value];
 }
 
-template<typename CollectionType> RetainPtr<NSArray> createNSArray(CollectionType&& collection)
+template<typename CollectionType> RetainPtr<NSMutableArray> createNSArray(CollectionType&& collection)
 {
     auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:std::size(collection)]);
     for (auto&& element : collection)
@@ -75,7 +75,7 @@ template<typename CollectionType> RetainPtr<NSArray> createNSArray(CollectionTyp
     return array;
 }
 
-template<typename CollectionType, typename MapFunctionType> RetainPtr<NSArray> createNSArray(CollectionType&& collection, MapFunctionType&& function)
+template<typename CollectionType, typename MapFunctionType> RetainPtr<NSMutableArray> createNSArray(CollectionType&& collection, MapFunctionType&& function)
 {
     auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:std::size(collection)]);
     for (auto&& element : collection)

@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: hello
+CONSOLE MESSAGE: hello
+We really just want to test that the shadow realm's console output gets redirected to the appropriate page console and not sent to the default (possibly blackhole) destination
+
+== Running test suite: ShadowRealm.Console.basic
+-- Running test case: ShadowRealm.Console.basic.log
+PASS: message text should be 'hello'
+PASS: message target should be the main page
+
+-- Running test case: ShadowRealm.Console.nested.log
+PASS: message text should be 'hello'
+PASS: message target should be the main page
+

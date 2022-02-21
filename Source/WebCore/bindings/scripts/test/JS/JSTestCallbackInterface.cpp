@@ -120,9 +120,9 @@ template<> TestCallbackInterface::Dictionary convertDictionary<TestCallbackInter
     return result;
 }
 
-JSTestCallbackInterface::JSTestCallbackInterface(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackInterface(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackDataStrong(callback, globalObject, this))
+JSTestCallbackInterface::JSTestCallbackInterface(VM& vm, JSObject* callback)
+    : TestCallbackInterface(jsCast<JSDOMGlobalObject*>(callback->globalObject(vm))->scriptExecutionContext())
+    , m_data(new JSCallbackDataStrong(vm, callback, this))
 {
 }
 
@@ -163,9 +163,11 @@ template<> JSValue JSTestCallbackInterfaceDOMConstructor::prototypeForStructure(
 
 template<> void JSTestCallbackInterfaceDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    UNUSED_PARAM(globalObject);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestCallbackInterface"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    JSString* nameString = jsNontrivialString(vm, "TestCallbackInterface"_s);
+    m_originalName.set(vm, this, nameString);
+    putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    UNUSED_PARAM(globalObject);
     reifyStaticProperties(vm, nullptr, JSTestCallbackInterfaceConstructorTableValues, *this);
 }
 
@@ -181,7 +183,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterfac
 
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
-    auto& globalObject = *m_data->globalObject();
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
@@ -191,7 +193,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterfac
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithNoParam"), returnedException);
+    m_data->invokeCallback(vm, thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithNoParam"), returnedException);
     if (returnedException) {
         reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -207,7 +209,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterfac
 
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
-    auto& globalObject = *m_data->globalObject();
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
@@ -218,7 +220,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterfac
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithArrayParam"), returnedException);
+    m_data->invokeCallback(vm, thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithArrayParam"), returnedException);
     if (returnedException) {
         reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -234,7 +236,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterfac
 
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
-    auto& globalObject = *m_data->globalObject();
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
@@ -246,7 +248,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterfac
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithSerializedScriptValueParam"), returnedException);
+    m_data->invokeCallback(vm, thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithSerializedScriptValueParam"), returnedException);
     if (returnedException) {
         reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -262,7 +264,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterfac
 
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
-    auto& globalObject = *m_data->globalObject();
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
@@ -273,7 +275,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterfac
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithStringList"), returnedException);
+    m_data->invokeCallback(vm, thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithStringList"), returnedException);
     if (returnedException) {
         reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -289,7 +291,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterfac
 
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
-    auto& globalObject = *m_data->globalObject();
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
@@ -300,7 +302,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterfac
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithBoolean"), returnedException);
+    m_data->invokeCallback(vm, thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithBoolean"), returnedException);
     if (returnedException) {
         reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -316,7 +318,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterfac
 
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
-    auto& globalObject = *m_data->globalObject();
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
@@ -328,7 +330,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackInterfac
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackRequiresThisToPass"), returnedException);
+    m_data->invokeCallback(vm, thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackRequiresThisToPass"), returnedException);
     if (returnedException) {
         reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -344,7 +346,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
 
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
-    auto& globalObject = *m_data->globalObject();
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
@@ -354,7 +356,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
-    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithAReturnValue"), returnedException);
+    auto jsResult = m_data->invokeCallback(vm, thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithAReturnValue"), returnedException);
     if (returnedException) {
         reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -373,7 +375,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
 
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
-    auto& globalObject = *m_data->globalObject();
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
@@ -384,37 +386,10 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
-    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackThatRethrowsExceptions"), returnedException);
+    auto jsResult = m_data->invokeCallback(vm, thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackThatRethrowsExceptions"), returnedException);
     if (returnedException) {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
         throwException(&lexicalGlobalObject, throwScope, returnedException);
-        return CallbackResultType::ExceptionThrown;
-     }
-
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto returnValue = convert<IDLDOMString>(lexicalGlobalObject, jsResult);
-    RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
-    return { WTFMove(returnValue) };
-}
-
-CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterface::callbackThatSkipsInvokeCheck(typename IDLDictionary<TestCallbackInterface::Dictionary>::ParameterType dictionaryParam)
-{
-    Ref<JSTestCallbackInterface> protectedThis(*this);
-
-    auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
-
-    JSLockHolder lock(vm);
-    auto& lexicalGlobalObject = globalObject;
-    JSValue thisValue = jsUndefined();
-    MarkedArgumentBuffer args;
-    args.append(toJS<IDLDictionary<TestCallbackInterface::Dictionary>>(lexicalGlobalObject, globalObject, dictionaryParam));
-    ASSERT(!args.hasOverflowed());
-
-    NakedPtr<JSC::Exception> returnedException;
-    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackThatSkipsInvokeCheck"), returnedException);
-    if (returnedException) {
-        reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;
      }
 
@@ -431,7 +406,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
 
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
-    auto& globalObject = *m_data->globalObject();
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
@@ -442,7 +417,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
-    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithThisObject"), returnedException);
+    auto jsResult = m_data->invokeCallback(vm, thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackWithThisObject"), returnedException);
     if (returnedException) {
         reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;

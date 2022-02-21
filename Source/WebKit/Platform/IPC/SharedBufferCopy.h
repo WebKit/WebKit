@@ -23,11 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Encodes a SharedBuffer that is received as a copy of the decoded data in a new SharedBuffer.
-// To avoid copying from the Decoder, use SharedBufferDataReference to receive a DataReference instead.
+// Encodes a FragmentedSharedBuffer that is to be sent over IPC
+// WARNING: a SharedBufferCopy should only be accessed on the IPC's receiver side.
 
 #pragma once
 
+#include "DataReference.h"
 #include <WebCore/SharedBuffer.h>
 
 namespace IPC {
@@ -39,28 +40,32 @@ class SharedBufferCopy {
 public:
     SharedBufferCopy() = default;
 
-    SharedBufferCopy(RefPtr<WebCore::SharedBuffer>&& buffer)
+    explicit SharedBufferCopy(RefPtr<WebCore::FragmentedSharedBuffer>&& buffer)
         : m_buffer(WTFMove(buffer)) { }
-    SharedBufferCopy(Ref<WebCore::SharedBuffer>&& buffer)
+    explicit SharedBufferCopy(Ref<WebCore::FragmentedSharedBuffer>&& buffer)
         : m_buffer(WTFMove(buffer)) { }
-    SharedBufferCopy(const WebCore::SharedBuffer& buffer)
-        : m_buffer(WebCore::SharedBuffer::create())
-    {
-        m_buffer->append(buffer);
-    }
+    explicit SharedBufferCopy(RefPtr<WebCore::SharedBuffer>&& buffer)
+        : m_buffer(WTFMove(buffer)) { }
+    explicit SharedBufferCopy(Ref<WebCore::SharedBuffer>&& buffer)
+        : m_buffer(WTFMove(buffer)) { }
+    explicit SharedBufferCopy(const WebCore::FragmentedSharedBuffer& buffer)
+        : m_buffer(const_cast<WebCore::FragmentedSharedBuffer*>(&buffer)) { }
 
-    RefPtr<WebCore::SharedBuffer>& buffer() { return m_buffer; }
-    const RefPtr<WebCore::SharedBuffer>& buffer() const { return m_buffer; }
-
-    const uint8_t* data() const { return m_buffer ? m_buffer->data() : nullptr; }
     size_t size() const { return m_buffer ? m_buffer->size() : 0; }
     bool isEmpty() const { return m_buffer ? m_buffer->isEmpty() : true; }
+
+    // The following methods must only be used on the receiver's IPC side.
+    // It relies on an implementation detail that makes m_buffer becomes a contiguous SharedBuffer
+    // once it's deserialised over IPC.
+    RefPtr<WebCore::SharedBuffer> buffer() const { return downcast<WebCore::SharedBuffer>(m_buffer.get()); }
+    Ref<WebCore::SharedBuffer> safeBuffer() const { return m_buffer ? buffer().releaseNonNull() : WebCore::SharedBuffer::create(); }
+    const uint8_t* data() const;
 
     void encode(Encoder&) const;
     static WARN_UNUSED_RETURN std::optional<SharedBufferCopy> decode(Decoder&);
 
 private:
-    RefPtr<WebCore::SharedBuffer> m_buffer;
+    RefPtr<WebCore::FragmentedSharedBuffer> m_buffer;
 };
 
 } // namespace IPC

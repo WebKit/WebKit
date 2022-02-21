@@ -107,6 +107,23 @@ const StringImpl* LazyJSValue::tryGetStringImpl(VM& vm) const
     return nullptr;
 }
 
+struct CrossThreadStringTranslator {
+    static unsigned hash(const StringImpl* impl)
+    {
+        return impl->concurrentHash();
+    }
+
+    static bool equal(const String& string, const StringImpl* impl)
+    {
+        return WTF::equal(string.impl(), impl);
+    }
+
+    static void translate(String& location, const StringImpl* impl, unsigned)
+    {
+        location = impl->isolatedCopy();
+    }
+};
+
 String LazyJSValue::tryGetString(Graph& graph) const
 {
     switch (m_kind) {
@@ -123,10 +140,7 @@ String LazyJSValue::tryGetString(Graph& graph) const
             if (string->length() > ginormousStringLength)
                 return String();
             
-            auto result = graph.m_copiedStrings.add(string, String());
-            if (result.isNewEntry)
-                result.iterator->value = string->isolatedCopy();
-            return result.iterator->value;
+            return *graph.m_copiedStrings.add<CrossThreadStringTranslator>(string).iterator;
         }
         
         return String();

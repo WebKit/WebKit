@@ -47,6 +47,8 @@ enum {
     kWKErrorCodePlugInWillHandleLoad =                           204,
     kWKErrorCodeInsecurePlugInVersion =                          205,
     kWKErrorInternal =                                           300,
+    kWKErrorCodeCancelled =                                      302,
+    kWKErrorCodeFileDoesNotExist =                               303,
 };
 
 WK_EXPORT WKTypeID WKErrorGetTypeID(void);

@@ -22,12 +22,13 @@ typedef std::vector<sh::ShaderVariable> InitVariableList;
 // For all of the functions below: If canUseLoopsToInitialize is set, for loops are used instead of
 // a large number of initializers where it can make sense, such as for initializing large arrays.
 
-// Return a sequence of assignment operations to initialize "initializedSymbol". initializedSymbol
+// Populate a sequence of assignment operations to initialize "initializedSymbol". initializedSymbol
 // may be an array, struct or any combination of these, as long as it contains only basic types.
-TIntermSequence *CreateInitCode(const TIntermTyped *initializedSymbol,
-                                bool canUseLoopsToInitialize,
-                                bool highPrecisionSupported,
-                                TSymbolTable *symbolTable);
+void CreateInitCode(const TIntermTyped *initializedSymbol,
+                    bool canUseLoopsToInitialize,
+                    bool highPrecisionSupported,
+                    TIntermSequence *initCode,
+                    TSymbolTable *symbolTable);
 
 // Initialize all uninitialized local variables, so that undefined behavior is avoided.
 ANGLE_NO_DISCARD bool InitializeUninitializedLocals(TCompiler *compiler,

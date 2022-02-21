@@ -303,7 +303,7 @@ HRESULT AccessibleBase::get_uniqueID(_Out_ long* uniqueID)
     if (!m_object)
         return E_FAIL;
 
-    *uniqueID = static_cast<long>(m_object->objectID());
+    *uniqueID = static_cast<long>(m_object->objectID().toUInt64());
     return S_OK;
 }
 
@@ -717,7 +717,7 @@ HRESULT AccessibleBase::get_accDefaultAction(VARIANT vChild, __deref_opt_out BST
     if (FAILED(hr))
         return hr;
 
-    if (*action = BString(childObj->actionVerb()).release())
+    if (*action = BString(childObj->localizedActionVerb()).release())
         return S_OK;
     return S_FALSE;
 }
@@ -1039,7 +1039,7 @@ HRESULT AccessibleBase::getAccessibilityObjectForChild(VARIANT vChild, Accessibi
         if (!document)
             return E_FAIL;
 
-        childObj = document->axObjectCache()->objectFromAXID(-vChild.lVal);
+        childObj = document->axObjectCache()->objectFromAXID(makeObjectIdentifier<AXIDType>(-vChild.lVal));
     } else {
         size_t childIndex = static_cast<size_t>(vChild.lVal - 1);
 

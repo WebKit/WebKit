@@ -38,10 +38,10 @@
     attribute Node mixinNodeAttribute;
 
     undefined mixinOperation();
-    [CallWith=ScriptExecutionContext] TestObj mixinComplexOperation(DOMString strArg, TestObj objArg);
+    [CallWith=CurrentScriptExecutionContext] TestObj mixinComplexOperation(DOMString strArg, TestObj objArg);
     [Custom] undefined mixinCustomOperation();
     [Conditional=Condition11] undefined mixinConditionalOperation();
-    [EnabledBySetting=TestSetting] undefined mixinSettingsConditionalOperation();
+    [EnabledBySetting=TestSettingEnabled] undefined mixinSettingsConditionalOperation();
     [ResultField=nodes] sequence<Node> mixinResultFieldOperation();
 
     const unsigned short MIXIN_CONSTANT = 1;

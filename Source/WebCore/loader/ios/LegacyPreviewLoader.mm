@@ -63,15 +63,15 @@ static Ref<LegacyPreviewLoaderClient> makeClient(const ResourceLoader& loader, c
     return emptyClient();
 }
 
-bool LegacyPreviewLoader::didReceiveBuffer(const SharedBuffer& buffer)
+bool LegacyPreviewLoader::didReceiveData(const SharedBuffer& buffer)
 {
     if (m_finishedLoadingDataIntoConverter)
         return false;
 
     LOG(Network, "LegacyPreviewLoader appending buffer with size %ld.", buffer.size());
-    m_originalData->append(buffer);
+    m_originalData.append(buffer);
     m_converter->updateMainResource();
-    m_client->didReceiveBuffer(buffer);
+    m_client->didReceiveData(buffer);
     return true;
 }
 
@@ -109,7 +109,7 @@ void LegacyPreviewLoader::previewConverterDidStartConverting(PreviewConverter& c
         return;
 
     ASSERT(!m_hasProcessedResponse);
-    m_originalData->clear();
+    m_originalData.reset();
     resourceLoader->documentLoader()->setPreviewConverter(WTFMove(m_converter));
     auto response { converter.previewResponse() };
 
@@ -119,7 +119,7 @@ void LegacyPreviewLoader::previewConverterDidStartConverting(PreviewConverter& c
         return;
     }
 
-    resourceLoader->didReceiveResponse(response, [this, weakThis = makeWeakPtr(static_cast<PreviewConverterClient&>(*this)), converter = makeRef(converter)] {
+    resourceLoader->didReceiveResponse(response, [this, weakThis = WeakPtr { static_cast<PreviewConverterClient&>(*this) }, converter = Ref { converter }] {
         if (!weakThis)
             return;
 
@@ -147,7 +147,7 @@ void LegacyPreviewLoader::previewConverterDidStartConverting(PreviewConverter& c
     });
 }
 
-void LegacyPreviewLoader::previewConverterDidReceiveData(PreviewConverter&, const SharedBuffer& data)
+void LegacyPreviewLoader::previewConverterDidReceiveData(PreviewConverter&, const FragmentedSharedBuffer& data)
 {
     auto resourceLoader = m_resourceLoader.get();
     if (!resourceLoader)
@@ -162,8 +162,7 @@ void LegacyPreviewLoader::previewConverterDidReceiveData(PreviewConverter&, cons
     if (!m_hasProcessedResponse)
         return;
 
-    auto dataCopy = data.copy();
-    resourceLoader->didReceiveBuffer(WTFMove(dataCopy), dataCopy->size(), DataPayloadBytes);
+    resourceLoader->didReceiveBuffer(data, data.size(), DataPayloadBytes);
 }
 
 void LegacyPreviewLoader::previewConverterDidFinishConverting(PreviewConverter&)
@@ -224,10 +223,10 @@ void LegacyPreviewLoader::providePasswordForPreviewConverter(PreviewConverter& c
     m_client->didRequestPassword(WTFMove(completionHandler));
 }
 
-void LegacyPreviewLoader::provideMainResourceForPreviewConverter(PreviewConverter& converter, CompletionHandler<void(const SharedBuffer*)>&& completionHandler)
+void LegacyPreviewLoader::provideMainResourceForPreviewConverter(PreviewConverter& converter, CompletionHandler<void(Ref<FragmentedSharedBuffer>&&)>&& completionHandler)
 {
     ASSERT_UNUSED(converter, &converter == m_converter);
-    completionHandler(m_originalData.ptr());
+    completionHandler(m_originalData.copy());
 }
 
 LegacyPreviewLoader::~LegacyPreviewLoader() = default;
@@ -235,18 +234,12 @@ LegacyPreviewLoader::~LegacyPreviewLoader() = default;
 LegacyPreviewLoader::LegacyPreviewLoader(ResourceLoader& loader, const ResourceResponse& response)
     : m_converter { PreviewConverter::create(response, *this) }
     , m_client { makeClient(loader, m_converter->previewFileName(), m_converter->previewUTI()) }
-    , m_originalData { SharedBuffer::create() }
-    , m_resourceLoader { makeWeakPtr(loader) }
+    , m_resourceLoader { loader }
     , m_shouldDecidePolicyBeforeLoading { loader.frame()->settings().shouldDecidePolicyBeforeLoadingQuickLookPreview() }
 {
     ASSERT(PreviewConverter::supportsMIMEType(response.mimeType()));
     m_converter->addClient(*this);
     LOG(Network, "LegacyPreviewLoader created with preview file name \"%s\".", m_converter->previewFileName().utf8().data());
-}
-
-bool LegacyPreviewLoader::didReceiveData(const uint8_t* data, unsigned length)
-{
-    return didReceiveBuffer(SharedBuffer::create(data, length).get());
 }
 
 bool LegacyPreviewLoader::didReceiveResponse(const ResourceResponse&)

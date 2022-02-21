@@ -7,7 +7,7 @@ RUN(internals.setCaptionDisplayMode('manual'))
 EVENT(canplaythrough)
 
 ** Forced tracks should be in .textTracks as well as in the menu
-EXPECTED (video.textTracks.length == '9') OK
+EXPECTED (video.textTracks.length == '11') OK
 
 ** No track should be enabled by default
 EXPECTED (video.textTracks[0].language == 'en') OK

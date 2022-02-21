@@ -42,7 +42,7 @@ GST_DEBUG_CATEGORY_EXTERN(webkitMediaThunderDecryptDebugCategory);
 namespace WebCore {
 
 // NOTE: YouTube 2019 EME conformance tests expect this to be >=5s.
-const WTF::Seconds s_licenseKeyResponseTimeout = WTF::Seconds(6);
+const Seconds s_licenseKeyResponseTimeout = Seconds(6);
 
 BoxPtr<OpenCDMSession> CDMProxyThunder::getDecryptionSession(DecryptionContext& in) const
 {
@@ -59,9 +59,9 @@ BoxPtr<OpenCDMSession> CDMProxyThunder::getDecryptionSession(DecryptionContext& 
         return nullptr;
 
     KeyHandleValueVariant keyData = keyHandle.value()->value();
-    ASSERT(WTF::holds_alternative<BoxPtr<OpenCDMSession>>(keyData));
+    ASSERT(std::holds_alternative<BoxPtr<OpenCDMSession>>(keyData));
 
-    BoxPtr<OpenCDMSession> keyValue = WTF::get<BoxPtr<OpenCDMSession>>(keyData);
+    BoxPtr<OpenCDMSession> keyValue = std::get<BoxPtr<OpenCDMSession>>(keyData);
 
     if (!keyValue) {
         keyValue = adoptInBoxPtr(opencdm_get_system_session(&static_cast<const CDMInstanceThunder*>(instance())->thunderSystem(), keyID.data(),

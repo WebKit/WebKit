@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef TCU_ANGLE_WIN32_PLATFORM_H_
-#define TCU_ANGLE_WIN32_PLATFORM_H_
+#ifndef TCU_ANGLE_PLATFORM_H_
+#define TCU_ANGLE_PLATFORM_H_
 
 #include "gluPlatform.hpp"
 #include "tcuDefs.hpp"
@@ -66,4 +66,6 @@ class ANGLEPlatform : public tcu::Platform, private glu::Platform, private eglu:
 
 }  // namespace tcu
 
-#endif  // TCU_ANGLE_WIN32_PLATFORM_H_
+tcu::Platform *CreateANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotation);
+
+#endif  // TCU_ANGLE_PLATFORM_H_

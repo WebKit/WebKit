@@ -118,11 +118,13 @@ int testExecutionTimeLimit()
 {
     static const TierOptions tierOptionsList[] = {
         { "LLINT",    0_ms,   "--useConcurrentJIT=false --useLLInt=true --useJIT=false" },
+#if ENABLE(JIT)
         { "Baseline", 0_ms,   "--useConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=false" },
         { "DFG",      200_ms,   "--useConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=true --useFTLJIT=false" },
 #if ENABLE(FTL_JIT)
         { "FTL",      500_ms, "--useConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=true --useFTLJIT=true" },
 #endif
+#endif // ENABLE(JIT)
     };
     
     bool failed = false;

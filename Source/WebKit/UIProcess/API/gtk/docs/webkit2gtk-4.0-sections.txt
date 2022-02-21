@@ -1277,7 +1277,10 @@ webkit_uri_scheme_request_get_scheme
 webkit_uri_scheme_request_get_uri
 webkit_uri_scheme_request_get_path
 webkit_uri_scheme_request_get_web_view
+webkit_uri_scheme_request_get_http_method
+webkit_uri_scheme_request_get_http_headers
 webkit_uri_scheme_request_finish
+webkit_uri_scheme_request_finish_with_response
 webkit_uri_scheme_request_finish_error
 
 <SUBSECTION Standard>
@@ -1292,6 +1295,28 @@ WEBKIT_URI_SCHEME_REQUEST_GET_CLASS
 <SUBSECTION Private>
 WebKitURISchemeRequestPrivate
 webkit_uri_scheme_request_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitURISchemeResponse</FILE>
+WebKitURISchemeResponse
+webkit_uri_scheme_response_new
+webkit_uri_scheme_response_set_content_type
+webkit_uri_scheme_response_set_status
+webkit_uri_scheme_response_set_http_headers
+
+<SUBSECTION Standard>
+WebKitURISchemeResponseClass
+WEBKIT_TYPE_URI_SCHEME_RESPONSE
+WEBKIT_URI_SCHEME_RESPONSE
+WEBKIT_IS_URI_SCHEME_RESPONSE
+WEBKIT_URI_SCHEME_RESPONSE_CLASS
+WEBKIT_IS_URI_SCHEME_RESPONSE_CLASS
+WEBKIT_URI_SCHEME_RESPONSE_GET_CLASS
+
+<SUBSECTION Private>
+WebKitURISchemeResponsePrivate
+webkit_uri_scheme_response_get_type
 </SECTION>
 
 <SECTION>
@@ -1985,4 +2010,3 @@ webkit_memory_pressure_settings_get_type
 <SUBSECTION Standard>
 WEBKIT_TYPE_MEMORY_PRESSURE_SETTINGS
 </SECTION>
-

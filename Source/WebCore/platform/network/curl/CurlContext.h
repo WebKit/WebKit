@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CertificateInfo.h"
 #include "CurlProxySettings.h"
 #include "CurlSSLHandle.h"
 
@@ -107,7 +108,7 @@ public:
 
     // Proxy
     const CurlProxySettings& proxySettings() const { return m_proxySettings; }
-    void setProxySettings(CurlProxySettings&& settings) { m_proxySettings = WTFMove(settings); }
+    void setProxySettings(const CurlProxySettings& settings) { m_proxySettings = settings; }
     void setProxyUserPass(const String& user, const String& password) { m_proxySettings.setUserPass(user, password); }
     void setDefaultProxyAuthMethod() { m_proxySettings.setDefaultAuthMethod(); }
     void setProxyAuthMethod(long authMethod) { m_proxySettings.setAuthMethod(authMethod); }
@@ -318,18 +319,29 @@ public:
 #endif
 
 private:
+    struct TLSConnectionInfo {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        String protocol;
+        String cipher;
+    };
+
     void enableRequestHeaders();
     static int expectedSizeOfCurlOffT();
 
     static CURLcode willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData);
     CURLcode willSetupSslCtx(void* sslCtx);
 
+    std::optional<SSL*> sslConnection() const;
+
     CURL* m_handle { nullptr };
     char m_errorBuffer[CURL_ERROR_SIZE] { };
 
     URL m_url;
     CurlSList m_requestHeaders;
+
     std::unique_ptr<CurlSSLVerifier> m_sslVerifier;
+    std::unique_ptr<TLSConnectionInfo> m_tlsConnectionInfo;
+    mutable std::unique_ptr<CertificateInfo> m_certificateInfo;
 };
 
 } // namespace WebCore

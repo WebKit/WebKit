@@ -44,6 +44,9 @@ class InlineMediaControls extends MediaControls
         this.leftContainer = new ButtonsContainer({ cssClassName: "left" });
         this.rightContainer = new ButtonsContainer({ cssClassName: "right" });
 
+        this.centerControlsBar = new ControlsBar("center");
+        this._centerControlsBarContainer = this.centerControlsBar.addChild(new ButtonsContainer);
+
         this._shouldUseAudioLayout = false;
         this._shouldUseSingleBarLayout = false;
         this.showsStartButton = false;
@@ -128,6 +131,11 @@ class InlineMediaControls extends MediaControls
         this._topLeftControlsBarContainer.layout();
         this.topLeftControlsBar.width = this._topLeftControlsBarContainer.width;
         this.topLeftControlsBar.visible = this._topLeftControlsBarContainer.children.some(button => button.visible);
+
+        this._centerControlsBarContainer.children = this._centerContainerButtons();
+        this._centerControlsBarContainer.layout();
+        this.centerControlsBar.width = this._centerControlsBarContainer.width;
+        this.centerControlsBar.visible = this._centerControlsBarContainer.children.some(button => button.visible);
 
         // Compute the visible size for the controls bar.
         if (!this._inlineInsideMargin)
@@ -224,6 +232,8 @@ class InlineMediaControls extends MediaControls
         this.bottomControlsBar.children = controlsBarChildren;
         if (!this._shouldUseAudioLayout && !this._shouldUseSingleBarLayout)
             children.push(this.topLeftControlsBar);
+        if (!this._shouldUseAudioLayout && !this._shouldUseSingleBarLayout && this._centerControlsBarContainer.children.length)
+            children.push(this.centerControlsBar);
         children.push(this.bottomControlsBar);
         if (this.muteButton.style === Button.Styles.Corner || (this.muteButton.dropped && !this._shouldUseAudioLayout && !this._shouldUseSingleBarLayout))
             this._addTopRightBarWithMuteButtonToChildren(children);
@@ -265,10 +275,14 @@ class InlineMediaControls extends MediaControls
         return [this.skipBackButton, this.playPauseButton, this.skipForwardButton];
     }
 
+    _centerContainerButtons() {
+        return [];
+    }
+
     _rightContainerButtons()
     {
         if (this._shouldUseAudioLayout)
-            return [this.muteButton, this.airplayButton, this.overflowButton];
+            return [this.muteButton, this.airplayButton, this.tracksButton, this.overflowButton];
 
         if (this._shouldUseSingleBarLayout)
             return [this.muteButton, this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton, this.overflowButton];

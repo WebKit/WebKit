@@ -22,18 +22,16 @@ enum class MetalShaderType
     None,
     Vertex,
     Fragment,
-    Compute, // Unused currently
+    Compute,  // Unused currently
     Count,
 };
 
 struct ProgramPreludeConfig
 {
-public:
+  public:
     ProgramPreludeConfig() {}
-    explicit ProgramPreludeConfig(MetalShaderType shaderType)
-    : shaderType(shaderType)
-    {}
-    bool hasStructEq = false;
+    explicit ProgramPreludeConfig(MetalShaderType shaderType) : shaderType(shaderType) {}
+    bool hasStructEq           = false;
     MetalShaderType shaderType = MetalShaderType::None;
 };
 

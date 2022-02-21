@@ -52,7 +52,7 @@
         element.dataset["a"] = "value1";
         element.dataset["b"] = "value2";
         
-        assert_throws("SyntaxError", () => {
+        assert_throws_dom("SyntaxError", () => {
             Object.defineProperty(element.dataset, "-invalid", { value: "value3" });            
         });
         assert_not_equals(element.dataset["-invalid"], 'value3');

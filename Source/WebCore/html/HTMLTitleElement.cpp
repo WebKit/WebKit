@@ -24,6 +24,7 @@
 #include "HTMLTitleElement.h"
 
 #include "Document.h"
+#include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
@@ -84,7 +85,7 @@ StringWithDirection HTMLTitleElement::computedTextWithDirection()
     if (auto* computedStyle = this->computedStyle())
         direction = computedStyle->direction();
     else
-        direction = styleResolver().styleForElement(*this, parentElement() ? parentElement()->renderStyle() : nullptr).renderStyle->direction();
+        direction = styleResolver().styleForElement(*this, { parentElement() ? parentElement()->renderStyle() : nullptr }).renderStyle->direction();
     return { text(), direction };
 }
 

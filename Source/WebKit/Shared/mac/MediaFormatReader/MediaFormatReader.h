@@ -36,6 +36,7 @@
 DECLARE_CORE_MEDIA_TRAITS(FormatReader);
 
 namespace WebCore {
+class MediaSampleAVFObjC;
 class SourceBufferParser;
 }
 
@@ -67,7 +68,7 @@ private:
     void didParseTracks(WebCore::SourceBufferPrivateClient::InitializationSegment&&, uint64_t errorCode);
     void didSelectVideoTrack(WebCore::VideoTrackPrivate&, bool) { }
     void didEnableAudioTrack(WebCore::AudioTrackPrivate&, bool) { }
-    void didProvideMediaData(Ref<WebCore::MediaSample>&&, uint64_t, const String&);
+    void didProvideMediaData(Ref<WebCore::MediaSampleAVFObjC>&&, uint64_t, const String&);
     void finishParsing(Ref<WebCore::SourceBufferParser>&&);
 
     // CMBaseClass
@@ -87,6 +88,7 @@ private:
     Vector<Ref<MediaTrackReader>> m_trackReaders WTF_GUARDED_BY_LOCK(m_parseTracksLock);
     RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;
+    bool m_init { false };
 };
 
 constexpr MediaFormatReader::WrapperClass MediaFormatReader::wrapperClass()

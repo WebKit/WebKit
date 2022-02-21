@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='webkitcorepy',
-    version='0.10.0',
+    version='0.13.0',
     description='Library containing various Python support classes and functions.',
     long_description=readme(),
     classifiers=[
@@ -43,7 +43,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     keywords='python unicode',
-    url='https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/libraries/webkitcorepy',
+    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitcorepy',
     author='Jonathan Bedard',
     author_email='jbedard@apple.com',
     license='Modified BSD',
@@ -57,6 +57,7 @@ setup(
         'mock',
         'requests',
         'six',
+        'tblib',
         'whichcraft',
     ],
     include_package_data=True,

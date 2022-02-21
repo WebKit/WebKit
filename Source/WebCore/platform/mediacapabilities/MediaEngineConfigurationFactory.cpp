@@ -68,7 +68,7 @@ static FactoryVector defaultFactories()
 
 static FactoryVector& factories()
 {
-    static auto factories = makeNeverDestroyed<FactoryVector>(defaultFactories());
+    static NeverDestroyed factories = defaultFactories();
     return factories;
 }
 

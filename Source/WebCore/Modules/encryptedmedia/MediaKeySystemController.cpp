@@ -48,7 +48,7 @@ MediaKeySystemController* MediaKeySystemController::from(Page* page)
 }
 
 MediaKeySystemController::MediaKeySystemController(MediaKeySystemClient& client)
-    : m_client(makeWeakPtr(client))
+    : m_client(client)
 {
 }
 

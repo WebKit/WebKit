@@ -1,3 +1,2756 @@
+2022-02-18  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r290149.
+
+        Broke Debug Builds.
+
+        Reverted changeset:
+
+        "Generate compile_commands.json on macOS Builds"
+        https://bugs.webkit.org/show_bug.cgi?id=235686
+        https://commits.webkit.org/r290149
+
+2022-02-18  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] "All Modules" workspace builds building out of order
+        https://bugs.webkit.org/show_bug.cgi?id=236813
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add product dependency on WTF, since PAL uses its headers without linking against it.
+
+        * PAL.xcodeproj/project.pbxproj:
+
+2022-02-18  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make AVFoundationSPI.h robust against changes in system headers
+        https://bugs.webkit.org/show_bug.cgi?id=236787
+        <rdar://89076606>
+
+        Reviewed by Eric Carlson.
+
+        Follow-up: build problems still persist on certain platforms, so the "robustness"
+        changes made previously were not robust enough. The guards in AVFoundationSPI.h were
+        intended to ensure the definitions were present even on builds where the official API
+        is not supported. However, just because the API is not supported does not mean it's not
+        present, which leads to duplicate-interface build errors.
+
+        Fix the AVFoundationSPI.h pragmas to only define the classes and methods where those
+        objects are supported, and in parallel, wrap implementations which use those objects
+        in those same guards (making these checks compile-time in addition to runtime).
+
+        Move the declarations inside the #else (IOW, !USE(APPLE_INTERNAL_SDK)) block above,
+        and wrap each declaration in the correct HAVE() macro.
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
+2022-02-18  Brandon Stewart  <brandonstewart@apple.com>
+
+        Generate compile_commands.json on macOS Builds
+        https://bugs.webkit.org/show_bug.cgi?id=235686
+
+        Reviewed by Saam Barati.
+
+        Add support for generating compile_commands.json file to WebKit.
+        
+        compile_commands.json can be used by tools like clangd to provide code complete,
+        refactoring, formatting, and cross references.
+
+        Steps to generate the compile commands file:
+        make r EXPORT_COMPILE_COMMANDS=YES
+        generate-compile-commands WebKitBuild/Release
+
+        * Configurations/DebugRelease.xcconfig:
+
+2022-02-18  Brady Eidson  <beidson@apple.com>
+
+        Add an InstallCoordination webpushd backend
+        https://bugs.webkit.org/show_bug.cgi?id=233714
+
+        Reviewed by Alex Christensen.
+
+        Expose "toHexString" so we can SHA256 an arbitrary string to a hex representation.
+
+        * pal/crypto/CryptoDigest.h:
+        * pal/crypto/commoncrypto/CryptoDigestCommonCrypto.cpp:
+        (PAL::CryptoDigest::toHexString):
+
+2022-02-18  Saam Barati  <sbarati@apple.com>
+
+        Add LC_SOURCE_VERSION to compile targets
+        https://bugs.webkit.org/show_bug.cgi?id=236720
+        <rdar://84984140>
+
+        Reviewed by Michael Saboff.
+
+        * Configurations/Version.xcconfig:
+
+2022-02-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Refactor share menu item presentation
+        https://bugs.webkit.org/show_bug.cgi?id=236806
+        <rdar://problem/88858606>
+
+        Reviewed by Aditya Keerthi.
+
+        * pal/spi/mac/NSSharingServicePickerSPI.h:
+
+2022-02-17  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make AVFoundationSPI.h robust against changes in system headers
+        https://bugs.webkit.org/show_bug.cgi?id=236787
+
+        Reviewed by Eric Carlson.
+
+        Only re-declare classes and add categories for non-Apple Internal builds, or when those
+        definitions would be missing from system headers. The presence of the classes and their
+        methods are already checked at runtime, so this is a build-only change.
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
+2022-02-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Update IDLs and stubs to latest version of the spec
+        https://bugs.webkit.org/show_bug.cgi?id=236639
+
+        Reviewed by Dean Jackson.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.cpp:
+        (PAL::WebGPU::supportedFeatures):
+        (PAL::WebGPU::AdapterImpl::requestDevice):
+        * pal/graphics/WebGPU/Impl/WebGPUBufferImpl.cpp:
+        (PAL::WebGPU::BufferImpl::mapAsync):
+        (PAL::WebGPU::BufferImpl::getMappedRange):
+        * pal/graphics/WebGPU/Impl/WebGPUBufferImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.cpp:
+        (PAL::WebGPU::CommandEncoderImpl::beginRenderPass):
+        (PAL::WebGPU::CommandEncoderImpl::beginComputePass):
+        (PAL::WebGPU::CommandEncoderImpl::clearBuffer):
+        (PAL::WebGPU::CommandEncoderImpl::fillBuffer): Deleted.
+        * pal/graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.cpp:
+        (PAL::WebGPU::ComputePassEncoderImpl::dispatch):
+        (PAL::WebGPU::ComputePassEncoderImpl::end):
+        (PAL::WebGPU::ComputePassEncoderImpl::beginPipelineStatisticsQuery): Deleted.
+        (PAL::WebGPU::ComputePassEncoderImpl::endPipelineStatisticsQuery): Deleted.
+        (PAL::WebGPU::ComputePassEncoderImpl::endPass): Deleted.
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.cpp:
+        (PAL::WebGPU::ConvertToBackingContext::convertToBacking):
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.h:
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp:
+        (PAL::WebGPU::DeviceImpl::createTexture):
+        (PAL::WebGPU::DeviceImpl::createShaderModule):
+        (PAL::WebGPU::convertToBacking):
+        (PAL::WebGPU::DeviceImpl::createRenderBundleEncoder):
+        (PAL::WebGPU::DeviceImpl::createQuerySet):
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.cpp:
+        (PAL::WebGPU::GPUImpl::requestAdapter):
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.cpp:
+        (PAL::WebGPU::RenderPassEncoderImpl::end):
+        (PAL::WebGPU::RenderPassEncoderImpl::beginPipelineStatisticsQuery): Deleted.
+        (PAL::WebGPU::RenderPassEncoderImpl::endPipelineStatisticsQuery): Deleted.
+        (PAL::WebGPU::RenderPassEncoderImpl::endPass): Deleted.
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.h:
+        * pal/graphics/WebGPU/WebGPUBuffer.h:
+        * pal/graphics/WebGPU/WebGPUCanvasConfiguration.h:
+        * pal/graphics/WebGPU/WebGPUCommandEncoder.h:
+        * pal/graphics/WebGPU/WebGPUComputePassEncoder.h:
+        * pal/graphics/WebGPU/WebGPUFeatureName.h:
+        * pal/graphics/WebGPU/WebGPUFragmentState.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h:
+        * pal/graphics/WebGPU/WebGPULoadOp.h:
+        * pal/graphics/WebGPU/WebGPUPipelineStatisticName.h: Removed.
+        * pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUQueryType.h:
+        * pal/graphics/WebGPU/WebGPUQueue.h:
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassLayout.h:
+        * pal/graphics/WebGPU/WebGPUShaderModuleCompilationHint.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h.
+        * pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUTextureFormat.h:
+
+2022-02-16  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE includes interfere with system header includes
+        https://bugs.webkit.org/show_bug.cgi?id=236636
+
+        Reviewed by Dean Jackson.
+
+        Remove the attempt to override system header logic with WebKit
+        ANGLE implementation. They are different implementations
+        and one cannot replace the other.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+        * pal/spi/mac/HIToolboxSPI.h:
+        Add missing CGCOLORTAGGEDPOINTER_H_ that makes the CocoaPriv.h
+        included CoreGraphics header skip the incompatible tagged pointer
+        declarations, similar to other *SPI.h headers.
+
+2022-02-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Big Sur build
+
+        * pal/spi/mac/HIToolboxSPI.h:
+
+2022-02-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Plumb platform image analysis objects to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=236535
+        rdar://88845367
+
+        Reviewed by Devin Rousso.
+
+        Add soft-linking support for VKCImageAnalysis. See WebCore and WebKit ChangeLogs for more detail.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+
+        Avoid a build error after shifting around Cocoa unified sources, by removing an unused definition of
+        AVOutputContextOutputDevicesDidChangeNotification. This definition causes the unified build to break downstream,
+        when other media-related source files end up importing AVKit headers that try to reference this symbol
+        (AVOutputContextOutputDevicesDidChangeNotification) but end up expanding the WebKit soft-linking macro instead.
+
+        * pal/cocoa/VisionKitCoreSoftLink.h:
+        * pal/cocoa/VisionKitCoreSoftLink.mm:
+
+2022-02-12  Jer Noble  <jer.noble@apple.com>
+
+        Add settings to restrict media containers and codecs when in Captive Portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=236245
+
+        Reviewed by Eric Carlson.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
+2022-02-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Use system window and screen picker when available
+        https://bugs.webkit.org/show_bug.cgi?id=236531
+        rdar://87111816
+
+        Reviewed by Jer Noble.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/mac/ScreenCaptureKitSoftLink.h:
+        * pal/mac/ScreenCaptureKitSoftLink.mm:
+        * pal/spi/mac/ScreenCaptureKitSPI.h: Added.
+
+2022-02-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Support both versions of ScreenCaptureKit API
+        https://bugs.webkit.org/show_bug.cgi?id=236422
+        <rdar://problem/88726849>
+
+        Reviewed by Youenn Fablet.
+
+        * pal/mac/ScreenCaptureKitSoftLink.h:
+        * pal/mac/ScreenCaptureKitSoftLink.mm:
+
+2022-02-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add some WebKitAdditions extension points in VisionKitCore SPI and softlinking headers
+        https://bugs.webkit.org/show_bug.cgi?id=236403
+        rdar://88709972
+
+        Reviewed by Aditya Keerthi.
+
+        Add new WebKitAdditions header includes.
+
+        * pal/cocoa/VisionKitCoreSoftLink.h:
+        * pal/cocoa/VisionKitCoreSoftLink.mm:
+
+2022-02-09  Antoine Quint  <graouts@webkit.org>
+
+        [model] improve sizing on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=236233
+        <rdar://problem/88569881>
+
+        Reviewed by Simon Fraser.
+
+        Add newly-used CAFenceHandle and ASVInlinePreview SPIs.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h:
+        * pal/spi/mac/SystemPreviewSPI.h:
+
+2022-02-07  Antoine Quint  <graouts@webkit.org>
+
+        [model] improve sizing on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=236234
+        <rdar://problem/88569898>
+
+        Reviewed by Darin Adler.
+
+        Add newly-used -[ASVInlinePreview setFrameWithinFencedTransaction:] SPI on iOS.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+
+2022-02-02  Alex Christensen  <achristensen@webkit.org>
+
+        Use private relay for all subresources if the main document main resource was loaded using private relay
+        https://bugs.webkit.org/show_bug.cgi?id=236000
+
+        Reviewed by Brady Eidson.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
+2022-01-31  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS][WP] Restrict image decoders
+        https://bugs.webkit.org/show_bug.cgi?id=234175
+
+        Reviewed by Brent Fulgham.
+
+        Include WebKitAdditions soft link files.
+
+        * pal/cf/VideoToolboxSoftLink.cpp:
+        * pal/cf/VideoToolboxSoftLink.h:
+
+2022-01-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Data detectors sometimes show up in the wrong place when resizing images with Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=235598
+        rdar://88032375
+
+        Reviewed by Dean Jackson.
+
+        Move some soft-linked DataDetectorsCore API out of the iOS-specific define, so that we can call them on macOS.
+        See WebCore/ChangeLog for more details.
+
+        * pal/cocoa/DataDetectorsCoreSoftLink.h:
+        * pal/cocoa/DataDetectorsCoreSoftLink.mm:
+
+2022-01-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Add new screen and window capture backend
+        https://bugs.webkit.org/show_bug.cgi?id=234029
+        rdar://problem/86347726
+
+        Reviewed by Jer Noble and Youenn Fablet.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/mac/ScreenCaptureKitSoftLink.h: Added.
+        * pal/mac/ScreenCaptureKitSoftLink.mm: Added.
+
+2022-01-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r282320): [Cocoa] User-installed fonts don't work in the GPU Process (in WKWebView)
+        https://bugs.webkit.org/show_bug.cgi?id=235449
+        <rdar://problem/84958961>
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cf/CoreTextSPI.h:
+
+022-01-24  David Quesada  <david_quesada@apple.com>
+
+        Simplify accesses to SystemVersion.plist
+        https://bugs.webkit.org/show_bug.cgi?id=234306
+
+        Reviewed by Alexey Proskuryakov.
+
+        * pal/spi/cf/CFUtilitiesSPI.h:
+            Forward declare _kCFSystemVersionProductUserVisibleVersionKey, used
+            by WebCore's SystemVersion.mm
+
+2022-01-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Disable CFURLCache in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=234988
+        <rdar://problem/87619196>
+
+        Reviewed by Geoffrey Garen.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
+2022-01-18  Alex Christensen  <achristensen@webkit.org>
+
+        Use c++2a instead of gnu++2a for Cocoa builds
+        https://bugs.webkit.org/show_bug.cgi?id=234936
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/Base.xcconfig:
+
+2022-01-14  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] rVFC() isn't called for initial video load
+        https://bugs.webkit.org/show_bug.cgi?id=235006
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
+2022-01-13  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Add "product dependencies" which influence workspace build order
+        https://bugs.webkit.org/show_bug.cgi?id=235094
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig: Add EXCLUDED_SOURCE_FILE_NAMES
+        * Configurations/PAL.xcconfig: Inherit EXCLUDED_SOURCE_FILE_NAMES
+        * PAL.xcodeproj/project.pbxproj: Add Product Dependencies
+
+2022-01-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove Direct2D code (part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=235097
+
+        Reviewed by Yusuke Suzuki.
+
+        * pal/PlatformAppleWin.cmake:
+
+2022-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add support for a -shouldWrap property when injecting Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=235035
+        rdar://85139146
+
+        Reviewed by Tim Horton.
+
+        Add a forward staging declaration for the new SPI property.
+
+        * pal/spi/cocoa/VisionKitCoreSPI.h:
+
+2022-01-10  Alex Christensen  <achristensen@webkit.org>
+
+        Start using C++20
+        https://bugs.webkit.org/show_bug.cgi?id=233963
+
+        Reviewed by Yusuke Suzuki.
+
+        * Configurations/Base.xcconfig:
+
+2022-01-09  Sam Weinig  <weinig@apple.com>
+
+        Remove support for Direct2D
+        https://bugs.webkit.org/show_bug.cgi?id=234999
+
+        Reviewed by Darin Adler.
+
+        Direct2D and FTW have not been building for over a year. It is
+        time to remove them.
+
+        * pal/PlatformFTW.cmake: Removed.
+
+2022-01-07  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r287698.
+
+        Broke an internal build
+
+        Reverted changeset:
+
+        "Start using C++20"
+        https://bugs.webkit.org/show_bug.cgi?id=233963
+        https://commits.webkit.org/r287698
+
+2022-01-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a helper function that returns the value of a std::optional<T> or constructs T if needed
+        https://bugs.webkit.org/show_bug.cgi?id=234865
+
+        Reviewed by Darin Adler.
+
+        Use `valueOrDefault` where appropriate. See WTF/ChangeLog for more details.
+
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.cpp:
+        (PAL::WebGPU::ComputePassEncoderImpl::setBindGroup):
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleEncoderImpl.cpp:
+        (PAL::WebGPU::RenderBundleEncoderImpl::setBindGroup):
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.cpp:
+        (PAL::WebGPU::RenderPassEncoderImpl::setBindGroup):
+
+2022-01-06  Alex Christensen  <achristensen@webkit.org>
+
+        Start using C++20
+        https://bugs.webkit.org/show_bug.cgi?id=233963
+
+        Reviewed by Yusuke Suzuki.
+
+        * Configurations/Base.xcconfig:
+
+2021-12-21  Sam Weinig  <weinig@apple.com>
+
+        Add support for premultiplied alpha interpolated gradients and defaulted off option to use them for CSS Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=234492
+
+        Reviewed by Simon Fraser.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+        Add forwards for creating conic shadings and enabling premultiplied alpha interpolation for gradients.
+
+2021-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add PAL soft linking headers for CoreML and NaturalLanguage frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=234489
+
+        Reviewed by Devin Rousso.
+
+        Add CoreMLSoftLink.h and NaturalLanguageSoftLink.h; to be used in an upcoming patch that will add support for
+        classifying text inside controls in "modal containers". See rdar://77073735 for more details.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/cocoa/CoreMLSoftLink.h: Added.
+        * pal/cocoa/CoreMLSoftLink.mm: Added.
+        * pal/cocoa/NaturalLanguageSoftLink.h: Added.
+        * pal/cocoa/NaturalLanguageSoftLink.mm: Added.
+
+2021-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r287056.
+        <rdar://86519800>
+
+        Caused performance regression...again
+
+        Reverted changeset:
+
+        "Remove properties set by NSURLProtocol on NSURLRequest before
+        serializing"
+        https://bugs.webkit.org/show_bug.cgi?id=232332
+        https://commits.webkit.org/r287056
+
+2021-12-14  Alex Christensen  <achristensen@webkit.org>
+
+        Remove properties set by NSURLProtocol on NSURLRequest before serializing
+        https://bugs.webkit.org/show_bug.cgi?id=232332
+        <rdar://79227845>
+
+        Reviewed by Geoff Garen.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
+2021-12-14  Andreu Botella  <andreu@andreubotella.com>
+
+        TextDecoder doesn't detect invalid UTF-8 sequences early enough
+        https://bugs.webkit.org/show_bug.cgi?id=233921
+
+        Reviewed by Darin Adler.
+
+        In streaming mode, when TextCodecUTF8 found a lead byte for which a
+        valid sequence would span longer than the currently available bytes, it
+        used to defer any processing of that sequence until all such bytes were
+        available, even if errors could be detected earlier. Additionally, if
+        the stream was flushed at that point, it would emit a single replacement
+        character, regardless of whether the remaining bytes formed a valid
+        sequence, even if they had lead bytes, resulting in skipped characters.
+        Both issues are solved by always checking the validity of partial
+        sequences.
+
+        The approach used in this patch uses `decodeNonASCIISequence` to find
+        the length of the maximal subpart of a partial sequence, and if the
+        length is equal to the partial sequence size and we're not at EOF, we
+        don't emit the error. This is enough to handle the missing characters at
+        EOF, and when combined with changing the condition of the outer do-while
+        loops in the `decode` method from `flush && m_partialSequenceSize` to
+        only `m_partialSequenceSize`, it also fixes the streaming issue.
+
+        This patch is a port of
+        https://chromium-review.googlesource.com/c/chromium/src/+/3263938
+
+        Tests: imported/w3c/web-platform-tests/encoding/textdecoder-eof.any.html
+               imported/w3c/web-platform-tests/encoding/textdecoder-stream.any.html
+
+        * pal/text/TextCodecUTF8.cpp:
+        (PAL::TextCodecUTF8::handlePartialSequence): Changed to always process
+        partial sequences.
+        (PAL::TextCodecUTF8::decode): Changed the loop condition of the outer
+        do-while loops to not depend on `flush`.
+
+2021-12-14  Ben Nham  <nham@apple.com>
+
+        Add web push message decryption routines
+        https://bugs.webkit.org/show_bug.cgi?id=233903
+
+        Reviewed by Brady Eidson.
+
+        * pal/spi/cocoa/CommonCryptoSPI.h: Add AES-GCM decryption SPI.
+
+2021-12-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r286893.
+        https://bugs.webkit.org/show_bug.cgi?id=234197
+
+        Breaks the build
+
+        Reverted changeset:
+
+        "[macOS] Add new screen and window capture backend"
+        https://bugs.webkit.org/show_bug.cgi?id=234029
+        https://commits.webkit.org/r286893
+
+2021-12-11  Jer Noble  <jer.noble@apple.com>
+
+        Add an experimental trackConfiguration accessor on AudioTrack & VideoTrack.
+        https://bugs.webkit.org/show_bug.cgi?id=230841
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
+2021-12-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Add new screen and window capture backend
+        https://bugs.webkit.org/show_bug.cgi?id=234029
+
+        Reviewed by Jer Noble and Youenn Fablet.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/mac/ScreenCaptureKitSoftLink.h: Added.
+        * pal/mac/ScreenCaptureKitSoftLink.mm: Added.
+
+2021-12-10  Brady Eidson  <beidson@apple.com>
+
+        Teach webpushd to launch an app in response to an injected message.
+        https://bugs.webkit.org/show_bug.cgi?id=234122
+
+        Reviewed by Alex Christensen.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
+2021-12-10  Antoine Quint  <graouts@webkit.org>
+
+        Expose the maximum device frame rate to the Web Animations model
+        https://bugs.webkit.org/show_bug.cgi?id=234161
+        rdar://85983792
+
+        Reviewed by Simon Fraser.
+
+        Add a newly-used CADisplayLink SPI.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h:
+
+2021-12-09  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r286754.
+
+        Broke 2 tests on all mac an iOS
+
+        Reverted changeset:
+
+        "Add an experimental trackConfiguration accessor on AudioTrack
+        & VideoTrack."
+        https://bugs.webkit.org/show_bug.cgi?id=230841
+        https://commits.webkit.org/r286754
+
+2021-12-09  Myles C. Maxfield  <mmaxfield@apple.com> and Don Olmstead  <don.olmstead@sony.com>
+
+        Move TextCodec files from WebCore/platform/text to WebCore/PAL/text
+        https://bugs.webkit.org/show_bug.cgi?id=233683
+
+        Reviewed by Yusuke Suzuki.
+
+        This is a purely mechanical move. The TextCodec files don't have any dependencies
+        except for ICU, so they're good candidates to move.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/CMakeLists.txt:
+        * pal/PlatformMac.cmake:
+        * pal/ThreadGlobalData.cpp: Copied from Source/WebCore/PAL/pal/text/UnencodableHandling.h.
+        (PAL::ThreadGlobalData::ThreadGlobalData):
+        (PAL::ThreadGlobalData::destroy):
+        * pal/ThreadGlobalData.h: Copied from Source/WebCore/html/parser/HTMLMetaCharsetParser.h.
+        (PAL::ThreadGlobalData::ThreadGlobalData::cachedConverterICU):
+        * pal/text/DecodeEscapeSequences.h: Renamed from Source/WebCore/platform/text/DecodeEscapeSequences.h.
+        (PAL::Unicode16BitEscapeSequence::findEndOfRun):
+        (PAL::Unicode16BitEscapeSequence::decodeRun):
+        (PAL::URLEscapeSequence::findEndOfRun):
+        (PAL::URLEscapeSequence::decodeRun):
+        (PAL::decodeURLEscapeSequencesAsData):
+        * pal/text/EncodingTables.cpp: Renamed from Source/WebCore/platform/text/EncodingTables.cpp.
+        (PAL::big5):
+        (PAL::eucKR):
+        * pal/text/EncodingTables.h: Renamed from Source/WebCore/platform/text/EncodingTables.h.
+        (PAL::findInSortedPairs):
+        * pal/text/TextCodec.cpp: Renamed from Source/WebCore/platform/text/TextCodec.cpp.
+        * pal/text/TextCodec.h: Renamed from Source/WebCore/platform/text/TextCodec.h.
+        * pal/text/TextCodecASCIIFastPath.h: Renamed from Source/WebCore/platform/text/TextCodecASCIIFastPath.h.
+        * pal/text/TextCodecCJK.cpp: Renamed from Source/WebCore/platform/text/TextCodecCJK.cpp.
+        (PAL::gb18030Ranges):
+        * pal/text/TextCodecCJK.h: Renamed from Source/WebCore/platform/text/TextCodecCJK.h.
+        * pal/text/TextCodecICU.cpp: Renamed from Source/WebCore/platform/text/TextCodecICU.cpp.
+        (PAL::TextCodecICU::decode):
+        * pal/text/TextCodecICU.h: Renamed from Source/WebCore/platform/text/TextCodecICU.h.
+        * pal/text/TextCodecLatin1.cpp: Renamed from Source/WebCore/platform/text/TextCodecLatin1.cpp.
+        * pal/text/TextCodecLatin1.h: Renamed from Source/WebCore/platform/text/TextCodecLatin1.h.
+        * pal/text/TextCodecReplacement.cpp: Renamed from Source/WebCore/platform/text/TextCodecReplacement.cpp.
+        * pal/text/TextCodecReplacement.h: Renamed from Source/WebCore/platform/text/TextCodecReplacement.h.
+        * pal/text/TextCodecSingleByte.cpp: Renamed from Source/WebCore/platform/text/TextCodecSingleByte.cpp.
+        (PAL::TextCodecSingleByte::encode const):
+        (PAL::TextCodecSingleByte::decode):
+        * pal/text/TextCodecSingleByte.h: Renamed from Source/WebCore/platform/text/TextCodecSingleByte.h.
+        * pal/text/TextCodecUTF16.cpp: Renamed from Source/WebCore/platform/text/TextCodecUTF16.cpp.
+        * pal/text/TextCodecUTF16.h: Renamed from Source/WebCore/platform/text/TextCodecUTF16.h.
+        * pal/text/TextCodecUTF8.cpp: Renamed from Source/WebCore/platform/text/TextCodecUTF8.cpp.
+        (PAL::TextCodecUTF8::decode):
+        * pal/text/TextCodecUTF8.h: Renamed from Source/WebCore/platform/text/TextCodecUTF8.h.
+        * pal/text/TextCodecUserDefined.cpp: Renamed from Source/WebCore/platform/text/TextCodecUserDefined.cpp.
+        * pal/text/TextCodecUserDefined.h: Renamed from Source/WebCore/platform/text/TextCodecUserDefined.h.
+        * pal/text/TextEncoding.cpp: Renamed from Source/WebCore/platform/text/TextEncoding.cpp.
+        (PAL::TextEncoding::encode const):
+        * pal/text/TextEncoding.h: Renamed from Source/WebCore/platform/text/TextEncoding.h.
+        * pal/text/TextEncodingDetector.h: Renamed from Source/WebCore/platform/text/TextEncodingDetector.h.
+        * pal/text/TextEncodingDetectorICU.cpp: Renamed from Source/WebCore/platform/text/TextEncodingDetectorICU.cpp.
+        (PAL::detectTextEncoding):
+        * pal/text/TextEncodingRegistry.cpp: Renamed from Source/WebCore/platform/text/TextEncodingRegistry.cpp.
+        (PAL::isUndesiredAlias):
+        * pal/text/TextEncodingRegistry.h: Renamed from Source/WebCore/platform/text/TextEncodingRegistry.h.
+        * pal/text/UnencodableHandling.h:
+        * pal/text/ios/TextEncodingRegistryIOS.mm: Renamed from Source/WebCore/platform/text/ios/TextEncodingRegistryIOS.mm.
+        (PAL::webDefaultCFStringEncoding):
+        * pal/text/mac/TextEncodingRegistryMac.mm: Renamed from Source/WebCore/platform/text/mac/TextEncodingRegistryMac.mm.
+        * pal/text/win/TextCodecWin.cpp: Renamed from Source/WebCore/platform/text/win/TextCodecWin.cpp.
+        (PAL::getCodePageFlags):
+        * pal/text/win/TextCodecWin.h: Renamed from Source/WebCore/platform/text/win/TextCodecWin.h.
+
+2021-12-08  Jer Noble  <jer.noble@apple.com>
+
+        Add an experimental trackConfiguration accessor on AudioTrack & VideoTrack.
+        https://bugs.webkit.org/show_bug.cgi?id=230841
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
+2021-12-02  Megan Gardner  <megan_gardner@apple.com>
+
+        Re-add support of image control menus.
+        https://bugs.webkit.org/show_bug.cgi?id=233305
+
+        Reviewed by Tim Horton.
+
+        Move SPI to SPI specific file.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/mac/NSServicesRolloverButtonCellSPI.h: Added.
+
+2021-12-02  Brady Eidson  <beidson@apple.com>
+
+        AVDelegatingPlaybackCoordinator error compiling on macOS 11
+        https://bugs.webkit.org/show_bug.cgi?id=232454
+
+        Reviewed by Tim Horton.
+
+        * pal/cocoa/AVFoundationSoftLink.h: Don't softlink on platforms that don't have it
+          (No other source changes were necessary)
+
+2021-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add missing files to CMake
+        https://bugs.webkit.org/show_bug.cgi?id=233687
+
+        Reviewed by Sam Weinig.
+
+        I forgot to list some files.
+
+        * pal/CMakeLists.txt:
+
+2021-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        Add a momentum event synthesizer
+        https://bugs.webkit.org/show_bug.cgi?id=233653
+        <rdar://problem/85571258>
+
+        Reviewed by Simon Fraser.
+
+        * pal/spi/mac/IOKitSPIMac.h:
+        Add some SPI.
+
+2021-11-30  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r286227.
+        https://bugs.webkit.org/show_bug.cgi?id=233652
+
+        Broke some Apple-internal builds
+
+        Reverted changeset:
+
+        "[Model] clean up compile-time flags and condition IDL methods
+        behind them"
+        https://bugs.webkit.org/show_bug.cgi?id=233407
+        https://commits.webkit.org/r286227
+
+2021-11-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Unify speech synthesizer platform usage for Mac/iOS
+        https://bugs.webkit.org/show_bug.cgi?id=231895
+        <rdar://problem/84372479>
+
+        Reviewed by Andres Gonzalez.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+        * pal/spi/cocoa/AXSpeechManagerSPI.h:
+        * pal/spi/mac/SpeechSynthesisSPI.h: Removed.
+
+2021-11-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Provide default values for descriptor struct members
+        https://bugs.webkit.org/show_bug.cgi?id=233431
+
+        Reviewed by Alex Christensen.
+
+        The purpose of this is to be defensive. Ideally these wouldn't actually be used, but it's
+        a good idea to be safe and have them specified anyway.
+
+        I didn't provide default values for members whose types already have something well-defined,
+        like variants or optionals. But I did for ints and enums.
+
+        Where possible, I've matched the default values listed in the spec.
+
+        * pal/graphics/WebGPU/WebGPUBindGroupEntry.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupLayoutEntry.h:
+        * pal/graphics/WebGPU/WebGPUBlendComponent.h:
+        * pal/graphics/WebGPU/WebGPUBufferBinding.h:
+        * pal/graphics/WebGPU/WebGPUBufferBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUBufferDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUCanvasConfiguration.h:
+        * pal/graphics/WebGPU/WebGPUColor.h:
+        * pal/graphics/WebGPU/WebGPUColorTargetState.h:
+        * pal/graphics/WebGPU/WebGPUCompilationMessage.h:
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampWrites.h:
+        * pal/graphics/WebGPU/WebGPUDepthStencilState.h:
+        * pal/graphics/WebGPU/WebGPUExtent3D.h:
+        * pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTexture.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTextureTagged.h:
+        * pal/graphics/WebGPU/WebGPUImageDataLayout.h:
+        * pal/graphics/WebGPU/WebGPUMultisampleState.h:
+        * pal/graphics/WebGPU/WebGPUOrigin2D.h:
+        * pal/graphics/WebGPU/WebGPUOrigin3D.h:
+        * pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h:
+        * pal/graphics/WebGPU/WebGPUPrimitiveState.h:
+        * pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoderDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassLayout.h:
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampWrites.h:
+        * pal/graphics/WebGPU/WebGPURequestAdapterOptions.h:
+        * pal/graphics/WebGPU/WebGPUSamplerBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUSamplerDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUStencilFaceState.h:
+        * pal/graphics/WebGPU/WebGPUStorageTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUVertexAttribute.h:
+        * pal/graphics/WebGPU/WebGPUVertexBufferLayout.h:
+
+2021-11-24  Antoine Quint  <graouts@webkit.org>
+
+        [Model] clean up compile-time flags and condition IDL methods behind them
+        https://bugs.webkit.org/show_bug.cgi?id=233407
+
+        Reviewed by Tim Horton.
+
+        We adopt the changes made to flags in wtf/PlatformEnableCocoa.h and wtf/PlatformHave.h.
+        We also remove the use of existing flags in QuartzCoreSPI.h since they're not actually
+        valid.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h:
+        * pal/spi/ios/SystemPreviewSPI.h:
+        * pal/spi/mac/SystemPreviewSPI.h:
+
+2021-11-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] IPC class refactorings
+        https://bugs.webkit.org/show_bug.cgi?id=233546
+
+        Reviewed by Dean Jackson.
+
+        Make classes fast allocated.
+
+        GPUImpl gets a create() function with no arguments, for ease of callers.
+
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupLayoutImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUBufferImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUCommandBufferImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUComputePipelineImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.h:
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUDowncastConvertToBackingContext.h:
+        * pal/graphics/WebGPU/Impl/WebGPUExternalTextureImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.cpp:
+        (PAL::WebGPU::GPUImpl::create):
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUPipelineLayoutImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUQuerySetImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUQueueImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPURenderPipelineImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUSamplerImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUShaderModuleImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUTextureImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUTextureViewImpl.h:
+
+2021-11-25  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal: The memory backing IOSurfaces of former client buffer pbuffers is leaked
+        https://bugs.webkit.org/show_bug.cgi?id=233328
+        <rdar://problem/85563187>
+
+        Reviewed by Antti Koivisto.
+
+        Add prototype for IOSurfaceIncrementUseCount.
+        Currently used for a test, in simulating CA behavior.
+
+        * pal/spi/cocoa/IOSurfaceSPI.h:
+
+2021-11-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Use OptionSet where it makes sense to
+        https://bugs.webkit.org/show_bug.cgi?id=233434
+
+        Reviewed by Wenson Hsieh.
+
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.cpp:
+        (PAL::WebGPU::ConvertToBackingContext::convertBufferUsageFlagsToBacking):
+        (PAL::WebGPU::ConvertToBackingContext::convertColorWriteFlagsToBacking):
+        (PAL::WebGPU::ConvertToBackingContext::convertMapModeFlagsToBacking):
+        (PAL::WebGPU::ConvertToBackingContext::convertShaderStageFlagsToBacking):
+        (PAL::WebGPU::ConvertToBackingContext::convertTextureUsageFlagsToBacking):
+        * pal/graphics/WebGPU/WebGPUBufferUsage.h:
+        * pal/graphics/WebGPU/WebGPUColorWrite.h:
+        * pal/graphics/WebGPU/WebGPUMapMode.h:
+        * pal/graphics/WebGPU/WebGPUShaderStage.h:
+        * pal/graphics/WebGPU/WebGPUTextureUsage.h:
+
+2021-11-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add converters from serializable descriptors to interface descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=233310
+
+        Reviewed by Dean Jackson.
+
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.cpp:
+        (PAL::WebGPU::AdapterImpl::requestDevice):
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp:
+        (PAL::WebGPU::DeviceImpl::createBindGroupLayout):
+        (PAL::WebGPU::DeviceImpl::createPipelineLayout):
+        (PAL::WebGPU::DeviceImpl::createBindGroup):
+        (PAL::WebGPU::convertToBacking):
+        (PAL::WebGPU::DeviceImpl::createRenderBundleEncoder):
+        (PAL::WebGPU::DeviceImpl::createQuerySet):
+        * pal/graphics/WebGPU/Impl/WebGPUQueueImpl.cpp:
+        (PAL::WebGPU::QueueImpl::submit):
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.cpp:
+        (PAL::WebGPU::RenderPassEncoderImpl::executeBundles):
+        * pal/graphics/WebGPU/Impl/WebGPUTextureImpl.cpp:
+        (PAL::WebGPU::TextureImpl::createView):
+        (PAL::WebGPU::TextureImpl::createView const): Deleted.
+        * pal/graphics/WebGPU/WebGPUCompilationMessage.h:
+        * pal/graphics/WebGPU/WebGPUSupportedFeatures.h:
+        * pal/graphics/WebGPU/WebGPUSupportedLimits.h:
+        * pal/graphics/WebGPU/WebGPUValidationError.h:
+
+2021-11-19  Antoine Quint  <graouts@webkit.org>
+
+        [Model] add support for seeking animations
+        https://bugs.webkit.org/show_bug.cgi?id=233362
+        <rdar://problem/85428812>
+
+        Reviewed by Wenson Hsieh.
+
+        Add the new ARQL SPIs we are using to query the animation duration, the current and time
+        as well as allowing to set the latter.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+        * pal/spi/mac/SystemPreviewSPI.h:
+
+2021-11-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r286047.
+
+        Breaks internal builds
+
+        Reverted changeset:
+
+        "[WebGPU] Add converters from serializable descriptors to
+        interface descriptors"
+        https://bugs.webkit.org/show_bug.cgi?id=233310
+        https://commits.webkit.org/r286047
+
+2021-11-19  Antoine Quint  <graouts@webkit.org>
+
+        [Model] add support for controlling looping animations
+        https://bugs.webkit.org/show_bug.cgi?id=233356
+        <rdar://problem/85428884>
+
+        Reviewed by Wenson Hsieh.
+
+        Add the new ARQL SPIs we are using to control animation looping.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+        * pal/spi/mac/SystemPreviewSPI.h:
+
+2021-11-19  Antoine Quint  <graouts@webkit.org>
+
+        [Model] add audio support
+        https://bugs.webkit.org/show_bug.cgi?id=233365
+        <rdar://problem/85428982>
+
+        Reviewed by Wenson Hsieh.
+
+        Add the new ARQL SPIs we are using for audio control.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+        * pal/spi/mac/SystemPreviewSPI.h:
+
+2021-11-18  Antoine Quint  <graouts@webkit.org>
+
+        [Model] add support for pausing and resuming animations
+        https://bugs.webkit.org/show_bug.cgi?id=233319
+        <rdar://problem/85428464>
+
+        Reviewed by Wenson Hsieh.
+
+        Add the new ARQL SPIs we are using.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+        * pal/spi/mac/SystemPreviewSPI.h:
+
+2021-11-18  Antoine Quint  <graouts@webkit.org>
+
+        [Model] add support for getting and setting the camera
+        https://bugs.webkit.org/show_bug.cgi?id=233265
+        <rdar://problem/85426290>
+
+        Reviewed by Darin Adler.
+
+        Add the new ARQL SPIs we are using.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+        * pal/spi/mac/SystemPreviewSPI.h:
+
+2021-11-18  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [macOS] Add support for interaction on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=233105
+        <rdar://problem/80079386>
+
+        Reviewed by Wenson Hsieh.
+
+        Add new ARQL SPIs.
+
+        * pal/spi/mac/SystemPreviewSPI.h:
+
+2021-11-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add IPC message handlers for WebGPU
+        https://bugs.webkit.org/show_bug.cgi?id=233247
+
+        Reviewed by Dean Jackson.
+
+        Add EnumTraits to the enum classes, so they can be serialized.
+
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.cpp:
+        (PAL::WebGPU::AdapterImpl::requestDevice):
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.h:
+        * pal/graphics/WebGPU/Impl/WebGPUTextureImpl.h:
+        * pal/graphics/WebGPU/WebGPUAdapter.h:
+        * pal/graphics/WebGPU/WebGPUAddressMode.h:
+        * pal/graphics/WebGPU/WebGPUBlendFactor.h:
+        * pal/graphics/WebGPU/WebGPUBlendOperation.h:
+        * pal/graphics/WebGPU/WebGPUBufferBindingType.h:
+        * pal/graphics/WebGPU/WebGPUBufferUsage.h:
+        * pal/graphics/WebGPU/WebGPUCanvasCompositingAlphaMode.h:
+        * pal/graphics/WebGPU/WebGPUCompareFunction.h:
+        * pal/graphics/WebGPU/WebGPUCompilationMessageType.h:
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampLocation.h:
+        * pal/graphics/WebGPU/WebGPUCullMode.h:
+        * pal/graphics/WebGPU/WebGPUDeviceLostReason.h:
+        * pal/graphics/WebGPU/WebGPUErrorFilter.h:
+        * pal/graphics/WebGPU/WebGPUFeatureName.h:
+        * pal/graphics/WebGPU/WebGPUFilterMode.h:
+        * pal/graphics/WebGPU/WebGPUFrontFace.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h:
+        * pal/graphics/WebGPU/WebGPUIndexFormat.h:
+        * pal/graphics/WebGPU/WebGPULoadOp.h:
+        * pal/graphics/WebGPU/WebGPUMapMode.h:
+        * pal/graphics/WebGPU/WebGPUPipelineStatisticName.h:
+        * pal/graphics/WebGPU/WebGPUPowerPreference.h:
+        * pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h:
+        * pal/graphics/WebGPU/WebGPUPrimitiveTopology.h:
+        * pal/graphics/WebGPU/WebGPUQueryType.h:
+        * pal/graphics/WebGPU/WebGPUQueue.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampLocation.h:
+        * pal/graphics/WebGPU/WebGPUSamplerBindingType.h:
+        * pal/graphics/WebGPU/WebGPUStencilOperation.h:
+        * pal/graphics/WebGPU/WebGPUStorageTextureAccess.h:
+        * pal/graphics/WebGPU/WebGPUStoreOp.h:
+        * pal/graphics/WebGPU/WebGPUTexture.h:
+        * pal/graphics/WebGPU/WebGPUTextureAspect.h:
+        * pal/graphics/WebGPU/WebGPUTextureDimension.h:
+        * pal/graphics/WebGPU/WebGPUTextureFormat.h:
+        * pal/graphics/WebGPU/WebGPUTextureSampleType.h:
+        * pal/graphics/WebGPU/WebGPUTextureViewDimension.h:
+        * pal/graphics/WebGPU/WebGPUVertexFormat.h:
+        * pal/graphics/WebGPU/WebGPUVertexStepMode.h:
+
+2021-11-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Plumb an identifier string through `ChromeClient::requestTextRecognition()`
+        https://bugs.webkit.org/show_bug.cgi?id=233210
+
+        Reviewed by Dean Jackson.
+
+        Add another WebKitAdditions extension point.
+
+        * pal/spi/cocoa/VisionKitCoreSPI.h:
+
+2021-11-16  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] handle unknown setup features
+        https://bugs.webkit.org/show_bug.cgi?id=233212
+
+        Reviewed by Wenson Hsieh.
+
+        * pal/spi/cocoa/PassKitSPI.h:
+        Drive-by: Replace all `PKPaymentSetupFeatureTypeApplePay_X` with `PKPaymentSetupFeatureTypeAppleCard`.
+
+2021-11-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Start preparing for serializing commands to the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=233179
+
+        Reviewed by Alex Christensen.
+
+        Tiny cleanups. Forward-declare things that can be forward declared.
+
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBufferBinding.h:
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampWrites.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyBuffer.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTexture.h:
+        * pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h:
+        * pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUProgrammableStage.h:
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampWrites.h:
+
+2021-11-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Fix namespace comments
+        https://bugs.webkit.org/show_bug.cgi?id=233169
+
+        Reviewed by Alex Christensen.
+
+        Purely mechanical.
+
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupLayoutImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupLayoutImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUBufferImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUBufferImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUCommandBufferImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUCommandBufferImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUComputePipelineImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUComputePipelineImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.h:
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUDowncastConvertToBackingContext.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUDowncastConvertToBackingContext.h:
+        * pal/graphics/WebGPU/Impl/WebGPUExternalTextureImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUExternalTextureImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUPipelineLayoutImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUPipelineLayoutImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUQuerySetImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUQuerySetImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUQueueImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUQueueImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleEncoderImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPURenderPipelineImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPURenderPipelineImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUSamplerImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUSamplerImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUShaderModuleImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUShaderModuleImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUTextureImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUTextureImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUTextureViewImpl.cpp:
+        * pal/graphics/WebGPU/Impl/WebGPUTextureViewImpl.h:
+        * pal/graphics/WebGPU/WebGPU.h:
+        * pal/graphics/WebGPU/WebGPUAdapter.h:
+        * pal/graphics/WebGPU/WebGPUAddressMode.h:
+        * pal/graphics/WebGPU/WebGPUBindGroup.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupEntry.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupLayout.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupLayoutDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupLayoutEntry.h:
+        * pal/graphics/WebGPU/WebGPUBlendComponent.h:
+        * pal/graphics/WebGPU/WebGPUBlendFactor.h:
+        * pal/graphics/WebGPU/WebGPUBlendOperation.h:
+        * pal/graphics/WebGPU/WebGPUBlendState.h:
+        * pal/graphics/WebGPU/WebGPUBuffer.h:
+        * pal/graphics/WebGPU/WebGPUBufferBinding.h:
+        * pal/graphics/WebGPU/WebGPUBufferBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUBufferBindingType.h:
+        * pal/graphics/WebGPU/WebGPUBufferDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBufferUsage.h:
+        * pal/graphics/WebGPU/WebGPUCanvasCompositingAlphaMode.h:
+        * pal/graphics/WebGPU/WebGPUCanvasConfiguration.h:
+        * pal/graphics/WebGPU/WebGPUColor.h:
+        * pal/graphics/WebGPU/WebGPUColorTargetState.h:
+        * pal/graphics/WebGPU/WebGPUColorWrite.h:
+        * pal/graphics/WebGPU/WebGPUCommandBuffer.h:
+        * pal/graphics/WebGPU/WebGPUCommandBufferDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUCommandEncoder.h:
+        * pal/graphics/WebGPU/WebGPUCommandEncoderDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUCompareFunction.h:
+        * pal/graphics/WebGPU/WebGPUCompilationInfo.h:
+        * pal/graphics/WebGPU/WebGPUCompilationMessage.h:
+        * pal/graphics/WebGPU/WebGPUCompilationMessageType.h:
+        * pal/graphics/WebGPU/WebGPUComputePassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUComputePassEncoder.h:
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampLocation.h:
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampWrites.h:
+        * pal/graphics/WebGPU/WebGPUComputePipeline.h:
+        * pal/graphics/WebGPU/WebGPUComputePipelineDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUCullMode.h:
+        * pal/graphics/WebGPU/WebGPUDepthStencilState.h:
+        * pal/graphics/WebGPU/WebGPUDevice.h:
+        * pal/graphics/WebGPU/WebGPUDeviceDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUDeviceLostInfo.h:
+        * pal/graphics/WebGPU/WebGPUDeviceLostReason.h:
+        * pal/graphics/WebGPU/WebGPUError.h:
+        * pal/graphics/WebGPU/WebGPUErrorFilter.h:
+        * pal/graphics/WebGPU/WebGPUExtent3D.h:
+        * pal/graphics/WebGPU/WebGPUExternalTexture.h:
+        * pal/graphics/WebGPU/WebGPUExternalTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUFeatureName.h:
+        * pal/graphics/WebGPU/WebGPUFilterMode.h:
+        * pal/graphics/WebGPU/WebGPUFragmentState.h:
+        * pal/graphics/WebGPU/WebGPUFrontFace.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyBuffer.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTexture.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTextureTagged.h:
+        * pal/graphics/WebGPU/WebGPUImageDataLayout.h:
+        * pal/graphics/WebGPU/WebGPUIndexFormat.h:
+        * pal/graphics/WebGPU/WebGPUIntegralTypes.h:
+        * pal/graphics/WebGPU/WebGPULoadOp.h:
+        * pal/graphics/WebGPU/WebGPUMapMode.h:
+        * pal/graphics/WebGPU/WebGPUMultisampleState.h:
+        * pal/graphics/WebGPU/WebGPUObjectDescriptorBase.h:
+        * pal/graphics/WebGPU/WebGPUOrigin2D.h:
+        * pal/graphics/WebGPU/WebGPUOrigin3D.h:
+        * pal/graphics/WebGPU/WebGPUOutOfMemoryError.h:
+        * pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h:
+        * pal/graphics/WebGPU/WebGPUPipelineLayout.h:
+        * pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUPipelineStatisticName.h:
+        * pal/graphics/WebGPU/WebGPUPowerPreference.h:
+        * pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h:
+        * pal/graphics/WebGPU/WebGPUPrimitiveState.h:
+        * pal/graphics/WebGPU/WebGPUPrimitiveTopology.h:
+        * pal/graphics/WebGPU/WebGPUProgrammableStage.h:
+        * pal/graphics/WebGPU/WebGPUQuerySet.h:
+        * pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUQueryType.h:
+        * pal/graphics/WebGPU/WebGPUQueue.h:
+        * pal/graphics/WebGPU/WebGPURenderBundle.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoderDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassLayout.h:
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampLocation.h:
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampWrites.h:
+        * pal/graphics/WebGPU/WebGPURenderPipeline.h:
+        * pal/graphics/WebGPU/WebGPURenderPipelineDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURequestAdapterOptions.h:
+        * pal/graphics/WebGPU/WebGPUSampler.h:
+        * pal/graphics/WebGPU/WebGPUSamplerBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUSamplerBindingType.h:
+        * pal/graphics/WebGPU/WebGPUSamplerDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUShaderModule.h:
+        * pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUShaderStage.h:
+        * pal/graphics/WebGPU/WebGPUStencilFaceState.h:
+        * pal/graphics/WebGPU/WebGPUStencilOperation.h:
+        * pal/graphics/WebGPU/WebGPUStorageTextureAccess.h:
+        * pal/graphics/WebGPU/WebGPUStorageTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUStoreOp.h:
+        * pal/graphics/WebGPU/WebGPUSupportedFeatures.h:
+        * pal/graphics/WebGPU/WebGPUSupportedLimits.h:
+        * pal/graphics/WebGPU/WebGPUTexture.h:
+        * pal/graphics/WebGPU/WebGPUTextureAspect.h:
+        * pal/graphics/WebGPU/WebGPUTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUTextureDimension.h:
+        * pal/graphics/WebGPU/WebGPUTextureFormat.h:
+        * pal/graphics/WebGPU/WebGPUTextureSampleType.h:
+        * pal/graphics/WebGPU/WebGPUTextureUsage.h:
+        * pal/graphics/WebGPU/WebGPUTextureView.h:
+        * pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUTextureViewDimension.h:
+        * pal/graphics/WebGPU/WebGPUUncapturedErrorEvent.h:
+        * pal/graphics/WebGPU/WebGPUUncapturedErrorEventInit.h:
+        * pal/graphics/WebGPU/WebGPUValidationError.h:
+        * pal/graphics/WebGPU/WebGPUVertexAttribute.h:
+        * pal/graphics/WebGPU/WebGPUVertexBufferLayout.h:
+        * pal/graphics/WebGPU/WebGPUVertexFormat.h:
+        * pal/graphics/WebGPU/WebGPUVertexState.h:
+        * pal/graphics/WebGPU/WebGPUVertexStepMode.h:
+
+2021-11-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Vertex and fragment shaders are not hooked up to pipeline creation
+        https://bugs.webkit.org/show_bug.cgi?id=233166
+
+        Reviewed by Dean Jackson.
+
+        I simply forgot to implement them in r285831.
+
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.cpp:
+        (PAL::WebGPU::supportedLimits):
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp:
+        (PAL::WebGPU::convertToBacking):
+
+2021-11-15  Sam Weinig  <weinig@apple.com>
+
+        Add another <model> backend backed by SceneKit to prove out ModelPlayer infrastructure a bit more
+        https://bugs.webkit.org/show_bug.cgi?id=233112
+
+        Reviewed by Dean Jackson.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/SceneKitSPI.h: Added.
+        Adds forward declaration of SCNMetalLayer SPI so SceneKit can be used
+        without an NSView/UIView.
+
+2021-11-15  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Adopt -[AVAudioSession setAuditTokensForProcessAssertion:]
+        https://bugs.webkit.org/show_bug.cgi?id=232909
+        <rdar://68184444>
+
+        Reviewed by Eric Carlson.
+
+        Re-declare -setAuditTokensForProcessAssertion in APPLE_INTERNAL_SDK section.
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
+2021-11-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] [Cocoa] Connect WebCore & PAL to WebGPU.framework
+        https://bugs.webkit.org/show_bug.cgi?id=233106
+
+        Reviewed by Dean Jackson.
+
+        This adds an implementation of WebGPU's virtual interfaces on top of WebGPU.framework.
+        That framework's headers almost exactly match the WebGPU API, so the connections are
+        mostly mechanical. There's just a bunch of marshalling code to convert between
+        descriptor and structs from WebCore's interface to WebGPU.framework's
+        descriptors/structs.
+
+        This uses the same "convertToBacking" convention, where functions that convert from the
+        higher-level WebCore types to the lower-level WebGPU.framework types are named
+        "convertToBacking()". Unfortunately, the WebGPU API takes many of these structs by
+        non-const reference, and the structs are nested by non-const reference, which means I
+        can't just have simple 1-in-1-out converter functions for every struct, since the
+        inner structs have to be referenced by-reference and therefore have to be in-scope. This
+        means that the simple enum and flags types use convertToBacking(), but most of the
+        structs have to be converted at their use site. Luckily, almost all of these structs
+        only have a single use site, so there isn't much duplication.
+
+        For now, this implementation is Cocoa-only, because in order for these calls to
+        WebGPU.framework to be legal, WebCore has to link with an implementation of those
+        functions. The Cocoa ports are the only ones which actually have an implementation of
+        those functions, so those are the only ports which can actually compile this code. If
+        the other ports want to link with Dawn or WGPU, this code should be (mostly) usable
+        out-of-the-box for them. I say "mostly" because the header that's shared between Dawn,
+        WGPU, and WebGPU.framework isn't finalized yet. As such, this implementation relies on
+        functions from WebGPUExt.h, which is an additional header (that only exists in
+        WebGPU.framework) that adds the missing pieces.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.cpp: Added.
+        (PAL::WebGPU::adapterName):
+        (PAL::WebGPU::supportedFeatures):
+        (PAL::WebGPU::supportedLimits):
+        (PAL::WebGPU::isFallbackAdapter):
+        (PAL::WebGPU::AdapterImpl::AdapterImpl):
+        (PAL::WebGPU::AdapterImpl::~AdapterImpl):
+        (PAL::WebGPU::requestDeviceCallback):
+        (PAL::WebGPU::AdapterImpl::requestDevice):
+        (PAL::WebGPU::AdapterImpl::requestDeviceCallback):
+        * pal/graphics/WebGPU/Impl/WebGPUAdapterImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupImpl.cpp: Added.
+        (PAL::WebGPU::BindGroupImpl::BindGroupImpl):
+        (PAL::WebGPU::BindGroupImpl::~BindGroupImpl):
+        (PAL::WebGPU::BindGroupImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupLayoutImpl.cpp: Added.
+        (PAL::WebGPU::BindGroupLayoutImpl::BindGroupLayoutImpl):
+        (PAL::WebGPU::BindGroupLayoutImpl::~BindGroupLayoutImpl):
+        (PAL::WebGPU::BindGroupLayoutImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUBindGroupLayoutImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUBufferImpl.cpp: Added.
+        (PAL::WebGPU::BufferImpl::BufferImpl):
+        (PAL::WebGPU::BufferImpl::~BufferImpl):
+        (PAL::WebGPU::mapCallback):
+        (PAL::WebGPU::BufferImpl::mapAsync):
+        (PAL::WebGPU::BufferImpl::mapCallback):
+        (PAL::WebGPU::BufferImpl::getMappedRange):
+        (PAL::WebGPU::BufferImpl::unmap):
+        (PAL::WebGPU::BufferImpl::destroy):
+        (PAL::WebGPU::BufferImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUBufferImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUCommandBufferImpl.cpp: Added.
+        (PAL::WebGPU::CommandBufferImpl::CommandBufferImpl):
+        (PAL::WebGPU::CommandBufferImpl::~CommandBufferImpl):
+        (PAL::WebGPU::CommandBufferImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUCommandBufferImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.cpp: Added.
+        (PAL::WebGPU::CommandEncoderImpl::CommandEncoderImpl):
+        (PAL::WebGPU::CommandEncoderImpl::~CommandEncoderImpl):
+        (PAL::WebGPU::CommandEncoderImpl::beginRenderPass):
+        (PAL::WebGPU::CommandEncoderImpl::beginComputePass):
+        (PAL::WebGPU::CommandEncoderImpl::copyBufferToBuffer):
+        (PAL::WebGPU::CommandEncoderImpl::copyBufferToTexture):
+        (PAL::WebGPU::CommandEncoderImpl::copyTextureToBuffer):
+        (PAL::WebGPU::CommandEncoderImpl::copyTextureToTexture):
+        (PAL::WebGPU::CommandEncoderImpl::fillBuffer):
+        (PAL::WebGPU::CommandEncoderImpl::pushDebugGroup):
+        (PAL::WebGPU::CommandEncoderImpl::popDebugGroup):
+        (PAL::WebGPU::CommandEncoderImpl::insertDebugMarker):
+        (PAL::WebGPU::CommandEncoderImpl::writeTimestamp):
+        (PAL::WebGPU::CommandEncoderImpl::resolveQuerySet):
+        (PAL::WebGPU::CommandEncoderImpl::finish):
+        (PAL::WebGPU::CommandEncoderImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.cpp: Added.
+        (PAL::WebGPU::ComputePassEncoderImpl::ComputePassEncoderImpl):
+        (PAL::WebGPU::ComputePassEncoderImpl::~ComputePassEncoderImpl):
+        (PAL::WebGPU::ComputePassEncoderImpl::setPipeline):
+        (PAL::WebGPU::ComputePassEncoderImpl::dispatch):
+        (PAL::WebGPU::ComputePassEncoderImpl::dispatchIndirect):
+        (PAL::WebGPU::ComputePassEncoderImpl::beginPipelineStatisticsQuery):
+        (PAL::WebGPU::ComputePassEncoderImpl::endPipelineStatisticsQuery):
+        (PAL::WebGPU::ComputePassEncoderImpl::endPass):
+        (PAL::WebGPU::ComputePassEncoderImpl::setBindGroup):
+        (PAL::WebGPU::ComputePassEncoderImpl::pushDebugGroup):
+        (PAL::WebGPU::ComputePassEncoderImpl::popDebugGroup):
+        (PAL::WebGPU::ComputePassEncoderImpl::insertDebugMarker):
+        (PAL::WebGPU::ComputePassEncoderImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUComputePipelineImpl.cpp: Added.
+        (PAL::WebGPU::ComputePipelineImpl::ComputePipelineImpl):
+        (PAL::WebGPU::ComputePipelineImpl::~ComputePipelineImpl):
+        (PAL::WebGPU::ComputePipelineImpl::getBindGroupLayout):
+        (PAL::WebGPU::ComputePipelineImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUComputePipelineImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBacking.cpp: Added.
+        (PAL::WebGPU::convertToBacking):
+        (PAL::WebGPU::convertBufferUsageFlagsToBacking):
+        (PAL::WebGPU::convertColorWriteFlagsToBacking):
+        (PAL::WebGPU::convertMapModeFlagsToBacking):
+        (PAL::WebGPU::convertShaderStageFlagsToBacking):
+        (PAL::WebGPU::convertTextureUsageFlagsToBacking):
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBacking.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp: Added.
+        (PAL::WebGPU::DeviceImpl::DeviceImpl):
+        (PAL::WebGPU::DeviceImpl::~DeviceImpl):
+        (PAL::WebGPU::DeviceImpl::destroy):
+        (PAL::WebGPU::DeviceImpl::createBuffer):
+        (PAL::WebGPU::DeviceImpl::createTexture):
+        (PAL::WebGPU::DeviceImpl::createSampler):
+        (PAL::WebGPU::DeviceImpl::importExternalTexture):
+        (PAL::WebGPU::DeviceImpl::createBindGroupLayout):
+        (PAL::WebGPU::DeviceImpl::createPipelineLayout):
+        (PAL::WebGPU::DeviceImpl::createBindGroup):
+        (PAL::WebGPU::DeviceImpl::createShaderModule):
+        (PAL::WebGPU::convertToBacking):
+        (PAL::WebGPU::DeviceImpl::createComputePipeline):
+        (PAL::WebGPU::DeviceImpl::createRenderPipeline):
+        (PAL::WebGPU::createComputePipelineAsyncCallback):
+        (PAL::WebGPU::DeviceImpl::createComputePipelineAsync):
+        (PAL::WebGPU::DeviceImpl::createComputePipelineAsyncCallback):
+        (PAL::WebGPU::createRenderPipelineAsyncCallback):
+        (PAL::WebGPU::DeviceImpl::createRenderPipelineAsync):
+        (PAL::WebGPU::DeviceImpl::createRenderPipelineAsyncCallback):
+        (PAL::WebGPU::DeviceImpl::createCommandEncoder):
+        (PAL::WebGPU::DeviceImpl::createRenderBundleEncoder):
+        (PAL::WebGPU::DeviceImpl::createQuerySet):
+        (PAL::WebGPU::DeviceImpl::pushErrorScope):
+        (PAL::WebGPU::popErrorScopeCallback):
+        (PAL::WebGPU::DeviceImpl::popErrorScope):
+        (PAL::WebGPU::DeviceImpl::popErrorScopeCallback):
+        (PAL::WebGPU::DeviceImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUExternalTextureImpl.cpp: Added.
+        (PAL::WebGPU::ExternalTextureImpl::ExternalTextureImpl):
+        (PAL::WebGPU::ExternalTextureImpl::~ExternalTextureImpl):
+        (PAL::WebGPU::ExternalTextureImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUExternalTextureImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.cpp: Added.
+        (PAL::WebGPU::GPUImpl::GPUImpl):
+        (PAL::WebGPU::GPUImpl::~GPUImpl):
+        (PAL::WebGPU::requestAdapterCallback):
+        (PAL::WebGPU::GPUImpl::requestAdapter):
+        (PAL::WebGPU::GPUImpl::requestAdapterCallback):
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUPipelineLayoutImpl.cpp: Added.
+        (PAL::WebGPU::PipelineLayoutImpl::PipelineLayoutImpl):
+        (PAL::WebGPU::PipelineLayoutImpl::~PipelineLayoutImpl):
+        (PAL::WebGPU::PipelineLayoutImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUPipelineLayoutImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUQuerySetImpl.cpp: Added.
+        (PAL::WebGPU::QuerySetImpl::QuerySetImpl):
+        (PAL::WebGPU::QuerySetImpl::~QuerySetImpl):
+        (PAL::WebGPU::QuerySetImpl::destroy):
+        (PAL::WebGPU::QuerySetImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUQuerySetImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUQueueImpl.cpp: Added.
+        (PAL::WebGPU::QueueImpl::QueueImpl):
+        (PAL::WebGPU::QueueImpl::~QueueImpl):
+        (PAL::WebGPU::QueueImpl::submit):
+        (PAL::WebGPU::onSubmittedWorkDoneCallback):
+        (PAL::WebGPU::QueueImpl::onSubmittedWorkDone):
+        (PAL::WebGPU::QueueImpl::onSubmittedWorkDoneCallback):
+        (PAL::WebGPU::QueueImpl::writeBuffer):
+        (PAL::WebGPU::QueueImpl::writeTexture):
+        (PAL::WebGPU::QueueImpl::copyExternalImageToTexture):
+        (PAL::WebGPU::QueueImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUQueueImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleEncoderImpl.cpp: Added.
+        (PAL::WebGPU::RenderBundleEncoderImpl::RenderBundleEncoderImpl):
+        (PAL::WebGPU::RenderBundleEncoderImpl::~RenderBundleEncoderImpl):
+        (PAL::WebGPU::RenderBundleEncoderImpl::setPipeline):
+        (PAL::WebGPU::RenderBundleEncoderImpl::setIndexBuffer):
+        (PAL::WebGPU::RenderBundleEncoderImpl::setVertexBuffer):
+        (PAL::WebGPU::RenderBundleEncoderImpl::draw):
+        (PAL::WebGPU::RenderBundleEncoderImpl::drawIndexed):
+        (PAL::WebGPU::RenderBundleEncoderImpl::drawIndirect):
+        (PAL::WebGPU::RenderBundleEncoderImpl::drawIndexedIndirect):
+        (PAL::WebGPU::RenderBundleEncoderImpl::setBindGroup):
+        (PAL::WebGPU::RenderBundleEncoderImpl::pushDebugGroup):
+        (PAL::WebGPU::RenderBundleEncoderImpl::popDebugGroup):
+        (PAL::WebGPU::RenderBundleEncoderImpl::insertDebugMarker):
+        (PAL::WebGPU::RenderBundleEncoderImpl::finish):
+        (PAL::WebGPU::RenderBundleEncoderImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleEncoderImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleImpl.cpp: Added.
+        (PAL::WebGPU::RenderBundleImpl::RenderBundleImpl):
+        (PAL::WebGPU::RenderBundleImpl::~RenderBundleImpl):
+        (PAL::WebGPU::RenderBundleImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPURenderBundleImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.cpp: Added.
+        (PAL::WebGPU::RenderPassEncoderImpl::RenderPassEncoderImpl):
+        (PAL::WebGPU::RenderPassEncoderImpl::~RenderPassEncoderImpl):
+        (PAL::WebGPU::RenderPassEncoderImpl::setPipeline):
+        (PAL::WebGPU::RenderPassEncoderImpl::setIndexBuffer):
+        (PAL::WebGPU::RenderPassEncoderImpl::setVertexBuffer):
+        (PAL::WebGPU::RenderPassEncoderImpl::draw):
+        (PAL::WebGPU::RenderPassEncoderImpl::drawIndexed):
+        (PAL::WebGPU::RenderPassEncoderImpl::drawIndirect):
+        (PAL::WebGPU::RenderPassEncoderImpl::drawIndexedIndirect):
+        (PAL::WebGPU::RenderPassEncoderImpl::setBindGroup):
+        (PAL::WebGPU::RenderPassEncoderImpl::pushDebugGroup):
+        (PAL::WebGPU::RenderPassEncoderImpl::popDebugGroup):
+        (PAL::WebGPU::RenderPassEncoderImpl::insertDebugMarker):
+        (PAL::WebGPU::RenderPassEncoderImpl::setViewport):
+        (PAL::WebGPU::RenderPassEncoderImpl::setScissorRect):
+        (PAL::WebGPU::RenderPassEncoderImpl::setBlendConstant):
+        (PAL::WebGPU::RenderPassEncoderImpl::setStencilReference):
+        (PAL::WebGPU::RenderPassEncoderImpl::beginOcclusionQuery):
+        (PAL::WebGPU::RenderPassEncoderImpl::endOcclusionQuery):
+        (PAL::WebGPU::RenderPassEncoderImpl::beginPipelineStatisticsQuery):
+        (PAL::WebGPU::RenderPassEncoderImpl::endPipelineStatisticsQuery):
+        (PAL::WebGPU::RenderPassEncoderImpl::executeBundles):
+        (PAL::WebGPU::RenderPassEncoderImpl::endPass):
+        (PAL::WebGPU::RenderPassEncoderImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPURenderPassEncoderImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPURenderPipelineImpl.cpp: Added.
+        (PAL::WebGPU::RenderPipelineImpl::RenderPipelineImpl):
+        (PAL::WebGPU::RenderPipelineImpl::~RenderPipelineImpl):
+        (PAL::WebGPU::RenderPipelineImpl::getBindGroupLayout):
+        (PAL::WebGPU::RenderPipelineImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPURenderPipelineImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUSamplerImpl.cpp: Added.
+        (PAL::WebGPU::SamplerImpl::SamplerImpl):
+        (PAL::WebGPU::SamplerImpl::~SamplerImpl):
+        (PAL::WebGPU::SamplerImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUSamplerImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUShaderModuleImpl.cpp: Added.
+        (PAL::WebGPU::ShaderModuleImpl::ShaderModuleImpl):
+        (PAL::WebGPU::ShaderModuleImpl::~ShaderModuleImpl):
+        (PAL::WebGPU::ShaderModuleImpl::compilationInfo):
+        (PAL::WebGPU::ShaderModuleImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUShaderModuleImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUTextureImpl.cpp: Added.
+        (PAL::WebGPU::TextureImpl::TextureImpl):
+        (PAL::WebGPU::TextureImpl::~TextureImpl):
+        (PAL::WebGPU::TextureImpl::createView const):
+        (PAL::WebGPU::TextureImpl::destroy):
+        (PAL::WebGPU::TextureImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUTextureImpl.h: Added.
+        * pal/graphics/WebGPU/Impl/WebGPUTextureViewImpl.cpp: Added.
+        (PAL::WebGPU::TextureViewImpl::TextureViewImpl):
+        (PAL::WebGPU::TextureViewImpl::~TextureViewImpl):
+        (PAL::WebGPU::TextureViewImpl::setLabelInternal):
+        * pal/graphics/WebGPU/Impl/WebGPUTextureViewImpl.h: Added.
+
+2021-11-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal iOS 15 build
+
+        In the internal iOS 15 SDK, <UIKit/NSTextList.h> does not define NSTextListMarkerFormat. Add a separate SDK
+        version check instead and only attempt to soft-link these constants if we're compiling against an SDK that we
+        know exports these symbols.
+
+        * pal/spi/cocoa/NSAttributedStringSPI.h:
+
+2021-11-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Declare NSTextListMarker* as type NSTextListMarkerFormat when soft-linking
+        https://bugs.webkit.org/show_bug.cgi?id=233064
+        rdar://85341122
+
+        Reviewed by Tim Horton.
+
+        Followup to r285744. Avoid build errors due to defining these constants as a different type of symbol
+        (NSString * vs. NSTextListMarkerFormat). To address this, we directly import `NSTextList.h` if it's available in
+        the SDK; otherwise, fall back to defining NSTextListMarkerFormat. In both cases, we need to keep soft linking
+        each of these constants, since WebCore cannot explicitly link against UIKit.
+
+        * pal/spi/cocoa/NSAttributedStringSPI.h:
+
+2021-11-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Various mechanical cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=233104
+
+        Reviewed by Dean Jackson.
+
+        - Explicitly delete some constructors and operators that we don't want
+        - Tweak const methods
+        - Add "// namespace WebCore" around closing namespace braces
+        - Trailing commas on enums
+
+        * pal/graphics/WebGPU/WebGPU.h:
+        * pal/graphics/WebGPU/WebGPUAdapter.h:
+        (PAL::WebGPU::Adapter::features const):
+        (PAL::WebGPU::Adapter::limits const):
+        * pal/graphics/WebGPU/WebGPUAddressMode.h:
+        * pal/graphics/WebGPU/WebGPUBindGroup.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupEntry.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupLayout.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupLayoutDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupLayoutEntry.h:
+        * pal/graphics/WebGPU/WebGPUBlendComponent.h:
+        * pal/graphics/WebGPU/WebGPUBlendFactor.h:
+        * pal/graphics/WebGPU/WebGPUBlendOperation.h:
+        * pal/graphics/WebGPU/WebGPUBlendState.h:
+        * pal/graphics/WebGPU/WebGPUBuffer.h:
+        * pal/graphics/WebGPU/WebGPUBufferBinding.h:
+        * pal/graphics/WebGPU/WebGPUBufferBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUBufferBindingType.h:
+        * pal/graphics/WebGPU/WebGPUBufferDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBufferUsage.h:
+        * pal/graphics/WebGPU/WebGPUCanvasCompositingAlphaMode.h:
+        * pal/graphics/WebGPU/WebGPUCanvasConfiguration.h:
+        * pal/graphics/WebGPU/WebGPUColorTargetState.h:
+        * pal/graphics/WebGPU/WebGPUColorWrite.h:
+        * pal/graphics/WebGPU/WebGPUCommandBuffer.h:
+        * pal/graphics/WebGPU/WebGPUCommandBufferDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUCommandEncoder.h:
+        * pal/graphics/WebGPU/WebGPUCommandEncoderDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUCompareFunction.h:
+        * pal/graphics/WebGPU/WebGPUCompilationInfo.h:
+        * pal/graphics/WebGPU/WebGPUCompilationMessage.h:
+        * pal/graphics/WebGPU/WebGPUCompilationMessageType.h:
+        * pal/graphics/WebGPU/WebGPUComputePassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUComputePassEncoder.h:
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampLocation.h:
+        * pal/graphics/WebGPU/WebGPUComputePipeline.h:
+        * pal/graphics/WebGPU/WebGPUComputePipelineDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUCullMode.h:
+        * pal/graphics/WebGPU/WebGPUDepthStencilState.h:
+        * pal/graphics/WebGPU/WebGPUDevice.h:
+        * pal/graphics/WebGPU/WebGPUDeviceDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUDeviceLostInfo.h:
+        * pal/graphics/WebGPU/WebGPUDeviceLostReason.h:
+        * pal/graphics/WebGPU/WebGPUErrorFilter.h:
+        * pal/graphics/WebGPU/WebGPUExternalTexture.h:
+        * pal/graphics/WebGPU/WebGPUExternalTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUFeatureName.h:
+        * pal/graphics/WebGPU/WebGPUFilterMode.h:
+        * pal/graphics/WebGPU/WebGPUFragmentState.h:
+        * pal/graphics/WebGPU/WebGPUFrontFace.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyBuffer.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTexture.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTextureTagged.h:
+        * pal/graphics/WebGPU/WebGPUImageDataLayout.h:
+        * pal/graphics/WebGPU/WebGPUIndexFormat.h:
+        * pal/graphics/WebGPU/WebGPULoadOp.h:
+        * pal/graphics/WebGPU/WebGPUMapMode.h:
+        * pal/graphics/WebGPU/WebGPUMultisampleState.h:
+        * pal/graphics/WebGPU/WebGPUObjectDescriptorBase.h:
+        * pal/graphics/WebGPU/WebGPUOutOfMemoryError.h:
+        (PAL::WebGPU::OutOfMemoryError::create):
+        * pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h:
+        * pal/graphics/WebGPU/WebGPUPipelineLayout.h:
+        * pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUPipelineStatisticName.h:
+        * pal/graphics/WebGPU/WebGPUPowerPreference.h:
+        * pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h:
+        * pal/graphics/WebGPU/WebGPUPrimitiveState.h:
+        * pal/graphics/WebGPU/WebGPUPrimitiveTopology.h:
+        * pal/graphics/WebGPU/WebGPUProgrammableStage.h:
+        * pal/graphics/WebGPU/WebGPUQuerySet.h:
+        * pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUQueryType.h:
+        * pal/graphics/WebGPU/WebGPUQueue.h:
+        * pal/graphics/WebGPU/WebGPURenderBundle.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoderDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassLayout.h:
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampLocation.h:
+        * pal/graphics/WebGPU/WebGPURenderPipeline.h:
+        * pal/graphics/WebGPU/WebGPURenderPipelineDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURequestAdapterOptions.h:
+        * pal/graphics/WebGPU/WebGPUSampler.h:
+        * pal/graphics/WebGPU/WebGPUSamplerBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUSamplerBindingType.h:
+        * pal/graphics/WebGPU/WebGPUSamplerDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUShaderModule.h:
+        * pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUShaderStage.h:
+        * pal/graphics/WebGPU/WebGPUStencilFaceState.h:
+        * pal/graphics/WebGPU/WebGPUStencilOperation.h:
+        * pal/graphics/WebGPU/WebGPUStorageTextureAccess.h:
+        * pal/graphics/WebGPU/WebGPUStorageTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUStoreOp.h:
+        * pal/graphics/WebGPU/WebGPUSupportedFeatures.h:
+        * pal/graphics/WebGPU/WebGPUSupportedLimits.h:
+        * pal/graphics/WebGPU/WebGPUTexture.h:
+        * pal/graphics/WebGPU/WebGPUTextureAspect.h:
+        * pal/graphics/WebGPU/WebGPUTextureBindingLayout.h:
+        * pal/graphics/WebGPU/WebGPUTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUTextureDimension.h:
+        * pal/graphics/WebGPU/WebGPUTextureFormat.h:
+        * pal/graphics/WebGPU/WebGPUTextureSampleType.h:
+        * pal/graphics/WebGPU/WebGPUTextureUsage.h:
+        * pal/graphics/WebGPU/WebGPUTextureView.h:
+        * pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUTextureViewDimension.h:
+        * pal/graphics/WebGPU/WebGPUUncapturedErrorEvent.h:
+        * pal/graphics/WebGPU/WebGPUUncapturedErrorEventInit.h:
+        * pal/graphics/WebGPU/WebGPUValidationError.h:
+        * pal/graphics/WebGPU/WebGPUVertexAttribute.h:
+        * pal/graphics/WebGPU/WebGPUVertexBufferLayout.h:
+        * pal/graphics/WebGPU/WebGPUVertexFormat.h:
+        * pal/graphics/WebGPU/WebGPUVertexState.h:
+        * pal/graphics/WebGPU/WebGPUVertexStepMode.h:
+
+2021-11-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Attach IOHIDEvent timestamps to wheel events
+        https://bugs.webkit.org/show_bug.cgi?id=233051
+
+        Reviewed by Wenson Hsieh.
+        
+        Expose a few bits of SPI needed.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+        * pal/spi/cocoa/IOKitSPI.h:
+
+2021-11-13  Tim Horton  <timothy_horton@apple.com>
+
+        Clean up IOKit SPI headers
+        https://bugs.webkit.org/show_bug.cgi?id=233093
+
+        Reviewed by Simon Fraser.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cg/CoreGraphicsSPI.h:
+        * pal/spi/cocoa/IOKitSPI.h:
+        * pal/spi/ios/IOKitSPIIOS.h: Added.
+        * pal/spi/mac/IOKitSPIMac.h:
+        IOKit vends a much different set of public API on iOS vs. macOS,
+        so we have separate SPI headers to reduce the confusion.
+
+        Unfortunately, the SPI header for iOS was not explicitly named as such,
+        and started being used in some macOS code. For a while, this didn't lead
+        to any trouble because the aforementioned macOS code didn't ALSO have
+        the public SDK headers included, but a future patch from Simon will
+        use IOKitSPI.h in a place where the macOS IOKit public headers are included,
+        and thus we must make the split more explicit.
+
+        Rename IOKitSPI.h to IOKitSPIIOS.h; make IOKitSPI choose the right one.
+        Add some SPI defintions to IOKitSPIMac.h that were missing (which the
+        dependent code was getting via the iOS header on macOS).
+
+2021-11-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Stop statically declaring various UIFoundation constants in NSAttributedStringSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=233064
+        rdar://85341122
+
+        Reviewed by Tim Horton.
+
+        Replace these static NSString definitions with soft-linked constants instead.
+
+        * pal/spi/cocoa/NSAttributedStringSPI.h:
+
+2021-11-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early November 2021 edition, bis
+        https://bugs.webkit.org/show_bug.cgi?id=232998
+
+        Unreviewed non-unified build fixes.
+
+        * pal/graphics/WebGPU/WebGPUColorWrite.h: Add missing wtf/RefCounted.h header.
+        * pal/graphics/WebGPU/WebGPUSupportedLimits.h: Add missing wtf/Ref.h header.
+        * pal/graphics/WebGPU/WebGPUValidationError.h: Add missing wtf/text/WTFString.h header.
+
+2021-11-10  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Adopt -[AVAudioSession setAuditTokensForProcessAssertion:]
+        https://bugs.webkit.org/show_bug.cgi?id=232909
+        <rdar://68184444>
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
+2021-11-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Migrate from CTFontCopyVariationAxes() to CTFontCopyVariationAxesInternal() if possible
+        https://bugs.webkit.org/show_bug.cgi?id=232690
+
+        Reviewed by Simon Fraser and Cameron McCormack.
+
+        * pal/spi/cf/CoreTextSPI.h:
+
+2021-11-09  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r271735): PaymentShippingOption.selected ignored
+        https://bugs.webkit.org/show_bug.cgi?id=221960
+        <rdar://problem/73464404>
+
+        Reviewed by Tim Horton.
+
+        Leverage new `PKShippingMethods` SPI to provide both the general list of `PKShippingMethod`
+        and the default selected `PKShippingMethods` when creating/updating a payment request.
+
+        * pal/cocoa/PassKitSoftLink.h:
+        * pal/cocoa/PassKitSoftLink.mm:
+        * pal/spi/cocoa/PassKitSPI.h:
+
+2021-11-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r285318.
+        https://bugs.webkit.org/show_bug.cgi?id=232894
+
+        broke Apple internal build
+
+        Reverted changeset:
+
+        "[Cocoa] Migrate from CTFontCopyVariationAxes() to
+        CTFontCopyVariationAxesInternal() if possible"
+        https://bugs.webkit.org/show_bug.cgi?id=232690
+        https://commits.webkit.org/r285318
+
+2021-11-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Connect JS bindings code to internal WebGPU interface
+        https://bugs.webkit.org/show_bug.cgi?id=232804
+
+        Reviewed by Dean Jackson.
+
+        Various assorted cleanups.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/graphics/WebGPU/WebGPU.h:
+        * pal/graphics/WebGPU/WebGPUAdapter.h:
+        (PAL::WebGPU::Adapter::Adapter):
+        * pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUBindGroupEntry.h:
+        * pal/graphics/WebGPU/WebGPUBuffer.h:
+        * pal/graphics/WebGPU/WebGPUBufferBinding.h:
+        * pal/graphics/WebGPU/WebGPUCanvasConfiguration.h:
+        * pal/graphics/WebGPU/WebGPUColor.h: Renamed from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUColorDict.h.
+        * pal/graphics/WebGPU/WebGPUCommandEncoder.h:
+        * pal/graphics/WebGPU/WebGPUComputePassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUComputePassEncoder.h:
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampWrites.h: Renamed from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUComputePassTimestampWrite.h.
+        * pal/graphics/WebGPU/WebGPUDevice.h:
+        (PAL::WebGPU::Device::features):
+        (PAL::WebGPU::Device::limits):
+        * pal/graphics/WebGPU/WebGPUDeviceDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUError.h:
+        * pal/graphics/WebGPU/WebGPUExtent3D.h: Renamed from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUExtent3DDict.h.
+        * pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUFrontFace.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyBuffer.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h:
+        * pal/graphics/WebGPU/WebGPUImageCopyTexture.h:
+        * pal/graphics/WebGPU/WebGPUOrigin2D.h: Renamed from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUOrigin2DDict.h.
+        * pal/graphics/WebGPU/WebGPUOrigin3D.h: Renamed from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPUOrigin3DDict.h.
+        * pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h:
+        * pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUProgrammableStage.h:
+        * pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h:
+        * pal/graphics/WebGPU/WebGPUQueue.h:
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h:
+        * pal/graphics/WebGPU/WebGPURenderPassDescriptor.h:
+        * pal/graphics/WebGPU/WebGPURenderPassEncoder.h:
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampWrites.h: Renamed from Source/WebCore/PAL/pal/graphics/WebGPU/WebGPURenderPassTimestampWrite.h.
+        * pal/graphics/WebGPU/WebGPUShaderModule.h:
+        * pal/graphics/WebGPU/WebGPUSupportedFeatures.h:
+        * pal/graphics/WebGPU/WebGPUSupportedLimits.h:
+        * pal/graphics/WebGPU/WebGPUTextureDescriptor.h:
+
+2021-11-08  Jer Noble  <jer.noble@apple.com>
+
+        Infinite loop in SourceBufferParserWebM::SegmentReader::Read
+        https://bugs.webkit.org/show_bug.cgi?id=232740
+        <rdar://83573873>
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/cocoa/MediaToolboxSPI.h:
+
+2021-11-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add internal WebGPU API interface
+        https://bugs.webkit.org/show_bug.cgi?id=232792
+
+        Reviewed by Dean Jackson.
+
+        Whenever we add new public API, we always have an internal version of the API which doesn't
+        know anything about things like promises and ActiveDOMObject. (One example is the difference
+        between FontFace and CSSFontFace.)
+
+        Adding such a internal version of the WebGPU API has 2 benefits:
+
+        1. We can use WebGPU to implement WebKit features. For example, if we wanted to, we could
+               implement hardware accelerated SVG filters using WebGPU.
+        2. We are actually going to have two implementations of the WebGPU API - one that is
+               implemented in WebKit (rather than WebCore) and implements all commands by simply
+               sending messages to the GPU process, and a second implementation in PAL that is
+               hooked up to WebGPU.framework (or Dawn or WGPU for the non-Apple ports). When the GPU
+               process receives the messages, it will forward them to the second implementation to
+               be executed. This new internal API provides a great places to provide virtual
+               function signatures which can be implemented in both places.
+
+        Mechanically, this new API lives in its own namespace within PAL: WebGPU, and therefore stops
+        using prefixes for all the type names. So, for example, the Javascript type named "GPUDevice"
+        corresponds to PAL::WebGPU::Device. This new API lives in PAL because it shouldn't need to
+        know anything about the DOM or style or anything like that.
+
+        There are no .cpp files in this patch - this patch just adds interfaces. Those interfaces will
+        be hooked up to real implementations in subsequent patches.
+
+        * pal/graphics/WebGPU/WebGPU.h: Added.
+        * pal/graphics/WebGPU/WebGPUAdapter.h: Added.
+        (PAL::WebGPU::Adapter::name const):
+        (PAL::WebGPU::Adapter::features const):
+        (PAL::WebGPU::Adapter::limits const):
+        (PAL::WebGPU::Adapter::isFallbackAdapter const):
+        (PAL::WebGPU::Adapter::Adapter):
+        * pal/graphics/WebGPU/WebGPUAddressMode.h: Added.
+        * pal/graphics/WebGPU/WebGPUBindGroup.h: Added.
+        (PAL::WebGPU::BindGroup::label const):
+        (PAL::WebGPU::BindGroup::setLabel):
+        * pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUBindGroupEntry.h: Added.
+        * pal/graphics/WebGPU/WebGPUBindGroupLayout.h: Added.
+        (PAL::WebGPU::BindGroupLayout::label const):
+        (PAL::WebGPU::BindGroupLayout::setLabel):
+        * pal/graphics/WebGPU/WebGPUBindGroupLayoutDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUBindGroupLayoutEntry.h: Added.
+        * pal/graphics/WebGPU/WebGPUBlendComponent.h: Added.
+        * pal/graphics/WebGPU/WebGPUBlendFactor.h: Added.
+        * pal/graphics/WebGPU/WebGPUBlendOperation.h: Added.
+        * pal/graphics/WebGPU/WebGPUBlendState.h: Added.
+        * pal/graphics/WebGPU/WebGPUBuffer.h: Added.
+        (PAL::WebGPU::Buffer::label const):
+        (PAL::WebGPU::Buffer::setLabel):
+        * pal/graphics/WebGPU/WebGPUBufferBinding.h: Added.
+        * pal/graphics/WebGPU/WebGPUBufferBindingLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUBufferBindingType.h: Added.
+        * pal/graphics/WebGPU/WebGPUBufferDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUBufferUsage.h: Added.
+        * pal/graphics/WebGPU/WebGPUCanvasCompositingAlphaMode.h: Added.
+        * pal/graphics/WebGPU/WebGPUCanvasConfiguration.h: Added.
+        * pal/graphics/WebGPU/WebGPUColorDict.h: Added.
+        * pal/graphics/WebGPU/WebGPUColorTargetState.h: Added.
+        * pal/graphics/WebGPU/WebGPUColorWrite.h: Added.
+        * pal/graphics/WebGPU/WebGPUCommandBuffer.h: Added.
+        (PAL::WebGPU::CommandBuffer::label const):
+        (PAL::WebGPU::CommandBuffer::setLabel):
+        * pal/graphics/WebGPU/WebGPUCommandBufferDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUCommandEncoder.h: Added.
+        (PAL::WebGPU::CommandEncoder::label const):
+        (PAL::WebGPU::CommandEncoder::setLabel):
+        * pal/graphics/WebGPU/WebGPUCommandEncoderDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUCompareFunction.h: Added.
+        * pal/graphics/WebGPU/WebGPUCompilationInfo.h: Added.
+        * pal/graphics/WebGPU/WebGPUCompilationMessage.h: Added.
+        * pal/graphics/WebGPU/WebGPUCompilationMessageType.h: Added.
+        * pal/graphics/WebGPU/WebGPUComputePassDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUComputePassEncoder.h: Added.
+        (PAL::WebGPU::ComputePassEncoder::label const):
+        (PAL::WebGPU::ComputePassEncoder::setLabel):
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampLocation.h: Added.
+        * pal/graphics/WebGPU/WebGPUComputePassTimestampWrite.h: Added.
+        * pal/graphics/WebGPU/WebGPUComputePipeline.h: Added.
+        (PAL::WebGPU::ComputePipeline::label const):
+        (PAL::WebGPU::ComputePipeline::setLabel):
+        * pal/graphics/WebGPU/WebGPUComputePipelineDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUCullMode.h: Added.
+        * pal/graphics/WebGPU/WebGPUDepthStencilState.h: Added.
+        * pal/graphics/WebGPU/WebGPUDevice.h: Added.
+        (PAL::WebGPU::Device::label const):
+        (PAL::WebGPU::Device::setLabel):
+        (PAL::WebGPU::Device::registerDeviceLostClient):
+        (PAL::WebGPU::Device::unregisterDeviceLostClient):
+        * pal/graphics/WebGPU/WebGPUDeviceDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUDeviceLostInfo.h: Added.
+        * pal/graphics/WebGPU/WebGPUDeviceLostReason.h: Added.
+        * pal/graphics/WebGPU/WebGPUError.h: Added.
+        * pal/graphics/WebGPU/WebGPUErrorFilter.h: Added.
+        * pal/graphics/WebGPU/WebGPUExtent3DDict.h: Added.
+        * pal/graphics/WebGPU/WebGPUExternalTexture.h: Added.
+        (PAL::WebGPU::ExternalTexture::label const):
+        (PAL::WebGPU::ExternalTexture::setLabel):
+        * pal/graphics/WebGPU/WebGPUExternalTextureBindingLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUFeatureName.h: Added.
+        * pal/graphics/WebGPU/WebGPUFilterMode.h: Added.
+        * pal/graphics/WebGPU/WebGPUFragmentState.h: Added.
+        * pal/graphics/WebGPU/WebGPUFrontFace.h: Added.
+        * pal/graphics/WebGPU/WebGPUImageCopyBuffer.h: Added.
+        * pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h: Added.
+        * pal/graphics/WebGPU/WebGPUImageCopyTexture.h: Added.
+        * pal/graphics/WebGPU/WebGPUImageCopyTextureTagged.h: Added.
+        * pal/graphics/WebGPU/WebGPUImageDataLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUIndexFormat.h: Added.
+        * pal/graphics/WebGPU/WebGPUIntegralTypes.h: Added.
+        * pal/graphics/WebGPU/WebGPULoadOp.h: Added.
+        * pal/graphics/WebGPU/WebGPUMapMode.h: Added.
+        * pal/graphics/WebGPU/WebGPUMultisampleState.h: Added.
+        * pal/graphics/WebGPU/WebGPUObjectDescriptorBase.h: Added.
+        * pal/graphics/WebGPU/WebGPUOrigin2DDict.h: Added.
+        * pal/graphics/WebGPU/WebGPUOrigin3DDict.h: Added.
+        * pal/graphics/WebGPU/WebGPUOutOfMemoryError.h: Added.
+        * pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h: Added.
+        * pal/graphics/WebGPU/WebGPUPipelineLayout.h: Added.
+        (PAL::WebGPU::PipelineLayout::label const):
+        (PAL::WebGPU::PipelineLayout::setLabel):
+        * pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUPipelineStatisticName.h: Added.
+        * pal/graphics/WebGPU/WebGPUPowerPreference.h: Added.
+        * pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h: Added.
+        * pal/graphics/WebGPU/WebGPUPrimitiveState.h: Added.
+        * pal/graphics/WebGPU/WebGPUPrimitiveTopology.h: Added.
+        * pal/graphics/WebGPU/WebGPUProgrammableStage.h: Added.
+        * pal/graphics/WebGPU/WebGPUQuerySet.h: Added.
+        (PAL::WebGPU::QuerySet::label const):
+        (PAL::WebGPU::QuerySet::setLabel):
+        * pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUQueryType.h: Added.
+        * pal/graphics/WebGPU/WebGPUQueue.h: Added.
+        (PAL::WebGPU::Queue::label const):
+        (PAL::WebGPU::Queue::setLabel):
+        * pal/graphics/WebGPU/WebGPURenderBundle.h: Added.
+        (PAL::WebGPU::RenderBundle::label const):
+        (PAL::WebGPU::RenderBundle::setLabel):
+        * pal/graphics/WebGPU/WebGPURenderBundleDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoder.h: Added.
+        (PAL::WebGPU::RenderBundleEncoder::label const):
+        (PAL::WebGPU::RenderBundleEncoder::setLabel):
+        * pal/graphics/WebGPU/WebGPURenderBundleEncoderDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPassDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPassEncoder.h: Added.
+        (PAL::WebGPU::RenderPassEncoder::label const):
+        (PAL::WebGPU::RenderPassEncoder::setLabel):
+        * pal/graphics/WebGPU/WebGPURenderPassLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampLocation.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPassTimestampWrite.h: Added.
+        * pal/graphics/WebGPU/WebGPURenderPipeline.h: Added.
+        (PAL::WebGPU::RenderPipeline::label const):
+        (PAL::WebGPU::RenderPipeline::setLabel):
+        * pal/graphics/WebGPU/WebGPURenderPipelineDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPURequestAdapterOptions.h: Added.
+        * pal/graphics/WebGPU/WebGPUSampler.h: Added.
+        (PAL::WebGPU::Sampler::label const):
+        (PAL::WebGPU::Sampler::setLabel):
+        * pal/graphics/WebGPU/WebGPUSamplerBindingLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUSamplerBindingType.h: Added.
+        * pal/graphics/WebGPU/WebGPUSamplerDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUShaderModule.h: Added.
+        (PAL::WebGPU::ShaderModule::label const):
+        (PAL::WebGPU::ShaderModule::setLabel):
+        * pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUShaderStage.h: Added.
+        * pal/graphics/WebGPU/WebGPUStencilFaceState.h: Added.
+        * pal/graphics/WebGPU/WebGPUStencilOperation.h: Added.
+        * pal/graphics/WebGPU/WebGPUStorageTextureAccess.h: Added.
+        * pal/graphics/WebGPU/WebGPUStorageTextureBindingLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUStoreOp.h: Added.
+        * pal/graphics/WebGPU/WebGPUSupportedFeatures.h: Added.
+        * pal/graphics/WebGPU/WebGPUSupportedLimits.h: Added.
+        * pal/graphics/WebGPU/WebGPUTexture.h: Added.
+        (PAL::WebGPU::Texture::label const):
+        (PAL::WebGPU::Texture::setLabel):
+        * pal/graphics/WebGPU/WebGPUTextureAspect.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureBindingLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureDimension.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureFormat.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureSampleType.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureUsage.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureView.h: Added.
+        (PAL::WebGPU::TextureView::label const):
+        (PAL::WebGPU::TextureView::setLabel):
+        * pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h: Added.
+        * pal/graphics/WebGPU/WebGPUTextureViewDimension.h: Added.
+        * pal/graphics/WebGPU/WebGPUUncapturedErrorEvent.h: Added.
+        * pal/graphics/WebGPU/WebGPUUncapturedErrorEventInit.h: Added.
+        * pal/graphics/WebGPU/WebGPUValidationError.h: Added.
+        * pal/graphics/WebGPU/WebGPUVertexAttribute.h: Added.
+        * pal/graphics/WebGPU/WebGPUVertexBufferLayout.h: Added.
+        * pal/graphics/WebGPU/WebGPUVertexFormat.h: Added.
+        * pal/graphics/WebGPU/WebGPUVertexState.h: Added.
+        * pal/graphics/WebGPU/WebGPUVertexStepMode.h: Added.
+
+2021-11-04  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: AR Quicklook asset is shared instead of page URL
+        https://bugs.webkit.org/show_bug.cgi?id=232674
+        rdar://84220997
+
+        Reviewed by Antoine Quint.
+
+        There was a typo. ENABLE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+        should be HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM).
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+
+2021-11-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Migrate from CTFontCopyVariationAxes() to CTFontCopyVariationAxesInternal() if possible
+        https://bugs.webkit.org/show_bug.cgi?id=232690
+
+        Reviewed by Simon Fraser and Cameron McCormack.
+
+        * pal/spi/cf/CoreTextSPI.h:
+
+2021-11-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r285228.
+        https://bugs.webkit.org/show_bug.cgi?id=232704
+
+        Broke iOS builds
+
+        Reverted changeset:
+
+        "REGRESSION: AR Quicklook asset is shared instead of page URL"
+        https://bugs.webkit.org/show_bug.cgi?id=232674
+        https://commits.webkit.org/r285228
+
+2021-11-03  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: AR Quicklook asset is shared instead of page URL
+        https://bugs.webkit.org/show_bug.cgi?id=232674
+        rdar://84220997
+
+        Reviewed by Antoine Quint.
+
+        There was a typo. ENABLE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
+        should be HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM).
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+
+2021-10-29  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r284917.
+
+        Likely caused significant performance regression
+
+        Reverted changeset:
+
+        "Remove properties set by NSURLProtocol on NSURLRequest before
+        serializing"
+        https://bugs.webkit.org/show_bug.cgi?id=232332
+        https://commits.webkit.org/r284917
+
+2021-10-26  Alex Christensen  <achristensen@webkit.org>
+
+        Remove properties set by NSURLProtocol on NSURLRequest before serializing
+        https://bugs.webkit.org/show_bug.cgi?id=232332
+        <rdar://79227845>
+
+        Reviewed by Geoff Garen.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
+2021-10-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WebCore] Remove unneeded WTF:: namespace prefix
+        https://bugs.webkit.org/show_bug.cgi?id=232226
+
+        Reviewed by Myles C. Maxfield.
+
+        * pal/HysteresisActivity.h:
+        (PAL::HysteresisActivity::HysteresisActivity):
+        * pal/Logging.cpp:
+        (PAL::registerNotifyCallback):
+        * pal/Logging.h:
+
+2021-10-25  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Unreviewed, reverting r284742.
+
+        Reverting because this commit may have casued a regression on
+        imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-
+        speak-events.html
+
+        Reverted changeset:
+
+        "AX: Unify speech synthesizer platform usage for Mac/iOS"
+        https://bugs.webkit.org/show_bug.cgi?id=231895
+        https://commits.webkit.org/r284742
+
+2021-10-23  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Unify speech synthesizer platform usage for Mac/iOS
+        https://bugs.webkit.org/show_bug.cgi?id=231895
+        <rdar://problem/84372479>
+
+        Reviewed by Andres Gonzalez.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+        * pal/spi/cocoa/AXSpeechManagerSPI.h:
+        * pal/spi/mac/SpeechSynthesisSPI.h: Removed.
+
+2021-10-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Update appearance of <datalist> indicator
+        https://bugs.webkit.org/show_bug.cgi?id=232031
+        rdar://84474135
+
+        Reviewed by Wenson Hsieh.
+
+        * pal/spi/mac/CoreUISPI.h:
+
+2021-10-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Mac CMake build should not need to include iOS headers
+        https://bugs.webkit.org/show_bug.cgi?id=231998
+
+        Reviewed by Alex Christensen.
+
+        * pal/PlatformMac.cmake:
+
+2021-10-19  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r284220): [PAL] TCCSPI.h should be a project header, not a private header
+        <https://webkit.org/b/231977>
+        <rdar://problem/84425384>
+
+        Reviewed by Wenson Hsieh.
+
+        * PAL.xcodeproj/project.pbxproj:
+        - Change TCCSPI.h from a private header to a project header.
+          PAL uses a build phase script to install its headers.
+
+2021-10-18  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 231882: WebKit::GPUConnectionToWebProcess::setTCCIdentity() leaks a tcc_identity_t
+        <https://webkit.org/b/231882>
+        <rdar://problem/84350854>
+
+        Reviewed by Chris Dumez.
+
+        * pal/spi/cocoa/TCCSPI.h:
+        - Properly declare tcc_identity_t as an OSObject.
+
+2021-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Simplify SleepDisabler by checking if we are under sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=231670
+
+        Reviewed by Adrian Perez de Castro.
+
+        Current implementation always tries to connect to ScreenSaver interface and if that fails tries with the portal
+        one. It's simpler to check if we are under sandbox and it avoids a connection that we know is always going to
+        fail.
+
+        * pal/system/glib/SleepDisablerGLib.cpp:
+        (PAL::SleepDisablerGLib::SleepDisablerGLib):
+        (PAL::SleepDisablerGLib::acquireInhibitor):
+        (PAL::SleepDisablerGLib::releaseInhibitor):
+        (PAL::SleepDisablerGLib::acquireInhibitorViaScreenSaverProxy): Deleted.
+        (PAL::SleepDisablerGLib::acquireInhibitorViaInhibitPortalProxy): Deleted.
+        (PAL::SleepDisablerGLib::releaseInhibitorViaScreenSaverProxy): Deleted.
+        (PAL::SleepDisablerGLib::releaseInhibitorViaInhibitPortalProxy): Deleted.
+        * pal/system/glib/SleepDisablerGLib.h:
+
+2021-10-17  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix #3: Adopt attribution AVCaptureSession SPI for GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=231621
+        <rdar://problem/80748535>
+
+        Unreviewed build fix.
+
+        * pal/spi/cocoa/TCCSPI.h:
+        - Use HAVE(TCC_IOS_14_BIG_SUR_SPI).
+
+2021-10-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Realize Mac CMake build of WebCore and WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=231749
+
+        Reviewed by Alex Christensen.
+
+        * pal/PlatformMac.cmake:
+
+2021-10-15  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Support getDisplayMedia
+        https://bugs.webkit.org/show_bug.cgi?id=231455
+        <rdar://problem/84044495>
+
+        Reviewed by Youenn Fablet and Jer Noble.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/ios/ReplayKitSoftLink.h: Added.
+        * pal/ios/ReplayKitSoftLink.mm: Added.
+
+2021-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Fix non-internal iOS builds after r284220
+        https://bugs.webkit.org/show_bug.cgi?id=231621
+
+        * pal/spi/cocoa/TCCSPI.h:
+
+2021-10-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        Adopt attribution AVCaptureSession SPI for GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=231621
+        <rdar://problem/80748535>
+
+        Reviewed by Eric Carlson.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/AVFoundationSPI.h:
+        * pal/spi/cocoa/TCCSPI.h: Renamed from Source/WebKit/Platform/spi/ios/TCCSPI.h.
+
+2021-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        All the SDKVariant.xcconfig files should match
+        https://bugs.webkit.org/show_bug.cgi?id=231663
+
+        Reviewed by Youenn Fablet.
+
+        * Configurations/SDKVariant.xcconfig:
+
+2021-10-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support both VK and VKC-prefixed SPI when softlinking VisionKitCore classes
+        https://bugs.webkit.org/show_bug.cgi?id=231683
+        rdar://83744729
+
+        Reviewed by Tim Horton.
+
+        See WebKit/ChangeLog for more details.
+
+        * pal/cocoa/VisionKitCoreSoftLink.h:
+        * pal/cocoa/VisionKitCoreSoftLink.mm:
+
+2021-10-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Add support for accent-color
+        https://bugs.webkit.org/show_bug.cgi?id=231464
+        rdar://84049511
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/mac/NSAppearanceSPI.h:
+
+2021-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Move some staged VisionKitCore SPI into VisionKitCoreSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=231648
+
+        Reviewed by Tim Horton.
+
+        See WebKit/ChangeLog for more details.
+
+        * pal/spi/cocoa/VisionKitCoreSPI.h:
+
+2021-10-12  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement FileSystemSyncAccessHandle read() and write()
+        https://bugs.webkit.org/show_bug.cgi?id=231466
+        <rdar://problem/84050394>
+
+        Reviewed by Youenn Fablet.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/FilePortSPI.h: Added.
+
+2021-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Allow direct construction of WeakPtr without makeWeakPtr()
+        https://bugs.webkit.org/show_bug.cgi?id=231580
+
+        Reviewed by Darin Adler.
+
+        Allow direct construction of WeakPtr without makeWeakPtr(), and deprecate makeWeakPtr().
+
+        * pal/system/mac/SystemSleepListenerMac.mm:
+        (PAL::SystemSleepListenerMac::SystemSleepListenerMac):
+
+2021-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Remove non-HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE) code
+        https://bugs.webkit.org/show_bug.cgi?id=231579
+
+        Reviewed by Chris Dumez.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
+2021-10-08  Devin Rousso  <drousso@apple.com>
+
+        [iOS][GPU Process] support `<attachment>`
+        https://bugs.webkit.org/show_bug.cgi?id=230781
+        <rdar://problem/70884096>
+
+        Reviewed by Myles Maxfield.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
+2021-10-05  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Transcode videos selected from UIImagePickerController
+        https://bugs.webkit.org/show_bug.cgi?id=230639
+        rdar://79665678
+
+        Reviewed by Tim Horton.
+
+        Add AVFoundation API needed to transcode video.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
+2021-10-05  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Unreviewed, reverting r283339.
+
+        Reverting because this commit may have caused fast/attachment
+        tests to crash
+
+        Reverted changeset:
+
+        "[iOS][GPU Process] support `<attachment>`"
+        https://bugs.webkit.org/show_bug.cgi?id=230781
+        https://commits.webkit.org/r283339
+
+2021-10-03  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix: Attribute IOSurfaces created by camera and decoders to responsible WebProcess
+        <https://bugs.webkit.org/show_bug.cgi?id=231075>
+        <rdar://problem/83767168>
+
+        Unreviewed build fix.
+
+        * pal/spi/cocoa/IOSurfaceSPI.h:
+        (IOSurfaceMemoryLedgerTags):
+        - Define enums for both HAVE(IOSURFACE_SET_OWNERSHIP)
+          and HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY).
+
+2021-10-03  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix: GPU Process microphone attribution SPI adoption
+        <https://bugs.webkit.org/show_bug.cgi?id=231034>
+        <rdar://problem/83732537>
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+        (-[AVAudioSession setHostProcessAttribution:error:]):
+        - Add SPI declaration for open source bots.
+
+2021-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for macOS < 10.15
+        https://bugs.webkit.org/show_bug.cgi?id=231085
+
+        Reviewed by Darin Adler.
+
+        * pal/cocoa/AVFoundationSoftLink.mm:
+        * pal/spi/cocoa/AVFoundationSPI.h:
+        * pal/spi/mac/NSMenuSPI.h:
+        * pal/spi/mac/NSViewSPI.h:
+
+2021-10-01  Kate Cheney  <katherine_cheney@apple.com>
+
+        GPU Process microphone attribution SPI adoption
+        https://bugs.webkit.org/show_bug.cgi?id=231034
+        <rdar://problem/83732537>
+
+        Reviewed by Youenn Fablet.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
+2021-09-30  Devin Rousso  <drousso@apple.com>
+
+        [iOS][GPU Process] support `<attachment>`
+        https://bugs.webkit.org/show_bug.cgi?id=230781
+        <rdar://problem/70884096>
+
+        Reviewed by Myles Maxfield.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
+2021-09-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Support in-band chapter tracks
+        https://bugs.webkit.org/show_bug.cgi?id=230380
+        <rdar://problem/83218578>
+
+        Reviewed by Jer Noble.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
+2021-09-28  Alex Christensen  <achristensen@webkit.org>
+
+        Mostly fix Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=230868
+
+        Reviewed by Don Olmstead.
+
+        * pal/PlatformMac.cmake:
+
+2021-09-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix build with non-internal Monterey SDK
+        https://bugs.webkit.org/show_bug.cgi?id=230872
+
+        Reviewed by Jonathan Bedard.
+
+        * pal/spi/cocoa/PassKitSPI.h:
+        * pal/spi/mac/SystemPreviewSPI.h:
+
+2021-09-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 15] Support building WebKit (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=227002
+        <rdar://problem/79316598>
+
+        Reviewed by Ryan Haddad.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h: Add CAFenceHandle.
+        * pal/spi/ios/SystemPreviewSPI.h: Ditto.
+
+2021-09-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Unify more media-related WebCore source files
+        https://bugs.webkit.org/show_bug.cgi?id=230666
+
+        Reviewed by Tim Horton.
+
+        AVOutputContextOutputDevicesDidChangeNotification is declared as an NSNotificationName.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
+2021-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Hook up palettes to CoreText
+        https://bugs.webkit.org/show_bug.cgi?id=230449
+
+        Reviewed by Simon Fraser.
+
+        * pal/spi/cf/CoreTextSPI.h:
+
+2021-09-21  Jean-Yves Avenard  <jya@apple.com>
+
+        Use SharedMemory for transferring appended buffers from SourceBuffer to the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=230329
+        rdar://problem/83291495
+
+        Reviewed by Jer Noble.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h: Add required CoreMedia methods.
+
+2021-09-21  Per Arne Vollan  <pvollan@apple.com>
+
+        [Mac Catalyst] Fix build issue
+        https://bugs.webkit.org/show_bug.cgi?id=230567
+        <rdar://83314629>
+
+        Unreviewed follow-up fix after <https://commits.webkit.org/241966@main>.
+
+        Fix an incorrect define check.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
+2021-09-21  Per Arne Vollan  <pvollan@apple.com>
+
+        [Mac Catalyst] Fix build issue
+        https://bugs.webkit.org/show_bug.cgi?id=230567
+        <rdar://83314629>
+
+        Reviewed by Brent Fulgham.
+
+        The identifier kLSDefaultSessionID is undeclared. Declare it for the internal build on Catalyst.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
+2021-09-20  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make AVSampleBufferVideoOutput support an Experimental Feature
+        https://bugs.webkit.org/show_bug.cgi?id=230424
+
+        Reviewed by Eric Carlson.
+
+        Drive-by fix: fix up the declarations in AVFoundationSPI.h.
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
+2021-09-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [Mac Catalyst] Fix build issue
+        https://bugs.webkit.org/show_bug.cgi?id=230373
+
+        Reviewed by Darin Adler.
+
+        There's an issue with the Mac Catalyst build where LSSessionID is being redefined. Address this by removing the second definition,
+        and moving the related function into the open source section.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
+2021-09-16  Tim Horton  <timothy_horton@apple.com>
+
+        Adjust ARKIT_INLINE_PREVIEW* compile time flags
+        https://bugs.webkit.org/show_bug.cgi?id=230332
+
+        Reviewed by Sam Weinig.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+        * pal/spi/mac/SystemPreviewSPI.h:
+        Adopt the new name.
+
+2021-09-15  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] Clean up some WKA hooks
+        https://bugs.webkit.org/show_bug.cgi?id=230182
+        <rdar://problem/78824639>
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/cocoa/PassKitSPI.h:
+
+2021-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Migrate to CTFontHasTable() from CTFontCopyAvailableTables()
+        https://bugs.webkit.org/show_bug.cgi?id=230248
+
+        Reviewed by Anders Carlsson.
+
+        * pal/spi/cf/CoreTextSPI.h:
+
+2021-09-11  David Kilzer  <ddkilzer@apple.com>
+
+        CFNotificationCenterAddObserver() should use weak observers
+        <https://webkit.org/b/230168>
+        <rdar://problem/82987695>
+
+        Reviewed by Darin Adler.
+
+        * PAL.xcodeproj/project.pbxproj:
+        - Add CFNotificationCenterSPI.h to the project.
+        * pal/spi/cf/CFNotificationCenterSPI.h: Add.
+
+2021-09-08  Youenn Fablet  <youenn@apple.com>
+
+        Add video metrics logging to LocalSampleBufferDisplayLayer
+        https://bugs.webkit.org/show_bug.cgi?id=229930
+
+        Reviewed by Eric Carlson.
+
+        * PAL/pal/spi/cocoa/AVFoundationSPI.h:
+
+2021-09-08  Per Arne  <pvollan@apple.com>
+
+        Remove unneeded call on startup of WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=230022
+        <rdar://problem/82838000>
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
 2021-08-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Drawing system fallback fonts to canvas causes a crash

@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/input-text-scroll-event-when-using-arrow-keys.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-deltas.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-event-fired-to-document.html

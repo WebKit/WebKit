@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ColorCocoa.h"
 
-#import "ColorMac.h"
-
 #if PLATFORM(IOS_FAMILY)
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
@@ -35,22 +33,18 @@
 
 namespace WebCore {
 
-#if USE(APPKIT)
-
-NSColor *platformColor(const Color& color)
-{
-    return nsColor(color);
-}
-
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 
-UIColor *platformColor(const Color& color)
+RetainPtr<UIColor> cocoaColor(const Color& color)
 {
-    return [PAL::getUIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color)];
+    return [PAL::getUIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color).get()];
 }
 
 #endif
+
+RetainPtr<CocoaColor> cocoaColorOrNil(const Color& color)
+{
+    return color.isValid() ? cocoaColor(color) : nil;
+}
 
 } // namespace WebCore

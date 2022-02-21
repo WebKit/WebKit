@@ -28,9 +28,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
-
-namespace PCM {
+namespace WebKit::PCM {
 
 struct DebugInfo {
 
@@ -45,7 +43,5 @@ struct DebugInfo {
 
     DebugInfo isolatedCopy() const;
 };
-
-} // namespace PCM
 
 } // namespace WebKit

@@ -35,7 +35,7 @@ namespace Style {
 class Builder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Builder(RenderStyle&, BuilderContext&&, const MatchResult&, OptionSet<CascadeLevel>, PropertyCascade::IncludedProperties = PropertyCascade::IncludedProperties::All);
+    Builder(RenderStyle&, BuilderContext&&, const MatchResult&, CascadeLevel, PropertyCascade::IncludedProperties = PropertyCascade::IncludedProperties::All);
     ~Builder();
 
     void applyAllProperties();
@@ -44,8 +44,6 @@ public:
 
     void applyProperty(CSSPropertyID propertyID) { applyProperties(propertyID, propertyID); }
     void applyCustomProperty(const String& name);
-
-    void applyPropertyValue(CSSPropertyID, CSSValue*);
 
     BuilderState& state() { return m_state; }
 
@@ -58,12 +56,22 @@ private:
     template<CustomPropertyCycleTracking trackCycles>
     void applyPropertiesImpl(int firstProperty, int lastProperty);
     void applyCascadeProperty(const PropertyCascade::Property&);
+    void applyRollbackCascadeProperty(const PropertyCascade::Property&, SelectorChecker::LinkMatchMask);
     void applyProperty(CSSPropertyID, CSSValue&, SelectorChecker::LinkMatchMask);
 
     Ref<CSSValue> resolveValue(CSSPropertyID, CSSValue&);
     RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&);
 
+    const PropertyCascade* ensureRollbackCascadeForRevert();
+    const PropertyCascade* ensureRollbackCascadeForRevertLayer();
+
+    using RollbackCascadeKey = std::pair<unsigned, unsigned>;
+    RollbackCascadeKey makeRollbackCascadeKey(CascadeLevel, CascadeLayerPriority);
+
     const PropertyCascade m_cascade;
+    // Rollback cascades are build on demand to resolve 'revert' and 'revert-layer' keywords.
+    HashMap<RollbackCascadeKey, std::unique_ptr<const PropertyCascade>> m_rollbackCascades;
+
     BuilderState m_state;
 };
 

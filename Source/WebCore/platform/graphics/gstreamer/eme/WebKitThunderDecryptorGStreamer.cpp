@@ -46,9 +46,9 @@ static bool decrypt(WebKitMediaCommonEncryptionDecrypt*, GstBuffer* iv, GstBuffe
 GST_DEBUG_CATEGORY(webkitMediaThunderDecryptDebugCategory);
 #define GST_CAT_DEFAULT webkitMediaThunderDecryptDebugCategory
 
-static const char* cencEncryptionMediaTypes[] = { "video/mp4", "audio/mp4", "video/x-h264", "audio/mpeg", "video/x-vp9", nullptr };
+static const char* cencEncryptionMediaTypes[] = { "video/mp4", "audio/mp4", "video/x-h264", "video/x-h265", "audio/mpeg", "video/x-vp9", nullptr };
 static const char** cbcsEncryptionMediaTypes = cencEncryptionMediaTypes;
-static const char* webmEncryptionMediaTypes[] = { "video/webm", "audio/webm", "video/x-vp9", "audio/x-opus", nullptr };
+static const char* webmEncryptionMediaTypes[] = { "video/webm", "audio/webm", "video/x-vp9", "audio/x-opus", "audio/x-vorbis", "video/x-vp8", nullptr };
 
 static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
     GST_PAD_SRC,
@@ -60,8 +60,9 @@ static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
         "audio/mp4; "
         "audio/mpeg; "
         "video/x-h264; "
-        "video/x-vp9; "
-        "audio/x-opus; "));
+        "video/x-h265; "
+        "video/x-vp9; video/x-vp8;"
+        "audio/x-opus; audio/x-vorbis"));
 
 #define webkit_media_thunder_decrypt_parent_class parent_class
 WEBKIT_DEFINE_TYPE(WebKitMediaThunderDecrypt, webkit_media_thunder_decrypt, WEBKIT_TYPE_MEDIA_CENC_DECRYPT)
@@ -93,8 +94,7 @@ static GRefPtr<GstCaps> createSinkPadTemplateCaps()
             cbcsEncryptionMediaTypes[i], nullptr));
     }
 
-    if (CDMFactoryThunder::singleton().supportsKeySystem(GStreamerEMEUtilities::s_WidevineKeySystem)) {
-        // WebM is Widevine only so no Widevine, no WebM decryption.
+    if (supportedKeySystems.contains(GStreamerEMEUtilities::s_WidevineKeySystem) || supportedKeySystems.contains(GStreamerEMEUtilities::s_ClearKeyKeySystem)) {
         for (int i = 0; webmEncryptionMediaTypes[i]; ++i) {
             gst_caps_append_structure(caps.get(), gst_structure_new("application/x-webm-enc", "original-media-type", G_TYPE_STRING,
                 webmEncryptionMediaTypes[i], nullptr));

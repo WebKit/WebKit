@@ -190,3 +190,30 @@ assert.eq(WebAssembly.instantiate.length, 1);
 
     assert.asyncTest(test());
 }
+
+{
+    const builder = (new Builder())
+          .Type().End()
+          .Import().Memory("imp", "memory", {initial:100}).End()
+          .Function().End()
+          .Export()
+              .Function("foo")
+          .End()
+          .Code()
+              .Function("foo", { params: [], ret: "i32" })
+                  .I32Const(1)
+              .End()
+          .End();
+
+    const bin = builder.WebAssembly().get();
+
+    async function test() {
+        let module = new WebAssembly.Module(bin);
+        let instance1 = await WebAssembly.instantiate(module, { imp: { memory: new WebAssembly.Memory({ initial: 100 }) } });
+        assert.truthy(instance1 instanceof WebAssembly.Instance);
+        let instance2 = await WebAssembly.instantiate(module, { imp: { memory: new WebAssembly.Memory({ initial: 100 }) } });
+        assert.truthy(instance2 instanceof WebAssembly.Instance);
+    }
+
+    assert.asyncTest(test());
+}

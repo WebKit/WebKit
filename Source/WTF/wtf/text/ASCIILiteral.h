@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/ASCIICType.h>
+#include <wtf/Forward.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -47,6 +48,8 @@ public:
     {
         return ASCIILiteral { nullptr };
     }
+
+    constexpr bool isNull() const { return !m_characters; }
 
     constexpr const char* characters() const { return m_characters; }
     const LChar* characters8() const { return bitwise_cast<const LChar*>(m_characters); }
@@ -78,4 +81,3 @@ constexpr ASCIILiteral operator"" _s(const char* characters, size_t n)
 } // namespace WTF
 
 using namespace WTF::StringLiterals;
-using WTF::ASCIILiteral;

@@ -89,7 +89,7 @@ void HiddenInputType::setValue(const String& sanitizedValue, bool, TextFieldEven
     element()->setAttributeWithoutSynchronization(valueAttr, sanitizedValue);
 }
 
-bool HiddenInputType::appendFormData(DOMFormData& formData, bool isMultipartForm) const
+bool HiddenInputType::appendFormData(DOMFormData& formData) const
 {
     ASSERT(element());
     auto name = element()->name();
@@ -98,7 +98,7 @@ bool HiddenInputType::appendFormData(DOMFormData& formData, bool isMultipartForm
         formData.append(name, String { formData.encoding().name() });
         return true;
     }
-    return InputType::appendFormData(formData, isMultipartForm);
+    return InputType::appendFormData(formData);
 }
 
 bool HiddenInputType::shouldRespectHeightAndWidthAttributes()

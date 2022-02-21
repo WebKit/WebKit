@@ -37,13 +37,13 @@
 ] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
     [Replaceable] readonly attribute DOMString name;
 
-    [CallWith=GlobalObject] undefined postMessage(any message, sequence<object> transfer);
-    [CallWith=GlobalObject] undefined postMessage(any message, optional StructuredSerializeOptions options);
+    [CallWith=CurrentGlobalObject] undefined postMessage(any message, sequence<object> transfer);
+    [CallWith=CurrentGlobalObject] undefined postMessage(any message, optional StructuredSerializeOptions options);
 
     undefined close();
 
     attribute EventHandler onmessage;
 };
 
-[Conditional=OFFSCREEN_CANVAS_IN_WORKERS, EnabledAtRuntime=OffscreenCanvasInWorkers] DedicatedWorkerGlobalScope includes AnimationFrameProvider;
-[Conditional=WEB_RTC, EnabledBySetting=WebRTCInsertableStreams] DedicatedWorkerGlobalScope includes RTCRtpScriptTransformProvider;
+[Conditional=OFFSCREEN_CANVAS_IN_WORKERS, EnabledAtRuntime=OffscreenCanvasInWorkersEnabled] DedicatedWorkerGlobalScope includes AnimationFrameProvider;
+[Conditional=WEB_RTC, EnabledBySetting=WebRTCEncodedTransformEnabled] DedicatedWorkerGlobalScope includes RTCRtpScriptTransformProvider;

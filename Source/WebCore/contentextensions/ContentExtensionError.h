@@ -37,7 +37,6 @@ enum class ContentExtensionError {
     JSONInvalid = 1,
     
     // JSON semantics error
-    JSONTopLevelStructureNotAnObject,
     JSONTopLevelStructureNotAnArray,
     JSONInvalidObjectInTopLevelArray,
     JSONInvalidRule,
@@ -46,12 +45,10 @@ enum class ContentExtensionError {
     JSONInvalidTrigger,
     JSONInvalidURLFilterInTrigger,
     JSONInvalidTriggerFlagsArray,
-    JSONInvalidObjectInTriggerFlagsArray,
     JSONInvalidStringInTriggerFlagsArray,
     JSONInvalidConditionList,
     JSONDomainNotLowerCaseASCII,
     JSONMultipleConditions,
-    JSONTopURLAndDomainConditions,
     JSONTooManyRules,
     
     JSONInvalidAction,
@@ -59,6 +56,30 @@ enum class ContentExtensionError {
     JSONInvalidCSSDisplayNoneActionType,
     JSONInvalidNotification,
     JSONInvalidRegex,
+
+    JSONRedirectMissing,
+    JSONRedirectExtensionPathDoesNotStartWithSlash,
+    JSONRedirectURLSchemeInvalid,
+    JSONRedirectToJavaScriptURL,
+    JSONRedirectURLInvalid,
+    JSONRedirectInvalidType,
+    JSONRedirectInvalidPort,
+    JSONRedirectInvalidQuery,
+    JSONRedirectInvalidFragment,
+
+    JSONRemoveParametersNotStringArray,
+
+    JSONAddOrReplaceParametersNotArray,
+    JSONAddOrReplaceParametersKeyValueNotADictionary,
+    JSONAddOrReplaceParametersKeyValueMissingKeyString,
+    JSONAddOrReplaceParametersKeyValueMissingValueString,
+
+    JSONModifyHeadersNotArray,
+    JSONModifyHeadersInfoNotADictionary,
+    JSONModifyHeadersMissingOperation,
+    JSONModifyHeadersInvalidOperation,
+    JSONModifyHeadersMissingHeader,
+    JSONModifyHeadersMissingValue,
 
     ErrorWritingSerializedNFA,
 };

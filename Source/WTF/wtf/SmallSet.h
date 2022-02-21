@@ -34,7 +34,7 @@ namespace WTF {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SmallSet);
 
-// Functionally, this class is very similar to Variant<Vector<T, SmallArraySize>, HashSet<T>>
+// Functionally, this class is very similar to std::variant<Vector<T, SmallArraySize>, HashSet<T>>
 // It is optimized primarily for space, but is also quite fast
 // Its main limitation is that it has no way to remove elements once they have been added to it
 // Also, instead of being fully parameterized by a HashTrait parameter, it always uses -1 (all ones) as its empty value

@@ -32,16 +32,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
-#if USE(DIRECT2D)
-interface ID2D1Bitmap;
-interface ID2D1RenderTarget;
-interface ID3D11Device1;
-interface IDXGIKeyedMutex;
-interface IDXGISurface1;
-
-#include <WebCore/COMPtr.h>
-#endif
-
 namespace WebCore {
 class Image;
 class GraphicsContext;
@@ -54,9 +44,6 @@ public:
     struct Configuration {
         std::optional<WebCore::DestinationColorSpace> colorSpace;
         bool isOpaque { false };
-#if USE(DIRECT2D)
-        mutable HANDLE sharedResourceHandle { nullptr };
-#endif
 
         void encode(IPC::Encoder&) const;
         static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Configuration&);
@@ -71,6 +58,9 @@ public:
 
         bool isNull() const { return m_handle.isNull(); }
 
+        // Take ownership of the memory for process memory accounting purposes.
+        void takeOwnershipOfMemory(MemoryLedger) const;
+
         void clear();
 
         void encode(IPC::Encoder&) const;
@@ -84,6 +74,7 @@ public:
         Configuration m_configuration;
     };
 
+    static void validateConfiguration(Configuration&);
     static CheckedUint32 numBytesForSize(WebCore::IntSize, const ShareableBitmap::Configuration&);
     static CheckedUint32 calculateBytesPerRow(WebCore::IntSize, const Configuration&);
     static CheckedUint32 calculateBytesPerPixel(const Configuration&);
@@ -136,14 +127,6 @@ public:
     RefPtr<cairo_surface_t> createCairoSurface();
 
     WebCore::PlatformImagePtr createPlatformImage() { return createCairoSurface(); }
-#elif USE(DIRECT2D)
-    COMPtr<ID2D1Bitmap> createDirect2DSurface(ID3D11Device1*, ID2D1RenderTarget*);
-    IDXGISurface1* dxSurface() { return m_surface.get(); }
-    void createSharedResource();
-    void disposeSharedResource();
-    void leakSharedResource();
-
-    WebCore::PlatformImagePtr createPlatformImage() { return nullptr; }
 #endif
 
 private:
@@ -169,12 +152,6 @@ private:
 
     WebCore::IntSize m_size;
     Configuration m_configuration;
-
-#if USE(DIRECT2D)
-    COMPtr<IDXGISurface1> m_surface;
-    COMPtr<IDXGIKeyedMutex> m_surfaceMutex;
-    COMPtr<ID2D1Bitmap> m_bitmap;
-#endif
 
 #if USE(CG)
     bool m_releaseBitmapContextDataCalled { false };

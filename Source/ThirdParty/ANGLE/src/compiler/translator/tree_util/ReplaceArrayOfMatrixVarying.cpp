@@ -86,7 +86,6 @@ ANGLE_NO_DISCARD bool ReplaceArrayOfMatrixVarying(TCompiler *compiler,
     // arithmetic, assignments an so on.
     TType *tmpReplacementType = new TType(type);
     tmpReplacementType->setQualifier(EvqGlobal);
-    tmpReplacementType->realize();
 
     TVariable *tempReplaceVar = new TVariable(
         symbolTable, ImmutableString(std::string("ANGLE_AOM_Temp_") + varying->name().data()),
@@ -98,14 +97,10 @@ ANGLE_NO_DISCARD bool ReplaceArrayOfMatrixVarying(TCompiler *compiler,
     }
 
     // Create array of vectors type
-    TType *varyingReplaceType =
-        new TType(type.getBasicType(), type.getPrecision(), type.getQualifier(),
-                  static_cast<unsigned char>(type.getRows()), 1);
-    varyingReplaceType->setInvariant(type.isInvariant());
-    varyingReplaceType->setMemoryQualifier(type.getMemoryQualifier());
-    varyingReplaceType->setLayoutQualifier(type.getLayoutQualifier());
+    TType *varyingReplaceType = new TType(type);
+    varyingReplaceType->toMatrixColumnType();
+    varyingReplaceType->toArrayElementType();
     varyingReplaceType->makeArray(type.getCols() * type.getOutermostArraySize());
-    varyingReplaceType->realize();
 
     TVariable *varyingReplaceVar =
         new TVariable(symbolTable, varying->name(), varyingReplaceType, SymbolType::UserDefined);

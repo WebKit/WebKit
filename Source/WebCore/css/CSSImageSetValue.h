@@ -57,7 +57,7 @@ public:
 
     String customCSSText() const;
 
-    bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
+    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
 
     void updateDeviceScaleFactor(const Document&);
 

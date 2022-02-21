@@ -190,9 +190,8 @@ bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
 
     if (builtInVariableBaseVertex)
     {
-        const TType *type = StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>();
-        const TVariable *baseVertex =
-            new TVariable(symbolTable, kEmulatedGLBaseVertexName, type, SymbolType::AngleInternal);
+        const TVariable *baseVertex           = BuiltInVariable::angle_BaseVertex();
+        const TType &type                     = baseVertex->getType();
         const TIntermSymbol *baseVertexSymbol = new TIntermSymbol(baseVertex);
 
         // AngleInternal variables don't get collected
@@ -200,15 +199,15 @@ bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
         {
             uniformBaseVertex.name       = kEmulatedGLBaseVertexName.data();
             uniformBaseVertex.mappedName = kEmulatedGLBaseVertexName.data();
-            uniformBaseVertex.type       = GLVariableType(*type);
-            uniformBaseVertex.precision  = GLVariablePrecision(*type);
+            uniformBaseVertex.type       = GLVariableType(type);
+            uniformBaseVertex.precision  = GLVariablePrecision(type);
             uniformBaseVertex.staticUse = symbolTable->isStaticallyUsed(*builtInVariableBaseVertex);
             uniformBaseVertex.active    = true;
-            uniformBaseVertex.binding   = type->getLayoutQualifier().binding;
-            uniformBaseVertex.location  = type->getLayoutQualifier().location;
-            uniformBaseVertex.offset    = type->getLayoutQualifier().offset;
-            uniformBaseVertex.readonly  = type->getMemoryQualifier().readonly;
-            uniformBaseVertex.writeonly = type->getMemoryQualifier().writeonly;
+            uniformBaseVertex.binding   = type.getLayoutQualifier().binding;
+            uniformBaseVertex.location  = type.getLayoutQualifier().location;
+            uniformBaseVertex.offset    = type.getLayoutQualifier().offset;
+            uniformBaseVertex.readonly  = type.getMemoryQualifier().readonly;
+            uniformBaseVertex.writeonly = type.getMemoryQualifier().writeonly;
             addBaseVertex               = true;
         }
 
@@ -226,9 +225,8 @@ bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
 
     if (builtInVariableBaseInstance)
     {
-        const TType *type             = StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>();
-        const TVariable *baseInstance = new TVariable(symbolTable, kEmulatedGLBaseInstanceName,
-                                                      type, SymbolType::AngleInternal);
+        const TVariable *baseInstance           = BuiltInVariable::angle_BaseInstance();
+        const TType &type                       = baseInstance->getType();
         const TIntermSymbol *baseInstanceSymbol = new TIntermSymbol(baseInstance);
 
         // AngleInternal variables don't get collected
@@ -236,16 +234,16 @@ bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
         {
             uniformBaseInstance.name       = kEmulatedGLBaseInstanceName.data();
             uniformBaseInstance.mappedName = kEmulatedGLBaseInstanceName.data();
-            uniformBaseInstance.type       = GLVariableType(*type);
-            uniformBaseInstance.precision  = GLVariablePrecision(*type);
+            uniformBaseInstance.type       = GLVariableType(type);
+            uniformBaseInstance.precision  = GLVariablePrecision(type);
             uniformBaseInstance.staticUse =
                 symbolTable->isStaticallyUsed(*builtInVariableBaseInstance);
             uniformBaseInstance.active    = true;
-            uniformBaseInstance.binding   = type->getLayoutQualifier().binding;
-            uniformBaseInstance.location  = type->getLayoutQualifier().location;
-            uniformBaseInstance.offset    = type->getLayoutQualifier().offset;
-            uniformBaseInstance.readonly  = type->getMemoryQualifier().readonly;
-            uniformBaseInstance.writeonly = type->getMemoryQualifier().writeonly;
+            uniformBaseInstance.binding   = type.getLayoutQualifier().binding;
+            uniformBaseInstance.location  = type.getLayoutQualifier().location;
+            uniformBaseInstance.offset    = type.getLayoutQualifier().offset;
+            uniformBaseInstance.readonly  = type.getMemoryQualifier().readonly;
+            uniformBaseInstance.writeonly = type.getMemoryQualifier().writeonly;
             addBaseInstance               = true;
         }
 

@@ -27,6 +27,7 @@
 
 #include "CSSPropertyNames.h"
 #include "DOMTokenList.h"
+#include "ElementInlines.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"

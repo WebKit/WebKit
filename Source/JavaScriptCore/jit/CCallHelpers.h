@@ -801,7 +801,7 @@ public:
 
         // We don't need the current frame beyond this point. Masquerade as our
         // caller.
-#if CPU(ARM_THUMB2) || CPU(ARM64)
+#if CPU(ARM_THUMB2) || CPU(ARM64) || CPU(RISCV64)
         loadPtr(Address(framePointerRegister, CallFrame::returnPCOffset()), linkRegister);
         subPtr(TrustedImm32(2 * sizeof(void*)), newFrameSizeGPR);
 #if CPU(ARM64E)
@@ -840,11 +840,158 @@ public:
     // These operations clobber all volatile registers. They assume that there is room on the top of
     // stack to marshall call arguments.
     void logShadowChickenProloguePacket(GPRReg shadowPacket, GPRReg scratch1, GPRReg scope);
-    void logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, CodeBlock*, CallSiteIndex);
+
+private:
+    template <typename CodeBlockType>
+    void logShadowChickenTailPacketImpl(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, CodeBlockType codeBlock, CallSiteIndex callSiteIndex);
+public:
+    void logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, TrustedImmPtr codeBlock, CallSiteIndex callSiteIndex);
+    void logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, GPRReg codeBlock, CallSiteIndex callSiteIndex);
+
     // Leaves behind a pointer to the Packet we should write to in shadowPacket.
     void ensureShadowChickenPacket(VM&, GPRReg shadowPacket, GPRReg scratch1NonArgGPR, GPRReg scratch2);
 
     static void emitJITCodeOver(MacroAssemblerCodePtr<JSInternalPtrTag> where, ScopedLambda<void(CCallHelpers&)>, const char*);
+
+private:
+    template <typename OperationType, unsigned ArgNum>
+    static constexpr std::enable_if_t<(FunctionTraits<OperationType>::arity > ArgNum), size_t> sizeOfArg()
+    {
+        return sizeof(typename FunctionTraits<OperationType>::template ArgumentType<ArgNum>);
+    }
+
+#if USE(JSVALUE64)
+    template <typename OperationType, unsigned ArgNum, unsigned Index = ArgNum, typename... Args>
+    static constexpr JSValueRegs pickJSR(GPRReg first, Args... rest)
+    {
+        static_assert(sizeOfArg<OperationType, ArgNum - Index>() <= 8, "Don't know how to handle large arguments");
+        if constexpr (!Index)
+            return JSValueRegs { first };
+        else {
+            UNUSED_PARAM(first); // Otherwise warning due to constexpr
+            return pickJSR<OperationType, ArgNum, Index - 1>(rest...);
+        }
+    }
+#elif USE(JSVALUE32_64)
+    template <typename OperationType, unsigned ArgNum, unsigned Index = ArgNum, typename... Args>
+    static constexpr JSValueRegs pickJSR(GPRReg first, GPRReg second, GPRReg third, Args... rest)
+    {
+        constexpr size_t sizeOfCurrentArg = sizeOfArg<OperationType, ArgNum - Index>();
+        static_assert(sizeOfCurrentArg <= 8, "Don't know how to handle large arguments");
+        if constexpr (!Index) {
+            if constexpr (sizeOfCurrentArg <= 4) {
+                // Fits in single GPR
+                UNUSED_PARAM(second); // Otherwise warning due to constexpr
+                UNUSED_PARAM(third); // Otherwise warning due to constexpr
+                return JSValueRegs::payloadOnly(first);
+            } else if (first == GPRInfo::argumentGPR1 && second == GPRInfo::argumentGPR2 && third == GPRInfo::argumentGPR3) {
+                // Wide argument passed in GPRs needs to start with even register number, so skip argumentGPR1
+                return JSValueRegs { third, second };
+            } else {
+                // First is either an even register, or this argument will be pushed to the stack, so it does not matter
+                return JSValueRegs { second, first };
+            }
+        } else {
+            if constexpr(sizeOfCurrentArg <= 4) {
+                // Fits in single GPR
+                UNUSED_PARAM(first); // Otherwise warning due to constexpr
+                return pickJSR<OperationType, ArgNum, Index - 1>(second, third, rest...);
+            } else if (first == GPRInfo::argumentGPR1 && second == GPRInfo::argumentGPR2 && third == GPRInfo::argumentGPR3) {
+                // Wide argument passed in GPRs needs to start with even register number, so skip argumentGPR1, but reuse it later
+                return pickJSR<OperationType, ArgNum, Index - 1>(first, rest...);
+            } else {
+                // First is either an even register, or this argument will be pushed to the stack, so it does not matter
+                return pickJSR<OperationType, ArgNum, Index - 1>(third, rest...);
+            }
+        }
+    }
+
+    template <typename OperationType, unsigned ArgNum, unsigned Index = ArgNum, typename... Args>
+    static constexpr JSValueRegs pickJSR(GPRReg first, GPRReg second)
+    {
+        constexpr size_t sizeOfCurrentArg = sizeOfArg<OperationType, ArgNum - Index>();
+        static_assert(sizeOfCurrentArg <= 8, "Don't know how to handle large arguments");
+        // Base case, 'first' and 'second' are never argument register, or will be pushed on the stack anyway
+        if constexpr (!Index) {
+            if constexpr (sizeOfCurrentArg <= 4) {
+                UNUSED_PARAM(second); // Otherwise warning due to constexpr
+                return JSValueRegs::payloadOnly(first);
+            } else
+                return JSValueRegs { second, first };
+        } else {
+            if constexpr(sizeOfCurrentArg <= 4) {
+                UNUSED_PARAM(first); // Otherwise warning due to constexpr
+                return pickJSR<OperationType, ArgNum, Index - 1>(second);
+            } else
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Out of registers");
+        }
+    }
+
+    template <typename OperationType, unsigned ArgNum, unsigned Index = ArgNum, typename... Args>
+    static constexpr JSValueRegs pickJSR(GPRReg first)
+    {
+        constexpr size_t sizeOfCurrentArg = sizeOfArg<OperationType, ArgNum - Index>();
+        static_assert(sizeOfCurrentArg <= 8, "Don't know how to handle large arguments");
+        // Base case, 'first' is never an argument register, or will be pushed on the stack anyway
+        if constexpr (sizeOfCurrentArg <= 4)
+            return JSValueRegs::payloadOnly(first);
+        else
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Out of registers");
+    }
+#endif
+
+public:
+    // See preferredArgumentGPR for the purpose of this function. This version returns a JSValueRegs
+    // instead of a GPR, which on JSVALUE64 are equivalent, but on JSVALUE32_64 a JSValueRegs is
+    // required to hold a 64-bit wide function argument, so use this in particular when passing a
+    // JSValue/EncodedJSValue be compatible with both JSVALUE64 an JSVALUE32_64 platforms, and use
+    // preferredArgumentGPR when passing host pointers.
+    template <typename OperationType, unsigned ArgNum>
+    static constexpr std::enable_if_t<(FunctionTraits<OperationType>::arity > ArgNum), JSValueRegs>
+    preferredArgumentJSR()
+    {
+#if USE(JSVALUE64)
+#if !OS(WINDOWS)
+        return pickJSR<OperationType, ArgNum>(
+            GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
+            GPRInfo::argumentGPR3, GPRInfo::argumentGPR4, GPRInfo::argumentGPR5);
+#else
+        return pickJSR<OperationType, ArgNum>(
+            GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
+            GPRInfo::argumentGPR3, GPRInfo::nonArgGPR0,   GPRInfo::nonArgGPR1);
+#endif
+#elif USE(JSVALUE32_64)
+#if CPU(ARM_THUMB2)
+        // The last register is guaranteed to be pushed onto the stack for calls, so we can use
+        // the link register as a temporary.
+        return pickJSR<OperationType, ArgNum>(
+            GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
+            GPRInfo::argumentGPR3, GPRInfo::regT7,        GPRInfo::regT6,
+            GPRInfo::regT4,        GPRInfo::regT5,        ARMRegisters::lr);
+#elif CPU(MIPS)
+        return pickJSR<OperationType, ArgNum>(
+            GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
+            GPRInfo::argumentGPR3, GPRInfo::regT2,        GPRInfo::regT3,
+            GPRInfo::regT4,        GPRInfo::regT5,        GPRInfo::regT6);
+#endif
+#endif
+    }
+
+    // Computes (statically, at compilation time), the ideal machine register an argument should be
+    // loaded into for a function call. This yields the ABI specific argument registers for the
+    // initial arguments as appropriate, then suitable temporary registers for the remaining
+    // arguments. The idea is that 'setupArguments' will have to do the minimal amount of work when
+    // using these registers to hold the arguments, so if you are loading most arguments from memory
+    // anyway, using these registers yields the smallest code required for a call.
+    template <typename OperationType, unsigned ArgNum>
+    static constexpr std::enable_if_t<(FunctionTraits<OperationType>::arity > ArgNum), GPRReg>
+    preferredArgumentGPR()
+    {
+#if USE(JSVALUE32_64)
+        static_assert(sizeOfArg<OperationType, ArgNum>() <= 4, "Argument does not fit in GPR");
+#endif
+        return preferredArgumentJSR<OperationType, ArgNum>().payloadGPR();
+    }
 };
 
 } // namespace JSC

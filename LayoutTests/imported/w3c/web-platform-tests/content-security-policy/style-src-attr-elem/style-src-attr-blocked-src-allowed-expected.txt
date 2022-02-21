@@ -1,8 +1,4 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'style-src-attr'.
 
-
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Should fire a security policy violation event
-FAIL The attribute style should not be applied assert_equals: expected 0 but got 10
+PASS Should fire a security policy violation event
+PASS The attribute style should not be applied
 

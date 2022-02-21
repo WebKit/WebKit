@@ -28,24 +28,27 @@
 
 #if HAVE(SPEECHRECOGNIZER)
 
+#import "AudioStreamDescription.h"
 #import "MediaUtilities.h"
 #import "SpeechRecognitionUpdate.h"
 #import "WebSpeechRecognizerTaskMock.h"
 #import <Speech/Speech.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 
-void SpeechRecognizer::dataCaptured(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
+void SpeechRecognizer::dataCaptured(const MediaTime&, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
 {
-    auto buffer = createAudioSampleBuffer(data, description, PAL::toCMTime(time), sampleCount);
+    auto buffer = createAudioSampleBuffer(data, description, m_currentAudioSampleTime, sampleCount);
     [m_task audioSamplesAvailable:buffer.get()];
+    m_currentAudioSampleTime = PAL::CMTimeAdd(m_currentAudioSampleTime, PAL::toCMTime(MediaTime(sampleCount, description.sampleRate())));
 }
 
 bool SpeechRecognizer::startRecognition(bool mockSpeechRecognitionEnabled, SpeechRecognitionConnectionClientIdentifier identifier, const String& localeIdentifier, bool continuous, bool interimResults, uint64_t alternatives)
 {
     auto taskClass = mockSpeechRecognitionEnabled ? [WebSpeechRecognizerTaskMock class] : [WebSpeechRecognizerTask class];
-    m_task = adoptNS([[taskClass alloc] initWithIdentifier:identifier locale:localeIdentifier doMultipleRecognitions:continuous reportInterimResults:interimResults maxAlternatives:alternatives delegateCallback:[weakThis = makeWeakPtr(this)](const WebCore::SpeechRecognitionUpdate& update) {
+    m_task = adoptNS([[taskClass alloc] initWithIdentifier:identifier locale:localeIdentifier doMultipleRecognitions:continuous reportInterimResults:interimResults maxAlternatives:alternatives delegateCallback:[weakThis = WeakPtr { *this }](const WebCore::SpeechRecognitionUpdate& update) {
         if (weakThis)
             weakThis->m_delegateCallback(update);
     }]);

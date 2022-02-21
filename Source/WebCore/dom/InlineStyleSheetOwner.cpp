@@ -22,7 +22,7 @@
 #include "InlineStyleSheetOwner.h"
 
 #include "ContentSecurityPolicy.h"
-#include "Element.h"
+#include "ElementInlines.h"
 #include "Logging.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
@@ -96,6 +96,8 @@ void InlineStyleSheetOwner::insertedIntoDocument(Element& element)
 void InlineStyleSheetOwner::removedFromDocument(Element& element)
 {
     if (m_styleScope) {
+        if (m_styleScope->hasPendingSheet(element))
+            m_styleScope->removePendingSheet(element);
         m_styleScope->removeStyleSheetCandidateNode(element);
         m_styleScope = nullptr;
     }
@@ -168,8 +170,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     ASSERT(document.contentSecurityPolicy());
     const ContentSecurityPolicy& contentSecurityPolicy = *document.contentSecurityPolicy();
-    bool hasKnownNonce = contentSecurityPolicy.allowStyleWithNonce(element.attributeWithoutSynchronization(HTMLNames::nonceAttr), element.isInUserAgentShadowTree());
-    if (!contentSecurityPolicy.allowInlineStyle(document.url().string(), m_startTextPosition.m_line, text, hasKnownNonce))
+    if (!contentSecurityPolicy.allowInlineStyle(document.url().string(), m_startTextPosition.m_line, text, CheckUnsafeHashes::No, element, element.nonce(), element.isInUserAgentShadowTree()))
         return;
 
     auto mediaQueries = MediaQuerySet::create(m_media, MediaQueryParserContext(document));
@@ -241,7 +242,7 @@ bool InlineStyleSheetOwner::sheetLoaded(Element& element)
 
 void InlineStyleSheetOwner::startLoadingDynamicSheet(Element& element)
 {
-    if (m_styleScope)
+    if (m_styleScope && !m_styleScope->hasPendingSheet(element))
         m_styleScope->addPendingSheet(element);
 }
 

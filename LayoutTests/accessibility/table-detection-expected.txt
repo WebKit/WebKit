@@ -1,10 +1,13 @@
 
 This should be a table because it has a thead.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 5>
+AXChildrenInNavigationOrder: <array of size 5>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {63, 47}
@@ -48,10 +51,13 @@ asdf	asdf
 
 This should be a table because cells have borders.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {69, 29}
@@ -94,10 +100,13 @@ asdf	asdf
 
 This should not be a table because its cells do not have borders.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {29, 21}
@@ -129,10 +138,13 @@ asdf	asdf
 
 This should be a table because a cell has a special attribute
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {59, 23}
@@ -175,10 +187,13 @@ asdf	asdf
 
 This should be a table because a cell has a special attribute.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {59, 23}
@@ -221,10 +236,13 @@ asdf	asdf
 
 This should be a table because a cell has a special attribute.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 5>
+AXChildrenInNavigationOrder: <array of size 5>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {59, 43}
@@ -268,10 +286,13 @@ asdf	asdf
 
 This should be a table because cells have different colors.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {59, 23}
@@ -314,10 +335,13 @@ asdf	asdf
 
 This should not be a table because cells have different but no spacing.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {27, 19}
@@ -349,10 +373,13 @@ asdf	asdf
 
 This should not be a table because cells have the same colors even though there is spacing.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {27, 19}
@@ -384,10 +411,13 @@ asdf	asdf
 
 This should be a table because it has the "rules" attr.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {54, 19}
@@ -430,10 +460,13 @@ asdf	asdf
 
 This should not be a table because it only has one valid cell (need more than one).
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {769, 27}
@@ -465,10 +498,13 @@ Contributions
 
 This should not be a table because it does not have enough cell borders or background colors
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {130, 19}
@@ -506,10 +542,13 @@ New York Times
 
 This should be a table because it's editable.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 4>
+AXChildrenInNavigationOrder: <array of size 4>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {65, 27}
@@ -552,10 +591,13 @@ asdf	asdf
 
 This should be a table because most cells have a top border.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 5>
+AXChildrenInNavigationOrder: <array of size 5>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {63, 49}
@@ -599,10 +641,13 @@ asdf	asdf
 
 This should not be a table because cells have different borders.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
 AXHelp:
 AXParent: <AXGroup>
 AXSize: NSSize: {29, 21}
@@ -635,10 +680,13 @@ asdf	asdf
 
 This should be a table because it sets empty-cells: hide on the table.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 6>
+AXChildrenInNavigationOrder: <array of size 6>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {65, 70}
@@ -683,10 +731,13 @@ asdf	asdf
 
 This should be a table because it sets empty-cells: hide on a cell.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 6>
+AXChildrenInNavigationOrder: <array of size 6>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {65, 71}
@@ -731,10 +782,13 @@ asdf	asdf
 
 This should be a table because it has a col.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 5>
+AXChildrenInNavigationOrder: <array of size 5>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {63, 47}
@@ -782,6 +836,7 @@ AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 26>
+AXChildrenInNavigationOrder: <array of size 26>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {33, 531}
@@ -847,10 +902,13 @@ asdf
 
 This should be a table even though it uses table-row-group for it's display type.
 
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
 AXChildren: <array of size 5>
+AXChildrenInNavigationOrder: <array of size 5>
 AXHelp:
 AXParent: <AXTable>
 AXSize: NSSize: {84, 47}

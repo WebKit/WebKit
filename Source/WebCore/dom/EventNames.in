@@ -7,7 +7,7 @@ Events interfaceName=Event
 HTMLEvents interfaceName=Event
 AnimationEvent
 AnimationPlaybackEvent
-BeforeLoadEvent
+BeforeLoadEvent interfaceName=Event
 BeforeUnloadEvent
 ClipboardEvent
 CloseEvent
@@ -36,13 +36,13 @@ PageTransitionEvent
 PopStateEvent
 ProgressEvent
 PromiseRejectionEvent
+PushEvent conditional=SERVICE_WORKER
+PushSubscriptionChangeEvent conditional=SERVICE_WORKER
 SubmitEvent
 TextEvent
 TransitionEvent
 UIEvent
 UIEvents interfaceName=UIEvent
-WebKitAnimationEvent
-WebKitTransitionEvent
 WheelEvent
 XMLHttpRequestProgressEvent
 ApplePayCancelEvent conditional=APPLE_PAY
@@ -53,13 +53,14 @@ ApplePayShippingContactSelectedEvent conditional=APPLE_PAY
 ApplePayShippingMethodSelectedEvent conditional=APPLE_PAY
 ApplePayValidateMerchantEvent conditional=APPLE_PAY
 AudioProcessingEvent conditional=WEB_AUDIO
-BlobEvent conditional=MEDIA_STREAM
+BlobEvent conditional=MEDIA_RECORDER
 OfflineAudioCompletionEvent conditional=WEB_AUDIO
-MediaRecorderErrorEvent conditional=MEDIA_STREAM
+MediaRecorderErrorEvent conditional=MEDIA_RECORDER
 MediaStreamTrackEvent conditional=MEDIA_STREAM
 MerchantValidationEvent conditional=PAYMENT_REQUEST
 PaymentMethodChangeEvent conditional=PAYMENT_REQUEST
 PaymentRequestUpdateEvent conditional=PAYMENT_REQUEST
+RTCErrorEvent conditional=WEB_RTC
 RTCPeerConnectionIceErrorEvent conditional=WEB_RTC
 RTCPeerConnectionIceEvent conditional=WEB_RTC
 RTCDataChannelEvent conditional=WEB_RTC
@@ -96,3 +97,4 @@ XRInputSourceEvent conditional=WEBXR
 XRInputSourcesChangeEvent conditional=WEBXR
 XRReferenceSpaceEvent conditional=WEBXR
 XRSessionEvent conditional=WEBXR
+NotificationEvent conditional=NOTIFICATION_EVENT

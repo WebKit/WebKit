@@ -33,11 +33,8 @@
 
 namespace WebCore {
 
-WebSocketChannelInspector::WebSocketChannelInspector(Document& document)
-{
-    if (auto* page = document.page())
-        m_progressIdentifier = page->progress().createUniqueIdentifier();
-}
+WebSocketChannelInspector::WebSocketChannelInspector(Document&)
+    : m_progressIdentifier(WebSocketChannelIdentifier::generateThreadSafe()) { }
 
 void WebSocketChannelInspector::didCreateWebSocket(Document* document, const URL& url)
 {
@@ -95,7 +92,7 @@ void WebSocketChannelInspector::didReceiveWebSocketFrameError(Document* document
     InspectorInstrumentation::didReceiveWebSocketFrameError(document, m_progressIdentifier, errorMessage);
 }
 
-unsigned long WebSocketChannelInspector::progressIdentifier() const
+WebSocketChannelIdentifier WebSocketChannelInspector::progressIdentifier() const
 {
     return m_progressIdentifier;
 }

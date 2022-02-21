@@ -335,6 +335,56 @@
                 { "name": "delta", "$ref": "Size", "optional": true, "description": "For 'wheel' input sources, specifies a scroll delta."},
                 { "name": "duration", "type": "integer", "optional": true, "description": "The minimum number of milliseconds that must elapse while the relevant input source transitions to this state." }
             ]
+        },
+        {
+            "id": "AuthenticatorProtocol",
+            "type": "string",
+            "description": "This enum contains the different protocol types supported by virtual authenticators.",
+            "enum": [
+                "ctap1_u2f",
+                "ctap2",
+                "ctap2_1"
+            ]
+        },
+        {
+            "id": "AuthenticatorTransport",
+            "type": "string",
+            "description": "Authenticators may implement various transports for communicating with clients. This enumeration defines hints as to how clients might communicate with a particular authenticator in order to obtain an assertion for a specific credential.",
+            "enum": [
+                "usb",
+                "nfc",
+                "ble",
+                "internal"
+            ]
+        },
+        {
+            "id": "VirtualAuthenticatorCredential",
+            "type": "object",
+            "description": "A credential object used for virtual authenticators.",
+            "properties": [
+                { "name": "credentialId", "type": "string", "description": "The Credential ID encoded using Base64url Encoding."},
+                { "name": "isResidentCredential", "type": "boolean", "description": "If set to true, a client-side discoverable credential is created. If set to false, a server-side credential is created instead."},
+                { "name": "rpId", "type": "string", "description": "The Relying Party ID the credential is scoped to."},
+                { "name": "privateKey", "type": "string", "description": "An asymmetric key package containing a single private key per [RFC5958], encoded using Base64url Encoding." },
+                { "name": "userHandle", "type": "string", "optional": true, "description": "The userHandle associated to the credential encoded using Base64url Encoding. This property may not be defined." },
+                { "name": "signCount", "type": "integer", "description": "The initial value for a signature counter associated to the public key credential source." },
+                { "name": "largeBlob", "type": "string", "optional": true, "description": "The large, per-credential blob associated to the public key credential source, encoded using Base64url Encoding. This property may not be defined." }
+            ]
+        },
+        {
+            "id": "VirtualAuthenticatorConfiguration",
+            "type": "object",
+            "description": "Parameters used when creating a virtual authenticator",
+            "properties": [
+                { "name": "protocol", "$ref": "AuthenticatorProtocol", "description": "The protocol of the authenticator" },
+                { "name": "transport", "$ref": "AuthenticatorTransport", "description": "The transport of the protocol" },
+                { "name": "hasResidentKey", "type": "boolean", "optional": true, "description": "If the authenticator has a resident key" },
+                { "name": "hasUserVerification", "type": "boolean", "optional": true, "description": "If the authenticator supports user verification" },
+                { "name": "isUserConsenting", "type": "boolean", "optional": true, "description": "If the virtual authenticator should consent to requests"},
+                { "name": "isUserVerified", "type": "boolean", "optional": true, "description": "If user verification requests should succeeed"},
+                { "name": "extensions", "type": "array", "items": {"type": "string"}, "optional": true, "description": "An array containing extension identifiers" },
+                { "name": "uvm", "type": "array", "items": {"type": "integer"}, "optional": true, "description": "Up to 3 User Verification Method entries"}
+            ]
         }
     ],
     "commands": [
@@ -712,6 +762,71 @@
             "description": "Attempts to set the state of session permissions, which control whether privileged Web APIs can be used. Permissions that are not understood are ignored. Permissions are applied to all browsing contexts associated with the automation session.",
             "parameters": [
                 { "name": "permissions", "type": "array", "items": { "$ref": "SessionPermissionData" }, "description": "Array of session permissions to set, if they are available." }
+            ]
+        },
+        {
+            "name": "addVirtualAuthenticator",
+            "description": "Adds a virtual web authentication authenticator for the specified browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticator", "$ref": "VirtualAuthenticatorConfiguration", "description": "The configuration for the virtual authenticator to be created." }
+            ],
+            "returns": [
+                { "name": "authenticatorId", "type": "string", "description": "The authenticatorId of the created authenticator" }
+            ]
+        },
+        {
+            "name": "removeVirtualAuthenticator",
+            "description": "Removes a virtual web authentication authenticator for the specified browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to remove." }
+            ]
+        },
+        {
+            "name": "addVirtualAuthenticatorCredential",
+            "description": "Add a credential to a specified virutal authenticator for the specified browsing context",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to add the credential to." },
+                { "name": "credential", "$ref": "VirtualAuthenticatorCredential", "description": "The parameters of the credential to add." }
+            ]
+        },
+        {
+            "name": "getVirtualAuthenticatorCredentials",
+            "description": "Get all credentials for a given virtual authenticator for the specified browsing context",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to fetch all credentials for." }
+            ],
+            "returns": [
+                { "name": "credentials", "type": "array", "items": { "$ref": "VirtualAuthenticatorCredential" }, "description": "Array of credentials for given virtual authenticator" }
+            ]
+        },
+        {
+            "name": "removeVirtualAuthenticatorCredential",
+            "description": "Remove a credential from a virtual authenticator for the specified browsing context",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to fetch all credentials for." },
+                { "name": "credentialId", "type": "string", "description": "The credentialId of the credential to remove from the virtual authenticator"}
+            ]
+        },
+        {
+            "name": "removeAllVirtualAuthenticatorCredentials",
+            "description": "Remove all credentials from a given virtual authenticatior for the specified browsing context",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to fetch all credentials for." }
+            ]
+        },
+        {
+            "name": "setVirtualAuthenticatorUserVerified",
+            "description": "set isUserVerified property for a given virtual authenticator for the specified browsing context",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to fetch all credentials for." },
+                { "name": "isUserVerified", "type": "boolean", "description": "The isUserVerified value to set on the given virtual authenticator"}
             ]
         }
     ],

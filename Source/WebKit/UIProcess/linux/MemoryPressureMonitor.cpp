@@ -29,6 +29,7 @@
 #if OS(LINUX)
 
 #include "WebProcessPool.h"
+#include <mutex>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -387,6 +388,18 @@ void MemoryPressureMonitor::start()
             pollInterval = pollIntervalForUsedMemoryPercentage(usedPercentage);
         }
     })->detach();
+}
+
+bool MemoryPressureMonitor::s_disabled = false;
+
+bool MemoryPressureMonitor::disabled()
+{
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        auto envvar = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
+        s_disabled = envvar && !strcmp(envvar, "1");
+    });
+    return s_disabled;
 }
 
 void CGroupMemoryController::setMemoryControllerPath(CString memoryControllerPath)

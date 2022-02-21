@@ -47,8 +47,6 @@
 
     readonly attribute ApplePaySetupConfiguration setupConfiguration;
 
-    attribute boolean supportsUnrestrictedApplePay;
-
     [Conditional=APPLE_PAY_INSTALLMENTS] readonly attribute ApplePayInstallmentConfiguration installmentConfiguration;
 
     [Conditional=APPLE_PAY_COUPON_CODE] readonly attribute boolean? supportsCouponCode;

@@ -69,13 +69,13 @@ UniqueRef<AuthenticatorTransportService> AuthenticatorTransportService::createMo
 }
 
 AuthenticatorTransportService::AuthenticatorTransportService(Observer& observer)
-    : m_observer(makeWeakPtr(observer))
+    : m_observer(observer)
 {
 }
 
 void AuthenticatorTransportService::startDiscovery()
 {
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->startDiscoveryInternal();
@@ -84,7 +84,7 @@ void AuthenticatorTransportService::startDiscovery()
 
 void AuthenticatorTransportService::restartDiscovery()
 {
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->restartDiscoveryInternal();

@@ -26,12 +26,11 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import <wtf/RetainPtr.h>
-
-static bool isDone;
 
 TEST(WKWebView, ProvisionalURLNotChange)
 {

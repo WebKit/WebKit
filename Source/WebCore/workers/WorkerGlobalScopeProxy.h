@@ -44,7 +44,7 @@ class ScriptBuffer;
 class ScriptExecutionContext;
 class Worker;
 enum class ReferrerPolicy : uint8_t;
-enum class WorkerType : uint8_t;
+enum class WorkerType : bool;
 
 // A proxy to talk to the worker context.
 class WorkerGlobalScopeProxy {

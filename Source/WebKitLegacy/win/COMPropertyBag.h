@@ -230,7 +230,7 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::GetPrope
 }
 
 template<typename ValueType, typename KeyType, typename HashType>
-HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::LoadObject(_In_ LPCOLESTR pstrName, DWORD dwHint, _In_opt_ IUnknown*, _In_opt_ IErrorLog*)
+HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::LoadObject(_In_ LPCOLESTR pstrName, DWORD dwHint, _In_opt_ ::IUnknown*, _In_opt_ IErrorLog*)
 {
     return E_NOTIMPL;
 }

@@ -34,7 +34,6 @@ public:
     {
     }
 
-    SVGTextPositioningElement& textPositioningElement() const { return static_cast<SVGTextPositioningElement&>(RenderSVGInline::graphicsElement()); }
 
 private:
     void graphicsElement() const = delete;

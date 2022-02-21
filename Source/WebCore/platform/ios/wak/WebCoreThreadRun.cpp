@@ -109,7 +109,7 @@ private:
 
 extern "C" {
 
-typedef WTF::Vector<WebThreadBlock> WebThreadRunQueue;
+typedef Vector<WebThreadBlock> WebThreadRunQueue;
 
 static Lock runQueueMutex;
 static WebThreadRunQueue* runQueue;

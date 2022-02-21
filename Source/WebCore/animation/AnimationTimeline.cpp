@@ -48,7 +48,7 @@ void AnimationTimeline::animationTimingDidChange(WebAnimation& animation)
     updateGlobalPosition(animation);
 
     if (m_animations.add(&animation)) {
-        m_allAnimations.append(makeWeakPtr(&animation));
+        m_allAnimations.append(animation);
         auto* timeline = animation.timeline();
         if (timeline && timeline != this)
             timeline->removeAnimation(animation);

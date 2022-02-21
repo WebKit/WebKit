@@ -34,6 +34,7 @@
 #include "NotImplemented.h"
 #include "RTCDtlsTransportBackend.h"
 #include "RTCIceTransport.h"
+#include "RTCPeerConnection.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -41,12 +42,18 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCDtlsTransport);
 
+Ref<RTCDtlsTransport> RTCDtlsTransport::create(ScriptExecutionContext& context, UniqueRef<RTCDtlsTransportBackend>&& backend, Ref<RTCIceTransport>&& iceTransport)
+{
+    auto result = adoptRef(*new RTCDtlsTransport(context, WTFMove(backend), WTFMove(iceTransport)));
+    result->suspendIfNeeded();
+    return result;
+}
+
 RTCDtlsTransport::RTCDtlsTransport(ScriptExecutionContext& context, UniqueRef<RTCDtlsTransportBackend>&& backend, Ref<RTCIceTransport>&& iceTransport)
     : ActiveDOMObject(&context)
     , m_backend(WTFMove(backend))
     , m_iceTransport(WTFMove(iceTransport))
 {
-    suspendIfNeeded();
     m_backend->registerClient(*this);
 }
 
@@ -81,6 +88,8 @@ void RTCDtlsTransport::onStateChanged(RTCDtlsTransportState state, Vector<Ref<JS
 
         if (m_state != state) {
             m_state = state;
+            if (auto* connection = m_iceTransport->connection())
+                connection->updateConnectionState();
             dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
         }
     });

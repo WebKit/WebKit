@@ -29,8 +29,10 @@
 #include "config.h"
 #include "AccessibilitySVGRoot.h"
 
+#include "ElementInlines.h"
 #include "RenderObject.h"
 #include "SVGDescElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGTitleElement.h"
 #include "TypedElementDescendantIterator.h"
 
@@ -50,7 +52,7 @@ Ref<AccessibilitySVGRoot> AccessibilitySVGRoot::create(RenderObject* renderer)
 
 void AccessibilitySVGRoot::setParent(AccessibilityRenderObject* parent)
 {
-    m_parent = makeWeakPtr(parent);
+    m_parent = parent;
 }
     
 AccessibilityObject* AccessibilitySVGRoot::parentObject() const

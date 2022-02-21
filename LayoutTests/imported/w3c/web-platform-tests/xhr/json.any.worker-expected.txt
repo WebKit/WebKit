@@ -1,0 +1,4 @@
+
+PASS Ensure the correct JSON parser is used
+FAIL Ensure UTF-16 results in an error assert_equals: expected null but got object "[object Object]"
+

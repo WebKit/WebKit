@@ -9,10 +9,12 @@ navigator.contacts is OK
 navigator.cookieEnabled is OK
 navigator.credentials is OK
 navigator.getStorageUpdates() is OK
+navigator.hardwareConcurrency is OK
 navigator.isLoggedIn() is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.languages is OK
+navigator.locks is OK
 navigator.maxTouchPoints is OK
 navigator.mediaCapabilities is OK
 navigator.mediaSession is OK
@@ -29,6 +31,7 @@ navigator.serviceWorker is OK
 navigator.setLoggedIn() is OK
 navigator.setLoggedOut() is OK
 navigator.share() is OK
+navigator.storage is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
@@ -43,10 +46,12 @@ navigator.contacts is OK
 navigator.cookieEnabled is OK
 navigator.credentials is OK
 navigator.getStorageUpdates() is OK
+navigator.hardwareConcurrency is OK
 navigator.isLoggedIn() is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.languages is OK
+navigator.locks is OK
 navigator.maxTouchPoints is OK
 navigator.mediaCapabilities is OK
 navigator.mediaSession is OK
@@ -63,6 +68,7 @@ navigator.serviceWorker is OK
 navigator.setLoggedIn() is OK
 navigator.setLoggedOut() is OK
 navigator.share() is OK
+navigator.storage is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK

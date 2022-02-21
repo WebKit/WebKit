@@ -39,7 +39,9 @@ namespace WebCore {
 
 Ref<WorkerAnimationController> WorkerAnimationController::create(WorkerGlobalScope& workerGlobalScope)
 {
-    return adoptRef(*new WorkerAnimationController(workerGlobalScope));
+    auto controller = adoptRef(*new WorkerAnimationController(workerGlobalScope));
+    controller->suspendIfNeeded();
+    return controller;
 }
 
 WorkerAnimationController::WorkerAnimationController(WorkerGlobalScope& workerGlobalScope)
@@ -47,7 +49,6 @@ WorkerAnimationController::WorkerAnimationController(WorkerGlobalScope& workerGl
     , m_workerGlobalScope(workerGlobalScope)
     , m_animationTimer(*this, &WorkerAnimationController::animationTimerFired)
 {
-    suspendIfNeeded();
 }
 
 WorkerAnimationController::~WorkerAnimationController()
@@ -111,9 +112,6 @@ void WorkerAnimationController::cancelAnimationFrame(CallbackId callbackId)
 
 void WorkerAnimationController::scheduleAnimation()
 {
-    if (!m_workerGlobalScope.settingsValues().requestAnimationFrameEnabled)
-        return;
-
     if (m_animationTimer.isActive())
         return;
 
@@ -131,7 +129,7 @@ void WorkerAnimationController::animationTimerFired()
 
 void WorkerAnimationController::serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp)
 {
-    if (!m_animationCallbacks.size() || !m_workerGlobalScope.settingsValues().requestAnimationFrameEnabled)
+    if (!m_animationCallbacks.size())
         return;
 
     // First, generate a list of callbacks to consider. Callbacks registered from this point

@@ -36,7 +36,7 @@ if (ENABLE_INTROSPECTION)
     )
 endif ()
 
-add_definitions(-DJSC_COMPILATION)
+list(APPEND JavaScriptCore_PRIVATE_DEFINITIONS JSC_COMPILATION)
 
 list(APPEND JavaScriptCore_LIBRARIES
     ${GLIB_LIBRARIES}

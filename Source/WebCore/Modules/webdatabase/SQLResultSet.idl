@@ -27,8 +27,7 @@
  */
 
 [
-    ImplementationLacksVTable,
-    EnabledAtRuntime=WebSQL,
+    EnabledAtRuntime=WebSQLEnabled,
     Exposed=Window
 ] interface SQLResultSet {
     readonly attribute SQLResultSetRowList rows;

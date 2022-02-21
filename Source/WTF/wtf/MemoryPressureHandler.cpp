@@ -264,18 +264,19 @@ void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchro
     platformReleaseMemory(critical);
 }
 
-void MemoryPressureHandler::setUnderMemoryPressure(bool underMemoryPressure)
+void MemoryPressureHandler::setMemoryPressureStatus(MemoryPressureStatus memoryPressureStatus)
 {
-    if (m_underMemoryPressure == underMemoryPressure)
+    if (m_memoryPressureStatus == memoryPressureStatus)
         return;
-    m_underMemoryPressure = underMemoryPressure;
+
+    m_memoryPressureStatus = memoryPressureStatus;
     memoryPressureStatusChanged();
 }
 
 void MemoryPressureHandler::memoryPressureStatusChanged()
 {
     if (m_memoryPressureStatusChangedCallback)
-        m_memoryPressureStatusChangedCallback(isUnderMemoryPressure());
+        m_memoryPressureStatusChangedCallback(m_memoryPressureStatus);
 }
 
 void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()

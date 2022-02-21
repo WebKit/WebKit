@@ -44,7 +44,13 @@ public:
         Compiled,
     };
 
-    LLIntTierUpCounter()
+    struct OSREntryData {
+        uint32_t loopIndex;
+        Vector<VirtualRegister> values;
+    };
+
+    LLIntTierUpCounter(HashMap<InstructionStream::Offset, OSREntryData>&& osrEntryData)
+        : m_osrEntryData(WTFMove(osrEntryData))
     {
         optimizeAfterWarmUp();
     }
@@ -52,9 +58,9 @@ public:
     void optimizeAfterWarmUp()
     {
         if (Options::wasmLLIntTiersUpToBBQ())
-            setNewThreshold(Options::thresholdForBBQOptimizeAfterWarmUp(), nullptr);
+            setNewThreshold(Options::thresholdForBBQOptimizeAfterWarmUp());
         else
-            setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp(), nullptr);
+            setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp());
     }
 
     bool checkIfOptimizationThresholdReached()
@@ -65,15 +71,10 @@ public:
     void optimizeSoon()
     {
         if (Options::wasmLLIntTiersUpToBBQ())
-            setNewThreshold(Options::thresholdForBBQOptimizeSoon(), nullptr);
+            setNewThreshold(Options::thresholdForBBQOptimizeSoon());
         else
-            setNewThreshold(Options::thresholdForOMGOptimizeSoon(), nullptr);
+            setNewThreshold(Options::thresholdForOMGOptimizeSoon());
     }
-
-    struct OSREntryData {
-        uint32_t loopIndex;
-        Vector<VirtualRegister> values;
-    };
 
     void addOSREntryDataForLoop(InstructionStream::Offset, OSREntryData&&);
 

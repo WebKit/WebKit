@@ -41,9 +41,11 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKInternalDebugFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 
@@ -150,14 +152,21 @@ bool waitUntilCaptureState(WKWebView *webView, _WKMediaCaptureStateDeprecated ex
     return false;
 }
 
+static void initializeMediaCaptureConfiguration(WKWebViewConfiguration* configuration)
+{
+    auto preferences = [configuration preferences];
+
+    configuration._mediaCaptureEnabled = YES;
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._mockCaptureDevicesEnabled = YES;
+    preferences._getUserMediaRequiresFocus = NO;
+}
+
 void doCaptureMuteTest(const Function<void(TestWKWebView*, _WKMediaMutedState)>& setPageMuted)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    auto preferences = [configuration preferences];
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
@@ -233,10 +242,7 @@ TEST(WebKit2, CaptureMuteAPI)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    auto preferences = [configuration preferences];
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
@@ -338,10 +344,7 @@ TEST(WebKit2, CaptureStop)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    auto preferences = [configuration preferences];
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
 
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
@@ -376,10 +379,7 @@ TEST(WebKit2, CaptureIndicatorDelay)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    auto preferences = [configuration preferences];
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
 
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
@@ -393,7 +393,10 @@ TEST(WebKit2, CaptureIndicatorDelay)
     [webView loadTestPageNamed:@"getUserMedia"];
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
-    [delegate waitUntilPrompted];
+    int retryCount = 1000;
+    while (--retryCount && ![webView stringByEvaluatingJavaScript:@"haveStream()"].boolValue)
+        TestWebKitAPI::Util::spinRunLoop(10);
+    EXPECT_TRUE(!!retryCount);
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
 
@@ -409,10 +412,7 @@ TEST(WebKit2, CaptureIndicatorDelayWhenClosed)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    auto preferences = [configuration preferences];
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
 
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
@@ -437,10 +437,7 @@ TEST(WebKit2, GetCapabilities)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    auto preferences = [configuration preferences];
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
 
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
@@ -468,10 +465,7 @@ TEST(WebKit, InterruptionBetweenSameProcessPages)
     [configuration setAllowsInlineMediaPlayback:YES];
 #endif
 
-    auto preferences = [configuration preferences];
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
 
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
@@ -527,10 +521,7 @@ TEST(WebKit, PermissionDelegateParameters)
     [configuration setAllowsInlineMediaPlayback:YES];
 #endif
 
-    auto preferences = [configuration preferences];
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
 
     done = false;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
@@ -550,10 +541,7 @@ TEST(WebKit, WebAudioAndGetUserMedia)
     configuration.get().processPool = (WKProcessPool *)context.get();
     configuration.get().processPool._configuration.shouldCaptureAudioInUIProcess = NO;
 
-    auto preferences = [configuration preferences];
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
 
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
@@ -586,9 +574,7 @@ TEST(WebKit2, CrashGPUProcessWhileCapturing)
             [preferences _setEnabled:YES forInternalDebugFeature:feature];
     }
 
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
 
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
@@ -661,9 +647,7 @@ TEST(WebKit2, CrashGPUProcessAfterApplyingConstraints)
         if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
             [preferences _setEnabled:YES forInternalDebugFeature:feature];
     }
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
 
 #if PLATFORM(IOS_FAMILY)
     [configuration setAllowsInlineMediaPlayback:YES];
@@ -741,9 +725,7 @@ TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
             [preferences _setEnabled:YES forFeature:feature];
     }
 
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
 
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
@@ -862,10 +844,7 @@ TEST(WebKit, AutoplayOnVisibilityChange)
     auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
 
-    auto preferences = [configuration preferences];
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    configuration.get()._mediaCaptureEnabled = YES;
-    preferences._mockCaptureDevicesEnabled = YES;
+    initializeMediaCaptureConfiguration(configuration.get());
 
     done = false;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
@@ -893,7 +872,190 @@ TEST(WebKit, AutoplayOnVisibilityChange)
     [webView stringByEvaluatingJavaScript:@"doTest()"];
     TestWebKitAPI::Util::run(&done);
 }
+
+static const char* getUserMediaFocusText = R"DOCDOCDOC(
+<html><body>
+<script>
+onload = () => {
+    document.onvisibilitychange = () => window.webkit.messageHandlers.gum.postMessage("PASS");
+    window.webkit.messageHandlers.gum.postMessage("PASS");
+}
+
+function capture()
+{
+    navigator.mediaDevices.getUserMedia({video : true}).then(stream => {
+        window.webkit.messageHandlers.gum.postMessage(document.hasFocus() ? "PASS" : "FAIL");
+    });
+}
+</script>
+</body></html>
+)DOCDOCDOC";
+
+TEST(WebKit, GetUserMediaFocus)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/", { getUserMediaFocusText } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 9090);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    initializeMediaCaptureConfiguration(configuration.get());
+    auto preferences = [configuration preferences];
+    preferences._getUserMediaRequiresFocus = YES;
+
+    done = false;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    webView.get().UIDelegate = delegate.get();
+
+    // Load page.
+    [webView loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&done);
+
+    // Minimize
+    done = false;
+    auto *hostWindow = [webView hostWindow];
+    [hostWindow miniaturize:hostWindow];
+    TestWebKitAPI::Util::run(&done);
+
+    // We call capture while minimizing.
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"capture()"];
+
+    // Make sure that getUserMedia does not resolve too soon.
+    TestWebKitAPI::Util::spinRunLoop(100);
+    EXPECT_FALSE(done);
+
+    [hostWindow deminiaturize:hostWindow];
+    TestWebKitAPI::Util::run(&done);
+}
 #endif // PLATFORM(MAC)
+
+TEST(WebKit, InvalidDeviceIdHashSalts)
+{
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"InvalidDeviceIdHashSaltsPathsTest"] isDirectory:YES];
+    NSURL *hashSaltLocation = [tempDir URLByAppendingPathComponent:@"1"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager createDirectoryAtURL:hashSaltLocation withIntermediateDirectories:YES attributes:nil error:nil];
+
+    NSString *fileName = @"CBF3087F32B7E19D13F683C9973060819F869CA9298B405E";
+    NSURL *filePath = [hashSaltLocation URLByAppendingPathComponent:fileName];
+
+    // Prepare invalid data.
+    if ([fileManager fileExistsAtPath:filePath.path])
+        [fileManager removeItemAtPath:filePath.path error:nil];
+    auto *fileData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"invalidDeviceIDHashSalts" withExtension:@"" subdirectory:@"TestWebKitAPI.resources"]];
+    EXPECT_TRUE([fileManager createFileAtPath:filePath.path contents:fileData attributes: nil]);
+    while (![fileManager fileExistsAtPath:filePath.path])
+        Util::spinRunLoop();
+
+    // Prepare web view to use the invalid data
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [websiteDataStoreConfiguration setDeviceIdHashSaltsStorageDirectory:tempDir];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
+    initializeMediaCaptureConfiguration(configuration.get());
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    // Wait for invalid data to be loaded.
+    [webView loadTestPageNamed:@"getUserMedia"];
+    [delegate waitUntilPrompted];
+}
+
+
+static _WKExperimentalFeature *permissionsAPIEnabledExperimentalFeature()
+{
+    static RetainPtr<_WKExperimentalFeature> theFeature;
+    if (theFeature)
+        return theFeature.get();
+
+    NSArray *features = [WKPreferences _experimentalFeatures];
+    for (_WKExperimentalFeature *feature in features) {
+        if ([feature.key isEqual:@"PermissionsAPIEnabled"]) {
+            theFeature = feature;
+            break;
+        }
+    }
+    return theFeature.get();
+}
+
+TEST(WebKit2, CapturePermission)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    initializeMediaCaptureConfiguration(configuration.get());
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:permissionsAPIEnabledExperimentalFeature()];
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView loadTestPageNamed:@"getUserMediaPermission"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [delegate setAudioDecision:WKPermissionDecisionPrompt];
+    [delegate setVideoDecision:WKPermissionDecisionPrompt];
+    [webView stringByEvaluatingJavaScript:@"checkPermission('microphone', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView stringByEvaluatingJavaScript:@"checkPermission('camera', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [delegate setAudioDecision:WKPermissionDecisionGrant];
+    [delegate setVideoDecision:WKPermissionDecisionGrant];
+    [webView stringByEvaluatingJavaScript:@"checkPermission('microphone', 'granted')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkPermission('camera', 'granted')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Although Deny, we expect prompt is exposed since we do not trust the page to call getUserMedia.
+    [delegate setAudioDecision:WKPermissionDecisionDeny];
+    [delegate setVideoDecision:WKPermissionDecisionDeny];
+    [webView stringByEvaluatingJavaScript:@"checkPermission('microphone', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkPermission('camera', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Now that we getUserMedia has been called, we can go with deny.
+    [webView stringByEvaluatingJavaScript:@"captureVideo()"];
+    [delegate waitUntilPrompted];
+    [webView stringByEvaluatingJavaScript:@"checkPermission('microphone', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkPermission('camera', 'denied')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView stringByEvaluatingJavaScript:@"captureAudio()"];
+    [delegate waitUntilPrompted];
+    [webView stringByEvaluatingJavaScript:@"checkPermission('microphone', 'denied')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkPermission('camera', 'denied')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
 
 } // namespace TestWebKitAPI
 

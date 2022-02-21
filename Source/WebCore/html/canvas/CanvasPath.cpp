@@ -145,7 +145,7 @@ static void normalizeAngles(float& startAngle, float& endAngle, bool anticlockwi
     float delta = newStartAngle - startAngle;
     startAngle = newStartAngle;
     endAngle = endAngle + delta;
-    ASSERT(newStartAngle >= 0 && newStartAngle < 2 * piFloat);
+    ASSERT(newStartAngle >= 0 && (newStartAngle < 2 * piFloat || WTF::areEssentiallyEqual<float>(newStartAngle, 2 * piFloat)));
 
     if (anticlockwise && startAngle - endAngle >= 2 * piFloat)
         endAngle = startAngle - 2 * piFloat;

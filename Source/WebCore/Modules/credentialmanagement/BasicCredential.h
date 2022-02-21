@@ -53,6 +53,8 @@ public:
     String type() const;
     Discovery discovery() const { return m_discovery; }
 
+    static void isConditionalMediationAvailable(Document&, DOMPromiseDeferred<IDLBoolean>&&);
+
 private:
     String m_id;
     Type m_type;

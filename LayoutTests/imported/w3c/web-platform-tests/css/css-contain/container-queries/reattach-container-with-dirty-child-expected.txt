@@ -1,0 +1,5 @@
+XXX
+
+PASS Initially wider than 200px
+PASS Container query changed and inner.style applied
+

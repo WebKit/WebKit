@@ -41,7 +41,7 @@
 - (instancetype)initWithConnection:(WebKit::NfcConnection&)connection
 {
     if ((self = [super init]))
-        _connection = makeWeakPtr(connection);
+        _connection = connection;
     return self;
 }
 

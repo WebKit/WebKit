@@ -73,7 +73,7 @@ void CryptoAlgorithmPBKDF2::importKey(CryptoKeyFormat format, KeyData&& data, co
         return;
     }
 
-    callback(CryptoKeyRaw::create(parameters.identifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), usages));
+    callback(CryptoKeyRaw::create(parameters.identifier, WTFMove(std::get<Vector<uint8_t>>(data)), usages));
 }
 
 ExceptionOr<size_t> CryptoAlgorithmPBKDF2::getKeyLength(const CryptoAlgorithmParameters&)

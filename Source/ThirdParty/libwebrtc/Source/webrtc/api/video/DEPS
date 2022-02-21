@@ -40,4 +40,8 @@ specific_include_rules = {
   "video_stream_encoder_create.cc": [
     "+video/video_stream_encoder.h",
   ],
+
+  "rtp_video_frame_assembler.h": [
+    "+modules/rtp_rtcp/source/rtp_packet_received.h",
+  ],
 }

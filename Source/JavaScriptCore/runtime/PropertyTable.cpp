@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PropertyMapHashTable.h"
+#include "PropertyTable.h"
 
 #include "JSCJSValueInlines.h"
 
@@ -36,21 +36,21 @@ const ClassInfo PropertyTable::s_info = { "PropertyTable", nullptr, nullptr, nul
 
 PropertyTable* PropertyTable::create(VM& vm, unsigned initialCapacity)
 {
-    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm.heap)) PropertyTable(vm, initialCapacity);
+    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm)) PropertyTable(vm, initialCapacity);
     table->finishCreation(vm);
     return table;
 }
 
 PropertyTable* PropertyTable::clone(VM& vm, const PropertyTable& other)
 {
-    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm.heap)) PropertyTable(vm, other);
+    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm)) PropertyTable(vm, other);
     table->finishCreation(vm);
     return table;
 }
 
 PropertyTable* PropertyTable::clone(VM& vm, unsigned initialCapacity, const PropertyTable& other)
 {
-    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm.heap)) PropertyTable(vm, initialCapacity, other);
+    PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm)) PropertyTable(vm, initialCapacity, other);
     table->finishCreation(vm);
     return table;
 }

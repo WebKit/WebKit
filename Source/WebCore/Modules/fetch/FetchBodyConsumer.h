@@ -29,8 +29,10 @@
 #pragma once
 
 #include "FetchBodySource.h"
+#include "FormDataConsumer.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ReadableStreamSink.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "SharedBuffer.h"
 #include "UserGestureIndicator.h"
 
@@ -39,6 +41,7 @@ namespace WebCore {
 class Blob;
 class DOMFormData;
 class FetchBodySource;
+class FormData;
 class ReadableStream;
 
 class FetchBodyConsumer {
@@ -47,13 +50,15 @@ public:
 
     explicit FetchBodyConsumer(Type type) : m_type(type) { }
 
-    void append(const uint8_t* data, unsigned);
+    FetchBodyConsumer clone();
+
+    void append(const SharedBuffer&);
 
     bool hasData() const { return !!m_buffer; }
-    const SharedBuffer* data() const { return m_buffer.get(); }
-    void setData(Ref<SharedBuffer>&& data) { m_buffer = WTFMove(data); }
+    const FragmentedSharedBuffer* data() const { return m_buffer.get().get(); }
+    void setData(Ref<FragmentedSharedBuffer>&&);
 
-    RefPtr<SharedBuffer> takeData();
+    RefPtr<FragmentedSharedBuffer> takeData();
     RefPtr<JSC::ArrayBuffer> takeAsArrayBuffer();
     String takeAsText();
 
@@ -65,6 +70,8 @@ public:
     void extract(ReadableStream&, ReadableStreamToSharedBufferSink::Callback&&);
     void resolve(Ref<DeferredPromise>&&, const String& contentType, ReadableStream*);
     void resolveWithData(Ref<DeferredPromise>&&, const String& contentType, const unsigned char*, unsigned);
+    void resolveWithFormData(Ref<DeferredPromise>&&, const String& contentType, const FormData&, ScriptExecutionContext*);
+    void consumeFormDataAsStream(const FormData&, FetchBodySource&, ScriptExecutionContext*);
 
     void loadingFailed(const Exception&);
     void loadingSucceeded(const String& contentType);
@@ -82,12 +89,13 @@ private:
 
     Type m_type;
     String m_contentType;
-    RefPtr<SharedBuffer> m_buffer;
+    SharedBufferBuilder m_buffer;
     RefPtr<DeferredPromise> m_consumePromise;
     RefPtr<ReadableStreamToSharedBufferSink> m_sink;
     RefPtr<FetchBodySource> m_source;
     bool m_isLoading { false };
     RefPtr<UserGestureToken> m_userGestureToken;
+    std::unique_ptr<FormDataConsumer> m_formDataConsumer;
 };
 
 } // namespace WebCore

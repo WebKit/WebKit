@@ -345,4 +345,11 @@
   CVPixelBufferUnlockBaseAddress(outputPixelBuffer, 0);
 }
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+- (void)close {
+    CVBufferRelease(_pixelBuffer);
+    _pixelBuffer = nil;
+}
+#endif
+
 @end

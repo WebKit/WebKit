@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:49001/echo-query?%C3%A5' failed: WebSocket is closed before the connection is established.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=d6ee874b-a162-41cc-b22f-5ab9030f5cf9' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=96e0db0a-ac82-483f-b68d-c8074d6fce5b' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=f6e87bbb-a25a-4dd1-9321-22fc0ad31a2a' because non CSS MIME types are not allowed in strict mode.
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=3283dc28-d7a4-4f0b-ae55-4c0b4e136c85' because non CSS MIME types are not allowed in strict mode.
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=ba150eb8-2b9f-47d0-a7b4-2ef8adb5f947' because non CSS MIME types are not allowed in strict mode.
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=d7967ae9-19f3-488d-9036-e2935d95cef1' because non CSS MIME types are not allowed in strict mode.
 CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
@@ -19,36 +19,43 @@ TIMEOUT loading image <embed src> Test timed out
 TIMEOUT loading image <object data> Test timed out
 PASS loading image <input src>
 PASS loading image <video poster>
-TIMEOUT loading video <video> Test timed out
-TIMEOUT loading video <video><source> Test timed out
-TIMEOUT loading video <audio> Test timed out
-TIMEOUT loading video <audio><source> Test timed out
+PASS loading video <video>
+PASS loading video <video><source>
+PASS loading video <audio>
+PASS loading video <audio><source>
 PASS loading webvtt <track>
 PASS submit form <form action>
 PASS submit form <input formaction>
 PASS submit form <button formaction>
 FAIL <base href> assert_true: expected substring %E5 got http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/resource.py?q=%C3%A5&encoding=windows-1252&type= expected true got false
 PASS Worker constructor
-FAIL SharedWorker constructor Can't find variable: SharedWorker
+FAIL SharedWorker constructor null is not an object (evaluating 'worker.port.onmessage = this.step_func_done(function(e) {
+      assert_equals(e.data, expected_current);
+    })')
 PASS EventSource constructor
 PASS EventSource#url
-FAIL XMLDocument#load() doc.load is not a function. (In 'doc.load(input_url_svg)', 'doc.load' is undefined)
 PASS window.open()
 FAIL <a>.search assert_true: href content attribute expected substring %E5 got http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/resource.py?q=%C3%A5&encoding=windows-1252&type=html expected true got false
 FAIL <area>.search assert_true: href content attribute expected substring %E5 got http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/resource.py?q=%C3%A5&encoding=windows-1252&type=html expected true got false
 FAIL history.pushState assert_equals: url was resolved against the iframe's URL instead of the settings object's API base URL expected -1 but got 76
 FAIL history.replaceState assert_equals: url was resolved against the iframe's URL instead of the settings object's API base URL expected -1 but got 76
 PASS SVG <a>
-TIMEOUT SVG <feImage>
+TIMEOUT SVG <feImage> Test timed out
 FAIL SVG <image> assert_equals: expected "%E5" but got "%C3%A5"
 PASS SVG <use>
 FAIL XMLHttpRequest#open() assert_equals: expected "%C3%A5" but got "%E5"
 PASS importScripts() in a dedicated worker
 FAIL Worker() in a dedicated worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: Worker"
 FAIL SharedWorker() in a dedicated worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: SharedWorker"
-FAIL importScripts() in a shared worker Can't find variable: SharedWorker
-FAIL Worker() in a shared worker Can't find variable: SharedWorker
-FAIL SharedWorker() in a shared worker Can't find variable: SharedWorker
+FAIL importScripts() in a shared worker null is not an object (evaluating 'worker.port.onmessage = this.step_func_done(function(e) {
+      assert_equals(e.data, expected_utf8);
+    })')
+FAIL Worker() in a shared worker null is not an object (evaluating 'worker.port.onmessage = this.step_func_done(function(e) {
+      assert_equals(e.data, expected_utf8);
+    })')
+FAIL SharedWorker() in a shared worker null is not an object (evaluating 'worker.port.onmessage = this.step_func_done(function(e) {
+      assert_equals(e.data, expected_utf8);
+    })')
 PASS WebSocket constructor
 PASS WebSocket#url
 PASS Parsing cache manifest (CACHE)
@@ -80,7 +87,7 @@ PASS URL constructor, url
 PASS URL constructor, base
 PASS Scheme ftp (getting <a>.href)
 PASS Scheme file (getting <a>.href)
-PASS Scheme gopher (getting <a>.href)
+FAIL Scheme gopher (getting <a>.href) assert_true: expected substring %E5 got gopher://example.invalid/?x=%C3%A5 expected true got false
 PASS Scheme http (getting <a>.href)
 PASS Scheme https (getting <a>.href)
 PASS Scheme ws (getting <a>.href)

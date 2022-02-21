@@ -49,6 +49,16 @@ void forEachLargeSharingPoolNode(function<bool(pas_large_sharing_node*)> visitor
     pas_large_sharing_pool_for_each(forEachAdapter, &visitor, pas_lock_is_not_held);
 }
 
+vector<pas_large_sharing_node*> largeSharingPoolAsVector()
+{
+    vector<pas_large_sharing_node*> result;
+    forEachLargeSharingPoolNode([&] (pas_large_sharing_node* node) -> bool {
+        result.push_back(node);
+        return true;
+    });
+    return result;
+}
+
 void dumpLargeSharingPool()
 {
     cout << "Large sharing pool:\n";

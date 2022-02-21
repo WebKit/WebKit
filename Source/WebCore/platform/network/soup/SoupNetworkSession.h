@@ -59,7 +59,7 @@ public:
 
     static void clearOldSoupCache(const String& cacheDirectory);
 
-    void setProxySettings(SoupNetworkProxySettings&&);
+    void setProxySettings(const SoupNetworkProxySettings&);
 
     static void setInitialAcceptLanguages(const CString&);
     void setAcceptLanguages(const CString&);

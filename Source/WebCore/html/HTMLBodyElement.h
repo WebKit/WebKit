@@ -51,8 +51,6 @@ private:
     bool supportsFocus() const final;
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
-
-    static EventHandlerNameMap createWindowEventHandlerNameMap();
 };
 
 } //namespace

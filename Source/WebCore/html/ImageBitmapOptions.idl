@@ -29,7 +29,7 @@ enum ColorSpaceConversion { "none", "default" };
 enum ResizeQuality { "pixelated", "low", "medium", "high" };
 
 dictionary ImageBitmapOptions {
-    ImageOrientation imageOrientation = "none";
+    [ImplementedAs=orientation] ImageOrientation imageOrientation = "none";
     PremultiplyAlpha premultiplyAlpha = "default";
     ColorSpaceConversion colorSpaceConversion = "default";
     [EnforceRange] unsigned long resizeWidth;

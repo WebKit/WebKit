@@ -6,11 +6,15 @@ info: The Date.prototype property "constructor" has { DontEnum } attributes
 esid: sec-date.prototype.constructor
 description: Checking absence of DontDelete attribute
 ---*/
+assert.notSameValue(
+  delete Date.prototype.constructor,
+  false,
+  'The value of delete Date.prototype.constructor is not false'
+);
 
-if (delete Date.prototype.constructor === false) {
-  throw new Test262Error('#1: The Date.prototype.constructor property has not the attributes DontDelete');
-}
+assert(
+  !Date.prototype.hasOwnProperty('constructor'),
+  'The value of !Date.prototype.hasOwnProperty(\'constructor\') is expected to be true'
+);
 
-if (Date.prototype.hasOwnProperty('constructor')) {
-  throw new Test262Error('#2: The Date.prototype.constructor property has not the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

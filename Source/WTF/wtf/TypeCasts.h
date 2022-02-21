@@ -88,6 +88,21 @@ inline match_constness_t<Source, Target>* downcast(Source* source)
     return static_cast<match_constness_t<Source, Target>*>(source);
 }
 
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>* dynamicDowncast(Source& source)
+{
+    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    return is<Target>(source) ? &static_cast<match_constness_t<Source, Target>&>(source) : nullptr;
+}
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>* dynamicDowncast(Source* source)
+{
+    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    return is<Target>(source) ? static_cast<match_constness_t<Source, Target>*>(source) : nullptr;
+}
+
 // Add support for type checking / casting using is<>() / downcast<>() helpers for a specific class.
 #define SPECIALIZE_TYPE_TRAITS_BEGIN(ClassName) \
 namespace WTF { \
@@ -101,8 +116,23 @@ private:
 }; \
 }
 
+// Explicit specialization for C++ standard library types.
+
+template<typename ExpectedType, typename ArgType, typename Deleter>
+inline bool is(std::unique_ptr<ArgType, Deleter>& source)
+{
+    return is<ExpectedType>(source.get());
+}
+
+template<typename ExpectedType, typename ArgType, typename Deleter>
+inline bool is(const std::unique_ptr<ArgType, Deleter>& source)
+{
+    return is<ExpectedType>(source.get());
+}
+
 } // namespace WTF
 
 using WTF::TypeCastTraits;
 using WTF::is;
 using WTF::downcast;
+using WTF::dynamicDowncast;

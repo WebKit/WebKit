@@ -39,7 +39,7 @@ class RtcEventLog;
 
 class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
  public:
-  // The |hold_back_window| parameter sets a lower bound on time to sleep if
+  // The `hold_back_window` parameter sets a lower bound on time to sleep if
   // there is currently a pacer queue and packets can't immediately be
   // processed. Increasing this reduces thread wakeups at the expense of higher
   // latency.
@@ -136,7 +136,7 @@ class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
   PacingController pacing_controller_ RTC_GUARDED_BY(task_queue_);
 
   // We want only one (valid) delayed process task in flight at a time.
-  // If the value of |next_process_time_| is finite, it is an id for a
+  // If the value of `next_process_time_` is finite, it is an id for a
   // delayed task that will call MaybeProcessPackets() with that time
   // as parameter.
   // Timestamp::MinusInfinity() indicates no valid pending task.
@@ -144,7 +144,7 @@ class TaskQueuePacedSender : public RtpPacketPacer, public RtpPacketSender {
 
   // Since we don't want to support synchronous calls that wait for a
   // task execution, we poll the stats at some interval and update
-  // |current_stats_|, which can in turn be polled at any time.
+  // `current_stats_`, which can in turn be polled at any time.
 
   // True iff there is delayed task in flight that that will call
   // UdpateStats().

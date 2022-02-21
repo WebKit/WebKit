@@ -38,7 +38,7 @@ class GeolocationClient {
 public:
     virtual void geolocationDestroyed() = 0;
 
-    virtual void startUpdating(const String& authorizationToken) = 0;
+    virtual void startUpdating(const String& authorizationToken, bool needsHighAccuracy) = 0;
     virtual void stopUpdating() = 0;
     virtual void revokeAuthorizationToken(const String&) { }
 

@@ -140,7 +140,7 @@ void Connection::readEventHandler()
 
         if (!m_readBuffer.isEmpty()) {
             // We have a message, let's dispatch it.
-            auto decoder = Decoder::create(m_readBuffer.data(), m_readBuffer.size(), nullptr, { });
+            auto decoder = Decoder::create(m_readBuffer.data(), m_readBuffer.size(), { });
             ASSERT(decoder);
             if (!decoder)
                 return;
@@ -233,14 +233,14 @@ void Connection::writeEventHandler()
 
 void Connection::invokeReadEventHandler()
 {
-    m_connectionQueue->dispatch([this, protectedThis = makeRef(*this)] {
+    m_connectionQueue->dispatch([this, protectedThis = Ref { *this }] {
         readEventHandler();
     });
 }
 
 void Connection::invokeWriteEventHandler()
 {
-    m_connectionQueue->dispatch([this, protectedThis = makeRef(*this)] {
+    m_connectionQueue->dispatch([this, protectedThis = Ref { *this }] {
         writeEventHandler();
     });
 }

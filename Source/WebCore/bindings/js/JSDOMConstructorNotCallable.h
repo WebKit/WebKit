@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Alexey Shvayka <shvaikalesh@gmail.com>
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,12 +45,12 @@ public:
     static JSC::JSValue prototypeForStructure(JSC::VM&, const JSDOMGlobalObject&);
 
     template<typename CellType, JSC::SubspaceAccess>
-    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
+    static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         static_assert(sizeof(CellType) == sizeof(JSDOMConstructorNotCallable));
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(CellType, JSDOMConstructorNotCallable);
         static_assert(CellType::destroy == JSC::JSCell::destroy, "JSDOMConstructorNotCallable<JSClass> is not destructible actually");
-        return &static_cast<JSVMClientData*>(vm.clientData)->domConstructorSpace();
+        return &static_cast<JSVMClientData*>(vm.clientData)->domNamespaceObjectSpace();
     }
 
 private:
@@ -64,7 +65,7 @@ private:
 
 template<typename JSClass> inline JSDOMConstructorNotCallable<JSClass>* JSDOMConstructorNotCallable<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
-    JSDOMConstructorNotCallable* constructor = new (NotNull, JSC::allocateCell<JSDOMConstructorNotCallable>(vm.heap)) JSDOMConstructorNotCallable(structure, globalObject);
+    JSDOMConstructorNotCallable* constructor = new (NotNull, JSC::allocateCell<JSDOMConstructorNotCallable>(vm)) JSDOMConstructorNotCallable(structure, globalObject);
     constructor->finishCreation(vm, globalObject);
     return constructor;
 }

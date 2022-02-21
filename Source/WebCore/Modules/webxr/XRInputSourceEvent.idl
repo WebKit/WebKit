@@ -23,22 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://immersive-web.github.io/webxr/#dictdef-xrinputsourceeventinit
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
 ] dictionary XRInputSourceEventInit : EventInit {
     required WebXRFrame frame;
     required WebXRInputSource inputSource;
 };
 
+// https://immersive-web.github.io/webxr/#xrinputsourceevent
 [
-    EnabledBySetting=WebXR,
+    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window
 ] interface XRInputSourceEvent : Event {
     constructor(DOMString type, XRInputSourceEventInit eventInitDict);
-
     [SameObject] readonly attribute WebXRFrame frame;
     [SameObject] readonly attribute WebXRInputSource inputSource;
 };

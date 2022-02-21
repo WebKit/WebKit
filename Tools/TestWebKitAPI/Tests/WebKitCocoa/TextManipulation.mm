@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
@@ -38,8 +39,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringConcatenate.h>
 #import <wtf/text/StringConcatenateNumbers.h>
-
-static bool done = false;
 
 typedef void(^ItemCallback)(_WKTextManipulationItem *);
 typedef void(^ItemListCallback)(NSArray<_WKTextManipulationItem *> *);
@@ -3058,11 +3057,6 @@ TEST(TextManipulation, CompleteTextManipulationAvoidExtractingManipulatedTextAft
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_WK_STREQ("<p>FOO<br>BAR</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
-
-    __block bool itemCallbackFired = false;
-    [delegate setItemCallback:^(_WKTextManipulationItem *) {
-        itemCallbackFired = true;
-    }];
 
     [webView objectByEvaluatingJavaScript:@"document.querySelector('p').style.display = 'none'"];
     [webView objectByEvaluatingJavaScript:@"document.querySelector('p').style.display = ''"];

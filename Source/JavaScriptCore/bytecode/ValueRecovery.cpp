@@ -99,6 +99,11 @@ void ValueRecovery::dumpInContext(PrintStream& out, DumpContext* context) const
     case Int32DisplacedInJSStack:
         out.print("*int32(", virtualRegister(), ")");
         return;
+#if USE(JSVALUE32_64)
+    case Int32TagDisplacedInJSStack:
+        out.print("*int32Tag(", virtualRegister(), ")");
+        return;
+#endif
     case Int52DisplacedInJSStack:
         out.print("*int52(", virtualRegister(), ")");
         return;

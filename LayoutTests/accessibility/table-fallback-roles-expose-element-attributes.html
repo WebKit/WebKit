@@ -30,7 +30,7 @@
            var grid = accessibilityController.accessibleElementById("grid" + k);
            var cell = grid.cellForColumnAndRow(0, 0);
            debug("cell: " + cell.role + ", " + cell.stringValue + "\n");
-           if (accessibilityController.platformName != "atk") {
+           if (accessibilityController.platformName != "atspi") {
               var cellChild = cell.childAtIndex(0);
               debug("cellChild: " + cellChild.role + ", " + cellChild.stringValue + "\n");
           }

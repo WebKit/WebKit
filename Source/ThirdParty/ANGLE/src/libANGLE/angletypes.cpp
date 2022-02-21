@@ -12,6 +12,8 @@
 #include "libANGLE/VertexArray.h"
 #include "libANGLE/VertexAttribute.h"
 
+#include <limits>
+
 namespace gl
 {
 namespace
@@ -198,69 +200,129 @@ SamplerState SamplerState::CreateDefaultForTarget(TextureType type)
     return state;
 }
 
-void SamplerState::setMinFilter(GLenum minFilter)
+bool SamplerState::setMinFilter(GLenum minFilter)
 {
-    mMinFilter                    = minFilter;
-    mCompleteness.typed.minFilter = static_cast<uint8_t>(FromGLenum<FilterMode>(minFilter));
+    if (mMinFilter != minFilter)
+    {
+        mMinFilter                    = minFilter;
+        mCompleteness.typed.minFilter = static_cast<uint8_t>(FromGLenum<FilterMode>(minFilter));
+        return true;
+    }
+    return false;
 }
 
-void SamplerState::setMagFilter(GLenum magFilter)
+bool SamplerState::setMagFilter(GLenum magFilter)
 {
-    mMagFilter                    = magFilter;
-    mCompleteness.typed.magFilter = static_cast<uint8_t>(FromGLenum<FilterMode>(magFilter));
+    if (mMagFilter != magFilter)
+    {
+        mMagFilter                    = magFilter;
+        mCompleteness.typed.magFilter = static_cast<uint8_t>(FromGLenum<FilterMode>(magFilter));
+        return true;
+    }
+    return false;
 }
 
-void SamplerState::setWrapS(GLenum wrapS)
+bool SamplerState::setWrapS(GLenum wrapS)
 {
-    mWrapS                    = wrapS;
-    mCompleteness.typed.wrapS = static_cast<uint8_t>(FromGLenum<WrapMode>(wrapS));
+    if (mWrapS != wrapS)
+    {
+        mWrapS                    = wrapS;
+        mCompleteness.typed.wrapS = static_cast<uint8_t>(FromGLenum<WrapMode>(wrapS));
+        return true;
+    }
+    return false;
 }
 
-void SamplerState::setWrapT(GLenum wrapT)
+bool SamplerState::setWrapT(GLenum wrapT)
 {
-    mWrapT = wrapT;
-    updateWrapTCompareMode();
+    if (mWrapT != wrapT)
+    {
+        mWrapT = wrapT;
+        updateWrapTCompareMode();
+        return true;
+    }
+    return false;
 }
 
-void SamplerState::setWrapR(GLenum wrapR)
+bool SamplerState::setWrapR(GLenum wrapR)
 {
-    mWrapR = wrapR;
+    if (mWrapR != wrapR)
+    {
+        mWrapR = wrapR;
+        return true;
+    }
+    return false;
 }
 
-void SamplerState::setMaxAnisotropy(float maxAnisotropy)
+bool SamplerState::setMaxAnisotropy(float maxAnisotropy)
 {
-    mMaxAnisotropy = maxAnisotropy;
+    if (mMaxAnisotropy != maxAnisotropy)
+    {
+        mMaxAnisotropy = maxAnisotropy;
+        return true;
+    }
+    return false;
 }
 
-void SamplerState::setMinLod(GLfloat minLod)
+bool SamplerState::setMinLod(GLfloat minLod)
 {
-    mMinLod = minLod;
+    if (mMinLod != minLod)
+    {
+        mMinLod = minLod;
+        return true;
+    }
+    return false;
 }
 
-void SamplerState::setMaxLod(GLfloat maxLod)
+bool SamplerState::setMaxLod(GLfloat maxLod)
 {
-    mMaxLod = maxLod;
+    if (mMaxLod != maxLod)
+    {
+        mMaxLod = maxLod;
+        return true;
+    }
+    return false;
 }
 
-void SamplerState::setCompareMode(GLenum compareMode)
+bool SamplerState::setCompareMode(GLenum compareMode)
 {
-    mCompareMode = compareMode;
-    updateWrapTCompareMode();
+    if (mCompareMode != compareMode)
+    {
+        mCompareMode = compareMode;
+        updateWrapTCompareMode();
+        return true;
+    }
+    return false;
 }
 
-void SamplerState::setCompareFunc(GLenum compareFunc)
+bool SamplerState::setCompareFunc(GLenum compareFunc)
 {
-    mCompareFunc = compareFunc;
+    if (mCompareFunc != compareFunc)
+    {
+        mCompareFunc = compareFunc;
+        return true;
+    }
+    return false;
 }
 
-void SamplerState::setSRGBDecode(GLenum sRGBDecode)
+bool SamplerState::setSRGBDecode(GLenum sRGBDecode)
 {
-    mSRGBDecode = sRGBDecode;
+    if (mSRGBDecode != sRGBDecode)
+    {
+        mSRGBDecode = sRGBDecode;
+        return true;
+    }
+    return false;
 }
 
-void SamplerState::setBorderColor(const ColorGeneric &color)
+bool SamplerState::setBorderColor(const ColorGeneric &color)
 {
-    mBorderColor = color;
+    if (mBorderColor != color)
+    {
+        mBorderColor = color;
+        return true;
+    }
+    return false;
 }
 
 void SamplerState::updateWrapTCompareMode()
@@ -295,11 +357,9 @@ BlendStateExt::BlendStateExt(const size_t drawBuffers)
       mMaxDrawBuffers(drawBuffers)
 {}
 
-BlendStateExt &BlendStateExt::operator=(const BlendStateExt &other)
-{
-    memcpy(this, &other, sizeof(BlendStateExt));
-    return *this;
-}
+BlendStateExt::BlendStateExt(const BlendStateExt &other) = default;
+
+BlendStateExt &BlendStateExt::operator=(const BlendStateExt &other) = default;
 
 void BlendStateExt::setEnabled(const bool enabled)
 {
@@ -566,30 +626,17 @@ static void MinMax(int a, int b, int *minimum, int *maximum)
     }
 }
 
-Rectangle Rectangle::flip(bool flipX, bool flipY) const
+template <>
+bool RectangleImpl<int>::empty() const
 {
-    Rectangle flipped = *this;
-    if (flipX)
-    {
-        flipped.x     = flipped.x + flipped.width;
-        flipped.width = -flipped.width;
-    }
-    if (flipY)
-    {
-        flipped.y      = flipped.y + flipped.height;
-        flipped.height = -flipped.height;
-    }
-    return flipped;
+    return width == 0 && height == 0;
 }
 
-Rectangle Rectangle::removeReversal() const
+template <>
+bool RectangleImpl<float>::empty() const
 {
-    return flip(isReversedX(), isReversedY());
-}
-
-bool Rectangle::encloses(const gl::Rectangle &inside) const
-{
-    return x0() <= inside.x0() && y0() <= inside.y0() && x1() >= inside.x1() && y1() >= inside.y1();
+    return std::abs(width) < std::numeric_limits<float>::epsilon() &&
+           std::abs(height) < std::numeric_limits<float>::epsilon();
 }
 
 bool ClipRectangle(const Rectangle &source, const Rectangle &clip, Rectangle *intersection)
@@ -834,30 +881,29 @@ bool ValidateComponentTypeMasks(unsigned long outputTypes,
 GLsizeiptr GetBoundBufferAvailableSize(const OffsetBindingPointer<Buffer> &binding)
 {
     Buffer *buffer = binding.get();
-    if (buffer)
-    {
-        if (binding.getSize() == 0)
-            return static_cast<GLsizeiptr>(buffer->getSize());
-        angle::CheckedNumeric<GLintptr> offset       = binding.getOffset();
-        angle::CheckedNumeric<GLsizeiptr> size       = binding.getSize();
-        angle::CheckedNumeric<GLsizeiptr> bufferSize = buffer->getSize();
-        auto end                                     = offset + size;
-        auto clampedSize                             = size;
-        auto difference                              = end - bufferSize;
-        if (!difference.IsValid())
-        {
-            return 0;
-        }
-        if (difference.ValueOrDie() > 0)
-        {
-            clampedSize = size - difference;
-        }
-        return clampedSize.ValueOrDefault(0);
-    }
-    else
+    if (buffer == nullptr)
     {
         return 0;
     }
+
+    const GLsizeiptr bufferSize = static_cast<GLsizeiptr>(buffer->getSize());
+
+    if (binding.getSize() == 0)
+    {
+        return bufferSize;
+    }
+
+    const GLintptr offset = binding.getOffset();
+    const GLsizeiptr size = binding.getSize();
+
+    ASSERT(offset >= 0 && bufferSize >= 0);
+
+    if (bufferSize <= offset)
+    {
+        return 0;
+    }
+
+    return std::min(size, bufferSize - offset);
 }
 
 }  // namespace gl

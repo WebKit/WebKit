@@ -24,8 +24,8 @@
  */
 
 [
-    EnabledBySetting=MediaCapabilities,
+    EnabledBySetting=MediaCapabilitiesEnabled,
     JSGenerateToJSObject,
 ] dictionary MediaCapabilitiesEncodingInfo : MediaCapabilitiesInfo {
-    [EnabledBySetting=MediaCapabilitiesExtensions] MediaEncodingConfiguration supportedConfiguration;
+    [EnabledBySetting=MediaCapabilitiesExtensionsEnabled] MediaEncodingConfiguration supportedConfiguration;
 };

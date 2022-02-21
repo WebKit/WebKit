@@ -23,7 +23,7 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 
-#include "CaptureDeviceManager.h"
+#include "DisplayCaptureManager.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerCaptureDevice.h"
 #include "RealtimeMediaSourceFactory.h"
@@ -66,13 +66,13 @@ private:
     GStreamerVideoCaptureDeviceManager() = default;
 };
 
-class GStreamerDisplayCaptureDeviceManager final : public CaptureDeviceManager {
+class GStreamerDisplayCaptureDeviceManager final : public DisplayCaptureManager {
     friend class NeverDestroyed<GStreamerDisplayCaptureDeviceManager>;
 public:
     static GStreamerDisplayCaptureDeviceManager& singleton();
     const Vector<CaptureDevice>& captureDevices() final { return m_devices; };
     void computeCaptureDevices(CompletionHandler<void()>&&) final;
-    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, const MediaConstraints*);
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*);
 
     enum PipeWireOutputType {
         Monitor = 1 << 0,

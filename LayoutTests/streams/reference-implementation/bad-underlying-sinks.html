@@ -8,7 +8,7 @@
 test(function() {
     var theError = new Error('a unique string');
 
-    assert_throws(theError, function() {
+    assert_throws_exactly(theError, function() {
         new WritableStream({
             get start() {
                 throw theError;
@@ -20,7 +20,7 @@ test(function() {
 test(function() {
     var theError = new Error('a unique string');
 
-    assert_throws(theError, function() {
+    assert_throws_exactly(theError, function() {
         new WritableStream({
             start: function() {
                 throw theError;

@@ -151,8 +151,14 @@ inline void swap(TimerHeapReference a, TimerHeapReference b)
 
 // Class to represent iterators in the heap when calling the standard library heap algorithms.
 // Uses a custom pointer and reference type that update indices for pointers in the heap.
-class TimerHeapIterator : public std::iterator<std::random_access_iterator_tag, RefPtr<ThreadTimerHeapItem>, ptrdiff_t, TimerHeapPointer, TimerHeapReference> {
+class TimerHeapIterator {
 public:
+    using iterator_category = std::random_access_iterator_tag;
+    using value_type = RefPtr<ThreadTimerHeapItem>;
+    using difference_type = ptrdiff_t;
+    using pointer = TimerHeapPointer;
+    using reference = TimerHeapReference;
+
     explicit TimerHeapIterator(RefPtr<ThreadTimerHeapItem>* pointer) : m_pointer(pointer) { checkConsistency(); }
 
     TimerHeapIterator& operator++() { checkConsistency(); ++m_pointer; checkConsistency(); return *this; }
@@ -244,9 +250,9 @@ private:
 static bool shouldSuppressThreadSafetyCheck()
 {
 #if PLATFORM(IOS_FAMILY)
-    return WebThreadIsEnabled() || applicationSDKVersion() < DYLD_IOS_VERSION_12_0;
+    return WebThreadIsEnabled() || !linkedOnOrAfter(SDKVersion::FirstWithTimerThreadSafetyChecks);
 #elif PLATFORM(MAC)
-    return !isInWebProcess() && applicationSDKVersion() < DYLD_MACOSX_VERSION_10_14;
+    return !isInWebProcess() && !linkedOnOrAfter(SDKVersion::FirstWithTimerThreadSafetyChecks);
 #else
     return false;
 #endif
@@ -327,7 +333,7 @@ void TimerBase::heapDecreaseKey()
     ASSERT(m_heapItem);
     checkHeapIndex();
     auto* heapData = m_heapItem->timerHeap().data();
-    push_heap(TimerHeapIterator(heapData), TimerHeapIterator(heapData + m_heapItem->heapIndex() + 1), TimerHeapLessThanFunction());
+    std::push_heap(TimerHeapIterator(heapData), TimerHeapIterator(heapData + m_heapItem->heapIndex() + 1), TimerHeapLessThanFunction());
     checkHeapIndex();
 }
 
@@ -381,7 +387,7 @@ void TimerBase::heapPopMin()
     checkHeapIndex();
     auto& heap = m_heapItem->timerHeap();
     auto* heapData = heap.data();
-    pop_heap(TimerHeapIterator(heapData), TimerHeapIterator(heapData + heap.size()), TimerHeapLessThanFunction());
+    std::pop_heap(TimerHeapIterator(heapData), TimerHeapIterator(heapData + heap.size()), TimerHeapLessThanFunction());
     checkHeapIndex();
     ASSERT(m_heapItem == m_heapItem->timerHeap().last());
 }
@@ -391,7 +397,7 @@ void TimerBase::heapDeleteNullMin(ThreadTimerHeap& heap)
     RELEASE_ASSERT(!heap.first()->hasTimer());
     heap.first()->time = -MonotonicTime::infinity();
     auto* heapData = heap.data();
-    pop_heap(TimerHeapIterator(heapData), TimerHeapIterator(heapData + heap.size()), TimerHeapLessThanFunction());
+    std::pop_heap(TimerHeapIterator(heapData), TimerHeapIterator(heapData + heap.size()), TimerHeapLessThanFunction());
     heap.removeLast();
 }
 

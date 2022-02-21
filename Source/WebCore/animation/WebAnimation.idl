@@ -36,6 +36,8 @@ enum AnimationReplaceState {
     "persisted"
 };
 
+typedef unsigned long FramesPerSecond;
+
 [
     ActiveDOMObject,
     InterfaceName=Animation,
@@ -47,10 +49,11 @@ enum AnimationReplaceState {
 
     attribute DOMString id;
     [ImplementedAs=bindingsEffect] attribute AnimationEffect? effect;
-    [SettingsConditionallyReadWrite=WebAnimationsMutableTimelines] attribute AnimationTimeline? timeline;
+    [SettingsConditionallyReadWrite=WebAnimationsMutableTimelinesEnabled] attribute AnimationTimeline? timeline;
     [ImplementedAs=bindingsStartTime] attribute double? startTime;
     [ImplementedAs=bindingsCurrentTime] attribute double? currentTime;
     attribute double playbackRate;
+    [ImplementedAs=bindingsFrameRate, EnabledBySetting=WebAnimationsCustomFrameRateEnabled] attribute (FramesPerSecond or AnimationFrameRatePreset) frameRate;
     [ImplementedAs=bindingsPlayState] readonly attribute AnimationPlayState playState;
     [ImplementedAs=bindingsReplaceState] readonly attribute AnimationReplaceState replaceState;
     [ImplementedAs=bindingsPending] readonly attribute boolean pending;

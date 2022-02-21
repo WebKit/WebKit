@@ -1,8 +1,6 @@
 
 
-Harness Error (TIMEOUT), message = null
-
 PASS location.reload() of empty iframe.
-TIMEOUT location.reload() of blob URL iframe. Test timed out
-NOTRUN location.reload() of srcdoc iframe.
+PASS location.reload() of blob URL iframe.
+PASS location.reload() of srcdoc iframe.
 

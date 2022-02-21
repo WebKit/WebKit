@@ -58,6 +58,7 @@ public:
     static constexpr bool isRefPtr = true;
 
     ALWAYS_INLINE constexpr RefPtr() : m_ptr(nullptr) { }
+    ALWAYS_INLINE constexpr RefPtr(std::nullptr_t) : m_ptr(nullptr) { }
     ALWAYS_INLINE RefPtr(T* ptr) : m_ptr(ptr) { RefDerefTraits::refIfNotNull(ptr); }
     ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { RefDerefTraits::refIfNotNull(PtrTraits::unwrap(m_ptr)); }
     template<typename X, typename Y, typename Z> RefPtr(const RefPtr<X, Y, Z>& o) : m_ptr(o.get()) { RefDerefTraits::refIfNotNull(PtrTraits::unwrap(m_ptr)); }
@@ -253,16 +254,6 @@ inline RefPtr<T, U, V> adoptRef(T* p)
     return RefPtr<T, U, V>(p, RefPtr<T, U, V>::Adopt);
 }
 
-template<typename T> inline RefPtr<T> makeRefPtr(T* pointer)
-{
-    return pointer;
-}
-
-template<typename T> inline RefPtr<T> makeRefPtr(T& reference)
-{
-    return &reference;
-}
-
 template<typename ExpectedType, typename ArgType, typename PtrTraits, typename RefDerefTraits>
 inline bool is(RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)
 {
@@ -279,5 +270,4 @@ inline bool is(const RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)
 
 using WTF::RefPtr;
 using WTF::adoptRef;
-using WTF::makeRefPtr;
 using WTF::static_pointer_cast;

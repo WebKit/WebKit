@@ -21,72 +21,72 @@ function isEqual(d1, d2) {
   }
 }
 
-//CHECK#1
-if (!isEqual(Date(), (new Date()).toString())) {
-  throw new Test262Error('#1: Date() is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(), (new Date()).toString()),
+  'isEqual(Date(), (new Date()).toString()) must return true'
+);
 
-//CHECK#2
-if (!isEqual(Date(1), (new Date()).toString())) {
-  throw new Test262Error('#2: Date(1) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(1), (new Date()).toString()),
+  'isEqual(Date(1), (new Date()).toString()) must return true'
+);
 
-//CHECK#3
-if (!isEqual(Date(1970, 1), (new Date()).toString())) {
-  throw new Test262Error('#3: Date(1970, 1) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(1970, 1), (new Date()).toString()),
+  'isEqual(Date(1970, 1), (new Date()).toString()) must return true'
+);
 
-//CHECK#4
-if (!isEqual(Date(1970, 1, 1), (new Date()).toString())) {
-  throw new Test262Error('#4: Date(1970, 1, 1) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(1970, 1, 1), (new Date()).toString()),
+  'isEqual(Date(1970, 1, 1), (new Date()).toString()) must return true'
+);
 
-//CHECK#5
-if (!isEqual(Date(1970, 1, 1, 1), (new Date()).toString())) {
-  throw new Test262Error('#5: Date(1970, 1, 1, 1) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(1970, 1, 1, 1), (new Date()).toString()),
+  'isEqual(Date(1970, 1, 1, 1), (new Date()).toString()) must return true'
+);
 
-//CHECK#6
-if (!isEqual(Date(1970, 1, 1, 1), (new Date()).toString())) {
-  throw new Test262Error('#7: Date(1970, 1, 1, 1) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(1970, 1, 1, 1), (new Date()).toString()),
+  'isEqual(Date(1970, 1, 1, 1), (new Date()).toString()) must return true'
+);
 
-//CHECK#8
-if (!isEqual(Date(1970, 1, 1, 1, 0), (new Date()).toString())) {
-  throw new Test262Error('#8: Date(1970, 1, 1, 1, 0) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(1970, 1, 1, 1, 0), (new Date()).toString()),
+  'isEqual(Date(1970, 1, 1, 1, 0), (new Date()).toString()) must return true'
+);
 
-//CHECK#9
-if (!isEqual(Date(1970, 1, 1, 1, 0, 0), (new Date()).toString())) {
-  throw new Test262Error('#9: Date(1970, 1, 1, 1, 0, 0) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(1970, 1, 1, 1, 0, 0), (new Date()).toString()),
+  'isEqual(Date(1970, 1, 1, 1, 0, 0), (new Date()).toString()) must return true'
+);
 
-//CHECK#10
-if (!isEqual(Date(1970, 1, 1, 1, 0, 0, 0), (new Date()).toString())) {
-  throw new Test262Error('#10: Date(1970, 1, 1, 1, 0, 0, 0) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(1970, 1, 1, 1, 0, 0, 0), (new Date()).toString()),
+  'isEqual(Date(1970, 1, 1, 1, 0, 0, 0), (new Date()).toString()) must return true'
+);
 
-//CHECK#11
-if (!isEqual(Date(Number.NaN), (new Date()).toString())) {
-  throw new Test262Error('#11: Date(Number.NaN) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(Number.NaN), (new Date()).toString()),
+  'isEqual(Date(Number.NaN), (new Date()).toString()) must return true'
+);
 
-//CHECK#12
-if (!isEqual(Date(Number.POSITIVE_INFINITY), (new Date()).toString())) {
-  throw new Test262Error('#12: Date(Number.POSITIVE_INFINITY) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(Number.POSITIVE_INFINITY), (new Date()).toString()),
+  'isEqual(Date(Number.POSITIVE_INFINITY), (new Date()).toString()) must return true'
+);
 
-//CHECK#13
-if (!isEqual(Date(Number.NEGATIVE_INFINITY), (new Date()).toString())) {
-  throw new Test262Error('#13: Date(Number.NEGATIVE_INFINITY) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(Number.NEGATIVE_INFINITY), (new Date()).toString()),
+  'isEqual(Date(Number.NEGATIVE_INFINITY), (new Date()).toString()) must return true'
+);
 
-//CHECK#14
-if (!isEqual(Date(undefined), (new Date()).toString())) {
-  throw new Test262Error('#14: Date(undefined) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(undefined), (new Date()).toString()),
+  'isEqual(Date(undefined), (new Date()).toString()) must return true'
+);
 
-//CHECK#15
-if (!isEqual(Date(null), (new Date()).toString())) {
-  throw new Test262Error('#15: Date(null) is equal to (new Date()).toString()');
-}
+assert(
+  isEqual(Date(null), (new Date()).toString()),
+  'isEqual(Date(null), (new Date()).toString()) must return true'
+);

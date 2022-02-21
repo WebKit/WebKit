@@ -30,9 +30,13 @@
 
 namespace WebCore {
 
+class AffineTransform;
 class Color;
 class FloatRect;
 class FloatSize;
+class LegacyRenderSVGContainer;
+class LegacyRenderSVGRoot;
+class LegacyRenderSVGShape;
 class Node;
 class RenderImage;
 class RenderObject;
@@ -41,18 +45,24 @@ class RenderSVGGradientStop;
 class RenderSVGImage;
 class RenderSVGInlineText;
 class RenderSVGResourceContainer;
-class RenderSVGShape;
 class RenderSVGRoot;
+class RenderSVGShape;
 class RenderSVGText;
-class AffineTransform;
 class SVGUnitTypes;
 
 // functions used by the main RenderTreeAsText code
-void write(WTF::TextStream&, const RenderSVGShape&, OptionSet<RenderAsTextFlag>);
+void write(WTF::TextStream&, const LegacyRenderSVGRoot&, OptionSet<RenderAsTextFlag>);
+void write(WTF::TextStream&, const LegacyRenderSVGShape&, OptionSet<RenderAsTextFlag>);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 void write(WTF::TextStream&, const RenderSVGRoot&, OptionSet<RenderAsTextFlag>);
+void write(WTF::TextStream&, const RenderSVGShape&, OptionSet<RenderAsTextFlag>);
+#endif
 void writeSVGGradientStop(WTF::TextStream&, const RenderSVGGradientStop&, OptionSet<RenderAsTextFlag>);
 void writeSVGResourceContainer(WTF::TextStream&, const RenderSVGResourceContainer&, OptionSet<RenderAsTextFlag>);
+void writeSVGContainer(WTF::TextStream&, const LegacyRenderSVGContainer&, OptionSet<RenderAsTextFlag>);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 void writeSVGContainer(WTF::TextStream&, const RenderSVGContainer&, OptionSet<RenderAsTextFlag>);
+#endif
 void writeSVGImage(WTF::TextStream&, const RenderSVGImage&, OptionSet<RenderAsTextFlag>);
 void writeSVGInlineText(WTF::TextStream&, const RenderSVGInlineText&, OptionSet<RenderAsTextFlag>);
 void writeSVGText(WTF::TextStream&, const RenderSVGText&, OptionSet<RenderAsTextFlag>);

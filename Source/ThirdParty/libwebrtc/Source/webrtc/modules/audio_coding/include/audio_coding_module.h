@@ -83,9 +83,9 @@ class AudioCodingModule {
   //   Sender
   //
 
-  // |modifier| is called exactly once with one argument: a pointer to the
+  // `modifier` is called exactly once with one argument: a pointer to the
   // unique_ptr that holds the current encoder (which is null if there is no
-  // current encoder). For the duration of the call, |modifier| has exclusive
+  // current encoder). For the duration of the call, `modifier` has exclusive
   // access to the unique_ptr; it may call the encoder, steal the encoder and
   // replace it with another encoder or with nullptr, etc.
   virtual void ModifyEncoder(

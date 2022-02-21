@@ -3,8 +3,7 @@
 
 /*---
 description: Intrinsic %FunctionPrototype% has poisoned own property "caller"
-includes:
-  - propertyHelper.js
+includes: [propertyHelper.js]
 es6id: 8.2.2 S12, 9.2.7
 ---*/
 

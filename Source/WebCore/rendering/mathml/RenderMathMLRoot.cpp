@@ -139,7 +139,7 @@ RenderMathMLRoot::VerticalParameters RenderMathMLRoot::verticalParameters()
         // RadicalDegreeBottomRaisePercent: Suggested value is 60%.
         parameters.ruleThickness = ruleThicknessFallback();
         if (style().mathStyle() == MathStyle::Normal)
-            parameters.verticalGap = parameters.ruleThickness + style().fontMetrics().xHeight() / 4;
+            parameters.verticalGap = parameters.ruleThickness + style().metricsOfPrimaryFont().xHeight() / 4;
         else
             parameters.verticalGap = 5 * parameters.ruleThickness / 4;
 

@@ -29,7 +29,8 @@ WI.LayersTabContentView = class LayersTabContentView extends WI.ContentBrowserTa
     {
         super(LayersTabContentView.tabInfo(), {
             detailsSidebarPanelConstructors: [WI.LayerDetailsSidebarPanel],
-            disableBackForward: true,
+            hideBackForwardButtons: true,
+            disableBackForwardNavigation: true,
         });
 
         this._layerDetailsSidebarPanel = this.detailsSidebarPanels[0];

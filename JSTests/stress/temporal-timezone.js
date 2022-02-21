@@ -18,6 +18,13 @@ function shouldThrow(func, errorType, message) {
         shouldBe(String(error), message);
 }
 
+shouldBe(Temporal.TimeZone instanceof Function, true);
+shouldBe(Temporal.TimeZone.length, 0);
+shouldBe(Object.getOwnPropertyDescriptor(Temporal.TimeZone, 'prototype').writable, false);
+shouldBe(Object.getOwnPropertyDescriptor(Temporal.TimeZone, 'prototype').enumerable, false);
+shouldBe(Object.getOwnPropertyDescriptor(Temporal.TimeZone, 'prototype').configurable, false);
+shouldBe(Temporal.TimeZone.prototype.constructor, Temporal.TimeZone);
+
 let failures = [
     "",
     "+",
@@ -26,9 +33,22 @@ let failures = [
     "+24",
     "+23:",
     "20:00",
+    "+2:00",
+    "+32:00",
+    "+23:001",
+    "+23:99",
+    "+23:990",
+    "+23:59:99",
+    "+23:59:001",
+    "+23:59:999",
+    "+23:59:59.",
+    "+23:59:59,",
+    "+23:59:59a",
+    "+23:59:59.a",
     "+20:0000",
     "+20:60",
     "+20:59:",
+    "+20:59:60",
     "2059:00",
     "+2059:00",
     "+20:5900",
@@ -52,6 +72,10 @@ shouldBe(new Temporal.TimeZone("-01:59:30.000001").id, `-01:59:30.000001`);
 shouldBe(new Temporal.TimeZone("-01:59:30.123450000").id, `-01:59:30.12345`);
 shouldBe(new Temporal.TimeZone("-01:59:30.000000001").id, `-01:59:30.000000001`);
 shouldBe(new Temporal.TimeZone("-01:59:30.123456789").id, `-01:59:30.123456789`);
+shouldBe(new Temporal.TimeZone("-01:59:30.001002003").id, `-01:59:30.001002003`);
+shouldBe(new Temporal.TimeZone("-01:59:30.000000000").id, `-01:59:30`);
+shouldBe(new Temporal.TimeZone("-01:59:00.000000000").id, `-01:59`);
+shouldBe(new Temporal.TimeZone("-01:00:00.000000000").id, `-01:00`);
 
 let tz = new Temporal.TimeZone("-01:59:30.123456789")
 shouldBe(tz.id, String(tz));

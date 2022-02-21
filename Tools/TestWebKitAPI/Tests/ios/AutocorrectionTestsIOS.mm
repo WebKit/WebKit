@@ -36,6 +36,7 @@
 
 @interface TestWKWebView (AutocorrectionTests)
 - (UIWKAutocorrectionRects *)autocorrectionRectsForString:(NSString *)string;
+- (UIWKAutocorrectionContext *)synchronouslyRequestAutocorrectionContext;
 @end
 
 @implementation TestWKWebView (AutocorrectionTests)
@@ -46,6 +47,18 @@
     bool done = false;
     [self.textInputContentView requestAutocorrectionRectsForString:string withCompletionHandler:[&] (UIWKAutocorrectionRects *rects) {
         result = rects;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+- (UIWKAutocorrectionContext *)synchronouslyRequestAutocorrectionContext
+{
+    RetainPtr<UIWKAutocorrectionContext> result;
+    bool done = false;
+    [self.textInputContentView requestAutocorrectionContextWithCompletionHandler:[&] (UIWKAutocorrectionContext *context) {
+        result = context;
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -104,11 +117,75 @@ TEST(AutocorrectionTests, RequestAutocorrectionContextAfterClosingPage)
     [contentView resignFirstResponder];
     [webView _close];
 
-    bool done = false;
-    [contentView requestAutocorrectionContextWithCompletionHandler:[&] (UIWKAutocorrectionContext *) {
+    // This test just verifies that attempting to request an autocorrection context in this state
+    // does not trigger a crash or hang, and also still invokes the given completion handler.
+    [webView synchronouslyRequestAutocorrectionContext];
+}
+
+TEST(AutocorrectionTests, AutocorrectionContextDoesNotIncludeNewlineInTextField)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] init]);
+    [webView synchronouslyLoadTestPageNamed:@"autofocused-text-input"];
+
+    RetainPtr contextBeforeTyping = [webView synchronouslyRequestAutocorrectionContext];
+    EXPECT_EQ(0U, [contextBeforeTyping contextBeforeSelection].length);
+    EXPECT_EQ(0U, [contextBeforeTyping selectedText].length);
+    EXPECT_EQ(0U, [contextBeforeTyping contextAfterSelection].length);
+
+    [[webView textInputContentView] insertText:@"a"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr contextAfterTyping = [webView synchronouslyRequestAutocorrectionContext];
+    EXPECT_WK_STREQ(@"a", [contextAfterTyping contextBeforeSelection]);
+    EXPECT_EQ(0U, [contextAfterTyping selectedText].length);
+    EXPECT_EQ(0U, [contextAfterTyping contextAfterSelection].length);
+}
+
+TEST(AutocorrectionTests, AutocorrectionContextBeforeAndAfterEditing)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] init]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"autofocused-text-input"];
+
+    __block RetainPtr<UIWKAutocorrectionContext> contextBeforeInsertingText;
+    __block RetainPtr<UIWKAutocorrectionContext> contextAfterInsertingText;
+    __block RetainPtr<UIWKAutocorrectionContext> contextAfterSelecting;
+
+    auto *contentView = [webView textInputContentView];
+    [contentView requestAutocorrectionContextWithCompletionHandler:^(UIWKAutocorrectionContext *context) {
+        contextBeforeInsertingText = context;
+    }];
+
+    [contentView insertText:@"hello"];
+    [contentView requestAutocorrectionContextWithCompletionHandler:^(UIWKAutocorrectionContext *context) {
+        contextAfterInsertingText = context;
+    }];
+
+    __block bool done = false;
+    [contentView selectAll:nil];
+    [contentView requestAutocorrectionContextWithCompletionHandler:^(UIWKAutocorrectionContext *context) {
+        contextAfterSelecting = context;
         done = true;
     }];
+
     TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(0U, [contextBeforeInsertingText contextBeforeSelection].length);
+    EXPECT_EQ(0U, [contextBeforeInsertingText selectedText].length);
+    EXPECT_EQ(0U, [contextBeforeInsertingText contextAfterSelection].length);
+
+    EXPECT_WK_STREQ("hello", [contextAfterInsertingText contextBeforeSelection]);
+    EXPECT_EQ(0U, [contextAfterInsertingText selectedText].length);
+    EXPECT_EQ(0U, [contextAfterInsertingText contextAfterSelection].length);
+
+    EXPECT_EQ(0U, [contextAfterSelecting contextBeforeSelection].length);
+    EXPECT_WK_STREQ("hello", [contextAfterSelecting selectedText]);
+    EXPECT_EQ(0U, [contextAfterSelecting contextAfterSelection].length);
 }
 
 #endif // PLATFORM(IOS_FAMILY)

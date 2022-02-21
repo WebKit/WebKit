@@ -40,6 +40,7 @@
 #include "MathMLNames.h"
 #include "RenderMathMLBlock.h"
 #include "RenderTableCell.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -111,7 +112,6 @@ bool MathMLPresentationElement::isPhrasingContent(const Node& node)
             || htmlElement.hasTagName(HTMLNames::inputTag)
             || htmlElement.hasTagName(HTMLNames::insTag)
             || htmlElement.hasTagName(HTMLNames::kbdTag)
-            || htmlElement.hasTagName(HTMLNames::keygenTag)
             || htmlElement.hasTagName(HTMLNames::labelTag)
             || htmlElement.hasTagName(HTMLNames::mapTag)
             || htmlElement.hasTagName(HTMLNames::markTag)
@@ -203,7 +203,7 @@ const MathMLElement::BooleanValue& MathMLPresentationElement::cachedBooleanAttri
     return attribute.value();
 }
 
-MathMLElement::Length MathMLPresentationElement::parseNumberAndUnit(const StringView& string)
+MathMLElement::Length MathMLPresentationElement::parseNumberAndUnit(StringView string)
 {
     LengthType lengthType = LengthType::UnitLess;
     unsigned stringLength = string.length();
@@ -245,7 +245,7 @@ MathMLElement::Length MathMLPresentationElement::parseNumberAndUnit(const String
     return length;
 }
 
-MathMLElement::Length MathMLPresentationElement::parseNamedSpace(const StringView& string)
+MathMLElement::Length MathMLPresentationElement::parseNamedSpace(StringView string)
 {
     // Named space values are case-sensitive.
     int namedSpaceValue;

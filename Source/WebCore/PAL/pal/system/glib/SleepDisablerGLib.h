@@ -35,7 +35,7 @@ typedef struct _GDBusProxy GDBusProxy;
 
 namespace PAL {
 
-class SleepDisablerGLib : public SleepDisabler {
+class SleepDisablerGLib final : public SleepDisabler {
 public:
     SleepDisablerGLib(const char*, Type);
     virtual ~SleepDisablerGLib();
@@ -51,10 +51,7 @@ private:
 
     GRefPtr<GDBusProxy> m_screenSaverProxy;
     unsigned m_screenSaverCookie { 0 };
-
-    GRefPtr<GDBusProxy> m_inhibitPortalProxy;
     GUniqueOutPtr<char> m_inhibitPortalRequestObjectPath;
-
     GRefPtr<GCancellable> m_cancellable;
     CString m_reason;
 };

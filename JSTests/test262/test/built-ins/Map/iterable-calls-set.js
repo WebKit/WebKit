@@ -1,7 +1,7 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 23.1.1.1
+esid: sec-map-iterable
 description: >
   new Map calls `set` for each item on the iterable argument in order.
 info: |
@@ -36,7 +36,7 @@ var map = new Map(iterable);
 
 assert.sameValue(counter, 2, "`Map.prototype.set` called twice.");
 
-assert(compareArray(results[0], iterable[0]));
-assert(compareArray(results[1], iterable[1]));
+assert.compareArray(results[0], iterable[0]);
+assert.compareArray(results[1], iterable[1]);
 assert.sameValue(_this[0], map);
 assert.sameValue(_this[1], map);

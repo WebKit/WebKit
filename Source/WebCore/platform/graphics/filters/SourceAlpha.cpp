@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,60 +21,32 @@
 #include "config.h"
 #include "SourceAlpha.h"
 
-#include "Color.h"
-#include "Filter.h"
-#include "GraphicsContext.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/StdLibExtras.h>
+#include "ImageBuffer.h"
+#include "SourceAlphaSoftwareApplier.h"
 #include <wtf/text/TextStream.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-Ref<SourceAlpha> SourceAlpha::create(FilterEffect& sourceEffect)
+Ref<SourceAlpha> SourceAlpha::create(const DestinationColorSpace& colorSpace)
 {
-    return adoptRef(*new SourceAlpha(sourceEffect));
+    return adoptRef(*new SourceAlpha(colorSpace));
 }
 
-const AtomString& SourceAlpha::effectName()
+SourceAlpha::SourceAlpha(const DestinationColorSpace& colorSpace)
+    : FilterEffect(FilterEffect::Type::SourceAlpha)
 {
-    static MainThreadNeverDestroyed<const AtomString> s_effectName("SourceAlpha", AtomString::ConstructFromLiteral);
-    return s_effectName;
+    setOperatingColorSpace(colorSpace);
 }
 
-void SourceAlpha::determineAbsolutePaintRect()
+std::unique_ptr<FilterEffectApplier> SourceAlpha::createSoftwareApplier() const
 {
-    inputEffect(0)->determineAbsolutePaintRect();
-    setAbsolutePaintRect(inputEffect(0)->absolutePaintRect());
+    return FilterEffectApplier::create<SourceAlphaSoftwareApplier>(*this);
 }
 
-void SourceAlpha::platformApplySoftware()
-{
-    ImageBuffer* resultImage = createImageBufferResult();
-    if (!resultImage)
-        return;
-    GraphicsContext& filterContext = resultImage->context();
-
-    ImageBuffer* imageBuffer = inputEffect(0)->imageBufferResult();
-    if (!imageBuffer)
-        return;
-
-    FloatRect imageRect(FloatPoint(), absolutePaintRect().size());
-    filterContext.fillRect(imageRect, Color::black);
-    filterContext.drawImageBuffer(*imageBuffer, IntPoint(), CompositeOperator::DestinationIn);
-}
-
-TextStream& SourceAlpha::externalRepresentation(TextStream& ts, RepresentationType) const
+TextStream& SourceAlpha::externalRepresentation(TextStream& ts, FilterRepresentation) const
 {
     ts << indent << "[SourceAlpha]\n";
     return ts;
-}
-
-SourceAlpha::SourceAlpha(FilterEffect& sourceEffect)
-    : FilterEffect(sourceEffect.filter(), Type::SourceAlpha)
-{
-    setOperatingColorSpace(sourceEffect.operatingColorSpace());
-    inputEffects().append(&sourceEffect);
 }
 
 } // namespace WebCore

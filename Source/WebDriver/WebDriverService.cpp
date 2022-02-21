@@ -173,8 +173,11 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Post, "/session/$sessionId/elements", &WebDriverService::findElements },
     { HTTPMethod::Post, "/session/$sessionId/element/$elementId/element", &WebDriverService::findElementFromElement },
     { HTTPMethod::Post, "/session/$sessionId/element/$elementId/elements", &WebDriverService::findElementsFromElement },
+    { HTTPMethod::Post, "/session/$sessionId/shadow/$shadowId/element", &WebDriverService::findElementFromShadowRoot },
+    { HTTPMethod::Post, "/session/$sessionId/shadow/$shadowId/elements", &WebDriverService::findElementsFromShadowRoot },
     { HTTPMethod::Get, "/session/$sessionId/element/active", &WebDriverService::getActiveElement },
 
+    { HTTPMethod::Get, "/session/$sessionId/element/$elementId/shadow", &WebDriverService::getElementShadowRoot },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/selected", &WebDriverService::isElementSelected },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/attribute/$name", &WebDriverService::getElementAttribute },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/property/$name", &WebDriverService::getElementProperty },
@@ -1293,9 +1296,9 @@ void WebDriverService::switchToParentFrame(RefPtr<JSON::Object>&& parameters, Fu
     });
 }
 
-static std::optional<String> findElementOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler)
+static std::optional<String> findElementOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, Session::ElementIsShadowRoot isShadowRoot = Session::ElementIsShadowRoot::No)
 {
-    auto elementID = parameters.getString("elementId"_s);
+    auto elementID = parameters.getString(isShadowRoot == Session::ElementIsShadowRoot::Yes ? "shadowId"_s : "elementId"_s);
     if (elementID.isEmpty()) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return std::nullopt;
@@ -1314,7 +1317,7 @@ static inline bool isValidStrategy(const String& strategy)
         || strategy == "xpath";
 }
 
-static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, String& strategy, String& selector)
+static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, Session::ElementIsShadowRoot isShadowRoot, String& strategy, String& selector)
 {
     strategy = parameters.getString("using"_s);
     if (!isValidStrategy(strategy)) {
@@ -1326,6 +1329,17 @@ static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters,
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return false;
     }
+
+    if (isShadowRoot == Session::ElementIsShadowRoot::Yes) {
+        // Currently there is an opened discussion about if the following values has to be supported for a Shadow Root
+        // because the current implementation doesn't support them. We have them disabled for now.
+        // https://github.com/w3c/webdriver/issues/1610
+        if (strategy == "tag name" || strategy == "xpath") {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidSelector));
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -1337,7 +1351,7 @@ void WebDriverService::findElement(RefPtr<JSON::Object>&& parameters, Function<v
         return;
 
     String strategy, selector;
-    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
+    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::No, strategy, selector))
         return;
 
     m_session->waitForNavigationToComplete([this, strategy = WTFMove(strategy), selector = WTFMove(selector), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
@@ -1345,7 +1359,7 @@ void WebDriverService::findElement(RefPtr<JSON::Object>&& parameters, Function<v
             completionHandler(WTFMove(result));
             return;
         }
-        m_session->findElements(strategy, selector, Session::FindElementsMode::Single, emptyString(), WTFMove(completionHandler));
+        m_session->findElements(strategy, selector, Session::FindElementsMode::Single, emptyString(), Session::ElementIsShadowRoot::No, WTFMove(completionHandler));
     });
 }
 
@@ -1357,7 +1371,7 @@ void WebDriverService::findElements(RefPtr<JSON::Object>&& parameters, Function<
         return;
 
     String strategy, selector;
-    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
+    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::No, strategy, selector))
         return;
 
     m_session->waitForNavigationToComplete([this, strategy = WTFMove(strategy), selector = WTFMove(selector), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
@@ -1365,7 +1379,7 @@ void WebDriverService::findElements(RefPtr<JSON::Object>&& parameters, Function<
             completionHandler(WTFMove(result));
             return;
         }
-        m_session->findElements(strategy, selector, Session::FindElementsMode::Multiple, emptyString(), WTFMove(completionHandler));
+        m_session->findElements(strategy, selector, Session::FindElementsMode::Multiple, emptyString(), Session::ElementIsShadowRoot::No, WTFMove(completionHandler));
     });
 }
 
@@ -1381,10 +1395,9 @@ void WebDriverService::findElementFromElement(RefPtr<JSON::Object>&& parameters,
         return;
 
     String strategy, selector;
-    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
+    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::No, strategy, selector))
         return;
-
-    m_session->findElements(strategy, selector, Session::FindElementsMode::Single, elementID.value(), WTFMove(completionHandler));
+    m_session->findElements(strategy, selector, Session::FindElementsMode::Single, elementID.value(), Session::ElementIsShadowRoot::No, WTFMove(completionHandler));
 }
 
 void WebDriverService::findElementsFromElement(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
@@ -1399,10 +1412,42 @@ void WebDriverService::findElementsFromElement(RefPtr<JSON::Object>&& parameters
         return;
 
     String strategy, selector;
-    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
+    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::No, strategy, selector))
         return;
 
-    m_session->findElements(strategy, selector, Session::FindElementsMode::Multiple, elementID.value(), WTFMove(completionHandler));
+    m_session->findElements(strategy, selector, Session::FindElementsMode::Multiple, elementID.value(), Session::ElementIsShadowRoot::No, WTFMove(completionHandler));
+}
+
+void WebDriverService::findElementFromShadowRoot(RefPtr<JSON::Object>&& parameters, Function<void(CommandResult&&)>&& completionHandler)
+{
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+
+    auto shadowID = findElementOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::Yes);
+    if (!shadowID)
+        return;
+
+    String strategy, selector;
+    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::Yes, strategy, selector))
+        return;
+
+    m_session->findElements(strategy, selector, Session::FindElementsMode::Single, shadowID.value(), Session::ElementIsShadowRoot::Yes, WTFMove(completionHandler));
+}
+
+void WebDriverService::findElementsFromShadowRoot(RefPtr<JSON::Object>&& parameters, Function<void(CommandResult&&)>&& completionHandler)
+{
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+
+    auto shadowID = findElementOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::Yes);
+    if (!shadowID)
+        return;
+
+    String strategy, selector;
+    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::Yes, strategy, selector))
+        return;
+
+    m_session->findElements(strategy, selector, Session::FindElementsMode::Multiple, shadowID.value(), Session::ElementIsShadowRoot::Yes, WTFMove(completionHandler));
 }
 
 void WebDriverService::getActiveElement(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
@@ -1419,6 +1464,18 @@ void WebDriverService::getActiveElement(RefPtr<JSON::Object>&& parameters, Funct
         }
         m_session->getActiveElement(WTFMove(completionHandler));
     });
+}
+
+void WebDriverService::getElementShadowRoot(RefPtr<JSON::Object>&& parameters, Function<void(CommandResult&&)>&& completionHandler)
+{
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+
+    auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
+    if (!elementID)
+        return;
+
+    m_session->getElementShadowRoot(elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::isElementSelected(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,26 +26,30 @@
 #ifndef PAS_BITFIT_DIRECTORY_H
 #define PAS_BITFIT_DIRECTORY_H
 
-#include "pas_bitfit_directory_kind.h"
 #include "pas_bitfit_max_free.h"
 #include "pas_bitfit_page_config_kind.h"
 #include "pas_bitfit_view_and_index.h"
 #include "pas_compact_atomic_bitfit_size_class_ptr.h"
 #include "pas_compact_atomic_bitfit_view_ptr.h"
 #include "pas_heap_summary.h"
+#include "pas_page_sharing_participant.h"
 #include "pas_segmented_vector.h"
 #include "pas_versioned_field.h"
 
 PAS_BEGIN_EXTERN_C;
 
 struct pas_bitfit_directory;
-struct pas_bitfit_global_size_class;
+struct pas_bitfit_directory_bitvector_segment;
+struct pas_bitfit_size_class;
 struct pas_bitfit_page;
 struct pas_bitfit_view;
+struct pas_segregated_heap;
 typedef struct pas_bitfit_directory pas_bitfit_directory;
-typedef struct pas_bitfit_global_size_class pas_bitfit_global_size_class;
+typedef struct pas_bitfit_directory_bitvector_segment pas_bitfit_directory_bitvector_segment;
+typedef struct pas_bitfit_size_class pas_bitfit_size_class;
 typedef struct pas_bitfit_page pas_bitfit_page;
 typedef struct pas_bitfit_view pas_bitfit_view;
+typedef struct pas_segregated_heap pas_segregated_heap;
 
 #define PAS_BITFIT_DIRECTORY_VERBOSE_MAX_FREE false
 
@@ -57,19 +61,35 @@ PAS_DECLARE_SEGMENTED_VECTOR(pas_bitfit_directory_view_vector,
                              pas_compact_atomic_bitfit_view_ptr,
                              8);
 
+struct pas_bitfit_directory_bitvector_segment {
+    unsigned empty_bits;
+};
+
+#define PAS_BITFIT_DIRECTORY_BITVECTOR_SEGMENT_INITIALIZER \
+    ((pas_bitfit_directory_bitvector_segment){ \
+         .empty_bits = 0, \
+     })
+
+PAS_DECLARE_SEGMENTED_VECTOR(pas_bitfit_directory_segmented_bitvectors,
+                             pas_bitfit_directory_bitvector_segment,
+                             4);
+
 struct PAS_ALIGNED(sizeof(pas_versioned_field)) pas_bitfit_directory {
     pas_versioned_field first_unprocessed_free;
     pas_versioned_field first_empty;
+    pas_versioned_field last_empty_plus_one; /* Zero means there aren't any. */
+    pas_segregated_heap* heap;
+    pas_bitfit_directory_segmented_bitvectors bitvectors;
     pas_bitfit_directory_max_free_vector max_frees;
     pas_bitfit_directory_view_vector views;
+    pas_page_sharing_participant_payload physical_sharing_payload;
     pas_compact_atomic_bitfit_size_class_ptr largest_size_class;
-    pas_bitfit_directory_kind directory_kind : 8;
     pas_bitfit_page_config_kind config_kind : 8;
 };
 
 PAS_API void pas_bitfit_directory_construct(pas_bitfit_directory* directory,
-                                            pas_bitfit_directory_kind directory_kind,
-                                            pas_bitfit_page_config* config);
+                                            pas_bitfit_page_config* config,
+                                            pas_segregated_heap* heap);
 
 static inline unsigned pas_bitfit_directory_size(pas_bitfit_directory* directory)
 {
@@ -195,7 +215,6 @@ static inline pas_bitfit_view* pas_bitfit_directory_get_view(pas_bitfit_director
    size_class's version of this function. */
 PAS_API pas_bitfit_view_and_index
 pas_bitfit_directory_get_first_free_view(pas_bitfit_directory* directory,
-                                         pas_bitfit_global_size_class* size_class,
                                          unsigned start_index,
                                          unsigned size,
                                          pas_bitfit_page_config* page_config);
@@ -213,6 +232,37 @@ PAS_API bool pas_bitfit_directory_for_each_live_object(
     pas_bitfit_directory* directory,
     pas_bitfit_directory_for_each_live_object_callback callback,
     void* arg);
+
+PAS_API bool pas_bitfit_directory_does_sharing(pas_bitfit_directory* directory);
+
+PAS_API uint64_t pas_bitfit_directory_get_use_epoch(pas_bitfit_directory* directory);
+
+PAS_API bool pas_bitfit_directory_get_empty_bit_at_index(
+    pas_bitfit_directory* directory,
+    size_t index);
+
+/* Returns whether we changed the value. */
+PAS_API bool pas_bitfit_directory_set_empty_bit_at_index(
+    pas_bitfit_directory* directory,
+    size_t index,
+    bool value);
+
+PAS_API void pas_bitfit_directory_view_did_become_empty_at_index(
+    pas_bitfit_directory* directory,
+    size_t index);
+PAS_API void pas_bitfit_directory_view_did_become_empty(
+    pas_bitfit_directory* directory,
+    pas_bitfit_view* view);
+
+PAS_API pas_page_sharing_pool_take_result pas_bitfit_directory_take_last_empty(
+    pas_bitfit_directory* directory,
+    pas_deferred_decommit_log* decommit_log,
+    pas_lock_hold_mode heap_lock_hold_mode);
+
+PAS_API void pas_bitfit_directory_dump_reference(
+    pas_bitfit_directory* directory, pas_stream* stream);
+
+PAS_API void pas_bitfit_directory_dump_for_spectrum(pas_stream* stream, void* directory);
 
 PAS_END_EXTERN_C;
 

@@ -1,0 +1,7 @@
+
+
+
+
+
+PASS c-v:hidden <img> layout APIs shouldn't return zero when accessed from script.
+

@@ -26,6 +26,8 @@
 #pragma once
 
 #include "FrameInfoData.h"
+#include "WebURLSchemeHandlerIdentifier.h"
+#include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 
 namespace IPC {
@@ -36,8 +38,8 @@ class Decoder;
 namespace WebKit {
 
 struct URLSchemeTaskParameters {
-    uint64_t handlerIdentifier { 0 };
-    uint64_t taskIdentifier { 0 };
+    WebURLSchemeHandlerIdentifier handlerIdentifier;
+    WebCore::ResourceLoaderIdentifier taskIdentifier;
     WebCore::ResourceRequest request;
     FrameInfoData frameInfo;
     

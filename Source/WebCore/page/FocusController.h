@@ -29,6 +29,7 @@
 #include "FocusOptions.h"
 #include "LayoutRect.h"
 #include "Timer.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -47,7 +48,7 @@ class TreeScope;
 
 struct FocusCandidate;
 
-class FocusController {
+class FocusController : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit FocusController(Page&, OptionSet<ActivityState::Flag>);

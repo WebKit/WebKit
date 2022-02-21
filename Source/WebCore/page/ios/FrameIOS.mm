@@ -204,8 +204,8 @@ CGRect Frame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fontSiz
             printf("%s %f %f %f %f\n", nodeName, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
         }
 #endif
-        if (renderer->isRenderBlock() || renderer->isInlineBlockOrInlineTable() || renderer->isReplaced()) {
-            *isReplaced = renderer->isReplaced();
+        if (renderer->isRenderBlock() || renderer->isInlineBlockOrInlineTable() || renderer->isReplacedOrInlineBlock()) {
+            *isReplaced = renderer->isReplacedOrInlineBlock();
 #if CHECK_FONT_SIZE
             for (RenderObject* textRenderer = hitRenderer; textRenderer; textRenderer = textRenderer->traverseNext(hitRenderer)) {
                 if (textRenderer->isText()) {
@@ -397,7 +397,7 @@ static bool nodeIsMouseFocusable(Node& node)
     if (element.isMouseFocusable())
         return true;
 
-    if (auto shadowRoot = makeRefPtr(element.shadowRoot())) {
+    if (RefPtr shadowRoot = element.shadowRoot()) {
         if (shadowRoot->delegatesFocus()) {
             for (auto& node : composedTreeDescendants(element)) {
                 if (is<Element>(node) && downcast<Element>(node).isMouseFocusable())
@@ -644,8 +644,9 @@ void Frame::dispatchPageHideEventBeforePause()
     if (!isMainFrame())
         return;
 
-    for (Frame* frame = this; frame; frame = frame->tree().traverseNext(this))
-        frame->document()->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, true), document());
+    Page::forEachDocumentFromMainFrame(*this, [pagehideEvent = eventNames().pagehideEvent, mainDocument = document()](Document& document) {
+        document.domWindow()->dispatchEvent(PageTransitionEvent::create(pagehideEvent, true), mainDocument);
+    });
 }
 
 void Frame::dispatchPageShowEventBeforeResume()
@@ -654,8 +655,9 @@ void Frame::dispatchPageShowEventBeforeResume()
     if (!isMainFrame())
         return;
 
-    for (Frame* frame = this; frame; frame = frame->tree().traverseNext(this))
-        frame->document()->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pageshowEvent, true), document());
+    Page::forEachDocumentFromMainFrame(*this, [pageshowEvent = eventNames().pageshowEvent, mainDocument = document()](Document& document) {
+        document.domWindow()->dispatchEvent(PageTransitionEvent::create(pageshowEvent, true), mainDocument);
+    });
 }
 
 void Frame::setRangedSelectionBaseToCurrentSelection()
@@ -728,7 +730,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
     size_t interpretationsCount = 1;
 
     for (auto* marker : markersInRoot)
-        interpretationsCount *= WTF::get<Vector<String>>(marker->data()).size() + 1;
+        interpretationsCount *= std::get<Vector<String>>(marker->data()).size() + 1;
 
     Vector<Vector<UChar>> interpretations;
     interpretations.grow(interpretationsCount);
@@ -739,7 +741,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
 
     for (auto& node : intersectingNodes(rangeOfRootContents)) {
         for (auto* marker : document()->markers().markersFor(node, DocumentMarker::DictationPhraseWithAlternatives)) {
-            auto& alternatives = WTF::get<Vector<String>>(marker->data());
+            auto& alternatives = std::get<Vector<String>>(marker->data());
 
             auto rangeForMarker = makeSimpleRange(node, *marker);
 

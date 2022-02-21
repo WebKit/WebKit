@@ -1,0 +1,9 @@
+
+PASS ":host" should be a valid selector
+PASS ":host(.a)" should be a valid selector
+PASS ":host(div.a)" should be a valid selector
+PASS ":host()" should be an invalid selector
+FAIL ":host(.a, .b)" should be an invalid selector assert_throws_dom: ":host(.a, .b)" should throw in querySelector function "() => document.querySelector(selector)" did not throw
+PASS ":host(.a + .b)" should be an invalid selector
+PASS ":host(.a + .b, #c > #d)" should be an invalid selector
+

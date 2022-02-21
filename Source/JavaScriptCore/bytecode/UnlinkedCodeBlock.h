@@ -25,9 +25,12 @@
 
 #pragma once
 
+#include "ArithProfile.h"
+#include "ArrayProfile.h"
 #include "BytecodeConventions.h"
 #include "CodeType.h"
 #include "DFGExitProfile.h"
+#include "ExecutionCounter.h"
 #include "ExpressionRangeInfo.h"
 #include "HandlerInfo.h"
 #include "Identifier.h"
@@ -38,6 +41,7 @@
 #include "RegExp.h"
 #include "UnlinkedFunctionExecutable.h"
 #include "UnlinkedMetadataTable.h"
+#include "ValueProfile.h"
 #include "VirtualRegister.h"
 #include <algorithm>
 #include <wtf/BitVector.h>
@@ -62,17 +66,15 @@ class UnlinkedCodeBlock;
 class UnlinkedCodeBlockGenerator;
 class UnlinkedFunctionCodeBlock;
 class UnlinkedFunctionExecutable;
+class BaselineJITCode;
 struct ExecutableInfo;
 enum class LinkTimeConstant : int32_t;
 
 template<typename CodeBlockType>
 class CachedCodeBlock;
 
-typedef unsigned UnlinkedValueProfile;
-typedef unsigned UnlinkedArrayProfile;
 typedef unsigned UnlinkedArrayAllocationProfile;
 typedef unsigned UnlinkedObjectAllocationProfile;
-typedef unsigned UnlinkedLLIntCallLinkInfo;
 
 struct UnlinkedStringJumpTable {
     struct OffsetLocation {
@@ -138,6 +140,8 @@ public:
 
     enum { CallFunction, ApplyFunction };
 
+    void initializeLoopHintExecutionCounter();
+
     bool isConstructor() const { return m_isConstructor; }
     bool usesCallEval() const { return m_usesCallEval; }
     void setUsesCallEval() { m_usesCallEval = true; }
@@ -175,6 +179,7 @@ public:
 
     const FixedVector<WriteBarrier<Unknown>>& constantRegisters() { return m_constantRegisters; }
     const WriteBarrier<Unknown>& constantRegister(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()]; }
+    WriteBarrier<Unknown>& constantRegister(VirtualRegister reg) { return m_constantRegisters[reg.toConstantIndex()]; }
     ALWAYS_INLINE JSValue getConstant(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()].get(); }
     const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation() { return m_constantsSourceCodeRepresentation; }
 
@@ -207,6 +212,15 @@ public:
     JSParserScriptMode scriptMode() const { return static_cast<JSParserScriptMode>(m_scriptMode); }
 
     const InstructionStream& instructions() const;
+    const Instruction* instructionAt(BytecodeIndex index) const { return instructions().at(index).ptr(); }
+    unsigned bytecodeOffset(const Instruction* instruction)
+    {
+        const auto* instructionsBegin = instructions().at(0).ptr();
+        const auto* instructionsEnd = reinterpret_cast<const Instruction*>(reinterpret_cast<uintptr_t>(instructionsBegin) + instructions().size());
+        RELEASE_ASSERT(instruction >= instructionsBegin && instruction < instructionsEnd);
+        return instruction - instructionsBegin;
+    }
+    unsigned instructionsSize() const { return instructions().size(); }
 
     unsigned numCalleeLocals() const { return m_numCalleeLocals; }
     unsigned numVars() const { return m_numVars; }
@@ -334,6 +348,22 @@ public:
         return m_metadata->sizeInBytes();
     }
 
+    bool loopHintsAreEligibleForFuzzingEarlyReturn()
+    {
+        // Some builtins are required to always complete the loops they run.
+        return !isBuiltinFunction();
+    }
+    void allocateSharedProfiles(unsigned numBinaryArithProfiles, unsigned numUnaryArithProfiles);
+    UnlinkedValueProfile& unlinkedValueProfile(unsigned index) { return m_valueProfiles[index]; }
+    UnlinkedArrayProfile& unlinkedArrayProfile(unsigned index) { return m_arrayProfiles[index]; }
+    unsigned numberOfValueProfiles() const { return m_valueProfiles.size(); }
+    unsigned numberOfArrayProfiles() const { return m_arrayProfiles.size(); }
+
+#if ASSERT_ENABLED
+    bool hasIdentifier(UniquedStringImpl*);
+#endif
+
+    int32_t thresholdForJIT(int32_t threshold);
 
 protected:
     UnlinkedCodeBlock(VM&, Structure*, CodeType, const ExecutableInfo&, OptionSet<CodeGenerationMode>);
@@ -394,6 +424,9 @@ private:
     unsigned m_lexicalScopeFeatures : 4;
 public:
     ConcurrentJSLock m_lock;
+#if ENABLE(JIT)
+    RefPtr<BaselineJITCode> m_unlinkedBaselineCode;
+#endif
 private:
     CodeFeatures m_features { 0 };
     SourceParseMode m_parseMode;
@@ -409,7 +442,6 @@ private:
     Ref<UnlinkedMetadataTable> m_metadata;
     std::unique_ptr<InstructionStream> m_instructions;
     std::unique_ptr<BytecodeLivenessAnalysis> m_liveness;
-
 
 #if ENABLE(DFG_JIT)
     DFG::ExitProfile m_exitProfile;
@@ -455,6 +487,16 @@ public:
     {
         return outOfLineJumpOffset(instruction.offset());
     }
+    int outOfLineJumpOffset(const Instruction* pc)
+    {
+        unsigned bytecodeOffset = this->bytecodeOffset(pc);
+        return outOfLineJumpOffset(bytecodeOffset);
+    }
+
+    BinaryArithProfile& binaryArithProfile(unsigned i) { return m_binaryArithProfiles[i]; }
+    UnaryArithProfile& unaryArithProfile(unsigned i) { return m_unaryArithProfiles[i]; }
+
+    BaselineExecutionCounter& llintExecuteCounter() { return m_llintExecuteCounter; }
 
 private:
     using OutOfLineJumpTargets = HashMap<InstructionStream::Offset, int>;
@@ -462,6 +504,16 @@ private:
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     std::unique_ptr<RareData> m_rareData;
     FixedVector<ExpressionRangeInfo> m_expressionInfo;
+    BaselineExecutionCounter m_llintExecuteCounter;
+    FixedVector<UnlinkedValueProfile> m_valueProfiles;
+    FixedVector<UnlinkedArrayProfile> m_arrayProfiles;
+    FixedVector<BinaryArithProfile> m_binaryArithProfiles;
+    FixedVector<UnaryArithProfile> m_unaryArithProfiles;
+
+#if ASSERT_ENABLED
+    Lock m_cachedIdentifierUidsLock;
+    HashSet<UniquedStringImpl*> m_cachedIdentifierUids;
+#endif
 
 protected:
     DECLARE_VISIT_CHILDREN;

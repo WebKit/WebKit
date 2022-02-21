@@ -37,7 +37,7 @@ class TestSuiteTest : public testing::Test
     {
         if (!mTempFileName.empty())
         {
-            angle::DeleteFile(mTempFileName.c_str());
+            angle::DeleteSystemFile(mTempFileName.c_str());
         }
     }
 
@@ -82,7 +82,7 @@ class TestSuiteTest : public testing::Test
             printf("\n");
         }
 
-        ProcessHandle process(args, true, true);
+        ProcessHandle process(args, ProcessOutputCapture::StdoutAndStderrSeparately);
         EXPECT_TRUE(process->started());
         EXPECT_TRUE(process->finish());
         EXPECT_TRUE(process->finished());
@@ -115,6 +115,7 @@ TEST_F(TestSuiteTest, RunMockTests)
     std::map<TestIdentifier, TestResult> expectedResults = {
         {{"MockTestSuiteTest", "DISABLED_Pass"}, {TestResultType::Pass, 0.0}},
         {{"MockTestSuiteTest", "DISABLED_Fail"}, {TestResultType::Fail, 0.0}},
+        {{"MockTestSuiteTest", "DISABLED_Skip"}, {TestResultType::Skip, 0.0}},
         {{"MockTestSuiteTest", "DISABLED_Timeout"}, {TestResultType::Timeout, 0.0}},
     };
 
@@ -142,6 +143,7 @@ TEST_F(TestSuiteTest, RunCrashingTests)
 {
     std::vector<std::string> extraArgs = {
         "--gtest_filter=MockTestSuiteTest.DISABLED_Pass:MockTestSuiteTest.DISABLED_Fail:"
+        "MockTestSuiteTest.DISABLED_Skip:"
         "MockCrashTestSuiteTest.DISABLED_*",
         "--disable-crash-handler"};
 
@@ -151,8 +153,10 @@ TEST_F(TestSuiteTest, RunCrashingTests)
     std::map<TestIdentifier, TestResult> expectedResults = {
         {{"MockTestSuiteTest", "DISABLED_Pass"}, {TestResultType::Pass, 0.0}},
         {{"MockTestSuiteTest", "DISABLED_Fail"}, {TestResultType::Fail, 0.0}},
+        {{"MockTestSuiteTest", "DISABLED_Skip"}, {TestResultType::Skip, 0.0}},
         {{"MockCrashTestSuiteTest", "DISABLED_Crash"}, {TestResultType::Crash, 0.0}},
         {{"MockCrashTestSuiteTest", "DISABLED_PassAfterCrash"}, {TestResultType::Pass, 0.0}},
+        {{"MockCrashTestSuiteTest", "DISABLED_SkipAfterCrash"}, {TestResultType::Skip, 0.0}},
     };
 
     EXPECT_EQ(expectedResults, actual.results);
@@ -174,6 +178,12 @@ TEST(MockTestSuiteTest, DISABLED_Fail)
 TEST(MockTestSuiteTest, DISABLED_Timeout)
 {
     angle::Sleep(20000);
+}
+
+// Trigger a test skip.
+TEST(MockTestSuiteTest, DISABLED_Skip)
+{
+    GTEST_SKIP() << "Test skipped.";
 }
 
 // Trigger a flaky test failure.
@@ -199,7 +209,7 @@ TEST(MockFlakyTestSuiteTest, DISABLED_Flaky)
 
     if (fails >= kFlakyRetries - 1)
     {
-        angle::DeleteFile(tempFileName.c_str());
+        angle::DeleteSystemFile(tempFileName.c_str());
     }
     else
     {
@@ -223,5 +233,11 @@ TEST(MockCrashTestSuiteTest, DISABLED_Crash)
 TEST(MockCrashTestSuiteTest, DISABLED_PassAfterCrash)
 {
     EXPECT_TRUE(true);
+}
+
+// This test runs after the crash test.
+TEST(MockCrashTestSuiteTest, DISABLED_SkipAfterCrash)
+{
+    GTEST_SKIP() << "Test skipped.";
 }
 }  // namespace

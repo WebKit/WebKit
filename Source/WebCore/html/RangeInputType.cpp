@@ -32,8 +32,8 @@
 #include "config.h"
 #include "RangeInputType.h"
 
-#include "AXObjectCache.h"
 #include "Decimal.h"
+#include "DocumentInlines.h"
 #include "ElementChildIterator.h"
 #include "EventNames.h"
 #include "HTMLCollection.h"
@@ -46,6 +46,7 @@
 #include "RenderSlider.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScopedEventQueue.h"
+#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "SliderThumbElement.h"
 #include "StepRange.h"
@@ -74,9 +75,9 @@ static const int rangeDefaultStepBase = 0;
 static const int rangeStepScaleFactor = 1;
 static const StepRange::StepDescription rangeStepDescription { rangeDefaultStep, rangeDefaultStepBase, rangeStepScaleFactor };
 
-static Decimal ensureMaximum(const Decimal& proposedValue, const Decimal& minimum, const Decimal& fallbackValue)
+static Decimal ensureMaximum(const Decimal& proposedValue, const Decimal& minimum)
 {
-    return proposedValue >= minimum ? proposedValue : std::max(minimum, fallbackValue);
+    return proposedValue >= minimum ? proposedValue : minimum;
 }
 
 RangeInputType::RangeInputType(HTMLInputElement& element)
@@ -117,7 +118,7 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     ASSERT(element());
     const Decimal minimum = parseToNumber(element()->attributeWithoutSynchronization(minAttr), rangeDefaultMinimum);
-    const Decimal maximum = ensureMaximum(parseToNumber(element()->attributeWithoutSynchronization(maxAttr), rangeDefaultMaximum), minimum, rangeDefaultMaximum);
+    const Decimal maximum = ensureMaximum(parseToNumber(element()->attributeWithoutSynchronization(maxAttr), rangeDefaultMaximum), minimum);
 
     const AtomString& precisionValue = element()->attributeWithoutSynchronization(precisionAttr);
     if (!precisionValue.isNull()) {
@@ -205,7 +206,7 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
 
     bool isVertical = false;
     if (auto* renderer = element()->renderer()) {
-        ControlPart part = renderer->style().appearance();
+        ControlPart part = renderer->style().effectiveAppearance();
         isVertical = part == SliderVerticalPart || part == MediaVolumeSliderPart;
     }
 
@@ -234,29 +235,25 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     if (newValue != current) {
         EventQueueScope scope;
         setValueAsDecimal(newValue, DispatchInputAndChangeEvent);
-
-        if (AXObjectCache* cache = element()->document().existingAXObjectCache())
-            cache->postNotification(element(), AXObjectCache::AXValueChanged);
     }
 
     event.setDefaultHandled();
     return ShouldCallBaseEventHandler::Yes;
 }
 
-void RangeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool)
+void RangeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(bool)
 {
     ASSERT(needsShadowSubtree());
     ASSERT(element());
     ASSERT(element()->userAgentShadowRoot());
 
-    static MainThreadNeverDestroyed<const AtomString> webkitSliderRunnableTrackName("-webkit-slider-runnable-track", AtomString::ConstructFromLiteral);
     Document& document = element()->document();
     auto track = HTMLDivElement::create(document);
-    track->setPseudo(webkitSliderRunnableTrackName);
-    track->appendChild(source, SliderThumbElement::create(document));
+    track->setPseudo(ShadowPseudoIds::webkitSliderRunnableTrack());
+    track->appendChild(ContainerNode::ChildChange::Source::Parser, SliderThumbElement::create(document));
     auto container = SliderContainerElement::create(document);
-    container->appendChild(source, track);
-    element()->userAgentShadowRoot()->appendChild(source, container);
+    container->appendChild(ContainerNode::ChildChange::Source::Parser, track);
+    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, container);
 }
 
 HTMLElement* RangeInputType::sliderTrackElement() const

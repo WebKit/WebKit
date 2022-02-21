@@ -1,0 +1,3 @@
+partial interface SharedWorkerGlobalScope {
+    attribute SharedWorkerGlobalScopeConstructor SharedWorkerGlobalScope;
+};

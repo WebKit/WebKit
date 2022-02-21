@@ -19,9 +19,7 @@ var rejectP1,
 Promise.all([p1, p2]).then(function(resolve) {
   throw new Test262Error("Did not expect promise to be fulfilled.");
 }, function(rejected) {
-  if (rejected !== 1) {
-    throw new Test262Error("Expected promise to be rejected with 1, actually " + rejected);
-  }
+  assert.sameValue(rejected, 1, 'The value of rejected is expected to be 1');
 }).then($DONE, $DONE);
 
 rejectP1(1);

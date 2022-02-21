@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #import <wtf/URLParser.h>
 #import <wtf/cf/CFURLExtras.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/CString.h>
 
 @interface NSString (WTFNSURLExtras)
@@ -37,18 +38,9 @@
 
 namespace WTF {
 
-URL::URL(NSURL *url)
+URL::URL(NSURL *cocoaURL)
+    : URL(bridge_cast(cocoaURL))
 {
-    if (!url) {
-        invalidate();
-        return;
-    }
-
-    // FIXME: Why is it OK to ignore base URL here?
-    CString urlBytes;
-    WTF::getURLBytes((__bridge CFURLRef)url, urlBytes);
-    URLParser parser(urlBytes.data());
-    *this = parser.result();
 }
 
 URL::operator NSURL *() const
@@ -58,28 +50,11 @@ URL::operator NSURL *() const
     return createCFURL().bridgingAutorelease();
 }
 
-RetainPtr<CFURLRef> URL::createCFURL() const
+RetainPtr<CFURLRef> URL::emptyCFURL()
 {
-    if (isNull())
-        return nullptr;
-
-    if (isEmpty()) {
-        // We use the toll-free bridge between NSURL and CFURL to create a CFURLRef supporting both empty and null values.
-        return (__bridge CFURLRef)adoptNS([[NSURL alloc] initWithString:@""]).get();
-    }
-
-    RetainPtr<CFURLRef> cfURL;
-    if (LIKELY(m_string.is8Bit() && m_string.isAllASCII()))
-        cfURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, m_string.characters8(), m_string.length(), kCFStringEncodingUTF8, nullptr, true));
-    else {
-        CString utf8 = m_string.utf8();
-        cfURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, utf8.dataAsUInt8Ptr(), utf8.length(), kCFStringEncodingUTF8, nullptr, true));
-    }
-
-    if (protocolIsInHTTPFamily() && !WTF::isCFURLSameOrigin(cfURL.get(), *this))
-        return nullptr;
-
-    return cfURL;
+    // We use the toll-free bridge to create an empty value that is distinct from null that no CFURL function can create.
+    // FIXME: When we originally wrote this, we thought that creating empty CF URLs was valuable; can we do without it now?
+    return bridge_cast(adoptNS([[NSURL alloc] initWithString:@""]));
 }
 
 bool URL::hostIsIPAddress(StringView host)
@@ -89,7 +64,7 @@ bool URL::hostIsIPAddress(StringView host)
 
 RetainPtr<id> makeNSArrayElement(const URL& vectorElement)
 {
-    return adoptNS((__bridge_transfer id)vectorElement.createCFURL().leakRef());
+    return bridge_cast(vectorElement.createCFURL());
 }
 
 std::optional<URL> makeVectorElement(const URL*, id arrayElement)

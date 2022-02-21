@@ -31,6 +31,7 @@ info: |
         Perform ? DefinePropertyOrThrow(O, k, desc).
   Return true.
 
+features: [AggregateError]
 ---*/
 
 Object.seal(new AggregateError([]));

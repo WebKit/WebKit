@@ -53,6 +53,7 @@ private:
         AfterRule,
         RuleValue,
         AfterRuleValue,
+        RuleConditions,
         DoneParsingImportRules,
     };
 
@@ -62,6 +63,7 @@ private:
     State m_state;
     Vector<UChar> m_rule;
     Vector<UChar> m_ruleValue;
+    Vector<UChar> m_ruleConditions;
 
     // Only non-zero during scan()
     PreloadRequestStream* m_requests;

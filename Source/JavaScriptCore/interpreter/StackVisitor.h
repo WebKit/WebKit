@@ -27,6 +27,7 @@
 
 #include "BytecodeIndex.h"
 #include "CalleeBits.h"
+#include "SourceID.h"
 #include "WasmIndexOrName.h"
 #include <wtf/Function.h>
 #include <wtf/Indenter.h>
@@ -87,7 +88,7 @@ public:
         JS_EXPORT_PRIVATE String sourceURL() const;
         JS_EXPORT_PRIVATE String toString() const;
 
-        JS_EXPORT_PRIVATE intptr_t sourceID();
+        JS_EXPORT_PRIVATE SourceID sourceID();
 
         CodeType codeType() const;
         bool hasLineAndColumnInfo() const;

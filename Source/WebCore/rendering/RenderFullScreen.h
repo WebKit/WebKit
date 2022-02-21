@@ -40,7 +40,7 @@ public:
     const char* renderName() const override { return "RenderFullScreen"; }
 
     RenderBlock* placeholder() { return m_placeholder.get(); }
-    void setPlaceholder(RenderBlock& placeholder) { m_placeholder = makeWeakPtr(placeholder); }
+    void setPlaceholder(RenderBlock& placeholder) { m_placeholder = placeholder; }
 
     static RenderPtr<RenderFullScreen> wrapNewRenderer(RenderTreeBuilder&, RenderPtr<RenderElement>, RenderElement& parent, Document&);
     static void wrapExistingRenderer(RenderElement&, Document&);

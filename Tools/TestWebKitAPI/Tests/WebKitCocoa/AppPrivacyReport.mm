@@ -27,7 +27,6 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
-#import "ServiceWorkerTCPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
@@ -37,6 +36,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKSessionState.h>
+#import <WebCore/ResourceRequest.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
@@ -665,17 +665,14 @@ TEST(AppPrivacyReport, RegisterServiceWorkerClientUpdatesAppInitiatedValue)
     webView1.get().navigationDelegate = delegate.get();
     webView2.get().navigationDelegate = delegate.get();
 
-    ServiceWorkerTCPServer server({
-        { "text/html", mainSWBytesDefaultValue },
-        { "application/javascript", scriptBytesDefaultValue },
-    }, {
-        { "text/html", mainSWBytesDefaultValue },
-        { "application/javascript", scriptBytesDefaultValue },
+    TestWebKitAPI::HTTPServer server({
+        { "/main.html", { mainSWBytesDefaultValue } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytesDefaultValue } },
     });
 
     // Load WebView with an app initiated request. We expect the ServiceWorkerThreadProxy to be app initiated.
     expectedMessage = "app initiated";
-    [webView1 loadRequest:server.request()];
+    [webView1 loadRequest:server.request("/main.html")];
     TestWebKitAPI::Util::run(&receivedMessage);
 
     // Load WebView with a non app initiated request. We expect the ServiceWorkerThreadProxy to be app initiated
@@ -707,10 +704,11 @@ static void loadSimulatedRequestTest(IsAppInitiated isAppInitiated)
     auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSMutableURLRequest *loadRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org"]];
+    NSMutableURLRequest *loadRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
     loadRequest.attribution = isAppInitiated == IsAppInitiated::Yes ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 
-    NSString *HTML = @"<html><head></head><body><img src='https://apple.com/'></img></body></html>";
+    NSString *HTML = @"<html><head></head><body><iframe src='http://127.0.0.1/'></iframe></body></html>";
+
     [webView loadSimulatedRequest:loadRequest responseHTMLString:HTML];
     [delegate waitForDidFinishNavigation];
 
@@ -724,6 +722,7 @@ static void loadSimulatedRequestTest(IsAppInitiated isAppInitiated)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+// FIXME: Re-enable these two tests once webkit.org/b/232166 is resolved.
 TEST(AppPrivacyReport, LoadSimulatedRequestIsAppInitiated)
 {
     loadSimulatedRequestTest(IsAppInitiated::Yes);
@@ -745,17 +744,21 @@ static void restoreFromSessionStateTest(IsAppInitiated isAppInitiated)
     [webView1 _test_waitForDidFinishNavigation];
 
     RetainPtr<_WKSessionState> sessionState = [webView1 _sessionState];
-    sessionState.get().isAppInitiated = isAppInitiated == IsAppInitiated::Yes ? true : false;
-    webView1 = nullptr;
+    [webView1 _close];
+
+    static bool isDone = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-
     [webView2 _restoreSessionState:sessionState.get() andNavigate:YES];
     [webView2 _test_waitForDidFinishNavigation];
 
     EXPECT_WK_STREQ(@"https://www.apple.com/", [[webView2 URL] absoluteString]);
 
-    static bool isDone = false;
+    isDone = false;
     bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
     [webView2 _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
         EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
@@ -773,6 +776,131 @@ TEST(AppPrivacyReport, RestoreFromSessionStateIsAppInitiated)
 TEST(AppPrivacyReport, RestoreFromSessionStateIsNonAppInitiated)
 {
     restoreFromSessionStateTest(IsAppInitiated::No);
+}
+
+static void restoreFromInteractionStateTest(IsAppInitiated isAppInitiated)
+{
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://www.apple.com/"]];
+    request.attribution = isAppInitiated == IsAppInitiated::Yes ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+
+    [webView1 loadRequest:request];
+    [webView1 _test_waitForDidFinishNavigation];
+
+    id interactionState = [webView1 interactionState];
+    [webView1 _close];
+
+    static bool isDone = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView2 setInteractionState:interactionState];
+    [webView2 _test_waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ(@"https://www.apple.com/", [[webView2 URL] absoluteString]);
+
+    isDone = false;
+    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
+    [webView2 _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
+        EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
+        EXPECT_EQ(data.hasLoadedNonAppInitiatedRequestTesting, !expectingAppInitiatedRequests);
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(AppPrivacyReport, RestoreFromInteractionStateIsAppInitiated)
+{
+    restoreFromInteractionStateTest(IsAppInitiated::Yes);
+}
+
+TEST(AppPrivacyReport, RestoreFromInteractionStateIsNonAppInitiated)
+{
+    restoreFromInteractionStateTest(IsAppInitiated::No);
+}
+
+static void loadFileTest(IsAppInitiated isAppInitiated)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+
+    NSURL *file = [[NSBundle mainBundle] URLForResource:@"file-with-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:file];
+    request.attribution = isAppInitiated == IsAppInitiated::Yes ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+
+    [webView loadFileRequest:request allowingReadAccessToURL:file.URLByDeletingLastPathComponent];
+    [webView _test_waitForDidFinishNavigation];
+
+    static bool isDone = false;
+    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
+    [webView _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
+        EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
+        EXPECT_EQ(data.hasLoadedNonAppInitiatedRequestTesting, !expectingAppInitiatedRequests);
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(AppPrivacyReport, LoadFileRequestIsAppInitiated)
+{
+    loadFileTest(IsAppInitiated::Yes);
+}
+
+TEST(AppPrivacyReport, LoadFileRequestIsNonAppInitiated)
+{
+    loadFileTest(IsAppInitiated::No);
+}
+
+TEST(AppPrivacyReport, NSURLRequestConstructorAttribution)
+{
+    NSString *url = @"https://webkit.org";
+
+    NSMutableURLRequest *appInitiatedRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    EXPECT_EQ(appInitiatedRequest.attribution, NSURLRequestAttributionDeveloper);
+
+    WebCore::ResourceRequest testRequest(appInitiatedRequest);
+    EXPECT_TRUE(testRequest.isAppInitiated());
+
+    WebCore::ResourceRequest testRequestCopy(testRequest);
+    EXPECT_TRUE(testRequestCopy.isAppInitiated());
+
+    auto nsRequestFromCopy = testRequestCopy.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    EXPECT_EQ(nsRequestFromCopy.attribution, NSURLRequestAttributionDeveloper);
+    
+    appInitiatedRequest.attribution = NSURLRequestAttributionUser;
+    WebCore::ResourceRequest testRequest2(appInitiatedRequest);
+    EXPECT_FALSE(testRequest2.isAppInitiated());
+
+    WebCore::ResourceRequest testRequestCopy2(testRequest2);
+    EXPECT_FALSE(testRequestCopy2.isAppInitiated());
+
+    auto nsRequestFromCopy2 = testRequestCopy2.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    EXPECT_EQ(nsRequestFromCopy2.attribution, NSURLRequestAttributionUser);
+
+    appInitiatedRequest.attribution = NSURLRequestAttributionDeveloper;
+    WebCore::ResourceRequest testRequest3(appInitiatedRequest);
+    EXPECT_TRUE(testRequest3.isAppInitiated());
+
+    auto nsRequestFromModifiedRequest = testRequest3.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    EXPECT_EQ(nsRequestFromModifiedRequest.attribution, NSURLRequestAttributionDeveloper);
+
+    testRequest3.setIsAppInitiated(false);
+    auto nsRequestFromModifiedRequest2 = testRequest3.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    EXPECT_EQ(nsRequestFromModifiedRequest2.attribution, NSURLRequestAttributionUser);
+
+    testRequest3.setIsAppInitiated(true);
+    auto nsRequestFromModifiedRequest3 = testRequest3.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    EXPECT_EQ(nsRequestFromModifiedRequest3.attribution, NSURLRequestAttributionDeveloper);
+
+    // Changing the nsURLRequest copy generated by the accessor doesn't change the ResourceRequest
+    appInitiatedRequest.attribution = NSURLRequestAttributionUser;
+    EXPECT_TRUE(testRequest.isAppInitiated());
+
+    WebCore::ResourceRequest testRequest4(appInitiatedRequest);
+    EXPECT_FALSE(testRequest4.isAppInitiated());
 }
 
 #endif // APP_PRIVACY_REPORT

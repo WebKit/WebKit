@@ -65,6 +65,7 @@ static float computeSampleUsingLinearInterpolation(const float* source, unsigned
 ExceptionOr<Ref<AudioBufferSourceNode>> AudioBufferSourceNode::create(BaseAudioContext& context, AudioBufferSourceOptions&& options)
 {
     auto node = adoptRef(*new AudioBufferSourceNode(context));
+    node->suspendIfNeeded();
 
     node->setBufferForBindings(WTFMove(options.buffer));
     node->detune().setValue(options.detune);

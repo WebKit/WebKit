@@ -23,8 +23,8 @@ layer at (0,0) size 800x230
               RenderText {#text} at (4,4) size 39x19
                 text run at (4,4) width 39: "dotted"
             RenderTableCell {TD} at (46,71) size 46x23 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 40x20
-                text run at (1,2) width 40: "hidden"
+              RenderText {#text} at (1,0) size 40x21
+                text run at (1,1) width 40: "hidden"
             RenderTableCell {TD} at (92,69) size 46x27 [border: (3px dotted #00FF00) none] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,4) size 39x19
                 text run at (1,4) width 39: "dotted"
@@ -33,8 +33,8 @@ layer at (0,0) size 800x230
               RenderText {#text} at (4,4) size 39x19
                 text run at (4,4) width 39: "dotted"
             RenderTableCell {TD} at (46,125) size 46x25 [border: none (2px dotted #00FF00)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,1) size 39x20
-                text run at (4,2) width 39: "dotted"
+              RenderText {#text} at (4,0) size 39x21
+                text run at (4,1) width 39: "dotted"
             RenderTableCell {TD} at (92,124) size 46x27 [border: (3px dotted #00FF00)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (4,4) size 39x19
                 text run at (4,4) width 39: "dotted"

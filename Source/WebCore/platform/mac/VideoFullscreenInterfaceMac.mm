@@ -395,14 +395,14 @@ void VideoFullscreenInterfaceMac::setVideoFullscreenModel(VideoFullscreenModel* 
 {
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->removeClient(*this);
-    m_videoFullscreenModel = makeWeakPtr(model);
+    m_videoFullscreenModel = model;
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->addClient(*this);
 }
 
 void VideoFullscreenInterfaceMac::setVideoFullscreenChangeObserver(VideoFullscreenChangeObserver* observer)
 {
-    m_fullscreenChangeObserver = makeWeakPtr(observer);
+    m_fullscreenChangeObserver = observer;
 }
 
 void VideoFullscreenInterfaceMac::setMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool)
@@ -456,7 +456,7 @@ void VideoFullscreenInterfaceMac::setupFullscreen(NSView& layerHostedView, const
 
     [videoFullscreenInterfaceObjC() setUpPIPForVideoView:&layerHostedView withFrame:(NSRect)initialRect inWindow:parentWindow];
 
-    RunLoop::main().dispatch([protectedThis = makeRefPtr(this), this] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this] {
         if (m_fullscreenChangeObserver)
             m_fullscreenChangeObserver->didSetupFullscreen();
     });

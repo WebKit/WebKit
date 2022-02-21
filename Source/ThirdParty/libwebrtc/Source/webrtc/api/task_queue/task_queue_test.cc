@@ -37,7 +37,7 @@ TEST_P(TaskQueueTest, PostAndCheckCurrent) {
   rtc::Event event;
   auto queue = CreateTaskQueue(factory, "PostAndCheckCurrent");
 
-  // We're not running a task, so |queue| shouldn't be current.
+  // We're not running a task, so `queue` shouldn't be current.
   // Note that because rtc::Thread also supports the TQ interface and
   // TestMainImpl::Init wraps the main test thread (bugs.webrtc.org/9714), that
   // means that TaskQueueBase::Current() will still return a valid value.
@@ -190,7 +190,7 @@ TEST_P(TaskQueueTest, PostAndReuse) {
 }
 
 TEST_P(TaskQueueTest, PostALot) {
-  // Waits until DecrementCount called |count| times. Thread safe.
+  // Waits until DecrementCount called `count` times. Thread safe.
   class BlockingCounter {
    public:
     explicit BlockingCounter(int initial_count) : count_(initial_count) {}

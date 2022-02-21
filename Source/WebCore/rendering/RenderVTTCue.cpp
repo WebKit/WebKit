@@ -60,7 +60,7 @@ void RenderVTTCue::layout()
     if (!m_cue->regionId().isEmpty())
         return;
 
-    LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(*this, locationOffset(), true);
 
     if (m_cue->cueType()== TextTrackCue::WebVTT) {
         if (m_cue->snapToLines())
@@ -79,18 +79,30 @@ bool RenderVTTCue::initializeLayoutParameters(LegacyInlineFlowBox*& firstLineBox
 
     RenderBlock* parentBlock = containingBlock();
 
-    // firstChild() returns the wrapping (backdrop) <div>. The cue object is
-    // the <div>'s first child.
-    RenderObject& firstChild = *this->firstChild();
-    RenderElement& backdropElement = downcast<RenderElement>(firstChild);
-    
-    firstLineBox = downcast<RenderInline>(*backdropElement.firstChild()).firstLineBox();
+    firstLineBox = cueBox().firstLineBox();
     if (!firstLineBox)
         firstLineBox = this->firstRootBox();
 
     // 1. Horizontal: Let step be the height of the first line box in boxes.
     //    Vertical: Let step be the width of the first line box in boxes.
     step = m_cue->getWritingDirection() == VTTCue::Horizontal ? firstLineBox->height() : firstLineBox->width();
+
+    // Note: the previous rules in initializeLayoutParameters() only account for
+    // the height of the line boxes contained within the cue, and not the cue's height
+    // nor its padding, nor its borders. Ignoring these will lead to errors
+    // in the initial placement of cues, as the resulting placement will result in
+    // the cue always being partially outside its containing block, rather than at
+    // its initial position. Correct the initial position by subtracting from
+    // position the difference between the the logicalHeight of the cue and its
+    // first line box.
+    auto& backdropBox = this->backdropBox();
+    auto lineBoxHeights = firstLineBox->logicalHeight();
+    for (auto nextLineBox = firstLineBox->nextLineBox(); nextLineBox; nextLineBox = nextLineBox->nextLineBox())
+        lineBoxHeights += nextLineBox->logicalHeight();
+
+    auto logicalHeightDelta = backdropBox.logicalHeight() - lineBoxHeights;
+    if (logicalHeightDelta > 0)
+        step += logicalHeightDelta;
 
     // 2. If step is zero, then jump to the step labeled done positioning below.
     if (!step)
@@ -146,7 +158,7 @@ void RenderVTTCue::placeBoxInDefaultPosition(LayoutUnit position, bool& switched
 
 bool RenderVTTCue::isOutside() const
 {
-    return !rectIsWithinContainer(absoluteContentBox());
+    return !rectIsWithinContainer(backdropBox().absoluteBoundingBoxRect());
 }
 
 bool RenderVTTCue::rectIsWithinContainer(const IntRect& rect) const
@@ -160,18 +172,20 @@ bool RenderVTTCue::isOverlapping() const
     return overlappingObject();
 }
 
-RenderObject* RenderVTTCue::overlappingObject() const
+RenderVTTCue* RenderVTTCue::overlappingObject() const
 {
-    return overlappingObjectForRect(absoluteBoundingBoxRect());
+    return overlappingObjectForRect(backdropBox().absoluteBoundingBoxRect());
 }
 
-RenderObject* RenderVTTCue::overlappingObjectForRect(const IntRect& rect) const
+RenderVTTCue* RenderVTTCue::overlappingObjectForRect(const IntRect& rect) const
 {
-    for (RenderObject* box = previousSibling(); box; box = box->previousSibling()) {
-        IntRect boxRect = box->absoluteBoundingBoxRect();
+    for (RenderObject* sibling = previousSibling(); sibling; sibling = sibling->previousSibling()) {
+        auto* previousCue = downcast<RenderVTTCue>(sibling);
+        if (!previousCue)
+            continue;
 
-        if (rect.intersects(boxRect))
-            return box;
+        if (rect.intersects(previousCue->backdropBox().absoluteBoundingBoxRect()))
+            return previousCue;
     }
 
     return 0;
@@ -243,7 +257,7 @@ bool RenderVTTCue::switchDirection(bool& switched, LayoutUnit& step)
 void RenderVTTCue::moveIfNecessaryToKeepWithinContainer()
 {
     IntRect containerRect = containingBlock()->absoluteBoundingBoxRect();
-    IntRect cueRect = absoluteBoundingBoxRect();
+    IntRect cueRect = backdropBox().absoluteBoundingBoxRect();
 
     int topOverflow = cueRect.y() - containerRect.y();
     int bottomOverflow = containerRect.maxY() - cueRect.maxY();
@@ -274,15 +288,15 @@ bool RenderVTTCue::findNonOverlappingPosition(int& newX, int& newY) const
 {
     newX = x();
     newY = y();
-    IntRect srcRect = absoluteBoundingBoxRect();
+    IntRect srcRect = backdropBox().absoluteBoundingBoxRect();
     IntRect destRect = srcRect;
 
     // Move the box up, looking for a non-overlapping position:
-    while (RenderObject* box = overlappingObjectForRect(destRect)) {
+    while (RenderVTTCue* cue = overlappingObjectForRect(destRect)) {
         if (m_cue->getWritingDirection() == VTTCue::Horizontal)
-            destRect.setY(box->absoluteBoundingBoxRect().y() - destRect.height());
+            destRect.setY(cue->backdropBox().absoluteBoundingBoxRect().y() - destRect.height());
         else
-            destRect.setX(box->absoluteBoundingBoxRect().x() - destRect.width());
+            destRect.setX(cue->backdropBox().absoluteBoundingBoxRect().x() - destRect.width());
     }
 
     if (rectIsWithinContainer(destRect)) {
@@ -294,11 +308,11 @@ bool RenderVTTCue::findNonOverlappingPosition(int& newX, int& newY) const
     destRect = srcRect;
 
     // Move the box down, looking for a non-overlapping position:
-    while (RenderObject* box = overlappingObjectForRect(destRect)) {
+    while (RenderVTTCue* cue = overlappingObjectForRect(destRect)) {
         if (m_cue->getWritingDirection() == VTTCue::Horizontal)
-            destRect.setY(box->absoluteBoundingBoxRect().maxY());
+            destRect.setY(cue->backdropBox().absoluteBoundingBoxRect().maxY());
         else
-            destRect.setX(box->absoluteBoundingBoxRect().maxX());
+            destRect.setX(cue->backdropBox().absoluteBoundingBoxRect().maxX());
     }
 
     if (rectIsWithinContainer(destRect)) {
@@ -345,12 +359,7 @@ void RenderVTTCue::repositionGenericCue()
 {
     ASSERT(firstChild());
 
-    // firstChild() returns the wrapping (backdrop) <div>. The cue object is
-    // the <div>'s first child.
-    RenderObject& firstChild = *this->firstChild();
-    RenderElement& backdropElement = downcast<RenderElement>(firstChild);
-    
-    LegacyInlineFlowBox* firstLineBox = downcast<RenderInline>(*backdropElement.firstChild()).firstLineBox();
+    LegacyInlineFlowBox* firstLineBox = cueBox().firstLineBox();
     if (downcast<TextTrackCueGeneric>(*m_cue).useDefaultPosition() && firstLineBox) {
         LayoutUnit parentWidth = containingBlock()->logicalWidth();
         LayoutUnit width { firstLineBox->width() };
@@ -382,6 +391,21 @@ void RenderVTTCue::repositionCueSnapToLinesNotSet()
 
     setX(x);
     setY(y);
+}
+
+RenderBlockFlow& RenderVTTCue::backdropBox() const
+{
+    ASSERT(firstChild());
+
+    // firstChild() returns the wrapping (backdrop) <div>. The cue object is
+    // the <div>'s first child.
+    RenderObject& firstChild = *this->firstChild();
+    return downcast<RenderBlockFlow>(firstChild);
+}
+
+RenderInline& RenderVTTCue::cueBox() const
+{
+    return downcast<RenderInline>(*backdropBox().firstChild());
 }
 
 } // namespace WebCore

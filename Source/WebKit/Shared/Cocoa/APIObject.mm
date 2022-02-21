@@ -59,11 +59,11 @@
 #import "WKUserContentControllerInternal.h"
 #import "WKUserScriptInternal.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
+#import "WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h"
 #import "WKWebProcessPlugInFrameInternal.h"
 #import "WKWebProcessPlugInHitTestResultInternal.h"
 #import "WKWebProcessPlugInInternal.h"
 #import "WKWebProcessPlugInNodeHandleInternal.h"
-#import "WKWebProcessPlugInPageGroupInternal.h"
 #import "WKWebProcessPlugInRangeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 #import "WKWebpagePreferencesInternal.h"
@@ -260,7 +260,7 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKHTTPCookieStore alloc];
         break;
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     case Type::HitTestResult:
         wrapper = [_WKHitTestResult alloc];
         break;
@@ -423,14 +423,12 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKWebProcessPlugInHitTestResult alloc];
         break;
 
-    case Type::BundleNodeHandle:
-        wrapper = [WKWebProcessPlugInNodeHandle alloc];
+    case Type::BundleCSSStyleDeclarationHandle:
+        wrapper = [WKWebProcessPlugInCSSStyleDeclarationHandle alloc];
         break;
 
-    case Type::BundlePageGroup:
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN;
-        wrapper = [WKWebProcessPlugInPageGroup alloc];
-        ALLOW_DEPRECATED_DECLARATIONS_END;
+    case Type::BundleNodeHandle:
+        wrapper = [WKWebProcessPlugInNodeHandle alloc];
         break;
 
     case Type::BundleRangeHandle:

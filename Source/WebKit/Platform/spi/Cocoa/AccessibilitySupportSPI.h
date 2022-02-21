@@ -38,9 +38,6 @@ extern void _AXSSetDarkenSystemColors(Boolean enabled);
 extern Boolean _AXSKeyRepeatEnabled();
 extern Boolean _AXSApplicationAccessibilityEnabled();
 extern CFStringRef kAXSApplicationAccessibilityEnabledNotification;
-#if HAVE(ACCESSIBILITY_BUNDLES_PATH)
-extern CFStringRef _AXSCopyPathForAccessibilityBundle(CFStringRef bundle);
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 extern CFStringRef kAXSReduceMotionPreference;

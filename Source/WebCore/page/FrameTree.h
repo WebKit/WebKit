@@ -107,6 +107,14 @@ private:
     mutable uint64_t m_frameIDGenerator { 0 };
 };
 
+ASCIILiteral blankTargetFrameName();
+ASCIILiteral selfTargetFrameName();
+
+bool isBlankTargetFrameName(StringView);
+bool isParentTargetFrameName(StringView);
+bool isSelfTargetFrameName(StringView);
+bool isTopTargetFrameName(StringView);
+
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)

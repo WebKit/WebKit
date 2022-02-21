@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+
+#import "NativeWebMouseEvent.h"
 
 @class WKHoverPlatter;
 
@@ -32,18 +34,28 @@
 @required
 - (void)positionInformationForHoverPlatter:(WKHoverPlatter *)hoverPlatter withRequest:(WebKit::InteractionInformationRequest&)request completionHandler:(void (^)(WebKit::InteractionInformationAtPosition))completionHandler;
 
+- (void)interactableRegionsForHoverPlatter:(WKHoverPlatter *)hoverPlatter inRect:(WebCore::FloatRect)rect completionHandler:(void (^)(Vector<WebCore::FloatRect>))completionHandler;
+
 @end
 
 @interface WKHoverPlatter : NSObject
 
 - (instancetype)initWithView:(UIView *)view delegate:(id <WKHoverPlatterDelegate>)delegate;
 
+- (void)didReceiveMouseEvent:(const WebKit::NativeWebMouseEvent&)event;
+- (void)didLongPressAtPoint:(WebCore::FloatPoint)point;
+- (void)didSingleTapAtPoint:(WebCore::FloatPoint)point;
+- (void)didDoubleTapAtPoint:(WebCore::FloatPoint)point;
+
+- (WebCore::FloatPoint)adjustedPointForPoint:(WebCore::FloatPoint)point;
+- (WebKit::NativeWebMouseEvent)adjustedEventForEvent:(const WebKit::NativeWebMouseEvent&)event;
+
 - (void)dismissPlatterWithAnimation:(BOOL)withAnimation;
 
 - (void)invalidate;
 
-@property (nonatomic, assign) WebCore::FloatPoint hoverPoint;
+- (BOOL)isVisible;
 
 @end
 
-#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)

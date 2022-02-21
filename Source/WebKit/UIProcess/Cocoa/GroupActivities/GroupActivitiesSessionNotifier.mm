@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
 
+#import "GroupActivitiesCoordinator.h"
 #import "WKGroupSession.h"
 #import "WebPageProxy.h"
 
@@ -48,7 +49,7 @@ GroupActivitiesSessionNotifier::GroupActivitiesSessionNotifier()
     : m_sessionObserver(adoptNS([allocWKGroupSessionObserverInstance() init]))
     , m_stateChangeObserver([this] (auto& session, auto state) { sessionStateChanged(session, state); })
 {
-    m_sessionObserver.get().newSessionCallback = [this, weakThis = makeWeakPtr(this)] (WKGroupSession *groupSession) {
+    m_sessionObserver.get().newSessionCallback = [this, weakThis = WeakPtr { *this }] (WKGroupSession *groupSession) {
         if (!weakThis)
             return;
 

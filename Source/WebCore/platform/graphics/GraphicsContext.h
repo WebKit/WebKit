@@ -43,15 +43,6 @@
 
 #if USE(CG)
 typedef struct CGContext PlatformGraphicsContext;
-#elif USE(DIRECT2D)
-interface ID2D1DCRenderTarget;
-interface ID2D1RenderTarget;
-interface ID2D1Factory;
-interface ID2D1SolidColorBrush;
-namespace WebCore {
-class PlatformContextDirect2D;
-}
-typedef WebCore::PlatformContextDirect2D PlatformGraphicsContext;
 #elif USE(CAIRO)
 namespace WebCore {
 class GraphicsContextCairo;
@@ -85,6 +76,8 @@ typedef unsigned char UInt8;
 namespace WebCore {
 
 class AffineTransform;
+class Filter;
+class FilterResults;
 class FloatRoundedRect;
 class Gradient;
 class GraphicsContextPlatformPrivate;
@@ -104,9 +97,6 @@ class Recorder;
 enum class TextDrawingMode : uint8_t {
     Fill = 1 << 0,
     Stroke = 1 << 1,
-#if ENABLE(LETTERPRESS)
-    Letterpress = 1 << 2,
-#endif
 };
 using TextDrawingModeFlags = OptionSet<TextDrawingMode>;
 
@@ -163,6 +153,8 @@ std::optional<DocumentMarkerLineStyle> DocumentMarkerLineStyle::decode(Decoder& 
     return {{ *mode, *shouldUseDarkAppearance }};
 }
 
+struct GraphicsContextStateChange;
+
 struct GraphicsContextState {
     WEBCORE_EXPORT GraphicsContextState();
     WEBCORE_EXPORT ~GraphicsContextState();
@@ -199,6 +191,8 @@ struct GraphicsContextState {
 #endif
     };
     using StateChangeFlags = OptionSet<Change>;
+
+    void mergeChanges(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
 
     RefPtr<Gradient> strokeGradient;
     RefPtr<Pattern> strokePattern;
@@ -266,15 +260,6 @@ public:
     WEBCORE_EXPORT GraphicsContext() = default;
     WEBCORE_EXPORT virtual ~GraphicsContext();
 
-#if USE(DIRECT2D)
-    // FIXME: This should move to GraphicsContextDirect2D
-    enum class BitmapRenderingContextType : uint8_t {
-        CPUMemory,
-        GPUMemory
-    };
-    WEBCORE_EXPORT GraphicsContext(PlatformGraphicsContext*, BitmapRenderingContextType);
-#endif
-
     virtual bool hasPlatformContext() const { return false; }
     virtual PlatformGraphicsContext* platformContext() const { return nullptr; }
 
@@ -286,10 +271,10 @@ public:
 
     // Context State
 
-    void setStrokeThickness(float thickness) { m_state.strokeThickness = thickness; updateState(m_state, GraphicsContextState::StrokeThicknessChange); }
+    void setStrokeThickness(float thickness) { m_state.strokeThickness = thickness; didUpdateState(m_state, GraphicsContextState::StrokeThicknessChange); }
     float strokeThickness() const { return m_state.strokeThickness; }
 
-    void setStrokeStyle(StrokeStyle style) { m_state.strokeStyle = style; updateState(m_state, GraphicsContextState::StrokeStyleChange); }
+    void setStrokeStyle(StrokeStyle style) { m_state.strokeStyle = style; didUpdateState(m_state, GraphicsContextState::StrokeStyleChange); }
     StrokeStyle strokeStyle() const { return m_state.strokeStyle; }
 
     WEBCORE_EXPORT void setStrokeColor(const Color&);
@@ -301,7 +286,7 @@ public:
     WEBCORE_EXPORT void setStrokeGradient(Ref<Gradient>&&, const AffineTransform& = { });
     Gradient* strokeGradient() const { return m_state.strokeGradient.get(); }
 
-    void setFillRule(WindRule fillRule) { m_state.fillRule = fillRule; updateState(m_state, GraphicsContextState::FillRuleChange); }
+    void setFillRule(WindRule fillRule) { m_state.fillRule = fillRule; didUpdateState(m_state, GraphicsContextState::FillRuleChange); }
     WindRule fillRule() const { return m_state.fillRule; }
 
     WEBCORE_EXPORT void setFillColor(const Color&);
@@ -313,34 +298,34 @@ public:
     WEBCORE_EXPORT void setFillGradient(Ref<Gradient>&&, const AffineTransform& = { });
     Gradient* fillGradient() const { return m_state.fillGradient.get(); }
 
-    void setShadowsIgnoreTransforms(bool shadowsIgnoreTransforms) { m_state.shadowsIgnoreTransforms = shadowsIgnoreTransforms; updateState(m_state, GraphicsContextState::ShadowsIgnoreTransformsChange); }
+    void setShadowsIgnoreTransforms(bool shadowsIgnoreTransforms) { m_state.shadowsIgnoreTransforms = shadowsIgnoreTransforms; didUpdateState(m_state, GraphicsContextState::ShadowsIgnoreTransformsChange); }
     bool shadowsIgnoreTransforms() const { return m_state.shadowsIgnoreTransforms; }
 
-    void setShouldAntialias(bool shouldAntialias) { m_state.shouldAntialias = shouldAntialias; updateState(m_state, GraphicsContextState::ShouldAntialiasChange); }
+    void setShouldAntialias(bool shouldAntialias) { m_state.shouldAntialias = shouldAntialias; didUpdateState(m_state, GraphicsContextState::ShouldAntialiasChange); }
     bool shouldAntialias() const { return m_state.shouldAntialias; }
 
-    void setShouldSmoothFonts(bool shouldSmoothFonts) { m_state.shouldSmoothFonts = shouldSmoothFonts; updateState(m_state, GraphicsContextState::ShouldSmoothFontsChange); }
+    void setShouldSmoothFonts(bool shouldSmoothFonts) { m_state.shouldSmoothFonts = shouldSmoothFonts; didUpdateState(m_state, GraphicsContextState::ShouldSmoothFontsChange); }
     bool shouldSmoothFonts() const { return m_state.shouldSmoothFonts; }
 
     // Normally CG enables subpixel-quantization because it improves the performance of aligning glyphs.
     // In some cases we have to disable to to ensure a high-quality output of the glyphs.
-    void setShouldSubpixelQuantizeFonts(bool shouldSubpixelQuantizeFonts) { m_state.shouldSubpixelQuantizeFonts = shouldSubpixelQuantizeFonts; updateState(m_state, GraphicsContextState::ShouldSubpixelQuantizeFontsChange); }
+    void setShouldSubpixelQuantizeFonts(bool shouldSubpixelQuantizeFonts) { m_state.shouldSubpixelQuantizeFonts = shouldSubpixelQuantizeFonts; didUpdateState(m_state, GraphicsContextState::ShouldSubpixelQuantizeFontsChange); }
     bool shouldSubpixelQuantizeFonts() const { return m_state.shouldSubpixelQuantizeFonts; }
 
-    void setImageInterpolationQuality(InterpolationQuality quality) { m_state.imageInterpolationQuality = quality; updateState(m_state, GraphicsContextState::ImageInterpolationQualityChange); }
+    void setImageInterpolationQuality(InterpolationQuality quality) { m_state.imageInterpolationQuality = quality; didUpdateState(m_state, GraphicsContextState::ImageInterpolationQualityChange); }
     InterpolationQuality imageInterpolationQuality() const { return m_state.imageInterpolationQuality; }
 
-    void setAlpha(float alpha) { m_state.alpha = alpha; updateState(m_state, GraphicsContextState::AlphaChange); }
+    void setAlpha(float alpha) { m_state.alpha = alpha; didUpdateState(m_state, GraphicsContextState::AlphaChange); }
     float alpha() const { return m_state.alpha; }
 
     WEBCORE_EXPORT void setCompositeOperation(CompositeOperator, BlendMode = BlendMode::Normal);
     CompositeOperator compositeOperation() const { return m_state.compositeOperator; }
     BlendMode blendModeOperation() const { return m_state.blendMode; }
 
-    void setDrawLuminanceMask(bool drawLuminanceMask) { m_state.drawLuminanceMask = drawLuminanceMask; updateState(m_state, GraphicsContextState::DrawLuminanceMaskChange); }
+    void setDrawLuminanceMask(bool drawLuminanceMask) { m_state.drawLuminanceMask = drawLuminanceMask; didUpdateState(m_state, GraphicsContextState::DrawLuminanceMaskChange); }
     bool drawLuminanceMask() const { return m_state.drawLuminanceMask; }
 
-    void setTextDrawingMode(TextDrawingModeFlags mode) { m_state.textDrawingMode = mode; updateState(m_state, GraphicsContextState::TextDrawingModeChange); }
+    void setTextDrawingMode(TextDrawingModeFlags mode) { m_state.textDrawingMode = mode; didUpdateState(m_state, GraphicsContextState::TextDrawingModeChange); }
     TextDrawingModeFlags textDrawingMode() const { return m_state.textDrawingMode; }
 
     WEBCORE_EXPORT void setShadow(const FloatSize&, float blur, const Color&, ShadowRadiusMode = ShadowRadiusMode::Default);
@@ -352,20 +337,24 @@ public:
     bool hasBlurredShadow() const { return hasVisibleShadow() && m_state.shadowBlur; }
 
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    void setUseDarkAppearance(bool useDarkAppearance) { m_state.useDarkAppearance = useDarkAppearance; updateState(m_state, GraphicsContextState::UseDarkAppearanceChange); }
+    void setUseDarkAppearance(bool useDarkAppearance) { m_state.useDarkAppearance = useDarkAppearance; didUpdateState(m_state, GraphicsContextState::UseDarkAppearanceChange); }
     bool useDarkAppearance() const { return m_state.useDarkAppearance; }
 #endif
 
-    const GraphicsContextState& state() const { return m_state; }
+    virtual const GraphicsContextState& state() const { return m_state; }
 
-    virtual void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) = 0;
+    void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
+
+    // Called *after* any change to GraphicsContextState; generally used to propagate changes
+    // to the platform context's state.
+    virtual void didUpdateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) = 0;
 
     WEBCORE_EXPORT virtual void save();
     WEBCORE_EXPORT virtual void restore();
     
     unsigned stackSize() const { return m_stack.size(); }
 
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
     // FIXME: Should these really be public GraphicsContext methods?
     virtual void applyStrokePattern() = 0;
     virtual void applyFillPattern() = 0;
@@ -410,7 +399,7 @@ public:
 
     virtual void fillRect(const FloatRect&) = 0;
     virtual void fillRect(const FloatRect&, const Color&) = 0;
-    virtual void fillRect(const FloatRect&, Gradient&);
+    WEBCORE_EXPORT virtual void fillRect(const FloatRect&, Gradient&);
     WEBCORE_EXPORT virtual void fillRect(const FloatRect&, const Color&, CompositeOperator, BlendMode = BlendMode::Normal);
     virtual void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) = 0;
     WEBCORE_EXPORT virtual void fillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode = BlendMode::Normal);
@@ -427,10 +416,18 @@ public:
 
     // Images, Patterns, and Media
 
+    IntSize compatibleImageBufferSize(const FloatSize&) const;
+
+    WEBCORE_EXPORT RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, const FloatSize& scale = { 1, 1 }, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMode> = std::nullopt, RenderingMethod = RenderingMethod::Default) const;
+    WEBCORE_EXPORT RefPtr<ImageBuffer> createImageBuffer(const FloatRect&, const FloatSize& scale = { 1, 1 }, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMode> = std::nullopt, RenderingMethod = RenderingMethod::Default) const;
+
+    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createCompatibleImageBuffer(const FloatSize&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), RenderingMethod = RenderingMethod::Default) const;
+    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createCompatibleImageBuffer(const FloatRect&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), RenderingMethod = RenderingMethod::Default) const;
+
     virtual void drawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) = 0;
 
-    WEBCORE_EXPORT virtual ImageDrawResult drawImage(Image&, const FloatPoint& destination, const ImagePaintingOptions& = { ImageOrientation::FromImage });
-    WEBCORE_EXPORT virtual ImageDrawResult drawImage(Image&, const FloatRect& destination, const ImagePaintingOptions& = { ImageOrientation::FromImage });
+    WEBCORE_EXPORT ImageDrawResult drawImage(Image&, const FloatPoint& destination, const ImagePaintingOptions& = { ImageOrientation::FromImage });
+    WEBCORE_EXPORT ImageDrawResult drawImage(Image&, const FloatRect& destination, const ImagePaintingOptions& = { ImageOrientation::FromImage });
     WEBCORE_EXPORT virtual ImageDrawResult drawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = { ImageOrientation::FromImage });
 
     WEBCORE_EXPORT virtual ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& = { });
@@ -444,7 +441,10 @@ public:
     WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const ImagePaintingOptions& = { });
     WEBCORE_EXPORT virtual void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = { });
 
-    virtual void drawPattern(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
+    WEBCORE_EXPORT virtual void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&);
+
+    virtual void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
+    WEBCORE_EXPORT virtual void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });
 
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT virtual void paintFrameForMedia(MediaPlayer&, const FloatRect& destination);
@@ -460,10 +460,6 @@ public:
     WEBCORE_EXPORT virtual void clipOutRoundedRect(const FloatRoundedRect&);
     virtual void clipPath(const Path&, WindRule = WindRule::EvenOdd) = 0;
     WEBCORE_EXPORT virtual void clipToImageBuffer(ImageBuffer&, const FloatRect&);
-
-    enum class ClipToDrawingCommandsResult : bool { Success, FailedToCreateImageBuffer };
-    WEBCORE_EXPORT virtual ClipToDrawingCommandsResult clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace&, Function<void(GraphicsContext&)>&&);
-
     WEBCORE_EXPORT virtual IntRect clipBounds() const;
 
     // Text
@@ -473,8 +469,13 @@ public:
     WEBCORE_EXPORT virtual void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt);
     WEBCORE_EXPORT virtual void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::DoNotPaintIfFontNotReady);
 
+    virtual void drawGlyphsAndCacheFont(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothingMode)
+    {
+        drawGlyphs(font, glyphs, advances, numGlyphs, point, fontSmoothingMode);
+    }
+
     WEBCORE_EXPORT FloatRect computeUnderlineBoundsForText(const FloatRect&, bool printing);
-    WEBCORE_EXPORT virtual void drawLineForText(const FloatRect&, bool printing, bool doubleLines = false, StrokeStyle = SolidStroke);
+    WEBCORE_EXPORT void drawLineForText(const FloatRect&, bool printing, bool doubleLines = false, StrokeStyle = SolidStroke);
     virtual void drawLinesForText(const FloatPoint&, float thickness, const DashArray& widths, bool printing, bool doubleLines = false, StrokeStyle = SolidStroke) = 0;
     virtual void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) = 0;
 
@@ -541,32 +542,14 @@ public:
     virtual GraphicsContextPlatformPrivate* deprecatedPrivateContext() const { return nullptr; }
 #endif
 
-#if USE(DIRECT2D)
-    GraphicsContext(HDC, ID2D1DCRenderTarget**, RECT, bool hasAlpha = false); // FIXME: To be removed.
-
-    WEBCORE_EXPORT static ID2D1Factory* systemFactory();
-    WEBCORE_EXPORT static ID2D1RenderTarget* defaultRenderTarget();
-
-    WEBCORE_EXPORT void beginDraw();
-    D2D1_COLOR_F colorWithGlobalAlpha(const Color&) const;
-    WEBCORE_EXPORT void endDraw();
-    void flush();
-
-    ID2D1Brush* solidStrokeBrush() const;
-    ID2D1Brush* solidFillBrush() const;
-    ID2D1Brush* patternStrokeBrush() const;
-    ID2D1Brush* patternFillBrush() const;
-    ID2D1StrokeStyle* platformStrokeStyle() const;
-
-    ID2D1SolidColorBrush* brushWithColor(const Color&);
-#endif
-
 private:
     virtual bool supportsTransparencyLayers() const { return true; }
 
 protected:
     void fillEllipseAsPath(const FloatRect&);
     void strokeEllipseAsPath(const FloatRect&);
+
+    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, const DestinationColorSpace&, RenderingMode, RenderingMethod) const;
 
     FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatRect&, bool printing, Color&);
 
@@ -759,9 +742,6 @@ template<> struct EnumTraits<WebCore::TextDrawingMode> {
         WebCore::TextDrawingMode,
         WebCore::TextDrawingMode::Fill,
         WebCore::TextDrawingMode::Stroke
-#if ENABLE(LETTERPRESS)
-        , WebCore::TextDrawingMode::Letterpress
-#endif
     >;
 };
 

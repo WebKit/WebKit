@@ -32,7 +32,7 @@
 
 #include "FormState.h"
 #include "FrameLoaderTypes.h"
-#include "RuntimeEnabledFeatures.h"
+#include "ReferrerPolicy.h"
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -50,9 +50,9 @@ public:
     class Attributes {
     public:
         Method method() const { return m_method; }
-        static Method parseMethodType(const String&);
-        void updateMethodType(const String&);
-        static ASCIILiteral methodString(Method);
+        static Method parseMethodType(const String&, bool);
+        void updateMethodType(const String&, bool);
+        static ASCIILiteral methodString(Method, bool);
 
         const String& action() const { return m_action; }
         void parseAction(const String&);
@@ -104,6 +104,12 @@ public:
     void cancel() { m_wasCancelled = true; }
     bool wasCancelled() const { return m_wasCancelled; }
 
+    NewFrameOpenerPolicy newFrameOpenerPolicy() const { return m_newFrameOpenerPolicy; }
+    void setNewFrameOpenerPolicy(NewFrameOpenerPolicy newFrameOpenerPolicy) { m_newFrameOpenerPolicy = newFrameOpenerPolicy; }
+
+    ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
+    void setReferrerPolicy(ReferrerPolicy referrerPolicy) { m_referrerPolicy = referrerPolicy; }
+
 private:
     // dialog form submissions
     FormSubmission(Method, const String& returnValue, const URL& action, const String& target, const String& contentType, LockHistory, Event*);
@@ -126,6 +132,9 @@ private:
     String m_origin;
 
     String m_returnValue; // for form[method=dialog]
+
+    NewFrameOpenerPolicy m_newFrameOpenerPolicy { NewFrameOpenerPolicy::Allow };
+    ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
 };
 
 } // namespace WebCore

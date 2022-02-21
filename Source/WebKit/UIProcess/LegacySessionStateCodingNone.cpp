@@ -48,7 +48,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 
 bool decodeLegacySessionState(const uint8_t* data, size_t dataSize, SessionState& sessionState)
 {
-    auto decoder = IPC::Decoder::create(data, dataSize, nullptr, Vector<IPC::Attachment>());
+    auto decoder = IPC::Decoder::create(data, dataSize, { });
     if (!decoder)
         return false;
 

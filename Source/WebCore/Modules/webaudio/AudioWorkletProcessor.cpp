@@ -40,8 +40,11 @@
 #include "MessagePort.h"
 #include <JavaScriptCore/JSTypedArrays.h>
 #include <wtf/GetPtr.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(AudioWorkletProcessor);
 
 using namespace JSC;
 
@@ -57,12 +60,12 @@ static unsigned busChannelCount(const AudioBus* bus)
 
 static JSArray* toJSArray(JSValueInWrappedObject& wrapper)
 {
-    return wrapper ? jsCast<JSArray*>(static_cast<JSValue>(wrapper)) : nullptr;
+    return wrapper ? jsCast<JSArray*>(wrapper.getValue()) : nullptr;
 }
 
 static JSObject* toJSObject(JSValueInWrappedObject& wrapper)
 {
-    return wrapper ? jsCast<JSObject*>(static_cast<JSValue>(wrapper)) : nullptr;
+    return wrapper ? jsCast<JSObject*>(wrapper.getValue()) : nullptr;
 }
 
 static JSFloat32Array* constructJSFloat32Array(JSGlobalObject& globalObject, unsigned length, const float* data = nullptr)
@@ -197,36 +200,38 @@ static bool zeroJSArray(VM& vm, JSGlobalObject& globalObject, const Vector<Ref<A
 
 ExceptionOr<Ref<AudioWorkletProcessor>> AudioWorkletProcessor::create(ScriptExecutionContext& context)
 {
-    auto constructionData = downcast<AudioWorkletGlobalScope>(context).takePendingProcessorConstructionData();
+    auto& globalScope = downcast<AudioWorkletGlobalScope>(context);
+    auto constructionData = globalScope.takePendingProcessorConstructionData();
     if (!constructionData)
         return Exception { TypeError, "No pending construction data for this worklet processor"_s };
 
-    return adoptRef(*new AudioWorkletProcessor(*constructionData));
+    return adoptRef(*new AudioWorkletProcessor(globalScope, *constructionData));
 }
 
 AudioWorkletProcessor::~AudioWorkletProcessor() = default;
 
-AudioWorkletProcessor::AudioWorkletProcessor(const AudioWorkletProcessorConstructionData& constructionData)
-    : m_name(constructionData.name())
+AudioWorkletProcessor::AudioWorkletProcessor(AudioWorkletGlobalScope& globalScope, const AudioWorkletProcessorConstructionData& constructionData)
+    : m_globalScope(globalScope)
+    , m_name(constructionData.name())
     , m_port(constructionData.port())
 {
     ASSERT(!isMainThread());
 }
 
-void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObject, MarkedArgumentBuffer& args, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
+void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObject, MarkedArgumentBufferBase& args, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
 {
     // For performance reasons, we cache the arrays passed to JS and reconstruct them only when the topology changes.
     if (!copyDataFromBusesToJSArray(vm, globalObject, inputs, toJSArray(m_jsInputs)))
-        m_jsInputs = { constructFrozenJSArray(vm, globalObject, inputs, ShouldPopulateWithBusData::Yes) };
-    args.append(m_jsInputs);
+        m_jsInputs.setWeakly(constructFrozenJSArray(vm, globalObject, inputs, ShouldPopulateWithBusData::Yes));
+    args.append(m_jsInputs.getValue());
 
     if (!zeroJSArray(vm, globalObject, outputs, toJSArray(m_jsOutputs)))
-        m_jsOutputs = { constructFrozenJSArray(vm, globalObject, outputs, ShouldPopulateWithBusData::No) };
-    args.append(m_jsOutputs);
+        m_jsOutputs.setWeakly(constructFrozenJSArray(vm, globalObject, outputs, ShouldPopulateWithBusData::No));
+    args.append(m_jsOutputs.getValue());
 
     if (!copyDataFromParameterMapToJSObject(vm, globalObject, paramValuesMap, toJSObject(m_jsParamValues)))
-        m_jsParamValues = { constructFrozenKeyValueObject(vm, globalObject, paramValuesMap) };
-    args.append(m_jsParamValues);
+        m_jsParamValues.setWeakly(constructFrozenKeyValueObject(vm, globalObject, paramValuesMap));
+    args.append(m_jsParamValues.getValue());
 }
 
 bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, bool& threwException)
@@ -235,8 +240,8 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
-    ASSERT(m_processCallback);
-    auto& globalObject = *m_processCallback->globalObject();
+    ASSERT(wrapper());
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(m_globalScope.globalObject());
     ASSERT(globalObject.scriptExecutionContext());
     ASSERT(globalObject.scriptExecutionContext()->isContextThread());
 
@@ -247,7 +252,7 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     buildJSArguments(vm, globalObject, args, inputs, outputs, paramValuesMap);
 
     NakedPtr<JSC::Exception> returnedException;
-    auto result = m_processCallback->invokeCallback(jsUndefined(), args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "process"), returnedException);
+    auto result = JSCallbackData::invokeCallback(vm, wrapper(), jsUndefined(), args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "process"), returnedException);
     if (returnedException) {
         reportException(&globalObject, returnedException);
         threwException = true;
@@ -257,11 +262,6 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     copyDataFromJSArrayToBuses(globalObject, *toJSArray(m_jsOutputs), outputs);
 
     return result.toBoolean(&globalObject);
-}
-
-void AudioWorkletProcessor::setProcessCallback(std::unique_ptr<JSCallbackDataStrong>&& processCallback)
-{
-    m_processCallback = WTFMove(processCallback);
 }
 
 } // namespace WebCore

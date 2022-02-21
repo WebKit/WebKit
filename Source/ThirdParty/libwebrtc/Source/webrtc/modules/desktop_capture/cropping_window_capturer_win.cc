@@ -15,7 +15,7 @@
 #include "modules/desktop_capture/win/window_capture_utils.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/trace_event.h"
-#include "rtc_base/win32.h"
+#include "rtc_base/win/windows_version.h"
 
 namespace webrtc {
 
@@ -118,7 +118,7 @@ struct TopWindowVerifierContext : public SelectedWindowContext {
       // firing an assert when enabled, report that the selected window isn't
       // topmost to avoid inadvertent capture of other windows.
       RTC_LOG(LS_ERROR) << "Failed to enumerate windows: " << lastError;
-      RTC_DCHECK(false);
+      RTC_NOTREACHED();
       return false;
     }
   }
@@ -130,6 +130,8 @@ class CroppingWindowCapturerWin : public CroppingWindowCapturer {
  public:
   explicit CroppingWindowCapturerWin(const DesktopCaptureOptions& options)
       : CroppingWindowCapturer(options),
+        enumerate_current_process_windows_(
+            options.enumerate_current_process_windows()),
         full_screen_window_detector_(options.full_screen_window_detector()) {}
 
   void CaptureFrame() override;
@@ -148,6 +150,8 @@ class CroppingWindowCapturerWin : public CroppingWindowCapturer {
 
   WindowCaptureHelperWin window_capture_helper_;
 
+  bool enumerate_current_process_windows_;
+
   rtc::scoped_refptr<FullScreenWindowDetector> full_screen_window_detector_;
 };
 
@@ -164,7 +168,12 @@ void CroppingWindowCapturerWin::CaptureFrame() {
             // it uses responsiveness check which could lead to performance
             // issues.
             SourceList result;
-            if (!webrtc::GetWindowList(GetWindowListFlags::kNone, &result))
+            int window_list_flags =
+                enumerate_current_process_windows_
+                    ? GetWindowListFlags::kNone
+                    : GetWindowListFlags::kIgnoreCurrentProcessWindows;
+
+            if (!webrtc::GetWindowList(window_list_flags, &result))
               return false;
 
             // Filter out windows not visible on current desktop
@@ -187,7 +196,8 @@ void CroppingWindowCapturerWin::CaptureFrame() {
 }
 
 bool CroppingWindowCapturerWin::ShouldUseScreenCapturer() {
-  if (!rtc::IsWindows8OrLater() && window_capture_helper_.IsAeroEnabled()) {
+  if (rtc::rtc_win::GetVersion() < rtc::rtc_win::Version::VERSION_WIN8 &&
+      window_capture_helper_.IsAeroEnabled()) {
     return false;
   }
 
@@ -238,7 +248,7 @@ bool CroppingWindowCapturerWin::ShouldUseScreenCapturer() {
   }
 
   if (region_type == SIMPLEREGION) {
-    // The |region_rect| returned from GetRgnBox() is always in window
+    // The `region_rect` returned from GetRgnBox() is always in window
     // coordinate.
     region_rect.Translate(window_region_rect_.left(),
                           window_region_rect_.top());
@@ -246,10 +256,10 @@ bool CroppingWindowCapturerWin::ShouldUseScreenCapturer() {
     // system permits drawing.
     // https://msdn.microsoft.com/en-us/library/windows/desktop/dd144950(v=vs.85).aspx.
     //
-    // |region_rect| should always be inside of |window_region_rect_|. So after
-    // the intersection, |window_region_rect_| == |region_rect|. If so, what's
+    // `region_rect` should always be inside of `window_region_rect_`. So after
+    // the intersection, `window_region_rect_` == `region_rect`. If so, what's
     // the point of the intersecting operations? Why cannot we directly retrieve
-    // |window_region_rect_| from GetWindowRegionTypeWithBoundary() function?
+    // `window_region_rect_` from GetWindowRegionTypeWithBoundary() function?
     // TODO(zijiehe): Figure out the purpose of these intersections.
     window_region_rect_.IntersectWith(region_rect);
     content_rect.IntersectWith(region_rect);
@@ -257,14 +267,14 @@ bool CroppingWindowCapturerWin::ShouldUseScreenCapturer() {
 
   // Check if the client area is out of the screen area. When the window is
   // maximized, only its client area is visible in the screen, the border will
-  // be hidden. So we are using |content_rect| here.
+  // be hidden. So we are using `content_rect` here.
   if (!GetFullscreenRect().ContainsRect(content_rect)) {
     return false;
   }
 
   // Check if the window is occluded by any other window, excluding the child
-  // windows, context menus, and |excluded_window_|.
-  // |content_rect| is preferred, see the comments on
+  // windows, context menus, and `excluded_window_`.
+  // `content_rect` is preferred, see the comments on
   // IsWindowIntersectWithSelectedWindow().
   TopWindowVerifierContext context(selected,
                                    reinterpret_cast<HWND>(excluded_window()),
@@ -284,7 +294,7 @@ DesktopRect CroppingWindowCapturerWin::GetWindowRectInVirtualScreen() {
   }
   window_rect.IntersectWith(window_region_rect_);
 
-  // Convert |window_rect| to be relative to the top-left of the virtual screen.
+  // Convert `window_rect` to be relative to the top-left of the virtual screen.
   DesktopRect screen_rect(GetFullscreenRect());
   window_rect.IntersectWith(screen_rect);
   window_rect.Translate(-screen_rect.left(), -screen_rect.top());

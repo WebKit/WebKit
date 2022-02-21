@@ -23,8 +23,8 @@ layer at (0,0) size 800x228
               RenderText {#text} at (4,4) size 32x18
                 text run at (4,4) width 32: "solid"
             RenderTableCell {TD} at (38,72) size 46x21 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 44x19
-                text run at (1,2) width 44: "hidden"
+              RenderText {#text} at (1,0) size 44x20
+                text run at (1,1) width 44: "hidden"
             RenderTableCell {TD} at (83,70) size 39x25 [border: (3px solid #00FF00) none] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,4) size 32x18
                 text run at (1,4) width 32: "solid"
@@ -33,8 +33,8 @@ layer at (0,0) size 800x228
               RenderText {#text} at (4,4) size 32x18
                 text run at (4,4) width 32: "solid"
             RenderTableCell {TD} at (38,126) size 46x23 [border: none (2px solid #00FF00)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,1) size 32x19
-                text run at (4,2) width 32: "solid"
+              RenderText {#text} at (4,0) size 32x20
+                text run at (4,1) width 32: "solid"
             RenderTableCell {TD} at (83,125) size 39x25 [border: (3px solid #00FF00)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (4,4) size 32x18
                 text run at (4,4) width 32: "solid"

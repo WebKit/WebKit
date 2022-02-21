@@ -46,10 +46,16 @@ const _normalizeFunctionSignature = (params, ret) => {
     assert.isArray(params);
     for (const p of params)
         assert.truthy(WASM.isValidValueType(p) || p === "void", `Type parameter ${p} needs a valid value type`);
-    if (typeof(ret) === "undefined")
-        ret = "void";
-    assert.isNotArray(ret, `Multiple return values not supported by WebAssembly yet`);
-    assert.truthy(WASM.isValidBlockType(ret), `Type return ${ret} must be valid block type`);
+    if (typeof ret === "undefined")
+        ret = [];
+    else if (typeof ret === "string") {
+        if (ret === "void")
+            ret = [];
+        else
+            ret = [ret];
+    }
+    for (let type of ret)
+        assert.truthy(WASM.isValidBlockType(type), `Type return ${type} must be valid block type`);
     return [params, ret];
 };
 
@@ -77,14 +83,19 @@ const _maybeRegisterType = (builder, type) => {
     const [params, ret] = _normalizeFunctionSignature(type.params, type.ret);
     assert.isNotUndef(typeSection, `Can not add type if a type section is not present`);
     // Try reusing an equivalent type from the type section.
-    types:
     for (let i = 0; i !== typeSection.data.length; ++i) {
-        const t = typeSection.data[i];
-        if (t.ret === ret && params.length === t.params.length) {
-            for (let j = 0; j !== t.params.length; ++j) {
-                if (params[j] !== t.params[j])
-                    continue types;
+        let shallowEqual = (a, b) => {
+            if (a.length !== b.length)
+                return false;
+            for (let i = 0; i < a.length; ++i) {
+                if (a[i] !== b[i])
+                    return false;
             }
+            return true;
+        };
+
+        const t = typeSection.data[i];
+        if (shallowEqual(ret, t.ret) && shallowEqual(params, t.params)) {
             type = i;
             break;
         }
@@ -126,6 +137,18 @@ const _importTableContinuation = (builder, section, nextBuilder) => {
         section.data.push({module, field, kind: "Table", tableDescription: {initial, maximum, element}});
         return _errorHandlingProxyFor(nextBuilder);
     };
+};
+
+const _importExceptionContinuation = (builder, section, nextBuilder) => {
+    return (module, field, type) => {
+        assert.isString(module, `Import function module should be a string, got "${module}"`);
+        assert.isString(field, `Import function field should be a string, got "${field}"`);
+        const typeSection = builder._getSection("Type");
+        type = _maybeRegisterType(builder, type);
+        const tag = 0;
+        section.data.push({ field, type, tag, kind: "Exception", module });
+        return _errorHandlingProxyFor(nextBuilder);
+    }
 };
 
 const _exportFunctionContinuation = (builder, section, nextBuilder) => {
@@ -211,6 +234,14 @@ const _exportTableContinuation = (builder, section, nextBuilder) => {
     return (field, index) => {
         assert.isNumber(index, `Table exports only support number indices`);
         section.data.push({field, kind: "Table", index});
+        return _errorHandlingProxyFor(nextBuilder);
+    }
+};
+
+const _exportExceptionContinuation = (builder, section, nextBuilder) => {
+    return (field, index) => {
+        assert.isNumber(index, `Exception exports only support number indices`);
+        section.data.push({field, kind: "Exception", index});
         return _errorHandlingProxyFor(nextBuilder);
     }
 };
@@ -307,6 +338,7 @@ const _checkImms = (op, imms, expectedImms, ret) => {
         case "target_table": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421
         case "reserved": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421
         case "table_index": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421
+        case "exn": break;
         case "reftype":
             assert.truthy(WASM.isValidRefType(imms[idx]), `Invalid ref type on ${op}: "${imms[idx]}"`);
             break;
@@ -335,11 +367,13 @@ const _createFunctionBuilder = (func, builder, previousBuilder) => {
                 nextBuilder = functionBuilder;
                 break;
             case "End":
+            case "Delegate":
                 nextBuilder = previousBuilder;
                 break;
             case "Block":
             case "Loop":
             case "If":
+            case "Try":
                 nextBuilder = _createFunctionBuilder(func, builder, functionBuilder);
                 break;
             }
@@ -488,6 +522,7 @@ export default class Builder {
                     importBuilder.Function = _importFunctionContinuation(this, s, importBuilder);
                     importBuilder.Memory = _importMemoryContinuation(this, s, importBuilder);
                     importBuilder.Table = _importTableContinuation(this, s, importBuilder);
+                    importBuilder.Exception = _importExceptionContinuation(this, s, importBuilder);
                     return _errorHandlingProxyFor(importBuilder);
                 };
                 break;
@@ -531,6 +566,23 @@ export default class Builder {
                 };
                 break;
 
+            case "Exception": {
+                this[section] = function() {
+                    const s = this._addSection(section);
+                    const dataBuilder = {
+                        End: () => this,
+                        Signature: (signature) => {
+                            let type = _maybeRegisterType(this, signature);
+                            s.data.push({ tag: 0, type });
+                            return _errorHandlingProxyFor(dataBuilder);
+                        },
+                        // If we add tags with non-zero value then we can add a new member.
+                    };
+                    return _errorHandlingProxyFor(dataBuilder);
+                };
+                break;
+            }
+
             case "Global":
                 this[section] = function() {
                     const s = this._addSection(section);
@@ -569,6 +621,7 @@ export default class Builder {
                     exportBuilder.Function = _exportFunctionContinuation(this, s, exportBuilder);
                     exportBuilder.Memory = _exportMemoryContinuation(this, s, exportBuilder);
                     exportBuilder.Table = _exportTableContinuation(this, s, exportBuilder);
+                    exportBuilder.Exception = _exportExceptionContinuation(this, s, exportBuilder);
                     return _errorHandlingProxyFor(exportBuilder);
                 };
                 break;
@@ -737,15 +790,6 @@ export default class Builder {
             for (const s of this._sections)
                 if (number !== _unknownSectionId)
                     assert.falsy(s.name === name && s.id === number, `Cannot have two sections with the same name "${name}" and ID ${number}`);
-            // Check ordering.
-            if ((number !== _unknownSectionId) && (this._sections.length !== 0)) {
-                for (let i = this._sections.length - 1; i >= 0; --i) {
-                    if (this._sections[i].id === _unknownSectionId)
-                        continue;
-                    assert.le(this._sections[i].id, number, `Bad section ordering: "${this._sections[i].name}" cannot precede "${name}"`);
-                    break;
-                }
-            }
         }
         const s = Object.assign({ name: name, id: number, data: [] }, extraObject || {});
         this._sections.push(s);

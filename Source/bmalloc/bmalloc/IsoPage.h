@@ -32,6 +32,8 @@
 #include <climits>
 #include <mutex>
 
+#if !BUSE(LIBPAS)
+
 namespace bmalloc {
 
 class IsoHeapImplBase;
@@ -128,3 +130,4 @@ private:
 
 } // namespace bmalloc
 
+#endif

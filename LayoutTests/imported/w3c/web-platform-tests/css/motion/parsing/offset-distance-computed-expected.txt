@@ -1,0 +1,8 @@
+
+PASS Property offset-distance value '10px'
+PASS Property offset-distance value '20%'
+PASS Property offset-distance value 'calc(40% - 30px)'
+PASS Property offset-distance value '0'
+PASS Property offset-distance value 'calc(10px - 0.5em)'
+PASS Property offset-distance value 'calc(10px + 0.5em)'
+

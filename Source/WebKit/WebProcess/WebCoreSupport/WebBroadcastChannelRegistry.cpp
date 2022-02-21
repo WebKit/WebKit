@@ -31,6 +31,7 @@
 #include "WebProcess.h"
 #include <WebCore/BroadcastChannel.h>
 #include <WebCore/MessageWithMessagePorts.h>
+#include <wtf/CallbackAggregator.h>
 
 namespace WebKit {
 
@@ -39,24 +40,78 @@ static inline IPC::Connection& networkProcessConnection()
     return WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
-void WebBroadcastChannelRegistry::registerChannel(const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
+void WebBroadcastChannelRegistry::registerChannel(const WebCore::ClientOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
 {
-    networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::RegisterChannel { origin, name, identifier }, 0);
+    auto& channelsForOrigin = m_channelsPerOrigin.ensure(origin, [] { return HashMap<String, Vector<WebCore::BroadcastChannelIdentifier>> { }; }).iterator->value;
+    auto& channelsForName = channelsForOrigin.ensure(name, [] { return Vector<WebCore::BroadcastChannelIdentifier> { }; }).iterator->value;
+    channelsForName.append(identifier);
+
+    if (channelsForName.size() == 1)
+        networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::RegisterChannel { origin, name }, 0);
 }
 
-void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
+void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::ClientOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
 {
-    networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::UnregisterChannel { origin, name, identifier }, 0);
+    auto channelsPerOriginIterator = m_channelsPerOrigin.find(origin);
+    if (channelsPerOriginIterator == m_channelsPerOrigin.end())
+        return;
+
+    auto& channelsForOrigin = channelsPerOriginIterator->value;
+    auto channelsForOriginIterator = channelsForOrigin.find(name);
+    if (channelsForOriginIterator == channelsForOrigin.end())
+        return;
+
+    auto& channelIdentifiersForName = channelsForOriginIterator->value;
+    if (!channelIdentifiersForName.removeFirst(identifier))
+        return;
+    if (!channelIdentifiersForName.isEmpty())
+        return;
+
+    channelsForOrigin.remove(channelsForOriginIterator);
+    networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::UnregisterChannel { origin, name }, 0);
+
+    if (channelsForOrigin.isEmpty())
+        m_channelsPerOrigin.remove(channelsPerOriginIterator);
 }
 
-void WebBroadcastChannelRegistry::postMessage(const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
+void WebBroadcastChannelRegistry::postMessage(const WebCore::ClientOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
 {
-    networkProcessConnection().sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { origin, name, source, WebCore::MessageWithMessagePorts { WTFMove(message), { } } }, WTFMove(completionHandler), 0);
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    postMessageLocally(origin, name, source, message.copyRef(), callbackAggregator.copyRef());
+    networkProcessConnection().sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { origin, name, WebCore::MessageWithMessagePorts { WTFMove(message), { } } }, [callbackAggregator] { }, 0);
 }
 
-void WebBroadcastChannelRegistry::postMessageToRemote(WebCore::BroadcastChannelIdentifier identifier, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
+void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::ClientOrigin& origin, const String& name, std::optional<WebCore::BroadcastChannelIdentifier> sourceInProcess, Ref<WebCore::SerializedScriptValue>&& message, Ref<WTF::CallbackAggregator>&& callbackAggregator)
 {
-    WebCore::BroadcastChannel::dispatchMessageTo(identifier, message.message.releaseNonNull(), WTFMove(completionHandler));
+    auto channelsPerOriginIterator = m_channelsPerOrigin.find(origin);
+    if (channelsPerOriginIterator == m_channelsPerOrigin.end())
+        return;
+
+    auto& channelsForOrigin = channelsPerOriginIterator->value;
+    auto channelsForOriginIterator = channelsForOrigin.find(name);
+    if (channelsForOriginIterator == channelsForOrigin.end())
+        return;
+
+    auto channelIdentifiersForName = channelsForOriginIterator->value;
+    for (auto& channelIdentier : channelIdentifiersForName) {
+        if (channelIdentier == sourceInProcess)
+            continue;
+        WebCore::BroadcastChannel::dispatchMessageTo(channelIdentier, message.copyRef(), [callbackAggregator] { });
+    }
+}
+
+void WebBroadcastChannelRegistry::postMessageToRemote(const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    postMessageLocally(origin, name, std::nullopt, *message.message, callbackAggregator.copyRef());
+}
+
+void WebBroadcastChannelRegistry::networkProcessCrashed()
+{
+    for (auto& [origin, channelsForOrigin] : m_channelsPerOrigin) {
+        for (auto& name : channelsForOrigin.keys())
+            networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::RegisterChannel { origin, name }, 0);
+    }
 }
 
 } // namespace WebKit

@@ -86,6 +86,7 @@ void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportCon
 FloatPoint ScrollingStateStickyNode::computeLayerPosition(const LayoutRect& viewportRect) const
 {
     // This logic follows ScrollingTreeStickyNode::computeLayerPosition().
+    FloatSize offsetFromStickyAncestors;
     auto computeLayerPositionForScrollingNode = [&](ScrollingStateNode& scrollingStateNode) {
         FloatRect constrainingRect;
         if (is<ScrollingStateFrameScrollingNode>(scrollingStateNode))
@@ -94,6 +95,7 @@ FloatPoint ScrollingStateStickyNode::computeLayerPosition(const LayoutRect& view
             auto& overflowScrollingNode = downcast<ScrollingStateOverflowScrollingNode>(scrollingStateNode);
             constrainingRect = FloatRect(overflowScrollingNode.scrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
         }
+        constrainingRect.move(offsetFromStickyAncestors);
         return m_constraints.layerPositionForConstrainingRect(constrainingRect);
     };
 
@@ -110,7 +112,10 @@ FloatPoint ScrollingStateStickyNode::computeLayerPosition(const LayoutRect& view
         if (is<ScrollingStateScrollingNode>(*ancestor))
             return computeLayerPositionForScrollingNode(*ancestor);
 
-        if (is<ScrollingStateFixedNode>(*ancestor) || is<ScrollingStateStickyNode>(*ancestor)) {
+        if (is<ScrollingStateStickyNode>(*ancestor))
+            offsetFromStickyAncestors += downcast<ScrollingStateStickyNode>(*ancestor).scrollDeltaSinceLastCommit(viewportRect);
+
+        if (is<ScrollingStateFixedNode>(*ancestor)) {
             // FIXME: Do we need scrolling tree nodes at all for nested cases?
             return m_constraints.layerPositionAtLastLayout();
         }
@@ -143,7 +148,13 @@ void ScrollingStateStickyNode::reconcileLayerPositionForViewportRect(const Layou
     }
 }
 
-void ScrollingStateStickyNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
+FloatSize ScrollingStateStickyNode::scrollDeltaSinceLastCommit(const LayoutRect& viewportRect) const
+{
+    auto layerPosition = computeLayerPosition(viewportRect);
+    return layerPosition - m_constraints.layerPositionAtLastLayout();
+}
+
+void ScrollingStateStickyNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "Sticky node";
     ScrollingStateNode::dumpProperties(ts, behavior);

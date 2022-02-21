@@ -107,7 +107,7 @@ RenderThemeScrollbar::RenderThemeScrollbar(GtkOrientation orientation, Mode mode
     info.type = RenderThemeGadget::Type::Generic;
     info.name = "contents";
     info.classList.clear();
-    m_contents = makeUnique<RenderThemeBoxGadget>(info, GTK_ORIENTATION_VERTICAL, children, m_scrollbar.get());
+    m_contents = makeUnique<RenderThemeBoxGadget>(info, orientation, children, m_scrollbar.get());
     info.name = "slider";
     m_slider = RenderThemeGadget::create(info, m_contents->child(m_troughPosition));
 }

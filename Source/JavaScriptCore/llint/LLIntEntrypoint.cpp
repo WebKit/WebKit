@@ -66,7 +66,7 @@ static void setFunctionEntrypoint(CodeBlock* codeBlock)
                 jitCode = new DirectJITCode(callRef, callArityCheckRef.code(), JITType::InterpreterThunk, JITCode::ShareAttribute::Shared);
             });
 
-            codeBlock->setJITCode(makeRef(*jitCode));
+            codeBlock->setJITCode(*jitCode);
             return;
         }
         ASSERT(kind == CodeForConstruct);
@@ -79,7 +79,7 @@ static void setFunctionEntrypoint(CodeBlock* codeBlock)
             jitCode = new DirectJITCode(constructRef, constructArityCheckRef.code(), JITType::InterpreterThunk, JITCode::ShareAttribute::Shared);
         });
 
-        codeBlock->setJITCode(makeRef(*jitCode));
+        codeBlock->setJITCode(*jitCode);
         return;
     }
 #endif // ENABLE(JIT)
@@ -94,7 +94,7 @@ static void setFunctionEntrypoint(CodeBlock* codeBlock)
             jitCode = new DirectJITCode(getCodeRef<JSEntryPtrTag>(llint_function_for_call_prologue), getCodePtr<JSEntryPtrTag>(llint_function_for_call_arity_check), JITType::InterpreterThunk, JITCode::ShareAttribute::Shared);
 #endif
         });
-        codeBlock->setJITCode(makeRef(*jitCode));
+        codeBlock->setJITCode(*jitCode);
     } else {
         static DirectJITCode* jitCode;
         static std::once_flag onceKey;
@@ -105,7 +105,7 @@ static void setFunctionEntrypoint(CodeBlock* codeBlock)
             jitCode = new DirectJITCode(getCodeRef<JSEntryPtrTag>(llint_function_for_construct_prologue), getCodePtr<JSEntryPtrTag>(llint_function_for_construct_arity_check), JITType::InterpreterThunk, JITCode::ShareAttribute::Shared);
 #endif
         });
-        codeBlock->setJITCode(makeRef(*jitCode));
+        codeBlock->setJITCode(*jitCode);
     }
 }
 
@@ -119,7 +119,7 @@ static void setEvalEntrypoint(CodeBlock* codeBlock)
             MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = evalEntryThunk();
             jitCode = new NativeJITCode(codeRef, JITType::InterpreterThunk, Intrinsic::NoIntrinsic, JITCode::ShareAttribute::Shared);
         });
-        codeBlock->setJITCode(makeRef(*jitCode));
+        codeBlock->setJITCode(*jitCode);
         return;
     }
 #endif // ENABLE(JIT)
@@ -133,7 +133,7 @@ static void setEvalEntrypoint(CodeBlock* codeBlock)
         jitCode = new NativeJITCode(getCodeRef<JSEntryPtrTag>(llint_eval_prologue), JITType::InterpreterThunk, Intrinsic::NoIntrinsic, JITCode::ShareAttribute::Shared);
 #endif
     });
-    codeBlock->setJITCode(makeRef(*jitCode));
+    codeBlock->setJITCode(*jitCode);
 }
 
 static void setProgramEntrypoint(CodeBlock* codeBlock)
@@ -146,7 +146,7 @@ static void setProgramEntrypoint(CodeBlock* codeBlock)
             MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = programEntryThunk();
             jitCode = new NativeJITCode(codeRef, JITType::InterpreterThunk, Intrinsic::NoIntrinsic, JITCode::ShareAttribute::Shared);
         });
-        codeBlock->setJITCode(makeRef(*jitCode));
+        codeBlock->setJITCode(*jitCode);
         return;
     }
 #endif // ENABLE(JIT)
@@ -160,7 +160,7 @@ static void setProgramEntrypoint(CodeBlock* codeBlock)
         jitCode = new NativeJITCode(getCodeRef<JSEntryPtrTag>(llint_program_prologue), JITType::InterpreterThunk, Intrinsic::NoIntrinsic, JITCode::ShareAttribute::Shared);
 #endif
     });
-    codeBlock->setJITCode(makeRef(*jitCode));
+    codeBlock->setJITCode(*jitCode);
 }
 
 static void setModuleProgramEntrypoint(CodeBlock* codeBlock)
@@ -173,7 +173,7 @@ static void setModuleProgramEntrypoint(CodeBlock* codeBlock)
             MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = moduleProgramEntryThunk();
             jitCode = new NativeJITCode(codeRef, JITType::InterpreterThunk, Intrinsic::NoIntrinsic, JITCode::ShareAttribute::Shared);
         });
-        codeBlock->setJITCode(makeRef(*jitCode));
+        codeBlock->setJITCode(*jitCode);
         return;
     }
 #endif // ENABLE(JIT)
@@ -187,7 +187,7 @@ static void setModuleProgramEntrypoint(CodeBlock* codeBlock)
         jitCode = new NativeJITCode(getCodeRef<JSEntryPtrTag>(llint_module_program_prologue), JITType::InterpreterThunk, Intrinsic::NoIntrinsic, JITCode::ShareAttribute::Shared);
 #endif
     });
-    codeBlock->setJITCode(makeRef(*jitCode));
+    codeBlock->setJITCode(*jitCode);
 }
 
 MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueEntrypoint()

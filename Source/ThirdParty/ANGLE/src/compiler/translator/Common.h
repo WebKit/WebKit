@@ -54,11 +54,10 @@ typedef std::basic_string<char, std::char_traits<char>, TStringAllocator> TStrin
 typedef std::basic_ostringstream<char, std::char_traits<char>, TStringAllocator> TStringStream;
 
 //
-// Persistent string memory.  Should only be used for strings that survive
-// across compiles.
+// Persistent memory.  Should only be used for strings that survive across compiles.
 //
-#define TPersistString std::string
-#define TPersistStringStream std::ostringstream
+using TPersistString       = std::string;
+using TPersistStringStream = std::ostringstream;
 
 //
 // Pool allocator versions of vectors, lists, and maps

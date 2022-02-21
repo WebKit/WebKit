@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@ const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table", &Base
  length webAssemblyTableProtoGetterLength ReadOnly|CustomAccessor
  grow   webAssemblyTableProtoFuncGrow   Function 1
  get    webAssemblyTableProtoFuncGet    Function 1
- set    webAssemblyTableProtoFuncSet    Function 2
+ set    webAssemblyTableProtoFuncSet    Function 1
  type   webAssemblyTableProtoFuncType   Function 0
  @end
  */
@@ -177,7 +177,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncType, (JSGlobalObject* globalO
 
 WebAssemblyTablePrototype* WebAssemblyTablePrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {
-    auto* object = new (NotNull, allocateCell<WebAssemblyTablePrototype>(vm.heap)) WebAssemblyTablePrototype(vm, structure);
+    auto* object = new (NotNull, allocateCell<WebAssemblyTablePrototype>(vm)) WebAssemblyTablePrototype(vm, structure);
     object->finishCreation(vm);
     return object;
 }

@@ -116,6 +116,21 @@
     [self.delegate clickDriver:(id<_UIClickInteractionDriving>)self didPerformEvent:_UIClickInteractionEventEnded];
 }
 
++ (BOOL)prefersCancelsTouchesInView
+{
+    return NO;
+}
+
+- (BOOL)cancelsTouchesInView
+{
+    return _cancelsTouchesInView;
+}
+
+- (void)setCancelsTouchesInView:(BOOL)cancelsTouchesInView
+{
+    _cancelsTouchesInView = cancelsTouchesInView;
+}
+
 @end
 
 #endif // USE(UICONTEXTMENU)

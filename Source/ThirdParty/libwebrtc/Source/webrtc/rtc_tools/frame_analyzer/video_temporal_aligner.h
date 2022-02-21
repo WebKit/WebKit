@@ -32,7 +32,7 @@ std::vector<size_t> FindMatchingFrameIndices(
     const rtc::scoped_refptr<Video>& test_video);
 
 // Generate a new video using the frames from the original video. The returned
-// video will have the same number of frames as the size of |indices|, and
+// video will have the same number of frames as the size of `indices`, and
 // frame nr i in the returned video will point to frame nr indices[i] in the
 // original video.
 rtc::scoped_refptr<Video> ReorderVideo(const rtc::scoped_refptr<Video>& video,

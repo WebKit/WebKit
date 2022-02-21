@@ -27,6 +27,8 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuxiliaryProcessCreationParameters.h"
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -36,6 +38,7 @@ namespace WebKit {
 
 struct WebAuthnProcessCreationParameters {
     WebAuthnProcessCreationParameters();
+    AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebAuthnProcessCreationParameters&);

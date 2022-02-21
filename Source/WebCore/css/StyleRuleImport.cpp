@@ -52,6 +52,16 @@ StyleRuleImport::StyleRuleImport(const String& href, Ref<MediaQuerySet>&& media,
         m_mediaQueries = MediaQuerySet::create(String(), MediaQueryParserContext());
 }
 
+void StyleRuleImport::cancelLoad()
+{
+    if (!isLoading())
+        return;
+
+    m_loading = false;
+    if (m_parentStyleSheet)
+        m_parentStyleSheet->checkLoaded();
+}
+
 StyleRuleImport::~StyleRuleImport()
 {
     if (m_styleSheet)
@@ -72,14 +82,18 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, c
 
     Document* document = m_parentStyleSheet ? m_parentStyleSheet->singleOwnerDocument() : nullptr;
     m_styleSheet = StyleSheetContents::create(this, href, context);
-    if (m_parentStyleSheet->isContentOpaque() || !cachedStyleSheet->isCORSSameOrigin())
+    if ((m_parentStyleSheet && m_parentStyleSheet->isContentOpaque()) || !cachedStyleSheet->isCORSSameOrigin())
         m_styleSheet->setAsOpaque();
-    m_styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document ? &document->securityOrigin() : nullptr);
+
+    bool parseSucceeded = m_styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document ? &document->securityOrigin() : nullptr);
 
     m_loading = false;
 
     if (m_parentStyleSheet) {
-        m_parentStyleSheet->notifyLoadedSheet(cachedStyleSheet);
+        if (parseSucceeded)
+            m_parentStyleSheet->notifyLoadedSheet(cachedStyleSheet);
+        else
+            m_parentStyleSheet->setLoadErrorOccured();
         m_parentStyleSheet->checkLoaded();
     }
 }

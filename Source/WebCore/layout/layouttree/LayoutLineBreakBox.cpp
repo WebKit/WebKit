@@ -36,8 +36,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LineBreakBox);
 
-LineBreakBox::LineBreakBox(bool isOptional, RenderStyle&& style)
-    : Box({ }, WTFMove(style), Box::LineBreakBoxFlag)
+LineBreakBox::LineBreakBox(bool isOptional, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+    : Box({ }, WTFMove(style), WTFMove(firstLineStyle), Box::LineBreakBoxFlag)
     , m_isOptional(isOptional)
 {
 }

@@ -82,7 +82,7 @@ void BifurcatedGraphicsContext::drawEllipse(const FloatRect& rect)
     m_secondaryContext.drawEllipse(rect);
 }
 
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
 void BifurcatedGraphicsContext::applyStrokePattern()
 {
     m_primaryContext.applyStrokePattern();
@@ -180,7 +180,7 @@ void BifurcatedGraphicsContext::strokeEllipse(const FloatRect& ellipse)
     m_secondaryContext.strokeEllipse(ellipse);
 }
 
-#if USE(CG) || USE(DIRECT2D)
+#if USE(CG)
 void BifurcatedGraphicsContext::setIsCALayerContext(bool isCALayerContext)
 {
     m_primaryContext.setIsCALayerContext(isCALayerContext);
@@ -263,17 +263,40 @@ void BifurcatedGraphicsContext::drawNativeImage(NativeImage& nativeImage, const 
     m_secondaryContext.drawNativeImage(nativeImage, selfSize, destRect, srcRect, options);
 }
 
-void BifurcatedGraphicsContext::drawPattern(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void BifurcatedGraphicsContext::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    m_primaryContext.drawPattern(nativeImage, imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
-    m_secondaryContext.drawPattern(nativeImage, imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
+    m_primaryContext.drawPattern(nativeImage, destRect, tileRect, patternTransform, phase, spacing, options);
+    m_secondaryContext.drawPattern(nativeImage, destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
+ImageDrawResult BifurcatedGraphicsContext::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
+{
+    auto result = m_primaryContext.drawImage(image, destination, source, options);
+    m_secondaryContext.drawImage(image, destination, source, options);
+    return result;
+}
+
+ImageDrawResult BifurcatedGraphicsContext::drawTiledImage(Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& options)
+{
+    auto result = m_primaryContext.drawTiledImage(image, destination, source, tileSize, spacing, options);
+    m_secondaryContext.drawTiledImage(image, destination, source, tileSize, spacing, options);
+    return result;
+}
+
+ImageDrawResult BifurcatedGraphicsContext::drawTiledImage(Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions& options)
+{
+    auto result = m_primaryContext.drawTiledImage(image, destination, source, tileScaleFactor, hRule, vRule, options);
+    m_secondaryContext.drawTiledImage(image, destination, source, tileScaleFactor, hRule, vRule, options);
+    return result;
+}
+
+#if ENABLE(VIDEO)
 void BifurcatedGraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
     m_primaryContext.paintFrameForMedia(player, destination);
     m_secondaryContext.paintFrameForMedia(player, destination);
 }
+#endif // ENABLE(VIDEO)
 
 void BifurcatedGraphicsContext::scale(const FloatSize& scale)
 {
@@ -401,8 +424,11 @@ bool BifurcatedGraphicsContext::supportsInternalLinks() const
     return m_primaryContext.supportsInternalLinks();
 }
 
-void BifurcatedGraphicsContext::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+void BifurcatedGraphicsContext::didUpdateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
+    // This calls updateState() instead of didUpdateState() so that changes
+    // are also applied to each context's GraphicsContextState, so that code
+    // internal to the child contexts that reads from the state gets the right values.
     m_primaryContext.updateState(state, flags);
     m_secondaryContext.updateState(state, flags);
 }

@@ -8,10 +8,16 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.prototype.setUTCHours;
-if (x === 1)
+if (x === 1) {
   Date.prototype.setUTCHours = 2;
-else
+} else {
   Date.prototype.setUTCHours = 1;
-if (Date.prototype.setUTCHours === x) {
-  throw new Test262Error('#1: The Date.prototype.setUTCHours has not the attribute ReadOnly');
 }
+
+assert.notSameValue(
+  Date.prototype.setUTCHours,
+  x,
+  'The value of Date.prototype.setUTCHours is expected to not equal the value of `x`'
+);
+
+// TODO: Convert to verifyProperty() format.

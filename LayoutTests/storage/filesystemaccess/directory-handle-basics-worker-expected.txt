@@ -1,0 +1,21 @@
+[Worker] This test checks basic funtionalities of FileSystemDirectoryHandle.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/directory-handle-basics.js
+PASS [Worker] rootHandle.name is ""
+PASS [Worker] rootHandle.kind is "directory"
+PASS [Worker] dirHandle.name is "dir"
+PASS [Worker] dirHandle.kind is "directory"
+PASS [Worker] isSameEntry is false
+PASS [Worker] fileHandle.name is "file"
+PASS [Worker] fileHandle.kind is "file"
+PASS [Worker] handleNames.length is 2
+PASS [Worker] handleNames[0] is "dir"
+PASS [Worker] handleNames[1] is "file"
+PASS [Worker] createError.toString() is "NotFoundError: The object can not be found here."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

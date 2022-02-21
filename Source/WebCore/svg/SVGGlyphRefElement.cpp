@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SVGGlyphRefElement.h"
 
+#include "SVGElementTypeHelpers.h"
 #include "SVGGlyphElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"

@@ -39,7 +39,7 @@ namespace WebCore {
 class BitmapImage;
 class GraphicsContext;
 class ImageDecoder;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class ImageSource : public ThreadSafeRefCounted<ImageSource>, public CanMakeWeakPtr<ImageSource> {
     friend class BitmapImage;
@@ -56,9 +56,9 @@ public:
         return adoptRef(*new ImageSource(WTFMove(nativeImage)));
     }
 
-    void setData(SharedBuffer* data, bool allDataReceived);
-    void resetData(SharedBuffer* data);
-    EncodedDataStatus dataChanged(SharedBuffer* data, bool allDataReceived);
+    void setData(FragmentedSharedBuffer* data, bool allDataReceived);
+    void resetData(FragmentedSharedBuffer* data);
+    EncodedDataStatus dataChanged(FragmentedSharedBuffer* data, bool allDataReceived);
     bool isAllDataReceived();
 
     unsigned decodedSize() const { return m_decodedSize; }
@@ -122,9 +122,6 @@ public:
     WEBCORE_EXPORT Seconds frameDurationAtIndex(size_t);
     ImageOrientation frameOrientationAtIndex(size_t);
 
-#if USE(DIRECT2D)
-    void setTargetContext(const GraphicsContext*);
-#endif
     RefPtr<NativeImage> createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
     RefPtr<NativeImage> frameImageAtIndex(size_t);
     RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default);
@@ -154,7 +151,7 @@ private:
     template<typename T>
     T firstFrameMetadataCacheIfNeeded(T& cachedValue, MetadataType, T (ImageFrame::*functor)() const, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { });
 
-    bool ensureDecoderAvailable(SharedBuffer* data);
+    bool ensureDecoderAvailable(FragmentedSharedBuffer* data);
     bool isDecoderAvailable() const { return m_decoder; }
     void destroyDecodedData(size_t frameCount, size_t excludeFrame);
     void decodedSizeChanged(long long decodedSize);

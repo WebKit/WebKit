@@ -27,6 +27,7 @@
 #include "IntPoint.h"
 
 #include "FloatPoint.h"
+#include "IntRect.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -43,6 +44,11 @@ IntPoint IntPoint::constrainedBetween(const IntPoint& min, const IntPoint& max) 
         std::max(min.x(), std::min(max.x(), m_x)),
         std::max(min.y(), std::min(max.y(), m_y))
     };
+}
+
+IntPoint IntPoint::constrainedWithin(const IntRect& rect) const
+{
+    return constrainedBetween(rect.minXMinYCorner(), rect.maxXMaxYCorner());
 }
 
 TextStream& operator<<(TextStream& ts, const IntPoint& p)

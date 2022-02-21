@@ -575,17 +575,9 @@ void removeItemsMatchingCurrentThread(HashMap<KeyType, ValueType>& map)
 {
     // FIXME: Revisit when introducing WebThread aware thread comparison.
     // https://bugs.webkit.org/show_bug.cgi?id=204345
-    auto& currentThread = Thread::current();
-
-    Vector<KeyType> keys;
-    keys.reserveInitialCapacity(map.size());
-    for (auto& iterator : map) {
-        if (&iterator.value->originThread() == &currentThread)
-            keys.uncheckedAppend(iterator.key);
-    }
-
-    for (auto& key : keys)
-        map.remove(key);
+    map.removeIf([currentThread = &Thread::current()](auto& entry) {
+        return &entry.value->originThread() == currentThread;
+    });
 }
 
 template<typename KeyType, typename ValueType>
@@ -609,8 +601,6 @@ void setMatchingItemsContextSuspended(ScriptExecutionContext& currentContext, Ha
 
 void IDBConnectionProxy::forgetActivityForCurrentThread()
 {
-    ASSERT(!isMainThread());
-
     {
         Locker locker { m_databaseConnectionMapLock };
         removeItemsMatchingCurrentThread(m_databaseConnectionMap);

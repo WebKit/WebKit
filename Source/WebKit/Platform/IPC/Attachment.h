@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <optional>
+
 #if OS(DARWIN) && !USE(UNIX_DOMAIN_SOCKETS)
 #include <mach/mach_init.h>
 #include <mach/mach_traps.h>
@@ -36,8 +38,8 @@
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
+#include <variant>
 #include <wtf/Function.h>
-#include <wtf/Variant.h>
 #endif
 
 namespace IPC {
@@ -69,7 +71,7 @@ public:
 
     using SocketDescriptor = int;
     using CustomWriterFunc = WTF::Function<void(SocketDescriptor)>;
-    using CustomWriter = Variant<CustomWriterFunc, SocketDescriptor>;
+    using CustomWriter = std::variant<CustomWriterFunc, SocketDescriptor>;
     Attachment(CustomWriter&&);
 #elif OS(DARWIN)
     Attachment(mach_port_name_t, mach_msg_type_name_t disposition);
@@ -98,7 +100,7 @@ public:
 #endif
 
     void encode(Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(Decoder&, Attachment&);
+    static std::optional<Attachment> decode(Decoder&);
     
 private:
     Type m_type;

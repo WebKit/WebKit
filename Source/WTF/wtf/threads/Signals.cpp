@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -172,10 +172,14 @@ inline ptrauth_generic_signature_t hashThreadState(const thread_state_t source)
 
     const uintptr_t* srcPtr = reinterpret_cast<const uintptr_t*>(source);
 
-    for (size_t i = 0; i < threadStateSizeInPointers; ++i) {
+    // Exclude the __opaque_flags field which is reserved for OS use.
+    // __opaque_flags is at the end of the payload.
+    for (size_t i = 0; i < threadStateSizeInPointers - 1; ++i) {
         if (i != threadStatePCPointerIndex)
             hash = ptrauth_sign_generic_data(srcPtr[i], hash);
     }
+    const uint32_t* cpsrPtr = reinterpret_cast<const uint32_t*>(&srcPtr[threadStateSizeInPointers - 1]);
+    hash = ptrauth_sign_generic_data(static_cast<uint64_t>(*cpsrPtr), hash);
     
     return hash;
 }
@@ -384,7 +388,7 @@ void jscSignalHandler(int sig, siginfo_t* info, void* ucontext)
         sigfillset(&defaultAction.sa_mask);
         defaultAction.sa_flags = 0;
         auto result = sigaction(sig, &defaultAction, nullptr);
-        dataLogLnIf(result == -1, "Unable to restore the default handler while proccessing signal ", sig, " the process is probably deadlocked. (errno: ", strerror(errno), ")");
+        dataLogLnIf(result == -1, "Unable to restore the default handler while processing signal ", sig, " the process is probably deadlocked. (errno: ", errno, ")");
     };
 
     // This shouldn't happen but we might as well be careful.

@@ -37,8 +37,8 @@
 namespace WebCore {
 namespace Layout {
 
+class InlineDamage;
 class InlineFormattingState;
-class InvalidationState;
 class LineBox;
 
 // This class implements the layout logic for inline formatting contexts.
@@ -46,26 +46,27 @@ class LineBox;
 class InlineFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState&);
-    void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
+    InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState&, const InlineDamage* = nullptr);
+    void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
     InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 
-    void lineLayoutForIntergration(InvalidationState&, const ConstraintsForInFlowContent&);
+    void lineLayoutForIntergration(const ConstraintsForInFlowContent&);
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
 
-private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
+private:
     void lineLayout(InlineItems&, LineBuilder::InlineItemRange, const ConstraintsForInFlowContent&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);
-    InlineLayoutUnit computedIntrinsicWidthForConstraint(InlineLayoutUnit availableWidth) const;
+    InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode) const;
 
     void computeHorizontalMargin(const Box&, const HorizontalConstraints&);
     void computeHeightAndMargin(const Box&, const HorizontalConstraints&);
@@ -73,8 +74,9 @@ private:
 
     void collectContentIfNeeded();
     InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&);
-    void invalidateFormattingState(const InvalidationState&);
+    void invalidateFormattingState();
 
+    const InlineDamage* m_lineDamage { nullptr };
     const InlineFormattingGeometry m_inlineFormattingGeometry;
     const InlineFormattingQuirks m_inlineFormattingQuirks;
 };

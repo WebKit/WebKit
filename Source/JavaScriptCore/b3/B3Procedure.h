@@ -189,7 +189,7 @@ public:
     CFG& cfg() const { return *m_cfg; }
 
     Dominators& dominators();
-    NaturalLoops& naturalLoops();
+    JS_EXPORT_PRIVATE NaturalLoops& naturalLoops();
     BackwardsCFG& backwardsCFG();
     BackwardsDominators& backwardsDominators();
 
@@ -275,10 +275,13 @@ public:
     JS_EXPORT_PRIVATE RegisterSet mutableGPRs();
     JS_EXPORT_PRIVATE RegisterSet mutableFPRs();
 
-    void setNeedsPCToOriginMap() { m_needsPCToOriginMap = true; }
+    void setNeedsPCToOriginMap();
     bool needsPCToOriginMap() { return m_needsPCToOriginMap; }
 
     JS_EXPORT_PRIVATE void freeUnneededB3ValuesAfterLowering();
+
+    bool shouldDumpIR() const { return m_shouldDumpIR; }
+    void setShouldDumpIR();
 
 private:
     friend class BlockInsertionSet;
@@ -307,6 +310,7 @@ private:
     bool m_needsUsedRegisters { true };
     bool m_hasQuirks { false };
     bool m_needsPCToOriginMap { false };
+    bool m_shouldDumpIR { false };
 };
     
 } } // namespace JSC::B3

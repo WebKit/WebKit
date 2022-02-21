@@ -25,7 +25,7 @@ Object.defineProperty(obj, "0", {
   configurable: true
 });
 
-Array.prototype.reduce.call(obj, function() {}, "initialValue");
+Array.prototype.reduce.call(obj, callbackfn, "initialValue");
 
 assert.sameValue(accessed, false, 'accessed');
 assert.sameValue(callbackAccessed, false, 'callbackAccessed');
