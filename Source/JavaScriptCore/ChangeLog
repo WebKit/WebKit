@@ -1,5 +1,20 @@
 2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add explicit exception check after appendWithoutSideEffects
+        https://bugs.webkit.org/show_bug.cgi?id=236986
+        rdar://88258776
+
+        Reviewed by Saam Barati.
+
+        Add exception check after JSStringJoiner::appendWithoutSideEffects call since JSString::value can throw OOM error.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSStringJoiner.h:
+        (JSC::JSStringJoiner::append):
+
+2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add CalendarDateTime parsing
         https://bugs.webkit.org/show_bug.cgi?id=236886
 

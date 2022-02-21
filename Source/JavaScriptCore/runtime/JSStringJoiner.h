@@ -152,6 +152,7 @@ ALWAYS_INLINE void JSStringJoiner::append(JSGlobalObject* globalObject, JSValue 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     bool success = appendWithoutSideEffects(globalObject, value);
+    RETURN_IF_EXCEPTION(scope, void());
     if (!success) {
         JSString* jsString = value.toString(globalObject);
         RETURN_IF_EXCEPTION(scope, void());

@@ -636,7 +636,6 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToString, (JSGlobalObject* globalObject, 
 
     if (LIKELY(canUseFastJoin(thisArray))) {
         const LChar comma = ',';
-        scope.release();
 
         bool isCoW = isCopyOnWrite(thisArray->indexingMode());
         JSImmutableButterfly* immutableButterfly = nullptr;
