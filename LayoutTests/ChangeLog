@@ -1,3 +1,13 @@
+2022-02-21  Rob Buis  <rbuis@igalia.com>
+
+        Null check parent node in outdentParagraph
+        https://bugs.webkit.org/show_bug.cgi?id=235914
+
+        Reviewed by Wenson Hsieh.
+
+        * editing/execCommand/outdent-paragraph-crash-expected.txt: Added.
+        * editing/execCommand/outdent-paragraph-crash.html: Added.
+
 2022-02-21  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Add test for r290130 (https://trac.webkit.org/changeset/290130/webkit)
