@@ -83,9 +83,10 @@ public:
     void setLabel(const char*);
 
 private:
-    Device(id <MTLDevice>);
+    Device(id <MTLDevice>, Ref<Queue>&&);
 
     id <MTLDevice> m_device { nil };
+    Ref<Queue> m_defaultQueue;
 };
 
 } // namespace WebGPU

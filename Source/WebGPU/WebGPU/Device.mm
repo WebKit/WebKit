@@ -47,68 +47,82 @@ namespace WebGPU {
 
 RefPtr<Device> Device::create(id <MTLDevice> device)
 {
-    return adoptRef(*new Device(device));
+    id <MTLCommandQueue> commandQueue = [device newCommandQueue];
+    if (!commandQueue)
+        return nullptr;
+    auto queue = Queue::create(commandQueue);
+
+    return adoptRef(*new Device(device, WTFMove(queue)));
 }
 
-Device::Device(id <MTLDevice> device)
+Device::Device(id <MTLDevice> device, Ref<Queue>&& queue)
     : m_device(device)
+    , m_defaultQueue(WTFMove(queue))
 {
-    UNUSED_VARIABLE(m_device);
 }
 
 Device::~Device() = default;
 
 void Device::destroy()
 {
+    // FIXME: Implement this.
 }
 
-size_t Device::enumerateFeatures(WGPUFeatureName* features)
+size_t Device::enumerateFeatures(WGPUFeatureName*)
 {
-    UNUSED_PARAM(features);
+    // We support no optional features right now.
     return 0;
 }
 
 bool Device::getLimits(WGPUSupportedLimits* limits)
 {
-    UNUSED_PARAM(limits);
-    return false;
+    if (limits->nextInChain != nullptr)
+        return false;
+
+    // FIXME: Implement this.
+    limits->limits = { };
+    return true;
 }
 
 RefPtr<Queue> Device::getQueue()
 {
-    return Queue::create(nil);
+    return m_defaultQueue.copyRef();
 }
 
-bool Device::hasFeature(WGPUFeatureName feature)
+bool Device::hasFeature(WGPUFeatureName)
 {
-    UNUSED_PARAM(feature);
+    // We support no optional features right now.
     return false;
 }
 
 bool Device::popErrorScope(WTF::Function<void(WGPUErrorType, const char*)>&& callback)
 {
+    // FIXME: Implement this.
     UNUSED_PARAM(callback);
     return false;
 }
 
 void Device::pushErrorScope(WGPUErrorFilter filter)
 {
+    // FIXME: Implement this.
     UNUSED_PARAM(filter);
 }
 
 void Device::setDeviceLostCallback(WTF::Function<void(WGPUDeviceLostReason, const char*)>&& callback)
 {
+    // FIXME: Implement this.
     UNUSED_PARAM(callback);
 }
 
 void Device::setUncapturedErrorCallback(WTF::Function<void(WGPUErrorType, const char*)>&& callback)
 {
+    // FIXME: Implement this.
     UNUSED_PARAM(callback);
 }
 
-void Device::setLabel(const char* label)
+void Device::setLabel(const char*)
 {
-    UNUSED_PARAM(label);
+    // Because MTLDevices are process-global, we can't set the label on it, because 2 contexts' labels would fight each other.
 }
 
 } // namespace WebGPU

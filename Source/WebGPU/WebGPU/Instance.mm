@@ -74,11 +74,74 @@ void Instance::processEvents()
     } while (result);
 }
 
+static NSArray<id <MTLDevice>> *sortedDevices(NSArray<id <MTLDevice>> *devices, WGPUPowerPreference powerPreference)
+{
+    switch (powerPreference) {
+    case WGPUPowerPreference_Undefined:
+        return devices;
+    case WGPUPowerPreference_LowPower:
+        return [devices sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult (id <MTLDevice> obj1, id <MTLDevice> obj2)
+        {
+            if (obj1.lowPower == obj2.lowPower)
+                return NSOrderedSame;
+            if (obj1.lowPower)
+                return NSOrderedAscending;
+            return NSOrderedDescending;
+        }];
+    case WGPUPowerPreference_HighPerformance:
+        return [devices sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult (id <MTLDevice> obj1, id <MTLDevice> obj2)
+        {
+            if (obj1.lowPower == obj2.lowPower)
+                return NSOrderedSame;
+            if (obj1.lowPower)
+                return NSOrderedDescending;
+            return NSOrderedAscending;
+        }];
+    default:
+        return nil;
+    }
+}
+
 void Instance::requestAdapter(const WGPURequestAdapterOptions* options, WTF::Function<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback)
 {
-    UNUSED_PARAM(options);
-    UNUSED_PARAM(callback);
-    callback(WGPURequestAdapterStatus_Unavailable, Adapter::create(nil), "Adapter");
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    NSArray<id <MTLDevice>> *devices = MTLCopyAllDevices();
+#else
+    NSArray<id <MTLDevice>> *devices = [NSArray array];
+    if (id <MTLDevice> device = MTLCreateSystemDefaultDevice())
+        [devices append:device];
+#endif
+
+    // FIXME: Deal with options->compatibleSurface.
+
+    auto sortedDevices = WebGPU::sortedDevices(devices, options->powerPreference);
+
+    if (options->nextInChain) {
+        callback(WGPURequestAdapterStatus_Error, nullptr, "Unknown descriptor type");
+        return;
+    }
+
+    if (options->forceFallbackAdapter) {
+        callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present");
+        return;
+    }
+
+    if (!sortedDevices) {
+        callback(WGPURequestAdapterStatus_Error, nullptr, "Unknown power preference");
+        return;
+    }
+
+    if (!sortedDevices.count) {
+        callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present");
+        return;
+    }
+
+    if (!sortedDevices[0]) {
+        callback(WGPURequestAdapterStatus_Error, nullptr, "Adapter is internally null");
+        return;
+    }
+
+    callback(WGPURequestAdapterStatus_Success, Adapter::create(sortedDevices[0]), nullptr);
 }
 
 } // namespace WebGPU

@@ -1,5 +1,41 @@
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Tracer bullet part 8: Basic implementation of device creation routines
+        https://bugs.webkit.org/show_bug.cgi?id=236902
+
+        Reviewed by Dean Jackson.
+
+        This is a basic implementation of the Instance, Adapter, and Device methods. Device limits are not
+        implemented yet, so for now we claim every limits is 0.
+
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::Adapter):
+        (WebGPU::Adapter::enumerateFeatures):
+        (WebGPU::Adapter::getLimits):
+        (WebGPU::Adapter::getProperties):
+        (WebGPU::Adapter::hasFeature):
+        (WebGPU::deviceMeetsRequiredLimits):
+        (WebGPU::Adapter::requestDevice):
+        * WebGPU/Device.h:
+        * WebGPU/Device.mm:
+        (WebGPU::Device::create):
+        (WebGPU::Device::Device):
+        (WebGPU::Device::destroy):
+        (WebGPU::Device::enumerateFeatures):
+        (WebGPU::Device::getLimits):
+        (WebGPU::Device::getQueue):
+        (WebGPU::Device::hasFeature):
+        (WebGPU::Device::popErrorScope):
+        (WebGPU::Device::pushErrorScope):
+        (WebGPU::Device::setDeviceLostCallback):
+        (WebGPU::Device::setUncapturedErrorCallback):
+        (WebGPU::Device::setLabel):
+        * WebGPU/Instance.mm:
+        (WebGPU::sortedDevices):
+        (WebGPU::Instance::requestAdapter):
+
+2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Tracer bullet part 7: Clean up includes a bit
         https://bugs.webkit.org/show_bug.cgi?id=236900
 
