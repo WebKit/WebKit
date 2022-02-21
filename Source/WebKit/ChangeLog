@@ -1,3 +1,14 @@
+2022-02-19  Jon Lee  <jonlee@apple.com>
+
+        Turn WebGL in GPU Process on by default
+        https://bugs.webkit.org/show_bug.cgi?id=236382
+        rdar://58057431
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultUseGPUProcessForWebGLEnabled):
+
 2022-02-20  Sihui Liu  <sihui_liu@apple.com>
 
         Origin file may not be created after migrating data to general storage directory

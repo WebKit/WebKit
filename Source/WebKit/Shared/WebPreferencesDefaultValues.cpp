@@ -188,7 +188,7 @@ bool defaultUseGPUProcessForMediaEnabled()
 
 bool defaultUseGPUProcessForWebGLEnabled()
 {
-#if PLATFORM(WIN)
+#if (ENABLE(GPU_PROCESS_BY_DEFAULT) && PLATFORM(IOS_FAMILY)) || PLATFORM(WIN)
     bool defaultValue = true;
 #else
     bool defaultValue = false;
