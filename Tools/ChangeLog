@@ -1,5 +1,17 @@
 2022-02-17  Jonathan Bedard  <jbedard@apple.com>
 
+        [run-webkit-tests] Use Python 3 (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=226658
+        <rdar://problem/78882016>
+
+        Reviewed by Dewei Zhu and Stephanie Lewis.
+
+        * CISupport/build-webkit-org/steps.py:
+        (RunWebKitTests): Change invocation to Python 3.
+        * CISupport/build-webkit-org/steps_unittest.py:
+
+2022-02-17  Jonathan Bedard  <jbedard@apple.com>
+
         [EWS] Enable GTK and Windows queues for PRs
         https://bugs.webkit.org/show_bug.cgi?id=236814
         <rdar://problem/89117205>
