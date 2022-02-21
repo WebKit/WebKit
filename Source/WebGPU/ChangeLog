@@ -1,5 +1,44 @@
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Tracer bullet part 12: Migrate from C function callbacks to blocks
+        https://bugs.webkit.org/show_bug.cgi?id=236934
+
+        Reviewed by Dean Jackson.
+
+        For all the C function pointer / userdata pairs, simply create a parallel entry point which accepts a block instead.
+
+        * WebGPU/Adapter.mm:
+        (wgpuAdapterRequestDeviceWithBlock):
+        * WebGPU/Buffer.mm:
+        (wgpuBufferMapAsyncWithBlock):
+        * WebGPU/CommandEncoder.mm:
+        (wgpuCommandEncoderSetLabel):
+        * WebGPU/ComputePipeline.mm:
+        (wgpuComputePipelineSetLabel):
+        * WebGPU/Device.mm:
+        (wgpuDeviceCreateComputePipelineAsyncWithBlock):
+        (wgpuDeviceCreateRenderPipelineAsyncWithBlock):
+        (wgpuDevicePopErrorScopeWithBlock):
+        (wgpuDeviceSetDeviceLostCallbackWithBlock):
+        (wgpuDeviceSetUncapturedErrorCallbackWithBlock):
+        * WebGPU/Instance.mm:
+        (wgpuInstanceRequestAdapterWithBlock):
+        * WebGPU/Queue.mm:
+        (wgpuQueueOnSubmittedWorkDoneWithBlock):
+        (wgpuQueueSetLabel):
+        * WebGPU/RenderPipeline.mm:
+        (wgpuRenderPipelineSetLabel):
+        * WebGPU/ShaderModule.mm:
+        (wgpuShaderModuleGetCompilationInfoWithBlock):
+        (wgpuShaderModuleSetLabel):
+        * WebGPU/Surface.mm:
+        (wgpuSurfaceGetPreferredFormat):
+        * WebGPU/SwapChain.mm:
+        (wgpuSwapChainPresent):
+        * WebGPU/WebGPUExt.h:
+
+2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Tracer bullet part 11: Implement shader creation methods
         https://bugs.webkit.org/show_bug.cgi?id=236933
 

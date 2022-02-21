@@ -157,9 +157,8 @@ WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor* descriptor)
     return result ? new WGPUInstanceImpl { result.releaseNonNull() } : nullptr;
 }
 
-WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
+WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
 {
-    UNUSED_PARAM(device);
     // FIXME: Use gperf to make this faster.
     // FIXME: Generate this at build time
     if (!strcmp(procName, "wgpuAdapterEnumerateFeatures"))
@@ -172,6 +171,8 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuAdapterHasFeature);
     if (!strcmp(procName, "wgpuAdapterRequestDevice"))
         return reinterpret_cast<WGPUProc>(&wgpuAdapterRequestDevice);
+    if (!strcmp(procName, "wgpuAdapterRequestDeviceWithBlock"))
+        return reinterpret_cast<WGPUProc>(&wgpuAdapterRequestDeviceWithBlock);
     if (!strcmp(procName, "wgpuBufferDestroy"))
         return reinterpret_cast<WGPUProc>(&wgpuBufferDestroy);
     if (!strcmp(procName, "wgpuBufferGetConstMappedRange"))
@@ -180,6 +181,8 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuBufferGetMappedRange);
     if (!strcmp(procName, "wgpuBufferMapAsync"))
         return reinterpret_cast<WGPUProc>(&wgpuBufferMapAsync);
+    if (!strcmp(procName, "wgpuBufferMapAsyncWithBlock"))
+        return reinterpret_cast<WGPUProc>(&wgpuBufferMapAsyncWithBlock);
     if (!strcmp(procName, "wgpuBufferUnmap"))
         return reinterpret_cast<WGPUProc>(&wgpuBufferUnmap);
     if (!strcmp(procName, "wgpuCommandEncoderBeginComputePass"))
@@ -246,6 +249,8 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateComputePipeline);
     if (!strcmp(procName, "wgpuDeviceCreateComputePipelineAsync"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateComputePipelineAsync);
+    if (!strcmp(procName, "wgpuDeviceCreateComputePipelineAsyncWithBlock"))
+        return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateComputePipelineAsyncWithBlock);
     if (!strcmp(procName, "wgpuDeviceCreatePipelineLayout"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreatePipelineLayout);
     if (!strcmp(procName, "wgpuDeviceCreateQuerySet"))
@@ -256,6 +261,8 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateRenderPipeline);
     if (!strcmp(procName, "wgpuDeviceCreateRenderPipelineAsync"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateRenderPipelineAsync);
+    if (!strcmp(procName, "wgpuDeviceCreateRenderPipelineAsyncWithBlock"))
+        return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateRenderPipelineAsyncWithBlock);
     if (!strcmp(procName, "wgpuDeviceCreateSampler"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceCreateSampler);
     if (!strcmp(procName, "wgpuDeviceCreateShaderModule"))
@@ -276,12 +283,18 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuDeviceHasFeature);
     if (!strcmp(procName, "wgpuDevicePopErrorScope"))
         return reinterpret_cast<WGPUProc>(&wgpuDevicePopErrorScope);
+    if (!strcmp(procName, "wgpuDevicePopErrorScopeWithBlock"))
+        return reinterpret_cast<WGPUProc>(&wgpuDevicePopErrorScopeWithBlock);
     if (!strcmp(procName, "wgpuDevicePushErrorScope"))
         return reinterpret_cast<WGPUProc>(&wgpuDevicePushErrorScope);
     if (!strcmp(procName, "wgpuDeviceSetDeviceLostCallback"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceSetDeviceLostCallback);
+    if (!strcmp(procName, "wgpuDeviceSetDeviceLostCallbackWithBlock"))
+        return reinterpret_cast<WGPUProc>(&wgpuDeviceSetDeviceLostCallbackWithBlock);
     if (!strcmp(procName, "wgpuDeviceSetUncapturedErrorCallback"))
         return reinterpret_cast<WGPUProc>(&wgpuDeviceSetUncapturedErrorCallback);
+    if (!strcmp(procName, "wgpuDeviceSetUncapturedErrorCallbackWithBlock"))
+        return reinterpret_cast<WGPUProc>(&wgpuDeviceSetUncapturedErrorCallbackWithBlock);
     if (!strcmp(procName, "wgpuGetProcAddress"))
         return reinterpret_cast<WGPUProc>(&wgpuGetProcAddress);
     if (!strcmp(procName, "wgpuInstanceCreateSurface"))
@@ -290,10 +303,14 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuInstanceProcessEvents);
     if (!strcmp(procName, "wgpuInstanceRequestAdapter"))
         return reinterpret_cast<WGPUProc>(&wgpuInstanceRequestAdapter);
+    if (!strcmp(procName, "wgpuInstanceRequestAdapterWithBlock"))
+        return reinterpret_cast<WGPUProc>(&wgpuInstanceRequestAdapterWithBlock);
     if (!strcmp(procName, "wgpuQuerySetDestroy"))
         return reinterpret_cast<WGPUProc>(&wgpuQuerySetDestroy);
     if (!strcmp(procName, "wgpuQueueOnSubmittedWorkDone"))
         return reinterpret_cast<WGPUProc>(&wgpuQueueOnSubmittedWorkDone);
+    if (!strcmp(procName, "wgpuQueueOnSubmittedWorkDoneWithBlock"))
+        return reinterpret_cast<WGPUProc>(&wgpuQueueOnSubmittedWorkDoneWithBlock);
     if (!strcmp(procName, "wgpuQueueSubmit"))
         return reinterpret_cast<WGPUProc>(&wgpuQueueSubmit);
     if (!strcmp(procName, "wgpuQueueWriteBuffer"))
@@ -372,6 +389,8 @@ WGPUProc wgpuGetProcAddress(WGPUDevice device, const char* procName)
         return reinterpret_cast<WGPUProc>(&wgpuRenderPipelineSetLabel);
     if (!strcmp(procName, "wgpuShaderModuleGetCompilationInfo"))
         return reinterpret_cast<WGPUProc>(&wgpuShaderModuleGetCompilationInfo);
+    if (!strcmp(procName, "wgpuShaderModuleGetCompilationInfoWithBlock"))
+        return reinterpret_cast<WGPUProc>(&wgpuShaderModuleGetCompilationInfoWithBlock);
     if (!strcmp(procName, "wgpuShaderModuleSetLabel"))
         return reinterpret_cast<WGPUProc>(&wgpuShaderModuleSetLabel);
     if (!strcmp(procName, "wgpuSurfaceGetPreferredFormat"))
@@ -405,3 +424,9 @@ void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterO
     });
 }
 
+void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback)
+{
+    instance->instance->requestAdapter(options, [callback] (WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, const char* message) {
+        callback(status, adapter ? new WGPUAdapterImpl { adapter.releaseNonNull() } : nullptr, message);
+    });
+}

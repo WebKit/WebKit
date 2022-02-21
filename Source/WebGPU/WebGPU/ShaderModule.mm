@@ -257,8 +257,14 @@ void wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompi
     });
 }
 
+void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback)
+{
+    shaderModule->shaderModule->getCompilationInfo([callback] (WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo* compilationInfo) {
+        callback(status, compilationInfo);
+    });
+}
+
 void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, const char* label)
 {
     shaderModule->shaderModule->setLabel(label);
 }
-

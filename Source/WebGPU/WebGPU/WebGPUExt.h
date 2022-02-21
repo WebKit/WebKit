@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,16 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef void (^WGPUBufferMapBlockCallback)(WGPUBufferMapAsyncStatus status);
+typedef void (^WGPUCompilationInfoBlockCallback)(WGPUCompilationInfoRequestStatus status, WGPUCompilationInfo const * compilationInfo);
+typedef void (^WGPUCreateComputePipelineAsyncBlockCallback)(WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, char const * message);
+typedef void (^WGPUCreateRenderPipelineAsyncBlockCallback)(WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, char const * message);
+typedef void (^WGPUDeviceLostBlockCallback)(WGPUDeviceLostReason reason, char const * message);
+typedef void (^WGPUErrorBlockCallback)(WGPUErrorType type, char const * message);
+typedef void (^WGPUQueueWorkDoneBlockCallback)(WGPUQueueWorkDoneStatus status);
+typedef void (^WGPURequestAdapterBlockCallback)(WGPURequestAdapterStatus status, WGPUAdapter adapter, char const * message);
+typedef void (^WGPURequestDeviceBlockCallback)(WGPURequestDeviceStatus status, WGPUDevice device, char const * message);
 
 typedef enum WGPUSTypeExtended {
     WGPUSTypeExtended_ShaderModuleDescriptorHints = 0x348970F3, // Random
@@ -101,6 +111,17 @@ typedef void (*WGPUProcSamplerSetLabel)(WGPUSampler sampler, char const * label)
 typedef void (*WGPUProcTextureSetLabel)(WGPUTexture sampler, char const * label);
 typedef void (*WGPUProcTextureViewSetLabel)(WGPUTextureView sampler, char const * label);
 
+typedef void (*WGPUProcAdapterRequestDeviceWithBlock)(WGPUAdapter adapter, WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceBlockCallback callback);
+typedef void (*WGPUProcBufferMapAsyncWithBlock)(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapBlockCallback callback);
+typedef void (*WGPUProcDeviceCreateComputePipelineAsyncWithBlock)(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncBlockCallback callback);
+typedef void (*WGPUProcDeviceCreateRenderPipelineAsyncWithBlock)(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncBlockCallback callback);
+typedef bool (*WGPUProcDevicePopErrorScopeWithBlock)(WGPUDevice device, WGPUErrorBlockCallback callback);
+typedef void (*WGPUProcDeviceSetDeviceLostCallbackWithBlock)(WGPUDevice device, WGPUDeviceLostBlockCallback callback);
+typedef void (*WGPUProcDeviceSetUncapturedErrorCallbackWithBlock)(WGPUDevice device, WGPUErrorBlockCallback callback);
+typedef void (*WGPUProcInstanceRequestAdapterWithBlock)(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback);
+typedef void (*WGPUProcQueueOnSubmittedWorkDoneWithBlock)(WGPUQueue queue, uint64_t signalValue, WGPUQueueWorkDoneBlockCallback callback);
+typedef void (*WGPUProcShaderModuleGetCompilationInfoWithBlock)(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback);
+
 #endif  // !defined(WGPU_SKIP_PROCS)
 
 #if !defined(WGPU_SKIP_DECLARATIONS)
@@ -145,6 +166,17 @@ WGPU_EXPORT void wgpuRenderPassEncoderSetLabel(WGPURenderPassEncoder renderBundl
 WGPU_EXPORT void wgpuSamplerSetLabel(WGPUSampler sampler, char const * label);
 WGPU_EXPORT void wgpuTextureSetLabel(WGPUTexture sampler, char const * label);
 WGPU_EXPORT void wgpuTextureViewSetLabel(WGPUTextureView sampler, char const * label);
+
+WGPU_EXPORT void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceBlockCallback callback);
+WGPU_EXPORT void wgpuBufferMapAsyncWithBlock(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapBlockCallback callback);
+WGPU_EXPORT void wgpuDeviceCreateComputePipelineAsyncWithBlock(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncBlockCallback callback);
+WGPU_EXPORT void wgpuDeviceCreateRenderPipelineAsyncWithBlock(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncBlockCallback callback);
+WGPU_EXPORT bool wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback);
+WGPU_EXPORT void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostBlockCallback callback);
+WGPU_EXPORT void wgpuDeviceSetUncapturedErrorCallbackWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback);
+WGPU_EXPORT void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback);
+WGPU_EXPORT void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, uint64_t signalValue, WGPUQueueWorkDoneBlockCallback callback);
+WGPU_EXPORT void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback);
 
 #endif  // !defined(WGPU_SKIP_DECLARATIONS)
 

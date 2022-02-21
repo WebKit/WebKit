@@ -158,3 +158,10 @@ void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* d
         callback(status, device ? new WGPUDeviceImpl { device.releaseNonNull() } : nullptr, message, userdata);
     });
 }
+
+void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceBlockCallback callback)
+{
+    adapter->adapter->requestDevice(descriptor, [callback] (WGPURequestDeviceStatus status, RefPtr<WebGPU::Device>&& device, const char* message) {
+        callback(status, device ? new WGPUDeviceImpl { device.releaseNonNull() } : nullptr, message);
+    });
+}

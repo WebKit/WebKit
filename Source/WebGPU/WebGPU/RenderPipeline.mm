@@ -77,4 +77,3 @@ void wgpuRenderPipelineSetLabel(WGPURenderPipeline renderPipeline, const char* l
 {
     renderPipeline->renderPipeline->setLabel(label);
 }
-

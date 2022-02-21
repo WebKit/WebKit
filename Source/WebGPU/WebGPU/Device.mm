@@ -169,6 +169,13 @@ void wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, const WGPUComputePi
     });
 }
 
+void wgpuDeviceCreateComputePipelineAsyncWithBlock(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncBlockCallback callback)
+{
+    device->device->createComputePipelineAsync(descriptor, [callback] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::ComputePipeline>&& pipeline, const char* message) {
+        callback(status, pipeline ? new WGPUComputePipelineImpl { pipeline.releaseNonNull() } : nullptr, message);
+    });
+}
+
 WGPUPipelineLayout wgpuDeviceCreatePipelineLayout(WGPUDevice device, const WGPUPipelineLayoutDescriptor* descriptor)
 {
     auto result = device->device->createPipelineLayout(descriptor);
@@ -197,6 +204,13 @@ void wgpuDeviceCreateRenderPipelineAsync(WGPUDevice device, const WGPURenderPipe
 {
     device->device->createRenderPipelineAsync(descriptor, [callback, userdata] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::RenderPipeline>&& pipeline, const char* message) {
         callback(status, pipeline ? new WGPURenderPipelineImpl { pipeline.releaseNonNull() } : nullptr, message, userdata);
+    });
+}
+
+void wgpuDeviceCreateRenderPipelineAsyncWithBlock(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncBlockCallback callback)
+{
+    device->device->createRenderPipelineAsync(descriptor, [callback] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::RenderPipeline>&& pipeline, const char* message) {
+        callback(status, pipeline ? new WGPURenderPipelineImpl { pipeline.releaseNonNull() } : nullptr, message);
     });
 }
 
@@ -257,6 +271,13 @@ bool wgpuDevicePopErrorScope(WGPUDevice device, WGPUErrorCallback callback, void
     });
 }
 
+bool wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback)
+{
+    return device->device->popErrorScope([callback] (WGPUErrorType type, const char* message) {
+        callback(type, message);
+    });
+}
+
 void wgpuDevicePushErrorScope(WGPUDevice device, WGPUErrorFilter filter)
 {
     device->device->pushErrorScope(filter);
@@ -270,11 +291,27 @@ void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback c
     });
 }
 
+void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostBlockCallback callback)
+{
+    return device->device->setDeviceLostCallback([callback] (WGPUDeviceLostReason reason, const char* message) {
+        if (callback)
+            callback(reason, message);
+    });
+}
+
 void wgpuDeviceSetUncapturedErrorCallback(WGPUDevice device, WGPUErrorCallback callback, void* userdata)
 {
     return device->device->setUncapturedErrorCallback([callback, userdata] (WGPUErrorType type, const char* message) {
         if (callback)
             callback(type, message, userdata);
+    });
+}
+
+void wgpuDeviceSetUncapturedErrorCallbackWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback)
+{
+    return device->device->setUncapturedErrorCallback([callback] (WGPUErrorType type, const char* message) {
+        if (callback)
+            callback(type, message);
     });
 }
 

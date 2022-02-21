@@ -216,4 +216,3 @@ void wgpuCommandEncoderSetLabel(WGPUCommandEncoder commandEncoder, const char* l
 {
     commandEncoder->commandEncoder->setLabel(label);
 }
-

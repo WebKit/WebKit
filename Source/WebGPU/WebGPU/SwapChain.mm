@@ -67,4 +67,3 @@ void wgpuSwapChainPresent(WGPUSwapChain swapChain)
 {
     swapChain->swapChain->present();
 }
-

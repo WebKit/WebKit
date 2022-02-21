@@ -85,6 +85,13 @@ void wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, uint64_t signalValue, WGPUQue
     });
 }
 
+void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, uint64_t signalValue, WGPUQueueWorkDoneBlockCallback callback)
+{
+    queue->queue->onSubmittedWorkDone(signalValue, [callback] (WGPUQueueWorkDoneStatus status) {
+        callback(status);
+    });
+}
+
 void wgpuQueueSubmit(WGPUQueue queue, uint32_t commandCount, const WGPUCommandBuffer* commands)
 {
     Vector<std::reference_wrapper<const WebGPU::CommandBuffer>> commandsToForward;
@@ -107,4 +114,3 @@ void wgpuQueueSetLabel(WGPUQueue queue, const char* label)
 {
     queue->queue->setLabel(label);
 }
-

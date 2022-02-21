@@ -211,4 +211,3 @@ void wgpuComputePipelineSetLabel(WGPUComputePipeline computePipeline, const char
 {
     computePipeline->computePipeline->setLabel(label);
 }
-

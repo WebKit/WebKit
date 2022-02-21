@@ -51,4 +51,3 @@ WGPUTextureFormat wgpuSurfaceGetPreferredFormat(WGPUSurface surface, WGPUAdapter
 {
     return surface->surface->getPreferredFormat(adapter->adapter);
 }
-

@@ -107,6 +107,13 @@ void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset,
     });
 }
 
+void wgpuBufferMapAsyncWithBlock(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapBlockCallback callback)
+{
+    buffer->buffer->mapAsync(mode, offset, size, [callback] (WGPUBufferMapAsyncStatus status) {
+        callback(status);
+    });
+}
+
 void wgpuBufferUnmap(WGPUBuffer buffer)
 {
     buffer->buffer->unmap();
