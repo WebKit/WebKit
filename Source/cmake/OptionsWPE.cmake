@@ -75,6 +75,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBXR PRIVATE ${ENABLE_EXPERIMENTAL_FEAT
 WEBKIT_OPTION_DEFINE(ENABLE_GTKDOC "Whether or not to use generate gtkdoc." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(ENABLE_JOURNALD_LOG "Whether to enable journald logging" PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WPE_QT_API "Whether to enable support for the Qt5/QML plugin" PUBLIC ${ENABLE_DEVELOPER_MODE})
+WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_AVIF "Whether to enable support for AVIF images." PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
 WEBKIT_OPTION_DEFINE(USE_JPEGXL "Whether to enable support for JPEG-XL images." PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
 WEBKIT_OPTION_DEFINE(USE_LCMS "Whether to enable support for image color management using libcms2." PUBLIC ON)
@@ -85,7 +86,6 @@ WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." 
 # Private options specific to the WPE port.
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_HOLEPUNCH "Whether to enable GStreamer holepunch" PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_EXTERNAL_HOLEPUNCH "Whether to enable external holepunch" PRIVATE OFF)
-WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PRIVATE OFF)
 WEBKIT_OPTION_DEPEND(USE_ANGLE_WEBGL ENABLE_WEBGL)
 WEBKIT_OPTION_DEFINE(USE_ATSPI "Whether to use the ATSPI a11y implementation instead of ATK." PRIVATE ON)
 WEBKIT_OPTION_DEPEND(ENABLE_WEBGL2 USE_ANGLE_WEBGL)
@@ -177,8 +177,15 @@ endif ()
 if (USE_ANGLE_WEBGL)
     SET_AND_EXPOSE_TO_BUILD(USE_ANGLE TRUE)
 
-    find_package(GBM REQUIRED)
-    find_package(LibDRM REQUIRED)
+    find_package(GBM)
+    if (NOT GBM_FOUND)
+        message(FATAL_ERROR "GBM is needed for USE_ANGLE_WEBGL")
+    endif ()
+
+    find_package(LibDRM)
+    if (NOT LIBDRM_FOUND)
+        message(FATAL_ERROR "libdrm is needed for USE_ANGLE_WEBGL")
+    endif ()
 endif ()
 
 if (USE_JPEGXL)

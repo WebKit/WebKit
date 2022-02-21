@@ -60,6 +60,7 @@ WEBKIT_OPTION_DEFINE(ENABLE_JOURNALD_LOG "Whether to enable journald logging" PU
 WEBKIT_OPTION_DEFINE(ENABLE_QUARTZ_TARGET "Whether to enable support for the Quartz windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wayland windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_X11_TARGET "Whether to enable support for the X11 windowing target." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_AVIF "Whether to enable support for AVIF images." PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
 WEBKIT_OPTION_DEFINE(USE_GTK4 "Whether to enable usage of GTK4 instead of GTK3." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_JPEGXL "Whether to enable support for JPEG-XL images." PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
@@ -75,7 +76,6 @@ WEBKIT_OPTION_DEFINE(USE_WPE_RENDERER "Whether to enable WPE rendering" PUBLIC O
 
 # Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
-WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_ATSPI "Whether to use the ATSPI a11y implementation instead of ATK." PRIVATE ON)
 
 WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS USE_OPENGL_OR_ES)
@@ -384,8 +384,15 @@ endif ()
 if (USE_ANGLE_WEBGL)
     SET_AND_EXPOSE_TO_BUILD(USE_ANGLE TRUE)
 
-    find_package(GBM REQUIRED)
-    find_package(LibDRM REQUIRED)
+    find_package(GBM)
+    if (NOT GBM_FOUND)
+        message(FATAL_ERROR "GBM is needed for USE_ANGLE_WEBGL")
+    endif ()
+
+    find_package(LibDRM)
+    if (NOT LIBDRM_FOUND)
+        message(FATAL_ERROR "libdrm is needed for USE_ANGLE_WEBGL")
+    endif ()
 endif ()
 
 if (ENABLE_SPELLCHECK)
