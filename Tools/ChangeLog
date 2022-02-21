@@ -1,3 +1,13 @@
+2022-02-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Enable GTK and Windows queues for PRs
+        https://bugs.webkit.org/show_bug.cgi?id=236814
+        <rdar://problem/89117205>
+
+        Reviewed by Ryan Haddad.
+
+        * CISupport/ews-build/config.json:
+
 2022-02-21  Sihui Liu  <sihui_liu@apple.com>
 
         Fetching website data may get wrong record after migrating data to general storage directory
