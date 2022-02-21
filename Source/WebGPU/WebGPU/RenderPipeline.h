@@ -46,6 +46,8 @@ public:
     Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
     void setLabel(const char*);
 
+    id <MTLRenderPipelineState> renderPipelineState() const { return m_renderPipelineState; }
+
 private:
     RenderPipeline(id <MTLRenderPipelineState>);
 

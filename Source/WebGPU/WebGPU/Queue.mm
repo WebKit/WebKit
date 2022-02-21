@@ -34,7 +34,6 @@ namespace WebGPU {
 Queue::Queue(id <MTLCommandQueue> commandQueue)
     : m_commandQueue(commandQueue)
 {
-    UNUSED_VARIABLE(m_commandQueue);
 }
 
 Queue::~Queue() = default;
@@ -69,7 +68,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture* destination, const void* da
 
 void Queue::setLabel(const char* label)
 {
-    UNUSED_PARAM(label);
+    m_commandQueue.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
 }
 
 } // namespace WebGPU

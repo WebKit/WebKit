@@ -32,14 +32,13 @@ namespace WebGPU {
 RenderBundle::RenderBundle(id <MTLIndirectCommandBuffer> indirectCommandBuffer)
     : m_indirectCommandBuffer(indirectCommandBuffer)
 {
-    UNUSED_VARIABLE(m_indirectCommandBuffer);
 }
 
 RenderBundle::~RenderBundle() = default;
 
 void RenderBundle::setLabel(const char* label)
 {
-    UNUSED_PARAM(label);
+    m_indirectCommandBuffer.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
 }
 
 }

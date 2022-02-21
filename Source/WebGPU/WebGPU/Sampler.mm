@@ -43,9 +43,9 @@ Sampler::Sampler(id <MTLSamplerState> samplerState)
 
 Sampler::~Sampler() = default;
 
-void Sampler::setLabel(const char* label)
+void Sampler::setLabel(const char*)
 {
-    UNUSED_PARAM(label);
+    // MTLRenderPipelineState's labels are read-only.
 }
 
 }

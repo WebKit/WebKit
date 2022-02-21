@@ -40,7 +40,6 @@ RefPtr<Texture> Device::createTexture(const WGPUTextureDescriptor* descriptor)
 Texture::Texture(id <MTLTexture> texture)
     : m_texture(texture)
 {
-    UNUSED_VARIABLE(m_texture);
 }
 
 Texture::~Texture() = default;
@@ -57,7 +56,7 @@ void Texture::destroy()
 
 void Texture::setLabel(const char* label)
 {
-    UNUSED_PARAM(label);
+    m_texture.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
 }
 
 } // namespace WebGPU

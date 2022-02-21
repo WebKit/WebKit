@@ -46,7 +46,6 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor* descr
 RenderPipeline::RenderPipeline(id <MTLRenderPipelineState> renderPipelineState)
     : m_renderPipelineState(renderPipelineState)
 {
-    UNUSED_VARIABLE(m_renderPipelineState);
 }
 
 RenderPipeline::~RenderPipeline() = default;
@@ -57,9 +56,9 @@ Ref<BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
     return BindGroupLayout::create(nil, nil, nil);
 }
 
-void RenderPipeline::setLabel(const char* label)
+void RenderPipeline::setLabel(const char*)
 {
-    UNUSED_PARAM(label);
+    // MTLRenderPipelineState's labels are read-only.
 }
 
 } // namespace WebGPU

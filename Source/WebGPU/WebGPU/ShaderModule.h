@@ -44,6 +44,8 @@ public:
     void getCompilationInfo(WTF::Function<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo*)>&& callback);
     void setLabel(const char*);
 
+    id <MTLLibrary> library() const { return m_library; }
+
 private:
     ShaderModule(id <MTLLibrary>);
 

@@ -75,7 +75,7 @@ void Buffer::unmap()
 
 void Buffer::setLabel(const char* label)
 {
-    UNUSED_PARAM(label);
+    m_buffer.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
 }
 
 } // namespace WebGPU

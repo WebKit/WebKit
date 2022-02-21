@@ -38,7 +38,7 @@ TextureView::~TextureView() = default;
 
 void TextureView::setLabel(const char* label)
 {
-    UNUSED_PARAM(label);
+    m_texture.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
 }
 
 }

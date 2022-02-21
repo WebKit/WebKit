@@ -44,6 +44,8 @@ public:
     void destroy();
     void setLabel(const char*);
 
+    id <MTLCounterSampleBuffer> counterSampleBuffer() const { return m_counterSampleBuffer; }
+
 private:
     QuerySet(id <MTLCounterSampleBuffer>);
 

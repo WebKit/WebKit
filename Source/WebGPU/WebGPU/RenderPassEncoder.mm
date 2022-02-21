@@ -37,7 +37,6 @@ namespace WebGPU {
 RenderPassEncoder::RenderPassEncoder(id <MTLRenderCommandEncoder> renderCommandEncoder)
     : m_renderCommandEncoder(renderCommandEncoder)
 {
-    UNUSED_VARIABLE(m_renderCommandEncoder);
 }
 
 RenderPassEncoder::~RenderPassEncoder() = default;
@@ -176,7 +175,7 @@ void RenderPassEncoder::setViewport(float x, float y, float width, float height,
 
 void RenderPassEncoder::setLabel(const char* label)
 {
-    UNUSED_PARAM(label);
+    m_renderCommandEncoder.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
 }
 
 } // namespace WebGPU

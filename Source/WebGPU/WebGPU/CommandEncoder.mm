@@ -44,7 +44,6 @@ RefPtr<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDesc
 CommandEncoder::CommandEncoder(id <MTLCommandBuffer> commandBuffer)
     : m_commandBuffer(commandBuffer)
 {
-    UNUSED_VARIABLE(m_commandBuffer);
 }
 
 CommandEncoder::~CommandEncoder() = default;
@@ -135,7 +134,7 @@ void CommandEncoder::writeTimestamp(const QuerySet& querySet, uint32_t queryInde
 
 void CommandEncoder::setLabel(const char* label)
 {
-    UNUSED_PARAM(label);
+    m_commandBuffer.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
 }
 
 } // namespace WebGPU

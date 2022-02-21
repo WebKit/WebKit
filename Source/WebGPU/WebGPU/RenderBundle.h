@@ -43,6 +43,8 @@ public:
 
     void setLabel(const char*);
 
+    id <MTLIndirectCommandBuffer> indirectCommandBuffer() const { return m_indirectCommandBuffer; }
+
 private:
     RenderBundle(id <MTLIndirectCommandBuffer>);
 

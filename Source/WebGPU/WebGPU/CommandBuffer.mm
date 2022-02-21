@@ -32,14 +32,13 @@ namespace WebGPU {
 CommandBuffer::CommandBuffer(id <MTLCommandBuffer> commandBuffer)
     : m_commandBuffer(commandBuffer)
 {
-    UNUSED_VARIABLE(m_commandBuffer);
 }
 
 CommandBuffer::~CommandBuffer() = default;
 
 void CommandBuffer::setLabel(const char* label)
 {
-    UNUSED_PARAM(label);
+    m_commandBuffer.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
 }
 
 }

@@ -36,7 +36,6 @@ namespace WebGPU {
 ComputePassEncoder::ComputePassEncoder(id <MTLComputeCommandEncoder> computeCommandEncoder)
     : m_computeCommandEncoder(computeCommandEncoder)
 {
-    UNUSED_VARIABLE(m_computeCommandEncoder);
 }
 
 ComputePassEncoder::~ComputePassEncoder() = default;
@@ -97,7 +96,7 @@ void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
 
 void ComputePassEncoder::setLabel(const char* label)
 {
-    UNUSED_PARAM(label);
+    m_computeCommandEncoder.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
 }
 
 } // namespace WebGPU

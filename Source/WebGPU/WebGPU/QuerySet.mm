@@ -39,7 +39,6 @@ RefPtr<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor* descriptor
 QuerySet::QuerySet(id <MTLCounterSampleBuffer> counterSampleBuffer)
     : m_counterSampleBuffer(counterSampleBuffer)
 {
-    UNUSED_VARIABLE(m_counterSampleBuffer);
 }
 
 QuerySet::~QuerySet() = default;
@@ -48,9 +47,9 @@ void QuerySet::destroy()
 {
 }
 
-void QuerySet::setLabel(const char* label)
+void QuerySet::setLabel(const char*)
 {
-    UNUSED_PARAM(label);
+    // MTLCounterSampleBuffer's labels are read-only.
 }
 
 } // namespace WebGPU

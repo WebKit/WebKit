@@ -39,7 +39,6 @@ RefPtr<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor
 ShaderModule::ShaderModule(id <MTLLibrary> library)
     : m_library(library)
 {
-    UNUSED_VARIABLE(m_library);
 }
 
 ShaderModule::~ShaderModule() = default;
@@ -51,7 +50,7 @@ void ShaderModule::getCompilationInfo(WTF::Function<void(WGPUCompilationInfoRequ
 
 void ShaderModule::setLabel(const char* label)
 {
-    UNUSED_PARAM(label);
+    m_library.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
 }
 
 } // namespace WebGPU

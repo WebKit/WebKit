@@ -47,7 +47,6 @@ void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor* des
 ComputePipeline::ComputePipeline(id <MTLComputePipelineState> computePipelineState)
     : m_computePipelineState(computePipelineState)
 {
-    UNUSED_VARIABLE(m_computePipelineState);
 }
 
 ComputePipeline::~ComputePipeline() = default;
@@ -58,9 +57,9 @@ Ref<BindGroupLayout> ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
     return BindGroupLayout::create(nil, nil, nil);
 }
 
-void ComputePipeline::setLabel(const char* label)
+void ComputePipeline::setLabel(const char*)
 {
-    UNUSED_PARAM(label);
+    // MTLComputePipelineState's labels are read-only.
 }
 
 } // namespace WebGPU

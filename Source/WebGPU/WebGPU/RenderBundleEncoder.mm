@@ -43,7 +43,6 @@ RefPtr<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBu
 RenderBundleEncoder::RenderBundleEncoder(id <MTLIndirectCommandBuffer> indirectCommandBuffer)
     : m_indirectCommandBuffer(indirectCommandBuffer)
 {
-    UNUSED_VARIABLE(m_indirectCommandBuffer);
 }
 
 RenderBundleEncoder::~RenderBundleEncoder() = default;
@@ -129,7 +128,7 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, const Buffer& buffer, u
 
 void RenderBundleEncoder::setLabel(const char* label)
 {
-    UNUSED_PARAM(label);
+    m_indirectCommandBuffer.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
 }
 
 } // namespace WebGPU
