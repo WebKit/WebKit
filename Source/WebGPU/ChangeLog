@@ -1,5 +1,18 @@
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Fix iOS build
+        https://bugs.webkit.org/show_bug.cgi?id=237000
+
+        The lowPower selector doesn't exist on iOS.
+
+        Unreviewed.
+
+        * WebGPU/Instance.mm:
+        (WebGPU::sortedDevices):
+        (WebGPU::Instance::requestAdapter):
+
+2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Tracer bullet part 12: Migrate from C function callbacks to blocks
         https://bugs.webkit.org/show_bug.cgi?id=236934
 

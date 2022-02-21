@@ -80,6 +80,7 @@ static NSArray<id <MTLDevice>> *sortedDevices(NSArray<id <MTLDevice>> *devices, 
     case WGPUPowerPreference_Undefined:
         return devices;
     case WGPUPowerPreference_LowPower:
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         return [devices sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult (id <MTLDevice> obj1, id <MTLDevice> obj2)
         {
             if (obj1.lowPower == obj2.lowPower)
@@ -88,7 +89,11 @@ static NSArray<id <MTLDevice>> *sortedDevices(NSArray<id <MTLDevice>> *devices, 
                 return NSOrderedAscending;
             return NSOrderedDescending;
         }];
+#else
+        return devices;
+#endif
     case WGPUPowerPreference_HighPerformance:
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         return [devices sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult (id <MTLDevice> obj1, id <MTLDevice> obj2)
         {
             if (obj1.lowPower == obj2.lowPower)
@@ -97,6 +102,9 @@ static NSArray<id <MTLDevice>> *sortedDevices(NSArray<id <MTLDevice>> *devices, 
                 return NSOrderedDescending;
             return NSOrderedAscending;
         }];
+#else
+        return devices;
+#endif
     default:
         return nil;
     }
@@ -107,9 +115,9 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions* options, WTF::Fun
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     NSArray<id <MTLDevice>> *devices = MTLCopyAllDevices();
 #else
-    NSArray<id <MTLDevice>> *devices = [NSArray array];
+    NSMutableArray<id <MTLDevice>> *devices = [NSMutableArray array];
     if (id <MTLDevice> device = MTLCreateSystemDefaultDevice())
-        [devices append:device];
+        [devices addObject:device];
 #endif
 
     // FIXME: Deal with options->compatibleSurface.
