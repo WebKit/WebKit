@@ -2362,7 +2362,7 @@ media/video-volume.html [ Failure ]
 
 media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html [ Failure ]
 
-media/video-seek-to-current-time.html [ Failure ]
+media/video-seek-to-current-time.html [ Failure Pass ]
 
 imported/w3c/web-platform-tests/dom/events/scrolling [ Pass ]
 

@@ -340,11 +340,12 @@ webkit.org/b/236932 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 webkit.org/b/236932 svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ Pass ImageOnlyFailure ]
 # Also happening on Mac...
 webkit.org/b/236932 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Pass Failure ]
-webkit.org/b/236932 webkit.org/b/221487 imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https.html [ Pass Failure ]
+webkit.org/b/221487 imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https.html [ Pass Failure ]
 webkit.org/b/236932 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html [ Pass Failure ]
 webkit.org/b/236932 imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
 webkit.org/b/236932 js/dom/Promise-reject-large-string.html [ Pass Failure ]
 webkit.org/b/236932 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
+webkit.org/b/68278 http/tests/history/back-with-fragment-change.py
 
 # Flaky crash
 webkit.org/b/236930 accessibility/ios-simulator/aria-details.html [ Crash Pass ]
@@ -356,6 +357,7 @@ webkit.org/b/236930 fast/backgrounds/background-clip-text-with-simple-container.
 webkit.org/b/236930 fast/backgrounds/background-clip-text.html [ Crash Pass ]
 webkit.org/b/236930 fast/clip/clip-hit-null-iterator-path-comparison.html [ Crash Pass ]
 webkit.org/b/236930 fast/clip/clip-when-rect-has-fractional-pixel-value.html [ Crash ImageOnlyFailure ]
+webkit.org/b/236930 fast/css/clip-text-in-scaled-div.html [ Crash Pass ]
 webkit.org/b/236930 fast/css/clip-zooming.html [ Crash Pass ]
 webkit.org/b/236930 fast/hidpi/clip-text-in-hidpi.html [ Crash Pass ]
 webkit.org/b/236930 fast/mediastream/captureStream/canvas2d-heavy-drawing.html [ Crash Pass ]
@@ -380,7 +382,6 @@ webkit.org/b/236928 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.
 #####
 # Progressions with GPU Process (when turned on, need to find other citations of these tests and update expectations)
 webkit.org/b/190032 animations/stop-animation-on-suspend.html [ Pass ]
-media/video-seek-to-current-time.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/change-src-while-not-displayed.html [ Pass ]
 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Pass ]
 svg/clip-path/clip-path-line-use-before-defined.svg [ Pass ]

@@ -1,5 +1,17 @@
 2022-02-21  Jon Lee  <jonlee@apple.com>
 
+        Unreviewed gardening for the GPU Process bots.
+        * css3/color-filters/color-filter-text-decoration-shadow.html:
+        * fast/gradients/conic-gradient-alpha-unpremultiplied.html:
+        * fast/gradients/conic-gradient-alpha.html:
+        * fast/gradients/linear-two-hints-angle.html:
+        * fast/scrolling/overflow-inside-foreignobject.html:
+        * gpu-process/TestExpectations:
+        * imported/blink/svg/custom/crisp-edges-leak.svg:
+        * platform/ios/TestExpectations:
+
+2022-02-21  Jon Lee  <jonlee@apple.com>
+
         Add test name to the image diff template
         https://bugs.webkit.org/show_bug.cgi?id=237003
 
