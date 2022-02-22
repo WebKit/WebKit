@@ -1011,7 +1011,7 @@ void WebPage::updateThrottleState()
         m_userActivity.start();
 
 #if ENABLE(SERVICE_WORKER)
-    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled()) {
+    if (m_page && m_page->settings().serviceWorkersEnabled()) {
         RunLoop::main().dispatch([isThrottleable] {
             WebServiceWorkerProvider::singleton().updateThrottleState(isThrottleable);
         });
@@ -4014,7 +4014,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     if (store.getBoolValueForKey(WebPreferencesKey::serviceWorkersEnabledKey())) {
         ASSERT(parentProcessHasServiceWorkerEntitlement() || shouldAllowServiceWorkersForAppBoundViews);
         if (!parentProcessHasServiceWorkerEntitlement() && !shouldAllowServiceWorkersForAppBoundViews)
-            RuntimeEnabledFeatures::sharedFeatures().setServiceWorkerEnabled(false);
+            settings.setServiceWorkersEnabled(false);
     }
 #endif
 

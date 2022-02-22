@@ -162,13 +162,6 @@ public:
     void setReadableByteStreamAPIEnabled(bool isEnabled) { m_isReadableByteStreamAPIEnabled = isEnabled; }
     bool readableByteStreamAPIEnabled() const { return m_isReadableByteStreamAPIEnabled; }
 
-#if ENABLE(SERVICE_WORKER)
-    bool pushAPIEnabled() const { return m_pushAPIEnabled; }
-    void setPushAPIEnabled(bool isEnabled) { m_pushAPIEnabled = isEnabled; }
-    bool serviceWorkerEnabled() const { return m_serviceWorkerEnabled; }
-    void setServiceWorkerEnabled(bool isEnabled) { m_serviceWorkerEnabled = isEnabled; }
-#endif
-
     void setCSSDisplayContentsAXSupportEnabled(bool isEnabled) { m_CSSDisplayContentsAXSupportEnabled = isEnabled; }
     bool cssDisplayContentsAXSupportEnabled() const { return m_CSSDisplayContentsAXSupportEnabled; }
 
@@ -331,11 +324,6 @@ private:
 #endif
 
     bool m_isReadableByteStreamAPIEnabled { false };
-
-#if ENABLE(SERVICE_WORKER)
-    bool m_pushAPIEnabled { false };
-    bool m_serviceWorkerEnabled { false };
-#endif
 
     bool m_CSSDisplayContentsAXSupportEnabled { false };
     bool m_CSSLogicalEnabled { false };

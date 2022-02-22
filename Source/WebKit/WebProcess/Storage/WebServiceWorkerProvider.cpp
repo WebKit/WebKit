@@ -56,7 +56,6 @@ WebServiceWorkerProvider::WebServiceWorkerProvider()
 
 WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnection()
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled());
     return WebProcess::singleton().ensureNetworkProcessConnection().serviceWorkerConnection();
 }
 

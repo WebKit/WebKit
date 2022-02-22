@@ -1,3 +1,49 @@
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Move service worker and push API preference from RuntimeEnabledFeatures to Settings
+        https://bugs.webkit.org/show_bug.cgi?id=236989
+
+        Reviewed by Youenn Fablet.
+
+        Move service worker and push API preference from RuntimeEnabledFeatures to Settings, since RuntimeEnabledFeatures is deprecated.
+
+        * Modules/push-api/PushEvent.idl:
+        * Modules/push-api/PushManager.idl:
+        * Modules/push-api/PushMessageData.idl:
+        * Modules/push-api/PushSubscription.idl:
+        * Modules/push-api/PushSubscriptionChangeEvent.idl:
+        * Modules/push-api/PushSubscriptionOptions.idl:
+        * Modules/push-api/ServiceWorkerGlobalScope+PushAPI.idl:
+        * Modules/push-api/ServiceWorkerRegistration+PushAPI.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::suspend):
+        (WebCore::Document::resume):
+        (WebCore::Document::finishedParsing):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::matchRegistration):
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::DocumentLoader::commitData):
+        (WebCore::DocumentLoader::unregisterReservedServiceWorkerClient):
+        (WebCore::DocumentLoader::loadMainResource):
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::serviceWorker):
+        * page/NavigatorServiceWorker.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::pushAPIEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setPushAPIEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::serviceWorkerEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setServiceWorkerEnabled): Deleted.
+        * workers/service/ExtendableEvent.idl:
+        * workers/service/ExtendableMessageEvent.idl:
+        * workers/service/FetchEvent.idl:
+        * workers/service/ServiceWorker.idl:
+        * workers/service/ServiceWorkerClient.idl:
+        * workers/service/ServiceWorkerClients.idl:
+        * workers/service/ServiceWorkerContainer.idl:
+        * workers/service/ServiceWorkerGlobalScope.idl:
+        * workers/service/ServiceWorkerRegistration.idl:
+        * workers/service/ServiceWorkerWindowClient.idl:
+
 2022-02-22  Marcos Caceres  <marcos@marcosc.com>
 
         Permission API: handle non-fully active documents

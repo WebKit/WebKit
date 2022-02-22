@@ -27,7 +27,7 @@
 
 [
     Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=PushAPIEnabled,
+    EnabledBySetting=PushAPIEnabled,
     ExportMacro=WEBCORE_EXPORT,
     SecureContext,
     Exposed=(Window,Worker),

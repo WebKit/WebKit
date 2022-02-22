@@ -1,5 +1,22 @@
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
+        Move service worker and push API preference from RuntimeEnabledFeatures to Settings
+        https://bugs.webkit.org/show_bug.cgi?id=236989
+
+        Reviewed by Youenn Fablet.
+
+        Move service worker and push API preference from RuntimeEnabledFeatures to Settings, since RuntimeEnabledFeatures is deprecated.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _serviceWorkersEnabled:]):
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::serviceWorkerConnection):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateThrottleState):
+        (WebKit::WebPage::updatePreferences):
+
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
         Avoid having to iterate the whole frame tree(s) every time we need to dispatch storage events
         https://bugs.webkit.org/show_bug.cgi?id=236985
 

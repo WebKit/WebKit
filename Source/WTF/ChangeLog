@@ -1,3 +1,15 @@
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Move service worker and push API preference from RuntimeEnabledFeatures to Settings
+        https://bugs.webkit.org/show_bug.cgi?id=236989
+
+        Reviewed by Youenn Fablet.
+
+        Move service worker and push API preference from RuntimeEnabledFeatures to Settings, since RuntimeEnabledFeatures is deprecated.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2022-02-22  Asumu Takikawa  <asumu@igalia.com>
 
         Initial support for Wasm/ESM-integration in the WebCore module loader

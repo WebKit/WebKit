@@ -1118,7 +1118,6 @@ PushAPIEnabled:
   condition: ENABLE(SERVICE_WORKER)
   humanReadableName: "Push API"
   humanReadableDescription: "Enable Push API"
-  webcoreBinding: RuntimeEnabledFeatures
   defaultValue:
     WebCore:
       default: false

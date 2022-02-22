@@ -25,7 +25,7 @@
 
 [
     Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=ServiceWorkerEnabled,
+    EnabledBySetting=ServiceWorkersEnabled,
     Exposed=ServiceWorker,
     GenerateIsReachable=Impl,
     InterfaceName=Clients,

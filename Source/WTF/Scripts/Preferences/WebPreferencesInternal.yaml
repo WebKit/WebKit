@@ -804,14 +804,14 @@ ServiceWorkersEnabled:
   type: bool
   humanReadableName: "Service Workers"
   humanReadableDescription: "Enable Service Workers"
-  webcoreBinding: RuntimeEnabledFeatures
-  webcoreName: serviceWorkerEnabled
   condition: ENABLE(SERVICE_WORKER)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
       "ENABLE(EXPERIMENTAL_FEATURES) || PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
+      default: false
+    WebCore:
       default: false
 
 SimpleLineLayoutEnabled:
