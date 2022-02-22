@@ -285,7 +285,8 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject, AXID p
         idsBeingChanged->add(nodeChange.isolatedObject->objectID());
     changes.append(WTFMove(nodeChange));
 
-    auto axChildrenIDs = axObject.children().map([&](auto& axChild) {
+    auto axChildrenCopy = axObject.children();
+    auto axChildrenIDs = axChildrenCopy.map([&](auto& axChild) {
         collectNodeChangesForSubtree(*axChild, axObject.objectID(), attachWrapper, changes, idsBeingChanged);
         return axChild->objectID();
     });
