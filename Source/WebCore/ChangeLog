@@ -1,3 +1,30 @@
+2022-02-22  Frédéric Wang  <fwang@igalia.com>
+
+        null ptr deref via WebXRSystem::requestSession
+        https://bugs.webkit.org/show_bug.cgi?id=235916
+
+        Reviewed by Dean Jackson.
+        WebXRSystem::requestSession() null checks the document's global object via the method
+        Document::domWindow() and calls WebXRSystem::inlineSessionRequestIsAllowedForGlobalObject()
+        which dereferences the global object via the method ScriptExecutionContext::globalObject().
+        The former is just getting a raw pointer from Document::m_domWindow which (once set) remains
+        non-null until the document is destroyed. The latter instead gets the DOM window via the
+        document's FrameDestructionObserver::m_frame which is null when document is detached from the
+        frame. Hence the two methods may disagree, leading to a null ptr deref in
+        WebXRSystem::inlineSessionRequestIsAllowedForGlobalObject(). This patch works around that
+        issue by explicitly null checking the result of Document::::globalObject(). Additionally, it
+        makes the document (and its m_domWindow member) protected earlier in
+        WebXRSystem::requestSession() i.e. before passing them to potentially complex subroutines
+        immersiveSessionRequestIsAllowedForGlobalObject() and
+        inlineSessionRequestIsAllowedForGlobalObject().
+
+        Test: webxr/xr-requestSession-crash.html
+
+        * Modules/webxr/WebXRSystem.cpp:
+        (WebCore::WebXRSystem::inlineSessionRequestIsAllowedForGlobalObject const): null-check
+        document::globalObject() before deferencing it.
+        (WebCore::WebXRSystem::requestSession): protect document (and its m_domWindow member).
+
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
         Clean up / optimize even more call sites constructing vectors

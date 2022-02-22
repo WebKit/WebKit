@@ -221,7 +221,7 @@ bool WebXRSystem::inlineSessionRequestIsAllowedForGlobalObject(DOMWindow& global
     auto isEmptyOrViewer = [&document](const JSFeatureList& features) {
         if (features.isEmpty())
             return true;
-        if (features.size() == 1) {
+        if (features.size() == 1 && document.globalObject()) {
             auto feature = parseEnumeration<XRReferenceSpaceType>(*document.globalObject(), features.first());
             if (feature == XRReferenceSpaceType::Viewer)
                 return true;
@@ -400,7 +400,8 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
     // 2. Let immersive be true if mode is an immersive session mode, and false otherwise.
     // 3. Let global object be the relevant Global object for the XRSystem on which this method was invoked.
     bool immersive = mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr;
-    auto* globalObject = document.domWindow();
+    Ref protectedDocument { document };
+    auto* globalObject = protectedDocument->domWindow();
     if (!globalObject) {
         promise.reject(Exception { InvalidAccessError});
         return;
@@ -427,7 +428,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
     // 5.2 Let optionalFeatures be options' optionalFeatures.
     // 5.3 Set device to the result of obtaining the current device for mode, requiredFeatures, and optionalFeatures.
     // 5.4 Queue a task to perform the following steps:
-    obtainCurrentDevice(mode, init.requiredFeatures, init.optionalFeatures, [this, protectedDocument = Ref { document }, immersive, init, mode, promise = WTFMove(promise)](auto* device) mutable {
+    obtainCurrentDevice(mode, init.requiredFeatures, init.optionalFeatures, [this, protectedDocument, immersive, init, mode, promise = WTFMove(promise)](auto* device) mutable {
         auto rejectPromiseWithNotSupportedError = makeScopeExit([&]() {
             promise.reject(Exception { NotSupportedError });
             m_pendingImmersiveSession = false;

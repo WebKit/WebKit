@@ -1,0 +1,23 @@
+<p>This test passes if it does not crash.</p>
+<script>
+  if (window.internals)
+    internals.settings.setWebXREnabled(true);
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+  (async () => {
+    new Image().src = 'data:';
+    for (let i = 0; i < 100; i++) {
+      if (window.caches)
+        await caches.has(i.toString());
+      navigator.xr.requestSession('inline', {optionalFeatures: [{}]}).
+        catch((e) => {
+          if (e instanceof DOMException && e.name === 'SecurityError') return;
+	  throw e;
+	});
+    }
+  })();
+  if (window.testRunner)
+    testRunner.notifyDone();
+</script>

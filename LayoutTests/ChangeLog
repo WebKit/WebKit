@@ -1,3 +1,15 @@
+2022-02-22  Frédéric Wang  <fwang@igalia.com>
+
+        null ptr deref via WebXRSystem::requestSession
+        https://bugs.webkit.org/show_bug.cgi?id=235916
+
+        Reviewed by Dean Jackson.
+
+        Add non-regression test.
+
+        * webxr/xr-requestSession-crash-expected.txt: Added.
+        * webxr/xr-requestSession-crash.html: Added.
+
 2022-02-22  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Initial MediaRecorder implementation
