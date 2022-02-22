@@ -84,8 +84,14 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
     }
 
     auto context = m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
+
     if (!context || !context->globalObject()) {
         promise.reject(Exception { InvalidStateError, "The context is invalid"_s });
+        return;
+    }
+
+    if (auto* document = dynamicDowncast<Document>(context); !document->isFullyActive()) {
+        promise.reject(Exception { InvalidStateError, "The document is not fully active"_s });
         return;
     }
 

@@ -1,0 +1,5 @@
+
+
+PASS Trying to query() a non-fully active document rejects with a InvalidStateError
+FAIL Permission change events shouldn't fire on non-fully active document assert_true: onchange is supported expected true got false
+

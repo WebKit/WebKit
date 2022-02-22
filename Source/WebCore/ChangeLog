@@ -1,3 +1,20 @@
+2022-02-22  Marcos Caceres  <marcos@marcosc.com>
+
+        Permission API: handle non-fully active documents
+        https://bugs.webkit.org/show_bug.cgi?id=236952
+
+        Spec change:
+        https://github.com/w3c/permissions/pull/365
+
+        Reviewed by Youenn Fablet.
+
+        Test: imported/w3c/web-platform-tests/permissions/non-fully-active.https.html
+
+        * Modules/permissions/PermissionStatus.cpp:
+        (WebCore::PermissionStatus::stateChanged):
+        * Modules/permissions/Permissions.cpp:
+        (WebCore::Permissions::query):
+
 2022-02-22  Asumu Takikawa  <asumu@igalia.com>
 
         Initial support for Wasm/ESM-integration in the WebCore module loader

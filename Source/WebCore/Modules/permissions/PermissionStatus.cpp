@@ -69,6 +69,9 @@ void PermissionStatus::stateChanged(PermissionState newState)
     if (m_state == newState)
         return;
 
+    if (auto* document = dynamicDowncast<Document>(scriptExecutionContext()); !document->isFullyActive())
+        return;
+
     m_state = newState;
     queueTaskToDispatchEvent(*this, TaskSource::Permission, Event::create(eventNames().changeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }

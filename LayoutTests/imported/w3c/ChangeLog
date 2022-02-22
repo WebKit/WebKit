@@ -1,3 +1,17 @@
+2022-02-22  Marcos Caceres  <marcos@marcosc.com>
+
+        Permission API: handle non-fully active documents
+        https://bugs.webkit.org/show_bug.cgi?id=236952
+
+        Web Platform Test
+        https://github.com/web-platform-tests/wpt/pull/32921
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/permissions/non-fully-active.https-expected.txt: Added.
+        * web-platform-tests/permissions/non-fully-active.https.html: Added.
+        * web-platform-tests/permissions/resources/empty.html: Added.
+
 2022-02-22  Asumu Takikawa  <asumu@igalia.com>
 
         Initial support for Wasm/ESM-integration in the WebCore module loader
