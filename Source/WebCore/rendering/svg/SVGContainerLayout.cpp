@@ -39,7 +39,6 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderSVGText.h"
-#include "RenderSVGTransformableContainer.h"
 #include "RenderSVGViewportContainer.h"
 #include "SVGRenderSupport.h"
 #include "SVGRenderingContext.h"

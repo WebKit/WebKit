@@ -56,7 +56,7 @@ protected:
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 
-    // Allow RenderSVGTransformableContainer to hook in at the right time in layout()
+    // Allow LegacyRenderSVGTransformableContainer to hook in at the right time in layout()
     virtual bool calculateLocalTransform() { return false; }
 
     // Allow RenderSVGViewportContainer to hook in at the right times in layout(), paint() and nodeAtFloatPoint()

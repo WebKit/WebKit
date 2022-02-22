@@ -22,9 +22,9 @@
 #include "config.h"
 #include "SVGGElement.h"
 
+#include "LegacyRenderSVGTransformableContainer.h"
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGResource.h"
-#include "RenderSVGTransformableContainer.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -58,7 +58,7 @@ RenderPtr<RenderElement> SVGGElement::createElementRenderer(RenderStyle&& style,
     if (style.display() == DisplayType::None)
         return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
 
-    return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 
 bool SVGGElement::rendererIsNeeded(const RenderStyle&)

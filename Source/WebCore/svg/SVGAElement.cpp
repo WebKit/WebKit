@@ -32,11 +32,11 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
+#include "LegacyRenderSVGTransformableContainer.h"
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGText.h"
-#include "RenderSVGTransformableContainer.h"
 #include "ResourceRequest.h"
 #include "SVGElementInlines.h"
 #include "SVGElementTypeHelpers.h"
@@ -110,7 +110,7 @@ RenderPtr<RenderElement> SVGAElement::createElementRenderer(RenderStyle&& style,
 {
     if (is<SVGElement>(parentNode()) && downcast<SVGElement>(*parentNode()).isTextContent())
         return createRenderer<RenderSVGInline>(*this, WTFMove(style));
-    return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 
 void SVGAElement::defaultEventHandler(Event& event)

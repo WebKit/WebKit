@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGTransformableContainer.h"
+#include "LegacyRenderSVGTransformableContainer.h"
 
 #include "SVGElementTypeHelpers.h"
 #include "SVGGElement.h"
@@ -30,16 +30,16 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGTransformableContainer);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGTransformableContainer);
 
-RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGGraphicsElement& element, RenderStyle&& style)
+LegacyRenderSVGTransformableContainer::LegacyRenderSVGTransformableContainer(SVGGraphicsElement& element, RenderStyle&& style)
     : LegacyRenderSVGContainer(element, WTFMove(style))
     , m_needsTransformUpdate(true)
     , m_didTransformToRootUpdate(false)
 {
 }
 
-bool RenderSVGTransformableContainer::calculateLocalTransform()
+bool LegacyRenderSVGTransformableContainer::calculateLocalTransform()
 {
     SVGGraphicsElement& element = graphicsElement();
 
@@ -73,7 +73,7 @@ bool RenderSVGTransformableContainer::calculateLocalTransform()
     return true;
 }
 
-SVGGraphicsElement& RenderSVGTransformableContainer::graphicsElement()
+SVGGraphicsElement& LegacyRenderSVGTransformableContainer::graphicsElement()
 {
     return downcast<SVGGraphicsElement>(LegacyRenderSVGContainer::element());
 }

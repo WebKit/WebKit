@@ -2481,6 +2481,7 @@ rendering/svg/LegacyRenderSVGModelObject.cpp
 rendering/svg/LegacyRenderSVGRect.cpp
 rendering/svg/LegacyRenderSVGRoot.cpp
 rendering/svg/LegacyRenderSVGShape.cpp
+rendering/svg/LegacyRenderSVGTransformableContainer.cpp
 rendering/svg/RenderSVGBlock.cpp
 rendering/svg/RenderSVGContainer.cpp
 rendering/svg/RenderSVGEllipse.cpp
@@ -2510,7 +2511,6 @@ rendering/svg/RenderSVGShape.cpp
 rendering/svg/RenderSVGTSpan.cpp
 rendering/svg/RenderSVGText.cpp
 rendering/svg/RenderSVGTextPath.cpp
-rendering/svg/RenderSVGTransformableContainer.cpp
 rendering/svg/RenderSVGViewportContainer.cpp
 rendering/svg/SVGBoundingBoxComputation.cpp
 rendering/svg/SVGContainerLayout.cpp

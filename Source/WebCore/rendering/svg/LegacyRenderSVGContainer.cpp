@@ -62,7 +62,7 @@ void LegacyRenderSVGContainer::layout()
     // Allow RenderSVGViewportContainer to update its viewport.
     calcViewport();
 
-    // Allow RenderSVGTransformableContainer to update its transform.
+    // Allow LegacyRenderSVGTransformableContainer to update its transform.
     bool updatedTransform = calculateLocalTransform();
 
     // RenderSVGViewportContainer needs to set the 'layout size changed' flag.

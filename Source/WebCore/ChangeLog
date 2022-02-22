@@ -1,3 +1,42 @@
+2022-02-22  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        [LBSE] Rename RenderSVGTransformableContainer -> LegacyRenderSVGTransformableContainer
+        https://bugs.webkit.org/show_bug.cgi?id=237023
+
+        Reviewed by Rob Buis.
+
+        Following the established procedure: rename RenderSVGTransformableContainer -> LegacyRenderSVGTransformableContainer.
+        In a follow-up patch RenderSVGTransformableContainer will be reintroduced for LBSE, inheriting from
+        RenderSVGContainer instead of LegacyRenderSVGContainer.
+
+        Covered by existing tests, no change in behaviour.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isLegacySVGTransformableContainer const):
+        (WebCore::RenderObject::isSVGTransformableContainer const): Deleted.
+        * rendering/svg/LegacyRenderSVGContainer.cpp:
+        (WebCore::LegacyRenderSVGContainer::layout):
+        * rendering/svg/LegacyRenderSVGContainer.h:
+        * rendering/svg/LegacyRenderSVGTransformableContainer.cpp: Renamed from Source/WebCore/rendering/svg/RenderSVGTransformableContainer.cpp.
+        (WebCore::LegacyRenderSVGTransformableContainer::LegacyRenderSVGTransformableContainer):
+        (WebCore::LegacyRenderSVGTransformableContainer::calculateLocalTransform):
+        (WebCore::LegacyRenderSVGTransformableContainer::graphicsElement):
+        * rendering/svg/LegacyRenderSVGTransformableContainer.h: Renamed from Source/WebCore/rendering/svg/RenderSVGTransformableContainer.h.
+        * rendering/svg/RenderSVGViewportContainer.h:
+        * rendering/svg/SVGContainerLayout.cpp:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::transformToRootChanged):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::createElementRenderer):
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::createElementRenderer):
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::createElementRenderer):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::createElementRenderer):
+
 2022-02-22  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Switch media player to playbin3

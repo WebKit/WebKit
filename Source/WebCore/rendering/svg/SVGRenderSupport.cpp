@@ -30,6 +30,7 @@
 #include "ElementAncestorIterator.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
+#include "LegacyRenderSVGTransformableContainer.h"
 #include "NodeRenderStyle.h"
 #include "RenderChildIterator.h"
 #include "RenderElement.h"
@@ -44,7 +45,6 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderSVGText.h"
-#include "RenderSVGTransformableContainer.h"
 #include "RenderSVGViewportContainer.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGGeometryElement.h"
@@ -224,8 +224,8 @@ static inline bool layoutSizeOfNearestViewportChanged(const RenderElement& rende
 bool SVGRenderSupport::transformToRootChanged(RenderElement* ancestor)
 {
     while (ancestor && !ancestor->isSVGRootOrLegacySVGRoot()) {
-        if (is<RenderSVGTransformableContainer>(*ancestor))
-            return downcast<RenderSVGTransformableContainer>(*ancestor).didTransformToRootUpdate();
+        if (is<LegacyRenderSVGTransformableContainer>(*ancestor))
+            return downcast<LegacyRenderSVGTransformableContainer>(*ancestor).didTransformToRootUpdate();
         if (is<RenderSVGViewportContainer>(*ancestor))
             return downcast<RenderSVGViewportContainer>(*ancestor).didTransformToRootUpdate();
         ancestor = ancestor->parent();

@@ -23,7 +23,7 @@
 #include "SVGSwitchElement.h"
 
 #include "ElementIterator.h"
-#include "RenderSVGTransformableContainer.h"
+#include "LegacyRenderSVGTransformableContainer.h"
 #include "SVGElementTypeHelpers.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -57,7 +57,7 @@ bool SVGSwitchElement::childShouldCreateRenderer(const Node& child) const
 
 RenderPtr<RenderElement> SVGSwitchElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 
 }
