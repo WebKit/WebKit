@@ -1,3 +1,15 @@
+2022-02-22  Tim Nguyen  <ntim@apple.com>
+
+        Hide PDF.js sidebar shown for long documents
+        https://bugs.webkit.org/show_bug.cgi?id=236850
+
+        Reviewed by Chris Dumez.
+
+        Use the built-in PDF.js `#pagemode=none` parameter to do this: https://github.com/mozilla/pdf.js/wiki/Viewer-options
+
+        * html/PDFDocument.cpp:
+        (WebCore::PDFDocument::createDocumentStructure):
+
 2022-02-22  Antti Koivisto  <antti@apple.com>
 
         [CSS container Queries] getComputedStyle should update style for invalid query containers

@@ -138,8 +138,10 @@ Ref<DocumentParser> PDFDocument::createParser()
 
 void PDFDocument::createDocumentStructure()
 {
-    // The empty file parameter prevents default pdf from loading.
-    auto viewerURL = "webkit-pdfjs-viewer://pdfjs/web/viewer.html?file=";
+    // Description of parameters:
+    // - `#pagemode=none` prevents the sidebar from showing on load.
+    // - Empty `?file=` parameter prevents default pdf from loading.
+    auto viewerURL = "webkit-pdfjs-viewer://pdfjs/web/viewer.html?file=#pagemode=none";
     auto rootElement = HTMLHtmlElement::create(*this);
     appendChild(rootElement);
     rootElement->insertedByParser();
