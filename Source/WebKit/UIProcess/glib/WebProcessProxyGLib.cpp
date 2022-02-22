@@ -29,8 +29,10 @@
 #include "UserMessage.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
-#include <WebCore/PlatformDisplay.h>
+#include <signal.h>
+#include <sys/types.h>
 #include <wtf/FileSystem.h>
+
 
 namespace WebKit {
 using namespace WebCore;
@@ -68,4 +70,24 @@ void WebProcessProxy::sendMessageToWebContext(UserMessage&& message)
     sendMessageToWebContextWithReply(WTFMove(message), [](UserMessage&&) { });
 }
 
-};
+void WebProcessProxy::platformSuspendProcess()
+{
+    auto id = processIdentifier();
+    if (!id)
+        return;
+
+    RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformSuspendProcess", this, id);
+    kill(id, SIGSTOP);
+}
+
+void WebProcessProxy::platformResumeProcess()
+{
+    auto id = processIdentifier();
+    if (!id)
+        return;
+
+    RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformResumeProcess", this, id);
+    kill(id, SIGCONT);
+}
+
+} // namespace WebKit

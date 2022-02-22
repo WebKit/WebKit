@@ -1,3 +1,23 @@
+2022-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Suspend web process after some time in the process cache
+        https://bugs.webkit.org/show_bug.cgi?id=236971
+
+        Reviewed by Michael Catanzaro.
+
+        Implement platformSuspendProcess() and platformResumeProcess() for GTK and WPE ports.
+
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::addProcess):
+        (WebKit::WebProcessCache::CachedProcess::CachedProcess):
+        (WebKit::WebProcessCache::CachedProcess::~CachedProcess):
+        (WebKit::WebProcessCache::CachedProcess::takeProcess):
+        * UIProcess/WebProcessCache.h:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/glib/WebProcessProxyGLib.cpp:
+        (WebKit::WebProcessProxy::platformSuspendProcess):
+        (WebKit::WebProcessProxy::platformResumeProcess):
+
 2022-02-21  Alex Christensen  <achristensen@webkit.org>
 
         Allow adattributiond to start on iOS devices

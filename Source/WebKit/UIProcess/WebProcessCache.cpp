@@ -137,7 +137,7 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
         m_processesPerRegistrableDomain.remove(it);
     }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
     cachedProcess->startSuspensionTimer();
 #endif
 
@@ -271,7 +271,7 @@ void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProc
 WebProcessCache::CachedProcess::CachedProcess(Ref<WebProcessProxy>&& process)
     : m_process(WTFMove(process))
     , m_evictionTimer(RunLoop::main(), this, &CachedProcess::evictionTimerFired)
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
     , m_suspensionTimer(RunLoop::main(), this, &CachedProcess::suspensionTimerFired)
 #endif
 {
@@ -290,7 +290,7 @@ WebProcessCache::CachedProcess::~CachedProcess()
     ASSERT(!m_process->provisionalPageCount());
     ASSERT(!m_process->suspendedPageCount());
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
     if (isSuspended())
         m_process->platformResumeProcess();
 #endif
@@ -302,7 +302,7 @@ Ref<WebProcessProxy> WebProcessCache::CachedProcess::takeProcess()
 {
     ASSERT(m_process);
     m_evictionTimer.stop();
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
     if (isSuspended())
         m_process->platformResumeProcess();
     else
@@ -318,7 +318,7 @@ void WebProcessCache::CachedProcess::evictionTimerFired()
     m_process->processPool().webProcessCache().removeProcess(*m_process, ShouldShutDownProcess::Yes);
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
 void WebProcessCache::CachedProcess::startSuspensionTimer()
 {
     m_suspensionTimer.startOneShot(cachedProcessSuspensionDelay);

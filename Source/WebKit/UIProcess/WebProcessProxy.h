@@ -420,7 +420,7 @@ public:
 
     void markProcessAsRecentlyUsed();
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
     void platformSuspendProcess();
     void platformResumeProcess();
 #endif
