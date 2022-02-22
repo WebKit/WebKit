@@ -828,9 +828,6 @@ test/built-ins/ShadowRealm/WrappedFunction/length-throws-typeerror.js:
 test/built-ins/ShadowRealm/WrappedFunction/name-throws-typeerror.js:
   default: 'Test262Error: expect a TypeError on name getter throwing Expected a TypeError but got a Error'
   strict mode: 'Test262Error: expect a TypeError on name getter throwing Expected a TypeError but got a Error'
-test/built-ins/ShadowRealm/prototype/evaluate/wrapped-function-throws-typeerror-from-caller-realm.js:
-  default: 'Test262Error: throws TypeError if arguments are not wrappable Expected a TypeError but got a different error constructor with the same name'
-  strict mode: 'Test262Error: throws TypeError if arguments are not wrappable Expected a TypeError but got a different error constructor with the same name'
 test/built-ins/Temporal/Duration/compare/calendar-dateadd-called-with-plaindate-instance.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'

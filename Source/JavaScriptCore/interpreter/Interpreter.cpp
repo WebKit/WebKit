@@ -556,13 +556,13 @@ CatchInfo::CatchInfo(const Wasm::HandlerInfo* handler, const Wasm::Callee* calle
 
 class UnwindFunctor {
 public:
-    UnwindFunctor(VM& vm, CallFrame*& callFrame, bool isTermination, JSValue thrownValue, CodeBlock*& codeBlock, CatchInfo& handler, bool& seenRemoteFucnction)
+    UnwindFunctor(VM& vm, CallFrame*& callFrame, bool isTermination, JSValue thrownValue, CodeBlock*& codeBlock, CatchInfo& handler, JSRemoteFunction*& seenRemoteFunction)
         : m_vm(vm)
         , m_callFrame(callFrame)
         , m_isTermination(isTermination)
         , m_codeBlock(codeBlock)
         , m_handler(handler)
-        , m_seenRemoteFunction(seenRemoteFucnction)
+        , m_seenRemoteFunction(seenRemoteFunction)
     {
 #if ENABLE(WEBASSEMBLY)
         if (!m_isTermination) {
@@ -614,7 +614,7 @@ public:
         if (!m_callFrame->isWasmFrame() && JSC::isRemoteFunction(m_vm, m_callFrame->jsCallee()) && !m_isTermination) {
             // Continue searching for a handler, but mark that a marshalling function was on the stack so that we can
             // translate the exception before jumping to the handler.
-            const_cast<UnwindFunctor*>(this)->m_seenRemoteFunction = true;
+            m_seenRemoteFunction = jsCast<JSRemoteFunction*>(m_callFrame->jsCallee());
         }
 
         notifyDebuggerOfUnwinding(m_vm, m_callFrame);
@@ -666,18 +666,18 @@ private:
     bool m_catchableFromWasm { false };
 #endif
 
-    bool& m_seenRemoteFunction;
+    JSRemoteFunction*& m_seenRemoteFunction;
 };
 
 // Replace an exception which passes across a marshalling boundary with a TypeError for its handler's global object.
-static void sanitizeRemoteFunctionException(VM& vm, CallFrame* handlerCallFrame, Exception* exception)
+static void sanitizeRemoteFunctionException(VM& vm, JSRemoteFunction* remoteFunction, Exception* exception)
 {
     DeferTermination deferScope(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(exception);
     ASSERT(!vm.isTerminationException(exception));
 
-    JSGlobalObject* globalObject = handlerCallFrame->jsCallee()->globalObject();
+    JSGlobalObject* globalObject = remoteFunction->globalObject();
     JSValue exceptionValue = exception->value();
     scope.clearException();
 
@@ -717,12 +717,12 @@ NEVER_INLINE CatchInfo Interpreter::unwind(VM& vm, CallFrame*& callFrame, Except
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
     CatchInfo catchInfo;
-    bool seenRemoteFunction = false;
+    JSRemoteFunction* seenRemoteFunction = nullptr;
     UnwindFunctor functor(vm, callFrame, vm.isTerminationException(exception), exceptionValue, codeBlock, catchInfo, seenRemoteFunction);
     StackVisitor::visit<StackVisitor::TerminateIfTopEntryFrameIsEmpty>(callFrame, vm, functor);
 
     if (seenRemoteFunction) {
-        sanitizeRemoteFunctionException(vm, callFrame, exception);
+        sanitizeRemoteFunctionException(vm, seenRemoteFunction, exception);
         exception = scope.exception(); // clear m_needExceptionCheck
     }
 
