@@ -611,11 +611,10 @@ public:
         }
 #endif
 
-        if (!m_callFrame->isWasmFrame() &&  JSC::isRemoteFunction(m_vm, m_callFrame->jsCallee()) && !m_isTermination) {
+        if (!m_callFrame->isWasmFrame() && JSC::isRemoteFunction(m_vm, m_callFrame->jsCallee()) && !m_isTermination) {
             // Continue searching for a handler, but mark that a marshalling function was on the stack so that we can
             // translate the exception before jumping to the handler.
             const_cast<UnwindFunctor*>(this)->m_seenRemoteFunction = true;
-            return StackVisitor::Continue;
         }
 
         notifyDebuggerOfUnwinding(m_vm, m_callFrame);

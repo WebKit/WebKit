@@ -1,5 +1,20 @@
 2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Fix ShadowRealm unwinding
+        https://bugs.webkit.org/show_bug.cgi?id=237001
+
+        Reviewed by Saam Barati.
+
+        This patch fixes a crash bug found by test262. Regardless of it is RemoteFunction,
+        we should handle it as the same way to the other normal host functions except
+        for setting m_seenRemoteFunction = true flag. Previously, we are early returning,
+        this is wrong since we should stop unwinding if the caller is entry frame.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::operator() const):
+
+2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Temporal.PlainDate should validate input range
         https://bugs.webkit.org/show_bug.cgi?id=236936
 

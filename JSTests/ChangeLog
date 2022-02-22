@@ -1,5 +1,14 @@
 2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Fix ShadowRealm unwinding
+        https://bugs.webkit.org/show_bug.cgi?id=237001
+
+        Reviewed by Saam Barati.
+
+        * test262/expectations.yaml:
+
+2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Temporal.PlainDate should validate input range
         https://bugs.webkit.org/show_bug.cgi?id=236936
 
