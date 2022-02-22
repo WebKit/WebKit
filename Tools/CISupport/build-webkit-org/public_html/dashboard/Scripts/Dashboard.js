@@ -27,7 +27,6 @@ Dashboard = {
     Platform: {
         macOSMonterey: { name: "macos-monterey", readableName: "macOS Monterey", order: 1 },
         macOSBigSur: { name: "macos-bigsur", readableName: "macOS Big Sur", order: 2 },
-        macOSCatalina: { name: "macos-catalina", readableName: "macOS Catalina", order: 3 },
         iOS15Simulator: { name: "ios-simulator-15", readableName: "iOS 15 Simulator", order: 15 },
         iOS15Device: { name: "ios-15", readableName: "iOS 15", order: 16 },
         iOS14Simulator: { name: "ios-simulator-14", readableName: "iOS 14 Simulator", order: 17 },

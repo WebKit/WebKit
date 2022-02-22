@@ -1,3 +1,15 @@
+2022-02-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove dormant queues from bot watchers dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=236809
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Dashboard.js:
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * Tools/CISupport/build-webkit-org/public_html/dashboard/Styles/Main.css:
+
 2022-02-22  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Link to GitHub wiki

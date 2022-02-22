@@ -221,10 +221,6 @@ table.queue-grid tr.platform.watchos-8 img.logo {
     content: url(../Images/WatchOS8.png);
 }
 
-table.queue-grid tr.platform.macos-catalina img.logo {
-    content: url(../Images/Catalina.png);
-}
-
 table.queue-grid tr.platform.macos-bigsur img.logo {
     content: url(../Images/BigSur.png);
 }
