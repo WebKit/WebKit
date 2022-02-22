@@ -1,3 +1,13 @@
+2022-02-22  Elliott Williams  <emw@apple.com>
+
+        Replace legacy-build-copy-nested-headers.py with an xcodebuild invocation
+        https://bugs.webkit.org/show_bug.cgi?id=237011
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/legacy-build-copy-nested-headers.py: Removed.
+        * WTF.xcodeproj/project.pbxproj: Remove reference to legacy-build-copy-nested-headers.py.
+
 2022-02-22  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Ruby ERB.new compatibility fix

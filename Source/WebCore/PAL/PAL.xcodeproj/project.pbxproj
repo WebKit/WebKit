@@ -2041,7 +2041,6 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(WTF_BUILD_SCRIPTS_DIR)/legacy-build-copy-nested-headers.py",
 			);
 			name = "(Legacy Build System) Nest Headers";
 			outputFileListPaths = (
@@ -2050,7 +2049,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "HEADER_OUTPUT_DIR=\"${BUILT_PRODUCTS_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}\" \\\n    WK_NESTED_HEADER_OUTPUT_DIR=\"${BUILT_PRODUCTS_DIR}/${PRIVATE_HEADERS_FOLDER_PATH_not_legacy}\" \\\n    WK_HEADER_SRCROOT=\"${SRCROOT}/pal\" \\\n    \"${SCRIPT_INPUT_FILE_0}\"\n";
+			shellScript = "[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = YES ] && exit 0\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" installhdrs SYMROOT=\"${TARGET_TEMP_DIR}/LegacyNestHeaders-build\" DSTROOT=\"${BUILT_PRODUCTS_DIR}\" SDKROOT=\"${SDKROOT}\" -UseNewBuildSystem=YES\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -1,3 +1,24 @@
+2022-02-22  Elliott Williams  <emw@apple.com>
+
+        Replace legacy-build-copy-nested-headers.py with an xcodebuild invocation.
+        https://bugs.webkit.org/show_bug.cgi?id=237011
+
+        Reviewed by Alexey Proskuryakov.
+
+        r290260 added a script to approximate how XCBuild copies headers to nested directories, for
+        use in legacy builds. Instead of that script, invoke `xcodebuild -UseNewBuildSystem=YES`
+        directly to copy nested headers to the build products directory. By taking the same
+        header-copying codepath, legacy builds can handle header edge cases (e.g. multiple headers
+        with the same basename) exactly as XCBuild does.
+
+        The child xcodebuild process saves incremental data to TARGET_TEMP_DIR, so it can rebuild
+        incrementally without clobbering the legacy build system's incremental data.
+
+        Apple production builds do not use the legacy build system, so this change is
+        engineering-only.
+
+        * PAL.xcodeproj/project.pbxproj:
+
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Fix build
