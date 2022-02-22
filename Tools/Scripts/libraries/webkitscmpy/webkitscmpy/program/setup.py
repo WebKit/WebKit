@@ -301,6 +301,9 @@ class Setup(Command):
 
     @classmethod
     def main(cls, args, repository, **kwargs):
+        print('For detailed information about options this script is configuring see:')
+        print('https://github.com/WebKit/WebKit/wiki/Git-Config#Configuration-Options')
+
         if isinstance(repository, local.Git):
             result = cls.git(args, repository, **kwargs)
             print('Setup failed' if result else 'Setup succeeded!')

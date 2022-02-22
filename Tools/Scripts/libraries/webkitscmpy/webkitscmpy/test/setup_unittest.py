@@ -52,7 +52,13 @@ class TestSetup(testing.PathTestCase):
                 path=self.path,
             ))
 
-        self.assertEqual(captured.stdout.getvalue(), "Create a private fork of 'WebKit' belonging to 'username' ([Yes]/No): \nSetup succeeded!\n")
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'For detailed information about options this script is configuring see:\n'
+            'https://github.com/WebKit/WebKit/wiki/Git-Config#Configuration-Options\n'
+            "Create a private fork of 'WebKit' belonging to 'username' ([Yes]/No): \n"
+            'Setup succeeded!\n',
+        )
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
             captured.root.log.getvalue(),
@@ -80,7 +86,12 @@ Created a private fork of 'WebKit' belonging to 'username'!
             self.assertEqual('auto', config.get('color.branch', ''))
             self.assertEqual('true', config.get('pull.rebase', ''))
 
-        self.assertEqual(captured.stdout.getvalue(), 'Setup succeeded!\n')
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'For detailed information about options this script is configuring see:\n'
+            'https://github.com/WebKit/WebKit/wiki/Git-Config#Configuration-Options\n'
+            'Setup succeeded!\n',
+        )
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
             captured.root.log.getvalue(),
@@ -120,7 +131,9 @@ Using the default git editor for this repository
         programs = ['default'] + [p.name for p in Editor.programs()]
         self.assertEqual(
             captured.stdout.getvalue(),
-            '''Set 'tapple@webkit.org' as the git user email for this repository ([Yes]/No): 
+            '''For detailed information about options this script is configuring see:
+https://github.com/WebKit/WebKit/wiki/Git-Config#Configuration-Options
+Set 'tapple@webkit.org' as the git user email for this repository ([Yes]/No): 
 Enter git user email for this repository: 
 Set 'Tim Apple' as the git user name for this repository ([Yes]/No): 
 Enter git user name for this repository: 
