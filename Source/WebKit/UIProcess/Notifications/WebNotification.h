@@ -53,8 +53,9 @@ public:
     const String& tag() const { return m_tag; }
     const String& lang() const { return m_lang; }
     WebCore::NotificationDirection dir() const { return m_dir; }
-    API::SecurityOrigin* origin() const { return m_origin.get(); }
-    
+    const API::SecurityOrigin* origin() const { return m_origin.get(); }
+    API::SecurityOrigin* origin() { return m_origin.get(); }
+
     uint64_t notificationID() const { return identifier(); }
     const UUID& coreNotificationID() const { return m_coreNotificationID; }
 

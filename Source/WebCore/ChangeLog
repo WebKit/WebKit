@@ -1,3 +1,18 @@
+2022-02-21  Alex Christensen  <achristensen@webkit.org>
+
+        Improve const correctness for SecurityOrigin accessors
+        https://bugs.webkit.org/show_bug.cgi?id=236983
+
+        Reviewed by Chris Dumez.
+
+        * loader/SubresourceLoader.h:
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::origin const):
+        (WebCore::CachedResource::origin):
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::origin const):
+        (WebCore::CachedResourceRequest::origin):
+
 2022-02-21  Brandon Stewart  <brandonstewart@apple.com>
 
         Ensure layer has backing during traversal

@@ -229,7 +229,8 @@ public:
 
     void loadFrom(const CachedResource&);
 
-    SecurityOrigin* origin() const { return m_origin.get(); }
+    const SecurityOrigin* origin() const { return m_origin.get(); }
+    SecurityOrigin* origin() { return m_origin.get(); }
     AtomString initiatorName() const { return m_initiatorName; }
 
     bool canDelete() const { return !hasClients() && !m_loader && !m_preloadCount && !m_handleCount && !m_resourceToRevalidate && !m_proxyResource; }

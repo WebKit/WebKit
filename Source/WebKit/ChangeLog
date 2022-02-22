@@ -1,3 +1,14 @@
+2022-02-21  Alex Christensen  <achristensen@webkit.org>
+
+        Improve const correctness for SecurityOrigin accessors
+        https://bugs.webkit.org/show_bug.cgi?id=236983
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Notifications/WebNotification.h:
+        (WebKit::WebNotification::origin const):
+        (WebKit::WebNotification::origin):
+
 2022-02-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Adjust some behaviors around the "Markup Image" action in the callout bar
