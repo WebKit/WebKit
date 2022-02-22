@@ -37,6 +37,7 @@ def repository(path, has_oops=True, remote=None, git_svn=False, issue_url=None):
     result.commits[branch] = [Commit(
         hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
         identifier='3.1@{}'.format(branch),
+        revision=10,
         timestamp=int(time.time()) - 60,
         author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
         message='To Be Committed\n{}\nReviewed by {}.\n{}'.format(

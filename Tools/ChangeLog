@@ -1,3 +1,21 @@
+2022-02-22  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Extract revision from `git svn dcommit`
+        https://bugs.webkit.org/show_bug.cgi?id=236849
+        <rdar://problem/89155179>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git): Thoroughly mock `dcommit`
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/land.py:
+        (Land.main): Extract committed SVN revision from `git svn dcommit` command to accurately
+        match landed commits to the pull request that generated them.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/land_unittest.py:
+        (repository): Add revision to local commit.
+
 2022-02-22  Dean Jackson  <dino@apple.com>
 
         Filter some build output from JSC

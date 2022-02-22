@@ -41,6 +41,7 @@ class Land(Command):
 
     OOPS_RE = re.compile(r'\(O+P+S!*\)')
     REVIEWED_BY_RE = re.compile('Reviewed by (?P<approver>.+)')
+    GIT_SVN_COMMITTED_RE = re.compile(r'Committed r(?P<revision>\d+)')
     REMOTE = 'origin'
     MIRROR_TIMEOUT = 60
 
@@ -191,26 +192,48 @@ class Land(Command):
             if run([repository.executable(), 'svn', 'fetch'], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to update subversion refs\n".format(target))
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
-            if run([repository.executable(), 'svn', 'dcommit'], cwd=repository.root_path).returncode:
+
+            dcommit = run([repository.executable(), 'svn', 'dcommit'], cwd=repository.root_path, capture_output=True, encoding='utf-8')
+            if dcommit.returncode:
+                sys.stderr.write(dcommit.stdout)
+                sys.stderr.write(dcommit.stderr)
                 sys.stderr.write("Failed to commit '{}' to Subversion remote\n".format(target))
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
+            revisions = []
+            for line in dcommit.stdout.splitlines():
+                match = cls.GIT_SVN_COMMITTED_RE.match(line)
+                if not match:
+                    continue
+                revisions.append(int(match.group('revision')))
+            if not revisions:
+                sys.stderr.write(dcommit.stdout)
+                sys.stderr.write(dcommit.stderr)
+                sys.stderr.write("Failed to find revision in '{}' when committing to Subversion remote\n".format(target))
+                return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
+
             run([repository.executable(), 'reset', 'HEAD~{}'.format(len(commits)), '--hard'], cwd=repository.root_path)
 
             # Verify the mirror processed our change
             started = time.time()
-            original = repository.find('HEAD', include_log=False, include_identifier=False)
-            latest = original
-            while original.hash == latest.hash:
+            latest = repository.find('HEAD', include_log=True, include_identifier=False)
+            while latest.revision < revisions[-1]:
                 if time.time() - started > cls.MIRROR_TIMEOUT:
                     sys.stderr.write("Timed out waiting for the git-svn mirror, '{}' landed but not closed\n".format(pull_request or source_branch))
                     return 1
                 log.info('    Verifying mirror processesed change')
                 time.sleep(5)
                 run([repository.executable(), 'pull'], cwd=repository.root_path)
-                latest = repository.find('HEAD', include_log=False, include_identifier=False)
+                latest = repository.find('HEAD', include_log=True, include_identifier=False)
+            if repository.cache and target in repository.cache._last_populated:
+                del repository.cache._last_populated[target]
+
+            commits = []
+            for revision in revisions:
+                commits.append(repository.commit(revision=revision, include_log=True))
+            commit = commits[-1]
+
             if pull_request:
                 run([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path)
-                commits = list(repository.commits(begin=dict(argument='{}~{}'.format(source_branch, len(commits))), end=dict(branch=source_branch)))
                 run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path)
                 rmt.pull_requests.update(
                     pull_request=pull_request,
@@ -237,8 +260,8 @@ class Land(Command):
                 sys.stderr.write("Failed to push '{}' to '{}'\n".format(target, cls.REMOTE))
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
             repository.checkout(target)
+            commit = repository.commit(branch=target, include_log=False)
 
-        commit = repository.commit(branch=target, include_log=True)
         if identifier_template and commit.identifier:
             land_message = 'Landed {} ({})!'.format(identifier_template.format(commit).split(': ')[-1], commit.hash[:Commit.HASH_LABEL_SIZE])
         else:

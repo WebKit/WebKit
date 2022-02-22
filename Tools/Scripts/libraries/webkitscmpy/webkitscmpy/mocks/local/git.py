@@ -160,7 +160,7 @@ class Git(mocks.Subprocess):
                 ), mocks.Subprocess.Route(
                     self.executable, 'svn', 'dcommit',
                     cwd=self.path,
-                    completion=mocks.ProcessCompletion(returncode=0)
+                    generator=lambda *args, **kwargs: self.dcommit(),
                 ),
             ]
 
@@ -906,6 +906,15 @@ nothing to commit, working tree clean
     def push(self, remote, branch):
         self.remotes['{}/{}'.format(remote, branch)] = self.commits[branch][-1]
         return mocks.ProcessCompletion(returncode=0)
+
+    def dcommit(self, remote='origin', branch=None):
+        branch = branch or self.default_branch
+        self.remotes['{}/{}'.format(remote, branch)] = self.commits[branch][-1]
+        return mocks.ProcessCompletion(
+            returncode=0,
+            stdout='Committed r{}\n\tM\tFiles/Changed.txt\n'.format(self.commits[branch][-1].revision),
+        )
+
 
     def reset(self, index):
         self.head = self.commits[self.head.branch][-(index + 1)]
