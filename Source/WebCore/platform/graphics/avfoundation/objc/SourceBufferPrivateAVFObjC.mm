@@ -284,11 +284,6 @@ static uint64_t nextMapID()
 static bool sampleBufferRenderersSupportKeySession()
 {
     static bool supports = false;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, [&] {
-        supports = [PAL::getAVSampleBufferAudioRendererClass() conformsToProtocol:@protocol(AVContentKeyRecipient)]
-            && [PAL::getAVSampleBufferDisplayLayerClass() conformsToProtocol:@protocol(AVContentKeyRecipient)];
-    });
     return supports;
 }
 
