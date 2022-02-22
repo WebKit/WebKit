@@ -131,7 +131,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     setProperty(AXPropertyName::IsSlider, object.isSlider());
     setProperty(AXPropertyName::IsStyleFormatGroup, object.isStyleFormatGroup());
     setProperty(AXPropertyName::IsTextControl, object.isTextControl());
-    setProperty(AXPropertyName::IsTree, object.isTree());
     setProperty(AXPropertyName::IsUnorderedList, object.isUnorderedList());
     setProperty(AXPropertyName::IsUnvisited, object.isUnvisited());
     setProperty(AXPropertyName::IsValueAutofillAvailable, object.isValueAutofillAvailable());
@@ -282,8 +281,23 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
         setObjectProperty(AXPropertyName::DisclosedByRow, object.disclosedByRow());
     }
 
-    if (object.isTreeItem())
+    if (object.isTreeItem()) {
+        setProperty(AXPropertyName::IsTreeItem, true);
+
+        AccessibilityChildrenVector ariaTreeItemContent;
+        object.ariaTreeItemContent(ariaTreeItemContent);
+        setObjectVectorProperty(AXPropertyName::ARIATreeItemContent, ariaTreeItemContent);
+
         setObjectVectorProperty(AXPropertyName::DisclosedRows, object.disclosedRows());
+    }
+
+    if (object.isTree()) {
+        setProperty(AXPropertyName::IsTree, true);
+
+        AccessibilityChildrenVector ariaTreeRows;
+        object.ariaTreeRows(ariaTreeRows);
+        setObjectVectorProperty(AXPropertyName::ARIATreeRows, ariaTreeRows);
+    }
 
     if (object.isTextControl())
         setProperty(AXPropertyName::TextLength, object.textLength());
@@ -311,14 +325,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     AccessibilityChildrenVector tabChildren;
     object.tabChildren(tabChildren);
     setObjectVectorProperty(AXPropertyName::TabChildren, tabChildren);
-
-    AccessibilityChildrenVector ariaTreeRows;
-    object.ariaTreeRows(ariaTreeRows);
-    setObjectVectorProperty(AXPropertyName::ARIATreeRows, ariaTreeRows);
-
-    AccessibilityChildrenVector ariaTreeItemContent;
-    object.ariaTreeItemContent(ariaTreeItemContent);
-    setObjectVectorProperty(AXPropertyName::ARIATreeItemContent, ariaTreeItemContent);
 
     AccessibilityChildrenVector linkedUIElements;
     object.linkedUIElements(linkedUIElements);

@@ -1898,7 +1898,7 @@ void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows, Access
 {
     AccessibilityChildrenVector ariaOwns;
     ariaOwnsElements(ariaOwns);
-    
+
     ancestors.append(this);
 
     // The ordering of rows is first DOM children *not* in aria-owns, followed by all specified
@@ -1951,7 +1951,7 @@ void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows, Access
     ancestors.removeLast();
 }
 
-void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows    )
+void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows)
 {
     AccessibilityChildrenVector ancestors;
     ariaTreeRows(rows, ancestors);

@@ -1,5 +1,25 @@
 2022-02-22  Tyler Wilcock  <tyler_w@apple.com>
 
+        AX: Only compute ariaTreeRows for isTree() objects
+        https://bugs.webkit.org/show_bug.cgi?id=236994
+
+        Reviewed by Andres Gonzalez.
+
+        We only expose AXPropertyName::ARIATreeRows for isTree() objects, but compute it for every object, which is wasteful.
+
+        This patch also includes a drive-by fixing of setting AXPropertyName::IsTreeItem. Prior to this patch,
+        we never set this property. Also, we now only store AXPropertyName::ARIATreeItemContent for isTreeItem() objects.
+
+        The AXPropertyName::IsTreeItem fix makes test accessibility/roles-exposed.html closer to passing with ITM enabled.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::ariaTreeRows):
+        Remove unncessary tab character.
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+
+2022-02-22  Tyler Wilcock  <tyler_w@apple.com>
+
         AX: Fix accessibility/aria-current-state-changed-notification.html in isolated tree mode
         https://bugs.webkit.org/show_bug.cgi?id=237014
 
