@@ -22,6 +22,7 @@
 #if USE(GSTREAMER)
 
 #include <gst/gst.h>
+#include <gst/pbutils/encoding-profile.h>
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _WebKitVideoSink WebKitVideoSink;
@@ -145,6 +146,10 @@ template<> GRefPtr<GstEGLImage> adoptGRef(GstEGLImage* ptr);
 template<> GstEGLImage* refGPtr<GstEGLImage>(GstEGLImage* ptr);
 template<> void derefGPtr<GstEGLImage>(GstEGLImage* ptr);
 #endif
+
+template<> GRefPtr<GstEncodingProfile> adoptGRef(GstEncodingProfile*);
+template<> GstEncodingProfile* refGPtr<GstEncodingProfile>(GstEncodingProfile*);
+template<> void derefGPtr<GstEncodingProfile>(GstEncodingProfile*);
 
 } // namespace WTF
 

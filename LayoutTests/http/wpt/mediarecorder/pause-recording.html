@@ -51,11 +51,15 @@ promise_test(async (test) => {
     await startPromise;
 
     await waitFor(1000);
+
+    const pausePromise = new Promise(resolve => recorder.onpause = resolve);
     recorder.pause();
+    await pausePromise;
+
     recorder.requestData();
 
     const blob = await dataPromise;
-    assert_greater_than(blob.size, 2000);
+    assert_greater_than(blob.size, 1400);
 }, "Calling requestData once after pausing should lead to more than header data");
 
 

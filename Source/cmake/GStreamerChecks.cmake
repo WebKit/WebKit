@@ -28,6 +28,10 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
               list(APPEND GSTREAMER_COMPONENTS audio fft)
           endif ()
 
+          if (ENABLE_MEDIA_RECORDER)
+              list(APPEND GSTREAMER_COMPONENTS transcoder)
+          endif ()
+
           find_package(GStreamer 1.14.0 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
 
           if (ENABLE_WEB_AUDIO)
@@ -49,6 +53,11 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
           if (USE_GSTREAMER_GL AND NOT PC_GSTREAMER_GL_FOUND)
               message(FATAL_ERROR "GStreamerGL is needed for USE_GSTREAMER_GL.")
           endif ()
+
+          if (ENABLE_MEDIA_RECORDER AND USE_GSTREAMER_TRANSCODER AND (NOT PC_GSTREAMER_TRANSCODER_FOUND OR PC_GSTREAMER_TRANSCODER_VERSION VERSION_LESS "1.20"))
+              message(FATAL_ERROR "GStreamerTranscoder >= 1.20 is needed for USE_GSTREAMER_TRANSCODER.")
+          endif ()
+
       endif ()
 endif ()
 

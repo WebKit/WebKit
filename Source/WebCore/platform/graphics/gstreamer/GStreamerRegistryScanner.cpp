@@ -480,6 +480,7 @@ void GStreamerRegistryScanner::initializeEncoders(const GStreamerRegistryScanner
 
     auto h264EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-h264, profile=(string){ constrained-baseline, baseline, high }", ElementFactories::CheckHardwareClassifier::Yes);
     if (h264EncoderAvailable) {
+        m_encoderCodecMap.add(AtomString("h264"), h264EncoderAvailable.isUsingHardware);
         m_encoderCodecMap.add(AtomString("x-h264"), h264EncoderAvailable.isUsingHardware);
         m_encoderCodecMap.add(AtomString("avc*"), h264EncoderAvailable.isUsingHardware);
         m_encoderCodecMap.add(AtomString("mp4v*"), h264EncoderAvailable.isUsingHardware);

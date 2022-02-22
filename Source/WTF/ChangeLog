@@ -1,3 +1,13 @@
+2022-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Initial MediaRecorder implementation
+        https://bugs.webkit.org/show_bug.cgi?id=236558
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Enable MediaRecorder if it was
+        enabled at build time in GStreamer ports.
+
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
         Move service worker and push API preference from RuntimeEnabledFeatures to Settings

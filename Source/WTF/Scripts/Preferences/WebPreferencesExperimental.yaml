@@ -862,6 +862,7 @@ MediaRecorderEnabled:
       default: false
     WebKit:
       "PLATFORM(COCOA)": true
+      "USE(GSTREAMER_TRANSCODER)": true
       default: false
     WebCore:
       default: false

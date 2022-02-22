@@ -48,7 +48,7 @@ MediaRecorder::CreatorFunction MediaRecorder::m_customCreator = nullptr;
 
 bool MediaRecorder::isTypeSupported(Document& document, const String& value)
 {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(GSTREAMER_TRANSCODER)
     auto* page = document.page();
     return page && page->mediaRecorderProvider().isSupported(value);
 #else
@@ -87,7 +87,7 @@ ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> MediaRecorder::createMediaRec
     if (m_customCreator)
         return m_customCreator(stream, options);
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(GSTREAMER_TRANSCODER)
     auto result = page->mediaRecorderProvider().createMediaRecorderPrivate(stream, options);
 #else
     std::unique_ptr<MediaRecorderPrivate> result;

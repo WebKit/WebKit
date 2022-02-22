@@ -786,6 +786,18 @@ webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Sk
 # GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/213699 http/wpt/mediarecorder/mimeType.html [ Failure ]
+webkit.org/b/213699 http/wpt/mediarecorder/mute-tracks.html [ Failure ]
+webkit.org/b/213699 http/wpt/mediarecorder/video-rotation.html [ Failure ]
+webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-mimetype.html [ Timeout ]
+webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Failure ]
+webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Failure ]
+webkit.org/b/213699 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure ]
+# Our WebRTC encoder doesn't support high h.264 profile yet.
+webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-video-h264-profiles.html [ Failure ]
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1017
+webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-bitrate.https.html [ Pass Crash ]
+
 webkit.org/b/230415 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
@@ -1646,11 +1658,6 @@ fast/events/webkit-media-key-events-constructor.html [ Skip ]
 http/tests/media/now-playing-info-private-browsing.html [ Skip ]
 http/tests/media/now-playing-info.html [ Skip ]
 
-# MediaRecorder is not currently implemented
-http/wpt/mediarecorder [ Skip ]
-imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
-fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Skip ]
-
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content-rendering-rules/canvas-update-with-border-object-fit.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering.html [ Pass ]
@@ -1861,6 +1868,7 @@ webkit.org/b/193623 accessibility/set-selected-editable.html [ Skip ]
 # No support for GPUProcess yet
 fast/mediastream/captureInGPUProcess.html [ Skip ]
 fast/mediastream/video-rotation-gpu-process-crash.html [ Skip ]
+http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-gpuprocess.html [ Skip ]
 
 # Payment Request
 imported/w3c/web-platform-tests/payment-request [ Skip ]
@@ -2308,7 +2316,6 @@ webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/idlharness.w
 webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html [ Failure ]
 
 webkit.org/b/206586 imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-from-serviceworker.https.html [ Failure ]
-webkit.org/b/206588 fast/history/page-cache-media-recorder.html [ Failure ]
 webkit.org/b/206005 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/234529 fast/box-shadow/hidpi-box-shadow-inset-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html [ Failure ]

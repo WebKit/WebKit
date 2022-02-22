@@ -151,6 +151,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mediarecorder"
     "${WEBCORE_DIR}/platform/mediastream"
     "${WEBCORE_DIR}/platform/mediastream/libwebrtc"
+    "${WEBCORE_DIR}/platform/mediarecorder"
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/platform/mock/mediasource"
     "${WEBCORE_DIR}/platform/network"

@@ -26,6 +26,7 @@
 #  gstreamer-video:      GSTREAMER_VIDEO_INCLUDE_DIRS and GSTREAMER_VIDEO_LIBRARIES
 #  gstreamer-codecparser:GSTREAMER_CODECPARSERS_INCLUDE_DIRS and GSTREAMER_CODECPARSERS_LIBRARIES
 #  gstreamer-full:       GSTREAMER_FULL_INCLUDE_DIRS and GSTREAMER_FULL_LIBRARIES
+#  gstreamer-transcoder: GSTREAMER_TRANSCODER_INCLUDE_DIRS and GSTREAMER_TRANSCODER_LIBRARIES
 #
 # Copyright (C) 2012 Raphael Kubo da Costa <rakuco@webkit.org>
 #
@@ -106,6 +107,7 @@ FIND_GSTREAMER_COMPONENT(GSTREAMER_PBUTILS gstreamer-pbutils-1.0 gstpbutils-1.0)
 FIND_GSTREAMER_COMPONENT(GSTREAMER_TAG gstreamer-tag-1.0 gsttag-1.0)
 FIND_GSTREAMER_COMPONENT(GSTREAMER_VIDEO gstreamer-video-1.0 gstvideo-1.0)
 FIND_GSTREAMER_COMPONENT(GSTREAMER_CODECPARSERS gstreamer-codecparsers-1.0 gstcodecparsers-1.0)
+FIND_GSTREAMER_COMPONENT(GSTREAMER_TRANSCODER gstreamer-transcoder-1.0 gsttranscoder-1.0)
 
 # ------------------------------------------------
 # 3. Process the COMPONENTS passed to FIND_PACKAGE

@@ -27,11 +27,11 @@ var testOffScreenCanvasCommits = function(drawFunction, message) {
     recorder.ondataavailable = test.step_func_done(function(event) {
       assert_true(event.data.size > 0, 'Recorded data size should be > 0');
     });
-    recorder.start(0);
+    recorder.start(1000);
 
     var ctx = drawFunction(offscreen);
     ctx.commit();
-  }), message;
+  }, message);
 };
 
 testOffScreenCanvasCommits(draw2d,

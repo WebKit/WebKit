@@ -569,6 +569,28 @@ template <> void derefGPtr<GstEGLImage>(GstEGLImage* ptr)
 
 #endif // USE(GSTREAMER_GL)
 
+template <>
+GRefPtr<GstEncodingProfile> adoptGRef(GstEncodingProfile* ptr)
+{
+    return GRefPtr<GstEncodingProfile>(ptr, GRefPtrAdopt);
+}
+
+template <>
+GstEncodingProfile* refGPtr<GstEncodingProfile>(GstEncodingProfile* ptr)
+{
+    if (ptr)
+        gst_encoding_profile_ref(ptr);
+
+    return ptr;
+}
+
+template <>
+void derefGPtr<GstEncodingProfile>(GstEncodingProfile* ptr)
+{
+    if (ptr)
+        gst_encoding_profile_unref(ptr);
+}
+
 } // namespace WTF
 
 #endif // USE(GSTREAMER)
