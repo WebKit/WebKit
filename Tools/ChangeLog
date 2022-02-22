@@ -1,3 +1,18 @@
+2022-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Switch media player to playbin3
+        https://bugs.webkit.org/show_bug.cgi?id=236884
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Replace WEBKIT_GST_USE_PLAYBIN3 with WEBKIT_GST_USE_PLAYBIN2 that allows to opt-out of
+        playbin3, if this is desired.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.setup_environ_for_server):
+
 2022-02-22  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Extract revision from `git svn dcommit`

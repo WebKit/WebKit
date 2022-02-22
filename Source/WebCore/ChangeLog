@@ -1,3 +1,19 @@
+2022-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Switch media player to playbin3
+        https://bugs.webkit.org/show_bug.cgi?id=236884
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        With GStreamer 1.20 playbin3 is quite usable now, so give it a try as default playback
+        engine during the 2.38 cycle. If one wants to opt out, set the WEBKIT_GST_USE_PLAYBIN2
+        environment variable to 1.
+
+        No new tests, covered by existing media layout tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+
 2022-02-22  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         [LBSE] Activate LBSE for <rect> painting

@@ -94,6 +94,7 @@
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(GSTREAMER_MPEGTS)
 #define GST_USE_UNSTABLE_API
@@ -2662,13 +2663,14 @@ static void setPlaybackFlags(GstElement* pipeline)
 void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
 {
     GST_INFO("Creating pipeline for %s player", m_player->isVideoPlayer() ? "video" : "audio");
-    const char* playbinName = "playbin";
 
-    // MSE and Mediastream require playbin3. Regular playback can use playbin3 on-demand with the
-    // WEBKIT_GST_USE_PLAYBIN3 environment variable.
-    const char* usePlaybin3 = g_getenv("WEBKIT_GST_USE_PLAYBIN3");
-    if ((isMediaSource() || url.protocolIs("mediastream") || (usePlaybin3 && equal(usePlaybin3, "1"))))
-        playbinName = "playbin3";
+    // MSE and Mediastream require playbin3. Regular playback uses playbin3 if GStreamer >= 1.20 is
+    // detected, unless the WEBKIT_GST_USE_PLAYBIN2 environment variable is set to 1.
+    const char* playbinName = "playbin3";
+    const char* usePlaybin2Override = g_getenv("WEBKIT_GST_USE_PLAYBIN2");
+    auto usePlaybin2 = usePlaybin2Override ? parseInteger<unsigned>(usePlaybin2Override) : 0;
+    if ((usePlaybin2 || !webkitGstCheckVersion(1, 20, 0)) && !isMediaSource() && !url.protocolIs("mediastream"))
+        playbinName = "playbin";
 
     ASSERT(!m_pipeline);
 
