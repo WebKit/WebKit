@@ -57,6 +57,7 @@ public:
     bool isValidValue(const String&) const;
     
     WEBCORE_EXPORT RefPtr<TextControlInnerTextElement> innerTextElement() const final;
+    WEBCORE_EXPORT RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded() final;
     RenderStyle createInnerTextStyle(const RenderStyle&) final;
     void copyNonAttributePropertiesFromElement(const Element&) final;
 

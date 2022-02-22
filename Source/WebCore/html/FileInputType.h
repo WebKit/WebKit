@@ -77,7 +77,7 @@ private:
 #endif
 
     Icon* icon() const final;
-    void createShadowSubtreeAndUpdateInnerTextElementEditability(bool) final;
+    void createShadowSubtree() final;
     void disabledStateChanged() final;
     void attributeChanged(const QualifiedName&) final;
     String defaultToolTip() const final;

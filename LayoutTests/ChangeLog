@@ -1,3 +1,16 @@
+2022-02-21  Cameron McCormack  <heycam@apple.com>
+
+        Make input element UA shadow tree creation lazy
+        https://bugs.webkit.org/show_bug.cgi?id=236747
+
+        Reviewed by Aditya Keerthi.
+
+        * fast/forms/lazy-shadow-tree-creation-expected.html: Added.
+        * fast/forms/lazy-shadow-tree-creation.html: Added.
+        * fast/forms/lazy-shadow-tree-creation.js: Added.
+        (supportsType):
+        (makeAndAppendInput):
+
 2022-02-21  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening for the GPU Process bots.

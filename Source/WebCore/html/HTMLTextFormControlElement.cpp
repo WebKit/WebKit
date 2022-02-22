@@ -157,7 +157,9 @@ void HTMLTextFormControlElement::forwardEvent(Event& event)
 {
     if (event.type() == eventNames().blurEvent || event.type() == eventNames().focusEvent)
         return;
-    innerTextElement()->defaultEventHandler(event);
+
+    if (auto innerText = innerTextElement())
+        innerText->defaultEventHandler(event);
 }
 
 static bool isNotLineBreak(UChar ch) { return ch != newlineCharacter && ch != carriageReturn; }
@@ -309,7 +311,7 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
     end = std::max(end, 0);
     start = std::min(std::max(start, 0), end);
 
-    auto innerText = innerTextElement();
+    auto innerText = innerTextElementCreatingShadowSubtreeIfNeeded();
     bool hasFocus = document().focusedElement() == this;
     if (!hasFocus && innerText) {
         if (!isConnected()) {
@@ -369,6 +371,7 @@ int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& p
 
 VisiblePosition HTMLTextFormControlElement::visiblePositionForIndex(int index) const
 {
+    ASSERT(innerTextElement());
     VisiblePosition position = positionForIndex(innerTextElement().get(), index);
     ASSERT(indexForVisiblePosition(position) == index);
     return position;
@@ -587,7 +590,7 @@ static String innerTextValueFrom(TextControlInnerTextElement& innerText)
 void HTMLTextFormControlElement::setInnerTextValue(const String& value)
 {
     LayoutDisallowedScope layoutDisallowedScope(LayoutDisallowedScope::Reason::PerformanceOptimization);
-    auto innerText = innerTextElement();
+    auto innerText = innerTextElementCreatingShadowSubtreeIfNeeded();
     if (!innerText)
         return;
 

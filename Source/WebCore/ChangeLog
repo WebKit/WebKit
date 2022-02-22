@@ -1,3 +1,184 @@
+2022-02-21  Cameron McCormack  <heycam@apple.com>
+
+        Make input element UA shadow tree creation lazy
+        https://bugs.webkit.org/show_bug.cgi?id=236747
+
+        Reviewed by Aditya Keerthi.
+
+        We currently delay InputType creation for parser inserted elements until
+        just after the attributes have been set, so that we don't wastefully
+        create an InputType and the UA shadow tree creation if a non-text
+        type="" was specified on the tag. We don't do anything similar for
+        script inserted input elements. We could make the InputType creation
+        lazy, but most of the wasted time is due to the shadow tree creation.
+
+        This patch makes InputType shadow tree creation lazy by delaying it
+        until one of the following happens:
+
+        1. the element is inserted into the document
+        2. the type="" or value="" attributes are changed before the element
+           is inserted into the document
+        3. any DOM methods that need access to the innerTextElement() are
+           called on the element before the element is inserted into the
+           document
+
+        Not all places where we call innerTextElement() on the
+        HTMLInputElement are safe to lazily create the shadow trees, so we
+        have two accessors:
+
+        - innerTextElement() returns the inner text element if it's been
+          created already
+        - innerTextElementCreatingShadowSubtreeIfNeeded will perform the lazy
+          shadow tree construction if it hasn't already been done
+
+        Since the existing
+        createShadowSubtreeAndUpdateInnerTextElementEditability function has
+        more responsibility than just creating the subtree and ensuring the
+        editability is set appropriately, it's renamed to a more manageable
+        createShadowSubtree.
+
+        This change is a 0.5% progression on Speedometer 2.
+
+        Test: fast/forms/lazy-shadow-tree-creation.html
+
+        * html/BaseDateAndTimeInputType.h:
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::createShadowSubtree):
+        (WebCore::BaseDateAndTimeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        * html/ColorInputType.h:
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree):
+        (WebCore::ColorInputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        * html/FileInputType.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::createShadowSubtree):
+        (WebCore::FileInputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        * html/InputType.cpp:
+        (WebCore::InputType::createShadowSubtree):
+        (WebCore::InputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        * html/RangeInputType.h:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createShadowSubtree):
+        (WebCore::RangeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        * html/SearchInputType.h:
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::createShadowSubtree):
+        (WebCore::SearchInputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        Renamed createShadowSubtreeAndUpdateInnerTextElementEditability to
+        createShadowSubtree and remove the "isInnerTextElementEditable"
+        argument, since we can ask the element() for its value if needed.
+        createShadowSubtree is now also responsible for creating the shadow
+        root.
+
+        * html/TextFieldInputType.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        Renamed. Ensure all shadow tree state is up to date now that it can be
+        created later.
+
+        * html/InputType.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::createShadowSubtree):
+        (WebCore::InputType::hasCreatedShadowSubtree const):
+        New functions to create the shadow subtree if it hasn't been done
+        already, and to query whether it's been done.
+
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::innerTextElementCreatingShadowSubtreeIfNeeded):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::innerTextElementCreatingShadowSubtreeIfNeeded):
+        * html/HTMLTextFormControlElement.h:
+        * html/InputType.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::innerTextElementCreatingShadowSubtreeIfNeeded):
+        New functions to first create the shadow subtree before returning
+        innerTextElement(). HTMLTextAreaElement never lazily creates its
+        shadow subtree and so just returns innerTextElement().
+
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createShadowSubtreeAndUpdateInnerTextElementEditability):
+        Deleted. Just call through to m_inputType->createShadowTree()
+        directly.
+
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::create):
+        (WebCore::HTMLInputElement::initializeInputType):
+        (WebCore::HTMLInputElement::updateType):
+        Don't immediately create the shadow tree.
+
+        (WebCore::HTMLInputElement::didFinishInsertingNode):
+        Create the shadow subtree now that the element's been inserted. No
+        need to call dataListMayHaveChanged since
+        TextFieldInputType::createShadowSubtree will now do this.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::updateInnerTextValue):
+        Ensure the shadow subtree is created since we need to poke at it.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::forwardEvent):
+        Don't forward the event if the shadow tree hasn't been created yet.
+
+        (WebCore::HTMLTextFormControlElement::setSelectionRange):
+        Ensure the shadow tree has been created. This is needed if the
+        selection APIs are called on the input element before it's inserted
+        into the document.
+
+        (WebCore::HTMLTextFormControlElement::visiblePositionForIndex const):
+        Assert that the shadow tree has been created, since editing
+        functionality should only be needed if the element's been inserted
+        into the document.
+
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue):
+        Ensure the shadow tree has been created.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent):
+        (WebCore::RangeInputType::handleTouchEvent):
+        (WebCore::RangeInputType::handleKeydownEvent):
+        Ensure the shadow tree has been created in case the event will change
+        the value.
+
+        (WebCore::RangeInputType::sliderTrackElement const):
+        Only return the element if it's been created.
+
+        (WebCore::RangeInputType::typedSliderThumbElement const):
+        Assert that the element has been created.
+
+        (WebCore::RangeInputType::dataListMayHaveChanged):
+        Only try to re-layout if the shadow tree has been created.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::isEmptyValue const):
+        Avoid creating the shadow subtree.
+
+        (WebCore::TextFieldInputType::forwardEvent):
+        Move the element assertion up to be consistent with other functions.
+
+        (WebCore::TextFieldInputType::innerTextElement const):
+        Don't assert, since this now can legitimately return null.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::disabledStateChanged):
+        (WebCore::FileInputType::attributeChanged):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::disabledStateChanged):
+        (WebCore::RangeInputType::attributeChanged):
+        (WebCore::RangeInputType::setValue):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::disabledStateChanged):
+        (WebCore::TextFieldInputType::readOnlyStateChanged):
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+        (WebCore::TextFieldInputType::updateAutoFillButton):
+        (WebCore::TextFieldInputType::dataListMayHaveChanged):
+        Don't update the shadow tree contents if it hasn't been created yet.
+        createShadowTree is responsible for ensuring it creates the shadow
+        tree contents reflecting the current state.
+
 2022-02-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add test coverage for the pasteboard writing codepath added in r289839
