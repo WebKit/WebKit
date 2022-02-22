@@ -510,7 +510,7 @@ function ios_family_process_webauthn_entitlements()
 function ios_family_process_adattributiond_entitlements()
 {
     plistbuddy Add :seatbelt-profiles array
-    plistbuddy Add :seatbelt-profiles:0 string com.apple.webkit.adattributiond
+    plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.adattributiond
 }
 
 function ios_family_process_webpushd_entitlements()

@@ -1,5 +1,27 @@
 2022-02-21  Alex Christensen  <achristensen@webkit.org>
 
+        Allow adattributiond to start on iOS devices
+        https://bugs.webkit.org/show_bug.cgi?id=237009
+        <rdar://89062166>
+
+        Reviewed by Per Arne Vollan.
+
+        There were three more problems preventing it from starting:
+        1. The code signature said to look for a sandbox profile with "webkit" in the name, but the profile had "WebKit" in the name.
+           These names are case sensitive.
+        2. The sandbox profile would not let it load the WebKit framework, so dyld would fail and the process would fail to launch.
+           I added the framework directories that the XPC services are allowed to access.
+        3. Once it started, it would crash inside WTF::initializeMainThread when calling WTF::pageSize which requires access to the hw.pagesize_compat syscall.
+           As a starting point, I'm going to allow all the syscalls that the network process currently has access to,
+           which is enough to get it to respond without crashing.
+        4. We need access to com.apple.diagnosticd and com.apple.analyticsd in order to be able to generate crash reports.  This is quite useful.
+        Yes, I know I said there were only three problems, but the 4th is so useful I thought I'd put it in the list.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.adattributiond.sb:
+        * Scripts/process-entitlements.sh:
+
+2022-02-21  Alex Christensen  <achristensen@webkit.org>
+
         Improve const correctness for SecurityOrigin accessors
         https://bugs.webkit.org/show_bug.cgi?id=236983
 
