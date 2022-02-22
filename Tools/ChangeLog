@@ -1,3 +1,18 @@
+2022-02-22  Dean Jackson  <dino@apple.com>
+
+        Filter some build output from JSC
+        https://bugs.webkit.org/show_bug.cgi?id=236885
+
+        Reviewed by Simon Fraser.
+
+        Add some filter rules for recently added output. In particular:
+        - whatever prints out the build command
+        - python executables now having the version numbers in the binary
+        - creating entitlements files
+
+        * Scripts/filter-build-webkit:
+        (shouldIgnoreLine):
+
 2022-02-22  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Adopt new _UITextSearching method for range comparison

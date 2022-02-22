@@ -169,8 +169,8 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
     } elsif ($line =~ /^cp (\S+)/) {
         my $path = basename($1);
         printLine("cp $path", STYLE_PLAIN);
-    } elsif ($line =~ /python (\S+\.py) (\S+)/) {
-        my ($command, $path) = (basename($1), basename($2));
+    } elsif ($line =~ /python(\d\.\d+)? (\S+) (.+)/) {
+        my ($command, $path) = (basename($2), basename($3));
         printLine("python $command $path", STYLE_PLAIN);
     } elsif ($line =~ /^\/\S+?(strip|WebCoreExportFileGenerator) .*?(\/|\> )(\S+)/) {
         my ($command, $path) = (basename($1), basename($3));
@@ -220,6 +220,13 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
     } elsif ($line =~ /^(\S+\/cc).*?(\S+)\.(out|exp)/) {
         my ($command, $path) = (basename($1), basename($2));
         printLine("$command $path", STYLE_PLAIN);
+    } elsif ($line =~ /^(File Doesn't Exist, Will Create:)(.*\.entitlements)$/) {
+        my $path = basename($2);
+        printLine("Creating Entitlements File $path", STYLE_PLAIN);
+    } elsif ($line =~ /^(building \S+)$/) {
+        printLine("$1", STYLE_PLAIN);
+    } elsif ($line =~ /^(running build command .*+)$/) {
+        printLine("$1", STYLE_PLAIN);
     } else {
         # This only gets hit if stderr is redirected to stdout.
         if (($line =~ /\*\* BUILD FAILED \*\*/) || ($line =~ /^Build FAILED./)) {
@@ -371,6 +378,7 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /^Making app bundle launchable/;
     return 1 if $line =~ /^Finished adding entitlements\.$/;
     return 1 if $line =~ /^.* will not be code signed because its settings don't specify a development team.$/;
+    return 1 if $line =~ /^Initializing Plist...$/;
 
     if ($platform eq "win") {
         return 1 if $line =~ /^\s*(touch|perl|cat|rm -f|del|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;
