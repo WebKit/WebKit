@@ -125,7 +125,7 @@ static JSValue getWrappedValue(JSGlobalObject* globalObject, JSGlobalObject* tar
         RELEASE_AND_RETURN(scope, value);
 
     if (value.isCallable(vm))
-        RELEASE_AND_RETURN(scope, JSRemoteFunction::create(vm, targetGlobalObject, static_cast<JSObject*>(value.asCell())));
+        RELEASE_AND_RETURN(scope, JSRemoteFunction::tryCreate(targetGlobalObject, vm, static_cast<JSObject*>(value.asCell())));
 
     throwTypeError(globalObject, scope, "value passing between realms must be callable or primitive");
     return jsUndefined();
@@ -140,10 +140,8 @@ JSC_DEFINE_JIT_OPERATION(operationGetWrappedValueForTarget, EncodedJSValue, (JSR
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     ASSERT(isRemoteFunction(vm, callee));
 
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     JSGlobalObject* targetGlobalObject = callee->targetFunction()->globalObject();
-    RELEASE_AND_RETURN(scope, JSValue::encode(getWrappedValue(globalObject, targetGlobalObject, JSValue::decode(encodedValue))));
+    return JSValue::encode(getWrappedValue(globalObject, targetGlobalObject, JSValue::decode(encodedValue)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetWrappedValueForCaller, EncodedJSValue, (JSRemoteFunction* callee, EncodedJSValue encodedValue))

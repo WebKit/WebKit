@@ -822,12 +822,6 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/ShadowRealm/WrappedFunction/length-throws-typeerror.js:
-  default: 'Test262Error: expect a TypeError on length getter throwing Expected a TypeError but got a Error'
-  strict mode: 'Test262Error: expect a TypeError on length getter throwing Expected a TypeError but got a Error'
-test/built-ins/ShadowRealm/WrappedFunction/name-throws-typeerror.js:
-  default: 'Test262Error: expect a TypeError on name getter throwing Expected a TypeError but got a Error'
-  strict mode: 'Test262Error: expect a TypeError on name getter throwing Expected a TypeError but got a Error'
 test/built-ins/Temporal/Duration/compare/calendar-dateadd-called-with-plaindate-instance.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
