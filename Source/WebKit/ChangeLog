@@ -1,3 +1,17 @@
+2022-02-22  Tim Nguyen  <ntim@apple.com>
+
+        Rename RenderStyle::userSelectIncludingInert to RenderStyle::effectiveUserSelect
+        https://bugs.webkit.org/show_bug.cgi?id=237033
+
+        Reviewed by Antti Koivisto.
+
+        This naming is consistent with other properties (effectiveDisplay/Appearance/PointerEvents/etc.).
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::isSelectableTextNode const):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::selectionPositionInformation):
+
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
         Move service worker and push API preference from RuntimeEnabledFeatures to Settings

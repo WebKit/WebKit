@@ -941,14 +941,14 @@ bool Position::nodeIsUserSelectNone(Node* node)
 {
     if (!node)
         return false;
-    return node->renderer() && (node->renderer()->style().userSelectIncludingInert() == UserSelect::None);
+    return node->renderer() && (node->renderer()->style().effectiveUserSelect() == UserSelect::None);
 }
 
 bool Position::nodeIsUserSelectAll(const Node* node)
 {
     if (!node)
         return false;
-    return node->renderer() && (node->renderer()->style().userSelectIncludingInert() == UserSelect::All);
+    return node->renderer() && (node->renderer()->style().effectiveUserSelect() == UserSelect::All);
 }
 
 Node* Position::rootUserSelectAllForNode(Node* node)

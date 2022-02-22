@@ -398,7 +398,7 @@ bool InjectedBundleNodeHandle::isSelectableTextNode() const
         return false;
 
     auto renderer = m_node->renderer();
-    return renderer && renderer->style().userSelectIncludingInert() != UserSelect::None;
+    return renderer && renderer->style().effectiveUserSelect() != UserSelect::None;
 }
 
 RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementCellAbove()

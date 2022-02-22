@@ -616,7 +616,7 @@ public:
     MarqueeDirection marqueeDirection() const { return static_cast<MarqueeDirection>(m_rareNonInheritedData->marquee->direction); }
     UserModify userModify() const { return static_cast<UserModify>(m_rareInheritedData->userModify); }
     UserDrag userDrag() const { return static_cast<UserDrag>(m_rareNonInheritedData->userDrag); }
-    UserSelect userSelectIncludingInert() const { return effectiveInert() ? UserSelect::None : userSelect(); }
+    UserSelect effectiveUserSelect() const { return effectiveInert() ? UserSelect::None : userSelect(); }
     UserSelect userSelect() const { return static_cast<UserSelect>(m_rareInheritedData->userSelect); }
     TextOverflow textOverflow() const { return static_cast<TextOverflow>(m_rareNonInheritedData->textOverflow); }
     WordBreak wordBreak() const { return static_cast<WordBreak>(m_rareInheritedData->wordBreak); }

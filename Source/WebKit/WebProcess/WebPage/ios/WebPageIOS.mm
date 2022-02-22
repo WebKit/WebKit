@@ -2997,7 +2997,7 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
     auto* renderer = hitNode->renderer();
 
     info.selectability = ([&] {
-        if (renderer->style().userSelectIncludingInert() == UserSelect::None)
+        if (renderer->style().effectiveUserSelect() == UserSelect::None)
             return InteractionInformationAtPosition::Selectability::UnselectableDueToUserSelectNone;
 
         if (is<Element>(*hitNode)) {
@@ -3043,7 +3043,7 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
             continue;
 
         auto& style = renderer->style();
-        if (style.userSelectIncludingInert() == UserSelect::None && style.userDrag() == UserDrag::Element) {
+        if (style.effectiveUserSelect() == UserSelect::None && style.userDrag() == UserDrag::Element) {
             info.prefersDraggingOverTextSelection = true;
             break;
         }
