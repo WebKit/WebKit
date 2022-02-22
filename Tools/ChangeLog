@@ -1,3 +1,17 @@
+2022-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Can't run performance tests due to a11y errors
+        https://bugs.webkit.org/show_bug.cgi?id=230705
+
+        Reviewed by Sergio Villar Senin.
+
+        Disable a11y in WTR since it's no longer nedded with ATSPI.
+
+        * WebKitTestRunner/gtk/main.cpp:
+        (main):
+        * WebKitTestRunner/wpe/main.cpp:
+        (main):
+
 2022-02-21  Brandon Stewart  <brandonstewart@apple.com>
 
         Use ArgumentParser for parsing args in generate-compile-commands

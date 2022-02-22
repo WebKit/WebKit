@@ -47,7 +47,15 @@ void initializeGtkSettings()
 int main(int argc, char** argv)
 {
     g_setenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR", "1", FALSE);
+#if USE(ATSPI)
     g_setenv("WEBKIT_A11Y_BUS_ADDRESS", "", FALSE);
+#if USE(GTK4)
+    g_setenv("GTK_A11Y", "none", TRUE);
+#else
+    g_setenv("NO_AT_BRIDGE", "1", TRUE);
+#endif
+#endif
+
 
     gtk_init(&argc, &argv);
 

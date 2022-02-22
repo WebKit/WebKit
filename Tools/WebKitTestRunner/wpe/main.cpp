@@ -31,6 +31,9 @@
 int main(int argc, char** argv)
 {
     g_setenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR", "1", FALSE);
+#if USE(ATSPI)
+    g_setenv("WEBKIT_A11Y_BUS_ADDRESS", "", FALSE);
+#endif
 
     WTR::TestController controller(argc, const_cast<const char**>(argv));
     return 0;
