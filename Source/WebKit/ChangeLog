@@ -1,3 +1,16 @@
+2022-02-22  Kate Cheney  <katherine_cheney@apple.com>
+
+        NSSharingServicePicker gets deallocated when using the standard share menu item
+        https://bugs.webkit.org/show_bug.cgi?id=236998
+        <rdar://problem/89174827>
+
+        Reviewed by Wenson Hsieh.
+
+        The NSMenuItem should keep the NSSharingServicePicker alive.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::getShareMenuItem):
+
 2022-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Suspend web process after some time in the process cache
