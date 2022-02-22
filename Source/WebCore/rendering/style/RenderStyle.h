@@ -713,6 +713,7 @@ public:
     LineAlign lineAlign() const { return static_cast<LineAlign>(m_rareInheritedData->lineAlign); }
 
     PointerEvents pointerEvents() const { return static_cast<PointerEvents>(m_inheritedFlags.pointerEvents); }
+    PointerEvents effectivePointerEvents() const { return effectiveInert() ? PointerEvents::None : pointerEvents(); }
     const AnimationList* animations() const { return m_rareNonInheritedData->animations.get(); }
     const AnimationList* transitions() const { return m_rareNonInheritedData->transitions.get(); }
 

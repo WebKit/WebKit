@@ -1,3 +1,17 @@
+2022-02-22  Tim Nguyen  <ntim@apple.com>
+
+        Make pointer-events checks for SVG take in account inert subtrees
+        https://bugs.webkit.org/show_bug.cgi?id=235836
+
+        Reviewed by Antti Koivisto.
+
+        Added tests for both inert attribute & modal dialog cases.
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-svg-hittest-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-svg-hittest.html: Added.
+        * web-platform-tests/inert/inert-svg-hittest.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-svg-hittest.tentative.html: Added.
+
 2022-02-22  Marcos Caceres  <marcos@marcosc.com>
 
         Permission API: handle non-fully active documents
