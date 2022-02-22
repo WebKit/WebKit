@@ -3558,10 +3558,12 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
     return nil;
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition inDocument:(_UITextSearchDocumentIdentifier)document
 {
     return [_contentView offsetFromPosition:from toPosition:toPosition inDocument:document];
 }
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(_UITextSearchOptions *)options resultAggregator:(id<_UITextSearchAggregator>)aggregator
 {

@@ -1,1 +1,13 @@
+2022-02-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Fix the internal build after rdar://88354008
+        https://bugs.webkit.org/show_bug.cgi?id=236999
+
+        Unreviewed build fix.
+
+        Mark deprecated implementations.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
 == Rolled over to ChangeLog-2022-02-22 ==

@@ -10413,10 +10413,12 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _page->didEndTextSearchOperation();
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition inDocument:(_UITextSearchDocumentIdentifier)document
 {
     return [self offsetFromPosition:from toPosition:toPosition];
 }
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)requestRectForFoundTextRange:(UITextRange *)range completionHandler:(void (^)(CGRect))completionHandler
 {
