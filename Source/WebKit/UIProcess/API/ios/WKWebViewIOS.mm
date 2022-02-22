@@ -3561,9 +3561,16 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition inDocument:(_UITextSearchDocumentIdentifier)document
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [_contentView offsetFromPosition:from toPosition:toPosition inDocument:document];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
+
+- (NSComparisonResult)compareFoundRange:(UITextRange *)fromRange toRange:(UITextRange *)toRange inDocument:(_UITextSearchDocumentIdentifier)document
+{
+    return [_contentView compareFoundRange:fromRange toRange:toRange inDocument:document];
+}
 
 - (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(_UITextSearchOptions *)options resultAggregator:(id<_UITextSearchAggregator>)aggregator
 {

@@ -1,3 +1,24 @@
+2022-02-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Adopt new _UITextSearching method for range comparison
+        https://bugs.webkit.org/show_bug.cgi?id=237012
+        rdar://88442811
+
+        Reviewed by Devin Rousso.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView offsetFromPosition:toPosition:inDocument:]):
+
+        Mark deprecation.
+
+        (-[WKWebView compareFoundRange:toRange:inDocument:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView compareFoundRange:toRange:inDocument:]):
+
+        Implement the new comparison method using existing offset computation logic.
+
 2022-02-22  Alexander Kanavin  <alex@linutronix.de>
 
         When building introspection files, add CMAKE_C_FLAGS to the compiler flags.

@@ -10422,6 +10422,19 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 }
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
+- (NSComparisonResult)compareFoundRange:(UITextRange *)fromRange toRange:(UITextRange *)toRange inDocument:(_UITextSearchDocumentIdentifier)document
+{
+    NSInteger offset = [self offsetFromPosition:fromRange.start toPosition:toRange.start];
+
+    if (offset < 0)
+        return NSOrderedAscending;
+
+    if (offset > 0)
+        return NSOrderedDescending;
+
+    return NSOrderedSame;
+}
+
 - (void)requestRectForFoundTextRange:(UITextRange *)range completionHandler:(void (^)(CGRect))completionHandler
 {
     if (auto* foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range)) {

@@ -1,3 +1,21 @@
+2022-02-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Adopt new _UITextSearching method for range comparison
+        https://bugs.webkit.org/show_bug.cgi?id=237012
+        rdar://88442811
+
+        Reviewed by Devin Rousso.
+
+        Ensure TestSearchAggregator conforms to _UITextSearchAggregator.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+        (-[TestSearchAggregator initWithCompletionHandler:]):
+        (-[TestSearchAggregator allFoundRanges]):
+        (-[TestSearchAggregator invalidateFoundRange:inDocument:]):
+        (-[TestSearchAggregator invalidate]):
+        (textRangesForQueryString):
+        (-[TestSearchAggregator foundRanges]): Deleted.
+
 2022-02-22  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Guard against dead remotes in numberOfProcessors

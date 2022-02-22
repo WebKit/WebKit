@@ -340,14 +340,14 @@ TEST(WebKit, FindTextInImageOverlay)
 @interface TestSearchAggregator : NSObject <_UITextSearchAggregator>
 
 @property (readonly) NSUInteger count;
-@property (nonatomic, readonly) NSArray<UITextRange *> *foundRanges;
+@property (nonatomic, readonly) NSOrderedSet<UITextRange *> *allFoundRanges;
 
 - (instancetype)initWithCompletionHandler:(dispatch_block_t)completionHandler;
 
 @end
 
 @implementation TestSearchAggregator {
-    RetainPtr<NSMutableArray<UITextRange *>> _foundRanges;
+    RetainPtr<NSMutableOrderedSet<UITextRange *>> _foundRanges;
     BlockPtr<void()> _completionHandler;
 }
 
@@ -356,7 +356,7 @@ TEST(WebKit, FindTextInImageOverlay)
     if (!(self = [super init]))
         return nil;
 
-    _foundRanges = adoptNS([[NSMutableArray alloc] init]);
+    _foundRanges = adoptNS([[NSMutableOrderedSet alloc] init]);
     _completionHandler = makeBlockPtr(completionHandler);
 
     return self;
@@ -373,9 +373,19 @@ TEST(WebKit, FindTextInImageOverlay)
         _completionHandler();
 }
 
-- (NSArray<UITextRange *>*)foundRanges
+- (NSOrderedSet<UITextRange *> *)allFoundRanges
 {
     return _foundRanges.get();
+}
+
+- (void)invalidateFoundRange:(UITextRange *)range inDocument:(_UITextSearchDocumentIdentifier)document
+{
+    [_foundRanges removeObject:range];
+}
+
+- (void)invalidate
+{
+    [_foundRanges removeAllObjects];
 }
 
 - (NSUInteger)count
@@ -400,7 +410,7 @@ static void testPerformTextSearchWithQueryStringInWebView(WKWebView *webView, NS
     EXPECT_EQ([aggregator count], expectedMatches);
 }
 
-static RetainPtr<NSArray<UITextRange *>> textRangesForQueryString(WKWebView *webView, NSString *query)
+static RetainPtr<NSOrderedSet<UITextRange *>> textRangesForQueryString(WKWebView *webView, NSString *query)
 {
     __block bool finishedSearching = false;
     auto aggregator = adoptNS([[TestSearchAggregator alloc] initWithCompletionHandler:^{
@@ -413,7 +423,7 @@ static RetainPtr<NSArray<UITextRange *>> textRangesForQueryString(WKWebView *web
 
     TestWebKitAPI::Util::run(&finishedSearching);
 
-    return adoptNS([[aggregator foundRanges] copy]);
+    return adoptNS([[aggregator allFoundRanges] copy]);
 }
 
 TEST(WebKit, FindInPage)
