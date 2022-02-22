@@ -1,3 +1,15 @@
+2022-02-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Fix watchOS build
+        https://bugs.webkit.org/show_bug.cgi?id=237064
+
+        Unreviewed.
+
+        32-bit devices require some casts.
+
+        * WebGPU/BindGroup.mm:
+        (WebGPU::Device::createBindGroup):
+
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Fix release build

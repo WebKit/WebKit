@@ -90,9 +90,10 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor* descrip
 
         if (bufferIsPresent) {
             id <MTLBuffer> buffer = entry.buffer->buffer->buffer();
-            [vertexArgumentEncoder setBuffer:buffer offset:entry.offset atIndex:entry.binding];
-            [fragmentArgumentEncoder setBuffer:buffer offset:entry.offset atIndex:entry.binding];
-            [computeArgumentEncoder setBuffer:buffer offset:entry.offset atIndex:entry.binding];
+            // FIXME: Use checked casts.
+            [vertexArgumentEncoder setBuffer:buffer offset:static_cast<NSUInteger>(entry.offset) atIndex:entry.binding];
+            [fragmentArgumentEncoder setBuffer:buffer offset:static_cast<NSUInteger>(entry.offset) atIndex:entry.binding];
+            [computeArgumentEncoder setBuffer:buffer offset:static_cast<NSUInteger>(entry.offset) atIndex:entry.binding];
         } else if (samplerIsPresent) {
             id <MTLSamplerState> sampler = entry.sampler->sampler->samplerState();
             [vertexArgumentEncoder setSamplerState:sampler atIndex:entry.binding];
