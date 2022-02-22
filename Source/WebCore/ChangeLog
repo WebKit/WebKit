@@ -1,3 +1,21 @@
+2022-02-22  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Properly uninitialize EGL display before termination
+        https://bugs.webkit.org/show_bug.cgi?id=236766
+
+        From the docs [1], if contexts or surfaces associated with display
+        is current to any thread, they are not released until they
+        are no longer current as a result of eglMakeCurrent.
+
+        So call eglMakeCurrent() to such effect.
+
+        [1] https://www.khronos.org/registry/EGL/sdk/docs/man/html/eglMakeCurrent.xhtml
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::terminateEGLDisplay):
+
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
         Avoid having to iterate the whole frame tree(s) every time we need to dispatch storage events
