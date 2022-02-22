@@ -1,3 +1,15 @@
+2022-02-22  Alexander Kanavin  <alex@linutronix.de>
+
+        When building introspection files, add CMAKE_C_FLAGS to the compiler flags.
+        https://bugs.webkit.org/show_bug.cgi?id=232936
+
+        Reviewed by Michael Catanzaro.
+
+        g-ir-compiler is using a C compiler internally, so it needs to set
+        the proper flags for it.
+
+        * PlatformGTK.cmake:
+
 2022-02-22  Youenn Fablet  <youenn@apple.com>
 
         http/wpt/mediarecorder/mute-tracks.html fails with WebRTCRemoteVideoFrameEnabled=true
