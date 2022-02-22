@@ -1,3 +1,18 @@
+2022-02-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix GPUP WebGL generator script wrt uninitialised sized span
+        https://bugs.webkit.org/show_bug.cgi?id=235889
+        <rdar://problem/88567612>
+
+        Reviewed by Chris Dumez.
+
+        Even though we check if the synchronous message was received successfully before using it,
+        if we didn't check then we might have a problem with pointing to uninitialized memory, which we then wouldn't use for anything.
+        To fix this hypothetical problem, I start out by pointing to initialized memory.
+
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::getShaderPrecisionFormat):
+
 2022-02-22  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Fix lifetime issue on iOS

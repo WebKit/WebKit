@@ -686,7 +686,8 @@ String RemoteGraphicsContextGLProxy::getShaderInfoLog(PlatformGLObject arg0)
 
 void RemoteGraphicsContextGLProxy::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLSpan<GCGLint, 2> range, GCGLint* precision)
 {
-    IPC::ArrayReference<int32_t, 2> rangeReply { { } };
+    constexpr std::array<int32_t, 2> emptyRangeReply { 0, 0 };
+    IPC::ArrayReference<int32_t, 2> rangeReply { emptyRangeReply };
     int32_t precisionReply = { };
     if (!isContextLost()) {
         auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetShaderPrecisionFormat(shaderType, precisionType), Messages::RemoteGraphicsContextGL::GetShaderPrecisionFormat::Reply(rangeReply, precisionReply));
