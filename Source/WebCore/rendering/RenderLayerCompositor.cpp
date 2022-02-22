@@ -3442,7 +3442,7 @@ ScrollPositioningBehavior RenderLayerCompositor::layerScrollBehahaviorRelativeTo
 static void collectStationaryLayerRelatedOverflowNodes(const RenderLayer& layer, const RenderLayer&, Vector<ScrollingNodeID>& scrollingNodes)
 {
     ASSERT(layer.isComposited());
-    
+
     auto appendOverflowLayerNodeID = [&scrollingNodes] (const RenderLayer& overflowLayer) {
         ASSERT(overflowLayer.isComposited());
         auto scrollingNodeID = overflowLayer.backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
@@ -3457,6 +3457,9 @@ static void collectStationaryLayerRelatedOverflowNodes(const RenderLayer& layer,
     traverseAncestorLayers(layer, [&](const RenderLayer& ancestorLayer, bool isContainingBlockChain, bool isPaintOrderAncestor) {
         seenPaintOrderAncestor |= isPaintOrderAncestor;
         if (isContainingBlockChain && isPaintOrderAncestor)
+            return AncestorTraversal::Stop;
+
+        if (!ancestorLayer.isComposited())
             return AncestorTraversal::Stop;
 
         if (seenPaintOrderAncestor && !isContainingBlockChain && ancestorLayer.hasCompositedScrollableOverflow())
