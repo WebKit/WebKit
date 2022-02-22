@@ -1,1 +1,12 @@
+2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Sort WebCore and WebKit Xcode project files
+        https://bugs.webkit.org/show_bug.cgi?id=237010
+
+        Unreviewed.
+
+        No new tests because there is no behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 == Rolled over to ChangeLog-2022-02-22 ==

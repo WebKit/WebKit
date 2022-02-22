@@ -12836,9 +12836,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51E9049B27BCB9D400929E7E /* LaunchServicesSPI.h in Headers */,
 				51E9049527BCB3C900929E7E /* ICAppBundle.h in Headers */,
 				51E9049D27BCB9D400929E7E /* InstallCoordinationSPI.h in Headers */,
+				51E9049B27BCB9D400929E7E /* LaunchServicesSPI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13240,11 +13240,13 @@
 				9197940523DBC4BB00257892 /* InspectorBrowserAgent.h in Headers */,
 				996B2B9D25E257FF00719379 /* InspectorExtensionDelegate.h in Headers */,
 				A5E391FD2183C1F800C8FB31 /* InspectorTargetProxy.h in Headers */,
+				51E9049C27BCB9D400929E7E /* InstallCoordinationSPI.h in Headers */,
 				C5BCE5DF1C50766A00CDE3FA /* InteractionInformationAtPosition.h in Headers */,
 				2D4D2C811DF60BF3002EB10C /* InteractionInformationRequest.h in Headers */,
 				A31F60A425CC7DB900AF14F4 /* IPCSemaphore.h in Headers */,
 				9B47908F253151CC00EC11AB /* JSIPCBinding.h in Headers */,
 				C1663E5B24AEAA2F00C6A3B2 /* LaunchServicesDatabaseXPCConstants.h in Headers */,
+				51E9049A27BCB9D400929E7E /* LaunchServicesSPI.h in Headers */,
 				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
 				44E936FD2447C2D8009FA3E3 /* LegacyCustomProtocolID.h in Headers */,
@@ -13373,7 +13375,6 @@
 				3754D5451B3A29FD003A4C7F /* NSInvocationSPI.h in Headers */,
 				41DD72AB2682167300A90C71 /* NWSPI.h in Headers */,
 				BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */,
-				51E9049A27BCB9D400929E7E /* LaunchServicesSPI.h in Headers */,
 				93085DCA26E29775000EC6A7 /* OriginStorageManager.h in Headers */,
 				F4EB4AFD269CD7F300D297AE /* OSStateSPI.h in Headers */,
 				7CF47FFB17275C57008ACB91 /* PageBanner.h in Headers */,
@@ -13587,7 +13588,6 @@
 				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,
 				F48570A32644BEC500C05F71 /* Timeout.h in Headers */,
 				2F8336861FA139DF00C6E080 /* TouchBarMenuData.h in Headers */,
-				51E9049C27BCB9D400929E7E /* InstallCoordinationSPI.h in Headers */,
 				46BEB6E322FBB21A00269867 /* TransientLocalStorageNamespace.h in Headers */,
 				57EB2E3A21E1983E00B89CDF /* U2fAuthenticator.h in Headers */,
 				1AFE436618B6C081009C7A48 /* UIDelegate.h in Headers */,
@@ -15661,6 +15661,7 @@
 				1AA576021496B97900A4EE06 /* EventDispatcherMessageReceiver.cpp in Sources */,
 				CDA93DB122F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.cpp in Sources */,
 				C1A152D724E5A29A00978C8B /* HandleXPCEndpointMessages.mm in Sources */,
+				51E9049727BCB3D900929E7E /* ICAppBundle.mm in Sources */,
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,
 				2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */,
 				C14D37FE24ACE086007FF014 /* LaunchServicesDatabaseManager.mm in Sources */,
@@ -15673,7 +15674,6 @@
 				07E19EFB23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessageReceiver.cpp in Sources */,
 				1DF29E64257F37A3003C28AF /* MediaSourcePrivateRemoteMessageReceiver.cpp in Sources */,
 				9B4790912531563200EC11AB /* MessageArgumentDescriptions.cpp in Sources */,
-				51E9049727BCB3D900929E7E /* ICAppBundle.mm in Sources */,
 				517B5F84275E97B6002DC22D /* MockAppBundleForTesting.mm in Sources */,
 				517B5F86275E97B6002DC22D /* MockAppBundleRegistry.mm in Sources */,
 				EBA8D3B627A5E33F00CB7900 /* MockPushServiceConnection.mm in Sources */,
