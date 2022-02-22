@@ -1,1 +1,12 @@
+2022-02-21  Jon Lee  <jonlee@apple.com>
+
+        Add test name to the image diff template
+        https://bugs.webkit.org/show_bug.cgi?id=237003
+
+        Reviewed by Sam Weinig.
+
+        Include the test name in the page. Workflow to update fuzzy match data becomes easier to copy-paste the name there instead of from the location bar.
+        * fast/harness/image-diff-template-expected.txt:
+        * fast/harness/image-diff-template.html:
+
 == Rolled over to ChangeLog-2022-02-22 ==

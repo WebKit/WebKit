@@ -196,6 +196,7 @@ class TestResultWriter(object):
             image_diff_file = self._filesystem.read_text_file(image_diff_template)
 
         html = image_diff_file.replace('__TITLE__', self._test_name)
+        html = html.replace('__TEST_NAME__', self._test_name)
         html = html.replace('__PREFIX__', self._output_testname(''))
 
         if not diff_percent_text:

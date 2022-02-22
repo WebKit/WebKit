@@ -1,1 +1,11 @@
+2022-02-21  Jon Lee  <jonlee@apple.com>
+
+        Add test name to the image diff template
+        https://bugs.webkit.org/show_bug.cgi?id=237003
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter.write_image_diff_files):
+
 == Rolled over to ChangeLog-2022-02-22 ==
