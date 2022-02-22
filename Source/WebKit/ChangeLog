@@ -1,3 +1,22 @@
+2022-02-22  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Fix lifetime issue on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=237018
+        rdar://89206950
+
+        Reviewed by Brent Fulgham.
+
+        Lifetime issues introduced in a recent refactor of performRequest were causing
+        replies from WebAuthenticatorCoordinatorProxy_MakeCredentialReply not to make it
+        back to the web content process. This patch fixes these, allowing requests to proceed.
+
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        (WebKit::continueAfterRequest):
+        (WebKit::WebAuthenticatorCoordinatorProxy::performRequest): Deleted.
+        (WebKit::WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable): Deleted.
+        (WebKit::WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable): Deleted.
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h:
+
 2022-02-22  Brent Fulgham  <bfulgham@apple.com>
 
         Remove an unneeded IOKit property
