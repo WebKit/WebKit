@@ -33,6 +33,19 @@ import os
 import sys
 import glob
 import json
+import argparse
+
+# Get command line args
+parser = argparse.ArgumentParser(description='Generate compile_commands.json', 
+            usage="""
+                  make r EXPORT_COMPILE_COMMANDS=YES
+                  generate-compile-commands WebKitBuild/Release
+
+                  https://trac.webkit.org/wiki/Clangd
+                  """)
+
+parser.add_argument('built_products_dir', help='path to the build directory containing generated compile commands (ex: WebKitBuild/Release)')
+opts = parser.parse_args()
 
 # Change to the root of WebKit Directory
 file_dir = os.path.dirname(os.path.realpath(__file__))
@@ -40,7 +53,7 @@ base_dir = file_dir + "/../../"
 os.chdir(base_dir)
 
 # Check compile_commands folder exists
-compile_commands_dir = sys.argv[1] + "/compile_commands/"
+compile_commands_dir = opts.built_products_dir + "/compile_commands/"
 
 if not os.path.exists(compile_commands_dir):
     print("Please specify the build directory with compile_commands.")
