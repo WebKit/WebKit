@@ -1,3 +1,22 @@
+2022-02-22  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Ruby ERB.new compatibility fix
+        https://bugs.webkit.org/show_bug.cgi?id=237035
+
+        Reviewed by Fujii Hironori.
+
+        ERB.new has changed its calling convention in newer ruby versions.
+        This was exposed by https://commits.webkit.org/247450@main, which
+        tried to silence the warning emitted by newer ruby versions.
+        Unfortunately, this resulted in failures with older ruby versions
+        (e.g.
+        https://build.webkit.org/#/builders/46/builds/11387/steps/8/logs/stdio).
+
+        Use the compatibility hack suggested by RuboCop to get this working
+        across ruby versions (without any warnings).
+
+        * Scripts/GeneratePreferences.rb:
+
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
         Clean up / optimize even more call sites constructing vectors

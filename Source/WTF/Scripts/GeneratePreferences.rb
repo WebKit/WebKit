@@ -228,11 +228,22 @@ class Preferences
     result
   end
 
+  def createTemplate(templateString)
+    # Newer versions of ruby deprecate and/or drop passing non-keyword
+    # arguments for trim_mode and friends, so we need to call the constructor
+    # differently depending on what it expects. This solution is suggested by
+    # rubocop's Lint/ErbNewArguments.
+    if ERB.instance_method(:initialize).parameters.assoc(:key) # Ruby 2.6+
+      ERB.new(templateString, trim_mode:"-")
+    else
+      ERB.new(templateString, nil, "-")
+    end
+  end
   def renderTemplate(templateFile, outputDirectory)
     resultFile = File.join(outputDirectory, File.basename(templateFile, ".erb"))
     tempResultFile = resultFile + ".tmp"
 
-    output = ERB.new(File.read(templateFile), trim_mode:"-").result(binding)
+    output = createTemplate(File.read(templateFile)).result(binding)
     File.open(tempResultFile, "w+") do |f|
       f.write(output)
     end
