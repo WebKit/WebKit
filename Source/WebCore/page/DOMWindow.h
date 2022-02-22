@@ -410,6 +410,9 @@ public:
     void setMayReuseForNavigation(bool mayReuseForNavigation) { m_mayReuseForNavigation = mayReuseForNavigation; }
     bool mayReuseForNavigation() const { return m_mayReuseForNavigation; }
 
+    Page* page() const;
+    WEBCORE_EXPORT static void forEachWindowInterestedInStorageEvents(const Function<void(DOMWindow&)>&);
+
 private:
     explicit DOMWindow(Document&);
 
@@ -417,8 +420,8 @@ private:
 
     bool isLocalDOMWindow() const final { return true; }
     bool isRemoteDOMWindow() const final { return false; }
+    void eventListenersDidChange() final;
 
-    Page* page() const;
     bool allowedToChangeWindowGeometry() const;
 
     static ExceptionOr<RefPtr<Frame>> createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures&, DOMWindow& activeWindow, Frame& firstFrame, Frame& openerFrame, const Function<void(DOMWindow&)>& prepareDialogFunction = nullptr);

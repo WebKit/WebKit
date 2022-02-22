@@ -28,9 +28,12 @@
 #include "StorageAreaSync.h"
 #include "StorageSyncManager.h"
 #include "StorageTracker.h"
+#include <WebCore/DOMWindow.h>
 #include <WebCore/Frame.h>
+#include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/Storage.h>
 #include <WebCore/StorageEventDispatcher.h>
 #include <WebCore/StorageType.h>
 #include <wtf/MainThread.h>
@@ -121,7 +124,7 @@ String StorageAreaImpl::item(const String& key)
     return m_storageMap.getItem(key);
 }
 
-void StorageAreaImpl::setItem(Frame* sourceFrame, const String& key, const String& value, bool& quotaException)
+void StorageAreaImpl::setItem(Frame& sourceFrame, const String& key, const String& value, bool& quotaException)
 {
     ASSERT(!m_isShutdown);
     ASSERT(!value.isNull());
@@ -141,7 +144,7 @@ void StorageAreaImpl::setItem(Frame* sourceFrame, const String& key, const Strin
     dispatchStorageEvent(key, oldValue, value, sourceFrame);
 }
 
-void StorageAreaImpl::removeItem(Frame* sourceFrame, const String& key)
+void StorageAreaImpl::removeItem(Frame& sourceFrame, const String& key)
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
@@ -157,7 +160,7 @@ void StorageAreaImpl::removeItem(Frame* sourceFrame, const String& key)
     dispatchStorageEvent(key, oldValue, String(), sourceFrame);
 }
 
-void StorageAreaImpl::clear(Frame* sourceFrame)
+void StorageAreaImpl::clear(Frame& sourceFrame)
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
@@ -269,12 +272,19 @@ void StorageAreaImpl::closeDatabaseIfIdle()
     }
 }
 
-void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
+void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame& sourceFrame)
 {
+    auto* page = sourceFrame.page();
+    if (!page)
+        return;
+
+    auto isSourceStorage = [&sourceFrame](Storage& storage) {
+        return storage.frame() == &sourceFrame;
+    };
     if (isLocalStorage(m_storageType))
-        StorageEventDispatcher::dispatchLocalStorageEvents(key, oldValue, newValue, m_securityOrigin, sourceFrame);
+        StorageEventDispatcher::dispatchLocalStorageEvents(key, oldValue, newValue, page->group(), m_securityOrigin, sourceFrame.document()->url().string(), WTFMove(isSourceStorage));
     else
-        StorageEventDispatcher::dispatchSessionStorageEvents(key, oldValue, newValue, m_securityOrigin, sourceFrame);
+        StorageEventDispatcher::dispatchSessionStorageEvents(key, oldValue, newValue, *page, m_securityOrigin, sourceFrame.document()->url().string(), WTFMove(isSourceStorage));
 }
 
 void StorageAreaImpl::sessionChanged(bool isNewSessionPersistent)

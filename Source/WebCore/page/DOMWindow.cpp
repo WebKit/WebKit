@@ -156,6 +156,18 @@ using namespace Inspector;
 
 static const Seconds defaultTransientActivationDuration { 2_s };
 
+static WeakHashSet<DOMWindow>& windowsInterestedInStorageEvents()
+{
+    static MainThreadNeverDestroyed<WeakHashSet<DOMWindow>> set;
+    return set;
+}
+
+void DOMWindow::forEachWindowInterestedInStorageEvents(const Function<void(DOMWindow&)>& apply)
+{
+    for (auto& window : copyToVectorOf<Ref<DOMWindow>>(windowsInterestedInStorageEvents()))
+        apply(window);
+}
+
 static std::optional<Seconds>& transientActivationDurationOverrideForTesting()
 {
     static NeverDestroyed<std::optional<Seconds>> overrideForTesting;
@@ -442,6 +454,8 @@ DOMWindow::~DOMWindow()
 #endif
 
     removeLanguageChangeObserver(this);
+
+    windowsInterestedInStorageEvents().remove(*this);
 }
 
 RefPtr<MediaQueryList> DOMWindow::matchMedia(const String& media)
@@ -498,6 +512,8 @@ void DOMWindow::willDetachDocumentFromFrame()
 
     if (m_performance)
         m_performance->clearResourceTimings();
+
+    windowsInterestedInStorageEvents().remove(*this);
 
     JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(this);
     InspectorInstrumentation::frameWindowDiscarded(*frame(), this);
@@ -832,6 +848,8 @@ ExceptionOr<Storage*> DOMWindow::sessionStorage()
 
     auto storageArea = page->sessionStorage()->storageArea(document->securityOrigin());
     m_sessionStorage = Storage::create(*this, WTFMove(storageArea));
+    if (hasEventListeners(eventNames().storageEvent))
+        windowsInterestedInStorageEvents().add(*this);
     return m_sessionStorage.get();
 }
 
@@ -866,6 +884,8 @@ ExceptionOr<Storage*> DOMWindow::localStorage()
 
     auto storageArea = page->storageNamespaceProvider().localStorageArea(*document);
     m_localStorage = Storage::create(*this, WTFMove(storageArea));
+    if (hasEventListeners(eventNames().storageEvent))
+        windowsInterestedInStorageEvents().add(*this);
     return m_localStorage.get();
 }
 
@@ -2695,6 +2715,16 @@ Frame* DOMWindow::frame() const
 {
     auto* document = this->document();
     return document ? document->frame() : nullptr;
+}
+
+void DOMWindow::eventListenersDidChange()
+{
+    if (m_localStorage || m_sessionStorage) {
+        if (hasEventListeners(eventNames().storageEvent))
+            windowsInterestedInStorageEvents().add(*this);
+        else
+            windowsInterestedInStorageEvents().remove(*this);
+    }
 }
 
 } // namespace WebCore

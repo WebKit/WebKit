@@ -58,9 +58,9 @@ public:
     unsigned length();
     String key(unsigned index);
     String item(const String& key);
-    void setItem(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException);
-    void removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key);
-    void clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea);
+    void setItem(WebCore::Frame& sourceFrame, StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException);
+    void removeItem(WebCore::Frame& sourceFrame, StorageAreaImpl* sourceArea, const String& key);
+    void clear(WebCore::Frame& sourceFrame, StorageAreaImpl* sourceArea);
     bool contains(const String& key);
 
     // IPC::MessageReceiver

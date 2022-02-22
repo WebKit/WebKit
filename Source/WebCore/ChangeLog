@@ -1,3 +1,45 @@
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Avoid having to iterate the whole frame tree(s) every time we need to dispatch storage events
+        https://bugs.webkit.org/show_bug.cgi?id=236985
+
+        Reviewed by Darin Adler.
+
+        Avoid having to iterate the whole frame tree(s) every time we need to dispatch storage events,
+        by keeping track of window objects interested in storage events. A Window object is interested
+        in storage events if both of the following conditions is true:
+        1. It has a Storage object (either localStorage or sessionStorage)
+        2. It has a storage event listener registered.
+
+        This patch also refactors the code so that we share more logic between WebKit1 and WebKit2.
+
+        * inspector/agents/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::setDOMStorageItem):
+        (WebCore::InspectorDOMStorageAgent::removeDOMStorageItem):
+        (WebCore::InspectorDOMStorageAgent::clearDOMStorageItems):
+        * loader/EmptyClients.cpp:
+        * page/DOMWindow.cpp:
+        (WebCore::windowsInterestedInStorageEvents):
+        (WebCore::DOMWindow::forEachWindowInterestedInStorageEvents):
+        (WebCore::DOMWindow::~DOMWindow):
+        (WebCore::DOMWindow::willDetachDocumentFromFrame):
+        (WebCore::DOMWindow::eventListenersDidChange):
+        * page/DOMWindow.h:
+        * page/DOMWindowProperty.h:
+        * storage/Storage.cpp:
+        (WebCore::Storage::setItem):
+        (WebCore::Storage::removeItem):
+        (WebCore::Storage::clear):
+        * storage/StorageArea.h:
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::dispatchSessionStorageEventsToWindows):
+        (WebCore::dispatchLocalStorageEventsToWindows):
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEvents):
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEvents):
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEventsToFrames): Deleted.
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEventsToFrames): Deleted.
+        * storage/StorageEventDispatcher.h:
+
 2022-02-21  Alex Christensen  <achristensen@webkit.org>
 
         Improve const correctness for SecurityOrigin accessors

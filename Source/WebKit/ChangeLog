@@ -1,3 +1,32 @@
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Avoid having to iterate the whole frame tree(s) every time we need to dispatch storage events
+        https://bugs.webkit.org/show_bug.cgi?id=236985
+
+        Reviewed by Darin Adler.
+
+        Avoid having to iterate the whole frame tree(s) every time we need to dispatch storage events,
+        by keeping track of window objects interested in storage events. A Window object is interested
+        in storage events if both of the following conditions is true:
+        1. It has a Storage object (either localStorage or sessionStorage)
+        2. It has a storage event listener registered.
+
+        This patch also refactors the code so that we share more logic between WebKit1 and WebKit2.
+
+        * WebProcess/WebStorage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::setItem):
+        (WebKit::StorageAreaImpl::removeItem):
+        (WebKit::StorageAreaImpl::clear):
+        * WebProcess/WebStorage/StorageAreaImpl.h:
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::setItem):
+        (WebKit::StorageAreaMap::removeItem):
+        (WebKit::StorageAreaMap::clear):
+        (WebKit::StorageAreaMap::dispatchSessionStorageEvent):
+        (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+        (WebKit::framesForEventDispatching): Deleted.
+        * WebProcess/WebStorage/StorageAreaMap.h:
+
 2022-02-22  Kate Cheney  <katherine_cheney@apple.com>
 
         NSSharingServicePicker gets deallocated when using the standard share menu item

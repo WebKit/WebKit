@@ -34,7 +34,7 @@ class Frame;
 
 class DOMWindowProperty {
 public:
-    Frame* frame() const;
+    WEBCORE_EXPORT Frame* frame() const;
     DOMWindow* window() const;
 
 protected:

@@ -484,9 +484,9 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
         unsigned length() final { return 0; }
         String key(unsigned) final { return { }; }
         String item(const String&) final { return { }; }
-        void setItem(Frame*, const String&, const String&, bool&) final { }
-        void removeItem(Frame*, const String&) final { }
-        void clear(Frame*) final { }
+        void setItem(Frame&, const String&, const String&, bool&) final { }
+        void removeItem(Frame&, const String&) final { }
+        void clear(Frame&) final { }
         bool contains(const String&) final { return false; }
         StorageType storageType() const final { return StorageType::Local; }
         size_t memoryBytesUsedByCache() final { return 0; }
