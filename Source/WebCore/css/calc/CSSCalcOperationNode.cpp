@@ -620,14 +620,11 @@ void CSSCalcOperationNode::hoistChildrenWithOperator(CalcOperator op)
 
     Vector<Ref<CSSCalcExpressionNode>> newChildren;
     for (auto& child : m_children) {
-        if (is<CSSCalcOperationNode>(child) && downcast<CSSCalcOperationNode>(child.get()).calcOperator() == op) {
-            auto& children = downcast<CSSCalcOperationNode>(child.get()).children();
-            for (auto& childToMove : children)
-                newChildren.append(WTFMove(childToMove));
-        } else
+        if (is<CSSCalcOperationNode>(child) && downcast<CSSCalcOperationNode>(child.get()).calcOperator() == op)
+            newChildren.appendVector(downcast<CSSCalcOperationNode>(child.get()).children());
+        else
             newChildren.append(WTFMove(child));
     }
-    
     newChildren.shrinkToFit();
     m_children = WTFMove(newChildren);
 }

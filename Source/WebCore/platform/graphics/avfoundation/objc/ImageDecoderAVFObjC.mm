@@ -535,13 +535,10 @@ Vector<ImageDecoder::FrameInfo> ImageDecoderAVFObjC::frameInfos() const
     if (m_sampleData.empty())
         return { };
 
-    Vector<ImageDecoder::FrameInfo> infos;
-    for (auto& sample : m_sampleData.presentationOrder()) {
+    return WTF::map(m_sampleData.presentationOrder(), [](auto& sample) {
         auto* imageSample = (ImageDecoderAVFObjCSample*)sample.second.get();
-        infos.append({ imageSample->hasAlpha(), Seconds(imageSample->duration().toDouble())});
-    }
-
-    return infos;
+        return ImageDecoder::FrameInfo { imageSample->hasAlpha(), Seconds(imageSample->duration().toDouble()) };
+    });
 }
 
 bool ImageDecoderAVFObjC::frameAllowSubsamplingAtIndex(size_t index) const

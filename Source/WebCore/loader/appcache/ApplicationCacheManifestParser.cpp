@@ -180,7 +180,7 @@ std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL&
                 if (!equalIgnoringASCIICase(url.protocol(), manifestURL.protocol()))
                     continue;
 
-                manifest.onlineAllowedURLs.append(url);
+                manifest.onlineAllowedURLs.append(WTFMove(url));
                 continue;
             }
             

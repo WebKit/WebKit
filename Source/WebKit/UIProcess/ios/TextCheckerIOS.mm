@@ -34,6 +34,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringView.h>
 
 namespace WebKit {
@@ -240,12 +241,13 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
                 TextCheckingResult result;
                 result.type = TextCheckingType::Spelling;
                 result.range = resultRange;
-                results.append(result);
+                results.append(WTFMove(result));
             } else if (resultType == NSTextCheckingTypeGrammar && checkingTypes.contains(TextCheckingType::Grammar)) {
                 TextCheckingResult result;
                 NSArray *details = [incomingResult grammarDetails];
                 result.type = TextCheckingType::Grammar;
                 result.range = resultRange;
+                result.details.reserveInitialCapacity(details.count);
                 for (NSDictionary *incomingDetail in details) {
                     ASSERT(incomingDetail);
                     GrammarDetail detail;
@@ -259,13 +261,10 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
                     
                     detail.range = detailNSRange;
                     detail.userDescription = [incomingDetail objectForKey:@"NSGrammarUserDescription"];
-                    NSArray *guesses = [incomingDetail objectForKey:@"NSGrammarCorrections"];
-                    
-                    for (NSString *guess in guesses)
-                        detail.guesses.append(guess);
-                    result.details.append(detail);
+                    detail.guesses = makeVector<String>([incomingDetail objectForKey:@"NSGrammarCorrections"]);
+                    result.details.uncheckedAppend(WTFMove(detail));
                 }
-                results.append(result);
+                results.append(WTFMove(result));
             }
         }
     } else

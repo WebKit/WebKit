@@ -128,9 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
         if (alternatives.size() == _maxAlternatives)
             break;
     }
-    Vector<SpeechRecognitionResultData> datas;
-    datas.append(SpeechRecognitionResultData { WTFMove(alternatives), bool(isFinal) });
-    _delegateCallback(SpeechRecognitionUpdate::createResult(_identifier, WTFMove(datas)));
+    _delegateCallback(SpeechRecognitionUpdate::createResult(_identifier, { SpeechRecognitionResultData { WTFMove(alternatives), !!isFinal } }));
 }
 
 - (void)audioSamplesAvailable:(CMSampleBufferRef)sampleBuffer

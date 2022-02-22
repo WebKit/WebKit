@@ -1380,10 +1380,9 @@ static void fetchDiskCacheEntries(NetworkCache::Cache* cache, PAL::SessionID ses
     HashMap<SecurityOriginData, uint64_t> originsAndSizes;
     cache->traverse([fetchOptions, completionHandler = WTFMove(completionHandler), originsAndSizes = WTFMove(originsAndSizes)](auto* traversalEntry) mutable {
         if (!traversalEntry) {
-            Vector<WebsiteData::Entry> entries;
-
-            for (auto& originAndSize : originsAndSizes)
-                entries.append(WebsiteData::Entry { originAndSize.key, WebsiteDataType::DiskCache, originAndSize.value });
+            auto entries = WTF::map(originsAndSizes, [](auto& originAndSize) {
+                return WebsiteData::Entry { originAndSize.key, WebsiteDataType::DiskCache, originAndSize.value };
+            });
 
             RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), entries = WTFMove(entries)] () mutable {
                 completionHandler(entries);

@@ -160,8 +160,9 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     proxyConfiguration.isVideo = player->isVideoPlayer();
 
 #if ENABLE(AVF_CAPTIONS)
-    for (const auto& track : player->outOfBandTrackSources())
-        proxyConfiguration.outOfBandTrackData.append(track->data());
+    proxyConfiguration.outOfBandTrackData = player->outOfBandTrackSources().map([](auto& track) {
+        return track->data();
+    });
 #endif
 
     auto documentSecurityOrigin = player->documentSecurityOrigin();

@@ -75,11 +75,9 @@ Vector<VideoPresetData> RealtimeVideoCaptureSource::presetsData()
 
 void RealtimeVideoCaptureSource::setSupportedPresets(Vector<VideoPresetData>&& presetData)
 {
-    Vector<Ref<VideoPreset>> presets;
-
-    for (auto& data : presetData)
-        presets.append(VideoPreset::create(WTFMove(data)));
-
+    auto presets = WTF::map(WTFMove(presetData), [](auto&& data) {
+        return VideoPreset::create(WTFMove(data));
+    });
     setSupportedPresets(WTFMove(presets));
 }
 

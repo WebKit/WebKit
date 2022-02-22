@@ -1,3 +1,166 @@
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / optimize even more call sites constructing vectors
+        https://bugs.webkit.org/show_bug.cgi?id=236852
+
+        Reviewed by Darin Adler.
+
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::beginPaymentSession):
+        * Modules/applepay/cocoa/PaymentMethodCocoa.mm:
+        (WebCore::convert):
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::batchPutOperation):
+        * Modules/gamepad/Gamepad.cpp:
+        (WebCore::Gamepad::Gamepad):
+        * Modules/gamepad/GamepadManager.cpp:
+        (WebCore::GamepadManager::platformGamepadDisconnected):
+        (WebCore::GamepadManager::makeGamepadVisible):
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::objectStoreNames const):
+        (WebCore::IDBDatabase::transaction):
+        * Modules/indexeddb/IDBKeyData.h:
+        (WebCore::IDBKeyData::isDeletedValue const):
+        (WebCore::add):
+        (WebCore::IDBKeyDataHash::hash):
+        (WebCore::IDBKeyData::hash const): Deleted.
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::indexNames const):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::objectStoreNames const):
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::showMediaControlsContextMenu):
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::activeRanges const):
+        * Modules/mediasource/SampleMap.h:
+        (WebCore::DecodeOrderSampleMap::size const):
+        * Modules/mediasource/SourceBufferList.h:
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::getVoices):
+        * Modules/speech/cocoa/WebSpeechRecognizerTask.mm:
+        (-[WebSpeechRecognizerTaskImpl callbackWithTranscriptions:isFinal:]):
+        * Modules/speech/cocoa/WebSpeechRecognizerTaskMock.mm:
+        (-[WebSpeechRecognizerTaskMock audioSamplesAvailable:]):
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::updateAnimationsAndSendEvents):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::processPropertyIndexedKeyframes):
+        * contentextensions/ContentExtension.cpp:
+        (WebCore::ContentExtensions::ContentExtension::ContentExtension):
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::size const):
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::CSSCalcOperationNode::hoistChildrenWithOperator):
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeContainerRule):
+        * dom/DOMStringList.h:
+        (WebCore::DOMStringList::create):
+        (WebCore::DOMStringList::append):
+        (WebCore::DOMStringList::DOMStringList):
+        * dom/EventPath.cpp:
+        (WebCore::EventPath::EventPath):
+        * dom/FullscreenManager.cpp:
+        (WebCore::FullscreenManager::cancelFullscreen):
+        * dom/LoadableScript.cpp:
+        (WebCore::LoadableScript::notifyClientFinished):
+        * dom/RadioButtonGroups.cpp:
+        (WebCore::RadioButtonGroup::members const):
+        * html/DirectoryFileListCreator.cpp:
+        (WebCore::toFileList):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::saveLastSelection):
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex):
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::detachBitmaps):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getAttachedShaders):
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::processMeta):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::insertPhoneNumberLink):
+        * html/parser/TextDocumentParser.cpp:
+        (WebCore::TextDocumentParser::insertFakePreElement):
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::create):
+        * loader/appcache/ApplicationCacheManifestParser.cpp:
+        (WebCore::parseApplicationCacheManifest):
+        * page/ResizeObserver.cpp:
+        (WebCore::ResizeObserver::deliverObservations):
+        * page/TextIndicator.cpp:
+        (WebCore::initializeIndicator):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::parseSubResourceIntegrityIntoDigests):
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::chooseFile):
+        (WebCore::FileChooser::chooseFiles):
+        (WebCore::FileChooser::chooseMediaFiles):
+        * platform/SharedBuffer.cpp:
+        (WebCore::FragmentedSharedBuffer::append):
+        * platform/ThreadSafeDataBuffer.h:
+        (WebCore::add):
+        * platform/audio/AudioDSPKernelProcessor.cpp:
+        (WebCore::AudioDSPKernelProcessor::initialize):
+        * platform/audio/AudioResampler.cpp:
+        (WebCore::AudioResampler::AudioResampler):
+        * platform/audio/DynamicsCompressorKernel.cpp:
+        (WebCore::DynamicsCompressorKernel::setNumberOfChannels):
+        * platform/audio/MultiChannelResampler.cpp:
+        (WebCore::MultiChannelResampler::MultiChannelResampler):
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::legibleMediaSelectionOptions const):
+        * platform/gamepad/mac/Dualshock3HIDGamepad.cpp:
+        (WebCore::Dualshock3HIDGamepad::Dualshock3HIDGamepad):
+        * platform/gamepad/mac/LogitechGamepad.cpp:
+        (WebCore::LogitechGamepad::LogitechGamepad):
+        * platform/gamepad/mac/StadiaHIDGamepad.cpp:
+        (WebCore::StadiaHIDGamepad::StadiaHIDGamepad):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::addRepaintRect):
+        * platform/graphics/PathUtilities.cpp:
+        (WebCore::PathUtilities::pathsWithShrinkWrappedRects):
+        (WebCore::PathUtilities::pathWithShrinkWrappedRectsForOutline):
+        * platform/graphics/SourceBufferPrivate.cpp:
+        (WebCore::SourceBufferPrivate::bufferedSamplesForTrackId):
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::CDMPrivateFairPlayStreaming::extractKeyIDsSkd):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::setRequestForKey):
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateKeyStatuses):
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjC::frameInfos const):
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+        (WebCore::SourceBufferParserAVFObjC::didParseStreamDataAsAsset):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::variationAxes const):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeString):
+        * platform/mediastream/RealtimeVideoCaptureSource.cpp:
+        (WebCore::RealtimeVideoCaptureSource::setSupportedPresets):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        (WebCore::BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::connectClippingStackLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::adjustOverflowScrollbarContainerLayers):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::paintAttachmentTitleBackground):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGStrokePaintingResource):
+        * rendering/svg/SVGTextChunk.cpp:
+        (WebCore::SVGTextChunk::SVGTextChunk):
+        * style/PageRuleCollector.cpp:
+        (WebCore::Style::PageRuleCollector::matchPageRules):
+        * style/RuleSetBuilder.cpp:
+        (WebCore::Style::RuleSetBuilder::MediaQueryCollector::pop):
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertContainerName):
+
 2022-02-22  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         [LBSE] Rename RenderSVGTransformableContainer -> LegacyRenderSVGTransformableContainer

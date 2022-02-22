@@ -343,18 +343,12 @@ bool ContentSecurityPolicy::allPoliciesAllow(ViolatedDirectiveCallback&& callbac
 static Vector<ResourceCryptographicDigest> parseSubResourceIntegrityIntoDigests(const String& subResourceIntegrity)
 {
     auto encodedDigests = parseIntegrityMetadata(subResourceIntegrity);
-    Vector<ResourceCryptographicDigest> decodedDigests;
-
-    if (!encodedDigests.has_value())
+    if (!encodedDigests)
         return { };
 
-    for (const auto& encodedDigest : encodedDigests.value()) {
-        auto decodedDigest = decodeEncodedResourceCryptographicDigest(encodedDigest);
-        if (decodedDigest.has_value())
-            decodedDigests.append(decodedDigest.value());
-        }
-
-    return decodedDigests;
+    return WTF::compactMap(*encodedDigests, [](auto& encodedDigest) {
+        return decodeEncodedResourceCryptographicDigest(encodedDigest);
+    });
 }
 
 static Vector<ContentSecurityPolicyHash> generateHashesForContent(const StringView content, OptionSet<ContentSecurityPolicyHashAlgorithm> algorithms)

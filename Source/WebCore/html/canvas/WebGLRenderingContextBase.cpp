@@ -3021,9 +3021,8 @@ std::optional<Vector<RefPtr<WebGLShader>>> WebGLRenderingContextBase::getAttache
     };
     Vector<RefPtr<WebGLShader>> shaderObjects;
     for (auto shaderType : shaderTypes) {
-        RefPtr<WebGLShader> shader = program.getAttachedShader(shaderType);
-        if (shader)
-            shaderObjects.append(shader);
+        if (RefPtr shader = program.getAttachedShader(shaderType))
+            shaderObjects.append(WTFMove(shader));
     }
     return shaderObjects;
 }

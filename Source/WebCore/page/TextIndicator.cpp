@@ -361,17 +361,16 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Sim
         textBoundingRectInRootViewCoordinates.unite(textRectInRootViewCoordinates);
     }
 
-    Vector<FloatRect> textRectsInBoundingRectCoordinates;
-    for (auto rect : textRectsInRootViewCoordinates) {
+    auto textRectsInBoundingRectCoordinates = textRectsInRootViewCoordinates.map([&](auto rect) {
         rect.moveBy(-textBoundingRectInRootViewCoordinates.location());
-        textRectsInBoundingRectCoordinates.append(rect);
-    }
+        return rect;
+    });
 
     // Store the selection rect in window coordinates, to be used subsequently
     // to determine if the indicator and selection still precisely overlap.
     data.selectionRectInRootViewCoordinates = frame.view()->contentsToRootView(enclosingIntRect(frame.selection().selectionBounds(FrameSelection::ClipToVisibleContent::No)));
     data.textBoundingRectInRootViewCoordinates = textBoundingRectInRootViewCoordinates;
-    data.textRectsInBoundingRectCoordinates = textRectsInBoundingRectCoordinates;
+    data.textRectsInBoundingRectCoordinates = WTFMove(textRectsInBoundingRectCoordinates);
 
     return takeSnapshots(data, frame, enclosingIntRect(textBoundingRectInDocumentCoordinates), clippedTextRectsInDocumentCoordinates);
 }

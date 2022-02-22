@@ -207,12 +207,11 @@ static const CGFloat presentationElementRectPadding = 15;
 
     WebCore::FloatPoint touchLocation = _positionInformation->request.point;
     WebCore::FloatPoint linkElementLocation = indicator.textBoundingRectInRootViewCoordinates.location();
-    Vector<WebCore::FloatRect> indicatedRects;
-    for (auto rect : indicator.textRectsInBoundingRectCoordinates) {
+    auto indicatedRects = indicator.textRectsInBoundingRectCoordinates.map([&](auto rect) {
         rect.inflate(2);
         rect.moveBy(linkElementLocation);
-        indicatedRects.append(rect);
-    }
+        return rect;
+    });
 
     for (const auto& path : WebCore::PathUtilities::pathsWithShrinkWrappedRects(indicatedRects, 0)) {
         auto boundingRect = path.fastBoundingRect();

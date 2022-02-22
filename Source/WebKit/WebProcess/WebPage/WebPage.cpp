@@ -3031,7 +3031,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<S
         return;
     }
 
-    Vector<RefPtr<SandboxExtension>> mouseEventSandboxExtensions;
+    Vector<Ref<SandboxExtension>> mouseEventSandboxExtensions;
     if (sandboxExtensions)
         mouseEventSandboxExtensions = consumeSandboxExtensions(WTFMove(*sandboxExtensions));
 
@@ -7857,21 +7857,19 @@ RemoteRenderingBackendProxy& WebPage::ensureRemoteRenderingBackendProxy()
 }
 #endif
 
-Vector<RefPtr<SandboxExtension>> WebPage::consumeSandboxExtensions(Vector<SandboxExtension::Handle>&& sandboxExtensions)
+Vector<Ref<SandboxExtension>> WebPage::consumeSandboxExtensions(Vector<SandboxExtension::Handle>&& sandboxExtensions)
 {
-    Vector<RefPtr<SandboxExtension>> dragSandboxExtensions;
-    for (auto& sandboxExtension : sandboxExtensions) {
+    return WTF::compactMap(WTFMove(sandboxExtensions), [](auto&& sandboxExtension) -> RefPtr<SandboxExtension> {
         auto extension = SandboxExtension::create(WTFMove(sandboxExtension));
         if (!extension)
-            continue;
+            return nullptr;
         bool ok = extension->consume();
         ASSERT_UNUSED(ok, ok);
-        dragSandboxExtensions.append(WTFMove(extension));
-    }
-    return dragSandboxExtensions;
+        return extension;
+    });
 }
 
-void WebPage::revokeSandboxExtensions(Vector<RefPtr<SandboxExtension>>& sandboxExtensions)
+void WebPage::revokeSandboxExtensions(Vector<Ref<SandboxExtension>>& sandboxExtensions)
 {
     for (auto& sandboxExtension : sandboxExtensions)
         sandboxExtension->revoke();

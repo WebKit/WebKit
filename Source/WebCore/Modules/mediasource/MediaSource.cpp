@@ -1051,10 +1051,9 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
 
 Vector<PlatformTimeRanges> MediaSource::activeRanges() const
 {
-    Vector<PlatformTimeRanges> activeRanges;
-    for (auto& sourceBuffer : *m_activeSourceBuffers)
-        activeRanges.append(sourceBuffer->bufferedInternal().ranges());
-    return activeRanges;
+    return WTF::map(*m_activeSourceBuffers, [](auto& sourceBuffer) {
+        return sourceBuffer->bufferedInternal().ranges();
+    });
 }
 
 ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(const ContentType& incomingType)

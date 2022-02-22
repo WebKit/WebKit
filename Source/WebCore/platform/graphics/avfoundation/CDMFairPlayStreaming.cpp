@@ -201,9 +201,7 @@ RefPtr<FragmentedSharedBuffer> CDMPrivateFairPlayStreaming::sanitizeSkd(const Fr
 std::optional<Vector<Ref<FragmentedSharedBuffer>>> CDMPrivateFairPlayStreaming::extractKeyIDsSkd(const FragmentedSharedBuffer& buffer)
 {
     // In the 'skd' scheme, the init data is the key ID.
-    Vector<Ref<FragmentedSharedBuffer>> keyIDs;
-    keyIDs.append(buffer.copy());
-    return keyIDs;
+    return Vector { buffer.copy() };
 }
 
 static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& validInitDataTypes()

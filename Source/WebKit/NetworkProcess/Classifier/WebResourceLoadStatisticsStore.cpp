@@ -853,9 +853,7 @@ void WebResourceLoadStatisticsStore::mergeStatisticForTesting(const RegistrableD
 
             statistic.subframeUnderTopFrameDomains = WTFMove(topFrameDomains);
 
-            Vector<ResourceLoadStatistics> statistics;
-            statistics.append(WTFMove(statistic));
-            m_statisticsStore->mergeStatistics(WTFMove(statistics));
+            m_statisticsStore->mergeStatistics(Vector<ResourceLoadStatistics>::from(WTFMove(statistic)));
         }
         postTaskReply(WTFMove(completionHandler));
     });

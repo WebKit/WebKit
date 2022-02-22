@@ -53,8 +53,9 @@ MultiChannelResampler::MultiChannelResampler(double scaleFactor, unsigned number
     }
 
     // Create each channel's resampler.
+    m_kernels.reserveInitialCapacity(numberOfChannels);
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
-        m_kernels.append(makeUnique<SincResampler>(scaleFactor, requestFrames, std::bind(&MultiChannelResampler::provideInputForChannel, this, std::placeholders::_1, std::placeholders::_2, channelIndex)));
+        m_kernels.uncheckedAppend(makeUnique<SincResampler>(scaleFactor, requestFrames, std::bind(&MultiChannelResampler::provideInputForChannel, this, std::placeholders::_1, std::placeholders::_2, channelIndex)));
 }
 
 MultiChannelResampler::~MultiChannelResampler() = default;

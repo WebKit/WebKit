@@ -375,8 +375,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
         computeMissingKeyframeOffsets(propertyKeyframes);
 
         // 7. Add keyframes in property keyframes to processed keyframes.
-        for (auto& keyframe : propertyKeyframes)
-            parsedKeyframes.append(WTFMove(keyframe));
+        parsedKeyframes.appendVector(propertyKeyframes);
     }
 
     // 3. Sort processed keyframes by the computed keyframe offset of each keyframe in increasing order.

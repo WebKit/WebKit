@@ -272,10 +272,9 @@ void FindController::findStringMatches(const String& string, OptionSet<FindOptio
     auto result = m_webPage->corePage()->findTextMatches(string, core(options), maxMatchCount);
     m_findMatches = WTFMove(result.ranges);
 
-    Vector<Vector<IntRect>> matchRects;
-    for (auto& range : m_findMatches)
-        matchRects.append(RenderObject::absoluteTextRects(range));
-
+    auto matchRects = m_findMatches.map([](auto& range) {
+        return RenderObject::absoluteTextRects(range);
+    });
     m_webPage->send(Messages::WebPageProxy::DidFindStringMatches(string, matchRects, result.indexForSelection));
 
     if (!options.contains(FindOptions::ShowOverlay) && !options.contains(FindOptions::ShowFindIndicator))

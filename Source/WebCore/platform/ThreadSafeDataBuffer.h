@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Hasher.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
@@ -141,6 +142,17 @@ bool ThreadSafeDataBuffer::decode(Decoder& decoder, ThreadSafeDataBuffer& result
     }
 
     return true;
+}
+
+inline void add(Hasher& hasher, const ThreadSafeDataBuffer& buffer)
+{
+    auto* data = buffer.data();
+    if (!data) {
+        add(hasher, true);
+        return;
+    }
+    add(hasher, false);
+    add(hasher, *data);
 }
 
 } // namespace WebCore

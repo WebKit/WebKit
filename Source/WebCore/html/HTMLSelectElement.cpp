@@ -634,9 +634,9 @@ void HTMLSelectElement::saveLastSelection()
         return;
     }
 
-    m_lastOnChangeSelection.clear();
-    for (auto& element : listItems())
-        m_lastOnChangeSelection.append(is<HTMLOptionElement>(*element) && downcast<HTMLOptionElement>(*element).selected());
+    m_lastOnChangeSelection = listItems().map([](auto& element) {
+        return is<HTMLOptionElement>(*element) && downcast<HTMLOptionElement>(*element).selected();
+    });
 }
 
 void HTMLSelectElement::setActiveSelectionAnchorIndex(int index)
@@ -645,10 +645,9 @@ void HTMLSelectElement::setActiveSelectionAnchorIndex(int index)
 
     // Cache the selection state so we can restore the old selection as the new
     // selection pivots around this anchor index.
-    m_cachedStateForActiveSelection.clear();
-
-    for (auto& element : listItems())
-        m_cachedStateForActiveSelection.append(is<HTMLOptionElement>(*element) && downcast<HTMLOptionElement>(*element).selected());
+    m_cachedStateForActiveSelection = listItems().map([](auto& element) {
+        return is<HTMLOptionElement>(*element) && downcast<HTMLOptionElement>(*element).selected();
+    });
 }
 
 void HTMLSelectElement::setActiveSelectionEndIndex(int index)

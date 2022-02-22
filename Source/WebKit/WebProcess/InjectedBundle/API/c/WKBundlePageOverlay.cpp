@@ -197,11 +197,13 @@ private:
         auto wkNames = m_accessibilityClient.client().copyAccessibilityAttributeNames(toAPI(&pageOverlay), paramerizedNames, m_accessibilityClient.client().base.clientInfo);
 
         size_t count = WKArrayGetSize(wkNames);
+        names.reserveInitialCapacity(count);
         for (size_t k = 0; k < count; k++) {
             WKTypeRef item = WKArrayGetItemAtIndex(wkNames, k);
             if (WebKit::toImpl(item)->type() == API::String::APIType)
-                names.append(WebKit::toWTFString(static_cast<WKStringRef>(item)));
+                names.uncheckedAppend(WebKit::toWTFString(static_cast<WKStringRef>(item)));
         }
+        names.shrinkToFit();
 
         return names;
     }

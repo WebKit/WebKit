@@ -75,35 +75,33 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment
 
     InitializationSegmentInfo segmentInfo;
     segmentInfo.duration = segment.duration;
-    for (auto& audioTrackInfo : segment.audioTracks) {
-        auto identifier = m_remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*audioTrackInfo.track);
-        segmentInfo.audioTracks.append({ MediaDescriptionInfo(*audioTrackInfo.description), identifier });
 
+    segmentInfo.audioTracks = segment.audioTracks.map([&](auto& audioTrackInfo) {
+        auto identifier = m_remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*audioTrackInfo.track);
         ASSERT(!m_trackIds.contains(identifier));
         ASSERT(!m_mediaDescriptions.contains(identifier));
         m_trackIds.add(identifier, audioTrackInfo.track->id());
         m_mediaDescriptions.add(identifier, *audioTrackInfo.description);
-    }
+        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*audioTrackInfo.description), identifier };
+    });
 
-    for (auto& videoTrackInfo : segment.videoTracks) {
+    segmentInfo.videoTracks = segment.videoTracks.map([&](auto& videoTrackInfo) {
         auto identifier = m_remoteMediaPlayerProxy->addRemoteVideoTrackProxy(*videoTrackInfo.track);
-        segmentInfo.videoTracks.append({ MediaDescriptionInfo(*videoTrackInfo.description), identifier });
-
         ASSERT(!m_trackIds.contains(identifier));
         ASSERT(!m_mediaDescriptions.contains(identifier));
         m_trackIds.add(identifier, videoTrackInfo.track->id());
         m_mediaDescriptions.add(identifier, *videoTrackInfo.description);
-    }
+        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*videoTrackInfo.description), identifier };
+    });
 
-    for (auto& textTrackInfo : segment.textTracks) {
+    segmentInfo.textTracks = segment.textTracks.map([&](auto& textTrackInfo) {
         auto identifier = m_remoteMediaPlayerProxy->addRemoteTextTrackProxy(*textTrackInfo.track);
-        segmentInfo.textTracks.append({ MediaDescriptionInfo(*textTrackInfo.description), identifier });
-
         ASSERT(!m_trackIds.contains(identifier));
         ASSERT(!m_mediaDescriptions.contains(identifier));
         m_trackIds.add(identifier, textTrackInfo.track->id());
         m_mediaDescriptions.add(identifier, *textTrackInfo.description);
-    }
+        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*textTrackInfo.description), identifier };
+    });
 
     if (!m_connectionToWebProcess) {
         completionHandler();
@@ -338,16 +336,11 @@ void RemoteSourceBufferProxy::seekToTime(const MediaTime& mediaTime)
 
 void RemoteSourceBufferProxy::updateTrackIds(Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>>&& identifierPairs)
 {
-    Vector<std::pair<AtomString, AtomString>> trackIdPairs;
-
-    for (auto& identifierPair : identifierPairs) {
+    auto trackIdPairs = identifierPairs.map([&](auto& identifierPair) {
         ASSERT(m_trackIds.contains(identifierPair.first));
         ASSERT(m_trackIds.contains(identifierPair.second));
-
-        auto oldId = m_trackIds.take(identifierPair.first);
-        auto newId = m_trackIds.get(identifierPair.second);
-        trackIdPairs.append(std::make_pair(oldId, newId));
-    }
+        return std::pair { m_trackIds.take(identifierPair.first), m_trackIds.get(identifierPair.second) };
+    });
 
     if (!trackIdPairs.isEmpty())
         m_sourceBufferPrivate->updateTrackIds(WTFMove(trackIdPairs));

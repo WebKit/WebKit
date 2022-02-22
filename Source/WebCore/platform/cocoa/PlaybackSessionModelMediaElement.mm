@@ -534,14 +534,12 @@ Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::legibleMediaSelec
     Vector<MediaSelectionOption> legibleOptions;
 
     if (!m_mediaElement || !m_mediaElement->document().page())
-        return legibleOptions;
+        return { };
 
     auto& captionPreferences = m_mediaElement->document().page()->group().ensureCaptionPreferences();
-
-    for (auto& track : m_legibleTracksForMenu)
-        legibleOptions.append(captionPreferences.mediaSelectionOptionForTrack(track.get()));
-
-    return legibleOptions;
+    return m_legibleTracksForMenu.map([&](auto& track) {
+        return captionPreferences.mediaSelectionOptionForTrack(track.get());
+    });
 }
 
 uint64_t PlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const

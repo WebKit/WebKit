@@ -84,8 +84,9 @@ void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isF
 
     std::stable_sort(matchedPageRules.begin(), matchedPageRules.end(), comparePageRules);
 
-    for (unsigned i = 0; i < matchedPageRules.size(); i++)
-        m_result.authorDeclarations.append({ &matchedPageRules[i]->properties() });
+    m_result.authorDeclarations.reserveCapacity(m_result.authorDeclarations.size() + matchedPageRules.size());
+    for (auto* pageRule : matchedPageRules)
+        m_result.authorDeclarations.uncheckedAppend({ &pageRule->properties() });
 }
 
 static bool checkPageSelectorComponents(const CSSSelector* selector, bool isLeftPage, bool isFirstPage, const String& pageName)

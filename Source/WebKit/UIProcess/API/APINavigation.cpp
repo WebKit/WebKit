@@ -62,10 +62,10 @@ Navigation::Navigation(WebNavigationState& state, WebCore::ResourceRequest&& req
     : m_navigationID(state.generateNavigationID())
     , m_originalRequest(WTFMove(request))
     , m_currentRequest(m_originalRequest)
+    , m_redirectChain { m_originalRequest.url() }
     , m_fromItem(fromItem)
     , m_clientNavigationActivity(navigationActivityTimeout)
 {
-    m_redirectChain.append(m_originalRequest.url());
 }
 
 Navigation::Navigation(WebNavigationState& state, WebBackForwardListItem& targetItem, WebBackForwardListItem* fromItem, FrameLoadType backForwardFrameLoadType)

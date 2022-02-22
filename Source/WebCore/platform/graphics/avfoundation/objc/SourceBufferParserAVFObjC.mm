@@ -297,16 +297,14 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 
             if ([track hasMediaCharacteristic:AVMediaCharacteristicVisual]) {
                 SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
-                auto videoTrack = VideoTrackPrivateMediaSourceAVFObjC::create(track);
-                info.track = videoTrack.copyRef();
+                info.track = VideoTrackPrivateMediaSourceAVFObjC::create(track);
                 info.description = MediaDescriptionAVFObjC::create(track);
-                segment.videoTracks.append(info);
+                segment.videoTracks.append(WTFMove(info));
             } else if ([track hasMediaCharacteristic:AVMediaCharacteristicAudible]) {
                 SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
-                auto audioTrack = AudioTrackPrivateMediaSourceAVFObjC::create(track);
-                info.track = audioTrack.copyRef();
+                info.track = AudioTrackPrivateMediaSourceAVFObjC::create(track);
                 info.description = MediaDescriptionAVFObjC::create(track);
-                segment.audioTracks.append(info);
+                segment.audioTracks.append(WTFMove(info));
             }
 
             // FIXME(125161)    : Add TextTrack support

@@ -206,9 +206,7 @@ void FragmentedSharedBuffer::append(const FragmentedSharedBuffer& data)
 void FragmentedSharedBuffer::append(const uint8_t* data, size_t length)
 {
     ASSERT(!m_contiguous);
-    Vector<uint8_t> vector;
-    vector.append(data, length);
-    m_segments.append({ m_size, DataSegment::create(WTFMove(vector)) });
+    m_segments.append({ m_size, DataSegment::create(Vector { data, length }) });
     m_size += length;
     ASSERT(internallyConsistent());
 }

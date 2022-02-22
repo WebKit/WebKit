@@ -340,16 +340,11 @@ void WebBackForwardList::removeAllItems()
 
     LOG(BackForward, "(Back/Forward) WebBackForwardList %p removeAllItems (has %zu of them)", this, m_entries.size());
 
-    Vector<Ref<WebBackForwardListItem>> removedItems;
-
-    for (auto& entry : m_entries) {
+    for (auto& entry : m_entries)
         didRemoveItem(entry);
-        removedItems.append(WTFMove(entry));
-    }
 
-    m_entries.clear();
     m_currentIndex = std::nullopt;
-    m_page->didChangeBackForwardList(nullptr, WTFMove(removedItems));
+    m_page->didChangeBackForwardList(nullptr, std::exchange(m_entries, { }));
 }
 
 void WebBackForwardList::clear()
@@ -363,21 +358,17 @@ void WebBackForwardList::clear()
         return;
 
     RefPtr<WebBackForwardListItem> currentItem = this->currentItem();
-    Vector<Ref<WebBackForwardListItem>> removedItems;
 
     if (!currentItem) {
         // We should only ever have no current item if we also have no current item index.
         ASSERT(!m_currentIndex);
 
         // But just in case it does happen in practice we should get back into a consistent state now.
-        for (size_t i = 0; i < size; ++i) {
-            didRemoveItem(m_entries[i]);
-            removedItems.append(WTFMove(m_entries[i]));
-        }
+        for (auto& entry : m_entries)
+            didRemoveItem(entry);
 
-        m_entries.clear();
         m_currentIndex = std::nullopt;
-        m_page->didChangeBackForwardList(nullptr, WTFMove(removedItems));
+        m_page->didChangeBackForwardList(nullptr, std::exchange(m_entries, { }));
 
         return;
     }
@@ -387,6 +378,7 @@ void WebBackForwardList::clear()
             didRemoveItem(m_entries[i]);
     }
 
+    Vector<Ref<WebBackForwardListItem>> removedItems;
     removedItems.reserveInitialCapacity(size - 1);
     for (size_t i = 0; i < size; ++i) {
         if (m_currentIndex && i != *m_currentIndex)

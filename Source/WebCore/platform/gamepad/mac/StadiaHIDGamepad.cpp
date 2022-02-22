@@ -41,12 +41,10 @@ StadiaHIDGamepad::StadiaHIDGamepad(HIDDevice&& device, unsigned index)
 
     m_mapping = standardGamepadMappingString();
 
-    for (size_t i = 0; i < 19; ++i)
-        m_buttonValues.append(0.0);
+    m_buttonValues = Vector(19, SharedGamepadValue { 0.0 });
 
-    static const size_t axisCount = 4;
-    for (size_t i = 0; i < axisCount; ++i)
-        m_axisValues.append(0.0);
+    constexpr size_t axisCount = 4;
+    m_axisValues = Vector(axisCount, SharedGamepadValue { 0.0 });
 
     auto inputElements = hidDevice().uniqueInputElementsInDeviceTreeOrder();
 
@@ -70,11 +68,12 @@ StadiaHIDGamepad::StadiaHIDGamepad(HIDDevice&& device, unsigned index)
             break;
 
         case hidHatswitchFullUsage: {
-            Vector<SharedGamepadValue> hatswitchValues;
-            hatswitchValues.append(m_buttonValues[(size_t)GamepadButtonRole::LeftClusterTop]);
-            hatswitchValues.append(m_buttonValues[(size_t)GamepadButtonRole::LeftClusterRight]);
-            hatswitchValues.append(m_buttonValues[(size_t)GamepadButtonRole::LeftClusterBottom]);
-            hatswitchValues.append(m_buttonValues[(size_t)GamepadButtonRole::LeftClusterLeft]);
+            auto hatswitchValues = Vector {
+                m_buttonValues[(size_t)GamepadButtonRole::LeftClusterTop],
+                m_buttonValues[(size_t)GamepadButtonRole::LeftClusterRight],
+                m_buttonValues[(size_t)GamepadButtonRole::LeftClusterBottom],
+                m_buttonValues[(size_t)GamepadButtonRole::LeftClusterLeft]
+            };
 
             m_elementMap.set(element.cookie(), makeUnique<HIDGamepadHatswitch>(element, WTFMove(hatswitchValues)));
             break;

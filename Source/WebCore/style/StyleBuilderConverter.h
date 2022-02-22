@@ -1697,13 +1697,12 @@ inline Vector<AtomString> BuilderConverter::convertContainerName(BuilderState&, 
         ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
         return { };
     }
+    if (!is<CSSValueList>(value))
+        return { };
 
-    Vector<AtomString> result;
-    if (is<CSSValueList>(value)) {
-        for (auto& item : downcast<CSSValueList>(value))
-            result.append(downcast<CSSPrimitiveValue>(item.get()).stringValue());
-    }
-    return result;
+    return WTF::map(downcast<CSSValueList>(value), [](auto& item) -> AtomString {
+        return downcast<CSSPrimitiveValue>(item.get()).stringValue();
+    });
 }
 
 }

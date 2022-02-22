@@ -515,10 +515,8 @@ Record DOMCache::toConnectionRecord(const FetchRequest& request, FetchResponse& 
 
 void DOMCache::batchPutOperation(const FetchRequest& request, FetchResponse& response, DOMCacheEngine::ResponseBody&& responseBody, CompletionHandler<void(ExceptionOr<void>&&)>&& callback)
 {
-    Vector<Record> records;
-    records.append(toConnectionRecord(request, response, WTFMove(responseBody)));
-
-    batchPutOperation(WTFMove(records), WTFMove(callback));
+    auto record = toConnectionRecord(request, response, WTFMove(responseBody));
+    batchPutOperation({ WTFMove(record) }, WTFMove(callback));
 }
 
 void DOMCache::batchPutOperation(Vector<Record>&& records, CompletionHandler<void(ExceptionOr<void>&&)>&& callback)

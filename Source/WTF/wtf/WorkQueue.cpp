@@ -105,7 +105,7 @@ void ConcurrentWorkQueue::apply(size_t iterations, WTF::Function<void(size_t ind
 
             m_workers.reserveInitialCapacity(threadCount);
             for (unsigned i = 0; i < threadCount; ++i) {
-                m_workers.append(Thread::create("ThreadPool Worker", [this] {
+                m_workers.uncheckedAppend(Thread::create("ThreadPool Worker", [this] {
                     threadBody();
                 }));
             }

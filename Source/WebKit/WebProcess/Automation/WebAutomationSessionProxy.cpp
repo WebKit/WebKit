@@ -805,13 +805,12 @@ void WebAutomationSessionProxy::setFilesForInputFileUpload(WebCore::PageIdentifi
     auto& inputElement = downcast<WebCore::HTMLInputElement>(*coreElement);
     Vector<Ref<WebCore::File>> fileObjects;
     if (inputElement.multiple()) {
-        if (auto* files = inputElement.files()) {
-            for (auto& file : files->files())
-                fileObjects.append(file.copyRef());
-        }
+        if (auto* files = inputElement.files())
+            fileObjects.appendVector(files->files());
     }
+    fileObjects.reserveCapacity(fileObjects.size() + filenames.size());
     for (const auto& path : filenames)
-        fileObjects.append(WebCore::File::create(&inputElement.document(), path));
+        fileObjects.uncheckedAppend(WebCore::File::create(&inputElement.document(), path));
     inputElement.setFiles(WebCore::FileList::create(WTFMove(fileObjects)));
 
     completionHandler(std::nullopt);

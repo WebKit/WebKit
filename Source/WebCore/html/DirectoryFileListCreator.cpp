@@ -86,13 +86,11 @@ static Vector<FileInformation> gatherFileInformation(const Vector<FileChooserFil
 static Ref<FileList> toFileList(Document* document, const Vector<FileInformation>& files)
 {
     ASSERT(isMainThread());
-    Vector<Ref<File>> fileObjects;
-    for (auto& file : files) {
+    auto fileObjects = files.map([document](auto& file) {
         if (file.relativePath.isNull())
-            fileObjects.append(File::create(document, file.path, { }, file.displayName));
-        else
-            fileObjects.append(File::createWithRelativePath(document, file.path, file.relativePath));
-    }
+            return File::create(document, file.path, { }, file.displayName);
+        return File::createWithRelativePath(document, file.path, file.relativePath);
+    });
     return FileList::create(WTFMove(fileObjects));
 }
 

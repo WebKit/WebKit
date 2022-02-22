@@ -1491,9 +1491,7 @@ void RenderLayerCompositor::adjustOverflowScrollbarContainerLayers(RenderLayer& 
             overflowBacking->ensureOverflowControlsHostLayerAncestorClippingStack(&stackingContextLayer);
 
         if (auto* overflowControlsAncestorClippingStack = overflowBacking->overflowControlsHostLayerAncestorClippingStack()) {
-            Vector<Ref<GraphicsLayer>> children;
-            children.append(*overflowContainerLayer);
-            overflowControlsAncestorClippingStack->lastClippingLayer()->setChildren(WTFMove(children));
+            overflowControlsAncestorClippingStack->lastClippingLayer()->setChildren({ Ref { *overflowContainerLayer } });
             overflowContainerLayer = overflowControlsAncestorClippingStack->firstClippingLayer();
         }
 

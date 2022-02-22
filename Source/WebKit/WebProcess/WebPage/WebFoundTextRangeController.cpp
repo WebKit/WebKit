@@ -248,11 +248,10 @@ void WebFoundTextRangeController::drawRect(WebCore::PageOverlay&, WebCore::Graph
         auto textBoundingRectInRootViewCoordinates = m_textIndicator->textBoundingRectInRootViewCoordinates();
         auto textRectsInBoundingRectCoordinates = m_textIndicator->textRectsInBoundingRectCoordinates();
 
-        Vector<WebCore::FloatRect> textRectsInRootViewCoordinates;
-        for (auto rect : textRectsInBoundingRectCoordinates) {
+        auto textRectsInRootViewCoordinates = textRectsInBoundingRectCoordinates.map([&](auto rect) {
             rect.moveBy(textBoundingRectInRootViewCoordinates.location());
-            textRectsInRootViewCoordinates.append(rect);
-        }
+            return rect;
+        });
 
         auto paths = WebCore::PathUtilities::pathsWithShrinkWrappedRects(textRectsInRootViewCoordinates, indicatorRadius);
 

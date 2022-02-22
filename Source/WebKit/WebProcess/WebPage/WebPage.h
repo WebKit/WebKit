@@ -1969,8 +1969,8 @@ private:
 
     void platformDidScalePage();
 
-    Vector<RefPtr<SandboxExtension>> consumeSandboxExtensions(Vector<SandboxExtension::Handle>&&);
-    void revokeSandboxExtensions(Vector<RefPtr<SandboxExtension>>& sandboxExtensions);
+    Vector<Ref<SandboxExtension>> consumeSandboxExtensions(Vector<SandboxExtension::Handle>&&);
+    void revokeSandboxExtensions(Vector<Ref<SandboxExtension>>& sandboxExtensions);
 
     void setSelectionRange(const WebCore::IntPoint&, WebCore::TextGranularity, bool);
     

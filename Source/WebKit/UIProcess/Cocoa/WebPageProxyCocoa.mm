@@ -666,14 +666,12 @@ void WebPageProxy::restoreAppHighlightsAndScrollToIndex(const Vector<Ref<SharedM
     if (!hasRunningProcess())
         return;
 
-    Vector<SharedMemory::IPCHandle> memoryHandles;
-
-    for (auto highlight : highlights) {
+    auto memoryHandles = WTF::compactMap(highlights, [](auto& highlight) -> std::optional<SharedMemory::IPCHandle> {
         SharedMemory::Handle handle;
-        highlight->createHandle(handle, SharedMemory::Protection::ReadOnly);
-
-        memoryHandles.append(SharedMemory::IPCHandle { WTFMove(handle), highlight->size() });
-    }
+        if (!highlight->createHandle(handle, SharedMemory::Protection::ReadOnly))
+            return std::nullopt;
+        return SharedMemory::IPCHandle { WTFMove(handle), highlight->size() };
+    });
     
     setUpHighlightsObserver();
 

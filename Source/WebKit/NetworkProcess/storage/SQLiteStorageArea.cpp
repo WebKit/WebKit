@@ -66,11 +66,9 @@ SQLiteStorageArea::SQLiteStorageArea(unsigned quota, const WebCore::ClientOrigin
     : StorageAreaBase(quota, origin)
     , m_path(path)
     , m_queue(WTFMove(workQueue))
+    , m_cachedStatements(static_cast<size_t>(StatementType::Invalid))
 {
-    ASSERT(!isMainRunLoop());
-
-    for (size_t i = 0; i < static_cast<size_t>(StatementType::Invalid); ++i)
-        m_cachedStatements.append(nullptr);
+    ASSERT(!isMainRunLoop());  
 }
 
 void SQLiteStorageArea::close()

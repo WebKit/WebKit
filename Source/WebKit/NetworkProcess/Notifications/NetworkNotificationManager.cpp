@@ -82,9 +82,9 @@ void NetworkNotificationManager::deletePushAndNotificationRegistration(const Sec
 void NetworkNotificationManager::getOriginsWithPushAndNotificationPermissions(CompletionHandler<void(const Vector<SecurityOriginData>&)>&& completionHandler)
 {
     CompletionHandler<void(Vector<String>&&)> replyHandler = [completionHandler = WTFMove(completionHandler)] (Vector<String> originStrings) mutable {
-        Vector<SecurityOriginData> origins;
-        for (auto& originString : originStrings)
-            origins.append(SecurityOriginData::fromURL({ { }, originString }));
+        auto origins = originStrings.map([](auto& originString) {
+            return SecurityOriginData::fromURL({ { }, originString });
+        });
         completionHandler(WTFMove(origins));
     };
 

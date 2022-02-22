@@ -265,9 +265,8 @@ void FullscreenManager::cancelFullscreen()
 
     // To achieve that aim, remove all the elements from the top document's stack except for the first before
     // calling webkitExitFullscreen():
-    Vector<RefPtr<Element>> replacementFullscreenElementStack;
-    replacementFullscreenElementStack.append(topDocument.fullscreenManager().fullscreenElement());
-    topDocument.fullscreenManager().m_fullscreenElementStack.swap(replacementFullscreenElementStack);
+    RefPtr fullscrenElement = topDocument.fullscreenManager().fullscreenElement();
+    topDocument.fullscreenManager().m_fullscreenElementStack = { WTFMove(fullscrenElement) };
 
     topDocument.fullscreenManager().exitFullscreen();
 }

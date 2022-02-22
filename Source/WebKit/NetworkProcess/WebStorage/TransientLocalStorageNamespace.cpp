@@ -55,14 +55,11 @@ StorageArea& TransientLocalStorageNamespace::getOrCreateStorageArea(SecurityOrig
 Vector<SecurityOriginData> TransientLocalStorageNamespace::origins() const
 {
     ASSERT(!RunLoop::isMain());
-    Vector<SecurityOriginData> origins;
-
-    for (const auto& storageArea : m_storageAreaMap.values()) {
-        if (!storageArea->items().isEmpty())
-            origins.append(storageArea->securityOrigin());
-    }
-
-    return origins;
+    return WTF::compactMap(m_storageAreaMap, [](auto& entry) -> std::optional<SecurityOriginData> {
+        if (entry.value->items().isEmpty())
+            return std::nullopt;
+        return entry.value->securityOrigin();
+    });
 }
 
 void TransientLocalStorageNamespace::clearStorageAreasMatchingOrigin(const SecurityOriginData& securityOrigin)
@@ -82,10 +79,9 @@ void TransientLocalStorageNamespace::clearAllStorageAreas()
 
 Vector<StorageAreaIdentifier> TransientLocalStorageNamespace::storageAreaIdentifiers() const
 {
-    Vector<StorageAreaIdentifier> identifiers;
-    for (auto& storageArea : m_storageAreaMap.values())
-        identifiers.append(storageArea->identifier());
-    return identifiers;
+    return WTF::map(m_storageAreaMap, [](auto& entry) {
+        return entry.value->identifier();
+    });
 }
 
 } // namespace WebKit

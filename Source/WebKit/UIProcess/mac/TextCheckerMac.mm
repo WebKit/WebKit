@@ -344,12 +344,13 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
             TextCheckingResult result;
             result.type = TextCheckingType::Spelling;
             result.range = resultRange;
-            results.append(result);
+            results.append(WTFMove(result));
         } else if (resultType == NSTextCheckingTypeGrammar && checkingTypes.contains(TextCheckingType::Grammar)) {
             TextCheckingResult result;
             NSArray *details = [incomingResult grammarDetails];
             result.type = TextCheckingType::Grammar;
             result.range = resultRange;
+            result.details.reserveInitialCapacity(details.count);
             for (NSDictionary *incomingDetail in details) {
                 ASSERT(incomingDetail);
                 GrammarDetail detail;
@@ -361,9 +362,8 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
                 detail.range = detailNSRange;
                 detail.userDescription = [incomingDetail objectForKey:NSGrammarUserDescription];
                 NSArray *guesses = [incomingDetail objectForKey:NSGrammarCorrections];
-                for (NSString *guess in guesses)
-                    detail.guesses.append(String(guess));
-                result.details.append(detail);
+                detail.guesses = makeVector<String>(guesses);
+                result.details.uncheckedAppend(WTFMove(detail));
             }
             results.append(result);
         } else if (resultType == NSTextCheckingTypeLink && checkingTypes.contains(TextCheckingType::Link)) {
@@ -371,31 +371,31 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
             result.type = TextCheckingType::Link;
             result.range = resultRange;
             result.replacement = [[incomingResult URL] absoluteString];
-            results.append(result);
+            results.append(WTFMove(result));
         } else if (resultType == NSTextCheckingTypeQuote && checkingTypes.contains(TextCheckingType::Quote)) {
             TextCheckingResult result;
             result.type = TextCheckingType::Quote;
             result.range = resultRange;
             result.replacement = [incomingResult replacementString];
-            results.append(result);
+            results.append(WTFMove(result));
         } else if (resultType == NSTextCheckingTypeDash && checkingTypes.contains(TextCheckingType::Dash)) {
             TextCheckingResult result;
             result.type = TextCheckingType::Dash;
             result.range = resultRange;
             result.replacement = [incomingResult replacementString];
-            results.append(result);
+            results.append(WTFMove(result));
         } else if (resultType == NSTextCheckingTypeReplacement && checkingTypes.contains(TextCheckingType::Replacement)) {
             TextCheckingResult result;
             result.type = TextCheckingType::Replacement;
             result.range = resultRange;
             result.replacement = [incomingResult replacementString];
-            results.append(result);
+            results.append(WTFMove(result));
         } else if (resultType == NSTextCheckingTypeCorrection && checkingTypes.contains(TextCheckingType::Correction)) {
             TextCheckingResult result;
             result.type = TextCheckingType::Correction;
             result.range = resultRange;
             result.replacement = [incomingResult replacementString];
-            results.append(result);
+            results.append(WTFMove(result));
         }
     }
 

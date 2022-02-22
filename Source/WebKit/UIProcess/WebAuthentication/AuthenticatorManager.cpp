@@ -416,11 +416,11 @@ void AuthenticatorManager::startDiscovery(const TransportSet& transports)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(m_services.isEmpty() && transports.size() <= maxTransportNumber);
-    for (auto& transport : transports) {
+    m_services = WTF::map(transports, [this](auto& transport) {
         auto service = createService(transport, *this);
         service->startDiscovery();
-        m_services.append(WTFMove(service));
-    }
+        return service;
+    });
 }
 
 void AuthenticatorManager::initTimeOutTimer()

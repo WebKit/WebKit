@@ -295,20 +295,14 @@ Vector<StorageAreaIdentifier> StorageManager::allStorageAreaIdentifiers() const
     ASSERT(!RunLoop::isMain());
 
     Vector<StorageAreaIdentifier> identifiers;
-    for (const auto& localStorageNamespace : m_localStorageNamespaces.values()) {
-        for (auto key : localStorageNamespace->storageAreaIdentifiers())
-            identifiers.append(key);
-    }
+    for (auto& localStorageNamespace : m_localStorageNamespaces.values())
+        identifiers.appendVector(localStorageNamespace->storageAreaIdentifiers());
 
-    for (const auto& trasientLocalStorageNamespace : m_transientLocalStorageNamespaces.values()) {
-        for (auto key : trasientLocalStorageNamespace->storageAreaIdentifiers())
-            identifiers.append(key);
-    }
+    for (auto& trasientLocalStorageNamespace : m_transientLocalStorageNamespaces.values())
+        identifiers.appendVector(trasientLocalStorageNamespace->storageAreaIdentifiers());
 
-    for (const auto& sessionStorageNamespace : m_sessionStorageNamespaces.values()) {
-        for (auto key : sessionStorageNamespace->storageAreaIdentifiers())
-            identifiers.append(key);
-    }
+    for (auto& sessionStorageNamespace : m_sessionStorageNamespaces.values())
+        identifiers.appendVector(sessionStorageNamespace->storageAreaIdentifiers());
 
     return identifiers;
 }

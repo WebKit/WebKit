@@ -141,10 +141,8 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart>&& blobPa
             break;
         }
         case BlobPart::Type::Blob: {
-            if (auto blob = m_blobs.get(part.url().string())) {
-                for (const BlobDataItem& item : blob->items())
-                    blobData->m_items.append(item);
-            }
+            if (auto blob = m_blobs.get(part.url().string()))
+                blobData->m_items.appendVector(blob->items());
             break;
         }
         }
@@ -328,7 +326,7 @@ void BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB(const Vector<Strin
                 filePaths.clear();
                 break;
             }
-            filePaths.append(tempFilePath.isolatedCopy());
+            filePaths.append(WTFMove(tempFilePath).isolatedCopy());
         }
 
         callOnMainThread([completionHandler = WTFMove(completionHandler), filePaths = WTFMove(filePaths)] () mutable {

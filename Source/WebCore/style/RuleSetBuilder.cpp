@@ -378,8 +378,9 @@ void RuleSetBuilder::MediaQueryCollector::pop(const MediaQuerySet* set)
 
     if (!dynamicContextStack.last().affectedRulePositions.isEmpty() || !collectDynamic) {
         RuleSet::DynamicMediaQueryRules rules;
+        rules.mediaQuerySets.reserveCapacity(rules.mediaQuerySets.size() + dynamicContextStack.size());
         for (auto& context : dynamicContextStack)
-            rules.mediaQuerySets.append(context.set.get());
+            rules.mediaQuerySets.uncheckedAppend(context.set.get());
 
         if (collectDynamic) {
             rules.affectedRulePositions.appendVector(dynamicContextStack.last().affectedRulePositions);

@@ -42,8 +42,9 @@ AudioResampler::AudioResampler()
 
 AudioResampler::AudioResampler(unsigned numberOfChannels)
 {
+    m_kernels.reserveInitialCapacity(numberOfChannels);
     for (unsigned i = 0; i < numberOfChannels; ++i)
-        m_kernels.append(makeUnique<AudioResamplerKernel>(this));
+        m_kernels.uncheckedAppend(makeUnique<AudioResamplerKernel>(this));
 
     m_sourceBus = AudioBus::create(numberOfChannels, 0, false);
 }

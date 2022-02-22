@@ -98,9 +98,7 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
     ASSERT(!m_timelines.hasNullReferences());
 
     // We need to copy m_timelines before iterating over its members since the steps in this procedure may mutate m_timelines.
-    Vector<Ref<DocumentTimeline>> protectedTimelines;
-    for (auto& timeline : m_timelines)
-        protectedTimelines.append(timeline);
+    auto protectedTimelines = copyToVectorOf<Ref<DocumentTimeline>>(m_timelines);
 
     // We need to freeze the current time even if no animation is running.
     // document.timeline.currentTime may be called from a rAF callback and

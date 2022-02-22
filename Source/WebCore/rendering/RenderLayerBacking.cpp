@@ -1956,9 +1956,7 @@ void RenderLayerBacking::connectClippingStackLayers(LayerAncestorClippingStack& 
     auto& clippingEntryStack = clippingStack.stack();
     for (unsigned i = 0; i < clippingEntryStack.size() - 1; ++i) {
         auto& entry = clippingEntryStack.at(i);
-        Vector<Ref<GraphicsLayer>> children;
-        children.append(*clippingEntryStack.at(i + 1).clippingLayer);
-        entry.clippingLayer->setChildren(WTFMove(children));
+        entry.clippingLayer->setChildren({ Ref { *clippingEntryStack.at(i + 1).clippingLayer } });
     }
 
     clippingEntryStack.last().clippingLayer->removeAllChildren();

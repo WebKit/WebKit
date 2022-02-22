@@ -71,18 +71,13 @@ void WebPasteboardOverrides::removeOverride(const String& pasteboardName, const 
 
 Vector<String> WebPasteboardOverrides::overriddenTypes(const String& pasteboardName)
 {
-    Vector<String> result;
-
     auto it = m_overridesMap.find(pasteboardName);
     if (it == m_overridesMap.end())
-        return result;
+        return { };
 
     ASSERT(it->value);
 
-    for (String& type : it->value->keys())
-        result.append(type);
-
-    return result;
+    return copyToVector(it->value->keys());
 }
 
 std::optional<WebCore::PasteboardItemInfo> WebPasteboardOverrides::overriddenInfo(const String& pasteboardName)

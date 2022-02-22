@@ -98,9 +98,9 @@ void WebPaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, c
 
 bool WebPaymentCoordinator::showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
-    Vector<String> linkIconURLStrings;
-    for (const auto& linkIconURL : linkIconURLs)
-        linkIconURLStrings.append(linkIconURL.string());
+    auto linkIconURLStrings = linkIconURLs.map([](auto& linkIconURL) {
+        return linkIconURL.string();
+    });
 
     bool result;
     if (!sendSync(Messages::WebPaymentCoordinatorProxy::ShowPaymentUI(m_webPage.identifier(), m_webPage.webPageProxyIdentifier(), originatingURL.string(), linkIconURLStrings, paymentRequest), Messages::WebPaymentCoordinatorProxy::ShowPaymentUI::Reply(result)))

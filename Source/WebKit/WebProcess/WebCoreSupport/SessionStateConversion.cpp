@@ -99,10 +99,9 @@ static FrameState toFrameState(const HistoryItem& historyItem)
     frameState.obscuredInsets = historyItem.obscuredInsets();
 #endif
 
-    for (auto& childHistoryItem : historyItem.children()) {
-        FrameState childFrameState = toFrameState(childHistoryItem);
-        frameState.children.append(WTFMove(childFrameState));
-    }
+    frameState.children = historyItem.children().map([](auto& childHistoryItem) {
+        return toFrameState(childHistoryItem);
+    });
 
     return frameState;
 }

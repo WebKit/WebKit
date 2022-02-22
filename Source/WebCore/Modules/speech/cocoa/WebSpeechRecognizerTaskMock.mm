@@ -63,11 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // Fake some recognition results.
-    Vector<SpeechRecognitionAlternativeData> alternatives;
-    alternatives.append(SpeechRecognitionAlternativeData { "Test", 1.0 });
-    Vector<SpeechRecognitionResultData> datas;
-    datas.append(SpeechRecognitionResultData { WTFMove(alternatives), true  });
-    _delegateCallback(SpeechRecognitionUpdate::createResult(_identifier, WTFMove(datas)));
+    SpeechRecognitionAlternativeData alternative { "Test", 1.0 };
+    _delegateCallback(SpeechRecognitionUpdate::createResult(_identifier, { SpeechRecognitionResultData { { WTFMove(alternative) }, true } }));
 
     if (!_doMultipleRecognitions)
         [self abort];

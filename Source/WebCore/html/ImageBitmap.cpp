@@ -112,10 +112,9 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
 Vector<std::optional<ImageBitmapBacking>> ImageBitmap::detachBitmaps(Vector<RefPtr<ImageBitmap>>&& bitmaps)
 {
-    Vector<std::optional<ImageBitmapBacking>> buffers;
-    for (auto& bitmap : bitmaps)
-        buffers.append(bitmap->takeImageBitmapBacking());
-    return buffers;
+    return WTF::map(WTFMove(bitmaps), [](auto&& bitmap) {
+        return bitmap->takeImageBitmapBacking();
+    });
 }
 
 void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, int sx, int sy, int sw, int sh, ImageBitmap::Promise&& promise)

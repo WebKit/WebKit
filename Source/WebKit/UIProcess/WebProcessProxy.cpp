@@ -936,8 +936,9 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
 
     // There is a nested transaction in WebPageProxy::resetStateAfterProcessExited() that we don't want to commit before the client call below (dispatchProcessDidTerminate).
     Vector<PageLoadState::Transaction> pageLoadStateTransactions;
+    pageLoadStateTransactions.reserveInitialCapacity(pages.size());
     for (auto& page : pages) {
-        pageLoadStateTransactions.append(page->pageLoadState().transaction());
+        pageLoadStateTransactions.uncheckedAppend(page->pageLoadState().transaction());
         page->resetStateAfterProcessTermination(reason);
     }
 

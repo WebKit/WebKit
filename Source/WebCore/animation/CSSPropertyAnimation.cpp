@@ -164,10 +164,8 @@ static inline TransformOperations blendFunc(const TransformOperations& from, con
     if (context.compositeOperation == CompositeOperation::Add) {
         ASSERT(context.progress == 1.0);
         TransformOperations resultOperations;
-        for (auto operation : from.operations())
-            resultOperations.operations().append(operation);
-        for (auto operation : to.operations())
-            resultOperations.operations().append(operation);
+        resultOperations.operations().appendVector(from.operations());
+        resultOperations.operations().appendVector(to.operations());
         return resultOperations;
     }
     auto boxSize = is<RenderBox>(context.client->renderer()) ? downcast<RenderBox>(*context.client->renderer()).borderBoxRect().size() : LayoutSize();

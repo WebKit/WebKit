@@ -1452,8 +1452,10 @@ void WebProcess::fetchWebsiteData(OptionSet<WebsiteDataType> websiteDataTypes, C
 {
     WebsiteData websiteData;
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {
-        for (auto& origin : MemoryCache::singleton().originsWithCache(sessionID()))
-            websiteData.entries.append(WebsiteData::Entry { origin->data(), WebsiteDataType::MemoryCache, 0 });
+        auto origins = MemoryCache::singleton().originsWithCache(sessionID());
+        websiteData.entries = WTF::map(origins, [](auto& origin) {
+            return WebsiteData::Entry { origin->data(), WebsiteDataType::MemoryCache, 0 };
+        });
     }
     completionHandler(WTFMove(websiteData));
 }

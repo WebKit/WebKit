@@ -85,12 +85,11 @@ static StringView extractCharset(const String& value)
 
 bool HTMLMetaCharsetParser::processMeta(HTMLToken& token)
 {
-    AttributeList attributes;
-    for (auto& attribute : token.attributes()) {
+    auto attributes = token.attributes().map([](auto& attribute) {
         String attributeName = StringImpl::create8BitIfPossible(attribute.name);
         String attributeValue = StringImpl::create8BitIfPossible(attribute.value);
-        attributes.append(std::make_pair(attributeName, attributeValue));
-    }
+        return std::pair { WTFMove(attributeName), WTFMove(attributeValue) };
+    });
 
     m_encoding = encodingFromMetaAttributes(attributes);
     return m_encoding.isValid();

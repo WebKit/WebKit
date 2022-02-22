@@ -702,10 +702,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         NSURL *url = [NSURL URLWithString:cocoaData];
         if ([url isFileURL])
             return;
-
-        Vector<String> types;
-        types.append(cocoaType);
-        platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName, context());
+        platformStrategies()->pasteboardStrategy()->setTypes({ cocoaType }, m_pasteboardName, context());
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, cocoaType, m_pasteboardName, context());
 
         return;
@@ -714,9 +711,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!cocoaType.isEmpty()) {
         // everything else we know of goes on the pboard as a string
-        Vector<String> types;
-        types.append(cocoaType);
-        platformStrategies()->pasteboardStrategy()->addTypes(types, m_pasteboardName, context());
+        platformStrategies()->pasteboardStrategy()->addTypes({ cocoaType }, m_pasteboardName, context());
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, cocoaType, m_pasteboardName, context());
     }
 }

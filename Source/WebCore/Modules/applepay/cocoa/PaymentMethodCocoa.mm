@@ -101,11 +101,8 @@ static std::optional<ApplePayPaymentMethod::Type> convert(PKPaymentMethodType pa
 #if HAVE(PASSKIT_PAYMENT_METHOD_BILLING_ADDRESS)
 static void convert(CNLabeledValue<CNPostalAddress*> *postalAddress, ApplePayPaymentContact &result)
 {
-    Vector<String> addressLine;
-    if (NSString *street = postalAddress.value.street) {
-        addressLine.append(street);
-        result.addressLines = WTFMove(addressLine);
-    }
+    if (NSString *street = postalAddress.value.street)
+        result.addressLines = { String { street } };
     result.subLocality = postalAddress.value.subLocality;
     result.locality = postalAddress.value.city;
     result.subAdministrativeArea = postalAddress.value.subAdministrativeArea;

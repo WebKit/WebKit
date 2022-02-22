@@ -431,8 +431,10 @@ private:
     if (dataTypes.contains(WebsiteDataType::DiskCache)) {
         m_queue->dispatch([mediaCacheDirectory = m_configuration->mediaCacheDirectory().isolatedCopy(), callbackAggregator] {
             WebsiteData websiteData;
-            for (auto& origin : WebCore::HTMLMediaElement::originsInMediaCache(mediaCacheDirectory))
-                websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::DiskCache, 0 });
+            auto origins = WebCore::HTMLMediaElement::originsInMediaCache(mediaCacheDirectory);
+            websiteData.entries = WTF::map(origins, [](auto& origin) {
+                return WebsiteData::Entry { origin, WebsiteDataType::DiskCache, 0 };
+            });
             callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
     }
@@ -469,8 +471,9 @@ private:
     if (dataTypes.contains(WebsiteDataType::DeviceIdHashSalt)) {
         m_deviceIdHashSaltStorage->getDeviceIdHashSaltOrigins([callbackAggregator](auto&& origins) {
             WebsiteData websiteData;
-            while (!origins.isEmpty())
-                websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataType::DeviceIdHashSalt, 0 });
+            websiteData.entries = WTF::map(origins, [](auto& origin) {
+                return WebsiteData::Entry { origin, WebsiteDataType::DeviceIdHashSalt, 0 };
+            });
             callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
     }
@@ -479,10 +482,11 @@ private:
         m_queue->dispatch([fetchOptions, applicationCacheDirectory = m_configuration->applicationCacheDirectory().isolatedCopy(), applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName().isolatedCopy(), callbackAggregator] {
             auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName);
             WebsiteData websiteData;
-            for (auto& origin : storage->originsWithCache()) {
+            auto origins = storage->originsWithCache();
+            websiteData.entries = WTF::map(origins, [&](auto& origin) {
                 uint64_t size = fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes) ? storage->diskUsageForOrigin(origin) : 0;
-                websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::OfflineWebApplicationCache, size });
-            }
+                return WebsiteData::Entry { origin, WebsiteDataType::OfflineWebApplicationCache, size };
+            });
             callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
     }
@@ -490,8 +494,9 @@ private:
     if (dataTypes.contains(WebsiteDataType::WebSQLDatabases) && isPersistent()) {
         m_queue->dispatch([webSQLDatabaseDirectory = m_configuration->webSQLDatabaseDirectory().isolatedCopy(), callbackAggregator]() {
             WebsiteData websiteData;
-            for (auto& origin : WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory)->origins())
-                websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::WebSQLDatabases, 0 });
+            websiteData.entries = WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDatabaseDirectory)->origins().map([](auto& origin) {
+                return WebsiteData::Entry { origin, WebsiteDataType::WebSQLDatabases, 0 };
+            });
             callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
     }
@@ -499,8 +504,9 @@ private:
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         m_queue->dispatch([mediaKeysStorageDirectory = m_configuration->mediaKeysStorageDirectory().isolatedCopy(), callbackAggregator] {
             WebsiteData websiteData;
-            for (auto& origin : mediaKeyOrigins(mediaKeysStorageDirectory))
-                websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataType::MediaKeys, 0 });
+            websiteData.entries = mediaKeyOrigins(mediaKeysStorageDirectory).map([](auto& origin) {
+                return WebsiteData::Entry { origin, WebsiteDataType::MediaKeys, 0 };
+            });
             callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
     }
@@ -712,8 +718,9 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                 for (auto& hostName : dataRecord.HSTSCacheHostNames)
                     HSTSCacheHostNames.append(hostName);
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+                registrableDomains.reserveCapacity(registrableDomains.size() + dataRecord.resourceLoadStatisticsRegistrableDomains.size());
                 for (auto& registrableDomain : dataRecord.resourceLoadStatisticsRegistrableDomains)
-                    registrableDomains.append(registrableDomain);
+                    registrableDomains.uncheckedAppend(registrableDomain);
 #endif
             }
 

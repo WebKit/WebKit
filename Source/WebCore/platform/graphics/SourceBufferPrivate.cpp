@@ -216,10 +216,9 @@ void SourceBufferPrivate::bufferedSamplesForTrackId(const AtomString& trackId, C
     if (!trackBuffer)
         completionHandler({ });
 
-    Vector<String> sampleDescriptions;
-    for (auto& pair : trackBuffer->samples.decodeOrder())
-        sampleDescriptions.append(toString(*pair.second));
-
+    auto sampleDescriptions = WTF::map(trackBuffer->samples.decodeOrder(), [](auto& entry) {
+        return toString(*entry.second);
+    });
     completionHandler(WTFMove(sampleDescriptions));
 }
 

@@ -274,11 +274,11 @@ Vector<EventTarget*> EventPath::computePathUnclosedToTarget(const EventTarget& t
 
 EventPath::EventPath(const Vector<EventTarget*>& targets)
 {
-    for (auto* target : targets) {
+    m_path = targets.map([&](auto* target) {
         ASSERT(target);
         ASSERT(!is<Node>(target));
-        m_path.append(EventContext { EventContext::Type::Normal, nullptr, target, *targets.begin(), 0 });
-    }
+        return EventContext { EventContext::Type::Normal, nullptr, target, *targets.begin(), 0 };
+    });
 }
 
 static Node* moveOutOfAllShadowRoots(Node& startingNode)

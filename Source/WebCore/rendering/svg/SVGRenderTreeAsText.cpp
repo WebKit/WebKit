@@ -197,11 +197,9 @@ static void writeSVGStrokePaintingResource(TextStream& ts, const RenderElement& 
     SVGLengthContext lengthContext(&shape);
     double dashOffset = lengthContext.valueForLength(svgStyle.strokeDashOffset());
     double strokeWidth = lengthContext.valueForLength(style.strokeWidth());
-    const auto& dashes = svgStyle.strokeDashArray();
-
-    DashArray dashArray;
-    for (auto& length : dashes)
-        dashArray.append(length.value(lengthContext));
+    auto dashArray = svgStyle.strokeDashArray().map([&](auto& length) -> DashArrayElement {
+        return length.value(lengthContext);
+    });
 
     writeIfNotDefault(ts, "opacity", svgStyle.strokeOpacity(), 1.0f);
     writeIfNotDefault(ts, "stroke width", strokeWidth, 1.0);

@@ -2731,10 +2731,9 @@ static void paintAttachmentTitleBackground(const RenderAttachment& attachment, G
     if (layout.lines.isEmpty())
         return;
 
-    Vector<FloatRect> backgroundRects;
-
-    for (size_t i = 0; i < layout.lines.size(); ++i)
-        backgroundRects.append(layout.lines[i].backgroundRect);
+    auto backgroundRects = layout.lines.map([](auto& line) {
+        return line.backgroundRect;
+    });
 
     Color backgroundColor;
     if (attachment.frame().selection().isFocusedAndActive()) {

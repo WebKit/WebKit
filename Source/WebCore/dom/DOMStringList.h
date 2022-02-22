@@ -40,9 +40,14 @@ public:
         return adoptRef(*new DOMStringList);
     }
 
+    static Ref<DOMStringList> create(Vector<String>&& strings)
+    {
+        return adoptRef(*new DOMStringList(WTFMove(strings)));
+    }
+
     bool isEmpty() const { return m_strings.isEmpty(); }
     void clear() { m_strings.clear(); }
-    void append(const String& string) { m_strings.append(string); }
+    void append(String&& string) { m_strings.append(WTFMove(string)); }
     void sort();
 
     // Implements the IDL.
@@ -53,7 +58,11 @@ public:
     operator const Vector<String>&() const { return m_strings; }
 
 private:
-    DOMStringList() { }
+    DOMStringList() = default;
+    explicit DOMStringList(Vector<String>&& strings)
+        : m_strings(WTFMove(strings))
+    {
+    }
 
     Vector<String> m_strings;
 };

@@ -126,14 +126,11 @@ Ref<DOMStringList> IDBObjectStore::indexNames() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_transaction.database().originThread()));
 
-    auto indexNames = DOMStringList::create();
+    if (m_deleted)
+        return DOMStringList::create();
 
-    if (!m_deleted) {
-        for (auto& name : m_info.indexNames())
-            indexNames->append(name);
-        indexNames->sort();
-    }
-
+    auto indexNames = DOMStringList::create(m_info.indexNames());
+    indexNames->sort();
     return indexNames;
 }
 

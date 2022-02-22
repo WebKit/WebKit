@@ -58,6 +58,7 @@ public:
     const_iterator end() const { return m_values.end(); }
     iterator begin() { return m_values.begin(); }
     iterator end() { return m_values.end(); }
+    size_t size() const { return m_values.size(); }
 
     void append(Ref<CSSValue>&&);
     void prepend(Ref<CSSValue>&&);

@@ -93,9 +93,10 @@ const Vector<Ref<SpeechSynthesisVoice>>& SpeechSynthesis::getVoices()
         return m_voiceList;
 
     // If the voiceList is empty, that's the cue to get the voices from the platform again.
-    for (auto& voice : m_speechSynthesisClient ? m_speechSynthesisClient->voiceList() : ensurePlatformSpeechSynthesizer().voiceList())
-        m_voiceList.append(SpeechSynthesisVoice::create(*voice));
-
+    auto& voiceList = m_speechSynthesisClient ? m_speechSynthesisClient->voiceList() : ensurePlatformSpeechSynthesizer().voiceList();
+    m_voiceList = voiceList.map([](auto& voice) {
+        return SpeechSynthesisVoice::create(*voice);
+    });
     return m_voiceList;
 }
 

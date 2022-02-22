@@ -1,3 +1,98 @@
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / optimize even more call sites constructing vectors
+        https://bugs.webkit.org/show_bug.cgi?id=236852
+
+        Reviewed by Darin Adler.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::outOfBandTrackSources):
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment):
+        (WebKit::RemoteSourceBufferProxy::updateTrackIds):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::mergeStatisticForTesting):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+        (WebKit::NetworkNotificationManager::getOriginsWithPushAndNotificationPermissions):
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::allStorageAreaIdentifiers const):
+        * NetworkProcess/WebStorage/TransientLocalStorageNamespace.cpp:
+        (WebKit::TransientLocalStorageNamespace::origins const):
+        (WebKit::TransientLocalStorageNamespace::storageAreaIdentifiers const):
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::finishOpening):
+        (WebKit::CacheStorage::Cache::keys const):
+        * NetworkProcess/storage/SQLiteStorageArea.cpp:
+        (WebKit::SQLiteStorageArea::SQLiteStorageArea):
+        * Platform/IPC/ArgumentCoders.h:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI):
+        * UIProcess/API/APINavigation.cpp:
+        (API::Navigation::Navigation):
+        (API::m_clientNavigationActivity):
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (appendFilesAsShareableURLs):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::restoreAppHighlightsAndScrollToIndex):
+        * UIProcess/FrameLoadState.cpp:
+        (WebKit::FrameLoadState::didFinishLoad):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendCreationParametersToNewProcess):
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::parameters const):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::startDiscovery):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::removeAllItems):
+        (WebKit::WebBackForwardList::clear):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::removeProcessFromOriginCacheSet):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant presentationRectForElementUsingClosestIndicatedRect]):
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::showPaymentUI):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::setFilesForInputFileUpload):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::updateTrackIds):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::createEncoder):
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFrameState):
+        * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.cpp:
+        (WebKit::WebDeviceOrientationUpdateProvider::deviceOrientationChanged):
+        (WebKit::WebDeviceOrientationUpdateProvider::deviceMotionChanged):
+        * WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp:
+        (WebKit::WebPasteboardOverrides::overriddenTypes):
+        * WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp:
+        (WebKit::WebSpeechSynthesisClient::voiceList):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findStringMatches):
+        * WebProcess/WebPage/WebFoundTextRangeController.cpp:
+        (WebKit::WebFoundTextRangeController::drawRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::consumeSandboxExtensions):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleSelectionServiceClick):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::fetchWebsiteData):
+
 2022-02-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix GPUP WebGL generator script wrt uninitialised sized span

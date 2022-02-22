@@ -67,11 +67,9 @@ Vector<ContentFilter::Type>& ContentFilter::types()
 
 std::unique_ptr<ContentFilter> ContentFilter::create(ContentFilterClient& client)
 {
-    Container filters;
-    for (auto& type : types()) {
-        auto filter = type.create();
-        filters.append(WTFMove(filter));
-    }
+    auto filters = types().map([](auto& type) {
+        return type.create();
+    });
 
     if (filters.isEmpty())
         return nullptr;

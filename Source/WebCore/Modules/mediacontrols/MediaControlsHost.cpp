@@ -555,11 +555,10 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
     if (optionsJSONObject->getBoolean("includeLanguages"_s).value_or(false)) {
         if (auto* audioTracks = mediaElement.audioTracks(); audioTracks && audioTracks->length() > 1) {
-            Vector<MenuItem> languageMenuItems;
-
             auto& captionPreferences = page->group().ensureCaptionPreferences();
-            for (auto& audioTrack : captionPreferences.sortedTrackListForMenu(audioTracks))
-                languageMenuItems.append(createMenuItem(audioTrack, captionPreferences.displayNameForTrack(audioTrack.get()), audioTrack->enabled()));
+            auto languageMenuItems = captionPreferences.sortedTrackListForMenu(audioTracks).map([&](auto& audioTrack) {
+                return createMenuItem(audioTrack, captionPreferences.displayNameForTrack(audioTrack.get()), audioTrack->enabled());
+            });
 
             if (!languageMenuItems.isEmpty())
                 items.append(createSubmenu(WEB_UI_STRING_KEY("Languages", "Languages (Media Controls Menu)", "Languages media controls context menu title"), "globe"_s, WTFMove(languageMenuItems)));
@@ -568,15 +567,13 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
     if (optionsJSONObject->getBoolean("includeSubtitles"_s).value_or(false)) {
         if (auto* textTracks = mediaElement.textTracks(); textTracks && textTracks->length()) {
-            Vector<MenuItem> subtitleMenuItems;
-
             auto& captionPreferences = page->group().ensureCaptionPreferences();
             auto sortedTextTracks = captionPreferences.sortedTrackListForMenu(textTracks, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
             bool allTracksDisabled = notFound == sortedTextTracks.findIf([] (const auto& textTrack) {
                 return textTrack->mode() == TextTrack::Mode::Showing;
             });
             bool usesAutomaticTrack = captionPreferences.captionDisplayMode() == CaptionUserPreferences::Automatic && allTracksDisabled;
-            for (auto& textTrack : sortedTextTracks) {
+            auto subtitleMenuItems = sortedTextTracks.map([&](auto& textTrack) {
                 bool checked = false;
                 if (allTracksDisabled && textTrack == &TextTrack::captionMenuOffItem() && (captionPreferences.captionDisplayMode() == CaptionUserPreferences::ForcedOnly || captionPreferences.captionDisplayMode() == CaptionUserPreferences::Manual))
                     checked = true;
@@ -584,8 +581,8 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
                     checked = true;
                 else if (!usesAutomaticTrack && textTrack->mode() == TextTrack::Mode::Showing)
                     checked = true;
-                subtitleMenuItems.append(createMenuItem(textTrack, captionPreferences.displayNameForTrack(textTrack.get()), checked));
-            }
+                return createMenuItem(textTrack, captionPreferences.displayNameForTrack(textTrack.get()), checked);
+            });
 
             if (!subtitleMenuItems.isEmpty())
                 items.append(createSubmenu(WEB_UI_STRING_KEY("Subtitles", "Subtitles (Media Controls Menu)", "Subtitles media controls context menu title"), "captions.bubble"_s, WTFMove(subtitleMenuItems)));

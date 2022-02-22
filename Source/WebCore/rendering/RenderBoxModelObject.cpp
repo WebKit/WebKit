@@ -2086,10 +2086,8 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext,
                 gapLength += (dashLength  / numberOfGaps);
             }
 
-            DashArray lineDash;
-            lineDash.append(dashLength);
-            lineDash.append(gapLength);
-            graphicsContext.setLineDash(lineDash, dashLength);
+            auto lineDash = DashArray::from(dashLength, gapLength);
+            graphicsContext.setLineDash(WTFMove(lineDash), dashLength);
         }
         
         // FIXME: stroking the border path causes issues with tight corners:

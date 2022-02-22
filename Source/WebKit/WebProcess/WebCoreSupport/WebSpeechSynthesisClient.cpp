@@ -42,9 +42,9 @@ const Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>>& WebSpeechSynthesisC
     Vector<WebSpeechSynthesisVoice> voiceList;
     m_page.sendSync(Messages::WebPageProxy::SpeechSynthesisVoiceList(), voiceList);
 
-    m_voices.clear();
-    for (auto& voice : voiceList)
-        m_voices.append(WebCore::PlatformSpeechSynthesisVoice::create(voice.voiceURI, voice.name, voice.lang, voice.localService, voice.defaultLang));
+    m_voices = voiceList.map([](auto& voice) -> RefPtr<WebCore::PlatformSpeechSynthesisVoice> {
+        return WebCore::PlatformSpeechSynthesisVoice::create(voice.voiceURI, voice.name, voice.lang, voice.localService, voice.defaultLang);
+    });
     return m_voices;
 }
 

@@ -27,6 +27,7 @@
 
 #include "IDBKey.h"
 #include <variant>
+#include <wtf/Hasher.h>
 #include <wtf/StdSet.h>
 #include <wtf/text/StringHash.h>
 
@@ -117,41 +118,6 @@ public:
         return !(*this == other);
     }
 
-    unsigned hash() const
-    {
-        Vector<unsigned> hashCodes;
-        hashCodes.append(static_cast<unsigned>(m_type));
-        hashCodes.append(m_isNull ? 1 : 0);
-        hashCodes.append(m_isDeletedValue ? 1 : 0);
-        switch (m_type) {
-        case IndexedDB::KeyType::Invalid:
-        case IndexedDB::KeyType::Max:
-        case IndexedDB::KeyType::Min:
-            break;
-        case IndexedDB::KeyType::Number:
-        case IndexedDB::KeyType::Date:
-            hashCodes.append(StringHasher::hashMemory<sizeof(double)>(&std::get<double>(m_value)));
-            break;
-        case IndexedDB::KeyType::String:
-            hashCodes.append(StringHash::hash(std::get<String>(m_value)));
-            break;
-        case IndexedDB::KeyType::Binary: {
-            auto* data = std::get<ThreadSafeDataBuffer>(m_value).data();
-            if (!data)
-                hashCodes.append(0);
-            else
-                hashCodes.append(StringHasher::hashMemory(data->data(), data->size()));
-            break;
-        }
-        case IndexedDB::KeyType::Array:
-            for (auto& key : std::get<Vector<IDBKeyData>>(m_value))
-                hashCodes.append(key.hash());
-            break;
-        }
-
-        return StringHasher::hashMemory(hashCodes.data(), hashCodes.size() * sizeof(unsigned));
-    }
-
     String string() const
     {
         ASSERT(m_type == IndexedDB::KeyType::String);
@@ -196,8 +162,35 @@ private:
     std::variant<Vector<IDBKeyData>, String, double, ThreadSafeDataBuffer> m_value;
 };
 
+inline void add(Hasher& hasher, const IDBKeyData& keyData)
+{
+    add(hasher, keyData.type());
+    add(hasher, keyData.isNull());
+    switch (keyData.type()) {
+    case IndexedDB::KeyType::Invalid:
+    case IndexedDB::KeyType::Max:
+    case IndexedDB::KeyType::Min:
+        break;
+    case IndexedDB::KeyType::Number:
+        add(hasher, keyData.number());
+        break;
+    case IndexedDB::KeyType::Date:
+        add(hasher, keyData.date());
+        break;
+    case IndexedDB::KeyType::String:
+        add(hasher, keyData.string());
+        break;
+    case IndexedDB::KeyType::Binary:
+        add(hasher, keyData.binary());
+        break;
+    case IndexedDB::KeyType::Array:
+        add(hasher, keyData.array());
+        break;
+    }
+}
+
 struct IDBKeyDataHash {
-    static unsigned hash(const IDBKeyData& a) { return a.hash(); }
+    static unsigned hash(const IDBKeyData& a) { return computeHash(a); }
     static bool equal(const IDBKeyData& a, const IDBKeyData& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = false;
 };

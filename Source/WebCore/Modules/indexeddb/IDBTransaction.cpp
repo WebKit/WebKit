@@ -121,12 +121,8 @@ Ref<DOMStringList> IDBTransaction::objectStoreNames() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
-    const Vector<String> names = isVersionChange() ? m_database->info().objectStoreNames() : m_info.objectStores();
-
-    Ref<DOMStringList> objectStoreNames = DOMStringList::create();
-    for (auto& name : names)
-        objectStoreNames->append(name);
-
+    auto names = isVersionChange() ? m_database->info().objectStoreNames() : m_info.objectStores();
+    auto objectStoreNames = DOMStringList::create(WTFMove(names));
     objectStoreNames->sort();
     return objectStoreNames;
 }

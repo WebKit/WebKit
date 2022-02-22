@@ -1,3 +1,15 @@
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / optimize even more call sites constructing vectors
+        https://bugs.webkit.org/show_bug.cgi?id=236852
+
+        Reviewed by Darin Adler.
+
+        * wtf/WorkQueue.cpp:
+        (WTF::ConcurrentWorkQueue::apply):
+        * wtf/cf/LanguageCF.cpp:
+        (WTF::platformUserPreferredLanguages):
+
 2022-02-22  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Initial MediaRecorder implementation

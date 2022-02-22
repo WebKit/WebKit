@@ -1494,7 +1494,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateKeyStatuses(std::optional
         }
     }
 
-    m_keyStatuses.swap(keyStatuses);
+    m_keyStatuses = WTFMove(keyStatuses);
 
     m_instance->sessionKeyStatusesChanged(*this);
 }

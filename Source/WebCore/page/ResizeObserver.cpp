@@ -125,11 +125,10 @@ size_t ResizeObserver::gatherObservations(size_t deeperThan)
 
 void ResizeObserver::deliverObservations()
 {
-    Vector<Ref<ResizeObserverEntry>> entries;
-    for (const auto& observation : m_activeObservations) {
+    auto entries = m_activeObservations.map([](auto& observation) {
         ASSERT(observation->target());
-        entries.append(ResizeObserverEntry::create(observation->target(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize()));
-    }
+        return ResizeObserverEntry::create(observation->target(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize());
+    });
     m_activeObservations.clear();
     auto activeObservationTargets = std::exchange(m_activeObservationTargets, { });
 

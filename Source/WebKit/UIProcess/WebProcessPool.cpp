@@ -849,10 +849,9 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
             parameters.injectedBundlePathExtensionHandle = WTFMove(*handle);
     }
 
-    for (auto& path : m_resolvedPaths.additionalWebProcessSandboxExtensionPaths) {
-        if (auto handle =  SandboxExtension::createHandleWithoutResolvingPath(path, SandboxExtension::Type::ReadOnly))
-            parameters.additionalSandboxExtensionHandles.append(WTFMove(*handle));
-    }
+    parameters.additionalSandboxExtensionHandles = WTF::compactMap(m_resolvedPaths.additionalWebProcessSandboxExtensionPaths, [](auto& path) {
+        return SandboxExtension::createHandleWithoutResolvingPath(path, SandboxExtension::Type::ReadOnly);
+    });
 
 #if PLATFORM(IOS_FAMILY)
     setJavaScriptConfigurationFileEnabledFromDefaults();
@@ -1870,14 +1869,9 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
     LOG(ProcessSwapping, "(ProcessSwapping) Removing process with pid %i from the origin cache set", process.processIdentifier());
 
     // FIXME: This can be very inefficient as the number of remembered origins and processes grows
-    Vector<WebCore::RegistrableDomain> registrableDomainsToRemove;
-    for (auto entry : m_swappedProcessesPerRegistrableDomain) {
-        if (entry.value == &process)
-            registrableDomainsToRemove.append(entry.key);
-    }
-
-    for (auto& registrableDomain : registrableDomainsToRemove)
-        m_swappedProcessesPerRegistrableDomain.remove(registrableDomain);
+    m_swappedProcessesPerRegistrableDomain.removeIf([&](auto& entry) {
+        return entry.value == &process;
+    });
 }
 
 void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::CaptivePortalMode captivePortalMode, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&& completionHandler)

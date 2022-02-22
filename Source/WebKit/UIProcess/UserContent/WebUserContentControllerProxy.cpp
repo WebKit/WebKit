@@ -117,11 +117,11 @@ UserContentControllerParameters WebUserContentControllerProxy::parameters() cons
     parameters.identifier = identifier();
     
     ASSERT(parameters.userContentWorlds.isEmpty());
-    for (const auto& identifier : m_associatedContentWorlds) {
+    parameters.userContentWorlds = WTF::map(m_associatedContentWorlds, [](auto& identifier) {
         auto* world = API::ContentWorld::worldForIdentifier(identifier);
         RELEASE_ASSERT(world);
-        parameters.userContentWorlds.append(world->worldData());
-    }
+        return world->worldData();
+    });
 
     for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
         parameters.userScripts.append({ userScript->identifier(), userScript->contentWorld().identifier(), userScript->userScript() });
@@ -129,8 +129,9 @@ UserContentControllerParameters WebUserContentControllerProxy::parameters() cons
     for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
         parameters.userStyleSheets.append({ userStyleSheet->identifier(), userStyleSheet->contentWorld().identifier(), userStyleSheet->userStyleSheet() });
 
-    for (auto& handler : m_scriptMessageHandlers.values())
-        parameters.messageHandlers.append({ handler->identifier(), handler->world().identifier(), handler->name() });
+    parameters.messageHandlers = WTF::map(m_scriptMessageHandlers, [](auto entry) {
+        return WebScriptMessageHandlerData { entry.value->identifier(), entry.value->world().identifier(), entry.value->name() };
+    });
 
 #if ENABLE(CONTENT_EXTENSIONS)
     parameters.contentRuleLists = contentRuleListData();

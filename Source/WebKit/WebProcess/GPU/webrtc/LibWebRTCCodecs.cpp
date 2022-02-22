@@ -392,9 +392,9 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(Type type, const std::m
     encoder->identifier = RTCEncoderIdentifier::generateThreadSafe();
     encoder->codecType = toWebRTCCodecType(type);
 
-    Vector<std::pair<String, String>> parameters;
-    for (auto& keyValue : formatParameters)
-        parameters.append(std::make_pair(String::fromUTF8(keyValue.first.data(), keyValue.first.length()), String::fromUTF8(keyValue.second.data(), keyValue.second.length())));
+    auto parameters = WTF::map(formatParameters, [](auto& entry) {
+        return std::pair { String::fromUTF8(entry.first.data(), entry.first.length()), String::fromUTF8(entry.second.data(), entry.second.length()) };
+    });
 
     ensureGPUProcessConnectionAndDispatchToThread([this, encoder = WTFMove(encoder), type, parameters = WTFMove(parameters)]() mutable {
         {
