@@ -2555,12 +2555,23 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
     if (!element.document().childNeedsStyleRecalc())
         return true;
 
+    auto isQueryContainer = [&](Element& element) {
+        auto* style = element.renderStyle();
+        return style && style->containerType() != ContainerType::None;
+    };
+
     bool isInherited = CSSProperty::isInheritedProperty(propertyID) || isImplicitlyInheritedGridOrFlexProperty(propertyID);
     bool maybeExplicitlyInherited = !isInherited;
+
+    if (isQueryContainer(element))
+        return false;
 
     const auto* currentElement = &element;
     for (auto& ancestor : composedTreeAncestors(element)) {
         if (ancestor.styleValidity() >= Style::Validity::SubtreeInvalid)
+            return false;
+
+        if (isQueryContainer(ancestor))
             return false;
 
         if (maybeExplicitlyInherited) {

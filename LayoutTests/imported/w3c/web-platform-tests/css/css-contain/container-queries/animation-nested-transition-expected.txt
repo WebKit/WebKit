@@ -1,4 +1,4 @@
 Test
 
-FAIL Animated container size triggers transition assert_equals: expected "rgb(150, 150, 150)" but got "rgb(100, 100, 100)"
+PASS Animated container size triggers transition
 

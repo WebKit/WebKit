@@ -1,4 +1,4 @@
 Test
 
-FAIL Animation affects container query evaluation assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 255)"
+PASS Animation affects container query evaluation
 
