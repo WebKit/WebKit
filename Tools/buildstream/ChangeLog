@@ -1,3 +1,13 @@
+2022-02-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update FDO junction for GDB 11.x
+        https://bugs.webkit.org/show_bug.cgi?id=236979
+
+        Reviewed by Adrian Perez de Castro.
+
+        * elements/freedesktop-sdk.bst: gdb 10 is crashy in the current SDK, but was fixed in the
+        upstream FDO SDK, by updating to the 11.x version.
+
 2022-02-21  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update pango and gtk4
