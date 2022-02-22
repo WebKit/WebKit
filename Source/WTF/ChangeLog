@@ -1,3 +1,14 @@
+2022-02-22  Asumu Takikawa  <asumu@igalia.com>
+
+        Initial support for Wasm/ESM-integration in the WebCore module loader
+        https://bugs.webkit.org/show_bug.cgi?id=236268
+
+        Reviewed by Yusuke Suzuki.
+
+        Add preference flag for Wasm/ESM Integration.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-02-21  Robin Morisset  <rmorisset@apple.com>
 
         [JSC] Format the output of --reportTotalPhaseTimes=1 more nicely

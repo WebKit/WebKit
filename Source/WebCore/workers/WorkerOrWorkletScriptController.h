@@ -36,6 +36,7 @@
 #include <wtf/NakedPtr.h>
 
 namespace JSC {
+class AbstractModuleRecord;
 class Exception;
 class JSGlobalObject;
 class JSModuleRecord;
@@ -96,7 +97,7 @@ public:
     void evaluate(const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
     void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage = nullptr);
 
-    JSC::JSValue evaluateModule(JSC::JSModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
+    JSC::JSValue evaluateModule(JSC::AbstractModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
 
     void linkAndEvaluateModule(WorkerScriptFetcher&, const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
     bool loadModuleSynchronously(WorkerScriptFetcher&, const ScriptSourceCode&);

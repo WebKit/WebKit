@@ -41,6 +41,7 @@
 #include "ScriptSourceCode.h"
 #include "ShadowRealmGlobalScope.h"
 #include "SubresourceIntegrity.h"
+#include "WebAssemblyScriptSourceCode.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerModuleScriptLoader.h"
 #include "WorkerOrWorkletGlobalScope.h"
@@ -48,13 +49,14 @@
 #include "WorkerScriptFetcher.h"
 #include "WorkerScriptLoader.h"
 #include "WorkletGlobalScope.h"
+#include <JavaScriptCore/AbstractModuleRecord.h>
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/JSInternalPromise.h>
-#include <JavaScriptCore/JSModuleRecord.h>
 #include <JavaScriptCore/JSScriptFetchParameters.h>
 #include <JavaScriptCore/JSScriptFetcher.h>
 #include <JavaScriptCore/JSSourceCode.h>
 #include <JavaScriptCore/JSString.h>
+#include <JavaScriptCore/SourceProvider.h>
 #include <JavaScriptCore/Symbol.h>
 
 #if ENABLE(SERVICE_WORKER)
@@ -253,10 +255,10 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
     JSC::VM& vm = jsGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // FIXME: Currently, we only support JSModuleRecord.
+    // FIXME: Currently, we only support JSModuleRecord and WebAssemblyModuleRecord.
     // Once the reflective part of the module loader is supported, we will handle arbitrary values.
     // https://whatwg.github.io/loader/#registry-prototype-provide
-    auto* moduleRecord = JSC::jsDynamicCast<JSC::JSModuleRecord*>(vm, moduleRecordValue);
+    auto* moduleRecord = JSC::jsDynamicCast<JSC::AbstractModuleRecord*>(vm, moduleRecordValue);
     if (!moduleRecord)
         return JSC::jsUndefined();
 
@@ -414,7 +416,14 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             return;
         }
 
-        if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(cachedScript.response().mimeType())) {
+        ModuleType type = ModuleType::Invalid;
+        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(cachedScript.response().mimeType()))
+            type = ModuleType::JavaScript;
+#if ENABLE(WEBASSEMBLY)
+        else if (context().settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(cachedScript.response().mimeType()))
+            type = ModuleType::WebAssembly;
+#endif
+        else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
             // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
@@ -433,8 +442,20 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         URL responseURL = canonicalizeAndRegisterResponseURL(cachedScript.response().url(), cachedScript.hasRedirections(), cachedScript.response().source());
         m_requestURLToResponseURLMap.add(sourceURL.string(), WTFMove(responseURL));
         promise->resolveWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
-            return JSC::JSSourceCode::create(jsGlobalObject.vm(),
-                JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
+            switch (type) {
+            case ModuleType::JavaScript:
+                return JSC::JSSourceCode::create(jsGlobalObject.vm(),
+                    JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
+                break;
+#if ENABLE(WEBASSEMBLY)
+            case ModuleType::WebAssembly:
+                return JSC::JSSourceCode::create(jsGlobalObject.vm(),
+                    JSC::SourceCode { WebAssemblyScriptSourceCode { &cachedScript, loader.scriptFetcher() }.jsSourceCode() });
+                break;
+#endif
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
         });
     } else {
         auto& loader = static_cast<WorkerModuleScriptLoader&>(moduleScriptLoader);
@@ -457,7 +478,18 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             return;
         }
 
-        if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(loader.responseMIMEType())) {
+        ModuleType type = ModuleType::Invalid;
+        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(loader.responseMIMEType()))
+            type = ModuleType::JavaScript;
+#if ENABLE(WEBASSEMBLY)
+        else if (context().settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(loader.responseMIMEType())) {
+            type = ModuleType::WebAssembly;
+            // FIXME: add worker support for Wasm/ESM integration.
+            rejectWithFetchError(promise.get(), TypeError, makeString("WebAssembly modules are not supported in workers yet."));
+            return;
+        }
+#endif
+        else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
             // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
@@ -481,8 +513,15 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         }
         m_requestURLToResponseURLMap.add(sourceURL.string(), responseURL);
         promise->resolveWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
-            return JSC::JSSourceCode::create(jsGlobalObject.vm(),
-                JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), { }, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
+            switch (type) {
+            case ModuleType::JavaScript:
+                return JSC::JSSourceCode::create(jsGlobalObject.vm(),
+                    JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), { }, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
+                break;
+            case ModuleType::WebAssembly:
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
         });
     }
 }

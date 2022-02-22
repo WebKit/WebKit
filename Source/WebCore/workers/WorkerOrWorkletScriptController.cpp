@@ -47,6 +47,7 @@
 #include "WorkerOrWorkletThread.h"
 #include "WorkerRunLoop.h"
 #include "WorkerScriptFetcher.h"
+#include <JavaScriptCore/AbstractModuleRecord.h>
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/DeferTermination.h>
 #include <JavaScriptCore/DeferredWorkTimer.h>
@@ -55,7 +56,6 @@
 #include <JavaScriptCore/GCActivityCallback.h>
 #include <JavaScriptCore/JSInternalPromise.h>
 #include <JavaScriptCore/JSLock.h>
-#include <JavaScriptCore/JSModuleRecord.h>
 #include <JavaScriptCore/JSNativeStdFunction.h>
 #include <JavaScriptCore/JSScriptFetchParameters.h>
 #include <JavaScriptCore/JSScriptFetcher.h>
@@ -262,7 +262,7 @@ static Identifier jsValueToModuleKey(JSGlobalObject* lexicalGlobalObject, JSValu
     return asString(value)->toIdentifier(lexicalGlobalObject);
 }
 
-JSC::JSValue WorkerOrWorkletScriptController::evaluateModule(JSC::JSModuleRecord& moduleRecord, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
+JSC::JSValue WorkerOrWorkletScriptController::evaluateModule(JSC::AbstractModuleRecord& moduleRecord, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
 {
     auto& globalObject = *m_globalScopeWrapper.get();
     VM& vm = globalObject.vm();

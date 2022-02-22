@@ -494,6 +494,11 @@ bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)
     return supportedJavaScriptMIMETypes.contains(mimeType);
 }
 
+bool MIMETypeRegistry::isSupportedWebAssemblyMIMEType(const String& mimeType)
+{
+    return equalLettersIgnoringASCIICase(mimeType, "application/wasm");
+}
+
 bool MIMETypeRegistry::isSupportedStyleSheetMIMEType(const String& mimeType)
 {
     return equalLettersIgnoringASCIICase(mimeType, "text/css");

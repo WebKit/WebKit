@@ -561,7 +561,7 @@ bool FetchResponse::isCORSSameOrigin() const
 
 bool FetchResponse::hasWasmMIMEType() const
 {
-    return equalLettersIgnoringASCIICase(m_headers->fastGet(HTTPHeaderName::ContentType), "application/wasm");
+    return MIMETypeRegistry::isSupportedWebAssemblyMIMEType(m_headers->fastGet(HTTPHeaderName::ContentType));
 }
 
 } // namespace WebCore

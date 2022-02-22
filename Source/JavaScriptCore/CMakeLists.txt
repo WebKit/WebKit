@@ -1218,11 +1218,13 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     tools/VMInspector.h
     tools/VMInspectorInlines.h
 
+    wasm/WasmBranchHints.h
     wasm/WasmCallee.h
     wasm/WasmCalleeGroup.h
     wasm/WasmCapabilities.h
     wasm/WasmCompilationMode.h
     wasm/WasmContext.h
+    wasm/WasmCreationMode.h
     wasm/WasmEmbedder.h
     wasm/WasmExceptionType.h
     wasm/WasmFaultSignalHandler.h
@@ -1235,6 +1237,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmMemoryInformation.h
     wasm/WasmMemoryMode.h
     wasm/WasmModule.h
+    wasm/WasmModuleInformation.h
     wasm/WasmName.h
     wasm/WasmNameSection.h
     wasm/WasmOSREntryData.h
@@ -1249,6 +1252,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/js/JSWebAssembly.h
     wasm/js/JSWebAssemblyMemory.h
     wasm/js/JSWebAssemblyModule.h
+    wasm/js/WebAssemblyModuleRecord.h
 
 
     yarr/RegularExpression.h

@@ -1,3 +1,36 @@
+2022-02-22  Asumu Takikawa  <asumu@igalia.com>
+
+        Initial support for Wasm/ESM-integration in the WebCore module loader
+        https://bugs.webkit.org/show_bug.cgi?id=236268
+
+        Reviewed by Yusuke Suzuki.
+
+        Add initial WebAssembly script support for WebCore module loading. It
+        does not yet support Wasm scripts in workers. Detection of Wasm
+        modules is currently done by MIME type, not by import assertions.
+
+        * Headers.cmake:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::hasWasmMIMEType const):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateModule):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::evaluate):
+        (WebCore::ScriptModuleLoader::notifyFinished):
+        * bindings/js/ScriptModuleLoader.h:
+        * bindings/js/WebAssemblyCachedScriptSourceProvider.h: Added.
+        * bindings/js/WebAssemblyScriptSourceCode.h: Copied from Source/JavaScriptCore/parser/SourceProvider.cpp.
+        (WebCore::WebAssemblyScriptSourceCode::WebAssemblyScriptSourceCode):
+        (WebCore::WebAssemblyScriptSourceCode::jsSourceCode const):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::isSupportedWebAssemblyMIMEType):
+        * platform/MIMETypeRegistry.h:
+        * workers/WorkerOrWorkletScriptController.cpp:
+        (WebCore::WorkerOrWorkletScriptController::evaluateModule):
+        * workers/WorkerOrWorkletScriptController.h:
+
 2022-02-22  Pablo Saavedra  <psaavedra@igalia.com>
 
         Properly uninitialize EGL display before termination

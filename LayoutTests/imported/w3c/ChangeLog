@@ -1,1 +1,78 @@
+2022-02-22  Asumu Takikawa  <asumu@igalia.com>
+
+        Initial support for Wasm/ESM-integration in the WebCore module loader
+        https://bugs.webkit.org/show_bug.cgi?id=236268
+
+        Reviewed by Yusuke Suzuki.
+
+        Add test suite for Wasm/ESM integration proposal to WPT Wasm WebAPI
+        tests.
+
+        * web-platform-tests/wasm/webapi/esm-integration/execute-start.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/execute-start.tentative.html: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/exported-names.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/exported-names.tentative.html: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/invalid-bytecode.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/invalid-bytecode.tentative.html: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/js-wasm-cycle-errors.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/js-wasm-cycle-errors.tentative.html: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/js-wasm-cycle.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/js-wasm-cycle.tentative.html: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/module-parse-error.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/module-parse-error.tentative.html: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resolve-export.js: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resolve-export.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resolve-export.tentative.html: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/execute-start.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/exported-names.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/invalid-bytecode.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/invalid-module.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-function-error.js: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-function-error.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-global.js: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-global.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-memory.js: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-memory.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-table.js: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-table.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-value.js: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle-value.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle.js: Added.
+        (f):
+        * web-platform-tests/wasm/webapi/esm-integration/resources/js-wasm-cycle.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/log.js: Added.
+        (export.logExec):
+        * web-platform-tests/wasm/webapi/esm-integration/resources/resolve-export.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-export-i64-global.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-export-to-wasm.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-error-from-wasm.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-from-wasm.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-func.js: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-func.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-global.js: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-global.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-memory.js: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-memory.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-table.js: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-import-table.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-js-cycle.js: Added.
+        (let.jsFunc):
+        (export.mutateBindings):
+        * web-platform-tests/wasm/webapi/esm-integration/resources/wasm-js-cycle.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/worker-helper.js: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/worker.js: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/resources/worker.wasm: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/wasm-import-wasm-export.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/wasm-import-wasm-export.tentative.html: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/wasm-import.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/wasm-import.tentative.html: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/wasm-js-cycle.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/wasm-js-cycle.tentative.html: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/wasm-to-wasm-link-error.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/wasm-to-wasm-link-error.tentative.html: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/worker-import.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/worker-import.tentative.html: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/worker.tentative-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/esm-integration/worker.tentative.html: Added.
+
 == Rolled over to ChangeLog-2022-02-22 ==

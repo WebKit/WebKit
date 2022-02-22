@@ -1,3 +1,31 @@
+2022-02-22  Asumu Takikawa  <asumu@igalia.com>
+
+        Initial support for Wasm/ESM-integration in the WebCore module loader
+        https://bugs.webkit.org/show_bug.cgi?id=236268
+
+        Reviewed by Yusuke Suzuki.
+
+        Adjust WebAssemblySourceProvider to inherit from a new abstract base
+        class that exposes the data as a pointer and size, to allow
+        implementations other than a Vector. Also add initialization
+        and cleanup methods managed by RAII class.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * parser/SourceProvider.cpp:
+        (JSC::BaseWebAssemblySourceProvider::BaseWebAssemblySourceProvider):
+        * parser/SourceProvider.h:
+        (JSC::BaseWebAssemblySourceProvider::lockUnderlyingBuffer):
+        (JSC::BaseWebAssemblySourceProvider::unlockUnderlyingBuffer):
+        (JSC::WebAssemblySourceProviderBufferGuard::WebAssemblySourceProviderBufferGuard):
+        (JSC::WebAssemblySourceProviderBufferGuard::~WebAssemblySourceProviderBufferGuard):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedWebAssemblySourceProvider::encode):
+        * tools/JSDollarVM.cpp:
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::getWasmBufferFromValue):
+        (JSC::createSourceBufferFromValue):
+
 2022-02-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] ShadowRealm JSRemoteFunction creation should convert CopyNameAndLength errors to TypeError

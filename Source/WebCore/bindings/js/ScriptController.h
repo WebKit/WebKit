@@ -40,10 +40,10 @@ OBJC_CLASS WebScriptObject;
 #endif
 
 namespace JSC {
+class AbstractModuleRecord;
 class CallFrame;
 class JSGlobalObject;
 class JSInternalPromise;
-class JSModuleRecord;
 
 namespace Bindings {
 class Instance;
@@ -119,8 +119,8 @@ public:
     JSC::JSValue linkAndEvaluateModuleScriptInWorld(LoadableModuleScript& , DOMWrapperWorld&);
     JSC::JSValue linkAndEvaluateModuleScript(LoadableModuleScript&);
 
-    JSC::JSValue evaluateModule(const URL&, JSC::JSModuleRecord&, DOMWrapperWorld&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
-    JSC::JSValue evaluateModule(const URL&, JSC::JSModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
+    JSC::JSValue evaluateModule(const URL&, JSC::AbstractModuleRecord&, DOMWrapperWorld&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
+    JSC::JSValue evaluateModule(const URL&, JSC::AbstractModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
 
     TextPosition eventHandlerPosition() const;
 

@@ -59,6 +59,7 @@
 #include "WebCoreJITOperations.h"
 #include "WebCoreJSClientData.h"
 #include "runtime_root.h"
+#include <JavaScriptCore/AbstractModuleRecord.h>
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/InitializeThreading.h>
@@ -72,6 +73,7 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
+#include <JavaScriptCore/WebAssemblyModuleRecord.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>
 #include <wtf/Threading.h>
@@ -230,11 +232,10 @@ JSC::JSValue ScriptController::linkAndEvaluateModuleScript(LoadableModuleScript&
     return linkAndEvaluateModuleScriptInWorld(moduleScript, mainThreadNormalWorld());
 }
 
-JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleRecord& moduleRecord, DOMWrapperWorld& world, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
+JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, AbstractModuleRecord& moduleRecord, DOMWrapperWorld& world, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
 {
-    JSLockHolder lock(world.vm());
-
-    const auto& jsSourceCode = moduleRecord.sourceCode();
+    JSC::VM& vm = world.vm();
+    JSLockHolder lock(vm);
 
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
@@ -242,14 +243,26 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleReco
     Ref<Frame> protector(m_frame);
     SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
-    InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
+#if ENABLE(WEBASSEMBLY)
+    const bool isWasmModule = moduleRecord.inherits<WebAssemblyModuleRecord>(vm);
+#else
+    constexpr bool isWasmModule = false;
+#endif
+    if (isWasmModule) {
+        // FIXME: Provide better inspector support for Wasm scripts.
+        InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), 1, 1);
+    } else {
+        auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(vm, &moduleRecord);
+        const auto& jsSourceCode = jsModuleRecord->sourceCode();
+        InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
+    }
     auto returnValue = moduleRecord.evaluate(&lexicalGlobalObject, awaitedValue, resumeMode);
     InspectorInstrumentation::didEvaluateScript(m_frame);
 
     return returnValue;
 }
 
-JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleRecord& moduleRecord, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
+JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, AbstractModuleRecord& moduleRecord, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
 {
     return evaluateModule(sourceURL, moduleRecord, mainThreadNormalWorld(), awaitedValue, resumeMode);
 }

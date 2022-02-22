@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: TypeError: 'application/wasm' is not a valid JavaScript MIME type.
+Test that Wasm ESM integration is disabled when flag is off.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS error.type === 'error' is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

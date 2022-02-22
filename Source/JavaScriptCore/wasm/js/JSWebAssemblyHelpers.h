@@ -60,14 +60,14 @@ ALWAYS_INLINE uint32_t toNonWrappingUint32(JSGlobalObject* globalObject, JSValue
     return { };
 }
 
-ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(JSGlobalObject* globalObject, JSValue value)
+ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(JSGlobalObject* globalObject, JSValue value, const WebAssemblySourceProviderBufferGuard&)
 {
     VM& vm = getVM(globalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (auto* source = jsDynamicCast<JSSourceCode*>(vm, value)) {
-        auto* provider = static_cast<WebAssemblySourceProvider*>(source->sourceCode().provider());
-        return { provider->data().data(), provider->data().size() };
+        auto* provider = static_cast<BaseWebAssemblySourceProvider*>(source->sourceCode().provider());
+        return { provider->data(), provider->size() };
     }
 
     // If the given bytes argument is not a BufferSource, a TypeError exception is thrown.
@@ -93,7 +93,13 @@ ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(JSGlobalO
 ALWAYS_INLINE Vector<uint8_t> createSourceBufferFromValue(VM& vm, JSGlobalObject* globalObject, JSValue value)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto [data, byteSize] = getWasmBufferFromValue(globalObject, value);
+
+    BaseWebAssemblySourceProvider* provider = nullptr;
+    if (auto* source = jsDynamicCast<JSSourceCode*>(vm, value))
+        provider = static_cast<BaseWebAssemblySourceProvider*>(source->sourceCode().provider());
+    WebAssemblySourceProviderBufferGuard bufferGuard(provider);
+
+    auto [data, byteSize] = getWasmBufferFromValue(globalObject, value, bufferGuard);
     RETURN_IF_EXCEPTION(throwScope, Vector<uint8_t>());
 
     Vector<uint8_t> result;
@@ -104,6 +110,7 @@ ALWAYS_INLINE Vector<uint8_t> createSourceBufferFromValue(VM& vm, JSGlobalObject
 
     result.grow(byteSize);
     memcpy(result.data(), data, byteSize);
+
     return result;
 }
 

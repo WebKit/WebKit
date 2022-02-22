@@ -1579,6 +1579,19 @@ WebAnimationsMutableTimelinesEnabled:
     WebCore:
       default: false
 
+WebAssemblyESMIntegrationEnabled:
+  type: bool
+  humanReadableName: "WebAssembly ES module integration support"
+  humanReadableDescription: "Support for allowing WebAssembly modules to integrate as ES modules"
+  condition: ENABLE(WEBASSEMBLY)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebAuthenticationEnabled:
   type: bool

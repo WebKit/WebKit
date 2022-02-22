@@ -480,6 +480,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/ScriptWrappableInlines.h
     bindings/js/SerializedScriptValue.h
     bindings/js/StringAdaptors.h
+    bindings/js/WebAssemblyCachedScriptSourceProvider.h
+    bindings/js/WebAssemblyScriptSourceCode.h
     bindings/js/WebCoreJITOperations.h
     bindings/js/WebCoreTypedArrayController.h
     bindings/js/WindowProxy.h

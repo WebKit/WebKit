@@ -1,0 +1,3 @@
+
+PASS Exported names from a WebAssembly module
+

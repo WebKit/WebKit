@@ -857,7 +857,7 @@
 		33B2A54722653481005A0F79 /* B3ValueInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84FB1BDACDAC0080FF74 /* B3ValueInlines.h */; };
 		33B2A548226543BF005A0F79 /* FTLLowerDFGToB3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A04170513DB00BB722C /* FTLLowerDFGToB3.cpp */; };
 		37AAC093279F1BFC00D64842 /* WasmBranchHintsSectionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 37AAC092279F124200D64842 /* WasmBranchHintsSectionParser.h */; };
-		37AAC094279F1C0500D64842 /* WasmBranchHints.h in Headers */ = {isa = PBXBuildFile; fileRef = 37AAC091279F124200D64842 /* WasmBranchHints.h */; };
+		37AAC094279F1C0500D64842 /* WasmBranchHints.h in Headers */ = {isa = PBXBuildFile; fileRef = 37AAC091279F124200D64842 /* WasmBranchHints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37C738D21EDB56E4003F2B0B /* ParseInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738D11EDB5672003F2B0B /* ParseInt.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		412952771D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_header.py in Headers */ = {isa = PBXBuildFile; fileRef = 412952731D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		412952781D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = 412952741D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1120,7 +1120,7 @@
 		53D41EC923C0081A00AE984B /* IterationModeMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D41EC823C0081000AE984B /* IterationModeMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53D444DC1DAF08AB00B92784 /* B3WasmAddressValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */; };
 		53E1F8F82154715A0001DDBC /* JSValuePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E1F8F7215471490001DDBC /* JSValuePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		53E777E41E92E265007CBEC4 /* WasmModuleInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E777E21E92E265007CBEC4 /* WasmModuleInformation.h */; };
+		53E777E41E92E265007CBEC4 /* WasmModuleInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E777E21E92E265007CBEC4 /* WasmModuleInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53E9E0AC1EAE83DF00FEE251 /* WasmMachineThreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E9E0AA1EAE83DE00FEE251 /* WasmMachineThreads.h */; };
 		53E9E0AF1EAEC45700FEE251 /* WasmTierUpCount.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E9E0AE1EAEC45700FEE251 /* WasmTierUpCount.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53EAFE2F208DFAB4007D524B /* testapi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 531D4E191F59CDD200EC836C /* testapi.cpp */; };
@@ -1650,7 +1650,7 @@
 		AD412B341E7B2E9E008AF157 /* WasmContext.h in Headers */ = {isa = PBXBuildFile; fileRef = AD412B321E7B2E8A008AF157 /* WasmContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4252511E5D0E14009D2A97 /* FullCodeOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4252501E5D0DEB009D2A97 /* FullCodeOrigin.h */; };
 		AD4937C41DDBE6140077C807 /* AbstractModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937C21DDBE60A0077C807 /* AbstractModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		AD4937C81DDD0AAE0077C807 /* WebAssemblyModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937C61DDCDCF00077C807 /* WebAssemblyModuleRecord.h */; };
+		AD4937C81DDD0AAE0077C807 /* WebAssemblyModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937C61DDCDCF00077C807 /* WebAssemblyModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4937D41DDD27DE0077C807 /* WebAssemblyFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937CA1DDD27340077C807 /* WebAssemblyFunction.h */; };
 		AD4B1DFA1DF244E20071AE32 /* WasmBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4B1DF81DF244D70071AE32 /* WasmBinding.h */; };
 		AD5B416F1EBAFB77008EFA43 /* WasmName.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5B416E1EBAFB65008EFA43 /* WasmName.h */; settings = {ATTRIBUTES = (Private, ); }; };

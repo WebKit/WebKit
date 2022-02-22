@@ -76,6 +76,9 @@ public:
     WEBCORE_EXPORT static bool isSupportedJavaScriptMIMEType(const String& mimeType);
     WEBCORE_EXPORT static bool isSupportedJSONMIMEType(const String& mimeType);
 
+    // Check to see if a MIME type is suitable for being loaded as a WebAssembly module.
+    WEBCORE_EXPORT static bool isSupportedWebAssemblyMIMEType(const String& mimeType);
+
     // Check to see if a MIME type is suitable for being loaded as a style sheet.
     static bool isSupportedStyleSheetMIMEType(const String& mimeType);
 

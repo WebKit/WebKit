@@ -339,6 +339,7 @@ application/vnd.yamaha.hv-script
 application/vnd.yamaha.hv-voice
 application/vnd.yellowriver-custom-menu
 application/voicexml+xml	vxml
+application/wasm	wasm
 application/watcherinfo+xml
 application/whoispp-query
 application/whoispp-response

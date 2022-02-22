@@ -1594,7 +1594,7 @@ public:
     void encode(Encoder& encoder, const WebAssemblySourceProvider& sourceProvider)
     {
         Base::encode(encoder, sourceProvider);
-        m_data.encode(encoder, sourceProvider.data());
+        m_data.encode(encoder, sourceProvider.dataVector());
     }
 
     WebAssemblySourceProvider* decode(Decoder& decoder) const

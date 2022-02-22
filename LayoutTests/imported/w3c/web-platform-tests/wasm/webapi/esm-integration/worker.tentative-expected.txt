@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: SyntaxError: Invalid character: '\0'
+
+FAIL Testing WebAssembly worker Script error.
+
