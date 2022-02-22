@@ -1,3 +1,16 @@
+2022-02-22  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed, reverting r290220.
+
+        Tests still fail with with fuzzy data
+
+        Reverted changeset:
+
+        "Test gardening for [CSS Blending] Non-separable blend modes
+        don't work"
+        https://bugs.webkit.org/show_bug.cgi?id=131354
+        https://commits.webkit.org/r290220
+
 2022-02-22  Asumu Takikawa  <asumu@igalia.com>
 
         Initial support for Wasm/ESM-integration in the WebCore module loader
