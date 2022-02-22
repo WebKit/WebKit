@@ -23,6 +23,9 @@
 #include <string>
 #include <type_traits>
 #include <wtf/MathExtras.h>
+#include <wtf/PrintStream.h>
+#include <wtf/Vector.h>
+#include <wtf/text/IntegerToStringConversion.h>
 
 namespace WTF {
 
@@ -316,6 +319,29 @@ std::ostream& operator<<(std::ostream& os, Int128Impl v) {
   }
 
   return os << rep;
+}
+
+void printInternal(PrintStream& out, UInt128 value)
+{
+    auto vector = numberToStringUnsigned<Vector<LChar, 50>>(value);
+    vector.append('\0');
+    out.printf("%s", bitwise_cast<const char*>(vector.data()));
+}
+
+void printInternal(PrintStream& out, Int128 value)
+{
+    if (value >= 0) {
+        printInternal(out, static_cast<UInt128>(value));
+        return;
+    }
+    UInt128 positive;
+    if (value == std::numeric_limits<Int128>::min())
+        positive = static_cast<UInt128>(0x8000'0000'0000'0000ULL) << 64;
+    else
+        positive = -value;
+    auto vector = numberToStringUnsigned<Vector<LChar, 50>>(positive);
+    vector.append('\0');
+    out.printf("-%s", bitwise_cast<const char*>(vector.data()));
 }
 
 }  // namespace WTF

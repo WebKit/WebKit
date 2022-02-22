@@ -110,6 +110,14 @@ shouldThrow(() => { new Temporal.PlainDate(2007, Infinity, 1); }, RangeError);
 shouldThrow(() => { new Temporal.PlainDate(2007, -Infinity, 1); }, RangeError);
 shouldThrow(() => { new Temporal.PlainDate(2007, 1, Infinity); }, RangeError);
 shouldThrow(() => { new Temporal.PlainDate(2007, 1, -Infinity); }, RangeError);
+shouldThrow(() => { new Temporal.PlainDate(0x43530, 9, 14); }, RangeError);
+shouldBe(String(new Temporal.PlainDate(0x43530, 9, 13)), `275760-09-13`);
+shouldThrow(() => { new Temporal.PlainDate(-0x425cd, 4, 19); }, RangeError);
+shouldBe(String(new Temporal.PlainDate(-0x425cd, 4, 20)), `-271821-04-20`);
+shouldThrow(() => { new Temporal.PlainDate(0x80000000, 1, 1); }, RangeError);
+shouldThrow(() => { new Temporal.PlainDate(-0x80000000, 1, 1); }, RangeError);
+shouldThrow(() => { new Temporal.PlainDate(0x7fffffff, 1, 1); }, RangeError);
+shouldThrow(() => { new Temporal.PlainDate(-0x7fffffff, 1, 1); }, RangeError);
 
 let failures = [
     "",

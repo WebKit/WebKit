@@ -83,6 +83,16 @@ private:
 class ExactTime {
     WTF_MAKE_FAST_ALLOCATED(ExactTime);
 public:
+    static constexpr Int128 dayRangeSeconds { 86400'00000000 }; // 1e8 days
+    static constexpr Int128 nsPerMicrosecond { 1000 };
+    static constexpr Int128 nsPerMillisecond { 1'000'000 };
+    static constexpr Int128 nsPerSecond { 1'000'000'000 };
+    static constexpr Int128 nsPerMinute = nsPerSecond * 60;
+    static constexpr Int128 nsPerHour = nsPerMinute * 60;
+    static constexpr Int128 nsPerDay = nsPerHour * 24;
+    static constexpr Int128 minValue = -dayRangeSeconds * nsPerSecond;
+    static constexpr Int128 maxValue = dayRangeSeconds * nsPerSecond;
+
     constexpr ExactTime() = default;
     constexpr ExactTime(const ExactTime&) = default;
     constexpr explicit ExactTime(Int128 epochNanoseconds) : m_epochNanoseconds(epochNanoseconds) { }
@@ -103,22 +113,18 @@ public:
 
     int64_t epochSeconds() const
     {
-        ASSERT(isValid());
         return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerSecond);
     }
     int64_t epochMilliseconds() const
     {
-        ASSERT(isValid());
         return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerMillisecond);
     }
     int64_t epochMicroseconds() const
     {
-        ASSERT(isValid());
         return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerMicrosecond);
     }
     constexpr Int128 epochNanoseconds() const
     {
-        ASSERT(isValid());
         return m_epochNanoseconds;
     }
 
@@ -177,15 +183,6 @@ public:
     static ExactTime now();
 
 private:
-    static constexpr Int128 dayRangeSeconds { 86400'00000000 }; // 1e8 days
-    static constexpr Int128 nsPerMicrosecond { 1000 };
-    static constexpr Int128 nsPerMillisecond { 1'000'000 };
-    static constexpr Int128 nsPerSecond { 1'000'000'000 };
-    static constexpr Int128 nsPerMinute = nsPerSecond * 60;
-    static constexpr Int128 nsPerHour = nsPerMinute * 60;
-    static constexpr Int128 minValue = -dayRangeSeconds * nsPerSecond;
-    static constexpr Int128 maxValue = dayRangeSeconds * nsPerSecond;
-
     static void asStringImpl(StringBuilder& builder, Int128 value)
     {
         if (value > 9)
@@ -307,6 +304,8 @@ unsigned daysInMonth(int32_t year, unsigned month);
 bool isValidDuration(const Duration&);
 
 std::optional<ExactTime> parseInstant(StringView);
+
+bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
 
 } // namespace ISO8601
 } // namespace JSC

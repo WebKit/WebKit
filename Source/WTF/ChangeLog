@@ -1,3 +1,16 @@
+2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Temporal.PlainDate should validate input range
+        https://bugs.webkit.org/show_bug.cgi?id=236936
+
+        Reviewed by Darin Adler.
+
+        Add code to allow dataLog(Int128).
+
+        * wtf/Int128.cpp:
+        (WTF::printInternal):
+        * wtf/Int128.h:
+
 2022-02-18  Devin Rousso  <drousso@apple.com>
 
         [iOS] Safari can sometimes hang while printing due to sync IPC

@@ -1,5 +1,15 @@
 2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Temporal.PlainDate should validate input range
+        https://bugs.webkit.org/show_bug.cgi?id=236936
+
+        Reviewed by Darin Adler.
+
+        * stress/temporal-plaindate.js:
+        (shouldThrow):
+
+2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] ShadowRealm wrapArgument should check exceptions
         https://bugs.webkit.org/show_bug.cgi?id=236984
 

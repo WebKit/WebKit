@@ -1192,23 +1192,20 @@ bool isValidDuration(const Duration& duration)
     return true;
 }
 
-ExactTime ExactTime::fromISOPartsAndOffset(int32_t y, uint8_t mon, uint8_t d, unsigned h, unsigned min, unsigned s, unsigned ms, unsigned micros, unsigned ns, int64_t offset)
+ExactTime ExactTime::fromISOPartsAndOffset(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond, int64_t offset)
 {
-    ASSERT(y >= -999999 && y <= 999999);
-    ASSERT(mon >= 1 && mon <= 12);
-    ASSERT(d >= 1 && d <= 31);
-    ASSERT(h <= 23);
-    ASSERT(min <= 59);
-    ASSERT(s <= 59);
-    ASSERT(ms <= 999);
-    ASSERT(micros <= 999);
-    ASSERT(ns <= 999);
+    ASSERT(month >= 1 && month <= 12);
+    ASSERT(day >= 1 && day <= 31);
+    ASSERT(hour <= 23);
+    ASSERT(minute <= 59);
+    ASSERT(second <= 59);
+    ASSERT(millisecond <= 999);
+    ASSERT(microsecond <= 999);
+    ASSERT(nanosecond <= 999);
 
-    double dateDays = dateToDaysFrom1970(y, mon - 1, d);
-    double timeMs = timeToMS(h, min, s, ms);
-    double utcMs = dateDays * msPerDay + timeMs;
-    Int128 utcNs = static_cast<Int128>(utcMs) * 1'000'000 + micros * 1000 + ns;
-    return ExactTime { utcNs - offset };
+    Int128 dateDays = static_cast<Int128>(dateToDaysFrom1970(year, month - 1, day));
+    Int128 utcNanoseconds = dateDays * nsPerDay + hour * nsPerHour + minute * nsPerMinute + second * nsPerSecond + millisecond * nsPerMillisecond + microsecond * nsPerMicrosecond + nanosecond;
+    return ExactTime { utcNanoseconds - offset };
 }
 
 using CheckedInt128 = Checked<Int128, RecordOverflow>;
@@ -1319,6 +1316,17 @@ ExactTime ExactTime::round(unsigned increment, TemporalUnit unit, RoundingMode r
 ExactTime ExactTime::now()
 {
     return ExactTime { WTF::currentTimeInNanoseconds() };
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-isodatetimewithinlimits
+bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond)
+{
+    Int128 nanoseconds = ExactTime::fromISOPartsAndOffset(year, month, day, hour, minute, second, millisecond, microsecond, nanosecond, 0).epochNanoseconds();
+    if (nanoseconds <= (ExactTime::minValue - ExactTime::nsPerDay))
+        return false;
+    if (nanoseconds >= (ExactTime::maxValue + ExactTime::nsPerDay))
+        return false;
+    return true;
 }
 
 } // namespace ISO8601

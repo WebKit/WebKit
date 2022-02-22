@@ -89,22 +89,38 @@ static ISO8601::PlainDate toPlainDate(JSGlobalObject* globalObject, ISO8601::Dur
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    double year = duration.years();
-    double month = duration.months();
-    double day = duration.days();
-    if (!(month >= 1 && month <= 12)) {
+    double yearDouble = duration.years();
+    double monthDouble = duration.months();
+    double dayDouble = duration.days();
+
+    if (!isInBounds<int32_t>(yearDouble)) {
+        throwRangeError(globalObject, scope, "year is out of range"_s);
+        return { };
+    }
+    int32_t year = static_cast<int32_t>(yearDouble);
+
+    if (!(monthDouble >= 1 && monthDouble <= 12)) {
         throwRangeError(globalObject, scope, "month is out of range"_s);
         return { };
     }
-    double daysInMonth = ISO8601::daysInMonth(static_cast<int32_t>(year), static_cast<unsigned>(month));
-    if (!(day >= 1 && day <= daysInMonth)) {
+    unsigned month = static_cast<unsigned>(monthDouble);
+
+    double daysInMonth = ISO8601::daysInMonth(year, month);
+    if (!(dayDouble >= 1 && dayDouble <= daysInMonth)) {
         throwRangeError(globalObject, scope, "day is out of range"_s);
         return { };
     }
+    unsigned day = static_cast<unsigned>(dayDouble);
+
+    if (!ISO8601::isDateTimeWithinLimits(year, month, day, 0, 0, 0, 0, 0, 0)) {
+        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
+        return { };
+    }
+
     return ISO8601::PlainDate {
-        static_cast<int32_t>(year),
-        static_cast<unsigned>(month),
-        static_cast<unsigned>(day)
+        year,
+        month,
+        day
     };
 }
 

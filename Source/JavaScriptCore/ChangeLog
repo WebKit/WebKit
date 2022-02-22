@@ -1,1 +1,45 @@
+2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Temporal.PlainDate should validate input range
+        https://bugs.webkit.org/show_bug.cgi?id=236936
+
+        Reviewed by Darin Adler.
+
+        Implement https://tc39.es/proposal-temporal/#sec-temporal-isodatetimewithinlimits check in
+        PlainDate to validate input range. For example, 0x7fffffff year should be rejected since
+        it is larger than ECMAScript datetime representation value. This is checked via ISODateTimeWithinLimits
+        in the spec.
+
+        We also remove isValid assertions in ExactTime. This should not be checked in these accessors, rather,
+        we should call that function when we would like to check, since PlainDate can represent a bit smaller
+        value than ExactTime's minValue (minValue - nsPerDay).
+
+        We also extend ExactTime::fromISOPartsAndOffset to handle values via Int128 to accept int32_t range years.
+        By using Int128 for nanoseconds, we can even represent int32_t max / min years. And we remove
+        `ASSERT(y >= -999999 && y <= 999999)` check since this is not necessary.
+
+        * runtime/ISO8601.cpp:
+        (JSC::ISO8601::ExactTime::fromISOPartsAndOffset):
+        (JSC::ISO8601::isDateTimeWithinLimits):
+        * runtime/ISO8601.h:
+        (JSC::ISO8601::ExactTime::ExactTime): Deleted.
+        (JSC::ISO8601::ExactTime::fromEpochSeconds): Deleted.
+        (JSC::ISO8601::ExactTime::fromEpochMilliseconds): Deleted.
+        (JSC::ISO8601::ExactTime::fromEpochMicroseconds): Deleted.
+        (JSC::ISO8601::ExactTime::epochSeconds const): Deleted.
+        (JSC::ISO8601::ExactTime::epochMilliseconds const): Deleted.
+        (JSC::ISO8601::ExactTime::epochMicroseconds const): Deleted.
+        (JSC::ISO8601::ExactTime::epochNanoseconds const): Deleted.
+        (JSC::ISO8601::ExactTime::nanosecondsFraction const): Deleted.
+        (JSC::ISO8601::ExactTime::asString const): Deleted.
+        (JSC::ISO8601::ExactTime::isValid const): Deleted.
+        (JSC::ISO8601::ExactTime::operator< const): Deleted.
+        (JSC::ISO8601::ExactTime::operator<= const): Deleted.
+        (JSC::ISO8601::ExactTime::operator== const): Deleted.
+        (JSC::ISO8601::ExactTime::operator!= const): Deleted.
+        (JSC::ISO8601::ExactTime::operator>= const): Deleted.
+        (JSC::ISO8601::ExactTime::operator> const): Deleted.
+        * runtime/TemporalPlainDate.cpp:
+        (JSC::toPlainDate):
+
 == Rolled over to ChangeLog-2022-02-22 ==
