@@ -80,6 +80,7 @@ private:
     bool m_hasDeferredRenderingUpdate { false };
     bool m_inUpdateRendering { false };
     bool m_waitDidUpdate { false };
+    bool m_isForceRepaintCompletionHandlerDeferred { false };
     WCUpateInfo m_updateInfo;
     Ref<WebCore::GraphicsLayer> m_rootLayer;
     RefPtr<WebCore::GraphicsLayer> m_contentLayer;

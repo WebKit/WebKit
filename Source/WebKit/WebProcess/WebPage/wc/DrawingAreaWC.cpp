@@ -174,6 +174,7 @@ void DrawingAreaWC::scroll(const IntRect& scrollRect, const IntSize& scrollDelta
 void DrawingAreaWC::forceRepaintAsync(WebPage&, CompletionHandler<void()>&& completionHandler)
 {
     m_forceRepaintCompletionHandler = WTFMove(completionHandler);
+    m_isForceRepaintCompletionHandlerDeferred = m_waitDidUpdate;
     setNeedsDisplay();
 }
 
@@ -367,8 +368,12 @@ RefPtr<ImageBuffer> DrawingAreaWC::createImageBuffer(FloatSize size)
 void DrawingAreaWC::didUpdate()
 {
     m_waitDidUpdate = false;
-    if (m_forceRepaintCompletionHandler)
-        m_forceRepaintCompletionHandler();
+    if (m_forceRepaintCompletionHandler) {
+        if (m_isForceRepaintCompletionHandlerDeferred)
+            m_isForceRepaintCompletionHandlerDeferred = false;
+        else
+            m_forceRepaintCompletionHandler();
+    }
     if (m_hasDeferredRenderingUpdate) {
         m_hasDeferredRenderingUpdate = false;
         triggerRenderingUpdate();

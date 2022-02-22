@@ -1,3 +1,22 @@
+2022-02-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WK2] animations/background-position.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=236630
+
+        Reviewed by Don Olmstead.
+
+        r289848 was a wrong fix causing some test failures. It called the
+        force repaint completion handler too early if m_waitDidUpdate was
+        true when the force repaint was requested. In such case, we should
+        wait for two DidUpdate messages before calling the completion
+        handler.
+
+        * WebProcess/WebPage/wc/DrawingAreaWC.cpp:
+        (WebKit::DrawingAreaWC::forceRepaintAsync):
+        (WebKit::DrawingAreaWC::didUpdate):
+        * WebProcess/WebPage/wc/DrawingAreaWC.h:
+        Added m_isForceRepaintCompletionHandlerDeferred flag.
+
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
         Clean up / optimize even more call sites constructing vectors
