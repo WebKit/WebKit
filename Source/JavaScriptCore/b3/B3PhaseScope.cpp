@@ -39,7 +39,7 @@ namespace JSC { namespace B3 {
 PhaseScope::PhaseScope(Procedure& procedure, const char* name)
     : m_procedure(procedure)
     , m_name(name)
-    , m_timingScope(name)
+    , m_timingScope("B3", name)
 {
     if (shouldDumpIRAtEachPhase(B3Mode)) {
         dataLog("B3 after ", procedure.lastPhaseName(), ", before ", name, ":\n");

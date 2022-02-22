@@ -48,14 +48,14 @@
 #include "B3ReduceDoubleToFloat.h"
 #include "B3ReduceLoopStrength.h"
 #include "B3ReduceStrength.h"
-#include "B3TimingScope.h"
 #include "B3Validate.h"
+#include "CompilerTimingScope.h"
 
 namespace JSC { namespace B3 {
 
 void prepareForGeneration(Procedure& procedure)
 {
-    TimingScope timingScope("prepareForGeneration");
+    CompilerTimingScope timingScope("Total B3+Air", "prepareForGeneration");
 
     generateToAir(procedure);
     Air::prepareForGeneration(procedure.code());
@@ -68,7 +68,7 @@ void generate(Procedure& procedure, CCallHelpers& jit)
 
 void generateToAir(Procedure& procedure)
 {
-    TimingScope timingScope("generateToAir");
+    CompilerTimingScope timingScope("Total B3", "generateToAir");
     
     if (shouldDumpIR(procedure, B3Mode) && !shouldDumpIRAtEachPhase(B3Mode)) {
         dataLog(tierName, "Initial B3:\n");

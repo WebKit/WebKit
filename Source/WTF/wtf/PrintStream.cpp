@@ -183,6 +183,11 @@ void printInternal(PrintStream& out, RawPointer value)
     out.printf("%p", value.value());
 }
 
+void printInternal(PrintStream& out, FixedWidthDouble value)
+{
+    out.printf("%*.*lf", value.width(), value.precision(), value.value());
+}
+
 void dumpCharacter(PrintStream& out, char value)
 {
     out.printf("%c", value);

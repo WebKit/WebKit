@@ -30,15 +30,15 @@
 
 #include "B3Generate.h"
 #include "B3Procedure.h"
-#include "B3TimingScope.h"
 #include "CCallHelpers.h"
+#include "CompilerTimingScope.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace B3 {
 
 Compilation compile(Procedure& proc)
 {
-    TimingScope timingScope("Compilation");
+    CompilerTimingScope timingScope("Total B3+Air", "compile");
     
     prepareForGeneration(proc);
     

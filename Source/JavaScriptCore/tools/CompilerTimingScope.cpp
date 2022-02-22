@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,7 @@ public:
     {
         for (auto& tuple : totals) {
             dataLogLn(
-                "[", std::get<0>(tuple), "] ", std::get<1>(tuple), " total ms: ", std::get<2>(tuple).milliseconds(), " max ms: ", std::get<3>(tuple).milliseconds());
+                "total ms: ", FixedWidthDouble(std::get<2>(tuple).milliseconds(), 8, 3), " max ms: ", FixedWidthDouble(std::get<3>(tuple).milliseconds(), 7, 3), " [", std::get<0>(tuple), "] ", std::get<1>(tuple));
         }
     }
     

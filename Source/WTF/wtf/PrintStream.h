@@ -31,6 +31,7 @@
 #include <tuple>
 #include <wtf/Forward.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/FixedWidthDouble.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RawPointer.h>
 #include <wtf/RefPtr.h>
@@ -122,6 +123,7 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, unsigned long long);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, float);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, double);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, RawPointer);
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, FixedWidthDouble);
 
 template<typename T>
 void printInternal(PrintStream& out, const T& value)

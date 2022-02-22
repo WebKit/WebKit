@@ -1,3 +1,57 @@
+2022-02-21  Robin Morisset  <rmorisset@apple.com>
+
+        [JSC] Format the output of --reportTotalPhaseTimes=1 more nicely
+        https://bugs.webkit.org/show_bug.cgi?id=237005
+
+        Reviewed by Saam Barati.
+
+        Before this patch:
+        [B3] moveConstants total ms: 64.307583 max ms: 1.703167
+        [B3] lowerToAir total ms: 151.297782 max ms: 5.426375
+        [B3] generateToAir total ms: 1623.987166 max ms: 92.826750
+        [B3] simplifyCFG total ms: 11.760463 max ms: 1.088083
+        [B3] Air::lowerMacros total ms: 5.975679 max ms: 0.382000
+
+        After this patch:
+        total ms:   66.328 max ms:   2.283 [B3] moveConstants
+        total ms:  148.097 max ms:   5.361 [B3] lowerToAir
+        total ms: 1619.115 max ms:  96.307 [Total B3] generateToAir
+        total ms:   11.959 max ms:   1.185 [Air] simplifyCFG
+        total ms:    6.519 max ms:   0.697 [Air] Air::lowerMacros
+
+        Concretely there are two changes:
+        - use FixedWidthDouble (also introduced to WTF in this patch) to line-up the total times.
+          This makes it possible to see at a glance which phases are worth optimizing and which aren't.
+        - Tag phases more precisely, and in particular replace [B3] by [Air] where relevant,
+          and give different tags to measurements that correspond to groups of phases instead of a single phase (e.g. generateToAir).
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3Compile.cpp:
+        (JSC::B3::compile):
+        * b3/B3FixSSA.cpp:
+        * b3/B3Generate.cpp:
+        (JSC::B3::prepareForGeneration):
+        (JSC::B3::generateToAir):
+        * b3/B3PhaseScope.cpp:
+        (JSC::B3::PhaseScope::PhaseScope):
+        * b3/B3PhaseScope.h:
+        * b3/B3TimingScope.h: Removed.
+        (JSC::B3::TimingScope::TimingScope): Deleted.
+        * b3/B3VariableLiveness.cpp:
+        (JSC::B3::VariableLiveness::VariableLiveness):
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp:
+        (JSC::B3::Air::GenerateAndAllocateRegisters::generate):
+        * b3/air/AirAllocateRegistersAndStackByLinearScan.cpp:
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        (JSC::B3::Air::generateWithAlreadyAllocatedRegisters):
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::Liveness::Liveness):
+        * b3/air/AirPhaseScope.cpp:
+        (JSC::B3::Air::PhaseScope::PhaseScope):
+        * b3/air/AirPhaseScope.h:
+        * tools/CompilerTimingScope.cpp:
+
 2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix ShadowRealm unwinding

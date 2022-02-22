@@ -38,6 +38,7 @@
 #include "B3Variable.h"
 #include "B3VariableLiveness.h"
 #include "B3VariableValue.h"
+#include "CompilerTimingScope.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/IndexSet.h>
 #include <wtf/IndexSparseSet.h>
@@ -149,7 +150,7 @@ void fixSSAGlobally(Procedure& proc)
 
     // Decide where Phis are to be inserted. This creates them but does not insert them.
     {
-        TimingScope timingScope("fixSSA: computePhis");
+        CompilerTimingScope timingScope("B3", "fixSSA: computePhis");
         ssa.computePhis(
             [&] (SSACalculator::Variable* calcVar, BasicBlock* block) -> Value* {
                 Variable* variable = calcVarToVariable[calcVar->index()];
@@ -167,7 +168,7 @@ void fixSSAGlobally(Procedure& proc)
     }
 
     // Now perform the conversion.
-    TimingScope timingScope("fixSSA: convert");
+    CompilerTimingScope timingScope("B3", "fixSSA: convert");
     InsertionSet insertionSet(proc);
     IndexSparseSet<KeyValuePair<unsigned, Value*>> mapping(proc.variables().size());
     IndexSet<Value*> valuesToDelete;

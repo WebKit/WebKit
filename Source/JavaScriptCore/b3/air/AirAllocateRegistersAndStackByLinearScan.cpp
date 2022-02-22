@@ -228,7 +228,7 @@ private:
     
     void buildIntervals()
     {
-        TimingScope timingScope("LinearScan::buildIntervals");
+        CompilerTimingScope timingScope("Air", "LinearScan::buildIntervals");
         UnifiedTmpLiveness liveness(m_code);
         
         for (BasicBlock* block : m_code) {

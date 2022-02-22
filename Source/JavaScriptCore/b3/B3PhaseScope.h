@@ -27,7 +27,7 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3TimingScope.h"
+#include "CompilerTimingScope.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/CString.h>
 
@@ -44,7 +44,7 @@ public:
 private:
     Procedure& m_procedure;
     const char* m_name;
-    TimingScope m_timingScope;
+    CompilerTimingScope m_timingScope;
     CString m_dumpBefore;
 };
 
