@@ -920,7 +920,6 @@
     (iokit-property "IOGVAEncoderRestricted")
     (iokit-property "IOGVAScaler")
     (iokit-property "IOClassNameOverride")
-    (iokit-property "IOPlatformUUID")
     (iokit-property "IOSurfaceAcceleratorCapabilitiesDict")
     (iokit-property "LGHSupported")
     (iokit-property "Protocol Characteristics")

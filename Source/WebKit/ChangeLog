@@ -1,3 +1,18 @@
+2022-02-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove an unneeded IOKit property
+        https://bugs.webkit.org/show_bug.cgi?id=236867
+        <rdar://47695155>
+
+        Reviewed by Per Arne Vollan.
+
+        The relevant frameworks that used the IOPlatformUUID IOKit
+        property have been updated to no longer refer to it. We can
+        now safely remove it.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-02-22  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Adopt new _UITextSearching method for range comparison

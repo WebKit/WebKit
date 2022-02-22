@@ -766,7 +766,6 @@
     (iokit-property "IOPMIsPowerManaged")
     (iokit-property "IOPersonalityPublisher")
     (iokit-property "IOPlatformSerialNumber")
-    (iokit-property "IOPlatformUUID")
     (iokit-property "IOPowerManagement")
     (iokit-property "IOProbeScore")
     (iokit-property "IOPropertyMatch")
