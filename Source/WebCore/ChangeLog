@@ -1,3 +1,27 @@
+2022-02-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add test coverage for the pasteboard writing codepath added in r289839
+        https://bugs.webkit.org/show_bug.cgi?id=236944
+
+        Reviewed by Aditya Keerthi.
+
+        Add test coverage for the changes in r289839 in the case where `ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)` is turned
+        on. To do this, we set the platform image analysis results to a new internal mock object,
+        `FakeImageAnalysisResult`, that returns a string for a given NSRange. This code is then exercised by several
+        existing layout tests that copy and paste text inside image overlays:
+
+        - fast/images/text-recognition/image-overlay-line-wrapping.html
+        - fast/images/text-recognition/image-overlay-text-without-leading-whitespace.html
+        - fast/images/text-recognition/mac/copy-image-overlay-text-with-context-menu.html
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::installImageOverlay):
+        * testing/Internals.h:
+        * testing/Internals.mm:
+        (-[FakeImageAnalysisResult initWithString:]):
+        (-[FakeImageAnalysisResult _attributedStringForRange:]):
+        (WebCore::Internals::fakeImageAnalysisResultForTesting):
+
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Sort WebCore and WebKit Xcode project files
