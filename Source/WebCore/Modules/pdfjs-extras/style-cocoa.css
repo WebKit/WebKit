@@ -150,6 +150,40 @@ body {
     top: 0;
 }
 
+/* Restyle PDF form fields */
+
+.annotationLayer :is(
+    .textWidgetAnnotation input,
+    .textWidgetAnnotation textarea,
+    .choiceWidgetAnnotation select,
+    .buttonWidgetAnnotation.checkBox input,
+    .buttonWidgetAnnotation.radioButton input,
+):not(:hover) {
+    --annotation-unfocused-field-background: none;
+}
+
+.annotationLayer :is(
+    .textWidgetAnnotation input,
+    .textWidgetAnnotation textarea,
+    .choiceWidgetAnnotation select,
+    .buttonWidgetAnnotation.checkBox input,
+    .buttonWidgetAnnotation.radioButton input,
+):hover {
+    border-color: transparent;
+}
+
+.annotationLayer :is(
+    .textWidgetAnnotation input,
+    .textWidgetAnnotation textarea,
+    .choiceWidgetAnnotation select,
+    .buttonWidgetAnnotation.checkBox input,
+    .buttonWidgetAnnotation.radioButton input,
+):focus {
+    --annotation-unfocused-field-background: none;
+    outline: -webkit-focus-ring-color 2px solid;
+    outline-offset: 2px;
+}
+
 /* Restyle the findbar */
 
 #findbar {
