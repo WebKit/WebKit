@@ -40,6 +40,7 @@
 		1C19E6B5273F85AF004B17B0 /* WebGPUConvertToBackingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C19E6B4273F85AF004B17B0 /* WebGPUConvertToBackingContext.cpp */; };
 		1C19E6BA27405E32004B17B0 /* WebGPUExternalTextureImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C19E6B927405E32004B17B0 /* WebGPUExternalTextureImpl.cpp */; };
 		1C36C52E2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C36C52C2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.cpp */; };
+		1C469C7A27C46E1300DEB594 /* WebGPUShaderModuleCompilationHint.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEF45AA27BB101F00C3A6BC /* WebGPUShaderModuleCompilationHint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C4876D81F8D7F4E00CCEEBD /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4876D61F8D7F4E00CCEEBD /* Logging.cpp */; };
 		1C5C57C927571531003B540D /* TextCodecICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57BD27571524003B540D /* TextCodecICU.cpp */; };
 		1C5C57CA27571531003B540D /* TextCodecUserDefined.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57B72757151E003B540D /* TextCodecUserDefined.cpp */; };
@@ -1912,6 +1913,7 @@
 				DD20DE3027BC90D80093D175 /* NSResponderSPI.h in Headers */,
 				DD20DE3127BC90D80093D175 /* NSScrollerImpSPI.h in Headers */,
 				DD20DE3227BC90D80093D175 /* NSScrollingInputFilterSPI.h in Headers */,
+				1C469C7A27C46E1300DEB594 /* WebGPUShaderModuleCompilationHint.h in Headers */,
 				DD20DE3327BC90D80093D175 /* NSScrollingMomentumCalculatorSPI.h in Headers */,
 				DD20DE3427BC90D80093D175 /* NSScrollViewSPI.h in Headers */,
 				DD20DE3527BC90D80093D175 /* NSServicesRolloverButtonCellSPI.h in Headers */,
