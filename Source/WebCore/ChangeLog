@@ -1,3 +1,23 @@
+2022-02-22  Kate Cheney  <katherine_cheney@apple.com>
+
+        Authenticated encryption console logging causing performance regressions
+        https://bugs.webkit.org/show_bug.cgi?id=236987
+        <rdar://problem/89108253>
+
+        Reviewed by Chris Dumez.
+
+        No new tests. Behavior confirmed by existing crypto/subtle tests.
+
+        For clients that use repeated unauthenticated AES encryption, console
+        logging may cause perf issues. We should log the authenticated
+        encryption warning once per context.
+
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::SubtleCrypto::addAuthenticatedEncryptionWarningIfNecessary):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::hasLoggedAuthenticatedEncryptionWarning const):
+        (WebCore::ScriptExecutionContext::setHasLoggedAuthenticatedEncryptionWarning):
+
 2022-02-22  Tim Nguyen  <ntim@apple.com>
 
         Re-style PDF.js form fields to match PDFKit

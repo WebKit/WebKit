@@ -1,3 +1,22 @@
+2022-02-22  Kate Cheney  <katherine_cheney@apple.com>
+
+        Authenticated encryption console logging causing performance regressions
+        https://bugs.webkit.org/show_bug.cgi?id=236987
+        <rdar://problem/89108253>
+
+        Reviewed by Chris Dumez.
+
+        * crypto/subtle/aes-cbc-cfb-decrypt-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-cbc-cfb-encrypt-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-cbc-generate-key-encrypt-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-import-key-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-import-key-encrypt-expected.txt:
+        * crypto/subtle/aes-ctr-encrypt-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-ctr-generate-key-encrypt-decrypt-expected.txt:
+        * crypto/subtle/aes-ctr-import-key-encrypt-expected.txt:
+        * platform/glib/crypto/subtle/aes-cbc-cfb-decrypt-malformed-parameters-expected.txt:
+        * platform/glib/crypto/subtle/aes-cbc-cfb-encrypt-malformed-parameters-expected.txt:
+
 2022-02-22  Youenn Fablet  <youenn@apple.com>
 
         http/wpt/mediarecorder/mute-tracks.html fails with WebRTCRemoteVideoFrameEnabled=true

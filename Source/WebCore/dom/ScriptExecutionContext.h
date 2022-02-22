@@ -294,6 +294,9 @@ public:
 
     ScriptExecutionContextIdentifier identifier() const { return m_identifier; }
 
+    bool hasLoggedAuthenticatedEncryptionWarning() const { return m_hasLoggedAuthenticatedEncryptionWarning; }
+    void setHasLoggedAuthenticatedEncryptionWarning(bool value) { m_hasLoggedAuthenticatedEncryptionWarning = value; }
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -373,6 +376,8 @@ private:
 
     String m_domainForCachePartition;
     mutable ScriptExecutionContextIdentifier m_identifier;
+
+    bool m_hasLoggedAuthenticatedEncryptionWarning { false };
 };
 
 } // namespace WebCore
