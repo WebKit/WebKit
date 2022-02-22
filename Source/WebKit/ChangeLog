@@ -1,3 +1,16 @@
+2022-02-21  Alexander Kanavin  <alex@linutronix.de>
+
+        Fix racy parallel build of WebKit2-4.0.gir
+        https://bugs.webkit.org/show_bug.cgi?id=232935
+
+        Reviewed by Michael Catanzaro.
+
+        This is a target and not a command because it's used to build another .gir
+        and a .typelib, which would trigger two racy parallel builds when using command
+        (e.g. command would run twice, target runs only once).
+
+        * PlatformGTK.cmake:
+
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Sort WebCore and WebKit Xcode project files

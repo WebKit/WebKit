@@ -670,8 +670,9 @@ if (ENABLE_INTROSPECTION)
         set(GIR_SOURCES_TOP_DIRS "--sources-top-dirs=${CMAKE_BINARY_DIR}")
     endif ()
 
-    add_custom_command(
-        OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
+    # This is a target and not a command because it's used to build another .gir
+    # and a .typelib, which would trigger two racy parallel builds when using command
+    add_custom_target(WebKit2-${WEBKITGTK_API_VERSION}-gir
         DEPENDS WebKit
         DEPENDS ${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
         COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations LDFLAGS=
@@ -719,7 +720,7 @@ if (ENABLE_INTROSPECTION)
     add_custom_command(
         OUTPUT ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
         DEPENDS ${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
-        DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
+        DEPENDS WebKit2-${WEBKITGTK_API_VERSION}-gir
         COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations
             LDFLAGS="${INTROSPECTION_ADDITIONAL_LDFLAGS}"
             ${LOADER_LIBRARY_PATH_VAR}="${INTROSPECTION_ADDITIONAL_LIBRARY_PATH}"
@@ -781,7 +782,7 @@ if (ENABLE_INTROSPECTION)
 
     add_custom_command(
         OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib
-        DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
+        DEPENDS WebKit2-${WEBKITGTK_API_VERSION}-gir
         COMMAND ${INTROSPECTION_COMPILER} --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir -o ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib
     )
 
