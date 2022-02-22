@@ -1,3 +1,18 @@
+2022-02-22  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Partial rollout of r289946, broke Netflix
+        https://bugs.webkit.org/show_bug.cgi?id=237019
+        <rdar://89261425>
+
+        Reviewed by Eric Carlson.
+
+        Adopting AVContentKeySupport for AVSampleBufferDisplayLayer broke Netflix playback on Cocoa
+        ports. Disable that support by hard coding sampleBufferRenderersSupportKeySession() to
+        return false.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::sampleBufferRenderersSupportKeySession):
+
 2022-02-22  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Only compute ariaTreeRows for isTree() objects
