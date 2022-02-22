@@ -1,3 +1,22 @@
+2022-02-22  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Guard against dead remotes in numberOfProcessors
+        https://bugs.webkit.org/show_bug.cgi?id=236643
+
+        Reviewed by Adrian Perez de Castro.
+
+        Instead of using only the first remote (and then defaulting to 1 when
+        it happens to not respond), try all the remotes in sequence.
+
+        Also, instead of trying the sysctl version on all hosts first and
+        only try nproc after sysctl has failed on all hosts, combine
+        sysctl and nproc in one command to speed things along.
+
+        This change also removes the numProcessors == 0 typo in the rescue
+        path.
+
+        * Scripts/run-jsc-stress-tests:
+
 2022-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Can't run performance tests due to a11y errors

@@ -2563,10 +2563,18 @@ end
 
 def runCommandOnTester(cmd)
     if $remote
-        result = sshRead(cmd, $remoteHosts[0])
-    else
-        result = `#{cmd}`
+        $remoteHosts.each { |remoteHost|
+            begin
+                # Return first successful value. Obviously, this
+                # assumes the remotes are homogeneous.
+                return sshRead(cmd, remoteHost)
+            rescue Exception => e
+                $stderr.puts("Error running `#{cmd}` on #{remoteHost.host}: #{e}")
+            end
+        }
+        return "0"
     end
+    `#{cmd}`
 end
 
 def numberOfProcessors
@@ -2574,21 +2582,14 @@ def numberOfProcessors
         numProcessors = runCommandOnTester("cmd /c echo %NUMBER_OF_PROCESSORS%").to_i
     else
         begin
-            numProcessors = runCommandOnTester("sysctl -n hw.activecpu 2>/dev/null").to_i
+            numProcessors = runCommandOnTester("sysctl -n hw.activecpu 2>/dev/null || nproc --all 2>/dev/null").to_i
         rescue
             numProcessors = 0
-        end
-
-        if numProcessors == 0
-            begin
-                numProcessors = runCommandOnTester("nproc --all 2>/dev/null").to_i
-            rescue
-                numProcessors == 0
-            end
         end
     end
 
     if numProcessors == 0
+        $stderr.puts("Warning: could not determine the number of remote CPUs, defaulting to 1")
         numProcessors = 1
     end
     return numProcessors
