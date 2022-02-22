@@ -95,31 +95,33 @@ MediaRecorderPrivate::~MediaRecorderPrivate()
 
 void MediaRecorderPrivate::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata)
 {
-    std::optional<RemoteVideoFrameReadReference> remoteVideoFrameReadReference;
-    std::unique_ptr<RemoteVideoSample> remoteSample;
     if (shouldMuteVideo()) {
         // FIXME: We could optimize sending black frames by only sending width/height.
         if (!m_blackFrame) {
             auto size = sample.presentationSize();
             m_blackFrame = createBlackPixelBuffer(static_cast<size_t>(size.width()), static_cast<size_t>(size.height()));
         }
-        remoteSample = RemoteVideoSample::create(m_blackFrame.get(), sample.presentationTime(), sample.videoRotation(), RemoteVideoSample::ShouldCheckForIOSurface::No);
-    } else {
-        m_blackFrame = nullptr;
-
-        if (is<RemoteVideoFrameProxy>(sample)) {
-            remoteVideoFrameReadReference = downcast<RemoteVideoFrameProxy>(sample).read();
-            remoteSample = RemoteVideoSample::create(nullptr, sample.presentationTime(), sample.videoRotation(), RemoteVideoSample::ShouldCheckForIOSurface::No);
-        } else
-            remoteSample = RemoteVideoSample::create(sample, RemoteVideoSample::ShouldCheckForIOSurface::No);
-    }
-
-    if (is<RemoteVideoFrameProxy>(sample))
-        remoteVideoFrameReadReference = downcast<RemoteVideoFrameProxy>(sample).read();
-    else if (!remoteSample->surface()) {
-        // buffer is not IOSurface, we need to copy to shared video frame.
+        auto remoteSample = RemoteVideoSample::create(m_blackFrame.get(), sample.presentationTime(), sample.videoRotation(), RemoteVideoSample::ShouldCheckForIOSurface::No);
         if (!copySharedVideoFrame(remoteSample->imageBuffer()))
             return;
+        m_connection->send(Messages::RemoteMediaRecorder::VideoSampleAvailable { WTFMove(*remoteSample), { } }, m_identifier);
+        return;
+    }
+
+    m_blackFrame = nullptr;
+
+    std::optional<RemoteVideoFrameReadReference> remoteVideoFrameReadReference;
+    std::unique_ptr<RemoteVideoSample> remoteSample;
+    if (is<RemoteVideoFrameProxy>(sample)) {
+        remoteVideoFrameReadReference = downcast<RemoteVideoFrameProxy>(sample).read();
+        remoteSample = RemoteVideoSample::create(nullptr, sample.presentationTime(), sample.videoRotation(), RemoteVideoSample::ShouldCheckForIOSurface::No);
+    } else {
+        remoteSample = RemoteVideoSample::create(sample, RemoteVideoSample::ShouldCheckForIOSurface::No);
+        if (!remoteSample->surface()) {
+            // buffer is not IOSurface, we need to copy to shared video frame.
+            if (!copySharedVideoFrame(remoteSample->imageBuffer()))
+                return;
+        }
     }
 
     m_connection->send(Messages::RemoteMediaRecorder::VideoSampleAvailable { WTFMove(*remoteSample), remoteVideoFrameReadReference }, m_identifier);

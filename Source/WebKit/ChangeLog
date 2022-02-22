@@ -1,3 +1,21 @@
+2022-02-22  Youenn Fablet  <youenn@apple.com>
+
+        http/wpt/mediarecorder/mute-tracks.html fails with WebRTCRemoteVideoFrameEnabled=true
+        https://bugs.webkit.org/show_bug.cgi?id=237021
+
+        Reviewed by Kimmo Kinnunen.
+
+        We were previously creating the black frame but still sending the remote read reference.
+        On GPUProcess side, we were then encoding the real frame instead of the black/muted frame.
+        Add a specific muted code path to fix the issue.
+
+        Covered by updated test.
+
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::videoSampleAvailable):
+        * WebProcess/GPU/webrtc/SharedVideoFrame.cpp:
+        (WebKit::SharedVideoFrameReader::read):
+
 2022-02-22  Tim Nguyen  <ntim@apple.com>
 
         Rename RenderStyle::userSelectIncludingInert to RenderStyle::effectiveUserSelect
