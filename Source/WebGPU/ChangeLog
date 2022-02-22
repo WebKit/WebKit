@@ -1,5 +1,16 @@
 2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Fix release build
+        https://bugs.webkit.org/show_bug.cgi?id=237004
+
+        Unreviewed.
+
+        If you include WTF, you must have set NDEBUG in release builds.
+
+        * Configurations/Base.xcconfig:
+
+2022-02-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Fix iOS build
         https://bugs.webkit.org/show_bug.cgi?id=237000
 
