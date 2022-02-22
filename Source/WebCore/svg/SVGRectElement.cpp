@@ -89,9 +89,8 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGRectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    // FIXME: [LBSE] Upstream enough code to allow the creation of RenderLayerModelObject based SVG renderers.
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (false && document().settings().layerBasedSVGEngineEnabled())
+    if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGRect>(*this, WTFMove(style));
 #endif
 
