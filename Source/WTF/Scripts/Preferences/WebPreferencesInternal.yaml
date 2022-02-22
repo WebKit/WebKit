@@ -369,6 +369,20 @@ IPCTestingAPIEnabled:
     WebKit:
       default: false
 
+ImageAnalysisMarkupEnabled:
+  type: bool
+  humanReadableName: "Image analysis markup"
+  humanReadableDescription: "Enable image analysis markup"
+  condition: ENABLE(IMAGE_ANALYSIS)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: defaultImageAnalysisMarkupEnabled()
+
 ImageAnalysisQueueEnabled:
   type: bool
   humanReadableName: "Image analysis queue"

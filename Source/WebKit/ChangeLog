@@ -1,3 +1,77 @@
+2022-02-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Adjust some behaviors around the "Markup Image" action in the callout bar
+        https://bugs.webkit.org/show_bug.cgi?id=236980
+
+        Reviewed by Aditya Keerthi.
+
+        Adjust the following behaviors around the "Markup Image" callout bar item on iOS:
+        1.  The item should be present as long as the selection range contains a single image item (not only if the
+            selection range exactly encompasses a single image element.
+        2.  The item should appear in the callout bar before other WebKit-client-provided menu controller items.
+
+        This patch also adds a new API test to exercise these behaviors and, in doing so, also refactors logic around
+        determining whether or not to show this item so that it's dependent on a WebKit internal feature instead of just
+        the system feature flag (with the default value of the internal feature being equal to whether or not the system
+        feature is enabled). This means we can run tests for these features without requiring the system feature flag to
+        be enabled.
+
+        See below for more details.
+
+        Test: ImageAnalysisTests.MenuControllerItems
+
+        * Platform/cocoa/TextRecognitionUtilities.mm:
+        (WebKit::makeTextRecognitionResult):
+
+        Drive-by fix for some API tests: only attempt to send the platform image analysis result over IPC if it is a
+        `VKCImageAnalysis`. In some API tests, we use mock objects here instead, which currently causes the IPC message
+        send to fail due to encoding failure.
+
+        * Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm:
+        (WebKit::defaultImageAnalysisMarkupEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+
+        Make the new internal feature flag default to the system feature flag.
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+        (-[WKActionSheetAssistant defaultActionsForImageSheet:]):
+
+        Consult a new delegate method (`-actionSheetAssistantShouldIncludeCopyCroppedImageAction:`) instead of checking
+        the system feature flag directly.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView updateImageAnalysisMarkupMenuItems:]):
+
+        Append the "Markup Image" item at the start of the list of additional menu items.
+
+        (-[WKContentView canPerformImageAnalysisMarkup]):
+
+        Check the internal feature instead of the system feature flag.
+
+        (-[WKContentView performImageAnalysisMarkup:]):
+
+        Now that this action can be triggered even when the current selection doens't encompass only a single image, we
+        need to use `replaceWithPasteboardData()` instead, passing in the element context of the image element we want
+        to replace.
+
+        (-[WKContentView actionSheetAssistantShouldIncludeCopyCroppedImageAction:]):
+
+        Only attempt to show the new items if the internal feature is enabled. Consulted by `WKActionSheetAssistant`
+        above.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+
+        Check the internal feature instead of the system feature flag.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const):
+
+        Make a minor adjustment here to bail early only if we find multiple image elements in the selected range,
+        rather than bailing if we find anything that's not an image element.
+
 2022-02-21  Alexander Kanavin  <alex@linutronix.de>
 
         Fix racy parallel build of WebKit2-4.0.gir

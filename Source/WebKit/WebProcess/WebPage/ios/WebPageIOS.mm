@@ -328,13 +328,16 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
                     return foundImage;
 
                 for (TextIterator iterator { *selectedRange, { } }; !iterator.atEnd(); iterator.advance()) {
+                    auto imageElement = dynamicDowncast<HTMLImageElement>(iterator.node());
+                    if (!imageElement)
+                        continue;
+
                     if (foundImage) {
                         foundImage = nullptr;
                         break;
                     }
-                    foundImage = dynamicDowncast<HTMLImageElement>(iterator.node());
-                    if (!foundImage)
-                        break;
+
+                    foundImage = imageElement;
                 }
                 return foundImage;
             };

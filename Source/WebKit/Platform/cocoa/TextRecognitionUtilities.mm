@@ -128,7 +128,8 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
 #endif // ENABLE(DATA_DETECTION)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    result.platformData = { RetainPtr { analysis } };
+    if ([analysis isKindOfClass:PAL::getVKCImageAnalysisClass()])
+        result.platformData = analysis;
 #endif
 
     return result;

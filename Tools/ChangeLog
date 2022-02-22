@@ -1,3 +1,28 @@
+2022-02-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Adjust some behaviors around the "Markup Image" action in the callout bar
+        https://bugs.webkit.org/show_bug.cgi?id=236980
+
+        Reviewed by Aditya Keerthi.
+
+        Add an API test to verify that "Markup Image" appears as the first non-default callout bar item when a single
+        image element is in the selection range. The test is comprised of three parts:
+
+        1. Select just a single image, and expect the "Markup Image" item.
+        2. Select all images in the document, and expect no "Markup Image" item.
+        3. Select a single image and some surrounding text, and expect the "Markup Image" item.
+
+        See WebKit/ChangeLog for more details.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (TestWebKitAPI::createWebViewWithTextRecognitionEnhancements):
+        (TestWebKitAPI::swizzledSetMenuItems):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/multiple-images.html:
+
+        Add some text before and after each image so that we can select a single image alongside some text, and exercise
+        the changes in `WebPage::getPlatformEditorState` (see WebKit changes for more information).
+
 2022-02-21  Jon Lee  <jonlee@apple.com>
 
         Add test name to the image diff template

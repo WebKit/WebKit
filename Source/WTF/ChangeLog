@@ -1,3 +1,16 @@
+2022-02-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Adjust some behaviors around the "Markup Image" action in the callout bar
+        https://bugs.webkit.org/show_bug.cgi?id=236980
+
+        Reviewed by Aditya Keerthi.
+
+        Add a WebKit internal feature flag to control whether or not the "Markup Image" and related "Copy Cropped Image"
+        menu items should be enabled on iOS and macOS. This enables us to test these features in API and layout tests
+        without requiring the corresponding system feature flag to be enabled.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Temporal.PlainDate should validate input range

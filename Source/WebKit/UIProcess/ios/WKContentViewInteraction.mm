@@ -4697,16 +4697,18 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     auto currentItem = findMenuItemWithAction(updatedItems, @selector(performImageAnalysisMarkup:));
     auto& editorState = _page->editorState();
-    if (!WebKit::isImageAnalysisMarkupSystemFeatureEnabled() || !self.window || editorState.isMissingPostLayoutData || !editorState.postLayoutData().selectedEditableImage) {
+    if (!_page->preferences().imageAnalysisMarkupEnabled() || !self.window || editorState.isMissingPostLayoutData || !editorState.postLayoutData().selectedEditableImage) {
         if (currentItem)
             [updatedItems removeObject:currentItem];
-    } else if (!currentItem)
-        [updatedItems addObject:adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTitleMarkupImage() action:@selector(performImageAnalysisMarkup:)]).get()];
+    } else if (!currentItem) {
+        auto item = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTitleMarkupImage() action:@selector(performImageAnalysisMarkup:)]);
+        [updatedItems insertObject:item.get() atIndex:0];
+    }
 }
 
 - (BOOL)canPerformImageAnalysisMarkup
 {
-    if (!WebKit::isImageAnalysisMarkupSystemFeatureEnabled())
+    if (!_page || !_page->preferences().imageAnalysisMarkupEnabled())
         return NO;
 
     if (!_imageAnalysisMarkupData)
@@ -4723,7 +4725,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
     auto [elementContext, image, preferredMIMEType] = *_imageAnalysisMarkupData;
     if (auto [data, type] = WebKit::transcodeWithPreferredMIMEType(image.get(), preferredMIMEType.createCFString().get(), (__bridge CFStringRef)UTTypeTIFF.identifier); data)
-        _page->replaceSelectionWithPasteboardData({ String { type.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
+        _page->replaceWithPasteboardData(elementContext, { String { type.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
 }
 
 - (void)doAfterComputingImageAnalysisResultsForMarkup:(CompletionHandler<void()>&&)completion
@@ -10901,6 +10903,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 #endif // ENABLE(IMAGE_ANALYSIS)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+- (BOOL)actionSheetAssistantShouldIncludeCopyCroppedImageAction:(WKActionSheetAssistant *)assistant
+{
+    return _page->preferences().imageAnalysisMarkupEnabled();
+}
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant copyCroppedImage:(UIImage *)image sourceMIMEType:(NSString *)sourceMIMEType
 {

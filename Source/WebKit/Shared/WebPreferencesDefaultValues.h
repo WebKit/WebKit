@@ -118,6 +118,7 @@ bool defaultScreenCaptureKitEnabled();
 #if ENABLE(IMAGE_ANALYSIS)
 bool defaultTextRecognitionEnhancementsEnabled();
 bool defaultImageAnalysisQueueEnabled();
+bool defaultImageAnalysisMarkupEnabled();
 #endif
 
 } // namespace WebKit

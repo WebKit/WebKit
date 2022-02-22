@@ -271,7 +271,7 @@ void WebContextMenuProxyMac::setupServicesMenu()
     if (!hasControlledImage)
         [m_menu setShowsStateColumn:YES];
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    else if (isImageAnalysisMarkupSystemFeatureEnabled()) {
+    else if (page()->preferences().imageAnalysisMarkupEnabled()) {
         auto markupImageItem = adoptNS([[NSMenuItem alloc] initWithTitle:contextMenuItemTitleMarkupImage() action:@selector(markupImage) keyEquivalent:@""]);
         [markupImageItem setImage:[NSImage imageWithSystemSymbolName:@"person.fill.viewfinder" accessibilityDescription:contextMenuItemTitleMarkupImage()]];
         [markupImageItem setTarget:WKSharingServicePickerDelegate.sharedSharingServicePickerDelegate];

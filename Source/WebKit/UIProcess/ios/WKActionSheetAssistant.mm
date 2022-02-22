@@ -555,7 +555,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (elementInfo.type == _WKActivatedElementTypeImage || [elementInfo image]) {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-        if (WebKit::isImageAnalysisMarkupSystemFeatureEnabled()) {
+        if ([_delegate respondsToSelector:@selector(actionSheetAssistantShouldIncludeCopyCroppedImageAction:)] && [_delegate actionSheetAssistantShouldIncludeCopyCroppedImageAction:self]) {
             // FIXME (rdar://88834304): This should be additionally gated on the relevant VisionKit SPI.
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopyCroppedImage assistant:self]];
         }
@@ -591,7 +591,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if (WebKit::isImageAnalysisMarkupSystemFeatureEnabled()) {
+    if ([_delegate respondsToSelector:@selector(actionSheetAssistantShouldIncludeCopyCroppedImageAction:)] && [_delegate actionSheetAssistantShouldIncludeCopyCroppedImageAction:self]) {
         // FIXME (rdar://88834304): This should be additionally gated on the relevant VisionKit SPI.
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopyCroppedImage assistant:self]];
     }

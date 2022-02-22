@@ -86,6 +86,7 @@ typedef NS_ENUM(NSInteger, _WKElementActionType);
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant lookUpImage:(UIImage *)image imageURL:(NSURL *)imageURL title:(NSString *)title imageBounds:(CGRect)imageBounds;
 #endif
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+- (BOOL)actionSheetAssistantShouldIncludeCopyCroppedImageAction:(WKActionSheetAssistant *)assistant;
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant copyCroppedImage:(UIImage *)image sourceMIMEType:(NSString *)sourceMIMEType;
 #endif
 @end
