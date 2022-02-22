@@ -3355,6 +3355,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXCheckedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsChecked);
             break;
+        case AXCurrentStateChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::CurrentValue);
+            break;
         case AXDisabledStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::CanSetFocusAttribute);
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsEnabled);

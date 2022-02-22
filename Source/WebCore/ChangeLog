@@ -1,3 +1,18 @@
+2022-02-22  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Fix accessibility/aria-current-state-changed-notification.html in isolated tree mode
+        https://bugs.webkit.org/show_bug.cgi?id=237014
+
+        Reviewed by Chris Fleizach.
+
+        We need to update AXPropertyName::CurrentValue when we get a AXCurrentStateChanged notification.
+
+        Fixes accessibility/aria-current-state-changed-notification.html in isolated tree mode.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::updateIsolatedTree):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+
 2022-02-22  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for crash in several AX LayoutTests in isolated tree mode.
