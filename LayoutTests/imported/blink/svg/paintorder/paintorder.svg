@@ -1,5 +1,5 @@
 <svg viewBox="-10 -10 280 220" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-	<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-104" />
+	<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-105" />
 	<defs>
 		<marker id="m" refX="5" refY="5" viewBox="0 0 10 10" overflow="visible">
 			<circle cx="5" cy="5" r="3" fill="black" stroke="black" fill-opacity="0.5"/>
