@@ -24,6 +24,7 @@
 #if USE(GSTREAMER)
 
 #include "ApplicationGLib.h"
+#include "DMABufVideoSinkGStreamer.h"
 #include "GLVideoSinkGStreamer.h"
 #include "GStreamerAudioMixer.h"
 #include "GUniquePtrGStreamer.h"
@@ -335,6 +336,7 @@ void registerWebKitGStreamerElements()
 
 #if ENABLE(VIDEO)
         gst_element_register(0, "webkitwebsrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEB_SRC);
+        gst_element_register(0, "webkitdmabufvideosink", GST_RANK_NONE, WEBKIT_TYPE_DMABUF_VIDEO_SINK);
 #if USE(GSTREAMER_GL)
         gst_element_register(0, "webkitglvideosink", GST_RANK_NONE, WEBKIT_TYPE_GL_VIDEO_SINK);
 #endif

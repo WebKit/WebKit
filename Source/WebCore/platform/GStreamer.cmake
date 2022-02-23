@@ -9,6 +9,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     list(APPEND WebCore_SOURCES
         Modules/webaudio/MediaStreamAudioSourceGStreamer.cpp
         platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp
+        platform/graphics/gstreamer/DMABufVideoSinkGStreamer.cpp
         platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp
         platform/graphics/gstreamer/GRefPtrGStreamer.cpp
         platform/graphics/gstreamer/GStreamerAudioMixer.cpp
@@ -16,6 +17,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp
         platform/graphics/gstreamer/GStreamerRegistryScanner.cpp
         platform/graphics/gstreamer/GStreamerVideoFrameHolder.cpp
+        platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp
         platform/graphics/gstreamer/ImageDecoderGStreamer.cpp
         platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
         platform/graphics/gstreamer/MediaEngineConfigurationFactoryGStreamer.cpp
@@ -94,11 +96,13 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
             ${GSTREAMER_INCLUDE_DIRS}
             ${GSTREAMER_BASE_INCLUDE_DIRS}
+            ${GSTREAMER_ALLOCATORS_INCLUDE_DIRS}
             ${GSTREAMER_APP_INCLUDE_DIRS}
             ${GSTREAMER_PBUTILS_INCLUDE_DIRS}
         )
 
         list(APPEND WebCore_LIBRARIES
+            ${GSTREAMER_ALLOCATORS_LIBRARIES}
             ${GSTREAMER_APP_LIBRARIES}
             ${GSTREAMER_BASE_LIBRARIES}
             ${GSTREAMER_LIBRARIES}

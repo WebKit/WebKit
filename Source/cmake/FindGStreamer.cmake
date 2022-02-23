@@ -16,6 +16,7 @@
 # plugins can be searched, and they define the following variables if
 # found:
 #
+#  gstreamer-allocators: GSTREAMER_ALLOCATORS_INCLUDE_DIRS and GSTREAMER_ALLOCATORS_LIBRARIES
 #  gstreamer-app:        GSTREAMER_APP_INCLUDE_DIRS and GSTREAMER_APP_LIBRARIES
 #  gstreamer-audio:      GSTREAMER_AUDIO_INCLUDE_DIRS and GSTREAMER_AUDIO_LIBRARIES
 #  gstreamer-fft:        GSTREAMER_FFT_INCLUDE_DIRS and GSTREAMER_FFT_LIBRARIES
@@ -98,6 +99,7 @@ FIND_GSTREAMER_COMPONENT(GSTREAMER_FULL gstreamer-full-1.0>=1.17.0 gstreamer-ful
 # 2. Find GStreamer plugins
 # -------------------------
 
+FIND_GSTREAMER_COMPONENT(GSTREAMER_ALLOCATORS gstreamer-allocators-1.0 gstallocators-1.0)
 FIND_GSTREAMER_COMPONENT(GSTREAMER_APP gstreamer-app-1.0 gstapp-1.0)
 FIND_GSTREAMER_COMPONENT(GSTREAMER_AUDIO gstreamer-audio-1.0 gstaudio-1.0)
 FIND_GSTREAMER_COMPONENT(GSTREAMER_FFT gstreamer-fft-1.0 gstfft-1.0)
@@ -126,6 +128,8 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(GStreamer REQUIRED_VARS _GSTREAMER_REQUIRED_VA
                                             VERSION_VAR   GSTREAMER_VERSION)
 
 mark_as_advanced(
+    GSTREAMER_ALLOCATORS_INCLUDE_DIRS
+    GSTREAMER_ALLOCATORS_LIBRARIES
     GSTREAMER_APP_INCLUDE_DIRS
     GSTREAMER_APP_LIBRARIES
     GSTREAMER_AUDIO_INCLUDE_DIRS

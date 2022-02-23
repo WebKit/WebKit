@@ -23,10 +23,9 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 
 #include "GStreamerCommon.h"
-#include "MediaPlayerPrivateGStreamer.h"
+#include "GStreamerVideoSinkCommon.h"
 #include "PlatformDisplay.h"
-
-#include <gst/app/gstappsink.h>
+#include <gst/gl/gl.h>
 #include <wtf/glib/WTFGType.h>
 
 // gstglapi.h may include eglplatform.h and it includes X.h, which
@@ -242,53 +241,7 @@ void webKitGLVideoSinkSetMediaPlayerPrivate(WebKitGLVideoSink* sink, MediaPlayer
     WebKitGLVideoSinkPrivate* priv = sink->priv;
 
     priv->mediaPlayerPrivate = player;
-    g_signal_connect(priv->appSink.get(), "new-sample", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
-        GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
-        GstBuffer* buffer = gst_sample_get_buffer(sample.get());
-        GST_TRACE_OBJECT(sink, "new-sample with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
-        player->triggerRepaint(sample.get());
-        return GST_FLOW_OK;
-    }), player);
-    g_signal_connect(priv->appSink.get(), "new-preroll", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
-        GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK(sink)));
-        GstBuffer* buffer = gst_sample_get_buffer(sample.get());
-        GST_DEBUG_OBJECT(sink, "new-preroll with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
-        player->triggerRepaint(sample.get());
-        return GST_FLOW_OK;
-    }), player);
-
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(priv->appSink.get(), "sink"));
-    gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_PUSH | GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM | GST_PAD_PROBE_TYPE_EVENT_FLUSH | GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM), [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
-        auto* player = static_cast<MediaPlayerPrivateGStreamer*>(userData);
-
-        if (info->type & GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM) {
-            if (GST_EVENT_TYPE(GST_PAD_PROBE_INFO_EVENT(info)) != GST_EVENT_TAG)
-                return GST_PAD_PROBE_OK;
-            GstTagList* tagList;
-            gst_event_parse_tag(GST_PAD_PROBE_INFO_EVENT(info), &tagList);
-            player->updateVideoOrientation(tagList);
-            return GST_PAD_PROBE_OK;
-        }
-
-        // In some platforms (e.g. OpenMAX on the Raspberry Pi) when a resolution change occurs the
-        // pipeline has to be drained before a frame with the new resolution can be decoded.
-        // In this context, it's important that we don't hold references to any previous frame
-        // (e.g. m_sample) so that decoding can continue.
-        // We are also not supposed to keep the original frame after a flush.
-        if (info->type & GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM) {
-            if (GST_QUERY_TYPE(GST_PAD_PROBE_INFO_QUERY(info)) != GST_QUERY_DRAIN)
-                return GST_PAD_PROBE_OK;
-            GST_DEBUG("Acting upon DRAIN query");
-        }
-        if (info->type & GST_PAD_PROBE_TYPE_EVENT_FLUSH) {
-            if (GST_EVENT_TYPE(GST_PAD_PROBE_INFO_EVENT(info)) != GST_EVENT_FLUSH_START)
-                return GST_PAD_PROBE_OK;
-            GST_DEBUG("Acting upon flush-start event");
-        }
-
-        player->flushCurrentBuffer();
-        return GST_PAD_PROBE_OK;
-    }, player, nullptr);
+    webKitVideoSinkSetMediaPlayerPrivate(priv->appSink.get(), priv->mediaPlayerPrivate);
 }
 
 bool webKitGLVideoSinkProbePlatform()

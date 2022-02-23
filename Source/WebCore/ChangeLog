@@ -1,3 +1,61 @@
+2022-02-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GStreamer] Add WebKitDMABufVideoSink
+        https://bugs.webkit.org/show_bug.cgi?id=236883
+
+        Reviewed by Philippe Normand.
+
+        Add custom WebKitDMABufVideoSink sink that is able to accept decoded
+        dmabuf or raw data in a range of RGB-like or YUV formats.
+
+        The sink is pretty straightforward, in large part mirroring the
+        WebKitGLVideoSink implementation. The formats that (at the moment) we
+        can correctly handle inside the TextureMapper-based graphics pipeline
+        are combined with both the dmabuf or raw memory type during the caps
+        construction. Like the GL counterpart, the received samples are passed
+        on to the associated MediaPlayerPrivateGStreamer object. The common
+        integration into the MediaPlayerPrivateGStreamer functionality is
+        encapsulated into the webKitVideoSinkSetMediaPlayerPrivate() function.
+
+        The MediaPlayerPrivateGStreamer implementation will be enhanced later to
+        properly handle samples conforming to either variant of these caps. But
+        the idea is that when using this sink, a dmabuf-containing sample will
+        pass the dmabuf to the graphics subsystem and a raw-data-containing
+        sample will copy the data into a dmabuf object (created or reused) and
+        then pass it on.
+
+        The WEBKIT_GST_DMABUF_SINK_FORCED_FALLBACK_CAPS_FORMAT environment
+        variable can be set to specify the desired exclusive format that this
+        sink should support. This is especially helpful to debug the correct
+        handling of different RGB or YUV formats inside the graphics pipeline.
+        When set, only raw data of the specified format is accepted, meaning the
+        pipeline upstream will perform any necessary conversion of the decoded
+        data into the desired format. Raw data is then packed into dmabufs and
+        sent into the pipeline for display, enabling the developer to examine
+        whether the given format is handled appropriately.
+
+        The sink element is registered in registerWebKitGStreamerElements().
+        This functionality will require The GStreamer allocators library, so the
+        necessary dependency glue is also provided.
+
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/DMABufVideoSinkGStreamer.cpp: Added.
+        (forcedFallbackCapsFormat):
+        (webKitDMABufVideoSinkConstructed):
+        (webKitDMABufVideoSinkFinalize):
+        (webKitDMABufVideoSinkGetProperty):
+        (webkit_dmabuf_video_sink_class_init):
+        (webKitDMABufVideoSinkSetMediaPlayerPrivate):
+        (webKitDMABufVideoSinkProbePlatform):
+        * platform/graphics/gstreamer/DMABufVideoSinkGStreamer.h: Added.
+        * platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp:
+        (webKitGLVideoSinkSetMediaPlayerPrivate):
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::registerWebKitGStreamerElements):
+        * platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp: Added.
+        (webKitVideoSinkSetMediaPlayerPrivate):
+        * platform/graphics/gstreamer/GStreamerVideoSinkCommon.h: Added.
+
 2022-02-23  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION(r289474): [iOS] ASSERTION FAILED: isMainThread() under WebCore::IDBServer::UniqueIDBDatabase::abortActiveTransactions()
