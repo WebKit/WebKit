@@ -1,5 +1,22 @@
 2022-02-23  J Pascoe  <j_pascoe@apple.com>
 
+        Prevent use of PDFKit when using PDF.js
+        https://bugs.webkit.org/show_bug.cgi?id=237052
+        rdar://89251696
+
+        Reviewed by Tim Horton.
+
+        PDFKit was still being used by embeds, this patch fixes that issue by treating
+        pdf embeds as frames if PDF.js is enabled and also prevents the loading of
+        the PDFKit plugin entirely by modifying shouldUsePDFPlugin.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::objectContentType):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::shouldUsePDFPlugin const):
+
+2022-02-23  J Pascoe  <j_pascoe@apple.com>
+
         [WebAuthn] userHandle not marked nullable in _WKWebAuthenticationAssertionResponse
         https://bugs.webkit.org/show_bug.cgi?id=237043
         rdar://89317740

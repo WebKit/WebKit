@@ -1704,6 +1704,10 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
             return ObjectContentType::Frame;
         }
     }
+    if (auto* webPage = m_frame->page()) {
+        if (webPage->corePage()->settings().pdfJSViewerEnabled() && MIMETypeRegistry::isPDFMIMEType(mimeType))
+            return ObjectContentType::Frame;
+    }
 
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return ObjectContentType::Image;

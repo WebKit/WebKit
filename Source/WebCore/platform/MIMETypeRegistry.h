@@ -105,7 +105,7 @@ public:
     static bool isApplicationPluginMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is one of the common PDF/PS types.
-    static bool isPDFMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isPDFMIMEType(const String& mimeType);
     static bool isPostScriptMIMEType(const String& mimeType);
     WEBCORE_EXPORT static bool isPDFOrPostScriptMIMEType(const String& mimeType);
 
