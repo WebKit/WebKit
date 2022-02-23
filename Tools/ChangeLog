@@ -1,3 +1,12 @@
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Drop StringHasher::hashMemory() and use the modern Hasher instead
+        https://bugs.webkit.org/show_bug.cgi?id=237049
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/StringHasher.cpp:
+
 2022-02-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION(r289580): [ iOS macOS ] TestWebKitAPI.IPCTestingAPI.CanReceiveSharedMemory is a constant timeout

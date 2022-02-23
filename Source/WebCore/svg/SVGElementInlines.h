@@ -47,7 +47,7 @@ struct SVGAttributeHashTranslator {
     {
         if (key.hasPrefix()) {
             QualifiedNameComponents components = { nullAtom().impl(), key.localName().impl(), key.namespaceURI().impl() };
-            return hashComponents(components);
+            return computeHash(components);
         }
         return DefaultHash<QualifiedName>::hash(key);
     }

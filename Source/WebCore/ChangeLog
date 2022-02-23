@@ -1,3 +1,48 @@
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Drop StringHasher::hashMemory() and use the modern Hasher instead
+        https://bugs.webkit.org/show_bug.cgi?id=237049
+
+        Reviewed by Sam Weinig and Darin Adler.
+
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+        (WebCore::add):
+        (WebCore::IDBResourceIdentifierHash::hash):
+        (WebCore::IDBResourceIdentifier::hash const): Deleted.
+        * dom/Attribute.h:
+        (WebCore::add):
+        * dom/DocumentSharedObjectPool.cpp:
+        (WebCore::DocumentSharedObjectPool::cachedShareableElementDataWithAttributes):
+        (WebCore::attributeHash): Deleted.
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::QualifiedNameImpl::computeHash const):
+        * dom/QualifiedName.h:
+        (WebCore::add):
+        (WebCore::hashComponents): Deleted.
+        * dom/QualifiedNameCache.cpp:
+        (WebCore::QNameComponentsTranslator::hash):
+        * page/GlobalWindowIdentifier.h:
+        (WebCore::add):
+        (WTF::GlobalWindowIdentifierHash::hash):
+        (WebCore::GlobalWindowIdentifier::hash const): Deleted.
+        * page/SecurityOriginHash.h:
+        (WebCore::SecurityOriginHash::hash):
+        * platform/ScriptExecutionContextIdentifier.h:
+        (WebCore::add):
+        (WebCore::ProcessQualified<UUID>::hash const): Deleted.
+        (WTF::computeHash): Deleted.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::hash const):
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::hash const):
+        * svg/SVGElementInlines.h:
+        (WebCore::SVGAttributeHashTranslator::hash):
+        * workers/service/ServiceWorkerRegistrationKey.cpp:
+        (WebCore::ServiceWorkerRegistrationKey::hash const): Deleted.
+        * workers/service/ServiceWorkerRegistrationKey.h:
+        (WebCore::add):
+        (WTF::ServiceWorkerRegistrationKeyHash::hash):
+
 2022-02-22  Tim Nguyen  <ntim@apple.com>
 
         Create a DOMWindow::printWarningMessage method and start using it in DOMWindow.cpp

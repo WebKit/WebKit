@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ProcessIdentifier.h"
-#include <wtf/text/StringHash.h>
+#include <wtf/Hasher.h>
 
 namespace WebCore {
 
@@ -55,12 +55,6 @@ public:
         return !m_resourceNumber && !m_idbConnectionIdentifier;
     }
 
-    unsigned hash() const
-    {
-        uint64_t hashCodes[2] = { m_idbConnectionIdentifier.toUInt64(), m_resourceNumber };
-        return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
-    }
-
     bool operator!=(const IDBResourceIdentifier& other) const { return !(*this == other); }
     bool operator==(const IDBResourceIdentifier& other) const
     {
@@ -83,14 +77,20 @@ public:
 
 private:
     friend struct IDBResourceIdentifierHashTraits;
+    friend void add(Hasher&, const IDBResourceIdentifier&);
 
     IDBResourceIdentifier(IDBConnectionIdentifier, uint64_t resourceIdentifier);
     IDBConnectionIdentifier m_idbConnectionIdentifier;
     uint64_t m_resourceNumber { 0 };
 };
 
+inline void add(Hasher& hasher, const IDBResourceIdentifier& identifier)
+{
+    add(hasher, identifier.m_idbConnectionIdentifier, identifier.m_resourceNumber);
+}
+
 struct IDBResourceIdentifierHash {
-    static unsigned hash(const IDBResourceIdentifier& a) { return a.hash(); }
+    static unsigned hash(const IDBResourceIdentifier& a) { return computeHash(a); }
     static bool equal(const IDBResourceIdentifier& a, const IDBResourceIdentifier& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = false;
 };

@@ -1,3 +1,21 @@
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Drop StringHasher::hashMemory() and use the modern Hasher instead
+        https://bugs.webkit.org/show_bug.cgi?id=237049
+
+        Reviewed by Sam Weinig and Darin Adler.
+
+        * wtf/SchedulePair.h:
+        (WTF::SchedulePairHash::hash):
+        * wtf/UUID.cpp:
+        (WTF::UUID::hash const): Deleted.
+        * wtf/UUID.h:
+        (WTF::UUID::isHashTableDeletedValue const):
+        (WTF::add):
+        (WTF::UUIDHash::hash):
+        * wtf/text/StringHasher.h:
+        (WTF::StringHasher::hashMemory): Deleted.
+
 2022-02-22  Elliott Williams  <emw@apple.com>
 
         Replace legacy-build-copy-nested-headers.py with an xcodebuild invocation

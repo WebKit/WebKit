@@ -462,20 +462,4 @@ TEST(WTF, StringHasher_computeHashAndMaskTop8Bits)
     ASSERT_EQ(testBHash5 & 0xFFFFFF, StringHasher::computeHashAndMaskTop8Bits(testBUChars, 5));
 }
 
-TEST(WTF, StringHasher_hashMemory)
-{
-    ASSERT_EQ(emptyStringHash, StringHasher::hashMemory(0, 0));
-    ASSERT_EQ(emptyStringHash, StringHasher::hashMemory(nullUChars, 0));
-    ASSERT_EQ(emptyStringHash, StringHasher::hashMemory<0>(0));
-    ASSERT_EQ(emptyStringHash, StringHasher::hashMemory<0>(nullUChars));
-
-    ASSERT_EQ(singleNullCharacterHash, StringHasher::hashMemory(nullUChars, 2));
-    ASSERT_EQ(singleNullCharacterHash, StringHasher::hashMemory<2>(nullUChars));
-
-    ASSERT_EQ(testAHash5, StringHasher::hashMemory(testAUChars, 10));
-    ASSERT_EQ(testAHash5, StringHasher::hashMemory<10>(testAUChars));
-    ASSERT_EQ(testBHash5, StringHasher::hashMemory(testBUChars, 10));
-    ASSERT_EQ(testBHash5, StringHasher::hashMemory<10>(testBUChars));
-}
-
 } // namespace TestWebKitAPI

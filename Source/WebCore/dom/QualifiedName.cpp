@@ -69,7 +69,7 @@ const AtomString& QualifiedName::localNameUpper() const
 unsigned QualifiedName::QualifiedNameImpl::computeHash() const
 {
     QualifiedNameComponents components = { m_prefix.impl(), m_localName.impl(), m_namespace.impl() };
-    return hashComponents(components);
+    return WTF::computeHash(components);
 }
 
 }

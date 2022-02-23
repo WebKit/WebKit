@@ -25,6 +25,7 @@
 #pragma once
 
 #include "QualifiedName.h"
+#include <wtf/Hasher.h>
 
 namespace WebCore {
 
@@ -73,6 +74,11 @@ private:
     QualifiedName m_name;
     AtomString m_value;
 };
+
+inline void add(Hasher& hasher, const Attribute& attribute)
+{
+    add(hasher, attribute.name(), attribute.value());
+}
 
 inline bool Attribute::nameMatchesFilter(const QualifiedName& name, const AtomString& filterPrefix, const AtomString& filterLocalName, const AtomString& filterNamespaceURI)
 {

@@ -57,11 +57,6 @@ UUID::UUID()
     m_data = (static_cast<UInt128>(high) << 64) | low;
 }
 
-unsigned UUID::hash() const
-{
-    return StringHasher::hashMemory(reinterpret_cast<const unsigned char*>(&m_data), 16);
-}
-
 String UUID::toString() const
 {
     auto high = static_cast<uint64_t>(m_data >> 64);

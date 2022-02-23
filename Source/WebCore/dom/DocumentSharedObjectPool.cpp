@@ -32,11 +32,6 @@
 
 namespace WebCore {
 
-inline unsigned attributeHash(const Vector<Attribute>& attributes)
-{
-    return StringHasher::hashMemory(attributes.data(), attributes.size() * sizeof(Attribute));
-}
-
 inline bool hasSameAttributes(const Vector<Attribute>& attributes, ShareableElementData& elementData)
 {
     if (attributes.size() != elementData.length())
@@ -48,7 +43,7 @@ Ref<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDataWi
 {
     ASSERT(!attributes.isEmpty());
 
-    auto& cachedData = m_shareableElementDataCache.add(attributeHash(attributes), nullptr).iterator->value;
+    auto& cachedData = m_shareableElementDataCache.add(computeHash(attributes), nullptr).iterator->value;
 
     // FIXME: This prevents sharing when there's a hash collision.
     if (cachedData && !hasSameAttributes(attributes, *cachedData))

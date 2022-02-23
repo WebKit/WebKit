@@ -30,6 +30,7 @@
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <pal/spi/win/CoreTextSPIWin.h>
 #include <wtf/HashMap.h>
+#include <wtf/Hasher.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
@@ -133,11 +134,11 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> hfont, CTFontRef ctFont, CGF
 
 unsigned FontPlatformData::hash() const
 {
+    // FIXME: Hashing hashes here is unfortunate.
     unsigned fontHash = m_font ? m_font->hash() : 0;
     CFHashCode cgFontHash = safeCFHash(m_cgFont.get());
     CFHashCode ctFontHash = safeCFHash(m_ctFont.get());
-    uintptr_t hashCodes[] = { fontHash, cgFontHash, ctFontHash, m_useGDI };
-    return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
+    return computeHash(fontHash, cgFontHash, ctFontHash, m_useGDI);
 }
 
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const

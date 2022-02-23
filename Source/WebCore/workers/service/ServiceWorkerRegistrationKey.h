@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SecurityOriginData.h"
+#include <wtf/Hasher.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -38,7 +39,6 @@ public:
     WEBCORE_EXPORT ServiceWorkerRegistrationKey(SecurityOriginData&& topOrigin, URL&& scope);
 
     static ServiceWorkerRegistrationKey emptyKey();
-    unsigned hash() const;
 
     bool operator==(const ServiceWorkerRegistrationKey&) const;
     bool operator!=(const ServiceWorkerRegistrationKey& key) const { return !(*this == key); }
@@ -96,12 +96,17 @@ std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::decode
     return ServiceWorkerRegistrationKey { WTFMove(*topOrigin), WTFMove(scope) };
 }
 
+inline void add(Hasher& hasher, const ServiceWorkerRegistrationKey& key)
+{
+    add(hasher, key.topOrigin(), key.scope());
+}
+
 } // namespace WebCore
 
 namespace WTF {
 
 struct ServiceWorkerRegistrationKeyHash {
-    static unsigned hash(const WebCore::ServiceWorkerRegistrationKey& key) { return key.hash(); }
+    static unsigned hash(const WebCore::ServiceWorkerRegistrationKey& key) { return computeHash(key); }
     static bool equal(const WebCore::ServiceWorkerRegistrationKey& a, const WebCore::ServiceWorkerRegistrationKey& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = false;
 };

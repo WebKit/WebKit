@@ -58,7 +58,6 @@ public:
     const UUID& object() const { return m_object; }
     ProcessIdentifier processIdentifier() const { return m_processIdentifier; }
 
-    unsigned hash() const { return m_object.hash(); }
     bool isHashTableDeletedValue() const { return m_processIdentifier.isHashTableDeletedValue(); }
 
     bool operator==(const ProcessQualified& other) const { return m_object == other.m_object && m_processIdentifier == other.m_processIdentifier; }
@@ -73,6 +72,12 @@ private:
     UUID m_object;
     ProcessIdentifier m_processIdentifier;
 };
+
+inline void add(Hasher& hasher, const ProcessQualified<UUID>& uuid)
+{
+    // Since UUIDs are unique on their own, optimize by not hashing the process identifier.
+    add(hasher, uuid.object());
+}
 
 template<typename Decoder> std::optional<ProcessQualified<UUID>> ProcessQualified<UUID>::decode(Decoder& decoder)
 {
@@ -95,15 +100,5 @@ inline TextStream& operator<<(TextStream& ts, const ProcessQualified<UUID>& proc
 }
 
 using ScriptExecutionContextIdentifier = ProcessQualified<UUID>;
-
-}
-
-namespace WTF {
-
-template<>
-inline uint32_t computeHash(const WebCore::ScriptExecutionContextIdentifier& identifier)
-{
-    return identifier.object().hash();
-}
 
 }

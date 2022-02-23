@@ -31,6 +31,7 @@
 #include "SecurityOriginData.h"
 #include "StorageBlockingPolicy.h"
 #include <wtf/EnumTraits.h>
+#include <wtf/Hasher.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -305,6 +306,11 @@ template<class Decoder> inline RefPtr<SecurityOrigin> SecurityOrigin::decode(Dec
         return nullptr;
 
     return origin;
+}
+
+inline void add(Hasher& hasher, const SecurityOrigin& origin)
+{
+    add(hasher, origin.protocol(), origin.host(), origin.port());
 }
 
 } // namespace WebCore

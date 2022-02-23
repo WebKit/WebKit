@@ -27,6 +27,7 @@
 
 #include <limits>
 #include <wtf/HashMap.h>
+#include <wtf/Hasher.h>
 #include <wtf/text/StringHash.h>
 
 static const size_t headerSize = 8;
@@ -73,21 +74,21 @@ inline bool operator==(const IntegerArray& a, const IntegerArray& b)
     return a.m_integers == b.m_integers &&  a.m_size == b.m_size;
 }
 
+inline void add(Hasher& hasher, const IntegerArray& array)
+{
+    add(hasher, Span { array.integers(), array.size() });
+}
+
 struct IntegerArrayHashTraits : HashTraits<IntegerArray> {
     static void constructDeletedValue(IntegerArray& slot) { HashTraits<size_t>::constructDeletedValue(slot.m_size); }
     static bool isDeletedValue(const IntegerArray& slot) { return HashTraits<size_t>::isDeletedValue(slot.m_size); }
 };
 
 struct IntegerArrayHash {
-    static unsigned hash(const IntegerArray&);
+    static unsigned hash(const IntegerArray& array) { return computeHash(array); }
     static bool equal(const IntegerArray&, const IntegerArray&);
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
-
-unsigned IntegerArrayHash::hash(const IntegerArray& array)
-{
-    return StringHasher::hashMemory(array.integers(), array.size() * sizeof(int));
-}
 
 bool IntegerArrayHash::equal(const IntegerArray& a, const IntegerArray& b)
 {

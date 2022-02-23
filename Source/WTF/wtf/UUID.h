@@ -83,19 +83,24 @@ public:
     }
 
     bool isHashTableDeletedValue() const { return m_data == deletedValue; }
-    WTF_EXPORT_PRIVATE unsigned hash() const;
     WTF_EXPORT_PRIVATE String toString() const;
 
     operator bool() const { return !!m_data; }
 
 private:
     WTF_EXPORT_PRIVATE UUID();
+    friend void add(Hasher&, UUID);
 
     UInt128 m_data;
 };
 
+inline void add(Hasher& hasher, UUID uuid)
+{
+    add(hasher, uuid.m_data);
+}
+
 struct UUIDHash {
-    static unsigned hash(const UUID& key) { return key.hash(); }
+    static unsigned hash(const UUID& key) { return computeHash(key); }
     static bool equal(const UUID& a, const UUID& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };

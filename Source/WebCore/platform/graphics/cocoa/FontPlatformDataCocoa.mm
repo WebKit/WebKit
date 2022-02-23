@@ -27,6 +27,7 @@
 #import "FontCacheCoreText.h"
 #import "SharedBuffer.h"
 #import <pal/spi/cf/CoreTextSPI.h>
+#import <wtf/Hasher.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -38,16 +39,8 @@ namespace WebCore {
 
 unsigned FontPlatformData::hash() const
 {
-    uintptr_t flags = static_cast<uintptr_t>(static_cast<unsigned>(m_widthVariant) << 6
-        | m_isHashTableDeletedValue << 5
-        | static_cast<unsigned>(m_textRenderingMode) << 3
-        | static_cast<unsigned>(m_orientation) << 2
-        | m_syntheticBold << 1
-        | m_syntheticOblique);
-
-    uintptr_t fontHash = static_cast<uintptr_t>(CFHash(m_font.get()));
-    uintptr_t hashCodes[] = { fontHash, flags };
-    return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
+    // FIXME: Hashing a CFHash is unfortunate here.
+    return computeHash(CFHash(m_font.get()), m_widthVariant, m_isHashTableDeletedValue, m_textRenderingMode, m_orientation, m_orientation, m_syntheticBold, m_syntheticOblique);
 }
 
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const

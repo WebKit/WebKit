@@ -22,6 +22,7 @@
 
 #include <optional>
 #include <variant>
+#include <wtf/Int128.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/text/AtomString.h>
@@ -73,6 +74,14 @@ template<typename UnsignedInteger> std::enable_if_t<std::is_unsigned<UnsignedInt
 {
     add(hasher, static_cast<uint32_t>(integer));
     add(hasher, static_cast<uint32_t>(integer >> 32));
+}
+
+inline void add(Hasher& hasher, UInt128 value)
+{
+    auto high = static_cast<uint64_t>(value >> 64);
+    auto low = static_cast<uint64_t>(value);
+    add(hasher, high);
+    add(hasher, low);
 }
 
 template<typename SignedArithmetic> std::enable_if_t<std::is_signed<SignedArithmetic>::value, void> add(Hasher& hasher, SignedArithmetic number)
