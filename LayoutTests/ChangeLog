@@ -1,3 +1,15 @@
+2022-02-23  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Improve error message for missing pubKeyCredParams
+        https://bugs.webkit.org/show_bug.cgi?id=235421
+        rdar://87884875
+
+        Reviewed by Brent Fulgham.
+
+        Update test to reflect new error message.
+
+        * http/wpt/webauthn/public-key-credential-create-failure.https.html:
+
 2022-02-23  Alan Bujtas  <zalan@apple.com>
 
         [Subpixel] imported/w3c/web-platform-tests/css/css-flexbox/auto-margins-001.html fails at certain font sizes

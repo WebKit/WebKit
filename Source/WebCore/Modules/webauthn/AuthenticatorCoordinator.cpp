@@ -141,7 +141,7 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
     // Most of the jobs are done by bindings. However, we can't know if the JSValue of options.pubKeyCredParams
     // is empty or not. Return NotSupportedError as long as it is empty.
     if (options.pubKeyCredParams.isEmpty()) {
-        promise.reject(Exception { NotSupportedError, "No desired properties of the to be created credential are provided."_s });
+        promise.reject(Exception { NotSupportedError, "Unable to create credential because options.pubKeyCredParams is empty."_s });
         return;
     }
 

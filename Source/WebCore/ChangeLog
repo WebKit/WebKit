@@ -1,3 +1,19 @@
+2022-02-23  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Improve error message for missing pubKeyCredParams
+        https://bugs.webkit.org/show_bug.cgi?id=235421
+        rdar://87884875
+
+        Reviewed by Brent Fulgham.
+
+        We have seen confusion from library authors around the language
+        used in this error not indicating enough information about what
+        the problem is. This patch adds additional information, useful
+        to developers seeing this error.
+
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinator::create const):
+
 2022-02-23  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] LineLayout::firstLinePhysicalBaseline/lastLineLogicalBaseline should flip box baseline value for vertical-lr
