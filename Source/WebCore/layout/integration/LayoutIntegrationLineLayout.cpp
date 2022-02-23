@@ -441,10 +441,17 @@ LayoutUnit LineLayout::firstLinePhysicalBaseline() const
     }
 
     auto& firstLine = m_inlineContent->lines.first();
-    if (rootLayoutBox().style().isHorizontalWritingMode())
+    switch (rootLayoutBox().style().writingMode()) {
+    case WritingMode::TopToBottom:
         return LayoutUnit { firstLine.lineBoxTop() + firstLine.baseline() };
-
-    return LayoutUnit { firstLine.lineBoxLeft() + (firstLine.lineBoxWidth() - firstLine.baseline()) };
+    case WritingMode::LeftToRight:
+        return LayoutUnit { firstLine.lineBoxLeft() + (firstLine.lineBoxWidth() - firstLine.baseline()) };
+    case WritingMode::RightToLeft:
+        return LayoutUnit { firstLine.lineBoxLeft() + firstLine.baseline() };
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
 }
 
 LayoutUnit LineLayout::lastLineLogicalBaseline() const
@@ -455,15 +462,23 @@ LayoutUnit LineLayout::lastLineLogicalBaseline() const
     }
 
     auto& lastLine = m_inlineContent->lines.last();
-    if (rootLayoutBox().style().isHorizontalWritingMode())
+    switch (rootLayoutBox().style().writingMode()) {
+    case WritingMode::TopToBottom:
         return LayoutUnit { lastLine.lineBoxTop() + lastLine.baseline() };
+    case WritingMode::LeftToRight: {
+        // FIXME: We should set the computed height on the root's box geometry (in RenderBlockFlow) so that
+        // we could call m_layoutState.geometryForRootBox().borderBoxHeight() instead.
 
-    // FIXME: We should set the computed height on the root's box geometry (in RenderBlockFlow) so that
-    // we could call m_layoutState.geometryForRootBox().borderBoxHeight() instead.
-
-    // Line is always visual coordinates while logicalHeight is not (i.e. this translate to "box visual width" - "line visual right")
-    auto lineLogicalTop = flow().logicalHeight() - lastLine.lineBoxRight();
-    return LayoutUnit { lineLogicalTop + lastLine.baseline() };
+        // Line is always visual coordinates while logicalHeight is not (i.e. this translate to "box visual width" - "line visual right")
+        auto lineLogicalTop = flow().logicalHeight() - lastLine.lineBoxRight();
+        return LayoutUnit { lineLogicalTop + lastLine.baseline() };
+    }
+    case WritingMode::RightToLeft:
+        return LayoutUnit { lastLine.lineBoxLeft() + lastLine.baseline() };
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
 }
 
 void LineLayout::adjustForPagination()
@@ -572,7 +587,7 @@ LayoutRect LineLayout::firstInlineBoxRect(const RenderInline& renderInline) cons
     // FIXME: We should be able to flip the display boxes soon after the root block
     // is finished sizing in one go.
     auto firstBoxRect = Layout::toLayoutRect(firstBox->rect());
-    switch (flow().style().writingMode()) {
+    switch (rootLayoutBox().style().writingMode()) {
     case WritingMode::TopToBottom:
     case WritingMode::LeftToRight:
         return firstBoxRect;

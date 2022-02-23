@@ -1,3 +1,15 @@
+2022-02-23  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] LineLayout::firstLinePhysicalBaseline/lastLineLogicalBaseline should flip box baseline value for vertical-lr
+        https://bugs.webkit.org/show_bug.cgi?id=237090
+
+        Reviewed by Antti Koivisto.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::firstLinePhysicalBaseline const):
+        (WebCore::LayoutIntegration::LineLayout::lastLineLogicalBaseline const):
+        (WebCore::LayoutIntegration::LineLayout::firstInlineBoxRect const):
+
 2022-02-23  J Pascoe  <j_pascoe@apple.com>
 
         Prevent use of PDFKit when using PDF.js
