@@ -1,3 +1,11 @@
+2022-02-23  Jon Lee  <jonlee@apple.com>
+
+        Test gardening for [CSS Blending] Non-separable blend modes don't work
+        https://bugs.webkit.org/show_bug.cgi?id=131354
+
+        Unreviewed.
+        * TestExpectations:
+
 2022-02-23  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for assert crash in AccessibilityRenderObject::visiblePositionForIndex.

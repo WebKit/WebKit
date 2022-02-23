@@ -1,3 +1,13 @@
+2022-02-19  Jon Lee  <jonlee@apple.com>
+
+        Test gardening for [CSS Blending] Non-separable blend modes don't work
+        https://bugs.webkit.org/show_bug.cgi?id=131354
+
+        Unreviewed. Relanding with updated fuzzy data.
+        * svg/blend-color.svg:
+        * svg/blend-hue.svg:
+        * svg/blend-luminosity.svg:
+
 2022-02-22  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, reverting r290220.
