@@ -97,7 +97,7 @@ class ExpectMasterShellCommand(object):
         return self
 
     def __repr__(self):
-        return 'ExpectMasterShellCommand({0})'.format(repr(self.args))
+        return f'ExpectMasterShellCommand({repr(self.args)})'
 
 
 class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
@@ -165,7 +165,7 @@ class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
     def _checkSpawnProcess(self, processProtocol, executable, args, env, path, usePTY, **kwargs):
         got = (executable, args, env, path, usePTY)
         if not self._expected_local_commands:
-            self.fail('got local command {0} when no further commands were expected'.format(got))
+            self.fail(f'got local command {got} when no further commands were expected')
         local_command = self._expected_local_commands.pop(0)
         try:
             self.assertEqual(got, (local_command.args[0], local_command.args, local_command.env, local_command.path, local_command.usePTY))
@@ -200,7 +200,7 @@ class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
         if not subject or not text:
             self._emails_list.append('Error: skipping email since no subject or text is specified')
             return False
-        self._emails_list.append('Subject: {}\nTo: {}\nReference: {}\nBody:\n\n{}'.format(subject, to_emails, reference, text))
+        self._emails_list.append(f'Subject: {subject}\nTo: {to_emails}\nReference: {reference}\nBody:\n\n{text}')
         return True
 
     def runStep(self):
@@ -273,8 +273,8 @@ class TestStepNameShouldBeValidIdentifier(BuildStepMixinAdditions, unittest.Test
         for build_step in build_step_classes:
             if 'name' in vars(build_step[1]):
                 name = build_step[1].name
-                self.assertFalse(' ' in name, 'step name "{}" contain space.'.format(name))
-                self.assertTrue(buildbot_identifiers.ident_re.match(name), 'step name "{}" is not a valid buildbot identifier.'.format(name))
+                self.assertFalse(' ' in name, f'step name "{name}" contain space.')
+                self.assertTrue(buildbot_identifiers.ident_re.match(name), f'step name "{name}" is not a valid buildbot identifier.')
 
 
 class TestCheckStyle(BuildStepMixinAdditions, unittest.TestCase):
@@ -464,7 +464,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/run-bindings-tests', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         )
             + 0,
@@ -478,7 +478,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/run-bindings-tests', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='FAIL: (JS) JSTestInterface.cpp')
@@ -547,7 +547,7 @@ class TestWebKitPyPython2Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         )
@@ -561,7 +561,7 @@ class TestWebKitPyPython2Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         )
@@ -577,7 +577,7 @@ FAILED (failures=1, errors=0)''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         ) +
@@ -592,7 +592,7 @@ FAILED (failures=1, errors=0)''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         ) +
@@ -604,12 +604,12 @@ FAILED (failures=1, errors=0)''')
 
     def test_lot_of_failures(self):
         self.setupStep(RunWebKitPyPython2Tests())
-        json_with_failures = json.dumps({"failures": [{"name": 'test{}'.format(i)} for i in range(1, 31)]})
+        json_with_failures = json.dumps({"failures": [{"name": f'test{i}'} for i in range(1, 31)]})
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         ) +
@@ -637,7 +637,7 @@ class TestWebKitPyPython3Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         )
@@ -651,7 +651,7 @@ class TestWebKitPyPython3Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         )
@@ -667,7 +667,7 @@ FAILED (failures=1, errors=0)''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         ) +
@@ -682,7 +682,7 @@ FAILED (failures=1, errors=0)''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         ) +
@@ -694,12 +694,12 @@ FAILED (failures=1, errors=0)''')
 
     def test_lot_of_failures(self):
         self.setupStep(RunWebKitPyPython3Tests())
-        json_with_failures = json.dumps({"failures": [{"name": 'test{}'.format(i)} for i in range(1, 31)]})
+        json_with_failures = json.dumps({'failures': [{f'name': f'test{i}'} for i in range(1, 31)]})
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         ) +
@@ -1447,7 +1447,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'] + self.command_extra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--release'] + self.command_extra,
                         logfiles={'json': self.jsonFileName},
                         )
             + 0,
@@ -1461,7 +1461,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--remote-config-file=remote-machines.json', '--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi', '--memory-limited', '--verbose', '--jsc-only'] + self.command_extra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--release', '--remote-config-file=remote-machines.json', '--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi', '--memory-limited', '--verbose', '--jsc-only'] + self.command_extra,
                         logfiles={'json': self.jsonFileName},
                         )
             + 0,
@@ -1474,7 +1474,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'] + self.command_extra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--debug'] + self.command_extra,
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
@@ -1489,7 +1489,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'] + self.command_extra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--debug'] + self.command_extra,
                         )
             + 2
             + ExpectShell.log('json', stdout=self.jsc_single_stress_test_failure),
@@ -1506,7 +1506,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'] + self.command_extra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--debug'] + self.command_extra,
                         )
             + 2
             + ExpectShell.log('json', stdout=self.jsc_multiple_stress_test_failures),
@@ -1523,7 +1523,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'] + self.command_extra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--debug'] + self.command_extra,
                         )
             + 2
             + ExpectShell.log('json', stdout=self.jsc_masm_failure),
@@ -1540,7 +1540,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'] + self.command_extra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--release'] + self.command_extra,
                         )
             + 2
             + ExpectShell.log('json', stdout=self.jsc_b3_and_stress_test_failure),
@@ -1557,7 +1557,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--memory-limited', '--verbose', '--jsc-only'] + self.command_extra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--release', '--memory-limited', '--verbose', '--jsc-only'] + self.command_extra,
                         )
             + 2
             + ExpectShell.log('json', stdout=self.jsc_dfg_air_and_stress_test_failure),
@@ -1574,7 +1574,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         logfiles={'json': self.jsonFileName},
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--memory-limited', '--verbose', '--jsc-only'] + self.command_extra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--release', '--memory-limited', '--verbose', '--jsc-only'] + self.command_extra,
                         )
             + 0
             + ExpectShell.log('json', stdout=self.jsc_passed_with_flaky),
@@ -1604,7 +1604,7 @@ class TestRunJSCTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release'] + self.command_extra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--release'] + self.command_extra,
                         logfiles={'json': self.jsonFileName},
                         )
             + 0,
@@ -1619,7 +1619,7 @@ class TestRunJSCTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug'] + self.command_extra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', f'--json-output={self.jsonFileName}', '--debug'] + self.command_extra,
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
@@ -1660,7 +1660,7 @@ class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_multiple_new_stress_failure(self):
         self.configureStep()
-        self.setProperty('jsc_stress_test_failures', ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('jsc_stress_test_failures', [f'test{i}' for i in range(0, 30)])
         self.expectOutcome(result=FAILURE, state_string='Found 30 new JSC stress test failures: test0, test1, test10, test11, test12, test13, test14, test15, test16, test17 ... (failure)')
         return self.runStep()
 
@@ -2271,7 +2271,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
         self.setProperty('configuration', 'release')
         self.setProperty('first_run_failures', ['test1.html', 'test2.html', 'test3.html'])
         self.setProperty('second_results_exceed_failure_limit', True)
-        self.setProperty('second_run_failures', ['test{}.html'.format(i) for i in range(0, 30)])
+        self.setProperty('second_run_failures', [f'test{i}.html' for i in range(0, 30)])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
@@ -2471,7 +2471,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
     def test_first_run_exceed_failure_limit(self):
         self.configureStep()
         self.setProperty('first_results_exceed_failure_limit', True)
-        self.setProperty('first_run_failures',  ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('first_run_failures',  [f'test{i}' for i in range(0, 30)])
         self.setProperty('second_run_failures', [])
         self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
         return self.runStep()
@@ -2480,7 +2480,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('first_run_failures', [])
         self.setProperty('second_results_exceed_failure_limit', True)
-        self.setProperty('second_run_failures',  ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('second_run_failures',  [f'test{i}' for i in range(0, 30)])
         self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
         return self.runStep()
 
@@ -2489,7 +2489,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('first_run_failures', ['test1'])
         self.setProperty('second_run_failures', ['test1'])
         self.setProperty('clean_tree_results_exceed_failure_limit', True)
-        self.setProperty('clean_tree_run_failures',  ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('clean_tree_run_failures',  [f'test{i}' for i in range(0, 30)])
         self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
         return self.runStep()
 
@@ -2500,7 +2500,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('first_run_failures', ['test1'])
         self.setProperty('second_run_failures', ['test1'])
         self.setProperty('clean_tree_results_exceed_failure_limit', True)
-        self.setProperty('clean_tree_run_failures',  ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('clean_tree_run_failures',  [f'test{i}' for i in range(0, 30)])
         message = 'Unable to confirm if test failures are introduced by change, retrying build'
         self.expectOutcome(result=SUCCESS, state_string=message)
         rc = self.runStep()
@@ -2510,20 +2510,20 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
     def test_clean_tree_has_lot_of_failures(self):
         self.configureStep()
         self.setProperty('first_results_exceed_failure_limit', True)
-        self.setProperty('first_run_failures', ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 30)])
         self.setProperty('second_results_exceed_failure_limit', True)
-        self.setProperty('second_run_failures', ['test{}'.format(i) for i in range(0, 30)])
-        self.setProperty('clean_tree_run_failures', ['test{}'.format(i) for i in range(0, 27)])
+        self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('clean_tree_run_failures', [f'test{i}' for i in range(0, 27)])
         self.expectOutcome(result=RETRY, state_string='Unable to confirm if test failures are introduced by change, retrying build (retry)')
         return self.runStep()
 
     def test_clean_tree_has_some_failures(self):
         self.configureStep()
         self.setProperty('first_results_exceed_failure_limit', True)
-        self.setProperty('first_run_failures', ['test{}'.format(i) for i in range(0, 30)])
+        self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 30)])
         self.setProperty('second_results_exceed_failure_limit', True)
-        self.setProperty('second_run_failures', ['test{}'.format(i) for i in range(0, 30)])
-        self.setProperty('clean_tree_run_failures', ['test{}'.format(i) for i in range(0, 10)])
+        self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 30)])
+        self.setProperty('clean_tree_run_failures', [f'test{i}' for i in range(0, 10)])
         self.expectOutcome(result=FAILURE, state_string='Found 30 new test failures: test0, test1, test10, test11, test12, test13, test14, test15, test16, test17 ... (failure)')
         return self.runStep()
 
@@ -2531,7 +2531,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('first_run_failures', ['test1'])
         self.setProperty('second_run_failures', ['test1'])
-        self.setProperty('clean_tree_run_failures', ['test{}'.format(i) for i in range(0, 20)])
+        self.setProperty('clean_tree_run_failures', [f'test{i}' for i in range(0, 20)])
         self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
         rc = self.runStep()
         self.assertEqual(self.getProperty('build_summary'), 'Found 20 pre-existing test failures: test0, test1, test10, test11, test12, test13, test14, test15, test16, test17 ...')
@@ -2541,9 +2541,9 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.configureStep()
         self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('first_results_exceed_failure_limit', True)
-        self.setProperty('first_run_failures', ['test{}'.format(i) for i in range(0, 300)])
+        self.setProperty('first_run_failures', [f'test{i}' for i in range(0, 300)])
         self.setProperty('second_results_exceed_failure_limit', True)
-        self.setProperty('second_run_failures', ['test{}'.format(i) for i in range(0, 300)])
+        self.setProperty('second_run_failures', [f'test{i}' for i in range(0, 300)])
         failure_message = 'Found 300 new test failures: test0, test1, test10, test100, test101, test102, test103, test104, test105, test106 ...'
         self.expectOutcome(result=FAILURE, state_string=failure_message + ' (failure)')
         rc = self.runStep()
@@ -2748,7 +2748,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.assertEqual(len(self._emails_list), 2)
         self.assertTrue('Subject: Info about 4 flaky failures' in self._emails_list[0])
         for flaky_test in ["test/flaky1.html", "test/flaky2.html", "test/failure2.html", "test/pre-existent/flaky.html"]:
-            self.assertTrue('Test name: {}'.format(flaky_test) in self._emails_list[0])
+            self.assertTrue(f'Test name: {flaky_test}' in self._emails_list[0])
         self.assertFalse('Test name: test/failure1.html' in self._emails_list[0])
         self.assertTrue('Subject: Layout test failure for Patch' in self._emails_list[1])
         self.assertTrue('test/failure1.html' in self._emails_list[1])
@@ -2768,7 +2768,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.assertEqual(len(self._emails_list), 3)
         self.assertTrue('Subject: Info about 4 flaky failures' in self._emails_list[0])
         for flaky_test in ["test/flaky1.html", "test/flaky2.html", "test/failure2.html", "test/pre-existent/flaky.html"]:
-            self.assertTrue('Test name: {}'.format(flaky_test) in self._emails_list[0])
+            self.assertTrue(f'Test name: {flaky_test}' in self._emails_list[0])
         self.assertFalse('Test name: preexisting-test/pre-existent/failure.html' in self._emails_list[0])
         self.assertTrue('Subject: Info about 1 pre-existent failure at' in self._emails_list[1])
         self.assertTrue('preexisting-test/pre-existent/failure.html' in self._emails_list[1])
@@ -2791,7 +2791,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.assertEqual(len(self._emails_list), 2)
         self.assertTrue('Subject: Info about 3 flaky failures' in self._emails_list[0])
         for flaky_test in ["test/pre-existent/flaky.html", "test/pre-existent/flaky2.html", "test/pre-existent/flaky3.html"]:
-            self.assertTrue('Test name: {}'.format(flaky_test) in self._emails_list[0])
+            self.assertTrue(f'Test name: {flaky_test}' in self._emails_list[0])
         self.assertFalse('Test name: preexisting-test/pre-existent/failure.html' in self._emails_list[0])
         self.assertTrue('Subject: Info about 1 pre-existent failure at' in self._emails_list[1])
         self.assertTrue('preexisting-test/pre-existent/failure.html' in self._emails_list[1])
@@ -2812,7 +2812,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue('Subject: Info about 3 flaky failures' in self._emails_list[0])
         for flaky_test in ["test/pre-existent/flaky1.html", "test/pre-existent/flaky2.html", "test/pre-existent/flaky3.html"]:
-            self.assertTrue('Test name: {}'.format(flaky_test) in self._emails_list[0])
+            self.assertTrue(f'Test name: {flaky_test}' in self._emails_list[0])
         return step_result
 
     def test_first_step_gives_unexpected_failure_and_clean_tree_pass_last_try(self):
@@ -2841,7 +2841,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         expected_infrastructure_error = 'The layout-test run with change generated no list of results and exited with error, and the clean_tree without change run did the same thing.'
         self.expectOutcome(
             result=WARNINGS,
-            state_string='{}\nReached the maximum number of retries (3). Unable to determine if change is bad or there is a pre-existent infrastructure issue. (warnings)'.format(expected_infrastructure_error))
+            state_string=f'{expected_infrastructure_error}\nReached the maximum number of retries (3). Unable to determine if change is bad or there is a pre-existent infrastructure issue. (warnings)')
         step_result = self.runStep()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
@@ -2857,7 +2857,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.setProperty('clean_tree_run_flakies', ['test/pre-existent/flaky.html'])
         self.setProperty('clean_tree_run_status', WARNINGS)
         expected_infrastructure_error = 'The layout-test run with change generated no list of results and exited with error, retrying with the hope it was a random infrastructure error.'
-        self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue: {}\nRetrying build [retry count is 2 of 3] (retry)'.format(expected_infrastructure_error))
+        self.expectOutcome(result=RETRY, state_string=f'Unexpected infrastructure issue: {expected_infrastructure_error}\nRetrying build [retry count is 2 of 3] (retry)')
         step_result = self.runStep()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
@@ -2874,7 +2874,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.setProperty('without_change_repeat_failures_results_flakies', ["test/pre-existent/flaky.html"])
         self.setProperty('with_change_repeat_failures_results_exceed_failure_limit', True)
         expected_infrastructure_error = 'One of the steps for retrying the failed tests has exited early, but this steps should run without "--exit-after-n-failures" switch, so they should not exit early.'
-        self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue: {}\nRetrying build [retry count is 0 of 3] (retry)'.format(expected_infrastructure_error))
+        self.expectOutcome(result=RETRY, state_string=f'Unexpected infrastructure issue: {expected_infrastructure_error}\nRetrying build [retry count is 0 of 3] (retry)')
         step_result = self.runStep()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
@@ -2891,7 +2891,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.setProperty('without_change_repeat_failures_results_flakies', ["test/pre-existent/flaky.html"])
         self.setProperty('without_change_repeat_failures_results_exceed_failure_limit', True)
         expected_infrastructure_error = 'One of the steps for retrying the failed tests has exited early, but this steps should run without "--exit-after-n-failures" switch, so they should not exit early.'
-        self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue: {}\nRetrying build [retry count is 0 of 3] (retry)'.format(expected_infrastructure_error))
+        self.expectOutcome(result=RETRY, state_string=f'Unexpected infrastructure issue: {expected_infrastructure_error}\nRetrying build [retry count is 0 of 3] (retry)')
         step_result = self.runStep()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
@@ -2924,7 +2924,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.setProperty('with_change_repeat_failures_results_flakies', [])
         self.setProperty('with_change_repeat_failures_retcode', FAILURE)
         expected_infrastructure_error = 'The step "layout-tests-repeat-failures" failed to generate any list of failures or flakies and returned an error code.'
-        self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue: {}\nRetrying build [retry count is 0 of 3] (retry)'.format(expected_infrastructure_error))
+        self.expectOutcome(result=RETRY, state_string=f'Unexpected infrastructure issue: {expected_infrastructure_error}\nRetrying build [retry count is 0 of 3] (retry)')
         step_result = self.runStep()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
@@ -2942,7 +2942,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.setProperty('without_change_repeat_failures_results_flakies', [])
         self.setProperty('without_change_repeat_failures_retcode', FAILURE)
         expected_infrastructure_error = 'The step "layout-tests-repeat-failures-without-change" failed to generate any list of failures or flakies and returned an error code.'
-        self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue: {}\nRetrying build [retry count is 0 of 3] (retry)'.format(expected_infrastructure_error))
+        self.expectOutcome(result=RETRY, state_string=f'Unexpected infrastructure issue: {expected_infrastructure_error}\nRetrying build [retry count is 0 of 3] (retry)')
         step_result = self.runStep()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
@@ -2956,7 +2956,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.setProperty('with_change_repeat_failures_timedout', True)
         self.setProperty('without_change_repeat_failures_timedout', True)
         expected_infrastructure_error = 'The step "layout-tests-repeat-failures-without-change" was interrumped because it reached the timeout.'
-        self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue: {}\nRetrying build [retry count is 0 of 3] (retry)'.format(expected_infrastructure_error))
+        self.expectOutcome(result=RETRY, state_string=f'Unexpected infrastructure issue: {expected_infrastructure_error}\nRetrying build [retry count is 0 of 3] (retry)')
         step_result = self.runStep()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
@@ -2971,7 +2971,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.setProperty('with_change_repeat_failures_results_flakies', ["test/failure2.html"])
         self.setProperty('without_change_repeat_failures_timedout', True)
         expected_infrastructure_error = 'The step "layout-tests-repeat-failures-without-change" was interrumped because it reached the timeout.'
-        self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue: {}\nRetrying build [retry count is 0 of 3] (retry)'.format(expected_infrastructure_error))
+        self.expectOutcome(result=RETRY, state_string=f'Unexpected infrastructure issue: {expected_infrastructure_error}\nRetrying build [retry count is 0 of 3] (retry)')
         step_result = self.runStep()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
@@ -2987,7 +2987,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.setProperty('without_change_repeat_failures_timedout', True)
         self.setProperty('retry_count', 2)
         expected_infrastructure_error = 'The step "layout-tests-repeat-failures-without-change" was interrumped because it reached the timeout.'
-        self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue: {}\nRetrying build [retry count is 2 of 3] (retry)'.format(expected_infrastructure_error))
+        self.expectOutcome(result=RETRY, state_string=f'Unexpected infrastructure issue: {expected_infrastructure_error}\nRetrying build [retry count is 2 of 3] (retry)')
         step_result = self.runStep()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
@@ -3003,7 +3003,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.setProperty('without_change_repeat_failures_timedout', True)
         self.setProperty('retry_count', 3)
         expected_infrastructure_error = 'The step "layout-tests-repeat-failures-without-change" was interrumped because it reached the timeout.'
-        self.expectOutcome(result=WARNINGS, state_string='{}\nReached the maximum number of retries (3). Unable to determine if change is bad or there is a pre-existent infrastructure issue. (warnings)'.format(expected_infrastructure_error))
+        self.expectOutcome(result=WARNINGS, state_string=f'{expected_infrastructure_error}\nReached the maximum number of retries (3). Unable to determine if change is bad or there is a pre-existent infrastructure issue. (warnings)')
         step_result = self.runStep()
         self.assertEqual(len(self._emails_list), 1)
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
@@ -3495,7 +3495,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(CheckChangeRelevance.haltOnFailure, True)
         self.assertEqual(CheckChangeRelevance.flunkOnFailure, True)
         for file_name in file_names:
-            CheckChangeRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
@@ -3507,7 +3507,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CheckChangeRelevance())
         self.setProperty('buildername', 'macOS-Catalina-Release-WK1-Tests-EWS')
         for file_name in file_names:
-            CheckChangeRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
@@ -3517,7 +3517,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CheckChangeRelevance())
         self.setProperty('buildername', 'macOS-BigSur-Release-Build-EWS')
         for file_name in file_names:
-            CheckChangeRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
@@ -3534,7 +3534,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CheckChangeRelevance())
         self.setProperty('buildername', 'WebKitPy-Tests-EWS')
         for file_name in file_names:
-            CheckChangeRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
@@ -3545,7 +3545,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CheckChangeRelevance())
         self.setProperty('buildername', 'Services-EWS')
         for file_name in file_names:
-            CheckChangeRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
@@ -3567,7 +3567,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(CheckChangeRelevance())
         self.setProperty('buildername', 'Bindings-Tests-EWS')
         for file_name in file_names:
-            CheckChangeRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
@@ -3642,7 +3642,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(FindModifiedLayoutTests())
         dir_names = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
         for dir_name in dir_names:
-            FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/{}/test-name.html'.format(dir_name).encode('utf-8')
+            FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/{dir_name}/test-name.html'.encode('utf-8')
             self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
             rc = self.runStep()
             self.assertEqual(self.getProperty('modified_tests'), None)
@@ -3652,7 +3652,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(FindModifiedLayoutTests())
         suffixes = ['-expected', '-expected-mismatch', '-ref', '-notref']
         for suffix in suffixes:
-            FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/http/tests/events/device-motion-{}.html'.format(suffix).encode('utf-8')
+            FindModifiedLayoutTests._get_patch = lambda x: f'+++ LayoutTests/http/tests/events/device-motion-{suffix}.html'.encode('utf-8')
             self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
             rc = self.runStep()
             self.assertEqual(self.getProperty('modified_tests'), None)
@@ -4011,7 +4011,7 @@ class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-api-tests', '--no-build', '--release', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/run-api-tests', '--no-build', '--release', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''...
@@ -4039,7 +4039,7 @@ All tests successfully passed!
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName), '--ios-simulator'],
+                        command=['python3', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', f'--json-output={self.jsonFileName}', '--ios-simulator'],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''...
@@ -4067,7 +4067,7 @@ All tests successfully passed!
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-gtk-tests', '--release', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/run-gtk-tests', '--release', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''...
@@ -4100,7 +4100,7 @@ Ran 1316 tests of 1318 with 1316 successful
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''
@@ -4142,7 +4142,7 @@ Testing completed, Exit status: 3
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''...
@@ -4198,7 +4198,7 @@ Testing completed, Exit status: 3
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='Unexpected failure. Failed to run api tests.')
@@ -4216,7 +4216,7 @@ Testing completed, Exit status: 3
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''...
@@ -4263,7 +4263,7 @@ class TestRunAPITestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
                                  '--no-build',
                                  '--release',
                                  '--verbose',
-                                 '--json-output={0}'.format(self.jsonFileName)],
+                                 f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''...
@@ -4299,7 +4299,7 @@ All tests successfully passed!
                                  '--no-build',
                                  '--debug',
                                  '--verbose',
-                                 '--json-output={0}'.format(self.jsonFileName)],
+                                 f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''
@@ -4347,7 +4347,7 @@ Testing completed, Exit status: 3
                         command=['python3',
                                  'Tools/Scripts/run-gtk-tests',
                                  '--debug',
-                                 '--json-output={0}'.format(self.jsonFileName)],
+                                 f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''
@@ -5088,7 +5088,7 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
             self.setProperty('patch_id', '425806')
             self.expectOutcome(result=SUCCESS, state_string='Validated change')
             rc = self.runStep()
-            self.assertEqual(self.getProperty('fast_commit_queue'), True, 'fast_commit_queue is not set, patch title: {}'.format(fast_cq_patch_title))
+            self.assertEqual(self.getProperty('fast_commit_queue'), True, f'fast_commit_queue is not set, patch title: {fast_cq_patch_title}')
         return rc
 
 
