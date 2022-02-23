@@ -526,7 +526,7 @@ void WebProcessPool::getWebAuthnProcessConnection(WebProcessProxy& webProcessPro
 bool WebProcessPool::s_useSeparateServiceWorkerProcess = false;
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(RegistrableDomain&& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     auto* websiteDataStore = WebsiteDataStore::existingDataStoreForSessionID(sessionID);
     if (!websiteDataStore)
@@ -534,21 +534,31 @@ void WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(Reg
     if (!processPools().size())
         static NeverDestroyed<Ref<WebProcessPool>> serviceWorkerProcessPool(WebProcessPool::create(API::ProcessPoolConfiguration::create().get()));
 
-    // Arbitrarily choose the first process pool to host the service worker process.
-    auto* processPool = processPools()[0];
+    RefPtr<WebProcessProxy> requestingProcess = requestingProcessIdentifier ? WebProcessProxy::processForIdentifier(*requestingProcessIdentifier) : nullptr;
+    WebProcessPool* processPool = requestingProcess ? &requestingProcess->processPool() : processPools()[0];
     ASSERT(processPool);
 
     WebProcessProxy* serviceWorkerProcessProxy { nullptr };
 
+    auto useProcessForServiceWorkers = [&](WebProcessProxy& process) {
+        serviceWorkerProcessProxy = &process;
+        process.enableRemoteWorkers(RemoteWorkerType::ServiceWorker, processPool->userContentControllerIdentifierForRemoteWorkers());
+        if (process.isInProcessCache()) {
+            processPool->webProcessCache().removeProcess(process, WebProcessCache::ShouldShutDownProcess::No);
+            ASSERT(!process.isInProcessCache());
+        }
+    };
+
     if (serviceWorkerPageIdentifier) {
         // This is a service worker for a service worker page so we need to make sure we use use the page's WebProcess for the service worker.
-        if ((serviceWorkerProcessProxy = WebProcessProxy::processForIdentifier(serviceWorkerPageIdentifier->processIdentifier()))) {
-            serviceWorkerProcessProxy->enableRemoteWorkers(RemoteWorkerType::ServiceWorker, processPool->userContentControllerIdentifierForRemoteWorkers());
-            if (serviceWorkerProcessProxy->isInProcessCache()) {
-                processPool->webProcessCache().removeProcess(*serviceWorkerProcessProxy, WebProcessCache::ShouldShutDownProcess::No);
-                ASSERT(!serviceWorkerProcessProxy->isInProcessCache());
-            }
-        }
+        if (RefPtr process = WebProcessProxy::processForIdentifier(serviceWorkerPageIdentifier->processIdentifier()))
+            useProcessForServiceWorkers(*process);
+    }
+
+    // Prioritize the requesting WebProcess for running the service worker.
+    if (!serviceWorkerProcessProxy && !s_useSeparateServiceWorkerProcess && requestingProcess) {
+        if (&requestingProcess->websiteDataStore() == websiteDataStore && requestingProcess->isMatchingRegistrableDomain(registrableDomain))
+            useProcessForServiceWorkers(*requestingProcess);
     }
 
     if (!serviceWorkerProcessProxy && !s_useSeparateServiceWorkerProcess) {
@@ -560,13 +570,7 @@ void WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(Reg
             if (!process->isMatchingRegistrableDomain(registrableDomain))
                 continue;
 
-            serviceWorkerProcessProxy = process.ptr();
-            serviceWorkerProcessProxy->enableRemoteWorkers(RemoteWorkerType::ServiceWorker, processPool->userContentControllerIdentifierForRemoteWorkers());
-
-            if (serviceWorkerProcessProxy->isInProcessCache()) {
-                processPool->webProcessCache().removeProcess(*serviceWorkerProcessProxy, WebProcessCache::ShouldShutDownProcess::No);
-                ASSERT(!serviceWorkerProcessProxy->isInProcessCache());
-            }
+            useProcessForServiceWorkers(process);
 
             WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishServiceWorkerContextConnectionToNetworkProcess reusing an existing web process (process=%p, PID=%d)", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
             break;
@@ -585,7 +589,7 @@ void WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(Reg
 
     remoteWorkerProcesses().add(*serviceWorkerProcessProxy);
 
-    auto preferencesStore = processPool->m_remoteWorkerPreferences ? processPool->m_remoteWorkerPreferences.value() : processPool->m_defaultPageGroup->preferences().store();
+    auto& preferencesStore = processPool->m_remoteWorkerPreferences ? processPool->m_remoteWorkerPreferences.value() : processPool->m_defaultPageGroup->preferences().store();
     serviceWorkerProcessProxy->establishServiceWorkerContext(preferencesStore, registrableDomain, serviceWorkerPageIdentifier, WTFMove(completionHandler));
     if (!processPool->m_remoteWorkerUserAgent.isNull())
         serviceWorkerProcessProxy->setRemoteWorkerUserAgent(processPool->m_remoteWorkerUserAgent);

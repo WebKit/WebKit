@@ -5165,7 +5165,5 @@ imported/blink/plugins [ Skip ]
 js/dom/reflect-set-onto-dom.html [ Skip ]
 userscripts/user-script-plugin-document.html [ Skip ]
 
-webkit.org/b/236874 http/wpt/push-api/onpush-disabled.html [ Failure ]
-
 # This is marked as passing on WK2.
 fast/canvas/large-getImageData.html [ Skip ]

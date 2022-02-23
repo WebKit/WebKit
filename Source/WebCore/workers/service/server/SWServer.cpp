@@ -1177,8 +1177,14 @@ void SWServer::createContextConnection(const RegistrableDomain& registrableDomai
 
     RELEASE_LOG(ServiceWorker, "SWServer::createContextConnection will create a connection");
 
+    std::optional<ProcessIdentifier> requestingProcessIdentifier;
+    if (auto it = m_clientsByRegistrableDomain.find(registrableDomain); it != m_clientsByRegistrableDomain.end()) {
+        if (!it->value.isEmpty())
+            requestingProcessIdentifier = it->value.begin()->processIdentifier();
+    }
+
     m_pendingConnectionDomains.add(registrableDomain);
-    m_createContextConnectionCallback(registrableDomain, serviceWorkerPageIdentifier, [this, weakThis = WeakPtr { *this }, registrableDomain, serviceWorkerPageIdentifier] {
+    m_createContextConnectionCallback(registrableDomain, requestingProcessIdentifier, serviceWorkerPageIdentifier, [this, weakThis = WeakPtr { *this }, registrableDomain, serviceWorkerPageIdentifier] {
         if (!weakThis)
             return;
 

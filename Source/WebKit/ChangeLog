@@ -1,3 +1,33 @@
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
+        http/wpt/push-api/onpush-disabled.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=236874
+        <rdar://problem/89176154>
+
+        Reviewed by Youenn Fablet.
+
+        Before running the test, we would construct a new WKWebView with the Push API setting disabled.
+        We would then run the test, which would launch a service worker. Normally, we would expect the
+        service worker to inherit the settings from the WKWebView. However, it was not reliably
+        happening because the settings for the service worker are stored on the WebProcessPool and
+        WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess() was selecting a
+        random WebProcessPool object (the first one returned by processPools()).
+
+        To address the issue, we now pass the ProcessIdentifier of the client that requested the
+        service worker connection so that establishServiceWorkerContextConnectionToNetworkProcess() can
+        now prioritize the WebProcessPool of that process. Also, as an optimization, we now prioritize
+        this client process to run the service worker (assuming it is origin-clean).
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::ensureSWServer):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::establishServiceWorkerContextConnectionToNetworkProcess):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess):
+        * UIProcess/WebProcessPool.h:
+
 2022-02-22  Simon Fraser  <simon.fraser@apple.com>
 
         With DOM Rendering in GPU process, every display results in new IOSurface allocation
