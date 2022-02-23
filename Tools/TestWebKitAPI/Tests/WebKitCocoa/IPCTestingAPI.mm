@@ -309,7 +309,8 @@ TEST(IPCTestingAPI, CanReceiveIPCSemaphore)
     EXPECT_STREQ([alertMessage UTF8String], "1:Semaphore:false");
 }
 
-TEST(IPCTestingAPI, CanReceiveSharedMemory)
+// FIXME: Re-enable this test once webkit.org/b/236744 is resolved.
+TEST(IPCTestingAPI, DISABLED_CanReceiveSharedMemory)
 {
     auto webView = createWebViewWithIPCTestingAPI();
 

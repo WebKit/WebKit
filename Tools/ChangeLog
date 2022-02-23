@@ -1,3 +1,13 @@
+2022-02-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION(r289580): [ iOS macOS ] TestWebKitAPI.IPCTestingAPI.CanReceiveSharedMemory is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=236744
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm: Disable the test.
+        (TEST):
+
 2022-02-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove dormant queues from bot watchers dashboard
