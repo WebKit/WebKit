@@ -1,3 +1,9 @@
+2022-02-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for rdar://86037417.
+
+        * platform/mac-wk2/TestExpectations:
+
 2022-02-22  Frédéric Wang  <fwang@igalia.com>
 
         null ptr deref via WebXRSystem::requestSession

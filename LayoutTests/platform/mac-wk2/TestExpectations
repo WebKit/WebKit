@@ -1685,6 +1685,7 @@ http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.
 
 # rdar://86037417 WindowServer returned not alive with context:,unresponsive work processor(s)
 [ Monterey+ ] http/tests/model/model-document.html [ Skip ]
+[ Monterey+ ] http/tests/model/model-document-interactive.html [ Skip ]
 
 # Captured WebGL to another context2d or WebGL not implemented yet.
 webkit.org/b/236496 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
