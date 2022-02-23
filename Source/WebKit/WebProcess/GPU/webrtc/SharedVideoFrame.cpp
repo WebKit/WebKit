@@ -29,8 +29,16 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && ENABLE(VIDEO)
 
 #include "Logging.h"
+#include "RemoteVideoFrameObjectHeap.h"
+#include "RemoteVideoFrameProxy.h"
+#include <WebCore/CVUtilities.h>
+#include <WebCore/IOSurface.h>
+#include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/SharedVideoFrameInfo.h>
 #include <wtf/Scope.h>
+
+#include <pal/cf/CoreMediaSoftLink.h>
+#include <WebCore/CoreVideoSoftLink.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -80,6 +88,26 @@ bool SharedVideoFrameWriter::prepareWriting(const SharedVideoFrameInfo& info, co
     return true;
 }
 
+std::optional<SharedVideoFrame> SharedVideoFrameWriter::write(MediaSample& frame, const Function<void(IPC::Semaphore&)>& newSemaphoreCallback, const Function<void(const SharedMemory::IPCHandle&)>& newMemoryCallback)
+{
+    SharedVideoFrame sharedVideoFrame { frame.presentationTime(), frame.videoMirrored(), frame.videoRotation(), nullptr };
+    if (is<RemoteVideoFrameProxy>(frame)) {
+        sharedVideoFrame.buffer = downcast<RemoteVideoFrameProxy>(frame).read();
+        return sharedVideoFrame;
+    }
+    if (is<MediaSampleAVFObjC>(frame)) {
+        auto pixelBuffer = downcast<MediaSampleAVFObjC>(frame).pixelBuffer();
+        IOSurfaceRef surface = pixelBuffer ? CVPixelBufferGetIOSurface(pixelBuffer) : nullptr;
+        if (surface) {
+            sharedVideoFrame.buffer = MachSendRight::adopt(IOSurfaceCreateMachPort(surface));
+            return sharedVideoFrame;
+        }
+    }
+    if (!write(frame.pixelBuffer(), newSemaphoreCallback, newMemoryCallback))
+        return { };
+    return sharedVideoFrame;
+}
+
 bool SharedVideoFrameWriter::write(CVPixelBufferRef pixelBuffer, const Function<void(IPC::Semaphore&)>& newSemaphoreCallback, const Function<void(const SharedMemory::IPCHandle&)>& newMemoryCallback)
 {
     auto info = SharedVideoFrameInfo::fromCVPixelBuffer(pixelBuffer);
@@ -94,7 +122,7 @@ bool SharedVideoFrameWriter::write(const webrtc::VideoFrame& frame, const Functi
 {
     auto info = SharedVideoFrameInfo::fromVideoFrame(frame);
     if (!prepareWriting(info, newSemaphoreCallback, newMemoryCallback))
-        return false;
+        return { };
 
     return info.writeVideoFrame(frame, static_cast<uint8_t*>(m_storage->data()));
 }
@@ -104,6 +132,12 @@ void SharedVideoFrameWriter::disable()
 {
     m_isDisabled = true;
     m_semaphore->signal();
+}
+
+SharedVideoFrameReader::SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&& objectHeap, UseIOSurfaceBufferPool useIOSurfaceBufferPool)
+    : m_objectHeap(WTFMove(objectHeap))
+    , m_useIOSurfaceBufferPool(useIOSurfaceBufferPool)
+{
 }
 
 RetainPtr<CVPixelBufferRef> SharedVideoFrameReader::read()
@@ -127,6 +161,34 @@ RetainPtr<CVPixelBufferRef> SharedVideoFrameReader::read()
         return { };
 
     return info->createPixelBufferFromMemory(data + SharedVideoFrameInfoEncodingLength, pixelBufferPool(*info));
+}
+
+RefPtr<MediaSample> SharedVideoFrameReader::read(SharedVideoFrame&& sharedVideoFrame)
+{
+    auto pixelBuffer = switchOn(WTFMove(sharedVideoFrame.buffer),
+    [this](RemoteVideoFrameReadReference&& reference) -> RetainPtr<CVPixelBufferRef> {
+        ASSERT(m_objectHeap);
+        if (!m_objectHeap)
+            return nullptr;
+
+        auto sample = m_objectHeap->retire(WTFMove(reference), 0_s);
+        ASSERT(sample && sample->pixelBuffer());
+        if (!sample)
+            return nullptr;
+        return sample->pixelBuffer();
+    } , [](MachSendRight&& sendRight) -> RetainPtr<CVPixelBufferRef> {
+        auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(sendRight), DestinationColorSpace::SRGB());
+        if (!surface)
+            return nullptr;
+        return WebCore::createCVPixelBuffer(surface->surface()).value_or(nullptr);
+    }, [this](std::nullptr_t representation) -> RetainPtr<CVPixelBufferRef> {
+        return read();
+    });
+
+    if (!pixelBuffer)
+        return nullptr;
+
+    return MediaSampleAVFObjC::createImageSample(WTFMove(pixelBuffer), sharedVideoFrame.rotation, sharedVideoFrame.mirrored, sharedVideoFrame.time);
 }
 
 CVPixelBufferPoolRef SharedVideoFrameReader::pixelBufferPool(const SharedVideoFrameInfo& info)

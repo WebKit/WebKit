@@ -45,7 +45,6 @@ class RemoteVideoSample;
 
 namespace WebKit {
 class GPUConnectionToWebProcess;
-class RemoteVideoFrameObjectHeap;
 
 class RemoteSampleBufferDisplayLayer : public WebCore::SampleBufferDisplayLayer::Client, public IPC::MessageReceiver, private IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
@@ -77,8 +76,7 @@ private:
     void flushAndRemoveImage();
     void play();
     void pause();
-    void enqueueSample(RemoteVideoFrameReadReference&&);
-    void enqueueSampleCV(WebCore::RemoteVideoSample&&);
+    void enqueue(SharedVideoFrame&&);
     void clearEnqueuedSamples();
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(const SharedMemory::IPCHandle&);
@@ -97,7 +95,6 @@ private:
     std::unique_ptr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     SharedVideoFrameReader m_sharedVideoFrameReader;
-    Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
     ThreadAssertion m_consumeThread NO_UNIQUE_ADDRESS;
 
 };

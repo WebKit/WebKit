@@ -285,7 +285,7 @@ void LibWebRTCCodecsProxy::setSharedVideoFrameSemaphore(RTCEncoderIdentifier ide
         return;
 
     if (!encoder->frameReader)
-        encoder->frameReader = makeUnique<SharedVideoFrameReader>();
+        encoder->frameReader = makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap });
     encoder->frameReader->setSemaphore(WTFMove(semaphore));
 }
 
@@ -299,7 +299,7 @@ void LibWebRTCCodecsProxy::setSharedVideoFrameMemory(RTCEncoderIdentifier identi
         return;
 
     if (!encoder->frameReader)
-        encoder->frameReader = makeUnique<SharedVideoFrameReader>();
+        encoder->frameReader = makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap });
     encoder->frameReader->setSharedMemory(ipcHandle);
 }
 

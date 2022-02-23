@@ -128,35 +128,19 @@ void SampleBufferDisplayLayer::pause()
     m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Pause { }, m_identifier);
 }
 
-bool SampleBufferDisplayLayer::copySharedVideoFrame(CVPixelBufferRef pixelBuffer)
-{
-    if (!pixelBuffer)
-        return false;
-    return m_sharedVideoFrameWriter.write(pixelBuffer,
-        [this](auto& semaphore) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameSemaphore { semaphore }, m_identifier); },
-        [this](auto& handle) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameMemory { handle }, m_identifier); }
-    );
-}
-
 void SampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
 {
     if (m_paused)
         return;
 
-    if (is<RemoteVideoFrameProxy>(sample)) {
-        auto& remoteSample = downcast<RemoteVideoFrameProxy>(sample);
-        m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueSample { remoteSample.read() }, m_identifier);
+    auto sharedVideoFrame = m_sharedVideoFrameWriter.write(sample,
+        [this](auto& semaphore) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameSemaphore { semaphore }, m_identifier); },
+        [this](auto& handle) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameMemory { handle }, m_identifier); }
+    );
+    if (!sharedVideoFrame)
         return;
-    }
 
-    auto remoteSample = RemoteVideoSample::create(sample, RemoteVideoSample::ShouldCheckForIOSurface::No);
-    if (!remoteSample->surface()) {
-        // buffer is not IOSurface, we need to copy to shared video frame.
-        if (!copySharedVideoFrame(remoteSample->imageBuffer()))
-            return;
-    }
-
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueSampleCV { *remoteSample }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Enqueue { *sharedVideoFrame }, m_identifier);
 }
 
 void SampleBufferDisplayLayer::clearEnqueuedSamples()

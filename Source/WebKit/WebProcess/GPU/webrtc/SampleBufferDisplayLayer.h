@@ -75,7 +75,6 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     void setDidFail(bool);
-    bool copySharedVideoFrame(CVPixelBufferRef);
 
     GPUProcessConnection* m_gpuProcessConnection;
     WeakPtr<SampleBufferDisplayLayerManager> m_manager;

@@ -28,7 +28,9 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && ENABLE(VIDEO)
 
 #include "IPCSemaphore.h"
+#include "RemoteVideoFrameIdentifier.h"
 #include "SharedMemory.h"
+#include <WebCore/MediaSample.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/UniqueRef.h>
@@ -46,11 +48,24 @@ class VideoFrame;
 
 namespace WebKit {
 
+class RemoteVideoFrameObjectHeap;
+
+struct SharedVideoFrame {
+    MediaTime time;
+    bool mirrored { false };
+    WebCore::MediaSample::VideoRotation rotation { WebCore::MediaSample::VideoRotation::None };
+    std::variant<std::nullptr_t, RemoteVideoFrameReadReference, MachSendRight> buffer;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<SharedVideoFrame> decode(Decoder&);
+};
+
 class SharedVideoFrameWriter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SharedVideoFrameWriter();
 
+    std::optional<SharedVideoFrame> write(WebCore::MediaSample&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::IPCHandle&)>&);
     bool write(CVPixelBufferRef, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::IPCHandle&)>&);
 #if USE(LIBWEBRTC)
     bool write(const webrtc::VideoFrame&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::IPCHandle&)>&);
@@ -72,16 +87,18 @@ class SharedVideoFrameReader {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class UseIOSurfaceBufferPool { No, Yes };
-    explicit SharedVideoFrameReader(UseIOSurfaceBufferPool = UseIOSurfaceBufferPool::Yes);
+    explicit SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&&, UseIOSurfaceBufferPool = UseIOSurfaceBufferPool::Yes);
 
     void setSemaphore(IPC::Semaphore&& semaphore) { m_semaphore = WTFMove(semaphore); }
     bool setSharedMemory(const SharedMemory::IPCHandle&);
 
     RetainPtr<CVPixelBufferRef> read();
+    RefPtr<WebCore::MediaSample> read(SharedVideoFrame&&);
 
 private:
     CVPixelBufferPoolRef pixelBufferPool(const WebCore::SharedVideoFrameInfo&);
 
+    RefPtr<RemoteVideoFrameObjectHeap> m_objectHeap;
     UseIOSurfaceBufferPool m_useIOSurfaceBufferPool;
     IPC::Semaphore m_semaphore;
     RefPtr<SharedMemory> m_storage;
@@ -92,9 +109,56 @@ private:
     uint32_t m_bufferPoolHeight { 0 };
 };
 
-inline SharedVideoFrameReader::SharedVideoFrameReader(UseIOSurfaceBufferPool useIOSurfaceBufferPool)
-    : m_useIOSurfaceBufferPool(useIOSurfaceBufferPool)
+template<class Encoder> void SharedVideoFrame::encode(Encoder& encoder) const
 {
+    encoder << time;
+    encoder << mirrored;
+    encoder << rotation;
+
+    switchOn(buffer,
+    [&](std::nullptr_t representation) {
+        encoder << (uint8_t)0;
+    }, [&](const RemoteVideoFrameReadReference& reference) {
+        encoder << (uint8_t)1;
+        encoder << reference;
+    } , [&](const MachSendRight& sendRight) {
+        encoder << (uint8_t)2;
+        encoder << sendRight;
+    });
+}
+
+template<class Decoder> std::optional<SharedVideoFrame> SharedVideoFrame::decode(Decoder& decoder)
+{
+    SharedVideoFrame frame;
+    if (!decoder.decode(frame.time))
+        return { };
+
+    if (!decoder.decode(frame.mirrored))
+        return { };
+
+    if (!decoder.decode(frame.rotation))
+        return { };
+
+    uint8_t bufferType;
+    if (!decoder.decode(bufferType))
+        return { };
+
+    if (bufferType > 2)
+        return { };
+
+    if (bufferType == 1) {
+        std::optional<RemoteVideoFrameReadReference> reference;
+        decoder >> reference;
+        if (!reference)
+            return { };
+        frame.buffer = WTFMove(*reference);
+    } else if (bufferType == 2) {
+        MachSendRight sendRight;
+        if (!decoder.decode(sendRight))
+            return { };
+        frame.buffer = WTFMove(sendRight);
+    }
+    return frame;
 }
 
 }

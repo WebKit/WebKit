@@ -1,5 +1,36 @@
 2022-02-23  Youenn Fablet  <youenn@apple.com>
 
+        RemoteSampleBufferDisplayLayer::enqueueSample should not change media samples owned by its object heap
+        https://bugs.webkit.org/show_bug.cgi?id=237025
+
+        Reviewed by Darin Adler.
+
+        From past bugs, it is risky to change CMSampleBuffer dictionaries if they can be used on various threads (encoder, display layer...).
+        Instead, we create a new MediaSample that is wrapping the same CVPixelBufferRef, on which can safely apply setAsDisplayImmediately.
+
+        We introduce SharedVideoFrame as a replacement to RemoteVideoSample.
+        We beef up SharedVideoFrameWriter and SharedVideoFrameReader to handle any MediaSample,
+        with specific handling for remote frames, IOSurface frames or other in memory frames.
+        We make use of SharedVideoFrame in SampleBufferDisplayLayer, which allows to unify enqueueSample and enqueueCV in one IPC message,
+        which is easier to maintain.
+
+        We update call sites that create SharedVideoFrameReader to either take nullptr or a object heap reference when they will need it in the future.
+
+        Covered by existing tests.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in:
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.h:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.cpp:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.h:
+
+2022-02-23  Youenn Fablet  <youenn@apple.com>
+
         Optimize RemoteVideoFrame handling in WebProcess WebRTC pipeline
         https://bugs.webkit.org/show_bug.cgi?id=236970
 
