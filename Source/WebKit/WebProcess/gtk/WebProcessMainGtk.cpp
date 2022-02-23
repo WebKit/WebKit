@@ -36,6 +36,10 @@
 #include <X11/Xlib.h>
 #endif
 
+#if USE(GSTREAMER)
+#include <gst/gst.h>
+#endif
+
 #if USE(GCRYPT)
 #include <pal/crypto/gcrypt/Initialization.h>
 #endif
@@ -66,6 +70,13 @@ public:
         bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 
         return true;
+    }
+
+    void platformFinalize() override
+    {
+#if USE(GSTREAMER)
+        gst_deinit();
+#endif
     }
 };
 

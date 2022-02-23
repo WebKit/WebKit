@@ -1,3 +1,14 @@
+2022-02-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] De-initialize GStreamer before terminating WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=237084
+
+        Reviewed by Carlos Garcia Campos.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.setup_gstbuild): Do not add extra quotes to GST_TRACERS, this is not supposed
+        to store paths.
+
 2022-02-23  Alex Christensen  <achristensen@webkit.org>
 
         Call WKNavigationDelegate.didFailProvisionalNavigation even after a cross-origin navigation with COOP

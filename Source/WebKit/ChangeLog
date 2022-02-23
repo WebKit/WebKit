@@ -1,3 +1,18 @@
+2022-02-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] De-initialize GStreamer before terminating WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=237084
+
+        Reviewed by Carlos Garcia Campos.
+
+        Allowing the leak tracer to report/log leaks. There is an issue though, if the UIProcess
+        exits too early, the leak tracer reporting will be interrupted potentially too early. The
+        workaround is to have 2 tabs open in the GTK MiniBrowser, closing the one where media
+        handling and leak tracing was done and keeping the second tab open.
+
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::stopRunLoop):
+
 2022-02-23  Youenn Fablet  <youenn@apple.com>
 
         RemoteSampleBufferDisplayLayer::enqueueSample should not change media samples owned by its object heap
