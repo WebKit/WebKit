@@ -565,11 +565,24 @@ InlineIterator::LineIterator LineLayout::lastLine() const
 LayoutRect LineLayout::firstInlineBoxRect(const RenderInline& renderInline) const
 {
     auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
+    auto* firstBox = m_inlineContent->firstBoxForLayoutBox(layoutBox);
+    if (!firstBox)
+        return { };
 
-    if (auto* box = m_inlineContent->firstBoxForLayoutBox(layoutBox))
-        return Layout::toLayoutRect(box->rect());
-
-    return { };
+    // FIXME: We should be able to flip the display boxes soon after the root block
+    // is finished sizing in one go.
+    auto firstBoxRect = Layout::toLayoutRect(firstBox->rect());
+    switch (flow().style().writingMode()) {
+    case WritingMode::TopToBottom:
+    case WritingMode::LeftToRight:
+        return firstBoxRect;
+    case WritingMode::RightToLeft:
+        firstBoxRect.setX(flow().width() - firstBoxRect.maxX());
+        return firstBoxRect;
+    default:
+        ASSERT_NOT_REACHED();
+        return firstBoxRect;
+    }
 }
 
 LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInline) const
