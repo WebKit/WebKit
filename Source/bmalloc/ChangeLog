@@ -1,1 +1,12 @@
+2022-02-23  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [libpas] PlayStation uses 16k page size.
+        https://bugs.webkit.org/show_bug.cgi?id=237096
+
+        Reviewed by Yusuke Suzuki.
+
+        Match the granule default size to system page size for our platform.
+
+        * libpas/src/libpas/pas_internal_config.h:
+
 == Rolled over to ChangeLog-2022-02-22 ==
