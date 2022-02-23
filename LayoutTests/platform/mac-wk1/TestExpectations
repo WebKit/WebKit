@@ -1612,6 +1612,7 @@ webkit.org/b/227085 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-t
 
 # rdar://80331434 ([ Mac WK1 Release ] accessibility/loading-iframe-sends-notification.html is a flaky timeout)
 [ Release ] accessibility/loading-iframe-sends-notification.html [ Pass Timeout ]
+accessibility/native-text-control-attributed-string.html [ Skip ]
 
 webkit.org/b/227516 fast/shadow-dom/style-resolver-sharing.html [ Pass Failure ]
 

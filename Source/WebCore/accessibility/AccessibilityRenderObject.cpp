@@ -112,6 +112,7 @@
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
+#include <algorithm>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -2097,21 +2098,23 @@ VisiblePositionRange AccessibilityRenderObject::visiblePositionRangeForLine(unsi
     selection.modify(FrameSelection::AlterationExtend, SelectionDirection::Right, TextGranularity::LineBoundary);
     return selection.selection();
 }
-    
+
 VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) const
 {
     if (!m_renderer)
-        return VisiblePosition();
+        return { };
 
-    if (isNativeTextControl())
-        return downcast<RenderTextControl>(*m_renderer).textFormControlElement().visiblePositionForIndex(index);
+    if (isNativeTextControl()) {
+        auto& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
+        return textControl.visiblePositionForIndex(std::clamp(index, 0, static_cast<int>(textControl.value().length())));
+    }
 
     if (!allowsTextRanges() && !is<RenderText>(*m_renderer))
-        return VisiblePosition();
-    
+        return { };
+
     Node* node = m_renderer->node();
     if (!node)
-        return VisiblePosition();
+        return { };
 
 #if USE(ATSPI)
     // We need to consider replaced elements for GTK, as they will be presented with the 'object replacement character' (0xFFFC).
@@ -2120,7 +2123,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
     return visiblePositionForIndexUsingCharacterIterator(*node, index);
 #endif
 }
-    
+
 int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& position) const
 {
     if (!m_renderer)

@@ -1,3 +1,24 @@
+2022-02-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for assert crash in AccessibilityRenderObject::visiblePositionForIndex.
+        https://bugs.webkit.org/show_bug.cgi?id=236795
+        rdar://89025180
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/native-text-control-attributed-string.html
+
+        In some cases like the one described in the bug, AccessibilityRenderObject::visiblePositionForIndex
+        is passed an index greater than the length of the text actually contained
+        in the text control. This triggers this assert that verifies that you can
+        round-trip from index to VisiblePosition and back to index. This patch
+        does a bounds check in the index and adjust if necessary.
+        The test exercise this method through the JS AccessibilityUIElement::attributedStringForRange
+        for both <input> of type text and password.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionForIndex const):
+
 2022-02-23  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed, build fix for Debian Stable after r290366

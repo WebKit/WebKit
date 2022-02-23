@@ -1864,6 +1864,7 @@ webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failur
 #////////////////////////////////////////////////////////////////////////////////////////
 
 accessibility/dialog-properties.html [ Skip ]
+accessibility/native-text-control-attributed-string.html [ Skip ]
 
 # These tests require platform support.
 media/media-allowed-codecs.html
