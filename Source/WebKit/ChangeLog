@@ -1,3 +1,16 @@
+2022-02-22  Simon Lewis  <simon.lewis@apple.com>
+
+        Further restrict received IPC boolean values to 0 or 1
+        https://bugs.webkit.org/show_bug.cgi?id=236801
+        rdar://85811396
+
+        Reviewed by Chris Dumez.
+
+        Return std::nullopt if a value larger than 1 is received.
+
+        * Platform/IPC/ArgumentCoder.h:
+        (IPC::ArgumentCoder<bool>::decode):
+
 2022-02-22  Brent Fulgham  <bfulgham@apple.com>
 
         PingLoader is failing to call completion handler in error case
