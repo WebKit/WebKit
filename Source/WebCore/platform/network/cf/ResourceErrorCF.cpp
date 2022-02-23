@@ -120,7 +120,7 @@ void ResourceError::platformLazyInit()
     if (userInfo.get()) {
         CFStringRef failingURLString = (CFStringRef) CFDictionaryGetValue(userInfo.get(), failingURLStringKey);
         if (failingURLString)
-            m_failingURL = URL(URL(), failingURLString);
+            m_failingURL = URL { failingURLString };
         else {
             CFURLRef failingURL = (CFURLRef) CFDictionaryGetValue(userInfo.get(), failingURLKey);
             if (failingURL) {

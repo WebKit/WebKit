@@ -394,7 +394,7 @@ void ResourceRequestBase::setHTTPReferrer(const String& httpReferrer)
     constexpr size_t maxLength = 4096;
     if (httpReferrer.length() > maxLength) {
         RELEASE_LOG(Loading, "Truncating HTTP referer");
-        String origin = URL(URL(), SecurityOrigin::create(URL(URL(), httpReferrer))->toString()).string();
+        String origin = URL(SecurityOrigin::create(URL { httpReferrer })->toString()).string();
         if (origin.length() <= maxLength)
             setHTTPHeaderField(HTTPHeaderName::Referer, origin);
     } else

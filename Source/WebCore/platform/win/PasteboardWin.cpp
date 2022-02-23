@@ -452,7 +452,7 @@ void Pasteboard::writeString(const String& type, const String& data)
     ClipboardDataType winType = clipboardTypeFromMIMEType(type);
 
     if (winType == ClipboardDataTypeURL) {
-        WebCore::writeURL(m_writableDataObject.get(), URL(URL(), data), String(), false, true);
+        WebCore::writeURL(m_writableDataObject.get(), URL { data }, String(), false, true);
         return;
     }
 

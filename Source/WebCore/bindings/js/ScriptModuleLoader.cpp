@@ -93,7 +93,7 @@ static Expected<URL, String> resolveModuleSpecifier(ScriptExecutionContext& cont
 {
     // https://html.spec.whatwg.org/multipage/webappapis.html#resolve-a-module-specifier
 
-    URL absoluteURL(URL(), specifier);
+    URL absoluteURL { specifier };
     if (absoluteURL.isValid())
         return absoluteURL;
 
@@ -189,7 +189,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
 
-    URL completedURL(URL(), asString(moduleKeyValue)->value(jsGlobalObject));
+    URL completedURL { asString(moduleKeyValue)->value(jsGlobalObject) };
     if (!completedURL.isValid()) {
         rejectWithFetchError(deferred.get(), TypeError, "Module key is a valid URL."_s);
         return jsPromise;
@@ -223,7 +223,7 @@ URL ScriptModuleLoader::moduleURL(JSC::JSGlobalObject& jsGlobalObject, JSC::JSVa
         return m_context.url();
 
     ASSERT(moduleKeyValue.isString());
-    return URL(URL(), asString(moduleKeyValue)->value(&jsGlobalObject));
+    return URL { asString(moduleKeyValue)->value(&jsGlobalObject) };
 }
 
 URL ScriptModuleLoader::responseURLFromRequestURL(JSC::JSGlobalObject& jsGlobalObject, JSC::JSValue moduleKeyValue)
@@ -241,7 +241,7 @@ URL ScriptModuleLoader::responseURLFromRequestURL(JSC::JSGlobalObject& jsGlobalO
     ASSERT(moduleKeyValue.isString());
     String requestURL = asString(moduleKeyValue)->value(&jsGlobalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    ASSERT_WITH_MESSAGE(URL(URL(), requestURL).isValid(), "Invalid module referrer never starts importing dependent modules.");
+    ASSERT_WITH_MESSAGE(URL(requestURL).isValid(), "Invalid module referrer never starts importing dependent modules.");
 
     auto iterator = m_requestURLToResponseURLMap.find(requestURL);
     ASSERT_WITH_MESSAGE(iterator != m_requestURLToResponseURLMap.end(), "Module referrer must register itself to the map before starting importing dependent modules.");
@@ -328,7 +328,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
             scriptFetcher = WorkerScriptFetcher::create(FetchOptions::Credentials::SameOrigin, FetchOptions::Destination::Script, ReferrerPolicy::EmptyString);
         }
     } else {
-        baseURL = URL(URL(), sourceOrigin.string());
+        baseURL = URL { sourceOrigin.string() };
         if (!baseURL.isValid())
             return rejectPromise(globalObject, TypeError, "Importer module key is not a Symbol or a String."_s);
 

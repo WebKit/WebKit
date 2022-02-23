@@ -1495,7 +1495,7 @@ void ApplicationCacheStorage::deleteCacheForOrigin(const SecurityOriginData& sec
         return;
     }
 
-    URL originURL(URL(), securityOrigin.toString());
+    URL originURL = securityOrigin.toURL();
 
     for (const auto& url : *urls) {
         if (!protocolHostAndPortAreEqual(url, originURL))

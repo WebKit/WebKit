@@ -5339,7 +5339,7 @@ String Document::referrer()
             URL referrerURL { URL(), referrerStr };
             RegistrableDomain referrerRegistrableDomain { referrerURL };
             if (!referrerRegistrableDomain.matches(securityOrigin().data())) {
-                m_referrerOverride = URL(URL(), referrerURL.protocolHostAndPort()).string();
+                m_referrerOverride = URL { referrerURL.protocolHostAndPort() }.string();
                 return m_referrerOverride;
             }
         }

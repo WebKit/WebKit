@@ -849,7 +849,7 @@ void DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 static URL microsoftTeamsRedirectURL()
 {
-    return URL(URL(), "https://www.microsoft.com/en-us/microsoft-365/microsoft-teams/");
+    return URL { "https://www.microsoft.com/en-us/microsoft-365/microsoft-teams/"_str };
 }
 #endif
 

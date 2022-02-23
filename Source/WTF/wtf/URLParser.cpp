@@ -1059,10 +1059,10 @@ ALWAYS_INLINE size_t URLParser::currentPosition(const CodePointIterator<Characte
     return iterator.codeUnitsSince(reinterpret_cast<const CharacterType*>(m_inputBegin));
 }
 
-URLParser::URLParser(const String& input, const URL& base, const URLTextEncoding* nonUTF8QueryEncoding)
-    : m_inputString(input)
+URLParser::URLParser(String&& input, const URL& base, const URLTextEncoding* nonUTF8QueryEncoding)
+    : m_inputString(WTFMove(input))
 {
-    if (input.isNull()) {
+    if (m_inputString.isNull()) {
         if (base.isValid() && !base.m_cannotBeABaseURL) {
             m_url = base;
             m_url.removeFragmentIdentifier();
@@ -1070,23 +1070,23 @@ URLParser::URLParser(const String& input, const URL& base, const URLTextEncoding
         return;
     }
 
-    if (input.is8Bit()) {
-        m_inputBegin = input.characters8();
-        parse(input.characters8(), input.length(), base, nonUTF8QueryEncoding);
+    if (m_inputString.is8Bit()) {
+        m_inputBegin = m_inputString.characters8();
+        parse(m_inputString.characters8(), m_inputString.length(), base, nonUTF8QueryEncoding);
     } else {
-        m_inputBegin = input.characters16();
-        parse(input.characters16(), input.length(), base, nonUTF8QueryEncoding);
+        m_inputBegin = m_inputString.characters16();
+        parse(m_inputString.characters16(), m_inputString.length(), base, nonUTF8QueryEncoding);
     }
 
     ASSERT(!m_url.m_isValid
-        || m_didSeeSyntaxViolation == (m_url.string() != input)
-        || (input.isAllSpecialCharacters<isC0ControlOrSpace>() && m_url.m_string == base.m_string.left(base.m_queryEnd))
+        || m_didSeeSyntaxViolation == (m_url.string() != m_inputString)
+        || (m_inputString.isAllSpecialCharacters<isC0ControlOrSpace>() && m_url.m_string == base.m_string.left(base.m_queryEnd))
         || (base.isValid() && base.protocolIs("file")));
     ASSERT(internalValuesConsistent(m_url));
 #if ASSERT_ENABLED
     if (!m_didSeeSyntaxViolation) {
         // Force a syntax violation at the beginning to make sure we get the same result.
-        URLParser parser(makeString(" ", input), base, nonUTF8QueryEncoding);
+        URLParser parser(makeString(" ", m_inputString), base, nonUTF8QueryEncoding);
         URL parsed = parser.result();
         if (parsed.isValid())
             ASSERT(allValuesEqual(parser.result(), m_url));

@@ -303,7 +303,7 @@ Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Obje
     }
 
     if (auto urlString = redirect->getString("url"); !!urlString) {
-        auto url = URL(URL(), urlString);
+        URL url { urlString };
         if (!url.isValid())
             return makeUnexpected(ContentExtensionError::JSONRedirectURLInvalid);
         if (url.protocolIsJavaScript())
@@ -382,7 +382,7 @@ void RedirectAction::applyToRequest(ResourceRequest& request, const URL& extensi
         action.applyToURL(url);
         request.setURL(WTFMove(url));
     }, [&] (const URLAction& action) {
-        request.setURL(URL(URL(), action.url));
+        request.setURL(URL { action.url });
     }), action);
 }
 

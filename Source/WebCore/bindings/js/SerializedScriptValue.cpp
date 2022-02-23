@@ -2564,7 +2564,7 @@ private:
         if (!m_canCreateDOMObject)
             return true;
 
-        file = File::deserialize(executionContext(m_lexicalGlobalObject), filePath, URL(URL(), url->string()), type->string(), name->string(), optionalLastModified);
+        file = File::deserialize(executionContext(m_lexicalGlobalObject), filePath, URL { url->string() }, type->string(), name->string(), optionalLastModified);
         return true;
     }
 
@@ -3649,7 +3649,7 @@ private:
                 return JSValue();
             if (!m_canCreateDOMObject)
                 return jsNull();
-            return getJSValue(Blob::deserialize(executionContext(m_lexicalGlobalObject), URL(URL(), url->string()), type->string(), size, blobFilePathForBlobURL(url->string())).get());
+            return getJSValue(Blob::deserialize(executionContext(m_lexicalGlobalObject), URL { url->string() }, type->string(), size, blobFilePathForBlobURL(url->string())).get());
         }
         case StringTag: {
             CachedStringRef cachedString;

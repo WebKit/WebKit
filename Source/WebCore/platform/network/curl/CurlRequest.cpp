@@ -365,8 +365,8 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     if (auto length = m_curlHandle->getContentLength())
         m_response.expectedContentLength = *length;
 
-    if (auto proxyUrl = m_curlHandle->getProxyUrl())
-        m_response.proxyUrl = URL(URL(), *proxyUrl);
+    if (auto proxyURL = m_curlHandle->getProxyUrl())
+        m_response.proxyUrl = URL { *proxyURL };
 
     if (auto auth = m_curlHandle->getHttpAuthAvail())
         m_response.availableHttpAuth = *auth;

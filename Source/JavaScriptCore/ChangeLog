@@ -1,3 +1,15 @@
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Add a URL constructor that takes a String
+        https://bugs.webkit.org/show_bug.cgi?id=237068
+
+        Reviewed by Darin Adler.
+
+        Adopt the new `URL(const String&)` constructor.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::computeValidImportSpecifier):
+
 2022-02-22  Alexander Kanavin  <alex@linutronix.de>
 
         When building introspection files, add CMAKE_C_FLAGS to the compiler flags.

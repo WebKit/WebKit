@@ -65,6 +65,14 @@ public:
     // null or empty, in which case the relative URL will be interpreted as absolute.
     WTF_EXPORT_PRIVATE URL(const URL& base, const String& relative, const URLTextEncoding* = nullptr);
 
+    // Parses the input string as an absolute URL. If you need to parse a relative URL, call the constructor above
+    // taking a base URL and a relative URL string.
+    WTF_EXPORT_PRIVATE explicit URL(String&& absoluteURL, const URLTextEncoding* = nullptr);
+    explicit URL(const String& absoluteURL, const URLTextEncoding* encoding = nullptr)
+        : URL(String { absoluteURL }, encoding)
+    {
+    }
+
     WTF_EXPORT_PRIVATE static URL fakeURLWithRelativePart(StringView);
     WTF_EXPORT_PRIVATE static URL fileURLWithFileSystemPath(StringView);
 
@@ -209,7 +217,7 @@ private:
     unsigned hostStart() const;
     unsigned credentialsEnd() const;
     void remove(unsigned start, unsigned length);
-    void parse(const String&);
+    void parse(String&&);
 
     friend WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 
@@ -313,7 +321,7 @@ template<typename Decoder> std::optional<URL> URL::decode(Decoder& decoder)
     decoder >> string;
     if (!string)
         return std::nullopt;
-    return URL(URL(), WTFMove(*string));
+    return URL(WTFMove(*string));
 }
 
 inline bool operator==(const URL& a, const URL& b)

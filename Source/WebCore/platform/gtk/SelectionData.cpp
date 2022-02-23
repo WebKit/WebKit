@@ -61,7 +61,7 @@ void SelectionData::setURIList(const String& uriListString)
         if (line[0] == '#')
             continue;
 
-        URL url = URL(URL(), line);
+        URL url { line };
         if (url.isValid()) {
             if (!setURL) {
                 m_url = url;

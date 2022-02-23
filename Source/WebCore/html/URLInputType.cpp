@@ -47,7 +47,7 @@ const AtomString& URLInputType::formControlType() const
 
 bool URLInputType::typeMismatchFor(const String& value) const
 {
-    return !value.isEmpty() && !URL(URL(), value).isValid();
+    return !value.isEmpty() && !URL(value).isValid();
 }
 
 bool URLInputType::typeMismatch() const

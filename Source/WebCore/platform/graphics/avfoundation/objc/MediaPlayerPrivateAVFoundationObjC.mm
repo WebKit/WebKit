@@ -362,7 +362,7 @@ HashSet<SecurityOriginData> MediaPlayerPrivateAVFoundationObjC::originsInMediaCa
         return origins;
 
     for (NSString *key in [assetCache allKeys]) {
-        URL keyAsURL = URL(URL(), key);
+        URL keyAsURL { key };
         if (keyAsURL.isValid())
             origins.add(SecurityOriginData::fromURL(keyAsURL));
     }
@@ -426,7 +426,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String&
         return;
 
     for (NSString *key in [assetCache allKeys]) {
-        URL keyAsURL = URL(URL(), key);
+        URL keyAsURL { key };
         if (keyAsURL.isValid()) {
             if (origins.contains(SecurityOriginData::fromURL(keyAsURL)))
                 [assetCache removeEntryForKey:key];

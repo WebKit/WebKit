@@ -922,7 +922,7 @@ void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
     if (url.isLocalFile())
         cleanURLString = cleanURLString.substring(0, url.pathEnd());
 
-    m_url = URL(URL(), cleanURLString);
+    m_url = URL { cleanURLString };
     GST_INFO_OBJECT(pipeline(), "Load %s", m_url.string().utf8().data());
     g_object_set(m_pipeline.get(), "uri", m_url.string().utf8().data(), nullptr);
 }

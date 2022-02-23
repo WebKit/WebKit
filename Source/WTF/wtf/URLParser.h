@@ -69,7 +69,7 @@ public:
     static std::optional<uint16_t> defaultPortForProtocol(StringView);
 
 private:
-    URLParser(const String&, const URL& = { }, const URLTextEncoding* = nullptr);
+    URLParser(String&&, const URL& = { }, const URLTextEncoding* = nullptr);
     URL result() { return m_url; }
 
     friend class URL;

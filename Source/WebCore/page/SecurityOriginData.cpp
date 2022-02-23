@@ -51,7 +51,7 @@ String SecurityOriginData::toString() const
 
 URL SecurityOriginData::toURL() const
 {
-    return URL { URL(), toString() };
+    return URL { toString() };
 }
 
 SecurityOriginData SecurityOriginData::fromFrame(Frame* frame)

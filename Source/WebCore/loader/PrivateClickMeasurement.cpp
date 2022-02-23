@@ -154,7 +154,7 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
             if (!sourceDomain.isEmpty())
                 return makeUnexpected("[Private Click Measurement] Triggering event was not accepted because the URL had multiple attributionSource query parameters."_s);
 
-            auto attributionSourceURL = URL(URL(), parameter.value);
+            URL attributionSourceURL { parameter.value };
             if (!attributionSourceURL.isValid() || (attributionSourceURL.hasPath() && attributionSourceURL.path().length() > 1) || attributionSourceURL.hasCredentials() || attributionSourceURL.hasQuery() || attributionSourceURL.hasFragmentIdentifier())
                 return makeUnexpected("[Private Click Measurement] Triggering event was not accepted because the URL's attributionSource query parameter was not a valid URL or was a URL with a path, credentials, query string, or fragment."_s);
             sourceDomain = RegistrableDomain { attributionSourceURL };

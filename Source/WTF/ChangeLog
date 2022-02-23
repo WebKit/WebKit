@@ -1,5 +1,22 @@
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
+        Add a URL constructor that takes a String
+        https://bugs.webkit.org/show_bug.cgi?id=237068
+
+        Reviewed by Darin Adler.
+
+        Add a URL constructor that takes a String to simplify our code base a bit.
+
+        * wtf/URL.cpp:
+        (WTF::URL::truncatedForUseAsBase const):
+        (WTF::URL::fakeURLWithRelativePart):
+        (WTF::URL::fileURLWithFileSystemPath):
+        * wtf/URL.h:
+        (WTF::URL::URL):
+        (WTF::URL::decode):
+
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
         Drop StringHasher::hashMemory() and use the modern Hasher instead
         https://bugs.webkit.org/show_bug.cgi?id=237049
 

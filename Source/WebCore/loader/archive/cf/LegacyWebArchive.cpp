@@ -225,7 +225,7 @@ RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef diction
         response = createResourceResponseFromPropertyListData(resourceResponseData, resourceResponseVersion);
     }
 
-    return ArchiveResource::create(SharedBuffer::create(resourceData), URL(URL(), url), mimeType, textEncoding, frameName, response);
+    return ArchiveResource::create(SharedBuffer::create(resourceData), URL { url }, mimeType, textEncoding, frameName, response);
 }
 
 Ref<LegacyWebArchive> LegacyWebArchive::create()

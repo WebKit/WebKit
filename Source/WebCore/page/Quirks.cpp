@@ -1098,7 +1098,7 @@ const String& Quirks::staticRadioPlayerURLString()
 
 static bool isBBCDomain(const RegistrableDomain& domain)
 {
-    static NeverDestroyed<RegistrableDomain> BBCDomain = RegistrableDomain(URL(URL(), Quirks::BBCRadioPlayerURLString()));
+    static NeverDestroyed<RegistrableDomain> BBCDomain = RegistrableDomain(URL { Quirks::BBCRadioPlayerURLString() });
     return domain == BBCDomain;
 }
 
@@ -1172,7 +1172,7 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theinventory.com"_s));
         return set;
     }();
-    static NeverDestroyed<URL> kinjaURL = URL(URL(), "https://kinja.com");
+    static NeverDestroyed kinjaURL = URL { "https://kinja.com"_str };
     static NeverDestroyed<RegistrableDomain> kinjaDomain { kinjaURL };
 
     static NeverDestroyed<RegistrableDomain> youTubeDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("youtube.com"_s);

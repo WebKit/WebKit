@@ -223,7 +223,7 @@ void WebSocket::failAsynchronously()
 ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& protocols)
 {
     LOG(Network, "WebSocket %p connect() url='%s'", this, url.utf8().data());
-    m_url = URL(URL(), url);
+    m_url = URL { url };
 
     ASSERT(scriptExecutionContext());
     auto& context = *scriptExecutionContext();

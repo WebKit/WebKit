@@ -590,13 +590,13 @@ bool serializedOriginsMatch(const SecurityOrigin* origin1, const SecurityOrigin*
 
 Ref<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
 {
-    return SecurityOrigin::create(URL(URL(), originString));
+    return SecurityOrigin::create(URL { originString });
 }
 
 Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, std::optional<uint16_t> port)
 {
     String decodedHost = PAL::decodeURLEscapeSequences(host);
-    auto origin = create(URL(URL(), protocol + "://" + host + "/"));
+    auto origin = create(URL { protocol + "://" + host + "/" });
     if (port && !WTF::isDefaultPortForProtocol(*port, protocol))
         origin->m_data.port = port;
     return origin;

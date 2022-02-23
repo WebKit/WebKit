@@ -82,7 +82,7 @@ void JSAPIGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globa
 
 static Expected<URL, String> computeValidImportSpecifier(const URL& base, const String& specifier)
 {
-    URL absoluteURL(URL(), specifier);
+    URL absoluteURL(specifier);
     if (absoluteURL.isValid())
         return absoluteURL;
 

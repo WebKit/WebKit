@@ -78,7 +78,7 @@ static String processAppIdExtension(const SecurityOrigin& facetId, const String&
         return facetId.toString();
 
     // Step 3. Relax the comparison to same site.
-    URL appIdURL(URL(), appId);
+    URL appIdURL { appId };
     if (!appIdURL.isValid() || facetId.protocol() != appIdURL.protocol() || (RegistrableDomain(appIdURL) != RegistrableDomain::uncheckedCreateFromHost(facetId.host()) && !needsAppIdQuirks(facetId.host(), appId)))
         return String();
     return appId;

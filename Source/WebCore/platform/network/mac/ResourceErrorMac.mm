@@ -160,7 +160,7 @@ void ResourceError::platformLazyInit()
     m_errorCode = [m_platformError code];
 
     if (NSString* failingURLString = [[m_platformError userInfo] valueForKey:@"NSErrorFailingURLStringKey"])
-        m_failingURL = URL(URL(), failingURLString);
+        m_failingURL = URL { failingURLString };
     else
         m_failingURL = URL((NSURL *)[[m_platformError userInfo] valueForKey:@"NSErrorFailingURLKey"]);
     // Workaround for <rdar://problem/6554067>

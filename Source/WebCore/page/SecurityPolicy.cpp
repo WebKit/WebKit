@@ -91,8 +91,8 @@ String SecurityPolicy::referrerToOriginString(const String& referrer)
 
 String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, const URL& url, const String& referrer)
 {
-    ASSERT(referrer == URL(URL(), referrer).strippedForUseAsReferrer()
-        || referrer == SecurityOrigin::create(URL(URL(), referrer))->toString());
+    ASSERT(referrer == URL { referrer }.strippedForUseAsReferrer()
+        || referrer == SecurityOrigin::create(URL { referrer })->toString());
 
     if (referrer.isEmpty())
         return String();

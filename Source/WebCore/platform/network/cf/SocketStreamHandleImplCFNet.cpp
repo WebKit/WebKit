@@ -110,7 +110,7 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
 
     ASSERT(url.protocolIs("ws") || url.protocolIs("wss"));
 
-    URL httpsURL(URL(), "https://" + m_url.host());
+    URL httpsURL { "https://" + m_url.host() };
     m_httpsURL = httpsURL.createCFURL();
 
 #if PLATFORM(COCOA)
