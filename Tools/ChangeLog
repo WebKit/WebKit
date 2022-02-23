@@ -1,3 +1,20 @@
+2022-02-23  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Set ssh keepalive in run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=237031
+
+        Reviewed by Adrian Perez de Castro.
+
+        If a remote goes down after an ssh connection has been established, we
+        need to be able to detect that. Keep the common ssh config options in
+        one constant and add ServerAliveInterval=30 to it.
+
+        While here, change sshRead to execute ssh directly (instead of
+        going through the shell). Similarly, don't open-code the read
+        loop, just call IO.read.
+
+        * Scripts/run-jsc-stress-tests:
+
 2022-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Fix GPUP WebGL generator script wrt uninitialised sized span

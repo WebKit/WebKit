@@ -87,6 +87,13 @@ ITERATION_LIMITS = OpenStruct.new(:infraIterationsFloor => 3,
                                   :iterationsCeiling => 10)
 
 REMOTE_TIMEOUT = 120
+SSH_OPTIONS_DEFAULT = [
+    "-o",
+    "NoHostAuthenticationForLocalhost=yes",
+    "-o",
+    "ServerAliveInterval=30",
+]
+
 begin
     require 'shellwords'
 rescue Exception => e
@@ -2550,12 +2557,13 @@ def sshRead(cmd, remoteHost, options={})
     raise unless $remote
 
     result = ""
-    IO.popen("ssh -o NoHostAuthenticationForLocalhost=yes -p #{remoteHost.port}" + (remoteHost.identity_file_path ? " -i #{remoteHost.identity_file_path}" : "") + " #{remoteHost.user}@#{remoteHost.host} '#{cmd}'", "r") {
-      | inp |
-      inp.each_line {
-        | line |
-        result += line
-      }
+    ssh_cmd = ["ssh"] +
+              SSH_OPTIONS_DEFAULT +
+              ["-p", remoteHost.port.to_s] +
+              (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) +
+             ["#{remoteHost.user}@#{remoteHost.host}", cmd]
+    IO.popen(ssh_cmd, "r") { |inp|
+        result = inp.read
     }
     raise "#{$?}" unless $?.success? or options[:ignoreFailure]
     result
@@ -2689,8 +2697,8 @@ def getRemoteDirectoryIfNeeded(remoteHost)
 end
 
 def copyBundleToRemote(remoteHost)
-    mysys(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"] + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}"])
-    mysys(["scp", "-o", "NoHostAuthenticationForLocalhost=yes"] + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}"])
+    mysys(["ssh"] + SSH_OPTIONS_DEFAULT + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}"])
+    mysys(["scp"] + SSH_OPTIONS_DEFAULT + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}"])
 end
 
 def exportBaseEnvironmentVariables(escape)
@@ -2724,7 +2732,7 @@ def runTestRunner(testRunner, remoteHosts, remoteIndex=0)
         remoteScript += exportBaseEnvironmentVariables(true)
         $envVars.each { |var| remoteScript += "export " << var << "\n" }
         remoteScript += "#{testRunner.command(remoteIndex)}\""
-        runAndMonitorTestRunnerCommand(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"] + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript])
+        runAndMonitorTestRunnerCommand(["ssh"] + SSH_OPTIONS_DEFAULT + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript])
     else
         Dir.chdir($runnerDir) {
             runAndMonitorTestRunnerCommand(Shellwords.shellsplit(testRunner.command))
@@ -3049,8 +3057,8 @@ end
 def unpackBundleGnuParallel(remoteHosts)
     forEachRemote(remoteHosts, :dropOnFailure => true, :timeout => REMOTE_TIMEOUT) {
         | _, remoteHost |
-        mysys(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"] + 
-               (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + 
+        mysys(["ssh"] + SSH_OPTIONS_DEFAULT +
+               (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) +
                ["-p", remoteHost.port.to_s,
                "#{remoteHost.user}@#{remoteHost.host}",
                "cd #{Shellwords.shellescape(remoteHost.remoteDirectory)} && rm -rf #{$outputDir.basename} && tar xzf #{$tarFileName}"])
