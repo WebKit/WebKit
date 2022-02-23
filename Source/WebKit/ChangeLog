@@ -1,3 +1,16 @@
+2022-02-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Use non-inline messages for layer volatility-related IPC in RemoteRenderingBackend
+        https://bugs.webkit.org/show_bug.cgi?id=237061
+
+        Reviewed by Wenson Hsieh.
+
+        There appears to be a rare issue where StreamClientConnection::sendSync() can hang sometimes,
+        which makes it impossible to do an entire MotionMark run (rdar://89313626). So avoid this
+        by making the MarkSurfaceNonVolatile and SwapToValidFrontBuffer use out-of-line encoding.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+
 2022-02-22  Simon Lewis  <simon.lewis@apple.com>
 
         Further restrict received IPC boolean values to 0 or 1
