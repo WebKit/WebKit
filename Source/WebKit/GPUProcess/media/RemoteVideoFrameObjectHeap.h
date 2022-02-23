@@ -64,7 +64,7 @@ private:
     void getVideoFrameBuffer(RemoteVideoFrameReadReference&&);
 #endif
 
-    GPUConnectionToWebProcess* m_gpuConnectionToWebProcess WTF_GUARDED_BY_LOCK(m_consumeThread);
+    GPUConnectionToWebProcess* m_gpuConnectionToWebProcess WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
     const Ref<IPC::Connection> m_connection;
     ThreadAssertion m_consumeThread NO_UNIQUE_ADDRESS;
 #if PLATFORM(COCOA)

@@ -88,7 +88,7 @@ private:
     // WebCore::SampleBufferDisplayLayer::Client
     void sampleBufferDisplayLayerStatusDidFail() final;
 
-    GPUConnectionToWebProcess& m_gpuConnection WTF_GUARDED_BY_LOCK(m_consumeThread);
+    GPUConnectionToWebProcess& m_gpuConnection WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
     SampleBufferDisplayLayerIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;

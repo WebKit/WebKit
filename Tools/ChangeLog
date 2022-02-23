@@ -1,3 +1,15 @@
+2022-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Thread safety analysis macros are confusing for non-Lock use-cases
+        https://bugs.webkit.org/show_bug.cgi?id=237022
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+        * TestWebKitAPI/Tests/WTF/ThreadAssertionsTest.cpp:
+        (TestWebKitAPI::WTF_REQUIRES_CAPABILITY):
+
 2022-02-23  Youenn Fablet  <youenn@apple.com>
 
         Enable WebRTCRemoteVideoFrameEnabled by default in WebKitTestRunner

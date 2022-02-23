@@ -140,7 +140,7 @@ protected:
     using GCGLContext = WebCore::GraphicsContextGLTextureMapper;
 #endif
     
-    RefPtr<GCGLContext> m_context WTF_GUARDED_BY_LOCK(m_streamThread);
+    RefPtr<GCGLContext> m_context WTF_GUARDED_BY_CAPABILITY(m_streamThread);
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
 #if ENABLE(VIDEO)
