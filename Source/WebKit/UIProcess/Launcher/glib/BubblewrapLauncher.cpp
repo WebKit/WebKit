@@ -288,6 +288,7 @@ static void bindFonts(Vector<CString>& args)
     const char* homeDir = g_get_home_dir();
     const char* dataDir = g_get_user_data_dir();
     const char* cacheDir = g_get_user_cache_dir();
+    const char* const * dataDirs = g_get_system_data_dirs();
 
     // Configs can include custom dirs but then we have to parse them...
     GUniquePtr<char> fontConfig(g_build_filename(configDir, "fontconfig", nullptr));
@@ -304,6 +305,10 @@ static void bindFonts(Vector<CString>& args)
     bindIfExists(args, fontHomeConfigDir.get());
     bindIfExists(args, fontData.get());
     bindIfExists(args, fontHomeData.get());
+    for (auto* dataDir = dataDirs; dataDir && *dataDir; dataDir++) {
+        GUniquePtr<char> fontDataDir(g_build_filename(*dataDir, "fonts", nullptr));
+        bindIfExists(args, fontDataDir.get());
+    }
     bindIfExists(args, "/var/cache/fontconfig"); // Used by Debian.
 }
 

@@ -1,3 +1,14 @@
+2022-02-23  Liliana Marie Prikler <liliana.prikler@gmail.com>
+
+        Bubblewrap launcher doesn't bind font locations from XDG_DATA_DIRS
+        https://bugs.webkit.org/show_bug.cgi?id=237089
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bindFonts): Expose font directories present in the
+        XDG_DATA_DIRS environment variable.
+
 2022-02-23  Chris Dumez  <cdumez@apple.com>
 
         Adopt more widely the new URL constructor that takes in a String
