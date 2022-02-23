@@ -1,3 +1,10 @@
+2022-02-23  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, non-unified build fix after 247623@main
+        https://bugs.webkit.org/show_bug.cgi?id=237074
+
+        * bindings/js/WebAssemblyCachedScriptSourceProvider.h: Namespace.
+
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
         http/wpt/push-api/onpush-disabled.html fails

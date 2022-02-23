@@ -78,7 +78,7 @@ public:
     }
 
 private:
-    WebAssemblyCachedScriptSourceProvider(CachedScript* cachedScript, const SourceOrigin& sourceOrigin, String sourceURL)
+    WebAssemblyCachedScriptSourceProvider(CachedScript* cachedScript, const JSC::SourceOrigin& sourceOrigin, String sourceURL)
         : BaseWebAssemblySourceProvider(sourceOrigin, WTFMove(sourceURL))
         , m_cachedScript(cachedScript)
         , m_buffer(nullptr)
