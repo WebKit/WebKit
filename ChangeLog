@@ -1,3 +1,12 @@
+2022-02-23  W.D. Xiong  <wdx@apple.com>
+
+        Add wdx's Github username to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=237106
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2022-02-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] Add WebKitDMABufVideoSink
