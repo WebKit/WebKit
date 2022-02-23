@@ -28,6 +28,7 @@
 
 #import "ArgumentCoders.h"
 #import "CGDisplayListImageBufferBackend.h"
+#import "Logging.h"
 #import "PlatformCALayerRemote.h"
 #import "PlatformRemoteImageBufferProxy.h"
 #import "RemoteLayerBackingStoreCollection.h"
@@ -45,6 +46,7 @@
 #import <WebCore/WebLayer.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/TextStream.h>
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
 #import <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
@@ -304,11 +306,15 @@ bool RemoteLayerBackingStore::display()
         return true;
     }
 
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore::display()");
+
     // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
     collection->makeFrontBufferNonVolatile(*this);
 
-    if (m_dirtyRegion.isEmpty() || m_size.isEmpty())
+    if (m_dirtyRegion.isEmpty() || m_size.isEmpty()) {
+        LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << " no dirty region");
         return needToEncodeBackingStore;
+    }
 
     WebCore::IntRect layerBounds(WebCore::IntPoint(), WebCore::expandedIntSize(m_size));
     if (!hasFrontBuffer() || !supportsPartialRepaint())

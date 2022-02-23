@@ -274,16 +274,33 @@ auto RemoteRenderingBackendProxy::swapToValidFrontBuffer(const BufferSet& buffer
         return buffer->renderingResourceIdentifier();
     };
 
+    auto clearBackendHandle = [](ImageBuffer* buffer) {
+        if (!buffer)
+            return;
+
+        if (auto* backend = buffer->ensureBackendCreated()) {
+            auto* sharing = backend->toBackendSharing();
+            if (is<ImageBufferBackendHandleSharing>(sharing))
+                downcast<ImageBufferBackendHandleSharing>(*sharing).clearBackendHandle();
+        }
+    };
+
+    // Clear all the buffer's MachSendRights to avoid all the surfaces appearing to be in-use.
+    // We get back the new front buffer's MachSendRight in the reply.
+    clearBackendHandle(buffers.front.get());
+    clearBackendHandle(buffers.back.get());
+    clearBackendHandle(buffers.secondaryBack.get());
+
     auto bufferSet = BufferIdentifierSet {
         bufferIdentifier(buffers.front.get()),
         bufferIdentifier(buffers.back.get()),
         bufferIdentifier(buffers.secondaryBack.get())
     };
-    
+
     BufferIdentifierSet swappedBufferSet;
     std::optional<ImageBufferBackendHandle> frontBufferHandle;
     bool frontBufferWasEmpty = false;
-    
+
     sendSyncToStream(Messages::RemoteRenderingBackend::SwapToValidFrontBuffer(bufferSet),
         Messages::RemoteRenderingBackend::SwapToValidFrontBuffer::Reply(swappedBufferSet, frontBufferHandle, frontBufferWasEmpty));
 
@@ -318,6 +335,8 @@ auto RemoteRenderingBackendProxy::swapToValidFrontBuffer(const BufferSet& buffer
 
 VolatilityState RemoteRenderingBackendProxy::markSurfaceNonVolatile(RenderingResourceIdentifier identifier)
 {
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "Web Process: RemoteRenderingBackendProxy::markSurfaceNonVolatile " << identifier);
+
     bool bufferWasEmpty;
     std::optional<ImageBufferBackendHandle> backendHandle;
     sendSyncToStream(Messages::RemoteRenderingBackend::MarkSurfaceNonVolatile(identifier), Messages::RemoteRenderingBackend::MarkSurfaceNonVolatile::Reply(backendHandle, bufferWasEmpty));

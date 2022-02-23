@@ -1,5 +1,34 @@
 2022-02-22  Simon Fraser  <simon.fraser@apple.com>
 
+        With DOM Rendering in GPU process, every display results in new IOSurface allocation
+        https://bugs.webkit.org/show_bug.cgi?id=237063
+
+        Reviewed by Tim Horton.
+
+        We have to avoid ImageBufferRemoteIOSurfaceBackends in the web process from hanging on to
+        an IOSurface MachSendRight (via ImageBufferBackendHandle) all the time, because doing so
+        makes the IOSurface appear to be in-use, and therefore not eligible for swapping to,
+        or making volatile. In particular, swapToValidFrontBuffer() would always think
+        that the surfaces were in-use, resulting in permanent triple-buffering, and
+        allocation of a new buffer on every swap.
+
+        Fix by clearing the ImageBufferBackendHandles of all the buffers in the WP in
+        RemoteRenderingBackendProxy::swapToValidFrontBuffer(), so that the GPUP can accurately
+        gauge in-use-ness; we get back a handle to the new front buffer in the reply,
+        and this is the only one we need to keep hold of, since it gets transferred to
+        the UI process.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::markSurfaceNonVolatile):
+        (WebKit::RemoteRenderingBackend::swapToValidFrontBuffer):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::display):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::swapToValidFrontBuffer):
+        (WebKit::RemoteRenderingBackendProxy::markSurfaceNonVolatile):
+
+2022-02-22  Simon Fraser  <simon.fraser@apple.com>
+
         Use non-inline messages for layer volatility-related IPC in RemoteRenderingBackend
         https://bugs.webkit.org/show_bug.cgi?id=237061
 

@@ -400,6 +400,8 @@ static std::optional<ImageBufferBackendHandle> handleFromBuffer(WebCore::ImageBu
 
 void RemoteRenderingBackend::markSurfaceNonVolatile(WebCore::RenderingResourceIdentifier identifier, CompletionHandler<void(std::optional<ImageBufferBackendHandle> backendHandle, bool bufferWasEmpty)>&& completionHandler)
 {
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: markSurfaceNonVolatile -  " << identifier);
+
     auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
     if (!imageBuffer) {
         completionHandler({ }, false);
@@ -421,6 +423,11 @@ void RemoteRenderingBackend::swapToValidFrontBuffer(const BufferIdentifierSet& b
     auto frontBuffer = fetchBuffer(bufferSet.front);
     auto backBuffer = fetchBuffer(bufferSet.back);
     auto secondaryBackBuffer = fetchBuffer(bufferSet.secondaryBack);
+
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: RemoteRenderingBackend::swapToValidFrontBuffer - front "
+        << bufferSet.front << " (in-use " << (frontBuffer && frontBuffer->isInUse()) << ") "
+        << bufferSet.back << " (in-use " << (backBuffer && backBuffer->isInUse()) << ") "
+        << bufferSet.secondaryBack << " (in-use " << (secondaryBackBuffer && secondaryBackBuffer->isInUse()) << ") ");
 
     if (!backBuffer || backBuffer->isInUse()) {
         std::swap(backBuffer, secondaryBackBuffer);
@@ -447,8 +454,14 @@ void RemoteRenderingBackend::swapToValidFrontBuffer(const BufferIdentifierSet& b
             return std::nullopt;
         return buffer->renderingResourceIdentifier();
     };
+    
+    auto resultBufferSet = BufferIdentifierSet { bufferIdentifer(frontBuffer), bufferIdentifer(backBuffer), bufferIdentifer(secondaryBackBuffer) };
 
-    completionHandler({ bufferIdentifer(frontBuffer), bufferIdentifer(backBuffer), bufferIdentifer(secondaryBackBuffer) }, WTFMove(frontBufferHandle), frontBufferWasEmpty);
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: swapToValidFrontBuffer - swapped from ["
+        << bufferSet.front << ", " << bufferSet.back << ", " << bufferSet.secondaryBack << "] to ["
+        << resultBufferSet.front << ", " << resultBufferSet.back << ", " << resultBufferSet.secondaryBack << "]");
+
+    completionHandler(resultBufferSet, WTFMove(frontBufferHandle), frontBufferWasEmpty);
 }
 
 void RemoteRenderingBackend::markSurfacesVolatile(const Vector<WebCore::RenderingResourceIdentifier>& identifiers, CompletionHandler<void(const Vector<WebCore::RenderingResourceIdentifier>& inUseBufferIdentifiers)>&& completionHandler)
