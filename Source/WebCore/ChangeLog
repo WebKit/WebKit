@@ -1,5 +1,19 @@
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
+        Share more code between dispatchSessionStorageEvents() and dispatchLocalStorageEvents()
+        https://bugs.webkit.org/show_bug.cgi?id=237040
+
+        Reviewed by Geoffrey Garen.
+
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::dispatchStorageEvents):
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEvents):
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEvents):
+        (WebCore::dispatchSessionStorageEventsToWindows): Deleted.
+        (WebCore::dispatchLocalStorageEventsToWindows): Deleted.
+
+2022-02-22  Chris Dumez  <cdumez@apple.com>
+
         CachedResourceLoader::allCachedSVGImages() reparses resource URLs unnecessarily
         https://bugs.webkit.org/show_bug.cgi?id=237002
 

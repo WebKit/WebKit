@@ -40,26 +40,27 @@
 
 namespace WebCore {
 
-static void dispatchSessionStorageEventsToWindows(Page& page, const Vector<Ref<DOMWindow>>& windows, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOrigin& securityOrigin)
+template<StorageType storageType>
+static void dispatchStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOrigin& securityOrigin, const String& url, const Function<bool(Storage&)>& isSourceStorage, const Function<bool(Page&)>& isRelevantPage)
 {
-    InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Session, securityOrigin);
+    Vector<Ref<DOMWindow>> windows;
+    DOMWindow::forEachWindowInterestedInStorageEvents([&](auto& window) {
+        auto storage = isLocalStorage(storageType) ? window.optionalLocalStorage() : window.optionalSessionStorage();
+        if (!storage)
+            return;
+        // Send events only to our page.
+        if (auto* page = window.page(); !page || !isRelevantPage(*page))
+            return;
+        if (isSourceStorage(*storage))
+            return;
+        if (!securityOrigin.equal(window.securityOrigin()))
+            return;
+        windows.append(window);
+    });
 
     for (auto& window : windows) {
         RefPtr document = window->document();
-        auto result = window->sessionStorage();
-        if (!result.hasException()) // https://html.spec.whatwg.org/multipage/webstorage.html#the-storage-event:event-storage
-            document->queueTaskToDispatchEventOnWindow(TaskSource::DOMManipulation, StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, result.releaseReturnValue()));
-    }
-}
-
-static void dispatchLocalStorageEventsToWindows(PageGroup& pageGroup, const Vector<Ref<DOMWindow>>& windows, const String& key, const String& oldValue, const String& newValue, const String& url, const SecurityOrigin& securityOrigin)
-{
-    for (auto& page : pageGroup.pages())
-        InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Local, securityOrigin);
-
-    for (auto& window : windows) {
-        RefPtr document = window->document();
-        auto result = window->localStorage();
+        auto result = isLocalStorage(storageType) ? window->localStorage() : window->sessionStorage();
         if (!result.hasException()) // https://html.spec.whatwg.org/multipage/webstorage.html#the-storage-event:event-storage
             document->queueTaskToDispatchEventOnWindow(TaskSource::DOMManipulation, StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, result.releaseReturnValue()));
     }
@@ -67,41 +68,20 @@ static void dispatchLocalStorageEventsToWindows(PageGroup& pageGroup, const Vect
 
 void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, const String& oldValue, const String& newValue, Page& page, const SecurityOrigin& securityOrigin, const String& url, const Function<bool(Storage&)>& isSourceStorage)
 {
-    Vector<Ref<DOMWindow>> windows;
-    DOMWindow::forEachWindowInterestedInStorageEvents([&](auto& window) {
-        if (!window.optionalSessionStorage())
-            return;
-        // Send events only to our page.
-        if (window.page() != &page)
-            return;
-        if (isSourceStorage(*window.optionalSessionStorage()))
-            return;
-        if (!securityOrigin.equal(window.securityOrigin()))
-            return;
-        windows.append(window);
+    InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Session, securityOrigin);
+    dispatchStorageEvents<StorageType::Session>(key, oldValue, newValue, securityOrigin, url, isSourceStorage, [&](auto& windowPage) {
+        return &windowPage == &page;
     });
-
-    dispatchSessionStorageEventsToWindows(page, windows, key, oldValue, newValue, url, securityOrigin);
 }
 
 void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, PageGroup& pageGroup, const SecurityOrigin& securityOrigin, const String& url, const Function<bool(Storage&)>& isSourceStorage)
 {
     auto& pagesInGroup = pageGroup.pages();
-    Vector<Ref<DOMWindow>> windows;
-    DOMWindow::forEachWindowInterestedInStorageEvents([&](auto& window) {
-        if (!window.optionalLocalStorage())
-            return;
-        // Send events to every page in the group.
-        if (!window.page() || !pagesInGroup.contains(*window.page()))
-            return;
-        if (isSourceStorage(*window.optionalLocalStorage()))
-            return;
-        if (!securityOrigin.equal(window.securityOrigin()))
-            return;
-        windows.append(window);
+    for (auto& page : pagesInGroup)
+        InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Local, securityOrigin);
+    dispatchStorageEvents<StorageType::Local>(key, oldValue, newValue, securityOrigin, url, isSourceStorage, [&](auto& page) {
+        return pagesInGroup.contains(page);
     });
-
-    dispatchLocalStorageEventsToWindows(pageGroup, windows, key, oldValue, newValue, url, securityOrigin);
 }
 
 } // namespace WebCore
