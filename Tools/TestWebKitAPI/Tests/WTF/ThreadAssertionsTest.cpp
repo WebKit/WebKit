@@ -46,8 +46,8 @@ public:
     template<typename T> int doTaskCompileFailure(T n) { return doTaskImpl(n); }
     template<typename T> void accessVariableCompileFailure(T n) { m_value = n; }
 private:
-    int doTaskImpl(int n) WTF_REQUIRES_LOCK(m_ownerThread) { return n + 1; }
-    int m_value WTF_GUARDED_BY_LOCK(m_ownerThread) { 0 };
+    int doTaskImpl(int n) WTF_REQUIRES_CAPABILITY(m_ownerThread) { return n + 1; }
+    int m_value WTF_GUARDED_BY_CAPABILITY(m_ownerThread) { 0 };
     NO_UNIQUE_ADDRESS ThreadAssertion m_ownerThread;
 };
 }
@@ -64,7 +64,7 @@ TEST(WTF_ThreadAssertions, TestThreadAssertion)
     // instance.accessVariableCompileFailure(10);
 }
 
-static int testMainThreadFunction() WTF_REQUIRES_LOCK(mainThread) { return 11; }
+static int testMainThreadFunction() WTF_REQUIRES_CAPABILITY(mainThread) { return 11; }
 
 TEST(WTF_ThreadAssertions, TestMainThreadNamedAssertion)
 {
@@ -75,7 +75,7 @@ TEST(WTF_ThreadAssertions, TestMainThreadNamedAssertion)
     EXPECT_EQ(11, testMainThreadFunction());
 }
 
-static int testMainRunLoopFunction() WTF_REQUIRES_LOCK(mainRunLoop) { return 12; }
+static int testMainRunLoopFunction() WTF_REQUIRES_CAPABILITY(mainRunLoop) { return 12; }
 
 TEST(WTF_ThreadAssertions, TestMainRunLoopNamedAssertion)
 {

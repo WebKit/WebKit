@@ -126,7 +126,7 @@ protected:
     using PlatformGraphicsContextGL = WebCore::GraphicsContextGLTextureMapper;
 #endif
     
-    RefPtr<PlatformGraphicsContextGL> m_context WTF_GUARDED_BY_LOCK(m_streamThread);
+    RefPtr<PlatformGraphicsContextGL> m_context WTF_GUARDED_BY_CAPABILITY(m_streamThread);
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
     ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;
