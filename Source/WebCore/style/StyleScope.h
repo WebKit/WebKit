@@ -129,7 +129,10 @@ public:
     static Scope& forNode(Node&);
     static Scope* forOrdinal(Element&, ScopeOrdinal);
 
-    bool updateQueryContainerState();
+    struct QueryContainerUpdateContext {
+        HashSet<Element*> invalidatedContainers;
+    };
+    bool updateQueryContainerState(QueryContainerUpdateContext&);
 
 private:
     Scope& documentScope();

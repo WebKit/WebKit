@@ -1,4 +1,4 @@
 
-FAIL Initial layout - expecting a scrollbar without overflowing content instead of overflowing content without a scrollbar assert_equals: Layout with a scrollbar means the container query applies expected "50px" but got "100px"
+FAIL Initial layout - expecting a scrollbar without overflowing content instead of overflowing content without a scrollbar assert_less_than: Expects a vertical scrollbar expected a number less than 100 but got 100
 FAIL Same result after a reflow assert_less_than: Expects a vertical scrollbar expected a number less than 100 but got 100
 

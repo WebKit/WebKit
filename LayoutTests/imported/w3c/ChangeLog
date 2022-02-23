@@ -1,3 +1,15 @@
+2022-02-23  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] offsetWidth/Height and similar should update layout for container queries
+        https://bugs.webkit.org/show_bug.cgi?id=237079
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-contain/container-queries/auto-scrollbars-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/inline-size-containment-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/inline-size-containment-vertical-rl-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/transition-scrollbars-expected.txt:
+
 2022-02-22  Antti Koivisto  <antti@apple.com>
 
         [CSS container Queries] getComputedStyle should update style for invalid query containers

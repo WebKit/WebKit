@@ -783,7 +783,7 @@ bool Scope::isForUserAgentShadowTree() const
     return m_shadowRoot && m_shadowRoot->mode() == ShadowRootMode::UserAgent;
 }
 
-bool Scope::updateQueryContainerState()
+bool Scope::updateQueryContainerState(QueryContainerUpdateContext& context)
 {
     ASSERT(!m_shadowRoot);
     ASSERT(m_document.renderView());
@@ -791,7 +791,7 @@ bool Scope::updateQueryContainerState()
     auto previousStates = WTFMove(m_queryContainerStates);
     m_queryContainerStates.clear();
 
-    Vector<Element*> changedContainers;
+    Vector<Element*> containersToInvalidate;
 
     for (auto& containerRenderer : m_document.renderView()->containerQueryBoxes()) {
         auto* containerElement = containerRenderer.element();
@@ -814,15 +814,16 @@ bool Scope::updateQueryContainerState()
 
         auto it = previousStates.find(*containerElement);
         bool changed = it == previousStates.end() || sizeChanged(it->value);
-        if (changed)
-            changedContainers.append(containerElement);
+        // Protect against unstable layout by invalidating only once per container.
+        if (changed && context.invalidatedContainers.add(containerElement).isNewEntry)
+            containersToInvalidate.append(containerElement);
         m_queryContainerStates.add(*containerElement, size);
     }
 
-    for (auto* toInvalidate : changedContainers)
+    for (auto* toInvalidate : containersToInvalidate)
         toInvalidate->invalidateForQueryContainerChange();
 
-    return !changedContainers.isEmpty();
+    return !containersToInvalidate.isEmpty();
 }
 
 HTMLSlotElement* assignedSlotForScopeOrdinal(const Element& element, ScopeOrdinal scopeOrdinal)

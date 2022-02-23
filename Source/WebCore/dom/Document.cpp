@@ -2208,8 +2208,15 @@ void Document::updateLayout()
 
     frameView->layoutContext().layout();
 
-    if (styleScope().updateQueryContainerState())
-        updateLayout();
+    Style::Scope::QueryContainerUpdateContext queryContainerUpdateContext;
+    while (styleScope().updateQueryContainerState(queryContainerUpdateContext)) {
+        updateStyleIfNeeded();
+
+        if (!frameView->layoutContext().needsLayout())
+            break;
+
+        frameView->layoutContext().layout();
+    }
 }
 
 void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks runPostLayoutTasks)
@@ -2313,7 +2320,12 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
             
             previousBox = currentBox;
             currentBox = downcast<RenderBox>(currRenderer);
-            
+
+            if (currentBox->style().containerType() != ContainerType::None) {
+                requireFullLayout = true;
+                break;
+            }
+
             // If a box needs layout for itself or if a box has changed children and sizes its width to
             // its content, then require a full layout.
             if (currentBox->selfNeedsLayout() ||
@@ -2348,9 +2360,9 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
     
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
-    // Only do a layout if changes have occurred that make it necessary.      
-    if (requireFullLayout && frameView && renderView() && (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()))
-        frameView->layoutContext().layout();
+    // Only do a layout if changes have occurred that make it necessary.
+    if (requireFullLayout)
+        updateLayout();
     
     return requireFullLayout;
 }
