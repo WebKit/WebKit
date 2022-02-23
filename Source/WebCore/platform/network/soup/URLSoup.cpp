@@ -37,7 +37,7 @@ URL soupURIToURL(SoupURI* soupURI)
         return URL();
 
     GUniquePtr<gchar> urlString(soup_uri_to_string(soupURI, FALSE));
-    URL url(URL(), String::fromUTF8(urlString.get()));
+    URL url { String::fromUTF8(urlString.get()) };
     if (url.isValid()) {
         // Motivated by https://bugs.webkit.org/show_bug.cgi?id=38956. libsoup
         // does not add the password to the URL when calling

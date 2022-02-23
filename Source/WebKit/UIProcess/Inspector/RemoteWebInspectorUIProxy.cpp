@@ -75,7 +75,7 @@ void RemoteWebInspectorUIProxy::load(Ref<API::DebuggableInfo>&& debuggableInfo, 
     createFrontendPageAndWindow();
 
     m_inspectorPage->send(Messages::RemoteWebInspectorUI::Initialize(m_debuggableInfo->debuggableInfoData(), backendCommandsURL));
-    m_inspectorPage->loadRequest(URL(URL(), WebInspectorUIProxy::inspectorPageURL()));
+    m_inspectorPage->loadRequest(URL { WebInspectorUIProxy::inspectorPageURL() });
 }
 
 void RemoteWebInspectorUIProxy::closeFromBackend()

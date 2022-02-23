@@ -56,7 +56,7 @@ ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const URL& base)
 
 ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const String& base)
 {
-    URL baseURL { URL { }, base };
+    URL baseURL { base };
     if (!base.isNull() && !baseURL.isValid())
         return Exception { TypeError };
     return create(url, baseURL);
@@ -71,7 +71,7 @@ DOMURL::~DOMURL() = default;
 
 ExceptionOr<void> DOMURL::setHref(const String& url)
 {
-    URL completeURL { URL { }, url };
+    URL completeURL { url };
     if (!completeURL.isValid())
         return Exception { TypeError };
     m_url = WTFMove(completeURL);
@@ -110,7 +110,7 @@ URLSearchParams& DOMURL::searchParams()
     
 void DOMURL::revokeObjectURL(ScriptExecutionContext& scriptExecutionContext, const String& urlString)
 {
-    URL url(URL(), urlString);
+    URL url { urlString };
     ResourceRequest request(url);
     request.setDomainForCachePartition(scriptExecutionContext.domainForCachePartition());
 

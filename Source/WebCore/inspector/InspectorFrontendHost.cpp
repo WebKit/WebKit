@@ -717,7 +717,7 @@ void InspectorFrontendHost::didNavigateExtensionTab(const String& extensionID, c
     if (!m_client)
         return;
     
-    m_client->didNavigateExtensionTab(extensionID, extensionTabID, { URL(), newURLString });
+    m_client->didNavigateExtensionTab(extensionID, extensionTabID, URL { newURLString });
 }
 
 void InspectorFrontendHost::inspectedPageDidNavigate(const String& newURLString)
@@ -725,7 +725,7 @@ void InspectorFrontendHost::inspectedPageDidNavigate(const String& newURLString)
     if (!m_client)
         return;
     
-    m_client->inspectedPageDidNavigate({ URL(), newURLString });
+    m_client->inspectedPageDidNavigate(URL { newURLString });
 }
 
 ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrameElement, const String& scriptSource)

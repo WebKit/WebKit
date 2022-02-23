@@ -38,7 +38,7 @@ WKTypeID WKURLRequestGetTypeID()
 
 WKURLRequestRef WKURLRequestCreateWithWKURL(WKURLRef url)
 {
-    return WebKit::toAPI(&API::URLRequest::create(URL(URL(), WebKit::toImpl(url)->string())).leakRef());
+    return WebKit::toAPI(&API::URLRequest::create(URL { WebKit::toImpl(url)->string() }).leakRef());
 }
 
 WKURLRef WKURLRequestCopyURL(WKURLRequestRef requestRef)

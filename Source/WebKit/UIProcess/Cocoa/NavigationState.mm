@@ -733,7 +733,7 @@ void NavigationState::NavigationClient::willPerformClientRedirect(WebPageProxy& 
     if (!navigationDelegate)
         return;
 
-    URL url(URL(), urlString);
+    URL url { urlString };
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState->m_webView willPerformClientRedirectToURL:url delay:delay];
 }
@@ -750,8 +750,8 @@ void NavigationState::NavigationClient::didPerformClientRedirect(WebPageProxy& p
     if (!navigationDelegate)
         return;
 
-    URL sourceURL(URL(), sourceURLString);
-    URL destinationURL(URL(), destinationURLString);
+    URL sourceURL { sourceURLString };
+    URL destinationURL { destinationURLString };
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState->m_webView didPerformClientRedirectFromURL:sourceURL toURL:destinationURL];
 }

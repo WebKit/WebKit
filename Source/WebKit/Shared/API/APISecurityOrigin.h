@@ -35,7 +35,7 @@ class SecurityOrigin : public API::ObjectImpl<API::Object::Type::SecurityOrigin>
 public:
     static Ref<SecurityOrigin> createFromString(const WTF::String& string)
     {
-        return adoptRef(*new SecurityOrigin(WebCore::SecurityOriginData::fromURL(WTF::URL(WTF::URL(), string))));
+        return adoptRef(*new SecurityOrigin(WebCore::SecurityOriginData::fromURL(WTF::URL { string })));
     }
 
     static Ref<SecurityOrigin> create(const WTF::String& protocol, const WTF::String& host, std::optional<uint16_t> port)

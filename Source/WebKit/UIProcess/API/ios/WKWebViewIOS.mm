@@ -2727,7 +2727,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     if (!measurement)
         return nil;
 
-    auto destinationURL = URL(URL(), makeString("https://", measurement->pcm.destinationSite().registrableDomain.string()));
+    URL destinationURL { makeString("https://", measurement->pcm.destinationSite().registrableDomain.string()) };
     return adoptNS([[UIEventAttribution alloc] initWithSourceIdentifier:measurement->pcm.sourceID().id destinationURL:destinationURL sourceDescription:measurement->sourceDescription purchaser:measurement->purchaser]).autorelease();
 #else
     return nil;

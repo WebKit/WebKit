@@ -623,7 +623,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     ASSERT(m_context.webHitTestResultData());
     auto hitTestData = m_context.webHitTestResultData().value();
     
-    auto imageURL = URL { URL { }, hitTestData.absoluteImageURL };
+    auto imageURL = URL { hitTestData.absoluteImageURL };
     auto imageBitmap = hitTestData.imageBitmap;
 
     auto sparseMenuItems = retainPtr([NSPointerArray strongObjectsPointerArray]);

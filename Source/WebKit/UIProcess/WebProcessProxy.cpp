@@ -162,7 +162,7 @@ static WebProcessProxy::WebPageProxyMap& globalPageMap()
 void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const SecurityOriginData& origin, const Function<void(WebPageProxy&)>& callback)
 {
     for (auto* page : globalPageMap().values()) {
-        if (page->sessionID() != sessionID || SecurityOriginData::fromURL(URL { { }, page->currentURL() }) != origin)
+        if (page->sessionID() != sessionID || SecurityOriginData::fromURL(URL { page->currentURL() }) != origin)
             continue;
         callback(*page);
     }
@@ -683,7 +683,7 @@ void WebProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContentCont
 
 void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String& urlString)
 {
-    URL url(URL(), urlString);
+    URL url { urlString };
     if (!url.isLocalFile())
         return;
 
@@ -748,10 +748,10 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const URL& url, CheckBackFo
     if (checkBackForwardList == CheckBackForwardList::Yes) {
         String path = url.fileSystemPath();
         for (auto& item : WebBackForwardListItem::allItems().values()) {
-            URL itemURL(URL(), item->url());
+            URL itemURL { item->url() };
             if (itemURL.isLocalFile() && itemURL.fileSystemPath() == path)
                 return true;
-            URL itemOriginalURL(URL(), item->originalURL());
+            URL itemOriginalURL { item->originalURL() };
             if (itemOriginalURL.isLocalFile() && itemOriginalURL.fileSystemPath() == path)
                 return true;
         }

@@ -567,7 +567,7 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
         auto record = WTFMove(*recordResult);
 
         if (message.encoding == ContentEncoding::Empty) {
-            m_incomingPushMessageHandler(record.bundleID, WebKit::WebPushMessage { { }, URL(URL(), record.scope) });
+            m_incomingPushMessageHandler(record.bundleID, WebKit::WebPushMessage { { }, URL { record.scope } });
             completionHandler();
             return;
         }
@@ -589,7 +589,7 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
             return;
         }
 
-        m_incomingPushMessageHandler(record.bundleID, WebKit::WebPushMessage { WTFMove(*decryptedPayload), URL(URL(), record.scope) });
+        m_incomingPushMessageHandler(record.bundleID, WebKit::WebPushMessage { WTFMove(*decryptedPayload), URL { record.scope } });
 
         completionHandler();
     });

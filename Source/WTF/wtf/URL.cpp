@@ -897,7 +897,7 @@ const URL& aboutBlankURL()
     static LazyNeverDestroyed<URL> staticBlankURL;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
-        staticBlankURL.construct(URL(), &aboutBlankString);
+        staticBlankURL.construct(&aboutBlankString);
     });
     return staticBlankURL;
 }
@@ -908,7 +908,7 @@ const URL& aboutSrcDocURL()
     static LazyNeverDestroyed<URL> staticSrcDocURL;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
-        staticSrcDocURL.construct(URL(), &aboutSrcDocString);
+        staticSrcDocURL.construct(&aboutSrcDocString);
     });
     return staticSrcDocURL;
 }

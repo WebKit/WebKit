@@ -1,3 +1,18 @@
+2022-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Adopt more widely the new URL constructor that takes in a String
+        https://bugs.webkit.org/show_bug.cgi?id=237099
+
+        Reviewed by Darin Adler.
+
+        * MarshallingHelpers.cpp:
+        * WebError.cpp:
+        (WebError::init):
+        * WebFrame.cpp:
+        (WebFrame::loadData):
+        * WebView.cpp:
+        (toURL):
+
 2022-02-15  Chris Dumez  <cdumez@apple.com>
 
         Do preliminary work to pass domain names to CoreLocation

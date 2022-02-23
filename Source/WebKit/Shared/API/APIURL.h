@@ -121,7 +121,7 @@ private:
     {
         if (m_parsedURL)
             return;
-        m_parsedURL = makeUnique<WTF::URL>(WTF::URL(), m_string);
+        m_parsedURL = makeUnique<WTF::URL>(m_string);
     }
 
     WTF::String m_string;

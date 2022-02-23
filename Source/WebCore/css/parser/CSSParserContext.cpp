@@ -270,7 +270,7 @@ ResolvedURL CSSParserContext::completeURL(const String& string) const
             return { };
 
         if (CSSValue::isCSSLocalURL(string))
-            return { string, { URL(), string } };
+            return { string, URL { string } };
 
         if (charset.isEmpty())
             return { string, { baseURL, string } };

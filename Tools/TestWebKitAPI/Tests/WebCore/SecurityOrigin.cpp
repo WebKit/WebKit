@@ -81,8 +81,8 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
     auto o2 = SecurityOrigin::create("http", "example.com", std::optional<uint16_t>());
     auto o3 = SecurityOrigin::createFromString("http://example.com");
     auto o4 = SecurityOrigin::createFromString("http://example.com:80");
-    auto o5 = SecurityOrigin::create(URL(URL(), "http://example.com"));
-    auto o6 = SecurityOrigin::create(URL(URL(), "http://example.com:80"));
+    auto o5 = SecurityOrigin::create(URL { "http://example.com"_str });
+    auto o6 = SecurityOrigin::create(URL { "http://example.com:80"_str });
     auto o7 = SecurityOrigin::createFromString("http://example.com:81");
     auto o8 = SecurityOrigin::createFromString("unrecognized://host");
 #if PLATFORM(COCOA)
@@ -163,10 +163,10 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
 
 TEST_F(SecurityOriginTest, SecurityOriginFileBasedConstructors)
 {
-    auto tempFileOrigin = SecurityOrigin::create(URL(URL(), "file:///" + tempFilePath()));
-    auto spaceContainingOrigin = SecurityOrigin::create(URL(URL(), "file:///" + spaceContainingFilePath()));
-    auto bangContainingOrigin = SecurityOrigin::create(URL(URL(), "file:///" + bangContainingFilePath()));
-    auto quoteContainingOrigin = SecurityOrigin::create(URL(URL(), "file:///" + quoteContainingFilePath()));
+    auto tempFileOrigin = SecurityOrigin::create(URL { "file:///" + tempFilePath() });
+    auto spaceContainingOrigin = SecurityOrigin::create(URL { "file:///" + spaceContainingFilePath() });
+    auto bangContainingOrigin = SecurityOrigin::create(URL { "file:///" + bangContainingFilePath() });
+    auto quoteContainingOrigin = SecurityOrigin::create(URL { "file:///" + quoteContainingFilePath() });
     
     EXPECT_EQ(String("file"), tempFileOrigin->protocol());
     EXPECT_EQ(String("file"), spaceContainingOrigin->protocol());
@@ -189,7 +189,7 @@ TEST_F(SecurityOriginTest, SecurityOriginFileBasedConstructors)
 TEST_F(SecurityOriginTest, IsPotentiallyTrustworthy)
 {
     // Potentially Trustworthy
-    EXPECT_TRUE(SecurityOrigin::create(URL(URL(), "file:///" + tempFilePath()))->isPotentiallyTrustworthy());
+    EXPECT_TRUE(SecurityOrigin::create(URL { "file:///" + tempFilePath() })->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("blob:http://127.0.0.1/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("blob:http://localhost/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentiallyTrustworthy());
     EXPECT_TRUE(SecurityOrigin::createFromString("blob:http://[::1]/3D45F36F-C126-493A-A8AA-457FA495247B")->isPotentiallyTrustworthy());
@@ -236,7 +236,7 @@ TEST_F(SecurityOriginTest, IsPotentiallyTrustworthy)
 
 TEST_F(SecurityOriginTest, IsRegistrableDomainSuffix)
 {
-    auto exampleOrigin = SecurityOrigin::create(URL(URL(), "http://www.example.com"));
+    auto exampleOrigin = SecurityOrigin::create(URL { "http://www.example.com"_str });
     EXPECT_TRUE(exampleOrigin->isMatchingRegistrableDomainSuffix("example.com"));
     EXPECT_TRUE(exampleOrigin->isMatchingRegistrableDomainSuffix("www.example.com"));
 #if !ENABLE(PUBLIC_SUFFIX_LIST)
@@ -251,7 +251,7 @@ TEST_F(SecurityOriginTest, IsRegistrableDomainSuffix)
     EXPECT_FALSE(exampleOrigin->isMatchingRegistrableDomainSuffix("com"));
 #endif
 
-    auto exampleDotOrigin = SecurityOrigin::create(URL(URL(), "http://www.example.com."));
+    auto exampleDotOrigin = SecurityOrigin::create(URL { "http://www.example.com."_str });
     EXPECT_TRUE(exampleDotOrigin->isMatchingRegistrableDomainSuffix("example.com."));
     EXPECT_TRUE(exampleDotOrigin->isMatchingRegistrableDomainSuffix("www.example.com."));
 #if !ENABLE(PUBLIC_SUFFIX_LIST)
@@ -266,11 +266,11 @@ TEST_F(SecurityOriginTest, IsRegistrableDomainSuffix)
     EXPECT_FALSE(exampleDotOrigin->isMatchingRegistrableDomainSuffix("com"));
 #endif
 
-    auto ipOrigin = SecurityOrigin::create(URL(URL(), "http://127.0.0.1"));
+    auto ipOrigin = SecurityOrigin::create(URL { "http://127.0.0.1"_str });
     EXPECT_TRUE(ipOrigin->isMatchingRegistrableDomainSuffix("127.0.0.1", true));
     EXPECT_FALSE(ipOrigin->isMatchingRegistrableDomainSuffix("127.0.0.2", true));
 
-    auto comOrigin = SecurityOrigin::create(URL(URL(), "http://com"));
+    auto comOrigin = SecurityOrigin::create(URL { "http://com"_str });
     EXPECT_TRUE(comOrigin->isMatchingRegistrableDomainSuffix("com"));
 }
 

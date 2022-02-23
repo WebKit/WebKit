@@ -88,7 +88,7 @@ const TestTabs testTabsValueForSurrogatePairs = TestTabs::No;
 
 static void checkURL(const String& urlString, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
-    auto url = URL(URL(), urlString);
+    URL url { urlString };
     
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
@@ -144,7 +144,7 @@ static void checkRelativeURL(const String& urlString, const String& baseURLStrin
 static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
 {
     UNUSED_PARAM(partsOld); // FIXME: Remove all the old expected parts.
-    auto url = URL(URL(), urlString);
+    URL url { urlString };
     
     EXPECT_TRUE(eq(partsNew.protocol, url.protocol()));
     EXPECT_TRUE(eq(partsNew.user, url.user()));
@@ -497,8 +497,8 @@ TEST_F(WTF_URLParser, Basic)
 
 static void testUserPassword(const String& value, const String& decoded, const String& encoded)
 {
-    URL userURL(URL(), makeString("http://", value, "@example.com/"));
-    URL passURL(URL(), makeString("http://user:", value, "@example.com/"));
+    URL userURL { makeString("http://", value, "@example.com/") };
+    URL passURL { makeString("http://user:", value, "@example.com/") };
     EXPECT_EQ(encoded, userURL.encodedUser());
     EXPECT_EQ(encoded, passURL.encodedPassword());
     EXPECT_EQ(decoded, userURL.user());

@@ -38,7 +38,7 @@ namespace TestWebKitAPI {
 
 TEST(LoggedInStatus, DefaultExpiryWebAuthn)
 {
-    RegistrableDomain loginDomain { URL { { }, "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
 
     auto loggedInResult = LoggedInStatus::create(loginDomain, "admin"_s, LoggedInStatus::CredentialTokenType::HTTPStateToken, LoggedInStatus::AuthenticationType::WebAuthn);
     auto& loggedIn = loggedInResult.returnValue().get();
@@ -56,7 +56,7 @@ TEST(LoggedInStatus, DefaultExpiryWebAuthn)
 
 TEST(LoggedInStatus, DefaultExpiryPasswordManager)
 {
-    RegistrableDomain loginDomain { URL { { }, "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
 
     auto loggedInResult = LoggedInStatus::create(loginDomain, "admin"_s, LoggedInStatus::CredentialTokenType::HTTPStateToken, LoggedInStatus::AuthenticationType::PasswordManager);
     auto& loggedIn = loggedInResult.returnValue().get();
@@ -69,7 +69,7 @@ TEST(LoggedInStatus, DefaultExpiryPasswordManager)
 
 TEST(LoggedInStatus, DefaultExpiryUnmanaged)
 {
-    RegistrableDomain loginDomain { URL { { }, "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
 
     auto loggedInResult = LoggedInStatus::create(loginDomain, "admin"_s, LoggedInStatus::CredentialTokenType::HTTPStateToken, LoggedInStatus::AuthenticationType::Unmanaged);
     auto& loggedIn = loggedInResult.returnValue().get();
@@ -82,7 +82,7 @@ TEST(LoggedInStatus, DefaultExpiryUnmanaged)
 
 TEST(LoggedInStatus, CustomExpiryBelowLong)
 {
-    RegistrableDomain loginDomain { URL { { }, "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
 
     auto customExpiry = LoggedInStatus::TimeToLiveLong - 48_h;
     auto loggedInResult = LoggedInStatus::create(loginDomain, "admin"_s, LoggedInStatus::CredentialTokenType::HTTPStateToken, LoggedInStatus::AuthenticationType::WebAuthn, customExpiry);
@@ -96,7 +96,7 @@ TEST(LoggedInStatus, CustomExpiryBelowLong)
 
 TEST(LoggedInStatus, CustomExpiryBelowShort)
 {
-    RegistrableDomain loginDomain { URL { { }, "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
 
     auto customExpiry = LoggedInStatus::TimeToLiveShort - 48_h;
     auto loggedInResult = LoggedInStatus::create(loginDomain, "admin"_s, LoggedInStatus::CredentialTokenType::HTTPStateToken, LoggedInStatus::AuthenticationType::PasswordManager, customExpiry);
@@ -110,7 +110,7 @@ TEST(LoggedInStatus, CustomExpiryBelowShort)
 
 TEST(LoggedInStatus, RenewedExpiry)
 {
-    RegistrableDomain loginDomain { URL { { }, "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
 
     auto customExpiry = LoggedInStatus::TimeToLiveShort - 48_h;
     auto loggedInResult = LoggedInStatus::create(loginDomain, "admin"_s, LoggedInStatus::CredentialTokenType::HTTPStateToken, LoggedInStatus::AuthenticationType::WebAuthn, customExpiry);
@@ -132,7 +132,7 @@ TEST(LoggedInStatus, RenewedExpiry)
 
 TEST(LoggedInStatus, InvalidUsernames)
 {
-    RegistrableDomain loginDomain { URL { { }, "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
 
     // Whitespace is not allowed.
     auto loggedInResult = LoggedInStatus::create(loginDomain, "I use spaces"_s, LoggedInStatus::CredentialTokenType::HTTPStateToken, LoggedInStatus::AuthenticationType::WebAuthn);
@@ -152,7 +152,7 @@ TEST(LoggedInStatus, InvalidUsernames)
 
 TEST(LoggedInStatus, ClampedExpiryLong)
 {
-    RegistrableDomain loginDomain { URL { { }, "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
 
     // Too long expiries for managed auth types should be clamped to LoggedInStatus::TimeToLiveLong.
     auto loggedInResult = LoggedInStatus::create(loginDomain, "admin"_s, LoggedInStatus::CredentialTokenType::HTTPStateToken, LoggedInStatus::AuthenticationType::WebAuthn, LoggedInStatus::TimeToLiveLong + 24_h);
@@ -174,7 +174,7 @@ TEST(LoggedInStatus, ClampedExpiryLong)
 
 TEST(LoggedInStatus, ClampedExpiryShort)
 {
-    RegistrableDomain loginDomain { URL { { }, "https://login.example.com"_s } };
+    RegistrableDomain loginDomain { URL { "https://login.example.com"_s } };
 
     // Too long expiries for unmanaged auth types should be clamped to LoggedInStatus::TimeToLiveShort.
     auto loggedInResult = LoggedInStatus::create(loginDomain, "admin"_s, LoggedInStatus::CredentialTokenType::HTTPStateToken, LoggedInStatus::AuthenticationType::Unmanaged, LoggedInStatus::TimeToLiveShort + 24_h);

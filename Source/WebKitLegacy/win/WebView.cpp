@@ -281,7 +281,7 @@ static inline String toString(BString &bstr)
 
 static inline URL toURL(BSTR bstr)
 {
-    return URL(URL(), toString(bstr));
+    return URL { toString(bstr) };
 }
 
 static String localStorageDatabasePath(WebPreferences* preferences)

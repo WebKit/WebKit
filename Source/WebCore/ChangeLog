@@ -1,3 +1,46 @@
+2022-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Adopt more widely the new URL constructor that takes in a String
+        https://bugs.webkit.org/show_bug.cgi?id=237099
+
+        Reviewed by Darin Adler.
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::convertAndValidatePaymentMethodIdentifier):
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::CSSParserContext::completeURL const):
+        * dom/Document.cpp:
+        (WebCore::Document::referrer):
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::revokeObjectURL):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parsePrivateClickMeasurement const):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::didNavigateExtensionTab):
+        (WebCore::InspectorFrontendHost::inspectedPageDidNavigate):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::extractInnerURL):
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::willSendRequest):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (convertPlaybinURI):
+        * platform/network/soup/URLSoup.cpp:
+        (WebCore::soupURIToURL):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::filesystemPathFromUrlOrTitle):
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::showPaymentUI):
+        * workers/service/ServiceWorkerRegistrationKey.cpp:
+        (WebCore::ServiceWorkerRegistrationKey::fromDatabaseKey):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::importRecords):
+
 2022-02-23  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Improve error message for missing pubKeyCredParams

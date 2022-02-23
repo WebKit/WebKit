@@ -1366,7 +1366,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef con
         auto string = jsValue.toWTFString(globalObject);
         if (scope.exception())
             return false;
-        encoder << URL { URL { }, string };
+        encoder << URL { string };
         return true;
     }
 
@@ -1378,7 +1378,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef con
         auto string = jsValue.toWTFString(globalObject);
         if (scope.exception())
             return false;
-        encoder << WebCore::RegistrableDomain { URL { URL { }, string } };
+        encoder << WebCore::RegistrableDomain { URL { string } };
         return true;
     }
 

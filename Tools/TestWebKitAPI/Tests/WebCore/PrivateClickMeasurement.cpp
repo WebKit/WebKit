@@ -36,8 +36,8 @@ namespace TestWebKitAPI {
 
 constexpr uint32_t min6BitValue { 0 };
 
-const URL webKitURL { { }, "https://webkit.org"_s };
-const URL exampleURL { { }, "https://example.com"_s };
+const URL webKitURL { "https://webkit.org"_s };
+const URL exampleURL { "https://example.com"_s };
 const URL emptyURL { };
 
 // Positive test cases.

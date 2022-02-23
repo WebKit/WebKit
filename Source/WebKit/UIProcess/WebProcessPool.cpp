@@ -1206,7 +1206,7 @@ DownloadProxy& WebProcessPool::download(WebsiteDataStore& dataStore, WebPageProx
     // Request's firstPartyForCookies will be used as Original URL of the download request.
     // We set the value to top level document's URL.
     if (initiatingPage) {
-        URL initiatingPageURL = URL { URL { }, initiatingPage->pageLoadState().url() };
+        URL initiatingPageURL = URL { initiatingPage->pageLoadState().url() };
         updatedRequest.setFirstPartyForCookies(initiatingPageURL);
         updatedRequest.setIsSameSite(areRegistrableDomainsEqual(initiatingPageURL, request.url()));
         if (!updatedRequest.hasHTTPHeaderField(HTTPHeaderName::UserAgent))
@@ -1928,12 +1928,12 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
 
     URL sourceURL;
     if (page.isPageOpenedByDOMShowingInitialEmptyDocument() && !navigation.requesterOrigin().isEmpty())
-        sourceURL = URL { URL(), navigation.requesterOrigin().toString() };
+        sourceURL = URL { navigation.requesterOrigin().toString() };
     else
         sourceURL = pageSourceURL;
 
     if (sourceURL.isEmpty() && page.configuration().relatedPage()) {
-        sourceURL = URL { { }, page.configuration().relatedPage()->pageLoadState().url() };
+        sourceURL = URL { page.configuration().relatedPage()->pageLoadState().url() };
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForNavigationInternal: Using related page's URL as source URL for process swap decision (page=%p)", page.configuration().relatedPage());
     }
 

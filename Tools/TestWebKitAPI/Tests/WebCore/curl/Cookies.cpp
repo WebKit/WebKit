@@ -64,7 +64,7 @@ protected:
 
 TEST_F(CurlCookies, RejectTailmatchFailureDomain)
 {
-    URL url(URL(), "http://example.com");
+    URL url { "http://example.com" };
 
     // success: domain match
     EXPECT_TRUE(m_cookieJar->setCookie(url, url, "foo=bar; Domain=example.com", CookieJarDB::Source::Network));
@@ -78,7 +78,7 @@ TEST_F(CurlCookies, RejectTailmatchFailureDomain)
 
 TEST_F(CurlCookies, TestHttpOnlyCase)
 {
-    URL url(URL(), "http://example.com");
+    URL url { "http://example.com" };
 
     // success: from network
     EXPECT_TRUE(m_cookieJar->setCookie(url, url, "foo=bar; HttpOnly", CookieJarDB::Source::Network));

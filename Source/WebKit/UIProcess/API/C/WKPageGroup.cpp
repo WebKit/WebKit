@@ -77,7 +77,7 @@ void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroupRef, WKStringRef sourc
     auto allowlist = toImpl(allowedURLPatterns);
     auto blocklist = toImpl(blockedURLPatterns);
 
-    Ref<API::UserStyleSheet> userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { source, (baseURLString.isEmpty() ? aboutBlankURL() :  URL(URL(), baseURLString)), allowlist ? allowlist->toStringVector() : Vector<String>(), blocklist ? blocklist->toStringVector() : Vector<String>(), toUserContentInjectedFrames(injectedFrames), WebCore::UserStyleUserLevel }, API::ContentWorld::pageContentWorld());
+    Ref<API::UserStyleSheet> userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { source, baseURLString.isEmpty() ? aboutBlankURL() :  URL { baseURLString }, allowlist ? allowlist->toStringVector() : Vector<String>(), blocklist ? blocklist->toStringVector() : Vector<String>(), toUserContentInjectedFrames(injectedFrames), WebCore::UserStyleUserLevel }, API::ContentWorld::pageContentWorld());
 
     toImpl(pageGroupRef)->userContentController().addUserStyleSheet(userStyleSheet.get());
 }
@@ -98,7 +98,7 @@ void WKPageGroupAddUserScript(WKPageGroupRef pageGroupRef, WKStringRef sourceRef
     auto allowlist = toImpl(allowedURLPatterns);
     auto blocklist = toImpl(blockedURLPatterns);
     
-    auto url = baseURLString.isEmpty() ? aboutBlankURL() :  URL(URL(), baseURLString);
+    auto url = baseURLString.isEmpty() ? aboutBlankURL() : URL { baseURLString };
     Ref<API::UserScript> userScript = API::UserScript::create(WebCore::UserScript { WTFMove(source), WTFMove(url), allowlist ? allowlist->toStringVector() : Vector<String>(), blocklist ? blocklist->toStringVector() : Vector<String>(), toUserScriptInjectionTime(injectionTime), toUserContentInjectedFrames(injectedFrames), WebCore::WaitForNotificationBeforeInjecting::No }, API::ContentWorld::pageContentWorld());
     toImpl(pageGroupRef)->userContentController().addUserScript(userScript.get(), InjectUserScriptImmediately::No);
 }

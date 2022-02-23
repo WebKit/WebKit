@@ -197,7 +197,7 @@ static inline bool isValidFetch(const ResourceRequest& request, const FetchOptio
     }
 
     String origin = request.httpOrigin();
-    URL url { URL(), origin.isEmpty() ? referrer : origin };
+    URL url { origin.isEmpty() ? referrer : origin };
     if (url.protocolIsInHTTPFamily() && !protocolHostAndPortAreEqual(url, serviceWorkerURL)) {
         RELEASE_LOG_ERROR(ServiceWorker, "Should not intercept a non navigation load that is not originating from a same-origin context as the service worker URL");
         ASSERT(url.host() == serviceWorkerURL.host());

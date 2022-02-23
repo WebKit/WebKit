@@ -1,5 +1,156 @@
 2022-02-23  Chris Dumez  <cdumez@apple.com>
 
+        Adopt more widely the new URL constructor that takes in a String
+        https://bugs.webkit.org/show_bug.cgi?id=237099
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        * Shared/API/APISecurityOrigin.h:
+        (API::SecurityOrigin::createFromString):
+        * Shared/API/APIURL.h:
+        (API::URL::parseURLIfNecessary const):
+        * Shared/API/c/WKURLRequest.cpp:
+        (WKURLRequestCreateWithWKURL):
+        * Shared/API/glib/WebKitURIRequest.cpp:
+        (webkit_uri_request_set_uri):
+        * Shared/APIWebArchiveResource.mm:
+        (API::WebArchiveResource::WebArchiveResource):
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI):
+        * Shared/curl/WebCoreArgumentCodersCurl.cpp:
+        (IPC::ArgumentCoder<ResourceError>::decodePlatformData):
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (IPC::ArgumentCoder<SelectionData>::decode):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<ResourceError>::decodePlatformData):
+        * UIProcess/API/C/WKOpenPanelResultListener.cpp:
+        (filePathsFromFileURLs):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadURL):
+        (WKPageLoadURLWithShouldOpenExternalURLsPolicy):
+        (WKPageLoadURLWithUserData):
+        (WKPageLoadAlternateHTMLStringWithUserData):
+        (WKPageSetPrivateClickMeasurementTokenPublicKeyURLForTesting):
+        (WKPageSetPrivateClickMeasurementTokenSignatureURLForTesting):
+        (WKPageSetPrivateClickMeasurementAttributionReportURLsForTesting):
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupAddUserStyleSheet):
+        (WKPageGroupAddUserScript):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetResourceLoadStatisticsPrevalentResourceForDebugMode):
+        (WKWebsiteDataStoreSetStatisticsLastSeen):
+        (WKWebsiteDataStoreSetStatisticsMergeStatistic):
+        (WKWebsiteDataStoreSetStatisticsExpiredStatistic):
+        (WKWebsiteDataStoreSetStatisticsPrevalentResource):
+        (WKWebsiteDataStoreSetStatisticsVeryPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsVeryPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsSubresourceUnder):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsSubFrameUnder):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsRedirectingTo):
+        (WKWebsiteDataStoreSetStatisticsHasHadUserInteraction):
+        (WKWebsiteDataStoreIsStatisticsHasHadUserInteraction):
+        (WKWebsiteDataStoreIsStatisticsOnlyInDatabaseOnce):
+        (WKWebsiteDataStoreSetStatisticsGrandfathered):
+        (WKWebsiteDataStoreIsStatisticsGrandfathered):
+        (WKWebsiteDataStoreSetStatisticsSubframeUnderTopFrameOrigin):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUnderTopFrameOrigin):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectTo):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectFrom):
+        (WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectTo):
+        (WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectFrom):
+        (WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecoration):
+        (WKWebsiteDataStoreStatisticsDeleteCookiesForTesting):
+        (WKWebsiteDataStoreStatisticsHasLocalStorage):
+        (WKWebsiteDataStoreStatisticsHasIsolatedSession):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsToSameSiteStrictCookiesForTesting):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsFirstPartyHostCNAMEDomainForTesting):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTesting):
+        (WKWebsiteDataStoreSetAppBoundDomainsForTesting):
+        * UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.cpp:
+        (WKWebsiteDataStoreEnableCustomNetworkProxySettings):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        * UIProcess/API/glib/WebKitCookieManager.cpp:
+        (webkit_cookie_manager_get_cookies):
+        * UIProcess/API/glib/WebKitSecurityOrigin.cpp:
+        (webkit_security_origin_new_for_uri):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_load_alternate_html):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _uiEventAttribution]):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::navigateBrowsingContext):
+        (WebKit::WebAutomationSession::addSingleCookie):
+        (WebKit::WebAutomationSession::deleteAllCookies):
+        * UIProcess/Cocoa/LegacyDownloadClient.mm:
+        (WebKit::LegacyDownloadClient::legacyDidStart):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::willPerformClientRedirect):
+        (WebKit::NavigationState::NavigationClient::didPerformClientRedirect):
+        * UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm:
+        (-[WKReloadFrameErrorRecoveryAttempter attemptRecovery]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::isURLKnownHSTSHost const):
+        * UIProcess/Inspector/RemoteWebInspectorUIProxy.cpp:
+        (WebKit::RemoteWebInspectorUIProxy::load):
+        * UIProcess/Inspector/WebInspectorUIProxy.cpp:
+        (WebKit::WebInspectorUIProxy::isMainOrTestInspectorPage):
+        (WebKit::WebInspectorUIProxy::openLocalInspectorFrontend):
+        * UIProcess/Inspector/gtk/RemoteWebInspectorUIProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorUIProxy::platformSave):
+        * UIProcess/Inspector/gtk/WebInspectorUIProxyGtk.cpp:
+        (WebKit::WebInspectorUIProxy::platformSave):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::launchProcessForReload):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::navigateToPDFLinkWithSimulatedClick):
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::sessionState const):
+        (WebKit::checkIfNavigationContainsDataTransfer):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        (WebKit::WebPageProxy::checkURLReceivedFromCurrentOrPreviousWebProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::assumeReadAccessToBaseURL):
+        (WebKit::WebProcessProxy::checkURLReceivedFromWebProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+        (WebKit::WebsiteDataStore::initializeAppBoundDomains):
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::decodeLegacySessionState):
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::validateMerchant):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameAllowsFollowingLink):
+        (WKBundleFrameCopySuggestedFilenameForResourceWithURL):
+        (WKBundleFrameCopyMIMETypeForResourceWithURL):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageHasLocalDataForURL):
+        (WKBundlePageClearApplicationCacheForOrigin):
+        (WKBundlePageGetAppCacheUsageForOrigin):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setUserStyleSheetLocation):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::isValidFetch):
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFormData):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadAlternateHTML):
+        (WebKit::WebPage::getResourceDataFromFrame):
+        * webpushd/PushService.mm:
+        (WebPushD::PushService::didReceivePushMessage):
+
+2022-02-23  Chris Dumez  <cdumez@apple.com>
+
         Share more code between service and shared workers for context connection establishment
         https://bugs.webkit.org/show_bug.cgi?id=237085
 

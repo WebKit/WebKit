@@ -69,7 +69,7 @@ const SecAsn1Template signedPublicKeyAndChallengeTemplate[] {
     { 0, 0, 0, 0 }
 };
 
-const URL url = URL(URL(), "http://www.webkit.org/");
+const URL url { "http://www.webkit.org/"_str };
 
 class SSLKeyGeneratorTest : public testing::Test {
 public:

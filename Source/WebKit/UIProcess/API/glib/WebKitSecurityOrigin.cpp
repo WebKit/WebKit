@@ -110,7 +110,7 @@ WebKitSecurityOrigin* webkit_security_origin_new_for_uri(const gchar* uri)
 {
     g_return_val_if_fail(uri, nullptr);
 
-    return webkitSecurityOriginCreate(WebCore::SecurityOriginData::fromURL(URL(URL(), String::fromUTF8(uri))));
+    return webkitSecurityOriginCreate(WebCore::SecurityOriginData::fromURL(URL { String::fromUTF8(uri) }));
 }
 
 /**

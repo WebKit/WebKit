@@ -133,7 +133,7 @@ static Ref<FormData> toFormData(const HTTPBody& httpBody)
             break;
 
         case HTTPBody::Element::Type::Blob:
-            formData->appendBlob(URL(URL(), element.blobURLString));
+            formData->appendBlob(URL { element.blobURLString });
             break;
         }
     }

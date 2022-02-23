@@ -10519,7 +10519,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         auto previewOptions = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
         if (_visualSearchPreviewImageURL)
             [previewOptions setObject:_visualSearchPreviewImageURL.get() forKey:@"imageURL"];
-        if (auto pageURL = URL { URL { }, _page->currentURL() }; !pageURL.isEmpty())
+        if (auto pageURL = URL { _page->currentURL() }; !pageURL.isEmpty())
             [previewOptions setObject:pageURL forKey:@"pageURL"];
         if ([previewOptions count])
             [item setPreviewOptions:previewOptions.get()];

@@ -896,7 +896,7 @@ void ApplicationCacheGroup::startLoadingEntry()
     ASSERT(!m_manifestLoader);
     ASSERT(!m_entryLoader);
 
-    auto request = createRequest(URL { { }, firstPendingEntryURL }, m_newestCache ? m_newestCache->resourceForURL(firstPendingEntryURL) : nullptr);
+    auto request = createRequest(URL { firstPendingEntryURL }, m_newestCache ? m_newestCache->resourceForURL(firstPendingEntryURL) : nullptr);
 
     m_currentResourceIdentifier = ResourceLoaderIdentifier::generate();
     InspectorInstrumentation::willSendRequest(m_frame.get(), m_currentResourceIdentifier, m_frame->loader().documentLoader(), request, ResourceResponse { }, nullptr);

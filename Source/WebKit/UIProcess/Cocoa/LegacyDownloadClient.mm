@@ -85,7 +85,7 @@ void LegacyDownloadClient::legacyDidStart(DownloadProxy& downloadProxy)
     if (downloadProxy.isSystemPreviewDownload()) {
         if (auto* webPage = downloadProxy.originatingPage()) {
             // FIXME: Update the MIME-type once it is known in the ResourceResponse.
-            webPage->systemPreviewController()->start(URL(URL(), webPage->currentURL()), "application/octet-stream"_s, downloadProxy.systemPreviewDownloadInfo());
+            webPage->systemPreviewController()->start(URL { webPage->currentURL() }, "application/octet-stream"_s, downloadProxy.systemPreviewDownloadInfo());
         }
         takeActivityToken(downloadProxy);
         return;

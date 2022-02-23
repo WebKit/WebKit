@@ -41,7 +41,7 @@ void WKWebsiteDataStoreEnableDefaultNetworkProxySettings(WKWebsiteDataStoreRef d
 
 void WKWebsiteDataStoreEnableCustomNetworkProxySettings(WKWebsiteDataStoreRef dataStoreRef, WKURLRef proxyUrl, WKStringRef ignoreHosts)
 {
-    toImpl(dataStoreRef)->setNetworkProxySettings(WebCore::CurlProxySettings(URL(URL(), toWTFString(proxyUrl)), toWTFString(ignoreHosts)));
+    toImpl(dataStoreRef)->setNetworkProxySettings(WebCore::CurlProxySettings(URL { toWTFString(proxyUrl) }, toWTFString(ignoreHosts)));
 }
 
 void WKWebsiteDataStoreDisableNetworkProxySettings(WKWebsiteDataStoreRef dataStoreRef)

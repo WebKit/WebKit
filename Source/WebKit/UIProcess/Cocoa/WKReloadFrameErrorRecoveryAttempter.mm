@@ -67,7 +67,7 @@
     if (!webFrameProxy)
         return NO;
 
-    webFrameProxy->loadURL(URL(URL(), _urlString));
+    webFrameProxy->loadURL(URL { _urlString });
     return YES;
 }
 

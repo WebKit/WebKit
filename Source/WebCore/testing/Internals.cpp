@@ -853,7 +853,7 @@ String Internals::blobInternalURL(const Blob& blob)
 
 void Internals::isBlobInternalURLRegistered(const String& url, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    promise.resolve(!!ThreadableBlobRegistry::blobSize(URL { { }, url }));
+    promise.resolve(!!ThreadableBlobRegistry::blobSize(URL { url }));
 }
 
 bool Internals::isSharingStyleSheetContents(HTMLLinkElement& a, HTMLLinkElement& b)

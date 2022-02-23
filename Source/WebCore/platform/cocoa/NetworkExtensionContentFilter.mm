@@ -117,7 +117,7 @@ void NetworkExtensionContentFilter::willSendRequest(ResourceRequest& request, co
     if (!modifiedRequestURLString)
         return;
 
-    URL modifiedRequestURL { URL(), modifiedRequestURLString.get() };
+    URL modifiedRequestURL { modifiedRequestURLString.get() };
     if (!modifiedRequestURL.isValid()) {
         LOG(ContentFiltering, "NetworkExtensionContentFilter failed to convert modified URL string %@ to a  URL.\n", modifiedRequestURLString.get());
         return;

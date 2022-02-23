@@ -174,7 +174,7 @@ uint64_t WebPaymentCoordinator::messageSenderDestinationID() const
 
 void WebPaymentCoordinator::validateMerchant(const String& validationURLString)
 {
-    paymentCoordinator().validateMerchant(URL(URL(), validationURLString));
+    paymentCoordinator().validateMerchant(URL { validationURLString });
 }
 
 void WebPaymentCoordinator::didAuthorizePayment(const WebCore::Payment& payment)

@@ -176,7 +176,7 @@ static bool isValidURLBasedPaymentMethodIdentifier(const URL& url)
 // https://www.w3.org/TR/payment-method-id/#validity
 std::optional<PaymentRequest::MethodIdentifier> convertAndValidatePaymentMethodIdentifier(const String& identifier)
 {
-    URL url { URL(), identifier };
+    URL url { identifier };
     if (!url.isValid()) {
         if (isValidStandardizedPaymentMethodIdentifier(identifier))
             return { identifier };

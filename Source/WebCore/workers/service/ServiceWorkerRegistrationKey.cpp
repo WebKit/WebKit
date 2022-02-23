@@ -114,7 +114,7 @@ std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDa
             return std::nullopt;
     }
 
-    auto scope = URL { URL(), key.substring(third + 1) };
+    URL scope { key.substring(third + 1) };
     if (!scope.isValid())
         return std::nullopt;
 

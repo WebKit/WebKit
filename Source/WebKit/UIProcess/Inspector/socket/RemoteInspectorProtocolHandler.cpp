@@ -59,7 +59,7 @@ public:
         if (tokens.size() != 3)
             return;
 
-        URL requestURL { { }, page.pageLoadState().url() };
+        URL requestURL { page.pageLoadState().url() };
         m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), parseInteger<uint32_t>(tokens[0]).value_or(0), parseInteger<uint32_t>(tokens[1]).value_or(0), tokens[2]);
     }
     

@@ -286,7 +286,7 @@ void InjectedBundle::didReceiveMessageToPage(WebPage* page, const String& messag
 void InjectedBundle::setUserStyleSheetLocation(const String& location)
 {
     Page::forEachPage([location](Page& page) {
-        page.settings().setUserStyleSheetLocation(URL(URL(), location));
+        page.settings().setUserStyleSheetLocation(URL { location });
     });
 }
 

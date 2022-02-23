@@ -120,7 +120,7 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, Resource
     if (!decoder.decode(localizedDescription))
         return false;
 
-    resourceError = ResourceError(domain, errorCode, URL(URL(), failingURL), localizedDescription);
+    resourceError = ResourceError(domain, errorCode, URL { failingURL }, localizedDescription);
 
     CertificateInfo certificateInfo;
     if (!decoder.decode(certificateInfo))

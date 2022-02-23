@@ -1,3 +1,14 @@
+2022-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Adopt more widely the new URL constructor that takes in a String
+        https://bugs.webkit.org/show_bug.cgi?id=237099
+
+        Reviewed by Darin Adler.
+
+        * wtf/URL.cpp:
+        (WTF::aboutBlankURL):
+        (WTF::aboutSrcDocURL):
+
 2022-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Thread safety analysis macros are confusing for non-Lock use-cases

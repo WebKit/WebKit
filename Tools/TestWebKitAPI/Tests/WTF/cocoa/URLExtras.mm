@@ -225,24 +225,24 @@ TEST(WTF_URLExtras, URLExtras_ParsingError)
     NSString *encodedHostName = WTF::encodeHostName(@"http://.com");
     EXPECT_TRUE(encodedHostName == nil);
 
-    WTF::URL url2(URL(), utf16String(u"http://\u2267\u222E\uFE63\u0661\u06F1"));
+    WTF::URL url2 { utf16String(u"http://\u2267\u222E\uFE63\u0661\u06F1") };
     EXPECT_STREQ([[url2 absoluteString] UTF8String], "http://%E2%89%A7%E2%88%AE%EF%B9%A3%D9%A1%DB%B1");
 
     std::array<UChar, 3> utf16 { 0xC2, 0xB6, 0x00 };
-    WTF::URL url3(URL(), String(utf16.data()));
+    WTF::URL url3 { String(utf16.data()) };
     EXPECT_FALSE(url3.string().is8Bit());
     EXPECT_FALSE(url3.isValid());
     EXPECT_STREQ([[url3 absoluteString] UTF8String], "%C3%82%C2%B6");
     
     std::array<LChar, 3> latin1 { 0xC2, 0xB6, 0x00 };
-    WTF::URL url4(URL(), String(latin1.data()));
+    WTF::URL url4 { String(latin1.data()) };
     EXPECT_FALSE(url4.isValid());
     EXPECT_TRUE(url4.string().is8Bit());
     EXPECT_STREQ([[url4 absoluteString] UTF8String], "%C3%82%C2%B6");
 
     char buffer[100];
     memset(buffer, 0, sizeof(buffer));
-    WTF::URL url5(URL(), "file:///A%C3%A7%C3%A3o.html"_s);
+    WTF::URL url5 { "file:///A%C3%A7%C3%A3o.html"_str };
     CFURLGetFileSystemRepresentation(url5.createCFURL().get(), false, reinterpret_cast<UInt8*>(buffer), sizeof(buffer));
     EXPECT_STREQ(buffer, "/Ação.html");
 }
@@ -258,7 +258,7 @@ TEST(WTF_URLExtras, URLExtras_Nil)
 
 TEST(WTF_URLExtras, CreateNSArray)
 {
-    Vector<URL> urls { URL(URL(), "https://webkit.org/") };
+    Vector<URL> urls { URL { "https://webkit.org/"_str } };
     auto array = createNSArray(urls);
     EXPECT_TRUE([array.get()[0] isKindOfClass:NSURL.class]);
 }

@@ -813,7 +813,7 @@ void WebProcessPool::unregisterNotificationObservers()
 
 bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const
 {
-    RetainPtr<CFURLRef> url = URL(URL(), urlString).createCFURL();
+    RetainPtr<CFURLRef> url = URL { urlString }.createCFURL();
 
     return _CFNetworkIsKnownHSTSHostWithSession(url.get(), nullptr);
 }

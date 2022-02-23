@@ -195,19 +195,19 @@ void static testRequestImpl(int line, const ContentExtensions::ContentExtensions
 
 static ResourceLoadInfo mainDocumentRequest(const char* urlString, ResourceType resourceType = ResourceType::Document)
 {
-    URL url(URL(), urlString);
+    URL url { urlString };
     return { url, url, url, resourceType };
 }
 
 static ResourceLoadInfo subResourceRequest(const char* url, const char* mainDocumentURLString, ResourceType resourceType = ResourceType::Document)
 {
-    URL mainDocumentURL(URL(), mainDocumentURLString);
-    return { URL(URL(), url), mainDocumentURL, mainDocumentURL, resourceType };
+    URL mainDocumentURL { mainDocumentURLString };
+    return { URL { url }, mainDocumentURL, mainDocumentURL, resourceType };
 }
 
 static ResourceLoadInfo requestInTopAndFrameURLs(const char* url, const char* topURL, const char* frameURL, ResourceType resourceType = ResourceType::Document)
 {
-    return { URL(URL(), url), URL(URL(), topURL), URL(URL(), frameURL), resourceType };
+    return { URL { url }, URL { topURL }, URL { frameURL }, resourceType };
 }
 
 ContentExtensions::ContentExtensionsBackend makeBackend(const char* json)
@@ -1138,13 +1138,13 @@ TEST_F(ContentExtensionTest, LoadType)
         "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"alwaysblock.pdf\"}}]");
     
     testRequest(backend, mainDocumentRequest("http://webkit.org"), { });
-    testRequest(backend, { URL(URL(), "http://webkit.org"), URL(URL(), "http://not_webkit.org"), URL(URL(), "http://not_webkit.org"), ResourceType::Document }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(backend, { URL { "http://webkit.org"_str }, URL { "http://not_webkit.org"_str }, URL { "http://not_webkit.org"_str }, ResourceType::Document }, { variantIndex<ContentExtensions::BlockLoadAction> });
         
     testRequest(backend, mainDocumentRequest("http://whatwg.org"), { variantIndex<ContentExtensions::BlockLoadAction> });
-    testRequest(backend, { URL(URL(), "http://whatwg.org"), URL(URL(), "http://not_whatwg.org"), URL(URL(), "http://not_whatwg.org"), ResourceType::Document }, { });
+    testRequest(backend, { URL { "http://whatwg.org"_str }, URL { "http://not_whatwg.org"_str }, URL { "http://not_whatwg.org"_str }, ResourceType::Document }, { });
     
     testRequest(backend, mainDocumentRequest("http://foobar.org/alwaysblock.pdf"), { variantIndex<ContentExtensions::BlockLoadAction> });
-    testRequest(backend, { URL(URL(), "http://foobar.org/alwaysblock.pdf"), URL(URL(), "http://not_foobar.org/alwaysblock.pdf"), URL(URL(), "http://not_foobar.org/alwaysblock.pdf"), ResourceType::Document }, { variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(backend, { URL { "http://foobar.org/alwaysblock.pdf"_str }, URL { "http://not_foobar.org/alwaysblock.pdf"_str }, URL { "http://not_foobar.org/alwaysblock.pdf"_str }, ResourceType::Document }, { variantIndex<ContentExtensions::BlockLoadAction> });
 }
 
 TEST_F(ContentExtensionTest, ResourceType)
@@ -1181,8 +1181,8 @@ TEST_F(ContentExtensionTest, ResourceOrLoadTypeMatchingEverything)
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\".*\",\"load-type\":[\"first-party\"]}}]");
     
     testRequest(backend, mainDocumentRequest("http://webkit.org"), { }, 0);
-    testRequest(backend, { URL(URL(), "http://webkit.org"), URL(URL(), "http://not_webkit.org"), URL(URL(), "http://not_webkit.org"), ResourceType::Document }, { variantIndex<ContentExtensions::BlockCookiesAction> });
-    testRequest(backend, { URL(URL(), "http://webkit.org"), URL(URL(), "http://not_webkit.org"), URL(URL(), "http://not_webkit.org"), ResourceType::Image }, { variantIndex<ContentExtensions::BlockCookiesAction>, variantIndex<ContentExtensions::BlockLoadAction> });
+    testRequest(backend, { URL { "http://webkit.org"_str }, URL { "http://not_webkit.org"_str }, URL { "http://not_webkit.org"_str }, ResourceType::Document }, { variantIndex<ContentExtensions::BlockCookiesAction> });
+    testRequest(backend, { URL { "http://webkit.org"_str }, URL { "http://not_webkit.org"_str }, URL { "http://not_webkit.org"_str }, ResourceType::Image }, { variantIndex<ContentExtensions::BlockCookiesAction>, variantIndex<ContentExtensions::BlockLoadAction> });
 }
     
 TEST_F(ContentExtensionTest, WideNFA)

@@ -570,7 +570,7 @@ void WebFrame::loadData(Ref<WebCore::FragmentedSharedBuffer>&& data, BSTR mimeTy
     // FIXME: We should really be using MarshallingHelpers::BSTRToKURL here,
     // but that would turn a null BSTR into a null URL, and we crash inside of
     // WebCore if we use a null URL in constructing the ResourceRequest.
-    URL baseCoreURL = URL(URL(), String(baseURL ? baseURL : L"", SysStringLen(baseURL)));
+    URL baseCoreURL { String(baseURL ? baseURL : L"", SysStringLen(baseURL)) };
 
     URL failingCoreURL = MarshallingHelpers::BSTRToKURL(failingURL);
 

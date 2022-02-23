@@ -54,7 +54,7 @@
         auto previewOptions = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
         if (imageURL)
             [previewOptions setObject:imageURL forKey:@"imageURL"];
-        if (NSURL *pageURL = URL { URL { }, page.currentURL() })
+        if (NSURL *pageURL = URL { page.currentURL() })
             [previewOptions setObject:pageURL forKey:@"pageURL"];
         [_item setPreviewOptions:previewOptions.get()];
     }

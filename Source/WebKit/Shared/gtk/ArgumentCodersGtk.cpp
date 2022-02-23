@@ -132,7 +132,7 @@ std::optional<SelectionData> ArgumentCoder<SelectionData>::decode(Decoder& decod
         String url;
         if (!decoder.decode(url))
             return std::nullopt;
-        selection.setURL(URL(URL(), url), String());
+        selection.setURL(URL { url }, String());
     }
 
     bool hasURIList;

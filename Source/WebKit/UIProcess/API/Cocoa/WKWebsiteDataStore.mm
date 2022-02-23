@@ -79,8 +79,8 @@ private:
             completionHandler(quota);
         });
 
-        URL mainFrameURL { URL(), topOrigin.toString() };
-        URL frameURL { URL(), frameOrigin.toString() };
+        URL mainFrameURL { topOrigin.toString() };
+        URL frameURL { frameOrigin.toString() };
 
         [m_delegate.getAutoreleased() requestStorageSpace:mainFrameURL frameOrigin:frameURL quota:quota currentSize:currentSize spaceRequired:spaceRequired decisionHandler:decisionHandler.get()];
     }

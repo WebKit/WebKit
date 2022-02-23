@@ -531,7 +531,7 @@ void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String&
     // Some inspector views (Audits for instance) use a custom URI scheme, such
     // as web-inspector. So we can't rely on the URL being a valid file:/// URL
     // unfortunately.
-    URL url(URL(), suggestedURL);
+    URL url { suggestedURL };
     // Strip leading / character.
     gtk_file_chooser_set_current_name(chooser, url.path().substring(1).utf8().data());
 

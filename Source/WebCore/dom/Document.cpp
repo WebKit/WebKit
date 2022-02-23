@@ -5348,7 +5348,7 @@ String Document::referrer()
     if (DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() && frame()) {
         auto referrerStr = frame()->loader().referrer();
         if (!referrerStr.isEmpty()) {
-            URL referrerURL { URL(), referrerStr };
+            URL referrerURL { referrerStr };
             RegistrableDomain referrerRegistrableDomain { referrerURL };
             if (!referrerRegistrableDomain.matches(securityOrigin().data())) {
                 m_referrerOverride = URL { referrerURL.protocolHostAndPort() }.string();
@@ -6260,7 +6260,7 @@ void Document::initSecurityContext()
         // This can occur via document.implementation.createDocument().
         setCookieURL(URL({ }, emptyString()));
         setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createUnique()));
-        setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { { }, emptyString() }, *this));
+        setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { emptyString() }, *this));
         return;
     }
 
@@ -8468,7 +8468,7 @@ void Document::wasLoadedWithDataTransferFromPrevalentResource()
 
 void Document::downgradeReferrerToRegistrableDomain()
 {
-    URL referrerURL { { }, referrer() };
+    URL referrerURL { referrer() };
     if (referrerURL.isEmpty())
         return;
 

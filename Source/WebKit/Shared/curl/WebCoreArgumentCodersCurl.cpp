@@ -135,7 +135,7 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, Resource
     if (!decoder.decode(sslErrors))
         return false;
 
-    resourceError = ResourceError(domain, errorCode, URL(URL(), failingURL), localizedDescription, errorType);
+    resourceError = ResourceError(domain, errorCode, URL { failingURL }, localizedDescription, errorType);
     resourceError.setSslErrors(sslErrors);
 
     return true;

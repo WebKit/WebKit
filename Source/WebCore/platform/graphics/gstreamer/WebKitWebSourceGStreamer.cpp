@@ -877,8 +877,7 @@ const gchar* const* webKitWebSrcGetProtocols(GType)
 
 static URL convertPlaybinURI(const char* uriString)
 {
-    URL url(URL(), uriString);
-    return url;
+    return URL { uriString };
 }
 
 static gchar* webKitWebSrcGetUri(GstURIHandler* handler)

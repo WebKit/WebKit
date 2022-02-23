@@ -44,7 +44,7 @@ CFDictionaryValueCallBacks MarshallingHelpers::kIUnknownDictionaryValueCallBacks
 
 URL MarshallingHelpers::BSTRToKURL(BSTR urlStr)
 {
-    return URL(URL(), String(urlStr, SysStringLen(urlStr)));
+    return URL { String(urlStr, SysStringLen(urlStr)) };
 }
 
 BSTR MarshallingHelpers::URLToBSTR(const URL& url)

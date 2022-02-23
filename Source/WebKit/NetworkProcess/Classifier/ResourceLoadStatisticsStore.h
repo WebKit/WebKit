@@ -279,7 +279,7 @@ private:
     MonotonicTime m_lastTimeDataRecordsWereRemoved;
     uint64_t m_lastStatisticsProcessingRequestIdentifier { 0 };
     std::optional<uint64_t> m_pendingStatisticsProcessingRequestIdentifier;
-    const RegistrableDomain m_debugStaticPrevalentResource { URL { URL(), "https://3rdpartytestwebkit.org"_s } };
+    const RegistrableDomain m_debugStaticPrevalentResource { URL { "https://3rdpartytestwebkit.org"_str } };
     bool m_debugLoggingEnabled { false };
     bool m_debugModeEnabled { false };
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };

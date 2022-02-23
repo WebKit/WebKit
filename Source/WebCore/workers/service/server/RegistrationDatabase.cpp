@@ -515,13 +515,13 @@ String RegistrationDatabase::importRecords()
     for (; result == SQLITE_ROW; result = sql->step()) {
         RELEASE_LOG(ServiceWorker, "RegistrationDatabase::importRecords: Importing a registration from the database");
         auto key = ServiceWorkerRegistrationKey::fromDatabaseKey(sql->columnText(0));
-        auto originURL = URL { URL(), sql->columnText(1) };
+        auto originURL = URL { sql->columnText(1) };
         auto scopePath = sql->columnText(2);
         auto scopeURL = URL { originURL, scopePath };
         auto topOrigin = SecurityOriginData::fromDatabaseIdentifier(sql->columnText(3));
         auto lastUpdateCheckTime = WallTime::fromRawSeconds(sql->columnDouble(4));
         auto updateViaCache = stringToUpdateViaCache(sql->columnText(5));
-        auto scriptURL = URL { URL(), sql->columnText(6) };
+        auto scriptURL = URL { sql->columnText(6) };
         auto workerType = stringToWorkerType(sql->columnText(7));
 
         std::optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicy;
