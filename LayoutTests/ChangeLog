@@ -1,3 +1,20 @@
+2022-02-23  Alejandro G. Castro  <alex@igalia.com>
+
+        Unreviewed test gardening.
+
+        These tests had incorrect expected results with failing tests for
+        glib.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/webgl/1.0.3/conformance/context/context-lost-restored-expected.txt: Removed.
+        * platform/glib/webgl/1.0.3/conformance/extensions/oes-texture-half-float-expected.txt: Removed.
+        * platform/glib/webgl/1.0.3/conformance/extensions/webgl-compressed-texture-s3tc-expected.txt: Removed.
+        * platform/glib/webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit-expected.txt: Removed.
+        * platform/glib/webgl/1.0.3/conformance/misc/webgl-specific-expected.txt: Removed.
+        * platform/glib/webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment-expected.txt: Removed.
+        * platform/glib/webgl/1.0.3/conformance/rendering/point-no-attributes-expected.txt: Removed.
+        * platform/glib/webgl/1.0.3/conformance/textures/texture-copying-feedback-loops-expected.txt: Removed.
+
 2022-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Crash when calling WEBGL_lose_context.loseContext() after the context has been lost
