@@ -1,3 +1,19 @@
+2022-02-23  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Ensure generated inline assembler that setups segments returns to previous state
+        https://bugs.webkit.org/show_bug.cgi?id=236976
+
+        Reviewed by Yusuke Suzuki.
+
+        Use .previous in inline assembler in order to ensure that mixed emission of assembler
+        functions and other definitions correctly puts each of them in their rightful sections
+        in the output object code.
+
+        * assembler/MacroAssemblerARM64.cpp:
+        * assembler/MacroAssemblerARMv7.cpp:
+        * assembler/MacroAssemblerMIPS.cpp:
+        * assembler/MacroAssemblerX86Common.cpp:
+
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
         Add a URL constructor that takes a String

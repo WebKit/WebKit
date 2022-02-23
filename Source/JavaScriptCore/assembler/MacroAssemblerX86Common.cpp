@@ -341,6 +341,7 @@ asm (
     "popl %ecx" "\n"
     "popl %ebp" "\n"
     "ret" "\n"
+    ".previous" "\n"
 );
 #endif
 
@@ -709,6 +710,7 @@ asm (
     "popq %rcx" "\n"
     "popq %rbp" "\n"
     "ret" "\n"
+    ".previous" "\n"
 );
 #endif // COMPILER(GCC_COMPATIBLE)
 #endif // CPU(X86_64)
