@@ -1,3 +1,14 @@
+2022-02-23  Alex Christensen  <achristensen@webkit.org>
+
+        Call WKNavigationDelegate.didFailProvisionalNavigation even after a cross-origin navigation with COOP
+        https://bugs.webkit.org/show_bug.cgi?id=237071
+        <rdar://88652375>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (TEST):
+
 2022-02-23  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Set ssh keepalive in run-jsc-stress-tests

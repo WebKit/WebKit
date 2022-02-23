@@ -1,3 +1,17 @@
+2022-02-23  Alex Christensen  <achristensen@webkit.org>
+
+        Call WKNavigationDelegate.didFailProvisionalNavigation even after a cross-origin navigation with COOP
+        https://bugs.webkit.org/show_bug.cgi?id=237071
+        <rdar://88652375>
+
+        Reviewed by Chris Dumez.
+
+        There was an assumption that this callback wasn't needed in this case, but it is.
+        Covered by an API test that verifies the callback is received.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::didFailProvisionalLoadForFrame):
+
 2022-02-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [GLib] Add missing WebPage.h inclusion in WebProcessGLib.cpp
