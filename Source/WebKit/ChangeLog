@@ -1,3 +1,17 @@
+2022-02-22  Brent Fulgham  <bfulgham@apple.com>
+
+        PingLoader is failing to call completion handler in error case
+        https://bugs.webkit.org/show_bug.cgi?id=237062
+        <rdar://50157253>
+
+        Reviewed by Chris Dumez.
+
+        The completion handler was not being called in the case of a PingLoad being redirected to
+        a non-HTTP(S) scheme.
+
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+
 2022-02-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][WK2] animations/background-position.html is timing out

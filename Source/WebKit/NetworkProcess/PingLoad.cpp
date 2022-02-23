@@ -134,13 +134,14 @@ void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, R
 {
     m_networkLoadChecker->checkRedirection(ResourceRequest { }, WTFMove(request), WTFMove(redirectResponse), nullptr, [this, completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
         if (!result.has_value()) {
-            completionHandler({ });
             this->didFinish(result.error());
+            completionHandler({ });
             return;
         }
         auto request = WTFMove(result->redirectRequest);
         if (!request.url().protocolIsInHTTPFamily()) {
             this->didFinish(ResourceError { String { }, 0, request.url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
+            completionHandler({ });
             return;
         }
 
