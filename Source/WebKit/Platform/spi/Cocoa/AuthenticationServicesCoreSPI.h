@@ -221,7 +221,7 @@ typedef NS_OPTIONS(NSUInteger, ASCCredentialRequestTypes) {
 
 @property (nonatomic, readonly, copy) NSString *name;
 @property (nonatomic, readonly, copy) NSString *displayName;
-@property (nonatomic, readonly, copy) NSData *userHandle;
+@property (nonatomic, readonly, nullable, copy) NSData *userHandle;
 @property (nonatomic, readonly) BOOL isRegistrationRequest;
 
 + (instancetype)new NS_UNAVAILABLE;

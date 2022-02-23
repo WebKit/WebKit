@@ -35,7 +35,7 @@ WK_CLASS_AVAILABLE(macos(11.0), ios(14.0))
 
 @property (nonatomic, readonly, copy) NSString *name;
 @property (nonatomic, readonly, copy) NSString *displayName;
-@property (nonatomic, readonly, copy) NSData *userHandle;
+@property (nonatomic, readonly, nullable, copy) NSData *userHandle;
 @property (nonatomic, readonly) BOOL synchronizable;
 @property (nonatomic, readonly, copy) NSString *group;
 @property (nonatomic, readonly, copy) NSData *credentialID;

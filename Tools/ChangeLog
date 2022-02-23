@@ -1,3 +1,16 @@
+2022-02-23  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] userHandle not marked nullable in _WKWebAuthenticationAssertionResponse
+        https://bugs.webkit.org/show_bug.cgi?id=237043
+        rdar://89317740
+
+        Reviewed by Brent Fulgham.
+
+        Create tests to check for null userHandle.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2022-02-23  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] De-initialize GStreamer before terminating WebProcess

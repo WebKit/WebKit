@@ -1,3 +1,19 @@
+2022-02-23  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] userHandle not marked nullable in _WKWebAuthenticationAssertionResponse
+        https://bugs.webkit.org/show_bug.cgi?id=237043
+        rdar://89317740
+
+        Reviewed by Brent Fulgham.
+
+        The userHandle is a nullable field on UserEntity. This patch changes
+        various API/SPI to allow passing null userHandle.
+
+        * Modules/webauthn/AuthenticatorAssertionResponse.cpp:
+        (WebCore::AuthenticatorAssertionResponse::create):
+        (WebCore::AuthenticatorAssertionResponse::AuthenticatorAssertionResponse):
+        * Modules/webauthn/AuthenticatorAssertionResponse.h:
+
 2022-02-23  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] offsetWidth/Height and similar should update layout for container queries

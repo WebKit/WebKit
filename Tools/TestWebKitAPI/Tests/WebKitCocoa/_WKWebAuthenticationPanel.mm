@@ -81,6 +81,7 @@ static String testES256PrivateKeyBase64 =
     "PH76c0+WFOzZKslPyyFse4goGIW2R7k9VHLPEZl5nfnBgEVFh5zev+/xpHQIvuq6"
     "RQ==";
 static String testUserEntityBundleBase64 = "omJpZEoAAQIDBAUGBwgJZG5hbWVkSm9obg=="; // { "id": h'00010203040506070809', "name": "John" }
+static String testUserEntityBundleNoUserHandleBase64 = "oWRuYW1lbE1DIE5vLUhhbmRsZQ=="; // {"name": "MC No-Handle"}
 static String webAuthenticationPanelSelectedCredentialName;
 static String testWebKitAPIAccessGroup = "com.apple.TestWebKitAPI";
 static String testWebKitAPIAlternateAccessGroup = "com.apple.TestWebKitAPIAlternate";
@@ -2128,6 +2129,34 @@ TEST(WebAuthenticationPanel, GetAssertionLAClientDataHash)
     Util::run(&webAuthenticationPanelRan);
 }
 
+TEST(WebAuthenticationPanel, GetAssertionNullUserHandle)
+{
+    reset();
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com", testUserEntityBundleNoUserHandleBase64));
+
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    NSData *nsHash = [NSData dataWithBytes:hash length:sizeof(hash)];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
+    [options setRelyingPartyIdentifier:@"example.com"];
+
+    auto panel = adoptNS([[_WKWebAuthenticationPanel alloc] init]);
+    [panel setMockConfiguration:@{ }];
+    auto delegate = adoptNS([[TestWebAuthenticationPanelDelegate alloc] init]);
+    [panel setDelegate:delegate.get()];
+
+    [panel getAssertionWithClientDataHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
+        webAuthenticationPanelRan = true;
+        cleanUpKeychain("example.com");
+
+        EXPECT_NULL(error);
+
+        EXPECT_NULL(response.userHandle);
+    }];
+    Util::run(&webAuthenticationPanelRan);
+}
+
 TEST(WebAuthenticationPanel, GetAssertionCrossPlatform)
 {
     reset();
@@ -2181,6 +2210,24 @@ TEST(WebAuthenticationPanel, GetAllCredential)
     EXPECT_GE([[credentials firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:before.get()], 0);
     EXPECT_LE([[credentials firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:after.get()], 0);
     EXPECT_EQ([[credentials firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentials firstObject][_WKLocalAuthenticatorCredentialCreationDateKey]], 0);
+
+    cleanUpKeychain("example.com");
+}
+
+TEST(WebAuthenticationPanel, GetAllCredentialNullUserHandle)
+{
+    reset();
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com", testUserEntityBundleNoUserHandleBase64));
+
+    auto after = adoptNS([[NSDate alloc] init]);
+
+    auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    EXPECT_NOT_NULL(credentials);
+    EXPECT_EQ([credentials count], 1lu);
+
+    EXPECT_NOT_NULL([credentials firstObject]);
+    EXPECT_EQ([credentials firstObject][_WKLocalAuthenticatorCredentialUserHandleKey], [NSNull null]);
 
     cleanUpKeychain("example.com");
 }

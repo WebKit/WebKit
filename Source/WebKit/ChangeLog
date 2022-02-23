@@ -1,3 +1,24 @@
+2022-02-23  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] userHandle not marked nullable in _WKWebAuthenticationAssertionResponse
+        https://bugs.webkit.org/show_bug.cgi?id=237043
+        rdar://89317740
+
+        Reviewed by Brent Fulgham.
+
+        The userHandle is a nullable field on UserEntity. This patch changes
+        various API/SPI to allow passing null userHandle.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        Update forward declared SPI, reflecting userHandle as nullable.
+        * UIProcess/API/Cocoa/_WKAuthenticatorAssertionResponseInternal.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.h:
+        Update userHandle property to null.
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (getAllLocalAuthenticatorCredentialsImpl):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticatorInternal::getExistingCredentials):
+
 2022-02-23  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] De-initialize GStreamer before terminating WebProcess

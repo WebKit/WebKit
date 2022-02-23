@@ -154,12 +154,11 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
         }
         auto& responseMap = decodedResponse->getMap();
 
+        RefPtr<ArrayBuffer> userHandle;
         auto it = responseMap.find(CBOR(fido::kEntityIdMapKey));
-        if (it == responseMap.end() || !it->second.isByteString()) {
-            ASSERT_NOT_REACHED();
-            return std::nullopt;
+        if (it != responseMap.end() && it->second.isByteString()) {
+            userHandle = toArrayBuffer(it->second.getByteString());
         }
-        auto& userHandle = it->second.getByteString();
 
         it = responseMap.find(CBOR(fido::kEntityNameMapKey));
         if (it == responseMap.end() || !it->second.isString()) {
@@ -168,7 +167,7 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
         }
         auto& username = it->second.getString();
 
-        auto response = AuthenticatorAssertionResponse::create(toArrayBuffer(attributes[(id)kSecAttrApplicationLabel]), toArrayBuffer(userHandle), String(username), (__bridge SecAccessControlRef)attributes[(id)kSecAttrAccessControl], AuthenticatorAttachment::Platform);
+        auto response = AuthenticatorAssertionResponse::create(toArrayBuffer(attributes[(id)kSecAttrApplicationLabel]), WTFMove(userHandle), String(username), (__bridge SecAccessControlRef)attributes[(id)kSecAttrAccessControl], AuthenticatorAttachment::Platform);
 
         auto group = groupForAttributes(attributes);
         if (!group.isNull())

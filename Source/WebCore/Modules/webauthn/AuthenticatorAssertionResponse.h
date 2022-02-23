@@ -39,7 +39,7 @@ class AuthenticatorAssertionResponse : public AuthenticatorResponse {
 public:
     static Ref<AuthenticatorAssertionResponse> create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& authenticatorData, Ref<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle, std::optional<AuthenticationExtensionsClientOutputs>&&, AuthenticatorAttachment);
     WEBCORE_EXPORT static Ref<AuthenticatorAssertionResponse> create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature,  const Vector<uint8_t>& userHandle, AuthenticatorAttachment);
-    WEBCORE_EXPORT static Ref<AuthenticatorAssertionResponse> create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& userHandle, String&& name, SecAccessControlRef, AuthenticatorAttachment);
+    WEBCORE_EXPORT static Ref<AuthenticatorAssertionResponse> create(Ref<ArrayBuffer>&& rawId, RefPtr<ArrayBuffer>&& userHandle, String&& name, SecAccessControlRef, AuthenticatorAttachment);
     virtual ~AuthenticatorAssertionResponse() = default;
 
     ArrayBuffer* authenticatorData() const { return m_authenticatorData.get(); }
@@ -64,7 +64,7 @@ public:
 
 private:
     AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&, AuthenticatorAttachment);
-    AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, String&&, SecAccessControlRef, AuthenticatorAttachment);
+    AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&, String&&, SecAccessControlRef, AuthenticatorAttachment);
 
     Type type() const final { return Type::Assertion; }
     AuthenticatorResponseData data() const final;
