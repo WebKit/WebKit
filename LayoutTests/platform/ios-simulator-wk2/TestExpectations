@@ -126,8 +126,6 @@ webkit.org/b/217357 http/wpt/cache-storage/cache-quota-after-restart.any.html [ 
 
 webkit.org/b/217412 http/wpt/cache-storage/cache-quota.any.html [ Pass Failure ]
 
-webkit.org/b/217643 imported/w3c/web-platform-tests/css/css-flexbox/auto-margins-001.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Timeout Failure ]
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Timeout Failure ]
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Timeout Failure ]

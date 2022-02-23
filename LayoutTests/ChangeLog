@@ -1,3 +1,13 @@
+2022-02-23  Alan Bujtas  <zalan@apple.com>
+
+        [Subpixel] imported/w3c/web-platform-tests/css/css-flexbox/auto-margins-001.html fails at certain font sizes
+        https://bugs.webkit.org/show_bug.cgi?id=217643
+        <rdar://problem/70464703>
+
+        Unreviewed gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: It must have progressed at some point.
+
 2022-02-23  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening for GPU Process bot.
