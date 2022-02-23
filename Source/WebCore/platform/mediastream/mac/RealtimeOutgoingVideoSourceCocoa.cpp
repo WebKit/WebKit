@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include "RealtimeIncomingVideoSourceCocoa.h"
 #include "RealtimeVideoUtilities.h"
+#include "VideoFrame.h"
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
@@ -84,7 +85,17 @@ void RealtimeOutgoingVideoSourceCocoa::videoSampleAvailable(MediaSample& sample,
         break;
     }
 
-    // FIXME: Optimize the case of PlatformSample::RemoteVideoFrameProxyType.
+    bool shouldApplyRotation = m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0;
+    if (!shouldApplyRotation && is<VideoFrame>(sample) && downcast<VideoFrame>(sample).isRemoteProxy()) {
+        Ref videoFrame { downcast<VideoFrame>(sample) };
+        auto size = sample.presentationSize();
+        sendFrame(webrtc::toWebRTCVideoFrameBuffer(&videoFrame.leakRef(),
+            [](auto* pointer) { return static_cast<VideoFrame*>(pointer)->pixelBuffer(); },
+            [](auto* pointer) { static_cast<VideoFrame*>(pointer)->deref(); },
+            static_cast<int>(size.width()), static_cast<int>(size.height())));
+        return;
+    }
+
     auto pixelBuffer = sample.pixelBuffer();
     auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer);
 
@@ -92,7 +103,7 @@ void RealtimeOutgoingVideoSourceCocoa::videoSampleAvailable(MediaSample& sample,
     if (pixelFormatType != preferedPixelBufferFormat())
         convertedBuffer = convertToYUV(pixelBuffer);
 
-    if (m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0)
+    if (shouldApplyRotation)
         convertedBuffer = rotatePixelBuffer(convertedBuffer.get(), m_currentRotation);
 
     sendFrame(webrtc::pixelBufferToFrame(convertedBuffer.get()));

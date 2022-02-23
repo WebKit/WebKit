@@ -33,6 +33,7 @@
 #import "CVUtilities.h"
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
+#import "VideoFrame.h"
 #import <wtf/cf/TypeCastsCF.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -127,7 +128,11 @@ RefPtr<MediaSample> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc:
         return createMediaSampleFromCVPixelBuffer(m_blackFrame.get(), rotation, frame.timestamp_us());
     }
 
-    // FIXME: Detect the case of frame having a FrameBufferProvider.
+    if (auto* provider = videoFrameBufferProvider(frame)) {
+        // The only supported provider is VideoFrame.
+        return static_cast<VideoFrame*>(provider);
+    }
+
     // In case of in memory samples, we have non interleaved YUV data while CVPixelBuffers prefer interleaved YUV data.
     // Maybe we should introduce a MediaSample that would represent non interleaved YUV data as an optimization.
     auto pixelBuffer = adoptCF(webrtc::createPixelBufferFromFrame(frame, [this](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {

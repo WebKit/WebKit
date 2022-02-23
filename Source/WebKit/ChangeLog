@@ -1,3 +1,17 @@
+2022-02-23  Youenn Fablet  <youenn@apple.com>
+
+        Optimize RemoteVideoFrame handling in WebProcess WebRTC pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=236970
+
+        Reviewed by Eric Carlson.
+
+        Fix bug in LibWebRTCCodecsProxy that would make use of shared video frame instead of remote video frame when a shared video frame is available.
+        Use VideoFrame* as webrtc frame provider for encoding and decoding.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
         http/wpt/push-api/onpush-disabled.html fails

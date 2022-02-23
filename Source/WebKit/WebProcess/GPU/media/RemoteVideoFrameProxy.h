@@ -81,7 +81,7 @@ public:
     RemoteVideoFrameWriteReference write() const;
     RemoteVideoFrameReadReference read() const;
 
-    WebCore::IntSize size() const;
+    WebCore::IntSize size() const { return m_size; }
 
     // WebCore::VideoFrame overrides.
     WebCore::FloatSize presentationSize() const final { return m_size; }

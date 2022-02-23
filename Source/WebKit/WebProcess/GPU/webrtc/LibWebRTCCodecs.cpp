@@ -343,9 +343,10 @@ void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, 
         return;
 
     if (remoteVideoFrame) {
-        webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, remoteSample.time().toDouble(), remoteVideoFrame.leakRef(),
-            [](auto* pointer) { return static_cast<RemoteVideoFrameProxy*>(pointer)->pixelBuffer(); },
-            [](auto* pointer) { static_cast<RemoteVideoFrameProxy*>(pointer)->deref(); },
+        Ref videoFrame { static_cast<VideoFrame&>(*remoteVideoFrame) };
+        webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, remoteSample.time().toDouble(), &videoFrame.leakRef(),
+            [](auto* pointer) { return static_cast<VideoFrame*>(pointer)->pixelBuffer(); },
+            [](auto* pointer) { static_cast<VideoFrame*>(pointer)->deref(); },
             remoteSample.size().width(), remoteSample.size().height());
         return;
     }
@@ -457,10 +458,10 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
         return WEBRTC_VIDEO_CODEC_ERROR;
 
     std::optional<RemoteVideoFrameReadReference> remoteVideoFrameReadReference;
-    if (auto provider = webrtc::videoFrameBufferProvider(frame)) {
-        auto& mediaSample = *static_cast<MediaSample*>(provider);
-        if (is<RemoteVideoFrameProxy>(mediaSample))
-            remoteVideoFrameReadReference = downcast<RemoteVideoFrameProxy>(mediaSample).read();
+    if (auto* provider = webrtc::videoFrameBufferProvider(frame)) {
+        auto* videoFrame = static_cast<VideoFrame*>(provider);
+        if (is<RemoteVideoFrameProxy>(videoFrame))
+            remoteVideoFrameReadReference = downcast<RemoteVideoFrameProxy>(videoFrame)->read();
     }
 
     RetainPtr<CVPixelBufferRef> buffer;

@@ -249,14 +249,16 @@ void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore:
         return;
 
 #if !PLATFORM(MACCATALYST)
-    if (sample.surface()) {
-        if (auto buffer = WebCore::createCVPixelBuffer(sample.surface()))
-            pixelBuffer = WTFMove(*buffer);
-    } else if (encoder->frameReader)
-        pixelBuffer = encoder->frameReader->read();
+    if (!pixelBuffer) {
+        if (sample.surface()) {
+            if (auto buffer = WebCore::createCVPixelBuffer(sample.surface()))
+                pixelBuffer = WTFMove(*buffer);
+        } else if (encoder->frameReader)
+            pixelBuffer = encoder->frameReader->read();
 
-    if (!pixelBuffer)
-        return;
+        if (!pixelBuffer)
+            return;
+    }
 
     webrtc::encodeLocalEncoderFrame(encoder->webrtcEncoder, pixelBuffer.get(), sample.time().toTimeScale(1000000).timeValue(), timeStamp, toWebRTCVideoRotation(sample.rotation()), shouldEncodeAsKeyFrame);
 #endif

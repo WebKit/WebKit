@@ -1,3 +1,19 @@
+2022-02-23  Youenn Fablet  <youenn@apple.com>
+
+        Optimize RemoteVideoFrame handling in WebProcess WebRTC pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=236970
+
+        Reviewed by Eric Carlson.
+
+        In case of remote video frame, directly get the remote video frame as a MediaSample in receive side.
+        On send side, wrap remote video frames as provider-based WebRTC video frames.
+        LibWebRTCCodecs will optimize the handling of remote frames for hardware encoders and no change will
+        happen for software encoders.
+        Covered by existing tests.
+
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+
 2022-02-23  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, non-unified build fix after 247623@main
