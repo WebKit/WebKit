@@ -105,7 +105,9 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void GetError() -> (uint32_t returnValue) Synchronous
     void PaintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
     void PaintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
-    void CopyTextureFromMedia(WebCore::MediaPlayerIdentifier identifier, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) -> (bool success) Synchronous
+#if ENABLE(VIDEO)
+    void CopyTextureFromVideoFrame(WebKit::RemoteVideoFrameReadReference videoFrame, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) -> (bool success) Synchronous
+#endif
 #if ENABLE(MEDIA_STREAM)
     void PaintCompositedResultsToMediaSample() -> (std::optional<WebKit::RemoteVideoFrameProxy::Properties> properties) Synchronous
 #endif
@@ -646,10 +648,10 @@ class webkit_ipc_cpp_proxy_impl(object):
                 if o.type.is_dynamic_span():
                     self.pre_call_stmts += [f"{str(v.type)} {str(v.name)};"]
                 else:
-                    # FIXME: Likely this creates a dangling reference span<int, 2> aReply = { { } };.
-                    # https://bugs.webkit.org/show_bug.cgi?id=235889
-                    self.pre_call_stmts += [f"{str(v.type)} {str(v.name)} {{ {{ }} }};"]
-
+                    self.pre_call_stmts += [
+                        f"constexpr std::array<{str(v.type.get_contained_type())}, {str(v.type.get_arity())}> {str(v.name)}Empty {{ }};",
+                        f"{str(v.type)} {str(v.name)} {{ {str(v.name)}Empty }};"
+                    ]
                 self.out_exprs += [cpp_expr(v.type, v.name)]
                 if o.type.is_dynamic_span():
                     self.in_exprs += [cpp_expr(get_cpp_type("size_t"), f"{o.name}.bufSize")]

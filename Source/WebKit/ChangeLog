@@ -1,5 +1,17 @@
 2022-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        Fix GPUP WebGL generator script wrt uninitialised sized span
+        https://bugs.webkit.org/show_bug.cgi?id=235889
+
+        Reviewed by Antti Koivisto.
+
+        Regenerated.
+
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::getShaderPrecisionFormat):
+
+2022-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         Thread safety analysis macros are confusing for non-Lock use-cases
         https://bugs.webkit.org/show_bug.cgi?id=237022
 
