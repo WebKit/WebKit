@@ -1395,6 +1395,7 @@ webkit.org/b/218318 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ F
 webkit.org/b/219251 fast/canvas/webgl/getIndexedParameter-crash.html [ Failure ]
 
 webkit.org/b/172812 fast/canvas/webgl/lose-context-on-status-failure.html [ Skip ]
+webkit.org/b/172812 webgl/lose-context-after-context-lost.html [ Failure ]
 
 webkit.org/b/223624 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 

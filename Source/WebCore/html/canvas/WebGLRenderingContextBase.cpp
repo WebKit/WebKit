@@ -7852,7 +7852,8 @@ void WebGLRenderingContextBase::synthesizeGLError(GCGLenum error, const char* fu
         String str = "WebGL: " + GetErrorString(error) +  ": " + String(functionName) + ": " + String(description);
         printToConsole(MessageLevel::Error, str);
     }
-    m_context->synthesizeGLError(error);
+    if (m_context)
+        m_context->synthesizeGLError(error);
 }
 
 void WebGLRenderingContextBase::applyStencilTest()

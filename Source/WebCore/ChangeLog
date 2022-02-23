@@ -1,3 +1,23 @@
+2022-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Crash when calling WEBGL_lose_context.loseContext() after the context has been lost
+        https://bugs.webkit.org/show_bug.cgi?id=236966
+
+        Reviewed by Dean Jackson.
+
+        WebGLRenderingContextBase::forceLostContext() would
+        try to synthesize a GL error to the underlying
+        m_context. However, m_context is cleared when a real
+        context loss happens. This happens for example when we
+        simulate a GPU status failure or when we create too
+        many contexts. The m_context is not currently cleared
+        when the page simulates context lost via WEBGL_lose_contexts.loseContext().
+
+        Test: webgl/lose-context-after-context-lost.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::synthesizeGLError):
+
 2022-02-23  Youenn Fablet  <youenn@apple.com>
 
         Optimize RemoteVideoFrame handling in WebProcess WebRTC pipeline
