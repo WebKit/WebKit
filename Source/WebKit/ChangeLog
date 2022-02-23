@@ -1,3 +1,21 @@
+2022-02-23  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GTK][WPE] PlatformDisplay::terminateEglDisplays() is never called
+        https://bugs.webkit.org/show_bug.cgi?id=217655
+
+        Stop the run loop for GTK and WPE to ensure a normal exit, since we need
+        atexit handlers to be called to cleanup resources like EGL displays.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::didClose):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::stopRunLoop):
+
 2022-02-23  Youenn Fablet  <youenn@apple.com>
 
         RemoteSampleBufferDisplayLayer::enqueueSample should not change media samples owned by its object heap
