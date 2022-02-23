@@ -2677,6 +2677,8 @@ ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(DOMWindow& activeWindow, DOMWin
 
 void DOMWindow::showModalDialog(const String& urlString, const String& dialogFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow, const Function<void(DOMWindow&)>& prepareDialogFunction)
 {
+    printWarningMessage("showModalDialog() is deprecated and will be removed. Please use the <dialog> element instead."_s);
+
     if (!isCurrentlyDisplayedInFrame())
         return;
     if (!activeWindow.frame())
