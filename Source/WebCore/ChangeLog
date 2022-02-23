@@ -1,3 +1,17 @@
+2022-02-23  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r287574): ASSERTION FAILED: !m_impl || !m_shouldEnableAssertions || m_impl->wasConstructedOnMainThread() == isMainThread() under WebCore::AVTrackPrivateAVFObjCImpl::initializeAssetTrack()
+        https://bugs.webkit.org/show_bug.cgi?id=235168
+        <rdar://problem/87518939>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use runOnMainThread() from within WebCore, as it will dispatch to the correct thread when
+        running under iOS/WebKitLegacy.
+
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        (WebCore::AVTrackPrivateAVFObjCImpl::initializeAssetTrack):
+
 2022-02-23  Youenn Fablet  <youenn@apple.com>
 
         RemoteVideoFrameObjectHeap::getVideoFrameBuffer can use base class pixelBuffer accessor

@@ -87,7 +87,7 @@ void AVTrackPrivateAVFObjCImpl::initializeAssetTrack()
         return;
 
     [m_assetTrack loadValuesAsynchronouslyForKeys:assetTrackConfigurationKeyNames() completionHandler:[weakThis = WeakPtr(this)] () mutable {
-        callOnMainRunLoop([weakThis = WTFMove(weakThis)] {
+        callOnMainThread([weakThis = WTFMove(weakThis)] {
             if (weakThis && weakThis->m_audioTrackConfigurationObserver)
                 (*weakThis->m_audioTrackConfigurationObserver)();
             if (weakThis && weakThis->m_videoTrackConfigurationObserver)
