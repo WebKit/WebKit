@@ -188,7 +188,7 @@ class DarwinPort(ApplePort):
                     host.executive.run_command(spindump_command)
                 host.filesystem.move_to_base_host(DarwinPort.tailspin_file_path(host, name, pid, str(tempdir)),
                                                   DarwinPort.tailspin_file_path(self.host, name, pid, self.results_directory()))
-            except (IOError, ScriptError) as e:
+            except (IOError, ScriptError, OSError) as e:
                 _log.warning('Unable to symbolicate tailspin log of process:' + str(e))
         else:  # Tailspin failed, run sample instead
             try:
@@ -202,7 +202,7 @@ class DarwinPort(ApplePort):
                 ])
                 host.filesystem.move_to_base_host(DarwinPort.sample_file_path(host, name, pid, str(tempdir)),
                                                   DarwinPort.sample_file_path(self.host, name, pid, self.results_directory()))
-            except ScriptError as e:
+            except (ScriptError, OSError) as e:
                 _log.warning('Unable to sample process:' + str(e))
         host.filesystem.rmtree(str(tempdir))
 

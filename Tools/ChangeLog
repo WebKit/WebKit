@@ -1,3 +1,16 @@
+2022-02-23  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Catch OSError when sampling
+        https://bugs.webkit.org/show_bug.cgi?id=237087
+        <rdar://problem/89357299>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.sample_process): Catch OSError when either sampling a
+        process or running spindump. These errors indicate the error gathering process
+        failed, but such a failure should not be fatal to the entire test run.
+
 2022-02-23  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] userHandle not marked nullable in _WKWebAuthenticationAssertionResponse
