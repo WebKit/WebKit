@@ -72,7 +72,9 @@ void webKitVideoSinkSetMediaPlayerPrivate(GstElement* appSink, MediaPlayerPrivat
             GST_DEBUG("Acting upon flush-start event");
         }
 
+#if USE(GSTREAMER_GL)
         player->flushCurrentBuffer();
+#endif
         return GST_PAD_PROBE_OK;
     }, player, nullptr);
 }

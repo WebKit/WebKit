@@ -1,3 +1,10 @@
+2022-02-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed, build fix for Debian Stable after r290366
+
+        * platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp:
+        (webKitVideoSinkSetMediaPlayerPrivate):
+
 2022-02-23  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r287574): ASSERTION FAILED: !m_impl || !m_shouldEnableAssertions || m_impl->wasConstructedOnMainThread() == isMainThread() under WebCore::AVTrackPrivateAVFObjCImpl::initializeAssetTrack()
