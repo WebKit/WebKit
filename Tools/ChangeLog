@@ -1,3 +1,27 @@
+2022-02-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (288925?): [iOS] TestWebKitAPI.RequestTextInputContext.TextInteraction_FocusingReadOnlyElementShouldScrollToReveal is failing
+        https://bugs.webkit.org/show_bug.cgi?id=237069
+        rdar://89325305
+
+        Reviewed by Kate Cheney.
+
+        This iOS API test occasionally fails in some test runners in automation, due to `didScroll` still being false at
+        the end of the test. While I was unable to reproduce (both locally, and using EWS test runners), from code
+        inspection this test appears to be inherently flaky since the scrolling is triggered via editor state updates
+        propagated through remote layer tree commits; however, the test only verifies that scrolling occurs after one
+        IPC round-trip between the web and UI processes (due to the call to `-stringByEvaluatingJavaScript:`).
+
+        Since the regression point is suspiciously close to r288925, it's possible that the optimizations introduced in
+        r288925 removed an extra sync IPC round-trip to the web process and back when requesting an autocorrection
+        context after element focus, which would make this flakiness easier to reproduce in some configurations.
+
+        In any case, one speculative fix for this test is to simply wait for the scrolling to occur, instead of assuming
+        that it occurs after a single IPC round-trip.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        (TestWebKitAPI::TEST):
+
 2022-02-23  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Catch OSError when sampling

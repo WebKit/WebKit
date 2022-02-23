@@ -664,7 +664,7 @@ TEST(RequestTextInputContext, TextInteraction_FocusingReadOnlyElementShouldScrol
     }
 
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    EXPECT_TRUE(didScroll);
+    TestWebKitAPI::Util::run(&didScroll);
 }
 
 TEST(RequestTextInputContext, TextInteraction_FocusElementInDetachedDocument)
