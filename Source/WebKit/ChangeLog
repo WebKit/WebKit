@@ -1,3 +1,16 @@
+2022-02-23  Youenn Fablet  <youenn@apple.com>
+
+        RemoteVideoFrameObjectHeap::getVideoFrameBuffer can use base class pixelBuffer accessor
+        https://bugs.webkit.org/show_bug.cgi?id=237020
+
+        Reviewed by Kimmo Kinnunen.
+
+        Make use of pixelBuffer virtual method to simplify things.
+        Add a missing early return in case of not found pixel buffer.
+
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.cpp:
+        (WebKit::RemoteVideoFrameObjectHeap::getVideoFrameBuffer):
+
 2022-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Fix GPUP WebGL generator script wrt uninitialised sized span

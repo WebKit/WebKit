@@ -94,22 +94,27 @@ void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReferen
     auto identifier = read.identifier();
     auto videoFrame = retire(WTFMove(read), 0_s);
 
-    if (!videoFrame)
+    if (!videoFrame) {
         m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::VideoFrameBufferNotFound { identifier }, 0);
-    RetainPtr<CVPixelBufferRef> pixelBuffer;
-    if (is<VideoFrameCV>(videoFrame))
-        pixelBuffer = downcast<VideoFrameCV>(*videoFrame).pixelBuffer();
-    else if (is<MediaSampleAVFObjC>(*videoFrame))
-        pixelBuffer = downcast<MediaSampleAVFObjC>(*videoFrame).pixelBuffer();
-    else {
+        return;
+    }
+
+    auto pixelBuffer = videoFrame->pixelBuffer();
+    if (!pixelBuffer) {
+        m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::VideoFrameBufferNotFound { identifier }, 0);
         ASSERT_NOT_REACHED();
         return;
     }
 
-    m_sharedVideoFrameWriter.write(pixelBuffer.get(),
+    bool result = m_sharedVideoFrameWriter.write(pixelBuffer,
         [&](auto& semaphore) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameSemaphore { semaphore }, 0); },
         [&](auto& handle) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameMemory { handle }, 0); }
     );
+    if (!result) {
+        // FIXME: We should ASSERT_NOT_REACHED once we support enough pixel buffer types.
+        m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::VideoFrameBufferNotFound { identifier }, 0);
+        return;
+    }
     m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewVideoFrameBuffer { identifier }, 0);
 }
 #endif

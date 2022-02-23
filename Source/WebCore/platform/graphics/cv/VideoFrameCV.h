@@ -40,7 +40,7 @@ public:
     WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, VideoRotation, RetainPtr<CVPixelBufferRef>&&);
     WEBCORE_EXPORT ~VideoFrameCV();
 
-    CVPixelBufferRef pixelBuffer() const { return m_pixelBuffer.get(); }
+    CVPixelBufferRef pixelBuffer() const final { return m_pixelBuffer.get(); }
     ImageOrientation orientation() const;
 
     template<typename Encoder> void encode(Encoder&) const;
