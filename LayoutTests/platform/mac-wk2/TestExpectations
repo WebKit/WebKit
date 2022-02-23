@@ -1689,3 +1689,5 @@ http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.
 
 # Captured WebGL to another context2d or WebGL not implemented yet.
 webkit.org/b/236496 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
+
+webkit.org/b/237095 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Pass Failure ]
