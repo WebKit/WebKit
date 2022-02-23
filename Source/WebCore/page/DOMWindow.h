@@ -440,6 +440,9 @@ private:
     void decrementGamepadEventListenerCount();
 #endif
 
+    void printConsoleMessage(const String&, MessageLevel) const;
+    void printWarningMessage(const String&) const;
+
     bool m_shouldPrintWhenFinishedLoading { false };
     bool m_suspendedForDocumentSuspension { false };
     bool m_isSuspendingObservers { false };

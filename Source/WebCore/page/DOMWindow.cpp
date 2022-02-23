@@ -1066,7 +1066,7 @@ void DOMWindow::close()
         return;
 
     if (!(page->openedByDOM() || page->backForward().count() <= 1)) {
-        console()->addMessage(MessageSource::JS, MessageLevel::Warning, "Can't close the window since it was not opened by JavaScript"_s);
+        printWarningMessage("Can't close the window since it was not opened by JavaScript"_s);
         return;
     }
 
@@ -1874,8 +1874,8 @@ int DOMWindow::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callba
 int DOMWindow::webkitRequestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)
 {
     static bool firstTime = true;
-    if (firstTime && document()) {
-        document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "webkitRequestAnimationFrame() is deprecated and will be removed. Please use requestAnimationFrame() instead."_s);
+    if (firstTime) {
+        printWarningMessage("webkitRequestAnimationFrame() is deprecated and will be removed. Please use requestAnimationFrame() instead."_s);
         firstTime = false;
     }
     return requestAnimationFrame(WTFMove(callback));
@@ -2110,8 +2110,7 @@ void DOMWindow::startListeningForDeviceOrientationIfNecessary()
 
     String innerMessage;
     if (!isAllowedToUseDeviceOrientation(innerMessage) || !hasPermissionToReceiveDeviceMotionOrOrientationEvents(innerMessage)) {
-        if (RefPtr document = this->document())
-            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("No device orientation events will be fired, reason: ", innerMessage, "."));
+        printWarningMessage(makeString("No device orientation events will be fired, reason: ", innerMessage, "."));
         return;
     }
 
@@ -2139,8 +2138,7 @@ void DOMWindow::startListeningForDeviceMotionIfNecessary()
     String innerMessage;
     if (!isAllowedToUseDeviceMotion(innerMessage) || !hasPermissionToReceiveDeviceMotionOrOrientationEvents(innerMessage)) {
         failedToRegisterDeviceMotionEventListener();
-        if (RefPtr document = this->document())
-            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("No device motion events will be fired, reason: ", innerMessage, "."));
+        printWarningMessage(makeString("No device motion events will be fired, reason: ", innerMessage, "."));
         return;
     }
 
@@ -2428,13 +2426,23 @@ void DOMWindow::setLocation(DOMWindow& activeWindow, const URL& completedURL, Se
         lockHistory, lockBackForwardList);
 }
 
-void DOMWindow::printErrorMessage(const String& message) const
+void DOMWindow::printConsoleMessage(const String& message, MessageLevel level) const
 {
     if (message.isEmpty())
         return;
 
     if (PageConsoleClient* pageConsole = console())
-        pageConsole->addMessage(MessageSource::JS, MessageLevel::Error, message);
+        pageConsole->addMessage(MessageSource::JS, level, message);
+}
+
+void DOMWindow::printErrorMessage(const String& message) const
+{
+    printConsoleMessage(message, MessageLevel::Error);
+}
+
+void DOMWindow::printWarningMessage(const String& message) const
+{
+    printConsoleMessage(message, MessageLevel::Warning);
 }
 
 String DOMWindow::crossDomainAccessErrorMessage(const DOMWindow& activeWindow, IncludeTargetOrigin includeTargetOrigin)
