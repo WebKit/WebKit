@@ -87,8 +87,8 @@ public:
 
     const Vector<uint64_t>& objectStoreIdentifiers();
 
-    void setMainThreadAbortResult(const IDBError& error) { m_mainThreadAbortResult = { error }; }
-    const std::optional<IDBError>& mainThreadAbortResult() const { return m_mainThreadAbortResult; }
+    void setSuspensionAbortResult(const IDBError& error) { m_suspensionAbortResult = { error }; }
+    const std::optional<IDBError>& suspensionAbortResult() const { return m_suspensionAbortResult; }
 
 private:
     UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConnection&, const IDBTransactionInfo&);
@@ -100,7 +100,7 @@ private:
 
     Vector<uint64_t> m_objectStoreIdentifiers;
 
-    std::optional<IDBError> m_mainThreadAbortResult;
+    std::optional<IDBError> m_suspensionAbortResult;
     Deque<IDBError> m_requestResults;
 };
 

@@ -1,3 +1,24 @@
+2022-02-23  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION(r289474): [iOS] ASSERTION FAILED: isMainThread() under WebCore::IDBServer::UniqueIDBDatabase::abortActiveTransactions()
+        https://bugs.webkit.org/show_bug.cgi?id=237066
+        <rdar://problem/89324810>
+
+        Reviewed by Chris Dumez.
+
+        We no longer need the assertion because the function can be called on non-main thread since r289474, where we 
+        started to abort transactions for suspension on WorkQueue. To avoid confusion, rename mainThreadAbortResult to 
+        suspensionAbortResult.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortActiveTransactions):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::setSuspensionAbortResult):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::suspensionAbortResult const):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::setMainThreadAbortResult): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::mainThreadAbortResult const): Deleted.
+
 2022-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Crash when calling WEBGL_lose_context.loseContext() after the context has been lost

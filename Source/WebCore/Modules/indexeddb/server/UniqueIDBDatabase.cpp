@@ -1184,9 +1184,8 @@ void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transacti
         return;
     }
 
-    // If transaction is already aborted on the main thread for suspension,
-    // return the result of that abort.
-    if (auto existingAbortResult = takenTransaction->mainThreadAbortResult()) {
+    // If transaction is already aborted for suspension, return the result of that abort.
+    if (auto existingAbortResult = takenTransaction->suspensionAbortResult()) {
         callback(*existingAbortResult);
         transactionCompleted(WTFMove(takenTransaction));
         return;
@@ -1475,11 +1474,9 @@ bool UniqueIDBDatabase::hasActiveTransactions() const
 
 void UniqueIDBDatabase::abortActiveTransactions()
 {
-    ASSERT(isMainThread());
-
     for (auto& identifier : copyToVector(m_inProgressTransactions.keys())) {
         auto transaction = m_inProgressTransactions.get(identifier);
-        transaction->setMainThreadAbortResult(m_backingStore->abortTransaction(transaction->info().identifier()));
+        transaction->setSuspensionAbortResult(m_backingStore->abortTransaction(transaction->info().identifier()));
     }
 }
 
