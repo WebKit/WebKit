@@ -86,7 +86,7 @@ class WebCookieManagerProxy;
 class WebPageProxy;
 class WebUserContentControllerProxy;
 
-enum class RemoteWorkerType : uint32_t;
+enum class RemoteWorkerType : bool;
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
 enum class WebsiteDataFetchOption : uint8_t;
@@ -333,12 +333,11 @@ private:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    void establishServiceWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
     void startServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);
     void endServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);
 #endif
     void remoteWorkerContextConnectionNoLongerNeeded(RemoteWorkerType, WebCore::ProcessIdentifier);
-    void establishSharedWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, PAL::SessionID, CompletionHandler<void()>&&);
+    void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
     void registerRemoteWorkerClientProcess(RemoteWorkerType, WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier sharedWorkerProcessIdentifier);
     void unregisterRemoteWorkerClientProcess(RemoteWorkerType, WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier sharedWorkerProcessIdentifier);
 

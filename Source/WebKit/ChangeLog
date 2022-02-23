@@ -1,3 +1,47 @@
+2022-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Share more code between service and shared workers for context connection establishment
+        https://bugs.webkit.org/show_bug.cgi?id=237085
+
+        Reviewed by Youenn Fablet.
+
+        Share more code between service and shared workers for context connection establishment.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::ensureSWServer):
+        * NetworkProcess/SharedWorker/WebSharedWorker.cpp:
+        (WebKit::WebSharedWorker::firstSharedWorkerObjectProcess const):
+        * NetworkProcess/SharedWorker/WebSharedWorker.h:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp:
+        (WebKit::WebSharedWorkerServer::didFinishFetchingSharedWorkerScript):
+        (WebKit::WebSharedWorkerServer::createContextConnection):
+        (WebKit::WebSharedWorkerServer::removeContextConnection):
+        (WebKit::WebSharedWorkerServer::shutDownSharedWorker):
+        * NetworkProcess/SharedWorker/WebSharedWorkerServer.h:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::establishRemoteWorkerContextConnectionToNetworkProcess):
+        (WebKit::NetworkProcessProxy::establishSharedWorkerContextConnectionToNetworkProcess): Deleted.
+        (WebKit::NetworkProcessProxy::establishServiceWorkerContextConnectionToNetworkProcess): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess): Deleted.
+        (WebKit::WebProcessPool::establishSharedWorkerContextConnectionToNetworkProcess): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::establishRemoteWorkerContext):
+        (WebKit::WebProcessProxy::establishServiceWorkerContext): Deleted.
+        (WebKit::WebProcessProxy::establishSharedWorkerContext): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::establishRemoteWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcess::establishSharedWorkerContextConnectionToNetworkProcess): Deleted.
+        (WebKit::WebProcess::establishServiceWorkerContextConnectionToNetworkProcess): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2022-02-23  J Pascoe  <j_pascoe@apple.com>
 
         Prevent use of PDFKit when using PDF.js

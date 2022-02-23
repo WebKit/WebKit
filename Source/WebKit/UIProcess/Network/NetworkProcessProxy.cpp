@@ -34,10 +34,6 @@
 #include "DownloadProxyMap.h"
 #include "DownloadProxyMessages.h"
 #include "FrameInfoData.h"
-#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-#include "LegacyCustomProtocolManagerMessages.h"
-#include "LegacyCustomProtocolManagerProxyMessages.h"
-#endif
 #include "LegacyGlobalSettings.h"
 #include "Logging.h"
 #include "NetworkContentRuleListManagerMessages.h"
@@ -46,10 +42,8 @@
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxyMessages.h"
 #include "PageClient.h"
+#include "RemoteWorkerType.h"
 #include "SandboxExtension.h"
-#if HAVE(SEC_KEY_PROXY)
-#include "SecKeyProxyStore.h"
-#endif
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "WebCompiledContentRuleList.h"
@@ -74,8 +68,17 @@
 #include "SecItemShimProxy.h"
 #endif
 
+#if HAVE(SEC_KEY_PROXY)
+#include "SecKeyProxyStore.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #include <wtf/spi/darwin/XPCSPI.h>
+#endif
+
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
+#include "LegacyCustomProtocolManagerMessages.h"
+#include "LegacyCustomProtocolManagerProxyMessages.h"
 #endif
 
 #if PLATFORM(COCOA)
@@ -1416,11 +1419,6 @@ void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContent
 }
 #endif
 
-void NetworkProcessProxy::establishSharedWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&& registrableDomain, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
-{
-    WebProcessPool::establishSharedWorkerContextConnectionToNetworkProcess(WTFMove(registrableDomain), sessionID, WTFMove(completionHandler));
-}
-
 void NetworkProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType workerType, WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier sharedWorkerProcessIdentifier)
 {
     auto* webProcess = WebProcessProxy::processForIdentifier(webProcessIdentifier);
@@ -1447,11 +1445,12 @@ void NetworkProcessProxy::remoteWorkerContextConnectionNoLongerNeeded(RemoteWork
         process->disableRemoteWorkers(workerType);
 }
 
-#if ENABLE(SERVICE_WORKER)
-void NetworkProcessProxy::establishServiceWorkerContextConnectionToNetworkProcess(RegistrableDomain&& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, RegistrableDomain&& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
-    WebProcessPool::establishServiceWorkerContextConnectionToNetworkProcess(WTFMove(registrableDomain), requestingProcessIdentifier, serviceWorkerPageIdentifier, sessionID, WTFMove(completionHandler));
+    WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(workerType, WTFMove(registrableDomain), requestingProcessIdentifier, serviceWorkerPageIdentifier, sessionID, WTFMove(completionHandler));
 }
+
+#if ENABLE(SERVICE_WORKER)
 
 void NetworkProcessProxy::startServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
 {

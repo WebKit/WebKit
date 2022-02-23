@@ -62,7 +62,7 @@ public:
     void terminateSharedWorker(const WebSharedWorker&);
 
     void connectionIsNoLongerNeeded();
-    bool hasSharedWorkerObjects() const { return !m_sharedWorkerObjects.isEmpty(); }
+    const HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>>& sharedWorkerObjects() const { return m_sharedWorkerObjects; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

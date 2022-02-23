@@ -27,19 +27,6 @@
 
 namespace WebKit {
 
-enum class RemoteWorkerType : uint32_t {
-    ServiceWorker = 1 << 0,
-    SharedWorker = 1 << 1
-};
+enum class RemoteWorkerType : bool { ServiceWorker, SharedWorker };
 
 } // namespace WebKit
-
-namespace WTF {
-template<> struct EnumTraits<WebKit::RemoteWorkerType> {
-    using values = EnumValues<
-        WebKit::RemoteWorkerType,
-        WebKit::RemoteWorkerType::ServiceWorker,
-        WebKit::RemoteWorkerType::SharedWorker
-    >;
-};
-}

@@ -62,6 +62,7 @@ public:
     void removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
     unsigned sharedWorkerObjectsCount() const { return m_sharedWorkerObjects.size(); }
     void forEachSharedWorkerObject(const Function<void(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&)>&) const;
+    std::optional<WebCore::ProcessIdentifier> firstSharedWorkerObjectProcess() const;
 
     void didCreateContextConnection(WebSharedWorkerServerToContextConnection&);
 

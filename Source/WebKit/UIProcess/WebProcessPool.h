@@ -379,7 +379,6 @@ public:
     void removeFromRemoteWorkerProcesses(WebProcessProxy&);
 
 #if ENABLE(SERVICE_WORKER)
-    static void establishServiceWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
     size_t serviceWorkerProxiesCount() const;
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
@@ -388,7 +387,7 @@ public:
 
     void updateRemoteWorkerUserAgent(const String& userAgent);
     UserContentControllerIdentifier userContentControllerIdentifierForRemoteWorkers();
-    static void establishSharedWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain&&, PAL::SessionID, CompletionHandler<void()>&&);
+    static void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
 
 #if PLATFORM(COCOA)
     bool processSuppressionEnabled() const;

@@ -98,6 +98,13 @@ void WebSharedWorker::forEachSharedWorkerObject(const Function<void(WebCore::Sha
         apply(sharedWorkerObjectIdentifier, port);
 }
 
+std::optional<WebCore::ProcessIdentifier> WebSharedWorker::firstSharedWorkerObjectProcess() const
+{
+    if (m_sharedWorkerObjects.isEmpty())
+        return std::nullopt;
+    return m_sharedWorkerObjects.begin()->key.processIdentifier();
+}
+
 WebSharedWorkerServerToContextConnection* WebSharedWorker::contextConnection() const
 {
     return m_server.contextConnectionForRegistrableDomain(registrableDomain());

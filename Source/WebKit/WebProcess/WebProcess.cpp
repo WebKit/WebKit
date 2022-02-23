@@ -49,6 +49,7 @@
 #include "RemoteMediaEngineConfigurationFactory.h"
 #include "RemoteRemoteCommandListener.h"
 #include "RemoteWebLockRegistry.h"
+#include "RemoteWorkerType.h"
 #include "SpeechRecognitionRealtimeMediaSourceManager.h"
 #include "StorageAreaMap.h"
 #include "UserData.h"
@@ -1926,27 +1927,25 @@ LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
     return *m_libWebRTCNetwork;
 }
 
-void WebProcess::establishSharedWorkerContextConnectionToNetworkProcess(PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, RegistrableDomain&& registrableDomain, RemoteWorkerInitializationData&& initializationData, CompletionHandler<void()>&& completionHandler)
+void WebProcess::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, RemoteWorkerInitializationData&& initializationData, CompletionHandler<void()>&& completionHandler)
 {
-    // We are in the Shared Worker context process and the call below establishes our connection to the Network Process
-    // by calling ensureNetworkProcessConnection. SharedWorkerContextManager needs to use the same underlying IPC::Connection as the
+    // We are in the Remote Worker context process and the call below establishes our connection to the Network Process
+    // by calling ensureNetworkProcessConnection. SWContextManager / SharedWorkerContextManager need to use the same underlying IPC::Connection as the
     // NetworkProcessConnection for synchronization purposes.
     auto& ipcConnection = ensureNetworkProcessConnection().connection();
-    SharedWorkerContextManager::singleton().setConnection(makeUnique<WebSharedWorkerContextManagerConnection>(ipcConnection, WTFMove(registrableDomain), pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
-    SharedWorkerContextManager::singleton().connection()->establishConnection(WTFMove(completionHandler));
+    switch (workerType) {
+    case RemoteWorkerType::ServiceWorker:
+        SWContextManager::singleton().setConnection(makeUnique<WebSWContextManagerConnection>(ipcConnection, WTFMove(registrableDomain), serviceWorkerPageIdentifier, pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
+        SWContextManager::singleton().connection()->establishConnection(WTFMove(completionHandler));
+        break;
+    case RemoteWorkerType::SharedWorker:
+        SharedWorkerContextManager::singleton().setConnection(makeUnique<WebSharedWorkerContextManagerConnection>(ipcConnection, WTFMove(registrableDomain), pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
+        SharedWorkerContextManager::singleton().connection()->establishConnection(WTFMove(completionHandler));
+        break;
+    }
 }
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcess::establishServiceWorkerContextConnectionToNetworkProcess(PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, RemoteWorkerInitializationData&& initializationData, CompletionHandler<void()>&& completionHandler)
-{
-    // We are in the Service Worker context process and the call below establishes our connection to the Network Process
-    // by calling ensureNetworkProcessConnection. SWContextManager needs to use the same underlying IPC::Connection as the
-    // NetworkProcessConnection for synchronization purposes.
-    auto& ipcConnection = ensureNetworkProcessConnection().connection();
-    SWContextManager::singleton().setConnection(makeUnique<WebSWContextManagerConnection>(ipcConnection, WTFMove(registrableDomain), serviceWorkerPageIdentifier, pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
-    SWContextManager::singleton().connection()->establishConnection(WTFMove(completionHandler));
-}
-
 void WebProcess::addServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier identifier)
 {
     m_swRegistrationCounts.add(identifier);
