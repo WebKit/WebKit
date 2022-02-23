@@ -96,11 +96,11 @@ std::optional<SharedVideoFrame> SharedVideoFrameWriter::write(MediaSample& frame
         return sharedVideoFrame;
     }
     if (is<MediaSampleAVFObjC>(frame)) {
-        auto pixelBuffer = downcast<MediaSampleAVFObjC>(frame).pixelBuffer();
-        IOSurfaceRef surface = pixelBuffer ? CVPixelBufferGetIOSurface(pixelBuffer) : nullptr;
-        if (surface) {
-            sharedVideoFrame.buffer = MachSendRight::adopt(IOSurfaceCreateMachPort(surface));
-            return sharedVideoFrame;
+        if (auto pixelBuffer = downcast<MediaSampleAVFObjC>(frame).pixelBuffer()) {
+            if (auto surface = CVPixelBufferGetIOSurface(pixelBuffer)) {
+                sharedVideoFrame.buffer = MachSendRight::adopt(IOSurfaceCreateMachPort(surface));
+                return sharedVideoFrame;
+            }
         }
     }
     if (!write(frame.pixelBuffer(), newSemaphoreCallback, newMemoryCallback))
@@ -137,6 +137,10 @@ void SharedVideoFrameWriter::disable()
 SharedVideoFrameReader::SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&& objectHeap, UseIOSurfaceBufferPool useIOSurfaceBufferPool)
     : m_objectHeap(WTFMove(objectHeap))
     , m_useIOSurfaceBufferPool(useIOSurfaceBufferPool)
+{
+}
+
+SharedVideoFrameReader::SharedVideoFrameReader()
 {
 }
 

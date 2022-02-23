@@ -88,6 +88,7 @@ class SharedVideoFrameReader {
 public:
     enum class UseIOSurfaceBufferPool { No, Yes };
     explicit SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&&, UseIOSurfaceBufferPool = UseIOSurfaceBufferPool::Yes);
+    SharedVideoFrameReader();
 
     void setSemaphore(IPC::Semaphore&& semaphore) { m_semaphore = WTFMove(semaphore); }
     bool setSharedMemory(const SharedMemory::IPCHandle&);
@@ -99,7 +100,7 @@ private:
     CVPixelBufferPoolRef pixelBufferPool(const WebCore::SharedVideoFrameInfo&);
 
     RefPtr<RemoteVideoFrameObjectHeap> m_objectHeap;
-    UseIOSurfaceBufferPool m_useIOSurfaceBufferPool;
+    UseIOSurfaceBufferPool m_useIOSurfaceBufferPool { UseIOSurfaceBufferPool::Yes };
     IPC::Semaphore m_semaphore;
     RefPtr<SharedMemory> m_storage;
 
@@ -114,17 +115,7 @@ template<class Encoder> void SharedVideoFrame::encode(Encoder& encoder) const
     encoder << time;
     encoder << mirrored;
     encoder << rotation;
-
-    switchOn(buffer,
-    [&](std::nullptr_t representation) {
-        encoder << (uint8_t)0;
-    }, [&](const RemoteVideoFrameReadReference& reference) {
-        encoder << (uint8_t)1;
-        encoder << reference;
-    } , [&](const MachSendRight& sendRight) {
-        encoder << (uint8_t)2;
-        encoder << sendRight;
-    });
+    encoder << buffer;
 }
 
 template<class Decoder> std::optional<SharedVideoFrame> SharedVideoFrame::decode(Decoder& decoder)
@@ -139,25 +130,9 @@ template<class Decoder> std::optional<SharedVideoFrame> SharedVideoFrame::decode
     if (!decoder.decode(frame.rotation))
         return { };
 
-    uint8_t bufferType;
-    if (!decoder.decode(bufferType))
+    if (!decoder.decode(frame.buffer))
         return { };
 
-    if (bufferType > 2)
-        return { };
-
-    if (bufferType == 1) {
-        std::optional<RemoteVideoFrameReadReference> reference;
-        decoder >> reference;
-        if (!reference)
-            return { };
-        frame.buffer = WTFMove(*reference);
-    } else if (bufferType == 2) {
-        MachSendRight sendRight;
-        if (!decoder.decode(sendRight))
-            return { };
-        frame.buffer = WTFMove(sendRight);
-    }
     return frame;
 }
 

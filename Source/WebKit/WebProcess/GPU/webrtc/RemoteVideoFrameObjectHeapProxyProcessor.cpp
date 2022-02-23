@@ -43,7 +43,6 @@ Ref<RemoteVideoFrameObjectHeapProxyProcessor> RemoteVideoFrameObjectHeapProxyPro
 RemoteVideoFrameObjectHeapProxyProcessor::RemoteVideoFrameObjectHeapProxyProcessor(GPUProcessConnection& connection)
     : m_connectionID(connection.connection().uniqueID())
     , m_queue(WorkQueue::create("RemoteVideoFrameObjectHeapProxy", WorkQueue::QOS::UserInteractive))
-    , m_sharedVideoFrameReader(nullptr)
 {
     connection.addClient(*this);
     connection.connection().addWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeapProxyProcessor::messageReceiverName(), m_queue, this);

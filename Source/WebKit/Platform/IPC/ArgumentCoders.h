@@ -852,4 +852,9 @@ template<> struct ArgumentCoder<std::monostate> {
     }
 };
 
+template<> struct ArgumentCoder<std::nullptr_t> {
+    static void encode(Encoder&, const std::nullptr_t&) { }
+    static WARN_UNUSED_RETURN bool decode(Decoder&, std::nullptr_t&) { return true; }
+};
+
 } // namespace IPC

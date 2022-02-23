@@ -1,3 +1,25 @@
+2022-02-23  Youenn Fablet  <youenn@apple.com>
+
+        RemoteSampleBufferDisplayLayer::enqueueSample should not change media samples owned by its object heap
+        https://bugs.webkit.org/show_bug.cgi?id=237025
+        <rdar://problem/89343447>
+
+        Reviewed by Darin Adler.
+
+        Updated https://commits.webkit.org/r290358 according comments given during review.
+
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::ArgumentCoder<std::nullptr_t>::encode):
+        (IPC::ArgumentCoder<std::nullptr_t>::decode):
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp:
+        (WebKit::RemoteVideoFrameObjectHeapProxyProcessor::RemoteVideoFrameObjectHeapProxyProcessor):
+        * WebProcess/GPU/webrtc/SharedVideoFrame.cpp:
+        (WebKit::SharedVideoFrameWriter::write):
+        (WebKit::SharedVideoFrameReader::SharedVideoFrameReader):
+        * WebProcess/GPU/webrtc/SharedVideoFrame.h:
+        (WebKit::SharedVideoFrame::encode const):
+        (WebKit::SharedVideoFrame::decode):
+
 2022-02-23  Alex Christensen  <achristensen@webkit.org>
 
         Call WKNavigationDelegate.didFailProvisionalNavigation even after a cross-origin navigation with COOP
