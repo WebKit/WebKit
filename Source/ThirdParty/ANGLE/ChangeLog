@@ -1,1 +1,13 @@
+2022-02-24  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] WebGL ANGLE backend is broken after r290138
+        https://bugs.webkit.org/show_bug.cgi?id=237133
+
+        Reviewed by Kimmo Kinnunen.
+
+        We removed some of the options that are already included in the
+        general library compilation, that fixes the backend.
+
+        * PlatformGTK.cmake:
+
 == Rolled over to ChangeLog-2022-02-22 ==

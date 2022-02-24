@@ -27,14 +27,4 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
         ANGLE_ENABLE_OPENGL
     )
 
-    list(APPEND ANGLEGLESv2_LIBRARIES
-        ${CMAKE_DL_LIBS}
-        Threads::Threads
-    )
-
-    if (USE_OPENGL)
-        list(APPEND ANGLEGLESv2_LIBRARIES OpenGL::OpenGL)
-    else ()
-        list(APPEND ANGLEGLESv2_LIBRARIES OpenGL::GLES)
-    endif ()
 endif ()
