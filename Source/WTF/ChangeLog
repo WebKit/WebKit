@@ -1,3 +1,16 @@
+2022-02-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r290452.
+
+        Caused failues with clean builds
+
+        Reverted changeset:
+
+        "[XCBuild] WTF's SPI dependencies are copied via a folder
+        reference and do not emit task outputs"
+        https://bugs.webkit.org/show_bug.cgi?id=237129
+        https://commits.webkit.org/r290452
+
 2022-02-24  Devin Rousso  <drousso@apple.com>
 
         REGRESSION(r290436): fix build failures
