@@ -1,3 +1,17 @@
+2022-02-23  Robert Jenner  <Jenner@apple.com>
+
+        Use of showModalDialog should appear as a warning in WI console
+        https://bugs.webkit.org/show_bug.cgi?id=237046
+
+        Unreviewed test gardening. Rebase for wk1 mac and Windows tests.
+
+        * platform/mac-wk1/fast/events/beforeunload-showModalDialog-expected.txt: Added.
+        * platform/mac-wk1/fast/events/pagehide-showModalDialog-expected.txt: Added.
+        * platform/mac-wk1/fast/events/unload-showModalDialog-expected.txt: Added.
+        * platform/wincairo-wk1/fast/events/beforeunload-showModalDialog-expected.txt: Added.
+        * platform/wincairo-wk1/fast/events/pagehide-showModalDialog-expected.txt: Added.
+        * platform/wincairo-wk1/fast/events/unload-showModalDialog-expected.txt: Added.
+
 2022-02-23  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Improve error message for missing pubKeyCredParams

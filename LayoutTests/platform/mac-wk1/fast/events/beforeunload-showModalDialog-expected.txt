@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: showModalDialog() is deprecated and will be removed. Please use the <dialog> element instead.
+CONSOLE MESSAGE: Use of window.showModalDialog is not allowed while unloading a page.
+This test verifies that prompts are forbidden when leaving a webpage.
+
+Prompts include alert, confirm, prompt, and showModalDialog.
+
+If there is no prompt, the test passed.
