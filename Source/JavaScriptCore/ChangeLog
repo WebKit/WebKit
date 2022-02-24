@@ -1,3 +1,46 @@
+2022-02-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Adjust thread number for GC throughput
+        https://bugs.webkit.org/show_bug.cgi?id=237122
+
+        Reviewed by Mark Lam.
+
+        Adjust numberOfGCMarkers from 4 to 3 to make GC and main thread througput better on M1 macOS.
+        3 makes sense since there is also a main thread when they are running concurrently to the
+        main thread.
+
+        It offers 1.2% improvement in Speedometer2 in M1Max MBP and 0.4% improvement in M1 MBP.
+
+        ----------------------------------------------------------------------------------------------------------------------------------
+        |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+        ----------------------------------------------------------------------------------------------------------------------------------
+        | Elm-TodoMVC                          |107.445000   |102.856667   |0.957296  | 0.000000 (significant)                           |
+        | VueJS-TodoMVC                        |21.571667    |21.805000    |1.010817  | 0.403054                                         |
+        | EmberJS-TodoMVC                      |113.320000   |111.300000   |0.982174  | 0.000027 (significant)                           |
+        | BackboneJS-TodoMVC                   |39.981667    |39.318333    |0.983409  | 0.002346 (significant)                           |
+        | Preact-TodoMVC                       |15.516667    |15.648333    |1.008485  | 0.544754                                         |
+        | AngularJS-TodoMVC                    |117.010000   |115.346667   |0.985785  | 0.000495 (significant)                           |
+        | Vanilla-ES2015-TodoMVC               |57.790000    |57.176667    |0.989387  | 0.000270 (significant)                           |
+        | Inferno-TodoMVC                      |55.275000    |53.755000    |0.972501  | 0.000000 (significant)                           |
+        | Flight-TodoMVC                       |53.875000    |53.941667    |1.001237  | 0.739556                                         |
+        | Angular2-TypeScript-TodoMVC          |36.600000    |36.471667    |0.996494  | 0.743761                                         |
+        | VanillaJS-TodoMVC                    |48.058333    |47.671667    |0.991954  | 0.158193                                         |
+        | jQuery-TodoMVC                       |203.433333   |201.878333   |0.992356  | 0.009271 (significant)                           |
+        | EmberJS-Debug-TodoMVC                |325.058333   |319.848333   |0.983972  | 0.000003 (significant)                           |
+        | React-TodoMVC                        |80.533333    |79.281667    |0.984458  | 0.000011 (significant)                           |
+        | React-Redux-TodoMVC                  |134.738333   |131.801667   |0.978205  | 0.000000 (significant)                           |
+        | Vanilla-ES2015-Babel-Webpack-TodoMVC |56.780000    |56.168333    |0.989227  | 0.000514 (significant)                           |
+        ----------------------------------------------------------------------------------------------------------------------------------
+        a mean = 293.86568
+        b mean = 297.52900
+        pValue = 0.0266899465
+        (Bigger means are better.)
+        1.012 times better
+        Results ARE significant
+
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+
 2022-02-23  Adrian Perez de Castro  <aperez@igalia.com>
 
         Ensure generated inline assembler that setups segments returns to previous state

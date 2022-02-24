@@ -353,7 +353,7 @@ static void overrideDefaults()
     }
 
 #if PLATFORM(MAC) && CPU(ARM64)
-    Options::numberOfGCMarkers() = 4;
+    Options::numberOfGCMarkers() = 3;
     Options::numberOfDFGCompilerThreads() = 3;
     Options::numberOfFTLCompilerThreads() = 3;
 #endif
