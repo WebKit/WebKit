@@ -2013,12 +2013,17 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
             if (!strongSelf)
                 return;
 
-            for (auto resizeAssertion : std::exchange(strongSelf->_resizeAssertions, { }))
-                [resizeAssertion _invalidate];
+            [strongSelf _invalidateResizeAssertions];
         }).get()];
     }
 
-    _resizeAssertions.append(adoptNS([windowScene _holdLiveResizeSnapshotForReason:reason]));
+    _resizeAssertions.append(retainPtr([windowScene _holdLiveResizeSnapshotForReason:reason]));
+}
+
+- (void)_invalidateResizeAssertions
+{
+    for (auto resizeAssertion : std::exchange(_resizeAssertions, { }))
+        [resizeAssertion _invalidate];
 }
 
 #endif // HAVE(MAC_CATALYST_LIVE_RESIZE)

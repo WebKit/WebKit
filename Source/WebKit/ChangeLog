@@ -1,5 +1,24 @@
 2022-02-24  Devin Rousso  <drousso@apple.com>
 
+        [MacCatalyst] REGRESSION(r290091): sometimes can crash if `WKWebView` is deallocated before the next visible content rect update
+        https://bugs.webkit.org/show_bug.cgi?id=237126
+        <rdar://problem/89345853>
+
+        Reviewed by Tim Horton.
+
+        Tests: WKWebViewResize.DoesNotAssertInDeallocAfterChangingFrame
+               WKWebViewResize.DoesNotAssertInDeallocAfterChangingBounds
+
+        * UIProcess/API/ios/WKWebViewIOS.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _acquireResizeAssertionForReason:]):
+        (-[WKWebView _invalidateResizeAssertions]): Added.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView dealloc]):
+        Make sure to `-invalidate` any remaining assertions in `-dealloc` as required by `_UIInvalidatable`.
+
+2022-02-24  Devin Rousso  <drousso@apple.com>
+
         [Apple Pay] switch from `PassKit/*` to `PassKit[Core,UI]/*`
         https://bugs.webkit.org/show_bug.cgi?id=237091
         <rdar://problem/81085862>

@@ -286,6 +286,7 @@ Tests/WebKitCocoa/WKWebViewFirstResponderTests.mm
 Tests/WebKitCocoa/WKWebViewGetContents.mm
 Tests/WebKitCocoa/WKWebViewLoadAPIs.mm
 Tests/WebKitCocoa/WKWebViewPrintFormatter.mm
+Tests/WebKitCocoa/WKWebViewResize.mm
 Tests/WebKitCocoa/WKWebViewServerTrustKVC.mm
 Tests/WebKitCocoa/WKWebViewSnapshot.mm
 Tests/WebKitCocoa/WKWebViewSuspendAllMediaPlayback.mm

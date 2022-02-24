@@ -2582,6 +2582,7 @@
 		952F7166270BD99700D00DCC /* CSSViewportUnits.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = CSSViewportUnits.html; sourceTree = "<group>"; };
 		952F7166270BD99700D00DCD /* CSSViewportUnits.svg */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = CSSViewportUnits.svg; sourceTree = "<group>"; };
 		953ABB3425C0D681004C8B73 /* WKWebViewUnderPageBackgroundColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewUnderPageBackgroundColor.mm; sourceTree = "<group>"; };
+		953DF77B27C6DE5D00FDF3A5 /* WKWebViewResize.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewResize.mm; sourceTree = "<group>"; };
 		958B70E026C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSAttributedStringWebKitAdditions.mm; sourceTree = "<group>"; };
 		95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewThemeColor.mm; sourceTree = "<group>"; };
 		95B6B3B6251EBF2F00FC4382 /* MediaDocument.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaDocument.mm; sourceTree = "<group>"; };
@@ -3715,6 +3716,7 @@
 				D3BE5E341E4CE85E00FD563A /* WKWebViewGetContents.mm */,
 				7A42ABD625CCD0F500980BCA /* WKWebViewLoadAPIs.mm */,
 				2D01D06D23218FEE0039AA3A /* WKWebViewPrintFormatter.mm */,
+				953DF77B27C6DE5D00FDF3A5 /* WKWebViewResize.mm */,
 				37A9DBE7213B4C9300D261A2 /* WKWebViewServerTrustKVC.mm */,
 				93F56DA81E5F9181003EDE84 /* WKWebViewSnapshot.mm */,
 				CD7F89DB22A86CDA00D683AE /* WKWebViewSuspendAllMediaPlayback.mm */,

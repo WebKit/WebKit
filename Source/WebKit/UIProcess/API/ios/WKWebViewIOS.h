@@ -49,6 +49,10 @@ enum class TapHandlingResult : uint8_t;
 - (void)_accessibilitySettingsDidChange:(NSNotification *)notification;
 
 - (void)_frameOrBoundsChanged;
+#if HAVE(MAC_CATALYST_LIVE_RESIZE)
+- (void)_invalidateResizeAssertions;
+#endif
+
 - (BOOL)usesStandardContentView;
 
 - (void)_processDidExit;
