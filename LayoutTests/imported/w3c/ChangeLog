@@ -1,3 +1,17 @@
+2022-02-24  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Support 'revert' in @keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=237073
+
+        Reviewed by Darin Adler.
+
+        Expect tests to pass.
+
+        * web-platform-tests/css/css-cascade/revert-val-006-expected.txt:
+        * web-platform-tests/css/css-cascade/revert-val-007-expected.txt:
+        * web-platform-tests/css/css-cascade/revert-val-008-expected.txt:
+        * web-platform-tests/css/css-cascade/revert-val-010-expected.txt:
+
 2022-02-24  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Enable non-paginated vertical-rl writing mode

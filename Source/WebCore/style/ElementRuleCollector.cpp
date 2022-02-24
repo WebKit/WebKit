@@ -29,6 +29,7 @@
 #include "config.h"
 #include "ElementRuleCollector.h"
 
+#include "CSSKeyframeRule.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSValueKeywords.h"
@@ -647,6 +648,12 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
     m_result.isCacheable = computeIsCacheable();
 
     declarationsForOrigin(m_result, declarationOrigin).append(WTFMove(matchedProperties));
+}
+
+void ElementRuleCollector::addAuthorKeyframeRules(const StyleRuleKeyframe& keyframe)
+{
+    ASSERT(m_result.authorDeclarations.isEmpty());
+    m_result.authorDeclarations.append({ &keyframe.properties(), SelectorChecker::MatchAll, propertyAllowlistForPseudoId(m_pseudoElementRequest.pseudoId) });
 }
 
 }

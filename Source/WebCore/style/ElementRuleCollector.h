@@ -93,6 +93,8 @@ public:
     const Relations& styleRelations() const { return m_styleRelations; }
     bool didMatchUncommonAttributeSelector() const { return m_didMatchUncommonAttributeSelector; }
 
+    void addAuthorKeyframeRules(const StyleRuleKeyframe&);
+
 private:
     void addElementStyleProperties(const StyleProperties*, bool isCacheable = true, FromStyleAttribute = FromStyleAttribute::No);
 
