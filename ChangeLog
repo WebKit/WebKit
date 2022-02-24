@@ -1,3 +1,15 @@
+2022-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Explain visit children and opaque roots in Introduction.md
+        https://bugs.webkit.org/show_bug.cgi?id=236894
+
+        Reviewed by Saam Barati.
+
+        Added the descriptions of visit children and opaque roots
+        as well as how to add IDL files.
+
+        * Introduction.md:
+
 2022-02-23  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Don't automatically use the ../Internal/WebKit workspace
