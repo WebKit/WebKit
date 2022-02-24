@@ -102,7 +102,7 @@ CDMFactoryThunder& CDMFactoryThunder::singleton()
     return s_factory;
 }
 
-std::unique_ptr<CDMPrivate> CDMFactoryThunder::createCDM(const String& keySystem)
+std::unique_ptr<CDMPrivate> CDMFactoryThunder::createCDM(const String& keySystem, const CDMPrivateClient&)
 {
     ASSERT(supportsKeySystem(keySystem));
     return makeUnique<CDMPrivateThunder>(keySystem);

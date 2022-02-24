@@ -692,7 +692,7 @@ void MediaPlayer::setBufferingPolicy(BufferingPolicy policy)
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-std::unique_ptr<LegacyCDMSession> MediaPlayer::createSession(const String& keySystem, LegacyCDMSessionClient* client)
+std::unique_ptr<LegacyCDMSession> MediaPlayer::createSession(const String& keySystem, LegacyCDMSessionClient& client)
 {
     return m_private->createSession(keySystem, client);
 }

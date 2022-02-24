@@ -49,6 +49,10 @@ private:
     friend class RemoteCDMFactory;
     RemoteCDMInstanceSession(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceSessionIdentifier&&);
 
+#if !RELEASE_LOG_DISABLED
+    void setLogIdentifier(const void*) final;
+#endif
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

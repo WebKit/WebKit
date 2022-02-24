@@ -49,6 +49,13 @@ RemoteCDMInstanceSession::RemoteCDMInstanceSession(WeakPtr<RemoteCDMFactory>&& f
 {
 }
 
+#if !RELEASE_LOG_DISABLED
+void RemoteCDMInstanceSession::setLogIdentifier(const void* logIdentifier)
+{
+    m_factory->gpuProcessConnection().connection().send(Messages::RemoteCDMInstanceSessionProxy::SetLogIdentifier(reinterpret_cast<uint64_t>(logIdentifier)), m_identifier);
+}
+#endif
+
 void RemoteCDMInstanceSession::requestLicense(LicenseType type, const AtomString& initDataType, Ref<FragmentedSharedBuffer>&& initData, LicenseCallback&& callback)
 {
     if (!m_factory) {

@@ -35,19 +35,24 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <WebCore/LegacyCDM.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/LoggerHelper.h>
 
 namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteLegacyCDMSessionProxy> RemoteLegacyCDMSessionProxy::create(WeakPtr<RemoteLegacyCDMFactoryProxy>&& factory, RemoteLegacyCDMSessionIdentifier identifier, WebCore::LegacyCDM& cdm)
+std::unique_ptr<RemoteLegacyCDMSessionProxy> RemoteLegacyCDMSessionProxy::create(RemoteLegacyCDMFactoryProxy& factory, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier sessionIdentifier, WebCore::LegacyCDM& cdm)
 {
-    return std::unique_ptr<RemoteLegacyCDMSessionProxy>(new RemoteLegacyCDMSessionProxy(WTFMove(factory), identifier, cdm));
+    return std::unique_ptr<RemoteLegacyCDMSessionProxy>(new RemoteLegacyCDMSessionProxy(factory, logIdentifier, sessionIdentifier, cdm));
 }
 
-RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy(WeakPtr<RemoteLegacyCDMFactoryProxy>&& factory, RemoteLegacyCDMSessionIdentifier identifier, WebCore::LegacyCDM& cdm)
-    : m_factory(WTFMove(factory))
-    , m_identifier(identifier)
+RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy(RemoteLegacyCDMFactoryProxy& factory, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier sessionIdentifier, WebCore::LegacyCDM& cdm)
+    : m_factory(factory)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(factory.logger())
+    , m_logIdentifier(reinterpret_cast<const void*>(logIdentifier))
+#endif
+    , m_identifier(sessionIdentifier)
     , m_session(cdm.createSession(*this))
 {
 }

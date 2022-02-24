@@ -64,7 +64,7 @@ void RemoteCDMFactoryProxy::createCDM(const String& keySystem, CompletionHandler
         return;
     }
 
-    auto privateCDM = factory->createCDM(keySystem);
+    auto privateCDM = factory->createCDM(keySystem, *this);
     if (!privateCDM) {
         completion({ }, { });
         return;
@@ -168,6 +168,18 @@ bool RemoteCDMFactoryProxy::allowsExitUnderMemoryPressure() const
 {
     return m_instances.isEmpty();
 }
+
+#if !RELEASE_LOG_DISABLED
+const Logger& RemoteCDMFactoryProxy::logger() const
+{
+    if (!m_logger) {
+        m_logger = Logger::create(this);
+        m_logger->setEnabled(this, m_gpuConnectionToWebProcess ? m_gpuConnectionToWebProcess->sessionID().isAlwaysOnLoggingAllowed() : false);
+    }
+
+    return *m_logger;
+}
+#endif
 
 }
 

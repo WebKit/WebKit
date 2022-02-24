@@ -60,18 +60,23 @@ bool RemoteLegacyCDM::supportsMIMEType(const String& mimeType)
     return supported;
 }
 
-std::unique_ptr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCore::LegacyCDMSessionClient* client)
+std::unique_ptr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCore::LegacyCDMSessionClient& client)
 {
     if (!m_factory)
         return nullptr;
 
-    String storageDirectory = client ? client->mediaKeysStorageDirectory() : emptyString();
+    String storageDirectory = client.mediaKeysStorageDirectory();
+
+    uint64_t logIdentifier { 0 };
+#if !RELEASE_LOG_DISABLED
+    logIdentifier = reinterpret_cast<uint64_t>(client.logIdentifier());
+#endif
 
     RemoteLegacyCDMSessionIdentifier identifier;
-    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::CreateSession(storageDirectory), Messages::RemoteLegacyCDMProxy::CreateSession::Reply(identifier), m_identifier);
+    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::CreateSession(storageDirectory, logIdentifier), Messages::RemoteLegacyCDMProxy::CreateSession::Reply(identifier), m_identifier);
     if (!identifier)
         return nullptr;
-    return RemoteLegacyCDMSession::create(m_factory, WTFMove(identifier));
+    return RemoteLegacyCDMSession::create(m_factory, WTFMove(identifier), client);
 }
 
 void RemoteLegacyCDM::setPlayerId(MediaPlayerIdentifier identifier)

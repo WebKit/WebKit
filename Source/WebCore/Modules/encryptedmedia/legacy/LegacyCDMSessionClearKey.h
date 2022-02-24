@@ -36,12 +36,11 @@ namespace WebCore {
 class CDMSessionClearKey final : public LegacyCDMSession {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CDMSessionClearKey(LegacyCDMSessionClient*);
+    CDMSessionClearKey(LegacyCDMSessionClient&);
     virtual ~CDMSessionClearKey();
 
     // CDMSessionPrivate
     LegacyCDMSessionType type() override { return CDMSessionTypeClearKey; }
-    void setClient(LegacyCDMSessionClient* client) override { m_client = client; }
     const String& sessionId() const override { return m_sessionId; }
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array*, String&, unsigned short&, uint32_t&) override;
     void releaseKeys() override;
@@ -49,7 +48,7 @@ public:
     RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override;
 
 private:
-    LegacyCDMSessionClient* m_client;
+    WeakPtr<LegacyCDMSessionClient> m_client;
     RefPtr<Uint8Array> m_initData;
     HashMap<String, Vector<uint8_t>> m_cachedKeys;
     String m_sessionId;

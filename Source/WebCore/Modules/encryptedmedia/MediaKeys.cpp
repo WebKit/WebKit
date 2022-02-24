@@ -62,7 +62,7 @@ MediaKeys::MediaKeys(Document& document, bool useDistinctiveIdentifier, bool per
 #endif
 {
 #if !RELEASE_LOG_DISABLED
-    m_instance->setLogger(document.logger(), m_logIdentifier);
+    m_instance->setLogIdentifier(m_logIdentifier);
 #else
     UNUSED_PARAM(document);
 #endif
@@ -76,32 +76,31 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(Document& document, M
     // https://w3c.github.io/encrypted-media/#dom-mediakeys-setservercertificate
     // W3C Editor's Draft 09 November 2016
     auto identifier = LOGIDENTIFIER;
-    INFO_LOG(identifier, "EME - check if a new session can be created");
 
     // When this method is invoked, the user agent must run the following steps:
     // 1. If this object's supported session types value does not contain sessionType, throw [WebIDL] a NotSupportedError.
     if (!m_supportedSessionTypes.contains(sessionType)) {
-        INFO_LOG(identifier, "Exception: unsupported sessionType: ", sessionType);
+        ERROR_LOG(identifier, "Exception: unsupported sessionType: ", sessionType);
         return Exception(NotSupportedError);
     }
 
     // 2. If the implementation does not support MediaKeySession operations in the current state, throw [WebIDL] an InvalidStateError.
     if (!m_implementation->supportsSessions()) {
-        INFO_LOG(identifier, "Exception: implementation does not support sessions");
+        ERROR_LOG(identifier, "Exception: implementation does not support sessions");
         return Exception(InvalidStateError);
     }
 
     auto instanceSession = m_instance->createSession();
     if (!instanceSession) {
-        INFO_LOG(identifier, "Exception: could not create session");
+        ERROR_LOG(identifier, "Exception: could not create session");
         return Exception(InvalidStateError);
     }
 
     // 3. Let session be a new MediaKeySession object, and initialize it as follows:
     // NOTE: Continued in MediaKeySession.
     // 4. Return session.
+    ALWAYS_LOG(identifier);
     auto session = MediaKeySession::create(document, *this, sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), instanceSession.releaseNonNull());
-    INFO_LOG(identifier, "Created session");
     m_sessions.append(session.copyRef());
     return session;
 }
@@ -116,14 +115,14 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
     // 1. If the Key System implementation represented by this object's cdm implementation value does not support
     //    server certificates, return a promise resolved with false.
     if (!m_implementation->supportsServerCertificates()) {
-        INFO_LOG(identifier, "Rejected: !supportsServerCertificates()");
+        ALWAYS_LOG(identifier, "Resolved: !supportsServerCertificates()");
         promise->resolve<IDLBoolean>(false);
         return;
     }
 
     // 2. If serverCertificate is an empty array, return a promise rejected with a new a newly created TypeError.
     if (!serverCertificate.length()) {
-        INFO_LOG(identifier, "Rejected: empty serverCertificate");
+        ERROR_LOG(identifier, "Rejected: empty serverCertificate");
         promise->reject(TypeError);
         return;
     }
@@ -135,16 +134,17 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
     // 5. Run the following steps in parallel:
 
     // 5.1. Use this object's cdm instance to process certificate.
+    ALWAYS_LOG(identifier);
     m_instance->setServerCertificate(WTFMove(certificate), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto success) {
         // 5.2. If the preceding step failed, resolve promise with a new DOMException whose name is the appropriate error name.
         // 5.1. [Else,] Resolve promise with true.
         if (success == CDMInstance::Failed) {
-            INFO_LOG(identifier, "::task() - Rejected, setServerCertificate() failed");
+            ERROR_LOG(identifier, "::task() - Rejected, setServerCertificate() failed");
             promise->reject(InvalidStateError);
             return;
         }
 
-        INFO_LOG(identifier, "::task() - Resolved");
+        ALWAYS_LOG(identifier, "::task() - Resolved");
         promise->resolve<IDLBoolean>(true);
     });
 

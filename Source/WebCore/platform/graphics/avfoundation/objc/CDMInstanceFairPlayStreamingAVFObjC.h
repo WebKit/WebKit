@@ -51,6 +51,7 @@ class Logger;
 namespace WebCore {
 
 class CDMInstanceSessionFairPlayStreamingAVFObjC;
+class CDMPrivateFairPlayStreaming;
 struct CDMMediaCapability;
 
 class AVContentKeySessionDelegateClient {
@@ -71,12 +72,8 @@ public:
 
 class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance, public AVContentKeySessionDelegateClient, public CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC> {
 public:
-    CDMInstanceFairPlayStreamingAVFObjC();
+    CDMInstanceFairPlayStreamingAVFObjC(const CDMPrivateFairPlayStreaming&);
     virtual ~CDMInstanceFairPlayStreamingAVFObjC() = default;
-
-#if !RELEASE_LOG_DISABLED
-    void setLogger(Logger&, const void* logIdentifier);
-#endif
 
     static bool supportsPersistableState();
     static bool supportsPersistentKeys();
@@ -126,14 +123,15 @@ public:
 
     void sessionKeyStatusesChanged(const CDMInstanceSessionFairPlayStreamingAVFObjC&);
 
-private:
-    void handleUnexpectedRequests(Vector<RetainPtr<AVContentKeyRequest>>&&);
-
 #if !RELEASE_LOG_DISABLED
-    Logger* loggerPtr() const { return m_logger.get(); };
+    void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
+    const Logger& logger() const { return m_logger; };
     const void* logIdentifier() const { return m_logIdentifier; }
     const char* logClassName() const { return "CDMInstanceFairPlayStreamingAVFObjC"; }
 #endif
+
+private:
+    void handleUnexpectedRequests(Vector<RetainPtr<AVContentKeyRequest>>&&);
 
     WeakPtr<CDMInstanceClient> m_client;
     RetainPtr<AVContentKeySession> m_session;
@@ -145,7 +143,7 @@ private:
     HashSet<RetainPtr<AVContentKeyRequest>> m_unexpectedKeyRequests;
     WeakHashSet<KeyStatusesChangedObserver> m_keyStatusChangedObservers;
 #if !RELEASE_LOG_DISABLED
-    RefPtr<Logger> m_logger;
+    Ref<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };
 #endif
 };
@@ -154,10 +152,6 @@ class CDMInstanceSessionFairPlayStreamingAVFObjC final : public CDMInstanceSessi
 public:
     CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
     virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC();
-
-#if !RELEASE_LOG_DISABLED
-    void setLogger(Logger&, const void* logIdentifier);
-#endif
 
     // CDMInstanceSession
     void requestLicense(LicenseType, const AtomString& initDataType, Ref<FragmentedSharedBuffer>&& initData, LicenseCallback&&) final;
@@ -210,7 +204,8 @@ private:
     std::optional<CDMKeyStatus> protectionStatusForDisplayID(AVContentKeyRequest *, std::optional<PlatformDisplayID>) const;
 
 #if !RELEASE_LOG_DISABLED
-    Logger* loggerPtr() const { return m_logger.get(); };
+    void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
+    const Logger& logger() const { return m_logger; };
     const void* logIdentifier() const { return m_logIdentifier; }
     const char* logClassName() const { return "CDMInstanceSessionFairPlayStreamingAVFObjC"; }
 #endif
@@ -240,7 +235,7 @@ private:
     RemoveSessionDataCallback m_removeSessionDataCallback;
 
 #if !RELEASE_LOG_DISABLED
-    RefPtr<Logger> m_logger;
+    Ref<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };
 #endif
 };

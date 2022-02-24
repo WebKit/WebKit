@@ -25,7 +25,7 @@
 
 messages -> RemoteLegacyCDMProxy NotRefCounted {
     SupportsMIMEType(String mimeType) -> (bool supports) Synchronous
-    CreateSession(String mediaKeysStorageDirectory) -> (WebKit::RemoteLegacyCDMSessionIdentifier identifier) Synchronous
+    CreateSession(String mediaKeysStorageDirectory, uint64_t logIdentifier) -> (WebKit::RemoteLegacyCDMSessionIdentifier identifier) Synchronous
     SetPlayerId(std::optional<WebCore::MediaPlayerIdentifier> playerId)
 }
 

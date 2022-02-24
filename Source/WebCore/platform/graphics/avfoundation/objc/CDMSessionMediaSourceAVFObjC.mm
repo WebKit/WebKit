@@ -35,9 +35,13 @@
 
 namespace WebCore {
 
-CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC(CDMPrivateMediaSourceAVFObjC& cdm, LegacyCDMSessionClient* client)
+CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC(CDMPrivateMediaSourceAVFObjC& cdm, LegacyCDMSessionClient& client)
     : m_cdm(&cdm)
     , m_client(client)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(client.logger())
+    , m_logIdentifier(client.logIdentifier())
+#endif
 {
 }
 
@@ -111,6 +115,13 @@ String CDMSessionMediaSourceAVFObjC::storagePath() const
 
     return FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist");
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& CDMSessionMediaSourceAVFObjC::logChannel() const
+{
+    return LogEME;
+}
+#endif
 
 }
 

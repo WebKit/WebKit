@@ -36,6 +36,7 @@ struct RemoteCDMConfiguration {
     Vector<AtomString> supportedRobustnesses;
     bool supportsServerCertificates;
     bool supportsSessions;
+    uint64_t logIdentifier { 0 };
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -44,6 +45,7 @@ struct RemoteCDMConfiguration {
         encoder << supportedRobustnesses;
         encoder << supportsServerCertificates;
         encoder << supportsSessions;
+        encoder << logIdentifier;
     }
 
     template <class Decoder>
@@ -67,6 +69,11 @@ struct RemoteCDMConfiguration {
         std::optional<bool> supportsSessions;
         decoder >> supportsSessions;
         if (!supportsSessions)
+            return std::nullopt;
+
+        std::optional<uint64_t> logIdentifier;
+        decoder >> logIdentifier;
+        if (!logIdentifier)
             return std::nullopt;
 
         return {{

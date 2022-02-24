@@ -59,7 +59,7 @@ public:
 
     virtual ~CDMFactoryThunder() = default;
 
-    std::unique_ptr<CDMPrivate> createCDM(const String&) final;
+    std::unique_ptr<CDMPrivate> createCDM(const String&, const CDMPrivateClient&) final;
     RefPtr<CDMProxy> createCDMProxy(const String&) final;
     bool supportsKeySystem(const String&) final;
     const Vector<String>& supportedKeySystems() const;

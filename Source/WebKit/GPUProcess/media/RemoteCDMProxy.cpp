@@ -39,7 +39,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteCDMProxy> RemoteCDMProxy::create(WeakPtr<RemoteCDMFactoryProxy>&& factory, std::unique_ptr<WebCore::CDMPrivate>&& priv)
+std::unique_ptr<RemoteCDMProxy> RemoteCDMProxy::create(RemoteCDMFactoryProxy& factory, std::unique_ptr<WebCore::CDMPrivate>&& priv)
 {
     if (!priv)
         return nullptr;
@@ -51,13 +51,16 @@ std::unique_ptr<RemoteCDMProxy> RemoteCDMProxy::create(WeakPtr<RemoteCDMFactoryP
         priv->supportsSessions()
     });
     // Use new() to access CDMPrivate's private constructor.
-    return std::unique_ptr<RemoteCDMProxy>(new RemoteCDMProxy(WTFMove(factory), WTFMove(priv), WTFMove(configuration)));
+    return std::unique_ptr<RemoteCDMProxy>(new RemoteCDMProxy(factory, WTFMove(priv), WTFMove(configuration)));
 }
 
-RemoteCDMProxy::RemoteCDMProxy(WeakPtr<RemoteCDMFactoryProxy>&& factory, std::unique_ptr<CDMPrivate>&& priv, UniqueRef<RemoteCDMConfiguration>&& configuration)
-    : m_factory(WTFMove(factory))
+RemoteCDMProxy::RemoteCDMProxy(RemoteCDMFactoryProxy& factory, std::unique_ptr<CDMPrivate>&& priv, UniqueRef<RemoteCDMConfiguration>&& configuration)
+    : m_factory(factory)
     , m_private(WTFMove(priv))
     , m_configuration(WTFMove(configuration))
+#if !RELEASE_LOG_DISABLED
+    , m_logger(factory.logger())
+#endif
 {
 }
 
@@ -100,6 +103,17 @@ void RemoteCDMProxy::createInstance(CompletionHandler<void(RemoteCDMInstanceIden
 void RemoteCDMProxy::loadAndInitialize()
 {
     m_private->loadAndInitialize();
+}
+
+void RemoteCDMProxy::setLogIdentifier(uint64_t logIdentifier)
+{
+#if !RELEASE_LOG_DISABLED
+    m_logIdentifier = reinterpret_cast<const void*>(logIdentifier);
+    if (m_factory)
+        m_private->setLogIdentifier(m_logIdentifier);
+#else
+    UNUSED_PARAM(logIdentifier);
+#endif
 }
 
 }

@@ -40,10 +40,9 @@ namespace WebCore {
 class MockCDMSession : public LegacyCDMSession {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MockCDMSession(LegacyCDMSessionClient*);
+    MockCDMSession(LegacyCDMSessionClient&);
     virtual ~MockCDMSession() = default;
 
-    void setClient(LegacyCDMSessionClient* client) override { m_client = client; }
     const String& sessionId() const override { return m_sessionId; }
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
     void releaseKeys() override;
@@ -51,7 +50,7 @@ public:
     RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override { return nullptr; }
 
 protected:
-    LegacyCDMSessionClient* m_client;
+    WeakPtr<LegacyCDMSessionClient> m_client;
     String m_sessionId;
 };
 
@@ -73,7 +72,7 @@ bool LegacyMockCDM::supportsMIMEType(const String& mimeType)
     return equalLettersIgnoringASCIICase(mimeType, "video/mock");
 }
 
-std::unique_ptr<LegacyCDMSession> LegacyMockCDM::createSession(LegacyCDMSessionClient* client)
+std::unique_ptr<LegacyCDMSession> LegacyMockCDM::createSession(LegacyCDMSessionClient& client)
 {
     return makeUnique<MockCDMSession>(client);
 }
@@ -108,7 +107,7 @@ static String generateSessionId()
     return String::number(monotonicallyIncreasingSessionId++);
 }
 
-MockCDMSession::MockCDMSession(LegacyCDMSessionClient* client)
+MockCDMSession::MockCDMSession(LegacyCDMSessionClient& client)
     : m_client(client)
     , m_sessionId(generateSessionId())
 {

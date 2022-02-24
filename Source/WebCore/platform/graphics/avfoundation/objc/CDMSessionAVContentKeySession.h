@@ -42,7 +42,7 @@ class CDMPrivateMediaSourceAVFObjC;
 class CDMSessionAVContentKeySession : public CDMSessionMediaSourceAVFObjC {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CDMSessionAVContentKeySession(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient*);
+    CDMSessionAVContentKeySession(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
     virtual ~CDMSessionAVContentKeySession();
 
     static bool isAvailable();
@@ -66,6 +66,10 @@ protected:
     bool hasContentKeySession() const { return m_contentKeySession; }
     AVContentKeySession* contentKeySession();
 
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const { return "CDMSessionAVContentKeySession"; }
+#endif
+
     RetainPtr<AVContentKeySession> m_contentKeySession;
     RetainPtr<WebCDMSessionAVContentKeySessionDelegate> m_contentKeySessionDelegate;
     RetainPtr<AVContentKeyRequest> m_keyRequest;
@@ -76,6 +80,11 @@ protected:
     int m_cdmVersion;
     int32_t m_protectedTrackID { 1 };
     enum { Normal, KeyRelease } m_mode;
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 inline CDMSessionAVContentKeySession* toCDMSessionAVContentKeySession(LegacyCDMSession* session)

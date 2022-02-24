@@ -60,7 +60,7 @@ public:
 
     virtual ~CDMFactoryClearKey();
 
-    std::unique_ptr<CDMPrivate> createCDM(const String&) final;
+    std::unique_ptr<CDMPrivate> createCDM(const String&, const CDMPrivateClient&) final;
     bool supportsKeySystem(const String&) final;
 
 private:

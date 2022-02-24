@@ -55,6 +55,11 @@ public:
     virtual ~CDMInstanceClient() = default;
 
     virtual void unrequestedInitializationDataReceived(const String&, Ref<FragmentedSharedBuffer>&&) = 0;
+
+#if !RELEASE_LOG_DISABLED
+    virtual const Logger& logger() const = 0;
+    virtual const void* logIdentifier() const = 0;
+#endif
 };
 
 // JavaScript's handle to a CDMInstance, must be used from the
@@ -67,7 +72,7 @@ public:
     virtual void clearClient() { }
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogger(Logger&, const void*) { }
+    virtual void setLogIdentifier(const void*) { }
 #endif
 
     enum class ImplementationType {

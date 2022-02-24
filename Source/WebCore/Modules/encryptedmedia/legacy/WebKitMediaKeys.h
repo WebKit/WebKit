@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
+class Document;
 class HTMLMediaElement;
-class ScriptExecutionContext;
 class WebKitMediaKeySession;
 
 class WebKitMediaKeys final : public RefCounted<WebKitMediaKeys>, private LegacyCDMClient {
@@ -44,7 +44,7 @@ public:
     static ExceptionOr<Ref<WebKitMediaKeys>> create(const String& keySystem);
     virtual ~WebKitMediaKeys();
 
-    ExceptionOr<Ref<WebKitMediaKeySession>> createSession(ScriptExecutionContext&, const String& mimeType, Ref<Uint8Array>&& initData);
+    ExceptionOr<Ref<WebKitMediaKeySession>> createSession(Document&, const String& mimeType, Ref<Uint8Array>&& initData);
     static bool isTypeSupported(const String& keySystem, const String& mimeType);
     const String& keySystem() const { return m_keySystem; }
 

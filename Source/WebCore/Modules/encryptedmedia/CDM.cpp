@@ -73,9 +73,9 @@ CDM::CDM(Document& document, const String& keySystem)
     ASSERT(supportsKeySystem(keySystem));
     for (auto* factory : CDMFactory::registeredFactories()) {
         if (factory->supportsKeySystem(keySystem)) {
-            m_private = factory->createCDM(keySystem);
+            m_private = factory->createCDM(keySystem, *this);
 #if !RELEASE_LOG_DISABLED
-            m_private->setLogger(m_logger, m_logIdentifier);
+            m_private->setLogIdentifier(m_logIdentifier);
 #endif
             break;
         }

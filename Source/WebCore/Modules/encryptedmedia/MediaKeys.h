@@ -89,8 +89,8 @@ protected:
     void unrequestedInitializationDataReceived(const String&, Ref<FragmentedSharedBuffer>&&) final;
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const { return m_logger; }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    const Logger& logger() const final { return m_logger; }
+    const void* logIdentifier() const final { return m_logIdentifier; }
 #endif
 
     bool m_useDistinctiveIdentifier;

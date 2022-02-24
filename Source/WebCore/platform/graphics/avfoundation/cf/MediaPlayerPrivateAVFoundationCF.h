@@ -117,7 +117,7 @@ private:
     virtual void contentsNeedsDisplay();
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    std::unique_ptr<LegacyCDMSession> createSession(const String&, LegacyCDMSessionClient*) override;
+    std::unique_ptr<LegacyCDMSession> createSession(const String&, LegacyCDMSessionClient&) override;
 #endif
 
     String languageOfPrimaryAudioTrack() const override;

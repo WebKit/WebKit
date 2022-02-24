@@ -264,7 +264,7 @@ CDMFactoryClearKey& CDMFactoryClearKey::singleton()
 CDMFactoryClearKey::CDMFactoryClearKey() = default;
 CDMFactoryClearKey::~CDMFactoryClearKey() = default;
 
-std::unique_ptr<CDMPrivate> CDMFactoryClearKey::createCDM(const String& keySystem)
+std::unique_ptr<CDMPrivate> CDMFactoryClearKey::createCDM(const String& keySystem, const CDMPrivateClient&)
 {
 #ifdef NDEBUG
     UNUSED_PARAM(keySystem);

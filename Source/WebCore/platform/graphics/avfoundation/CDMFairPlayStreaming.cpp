@@ -28,6 +28,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDM.h"
 #include "CDMClearKey.h"
 #include "CDMKeySystemConfiguration.h"
 #include "CDMRestrictions.h"
@@ -237,12 +238,12 @@ CDMFactoryFairPlayStreaming& CDMFactoryFairPlayStreaming::singleton()
 CDMFactoryFairPlayStreaming::CDMFactoryFairPlayStreaming() = default;
 CDMFactoryFairPlayStreaming::~CDMFactoryFairPlayStreaming() = default;
 
-std::unique_ptr<CDMPrivate> CDMFactoryFairPlayStreaming::createCDM(const String& keySystem)
+std::unique_ptr<CDMPrivate> CDMFactoryFairPlayStreaming::createCDM(const String& keySystem, const CDMPrivateClient& client)
 {
     if (!supportsKeySystem(keySystem))
         return nullptr;
 
-    return makeUnique<CDMPrivateFairPlayStreaming>();
+    return makeUnique<CDMPrivateFairPlayStreaming>(client);
 }
 
 bool CDMFactoryFairPlayStreaming::supportsKeySystem(const String& keySystem)
@@ -252,16 +253,14 @@ bool CDMFactoryFairPlayStreaming::supportsKeySystem(const String& keySystem)
     return keySystem == "com.apple.fps" || keySystem.startsWith("com.apple.fps."_s);
 }
 
-CDMPrivateFairPlayStreaming::CDMPrivateFairPlayStreaming() = default;
-CDMPrivateFairPlayStreaming::~CDMPrivateFairPlayStreaming() = default;
-
+CDMPrivateFairPlayStreaming::CDMPrivateFairPlayStreaming(const CDMPrivateClient& client)
 #if !RELEASE_LOG_DISABLED
-void CDMPrivateFairPlayStreaming::setLogger(Logger& logger, const void* logIdentifier)
-{
-    m_logger = &logger;
-    m_logIdentifier = logIdentifier;
-}
+    : m_logger(client.logger())
 #endif
+{
+}
+
+CDMPrivateFairPlayStreaming::~CDMPrivateFairPlayStreaming() = default;
 
 Vector<AtomString> CDMPrivateFairPlayStreaming::supportedInitDataTypes() const
 {
@@ -271,26 +270,26 @@ Vector<AtomString> CDMPrivateFairPlayStreaming::supportedInitDataTypes() const
 bool CDMPrivateFairPlayStreaming::supportsConfiguration(const CDMKeySystemConfiguration& configuration) const
 {
     if (!WTF::anyOf(configuration.initDataTypes, [] (auto& initDataType) { return validInitDataTypes().contains(initDataType); })) {
-        DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, " false, no initDataType supported");
+        INFO_LOG(LOGIDENTIFIER, " false, no initDataType supported");
         return false;
     }
 
 #if HAVE(AVCONTENTKEYSESSION)
     // FIXME: verify that FairPlayStreaming does not (and cannot) expose a distinctive identifier to the client
     if (configuration.distinctiveIdentifier == CDMRequirement::Required) {
-        DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "false, requried distinctiveIdentifier not supported");
+        INFO_LOG(LOGIDENTIFIER, "false, requried distinctiveIdentifier not supported");
         return false;
     }
 
     if (configuration.persistentState == CDMRequirement::Required && !CDMInstanceFairPlayStreamingAVFObjC::supportsPersistableState()) {
-        DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "false, required persistentState not supported");
+        INFO_LOG(LOGIDENTIFIER, "false, required persistentState not supported");
         return false;
     }
 
     if (configuration.sessionTypes.contains(CDMSessionType::PersistentLicense)
         && !configuration.sessionTypes.contains(CDMSessionType::Temporary)
         && !CDMInstanceFairPlayStreamingAVFObjC::supportsPersistentKeys()) {
-        DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "false, sessionType PersistentLicense not supported");
+        INFO_LOG(LOGIDENTIFIER, "false, sessionType PersistentLicense not supported");
         return false;
     }
 
@@ -298,7 +297,7 @@ bool CDMPrivateFairPlayStreaming::supportsConfiguration(const CDMKeySystemConfig
         && !WTF::anyOf(configuration.audioCapabilities, [](auto& capability) {
             return CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability(capability);
         })) {
-        DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "false, no audio configuration supported");
+        INFO_LOG(LOGIDENTIFIER, "false, no audio configuration supported");
         return false;
     }
 
@@ -306,11 +305,11 @@ bool CDMPrivateFairPlayStreaming::supportsConfiguration(const CDMKeySystemConfig
         && !WTF::anyOf(configuration.videoCapabilities, [](auto& capability) {
             return CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability(capability);
         })) {
-            DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "false, no video configuration supported");
+            INFO_LOG(LOGIDENTIFIER, "false, no video configuration supported");
         return false;
     }
 
-    DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "true, supported");
+    INFO_LOG(LOGIDENTIFIER, "true, supported");
     return true;
 #else
     return false;
@@ -371,7 +370,11 @@ bool CDMPrivateFairPlayStreaming::distinctiveIdentifiersAreUniquePerOriginAndCle
 RefPtr<CDMInstance> CDMPrivateFairPlayStreaming::createInstance()
 {
 #if HAVE(AVCONTENTKEYSESSION)
-    return adoptRef(new CDMInstanceFairPlayStreamingAVFObjC());
+    auto instance = adoptRef(new CDMInstanceFairPlayStreamingAVFObjC(*this));
+#if !RELEASE_LOG_DISABLED
+    instance->setLogIdentifier(m_logIdentifier);
+#endif
+    return instance;
 #else
     return nullptr;
 #endif

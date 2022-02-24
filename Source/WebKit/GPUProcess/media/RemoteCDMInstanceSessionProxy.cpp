@@ -38,15 +38,15 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteCDMInstanceSessionProxy> RemoteCDMInstanceSessionProxy::create(WeakPtr<RemoteCDMProxy>&& proxy, Ref<WebCore::CDMInstanceSession>&& session, RemoteCDMInstanceSessionIdentifier identifier)
+std::unique_ptr<RemoteCDMInstanceSessionProxy> RemoteCDMInstanceSessionProxy::create(WeakPtr<RemoteCDMProxy>&& proxy, Ref<WebCore::CDMInstanceSession>&& session, uint64_t logIdentifier, RemoteCDMInstanceSessionIdentifier identifier)
 {
-    auto sessionProxy = std::unique_ptr<RemoteCDMInstanceSessionProxy>(new RemoteCDMInstanceSessionProxy(WTFMove(proxy), WTFMove(session), identifier));
+    auto sessionProxy = std::unique_ptr<RemoteCDMInstanceSessionProxy>(new RemoteCDMInstanceSessionProxy(WTFMove(proxy), WTFMove(session), logIdentifier, identifier));
     WeakPtr<WebCore::CDMInstanceSessionClient> client = sessionProxy.get();
     sessionProxy->m_session->setClient(WTFMove(client));
     return sessionProxy;
 }
 
-RemoteCDMInstanceSessionProxy::RemoteCDMInstanceSessionProxy(WeakPtr<RemoteCDMProxy>&& cdm, Ref<WebCore::CDMInstanceSession>&& session, RemoteCDMInstanceSessionIdentifier identifier)
+RemoteCDMInstanceSessionProxy::RemoteCDMInstanceSessionProxy(WeakPtr<RemoteCDMProxy>&& cdm, Ref<WebCore::CDMInstanceSession>&& session, uint64_t logIdentifier, RemoteCDMInstanceSessionIdentifier identifier)
     : m_cdm(WTFMove(cdm))
     , m_session(WTFMove(session))
     , m_identifier(identifier)
@@ -55,6 +55,11 @@ RemoteCDMInstanceSessionProxy::RemoteCDMInstanceSessionProxy(WeakPtr<RemoteCDMPr
 
 RemoteCDMInstanceSessionProxy::~RemoteCDMInstanceSessionProxy()
 {
+}
+
+void RemoteCDMInstanceSessionProxy::setLogIdentifier(uint64_t logIdentifier)
+{
+    m_session->setLogIdentifier(reinterpret_cast<const void*>(logIdentifier));
 }
 
 void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, AtomString initDataType, IPC::SharedBufferCopy&& initData, LicenseCallback&& completion)

@@ -65,14 +65,15 @@ static IPC::SharedBufferCopy convertToSharedBufferCopy(T array)
     return IPC::SharedBufferCopy(SharedBuffer::create(array->data(), array->byteLength()));
 }
 
-std::unique_ptr<RemoteLegacyCDMSession> RemoteLegacyCDMSession::create(WeakPtr<RemoteLegacyCDMFactory> factory, RemoteLegacyCDMSessionIdentifier&& identifier)
+std::unique_ptr<RemoteLegacyCDMSession> RemoteLegacyCDMSession::create(WeakPtr<RemoteLegacyCDMFactory> factory, RemoteLegacyCDMSessionIdentifier&& identifier, LegacyCDMSessionClient& client)
 {
-    return std::unique_ptr<RemoteLegacyCDMSession>(new RemoteLegacyCDMSession(WTFMove(factory), WTFMove(identifier)));
+    return std::unique_ptr<RemoteLegacyCDMSession>(new RemoteLegacyCDMSession(WTFMove(factory), WTFMove(identifier), client));
 }
 
-RemoteLegacyCDMSession::RemoteLegacyCDMSession(WeakPtr<RemoteLegacyCDMFactory> factory, RemoteLegacyCDMSessionIdentifier&& identifier)
+RemoteLegacyCDMSession::RemoteLegacyCDMSession(WeakPtr<RemoteLegacyCDMFactory> factory, RemoteLegacyCDMSessionIdentifier&& identifier, LegacyCDMSessionClient& client)
     : m_factory(WTFMove(factory))
     , m_identifier(WTFMove(identifier))
+    , m_client(client)
 {
 }
 

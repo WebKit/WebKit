@@ -43,6 +43,10 @@ public:
 private:
     RemoteCDM(WeakPtr<RemoteCDMFactory>&&, RemoteCDMIdentifier&&, RemoteCDMConfiguration&&);
 
+#if !RELEASE_LOG_DISABLED
+    void setLogIdentifier(const void*) final;
+#endif
+
     void getSupportedConfiguration(WebCore::CDMKeySystemConfiguration&& candidateConfiguration, LocalStorageAccess, SupportedConfigurationCallback&&) final;
 
     bool supportsConfiguration(const WebCore::CDMKeySystemConfiguration&) const final;

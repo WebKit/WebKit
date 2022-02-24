@@ -44,12 +44,12 @@ namespace WebKit {
 
 class RemoteCDMInstanceSessionProxy final : private IPC::MessageReceiver, private WebCore::CDMInstanceSessionClient {
 public:
-    static std::unique_ptr<RemoteCDMInstanceSessionProxy> create(WeakPtr<RemoteCDMProxy>&&, Ref<WebCore::CDMInstanceSession>&&, RemoteCDMInstanceSessionIdentifier);
+    static std::unique_ptr<RemoteCDMInstanceSessionProxy> create(WeakPtr<RemoteCDMProxy>&&, Ref<WebCore::CDMInstanceSession>&&, uint64_t logIdentifier, RemoteCDMInstanceSessionIdentifier);
     virtual ~RemoteCDMInstanceSessionProxy();
 
 private:
     friend class RemoteCDMFactoryProxy;
-    RemoteCDMInstanceSessionProxy(WeakPtr<RemoteCDMProxy>&&, Ref<WebCore::CDMInstanceSession>&&, RemoteCDMInstanceSessionIdentifier);
+    RemoteCDMInstanceSessionProxy(WeakPtr<RemoteCDMProxy>&&, Ref<WebCore::CDMInstanceSession>&&, uint64_t logIdentifier, RemoteCDMInstanceSessionIdentifier);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -67,6 +67,7 @@ private:
     using StoreRecordCallback = CompletionHandler<void()>;
 
     // Messages
+    void setLogIdentifier(uint64_t);
     void requestLicense(LicenseType, AtomString initDataType, IPC::SharedBufferCopy&& initData, LicenseCallback&&);
     void updateLicense(String sessionId, LicenseType, IPC::SharedBufferCopy&& response, LicenseUpdateCallback&&);
     void loadSession(LicenseType, String sessionId, String origin, LoadSessionCallback&&);

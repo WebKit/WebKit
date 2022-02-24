@@ -1,3 +1,172 @@
+2022-02-24  Jer Noble  <jer.noble@apple.com>
+
+        [Refactor] Adopt LoggerHelper in Logging EME classes
+        https://bugs.webkit.org/show_bug.cgi?id=234319
+
+        Reviewed by Eric Carlson.
+
+        In order to pass down a logger() and logIdentifier() to the platform/
+        classes, modify LegacyCDMSessionClient to be a CanMakeWeakPtr class,
+        so it can be passed around by reference and automatically invalidated
+        when the client is destroyed. Then modify LegacyCDMSessionClient to
+        provide a logger() and logIdentifier() to callers.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::CDM):
+        * Modules/encryptedmedia/CDM.h:
+        (WebCore::CDM::logIdentifier const):
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::generateRequest):
+        (WebCore::MediaKeySession::load):
+        (WebCore::MediaKeySession::update):
+        (WebCore::MediaKeySession::close):
+        (WebCore::MediaKeySession::remove):
+        (WebCore::MediaKeySession::updateKeyStatuses):
+        (WebCore::MediaKeySession::sessionClosed):
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::MediaKeys):
+        (WebCore::MediaKeys::createSession):
+        (WebCore::MediaKeys::setServerCertificate):
+        * Modules/encryptedmedia/MediaKeys.h:
+        * Modules/encryptedmedia/legacy/LegacyCDM.cpp:
+        (WebCore::LegacyCDM::createSession):
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivate.h:
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateClearKey.cpp:
+        (WebCore::LegacyCDMPrivateClearKey::createSession):
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateClearKey.h:
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateMediaPlayer.cpp:
+        (WebCore::CDMPrivateMediaPlayer::createSession):
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateMediaPlayer.h:
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::CDMSessionClearKey):
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.h:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::create):
+        (WebCore::WebKitMediaKeySession::WebKitMediaKeySession):
+        (WebCore::WebKitMediaKeySession::~WebKitMediaKeySession):
+        (WebCore::WebKitMediaKeySession::close):
+        (WebCore::WebKitMediaKeySession::generateKeyRequest):
+        (WebCore::WebKitMediaKeySession::update):
+        (WebCore::WebKitMediaKeySession::sendMessage):
+        (WebCore::WebKitMediaKeySession::sendError):
+        (WebCore::WebKitMediaKeySession::logChannel const):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.cpp:
+        (WebCore::WebKitMediaKeys::createSession):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.h:
+        * platform/encryptedmedia/CDMFactory.h:
+        * platform/encryptedmedia/CDMInstance.h:
+        (WebCore::CDMInstance::setLogIdentifier):
+        (WebCore::CDMInstance::setLogger): Deleted.
+        * platform/encryptedmedia/CDMInstanceSession.h:
+        (WebCore::CDMInstanceSession::setLogIdentifier):
+        (WebCore::CDMInstanceSession::setLogger): Deleted.
+        * platform/encryptedmedia/CDMPrivate.h:
+        (WebCore::CDMPrivate::setLogIdentifier):
+        (WebCore::CDMPrivate::setLogger): Deleted.
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMFactoryClearKey::createCDM):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/graphics/LegacyCDMSession.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::createSession):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::createSession):
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::CDMFactoryFairPlayStreaming::createCDM):
+        (WebCore::CDMPrivateFairPlayStreaming::CDMPrivateFairPlayStreaming):
+        (WebCore::CDMPrivateFairPlayStreaming::supportsConfiguration const):
+        (WebCore::CDMPrivateFairPlayStreaming::createInstance):
+        (WebCore::CDMPrivateFairPlayStreaming::setLogger): Deleted.
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.h:
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::createSession):
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+        (WebCore::CDMSessionAVFoundationCF::CDMSessionAVFoundationCF):
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.h:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createSession):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::CDMInstanceFairPlayStreamingAVFObjC):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::setServerCertificate):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::didProvideRequest):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::didProvideRenewingRequest):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::didProvidePersistableRequest):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::didFailToProvideRequest):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::requestDidSucceed):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::shouldRetryRequestForReason):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::groupSessionIdentifierChanged):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::externalProtectionStatusDidChangeForContentKeyRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::CDMInstanceSessionFairPlayStreamingAVFObjC):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestDidSucceed):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::protectionStatusForDisplayID const):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::setLogger): Deleted.
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::setLogger): Deleted.
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.h:
+        (WebCore::CDMSessionAVContentKeySession::logClassName const):
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::CDMSessionAVContentKeySession):
+        (WebCore::CDMSessionAVContentKeySession::generateKeyRequest):
+        (WebCore::CDMSessionAVContentKeySession::releaseKeys):
+        (WebCore::CDMSessionAVContentKeySession::update):
+        (WebCore::CDMSessionAVContentKeySession::addParser):
+        (WebCore::CDMSessionAVContentKeySession::removeParser):
+        (WebCore::CDMSessionAVContentKeySession::generateKeyReleaseMessage):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        (WebCore::CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC):
+        (WebCore::CDMSessionAVFoundationObjC::~CDMSessionAVFoundationObjC):
+        (WebCore::CDMSessionAVFoundationObjC::generateKeyRequest):
+        (WebCore::CDMSessionAVFoundationObjC::update):
+        (WebCore::CDMSessionAVFoundationObjC::playerDidReceiveError):
+        (WebCore::CDMSessionAVFoundationObjC::logChannel const):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.h:
+        (WebCore::CDMSessionAVStreamSession::logClassName const):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::CDMSessionAVStreamSession):
+        (WebCore::CDMSessionAVStreamSession::~CDMSessionAVStreamSession):
+        (WebCore::CDMSessionAVStreamSession::generateKeyRequest):
+        (WebCore::CDMSessionAVStreamSession::releaseKeys):
+        (WebCore::CDMSessionAVStreamSession::update):
+        (WebCore::CDMSessionAVStreamSession::addParser):
+        (WebCore::CDMSessionAVStreamSession::removeParser):
+        (WebCore::CDMSessionAVStreamSession::generateKeyReleaseMessage):
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+        (WebCore::CDMSessionMediaSourceAVFObjC::logger const):
+        (WebCore::CDMSessionMediaSourceAVFObjC::logIdentifier const):
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC):
+        (WebCore::CDMSessionMediaSourceAVFObjC::logChannel const):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createSession):
+        * platform/graphics/gstreamer/eme/CDMThunder.cpp:
+        (WebCore::CDMFactoryThunder::createCDM):
+        * platform/graphics/gstreamer/eme/CDMThunder.h:
+        * testing/LegacyMockCDM.cpp:
+        (WebCore::LegacyMockCDM::createSession):
+        (WebCore::MockCDMSession::MockCDMSession):
+        * testing/LegacyMockCDM.h:
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMFactory::createCDM):
+        * testing/MockCDMFactory.h:
+
 2022-02-24  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Support 'revert' in @keyframes

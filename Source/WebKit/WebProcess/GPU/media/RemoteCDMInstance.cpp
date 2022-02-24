@@ -101,8 +101,14 @@ RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
     if (!m_factory)
         return nullptr;
 
+    uint64_t logIdentifier { 0 };
+#if !RELEASE_LOG_DISABLED
+    if (m_client)
+        logIdentifier = reinterpret_cast<uint64_t>(m_client->logIdentifier());
+#endif
+
     RemoteCDMInstanceSessionIdentifier identifier;
-    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(), Messages::RemoteCDMInstanceProxy::CreateSession::Reply(identifier), m_identifier);
+    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(logIdentifier), Messages::RemoteCDMInstanceProxy::CreateSession::Reply(identifier), m_identifier);
     if (!identifier)
         return nullptr;
     auto session = RemoteCDMInstanceSession::create(m_factory.get(), WTFMove(identifier));

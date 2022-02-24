@@ -47,7 +47,7 @@ public:
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
     bool supportsMIMEType(const String& mimeType) override;
-    std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient*) override;
+    std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) override;
 
 protected:
     LegacyCDM* m_cdm;

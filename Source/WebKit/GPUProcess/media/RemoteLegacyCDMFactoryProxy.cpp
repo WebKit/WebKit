@@ -170,6 +170,18 @@ bool RemoteLegacyCDMFactoryProxy::allowsExitUnderMemoryPressure() const
     return m_sessions.isEmpty();
 }
 
+#if !RELEASE_LOG_DISABLED
+const Logger& RemoteLegacyCDMFactoryProxy::logger() const
+{
+    if (!m_logger) {
+        m_logger = Logger::create(this);
+        m_logger->setEnabled(this, m_gpuConnectionToWebProcess ? m_gpuConnectionToWebProcess->sessionID().isAlwaysOnLoggingAllowed() : false);
+    }
+
+    return *m_logger;
+}
+#endif
+
 }
 
 #endif

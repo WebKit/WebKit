@@ -53,7 +53,7 @@ class RemoteLegacyCDMSessionProxy
     : public IPC::MessageReceiver
     , public WebCore::LegacyCDMSessionClient {
 public:
-    static std::unique_ptr<RemoteLegacyCDMSessionProxy> create(WeakPtr<RemoteLegacyCDMFactoryProxy>&&, RemoteLegacyCDMSessionIdentifier, WebCore::LegacyCDM&);
+    static std::unique_ptr<RemoteLegacyCDMSessionProxy> create(RemoteLegacyCDMFactoryProxy&, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier, WebCore::LegacyCDM&);
     ~RemoteLegacyCDMSessionProxy();
 
     RemoteLegacyCDMFactoryProxy* factory() const { return m_factory.get(); }
@@ -65,7 +65,7 @@ public:
 
 private:
     friend class RemoteLegacyCDMFactoryProxy;
-    RemoteLegacyCDMSessionProxy(WeakPtr<RemoteLegacyCDMFactoryProxy>&&, RemoteLegacyCDMSessionIdentifier, WebCore::LegacyCDM&);
+    RemoteLegacyCDMSessionProxy(RemoteLegacyCDMFactoryProxy&, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier, WebCore::LegacyCDM&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -75,6 +75,10 @@ private:
     void sendMessage(Uint8Array*, String destinationURL) final;
     void sendError(MediaKeyErrorCode, uint32_t systemCode) final;
     String mediaKeysStorageDirectory() const final;
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger; }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+#endif
 
     // Messages
     using GenerateKeyCallback = CompletionHandler<void(std::optional<IPC::SharedBufferCopy>&&, const String&, unsigned short, uint32_t)>;
@@ -86,6 +90,12 @@ private:
     void cachedKeyForKeyID(String keyId, CachedKeyForKeyIDCallback&&);
 
     WeakPtr<RemoteLegacyCDMFactoryProxy> m_factory;
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
+
     RemoteLegacyCDMSessionIdentifier m_identifier;
     std::unique_ptr<WebCore::LegacyCDMSession> m_session;
     WeakPtr<RemoteMediaPlayerProxy> m_player;

@@ -72,7 +72,7 @@ public:
     void removeSession(RemoteCDMInstanceSessionIdentifier);
 
 private:
-    std::unique_ptr<WebCore::CDMPrivate> createCDM(const String&) final;
+    std::unique_ptr<WebCore::CDMPrivate> createCDM(const String&, const WebCore::CDMPrivateClient&) final;
     bool supportsKeySystem(const String&) final;
 
     HashMap<RemoteCDMInstanceSessionIdentifier, Ref<RemoteCDMInstanceSession>> m_sessions;

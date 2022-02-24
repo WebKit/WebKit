@@ -45,7 +45,7 @@ public:
     virtual ~CDMPrivateMediaPlayer() = default;
 
     bool supportsMIMEType(const String& mimeType) override;
-    std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient*) override;
+    std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) override;
 
     LegacyCDM* cdm() const { return m_cdm; }
 

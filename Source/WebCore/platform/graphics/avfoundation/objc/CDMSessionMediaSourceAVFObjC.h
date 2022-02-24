@@ -43,14 +43,13 @@ class CDMPrivateMediaSourceAVFObjC;
 class CDMSessionMediaSourceAVFObjC : public LegacyCDMSession, public SourceBufferPrivateAVFObjCErrorClient, public CanMakeWeakPtr<CDMSessionMediaSourceAVFObjC> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CDMSessionMediaSourceAVFObjC(CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient*);
+    CDMSessionMediaSourceAVFObjC(CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
     virtual ~CDMSessionMediaSourceAVFObjC();
 
     virtual void addParser(AVStreamDataParser*) = 0;
     virtual void removeParser(AVStreamDataParser*) = 0;
 
     // LegacyCDMSession
-    void setClient(LegacyCDMSessionClient* client) override { m_client = client; }
     const String& sessionId() const override { return m_sessionId; }
 
     // SourceBufferPrivateAVFObjCErrorClient
@@ -68,12 +67,23 @@ public:
 protected:
     String storagePath() const;
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const { return m_logger; }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const;
+#endif
+
     CDMPrivateMediaSourceAVFObjC* m_cdm;
-    LegacyCDMSessionClient* m_client { nullptr };
+    WeakPtr<LegacyCDMSessionClient> m_client;
     Vector<RefPtr<SourceBufferPrivateAVFObjC>> m_sourceBuffers;
     RefPtr<Uint8Array> m_certificate;
     String m_sessionId;
     bool m_stopped { false };
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 inline CDMSessionMediaSourceAVFObjC* toCDMSessionMediaSourceAVFObjC(LegacyCDMSession* session)

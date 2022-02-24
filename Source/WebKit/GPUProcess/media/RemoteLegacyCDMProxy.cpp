@@ -61,17 +61,17 @@ void RemoteLegacyCDMProxy::supportsMIMEType(const String& mimeType, SupportsMIME
     callback(m_cdm->supportsMIMEType(mimeType));
 }
 
-void RemoteLegacyCDMProxy::createSession(const String& keySystem, CreateSessionCallback&& callback)
+void RemoteLegacyCDMProxy::createSession(const String& keySystem, uint64_t logIdentifier, CreateSessionCallback&& callback)
 {
     if (!m_cdm || !m_factory) {
         callback({ });
         return;
     }
 
-    auto identifier = RemoteLegacyCDMSessionIdentifier::generate();
-    auto session = RemoteLegacyCDMSessionProxy::create(m_factory.get(), identifier, *m_cdm);
-    m_factory->addSession(identifier, WTFMove(session));
-    callback(WTFMove(identifier));
+    auto sessionIdentifier = RemoteLegacyCDMSessionIdentifier::generate();
+    auto session = RemoteLegacyCDMSessionProxy::create(*m_factory, logIdentifier, sessionIdentifier, *m_cdm);
+    m_factory->addSession(sessionIdentifier, WTFMove(session));
+    callback(WTFMove(sessionIdentifier));
 }
 
 void RemoteLegacyCDMProxy::setPlayerId(std::optional<MediaPlayerIdentifier>&& playerId)

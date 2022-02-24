@@ -45,12 +45,21 @@ struct CDMKeySystemConfiguration;
 struct CDMMediaCapability;
 struct CDMRestrictions;
 
+class CDMPrivateClient {
+public:
+    virtual ~CDMPrivateClient() = default;
+
+#if !RELEASE_LOG_DISABLED
+    virtual const Logger& logger() const = 0;
+#endif
+};
+
 class CDMPrivate : public CanMakeWeakPtr<CDMPrivate> {
 public:
     WEBCORE_EXPORT virtual ~CDMPrivate();
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogger(Logger&, const void*) { };
+    virtual void setLogIdentifier(const void*) { };
 #endif
 
     enum class LocalStorageAccess : bool {

@@ -41,7 +41,7 @@ public:
 
     virtual ~CDMFactoryFairPlayStreaming();
 
-    std::unique_ptr<CDMPrivate> createCDM(const String&) override;
+    std::unique_ptr<CDMPrivate> createCDM(const String&, const CDMPrivateClient&) override;
     bool supportsKeySystem(const String&) override;
 
 private:
@@ -52,11 +52,14 @@ private:
 class CDMPrivateFairPlayStreaming final : public CDMPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CDMPrivateFairPlayStreaming();
+    CDMPrivateFairPlayStreaming(const CDMPrivateClient&);
     virtual ~CDMPrivateFairPlayStreaming();
 
 #if !RELEASE_LOG_DISABLED
-    void setLogger(Logger&, const void* logIdentifier) final;
+    void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
+    const Logger& logger() const { return m_logger; };
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "CDMPrivateFairPlayStreaming"; }
 #endif
 
     Vector<AtomString> supportedInitDataTypes() const override;
@@ -87,12 +90,8 @@ public:
 
 private:
 #if !RELEASE_LOG_DISABLED
-    Logger* loggerPtr() const { return m_logger.get(); };
-    const void* logIdentifier() const { return m_logIdentifier; }
-    const char* logClassName() const { return "CDMPrivateFairPlayStreaming"; }
-
-    RefPtr<Logger> m_logger;
-    const void* m_logIdentifier;
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier { nullptr };
 #endif
 };
 

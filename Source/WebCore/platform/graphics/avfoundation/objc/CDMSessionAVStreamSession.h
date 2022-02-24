@@ -42,7 +42,7 @@ class CDMPrivateMediaSourceAVFObjC;
 class CDMSessionAVStreamSession : public CDMSessionMediaSourceAVFObjC {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CDMSessionAVStreamSession(Vector<int>&& protocolVersions, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient*);
+    CDMSessionAVStreamSession(Vector<int>&& protocolVersions, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
     virtual ~CDMSessionAVStreamSession();
 
     // LegacyCDMSession
@@ -60,6 +60,10 @@ public:
 
 protected:
     RefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, uint32_t& systemCode);
+
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const { return "CDMSessionAVStreamSession"; }
+#endif
 
     RetainPtr<AVStreamSession> m_streamSession;
     RefPtr<Uint8Array> m_initData;

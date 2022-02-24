@@ -43,7 +43,7 @@ class WebKitMediaKeys;
 class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, private LegacyCDMSessionClient {
     WTF_MAKE_ISO_ALLOCATED(WebKitMediaKeySession);
 public:
-    static Ref<WebKitMediaKeySession> create(ScriptExecutionContext&, WebKitMediaKeys&, const String& keySystem);
+    static Ref<WebKitMediaKeySession> create(Document&, WebKitMediaKeys&, const String& keySystem);
     ~WebKitMediaKeySession();
 
     WebKitMediaKeyError* error() { return m_error.get(); }
@@ -63,7 +63,7 @@ public:
     using RefCounted::deref;
 
 private:
-    WebKitMediaKeySession(ScriptExecutionContext&, WebKitMediaKeys&, const String& keySystem);
+    WebKitMediaKeySession(Document&, WebKitMediaKeys&, const String& keySystem);
     void keyRequestTimerFired();
     void addKeyTimerFired();
 
@@ -81,6 +81,16 @@ private:
 
     EventTargetInterface eventTargetInterface() const final { return WebKitMediaKeySessionEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger; }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const { return "WebKitMediaKeySession"; }
+    WTFLogChannel& logChannel() const;
+
+    Ref<Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 
     WebKitMediaKeys* m_keys;
     String m_keySystem;

@@ -1,3 +1,70 @@
+2022-02-24  Jer Noble  <jer.noble@apple.com>
+
+        [Refactor] Adopt LoggerHelper in Legacy EME classes
+        https://bugs.webkit.org/show_bug.cgi?id=234319
+
+        Reviewed by Eric Carlson.
+
+        * GPUProcess/media/RemoteCDMFactoryProxy.cpp:
+        (WebKit::RemoteCDMFactoryProxy::createCDM):
+        (WebKit::RemoteCDMFactoryProxy::logger const):
+        * GPUProcess/media/RemoteCDMFactoryProxy.h:
+        * GPUProcess/media/RemoteCDMInstanceProxy.cpp:
+        (WebKit::RemoteCDMInstanceProxy::create):
+        (WebKit::RemoteCDMInstanceProxy::RemoteCDMInstanceProxy):
+        (WebKit::RemoteCDMInstanceProxy::createSession):
+        * GPUProcess/media/RemoteCDMInstanceProxy.h:
+        * GPUProcess/media/RemoteCDMInstanceProxy.messages.in:
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp:
+        (WebKit::RemoteCDMInstanceSessionProxy::create):
+        (WebKit::RemoteCDMInstanceSessionProxy::RemoteCDMInstanceSessionProxy):
+        (WebKit::RemoteCDMInstanceSessionProxy::setLogIdentifier):
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.h:
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.messages.in:
+        * GPUProcess/media/RemoteCDMProxy.cpp:
+        (WebKit::RemoteCDMProxy::create):
+        (WebKit::RemoteCDMProxy::RemoteCDMProxy):
+        (WebKit::RemoteCDMProxy::setLogIdentifier):
+        * GPUProcess/media/RemoteCDMProxy.h:
+        (WebKit::RemoteCDMProxy::logger const):
+        (WebKit::RemoteCDMProxy::logIdentifier const):
+        * GPUProcess/media/RemoteCDMProxy.messages.in:
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp:
+        (WebKit::RemoteLegacyCDMFactoryProxy::logger const):
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMProxy.cpp:
+        (WebKit::RemoteLegacyCDMProxy::createSession):
+        * GPUProcess/media/RemoteLegacyCDMProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMProxy.messages.in:
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.cpp:
+        (WebKit::RemoteLegacyCDMSessionProxy::create):
+        (WebKit::RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy):
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::createSession):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteCDM.cpp:
+        (WebKit::RemoteCDM::setLogIdentifier):
+        * WebProcess/GPU/media/RemoteCDM.h:
+        * WebProcess/GPU/media/RemoteCDMConfiguration.h:
+        (WebKit::RemoteCDMConfiguration::encode const):
+        (WebKit::RemoteCDMConfiguration::decode):
+        * WebProcess/GPU/media/RemoteCDMFactory.cpp:
+        (WebKit::RemoteCDMFactory::createCDM):
+        * WebProcess/GPU/media/RemoteCDMFactory.h:
+        * WebProcess/GPU/media/RemoteCDMInstance.cpp:
+        (WebKit::RemoteCDMInstance::createSession):
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.cpp:
+        (WebKit::RemoteCDMInstanceSession::setLogIdentifier):
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.h:
+        * WebProcess/GPU/media/RemoteLegacyCDM.cpp:
+        (WebKit::RemoteLegacyCDM::createSession):
+        * WebProcess/GPU/media/RemoteLegacyCDM.h:
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.cpp:
+        (WebKit::RemoteLegacyCDMSession::create):
+        (WebKit::RemoteLegacyCDMSession::RemoteLegacyCDMSession):
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.h:
+
 2022-02-24  Sihui Liu  <sihui_liu@apple.com>
 
         Delete SessionStorageQuotaManager

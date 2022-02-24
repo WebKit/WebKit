@@ -27,6 +27,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDMPrivate.h"
 #include "ContextDestructionObserver.h"
 #include "MediaKeySessionType.h"
 #include "MediaKeySystemConfiguration.h"
@@ -54,7 +55,7 @@ class Document;
 class ScriptExecutionContext;
 class FragmentedSharedBuffer;
 
-class CDM : public RefCounted<CDM>, public CanMakeWeakPtr<CDM>, private ContextDestructionObserver {
+class CDM : public RefCounted<CDM>, public CanMakeWeakPtr<CDM>, public CDMPrivateClient, private ContextDestructionObserver {
 public:
     static bool supportsKeySystem(const String&);
     static bool isPersistentType(MediaKeySessionType);
@@ -82,11 +83,16 @@ public:
 
     String storageDirectory() const;
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger; }
+    const void* logIdentifier() const { return m_logIdentifier; }
+#endif
+
 private:
     CDM(Document&, const String& keySystem);
 
 #if !RELEASE_LOG_DISABLED
-    Ref<Logger> m_logger;
+    Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
     String m_keySystem;
