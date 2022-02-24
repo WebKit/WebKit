@@ -1,5 +1,14 @@
 2022-02-24  Robert Jenner  <Jenner@apple.com>
 
+        REGRESSION(r290356-r290351?):[ iOS EWS ] imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-no-freshness-headers.https.html  is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=237161
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2022-02-24  Robert Jenner  <Jenner@apple.com>
+
         [ iOS EWS ]imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-049.htmlis a flaky crash
         https://bugs.webkit.org/show_bug.cgi?id=237159
 
