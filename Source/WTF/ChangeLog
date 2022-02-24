@@ -1,3 +1,21 @@
+2022-02-24  Chris Dumez  <cdumez@apple.com>
+
+        Small optimizations to TinyLRUCache
+        https://bugs.webkit.org/show_bug.cgi?id=237117
+
+        Reviewed by Darin Adler.
+
+        Small optimizations to TinyLRUCache:
+        - When trying to find an entry in the cache, start from the end of the vector
+          since this is where the most recent entries are.
+        - Use reverseFind() instead of a for loop to simplify the code a bit
+        - Use Vector::uncheckedAppend() instead of Vector::append() to bypass capacity
+          checks given that the vector has an inline capacity that is the size of the
+          cache (vector capacity never grows or shrinks).
+
+        * wtf/TinyLRUCache.h:
+        (WTF::TinyLRUCache::get):
+
 2022-02-23  Chris Dumez  <cdumez@apple.com>
 
         Adopt more widely the new URL constructor that takes in a String

@@ -49,17 +49,14 @@ public:
             return valueForNull;
         }
 
-        for (size_t i = 0; i < m_cache.size(); ++i) {
-            if (m_cache[i].first != key)
-                continue;
-
-            if (i == m_cache.size() - 1)
-                return m_cache[i].second;
-
-            // If the entry is not the last one, move it to the end of the cache.
-            Entry entry = WTFMove(m_cache[i]);
-            m_cache.remove(i);
-            m_cache.append(WTFMove(entry));
+        auto index = m_cache.reverseFindIf([&key](auto& entry) { return entry.first == key; });
+        if (index != notFound) {
+            // Move entry to the end of the cache if necessary.
+            if (index != m_cache.size() - 1) {
+                auto entry = WTFMove(m_cache[index]);
+                m_cache.remove(index);
+                m_cache.uncheckedAppend(WTFMove(entry));
+            }
             return m_cache[m_cache.size() - 1].second;
         }
 
@@ -67,17 +64,17 @@ public:
         if (m_cache.size() == capacity)
             m_cache.remove(0);
 
-        m_cache.append(std::make_pair(Policy::createKeyForStorage(key), Policy::createValueForKey(key)));
+        m_cache.uncheckedAppend(std::pair { Policy::createKeyForStorage(key), Policy::createValueForKey(key) });
         return m_cache.last().second;
     }
 
 private:
-    typedef std::pair<KeyType, ValueType> Entry;
-    typedef Vector<Entry, capacity> Cache;
+    using Entry = std::pair<KeyType, ValueType>;
+    using Cache = Vector<Entry, capacity>;
     Cache m_cache;
 };
 
-}
+} // namespace WTF
 
 using WTF::TinyLRUCache;
 using WTF::TinyLRUCachePolicy;
