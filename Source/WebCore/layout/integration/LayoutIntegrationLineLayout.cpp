@@ -177,14 +177,16 @@ static inline Layout::BoxGeometry::HorizontalMargin horizontalLogicalMargin(cons
 
 static inline Layout::BoxGeometry::VerticalMargin verticalLogicalMargin(const RenderBoxModelObject& renderer, WritingMode writingMode)
 {
-    if (writingMode == WritingMode::TopToBottom)
+    switch (writingMode) {
+    case WritingMode::TopToBottom:
         return { renderer.marginTop(), renderer.marginBottom() };
-    if (writingMode == WritingMode::LeftToRight)
+    case WritingMode::LeftToRight:
+    case WritingMode::RightToLeft:
         return { renderer.marginRight(), renderer.marginLeft() };
-    if (writingMode == WritingMode::RightToLeft)
-        return { renderer.marginLeft(), renderer.marginRight() };
-    ASSERT_NOT_REACHED();
-    return  { };
+    default:
+        ASSERT_NOT_REACHED();
+        return { renderer.marginTop(), renderer.marginBottom() };
+    }
 }
 
 static inline Layout::Edges logicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, WritingMode writingMode, bool retainBorderStart = true, bool retainBorderEnd = true)
