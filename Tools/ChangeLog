@@ -1,5 +1,20 @@
 2022-02-24  Jonathan Bedard  <jbedard@apple.com>
 
+        [Python3] Change shebang for various scripts
+        https://bugs.webkit.org/show_bug.cgi?id=237155
+        <rdar://problem/89436097>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/lint-webkitpy: Change shebang to Python 3.
+        * Scripts/open-layout-test: Ditto.
+        * Scripts/run-imagediff: Ditto.
+        * Scripts/run-minibrowser: Ditto.
+        * Scripts/run-webkit-httpd: Ditto.
+        * Scripts/test-webkit-scripts: Ditto.
+
+2022-02-24  Jonathan Bedard  <jbedard@apple.com>
+
         [Python3] Make report-non-inclusive-language Python 3 compatible
         https://bugs.webkit.org/show_bug.cgi?id=237154
         <rdar://problem/89434987>
