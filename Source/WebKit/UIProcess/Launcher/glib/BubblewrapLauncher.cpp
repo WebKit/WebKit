@@ -27,7 +27,6 @@
 #include <seccomp.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
-#include <unistd.h>
 #include <wtf/FileSystem.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/glib/GRefPtr.h>
@@ -165,6 +164,15 @@ enum class BindFlags {
     Device,
 };
 
+static void bindSymlinksRealPath(Vector<CString>& args, const char* path, const char* bindOption = "--ro-bind")
+{
+    WTF::String realPath = FileSystem::realPath(path);
+    if (path != realPath) {
+        CString rpath = realPath.utf8();
+        args.appendVector(Vector<CString>({ bindOption, rpath.data(), rpath.data() }));
+    }
+}
+
 static void bindIfExists(Vector<CString>& args, const char* path, BindFlags bindFlags = BindFlags::ReadOnly)
 {
     if (!path || path[0] == '\0')
@@ -177,7 +185,16 @@ static void bindIfExists(Vector<CString>& args, const char* path, BindFlags bind
         bindType = "--ro-bind-try";
     else
         bindType = "--bind-try";
-    args.appendVector(Vector<CString>({ bindType, path, path }));
+
+    // Canonicalize the source path, otherwise a symbolic link could
+    // point to a location outside of the namespace.
+    bindSymlinksRealPath(args, path, bindType);
+
+    // As /etc is exposed wholesale, do not layer extraneous bind
+    // directives on top, which could fail in the presence of symbolic
+    // links.
+    if (!g_str_has_prefix(path, "/etc/"))
+        args.appendVector(Vector<CString>({ bindType, path, path }));
 }
 
 static void bindDBusSession(Vector<CString>& args, bool allowPortals)
@@ -413,17 +430,6 @@ static void bindV4l(Vector<CString>& args)
         "--dev-bind-try", "/dev/video2", "/dev/video2",
         "--dev-bind-try", "/dev/media0", "/dev/media0",
     }));
-}
-
-static void bindSymlinksRealPath(Vector<CString>& args, const char* path)
-{
-    char realPath[PATH_MAX];
-
-    if (realpath(path, realPath) && strcmp(path, realPath)) {
-        args.appendVector(Vector<CString>({
-            "--ro-bind", realPath, realPath,
-        }));
-    }
 }
 
 // Translate a libseccomp error code into an error message. libseccomp
