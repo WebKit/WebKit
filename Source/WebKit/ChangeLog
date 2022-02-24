@@ -1,3 +1,15 @@
+2022-02-24  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r273929) FrameState no longer gets a move constructor
+        https://bugs.webkit.org/show_bug.cgi?id=237142
+
+        Reviewed by Darin Adler.
+
+        FrameState no longer gets an implicit move constructor since r273929 because a custom
+        destructor was added.
+
+        * Shared/SessionState.h:
+
 2022-02-24  Kate Cheney  <katherine_cheney@apple.com>
 
         Update CSP console logging
