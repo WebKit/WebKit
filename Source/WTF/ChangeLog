@@ -1,3 +1,12 @@
+2022-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix compile warnings when asserts are disabled after r290418
+
+        * wtf/Threading.h:
+        (WTF::WTF_ASSERTS_ACQUIRED_CAPABILITY):
+        * wtf/WorkQueue.h:
+        (WTF::WTF_ASSERTS_ACQUIRED_CAPABILITY):
+
 2022-02-24  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Thread safety analysis to assert "code is run sequentially" is not useful when code is mainly run with WorkQueues

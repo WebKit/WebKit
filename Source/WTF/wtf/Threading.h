@@ -430,7 +430,11 @@ inline Thread& Thread::current()
 
 inline void assertIsCurrent(const Thread& thread) WTF_ASSERTS_ACQUIRED_CAPABILITY(thread)
 {
+#if ASSERT_ENABLED
     ASSERT(&thread == &Thread::current());
+#else
+    UNUSED_PARAM(thread);
+#endif
 }
 
 } // namespace WTF

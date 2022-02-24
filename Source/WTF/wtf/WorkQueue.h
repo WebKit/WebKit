@@ -122,6 +122,8 @@ inline void assertIsCurrent(const WorkQueue& workQueue) WTF_ASSERTS_ACQUIRED_CAP
 {
 #if ASSERT_ENABLED
     workQueue.assertIsCurrent();
+#else
+    UNUSED_PARAM(workQueue);
 #endif
 }
 
