@@ -361,6 +361,7 @@ asm (
     // Restore the sp and pc.
     "ldr       sp, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
     "pop       { pc }" "\n"
+    ".previous" "\n"
 );
 #endif // COMPILER(GCC_COMPATIBLE)
 
