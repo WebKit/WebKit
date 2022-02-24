@@ -80,7 +80,6 @@ ALWAYS_INLINE void WeakMapImpl<BucketType>::visitOutputConstraints(JSCell* cell,
     static_assert(std::is_same<BucketType, WeakMapBucket<WeakMapBucketDataKeyValue>>::value);
 
     auto* thisObject = jsCast<WeakMapImpl*>(cell);
-    Locker locker { thisObject->cellLock() };
     auto* buffer = thisObject->buffer();
     for (uint32_t index = 0; index < thisObject->m_capacity; ++index) {
         auto* bucket = buffer + index;

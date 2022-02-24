@@ -197,21 +197,13 @@ public:
 
     static size_t estimatedSize(JSCell*, VM&);
 
+    static constexpr uint32_t initialCapacity = 4;
+
     WeakMapImpl(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
-    }
-
-    static constexpr uint32_t initialCapacity = 4;
-
-    void finishCreation(VM& vm)
-    {
         ASSERT_WITH_MESSAGE(WeakMapBucket<WeakMapBucketDataKey>::offsetOfKey() == WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfKey(), "We assume this to be true in the DFG and FTL JIT.");
-
-        Base::finishCreation(vm);
-
-        Locker locker { cellLock() };
-        makeAndSetNewBuffer(locker, initialCapacity);
+        makeAndSetNewBuffer(initialCapacity);
     }
 
     // WeakMap operations must not cause GC. We model operations in DFG based on this guarantee.
@@ -395,7 +387,7 @@ private:
         }
     }
 
-    void makeAndSetNewBuffer(const AbstractLocker&, uint32_t capacity)
+    void makeAndSetNewBuffer(uint32_t capacity)
     {
         ASSERT(!(capacity & (capacity - 1)));
 

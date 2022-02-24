@@ -90,10 +90,6 @@ void WeakMapImpl<WeakMapBucket>::rehash(RehashMode mode)
     // function must not touch any GC related features. This is why we do not allocate WeakMapBuffer
     // in auxiliary buffer.
 
-    // This rehash modifies m_buffer which is not GC-managed buffer. But m_buffer can be touched in
-    // visitOutputConstraints. Thus, we should guard it with cellLock.
-    Locker locker { cellLock() };
-
     uint32_t oldCapacity = m_capacity;
     MallocPtr<WeakMapBufferType, JSValueMalloc> oldBuffer = WTFMove(m_buffer);
 
@@ -103,7 +99,7 @@ void WeakMapImpl<WeakMapBucket>::rehash(RehashMode mode)
         capacity = nextCapacityAfterBatchRemoval(capacity, m_keyCount);
     } else
         capacity = nextCapacity(capacity, m_keyCount);
-    makeAndSetNewBuffer(locker, capacity);
+    makeAndSetNewBuffer(capacity);
 
     auto* buffer = this->buffer();
     const uint32_t mask = m_capacity - 1;

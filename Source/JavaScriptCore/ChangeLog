@@ -1,5 +1,26 @@
 2022-02-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] WeakMapImpl do not need to take cellLock in visitOutputConstraints and main thread
+        https://bugs.webkit.org/show_bug.cgi?id=200195
+
+        Reviewed by Mark Lam.
+
+        WeakMapImpl::visitOutputConstraints is called in the constraint solver, so the main thread is stopped.
+        WeakMapImpl::rehash can destroy the buffer, but it is only called on either the main thread or GC finalizer. As a result,
+        it never happens that destroying the buffer while touching it in visitOutputConstraints. We can remove the lock guarding
+        this buffer.
+
+        * runtime/WeakMapImpl.cpp:
+        (JSC::WeakMapImpl<BucketType>::visitOutputConstraints):
+        * runtime/WeakMapImpl.h:
+        (JSC::WeakMapImpl::WeakMapImpl):
+        (JSC::WeakMapImpl::makeAndSetNewBuffer):
+        (JSC::WeakMapImpl::finishCreation): Deleted.
+        * runtime/WeakMapImplInlines.h:
+        (JSC::WeakMapImpl<WeakMapBucket>::rehash):
+
+2022-02-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Adjust thread number for GC throughput
         https://bugs.webkit.org/show_bug.cgi?id=237122
 
