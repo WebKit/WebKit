@@ -306,7 +306,7 @@ layer at (0,0) size 785x884
           RenderTableSection {THEAD} at (18,0) size 50x537 [border: (3px solid #FF0000)]
             RenderTableRow {TR} at (0,2) size 46x537 [border: (3px solid #FF0000)]
               RenderTableCell {TH} at (2,2) size 46x88 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (5,18) size 36x52
+                RenderText {#text} at (5,18) size 36x51
                   text run at (5,18) width 51: "Header"
                   text run at (23,29) width 29: "One"
               RenderTableCell {TH} at (2,100) size 46x216 [r=0 c=1 rs=1 cs=1]

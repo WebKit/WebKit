@@ -1,3 +1,13 @@
+2022-02-24  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Enable non-paginated vertical-rl writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=236897
+
+        Reviewed by Antti Koivisto.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForStyle):
+
 2022-02-24  Chris Dumez  <cdumez@apple.com>
 
         Fix bad logging in SharedWorkerObjectConnection::notifyWorkerObjectOfLoadCompletion()

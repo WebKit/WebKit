@@ -1,3 +1,13 @@
+2022-02-24  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Enable non-paginated vertical-rl writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=236897
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-expected.txt:
+        * web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline-expected.txt:
+
 2022-02-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, add some logging to imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html to debug flakiness

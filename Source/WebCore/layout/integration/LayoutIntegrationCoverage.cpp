@@ -409,7 +409,7 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (style.textOverflow() == TextOverflow::Ellipsis)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-    if (style.writingMode() == WritingMode::RightToLeft || style.writingMode() == WritingMode::BottomToTop)
+    if (style.writingMode() == WritingMode::BottomToTop)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedWritingMode, reasons, includeReasons);
     if (style.textEmphasisFill() != TextEmphasisFill::Filled || style.textEmphasisMark() != TextEmphasisMark::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextEmphasisFillOrMark, reasons, includeReasons);

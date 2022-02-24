@@ -7,6 +7,6 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 230x37 [border: (21px solid #000000) (30px solid #000000) (21px solid #000000)]
           RenderText {#text} at (85,46) size 29x7
             text run at (85,46) width 7: " "
-          RenderBR {BR} at (25,52) size 29x1
+          RenderBR {BR} at (85,52) size 29x1
           RenderText {#text} at (235,25) size 29x7
             text run at (235,25) width 7: " "
