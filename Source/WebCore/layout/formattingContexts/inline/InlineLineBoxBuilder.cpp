@@ -261,7 +261,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             if (layoutState().shouldNotSynthesizeInlineBlockBaseline()) {
                 // Integration codepath constructs replaced boxes for inline-block content.
                 ASSERT(layoutBox.isReplacedBox());
-                ascent = *downcast<ReplacedBox>(layoutBox).baseline();
+                ascent = downcast<ReplacedBox>(layoutBox).baseline().value_or(marginBoxHeight);
             } else if (layoutBox.isInlineBlockBox()) {
                 // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or
                 // if its 'overflow' property has a computed value other than 'visible', in which case the baseline is the bottom margin edge.
@@ -415,8 +415,19 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
     };
 
     adjustLayoutBoundsWithIdeographicBaseline(rootInlineBox);
-    for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes())
+    for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+        if (inlineLevelBox.isAtomicInlineLevelBox()) {
+            auto& layoutBox = inlineLevelBox.layoutBox();
+            auto isInlineBlockWithNonSyntheticBaseline = layoutBox.isIntegrationInlineBlock() && downcast<ReplacedBox>(layoutBox).baseline().has_value();
+            // FIXME: While the layoutBox.isIntegrationInlineBlock check may seem redundant here, it's really just because currently
+            // the integration codepath turns inline-blocks into replaced type boxes.
+            auto isOrthogonalBlockFormattingRoot = (layoutBox.establishesBlockFormattingContext() || layoutBox.isIntegrationInlineBlock()) 
+                && layoutBox.style().isHorizontalWritingMode();
+            if (isInlineBlockWithNonSyntheticBaseline && !isOrthogonalBlockFormattingRoot)
+                continue;
+        }
         adjustLayoutBoundsWithIdeographicBaseline(inlineLevelBox);
+    }
 }
 
 }

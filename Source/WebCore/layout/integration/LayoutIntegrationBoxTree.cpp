@@ -35,6 +35,7 @@
 #include "LayoutReplacedBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderDetailsMarker.h"
 #include "RenderImage.h"
 #include "RenderLineBreak.h"
 #include "TextUtil.h"
@@ -116,8 +117,14 @@ void BoxTree::buildTree()
         if (is<RenderReplaced>(childRenderer))
             return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { is<RenderImage>(childRenderer) ? Layout::Box::ElementType::Image : Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
 
-        if (is<RenderBlock>(childRenderer))
-            return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationInlineBlock }, WTFMove(style), WTFMove(firstLineStyle));
+        if (is<RenderBlock>(childRenderer)) {
+            auto attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationInlineBlock };
+            if (is<RenderDetailsMarker>(childRenderer)) {
+                // Details marker is not a real inline-block box.
+                attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement };
+            }
+            return makeUnique<Layout::ReplacedBox>(attributes, WTFMove(style), WTFMove(firstLineStyle));
+        }
 
         if (is<RenderInline>(childRenderer)) {
             // This looks like continuation renderer.

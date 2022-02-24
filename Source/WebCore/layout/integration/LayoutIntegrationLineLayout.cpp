@@ -45,12 +45,19 @@
 #include "LayoutReplacedBox.h"
 #include "LayoutTreeBuilder.h"
 #include "PaintInfo.h"
+#include "RenderAttachment.h"
 #include "RenderBlockFlow.h"
+#include "RenderButton.h"
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
+#include "RenderListBox.h"
+#include "RenderListMarker.h"
+#include "RenderSlider.h"
+#include "RenderTextControlMultiLine.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
@@ -256,8 +263,27 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     replacedBoxGeometry.setBorder(logicalBorder(replacedOrInlineBlock, isLeftToRightInlineDirection, writingMode));
     replacedBoxGeometry.setPadding(logicalPadding(replacedOrInlineBlock, isLeftToRightInlineDirection, writingMode));
 
-    auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, writingMode == WritingMode::TopToBottom ? HorizontalLine : VerticalLine, PositionOnContainingLine);
-    replacedBox.setBaseline(roundToInt(baseline));
+    auto hasNonSyntheticBaseline = [&] {
+        if (is<RenderReplaced>(replacedOrInlineBlock)
+            || is<RenderListBox>(replacedOrInlineBlock)
+            || is<RenderSlider>(replacedOrInlineBlock)
+            || is<RenderTextControlMultiLine>(replacedOrInlineBlock)
+            || is<RenderListMarker>(replacedOrInlineBlock)
+#if ENABLE(ATTACHMENT_ELEMENT)
+            || is<RenderAttachment>(replacedOrInlineBlock)
+#endif
+            || is<RenderButton>(replacedOrInlineBlock)) {
+            // These are special RenderBlock renderers that override the default baseline position behavior of the inline block box.
+            return true;
+        }
+        auto& blockFlow = downcast<RenderBlockFlow>(replacedOrInlineBlock);
+        auto hasAppareance = blockFlow.style().hasEffectiveAppearance() && !blockFlow.theme().isControlContainer(blockFlow.style().effectiveAppearance());
+        return hasAppareance || !blockFlow.childrenInline() || blockFlow.hasLines() || blockFlow.hasLineIfEmpty();
+    }();
+    if (hasNonSyntheticBaseline) {
+        auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, writingMode == WritingMode::TopToBottom ? HorizontalLine : VerticalLine, PositionOnContainingLine);
+        replacedBox.setBaseline(roundToInt(baseline));
+    }
 }
 
 void LineLayout::updateLineBreakBoxDimensions(const RenderLineBreak& lineBreakBox)

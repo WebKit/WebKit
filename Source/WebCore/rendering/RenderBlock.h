@@ -320,6 +320,8 @@ public:
 
     static String updateSecurityDiscCharacters(const RenderStyle&, String&&);
 
+    virtual bool hasLineIfEmpty() const;
+
 protected:
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override;
     void willBeDestroyed() override;
@@ -369,8 +371,6 @@ protected:
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    virtual bool hasLineIfEmpty() const;
-    
     virtual bool canPerformSimplifiedLayout() const;
     bool simplifiedLayout();
     virtual void simplifiedNormalFlowLayout();
