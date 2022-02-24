@@ -1,3 +1,12 @@
+2022-02-24  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Skip shadow-realm-import-value on ARM too
+        https://bugs.webkit.org/show_bug.cgi?id=237139
+
+        Unreviewed gardening.
+
+        * stress/shadow-realm-import-value.js:
+
 2022-02-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] ShadowRealm JSRemoteFunction creation should convert CopyNameAndLength errors to TypeError

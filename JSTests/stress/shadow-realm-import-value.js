@@ -1,4 +1,4 @@
-//@ skip if "mips" == $architecture
+//@ skip if ["mips", "arm"].include?($architecture)
 //@ requireOptions("--useShadowRealm=1")
 
 var abort = $vm.abort;
