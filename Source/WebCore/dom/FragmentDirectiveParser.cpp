@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include <wtf/Deque.h>
 #include <wtf/URL.h>
+#include <wtf/URLParser.h>
 #include <wtf/text/TextStream.h>
 
 
@@ -91,7 +92,6 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
         }
         if (containsEmptyToken)
             continue;
-        // FIXME: add decoding for % encoded strings.
         if (tokens.size() > 4 || tokens.size() < 1) {
             LOG_WITH_STREAM(TextFragment, stream << " wrong number of tokens ");
             continue;
@@ -101,13 +101,20 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
         
         if (tokens.first().endsWith('-') && tokens.first().length() > 1) {
             tokens.first().truncate(tokens.first().length() - 2);
-            parsedTextDirective.prefix = tokens.first();
-            tokens.removeFirst();
+            
+            if (auto prefix = WTF::URLParser::formURLDecode(tokens.takeFirst()))
+                parsedTextDirective.prefix = WTFMove(*prefix);
+            else
+                LOG_WITH_STREAM(TextFragment, stream << " could not decode prefix ");
         }
         
         if (tokens.last().startsWith('-') && tokens.last().length() > 1) {
             tokens.last().remove(0);
-            parsedTextDirective.suffix = tokens.takeLast();
+            
+            if (auto suffix = WTF::URLParser::formURLDecode(tokens.takeLast()))
+                parsedTextDirective.suffix = WTFMove(*suffix);
+            else
+                LOG_WITH_STREAM(TextFragment, stream << " could not decode suffix ");
         }
         
         if (tokens.size() != 1 && tokens.size() != 2) {
@@ -115,10 +122,17 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
             continue;
         }
         
-        parsedTextDirective.textStart = tokens.first();
+        if (auto start = WTF::URLParser::formURLDecode(tokens.first()))
+            parsedTextDirective.textStart = WTFMove(*start);
+        else
+            LOG_WITH_STREAM(TextFragment, stream << " could not decode start ");
         
-        if (tokens.size() == 2)
-            parsedTextDirective.textEnd = tokens.last();
+        if (tokens.size() == 2) {
+            if (auto end = WTF::URLParser::formURLDecode(tokens.last()))
+                parsedTextDirective.textEnd = WTFMove(*end);
+            else
+                LOG_WITH_STREAM(TextFragment, stream << " could not decode end ");
+        }
         
         parsedTextDirectives.append(parsedTextDirective);
     }

@@ -645,6 +645,9 @@ fast/viewport/ [ Skip ]
 highlight/ [ Skip ]
 http/wpt/css/css-highlight-api/ [ Skip ]
 
+# Scroll to Text Fragment
+http/wpt/html/dom/scroll-to-text-fragment/ [ Skip ]
+
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html [ Skip ]
 

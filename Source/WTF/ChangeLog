@@ -1,3 +1,14 @@
+2022-02-24  Megan Gardner  <megan_gardner@apple.com>
+
+        Add percent decoding to Scroll to Text Fragment parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=236818
+
+        Reviewed by Chris Dumez.
+
+        Expose bits of URL parser to allow percent decoding elsewhere.
+
+        * wtf/URLParser.h:
+
 2022-02-24  Elliott Williams  <emw@apple.com>
 
         [XCBuild] WTF's SPI dependencies are copied via a folder reference and do not emit task outputs

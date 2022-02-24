@@ -1,3 +1,17 @@
+2022-02-24  Megan Gardner  <megan_gardner@apple.com>
+
+        Add percent decoding to Scroll to Text Fragment parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=236818
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/html/dom/scroll-to-text-fragment/scroll-to-text-fragment-start-emoji-expected.html: Added.
+        * http/wpt/html/dom/scroll-to-text-fragment/scroll-to-text-fragment-start-emoji.html: Added.
+        * http/wpt/html/dom/scroll-to-text-fragment/scroll-to-text-fragment-start-expected.html: Added.
+        * http/wpt/html/dom/scroll-to-text-fragment/scroll-to-text-fragment-start-sentence-expected.html: Added.
+        * http/wpt/html/dom/scroll-to-text-fragment/scroll-to-text-fragment-start-sentence.html: Added.
+        * http/wpt/html/dom/scroll-to-text-fragment/scroll-to-text-fragment-start.html: Added.
+
 2022-02-24  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Enable non-paginated vertical-rl writing mode
