@@ -207,15 +207,15 @@ async function checkVideoBlack(expected, canvas, video, errorMessage, counter)
         return Promise.resolve();
 
     if (counter === undefined)
-        counter = 0;
-    if (counter > 400) {
+        counter = 400;
+    if (counter === 0) {
         if (!errorMessage)
             errorMessage = "checkVideoBlack timed out expecting " + expected;
         return Promise.reject(errorMessage);
     }
 
     await waitFor(50);
-    return checkVideoBlack(expected, canvas, video, errorMessage, ++counter);
+    return checkVideoBlack(expected, canvas, video, errorMessage, --counter);
 }
 
 function setCodec(sdp, codec)

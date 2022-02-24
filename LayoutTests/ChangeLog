@@ -1,3 +1,17 @@
+2022-02-24  Youenn Fablet  <youenn@apple.com>
+
+        webrtc/video-replace-muted-track.html is unnecessary long to run
+        https://bugs.webkit.org/show_bug.cgi?id=237086
+
+        Reviewed by Peng Liu.
+
+        * platform/mac/TestExpectations: Unflake test since it is no longer flaky in bots.
+        * webrtc/routines.js:
+        We were waiting for 360 iterations to validate no black frame is found in webrtc/routines.js.
+        This makes it last around 20 seconds.
+        Decrease the number of iterations to 40, around 2 seconds by decrementing counter from provided value
+        instead of incrementing value up to 400.
+
 2022-02-24  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed test gardening.

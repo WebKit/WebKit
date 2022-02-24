@@ -2193,8 +2193,6 @@ webkit.org/b/225425 [ Debug ] webgl/1.0.3/conformance/glsl/misc/expression-list-
 # See https://webkit.org/b/120081 for why this is one expectation.
 webkit.org/b/225523 webrtc/direction-change.html [ Pass Timeout Failure ]
 
-webkit.org/b/22525 webrtc/video-replace-muted-track.html [ Pass Failure ]
-
 webkit.org/b/225528 [ arm64 ] http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pass Crash ]
 
 webkit.org/b/225258 [ arm64 ] js/dom/Promise-reject-large-string.html [ Pass Failure ]
