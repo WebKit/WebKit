@@ -1,3 +1,33 @@
+2022-02-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Thread safety analysis to assert "code is run sequentially" is not useful when code is mainly run with WorkQueues
+        https://bugs.webkit.org/show_bug.cgi?id=236832
+
+        Reviewed by Antti Koivisto.
+
+        Thread safety analysis is not useful when code is mainly run with WorkQueues.
+        WorkQueue runnables might run in arbitrary thread, but still serially in a specific
+        "work queue". Thus current ThreadAssertion produces false assertions.
+
+        Make Thread and WorkQueue hold "is current" capability. This means the
+        `assertIsCurrent(thread/workQueue)` can establish that the caller holds the capabity,
+        e.g. that the caller is running in the particular thread or work queue.
+
+        Tested by new API tests.
+
+        * wtf/Threading.h:
+        (WTF::WTF_ASSERTS_ACQUIRED_CAPABILITY):
+        * wtf/WorkQueue.h:
+        (WTF::WTF_ASSERTS_ACQUIRED_CAPABILITY):
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueueBase::platformInitialize):
+        (WTF::WorkQueue::assertIsCurrent const):
+        (WTF::currentSequenceID):
+        * wtf/generic/WorkQueueGeneric.cpp:
+        (WTF::WorkQueueBase::platformInitialize):
+        (WTF::WorkQueue::assertIsCurrent):
+        (WTF::currentSequenceID):
+
 2022-02-24  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         REGRESSION(r289683): [GTK][WPE] Scrolling with the mouse wheel doesn't work in twitter after r289683

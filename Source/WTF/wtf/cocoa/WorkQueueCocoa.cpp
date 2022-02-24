@@ -102,6 +102,13 @@ Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
     return adoptRef(*new WorkQueue(dispatch_get_main_queue()));
 }
 
+#if ASSERT_ENABLED
+void WorkQueue::assertIsCurrent() const
+{
+    dispatch_assert_queue(m_dispatchQueue.get());
+}
+#endif
+
 void ConcurrentWorkQueue::apply(size_t iterations, WTF::Function<void(size_t index)>&& function)
 {
     dispatch_apply(iterations, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([function = WTFMove(function)](size_t index) {

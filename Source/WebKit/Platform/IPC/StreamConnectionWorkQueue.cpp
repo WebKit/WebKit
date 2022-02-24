@@ -136,4 +136,12 @@ void StreamConnectionWorkQueue::processStreams()
     } while (hasMoreToProcess);
 }
 
+#if ASSERT_ENABLED
+void StreamConnectionWorkQueue::assertIsCurrent() const
+{
+    Locker locker { m_lock };
+    ASSERT(m_processingThread);
+    WTF::assertIsCurrent(*m_processingThread);
+}
+#endif
 }

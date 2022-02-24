@@ -67,9 +67,8 @@ private:
 #endif
     inline static Seconds defaultTimeout = 10_s;
 
-    GPUConnectionToWebProcess* m_gpuConnectionToWebProcess WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
+    GPUConnectionToWebProcess* m_gpuConnectionToWebProcess WTF_GUARDED_BY_CAPABILITY(mainThread);
     const Ref<IPC::Connection> m_connection;
-    ThreadAssertion m_consumeThread NO_UNIQUE_ADDRESS;
 #if PLATFORM(COCOA)
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
 #endif

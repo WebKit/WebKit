@@ -27,6 +27,7 @@
 
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace TestWebKitAPI {
 
@@ -64,5 +65,60 @@ TEST(WTF, ThreadingThreadIdentity)
     })->waitForCompletion();
 }
 #endif // USE(PTHREADS)
+
+namespace {
+struct AssertionTestHolder {
+    RefPtr<Thread> thread;
+    size_t counter WTF_GUARDED_BY_CAPABILITY(*thread) { 0 };
+    size_t result { 0 }; // This is here to support the result assertion. The compiler doesn't allow us to obtain the `counter` otherwise.
+
+    AssertionTestHolder()
+    {
+        BinarySemaphore memberInitialized;
+        BinarySemaphore threadInitialized;
+
+        thread = Thread::create("com.apple.WebKit.Test.ThreadThreadSafetyAnalysisAssertIsCurrentWorks", [&] {
+            memberInitialized.wait(); // Wait for `AssertionTestHolder::thread` assignment to complete.
+            threadInitialized.signal();
+// Enable to see "writing variable 'counter' requires holding mutex 'thread' exclusively".
+// #define TEST_COMPILE_FAILURE
+#ifdef TEST_COMPILE_FAILURE
+            testTaskThatFailsToCompile<int>();
+#endif
+            testTask();
+            assertIsCurrent(*thread);
+            computeResult();
+        });
+        memberInitialized.signal();
+        threadInitialized.wait(); // Wait for the thread to stop using `memberInitialized`, as we will destroy it.
+    }
+    void testTask()
+    {
+        assertIsCurrent(*thread); // This is being tested.
+        ++counter;
+    }
+    void computeResult() WTF_REQUIRES_CAPABILITY(*thread) // This is being tested.
+    {
+        result = ++counter;
+    }
+    template<typename T> void testTaskThatFailsToCompile()
+    {
+        ++counter;
+    }
+};
+}
+
+// Consider declaration `RefPtr<Thread> myThread`.
+// This test tests that clients can use thread safety analysis to check that the thread is current
+// by using `assertIsCurrent(*myThread);` to establish the assertion and WTF_GUARDED_BY_CAPABILITY, WTF_REQUIRES_BY_CAPABILITY
+// declarations to let the compiler analyze the uses of the variables and functions with the declarations.
+TEST(WTF_Thread, ThreadSafetyAnalysisAssertIsCurrentWorks)
+{
+    AssertionTestHolder holders[50];
+    for (auto& holder : holders)
+        holder.thread->waitForCompletion();
+    for (auto& holder : holders)
+        EXPECT_EQ(2u, holder.result);
+}
 
 } // namespace TestWebKitAPI

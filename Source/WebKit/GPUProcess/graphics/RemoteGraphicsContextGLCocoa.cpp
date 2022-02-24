@@ -46,7 +46,7 @@ namespace WebKit {
 #if ENABLE(VIDEO)
 void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::RemoteVideoFrameReadReference read, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
 {
-    assertIsCurrent(m_streamThread);
+    assertIsCurrent(workQueue());
     UNUSED_VARIABLE(premultiplyAlpha);
     ASSERT_UNUSED(target, target == WebCore::GraphicsContextGL::TEXTURE_2D);
 
@@ -110,13 +110,13 @@ RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(GPUConnectionToWebPro
 
 void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
-    assertIsCurrent(m_streamThread);
+    assertIsCurrent(workQueue());
     m_context = WebCore::GraphicsContextGLCocoa::create(WTFMove(attributes), WebCore::ProcessIdentity { m_resourceOwner });
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
 {
-    assertIsCurrent(m_streamThread);
+    assertIsCurrent(workQueue());
     m_context->prepareForDisplay();
     MachSendRight sendRight;
     WebCore::IOSurface* displayBuffer = m_context->displayBuffer();

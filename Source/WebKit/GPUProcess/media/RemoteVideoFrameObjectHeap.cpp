@@ -55,12 +55,11 @@ RemoteVideoFrameObjectHeap::RemoteVideoFrameObjectHeap(GPUConnectionToWebProcess
 RemoteVideoFrameObjectHeap::~RemoteVideoFrameObjectHeap()
 {
     ASSERT(!m_gpuConnectionToWebProcess);
-    m_consumeThread.reset();
 }
 
 void RemoteVideoFrameObjectHeap::stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&& refFromConnection)
 {
-    assertIsCurrent(m_consumeThread);
+    assertIsMainThread();
 #if PLATFORM(COCOA)
     m_sharedVideoFrameWriter.disable();
 #endif
@@ -84,7 +83,7 @@ RemoteVideoFrameIdentifier RemoteVideoFrameObjectHeap::createRemoteVideoFrame(Re
 
 void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReference&& write)
 {
-    assertIsCurrent(m_consumeThread);
+    assertIsMainThread();
     retireRemove(WTFMove(write));
 }
 

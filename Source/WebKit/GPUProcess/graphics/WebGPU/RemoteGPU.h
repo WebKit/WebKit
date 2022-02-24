@@ -122,6 +122,7 @@ private:
     RemoteGPU& operator=(RemoteGPU&&) = delete;
 
     void initialize();
+    IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
     void workQueueInitialize();
     void workQueueUninitialize();
 
@@ -138,11 +139,10 @@ private:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
-    RefPtr<PAL::WebGPU::GPU> m_backing WTF_GUARDED_BY_CAPABILITY(m_streamThread);
-    Ref<WebGPU::ObjectHeap> m_objectHeap WTF_GUARDED_BY_CAPABILITY(m_streamThread);
+    RefPtr<PAL::WebGPU::GPU> m_backing WTF_GUARDED_BY_CAPABILITY(workQueue());
+    Ref<WebGPU::ObjectHeap> m_objectHeap WTF_GUARDED_BY_CAPABILITY(workQueue());
     const WebGPUIdentifier m_identifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
-    NO_UNIQUE_ADDRESS ThreadAssertion m_streamThread;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
 };
 

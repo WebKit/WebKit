@@ -746,7 +746,7 @@ class webkit_ipc_cpp_impl(object):
         self.process_call()
 
     def process_call(self):
-        self.call_stmts += [ "assertIsCurrent(m_streamThread);" ]
+        self.call_stmts += [ "assertIsCurrent(workQueue());" ]
 
         in_exprs = ", ".join(str(e) for e in self.in_exprs)
         is_async = len(self.out_exprs) == 0
