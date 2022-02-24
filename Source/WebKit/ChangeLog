@@ -1,3 +1,13 @@
+2022-02-23  Don Olmstead  <don.olmstead@sony.com>
+
+        Fix !ENABLE(SERVICE_WORKER) build after r290387
+        https://bugs.webkit.org/show_bug.cgi?id=237119
+
+        Unreviewed build fix.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::establishRemoteWorkerContextConnectionToNetworkProcess):
+
 2022-02-23  Maxim Cournoyer  <maxim.cournoyer@gmail.com>
 
         [WPE][GTK] Paths should be canonicalized before calling bwrap
