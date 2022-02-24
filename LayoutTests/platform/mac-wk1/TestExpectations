@@ -1781,3 +1781,5 @@ http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Skip
 http/tests/push-api/subscribe-default-permissions.html [ Skip ]
 http/tests/push-api/subscribe-deny-permissions.html [ Skip ]
 http/tests/push-api/subscribe-grant-permissions.html [ Skip ]
+
+webkit.org/b/236126 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html [ Pass Failure ]

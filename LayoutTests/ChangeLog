@@ -1,5 +1,14 @@
 2022-02-23  Robert Jenner  <Jenner@apple.com>
 
+        [ Mac wk1 Release ] imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=236126
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2022-02-23  Robert Jenner  <Jenner@apple.com>
+
         Unreviewed, reverting r290351 and r290404.
 
         Broke the build after revert of initial commit (r290348)
