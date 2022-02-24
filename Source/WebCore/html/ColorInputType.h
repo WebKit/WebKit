@@ -62,7 +62,7 @@ private:
     bool supportsRequired() const final;
     String fallbackValue() const final;
     String sanitizeValue(const String&) const final;
-    void createShadowSubtree() final;
+    void createShadowSubtreeAndUpdateInnerTextElementEditability(bool) final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
     void attributeChanged(const QualifiedName&) final;
     void handleDOMActivateEvent(Event&) final;

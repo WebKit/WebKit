@@ -108,11 +108,7 @@ bool TextFieldInputType::isMouseFocusable() const
 bool TextFieldInputType::isEmptyValue() const
 {
     auto innerText = innerTextElement();
-    if (!innerText) {
-        // Since we always create the shadow subtree if a value is set, we know
-        // that the value is empty.
-        return true;
-    }
+    ASSERT(innerText);
 
     for (Text* text = TextNodeTraversal::firstWithin(*innerText); text; text = TextNodeTraversal::next(*text, innerText.get())) {
         if (text->length())
@@ -225,8 +221,6 @@ void TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent& event)
 
 void TextFieldInputType::forwardEvent(Event& event)
 {
-    ASSERT(element());
-
     if (m_innerSpinButton) {
         m_innerSpinButton->forwardEvent(event);
         if (event.defaultHandled())
@@ -237,8 +231,10 @@ void TextFieldInputType::forwardEvent(Event& event)
     bool isBlurEvent = event.type() == eventNames().blurEvent;
     if (isFocusEvent || isBlurEvent)
         capsLockStateMayHaveChanged();
-    if (event.isMouseEvent() || isFocusEvent || isBlurEvent)
+    if (event.isMouseEvent() || isFocusEvent || isBlurEvent) {
+        ASSERT(element());
         element()->forwardEvent(event);
+    }
 }
 
 void TextFieldInputType::elementDidBlur()
@@ -320,12 +316,11 @@ bool TextFieldInputType::shouldHaveCapsLockIndicator() const
     return RenderTheme::singleton().shouldHaveCapsLockIndicator(*element());
 }
 
-void TextFieldInputType::createShadowSubtree()
+void TextFieldInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(bool isInnerTextElementEditable)
 {
     ASSERT(needsShadowSubtree());
     ASSERT(element());
     ASSERT(element()->shadowRoot());
-    ASSERT(!element()->shadowRoot()->hasChildNodes());
 
     ASSERT(!m_innerText);
     ASSERT(!m_innerBlock);
@@ -336,17 +331,9 @@ void TextFieldInputType::createShadowSubtree()
     Document& document = element()->document();
     bool shouldHaveSpinButton = this->shouldHaveSpinButton();
     bool shouldHaveCapsLockIndicator = this->shouldHaveCapsLockIndicator();
-    bool shouldDrawAutoFillButton = this->shouldDrawAutoFillButton();
-#if ENABLE(DATALIST_ELEMENT)
-    bool hasDataList = element()->list();
-#endif
-    bool createsContainer = shouldHaveSpinButton || shouldHaveCapsLockIndicator || shouldDrawAutoFillButton
-#if ENABLE(DATALIST_ELEMENT)
-        || hasDataList
-#endif
-        || needsContainer();
+    bool createsContainer = shouldHaveSpinButton || shouldHaveCapsLockIndicator || needsContainer();
 
-    m_innerText = TextControlInnerTextElement::create(document, element()->isInnerTextElementEditable());
+    m_innerText = TextControlInnerTextElement::create(document, isInnerTextElementEditable);
 
     if (!createsContainer) {
         element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, *m_innerText);
@@ -371,12 +358,7 @@ void TextFieldInputType::createShadowSubtree()
 
         m_container->appendChild(ContainerNode::ChildChange::Source::Parser, *m_capsLockIndicator);
     }
-
     updateAutoFillButton();
-
-#if ENABLE(DATALIST_ELEMENT)
-    dataListMayHaveChanged();
-#endif
 }
 
 HTMLElement* TextFieldInputType::containerElement() const
@@ -391,6 +373,7 @@ HTMLElement* TextFieldInputType::innerBlockElement() const
 
 RefPtr<TextControlInnerTextElement> TextFieldInputType::innerTextElement() const
 {
+    ASSERT(m_innerText);
     return m_innerText;
 }
 
@@ -442,9 +425,6 @@ void TextFieldInputType::attributeChanged(const QualifiedName& name)
 
 void TextFieldInputType::disabledStateChanged()
 {
-    if (!hasCreatedShadowSubtree())
-        return;
-
     if (m_innerSpinButton)
         m_innerSpinButton->releaseCapture();
     capsLockStateMayHaveChanged();
@@ -453,9 +433,6 @@ void TextFieldInputType::disabledStateChanged()
 
 void TextFieldInputType::readOnlyStateChanged()
 {
-    if (!hasCreatedShadowSubtree())
-        return;
-
     if (m_innerSpinButton)
         m_innerSpinButton->releaseCapture();
     capsLockStateMayHaveChanged();
@@ -639,14 +616,9 @@ bool TextFieldInputType::shouldRespectListAttribute()
 
 void TextFieldInputType::updatePlaceholderText()
 {
-    ASSERT(element());
-
-    if (!hasCreatedShadowSubtree())
-        return;
-
     if (!supportsPlaceholder())
         return;
-
+    ASSERT(element());
     String placeholderText = element()->placeholder();
     if (placeholderText.isEmpty()) {
         if (m_placeholder) {
@@ -844,17 +816,13 @@ void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonT
 
 void TextFieldInputType::updateAutoFillButton()
 {
-    ASSERT(element());
-
-    if (!hasCreatedShadowSubtree())
-        return;
-
     capsLockStateMayHaveChanged();
 
     if (shouldDrawAutoFillButton()) {
         if (!m_container)
             createContainer();
 
+        ASSERT(element());
         AutoFillButtonType autoFillButtonType = element()->autoFillButtonType();
         if (!m_autoFillButton)
             createAutoFillButton(autoFillButtonType);
@@ -878,9 +846,6 @@ void TextFieldInputType::updateAutoFillButton()
 
 void TextFieldInputType::dataListMayHaveChanged()
 {
-    if (!hasCreatedShadowSubtree())
-        return;
-
     m_cachedSuggestions = { };
 
     if (!m_dataListDropdownIndicator)

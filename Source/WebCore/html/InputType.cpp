@@ -561,7 +561,7 @@ void InputType::blur()
     element()->defaultBlur();
 }
 
-void InputType::createShadowSubtree()
+void InputType::createShadowSubtreeAndUpdateInnerTextElementEditability(bool)
 {
 }
 
@@ -1119,26 +1119,10 @@ RefPtr<TextControlInnerTextElement> InputType::innerTextElement() const
     return nullptr;
 }
 
-RefPtr<TextControlInnerTextElement> InputType::innerTextElementCreatingShadowSubtreeIfNeeded()
-{
-    createShadowSubtreeIfNeeded();
-    return innerTextElement();
-}
-
 String InputType::resultForDialogSubmit() const
 {
     ASSERT(element());
     return element()->value();
-}
-
-void InputType::createShadowSubtreeIfNeeded()
-{
-    if (m_hasCreatedShadowSubtree || !needsShadowSubtree())
-        return;
-    Ref protectedThis { *this };
-    element()->ensureUserAgentShadowRoot();
-    m_hasCreatedShadowSubtree = true;
-    createShadowSubtree();
 }
 
 } // namespace WebCore

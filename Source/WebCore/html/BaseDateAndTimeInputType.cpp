@@ -306,7 +306,7 @@ void BaseDateAndTimeInputType::handleDOMActivateEvent(Event&)
     }
 }
 
-void BaseDateAndTimeInputType::createShadowSubtree()
+void BaseDateAndTimeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(bool)
 {
     ASSERT(needsShadowSubtree());
     ASSERT(element());
@@ -334,9 +334,6 @@ void BaseDateAndTimeInputType::destroyShadowSubtree()
 void BaseDateAndTimeInputType::updateInnerTextValue()
 {
     ASSERT(element());
-
-    createShadowSubtreeIfNeeded();
-
     if (!m_dateTimeEditElement) {
         auto node = element()->userAgentShadowRoot()->firstChild();
         if (!is<HTMLElement>(node))

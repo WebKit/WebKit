@@ -262,20 +262,18 @@ void FileInputType::setValue(const String&, bool, TextFieldEventBehavior)
     element()->invalidateStyleForSubtree();
 }
 
-void FileInputType::createShadowSubtree()
+void FileInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(bool)
 {
     ASSERT(needsShadowSubtree());
     ASSERT(element());
     ASSERT(element()->shadowRoot());
-
-    auto button = element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()) : UploadButtonElement::create(element()->document());
-    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, button);
-    disabledStateChanged();
+    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()));
 }
 
 void FileInputType::disabledStateChanged()
 {
     ASSERT(element());
+    ASSERT(element()->shadowRoot());
 
     auto root = element()->userAgentShadowRoot();
     if (!root)
@@ -289,6 +287,7 @@ void FileInputType::attributeChanged(const QualifiedName& name)
 {
     if (name == multipleAttr) {
         if (auto* element = this->element()) {
+            ASSERT(element->shadowRoot());
             if (auto root = element->userAgentShadowRoot()) {
                 if (RefPtr button = childrenOfType<UploadButtonElement>(*root).first())
                     button->setValue(element->multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());

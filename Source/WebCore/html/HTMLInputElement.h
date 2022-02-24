@@ -137,7 +137,6 @@ public:
     HTMLElement* containerElement() const;
     
     RefPtr<TextControlInnerTextElement> innerTextElement() const final;
-    RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded() final;
     RenderStyle createInnerTextStyle(const RenderStyle&) final;
 
     HTMLElement* innerBlockElement() const;
@@ -357,8 +356,6 @@ public:
 
     String resultForDialogSubmit() const final;
 
-    bool isInnerTextElementEditable() const final { return !hasAutoFillStrongPasswordButton() && HTMLTextFormControlElement::isInnerTextElementEditable(); }
-
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 
@@ -374,6 +371,8 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode&) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
+    void createShadowSubtreeAndUpdateInnerTextElementEditability();
+
     int defaultTabIndex() const final;
     bool hasCustomFocusLogic() const final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;
@@ -384,6 +383,8 @@ private:
     bool shouldUseInputMethod() final;
 
     bool isInteractiveContent() const final;
+
+    bool isInnerTextElementEditable() const final { return !hasAutoFillStrongPasswordButton() && HTMLTextFormControlElement::isInnerTextElementEditable(); }
 
     bool canTriggerImplicitSubmission() const final { return isTextField(); }
 

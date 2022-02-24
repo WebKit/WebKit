@@ -133,10 +133,6 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 void RangeInputType::handleMouseDownEvent(MouseEvent& event)
 {
     ASSERT(element());
-
-    if (!hasCreatedShadowSubtree())
-        return;
-
     if (element()->isDisabledFormControl())
         return;
 
@@ -155,15 +151,10 @@ void RangeInputType::handleMouseDownEvent(MouseEvent& event)
 #if ENABLE(TOUCH_EVENTS)
 void RangeInputType::handleTouchEvent(TouchEvent& event)
 {
-    ASSERT(element());
-
-    if (!hasCreatedShadowSubtree())
-        return;
-
 #if PLATFORM(IOS_FAMILY)
     typedSliderThumbElement().handleTouchEvent(event);
 #elif ENABLE(TOUCH_SLIDER)
-
+    ASSERT(element());
     if (element()->isDisabledFormControl())
         return;
 
@@ -192,18 +183,12 @@ bool RangeInputType::hasTouchEventHandler() const
 
 void RangeInputType::disabledStateChanged()
 {
-    if (!hasCreatedShadowSubtree())
-        return;
     typedSliderThumbElement().hostDisabledStateChanged();
 }
 
 auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
     ASSERT(element());
-
-    if (!hasCreatedShadowSubtree())
-        return ShouldCallBaseEventHandler::Yes;
-
     if (element()->isDisabledFormControl())
         return ShouldCallBaseEventHandler::Yes;
 
@@ -256,7 +241,7 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     return ShouldCallBaseEventHandler::Yes;
 }
 
-void RangeInputType::createShadowSubtree()
+void RangeInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(bool)
 {
     ASSERT(needsShadowSubtree());
     ASSERT(element());
@@ -274,10 +259,6 @@ void RangeInputType::createShadowSubtree()
 HTMLElement* RangeInputType::sliderTrackElement() const
 {
     ASSERT(element());
-
-    if (!hasCreatedShadowSubtree())
-        return nullptr;
-
     ASSERT(element()->userAgentShadowRoot());
     ASSERT(element()->userAgentShadowRoot()->firstChild()); // container
     ASSERT(element()->userAgentShadowRoot()->firstChild()->isHTMLElement());
@@ -296,7 +277,6 @@ HTMLElement* RangeInputType::sliderTrackElement() const
 
 SliderThumbElement& RangeInputType::typedSliderThumbElement() const
 {
-    ASSERT(hasCreatedShadowSubtree());
     ASSERT(sliderTrackElement()->firstChild()); // thumb
     ASSERT(sliderTrackElement()->firstChild()->isHTMLElement());
 
@@ -342,8 +322,7 @@ void RangeInputType::attributeChanged(const QualifiedName& name)
             if (element->hasDirtyValue())
                 element->setValue(element->value());
         }
-        if (hasCreatedShadowSubtree())
-            typedSliderThumbElement().setPositionFromValue();
+        typedSliderThumbElement().setPositionFromValue();
     }
     InputType::attributeChanged(name);
 }
@@ -360,8 +339,7 @@ void RangeInputType::setValue(const String& value, bool valueChanged, TextFieldE
         element()->setTextAsOfLastFormControlChangeEvent(value);
     }
 
-    if (hasCreatedShadowSubtree())
-        typedSliderThumbElement().setPositionFromValue();
+    typedSliderThumbElement().setPositionFromValue();
 }
 
 String RangeInputType::fallbackValue() const
@@ -390,7 +368,7 @@ void RangeInputType::dataListMayHaveChanged()
 {
     m_tickMarkValuesDirty = true;
     RefPtr<HTMLElement> sliderTrackElement = this->sliderTrackElement();
-    if (sliderTrackElement && sliderTrackElement->renderer())
+    if (sliderTrackElement->renderer())
         sliderTrackElement->renderer()->setNeedsLayout();
 }
 
