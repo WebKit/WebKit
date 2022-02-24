@@ -1324,6 +1324,8 @@ webkit.org/b/137572 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Fa
 webkit.org/b/137572 scrollbars/scrollbar-selectors.html [ Failure ]
 scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
 
+webkit.org/b/237150 fast/events/autoscroll-in-iframe-body.html [ Pass Failure ]
+
 # These tests require an OpenType MATH font on the Apple bots.
 webkit.org/b/160161 mathml/opentype/vertical.html [ Skip ]
 webkit.org/b/160161 mathml/opentype/large-operators.html [ Skip ]
