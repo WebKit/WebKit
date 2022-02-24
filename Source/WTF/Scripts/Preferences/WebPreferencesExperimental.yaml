@@ -977,8 +977,10 @@ OverscrollBehaviorEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(WPE)": false
       default: true
     WebCore:
+      "PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(WPE)": false
       default: true
 
 PageAtRuleSupportEnabled:

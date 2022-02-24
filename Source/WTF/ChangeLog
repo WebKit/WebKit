@@ -1,3 +1,14 @@
+2022-02-24  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        REGRESSION(r289683): [GTK][WPE] Scrolling with the mouse wheel doesn't work in twitter after r289683
+        https://bugs.webkit.org/show_bug.cgi?id=237093
+
+        Reviewed by Carlos Garcia Campos.
+ 
+        Turn off by default for wpe/gtk and windows to investigate issue.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-02-24  Chris Dumez  <cdumez@apple.com>
 
         Small optimizations to TinyLRUCache
