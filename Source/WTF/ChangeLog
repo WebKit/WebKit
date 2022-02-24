@@ -1,3 +1,28 @@
+2022-02-24  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] WTF's SPI dependencies are copied via a folder reference and do not emit task outputs
+        https://bugs.webkit.org/show_bug.cgi?id=237129
+
+        Reviewed by Alexey Proskuryakov.
+
+        In https://bugs.webkit.org/show_bug.cgi?id=235744, a folder reference was used to copy
+        headers from `spi/`, but the build system needs explicit file references for all headers to
+        infer discovered dependency relationships for incremental builds. Add spi/ headers directly
+        to WTF.xcodeproj.
+
+        We now have a method for using build rules to make a native Headers phase nest headers
+        according to their source directories. Use it here and delete the per-directory Copy Files
+        phases.
+
+        WTF's unicode headers--used only by external builders--are copied to a different include
+        directory, so for organization simplicity, add a separate target to WTF.xcodeproj to track
+        them. This target is effectively headers-only as it has no source files.
+
+        * Configurations/Base.xcconfig: Copy WK_WHICH_BUILD_SYSTEM settings from other projects.
+        * Configurations/WTF.xcconfig: Set header folder paths.
+        * Configurations/icu.xcconfig: Copied from Source/WTF/Configurations/WTF.xcconfig.
+        * WTF.xcodeproj/project.pbxproj: Add icu target, add spi headers, add build rules.
+
 2022-02-24  Don Olmstead  <don.olmstead@sony.com>
 
         Fix debug build of WorkQueueGeneric after r290418
