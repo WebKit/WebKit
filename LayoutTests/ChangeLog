@@ -1,3 +1,25 @@
+2022-02-23  Tim Nguyen  <ntim@apple.com>
+
+        Use of showModalDialog should appear as a warning in WI console
+        https://bugs.webkit.org/show_bug.cgi?id=237046
+
+        Reviewed by Devin Rousso.
+
+        Test gardening to take in account new console warning.
+
+        * fast/animation/request-animation-frame-during-modal-expected.txt:
+        * fast/dom/Window/open-window-min-size-expected.txt:
+        * fast/events/show-modal-dialog-onblur-onfocus-expected.txt:
+        * http/tests/cookies/document-cookie-after-showModalDialog-expected.txt:
+        * http/tests/security/navigate-when-restoring-cached-page-expected.txt:
+        * http/tests/security/showModalDialog-sync-cross-origin-page-load2-expected.txt:
+        * platform/mac-wk1/fast/events/beforeunload-showModalDialog-expected.txt: Added.
+        * platform/mac-wk1/fast/events/pagehide-showModalDialog-expected.txt: Added.
+        * platform/mac-wk1/fast/events/unload-showModalDialog-expected.txt: Added.
+        * platform/wincairo-wk1/fast/events/beforeunload-showModalDialog-expected.txt: Added.
+        * platform/wincairo-wk1/fast/events/pagehide-showModalDialog-expected.txt: Added.
+        * platform/wincairo-wk1/fast/events/unload-showModalDialog-expected.txt: Added.
+
 2022-02-23  Robert Jenner  <Jenner@apple.com>
 
         [ Mac wk1 Release ] imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html is a constant text failure
