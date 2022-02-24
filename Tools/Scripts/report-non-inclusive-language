@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2020 Apple Inc. All rights reserved.
 #
@@ -36,9 +36,9 @@ import argparse, os, re
 # Hard-coded for now, could read these out of a file instead.
 # Term, then the regular expression for that term.
 nonInclusiveTerms = [
-    [ "blacklist", "black ?list" ],
-    [ "whitelist", "white ?list" ],
-    [ "slave", "slave" ]
+    [ "blacklist", rb"black ?list" ],
+    [ "whitelist", rb"white ?list" ],
+    [ "slave", rb"slave" ]
 ]
 
 IGNORE_DIRECTORIES = ['.svn', '.git', 'autoinstalled', 'buildstream', 'node_modules']
@@ -69,7 +69,7 @@ for subroot, directories, files in os.walk(root):
             continue
         if os.path.islink(os.path.join(subroot, file)):
             continue
-        handle = open(os.path.join(subroot, file), "r")
+        handle = open(os.path.join(subroot, file), "rb")
         for line in handle.readlines():
             for term in nonInclusiveTerms:
                 if re.search(term[1], line):
