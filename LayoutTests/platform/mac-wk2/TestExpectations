@@ -1691,3 +1691,5 @@ http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.
 webkit.org/b/236496 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
 
 webkit.org/b/237095 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Pass Failure ]
+
+webkit.org/b/237165 [ BigSur+ Debug ] imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/quirks.window.html [ Pass Crash ]
