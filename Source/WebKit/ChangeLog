@@ -1,3 +1,27 @@
+2022-02-24  Sihui Liu  <sihui_liu@apple.com>
+
+        Delete SessionStorageQuotaManager
+        https://bugs.webkit.org/show_bug.cgi?id=237132
+
+        Reviewed by Chris Dumez.
+
+        The code is unused since r289474.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::addSessionStorageQuotaManager): Deleted.
+        (WebKit::NetworkProcess::removeSessionStorageQuotaManager): Deleted.
+        (WebKit::NetworkProcess::setSessionStorageQuotaManagerIDBRootPath): Deleted.
+        (WebKit::NetworkProcess::storageQuotaManager): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::SessionStorageQuotaManager): Deleted.
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::defaultQuota const): Deleted.
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::ensureOriginStorageQuotaManager): Deleted.
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::existingStorageQuotaManagers): Deleted.
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::cacheRootPath const): Deleted.
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::setIDBRootPath): Deleted.
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::idbRootPath const): Deleted.
+
 2022-02-24  Devin Rousso  <drousso@apple.com>
 
         REGRESSION(r290436): fix build failures

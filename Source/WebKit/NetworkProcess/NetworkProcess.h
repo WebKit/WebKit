@@ -380,8 +380,6 @@ public:
     void deletePushAndNotificationRegistration(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);
     void getOriginsWithPushAndNotificationPermissions(PAL::SessionID, CompletionHandler<void(const Vector<WebCore::SecurityOriginData>&)>&&);
 
-    void setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID, const String& idbRootPath);
-
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 
@@ -477,43 +475,6 @@ private:
     void setIsHoldingLockedFiles(bool);
 #endif
 
-    class SessionStorageQuotaManager {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        SessionStorageQuotaManager() = delete;
-        SessionStorageQuotaManager(const String& cacheRootPath, uint64_t defaultQuota, uint64_t defaultThirdPartyQuota)
-            : m_cacheRootPath(cacheRootPath)
-            , m_defaultQuota(defaultQuota)
-            , m_defaultThirdPartyQuota(defaultThirdPartyQuota)
-        {
-        }
-        uint64_t defaultQuota(const WebCore::ClientOrigin& origin) const { return origin.topOrigin == origin.clientOrigin ? m_defaultQuota : m_defaultThirdPartyQuota; }
-
-        Ref<WebCore::StorageQuotaManager> ensureOriginStorageQuotaManager(WebCore::ClientOrigin origin, uint64_t quota, WebCore::StorageQuotaManager::UsageGetter&& usageGetter, WebCore::StorageQuotaManager::QuotaIncreaseRequester&& quotaIncreaseRequester)
-        {
-            auto iter = m_storageQuotaManagers.ensure(origin, [quota, usageGetter = WTFMove(usageGetter), quotaIncreaseRequester = WTFMove(quotaIncreaseRequester)]() mutable {
-                return WebCore::StorageQuotaManager::create(quota, WTFMove(usageGetter), WTFMove(quotaIncreaseRequester));
-            }).iterator;
-            return *iter->value;
-        }
-
-        auto existingStorageQuotaManagers() { return m_storageQuotaManagers.values(); }
-
-        const String& cacheRootPath() const { return m_cacheRootPath; }
-
-        void setIDBRootPath(const String& idbRootPath) { m_idbRootPath = idbRootPath; }
-        const String& idbRootPath() const { return m_idbRootPath; }
-
-    private:
-        String m_cacheRootPath;
-        String m_idbRootPath;
-        uint64_t m_defaultQuota;
-        uint64_t m_defaultThirdPartyQuota;
-        HashMap<WebCore::ClientOrigin, RefPtr<WebCore::StorageQuotaManager>> m_storageQuotaManagers;
-    };
-    void addSessionStorageQuotaManager(PAL::SessionID, uint64_t defaultQuota, uint64_t defaultThirdPartyQuota, const String& cacheRootPath, SandboxExtension::Handle&);
-    void removeSessionStorageQuotaManager(PAL::SessionID);
-
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
 
@@ -552,10 +513,6 @@ private:
 #if ENABLE(WEB_RTC)
     RefPtr<RTCDataChannelRemoteManagerProxy> m_rtcDataChannelProxy;
 #endif
-
-    Lock m_sessionStorageQuotaManagersLock;
-    HashMap<PAL::SessionID, std::unique_ptr<SessionStorageQuotaManager>> m_sessionStorageQuotaManagers WTF_GUARDED_BY_LOCK(m_sessionStorageQuotaManagersLock);
-    bool m_quotaLoggingEnabled { false };
 
     OptionSet<NetworkCache::CacheOption> m_cacheOptions;
     WebCore::MessagePortChannelRegistry m_messagePortChannelRegistry;

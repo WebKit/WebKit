@@ -400,8 +400,6 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 
     RemoteNetworkingContext::ensureWebsiteDataStoreSession(*this, parameters);
 
-    addSessionStorageQuotaManager(sessionID, parameters.perOriginStorageQuota, parameters.perThirdPartyOriginStorageQuota, parameters.cacheStorageDirectory, parameters.cacheStorageDirectoryExtensionHandle);
-
     if (auto* session = networkSession(sessionID)) {
         session->addStorageManagerSession(parameters.generalStorageDirectory, parameters.generalStorageDirectoryHandle, parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle, parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle, parameters.cacheStorageDirectory, parameters.perOriginStorageQuota, parameters.perThirdPartyOriginStorageQuota, parameters.shouldUseCustomStoragePaths);
 
@@ -409,25 +407,6 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
         session->addServiceWorkerSession(parameters.serviceWorkerProcessTerminationDelayEnabled, WTFMove(parameters.serviceWorkerRegistrationDirectory), parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
     }
-}
-
-void NetworkProcess::addSessionStorageQuotaManager(PAL::SessionID sessionID, uint64_t defaultQuota, uint64_t defaultThirdPartyQuota, const String& cacheRootPath, SandboxExtension::Handle& cacheRootPathHandle)
-{
-    Locker locker { m_sessionStorageQuotaManagersLock };
-    auto isNewEntry = m_sessionStorageQuotaManagers.ensure(sessionID, [defaultQuota, defaultThirdPartyQuota, &cacheRootPath] {
-        return makeUnique<SessionStorageQuotaManager>(cacheRootPath, defaultQuota, defaultThirdPartyQuota);
-    }).isNewEntry;
-    if (isNewEntry)
-        SandboxExtension::consumePermanently(cacheRootPathHandle);
-    else
-        ASSERT_NOT_REACHED();
-}
-
-void NetworkProcess::removeSessionStorageQuotaManager(PAL::SessionID sessionID)
-{
-    Locker locker { m_sessionStorageQuotaManagersLock };
-    ASSERT(m_sessionStorageQuotaManagers.contains(sessionID));
-    m_sessionStorageQuotaManagers.remove(sessionID);
 }
 
 void NetworkProcess::forEachNetworkSession(const Function<void(NetworkSession&)>& functor)
@@ -2186,14 +2165,6 @@ void NetworkProcess::registerURLSchemeAsNoAccess(const String& scheme) const
     LegacySchemeRegistry::registerURLSchemeAsNoAccess(scheme);
 }
 
-void NetworkProcess::setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID sessionID, const String& idbRootPath)
-{
-    Locker locker { m_sessionStorageQuotaManagersLock };
-    auto* sessionStorageQuotaManager = m_sessionStorageQuotaManagers.get(sessionID);
-    ASSERT(sessionStorageQuotaManager);
-    sessionStorageQuotaManager->setIDBRootPath(idbRootPath);
-}
-
 void NetworkProcess::syncLocalStorage(CompletionHandler<void()>&& completionHandler)
 {
     auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
@@ -2298,31 +2269,6 @@ void NetworkProcess::getOriginsWithPushAndNotificationPermissions(PAL::SessionID
 void NetworkProcess::requestStorageSpace(PAL::SessionID sessionID, const ClientOrigin& origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t>)>&& callback)
 {
     parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestStorageSpace { sessionID, origin, quota, currentSize, spaceRequired }, WTFMove(callback), 0);
-}
-
-RefPtr<StorageQuotaManager> NetworkProcess::storageQuotaManager(PAL::SessionID sessionID, const ClientOrigin& origin)
-{
-    Locker locker { m_sessionStorageQuotaManagersLock };
-    auto* sessionStorageQuotaManager = m_sessionStorageQuotaManagers.get(sessionID);
-    if (!sessionStorageQuotaManager)
-        return nullptr;
-
-    String idbRootPath = sessionStorageQuotaManager->idbRootPath();
-    StorageQuotaManager::UsageGetter usageGetter = [cacheRootPath = sessionStorageQuotaManager->cacheRootPath().isolatedCopy(), idbRootPath = idbRootPath.isolatedCopy(), origin = origin.isolatedCopy()]() {
-        ASSERT(!isMainRunLoop());
-
-        auto cacheStoragePath = CacheStorage::Engine::storagePath(cacheRootPath, origin);
-        return CacheStorage::Engine::diskUsage(cacheStoragePath) + IDBServer::IDBServer::diskUsage(idbRootPath, origin);
-    };
-    StorageQuotaManager::QuotaIncreaseRequester quotaIncreaseRequester = [this, weakThis = WeakPtr { *this }, sessionID, origin] (uint64_t currentQuota, uint64_t currentSpace, uint64_t requestedIncrease, auto&& callback) {
-        ASSERT(isMainRunLoop());
-        if (!weakThis)
-            callback({ });
-        requestStorageSpace(sessionID, origin, currentQuota, currentSpace, requestedIncrease, WTFMove(callback));
-    };
-
-    auto originStorageQuotaManager = sessionStorageQuotaManager->ensureOriginStorageQuotaManager(origin, sessionStorageQuotaManager->defaultQuota(origin), WTFMove(usageGetter), WTFMove(quotaIncreaseRequester)).ptr();
-    return originStorageQuotaManager;
 }
 
 #if !PLATFORM(COCOA)
