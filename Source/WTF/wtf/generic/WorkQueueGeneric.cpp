@@ -89,7 +89,7 @@ Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
 }
 
 #if ASSERT_ENABLED
-void WorkQueue::assertIsCurrent()
+void WorkQueue::assertIsCurrent() const
 {
     ASSERT(m_threadID == Thread::current().uid());
 }
