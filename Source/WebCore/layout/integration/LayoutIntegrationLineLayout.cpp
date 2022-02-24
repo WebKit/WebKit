@@ -657,6 +657,13 @@ Layout::ContainerBox& LineLayout::rootLayoutBox()
     return m_boxTree.rootLayoutBox();
 }
 
+static LayoutPoint flippedContentOffsetIfNeeded(const RenderBlockFlow& root, const RenderBox& childRenderer, LayoutPoint contentOffset)
+{
+    if (root.style().isFlippedBlocksWritingMode())
+        return root.flipForWritingModeForChild(childRenderer, contentOffset);
+    return contentOffset;
+}
+
 void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!m_inlineContent)
@@ -736,12 +743,8 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
         if (auto& renderer = m_boxTree.rendererForLayoutBox(box.layoutBox()); is<RenderBox>(renderer) && renderer.isReplacedOrInlineBlock()) {
             auto& renderBox = downcast<RenderBox>(renderer);
-            if (!renderBox.hasSelfPaintingLayer() && paintInfo.shouldPaintWithinRoot(renderBox)) {
-                auto visualTopLeft = paintOffset;
-                if (flow().style().isFlippedBlocksWritingMode())
-                    visualTopLeft = flow().flipForWritingModeForChild(renderBox, paintOffset);
-                renderBox.paintAsInlineBlock(paintInfo, visualTopLeft);
-            }
+            if (!renderBox.hasSelfPaintingLayer() && paintInfo.shouldPaintWithinRoot(renderBox))
+                renderBox.paintAsInlineBlock(paintInfo, flippedContentOffsetIfNeeded(flow(), renderBox, paintOffset));
         }
     }
 
@@ -768,7 +771,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
             continue;
 
         if (box.isAtomicInlineLevelBox()) {
-            if (renderer.hitTest(request, result, locationInContainer, accumulatedOffset))
+            if (renderer.hitTest(request, result, locationInContainer, flippedContentOffsetIfNeeded(flow(), downcast<RenderBox>(renderer), accumulatedOffset)))
                 return true;
             continue;
         }

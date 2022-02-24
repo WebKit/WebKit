@@ -1,3 +1,17 @@
+2022-02-23  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Flip accumulatedOffset to take writing mode into account when hittesting across formatting contexts.
+        https://bugs.webkit.org/show_bug.cgi?id=237094
+
+        Reviewed by Antti Koivisto.
+
+        Both paint and hittest need coord flip (vertical writing mode here) when jumping through formatting context boundaries.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::flippedContentOffsetIfNeeded):
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+
 2022-02-23  Chris Dumez  <cdumez@apple.com>
 
         Adopt more widely the new URL constructor that takes in a String
