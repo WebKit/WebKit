@@ -575,8 +575,9 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             auto styleable = Styleable::fromElement(element);
 
             // Make sure we don't leave any renderers behind in nodes outside the composed tree.
-            if (element.shadowRoot())
-                tearDownLeftoverShadowHostChildren(element, builder);
+            // See ComposedTreeIterator::ComposedTreeIterator().
+            if (is<HTMLSlotElement>(element) || element.shadowRoot())
+                tearDownLeftoverChildrenOfComposedTree(element, builder);
 
             switch (teardownType) {
             case TeardownType::FullAfterSlotChange:
@@ -652,17 +653,17 @@ void RenderTreeUpdater::tearDownLeftoverPaginationRenderersIfNeeded(Element& roo
     }
 }
 
-void RenderTreeUpdater::tearDownLeftoverShadowHostChildren(Element& host, RenderTreeBuilder& builder)
+void RenderTreeUpdater::tearDownLeftoverChildrenOfComposedTree(Element& element, RenderTreeBuilder& builder)
 {
-    for (auto* hostChild = host.firstChild(); hostChild; hostChild = hostChild->nextSibling()) {
-        if (!hostChild->renderer())
+    for (auto* child = element.firstChild(); child; child = child->nextSibling()) {
+        if (!child->renderer())
             continue;
-        if (is<Text>(*hostChild)) {
-            tearDownTextRenderer(downcast<Text>(*hostChild), builder);
+        if (is<Text>(*child)) {
+            tearDownTextRenderer(downcast<Text>(*child), builder);
             continue;
         }
-        if (is<Element>(*hostChild))
-            tearDownRenderers(downcast<Element>(*hostChild), TeardownType::Full, builder);
+        if (is<Element>(*child))
+            tearDownRenderers(downcast<Element>(*child), TeardownType::Full, builder);
     }
 }
 

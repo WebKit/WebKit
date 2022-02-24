@@ -91,7 +91,7 @@ private:
     enum class TeardownType { Full, FullAfterSlotChange, RendererUpdate, RendererUpdateCancelingAnimations };
     static void tearDownRenderers(Element&, TeardownType, RenderTreeBuilder&);
     static void tearDownTextRenderer(Text&, RenderTreeBuilder&);
-    static void tearDownLeftoverShadowHostChildren(Element&, RenderTreeBuilder&);
+    static void tearDownLeftoverChildrenOfComposedTree(Element&, RenderTreeBuilder&);
     static void tearDownLeftoverPaginationRenderersIfNeeded(Element&, RenderTreeBuilder&);
 
     RenderView& renderView();

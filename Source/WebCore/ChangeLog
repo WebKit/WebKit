@@ -1,3 +1,27 @@
+2022-02-24  Frédéric Wang  <fwang@igalia.com>
+
+        RELEASE_ASSERT(!renderer()); in WebCore::Node::~Node() + 479 (Node.cpp:366)
+        https://bugs.webkit.org/show_bug.cgi?id=235380
+
+        Reviewed by Ryosuke Niwa.
+
+        RenderTreeUpdater::tearDownRenderers() browse the composed tree to tear down descendants.
+        However, element with a shadow root are handled specially in
+        ComposedTreeIterator::ComposedTreeIterator(), they have to be handled specially by calling
+        a tearDownLeftoverShadowHostChildren(). This patch does the same for slot elements which
+        are also handled specially in ComposedTreeIterator(). It also makes names within
+        tearDownLeftoverShadowHostChildren() more generic. This in particular fixes a release assert
+        when a slot with pseudo elements children is torn down.
+
+        Test: fast/shadow-dom/slot-with-pseudo-element-children-renderer-teardown.html
+
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers): Also call tearDownLeftoverShadowHostChildren
+        for a slot element and add a comment pointing to the method corresponding to these special
+        cases.
+        (WebCore::RenderTreeUpdater::tearDownLeftoverChildrenOfComposedTree): Renamed to remove "shadow host".
+        * rendering/updating/RenderTreeUpdater.h: Ditto.
+
 2022-02-24  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Adjust hittest coords when in flipped writing mode
