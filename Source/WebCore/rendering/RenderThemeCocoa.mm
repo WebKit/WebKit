@@ -95,7 +95,7 @@ void RenderThemeCocoa::adjustApplePayButtonStyle(RenderStyle& style, const Eleme
     style.setMinHeight(Length(applePayButtonMinimumHeight, LengthType::Fixed));
 
     if (!style.hasExplicitlySetBorderRadius()) {
-        auto cornerRadius = PAL::get_PassKitCore_PKApplePayButtonDefaultCornerRadius();
+        auto cornerRadius = PKApplePayButtonDefaultCornerRadius;
         style.setBorderRadius({ { cornerRadius, LengthType::Fixed }, { cornerRadius, LengthType::Fixed } });
     }
 }

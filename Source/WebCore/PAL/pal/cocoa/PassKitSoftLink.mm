@@ -101,7 +101,7 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentErrorPostal
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication, void, (NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion), (identifier, domain, sourceApplicationSecondaryIdentifier, completion), PAL_EXPORT)
 
-#if HAVE(PASSKIT_UI)
+#if HAVE(PASSKIT_MODULARIZATION)
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, PassKitUI, PAL_EXPORT)
 #if PLATFORM(MAC)
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, PassKitMacHelper, PAL_EXPORT)
@@ -114,7 +114,7 @@ SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitUI, PKPaymentAuthorizationVie
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitUI, PKPaymentSetupController, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitUI, PKPaymentSetupViewController, PAL_EXPORT)
 #endif
-#else // HAVE(PASSKIT_UI)
+#else // HAVE(PASSKIT_MODULARIZATION)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentAuthorizationViewController, PAL_EXPORT)
 #if PLATFORM(MAC)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, PassKitCore, PKPaymentSetupController, PAL_EXPORT)
@@ -124,7 +124,7 @@ SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentAuthorizationC
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentSetupController, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentSetupViewController, PAL_EXPORT)
 #endif
-#endif // HAVE(PASSKIT_UI)
+#endif // HAVE(PASSKIT_MODULARIZATION)
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/PassKitSoftLinkAdditions.mm>

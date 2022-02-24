@@ -31,7 +31,7 @@
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, PassKitCore)
-#if HAVE(PASSKIT_UI)
+#if HAVE(PASSKIT_MODULARIZATION)
 #if PLATFORM(MAC)
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, PassKitMacHelper)
 #endif
@@ -94,15 +94,25 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequestShippingContactUpdate)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequestShippingMethodUpdate)
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKApplePayButtonDefaultCornerRadius, CGFloat)
+#define PKApplePayButtonDefaultCornerRadius PAL::get_PassKitCore_PKApplePayButtonDefaultCornerRadius()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKContactFieldEmailAddress, PKContactField)
+#define PKContactFieldEmailAddress PAL::get_PassKitCore_PKContactFieldEmailAddress()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKContactFieldName, PKContactField)
+#define PKContactFieldName PAL::get_PassKitCore_PKContactFieldName()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKContactFieldPhoneNumber, PKContactField)
+#define PKContactFieldPhoneNumber PAL::get_PassKitCore_PKContactFieldPhoneNumber()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKContactFieldPhoneticName, PKContactField)
+#define PKContactFieldPhoneticName PAL::get_PassKitCore_PKContactFieldPhoneticName()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKContactFieldPostalAddress, PKContactField)
+#define PKContactFieldPostalAddress PAL::get_PassKitCore_PKContactFieldPostalAddress()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKPaymentErrorContactFieldUserInfoKey, PKPaymentErrorKey)
+#define PKPaymentErrorContactFieldUserInfoKey PAL::get_PassKitCore_PKPaymentErrorContactFieldUserInfoKey()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKPassKitErrorDomain, NSString *)
+#define PKPassKitErrorDomain PAL::get_PassKitCore_PKPassKitErrorDomain()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKPaymentErrorDomain, NSString *)
+#define PKPaymentErrorDomain PAL::get_PassKitCore_PKPaymentErrorDomain()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKPaymentErrorPostalAddressUserInfoKey, PKPaymentErrorKey)
+#define PKPaymentErrorPostalAddressUserInfoKey PAL::get_PassKitCore_PKPaymentErrorPostalAddressUserInfoKey()
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKitCore, PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication, void, (NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion), (identifier, domain, sourceApplicationSecondaryIdentifier, completion))
 #define PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication PAL::softLink_PassKitCore_PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication

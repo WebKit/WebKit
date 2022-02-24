@@ -112,15 +112,15 @@ static RetainPtr<NSSet> toPKContactFields(const WebCore::ApplePaySessionPaymentR
     Vector<NSString *> result;
 
     if (contactFields.postalAddress)
-        result.append(PAL::get_PassKitCore_PKContactFieldPostalAddress());
+        result.append(PKContactFieldPostalAddress);
     if (contactFields.phone)
-        result.append(PAL::get_PassKitCore_PKContactFieldPhoneNumber());
+        result.append(PKContactFieldPhoneNumber);
     if (contactFields.email)
-        result.append(PAL::get_PassKitCore_PKContactFieldEmailAddress());
+        result.append(PKContactFieldEmailAddress);
     if (contactFields.name)
-        result.append(PAL::get_PassKitCore_PKContactFieldName());
+        result.append(PKContactFieldName);
     if (contactFields.phoneticName)
-        result.append(PAL::get_PassKitCore_PKContactFieldPhoneticName());
+        result.append(PKContactFieldPhoneticName);
 
     return adoptNS([[NSSet alloc] initWithObjects:result.data() count:result.size()]);
 }

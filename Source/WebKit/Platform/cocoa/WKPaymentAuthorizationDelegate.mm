@@ -336,7 +336,7 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
 
 - (void)_willFinishWithError:(NSError *)error
 {
-    if (![error.domain isEqualToString:PAL::get_PassKitCore_PKPassKitErrorDomain()])
+    if (![error.domain isEqualToString:PKPassKitErrorDomain])
         return;
 
     _sessionError = error;

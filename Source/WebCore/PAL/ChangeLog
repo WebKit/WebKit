@@ -1,5 +1,23 @@
 2022-02-24  Devin Rousso  <drousso@apple.com>
 
+        REGRESSION(r290436): fix build failures
+        https://bugs.webkit.org/show_bug.cgi?id=237149
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/cocoa/PassKitSPI.h:
+        * pal/spi/cocoa/PassKitInstallmentsSPI.h:
+        Undo some of the changes in r290436 by re-adding the old `#import` pre-r290436 when we do
+        not have PassKit modularization (i.e. `HAVE(PASSKIT_MODULARIZATION)`). This way, the code
+        is the same as it was for older releases.
+
+        * pal/cocoa/PassKitSoftLink.h:
+        * pal/cocoa/PassKitSoftLink.mm:
+        Declare some `#define` for convenience (and so that if we need to change from `PassKitCore`
+        in the future we don't have to change any callsites).
+
+2022-02-24  Devin Rousso  <drousso@apple.com>
+
         [Apple Pay] switch from `PassKit/*` to `PassKit[Core,UI]/*`
         https://bugs.webkit.org/show_bug.cgi?id=237091
         <rdar://problem/81085862>

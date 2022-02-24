@@ -23,37 +23,70 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(APPLE_INTERNAL_SDK)
+#if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
+#if HAVE(PASSKIT_MODULARIZATION)
+#import <PassKitCore/PKRecurringPaymentSummaryItem.h>
+#else
+#import <PassKit/PKRecurringPaymentSummaryItem.h>
+#endif
+#endif
+
+#if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
+#if HAVE(PASSKIT_MODULARIZATION)
+#import <PassKitCore/PKDeferredPaymentSummaryItem.h>
+#else
+#import <PassKit/PKDeferredPaymentSummaryItem.h>
+#endif
+#endif
+
+#if !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
 // FIXME: PassKit does not declare its NSString constant symbols with C linkage, so we end up with
 // linkage mismatches in the SOFT_LINK_CONSTANT macros used in PassKitSoftLink.mm unless we wrap
 // these includes in an extern "C" block.
 WTF_EXTERN_C_BEGIN
+#if HAVE(PASSKIT_MODULARIZATION)
 #import <PassKitCore/PKConstants.h>
 #import <PassKitCore/PKError.h>
+#else
+#import <PassKit/PKConstants.h>
+#import <PassKit/PKError.h>
+#endif
 WTF_EXTERN_C_END
 
+#endif // !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+
+#if USE(APPLE_INTERNAL_SDK)
+
+#if HAVE(PASSKIT_MODULARIZATION)
 #import <PassKitCore/PKContact.h>
 #import <PassKitCore/PKError_Private.h>
 #import <PassKitCore/PKPassLibrary.h>
 #import <PassKitCore/PKPayment.h>
 #import <PassKitCore/PKPaymentMethod.h>
 #import <PassKitCore/PKPaymentPass.h>
-#import <PassKitCore/PKPaymentRequest_WebKit.h>
-#import <PassKitCore/PKPaymentRequestStatus.h>
 #import <PassKitCore/PKPaymentSetupConfiguration_WebKit.h>
 #import <PassKitCore/PKPaymentSetupRequest.h>
+#else
+#import <PassKit/PKContact.h>
+#import <PassKit/PKError_Private.h>
+#import <PassKit/PKPassLibrary.h>
+#import <PassKit/PKPayment.h>
+#import <PassKit/PKPaymentMethod.h>
+#import <PassKit/PKPaymentPass.h>
+#import <PassKit/PKPaymentSetupConfiguration_WebKit.h>
+#import <PassKit/PKPaymentSetupRequest.h>
+#endif
+
+#import <PassKitCore/PKPaymentRequestStatus.h>
+#import <PassKitCore/PKPaymentRequest_WebKit.h>
 
 #if !HAVE(PASSKIT_INSTALLMENTS)
+#if HAVE(PASSKIT_MODULARIZATION)
 #import <PassKitCore/PKPaymentRequest_Private.h>
+#else
+#import <PassKit/PKPaymentRequest_Private.h>
 #endif
-
-#if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
-#import <PassKitCore/PKRecurringPaymentSummaryItem.h>
-#endif
-
-#if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
-#import <PassKitCore/PKDeferredPaymentSummaryItem.h>
 #endif
 
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
@@ -64,7 +97,7 @@ WTF_EXTERN_C_END
 #import <PassKitCore/PKDateComponentsRange.h>
 #endif
 
-#if HAVE(PASSKIT_UI)
+#if HAVE(PASSKIT_MODULARIZATION)
 // FIXME: remove this after <rdar://88985220>
 #if __has_include(<PassKitUI/PKPaymentSetupController.h>)
 #import <PassKitUI/PKPaymentSetupController.h>
@@ -79,14 +112,14 @@ WTF_EXTERN_C_END
 #import <PassKitUI/PKPaymentAuthorizationViewController_Private.h>
 #import <PassKitUI/PKPaymentSetupViewController.h>
 #endif
-#else // HAVE(PASSKIT_UI)
-#import <PassKitCore/PKPaymentSetupController.h>
-#import <PassKitCore/PKPaymentAuthorizationViewController_Private.h>
+#else // HAVE(PASSKIT_MODULARIZATION)
+#import <PassKit/PKPaymentSetupController.h>
+#import <PassKit/PKPaymentAuthorizationViewController_Private.h>
 #if PLATFORM(IOS_FAMILY)
-#import <PassKitCore/PKPaymentAuthorizationController_Private.h>
-#import <PassKitCore/PKPaymentSetupViewController.h>
+#import <PassKit/PKPaymentAuthorizationController_Private.h>
+#import <PassKit/PKPaymentSetupViewController.h>
 #endif
-#endif // HAVE(PASSKIT_UI)
+#endif // HAVE(PASSKIT_MODULARIZATION)
 
 #import <WebKitAdditions/PassKitSPIAdditions.h>
 

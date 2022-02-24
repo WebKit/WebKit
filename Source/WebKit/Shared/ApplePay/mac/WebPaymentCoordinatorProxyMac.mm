@@ -37,7 +37,7 @@ namespace WebKit {
 
 void WebPaymentCoordinatorProxy::platformCanMakePayments(CompletionHandler<void(bool)>&& completionHandler)
 {
-#if HAVE(PASSKIT_UI)
+#if HAVE(PASSKIT_MODULARIZATION)
     if (!PAL::isPassKitMacHelperFrameworkAvailable())
 #else
     if (!PAL::isPassKitCoreFrameworkAvailable())
@@ -53,7 +53,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePayments(CompletionHandler<void(
 
 void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-#if HAVE(PASSKIT_UI)
+#if HAVE(PASSKIT_MODULARIZATION)
     if (!PAL::isPassKitMacHelperFrameworkAvailable())
 #else
     if (!PAL::isPassKitCoreFrameworkAvailable())
