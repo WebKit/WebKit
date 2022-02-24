@@ -5,6 +5,6 @@ PASS fetch was successfully blocked.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-blockedURI = http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py?url=http://localhost:8000/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.py
+blockedURI = http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py?url=http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py?url=http://localhost:8000/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.py
 
 

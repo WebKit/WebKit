@@ -1,3 +1,32 @@
+2022-02-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        Update CSP console logging
+        https://bugs.webkit.org/show_bug.cgi?id=232216
+        <rdar://problem/89322580>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/security/contentSecurityPolicy/audio-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/font-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/font-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/image-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/image-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-after-multiple-redirects-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/stylesheet-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/stylesheet-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/svg-font-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/svg-font-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/svg-image-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/svg-image-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/track-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/track-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/video-redirect-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/video-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-blocked-expected.txt:
+
 2022-02-24  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Non-orthogonal inline block boxes keep their baseline on ideographic lines

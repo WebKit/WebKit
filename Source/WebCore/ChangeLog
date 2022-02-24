@@ -1,3 +1,20 @@
+2022-02-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        Update CSP console logging
+        https://bugs.webkit.org/show_bug.cgi?id=232216
+        <rdar://problem/89322580>
+
+        Reviewed by Brent Fulgham.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        (WebCore::SubresourceLoader::originalHeaders const):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowResourceFromSource const):
+        (WebCore::ContentSecurityPolicy::allowWorkerFromSource const):
+        (WebCore::ContentSecurityPolicy::allowScriptFromSource const):
+        (WebCore::ContentSecurityPolicy::allowStyleFromSource const):
+
 2022-02-24  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Non-orthogonal inline block boxes keep their baseline on ideographic lines

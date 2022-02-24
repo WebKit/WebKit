@@ -93,7 +93,7 @@ void NetworkLoadChecker::check(ResourceRequest&& request, ContentSecurityPolicyC
         m_loadInformation.request = request;
 
     m_firstRequestHeaders = request.httpHeaderFields();
-    checkRequest(WTFMove(request), client, URL(), WTFMove(handler));
+    checkRequest(WTFMove(request), client, WTFMove(handler));
 }
 
 static inline NetworkLoadChecker::RedirectionRequestOrError redirectionError(const ResourceResponse& redirectResponse, String&& errorMessage)
@@ -143,7 +143,7 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
     m_previousURL = WTFMove(m_url);
     m_url = redirectRequest.url();
 
-    checkRequest(WTFMove(redirectRequest), client, redirectResponse.url(), [handler = WTFMove(handler), request = WTFMove(request), redirectResponse](auto&& result) mutable {
+    checkRequest(WTFMove(redirectRequest), client, [handler = WTFMove(handler), request = WTFMove(request), redirectResponse](auto&& result) mutable {
         WTF::switchOn(result,
             [&handler] (ResourceError& error) mutable {
                 handler(makeUnexpected(WTFMove(error)));
@@ -221,7 +221,7 @@ auto NetworkLoadChecker::accessControlErrorForValidationHandler(String&& message
     return ResourceError { String { }, 0, m_url, WTFMove(message), ResourceError::Type::AccessControl };
 }
 
-void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurityPolicyClient* client, const URL& preRedirectURL, ValidationHandler&& handler)
+void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurityPolicyClient* client, ValidationHandler&& handler)
 {
     ResourceRequest originalRequest = request;
 
@@ -230,7 +230,7 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
             auto type = m_options.mode == FetchOptions::Mode::Navigate ? ContentSecurityPolicy::InsecureRequestType::Navigation : ContentSecurityPolicy::InsecureRequestType::Load;
             contentSecurityPolicy->upgradeInsecureRequestIfNeeded(request, type);
         }
-        if (!this->isAllowedByContentSecurityPolicy(request, client, preRedirectURL)) {
+        if (!this->isAllowedByContentSecurityPolicy(request, client)) {
             handler(this->accessControlErrorForValidationHandler("Blocked by Content Security Policy."_s));
             return;
         }
@@ -267,7 +267,7 @@ void NetworkLoadChecker::continueCheckingRequestOrDoSyntheticRedirect(ResourceRe
     this->continueCheckingRequest(WTFMove(currentRequest), WTFMove(handler));
 }
 
-bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest& request, WebCore::ContentSecurityPolicyClient* client, const URL& preRedirectURL)
+bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest& request, WebCore::ContentSecurityPolicyClient* client)
 {
     auto* contentSecurityPolicy = this->contentSecurityPolicy();
     contentSecurityPolicy->setClient(client);
@@ -275,6 +275,7 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
         contentSecurityPolicy->setClient(nullptr);
     });
 
+    auto preRedirectURL = m_networkResourceLoader ? m_networkResourceLoader.get()->originalRequest().url() : URL();
     auto redirectResponseReceived = isRedirected() ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
     switch (m_options.destination) {
     case FetchOptions::Destination::Audioworklet:
