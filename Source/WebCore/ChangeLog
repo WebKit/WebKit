@@ -1,3 +1,71 @@
+2022-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Modernize / simplify ScrollingStateTree a bit
+        https://bugs.webkit.org/show_bug.cgi?id=237111
+
+        Reviewed by Simon Fraser.
+
+        Modernize / simplify ScrollingStateTree a bit.
+
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::nodeTypeAndParentMatch):
+        Simplify function body to be on one line and make function static since it doesn't
+        need an instance.
+
+        (WebCore::nodeWasReattachedRecursive):
+        Make function static since it doesn't need an instance.
+
+        (WebCore::ScrollingStateTree::createUnparentedNode):
+        - Pass a reference instead of pointer
+
+        (WebCore::ScrollingStateTree::insertNode):
+        - Use template deduction for Ref<>
+        - Drop unnecessarily 0-check for parentID since stateNodeForID(parentID) would have
+          returned null and we would have returned early a few lines above.
+
+        (WebCore::ScrollingStateTree::unparentNode):
+        (WebCore::ScrollingStateTree::unparentChildrenAndDestroyNode):
+        - Use RefPtr type for protectedNode based on the variable naming. Previously, auto
+          would have deduced to a raw pointer.
+
+        (WebCore::ScrollingStateTree::detachAndDestroySubtree):
+        (WebCore::ScrollingStateTree::clear):
+        Pass more references instead of pointers.
+
+        (WebCore::ScrollingStateTree::commit):
+        use auto and std::exchange() to make the code a bit more concise.
+
+        (WebCore::ScrollingStateTree::removeNodeAndAllDescendants):
+        Take a reference in parameter instead of a raw pointer since the pointer couldn't
+        be null.
+
+        (WebCore::ScrollingStateTree::recursiveNodeWillBeRemoved):
+        - Take a reference in parameter instead of a raw pointer since the pointer couldn't
+        be null.
+        - Rename currNode to currentNode per WebKit coding style.
+
+        (WebCore::ScrollingStateTree::willRemoveNode):
+        Take a reference in parameter instead of a raw pointer since the pointer couldn't
+        be null.
+
+        (WebCore::ScrollingStateTree::stateNodeForID const):
+        Rewrite function in a more concise way by calling HashMap::get() instead of HashMap::find().
+
+        (WebCore::reconcileLayerPositionsRecursive):
+        - Make function static since it doesn't need an instance
+        - Rename currNode to currentNode per WebKit coding style
+
+        (WebCore::ScrollingStateTree::reconcileViewportConstrainedLayerPositions):
+        Make function a bit more concise by not doing an early return.
+
+        (showScrollingStateTree):
+        Take in a reference instead of a raw pointer.
+
+        (WebCore::ScrollingStateTree::nodeTypeAndParentMatch const): Deleted.
+        (WebCore::ScrollingStateTree::nodeWasReattachedRecursive): Deleted.
+        (WebCore::ScrollingStateTree::reconcileLayerPositionsRecursive): Deleted.
+        * page/scrolling/ScrollingStateTree.h:
+
 2022-02-23  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r290351 and r290404.
