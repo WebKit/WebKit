@@ -1,3 +1,13 @@
+2022-02-24  J Pascoe  <j_pascoe@apple.com>
+
+        Add myself (John Pascoe) to watchlist for authentication and WebCrypto
+        https://bugs.webkit.org/show_bug.cgi?id=237121
+        rdar://problem/89385797
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2022-02-22  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Use Python 3 (Part 2)
