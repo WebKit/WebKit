@@ -752,6 +752,13 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         renderInline->paintOutline(paintInfo, paintOffset);
 }
 
+static LayoutRect flippedRectForWritingMode(const RenderBlockFlow& root, const FloatRect& rect)
+{
+    auto flippedRect = LayoutRect { rect };
+    root.flipForWritingMode(flippedRect);
+    return flippedRect;
+}
+
 bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     if (hitTestAction != HitTestForeground)
@@ -776,7 +783,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
             continue;
         }
 
-        auto boxRect = Layout::toLayoutRect(box.rect());
+        auto boxRect = flippedRectForWritingMode(flow(), box.rect());
         boxRect.moveBy(accumulatedOffset);
 
         if (!locationInContainer.intersects(boxRect))
@@ -786,7 +793,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         if (!elementRenderer.visibleToHitTesting(request))
             continue;
         
-        renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
+        renderer.updateHitTestResult(result, flow().flipForWritingMode(locationInContainer.point() - toLayoutSize(accumulatedOffset)));
         if (result.addNodeToListBasedTestResult(renderer.nodeForHitTest(), request, locationInContainer, boxRect) == HitTestProgress::Stop)
             return true;
     }

@@ -1,3 +1,17 @@
+2022-02-24  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Adjust hittest coords when in flipped writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=237103
+
+        Reviewed by Antti Koivisto.
+
+        This is similar to what we do in LegacyInlineFlowBox::nodeAtPoint.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::flippedRectForWritingMode):
+        (WebCore::LayoutIntegration::flippedPointForWritingMode):
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+
 2022-02-24  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         LibWebRTCCodecs, -Proxy create and communicate the RemoteVideoFrameProxy incorrectly
