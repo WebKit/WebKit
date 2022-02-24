@@ -46,17 +46,17 @@ function test()
             let container = await getFlexContainerNode();
 
             InspectorTest.log("Requesting to show flex overlay for first .flex-container");
-            await DOMAgent.showFlexOverlay(container.id, WI.Color.fromString("magenta").toProtocol());
+            await container.showLayoutOverlay({color: WI.Color.fromString("magenta")});
             await checkFlexOverlayCount(1);
 
             // No error should occur if showing flex overlay for a node that already has one.
             InspectorTest.log("Requesting to show a different flex overlay for first .flex-container");
-            await DOMAgent.showFlexOverlay(container.id, WI.Color.fromString("green").toProtocol());
+            await container.showLayoutOverlay({color: WI.Color.fromString("green")});
             await checkFlexOverlayCount(1);
 
             // No error should occur when hiding the flex overlay.
             InspectorTest.log("Requesting to hide flex overlay");
-            await DOMAgent.hideFlexOverlay(container.id);
+            await container.hideLayoutOverlay();
             await checkFlexOverlayCount(0);
         }
     });
@@ -69,21 +69,21 @@ function test()
             let [first, second] = await getAllFlexContainerNodes();
 
             InspectorTest.log("Requesting to show first flex overlay");
-            await DOMAgent.showFlexOverlay(first.id, WI.Color.fromString("magenta").toProtocol());
+            await first.showLayoutOverlay({color: WI.Color.fromString("magenta")});
             await checkFlexOverlayCount(1);
 
             InspectorTest.log("Requesting to show second flex overlay");
-            await DOMAgent.showFlexOverlay(second.id, WI.Color.fromString("green").toProtocol());
+            await second.showLayoutOverlay({color: WI.Color.fromString("green")});
             await checkFlexOverlayCount(2);
 
             // No error should occur when hiding the first flex overlay.
             InspectorTest.log("Requesting to hide first flex overlay");
-            await DOMAgent.hideFlexOverlay(first.id);
+            await first.hideLayoutOverlay();
             await checkFlexOverlayCount(1);
 
             // No error should occur when hiding the second flex overlay.
             InspectorTest.log("Requesting to hide second flex overlay");
-            await DOMAgent.hideFlexOverlay(second.id);
+            await second.hideLayoutOverlay();
             await checkFlexOverlayCount(0);
         }
     });
@@ -96,11 +96,11 @@ function test()
             let [first, second] = await getAllFlexContainerNodes();
 
             InspectorTest.log("Requesting to show first flex overlay");
-            await DOMAgent.showFlexOverlay(first.id, WI.Color.fromString("magenta").toProtocol());
+            await first.showLayoutOverlay({color: WI.Color.fromString("magenta")});
             await checkFlexOverlayCount(1);
 
             InspectorTest.log("Requesting to show second flex overlay");
-            await DOMAgent.showFlexOverlay(second.id, WI.Color.fromString("green").toProtocol());
+            await second.showLayoutOverlay({color: WI.Color.fromString("green")});
             await checkFlexOverlayCount(2);
 
             // No error should occur when hiding all flex overlays.

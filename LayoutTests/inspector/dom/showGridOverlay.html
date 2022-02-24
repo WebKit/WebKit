@@ -46,17 +46,17 @@ function test()
             let container = await getGridContainerNode();
 
             InspectorTest.log("Requesting to show grid overlay for first .grid-container");
-            await DOMAgent.showGridOverlay(container.id, WI.Color.fromString("magenta").toProtocol());
+            await container.showLayoutOverlay({color: WI.Color.fromString("magenta")});
             await checkGridOverlayCount(1);
 
             // No error should occur if showing grid overlay for a node that already has one.
             InspectorTest.log("Requesting to show a different grid overlay for first .grid-container");
-            await DOMAgent.showGridOverlay(container.id, WI.Color.fromString("green").toProtocol());
+            await container.showLayoutOverlay({color: WI.Color.fromString("green")});
             await checkGridOverlayCount(1);
 
             // No error should occur when hiding the grid overlay.
             InspectorTest.log("Requesting to hide grid overlay");
-            await DOMAgent.hideGridOverlay(container.id);
+            await container.hideLayoutOverlay();
             await checkGridOverlayCount(0);
         }
     });
@@ -69,21 +69,21 @@ function test()
             let [first, second] = await getAllGridContainerNodes();
 
             InspectorTest.log("Requesting to show first grid overlay");
-            await DOMAgent.showGridOverlay(first.id, WI.Color.fromString("magenta").toProtocol());
+            await first.showLayoutOverlay({color: WI.Color.fromString("magenta")});
             await checkGridOverlayCount(1);
 
             InspectorTest.log("Requesting to show second grid overlay");
-            await DOMAgent.showGridOverlay(second.id, WI.Color.fromString("green").toProtocol());
+            await second.showLayoutOverlay({color: WI.Color.fromString("green")});
             await checkGridOverlayCount(2);
 
             // No error should occur when hiding the grid overlay.
             InspectorTest.log("Requesting to hide first grid overlay");
-            await DOMAgent.hideGridOverlay(first.id);
+            await first.hideLayoutOverlay();
             await checkGridOverlayCount(1);
 
             // No error should occur when hiding the grid overlay.
             InspectorTest.log("Requesting to hide second grid overlay");
-            await DOMAgent.hideGridOverlay(second.id);
+            await second.hideLayoutOverlay();
             await checkGridOverlayCount(0);
         }
     });
@@ -96,11 +96,11 @@ function test()
             let [first, second] = await getAllGridContainerNodes();
 
             InspectorTest.log("Requesting to show grid overlay");
-            await DOMAgent.showGridOverlay(first.id, WI.Color.fromString("magenta").toProtocol());
+            await first.showLayoutOverlay({color: WI.Color.fromString("magenta")});
             await checkGridOverlayCount(1);
 
             InspectorTest.log("Requesting to show a different grid overlay");
-            await DOMAgent.showGridOverlay(second.id, WI.Color.fromString("green").toProtocol());
+            await second.showLayoutOverlay({color: WI.Color.fromString("green")});
             await checkGridOverlayCount(2);
 
             // No error should occur when hiding the grid overlay.

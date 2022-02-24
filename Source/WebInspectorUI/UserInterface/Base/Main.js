@@ -127,7 +127,6 @@ WI.loaded = function()
         WI.domDebuggerManager = new WI.DOMDebuggerManager,
         WI.canvasManager = new WI.CanvasManager,
         WI.animationManager = new WI.AnimationManager,
-        WI.overlayManager = new WI.OverlayManager,
     ];
 
     // Register for events.

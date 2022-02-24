@@ -1,3 +1,67 @@
+2022-02-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: merge WI.OverlayManager into WI.DOMNode
+        https://bugs.webkit.org/show_bug.cgi?id=236533
+
+        Reviewed by Patrick Angle.
+
+        There's really nothing substantial about `WI.OverlayManager` that requires it to exist. All
+        of the methods, members, etc. can be moved to `WI.DOMNode`, resulting in clearer calling
+        code (since callers currently have to provide a `WI.DOMNode` to `WI.OverlayManager` methods)
+        and fewer collections (e.g. it's no longer necessary to have a "list of nodes showing a grid
+        overlay").
+
+        * UserInterface/Controllers/OverlayManager.js: Removed.
+        * UserInterface/Main.html:
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode):
+        (WI.DOMNode.resetDefaultLayoutOverlayConfiguration): Added.
+        (WI.DOMNode.prototype.get layoutOverlayShowing): moved from `WI.OverlayManager.protytpe.hasVisibleOverlay`.
+        (WI.DOMNode.prototype.set layoutContextType):
+        (WI.DOMNode.prototype.showLayoutOverlay): moved from `WI.OverlayManager.protytpe.showOverlay`.
+        (WI.DOMNode.prototype.hideLayoutOverlay): moved from `WI.OverlayManager.protytpe.hideOverlay`.
+        (WI.DOMNode.prototype.get layoutOverlayColor): moved from `WI.OverlayManager.protytpe.getColorForNode`.
+        (WI.DOMNode.prototype.set layoutOverlayColor): moved from `WI.OverlayManager.protytpe.setColorForNode`.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype._mainResourceDidChange):
+        Reset the index of the next default color to use for the next grid/flex DOM node.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.onattach):
+        (WI.DOMTreeElement.prototype.ondetach):
+        (WI.DOMTreeElement.prototype._layoutBadgeClicked):
+        (WI.DOMTreeElement.prototype._updateLayoutBadgeStatus):
+        (WI.DOMTreeElement.prototype._handleLayoutContextTypeChanged):
+        * UserInterface/Views/NodeOverlayListSection.js:
+        (WI.NodeOverlayListSection.prototype.attached):
+        (WI.NodeOverlayListSection.prototype.detached):
+        (WI.NodeOverlayListSection.prototype.layout):
+        (WI.NodeOverlayListSection.prototype._handleOverlayStateChanged):
+        (WI.NodeOverlayListSection.prototype._handleToggleAllCheckboxChanged):
+        (WI.NodeOverlayListSection.prototype._updateToggleAllCheckbox):
+        * UserInterface/Controllers/GridOverlayConfigurationDiagnosticEventRecorder.js:
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype.setup):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype.teardown):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleGridOverlayShown):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleGridOverlayHidden):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._sampleCurrentOverlayConfiguration):
+        * UserInterface/Controllers/GridOverlayDiagnosticEventRecorder.js:
+        (WI.GridOverlayDiagnosticEventRecorder):
+        (WI.GridOverlayDiagnosticEventRecorder.prototype.setup):
+        (WI.GridOverlayDiagnosticEventRecorder.prototype.teardown):
+        (WI.GridOverlayDiagnosticEventRecorder.prototype._handleGridOverlayShown):
+        Adopt the above changes:
+         - Replace `WI.OverlayManager.Event.*` with `WI.DOMNode.Event.*` (and `event.data.domNode`
+           with `event.target`).
+         - Replace `WI.overlayManager.*(domNode[, ...])` with `domNode.*([...])`.
+         - Directly query `WI.settings.gridOverlay*.value` instead of getting them from the `data`
+           in `WI.DOMNode.Event.LayoutOverlayShown` (formerly `WI.OverlayManager.Event.OverlayShown`).
+
 2022-02-18  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r290149.

@@ -859,6 +859,8 @@ WI.DOMManager = class DOMManager extends WI.Object
         this._restoreSelectedNodeIsAllowed = true;
 
         this.ensureDocument();
+
+        WI.DOMNode.resetDefaultLayoutOverlayConfiguration();
     }
 };
 

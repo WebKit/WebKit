@@ -56,14 +56,14 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
     {
         super.attached();
 
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.OverlayShown, this._handleOverlayStateChanged, this);
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.OverlayHidden, this._handleOverlayStateChanged, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._handleOverlayStateChanged, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._handleOverlayStateChanged, this);
     }
 
     detached()
     {
-        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.OverlayShown, this._handleOverlayStateChanged, this);
-        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.OverlayHidden, this._handleOverlayStateChanged, this);
+        WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._handleOverlayStateChanged, this);
+        WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._handleOverlayStateChanged, this);
 
         super.detached();
     }
@@ -107,7 +107,7 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
             let checkboxElement = labelElement.appendChild(document.createElement("input"));
             labelElement.insertBefore(checkboxElement, nodeDisplayName);
             checkboxElement.type = "checkbox";
-            checkboxElement.checked = WI.overlayManager.hasVisibleOverlay(domNode);
+            checkboxElement.checked = domNode.layoutOverlayShowing;
 
             this._checkboxElementByNodeMap.set(domNode, checkboxElement);
 
@@ -117,27 +117,22 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
 
             checkboxElement.addEventListener("change", (event) => {
                 if (checkboxElement.checked)
-                    WI.overlayManager.showOverlay(domNode, {color: swatch?.value, initiator});
+                    domNode.showLayoutOverlay({color: swatch?.value, initiator});
                 else
-                    WI.overlayManager.hideOverlay(domNode);
+                    domNode.hideLayoutOverlay();
             });
 
-            let color = WI.overlayManager.getColorForNode(domNode);
-            let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, color);
+            let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, domNode.layoutOverlayColor);
             swatch.shiftClickColorEnabled = false;
             itemContainerElement.append(swatch.element);
 
             swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {
                 if (checkboxElement?.checked)
-                    WI.overlayManager.showOverlay(domNode, {color: event.data.value});
+                    domNode.showLayoutOverlay({color: event.data.value});
             }, swatch);
 
             swatch.addEventListener(WI.InlineSwatch.Event.Deactivated, (event) => {
-                if (event.target.value === color)
-                    return;
-
-                color = event.target.value;
-                WI.overlayManager.setColorForNode(domNode, color);
+                domNode.layoutOverlayColor = event.target.value;
             }, swatch);
 
             let buttonElement = itemContainerElement.appendChild(WI.createGoToArrowButton());
@@ -152,11 +147,11 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
 
     _handleOverlayStateChanged(event)
     {
-        let checkboxElement = this._checkboxElementByNodeMap.get(event.data.domNode);
+        let checkboxElement = this._checkboxElementByNodeMap.get(event.target);
         if (!checkboxElement)
             return;
 
-        checkboxElement.checked = event.type === WI.OverlayManager.Event.OverlayShown;
+        checkboxElement.checked = event.target.layoutOverlayShowing;
         this._updateToggleAllCheckbox();
     }
 
@@ -167,9 +162,9 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
 
         for (let domNode of this._nodeSet) {
             if (isChecked)
-                WI.overlayManager.showOverlay(domNode);
+                domNode.showLayoutOverlay();
             else
-                WI.overlayManager.hideOverlay(domNode);
+                domNode.hideLayoutOverlay();
         }
 
         this._suppressUpdateToggleAllCheckbox = false;
@@ -183,8 +178,7 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
         let hasVisible = false;
         let hasHidden = false;
         for (let domNode of this._nodeSet) {
-            let isVisible = WI.overlayManager.hasVisibleOverlay(domNode);
-            if (isVisible)
+            if (domNode.layoutOverlayShowing)
                 hasVisible = true;
             else
                 hasHidden = true;

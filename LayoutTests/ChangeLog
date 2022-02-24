@@ -1,3 +1,14 @@
+2022-02-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: merge WI.OverlayManager into WI.DOMNode
+        https://bugs.webkit.org/show_bug.cgi?id=236533
+
+        Reviewed by Patrick Angle.
+
+        * inspector/dom/showFlexOverlay.html:
+        * inspector/dom/showGridOverlay.html:
+        Replace direct `DOMAgent` calls with equivalent `WI.DOMNode` methods.
+
 2022-02-24  Frédéric Wang  <fwang@igalia.com>
 
         RELEASE_ASSERT(!renderer()); in WebCore::Node::~Node() + 479 (Node.cpp:366)

@@ -28,38 +28,38 @@ WI.GridOverlayDiagnosticEventRecorder = class GridOverlayDiagnosticEventRecorder
     constructor(controller)
     {
         super("GridOverlay", controller);
-
-        this._initiators = Object.values(WI.GridOverlayDiagnosticEventRecorder.Initiator);
     }
 
     // Protected
 
     setup()
     {
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.OverlayShown, this._handleGridOverlayShown, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._handleGridOverlayShown, this);
     }
 
     teardown()
     {
-        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.OverlayShown, this._handleGridOverlayShown, this);
+        WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._handleGridOverlayShown, this);
     }
 
     // Private
 
     _handleGridOverlayShown(event)
     {
-        if (event.data.domNode.layoutContextType !== WI.DOMNode.LayoutContextType.Grid)
+        if (event.target.layoutContextType !== WI.DOMNode.LayoutContextType.Grid)
             return;
 
-        let initiator = event.data.initiator;
-        if (!initiator || !this._initiators.includes(initiator))
+        let {initiator} = event.data;
+        if (!initiator)
             return;
 
-        let showTrackSizes = event.data.showTrackSizes ? 1 : 0;
-        let showLineNumbers = event.data.showLineNumbers ? 1 : 0;
-        let showLineNames = event.data.showLineNames ? 1 : 0;
-        let showAreaNames = event.data.showAreaNames ? 1 : 0;
-        let showExtendedGridLines = event.data.showExtendedGridLines ? 1 : 0;
+        console.assert(Object.values(WI.GridOverlayDiagnosticEventRecorder.Initiator).includes(initiator), initiator);
+
+        let showTrackSizes = WI.settings.gridOverlayShowTrackSizes.value ? 1 : 0;
+        let showLineNumbers = WI.settings.gridOverlayShowLineNumbers.value ? 1 : 0;
+        let showLineNames = WI.settings.gridOverlayShowLineNames.value ? 1 : 0;
+        let showAreaNames = WI.settings.gridOverlayShowAreaNames.value ? 1 : 0;
+        let showExtendedGridLines = WI.settings.gridOverlayShowExtendedGridLines.value ? 1 : 0;
 
         this.logDiagnosticEvent(this.name, {initiator, showTrackSizes, showLineNumbers, showLineNames, showAreaNames, showExtendedGridLines});
     }

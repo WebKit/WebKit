@@ -32,7 +32,7 @@ WI.GridOverlayConfigurationDiagnosticEventRecorder = class GridOverlayConfigurat
         this._inspectorHasFocus = true;
         this._lastUserInteractionTimestamp = undefined;
         this._eventSamplingTimerIdentifier = undefined;
-        this._overlayOptions = {};
+        this._nodesShowingGridLayoutOverlay = new Set;
     }
 
     // Static
@@ -51,8 +51,8 @@ WI.GridOverlayConfigurationDiagnosticEventRecorder = class GridOverlayConfigurat
         window.addEventListener("blur", this, options);
         window.addEventListener("keydown", this, options);
         window.addEventListener("mousedown", this, options);
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.OverlayShown, this._handleGridOverlayShown, this);
-        WI.overlayManager.addEventListener(WI.OverlayManager.Event.OverlayHidden, this._handleGridOverlayHidden, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._handleGridOverlayShown, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._handleGridOverlayHidden, this);
     }
 
     teardown()
@@ -64,34 +64,31 @@ WI.GridOverlayConfigurationDiagnosticEventRecorder = class GridOverlayConfigurat
         window.removeEventListener("blur", this, options);
         window.removeEventListener("keydown", this, options);
         window.removeEventListener("mousedown", this, options);
-        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.OverlayShown, this._handleGridOverlayShown, this);
-        WI.overlayManager.removeEventListener(WI.OverlayManager.Event.OverlayHidden, this._handleGridOverlayHidden, this);
+        WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._handleGridOverlayShown, this);
+        WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._handleGridOverlayHidden, this);
 
         this._stopEventSamplingTimerIfNeeded();
     }
 
     _handleGridOverlayShown(event)
     {
-        if (event.data.domNode.layoutContextType !== WI.DOMNode.LayoutContextType.Grid)
+        if (event.target.layoutContextType !== WI.DOMNode.LayoutContextType.Grid)
             return;
 
-        this._overlayOptions.showTrackSizes = event.data.showTrackSizes;
-        this._overlayOptions.showLineNumbers = event.data.showLineNumbers;
-        this._overlayOptions.showLineNames = event.data.showLineNames;
-        this._overlayOptions.showAreaNames = event.data.showAreaNames;
-        this._overlayOptions.showExtendedGridLines = event.data.showExtendedGridLines;
+        this._nodesShowingGridLayoutOverlay.add(event.target);
 
         if (!this._eventSamplingTimerIdentifier)
             this._startEventSamplingTimer();
     }
 
-    _handleGridOverlayHidden()
+    _handleGridOverlayHidden(event)
     {
-        if (WI.overlayManager.hasVisibleGridOverlays())
+        this._nodesShowingGridLayoutOverlay.delete(event.target);
+
+        if (this._nodesShowingGridLayoutOverlay.size)
             return;
 
         this._stopEventSamplingTimerIfNeeded();
-        this._overlayOptions = {};
     }
 
     // Public
@@ -150,7 +147,11 @@ WI.GridOverlayConfigurationDiagnosticEventRecorder = class GridOverlayConfigurat
             return;
 
         let interval = WI.GridOverlayConfigurationDiagnosticEventRecorder.eventSamplingInterval / 1000;
-        let {showTrackSizes, showLineNumbers, showLineNames, showAreaNames, showExtendedGridLines} = this._overlayOptions;
+        let showLineNames = WI.settings.gridOverlayShowLineNames.value;
+        let showLineNumbers = WI.settings.gridOverlayShowLineNumbers.value;
+        let showExtendedGridLines = WI.settings.gridOverlayShowExtendedGridLines.value;
+        let showTrackSizes = WI.settings.gridOverlayShowTrackSizes.value;
+        let showAreaNames = WI.settings.gridOverlayShowAreaNames.value;
 
         // Encode the configuration of overlay options as a sum of increasing powers of 10 for each overlay option that is enabled (zero if disabled), convert to string and pad with zero if necessary.
         // For example, "01100" = showTrackSizes: false, showLineNumbers: true, showLineNames: true, showAreaNames: false, showExtendedGridLines: false;
