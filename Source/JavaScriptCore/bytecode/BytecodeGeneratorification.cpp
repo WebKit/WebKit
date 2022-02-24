@@ -255,7 +255,7 @@ void BytecodeGeneratorification::run()
         });
 
         // Emit resume sequence.
-        rewriter.insertFragmentAfter(instruction, [&] (BytecodeRewriter::Fragment& fragment) {
+        rewriter.replaceBytecodeWithFragment(instruction, [&] (BytecodeRewriter::Fragment& fragment) {
             data.liveness.forEachSetBit([&](size_t index) {
                 VirtualRegister operand = virtualRegisterForLocal(index);
                 Storage storage = storageForGeneratorLocal(vm, index);
@@ -270,21 +270,17 @@ void BytecodeGeneratorification::run()
                 );
             });
         });
-
-        // Clip the unnecessary bytecodes.
-        rewriter.removeBytecode(instruction);
     }
 
     if (m_generatorFrameData) {
         auto instruction = m_instructions.at(m_generatorFrameData->m_point);
-        rewriter.insertFragmentAfter(instruction, [&] (BytecodeRewriter::Fragment& fragment) {
+        rewriter.replaceBytecodeWithFragment(instruction, [&] (BytecodeRewriter::Fragment& fragment) {
             if (!m_generatorFrameSymbolTable->scopeSize()) {
                 // This will cause us to put jsUndefined() into the generator frame's scope value.
                 fragment.appendInstruction<OpMov>(m_generatorFrameData->m_dst, m_generatorFrameData->m_initialValue);
             } else
                 fragment.appendInstruction<OpCreateLexicalEnvironment>(m_generatorFrameData->m_dst, m_generatorFrameData->m_scope, m_generatorFrameData->m_symbolTable, m_generatorFrameData->m_initialValue);
         });
-        rewriter.removeBytecode(instruction);
     }
 
     rewriter.execute();

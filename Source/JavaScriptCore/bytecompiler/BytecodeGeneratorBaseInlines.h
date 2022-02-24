@@ -114,7 +114,7 @@ void BytecodeGeneratorBase<Traits>::alignWideOpcode32()
 {
 #if CPU(NEEDS_ALIGNED_ACCESS)
     size_t opcodeSize = 1;
-    size_t prefixAndOpcodeSize = opcodeSize + PaddingBySize<OpcodeSize::Wide16>::value;
+    size_t prefixAndOpcodeSize = opcodeSize + PaddingBySize<OpcodeSize::Wide32>::value;
     while ((m_writer.position() + prefixAndOpcodeSize) % OpcodeSize::Wide32)
         Traits::OpNop::template emit<OpcodeSize::Narrow>(this);
 #endif
