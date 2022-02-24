@@ -72,7 +72,10 @@ void SharedWorkerObjectConnection::notifyWorkerObjectOfLoadCompletion(WebCore::S
 {
     ASSERT(isMainThread());
     auto* workerObject = SharedWorker::fromIdentifier(sharedWorkerObjectIdentifier);
-    CONNECTION_RELEASE_LOG_ERROR("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%{public}s, worker=%p, success=%d", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject, error.isNull());
+    if (error.isNull())
+        CONNECTION_RELEASE_LOG("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%{public}s, worker=%p, load succeeded", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
+    else
+        CONNECTION_RELEASE_LOG_ERROR("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%{public}s, worker=%p, load failed", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
     if (workerObject)
         workerObject->didFinishLoading(error);
 }

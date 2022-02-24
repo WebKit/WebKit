@@ -1,3 +1,16 @@
+2022-02-24  Chris Dumez  <cdumez@apple.com>
+
+        Fix bad logging in SharedWorkerObjectConnection::notifyWorkerObjectOfLoadCompletion()
+        https://bugs.webkit.org/show_bug.cgi?id=237146
+
+        Reviewed by Geoffrey Garen.
+
+        Fix bad logging in SharedWorkerObjectConnection::notifyWorkerObjectOfLoadCompletion().
+        It was logging an error even when the load succeeded.
+
+        * workers/shared/SharedWorkerObjectConnection.cpp:
+        (WebCore::SharedWorkerObjectConnection::notifyWorkerObjectOfLoadCompletion):
+
 2022-02-24  Kate Cheney  <katherine_cheney@apple.com>
 
         Update CSP console logging
