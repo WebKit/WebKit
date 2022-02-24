@@ -262,6 +262,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
 }
 
 @class WKFocusedElementInfo;
+@protocol UIMenuBuilder;
 @protocol WKFormControl;
 
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
@@ -593,6 +594,8 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
 
 - (void)scrollViewWillStartPanOrPinchGesture;
 
+- (void)buildMenuForWebViewWithBuilder:(id <UIMenuBuilder>)builder;
+
 - (BOOL)canBecomeFirstResponderForWebView;
 - (BOOL)becomeFirstResponderForWebView;
 - (BOOL)resignFirstResponderForWebView;
@@ -781,8 +784,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #if HAVE(PASTEBOARD_DATA_OWNER)
 - (WebCore::DataOwnerType)_dataOwnerForPasteboard:(WebKit::PasteboardAccessIntent)intent;
 #endif
-
-- (void)setUpAdditionalMenuControllerActions;
 
 #if ENABLE(IMAGE_ANALYSIS)
 - (void)_endImageAnalysisGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures;

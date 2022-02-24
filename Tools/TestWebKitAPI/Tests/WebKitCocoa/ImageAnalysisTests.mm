@@ -31,6 +31,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
+#import "TestUIMenuBuilder.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebCore/LocalizedStrings.h>
@@ -263,27 +264,8 @@ TEST(ImageAnalysisTests, ImageAnalysisPrioritizesVisibleImages)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
 
-static NeverDestroyed<RetainPtr<NSArray<UIMenuItem *>>> gSwizzledMenuItems;
-static void swizzledSetMenuItems(id, SEL, NSArray<UIMenuItem *> *items)
-{
-    gSwizzledMenuItems.get() = items;
-}
-
-static NSArray<UIMenuItem *> *swizzledMenuItems(id, SEL)
-{
-    return gSwizzledMenuItems.get().get();
-}
-
 TEST(ImageAnalysisTests, MenuControllerItems)
 {
-    auto sharedMenuController = UIMenuController.sharedMenuController;
-    InstanceMethodSwizzler menuItemsSwizzler { sharedMenuController.class, @selector(menuItems), reinterpret_cast<IMP>(swizzledMenuItems) };
-    InstanceMethodSwizzler setMenuItemsSwizzler { sharedMenuController.class, @selector(setMenuItems:), reinterpret_cast<IMP>(swizzledSetMenuItems) };
-
-    NSString *testActionName = @"Test action";
-    auto customAction = adoptNS([[UIMenuItem alloc] initWithTitle:testActionName action:@selector(becomeFirstResponder)]);
-    [sharedMenuController setMenuItems:@[customAction.get()]];
-
     auto webView = createWebViewWithTextRecognitionEnhancements();
     auto inputDelegate = adoptNS([TestInputDelegate new]);
     [inputDelegate setFocusStartsInputSessionPolicyHandler:[](WKWebView *, id <_WKFocusedElementInfo>) {
@@ -296,27 +278,23 @@ TEST(ImageAnalysisTests, MenuControllerItems)
     [webView objectByEvaluatingJavaScript:@"let image = document.images[0]; getSelection().setBaseAndExtent(image, 0, image, 1);"];
     [webView waitForNextPresentationUpdate];
 
-    auto hasMenuItemWithTitle = [&] (NSString *title) {
-        for (UIMenuItem *item in sharedMenuController.menuItems) {
-            if ([item.title isEqualToString:title])
-                return YES;
-        }
-        return NO;
-    };
-
-    EXPECT_TRUE(hasMenuItemWithTitle(testActionName));
-    EXPECT_WK_STREQ(sharedMenuController.menuItems.firstObject.title, WebCore::contextMenuItemTitleMarkupImage());
+    auto menuBuilder = adoptNS([[TestUIMenuBuilder alloc] init]);
+    [webView buildMenuWithBuilder:menuBuilder.get()];
+    EXPECT_TRUE([menuBuilder containsActionWithTitle:WebCore::contextMenuItemTitleMarkupImage()]);
 
     [webView selectAll:nil];
     [webView waitForNextPresentationUpdate];
 
-    EXPECT_TRUE(hasMenuItemWithTitle(testActionName));
-    EXPECT_FALSE(hasMenuItemWithTitle(WebCore::contextMenuItemTitleMarkupImage()));
+    [menuBuilder reset];
+    [webView buildMenuWithBuilder:menuBuilder.get()];
+    EXPECT_FALSE([menuBuilder containsActionWithTitle:WebCore::contextMenuItemTitleMarkupImage()]);
 
     [webView objectByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(document.body, 0, document.images[0], 1);"];
     [webView waitForNextPresentationUpdate];
-    EXPECT_TRUE(hasMenuItemWithTitle(testActionName));
-    EXPECT_WK_STREQ(sharedMenuController.menuItems.firstObject.title, WebCore::contextMenuItemTitleMarkupImage());
+
+    [menuBuilder reset];
+    [webView buildMenuWithBuilder:menuBuilder.get()];
+    EXPECT_TRUE([menuBuilder containsActionWithTitle:WebCore::contextMenuItemTitleMarkupImage()]);
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)

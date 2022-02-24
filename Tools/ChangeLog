@@ -1,3 +1,49 @@
+2022-02-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor logic for showing "Markup Image" and Quick Note items in the callout bar
+        https://bugs.webkit.org/show_bug.cgi?id=237127
+        rdar://89396617
+
+        Reviewed by Megan Gardner.
+
+        Adjust a couple of existing API tests. See comments below.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+
+        Refactor ImageAnalysisTests.MenuControllerItems to exercise `-buildMenuWithBuilder:` instead of swizzling
+        UIMenuController methods and checking `-menuItems`.
+
+        (TestWebKitAPI::swizzledSetMenuItems): Deleted.
+        (): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+
+        Refactor WebKit.AppHighlightsInImageOverlays to exercise `-buildMenuWithBuilder:` instead of passing in actions
+        to `-targetForAction:withSender:`.
+
+        * TestWebKitAPI/ios/TestUIMenuBuilder.h: Added.
+        * TestWebKitAPI/ios/TestUIMenuBuilder.mm: Added.
+
+        Add a helper class that conforms to UIMenuBuilder. This is used in the two API tests above as an argument to
+        `-buildMenuWithBuilder:` in order to collect additional menu items that WKWebView adds to the callout bar.
+
+        (-[TestUIMenuBuilder init]):
+        (-[TestUIMenuBuilder system]):
+        (-[TestUIMenuBuilder menuForIdentifier:]):
+        (-[TestUIMenuBuilder findMatching:]):
+        (-[TestUIMenuBuilder containsActionWithTitle:]):
+        (-[TestUIMenuBuilder reset]):
+        (-[TestUIMenuBuilder actionForIdentifier:]):
+        (-[TestUIMenuBuilder commandForAction:propertyList:]):
+        (-[TestUIMenuBuilder replaceMenuForIdentifier:withMenu:]):
+        (-[TestUIMenuBuilder replaceChildrenOfMenuForIdentifier:fromChildrenBlock:]):
+        (-[TestUIMenuBuilder insertChildMenu:atStartOfMenuForIdentifier:]):
+        (-[TestUIMenuBuilder insertChildMenu:atEndOfMenuForIdentifier:]):
+        (-[TestUIMenuBuilder removeMenuForIdentifier:]):
+        (-[TestUIMenuBuilder insertSiblingMenu:beforeMenuForIdentifier:]):
+        (-[TestUIMenuBuilder insertSiblingMenu:afterMenuForIdentifier:]):
+        (-[TestUIMenuBuilder registerMenu:]):
+
 2022-02-24  Jonathan Bedard  <jbedard@apple.com>
 
         [Python3] Convert shebangs in generate_xcfilelists_lib

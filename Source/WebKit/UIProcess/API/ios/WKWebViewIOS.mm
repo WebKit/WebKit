@@ -1538,8 +1538,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [self _dispatchSetDeviceOrientation:[self _deviceOrientation]];
     _page->activityStateDidChange(WebCore::ActivityState::allFlags());
     _page->webViewDidMoveToWindow();
-
-    [_contentView setUpAdditionalMenuControllerActions];
 }
 
 - (void)_setOpaqueInternal:(BOOL)opaque
@@ -2700,6 +2698,14 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
     if (_page)
         _page->setUserInterfaceLayoutDirection(toUserInterfaceLayoutDirection(contentAttribute));
+}
+
+- (void)buildMenuWithBuilder:(id <UIMenuBuilder>)builder
+{
+    if (self.usesStandardContentView)
+        [_contentView buildMenuForWebViewWithBuilder:builder];
+
+    [super buildMenuWithBuilder:builder];
 }
 
 @end

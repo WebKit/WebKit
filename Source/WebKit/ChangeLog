@@ -1,3 +1,70 @@
+2022-02-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor logic for showing "Markup Image" and Quick Note items in the callout bar
+        https://bugs.webkit.org/show_bug.cgi?id=237127
+        rdar://89396617
+
+        Reviewed by Megan Gardner.
+
+        Use `-buildMenuWithBuilder:` to supply additional Quick Note and image analysis items, instead of adding them
+        directly to the shared menu controller. See below for more details.
+
+        Tests:  ImageAnalysisTests.MenuControllerItems
+                WebKit.AppHighlightsInImageOverlays
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView didMoveToWindow]):
+
+        See below.
+
+        (-[WKWebView buildMenuWithBuilder:]):
+
+        Override this method and call into the content view via `-buildMenuForWebViewWithBuilder:` to populate the given
+        builder with either Quick Note or "Markup Image" items, if necessary. Note that overriding this method on
+        WKWebView is sufficient, since UIKit walks up the responder hierarchy starting from the first responder
+        (WKContentView) when populating menu items.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView targetForAction:withSender:]):
+
+        Move some logic for conditionally enabling the Quick Note items into `-imageAnalysisMarkupMenu`.
+
+        (-[WKContentView imageAnalysisMarkupMenu]):
+        (-[WKContentView _selectionChanged]):
+
+        Remove logic that updates the shared UIMenuController's menu items every time the selection changes. This is
+        no longer needed, since UIKit will always call into `-buildMenuWithBuilder:` when presenting the callout bar,
+        which allows us to lazily run logic to determine whether or not we should show the Quick Note and image analysis
+        items when the callout bar is shown, instead of keeping the menu controller's `-menuItems` array up to date upon
+        each selection change.
+
+        (-[WKContentView buildMenuForWebViewWithBuilder:]):
+
+        Consult `-appHighlightMenu` and `-imageAnalysisMarkupMenu` to populate the menu with inline UIMenus. Note that
+        these menus' items are always inlined into the callout bar as top-level items, since we explicitly specify
+        `UIMenuOptionsDisplayInline` when creating the menu.
+
+        (-[WKContentView menuWithInlineAction:identifier:handler:]):
+        (-[WKContentView appHighlightMenu]):
+
+        Refactor this, and `-imageAnalysisMarkupMenu` above to return a UIMenu with a single UIAction presented inline.
+
+        (-[WKContentView updateImageAnalysisMarkupMenuItems:]): Deleted.
+
+        Replaced with `-imageAnalysisMarkupMenu`.
+
+        (-[WKContentView canPerformImageAnalysisMarkup]): Deleted.
+        (-[WKContentView performImageAnalysisMarkup:]): Deleted.
+        (-[WKContentView setUpAdditionalMenuControllerActions]): Deleted.
+        (findMenuItemWithAction): Deleted.
+        (-[WKContentView updateAppHighlightMenuItems:]): Deleted.
+
+        Replaced with `-appHighlightMenu`.
+
+        (-[WKContentView createHighlightForCurrentQuickNoteWithRange:]): Deleted.
+        (-[WKContentView createHighlightForNewQuickNoteWithRange:]): Deleted.
+
 2022-02-24  Chris Dumez  <cdumez@apple.com>
 
         Regression(r273929) FrameState no longer gets a move constructor

@@ -32,9 +32,11 @@
 #import "Test.h"
 #import "TestInputDelegate.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIMenuBuilder.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebCore/LocalizedStrings.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
@@ -89,18 +91,19 @@ TEST(WebKit, AppHighlightsInImageOverlays)
     [webView stringByEvaluatingJavaScript:@"selectImageOverlay()"];
     [webView waitForNextPresentationUpdate];
 
-    auto createHighlightForCurrentQuickNoteWithRangeSelector = NSSelectorFromString(@"createHighlightForCurrentQuickNoteWithRange:");
-    auto createHighlightForNewQuickNoteWithRangeSelector = NSSelectorFromString(@"createHighlightForNewQuickNoteWithRange:");
-
-    auto contentView = [webView textInputContentView];
-    EXPECT_NULL([contentView targetForAction:createHighlightForCurrentQuickNoteWithRangeSelector withSender:nil]);
-    EXPECT_NULL([contentView targetForAction:createHighlightForNewQuickNoteWithRangeSelector withSender:nil]);
+    auto menuBuilder = adoptNS([[TestUIMenuBuilder alloc] init]);
+    [webView buildMenuWithBuilder:menuBuilder.get()];
+    EXPECT_FALSE([menuBuilder containsActionWithTitle:WebCore::contextMenuItemTagAddHighlightToNewQuickNote()]);
+    EXPECT_FALSE([menuBuilder containsActionWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentQuickNote()]);
 
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView selectAll:nil];
     [webView waitForNextPresentationUpdate];
-    EXPECT_NULL([contentView targetForAction:createHighlightForCurrentQuickNoteWithRangeSelector withSender:nil]);
-    EXPECT_EQ([contentView targetForAction:createHighlightForNewQuickNoteWithRangeSelector withSender:nil], contentView);
+
+    [menuBuilder reset];
+    [webView buildMenuWithBuilder:menuBuilder.get()];
+    EXPECT_TRUE([menuBuilder containsActionWithTitle:WebCore::contextMenuItemTagAddHighlightToNewQuickNote()]);
+    EXPECT_FALSE([menuBuilder containsActionWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentQuickNote()]);
 }
 
 #endif // ENABLE(APP_HIGHLIGHTS)

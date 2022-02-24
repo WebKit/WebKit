@@ -1112,6 +1112,7 @@
 		F4D060082734A1AB008FA67A /* simple-editor.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D060072734A08C008FA67A /* simple-editor.html */; };
 		F4D4F3B61E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */; };
 		F4D4F3B91E4E36E400BB2767 /* DragAndDropTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */; };
+		F4D5C55827C6FF4800ED1C23 /* TestUIMenuBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D5C55727C6EBDC00ED1C23 /* TestUIMenuBuilder.mm */; };
 		F4D5D69525AF8BE400205280 /* DisableAutomaticSpellingCorrection.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D5D69425AF8BE400205280 /* DisableAutomaticSpellingCorrection.mm */; };
 		F4D5E4E81F0C5D38008C1A49 /* dragstart-clear-selection.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */; };
 		F4D65DA81F5E4704009D8C27 /* selected-text-image-link-and-editable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */; };
@@ -3129,6 +3130,8 @@
 		F4D2986D20FEE7370092D636 /* RunScriptAfterDocumentLoad.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RunScriptAfterDocumentLoad.mm; sourceTree = "<group>"; };
 		F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropSimulatorIOS.mm; sourceTree = "<group>"; };
 		F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropTestsIOS.mm; sourceTree = "<group>"; };
+		F4D5C55627C6EBDC00ED1C23 /* TestUIMenuBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestUIMenuBuilder.h; sourceTree = "<group>"; };
+		F4D5C55727C6EBDC00ED1C23 /* TestUIMenuBuilder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestUIMenuBuilder.mm; sourceTree = "<group>"; };
 		F4D5D69425AF8BE400205280 /* DisableAutomaticSpellingCorrection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisableAutomaticSpellingCorrection.mm; sourceTree = "<group>"; };
 		F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "dragstart-clear-selection.html"; sourceTree = "<group>"; };
 		F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "selected-text-image-link-and-editable.html"; sourceTree = "<group>"; };
@@ -3734,6 +3737,8 @@
 				F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */,
 				2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */,
 				F48D6C0F224B377000E3E2FB /* PreferredContentMode.mm */,
+				F4D5C55627C6EBDC00ED1C23 /* TestUIMenuBuilder.h */,
+				F4D5C55727C6EBDC00ED1C23 /* TestUIMenuBuilder.mm */,
 				F4517B652054C49500C26721 /* TestWKWebViewController.h */,
 				F4517B662054C49500C26721 /* TestWKWebViewController.mm */,
 				2D2171C3262F8B8200C209DC /* UIKitMacHelperSPI.h */,
@@ -5799,6 +5804,7 @@
 				F45D3891215A7B4B002A2979 /* TestInspectorBar.mm in Sources */,
 				516281252325C18000BB7E42 /* TestPDFDocument.mm in Sources */,
 				7B774906267CCE72009873B4 /* TestRunnerTests.cpp in Sources */,
+				F4D5C55827C6FF4800ED1C23 /* TestUIMenuBuilder.mm in Sources */,
 				F4517B672054C49500C26721 /* TestWKWebViewController.mm in Sources */,
 				F45033F5206BEC95009351CE /* TextAutosizingBoost.mm in Sources */,
 				93E6193B1F931B3A00AF245E /* TextCodec.cpp in Sources */,

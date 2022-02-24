@@ -4106,16 +4106,6 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (id)targetForAction:(SEL)action withSender:(id)sender
 {
-#if ENABLE(APP_HIGHLIGHTS)
-    if (action == @selector(createHighlightForCurrentQuickNoteWithRange:))
-        return self.shouldAllowAppHighlightCreation && _page->appHighlightsVisibility() ? self : nil;
-    if (action == @selector(createHighlightForNewQuickNoteWithRange:))
-        return self.shouldAllowAppHighlightCreation && !_page->appHighlightsVisibility() ? self : nil;
-#endif
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if (action == @selector(performImageAnalysisMarkup:))
-        return self.canPerformImageAnalysisMarkup ? self : nil;
-#endif
     return [_webView targetForAction:action withSender:sender];
 }
 
@@ -4693,39 +4683,22 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-- (void)updateImageAnalysisMarkupMenuItems:(NSMutableArray<UIMenuItem *> *)updatedItems
-{
-    auto currentItem = findMenuItemWithAction(updatedItems, @selector(performImageAnalysisMarkup:));
-    auto& editorState = _page->editorState();
-    if (!_page->preferences().imageAnalysisMarkupEnabled() || !self.window || editorState.isMissingPostLayoutData || !editorState.postLayoutData().selectedEditableImage) {
-        if (currentItem)
-            [updatedItems removeObject:currentItem];
-    } else if (!currentItem) {
-        auto item = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTitleMarkupImage() action:@selector(performImageAnalysisMarkup:)]);
-        [updatedItems insertObject:item.get() atIndex:0];
-    }
-}
-
-- (BOOL)canPerformImageAnalysisMarkup
+- (UIMenu *)imageAnalysisMarkupMenu
 {
     if (!_page || !_page->preferences().imageAnalysisMarkupEnabled())
-        return NO;
+        return nil;
 
-    if (!_imageAnalysisMarkupData)
-        return NO;
+    if (_page->editorState().isMissingPostLayoutData || !_page->editorState().postLayoutData().selectedEditableImage)
+        return nil;
 
-    auto [elementContext, image, preferredMIMEType] = *_imageAnalysisMarkupData;
-    return !_page->editorState().isMissingPostLayoutData && elementContext == _page->editorState().postLayoutData().selectedEditableImage;
-}
+    return [self menuWithInlineAction:WebCore::contextMenuItemTitleMarkupImage() identifier:@"WKActionMarkupImage" handler:[](WKContentView *view) {
+        if (!view->_imageAnalysisMarkupData)
+            return;
 
-- (void)performImageAnalysisMarkup:(id)sender
-{
-    if (!self.canPerformImageAnalysisMarkup)
-        return;
-
-    auto [elementContext, image, preferredMIMEType] = *_imageAnalysisMarkupData;
-    if (auto [data, type] = WebKit::transcodeWithPreferredMIMEType(image.get(), preferredMIMEType.createCFString().get(), (__bridge CFStringRef)UTTypeTIFF.identifier); data)
-        _page->replaceWithPasteboardData(elementContext, { String { type.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
+        auto [elementContext, image, preferredMIMEType] = *view->_imageAnalysisMarkupData;
+        if (auto [data, type] = WebKit::transcodeWithPreferredMIMEType(image.get(), preferredMIMEType.createCFString().get(), (__bridge CFStringRef)UTTypeTIFF.identifier); data)
+            view->_page->replaceWithPasteboardData(elementContext, { String { type.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
+    }];
 }
 
 - (void)doAfterComputingImageAnalysisResultsForMarkup:(CompletionHandler<void()>&&)completion
@@ -7472,7 +7445,6 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 {
     _autocorrectionContextNeedsUpdate = YES;
 
-    [self setUpAdditionalMenuControllerActions];
     [self _updateSelectionAssistantSuppressionState];
 
     _cachedSelectedTextRange = nil;
@@ -9774,61 +9746,40 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 }
 #endif
 
-- (void)setUpAdditionalMenuControllerActions
+- (void)buildMenuForWebViewWithBuilder:(id <UIMenuBuilder>)builder
 {
-    auto updatedItems = adoptNS(UIMenuController.sharedMenuController.menuItems.mutableCopy ?: [NSMutableArray<UIMenuItem *> new]);
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    [self updateImageAnalysisMarkupMenuItems:updatedItems.get()];
+    if (auto menu = self.imageAnalysisMarkupMenu)
+        [builder insertSiblingMenu:menu afterMenuForIdentifier:UIMenuStandardEdit];
 #endif
+
 #if ENABLE(APP_HIGHLIGHTS)
-    [self updateAppHighlightMenuItems:updatedItems.get()];
+    if (auto menu = self.appHighlightMenu)
+        [builder insertChildMenu:menu atEndOfMenuForIdentifier:UIMenuRoot];
 #endif
-    UIMenuController.sharedMenuController.menuItems = updatedItems.get();
 }
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) || ENABLE(APP_HIGHLIGHTS)
-
-static UIMenuItem *findMenuItemWithAction(NSArray<UIMenuItem *> *items, SEL action)
+- (UIMenu *)menuWithInlineAction:(NSString *)title identifier:(NSString *)identifier handler:(Function<void(WKContentView *)>&&)handler
 {
-    for (UIMenuItem *item in items) {
-        if (item.action == action)
-            return item;
-    }
-    return nil;
+    auto action = [UIAction actionWithTitle:title image:nil identifier:identifier handler:makeBlockPtr([handler = WTFMove(handler), weakSelf = WeakObjCPtr<WKContentView>(self)](UIAction *) mutable {
+        if (auto strongSelf = weakSelf.get())
+            handler(strongSelf.get());
+    }).get()];
+    return [UIMenu menuWithTitle:@"" image:nil identifier:nil options:UIMenuOptionsDisplayInline children:@[ action ]];
 }
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) || ENABLE(APP_HIGHLIGHTS)
 
 #if ENABLE(APP_HIGHLIGHTS)
 
-- (void)updateAppHighlightMenuItems:(NSMutableArray<UIMenuItem *> *)updatedItems
+- (UIMenu *)appHighlightMenu
 {
-    auto currentQuickNoteItem = findMenuItemWithAction(updatedItems, @selector(createHighlightForCurrentQuickNoteWithRange:));
-    auto newQuickNoteItem = findMenuItemWithAction(updatedItems, @selector(createHighlightForNewQuickNoteWithRange:));
+    if (!_page->preferences().appHighlightsEnabled() || !_page->editorState().selectionIsRange || !self.shouldAllowAppHighlightCreation)
+        return nil;
 
-    if (!_page->preferences().appHighlightsEnabled() || !self.window || !_page->editorState().selectionIsRange) {
-        if (currentQuickNoteItem)
-            [updatedItems removeObject:currentQuickNoteItem];
-        if (newQuickNoteItem)
-            [updatedItems removeObject:newQuickNoteItem];
-        return;
-    }
-
-    if (!currentQuickNoteItem)
-        [updatedItems addObject:adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentQuickNote() action:@selector(createHighlightForCurrentQuickNoteWithRange:)]).get()];
-
-    if (!newQuickNoteItem)
-        [updatedItems addObject:adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewQuickNote() action:@selector(createHighlightForNewQuickNoteWithRange:)]).get()];
-}
-
-- (void)createHighlightForCurrentQuickNoteWithRange:(id)sender
-{
-    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No, WebCore::HighlightRequestOriginatedInApp::No);
-}
-
-- (void)createHighlightForNewQuickNoteWithRange:(id)sender
-{
-    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::Yes, WebCore::HighlightRequestOriginatedInApp::No);
+    bool isVisible = _page->appHighlightsVisibility();
+    auto title = isVisible ? WebCore::contextMenuItemTagAddHighlightToCurrentQuickNote() : WebCore::contextMenuItemTagAddHighlightToNewQuickNote();
+    return [self menuWithInlineAction:title identifier:@"WKActionCreateQuickNote" handler:[isVisible](WKContentView *view) mutable {
+        view->_page->createAppHighlightInSelectedRange(isVisible ? WebCore::CreateNewGroupForHighlight::No : WebCore::CreateNewGroupForHighlight::Yes, WebCore::HighlightRequestOriginatedInApp::No);
+    }];
 }
 
 #endif // ENABLE(APP_HIGHLIGHTS)
