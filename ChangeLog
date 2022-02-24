@@ -1,3 +1,20 @@
+2022-02-23  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Don't automatically use the ../Internal/WebKit workspace
+        https://bugs.webkit.org/show_bug.cgi?id=237115
+
+        Reviewed by Alexey Proskuryakov.
+
+        When the USE_WORKSPACE=YES Make flag was added in https://commits.webkit.org/246232@main, we
+        configured Make to automatically use the workspace at ../Internal/WebKit/WebKit.xcworkspace,
+        if it was available. The idea was to make it easier for workspace builds to automatically
+        detect dependencies needed by folks at Apple, like WebKitAdditions.
+
+        In practice, this has made workspace builds silently rely on code from outside of the WebKit
+        repo, and it's unintuitive since non-workspace Make builds do not do this.
+
+        * Makefile.shared:
+
 2022-02-23  W.D. Xiong  <wdx@apple.com>
 
         Add wdx's Github username to contributors.json

@@ -5,10 +5,7 @@ XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString
 ifeq ($(USE_WORKSPACE),YES)
 SCHEME ?= $(notdir $(CURDIR))
 XCODE_TARGET = -scheme "$(SCHEME)"
-WORKSPACE := $(firstword $(wildcard \
-	$(dir $(lastword $(MAKEFILE_LIST)))../Internal/WebKit/WebKit.xcworkspace \
-	$(dir $(lastword $(MAKEFILE_LIST)))WebKit.xcworkspace \
-	))
+WORKSPACE := $(dir $(lastword $(MAKEFILE_LIST)))WebKit.xcworkspace
 else
 SCHEME =
 endif
