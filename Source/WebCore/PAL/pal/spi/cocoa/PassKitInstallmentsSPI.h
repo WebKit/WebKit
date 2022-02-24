@@ -29,8 +29,8 @@
 
 #if HAVE(PASSKIT_INSTALLMENTS_IN_SDK)
 
-#import <PassKit/PKPaymentRequest_Private.h>
 #import <PassKitCore/PKPaymentMethod_Private.h>
+#import <PassKitCore/PKPaymentRequest_Private.h>
 #import <PassKitCore/PKPaymentRequestStatus_Private.h>
 #import <PassKitCore/PKPayment_Private.h>
 

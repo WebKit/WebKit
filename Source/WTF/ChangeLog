@@ -1,3 +1,13 @@
+2022-02-24  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] switch from `PassKit/*` to `PassKit[Core,UI]/*`
+        https://bugs.webkit.org/show_bug.cgi?id=237091
+        <rdar://problem/81085862>
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformHave.h:
+
 2022-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix compile warnings when asserts are disabled after r290418

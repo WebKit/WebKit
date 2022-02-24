@@ -78,7 +78,7 @@ WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy()
 void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
 {
 #if PLATFORM(MAC)
-    if (!PAL::isPassKitFrameworkAvailable())
+    if (!PAL::isPassKitCoreFrameworkAvailable())
         return completionHandler(false);
 #endif
 
@@ -95,7 +95,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
 void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
 {
 #if PLATFORM(MAC)
-    if (!PAL::isPassKitFrameworkAvailable())
+    if (!PAL::isPassKitCoreFrameworkAvailable())
         return completionHandler(false);
 #endif
 
@@ -112,15 +112,15 @@ static RetainPtr<NSSet> toPKContactFields(const WebCore::ApplePaySessionPaymentR
     Vector<NSString *> result;
 
     if (contactFields.postalAddress)
-        result.append(PAL::get_PassKit_PKContactFieldPostalAddress());
+        result.append(PAL::get_PassKitCore_PKContactFieldPostalAddress());
     if (contactFields.phone)
-        result.append(PAL::get_PassKit_PKContactFieldPhoneNumber());
+        result.append(PAL::get_PassKitCore_PKContactFieldPhoneNumber());
     if (contactFields.email)
-        result.append(PAL::get_PassKit_PKContactFieldEmailAddress());
+        result.append(PAL::get_PassKitCore_PKContactFieldEmailAddress());
     if (contactFields.name)
-        result.append(PAL::get_PassKit_PKContactFieldName());
+        result.append(PAL::get_PassKitCore_PKContactFieldName());
     if (contactFields.phoneticName)
-        result.append(PAL::get_PassKit_PKContactFieldPhoneticName());
+        result.append(PAL::get_PassKitCore_PKContactFieldPhoneticName());
 
     return adoptNS([[NSSet alloc] initWithObjects:result.data() count:result.size()]);
 }

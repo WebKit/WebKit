@@ -128,72 +128,72 @@ static NSError *toNSError(const WebCore::ApplePayError& error)
 
         switch (*contactField) {
         case WebCore::ApplePayErrorContactField::PhoneNumber:
-            pkContactField = PAL::get_PassKit_PKContactFieldPhoneNumber();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldPhoneNumber();
             break;
             
         case WebCore::ApplePayErrorContactField::EmailAddress:
-            pkContactField = PAL::get_PassKit_PKContactFieldEmailAddress();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldEmailAddress();
             break;
             
         case WebCore::ApplePayErrorContactField::Name:
-            pkContactField = PAL::get_PassKit_PKContactFieldName();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldName();
             break;
             
         case WebCore::ApplePayErrorContactField::PhoneticName:
-            pkContactField = PAL::get_PassKit_PKContactFieldPhoneticName();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldPhoneticName();
             break;
             
         case WebCore::ApplePayErrorContactField::PostalAddress:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldPostalAddress();
             break;
             
         case WebCore::ApplePayErrorContactField::AddressLines:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressStreetKey();
             break;
             
         case WebCore::ApplePayErrorContactField::SubLocality:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressSubLocalityKey();
             break;
             
         case WebCore::ApplePayErrorContactField::Locality:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressCityKey();
             break;
             
         case WebCore::ApplePayErrorContactField::PostalCode:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressPostalCodeKey();
             break;
             
         case WebCore::ApplePayErrorContactField::SubAdministrativeArea:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressSubAdministrativeAreaKey();
             break;
             
         case WebCore::ApplePayErrorContactField::AdministrativeArea:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressStateKey();
             break;
             
         case WebCore::ApplePayErrorContactField::Country:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressCountryKey();
             break;
             
         case WebCore::ApplePayErrorContactField::CountryCode:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKitCore_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressISOCountryCodeKey();
             break;
         }
 
-        [userInfo setObject:pkContactField forKey:PAL::get_PassKit_PKPaymentErrorContactFieldUserInfoKey()];
+        [userInfo setObject:pkContactField forKey:PAL::get_PassKitCore_PKPaymentErrorContactFieldUserInfoKey()];
         if (postalAddressKey)
-            [userInfo setObject:postalAddressKey forKey:PAL::get_PassKit_PKPaymentErrorPostalAddressUserInfoKey()];
+            [userInfo setObject:postalAddressKey forKey:PAL::get_PassKitCore_PKPaymentErrorPostalAddressUserInfoKey()];
     }
 
-    return [NSError errorWithDomain:PAL::get_PassKit_PKPaymentErrorDomain() code:toPKPaymentErrorCode(error.code()) userInfo:userInfo.get()];
+    return [NSError errorWithDomain:PAL::get_PassKitCore_PKPaymentErrorDomain() code:toPKPaymentErrorCode(error.code()) userInfo:userInfo.get()];
 }
 
 static RetainPtr<NSArray> toNSErrors(const Vector<RefPtr<WebCore::ApplePayError>>& errors)

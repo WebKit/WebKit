@@ -60,7 +60,7 @@ PaymentSessionError::PaymentSessionError(RetainPtr<NSError>&& error)
 
 ApplePaySessionError PaymentSessionError::sessionError() const
 {
-    ASSERT(!m_platformError || [[m_platformError domain] isEqualToString:PAL::get_PassKit_PKPassKitErrorDomain()]);
+    ASSERT(!m_platformError || [[m_platformError domain] isEqualToString:PAL::get_PassKitCore_PKPassKitErrorDomain()]);
 
     if (auto error = additionalError(m_platformError.get()))
         return *error;

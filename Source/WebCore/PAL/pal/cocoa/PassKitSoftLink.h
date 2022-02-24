@@ -30,7 +30,13 @@
 #import <pal/spi/cocoa/PassKitSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, PassKit)
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, PassKitCore)
+#if HAVE(PASSKIT_UI)
+#if PLATFORM(MAC)
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, PassKitMacHelper)
+#endif
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, PassKitUI)
+#endif
 
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKContact)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPassLibrary)
@@ -76,10 +82,10 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequestCouponCodeUpdate)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentAuthorizationController)
 #endif
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKit, PKCanMakePaymentsWithMerchantIdentifierAndDomain, void, (NSString *identifier, NSString *domain, PKCanMakePaymentsCompletion completion), (identifier, domain, completion))
-#define PKCanMakePaymentsWithMerchantIdentifierAndDomain PAL::softLink_PassKit_PKCanMakePaymentsWithMerchantIdentifierAndDomain
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKit, PKDrawApplePayButtonWithCornerRadius, void, (CGContextRef context, CGRect drawRect, CGFloat scale, CGFloat cornerRadius, PKPaymentButtonType type, PKPaymentButtonStyle style, NSString *languageCode), (context, drawRect, scale, cornerRadius, type, style, languageCode))
-#define PKDrawApplePayButtonWithCornerRadius PAL::softLink_PassKit_PKDrawApplePayButtonWithCornerRadius
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKitCore, PKCanMakePaymentsWithMerchantIdentifierAndDomain, void, (NSString *identifier, NSString *domain, PKCanMakePaymentsCompletion completion), (identifier, domain, completion))
+#define PKCanMakePaymentsWithMerchantIdentifierAndDomain PAL::softLink_PassKitCore_PKCanMakePaymentsWithMerchantIdentifierAndDomain
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKitCore, PKDrawApplePayButtonWithCornerRadius, void, (CGContextRef context, CGRect drawRect, CGFloat scale, CGFloat cornerRadius, PKPaymentButtonType type, PKPaymentButtonStyle style, NSString *languageCode), (context, drawRect, scale, cornerRadius, type, style, languageCode))
+#define PKDrawApplePayButtonWithCornerRadius PAL::softLink_PassKitCore_PKDrawApplePayButtonWithCornerRadius
 
 
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentAuthorizationResult)
@@ -87,19 +93,19 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequestPaymentMethodUpdate)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequestShippingContactUpdate)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequestShippingMethodUpdate)
 
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKApplePayButtonDefaultCornerRadius, CGFloat)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKContactFieldEmailAddress, PKContactField)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKContactFieldName, PKContactField)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKContactFieldPhoneNumber, PKContactField)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKContactFieldPhoneticName, PKContactField)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKContactFieldPostalAddress, PKContactField)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKPaymentErrorContactFieldUserInfoKey, PKPaymentErrorKey)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKPassKitErrorDomain, NSString *)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKPaymentErrorDomain, NSString *)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKPaymentErrorPostalAddressUserInfoKey, PKPaymentErrorKey)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKApplePayButtonDefaultCornerRadius, CGFloat)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKContactFieldEmailAddress, PKContactField)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKContactFieldName, PKContactField)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKContactFieldPhoneNumber, PKContactField)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKContactFieldPhoneticName, PKContactField)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKContactFieldPostalAddress, PKContactField)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKPaymentErrorContactFieldUserInfoKey, PKPaymentErrorKey)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKPassKitErrorDomain, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKPaymentErrorDomain, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKPaymentErrorPostalAddressUserInfoKey, PKPaymentErrorKey)
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKit, PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication, void, (NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion), (identifier, domain, sourceApplicationSecondaryIdentifier, completion))
-#define PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication PAL::softLink_PassKit_PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKitCore, PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication, void, (NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion), (identifier, domain, sourceApplicationSecondaryIdentifier, completion))
+#define PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication PAL::softLink_PassKitCore_PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/PassKitSoftLinkAdditions.h>
