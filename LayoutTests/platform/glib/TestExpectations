@@ -1901,6 +1901,7 @@ webkit.org/b/166536 fast/canvas/webgl/shader-mix-with-bool.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/shader-vec-array-deref-no-crash.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/shader-with-reserved-keyword.html [ Skip ]
 webkit.org/b/166536 webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html [ Skip ]
+webkit.org/b/166536 webgl/webgl-allow-shared.html [ Failure ]
 
 # LFC (LayoutFormatingContext is disabled by default).
 fast/layoutformattingcontext/ [ Skip ]
