@@ -244,6 +244,8 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
     case CSSPropertyScale:
         return !individualTransformPropertiesEnabled;
     case CSSPropertyOverscrollBehavior:
+    case CSSPropertyOverscrollBehaviorBlock:
+    case CSSPropertyOverscrollBehaviorInline:
     case CSSPropertyOverscrollBehaviorX:
     case CSSPropertyOverscrollBehaviorY:
         return !overscrollBehaviorEnabled;

@@ -14,10 +14,10 @@ PASS e.style['overscroll-behavior-x'] = "auto" should set the property value
 PASS e.style['overscroll-behavior-y'] = "contain" should set the property value
 PASS e.style['overscroll-behavior-y'] = "none" should set the property value
 PASS e.style['overscroll-behavior-y'] = "auto" should set the property value
-FAIL e.style['overscroll-behavior-inline'] = "contain" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['overscroll-behavior-inline'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['overscroll-behavior-inline'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['overscroll-behavior-block'] = "contain" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['overscroll-behavior-block'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['overscroll-behavior-block'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['overscroll-behavior-inline'] = "contain" should set the property value
+PASS e.style['overscroll-behavior-inline'] = "none" should set the property value
+PASS e.style['overscroll-behavior-inline'] = "auto" should set the property value
+PASS e.style['overscroll-behavior-block'] = "contain" should set the property value
+PASS e.style['overscroll-behavior-block'] = "none" should set the property value
+PASS e.style['overscroll-behavior-block'] = "auto" should set the property value
 

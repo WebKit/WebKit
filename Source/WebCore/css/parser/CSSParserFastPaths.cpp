@@ -683,6 +683,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         if (context.overflowClipEnabled && valueID == CSSValueClip)
             return true;
         return valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueScroll || valueID == CSSValueAuto || valueID == CSSValueOverlay || valueID == CSSValueWebkitPagedX || valueID == CSSValueWebkitPagedY;
+    case CSSPropertyOverscrollBehaviorBlock:
+    case CSSPropertyOverscrollBehaviorInline:
     case CSSPropertyOverscrollBehaviorX:
     case CSSPropertyOverscrollBehaviorY:
         if (!context.overscrollBehaviorEnabled)
@@ -949,6 +951,8 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyOverflowWrap:
     case CSSPropertyOverflowX:
     case CSSPropertyOverflowY:
+    case CSSPropertyOverscrollBehaviorBlock:
+    case CSSPropertyOverscrollBehaviorInline:
     case CSSPropertyOverscrollBehaviorX:
     case CSSPropertyOverscrollBehaviorY:
     case CSSPropertyPointerEvents:

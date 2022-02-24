@@ -1,8 +1,8 @@
 
-FAIL Property overscroll-behavior-block has initial value auto assert_true: overscroll-behavior-block doesn't seem to be supported in the computed style expected true got false
-FAIL Property overscroll-behavior-block does not inherit assert_true: expected true got false
-FAIL Property overscroll-behavior-inline has initial value auto assert_true: overscroll-behavior-inline doesn't seem to be supported in the computed style expected true got false
-FAIL Property overscroll-behavior-inline does not inherit assert_true: expected true got false
+PASS Property overscroll-behavior-block has initial value auto
+PASS Property overscroll-behavior-block does not inherit
+PASS Property overscroll-behavior-inline has initial value auto
+PASS Property overscroll-behavior-inline does not inherit
 PASS Property overscroll-behavior-x has initial value auto
 PASS Property overscroll-behavior-x does not inherit
 PASS Property overscroll-behavior-y has initial value auto

@@ -4347,6 +4347,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         if (!m_context.scrollBehaviorEnabled)
             return nullptr;
         return consumeScrollBehavior(m_range);
+    case CSSPropertyOverscrollBehaviorBlock:
+    case CSSPropertyOverscrollBehaviorInline:
     case CSSPropertyOverscrollBehaviorX:
     case CSSPropertyOverscrollBehaviorY:
         if (!m_context.overscrollBehaviorEnabled)

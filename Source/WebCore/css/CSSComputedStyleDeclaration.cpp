@@ -4210,6 +4210,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyMarginBlockStart:
         case CSSPropertyMarginInlineEnd:
         case CSSPropertyMarginInlineStart:
+        case CSSPropertyOverscrollBehaviorInline:
+        case CSSPropertyOverscrollBehaviorBlock:
         case CSSPropertyPaddingBlockEnd:
         case CSSPropertyPaddingBlockStart:
         case CSSPropertyPaddingInlineEnd:

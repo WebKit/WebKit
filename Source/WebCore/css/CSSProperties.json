@@ -3910,7 +3910,11 @@
                 "auto"
             ],
             "codegen-properties": {
-                "settings-flag": "overscrollBehaviorEnabled"
+                "settings-flag": "overscrollBehaviorEnabled",
+                "logical-property-group": {
+                    "name": "overscroll-behavior",
+                    "resolver": "horizontal"
+                }
             },
             "status": {
                 "status": "in development"
@@ -3926,13 +3930,59 @@
                 "auto"
             ],
             "codegen-properties": {
-                "settings-flag": "overscrollBehaviorEnabled"
+                "settings-flag": "overscrollBehaviorEnabled",
+                "logical-property-group": {
+                    "name": "overscroll-behavior",
+                    "resolver": "vertical"
+                }
             },
             "status": {
                 "status": "in development"
             },
             "specification": {
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-y"
+            }
+        },
+        "overscroll-behavior-inline": {
+            "values": [
+                "contain",
+                "none",
+                "auto"
+            ],
+            "codegen-properties": {
+                "settings-flag": "overscrollBehaviorEnabled",
+                "skip-builder": true,
+                "logical-property-group": {
+                    "name": "overscroll-behavior",
+                    "resolver": "inline"
+                }
+            },
+            "status": {
+                "status": "in development"
+            },
+            "specification": {
+                "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-x"
+            }
+        },
+        "overscroll-behavior-block": {
+            "values": [
+                "contain",
+                "none",
+                "auto"
+            ],
+            "codegen-properties": {
+                "settings-flag": "overscrollBehaviorEnabled",
+                "skip-builder": true,
+                "logical-property-group": {
+                    "name": "overscroll-behavior",
+                    "resolver": "block"
+                }
+            },
+            "status": {
+                "status": "in development"
+            },
+            "specification": {
+                "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-x"
             }
         },
         "pad": {

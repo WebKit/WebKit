@@ -1,3 +1,15 @@
+2022-02-24  Martin Robinson  <mrobinson@webkit.org>
+
+        Implement logical properties for CSS overscroll-behavior
+        https://bugs.webkit.org/show_bug.cgi?id=237080
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-overscroll-behavior/inheritance-expected.txt: Update expectations for passing tests.
+        * web-platform-tests/css/css-overscroll-behavior/overscroll-behavior-logical-expected.txt: Ditto.
+        * web-platform-tests/css/css-overscroll-behavior/parsing/overscroll-behavior-computed-expected.txt: Ditto.
+        * web-platform-tests/css/css-overscroll-behavior/parsing/overscroll-behavior-valid-expected.txt: Ditto.
+
 2022-02-23  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] offsetWidth/Height and similar should update layout for container queries
