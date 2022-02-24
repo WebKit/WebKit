@@ -1,3 +1,16 @@
+2022-02-23  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r290348.
+
+        Broke a test, slowing down EWS.
+
+        Reverted changeset:
+
+        "Create a DOMWindow::printWarningMessage method and start
+        using it in DOMWindow.cpp"
+        https://bugs.webkit.org/show_bug.cgi?id=237047
+        https://commits.webkit.org/r290348
+
 2022-02-23  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Flip accumulatedOffset to take writing mode into account when hittesting across formatting contexts.
