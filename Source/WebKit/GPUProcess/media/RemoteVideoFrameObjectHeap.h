@@ -57,12 +57,15 @@ private:
 
     // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // Messages.
     void releaseVideoFrame(RemoteVideoFrameWriteReference&&);
 #if PLATFORM(COCOA)
     void getVideoFrameBuffer(RemoteVideoFrameReadReference&&);
+    void pixelBuffer(RemoteVideoFrameReadReference&&, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&&);
 #endif
+    inline static Seconds defaultTimeout = 10_s;
 
     GPUConnectionToWebProcess* m_gpuConnectionToWebProcess WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
     const Ref<IPC::Connection> m_connection;

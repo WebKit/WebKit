@@ -1,3 +1,21 @@
+2022-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION(r290175): Texture upload from video and user media is slower than expected for non-GPUP WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=237034
+
+        Reviewed by Youenn Fablet.
+
+        Add back the code-path to obtain the IOSurface backed CVPixelBuffers directly
+        via IPC transfer. This is used on macOS where WebGL is in WP.
+
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.cpp:
+        (WebKit::RemoteVideoFrameObjectHeap::pixelBuffer):
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.h:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.messages.in:
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.cpp:
+        (WebKit::RemoteVideoFrameProxy::pixelBuffer const):
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.h:
+
 2022-02-23  Don Olmstead  <don.olmstead@sony.com>
 
         Fix !ENABLE(SERVICE_WORKER) build after r290387

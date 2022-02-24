@@ -24,8 +24,9 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 messages -> RemoteVideoFrameObjectHeap NotRefCounted {
 #if PLATFORM(COCOA)
-    GetVideoFrameBuffer(WebKit::RemoteVideoFrameReadReference identifier)
+    GetVideoFrameBuffer(WebKit::RemoteVideoFrameReadReference read)
+    PixelBuffer(WebKit::RemoteVideoFrameReadReference read) -> (RetainPtr<CVPixelBufferRef> result) Synchronous
 #endif
-    ReleaseVideoFrame(WebKit::RemoteVideoFrameWriteReference identifier)
+    ReleaseVideoFrame(WebKit::RemoteVideoFrameWriteReference write)
 }
 #endif

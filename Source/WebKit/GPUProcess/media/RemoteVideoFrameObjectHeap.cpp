@@ -117,6 +117,28 @@ void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReferen
     }
     m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewVideoFrameBuffer { identifier }, 0);
 }
+
+void RemoteVideoFrameObjectHeap::pixelBuffer(RemoteVideoFrameReadReference&& read, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&& completionHandler)
+{
+    auto videoFrame = retire(WTFMove(read), defaultTimeout);
+    if (!videoFrame) {
+        ASSERT_IS_TESTING_IPC();
+        completionHandler(nullptr);
+        return;
+    }
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    if (is<VideoFrameCV>(videoFrame))
+        pixelBuffer = downcast<VideoFrameCV>(*videoFrame).pixelBuffer();
+    else if (is<MediaSampleAVFObjC>(*videoFrame))
+        pixelBuffer = downcast<MediaSampleAVFObjC>(*videoFrame).pixelBuffer();
+    else {
+        ASSERT_NOT_REACHED();
+        completionHandler(nullptr);
+        return;
+    }
+    completionHandler(pixelBuffer);
+}
+
 #endif
 
 }

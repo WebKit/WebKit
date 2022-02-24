@@ -32,9 +32,11 @@
 #include "RemoteVideoFrameObjectHeapProxy.h"
 
 #if PLATFORM(COCOA)
+#include "WebProcess.h"
 #include <WebCore/CVUtilities.h>
 #include <WebCore/RealtimeIncomingVideoSourceCocoa.h>
 #include <WebCore/VideoFrameCV.h>
+#include <wtf/MainThread.h>
 #include <wtf/threads/BinarySemaphore.h>
 #endif
 
@@ -107,18 +109,27 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
 {
     Locker lock(m_pixelBufferLock);
     if (!m_pixelBuffer && m_videoFrameObjectHeapProxy) {
-        BinarySemaphore semaphore;
-        m_videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, [this, &semaphore](auto pixelBuffer) {
-            m_pixelBuffer = WTFMove(pixelBuffer);
-            if (!m_pixelBuffer) {
-                // Some code paths do not like empty pixel buffers.
-                m_pixelBuffer = WebCore::createBlackPixelBuffer(static_cast<size_t>(m_size.width()), static_cast<size_t>(m_size.height()));
-            }
-            semaphore.signal();
-        });
-        semaphore.wait();
-        m_videoFrameObjectHeapProxy = nullptr;
+        auto videoFrameObjectHeapProxy = std::exchange(m_videoFrameObjectHeapProxy, nullptr);
+
+        bool canSendSync = isMainRunLoop(); // FIXME: we should be able to sendSync from other threads too.
+        // Currently we just key with this, as there is no condition for "has access to IOKit".
+        if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL() || !canSendSync) {
+            BinarySemaphore semaphore;
+            videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, [this, &semaphore](auto pixelBuffer) {
+                m_pixelBuffer = WTFMove(pixelBuffer);
+                semaphore.signal();
+            });
+            semaphore.wait();
+        } else {
+            RetainPtr<CVPixelBufferRef> pixelBuffer;
+            auto result = m_connection->sendSync(Messages::RemoteVideoFrameObjectHeap::PixelBuffer(read()), Messages::RemoteVideoFrameObjectHeap::PixelBuffer::Reply(pixelBuffer), 0, defaultTimeout);
+            if (result)
+                m_pixelBuffer = WTFMove(pixelBuffer);
+        }
     }
+    // FIXME: Some code paths do not like empty pixel buffers.
+    if (!m_pixelBuffer)
+        m_pixelBuffer = WebCore::createBlackPixelBuffer(static_cast<size_t>(m_size.width()), static_cast<size_t>(m_size.height()));
     return m_pixelBuffer.get();
 }
 
