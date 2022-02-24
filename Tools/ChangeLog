@@ -1,3 +1,19 @@
+2022-02-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [Python3] Migrate Tools/CISupport to Python3
+        https://bugs.webkit.org/show_bug.cgi?id=237148
+        <rdar://problem/89430395>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/build-webkit-org/committer_auth_unittest_old.py: Removed.
+        * CISupport/build-webkit-org/loadConfig_unittest.py: Change shebang to Python 3.
+        * CISupport/build-webkit-org/make_passwords_json.py: Change shebang to Python 3,
+        make Python 3 compatible.
+        * CISupport/ews-build/email_unittest.py: Change shebang to Python 3.
+        * CISupport/ews-build/loadConfig_unittest.py: Ditto.
+        * CISupport/win/kill-old-processes: Ditto.
+
 2022-02-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor logic for showing "Markup Image" and Quick Note items in the callout bar

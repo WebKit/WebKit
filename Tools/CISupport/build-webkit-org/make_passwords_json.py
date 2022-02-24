@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (C) 2011-2020 Apple Inc. All rights reserved.
 # Copyright (C) 2014 University of Szeged. All rights reserved.
@@ -25,7 +25,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
-import md5
+import hashlib
 
 
 def create_mock_worker_passwords_dict():
@@ -46,7 +46,7 @@ if __name__ == '__main__':
 }""")
 
     with open('credentials.cfg', 'w') as credentials_file:
-        credentials_file.write("committer@webkit.org:Mac OS Forge:%s" % md5.new("committer@webkit.org:Mac OS Forge:committerpassword").hexdigest())
+        credentials_file.write("committer@webkit.org:Mac OS Forge:%s" % hashlib.md5(b'committer@webkit.org:Mac OS Forge:committerpassword').hexdigest())
 
     with open('committers.cfg', 'w') as committers_file:
         committers_file.write("""[groups]
