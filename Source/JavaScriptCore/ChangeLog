@@ -1,3 +1,30 @@
+2022-02-24  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Only clear ICU cache when time zone is changed
+        https://bugs.webkit.org/show_bug.cgi?id=236996
+
+        Reviewed by Yusuke Suzuki.
+
+        We used to unconditionally invalidate the VM's DateCache in VMEntryScope in order to
+        make sure we always used the latest time zone from the host machine (in case it changed).
+        This overly aggressive invalidation was causing us to repeatedly go to the disk in order
+        to determine the host time zone. On Cocoa ports, we now listen to the
+        kCFTimeZoneSystemTimeZoneDidChangeNotification notification and only invalidate the
+        VM's DateCache in VMEntryScope if the host time zone has actually changed since the
+        last time.
+
+        * runtime/JSDateMath.cpp:
+        (JSC::timeZoneChangeNotification):
+        (JSC::DateCache::DateCache):
+        (JSC::DateCache::resetIfNecessary):
+        (JSC::DateCache::reset): Deleted.
+        * runtime/JSDateMath.h:
+        * runtime/VM.h:
+        (JSC::VM::resetDateCacheIfNecessary):
+        (JSC::VM::resetDateCache): Deleted.
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+
 2022-02-24  Geza Lore  <glore@igalia.com>
 
         [JSC] Respect bytecode alignment in BytecodeRewriter

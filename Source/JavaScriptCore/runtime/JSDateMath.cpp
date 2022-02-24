@@ -97,6 +97,7 @@
 
 namespace JSC {
 
+static std::atomic<uint64_t> lastTimeZoneID { 1 };
 
 #if HAVE(ICU_C_TIMEZONE_API)
 class OpaqueICUTimeZone {
@@ -351,8 +352,25 @@ String DateCache::defaultTimeZone()
 #endif
 }
 
+#if PLATFORM(COCOA)
+static void timeZoneChangeNotification(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
+{
+    ASSERT(isMainThread());
+    ++lastTimeZoneID;
+}
+#endif
+
 // To confine icu::TimeZone destructor invocation in this file.
-DateCache::DateCache() = default;
+DateCache::DateCache()
+{
+#if PLATFORM(COCOA)
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), nullptr, timeZoneChangeNotification, kCFTimeZoneSystemTimeZoneDidChangeNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+    });
+#endif
+}
+
 DateCache::~DateCache() = default;
 
 Ref<DateInstanceData> DateCache::cachedDateInstanceData(double millisecondsFromEpoch)
@@ -390,8 +408,16 @@ void DateCache::timeZoneCacheSlow()
 #endif
 }
 
-void DateCache::reset()
+void DateCache::resetIfNecessary()
 {
+#if PLATFORM(COCOA)
+    if (m_cachedTimezoneID == lastTimeZoneID)
+        return;
+    m_cachedTimezoneID = lastTimeZoneID;
+#endif
+
+    // FIXME: We should clear it only when we know the timezone has been changed on Non-Cocoa platforms.
+    // https://bugs.webkit.org/show_bug.cgi?id=218365
     m_timeZoneCache.reset();
     m_utcTimeOffsetCache = LocalTimeOffsetCache();
     m_localTimeOffsetCache = LocalTimeOffsetCache();

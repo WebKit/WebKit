@@ -733,7 +733,7 @@ public:
     RTTraceList* m_rtTraceList;
 #endif
 
-    void resetDateCache() { dateCache.reset(); }
+    void resetDateCacheIfNecessary() { dateCache.resetIfNecessary(); }
 
     RegExpCache* regExpCache() { return m_regExpCache; }
 #if ENABLE(REGEXP_TRACING)

@@ -77,7 +77,7 @@ public:
     DateCache();
     ~DateCache();
 
-    JS_EXPORT_PRIVATE void reset();
+    JS_EXPORT_PRIVATE void resetIfNecessary();
 
     String defaultTimeZone();
 
@@ -86,6 +86,8 @@ public:
     void msToGregorianDateTime(double millisecondsFromEpoch, WTF::TimeType outputTimeType, GregorianDateTime&);
     double gregorianDateTimeToMS(const GregorianDateTime&, double milliseconds, WTF::TimeType inputTimeType);
     JS_EXPORT_PRIVATE double parseDate(JSGlobalObject*, VM&, const WTF::String&);
+
+    static void timeZoneChanged();
 
 private:
     void timeZoneCacheSlow();
@@ -105,6 +107,7 @@ private:
     String m_cachedDateString;
     double m_cachedDateStringValue;
     DateInstanceCache m_dateInstanceCache;
+    uint64_t m_cachedTimezoneID { 0 };
 };
 
 ALWAYS_INLINE bool isUTCEquivalent(StringView timeZone)
