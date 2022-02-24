@@ -318,39 +318,45 @@ void LibWebRTCCodecs::failedDecoding(RTCDecoderIdentifier decoderIdentifier)
         decoder->hasError = true;
 }
 
-void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&& remoteSample, std::optional<RemoteVideoFrameIdentifier> remoteFrameIdentifier)
+void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, uint32_t timeStamp, RemoteVideoFrameProxy::Properties&& properties)
 {
     ASSERT(!isMainRunLoop());
-
-    RefPtr<RemoteVideoFrameProxy> remoteVideoFrame;
-    // We always create RemoteVideoFrameProxy so that we can release the corresponding GPUProcess IOSurface right away if there is no video source.
-    if (remoteFrameIdentifier) {
+    // Adopt RemoteVideoFrameProxy::Properties to RemoteVideoFrameProxy instance before the early outs, so that the reference gets adopted.
+    // Typically RemoteVideoFrameProxy::Properties&& sent to destinations that are already removed need to be handled separately.
+    // LibWebRTCCodecs is not ever removed, so we do not do this. However, if it ever is, LibWebRTCCodecs::handleMessageToRemovedDestination()
+    // needs to be implemented.
+    Ref<RemoteVideoFrameProxy> remoteVideoFrame = [&] {
         Locker locker { m_connectionLock };
-        RemoteVideoFrameProxy::Properties properties { { *remoteFrameIdentifier, 0 }, remoteSample.time(), remoteSample.mirrored(), remoteSample.rotation(), remoteSample.size(), remoteSample.videoFormat() };
-        remoteVideoFrame = RemoteVideoFrameProxy::create(*m_connection, *m_videoFrameObjectHeapProxy, WTFMove(properties));
-    }
+        return RemoteVideoFrameProxy::create(*m_connection, *m_videoFrameObjectHeapProxy, WTFMove(properties));
+    }();
     // FIXME: Do error logging.
     auto* decoder = m_decoders.get(decoderIdentifier);
     if (!decoder)
         return;
-
     if (!decoder->decodedImageCallbackLock.tryLock())
         return;
-
     Locker locker { AdoptLock, decoder->decodedImageCallbackLock };
-
     if (!decoder->decodedImageCallback)
         return;
+    auto& frame = remoteVideoFrame.leakRef(); // Balanced by the release callback of videoDecoderTaskComplete.
+    webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, frame.presentationTime().toDouble(), &frame,
+        [](auto* pointer) { return static_cast<RemoteVideoFrameProxy*>(pointer)->pixelBuffer(); },
+        [](auto* pointer) { static_cast<RemoteVideoFrameProxy*>(pointer)->deref(); },
+        frame.size().width(), frame.size().height());
+}
 
-    if (remoteVideoFrame) {
-        Ref videoFrame { static_cast<VideoFrame&>(*remoteVideoFrame) };
-        webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, remoteSample.time().toDouble(), &videoFrame.leakRef(),
-            [](auto* pointer) { return static_cast<VideoFrame*>(pointer)->pixelBuffer(); },
-            [](auto* pointer) { static_cast<VideoFrame*>(pointer)->deref(); },
-            remoteSample.size().width(), remoteSample.size().height());
+void LibWebRTCCodecs::completedDecodingCV(RTCDecoderIdentifier decoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&& remoteSample)
+{
+    ASSERT(!isMainRunLoop());
+    // FIXME: Do error logging.
+    auto* decoder = m_decoders.get(decoderIdentifier);
+    if (!decoder)
         return;
-    }
-
+    if (!decoder->decodedImageCallbackLock.tryLock())
+        return;
+    Locker locker { AdoptLock, decoder->decodedImageCallbackLock };
+    if (!decoder->decodedImageCallback)
+        return;
     if (!remoteSample.surface())
         return;
     auto pixelBuffer = createCVPixelBuffer(remoteSample.surface()).value_or(nullptr);
@@ -358,7 +364,6 @@ void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, 
         ASSERT_NOT_REACHED();
         return;
     }
-
     webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, remoteSample.time().toDouble(), pixelBuffer.get());
 }
 

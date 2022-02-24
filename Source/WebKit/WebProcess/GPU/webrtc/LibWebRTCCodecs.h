@@ -35,6 +35,7 @@
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
 #include "RemoteVideoFrameIdentifier.h"
+#include "RemoteVideoFrameProxy.h"
 #include "SharedVideoFrame.h"
 #include <WebCore/PixelBufferConformerCV.h>
 #include <map>
@@ -131,7 +132,8 @@ private:
     void gpuProcessConnectionMayNoLongerBeNeeded();
 
     void failedDecoding(RTCDecoderIdentifier);
-    void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&, std::optional<RemoteVideoFrameIdentifier>);
+    void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, RemoteVideoFrameProxy::Properties&&);
+    void completedDecodingCV(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&);
     void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
     RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 

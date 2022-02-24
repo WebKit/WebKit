@@ -1,5 +1,33 @@
 2022-02-24  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        LibWebRTCCodecs, -Proxy create and communicate the RemoteVideoFrameProxy incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=237083
+
+        Reviewed by Youenn Fablet.
+        LibWebRTCCodecsProxy should not call RemoteVideoFrameObjectHeap::createVideoFrame,
+        the function should be removed. Instead, LibWebRTCCodecsProxy should construct a
+        write reference to insert the media sample -> remote proxy mapping. Then
+        the result of the insert, a new reference, should be sent as part of the
+        RemoteVideoFrameProxy::Properties to the WP. This way the sent reference is
+        constructed as expected. Previously the reference was correct but matched just
+        by selecting the constants currently used (0). This works towards being able
+        to remove RemoteVideoFrameObjectHeap::createVideoFrame.
+
+        Split the completedDecoding to two:
+        - completedDecoding used to send new RemoteVideoFrames
+        - completedDecodingCV to send CoreVideo specific RemoteVideoSample instances (which will
+          removed eventually).
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::Function<void):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::completedDecoding):
+        (WebKit::LibWebRTCCodecs::completedDecodingCV):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in:
+
+2022-02-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         Thread safety analysis to assert "code is run sequentially" is not useful when code is mainly run with WorkQueues
         https://bugs.webkit.org/show_bug.cgi?id=236832
 

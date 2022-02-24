@@ -27,6 +27,8 @@
 #include "VideoFrameCV.h"
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
+#include "CVUtilities.h"
+#include "ProcessIdentity.h"
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
@@ -54,11 +56,19 @@ uint32_t VideoFrameCV::videoPixelFormat() const
 {
     return CVPixelBufferGetPixelFormatType(m_pixelBuffer.get());
 }
+
+void VideoFrameCV::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
+{
+    ASSERT(resourceOwner);
+    auto buffer = pixelBuffer();
+    ASSERT(buffer);
+    setOwnershipIdentityForCVPixelBuffer(buffer, resourceOwner);
+}
+
 RefPtr<WebCore::VideoFrameCV> VideoFrameCV::asVideoFrameCV()
 {
     return this;
 }
-
 
 ImageOrientation VideoFrameCV::orientation() const
 {

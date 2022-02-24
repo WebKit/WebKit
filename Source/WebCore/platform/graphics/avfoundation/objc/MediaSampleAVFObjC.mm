@@ -26,8 +26,10 @@
 #import "config.h"
 #import "MediaSampleAVFObjC.h"
 
+#import "CVUtilities.h"
 #import "PixelBuffer.h"
 #import "PixelBufferConformerCV.h"
+#import "ProcessIdentity.h"
 #import "VideoFrameCV.h"
 #import <JavaScriptCore/JSCInlines.h>
 #import <JavaScriptCore/TypedArrayInlines.h>
@@ -549,6 +551,14 @@ std::optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRangeForAttachment
 CVPixelBufferRef MediaSampleAVFObjC::pixelBuffer() const
 {
     return static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
+}
+
+void MediaSampleAVFObjC::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
+{
+    ASSERT(resourceOwner);
+    auto buffer = pixelBuffer();
+    ASSERT(buffer);
+    setOwnershipIdentityForCVPixelBuffer(buffer, resourceOwner);
 }
 
 }

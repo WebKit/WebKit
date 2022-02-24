@@ -49,6 +49,7 @@ public:
     // VideoFrame overrides.
     WEBCORE_EXPORT WebCore::FloatSize presentationSize() const final;
     WEBCORE_EXPORT uint32_t videoPixelFormat() const final;
+    WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&) final;
     bool isCV() const final { return true; }
     WEBCORE_EXPORT RefPtr<WebCore::VideoFrameCV> asVideoFrameCV() final;
 

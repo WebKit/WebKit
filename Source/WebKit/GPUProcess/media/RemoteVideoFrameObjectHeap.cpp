@@ -74,11 +74,21 @@ void RemoteVideoFrameObjectHeap::stopListeningForIPC(Ref<RemoteVideoFrameObjectH
     }
 }
 
+// FIXME: This will be removed once call sites use addVideoFrame().
 RemoteVideoFrameIdentifier RemoteVideoFrameObjectHeap::createRemoteVideoFrame(Ref<WebCore::MediaSample>&& frame)
 {
     auto identifier = RemoteVideoFrameIdentifier::generateThreadSafe();
     add(identifier, WTFMove(frame));
     return identifier;
+}
+
+RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::addVideoFrame(Ref<WebCore::MediaSample>&& frame)
+{
+    auto write = RemoteVideoFrameWriteReference::generateForAdd();
+    auto newFrameReference = write.retiredReference();
+    auto properties = RemoteVideoFrameProxy::properties(WTFMove(newFrameReference), frame);
+    retire(WTFMove(write), WTFMove(frame), std::nullopt);
+    return properties;
 }
 
 void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReference&& write)

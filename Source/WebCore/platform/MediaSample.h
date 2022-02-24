@@ -41,6 +41,7 @@ typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 namespace WebCore {
 
 class MockSampleBox;
+class ProcessIdentity;
 
 struct PlatformSample {
     enum Type {
@@ -111,6 +112,7 @@ public:
 #if PLATFORM(COCOA)
     virtual CVPixelBufferRef pixelBuffer() const { return nullptr; };
 #endif
+    virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 
     bool isSync() const { return flags() & IsSync; }
     bool isNonDisplaying() const { return flags() & IsNonDisplaying; }

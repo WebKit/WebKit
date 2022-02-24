@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 #include "RemoteVideoFrameIdentifier.h"
+#include "RemoteVideoFrameProxy.h"
 #include "ThreadSafeObjectHeap.h"
 #include <WebCore/MediaSample.h>
 #include <wtf/ThreadAssertions.h>
@@ -48,7 +49,9 @@ public:
     static Ref<RemoteVideoFrameObjectHeap> create(GPUConnectionToWebProcess&);
     ~RemoteVideoFrameObjectHeap();
 
+    // FIXME: This will be removed once call sites use addVideoFrame().
     RemoteVideoFrameIdentifier createRemoteVideoFrame(Ref<WebCore::MediaSample>&&);
+    RemoteVideoFrameProxy::Properties addVideoFrame(Ref<WebCore::MediaSample>&&);
 
     void stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&& refFromConnection);
 

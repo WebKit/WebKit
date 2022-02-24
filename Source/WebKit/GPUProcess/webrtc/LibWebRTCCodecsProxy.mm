@@ -87,21 +87,17 @@ static Function<void(CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_
         auto sample = WebCore::MediaSampleAVFObjC::createImageSample(pixelBuffer, WebCore::MediaSample::VideoRotation::None, false, MediaTime(timeStampNs, 1), { });
         if (!sample)
             return;
-
+        if (resourceOwner)
+            sample->setOwnershipIdentity(resourceOwner);
+        if (useRemoteFrames) {
+            auto properties = videoFrameObjectHeap->addVideoFrame(sample.releaseNonNull());
+            connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, WTFMove(properties) }, 0);
+            return;
+        }
         auto remoteSample = WebCore::RemoteVideoSample::create(*sample);
         if (!remoteSample)
             return;
-
-        if (resourceOwner)
-            remoteSample->setOwnershipIdentity(resourceOwner);
-
-        std::optional<RemoteVideoFrameIdentifier> remoteIdentifier;
-        if (useRemoteFrames) {
-            remoteIdentifier = videoFrameObjectHeap->createRemoteVideoFrame(sample.releaseNonNull());
-            remoteSample->clearIOSurface();
-        }
-
-        connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *remoteSample, remoteIdentifier }, 0);
+        connection->send(Messages::LibWebRTCCodecs::CompletedDecodingCV { identifier, timeStamp, *remoteSample }, 0);
     };
 }
 
