@@ -3489,3 +3489,5 @@ pointerevents/mouse/pointer-event-basic-properties.html [ Timeout ]
 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Failure Pass ]
 [ Release ] perf/nested-combined-selectors.html [ Failure ]
 webkit.org/b/236496 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
+
+webkit.org/b/236794 editing/spelling/editing-word-with-marker-2.html [ Pass Crash ]
