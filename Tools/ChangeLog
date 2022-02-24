@@ -1,3 +1,13 @@
+2022-02-22  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Use Python 3 (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=226658
+        <rdar://problem/78882016>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/run-webkit-tests: Change shebang to Python 3.
+
 2022-02-24  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Thread safety analysis to assert "code is run sequentially" is not useful when code is mainly run with WorkQueues
