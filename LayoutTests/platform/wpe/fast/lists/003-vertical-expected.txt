@@ -5,8 +5,8 @@ layer at (0,0) size 458x600
     RenderBody {body} at (16,8) size 302x584
       RenderBlock (floating) {div} at (0,0) size 442x351
         RenderBlock {p} at (16,0) size 72x351
-          RenderText {#text} at (0,0) size 36x319
-            text run at (0,0) width 319: "This test case illustrates incorrect positioning of list"
+          RenderText {#text} at (1,0) size 35x319
+            text run at (1,0) width 319: "This test case illustrates incorrect positioning of list"
             text run at (19,0) width 92: "items within a "
           RenderInline {code} at (0,0) size 15x136
             RenderText {#text} at (18,92) size 15x136
@@ -24,22 +24,22 @@ layer at (0,0) size 458x600
               text run at (37,64) width 192: "Screenshot of correct behavior"
           RenderText {#text} at (37,256) size 17x8
             text run at (37,256) width 8: "; "
-          RenderInline {a} at (0,0) size 34x347 [color=#0000EE]
-            RenderText {#text} at (37,264) size 34x347
+          RenderInline {a} at (0,0) size 35x347 [color=#0000EE]
+            RenderText {#text} at (37,264) size 35x347
               text run at (37,264) width 83: "screenshot of"
-              text run at (54,0) width 37: "Safari"
-          RenderText {#text} at (54,37) size 17x4
-            text run at (54,37) width 4: "."
+              text run at (55,0) width 37: "Safari"
+          RenderText {#text} at (55,37) size 17x4
+            text run at (55,37) width 4: "."
         RenderBlock {p} at (104,0) size 54x351
-          RenderText {#text} at (0,0) size 35x304
-            text run at (0,0) width 304: "This bug only occurs on pages with a standards-"
-            text run at (18,0) width 150: "compliant DOCTYPE. "
+          RenderText {#text} at (1,0) size 35x304
+            text run at (1,0) width 304: "This bug only occurs on pages with a standards-"
+            text run at (19,0) width 150: "compliant DOCTYPE. "
           RenderInline {a} at (0,0) size 35x330 [color=#0000EE]
-            RenderText {#text} at (18,150) size 35x330
-              text run at (18,150) width 180: "View this test case without a"
-              text run at (36,0) width 76: "DOCTYPE"
-          RenderText {#text} at (36,76) size 17x4
-            text run at (36,76) width 4: "."
+            RenderText {#text} at (19,150) size 35x330
+              text run at (19,150) width 180: "View this test case without a"
+              text run at (37,0) width 76: "DOCTYPE"
+          RenderText {#text} at (37,76) size 17x4
+            text run at (37,76) width 4: "."
         RenderBlock {ol} at (174,0) size 252x351
           RenderListItem {li} at (0,40) size 36x311
             RenderListMarker at (0,-20) size 17x16: "1"

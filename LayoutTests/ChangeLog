@@ -1,3 +1,59 @@
+2022-02-25  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test baselines after various LFC improvements.
+        https://bugs.webkit.org/show_bug.cgi?id=237184
+
+        Unreviewed test gardening.
+
+        * platform/glib/fast/backgrounds/background-leakage-transforms-expected.txt:
+        * platform/glib/fast/backgrounds/border-radius-split-background-expected.txt:
+        * platform/glib/fast/backgrounds/border-radius-split-background-image-expected.txt:
+        * platform/glib/fast/block/positioning/auto/vertical-lr/001-expected.txt:
+        * platform/glib/fast/block/positioning/auto/vertical-lr/002-expected.txt:
+        * platform/glib/fast/block/positioning/auto/vertical-lr/003-expected.txt:
+        * platform/glib/fast/block/positioning/auto/vertical-lr/004-expected.txt:
+        * platform/glib/fast/block/positioning/auto/vertical-lr/006-expected.txt:
+        * platform/glib/fast/block/positioning/vertical-lr/002-expected.txt:
+        * platform/glib/fast/borders/border-image-outset-split-inline-vertical-lr-expected.txt:
+        * platform/glib/fast/replaced/vertical-lr/absolute-position-percentage-width-expected.txt:
+        * platform/glib/fast/replaced/vertical-lr/absolute-position-with-auto-height-and-top-and-bottom-expected.txt:
+        * platform/glib/fast/replaced/vertical-lr/absolute-position-with-auto-width-and-left-and-right-expected.txt:
+        * platform/glib/fast/table/border-collapsing/002-vertical-expected.txt:
+        * platform/glib/fast/writing-mode/basic-vertical-line-expected.txt:
+        * platform/glib/fast/writing-mode/border-image-vertical-lr-expected.txt:
+        * platform/glib/fast/writing-mode/border-radius-clipping-vertical-lr-expected.txt:
+        * platform/glib/fast/writing-mode/border-styles-vertical-lr-expected.txt:
+        * platform/glib/fast/writing-mode/border-styles-vertical-lr-mixed-expected.txt:
+        * platform/glib/fast/writing-mode/border-styles-vertical-rl-expected.txt:
+        * platform/glib/fast/writing-mode/border-styles-vertical-rl-mixed-expected.txt:
+        * platform/glib/fast/writing-mode/border-vertical-lr-expected.txt:
+        * platform/glib/fast/writing-mode/box-shadow-vertical-lr-expected.txt:
+        * platform/glib/fast/writing-mode/japanese-lr-text-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline-expected.txt: Added.
+        * platform/gtk/fast/block/lineboxcontain/inline-box-vertical-expected.txt:
+        * platform/gtk/fast/html/details-writing-mode-expected.txt:
+        * platform/gtk/fast/html/details-writing-mode-mixed-expected.txt:
+        * platform/gtk/fast/lists/003-vertical-expected.txt:
+        * platform/gtk/fast/overflow/overflow-rtl-vertical-expected.txt:
+        * platform/gtk/fast/text/international/synthesized-italic-vertical-latin-expected.txt:
+        * platform/gtk/fast/writing-mode/english-lr-text-expected.txt:
+        * platform/gtk/fast/writing-mode/text-orientation-basic-expected.txt:
+        * platform/gtk/fast/writing-mode/vertical-lr-replaced-selection-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline-expected.txt: Removed.
+        * platform/wpe/fast/block/lineboxcontain/inline-box-vertical-expected.txt:
+        * platform/wpe/fast/html/details-writing-mode-expected.txt:
+        * platform/wpe/fast/html/details-writing-mode-mixed-expected.txt:
+        * platform/wpe/fast/lists/003-vertical-expected.txt:
+        * platform/wpe/fast/overflow/overflow-rtl-vertical-expected.txt:
+        * platform/wpe/fast/text/international/synthesized-italic-vertical-latin-expected.txt:
+        * platform/wpe/fast/writing-mode/english-lr-text-expected.txt:
+        * platform/wpe/fast/writing-mode/text-orientation-basic-expected.txt:
+        * platform/wpe/fast/writing-mode/vertical-lr-replaced-selection-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline-expected.txt: Removed.
+
 2022-02-24  Alan Bujtas  <zalan@apple.com>
 
         Unreviewed test gardening after r290454.

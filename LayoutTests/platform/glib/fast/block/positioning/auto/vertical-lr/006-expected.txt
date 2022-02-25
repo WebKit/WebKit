@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
       RenderBlock (anonymous) at (0,0) size 72x584
-        RenderText {#text} at (0,0) size 71x560
-          text run at (0,0) width 558: "In this test, you should see three blocks that are aligned to the bottom within a black box."
-          text run at (18,0) width 535: "They should be stacked horizontally with the green box in between two olive boxes. "
-          text run at (18,535) width 25: "The"
-          text run at (36,0) width 531: "olive boxes and the green box should be 100x100, and there should be 100 pixels of"
-          text run at (54,0) width 255: "padding on the top side of the box stack."
+        RenderText {#text} at (1,0) size 71x560
+          text run at (1,0) width 558: "In this test, you should see three blocks that are aligned to the bottom within a black box."
+          text run at (19,0) width 535: "They should be stacked horizontally with the green box in between two olive boxes. "
+          text run at (19,535) width 25: "The"
+          text run at (37,0) width 531: "olive boxes and the green box should be 100x100, and there should be 100 pixels of"
+          text run at (55,0) width 255: "padding on the top side of the box stack."
 layer at (96,8) size 36x584
   RenderBlock (relative positioned) {DIV} at (88,0) size 36x584
     RenderText {#text} at (0,31) size 35x553
