@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -503,18 +503,21 @@ private:
 
 ALWAYS_INLINE static void notifyDebuggerOfUnwinding(VM& vm, CallFrame* callFrame)
 {
-    DeferTermination deferScope(vm);
     JSGlobalObject* globalObject = callFrame->lexicalGlobalObject(vm);
+    Debugger* debugger = globalObject->debugger();
+    if (LIKELY(!debugger))
+        return;
+
+    DeferTermination deferScope(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
-    if (Debugger* debugger = globalObject->debugger()) {
-        SuspendExceptionScope scope(&vm);
-        if (callFrame->isAnyWasmCallee()
-            || (callFrame->callee().isCell() && callFrame->callee().asCell()->inherits<JSFunction>(vm)))
-            debugger->unwindEvent(callFrame);
-        else
-            debugger->didExecuteProgram(callFrame);
-        catchScope.assertNoException();
-    }
+
+    SuspendExceptionScope scope(&vm);
+    if (callFrame->isAnyWasmCallee()
+        || (callFrame->callee().isCell() && callFrame->callee().asCell()->inherits<JSFunction>(vm)))
+        debugger->unwindEvent(callFrame);
+    else
+        debugger->didExecuteProgram(callFrame);
+    catchScope.assertNoException();
 }
 
 CatchInfo::CatchInfo(const HandlerInfo* handler, CodeBlock* codeBlock)

@@ -192,7 +192,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
 
     // It's too hairy to handle TerminationExceptions during OSR object materialization.
     // Let's just wait until after.
-    DeferTermination deferTermination(vm);
+    DeferTerminationForAWhile deferTermination(vm);
 
     // We cannot GC. We've got pointers in evil places.
     DeferGCForAWhile deferGC(vm);

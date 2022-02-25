@@ -1,3 +1,13 @@
+2022-02-25  Mark Lam  <mark.lam@apple.com>
+
+        operationMaterializeObjectInOSR should DeferTerminationForAWhile instead of just DeferTermination.
+        https://bugs.webkit.org/show_bug.cgi?id=237173
+        rdar://problem/89450245
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/termination-exception-in-operationMaterializeObjectInOSR2.js: Added.
+
 2022-02-24  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Skip shadow-realm-import-value on ARM too
