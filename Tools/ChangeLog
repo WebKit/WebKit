@@ -1,3 +1,13 @@
+2022-02-25  Alex Christensen  <achristensen@webkit.org>
+
+        Re-add YouTubePluginReplacement, removed in r285252
+        https://bugs.webkit.org/show_bug.cgi?id=237182
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/YouTubePluginReplacement.cpp:
+
 2022-02-24  Jonathan Bedard  <jbedard@apple.com>
 
         [Python 3] Invoke validate-committer-lists with Python 3

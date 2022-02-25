@@ -5157,6 +5157,10 @@ fullscreen/full-screen-plugin.html [ Skip ]
 imported/blink/http/tests/plugins [ Skip ]
 imported/blink/plugins [ Skip ]
 js/dom/reflect-set-onto-dom.html [ Skip ]
+security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
 userscripts/user-script-plugin-document.html [ Skip ]
 
 # This is marked as passing on WK2.

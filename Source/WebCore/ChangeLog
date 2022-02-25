@@ -1,3 +1,44 @@
+2022-02-25  Alex Christensen  <achristensen@webkit.org>
+
+        Re-add YouTubePluginReplacement, removed in r285252
+        https://bugs.webkit.org/show_bug.cgi?id=237182
+        <rdar://89148022>
+
+        Reviewed by Chris Dumez.
+
+        Tests: security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement.html
+               security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html
+               security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html
+               security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html
+
+        Its removal broke webpages that work in Chrome and Firefox, so back it comes.
+
+        * Headers.cmake:
+        * Modules/plugins: Copied from Source/WebCore/Modules/plugins.
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginScriptObject):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        (WebCore::JSTestPluginInterface::visitChildrenImpl):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::createElementRenderer):
+        (WebCore::HTMLPlugInElement::didAddUserAgentShadowRoot):
+        (WebCore::registrar):
+        (WebCore::pluginReplacementForType):
+        (WebCore::HTMLPlugInElement::requestObject):
+        (WebCore::HTMLPlugInElement::scriptObjectForPluginReplacement):
+        * html/HTMLPlugInElement.h:
+        (WebCore::HTMLPlugInElement::pluginReplacementScriptObject):
+        * html/shadow/ShadowPseudoIds.cpp:
+        (WebCore::ShadowPseudoIds::webkitPluginReplacement):
+        * html/shadow/ShadowPseudoIds.h:
+        * html/shadow/YouTubeEmbedShadowElement.cpp:
+        * html/shadow/YouTubeEmbedShadowElement.h:
+        * page/Settings.yaml:
+
 2022-02-25  J Pascoe  <j_pascoe@apple.com>
         [WebAuthn] Use default pubKeyCredParams if empty in makeCredential
         https://bugs.webkit.org/show_bug.cgi?id=237109

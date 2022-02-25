@@ -213,6 +213,12 @@ const AtomString& webkitMeterEvenLessGoodValue()
     return webkitMeterEvenLessGoodValue;
 }
 
+const AtomString& webkitPluginReplacement()
+{
+    static MainThreadNeverDestroyed<const AtomString> webkitPluginReplacement("-webkit-plugin-replacement", AtomString::ConstructFromLiteral);
+    return webkitPluginReplacement;
+}
+
 const AtomString& webkitProgressBar()
 {
     static MainThreadNeverDestroyed<const AtomString> webkitProgressBar("-webkit-progress-bar", AtomString::ConstructFromLiteral);

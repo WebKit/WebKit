@@ -298,6 +298,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/permissions/PermissionObserver.h
     Modules/permissions/PermissionState.h
 
+    Modules/plugins/PluginReplacement.h
+    Modules/plugins/YouTubePluginReplacement.h
+
     Modules/push-api/PushCrypto.h
     Modules/push-api/PushDatabase.h
     Modules/push-api/PushMessageCrypto.h
