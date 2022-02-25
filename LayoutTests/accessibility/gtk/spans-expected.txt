@@ -26,9 +26,13 @@ PASS link.childrenCount is 0
 PASS element.role is 'AXRole: AXList'
 PASS element.childrenCount is 2
 PASS item.role is 'AXRole: AXListItem'
-PASS item.childrenCount is 0
-PASS item.role is 'AXRole: AXListItem'
 PASS item.childrenCount is 1
+PASS marker.role is 'AXRole: AXStatic'
+PASS marker.childrenCount is 0
+PASS item.role is 'AXRole: AXListItem'
+PASS item.childrenCount is 2
+PASS marker.role is 'AXRole: AXStatic'
+PASS marker.childrenCount is 0
 PASS link.role is 'AXRole: AXLink'
 PASS link.childrenCount is 0
 PASS successfullyParsed is true

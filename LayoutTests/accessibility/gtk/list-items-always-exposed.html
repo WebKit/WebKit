@@ -23,12 +23,16 @@ if (window.testRunner) {
 
     var list = webArea.childAtIndex(0);
     var item1 = list.childAtIndex(0);
+    var marker1 = item1.childAtIndex(0);
     var item2 = list.childAtIndex(1);
-    var paragraph = item2.childAtIndex(0);
+    var marker2 = item2.childAtIndex(0);
+    var paragraph = item2.childAtIndex(1);
 
     shouldBe("list.role", "'AXRole: AXList'");
     shouldBe("item1.role", "'AXRole: AXListItem'");
+    shouldBe("marker1.role", "'AXRole: AXStatic'");
     shouldBe("item2.role", "'AXRole: AXListItem'");
+    shouldBe("marker2.role", "'AXRole: AXStatic'");
     shouldBe("paragraph.role", "'AXRole: AXParagraph'");
   }
 }

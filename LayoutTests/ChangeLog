@@ -1,3 +1,19 @@
+2022-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        AX: List item marker not exposed when not a direct child of a list item
+        https://bugs.webkit.org/show_bug.cgi?id=236777
+        <rdar://problem/89082485>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update test results.
+
+        * accessibility/gtk/list-items-always-exposed-expected.txt:
+        * accessibility/gtk/list-items-always-exposed.html:
+        * accessibility/gtk/spans-expected.txt:
+        * accessibility/gtk/spans.html:
+        * platform/gtk/TestExpectations:
+
 2022-02-25  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test baselines after various LFC improvements.

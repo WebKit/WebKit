@@ -1,3 +1,23 @@
+2022-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        AX: List item marker not exposed when not a direct child of a list item
+        https://bugs.webkit.org/show_bug.cgi?id=236777
+        <rdar://problem/89082485>
+
+        Reviewed by Adrian Perez de Castro.
+
+        It can happen that the marker is not a direct child of a list item, in which case the marker is ignored and not
+        exposed to ATs.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::parentObjectUnignored const): In case of list marker find the marker list item.
+        (WebCore::AccessibilityRenderObject::markerRenderer const): Helper to return the list item marker renderer.
+        (WebCore::AccessibilityRenderObject::addListItemMarker): Add always the list item marker as the first child of
+        list items.
+        (WebCore::AccessibilityRenderObject::addChildren): Do not add list item marker children, they will be added to
+        the right parent in addListItemMarker().
+        * accessibility/AccessibilityRenderObject.h:
+
 2022-02-25  Youenn Fablet  <youenn@apple.com>
 
         Optimize black frame sending in MediaRecorderPrivate

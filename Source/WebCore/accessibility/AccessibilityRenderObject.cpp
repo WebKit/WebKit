@@ -528,7 +528,23 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
     
     return nullptr;
 }
-    
+
+AXCoreObject* AccessibilityRenderObject::parentObjectUnignored() const
+{
+#if USE(ATSPI)
+    // Expose markers that are not direct children of a list item too.
+    if (m_renderer && m_renderer->isListMarker()) {
+        if (auto* listItem = ancestorsOfType<RenderListItem>(*m_renderer).first()) {
+            AccessibilityObject* parent = axObjectCache()->getOrCreate(listItem);
+            if (downcast<AccessibilityRenderObject>(*parent).markerRenderer() == m_renderer)
+                return parent;
+        }
+    }
+#endif
+
+    return AccessibilityNodeObject::parentObjectUnignored();
+}
+
 bool AccessibilityRenderObject::isAttachment() const
 {
     RenderBoxModelObject* renderer = renderBoxModelObject();
@@ -3239,7 +3255,23 @@ void AccessibilityRenderObject::addHiddenChildren()
         insertionIndex += (m_children.size() - previousSize);
     }
 }
-    
+
+#if USE(ATSPI)
+RenderObject* AccessibilityRenderObject::markerRenderer() const
+{
+    if (accessibilityIsIgnored() || !isListItem() || !m_renderer || !m_renderer->isListItem())
+        return nullptr;
+
+    return downcast<RenderListItem>(*m_renderer).markerRenderer();
+}
+
+void AccessibilityRenderObject::addListItemMarker()
+{
+    if (auto* marker = markerRenderer())
+        insertChild(axObjectCache()->getOrCreate(marker), 0);
+}
+#endif
+
 void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
 {
     AXTRACE("AccessibilityRenderObject::updateRoleAfterChildrenCreation");
@@ -3272,10 +3304,18 @@ void AccessibilityRenderObject::addChildren()
     
     if (!canHaveChildren())
         return;
-    
-    for (RefPtr<AccessibilityObject> obj = firstChild(); obj; obj = obj->nextSibling())
-        addChild(obj.get());
-    
+
+    auto addChildIfNeeded = [this](AccessibilityObject& object) {
+#if USE(ATSPI)
+        if (object.renderer()->isListMarker())
+            return;
+#endif
+        addChild(&object);
+    };
+
+    for (RefPtr<AccessibilityObject> object = firstChild(); object; object = object->nextSibling())
+        addChildIfNeeded(*object);
+
     m_subtreeDirty = false;
     
     addHiddenChildren();
@@ -3284,6 +3324,9 @@ void AccessibilityRenderObject::addChildren()
     addTextFieldChildren();
     addCanvasChildren();
     addRemoteSVGChildren();
+#if USE(ATSPI)
+    addListItemMarker();
+#endif
 
 #if PLATFORM(COCOA)
     updateAttachmentViewParents();
