@@ -3277,6 +3277,8 @@ webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-backgr
 
 webkit.org/b/222239 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
+webkit.org/b/237174 editing/pasteboard/dom-paste/dom-paste-same-origin.html [ Pass Failure Timeout ]
+
 fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 
 webkit.org/b/229154 webrtc/peer-connection-audio-mute2.html [ Pass Failure ]
