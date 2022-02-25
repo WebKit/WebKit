@@ -1,3 +1,13 @@
+2022-02-25  Robert Jenner  <Jenner@apple.com>
+
+        [ Mac wk1 ] 7X imported/w3c/web-platform-tests/pointerevents/pointerevent (layout-tests) are flaky text failures
+        https://bugs.webkit.org/show_bug.cgi?id=236128
+
+        
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2022-02-25  Matteo Flores  <matteo_flores@apple.com>
 
         [ iOS EWS ] imported/w3c/web-platform-tests/svg/coordinate-systems/abspos.html is a flaky image failure.

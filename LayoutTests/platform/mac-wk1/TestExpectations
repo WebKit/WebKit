@@ -1783,3 +1783,12 @@ http/tests/push-api/subscribe-deny-permissions.html [ Skip ]
 http/tests/push-api/subscribe-grant-permissions.html [ Skip ]
 
 webkit.org/b/236126 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html [ Pass Failure ]
+
+# webkit.org/b/236128 [ Mac wk1 ] 7X imported/w3c/web-platform-tests/pointerevents/pointerevent (layout-tests) are flaky text failures 
+imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_at_implicit_release_hoverable_pointers.html [ Pass Failure ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_capture_mouse.html [ Pass Failure ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_click_during_capture.html [ Pass Failure ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_element_haspointercapture.html [ Pass Failure ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_hover.html [ Pass Failure ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_in_frame.html [ Pass Failure ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture-in-custom-element.html [ Pass Failure ]
