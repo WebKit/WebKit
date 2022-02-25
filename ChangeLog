@@ -1,3 +1,9 @@
+2022-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK] Bump version numbers
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2022-02-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Explain visit children and opaque roots in Introduction.md
