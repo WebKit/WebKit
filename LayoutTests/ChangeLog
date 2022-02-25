@@ -1,3 +1,12 @@
+2022-02-25  Matteo Flores  <matteo_flores@apple.com>
+
+        REGRESSION(r289787?) [ iOS EWS ]fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html is a flaky image failure.
+        https://bugs.webkit.org/show_bug.cgi?id=237218
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2022-02-25  Alex Christensen  <achristensen@webkit.org>
 
         Re-add YouTubePluginReplacement, removed in r285252
