@@ -4296,6 +4296,11 @@ void WebPageProxy::findTextRangesForStringMatches(const String& string, OptionSe
     sendWithAsyncReply(Messages::WebPage::FindTextRangesForStringMatches(string, options, maxMatchCount), WTFMove(callbackFunction));
 }
 
+void WebPageProxy::replaceFoundTextRangeWithString(const WebFoundTextRange& range, const String& string)
+{
+    send(Messages::WebPage::ReplaceFoundTextRangeWithString(range, string));
+}
+
 void WebPageProxy::decorateTextRangeWithStyle(const WebFoundTextRange& range, FindDecorationStyle style)
 {
     send(Messages::WebPage::DecorateTextRangeWithStyle(range, style));

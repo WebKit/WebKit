@@ -10330,6 +10330,18 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     });
 }
 
+- (void)replaceFoundTextInRange:(UITextRange *)range inDocument:(_UITextSearchDocumentIdentifier)document withText:(NSString *)replacementText
+{
+    if (!self.supportsTextReplacement)
+        return;
+
+    auto foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range);
+    if (!foundTextRange)
+        return;
+
+    _page->replaceFoundTextRangeWithString([foundTextRange webFoundTextRange], replacementText);
+}
+
 - (void)decorateFoundTextRange:(UITextRange *)range inDocument:(_UITextSearchDocumentIdentifier)document usingStyle:(_UIFoundTextStyle)style
 {
     auto foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range);
@@ -10364,6 +10376,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (void)didEndTextSearchOperation
 {
     _page->didEndTextSearchOperation();
+}
+
+- (BOOL)supportsTextReplacement
+{
+    return self.webView._editable;
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN

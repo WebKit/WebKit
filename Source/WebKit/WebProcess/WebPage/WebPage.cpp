@@ -4721,6 +4721,11 @@ void WebPage::findTextRangesForStringMatches(const String& string, OptionSet<Fin
     foundTextRangeController().findTextRangesForStringMatches(string, options, maxMatchCount, WTFMove(completionHandler));
 }
 
+void WebPage::replaceFoundTextRangeWithString(const WebFoundTextRange& range, const String& string)
+{
+    foundTextRangeController().replaceFoundTextRangeWithString(range, string);
+}
+
 void WebPage::decorateTextRangeWithStyle(const WebFoundTextRange& range, WebKit::FindDecorationStyle style)
 {
     foundTextRangeController().decorateTextRangeWithStyle(range, style);

@@ -54,6 +54,8 @@ public:
 
     void findTextRangesForStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount, CompletionHandler<void(Vector<WebKit::WebFoundTextRange>&&)>&&);
 
+    void replaceFoundTextRangeWithString(const WebFoundTextRange&, const String&);
+
     void decorateTextRangeWithStyle(const WebFoundTextRange&, FindDecorationStyle);
     void scrollTextRangeToVisible(const WebFoundTextRange&);
 

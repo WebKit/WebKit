@@ -324,6 +324,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     HideFindIndicator()
 
     FindTextRangesForStringMatches(String string, OptionSet<WebKit::FindOptions> findOptions, unsigned maxMatchCount) -> (Vector<WebKit::WebFoundTextRange> ranges) Async
+    ReplaceFoundTextRangeWithString(struct WebKit::WebFoundTextRange range, String string)
     DecorateTextRangeWithStyle(struct WebKit::WebFoundTextRange range, enum:uint8_t WebKit::FindDecorationStyle style)
     ScrollTextRangeToVisible(struct WebKit::WebFoundTextRange range)
     ClearAllDecoratedFoundText();

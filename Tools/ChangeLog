@@ -1,3 +1,16 @@
+2022-02-24  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add support for replacing WKFoundTextRanges
+        https://bugs.webkit.org/show_bug.cgi?id=237151
+        rdar://89258687
+
+        Reviewed by Wenson Hsieh.
+
+        Add a test that replaces found ranges.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+        (TEST):
+
 2022-02-24  Jonathan Bedard  <jbedard@apple.com>
 
         [Python3] Remove shebangs from webkitpy files

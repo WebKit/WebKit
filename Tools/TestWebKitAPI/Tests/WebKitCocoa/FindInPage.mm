@@ -490,6 +490,32 @@ TEST(WebKit, FindInPageFullWord)
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birth", searchOptions.get(), 0UL);
 }
 
+TEST(WebKit, FindAndReplace)
+{
+    NSString *originalContent = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+    NSString *searchString = @"dolor";
+    NSString *replacementString = @"colour";
+    NSString *replacedContent = [originalContent stringByReplacingOccurrencesOfString:searchString withString:replacementString];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView _setFindInteractionEnabled:YES];
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<p>%@</p>", originalContent]];
+
+    auto ranges = textRangesForQueryString(webView.get(), searchString);
+
+    [webView _setEditable:NO];
+    for (UITextRange *range in [ranges reverseObjectEnumerator])
+        [[[webView _findInteraction] searchableObject] replaceFoundTextInRange:range inDocument:nil withText:replacementString];
+
+    EXPECT_WK_STREQ(originalContent, [webView stringByEvaluatingJavaScript:@"document.body.innerText"]);
+
+    [webView _setEditable:YES];
+    for (UITextRange *range in [ranges reverseObjectEnumerator])
+        [[[webView _findInteraction] searchableObject] replaceFoundTextInRange:range inDocument:nil withText:replacementString];
+
+    EXPECT_WK_STREQ(replacedContent, [webView stringByEvaluatingJavaScript:@"document.body.innerText"]);
+}
+
 TEST(WebKit, FindInteraction)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);

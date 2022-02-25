@@ -1,3 +1,33 @@
+2022-02-24  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add support for replacing WKFoundTextRanges
+        https://bugs.webkit.org/show_bug.cgi?id=237151
+        rdar://89258687
+
+        Reviewed by Wenson Hsieh.
+
+        Implement protocol methods to support replacement.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::replaceFoundTextRangeWithString):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView replaceFoundTextInRange:inDocument:withText:]):
+        (-[WKContentView supportsTextReplacement]):
+
+        Restrict replacement to editable web views.
+
+        * WebProcess/WebPage/WebFoundTextRangeController.cpp:
+        (WebKit::WebFoundTextRangeController::replaceFoundTextRangeWithString):
+
+        Use a `TemporarySelectionChange` to select and replace the desired range.
+
+        * WebProcess/WebPage/WebFoundTextRangeController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::replaceFoundTextRangeWithString):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2022-02-24  Chris Dumez  <cdumez@apple.com>
 
         Take down shared worker context connection less aggressively when it becomes idle
