@@ -290,6 +290,7 @@ private:
     ProcessID m_parentProcessIdentifier { 0 };
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> m_parentProcessAuditData;
+    bool m_messageDataTypeChunkSupported { false };
 #endif
     bool m_shouldSendParentProcessInformation { false };
     bool m_automaticInspectionEnabled { false };

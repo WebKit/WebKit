@@ -204,13 +204,33 @@ void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const Strin
     if (!targetConnection)
         return;
 
-    NSDictionary *userInfo = @{
-        WIRRawDataKey: [static_cast<NSString *>(message) dataUsingEncoding:NSUTF8StringEncoding],
-        WIRConnectionIdentifierKey: targetConnection->connectionIdentifier(),
-        WIRDestinationKey: targetConnection->destination()
-    };
+    NSData *messageData = [static_cast<NSString *>(message) dataUsingEncoding:NSUTF8StringEncoding];
+    NSUInteger messageLength = messageData.length;
+    const NSUInteger maxChunkSize = 2 * 1024 * 1024; // 2 Mebibytes
 
-    m_relayConnection->sendMessage(WIRRawDataMessage, userInfo);
+    if (!m_messageDataTypeChunkSupported || messageLength < maxChunkSize) {
+        m_relayConnection->sendMessage(WIRRawDataMessage, @{
+            WIRRawDataKey: messageData,
+            WIRMessageDataTypeKey: WIRMessageDataTypeFull,
+            WIRConnectionIdentifierKey: targetConnection->connectionIdentifier(),
+            WIRDestinationKey: targetConnection->destination()
+        });
+        return;
+    }
+
+    for (NSUInteger offset = 0; offset < messageLength; offset += maxChunkSize) {
+        @autoreleasepool {
+            NSUInteger currentChunkSize = std::min(messageLength - offset, maxChunkSize);
+            NSString *type = offset + currentChunkSize == messageLength ? WIRMessageDataTypeFinalChunk : WIRMessageDataTypeChunk;
+
+            m_relayConnection->sendMessage(WIRRawDataMessage, @{
+                WIRRawDataKey: [messageData subdataWithRange:NSMakeRange(offset, currentChunkSize)],
+                WIRMessageDataTypeKey: type,
+                WIRConnectionIdentifierKey: targetConnection->connectionIdentifier(),
+                WIRDestinationKey: targetConnection->destination()
+            });
+        }
+    }
 }
 
 void RemoteInspector::start()
@@ -526,6 +546,11 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
     convertNSNullToNil(automaticallyPauseNumber);
     BAIL_IF_UNEXPECTED_TYPE_ALLOWING_NIL(automaticallyPauseNumber, [NSNumber class]);
     BOOL automaticallyPause = automaticallyPauseNumber.boolValue;
+
+    NSNumber *messageDataTypeChunkSupportedNumber = userInfo[WIRMessageDataTypeChunkSupportedKey];
+    convertNSNullToNil(messageDataTypeChunkSupportedNumber);
+    BAIL_IF_UNEXPECTED_TYPE_ALLOWING_NIL(messageDataTypeChunkSupportedNumber, [NSNumber class]);
+    m_messageDataTypeChunkSupported = messageDataTypeChunkSupportedNumber.boolValue;
 
     TargetID targetIdentifier = targetIdentifierNumber.unsignedIntValue;
     if (!targetIdentifier)

@@ -1,3 +1,25 @@
+2022-02-25  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Cocoa] Split remote inspector message data into smaller chunks for large messages
+        https://bugs.webkit.org/show_bug.cgi?id=237110
+        <rdar://89364487>
+
+        Reviewed by Devin Rousso.
+
+        Messages over 2 MiB will now be split into multiple chunks, which allows us to not exceed any receiving daemon
+        process' memory limit under otherwise normal conditions. 2 MiB was chosen as a balance between not having to
+        split most messages at all and making sure that the messages (and any copies made during the relaying of the
+        messages) do not exceed the memory limits of the receiving daemon process.
+
+        In order to prevent us from sending chunked messages to a process that doesn't support them we check for a flag
+        to enable this functionality during connection setup.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspectorConstants.h:
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::receivedSetupMessage):
+
 2022-02-24  Chris Dumez  <cdumez@apple.com>
 
         [Cocoa] Only clear ICU cache when time zone is changed
