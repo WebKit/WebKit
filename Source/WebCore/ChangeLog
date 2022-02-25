@@ -1,3 +1,20 @@
+2022-02-25  J Pascoe  <j_pascoe@apple.com>
+        [WebAuthn] Use default pubKeyCredParams if empty in makeCredential
+        https://bugs.webkit.org/show_bug.cgi?id=237109
+        rdar://problem/89376484
+
+        Reviewed by Brent Fulgham.
+
+        The Web Authentication level 2 spec was updated to clarify that
+        a set of default pubKeyCredParams should be used if the list
+        supplied by the RP is empty. This patch starts using
+        the default and updates associated tests.
+
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinator::create const):
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        * Modules/webauthn/WebAuthenticationConstants.h:
+
 2022-02-25  Chris Dumez  <cdumez@apple.com>
 
         Use modern Hasher in ContentExtensionsActions

@@ -138,11 +138,18 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
         options.rp.id = callerOrigin.domain();
 
     // Step 8-10.
-    // Most of the jobs are done by bindings. However, we can't know if the JSValue of options.pubKeyCredParams
-    // is empty or not. Return NotSupportedError as long as it is empty.
+    // Most of the jobs are done by bindings.
     if (options.pubKeyCredParams.isEmpty()) {
-        promise.reject(Exception { NotSupportedError, "Unable to create credential because options.pubKeyCredParams is empty."_s });
-        return;
+        options.pubKeyCredParams.append({ PublicKeyCredentialType::PublicKey, COSE::ES256 });
+        options.pubKeyCredParams.append({ PublicKeyCredentialType::PublicKey, COSE::RS256 });
+    } else {
+        if (notFound != options.pubKeyCredParams.findIf([] (auto& pubKeyCredParam) {
+            return pubKeyCredParam.type != PublicKeyCredentialType::PublicKey;
+        })) {
+            
+            promise.reject(Exception { NotSupportedError, "options.pubKeyCredParams contains unsupported PublicKeyCredentialType value."_s });
+            return;
+        }
     }
 
     // Step 11-12.
