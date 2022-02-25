@@ -1,3 +1,16 @@
+2022-02-25  Alan Bujtas  <zalan@apple.com>
+
+        [Tables] Incorrect table sizing when colgroup comes after tbody
+        https://bugs.webkit.org/show_bug.cgi?id=237205
+        <rdar://86582214>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/table/table-sizing-fails-when-colgroup-comes-after-content-expected.html: Added.
+        * fast/table/table-sizing-fails-when-colgroup-comes-after-content.html: Added.
+        * platform/mac/tables/mozilla_expected_failures/dom/appendCol1-expected.txt: Progression.
+        * platform/mac/tables/mozilla_expected_failures/dom/appendColGroup1-expected.txt: Progression.
+
 2022-02-25  Youenn Fablet  <youenn@apple.com>
 
         Non-simple CORS preflight fails due to cache-control header
