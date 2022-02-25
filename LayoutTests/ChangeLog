@@ -1,3 +1,20 @@
+2022-02-25  Chris Dumez  <cdumez@apple.com>
+
+        SharedArrayBuffer posted to AudioWorkletProcessor is not actually shared with the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=237144
+        <rdar://problem/89479641>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/processors/shared-array-buffer-processor.js: Added.
+        (SharedArrayBufferTestProcessor):
+        (SharedArrayBufferTestProcessor.prototype.process):
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/shared-array-buffer.https-expected.txt: Added.
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/shared-array-buffer.https.html: Added.
+        * http/wpt/webaudio/the-audio-api/the-audioworklet-interface/shared-array-buffer.https.html.headers: Added.
+
 2022-02-25  Robert Jenner  <Jenner@apple.com>
 
         [ Mac wk1 ] 7X imported/w3c/web-platform-tests/pointerevents/pointerevent (layout-tests) are flaky text failures

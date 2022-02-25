@@ -1,3 +1,28 @@
+2022-02-25  Chris Dumez  <cdumez@apple.com>
+
+        SharedArrayBuffer posted to AudioWorkletProcessor is not actually shared with the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=237144
+        <rdar://problem/89479641>
+
+        Reviewed by Darin Adler.
+
+        SerializedScriptValue only maintains SharedArrayBuffers when constructed with SerializationContext::WorkerPostMessage.
+        With other SerializationContext values, such as the default one that AudioWorkletNode was using, SharedArrayBuffers
+        are serialized as simple arrays and are no longer shared.
+
+        This patch passes SerializationContext::WorkerPostMessage when constructing the SerializedScriptValue since we want
+        SharedArrayBuffer sharing and since a worklet is essentially a worker.
+
+        Note that this patch allows passing a SharedArrayBuffer to an AudioWorklet upon construction via processorOptions.
+        However, SharedArrayBuffer still won't be shared if sent later on via a MessagePort.postMessage() call. This is
+        because MessagePort.postMessage() routes all messages via the network process, even if the destination ends up
+        being within the same process as the sender (See Bug 220038).
+
+        Test: http/wpt/webaudio/the-audio-api/the-audioworklet-interface/shared-array-buffer.https.html
+
+        * Modules/webaudio/AudioWorkletNode.cpp:
+        (WebCore::AudioWorkletNode::create):
+
 2022-02-25  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] HLS + Modern EME key rotation causes playback to stall indefinitely
