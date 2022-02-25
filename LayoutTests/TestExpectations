@@ -4065,8 +4065,6 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/sizing
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-vrl-in-htb-008.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-cell-001.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-cell-002.html [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-column-order-002.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-column-order-004.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-column-order-slr-007.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-column-order-srl-006.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-progression-slr-001.html [ ImageOnlyFailure ]

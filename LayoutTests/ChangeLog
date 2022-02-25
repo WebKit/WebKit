@@ -1,3 +1,9 @@
+2022-02-24  Alan Bujtas  <zalan@apple.com>
+
+        Unreviewed test gardening after r290454.
+
+        * TestExpectations: Progressions.
+
 2022-02-24  Matteo Flores  <matteo_flores@apple.com>
 
         [ iOS ] editing/pasteboard/dom-paste/dom-paste-same-origin.html is a flaky timeout/failure
