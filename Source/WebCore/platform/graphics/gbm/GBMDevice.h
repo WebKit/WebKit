@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if USE(ANGLE) && USE(NICOSIA)
-
 struct gbm_device;
 
 namespace WebCore {
@@ -48,5 +46,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // USE(ANGLE) && USE(NICOSIA)

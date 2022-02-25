@@ -1,3 +1,18 @@
+2022-02-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Uncouple libgbm, libdrm dependencies from ANGLE functionality
+        https://bugs.webkit.org/show_bug.cgi?id=237199
+
+        Reviewed by Chris Lord.
+
+        For both GTK and WPE, unconditionally search for the libgbm and libdrm
+        dependencies as they will also be needed outside of ANGLE functionality.
+        USE_ANGLE is defined along with USE_NICOSIA, but still only if the
+        relevant option was enabled.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2022-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. [GTK] Bump version numbers

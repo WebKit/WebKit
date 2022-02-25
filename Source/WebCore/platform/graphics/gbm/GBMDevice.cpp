@@ -27,8 +27,6 @@
 #include "config.h"
 #include "GBMDevice.h"
 
-#if USE(ANGLE) && USE(NICOSIA)
-
 #include <fcntl.h>
 #include <gbm.h>
 #include <mutex>
@@ -91,5 +89,3 @@ GBMDevice::~GBMDevice()
 }
 
 } // namespace WebCore
-
-#endif // USE(ANGLE) && USE(NICOSIA)
