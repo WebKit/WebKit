@@ -29,7 +29,6 @@
 
 #include "ContentExtensionStringSerialization.h"
 #include <wtf/JSONValues.h>
-#include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
 
 namespace WebCore {
@@ -37,29 +36,6 @@ class ResourceRequest;
 }
 
 namespace WebCore::ContentExtensions {
-
-// FIXME: This probably belongs in WTF, such as in HashFunctions.h.
-struct VariantHasher {
-    template <typename V>
-    static uint32_t hash(V&& variant)
-    {
-        return pairIntHash(variant.index(), std::visit([](const auto& type) {
-            return type.hash();
-        }, std::forward<V>(variant)));
-    }
-};
-
-// FIXME: This probably belongs in WTF, such as in Hasher.h.
-struct VectorHasher {
-    template <typename V>
-    static uint32_t hash(V&& vector)
-    {
-        Hasher hasher;
-        for (auto& element : vector)
-            add(hasher, element.hash());
-        return hasher.hash();
-    }
-};
 
 struct Action;
 
@@ -95,7 +71,6 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
             String header;
             String value;
 
-            uint32_t hash() const { return pairIntHash(header.hash(), value.hash()); }
             AppendOperation isolatedCopy() const { return { header.isolatedCopy(), value.isolatedCopy() }; }
             bool operator==(const AppendOperation& other) const { return other.header == this->header && other.value == this->value; }
         };
@@ -103,21 +78,18 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
             String header;
             String value;
 
-            uint32_t hash() const { return pairIntHash(header.hash(), value.hash()); }
             SetOperation isolatedCopy() const { return { header.isolatedCopy(), value.isolatedCopy() }; }
             bool operator==(const SetOperation& other) const { return other.header == this->header && other.value == this->value; }
         };
         struct RemoveOperation {
             String header;
 
-            uint32_t hash() const { return header.hash(); }
             RemoveOperation isolatedCopy() const { return { header.isolatedCopy() }; }
             bool operator==(const RemoveOperation& other) const { return other.header == this->header; }
         };
         using OperationVariant = std::variant<AppendOperation, SetOperation, RemoveOperation>;
         OperationVariant operation;
 
-        uint32_t hash() const { return VariantHasher::hash(operation); }
         static Expected<ModifyHeaderInfo, std::error_code> parse(const JSON::Value&);
         ModifyHeaderInfo isolatedCopy() const;
         bool operator==(const ModifyHeaderInfo&) const;
@@ -142,7 +114,6 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
     ModifyHeadersAction(DeletedValueTag) : hashTableType(HashTableType::Deleted) { }
     bool isDeletedValue() const { return hashTableType == HashTableType::Deleted; }
 
-    uint32_t hash() const { return pairIntHash(VectorHasher::hash(requestHeaders), VectorHasher::hash(responseHeaders)); }
     static Expected<ModifyHeadersAction, std::error_code> parse(const JSON::Object&);
     ModifyHeadersAction isolatedCopy() const;
     bool operator==(const ModifyHeadersAction&) const;
@@ -156,14 +127,12 @@ struct WEBCORE_EXPORT RedirectAction {
     struct ExtensionPathAction {
         String extensionPath;
 
-        uint32_t hash() const { return extensionPath.hash(); }
         ExtensionPathAction isolatedCopy() const { return { extensionPath.isolatedCopy() }; }
         bool operator==(const ExtensionPathAction& other) const { return other.extensionPath == this->extensionPath; }
     };
     struct RegexSubstitutionAction {
         String regexSubstitution;
 
-        uint32_t hash() const { return regexSubstitution.hash(); }
         RegexSubstitutionAction isolatedCopy() const { return { regexSubstitution.isolatedCopy() }; }
         bool operator==(const RegexSubstitutionAction& other) const { return other.regexSubstitution == this->regexSubstitution; }
     };
@@ -174,7 +143,6 @@ struct WEBCORE_EXPORT RedirectAction {
                 bool replaceOnly { false };
                 String value;
 
-                uint32_t hash() const { return computeHash(key, replaceOnly, value); }
                 static Expected<QueryKeyValue, std::error_code> parse(const JSON::Value&);
                 QueryKeyValue isolatedCopy() const;
                 bool operator==(const QueryKeyValue&) const;
@@ -186,7 +154,6 @@ struct WEBCORE_EXPORT RedirectAction {
             Vector<QueryKeyValue> addOrReplaceParams;
             Vector<String> removeParams;
 
-            uint32_t hash() const { return computeHash(VectorHasher::hash(addOrReplaceParams), removeParams); }
             static Expected<QueryTransform, std::error_code> parse(const JSON::Object&);
             QueryTransform isolatedCopy() const;
             bool operator==(const QueryTransform&) const;
@@ -206,7 +173,6 @@ struct WEBCORE_EXPORT RedirectAction {
         String scheme;
         String username;
 
-        uint32_t hash() const { return computeHash(fragment.hash(), host.hash(), password.hash(), path.hash(), port, VariantHasher::hash(queryTransform), scheme.hash(), username.hash()); }
         static Expected<URLTransformAction, std::error_code> parse(const JSON::Object&);
         URLTransformAction isolatedCopy() const;
         bool operator==(const URLTransformAction&) const;
@@ -218,7 +184,6 @@ struct WEBCORE_EXPORT RedirectAction {
     struct URLAction {
         String url;
 
-        uint32_t hash() const { return url.hash(); }
         URLAction isolatedCopy() const { return { url.isolatedCopy() }; }
         bool operator==(const URLAction& other) const { return other.url == this->url; }
     };
@@ -236,7 +201,6 @@ struct WEBCORE_EXPORT RedirectAction {
     RedirectAction(EmptyValueTag) : hashTableType(HashTableType::Empty) { }
     RedirectAction(DeletedValueTag) : hashTableType(HashTableType::Deleted) { }
     bool isDeletedValue() const { return hashTableType == HashTableType::Deleted; }
-    uint32_t hash() const { return VariantHasher::hash(action); }
 
     static Expected<RedirectAction, std::error_code> parse(const JSON::Object&);
     RedirectAction isolatedCopy() const;
@@ -258,13 +222,73 @@ using ActionData = std::variant<
     RedirectAction
 >;
 
+inline void add(Hasher& hasher, const ModifyHeadersAction::ModifyHeaderInfo::AppendOperation& operation)
+{
+    add(hasher, operation.header, operation.value);
+}
+
+inline void add(Hasher& hasher, const ModifyHeadersAction::ModifyHeaderInfo::SetOperation& operation)
+{
+    add(hasher, operation.header, operation.value);
+}
+
+inline void add(Hasher& hasher, const ModifyHeadersAction::ModifyHeaderInfo::RemoveOperation& operation)
+{
+    add(hasher, operation.header);
+}
+
+inline void add(Hasher& hasher, const ModifyHeadersAction::ModifyHeaderInfo& info)
+{
+    add(hasher, info.operation);
+}
+
+inline void add(Hasher& hasher, const RedirectAction::ExtensionPathAction& action)
+{
+    add(hasher, action.extensionPath);
+}
+
+inline void add(Hasher& hasher, const RedirectAction::RegexSubstitutionAction& action)
+{
+    add(hasher, action.regexSubstitution);
+}
+
+inline void add(Hasher& hasher, const RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue& queryKeyValue)
+{
+    add(hasher, queryKeyValue.key, queryKeyValue.replaceOnly, queryKeyValue.value);
+}
+
+inline void add(Hasher& hasher, const RedirectAction::URLTransformAction::QueryTransform& transform)
+{
+    add(hasher, transform.addOrReplaceParams, transform.removeParams);
+}
+
+inline void add(Hasher& hasher, const RedirectAction::URLAction& action)
+{
+    add(hasher, action.url);
+}
+
+inline void add(Hasher& hasher, const RedirectAction::URLTransformAction& action)
+{
+    add(hasher, action.fragment, action.host, action.password, action.path, action.port, action.queryTransform, action.scheme, action.username);
+}
+
+inline void add(Hasher& hasher, const RedirectAction& action)
+{
+    add(hasher, action.action);
+}
+
+inline void add(Hasher& hasher, const ModifyHeadersAction& action)
+{
+    add(hasher, action.requestHeaders, action.responseHeaders);
+}
+
 } // namespace WebCore::ContentExtensions
 
 namespace WTF {
 
 template<> struct DefaultHash<WebCore::ContentExtensions::RedirectAction> {
     using Action = WebCore::ContentExtensions::RedirectAction;
-    static uint32_t hash(const Action& action) { return action.hash(); }
+    static uint32_t hash(const Action& action) { return computeHash(action); }
     static bool equal(const Action& a, const Action& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
@@ -272,7 +296,7 @@ template<> struct HashTraits<WebCore::ContentExtensions::RedirectAction> : publi
 
 template<> struct DefaultHash<WebCore::ContentExtensions::ModifyHeadersAction> {
     using Action = WebCore::ContentExtensions::ModifyHeadersAction;
-    static uint32_t hash(const Action& action) { return action.hash(); }
+    static uint32_t hash(const Action& action) { return computeHash(action); }
     static bool equal(const Action& a, const Action& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };

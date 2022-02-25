@@ -1,3 +1,17 @@
+2022-02-25  Chris Dumez  <cdumez@apple.com>
+
+        Use modern Hasher in ContentExtensionsActions
+        https://bugs.webkit.org/show_bug.cgi?id=237157
+
+        Reviewed by Darin Adler.
+
+        * contentextensions/ContentExtensionActions.h:
+        (WebCore::ContentExtensions::add):
+        (WTF::DefaultHash<WebCore::ContentExtensions::RedirectAction>::hash):
+        (WTF::DefaultHash<WebCore::ContentExtensions::ModifyHeadersAction>::hash):
+        (WebCore::ContentExtensions::VariantHasher::hash): Deleted.
+        (WebCore::ContentExtensions::VectorHasher::hash): Deleted.
+
 2022-02-25  Alan Bujtas  <zalan@apple.com>
 
         [Tables] Incorrect table sizing when colgroup comes after tbody
