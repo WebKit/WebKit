@@ -1,5 +1,11 @@
 2022-02-25  Adrian Perez de Castro  <aperez@igalia.com>
 
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.35.90 release
+
+        * wpe/NEWS: Add release notes for 2.35.90.
+
+2022-02-25  Adrian Perez de Castro  <aperez@igalia.com>
+
         Unreviewed non-unified build fix.
 
         * WebProcess/glib/WebProcessGLib.cpp: Add missing WebPage.h inclusion.

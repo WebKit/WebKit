@@ -1,3 +1,24 @@
+==================
+WPE WebKit 2.35.90
+==================
+
+What's new in WPE WebKit 2.35.90?
+
+  - Fix scrolling with the mouse wheel on sites using overscroll-behavior.
+  - Suspend web processes after some time in the process cache.
+  - Ensure EGL displays are terminated before web process exits.
+  - Deinitialize gstreamer before web process exits.
+  - Make fonts under XDG_DATA_DIRS available in web process sanbox.
+  - Canonicalize paths passed to bubblewrap launcher.
+  - The WebKitSettings:enable-developer-extras option is no longer enabled by default.
+  - Allow tweaking media source buffering with the MSE_MAX_BUFFER_SIZE, and configure
+    regular playback on-disk buffering with WPE_SHELL_DISABLE_MEDIA_DISK_CACHE and
+    WPE_SHELL_MEDIA_DISK_CACHE_PATH environment variables.
+  - Add new accessibility implementation using ATSPI DBus interfaces instead of ATK.
+  - Add support for requestVideoFrameCallback.
+  - Fix a crash at startup when bubblewrap sandbox is enabled.
+  - Fix several crashes and rendering issues.
+
 =================
 WPE WebKit 2.35.1
 =================
