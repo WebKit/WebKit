@@ -275,7 +275,7 @@ RetainPtr<AVContentKeyRequest> CDMInstanceFairPlayStreamingAVFObjC::takeUnexpect
         auto& request = *requestIter;
         auto requestType = initTypeForRequest(request.get());
         auto requestInitData = initializationDataForRequest(request.get());
-        if (initDataType != requestType || initData != requestInitData)
+        if (initDataType != requestType || initData != requestInitData.get())
             continue;
 
         return m_unexpectedKeyRequests.take(requestIter);

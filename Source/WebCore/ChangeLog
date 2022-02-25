@@ -1,3 +1,21 @@
+2022-02-25  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] HLS + Modern EME key rotation causes playback to stall indefinitely
+        https://bugs.webkit.org/show_bug.cgi?id=237214
+        <rdar://89372801>
+
+        Reviewed by Eric Carlson.
+
+        In r275916, Ref was changed to perform pointer equality in its operator==. This caused 
+        takeUnexpectedKeyRequestForInitializationData() to fail to find key requests matching
+        the initData passed in through MediaKeySession.
+
+        Fix the equality test by calling .get() on the Ref, which causes the `==` to resolve to
+        FragmentedSharedBuffer::operator==().
+
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::takeUnexpectedKeyRequestForInitializationData):
+
 2022-02-25  Alex Christensen  <achristensen@webkit.org>
 
         Re-add YouTubePluginReplacement, removed in r285252
