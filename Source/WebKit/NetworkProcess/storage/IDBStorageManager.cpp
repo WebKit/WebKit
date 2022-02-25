@@ -28,6 +28,7 @@
 
 #include "IDBStorageRegistry.h"
 #include <WebCore/IDBRequestData.h>
+#include <WebCore/IDBServer.h>
 #include <WebCore/MemoryIDBBackingStore.h>
 #include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SQLiteIDBBackingStore.h>
@@ -44,6 +45,10 @@ static void migrateOriginData(const String& oldOriginDirectory, const String& ne
         FileSystem::makeAllDirectories(newOriginDirectory);
 
     for (auto& name : fileNames) {
+        // This is an origin directory for third-party data.
+        if (auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(name))
+            continue;
+
         String childPath = FileSystem::realPath(FileSystem::pathByAppendingComponent(oldOriginDirectory, name));
         String newName = WebCore::SQLiteFileSystem::computeHashForFileName(WebCore::IDBServer::SQLiteIDBBackingStore::decodeDatabaseName(name));
         auto newChildPath = FileSystem::pathByAppendingComponent(newOriginDirectory, newName);
@@ -58,8 +63,8 @@ String IDBStorageManager::idbStorageOriginDirectory(const String& rootDirectory,
     if (rootDirectory.isEmpty())
         return emptyString();
 
-    String originDirectory = WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, rootDirectory, "v1");
-    String oldOriginDirectory = WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, rootDirectory, "v0");
+    auto originDirectory = WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin, rootDirectory, "v1");
+    auto oldOriginDirectory = WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin, rootDirectory, "v0");
     migrateOriginData(oldOriginDirectory, originDirectory);
 
     return originDirectory;

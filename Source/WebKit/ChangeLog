@@ -1,3 +1,14 @@
+2022-02-25  Sihui Liu  <sihui_liu@apple.com>
+
+        Regression(r242729): m_origin in IDBDatabaseIdentifier is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=237044
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/storage/IDBStorageManager.cpp:
+        (WebKit::migrateOriginData):
+        (WebKit::IDBStorageManager::idbStorageOriginDirectory):
+
 2022-02-25  Per Arne Vollan  <pvollan@apple.com>
 
         Make sure there is a default Networking process to provide the Launch Services database

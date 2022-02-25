@@ -1,3 +1,14 @@
+2022-02-25  Sihui Liu  <sihui_liu@apple.com>
+
+        Regression(r242729): m_origin in IDBDatabaseIdentifier is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=237044
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBPersistence.mm:
+        (-[IndexedDBMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TEST):
+
 2022-02-25  Alex Christensen  <achristensen@webkit.org>
 
         Re-add YouTubePluginReplacement, removed in r285252

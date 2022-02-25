@@ -29,12 +29,14 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestURLSchemeHandler.h"
-#import <WebKit/WebKit.h>
+#import <WebKit/WKPreferencesRef.h>
+#import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
@@ -47,7 +49,7 @@
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     receivedScriptMessage = true;
-    lastScriptMessage = message;
+    scriptMessages.append(message);
 }
 
 @end
@@ -65,11 +67,11 @@ TEST(IndexedDB, IndexedDBPersistence)
 
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    RetainPtr<NSString> string1 = (NSString *)[lastScriptMessage body];
+    RetainPtr<NSString> string1 = (NSString *)[getNextMessage() body];
 
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    RetainPtr<NSString> string2 = (NSString *)[lastScriptMessage body];
+    RetainPtr<NSString> string2 = (NSString *)[getNextMessage() body];
 
     // Ditch this web view (ditching its web process)
     webView = nil;
@@ -85,7 +87,7 @@ TEST(IndexedDB, IndexedDBPersistence)
 
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    RetainPtr<NSString> string3 = (NSString *)[lastScriptMessage body];
+    RetainPtr<NSString> string3 = (NSString *)[getNextMessage() body];
 
     EXPECT_WK_STREQ(@"UpgradeNeeded", string1.get());
     EXPECT_WK_STREQ(@"Success", string2.get());
@@ -108,11 +110,11 @@ TEST(IndexedDB, IndexedDBPersistencePrivate)
 
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    RetainPtr<NSString> string1 = (NSString *)[lastScriptMessage body];
+    RetainPtr<NSString> string1 = (NSString *)[getNextMessage() body];
 
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    RetainPtr<NSString> string2 = (NSString *)[lastScriptMessage body];
+    RetainPtr<NSString> string2 = (NSString *)[getNextMessage() body];
 
     auto webViewPid1 = [webView _webProcessIdentifier];
     // Ditch this web view (ditching its web process)
@@ -126,7 +128,7 @@ TEST(IndexedDB, IndexedDBPersistencePrivate)
 
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    RetainPtr<NSString> string3 = (NSString *)[lastScriptMessage body];
+    RetainPtr<NSString> string3 = (NSString *)[getNextMessage() body];
 
     auto webViewPid2 = [webView _webProcessIdentifier];
     EXPECT_NE(webViewPid1, webViewPid2);
@@ -240,7 +242,7 @@ static void loadTestPageInWebView(WKWebView *webView, NSString *expectedResult)
     [webView loadHTMLString:mainFrameStringPersistence baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    EXPECT_WK_STREQ(expectedResult, (NSString *)[lastScriptMessage body]);
+    EXPECT_WK_STREQ(expectedResult, (NSString *)[getNextMessage() body]);
 }
 
 TEST(IndexedDB, IndexedDBThirdPartyFrameHasAccess)
@@ -302,7 +304,7 @@ TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
     [secondWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"iframe://"]]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    EXPECT_WK_STREQ( @"database is created - put item success", (NSString *)[lastScriptMessage body]);
+    EXPECT_WK_STREQ( @"database is created - put item success", (NSString *)[getNextMessage() body]);
 
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
@@ -320,6 +322,50 @@ TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
 
     auto thirdWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     loadTestPageInWebView(thirdWebView.get(), @"database is created - put item success");
+}
+
+TEST(IndexedDB, IndexedDBThirdPartyStorageLayout)
+{
+    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *webkitOriginFile = [generalStorageDirectory URLByAppendingPathComponent:@"EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg/EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg/origin"];
+    NSURL *webkitIframeOriginFile = [generalStorageDirectory URLByAppendingPathComponent:@"EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg/vudvbMlKXj1m6RibnVvc8PdAdcXZsNE6ON_Al7yqOsg/origin"];
+    NSURL *iframeWebKitOriginFile = [generalStorageDirectory URLByAppendingPathComponent:@"vudvbMlKXj1m6RibnVvc8PdAdcXZsNE6ON_Al7yqOsg/EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg/origin"];
+    NSURL *idbDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/IndexedDB" stringByExpandingTildeInPath] isDirectory:YES];
+    NSString *hashedDatabaseName = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBThirdPartyFrameHasAccess");
+    NSURL *webkitIframeDatabaseFile = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbDirectory.path, @"v1/http_webkit.org_0/iframe__0/", hashedDatabaseName, @"IndexedDB.sqlite3"]]];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:generalStorageDirectory error:nil];
+    [fileManager createDirectoryAtURL:generalStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceSalt toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
+    [fileManager removeItemAtURL:idbDirectory error:nil];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = idbDirectory;
+    websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory;
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
+    auto handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[NSData dataWithBytes:iframeBytesPersistence length:strlen(iframeBytesPersistence)]];
+        [task didFinish];
+    }];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"iframe"];
+    // Allowing third-party frame to store data on disk.
+    auto preferences = (__bridge WKPreferencesRef)[configuration preferences];
+    WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    loadTestPageInWebView(webView.get(), @"database is created - put item success");
+
+    EXPECT_TRUE([fileManager fileExistsAtPath:webkitOriginFile.path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeOriginFile.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:iframeWebKitOriginFile.path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeDatabaseFile.path]);
 }
 
 static const char* workerBytes = R"TESTRESOURCE(
@@ -456,18 +502,18 @@ TEST(IndexedDB, IndexedDBGetDatabases)
     [webView loadHTMLString:getDatabasesString baseURL:[NSURL URLWithString:@"http://apple.com"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    EXPECT_WK_STREQ(@"databases: [{\"name\":\"IndexedDBGetDatabases\",\"version\":1}]", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"databases: [{\"name\":\"IndexedDBGetDatabases\",\"version\":1}]", [getNextMessage() body]);
 
     [webView evaluateJavaScript:@"loadFrame()" completionHandler:nil];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    EXPECT_WK_STREQ(@"child frame databases: []", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"child frame databases: []", [getNextMessage() body]);
 
     auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [secondWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webkit://"]]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
-    EXPECT_WK_STREQ(@"main frame databases: []", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"main frame databases: []", [getNextMessage() body]);
 
     // Getting databases should not create files on disk.
     NSURL *idbDirectoryURL = [[WKWebsiteDataStore defaultDataStore] _indexedDBDatabaseDirectory];

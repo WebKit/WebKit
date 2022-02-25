@@ -1,3 +1,25 @@
+2022-02-25  Sihui Liu  <sihui_liu@apple.com>
+
+        Regression(r242729): m_origin in IDBDatabaseIdentifier is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=237044
+
+        Reviewed by Youenn Fablet.
+
+        In r242729, we swapped top origin and opening origin in m_origin (it is a ClientOrigin) of IDBDatabaseIdentifier. 
+        This can cause trouble since IndexedDB operation will be processed by wrong OriginStorageManager 
+        (OriginStorageManager is identified by ClientOrigin). To fix this issue, we need to swap it back.
+
+        New test: IndexedDB.IndexedDBThirdPartyStorageLayout
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        (WebCore::IDBDatabaseIdentifier::IDBDatabaseIdentifier):
+        (WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot const):
+        (WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot):
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::getAllDatabaseNamesAndVersions):
+        (WebCore::IDBServer::IDBServer::diskUsage):
+
 2022-02-25  Chris Dumez  <cdumez@apple.com>
 
         SharedArrayBuffer posted to AudioWorkletProcessor is not actually shared with the main thread

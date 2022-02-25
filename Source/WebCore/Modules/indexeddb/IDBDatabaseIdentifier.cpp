@@ -35,7 +35,7 @@ namespace WebCore {
 
 IDBDatabaseIdentifier::IDBDatabaseIdentifier(const String& databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin, bool isTransient)
     : m_databaseName(databaseName)
-    , m_origin { WTFMove(openingOrigin), WTFMove(mainFrameOrigin) }
+    , m_origin { WTFMove(mainFrameOrigin), WTFMove(openingOrigin) }
     , m_isTransient(isTransient)
 {
     // The empty string is a valid database name, but a null string is not.
@@ -55,19 +55,19 @@ IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() const
 
 String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const String& rootDirectory, const String& versionString) const
 {
-    return databaseDirectoryRelativeToRoot(m_origin.topOrigin, m_origin.clientOrigin, rootDirectory, versionString);
+    return databaseDirectoryRelativeToRoot(m_origin, rootDirectory, versionString);
 }
 
-String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const SecurityOriginData& topLevelOrigin, const SecurityOriginData& openingOrigin, const String& rootDirectory, const String& versionString)
+String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const ClientOrigin& origin, const String& rootDirectory, const String& versionString)
 {
     String versionDirectory = FileSystem::pathByAppendingComponent(rootDirectory, versionString);
-    String mainFrameDirectory = FileSystem::pathByAppendingComponent(versionDirectory, topLevelOrigin.databaseIdentifier());
+    String mainFrameDirectory = FileSystem::pathByAppendingComponent(versionDirectory, origin.topOrigin.databaseIdentifier());
 
     // If the opening origin and main frame origins are the same, there is no partitioning.
-    if (openingOrigin == topLevelOrigin)
+    if (origin.topOrigin == origin.clientOrigin)
         return mainFrameDirectory;
 
-    return FileSystem::pathByAppendingComponent(mainFrameDirectory, openingOrigin.databaseIdentifier());
+    return FileSystem::pathByAppendingComponent(mainFrameDirectory, origin.clientOrigin.databaseIdentifier());
 }
 
 #if !LOG_DISABLED

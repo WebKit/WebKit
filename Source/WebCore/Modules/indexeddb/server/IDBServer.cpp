@@ -530,10 +530,10 @@ void IDBServer::getAllDatabaseNamesAndVersions(IDBConnectionIdentifier serverCon
             result.append(WTFMove(*nameAndVersion));
     }
 
-    String oldDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, m_databaseDirectoryPath, "v0");
+    auto oldDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin, m_databaseDirectoryPath, "v0");
     getDatabaseNameAndVersionFromOriginDirectory(oldDirectory, visitedDatabasePaths, result);
 
-    String directory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, m_databaseDirectoryPath, "v1");
+    auto directory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin, m_databaseDirectoryPath, "v1");
     getDatabaseNameAndVersionFromOriginDirectory(directory, visitedDatabasePaths, result);
 
     auto connection = m_connectionMap.get(serverConnectionIdentifier);
@@ -758,8 +758,8 @@ uint64_t IDBServer::diskUsage(const String& rootDirectory, const ClientOrigin& o
 {
     ASSERT(!isMainThread());
 
-    auto oldVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, rootDirectory, "v0"_str);
-    auto newVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, rootDirectory, "v1"_str);
+    auto oldVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin, rootDirectory, "v0"_str);
+    auto newVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin, rootDirectory, "v1"_str);
     return SQLiteIDBBackingStore::databasesSizeForDirectory(oldVersionOriginDirectory) + SQLiteIDBBackingStore::databasesSizeForDirectory(newVersionOriginDirectory);
 }
 
