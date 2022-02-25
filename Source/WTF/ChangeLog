@@ -1,3 +1,22 @@
+2022-02-25  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Add missing header build rule for Scripts/Preferences/*
+        https://bugs.webkit.org/show_bug.cgi?id=237129
+
+        Reviewed by Alexey Proskuryakov.
+
+        Relands "[XCBuild] WTF's SPI dependencies are copied via a folder reference and do not emit
+        task outputs".
+
+        r290452 missed adding a build rule which would copy $SRCROOT/Scripts/Preferences/* to
+        /usr/local/include/wtf/Scripts/Preferences, and caused clean builds to start failing. Fix by
+        adding the needed build rule.
+
+        * Configurations/Base.xcconfig: 
+        * Configurations/WTF.xcconfig:
+        * Configurations/icu.xcconfig:
+        * WTF.xcodeproj/project.pbxproj:
+
 2022-02-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r290452.
