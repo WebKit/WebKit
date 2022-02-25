@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright (C) 2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

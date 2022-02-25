@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

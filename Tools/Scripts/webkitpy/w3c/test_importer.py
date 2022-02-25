@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
 # Copyright (C) 2015 Canon Inc. All rights reserved.
 #

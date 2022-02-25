@@ -1,5 +1,27 @@
 2022-02-24  Jonathan Bedard  <jbedard@apple.com>
 
+        [Python3] Remove shebangs from webkitpy files
+        https://bugs.webkit.org/show_bug.cgi?id=237167
+        <rdar://problem/89444955>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/browserperfdash/browserperfdash_runner.py: Remove shebang.
+        * Scripts/webkitpy/browserperfdash/browserperfdash_unittest.py: Ditto.
+        * Scripts/webkitpy/common/attribute_saver.py: Ditto.
+        * Scripts/webkitpy/common/attribute_saver_unittest.py: Ditto.
+        * Scripts/webkitpy/common/net/bugzilla/test_expectation_updater.py: Ditto.
+        * Scripts/webkitpy/common/net/bugzilla/test_expectation_updater_unittest.py: Ditto.
+        * Scripts/webkitpy/layout_tests/servers/run_webkit_httpd.py: Ditto.
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py: Ditto.
+        * Scripts/webkitpy/w3c/test_converter.py: Ditto.
+        * Scripts/webkitpy/w3c/test_importer.py: Ditto.
+        * Scripts/webkitpy/w3c/test_parser.py: Ditto.
+        * Scripts/webkitpy/xcode/sdk.py: Ditto.
+        * Scripts/webkitpy/xcode/sdk_unittest.py: Ditto.
+
+2022-02-24  Jonathan Bedard  <jbedard@apple.com>
+
         [Python3] Change shebang for various scripts
         https://bugs.webkit.org/show_bug.cgi?id=237155
         <rdar://problem/89436097>

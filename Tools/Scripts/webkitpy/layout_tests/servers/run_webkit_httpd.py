@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright (C) 2005, 2006, 2007, 2015 Apple Inc.  All rights reserved.
 # Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
