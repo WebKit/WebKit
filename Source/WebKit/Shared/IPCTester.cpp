@@ -29,6 +29,7 @@
 #if ENABLE(IPC_TESTING_API)
 #include "Connection.h"
 #include "Decoder.h"
+#include "IPCStreamTester.h"
 
 #include <atomic>
 #include <dlfcn.h>
@@ -127,6 +128,20 @@ void IPCTester::startMessageTesting(IPC::Connection& connection, String&& driver
 void IPCTester::stopMessageTesting(CompletionHandler<void()> completionHandler)
 {
     stopIfNeeded();
+    completionHandler();
+}
+
+void IPCTester::createStreamTester(IPC::Connection& connection, IPCStreamTesterIdentifier identifier, IPC::StreamConnectionBuffer&& stream)
+{
+    auto addResult = m_streamTesters.ensure(identifier, [&] {
+        return IPC::ScopedActiveMessageReceiveQueue<IPCStreamTester> { IPCStreamTester::create(connection, identifier, WTFMove(stream)) };
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry || isTestingIPC());
+}
+
+void IPCTester::releaseStreamTester(IPCStreamTesterIdentifier identifier, CompletionHandler<void()>&& completionHandler)
+{
+    m_streamTesters.remove(identifier);
     completionHandler();
 }
 

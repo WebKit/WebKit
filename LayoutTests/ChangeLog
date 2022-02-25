@@ -1,3 +1,13 @@
+2022-02-25  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION(r289580): [ iOS macOS ] TestWebKitAPI.IPCTestingAPI.CanReceiveSharedMemory is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=236744
+
+        Reviewed by Antti Koivisto.
+
+        * ipc/stream-sync-reply-shared-memory-expected.txt: Added.
+        * ipc/stream-sync-reply-shared-memory.html: Added.
+
 2022-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         AX: List item marker not exposed when not a direct child of a list item

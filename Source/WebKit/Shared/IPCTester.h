@@ -26,9 +26,21 @@
 #pragma once
 
 
+#if ENABLE(IPC_TESTING_API)
+
+#include "IPCStreamTesterIdentifier.h"
 #include "MessageReceiver.h"
+#include "ScopedActiveMessageReceiveQueue.h"
+#include "SharedMemory.h"
+#include "StreamConnectionBuffer.h"
+#include "StreamConnectionWorkQueue.h"
+#include "StreamMessageReceiver.h"
+#include "StreamServerConnection.h"
 #include <atomic>
+#include <wtf/HashMap.h>
 #include <wtf/WorkQueue.h>
+
+#endif
 
 namespace WebKit {
 
@@ -40,6 +52,9 @@ namespace WebKit {
 // and exposes bugs underneath.
 bool isTestingIPC();
 
+class IPCStreamTester;
+
+// Main test interface for initiating various IPC test activities.
 class IPCTester final : public IPC::MessageReceiver {
 public:
     IPCTester();
@@ -52,11 +67,16 @@ private:
     // Messages.
     void startMessageTesting(IPC::Connection&, String&& driverName);
     void stopMessageTesting(CompletionHandler<void()>);
+    void createStreamTester(IPC::Connection&, IPCStreamTesterIdentifier, IPC::StreamConnectionBuffer&&);
+    void releaseStreamTester(IPCStreamTesterIdentifier, CompletionHandler<void()>&&);
 
     void stopIfNeeded();
 
     RefPtr<WorkQueue> m_testQueue;
     std::atomic<bool> m_shouldStop { false };
+
+    using StreamTesterMap = HashMap<IPCStreamTesterIdentifier, IPC::ScopedActiveMessageReceiveQueue<IPCStreamTester>>;
+    StreamTesterMap m_streamTesters;
 };
 
 #else

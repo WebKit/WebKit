@@ -1,3 +1,60 @@
+2022-02-25  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION(r289580): [ iOS macOS ] TestWebKitAPI.IPCTestingAPI.CanReceiveSharedMemory is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=236744
+
+        Reviewed by Antti Koivisto.
+
+        Add new tester interface for testing IPC stream features.
+
+        Before, TestWebKitAPI.IPCTestingAPI.CanReceiveSharedMemory would test the feature of
+        "can reply stream sync message with shared memory" by using a RemoteRenderingBackend
+        message that did so. However, when the RemoteRenderingBackend was changed to use a
+        different stategy, this test stopped working without compile failure. The IPC testing
+        is currently done at JS level.
+
+        After, the new dedicated testing interface IPCStreamTester has dedicated message for
+        testing this feature. The test is moved to LayoutTests/ipc and made so that
+        it tests the feature in all currently testable processes WP uses (GPU, Networking, UI).
+
+        IPCTestingAPI is amended to return the all possible testable process names, so
+        the .html test can work even when ENABLE(GPU_PROCESS) is toggled.
+
+        The .html test also passes when !ENABLE(IPC_TESTING_API). Currently
+        ENABLE_IPC_TESTING_API == (ASAN_ENABLED || !defined(NDEBUG)) && PLATFORM(COCOA)
+        E.g. test tests something on Release+ASAN or Debug.
+
+        Having the test in .html also makes it possible to run the test on iOS devices.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * Shared/IPCStreamTester.cpp: Added.
+        (WebKit::IPCStreamTester::create):
+        (WebKit::IPCStreamTester::IPCStreamTester):
+        (WebKit::IPCStreamTester::initialize):
+        (WebKit::IPCStreamTester::stopListeningForIPC):
+        (WebKit::IPCStreamTester::syncMessageReturningSharedMemory1):
+        * Shared/IPCStreamTester.h: Copied from Source/WebKit/Shared/IPCTester.h.
+        * Shared/IPCStreamTester.messages.in: Copied from Source/WebKit/Shared/IPCTester.messages.in.
+        * Shared/IPCStreamTesterIdentifier.h: Copied from Source/WebKit/Shared/IPCTester.h.
+        * Shared/IPCStreamTesterProxy.messages.in: Copied from Source/WebKit/Shared/IPCTester.messages.in.
+        * Shared/IPCTester.cpp:
+        (WebKit::IPCTester::createStreamTester):
+        (WebKit::IPCTester::releaseStreamTester):
+        * Shared/IPCTester.h:
+        * Shared/IPCTester.messages.in:
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPC::staticValues):
+        (WebKit::IPCTestingAPI::processTargetFromArgument):
+        (WebKit::IPCTestingAPI::JSIPC::processTargets):
+
 2022-02-25  Youenn Fablet  <youenn@apple.com>
 
         Optimize black frame sending in MediaRecorderPrivate

@@ -219,6 +219,7 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy
 
     Shared/AuxiliaryProcess
+    Shared/IPCStreamTester
     Shared/IPCTester
     Shared/WebConnection
 

@@ -96,6 +96,8 @@ TEST(IPCTestingAPI, IsDisabledByDefault)
     EXPECT_STREQ([alertMessage UTF8String], "undefined");
 }
 
+// Note: There are more IPC tests using IPC testing API in `LayoutTests/ipc`.
+
 #if ENABLE(IPC_TESTING_API)
 
 static RetainPtr<TestWKWebView> createWebViewWithIPCTestingAPI()
@@ -307,38 +309,6 @@ TEST(IPCTestingAPI, CanReceiveIPCSemaphore)
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([alertMessage UTF8String], "1:Semaphore:false");
-}
-
-// FIXME: Re-enable this test once webkit.org/b/236744 is resolved.
-TEST(IPCTestingAPI, DISABLED_CanReceiveSharedMemory)
-{
-    auto webView = createWebViewWithIPCTestingAPI();
-
-    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
-    [webView setUIDelegate:delegate.get()];
-
-    auto html = @"<!DOCTYPE html>"
-        "<script>"
-        "const bufferSize = 1 << 16;"
-        "const streamConnection = IPC.createStreamClientConnection('GPU', bufferSize);"
-        "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name, ["
-        "    { type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID },"
-        "    { type: 'StreamConnectionBuffer', value: streamConnection.streamBuffer() },"
-        "]);"
-        "const arguments = IPC.waitForMessage('GPU', 123, IPC.messages.RemoteRenderingBackendProxy_DidCreateWakeUpSemaphoreForDisplayListStream.name, 100);"
-        "streamConnection.setWakeUpSemaphore(arguments[0].value);"
-        "const result = streamConnection.sendSyncMessage(123, IPC.messages.RemoteRenderingBackend_UpdateSharedMemoryForGetPixelBuffer.name, 100, [{type: 'uint32_t', value: 8}]);"
-        "alert(result.arguments.length);"
-        "</script>";
-
-    done = false;
-    [webView synchronouslyLoadHTMLString:html];
-    TestWebKitAPI::Util::run(&done);
-
-    EXPECT_EQ([alertMessage intValue], 1);
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstReply = result.arguments[0]; firstReply.type"].UTF8String, "SharedMemory");
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstReply.protection"].UTF8String, "ReadOnly");
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"Array.from(new Uint8Array(firstReply.value.readBytes(0, 8))).toString()"].UTF8String, "0,0,0,0,0,0,0,0");
 }
 
 #endif // ENABLE(GPU_PROCESS)

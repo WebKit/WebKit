@@ -231,6 +231,7 @@ Shared/EditorState.cpp
 Shared/FontInfo.cpp
 Shared/FrameInfoData.cpp
 Shared/InspectorExtensionTypes.cpp
+Shared/IPCStreamTester.cpp
 Shared/IPCTester.cpp
 Shared/LayerTreeContext.cpp
 Shared/LoadParameters.cpp
@@ -868,6 +869,7 @@ WebProcess/WebStorage/WebStorageNamespaceProvider.cpp
 
 WebProcess/XR/PlatformXRSystemProxy.cpp
 
+IPCStreamTesterMessageReceiver.cpp
 IPCTesterMessageReceiver.cpp
 NetworkBroadcastChannelRegistryMessageReceiver.cpp
 RTCDataChannelRemoteManagerMessageReceiver.cpp
