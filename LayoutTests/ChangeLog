@@ -1,3 +1,15 @@
+2022-02-25  Youenn Fablet  <youenn@apple.com>
+
+        Non-simple CORS preflight fails due to cache-control header
+        https://bugs.webkit.org/show_bug.cgi?id=236837
+        <rdar://problem/89382796>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/cache-control-request-expected.txt:
+        * http/wpt/service-workers/cache-control-request.html:
+        * http/wpt/service-workers/resources/cross-origin-allow-for-beacon.py: Added.
+
 2022-02-25  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION(r289580): [ iOS macOS ] TestWebKitAPI.IPCTestingAPI.CanReceiveSharedMemory is a constant timeout
