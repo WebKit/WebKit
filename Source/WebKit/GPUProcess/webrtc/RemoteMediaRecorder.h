@@ -44,7 +44,6 @@ class Decoder;
 
 namespace WebCore {
 class CARingBuffer;
-class ImageTransferSessionVT;
 class RemoteVideoSample;
 class WebAudioBufferList;
 struct MediaRecorderPrivateOptions;
@@ -53,7 +52,6 @@ struct MediaRecorderPrivateOptions;
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
-class RemoteVideoFrameObjectHeap;
 class SharedRingBufferStorage;
 
 class RemoteMediaRecorder : private IPC::MessageReceiver {
@@ -74,7 +72,7 @@ private:
     // IPC::MessageReceiver
     void audioSamplesStorageChanged(const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
     void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
-    void videoSampleAvailable(WebCore::RemoteVideoSample&&, std::optional<RemoteVideoFrameReadReference>);
+    void videoSampleAvailable(SharedVideoFrame&&);
     void fetchData(CompletionHandler<void(IPC::DataReference&&, double)>&&);
     void stopRecording(CompletionHandler<void()>&&);
     void pause(CompletionHandler<void()>&&);
@@ -89,10 +87,8 @@ private:
     WebCore::CAAudioStreamDescription m_description;
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
     std::unique_ptr<WebCore::WebAudioBufferList> m_audioBufferList;
-    std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
 
     SharedVideoFrameReader m_sharedVideoFrameReader;
-    Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
 };
 
 }

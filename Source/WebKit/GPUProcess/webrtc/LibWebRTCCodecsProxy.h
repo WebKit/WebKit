@@ -34,6 +34,7 @@
 #include "RemoteVideoFrameIdentifier.h"
 #include "SharedMemory.h"
 #include "SharedVideoFrame.h"
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/Lock.h>
 
 namespace IPC {
@@ -104,6 +105,7 @@ private:
     HashMap<RTCEncoderIdentifier, Encoder> m_encoders WTF_GUARDED_BY_LOCK(m_lock); // Only modified on the libWebRTCCodecsQueue but may get accessed from the main thread.
     Ref<WorkQueue> m_queue;
     Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
+    WebCore::ProcessIdentity m_resourceOwner;
 };
 
 }

@@ -1,5 +1,30 @@
 2022-02-25  Youenn Fablet  <youenn@apple.com>
 
+        Optimize black frame sending in MediaRecorderPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=237027
+
+        Reviewed by Kimmo Kinnunen.
+
+        Add support for sending black frames through SharedVideoFrame.
+        In that case, we only send width and height and we reconstruct a black frame on receiver side.
+        Make use of SharedVideoFrame in RemoteMediaRecorder.
+        Set ownership in SharedVideoFrame to the corresponding WebProcess.
+
+        Covered by existing tests, in particular http/wpt/mediarecorder/mute-tracks.html.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        * GPUProcess/webrtc/RemoteMediaRecorder.h:
+        * GPUProcess/webrtc/RemoteMediaRecorder.messages.in:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.cpp:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.h:
+
+2022-02-25  Youenn Fablet  <youenn@apple.com>
+
         Remove dead code in GPUProcessConnection::dispatchMessage
         https://bugs.webkit.org/show_bug.cgi?id=237135
 

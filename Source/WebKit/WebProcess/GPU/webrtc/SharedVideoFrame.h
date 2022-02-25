@@ -31,6 +31,7 @@
 #include "RemoteVideoFrameIdentifier.h"
 #include "SharedMemory.h"
 #include <WebCore/MediaSample.h>
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/UniqueRef.h>
@@ -54,7 +55,7 @@ struct SharedVideoFrame {
     MediaTime time;
     bool mirrored { false };
     WebCore::MediaSample::VideoRotation rotation { WebCore::MediaSample::VideoRotation::None };
-    std::variant<std::nullptr_t, RemoteVideoFrameReadReference, MachSendRight> buffer;
+    std::variant<std::nullptr_t, RemoteVideoFrameReadReference, MachSendRight, WebCore::IntSize> buffer;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<SharedVideoFrame> decode(Decoder&);
@@ -87,7 +88,7 @@ class SharedVideoFrameReader {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class UseIOSurfaceBufferPool { No, Yes };
-    explicit SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&&, UseIOSurfaceBufferPool = UseIOSurfaceBufferPool::Yes);
+    explicit SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&&, const WebCore::ProcessIdentity& = { }, UseIOSurfaceBufferPool = UseIOSurfaceBufferPool::Yes);
     SharedVideoFrameReader();
 
     void setSemaphore(IPC::Semaphore&& semaphore) { m_semaphore = WTFMove(semaphore); }
@@ -100,7 +101,8 @@ private:
     CVPixelBufferPoolRef pixelBufferPool(const WebCore::SharedVideoFrameInfo&);
 
     RefPtr<RemoteVideoFrameObjectHeap> m_objectHeap;
-    UseIOSurfaceBufferPool m_useIOSurfaceBufferPool { UseIOSurfaceBufferPool::Yes };
+    WebCore::ProcessIdentity m_resourceOwner;
+    UseIOSurfaceBufferPool m_useIOSurfaceBufferPool { UseIOSurfaceBufferPool::No };
     IPC::Semaphore m_semaphore;
     RefPtr<SharedMemory> m_storage;
 
@@ -108,6 +110,8 @@ private:
     OSType m_bufferPoolType { 0 };
     uint32_t m_bufferPoolWidth { 0 };
     uint32_t m_bufferPoolHeight { 0 };
+    WebCore::IntSize m_blackFrameSize;
+    RetainPtr<CVPixelBufferRef> m_blackFrame;
 };
 
 template<class Encoder> void SharedVideoFrame::encode(Encoder& encoder) const

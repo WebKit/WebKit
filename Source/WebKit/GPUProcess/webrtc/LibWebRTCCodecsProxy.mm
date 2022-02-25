@@ -53,6 +53,7 @@ LibWebRTCCodecsProxy::LibWebRTCCodecsProxy(GPUConnectionToWebProcess& connection
     : m_gpuConnectionToWebProcess(connection)
     , m_queue(connection.gpuProcess().libWebRTCCodecsQueue())
     , m_videoFrameObjectHeap(connection.videoFrameObjectHeap())
+    , m_resourceOwner(connection.webProcessIdentity())
 {
     m_gpuConnectionToWebProcess.connection().addThreadMessageReceiver(Messages::LibWebRTCCodecsProxy::messageReceiverName(), this);
 }
@@ -281,7 +282,7 @@ void LibWebRTCCodecsProxy::setSharedVideoFrameSemaphore(RTCEncoderIdentifier ide
         return;
 
     if (!encoder->frameReader)
-        encoder->frameReader = makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap });
+        encoder->frameReader = makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner);
     encoder->frameReader->setSemaphore(WTFMove(semaphore));
 }
 
@@ -295,7 +296,7 @@ void LibWebRTCCodecsProxy::setSharedVideoFrameMemory(RTCEncoderIdentifier identi
         return;
 
     if (!encoder->frameReader)
-        encoder->frameReader = makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap });
+        encoder->frameReader = makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner);
     encoder->frameReader->setSharedMemory(ipcHandle);
 }
 

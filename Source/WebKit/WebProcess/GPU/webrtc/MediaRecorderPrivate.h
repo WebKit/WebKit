@@ -69,13 +69,11 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription& format, size_t frameCount);
-    bool copySharedVideoFrame(CVPixelBufferRef);
 
     MediaRecorderIdentifier m_identifier;
     Ref<WebCore::MediaStreamPrivate> m_stream;
     Ref<IPC::Connection> m_connection;
 
-    RetainPtr<CVPixelBufferRef> m_blackFrame;
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
     WebCore::CAAudioStreamDescription m_description { };
     std::unique_ptr<WebCore::WebAudioBufferList> m_silenceAudioBuffer;
@@ -83,6 +81,7 @@ private:
     WebCore::MediaRecorderPrivateOptions m_options;
     bool m_hasVideo { false };
     bool m_isStopped { false };
+    std::optional<WebCore::IntSize> m_blackFrameSize;
 
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
 };

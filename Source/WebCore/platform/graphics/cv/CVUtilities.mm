@@ -163,13 +163,15 @@ void setOwnershipIdentityForCVPixelBuffer(CVPixelBufferRef pixelBuffer, const Pr
     IOSurface::setOwnershipIdentity(surface, owner);
 }
 
-RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height)
+RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height, bool shouldUseIOSurface)
 {
     OSType format = preferedPixelBufferFormat();
     ASSERT(format == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange || format == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange);
 
+    NSDictionary *pixelAttributes = @{ (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ } };
+
     CVPixelBufferRef pixelBuffer = nullptr;
-    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, format, nullptr, &pixelBuffer);
+    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, format, shouldUseIOSurface ? (__bridge CFDictionaryRef)pixelAttributes : nullptr, &pixelBuffer);
     ASSERT_UNUSED(status, status == noErr);
 
     status = CVPixelBufferLockBaseAddress(pixelBuffer, 0);

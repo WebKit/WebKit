@@ -52,7 +52,7 @@ RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer(GPUConnectionToWe
     , m_identifier(identifier)
     , m_connection(WTFMove(connection))
     , m_sampleBufferDisplayLayer(LocalSampleBufferDisplayLayer::create(*this))
-    , m_sharedVideoFrameReader(&m_gpuConnection.videoFrameObjectHeap())
+    , m_sharedVideoFrameReader(Ref { m_gpuConnection.videoFrameObjectHeap() }, m_gpuConnection.webProcessIdentity())
 {
     ASSERT(m_sampleBufferDisplayLayer);
 }
@@ -122,7 +122,6 @@ void RemoteSampleBufferDisplayLayer::pause()
 void RemoteSampleBufferDisplayLayer::enqueue(SharedVideoFrame&& frame)
 {
     auto sample = m_sharedVideoFrameReader.read(WTFMove(frame));
-    ASSERT(sample);
     if (!sample)
         return;
 

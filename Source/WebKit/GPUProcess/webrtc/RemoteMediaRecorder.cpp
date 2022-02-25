@@ -33,7 +33,6 @@
 #include "RemoteVideoFrameObjectHeap.h"
 #include "SharedRingBufferStorage.h"
 #include <WebCore/CARingBuffer.h>
-#include <WebCore/ImageTransferSessionVT.h>
 #include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
@@ -57,8 +56,7 @@ RemoteMediaRecorder::RemoteMediaRecorder(GPUConnectionToWebProcess& gpuConnectio
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_identifier(identifier)
     , m_writer(WTFMove(writer))
-    , m_sharedVideoFrameReader(Ref { gpuConnectionToWebProcess.videoFrameObjectHeap() })
-    , m_videoFrameObjectHeap(gpuConnectionToWebProcess.videoFrameObjectHeap())
+    , m_sharedVideoFrameReader(Ref { gpuConnectionToWebProcess.videoFrameObjectHeap() }, { gpuConnectionToWebProcess.webProcessIdentity() })
 {
     if (recordAudio)
         m_ringBuffer = makeUnique<CARingBuffer>();
@@ -90,37 +88,10 @@ void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberO
     m_writer->appendAudioSampleBuffer(*m_audioBufferList, m_description, time, numberOfFrames);
 }
 
-void RemoteMediaRecorder::videoSampleAvailable(WebCore::RemoteVideoSample&& remoteSample, std::optional<RemoteVideoFrameReadReference> sampleReference)
+void RemoteMediaRecorder::videoSampleAvailable(SharedVideoFrame&& sharedVideoFrame)
 {
-    RefPtr<MediaSample> sample;
-    if (sampleReference) {
-        sample = m_videoFrameObjectHeap->retire(WTFMove(*sampleReference), mediaRecorderDefaultTimeout);
-        if (!sample) {
-            // In case of GPUProcess crash, we might enqueue previous GPUProcess samples, ignore them.
-            return;
-        }
-    } else if (!remoteSample.surface()) {
-        auto pixelBuffer = m_sharedVideoFrameReader.read();
-        if (!pixelBuffer)
-            return;
-
-        sample = MediaSampleAVFObjC::createImageSample(WTFMove(pixelBuffer), remoteSample.rotation(), remoteSample.mirrored(), remoteSample.time());
-    } else {
-        if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
-            m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
-
-        if (!m_imageTransferSession) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-
-        sample = m_imageTransferSession->createMediaSample(remoteSample);
-        if (!sample) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-    }
-    m_writer->appendVideoSampleBuffer(*sample);
+    if (auto sample = m_sharedVideoFrameReader.read(WTFMove(sharedVideoFrame)))
+        m_writer->appendVideoSampleBuffer(*sample);
 }
 
 void RemoteMediaRecorder::fetchData(CompletionHandler<void(IPC::DataReference&&, double)>&& completionHandler)

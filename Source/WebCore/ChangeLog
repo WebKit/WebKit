@@ -1,3 +1,16 @@
+2022-02-25  Youenn Fablet  <youenn@apple.com>
+
+        Optimize black frame sending in MediaRecorderPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=237027
+
+        Reviewed by Kimmo Kinnunen.
+
+        Allow generating black frames as IOSurfaces.
+        Covered by existing tests.
+
+        * platform/graphics/cv/CVUtilities.h:
+        * platform/graphics/cv/CVUtilities.mm:
+
 2022-02-24  Matt Woodrow  <mattwoodrow@apple.com>
 
         Simplify grid RTL handling

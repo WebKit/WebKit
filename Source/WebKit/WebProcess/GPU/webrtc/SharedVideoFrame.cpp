@@ -134,15 +134,14 @@ void SharedVideoFrameWriter::disable()
     m_semaphore->signal();
 }
 
-SharedVideoFrameReader::SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&& objectHeap, UseIOSurfaceBufferPool useIOSurfaceBufferPool)
+SharedVideoFrameReader::SharedVideoFrameReader(RefPtr<RemoteVideoFrameObjectHeap>&& objectHeap, const ProcessIdentity& resourceOwner, UseIOSurfaceBufferPool useIOSurfaceBufferPool)
     : m_objectHeap(WTFMove(objectHeap))
+    , m_resourceOwner(resourceOwner)
     , m_useIOSurfaceBufferPool(useIOSurfaceBufferPool)
 {
 }
 
-SharedVideoFrameReader::SharedVideoFrameReader()
-{
-}
+SharedVideoFrameReader::SharedVideoFrameReader() = default;
 
 RetainPtr<CVPixelBufferRef> SharedVideoFrameReader::read()
 {
@@ -164,7 +163,10 @@ RetainPtr<CVPixelBufferRef> SharedVideoFrameReader::read()
     if (m_storage->size() < info->storageSize())
         return { };
 
-    return info->createPixelBufferFromMemory(data + SharedVideoFrameInfoEncodingLength, pixelBufferPool(*info));
+    auto result = info->createPixelBufferFromMemory(data + SharedVideoFrameInfoEncodingLength, pixelBufferPool(*info));
+    if (result && m_resourceOwner && m_useIOSurfaceBufferPool == UseIOSurfaceBufferPool::Yes)
+        setOwnershipIdentityForCVPixelBuffer(result.get(), m_resourceOwner);
+    return result;
 }
 
 RefPtr<MediaSample> SharedVideoFrameReader::read(SharedVideoFrame&& sharedVideoFrame)
@@ -176,9 +178,9 @@ RefPtr<MediaSample> SharedVideoFrameReader::read(SharedVideoFrame&& sharedVideoF
             return nullptr;
 
         auto sample = m_objectHeap->retire(WTFMove(reference), 0_s);
-        ASSERT(sample && sample->pixelBuffer());
         if (!sample)
             return nullptr;
+        ASSERT(sample->pixelBuffer());
         return sample->pixelBuffer();
     } , [](MachSendRight&& sendRight) -> RetainPtr<CVPixelBufferRef> {
         auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(sendRight), DestinationColorSpace::SRGB());
@@ -187,6 +189,14 @@ RefPtr<MediaSample> SharedVideoFrameReader::read(SharedVideoFrame&& sharedVideoF
         return WebCore::createCVPixelBuffer(surface->surface()).value_or(nullptr);
     }, [this](std::nullptr_t representation) -> RetainPtr<CVPixelBufferRef> {
         return read();
+    }, [this](IntSize size) -> RetainPtr<CVPixelBufferRef> {
+        if (m_blackFrameSize != size) {
+            m_blackFrameSize = size;
+            m_blackFrame = WebCore::createBlackPixelBuffer(m_blackFrameSize.width(), m_blackFrameSize.height(), m_useIOSurfaceBufferPool == UseIOSurfaceBufferPool::Yes);
+            if (m_resourceOwner && m_useIOSurfaceBufferPool == UseIOSurfaceBufferPool::Yes)
+                setOwnershipIdentityForCVPixelBuffer(m_blackFrame.get(), m_resourceOwner);
+        }
+        return m_blackFrame.get();
     });
 
     if (!pixelBuffer)
