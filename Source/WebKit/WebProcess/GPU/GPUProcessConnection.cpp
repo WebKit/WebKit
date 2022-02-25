@@ -222,10 +222,6 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
     if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGLProxy::messageReceiverName())
         return RemoteGraphicsContextGLProxy::handleMessageToRemovedDestination(connection, decoder);
 #endif
-#if ENABLE(MEDIA_STREAMS)
-    if (decoder.messageReceiverName() == Messages::RemoteVideoFrameProxy::messageReceiverName())
-        return RemoteVideoFrameProxy::handleMessageToRemovedDestination(connection, decoder);
-#endif
 
 #if USE(AUDIO_SESSION)
     if (decoder.messageReceiverName() == Messages::RemoteAudioSession::messageReceiverName()) {

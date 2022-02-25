@@ -1,5 +1,17 @@
 2022-02-25  Youenn Fablet  <youenn@apple.com>
 
+        Remove dead code in GPUProcessConnection::dispatchMessage
+        https://bugs.webkit.org/show_bug.cgi?id=237135
+
+        Reviewed by Kimmo Kinnunen.
+
+        No change of behavior.
+
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::dispatchMessage):
+
+2022-02-25  Youenn Fablet  <youenn@apple.com>
+
         Make RemoteVideoFrameIdentifier a regular ObjectIdentifier
         https://bugs.webkit.org/show_bug.cgi?id=237136
 
