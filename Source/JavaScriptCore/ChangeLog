@@ -1,3 +1,22 @@
+2022-02-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use DeferTerminationForAWhile in Interpreter::unwind
+        https://bugs.webkit.org/show_bug.cgi?id=237176
+
+        Reviewed by Mark Lam.
+
+        Interpreter::unwind calls sanitizeRemoteFunctionException, which would like to create scope (but it
+        does not have user observable behavior). Problem is that, since it is creating a scope, it can throw
+        a termination exception. We were using DeferTermination, but destructor of this scope can still set
+        termination exception, which results in throwing a termination exception for the error handler.
+
+        We use DeferTerminationForAWhile in the prologue of the Interpreter::unwind to ensure that this function
+        will not accept termination exception coming concurrently.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::sanitizeRemoteFunctionException):
+        (JSC::Interpreter::unwind):
+
 2022-02-25  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: [Cocoa] Split remote inspector message data into smaller chunks for large messages
