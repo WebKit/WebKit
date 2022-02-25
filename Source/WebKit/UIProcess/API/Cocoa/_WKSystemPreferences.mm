@@ -36,15 +36,16 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
 + (BOOL)isCaptivePortalModeEnabled
 {
     auto changedNotificationKey = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, WKCaptivePortalModeEnabledKey, kCFStringEncodingUTF8));
-    auto preferenceValue = adoptCF(CFPreferencesCopyValue(changedNotificationKey.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost));
+    auto preferenceValue = adoptCF(CFPreferencesCopyValue(changedNotificationKey.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
     return preferenceValue.get() == kCFBooleanTrue;
 }
 
 + (void)setCaptivePortalModeEnabled:(BOOL)enabled
 {
     auto changedNotificationKey = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, WKCaptivePortalModeEnabledKey, kCFStringEncodingUTF8));
-    CFPreferencesSetValue(changedNotificationKey.get(), enabled ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesCurrentHost);
-    CFPreferencesSynchronize(kCFPreferencesAnyApplication, kCFPreferencesAnyUser, kCFPreferencesAnyHost);
+    CFPreferencesSetValue(changedNotificationKey.get(), enabled ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+    CFPreferencesSynchronize(kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKCaptivePortalModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
 }
 
 + (BOOL)isCaptivePortalModeIgnored:(NSString *)containerPath

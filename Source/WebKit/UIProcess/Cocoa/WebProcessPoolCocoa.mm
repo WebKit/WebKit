@@ -624,7 +624,7 @@ void WebProcessPool::remoteWebInspectorEnabledCallback(CFNotificationCenterRef, 
 }
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 void WebProcessPool::captivePortalModeConfigUpdateCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
     if (auto pool = extractWebProcessPool(observer))
@@ -745,7 +745,7 @@ void WebProcessPool::registerNotificationObservers()
         sendToAllProcesses(Messages::WebProcess::PowerSourceDidChange(hasAC));
     });
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     addCFNotificationObserver(captivePortalModeConfigUpdateCallback, (__bridge CFStringRef)WKCaptivePortalModeContainerConfigurationChangedNotification);
 #endif
 
@@ -793,7 +793,7 @@ void WebProcessPool::unregisterNotificationObservers()
 
     m_powerSourceNotifier = nullptr;
     
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     removeCFNotificationObserver((__bridge CFStringRef)WKCaptivePortalModeContainerConfigurationChangedNotification);
 #endif
 

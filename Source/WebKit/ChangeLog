@@ -1,3 +1,28 @@
+2022-02-24  Gavin Phillips  <gavin.p@apple.com>
+
+        Port CaptivePortalMode preferences to AnyHost in order to support CFPrefs Direct Mode propagation
+        https://bugs.webkit.org/show_bug.cgi?id=237098
+
+        Reviewed by Brent Fulgham.
+
+        Move our CaptivePortalMode preference to AnyHost in order to correctly support
+        CFPrefs Direct Mode propagation. We also now dispatch a CFNotification to ensure our preference
+        observer is always notified of the change.
+
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (-[WKUserDefaults findPreferenceChangesAndNotifyForKeys:toValuesForKeys:]):
+
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::setPreferenceValue):
+        * UIProcess/API/Cocoa/_WKSystemPreferences.mm:
+        (+[_WKSystemPreferences isCaptivePortalModeEnabled]):
+        (+[_WKSystemPreferences setCaptivePortalModeEnabled:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::captivePortalModeConfigUpdateCallback):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * UIProcess/WebProcessPool.h:
+
 2022-02-24  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add support for replacing WKFoundTextRanges
