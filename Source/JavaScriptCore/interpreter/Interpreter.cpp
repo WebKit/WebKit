@@ -675,7 +675,7 @@ private:
 // Replace an exception which passes across a marshalling boundary with a TypeError for its handler's global object.
 static void sanitizeRemoteFunctionException(VM& vm, JSRemoteFunction* remoteFunction, Exception* exception)
 {
-    ASSERT(vm.traps().isDeferringTermination());
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(exception);
     ASSERT(!vm.isTerminationException(exception));
@@ -703,10 +703,6 @@ static void sanitizeRemoteFunctionException(VM& vm, JSRemoteFunction* remoteFunc
 
 NEVER_INLINE CatchInfo Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exception* exception)
 {
-    // While running Interpreter::unwind, we must not accept concurrently set termination exception,
-    // otherwise, we can end up in a found error handler with a TerminationException, and effectively
-    // "catch" the TerminationException which should not be catchable.
-    DeferTerminationForAWhile deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     ASSERT(reinterpret_cast<void*>(callFrame) != vm.topEntryFrame);
