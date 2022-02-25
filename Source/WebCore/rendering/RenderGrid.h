@@ -167,8 +167,6 @@ private:
     void layoutGridItems();
     void populateGridPositionsForDirection(GridTrackSizingDirection);
 
-    LayoutUnit resolveAutoStartGridPosition(GridTrackSizingDirection) const;
-    LayoutUnit resolveAutoEndGridPosition(GridTrackSizingDirection) const;
     LayoutUnit gridAreaBreadthForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection);
     LayoutUnit logicalOffsetForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit) const;
     void gridAreaPositionForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit& start, LayoutUnit& end) const;
@@ -212,7 +210,6 @@ private:
     unsigned nonCollapsedTracks(GridTrackSizingDirection) const;
     unsigned numTracks(GridTrackSizingDirection, const Grid&) const;
 
-    LayoutUnit translateOutOfFlowRTLCoordinate(const RenderBox&, LayoutUnit) const;
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
 
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }

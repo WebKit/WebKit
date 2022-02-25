@@ -1,3 +1,31 @@
+2022-02-24  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Simplify grid RTL handling
+        https://bugs.webkit.org/show_bug.cgi?id=236694
+
+        Reviewed by Dean Jackson.
+
+        The previous code stored columns in logical order (column 0 is the rightmost physical column), but the positions were offset
+        using the physical left border, padding and content distribution offset. This hybrid physical/logical coordinate space
+        made for tricky conversions into the final coordinate space.
+        This changes the stored column positions to use purely logical coordinates, and does a single direction swap (by subtracting
+        from the width) at the end.
+
+        No tests added, this refactoring is covered by a large number of existing WPTs.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::populateGridPositionsForDirection):
+        (WebCore::RenderGrid::resolveAutoStartGridPosition const):
+        (WebCore::RenderGrid::resolveAutoEndGridPosition const):
+        (WebCore::RenderGrid::gridAreaBreadthForOutOfFlowChild):
+        (WebCore::RenderGrid::logicalOffsetForOutOfFlowChild const):
+        (WebCore::RenderGrid::gridAreaPositionForOutOfFlowChild const):
+        (WebCore::RenderGrid::computeContentPositionAndDistributionOffset):
+        (WebCore::RenderGrid::translateRTLCoordinate const):
+        (WebCore::RenderGrid::logicalOffsetForChild const):
+        (WebCore::RenderGrid::translateOutOfFlowRTLCoordinate const): Deleted.
+        * rendering/RenderGrid.h:
+
 2022-02-24  Jer Noble  <jer.noble@apple.com>
 
         [Refactor] Adopt LoggerHelper in Logging EME classes

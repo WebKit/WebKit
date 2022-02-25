@@ -1141,15 +1141,7 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
     auto& positions = isRowAxis ? m_columnPositions : m_rowPositions;
     positions.resize(numberOfLines);
 
-    auto borderAndPadding = isRowAxis ? borderAndPaddingLogicalLeft() : borderAndPaddingBefore();
-#if !PLATFORM(IOS_FAMILY)
-    // FIXME: Ideally scrollbarLogicalWidth() should return zero in iOS so we don't need this
-    // (see bug https://webkit.org/b/191857).
-    // If we are in horizontal writing mode and RTL direction the scrollbar is painted on the left,
-    // so we need to take into account when computing the position of the columns.
-    if (isRowAxis && style().isHorizontalWritingMode() && !style().isLeftToRightDirection())
-        borderAndPadding += scrollbarLogicalWidth();
-#endif
+    auto borderAndPadding = isRowAxis ? borderAndPaddingStart() : borderAndPaddingBefore();
 
     positions[0] = borderAndPadding + offset.positionOffset;
     if (numberOfLines > 1) {
@@ -1621,36 +1613,6 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
     return 0;
 }
 
-LayoutUnit RenderGrid::resolveAutoStartGridPosition(GridTrackSizingDirection direction) const
-{
-    if (direction == ForRows || style().isLeftToRightDirection())
-        return 0_lu;
-
-    int lastLine = numTracks(ForColumns, m_grid);
-    ContentPosition position = style().resolvedJustifyContentPosition(contentAlignmentNormalBehaviorGrid());
-    if (position == ContentPosition::End)
-        return m_columnPositions[lastLine] - clientLogicalWidth();
-    if (position == ContentPosition::Start || style().resolvedJustifyContentDistribution(contentAlignmentNormalBehaviorGrid()) == ContentDistribution::Stretch)
-        return m_columnPositions[0] - borderAndPaddingLogicalLeft();
-    return 0_lu;
-}
-
-LayoutUnit RenderGrid::resolveAutoEndGridPosition(GridTrackSizingDirection direction) const
-{
-    if (direction == ForRows)
-        return clientLogicalHeight();
-    if (style().isLeftToRightDirection())
-        return clientLogicalWidth();
-
-    int lastLine = numTracks(ForColumns, m_grid);
-    ContentPosition position = style().resolvedJustifyContentPosition(contentAlignmentNormalBehaviorGrid());
-    if (position == ContentPosition::End)
-        return m_columnPositions[lastLine];
-    if (position == ContentPosition::Start || style().resolvedJustifyContentDistribution(contentAlignmentNormalBehaviorGrid()) == ContentDistribution::Stretch)
-        return m_columnPositions[0] - borderAndPaddingLogicalLeft() + clientLogicalWidth();
-    return clientLogicalWidth();
-}
-
 bool RenderGrid::isSubgrid(GridTrackSizingDirection direction) const
 {
     if (!mayBeSubgridExcludingAbsPos(direction))
@@ -1696,19 +1658,15 @@ LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, 
     LayoutUnit end;
     auto& positions = isRowAxis ? m_columnPositions : m_rowPositions;
     auto& outOfFlowItemLine = isRowAxis ? m_outOfFlowItemColumn : m_outOfFlowItemRow;
-    LayoutUnit borderEdge = isRowAxis ? (style().isLeftToRightDirection() ? borderLogicalLeft() : borderLogicalRight()) : borderBefore();
+    LayoutUnit borderEdge = isRowAxis ? borderStart() : borderBefore();
     if (startIsAuto)
-        start = resolveAutoStartGridPosition(direction) + borderEdge;
+        start = borderEdge;
     else {
         outOfFlowItemLine.set(&child, startLine);
         start = positions[startLine];
-        if (isRowAxis && !style().isLeftToRightDirection()) {
-            start -= borderAndPaddingLogicalLeft();
-            start += borderLogicalRight() + paddingLogicalRight();
-        }
     }
     if (endIsAuto)
-        end = resolveAutoEndGridPosition(direction) + borderEdge;
+        end = ((direction == ForRows) ? clientLogicalHeight() : clientLogicalWidth()) + borderEdge;
     else {
         end = positions[endLine];
         // These vectors store line positions including gaps, but we shouldn't consider them for the edges of the grid.
@@ -1717,11 +1675,6 @@ LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, 
             ASSERT(!m_grid.needsItemsPlacement());
             end -= guttersSize(m_grid, direction, endLine - 1, 2, availableSizeForGutters);
             end -= isRowAxis ? m_offsetBetweenColumns.distributionOffset : m_offsetBetweenRows.distributionOffset;
-        }
-
-        if (isRowAxis && !style().isLeftToRightDirection()) {
-            end -= borderAndPaddingLogicalLeft();
-            end += borderLogicalRight() + paddingLogicalRight();
         }
     }
     return std::max(end - start, 0_lu);
@@ -1753,7 +1706,7 @@ void RenderGrid::gridAreaPositionForOutOfFlowChild(const RenderBox& child, GridT
     LayoutUnit trackBreadth = GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, direction).value();
     bool isRowAxis = direction == ForColumns;
     auto& outOfFlowItemLine = isRowAxis ? m_outOfFlowItemColumn : m_outOfFlowItemRow;
-    start = isRowAxis ? (style().isLeftToRightDirection() ? borderLogicalLeft() : borderLogicalRight()) : borderBefore();
+    start = isRowAxis ? borderStart() : borderBefore();
     if (auto line = outOfFlowItemLine.get(&child)) {
         auto& positions = isRowAxis ? m_columnPositions : m_rowPositions;
         start = positions[line.value()];
@@ -1885,32 +1838,30 @@ void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDire
     switch (position) {
     case ContentPosition::Left:
         ASSERT(isRowAxis);
+        positionOffset = style().isLeftToRightDirection() ? 0_lu : availableFreeSpace;
         break;
     case ContentPosition::Right:
         ASSERT(isRowAxis);
-        positionOffset = availableFreeSpace;
+        positionOffset = style().isLeftToRightDirection() ? availableFreeSpace : 0_lu;
         break;
     case ContentPosition::Center:
         positionOffset = availableFreeSpace / 2;
         break;
     case ContentPosition::FlexEnd: // Only used in flex layout, for other layout, it's equivalent to 'end'.
     case ContentPosition::End:
-        if (isRowAxis)
-            positionOffset = style().isLeftToRightDirection() ? availableFreeSpace : 0_lu;
-        else
-            positionOffset = availableFreeSpace;
+        positionOffset = availableFreeSpace;
         break;
     case ContentPosition::FlexStart: // Only used in flex layout, for other layout, it's equivalent to 'start'.
     case ContentPosition::Start:
         if (isRowAxis)
-            positionOffset = style().isLeftToRightDirection() ? 0_lu : availableFreeSpace;
+            positionOffset = 0_lu;
         break;
     case ContentPosition::Baseline:
     case ContentPosition::LastBaseline:
         // FIXME: Implement the previous values. For now, we always 'start' align.
         // http://webkit.org/b/145566
         if (isRowAxis)
-            positionOffset = style().isLeftToRightDirection() ? 0_lu : availableFreeSpace;
+            positionOffset = 0_lu;
         break;
     case ContentPosition::Normal:
     default:
@@ -1922,24 +1873,20 @@ void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDire
     offset.distributionOffset = 0_lu;
 }
 
-LayoutUnit RenderGrid::translateOutOfFlowRTLCoordinate(const RenderBox& child, LayoutUnit coordinate) const
-{
-    ASSERT(child.isOutOfFlowPositioned());
-    ASSERT(!style().isLeftToRightDirection());
-
-    if (m_outOfFlowItemColumn.get(&child))
-        return translateRTLCoordinate(coordinate);
-
-    return borderLogicalLeft() + borderLogicalRight() + clientLogicalWidth() - coordinate;
-}
-
 LayoutUnit RenderGrid::translateRTLCoordinate(LayoutUnit coordinate) const
 {
-    ASSERT(!style().isLeftToRightDirection());
+    LayoutUnit width = borderLogicalLeft() + borderLogicalRight() + clientLogicalWidth();
 
-    LayoutUnit alignmentOffset = m_columnPositions[0];
-    LayoutUnit rightGridEdgePosition = m_columnPositions[m_columnPositions.size() - 1];
-    return rightGridEdgePosition + alignmentOffset - coordinate;
+#if !PLATFORM(IOS_FAMILY)
+    // FIXME: Ideally scrollbarLogicalWidth() should return zero in iOS so we don't need this
+    // (see bug https://webkit.org/b/191857).
+    // If we are in horizontal writing mode and RTL direction the scrollbar is painted on the left,
+    // so we need to take into account when computing the position of the columns.
+    if (style().isHorizontalWritingMode())
+        width += scrollbarLogicalWidth();
+#endif
+
+    return width - coordinate;
 }
 
 // FIXME: SetLogicalPositionForChild has only one caller, consider its refactoring in the future.
@@ -1970,7 +1917,7 @@ LayoutUnit RenderGrid::logicalOffsetForChild(const RenderBox& child, GridTrackSi
     // We stored m_columnPositions's data ignoring the direction, hence we might need now
     // to translate positions from RTL to LTR, as it's more convenient for painting.
     if (!style().isLeftToRightDirection())
-        rowAxisOffset = (child.isOutOfFlowPositioned() ? translateOutOfFlowRTLCoordinate(child, rowAxisOffset) : translateRTLCoordinate(rowAxisOffset)) - (GridLayoutFunctions::isOrthogonalChild(*this, child) ? child.logicalHeight()  : child.logicalWidth());
+        rowAxisOffset = translateRTLCoordinate(rowAxisOffset) - (GridLayoutFunctions::isOrthogonalChild(*this, child) ? child.logicalHeight()  : child.logicalWidth());
     return rowAxisOffset;
 }
 
