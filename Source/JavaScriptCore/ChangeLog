@@ -1,3 +1,42 @@
+2022-02-24  Mark Lam  <mark.lam@apple.com>
+
+        Remove incorrect ASSERT.
+        https://bugs.webkit.org/show_bug.cgi?id=237185
+        <rdar://problem/83902782>
+
+        Reviewed by Yusuke Suzuki.
+
+        These debug ASSERTs were added in http://trac.webkit.org/r283632 back when we
+        weren't sure that the StringImpl pointer can be null or not.  We're now certain
+        that the StringImpl pointer can be null because:
+
+        The site of the ASSERT looks like this:
+        ```
+            auto* impl = string->tryGetValueImpl();
+            ASSERT(impl); // FIXME: rdar://83902782
+            if (impl && impl->isAtom() && 
+                ...
+        ```
+        ... where string is a JSString, which can also be a JSRopeString.
+
+        JSString::tryGetValueImpl() is:
+        ```
+        inline const StringImpl* JSString::tryGetValueImpl() const
+        {
+            uintptr_t pointer = fiberConcurrently();
+            if (pointer & isRopeInPointer)
+                return nullptr;
+            return bitwise_cast<StringImpl*>(pointer);
+        }
+        ```
+
+        If string is a JSRopeString, the returned impl will be null.  Hence, the ASSERT is
+        invalid and should be removed.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+
 2022-02-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r290516.
