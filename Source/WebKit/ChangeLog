@@ -1,3 +1,24 @@
+2022-02-24  Chris Dumez  <cdumez@apple.com>
+
+        Take down shared worker context connection less aggressively when it becomes idle
+        https://bugs.webkit.org/show_bug.cgi?id=237156
+
+        Reviewed by Darin Adler.
+
+        Take down shared worker context connection less aggressively when it becomes idle. Give it 5
+        seconds before shutting it down in case it ends up being used again in the near future.
+
+        This is similar to what we do for service workers.
+
+        * NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp:
+        (WebKit::WebSharedWorkerServer::shutDownSharedWorker):
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp:
+        (WebKit::WebSharedWorkerServerToContextConnection::WebSharedWorkerServerToContextConnection):
+        (WebKit::WebSharedWorkerServerToContextConnection::addSharedWorkerObject):
+        (WebKit::WebSharedWorkerServerToContextConnection::removeSharedWorkerObject):
+        (WebKit::WebSharedWorkerServerToContextConnection::idleTerminationTimerFired):
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.h:
+
 2022-02-24  Jer Noble  <jer.noble@apple.com>
 
         [Refactor] Adopt LoggerHelper in Legacy EME classes

@@ -212,14 +212,8 @@ void WebSharedWorkerServer::shutDownSharedWorker(const WebCore::SharedWorkerKey&
     if (!sharedWorker)
         return;
 
-    auto* contextConnection = sharedWorker->contextConnection();
-    if (!contextConnection)
-        return;
-
-    contextConnection->terminateSharedWorker(*sharedWorker);
-
-    if (contextConnection->sharedWorkerObjects().isEmpty())
-        contextConnection->connectionIsNoLongerNeeded();
+    if (auto* contextConnection = sharedWorker->contextConnection())
+        contextConnection->terminateSharedWorker(*sharedWorker);
 }
 
 void WebSharedWorkerServer::addConnection(std::unique_ptr<WebSharedWorkerServerConnection>&& connection)

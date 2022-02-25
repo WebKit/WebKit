@@ -35,15 +35,21 @@
 #include "WebSharedWorker.h"
 #include "WebSharedWorkerContextManagerConnectionMessages.h"
 #include "WebSharedWorkerServer.h"
+#include <wtf/MemoryPressureHandler.h>
 
 namespace WebKit {
 
 #define CONTEXT_CONNECTION_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [webProcessIdentifier=%" PRIu64 "] WebSharedWorkerServerToContextConnection::" fmt, this, webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 
+// We terminate the context connection after 5 seconds if it is no longer used by any SharedWorker objects,
+// as a performance optimization.
+constexpr Seconds idleTerminationDelay { 5_s };
+
 WebSharedWorkerServerToContextConnection::WebSharedWorkerServerToContextConnection(NetworkConnectionToWebProcess& connection, const WebCore::RegistrableDomain& registrableDomain, WebSharedWorkerServer& server)
     : m_connection(connection)
     , m_server(server)
     , m_registrableDomain(registrableDomain)
+    , m_idleTerminationTimer(*this, &WebSharedWorkerServerToContextConnection::idleTerminationTimerFired)
 {
     CONTEXT_CONNECTION_RELEASE_LOG("WebSharedWorkerServerToContextConnection:");
     server.addContextConnection(*this);
@@ -113,16 +119,22 @@ void WebSharedWorkerServerToContextConnection::terminateSharedWorker(const WebSh
 
 void WebSharedWorkerServerToContextConnection::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
+    CONTEXT_CONNECTION_RELEASE_LOG("addSharedWorkerObject: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
     auto& sharedWorkerObjects = m_sharedWorkerObjects.ensure(sharedWorkerObjectIdentifier.processIdentifier(), [] { return HashSet<WebCore::SharedWorkerObjectIdentifier> { }; }).iterator->value;
+    ASSERT(!sharedWorkerObjects.contains(sharedWorkerObjectIdentifier));
     sharedWorkerObjects.add(sharedWorkerObjectIdentifier);
 
     if (webProcessIdentifier() != sharedWorkerObjectIdentifier.processIdentifier() && sharedWorkerObjects.size() == 1)
         m_connection.networkProcess().send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::SharedWorker, sharedWorkerObjectIdentifier.processIdentifier(), webProcessIdentifier() }, 0);
+
+    m_idleTerminationTimer.stop();
 }
 
 void WebSharedWorkerServerToContextConnection::removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
+    CONTEXT_CONNECTION_RELEASE_LOG("removeSharedWorkerObject: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
     auto it = m_sharedWorkerObjects.find(sharedWorkerObjectIdentifier.processIdentifier());
+    ASSERT(it != m_sharedWorkerObjects.end());
     if (it == m_sharedWorkerObjects.end())
         return;
     it->value.remove(sharedWorkerObjectIdentifier);
@@ -132,6 +144,18 @@ void WebSharedWorkerServerToContextConnection::removeSharedWorkerObject(WebCore:
     m_sharedWorkerObjects.remove(it);
     if (webProcessIdentifier() != sharedWorkerObjectIdentifier.processIdentifier())
         m_connection.networkProcess().send(Messages::NetworkProcessProxy::UnregisterRemoteWorkerClientProcess { RemoteWorkerType::SharedWorker, sharedWorkerObjectIdentifier.processIdentifier(), webProcessIdentifier() }, 0);
+
+    if (m_sharedWorkerObjects.isEmpty()) {
+        CONTEXT_CONNECTION_RELEASE_LOG("removeSharedWorkerObject: connection is now idle, starting a timer to terminate it");
+        ASSERT(!m_idleTerminationTimer.isActive());
+        m_idleTerminationTimer.startOneShot(MemoryPressureHandler::singleton().isUnderMemoryPressure() ? 0_s : idleTerminationDelay);
+    }
+}
+
+void WebSharedWorkerServerToContextConnection::idleTerminationTimerFired()
+{
+    RELEASE_ASSERT(m_sharedWorkerObjects.isEmpty());
+    connectionIsNoLongerNeeded();
 }
 
 #undef CONTEXT_CONNECTION_RELEASE_LOG

@@ -31,6 +31,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SharedWorkerIdentifier.h>
 #include <WebCore/SharedWorkerObjectIdentifier.h>
+#include <WebCore/Timer.h>
 #include <WebCore/TransferredMessagePort.h>
 
 namespace WebCore {
@@ -61,7 +62,6 @@ public:
     void postConnectEvent(const WebSharedWorker&, const WebCore::TransferredMessagePort&);
     void terminateSharedWorker(const WebSharedWorker&);
 
-    void connectionIsNoLongerNeeded();
     const HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>>& sharedWorkerObjects() const { return m_sharedWorkerObjects; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -70,6 +70,9 @@ public:
     void removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
 
 private:
+    void idleTerminationTimerFired();
+    void connectionIsNoLongerNeeded();
+
     // IPC messages.
     void postExceptionToWorkerObject(WebCore::SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL);
 
@@ -81,6 +84,7 @@ private:
     WeakPtr<WebSharedWorkerServer> m_server;
     WebCore::RegistrableDomain m_registrableDomain;
     HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>> m_sharedWorkerObjects;
+    WebCore::Timer m_idleTerminationTimer;
 };
 
 } // namespace WebKit
