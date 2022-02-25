@@ -3389,6 +3389,8 @@ webkit.org/b/229584 animations/fill-mode-forwards.html [ Pass Failure ]
 # rdar://82190832 ([ iOS15 ] editing/caret/ios/caret-in-overflow-area.html is failing)
 [ Debug ] editing/caret/ios/caret-in-overflow-area.html [ Pass Timeout Failure ]
 
+webkit.org/b/237220 imported/w3c/web-platform-tests/svg/coordinate-systems/abspos.html [ Pass Failure ]
+
 webkit.org/b/237218 fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html [ Pass Failure ]
 
 webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.html [ Pass Failure ]
