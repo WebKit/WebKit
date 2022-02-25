@@ -1,5 +1,14 @@
 2022-02-24  Matteo Flores  <matteo_flores@apple.com>
 
+        [ BigSur+ EWS ] imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html is a flaky ASSERTION FAILED / failure
+        https://bugs.webkit.org/show_bug.cgi?id=237172
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2022-02-24  Matteo Flores  <matteo_flores@apple.com>
+
         REGRESSION(r290358): [ Debug EWS ] ASSERTION FAILED: sample && sample->pixelBuffer()
         https://bugs.webkit.org/show_bug.cgi?id=237164
 

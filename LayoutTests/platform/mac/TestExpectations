@@ -2400,6 +2400,8 @@ webkit.org/b/231757 [ BigSur ] inspector/canvas/updateShader-webgl.html [ Pass F
 
 webkit.org/b/231924 inspector/css/modify-css-property.html [ Pass Failure ]
 
+webkit.org/b/237172 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Pass Failure Crash ]
+
 webkit.org/b/233047 inspector/page/setShowPaintRects.html [ Pass Failure ]
 
 webkit.org/b/237164 [ Debug ] webrtc/vp8-then-h264-gpu-process-crash.html [ Crash ]
